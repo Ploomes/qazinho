@@ -18,6 +18,8 @@
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
     "typecheck:fast": "tsgo --noEmit -p tsconfig.node.json --composite false && tsgo --noEmit -p tsconfig.web.json --composite false",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -29,6 +31,7 @@
     "@vitejs/plugin-react": "^5.2.0",
     "electron": "^44.3.0",
     "electron-vite": "^5.0.0",
+    "prettier": "^3.9.6",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "typescript": "~5.9.3",
