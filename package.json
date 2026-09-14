@@ -8,11 +8,11 @@
   "author": "Salve Software",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Salve-Software/qaCEO.git"
+    "url": "git+https://github.com/Salve-Software/QaCEO.git"
   },
-  "homepage": "https://github.com/Salve-Software/qaCEO#readme",
+  "homepage": "https://github.com/Salve-Software/QaCEO#readme",
   "bugs": {
-    "url": "https://github.com/Salve-Software/qaCEO/issues"
+    "url": "https://github.com/Salve-Software/QaCEO/issues"
   },
   "main": "./out/main/index.js",
   "engines": {
