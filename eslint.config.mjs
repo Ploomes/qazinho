@@ -10,6 +10,12 @@ const NO_UPWARD_RELATIVE = {
     'Use the @/ alias instead of an upward relative path. Only ./ within the same directory is allowed.',
 };
 
+const NO_NODE_IN_THE_PAGE = {
+  group: ['node:*', 'fs', 'path', 'os', 'child_process', 'worker_threads', 'electron'],
+  message:
+    'This code runs in the page. No Node builtins and no electron: ask the main process through window.qaceo.',
+};
+
 export default config(
   { ignores: ['out', 'dist', 'release', 'node_modules', 'coverage'] },
 
@@ -88,6 +94,65 @@ export default config(
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+    },
+  },
+
+  {
+    files: ['src/main/**/*.ts', 'src/preload/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            NO_UPWARD_RELATIVE,
+            {
+              group: ['@/renderer/**'],
+              message:
+                'The main process and the preload never import the renderer. Share a type through src/shared/.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  {
+    files: ['src/renderer/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': ['error', { patterns: [NO_NODE_IN_THE_PAGE] }],
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            NO_UPWARD_RELATIVE,
+            {
+              group: ['@/main/**', '@/preload/**'],
+              message:
+                'The renderer never imports the main process or the preload. Share a type through src/shared/.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  {
+    files: ['src/shared/**/*.ts'],
+    rules: {
+      'no-restricted-imports': ['error', { patterns: [NO_NODE_IN_THE_PAGE] }],
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            NO_UPWARD_RELATIVE,
+            {
+              group: ['@/main/**', '@/preload/**', '@/renderer/**'],
+              message:
+                'src/shared/ is imported by every process and imports none of them.',
+            },
+          ],
+        },
       ],
     },
   },
