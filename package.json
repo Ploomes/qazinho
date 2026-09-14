@@ -6,6 +6,14 @@
   "description": "A local-first desktop app where AI agents test your web and mobile apps from a test plan.",
   "license": "MIT",
   "author": "Salve Software",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Salve-Software/qaCEO.git"
+  },
+  "homepage": "https://github.com/Salve-Software/qaCEO#readme",
+  "bugs": {
+    "url": "https://github.com/Salve-Software/qaCEO/issues"
+  },
   "main": "./out/main/index.js",
   "engines": {
     "node": ">=22.12"
