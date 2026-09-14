@@ -161,6 +161,34 @@ export default config(
   },
 
   {
+    // A class file holds the class and nothing else: functions belong in `library/`, where
+    // they get a file and a test, and types belong in `types/`.
+    files: ['**/*.class.ts'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Program > FunctionDeclaration',
+          message:
+            'No loose function in a class file. Move it to library/, where it gets its own file and its own test.',
+        },
+        {
+          selector:
+            'Program > ExportNamedDeclaration > FunctionDeclaration, Program > ExportNamedDeclaration > VariableDeclaration > VariableDeclarator[init.type=/FunctionExpression|ArrowFunctionExpression/]',
+          message:
+            'No loose function in a class file. Move it to library/, where it gets its own file and its own test.',
+        },
+        {
+          selector:
+            'Program > TSTypeAliasDeclaration, Program > TSInterfaceDeclaration, Program > ExportNamedDeclaration > TSTypeAliasDeclaration, Program > ExportNamedDeclaration > TSInterfaceDeclaration',
+          message:
+            'No type declared in a class file. Move it to types/, one type per file.',
+        },
+      ],
+    },
+  },
+
+  {
     files: ['**/*.{js,mjs}'],
     ...configs.disableTypeChecked,
   },
