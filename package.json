@@ -12,10 +12,12 @@
   "scripts": {
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
-    "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false"
+    "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
+    "typecheck:fast": "tsgo --noEmit -p tsconfig.node.json --composite false && tsgo --noEmit -p tsconfig.web.json --composite false"
   },
   "devDependencies": {
     "@types/node": "^22.20.2",
+    "@typescript/native-preview": "7.0.0-dev.20260707.2",
     "typescript": "~5.9.3"
   }
 }
