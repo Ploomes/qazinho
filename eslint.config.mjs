@@ -189,6 +189,18 @@ export default config(
   },
 
   {
+    files: ['src/**/__tests__/**/*.{ts,tsx}', '*.config.ts'],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/unbound-method': 'off',
+      'no-console': 'off',
+    },
+  },
+
+  {
     files: ['**/*.{js,mjs}'],
     ...configs.disableTypeChecked,
   },
