@@ -1,5 +1,5 @@
-appId: com.salvesoftware.qaceo
-productName: QaCEO
+appId: com.salvesoftware.gocrash
+productName: gocrash
 directories:
   output: release
   buildResources: build

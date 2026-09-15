@@ -1,6 +1,6 @@
 {
-  "name": "@salve-software/qaceo",
-  "productName": "QaCEO",
+  "name": "@salve-software/gocrash",
+  "productName": "gocrash",
   "version": "0.0.0",
   "private": true,
   "description": "A local-first desktop app where AI agents test your web and mobile apps from a test plan.",
@@ -8,11 +8,11 @@
   "author": "Salve Software",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Salve-Software/QaCEO.git"
+    "url": "git+https://github.com/Salve-Software/gocrash.git"
   },
-  "homepage": "https://github.com/Salve-Software/QaCEO#readme",
+  "homepage": "https://github.com/Salve-Software/gocrash#readme",
   "bugs": {
-    "url": "https://github.com/Salve-Software/QaCEO/issues"
+    "url": "https://github.com/Salve-Software/gocrash/issues"
   },
   "main": "./out/main/index.js",
   "engines": {
