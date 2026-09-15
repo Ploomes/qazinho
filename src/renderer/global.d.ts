@@ -1,8 +1,8 @@
-import type { QaceoApi } from '@/shared/types';
+import type { GocrashApi } from '@/shared/types';
 
 declare global {
   interface Window {
-    qaceo: QaceoApi;
+    gocrash: GocrashApi;
   }
 }
 

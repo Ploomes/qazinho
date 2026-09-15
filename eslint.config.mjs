@@ -14,7 +14,7 @@ const NO_UPWARD_RELATIVE = {
 const NO_NODE_IN_THE_PAGE = {
   group: ['node:*', 'fs', 'path', 'os', 'child_process', 'worker_threads', 'electron'],
   message:
-    'This code runs in the page. No Node builtins and no electron: ask the main process through window.qaceo.',
+    'This code runs in the page. No Node builtins and no electron: ask the main process through window.gocrash.',
 };
 
 export default config(

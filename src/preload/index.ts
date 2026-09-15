@@ -1,8 +1,8 @@
-import type { QaceoApi } from '@/shared/types';
+import type { GocrashApi } from '@/shared/types';
 import { contextBridge } from 'electron';
 
-const api: QaceoApi = {
+const api: GocrashApi = {
   platform: process.platform,
 };
 
-contextBridge.exposeInMainWorld('qaceo', api);
+contextBridge.exposeInMainWorld('gocrash', api);

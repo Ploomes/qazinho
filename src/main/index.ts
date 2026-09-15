@@ -8,7 +8,7 @@ const RENDERER_FILE = join(__dirname, '../renderer/index.html');
 
 function createMainWindow(): void {
   const window = new BrowserWindow({
-    title: 'QaCEO',
+    title: 'gocrash',
     width: 1440,
     height: 900,
     minWidth: 1024,

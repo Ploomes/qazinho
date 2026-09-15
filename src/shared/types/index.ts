@@ -1,1 +1,1 @@
-export type * from './qaceo-api';
+export type * from './gocrash-api';
