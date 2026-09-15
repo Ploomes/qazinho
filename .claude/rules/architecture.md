@@ -5,7 +5,7 @@ Electron, built by electron-vite. Three processes, and one folder they all share
 ```
 src/
 ├── main/       ← Node + Electron: windows, the filesystem, child processes
-├── preload/    ← the bridge: exposes window.qaceo through contextBridge, nothing else
+├── preload/    ← the bridge: exposes window.gocrash through contextBridge, nothing else
 ├── renderer/   ← React: a web page, sandboxed
 └── shared/     ← contracts every process agrees on; imports none of them
 ```
@@ -36,8 +36,8 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
 
 ## IPC
 
-- The contract is `QaceoApi` in `src/shared/types/`. The preload implements it, and the renderer
-  reads it from `window.qaceo`, typed in `src/renderer/global.d.ts`.
+- The contract is `GocrashApi` in `src/shared/types/`. The preload implements it, and the renderer
+  reads it from `window.gocrash`, typed in `src/renderer/global.d.ts`.
 - **Expose functions with a purpose, never `ipcRenderer` itself.** A renderer that can send any
   channel is a renderer with Node.
 - Structured clone carries no functions and no class instances. What crosses is data.

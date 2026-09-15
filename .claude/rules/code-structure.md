@@ -25,7 +25,7 @@ A class folder **never** sits loose in `classes/`. It always goes inside a categ
 | --------- | -------------------------------- | ----------------------------------- |
 | Class     | `<kebab>.class.ts`               | `android-emulator.class.ts`         |
 | Library   | `<kebab>.ts`                     | `library/is-internal-navigation.ts` |
-| Type      | `<kebab>.ts`                     | `types/qaceo-api.ts`                |
+| Type      | `<kebab>.ts`                     | `types/gocrash-api.ts`              |
 | Constant  | `<kebab>.ts`                     | `constants/default-window-size.ts`  |
 | Component | `components/<kebab>/<kebab>.tsx` | `components/sidebar/sidebar.tsx`    |
 | Hook      | `hooks/use-<kebab>.ts`           | `hooks/use-workspace.ts`            |
@@ -67,7 +67,7 @@ repository.
 
 ## Types
 
-- No `I` or `T` prefix. It is `QaceoApi`, never `IQaceoApi`.
+- No `I` or `T` prefix. It is `GocrashApi`, never `IGocrashApi`.
 - **`src/shared/types/` holds only what crosses a process boundary**, and never imports from
   `main`, `preload` or `renderer`.
 - Everything else lives with its owner: a class's options type is in that class's `types/`.
@@ -98,7 +98,7 @@ src/shared/
 within the same directory is still right for `./library/`, `./constants/` and `./types/`.
 
 ```ts
-import type { QaceoApi } from '@/shared/types';
+import type { GocrashApi } from '@/shared/types';
 import { isInternalNavigation } from '@/main/library';
 ```
 

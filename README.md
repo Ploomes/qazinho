@@ -1,13 +1,13 @@
-# QaCEO
+# gocrash
 
 A local-first desktop app where AI agents test your web and mobile apps from a test plan.
 
-Every startup CEO is the best QA there is. QaCEO puts that instinct in an agent: you write the
-plan, the agent opens the app, walks the flows and tells you what broke.
+Go crash your app before your users do. You write the plan, the agent opens the app, walks the
+flows and tells you what broke.
 
 - **Web, Android and iOS.** A URL, an `.apk`, or a simulator `.app` build.
 - **Your agent.** Claude Code, Codex, Gemini CLI or any other agent that speaks ACP.
-- **Your machine.** Emulators, simulators and browsers run locally. Nothing goes to a QaCEO
+- **Your machine.** Emulators, simulators and browsers run locally. Nothing goes to a gocrash
   server, because there is none.
 - **Free and open source.** MIT, with no paid tier.
 

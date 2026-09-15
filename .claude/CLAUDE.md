@@ -1,8 +1,8 @@
-# QaCEO
+# gocrash
 
 A local-first desktop app where AI agents test web and mobile apps from a test plan. The QA writes
 the plan and orchestrates; the agent opens the app, walks the flows and reports what broke. The
-name is the meme: every startup CEO is the best QA there is.
+name is the pitch: go crash your app before your users do.
 
 | Target  | Input                                   | Driven by (planned)                                    |
 | ------- | --------------------------------------- | ------------------------------------------------------ |
@@ -15,13 +15,13 @@ Projects hold targets. Workspaces hold a test plan, and several run in parallel.
 ## The rules that are not up for negotiation
 
 1. **Everything runs on the user's machine.** Emulators, simulators, browsers and runs. There is
-   no QaCEO backend, and no feature may assume one.
+   no gocrash backend, and no feature may assume one.
 2. **The agent is the user's.** Claude Code, Codex, Gemini CLI or any other, spoken to over ACP
-   (Agent Client Protocol). QaCEO never offers a login to a model provider and never holds a
+   (Agent Client Protocol). gocrash never offers a login to a model provider and never holds a
    provider key of its own.
 3. **Free and open source, with no paid tier.** No feature is shaped around a limit.
 4. **The renderer is a web page and nothing more.** No Node, no Electron, no filesystem. It asks
-   the main process through `window.qaceo`, whose contract lives in `src/shared/types/`.
+   the main process through `window.gocrash`, whose contract lives in `src/shared/types/`.
 
 ## State
 
