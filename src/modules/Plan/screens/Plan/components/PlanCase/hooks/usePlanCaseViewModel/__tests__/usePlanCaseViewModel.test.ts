@@ -25,6 +25,52 @@ describe('usePlanCaseViewModel', () => {
     expect(result.current.steps.map(({ number }) => number)).toEqual([1, 2, 3]);
   });
 
+  it('shows each step as it went in the last run', () => {
+    const lastRun = {
+      id: TEST_CASE.id,
+      title: TEST_CASE.title,
+      verdict: 'failed' as const,
+      durationSec: 4,
+      steps: [
+        {
+          number: 1,
+          action: '',
+          verdict: 'passed' as const,
+          why: null,
+          bugId: null,
+          shot: null,
+          shotFile: null,
+        },
+        {
+          number: 2,
+          action: '',
+          verdict: 'failed' as const,
+          why: null,
+          bugId: null,
+          shot: null,
+          shotFile: null,
+        },
+      ],
+    };
+    const { result } = renderHook(() => usePlanCaseViewModel({ ...PROPS, lastRun }));
+
+    expect(
+      result.current.steps.map(({ verdict, verdictGlyph }) => [verdict, verdictGlyph]),
+    ).toEqual([
+      ['passed', '✓'],
+      ['failed', '✕'],
+      ['pending', '○'],
+    ]);
+  });
+
+  it('does NOT invent a verdict for a case the last run never reached', () => {
+    const { result } = renderHook(() => usePlanCaseViewModel(PROPS));
+
+    expect(
+      result.current.steps.every(({ verdictLabel }) => verdictLabel === 'not run'),
+    ).toBe(true);
+  });
+
   it('reads a case that has never run as not run', () => {
     const { result } = renderHook(() => usePlanCaseViewModel(PROPS));
 
