@@ -17,7 +17,12 @@ export const en = {
     AGENT: '{{agent}} · {{model}}',
     CONTEXT_LEFT: '{{agent}} · {{model}} · {{percent}} % context left',
     SESSION_LEFT: '{{percent}}% session · resets {{resets}}',
-    SESSION_TITLE: 'Five-hour session window. This week: {{week}}% left.',
+    TIP_TITLE: '{{agent}} usage',
+    TIP_SESSION: '5-hour session',
+    TIP_WEEK: 'This week',
+    TIP_LEFT: '{{percent}}% left',
+    TIP_RESETS: 'resets at {{resets}}',
+    TIP_NOTE: 'Reported by {{agent}}. gocrash only reads it.',
   },
   SIDEBAR: {
     NEW_WORKSPACE: 'New workspace here',

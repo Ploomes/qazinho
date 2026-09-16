@@ -23,6 +23,9 @@ export const useTitlebarViewModel = () => {
       : 100 - Math.round((usage.contextTokens / usage.contextWindow) * 100);
 
   const sessionLeft = usage?.fiveHourUsed == null ? null : 1 - usage.fiveHourUsed;
+  const sessionPercent = Math.round((sessionLeft ?? 0) * 100);
+  const weekPercent =
+    usage?.sevenDayUsed == null ? null : 100 - Math.round(usage.sevenDayUsed * 100);
 
   return {
     isMac: Platform.isMac(),
@@ -50,12 +53,33 @@ export const useTitlebarViewModel = () => {
             percent: Math.round(sessionLeft * 100),
             resets: formatResetsAt(usage?.resetsAt ?? 0),
           }),
-    sessionTitle:
-      usage?.sevenDayUsed == null
-        ? ''
-        : t('TITLEBAR.SESSION_TITLE', {
-            week: 100 - Math.round(usage.sevenDayUsed * 100),
-          }),
+    sessionTip: {
+      title: t('TITLEBAR.TIP_TITLE', { agent }),
+      rows: [
+        {
+          id: 'session',
+          label: t('TITLEBAR.TIP_SESSION'),
+          value: t('TITLEBAR.TIP_LEFT', { percent: sessionPercent }),
+          detail:
+            (usage?.resetsAt ?? 0) > 0
+              ? t('TITLEBAR.TIP_RESETS', { resets: formatResetsAt(usage?.resetsAt ?? 0) })
+              : null,
+          fillWidth: `${String(sessionPercent)}%`,
+        },
+        ...(weekPercent === null
+          ? []
+          : [
+              {
+                id: 'week',
+                label: t('TITLEBAR.TIP_WEEK'),
+                value: t('TITLEBAR.TIP_LEFT', { percent: weekPercent }),
+                detail: null,
+                fillWidth: `${String(weekPercent)}%`,
+              },
+            ]),
+      ],
+      note: t('TITLEBAR.TIP_NOTE', { agent }),
+    },
     onToggleResources: toggleResources,
     onToggleModelMenu: () => {
       toggleModelMenu('titlebar');

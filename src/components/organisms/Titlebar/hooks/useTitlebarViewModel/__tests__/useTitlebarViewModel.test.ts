@@ -57,4 +57,53 @@ describe('useTitlebarViewModel', () => {
       expect(useAppStore.getState().modelMenuAt).toBeNull();
     });
   });
+
+  describe('sessionTip', () => {
+    it('spells out what is left of the session, when it resets, and the week', () => {
+      useMachineStore.setState({
+        usage: {
+          fiveHourUsed: 0.44,
+          sevenDayUsed: 0.18,
+          resetsAt: 0,
+          contextTokens: 0,
+          contextWindow: 0,
+        },
+      });
+
+      const { result } = renderHook(() => useTitlebarViewModel());
+
+      expect(result.current.sessionTip.rows).toEqual([
+        {
+          id: 'session',
+          label: '5-hour session',
+          value: '56% left',
+          detail: null,
+          fillWidth: '56%',
+        },
+        {
+          id: 'week',
+          label: 'This week',
+          value: '82% left',
+          detail: null,
+          fillWidth: '82%',
+        },
+      ]);
+    });
+
+    it('does NOT invent a week the agent never reported', () => {
+      useMachineStore.setState({
+        usage: {
+          fiveHourUsed: 0.5,
+          sevenDayUsed: null,
+          resetsAt: 0,
+          contextTokens: 0,
+          contextWindow: 0,
+        },
+      });
+
+      const { result } = renderHook(() => useTitlebarViewModel());
+
+      expect(result.current.sessionTip.rows.map(({ id }) => id)).toEqual(['session']);
+    });
+  });
 });

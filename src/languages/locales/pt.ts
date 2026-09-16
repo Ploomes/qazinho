@@ -19,7 +19,12 @@ export const pt: typeof en = {
     AGENT: '{{agent}} · {{model}}',
     CONTEXT_LEFT: '{{agent}} · {{model}} · {{percent}} % de contexto',
     SESSION_LEFT: '{{percent}}% da sessão · reseta {{resets}}',
-    SESSION_TITLE: 'Janela de cinco horas. Nesta semana: {{week}}% restante.',
+    TIP_TITLE: 'Uso do {{agent}}',
+    TIP_SESSION: 'Sessão de 5 horas',
+    TIP_WEEK: 'Esta semana',
+    TIP_LEFT: '{{percent}}% restante',
+    TIP_RESETS: 'reseta às {{resets}}',
+    TIP_NOTE: 'Informado pelo {{agent}}. O gocrash só lê.',
   },
   SIDEBAR: {
     NEW_WORKSPACE: 'Novo workspace aqui',

@@ -1,7 +1,9 @@
 import { AnimatePresence } from 'motion/react';
 import { Gauge, Logo, Meter } from '@/components/atoms';
+import { Tooltip } from '@/components/molecules';
 import { ModelPopover } from '@/components/organisms/ModelPopover';
 import { ResourcePopover } from '@/components/organisms/ResourcePopover';
+import { SessionTip } from './components';
 import { useTitlebarViewModel } from './hooks';
 import './styles.css';
 
@@ -17,7 +19,7 @@ export const Titlebar: React.FC = () => {
     agentLabel,
     sessionLeft,
     sessionLabel,
-    sessionTitle,
+    sessionTip,
     onToggleResources,
     onToggleModelMenu,
   } = useTitlebarViewModel();
@@ -45,10 +47,20 @@ export const Titlebar: React.FC = () => {
         </button>
 
         {sessionLeft !== null && (
-          <span className="titlebar__session" title={sessionTitle}>
-            <Gauge value={sessionLeft} label={sessionLabel ?? ''} />
-            <span>{sessionLabel}</span>
-          </span>
+          <Tooltip
+            content={
+              <SessionTip
+                title={sessionTip.title}
+                rows={sessionTip.rows}
+                note={sessionTip.note}
+              />
+            }
+          >
+            <span className="titlebar__session" tabIndex={0}>
+              <Gauge value={sessionLeft} label={sessionLabel ?? ''} />
+              <span>{sessionLabel}</span>
+            </span>
+          </Tooltip>
         )}
 
         <button
