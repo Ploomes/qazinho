@@ -1,0 +1,17 @@
+.meta-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-3) var(--space-5);
+  margin: 0;
+}
+
+.meta-grid__key {
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
+
+.meta-grid__value {
+  margin: 0;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}

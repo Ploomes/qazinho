@@ -1,0 +1,10 @@
+.stripes {
+  width: 100%;
+  height: 100%;
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 calc(var(--stripe-pitch) * 1px),
+    var(--stripe) calc(var(--stripe-pitch) * 1px) calc(var(--stripe-pitch) * 2px)
+  );
+  background-color: var(--screen);
+}
