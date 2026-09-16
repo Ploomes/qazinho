@@ -38,6 +38,7 @@
 .resource-popover__list {
   max-height: 330px;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 .resource-popover__row {

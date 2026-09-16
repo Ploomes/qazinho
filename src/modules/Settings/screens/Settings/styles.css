@@ -55,6 +55,7 @@
   min-width: 0;
   padding: var(--space-8) 36px;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 .settings__page {
