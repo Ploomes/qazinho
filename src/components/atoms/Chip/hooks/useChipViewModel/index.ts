@@ -8,6 +8,7 @@ export const useChipViewModel = (props: IChipProps) => {
     hasDot: dotTone !== undefined,
     dotTone: dotTone ?? 'var(--ink3)',
     hasCaret,
+    popup: hasCaret ? ('menu' as const) : undefined,
     onChipClick: onClick ?? (() => undefined),
   };
 };

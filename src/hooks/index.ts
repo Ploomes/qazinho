@@ -5,3 +5,4 @@ export * from './useMachineWatch';
 export * from './useRunEvents';
 export * from './useRunTicker';
 export * from './useShot';
+export * from './useDismiss';

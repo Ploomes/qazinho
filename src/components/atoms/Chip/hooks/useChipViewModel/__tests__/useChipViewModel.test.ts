@@ -36,4 +36,14 @@ describe('useChipViewModel', () => {
 
     expect(() => result.current.onChipClick()).not.toThrow();
   });
+
+  it('announces a menu when it carries a caret, and nothing otherwise', () => {
+    const withCaret = renderHook(() =>
+      useChipViewModel({ children: 'Claude', hasCaret: true }),
+    );
+    const plain = renderHook(() => useChipViewModel({ children: 'Web' }));
+
+    expect(withCaret.result.current.popup).toBe('menu');
+    expect(plain.result.current.popup).toBeUndefined();
+  });
 });

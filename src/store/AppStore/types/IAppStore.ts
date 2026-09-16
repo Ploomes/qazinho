@@ -32,6 +32,7 @@ export interface IAppStore {
   removeProject: (projectId: string) => void;
   toggleResources: () => void;
   toggleModelMenu: (at: ModelMenuAt) => void;
+  closeModelMenu: () => void;
   openMedia: (media: IMedia) => void;
   closeMedia: () => void;
 }

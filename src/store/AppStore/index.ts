@@ -81,6 +81,8 @@ export const useAppStore = create<IAppStore>()(
           isResourcesOpen: false,
         })),
 
+      closeModelMenu: () => set({ modelMenuAt: null }),
+
       openMedia: (media) => set({ media }),
 
       closeMedia: () => set({ media: null }),

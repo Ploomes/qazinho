@@ -133,6 +133,24 @@ describe('the built page, with no bridge behind it', () => {
     expect(await page.locator('.model-popover').count()).toBe(1);
   });
 
+  it('closes both popovers on a press outside them, and on Escape', async () => {
+    await openModelMenu();
+    await page.locator('.workspace-tabs__tab', { hasText: 'Plan' }).first().click();
+    await page.waitForTimeout(300);
+    expect(await page.locator('.model-popover').count()).toBe(0);
+
+    await page.locator('.titlebar__meter-button').first().click();
+    await page.waitForTimeout(200);
+    await page.locator('body').click({ position: { x: 700, y: 600 } });
+    await page.waitForTimeout(300);
+    expect(await page.locator('.resource-popover').count()).toBe(0);
+
+    await openModelMenu();
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+    expect(await page.locator('.model-popover').count()).toBe(0);
+  });
+
   it('picks another model, and the titlebar says so', async () => {
     await openModelMenu();
 

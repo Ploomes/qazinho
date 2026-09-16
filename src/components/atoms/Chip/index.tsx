@@ -3,7 +3,8 @@ import { useChipViewModel } from './hooks';
 import './styles.css';
 
 export const Chip: React.FC<IChipProps> = (props) => {
-  const { isPressable, hasDot, dotTone, hasCaret, onChipClick } = useChipViewModel(props);
+  const { isPressable, hasDot, dotTone, hasCaret, popup, onChipClick } =
+    useChipViewModel(props);
 
   const content = (
     <>
@@ -20,7 +21,7 @@ export const Chip: React.FC<IChipProps> = (props) => {
   if (!isPressable) return <span className="chip">{content}</span>;
 
   return (
-    <button type="button" className="chip" onClick={onChipClick}>
+    <button type="button" className="chip" aria-haspopup={popup} onClick={onChipClick}>
       {content}
     </button>
   );

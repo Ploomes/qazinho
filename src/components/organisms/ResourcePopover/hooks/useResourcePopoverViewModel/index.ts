@@ -1,5 +1,6 @@
 import type { IProcessNode } from '@/modules/Resources/types';
 import { useTranslation } from 'react-i18next';
+import { useDismiss } from '@/hooks';
 import { MB_IN_GB } from '@/modules/Resources/constants';
 import { buildProcessTree, rollUp } from '@/modules/Resources/library';
 import { Run } from '@/services';
@@ -13,6 +14,8 @@ export const useResourcePopoverViewModel = () => {
   const resources = useMachineStore((state) => state.resources);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const stopRun = useWorkspaceStore((state) => state.stopRun);
+
+  const ref = useDismiss<HTMLDivElement>(toggleResources);
 
   const app = resources.processes.filter(({ kind }) => kind === 'app');
 
@@ -32,6 +35,7 @@ export const useResourcePopoverViewModel = () => {
   });
 
   return {
+    ref,
     isOpen,
     nodes: app.length === 0 ? running : [itself, ...running],
     header:

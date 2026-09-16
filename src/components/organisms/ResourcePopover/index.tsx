@@ -6,11 +6,12 @@ import { useResourcePopoverViewModel } from './hooks';
 import './styles.css';
 
 export const ResourcePopover: React.FC = () => {
-  const { nodes, header, onClose, onShutDown } = useResourcePopoverViewModel();
+  const { ref, nodes, header, onClose, onShutDown } = useResourcePopoverViewModel();
   const { t } = useTranslation();
 
   return (
     <motion.div
+      ref={ref}
       className="resource-popover"
       initial={{ opacity: 0, scale: 0.97, y: -6 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}

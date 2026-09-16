@@ -7,12 +7,21 @@ import { useModelPopoverViewModel } from './hooks';
 import './styles.css';
 
 export const ModelPopover: React.FC<IModelPopoverProps> = (props) => {
-  const { agents, agent, models, model, modelHeading, onSelectAgent, onSelectModel } =
-    useModelPopoverViewModel(props);
+  const {
+    ref,
+    agents,
+    agent,
+    models,
+    model,
+    modelHeading,
+    onSelectAgent,
+    onSelectModel,
+  } = useModelPopoverViewModel();
   const { t } = useTranslation();
 
   return (
     <motion.div
+      ref={ref}
       className={`model-popover model-popover--${props.at}`}
       initial={{ opacity: 0, scale: 0.97, y: -6 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}

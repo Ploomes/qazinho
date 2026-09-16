@@ -33,6 +33,7 @@ export const Titlebar: React.FC = () => {
         <button
           type="button"
           className="titlebar__meter-button"
+          aria-haspopup="dialog"
           onClick={onToggleResources}
         >
           <Meter value={cpuShare} label="CPU" />
@@ -53,6 +54,7 @@ export const Titlebar: React.FC = () => {
         <button
           type="button"
           className="titlebar__meter-button"
+          aria-haspopup="menu"
           onClick={onToggleModelMenu}
         >
           <span>{agentLabel}</span>
