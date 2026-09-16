@@ -60,6 +60,12 @@ button:disabled {
   outline-offset: 2px;
 }
 
+/* A text field shows focus through its own border; a ring around the caret reads as an error. */
+input:focus-visible,
+textarea:focus-visible {
+  outline: none;
+}
+
 input {
   font: inherit;
   color: inherit;
