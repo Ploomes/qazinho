@@ -10,6 +10,7 @@ import type {
   ISavedState,
   ISavedWorkspace,
   IStartRun,
+  PickKind,
   Platform,
 } from '@/types';
 import { contextBridge, ipcRenderer } from 'electron';
@@ -62,6 +63,8 @@ const api: IGocrashApi = {
     ipcRenderer.invoke(CHANNELS.removeWorkspace, workspaceId) as Promise<void>,
   readShot: (file: string) =>
     ipcRenderer.invoke(CHANNELS.readShot, file) as Promise<string | null>,
+  pickFile: (kind: PickKind) =>
+    ipcRenderer.invoke(CHANNELS.pickFile, kind) as Promise<string | null>,
 };
 
 contextBridge.exposeInMainWorld('gocrash', api);

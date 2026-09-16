@@ -25,5 +25,6 @@ export function fakeGocrashApi(platform: Platform): IGocrashApi {
     saveWorkspace: () => Promise.resolve(),
     removeWorkspace: () => Promise.resolve(),
     readShot: () => Promise.resolve(null),
+    pickFile: () => Promise.resolve(null),
   };
 }

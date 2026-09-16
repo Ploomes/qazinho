@@ -4,8 +4,9 @@ import type {
   IRunEvent,
   ISavedWorkspace,
   IStartRun,
+  PickKind,
 } from '@/types';
-import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron';
 import { CHANNELS } from '@/constants';
 import { AgentDetector } from '@/main/classes/agents/AgentDetector';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
@@ -16,7 +17,7 @@ import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { ResourceCollector } from '@/main/classes/resources/ResourceCollector';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
 import { Archive } from '@/main/classes/storage/Archive';
-import { PATHS, WINDOW } from '@/main/constants';
+import { FILE_FILTERS, PATHS, WINDOW } from '@/main/constants';
 import { isInternalNavigation } from '@/main/library';
 
 const agents = new AgentDetector();
@@ -86,6 +87,17 @@ async function askAgent(ask: IAskAgent) {
   return agentRunner.ask({ ...ask, command });
 }
 
+async function pickFile(kind: PickKind) {
+  const [open] = BrowserWindow.getAllWindows();
+  const filters = [FILE_FILTERS[kind]];
+
+  const picked = open
+    ? await dialog.showOpenDialog(open, { properties: ['openFile'], filters })
+    : await dialog.showOpenDialog({ properties: ['openFile'], filters });
+
+  return picked.canceled ? null : (picked.filePaths[0] ?? null);
+}
+
 function createWindow(): void {
   const window = new BrowserWindow({
     ...WINDOW,
@@ -144,6 +156,7 @@ void app.whenReady().then(() => {
     archive.removeWorkspace(workspaceId),
   );
   ipcMain.handle(CHANNELS.readShot, (_event, file: string) => archive.readShot(file));
+  ipcMain.handle(CHANNELS.pickFile, (_event, kind: PickKind) => pickFile(kind));
 
   createWindow();
 

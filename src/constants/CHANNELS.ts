@@ -14,4 +14,5 @@ export const CHANNELS = {
   saveWorkspace: 'state:workspace',
   removeWorkspace: 'state:remove',
   readShot: 'state:shot',
+  pickFile: 'files:pick',
 } as const;

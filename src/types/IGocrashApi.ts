@@ -8,6 +8,7 @@ import type { IRunEvent } from './IRunEvent';
 import type { ISavedState } from './ISavedState';
 import type { ISavedWorkspace } from './ISavedWorkspace';
 import type { IStartRun } from './IStartRun';
+import type { PickKind } from './PickKind';
 import type { Platform } from './Platform';
 
 /** What the preload exposes to the page as `window.gocrash`. Data and purposeful functions only. */
@@ -27,4 +28,5 @@ export interface IGocrashApi {
   saveWorkspace: (saved: ISavedWorkspace) => Promise<void>;
   removeWorkspace: (workspaceId: string) => Promise<void>;
   readShot: (file: string) => Promise<string | null>;
+  pickFile: (kind: PickKind) => Promise<string | null>;
 }

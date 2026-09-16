@@ -22,4 +22,5 @@ export type * from './Severity';
 export type * from './StepVerdict';
 export type * from './TargetKind';
 export type * from './IToolStatus';
+export type * from './PickKind';
 export type * from './Platform';

@@ -51,6 +51,7 @@ beforeEach(() => {
     saveWorkspace: vi.fn(),
     removeWorkspace: vi.fn(),
     readShot: vi.fn().mockResolvedValue(null),
+    pickFile: vi.fn().mockResolvedValue(null),
   };
 });
 
