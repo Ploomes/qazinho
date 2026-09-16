@@ -112,14 +112,57 @@ describe('the built page, with no bridge behind it', () => {
     expect(await page.locator('body').innerText()).toContain('1 cases · 2 steps');
   });
 
-  it('opens the resources popover and the model menu', async () => {
+  it('opens the resources popover and the model menu, and closes them again', async () => {
     await page.locator('.titlebar__meter-button').first().click();
     await page.waitForTimeout(200);
     expect(await page.locator('.resource-popover').count()).toBe(1);
 
+    await page.locator('.resource-popover .icon-button').click();
+    await page.waitForTimeout(300);
+    expect(await page.locator('.resource-popover').count()).toBe(0);
+
     await page.locator('.titlebar__meter-button').last().click();
     await page.waitForTimeout(200);
     expect(await page.locator('.model-popover').count()).toBe(1);
+  });
+
+  // Electron swallows a click in a drag region; plain Chrome does not, so only this can catch it.
+  it('nothing clickable in the titlebar sits in the window drag region', async () => {
+    const dragging = async () =>
+      page.evaluate(() => {
+        // The callback runs in the page, where DOM types are not in this project's lib.
+        const web = globalThis as unknown as {
+          document: {
+            querySelectorAll: (
+              query: string,
+            ) => Iterable<{ className: string; tagName: string }>;
+          };
+          getComputedStyle: (one: object) => {
+            getPropertyValue: (name: string) => string;
+          };
+        };
+
+        return [
+          ...web.document.querySelectorAll(
+            '.titlebar button, .titlebar a, .titlebar input',
+          ),
+        ]
+          .filter(
+            (one) =>
+              web.getComputedStyle(one).getPropertyValue('-webkit-app-region') === 'drag',
+          )
+          .map((one) => one.className || one.tagName);
+      });
+
+    await page.locator('.titlebar__meter-button').first().click();
+    await page.waitForTimeout(200);
+    expect(await page.locator('.resource-popover').count()).toBe(1);
+    expect(await dragging()).toEqual([]);
+
+    await page.locator('.titlebar__meter-button').last().click();
+    await page.waitForTimeout(200);
+    expect(await page.locator('.model-popover').count()).toBe(1);
+    expect(await dragging()).toEqual([]);
   });
 
   it('opens Settings, and every tab of it', async () => {
