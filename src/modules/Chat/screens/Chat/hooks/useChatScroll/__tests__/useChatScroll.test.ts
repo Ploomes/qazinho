@@ -1,0 +1,95 @@
+// @vitest-environment jsdom
+import type { ChatMessage } from '@/modules/Chat/types';
+import { act, renderHook } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
+
+function chat(count: number): ChatMessage[] {
+  return Array.from({ length: count }, (_, index) => ({
+    id: `m-${String(index + 1)}`,
+    kind: 'user' as const,
+    at: '09:41',
+    text: `message ${String(index + 1)}`,
+  }));
+}
+
+function scrolledTo(scrollTop: number) {
+  const list = document.createElement('div');
+
+  Object.defineProperty(list, 'scrollHeight', { value: 3_000, configurable: true });
+  Object.defineProperty(list, 'clientHeight', { value: 400, configurable: true });
+  list.scrollTop = scrollTop;
+  list.scrollTo = () => undefined;
+
+  return list;
+}
+
+describe('useChatScroll', () => {
+  it('opens on the latest messages, without replaying them as new', () => {
+    const { result } = renderHook(() =>
+      useChatScroll({ workspaceId: 'w1', messages: chat(70), isAgentTyping: false }),
+    );
+
+    expect(result.current.visible).toHaveLength(30);
+    expect(result.current.visible[0]?.message.id).toBe('m-41');
+    expect(result.current.visible.some(({ isNew }) => isNew)).toBe(false);
+  });
+
+  it('marks a message that arrives after the chat opened as new', () => {
+    const { result, rerender } = renderHook(
+      (messages: ChatMessage[]) =>
+        useChatScroll({ workspaceId: 'w1', messages, isAgentTyping: false }),
+      { initialProps: chat(3) },
+    );
+
+    rerender(chat(4));
+
+    expect(result.current.visible.at(-1)).toMatchObject({ isNew: true });
+    expect(result.current.visible[0]).toMatchObject({ isNew: false });
+  });
+
+  describe('onScroll', () => {
+    it('pulls in older messages when the reader reaches the top', () => {
+      const { result } = renderHook(() =>
+        useChatScroll({ workspaceId: 'w1', messages: chat(70), isAgentTyping: false }),
+      );
+
+      act(() => {
+        result.current.listRef.current = scrolledTo(10);
+        result.current.onScroll();
+      });
+
+      expect(result.current.visible).toHaveLength(60);
+      expect(result.current.visible[0]?.message.id).toBe('m-11');
+    });
+
+    it('does NOT load anything while the reader is away from the top', () => {
+      const { result } = renderHook(() =>
+        useChatScroll({ workspaceId: 'w1', messages: chat(70), isAgentTyping: false }),
+      );
+
+      act(() => {
+        result.current.listRef.current = scrolledTo(1_500);
+        result.current.onScroll();
+      });
+
+      expect(result.current.visible).toHaveLength(30);
+    });
+
+    it('starts the next workspace back on its latest messages', () => {
+      const { result, rerender } = renderHook(
+        (workspaceId: string) =>
+          useChatScroll({ workspaceId, messages: chat(70), isAgentTyping: false }),
+        { initialProps: 'w1' },
+      );
+
+      act(() => {
+        result.current.listRef.current = scrolledTo(10);
+        result.current.onScroll();
+      });
+      rerender('w2');
+
+      expect(result.current.visible).toHaveLength(30);
+    });
+  });
+});
