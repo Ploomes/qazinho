@@ -59,7 +59,6 @@ export const en = {
       'Say what you want covered. The agent writes the cases, you fix what it got wrong.',
     PLACEHOLDER: 'Tell the agent what to test',
     SEND: 'Send',
-    ACTIONS_ON_DEVICE: '{{count}} actions on the device',
     AGENT_NEEDS_YOU: 'the agent needs you',
     HOLDING: 'the run is holding · {{elapsed}}',
     ERROR_KICKER: 'gocrash error · not a test result',

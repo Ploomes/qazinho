@@ -1,4 +1,3 @@
-import type { IActionMessage } from './IActionMessage';
 import type { IAgentMessage } from './IAgentMessage';
 import type { IAskMessage } from './IAskMessage';
 import type { IErrorMessage } from './IErrorMessage';
@@ -10,7 +9,6 @@ import type { IVerdictMessage } from './IVerdictMessage';
 export type ChatMessage =
   | IUserMessage
   | IAgentMessage
-  | IActionMessage
   | IPlanMessage
   | IRunMessage
   | IVerdictMessage

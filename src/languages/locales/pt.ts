@@ -61,7 +61,6 @@ export const pt: typeof en = {
       'Diga o que quer cobrir. O agente escreve os casos, você corrige o que ele errar.',
     PLACEHOLDER: 'Diga ao agente o que testar',
     SEND: 'Enviar',
-    ACTIONS_ON_DEVICE: '{{count}} ações no device',
     AGENT_NEEDS_YOU: 'o agente precisa de você',
     HOLDING: 'a run está esperando · {{elapsed}}',
     ERROR_KICKER: 'erro do gocrash · não é resultado de teste',

@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Chip, Logo } from '@/components/atoms';
 import { MOTION } from '@/constants';
 import {
-  ActionLog,
   AgentMessage,
   AskBlock,
   Composer,
@@ -89,7 +88,6 @@ export const Chat: React.FC = () => {
               <div className="chat__body">
                 {message.kind === 'user' && <UserMessage message={message} />}
                 {message.kind === 'agent' && <AgentMessage message={message} />}
-                {message.kind === 'action' && <ActionLog message={message} />}
                 {message.kind === 'verdict' && <VerdictNote message={message} />}
                 {message.kind === 'ask' && (
                   <AskBlock message={message} onAnswer={onAnswer} />
