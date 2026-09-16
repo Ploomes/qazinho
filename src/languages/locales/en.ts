@@ -16,7 +16,6 @@ export const en = {
     PROCESSES_ONE: '1 process',
     PROCESSES_OTHER: '{{count}} processes',
     AGENT: '{{agent}} · {{model}}',
-    CONTEXT_USED: '{{percent}}% of the context window used',
     SESSION_LEFT: '{{percent}}% session · resets {{resets}}',
     SESSION_ONLY: '{{percent}}% session',
     TIP_TITLE: '{{agent}} usage',

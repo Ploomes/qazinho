@@ -18,7 +18,6 @@ export const pt: typeof en = {
     PROCESSES_ONE: '1 processo',
     PROCESSES_OTHER: '{{count}} processos',
     AGENT: '{{agent}} · {{model}}',
-    CONTEXT_USED: '{{percent}}% da janela de contexto usada',
     SESSION_LEFT: '{{percent}}% da sessão · reseta {{resets}}',
     SESSION_ONLY: '{{percent}}% da sessão',
     TIP_TITLE: 'Uso do {{agent}}',

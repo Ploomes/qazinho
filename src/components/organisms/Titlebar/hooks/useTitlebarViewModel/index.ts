@@ -2,15 +2,12 @@ import { useTranslation } from 'react-i18next';
 import { formatResetsAt } from '@/components/organisms/Titlebar/library';
 import { useModelInUse } from '@/modules/Settings/hooks';
 import { Platform } from '@/services';
-import { useAppStore, useMachineStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useMachineStore } from '@/store';
 
 export const useTitlebarViewModel = () => {
   const { t } = useTranslation();
   const isResourcesOpen = useAppStore((state) => state.isResourcesOpen);
   const modelMenuAt = useAppStore((state) => state.modelMenuAt);
-  const screen = useAppStore((state) => state.screen);
-  const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
-  const workspaces = useWorkspaceStore((state) => state.workspaces);
   const toggleResources = useAppStore((state) => state.toggleResources);
   const toggleModelMenu = useAppStore((state) => state.toggleModelMenu);
   const resources = useMachineStore((state) => state.resources);
@@ -20,15 +17,6 @@ export const useTitlebarViewModel = () => {
   const cpu = Math.round(resources.cpu);
   const ramGb = resources.ramMb / 1024;
   const processCount = resources.processes.length;
-  // The context window belongs to the open workspace's conversation, not to the machine.
-  const context =
-    screen === 'workspace'
-      ? (workspaces.find(({ id }) => id === selectedWorkspaceId)?.context ?? null)
-      : null;
-  const contextUsed =
-    context === null
-      ? null
-      : Math.min(100, Math.round((context.tokens / context.window) * 100));
 
   const sessionLeft = usage?.fiveHourUsed == null ? null : 1 - usage.fiveHourUsed;
   const sessionPercent = Math.round((sessionLeft ?? 0) * 100);
@@ -50,9 +38,6 @@ export const useTitlebarViewModel = () => {
         ? t('TITLEBAR.PROCESSES_ONE')
         : t('TITLEBAR.PROCESSES_OTHER', { count: processCount }),
     agentLabel: t('TITLEBAR.AGENT', { agent, model: modelName }),
-    contextShare: contextUsed === null ? null : contextUsed / 100,
-    contextLabel:
-      contextUsed === null ? '' : t('TITLEBAR.CONTEXT_USED', { percent: contextUsed }),
     sessionLeft,
     sessionLabel:
       sessionLeft === null
