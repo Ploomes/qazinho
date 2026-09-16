@@ -61,6 +61,7 @@ Three suites that need something real behind them. They have their own config
 | `electron.test.ts` | the packaged window, where `window.gocrash` is the real preload         |
 | `stream.test.ts`   | windowless Chrome streamed as MJPEG over loopback, with no agent        |
 | `stop.test.ts`     | Stop ends a run while a fake agent is still thinking                    |
+| `agent.test.ts`    | a fake agent retries a failed action, leaves a note, or errors out      |
 
 `run.test.ts` spends the QA's tokens and needs an agent installed. Run it by hand after touching
 the run pipeline.
