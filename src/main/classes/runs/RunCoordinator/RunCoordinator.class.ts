@@ -12,6 +12,7 @@ import type {
 } from '@/types';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
+import { stripAnsi } from '@/main/library';
 import { RUN_PROMPTS, RUN_SCHEMAS, RUN_WALK } from './constants';
 import { driverFor, parseActions, parseVerdict, skippedOutcome } from './library';
 
@@ -310,6 +311,6 @@ export class RunCoordinator {
   }
 
   private explain(reason: unknown): string {
-    return reason instanceof Error ? reason.message : String(reason);
+    return stripAnsi(reason instanceof Error ? reason.message : String(reason));
   }
 }
