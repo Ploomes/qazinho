@@ -1,0 +1,51 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--raise);
+  color: var(--ink);
+  font: var(--font-ui-md);
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease,
+    color var(--dur-fast) ease;
+}
+
+.button--md {
+  padding: var(--space-3) var(--space-5);
+}
+
+.button--sm {
+  padding: 7px var(--space-4);
+  font: var(--font-ui-sm);
+}
+
+.button--primary {
+  border-color: transparent;
+  border-radius: 9px;
+  background: var(--amber);
+  color: var(--on-amber);
+  font: var(--font-ui-strong);
+}
+
+.button--ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--ink2);
+}
+
+.button--danger {
+  border-color: var(--fail);
+  background: transparent;
+  color: var(--fail);
+}
+
+.button:disabled {
+  border-color: transparent;
+  background: var(--line);
+  color: var(--ink3);
+}
