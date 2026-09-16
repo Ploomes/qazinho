@@ -35,6 +35,7 @@ describe('useSidebarViewModel', () => {
         kind: 'workspace',
         name: 'Checkout regression',
         meta: '6 steps',
+        statusLabel: 'idle',
       });
     });
 

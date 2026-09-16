@@ -7,6 +7,7 @@ export interface ISidebarWorkspaceRow {
   platform: TargetKind | null;
   meta: string;
   glyph: string;
+  statusLabel: string;
   tone: string;
   animation: string;
   isSelected: boolean;

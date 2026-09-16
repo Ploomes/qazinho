@@ -2,6 +2,7 @@ import type { SidebarRow } from '@/app/components/Sidebar/types';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SIDEBAR_STATUS } from '@/app/components/Sidebar/constants';
+import { STATUS } from '@/components/atoms/StatusPill/constants';
 import { workspaceMeta } from '@/modules/Workspace/library';
 import { Archive } from '@/services';
 import { useAppStore, useWorkspaceStore } from '@/store';
@@ -41,6 +42,7 @@ export const useSidebarViewModel = () => {
           current: workspace.live?.outcomes.length ?? 0,
         }),
         glyph: SIDEBAR_STATUS[workspace.status].glyph,
+        statusLabel: t(STATUS[workspace.status].labelKey),
         tone: SIDEBAR_STATUS[workspace.status].tone,
         animation: SIDEBAR_STATUS[workspace.status].animation,
         isSelected: workspace.id === selectedWorkspaceId,
