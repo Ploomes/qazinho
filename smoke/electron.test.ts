@@ -9,6 +9,20 @@ let app: ElectronApplication;
 let page: Page;
 const said: string[] = [];
 
+/** The resources popover redraws on every sweep, so its X moves until the list settles. */
+async function waitUntilStill(selector: string) {
+  let before = '';
+
+  for (let look = 0; look < 40; look += 1) {
+    const now = JSON.stringify(await page.locator(selector).boundingBox());
+
+    if (now === before && now !== 'null') return;
+
+    before = now;
+    await page.waitForTimeout(150);
+  }
+}
+
 beforeAll(async () => {
   app = await electron.launch({
     args: [
@@ -47,7 +61,7 @@ describe('the real window', () => {
 
   it('closes the resources popover from its own X', async () => {
     await page.locator('.titlebar__meter-button').first().click();
-    await page.waitForTimeout(300);
+    await waitUntilStill('.resource-popover');
     expect(await page.locator('.resource-popover').count()).toBe(1);
 
     await page.locator('.resource-popover .icon-button').click();
@@ -65,6 +79,36 @@ describe('the real window', () => {
     await page.waitForTimeout(300);
 
     expect(await page.locator('.titlebar').innerText()).toContain('opus');
+  });
+
+  it('opens the OS file picker from the android field', async () => {
+    // The dialog is modal and blocks the main process, so it is watched, not clicked through.
+    const opened = app.evaluate(({ dialog }) => {
+      return new Promise<string>((named) => {
+        const real = dialog.showOpenDialog.bind(dialog);
+
+        Object.defineProperty(dialog, 'showOpenDialog', {
+          value: (...args: unknown[]) => {
+            const options = (args.length > 1 ? args[1] : args[0]) as {
+              filters?: { extensions?: string[] }[];
+            };
+
+            named(options.filters?.[0]?.extensions?.[0] ?? 'none');
+            dialog.showOpenDialog = real;
+
+            return Promise.resolve({ canceled: true, filePaths: [] });
+          },
+          configurable: true,
+          writable: true,
+        });
+      });
+    });
+
+    await page.getByRole('button', { name: 'New project' }).first().click();
+    await page.waitForTimeout(300);
+    await page.locator('.file-field').first().click();
+
+    expect(await opened).toBe('apk');
   });
 
   it('says nothing to the console the whole way through', () => {
