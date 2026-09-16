@@ -1,3 +1,4 @@
+import type { IMedia } from './IMedia';
 import type { Modal } from './Modal';
 import type { Screen } from './Screen';
 import type { Theme } from './Theme';
@@ -13,6 +14,7 @@ export interface IAppStore {
   selectedProjectId: string | null;
   isResourcesOpen: boolean;
   isModelMenuOpen: boolean;
+  media: IMedia | null;
   toggleTheme: () => void;
   openSettings: () => void;
   openModal: (modal: Modal) => void;
@@ -22,4 +24,6 @@ export interface IAppStore {
   addProject: (project: IProject) => void;
   toggleResources: () => void;
   toggleModelMenu: () => void;
+  openMedia: (media: IMedia) => void;
+  closeMedia: () => void;
 }

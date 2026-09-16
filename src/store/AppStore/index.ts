@@ -10,6 +10,7 @@ export const useAppStore = create<IAppStore>((set) => ({
   selectedProjectId: null,
   isResourcesOpen: false,
   isModelMenuOpen: false,
+  media: null,
 
   toggleTheme: () =>
     set((state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
@@ -39,4 +40,8 @@ export const useAppStore = create<IAppStore>((set) => ({
 
   toggleModelMenu: () =>
     set((state) => ({ isModelMenuOpen: !state.isModelMenuOpen, isResourcesOpen: false })),
+
+  openMedia: (media) => set({ media }),
+
+  closeMedia: () => set({ media: null }),
 }));
