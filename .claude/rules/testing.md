@@ -51,7 +51,20 @@ origin'`, never `'isInternalNavigation() returns false'`.
 
 ## `smoke/`, and why it is not in `npm test`
 
-`smoke/run.test.ts` is the one test that proves the product: it serves a page on localhost, drives
-real Chrome through `RunCoordinator` and asks the QA's own agent to judge what it sees. It spends
-the QA's tokens and needs an agent installed, so it has its own config (`vitest.smoke.ts`), its
-own command, and CI never runs it. Run it by hand after touching the run pipeline.
+Three suites that need something real behind them. They have their own config
+(`vitest.smoke.ts`), their own command, and CI never runs them.
+
+| File               | What it drives                                                          |
+| ------------------ | ----------------------------------------------------------------------- |
+| `run.test.ts`      | the product: real Chrome, the QA's own agent, a plan walked and judged  |
+| `page.test.ts`     | `out/renderer` in plain Chrome, with no bridge: the page must not crash |
+| `electron.test.ts` | the packaged window, where `window.gocrash` is the real preload         |
+
+`run.test.ts` spends the QA's tokens and needs an agent installed. Run it by hand after touching
+the run pipeline.
+
+**A synthetic click is not a click.** Playwright drives the page over CDP, which skips the hit
+test the window manager does — so `-webkit-app-region: drag` swallowing a real click is
+**invisible to every suite here, Electron included**. What catches it is reading the computed
+property off each control, which `page.test.ts` does for the titlebar. Any rule the OS enforces
+rather than the page needs the same treatment: assert the declaration, not the behaviour.
