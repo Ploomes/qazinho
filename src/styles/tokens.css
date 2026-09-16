@@ -1,0 +1,124 @@
+:root {
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-ui: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --font-ui-xs: 400 11px/1.4 var(--font-ui);
+  --font-ui-sm: 400 12px/1.5 var(--font-ui);
+  --font-ui-md: 500 13px/1.3 var(--font-ui);
+  --font-ui-lg: 400 14px/1.65 var(--font-ui);
+  --font-ui-strong: 600 13px/1 var(--font-ui);
+
+  --font-mono-xs: 400 10px/1 var(--font-mono);
+  --font-mono-sm: 400 11px/1 var(--font-mono);
+  --font-mono-md: 500 12px/1 var(--font-mono);
+
+  --font-display-sm: 600 16px/1.3 var(--font-display);
+  --font-display-md: 600 18px/1 var(--font-display);
+  --font-display-lg: 600 21px/1.2 var(--font-display);
+
+  --eyebrow-size: 10px;
+  --eyebrow-tracking: 0.16em;
+
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 8px;
+  --space-4: 12px;
+  --space-5: 16px;
+  --space-6: 20px;
+  --space-7: 24px;
+  --space-8: 30px;
+
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-2xl: 16px;
+  --radius-pill: 999px;
+
+  --ease: cubic-bezier(0.2, 0.8, 0.3, 1);
+  --dur-fast: 0.16s;
+  --dur: 0.28s;
+  --dur-slow: 0.38s;
+}
+
+[data-theme='dark'] {
+  --bg: #0a0b0d;
+  --win: #101114;
+  --panel: #0d0e11;
+  --center: #131418;
+  --raise: #191a1e;
+  --raise2: #1e2025;
+  --screen: #141519;
+
+  --line: #26282d;
+  --line2: #1b1d21;
+  --sel: #1f2127;
+  --stripe: rgba(255, 255, 255, 0.05);
+
+  --ink: #ecedef;
+  --ink2: #a6a9b0;
+  --ink3: #83878f;
+
+  --amber: #f3a82c;
+  --amber-ink: #f3a82c;
+  --amber-soft: rgba(243, 168, 44, 0.13);
+  --on-amber: #2d1e05;
+  --on-attn: #2d1e05;
+
+  --pass: #4fc98c;
+  --pass-soft: rgba(79, 201, 140, 0.13);
+  --fail: #fb7059;
+  --fail-soft: rgba(251, 112, 89, 0.13);
+  --block: #9bade2;
+  --block-soft: rgba(155, 173, 226, 0.13);
+  --skip: #7c818a;
+  --skip-soft: rgba(124, 129, 138, 0.13);
+  --attn: #ff9540;
+  --attn-soft: rgba(255, 149, 64, 0.13);
+
+  --shadow: 0 40px 90px -34px rgba(0, 0, 0, 0.92);
+  --shadow-popover: 0 30px 70px -28px rgba(0, 0, 0, 0.85);
+  --shadow-modal: 0 40px 90px -30px rgba(0, 0, 0, 0.9);
+}
+
+[data-theme='light'] {
+  --bg: #eae7e1;
+  --win: #fdfcfa;
+  --panel: #f5f2ed;
+  --center: #fdfcfa;
+  --raise: #ffffff;
+  --raise2: #f7f5f1;
+  --screen: #f0ede8;
+
+  --line: #e0dbd3;
+  --line2: #ede9e3;
+  --sel: #ede9e2;
+  --stripe: rgba(0, 0, 0, 0.055);
+
+  --ink: #17181b;
+  --ink2: #5c5f66;
+  --ink3: #6e717a;
+
+  --amber: #f3a82c;
+  --amber-ink: #9a6a12;
+  --amber-soft: rgba(243, 168, 44, 0.2);
+  --on-amber: #2d1e05;
+  --on-attn: #ffffff;
+
+  --pass: #11774f;
+  --pass-soft: rgba(17, 119, 79, 0.12);
+  --fail: #b93a22;
+  --fail-soft: rgba(185, 58, 34, 0.11);
+  --block: #4a5d93;
+  --block-soft: rgba(74, 93, 147, 0.11);
+  --skip: #7e828a;
+  --skip-soft: rgba(126, 130, 138, 0.12);
+  --attn: #a9600c;
+  --attn-soft: rgba(169, 96, 12, 0.13);
+
+  --shadow: 0 34px 70px -32px rgba(70, 58, 40, 0.4);
+  --shadow-popover: 0 26px 60px -30px rgba(70, 58, 40, 0.34);
+  --shadow-modal: 0 34px 80px -30px rgba(70, 58, 40, 0.42);
+}

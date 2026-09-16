@@ -1,0 +1,120 @@
+@keyframes gc-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes gc-blink {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.25);
+  }
+}
+
+@keyframes gc-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes gc-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(243, 168, 44, 0);
+  }
+  50% {
+    box-shadow: 0 0 22px -4px rgba(243, 168, 44, 0.45);
+  }
+}
+
+@keyframes gc-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes gc-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes gc-zoom {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes gc-sweep {
+  0% {
+    transform: translateY(-130%);
+  }
+  100% {
+    transform: translateY(420%);
+  }
+}
+
+@keyframes gc-trace {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+@keyframes gc-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes gc-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes gc-play {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
