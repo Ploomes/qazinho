@@ -94,6 +94,24 @@ describe('the built page, with no bridge behind it', () => {
     expect(await page.locator('body').innerText()).toContain('Cart');
   });
 
+  it('writes a plan by hand, with no agent anywhere near it', async () => {
+    await page.locator('.workspace-tabs__tab', { hasText: 'Plan' }).first().click();
+    await page.getByRole('button', { name: 'Add a case' }).first().click();
+
+    await page
+      .locator('.plan-case__head .editable-text')
+      .first()
+      .fill('Cart keeps its items');
+    await page.locator('.plan-case__open').first().click();
+    await page.getByPlaceholder('what the agent does').first().fill('Add a hat');
+    await page.getByPlaceholder('what you expect to see').first().fill('Cart reads 1');
+    await page.getByRole('button', { name: 'Add a step' }).first().click();
+    await page.waitForTimeout(150);
+
+    expect(await page.locator('.plan-case__step-number').count()).toBe(2);
+    expect(await page.locator('body').innerText()).toContain('1 cases · 2 steps');
+  });
+
   it('opens the resources popover and the model menu', async () => {
     await page.locator('.titlebar__meter-button').first().click();
     await page.waitForTimeout(200);
