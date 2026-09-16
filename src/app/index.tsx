@@ -11,7 +11,8 @@ import { useAppViewModel } from './hooks';
 import './styles.css';
 
 export const App: React.FC = () => {
-  const { hasSidebar, isWelcome, isWorkspace, isSettings, modal } = useAppViewModel();
+  const { hasSidebar, isWelcome, isWorkspace, isSettings, modal, hasMedia } =
+    useAppViewModel();
 
   return (
     <MotionConfig reducedMotion="user">
@@ -26,7 +27,7 @@ export const App: React.FC = () => {
         </div>
 
         <AnimatePresence>
-          <Lightbox key="lightbox" />
+          {hasMedia && <Lightbox key="lightbox" />}
           {modal === 'project' && <NewProjectModal key="project" />}
           {modal === 'workspace' && <NewWorkspaceModal key="workspace" />}
         </AnimatePresence>

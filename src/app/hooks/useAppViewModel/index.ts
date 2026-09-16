@@ -13,6 +13,7 @@ export const useAppViewModel = () => {
   const screen = useAppStore((state) => state.screen);
   const projects = useAppStore((state) => state.projects);
   const modal = useAppStore((state) => state.modal);
+  const media = useAppStore((state) => state.media);
 
   useArchive();
   useKeybinds();
@@ -27,6 +28,7 @@ export const useAppViewModel = () => {
   return {
     screen,
     modal,
+    hasMedia: media !== null,
     hasSidebar: projects.length > 0 && screen !== 'settings',
     isWelcome: screen === 'welcome' || projects.length === 0,
     isWorkspace: screen === 'workspace',

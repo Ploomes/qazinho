@@ -53,4 +53,16 @@ describe('useAppViewModel', () => {
     expect(result.current.isSettings).toBe(true);
     expect(result.current.hasSidebar).toBe(false);
   });
+
+  it('mounts the lightbox only while there is media, so its exit can play', () => {
+    useAppStore.setState({ media: null });
+
+    expect(renderHook(() => useAppViewModel()).result.current.hasMedia).toBe(false);
+
+    useAppStore.setState({
+      media: { kicker: 'r-01', title: 'step 1', isTall: false, src: null, file: null },
+    });
+
+    expect(renderHook(() => useAppViewModel()).result.current.hasMedia).toBe(true);
+  });
 });
