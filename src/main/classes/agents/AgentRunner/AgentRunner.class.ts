@@ -1,14 +1,23 @@
 import type { IAgentRunner, IRunAgent } from './types';
 import type { IAgentEvent, IAgentTurn, IAgentUsage } from '@/types';
+import type { ChildProcess } from 'node:child_process';
 import { spawn } from 'node:child_process';
 import { createInterface } from 'node:readline';
 import { AGENT_RUN } from './constants';
-import { buildAskArgs, readAgentLine, toStructured, toText, toUsage } from './library';
+import {
+  buildAskArgs,
+  killTree,
+  readAgentLine,
+  toStructured,
+  toText,
+  toUsage,
+} from './library';
 
 /** Drives the QA's own agent CLI. gocrash owns no model and holds no provider key. */
 export class AgentRunner {
   private readonly onEvent: (event: IAgentEvent) => void;
   private readonly owners: IAgentRunner['owners'];
+  private readonly asking = new Map<string, Set<ChildProcess>>();
 
   public constructor(props: IAgentRunner) {
     this.onEvent = props.onEvent;
@@ -19,15 +28,24 @@ export class AgentRunner {
     const { command, prompt, workspaceId } = props;
     const child = spawn(command, buildAskArgs(props), {
       stdio: ['pipe', 'pipe', 'pipe'],
+      // POSIX: its own process group, so a stop reaches the tools the agent spawned too.
+      detached: process.platform !== 'win32',
     });
 
     if (child.pid !== undefined)
       this.owners.claim({ pid: child.pid, workspaceId, kind: 'agent' });
 
+    const asking = this.asking.get(workspaceId) ?? new Set<ChildProcess>();
+
+    asking.add(child);
+    this.asking.set(workspaceId, asking);
+
     child.stdin.write(prompt);
     child.stdin.end();
 
-    const timeout = setTimeout(() => child.kill('SIGTERM'), AGENT_RUN.timeoutMs);
+    const timeout = setTimeout(() => {
+      killTree(child);
+    }, AGENT_RUN.timeoutMs);
 
     let sessionId: string | null = props.sessionId;
     let usage: IAgentUsage | null = null;
@@ -75,6 +93,7 @@ export class AgentRunner {
     const code = await new Promise<number>((resolve) => {
       child.on('close', (status) => {
         clearTimeout(timeout);
+        asking.delete(child);
 
         if (child.pid !== undefined) this.owners.release(child.pid);
 
@@ -91,5 +110,9 @@ export class AgentRunner {
       usage,
       isError: isError || code !== 0,
     };
+  }
+
+  public cancel(workspaceId: string): void {
+    for (const child of this.asking.get(workspaceId) ?? []) killTree(child);
   }
 }
