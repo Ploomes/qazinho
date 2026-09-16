@@ -17,7 +17,32 @@ const RESULT = {
   modelUsage: { 'claude-opus-5': { contextWindow: 1000000 } },
 };
 
+/** Claude Code before 2.1.273 reported the limit with no utilization in it. */
+const OLD_LIMITS = {
+  type: 'rate_limit_event',
+  rate_limit_info: {
+    status: 'allowed',
+    resetsAt: 1789575000,
+    rateLimitType: 'five_hour',
+  },
+};
+
 describe('toUsage', () => {
+  it('an agent too old to report utilization leaves the window unknown', () => {
+    const usage = toUsage({ previous: null, line: OLD_LIMITS });
+
+    expect(usage.fiveHourUsed).toBeNull();
+    expect(usage.sevenDayUsed).toBeNull();
+  });
+
+  it('a window the agent never mentioned is unknown, not empty', () => {
+    const usage = toUsage({ previous: null, line: RESULT });
+
+    expect(usage.fiveHourUsed).toBeNull();
+    expect(usage.sevenDayUsed).toBeNull();
+    expect(usage.contextWindow).toBe(1000000);
+  });
+
   it('reads how much of the account the QA has spent', () => {
     const usage = toUsage({ previous: null, line: LIMITS });
 

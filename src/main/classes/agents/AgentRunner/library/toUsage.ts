@@ -2,8 +2,8 @@ import type { IAgentLine } from '@/main/types';
 import type { IAgentUsage } from '@/types';
 
 const EMPTY: IAgentUsage = {
-  fiveHourUsed: 0,
-  sevenDayUsed: 0,
+  fiveHourUsed: null,
+  sevenDayUsed: null,
   resetsAt: 0,
   contextTokens: 0,
   contextWindow: 0,
