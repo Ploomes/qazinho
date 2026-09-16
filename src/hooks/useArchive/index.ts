@@ -1,17 +1,10 @@
-import type { IProject } from '@/modules/Project/types';
 import { useEffect, useRef } from 'react';
 import { readProjects } from '@/modules/Project/library';
 import { fromSaved, toSaved } from '@/modules/Workspace/library';
 import { Archive } from '@/services';
 import { useAppStore, useWorkspaceStore } from '@/store';
 import { ARCHIVE } from './constants';
-import { lastWritten, saveLater } from './library';
-
-const PROJECTS = 'projects';
-
-function asJson(projects: IProject[]): string {
-  return JSON.stringify(projects, null, 2);
-}
+import { asJson, lastWritten, saveLater } from './library';
 
 /** gocrash remembers: what the QA made is read back on start and written as it changes. */
 export const useArchive = () => {
@@ -29,7 +22,7 @@ export const useArchive = () => {
         .filter((workspace) => workspace !== null)
         .sort((first, second) => first.name.localeCompare(second.name));
 
-      held.keep(PROJECTS, asJson(projects));
+      held.keep(ARCHIVE.projectsKey, asJson(projects));
 
       for (const workspace of workspaces)
         held.keep(workspace.id, JSON.stringify(toSaved(workspace)));
@@ -47,9 +40,9 @@ export const useArchive = () => {
 
       const json = asJson(state.projects);
 
-      if (!held.isNew(PROJECTS, json)) return;
+      if (!held.isNew(ARCHIVE.projectsKey, json)) return;
 
-      held.keep(PROJECTS, json);
+      held.keep(ARCHIVE.projectsKey, json);
       Archive.saveProjects(json);
     });
   }, []);
