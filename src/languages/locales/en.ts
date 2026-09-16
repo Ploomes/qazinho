@@ -183,8 +183,10 @@ export const en = {
     IOS_PLACEHOLDER: 'drop your .app here, or pick one',
     IOS_MAC_ONLY: 'macOS only',
     CREATE: 'Create project',
-    HINT_MAC: 'iOS needs Xcode · Android SDK found · nothing is downloaded for you',
-    HINT_OTHER: 'iOS needs macOS · Android SDK found · nothing is downloaded for you',
+    HINT: '{{ios}} · {{android}} · nothing is downloaded for you',
+    IOS_NEEDS_XCODE: 'iOS needs Xcode',
+    IOS_NEEDS_MACOS: 'iOS needs macOS',
+    IOS_READY: 'iOS ready',
   },
   NEW_WORKSPACE: {
     TITLE: 'New workspace',

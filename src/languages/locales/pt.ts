@@ -184,8 +184,10 @@ export const pt: typeof en = {
     IOS_PLACEHOLDER: 'solte seu .app aqui, ou escolha um',
     IOS_MAC_ONLY: 'só no macOS',
     CREATE: 'Criar projeto',
-    HINT_MAC: 'iOS precisa do Xcode · Android SDK encontrado · nada é baixado por você',
-    HINT_OTHER: 'iOS precisa do macOS · Android SDK encontrado · nada é baixado por você',
+    HINT: '{{ios}} · {{android}} · nada é baixado por você',
+    IOS_NEEDS_XCODE: 'iOS precisa do Xcode',
+    IOS_NEEDS_MACOS: 'iOS precisa do macOS',
+    IOS_READY: 'iOS pronto',
   },
   NEW_WORKSPACE: {
     TITLE: 'Novo workspace',
