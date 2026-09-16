@@ -45,6 +45,14 @@ const server = createServer((request, response) => {
 let page: Page;
 const said: string[] = [];
 
+/** Both popovers hang off one toggle each, so a test that wants one open says so itself. */
+async function openModelMenu() {
+  if ((await page.locator('.model-popover').count()) === 0)
+    await page.locator('.titlebar__meter-button').last().click();
+
+  await page.waitForTimeout(200);
+}
+
 beforeAll(async () => {
   await new Promise<void>((ready) => server.listen(PORT, '127.0.0.1', ready));
 
@@ -121,9 +129,17 @@ describe('the built page, with no bridge behind it', () => {
     await page.waitForTimeout(300);
     expect(await page.locator('.resource-popover').count()).toBe(0);
 
-    await page.locator('.titlebar__meter-button').last().click();
-    await page.waitForTimeout(200);
+    await openModelMenu();
     expect(await page.locator('.model-popover').count()).toBe(1);
+  });
+
+  it('picks another model, and the titlebar says so', async () => {
+    await openModelMenu();
+
+    await page.locator('.model-popover__row', { hasText: 'Opus' }).click();
+    await page.waitForTimeout(200);
+
+    expect(await page.locator('.titlebar').innerText()).toContain('opus');
   });
 
   // Electron swallows a click in a drag region; plain Chrome does not, so only this can catch it.
@@ -159,8 +175,7 @@ describe('the built page, with no bridge behind it', () => {
     expect(await page.locator('.resource-popover').count()).toBe(1);
     expect(await dragging()).toEqual([]);
 
-    await page.locator('.titlebar__meter-button').last().click();
-    await page.waitForTimeout(200);
+    await openModelMenu();
     expect(await page.locator('.model-popover').count()).toBe(1);
     expect(await dragging()).toEqual([]);
   });
