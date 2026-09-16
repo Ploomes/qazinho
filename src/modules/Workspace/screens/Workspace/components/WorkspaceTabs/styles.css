@@ -1,0 +1,30 @@
+.workspace-tabs {
+  display: flex;
+  gap: var(--space-6);
+  border-bottom: 1px solid var(--line2);
+}
+
+.workspace-tabs__tab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 0 13px;
+  border: none;
+  background: transparent;
+  color: var(--ink3);
+  font: 500 14px/1 var(--font-ui);
+}
+
+.workspace-tabs__tab--active {
+  box-shadow: inset 0 -2px 0 0 var(--ink);
+  color: var(--ink);
+}
+
+.workspace-tabs__badge {
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
+
+.workspace-tabs__tab--active .workspace-tabs__badge {
+  color: var(--amber-ink);
+}
