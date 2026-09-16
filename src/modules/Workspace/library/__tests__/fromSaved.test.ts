@@ -27,4 +27,23 @@ describe('fromSaved', () => {
 
     expect(fromSaved({ id: 'w1', json, planYaml: '' })?.live).toBeNull();
   });
+
+  it('keeps how full the context window was, and drops one that is not numbers', () => {
+    const kept = JSON.stringify({
+      id: 'w1',
+      projectId: 'p1',
+      context: { tokens: 40, window: 200 },
+    });
+    const broken = JSON.stringify({
+      id: 'w1',
+      projectId: 'p1',
+      context: { tokens: 'a' },
+    });
+
+    expect(fromSaved({ id: 'w1', json: kept, planYaml: '' })?.context).toEqual({
+      tokens: 40,
+      window: 200,
+    });
+    expect(fromSaved({ id: 'w1', json: broken, planYaml: '' })?.context).toBeNull();
+  });
 });

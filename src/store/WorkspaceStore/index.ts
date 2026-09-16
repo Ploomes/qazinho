@@ -177,6 +177,16 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
+  setContext: ({ workspaceId, tokens, window }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          window > 0 ? { ...workspace, context: { tokens, window } } : workspace,
+      }),
+    })),
+
   markStreaming: ({ workspaceId, url }) =>
     set((state) => ({
       workspaces: mapWorkspace({

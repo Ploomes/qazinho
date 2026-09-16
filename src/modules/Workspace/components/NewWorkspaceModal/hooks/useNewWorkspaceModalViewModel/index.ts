@@ -39,6 +39,7 @@ export const useNewWorkspaceModalViewModel = () => {
       bugs: [],
       live: null,
       hasBeenAsked: false,
+      context: null,
     });
 
     selectWorkspace(id);

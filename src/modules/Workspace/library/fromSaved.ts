@@ -40,5 +40,9 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     bugs: read.bugs ?? [],
     live: null,
     hasBeenAsked: read.hasBeenAsked ?? false,
+    context:
+      typeof read.context?.tokens === 'number' && typeof read.context.window === 'number'
+        ? { tokens: read.context.tokens, window: read.context.window }
+        : null,
   };
 }

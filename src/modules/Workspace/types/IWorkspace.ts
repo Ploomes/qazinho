@@ -1,3 +1,4 @@
+import type { IAgentContext } from './IAgentContext';
 import type { IIssue } from './IIssue';
 import type { ILiveRun } from './ILiveRun';
 import type { WorkspaceStatus } from './WorkspaceStatus';
@@ -14,6 +15,7 @@ export interface IWorkspace {
   targetId: string;
   planKind: 'web' | 'mobile';
   sessionId: string | null;
+  context: IAgentContext | null;
   status: WorkspaceStatus;
   issue: IIssue | null;
   chat: ChatMessage[];
