@@ -1,6 +1,16 @@
+import type { StepVerdict } from '@/modules/Run/types';
 import { buildRun, startRun } from '@/modules/Workspace/library';
 import { describe, expect, it } from 'vitest';
 import { makeWorkspace } from './fixtures';
+
+const VERDICTS: StepVerdict[] = [
+  'passed',
+  'passed',
+  'passed',
+  'passed',
+  'failed',
+  'skipped',
+];
 
 function workspaceWithVerdicts() {
   const running = startRun({ workspace: makeWorkspace(), startedAt: '09:41' });
@@ -9,7 +19,7 @@ function workspaceWithVerdicts() {
     ...running,
     live: {
       ...running.live!,
-      verdicts: ['passed', 'passed', 'passed', 'passed', 'failed', 'skipped'] as const,
+      verdicts: VERDICTS,
     },
   };
 }

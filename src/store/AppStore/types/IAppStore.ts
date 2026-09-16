@@ -1,23 +1,24 @@
+import type { IProject } from '@/modules/Project/types';
 import type { Modal } from './Modal';
 import type { Screen } from './Screen';
 import type { Theme } from './Theme';
-import type { IProject } from '@/modules/Project/types';
-import type { IWorkspace } from '@/modules/Workspace/types';
 
-/** Everything the page renders from, plus the actions that move it. */
+/** The shell: which screen is up, which project is selected, and what is floating over it. */
 export interface IAppStore {
   theme: Theme;
   screen: Screen;
   modal: Modal | null;
   projects: IProject[];
-  workspaces: IWorkspace[];
   selectedWorkspaceId: string | null;
   selectedProjectId: string | null;
+  isResourcesOpen: boolean;
+  isModelMenuOpen: boolean;
   toggleTheme: () => void;
   openSettings: () => void;
   openModal: (modal: Modal) => void;
   closeModal: () => void;
   selectWorkspace: (workspaceId: string) => void;
   addProject: (project: IProject) => void;
-  addWorkspace: (workspace: IWorkspace) => void;
+  toggleResources: () => void;
+  toggleModelMenu: () => void;
 }

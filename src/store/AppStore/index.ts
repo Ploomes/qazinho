@@ -6,9 +6,10 @@ export const useAppStore = create<IAppStore>((set) => ({
   screen: 'welcome',
   modal: null,
   projects: [],
-  workspaces: [],
   selectedWorkspaceId: null,
   selectedProjectId: null,
+  isResourcesOpen: false,
+  isModelMenuOpen: false,
 
   toggleTheme: () =>
     set((state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
@@ -29,11 +30,10 @@ export const useAppStore = create<IAppStore>((set) => ({
       modal: null,
     })),
 
-  addWorkspace: (workspace) =>
-    set((state) => ({
-      workspaces: [...state.workspaces, workspace],
-      screen: 'workspace',
-      selectedWorkspaceId: workspace.id,
-      modal: null,
-    })),
+  // The two popovers share the top-right corner, so opening one closes the other.
+  toggleResources: () =>
+    set((state) => ({ isResourcesOpen: !state.isResourcesOpen, isModelMenuOpen: false })),
+
+  toggleModelMenu: () =>
+    set((state) => ({ isModelMenuOpen: !state.isModelMenuOpen, isResourcesOpen: false })),
 }));
