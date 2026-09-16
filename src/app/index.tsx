@@ -3,6 +3,7 @@ import { Titlebar } from '@/components/organisms';
 import { DevicePanel } from '@/modules/Device/components';
 import { NewProjectModal } from '@/modules/Project/components';
 import { Welcome } from '@/modules/Project/screens/Welcome';
+import { Settings } from '@/modules/Settings/screens/Settings';
 import { NewWorkspaceModal } from '@/modules/Workspace/components';
 import { Workspace } from '@/modules/Workspace/screens/Workspace';
 import { Sidebar } from './components/Sidebar';
@@ -10,7 +11,7 @@ import { useAppViewModel } from './hooks';
 import './styles.css';
 
 export const App: React.FC = () => {
-  const { hasProjects, isWelcome, isWorkspace, modal } = useAppViewModel();
+  const { hasProjects, isWelcome, isWorkspace, isSettings, modal } = useAppViewModel();
 
   return (
     <MotionConfig reducedMotion="user">
@@ -21,6 +22,7 @@ export const App: React.FC = () => {
           {isWelcome && <Welcome />}
           {!isWelcome && isWorkspace && <Workspace />}
           {!isWelcome && isWorkspace && <DevicePanel />}
+          {!isWelcome && isSettings && <Settings />}
         </div>
 
         <AnimatePresence>
