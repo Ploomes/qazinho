@@ -4,9 +4,8 @@ import type { IProcessRow } from '@/main/types';
 import type { IProcessSample, IResourceSnapshot } from '@/types';
 import { totalmem } from 'node:os';
 import { collectSubtree } from '@/main/library';
+import { BYTES_IN_GB } from './constants';
 import { sweepProcesses, toSample, workspaceOfProfile } from './library';
-
-const BYTES_IN_GB = 1024 ** 3;
 
 /** What gocrash costs this machine: the app itself, plus everything it started. */
 export class ResourceCollector {

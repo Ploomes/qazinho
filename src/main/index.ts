@@ -5,7 +5,6 @@ import type {
   ISavedWorkspace,
   IStartRun,
 } from '@/types';
-import { join } from 'node:path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { CHANNELS } from '@/constants';
 import { AgentDetector } from '@/main/classes/agents/AgentDetector';
@@ -15,22 +14,17 @@ import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { ResourceCollector } from '@/main/classes/resources/ResourceCollector';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
 import { Archive } from '@/main/classes/storage/Archive';
-import { WINDOW } from '@/main/constants';
+import { PATHS, WINDOW } from '@/main/constants';
 import { isInternalNavigation } from '@/main/library';
-
-const DEV_SERVER_URL = process.env.ELECTRON_RENDERER_URL;
-const RENDERER_FILE = join(__dirname, '../renderer/index.html');
-const PRELOAD_FILE = join(__dirname, '../preload/index.js');
-const DATA_ROOT = app.getPath('userData');
 
 const agents = new AgentDetector();
 const owners = new ProcessOwners();
 const resources = new ResourceCollector({
   owners,
-  profileRoot: join(DATA_ROOT, 'profiles'),
+  profileRoot: PATHS.profiles,
 });
 const deviceTools = new DeviceToolDetector();
-const archive = new Archive(DATA_ROOT);
+const archive = new Archive(PATHS.data);
 
 function broadcast(props: { channel: string; event: IAgentEvent | IRunEvent }): void {
   for (const open of BrowserWindow.getAllWindows())
@@ -49,7 +43,7 @@ async function findCommand(agentId: string): Promise<string | null> {
 const runs = new RunCoordinator({
   runner: agentRunner,
   findCommand,
-  dataRoot: DATA_ROOT,
+  dataRoot: PATHS.data,
   onEvent: (event) => broadcast({ channel: CHANNELS.runEvent, event }),
 });
 
@@ -77,7 +71,7 @@ function createWindow(): void {
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: 16, y: 16 },
     webPreferences: {
-      preload: PRELOAD_FILE,
+      preload: PATHS.preload,
       contextIsolation: true,
       sandbox: true,
       nodeIntegration: false,
@@ -96,8 +90,8 @@ function createWindow(): void {
     return { action: 'deny' };
   });
 
-  if (DEV_SERVER_URL) void window.loadURL(DEV_SERVER_URL);
-  else void window.loadFile(RENDERER_FILE);
+  if (PATHS.devServer) void window.loadURL(PATHS.devServer);
+  else void window.loadFile(PATHS.renderer);
 }
 
 void app.whenReady().then(() => {
