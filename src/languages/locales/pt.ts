@@ -98,6 +98,8 @@ export const pt: typeof en = {
     HISTORY: 'histórico de runs',
     WHOLE_PLAN: 'O plano inteiro',
     OPEN_IN_BUGS: 'Abrir em Bugs →',
+    DURATION: '{{seconds}}s',
+    STEP_SHOT: '{{id}} · passo {{number}}',
     PASSED: 'passou',
     FAILED: 'falhou',
     BLOCKED: 'bloqueado',

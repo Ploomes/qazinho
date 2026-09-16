@@ -8,8 +8,8 @@ export const Runs: React.FC = () => {
   const {
     runs,
     run,
+    counts,
     filters,
-    filter,
     cases,
     isEmpty,
     onSelectRun,
@@ -25,14 +25,14 @@ export const Runs: React.FC = () => {
 
   return (
     <div className="runs">
-      <Eyebrow>{t('RUN.HISTORY')}</Eyebrow>
       <div className="runs__history">
+        <Eyebrow>{t('RUN.HISTORY')}</Eyebrow>
         {runs.map((item) => (
           <button
             key={item.id}
             type="button"
             className={
-              item.id === run.id
+              item.isSelected
                 ? 'runs__history-row runs__history-row--selected'
                 : 'runs__history-row'
             }
@@ -41,95 +41,133 @@ export const Runs: React.FC = () => {
             }}
           >
             <span className="runs__history-id">{item.id}</span>
-            <span>{item.what}</span>
-            <span className="runs__history-counts">
-              ✓{item.counts.passed} ✕{item.counts.failed} ⊘{item.counts.blocked} –
-              {item.counts.skipped}
+            <span className="runs__history-what">{item.what}</span>
+            <span className="runs__tally runs__tally--passed">
+              ✓ {item.counts.passed}
             </span>
+            <span className="runs__tally runs__tally--failed">
+              ✕ {item.counts.failed}
+            </span>
+            <span className="runs__tally runs__tally--blocked">
+              ⊘ {item.counts.blocked}
+            </span>
+            <span className="runs__tally runs__tally--skipped">
+              – {item.counts.skipped}
+            </span>
+            <span className="runs__history-when">{item.startedAt}</span>
           </button>
         ))}
       </div>
 
       <div className="runs__report">
-        <div>
-          <h2 className="runs__title">{run.title}</h2>
-          <span className="runs__meta">{run.meta}</span>
-        </div>
+        <div className="runs__head">
+          <div className="runs__heading">
+            <h2 className="runs__title">{run.title}</h2>
+            <span className="runs__meta">{run.meta}</span>
+          </div>
 
-        <div className="runs__counts">
-          <CountTile status="passed" count={run.counts.passed} label={t('RUN.PASSED')} />
-          <CountTile status="failed" count={run.counts.failed} label={t('RUN.FAILED')} />
-          <CountTile
-            status="blocked"
-            count={run.counts.blocked}
-            label={t('RUN.BLOCKED')}
-          />
-          <CountTile
-            status="skipped"
-            count={run.counts.skipped}
-            label={t('RUN.SKIPPED')}
-          />
+          <div className="runs__counts">
+            {counts.map((item) => (
+              <CountTile
+                key={item.status}
+                status={item.status}
+                glyph={item.glyph}
+                count={item.count}
+                label={item.label}
+                delay={item.delay}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="runs__filters">
           <Eyebrow>{t('COMMON.FILTER')}</Eyebrow>
           {filters.map((item) => (
             <button
-              key={item}
+              key={item.id}
               type="button"
               className={
-                item === filter ? 'runs__filter runs__filter--active' : 'runs__filter'
+                item.isActive ? 'runs__filter runs__filter--active' : 'runs__filter'
               }
               onClick={() => {
-                onFilter(item);
+                onFilter(item.id);
               }}
             >
-              {t(`RUN.${item.toUpperCase()}` as never)}
+              {item.label}
             </button>
           ))}
         </div>
 
-        {cases.map((runCase) => (
-          <div key={runCase.id} className="runs__case">
-            <div className="runs__case-head">
-              <span className="runs__step-number">{runCase.id}</span>
-              <span>{runCase.title}</span>
-              <StatusPill status={runCase.verdict} />
-            </div>
-
-            {runCase.steps.map((step) => (
-              <div key={step.number} className="runs__step">
-                <span className="runs__step-number">{step.number}</span>
-                <StatusPill status={step.verdict} label="" />
-                <span>{step.action}</span>
-                {step.bugId !== null && (
-                  <button
-                    type="button"
-                    className="runs__bug-link"
-                    onClick={() => {
-                      onOpenBug(step.bugId ?? '');
-                    }}
-                  >
-                    {t('RUN.OPEN_IN_BUGS')}
-                  </button>
-                )}
-                <Screenshot
-                  label={`step ${String(step.number)}`}
-                  src={step.shot}
-                  file={step.shotFile}
-                  onOpen={() => {
-                    onOpenShot({
-                      label: `step ${String(step.number)}`,
-                      src: step.shot,
-                      file: step.shotFile,
-                    });
-                  }}
-                />
-                {step.why !== null && <span className="runs__why">{step.why}</span>}
+        <div className="runs__cases">
+          {cases.map((runCase) => (
+            <div key={runCase.id} className="runs__case">
+              <div className="runs__case-head">
+                <span className="runs__case-id">{runCase.id}</span>
+                <span className="runs__case-title">{runCase.title}</span>
+                <span className="runs__case-duration">{runCase.duration}</span>
+                <StatusPill status={runCase.verdict} />
               </div>
-            ))}
-          </div>
-        ))}
+
+              <div className="runs__steps">
+                {runCase.steps.map((step) => (
+                  <div key={step.number} className="runs__step">
+                    <span className="runs__step-number">{step.number}</span>
+                    <span
+                      className={`runs__step-glyph runs__step-glyph--${step.verdict}`}
+                      title={step.verdictLabel}
+                    >
+                      {step.glyph}
+                    </span>
+
+                    <div className="runs__step-body">
+                      <span
+                        className={
+                          step.isMuted
+                            ? 'runs__step-action runs__step-action--muted'
+                            : 'runs__step-action'
+                        }
+                      >
+                        {step.action}
+                      </span>
+
+                      {step.bug !== null && (
+                        <button
+                          type="button"
+                          className={
+                            step.bug.isHigh ? 'runs__bug runs__bug--high' : 'runs__bug'
+                          }
+                          onClick={() => {
+                            onOpenBug(step.bug?.id ?? '');
+                          }}
+                        >
+                          <span className="runs__bug-mark" />
+                          <span className="runs__bug-id">{step.bug.id}</span>
+                          <span className="runs__bug-title">{step.bug.title}</span>
+                          <span className="runs__bug-open">{t('RUN.OPEN_IN_BUGS')}</span>
+                        </button>
+                      )}
+
+                      {step.hasNote && <span className="runs__why">{step.why}</span>}
+                    </div>
+
+                    <Screenshot
+                      label={step.shotLabel}
+                      src={step.shot}
+                      file={step.shotFile}
+                      onOpen={() => {
+                        onOpenShot({
+                          label: step.shotLabel,
+                          src: step.shot,
+                          file: step.shotFile,
+                        });
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

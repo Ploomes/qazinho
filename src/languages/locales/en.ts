@@ -97,6 +97,8 @@ export const en = {
     HISTORY: 'run history',
     WHOLE_PLAN: 'The whole plan',
     OPEN_IN_BUGS: 'Open in Bugs →',
+    DURATION: '{{seconds}}s',
+    STEP_SHOT: '{{id}} · step {{number}}',
     PASSED: 'passed',
     FAILED: 'failed',
     BLOCKED: 'blocked',

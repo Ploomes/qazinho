@@ -38,6 +38,55 @@ describe('useRunsViewModel', () => {
     expect(result.current.run).toBeNull();
   });
 
+  it('counts every verdict in the order the report shows them, glyph beside each', () => {
+    const { result } = renderHook(() => useRunsViewModel());
+
+    expect(
+      result.current.counts.map(({ status, glyph, count }) => [status, glyph, count]),
+    ).toEqual([
+      ['passed', '✓', 4],
+      ['failed', '✕', 1],
+      ['blocked', '⊘', 0],
+      ['skipped', '–', 1],
+    ]);
+  });
+
+  it('puts the bug on the step that caught it, instead of the agent note', () => {
+    const { result } = renderHook(() => useRunsViewModel());
+    const failed = result.current.cases[1]?.steps.find(
+      ({ verdict }) => verdict === 'failed',
+    );
+
+    expect(failed?.bug?.id).toBe('BUG-01');
+    expect(failed?.hasNote).toBe(false);
+  });
+
+  it('mutes a step that never ran, and keeps its note', () => {
+    const { result } = renderHook(() => useRunsViewModel());
+    const skipped = result.current.cases[1]?.steps.find(
+      ({ verdict }) => verdict === 'skipped',
+    );
+
+    expect(skipped?.isMuted).toBe(true);
+    expect(skipped?.hasNote).toBe(true);
+  });
+
+  it('does NOT call a case failed when nothing in it failed, even if the saved run says so', () => {
+    const workspace = walkRun({
+      verdicts: ['passed', 'passed', 'passed', 'passed', 'blocked', 'skipped'],
+      isFinished: true,
+    });
+    const runs = workspace.runs.map((run) => ({
+      ...run,
+      cases: run.cases.map((runCase) => ({ ...runCase, verdict: 'failed' as const })),
+    }));
+    useWorkspaceStore.setState({ workspaces: [{ ...workspace, runs }] });
+
+    const { result } = renderHook(() => useRunsViewModel());
+
+    expect(result.current.cases[1]?.verdict).toBe('blocked');
+  });
+
   describe('onFilter', () => {
     it('narrows the report to the failures', () => {
       const { result } = renderHook(() => useRunsViewModel());
