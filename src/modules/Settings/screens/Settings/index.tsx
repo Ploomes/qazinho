@@ -20,6 +20,7 @@ export const Settings: React.FC = () => {
     onSelectLanguage,
     androidSdk,
     xcode,
+    idb,
     isMac,
     onSelectTab,
     onSelectAgent,
@@ -126,6 +127,17 @@ export const Settings: React.FC = () => {
               </div>
               <span className="settings__row-action settings__row-note">
                 {isMac ? xcode.note : t('SETTINGS.IOS_OFF')}
+              </span>
+            </div>
+            <div className="settings__row">
+              <div>
+                <div className="settings__row-name">idb</div>
+                <div className="settings__row-note">
+                  {isMac ? idb.path : t('PROJECT.IOS_MAC_ONLY')}
+                </div>
+              </div>
+              <span className="settings__row-action settings__row-note">
+                {isMac ? idb.note : t('SETTINGS.IOS_OFF')}
               </span>
             </div>
             <p className="settings__note">{t('SETTINGS.DEVICES_NOTE')}</p>

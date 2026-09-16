@@ -46,6 +46,10 @@ export const useSettingsViewModel = () => {
       path: tools.xcode.path ?? t('TOOLS.NOT_FOUND_PATH'),
       note: tools.xcode.isFound ? t('TOOLS.XCODE_FOUND') : t('TOOLS.XCODE_MISSING'),
     },
+    idb: {
+      path: tools.idb.path ?? t('TOOLS.IDB_INSTALL'),
+      note: tools.idb.isFound ? t('TOOLS.IDB_FOUND') : t('TOOLS.IDB_MISSING'),
+    },
     isMac: Platform.isMac(),
     onSelectTab: selectTab,
     onSelectAgent: selectAgent,

@@ -160,6 +160,9 @@ export const pt: typeof en = {
     XCODE_FOUND: 'Xcode encontrado',
     XCODE_MISSING: 'Xcode não encontrado',
     NOT_FOUND_PATH: 'não encontrado',
+    IDB_FOUND: 'idb encontrado',
+    IDB_MISSING: 'idb não encontrado',
+    IDB_INSTALL: 'brew install idb-companion',
   },
   PROJECT: {
     NEW_TITLE: 'Novo projeto',

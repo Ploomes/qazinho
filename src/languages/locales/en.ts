@@ -159,6 +159,9 @@ export const en = {
     XCODE_FOUND: 'Xcode found',
     XCODE_MISSING: 'Xcode not found',
     NOT_FOUND_PATH: 'not found',
+    IDB_FOUND: 'idb found',
+    IDB_MISSING: 'idb not found',
+    IDB_INSTALL: 'brew install idb-companion',
   },
   PROJECT: {
     NEW_TITLE: 'New project',
