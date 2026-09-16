@@ -1,16 +1,17 @@
 import type { IRunCoordinator, IStepResult, IWalkRun, IWalkStep } from './types';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
+import type { IDeviceDriver } from '@/main/classes/devices/types';
 import type { IRunEvent, IStartRun, IStepOutcome } from '@/types';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { WebDriver } from '@/main/classes/devices/WebDriver';
 import { RUN_PROMPTS, RUN_SCHEMAS, RUN_WALK } from './constants';
-import { parseActions, parseVerdict, skippedOutcome } from './library';
+import { driverFor, parseActions, parseVerdict, skippedOutcome } from './library';
 
 /** Walks a plan on a real device: the agent drives, the requirement judges. */
 export class RunCoordinator {
   private readonly runner: AgentRunner;
   private readonly findCommand: (agentId: string) => Promise<string | null>;
+  private readonly findAndroid: IRunCoordinator['findAndroid'];
   private readonly dataRoot: string;
   private readonly onEvent: (event: IRunEvent) => void;
   private readonly stopping = new Set<string>();
@@ -20,6 +21,7 @@ export class RunCoordinator {
   public constructor(props: IRunCoordinator) {
     this.runner = props.runner;
     this.findCommand = props.findCommand;
+    this.findAndroid = props.findAndroid;
     this.dataRoot = props.dataRoot;
     this.onEvent = props.onEvent;
   }
@@ -39,6 +41,18 @@ export class RunCoordinator {
       return;
     }
 
+    const android = run.target.kind === 'android' ? await this.findAndroid() : null;
+
+    if (run.target.kind === 'android' && android === null) {
+      this.onEvent({
+        kind: 'failed',
+        workspaceId: run.workspaceId,
+        text: 'gocrash found no Android emulator to open. Make one in Android Studio, then run the plan again.',
+      });
+
+      return;
+    }
+
     this.walking.add(run.workspaceId);
 
     try {
@@ -47,6 +61,8 @@ export class RunCoordinator {
         command,
         shotDir: join(this.dataRoot, 'runs', run.workspaceId, run.runId),
         profileDir: join(this.dataRoot, RUN_WALK.profiles, run.workspaceId),
+        sdkRoot: android?.sdkRoot ?? '',
+        avd: android?.avd ?? '',
       });
     } finally {
       this.walking.delete(run.workspaceId);
@@ -66,15 +82,16 @@ export class RunCoordinator {
   }
 
   private async walk(run: IWalkRun): Promise<void> {
-    const driver = new WebDriver();
-
     this.stopping.delete(run.workspaceId);
 
+    let driver: IDeviceDriver | null = null;
+
     try {
+      driver = driverFor(run);
       await mkdir(run.shotDir, { recursive: true });
-      await driver.open({ url: run.url, profileDir: run.profileDir });
+      await driver.open();
     } catch (reason) {
-      await driver.close();
+      await driver?.close();
       this.onEvent({
         kind: 'failed',
         workspaceId: run.workspaceId,
@@ -89,7 +106,10 @@ export class RunCoordinator {
     this.onEvent({ kind: 'done', workspaceId: run.workspaceId });
   }
 
-  private async walkSteps(props: { run: IWalkRun; driver: WebDriver }): Promise<void> {
+  private async walkSteps(props: {
+    run: IWalkRun;
+    driver: IDeviceDriver;
+  }): Promise<void> {
     const { run, driver } = props;
     const broken = new Set<string>();
     let session: string | null = run.sessionId;
@@ -102,7 +122,7 @@ export class RunCoordinator {
 
       if (step.caseId !== walkedCase) {
         walkedCase = step.caseId;
-        await this.reopen({ driver, url: run.url });
+        await this.reopen({ driver, url: run.target.value });
       }
 
       if (broken.has(step.caseId)) {
@@ -140,8 +160,8 @@ export class RunCoordinator {
       schema: RUN_SCHEMAS.action,
       prompt: RUN_PROMPTS.act({
         action: step.action,
-        url: run.url,
-        page: await driver.describe(),
+        target: run.target,
+        screen: await driver.describe(),
       }),
     });
 
@@ -155,7 +175,7 @@ export class RunCoordinator {
       prompt: RUN_PROMPTS.judge({
         action: step.action,
         expected: step.expected,
-        page: await driver.describe(),
+        screen: await driver.describe(),
       }),
     });
 
@@ -184,7 +204,7 @@ export class RunCoordinator {
   }
 
   private async carryOut(props: {
-    driver: WebDriver;
+    driver: IDeviceDriver;
     answer: string;
   }): Promise<string | null> {
     for (const action of parseActions(props.answer)) {
@@ -198,7 +218,7 @@ export class RunCoordinator {
     return null;
   }
 
-  private async reopen(props: { driver: WebDriver; url: string }): Promise<void> {
+  private async reopen(props: { driver: IDeviceDriver; url: string }): Promise<void> {
     // Every case starts from the same place, or the one before it decides what this one sees.
     try {
       await props.driver.act({ kind: 'goto', target: props.url, value: '' });

@@ -9,6 +9,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { CHANNELS } from '@/constants';
 import { AgentDetector } from '@/main/classes/agents/AgentDetector';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
+import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
 import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { ResourceCollector } from '@/main/classes/resources/ResourceCollector';
@@ -40,9 +41,20 @@ async function findCommand(agentId: string): Promise<string | null> {
   return (await agents.detect()).find(({ id }) => id === agentId)?.path ?? null;
 }
 
+async function findAndroid() {
+  const sdkRoot = deviceTools.detect().androidSdk.path;
+
+  if (sdkRoot === null) return null;
+
+  const avd = (await listAvds(sdkRoot))[0];
+
+  return avd === undefined ? null : { sdkRoot, avd };
+}
+
 const runs = new RunCoordinator({
   runner: agentRunner,
   findCommand,
+  findAndroid,
   dataRoot: PATHS.data,
   onEvent: (event) => broadcast({ channel: CHANNELS.runEvent, event }),
 });
