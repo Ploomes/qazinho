@@ -24,11 +24,12 @@ export const useRunsViewModel = () => {
     selectTab('bugs');
   };
 
-  const onOpenShot = (label: string) => {
+  const onOpenShot = (props: { label: string; src: string | null }) => {
     openMedia({
       kicker: run?.id ?? '',
-      title: label,
+      title: props.label,
       isTall: workspace?.planKind === 'mobile',
+      src: props.src,
     });
   };
 

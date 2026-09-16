@@ -1,12 +1,13 @@
 import { motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { Eyebrow, IconButton } from '@/components/atoms';
-import { Stripes } from '@/components/molecules';
 import { MOTION } from '@/constants';
 import { useLightboxViewModel } from './hooks';
 import './styles.css';
 
 export const Lightbox: React.FC = () => {
   const { media, frameWidth, onClose } = useLightboxViewModel();
+  const { t } = useTranslation();
 
   if (media === null) return null;
 
@@ -41,7 +42,11 @@ export const Lightbox: React.FC = () => {
             media.isTall ? 'lightbox__frame lightbox__frame--tall' : 'lightbox__frame'
           }
         >
-          <Stripes pitch={13} />
+          {media.src === null ? (
+            <p className="lightbox__missing">{t('RUN.NO_SHOT')}</p>
+          ) : (
+            <img className="lightbox__shot" src={media.src} alt={media.title} />
+          )}
         </div>
       </motion.div>
     </motion.div>

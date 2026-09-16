@@ -3,8 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useDevicePanelViewModel } from '@/modules/Device/components/DevicePanel/hooks/useDevicePanelViewModel';
 import { DEVICE } from '@/modules/Device/constants';
-import { advanceRun, startRun } from '@/modules/Workspace/library';
-import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 beforeEach(() => {
@@ -27,7 +26,7 @@ describe('useDevicePanelViewModel', () => {
   it('describes the browser for a URL and the emulator for a build', () => {
     const { result } = renderHook(() => useDevicePanelViewModel());
 
-    expect(result.current.deviceLabel).toBe('Chromium 1280 × 800');
+    expect(result.current.deviceLabel).toBe('Chrome 1280 × 800');
 
     useWorkspaceStore.setState({
       workspaces: [{ ...makeWorkspace(), planKind: 'mobile' }],
@@ -40,16 +39,35 @@ describe('useDevicePanelViewModel', () => {
   });
 
   it('marks the step the agent is on while it drives', () => {
-    let workspace = startRun({ workspace: makeWorkspace(), startedAt: '09:41' });
-    workspace = advanceRun(advanceRun(advanceRun(workspace)));
-    useWorkspaceStore.setState({ workspaces: [workspace] });
+    const walked = walkRun({ verdicts: ['passed'] });
+
+    useWorkspaceStore.setState({
+      workspaces: [{ ...walked, live: { ...walked.live!, doingIndex: 1 } }],
+    });
 
     const { result } = renderHook(() => useDevicePanelViewModel());
 
     expect(result.current.isLive).toBe(true);
     expect(result.current.steps[0]?.verdict).toBe('passed');
     expect(result.current.steps[1]?.verdict).toBe('running');
+    expect(result.current.steps[2]?.verdict).toBe('pending');
     expect(result.current.doingLabel).toBe('1 of 6');
+  });
+
+  it('shows the last screenshot the device sent back', () => {
+    useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
+
+    const { result } = renderHook(() => useDevicePanelViewModel());
+
+    expect(result.current.shot).toBe('data:image/jpeg;base64,shot-0');
+  });
+
+  it('has no screenshot to show before the first step comes back', () => {
+    useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: [] })] });
+
+    const { result } = renderHook(() => useDevicePanelViewModel());
+
+    expect(result.current.shot).toBeNull();
   });
 
   describe('onResize', () => {

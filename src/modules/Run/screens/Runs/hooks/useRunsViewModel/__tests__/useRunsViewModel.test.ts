@@ -2,16 +2,14 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useRunsViewModel } from '@/modules/Run/screens/Runs/hooks/useRunsViewModel';
-import { advanceRun, startRun } from '@/modules/Workspace/library';
-import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 function finishedWorkspace() {
-  let workspace = startRun({ workspace: makeWorkspace(), startedAt: '09:41' });
-
-  for (let tick = 0; tick < 18; tick += 1) workspace = advanceRun(workspace);
-
-  return workspace;
+  return walkRun({
+    verdicts: ['passed', 'passed', 'passed', 'passed', 'failed', 'skipped'],
+    isFinished: true,
+  });
 }
 
 beforeEach(() => {

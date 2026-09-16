@@ -20,3 +20,10 @@
 .screenshot--bad {
   border-color: var(--fail);
 }
+
+.screenshot__shot {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}

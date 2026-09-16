@@ -115,8 +115,12 @@ export const Runs: React.FC = () => {
                 )}
                 <Screenshot
                   label={`step ${String(step.number)}`}
+                  src={step.shot}
                   onOpen={() => {
-                    onOpenShot(`step ${String(step.number)}`);
+                    onOpenShot({
+                      label: `step ${String(step.number)}`,
+                      src: step.shot,
+                    });
                   }}
                 />
                 {step.why !== null && <span className="runs__why">{step.why}</span>}

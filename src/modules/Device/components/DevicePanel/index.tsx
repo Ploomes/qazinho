@@ -1,8 +1,8 @@
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Button, Chip, Eyebrow, IconButton, StatusPill } from '@/components/atoms';
-import { Stripes } from '@/components/molecules';
 import { MOTION } from '@/constants';
+import { DeviceScreen } from './components';
 import { useDevicePanelViewModel } from './hooks';
 import './styles.css';
 
@@ -14,7 +14,8 @@ export const DevicePanel: React.FC = () => {
     isOff,
     stateText,
     deviceLabel,
-    streamText,
+    shot,
+    urlText,
     elapsedLabel,
     isLive,
     steps,
@@ -74,15 +75,7 @@ export const DevicePanel: React.FC = () => {
 
           {!isOff && isPhone && (
             <div className="device-panel__phone">
-              <div className="device-panel__screen">
-                <Stripes pitch={11} />
-                {isLive && (
-                  <span className="device-panel__live">
-                    <span className="device-panel__live-dot" />
-                    {elapsedLabel}
-                  </span>
-                )}
-              </div>
+              <DeviceScreen shot={shot} isLive={isLive} elapsedLabel={elapsedLabel} />
             </div>
           )}
 
@@ -92,17 +85,9 @@ export const DevicePanel: React.FC = () => {
                 <span className="device-panel__dot" />
                 <span className="device-panel__dot" />
                 <span className="device-panel__dot" />
-                <span className="device-panel__url">{streamText}</span>
+                <span className="device-panel__url">{urlText}</span>
               </div>
-              <div className="device-panel__screen">
-                <Stripes pitch={11} />
-                {isLive && (
-                  <span className="device-panel__live">
-                    <span className="device-panel__live-dot" />
-                    {elapsedLabel}
-                  </span>
-                )}
-              </div>
+              <DeviceScreen shot={shot} isLive={isLive} elapsedLabel={elapsedLabel} />
             </div>
           )}
         </div>

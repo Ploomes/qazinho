@@ -25,9 +25,26 @@
 }
 
 .lightbox__frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   aspect-ratio: 16 / 10;
   overflow: hidden;
   border-radius: var(--radius-md);
+  background: var(--screen);
+}
+
+.lightbox__shot {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.lightbox__missing {
+  padding: var(--space-6);
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+  text-align: center;
 }
 
 .lightbox__frame--tall {

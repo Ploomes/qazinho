@@ -5,6 +5,7 @@ import './styles.css';
 
 export const Screenshot: React.FC<IScreenshotProps> = (props) => {
   const { className, pitch, onScreenshotClick } = useScreenshotViewModel(props);
+  const src = props.src ?? null;
 
   return (
     <button
@@ -13,7 +14,11 @@ export const Screenshot: React.FC<IScreenshotProps> = (props) => {
       aria-label={props.label}
       onClick={onScreenshotClick}
     >
-      <Stripes pitch={pitch} />
+      {src === null ? (
+        <Stripes pitch={pitch} />
+      ) : (
+        <img className="screenshot__shot" src={src} alt="" />
+      )}
     </button>
   );
 };

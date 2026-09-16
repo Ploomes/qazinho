@@ -4,7 +4,12 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { useLightboxViewModel } from '@/components/organisms/Lightbox/hooks/useLightboxViewModel';
 import { useAppStore } from '@/store';
 
-const SHOT = { kicker: 'run r-01', title: 'the step that broke', isTall: false };
+const SHOT = {
+  kicker: 'run r-01',
+  title: 'the step that broke',
+  isTall: false,
+  src: null,
+};
 
 beforeEach(() => {
   useAppStore.setState({ media: SHOT });
@@ -22,7 +27,7 @@ describe('useLightboxViewModel', () => {
 
     expect(wide.result.current.frameWidth).toBe(560);
 
-    useAppStore.setState({ media: { ...SHOT, isTall: true } });
+    useAppStore.setState({ media: { ...SHOT, isTall: true, src: null } });
 
     const tall = renderHook(() => useLightboxViewModel());
 

@@ -88,7 +88,7 @@ export const en = {
     BLOCKED: 'blocked',
     SKIPPED: 'skipped',
     ALL: 'all',
-    SKIPPED_WHY: 'Skipped because the step before it failed.',
+    NO_SHOT: 'This step has no screenshot.',
   },
   BUG: {
     EMPTY_TITLE: 'No bugs yet.',
@@ -97,7 +97,6 @@ export const en = {
     SUMMARY_ONE: '1 bug, caught by the agent',
     SUMMARY_OTHER: '{{count}} bugs, caught by the agent',
     JUST_CAUGHT: 'just caught',
-    CLIP: 'clip of the failure',
     WHERE: 'where it came from',
     SCREENSHOTS: 'screenshots',
     HOW_TO: 'how to get there',
@@ -118,6 +117,8 @@ export const en = {
     RAIL: '|← device',
     LIVE: 'live · {{elapsed}}',
     HIDE: 'Hide the device',
+    NO_SHOT: 'the first screenshot lands when the first step is done.',
+    SHOT_ALT: 'the device after the last step',
   },
   RESOURCES: {
     TITLE: 'Resources',

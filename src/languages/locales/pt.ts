@@ -89,7 +89,7 @@ export const pt: typeof en = {
     BLOCKED: 'bloqueado',
     SKIPPED: 'pulado',
     ALL: 'tudo',
-    SKIPPED_WHY: 'Pulado porque o passo anterior falhou.',
+    NO_SHOT: 'Este passo não tem screenshot.',
   },
   BUG: {
     EMPTY_TITLE: 'Nenhum bug ainda.',
@@ -98,7 +98,6 @@ export const pt: typeof en = {
     SUMMARY_ONE: '1 bug, encontrado pelo agente',
     SUMMARY_OTHER: '{{count}} bugs, encontrados pelo agente',
     JUST_CAUGHT: 'recém-encontrado',
-    CLIP: 'clipe da falha',
     WHERE: 'de onde veio',
     SCREENSHOTS: 'screenshots',
     HOW_TO: 'como chegar lá',
@@ -119,6 +118,8 @@ export const pt: typeof en = {
     RAIL: '|← device',
     LIVE: 'ao vivo · {{elapsed}}',
     HIDE: 'Esconder o device',
+    NO_SHOT: 'o primeiro screenshot chega quando o primeiro passo terminar.',
+    SHOT_ALT: 'o device depois do último passo',
   },
   RESOURCES: {
     TITLE: 'Recursos',

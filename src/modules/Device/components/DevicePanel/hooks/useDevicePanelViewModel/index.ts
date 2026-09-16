@@ -2,7 +2,7 @@ import type { IDeviceStep } from '@/modules/Device/types';
 import { useTranslation } from 'react-i18next';
 import { DEVICE } from '@/modules/Device/constants';
 import { deviceStateOf, formatElapsed } from '@/modules/Device/library';
-import { flattenPlanSteps, verdictForStep } from '@/modules/Run/library';
+import { useRunControls } from '@/modules/Run/hooks';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 const STATE_KEY = {
@@ -15,32 +15,27 @@ const STATE_KEY = {
 export const useDevicePanelViewModel = () => {
   const { t } = useTranslation();
   const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
+  const projects = useAppStore((state) => state.projects);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const isOpen = useWorkspaceStore((state) => state.isDevicePanelOpen);
   const width = useWorkspaceStore((state) => state.deviceWidth);
   const toggleDevicePanel = useWorkspaceStore((state) => state.toggleDevicePanel);
   const setDeviceWidth = useWorkspaceStore((state) => state.setDeviceWidth);
-  const pauseRun = useWorkspaceStore((state) => state.pauseRun);
-  const stopRun = useWorkspaceStore((state) => state.stopRun);
+  const { steps: planSteps, live, onPause, onStop } = useRunControls();
 
   const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
-  const workspaceId = workspace?.id ?? null;
+  const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
+  const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
   const state = deviceStateOf(workspace);
-  const live = workspace?.live ?? null;
   const isPhone = workspace?.planKind === 'mobile';
 
-  const steps: IDeviceStep[] = flattenPlanSteps(workspace?.plan ?? []).map(
-    (step, index) => ({
-      number: index + 1,
-      action: step.action,
-      verdict:
-        live === null || index >= live.stepIndex
-          ? index === (live?.stepIndex ?? -1)
-            ? 'running'
-            : 'pending'
-          : verdictForStep(index + 1),
-    }),
-  );
+  const steps: IDeviceStep[] = planSteps.map((step, index) => ({
+    number: index + 1,
+    action: step.action,
+    verdict:
+      live?.outcomes.find((outcome) => outcome.index === index)?.verdict ??
+      (live?.doingIndex === index ? 'running' : 'pending'),
+  }));
 
   return {
     isOpen,
@@ -49,22 +44,17 @@ export const useDevicePanelViewModel = () => {
     isPhone,
     isOff: state === 'off',
     stateText: t(STATE_KEY[state]),
-    deviceLabel: isPhone ? 'Emulator · Pixel 7 · API 34' : 'Chromium 1280 × 800',
-    streamText: isPhone
-      ? 'live emulator stream\n1080 × 2400 · 30 fps'
-      : 'live browser stream\n1280 × 800 · 30 fps',
+    deviceLabel: isPhone ? 'Emulator · Pixel 7 · API 34' : 'Chrome 1280 × 800',
+    shot: live?.shot ?? null,
+    urlText: target?.value ?? '',
     elapsedLabel: t('DEVICE.LIVE', { elapsed: formatElapsed(live?.elapsedSec ?? 0) }),
     isLive: state === 'driving',
     steps,
     doingLabel:
-      live === null ? '' : `${String(live.stepIndex)} of ${String(steps.length)}`,
+      live === null ? '' : `${String(live.outcomes.length)} of ${String(steps.length)}`,
     onToggle: toggleDevicePanel,
     onResize: setDeviceWidth,
-    onPause: () => {
-      if (workspaceId !== null) pauseRun(workspaceId);
-    },
-    onStop: () => {
-      if (workspaceId !== null) stopRun(workspaceId);
-    },
+    onPause,
+    onStop,
   };
 };
