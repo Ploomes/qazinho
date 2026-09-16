@@ -65,10 +65,12 @@ export const useTitlebarViewModel = () => {
     sessionLabel:
       sessionLeft === null
         ? null
-        : t('TITLEBAR.SESSION_LEFT', {
-            percent: Math.round(sessionLeft * 100),
-            resets: formatResetsAt(usage?.resetsAt ?? 0),
-          }),
+        : (usage?.resetsAt ?? 0) > 0
+          ? t('TITLEBAR.SESSION_LEFT', {
+              percent: sessionPercent,
+              resets: formatResetsAt(usage?.resetsAt ?? 0),
+            })
+          : t('TITLEBAR.SESSION_ONLY', { percent: sessionPercent }),
     sessionTip: {
       title: t('TITLEBAR.TIP_TITLE', { agent }),
       rows: [

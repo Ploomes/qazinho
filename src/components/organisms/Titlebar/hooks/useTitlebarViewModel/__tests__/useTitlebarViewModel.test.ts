@@ -108,6 +108,24 @@ describe('useTitlebarViewModel', () => {
     });
   });
 
+  describe('sessionLabel', () => {
+    it('does NOT promise a reset time the agent never gave', () => {
+      useMachineStore.setState({
+        usage: {
+          fiveHourUsed: 0.4,
+          sevenDayUsed: null,
+          resetsAt: 0,
+          contextTokens: 0,
+          contextWindow: 0,
+        },
+      });
+
+      expect(renderHook(() => useTitlebarViewModel()).result.current.sessionLabel).toBe(
+        '60% session',
+      );
+    });
+  });
+
   describe('contextShare', () => {
     beforeEach(() => {
       useWorkspaceStore.setState({

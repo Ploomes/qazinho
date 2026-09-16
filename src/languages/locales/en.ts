@@ -18,6 +18,7 @@ export const en = {
     CONTEXT_LEFT: '{{agent}} · {{model}} · {{percent}}% context left',
     CONTEXT_RING: '{{percent}}% context left',
     SESSION_LEFT: '{{percent}}% session · resets {{resets}}',
+    SESSION_ONLY: '{{percent}}% session',
     TIP_TITLE: '{{agent}} usage',
     TIP_SESSION: '5-hour session',
     TIP_WEEK: 'This week',

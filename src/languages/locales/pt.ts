@@ -20,6 +20,7 @@ export const pt: typeof en = {
     CONTEXT_LEFT: '{{agent}} · {{model}} · {{percent}}% de contexto',
     CONTEXT_RING: '{{percent}}% de contexto restante',
     SESSION_LEFT: '{{percent}}% da sessão · reseta {{resets}}',
+    SESSION_ONLY: '{{percent}}% da sessão',
     TIP_TITLE: 'Uso do {{agent}}',
     TIP_SESSION: 'Sessão de 5 horas',
     TIP_WEEK: 'Esta semana',
