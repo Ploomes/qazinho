@@ -56,6 +56,7 @@ export const pt: typeof en = {
     LIVE_STEP: 'rodando · passo {{current}} de {{total}}',
   },
   CHAT: {
+    YOU: 'Você',
     EMPTY_TITLE: 'Nada quebrou por aqui ainda.',
     EMPTY_BODY:
       'Diga o que quer cobrir. O agente escreve os casos, você corrige o que ele errar.',

@@ -77,9 +77,9 @@ export const Chat: React.FC = () => {
                   }
                 >
                   {message.kind === 'user'
-                    ? 'You'
+                    ? t('CHAT.YOU')
                     : message.kind === 'agent'
-                      ? 'Claude'
+                      ? message.who
                       : ''}
                 </span>
                 <span className="chat__at">{message.at}</span>

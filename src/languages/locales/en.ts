@@ -54,6 +54,7 @@ export const en = {
     LIVE_STEP: 'running · step {{current}} of {{total}}',
   },
   CHAT: {
+    YOU: 'You',
     EMPTY_TITLE: 'Nothing has crashed here yet.',
     EMPTY_BODY:
       'Say what you want covered. The agent writes the cases, you fix what it got wrong.',
