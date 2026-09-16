@@ -1,6 +1,6 @@
+import { describe, expect, it } from 'vitest';
 import { appendUserMessage } from '@/modules/Chat/library';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
-import { describe, expect, it } from 'vitest';
 
 describe('appendUserMessage', () => {
   it('puts what the QA typed at the end of the chat, stamped with the time', () => {

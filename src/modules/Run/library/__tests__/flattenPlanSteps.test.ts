@@ -1,6 +1,6 @@
 import type { ITestCase } from '@/modules/Plan/types';
-import { flattenPlanSteps } from '@/modules/Run/library';
 import { describe, expect, it } from 'vitest';
+import { flattenPlanSteps } from '@/modules/Run/library';
 
 const CASE: ITestCase = {
   id: 'TC-01',

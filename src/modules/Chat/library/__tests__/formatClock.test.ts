@@ -1,5 +1,5 @@
-import { formatClock } from '@/modules/Chat/library';
 import { describe, expect, it } from 'vitest';
+import { formatClock } from '@/modules/Chat/library';
 
 describe('formatClock', () => {
   it('reads a message time as the QA sees it in the gutter', () => {

@@ -1,6 +1,6 @@
+import { describe, expect, it } from 'vitest';
 import { RUN_ENGINE } from '@/modules/Run/constants';
 import { verdictForStep } from '@/modules/Run/library';
-import { describe, expect, it } from 'vitest';
 
 describe('verdictForStep', () => {
   it('passes every step before the one that breaks', () => {

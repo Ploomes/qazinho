@@ -1,5 +1,5 @@
-import { countVerdicts } from '@/modules/Run/library';
 import { describe, expect, it } from 'vitest';
+import { countVerdicts } from '@/modules/Run/library';
 
 describe('countVerdicts', () => {
   it('counts one of each', () => {

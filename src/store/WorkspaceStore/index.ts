@@ -1,8 +1,8 @@
 import type { IWorkspaceStore } from './types';
+import { create } from 'zustand';
 import { appendUserMessage, formatClock } from '@/modules/Chat/library';
 import { DEVICE } from '@/modules/Device/constants';
 import { advanceRun, startRun } from '@/modules/Workspace/library';
-import { create } from 'zustand';
 import { mapWorkspace } from './library';
 
 export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({

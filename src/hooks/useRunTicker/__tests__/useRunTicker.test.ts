@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
+import { renderHook } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { useRunTicker } from '@/hooks/useRunTicker';
 import { RUN_ENGINE } from '@/modules/Run/constants';
 import { startRun } from '@/modules/Workspace/library';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
-import { useRunTicker } from '@/hooks/useRunTicker';
 import { useWorkspaceStore } from '@/store';
-import { renderHook } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const A_STEP = RUN_ENGINE.tickSeconds * RUN_ENGINE.ticksPerStep * 1000;
 

@@ -1,6 +1,6 @@
-import { mapWorkspace } from '@/store/WorkspaceStore/library';
-import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { describe, expect, it } from 'vitest';
+import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import { mapWorkspace } from '@/store/WorkspaceStore/library';
 
 const FIRST = makeWorkspace();
 const SECOND = { ...makeWorkspace(), id: 'w2', name: 'Bug bash' };

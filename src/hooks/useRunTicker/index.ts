@@ -1,6 +1,6 @@
+import { useEffect } from 'react';
 import { RUN_ENGINE } from '@/modules/Run/constants';
 import { useWorkspaceStore } from '@/store';
-import { useEffect } from 'react';
 
 /** Drives every live run in the app: one tick, all workspaces, so parallel runs stay in step. */
 export const useRunTicker = () => {

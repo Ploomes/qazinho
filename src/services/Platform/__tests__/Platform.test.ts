@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { Platform } from '@/services/Platform';
 import { afterEach, describe, expect, it } from 'vitest';
+import { Platform } from '@/services/Platform';
 
 afterEach(() => {
   Reflect.deleteProperty(window, 'gocrash');
