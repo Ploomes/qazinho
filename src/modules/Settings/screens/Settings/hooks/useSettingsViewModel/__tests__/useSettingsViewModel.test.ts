@@ -2,7 +2,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useSettingsViewModel } from '@/modules/Settings/screens/Settings/hooks/useSettingsViewModel';
-import { useAppStore, useSettingsStore } from '@/store';
+import { useAppStore, useMachineStore, useSettingsStore } from '@/store';
 
 beforeEach(() => {
   useAppStore.setState({ theme: 'dark' });
@@ -11,6 +11,7 @@ beforeEach(() => {
     agent: 'Claude Code',
     model: 'sonnet',
     integrations: { github: false, jira: false },
+    editingKeybindId: null,
   });
 });
 
@@ -22,15 +23,62 @@ describe('useSettingsViewModel', () => {
     expect(result.current.tabs).toHaveLength(6);
   });
 
-  it('lists the models of the agent that is selected', () => {
+  it('names the default agent, offers the others, and flags one that is not on PATH', () => {
+    useMachineStore.setState({
+      agents: [
+        {
+          id: 'claude',
+          name: 'Claude Code',
+          command: 'claude',
+          isFound: true,
+          path: '/bin/claude',
+        },
+        {
+          id: 'codex',
+          name: 'Codex',
+          command: 'codex',
+          isFound: true,
+          path: '/bin/codex',
+        },
+        {
+          id: 'gemini',
+          name: 'Gemini CLI',
+          command: 'gemini',
+          isFound: false,
+          path: null,
+        },
+      ],
+    });
+
     const { result } = renderHook(() => useSettingsViewModel());
 
-    expect(result.current.models.map(({ id }) => id)).toEqual([
-      'haiku',
-      'sonnet',
-      'opus',
-      'fable',
+    expect(result.current.agents.map(({ note }) => note)).toEqual([
+      'Default agent',
+      'Make default',
+      'Not on PATH',
     ]);
+    expect(result.current.agents[2]?.path).toBe('not found');
+  });
+
+  it('asks for what a tracker needs until it is connected', () => {
+    const { result } = renderHook(() => useSettingsViewModel());
+    const github = result.current.integrations.find(({ id }) => id === 'github');
+
+    expect(github?.isConnected).toBe(false);
+    expect(github?.pill).toBe('idle');
+    expect(github?.action).toBe('Connect');
+  });
+
+  it('shows the keys being waited for on the shortcut under edit', () => {
+    const { result } = renderHook(() => useSettingsViewModel());
+
+    act(() => {
+      result.current.onEditKeybind('run');
+    });
+
+    expect(result.current.keybinds.find(({ id }) => id === 'run')?.keys).toBe(
+      'press the keys',
+    );
   });
 
   describe('onSelectAgent', () => {
@@ -94,12 +142,12 @@ describe('useSettingsViewModel', () => {
     });
   });
 
-  describe('onToggleTheme', () => {
+  describe('onSelectTheme', () => {
     it('switches the theme the whole window reads from', () => {
       const { result } = renderHook(() => useSettingsViewModel());
 
       act(() => {
-        result.current.onToggleTheme();
+        result.current.onSelectTheme('light');
       });
 
       expect(useAppStore.getState().theme).toBe('light');

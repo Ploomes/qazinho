@@ -19,6 +19,7 @@ export interface IAppStore {
   modelMenuAt: ModelMenuAt | null;
   media: IMedia | null;
   toggleTheme: () => void;
+  setTheme: (theme: Theme) => void;
   openSettings: () => void;
   closeSettings: () => void;
   openModal: (modal: Modal) => void;

@@ -21,6 +21,8 @@ export const useAppStore = create<IAppStore>()(
       toggleTheme: () =>
         set((state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
 
+      setTheme: (theme) => set({ theme }),
+
       openSettings: () => set({ screen: 'settings' }),
 
       closeSettings: () =>

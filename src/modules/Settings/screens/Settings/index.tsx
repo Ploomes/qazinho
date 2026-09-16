@@ -1,32 +1,25 @@
 import { useTranslation } from 'react-i18next';
-import { Button, Kbd } from '@/components/atoms';
+import { Logo, StatusPill } from '@/components/atoms';
 import { useSettingsViewModel } from './hooks';
 import './styles.css';
 
 export const Settings: React.FC = () => {
   const {
-    tabs,
     tab,
-    theme,
+    title,
+    tabs,
     agents,
-    agent,
-    models,
-    model,
-    keybinds,
-    editingKeybindId,
+    devices,
     integrations,
-    language,
+    themes,
     languages,
-    onSelectLanguage,
-    androidSdk,
-    xcode,
-    idb,
-    isMac,
+    keybinds,
+    links,
     onBack,
     onSelectTab,
     onSelectAgent,
-    onSelectModel,
-    onToggleTheme,
+    onSelectTheme,
+    onSelectLanguage,
     onToggleIntegration,
     onEditKeybind,
   } = useSettingsViewModel();
@@ -42,229 +35,283 @@ export const Settings: React.FC = () => {
 
         {tabs.map((item) => (
           <button
-            key={item}
+            key={item.id}
             type="button"
             className={
-              item === tab
+              item.isActive
                 ? 'settings__nav-item settings__nav-item--active'
                 : 'settings__nav-item'
             }
             onClick={() => {
-              onSelectTab(item);
+              onSelectTab(item.id);
             }}
           >
-            {t(`SETTINGS.${item.toUpperCase()}` as never)}
+            {item.label}
           </button>
         ))}
       </nav>
 
       <div className="settings__content">
         <div className="settings__page">
-          <h1 className="settings__title">
-            {t(`SETTINGS.${tab.toUpperCase()}` as never)}
-          </h1>
+          <h1 className="settings__title">{title}</h1>
 
           {tab === 'agents' && (
-            <div>
+            <div className="settings__stack">
               {agents.map((item) => (
-                <div key={item.name} className="settings__row">
-                  <div>
-                    <div className="settings__row-name">{item.name}</div>
-                    <div className="settings__row-note">{item.path}</div>
-                  </div>
-                  <div className="settings__row-action">
-                    {item.name === agent ? (
-                      <span className="settings__row-note">
-                        {t('SETTINGS.DEFAULT_AGENT')}
-                      </span>
-                    ) : (
-                      <Button
-                        size="sm"
-                        disabled={!item.isFound}
-                        onClick={() => {
-                          onSelectAgent(item.name);
-                        }}
-                      >
-                        {item.isFound
-                          ? t('SETTINGS.MAKE_DEFAULT')
-                          : t('SETTINGS.NOT_ON_PATH')}
-                      </Button>
-                    )}
-                  </div>
-                </div>
+                <button
+                  key={item.name}
+                  type="button"
+                  className={
+                    item.isDefault
+                      ? 'settings__card settings__card--on'
+                      : 'settings__card'
+                  }
+                  disabled={!item.isFound}
+                  onClick={() => {
+                    onSelectAgent(item.name);
+                  }}
+                >
+                  <span
+                    className={
+                      item.isFound
+                        ? 'settings__dot settings__dot--found'
+                        : 'settings__dot'
+                    }
+                  />
+                  <span className="settings__card-text">
+                    <span
+                      className={
+                        item.isFound
+                          ? 'settings__card-name'
+                          : 'settings__card-name settings__card-name--muted'
+                      }
+                    >
+                      {item.name}
+                    </span>
+                    <span className="settings__card-path">{item.path}</span>
+                  </span>
+                  <span
+                    className={
+                      item.isFound
+                        ? 'settings__card-note'
+                        : 'settings__card-note settings__card-note--missing'
+                    }
+                  >
+                    {item.note}
+                  </span>
+                </button>
               ))}
               <p className="settings__note">{t('SETTINGS.AGENTS_NOTE')}</p>
-              {models.map((item) => (
-                <div key={item.id} className="settings__row">
-                  <div>
-                    <div className="settings__row-name">{item.name}</div>
-                    <div className="settings__row-note">{item.note}</div>
-                  </div>
-                  <div className="settings__row-action">
-                    <Button
-                      size="sm"
-                      disabled={item.isLocked}
-                      onClick={() => {
-                        onSelectModel(item.id);
-                      }}
-                    >
-                      {item.id === model ? t('MODEL.IN_USE') : t('MODEL.USE_IT')}
-                    </Button>
-                  </div>
-                </div>
-              ))}
             </div>
           )}
 
           {tab === 'devices' && (
-            <div>
-              <div className="settings__row">
-                <div>
-                  <div className="settings__row-name">Android SDK</div>
-                  <div className="settings__row-note">{androidSdk.path}</div>
+            <div className="settings__stack">
+              {devices.map((item) => (
+                <div
+                  key={item.name}
+                  className={
+                    item.isFound
+                      ? 'settings__card settings__card--top'
+                      : 'settings__card settings__card--top settings__card--missing'
+                  }
+                >
+                  <span
+                    className={
+                      item.isFound
+                        ? 'settings__glyph settings__glyph--found'
+                        : 'settings__glyph'
+                    }
+                    aria-hidden="true"
+                  >
+                    {item.glyph}
+                  </span>
+                  <span className="settings__card-text settings__card-text--loose">
+                    <span className="settings__card-name">{item.name}</span>
+                    <span className="settings__card-path">{item.path}</span>
+                    <span
+                      className={
+                        item.isFound
+                          ? 'settings__card-status settings__card-status--found'
+                          : 'settings__card-status'
+                      }
+                    >
+                      {item.status}
+                    </span>
+                  </span>
                 </div>
-                <span className="settings__row-action settings__row-note">
-                  {androidSdk.note}
-                </span>
-              </div>
-              <div className="settings__row">
-                <div>
-                  <div className="settings__row-name">Xcode</div>
-                  <div className="settings__row-note">
-                    {isMac ? xcode.path : t('PROJECT.IOS_MAC_ONLY')}
-                  </div>
-                </div>
-                <span className="settings__row-action settings__row-note">
-                  {isMac ? xcode.note : t('SETTINGS.IOS_OFF')}
-                </span>
-              </div>
-              <div className="settings__row">
-                <div>
-                  <div className="settings__row-name">idb</div>
-                  <div className="settings__row-note">
-                    {isMac ? idb.path : t('PROJECT.IOS_MAC_ONLY')}
-                  </div>
-                </div>
-                <span className="settings__row-action settings__row-note">
-                  {isMac ? idb.note : t('SETTINGS.IOS_OFF')}
-                </span>
-              </div>
+              ))}
               <p className="settings__note">{t('SETTINGS.DEVICES_NOTE')}</p>
             </div>
           )}
 
           {tab === 'integrations' && (
-            <div>
-              <div className="settings__row">
-                <div>
-                  <div className="settings__row-name">GitHub</div>
-                  <div className="settings__row-note">
-                    {integrations.github
-                      ? t('SETTINGS.CONNECTED')
-                      : t('SETTINGS.NOT_CONNECTED')}
+            <div className="settings__stack">
+              {integrations.map((item) => (
+                <div
+                  key={item.id}
+                  className={
+                    item.isConnected
+                      ? 'settings__integration settings__integration--on'
+                      : 'settings__integration'
+                  }
+                >
+                  <div className="settings__integration-head">
+                    <span className="settings__logo">
+                      <img src={item.logo} alt={item.name} />
+                    </span>
+                    <span className="settings__card-text">
+                      <span className="settings__integration-name">{item.name}</span>
+                      <span className="settings__integration-text">{item.text}</span>
+                    </span>
+                    <StatusPill status={item.pill} label={item.status} />
+                    <button
+                      type="button"
+                      className={
+                        item.isConnected
+                          ? 'settings__connect settings__connect--on'
+                          : 'settings__connect'
+                      }
+                      onClick={() => {
+                        onToggleIntegration(item.id);
+                      }}
+                    >
+                      {item.action}
+                    </button>
                   </div>
+
+                  {item.isConnected ? (
+                    <div className="settings__integration-rows">
+                      {item.rows.map((row) => (
+                        <div key={row.label} className="settings__integration-row">
+                          <span className="settings__integration-key">{row.label}</span>
+                          <span className="settings__integration-value">{row.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="settings__integration-needs">
+                      <span className="settings__eyebrow">
+                        {t('SETTINGS.WHAT_IT_NEEDS')}
+                      </span>
+                      <p className="settings__integration-text">{item.needs}</p>
+                    </div>
+                  )}
                 </div>
-                <div className="settings__row-action">
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      onToggleIntegration('github');
-                    }}
-                  >
-                    {integrations.github ? t('COMMON.DISCONNECT') : t('COMMON.CONNECT')}
-                  </Button>
-                </div>
-              </div>
-              <div className="settings__row">
-                <div>
-                  <div className="settings__row-name">Jira</div>
-                  <div className="settings__row-note">
-                    {integrations.jira
-                      ? t('SETTINGS.CONNECTED')
-                      : t('SETTINGS.NOT_CONNECTED')}
-                  </div>
-                </div>
-                <div className="settings__row-action">
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      onToggleIntegration('jira');
-                    }}
-                  >
-                    {integrations.jira ? t('COMMON.DISCONNECT') : t('COMMON.CONNECT')}
-                  </Button>
-                </div>
-              </div>
+              ))}
               <p className="settings__note">{t('SETTINGS.INTEGRATIONS_NOTE')}</p>
             </div>
           )}
 
           {tab === 'appearance' && (
-            <div>
-              <div className="settings__row">
-                <div className="settings__row-name">{t('SETTINGS.THEME')}</div>
-                <div className="settings__row-action">
-                  <Button size="sm" onClick={onToggleTheme}>
-                    {theme === 'dark'
-                      ? t('SETTINGS.THEME_LIGHT')
-                      : t('SETTINGS.THEME_DARK')}
-                  </Button>
-                </div>
+            <div className="settings__stack settings__stack--wide">
+              <div className="settings__themes">
+                {themes.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className={
+                      item.isActive
+                        ? 'settings__theme settings__theme--on'
+                        : 'settings__theme'
+                    }
+                    style={item.swatch}
+                    onClick={() => {
+                      onSelectTheme(item.id);
+                    }}
+                  >
+                    <span className="settings__swatch">
+                      <span className="settings__swatch-bar" />
+                      <span className="settings__swatch-accent" />
+                    </span>
+                    <span className="settings__theme-label">{item.label}</span>
+                  </button>
+                ))}
               </div>
-              <div className="settings__row">
-                <div className="settings__row-name">{t('SETTINGS.LANGUAGE')}</div>
-                <div className="settings__row-action">
+              <p className="settings__note">{t('SETTINGS.APPEARANCE_NOTE')}</p>
+
+              <div className="settings__section">
+                <span className="settings__eyebrow">{t('SETTINGS.LANGUAGE')}</span>
+                <div className="settings__languages">
                   {languages.map((item) => (
-                    <Button
+                    <button
                       key={item.id}
-                      size="sm"
-                      disabled={item.id === language}
+                      type="button"
+                      className={
+                        item.isActive
+                          ? 'settings__language settings__language--on'
+                          : 'settings__language'
+                      }
                       onClick={() => {
                         onSelectLanguage(item.id);
                       }}
                     >
-                      {item.label}
-                    </Button>
+                      <span className="settings__language-label">{item.label}</span>
+                      <span className="settings__language-code">{item.code}</span>
+                    </button>
                   ))}
                 </div>
+                <p className="settings__note">{t('SETTINGS.LANGUAGE_NOTE')}</p>
               </div>
-              <p className="settings__note">{t('SETTINGS.APPEARANCE_NOTE')}</p>
             </div>
           )}
 
           {tab === 'shortcuts' && (
-            <div>
-              {keybinds.map((keybind) => (
-                <div key={keybind.id} className="settings__row">
-                  <div className="settings__row-name">{keybind.label}</div>
-                  <div className="settings__row-action">
-                    <button
-                      type="button"
-                      className="settings__keybind"
-                      onClick={() => {
-                        onEditKeybind(keybind.id);
-                      }}
-                    >
-                      {editingKeybindId === keybind.id ? (
-                        <span className="settings__row-note">
-                          {t('SETTINGS.PRESS_KEYS')}
-                        </span>
-                      ) : (
-                        <Kbd combo={keybind.combo} />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              ))}
+            <div className="settings__stack settings__stack--wide">
+              <div className="settings__keybinds">
+                {keybinds.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className={
+                      item.isEditing
+                        ? 'settings__keybind settings__keybind--editing'
+                        : 'settings__keybind'
+                    }
+                    onClick={() => {
+                      onEditKeybind(item.id);
+                    }}
+                  >
+                    <span className="settings__keybind-label">{item.label}</span>
+                    <kbd className="settings__keybind-keys">{item.keys}</kbd>
+                  </button>
+                ))}
+              </div>
+              <p className="settings__note">{t('SETTINGS.SHORTCUTS_NOTE')}</p>
             </div>
           )}
 
           {tab === 'about' && (
             <div className="settings__about">
-              <span className="settings__about-name">gocrash</span>
-              <span className="settings__row-note">{t('SETTINGS.ABOUT_VERSION')}</span>
-              <span>{t('SETTINGS.ABOUT_BY')}</span>
-              <p className="settings__note">{t('SETTINGS.ABOUT_NOTE')}</p>
+              <div className="settings__about-head">
+                <Logo size={46} />
+                <div className="settings__about-names">
+                  <span className="settings__about-name">gocrash</span>
+                  <span className="settings__about-version">
+                    {t('SETTINGS.ABOUT_VERSION')}
+                  </span>
+                  <span className="settings__about-by">{t('SETTINGS.ABOUT_BY')}</span>
+                </div>
+              </div>
+              <p className="settings__about-note">{t('SETTINGS.ABOUT_NOTE')}</p>
+              <div className="settings__about-links">
+                <a
+                  className="settings__link settings__link--primary"
+                  href={links.repository}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  GitHub
+                </a>
+                <a
+                  className="settings__link"
+                  href={links.licence}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {t('SETTINGS.LICENCE')}
+                </a>
+              </div>
             </div>
           )}
         </div>
