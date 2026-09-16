@@ -1,10 +1,9 @@
 import type { IProcessNode } from '@/modules/Resources/types';
 import { useTranslation } from 'react-i18next';
+import { MB_IN_GB } from '@/modules/Resources/constants';
 import { buildProcessTree, rollUp } from '@/modules/Resources/library';
 import { Run } from '@/services';
 import { useAppStore, useMachineStore, useWorkspaceStore } from '@/store';
-
-const MB_IN_GB = 1024;
 
 export const useResourcePopoverViewModel = () => {
   const { t } = useTranslation();

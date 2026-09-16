@@ -1,22 +1,7 @@
-import type { SettingsTab } from '@/modules/Settings/types';
 import { useTranslation } from 'react-i18next';
-import { MODELS } from '@/modules/Settings/constants';
+import { LANGUAGES, MODELS, SETTINGS_TABS } from '@/modules/Settings/constants';
 import { Platform } from '@/services';
 import { useAppStore, useMachineStore, useSettingsStore } from '@/store';
-
-const LANGUAGES = [
-  { id: 'en' as const, label: 'English' },
-  { id: 'pt' as const, label: 'Português' },
-];
-
-const TABS: SettingsTab[] = [
-  'agents',
-  'devices',
-  'integrations',
-  'appearance',
-  'shortcuts',
-  'about',
-];
 
 export const useSettingsViewModel = () => {
   const { t } = useTranslation();
@@ -39,7 +24,7 @@ export const useSettingsViewModel = () => {
   const toggleIntegration = useSettingsStore((state) => state.toggleIntegration);
 
   return {
-    tabs: TABS,
+    tabs: SETTINGS_TABS,
     tab,
     theme,
     agents: detected,

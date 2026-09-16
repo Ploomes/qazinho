@@ -1,8 +1,6 @@
-import type { RunFilter } from '@/modules/Run/types';
+import { RUN_FILTERS } from '@/modules/Run/constants';
 import { filterCases } from '@/modules/Run/library';
 import { useAppStore, useWorkspaceStore } from '@/store';
-
-const FILTERS: RunFilter[] = ['all', 'passed', 'failed', 'blocked', 'skipped'];
 
 export const useRunsViewModel = () => {
   const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
@@ -41,7 +39,7 @@ export const useRunsViewModel = () => {
   return {
     runs,
     run,
-    filters: FILTERS,
+    filters: RUN_FILTERS,
     filter: runFilter,
     cases: run === null ? [] : filterCases({ cases: run.cases, filter: runFilter }),
     isEmpty: runs.length === 0,

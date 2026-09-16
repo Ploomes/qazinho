@@ -1,16 +1,9 @@
 import type { IDeviceStep } from '@/modules/Device/types';
 import { useTranslation } from 'react-i18next';
-import { DEVICE } from '@/modules/Device/constants';
+import { DEVICE, DEVICE_STATE_KEY } from '@/modules/Device/constants';
 import { deviceStateOf, formatElapsed } from '@/modules/Device/library';
 import { useRunControls } from '@/modules/Run/hooks';
 import { useAppStore, useWorkspaceStore } from '@/store';
-
-const STATE_KEY = {
-  off: 'DEVICE.IDLE',
-  driving: 'DEVICE.DRIVING',
-  holding: 'DEVICE.HOLDING',
-  stopped: 'DEVICE.STOPPED',
-} as const;
 
 export const useDevicePanelViewModel = () => {
   const { t } = useTranslation();
@@ -43,7 +36,7 @@ export const useDevicePanelViewModel = () => {
     railWidth: DEVICE.railWidth,
     isPhone,
     isOff: state === 'off',
-    stateText: t(STATE_KEY[state]),
+    stateText: t(DEVICE_STATE_KEY[state] as never),
     deviceLabel: isPhone ? 'Emulator · Pixel 7 · API 34' : 'Chrome 1280 × 800',
     shot: live?.shot ?? null,
     urlText: target?.value ?? '',

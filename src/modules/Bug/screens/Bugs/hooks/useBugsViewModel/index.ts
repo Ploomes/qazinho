@@ -1,8 +1,6 @@
-import type { BugFilter } from '@/modules/Bug/types';
 import { useTranslation } from 'react-i18next';
+import { BUG_FILTERS } from '@/modules/Bug/constants';
 import { useAppStore, useWorkspaceStore } from '@/store';
-
-const FILTERS: BugFilter[] = ['all', 'high', 'medium', 'low'];
 
 export const useBugsViewModel = () => {
   const { t } = useTranslation();
@@ -30,7 +28,7 @@ export const useBugsViewModel = () => {
   return {
     bugs: shown,
     openBugId,
-    filters: FILTERS,
+    filters: BUG_FILTERS,
     filter: bugFilter,
     isEmpty: bugs.length === 0,
     summary:
