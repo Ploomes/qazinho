@@ -9,8 +9,9 @@ import {
   formatClock,
 } from '@/modules/Chat/library';
 import { DEVICE } from '@/modules/Device/constants';
-import { advanceRun, startRun } from '@/modules/Workspace/library';
-import { mapWorkspace } from './library';
+import { RUN_CLOCK } from '@/modules/Run/constants';
+import { finishRun, landStep, startRun } from '@/modules/Workspace/library';
+import { mapWorkspace, tickLive } from './library';
 
 export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   workspaces: [],
@@ -104,13 +105,13 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
-  startRun: (workspaceId) =>
+  startRun: ({ workspaceId, runId }) =>
     set((state) => ({
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
         change: (workspace) =>
-          startRun({ workspace, startedAt: formatClock(new Date()) }),
+          startRun({ workspace, runId, startedAt: formatClock(new Date()) }),
       }),
     })),
 
@@ -135,17 +136,62 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         workspaces: state.workspaces,
         workspaceId,
         change: (workspace) =>
+          workspace.live ? { ...workspace, status: 'stopped' } : workspace,
+      }),
+    })),
+
+  markDoing: ({ workspaceId, index }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
           workspace.live
-            ? {
-                ...workspace,
-                status: 'stopped',
-                live: { ...workspace.live, isRunning: false, isDone: true },
-              }
+            ? { ...workspace, live: { ...workspace.live, doingIndex: index } }
             : workspace,
       }),
     })),
 
-  tick: () => set((state) => ({ workspaces: state.workspaces.map(advanceRun) })),
+  landStep: (outcome) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId: outcome.workspaceId,
+        change: (workspace) =>
+          landStep({ workspace, outcome, at: formatClock(new Date()) }),
+      }),
+    })),
+
+  landRunDone: (workspaceId) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => finishRun({ workspace, at: formatClock(new Date()) }),
+      }),
+    })),
+
+  landRunFailed: ({ workspaceId, text }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => ({
+          ...appendAgentError({ workspace, text, at: formatClock(new Date()) }),
+          status: 'stopped',
+          live: workspace.live
+            ? { ...workspace.live, isRunning: false, isDone: true, doingIndex: -1 }
+            : null,
+        }),
+      }),
+    })),
+
+  tickClock: () =>
+    set((state) => ({
+      workspaces: state.workspaces.map((workspace) =>
+        tickLive({ workspace, seconds: RUN_CLOCK.tickMs / 1_000 }),
+      ),
+    })),
 
   toggleCase: (caseId) =>
     set((state) => ({ openCaseId: state.openCaseId === caseId ? null : caseId })),

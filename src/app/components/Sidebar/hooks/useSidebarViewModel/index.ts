@@ -25,7 +25,7 @@ export const useSidebarViewModel = () => {
         name: workspace.name,
         meta: t(workspaceMeta(workspace).key as never, {
           count: workspaceMeta(workspace).count,
-          current: workspace.live?.stepIndex ?? 0,
+          current: workspace.live?.outcomes.length ?? 0,
         }),
         glyph: SIDEBAR_STATUS[workspace.status].glyph,
         tone: SIDEBAR_STATUS[workspace.status].tone,

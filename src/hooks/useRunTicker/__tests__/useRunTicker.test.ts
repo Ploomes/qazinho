@@ -2,17 +2,23 @@
 import { renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRunTicker } from '@/hooks/useRunTicker';
-import { RUN_ENGINE } from '@/modules/Run/constants';
+import { RUN_CLOCK } from '@/modules/Run/constants';
 import { startRun } from '@/modules/Workspace/library';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useWorkspaceStore } from '@/store';
 
-const A_STEP = RUN_ENGINE.tickSeconds * RUN_ENGINE.ticksPerStep * 1000;
+const TEN_SECONDS = RUN_CLOCK.tickMs * 10;
+
+function elapsed() {
+  return useWorkspaceStore.getState().workspaces[0]?.live?.elapsedSec;
+}
 
 beforeEach(() => {
   vi.useFakeTimers();
   useWorkspaceStore.setState({
-    workspaces: [startRun({ workspace: makeWorkspace(), startedAt: '09:41' })],
+    workspaces: [
+      startRun({ workspace: makeWorkspace(), startedAt: '09:41', runId: 'r-01' }),
+    ],
   });
 });
 
@@ -21,20 +27,33 @@ afterEach(() => {
 });
 
 describe('useRunTicker', () => {
-  it('resolves a step once enough time has passed', () => {
+  it('counts the seconds a live run has been going', () => {
     renderHook(() => useRunTicker());
 
-    vi.advanceTimersByTime(A_STEP);
+    vi.advanceTimersByTime(TEN_SECONDS);
 
-    expect(useWorkspaceStore.getState().workspaces[0]?.live?.stepIndex).toBe(1);
+    expect(elapsed()).toBe(10);
+  });
+
+  it('a held run stops counting, because the device is not being worked', () => {
+    renderHook(() => useRunTicker());
+    const { workspaces } = useWorkspaceStore.getState();
+    const held = workspaces[0]!;
+
+    useWorkspaceStore.setState({
+      workspaces: [{ ...held, live: { ...held.live!, isRunning: false } }],
+    });
+    vi.advanceTimersByTime(TEN_SECONDS);
+
+    expect(elapsed()).toBe(0);
   });
 
   it('stops ticking once the page drops the hook', () => {
     const { unmount } = renderHook(() => useRunTicker());
 
     unmount();
-    vi.advanceTimersByTime(A_STEP * 2);
+    vi.advanceTimersByTime(TEN_SECONDS);
 
-    expect(useWorkspaceStore.getState().workspaces[0]?.live?.stepIndex).toBe(0);
+    expect(elapsed()).toBe(0);
   });
 });

@@ -7,4 +7,5 @@ export interface IRunStep {
   verdict: StepVerdict;
   why: string | null;
   bugId: string | null;
+  shot: string | null;
 }

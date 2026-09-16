@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { flattenPlanSteps } from '@/modules/Run/library';
+import { useRunControls } from '@/modules/Run/hooks';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useWorkspaceViewModel = () => {
@@ -8,27 +8,10 @@ export const useWorkspaceViewModel = () => {
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const tab = useWorkspaceStore((state) => state.tab);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
-  const startRun = useWorkspaceStore((state) => state.startRun);
-  const pauseRun = useWorkspaceStore((state) => state.pauseRun);
-  const stopRun = useWorkspaceStore((state) => state.stopRun);
+  const { steps, live, isLive, isPaused, canRun, onRun, onPause, onStop } =
+    useRunControls();
 
   const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
-  const workspaceId = workspace?.id ?? null;
-  const steps = flattenPlanSteps(workspace?.plan ?? []);
-  const live = workspace?.live ?? null;
-  const isLive = live !== null && !live.isDone;
-
-  const onRun = () => {
-    if (workspaceId !== null) startRun(workspaceId);
-  };
-
-  const onPause = () => {
-    if (workspaceId !== null) pauseRun(workspaceId);
-  };
-
-  const onStop = () => {
-    if (workspaceId !== null) stopRun(workspaceId);
-  };
 
   return {
     workspace,
@@ -37,14 +20,17 @@ export const useWorkspaceViewModel = () => {
     issueKey: workspace?.issue?.key ?? null,
     status: workspace?.status ?? 'idle',
     statusLabel: isLive
-      ? t('WORKSPACE.LIVE_STEP', { current: live.stepIndex, total: steps.length })
+      ? t('WORKSPACE.LIVE_STEP', {
+          current: live?.outcomes.length ?? 0,
+          total: steps.length,
+        })
       : null,
     planCount: workspace?.plan.length ?? 0,
     runCount: workspace?.runs.length ?? 0,
     bugCount: workspace?.bugs.length ?? 0,
-    canRun: steps.length > 0 && !isLive,
+    canRun,
     isLive,
-    isPaused: live?.isRunning === false && !live.isDone,
+    isPaused,
     onSelectTab: selectTab,
     onRun,
     onPause,

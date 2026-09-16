@@ -6,8 +6,14 @@ import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useWorkspaceViewModel } from '@/modules/Workspace/screens/Workspace/hooks/useWorkspaceViewModel';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
+const PROJECT = {
+  id: 'p1',
+  name: 'Shop · staging',
+  targets: [{ id: 't1', kind: 'web' as const, label: 'Web', value: 'https://shop.test' }],
+};
+
 beforeEach(() => {
-  useAppStore.setState({ selectedWorkspaceId: 'w1' });
+  useAppStore.setState({ selectedWorkspaceId: 'w1', projects: [PROJECT] });
   useWorkspaceStore.setState({ workspaces: [makeWorkspace()], tab: 'chat' });
 });
 
@@ -38,7 +44,9 @@ describe('useWorkspaceViewModel', () => {
 
   it('reads the live step in the header while the agent is driving', () => {
     useWorkspaceStore.setState({
-      workspaces: [startRun({ workspace: makeWorkspace(), startedAt: '09:41' })],
+      workspaces: [
+        startRun({ workspace: makeWorkspace(), startedAt: '09:41', runId: 'r-01' }),
+      ],
     });
 
     const { result } = renderHook(() => useWorkspaceViewModel());
@@ -56,6 +64,30 @@ describe('useWorkspaceViewModel', () => {
       });
 
       expect(useWorkspaceStore.getState().workspaces[0]?.status).toBe('running');
+    });
+
+    it('says so instead of pretending when the target is not a URL', () => {
+      useAppStore.setState({
+        projects: [
+          {
+            ...PROJECT,
+            targets: [
+              { id: 't1', kind: 'android', label: 'Android', value: '/tmp/app.apk' },
+            ],
+          },
+        ],
+      });
+
+      const { result } = renderHook(() => useWorkspaceViewModel());
+
+      act(() => {
+        result.current.onRun();
+      });
+
+      const [workspace] = useWorkspaceStore.getState().workspaces;
+
+      expect(workspace?.status).toBe('stopped');
+      expect(workspace?.chat.at(-1)).toMatchObject({ kind: 'error' });
     });
   });
 });

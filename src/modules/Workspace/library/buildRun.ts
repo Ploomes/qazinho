@@ -1,64 +1,61 @@
-import type {
-  IFlatStep,
-  IRun,
-  IRunCase,
-  IRunStep,
-  StepVerdict,
-} from '@/modules/Run/types';
+import type { IRun, IRunCase, IRunStep } from '@/modules/Run/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
-import { countVerdicts, flattenPlanSteps } from '@/modules/Run/library';
+import type { IStepOutcome } from '@/types';
+import { countVerdicts } from '@/modules/Run/library';
 
-type ResolvedStep = IFlatStep & { verdict: StepVerdict };
+const MS_IN_SECOND = 1_000;
 
-export function buildRun(props: { workspace: IWorkspace; runNumber: number }): IRun {
-  const { workspace, runNumber } = props;
-  const verdicts = workspace.live?.verdicts ?? [];
-
-  const resolved: ResolvedStep[] = flattenPlanSteps(workspace.plan).map(
-    (step, index) => ({
-      ...step,
-      verdict: verdicts[index] ?? 'skipped',
-    }),
+function tookSec(outcomes: IStepOutcome[]): number {
+  return Math.round(
+    outcomes.reduce((total, one) => total + one.tookMs, 0) / MS_IN_SECOND,
   );
+}
 
-  const cases: IRunCase[] = workspace.plan.map((testCase) => {
-    const steps: IRunStep[] = resolved
-      .filter((step) => step.caseId === testCase.id)
-      .map((step) => ({
-        number: step.numberInCase,
-        action: step.action,
-        verdict: step.verdict,
-        why:
-          step.verdict === 'skipped'
-            ? 'Skipped because the step before it failed.'
-            : null,
+/** The finished run, read back from what the device actually did. */
+export function buildRun(workspace: IWorkspace): IRun {
+  const live = workspace.live;
+  const outcomes = live?.outcomes ?? [];
+  const id = live?.id ?? 'r-01';
+
+  const cases: IRunCase[] = workspace.plan
+    .map((testCase) => {
+      const mine = outcomes.filter((outcome) => outcome.caseId === testCase.id);
+
+      const steps: IRunStep[] = mine.map((outcome) => ({
+        number: outcome.stepNumber,
+        action: outcome.action,
+        verdict: outcome.verdict,
+        why: outcome.why.length > 0 ? outcome.why : null,
+        shot: outcome.screenshot,
         bugId:
           workspace.bugs.find(
             (bug) =>
-              bug.caseId === step.caseId &&
-              bug.step === `step ${String(step.numberInCase)}`,
+              bug.runId === id &&
+              bug.caseId === outcome.caseId &&
+              bug.step === `step ${String(outcome.stepNumber)}`,
           )?.id ?? null,
       }));
 
-    return {
-      id: testCase.id,
-      title: testCase.title,
-      verdict: steps.some((step) => step.verdict === 'failed') ? 'failed' : 'passed',
-      durationSec: steps.length * 2,
-      steps,
-    };
-  });
-
-  const id = `r-${String(runNumber).padStart(2, '0')}`;
+      return {
+        id: testCase.id,
+        title: testCase.title,
+        verdict: steps.every((step) => step.verdict === 'passed')
+          ? ('passed' as const)
+          : ('failed' as const),
+        durationSec: tookSec(mine),
+        steps,
+      };
+    })
+    .filter((testCase) => testCase.steps.length > 0);
 
   return {
     id,
     title: `Run ${id} · the whole plan`,
     what: 'The whole plan',
     meta: workspace.name,
-    startedAt: workspace.live?.startedAt ?? '',
-    durationSec: workspace.live?.elapsedSec ?? 0,
-    counts: countVerdicts(verdicts),
+    startedAt: live?.startedAt ?? '',
+    durationSec: live?.elapsedSec ?? tookSec(outcomes),
+    counts: countVerdicts(outcomes.map((outcome) => outcome.verdict)),
     cases,
   };
 }

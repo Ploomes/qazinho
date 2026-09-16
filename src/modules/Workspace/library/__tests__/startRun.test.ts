@@ -1,32 +1,41 @@
 import { describe, expect, it } from 'vitest';
 import { startRun } from '@/modules/Workspace/library';
-import { makeWorkspace } from './fixtures';
+import { makeWorkspace, walkRun } from './fixtures';
 
 describe('startRun', () => {
-  it('opens a live run at the first step and turns the workspace running', () => {
-    const workspace = startRun({ workspace: makeWorkspace(), startedAt: '09:41' });
+  it('opens a live run with nothing decided and turns the workspace running', () => {
+    const workspace = startRun({
+      workspace: makeWorkspace(),
+      startedAt: '09:41',
+      runId: 'r-01',
+    });
 
     expect(workspace.status).toBe('running');
     expect(workspace.live).toMatchObject({
-      stepIndex: 0,
+      id: 'r-01',
+      doingIndex: -1,
       isRunning: true,
       isDone: false,
     });
-    expect(workspace.live?.verdicts).toEqual([]);
+    expect(workspace.live?.outcomes).toEqual([]);
+    expect(workspace.live?.shot).toBeNull();
   });
 
   it('does NOT start a workspace whose plan has no cases', () => {
     const empty = makeWorkspace([]);
 
-    const workspace = startRun({ workspace: empty, startedAt: '09:41' });
+    const workspace = startRun({ workspace: empty, startedAt: '09:41', runId: 'r-01' });
 
     expect(workspace.live).toBeNull();
     expect(workspace.status).toBe('idle');
   });
 
-  it('numbers the run after the ones already in the history', () => {
-    const workspace = startRun({ workspace: makeWorkspace(), startedAt: '09:41' });
+  it('the bugs from the run before stop being the new ones', () => {
+    const caught = walkRun({ verdicts: ['failed'], isFinished: true });
 
-    expect(workspace.live?.id).toBe('r-01');
+    const again = startRun({ workspace: caught, startedAt: '10:02', runId: 'r-02' });
+
+    expect(caught.bugs[0]?.isNew).toBe(true);
+    expect(again.bugs[0]?.isNew).toBe(false);
   });
 });

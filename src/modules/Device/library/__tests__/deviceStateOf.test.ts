@@ -3,7 +3,11 @@ import { deviceStateOf } from '@/modules/Device/library';
 import { startRun } from '@/modules/Workspace/library';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 
-const RUNNING = startRun({ workspace: makeWorkspace(), startedAt: '09:41' });
+const RUNNING = startRun({
+  workspace: makeWorkspace(),
+  startedAt: '09:41',
+  runId: 'r-01',
+});
 
 describe('deviceStateOf', () => {
   it('stays off until a run asks for it', () => {

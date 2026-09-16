@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
-import { RUN_ENGINE } from '@/modules/Run/constants';
+import { RUN_CLOCK } from '@/modules/Run/constants';
 import { useWorkspaceStore } from '@/store';
 
-/** Drives every live run in the app: one tick, all workspaces, so parallel runs stay in step. */
+/** Drives every live run's clock: one tick, all workspaces, so parallel runs stay in step. */
 export const useRunTicker = () => {
-  const tick = useWorkspaceStore((state) => state.tick);
+  const tickClock = useWorkspaceStore((state) => state.tickClock);
 
   useEffect(() => {
-    const id = window.setInterval(tick, RUN_ENGINE.tickSeconds * 1000);
+    const id = window.setInterval(tickClock, RUN_CLOCK.tickMs);
 
     return () => window.clearInterval(id);
-  }, [tick]);
+  }, [tickClock]);
 };

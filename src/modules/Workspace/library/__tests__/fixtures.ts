@@ -1,5 +1,10 @@
 import type { ITestCase } from '@/modules/Plan/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
+import type { IStepOutcome, StepVerdict } from '@/types';
+import { flattenPlanSteps } from '@/modules/Run/library';
+import { finishRun } from '@/modules/Workspace/library/finishRun';
+import { landStep } from '@/modules/Workspace/library/landStep';
+import { startRun } from '@/modules/Workspace/library/startRun';
 
 export const CASES: ITestCase[] = [
   {
@@ -50,4 +55,57 @@ export function makeWorkspace(plan: ITestCase[] = CASES): IWorkspace {
     live: null,
     hasBeenAsked: false,
   };
+}
+
+export function makeOutcome(props: {
+  workspace: IWorkspace;
+  index: number;
+  verdict: StepVerdict;
+}): IStepOutcome {
+  const { workspace, index, verdict } = props;
+  const step = flattenPlanSteps(workspace.plan)[index];
+
+  return {
+    workspaceId: workspace.id,
+    caseId: step?.caseId ?? 'TC-01',
+    stepNumber: step?.numberInCase ?? 1,
+    index,
+    action: step?.action ?? '',
+    expected: step?.expected ?? '',
+    verdict,
+    why: verdict === 'passed' ? '' : 'The page did not do it.',
+    got: verdict === 'passed' ? '' : 'Nothing moved.',
+    title: verdict === 'failed' ? 'Nothing happens on submit' : '',
+    severity: 'high',
+    tookMs: 2_000,
+    screenshot:
+      verdict === 'skipped' ? null : `data:image/jpeg;base64,shot-${String(index)}`,
+    shotFile: verdict === 'skipped' ? null : `/tmp/gocrash/step-${String(index + 1)}.jpg`,
+  };
+}
+
+/** A run that already happened: one outcome per verdict, in plan order. */
+export function walkRun(props: {
+  workspace?: IWorkspace;
+  verdicts: StepVerdict[];
+  isFinished?: boolean;
+}): IWorkspace {
+  const started = startRun({
+    workspace: props.workspace ?? makeWorkspace(),
+    startedAt: '09:41',
+    runId: 'r-01',
+  });
+
+  let walked = started;
+
+  for (const [index, verdict] of props.verdicts.entries())
+    walked = landStep({
+      workspace: walked,
+      outcome: makeOutcome({ workspace: walked, index, verdict }),
+      at: '09:41',
+    });
+
+  return props.isFinished === true
+    ? finishRun({ workspace: walked, at: '09:42' })
+    : walked;
 }

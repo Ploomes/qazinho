@@ -18,7 +18,11 @@ describe('workspaceMeta', () => {
   });
 
   it('shows the progress of the run above everything else', () => {
-    const running = startRun({ workspace: makeWorkspace(), startedAt: '09:41' });
+    const running = startRun({
+      workspace: makeWorkspace(),
+      startedAt: '09:41',
+      runId: 'r-01',
+    });
 
     expect(workspaceMeta(running)).toEqual({ key: 'SIDEBAR.META_PROGRESS', count: 6 });
   });

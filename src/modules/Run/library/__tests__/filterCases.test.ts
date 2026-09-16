@@ -9,8 +9,22 @@ const CASES: IRunCase[] = [
     verdict: 'passed',
     durationSec: 6,
     steps: [
-      { number: 1, action: 'Open the URL', verdict: 'passed', why: null, bugId: null },
-      { number: 2, action: 'Search', verdict: 'passed', why: null, bugId: null },
+      {
+        number: 1,
+        action: 'Open the URL',
+        verdict: 'passed',
+        why: null,
+        bugId: null,
+        shot: null,
+      },
+      {
+        number: 2,
+        action: 'Search',
+        verdict: 'passed',
+        why: null,
+        bugId: null,
+        shot: null,
+      },
     ],
   },
   {
@@ -19,8 +33,22 @@ const CASES: IRunCase[] = [
     verdict: 'failed',
     durationSec: 6,
     steps: [
-      { number: 1, action: 'Add to cart', verdict: 'passed', why: null, bugId: null },
-      { number: 2, action: 'Pay', verdict: 'failed', why: null, bugId: 'BUG-01' },
+      {
+        number: 1,
+        action: 'Add to cart',
+        verdict: 'passed',
+        why: null,
+        bugId: null,
+        shot: null,
+      },
+      {
+        number: 2,
+        action: 'Pay',
+        verdict: 'failed',
+        why: null,
+        bugId: 'BUG-01',
+        shot: null,
+      },
     ],
   },
 ];

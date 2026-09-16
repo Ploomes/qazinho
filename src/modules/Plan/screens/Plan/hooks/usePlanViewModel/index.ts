@@ -1,5 +1,6 @@
 import type { ITestCase } from '@/modules/Plan/types';
 import { useTranslation } from 'react-i18next';
+import { useRunControls } from '@/modules/Run/hooks';
 import { flattenPlanSteps } from '@/modules/Run/library';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
@@ -10,9 +11,8 @@ export const usePlanViewModel = () => {
   const openCaseId = useWorkspaceStore((state) => state.openCaseId);
   const toggleCase = useWorkspaceStore((state) => state.toggleCase);
   const reorderPlan = useWorkspaceStore((state) => state.reorderPlan);
-  const startRun = useWorkspaceStore((state) => state.startRun);
-  const stopRun = useWorkspaceStore((state) => state.stopRun);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
+  const { onRun, onStop } = useRunControls();
 
   const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
   const workspaceId = workspace?.id ?? null;
@@ -23,14 +23,6 @@ export const usePlanViewModel = () => {
     if (workspaceId === null || isLocked) return;
 
     reorderPlan({ workspaceId, plan: cases });
-  };
-
-  const onRunAll = () => {
-    if (workspaceId !== null) startRun(workspaceId);
-  };
-
-  const onStop = () => {
-    if (workspaceId !== null) stopRun(workspaceId);
   };
 
   const onDraftInChat = () => {
@@ -48,7 +40,7 @@ export const usePlanViewModel = () => {
     }),
     onToggleCase: toggleCase,
     onReorder,
-    onRunAll,
+    onRunAll: onRun,
     onStop,
     onDraftInChat,
   };

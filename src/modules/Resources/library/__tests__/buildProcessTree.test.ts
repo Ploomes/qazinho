@@ -4,7 +4,11 @@ import { startRun } from '@/modules/Workspace/library';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 
 const PROJECT = { id: 'p1', name: 'Shop · staging', targets: [] };
-const RUNNING = startRun({ workspace: makeWorkspace(), startedAt: '09:41' });
+const RUNNING = startRun({
+  workspace: makeWorkspace(),
+  startedAt: '09:41',
+  runId: 'r-01',
+});
 
 describe('buildProcessTree', () => {
   it('shows nothing while nothing is running', () => {

@@ -41,7 +41,9 @@ describe('usePlanViewModel', () => {
 
     it('does NOT let the plan move while the agent is running it', () => {
       useWorkspaceStore.setState({
-        workspaces: [startRun({ workspace: makeWorkspace(), startedAt: '09:41' })],
+        workspaces: [
+          startRun({ workspace: makeWorkspace(), startedAt: '09:41', runId: 'r-01' }),
+        ],
       });
 
       const { result } = renderHook(() => usePlanViewModel());
