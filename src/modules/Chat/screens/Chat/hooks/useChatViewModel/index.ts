@@ -64,7 +64,12 @@ export const useChatViewModel = () => {
       }
 
       if (!needsPlan) {
-        landAgentText({ workspaceId, text: turn.text, sessionId: turn.sessionId });
+        landAgentText({
+          workspaceId,
+          text: turn.text,
+          who: agentName,
+          sessionId: turn.sessionId,
+        });
 
         return;
       }
@@ -81,6 +86,7 @@ export const useChatViewModel = () => {
         workspaceId,
         summary: drafted.summary,
         plan: drafted.plan,
+        who: agentName,
         sessionId: turn.sessionId,
       });
     });

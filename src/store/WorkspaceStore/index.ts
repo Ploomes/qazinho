@@ -64,7 +64,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
-  landAgentText: ({ workspaceId, text, sessionId }) =>
+  landAgentText: ({ workspaceId, text, who, sessionId }) =>
     set((state) => ({
       isAgentTyping: false,
       liveText: '',
@@ -72,13 +72,13 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         workspaces: state.workspaces,
         workspaceId,
         change: (workspace) => ({
-          ...appendAgentMessage({ workspace, text, at: formatClock(new Date()) }),
+          ...appendAgentMessage({ workspace, text, who, at: formatClock(new Date()) }),
           sessionId: sessionId ?? workspace.sessionId,
         }),
       }),
     })),
 
-  landPlan: ({ workspaceId, summary, plan, sessionId }) =>
+  landPlan: ({ workspaceId, summary, plan, who, sessionId }) =>
     set((state) => ({
       isAgentTyping: false,
       liveText: '',
@@ -89,6 +89,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
           const said = appendAgentMessage({
             workspace,
             text: summary,
+            who,
             at: formatClock(new Date()),
           });
 
@@ -187,13 +188,13 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
-  landNote: ({ workspaceId, text }) =>
+  landNote: ({ workspaceId, text, who }) =>
     set((state) => ({
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
         change: (workspace) =>
-          appendAgentMessage({ workspace, text, at: formatClock(new Date()) }),
+          appendAgentMessage({ workspace, text, who, at: formatClock(new Date()) }),
       }),
     })),
 

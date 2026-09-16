@@ -29,12 +29,14 @@ export interface IWorkspaceStore {
   landAgentText: (props: {
     workspaceId: string;
     text: string;
+    who: string;
     sessionId: string | null;
   }) => void;
   landPlan: (props: {
     workspaceId: string;
     summary: string;
     plan: ITestCase[];
+    who: string;
     sessionId: string | null;
   }) => void;
   landAgentError: (props: { workspaceId: string; text: string }) => void;
@@ -47,7 +49,7 @@ export interface IWorkspaceStore {
   markDoing: (props: { workspaceId: string; index: number }) => void;
   setContext: (props: { workspaceId: string; tokens: number; window: number }) => void;
   markStreaming: (props: { workspaceId: string; url: string }) => void;
-  landNote: (props: { workspaceId: string; text: string }) => void;
+  landNote: (props: { workspaceId: string; text: string; who: string }) => void;
   landStep: (outcome: IStepOutcome) => void;
   landRunDone: (workspaceId: string) => void;
   landRunFailed: (props: { workspaceId: string; text: string }) => void;

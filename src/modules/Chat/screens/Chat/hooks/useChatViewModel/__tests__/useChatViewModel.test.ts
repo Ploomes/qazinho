@@ -147,6 +147,7 @@ describe('useChatViewModel', () => {
       await waitFor(() => {
         expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
           kind: 'agent',
+          who: 'Claude Code',
           text: 'Noted.',
         });
       });
