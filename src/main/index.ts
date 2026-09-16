@@ -1,6 +1,6 @@
 import { join } from 'node:path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
-import { CHANNELS } from '@/ipc';
+import { CHANNELS } from '@/constants';
 import { AgentDetector } from '@/main/classes/agents/AgentDetector';
 import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
 import { ResourceCollector } from '@/main/classes/resources/ResourceCollector';

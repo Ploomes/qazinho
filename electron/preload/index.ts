@@ -6,7 +6,7 @@ import type {
   Platform,
 } from '@/types';
 import { contextBridge, ipcRenderer } from 'electron';
-import { CHANNELS } from '@/ipc';
+import { CHANNELS } from '@/constants';
 
 const api: IGocrashApi = {
   platform: process.platform as Platform,

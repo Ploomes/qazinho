@@ -24,7 +24,7 @@
     "vitest.config.ts",
     "src/main/**/*",
     "src/types/**/*",
-    "src/ipc/**/*",
+    "src/constants/**/*",
     "electron/**/*"
   ]
 }
