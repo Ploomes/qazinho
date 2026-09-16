@@ -4,5 +4,7 @@ export * from './EmptyState';
 export * from './Eyebrow';
 export * from './IconButton';
 export * from './Input';
+export * from './Kbd';
 export * from './Logo';
+export * from './Meter';
 export * from './StatusPill';
