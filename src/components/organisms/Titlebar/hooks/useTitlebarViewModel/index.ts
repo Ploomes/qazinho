@@ -1,12 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { formatResetsAt } from '@/components/organisms/Titlebar/library';
+import { useModelInUse } from '@/modules/Settings/hooks';
 import { Platform } from '@/services';
-import {
-  useAppStore,
-  useMachineStore,
-  useSettingsStore,
-  useWorkspaceStore,
-} from '@/store';
+import { useAppStore, useMachineStore, useWorkspaceStore } from '@/store';
 
 export const useTitlebarViewModel = () => {
   const { t } = useTranslation();
@@ -19,8 +15,7 @@ export const useTitlebarViewModel = () => {
   const toggleModelMenu = useAppStore((state) => state.toggleModelMenu);
   const resources = useMachineStore((state) => state.resources);
   const usage = useMachineStore((state) => state.usage);
-  const agent = useSettingsStore((state) => state.agent);
-  const model = useSettingsStore((state) => state.model);
+  const { agent, modelName } = useModelInUse();
 
   const cpu = Math.round(resources.cpu);
   const ramGb = resources.ramMb / 1024;
@@ -54,7 +49,7 @@ export const useTitlebarViewModel = () => {
       processCount === 1
         ? t('TITLEBAR.PROCESSES_ONE')
         : t('TITLEBAR.PROCESSES_OTHER', { count: processCount }),
-    agentLabel: t('TITLEBAR.AGENT', { agent, model }),
+    agentLabel: t('TITLEBAR.AGENT', { agent, model: modelName }),
     contextShare: contextUsed === null ? null : contextUsed / 100,
     contextLabel:
       contextUsed === null ? '' : t('TITLEBAR.CONTEXT_USED', { percent: contextUsed }),

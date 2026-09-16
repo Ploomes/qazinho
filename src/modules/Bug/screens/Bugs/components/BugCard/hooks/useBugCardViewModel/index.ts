@@ -1,11 +1,11 @@
 import type { IBugCardProps } from '@/modules/Bug/screens/Bugs/components/BugCard/types';
 import type { IBugShot } from '@/modules/Bug/types';
-import { useAppStore, useSettingsStore } from '@/store';
+import { useModelInUse } from '@/modules/Settings/hooks';
+import { useAppStore } from '@/store';
 
 export const useBugCardViewModel = (props: IBugCardProps) => {
   const { bug, isOpen, onToggle } = props;
-  const agent = useSettingsStore((state) => state.agent);
-  const model = useSettingsStore((state) => state.model);
+  const { agent, modelName } = useModelInUse();
   const openMedia = useAppStore((state) => state.openMedia);
 
   return {
@@ -15,7 +15,7 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
       { key: 'case', value: `${bug.caseId} · ${bug.step}` },
       { key: 'target', value: bug.target },
       { key: 'seen', value: bug.seen },
-      { key: 'agent', value: `${agent} · ${model}` },
+      { key: 'agent', value: `${agent} · ${modelName}` },
     ],
     onHeadClick: () => {
       onToggle(bug.id);

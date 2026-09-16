@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { PLAN_SCHEMA, PROMPTS } from '@/modules/Plan/constants';
 import { parseDraftedPlan } from '@/modules/Plan/library';
+import { useModelInUse } from '@/modules/Settings/hooks';
 import { Agent } from '@/services';
 import {
   useAppStore,
@@ -18,6 +20,8 @@ export const useChatViewModel = () => {
   const detected = useMachineStore((state) => state.agents);
   const agentName = useSettingsStore((state) => state.agent);
   const model = useSettingsStore((state) => state.model);
+  const { modelName } = useModelInUse();
+  const { t } = useTranslation();
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const isAgentTyping = useWorkspaceStore((state) => state.isAgentTyping);
   const liveText = useWorkspaceStore((state) => state.liveText);
@@ -90,7 +94,7 @@ export const useChatViewModel = () => {
     draft,
     suggestions: CHAT.suggestions,
     targetLabel: target === null ? 'No target' : `${target.label} · ${target.value}`,
-    agentLabel: `${agentName} · ${model}`,
+    agentLabel: t('TITLEBAR.AGENT', { agent: agentName, model: modelName }),
     onDraftChange: setDraft,
     onSend: () => {
       send(draft);
