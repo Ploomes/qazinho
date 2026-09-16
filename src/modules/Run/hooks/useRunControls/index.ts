@@ -61,7 +61,7 @@ export const useRunControls = () => {
   };
 
   const onStop = () => {
-    if (!workspace) return;
+    if (!workspace || !isLive) return;
 
     stop(workspace.id);
     Run.stop(workspace.id);
