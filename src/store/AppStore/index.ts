@@ -11,6 +11,7 @@ export const useAppStore = create<IAppStore>()(
       modal: null,
       projects: [],
       isLoaded: false,
+      removingProjectId: null,
       selectedWorkspaceId: null,
       selectedProjectId: null,
       isResourcesOpen: false,
@@ -43,6 +44,24 @@ export const useAppStore = create<IAppStore>()(
 
       loadProjects: (projects) =>
         set({ projects, isLoaded: true, selectedProjectId: projects[0]?.id ?? null }),
+
+      askRemoveProject: (removingProjectId) => set({ removingProjectId }),
+
+      removeProject: (projectId) =>
+        set((state) => {
+          const projects = state.projects.filter(({ id }) => id !== projectId);
+
+          return {
+            projects,
+            removingProjectId: null,
+            screen: 'welcome',
+            selectedWorkspaceId: null,
+            selectedProjectId:
+              state.selectedProjectId === projectId
+                ? (projects[0]?.id ?? null)
+                : state.selectedProjectId,
+          };
+        }),
 
       // The two popovers share the top-right corner, so opening one closes the other.
       toggleResources: () =>

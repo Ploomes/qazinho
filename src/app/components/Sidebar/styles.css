@@ -17,11 +17,25 @@
 }
 
 .sidebar__project {
+  display: flex;
+  align-items: center;
   padding: var(--space-5) var(--space-3) var(--space-3);
   color: var(--ink3);
   font: 500 var(--eyebrow-size) / 1.4 var(--font-mono);
   letter-spacing: var(--eyebrow-tracking);
   text-transform: uppercase;
+}
+
+.sidebar__project-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar__project:hover .sidebar__remove {
+  opacity: 1;
 }
 
 .sidebar__row {

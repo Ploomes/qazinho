@@ -41,6 +41,13 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       workspaces: state.workspaces.filter(({ id }) => id !== workspaceId),
     })),
 
+  removeWorkspacesOf: (projectId) =>
+    set((state) => ({
+      workspaces: state.workspaces.filter(
+        (workspace) => workspace.projectId !== projectId,
+      ),
+    })),
+
   selectTab: (tab) => set({ tab }),
 
   setLiveText: (liveText) => set({ liveText }),

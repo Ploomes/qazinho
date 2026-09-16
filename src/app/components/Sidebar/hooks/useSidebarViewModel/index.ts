@@ -15,13 +15,23 @@ export const useSidebarViewModel = () => {
   const openWorkspaceModal = useAppStore((state) => state.openWorkspaceModal);
   const openSettings = useAppStore((state) => state.openSettings);
   const goHome = useAppStore((state) => state.goHome);
+  const removingProjectId = useAppStore((state) => state.removingProjectId);
+  const askRemoveProject = useAppStore((state) => state.askRemoveProject);
+  const removeProject = useAppStore((state) => state.removeProject);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const removingWorkspaceId = useWorkspaceStore((state) => state.removingWorkspaceId);
   const askRemoveWorkspace = useWorkspaceStore((state) => state.askRemoveWorkspace);
   const removeWorkspace = useWorkspaceStore((state) => state.removeWorkspace);
+  const removeWorkspacesOf = useWorkspaceStore((state) => state.removeWorkspacesOf);
 
   const rows: SidebarRow[] = projects.flatMap((project) => [
-    { kind: 'header' as const, id: `header-${project.id}`, name: project.name },
+    {
+      kind: 'header' as const,
+      id: `header-${project.id}`,
+      projectId: project.id,
+      name: project.name,
+      isRemoving: project.id === removingProjectId,
+    },
     ...workspaces
       .filter((workspace) => workspace.projectId === project.id)
       .map((workspace) => ({
@@ -54,6 +64,14 @@ export const useSidebarViewModel = () => {
     if (workspaceId === selectedWorkspaceId) goHome();
   };
 
+  const onRemoveProject = (projectId: string) => {
+    for (const workspace of workspaces.filter((one) => one.projectId === projectId))
+      Archive.removeWorkspace(workspace.id);
+
+    removeWorkspacesOf(projectId);
+    removeProject(projectId);
+  };
+
   return {
     rows,
     waitingName: waiting?.name ?? null,
@@ -63,5 +81,7 @@ export const useSidebarViewModel = () => {
     onSettings: openSettings,
     onAskRemove: askRemoveWorkspace,
     onRemoveWorkspace,
+    onAskRemoveProject: askRemoveProject,
+    onRemoveProject,
   };
 };

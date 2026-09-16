@@ -14,6 +14,8 @@ export const Sidebar: React.FC = () => {
     onSettings,
     onAskRemove,
     onRemoveWorkspace,
+    onAskRemoveProject,
+    onRemoveProject,
   } = useSidebarViewModel();
   const { t } = useTranslation();
 
@@ -40,7 +42,41 @@ export const Sidebar: React.FC = () => {
           if (row.kind === 'header') {
             return (
               <div key={row.id} className="sidebar__project">
-                {row.name}
+                <span className="sidebar__project-name">{row.name}</span>
+
+                {row.isRemoving ? (
+                  <span className="sidebar__confirm">
+                    <button
+                      type="button"
+                      className="sidebar__confirm-yes"
+                      onClick={() => {
+                        onRemoveProject(row.projectId);
+                      }}
+                    >
+                      {t('SIDEBAR.REMOVE_YES')}
+                    </button>
+                    <button
+                      type="button"
+                      className="sidebar__confirm-no"
+                      onClick={() => {
+                        onAskRemoveProject(null);
+                      }}
+                    >
+                      {t('SIDEBAR.REMOVE_NO')}
+                    </button>
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    className="sidebar__remove"
+                    aria-label={t('SIDEBAR.REMOVE', { name: row.name })}
+                    onClick={() => {
+                      onAskRemoveProject(row.projectId);
+                    }}
+                  >
+                    ✕
+                  </button>
+                )}
               </div>
             );
           }

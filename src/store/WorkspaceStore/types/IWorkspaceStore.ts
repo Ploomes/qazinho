@@ -23,6 +23,7 @@ export interface IWorkspaceStore {
   loadWorkspaces: (workspaces: IWorkspace[]) => void;
   askRemoveWorkspace: (workspaceId: string | null) => void;
   removeWorkspace: (workspaceId: string) => void;
+  removeWorkspacesOf: (projectId: string) => void;
   selectTab: (tab: WorkspaceTab) => void;
   sendMessage: (props: { workspaceId: string; text: string }) => void;
   landAgentText: (props: {
