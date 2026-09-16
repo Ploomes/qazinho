@@ -33,12 +33,30 @@ that re-exports. A class folder **never** sits loose in `classes/`: it always go
 The file is named after the thing it exports, and it exports one thing. A file that holds two
 functions, two types or two constants grows without anyone noticing.
 
-## A class file holds the class, and nothing else
+## One file holds one thing
 
-**No loose `function`, no `type` declared in the class file.** Functions go to `library/`, where
-each gets its own file and its own test, or become private methods. Types go to `types/`.
+A class file holds the class. A view holds the JSX. A view model holds the state. **No loose
+`function`, no loose `const`, no `type` beside it.** A function goes to `library/`, where it gets
+its own file and its own test, or becomes a private method. A value goes to `constants/`, named,
+one per file. A type goes to `types/`.
 
-**Enforced** by `no-restricted-syntax` over `**/*.class.ts` in `eslint.config.mjs`.
+```ts
+// ❌ in use<Name>ViewModel/index.ts
+const FILTERS = ['all', 'passed'];
+function asJson(projects) {}
+
+// ✅ constants/RUN_FILTERS.ts and library/asJson.ts, imported
+```
+
+**Enforced** by `no-restricted-syntax` over `**/*.class.ts`, `src/**/hooks/**/index.ts` and
+`src/**/*.tsx`.
+
+**`library/` is the exception, and only for what stays private.** The rule is "exports one
+thing", so a file may keep a helper function, a lookup table or a non-exported type next to its
+single export. The moment a second thing is exported, it is two files.
+
+`src/main/index.ts` is the composition root: it wires the classes and the IPC handlers, and its
+functions stay there because they touch `electron` and `library/` may not.
 
 ## Types
 

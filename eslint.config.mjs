@@ -165,28 +165,35 @@ export default config(
   },
 
   {
-    // A class file holds the class and nothing else: functions belong in `library/`, where
-    // they get a file and a test, and types belong in `types/`.
-    files: ['**/*.class.ts'],
+    // A class holds the class, a view holds the JSX, a view model holds the state. Each file
+    // holds one thing: a function belongs in `library/`, a value in `constants/`, a type in
+    // `types/`. A `library/` file may keep a private helper, because it still exports one thing.
+    files: ['**/*.class.ts', 'src/**/hooks/**/index.ts', 'src/**/*.tsx'],
+    ignores: ['src/index.tsx', 'src/**/__tests__/**'],
     rules: {
       'no-restricted-syntax': [
         'error',
         {
           selector: 'Program > FunctionDeclaration',
           message:
-            'No loose function in a class file. Move it to library/, where it gets its own file and its own test.',
+            'This file holds one thing. Move the function to library/, where it gets its own file and its own test.',
         },
         {
           selector:
-            'Program > ExportNamedDeclaration > FunctionDeclaration, Program > ExportNamedDeclaration > VariableDeclaration > VariableDeclarator[init.type=/FunctionExpression|ArrowFunctionExpression/]',
+            'Program > ExportNamedDeclaration > FunctionDeclaration, Program > ExportNamedDeclaration > VariableDeclaration > VariableDeclarator[init.type=/FunctionExpression|ArrowFunctionExpression/]:not([id.name=/^use[A-Z]/]):not([id.name=/^[A-Z]/])',
           message:
-            'No loose function in a class file. Move it to library/, where it gets its own file and its own test.',
+            'This file holds one thing. Move the function to library/, where it gets its own file and its own test.',
+        },
+        {
+          selector: 'Program > VariableDeclaration',
+          message:
+            'This file holds one thing. Move the value to constants/, one per file, named.',
         },
         {
           selector:
             'Program > TSTypeAliasDeclaration, Program > TSInterfaceDeclaration, Program > ExportNamedDeclaration > TSTypeAliasDeclaration, Program > ExportNamedDeclaration > TSInterfaceDeclaration',
           message:
-            'No type declared in a class file. Move it to types/, one type per file.',
+            'This file holds one thing. Move the type to types/, one type per file.',
         },
       ],
     },
