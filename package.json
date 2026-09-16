@@ -75,5 +75,8 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs,json,md,yml,yaml,css,html}": "prettier --write"
+  },
+  "dependencies": {
+    "playwright-core": "^1.63.0"
   }
 }
