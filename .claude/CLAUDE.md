@@ -4,11 +4,13 @@ A local-first desktop app where AI agents test web and mobile apps from a test p
 the plan and orchestrates; the agent opens the app, walks the flows and reports what broke. The
 name is the pitch: go crash your app before your users do.
 
-| Target  | Input                                   | Driven by (planned)                                    |
+| Target  | Input                                   | Driven by                                              |
 | ------- | --------------------------------------- | ------------------------------------------------------ |
-| web     | the environment's URL                   | Playwright                                             |
+| web     | the environment's URL                   | **Playwright over the QA's own Chrome — this works**   |
 | Android | an `.apk`                               | the Android Emulator, headless, streamed in the window |
 | iOS     | a simulator `.app` build, not an `.ipa` | the iOS Simulator, macOS only                          |
+
+A run on a target gocrash cannot drive yet says so in the chat. It never pretends.
 
 Built for technical QA teams, and for QA moving from manual to technical. A project is an
 environment with one or more targets. Workspaces hold a test plan, and several run in parallel.
@@ -22,15 +24,24 @@ environment with one or more targets. Workspaces hold a test plan, and several r
    model provider or holds a provider key of its own.
 3. **Open core.** The app is MIT and free, with no artificial limit for one user. Pro adds team
    hosting, and nothing local is shaped around it.
-4. **The renderer is a web page and nothing more.** No Node, no Electron, no filesystem. It asks
-   the main process through `window.gocrash`, whose contract lives in `src/shared/types/`.
+4. **The page is a web page and nothing more.** No Node, no Electron, no filesystem. It asks the
+   main process through `window.gocrash`, whose contract lives in `src/types/`.
+5. **Nothing in the interface is a mock.** Every number, screenshot and verdict on screen came
+   back from the machine. When something is not built yet, it says so where a QA can read it.
 
 ## State
 
-Scaffold only: an Electron window with a sandboxed preload, a navigation guard and the tooling.
-The layout is being designed separately and has not landed.
+**The web target works end to end.** A QA makes a project and a workspace, talks to their own
+agent, gets a plan, runs it, and watches real Chrome be driven step by step: the agent reads the
+page, acts, the run screenshots it, and the agent judges what it sees against what the QA
+expected. A failed step becomes a bug with its evidence. Everything is kept on disk, one folder
+per workspace, with the plan beside it in YAML.
 
-**Planned for 0.1:** projects, workspaces, test plans and runs on web, Android and iOS.
+`npm run test:smoke` proves it: it drives the real browser with the real agent.
+
+**Still to build for 0.1:** the Android target (the emulator, `adb`, installing an `.apk`) and
+the iOS one. The agent cannot ask the QA a question mid-run yet, and no issue tracker is
+connected.
 
 ## Mandatory rules
 

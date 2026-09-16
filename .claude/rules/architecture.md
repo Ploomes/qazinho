@@ -60,8 +60,20 @@ Agents, Playwright and device drivers will run in child processes (`utilityProce
 emulator never freezes a window. **Video frames never cross IPC**: an emulator stream reaches the
 page over a local WebSocket or WebRTC.
 
+## What the main process owns
+
+| Class                                 | What it does                                                           |
+| ------------------------------------- | ---------------------------------------------------------------------- |
+| `AgentDetector`                       | finds the QA's agent CLIs, the way Orca does: fs probes, no subprocess |
+| `AgentRunner`                         | spawns one, streams its JSON, reads a `--json-schema` answer back      |
+| `WebDriver`                           | drives Chrome over playwright-core, one profile per workspace          |
+| `RunCoordinator`                      | walks a plan: describe, act, shoot, judge, one step at a time          |
+| `ResourceCollector` / `ProcessOwners` | one `ps` sweep, charged to whoever started it                          |
+| `Archive`                             | the QA's projects, workspaces and plans, as files on disk              |
+
 ## Dependencies
 
 - `dependencies` ship inside the app and `devDependencies` do not. Everything the page uses,
   React included, is bundled by Vite, so it is a devDependency.
-- A runtime dependency in `src/main` ships to every user. Today there are none. Think twice.
+- A runtime dependency in `src/main` ships to every user: today `playwright-core` drives the web
+  target and `yaml` writes the plans. Think twice before a third.
