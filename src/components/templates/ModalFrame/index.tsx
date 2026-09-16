@@ -2,7 +2,7 @@ import type { IModalFrameProps } from './types';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/atoms';
-import { MOTION } from '@/constants';
+import { BACKDROP, MOTION } from '@/constants';
 import { useModalFrameViewModel } from './hooks';
 import './styles.css';
 
@@ -13,19 +13,18 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
   return (
     <motion.div
       className="modal-frame"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: MOTION.durationFast }}
+      initial={{ opacity: 0, backdropFilter: BACKDROP.clear }}
+      animate={{ opacity: 1, backdropFilter: BACKDROP.blur }}
+      exit={{ opacity: 0, backdropFilter: BACKDROP.clear }}
+      transition={{ duration: MOTION.duration, ease: MOTION.ease }}
       onClick={props.onCancel}
     >
       <motion.div
         className="modal-frame__panel"
         style={{ width: props.width }}
-        initial={{ opacity: 0, scale: 0.97, y: 6 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.97, y: 6 }}
-        transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+        initial={{ opacity: 0, scale: 0.94, y: 18 }}
+        animate={{ opacity: 1, scale: 1, y: 0, transition: BACKDROP.panelSpring }}
+        exit={{ opacity: 0, scale: 0.97, y: 8, transition: BACKDROP.panelExit }}
         onClick={(event) => {
           event.stopPropagation();
         }}

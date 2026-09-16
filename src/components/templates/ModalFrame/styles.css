@@ -5,7 +5,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.42);
+  -webkit-app-region: no-drag;
 }
 
 .modal-frame__panel {
