@@ -7,9 +7,10 @@ flows and tells you what broke.
 
 - **Web, Android and iOS.** A URL, an `.apk`, or a simulator `.app` build.
 - **Your agent.** Claude Code, Codex, Gemini CLI or any other agent that speaks ACP.
-- **Your machine.** Emulators, simulators and browsers run locally. Nothing goes to a gocrash
-  server, because there is none.
-- **Free and open source.** MIT, with no paid tier.
+- **Your machine.** Emulators, simulators, browsers and runs stay local. Nothing goes to a gocrash
+  server.
+- **Free and open source.** MIT, with no limits for one user. A Pro plan will host plans and runs
+  for teams.
 
 > **Status:** early scaffold. Nothing above works yet.
 
