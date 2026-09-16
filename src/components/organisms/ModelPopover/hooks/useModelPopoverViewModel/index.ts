@@ -1,8 +1,9 @@
+import type { IModelPopoverProps } from '@/components/organisms/ModelPopover/types';
 import { useTranslation } from 'react-i18next';
 import { MODELS } from '@/modules/Settings/constants';
 import { useAppStore, useMachineStore, useSettingsStore } from '@/store';
 
-export const useModelPopoverViewModel = () => {
+export const useModelPopoverViewModel = (props: IModelPopoverProps) => {
   const { t } = useTranslation();
   const toggleModelMenu = useAppStore((state) => state.toggleModelMenu);
   const detected = useMachineStore((state) => state.agents);
@@ -30,6 +31,8 @@ export const useModelPopoverViewModel = () => {
     modelHeading: models.length === 0 ? t('MODEL.NO_MODELS') : t('MODEL.MODEL'),
     onSelectAgent: selectAgent,
     onSelectModel: selectModel,
-    onClose: toggleModelMenu,
+    onClose: () => {
+      toggleModelMenu(props.at);
+    },
   };
 };

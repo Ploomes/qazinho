@@ -10,7 +10,7 @@ beforeEach(() => {
 
 describe('useModelPopoverViewModel', () => {
   it('lists the models of the agent on this machine', () => {
-    const { result } = renderHook(() => useModelPopoverViewModel());
+    const { result } = renderHook(() => useModelPopoverViewModel({ at: 'titlebar' }));
 
     expect(result.current.modelHeading).toBe('model');
     expect(result.current.models).toHaveLength(4);
@@ -19,13 +19,13 @@ describe('useModelPopoverViewModel', () => {
   it('says there is nothing to pick for an agent that exposes no model', () => {
     useSettingsStore.setState({ agent: 'Gemini CLI' });
 
-    const { result } = renderHook(() => useModelPopoverViewModel());
+    const { result } = renderHook(() => useModelPopoverViewModel({ at: 'titlebar' }));
 
     expect(result.current.modelHeading).toBe('no models to pick');
   });
 
   it('moves the model with the agent', () => {
-    const { result } = renderHook(() => useModelPopoverViewModel());
+    const { result } = renderHook(() => useModelPopoverViewModel({ at: 'titlebar' }));
 
     act(() => {
       result.current.onSelectAgent('Codex');

@@ -1,5 +1,6 @@
 import type { IMedia } from './IMedia';
 import type { Modal } from './Modal';
+import type { ModelMenuAt } from './ModelMenuAt';
 import type { Screen } from './Screen';
 import type { Theme } from './Theme';
 import type { IProject } from '@/modules/Project/types';
@@ -15,7 +16,7 @@ export interface IAppStore {
   selectedWorkspaceId: string | null;
   selectedProjectId: string | null;
   isResourcesOpen: boolean;
-  isModelMenuOpen: boolean;
+  modelMenuAt: ModelMenuAt | null;
   media: IMedia | null;
   toggleTheme: () => void;
   openSettings: () => void;
@@ -29,7 +30,7 @@ export interface IAppStore {
   askRemoveProject: (projectId: string | null) => void;
   removeProject: (projectId: string) => void;
   toggleResources: () => void;
-  toggleModelMenu: () => void;
+  toggleModelMenu: (at: ModelMenuAt) => void;
   openMedia: (media: IMedia) => void;
   closeMedia: () => void;
 }

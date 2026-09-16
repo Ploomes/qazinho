@@ -71,7 +71,7 @@ export const Titlebar: React.FC = () => {
 
       <AnimatePresence>
         {isResourcesOpen && <ResourcePopover key="resources" />}
-        {isModelMenuOpen && <ModelPopover key="model" />}
+        {isModelMenuOpen && <ModelPopover key="model" at="titlebar" />}
       </AnimatePresence>
     </header>
   );

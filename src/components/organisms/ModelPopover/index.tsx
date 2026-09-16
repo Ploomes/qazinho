@@ -1,3 +1,4 @@
+import type { IModelPopoverProps } from './types';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Eyebrow } from '@/components/atoms';
@@ -5,19 +6,19 @@ import { MOTION } from '@/constants';
 import { useModelPopoverViewModel } from './hooks';
 import './styles.css';
 
-export const ModelPopover: React.FC = () => {
+export const ModelPopover: React.FC<IModelPopoverProps> = (props) => {
   const { agents, agent, models, model, modelHeading, onSelectAgent, onSelectModel } =
-    useModelPopoverViewModel();
+    useModelPopoverViewModel(props);
   const { t } = useTranslation();
 
   return (
     <motion.div
-      className="model-popover"
+      className={`model-popover model-popover--${props.at}`}
       initial={{ opacity: 0, scale: 0.97, y: -6 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.97, y: -6 }}
       transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
-      style={{ transformOrigin: 'top right' }}
+      style={{ transformOrigin: props.at === 'titlebar' ? 'top right' : 'bottom left' }}
     >
       <div className="model-popover__section">
         <Eyebrow>{t('MODEL.AGENT_ON_MACHINE')}</Eyebrow>

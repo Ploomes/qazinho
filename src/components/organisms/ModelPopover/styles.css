@@ -2,8 +2,6 @@
   /* Electron: the titlebar is a drag region, and it swallows every click a child gets. */
   -webkit-app-region: no-drag;
   position: absolute;
-  top: 54px;
-  right: 14px;
   z-index: 32;
   width: 330px;
   overflow: hidden;
@@ -55,4 +53,14 @@
   padding: var(--space-4) var(--space-5);
   color: var(--ink3);
   font: var(--font-ui-xs);
+}
+
+.model-popover--titlebar {
+  top: 54px;
+  right: 14px;
+}
+
+.model-popover--composer {
+  bottom: calc(100% + var(--space-3));
+  left: 0;
 }

@@ -15,7 +15,7 @@ export const useAppStore = create<IAppStore>()(
       selectedWorkspaceId: null,
       selectedProjectId: null,
       isResourcesOpen: false,
-      isModelMenuOpen: false,
+      modelMenuAt: null,
       media: null,
 
       toggleTheme: () =>
@@ -67,12 +67,12 @@ export const useAppStore = create<IAppStore>()(
       toggleResources: () =>
         set((state) => ({
           isResourcesOpen: !state.isResourcesOpen,
-          isModelMenuOpen: false,
+          modelMenuAt: null,
         })),
 
-      toggleModelMenu: () =>
+      toggleModelMenu: (at) =>
         set((state) => ({
-          isModelMenuOpen: !state.isModelMenuOpen,
+          modelMenuAt: state.modelMenuAt === at ? null : at,
           isResourcesOpen: false,
         })),
 

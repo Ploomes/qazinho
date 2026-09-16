@@ -8,7 +8,7 @@ export const useTitlebarViewModel = () => {
   const projects = useAppStore((state) => state.projects);
   const selectedProjectId = useAppStore((state) => state.selectedProjectId);
   const isResourcesOpen = useAppStore((state) => state.isResourcesOpen);
-  const isModelMenuOpen = useAppStore((state) => state.isModelMenuOpen);
+  const modelMenuAt = useAppStore((state) => state.modelMenuAt);
   const toggleResources = useAppStore((state) => state.toggleResources);
   const toggleModelMenu = useAppStore((state) => state.toggleModelMenu);
   const resources = useMachineStore((state) => state.resources);
@@ -32,7 +32,7 @@ export const useTitlebarViewModel = () => {
     hasProjects: projects.length > 0,
     isMac: Platform.isMac(),
     isResourcesOpen,
-    isModelMenuOpen,
+    isModelMenuOpen: modelMenuAt === 'titlebar',
     cpuLabel: t('TITLEBAR.CPU', { percent: cpu }),
     cpuShare: cpu / 100,
     ramLabel: t('TITLEBAR.RAM', {
@@ -62,6 +62,8 @@ export const useTitlebarViewModel = () => {
             week: 100 - Math.round(usage.sevenDayUsed * 100),
           }),
     onToggleResources: toggleResources,
-    onToggleModelMenu: toggleModelMenu,
+    onToggleModelMenu: () => {
+      toggleModelMenu('titlebar');
+    },
   };
 };

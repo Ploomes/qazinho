@@ -13,7 +13,7 @@ beforeEach(() => {
     projects: [],
     selectedProjectId: null,
     isResourcesOpen: false,
-    isModelMenuOpen: false,
+    modelMenuAt: null,
   });
   useMachineStore.setState({
     resources: { cpu: 0, ramMb: 0, ramCeilingGb: 32, processes: [] },
@@ -73,7 +73,7 @@ describe('useTitlebarViewModel', () => {
 
   describe('onToggleResources', () => {
     it('closes the model menu, because they share the same corner', () => {
-      useAppStore.setState({ isModelMenuOpen: true });
+      useAppStore.setState({ modelMenuAt: 'titlebar' });
 
       const { result } = renderHook(() => useTitlebarViewModel());
 
@@ -82,7 +82,7 @@ describe('useTitlebarViewModel', () => {
       });
 
       expect(useAppStore.getState().isResourcesOpen).toBe(true);
-      expect(useAppStore.getState().isModelMenuOpen).toBe(false);
+      expect(useAppStore.getState().modelMenuAt).toBeNull();
     });
   });
 });
