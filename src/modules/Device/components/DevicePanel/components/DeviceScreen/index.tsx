@@ -5,13 +5,20 @@ import { MOTION } from '@/constants';
 import './styles.css';
 
 export const DeviceScreen: React.FC<IDeviceScreenProps> = (props) => {
-  const { shot, isLive, elapsedLabel } = props;
+  const { shot, stream, isLive, elapsedLabel } = props;
   const { t } = useTranslation();
 
   return (
     <div className="device-screen">
       <AnimatePresence initial={false} mode="popLayout">
-        {shot === null ? (
+        {stream !== null ? (
+          <img
+            key="stream"
+            className="device-screen__shot"
+            src={stream}
+            alt={t('DEVICE.SHOT_ALT')}
+          />
+        ) : shot === null ? (
           <p className="device-screen__waiting">{t('DEVICE.NO_SHOT')}</p>
         ) : (
           <motion.img

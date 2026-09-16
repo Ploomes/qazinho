@@ -39,6 +39,7 @@ export const useDevicePanelViewModel = () => {
     stateText: t(DEVICE_STATE_KEY[state] as never),
     deviceLabel: isPhone ? 'Emulator · Pixel 7 · API 34' : 'Chrome 1280 × 800',
     shot: live?.shot ?? null,
+    stream: live?.isDone === false ? live.streamUrl : null,
     urlText: target?.value ?? '',
     elapsedLabel: t('DEVICE.LIVE', { elapsed: formatElapsed(live?.elapsedSec ?? 0) }),
     isLive: state === 'driving',

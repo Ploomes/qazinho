@@ -15,6 +15,7 @@ export const DevicePanel: React.FC = () => {
     stateText,
     deviceLabel,
     shot,
+    stream,
     urlText,
     elapsedLabel,
     isLive,
@@ -75,7 +76,12 @@ export const DevicePanel: React.FC = () => {
 
           {!isOff && isPhone && (
             <div className="device-panel__phone">
-              <DeviceScreen shot={shot} isLive={isLive} elapsedLabel={elapsedLabel} />
+              <DeviceScreen
+                shot={shot}
+                stream={stream}
+                isLive={isLive}
+                elapsedLabel={elapsedLabel}
+              />
             </div>
           )}
 
@@ -87,7 +93,12 @@ export const DevicePanel: React.FC = () => {
                 <span className="device-panel__dot" />
                 <span className="device-panel__url">{urlText}</span>
               </div>
-              <DeviceScreen shot={shot} isLive={isLive} elapsedLabel={elapsedLabel} />
+              <DeviceScreen
+                shot={shot}
+                stream={stream}
+                isLive={isLive}
+                elapsedLabel={elapsedLabel}
+              />
             </div>
           )}
         </div>

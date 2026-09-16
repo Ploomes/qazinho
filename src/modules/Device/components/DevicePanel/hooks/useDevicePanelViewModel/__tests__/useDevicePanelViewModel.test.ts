@@ -54,6 +54,25 @@ describe('useDevicePanelViewModel', () => {
     expect(result.current.doingLabel).toBe('1 of 6');
   });
 
+  it('shows the live stream while the run goes, and drops it once the run is over', () => {
+    const walked = walkRun({ verdicts: ['passed'] });
+    const url = 'http://127.0.0.1:5000/token/w1';
+
+    useWorkspaceStore.setState({
+      workspaces: [{ ...walked, live: { ...walked.live!, streamUrl: url } }],
+    });
+
+    expect(renderHook(() => useDevicePanelViewModel()).result.current.stream).toBe(url);
+
+    useWorkspaceStore.setState({
+      workspaces: [
+        { ...walked, live: { ...walked.live!, streamUrl: url, isDone: true } },
+      ],
+    });
+
+    expect(renderHook(() => useDevicePanelViewModel()).result.current.stream).toBeNull();
+  });
+
   it('shows the last screenshot the device sent back', () => {
     useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
 
