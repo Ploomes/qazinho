@@ -58,7 +58,9 @@
 }
 
 .sidebar__project-settings-icon {
-  display: inline-block;
+  display: block;
+  transform-box: fill-box;
+  transform-origin: center;
   transition: transform var(--dur) var(--ease);
 }
 

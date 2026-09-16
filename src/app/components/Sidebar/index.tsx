@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { MOTION } from '@/constants';
+import { GEAR_PATH } from './constants';
 import { useSidebarViewModel } from './hooks';
 import './styles.css';
 
@@ -50,9 +51,21 @@ export const Sidebar: React.FC = () => {
                     onProjectSettings(row.projectId);
                   }}
                 >
-                  <span className="sidebar__project-settings-icon" aria-hidden="true">
-                    ⚙
-                  </span>
+                  <svg
+                    className="sidebar__project-settings-icon"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d={GEAR_PATH} />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
                 </button>
               </div>
             );
