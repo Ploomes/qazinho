@@ -1,0 +1,30 @@
+.editable-text {
+  width: 100%;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  /* Chromium 123: the textarea grows with its own content, so no measuring in JS. */
+  field-sizing: content;
+  resize: none;
+}
+
+.editable-text:hover:not(:read-only) {
+  border-color: var(--line2);
+}
+
+.editable-text:focus {
+  border-color: var(--amber);
+  outline: none;
+}
+
+.editable-text::placeholder {
+  color: var(--ink3);
+}
+
+.editable-text--title {
+  color: var(--ink);
+  font: var(--font-ui-md);
+}
