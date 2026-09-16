@@ -16,7 +16,8 @@
     "verbatimModuleSyntax": true,
     "resolveJsonModule": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@brand/*": ["./assets/logo/*"]
     }
   },
   "include": ["src/**/*", "vitest.setup.ts"],

@@ -2,7 +2,10 @@ import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'electron-vite';
 
-const alias = { '@': fileURLToPath(new URL('./src', import.meta.url)) };
+const alias = {
+  '@': fileURLToPath(new URL('./src', import.meta.url)),
+  '@brand': fileURLToPath(new URL('./assets/logo', import.meta.url)),
+};
 
 export default defineConfig({
   main: {
@@ -17,6 +20,8 @@ export default defineConfig({
     root: 'src',
     resolve: { alias },
     plugins: [react()],
+    // The brand assets are the design handoff, and live outside the page's root.
+    server: { fs: { allow: [fileURLToPath(new URL('.', import.meta.url))] } },
     build: {
       rollupOptions: {
         input: fileURLToPath(new URL('./src/index.html', import.meta.url)),
