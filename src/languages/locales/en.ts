@@ -162,7 +162,7 @@ export const en = {
     MODEL: 'model',
     NO_MODELS: 'no models to pick',
     DEFAULT: 'default',
-    AGENT_DEFAULT: 'agent default',
+    AGENT_DEFAULT: 'Agent default',
     AGENT_DEFAULT_NOTE: 'from your agent config',
     AGENT_DEFAULT_UNKNOWN: 'whatever your agent is set to',
     FOUND: 'found',
