@@ -1,0 +1,80 @@
+.chat {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  gap: var(--space-6);
+}
+
+.chat__messages {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.chat__row {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.chat__gutter {
+  flex: none;
+  width: 58px;
+  text-align: right;
+}
+
+.chat__who {
+  display: block;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
+
+.chat__who--agent {
+  color: var(--amber-ink);
+}
+
+.chat__at {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+}
+
+.chat__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat__empty {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.chat__empty-title {
+  font: var(--font-display-sm);
+  color: var(--ink);
+}
+
+.chat__empty-body {
+  max-width: 380px;
+  margin: 0;
+  color: var(--ink2);
+  font: var(--font-ui-lg);
+  text-align: center;
+  text-wrap: pretty;
+}
+
+.chat__suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: center;
+  margin-top: var(--space-3);
+}
