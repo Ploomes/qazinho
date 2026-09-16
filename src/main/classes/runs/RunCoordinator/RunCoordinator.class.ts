@@ -1,7 +1,14 @@
 import type { IRunCoordinator, IStepResult, IWalkRun, IWalkStep } from './types';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { IDeviceDriver } from '@/main/classes/devices/types';
-import type { IRunEvent, IStartRun, IStepOutcome } from '@/types';
+import type {
+  IAndroidSetup,
+  IIosSetup,
+  IRunEvent,
+  IStartRun,
+  IStepOutcome,
+  TargetKind,
+} from '@/types';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { RUN_PROMPTS, RUN_SCHEMAS, RUN_WALK } from './constants';
@@ -12,6 +19,7 @@ export class RunCoordinator {
   private readonly runner: AgentRunner;
   private readonly findCommand: (agentId: string) => Promise<string | null>;
   private readonly findAndroid: IRunCoordinator['findAndroid'];
+  private readonly findIos: IRunCoordinator['findIos'];
   private readonly dataRoot: string;
   private readonly onEvent: (event: IRunEvent) => void;
   private readonly stopping = new Set<string>();
@@ -22,6 +30,7 @@ export class RunCoordinator {
     this.runner = props.runner;
     this.findCommand = props.findCommand;
     this.findAndroid = props.findAndroid;
+    this.findIos = props.findIos;
     this.dataRoot = props.dataRoot;
     this.onEvent = props.onEvent;
   }
@@ -42,13 +51,11 @@ export class RunCoordinator {
     }
 
     const android = run.target.kind === 'android' ? await this.findAndroid() : null;
+    const ios = run.target.kind === 'ios' ? await this.findIos() : null;
+    const missing = this.whatIsMissing({ kind: run.target.kind, android, ios });
 
-    if (run.target.kind === 'android' && android === null) {
-      this.onEvent({
-        kind: 'failed',
-        workspaceId: run.workspaceId,
-        text: 'gocrash found no Android emulator to open. Make one in Android Studio, then run the plan again.',
-      });
+    if (missing !== null) {
+      this.onEvent({ kind: 'failed', workspaceId: run.workspaceId, text: missing });
 
       return;
     }
@@ -63,6 +70,8 @@ export class RunCoordinator {
         profileDir: join(this.dataRoot, RUN_WALK.profiles, run.workspaceId),
         sdkRoot: android?.sdkRoot ?? '',
         avd: android?.avd ?? '',
+        idb: ios?.idb ?? '',
+        udid: ios?.udid ?? '',
       });
     } finally {
       this.walking.delete(run.workspaceId);
@@ -79,6 +88,20 @@ export class RunCoordinator {
   public setPaused(props: { workspaceId: string; isPaused: boolean }): void {
     if (props.isPaused) this.paused.add(props.workspaceId);
     else this.paused.delete(props.workspaceId);
+  }
+
+  private whatIsMissing(props: {
+    kind: TargetKind;
+    android: IAndroidSetup | null;
+    ios: IIosSetup | null;
+  }): string | null {
+    if (props.kind === 'android' && props.android === null)
+      return 'gocrash found no Android emulator to open. Make one in Android Studio, then run the plan again.';
+
+    if (props.kind === 'ios' && props.ios === null)
+      return 'gocrash needs idb to tap an iOS simulator, and a simulator to open. Install idb with `brew install idb-companion`, then run the plan again.';
+
+    return null;
   }
 
   private async walk(run: IWalkRun): Promise<void> {

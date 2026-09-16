@@ -6,4 +6,6 @@ export interface IWalkRun extends IStartRun {
   profileDir: string;
   sdkRoot: string;
   avd: string;
+  idb: string;
+  udid: string;
 }

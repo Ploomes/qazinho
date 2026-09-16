@@ -11,6 +11,7 @@ import { AgentDetector } from '@/main/classes/agents/AgentDetector';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
 import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
+import { listSimulators } from '@/main/classes/devices/IosDriver/library';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { ResourceCollector } from '@/main/classes/resources/ResourceCollector';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
@@ -51,10 +52,21 @@ async function findAndroid() {
   return avd === undefined ? null : { sdkRoot, avd };
 }
 
+async function findIos() {
+  const idb = deviceTools.detect().idb.path;
+
+  if (idb === null) return null;
+
+  const udid = (await listSimulators())[0];
+
+  return udid === undefined ? null : { idb, udid };
+}
+
 const runs = new RunCoordinator({
   runner: agentRunner,
   findCommand,
   findAndroid,
+  findIos,
   dataRoot: PATHS.data,
   onEvent: (event) => broadcast({ channel: CHANNELS.runEvent, event }),
 });
