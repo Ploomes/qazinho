@@ -18,6 +18,9 @@ export const useAppStore = create<IAppStore>((set) => ({
 
   openModal: (modal) => set({ modal }),
 
+  openWorkspaceModal: (projectId) =>
+    set({ modal: 'workspace', selectedProjectId: projectId }),
+
   closeModal: () => set({ modal: null }),
 
   selectWorkspace: (workspaceId) =>

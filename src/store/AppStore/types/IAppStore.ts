@@ -1,7 +1,7 @@
-import type { IProject } from '@/modules/Project/types';
 import type { Modal } from './Modal';
 import type { Screen } from './Screen';
 import type { Theme } from './Theme';
+import type { IProject } from '@/modules/Project/types';
 
 /** The shell: which screen is up, which project is selected, and what is floating over it. */
 export interface IAppStore {
@@ -16,6 +16,7 @@ export interface IAppStore {
   toggleTheme: () => void;
   openSettings: () => void;
   openModal: (modal: Modal) => void;
+  openWorkspaceModal: (projectId: string) => void;
   closeModal: () => void;
   selectWorkspace: (workspaceId: string) => void;
   addProject: (project: IProject) => void;
