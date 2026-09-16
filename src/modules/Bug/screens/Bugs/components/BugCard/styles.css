@@ -1,0 +1,96 @@
+.bug-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: var(--raise);
+}
+
+.bug-card__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  padding: 15px 17px;
+  border: none;
+  background: transparent;
+  text-align: left;
+}
+
+.bug-card__severity {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  background: var(--fail);
+}
+
+.bug-card__severity--new {
+  animation: gc-blink 2.4s ease-in-out infinite;
+}
+
+.bug-card__id {
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
+
+.bug-card__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font: var(--font-ui-md);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bug-card__new {
+  padding: 3px var(--space-3);
+  border-radius: 5px;
+  background: var(--fail-soft);
+  color: var(--fail);
+  font: var(--font-mono-xs);
+  animation: gc-breathe 2.4s ease-in-out infinite;
+}
+
+.bug-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: 0 17px 18px;
+}
+
+.bug-card__text {
+  margin: 0;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  text-wrap: pretty;
+}
+
+.bug-card__clip {
+  position: relative;
+  height: 228px;
+  overflow: hidden;
+  border: 1px solid var(--line2);
+  border-radius: var(--radius-md);
+}
+
+.bug-card__shots {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.bug-card__repro {
+  margin: 0;
+  padding-left: var(--space-6);
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}
+
+.bug-card__repro-step--bad {
+  color: var(--fail);
+}
+
+.bug-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}

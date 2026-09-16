@@ -32,7 +32,12 @@ export function buildRun(props: { workspace: IWorkspace; runNumber: number }): I
           step.verdict === 'skipped'
             ? 'Skipped because the step before it failed.'
             : null,
-        bugId: null,
+        bugId:
+          workspace.bugs.find(
+            (bug) =>
+              bug.caseId === step.caseId &&
+              bug.step === `step ${String(step.numberInCase)}`,
+          )?.id ?? null,
       }));
 
     return {

@@ -12,6 +12,7 @@ export interface IWorkspace {
   projectId: string;
   name: string;
   targetId: string;
+  planKind: 'web' | 'mobile';
   status: WorkspaceStatus;
   issue: IIssue | null;
   chat: ChatMessage[];

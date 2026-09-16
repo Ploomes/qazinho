@@ -1,4 +1,5 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
+import { makeBug } from '@/modules/Bug/library';
 import { RUN_ENGINE } from '@/modules/Run/constants';
 import { flattenPlanSteps, verdictForStep } from '@/modules/Run/library';
 import { buildRun } from './buildRun';
@@ -19,18 +20,24 @@ export function advanceRun(workspace: IWorkspace): IWorkspace {
 
   const steps = flattenPlanSteps(workspace.plan);
   const position = live.stepIndex + 1;
+  const verdict = verdictForStep(position);
   const resolved = {
     ...ticked,
     stepIndex: position,
-    verdicts: [...live.verdicts, verdictForStep(position)],
+    verdicts: [...live.verdicts, verdict],
   };
 
-  if (position < steps.length) return { ...workspace, live: resolved };
+  const step = steps[position - 1];
+  const caught =
+    verdict === 'failed' && step
+      ? [...workspace.bugs, makeBug({ workspace, step })]
+      : workspace.bugs;
 
-  const finished = {
-    ...workspace,
-    live: { ...resolved, isRunning: false, isDone: true },
-  };
+  const walked = { ...workspace, bugs: caught, live: resolved };
+
+  if (position < steps.length) return walked;
+
+  const finished = { ...walked, live: { ...resolved, isRunning: false, isDone: true } };
   const run = buildRun({ workspace: finished, runNumber: workspace.runs.length + 1 });
 
   return {

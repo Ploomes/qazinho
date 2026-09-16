@@ -1,0 +1,87 @@
+import type { IBugCardProps } from './types';
+import { Button, Eyebrow } from '@/components/atoms';
+import { ExpectedGot, MetaGrid, Screenshot, Stripes } from '@/components/molecules';
+import { useBugCardViewModel } from './hooks';
+import './styles.css';
+
+export const BugCard: React.FC<IBugCardProps> = (props) => {
+  const { caret, meta, onHeadClick } = useBugCardViewModel(props);
+  const { bug } = props;
+
+  return (
+    <article className="bug-card">
+      <button type="button" className="bug-card__head" onClick={onHeadClick}>
+        <span
+          className={
+            bug.isNew
+              ? 'bug-card__severity bug-card__severity--new'
+              : 'bug-card__severity'
+          }
+          aria-hidden="true"
+        />
+        <span className="bug-card__id">{bug.id}</span>
+        <span className="bug-card__title">{bug.title}</span>
+        {bug.isNew && <span className="bug-card__new">just caught</span>}
+        <span className="bug-card__id">{bug.severity}</span>
+        <span aria-hidden="true">{caret}</span>
+      </button>
+
+      {props.isOpen && (
+        <div className="bug-card__body">
+          <p className="bug-card__text">{bug.body}</p>
+
+          <div>
+            <Eyebrow>clip of the failure</Eyebrow>
+            <div className="bug-card__clip">
+              <Stripes pitch={11} />
+            </div>
+          </div>
+
+          <div>
+            <Eyebrow>where it came from</Eyebrow>
+            <MetaGrid rows={meta} />
+          </div>
+
+          <div>
+            <Eyebrow>screenshots</Eyebrow>
+            <div className="bug-card__shots">
+              {bug.shots.map((shot) => (
+                <Screenshot
+                  key={shot.label}
+                  label={shot.label}
+                  isBad={shot.isBad}
+                  size="shot"
+                />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <Eyebrow>how to get there</Eyebrow>
+            <ol className="bug-card__repro">
+              {bug.repro.map((step) => (
+                <li
+                  key={step.action}
+                  className={step.isBad ? 'bug-card__repro-step--bad' : undefined}
+                >
+                  {step.action}
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <ExpectedGot isBug expected={bug.expected} got={bug.got} />
+
+          <div className="bug-card__actions">
+            <Button size="sm" onClick={props.onOpenRun}>
+              Open {bug.runId}
+            </Button>
+            <Button size="sm" onClick={props.onOpenCase}>
+              Open {bug.caseId} in the plan
+            </Button>
+          </div>
+        </div>
+      )}
+    </article>
+  );
+};

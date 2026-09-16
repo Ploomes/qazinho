@@ -39,6 +39,7 @@ export function makeWorkspace(plan: ITestCase[] = CASES): IWorkspace {
     projectId: 'p1',
     name: 'Checkout regression',
     targetId: 't1',
+    planKind: 'web',
     status: 'idle',
     issue: null,
     chat: [],

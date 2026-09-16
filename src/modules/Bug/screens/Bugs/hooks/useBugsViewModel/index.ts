@@ -1,0 +1,43 @@
+import type { BugFilter } from '@/modules/Bug/types';
+import { useAppStore, useWorkspaceStore } from '@/store';
+
+const FILTERS: BugFilter[] = ['all', 'high', 'medium', 'low'];
+
+export const useBugsViewModel = () => {
+  const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
+  const workspaces = useWorkspaceStore((state) => state.workspaces);
+  const openBugId = useWorkspaceStore((state) => state.openBugId);
+  const bugFilter = useWorkspaceStore((state) => state.bugFilter);
+  const toggleBug = useWorkspaceStore((state) => state.toggleBug);
+  const setBugFilter = useWorkspaceStore((state) => state.setBugFilter);
+  const selectTab = useWorkspaceStore((state) => state.selectTab);
+
+  const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
+  const bugs = workspace?.bugs ?? [];
+  const shown =
+    bugFilter === 'all' ? bugs : bugs.filter(({ severity }) => severity === bugFilter);
+
+  const onOpenRun = () => {
+    selectTab('runs');
+  };
+
+  const onOpenCase = () => {
+    selectTab('plan');
+  };
+
+  return {
+    bugs: shown,
+    openBugId,
+    filters: FILTERS,
+    filter: bugFilter,
+    isEmpty: bugs.length === 0,
+    summary:
+      bugs.length === 1
+        ? '1 bug, caught by the agent'
+        : `${String(bugs.length)} bugs, caught by the agent`,
+    onToggleBug: toggleBug,
+    onFilter: setBugFilter,
+    onOpenRun,
+    onOpenCase,
+  };
+};
