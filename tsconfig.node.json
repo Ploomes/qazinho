@@ -27,5 +27,6 @@
     "src/types/**/*",
     "src/constants/**/*",
     "electron/**/*"
-  ]
+  ],
+  "exclude": ["tests/vitest.setup.ts"]
 }

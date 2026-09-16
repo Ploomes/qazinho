@@ -20,6 +20,6 @@
       "@brand/*": ["./assets/logo/*"]
     }
   },
-  "include": ["src/**/*", "vitest.setup.ts"],
+  "include": ["src/**/*", "tests/vitest.setup.ts"],
   "exclude": ["src/main/**/*"]
 }
