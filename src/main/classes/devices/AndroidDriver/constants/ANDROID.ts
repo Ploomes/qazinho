@@ -1,0 +1,21 @@
+/** A phone screen holds less than a page, and a hierarchy dump holds far more than a person reads. */
+export const ANDROID = {
+  screenTextLimit: 2_000,
+  controlLimit: 40,
+  labelLimit: 60,
+  bootTimeoutMs: 180_000,
+  commandTimeoutMs: 60_000,
+  maxBufferBytes: 64 * 1024 * 1024,
+  settleMs: 1_200,
+  waitMs: 1_000,
+  dumpFile: '/sdcard/gocrash-ui.xml',
+  keys: {
+    back: 'KEYCODE_BACK',
+    home: 'KEYCODE_HOME',
+    enter: 'KEYCODE_ENTER',
+    tab: 'KEYCODE_TAB',
+    delete: 'KEYCODE_DEL',
+    escape: 'KEYCODE_ESCAPE',
+    search: 'KEYCODE_SEARCH',
+  } as Record<string, string>,
+} as const;

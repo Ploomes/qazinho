@@ -1,0 +1,51 @@
+import { describe, expect, it } from 'vitest';
+import {
+  findNode,
+  parseViewHierarchy,
+} from '@/main/classes/devices/AndroidDriver/library';
+import { SCREEN_DUMP } from './SCREEN_DUMP';
+
+const NODES = parseViewHierarchy(SCREEN_DUMP);
+
+describe('findNode', () => {
+  it('finds what the agent named, the way a person reads it', () => {
+    expect(findNode({ nodes: NODES, target: 'Connected devices' })?.text).toBe(
+      'Connected devices',
+    );
+  });
+
+  it('does not care about case', () => {
+    expect(findNode({ nodes: NODES, target: 'search settings' })?.id).toBe(
+      'search_bar_title',
+    );
+  });
+
+  it('takes part of a label, because the agent shortens what it saw', () => {
+    expect(findNode({ nodes: NODES, target: 'Connected' })?.text).toBe(
+      'Connected devices',
+    );
+  });
+
+  it('prefers the whole label over one that merely contains it', () => {
+    const nodes = [
+      { ...NODES[0]!, text: 'Network & internet settings' },
+      { ...NODES[0]!, text: 'Network' },
+    ];
+
+    expect(findNode({ nodes, target: 'Network' })?.text).toBe('Network');
+  });
+
+  it('falls back to the id when nothing reads that way', () => {
+    expect(findNode({ nodes: NODES, target: 'search_bar_title' })?.text).toBe(
+      'Search Settings',
+    );
+  });
+
+  it('nothing on the screen answering is null, not the first node', () => {
+    expect(findNode({ nodes: NODES, target: 'Bluetooth' })).toBeNull();
+  });
+
+  it('a blank target never matches', () => {
+    expect(findNode({ nodes: NODES, target: '  ' })).toBeNull();
+  });
+});
