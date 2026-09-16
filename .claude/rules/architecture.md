@@ -57,8 +57,8 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
 ## Heavy work stays off the main process
 
 Agents, Playwright and device drivers will run in child processes (`utilityProcess`), so a slow
-emulator never freezes a window. **Video frames never cross IPC**: an emulator stream reaches the
-page over a local WebSocket or WebRTC.
+emulator never freezes a window. **Video frames never cross IPC**: Chrome runs with no window, and its CDP
+screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `<img>`.
 
 ## What the main process owns
 
@@ -67,6 +67,7 @@ page over a local WebSocket or WebRTC.
 | `AgentDetector`                       | finds the QA's agent CLIs, the way Orca does: fs probes, no subprocess |
 | `AgentRunner`                         | spawns one, streams its JSON, reads a `--json-schema` answer back      |
 | `WebDriver`                           | drives Chrome over playwright-core, one profile per workspace          |
+| `LiveStream`                          | serves the device's frames as MJPEG on 127.0.0.1, for the device panel |
 | `RunCoordinator`                      | walks a plan: describe, act, shoot, judge, one step at a time          |
 | `ResourceCollector` / `ProcessOwners` | one `ps` sweep, charged to whoever started it                          |
 | `Archive`                             | the QA's projects, workspaces and plans, as files on disk              |
