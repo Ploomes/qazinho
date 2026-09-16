@@ -1,0 +1,29 @@
+.new-workspace__targets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.new-workspace__target {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--ink2);
+  font: var(--font-mono-sm);
+}
+
+.new-workspace__target--chosen {
+  border-color: var(--amber);
+  background: var(--amber-soft);
+  color: var(--amber-ink);
+}
+
+.new-workspace__issue {
+  padding: var(--space-5);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-md);
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  text-wrap: pretty;
+}
