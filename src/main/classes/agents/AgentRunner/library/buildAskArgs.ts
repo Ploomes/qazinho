@@ -11,8 +11,8 @@ export function buildAskArgs(
     '--output-format',
     'stream-json',
     '--verbose',
-    '--model',
-    model,
+    // No model means the agent's own default, as its config on this machine sets it.
+    ...(model.length === 0 ? [] : ['--model', model]),
     ...(sessionId === null ? [] : ['--resume', sessionId]),
     ...(schema === undefined ? [] : ['--json-schema', schema]),
   ];

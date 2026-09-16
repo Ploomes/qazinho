@@ -15,6 +15,12 @@ describe('buildAskArgs', () => {
     ]);
   });
 
+  it('leaves the model to the agent when the QA kept its default', () => {
+    const args = buildAskArgs({ model: '', sessionId: null });
+
+    expect(args).not.toContain('--model');
+  });
+
   it('carries on the session the workspace already has', () => {
     const args = buildAskArgs({ model: 'sonnet', sessionId: 'abc-123' });
 
