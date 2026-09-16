@@ -4,3 +4,4 @@ export * from './FileField';
 export * from './MetaGrid';
 export * from './Screenshot';
 export * from './Stripes';
+export * from './Tooltip';
