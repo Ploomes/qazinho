@@ -1,0 +1,53 @@
+.workspace {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--center);
+}
+
+.workspace__header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 22px var(--space-8) 0;
+}
+
+.workspace__title {
+  margin: 0;
+  font: var(--font-display-lg);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.workspace__issue {
+  padding: 4px var(--space-3);
+  border-radius: var(--radius-xs);
+  background: var(--raise);
+  color: var(--ink2);
+  font: var(--font-mono-sm);
+}
+
+.workspace__status {
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
+
+.workspace__actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-left: auto;
+}
+
+.workspace__tabs {
+  flex: none;
+  padding: var(--space-5) var(--space-8) 0;
+}
+
+.workspace__body {
+  flex: 1;
+  min-height: 0;
+  padding: var(--space-7) var(--space-8) var(--space-8);
+  overflow-y: auto;
+}
