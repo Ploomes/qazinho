@@ -1,5 +1,6 @@
 import type { IModalFrameProps } from './types';
 import { motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/atoms';
 import { MOTION } from '@/constants';
 import { useModalFrameViewModel } from './hooks';
@@ -7,6 +8,7 @@ import './styles.css';
 
 export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
   const { onConfirmClick } = useModalFrameViewModel(props);
+  const { t } = useTranslation();
 
   return (
     <motion.div
@@ -40,7 +42,7 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
             <span className="modal-frame__hint">{props.hint}</span>
           )}
           <div className="modal-frame__actions">
-            <Button onClick={props.onCancel}>Cancel</Button>
+            <Button onClick={props.onCancel}>{t('COMMON.CANCEL')}</Button>
             <Button
               variant="primary"
               disabled={!props.canConfirm}

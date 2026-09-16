@@ -39,10 +39,10 @@ describe('useStatusPillViewModel', () => {
 });
 
 describe('STATUS', () => {
-  it('gives every status a glyph and a word of its own', () => {
-    const words = Object.values(STATUS).map(({ label }) => label);
+  it('gives every status a glyph and a key of its own', () => {
+    const keys = Object.values(STATUS).map(({ labelKey }) => labelKey);
 
     expect(Object.values(STATUS).every(({ glyph }) => glyph.length > 0)).toBe(true);
-    expect(new Set(words).size).toBe(words.length);
+    expect(new Set(keys).size).toBe(keys.length);
   });
 });

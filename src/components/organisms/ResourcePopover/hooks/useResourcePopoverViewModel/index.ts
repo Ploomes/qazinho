@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next';
 import { RESOURCES } from '@/modules/Resources/constants';
 import { buildProcessTree } from '@/modules/Resources/library';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useResourcePopoverViewModel = () => {
+  const { t } = useTranslation();
   const projects = useAppStore((state) => state.projects);
   const isOpen = useAppStore((state) => state.isResourcesOpen);
   const toggleResources = useAppStore((state) => state.toggleResources);
@@ -23,8 +25,8 @@ export const useResourcePopoverViewModel = () => {
     processCount: nodes.filter(({ level }) => level === 2).length,
     header:
       running.length === 0
-        ? 'nothing running'
-        : `${String(running.length)} running · ${ramGb.toFixed(1)} GB`,
+        ? t('RESOURCES.NOTHING_RUNNING')
+        : t('RESOURCES.RUNNING', { count: running.length, ram: ramGb.toFixed(1) }),
     onClose: toggleResources,
     onShutDown: (nodeId: string) => {
       stopRun(nodeId.replace('-device', ''));

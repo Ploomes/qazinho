@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { IconButton } from '@/components/atoms';
 import { MOTION } from '@/constants';
 import { useResourcePopoverViewModel } from './hooks';
@@ -6,6 +7,7 @@ import './styles.css';
 
 export const ResourcePopover: React.FC = () => {
   const { nodes, header, onClose, onShutDown } = useResourcePopoverViewModel();
+  const { t } = useTranslation();
 
   return (
     <motion.div
@@ -17,10 +19,15 @@ export const ResourcePopover: React.FC = () => {
       style={{ transformOrigin: 'top right' }}
     >
       <header className="resource-popover__head">
-        <span className="resource-popover__title">Resources</span>
+        <span className="resource-popover__title">{t('RESOURCES.TITLE')}</span>
         <span className="resource-popover__header-note">{header}</span>
         <span className="resource-popover__close">
-          <IconButton glyph="✕" label="Close resources" size="sm" onClick={onClose} />
+          <IconButton
+            glyph="✕"
+            label={t('RESOURCES.CLOSE')}
+            size="sm"
+            onClick={onClose}
+          />
         </span>
       </header>
 
@@ -43,7 +50,7 @@ export const ResourcePopover: React.FC = () => {
                   onShutDown(node.id);
                 }}
               >
-                shut down
+                {t('RESOURCES.SHUT_DOWN')}
               </button>
             ) : (
               <span />
@@ -52,9 +59,7 @@ export const ResourcePopover: React.FC = () => {
         ))}
       </div>
 
-      <footer className="resource-popover__foot">
-        emulators eat a few GB each. shut one down if things get slow.
-      </footer>
+      <footer className="resource-popover__foot">{t('RESOURCES.NOTE')}</footer>
     </motion.div>
   );
 };

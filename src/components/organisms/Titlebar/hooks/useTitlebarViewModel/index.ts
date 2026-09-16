@@ -1,9 +1,11 @@
+import { useTranslation } from 'react-i18next';
 import { RESOURCES } from '@/modules/Resources/constants';
 import { buildProcessTree } from '@/modules/Resources/library';
 import { Platform } from '@/services';
 import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 export const useTitlebarViewModel = () => {
+  const { t } = useTranslation();
   const projects = useAppStore((state) => state.projects);
   const selectedProjectId = useAppStore((state) => state.selectedProjectId);
   const isResourcesOpen = useAppStore((state) => state.isResourcesOpen);
@@ -26,12 +28,17 @@ export const useTitlebarViewModel = () => {
     isMac: Platform.isMac(),
     isResourcesOpen,
     isModelMenuOpen,
-    cpuLabel: `CPU ${String(cpu)}%`,
+    cpuLabel: t('TITLEBAR.CPU', { percent: cpu }),
     cpuShare: cpu / 100,
-    ramLabel: `RAM ${ramGb.toFixed(1)} / ${String(RESOURCES.ramCeilingGb)} GB`,
+    ramLabel: t('TITLEBAR.RAM', {
+      used: ramGb.toFixed(1),
+      ceiling: RESOURCES.ramCeilingGb,
+    }),
     processLabel:
-      leaves.length === 1 ? '1 process' : `${String(leaves.length)} processes`,
-    agentLabel: `${agent} · ${model} · 96 % context left`,
+      leaves.length === 1
+        ? t('TITLEBAR.PROCESSES_ONE')
+        : t('TITLEBAR.PROCESSES_OTHER', { count: leaves.length }),
+    agentLabel: t('TITLEBAR.CONTEXT_LEFT', { agent, model, percent: 96 }),
     onToggleResources: toggleResources,
     onToggleModelMenu: toggleModelMenu,
   };

@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { Eyebrow } from '@/components/atoms';
 import { MOTION } from '@/constants';
 import { useModelPopoverViewModel } from './hooks';
@@ -7,6 +8,7 @@ import './styles.css';
 export const ModelPopover: React.FC = () => {
   const { agents, agent, models, model, modelHeading, onSelectAgent, onSelectModel } =
     useModelPopoverViewModel();
+  const { t } = useTranslation();
 
   return (
     <motion.div
@@ -18,7 +20,7 @@ export const ModelPopover: React.FC = () => {
       style={{ transformOrigin: 'top right' }}
     >
       <div className="model-popover__section">
-        <Eyebrow>agent on this machine</Eyebrow>
+        <Eyebrow>{t('MODEL.AGENT_ON_MACHINE')}</Eyebrow>
         {agents.map((item) => (
           <button
             key={item.name}
@@ -69,9 +71,7 @@ export const ModelPopover: React.FC = () => {
         ))}
       </div>
 
-      <footer className="model-popover__foot">
-        the model runs through your own agent, on your own key
-      </footer>
+      <footer className="model-popover__foot">{t('MODEL.FOOTER')}</footer>
     </motion.div>
   );
 };

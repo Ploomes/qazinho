@@ -1,15 +1,18 @@
 import type { PillStatus } from '@/components/atoms/StatusPill/types';
+import type { ParseKeys } from 'i18next';
 
 /** Every status carries a glyph and a word, so colour is never the only clue. */
-export const STATUS: Record<PillStatus, { glyph: string; label: string; tone: string }> =
-  {
-    running: { glyph: '▸', label: 'running', tone: 'amber' },
-    attention: { glyph: '!', label: 'needs you', tone: 'attn' },
-    failed: { glyph: '✕', label: 'failed', tone: 'fail' },
-    passed: { glyph: '✓', label: 'passed', tone: 'pass' },
-    blocked: { glyph: '⊘', label: 'blocked', tone: 'block' },
-    skipped: { glyph: '–', label: 'skipped', tone: 'skip' },
-    stopped: { glyph: '■', label: 'stopped', tone: 'quiet' },
-    idle: { glyph: '○', label: 'idle', tone: 'quiet' },
-    pending: { glyph: '○', label: 'not run', tone: 'quiet' },
-  };
+export const STATUS: Record<
+  PillStatus,
+  { glyph: string; labelKey: ParseKeys; tone: string }
+> = {
+  running: { glyph: '▸', labelKey: 'STATUS.RUNNING', tone: 'amber' },
+  attention: { glyph: '!', labelKey: 'STATUS.NEEDS_YOU', tone: 'attn' },
+  failed: { glyph: '✕', labelKey: 'STATUS.FAILED', tone: 'fail' },
+  passed: { glyph: '✓', labelKey: 'STATUS.PASSED', tone: 'pass' },
+  blocked: { glyph: '⊘', labelKey: 'STATUS.BLOCKED', tone: 'block' },
+  skipped: { glyph: '–', labelKey: 'STATUS.SKIPPED', tone: 'skip' },
+  stopped: { glyph: '■', labelKey: 'STATUS.STOPPED', tone: 'quiet' },
+  idle: { glyph: '○', labelKey: 'STATUS.IDLE', tone: 'quiet' },
+  pending: { glyph: '○', labelKey: 'STATUS.NOT_RUN', tone: 'quiet' },
+};
