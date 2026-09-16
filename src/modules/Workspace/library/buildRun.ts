@@ -1,7 +1,7 @@
 import type { IRun, IRunCase, IRunStep } from '@/modules/Run/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IStepOutcome } from '@/types';
-import { countVerdicts } from '@/modules/Run/library';
+import { caseVerdict, countVerdicts } from '@/modules/Run/library';
 
 const MS_IN_SECOND = 1_000;
 
@@ -40,9 +40,7 @@ export function buildRun(workspace: IWorkspace): IRun {
       return {
         id: testCase.id,
         title: testCase.title,
-        verdict: steps.every((step) => step.verdict === 'passed')
-          ? ('passed' as const)
-          : ('failed' as const),
+        verdict: caseVerdict(steps),
         durationSec: tookSec(mine),
         steps,
       };
