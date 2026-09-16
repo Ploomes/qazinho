@@ -1,28 +1,35 @@
 # Architecture
 
-Electron, built by electron-vite. Three processes, and one folder they all share.
+Electron, built by electron-vite. Electron needs three processes, and they run in different
+worlds. **`src/` is the app**; the Electron plumbing stays out of the way.
 
 ```
 src/
-├── main/       ← Node + Electron: windows, the filesystem, child processes
-├── preload/    ← the bridge: exposes window.gocrash through contextBridge, nothing else
-├── renderer/   ← React: a web page, sandboxed
-└── shared/     ← contracts every process agrees on; imports none of them
+├── main/        ← Node + Electron: the window, the filesystem, child processes
+├── types/       ← contracts every side agrees on; imports none of them
+├── components/  ← atoms, molecules, organisms, templates (components.md)
+├── modules/     ← screens, grouped by domain
+├── hooks/  store/  services/  styles/
+├── app/  index.tsx  index.html
+electron/
+└── preload/     ← the bridge: exposes window.gocrash through contextBridge, nothing else
 ```
 
-| Folder     | Runs in             | May import                            |
-| ---------- | ------------------- | ------------------------------------- |
-| `main`     | Node                | `electron`, Node builtins, `@/shared` |
-| `preload`  | a sandboxed preload | `electron`, `@/shared`                |
-| `renderer` | the page            | `@/shared`                            |
-| `shared`   | all of the above    | none of the three                     |
+Everything under `src/` that is not `src/main/` is **the page**: React, no Node.
+
+| Folder             | Runs in             | May import                           |
+| ------------------ | ------------------- | ------------------------------------ |
+| `src/main`         | Node                | `electron`, Node builtins, `@/types` |
+| `electron/preload` | a sandboxed preload | `electron`, `@/types`                |
+| the page           | the page            | `@/types` and the rest of the page   |
+| `src/types`        | all of the above    | nothing                              |
 
 ## The boundary is enforced, not agreed
 
-- `tsconfig.web.json` covers `renderer` and `shared` **without Node's types**: `import 'node:fs'`
-  does not compile there.
-- ESLint `no-restricted-imports` bans Node builtins and `electron` in `renderer` and `shared`,
-  and bans importing another process's folder anywhere.
+- `tsconfig.web.json` covers the page **without Node's types** and excludes `src/main`:
+  `import 'node:fs'` does not compile there.
+- ESLint `no-restricted-imports` bans Node builtins and `electron` in the page and in
+  `src/types`, and bans the page importing `src/main` or `electron/`.
 
 ## Security defaults
 
@@ -36,11 +43,12 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
 
 ## IPC
 
-- The contract is `GocrashApi` in `src/shared/types/`. The preload implements it, and the renderer
-  reads it from `window.gocrash`, typed in `src/renderer/global.d.ts`.
-- **Expose functions with a purpose, never `ipcRenderer` itself.** A renderer that can send any
-  channel is a renderer with Node.
+- The contract is `IGocrashApi` in `src/types/`. The preload implements it, and the page reads it
+  from `window.gocrash`, typed in `src/global.d.ts`.
+- **Expose functions with a purpose, never `ipcRenderer` itself.** A page that can send any
+  channel is a page with Node.
 - Structured clone carries no functions and no class instances. What crosses is data.
+- The page never calls `window.gocrash` from a view. It goes through `src/services/`.
 
 ## Heavy work stays off the main process
 
@@ -50,6 +58,6 @@ page over a local WebSocket or WebRTC.
 
 ## Dependencies
 
-- `dependencies` ship inside the app and `devDependencies` do not. Everything the renderer uses,
+- `dependencies` ship inside the app and `devDependencies` do not. Everything the page uses,
   React included, is bundled by Vite, so it is a devDependency.
-- A runtime dependency in `main` ships to every user. Today there are none. Think twice.
+- A runtime dependency in `src/main` ships to every user. Today there are none. Think twice.

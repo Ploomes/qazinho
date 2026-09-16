@@ -12,8 +12,8 @@ nowhere, the field name is wrong.
 
 ```ts
 /** What the preload exposes to the page as `window.gocrash`. Data and purposeful functions only. */
-export interface GocrashApi {
-  platform: string;
+export interface IGocrashApi {
+  platform: Platform;
 }
 ```
 

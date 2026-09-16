@@ -1,6 +1,6 @@
 # Tests
 
-Vitest, `node` environment.
+Vitest. `node` for `src/main` and `src/types`, `jsdom` for anything in the page.
 
 | Command              | What              |
 | -------------------- | ----------------- |
@@ -11,30 +11,41 @@ Vitest, `node` environment.
 
 ```
 src/main/library/
-├── is-internal-navigation.ts
-└── __tests__/is-internal-navigation.test.ts
+├── isInternalNavigation.ts
+└── __tests__/isInternalNavigation.test.ts
+
+src/components/atoms/Button/hooks/useButtonViewModel/
+├── index.ts
+└── __tests__/useButtonViewModel.test.ts
 ```
 
 A test lives next to what it tests, not next to the folder that contains it. Vitest picks up
 `src/**/__tests__/**/*.test.{ts,tsx}`, and electron-vite never bundles them because nothing
 imports them.
 
+## What must have a test
+
+- **Every view model.** One `describe` per exposed function, and the cases that matter: the
+  happy path, the path that must **not** happen, and the edge.
+- **Every function exported from `library/`.** The caller exercises one path; the function has
+  several.
+- **Every constant table**, at its edges.
+- **The navigation guard**: same origin, another port, a hash on the packaged page, another file
+  on disk, `javascript:` and a string that is not a URL.
+
+A view is not tested. It holds no logic, so there is nothing to assert that the view model does
+not already cover.
+
 ## Rules
 
 - **No module mocking.** Hand-written fakes over a port. If a test needs `vi.mock`, a dependency
-  has leaked.
+  has leaked. A collaborator arrives through props or through the view model's arguments.
 - **Keep `electron` out of `library/`.** A function that takes plain values is tested with plain
-  values; the Electron call stays in the class or in `index.ts` that uses the function. That is
-  why `isInternalNavigation` takes two strings and not a `WebContents`.
-- **Every function exported from `library/` has a test.** The caller exercises one path; the
-  function has several.
-- **Every constant table has an edge test.**
-- **Test names describe behaviour, not methods.** `'another port on localhost is another origin'`,
-  never `'isInternalNavigation() returns false'`.
+  values; the Electron call stays in the class or in `index.ts`. That is why
+  `isInternalNavigation` takes two strings and not a `WebContents`.
+- **Test names describe behaviour, not methods.** `'another port on localhost is another
+origin'`, never `'isInternalNavigation() returns false'`.
 - **Tests do not use the network**, and do not boot an emulator, a simulator or a browser. What
   drives a real device gets its own suite when it exists.
-
-## What must always be covered
-
-- **The navigation guard.** Same origin, another port, a hash on the packaged page, another file
-  on disk, `javascript:` and a string that is not a URL.
+- A renderer test file declares its environment at the top:
+  `// @vitest-environment jsdom`.

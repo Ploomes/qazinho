@@ -18,13 +18,13 @@
 
 `tsconfig.json` only references the other two, so the editor and ESLint see both.
 
-| Config               | Covers                                    | Types         |
-| -------------------- | ----------------------------------------- | ------------- |
-| `tsconfig.node.json` | `main`, `preload`, `shared`, config files | `node`        |
-| `tsconfig.web.json`  | `renderer`, `shared`                      | `vite/client` |
+| Config               | Covers                                                 | Types         |
+| -------------------- | ------------------------------------------------------ | ------------- |
+| `tsconfig.node.json` | `src/main`, `src/types`, `electron/`, the config files | `node`        |
+| `tsconfig.web.json`  | all of `src/` except `src/main`                        | `vite/client` |
 
-**`tsconfig.web.json` has no Node types.** An `import 'node:fs'` in the renderer or in `shared`
-does not compile. `shared` sits in both on purpose: it has to compile in each world.
+**`tsconfig.web.json` has no Node types.** An `import 'node:fs'` in the page or in `src/types`
+does not compile. `src/types` sits in both on purpose: it has to compile in each world.
 
 Both are `composite` so they can be referenced. `typecheck` passes `--composite false` with
 `--noEmit`, because a composite project wants to emit declarations.
@@ -70,7 +70,7 @@ Prettier is the single source of formatting; ESLint does not format.
 
 The rules backing the structure: `max-params: 2`, `member-ordering`, `consistent-type-imports`,
 `import-x/order` with the `type` group on top, `../` banned by regex, the process boundaries in
-`no-restricted-imports`, `react-hooks` in the renderer, and `no-restricted-syntax` over
+`no-restricted-imports`, `react-hooks` in the page, and `no-restricted-syntax` over
 `**/*.class.ts`.
 
 The ESLint config is `eslint.config.mjs` because the package is not `"type": "module"`: Electron's
