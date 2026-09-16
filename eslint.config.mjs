@@ -17,8 +17,27 @@ const NO_NODE_IN_THE_PAGE = {
     'This code runs in the page. No Node builtins and no electron: ask the main process through window.gocrash.',
 };
 
+const NO_PAGE_IN_NODE = {
+  group: [
+    '@/components/**',
+    '@/modules/**',
+    '@/store/**',
+    '@/hooks/**',
+    '@/services/**',
+    '@/styles/**',
+  ],
+  message:
+    'The main process and the preload never import the page. Share a type through @/types.',
+};
+
+const NO_NODE_FOLDERS_IN_THE_PAGE = {
+  group: ['@/main/**', '**/electron/**'],
+  message:
+    'The page never imports src/main or electron/. Ask the main process through window.gocrash.',
+};
+
 export default config(
-  { ignores: ['out', 'dist', 'release', 'node_modules', 'coverage'] },
+  { ignores: ['out', 'dist', 'release', 'node_modules', 'coverage', 'assets'] },
 
   js.configs.recommended,
   ...configs.recommendedTypeChecked,
@@ -100,61 +119,38 @@ export default config(
   },
 
   {
-    files: ['src/main/**/*.ts', 'src/preload/**/*.ts'],
+    files: ['src/main/**/*.ts', 'electron/**/*.ts'],
     rules: {
       '@typescript-eslint/no-restricted-imports': [
         'error',
-        {
-          patterns: [
-            NO_UPWARD_RELATIVE,
-            {
-              group: ['@/renderer/**'],
-              message:
-                'The main process and the preload never import the renderer. Share a type through src/shared/.',
-            },
-          ],
-        },
+        { patterns: [NO_UPWARD_RELATIVE, NO_PAGE_IN_NODE] },
       ],
     },
   },
 
   {
-    files: ['src/renderer/**/*.{ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['src/main/**/*.ts'],
     plugins: { 'react-hooks': reactHooks },
     rules: {
       ...reactHooks.configs.recommended.rules,
       'no-restricted-imports': ['error', { patterns: [NO_NODE_IN_THE_PAGE] }],
       '@typescript-eslint/no-restricted-imports': [
         'error',
-        {
-          patterns: [
-            NO_UPWARD_RELATIVE,
-            {
-              group: ['@/main/**', '@/preload/**'],
-              message:
-                'The renderer never imports the main process or the preload. Share a type through src/shared/.',
-            },
-          ],
-        },
+        { patterns: [NO_UPWARD_RELATIVE, NO_NODE_FOLDERS_IN_THE_PAGE] },
       ],
     },
   },
 
   {
-    files: ['src/shared/**/*.ts'],
+    // @/types is imported by the page, by src/main and by the preload, so it imports none of them.
+    files: ['src/types/**/*.ts'],
     rules: {
       'no-restricted-imports': ['error', { patterns: [NO_NODE_IN_THE_PAGE] }],
       '@typescript-eslint/no-restricted-imports': [
         'error',
         {
-          patterns: [
-            NO_UPWARD_RELATIVE,
-            {
-              group: ['@/main/**', '@/preload/**', '@/renderer/**'],
-              message:
-                'src/shared/ is imported by every process and imports none of them.',
-            },
-          ],
+          patterns: [NO_UPWARD_RELATIVE, NO_NODE_FOLDERS_IN_THE_PAGE, NO_PAGE_IN_NODE],
         },
       ],
     },

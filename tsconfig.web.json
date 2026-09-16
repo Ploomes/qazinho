@@ -19,5 +19,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src/renderer/**/*", "src/shared/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["src/main/**/*"]
 }
