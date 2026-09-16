@@ -1,3 +1,4 @@
+import type { Severity } from './Severity';
 import type { StepVerdict } from './StepVerdict';
 
 /** What a run reports about one step: `screenshot` is inline because the page cannot read disk. */
@@ -11,6 +12,9 @@ export interface IStepOutcome {
   verdict: StepVerdict;
   why: string;
   got: string;
+  title: string;
+  severity: Severity;
+  tookMs: number;
   screenshot: string | null;
   shotFile: string | null;
 }

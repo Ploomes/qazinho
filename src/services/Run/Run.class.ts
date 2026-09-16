@@ -6,6 +6,10 @@ export class Run {
     void window.gocrash?.startRun(run);
   }
 
+  public static setPaused(props: { workspaceId: string; isPaused: boolean }): void {
+    void window.gocrash?.pauseRun(props);
+  }
+
   public static stop(workspaceId: string): void {
     void window.gocrash?.stopRun(workspaceId);
   }

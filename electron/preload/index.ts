@@ -36,6 +36,8 @@ const api: IGocrashApi = {
   },
   startRun: (run: IStartRun) =>
     ipcRenderer.invoke(CHANNELS.startRun, run) as Promise<void>,
+  pauseRun: (props: { workspaceId: string; isPaused: boolean }) =>
+    ipcRenderer.invoke(CHANNELS.pauseRun, props) as Promise<void>,
   stopRun: (workspaceId: string) =>
     ipcRenderer.invoke(CHANNELS.stopRun, workspaceId) as Promise<void>,
   onRunEvent: (listener: (event: IRunEvent) => void) => {

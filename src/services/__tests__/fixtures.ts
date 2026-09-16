@@ -16,6 +16,7 @@ export function fakeGocrashApi(platform: Platform): IGocrashApi {
     readResources: () =>
       Promise.resolve({ cpu: 0, ramMb: 0, ramCeilingGb: 32, processes: [] }),
     startRun: () => Promise.resolve(),
+    pauseRun: () => Promise.resolve(),
     stopRun: () => Promise.resolve(),
     onRunEvent: () => () => undefined,
   };

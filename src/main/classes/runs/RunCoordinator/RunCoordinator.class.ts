@@ -4,7 +4,7 @@ import type { IRunEvent, IStartRun, IStepOutcome } from '@/types';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { WebDriver } from '@/main/classes/devices/WebDriver';
-import { RUN_PROMPTS, RUN_SCHEMAS } from './constants';
+import { RUN_PROMPTS, RUN_SCHEMAS, RUN_WALK } from './constants';
 import { parseActions, parseVerdict, skippedOutcome } from './library';
 
 /** Walks a plan on a real device: the agent drives, the requirement judges. */
@@ -15,6 +15,7 @@ export class RunCoordinator {
   private readonly onEvent: (event: IRunEvent) => void;
   private readonly stopping = new Set<string>();
   private readonly walking = new Set<string>();
+  private readonly paused = new Set<string>();
 
   public constructor(props: IRunCoordinator) {
     this.runner = props.runner;
@@ -45,11 +46,18 @@ export class RunCoordinator {
     } finally {
       this.walking.delete(run.workspaceId);
       this.stopping.delete(run.workspaceId);
+      this.paused.delete(run.workspaceId);
     }
   }
 
   public stop(workspaceId: string): void {
     if (this.walking.has(workspaceId)) this.stopping.add(workspaceId);
+    this.paused.delete(workspaceId);
+  }
+
+  public setPaused(props: { workspaceId: string; isPaused: boolean }): void {
+    if (props.isPaused) this.paused.add(props.workspaceId);
+    else this.paused.delete(props.workspaceId);
   }
 
   private async walk(run: IWalkRun): Promise<void> {
@@ -83,6 +91,8 @@ export class RunCoordinator {
     let walkedCase = '';
 
     for (const [index, step] of run.steps.entries()) {
+      await this.holdWhilePaused(run.workspaceId);
+
       if (this.stopping.has(run.workspaceId)) break;
 
       if (step.caseId !== walkedCase) {
@@ -111,6 +121,7 @@ export class RunCoordinator {
 
   private async walkStep(props: IWalkStep): Promise<IStepResult> {
     const { run, driver, step, index } = props;
+    const began = Date.now();
     const ask = {
       workspaceId: run.workspaceId,
       agentId: run.agentId,
@@ -155,6 +166,9 @@ export class RunCoordinator {
       verdict: broke === null ? verdict.verdict : 'blocked',
       why: broke ?? verdict.why,
       got: verdict.got,
+      title: verdict.title,
+      severity: verdict.severity,
+      tookMs: Date.now() - began,
       screenshot: shot?.dataUrl ?? null,
       shotFile: shot?.file ?? null,
     };
@@ -186,6 +200,11 @@ export class RunCoordinator {
     } catch {
       return;
     }
+  }
+
+  private async holdWhilePaused(workspaceId: string): Promise<void> {
+    while (this.paused.has(workspaceId) && !this.stopping.has(workspaceId))
+      await new Promise((wake) => setTimeout(wake, RUN_WALK.holdMs));
   }
 
   private explain(reason: unknown): string {

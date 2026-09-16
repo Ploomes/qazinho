@@ -17,6 +17,7 @@ export interface IGocrashApi {
   askAgent: (ask: IAskAgent) => Promise<IAgentTurn>;
   onAgentEvent: (listener: (event: IAgentEvent) => void) => () => void;
   startRun: (run: IStartRun) => Promise<void>;
+  pauseRun: (props: { workspaceId: string; isPaused: boolean }) => Promise<void>;
   stopRun: (workspaceId: string) => Promise<void>;
   onRunEvent: (listener: (event: IRunEvent) => void) => () => void;
 }

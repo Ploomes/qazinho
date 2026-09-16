@@ -18,6 +18,9 @@ export function skippedOutcome(props: {
     verdict: 'skipped',
     why: 'Skipped because the step before it did not hold up.',
     got: '',
+    title: '',
+    severity: 'medium',
+    tookMs: 0,
     screenshot: null,
     shotFile: null,
   };

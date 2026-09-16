@@ -12,6 +12,7 @@ export type * from './IRunEvent';
 export type * from './IStartRun';
 export type * from './IStepAction';
 export type * from './IStepOutcome';
+export type * from './Severity';
 export type * from './StepVerdict';
 export type * from './IToolStatus';
 export type * from './Platform';

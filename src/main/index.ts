@@ -94,6 +94,12 @@ void app.whenReady().then(() => {
   ipcMain.handle(CHANNELS.stopRun, (_event, workspaceId: string) => {
     runs.stop(workspaceId);
   });
+  ipcMain.handle(
+    CHANNELS.pauseRun,
+    (_event, props: { workspaceId: string; isPaused: boolean }) => {
+      runs.setPaused(props);
+    },
+  );
 
   createWindow();
 

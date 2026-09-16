@@ -9,7 +9,7 @@ describe('parseVerdict', () => {
       got: 'The payment step opened with the field empty.',
     });
 
-    expect(parseVerdict(answer)).toEqual({
+    expect(parseVerdict(answer)).toMatchObject({
       verdict: 'failed',
       why: 'No inline error appeared.',
       got: 'The payment step opened with the field empty.',

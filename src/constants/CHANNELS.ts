@@ -6,6 +6,7 @@ export const CHANNELS = {
   askAgent: 'agent:ask',
   agentEvent: 'agent:event',
   startRun: 'run:start',
+  pauseRun: 'run:pause',
   stopRun: 'run:stop',
   runEvent: 'run:event',
 } as const;

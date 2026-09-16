@@ -20,5 +20,7 @@ export const RUN_PROMPTS = {
       props.page,
       'Judge only against what the QA expected. Answer passed, failed, or blocked when the',
       'step could not be carried out at all. Say what you actually saw in "got".',
+      'When it failed, also give "title": one line a developer would recognise the bug by,',
+      'and "severity": high, medium or low.',
     ].join('\n'),
 };

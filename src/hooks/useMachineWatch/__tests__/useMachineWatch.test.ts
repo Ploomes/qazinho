@@ -41,6 +41,7 @@ beforeEach(() => {
     askAgent: vi.fn(),
     onAgentEvent: vi.fn().mockReturnValue(() => undefined),
     startRun: vi.fn(),
+    pauseRun: vi.fn(),
     stopRun: vi.fn(),
     onRunEvent: vi.fn().mockReturnValue(() => undefined),
   };

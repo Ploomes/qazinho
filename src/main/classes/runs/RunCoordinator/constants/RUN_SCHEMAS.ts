@@ -25,6 +25,8 @@ export const RUN_SCHEMAS = {
       verdict: { type: 'string', enum: ['passed', 'failed', 'blocked'] },
       why: { type: 'string' },
       got: { type: 'string' },
+      title: { type: 'string' },
+      severity: { type: 'string', enum: ['high', 'medium', 'low'] },
     },
     required: ['verdict', 'why', 'got'],
   }),
