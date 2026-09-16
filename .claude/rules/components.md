@@ -67,6 +67,12 @@ export const useTabBarViewModel = (props: ITabBarProps) => {
 handler and no derivation — only JSX built from constants. An empty view model with an empty
 test is worse than no view model. The moment any of those appears, the view model is mandatory.
 
+## Do not hand-memoize
+
+The React Compiler memoizes for you. A `useCallback` or `useMemo` whose dependency comes out of a
+store selector makes it **skip the whole component** (`react-hooks/preserve-manual-memoization`
+fires). Write the plain function and let the compiler work.
+
 ## Every view model has a test
 
 `hooks/use<Name>ViewModel/__tests__/use<Name>ViewModel.test.ts`. One `describe` per exposed
