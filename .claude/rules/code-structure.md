@@ -93,6 +93,7 @@ src/
 ├── app/              ← the shell, with the anatomy of any component
 ├── components/       ← atoms, molecules, organisms, templates (components.md)
 ├── modules/<Domain>/screens/<Screen>/
+├── languages/        ← i18next, en and pt (i18n.md)
 ├── hooks/            ← hooks used across modules
 ├── store/            ← zustand stores
 ├── services/         ← the only callers of window.gocrash

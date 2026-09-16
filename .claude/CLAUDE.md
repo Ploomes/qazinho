@@ -39,6 +39,7 @@ The layout is being designed separately and has not landed.
 @rules/components.md
 @rules/design-tokens.md
 @rules/animation.md
+@rules/i18n.md
 @rules/comments.md
 @rules/testing.md
 @rules/tooling.md
