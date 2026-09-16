@@ -1,3 +1,7 @@
+export type * from './IAgentEvent';
+export type * from './IAgentTurn';
+export type * from './IAgentUsage';
+export type * from './IAskAgent';
 export type * from './IDetectedAgent';
 export type * from './IDeviceTools';
 export type * from './IGocrashApi';

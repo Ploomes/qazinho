@@ -3,4 +3,6 @@ export const CHANNELS = {
   detectAgents: 'agents:detect',
   readResources: 'resources:read',
   detectDeviceTools: 'devices:detect',
+  askAgent: 'agent:ask',
+  agentEvent: 'agent:event',
 } as const;

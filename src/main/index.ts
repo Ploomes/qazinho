@@ -1,7 +1,9 @@
+import type { IAgentEvent, IAskAgent } from '@/types';
 import { join } from 'node:path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { CHANNELS } from '@/constants';
 import { AgentDetector } from '@/main/classes/agents/AgentDetector';
+import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
 import { ResourceCollector } from '@/main/classes/resources/ResourceCollector';
 import { WINDOW } from '@/main/constants';
@@ -14,6 +16,28 @@ const PRELOAD_FILE = join(__dirname, '../preload/index.js');
 const agents = new AgentDetector();
 const resources = new ResourceCollector();
 const deviceTools = new DeviceToolDetector();
+
+function broadcast(event: IAgentEvent): void {
+  for (const open of BrowserWindow.getAllWindows())
+    open.webContents.send(CHANNELS.agentEvent, event);
+}
+
+const agentRunner = new AgentRunner(broadcast);
+
+async function askAgent(ask: IAskAgent) {
+  const found = (await agents.detect()).find(({ id }) => id === ask.agentId);
+
+  if (!found?.path) {
+    return {
+      sessionId: ask.sessionId,
+      text: `gocrash cannot find ${ask.agentId} on this machine. Install it, or pick another agent in Settings.`,
+      usage: null,
+      isError: true,
+    };
+  }
+
+  return agentRunner.ask({ ...ask, command: found.path });
+}
 
 function createWindow(): void {
   const window = new BrowserWindow({
@@ -51,6 +75,7 @@ void app.whenReady().then(() => {
   ipcMain.handle(CHANNELS.detectAgents, () => agents.detect());
   ipcMain.handle(CHANNELS.readResources, () => resources.snapshot());
   ipcMain.handle(CHANNELS.detectDeviceTools, () => deviceTools.detect());
+  ipcMain.handle(CHANNELS.askAgent, (_event, ask: IAskAgent) => askAgent(ask));
 
   createWindow();
 

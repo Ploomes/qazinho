@@ -1,4 +1,7 @@
 import type {
+  IAgentEvent,
+  IAgentTurn,
+  IAskAgent,
   IDetectedAgent,
   IDeviceTools,
   IGocrashApi,
@@ -16,6 +19,19 @@ const api: IGocrashApi = {
     ipcRenderer.invoke(CHANNELS.readResources) as Promise<IResourceSnapshot>,
   detectDeviceTools: () =>
     ipcRenderer.invoke(CHANNELS.detectDeviceTools) as Promise<IDeviceTools>,
+  askAgent: (ask: IAskAgent) =>
+    ipcRenderer.invoke(CHANNELS.askAgent, ask) as Promise<IAgentTurn>,
+  onAgentEvent: (listener: (event: IAgentEvent) => void) => {
+    const forward = (_: unknown, event: IAgentEvent) => {
+      listener(event);
+    };
+
+    ipcRenderer.on(CHANNELS.agentEvent, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.agentEvent, forward);
+    };
+  },
 };
 
 contextBridge.exposeInMainWorld('gocrash', api);
