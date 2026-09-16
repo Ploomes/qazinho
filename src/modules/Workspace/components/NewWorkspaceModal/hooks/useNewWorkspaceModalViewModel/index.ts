@@ -45,7 +45,6 @@ export const useNewWorkspaceModalViewModel = () => {
     closeModal();
   };
 
-  // The footer speaks only when it has something the QA cannot already read on the form.
   const blocking =
     chosen === null
       ? t('NEW_WORKSPACE.NEEDS_TARGET')

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { formatResetsAt } from '@/components/organisms/Titlebar/library';
 import { Platform } from '@/services';
 import { useAppStore, useMachineStore, useSettingsStore } from '@/store';
 
@@ -24,6 +25,8 @@ export const useTitlebarViewModel = () => {
       ? null
       : 100 - Math.round((usage.contextTokens / usage.contextWindow) * 100);
 
+  const sessionLeft = usage?.fiveHourUsed == null ? null : 1 - usage.fiveHourUsed;
+
   return {
     projectName: project?.name ?? null,
     hasProjects: projects.length > 0,
@@ -44,6 +47,20 @@ export const useTitlebarViewModel = () => {
       contextLeft === null
         ? t('TITLEBAR.AGENT', { agent, model })
         : t('TITLEBAR.CONTEXT_LEFT', { agent, model, percent: contextLeft }),
+    sessionLeft,
+    sessionLabel:
+      sessionLeft === null
+        ? null
+        : t('TITLEBAR.SESSION_LEFT', {
+            percent: Math.round(sessionLeft * 100),
+            resets: formatResetsAt(usage?.resetsAt ?? 0),
+          }),
+    sessionTitle:
+      usage?.sevenDayUsed == null
+        ? ''
+        : t('TITLEBAR.SESSION_TITLE', {
+            week: 100 - Math.round(usage.sevenDayUsed * 100),
+          }),
     onToggleResources: toggleResources,
     onToggleModelMenu: toggleModelMenu,
   };

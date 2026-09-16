@@ -22,7 +22,6 @@ export const useNewProjectModalViewModel = () => {
     ? t('TOOLS.ANDROID_FOUND')
     : t('TOOLS.ANDROID_MISSING');
 
-  // The footer speaks only when it has something the QA cannot already read beside the field.
   const blocking =
     name.trim().length === 0
       ? t('PROJECT.NEEDS_NAME')

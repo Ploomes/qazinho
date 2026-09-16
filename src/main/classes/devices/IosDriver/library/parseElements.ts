@@ -11,6 +11,14 @@ function read(value: unknown): number {
   return typeof value === 'number' && Number.isFinite(value) ? value : Number.NaN;
 }
 
+function readJson(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
 function toElement(one: Described): IScreenElement[] {
   const label =
     [one.AXLabel, one.AXValue].find((value) => typeof value === 'string') ?? '';
@@ -36,22 +44,13 @@ function toElement(one: Described): IScreenElement[] {
 /** `idb ui describe-all` has answered with both a JSON array and one object per line; take either. */
 export function parseElements(described: string): IScreenElement[] {
   const trimmed = described.trim();
+  const whole = readJson(trimmed);
 
-  if (trimmed.length === 0) return [];
+  if (Array.isArray(whole)) return (whole as Described[]).flatMap(toElement);
 
-  try {
-    const whole: unknown = JSON.parse(trimmed);
-
-    if (Array.isArray(whole)) return (whole as Described[]).flatMap(toElement);
-  } catch {
-    // Not one document, so it is one element per line.
-  }
-
-  return trimmed.split('\n').flatMap((line) => {
-    try {
-      return toElement(JSON.parse(line) as Described);
-    } catch {
-      return [];
-    }
-  });
+  return trimmed
+    .split('\n')
+    .map(readJson)
+    .filter((one) => one !== null)
+    .flatMap((one) => toElement(one as Described));
 }

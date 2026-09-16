@@ -46,7 +46,6 @@
 }
 
 .workspace__body {
-  /* A column, so the chat can fill it and keep its composer on the floor. */
   display: flex;
   flex: 1;
   flex-direction: column;

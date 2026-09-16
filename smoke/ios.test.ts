@@ -32,7 +32,6 @@ afterAll(async () => {
   if (hasIdb) await driver.close();
 });
 
-// idb is the only way to tap a simulator, and gocrash never installs it for the QA.
 describe.skipIf(!hasIdb)(
   'a real iOS simulator',
   () => {
