@@ -30,6 +30,11 @@ const NO_PAGE_IN_NODE = {
     'The main process and the preload never import the page. Share a type through @/types.',
 };
 
+const NO_FRAMER_MOTION = {
+  group: ['framer-motion'],
+  message: 'Motion ships as `motion`: import from `motion/react`.',
+};
+
 const NO_NODE_FOLDERS_IN_THE_PAGE = {
   group: ['@/main/**', '**/electron/**'],
   message:
@@ -134,7 +139,10 @@ export default config(
     plugins: { 'react-hooks': reactHooks },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      'no-restricted-imports': ['error', { patterns: [NO_NODE_IN_THE_PAGE] }],
+      'no-restricted-imports': [
+        'error',
+        { patterns: [NO_NODE_IN_THE_PAGE, NO_FRAMER_MOTION] },
+      ],
       '@typescript-eslint/no-restricted-imports': [
         'error',
         { patterns: [NO_UPWARD_RELATIVE, NO_NODE_FOLDERS_IN_THE_PAGE] },
