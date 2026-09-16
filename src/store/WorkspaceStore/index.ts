@@ -187,6 +187,16 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
+  landNote: ({ workspaceId, text }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          appendAgentMessage({ workspace, text, at: formatClock(new Date()) }),
+      }),
+    })),
+
   markStreaming: ({ workspaceId, url }) =>
     set((state) => ({
       workspaces: mapWorkspace({

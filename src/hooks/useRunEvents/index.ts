@@ -6,6 +6,7 @@ import { useWorkspaceStore } from '@/store';
 export const useRunEvents = () => {
   const markDoing = useWorkspaceStore((state) => state.markDoing);
   const markStreaming = useWorkspaceStore((state) => state.markStreaming);
+  const landNote = useWorkspaceStore((state) => state.landNote);
   const landStep = useWorkspaceStore((state) => state.landStep);
   const landRunDone = useWorkspaceStore((state) => state.landRunDone);
   const landRunFailed = useWorkspaceStore((state) => state.landRunFailed);
@@ -17,10 +18,12 @@ export const useRunEvents = () => {
           markDoing({ workspaceId: event.workspaceId, index: event.index });
         else if (event.kind === 'streaming')
           markStreaming({ workspaceId: event.workspaceId, url: event.url });
+        else if (event.kind === 'note')
+          landNote({ workspaceId: event.workspaceId, text: event.text });
         else if (event.kind === 'step') landStep(event.outcome);
         else if (event.kind === 'done') landRunDone(event.workspaceId);
         else landRunFailed({ workspaceId: event.workspaceId, text: event.text });
       }),
-    [markDoing, markStreaming, landStep, landRunDone, landRunFailed],
+    [markDoing, markStreaming, landNote, landStep, landRunDone, landRunFailed],
   );
 };
