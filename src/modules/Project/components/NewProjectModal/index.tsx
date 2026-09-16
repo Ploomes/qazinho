@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Eyebrow, Input } from '@/components/atoms';
+import { FileField } from '@/components/molecules';
 import { ModalFrame } from '@/components/templates';
 import { useNewProjectModalViewModel } from './hooks';
 import './styles.css';
@@ -17,8 +18,8 @@ export const NewProjectModal: React.FC = () => {
     footerHint,
     onNameChange,
     onUrlChange,
-    onApkChange,
-    onAppChange,
+    onPickApk,
+    onPickApp,
     onCancel,
     onCreate,
   } = useNewProjectModalViewModel();
@@ -28,7 +29,7 @@ export const NewProjectModal: React.FC = () => {
     <ModalFrame
       title={t('PROJECT.NEW_TITLE')}
       subtitle={t('PROJECT.NEW_SUBTITLE')}
-      width={740}
+      width={720}
       confirmLabel={t('PROJECT.CREATE')}
       canConfirm={canCreate}
       hint={footerHint}
@@ -49,28 +50,35 @@ export const NewProjectModal: React.FC = () => {
         <Eyebrow>{t('PROJECT.TARGETS')}</Eyebrow>
         <div className="new-project__targets">
           <div className="new-project__target">
-            <span className="new-project__target-name">{t('PROJECT.WEB')}</span>
-            <p className="new-project__target-text">{t('PROJECT.WEB_TEXT')}</p>
-            <Input
-              isMono
-              value={url}
-              label={t('PROJECT.WEB')}
-              placeholder={t('PROJECT.WEB_PLACEHOLDER')}
-              onChange={onUrlChange}
-            />
+            <div className="new-project__target-head">
+              <span className="new-project__target-name">{t('PROJECT.WEB')}</span>
+              <p className="new-project__target-text">{t('PROJECT.WEB_TEXT')}</p>
+            </div>
+            <div className="new-project__target-field">
+              <Input
+                isMono
+                value={url}
+                label={t('PROJECT.WEB')}
+                placeholder={t('PROJECT.WEB_PLACEHOLDER')}
+                onChange={onUrlChange}
+              />
+            </div>
           </div>
 
           <div className="new-project__target">
-            <span className="new-project__target-name">{t('PROJECT.ANDROID')}</span>
-            <p className="new-project__target-text">{t('PROJECT.ANDROID_TEXT')}</p>
-            <Input
-              isMono
-              value={apk}
-              label={t('PROJECT.ANDROID')}
-              placeholder={t('PROJECT.ANDROID_PLACEHOLDER')}
-              onChange={onApkChange}
-            />
-            <span className="new-project__note">{androidNote}</span>
+            <div className="new-project__target-head">
+              <span className="new-project__target-name">{t('PROJECT.ANDROID')}</span>
+              <p className="new-project__target-text">{t('PROJECT.ANDROID_TEXT')}</p>
+            </div>
+            <div className="new-project__target-field">
+              <FileField
+                value={apk}
+                label={t('PROJECT.ANDROID')}
+                placeholder={t('PROJECT.ANDROID_PLACEHOLDER')}
+                onPick={onPickApk}
+              />
+              <span className="new-project__note">{androidNote}</span>
+            </div>
           </div>
 
           <div
@@ -80,18 +88,21 @@ export const NewProjectModal: React.FC = () => {
                 : 'new-project__target new-project__target--off'
             }
           >
-            <span className="new-project__target-name">{t('PROJECT.IOS')}</span>
-            <p className="new-project__target-text">{t('PROJECT.IOS_TEXT')}</p>
-            {isIosAvailable && (
-              <Input
-                isMono
-                value={app}
-                label={t('PROJECT.IOS')}
-                placeholder={t('PROJECT.IOS_PLACEHOLDER')}
-                onChange={onAppChange}
-              />
-            )}
-            <span className="new-project__note">{xcodeNote}</span>
+            <div className="new-project__target-head">
+              <span className="new-project__target-name">{t('PROJECT.IOS')}</span>
+              <p className="new-project__target-text">{t('PROJECT.IOS_TEXT')}</p>
+            </div>
+            <div className="new-project__target-field">
+              {isIosAvailable && (
+                <FileField
+                  value={app}
+                  label={t('PROJECT.IOS')}
+                  placeholder={t('PROJECT.IOS_PLACEHOLDER')}
+                  onPick={onPickApp}
+                />
+              )}
+              <span className="new-project__note">{xcodeNote}</span>
+            </div>
           </div>
         </div>
       </div>

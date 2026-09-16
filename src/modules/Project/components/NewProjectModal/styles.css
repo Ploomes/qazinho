@@ -1,14 +1,15 @@
 .new-project__targets {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: var(--space-4);
 }
 
 .new-project__target {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-5);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+  gap: var(--space-6);
+  align-items: center;
+  padding: var(--space-5) var(--space-6);
   border: 1px solid var(--line);
   border-radius: 13px;
   background: var(--raise);
@@ -20,6 +21,20 @@
   opacity: 0.55;
 }
 
+.new-project__target-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.new-project__target-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
 .new-project__target-name {
   color: var(--ink);
   font: var(--font-ui-strong);
@@ -28,7 +43,7 @@
 .new-project__target-text {
   margin: 0;
   color: var(--ink2);
-  font: var(--font-ui-xs);
+  font: var(--font-ui-sm);
   text-wrap: pretty;
 }
 

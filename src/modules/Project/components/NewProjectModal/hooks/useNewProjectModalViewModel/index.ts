@@ -1,7 +1,7 @@
 import type { ITarget } from '@/modules/Project/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform } from '@/services';
+import { Files, Platform } from '@/services';
 import { useAppStore, useMachineStore } from '@/store';
 
 export const useNewProjectModalViewModel = () => {
@@ -17,6 +17,16 @@ export const useNewProjectModalViewModel = () => {
 
   const isMac = Platform.isMac();
   const hasTarget = [url, apk, app].some((value) => value.trim().length > 0);
+
+  const androidNote = tools.androidSdk.isFound
+    ? t('TOOLS.ANDROID_FOUND')
+    : t('TOOLS.ANDROID_MISSING');
+
+  const iosNote = !isMac
+    ? t('PROJECT.IOS_NEEDS_MACOS')
+    : tools.xcode.isFound
+      ? t('PROJECT.IOS_READY')
+      : t('PROJECT.IOS_NEEDS_XCODE');
 
   const onCreate = () => {
     if (name.trim().length === 0 || !hasTarget) return;
@@ -45,20 +55,26 @@ export const useNewProjectModalViewModel = () => {
     app,
     isMac,
     canCreate: name.trim().length > 0 && hasTarget,
-    androidNote: tools.androidSdk.isFound
-      ? t('TOOLS.ANDROID_FOUND')
-      : t('TOOLS.ANDROID_MISSING'),
+    androidNote,
     xcodeNote: isMac
       ? tools.xcode.isFound
         ? t('TOOLS.XCODE_FOUND')
         : t('TOOLS.XCODE_MISSING')
       : t('PROJECT.IOS_MAC_ONLY'),
     isIosAvailable: isMac && tools.xcode.isFound,
-    footerHint: isMac ? t('PROJECT.HINT_MAC') : t('PROJECT.HINT_OTHER'),
+    footerHint: t('PROJECT.HINT', { ios: iosNote, android: androidNote }),
     onNameChange: setName,
     onUrlChange: setUrl,
-    onApkChange: setApk,
-    onAppChange: setApp,
+    onPickApk: () => {
+      void Files.pick('apk').then((picked) => {
+        if (picked !== null) setApk(picked);
+      });
+    },
+    onPickApp: () => {
+      void Files.pick('app').then((picked) => {
+        if (picked !== null) setApp(picked);
+      });
+    },
     onCancel: closeModal,
     onCreate,
   };
