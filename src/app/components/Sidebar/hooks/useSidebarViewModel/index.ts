@@ -34,6 +34,8 @@ export const useSidebarViewModel = () => {
         kind: 'workspace' as const,
         id: workspace.id,
         name: workspace.name,
+        platform:
+          project.targets.find(({ id }) => id === workspace.targetId)?.kind ?? null,
         meta: t(workspaceMeta(workspace).key as never, {
           count: workspaceMeta(workspace).count,
           current: workspace.live?.outcomes.length ?? 0,

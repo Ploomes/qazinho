@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
+import { PlatformIcon } from '@/components/atoms';
 import { MOTION } from '@/constants';
 import { GEAR_PATH } from './constants';
 import { useSidebarViewModel } from './hooks';
@@ -108,6 +109,11 @@ export const Sidebar: React.FC = () => {
                 >
                   {row.glyph}
                 </span>
+                {row.platform !== null && (
+                  <span className="sidebar__platform">
+                    <PlatformIcon kind={row.platform} size={13} />
+                  </span>
+                )}
                 <span className="sidebar__name">{row.name}</span>
                 <span
                   className={

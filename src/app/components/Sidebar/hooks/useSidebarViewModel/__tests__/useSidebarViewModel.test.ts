@@ -38,6 +38,31 @@ describe('useSidebarViewModel', () => {
       });
     });
 
+    it('marks each workspace with the platform it runs on, and none it cannot find', () => {
+      useAppStore.setState({
+        projects: [
+          {
+            ...PROJECT,
+            targets: [{ id: 't1', kind: 'android', label: 'Android', value: 'a.apk' }],
+          },
+        ],
+      });
+      useWorkspaceStore.setState({
+        workspaces: [
+          { ...makeWorkspace(), id: 'w1', targetId: 't1' },
+          { ...makeWorkspace(), id: 'w2', targetId: 'gone' },
+        ],
+      });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(
+        result.current.rows
+          .filter((row) => row.kind === 'workspace')
+          .map((row) => row.kind === 'workspace' && row.platform),
+      ).toEqual(['android', null]);
+    });
+
     it('does NOT list a workspace of another project', () => {
       useWorkspaceStore.setState({
         workspaces: [{ ...makeWorkspace(), projectId: 'p2' }],

@@ -143,6 +143,17 @@
   font: 600 11px/1 var(--font-mono);
 }
 
+.sidebar__platform {
+  display: flex;
+  color: var(--ink3);
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.sidebar__row--selected .sidebar__platform,
+.sidebar__row:hover .sidebar__platform {
+  color: var(--ink2);
+}
+
 .sidebar__name {
   flex: 1;
   min-width: 0;
