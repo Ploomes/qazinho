@@ -1,11 +1,10 @@
 import type { ISavedState, ISavedWorkspace } from '@/types';
-
-const NOTHING: ISavedState = { projects: '[]', workspaces: [] };
+import { NOTHING_SAVED } from './constants';
 
 /** The only caller of the disk side of the bridge. */
 export class Archive {
   public static async read(): Promise<ISavedState> {
-    return (await window.gocrash?.readState()) ?? NOTHING;
+    return (await window.gocrash?.readState()) ?? NOTHING_SAVED;
   }
 
   public static saveProjects(json: string): void {

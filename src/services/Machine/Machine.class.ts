@@ -1,11 +1,5 @@
 import type { IDetectedAgent, IDeviceTools, IResourceSnapshot } from '@/types';
-
-const NO_TOOLS: IDeviceTools = {
-  androidSdk: { isFound: false, path: null },
-  xcode: { isFound: false, path: null },
-};
-
-const EMPTY: IResourceSnapshot = { cpu: 0, ramMb: 0, ramCeilingGb: 32, processes: [] };
+import { NO_RESOURCES, NO_TOOLS } from './constants';
 
 /** The only caller of the machine side of the bridge. Views ask this, never `window.gocrash`. */
 export class Machine {
@@ -14,7 +8,7 @@ export class Machine {
   }
 
   public static async readResources(): Promise<IResourceSnapshot> {
-    return (await window.gocrash?.readResources()) ?? EMPTY;
+    return (await window.gocrash?.readResources()) ?? NO_RESOURCES;
   }
 
   public static async detectDeviceTools(): Promise<IDeviceTools> {
