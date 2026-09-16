@@ -4,13 +4,15 @@ A local-first desktop app where AI agents test web and mobile apps from a test p
 the plan and orchestrates; the agent opens the app, walks the flows and reports what broke. The
 name is the pitch: go crash your app before your users do.
 
-| Target  | Input                                   | Driven by                                              |
-| ------- | --------------------------------------- | ------------------------------------------------------ |
-| web     | the environment's URL                   | **Playwright over the QA's own Chrome — this works**   |
-| Android | an `.apk`                               | the Android Emulator, headless, streamed in the window |
-| iOS     | a simulator `.app` build, not an `.ipa` | the iOS Simulator, macOS only                          |
+| Target  | Input                                   | Driven by                                         | Verified         |
+| ------- | --------------------------------------- | ------------------------------------------------- | ---------------- |
+| web     | the environment's URL                   | Playwright over the QA's own Chrome               | end to end       |
+| Android | an `.apk`                               | the QA's own AVD, through `adb` and `uiautomator` | end to end       |
+| iOS     | a simulator `.app` build, not an `.ipa` | `simctl` boots and shoots; `idb` reads and taps   | simctl half only |
 
-A run on a target gocrash cannot drive yet says so in the chat. It never pretends.
+gocrash installs none of it. It finds the SDK, the emulator and idb where they already are, and
+names what is missing where the QA reads it. **iOS needs `brew install idb-companion`**: simctl
+has no command that touches the screen.
 
 Built for technical QA teams, and for QA moving from manual to technical. A project is an
 environment with one or more targets. Workspaces hold a test plan, and several run in parallel.
@@ -39,9 +41,17 @@ per workspace, with the plan beside it in YAML.
 
 `npm run test:smoke` proves it: it drives the real browser with the real agent.
 
-**Still to build for 0.1:** the Android target (the emulator, `adb`, installing an `.apk`) and
-the iOS one. The agent cannot ask the QA a question mid-run yet, and no issue tracker is
-connected.
+**Android works the same way**, proven by `npm run test:smoke`: it installs a real apk on the
+QA's own AVD, reads the screen out of `uiautomator`, taps what the agent named, and judges what
+it sees.
+
+**iOS is built but half-proven.** Booting, installing, launching and screenshotting are verified
+against a real simulator. The tap path goes through idb, which was not installed on the machine
+this was written on, so `parseElements` reads idb's tree tolerantly and has never seen the real
+thing. Run `smoke/ios.test.ts` once idb is installed before trusting it.
+
+**Still to build for 0.1:** the agent cannot ask the QA a question mid-run, and no issue tracker
+is connected.
 
 ## Mandatory rules
 
