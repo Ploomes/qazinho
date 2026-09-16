@@ -204,6 +204,7 @@ export const pt: typeof en = {
     NEEDS_TARGET: 'Este projeto não tem target para rodar',
   },
   SETTINGS: {
+    BACK: 'Voltar ao app',
     AGENTS: 'agentes',
     DEVICES: 'devices',
     INTEGRATIONS: 'integrações',

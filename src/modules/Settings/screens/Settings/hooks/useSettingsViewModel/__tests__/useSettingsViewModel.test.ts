@@ -70,6 +70,30 @@ describe('useSettingsViewModel', () => {
     });
   });
 
+  describe('onBack', () => {
+    it('returns to the workspace that was open before settings', () => {
+      useAppStore.setState({ screen: 'settings', selectedWorkspaceId: 'w1' });
+      const { result } = renderHook(() => useSettingsViewModel());
+
+      act(() => {
+        result.current.onBack();
+      });
+
+      expect(useAppStore.getState().screen).toBe('workspace');
+    });
+
+    it('returns to the welcome screen when no workspace was open', () => {
+      useAppStore.setState({ screen: 'settings', selectedWorkspaceId: null });
+      const { result } = renderHook(() => useSettingsViewModel());
+
+      act(() => {
+        result.current.onBack();
+      });
+
+      expect(useAppStore.getState().screen).toBe('welcome');
+    });
+  });
+
   describe('onToggleTheme', () => {
     it('switches the theme the whole window reads from', () => {
       const { result } = renderHook(() => useSettingsViewModel());

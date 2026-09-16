@@ -9,6 +9,7 @@ export const useSettingsViewModel = () => {
   const detected = useMachineStore((state) => state.agents);
   const tools = useMachineStore((state) => state.tools);
   const toggleTheme = useAppStore((state) => state.toggleTheme);
+  const closeSettings = useAppStore((state) => state.closeSettings);
   const tab = useSettingsStore((state) => state.tab);
   const agent = useSettingsStore((state) => state.agent);
   const model = useSettingsStore((state) => state.model);
@@ -51,6 +52,7 @@ export const useSettingsViewModel = () => {
       note: tools.idb.isFound ? t('TOOLS.IDB_FOUND') : t('TOOLS.IDB_MISSING'),
     },
     isMac: Platform.isMac(),
+    onBack: closeSettings,
     onSelectTab: selectTab,
     onSelectAgent: selectAgent,
     onSelectModel: selectModel,

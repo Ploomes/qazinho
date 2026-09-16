@@ -20,6 +20,7 @@ export interface IAppStore {
   media: IMedia | null;
   toggleTheme: () => void;
   openSettings: () => void;
+  closeSettings: () => void;
   openModal: (modal: Modal) => void;
   openWorkspaceModal: (projectId: string) => void;
   closeModal: () => void;

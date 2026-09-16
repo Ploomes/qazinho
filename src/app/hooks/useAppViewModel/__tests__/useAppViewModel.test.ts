@@ -41,4 +41,16 @@ describe('useAppViewModel', () => {
 
     expect(result.current.isWelcome).toBe(true);
   });
+
+  it('hides the app sidebar while settings take the whole window', () => {
+    useAppStore.setState({
+      screen: 'settings',
+      projects: [{ id: 'p1', name: 'Shop · staging', targets: [] }],
+    });
+
+    const { result } = renderHook(() => useAppViewModel());
+
+    expect(result.current.isSettings).toBe(true);
+    expect(result.current.hasSidebar).toBe(false);
+  });
 });

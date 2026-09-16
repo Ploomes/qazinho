@@ -11,14 +11,14 @@ import { useAppViewModel } from './hooks';
 import './styles.css';
 
 export const App: React.FC = () => {
-  const { hasProjects, isWelcome, isWorkspace, isSettings, modal } = useAppViewModel();
+  const { hasSidebar, isWelcome, isWorkspace, isSettings, modal } = useAppViewModel();
 
   return (
     <MotionConfig reducedMotion="user">
       <div className="app">
         <Titlebar />
         <div className="app__body">
-          {hasProjects && <Sidebar />}
+          {hasSidebar && <Sidebar />}
           {isWelcome && <Welcome />}
           {!isWelcome && isWorkspace && <Workspace />}
           {!isWelcome && isWorkspace && <DevicePanel />}

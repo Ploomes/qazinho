@@ -203,6 +203,7 @@ export const en = {
     NEEDS_TARGET: 'This project has no target to run against',
   },
   SETTINGS: {
+    BACK: 'Back to app',
     AGENTS: 'agents',
     DEVICES: 'devices',
     INTEGRATIONS: 'integrations',
