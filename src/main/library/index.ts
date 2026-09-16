@@ -1,1 +1,1 @@
-export { isInternalNavigation } from './is-internal-navigation';
+export * from './isInternalNavigation';

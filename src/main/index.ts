@@ -1,53 +1,53 @@
 import { join } from 'node:path';
-import { pathToFileURL } from 'node:url';
 import { app, BrowserWindow, shell } from 'electron';
+import { WINDOW } from '@/main/constants';
 import { isInternalNavigation } from '@/main/library';
 
-const RENDERER_URL = process.env['ELECTRON_RENDERER_URL'];
+const DEV_SERVER_URL = process.env.ELECTRON_RENDERER_URL;
 const RENDERER_FILE = join(__dirname, '../renderer/index.html');
+const PRELOAD_FILE = join(__dirname, '../preload/index.js');
 
-function createMainWindow(): void {
+function createWindow(): void {
   const window = new BrowserWindow({
-    title: 'gocrash',
-    width: 1440,
-    height: 900,
-    minWidth: 1024,
-    minHeight: 640,
+    ...WINDOW,
     show: false,
+    title: 'gocrash',
+    backgroundColor: '#0a0b0d',
+    titleBarStyle: 'hiddenInset',
+    trafficLightPosition: { x: 16, y: 16 },
     webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
+      preload: PRELOAD_FILE,
       contextIsolation: true,
       sandbox: true,
       nodeIntegration: false,
     },
   });
 
-  const appUrl = RENDERER_URL ?? pathToFileURL(RENDERER_FILE).href;
-
   window.once('ready-to-show', () => window.show());
 
-  window.webContents.on('will-navigate', (event, url) => {
-    if (!isInternalNavigation(appUrl, url)) event.preventDefault();
+  window.webContents.on('will-navigate', (event, target) => {
+    if (!isInternalNavigation(window.webContents.getURL(), target))
+      event.preventDefault();
   });
 
   window.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith('https://')) void shell.openExternal(url);
+    if (url.startsWith('https:')) void shell.openExternal(url);
     return { action: 'deny' };
   });
 
-  if (RENDERER_URL) void window.loadURL(RENDERER_URL);
+  if (DEV_SERVER_URL) void window.loadURL(DEV_SERVER_URL);
   else void window.loadFile(RENDERER_FILE);
 }
 
 void app.whenReady().then(() => {
-  createMainWindow();
+  createWindow();
 
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
 app.on('window-all-closed', () => {
-  // On macOS an app stays in the dock with no window open, until the user quits it.
+  // macOS: an app stays in the dock with no window open.
   if (process.platform !== 'darwin') app.quit();
 });
