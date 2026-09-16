@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Eyebrow, IconButton } from '@/components/atoms';
-import { MOTION } from '@/constants';
+import { BACKDROP, MOTION } from '@/constants';
 import { useLightboxViewModel } from './hooks';
 import './styles.css';
 
@@ -14,19 +14,18 @@ export const Lightbox: React.FC = () => {
   return (
     <motion.div
       className="lightbox"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: MOTION.durationFast }}
+      initial={{ opacity: 0, backdropFilter: BACKDROP.clear }}
+      animate={{ opacity: 1, backdropFilter: BACKDROP.blur }}
+      exit={{ opacity: 0, backdropFilter: BACKDROP.clear }}
+      transition={{ duration: MOTION.duration, ease: MOTION.ease }}
       onClick={onClose}
     >
       <motion.div
         className="lightbox__panel"
         style={{ width: frameWidth }}
-        initial={{ opacity: 0, scale: 0.92, y: 14 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.92, y: 14 }}
-        transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+        initial={{ opacity: 0, scale: 0.92, y: 18 }}
+        animate={{ opacity: 1, scale: 1, y: 0, transition: BACKDROP.panelSpring }}
+        exit={{ opacity: 0, scale: 0.96, y: 8, transition: BACKDROP.panelExit }}
         onClick={(event) => {
           event.stopPropagation();
         }}
