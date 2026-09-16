@@ -113,6 +113,10 @@ export class AndroidDriver implements IDeviceDriver {
   }
 
   /** gocrash only shuts down what gocrash started: an emulator the QA opened stays open. */
+  public async stream(): Promise<boolean> {
+    return Promise.resolve(false);
+  }
+
   public async close(): Promise<void> {
     if (this.isOurs && this.serial.length > 0)
       await this.adb(['emu', 'kill']).catch(() => '');

@@ -7,5 +7,6 @@ export interface IDeviceDriver {
   act: (action: IStepAction) => Promise<void>;
   describe: () => Promise<string>;
   shoot: (file: string) => Promise<IShot | null>;
+  stream: (onFrame: (jpeg: Buffer) => void) => Promise<boolean>;
   close: () => Promise<void>;
 }

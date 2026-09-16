@@ -93,6 +93,10 @@ export class IosDriver implements IDeviceDriver {
   }
 
   /** gocrash only shuts down what gocrash started: a simulator the QA opened stays open. */
+  public async stream(): Promise<boolean> {
+    return Promise.resolve(false);
+  }
+
   public async close(): Promise<void> {
     if (this.isOurs) await this.simctl(['shutdown', this.udid]).catch(() => '');
 

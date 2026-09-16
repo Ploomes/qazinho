@@ -1,17 +1,18 @@
 import type { IWebDriver } from './types';
 import type { IDeviceDriver, IShot } from '@/main/classes/devices/types';
 import type { IStepAction } from '@/types';
-import type { BrowserContext, Page } from 'playwright-core';
+import type { BrowserContext, CDPSession, Page } from 'playwright-core';
 import { chromium } from 'playwright-core';
 import { WEB_DRIVER } from './constants';
 import { describePage, findLocator } from './library';
 
-/** Drives a real browser on this machine. The QA watches it work. */
+/** Drives a real Chrome on this machine with no window of its own; the QA watches it in the device panel. */
 export class WebDriver implements IDeviceDriver {
   private readonly url: string;
   private readonly profileDir: string;
   private context: BrowserContext | null = null;
   private page: Page | null = null;
+  private screencast: CDPSession | null = null;
 
   public constructor(props: IWebDriver) {
     this.url = props.url;
@@ -21,7 +22,7 @@ export class WebDriver implements IDeviceDriver {
   public async open(): Promise<void> {
     this.context = await chromium.launchPersistentContext(this.profileDir, {
       channel: 'chrome',
-      headless: false,
+      headless: true,
       viewport: { ...WEB_DRIVER.viewport },
     });
     this.page = this.context.pages()[0] ?? (await this.context.newPage());
@@ -73,7 +74,34 @@ export class WebDriver implements IDeviceDriver {
     return { file, dataUrl: `data:image/jpeg;base64,${image.toString('base64')}` };
   }
 
+  public async stream(onFrame: (jpeg: Buffer) => void): Promise<boolean> {
+    if (!this.context || !this.page) return false;
+
+    const session = await this.context.newCDPSession(this.page);
+
+    // Chrome DevTools Protocol: no frame comes after one that was never acknowledged.
+    session.on('Page.screencastFrame', (frame) => {
+      onFrame(Buffer.from(frame.data, 'base64'));
+      void session
+        .send('Page.screencastFrameAck', { sessionId: frame.sessionId })
+        .catch(() => undefined);
+    });
+
+    await session.send('Page.startScreencast', {
+      format: 'jpeg',
+      quality: WEB_DRIVER.streamQuality,
+      maxWidth: WEB_DRIVER.viewport.width,
+      maxHeight: WEB_DRIVER.viewport.height,
+    });
+
+    this.screencast = session;
+
+    return true;
+  }
+
   public async close(): Promise<void> {
+    await this.screencast?.detach().catch(() => undefined);
+    this.screencast = null;
     await this.context?.close().catch(() => undefined);
     this.context = null;
     this.page = null;
