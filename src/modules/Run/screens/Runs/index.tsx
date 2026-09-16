@@ -4,8 +4,18 @@ import { useRunsViewModel } from './hooks';
 import './styles.css';
 
 export const Runs: React.FC = () => {
-  const { runs, run, filters, filter, cases, isEmpty, onSelectRun, onFilter, onOpenBug } =
-    useRunsViewModel();
+  const {
+    runs,
+    run,
+    filters,
+    filter,
+    cases,
+    isEmpty,
+    onSelectRun,
+    onFilter,
+    onOpenBug,
+    onOpenShot,
+  } = useRunsViewModel();
 
   if (isEmpty || run === null) {
     return (
@@ -98,7 +108,12 @@ export const Runs: React.FC = () => {
                     Open in Bugs →
                   </button>
                 )}
-                <Screenshot label={`step ${String(step.number)}`} />
+                <Screenshot
+                  label={`step ${String(step.number)}`}
+                  onOpen={() => {
+                    onOpenShot(`step ${String(step.number)}`);
+                  }}
+                />
                 {step.why !== null && <span className="runs__why">{step.why}</span>}
               </div>
             ))}

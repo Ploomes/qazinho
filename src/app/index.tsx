@@ -1,5 +1,5 @@
 import { AnimatePresence, MotionConfig } from 'motion/react';
-import { Titlebar } from '@/components/organisms';
+import { Lightbox, Titlebar } from '@/components/organisms';
 import { DevicePanel } from '@/modules/Device/components';
 import { NewProjectModal } from '@/modules/Project/components';
 import { Welcome } from '@/modules/Project/screens/Welcome';
@@ -26,6 +26,7 @@ export const App: React.FC = () => {
         </div>
 
         <AnimatePresence>
+          <Lightbox key="lightbox" />
           {modal === 'project' && <NewProjectModal key="project" />}
           {modal === 'workspace' && <NewWorkspaceModal key="workspace" />}
         </AnimatePresence>

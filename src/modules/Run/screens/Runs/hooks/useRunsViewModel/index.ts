@@ -11,6 +11,7 @@ export const useRunsViewModel = () => {
   const runFilter = useWorkspaceStore((state) => state.runFilter);
   const selectRun = useWorkspaceStore((state) => state.selectRun);
   const setRunFilter = useWorkspaceStore((state) => state.setRunFilter);
+  const openMedia = useAppStore((state) => state.openMedia);
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
 
@@ -23,6 +24,14 @@ export const useRunsViewModel = () => {
     selectTab('bugs');
   };
 
+  const onOpenShot = (label: string) => {
+    openMedia({
+      kicker: run?.id ?? '',
+      title: label,
+      isTall: workspace?.planKind === 'mobile',
+    });
+  };
+
   return {
     runs,
     run,
@@ -33,5 +42,6 @@ export const useRunsViewModel = () => {
     onSelectRun: selectRun,
     onFilter: setRunFilter,
     onOpenBug,
+    onOpenShot,
   };
 };
