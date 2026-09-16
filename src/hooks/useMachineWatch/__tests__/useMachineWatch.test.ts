@@ -14,6 +14,7 @@ const AGENTS = [
     command: 'claude',
     isFound: true,
     path: '/bin/claude',
+    defaultModel: null,
   },
 ];
 

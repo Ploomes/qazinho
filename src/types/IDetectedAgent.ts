@@ -5,4 +5,5 @@ export interface IDetectedAgent {
   command: string;
   isFound: boolean;
   path: string | null;
+  defaultModel: string | null;
 }

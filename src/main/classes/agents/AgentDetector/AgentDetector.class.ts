@@ -1,9 +1,10 @@
 import type { IDetectedAgent } from '@/types';
+import { readFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { isAbsolute, join } from 'node:path';
 import { findOnPath, mergePathSegments } from '@/main/library';
 import { AGENT_PROBES, INSTALL_DIRS } from './constants';
-import { hydrateShellPath } from './library';
+import { defaultModelOf, hydrateShellPath } from './library';
 
 /** Finds the agents already on this machine. gocrash installs nothing and downloads nothing. */
 export class AgentDetector {
@@ -15,11 +16,22 @@ export class AgentDetector {
 
     const directories = await this.directories();
 
-    this.detected = AGENT_PROBES.map((probe) => {
-      const found = findOnPath({ command: probe.command, directories });
+    this.detected = await Promise.all(
+      AGENT_PROBES.map(async ({ config, ...probe }) => {
+        const found = findOnPath({ command: probe.command, directories });
+        const text = await readFile(join(homedir(), config.file), 'utf8').catch(
+          () => null,
+        );
 
-      return { ...probe, isFound: found !== null, path: found };
-    });
+        return {
+          ...probe,
+          isFound: found !== null,
+          path: found,
+          defaultModel:
+            text === null ? null : defaultModelOf({ format: config.format, text }),
+        };
+      }),
+    );
 
     return this.detected;
   }

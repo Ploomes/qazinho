@@ -32,6 +32,7 @@ describe('useSettingsViewModel', () => {
           command: 'claude',
           isFound: true,
           path: '/bin/claude',
+          defaultModel: null,
         },
         {
           id: 'codex',
@@ -39,6 +40,7 @@ describe('useSettingsViewModel', () => {
           command: 'codex',
           isFound: true,
           path: '/bin/codex',
+          defaultModel: null,
         },
         {
           id: 'gemini',
@@ -46,6 +48,7 @@ describe('useSettingsViewModel', () => {
           command: 'gemini',
           isFound: false,
           path: null,
+          defaultModel: null,
         },
       ],
     });
