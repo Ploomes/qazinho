@@ -2,10 +2,11 @@
 
 Vitest. `node` for `src/main` and `src/types`, `jsdom` for anything in the page.
 
-| Command              | What              |
-| -------------------- | ----------------- |
-| `npm test`           | everything        |
-| `npm run test:watch` | everything, watch |
+| Command              | What                                       |
+| -------------------- | ------------------------------------------ |
+| `npm test`           | every unit test                            |
+| `npm run test:watch` | the same, watching                         |
+| `npm run test:smoke` | `smoke/`: the real agent, the real browser |
 
 ## `__tests__/` next to the code
 
@@ -45,7 +46,14 @@ not already cover.
   `isInternalNavigation` takes two strings and not a `WebContents`.
 - **Test names describe behaviour, not methods.** `'another port on localhost is another
 origin'`, never `'isInternalNavigation() returns false'`.
-- **Tests do not use the network**, and do not boot an emulator, a simulator or a browser. What
-  drives a real device gets its own suite when it exists.
+- **Tests do not use the network**, and do not boot an emulator, a simulator or a browser.
+
+## `smoke/`, and why it is not in `npm test`
+
+`smoke/run.test.ts` is the one test that proves the product: it serves a page on localhost, drives
+real Chrome through `RunCoordinator` and asks the QA's own agent to judge what it sees. It spends
+the QA's tokens and needs an agent installed, so it has its own config (`vitest.smoke.ts`), its
+own command, and CI never runs it. Run it by hand after touching the run pipeline.
+
 - A renderer test file declares its environment at the top:
   `// @vitest-environment jsdom`.

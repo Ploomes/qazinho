@@ -13,6 +13,7 @@
 | `npm run lint` / `lint:fix`       | ESLint                                                 |
 | `npm run format` / `format:check` | Prettier                                               |
 | `npm test` / `test:watch`         | Vitest                                                 |
+| `npm run test:smoke`              | the real agent and a real browser — see `testing.md`   |
 
 ## Two tsconfigs, and the second one is a guard
 
@@ -20,7 +21,7 @@
 
 | Config               | Covers                                                 | Types         |
 | -------------------- | ------------------------------------------------------ | ------------- |
-| `tsconfig.node.json` | `src/main`, `src/types`, `electron/`, the config files | `node`        |
+| `tsconfig.node.json` | `src/main`, `src/types`, `electron/`, `smoke/`, config | `node`        |
 | `tsconfig.web.json`  | all of `src/` except `src/main`                        | `vite/client` |
 
 **`tsconfig.web.json` has no Node types.** An `import 'node:fs'` in the page or in `src/types`
