@@ -22,6 +22,7 @@ export function startRun(props: {
       startedAt,
       outcomes: [],
       shot: null,
+      streamUrl: null,
     },
   };
 }

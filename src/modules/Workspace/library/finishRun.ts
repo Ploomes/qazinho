@@ -11,7 +11,7 @@ export function finishRun(props: { workspace: IWorkspace; at: string }): IWorksp
 
   const settled: IWorkspace = {
     ...workspace,
-    live: { ...live, isRunning: false, isDone: true, doingIndex: -1 },
+    live: { ...live, isRunning: false, isDone: true, doingIndex: -1, streamUrl: null },
   };
 
   if (live.outcomes.length === 0) return { ...settled, status: 'stopped' };

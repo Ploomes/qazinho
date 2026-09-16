@@ -178,6 +178,20 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
+  markStreaming: ({ workspaceId, url }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          workspace.live
+            ? workspace.live.isDone
+              ? workspace
+              : { ...workspace, live: { ...workspace.live, streamUrl: url } }
+            : workspace,
+      }),
+    })),
+
   landStep: (outcome) =>
     set((state) => ({
       workspaces: mapWorkspace({
@@ -206,7 +220,13 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
           ...appendAgentError({ workspace, text, at: formatClock(new Date()) }),
           status: 'stopped',
           live: workspace.live
-            ? { ...workspace.live, isRunning: false, isDone: true, doingIndex: -1 }
+            ? {
+                ...workspace.live,
+                isRunning: false,
+                isDone: true,
+                doingIndex: -1,
+                streamUrl: null,
+              }
             : null,
         }),
       }),

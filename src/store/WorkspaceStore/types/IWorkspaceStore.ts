@@ -45,6 +45,7 @@ export interface IWorkspaceStore {
   pauseRun: (workspaceId: string) => void;
   stopRun: (workspaceId: string) => void;
   markDoing: (props: { workspaceId: string; index: number }) => void;
+  markStreaming: (props: { workspaceId: string; url: string }) => void;
   landStep: (outcome: IStepOutcome) => void;
   landRunDone: (workspaceId: string) => void;
   landRunFailed: (props: { workspaceId: string; text: string }) => void;
