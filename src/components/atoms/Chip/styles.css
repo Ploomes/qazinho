@@ -1,0 +1,22 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 11px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--raise);
+  color: var(--ink2);
+  font: var(--font-mono-sm);
+  white-space: nowrap;
+}
+
+.chip__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+}
+
+.chip__caret {
+  color: var(--ink3);
+}
