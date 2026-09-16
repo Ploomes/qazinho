@@ -1,0 +1,128 @@
+.sidebar {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: 268px;
+  border-right: 1px solid var(--line2);
+  background: var(--panel);
+}
+
+.sidebar__rows {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 var(--space-3) var(--space-3);
+  overflow-y: auto;
+}
+
+.sidebar__project {
+  padding: var(--space-5) var(--space-3) var(--space-3);
+  color: var(--ink3);
+  font: 500 var(--eyebrow-size) / 1.4 var(--font-mono);
+  letter-spacing: var(--eyebrow-tracking);
+  text-transform: uppercase;
+}
+
+.sidebar__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-3);
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  text-align: left;
+}
+
+.sidebar__row--selected {
+  background: var(--sel);
+}
+
+.sidebar__glyph {
+  width: 14px;
+  font: 600 11px/1 var(--font-mono);
+}
+
+.sidebar__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink2);
+  font: var(--font-ui-md);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar__row--selected .sidebar__name {
+  color: var(--ink);
+}
+
+.sidebar__meta {
+  padding: 3px var(--space-2);
+  border-radius: 5px;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
+
+.sidebar__meta--waiting {
+  background: var(--attn);
+  color: var(--on-attn);
+}
+
+.sidebar__add {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: none;
+  background: transparent;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+  text-align: left;
+}
+
+.sidebar__add--project {
+  margin: 0 var(--space-3);
+}
+
+.sidebar__settings {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border: none;
+  border-top: 1px solid var(--line2);
+  background: transparent;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  text-align: left;
+}
+
+.sidebar__banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--attn);
+  border-radius: var(--radius-md);
+  background: var(--attn-soft);
+  animation: gc-glow 2.8s ease-in-out infinite;
+}
+
+.sidebar__banner-glyph {
+  color: var(--attn);
+  font: 600 12px/1 var(--font-mono);
+  animation: gc-blink 2.4s ease-in-out infinite;
+}
+
+.sidebar__banner-name {
+  color: var(--ink);
+  font: var(--font-ui-md);
+}
+
+.sidebar__banner-text {
+  color: var(--ink2);
+  font: var(--font-ui-xs);
+}
