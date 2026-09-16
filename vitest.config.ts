@@ -12,7 +12,7 @@ export default defineConfig({
     name: 'unit',
     include: ['src/**/__tests__/**/*.test.{ts,tsx}'],
     environment: 'node',
-    setupFiles: ['./vitest.setup.ts'],
+    setupFiles: ['./tests/vitest.setup.ts'],
     passWithNoTests: true,
   },
 });
