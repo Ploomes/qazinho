@@ -85,24 +85,24 @@ describe('useSettingsViewModel', () => {
   });
 
   describe('onSelectAgent', () => {
-    it('falls back to the first model of the agent it moved to', () => {
+    it('moves to the agent it was given, on that agent own default model', () => {
       const { result } = renderHook(() => useSettingsViewModel());
 
       act(() => {
         result.current.onSelectAgent('Codex');
       });
 
-      expect(useSettingsStore.getState().model).toBe('mini');
+      expect(useSettingsStore.getState()).toMatchObject({ agent: 'Codex', model: '' });
     });
 
-    it('leaves no model at all for an agent that has none', () => {
+    it('does NOT touch the model when the agent already in use is picked again', () => {
       const { result } = renderHook(() => useSettingsViewModel());
 
       act(() => {
-        result.current.onSelectAgent('Gemini CLI');
+        result.current.onSelectAgent('Claude Code');
       });
 
-      expect(useSettingsStore.getState().model).toBe('');
+      expect(useSettingsStore.getState().model).toBe('sonnet');
     });
   });
 

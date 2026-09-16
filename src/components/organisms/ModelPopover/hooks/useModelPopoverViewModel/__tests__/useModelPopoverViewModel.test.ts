@@ -24,14 +24,24 @@ describe('useModelPopoverViewModel', () => {
     expect(result.current.modelHeading).toBe('no models to pick');
   });
 
-  it('moves the model with the agent', () => {
+  it('moves to the agent own default model when the agent changes', () => {
     const { result } = renderHook(() => useModelPopoverViewModel());
 
     act(() => {
       result.current.onSelectAgent('Codex');
     });
 
-    expect(useSettingsStore.getState().model).toBe('mini');
+    expect(useSettingsStore.getState().model).toBe('');
+  });
+
+  it('does NOT reset the model when the agent in use is clicked', () => {
+    const { result } = renderHook(() => useModelPopoverViewModel());
+
+    act(() => {
+      result.current.onSelectAgent('Claude Code');
+    });
+
+    expect(useSettingsStore.getState().model).toBe('sonnet');
   });
 
   it('closes when the QA presses anywhere outside it', () => {

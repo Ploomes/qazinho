@@ -2,14 +2,15 @@ import type { ISettingsStore } from './types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { STORAGE } from '@/constants';
-import { KEYBINDS, MODELS } from '@/modules/Settings/constants';
+import { KEYBINDS } from '@/modules/Settings/constants';
+import { migrateSettings } from './library';
 
 export const useSettingsStore = create<ISettingsStore>()(
   persist(
     (set) => ({
       tab: 'agents',
       agent: 'Claude Code',
-      model: 'sonnet',
+      model: '',
       language: 'en',
       keybinds: KEYBINDS,
       editingKeybindId: null,
@@ -17,7 +18,8 @@ export const useSettingsStore = create<ISettingsStore>()(
 
       selectTab: (tab) => set({ tab }),
 
-      selectAgent: (agent) => set({ agent, model: MODELS[agent]?.[0]?.id ?? '' }),
+      selectAgent: (agent) =>
+        set((state) => (state.agent === agent ? {} : { agent, model: '' })),
 
       selectModel: (model) => set({ model }),
 
@@ -40,6 +42,12 @@ export const useSettingsStore = create<ISettingsStore>()(
     }),
     {
       name: STORAGE.settings,
+      version: 1,
+      migrate: (persisted, version) =>
+        migrateSettings({ persisted, version }) as Pick<
+          ISettingsStore,
+          'agent' | 'model' | 'language' | 'keybinds' | 'integrations'
+        >,
       partialize: ({ agent, model, language, keybinds, integrations }) => ({
         agent,
         model,
