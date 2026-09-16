@@ -59,6 +59,15 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
+  reorderPlan: ({ workspaceId, plan }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => ({ ...workspace, plan }),
+      }),
+    })),
+
   startRun: (workspaceId) =>
     set((state) => ({
       workspaces: mapWorkspace({

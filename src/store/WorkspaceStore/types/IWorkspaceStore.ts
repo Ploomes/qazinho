@@ -1,4 +1,5 @@
 import type { BugFilter } from '@/modules/Bug/types';
+import type { ITestCase } from '@/modules/Plan/types';
 import type { RunFilter } from '@/modules/Run/types';
 import type { IWorkspace, WorkspaceTab } from '@/modules/Workspace/types';
 
@@ -19,6 +20,7 @@ export interface IWorkspaceStore {
   sendMessage: (props: { workspaceId: string; text: string }) => void;
   replyToQa: (props: { workspaceId: string; kind: 'web' | 'mobile' }) => void;
   answerAsk: (props: { workspaceId: string; reply: string }) => void;
+  reorderPlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
   startRun: (workspaceId: string) => void;
   pauseRun: (workspaceId: string) => void;
   stopRun: (workspaceId: string) => void;
