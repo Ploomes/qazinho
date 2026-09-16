@@ -32,6 +32,22 @@ describe('finishRun', () => {
     expect(workspace.status).toBe('failed');
   });
 
+  it('the plan carries how each case went, so the QA sees it without opening the run', () => {
+    const workspace = walkRun({
+      verdicts: ['passed', 'passed', 'passed', 'passed', 'failed'],
+      isFinished: true,
+    });
+
+    expect(workspace.plan[0]?.lastVerdict).toBe('passed');
+    expect(workspace.plan[1]?.lastVerdict).toBe('failed');
+  });
+
+  it('a case the run never reached keeps the verdict it already had', () => {
+    const workspace = walkRun({ verdicts: ['passed', 'passed'], isFinished: true });
+
+    expect(workspace.plan[1]?.lastVerdict).toBeNull();
+  });
+
   it('a run that decided nothing is stopped, not filed', () => {
     const started = startRun({
       workspace: makeWorkspace(),

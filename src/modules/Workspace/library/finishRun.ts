@@ -34,5 +34,10 @@ export function finishRun(props: { workspace: IWorkspace; at: string }): IWorksp
     chat: [...settled.chat, card],
     runs: [run, ...workspace.runs],
     status: held > 0 ? 'failed' : 'passed',
+    plan: workspace.plan.map((testCase) => {
+      const walked = run.cases.find(({ id }) => id === testCase.id);
+
+      return walked ? { ...testCase, lastVerdict: walked.verdict } : testCase;
+    }),
   };
 }
