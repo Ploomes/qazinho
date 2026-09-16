@@ -47,6 +47,7 @@ not already cover.
 - **Test names describe behaviour, not methods.** `'another port on localhost is another
 origin'`, never `'isInternalNavigation() returns false'`.
 - **Tests do not use the network**, and do not boot an emulator, a simulator or a browser.
+- A page test file declares its environment at the top: `// @vitest-environment jsdom`.
 
 ## `smoke/`, and why it is not in `npm test`
 
@@ -54,6 +55,3 @@ origin'`, never `'isInternalNavigation() returns false'`.
 real Chrome through `RunCoordinator` and asks the QA's own agent to judge what it sees. It spends
 the QA's tokens and needs an agent installed, so it has its own config (`vitest.smoke.ts`), its
 own command, and CI never runs it. Run it by hand after touching the run pipeline.
-
-- A renderer test file declares its environment at the top:
-  `// @vitest-environment jsdom`.
