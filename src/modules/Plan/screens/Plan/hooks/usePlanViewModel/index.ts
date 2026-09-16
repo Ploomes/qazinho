@@ -1,5 +1,4 @@
 import type { ITestCase } from '@/modules/Plan/types';
-import { useCallback } from 'react';
 import { flattenPlanSteps } from '@/modules/Run/library';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
@@ -14,28 +13,27 @@ export const usePlanViewModel = () => {
   const selectTab = useWorkspaceStore((state) => state.selectTab);
 
   const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
+  const workspaceId = workspace?.id ?? null;
   const plan = workspace?.plan ?? [];
-  const live = workspace?.live ?? null;
-  const isLocked = live !== null && live.isRunning;
+  const isLocked = workspace?.live?.isRunning === true;
 
-  const onReorder = useCallback(
-    (cases: ITestCase[]) => {
-      if (workspace && !isLocked) reorderPlan({ workspaceId: workspace.id, plan: cases });
-    },
-    [isLocked, reorderPlan, workspace],
-  );
+  const onReorder = (cases: ITestCase[]) => {
+    if (workspaceId === null || isLocked) return;
 
-  const onRunAll = useCallback(() => {
-    if (workspace) startRun(workspace.id);
-  }, [startRun, workspace]);
+    reorderPlan({ workspaceId, plan: cases });
+  };
 
-  const onStop = useCallback(() => {
-    if (workspace) stopRun(workspace.id);
-  }, [stopRun, workspace]);
+  const onRunAll = () => {
+    if (workspaceId !== null) startRun(workspaceId);
+  };
 
-  const onDraftInChat = useCallback(() => {
+  const onStop = () => {
+    if (workspaceId !== null) stopRun(workspaceId);
+  };
+
+  const onDraftInChat = () => {
     selectTab('chat');
-  }, [selectTab]);
+  };
 
   return {
     plan,
