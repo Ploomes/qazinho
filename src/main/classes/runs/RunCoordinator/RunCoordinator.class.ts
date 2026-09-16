@@ -11,7 +11,7 @@ import { parseActions, parseVerdict, skippedOutcome } from './library';
 export class RunCoordinator {
   private readonly runner: AgentRunner;
   private readonly findCommand: (agentId: string) => Promise<string | null>;
-  private readonly shotRoot: string;
+  private readonly dataRoot: string;
   private readonly onEvent: (event: IRunEvent) => void;
   private readonly stopping = new Set<string>();
   private readonly walking = new Set<string>();
@@ -20,7 +20,7 @@ export class RunCoordinator {
   public constructor(props: IRunCoordinator) {
     this.runner = props.runner;
     this.findCommand = props.findCommand;
-    this.shotRoot = props.shotRoot;
+    this.dataRoot = props.dataRoot;
     this.onEvent = props.onEvent;
   }
 
@@ -42,7 +42,12 @@ export class RunCoordinator {
     this.walking.add(run.workspaceId);
 
     try {
-      await this.walk({ ...run, command, shotDir: join(this.shotRoot, run.runId) });
+      await this.walk({
+        ...run,
+        command,
+        shotDir: join(this.dataRoot, 'runs', run.workspaceId, run.runId),
+        profileDir: join(this.dataRoot, RUN_WALK.profiles, run.workspaceId),
+      });
     } finally {
       this.walking.delete(run.workspaceId);
       this.stopping.delete(run.workspaceId);
@@ -67,7 +72,7 @@ export class RunCoordinator {
 
     try {
       await mkdir(run.shotDir, { recursive: true });
-      await driver.open(run.url);
+      await driver.open({ url: run.url, profileDir: run.profileDir });
     } catch (reason) {
       await driver.close();
       this.onEvent({

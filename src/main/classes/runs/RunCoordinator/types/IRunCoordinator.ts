@@ -4,6 +4,6 @@ import type { IRunEvent } from '@/types';
 export interface IRunCoordinator {
   runner: AgentRunner;
   findCommand: (agentId: string) => Promise<string | null>;
-  shotRoot: string;
+  dataRoot: string;
   onEvent: (event: IRunEvent) => void;
 }

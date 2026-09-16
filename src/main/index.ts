@@ -5,6 +5,7 @@ import { CHANNELS } from '@/constants';
 import { AgentDetector } from '@/main/classes/agents/AgentDetector';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
+import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { ResourceCollector } from '@/main/classes/resources/ResourceCollector';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
 import { WINDOW } from '@/main/constants';
@@ -13,9 +14,14 @@ import { isInternalNavigation } from '@/main/library';
 const DEV_SERVER_URL = process.env.ELECTRON_RENDERER_URL;
 const RENDERER_FILE = join(__dirname, '../renderer/index.html');
 const PRELOAD_FILE = join(__dirname, '../preload/index.js');
+const DATA_ROOT = app.getPath('userData');
 
 const agents = new AgentDetector();
-const resources = new ResourceCollector();
+const owners = new ProcessOwners();
+const resources = new ResourceCollector({
+  owners,
+  profileRoot: join(DATA_ROOT, 'profiles'),
+});
 const deviceTools = new DeviceToolDetector();
 
 function broadcast(props: { channel: string; event: IAgentEvent | IRunEvent }): void {
@@ -23,9 +29,10 @@ function broadcast(props: { channel: string; event: IAgentEvent | IRunEvent }): 
     open.webContents.send(props.channel, props.event);
 }
 
-const agentRunner = new AgentRunner((event) =>
-  broadcast({ channel: CHANNELS.agentEvent, event }),
-);
+const agentRunner = new AgentRunner({
+  owners,
+  onEvent: (event) => broadcast({ channel: CHANNELS.agentEvent, event }),
+});
 
 async function findCommand(agentId: string): Promise<string | null> {
   return (await agents.detect()).find(({ id }) => id === agentId)?.path ?? null;
@@ -34,7 +41,7 @@ async function findCommand(agentId: string): Promise<string | null> {
 const runs = new RunCoordinator({
   runner: agentRunner,
   findCommand,
-  shotRoot: join(app.getPath('userData'), 'runs'),
+  dataRoot: DATA_ROOT,
   onEvent: (event) => broadcast({ channel: CHANNELS.runEvent, event }),
 });
 

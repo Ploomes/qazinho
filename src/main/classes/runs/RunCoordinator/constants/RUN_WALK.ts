@@ -1,4 +1,5 @@
-/** How often a paused run looks up to see whether the QA let it go on. */
+/** `profiles` is also how a browser says which workspace it belongs to: it is in its own path. */
 export const RUN_WALK = {
   holdMs: 250,
+  profiles: 'profiles',
 } as const;

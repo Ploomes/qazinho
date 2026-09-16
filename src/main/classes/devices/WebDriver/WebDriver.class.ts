@@ -1,20 +1,24 @@
-import type { IShot } from './types';
+import type { IOpenDevice, IShot } from './types';
 import type { IStepAction } from '@/types';
-import type { Browser, Page } from 'playwright-core';
+import type { BrowserContext, Page } from 'playwright-core';
 import { chromium } from 'playwright-core';
 import { WEB_DRIVER } from './constants';
 import { describePage, findLocator } from './library';
 
 /** Drives a real browser on this machine. The QA watches it work. */
 export class WebDriver {
-  private browser: Browser | null = null;
+  private context: BrowserContext | null = null;
   private page: Page | null = null;
 
-  public async open(url: string): Promise<void> {
-    this.browser = await chromium.launch({ channel: 'chrome', headless: false });
-    this.page = await this.browser.newPage({ viewport: { ...WEB_DRIVER.viewport } });
+  public async open(props: IOpenDevice): Promise<void> {
+    this.context = await chromium.launchPersistentContext(props.profileDir, {
+      channel: 'chrome',
+      headless: false,
+      viewport: { ...WEB_DRIVER.viewport },
+    });
+    this.page = this.context.pages()[0] ?? (await this.context.newPage());
 
-    await this.page.goto(url, { timeout: WEB_DRIVER.actionTimeoutMs });
+    await this.page.goto(props.url, { timeout: WEB_DRIVER.actionTimeoutMs });
   }
 
   public async act(action: IStepAction): Promise<void> {
@@ -62,8 +66,8 @@ export class WebDriver {
   }
 
   public async close(): Promise<void> {
-    await this.browser?.close().catch(() => undefined);
-    this.browser = null;
+    await this.context?.close().catch(() => undefined);
+    this.context = null;
     this.page = null;
   }
 }
