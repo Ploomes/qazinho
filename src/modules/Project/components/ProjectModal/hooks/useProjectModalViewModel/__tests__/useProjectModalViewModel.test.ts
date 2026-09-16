@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { useNewProjectModalViewModel } from '@/modules/Project/components/NewProjectModal/hooks/useNewProjectModalViewModel';
+import { useProjectModalViewModel } from '@/modules/Project/components/ProjectModal/hooks/useProjectModalViewModel';
 import { fakeGocrashApi } from '@/services/__tests__/fixtures';
 import { useAppStore } from '@/store';
 
@@ -14,15 +14,15 @@ afterEach(() => {
   Reflect.deleteProperty(window, 'gocrash');
 });
 
-describe('useNewProjectModalViewModel', () => {
+describe('useProjectModalViewModel', () => {
   it('cannot create a project with no name and no target', () => {
-    const { result } = renderHook(() => useNewProjectModalViewModel());
+    const { result } = renderHook(() => useProjectModalViewModel());
 
     expect(result.current.canCreate).toBe(false);
   });
 
   it('cannot create a project that has a name but nothing to test', () => {
-    const { result } = renderHook(() => useNewProjectModalViewModel());
+    const { result } = renderHook(() => useProjectModalViewModel());
 
     act(() => {
       result.current.onNameChange('Shop · staging');
@@ -32,7 +32,7 @@ describe('useNewProjectModalViewModel', () => {
   });
 
   it('creates the project with the targets that were filled in', () => {
-    const { result } = renderHook(() => useNewProjectModalViewModel());
+    const { result } = renderHook(() => useProjectModalViewModel());
 
     act(() => {
       result.current.onNameChange('Shop · staging');
@@ -51,7 +51,7 @@ describe('useNewProjectModalViewModel', () => {
   });
 
   it('turns iOS off when Xcode is not there, even on a Mac', () => {
-    const { result } = renderHook(() => useNewProjectModalViewModel());
+    const { result } = renderHook(() => useProjectModalViewModel());
 
     expect(result.current.isMac).toBe(true);
     expect(result.current.isIosAvailable).toBe(false);
@@ -61,20 +61,20 @@ describe('useNewProjectModalViewModel', () => {
   it('says iOS is macOS only anywhere else', () => {
     window.gocrash = fakeGocrashApi('win32');
 
-    const { result } = renderHook(() => useNewProjectModalViewModel());
+    const { result } = renderHook(() => useProjectModalViewModel());
 
     expect(result.current.xcodeNote).toBe('macOS only');
   });
 
   describe('footerHint', () => {
     it('says what is missing first, which is the name', () => {
-      const { result } = renderHook(() => useNewProjectModalViewModel());
+      const { result } = renderHook(() => useProjectModalViewModel());
 
       expect(result.current.footerHint).toBe('Name the project to create it');
     });
 
     it('asks for a target once the project has a name', () => {
-      const { result } = renderHook(() => useNewProjectModalViewModel());
+      const { result } = renderHook(() => useProjectModalViewModel());
 
       act(() => {
         result.current.onNameChange('Shop · staging');
@@ -84,7 +84,7 @@ describe('useNewProjectModalViewModel', () => {
     });
 
     it('says nothing once the button can be pressed', () => {
-      const { result } = renderHook(() => useNewProjectModalViewModel());
+      const { result } = renderHook(() => useProjectModalViewModel());
 
       act(() => {
         result.current.onNameChange('Shop · staging');

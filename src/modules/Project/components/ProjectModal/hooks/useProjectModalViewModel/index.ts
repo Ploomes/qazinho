@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Files, Platform } from '@/services';
 import { useAppStore, useMachineStore } from '@/store';
 
-export const useNewProjectModalViewModel = () => {
+export const useProjectModalViewModel = () => {
   const { t } = useTranslation();
   const [name, setName] = useState('');
   const [url, setUrl] = useState('');

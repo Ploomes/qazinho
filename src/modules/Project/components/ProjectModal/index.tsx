@@ -2,10 +2,10 @@ import { useTranslation } from 'react-i18next';
 import { Eyebrow, Input } from '@/components/atoms';
 import { FileField } from '@/components/molecules';
 import { ModalFrame } from '@/components/templates';
-import { useNewProjectModalViewModel } from './hooks';
+import { useProjectModalViewModel } from './hooks';
 import './styles.css';
 
-export const NewProjectModal: React.FC = () => {
+export const ProjectModal: React.FC = () => {
   const {
     name,
     url,
@@ -22,7 +22,7 @@ export const NewProjectModal: React.FC = () => {
     onPickApp,
     onCancel,
     onCreate,
-  } = useNewProjectModalViewModel();
+  } = useProjectModalViewModel();
   const { t } = useTranslation();
 
   return (
@@ -48,13 +48,13 @@ export const NewProjectModal: React.FC = () => {
 
       <div>
         <Eyebrow>{t('PROJECT.TARGETS')}</Eyebrow>
-        <div className="new-project__targets">
-          <div className="new-project__target">
-            <div className="new-project__target-head">
-              <span className="new-project__target-name">{t('PROJECT.WEB')}</span>
-              <p className="new-project__target-text">{t('PROJECT.WEB_TEXT')}</p>
+        <div className="project-modal__targets">
+          <div className="project-modal__target">
+            <div className="project-modal__target-head">
+              <span className="project-modal__target-name">{t('PROJECT.WEB')}</span>
+              <p className="project-modal__target-text">{t('PROJECT.WEB_TEXT')}</p>
             </div>
-            <div className="new-project__target-field">
+            <div className="project-modal__target-field">
               <Input
                 isMono
                 value={url}
@@ -65,34 +65,34 @@ export const NewProjectModal: React.FC = () => {
             </div>
           </div>
 
-          <div className="new-project__target">
-            <div className="new-project__target-head">
-              <span className="new-project__target-name">{t('PROJECT.ANDROID')}</span>
-              <p className="new-project__target-text">{t('PROJECT.ANDROID_TEXT')}</p>
+          <div className="project-modal__target">
+            <div className="project-modal__target-head">
+              <span className="project-modal__target-name">{t('PROJECT.ANDROID')}</span>
+              <p className="project-modal__target-text">{t('PROJECT.ANDROID_TEXT')}</p>
             </div>
-            <div className="new-project__target-field">
+            <div className="project-modal__target-field">
               <FileField
                 value={apk}
                 label={t('PROJECT.ANDROID')}
                 placeholder={t('PROJECT.ANDROID_PLACEHOLDER')}
                 onPick={onPickApk}
               />
-              <span className="new-project__note">{androidNote}</span>
+              <span className="project-modal__note">{androidNote}</span>
             </div>
           </div>
 
           <div
             className={
               isIosAvailable
-                ? 'new-project__target'
-                : 'new-project__target new-project__target--off'
+                ? 'project-modal__target'
+                : 'project-modal__target project-modal__target--off'
             }
           >
-            <div className="new-project__target-head">
-              <span className="new-project__target-name">{t('PROJECT.IOS')}</span>
-              <p className="new-project__target-text">{t('PROJECT.IOS_TEXT')}</p>
+            <div className="project-modal__target-head">
+              <span className="project-modal__target-name">{t('PROJECT.IOS')}</span>
+              <p className="project-modal__target-text">{t('PROJECT.IOS_TEXT')}</p>
             </div>
-            <div className="new-project__target-field">
+            <div className="project-modal__target-field">
               {isIosAvailable && (
                 <FileField
                   value={app}
@@ -101,7 +101,7 @@ export const NewProjectModal: React.FC = () => {
                   onPick={onPickApp}
                 />
               )}
-              <span className="new-project__note">{xcodeNote}</span>
+              <span className="project-modal__note">{xcodeNote}</span>
             </div>
           </div>
         </div>

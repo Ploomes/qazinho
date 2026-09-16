@@ -1,1 +1,1 @@
-export * from './NewProjectModal';
+export * from './ProjectModal';
