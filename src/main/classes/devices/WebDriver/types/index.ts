@@ -1,2 +1,1 @@
-export type * from './IOpenDevice';
-export type * from './IShot';
+export type * from './IWebDriver';
