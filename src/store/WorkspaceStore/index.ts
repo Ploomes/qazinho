@@ -15,6 +15,7 @@ import { mapWorkspace, tickLive } from './library';
 
 export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   workspaces: [],
+  isLoaded: false,
   tab: 'chat',
   openCaseId: null,
   openBugId: null,
@@ -27,6 +28,8 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   addWorkspace: (workspace) =>
     set((state) => ({ workspaces: [...state.workspaces, workspace], tab: 'chat' })),
+
+  loadWorkspaces: (workspaces) => set({ workspaces, isLoaded: true }),
 
   selectTab: (tab) => set({ tab }),
 

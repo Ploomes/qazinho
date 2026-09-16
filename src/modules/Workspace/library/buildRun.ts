@@ -27,6 +27,7 @@ export function buildRun(workspace: IWorkspace): IRun {
         verdict: outcome.verdict,
         why: outcome.why.length > 0 ? outcome.why : null,
         shot: outcome.screenshot,
+        shotFile: outcome.shotFile,
         bugId:
           workspace.bugs.find(
             (bug) =>

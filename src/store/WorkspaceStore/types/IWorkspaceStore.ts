@@ -7,6 +7,7 @@ import type { IStepOutcome } from '@/types';
 /** The workspaces and everything the QA can poke inside one of them. */
 export interface IWorkspaceStore {
   workspaces: IWorkspace[];
+  isLoaded: boolean;
   tab: WorkspaceTab;
   openCaseId: string | null;
   openBugId: string | null;
@@ -17,6 +18,7 @@ export interface IWorkspaceStore {
   deviceWidth: number;
   isAgentTyping: boolean;
   addWorkspace: (workspace: IWorkspace) => void;
+  loadWorkspaces: (workspaces: IWorkspace[]) => void;
   selectTab: (tab: WorkspaceTab) => void;
   sendMessage: (props: { workspaceId: string; text: string }) => void;
   landAgentText: (props: {

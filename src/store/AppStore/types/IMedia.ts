@@ -1,7 +1,8 @@
-/** What the lightbox is showing: a screenshot the run took, or nothing when the step had none. */
+/** What the lightbox is showing: a screenshot in hand, or one still on disk to be read back. */
 export interface IMedia {
   kicker: string;
   title: string;
   isTall: boolean;
   src: string | null;
+  file: string | null;
 }
