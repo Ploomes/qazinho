@@ -1,0 +1,26 @@
+.file-field {
+  width: 100%;
+  overflow: hidden;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line2);
+  border-radius: var(--radius-sm);
+  background: var(--raise2);
+  color: var(--ink);
+  font: var(--font-mono-sm);
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-field:hover {
+  border-color: var(--amber);
+}
+
+.file-field:focus-visible {
+  border-color: var(--amber);
+  outline: none;
+}
+
+.file-field--empty {
+  color: var(--ink3);
+}
