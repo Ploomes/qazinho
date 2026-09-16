@@ -1,0 +1,20 @@
+.error-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: 1px dashed var(--fail);
+  border-radius: var(--radius-lg);
+  background: var(--fail-soft);
+}
+
+.error-block__text {
+  margin: 0;
+  color: var(--ink);
+  font: var(--font-ui-sm);
+}
+
+.error-block__fix {
+  color: var(--fail);
+  font: var(--font-ui-md);
+}

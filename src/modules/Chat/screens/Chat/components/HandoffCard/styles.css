@@ -1,0 +1,45 @@
+.handoff-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--raise);
+  text-align: left;
+}
+
+.handoff-card__tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--raise2);
+  color: var(--ink2);
+}
+
+.handoff-card__tile--accent {
+  background: var(--amber-soft);
+  color: var(--amber-ink);
+}
+
+.handoff-card__title {
+  color: var(--ink);
+  font: var(--font-ui-strong);
+}
+
+.handoff-card__subtitle {
+  margin: var(--space-2) 0 0;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}
+
+.handoff-card__action {
+  margin-left: auto;
+  color: var(--amber-ink);
+  font: var(--font-ui-md);
+  white-space: nowrap;
+}

@@ -1,0 +1,16 @@
+.verdict-note {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.verdict-note__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.verdict-note__text {
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}
