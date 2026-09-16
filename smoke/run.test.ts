@@ -31,6 +31,7 @@ describe('a real run', () => {
 
     const coordinator = new RunCoordinator({
       runner: new AgentRunner({ owners, onEvent: () => undefined }),
+      findAndroid: async () => null,
       findCommand: async (id) =>
         (await new AgentDetector().detect()).find((one) => one.id === id)?.path ?? null,
       dataRoot: await mkdtemp(join(tmpdir(), 'gocrash-smoke-')),
@@ -42,7 +43,7 @@ describe('a real run', () => {
       agentId: 'claude-code',
       model: 'sonnet',
       sessionId: null,
-      url: 'http://127.0.0.1:4321/',
+      target: { kind: 'web' as const, value: 'http://127.0.0.1:4321/' },
       runId: 'r-01',
       steps: [
         {
