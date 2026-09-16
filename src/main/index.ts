@@ -1,4 +1,4 @@
-import type { IAgentEvent, IAskAgent } from '@/types';
+import type { IAgentEvent, IAskAgent, IRunEvent, IStartRun } from '@/types';
 import { join } from 'node:path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { CHANNELS } from '@/constants';
@@ -6,6 +6,7 @@ import { AgentDetector } from '@/main/classes/agents/AgentDetector';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
 import { ResourceCollector } from '@/main/classes/resources/ResourceCollector';
+import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
 import { WINDOW } from '@/main/constants';
 import { isInternalNavigation } from '@/main/library';
 
@@ -17,17 +18,30 @@ const agents = new AgentDetector();
 const resources = new ResourceCollector();
 const deviceTools = new DeviceToolDetector();
 
-function broadcast(event: IAgentEvent): void {
+function broadcast(props: { channel: string; event: IAgentEvent | IRunEvent }): void {
   for (const open of BrowserWindow.getAllWindows())
-    open.webContents.send(CHANNELS.agentEvent, event);
+    open.webContents.send(props.channel, props.event);
 }
 
-const agentRunner = new AgentRunner(broadcast);
+const agentRunner = new AgentRunner((event) =>
+  broadcast({ channel: CHANNELS.agentEvent, event }),
+);
+
+async function findCommand(agentId: string): Promise<string | null> {
+  return (await agents.detect()).find(({ id }) => id === agentId)?.path ?? null;
+}
+
+const runs = new RunCoordinator({
+  runner: agentRunner,
+  findCommand,
+  shotRoot: join(app.getPath('userData'), 'runs'),
+  onEvent: (event) => broadcast({ channel: CHANNELS.runEvent, event }),
+});
 
 async function askAgent(ask: IAskAgent) {
-  const found = (await agents.detect()).find(({ id }) => id === ask.agentId);
+  const command = await findCommand(ask.agentId);
 
-  if (!found?.path) {
+  if (!command) {
     return {
       sessionId: ask.sessionId,
       text: `gocrash cannot find ${ask.agentId} on this machine. Install it, or pick another agent in Settings.`,
@@ -36,7 +50,7 @@ async function askAgent(ask: IAskAgent) {
     };
   }
 
-  return agentRunner.ask({ ...ask, command: found.path });
+  return agentRunner.ask({ ...ask, command });
 }
 
 function createWindow(): void {
@@ -76,6 +90,10 @@ void app.whenReady().then(() => {
   ipcMain.handle(CHANNELS.readResources, () => resources.snapshot());
   ipcMain.handle(CHANNELS.detectDeviceTools, () => deviceTools.detect());
   ipcMain.handle(CHANNELS.askAgent, (_event, ask: IAskAgent) => askAgent(ask));
+  ipcMain.handle(CHANNELS.startRun, (_event, run: IStartRun) => runs.start(run));
+  ipcMain.handle(CHANNELS.stopRun, (_event, workspaceId: string) => {
+    runs.stop(workspaceId);
+  });
 
   createWindow();
 

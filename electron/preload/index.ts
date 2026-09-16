@@ -6,6 +6,8 @@ import type {
   IDeviceTools,
   IGocrashApi,
   IResourceSnapshot,
+  IRunEvent,
+  IStartRun,
   Platform,
 } from '@/types';
 import { contextBridge, ipcRenderer } from 'electron';
@@ -30,6 +32,21 @@ const api: IGocrashApi = {
 
     return () => {
       ipcRenderer.off(CHANNELS.agentEvent, forward);
+    };
+  },
+  startRun: (run: IStartRun) =>
+    ipcRenderer.invoke(CHANNELS.startRun, run) as Promise<void>,
+  stopRun: (workspaceId: string) =>
+    ipcRenderer.invoke(CHANNELS.stopRun, workspaceId) as Promise<void>,
+  onRunEvent: (listener: (event: IRunEvent) => void) => {
+    const forward = (_: unknown, event: IRunEvent) => {
+      listener(event);
+    };
+
+    ipcRenderer.on(CHANNELS.runEvent, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.runEvent, forward);
     };
   },
 };

@@ -4,6 +4,8 @@ import type { IAskAgent } from './IAskAgent';
 import type { IDetectedAgent } from './IDetectedAgent';
 import type { IDeviceTools } from './IDeviceTools';
 import type { IResourceSnapshot } from './IResourceSnapshot';
+import type { IRunEvent } from './IRunEvent';
+import type { IStartRun } from './IStartRun';
 import type { Platform } from './Platform';
 
 /** What the preload exposes to the page as `window.gocrash`. Data and purposeful functions only. */
@@ -14,4 +16,7 @@ export interface IGocrashApi {
   detectDeviceTools: () => Promise<IDeviceTools>;
   askAgent: (ask: IAskAgent) => Promise<IAgentTurn>;
   onAgentEvent: (listener: (event: IAgentEvent) => void) => () => void;
+  startRun: (run: IStartRun) => Promise<void>;
+  stopRun: (workspaceId: string) => Promise<void>;
+  onRunEvent: (listener: (event: IRunEvent) => void) => () => void;
 }

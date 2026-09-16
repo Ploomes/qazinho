@@ -5,4 +5,7 @@ export const CHANNELS = {
   detectDeviceTools: 'devices:detect',
   askAgent: 'agent:ask',
   agentEvent: 'agent:event',
+  startRun: 'run:start',
+  stopRun: 'run:stop',
+  runEvent: 'run:event',
 } as const;
