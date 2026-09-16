@@ -1,52 +1,106 @@
 import type { ITarget } from '@/modules/Project/types';
+import type { TargetKind } from '@/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Files, Platform } from '@/services';
-import { useAppStore, useMachineStore } from '@/store';
+import { newProjectId } from '@/modules/Project/library';
+import { Archive, Files, Platform, Run } from '@/services';
+import { useAppStore, useMachineStore, useWorkspaceStore } from '@/store';
 
 export const useProjectModalViewModel = () => {
   const { t } = useTranslation();
-  const [name, setName] = useState('');
-  const [url, setUrl] = useState('');
-  const [apk, setApk] = useState('');
-  const [app, setApp] = useState('');
-
+  const projects = useAppStore((state) => state.projects);
+  const editingProjectId = useAppStore((state) => state.editingProjectId);
+  const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
   const addProject = useAppStore((state) => state.addProject);
+  const updateProject = useAppStore((state) => state.updateProject);
+  const removeProject = useAppStore((state) => state.removeProject);
   const closeModal = useAppStore((state) => state.closeModal);
   const tools = useMachineStore((state) => state.tools);
+  const workspaces = useWorkspaceStore((state) => state.workspaces);
+  const removeWorkspacesOf = useWorkspaceStore((state) => state.removeWorkspacesOf);
+
+  const editing = projects.find(({ id }) => id === editingProjectId) ?? null;
+  const saved = (kind: TargetKind) =>
+    editing?.targets.find((target) => target.kind === kind) ?? null;
+
+  const [name, setName] = useState(editing?.name ?? '');
+  const [url, setUrl] = useState(saved('web')?.value ?? '');
+  const [apk, setApk] = useState(saved('android')?.value ?? '');
+  const [app, setApp] = useState(saved('ios')?.value ?? '');
+  const [isConfirmingDelete, setConfirmingDelete] = useState(false);
 
   const isMac = Platform.isMac();
-  const hasTarget = [url, apk, app].some((value) => value.trim().length > 0);
+  const isEditing = editing !== null;
+  const own = workspaces.filter((workspace) => workspace.projectId === editing?.id);
+  const values: Record<TargetKind, string> = {
+    web: url.trim(),
+    android: apk.trim(),
+    ios: app.trim(),
+  };
+  const hasTarget = Object.values(values).some((value) => value.length > 0);
 
-  const androidNote = tools.androidSdk.isFound
-    ? t('TOOLS.ANDROID_FOUND')
-    : t('TOOLS.ANDROID_MISSING');
+  // A workspace runs against one target; emptying that target would leave it with nothing to run.
+  const orphaned =
+    editing?.targets.find(
+      (target) =>
+        values[target.kind].length === 0 &&
+        own.some((workspace) => workspace.targetId === target.id),
+    ) ?? null;
 
   const blocking =
     name.trim().length === 0
-      ? t('PROJECT.NEEDS_NAME')
-      : hasTarget
-        ? undefined
-        : t('PROJECT.NEEDS_TARGET');
+      ? isEditing
+        ? t('PROJECT.NEEDS_NAME_EDIT')
+        : t('PROJECT.NEEDS_NAME')
+      : !hasTarget
+        ? isEditing
+          ? t('PROJECT.NEEDS_TARGET_EDIT')
+          : t('PROJECT.NEEDS_TARGET')
+        : orphaned === null
+          ? undefined
+          : t('PROJECT.TARGET_IN_USE', { target: orphaned.label });
 
-  const onCreate = () => {
-    if (name.trim().length === 0 || !hasTarget) return;
+  const targetFor = (props: { kind: TargetKind; label: string }): ITarget[] => {
+    const value = values[props.kind];
 
-    const targets: ITarget[] = [];
+    if (value.length === 0) return [];
 
-    if (url.trim().length > 0)
-      targets.push({ id: 't-web', kind: 'web', label: 'Web', value: url });
-    if (apk.trim().length > 0)
-      targets.push({
-        id: 't-android',
-        kind: 'android',
-        label: 'Android · Pixel 7',
-        value: apk,
-      });
-    if (app.trim().length > 0)
-      targets.push({ id: 't-ios', kind: 'ios', label: 'iOS · iPhone 16', value: app });
+    const kept = saved(props.kind);
 
-    addProject({ id: `p-${String(Date.now())}`, name: name.trim(), targets });
+    return [
+      kept === null
+        ? { id: `t-${props.kind}`, kind: props.kind, label: props.label, value }
+        : { ...kept, value },
+    ];
+  };
+
+  const onConfirm = () => {
+    if (blocking !== undefined) return;
+
+    const targets = [
+      ...targetFor({ kind: 'web', label: 'Web' }),
+      ...targetFor({ kind: 'android', label: 'Android · Pixel 7' }),
+      ...targetFor({ kind: 'ios', label: 'iOS · iPhone 16' }),
+    ];
+
+    if (editing) updateProject({ ...editing, name: name.trim(), targets });
+    else addProject({ id: newProjectId(), name: name.trim(), targets });
+  };
+
+  const onDelete = () => {
+    if (!editing) return;
+
+    for (const workspace of own) {
+      if (workspace.live && !workspace.live.isDone) Run.stop(workspace.id);
+
+      Archive.removeWorkspace(workspace.id);
+    }
+
+    removeWorkspacesOf(editing.id);
+    removeProject({
+      projectId: editing.id,
+      isOpen: own.some((workspace) => workspace.id === selectedWorkspaceId),
+    });
   };
 
   return {
@@ -55,8 +109,23 @@ export const useProjectModalViewModel = () => {
     apk,
     app,
     isMac,
-    canCreate: name.trim().length > 0 && hasTarget,
-    androidNote,
+    isEditing,
+    isConfirmingDelete,
+    title: isEditing ? t('PROJECT.EDIT_TITLE') : t('PROJECT.NEW_TITLE'),
+    subtitle: isEditing
+      ? t('PROJECT.EDIT_SUBTITLE', { name: editing.name })
+      : t('PROJECT.NEW_SUBTITLE'),
+    confirmLabel: isEditing ? t('PROJECT.SAVE') : t('PROJECT.CREATE'),
+    canConfirm: blocking === undefined,
+    deleteQuestion:
+      own.length === 0
+        ? t('PROJECT.DELETE_QUESTION_EMPTY')
+        : own.length === 1
+          ? t('PROJECT.DELETE_QUESTION_ONE')
+          : t('PROJECT.DELETE_QUESTION_OTHER', { count: own.length }),
+    androidNote: tools.androidSdk.isFound
+      ? t('TOOLS.ANDROID_FOUND')
+      : t('TOOLS.ANDROID_MISSING'),
     xcodeNote: isMac
       ? tools.xcode.isFound
         ? t('TOOLS.XCODE_FOUND')
@@ -77,6 +146,13 @@ export const useProjectModalViewModel = () => {
       });
     },
     onCancel: closeModal,
-    onCreate,
+    onConfirm,
+    onAskDelete: () => {
+      setConfirmingDelete(true);
+    },
+    onKeep: () => {
+      setConfirmingDelete(false);
+    },
+    onDelete,
   };
 };

@@ -51,3 +51,14 @@
   color: var(--ink3);
   font: var(--font-mono-sm);
 }
+
+.project-modal__delete {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.project-modal__delete-question {
+  color: var(--fail);
+  font: var(--font-ui-sm);
+}

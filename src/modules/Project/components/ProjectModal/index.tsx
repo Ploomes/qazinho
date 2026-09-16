@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Eyebrow, Input } from '@/components/atoms';
+import { Button, Eyebrow, Input } from '@/components/atoms';
 import { FileField } from '@/components/molecules';
 import { ModalFrame } from '@/components/templates';
 import { useProjectModalViewModel } from './hooks';
@@ -11,7 +11,13 @@ export const ProjectModal: React.FC = () => {
     url,
     apk,
     app,
-    canCreate,
+    isEditing,
+    isConfirmingDelete,
+    title,
+    subtitle,
+    confirmLabel,
+    canConfirm,
+    deleteQuestion,
     androidNote,
     xcodeNote,
     isIosAvailable,
@@ -21,20 +27,41 @@ export const ProjectModal: React.FC = () => {
     onPickApk,
     onPickApp,
     onCancel,
-    onCreate,
+    onConfirm,
+    onAskDelete,
+    onKeep,
+    onDelete,
   } = useProjectModalViewModel();
   const { t } = useTranslation();
 
   return (
     <ModalFrame
-      title={t('PROJECT.NEW_TITLE')}
-      subtitle={t('PROJECT.NEW_SUBTITLE')}
+      title={title}
+      subtitle={subtitle}
       width={720}
-      confirmLabel={t('PROJECT.CREATE')}
-      canConfirm={canCreate}
+      confirmLabel={confirmLabel}
+      canConfirm={canConfirm}
       hint={footerHint}
+      aside={
+        isEditing &&
+        (isConfirmingDelete ? (
+          <span className="project-modal__delete">
+            <span className="project-modal__delete-question">{deleteQuestion}</span>
+            <Button variant="danger" size="sm" onClick={onDelete}>
+              {t('PROJECT.DELETE_YES')}
+            </Button>
+            <Button size="sm" onClick={onKeep}>
+              {t('PROJECT.DELETE_NO')}
+            </Button>
+          </span>
+        ) : (
+          <Button variant="ghost" size="sm" onClick={onAskDelete}>
+            {t('PROJECT.DELETE')}
+          </Button>
+        ))
+      }
       onCancel={onCancel}
-      onConfirm={onCreate}
+      onConfirm={onConfirm}
     >
       <div>
         <Eyebrow>{t('PROJECT.NAME')}</Eyebrow>
