@@ -1,5 +1,6 @@
 import { MotionConfig } from 'motion/react';
 import { Titlebar } from '@/components/organisms';
+import { DevicePanel } from '@/modules/Device/components';
 import { Welcome } from '@/modules/Project/screens/Welcome';
 import { Workspace } from '@/modules/Workspace/screens/Workspace';
 import { Sidebar } from './components/Sidebar';
@@ -17,6 +18,7 @@ export const App: React.FC = () => {
           {hasProjects && <Sidebar />}
           {isWelcome && <Welcome />}
           {!isWelcome && isWorkspace && <Workspace />}
+          {!isWelcome && isWorkspace && <DevicePanel />}
         </div>
       </div>
     </MotionConfig>
