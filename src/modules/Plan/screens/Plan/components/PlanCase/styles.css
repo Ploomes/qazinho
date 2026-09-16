@@ -112,12 +112,23 @@
 }
 
 .plan-case__remove {
-  padding: var(--space-1) var(--space-2);
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
   border: none;
+  border-radius: var(--radius-xs);
   background: transparent;
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-mono-sm);
   opacity: 0;
+}
+
+.plan-case__steps .plan-case__remove {
+  margin-top: -5px;
 }
 
 .plan-case:hover .plan-case__remove,
@@ -126,6 +137,7 @@
 }
 
 .plan-case__remove:hover {
+  background: var(--fail-soft);
   color: var(--fail);
 }
 
