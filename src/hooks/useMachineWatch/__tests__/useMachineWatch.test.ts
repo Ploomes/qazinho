@@ -20,6 +20,7 @@ const RESOURCES = { cpu: 12.5, ramMb: 2048, ramCeilingGb: 64, processes: [] };
 const TOOLS = {
   androidSdk: { isFound: true, path: '/Users/qa/Library/Android/sdk' },
   xcode: { isFound: false, path: null },
+  idb: { isFound: false, path: null },
 };
 
 beforeEach(() => {
@@ -29,6 +30,7 @@ beforeEach(() => {
     tools: {
       androidSdk: { isFound: false, path: null },
       xcode: { isFound: false, path: null },
+      idb: { isFound: false, path: null },
     },
     hasDetected: false,
   });

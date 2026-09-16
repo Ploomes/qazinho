@@ -6,6 +6,7 @@ export type * from './IAskAgent';
 export type * from './IDetectedAgent';
 export type * from './IFlatStep';
 export type * from './IDeviceTools';
+export type * from './IIosSetup';
 export type * from './IGocrashApi';
 export type * from './IProcessSample';
 export type * from './ProcessKind';

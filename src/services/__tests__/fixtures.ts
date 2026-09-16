@@ -12,6 +12,7 @@ export function fakeGocrashApi(platform: Platform): IGocrashApi {
       Promise.resolve({
         androidSdk: { isFound: false, path: null },
         xcode: { isFound: false, path: null },
+        idb: { isFound: false, path: null },
       }),
     readResources: () =>
       Promise.resolve({ cpu: 0, ramMb: 0, ramCeilingGb: 32, processes: [] }),
