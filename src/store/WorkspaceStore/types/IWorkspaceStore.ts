@@ -39,7 +39,7 @@ export interface IWorkspaceStore {
   landAgentError: (props: { workspaceId: string; text: string }) => void;
   setLiveText: (text: string) => void;
   answerAsk: (props: { workspaceId: string; reply: string }) => void;
-  reorderPlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
+  setPlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
   startRun: (props: { workspaceId: string; runId: string }) => void;
   pauseRun: (workspaceId: string) => void;
   stopRun: (workspaceId: string) => void;

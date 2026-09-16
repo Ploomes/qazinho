@@ -17,6 +17,12 @@ export const Plan: React.FC = () => {
     onRunAll,
     onStop,
     onDraftInChat,
+    onAddCase,
+    onRemoveCase,
+    onEditCase,
+    onAddStep,
+    onRemoveStep,
+    onEditStep,
   } = usePlanViewModel();
   const { t } = useTranslation();
 
@@ -26,9 +32,12 @@ export const Plan: React.FC = () => {
         title={t('PLAN.EMPTY_TITLE')}
         body={t('PLAN.EMPTY_BODY')}
         action={
-          <Button variant="primary" onClick={onDraftInChat}>
-            {t('PLAN.EMPTY_ACTION')}
-          </Button>
+          <>
+            <Button variant="primary" onClick={onDraftInChat}>
+              {t('PLAN.EMPTY_ACTION')}
+            </Button>
+            <Button onClick={onAddCase}>{t('PLAN.ADD_CASE')}</Button>
+          </>
         }
       />
     );
@@ -67,9 +76,21 @@ export const Plan: React.FC = () => {
             isOpen={openCaseId === testCase.id}
             isLocked={isLocked}
             onToggle={onToggleCase}
+            onEditCase={onEditCase}
+            onRemoveCase={onRemoveCase}
+            onAddStep={onAddStep}
+            onRemoveStep={onRemoveStep}
+            onEditStep={onEditStep}
           />
         ))}
       </Reorder.Group>
+
+      {!isLocked && (
+        <button type="button" className="plan__add" onClick={onAddCase}>
+          <span aria-hidden="true">+</span>
+          {t('PLAN.ADD_CASE')}
+        </button>
+      )}
     </div>
   );
 };

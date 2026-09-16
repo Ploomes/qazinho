@@ -46,3 +46,19 @@
   padding: 0;
   list-style: none;
 }
+
+.plan__add {
+  align-self: flex-start;
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px dashed var(--line2);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+}
+
+.plan__add:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+}

@@ -1,5 +1,13 @@
-import type { ITestCase } from '@/modules/Plan/types';
+import type { ITestCase, ITestStep } from '@/modules/Plan/types';
 import { useTranslation } from 'react-i18next';
+import {
+  addCase,
+  addStep,
+  editCase,
+  editStep,
+  removeCase,
+  removeStep,
+} from '@/modules/Plan/library';
 import { useRunControls } from '@/modules/Run/hooks';
 import { flattenPlanSteps } from '@/modules/Run/library';
 import { useAppStore, useWorkspaceStore } from '@/store';
@@ -10,7 +18,7 @@ export const usePlanViewModel = () => {
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const openCaseId = useWorkspaceStore((state) => state.openCaseId);
   const toggleCase = useWorkspaceStore((state) => state.toggleCase);
-  const reorderPlan = useWorkspaceStore((state) => state.reorderPlan);
+  const setPlan = useWorkspaceStore((state) => state.setPlan);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const { onRun, onStop } = useRunControls();
 
@@ -19,14 +27,10 @@ export const usePlanViewModel = () => {
   const plan = workspace?.plan ?? [];
   const isLocked = workspace?.live?.isRunning === true;
 
-  const onReorder = (cases: ITestCase[]) => {
+  const write = (cases: ITestCase[]) => {
     if (workspaceId === null || isLocked) return;
 
-    reorderPlan({ workspaceId, plan: cases });
-  };
-
-  const onDraftInChat = () => {
-    selectTab('chat');
+    setPlan({ workspaceId, plan: cases });
   };
 
   return {
@@ -39,9 +43,29 @@ export const usePlanViewModel = () => {
       steps: flattenPlanSteps(plan).length,
     }),
     onToggleCase: toggleCase,
-    onReorder,
+    onReorder: write,
     onRunAll: onRun,
     onStop,
-    onDraftInChat,
+    onDraftInChat: () => {
+      selectTab('chat');
+    },
+    onAddCase: () => {
+      write(addCase(plan));
+    },
+    onRemoveCase: (caseId: string) => {
+      write(removeCase({ plan, caseId }));
+    },
+    onEditCase: (props: { caseId: string; fields: Partial<ITestCase> }) => {
+      write(editCase({ plan, ...props }));
+    },
+    onAddStep: (caseId: string) => {
+      write(addStep({ plan, caseId }));
+    },
+    onRemoveStep: (props: { caseId: string; index: number }) => {
+      write(removeStep({ plan, ...props }));
+    },
+    onEditStep: (props: { caseId: string; index: number; step: Partial<ITestStep> }) => {
+      write(editStep({ plan, ...props }));
+    },
   };
 };

@@ -5,7 +5,18 @@ import { usePlanCaseViewModel } from '@/modules/Plan/screens/Plan/components/Pla
 import { CASES } from '@/modules/Workspace/library/__tests__/fixtures';
 
 const TEST_CASE = CASES[0]!;
-const PROPS = { testCase: TEST_CASE, isOpen: false, isLocked: false, onToggle: vi.fn() };
+
+const PROPS = {
+  testCase: TEST_CASE,
+  isOpen: false,
+  isLocked: false,
+  onToggle: vi.fn(),
+  onEditCase: vi.fn(),
+  onRemoveCase: vi.fn(),
+  onAddStep: vi.fn(),
+  onRemoveStep: vi.fn(),
+  onEditStep: vi.fn(),
+};
 
 describe('usePlanCaseViewModel', () => {
   it('numbers the steps as the table shows them', () => {
@@ -33,5 +44,43 @@ describe('usePlanCaseViewModel', () => {
     result.current.onHeadClick();
 
     expect(onToggle).toHaveBeenCalledWith('TC-01');
+  });
+
+  it('names its own case on every change it asks for', () => {
+    const onEditStep = vi.fn();
+    const onEditCase = vi.fn();
+    const { result } = renderHook(() =>
+      usePlanCaseViewModel({ ...PROPS, onEditStep, onEditCase }),
+    );
+
+    result.current.onStepCommit({ index: 1, step: { action: 'Search' } });
+    result.current.onFieldCommit({ title: 'Search' });
+
+    expect(onEditStep).toHaveBeenCalledWith({
+      caseId: 'TC-01',
+      index: 1,
+      step: { action: 'Search' },
+    });
+    expect(onEditCase).toHaveBeenCalledWith({
+      caseId: 'TC-01',
+      fields: { title: 'Search' },
+    });
+  });
+
+  it('does NOT offer to remove the only step a case has', () => {
+    const oneStep = { ...TEST_CASE, steps: [TEST_CASE.steps[0]!] };
+    const { result } = renderHook(() =>
+      usePlanCaseViewModel({ ...PROPS, testCase: oneStep }),
+    );
+
+    expect(result.current.canRemoveStep).toBe(false);
+  });
+
+  it('does NOT offer to remove a step while the agent is running the plan', () => {
+    const { result } = renderHook(() =>
+      usePlanCaseViewModel({ ...PROPS, isLocked: true }),
+    );
+
+    expect(result.current.canRemoveStep).toBe(false);
   });
 });

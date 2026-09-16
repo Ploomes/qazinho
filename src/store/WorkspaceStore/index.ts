@@ -115,7 +115,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
-  reorderPlan: ({ workspaceId, plan }) =>
+  setPlan: ({ workspaceId, plan }) =>
     set((state) => ({
       workspaces: mapWorkspace({
         workspaces: state.workspaces,

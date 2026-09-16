@@ -32,14 +32,9 @@
   font: var(--font-mono-sm);
 }
 
-.plan-case__title {
+.plan-case__head .editable-text {
   flex: 1;
   min-width: 0;
-  overflow: hidden;
-  color: var(--ink);
-  font: var(--font-ui-md);
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .plan-case__priority {
@@ -51,6 +46,9 @@
 }
 
 .plan-case__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
   padding: 0 17px 18px;
 }
 
@@ -78,7 +76,7 @@
 
 .plan-case__steps {
   display: grid;
-  grid-template-columns: 34px 1fr 1fr 88px;
+  grid-template-columns: 34px 1fr 1fr 28px;
   gap: var(--space-5);
   align-items: start;
 }
@@ -98,4 +96,46 @@
 .plan-case__step-number {
   color: var(--ink3);
   font: var(--font-mono-sm);
+}
+
+.plan-case__open {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.plan-case__remove {
+  padding: var(--space-1) var(--space-2);
+  border: none;
+  background: transparent;
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+  opacity: 0;
+}
+
+.plan-case:hover .plan-case__remove,
+.plan-case__remove:focus-visible {
+  opacity: 1;
+}
+
+.plan-case__remove:hover {
+  color: var(--fail);
+}
+
+.plan-case__add {
+  align-self: flex-start;
+  padding: var(--space-2) var(--space-3);
+  border: 1px dashed var(--line2);
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+}
+
+.plan-case__add:hover {
+  border-color: var(--amber);
+  color: var(--amber);
 }
