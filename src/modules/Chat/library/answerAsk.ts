@@ -14,13 +14,6 @@ export function answerAsk(props: {
     chat: [
       ...withoutAsk,
       { id: `m-${String(withoutAsk.length + 1)}`, kind: 'user', at, text: reply },
-      {
-        id: `m-${String(withoutAsk.length + 2)}`,
-        kind: 'agent',
-        at,
-        who: 'Claude',
-        text: 'Got it. The plan is ready to run.',
-      },
     ],
   };
 }

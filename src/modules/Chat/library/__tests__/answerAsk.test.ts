@@ -37,18 +37,17 @@ describe('answerAsk', () => {
     expect(workspace.chat.some(({ kind }) => kind === 'ask')).toBe(false);
   });
 
-  it('leaves the answer and the acknowledgement in the conversation', () => {
+  it('leaves the answer in the conversation, and puts no words in the agent mouth', () => {
     const workspace = answerAsk({
       workspace: waiting(),
       reply: 'Use the sandbox number.',
       at: '19:56',
     });
 
-    expect(workspace.chat.at(-2)).toMatchObject({
+    expect(workspace.chat.at(-1)).toMatchObject({
       kind: 'user',
       text: 'Use the sandbox number.',
     });
-    expect(workspace.chat.at(-1)).toMatchObject({ kind: 'agent' });
   });
 
   it('lets the workspace go quiet again, so the sidebar stops shouting', () => {
