@@ -10,7 +10,7 @@ export const Welcome: React.FC = () => {
   return (
     <section className="welcome">
       <span className="welcome__logo">
-        <Logo size={56} />
+        <Logo size={56} tone="quiet" />
       </span>
       <h1 className="welcome__title">{t('WELCOME.TITLE')}</h1>
       <p className="welcome__body">{t('WELCOME.BODY')}</p>

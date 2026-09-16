@@ -57,6 +57,10 @@
   gap: var(--space-4);
 }
 
+.chat__mark {
+  opacity: 0.35;
+}
+
 .chat__empty-title {
   font: var(--font-display-sm);
   color: var(--ink);

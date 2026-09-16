@@ -11,7 +11,7 @@
 }
 
 .titlebar--mac {
-  padding-left: 78px;
+  padding-left: 90px;
 }
 
 .titlebar__brand {
@@ -22,7 +22,7 @@
 
 .titlebar__wordmark {
   font: 600 14px/1 var(--font-display);
-  letter-spacing: -0.045em;
+  letter-spacing: -0.02em;
   color: var(--ink);
 }
 

@@ -1,0 +1,12 @@
+.logo {
+  display: block;
+  flex: none;
+}
+
+.logo--amber .logo__mark {
+  fill: var(--amber);
+}
+
+.logo--quiet .logo__mark {
+  fill: var(--ink3);
+}
