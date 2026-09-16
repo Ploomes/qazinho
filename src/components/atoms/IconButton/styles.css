@@ -1,0 +1,25 @@
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink2);
+  font: var(--font-mono-md);
+}
+
+.icon-button--sm {
+  width: 26px;
+  height: 26px;
+}
+
+.icon-button--md {
+  width: 30px;
+  height: 30px;
+}
+
+.icon-button--active {
+  background: var(--sel);
+  color: var(--ink);
+}
