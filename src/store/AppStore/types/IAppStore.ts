@@ -13,6 +13,7 @@ export interface IAppStore {
   projects: IProject[];
   isLoaded: boolean;
   removingProjectId: string | null;
+  editingProjectId: string | null;
   selectedWorkspaceId: string | null;
   selectedProjectId: string | null;
   isResourcesOpen: boolean;
@@ -23,6 +24,7 @@ export interface IAppStore {
   openSettings: () => void;
   closeSettings: () => void;
   openModal: (modal: Modal) => void;
+  openProjectSettings: (projectId: string) => void;
   openWorkspaceModal: (projectId: string) => void;
   closeModal: () => void;
   selectWorkspace: (workspaceId: string) => void;
@@ -30,7 +32,8 @@ export interface IAppStore {
   addProject: (project: IProject) => void;
   loadProjects: (projects: IProject[]) => void;
   askRemoveProject: (projectId: string | null) => void;
-  removeProject: (projectId: string) => void;
+  updateProject: (project: IProject) => void;
+  removeProject: (props: { projectId: string; isOpen: boolean }) => void;
   toggleResources: () => void;
   toggleModelMenu: (at: ModelMenuAt) => void;
   closeModelMenu: () => void;

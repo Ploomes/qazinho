@@ -12,6 +12,7 @@ export const useAppStore = create<IAppStore>()(
       projects: [],
       isLoaded: false,
       removingProjectId: null,
+      editingProjectId: null,
       selectedWorkspaceId: null,
       selectedProjectId: null,
       isResourcesOpen: false,
@@ -30,12 +31,15 @@ export const useAppStore = create<IAppStore>()(
           screen: state.selectedWorkspaceId === null ? 'welcome' : 'workspace',
         })),
 
-      openModal: (modal) => set({ modal }),
+      openModal: (modal) => set({ modal, editingProjectId: null }),
+
+      openProjectSettings: (projectId) =>
+        set({ modal: 'project', editingProjectId: projectId }),
 
       openWorkspaceModal: (projectId) =>
         set({ modal: 'workspace', selectedProjectId: projectId }),
 
-      closeModal: () => set({ modal: null }),
+      closeModal: () => set({ modal: null, editingProjectId: null }),
 
       selectWorkspace: (workspaceId) =>
         set({ screen: 'workspace', selectedWorkspaceId: workspaceId }),
@@ -54,15 +58,22 @@ export const useAppStore = create<IAppStore>()(
 
       askRemoveProject: (removingProjectId) => set({ removingProjectId }),
 
-      removeProject: (projectId) =>
+      updateProject: (project) =>
+        set((state) => ({
+          projects: state.projects.map((one) => (one.id === project.id ? project : one)),
+          modal: null,
+          editingProjectId: null,
+        })),
+
+      removeProject: ({ projectId, isOpen }) =>
         set((state) => {
           const projects = state.projects.filter(({ id }) => id !== projectId);
 
           return {
             projects,
-            removingProjectId: null,
-            screen: 'welcome',
-            selectedWorkspaceId: null,
+            modal: null,
+            editingProjectId: null,
+            ...(isOpen ? { screen: 'welcome' as const, selectedWorkspaceId: null } : {}),
             selectedProjectId:
               state.selectedProjectId === projectId
                 ? (projects[0]?.id ?? null)

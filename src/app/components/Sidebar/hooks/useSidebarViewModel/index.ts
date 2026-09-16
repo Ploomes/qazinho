@@ -69,7 +69,12 @@ export const useSidebarViewModel = () => {
       Archive.removeWorkspace(workspace.id);
 
     removeWorkspacesOf(projectId);
-    removeProject(projectId);
+    removeProject({
+      projectId,
+      isOpen: workspaces.some(
+        (one) => one.projectId === projectId && one.id === selectedWorkspaceId,
+      ),
+    });
   };
 
   return {
