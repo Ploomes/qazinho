@@ -8,6 +8,7 @@ export interface IModalFrameProps {
   canConfirm: boolean;
   children: ReactNode;
   hint?: string;
+  aside?: ReactNode;
   onCancel: () => void;
   onConfirm: () => void;
 }

@@ -37,6 +37,7 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
         <div className="modal-frame__body">{props.children}</div>
 
         <footer className="modal-frame__foot">
+          {props.aside}
           {props.hint !== undefined && (
             <span className="modal-frame__hint">{props.hint}</span>
           )}
