@@ -15,6 +15,7 @@ export const RUN_SCHEMAS = {
           required: ['kind', 'target', 'value'],
         },
       },
+      note: { type: 'string' },
     },
     required: ['actions'],
   }),

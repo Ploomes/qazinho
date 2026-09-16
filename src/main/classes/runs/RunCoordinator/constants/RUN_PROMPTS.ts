@@ -7,13 +7,23 @@ export const RUN_PROMPTS = {
     action: string;
     target: { kind: TargetKind; value: string };
     screen: string;
+    failure: string | null;
   }): string =>
     [
       DEVICE_BRIEF[props.target.kind],
       `The device is on ${props.target.value}. What it shows right now:`,
       props.screen,
       `The step to carry out: ${props.action}`,
+      ...(props.failure === null
+        ? []
+        : [
+            `Your last try at this step did not work: ${props.failure}`,
+            'Find another way to reach the same goal: another label for the same control, a',
+            'banner or dialog to close first, a wait for the page to settle. Do not repeat what failed.',
+          ]),
       'Answer with the actions that carry out this step and nothing more.',
+      'When something got in the way and you worked around it, say so in "note", in one',
+      'sentence the QA reads in the chat. Leave "note" empty when the step went as planned.',
     ].join('\n'),
 
   judge: (props: { action: string; expected: string; screen: string }): string =>

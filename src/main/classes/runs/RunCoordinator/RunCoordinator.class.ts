@@ -14,7 +14,14 @@ import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { stripAnsi } from '@/main/library';
 import { RUN_PROMPTS, RUN_SCHEMAS, RUN_WALK } from './constants';
-import { driverFor, parseActions, parseVerdict, skippedOutcome } from './library';
+import {
+  agentFailure,
+  driverFor,
+  parseActions,
+  parseNote,
+  parseVerdict,
+  skippedOutcome,
+} from './library';
 
 /** Walks a plan on a real device: the agent drives, the requirement judges. */
 export class RunCoordinator {
@@ -212,27 +219,48 @@ export class RunCoordinator {
       command: run.command,
     };
 
-    const asked = await this.runner.ask({
-      ...ask,
-      sessionId: props.session,
-      schema: RUN_SCHEMAS.action,
-      prompt: RUN_PROMPTS.act({
-        action: step.action,
-        target: run.target,
-        screen: await driver.describe(),
-      }),
-    });
+    let session = props.session;
+    let broke: string | null = null;
 
-    if (this.stopping.has(run.workspaceId)) return null;
+    // A failed action goes back to the agent with what went wrong, so it can find another way.
+    for (let attempt = 0; attempt < RUN_WALK.attempts; attempt += 1) {
+      const asked = await this.runner.ask({
+        ...ask,
+        sessionId: session,
+        schema: RUN_SCHEMAS.action,
+        prompt: RUN_PROMPTS.act({
+          action: step.action,
+          target: run.target,
+          screen: await driver.describe(),
+          failure: broke,
+        }),
+      });
 
-    const broke = await this.carryOut({ driver, answer: asked.text });
+      if (this.stopping.has(run.workspaceId)) return null;
+
+      const failed = agentFailure(asked);
+
+      if (failed !== null) throw new Error(failed);
+
+      session = asked.sessionId;
+
+      const note = parseNote(asked.text);
+
+      if (note.length > 0)
+        this.onEvent({ kind: 'note', workspaceId: run.workspaceId, text: note });
+
+      broke = await this.carryOut({ driver, answer: asked.text });
+
+      if (broke === null) break;
+    }
+
     const shot = await driver.shoot(join(run.shotDir, `step-${String(index + 1)}.jpg`));
 
     if (this.stopping.has(run.workspaceId)) return null;
 
     const judged = await this.runner.ask({
       ...ask,
-      sessionId: asked.sessionId,
+      sessionId: session,
       schema: RUN_SCHEMAS.verdict,
       prompt: RUN_PROMPTS.judge({
         action: step.action,
@@ -242,6 +270,10 @@ export class RunCoordinator {
     });
 
     if (this.stopping.has(run.workspaceId)) return null;
+
+    const failedJudging = agentFailure(judged);
+
+    if (failedJudging !== null) throw new Error(failedJudging);
 
     const verdict = parseVerdict(judged.text);
 
