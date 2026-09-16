@@ -37,4 +37,26 @@ describe('useGaugeViewModel', () => {
     expect(ring(2).left).toBe(1);
     expect(ring(-1).left).toBe(0);
   });
+
+  describe('filling with what is used', () => {
+    function used(value: number) {
+      return renderHook(() =>
+        useGaugeViewModel({ value, label: 'context', fills: 'used' }),
+      ).result.current;
+    }
+
+    it('a full context window closes the ring', () => {
+      expect(used(1).offset).toBe(0);
+    });
+
+    it('an empty context window leaves the ring open', () => {
+      expect(used(0).offset).toBe(GAUGE.circumference);
+    });
+
+    it('turns red as the window fills up, not as it empties', () => {
+      expect(used(0.2).className).toContain('--easy');
+      expect(used(0.8).className).toContain('--tight');
+      expect(used(0.95).className).toContain('--empty');
+    });
+  });
 });
