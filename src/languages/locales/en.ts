@@ -188,6 +188,7 @@ export const en = {
     INTEGRATIONS: 'integrations',
     APPEARANCE: 'appearance',
     SHORTCUTS: 'shortcuts',
+    PRESS_KEYS: 'press the keys…',
     ABOUT: 'about',
     DEFAULT_AGENT: 'Default agent',
     MAKE_DEFAULT: 'Make default',

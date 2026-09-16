@@ -189,6 +189,7 @@ export const pt: typeof en = {
     INTEGRATIONS: 'integrações',
     APPEARANCE: 'aparência',
     SHORTCUTS: 'atalhos',
+    PRESS_KEYS: 'aperte as teclas…',
     ABOUT: 'sobre',
     DEFAULT_AGENT: 'Agente padrão',
     MAKE_DEFAULT: 'Tornar padrão',
