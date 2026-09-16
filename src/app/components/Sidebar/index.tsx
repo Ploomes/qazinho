@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { MOTION } from '@/constants';
 import { useSidebarViewModel } from './hooks';
 import './styles.css';
@@ -12,6 +13,7 @@ export const Sidebar: React.FC = () => {
     onNewProject,
     onSettings,
   } = useSidebarViewModel();
+  const { t } = useTranslation();
 
   return (
     <nav className="sidebar">
@@ -26,7 +28,7 @@ export const Sidebar: React.FC = () => {
           >
             <span className="sidebar__banner-glyph">!</span>
             <span className="sidebar__banner-name">{waitingName}</span>
-            <span className="sidebar__banner-text">The agent asked you something</span>
+            <span className="sidebar__banner-text">{t('SIDEBAR.ASKED_YOU')}</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -52,7 +54,7 @@ export const Sidebar: React.FC = () => {
                 }}
               >
                 <span aria-hidden="true">+</span>
-                New workspace here
+                {t('SIDEBAR.NEW_WORKSPACE')}
               </button>
             );
           }
@@ -94,12 +96,12 @@ export const Sidebar: React.FC = () => {
         onClick={onNewProject}
       >
         <span aria-hidden="true">+</span>
-        New project
+        {t('SIDEBAR.NEW_PROJECT')}
       </button>
 
       <button type="button" className="sidebar__settings" onClick={onSettings}>
         <span aria-hidden="true">⚙</span>
-        Settings
+        {t('COMMON.SETTINGS')}
       </button>
     </nav>
   );

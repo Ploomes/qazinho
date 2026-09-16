@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Eyebrow, EmptyState, StatusPill } from '@/components/atoms';
 import { CountTile, Screenshot } from '@/components/molecules';
 import { useRunsViewModel } from './hooks';
@@ -16,19 +17,15 @@ export const Runs: React.FC = () => {
     onOpenBug,
     onOpenShot,
   } = useRunsViewModel();
+  const { t } = useTranslation();
 
   if (isEmpty || run === null) {
-    return (
-      <EmptyState
-        title="No runs yet."
-        body="Every run lands here, with its verdicts and screenshots."
-      />
-    );
+    return <EmptyState title={t('RUN.EMPTY_TITLE')} body={t('RUN.EMPTY_BODY')} />;
   }
 
   return (
     <div className="runs">
-      <Eyebrow>run history</Eyebrow>
+      <Eyebrow>{t('RUN.HISTORY')}</Eyebrow>
       <div className="runs__history">
         {runs.map((item) => (
           <button
@@ -60,14 +57,22 @@ export const Runs: React.FC = () => {
         </div>
 
         <div className="runs__counts">
-          <CountTile status="passed" count={run.counts.passed} label="passed" />
-          <CountTile status="failed" count={run.counts.failed} label="failed" />
-          <CountTile status="blocked" count={run.counts.blocked} label="blocked" />
-          <CountTile status="skipped" count={run.counts.skipped} label="skipped" />
+          <CountTile status="passed" count={run.counts.passed} label={t('RUN.PASSED')} />
+          <CountTile status="failed" count={run.counts.failed} label={t('RUN.FAILED')} />
+          <CountTile
+            status="blocked"
+            count={run.counts.blocked}
+            label={t('RUN.BLOCKED')}
+          />
+          <CountTile
+            status="skipped"
+            count={run.counts.skipped}
+            label={t('RUN.SKIPPED')}
+          />
         </div>
 
         <div className="runs__filters">
-          <Eyebrow>filter</Eyebrow>
+          <Eyebrow>{t('COMMON.FILTER')}</Eyebrow>
           {filters.map((item) => (
             <button
               key={item}
@@ -79,7 +84,7 @@ export const Runs: React.FC = () => {
                 onFilter(item);
               }}
             >
-              {item}
+              {t(`RUN.${item.toUpperCase()}` as never)}
             </button>
           ))}
         </div>
@@ -105,7 +110,7 @@ export const Runs: React.FC = () => {
                       onOpenBug(step.bugId ?? '');
                     }}
                   >
-                    Open in Bugs →
+                    {t('RUN.OPEN_IN_BUGS')}
                   </button>
                 )}
                 <Screenshot

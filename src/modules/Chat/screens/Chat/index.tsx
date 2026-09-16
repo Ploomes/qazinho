@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { Chip, Logo } from '@/components/atoms';
 import { MOTION } from '@/constants';
 import {
@@ -31,26 +32,24 @@ export const Chat: React.FC = () => {
     onOpenPlan,
     onOpenRuns,
   } = useChatViewModel();
+  const { t } = useTranslation();
 
   return (
     <div className="chat">
       {isEmpty ? (
         <div className="chat__empty">
           <Logo size={42} />
-          <span className="chat__empty-title">Nothing has crashed here yet.</span>
-          <p className="chat__empty-body">
-            Say what you want covered. The agent writes the cases, you fix what it got
-            wrong.
-          </p>
+          <span className="chat__empty-title">{t('CHAT.EMPTY_TITLE')}</span>
+          <p className="chat__empty-body">{t('CHAT.EMPTY_BODY')}</p>
           <div className="chat__suggestions">
             {suggestions.map((suggestion) => (
               <Chip
-                key={suggestion.label}
+                key={suggestion.labelKey}
                 onClick={() => {
                   onSuggestion(suggestion.text);
                 }}
               >
-                {suggestion.label}
+                {t(suggestion.labelKey)}
               </Chip>
             ))}
           </div>
@@ -97,18 +96,25 @@ export const Chat: React.FC = () => {
                   <HandoffCard
                     isAccent
                     glyph="▤"
-                    title={`Plan · ${String(message.caseCount)} cases · ${String(message.stepCount)} steps`}
-                    subtitle="Read it, change what is wrong, then run it."
-                    action="Open in Plan →"
+                    title={t('CHAT.PLAN_CARD_TITLE', {
+                      cases: message.caseCount,
+                      steps: message.stepCount,
+                    })}
+                    subtitle={t('CHAT.PLAN_CARD_SUBTITLE')}
+                    action={t('CHAT.PLAN_CARD_ACTION')}
                     onOpen={onOpenPlan}
                   />
                 )}
                 {message.kind === 'run' && (
                   <HandoffCard
                     glyph="↻"
-                    title={`Run ${message.runId} · ${String(message.passed)} passed · ${String(message.failed)} failed`}
-                    subtitle="Counters, screenshots and the expected vs. got for every failure."
-                    action="Open in Runs →"
+                    title={t('CHAT.RUN_CARD_TITLE', {
+                      id: message.runId,
+                      passed: message.passed,
+                      failed: message.failed,
+                    })}
+                    subtitle={t('CHAT.RUN_CARD_SUBTITLE')}
+                    action={t('CHAT.RUN_CARD_ACTION')}
                     onOpen={onOpenRuns}
                   />
                 )}

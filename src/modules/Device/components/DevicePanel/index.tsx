@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { Button, Chip, Eyebrow, IconButton, StatusPill } from '@/components/atoms';
 import { Stripes } from '@/components/molecules';
 import { MOTION } from '@/constants';
@@ -23,11 +24,12 @@ export const DevicePanel: React.FC = () => {
     onPause,
     onStop,
   } = useDevicePanelViewModel();
+  const { t } = useTranslation();
 
   if (!isOpen) {
     return (
       <button type="button" className="device-panel__rail" onClick={onToggle}>
-        |← device
+        {t('DEVICE.RAIL')}
       </button>
     );
   }
@@ -53,15 +55,20 @@ export const DevicePanel: React.FC = () => {
           <Chip hasCaret>{deviceLabel}</Chip>
           <span className="device-panel__state">{stateText}</span>
           <span className="device-panel__collapse">
-            <IconButton glyph="→|" label="Hide the device" size="sm" onClick={onToggle} />
+            <IconButton
+              glyph="→|"
+              label={t('DEVICE.HIDE')}
+              size="sm"
+              onClick={onToggle}
+            />
           </span>
         </header>
 
         <div className="device-panel__viewport">
           {isOff && (
             <div className="device-panel__off">
-              <span>no device yet</span>
-              <span>Hit Run plan and the device opens right here.</span>
+              <span>{t('DEVICE.NO_DEVICE')}</span>
+              <span>{t('DEVICE.NO_DEVICE_BODY')}</span>
             </div>
           )}
 
@@ -72,7 +79,7 @@ export const DevicePanel: React.FC = () => {
                 {isLive && (
                   <span className="device-panel__live">
                     <span className="device-panel__live-dot" />
-                    live · {elapsedLabel}
+                    {elapsedLabel}
                   </span>
                 )}
               </div>
@@ -92,7 +99,7 @@ export const DevicePanel: React.FC = () => {
                 {isLive && (
                   <span className="device-panel__live">
                     <span className="device-panel__live-dot" />
-                    live · {elapsedLabel}
+                    {elapsedLabel}
                   </span>
                 )}
               </div>
@@ -103,20 +110,20 @@ export const DevicePanel: React.FC = () => {
         {!isOff && (
           <div className="device-panel__controls">
             <Button size="sm" onClick={onPause}>
-              Pause
+              {t('COMMON.PAUSE')}
             </Button>
             <Button size="sm" variant="danger" onClick={onStop}>
-              Stop
+              {t('COMMON.STOP')}
             </Button>
           </div>
         )}
 
         <div className="device-panel__steps">
-          <Eyebrow>steps {doingLabel}</Eyebrow>
+          <Eyebrow>
+            {t('DEVICE.STEPS')} {doingLabel}
+          </Eyebrow>
           {steps.length === 0 ? (
-            <p className="device-panel__step">
-              Hit Run plan and the steps show up here, one at a time.
-            </p>
+            <p className="device-panel__step">{t('DEVICE.STEPS_EMPTY')}</p>
           ) : (
             steps.map((step) => (
               <div key={step.number} className="device-panel__step">

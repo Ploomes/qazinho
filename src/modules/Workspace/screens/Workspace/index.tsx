@@ -1,4 +1,5 @@
-import { Button } from '@/components/atoms';
+import { useTranslation } from 'react-i18next';
+import { Button, StatusPill } from '@/components/atoms';
 import { Bugs } from '@/modules/Bug/screens/Bugs';
 import { Chat } from '@/modules/Chat/screens/Chat';
 import { Plan } from '@/modules/Plan/screens/Plan';
@@ -13,6 +14,7 @@ export const Workspace: React.FC = () => {
     tab,
     name,
     issueKey,
+    status,
     statusLabel,
     planCount,
     runCount,
@@ -24,6 +26,7 @@ export const Workspace: React.FC = () => {
     onPause,
     onStop,
   } = useWorkspaceViewModel();
+  const { t } = useTranslation();
 
   if (!workspace) return null;
 
@@ -32,19 +35,23 @@ export const Workspace: React.FC = () => {
       <header className="workspace__header">
         <h1 className="workspace__title">{name}</h1>
         {issueKey !== null && <span className="workspace__issue">{issueKey}</span>}
-        <span className="workspace__status">{statusLabel}</span>
+        {statusLabel === null ? (
+          <StatusPill status={status} shape="round" />
+        ) : (
+          <StatusPill status="running" shape="round" label={statusLabel} />
+        )}
 
         <div className="workspace__actions">
           {isLive ? (
             <>
-              <Button onClick={onPause}>Pause</Button>
+              <Button onClick={onPause}>{t('COMMON.PAUSE')}</Button>
               <Button variant="danger" onClick={onStop}>
-                Stop
+                {t('COMMON.STOP')}
               </Button>
             </>
           ) : (
             <Button variant="primary" disabled={!canRun} onClick={onRun}>
-              Run plan
+              {t('WORKSPACE.RUN_PLAN')}
             </Button>
           )}
         </div>

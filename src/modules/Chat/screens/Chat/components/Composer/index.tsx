@@ -1,10 +1,12 @@
 import type { IComposerProps } from './types';
+import { useTranslation } from 'react-i18next';
 import { Chip } from '@/components/atoms';
 import { useComposerViewModel } from './hooks';
 import './styles.css';
 
 export const Composer: React.FC<IComposerProps> = (props) => {
   const { canSend, onSendClick, onKeyDown } = useComposerViewModel(props);
+  const { t } = useTranslation();
 
   return (
     <div className="composer">
@@ -19,8 +21,8 @@ export const Composer: React.FC<IComposerProps> = (props) => {
         <input
           className="input input--bare"
           value={props.value}
-          placeholder="Tell the agent what to test"
-          aria-label="Tell the agent what to test"
+          placeholder={t('CHAT.PLACEHOLDER')}
+          aria-label={t('CHAT.PLACEHOLDER')}
           onChange={(event) => {
             props.onChange(event.target.value);
           }}
@@ -30,7 +32,7 @@ export const Composer: React.FC<IComposerProps> = (props) => {
           type="button"
           className="composer__send"
           disabled={!canSend}
-          aria-label="Send"
+          aria-label={t('CHAT.SEND')}
           onClick={onSendClick}
         >
           <span aria-hidden="true">↑</span>

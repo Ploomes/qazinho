@@ -1,4 +1,5 @@
 import { Reorder } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { Button, EmptyState } from '@/components/atoms';
 import { PlanCase } from './components';
 import { usePlanViewModel } from './hooks';
@@ -17,15 +18,16 @@ export const Plan: React.FC = () => {
     onStop,
     onDraftInChat,
   } = usePlanViewModel();
+  const { t } = useTranslation();
 
   if (isEmpty) {
     return (
       <EmptyState
-        title="No plan yet."
-        body="Write the cases yourself, or say what this workspace covers and let the agent draft them."
+        title={t('PLAN.EMPTY_TITLE')}
+        body={t('PLAN.EMPTY_BODY')}
         action={
           <Button variant="primary" onClick={onDraftInChat}>
-            Draft it in chat
+            {t('PLAN.EMPTY_ACTION')}
           </Button>
         }
       />
@@ -36,17 +38,15 @@ export const Plan: React.FC = () => {
     <div className="plan">
       <div className="plan__head">
         <span className="plan__summary">{summary}</span>
-        <span className="plan__note">
-          Drafted by Claude Code. Click a case to open it, drag it to move it.
-        </span>
+        <span className="plan__note">{t('PLAN.NOTE')}</span>
         <div className="plan__actions">
           {isLocked ? (
             <Button variant="danger" onClick={onStop}>
-              Stop the run
+              {t('PLAN.STOP_RUN')}
             </Button>
           ) : (
             <Button variant="primary" onClick={onRunAll}>
-              Run all
+              {t('PLAN.RUN_ALL')}
             </Button>
           )}
         </div>
@@ -55,7 +55,7 @@ export const Plan: React.FC = () => {
       {isLocked && (
         <div className="plan__locked">
           <span aria-hidden="true">🔒</span>
-          Claude is running this plan. Stop the run if you want to change it.
+          {t('PLAN.LOCKED')}
         </div>
       )}
 

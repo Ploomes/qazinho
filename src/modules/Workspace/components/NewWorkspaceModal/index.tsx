@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Eyebrow, Input } from '@/components/atoms';
 import { ModalFrame } from '@/components/templates';
 import { useNewWorkspaceModalViewModel } from './hooks';
@@ -15,30 +16,31 @@ export const NewWorkspaceModal: React.FC = () => {
     onCancel,
     onCreate,
   } = useNewWorkspaceModalViewModel();
+  const { t } = useTranslation();
 
   return (
     <ModalFrame
-      title="New workspace"
-      subtitle={`One front of testing in ${projectName}. It gets its own chat, device, plan and runs.`}
+      title={t('NEW_WORKSPACE.TITLE')}
+      subtitle={t('NEW_WORKSPACE.SUBTITLE', { project: projectName })}
       width={520}
-      confirmLabel="Create workspace"
+      confirmLabel={t('NEW_WORKSPACE.CREATE')}
       canConfirm={canCreate}
-      hint="nothing starts until you ask for a run"
+      hint={t('NEW_WORKSPACE.HINT')}
       onCancel={onCancel}
       onConfirm={onCreate}
     >
       <div>
-        <Eyebrow>what are you testing</Eyebrow>
+        <Eyebrow>{t('NEW_WORKSPACE.NAME')}</Eyebrow>
         <Input
           value={name}
-          label="what are you testing"
-          placeholder="Checkout regression"
+          label={t('NEW_WORKSPACE.NAME')}
+          placeholder={t('NEW_WORKSPACE.NAME_PLACEHOLDER')}
           onChange={onNameChange}
         />
       </div>
 
       <div>
-        <Eyebrow>target</Eyebrow>
+        <Eyebrow>{t('NEW_WORKSPACE.TARGET')}</Eyebrow>
         <div className="new-workspace__targets">
           {targets.map((target) => (
             <button
@@ -60,11 +62,8 @@ export const NewWorkspaceModal: React.FC = () => {
       </div>
 
       <div>
-        <Eyebrow>linked issue · optional</Eyebrow>
-        <p className="new-workspace__issue">
-          No issue tracker connected. Connect one and you can hand the agent a ticket to
-          work from. Without it you and the agent write the plan together.
-        </p>
+        <Eyebrow>{t('NEW_WORKSPACE.ISSUE')}</Eyebrow>
+        <p className="new-workspace__issue">{t('NEW_WORKSPACE.ISSUE_EMPTY')}</p>
       </div>
     </ModalFrame>
   );

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Eyebrow, Input } from '@/components/atoms';
 import { ModalFrame } from '@/components/templates';
 import { useNewProjectModalViewModel } from './hooks';
@@ -21,56 +22,52 @@ export const NewProjectModal: React.FC = () => {
     onCancel,
     onCreate,
   } = useNewProjectModalViewModel();
+  const { t } = useTranslation();
 
   return (
     <ModalFrame
-      title="New project"
-      subtitle="One environment of the app you test. Add as many targets as you need."
+      title={t('PROJECT.NEW_TITLE')}
+      subtitle={t('PROJECT.NEW_SUBTITLE')}
       width={740}
-      confirmLabel="Create project"
+      confirmLabel={t('PROJECT.CREATE')}
       canConfirm={canCreate}
       hint={footerHint}
       onCancel={onCancel}
       onConfirm={onCreate}
     >
       <div>
-        <Eyebrow>project name</Eyebrow>
+        <Eyebrow>{t('PROJECT.NAME')}</Eyebrow>
         <Input
           value={name}
-          label="project name"
-          placeholder="Shop · staging"
+          label={t('PROJECT.NAME')}
+          placeholder={t('PROJECT.NAME_PLACEHOLDER')}
           onChange={onNameChange}
         />
       </div>
 
       <div>
-        <Eyebrow>targets</Eyebrow>
+        <Eyebrow>{t('PROJECT.TARGETS')}</Eyebrow>
         <div className="new-project__targets">
           <div className="new-project__target">
-            <span className="new-project__target-name">Web</span>
-            <p className="new-project__target-text">
-              A URL the agent can reach from this machine. Basic auth and a staging cookie
-              are fine.
-            </p>
+            <span className="new-project__target-name">{t('PROJECT.WEB')}</span>
+            <p className="new-project__target-text">{t('PROJECT.WEB_TEXT')}</p>
             <Input
               isMono
               value={url}
-              label="web url"
-              placeholder="https://staging.yourshop.com"
+              label={t('PROJECT.WEB')}
+              placeholder={t('PROJECT.WEB_PLACEHOLDER')}
               onChange={onUrlChange}
             />
           </div>
 
           <div className="new-project__target">
-            <span className="new-project__target-name">Android</span>
-            <p className="new-project__target-text">
-              Drop a debug .apk. gocrash installs it on an emulator you already have.
-            </p>
+            <span className="new-project__target-name">{t('PROJECT.ANDROID')}</span>
+            <p className="new-project__target-text">{t('PROJECT.ANDROID_TEXT')}</p>
             <Input
               isMono
               value={apk}
-              label="android build"
-              placeholder="drop your .apk here, or pick one"
+              label={t('PROJECT.ANDROID')}
+              placeholder={t('PROJECT.ANDROID_PLACEHOLDER')}
               onChange={onApkChange}
             />
             <span className="new-project__note">{androidNote}</span>
@@ -83,17 +80,14 @@ export const NewProjectModal: React.FC = () => {
                 : 'new-project__target new-project__target--off'
             }
           >
-            <span className="new-project__target-name">iOS</span>
-            <p className="new-project__target-text">
-              Drop a simulator build: the .app folder from DerivedData. An .ipa will not
-              work, and neither will a real iPhone.
-            </p>
+            <span className="new-project__target-name">{t('PROJECT.IOS')}</span>
+            <p className="new-project__target-text">{t('PROJECT.IOS_TEXT')}</p>
             {isIosAvailable && (
               <Input
                 isMono
                 value={app}
-                label="ios build"
-                placeholder="drop your .app here, or pick one"
+                label={t('PROJECT.IOS')}
+                placeholder={t('PROJECT.IOS_PLACEHOLDER')}
                 onChange={onAppChange}
               />
             )}

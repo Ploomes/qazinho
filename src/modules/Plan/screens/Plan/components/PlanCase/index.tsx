@@ -1,12 +1,14 @@
 import type { IPlanCaseProps } from './types';
 import { Reorder } from 'motion/react';
 import { Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StatusPill } from '@/components/atoms';
 import { usePlanCaseViewModel } from './hooks';
 import './styles.css';
 
 export const PlanCase: React.FC<IPlanCaseProps> = (props) => {
   const { steps, caret, verdict, onHeadClick } = usePlanCaseViewModel(props);
+  const { t } = useTranslation();
 
   return (
     <Reorder.Item
@@ -37,20 +39,20 @@ export const PlanCase: React.FC<IPlanCaseProps> = (props) => {
         <div className="plan-case__body">
           <div className="plan-case__meta">
             <div>
-              <span className="plan-case__label">goal</span>
+              <span className="plan-case__label">{t('PLAN.GOAL')}</span>
               <p className="plan-case__value">{props.testCase.goal}</p>
             </div>
             <div>
-              <span className="plan-case__label">before</span>
+              <span className="plan-case__label">{t('PLAN.BEFORE')}</span>
               <p className="plan-case__value">{props.testCase.preconditions}</p>
             </div>
           </div>
 
           <div className="plan-case__steps">
-            <span className="plan-case__step-head">#</span>
-            <span className="plan-case__step-head">action</span>
-            <span className="plan-case__step-head">expected</span>
-            <span className="plan-case__step-head">last run</span>
+            <span className="plan-case__step-head">{t('PLAN.COLUMN_NUMBER')}</span>
+            <span className="plan-case__step-head">{t('PLAN.COLUMN_ACTION')}</span>
+            <span className="plan-case__step-head">{t('PLAN.COLUMN_EXPECTED')}</span>
+            <span className="plan-case__step-head">{t('PLAN.COLUMN_LAST_RUN')}</span>
 
             {steps.map((step) => (
               <Fragment key={step.number}>

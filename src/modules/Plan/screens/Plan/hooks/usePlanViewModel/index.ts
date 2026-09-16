@@ -1,8 +1,10 @@
 import type { ITestCase } from '@/modules/Plan/types';
+import { useTranslation } from 'react-i18next';
 import { flattenPlanSteps } from '@/modules/Run/library';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const usePlanViewModel = () => {
+  const { t } = useTranslation();
   const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const openCaseId = useWorkspaceStore((state) => state.openCaseId);
@@ -40,7 +42,10 @@ export const usePlanViewModel = () => {
     openCaseId,
     isLocked,
     isEmpty: plan.length === 0,
-    summary: `${String(plan.length)} cases · ${String(flattenPlanSteps(plan).length)} steps`,
+    summary: t('PLAN.SUMMARY', {
+      cases: plan.length,
+      steps: flattenPlanSteps(plan).length,
+    }),
     onToggleCase: toggleCase,
     onReorder,
     onRunAll,

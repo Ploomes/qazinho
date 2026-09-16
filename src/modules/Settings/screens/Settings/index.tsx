@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Button, Kbd } from '@/components/atoms';
 import { useSettingsViewModel } from './hooks';
 import './styles.css';
@@ -13,6 +14,9 @@ export const Settings: React.FC = () => {
     model,
     keybinds,
     integrations,
+    language,
+    languages,
+    onSelectLanguage,
     androidSdk,
     xcode,
     isMac,
@@ -22,6 +26,7 @@ export const Settings: React.FC = () => {
     onToggleTheme,
     onToggleIntegration,
   } = useSettingsViewModel();
+  const { t } = useTranslation();
 
   return (
     <section className="settings">
@@ -39,13 +44,13 @@ export const Settings: React.FC = () => {
               onSelectTab(item);
             }}
           >
-            {item}
+            {t(`SETTINGS.${item.toUpperCase()}` as never)}
           </button>
         ))}
       </nav>
 
       <div className="settings__content">
-        <h1 className="settings__title">{tab}</h1>
+        <h1 className="settings__title">{t(`SETTINGS.${tab.toUpperCase()}` as never)}</h1>
 
         {tab === 'agents' && (
           <div>
@@ -57,7 +62,9 @@ export const Settings: React.FC = () => {
                 </div>
                 <div className="settings__row-action">
                   {item.name === agent ? (
-                    <span className="settings__row-note">Default agent</span>
+                    <span className="settings__row-note">
+                      {t('SETTINGS.DEFAULT_AGENT')}
+                    </span>
                   ) : (
                     <Button
                       size="sm"
@@ -66,16 +73,15 @@ export const Settings: React.FC = () => {
                         onSelectAgent(item.name);
                       }}
                     >
-                      {item.isFound ? 'Make default' : 'Not on PATH'}
+                      {item.isFound
+                        ? t('SETTINGS.MAKE_DEFAULT')
+                        : t('SETTINGS.NOT_ON_PATH')}
                     </Button>
                   )}
                 </div>
               </div>
             ))}
-            <p className="settings__note">
-              gocrash has no model of its own. It drives whichever agent you already have
-              installed.
-            </p>
+            <p className="settings__note">{t('SETTINGS.AGENTS_NOTE')}</p>
             {models.map((item) => (
               <div key={item.id} className="settings__row">
                 <div>
@@ -90,7 +96,7 @@ export const Settings: React.FC = () => {
                       onSelectModel(item.id);
                     }}
                   >
-                    {item.id === model ? 'in use' : 'use it'}
+                    {item.id === model ? t('MODEL.IN_USE') : t('MODEL.USE_IT')}
                   </Button>
                 </div>
               </div>
@@ -113,17 +119,14 @@ export const Settings: React.FC = () => {
               <div>
                 <div className="settings__row-name">Xcode</div>
                 <div className="settings__row-note">
-                  {isMac ? xcode.path : 'macOS only'}
+                  {isMac ? xcode.path : t('PROJECT.IOS_MAC_ONLY')}
                 </div>
               </div>
               <span className="settings__row-action settings__row-note">
-                {isMac ? xcode.note : 'iOS targets are off'}
+                {isMac ? xcode.note : t('SETTINGS.IOS_OFF')}
               </span>
             </div>
-            <p className="settings__note">
-              gocrash never downloads an SDK, an emulator or Xcode. It finds what is
-              already here and says what is missing.
-            </p>
+            <p className="settings__note">{t('SETTINGS.DEVICES_NOTE')}</p>
           </div>
         )}
 
@@ -133,7 +136,9 @@ export const Settings: React.FC = () => {
               <div>
                 <div className="settings__row-name">GitHub</div>
                 <div className="settings__row-note">
-                  {integrations.github ? 'connected' : 'not connected'}
+                  {integrations.github
+                    ? t('SETTINGS.CONNECTED')
+                    : t('SETTINGS.NOT_CONNECTED')}
                 </div>
               </div>
               <div className="settings__row-action">
@@ -143,7 +148,7 @@ export const Settings: React.FC = () => {
                     onToggleIntegration('github');
                   }}
                 >
-                  {integrations.github ? 'Disconnect' : 'Connect'}
+                  {integrations.github ? t('COMMON.DISCONNECT') : t('COMMON.CONNECT')}
                 </Button>
               </div>
             </div>
@@ -151,7 +156,9 @@ export const Settings: React.FC = () => {
               <div>
                 <div className="settings__row-name">Jira</div>
                 <div className="settings__row-note">
-                  {integrations.jira ? 'connected' : 'not connected'}
+                  {integrations.jira
+                    ? t('SETTINGS.CONNECTED')
+                    : t('SETTINGS.NOT_CONNECTED')}
                 </div>
               </div>
               <div className="settings__row-action">
@@ -161,30 +168,44 @@ export const Settings: React.FC = () => {
                     onToggleIntegration('jira');
                   }}
                 >
-                  {integrations.jira ? 'Disconnect' : 'Connect'}
+                  {integrations.jira ? t('COMMON.DISCONNECT') : t('COMMON.CONNECT')}
                 </Button>
               </div>
             </div>
-            <p className="settings__note">
-              Nothing is sent anywhere on its own. You pick the run, the bug and the
-              moment.
-            </p>
+            <p className="settings__note">{t('SETTINGS.INTEGRATIONS_NOTE')}</p>
           </div>
         )}
 
         {tab === 'appearance' && (
           <div>
             <div className="settings__row">
-              <div className="settings__row-name">Theme</div>
+              <div className="settings__row-name">{t('SETTINGS.THEME')}</div>
               <div className="settings__row-action">
                 <Button size="sm" onClick={onToggleTheme}>
-                  {theme === 'dark' ? 'Light' : 'Dark'}
+                  {theme === 'dark'
+                    ? t('SETTINGS.THEME_LIGHT')
+                    : t('SETTINGS.THEME_DARK')}
                 </Button>
               </div>
             </div>
-            <p className="settings__note">
-              Every status carries an icon and a word, so colour is never the only clue.
-            </p>
+            <div className="settings__row">
+              <div className="settings__row-name">{t('SETTINGS.LANGUAGE')}</div>
+              <div className="settings__row-action">
+                {languages.map((item) => (
+                  <Button
+                    key={item.id}
+                    size="sm"
+                    disabled={item.id === language}
+                    onClick={() => {
+                      onSelectLanguage(item.id);
+                    }}
+                  >
+                    {item.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <p className="settings__note">{t('SETTINGS.APPEARANCE_NOTE')}</p>
           </div>
         )}
 
@@ -204,12 +225,9 @@ export const Settings: React.FC = () => {
         {tab === 'about' && (
           <div className="settings__about">
             <span className="settings__about-name">gocrash</span>
-            <span className="settings__row-note">0.1.0 · MIT</span>
-            <span>by Salve Software</span>
-            <p className="settings__note">
-              Go crash your app before your users do. Your agent, your emulators, your
-              screenshots. Nothing leaves this machine.
-            </p>
+            <span className="settings__row-note">{t('SETTINGS.ABOUT_VERSION')}</span>
+            <span>{t('SETTINGS.ABOUT_BY')}</span>
+            <p className="settings__note">{t('SETTINGS.ABOUT_NOTE')}</p>
           </div>
         )}
       </div>

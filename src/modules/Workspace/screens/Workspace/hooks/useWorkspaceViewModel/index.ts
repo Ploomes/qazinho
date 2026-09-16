@@ -1,8 +1,9 @@
-import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { flattenPlanSteps } from '@/modules/Run/library';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useWorkspaceViewModel = () => {
+  const { t } = useTranslation();
   const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const tab = useWorkspaceStore((state) => state.tab);
@@ -12,21 +13,22 @@ export const useWorkspaceViewModel = () => {
   const stopRun = useWorkspaceStore((state) => state.stopRun);
 
   const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
+  const workspaceId = workspace?.id ?? null;
   const steps = flattenPlanSteps(workspace?.plan ?? []);
   const live = workspace?.live ?? null;
   const isLive = live !== null && !live.isDone;
 
-  const onRun = useCallback(() => {
-    if (workspace) startRun(workspace.id);
-  }, [startRun, workspace]);
+  const onRun = () => {
+    if (workspaceId !== null) startRun(workspaceId);
+  };
 
-  const onPause = useCallback(() => {
-    if (workspace) pauseRun(workspace.id);
-  }, [pauseRun, workspace]);
+  const onPause = () => {
+    if (workspaceId !== null) pauseRun(workspaceId);
+  };
 
-  const onStop = useCallback(() => {
-    if (workspace) stopRun(workspace.id);
-  }, [stopRun, workspace]);
+  const onStop = () => {
+    if (workspaceId !== null) stopRun(workspaceId);
+  };
 
   return {
     workspace,
@@ -35,8 +37,8 @@ export const useWorkspaceViewModel = () => {
     issueKey: workspace?.issue?.key ?? null,
     status: workspace?.status ?? 'idle',
     statusLabel: isLive
-      ? `running · step ${String(live.stepIndex)} of ${String(steps.length)}`
-      : (workspace?.status ?? 'idle'),
+      ? t('WORKSPACE.LIVE_STEP', { current: live.stepIndex, total: steps.length })
+      : null,
     planCount: workspace?.plan.length ?? 0,
     runCount: workspace?.runs.length ?? 0,
     bugCount: workspace?.bugs.length ?? 0,

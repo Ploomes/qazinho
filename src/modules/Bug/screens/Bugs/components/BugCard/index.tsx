@@ -1,4 +1,5 @@
 import type { IBugCardProps } from './types';
+import { useTranslation } from 'react-i18next';
 import { Button, Eyebrow } from '@/components/atoms';
 import { ExpectedGot, MetaGrid, Screenshot, Stripes } from '@/components/molecules';
 import { useBugCardViewModel } from './hooks';
@@ -7,6 +8,7 @@ import './styles.css';
 export const BugCard: React.FC<IBugCardProps> = (props) => {
   const { caret, meta, onHeadClick } = useBugCardViewModel(props);
   const { bug } = props;
+  const { t } = useTranslation();
 
   return (
     <article className="bug-card">
@@ -21,7 +23,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
         />
         <span className="bug-card__id">{bug.id}</span>
         <span className="bug-card__title">{bug.title}</span>
-        {bug.isNew && <span className="bug-card__new">just caught</span>}
+        {bug.isNew && <span className="bug-card__new">{t('BUG.JUST_CAUGHT')}</span>}
         <span className="bug-card__id">{bug.severity}</span>
         <span aria-hidden="true">{caret}</span>
       </button>
@@ -31,19 +33,19 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
           <p className="bug-card__text">{bug.body}</p>
 
           <div>
-            <Eyebrow>clip of the failure</Eyebrow>
+            <Eyebrow>{t('BUG.CLIP')}</Eyebrow>
             <div className="bug-card__clip">
               <Stripes pitch={11} />
             </div>
           </div>
 
           <div>
-            <Eyebrow>where it came from</Eyebrow>
+            <Eyebrow>{t('BUG.WHERE')}</Eyebrow>
             <MetaGrid rows={meta} />
           </div>
 
           <div>
-            <Eyebrow>screenshots</Eyebrow>
+            <Eyebrow>{t('BUG.SCREENSHOTS')}</Eyebrow>
             <div className="bug-card__shots">
               {bug.shots.map((shot) => (
                 <Screenshot
@@ -57,7 +59,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
           </div>
 
           <div>
-            <Eyebrow>how to get there</Eyebrow>
+            <Eyebrow>{t('BUG.HOW_TO')}</Eyebrow>
             <ol className="bug-card__repro">
               {bug.repro.map((step) => (
                 <li
@@ -74,10 +76,10 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
 
           <div className="bug-card__actions">
             <Button size="sm" onClick={props.onOpenRun}>
-              Open {bug.runId}
+              {t('BUG.OPEN_RUN', { id: bug.runId })}
             </Button>
             <Button size="sm" onClick={props.onOpenCase}>
-              Open {bug.caseId} in the plan
+              {t('BUG.OPEN_CASE', { id: bug.caseId })}
             </Button>
           </div>
         </div>

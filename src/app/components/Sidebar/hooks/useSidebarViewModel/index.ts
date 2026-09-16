@@ -1,10 +1,12 @@
 import type { SidebarRow } from '@/app/components/Sidebar/types';
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { SIDEBAR_STATUS } from '@/app/components/Sidebar/constants';
 import { workspaceMeta } from '@/modules/Workspace/library';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useSidebarViewModel = () => {
+  const { t } = useTranslation();
   const projects = useAppStore((state) => state.projects);
   const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
   const selectWorkspace = useAppStore((state) => state.selectWorkspace);
@@ -21,7 +23,10 @@ export const useSidebarViewModel = () => {
         kind: 'workspace' as const,
         id: workspace.id,
         name: workspace.name,
-        meta: workspaceMeta(workspace),
+        meta: t(workspaceMeta(workspace).key as never, {
+          count: workspaceMeta(workspace).count,
+          current: workspace.live?.stepIndex ?? 0,
+        }),
         glyph: SIDEBAR_STATUS[workspace.status].glyph,
         tone: SIDEBAR_STATUS[workspace.status].tone,
         animation: SIDEBAR_STATUS[workspace.status].animation,

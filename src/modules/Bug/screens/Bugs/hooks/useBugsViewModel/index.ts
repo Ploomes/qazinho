@@ -1,9 +1,11 @@
 import type { BugFilter } from '@/modules/Bug/types';
+import { useTranslation } from 'react-i18next';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 const FILTERS: BugFilter[] = ['all', 'high', 'medium', 'low'];
 
 export const useBugsViewModel = () => {
+  const { t } = useTranslation();
   const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const openBugId = useWorkspaceStore((state) => state.openBugId);
@@ -33,8 +35,8 @@ export const useBugsViewModel = () => {
     isEmpty: bugs.length === 0,
     summary:
       bugs.length === 1
-        ? '1 bug, caught by the agent'
-        : `${String(bugs.length)} bugs, caught by the agent`,
+        ? t('BUG.SUMMARY_ONE')
+        : t('BUG.SUMMARY_OTHER', { count: bugs.length }),
     onToggleBug: toggleBug,
     onFilter: setBugFilter,
     onOpenRun,

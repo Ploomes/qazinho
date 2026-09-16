@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { EmptyState } from '@/components/atoms';
 import { BugCard } from './components';
 import { useBugsViewModel } from './hooks';
@@ -16,14 +17,10 @@ export const Bugs: React.FC = () => {
     onOpenRun,
     onOpenCase,
   } = useBugsViewModel();
+  const { t } = useTranslation();
 
   if (isEmpty) {
-    return (
-      <EmptyState
-        title="No bugs yet."
-        body="Every failed step the agent can explain shows up here, with its evidence attached."
-      />
-    );
+    return <EmptyState title={t('BUG.EMPTY_TITLE')} body={t('BUG.EMPTY_BODY')} />;
   }
 
   return (

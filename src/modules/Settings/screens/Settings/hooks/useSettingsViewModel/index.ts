@@ -4,6 +4,11 @@ import { AGENTS, MODELS } from '@/modules/Settings/constants';
 import { Platform } from '@/services';
 import { useAppStore, useSettingsStore } from '@/store';
 
+const LANGUAGES = [
+  { id: 'en' as const, label: 'English' },
+  { id: 'pt' as const, label: 'Português' },
+];
+
 const TABS: SettingsTab[] = [
   'agents',
   'devices',
@@ -37,6 +42,7 @@ export const useSettingsViewModel = () => {
     models: MODELS[agent] ?? [],
     model,
     language,
+    languages: LANGUAGES,
     keybinds,
     integrations,
     androidSdk: MACHINE.androidSdk,

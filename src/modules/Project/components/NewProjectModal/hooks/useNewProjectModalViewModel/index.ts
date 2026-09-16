@@ -1,10 +1,12 @@
 import type { ITarget } from '@/modules/Project/types';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MACHINE } from '@/modules/Project/constants';
 import { Platform } from '@/services';
 import { useAppStore } from '@/store';
 
 export const useNewProjectModalViewModel = () => {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [url, setUrl] = useState('');
   const [apk, setApk] = useState('');
@@ -44,11 +46,10 @@ export const useNewProjectModalViewModel = () => {
     isMac,
     canCreate: name.trim().length > 0 && hasTarget,
     androidNote: MACHINE.androidSdk.note,
-    xcodeNote: isMac ? MACHINE.xcode.note : 'macOS only',
+    xcodePath: MACHINE.xcode.path,
+    xcodeNote: isMac ? MACHINE.xcode.note : t('PROJECT.IOS_MAC_ONLY'),
     isIosAvailable: isMac && MACHINE.xcode.isFound,
-    footerHint: isMac
-      ? 'iOS needs Xcode · Android SDK found · nothing is downloaded for you'
-      : 'iOS needs macOS · Android SDK found · nothing is downloaded for you',
+    footerHint: isMac ? t('PROJECT.HINT_MAC') : t('PROJECT.HINT_OTHER'),
     onNameChange: setName,
     onUrlChange: setUrl,
     onApkChange: setApk,

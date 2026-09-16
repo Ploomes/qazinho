@@ -1,17 +1,19 @@
 import type { IDeviceStep } from '@/modules/Device/types';
+import { useTranslation } from 'react-i18next';
 import { DEVICE } from '@/modules/Device/constants';
 import { deviceStateOf, formatElapsed } from '@/modules/Device/library';
 import { flattenPlanSteps, verdictForStep } from '@/modules/Run/library';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
-const STATE_TEXT = {
-  off: 'idle',
-  driving: 'the agent is driving',
-  holding: 'holding for you',
-  stopped: 'stopped',
-};
+const STATE_KEY = {
+  off: 'DEVICE.IDLE',
+  driving: 'DEVICE.DRIVING',
+  holding: 'DEVICE.HOLDING',
+  stopped: 'DEVICE.STOPPED',
+} as const;
 
 export const useDevicePanelViewModel = () => {
+  const { t } = useTranslation();
   const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const isOpen = useWorkspaceStore((state) => state.isDevicePanelOpen);
@@ -46,12 +48,12 @@ export const useDevicePanelViewModel = () => {
     railWidth: DEVICE.railWidth,
     isPhone,
     isOff: state === 'off',
-    stateText: STATE_TEXT[state],
+    stateText: t(STATE_KEY[state]),
     deviceLabel: isPhone ? 'Emulator · Pixel 7 · API 34' : 'Chromium 1280 × 800',
     streamText: isPhone
       ? 'live emulator stream\n1080 × 2400 · 30 fps'
       : 'live browser stream\n1280 × 800 · 30 fps',
-    elapsedLabel: formatElapsed(live?.elapsedSec ?? 0),
+    elapsedLabel: t('DEVICE.LIVE', { elapsed: formatElapsed(live?.elapsedSec ?? 0) }),
     isLive: state === 'driving',
     steps,
     doingLabel:

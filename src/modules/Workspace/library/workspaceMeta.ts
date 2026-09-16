@@ -1,15 +1,16 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
 import { flattenPlanSteps } from '@/modules/Run/library';
 
-/** What the sidebar badge says: progress beats bugs, bugs beat the plan's size. */
-export function workspaceMeta(workspace: IWorkspace): string {
+/** The key and the count the sidebar badge reads: progress beats bugs, bugs beat the plan. */
+export function workspaceMeta(workspace: IWorkspace): { key: string; count: number } {
   const steps = flattenPlanSteps(workspace.plan);
 
   if (workspace.live?.isRunning)
-    return `${String(workspace.live.stepIndex)}/${String(steps.length)}`;
-  if (workspace.bugs.length === 1) return '1 bug';
-  if (workspace.bugs.length > 1) return `${String(workspace.bugs.length)} bugs`;
-  if (steps.length > 0) return `${String(steps.length)} steps`;
+    return { key: 'SIDEBAR.META_PROGRESS', count: steps.length };
+  if (workspace.bugs.length === 1) return { key: 'SIDEBAR.META_BUG_ONE', count: 1 };
+  if (workspace.bugs.length > 1)
+    return { key: 'SIDEBAR.META_BUG_OTHER', count: workspace.bugs.length };
+  if (steps.length > 0) return { key: 'SIDEBAR.META_STEPS', count: steps.length };
 
-  return 'new';
+  return { key: 'SIDEBAR.META_NEW', count: 0 };
 }
