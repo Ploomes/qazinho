@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CHAT } from '@/modules/Chat/screens/Chat/constants';
+import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { PLAN_SCHEMA, PROMPTS } from '@/modules/Plan/constants';
 import { parseDraftedPlan } from '@/modules/Plan/library';
 import { useModelInUse } from '@/modules/Settings/hooks';
@@ -36,6 +37,11 @@ export const useChatViewModel = () => {
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
   const agentId = detected.find(({ name }) => name === agentName)?.id ?? 'claude-code';
+  const { listRef, visible, onScroll } = useChatScroll({
+    workspaceId: workspace?.id ?? null,
+    messages: workspace?.chat ?? [],
+    isAgentTyping,
+  });
 
   const send = (text: string) => {
     if (!workspace || text.trim().length === 0) return;
@@ -93,7 +99,9 @@ export const useChatViewModel = () => {
   };
 
   return {
-    messages: workspace?.chat ?? [],
+    messages: visible,
+    listRef,
+    onScroll,
     isEmpty: (workspace?.chat.length ?? 0) === 0,
     isAgentTyping,
     liveText: isAgentTyping ? liveText : '',

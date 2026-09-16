@@ -18,6 +18,8 @@ import './styles.css';
 export const Chat: React.FC = () => {
   const {
     messages,
+    listRef,
+    onScroll,
     isEmpty,
     isAgentTyping,
     liveText,
@@ -57,18 +59,14 @@ export const Chat: React.FC = () => {
           </div>
         </div>
       ) : (
-        <div className="chat__messages">
-          {messages.map((message, index) => (
+        <div ref={listRef} className="chat__messages" onScroll={onScroll}>
+          {messages.map(({ message, isNew }) => (
             <motion.div
               key={message.id}
               className="chat__row"
-              initial={{ opacity: 0, y: 10 }}
+              initial={isNew ? { opacity: 0, y: 10 } : false}
               animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: MOTION.durationSlow,
-                ease: MOTION.ease,
-                delay: Math.min(index * MOTION.stagger, MOTION.maxStagger),
-              }}
+              transition={{ duration: MOTION.durationSlow, ease: MOTION.ease }}
             >
               <div className="chat__gutter">
                 <span
