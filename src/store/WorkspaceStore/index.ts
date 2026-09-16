@@ -10,7 +10,7 @@ import {
 } from '@/modules/Chat/library';
 import { DEVICE } from '@/modules/Device/constants';
 import { RUN_CLOCK } from '@/modules/Run/constants';
-import { finishRun, landStep, startRun } from '@/modules/Workspace/library';
+import { finishRun, landStep, startRun, stopRun } from '@/modules/Workspace/library';
 import { mapWorkspace, tickLive } from './library';
 
 export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
@@ -161,8 +161,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
-        change: (workspace) =>
-          workspace.live ? { ...workspace, status: 'stopped' } : workspace,
+        change: stopRun,
       }),
     })),
 
