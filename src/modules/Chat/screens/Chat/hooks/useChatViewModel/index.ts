@@ -1,59 +1,85 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { CHAT } from '@/modules/Chat/screens/Chat/constants';
-import { toPlanKind } from '@/modules/Plan/library';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { PLAN_SCHEMA, PROMPTS } from '@/modules/Plan/constants';
+import { parseDraftedPlan } from '@/modules/Plan/library';
+import { Agent } from '@/services';
+import {
+  useAppStore,
+  useMachineStore,
+  useSettingsStore,
+  useWorkspaceStore,
+} from '@/store';
 
 export const useChatViewModel = () => {
   const [draft, setDraft] = useState('');
-  const replyTimer = useRef<number | null>(null);
 
   const projects = useAppStore((state) => state.projects);
   const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
+  const detected = useMachineStore((state) => state.agents);
+  const agentName = useSettingsStore((state) => state.agent);
+  const model = useSettingsStore((state) => state.model);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const isAgentTyping = useWorkspaceStore((state) => state.isAgentTyping);
   const sendMessage = useWorkspaceStore((state) => state.sendMessage);
-  const replyToQa = useWorkspaceStore((state) => state.replyToQa);
+  const landAgentText = useWorkspaceStore((state) => state.landAgentText);
+  const landPlan = useWorkspaceStore((state) => state.landPlan);
+  const landAgentError = useWorkspaceStore((state) => state.landAgentError);
   const answerAsk = useWorkspaceStore((state) => state.answerAsk);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
 
   const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
-  const kind = toPlanKind(target?.kind ?? 'web');
+  const agentId = detected.find(({ name }) => name === agentName)?.id ?? 'claude-code';
 
-  useEffect(
-    () => () => {
-      if (replyTimer.current !== null) window.clearTimeout(replyTimer.current);
-    },
-    [],
-  );
+  const send = (text: string) => {
+    if (!workspace || text.trim().length === 0) return;
 
-  const send = useCallback(
-    (text: string) => {
-      if (!workspace || text.trim().length === 0) return;
+    const workspaceId = workspace.id;
+    const needsPlan = workspace.plan.length === 0;
+    const about = { target: target?.value ?? 'an app', kind: target?.kind ?? 'web' };
 
-      const workspaceId = workspace.id;
+    sendMessage({ workspaceId, text });
+    setDraft('');
 
-      sendMessage({ workspaceId, text });
-      setDraft('');
+    void Agent.ask({
+      workspaceId,
+      agentId,
+      model,
+      sessionId: workspace.sessionId,
+      prompt: needsPlan
+        ? PROMPTS.draftPlan({ ...about, wanted: text })
+        : PROMPTS.talk({ ...about, said: text }),
+      schema: needsPlan ? PLAN_SCHEMA : undefined,
+    }).then((turn) => {
+      if (turn.isError) {
+        landAgentError({ workspaceId, text: turn.text });
 
-      replyTimer.current = window.setTimeout(() => {
-        replyToQa({ workspaceId, kind });
-      }, CHAT.replyDelayMs);
-    },
-    [kind, replyToQa, sendMessage, workspace],
-  );
+        return;
+      }
 
-  const onSend = useCallback(() => {
-    send(draft);
-  }, [draft, send]);
+      if (!needsPlan) {
+        landAgentText({ workspaceId, text: turn.text, sessionId: turn.sessionId });
 
-  const onAnswer = useCallback(
-    (reply: string) => {
-      if (workspace) answerAsk({ workspaceId: workspace.id, reply });
-    },
-    [answerAsk, workspace],
-  );
+        return;
+      }
+
+      const drafted = parseDraftedPlan(turn.text);
+
+      if (!drafted) {
+        landAgentError({ workspaceId, text: CHAT.noPlanBack });
+
+        return;
+      }
+
+      landPlan({
+        workspaceId,
+        summary: drafted.summary,
+        plan: drafted.plan,
+        sessionId: turn.sessionId,
+      });
+    });
+  };
 
   return {
     messages: workspace?.chat ?? [],
@@ -62,16 +88,20 @@ export const useChatViewModel = () => {
     draft,
     suggestions: CHAT.suggestions,
     targetLabel: target === null ? 'No target' : `${target.label} · ${target.value}`,
-    agentLabel: 'Claude Code · Sonnet',
+    agentLabel: `${agentName} · ${model}`,
     onDraftChange: setDraft,
-    onSend,
+    onSend: () => {
+      send(draft);
+    },
     onSuggestion: send,
-    onAnswer,
-    onOpenPlan: useCallback(() => {
+    onAnswer: (reply: string) => {
+      if (workspace) answerAsk({ workspaceId: workspace.id, reply });
+    },
+    onOpenPlan: () => {
       selectTab('plan');
-    }, [selectTab]),
-    onOpenRuns: useCallback(() => {
+    },
+    onOpenRuns: () => {
       selectTab('runs');
-    }, [selectTab]),
+    },
   };
 };

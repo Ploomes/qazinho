@@ -16,6 +16,7 @@ export const pt: typeof en = {
     RAM: 'RAM {{used}} / {{ceiling}} GB',
     PROCESSES_ONE: '1 processo',
     PROCESSES_OTHER: '{{count}} processos',
+    AGENT: '{{agent}} · {{model}}',
     CONTEXT_LEFT: '{{agent}} · {{model}} · {{percent}} % de contexto',
   },
   SIDEBAR: {

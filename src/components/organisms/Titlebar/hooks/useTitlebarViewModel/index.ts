@@ -11,6 +11,7 @@ export const useTitlebarViewModel = () => {
   const toggleResources = useAppStore((state) => state.toggleResources);
   const toggleModelMenu = useAppStore((state) => state.toggleModelMenu);
   const resources = useMachineStore((state) => state.resources);
+  const usage = useMachineStore((state) => state.usage);
   const agent = useSettingsStore((state) => state.agent);
   const model = useSettingsStore((state) => state.model);
 
@@ -18,6 +19,10 @@ export const useTitlebarViewModel = () => {
   const cpu = Math.round(resources.cpu);
   const ramGb = resources.ramMb / 1024;
   const processCount = resources.processes.length;
+  const contextLeft =
+    usage === null || usage.contextWindow === 0
+      ? null
+      : 100 - Math.round((usage.contextTokens / usage.contextWindow) * 100);
 
   return {
     projectName: project?.name ?? null,
@@ -35,7 +40,10 @@ export const useTitlebarViewModel = () => {
       processCount === 1
         ? t('TITLEBAR.PROCESSES_ONE')
         : t('TITLEBAR.PROCESSES_OTHER', { count: processCount }),
-    agentLabel: t('TITLEBAR.CONTEXT_LEFT', { agent, model, percent: 96 }),
+    agentLabel:
+      contextLeft === null
+        ? t('TITLEBAR.AGENT', { agent, model })
+        : t('TITLEBAR.CONTEXT_LEFT', { agent, model, percent: contextLeft }),
     onToggleResources: toggleResources,
     onToggleModelMenu: toggleModelMenu,
   };

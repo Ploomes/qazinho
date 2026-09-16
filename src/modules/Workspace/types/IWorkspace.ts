@@ -13,6 +13,7 @@ export interface IWorkspace {
   name: string;
   targetId: string;
   planKind: 'web' | 'mobile';
+  sessionId: string | null;
   status: WorkspaceStatus;
   issue: IIssue | null;
   chat: ChatMessage[];

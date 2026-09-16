@@ -1,5 +1,5 @@
 export const CHAT = {
-  replyDelayMs: 1100,
+  noPlanBack: 'The agent answered, but not with a plan gocrash could read. Ask it again.',
   suggestions: [
     {
       labelKey: 'CHAT.SUGGESTION_CHECKOUT',

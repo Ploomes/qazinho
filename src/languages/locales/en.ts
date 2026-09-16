@@ -14,6 +14,7 @@ export const en = {
     RAM: 'RAM {{used}} / {{ceiling}} GB',
     PROCESSES_ONE: '1 process',
     PROCESSES_OTHER: '{{count}} processes',
+    AGENT: '{{agent}} · {{model}}',
     CONTEXT_LEFT: '{{agent}} · {{model}} · {{percent}} % context left',
   },
   SIDEBAR: {
