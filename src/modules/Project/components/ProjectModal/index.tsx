@@ -55,7 +55,7 @@ export const ProjectModal: React.FC = () => {
             </Button>
           </span>
         ) : (
-          <Button variant="ghost" size="sm" onClick={onAskDelete}>
+          <Button variant="danger-quiet" size="sm" onClick={onAskDelete}>
             {t('PROJECT.DELETE')}
           </Button>
         ))
