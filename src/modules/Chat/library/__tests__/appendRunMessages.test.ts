@@ -1,14 +1,12 @@
 import type { StepVerdict } from '@/types';
 import { describe, expect, it } from 'vitest';
 import { appendRunMessages } from '@/modules/Chat/library';
-import { flattenPlanSteps } from '@/modules/Run/library';
 import {
   makeOutcome,
   makeWorkspace,
 } from '@/modules/Workspace/library/__tests__/fixtures';
 
 const WORKSPACE = makeWorkspace();
-const STEPS = flattenPlanSteps(WORKSPACE.plan);
 
 function outcome(props: { index: number; verdict: StepVerdict }) {
   return makeOutcome({ workspace: WORKSPACE, ...props });
@@ -28,19 +26,8 @@ function walk(count: number) {
 }
 
 describe('appendRunMessages', () => {
-  it('keeps one rolling log instead of a message per action', () => {
-    const chat = walk(3);
-
-    expect(chat).toHaveLength(1);
-    expect(chat[0]).toMatchObject({ kind: 'action' });
-  });
-
-  it('keeps only the last five actions, so the chat stays readable', () => {
-    const chat = walk(6);
-    const [log] = chat;
-
-    expect(log?.kind === 'action' && log.actions).toHaveLength(5);
-    expect(log?.kind === 'action' && log.actions[0]?.what).toBe(STEPS[1]?.action);
+  it('does NOT write anything for steps that went through', () => {
+    expect(walk(3)).toEqual([]);
   });
 
   it('writes a verdict of its own when a step fails', () => {
