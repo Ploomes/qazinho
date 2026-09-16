@@ -48,6 +48,8 @@
 }
 
 .plan__add {
+  display: inline-flex;
+  gap: var(--space-3);
   align-self: flex-start;
   margin-top: var(--space-4);
   padding: var(--space-3) var(--space-4);
