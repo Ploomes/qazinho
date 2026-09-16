@@ -1,0 +1,29 @@
+.gauge {
+  flex: none;
+  transform: rotate(-90deg);
+}
+
+.gauge__track {
+  fill: none;
+  stroke: var(--line);
+}
+
+.gauge__used {
+  fill: none;
+  stroke-linecap: round;
+  transition:
+    stroke-dashoffset 0.5s var(--ease),
+    stroke 0.5s var(--ease);
+}
+
+.gauge__used--easy {
+  stroke: var(--pass);
+}
+
+.gauge__used--tight {
+  stroke: var(--amber);
+}
+
+.gauge__used--empty {
+  stroke: var(--fail);
+}

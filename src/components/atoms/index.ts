@@ -2,6 +2,7 @@ export * from './Button';
 export * from './Chip';
 export * from './EditableText';
 export * from './EmptyState';
+export * from './Gauge';
 export * from './Eyebrow';
 export * from './IconButton';
 export * from './Input';
