@@ -5,13 +5,8 @@ import { useTitlebarViewModel } from '@/components/organisms/Titlebar/hooks/useT
 import { sample } from '@/modules/Resources/library/__tests__/fixtures';
 import { useAppStore, useMachineStore } from '@/store';
 
-const STAGING = { id: 'p1', name: 'Shop · staging', targets: [] };
-const PRODUCTION = { id: 'p2', name: 'Shop · production', targets: [] };
-
 beforeEach(() => {
   useAppStore.setState({
-    projects: [],
-    selectedProjectId: null,
     isResourcesOpen: false,
     modelMenuAt: null,
   });
@@ -21,29 +16,6 @@ beforeEach(() => {
 });
 
 describe('useTitlebarViewModel', () => {
-  it('has no project to switch to before the first one is created', () => {
-    const { result } = renderHook(() => useTitlebarViewModel());
-
-    expect(result.current.hasProjects).toBe(false);
-    expect(result.current.projectName).toBeNull();
-  });
-
-  it('names the selected project', () => {
-    useAppStore.setState({ projects: [STAGING, PRODUCTION], selectedProjectId: 'p2' });
-
-    const { result } = renderHook(() => useTitlebarViewModel());
-
-    expect(result.current.projectName).toBe('Shop · production');
-  });
-
-  it('falls back to the first project when the selection points nowhere', () => {
-    useAppStore.setState({ projects: [STAGING, PRODUCTION], selectedProjectId: 'gone' });
-
-    const { result } = renderHook(() => useTitlebarViewModel());
-
-    expect(result.current.projectName).toBe('Shop · staging');
-  });
-
   it('reads an idle machine as costing nothing', () => {
     const { result } = renderHook(() => useTitlebarViewModel());
 

@@ -5,8 +5,6 @@ import { useAppStore, useMachineStore, useSettingsStore } from '@/store';
 
 export const useTitlebarViewModel = () => {
   const { t } = useTranslation();
-  const projects = useAppStore((state) => state.projects);
-  const selectedProjectId = useAppStore((state) => state.selectedProjectId);
   const isResourcesOpen = useAppStore((state) => state.isResourcesOpen);
   const modelMenuAt = useAppStore((state) => state.modelMenuAt);
   const toggleResources = useAppStore((state) => state.toggleResources);
@@ -16,7 +14,6 @@ export const useTitlebarViewModel = () => {
   const agent = useSettingsStore((state) => state.agent);
   const model = useSettingsStore((state) => state.model);
 
-  const project = projects.find(({ id }) => id === selectedProjectId) ?? projects[0];
   const cpu = Math.round(resources.cpu);
   const ramGb = resources.ramMb / 1024;
   const processCount = resources.processes.length;
@@ -28,8 +25,6 @@ export const useTitlebarViewModel = () => {
   const sessionLeft = usage?.fiveHourUsed == null ? null : 1 - usage.fiveHourUsed;
 
   return {
-    projectName: project?.name ?? null,
-    hasProjects: projects.length > 0,
     isMac: Platform.isMac(),
     isResourcesOpen,
     isModelMenuOpen: modelMenuAt === 'titlebar',

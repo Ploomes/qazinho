@@ -26,19 +26,6 @@
   color: var(--ink);
 }
 
-.titlebar__project {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: 5px var(--space-3);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-xs);
-  background: transparent;
-  color: var(--ink2);
-  font: var(--font-ui-sm);
-  -webkit-app-region: no-drag;
-}
-
 .titlebar__meters {
   display: flex;
   align-items: center;

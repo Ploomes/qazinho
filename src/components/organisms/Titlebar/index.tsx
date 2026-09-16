@@ -7,8 +7,6 @@ import './styles.css';
 
 export const Titlebar: React.FC = () => {
   const {
-    projectName,
-    hasProjects,
     isMac,
     isResourcesOpen,
     isModelMenuOpen,
@@ -30,13 +28,6 @@ export const Titlebar: React.FC = () => {
         <Logo />
         <span className="titlebar__wordmark">gocrash</span>
       </div>
-
-      {hasProjects && (
-        <button type="button" className="titlebar__project">
-          {projectName}
-          <span aria-hidden="true">▾</span>
-        </button>
-      )}
 
       <div className="titlebar__meters">
         <button
