@@ -20,6 +20,7 @@ export const useChatViewModel = () => {
   const model = useSettingsStore((state) => state.model);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const isAgentTyping = useWorkspaceStore((state) => state.isAgentTyping);
+  const liveText = useWorkspaceStore((state) => state.liveText);
   const sendMessage = useWorkspaceStore((state) => state.sendMessage);
   const landAgentText = useWorkspaceStore((state) => state.landAgentText);
   const landPlan = useWorkspaceStore((state) => state.landPlan);
@@ -85,6 +86,7 @@ export const useChatViewModel = () => {
     messages: workspace?.chat ?? [],
     isEmpty: (workspace?.chat.length ?? 0) === 0,
     isAgentTyping,
+    liveText: isAgentTyping ? liveText : '',
     draft,
     suggestions: CHAT.suggestions,
     targetLabel: target === null ? 'No target' : `${target.label} · ${target.value}`,

@@ -17,6 +17,7 @@ export interface IWorkspaceStore {
   isDevicePanelOpen: boolean;
   deviceWidth: number;
   isAgentTyping: boolean;
+  liveText: string;
   addWorkspace: (workspace: IWorkspace) => void;
   loadWorkspaces: (workspaces: IWorkspace[]) => void;
   selectTab: (tab: WorkspaceTab) => void;
@@ -33,6 +34,7 @@ export interface IWorkspaceStore {
     sessionId: string | null;
   }) => void;
   landAgentError: (props: { workspaceId: string; text: string }) => void;
+  setLiveText: (text: string) => void;
   answerAsk: (props: { workspaceId: string; reply: string }) => void;
   reorderPlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
   startRun: (props: { workspaceId: string; runId: string }) => void;

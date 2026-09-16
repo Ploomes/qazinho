@@ -21,6 +21,7 @@ export const Chat: React.FC = () => {
     messages,
     isEmpty,
     isAgentTyping,
+    liveText,
     draft,
     suggestions,
     targetLabel,
@@ -125,7 +126,10 @@ export const Chat: React.FC = () => {
           {isAgentTyping && (
             <div className="chat__row">
               <div className="chat__gutter" />
-              <TypingDots />
+              <div className="chat__live">
+                {liveText !== '' && <p className="chat__live-text">{liveText}</p>}
+                <TypingDots />
+              </div>
             </div>
           )}
         </div>

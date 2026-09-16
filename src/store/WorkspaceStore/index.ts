@@ -25,6 +25,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   isDevicePanelOpen: true,
   deviceWidth: DEVICE.defaultWidth,
   isAgentTyping: false,
+  liveText: '',
 
   addWorkspace: (workspace) =>
     set((state) => ({ workspaces: [...state.workspaces, workspace], tab: 'chat' })),
@@ -33,9 +34,12 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   selectTab: (tab) => set({ tab }),
 
+  setLiveText: (liveText) => set({ liveText }),
+
   sendMessage: ({ workspaceId, text }) =>
     set((state) => ({
       isAgentTyping: true,
+      liveText: '',
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -47,6 +51,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   landAgentText: ({ workspaceId, text, sessionId }) =>
     set((state) => ({
       isAgentTyping: false,
+      liveText: '',
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -60,6 +65,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   landPlan: ({ workspaceId, summary, plan, sessionId }) =>
     set((state) => ({
       isAgentTyping: false,
+      liveText: '',
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -81,6 +87,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   landAgentError: ({ workspaceId, text }) =>
     set((state) => ({
       isAgentTyping: false,
+      liveText: '',
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,

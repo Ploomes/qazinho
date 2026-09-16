@@ -78,3 +78,18 @@
   justify-content: center;
   margin-top: var(--space-3);
 }
+
+.chat__live {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.chat__live-text {
+  max-width: 62ch;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+  white-space: pre-wrap;
+}

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { MACHINE_WATCH } from '@/hooks/useMachineWatch/constants';
 import { Agent, Machine } from '@/services';
-import { useMachineStore } from '@/store';
+import { useMachineStore, useWorkspaceStore } from '@/store';
 
 /** Detection runs once; the meters keep reading, because a device can come up at any time. */
 export const useMachineWatch = () => {
@@ -9,6 +9,7 @@ export const useMachineWatch = () => {
   const setResources = useMachineStore((state) => state.setResources);
   const setTools = useMachineStore((state) => state.setTools);
   const setUsage = useMachineStore((state) => state.setUsage);
+  const setLiveText = useWorkspaceStore((state) => state.setLiveText);
 
   useEffect(() => {
     void Machine.detectAgents().then(setAgents);
@@ -22,8 +23,9 @@ export const useMachineWatch = () => {
     () =>
       Agent.onEvent((event) => {
         if (event.kind === 'usage') setUsage(event.usage);
+        else setLiveText(event.text);
       }),
-    [setUsage],
+    [setUsage, setLiveText],
   );
 
   useEffect(() => {
