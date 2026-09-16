@@ -1,0 +1,25 @@
+.input {
+  width: 100%;
+  padding: 13px 15px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--raise);
+  color: var(--ink);
+  font: 400 14px/1.2 var(--font-ui);
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--ink3);
+}
+
+.input--mono {
+  background: var(--panel);
+  font: 400 13px/1.2 var(--font-mono);
+}
+
+.input--bare {
+  padding: 0;
+  border: none;
+  background: transparent;
+}
