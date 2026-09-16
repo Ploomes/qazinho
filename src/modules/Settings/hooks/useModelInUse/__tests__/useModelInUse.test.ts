@@ -33,7 +33,7 @@ describe('useModelInUse', () => {
     useMachineStore.setState({ agents: [{ ...CLAUDE, defaultModel: null }] });
 
     expect(renderHook(() => useModelInUse()).result.current.modelName).toBe(
-      'agent default',
+      'Agent default',
     );
   });
 });
