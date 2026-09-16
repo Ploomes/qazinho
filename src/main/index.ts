@@ -1,11 +1,19 @@
 import { join } from 'node:path';
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { CHANNELS } from '@/ipc';
+import { AgentDetector } from '@/main/classes/agents/AgentDetector';
+import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
+import { ResourceCollector } from '@/main/classes/resources/ResourceCollector';
 import { WINDOW } from '@/main/constants';
 import { isInternalNavigation } from '@/main/library';
 
 const DEV_SERVER_URL = process.env.ELECTRON_RENDERER_URL;
 const RENDERER_FILE = join(__dirname, '../renderer/index.html');
 const PRELOAD_FILE = join(__dirname, '../preload/index.js');
+
+const agents = new AgentDetector();
+const resources = new ResourceCollector();
+const deviceTools = new DeviceToolDetector();
 
 function createWindow(): void {
   const window = new BrowserWindow({
@@ -40,6 +48,10 @@ function createWindow(): void {
 }
 
 void app.whenReady().then(() => {
+  ipcMain.handle(CHANNELS.detectAgents, () => agents.detect());
+  ipcMain.handle(CHANNELS.readResources, () => resources.snapshot());
+  ipcMain.handle(CHANNELS.detectDeviceTools, () => deviceTools.detect());
+
   createWindow();
 
   app.on('activate', () => {
