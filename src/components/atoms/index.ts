@@ -9,4 +9,5 @@ export * from './Input';
 export * from './Kbd';
 export * from './Logo';
 export * from './Meter';
+export * from './PlatformIcon';
 export * from './StatusPill';

@@ -1,0 +1,16 @@
+.platform-icon {
+  display: block;
+  flex: none;
+}
+
+.platform-icon__stroke {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.platform-icon__fill {
+  fill: currentColor;
+}
