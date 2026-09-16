@@ -1,5 +1,6 @@
 import type { IRunCoordinator, IStepResult, IWalkRun, IWalkStep } from './types';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
+import type { LiveStream } from '@/main/classes/devices/LiveStream';
 import type { IDeviceDriver } from '@/main/classes/devices/types';
 import type {
   IAndroidSetup,
@@ -21,6 +22,7 @@ export class RunCoordinator {
   private readonly findAndroid: IRunCoordinator['findAndroid'];
   private readonly findIos: IRunCoordinator['findIos'];
   private readonly dataRoot: string;
+  private readonly live: LiveStream;
   private readonly onEvent: (event: IRunEvent) => void;
   private readonly stopping = new Set<string>();
   private readonly walking = new Set<string>();
@@ -32,6 +34,7 @@ export class RunCoordinator {
     this.findAndroid = props.findAndroid;
     this.findIos = props.findIos;
     this.dataRoot = props.dataRoot;
+    this.live = props.live;
     this.onEvent = props.onEvent;
   }
 
@@ -113,8 +116,10 @@ export class RunCoordinator {
       driver = driverFor(run);
       await mkdir(run.shotDir, { recursive: true });
       await driver.open();
+      await this.watch({ workspaceId: run.workspaceId, driver });
     } catch (reason) {
       await driver?.close();
+      this.live.end(run.workspaceId);
       this.onEvent({
         kind: 'failed',
         workspaceId: run.workspaceId,
@@ -126,6 +131,7 @@ export class RunCoordinator {
 
     await this.walkSteps({ run, driver });
     await driver.close();
+    this.live.end(run.workspaceId);
     this.onEvent({ kind: 'done', workspaceId: run.workspaceId });
   }
 
@@ -248,6 +254,20 @@ export class RunCoordinator {
     } catch {
       return;
     }
+  }
+
+  private async watch(props: {
+    workspaceId: string;
+    driver: IDeviceDriver;
+  }): Promise<void> {
+    const { workspaceId, driver } = props;
+    const isStreaming = await driver.stream((jpeg) => {
+      this.live.push({ workspaceId, jpeg });
+    });
+    const url = this.live.urlFor(workspaceId);
+
+    if (isStreaming && url !== null)
+      this.onEvent({ kind: 'streaming', workspaceId, url });
   }
 
   private async holdWhilePaused(workspaceId: string): Promise<void> {

@@ -1,4 +1,5 @@
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
+import type { LiveStream } from '@/main/classes/devices/LiveStream';
 import type { IAndroidSetup, IIosSetup, IRunEvent } from '@/types';
 
 export interface IRunCoordinator {
@@ -7,5 +8,6 @@ export interface IRunCoordinator {
   findAndroid: () => Promise<IAndroidSetup | null>;
   findIos: () => Promise<IIosSetup | null>;
   dataRoot: string;
+  live: LiveStream;
   onEvent: (event: IRunEvent) => void;
 }

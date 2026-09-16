@@ -8,6 +8,7 @@ import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { AndroidDriver } from '@/main/classes/devices/AndroidDriver';
 import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
 import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
+import { LiveStream } from '@/main/classes/devices/LiveStream';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
 
@@ -84,6 +85,7 @@ describe('a real run on a phone', () => {
       findCommand: async (id) =>
         (await new AgentDetector().detect()).find((one) => one.id === id)?.path ?? null,
       findAndroid: async () => ({ sdkRoot, avd: (await listAvds(sdkRoot))[0] ?? '' }),
+      live: new LiveStream(),
       dataRoot: await mkdtemp(join(tmpdir(), 'gocrash-android-run-')),
       onEvent: (event) => events.push(event),
     });

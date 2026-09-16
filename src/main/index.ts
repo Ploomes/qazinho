@@ -13,6 +13,7 @@ import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
 import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
 import { listSimulators } from '@/main/classes/devices/IosDriver/library';
+import { LiveStream } from '@/main/classes/devices/LiveStream';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { ResourceCollector } from '@/main/classes/resources/ResourceCollector';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
@@ -28,6 +29,7 @@ const resources = new ResourceCollector({
 });
 const deviceTools = new DeviceToolDetector();
 const archive = new Archive(PATHS.data);
+const live = new LiveStream();
 
 function broadcast(props: { channel: string; event: IAgentEvent | IRunEvent }): void {
   for (const open of BrowserWindow.getAllWindows())
@@ -69,6 +71,7 @@ const runs = new RunCoordinator({
   findAndroid,
   findIos,
   dataRoot: PATHS.data,
+  live,
   onEvent: (event) => broadcast({ channel: CHANNELS.runEvent, event }),
 });
 
@@ -130,7 +133,9 @@ function createWindow(): void {
   else void window.loadFile(PATHS.renderer);
 }
 
-void app.whenReady().then(() => {
+void app.whenReady().then(async () => {
+  await live.start();
+
   ipcMain.handle(CHANNELS.detectAgents, () => agents.detect());
   ipcMain.handle(CHANNELS.readResources, () => resources.snapshot());
   ipcMain.handle(CHANNELS.detectDeviceTools, () => deviceTools.detect());
@@ -163,6 +168,10 @@ void app.whenReady().then(() => {
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
+});
+
+app.on('will-quit', () => {
+  live.close();
 });
 
 app.on('window-all-closed', () => {
