@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { flattenPlanSteps } from '@/modules/Run/library';
 import { Run } from '@/services';
 import {
@@ -7,11 +8,9 @@ import {
   useWorkspaceStore,
 } from '@/store';
 
-const NOT_WEB =
-  'gocrash only drives web targets today. Android and iOS are on the way; pick a URL target to run this plan.';
-
 /** Run, hold and stop: the machine and the page are told in the same breath, from one place. */
 export const useRunControls = () => {
+  const { t } = useTranslation();
   const projects = useAppStore((state) => state.projects);
   const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
   const detected = useMachineStore((state) => state.agents);
@@ -38,7 +37,7 @@ export const useRunControls = () => {
     start({ workspaceId: workspace.id, runId });
 
     if (target?.kind !== 'web') {
-      landRunFailed({ workspaceId: workspace.id, text: NOT_WEB });
+      landRunFailed({ workspaceId: workspace.id, text: t('RUN.NOT_WEB_TARGET') });
 
       return;
     }
