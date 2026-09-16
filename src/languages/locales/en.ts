@@ -220,13 +220,13 @@ export const en = {
       'One front of testing in {{project}}. It gets its own chat, device, plan and runs.',
     NAME: 'what are you testing',
     NAME_PLACEHOLDER: 'Checkout regression',
-    TARGET: 'target',
+    PLATFORM: 'platform',
     ISSUE: 'linked issue · optional',
     ISSUE_EMPTY:
       'No issue tracker connected. Connect one and you can hand the agent a ticket to work from. Without it you and the agent write the plan together.',
     CREATE: 'Create workspace',
     NEEDS_NAME: 'Say what you are testing to create it',
-    NEEDS_TARGET: 'This project has no target to run against',
+    NEEDS_TARGET: 'This project has no platform to run on',
   },
   SETTINGS: {
     BACK: 'Back to app',

@@ -1,22 +1,31 @@
-.new-workspace__targets {
+.new-workspace__platforms {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
+  margin-top: var(--space-3);
 }
 
-.new-workspace__target {
-  padding: var(--space-3) var(--space-4);
+.new-workspace__platform {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px 14px;
   border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   background: transparent;
   color: var(--ink2);
-  font: var(--font-mono-sm);
+  font: var(--font-ui-md);
 }
 
-.new-workspace__target--chosen {
+.new-workspace__platform:hover:not(.new-workspace__platform--chosen) {
+  border-color: var(--ink3);
+  color: var(--ink);
+}
+
+.new-workspace__platform--chosen {
   border-color: var(--amber);
-  background: var(--amber-soft);
-  color: var(--amber-ink);
+  background: var(--sel);
+  color: var(--ink);
 }
 
 .new-workspace__issue {

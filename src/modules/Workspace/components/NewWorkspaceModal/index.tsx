@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Eyebrow, Input } from '@/components/atoms';
+import { Eyebrow, Input, PlatformIcon } from '@/components/atoms';
 import { ModalFrame } from '@/components/templates';
 import { useNewWorkspaceModalViewModel } from './hooks';
 import './styles.css';
@@ -8,8 +8,7 @@ export const NewWorkspaceModal: React.FC = () => {
   const {
     name,
     footerHint,
-    targets,
-    chosenTargetId,
+    platforms,
     projectName,
     canCreate,
     onNameChange,
@@ -41,22 +40,24 @@ export const NewWorkspaceModal: React.FC = () => {
       </div>
 
       <div>
-        <Eyebrow>{t('NEW_WORKSPACE.TARGET')}</Eyebrow>
-        <div className="new-workspace__targets">
-          {targets.map((target) => (
+        <Eyebrow>{t('NEW_WORKSPACE.PLATFORM')}</Eyebrow>
+        <div className="new-workspace__platforms">
+          {platforms.map((platform) => (
             <button
-              key={target.id}
+              key={platform.id}
               type="button"
               className={
-                target.id === chosenTargetId
-                  ? 'new-workspace__target new-workspace__target--chosen'
-                  : 'new-workspace__target'
+                platform.isChosen
+                  ? 'new-workspace__platform new-workspace__platform--chosen'
+                  : 'new-workspace__platform'
               }
+              aria-pressed={platform.isChosen}
               onClick={() => {
-                onTargetChange(target.id);
+                onTargetChange(platform.id);
               }}
             >
-              {target.label}
+              <PlatformIcon kind={platform.kind} size={16} />
+              {platform.label}
             </button>
           ))}
         </div>

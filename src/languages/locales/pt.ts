@@ -221,13 +221,13 @@ export const pt: typeof en = {
       'Uma frente de teste em {{project}}. Com chat, device, plano e runs próprios.',
     NAME: 'o que você vai testar',
     NAME_PLACEHOLDER: 'Regressão do checkout',
-    TARGET: 'target',
+    PLATFORM: 'plataforma',
     ISSUE: 'issue vinculada · opcional',
     ISSUE_EMPTY:
       'Nenhum rastreador conectado. Conecte um e você pode entregar um ticket ao agente. Sem ele, você e o agente escrevem o plano juntos.',
     CREATE: 'Criar workspace',
     NEEDS_NAME: 'Diga o que você vai testar para criá-lo',
-    NEEDS_TARGET: 'Este projeto não tem target para rodar',
+    NEEDS_TARGET: 'Este projeto não tem plataforma para rodar',
   },
   SETTINGS: {
     BACK: 'Voltar ao app',

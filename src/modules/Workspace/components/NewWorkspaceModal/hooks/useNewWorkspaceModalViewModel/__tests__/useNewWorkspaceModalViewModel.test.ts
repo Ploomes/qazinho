@@ -30,6 +30,14 @@ describe('useNewWorkspaceModalViewModel', () => {
     expect(result.current.projectName).toBe('Shop · staging');
     expect(result.current.targets).toHaveLength(2);
     expect(result.current.chosenTargetId).toBe('t1');
+    expect(
+      result.current.platforms.map(({ label, isChosen }) => [label, isChosen]),
+    ).toEqual(
+      result.current.targets.map((target, index) => [
+        { web: 'Web', android: 'Android', ios: 'iOS' }[target.kind],
+        index === 0,
+      ]),
+    );
   });
 
   it('cannot create a workspace with no name', () => {

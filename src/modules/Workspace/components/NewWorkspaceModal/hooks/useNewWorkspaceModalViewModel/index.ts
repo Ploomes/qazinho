@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toPlanKind } from '@/modules/Plan/library';
+import { PLATFORM_LABEL } from '@/modules/Workspace/constants';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useNewWorkspaceModalViewModel = () => {
@@ -56,6 +57,12 @@ export const useNewWorkspaceModalViewModel = () => {
   return {
     name,
     targets,
+    platforms: targets.map((target) => ({
+      id: target.id,
+      kind: target.kind,
+      label: t(PLATFORM_LABEL[target.kind]),
+      isChosen: target.id === chosen?.id,
+    })),
     footerHint: blocking,
     chosenTargetId: chosen?.id ?? null,
     projectName: project?.name ?? '',
