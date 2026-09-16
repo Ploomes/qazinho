@@ -8,4 +8,5 @@ export interface ISidebarWorkspaceRow {
   animation: string;
   isSelected: boolean;
   isWaiting: boolean;
+  isRemoving: boolean;
 }

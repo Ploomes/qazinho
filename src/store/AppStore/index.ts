@@ -32,6 +32,8 @@ export const useAppStore = create<IAppStore>()(
       selectWorkspace: (workspaceId) =>
         set({ screen: 'workspace', selectedWorkspaceId: workspaceId }),
 
+      goHome: () => set({ screen: 'welcome', selectedWorkspaceId: null }),
+
       addProject: (project) =>
         set((state) => ({
           projects: [...state.projects, project],

@@ -12,6 +12,8 @@ export const Sidebar: React.FC = () => {
     onNewWorkspace,
     onNewProject,
     onSettings,
+    onAskRemove,
+    onRemoveWorkspace,
   } = useSidebarViewModel();
   const { t } = useTranslation();
 
@@ -60,32 +62,72 @@ export const Sidebar: React.FC = () => {
           }
 
           return (
-            <button
+            <div
               key={row.id}
-              type="button"
               className={
                 row.isSelected ? 'sidebar__row sidebar__row--selected' : 'sidebar__row'
               }
-              onClick={() => {
-                onSelectWorkspace(row.id);
-              }}
             >
-              <span
-                className="sidebar__glyph"
-                style={{ color: row.tone, animation: row.animation }}
-                aria-hidden="true"
+              <button
+                type="button"
+                className="sidebar__open"
+                onClick={() => {
+                  onSelectWorkspace(row.id);
+                }}
               >
-                {row.glyph}
-              </span>
-              <span className="sidebar__name">{row.name}</span>
-              <span
-                className={
-                  row.isWaiting ? 'sidebar__meta sidebar__meta--waiting' : 'sidebar__meta'
-                }
-              >
-                {row.meta}
-              </span>
-            </button>
+                <span
+                  className="sidebar__glyph"
+                  style={{ color: row.tone, animation: row.animation }}
+                  aria-hidden="true"
+                >
+                  {row.glyph}
+                </span>
+                <span className="sidebar__name">{row.name}</span>
+                <span
+                  className={
+                    row.isWaiting
+                      ? 'sidebar__meta sidebar__meta--waiting'
+                      : 'sidebar__meta'
+                  }
+                >
+                  {row.meta}
+                </span>
+              </button>
+
+              {row.isRemoving ? (
+                <span className="sidebar__confirm">
+                  <button
+                    type="button"
+                    className="sidebar__confirm-yes"
+                    onClick={() => {
+                      onRemoveWorkspace(row.id);
+                    }}
+                  >
+                    {t('SIDEBAR.REMOVE_YES')}
+                  </button>
+                  <button
+                    type="button"
+                    className="sidebar__confirm-no"
+                    onClick={() => {
+                      onAskRemove(null);
+                    }}
+                  >
+                    {t('SIDEBAR.REMOVE_NO')}
+                  </button>
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  className="sidebar__remove"
+                  aria-label={t('SIDEBAR.REMOVE', { name: row.name })}
+                  onClick={() => {
+                    onAskRemove(row.id);
+                  }}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
           );
         })}
       </div>

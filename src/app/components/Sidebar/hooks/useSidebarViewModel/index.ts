@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SIDEBAR_STATUS } from '@/app/components/Sidebar/constants';
 import { workspaceMeta } from '@/modules/Workspace/library';
+import { Archive } from '@/services';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useSidebarViewModel = () => {
@@ -13,7 +14,11 @@ export const useSidebarViewModel = () => {
   const openModal = useAppStore((state) => state.openModal);
   const openWorkspaceModal = useAppStore((state) => state.openWorkspaceModal);
   const openSettings = useAppStore((state) => state.openSettings);
+  const goHome = useAppStore((state) => state.goHome);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
+  const removingWorkspaceId = useWorkspaceStore((state) => state.removingWorkspaceId);
+  const askRemoveWorkspace = useWorkspaceStore((state) => state.askRemoveWorkspace);
+  const removeWorkspace = useWorkspaceStore((state) => state.removeWorkspace);
 
   const rows: SidebarRow[] = projects.flatMap((project) => [
     { kind: 'header' as const, id: `header-${project.id}`, name: project.name },
@@ -32,6 +37,7 @@ export const useSidebarViewModel = () => {
         animation: SIDEBAR_STATUS[workspace.status].animation,
         isSelected: workspace.id === selectedWorkspaceId,
         isWaiting: workspace.status === 'attention',
+        isRemoving: workspace.id === removingWorkspaceId,
       })),
     { kind: 'add' as const, id: `add-${project.id}`, projectId: project.id },
   ]);
@@ -41,6 +47,13 @@ export const useSidebarViewModel = () => {
 
   const onNewProject = useCallback(() => openModal('project'), [openModal]);
 
+  const onRemoveWorkspace = (workspaceId: string) => {
+    removeWorkspace(workspaceId);
+    Archive.removeWorkspace(workspaceId);
+
+    if (workspaceId === selectedWorkspaceId) goHome();
+  };
+
   return {
     rows,
     waitingName: waiting?.name ?? null,
@@ -48,5 +61,7 @@ export const useSidebarViewModel = () => {
     onNewWorkspace: openWorkspaceModal,
     onNewProject,
     onSettings: openSettings,
+    onAskRemove: askRemoveWorkspace,
+    onRemoveWorkspace,
   };
 };

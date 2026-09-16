@@ -18,8 +18,11 @@ export interface IWorkspaceStore {
   deviceWidth: number;
   isAgentTyping: boolean;
   liveText: string;
+  removingWorkspaceId: string | null;
   addWorkspace: (workspace: IWorkspace) => void;
   loadWorkspaces: (workspaces: IWorkspace[]) => void;
+  askRemoveWorkspace: (workspaceId: string | null) => void;
+  removeWorkspace: (workspaceId: string) => void;
   selectTab: (tab: WorkspaceTab) => void;
   sendMessage: (props: { workspaceId: string; text: string }) => void;
   landAgentText: (props: {

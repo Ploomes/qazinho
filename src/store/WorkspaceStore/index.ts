@@ -26,11 +26,20 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   deviceWidth: DEVICE.defaultWidth,
   isAgentTyping: false,
   liveText: '',
+  removingWorkspaceId: null,
 
   addWorkspace: (workspace) =>
     set((state) => ({ workspaces: [...state.workspaces, workspace], tab: 'chat' })),
 
   loadWorkspaces: (workspaces) => set({ workspaces, isLoaded: true }),
+
+  askRemoveWorkspace: (removingWorkspaceId) => set({ removingWorkspaceId }),
+
+  removeWorkspace: (workspaceId) =>
+    set((state) => ({
+      removingWorkspaceId: null,
+      workspaces: state.workspaces.filter(({ id }) => id !== workspaceId),
+    })),
 
   selectTab: (tab) => set({ tab }),
 

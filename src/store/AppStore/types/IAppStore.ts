@@ -22,6 +22,7 @@ export interface IAppStore {
   openWorkspaceModal: (projectId: string) => void;
   closeModal: () => void;
   selectWorkspace: (workspaceId: string) => void;
+  goHome: () => void;
   addProject: (project: IProject) => void;
   loadProjects: (projects: IProject[]) => void;
   toggleResources: () => void;
