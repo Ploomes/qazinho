@@ -5,7 +5,9 @@ export interface IAgentLine {
   session_id?: string;
   result?: string;
   is_error?: boolean;
-  message?: { content?: { type: string; text?: string }[] };
+  message?: {
+    content?: { type: string; text?: string; name?: string; input?: unknown }[];
+  };
   rate_limit_info?: {
     resetsAt?: number;
     unifiedWindows?: {

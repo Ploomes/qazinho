@@ -3,7 +3,7 @@ import type { IAgentEvent, IAgentTurn, IAgentUsage } from '@/types';
 import { spawn } from 'node:child_process';
 import { createInterface } from 'node:readline';
 import { AGENT_RUN } from './constants';
-import { buildAskArgs, readAgentLine, toText, toUsage } from './library';
+import { buildAskArgs, readAgentLine, toStructured, toText, toUsage } from './library';
 
 /** Drives the QA's own agent CLI. gocrash owns no model and holds no provider key. */
 export class AgentRunner {
@@ -32,6 +32,7 @@ export class AgentRunner {
     let sessionId: string | null = props.sessionId;
     let usage: IAgentUsage | null = null;
     let result = '';
+    let structured = '';
     let spoken = '';
     let isError = false;
     let stderr = '';
@@ -53,6 +54,10 @@ export class AgentRunner {
         usage = toUsage({ previous: usage, line: event });
         this.onEvent({ kind: 'usage', workspaceId, usage });
       }
+
+      const answered = toStructured(event);
+
+      if (answered.length > 0) structured = answered;
 
       const text = toText(event);
 
@@ -78,10 +83,11 @@ export class AgentRunner {
     });
 
     const spokenOrError = spoken.length > 0 ? spoken : stderr.trim();
+    const said = result.length > 0 ? result : spokenOrError;
 
     return {
       sessionId,
-      text: result.length > 0 ? result : spokenOrError,
+      text: structured.length > 0 ? structured : said,
       usage,
       isError: isError || code !== 0,
     };
