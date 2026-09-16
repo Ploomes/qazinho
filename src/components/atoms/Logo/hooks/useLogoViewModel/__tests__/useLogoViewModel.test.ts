@@ -5,24 +5,33 @@ import { LOGO } from '@/components/atoms/Logo/constants';
 import { useLogoViewModel } from '@/components/atoms/Logo/hooks/useLogoViewModel';
 
 describe('useLogoViewModel', () => {
-  it('falls back to the titlebar size and the amber token', () => {
+  it('falls back to the titlebar size', () => {
     const { result } = renderHook(() => useLogoViewModel({}));
 
     expect(result.current.size).toBe(LOGO.defaultSize);
-    expect(result.current.color).toBe('var(--amber)');
   });
 
-  it('keeps the size and the colour it was given', () => {
-    const { result } = renderHook(() => useLogoViewModel({ size: 56, color: '#fff' }));
+  it('takes the micro drawing below 20px, where the branches would close up', () => {
+    const { result } = renderHook(() => useLogoViewModel({ size: 17 }));
 
-    expect(result.current.size).toBe(56);
-    expect(result.current.color).toBe('#fff');
+    expect(result.current.variant).toBe('micro');
   });
 
-  it('gives every logo on the page a mask id of its own', () => {
-    const first = renderHook(() => useLogoViewModel({}));
-    const second = renderHook(() => useLogoViewModel({}));
+  it('takes the mid drawing between 20 and 39px', () => {
+    expect(renderHook(() => useLogoViewModel({ size: 20 })).result.current.variant).toBe(
+      'mid',
+    );
+    expect(renderHook(() => useLogoViewModel({ size: 39 })).result.current.variant).toBe(
+      'mid',
+    );
+  });
 
-    expect(first.result.current.maskId).not.toBe(second.result.current.maskId);
+  it('takes the full drawing from 40px up, where both branches read', () => {
+    expect(renderHook(() => useLogoViewModel({ size: 40 })).result.current.variant).toBe(
+      'full',
+    );
+    expect(renderHook(() => useLogoViewModel({ size: 56 })).result.current.variant).toBe(
+      'full',
+    );
   });
 });
