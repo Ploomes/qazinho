@@ -1,0 +1,38 @@
+.new-project__targets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+.new-project__target {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: var(--raise);
+}
+
+.new-project__target--off {
+  border-style: dashed;
+  background: transparent;
+  opacity: 0.55;
+}
+
+.new-project__target-name {
+  color: var(--ink);
+  font: var(--font-ui-strong);
+}
+
+.new-project__target-text {
+  margin: 0;
+  color: var(--ink2);
+  font: var(--font-ui-xs);
+  text-wrap: pretty;
+}
+
+.new-project__note {
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
