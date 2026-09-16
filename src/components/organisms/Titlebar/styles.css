@@ -1,0 +1,66 @@
+.titlebar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-4);
+  height: 46px;
+  padding: 0 var(--space-4) 0 var(--space-5);
+  border-bottom: 1px solid var(--line2);
+  background: var(--panel);
+  -webkit-app-region: drag;
+}
+
+.titlebar--mac {
+  padding-left: 78px;
+}
+
+.titlebar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.titlebar__wordmark {
+  font: 600 14px/1 var(--font-display);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.titlebar__project {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 5px var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  -webkit-app-region: no-drag;
+}
+
+.titlebar__meters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-left: auto;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+  -webkit-app-region: no-drag;
+}
+
+.titlebar {
+  position: relative;
+}
+
+.titlebar__meter-button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
