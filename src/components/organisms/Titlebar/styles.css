@@ -52,6 +52,11 @@
   font: var(--font-mono-sm);
 }
 
+.titlebar__tip {
+  color: var(--ink2);
+  font: var(--font-mono-sm);
+}
+
 .titlebar__session {
   display: flex;
   align-items: center;

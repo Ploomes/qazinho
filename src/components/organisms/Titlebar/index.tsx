@@ -71,7 +71,11 @@ export const Titlebar: React.FC = () => {
           aria-haspopup="menu"
           onClick={onToggleModelMenu}
         >
-          {contextShare !== null && <Gauge value={contextShare} label={contextLabel} />}
+          {contextShare !== null && (
+            <Tooltip content={<span className="titlebar__tip">{contextLabel}</span>}>
+              <Gauge value={contextShare} label={contextLabel} fills="used" />
+            </Tooltip>
+          )}
           <span>{agentLabel}</span>
           <span aria-hidden="true">▾</span>
         </button>

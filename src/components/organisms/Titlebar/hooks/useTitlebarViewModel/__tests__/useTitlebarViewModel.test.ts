@@ -141,13 +141,13 @@ describe('useTitlebarViewModel', () => {
       useAppStore.setState({ screen: 'workspace', selectedWorkspaceId: 'w1' });
 
       expect(renderHook(() => useTitlebarViewModel()).result.current.contextShare).toBe(
-        0.75,
+        0.25,
       );
 
       useAppStore.setState({ selectedWorkspaceId: 'w2' });
 
       expect(renderHook(() => useTitlebarViewModel()).result.current.contextShare).toBe(
-        0.25,
+        0.75,
       );
     });
 

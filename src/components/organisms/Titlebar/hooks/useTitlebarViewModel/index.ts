@@ -30,10 +30,10 @@ export const useTitlebarViewModel = () => {
     screen === 'workspace'
       ? (workspaces.find(({ id }) => id === selectedWorkspaceId)?.context ?? null)
       : null;
-  const contextLeft =
+  const contextUsed =
     context === null
       ? null
-      : Math.max(0, 100 - Math.round((context.tokens / context.window) * 100));
+      : Math.min(100, Math.round((context.tokens / context.window) * 100));
 
   const sessionLeft = usage?.fiveHourUsed == null ? null : 1 - usage.fiveHourUsed;
   const sessionPercent = Math.round((sessionLeft ?? 0) * 100);
@@ -54,13 +54,10 @@ export const useTitlebarViewModel = () => {
       processCount === 1
         ? t('TITLEBAR.PROCESSES_ONE')
         : t('TITLEBAR.PROCESSES_OTHER', { count: processCount }),
-    agentLabel:
-      contextLeft === null
-        ? t('TITLEBAR.AGENT', { agent, model })
-        : t('TITLEBAR.CONTEXT_LEFT', { agent, model, percent: contextLeft }),
-    contextShare: contextLeft === null ? null : contextLeft / 100,
+    agentLabel: t('TITLEBAR.AGENT', { agent, model }),
+    contextShare: contextUsed === null ? null : contextUsed / 100,
     contextLabel:
-      contextLeft === null ? '' : t('TITLEBAR.CONTEXT_RING', { percent: contextLeft }),
+      contextUsed === null ? '' : t('TITLEBAR.CONTEXT_USED', { percent: contextUsed }),
     sessionLeft,
     sessionLabel:
       sessionLeft === null
