@@ -1,7 +1,9 @@
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
+import type { IRunCase } from '@/modules/Run/types';
 
 export interface IPlanCaseProps {
   testCase: ITestCase;
+  lastRun?: IRunCase;
   isOpen: boolean;
   isLocked: boolean;
   onToggle: (caseId: string) => void;

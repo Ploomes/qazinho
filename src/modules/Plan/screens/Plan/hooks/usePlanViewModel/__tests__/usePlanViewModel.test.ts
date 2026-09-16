@@ -3,7 +3,11 @@ import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { usePlanViewModel } from '@/modules/Plan/screens/Plan/hooks/usePlanViewModel';
 import { startRun } from '@/modules/Workspace/library';
-import { CASES, makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import {
+  CASES,
+  makeWorkspace,
+  walkRun,
+} from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 beforeEach(() => {
@@ -25,6 +29,22 @@ describe('usePlanViewModel', () => {
     const { result } = renderHook(() => usePlanViewModel());
 
     expect(result.current.isEmpty).toBe(true);
+  });
+
+  it('hands each case the way it went in the newest run', () => {
+    useWorkspaceStore.setState({
+      workspaces: [
+        walkRun({
+          verdicts: ['passed', 'passed', 'passed', 'passed', 'failed', 'skipped'],
+          isFinished: true,
+        }),
+      ],
+    });
+
+    const { result } = renderHook(() => usePlanViewModel());
+
+    expect(result.current.lastRuns['TC-01']?.verdict).toBe('passed');
+    expect(result.current.lastRuns['TC-02']?.steps[1]?.verdict).toBe('failed');
   });
 
   describe('onReorder', () => {

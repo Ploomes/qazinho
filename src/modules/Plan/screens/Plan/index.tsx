@@ -8,6 +8,7 @@ import './styles.css';
 export const Plan: React.FC = () => {
   const {
     plan,
+    lastRuns,
     openCaseId,
     isLocked,
     isEmpty,
@@ -73,6 +74,7 @@ export const Plan: React.FC = () => {
           <PlanCase
             key={testCase.id}
             testCase={testCase}
+            lastRun={lastRuns[testCase.id]}
             isOpen={openCaseId === testCase.id}
             isLocked={isLocked}
             onToggle={onToggleCase}

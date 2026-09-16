@@ -1,4 +1,5 @@
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
+import type { IRunCase } from '@/modules/Run/types';
 import { useTranslation } from 'react-i18next';
 import {
   addCase,
@@ -33,8 +34,14 @@ export const usePlanViewModel = () => {
     setPlan({ workspaceId, plan: cases });
   };
 
+  const latest = workspace?.runs[0] ?? null;
+  const lastRuns: Record<string, IRunCase> = Object.fromEntries(
+    (latest?.cases ?? []).map((runCase) => [runCase.id, runCase]),
+  );
+
   return {
     plan,
+    lastRuns,
     openCaseId,
     isLocked,
     isEmpty: plan.length === 0,
