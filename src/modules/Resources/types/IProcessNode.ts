@@ -5,5 +5,6 @@ export interface IProcessNode {
   level: 0 | 1 | 2;
   cpu: number;
   ramGb: number;
+  workspaceId: string | null;
   canShutDown: boolean;
 }

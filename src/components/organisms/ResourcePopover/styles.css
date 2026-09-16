@@ -48,6 +48,19 @@
   font: var(--font-ui-sm);
 }
 
+.resource-popover__row--0 {
+  color: var(--ink);
+}
+
+.resource-popover__row--1 .resource-popover__name {
+  padding-left: var(--space-4);
+}
+
+.resource-popover__row--2 .resource-popover__name {
+  padding-left: var(--space-7);
+  color: var(--ink3);
+}
+
 .resource-popover__name {
   overflow: hidden;
   text-overflow: ellipsis;

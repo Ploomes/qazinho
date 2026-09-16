@@ -1,58 +1,88 @@
 import type { IProject } from '@/modules/Project/types';
 import type { IProcessNode } from '@/modules/Resources/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
-import { deviceStateOf } from '@/modules/Device/library';
+import type { IProcessSample } from '@/types';
 import { RESOURCES } from '@/modules/Resources/constants';
+import { rollUp } from './rollUp';
+
+function deviceName(props: { workspace: IWorkspace; samples: IProcessSample[] }): string {
+  if (props.workspace.planKind === 'mobile') return RESOURCES.emulatorName;
+
+  const one = props.samples[0]?.name ?? 'Browser';
+
+  return props.samples.length === 1
+    ? one
+    : `${one} · ${String(props.samples.length)} processes`;
+}
+
+function ranBy(props: {
+  workspace: IWorkspace;
+  samples: IProcessSample[];
+}): IProcessNode[] {
+  const { workspace, samples } = props;
+  const agent = samples.filter(({ kind }) => kind === 'agent');
+  const device = samples.filter(({ kind }) => kind === 'device');
+
+  return [
+    ...(agent.length === 0
+      ? []
+      : [
+          {
+            ...rollUp(agent),
+            id: `${workspace.id}-agent`,
+            level: 2 as const,
+            workspaceId: workspace.id,
+            canShutDown: false,
+          },
+        ]),
+    ...(device.length === 0
+      ? []
+      : [
+          {
+            ...rollUp(device),
+            id: `${workspace.id}-device`,
+            name: deviceName({ workspace, samples: device }),
+            level: 2 as const,
+            workspaceId: workspace.id,
+            canShutDown: true,
+          },
+        ]),
+  ];
+}
 
 /** A project only shows up once something under it is running. Nothing idles in this tree. */
 export function buildProcessTree(props: {
   projects: IProject[];
   workspaces: IWorkspace[];
+  processes: IProcessSample[];
 }): IProcessNode[] {
-  const { projects, workspaces } = props;
+  const { projects, workspaces, processes } = props;
 
   return projects.flatMap((project) => {
-    const running = workspaces.filter(
-      (workspace) =>
-        workspace.projectId === project.id && deviceStateOf(workspace) !== 'off',
-    );
+    const children = workspaces
+      .filter((workspace) => workspace.projectId === project.id)
+      .flatMap<IProcessNode>((workspace) => {
+        const samples = processes.filter(
+          ({ workspaceId }) => workspaceId === workspace.id,
+        );
+        const running = ranBy({ workspace, samples });
 
-    if (running.length === 0) return [];
+        if (running.length === 0) return [];
 
-    const children = running.flatMap<IProcessNode>((workspace) => {
-      const device =
-        workspace.planKind === 'mobile' ? RESOURCES.emulator : RESOURCES.browser;
+        return [
+          {
+            ...rollUp(samples),
+            id: workspace.id,
+            name: workspace.name,
+            level: 1,
+            workspaceId: workspace.id,
+            canShutDown: false,
+          },
+          ...running,
+        ];
+      });
 
-      return [
-        {
-          id: workspace.id,
-          name: workspace.name,
-          level: 1,
-          cpu: RESOURCES.agent.cpu + device.cpu,
-          ramGb: RESOURCES.agent.ramGb + device.ramGb,
-          canShutDown: false,
-        },
-        {
-          id: `${workspace.id}-agent`,
-          name: 'Claude Code · 96% context',
-          level: 2,
-          cpu: RESOURCES.agent.cpu,
-          ramGb: RESOURCES.agent.ramGb,
-          canShutDown: false,
-        },
-        {
-          id: `${workspace.id}-device`,
-          name:
-            workspace.planKind === 'mobile'
-              ? 'Emulator · Pixel 7 · API 34'
-              : 'Chromium 1280 × 800',
-          level: 2,
-          cpu: device.cpu,
-          ramGb: device.ramGb,
-          canShutDown: true,
-        },
-      ];
-    });
+    if (children.length === 0) return [];
 
     const owned = children.filter(({ level }) => level === 1);
 
@@ -61,8 +91,10 @@ export function buildProcessTree(props: {
         id: project.id,
         name: project.name,
         level: 0,
-        cpu: owned.reduce((total, node) => total + node.cpu, 0),
-        ramGb: owned.reduce((total, node) => total + node.ramGb, 0),
+        cpu: Math.round(owned.reduce((total, node) => total + node.cpu, 0) * 10) / 10,
+        ramGb:
+          Math.round(owned.reduce((total, node) => total + node.ramGb, 0) * 100) / 100,
+        workspaceId: null,
         canShutDown: false,
       },
       ...children,

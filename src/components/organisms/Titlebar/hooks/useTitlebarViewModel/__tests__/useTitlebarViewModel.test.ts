@@ -2,6 +2,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useTitlebarViewModel } from '@/components/organisms/Titlebar/hooks/useTitlebarViewModel';
+import { sample } from '@/modules/Resources/library/__tests__/fixtures';
 import { useAppStore, useMachineStore } from '@/store';
 
 const STAGING = { id: 'p1', name: 'Shop · staging', targets: [] };
@@ -57,8 +58,8 @@ describe('useTitlebarViewModel', () => {
         ramMb: 2230,
         ramCeilingGb: 64,
         processes: [
-          { pid: 1, name: 'gocrash', cpu: 12, ramMb: 1800 },
-          { pid: 2, name: 'claude', cpu: 4, ramMb: 430 },
+          sample({ name: 'gocrash', kind: 'app', ramMb: 1800 }),
+          sample({ name: 'claude', kind: 'agent', workspaceId: 'w1', ramMb: 430 }),
         ],
       },
     });

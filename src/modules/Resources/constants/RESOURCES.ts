@@ -1,7 +1,4 @@
-/** What each kind of process costs. Real numbers arrive when the processes do. */
+/** What a device is called in the tree, when its own process name says nothing useful. */
 export const RESOURCES = {
-  ramCeilingGb: 32,
-  agent: { cpu: 4, ramGb: 0.42 },
-  browser: { cpu: 12, ramGb: 1.8 },
-  emulator: { cpu: 11, ramGb: 4.4 },
+  emulatorName: 'Emulator · Pixel 7 · API 34',
 } as const;
