@@ -1,4 +1,4 @@
-import type { StepVerdict } from './StepVerdict';
+import type { StepVerdict } from '@/types';
 
 /** How one step of a case went, with the note the agent left when it did not pass. */
 export interface IRunStep {
