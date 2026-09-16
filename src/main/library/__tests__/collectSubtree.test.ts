@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { collectSubtree } from '@/main/library';
 
 function row(props: { pid: number; parentPid: number }): IProcessRow {
-  return { ...props, cpu: 1, ramMb: 10, name: `process-${String(props.pid)}` };
+  const name = `process-${String(props.pid)}`;
+
+  return { ...props, cpu: 1, ramMb: 10, name, command: name };
 }
 
 const ROWS = [

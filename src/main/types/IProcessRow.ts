@@ -5,4 +5,5 @@ export interface IProcessRow {
   cpu: number;
   ramMb: number;
   name: string;
+  command: string;
 }

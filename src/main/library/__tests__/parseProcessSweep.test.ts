@@ -4,7 +4,7 @@ import { parseProcessSweep } from '@/main/library';
 const SWEEP = [
   '  501     1   0.0  12480 /sbin/launchd',
   ' 1234   501  12.5 189320 /Applications/gocrash.app/Contents/MacOS/gocrash',
-  ' 1240  1234   4.0  43008 claude',
+  ' 1240  1234   4.0  43008 claude --print --model sonnet',
 ].join('\n');
 
 describe('parseProcessSweep', () => {
@@ -17,6 +17,7 @@ describe('parseProcessSweep', () => {
       cpu: 0,
       ramMb: 12480 / 1024,
       name: '/sbin/launchd',
+      command: '/sbin/launchd',
     });
   });
 
@@ -26,7 +27,24 @@ describe('parseProcessSweep', () => {
     expect(rows[2]?.ramMb).toBeCloseTo(42);
   });
 
-  it('keeps a command that holds spaces in one piece', () => {
+  it('keeps the flags, because that is where a run says who it belongs to', () => {
+    const rows = parseProcessSweep(SWEEP);
+
+    expect(rows[2]?.command).toBe('claude --print --model sonnet');
+    expect(rows[2]?.name).toBe('claude');
+  });
+
+  it('a program path with spaces stays whole, flags and all', () => {
+    const rows = parseProcessSweep(
+      '  1  0  0.0  1024 /Applications/Google Chrome.app/Contents/MacOS/Google Chrome --user-data-dir=/tmp/w1',
+    );
+
+    expect(rows[0]?.name).toBe(
+      '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    );
+  });
+
+  it('a program with no flags is all name', () => {
     const rows = parseProcessSweep(
       '  1  0  0.0  1024 /Applications/My App.app/Contents/MacOS/My App',
     );

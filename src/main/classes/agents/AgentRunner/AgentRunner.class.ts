@@ -1,4 +1,4 @@
-import type { IRunAgent } from './types';
+import type { IAgentRunner, IRunAgent } from './types';
 import type { IAgentEvent, IAgentTurn, IAgentUsage } from '@/types';
 import { spawn } from 'node:child_process';
 import { createInterface } from 'node:readline';
@@ -8,9 +8,11 @@ import { buildAskArgs, readAgentLine, toText, toUsage } from './library';
 /** Drives the QA's own agent CLI. gocrash owns no model and holds no provider key. */
 export class AgentRunner {
   private readonly onEvent: (event: IAgentEvent) => void;
+  private readonly owners: IAgentRunner['owners'];
 
-  public constructor(onEvent: (event: IAgentEvent) => void) {
-    this.onEvent = onEvent;
+  public constructor(props: IAgentRunner) {
+    this.onEvent = props.onEvent;
+    this.owners = props.owners;
   }
 
   public async ask(props: IRunAgent): Promise<IAgentTurn> {
@@ -18,6 +20,9 @@ export class AgentRunner {
     const child = spawn(command, buildAskArgs(props), {
       stdio: ['pipe', 'pipe', 'pipe'],
     });
+
+    if (child.pid !== undefined)
+      this.owners.claim({ pid: child.pid, workspaceId, kind: 'agent' });
 
     child.stdin.write(prompt);
     child.stdin.end();
@@ -65,6 +70,9 @@ export class AgentRunner {
     const code = await new Promise<number>((resolve) => {
       child.on('close', (status) => {
         clearTimeout(timeout);
+
+        if (child.pid !== undefined) this.owners.release(child.pid);
+
         resolve(status ?? 1);
       });
     });
