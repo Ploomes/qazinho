@@ -11,6 +11,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
+  gap: 2px;
   min-height: 0;
   padding: 0 var(--space-3) var(--space-3);
   overflow-y: auto;
@@ -79,49 +80,139 @@
 }
 
 .sidebar__row {
-  display: flex;
-  align-items: center;
+  position: relative;
   border-radius: 9px;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.sidebar__row:hover {
+  background: var(--raise);
+}
+
+.sidebar__row--selected,
+.sidebar__row--selected:hover {
+  background: var(--sel);
 }
 
 .sidebar__open {
   display: flex;
-  flex: 1;
-  gap: var(--space-3);
-  align-items: center;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
   min-width: 0;
-  padding: var(--space-3) var(--space-3);
+  padding: 9px 30px 9px 10px;
   border: none;
   background: transparent;
   text-align: left;
 }
 
+.sidebar__platform {
+  display: flex;
+  flex: none;
+  justify-content: center;
+  width: 16px;
+  padding-top: 1px;
+  color: var(--ink3);
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.sidebar__row--selected .sidebar__platform,
+.sidebar__row:hover .sidebar__platform {
+  color: var(--ink2);
+}
+
+.sidebar__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.sidebar__name {
+  overflow: hidden;
+  color: var(--ink2);
+  font: var(--font-ui-md);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.sidebar__row--selected .sidebar__name,
+.sidebar__row:hover .sidebar__name {
+  color: var(--ink);
+}
+
+.sidebar__detail {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+  white-space: nowrap;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.sidebar__detail--hidden {
+  opacity: 0;
+}
+
+.sidebar__glyph {
+  font: 600 10px/1 var(--font-mono);
+}
+
+.sidebar__meta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar__meta--waiting {
+  padding: 2px var(--space-2);
+  border-radius: 5px;
+  background: var(--attn);
+  color: var(--on-attn);
+}
+
 .sidebar__remove {
-  padding: var(--space-2) var(--space-3);
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
   border: none;
+  border-radius: var(--radius-xs);
   background: transparent;
   color: var(--ink3);
   font: var(--font-mono-xs);
   opacity: 0;
 }
 
-.sidebar__row:hover .sidebar__remove {
+.sidebar__row:hover .sidebar__remove,
+.sidebar__remove:focus-visible {
   opacity: 1;
 }
 
 .sidebar__remove:hover {
+  background: var(--fail-soft);
   color: var(--fail);
 }
 
 .sidebar__confirm {
+  position: absolute;
+  bottom: 6px;
+  left: 36px;
   display: flex;
   gap: var(--space-2);
-  padding-right: var(--space-3);
 }
 
 .sidebar__confirm-yes,
 .sidebar__confirm-no {
-  padding: var(--space-1) var(--space-2);
+  padding: 2px var(--space-3);
   border: 1px solid var(--line2);
   border-radius: var(--radius-xs);
   background: transparent;
@@ -134,50 +225,13 @@
   color: var(--fail);
 }
 
-.sidebar__row--selected {
-  background: var(--sel);
+.sidebar__confirm-yes:hover {
+  background: var(--fail-soft);
 }
 
-.sidebar__glyph {
-  width: 14px;
-  font: 600 11px/1 var(--font-mono);
-}
-
-.sidebar__platform {
-  display: flex;
-  color: var(--ink3);
-  transition: color var(--dur-fast) var(--ease);
-}
-
-.sidebar__row--selected .sidebar__platform,
-.sidebar__row:hover .sidebar__platform {
-  color: var(--ink2);
-}
-
-.sidebar__name {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  color: var(--ink2);
-  font: var(--font-ui-md);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.sidebar__row--selected .sidebar__name {
+.sidebar__confirm-no:hover {
+  border-color: var(--line);
   color: var(--ink);
-}
-
-.sidebar__meta {
-  padding: 3px var(--space-2);
-  border-radius: 5px;
-  color: var(--ink3);
-  font: var(--font-mono-sm);
-}
-
-.sidebar__meta--waiting {
-  background: var(--attn);
-  color: var(--on-attn);
 }
 
 .sidebar__add {

@@ -102,27 +102,39 @@ export const Sidebar: React.FC = () => {
                   onSelectWorkspace(row.id);
                 }}
               >
-                <span
-                  className="sidebar__glyph"
-                  style={{ color: row.tone, animation: row.animation }}
-                  aria-hidden="true"
-                >
-                  {row.glyph}
+                <span className="sidebar__platform">
+                  {row.platform !== null && (
+                    <PlatformIcon kind={row.platform} size={15} />
+                  )}
                 </span>
-                {row.platform !== null && (
-                  <span className="sidebar__platform">
-                    <PlatformIcon kind={row.platform} size={13} />
+                <span className="sidebar__text">
+                  <span className="sidebar__name">{row.name}</span>
+                  <span
+                    className={
+                      row.isRemoving
+                        ? 'sidebar__detail sidebar__detail--hidden'
+                        : 'sidebar__detail'
+                    }
+                  >
+                    <span
+                      className="sidebar__glyph"
+                      style={{ color: row.tone, animation: row.animation }}
+                      aria-hidden="true"
+                    >
+                      {row.glyph}
+                    </span>
+                    <span style={{ color: row.tone }}>{row.statusLabel}</span>
+                    <span aria-hidden="true">·</span>
+                    <span
+                      className={
+                        row.isWaiting
+                          ? 'sidebar__meta sidebar__meta--waiting'
+                          : 'sidebar__meta'
+                      }
+                    >
+                      {row.meta}
+                    </span>
                   </span>
-                )}
-                <span className="sidebar__name">{row.name}</span>
-                <span
-                  className={
-                    row.isWaiting
-                      ? 'sidebar__meta sidebar__meta--waiting'
-                      : 'sidebar__meta'
-                  }
-                >
-                  {row.meta}
                 </span>
               </button>
 
