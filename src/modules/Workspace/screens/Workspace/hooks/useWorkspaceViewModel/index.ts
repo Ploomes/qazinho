@@ -31,6 +31,7 @@ export const useWorkspaceViewModel = () => {
     canRun,
     isLive,
     isPaused,
+    pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
     onSelectTab: selectTab,
     onRun,
     onPause,

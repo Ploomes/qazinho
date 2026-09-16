@@ -21,6 +21,7 @@ export const Workspace: React.FC = () => {
     bugCount,
     canRun,
     isLive,
+    pauseLabel,
     onSelectTab,
     onRun,
     onPause,
@@ -44,7 +45,7 @@ export const Workspace: React.FC = () => {
         <div className="workspace__actions">
           {isLive ? (
             <>
-              <Button onClick={onPause}>{t('COMMON.PAUSE')}</Button>
+              <Button onClick={onPause}>{pauseLabel}</Button>
               <Button variant="danger" onClick={onStop}>
                 {t('COMMON.STOP')}
               </Button>

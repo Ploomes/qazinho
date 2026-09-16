@@ -2,7 +2,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { startRun } from '@/modules/Workspace/library';
-import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useWorkspaceViewModel } from '@/modules/Workspace/screens/Workspace/hooks/useWorkspaceViewModel';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
@@ -107,6 +107,26 @@ describe('useWorkspaceViewModel', () => {
 
       expect(workspace?.status).toBe('stopped');
       expect(workspace?.chat.at(-1)).toMatchObject({ kind: 'error' });
+    });
+  });
+
+  describe('pauseLabel', () => {
+    it('reads resume while the run is held, and pause while it goes', () => {
+      const walked = walkRun({ verdicts: ['passed'] });
+
+      useWorkspaceStore.setState({ workspaces: [walked] });
+
+      expect(renderHook(() => useWorkspaceViewModel()).result.current.pauseLabel).toBe(
+        'Pause',
+      );
+
+      useWorkspaceStore.setState({
+        workspaces: [{ ...walked, live: { ...walked.live!, isRunning: false } }],
+      });
+
+      expect(renderHook(() => useWorkspaceViewModel()).result.current.pauseLabel).toBe(
+        'Resume',
+      );
     });
   });
 });
