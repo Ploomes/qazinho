@@ -59,6 +59,9 @@
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-sm);
   cursor: default;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
 }
 
 .titlebar__session:hover,
