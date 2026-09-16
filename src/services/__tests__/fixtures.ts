@@ -5,6 +5,9 @@ export function fakeGocrashApi(platform: Platform): IGocrashApi {
   return {
     platform,
     detectAgents: () => Promise.resolve([]),
+    askAgent: () =>
+      Promise.resolve({ sessionId: null, text: '', usage: null, isError: false }),
+    onAgentEvent: () => () => undefined,
     detectDeviceTools: () =>
       Promise.resolve({
         androidSdk: { isFound: false, path: null },

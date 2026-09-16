@@ -2,9 +2,11 @@ import type { IWorkspaceStore } from './types';
 import { create } from 'zustand';
 import {
   answerAsk,
+  appendAgentError,
+  appendAgentMessage,
+  appendPlanCard,
   appendUserMessage,
   formatClock,
-  replyToQa,
 } from '@/modules/Chat/library';
 import { DEVICE } from '@/modules/Device/constants';
 import { advanceRun, startRun } from '@/modules/Workspace/library';
@@ -38,14 +40,48 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
-  replyToQa: ({ workspaceId, kind }) =>
+  landAgentText: ({ workspaceId, text, sessionId }) =>
+    set((state) => ({
+      isAgentTyping: false,
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => ({
+          ...appendAgentMessage({ workspace, text, at: formatClock(new Date()) }),
+          sessionId: sessionId ?? workspace.sessionId,
+        }),
+      }),
+    })),
+
+  landPlan: ({ workspaceId, summary, plan, sessionId }) =>
+    set((state) => ({
+      isAgentTyping: false,
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => {
+          const said = appendAgentMessage({
+            workspace,
+            text: summary,
+            at: formatClock(new Date()),
+          });
+
+          return {
+            ...appendPlanCard({ workspace: said, plan, at: formatClock(new Date()) }),
+            sessionId: sessionId ?? workspace.sessionId,
+          };
+        },
+      }),
+    })),
+
+  landAgentError: ({ workspaceId, text }) =>
     set((state) => ({
       isAgentTyping: false,
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
         change: (workspace) =>
-          replyToQa({ workspace, kind, at: formatClock(new Date()) }),
+          appendAgentError({ workspace, text, at: formatClock(new Date()) }),
       }),
     })),
 

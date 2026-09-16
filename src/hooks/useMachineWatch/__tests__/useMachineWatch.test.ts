@@ -38,6 +38,8 @@ beforeEach(() => {
     detectAgents: vi.fn().mockResolvedValue(AGENTS),
     readResources: vi.fn().mockResolvedValue(RESOURCES),
     detectDeviceTools: vi.fn().mockResolvedValue(TOOLS),
+    askAgent: vi.fn(),
+    onAgentEvent: vi.fn().mockReturnValue(() => undefined),
   };
 });
 

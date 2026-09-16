@@ -8,6 +8,7 @@ export const useMachineStore = create<IMachineStore>((set) => ({
     androidSdk: { isFound: false, path: null },
     xcode: { isFound: false, path: null },
   },
+  usage: null,
   hasDetected: false,
 
   setAgents: (agents) => set({ agents, hasDetected: true }),
@@ -15,4 +16,6 @@ export const useMachineStore = create<IMachineStore>((set) => ({
   setResources: (resources) => set({ resources }),
 
   setTools: (tools) => set({ tools }),
+
+  setUsage: (usage) => set({ usage }),
 }));

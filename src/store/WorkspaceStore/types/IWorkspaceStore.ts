@@ -18,7 +18,18 @@ export interface IWorkspaceStore {
   addWorkspace: (workspace: IWorkspace) => void;
   selectTab: (tab: WorkspaceTab) => void;
   sendMessage: (props: { workspaceId: string; text: string }) => void;
-  replyToQa: (props: { workspaceId: string; kind: 'web' | 'mobile' }) => void;
+  landAgentText: (props: {
+    workspaceId: string;
+    text: string;
+    sessionId: string | null;
+  }) => void;
+  landPlan: (props: {
+    workspaceId: string;
+    summary: string;
+    plan: ITestCase[];
+    sessionId: string | null;
+  }) => void;
+  landAgentError: (props: { workspaceId: string; text: string }) => void;
   answerAsk: (props: { workspaceId: string; reply: string }) => void;
   reorderPlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
   startRun: (workspaceId: string) => void;
