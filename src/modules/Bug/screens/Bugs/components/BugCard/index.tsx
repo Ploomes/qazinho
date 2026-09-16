@@ -1,12 +1,12 @@
 import type { IBugCardProps } from './types';
 import { useTranslation } from 'react-i18next';
 import { Button, Eyebrow } from '@/components/atoms';
-import { ExpectedGot, MetaGrid, Screenshot, Stripes } from '@/components/molecules';
+import { ExpectedGot, MetaGrid, Screenshot } from '@/components/molecules';
 import { useBugCardViewModel } from './hooks';
 import './styles.css';
 
 export const BugCard: React.FC<IBugCardProps> = (props) => {
-  const { caret, meta, onHeadClick } = useBugCardViewModel(props);
+  const { caret, meta, onHeadClick, onOpenShot } = useBugCardViewModel(props);
   const { bug } = props;
   const { t } = useTranslation();
 
@@ -33,13 +33,6 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
           <p className="bug-card__text">{bug.body}</p>
 
           <div>
-            <Eyebrow>{t('BUG.CLIP')}</Eyebrow>
-            <div className="bug-card__clip">
-              <Stripes pitch={11} />
-            </div>
-          </div>
-
-          <div>
             <Eyebrow>{t('BUG.WHERE')}</Eyebrow>
             <MetaGrid rows={meta} />
           </div>
@@ -51,8 +44,12 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
                 <Screenshot
                   key={shot.label}
                   label={shot.label}
+                  src={shot.src}
                   isBad={shot.isBad}
                   size="shot"
+                  onOpen={() => {
+                    onOpenShot(shot);
+                  }}
                 />
               ))}
             </div>

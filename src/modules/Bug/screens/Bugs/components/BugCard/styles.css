@@ -65,14 +65,6 @@
   text-wrap: pretty;
 }
 
-.bug-card__clip {
-  position: relative;
-  height: 228px;
-  overflow: hidden;
-  border: 1px solid var(--line2);
-  border-radius: var(--radius-md);
-}
-
 .bug-card__shots {
   display: flex;
   gap: var(--space-3);

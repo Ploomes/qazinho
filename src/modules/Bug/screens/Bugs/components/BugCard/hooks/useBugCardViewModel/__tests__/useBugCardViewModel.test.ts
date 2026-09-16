@@ -1,13 +1,14 @@
 // @vitest-environment jsdom
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { makeBug } from '@/modules/Bug/library';
 import { useBugCardViewModel } from '@/modules/Bug/screens/Bugs/components/BugCard/hooks/useBugCardViewModel';
-import { flattenPlanSteps } from '@/modules/Run/library';
-import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import { walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 
-const WORKSPACE = makeWorkspace();
-const BUG = makeBug({ workspace: WORKSPACE, step: flattenPlanSteps(WORKSPACE.plan)[4]! });
+const WORKSPACE = walkRun({
+  verdicts: ['passed', 'passed', 'passed', 'passed', 'failed'],
+  isFinished: true,
+});
+const BUG = WORKSPACE.bugs[0]!;
 const PROPS = {
   bug: BUG,
   isOpen: false,
@@ -24,7 +25,7 @@ describe('useBugCardViewModel', () => {
       'run',
       'case',
       'target',
-      'build',
+      'seen',
       'agent',
     ]);
     expect(result.current.meta[1]?.value).toBe('TC-02 · step 2');

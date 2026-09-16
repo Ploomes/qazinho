@@ -1,14 +1,15 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { makeBug } from '@/modules/Bug/library';
 import { useBugsViewModel } from '@/modules/Bug/screens/Bugs/hooks/useBugsViewModel';
-import { flattenPlanSteps } from '@/modules/Run/library';
-import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import { walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
-const WORKSPACE = makeWorkspace();
-const BUG = makeBug({ workspace: WORKSPACE, step: flattenPlanSteps(WORKSPACE.plan)[4]! });
+const WORKSPACE = walkRun({
+  verdicts: ['passed', 'passed', 'passed', 'passed', 'failed'],
+  isFinished: true,
+});
+const BUG = WORKSPACE.bugs[0]!;
 
 beforeEach(() => {
   useAppStore.setState({ selectedWorkspaceId: 'w1' });
@@ -27,7 +28,7 @@ describe('useBugsViewModel', () => {
   });
 
   it('has nothing to show while nothing has broken', () => {
-    useWorkspaceStore.setState({ workspaces: [WORKSPACE] });
+    useWorkspaceStore.setState({ workspaces: [{ ...WORKSPACE, bugs: [] }] });
 
     const { result } = renderHook(() => useBugsViewModel());
 
