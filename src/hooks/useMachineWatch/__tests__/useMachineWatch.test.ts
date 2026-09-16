@@ -1,9 +1,11 @@
 // @vitest-environment jsdom
+import type { IAgentEvent } from '@/types';
 import { renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMachineWatch } from '@/hooks/useMachineWatch';
 import { MACHINE_WATCH } from '@/hooks/useMachineWatch/constants';
-import { useMachineStore } from '@/store';
+import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import { useMachineStore, useWorkspaceStore } from '@/store';
 
 const AGENTS = [
   {
@@ -101,5 +103,38 @@ describe('useMachineWatch', () => {
     expect(window.gocrash.readResources).toHaveBeenCalledTimes(3);
 
     vi.useRealTimers();
+  });
+
+  it('files the context window under the workspace the agent answered', () => {
+    let hear: (event: IAgentEvent) => void = () => undefined;
+
+    window.gocrash.onAgentEvent = vi.fn((listener: (event: IAgentEvent) => void) => {
+      hear = listener;
+
+      return () => undefined;
+    });
+    useWorkspaceStore.setState({
+      workspaces: [makeWorkspace(), { ...makeWorkspace(), id: 'w2' }],
+    });
+
+    renderHook(() => useMachineWatch());
+
+    hear({
+      kind: 'usage',
+      workspaceId: 'w2',
+      usage: {
+        fiveHourUsed: 0.3,
+        sevenDayUsed: null,
+        resetsAt: 0,
+        contextTokens: 50_000,
+        contextWindow: 200_000,
+      },
+    });
+
+    const [first, second] = useWorkspaceStore.getState().workspaces;
+
+    expect(first?.context).toBeNull();
+    expect(second?.context).toEqual({ tokens: 50_000, window: 200_000 });
+    expect(useMachineStore.getState().usage?.fiveHourUsed).toBe(0.3);
   });
 });

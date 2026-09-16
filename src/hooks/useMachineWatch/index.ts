@@ -10,6 +10,7 @@ export const useMachineWatch = () => {
   const setTools = useMachineStore((state) => state.setTools);
   const setUsage = useMachineStore((state) => state.setUsage);
   const setLiveText = useWorkspaceStore((state) => state.setLiveText);
+  const setContext = useWorkspaceStore((state) => state.setContext);
 
   useEffect(() => {
     void Machine.detectAgents().then(setAgents);
@@ -22,10 +23,16 @@ export const useMachineWatch = () => {
   useEffect(
     () =>
       Agent.onEvent((event) => {
-        if (event.kind === 'usage') setUsage(event.usage);
-        else setLiveText(event.text);
+        if (event.kind === 'usage') {
+          setUsage(event.usage);
+          setContext({
+            workspaceId: event.workspaceId,
+            tokens: event.usage.contextTokens,
+            window: event.usage.contextWindow,
+          });
+        } else setLiveText(event.text);
       }),
-    [setUsage, setLiveText],
+    [setUsage, setContext, setLiveText],
   );
 
   useEffect(() => {
