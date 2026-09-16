@@ -183,10 +183,8 @@ export const en = {
     IOS_PLACEHOLDER: 'drop your .app here, or pick one',
     IOS_MAC_ONLY: 'macOS only',
     CREATE: 'Create project',
-    HINT: '{{ios}} · {{android}} · nothing is downloaded for you',
-    IOS_NEEDS_XCODE: 'iOS needs Xcode',
-    IOS_NEEDS_MACOS: 'iOS needs macOS',
-    IOS_READY: 'iOS ready',
+    NEEDS_NAME: 'Name the project to create it',
+    NEEDS_TARGET: 'Add one target: a URL, an .apk or a .app',
   },
   NEW_WORKSPACE: {
     TITLE: 'New workspace',
@@ -199,7 +197,8 @@ export const en = {
     ISSUE_EMPTY:
       'No issue tracker connected. Connect one and you can hand the agent a ticket to work from. Without it you and the agent write the plan together.',
     CREATE: 'Create workspace',
-    HINT: 'nothing starts until you ask for a run',
+    NEEDS_NAME: 'Say what you are testing to create it',
+    NEEDS_TARGET: 'This project has no target to run against',
   },
   SETTINGS: {
     AGENTS: 'agents',

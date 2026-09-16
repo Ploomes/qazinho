@@ -64,6 +64,35 @@ describe('useNewProjectModalViewModel', () => {
     const { result } = renderHook(() => useNewProjectModalViewModel());
 
     expect(result.current.xcodeNote).toBe('macOS only');
-    expect(result.current.footerHint).toContain('iOS needs macOS');
+  });
+
+  describe('footerHint', () => {
+    it('says what is missing first, which is the name', () => {
+      const { result } = renderHook(() => useNewProjectModalViewModel());
+
+      expect(result.current.footerHint).toBe('Name the project to create it');
+    });
+
+    it('asks for a target once the project has a name', () => {
+      const { result } = renderHook(() => useNewProjectModalViewModel());
+
+      act(() => {
+        result.current.onNameChange('Shop · staging');
+      });
+
+      expect(result.current.footerHint).toBe('Add one target: a URL, an .apk or a .app');
+    });
+
+    it('says nothing once the button can be pressed', () => {
+      const { result } = renderHook(() => useNewProjectModalViewModel());
+
+      act(() => {
+        result.current.onNameChange('Shop · staging');
+        result.current.onUrlChange('https://staging.shop.test');
+      });
+
+      expect(result.current.footerHint).toBeUndefined();
+      expect(result.current.canCreate).toBe(true);
+    });
   });
 });

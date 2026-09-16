@@ -7,6 +7,7 @@ import './styles.css';
 export const NewWorkspaceModal: React.FC = () => {
   const {
     name,
+    footerHint,
     targets,
     chosenTargetId,
     projectName,
@@ -25,7 +26,7 @@ export const NewWorkspaceModal: React.FC = () => {
       width={520}
       confirmLabel={t('NEW_WORKSPACE.CREATE')}
       canConfirm={canCreate}
-      hint={t('NEW_WORKSPACE.HINT')}
+      hint={footerHint}
       onCancel={onCancel}
       onConfirm={onCreate}
     >

@@ -22,11 +22,13 @@ export const useNewProjectModalViewModel = () => {
     ? t('TOOLS.ANDROID_FOUND')
     : t('TOOLS.ANDROID_MISSING');
 
-  const iosNote = !isMac
-    ? t('PROJECT.IOS_NEEDS_MACOS')
-    : tools.xcode.isFound
-      ? t('PROJECT.IOS_READY')
-      : t('PROJECT.IOS_NEEDS_XCODE');
+  // The footer speaks only when it has something the QA cannot already read beside the field.
+  const blocking =
+    name.trim().length === 0
+      ? t('PROJECT.NEEDS_NAME')
+      : hasTarget
+        ? undefined
+        : t('PROJECT.NEEDS_TARGET');
 
   const onCreate = () => {
     if (name.trim().length === 0 || !hasTarget) return;
@@ -62,7 +64,7 @@ export const useNewProjectModalViewModel = () => {
         : t('TOOLS.XCODE_MISSING')
       : t('PROJECT.IOS_MAC_ONLY'),
     isIosAvailable: isMac && tools.xcode.isFound,
-    footerHint: t('PROJECT.HINT', { ios: iosNote, android: androidNote }),
+    footerHint: blocking,
     onNameChange: setName,
     onUrlChange: setUrl,
     onPickApk: () => {

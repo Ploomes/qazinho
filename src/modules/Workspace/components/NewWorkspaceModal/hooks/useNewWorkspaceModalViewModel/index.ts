@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toPlanKind } from '@/modules/Plan/library';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useNewWorkspaceModalViewModel = () => {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [targetId, setTargetId] = useState<string | null>(null);
 
@@ -43,9 +45,18 @@ export const useNewWorkspaceModalViewModel = () => {
     closeModal();
   };
 
+  // The footer speaks only when it has something the QA cannot already read on the form.
+  const blocking =
+    chosen === null
+      ? t('NEW_WORKSPACE.NEEDS_TARGET')
+      : name.trim().length === 0
+        ? t('NEW_WORKSPACE.NEEDS_NAME')
+        : undefined;
+
   return {
     name,
     targets,
+    footerHint: blocking,
     chosenTargetId: chosen?.id ?? null,
     projectName: project?.name ?? '',
     canCreate: name.trim().length > 0 && chosen !== null,

@@ -184,10 +184,8 @@ export const pt: typeof en = {
     IOS_PLACEHOLDER: 'solte seu .app aqui, ou escolha um',
     IOS_MAC_ONLY: 'só no macOS',
     CREATE: 'Criar projeto',
-    HINT: '{{ios}} · {{android}} · nada é baixado por você',
-    IOS_NEEDS_XCODE: 'iOS precisa do Xcode',
-    IOS_NEEDS_MACOS: 'iOS precisa do macOS',
-    IOS_READY: 'iOS pronto',
+    NEEDS_NAME: 'Dê um nome ao projeto para criá-lo',
+    NEEDS_TARGET: 'Adicione um target: uma URL, um .apk ou um .app',
   },
   NEW_WORKSPACE: {
     TITLE: 'Novo workspace',
@@ -200,7 +198,8 @@ export const pt: typeof en = {
     ISSUE_EMPTY:
       'Nenhum rastreador conectado. Conecte um e você pode entregar um ticket ao agente. Sem ele, você e o agente escrevem o plano juntos.',
     CREATE: 'Criar workspace',
-    HINT: 'nada começa até você pedir uma run',
+    NEEDS_NAME: 'Diga o que você vai testar para criá-lo',
+    NEEDS_TARGET: 'Este projeto não tem target para rodar',
   },
   SETTINGS: {
     AGENTS: 'agentes',
