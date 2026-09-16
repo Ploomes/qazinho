@@ -13,7 +13,7 @@ beforeEach(() => {
     selectedWorkspaceId: null,
     modal: null,
     screen: 'workspace',
-    removingProjectId: null,
+    editingProjectId: null,
   });
   useWorkspaceStore.setState({ workspaces: [], removingWorkspaceId: null });
 });
@@ -78,31 +78,19 @@ describe('useSidebarViewModel', () => {
     });
   });
 
-  describe('onRemoveProject', () => {
-    it('asks before it removes, because a project holds every workspace under it', () => {
+  describe('onProjectSettings', () => {
+    it('opens the project modal on the project it came from', () => {
       const { result } = renderHook(() => useSidebarViewModel());
 
       act(() => {
-        result.current.onAskRemoveProject('p1');
+        result.current.onProjectSettings('p1');
       });
 
-      expect(result.current.rows[0]).toMatchObject({ isRemoving: true });
+      expect(useAppStore.getState()).toMatchObject({
+        modal: 'project',
+        editingProjectId: 'p1',
+      });
       expect(useAppStore.getState().projects).toHaveLength(1);
-    });
-
-    it('takes the workspaces under it with it', () => {
-      useWorkspaceStore.setState({
-        workspaces: [makeWorkspace(), { ...makeWorkspace(), id: 'w2', projectId: 'p2' }],
-      });
-
-      const { result } = renderHook(() => useSidebarViewModel());
-
-      act(() => {
-        result.current.onRemoveProject('p1');
-      });
-
-      expect(useAppStore.getState().projects).toEqual([]);
-      expect(useWorkspaceStore.getState().workspaces.map(({ id }) => id)).toEqual(['w2']);
     });
   });
 

@@ -11,7 +11,6 @@ export const useAppStore = create<IAppStore>()(
       modal: null,
       projects: [],
       isLoaded: false,
-      removingProjectId: null,
       editingProjectId: null,
       selectedWorkspaceId: null,
       selectedProjectId: null,
@@ -55,8 +54,6 @@ export const useAppStore = create<IAppStore>()(
 
       loadProjects: (projects) =>
         set({ projects, isLoaded: true, selectedProjectId: projects[0]?.id ?? null }),
-
-      askRemoveProject: (removingProjectId) => set({ removingProjectId }),
 
       updateProject: (project) =>
         set((state) => ({

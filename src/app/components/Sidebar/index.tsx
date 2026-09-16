@@ -14,8 +14,7 @@ export const Sidebar: React.FC = () => {
     onSettings,
     onAskRemove,
     onRemoveWorkspace,
-    onAskRemoveProject,
-    onRemoveProject,
+    onProjectSettings,
   } = useSidebarViewModel();
   const { t } = useTranslation();
 
@@ -43,40 +42,18 @@ export const Sidebar: React.FC = () => {
             return (
               <div key={row.id} className="sidebar__project">
                 <span className="sidebar__project-name">{row.name}</span>
-
-                {row.isRemoving ? (
-                  <span className="sidebar__confirm">
-                    <button
-                      type="button"
-                      className="sidebar__confirm-yes"
-                      onClick={() => {
-                        onRemoveProject(row.projectId);
-                      }}
-                    >
-                      {t('SIDEBAR.REMOVE_YES')}
-                    </button>
-                    <button
-                      type="button"
-                      className="sidebar__confirm-no"
-                      onClick={() => {
-                        onAskRemoveProject(null);
-                      }}
-                    >
-                      {t('SIDEBAR.REMOVE_NO')}
-                    </button>
+                <button
+                  type="button"
+                  className="sidebar__project-settings"
+                  aria-label={t('SIDEBAR.PROJECT_SETTINGS', { name: row.name })}
+                  onClick={() => {
+                    onProjectSettings(row.projectId);
+                  }}
+                >
+                  <span className="sidebar__project-settings-icon" aria-hidden="true">
+                    ⚙
                   </span>
-                ) : (
-                  <button
-                    type="button"
-                    className="sidebar__remove"
-                    aria-label={t('SIDEBAR.REMOVE', { name: row.name })}
-                    onClick={() => {
-                      onAskRemoveProject(row.projectId);
-                    }}
-                  >
-                    ✕
-                  </button>
-                )}
+                </button>
               </div>
             );
           }

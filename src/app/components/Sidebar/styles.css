@@ -34,8 +34,45 @@
   white-space: nowrap;
 }
 
-.sidebar__project:hover .sidebar__remove {
+.sidebar__project-settings {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin: calc(var(--space-2) * -1) 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--ink3);
+  font: 400 13px/1 var(--font-ui);
+  letter-spacing: 0;
+  opacity: 0;
+  transition:
+    opacity var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.sidebar__project-settings-icon {
+  display: inline-block;
+  transition: transform var(--dur) var(--ease);
+}
+
+.sidebar__project:hover .sidebar__project-settings,
+.sidebar__project-settings:focus-visible {
   opacity: 1;
+}
+
+.sidebar__project-settings:hover {
+  background: var(--sel);
+  color: var(--ink);
+}
+
+.sidebar__project-settings:hover .sidebar__project-settings-icon {
+  transform: rotate(60deg);
 }
 
 .sidebar__row {

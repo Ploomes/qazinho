@@ -3,5 +3,4 @@ export interface ISidebarHeaderRow {
   id: string;
   projectId: string;
   name: string;
-  isRemoving: boolean;
 }
