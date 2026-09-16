@@ -52,54 +52,111 @@
 .plan-case__body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
-  padding: 0 17px 18px;
+  gap: 14px;
+  padding: var(--space-2) 17px 18px 52px;
 }
 
 .plan-case__meta {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-5);
-  margin-bottom: var(--space-5);
+  grid-template-columns: auto 1fr;
+  gap: 7px var(--space-5);
+  align-items: start;
+  margin: 0;
+}
+
+/* A multi-line textarea has no first baseline to share, so the short columns match its first line by hand. */
+.plan-case__label,
+.plan-case__step-number,
+.plan-case__verdict {
+  padding-top: 1px;
 }
 
 .plan-case__label {
-  display: block;
-  margin-bottom: var(--space-2);
   color: var(--ink3);
-  font: 500 var(--eyebrow-size) / 1 var(--font-mono);
-  letter-spacing: var(--eyebrow-tracking);
-  text-transform: uppercase;
+  font: 500 11px/1.5 var(--font-mono);
 }
 
-.plan-case__value {
+.plan-case__field {
+  min-width: 0;
   margin: 0;
+}
+
+/* The textarea's own padding and border would push its text off the column it sits in. */
+.plan-case__body .editable-text {
+  width: calc(100% + 10px);
+  margin: -3px -5px;
+  padding: var(--space-1) var(--space-2);
   color: var(--ink2);
-  font: var(--font-ui-sm);
+  font: 400 13px/1.5 var(--font-ui);
 }
 
-.plan-case__steps {
+.plan-case__table {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line2);
+}
+
+.plan-case__row {
+  position: relative;
   display: grid;
-  grid-template-columns: 34px 1fr 1fr 28px;
-  gap: var(--space-5);
+  grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1fr) 88px;
+  gap: 14px;
   align-items: start;
+  margin: 0 calc(var(--space-3) * -1);
+  padding: 9px 40px 9px var(--space-3);
+  border-top: 1px solid var(--line2);
+  border-radius: 7px;
+  transition: background-color var(--dur-fast) var(--ease);
 }
 
-.plan-case__step-head {
+.plan-case__row:not(.plan-case__row--head):hover {
+  background: var(--raise2);
+}
+
+.plan-case__row--head {
+  padding-top: 0;
+  padding-bottom: var(--space-3);
+  border-top: none;
+}
+
+.plan-case__column {
   color: var(--ink3);
   font: 500 var(--eyebrow-size) / 1 var(--font-mono);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-.plan-case__step {
-  color: var(--ink2);
-  font: var(--font-ui-sm);
-}
-
 .plan-case__step-number {
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: 400 12px/1.5 var(--font-mono);
+}
+
+.plan-case__body .plan-case__action .editable-text {
+  color: var(--ink);
+}
+
+.plan-case__verdict {
+  color: var(--ink3);
+  font: 500 11px/1.5 var(--font-mono);
+  white-space: nowrap;
+}
+
+.plan-case__verdict--passed {
+  color: var(--pass);
+}
+
+.plan-case__verdict--failed {
+  color: var(--fail);
+}
+
+.plan-case__verdict--blocked {
+  color: var(--block);
+}
+
+.plan-case__verdict--skipped {
+  color: var(--skip);
 }
 
 .plan-case__open {
@@ -127,11 +184,15 @@
   opacity: 0;
 }
 
-.plan-case__steps .plan-case__remove {
-  margin-top: -5px;
+.plan-case__remove--step {
+  position: absolute;
+  top: 50%;
+  right: var(--space-2);
+  transform: translateY(-50%);
 }
 
-.plan-case:hover .plan-case__remove,
+.plan-case:hover .plan-case__head .plan-case__remove,
+.plan-case__row:hover .plan-case__remove,
 .plan-case__remove:focus-visible {
   opacity: 1;
 }
@@ -142,18 +203,17 @@
 }
 
 .plan-case__add {
-  display: inline-flex;
-  gap: var(--space-2);
   align-self: flex-start;
-  padding: var(--space-2) var(--space-3);
-  border: 1px dashed var(--line2);
-  border-radius: var(--radius-xs);
+  margin-top: var(--space-3);
+  padding: 7px var(--space-4);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: 400 12px/1 var(--font-ui);
 }
 
 .plan-case__add:hover {
   border-color: var(--amber);
-  color: var(--amber);
+  color: var(--amber-ink);
 }

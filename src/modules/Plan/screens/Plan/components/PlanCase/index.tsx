@@ -1,6 +1,5 @@
 import type { IPlanCaseProps } from './types';
 import { AnimatePresence, motion, Reorder } from 'motion/react';
-import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EditableText, StatusPill } from '@/components/atoms';
 import { MOTION } from '@/constants';
@@ -82,9 +81,9 @@ export const PlanCase: React.FC<IPlanCaseProps> = (props) => {
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
             <div className="plan-case__body">
-              <div className="plan-case__meta">
-                <div>
-                  <span className="plan-case__label">{t('PLAN.GOAL')}</span>
+              <dl className="plan-case__meta">
+                <dt className="plan-case__label">{t('PLAN.GOAL')}</dt>
+                <dd className="plan-case__field">
                   <EditableText
                     value={props.testCase.goal}
                     placeholder={t('PLAN.GOAL_PLACEHOLDER')}
@@ -93,9 +92,9 @@ export const PlanCase: React.FC<IPlanCaseProps> = (props) => {
                       onFieldCommit({ goal });
                     }}
                   />
-                </div>
-                <div>
-                  <span className="plan-case__label">{t('PLAN.BEFORE')}</span>
+                </dd>
+                <dt className="plan-case__label">{t('PLAN.BEFORE')}</dt>
+                <dd className="plan-case__field">
                   <EditableText
                     value={props.testCase.preconditions}
                     placeholder={t('PLAN.BEFORE_PLACEHOLDER')}
@@ -104,38 +103,50 @@ export const PlanCase: React.FC<IPlanCaseProps> = (props) => {
                       onFieldCommit({ preconditions });
                     }}
                   />
-                </div>
-              </div>
+                </dd>
+              </dl>
 
-              <div className="plan-case__steps">
-                <span className="plan-case__step-head">{t('PLAN.COLUMN_NUMBER')}</span>
-                <span className="plan-case__step-head">{t('PLAN.COLUMN_ACTION')}</span>
-                <span className="plan-case__step-head">{t('PLAN.COLUMN_EXPECTED')}</span>
-                <span className="plan-case__step-head" />
+              <div className="plan-case__table">
+                <div className="plan-case__row plan-case__row--head">
+                  <span className="plan-case__column">{t('PLAN.COLUMN_NUMBER')}</span>
+                  <span className="plan-case__column">{t('PLAN.COLUMN_ACTION')}</span>
+                  <span className="plan-case__column">{t('PLAN.COLUMN_EXPECTED')}</span>
+                  <span className="plan-case__column">{t('PLAN.COLUMN_LAST_RUN')}</span>
+                </div>
 
                 {steps.map((step) => (
-                  <Fragment key={step.number}>
+                  <div key={step.number} className="plan-case__row">
                     <span className="plan-case__step-number">{step.number}</span>
-                    <EditableText
-                      value={step.action}
-                      placeholder={t('PLAN.ACTION_PLACEHOLDER')}
-                      isLocked={props.isLocked}
-                      onCommit={(action) => {
-                        onStepCommit({ index: step.number - 1, step: { action } });
-                      }}
-                    />
-                    <EditableText
-                      value={step.expected}
-                      placeholder={t('PLAN.EXPECTED_PLACEHOLDER')}
-                      isLocked={props.isLocked}
-                      onCommit={(expected) => {
-                        onStepCommit({ index: step.number - 1, step: { expected } });
-                      }}
-                    />
-                    {canRemoveStep ? (
+                    <span className="plan-case__action">
+                      <EditableText
+                        value={step.action}
+                        placeholder={t('PLAN.ACTION_PLACEHOLDER')}
+                        isLocked={props.isLocked}
+                        onCommit={(action) => {
+                          onStepCommit({ index: step.number - 1, step: { action } });
+                        }}
+                      />
+                    </span>
+                    <span className="plan-case__expected">
+                      <EditableText
+                        value={step.expected}
+                        placeholder={t('PLAN.EXPECTED_PLACEHOLDER')}
+                        isLocked={props.isLocked}
+                        onCommit={(expected) => {
+                          onStepCommit({ index: step.number - 1, step: { expected } });
+                        }}
+                      />
+                    </span>
+                    <span
+                      className={`plan-case__verdict plan-case__verdict--${step.verdict}`}
+                    >
+                      <span aria-hidden="true">{step.verdictGlyph}</span>{' '}
+                      {step.verdictLabel}
+                    </span>
+                    {canRemoveStep && (
                       <button
                         type="button"
-                        className="plan-case__remove"
+                        className="plan-case__remove plan-case__remove--step"
                         aria-label={t('PLAN.REMOVE_STEP', { number: step.number })}
                         onClick={() => {
                           onStepRemove(step.number - 1);
@@ -143,19 +154,16 @@ export const PlanCase: React.FC<IPlanCaseProps> = (props) => {
                       >
                         ✕
                       </button>
-                    ) : (
-                      <span />
                     )}
-                  </Fragment>
+                  </div>
                 ))}
-              </div>
 
-              {!props.isLocked && (
-                <button type="button" className="plan-case__add" onClick={onStepAdd}>
-                  <span aria-hidden="true">+</span>
-                  {t('PLAN.ADD_STEP')}
-                </button>
-              )}
+                {!props.isLocked && (
+                  <button type="button" className="plan-case__add" onClick={onStepAdd}>
+                    {t('PLAN.ADD_STEP')}
+                  </button>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
