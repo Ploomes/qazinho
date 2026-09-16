@@ -48,7 +48,7 @@ it sees.
 **iOS is built but half-proven.** Booting, installing, launching and screenshotting are verified
 against a real simulator. The tap path goes through idb, which was not installed on the machine
 this was written on, so `parseElements` reads idb's tree tolerantly and has never seen the real
-thing. Run `smoke/ios.test.ts` once idb is installed before trusting it.
+thing. Run `tests/smoke/ios.test.ts` once idb is installed before trusting it.
 
 **Still to build for 0.1:** the agent cannot ask the QA a question mid-run, and no issue tracker
 is connected.

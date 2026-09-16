@@ -21,7 +21,7 @@
 
 | Config               | Covers                                                 | Types         |
 | -------------------- | ------------------------------------------------------ | ------------- |
-| `tsconfig.node.json` | `src/main`, `src/types`, `electron/`, `smoke/`, config | `node`        |
+| `tsconfig.node.json` | `src/main`, `src/types`, `electron/`, `tests/`, config | `node`        |
 | `tsconfig.web.json`  | all of `src/` except `src/main`                        | `vite/client` |
 
 **`tsconfig.web.json` has no Node types.** An `import 'node:fs'` in the page or in `src/types`

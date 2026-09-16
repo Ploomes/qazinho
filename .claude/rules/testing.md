@@ -2,11 +2,11 @@
 
 Vitest. `node` for `src/main` and `src/types`, `jsdom` for anything in the page.
 
-| Command              | What                                       |
-| -------------------- | ------------------------------------------ |
-| `npm test`           | every unit test                            |
-| `npm run test:watch` | the same, watching                         |
-| `npm run test:smoke` | `smoke/`: the real agent, the real browser |
+| Command              | What                                             |
+| -------------------- | ------------------------------------------------ |
+| `npm test`           | every unit test                                  |
+| `npm run test:watch` | the same, watching                               |
+| `npm run test:smoke` | `tests/smoke/`: the real agent, the real browser |
 
 ## `__tests__/` next to the code
 
@@ -49,10 +49,10 @@ origin'`, never `'isInternalNavigation() returns false'`.
 - **Tests do not use the network**, and do not boot an emulator, a simulator or a browser.
 - A page test file declares its environment at the top: `// @vitest-environment jsdom`.
 
-## `smoke/`, and why it is not in `npm test`
+## `tests/smoke/`, and why it is not in `npm test`
 
 Three suites that need something real behind them. They have their own config
-(`vitest.smoke.ts`), their own command, and CI never runs them.
+(`tests/vitest.smoke.ts`), their own command, and CI never runs them.
 
 | File               | What it drives                                                          |
 | ------------------ | ----------------------------------------------------------------------- |
