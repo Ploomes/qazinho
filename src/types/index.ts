@@ -1,4 +1,5 @@
 export type * from './IAgentEvent';
+export type * from './IAndroidSetup';
 export type * from './IAgentTurn';
 export type * from './IAgentUsage';
 export type * from './IAskAgent';
@@ -13,9 +14,11 @@ export type * from './ISavedState';
 export type * from './ISavedWorkspace';
 export type * from './IRunEvent';
 export type * from './IStartRun';
+export type * from './ITargetUnderTest';
 export type * from './IStepAction';
 export type * from './IStepOutcome';
 export type * from './Severity';
 export type * from './StepVerdict';
+export type * from './TargetKind';
 export type * from './IToolStatus';
 export type * from './Platform';

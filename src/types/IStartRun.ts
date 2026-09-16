@@ -1,4 +1,5 @@
 import type { IFlatStep } from './IFlatStep';
+import type { ITargetUnderTest } from './ITargetUnderTest';
 
 /** Everything the main process needs to walk a plan on a real device. */
 export interface IStartRun {
@@ -6,7 +7,7 @@ export interface IStartRun {
   agentId: string;
   model: string;
   sessionId: string | null;
-  url: string;
+  target: ITargetUnderTest;
   runId: string;
   steps: IFlatStep[];
 }
