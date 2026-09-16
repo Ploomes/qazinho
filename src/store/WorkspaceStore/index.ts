@@ -1,6 +1,11 @@
 import type { IWorkspaceStore } from './types';
 import { create } from 'zustand';
-import { appendUserMessage, formatClock } from '@/modules/Chat/library';
+import {
+  answerAsk,
+  appendUserMessage,
+  formatClock,
+  replyToQa,
+} from '@/modules/Chat/library';
 import { DEVICE } from '@/modules/Device/constants';
 import { advanceRun, startRun } from '@/modules/Workspace/library';
 import { mapWorkspace } from './library';
@@ -30,6 +35,27 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         workspaceId,
         change: (workspace) =>
           appendUserMessage({ workspace, text, at: formatClock(new Date()) }),
+      }),
+    })),
+
+  replyToQa: ({ workspaceId, kind }) =>
+    set((state) => ({
+      isAgentTyping: false,
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          replyToQa({ workspace, kind, at: formatClock(new Date()) }),
+      }),
+    })),
+
+  answerAsk: ({ workspaceId, reply }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          answerAsk({ workspace, reply, at: formatClock(new Date()) }),
       }),
     })),
 

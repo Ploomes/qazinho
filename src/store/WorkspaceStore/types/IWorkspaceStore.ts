@@ -17,6 +17,8 @@ export interface IWorkspaceStore {
   addWorkspace: (workspace: IWorkspace) => void;
   selectTab: (tab: WorkspaceTab) => void;
   sendMessage: (props: { workspaceId: string; text: string }) => void;
+  replyToQa: (props: { workspaceId: string; kind: 'web' | 'mobile' }) => void;
+  answerAsk: (props: { workspaceId: string; reply: string }) => void;
   startRun: (workspaceId: string) => void;
   pauseRun: (workspaceId: string) => void;
   stopRun: (workspaceId: string) => void;
