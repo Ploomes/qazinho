@@ -19,5 +19,10 @@ export function fakeGocrashApi(platform: Platform): IGocrashApi {
     pauseRun: () => Promise.resolve(),
     stopRun: () => Promise.resolve(),
     onRunEvent: () => () => undefined,
+    readState: () => Promise.resolve({ projects: '[]', workspaces: [] }),
+    saveProjects: () => Promise.resolve(),
+    saveWorkspace: () => Promise.resolve(),
+    removeWorkspace: () => Promise.resolve(),
+    readShot: () => Promise.resolve(null),
   };
 }

@@ -5,6 +5,8 @@ import type { IDetectedAgent } from './IDetectedAgent';
 import type { IDeviceTools } from './IDeviceTools';
 import type { IResourceSnapshot } from './IResourceSnapshot';
 import type { IRunEvent } from './IRunEvent';
+import type { ISavedState } from './ISavedState';
+import type { ISavedWorkspace } from './ISavedWorkspace';
 import type { IStartRun } from './IStartRun';
 import type { Platform } from './Platform';
 
@@ -20,4 +22,9 @@ export interface IGocrashApi {
   pauseRun: (props: { workspaceId: string; isPaused: boolean }) => Promise<void>;
   stopRun: (workspaceId: string) => Promise<void>;
   onRunEvent: (listener: (event: IRunEvent) => void) => () => void;
+  readState: () => Promise<ISavedState>;
+  saveProjects: (json: string) => Promise<void>;
+  saveWorkspace: (saved: ISavedWorkspace) => Promise<void>;
+  removeWorkspace: (workspaceId: string) => Promise<void>;
+  readShot: (file: string) => Promise<string | null>;
 }

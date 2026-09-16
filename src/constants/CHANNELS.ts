@@ -9,4 +9,9 @@ export const CHANNELS = {
   pauseRun: 'run:pause',
   stopRun: 'run:stop',
   runEvent: 'run:event',
+  readState: 'state:read',
+  saveProjects: 'state:projects',
+  saveWorkspace: 'state:workspace',
+  removeWorkspace: 'state:remove',
+  readShot: 'state:shot',
 } as const;

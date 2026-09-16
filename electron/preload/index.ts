@@ -7,6 +7,8 @@ import type {
   IGocrashApi,
   IResourceSnapshot,
   IRunEvent,
+  ISavedState,
+  ISavedWorkspace,
   IStartRun,
   Platform,
 } from '@/types';
@@ -51,6 +53,15 @@ const api: IGocrashApi = {
       ipcRenderer.off(CHANNELS.runEvent, forward);
     };
   },
+  readState: () => ipcRenderer.invoke(CHANNELS.readState) as Promise<ISavedState>,
+  saveProjects: (json: string) =>
+    ipcRenderer.invoke(CHANNELS.saveProjects, json) as Promise<void>,
+  saveWorkspace: (saved: ISavedWorkspace) =>
+    ipcRenderer.invoke(CHANNELS.saveWorkspace, saved) as Promise<void>,
+  removeWorkspace: (workspaceId: string) =>
+    ipcRenderer.invoke(CHANNELS.removeWorkspace, workspaceId) as Promise<void>,
+  readShot: (file: string) =>
+    ipcRenderer.invoke(CHANNELS.readShot, file) as Promise<string | null>,
 };
 
 contextBridge.exposeInMainWorld('gocrash', api);

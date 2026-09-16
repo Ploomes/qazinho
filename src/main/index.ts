@@ -1,4 +1,10 @@
-import type { IAgentEvent, IAskAgent, IRunEvent, IStartRun } from '@/types';
+import type {
+  IAgentEvent,
+  IAskAgent,
+  IRunEvent,
+  ISavedWorkspace,
+  IStartRun,
+} from '@/types';
 import { join } from 'node:path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { CHANNELS } from '@/constants';
@@ -8,6 +14,7 @@ import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { ResourceCollector } from '@/main/classes/resources/ResourceCollector';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
+import { Archive } from '@/main/classes/storage/Archive';
 import { WINDOW } from '@/main/constants';
 import { isInternalNavigation } from '@/main/library';
 
@@ -23,6 +30,7 @@ const resources = new ResourceCollector({
   profileRoot: join(DATA_ROOT, 'profiles'),
 });
 const deviceTools = new DeviceToolDetector();
+const archive = new Archive(DATA_ROOT);
 
 function broadcast(props: { channel: string; event: IAgentEvent | IRunEvent }): void {
   for (const open of BrowserWindow.getAllWindows())
@@ -107,6 +115,17 @@ void app.whenReady().then(() => {
       runs.setPaused(props);
     },
   );
+  ipcMain.handle(CHANNELS.readState, () => archive.read());
+  ipcMain.handle(CHANNELS.saveProjects, (_event, json: string) =>
+    archive.saveProjects(json),
+  );
+  ipcMain.handle(CHANNELS.saveWorkspace, (_event, saved: ISavedWorkspace) =>
+    archive.saveWorkspace(saved),
+  );
+  ipcMain.handle(CHANNELS.removeWorkspace, (_event, workspaceId: string) =>
+    archive.removeWorkspace(workspaceId),
+  );
+  ipcMain.handle(CHANNELS.readShot, (_event, file: string) => archive.readShot(file));
 
   createWindow();
 

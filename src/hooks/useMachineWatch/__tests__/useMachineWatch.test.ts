@@ -44,6 +44,11 @@ beforeEach(() => {
     pauseRun: vi.fn(),
     stopRun: vi.fn(),
     onRunEvent: vi.fn().mockReturnValue(() => undefined),
+    readState: vi.fn().mockResolvedValue({ projects: '[]', workspaces: [] }),
+    saveProjects: vi.fn(),
+    saveWorkspace: vi.fn(),
+    removeWorkspace: vi.fn(),
+    readShot: vi.fn().mockResolvedValue(null),
   };
 });
 

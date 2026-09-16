@@ -9,6 +9,8 @@ export type * from './IGocrashApi';
 export type * from './IProcessSample';
 export type * from './ProcessKind';
 export type * from './IResourceSnapshot';
+export type * from './ISavedState';
+export type * from './ISavedWorkspace';
 export type * from './IRunEvent';
 export type * from './IStartRun';
 export type * from './IStepAction';
