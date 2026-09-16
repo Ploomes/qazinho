@@ -1,6 +1,6 @@
+import { useCallback } from 'react';
 import { flattenPlanSteps } from '@/modules/Run/library';
 import { useAppStore, useWorkspaceStore } from '@/store';
-import { useCallback } from 'react';
 
 export const useWorkspaceViewModel = () => {
   const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);

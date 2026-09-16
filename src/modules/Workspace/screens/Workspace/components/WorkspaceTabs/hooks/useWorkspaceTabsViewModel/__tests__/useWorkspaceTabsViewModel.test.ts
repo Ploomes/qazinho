@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
-import { useWorkspaceTabsViewModel } from '@/modules/Workspace/screens/Workspace/components/WorkspaceTabs/hooks/useWorkspaceTabsViewModel';
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { useWorkspaceTabsViewModel } from '@/modules/Workspace/screens/Workspace/components/WorkspaceTabs/hooks/useWorkspaceTabsViewModel';
 
 const PROPS = {
   current: 'plan' as const,
