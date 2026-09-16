@@ -20,6 +20,14 @@ button {
   font: inherit;
   color: inherit;
   cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease),
+    opacity var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease),
+    filter var(--dur-fast) var(--ease),
+    transform 0.12s var(--ease);
 }
 
 button:hover:not(:disabled) {
@@ -47,6 +55,7 @@ input {
 a {
   color: var(--amber-ink);
   text-decoration: none;
+  transition: color var(--dur-fast) var(--ease);
 }
 
 ::-webkit-scrollbar {

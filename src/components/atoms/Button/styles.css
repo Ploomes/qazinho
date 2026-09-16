@@ -9,10 +9,6 @@
   color: var(--ink);
   font: var(--font-ui-md);
   white-space: nowrap;
-  transition:
-    background-color var(--dur-fast) ease,
-    border-color var(--dur-fast) ease,
-    color var(--dur-fast) ease;
 }
 
 .button--md {
