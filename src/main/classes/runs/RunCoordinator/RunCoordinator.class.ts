@@ -27,6 +27,7 @@ export class RunCoordinator {
   private readonly stopping = new Set<string>();
   private readonly walking = new Set<string>();
   private readonly paused = new Set<string>();
+  private readonly drivers = new Map<string, IDeviceDriver>();
 
   public constructor(props: IRunCoordinator) {
     this.runner = props.runner;
@@ -84,8 +85,14 @@ export class RunCoordinator {
   }
 
   public stop(workspaceId: string): void {
-    if (this.walking.has(workspaceId)) this.stopping.add(workspaceId);
     this.paused.delete(workspaceId);
+
+    if (!this.walking.has(workspaceId)) return;
+
+    // Waiting for the step in flight would hold the QA for as long as the agent thinks.
+    this.stopping.add(workspaceId);
+    this.runner.cancel(workspaceId);
+    void this.drivers.get(workspaceId)?.close();
   }
 
   public setPaused(props: { workspaceId: string; isPaused: boolean }): void {
@@ -114,12 +121,21 @@ export class RunCoordinator {
 
     try {
       driver = driverFor(run);
+      this.drivers.set(run.workspaceId, driver);
       await mkdir(run.shotDir, { recursive: true });
       await driver.open();
       await this.watch({ workspaceId: run.workspaceId, driver });
     } catch (reason) {
       await driver?.close();
+      this.drivers.delete(run.workspaceId);
       this.live.end(run.workspaceId);
+
+      if (this.stopping.has(run.workspaceId)) {
+        this.onEvent({ kind: 'done', workspaceId: run.workspaceId });
+
+        return;
+      }
+
       this.onEvent({
         kind: 'failed',
         workspaceId: run.workspaceId,
@@ -129,10 +145,20 @@ export class RunCoordinator {
       return;
     }
 
-    await this.walkSteps({ run, driver });
+    const broke = await this.walkSteps({ run, driver }).then(
+      () => null,
+      (reason: unknown) =>
+        this.stopping.has(run.workspaceId) ? null : this.explain(reason),
+    );
+
     await driver.close();
+    this.drivers.delete(run.workspaceId);
     this.live.end(run.workspaceId);
-    this.onEvent({ kind: 'done', workspaceId: run.workspaceId });
+    this.onEvent(
+      broke === null
+        ? { kind: 'done', workspaceId: run.workspaceId }
+        : { kind: 'failed', workspaceId: run.workspaceId, text: broke },
+    );
   }
 
   private async walkSteps(props: {
@@ -167,13 +193,15 @@ export class RunCoordinator {
 
       const result = await this.walkStep({ run, driver, step, index, session });
 
+      if (result === null) break;
+
       session = result.session;
 
       if (result.verdict !== 'passed') broken.add(step.caseId);
     }
   }
 
-  private async walkStep(props: IWalkStep): Promise<IStepResult> {
+  private async walkStep(props: IWalkStep): Promise<IStepResult | null> {
     const { run, driver, step, index } = props;
     const began = Date.now();
     const ask = {
@@ -194,8 +222,12 @@ export class RunCoordinator {
       }),
     });
 
+    if (this.stopping.has(run.workspaceId)) return null;
+
     const broke = await this.carryOut({ driver, answer: asked.text });
     const shot = await driver.shoot(join(run.shotDir, `step-${String(index + 1)}.jpg`));
+
+    if (this.stopping.has(run.workspaceId)) return null;
 
     const judged = await this.runner.ask({
       ...ask,
@@ -207,6 +239,8 @@ export class RunCoordinator {
         screen: await driver.describe(),
       }),
     });
+
+    if (this.stopping.has(run.workspaceId)) return null;
 
     const verdict = parseVerdict(judged.text);
 
