@@ -126,6 +126,18 @@ describe('useProjectModalViewModel', () => {
       expect(result.current.confirmLabel).toBe('Save changes');
     });
 
+    it('stays on the project while it animates out, after the store has let go', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onCancel();
+      });
+
+      expect(useAppStore.getState().editingProjectId).toBeNull();
+      expect(result.current.title).toBe('Project settings');
+      expect(result.current.confirmLabel).toBe('Save changes');
+    });
+
     it('saves in place and keeps the target id a workspace points at', () => {
       const { result } = renderHook(() => useProjectModalViewModel());
 

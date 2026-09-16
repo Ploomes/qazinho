@@ -19,7 +19,10 @@ export const useProjectModalViewModel = () => {
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const removeWorkspacesOf = useWorkspaceStore((state) => state.removeWorkspacesOf);
 
-  const editing = projects.find(({ id }) => id === editingProjectId) ?? null;
+  // Closing clears the store before the exit animation ends; the modal keeps what it opened on.
+  const [editing] = useState(
+    () => projects.find(({ id }) => id === editingProjectId) ?? null,
+  );
   const saved = (kind: TargetKind) =>
     editing?.targets.find((target) => target.kind === kind) ?? null;
 
