@@ -13,6 +13,7 @@ export const Settings: React.FC = () => {
     models,
     model,
     keybinds,
+    editingKeybindId,
     integrations,
     language,
     languages,
@@ -25,6 +26,7 @@ export const Settings: React.FC = () => {
     onSelectModel,
     onToggleTheme,
     onToggleIntegration,
+    onEditKeybind,
   } = useSettingsViewModel();
   const { t } = useTranslation();
 
@@ -215,7 +217,21 @@ export const Settings: React.FC = () => {
               <div key={keybind.id} className="settings__row">
                 <div className="settings__row-name">{keybind.label}</div>
                 <div className="settings__row-action">
-                  <Kbd combo={keybind.combo} />
+                  <button
+                    type="button"
+                    className="settings__keybind"
+                    onClick={() => {
+                      onEditKeybind(keybind.id);
+                    }}
+                  >
+                    {editingKeybindId === keybind.id ? (
+                      <span className="settings__row-note">
+                        {t('SETTINGS.PRESS_KEYS')}
+                      </span>
+                    ) : (
+                      <Kbd combo={keybind.combo} />
+                    )}
+                  </button>
                 </div>
               </div>
             ))}

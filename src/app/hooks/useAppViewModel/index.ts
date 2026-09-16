@@ -1,5 +1,11 @@
 import { useEffect } from 'react';
-import { useArchive, useMachineWatch, useRunEvents, useRunTicker } from '@/hooks';
+import {
+  useArchive,
+  useKeybinds,
+  useMachineWatch,
+  useRunEvents,
+  useRunTicker,
+} from '@/hooks';
 import { useAppStore } from '@/store';
 
 export const useAppViewModel = () => {
@@ -9,6 +15,7 @@ export const useAppViewModel = () => {
   const modal = useAppStore((state) => state.modal);
 
   useArchive();
+  useKeybinds();
   useRunTicker();
   useRunEvents();
   useMachineWatch();

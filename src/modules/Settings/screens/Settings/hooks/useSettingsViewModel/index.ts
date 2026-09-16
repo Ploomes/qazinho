@@ -29,6 +29,8 @@ export const useSettingsViewModel = () => {
   const model = useSettingsStore((state) => state.model);
   const language = useSettingsStore((state) => state.language);
   const keybinds = useSettingsStore((state) => state.keybinds);
+  const editingKeybindId = useSettingsStore((state) => state.editingKeybindId);
+  const editKeybind = useSettingsStore((state) => state.editKeybind);
   const integrations = useSettingsStore((state) => state.integrations);
   const selectTab = useSettingsStore((state) => state.selectTab);
   const selectAgent = useSettingsStore((state) => state.selectAgent);
@@ -47,6 +49,7 @@ export const useSettingsViewModel = () => {
     language,
     languages: LANGUAGES,
     keybinds,
+    editingKeybindId,
     integrations,
     androidSdk: {
       path: tools.androidSdk.path ?? t('TOOLS.NOT_FOUND_PATH'),
@@ -65,5 +68,8 @@ export const useSettingsViewModel = () => {
     onSelectLanguage: selectLanguage,
     onToggleTheme: toggleTheme,
     onToggleIntegration: toggleIntegration,
+    onEditKeybind: (keybindId: string) => {
+      editKeybind(editingKeybindId === keybindId ? null : keybindId);
+    },
   };
 };

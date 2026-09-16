@@ -89,3 +89,14 @@
   letter-spacing: -0.03em;
   color: var(--ink);
 }
+
+.settings__keybind {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-xs);
+  background: transparent;
+}
+
+.settings__keybind:hover {
+  border-color: var(--line2);
+}
