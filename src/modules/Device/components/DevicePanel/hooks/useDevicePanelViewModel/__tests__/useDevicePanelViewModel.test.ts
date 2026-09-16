@@ -19,7 +19,8 @@ describe('useDevicePanelViewModel', () => {
   it('stays off and says so while no run has started', () => {
     const { result } = renderHook(() => useDevicePanelViewModel());
 
-    expect(result.current.isOff).toBe(true);
+    expect(result.current.hasScreen).toBe(false);
+    expect(result.current.hasControls).toBe(false);
     expect(result.current.stateText).toBe('idle');
   });
 
@@ -134,6 +135,40 @@ describe('useDevicePanelViewModel', () => {
       });
 
       expect(result.current.widthTransition.duration).toBeGreaterThan(0);
+    });
+  });
+
+  describe('hasControls', () => {
+    it('offers pause and stop while the run goes, and resume once paused', () => {
+      const walked = walkRun({ verdicts: ['passed'] });
+
+      useWorkspaceStore.setState({ workspaces: [walked] });
+
+      const running = renderHook(() => useDevicePanelViewModel()).result.current;
+
+      expect(running.hasControls).toBe(true);
+      expect(running.pauseLabel).toBe('Pause');
+
+      useWorkspaceStore.setState({
+        workspaces: [{ ...walked, live: { ...walked.live!, isRunning: false } }],
+      });
+
+      expect(renderHook(() => useDevicePanelViewModel()).result.current.pauseLabel).toBe(
+        'Resume',
+      );
+    });
+
+    it('does NOT offer to pause or stop a run that was stopped', () => {
+      const walked = walkRun({ verdicts: ['passed'] });
+
+      useWorkspaceStore.setState({
+        workspaces: [{ ...walked, live: { ...walked.live!, isDone: true, shot: null } }],
+      });
+
+      const { result } = renderHook(() => useDevicePanelViewModel());
+
+      expect(result.current.hasControls).toBe(false);
+      expect(result.current.hasScreen).toBe(false);
     });
   });
 });

@@ -17,7 +17,14 @@ export const useDevicePanelViewModel = () => {
   const width = useWorkspaceStore((state) => state.deviceWidth);
   const toggleDevicePanel = useWorkspaceStore((state) => state.toggleDevicePanel);
   const setDeviceWidth = useWorkspaceStore((state) => state.setDeviceWidth);
-  const { steps: planSteps, live, onPause, onStop } = useRunControls();
+  const {
+    steps: planSteps,
+    live,
+    isLive: isRunLive,
+    isPaused,
+    onPause,
+    onStop,
+  } = useRunControls();
   const [isResizing, setResizing] = useState(false);
 
   const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
@@ -44,7 +51,10 @@ export const useDevicePanelViewModel = () => {
       : { duration: MOTION.durationSlow, ease: MOTION.ease },
     innerStyle: { '--device-width': `${String(width)}px` } as CSSProperties,
     isPhone,
-    isOff: state === 'off',
+    // A stopped run with nothing captured has no screen worth keeping up.
+    hasScreen: isRunLive || (live?.shot ?? null) !== null,
+    hasControls: isRunLive,
+    pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
     stateText: t(DEVICE_STATE_KEY[state] as never),
     deviceLabel: isPhone ? 'Emulator · Pixel 7 · API 34' : 'Chrome 1280 × 800',
     shot: live?.shot ?? null,

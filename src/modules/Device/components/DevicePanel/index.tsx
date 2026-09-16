@@ -14,7 +14,9 @@ export const DevicePanel: React.FC = () => {
     widthTransition,
     innerStyle,
     isPhone,
-    isOff,
+    hasScreen,
+    hasControls,
+    pauseLabel,
     stateText,
     deviceLabel,
     shot,
@@ -97,14 +99,14 @@ export const DevicePanel: React.FC = () => {
               </header>
 
               <div className="device-panel__viewport">
-                {isOff && (
+                {!hasScreen && (
                   <div className="device-panel__off">
                     <span>{t('DEVICE.NO_DEVICE')}</span>
                     <span>{t('DEVICE.NO_DEVICE_BODY')}</span>
                   </div>
                 )}
 
-                {!isOff && isPhone && (
+                {hasScreen && isPhone && (
                   <div className="device-panel__phone">
                     <DeviceScreen
                       shot={shot}
@@ -115,7 +117,7 @@ export const DevicePanel: React.FC = () => {
                   </div>
                 )}
 
-                {!isOff && !isPhone && (
+                {hasScreen && !isPhone && (
                   <div className="device-panel__browser">
                     <div className="device-panel__chrome">
                       <span className="device-panel__dot" />
@@ -133,10 +135,10 @@ export const DevicePanel: React.FC = () => {
                 )}
               </div>
 
-              {!isOff && (
+              {hasControls && (
                 <div className="device-panel__controls">
                   <Button size="sm" onClick={onPause}>
-                    {t('COMMON.PAUSE')}
+                    {pauseLabel}
                   </Button>
                   <Button size="sm" variant="danger" onClick={onStop}>
                     {t('COMMON.STOP')}
