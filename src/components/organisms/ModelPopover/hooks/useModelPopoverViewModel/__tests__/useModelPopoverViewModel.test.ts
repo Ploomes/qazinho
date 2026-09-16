@@ -9,19 +9,25 @@ beforeEach(() => {
 });
 
 describe('useModelPopoverViewModel', () => {
-  it('lists the models of the agent on this machine', () => {
+  it('offers the agent own default first, then the models it lists', () => {
     const { result } = renderHook(() => useModelPopoverViewModel());
 
     expect(result.current.modelHeading).toBe('model');
-    expect(result.current.models).toHaveLength(4);
+    expect(result.current.models.map(({ id }) => id)).toEqual([
+      '',
+      'haiku',
+      'sonnet',
+      'opus',
+      'fable',
+    ]);
   });
 
-  it('says there is nothing to pick for an agent that exposes no model', () => {
+  it('still offers the agent default for an agent that lists no models', () => {
     useSettingsStore.setState({ agent: 'Gemini CLI' });
 
     const { result } = renderHook(() => useModelPopoverViewModel());
 
-    expect(result.current.modelHeading).toBe('no models to pick');
+    expect(result.current.models.map(({ id }) => id)).toEqual(['']);
   });
 
   it('moves to the agent own default model when the agent changes', () => {
