@@ -1,6 +1,8 @@
 import { Button } from '@/components/atoms';
+import { Bugs } from '@/modules/Bug/screens/Bugs';
 import { Chat } from '@/modules/Chat/screens/Chat';
 import { Plan } from '@/modules/Plan/screens/Plan';
+import { Runs } from '@/modules/Run/screens/Runs';
 import { WorkspaceTabs } from './components';
 import { useWorkspaceViewModel } from './hooks';
 import './styles.css';
@@ -61,6 +63,8 @@ export const Workspace: React.FC = () => {
       <div className="workspace__body">
         {tab === 'chat' && <Chat />}
         {tab === 'plan' && <Plan />}
+        {tab === 'runs' && <Runs />}
+        {tab === 'bugs' && <Bugs />}
       </div>
     </section>
   );
