@@ -46,4 +46,19 @@ describe('fromSaved', () => {
     });
     expect(fromSaved({ id: 'w1', json: broken, planYaml: '' })?.context).toBeNull();
   });
+
+  it('drops the action logs an older chat still carries', () => {
+    const json = JSON.stringify({
+      id: 'w1',
+      projectId: 'p1',
+      chat: [
+        { id: 'm-1', kind: 'user', at: '09:41', text: 'hi' },
+        { id: 'm-2', kind: 'action', at: '09:42', actions: [] },
+      ],
+    });
+
+    expect(
+      fromSaved({ id: 'w1', json, planYaml: '' })?.chat.map(({ kind }) => kind),
+    ).toEqual(['user']);
+  });
 });
