@@ -80,6 +80,7 @@ describe('a real run on a phone', () => {
 
     const coordinator = new RunCoordinator({
       runner: new AgentRunner({ owners, onEvent: () => undefined }),
+      findIos: async () => null,
       findCommand: async (id) =>
         (await new AgentDetector().detect()).find((one) => one.id === id)?.path ?? null,
       findAndroid: async () => ({ sdkRoot, avd: (await listAvds(sdkRoot))[0] ?? '' }),

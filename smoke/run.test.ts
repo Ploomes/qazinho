@@ -32,6 +32,7 @@ describe('a real run', () => {
     const coordinator = new RunCoordinator({
       runner: new AgentRunner({ owners, onEvent: () => undefined }),
       findAndroid: async () => null,
+      findIos: async () => null,
       findCommand: async (id) =>
         (await new AgentDetector().detect()).find((one) => one.id === id)?.path ?? null,
       dataRoot: await mkdtemp(join(tmpdir(), 'gocrash-smoke-')),
