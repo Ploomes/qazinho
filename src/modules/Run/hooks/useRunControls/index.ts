@@ -36,8 +36,8 @@ export const useRunControls = () => {
 
     start({ workspaceId: workspace.id, runId });
 
-    if (target?.kind !== 'web') {
-      landRunFailed({ workspaceId: workspace.id, text: t('RUN.NOT_WEB_TARGET') });
+    if (target === null || target.kind === 'ios') {
+      landRunFailed({ workspaceId: workspace.id, text: t('RUN.NO_IOS_TARGET') });
 
       return;
     }
@@ -47,7 +47,7 @@ export const useRunControls = () => {
       agentId: detected.find(({ name }) => name === agentName)?.id ?? 'claude-code',
       model,
       sessionId: workspace.sessionId,
-      url: target.value,
+      target: { kind: target.kind, value: target.value },
       runId,
       steps,
     });

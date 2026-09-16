@@ -66,7 +66,7 @@ describe('useWorkspaceViewModel', () => {
       expect(useWorkspaceStore.getState().workspaces[0]?.status).toBe('running');
     });
 
-    it('says so instead of pretending when the target is not a URL', () => {
+    it('runs an android target too, because gocrash drives a phone now', () => {
       useAppStore.setState({
         projects: [
           {
@@ -74,6 +74,25 @@ describe('useWorkspaceViewModel', () => {
             targets: [
               { id: 't1', kind: 'android', label: 'Android', value: '/tmp/app.apk' },
             ],
+          },
+        ],
+      });
+
+      const { result } = renderHook(() => useWorkspaceViewModel());
+
+      act(() => {
+        result.current.onRun();
+      });
+
+      expect(useWorkspaceStore.getState().workspaces[0]?.status).toBe('running');
+    });
+
+    it('says so instead of pretending when the target is an iOS build', () => {
+      useAppStore.setState({
+        projects: [
+          {
+            ...PROJECT,
+            targets: [{ id: 't1', kind: 'ios', label: 'iOS', value: '/tmp/App.app' }],
           },
         ],
       });

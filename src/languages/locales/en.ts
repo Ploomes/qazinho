@@ -101,8 +101,8 @@ export const en = {
     SKIPPED: 'skipped',
     ALL: 'all',
     NO_SHOT: 'This step has no screenshot.',
-    NOT_WEB_TARGET:
-      'gocrash only drives web targets today. Android and iOS are on the way; pick a URL target to run this plan.',
+    NO_IOS_TARGET:
+      'gocrash cannot drive an iOS simulator yet: tapping one needs XCUITest, which is not built. Pick a web or Android target.',
   },
   BUG: {
     EMPTY_TITLE: 'No bugs yet.',

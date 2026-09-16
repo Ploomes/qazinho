@@ -102,8 +102,8 @@ export const pt: typeof en = {
     SKIPPED: 'pulado',
     ALL: 'tudo',
     NO_SHOT: 'Este passo não tem screenshot.',
-    NOT_WEB_TARGET:
-      'O gocrash só dirige targets web hoje. Android e iOS estão a caminho; escolha um target de URL para rodar este plano.',
+    NO_IOS_TARGET:
+      'O gocrash ainda não dirige um simulador de iOS: tocar nele precisa de XCUITest, que não está pronto. Escolha um target web ou Android.',
   },
   BUG: {
     EMPTY_TITLE: 'Nenhum bug ainda.',
