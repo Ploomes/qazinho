@@ -1,0 +1,44 @@
+// @vitest-environment jsdom
+import { renderHook } from '@testing-library/react';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { useAppViewModel } from '@/app/hooks/useAppViewModel';
+import { useAppStore } from '@/store';
+
+describe('useAppViewModel', () => {
+  beforeEach(() => {
+    useAppStore.setState({ theme: 'dark', screen: 'welcome', projects: [] });
+  });
+
+  it('opens on the welcome screen while there is nothing to test', () => {
+    const { result } = renderHook(() => useAppViewModel());
+
+    expect(result.current.isWelcome).toBe(true);
+  });
+
+  it('writes the theme on the document, because the tokens hang off it', () => {
+    useAppStore.setState({ theme: 'light' });
+
+    renderHook(() => useAppViewModel());
+
+    expect(document.documentElement.dataset.theme).toBe('light');
+  });
+
+  it('is not the welcome screen once a workspace is open', () => {
+    useAppStore.setState({
+      screen: 'workspace',
+      projects: [{ id: 'p1', name: 'Shop · staging', targets: [] }],
+    });
+
+    const { result } = renderHook(() => useAppViewModel());
+
+    expect(result.current.isWelcome).toBe(false);
+  });
+
+  it('keeps the welcome screen while there is no project, whatever the screen says', () => {
+    useAppStore.setState({ screen: 'workspace', projects: [] });
+
+    const { result } = renderHook(() => useAppViewModel());
+
+    expect(result.current.isWelcome).toBe(true);
+  });
+});
