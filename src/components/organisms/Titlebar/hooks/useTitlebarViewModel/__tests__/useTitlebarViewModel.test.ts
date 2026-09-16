@@ -3,7 +3,8 @@ import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useTitlebarViewModel } from '@/components/organisms/Titlebar/hooks/useTitlebarViewModel';
 import { sample } from '@/modules/Resources/library/__tests__/fixtures';
-import { useAppStore, useMachineStore } from '@/store';
+import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import { useAppStore, useMachineStore, useWorkspaceStore } from '@/store';
 
 beforeEach(() => {
   useAppStore.setState({
@@ -104,6 +105,48 @@ describe('useTitlebarViewModel', () => {
       const { result } = renderHook(() => useTitlebarViewModel());
 
       expect(result.current.sessionTip.rows.map(({ id }) => id)).toEqual(['session']);
+    });
+  });
+
+  describe('contextShare', () => {
+    beforeEach(() => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          { ...makeWorkspace(), id: 'w1', context: { tokens: 50_000, window: 200_000 } },
+          { ...makeWorkspace(), id: 'w2', context: { tokens: 150_000, window: 200_000 } },
+          { ...makeWorkspace(), id: 'w3', context: null },
+        ],
+      });
+    });
+
+    it('follows the workspace that is open', () => {
+      useAppStore.setState({ screen: 'workspace', selectedWorkspaceId: 'w1' });
+
+      expect(renderHook(() => useTitlebarViewModel()).result.current.contextShare).toBe(
+        0.75,
+      );
+
+      useAppStore.setState({ selectedWorkspaceId: 'w2' });
+
+      expect(renderHook(() => useTitlebarViewModel()).result.current.contextShare).toBe(
+        0.25,
+      );
+    });
+
+    it('does NOT show a ring for a workspace the agent has not answered yet', () => {
+      useAppStore.setState({ screen: 'workspace', selectedWorkspaceId: 'w3' });
+
+      expect(
+        renderHook(() => useTitlebarViewModel()).result.current.contextShare,
+      ).toBeNull();
+    });
+
+    it('shows no ring away from a workspace', () => {
+      useAppStore.setState({ screen: 'settings', selectedWorkspaceId: 'w1' });
+
+      expect(
+        renderHook(() => useTitlebarViewModel()).result.current.contextShare,
+      ).toBeNull();
     });
   });
 });

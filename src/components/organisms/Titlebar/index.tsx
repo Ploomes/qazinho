@@ -17,6 +17,8 @@ export const Titlebar: React.FC = () => {
     ramLabel,
     processLabel,
     agentLabel,
+    contextShare,
+    contextLabel,
     sessionLeft,
     sessionLabel,
     sessionTip,
@@ -69,6 +71,7 @@ export const Titlebar: React.FC = () => {
           aria-haspopup="menu"
           onClick={onToggleModelMenu}
         >
+          {contextShare !== null && <Gauge value={contextShare} label={contextLabel} />}
           <span>{agentLabel}</span>
           <span aria-hidden="true">▾</span>
         </button>
