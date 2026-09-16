@@ -1,5 +1,5 @@
-import { draftPlan } from '@/modules/Workspace/library';
 import { describe, expect, it } from 'vitest';
+import { draftPlan } from '@/modules/Workspace/library';
 
 describe('draftPlan', () => {
   it('numbers the cases from TC-01, the way the plan editor shows them', () => {

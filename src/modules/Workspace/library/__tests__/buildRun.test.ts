@@ -1,6 +1,6 @@
 import type { StepVerdict } from '@/modules/Run/types';
-import { buildRun, startRun } from '@/modules/Workspace/library';
 import { describe, expect, it } from 'vitest';
+import { buildRun, startRun } from '@/modules/Workspace/library';
 import { makeWorkspace } from './fixtures';
 
 const VERDICTS: StepVerdict[] = [

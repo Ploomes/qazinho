@@ -1,7 +1,7 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
+import { describe, expect, it } from 'vitest';
 import { RUN_ENGINE } from '@/modules/Run/constants';
 import { advanceRun, startRun } from '@/modules/Workspace/library';
-import { describe, expect, it } from 'vitest';
 import { makeWorkspace } from './fixtures';
 
 function tick(workspace: IWorkspace, times: number): IWorkspace {
