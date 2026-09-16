@@ -7,6 +7,7 @@ worlds. **`src/` is the app**; the Electron plumbing stays out of the way.
 src/
 ├── main/        ← Node + Electron: the window, the filesystem, child processes
 ├── types/       ← contracts every side agrees on; imports none of them
+├── ipc/         ← the channel names, the one value main and the preload share
 ├── components/  ← atoms, molecules, organisms, templates (components.md)
 ├── modules/     ← screens, grouped by domain
 ├── hooks/  store/  services/  styles/
@@ -17,12 +18,13 @@ electron/
 
 Everything under `src/` that is not `src/main/` is **the page**: React, no Node.
 
-| Folder             | Runs in             | May import                           |
-| ------------------ | ------------------- | ------------------------------------ |
-| `src/main`         | Node                | `electron`, Node builtins, `@/types` |
-| `electron/preload` | a sandboxed preload | `electron`, `@/types`                |
-| the page           | the page            | `@/types` and the rest of the page   |
-| `src/types`        | all of the above    | nothing                              |
+| Folder             | Runs in             | May import                                    |
+| ------------------ | ------------------- | --------------------------------------------- |
+| `src/main`         | Node                | `electron`, Node builtins, `@/types`, `@/ipc` |
+| `electron/preload` | a sandboxed preload | `electron`, `@/types`, `@/ipc`                |
+| the page           | the page            | `@/types` and the rest of the page            |
+| `src/types`        | all of the above    | nothing                                       |
+| `src/ipc`          | main and preload    | nothing                                       |
 
 ## The boundary is enforced, not agreed
 
@@ -45,6 +47,9 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
 
 - The contract is `IGocrashApi` in `src/types/`. The preload implements it, and the page reads it
   from `window.gocrash`, typed in `src/global.d.ts`.
+- **The channel names live in `src/ipc/`**, and only main and the preload read them. A string
+  written twice is a call that never answers and never errors. The page never sees a channel: it
+  goes through `src/services/`.
 - **Expose functions with a purpose, never `ipcRenderer` itself.** A page that can send any
   channel is a page with Node.
 - Structured clone carries no functions and no class instances. What crosses is data.
