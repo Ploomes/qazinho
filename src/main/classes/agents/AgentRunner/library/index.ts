@@ -1,4 +1,5 @@
 export * from './buildAskArgs';
+export * from './killTree';
 export * from './readAgentLine';
 export * from './toStructured';
 export * from './toText';
