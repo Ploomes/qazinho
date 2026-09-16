@@ -1,8 +1,9 @@
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { STATUS } from '@/components/atoms/StatusPill/constants';
 import { MOTION } from '@/constants';
-import { RUN_FILTERS, RUN_VERDICTS } from '@/modules/Run/constants';
-import { caseVerdict, filterCases } from '@/modules/Run/library';
+import { RUN_FILTERS, RUN_PAGE_SIZE, RUN_VERDICTS } from '@/modules/Run/constants';
+import { caseVerdict, filterCases, pageOf } from '@/modules/Run/library';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useRunsViewModel = () => {
@@ -16,13 +17,16 @@ export const useRunsViewModel = () => {
   const openMedia = useAppStore((state) => state.openMedia);
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
+  const [page, setPage] = useState(0);
+  const reportRef = useRef<HTMLDivElement>(null);
 
   const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
   const runs = workspace?.runs ?? [];
   const bugs = workspace?.bugs ?? [];
   const run = runs.find(({ id }) => id === selectedRunId) ?? runs[0] ?? null;
 
-  // A run saved before caseVerdict existed carries a case verdict its steps contradict.
+  const paged = pageOf({ items: runs, page, size: RUN_PAGE_SIZE });
+
   const judged = (run?.cases ?? []).map((runCase) => ({
     ...runCase,
     verdict: caseVerdict(runCase.steps),
@@ -48,11 +52,18 @@ export const useRunsViewModel = () => {
   };
 
   return {
-    runs: runs.map((item) => ({
+    runs: paged.items.map((item) => ({
       ...item,
       isSelected: item.id === run?.id,
     })),
     run,
+    reportRef,
+    pager: {
+      isShown: paged.pageCount > 1,
+      label: t('RUN.PAGE', { from: paged.from, to: paged.to, total: runs.length }),
+      canGoBack: paged.page > 0,
+      canGoOn: paged.page < paged.pageCount - 1,
+    },
     counts: RUN_VERDICTS.map((status, index) => ({
       status,
       glyph: STATUS[status].glyph,
@@ -87,7 +98,17 @@ export const useRunsViewModel = () => {
       }),
     })),
     isEmpty: runs.length === 0,
-    onSelectRun: selectRun,
+    onSelectRun: (runId: string) => {
+      selectRun(runId);
+      setRunFilter('all');
+      reportRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    },
+    onPreviousPage: () => {
+      setPage(paged.page - 1);
+    },
+    onNextPage: () => {
+      setPage(paged.page + 1);
+    },
     onFilter: setRunFilter,
     onOpenBug,
     onOpenShot,

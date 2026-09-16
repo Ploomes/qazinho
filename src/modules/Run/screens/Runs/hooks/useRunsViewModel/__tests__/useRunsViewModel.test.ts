@@ -122,4 +122,74 @@ describe('useRunsViewModel', () => {
       expect(useWorkspaceStore.getState().openBugId).toBe('BUG-01');
     });
   });
+
+  describe('onSelectRun', () => {
+    it('opens the run it was given, with every case back in view', () => {
+      const workspace = finishedWorkspace();
+      const [first] = workspace.runs;
+      const runs = [{ ...first!, id: 'r-02' }, first!];
+
+      useWorkspaceStore.setState({
+        workspaces: [{ ...workspace, runs }],
+        runFilter: 'failed',
+      });
+
+      const { result } = renderHook(() => useRunsViewModel());
+
+      act(() => {
+        result.current.onSelectRun('r-01');
+      });
+
+      expect(result.current.run?.id).toBe('r-01');
+      expect(result.current.filter).toBe('all');
+    });
+  });
+
+  describe('onNextPage', () => {
+    function manyRuns(count: number) {
+      const workspace = finishedWorkspace();
+      const [first] = workspace.runs;
+      const runs = Array.from({ length: count }, (_, index) => ({
+        ...first!,
+        id: `r-${String(count - index).padStart(2, '0')}`,
+      }));
+
+      useWorkspaceStore.setState({ workspaces: [{ ...workspace, runs }] });
+    }
+
+    it('pages the history five runs at a time, newest first', () => {
+      manyRuns(12);
+
+      const { result } = renderHook(() => useRunsViewModel());
+
+      expect(result.current.runs.map(({ id }) => id)).toEqual([
+        'r-12',
+        'r-11',
+        'r-10',
+        'r-09',
+        'r-08',
+      ]);
+      expect(result.current.pager).toMatchObject({
+        isShown: true,
+        label: '1–5 of 12 runs',
+        canGoBack: false,
+        canGoOn: true,
+      });
+
+      act(() => {
+        result.current.onNextPage();
+      });
+
+      expect(result.current.runs[0]?.id).toBe('r-07');
+      expect(result.current.pager.canGoBack).toBe(true);
+    });
+
+    it('does NOT show a pager while every run fits on one page', () => {
+      manyRuns(3);
+
+      const { result } = renderHook(() => useRunsViewModel());
+
+      expect(result.current.pager.isShown).toBe(false);
+    });
+  });
 });
