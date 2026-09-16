@@ -16,6 +16,8 @@ export const en = {
     PROCESSES_OTHER: '{{count}} processes',
     AGENT: '{{agent}} · {{model}}',
     CONTEXT_LEFT: '{{agent}} · {{model}} · {{percent}} % context left',
+    SESSION_LEFT: '{{percent}}% session · resets {{resets}}',
+    SESSION_TITLE: 'Five-hour session window. This week: {{week}}% left.',
   },
   SIDEBAR: {
     NEW_WORKSPACE: 'New workspace here',

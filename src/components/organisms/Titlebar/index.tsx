@@ -1,5 +1,5 @@
 import { AnimatePresence } from 'motion/react';
-import { Logo, Meter } from '@/components/atoms';
+import { Gauge, Logo, Meter } from '@/components/atoms';
 import { ModelPopover } from '@/components/organisms/ModelPopover';
 import { ResourcePopover } from '@/components/organisms/ResourcePopover';
 import { useTitlebarViewModel } from './hooks';
@@ -17,6 +17,9 @@ export const Titlebar: React.FC = () => {
     ramLabel,
     processLabel,
     agentLabel,
+    sessionLeft,
+    sessionLabel,
+    sessionTitle,
     onToggleResources,
     onToggleModelMenu,
   } = useTitlebarViewModel();
@@ -48,6 +51,13 @@ export const Titlebar: React.FC = () => {
           <span aria-hidden="true">·</span>
           <span>{processLabel}</span>
         </button>
+
+        {sessionLeft !== null && (
+          <span className="titlebar__session" title={sessionTitle}>
+            <Gauge value={sessionLeft} label={sessionLabel ?? ''} />
+            <span>{sessionLabel}</span>
+          </span>
+        )}
 
         <button
           type="button"

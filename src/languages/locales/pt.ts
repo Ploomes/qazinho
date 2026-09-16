@@ -18,6 +18,8 @@ export const pt: typeof en = {
     PROCESSES_OTHER: '{{count}} processos',
     AGENT: '{{agent}} · {{model}}',
     CONTEXT_LEFT: '{{agent}} · {{model}} · {{percent}} % de contexto',
+    SESSION_LEFT: '{{percent}}% da sessão · reseta {{resets}}',
+    SESSION_TITLE: 'Janela de cinco horas. Nesta semana: {{week}}% restante.',
   },
   SIDEBAR: {
     NEW_WORKSPACE: 'Novo workspace aqui',
