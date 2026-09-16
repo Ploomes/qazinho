@@ -1,10 +1,13 @@
 import type { IComposerProps } from '@/modules/Chat/screens/Chat/components/Composer/types';
 import type { KeyboardEvent } from 'react';
 import { useCallback } from 'react';
+import { useAppStore } from '@/store';
 
 export const useComposerViewModel = (props: IComposerProps) => {
   const { value, onSend } = props;
   const canSend = value.trim().length > 0;
+  const modelMenuAt = useAppStore((state) => state.modelMenuAt);
+  const toggleModelMenu = useAppStore((state) => state.toggleModelMenu);
 
   const onSendClick = useCallback(() => {
     if (canSend) onSend();
@@ -20,5 +23,13 @@ export const useComposerViewModel = (props: IComposerProps) => {
     [onSendClick],
   );
 
-  return { canSend, onSendClick, onKeyDown };
+  return {
+    canSend,
+    isModelMenuOpen: modelMenuAt === 'composer',
+    onSendClick,
+    onKeyDown,
+    onAgentClick: () => {
+      toggleModelMenu('composer');
+    },
+  };
 };

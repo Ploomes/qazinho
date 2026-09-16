@@ -9,6 +9,10 @@
   gap: var(--space-3);
 }
 
+.composer__agent {
+  position: relative;
+}
+
 .composer__field {
   display: flex;
   align-items: center;
