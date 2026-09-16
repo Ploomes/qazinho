@@ -2,16 +2,18 @@ import type { IResourceCollector } from './types';
 import type { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import type { IProcessRow } from '@/main/types';
 import type { IProcessSample, IResourceSnapshot } from '@/types';
-import { totalmem } from 'node:os';
+import { availableParallelism, totalmem } from 'node:os';
 import { collectSubtree } from '@/main/library';
 import { BYTES_IN_GB } from './constants';
-import { sweepProcesses, toSample, workspaceOfProfile } from './library';
+import { cpuPercent, sweepProcesses, toSample, workspaceOfProfile } from './library';
 
 /** What gocrash costs this machine: the app itself, plus everything it started. */
 export class ResourceCollector {
   private readonly owners: ProcessOwners;
   private readonly profileRoot: string;
   private inflight: Promise<IResourceSnapshot> | null = null;
+  private cpuSecondsBefore = new Map<number, number>();
+  private sweptAt = 0;
 
   public constructor(props: IResourceCollector) {
     this.owners = props.owners;
@@ -28,11 +30,30 @@ export class ResourceCollector {
   }
 
   private async collect(): Promise<IResourceSnapshot> {
-    const rows = await sweepProcesses();
+    // The sweep's own ps is a child of this process, and not something gocrash is running.
+    const rows = (await sweepProcesses()).filter(
+      (row) => !(row.parentPid === process.pid && row.name === 'ps'),
+    );
+    const now = Date.now();
+    const elapsedMs = this.sweptAt === 0 ? 0 : now - this.sweptAt;
+    const cores = availableParallelism();
     const mine = rows.filter((row) => row.pid === process.pid);
     const processes = [...mine, ...collectSubtree({ rows, rootPid: process.pid })].map(
-      (row) => this.charge({ row, rows }),
+      (row) =>
+        this.charge({
+          row,
+          rows,
+          cpu: cpuPercent({
+            before: this.cpuSecondsBefore.get(row.pid),
+            after: row.cpuSeconds,
+            elapsedMs,
+            cores,
+          }),
+        }),
     );
+
+    this.cpuSecondsBefore = new Map(rows.map((row) => [row.pid, row.cpuSeconds]));
+    this.sweptAt = now;
 
     return {
       cpu: Math.round(processes.reduce((total, one) => total + one.cpu, 0) * 10) / 10,
@@ -42,15 +63,19 @@ export class ResourceCollector {
     };
   }
 
-  private charge(props: { row: IProcessRow; rows: IProcessRow[] }): IProcessSample {
-    const { row, rows } = props;
+  private charge(props: {
+    row: IProcessRow;
+    rows: IProcessRow[];
+    cpu: number;
+  }): IProcessSample {
+    const { row, rows, cpu } = props;
 
     for (const [pid, claim] of this.owners.all()) {
       const owned =
         row.pid === pid ||
         collectSubtree({ rows, rootPid: pid }).some((kid) => kid.pid === row.pid);
 
-      if (owned) return toSample({ row, ...claim });
+      if (owned) return toSample({ row, cpu, ...claim });
     }
 
     const workspaceId = workspaceOfProfile({
@@ -59,7 +84,7 @@ export class ResourceCollector {
     });
 
     return workspaceId === null
-      ? toSample({ row, kind: 'app', workspaceId: null })
-      : toSample({ row, kind: 'device', workspaceId });
+      ? toSample({ row, cpu, kind: 'app', workspaceId: null })
+      : toSample({ row, cpu, kind: 'device', workspaceId });
   }
 }

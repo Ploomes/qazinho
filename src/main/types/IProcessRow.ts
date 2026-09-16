@@ -2,7 +2,7 @@
 export interface IProcessRow {
   pid: number;
   parentPid: number;
-  cpu: number;
+  cpuSeconds: number;
   ramMb: number;
   name: string;
   command: string;

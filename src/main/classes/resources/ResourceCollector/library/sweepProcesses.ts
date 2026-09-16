@@ -12,7 +12,7 @@ export async function sweepProcesses(): Promise<IProcessRow[]> {
   if (process.platform === 'win32') return [];
 
   try {
-    const { stdout } = await run('ps', ['-axo', 'pid=,ppid=,pcpu=,rss=,args='], {
+    const { stdout } = await run('ps', ['-axo', 'pid=,ppid=,time=,rss=,args='], {
       timeout: TIMEOUT_MS,
       maxBuffer: MAX_BUFFER,
     });

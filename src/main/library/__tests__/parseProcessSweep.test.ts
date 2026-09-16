@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { parseProcessSweep } from '@/main/library';
 
 const SWEEP = [
-  '  501     1   0.0  12480 /sbin/launchd',
-  ' 1234   501  12.5 189320 /Applications/gocrash.app/Contents/MacOS/gocrash',
-  ' 1240  1234   4.0  43008 claude --print --model sonnet',
+  '  501     1   21:05.80  12480 /sbin/launchd',
+  ' 1234   501   0:12.50 189320 /Applications/gocrash.app/Contents/MacOS/gocrash',
+  ' 1240  1234   0:04.00  43008 claude --print --model sonnet',
 ].join('\n');
 
 describe('parseProcessSweep', () => {
@@ -14,7 +14,7 @@ describe('parseProcessSweep', () => {
     expect(launchd).toEqual({
       pid: 501,
       parentPid: 1,
-      cpu: 0,
+      cpuSeconds: 1265.8,
       ramMb: 12480 / 1024,
       name: '/sbin/launchd',
       command: '/sbin/launchd',
@@ -36,7 +36,7 @@ describe('parseProcessSweep', () => {
 
   it('a program path with spaces stays whole, flags and all', () => {
     const rows = parseProcessSweep(
-      '  1  0  0.0  1024 /Applications/Google Chrome.app/Contents/MacOS/Google Chrome --user-data-dir=/tmp/w1',
+      '  1  0  0:00.00  1024 /Applications/Google Chrome.app/Contents/MacOS/Google Chrome --user-data-dir=/tmp/w1',
     );
 
     expect(rows[0]?.name).toBe(
@@ -46,7 +46,7 @@ describe('parseProcessSweep', () => {
 
   it('a program with no flags is all name', () => {
     const rows = parseProcessSweep(
-      '  1  0  0.0  1024 /Applications/My App.app/Contents/MacOS/My App',
+      '  1  0  0:00.00  1024 /Applications/My App.app/Contents/MacOS/My App',
     );
 
     expect(rows[0]?.name).toBe('/Applications/My App.app/Contents/MacOS/My App');
