@@ -45,6 +45,10 @@
   font: var(--font-mono-xs);
 }
 
+.plan-case__reveal {
+  overflow: hidden;
+}
+
 .plan-case__body {
   display: flex;
   flex-direction: column;

@@ -1,8 +1,9 @@
 import type { IPlanCaseProps } from './types';
-import { Reorder } from 'motion/react';
+import { AnimatePresence, motion, Reorder } from 'motion/react';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EditableText, StatusPill } from '@/components/atoms';
+import { MOTION } from '@/constants';
 import { usePlanCaseViewModel } from './hooks';
 import './styles.css';
 
@@ -25,6 +26,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = (props) => {
     <Reorder.Item
       value={props.testCase}
       className="plan-case"
+      layout="position"
       dragListener={!props.isLocked}
       whileDrag={{ scale: 1.012, zIndex: 6 }}
     >
@@ -69,84 +71,95 @@ export const PlanCase: React.FC<IPlanCaseProps> = (props) => {
         )}
       </div>
 
-      {props.isOpen && (
-        <div className="plan-case__body">
-          <div className="plan-case__meta">
-            <div>
-              <span className="plan-case__label">{t('PLAN.GOAL')}</span>
-              <EditableText
-                value={props.testCase.goal}
-                placeholder={t('PLAN.GOAL_PLACEHOLDER')}
-                isLocked={props.isLocked}
-                onCommit={(goal) => {
-                  onFieldCommit({ goal });
-                }}
-              />
-            </div>
-            <div>
-              <span className="plan-case__label">{t('PLAN.BEFORE')}</span>
-              <EditableText
-                value={props.testCase.preconditions}
-                placeholder={t('PLAN.BEFORE_PLACEHOLDER')}
-                isLocked={props.isLocked}
-                onCommit={(preconditions) => {
-                  onFieldCommit({ preconditions });
-                }}
-              />
-            </div>
-          </div>
-
-          <div className="plan-case__steps">
-            <span className="plan-case__step-head">{t('PLAN.COLUMN_NUMBER')}</span>
-            <span className="plan-case__step-head">{t('PLAN.COLUMN_ACTION')}</span>
-            <span className="plan-case__step-head">{t('PLAN.COLUMN_EXPECTED')}</span>
-            <span className="plan-case__step-head" />
-
-            {steps.map((step) => (
-              <Fragment key={step.number}>
-                <span className="plan-case__step-number">{step.number}</span>
-                <EditableText
-                  value={step.action}
-                  placeholder={t('PLAN.ACTION_PLACEHOLDER')}
-                  isLocked={props.isLocked}
-                  onCommit={(action) => {
-                    onStepCommit({ index: step.number - 1, step: { action } });
-                  }}
-                />
-                <EditableText
-                  value={step.expected}
-                  placeholder={t('PLAN.EXPECTED_PLACEHOLDER')}
-                  isLocked={props.isLocked}
-                  onCommit={(expected) => {
-                    onStepCommit({ index: step.number - 1, step: { expected } });
-                  }}
-                />
-                {canRemoveStep ? (
-                  <button
-                    type="button"
-                    className="plan-case__remove"
-                    aria-label={t('PLAN.REMOVE_STEP', { number: step.number })}
-                    onClick={() => {
-                      onStepRemove(step.number - 1);
+      <AnimatePresence initial={false}>
+        {props.isOpen && (
+          <motion.div
+            key="body"
+            className="plan-case__reveal"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+          >
+            <div className="plan-case__body">
+              <div className="plan-case__meta">
+                <div>
+                  <span className="plan-case__label">{t('PLAN.GOAL')}</span>
+                  <EditableText
+                    value={props.testCase.goal}
+                    placeholder={t('PLAN.GOAL_PLACEHOLDER')}
+                    isLocked={props.isLocked}
+                    onCommit={(goal) => {
+                      onFieldCommit({ goal });
                     }}
-                  >
-                    ✕
-                  </button>
-                ) : (
-                  <span />
-                )}
-              </Fragment>
-            ))}
-          </div>
+                  />
+                </div>
+                <div>
+                  <span className="plan-case__label">{t('PLAN.BEFORE')}</span>
+                  <EditableText
+                    value={props.testCase.preconditions}
+                    placeholder={t('PLAN.BEFORE_PLACEHOLDER')}
+                    isLocked={props.isLocked}
+                    onCommit={(preconditions) => {
+                      onFieldCommit({ preconditions });
+                    }}
+                  />
+                </div>
+              </div>
 
-          {!props.isLocked && (
-            <button type="button" className="plan-case__add" onClick={onStepAdd}>
-              <span aria-hidden="true">+</span>
-              {t('PLAN.ADD_STEP')}
-            </button>
-          )}
-        </div>
-      )}
+              <div className="plan-case__steps">
+                <span className="plan-case__step-head">{t('PLAN.COLUMN_NUMBER')}</span>
+                <span className="plan-case__step-head">{t('PLAN.COLUMN_ACTION')}</span>
+                <span className="plan-case__step-head">{t('PLAN.COLUMN_EXPECTED')}</span>
+                <span className="plan-case__step-head" />
+
+                {steps.map((step) => (
+                  <Fragment key={step.number}>
+                    <span className="plan-case__step-number">{step.number}</span>
+                    <EditableText
+                      value={step.action}
+                      placeholder={t('PLAN.ACTION_PLACEHOLDER')}
+                      isLocked={props.isLocked}
+                      onCommit={(action) => {
+                        onStepCommit({ index: step.number - 1, step: { action } });
+                      }}
+                    />
+                    <EditableText
+                      value={step.expected}
+                      placeholder={t('PLAN.EXPECTED_PLACEHOLDER')}
+                      isLocked={props.isLocked}
+                      onCommit={(expected) => {
+                        onStepCommit({ index: step.number - 1, step: { expected } });
+                      }}
+                    />
+                    {canRemoveStep ? (
+                      <button
+                        type="button"
+                        className="plan-case__remove"
+                        aria-label={t('PLAN.REMOVE_STEP', { number: step.number })}
+                        onClick={() => {
+                          onStepRemove(step.number - 1);
+                        }}
+                      >
+                        ✕
+                      </button>
+                    ) : (
+                      <span />
+                    )}
+                  </Fragment>
+                ))}
+              </div>
+
+              {!props.isLocked && (
+                <button type="button" className="plan-case__add" onClick={onStepAdd}>
+                  <span aria-hidden="true">+</span>
+                  {t('PLAN.ADD_STEP')}
+                </button>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Reorder.Item>
   );
 };
