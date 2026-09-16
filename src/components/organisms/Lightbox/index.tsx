@@ -6,7 +6,7 @@ import { useLightboxViewModel } from './hooks';
 import './styles.css';
 
 export const Lightbox: React.FC = () => {
-  const { media, frameWidth, onClose } = useLightboxViewModel();
+  const { media, shot, frameWidth, onClose } = useLightboxViewModel();
   const { t } = useTranslation();
 
   if (media === null) return null;
@@ -42,10 +42,10 @@ export const Lightbox: React.FC = () => {
             media.isTall ? 'lightbox__frame lightbox__frame--tall' : 'lightbox__frame'
           }
         >
-          {media.src === null ? (
+          {shot === null ? (
             <p className="lightbox__missing">{t('RUN.NO_SHOT')}</p>
           ) : (
-            <img className="lightbox__shot" src={media.src} alt={media.title} />
+            <img className="lightbox__shot" src={shot} alt={media.title} />
           )}
         </div>
       </motion.div>

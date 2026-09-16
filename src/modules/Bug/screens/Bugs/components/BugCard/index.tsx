@@ -45,6 +45,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
                   key={shot.label}
                   label={shot.label}
                   src={shot.src}
+                  file={shot.file}
                   isBad={shot.isBad}
                   size="shot"
                   onOpen={() => {

@@ -4,8 +4,7 @@ import { useScreenshotViewModel } from './hooks';
 import './styles.css';
 
 export const Screenshot: React.FC<IScreenshotProps> = (props) => {
-  const { className, pitch, onScreenshotClick } = useScreenshotViewModel(props);
-  const src = props.src ?? null;
+  const { shot, className, pitch, onScreenshotClick } = useScreenshotViewModel(props);
 
   return (
     <button
@@ -14,10 +13,10 @@ export const Screenshot: React.FC<IScreenshotProps> = (props) => {
       aria-label={props.label}
       onClick={onScreenshotClick}
     >
-      {src === null ? (
+      {shot === null ? (
         <Stripes pitch={pitch} />
       ) : (
-        <img className="screenshot__shot" src={src} alt="" />
+        <img className="screenshot__shot" src={shot} alt="" />
       )}
     </button>
   );

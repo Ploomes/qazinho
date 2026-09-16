@@ -15,10 +15,14 @@ function shotsFor(props: {
     label: 'the step that broke',
     isBad: true,
     src: props.outcome.screenshot,
+    file: props.outcome.shotFile,
   };
 
   return before
-    ? [{ label: 'before', isBad: false, src: before.screenshot }, broke]
+    ? [
+        { label: 'before', isBad: false, src: before.screenshot, file: before.shotFile },
+        broke,
+      ]
     : [broke];
 }
 

@@ -8,7 +8,8 @@ const SHOT = {
   kicker: 'run r-01',
   title: 'the step that broke',
   isTall: false,
-  src: null,
+  src: 'data:image/jpeg;base64,shot',
+  file: null,
 };
 
 beforeEach(() => {
@@ -27,7 +28,7 @@ describe('useLightboxViewModel', () => {
 
     expect(wide.result.current.frameWidth).toBe(560);
 
-    useAppStore.setState({ media: { ...SHOT, isTall: true, src: null } });
+    useAppStore.setState({ media: { ...SHOT, isTall: true, src: null, file: null } });
 
     const tall = renderHook(() => useLightboxViewModel());
 

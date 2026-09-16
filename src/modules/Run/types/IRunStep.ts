@@ -8,4 +8,5 @@ export interface IRunStep {
   why: string | null;
   bugId: string | null;
   shot: string | null;
+  shotFile: string | null;
 }

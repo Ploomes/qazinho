@@ -16,6 +16,7 @@ const CASES: IRunCase[] = [
         why: null,
         bugId: null,
         shot: null,
+        shotFile: null,
       },
       {
         number: 2,
@@ -24,6 +25,7 @@ const CASES: IRunCase[] = [
         why: null,
         bugId: null,
         shot: null,
+        shotFile: null,
       },
     ],
   },
@@ -40,6 +42,7 @@ const CASES: IRunCase[] = [
         why: null,
         bugId: null,
         shot: null,
+        shotFile: null,
       },
       {
         number: 2,
@@ -48,6 +51,7 @@ const CASES: IRunCase[] = [
         why: null,
         bugId: 'BUG-01',
         shot: null,
+        shotFile: null,
       },
     ],
   },

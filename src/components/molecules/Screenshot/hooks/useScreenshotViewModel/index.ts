@@ -1,9 +1,12 @@
 import type { IScreenshotProps } from '@/components/molecules/Screenshot/types';
+import { useShot } from '@/hooks';
 
 export const useScreenshotViewModel = (props: IScreenshotProps) => {
   const { onOpen, isBad = false, size = 'thumb' } = props;
+  const shot = useShot({ src: props.src ?? null, file: props.file ?? null });
 
   return {
+    shot,
     className: ['screenshot', `screenshot--${size}`, isBad ? 'screenshot--bad' : '']
       .filter((part) => part.length > 0)
       .join(' '),

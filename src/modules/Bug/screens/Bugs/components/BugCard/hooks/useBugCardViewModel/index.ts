@@ -26,6 +26,7 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
         title: shot.label,
         isTall: false,
         src: shot.src,
+        file: shot.file,
       });
     },
   };

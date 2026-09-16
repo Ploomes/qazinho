@@ -116,10 +116,12 @@ export const Runs: React.FC = () => {
                 <Screenshot
                   label={`step ${String(step.number)}`}
                   src={step.shot}
+                  file={step.shotFile}
                   onOpen={() => {
                     onOpenShot({
                       label: `step ${String(step.number)}`,
                       src: step.shot,
+                      file: step.shotFile,
                     });
                   }}
                 />
