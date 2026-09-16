@@ -40,6 +40,16 @@
   color: var(--fail);
 }
 
+.button--danger-quiet {
+  border-color: transparent;
+  background: transparent;
+  color: var(--fail);
+}
+
+.button--danger-quiet:hover:not(:disabled) {
+  background: var(--fail-soft);
+}
+
 .button:disabled {
   border-color: transparent;
   background: var(--line);
