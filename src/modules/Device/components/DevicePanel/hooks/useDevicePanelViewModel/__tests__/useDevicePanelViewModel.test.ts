@@ -106,4 +106,34 @@ describe('useDevicePanelViewModel', () => {
       expect(useWorkspaceStore.getState().deviceWidth).toBe(DEVICE.minWidth);
     });
   });
+
+  describe('panelWidth', () => {
+    it('narrows to the rail when the panel is hidden, so the width can animate', () => {
+      useWorkspaceStore.setState({ isDevicePanelOpen: false });
+
+      const { result } = renderHook(() => useDevicePanelViewModel());
+
+      expect(result.current.panelWidth).toBe(DEVICE.railWidth);
+    });
+  });
+
+  describe('onResizeStart', () => {
+    it('follows the pointer with no easing while the handle is dragged', () => {
+      const { result } = renderHook(() => useDevicePanelViewModel());
+
+      expect(result.current.widthTransition.duration).toBeGreaterThan(0);
+
+      act(() => {
+        result.current.onResizeStart();
+      });
+
+      expect(result.current.widthTransition.duration).toBe(0);
+
+      act(() => {
+        result.current.onResizeEnd();
+      });
+
+      expect(result.current.widthTransition.duration).toBeGreaterThan(0);
+    });
+  });
 });
