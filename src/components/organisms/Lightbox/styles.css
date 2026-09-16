@@ -20,9 +20,31 @@
   box-shadow: var(--shadow-modal);
 }
 
+.lightbox__panel-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.lightbox__kicker {
+  flex: none;
+  color: var(--amber-ink);
+  font: 500 11px/1 var(--font-mono);
+}
+
 .lightbox__title {
+  min-width: 0;
+  overflow: hidden;
   color: var(--ink);
   font: var(--font-ui-md);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lightbox__close {
+  flex: none;
+  margin-left: auto;
 }
 
 .lightbox__frame {

@@ -1,6 +1,7 @@
 export const en = {
   COMMON: {
     CANCEL: 'Cancel',
+    CLOSE: 'Close',
     CONNECT: 'Connect',
     DISCONNECT: 'Disconnect',
     PAUSE: 'Pause',

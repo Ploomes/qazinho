@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Eyebrow, IconButton } from '@/components/atoms';
+import { IconButton } from '@/components/atoms';
 import { BACKDROP, MOTION } from '@/constants';
 import { useLightboxViewModel } from './hooks';
 import './styles.css';
@@ -31,9 +31,11 @@ export const Lightbox: React.FC = () => {
         }}
       >
         <header className="lightbox__panel-head">
-          <Eyebrow>{media.kicker}</Eyebrow>
+          <span className="lightbox__kicker">{media.kicker}</span>
           <span className="lightbox__title">{media.title}</span>
-          <IconButton glyph="✕" label="Close" size="sm" onClick={onClose} />
+          <span className="lightbox__close">
+            <IconButton glyph="✕" label={t('COMMON.CLOSE')} size="sm" onClick={onClose} />
+          </span>
         </header>
 
         <div

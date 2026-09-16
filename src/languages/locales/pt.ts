@@ -3,6 +3,7 @@ import type { en } from './en';
 export const pt: typeof en = {
   COMMON: {
     CANCEL: 'Cancelar',
+    CLOSE: 'Fechar',
     CONNECT: 'Conectar',
     DISCONNECT: 'Desconectar',
     PAUSE: 'Pausar',
