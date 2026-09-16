@@ -1,8 +1,8 @@
 import type { SettingsTab } from '@/modules/Settings/types';
-import { MACHINE } from '@/modules/Project/constants';
-import { AGENTS, MODELS } from '@/modules/Settings/constants';
+import { useTranslation } from 'react-i18next';
+import { MODELS } from '@/modules/Settings/constants';
 import { Platform } from '@/services';
-import { useAppStore, useSettingsStore } from '@/store';
+import { useAppStore, useMachineStore, useSettingsStore } from '@/store';
 
 const LANGUAGES = [
   { id: 'en' as const, label: 'English' },
@@ -19,7 +19,10 @@ const TABS: SettingsTab[] = [
 ];
 
 export const useSettingsViewModel = () => {
+  const { t } = useTranslation();
   const theme = useAppStore((state) => state.theme);
+  const detected = useMachineStore((state) => state.agents);
+  const tools = useMachineStore((state) => state.tools);
   const toggleTheme = useAppStore((state) => state.toggleTheme);
   const tab = useSettingsStore((state) => state.tab);
   const agent = useSettingsStore((state) => state.agent);
@@ -37,7 +40,7 @@ export const useSettingsViewModel = () => {
     tabs: TABS,
     tab,
     theme,
-    agents: AGENTS,
+    agents: detected,
     agent,
     models: MODELS[agent] ?? [],
     model,
@@ -45,8 +48,16 @@ export const useSettingsViewModel = () => {
     languages: LANGUAGES,
     keybinds,
     integrations,
-    androidSdk: MACHINE.androidSdk,
-    xcode: MACHINE.xcode,
+    androidSdk: {
+      path: tools.androidSdk.path ?? t('TOOLS.NOT_FOUND_PATH'),
+      note: tools.androidSdk.isFound
+        ? t('TOOLS.ANDROID_FOUND')
+        : t('TOOLS.ANDROID_MISSING'),
+    },
+    xcode: {
+      path: tools.xcode.path ?? t('TOOLS.NOT_FOUND_PATH'),
+      note: tools.xcode.isFound ? t('TOOLS.XCODE_FOUND') : t('TOOLS.XCODE_MISSING'),
+    },
     isMac: Platform.isMac(),
     onSelectTab: selectTab,
     onSelectAgent: selectAgent,

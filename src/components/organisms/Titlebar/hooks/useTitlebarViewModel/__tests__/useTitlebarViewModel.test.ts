@@ -2,9 +2,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useTitlebarViewModel } from '@/components/organisms/Titlebar/hooks/useTitlebarViewModel';
-import { startRun } from '@/modules/Workspace/library';
-import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useMachineStore } from '@/store';
 
 const STAGING = { id: 'p1', name: 'Shop · staging', targets: [] };
 const PRODUCTION = { id: 'p2', name: 'Shop · production', targets: [] };
@@ -16,7 +14,9 @@ beforeEach(() => {
     isResourcesOpen: false,
     isModelMenuOpen: false,
   });
-  useWorkspaceStore.setState({ workspaces: [] });
+  useMachineStore.setState({
+    resources: { cpu: 0, ramMb: 0, ramCeilingGb: 32, processes: [] },
+  });
 });
 
 describe('useTitlebarViewModel', () => {
@@ -50,16 +50,24 @@ describe('useTitlebarViewModel', () => {
     expect(result.current.processLabel).toBe('0 processes');
   });
 
-  it('counts the agent and the device of a running workspace', () => {
-    useAppStore.setState({ projects: [STAGING], selectedProjectId: 'p1' });
-    useWorkspaceStore.setState({
-      workspaces: [startRun({ workspace: makeWorkspace(), startedAt: '09:41' })],
+  it('reads what the machine reported, not a guess', () => {
+    useMachineStore.setState({
+      resources: {
+        cpu: 16,
+        ramMb: 2230,
+        ramCeilingGb: 64,
+        processes: [
+          { pid: 1, name: 'gocrash', cpu: 12, ramMb: 1800 },
+          { pid: 2, name: 'claude', cpu: 4, ramMb: 430 },
+        ],
+      },
     });
 
     const { result } = renderHook(() => useTitlebarViewModel());
 
     expect(result.current.processLabel).toBe('2 processes');
-    expect(result.current.ramLabel).toBe('RAM 2.2 / 32 GB');
+    expect(result.current.ramLabel).toBe('RAM 2.2 / 64 GB');
+    expect(result.current.cpuLabel).toBe('CPU 16%');
   });
 
   describe('onToggleResources', () => {

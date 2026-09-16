@@ -1,46 +1,41 @@
 // @vitest-environment jsdom
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useResourcePopoverViewModel } from '@/components/organisms/ResourcePopover/hooks/useResourcePopoverViewModel';
-import { startRun } from '@/modules/Workspace/library';
-import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { useMachineStore } from '@/store';
 
-const PROJECT = { id: 'p1', name: 'Shop · staging', targets: [] };
+const PROCESSES = [
+  { pid: 1240, name: 'claude', cpu: 4, ramMb: 430 },
+  { pid: 1300, name: 'Chromium', cpu: 12, ramMb: 1800 },
+];
 
 beforeEach(() => {
-  useAppStore.setState({ projects: [PROJECT], isResourcesOpen: true });
-  useWorkspaceStore.setState({
-    workspaces: [startRun({ workspace: makeWorkspace(), startedAt: '09:41' })],
+  useMachineStore.setState({
+    resources: { cpu: 16, ramMb: 2230, ramCeilingGb: 32, processes: PROCESSES },
   });
 });
 
 describe('useResourcePopoverViewModel', () => {
-  it('counts what is actually running, not what merely exists', () => {
+  it('counts what the machine is really running', () => {
     const { result } = renderHook(() => useResourcePopoverViewModel());
 
-    expect(result.current.processCount).toBe(2);
-    expect(result.current.header).toBe('1 running · 2.2 GB');
+    expect(result.current.header).toBe('2 running · 2.2 GB');
+  });
+
+  it('puts the heaviest process first, because that is the one to shut down', () => {
+    const { result } = renderHook(() => useResourcePopoverViewModel());
+
+    expect(result.current.processes[0]?.name).toBe('Chromium');
   });
 
   it('says so plainly when the machine is quiet', () => {
-    useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+    useMachineStore.setState({
+      resources: { cpu: 0, ramMb: 0, ramCeilingGb: 32, processes: [] },
+    });
 
     const { result } = renderHook(() => useResourcePopoverViewModel());
 
     expect(result.current.header).toBe('nothing running');
-    expect(result.current.nodes).toEqual([]);
-  });
-
-  describe('onShutDown', () => {
-    it('stops the run of the workspace whose device was shut down', () => {
-      const { result } = renderHook(() => useResourcePopoverViewModel());
-
-      act(() => {
-        result.current.onShutDown('w1-device');
-      });
-
-      expect(useWorkspaceStore.getState().workspaces[0]?.status).toBe('stopped');
-    });
+    expect(result.current.processes).toEqual([]);
   });
 });

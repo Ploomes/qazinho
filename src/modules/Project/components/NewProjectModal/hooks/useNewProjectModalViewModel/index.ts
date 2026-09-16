@@ -1,9 +1,8 @@
 import type { ITarget } from '@/modules/Project/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MACHINE } from '@/modules/Project/constants';
 import { Platform } from '@/services';
-import { useAppStore } from '@/store';
+import { useAppStore, useMachineStore } from '@/store';
 
 export const useNewProjectModalViewModel = () => {
   const { t } = useTranslation();
@@ -14,6 +13,7 @@ export const useNewProjectModalViewModel = () => {
 
   const addProject = useAppStore((state) => state.addProject);
   const closeModal = useAppStore((state) => state.closeModal);
+  const tools = useMachineStore((state) => state.tools);
 
   const isMac = Platform.isMac();
   const hasTarget = [url, apk, app].some((value) => value.trim().length > 0);
@@ -45,10 +45,15 @@ export const useNewProjectModalViewModel = () => {
     app,
     isMac,
     canCreate: name.trim().length > 0 && hasTarget,
-    androidNote: MACHINE.androidSdk.note,
-    xcodePath: MACHINE.xcode.path,
-    xcodeNote: isMac ? MACHINE.xcode.note : t('PROJECT.IOS_MAC_ONLY'),
-    isIosAvailable: isMac && MACHINE.xcode.isFound,
+    androidNote: tools.androidSdk.isFound
+      ? t('TOOLS.ANDROID_FOUND')
+      : t('TOOLS.ANDROID_MISSING'),
+    xcodeNote: isMac
+      ? tools.xcode.isFound
+        ? t('TOOLS.XCODE_FOUND')
+        : t('TOOLS.XCODE_MISSING')
+      : t('PROJECT.IOS_MAC_ONLY'),
+    isIosAvailable: isMac && tools.xcode.isFound,
     footerHint: isMac ? t('PROJECT.HINT_MAC') : t('PROJECT.HINT_OTHER'),
     onNameChange: setName,
     onUrlChange: setUrl,

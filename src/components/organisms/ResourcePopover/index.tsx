@@ -6,7 +6,7 @@ import { useResourcePopoverViewModel } from './hooks';
 import './styles.css';
 
 export const ResourcePopover: React.FC = () => {
-  const { nodes, header, onClose, onShutDown } = useResourcePopoverViewModel();
+  const { processes, header, onClose } = useResourcePopoverViewModel();
   const { t } = useTranslation();
 
   return (
@@ -32,29 +32,14 @@ export const ResourcePopover: React.FC = () => {
       </header>
 
       <div className="resource-popover__list">
-        {nodes.map((node) => (
-          <div key={node.id} className="resource-popover__row">
-            <span
-              className="resource-popover__name"
-              style={{ paddingLeft: 10 + node.level * 18 }}
-            >
-              {node.name}
+        {processes.map((process) => (
+          <div key={process.pid} className="resource-popover__row">
+            <span className="resource-popover__name">{process.name}</span>
+            <span className="resource-popover__number">{process.cpu}%</span>
+            <span className="resource-popover__number">
+              {(process.ramMb / 1024).toFixed(1)} GB
             </span>
-            <span className="resource-popover__number">{node.cpu}%</span>
-            <span className="resource-popover__number">{node.ramGb.toFixed(1)} GB</span>
-            {node.canShutDown ? (
-              <button
-                type="button"
-                className="resource-popover__kill"
-                onClick={() => {
-                  onShutDown(node.id);
-                }}
-              >
-                {t('RESOURCES.SHUT_DOWN')}
-              </button>
-            ) : (
-              <span />
-            )}
+            <span className="resource-popover__number">{process.pid}</span>
           </div>
         ))}
       </div>

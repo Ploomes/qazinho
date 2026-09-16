@@ -1,10 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import { AGENTS, MODELS } from '@/modules/Settings/constants';
-import { useAppStore, useSettingsStore } from '@/store';
+import { MODELS } from '@/modules/Settings/constants';
+import { useAppStore, useMachineStore, useSettingsStore } from '@/store';
 
 export const useModelPopoverViewModel = () => {
   const { t } = useTranslation();
   const toggleModelMenu = useAppStore((state) => state.toggleModelMenu);
+  const detected = useMachineStore((state) => state.agents);
   const agent = useSettingsStore((state) => state.agent);
   const model = useSettingsStore((state) => state.model);
   const selectAgent = useSettingsStore((state) => state.selectAgent);
@@ -12,8 +13,17 @@ export const useModelPopoverViewModel = () => {
 
   const models = MODELS[agent] ?? [];
 
+  const agents = detected.map((one) => ({
+    ...one,
+    note: one.isFound
+      ? one.name === agent
+        ? t('MODEL.DEFAULT')
+        : t('MODEL.FOUND')
+      : t('MODEL.NOT_FOUND'),
+  }));
+
   return {
-    agents: AGENTS,
+    agents,
     agent,
     models,
     model,

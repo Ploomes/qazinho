@@ -2,10 +2,11 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { useNewProjectModalViewModel } from '@/modules/Project/components/NewProjectModal/hooks/useNewProjectModalViewModel';
+import { fakeGocrashApi } from '@/services/__tests__/fixtures';
 import { useAppStore } from '@/store';
 
 beforeEach(() => {
-  window.gocrash = { platform: 'darwin' };
+  window.gocrash = fakeGocrashApi('darwin');
   useAppStore.setState({ projects: [], modal: 'project' });
 });
 
@@ -58,7 +59,7 @@ describe('useNewProjectModalViewModel', () => {
   });
 
   it('says iOS is macOS only anywhere else', () => {
-    window.gocrash = { platform: 'win32' };
+    window.gocrash = fakeGocrashApi('win32');
 
     const { result } = renderHook(() => useNewProjectModalViewModel());
 
