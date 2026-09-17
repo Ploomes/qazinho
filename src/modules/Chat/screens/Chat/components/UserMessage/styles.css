@@ -4,3 +4,11 @@
   font: 400 14px/1.6 var(--font-ui);
   text-wrap: pretty;
 }
+
+.user-message__mention {
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-xs);
+  background: var(--amber-soft);
+  color: var(--amber-ink);
+  font: var(--font-mono-md);
+}
