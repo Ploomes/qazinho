@@ -33,4 +33,25 @@ describe('appendUserMessage', () => {
 
     expect(workspace.chat[0]).toMatchObject({ text: 'hello' });
   });
+
+  it('keeps the mentions it carried, so they stand out when the chat is read again', () => {
+    const workspace = appendUserMessage({
+      workspace: makeWorkspace(),
+      text: 'What happened in @r-02?',
+      at: '19:54',
+      mentions: ['r-02'],
+    });
+
+    expect(workspace.chat[0]).toMatchObject({ mentions: ['r-02'] });
+  });
+
+  it('does NOT write an empty mention list on a plain message', () => {
+    const workspace = appendUserMessage({
+      workspace: makeWorkspace(),
+      text: 'hello',
+      at: '19:54',
+    });
+
+    expect(workspace.chat[0]).not.toHaveProperty('mentions');
+  });
 });

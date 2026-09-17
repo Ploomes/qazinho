@@ -52,7 +52,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   setLiveText: (liveText) => set({ liveText }),
 
-  sendMessage: ({ workspaceId, text }) =>
+  sendMessage: ({ workspaceId, text, mentions }) =>
     set((state) => ({
       isAgentTyping: true,
       liveText: '',
@@ -60,7 +60,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         workspaces: state.workspaces,
         workspaceId,
         change: (workspace) =>
-          appendUserMessage({ workspace, text, at: formatClock(new Date()) }),
+          appendUserMessage({ workspace, text, mentions, at: formatClock(new Date()) }),
       }),
     })),
 

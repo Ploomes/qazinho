@@ -149,6 +149,29 @@ describe('useChatViewModel', () => {
       expect(useWorkspaceStore.getState().workspaces[0]?.plan).toHaveLength(2);
     });
 
+    it('hands the agent what the QA mentioned, and keeps the mention on the message', async () => {
+      const ask = answering({ text: JSON.stringify({ reply: 'It checks out.' }) });
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onDraftChange('what does @TC-01 prove? and @TC-09?');
+      });
+      act(() => {
+        result.current.onSend();
+      });
+
+      await waitFor(() => {
+        expect(ask).toHaveBeenCalledOnce();
+      });
+      expect(ask.mock.calls[0]?.[0].references.map(({ id }) => id)).toEqual(['TC-01']);
+      expect(useWorkspaceStore.getState().workspaces[0]?.chat[0]).toMatchObject({
+        kind: 'user',
+        mentions: ['TC-01'],
+      });
+    });
+
     it('shows a gocrash error when the agent breaks, never a verdict', async () => {
       answering({ isError: true, text: 'claude: command not found' });
       const { result } = renderHook(() => useChatViewModel());

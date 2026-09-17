@@ -3,4 +3,5 @@ export interface IUserMessage {
   kind: 'user';
   at: string;
   text: string;
+  mentions?: string[];
 }

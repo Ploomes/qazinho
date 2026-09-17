@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { parseChatAnswer } from '@/modules/Chat/library';
+import { mentionsIn, parseChatAnswer, referencesOf } from '@/modules/Chat/library';
 import { CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { flattenPlanSteps } from '@/modules/Run/library';
@@ -47,8 +47,9 @@ export const useChatViewModel = () => {
     if (!workspace || text.trim().length === 0) return;
 
     const workspaceId = workspace.id;
+    const references = mentionsIn({ text, references: referencesOf(workspace) });
 
-    sendMessage({ workspaceId, text });
+    sendMessage({ workspaceId, text, mentions: references.map(({ id }) => id) });
     setDraft('');
 
     void Agent.ask({
@@ -59,7 +60,7 @@ export const useChatViewModel = () => {
       text,
       target: target === null ? null : { kind: target.kind, value: target.value },
       steps: flattenPlanSteps(workspace.plan),
-      references: [],
+      references,
     }).then((turn) => {
       if (turn.isError) {
         landAgentError({ workspaceId, text: turn.text });
