@@ -75,8 +75,22 @@ afterAll(async () => {
 });
 
 describe('the built page, with no bridge behind it', () => {
-  it('opens on the welcome screen', async () => {
+  it('opens on the first-run setup, and walks it without a bridge', async () => {
     expect(await page.locator('.titlebar').count()).toBe(1);
+    expect(await page.locator('body').innerText()).toContain('Set up gocrash');
+
+    for (const name of [
+      'Let’s start',
+      'Continue without an agent',
+      'Continue',
+      'Skip for now',
+    ])
+      await page.getByRole('button', { name, exact: true }).click();
+
+    await page.getByRole('button', { name: 'Open gocrash' }).click();
+  });
+
+  it('lands on the welcome screen once the setup is done', async () => {
     expect(await page.locator('body').innerText()).toContain('No projects yet.');
   });
 
@@ -154,10 +168,10 @@ describe('the built page, with no bridge behind it', () => {
   it('picks another model, and the titlebar says so', async () => {
     await openModelMenu();
 
-    await page.locator('.model-popover__row', { hasText: 'Opus' }).click();
+    await page.locator('.model-popover__row', { hasText: /^Opus/ }).click();
     await page.waitForTimeout(200);
 
-    expect(await page.locator('.titlebar').innerText()).toContain('opus');
+    expect(await page.locator('.titlebar').innerText()).toContain('· Opus');
   });
 
   // Electron swallows a click in a drag region; plain Chrome does not, so only this can catch it.

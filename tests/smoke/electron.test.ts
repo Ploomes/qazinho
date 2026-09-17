@@ -40,6 +40,8 @@ beforeAll(async () => {
   page.on('pageerror', (reason) => said.push(reason.message));
 
   await page.waitForSelector('.titlebar');
+  // A fresh data directory is a first run: past the setup is the app these tests look at.
+  await page.locator('.onboarding__skip').click();
 }, 120_000);
 
 afterAll(async () => {
@@ -75,10 +77,10 @@ describe('the real window', () => {
     await page.waitForTimeout(300);
     expect(await page.locator('.model-popover').count()).toBe(1);
 
-    await page.locator('.model-popover__row', { hasText: 'Opus' }).click();
+    await page.locator('.model-popover__row', { hasText: /^Opus/ }).click();
     await page.waitForTimeout(300);
 
-    expect(await page.locator('.titlebar').innerText()).toContain('opus');
+    expect(await page.locator('.titlebar').innerText()).toContain('· Opus');
   });
 
   it('opens the OS file picker from the android field', async () => {
