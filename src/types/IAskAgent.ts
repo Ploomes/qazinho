@@ -1,9 +1,13 @@
-/** What the page asks of an agent: a prompt, on a model, continuing a session or starting one. */
+import type { IFlatStep } from './IFlatStep';
+import type { ITargetUnderTest } from './ITargetUnderTest';
+
+/** What the page asks in the chat: the QA's own words, and the workspace they are about. */
 export interface IAskAgent {
   workspaceId: string;
   agentId: string;
-  prompt: string;
   model: string;
   sessionId: string | null;
-  schema?: string;
+  text: string;
+  target: ITargetUnderTest | null;
+  steps: IFlatStep[];
 }

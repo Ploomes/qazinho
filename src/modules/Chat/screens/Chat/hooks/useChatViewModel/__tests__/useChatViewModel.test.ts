@@ -19,16 +19,19 @@ const PROJECT = {
 };
 
 const DRAFTED = JSON.stringify({
-  summary: 'Two cases over the checkout.',
-  cases: [
-    {
-      title: 'Checkout with a test card',
-      priority: 'P1',
-      goal: 'A card order goes through.',
-      preconditions: 'One product in the cart.',
-      steps: [{ action: 'Pay with the test card', expected: 'A confirmation appears' }],
-    },
-  ],
+  reply: 'Two cases over the checkout.',
+  plan: {
+    summary: 'Two cases over the checkout.',
+    cases: [
+      {
+        title: 'Checkout with a test card',
+        priority: 'P1',
+        goal: 'A card order goes through.',
+        preconditions: 'One product in the cart.',
+        steps: [{ action: 'Pay with the test card', expected: 'A confirmation appears' }],
+      },
+    ],
+  },
 });
 
 function answering(turn: Partial<IAgentTurn>) {
@@ -98,6 +101,9 @@ describe('useChatViewModel', () => {
         agentId: 'claude-code',
         model: 'sonnet',
         workspaceId: 'w1',
+        text: 'Test the whole checkout',
+        target: { kind: 'web', value: 'https://shop.test' },
+        steps: [],
       });
     });
 
@@ -119,30 +125,28 @@ describe('useChatViewModel', () => {
       expect(useWorkspaceStore.getState().isAgentTyping).toBe(false);
     });
 
-    it('does NOT ask for a plan again once the workspace has one', async () => {
-      const ask = answering({ text: 'Noted.' });
+    it('talks without touching the plan when the answer carries none', async () => {
+      const ask = answering({ text: JSON.stringify({ reply: '1 + 1 is 2.' }) });
       useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
 
       const { result } = renderHook(() => useChatViewModel());
 
       act(() => {
-        result.current.onDraftChange('Change the second case');
+        result.current.onDraftChange('how much is 1 + 1');
       });
       act(() => {
         result.current.onSend();
       });
 
       await waitFor(() => {
-        expect(ask).toHaveBeenCalledOnce();
-      });
-      expect(ask.mock.calls[0]?.[0].schema).toBeUndefined();
-      await waitFor(() => {
         expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
           kind: 'agent',
           who: 'Claude Code',
-          text: 'Noted.',
+          text: '1 + 1 is 2.',
         });
       });
+      expect(ask.mock.calls[0]?.[0].steps).toHaveLength(6);
+      expect(useWorkspaceStore.getState().workspaces[0]?.plan).toHaveLength(2);
     });
 
     it('shows a gocrash error when the agent breaks, never a verdict', async () => {
@@ -163,7 +167,7 @@ describe('useChatViewModel', () => {
       });
     });
 
-    it('says so when the answer is not a plan it can read', async () => {
+    it('says so when the answer is not in a shape it can read', async () => {
       answering({ text: 'I would rather not.' });
       const { result } = renderHook(() => useChatViewModel());
 

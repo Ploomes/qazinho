@@ -93,7 +93,18 @@ async function askAgent(ask: IAskAgent) {
     };
   }
 
-  return agentRunner.ask({ ...ask, command });
+  const chat = harness.chat({ target: ask.target, steps: ask.steps });
+
+  return agentRunner.ask({
+    workspaceId: ask.workspaceId,
+    command,
+    model: ask.model,
+    sessionId: ask.sessionId,
+    prompt: ask.text,
+    schema: chat.schema,
+    systemPrompt: chat.systemPrompt,
+    hasNoTools: true,
+  });
 }
 
 async function pickFile(kind: PickKind) {

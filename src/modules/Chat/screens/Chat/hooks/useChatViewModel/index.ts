@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { parseChatAnswer } from '@/modules/Chat/library';
 import { CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
-import { PLAN_SCHEMA, PROMPTS } from '@/modules/Plan/constants';
-import { parseDraftedPlan } from '@/modules/Plan/library';
+import { flattenPlanSteps } from '@/modules/Run/library';
 import { useModelInUse } from '@/modules/Settings/hooks';
 import { Agent } from '@/services';
 import {
@@ -47,8 +47,6 @@ export const useChatViewModel = () => {
     if (!workspace || text.trim().length === 0) return;
 
     const workspaceId = workspace.id;
-    const needsPlan = workspace.plan.length === 0;
-    const about = { target: target?.value ?? 'an app', kind: target?.kind ?? 'web' };
 
     sendMessage({ workspaceId, text });
     setDraft('');
@@ -58,10 +56,9 @@ export const useChatViewModel = () => {
       agentId,
       model,
       sessionId: workspace.sessionId,
-      prompt: needsPlan
-        ? PROMPTS.draftPlan({ ...about, wanted: text })
-        : PROMPTS.talk({ ...about, said: text }),
-      schema: needsPlan ? PLAN_SCHEMA : undefined,
+      text,
+      target: target === null ? null : { kind: target.kind, value: target.value },
+      steps: flattenPlanSteps(workspace.plan),
     }).then((turn) => {
       if (turn.isError) {
         landAgentError({ workspaceId, text: turn.text });
@@ -69,10 +66,18 @@ export const useChatViewModel = () => {
         return;
       }
 
-      if (!needsPlan) {
+      const answer = parseChatAnswer(turn.text);
+
+      if (!answer) {
+        landAgentError({ workspaceId, text: CHAT.unreadable });
+
+        return;
+      }
+
+      if (answer.plan === null) {
         landAgentText({
           workspaceId,
-          text: turn.text,
+          text: answer.reply,
           who: agentName,
           sessionId: turn.sessionId,
         });
@@ -80,18 +85,10 @@ export const useChatViewModel = () => {
         return;
       }
 
-      const drafted = parseDraftedPlan(turn.text);
-
-      if (!drafted) {
-        landAgentError({ workspaceId, text: CHAT.noPlanBack });
-
-        return;
-      }
-
       landPlan({
         workspaceId,
-        summary: drafted.summary,
-        plan: drafted.plan,
+        summary: answer.reply,
+        plan: answer.plan,
         who: agentName,
         sessionId: turn.sessionId,
       });
