@@ -1,0 +1,11 @@
+.step-integrations {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.step-integrations__note {
+  margin: var(--space-3) 0 0;
+  color: var(--ink3);
+  font: 400 12px/1.6 var(--font-ui);
+}

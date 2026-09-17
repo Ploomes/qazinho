@@ -47,6 +47,7 @@ describe('useIntegrationCardViewModel', () => {
       await act(() => result.current.onAction());
 
       expect(result.current.isOpen).toBe(true);
+      expect(result.current.hasAction).toBe(false);
       expect(result.current.fields.map(({ id }) => id)).toEqual(['token']);
     });
 

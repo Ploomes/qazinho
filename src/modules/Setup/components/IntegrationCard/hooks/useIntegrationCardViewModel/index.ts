@@ -28,6 +28,7 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
   return {
     isConnected,
     isOpen: isOpen && !isConnected,
+    hasAction: isConnected || !isOpen,
     isConnecting,
     error,
     text: t(integration.textKey),

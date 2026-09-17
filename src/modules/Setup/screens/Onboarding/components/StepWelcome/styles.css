@@ -1,0 +1,88 @@
+.step-welcome {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+
+.step-welcome__checks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step-welcome__check {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border: 1px solid var(--line2);
+  border-radius: var(--radius-lg);
+  background: var(--raise);
+  color: var(--ink);
+  font: var(--font-ui-md);
+}
+
+.step-welcome__glyph {
+  color: var(--amber-ink);
+  font: var(--font-mono-md);
+}
+
+.step-welcome__section {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.step-welcome__eyebrow {
+  color: var(--ink3);
+  font: 500 var(--eyebrow-size) / 1 var(--font-mono);
+  letter-spacing: var(--eyebrow-tracking);
+  text-transform: uppercase;
+}
+
+.step-welcome__languages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.step-welcome__language {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: transparent;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease);
+}
+
+.step-welcome__language:hover {
+  border-color: var(--ink3);
+}
+
+.step-welcome__language--on,
+.step-welcome__language--on:hover {
+  border-color: var(--amber);
+  background: var(--sel);
+}
+
+.step-welcome__language-label {
+  color: var(--ink2);
+  font: 500 13px/1 var(--font-ui);
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.step-welcome__language--on .step-welcome__language-label {
+  color: var(--ink);
+}
+
+.step-welcome__language-code {
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}

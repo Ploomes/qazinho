@@ -9,10 +9,12 @@ export interface ISettingsStore {
   language: Language;
   keybinds: IKeybind[];
   editingKeybindId: string | null;
+  hasOnboarded: boolean;
   selectTab: (tab: SettingsTab) => void;
   selectAgent: (agent: string) => void;
   selectModel: (model: string) => void;
   selectLanguage: (language: Language) => void;
   editKeybind: (keybindId: string | null) => void;
   setKeybind: (props: { keybindId: string; combo: string }) => void;
+  finishOnboarding: () => void;
 }

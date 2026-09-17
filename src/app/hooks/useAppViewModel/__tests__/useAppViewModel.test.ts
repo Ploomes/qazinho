@@ -2,11 +2,26 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useAppViewModel } from '@/app/hooks/useAppViewModel';
-import { useAppStore } from '@/store';
+import { useAppStore, useSettingsStore } from '@/store';
 
 describe('useAppViewModel', () => {
   beforeEach(() => {
     useAppStore.setState({ theme: 'dark', screen: 'welcome', projects: [] });
+    useSettingsStore.setState({ hasOnboarded: true });
+  });
+
+  it('opens on the first-run setup until the QA finished or skipped it', () => {
+    useSettingsStore.setState({ hasOnboarded: false });
+
+    const { result } = renderHook(() => useAppViewModel());
+
+    expect(result.current.isOnboarding).toBe(true);
+  });
+
+  it('does NOT show the setup again once it was done', () => {
+    const { result } = renderHook(() => useAppViewModel());
+
+    expect(result.current.isOnboarding).toBe(false);
   });
 
   it('opens on the welcome screen while there is nothing to test', () => {

@@ -14,6 +14,7 @@ export const useSettingsStore = create<ISettingsStore>()(
       language: 'en',
       keybinds: KEYBINDS,
       editingKeybindId: null,
+      hasOnboarded: false,
 
       selectTab: (tab) => set({ tab }),
 
@@ -33,6 +34,8 @@ export const useSettingsStore = create<ISettingsStore>()(
             keybind.id === keybindId ? { ...keybind, combo } : keybind,
           ),
         })),
+
+      finishOnboarding: () => set({ hasOnboarded: true }),
     }),
     {
       name: STORAGE.settings,
@@ -40,13 +43,14 @@ export const useSettingsStore = create<ISettingsStore>()(
       migrate: (persisted, version) =>
         migrateSettings({ persisted, version }) as Pick<
           ISettingsStore,
-          'agent' | 'model' | 'language' | 'keybinds'
+          'agent' | 'model' | 'language' | 'keybinds' | 'hasOnboarded'
         >,
-      partialize: ({ agent, model, language, keybinds }) => ({
+      partialize: ({ agent, model, language, keybinds, hasOnboarded }) => ({
         agent,
         model,
         language,
         keybinds,
+        hasOnboarded,
       }),
     },
   ),

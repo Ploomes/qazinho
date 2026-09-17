@@ -10,6 +10,7 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
   const {
     isConnected,
     isOpen,
+    hasAction,
     isConnecting,
     error,
     text,
@@ -42,19 +43,28 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
           <span className="integration-card__about">{text}</span>
         </span>
         <StatusPill status={pill} label={statusLabel} />
-        <button
-          type="button"
-          className={
-            isConnected || isOpen
-              ? 'integration-card__action integration-card__action--quiet'
-              : 'integration-card__action'
-          }
-          onClick={() => {
-            void onAction();
-          }}
-        >
-          {action}
-        </button>
+        <AnimatePresence initial={false}>
+          {hasAction && (
+            <motion.button
+              key="action"
+              type="button"
+              className={
+                isConnected
+                  ? 'integration-card__action integration-card__action--quiet'
+                  : 'integration-card__action'
+              }
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+              onClick={() => {
+                void onAction();
+              }}
+            >
+              {action}
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
 
       <AnimatePresence initial={false} mode="wait">

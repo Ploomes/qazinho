@@ -6,7 +6,7 @@ import {
   useRunEvents,
   useRunTicker,
 } from '@/hooks';
-import { useAppStore } from '@/store';
+import { useAppStore, useSettingsStore } from '@/store';
 
 export const useAppViewModel = () => {
   const theme = useAppStore((state) => state.theme);
@@ -14,6 +14,7 @@ export const useAppViewModel = () => {
   const projects = useAppStore((state) => state.projects);
   const modal = useAppStore((state) => state.modal);
   const media = useAppStore((state) => state.media);
+  const hasOnboarded = useSettingsStore((state) => state.hasOnboarded);
 
   useArchive();
   useKeybinds();
@@ -29,6 +30,7 @@ export const useAppViewModel = () => {
     screen,
     modal,
     hasMedia: media !== null,
+    isOnboarding: !hasOnboarded,
     hasSidebar: projects.length > 0 && screen !== 'settings',
     isWelcome: screen === 'welcome' || projects.length === 0,
     isWorkspace: screen === 'workspace',
