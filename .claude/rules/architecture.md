@@ -54,6 +54,15 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
 - Structured clone carries no functions and no class instances. What crosses is data.
 - The page never calls `window.gocrash` from a view. It goes through `src/services/`.
 
+## The harness
+
+**Everything the QA's agent is told lives in `Harness`**, in `src/main/classes/agents/Harness/`:
+the system prompt as titled sections, the device brief per platform, and the answer schemas. The
+page never writes a prompt: the chat sends the QA's words, the app and the plan, and main adds the
+harness once through `--append-system-prompt`. A run gives the agent the device as MCP tools
+(`DeviceToolServer`) and no other tool, so within a step it looks, acts, corrects itself and
+judges in one turn.
+
 ## Heavy work stays off the main process
 
 Agents, Playwright and device drivers will run in child processes (`utilityProcess`), so a slow
@@ -66,9 +75,11 @@ screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `
 | ------------------------------------- | ---------------------------------------------------------------------- |
 | `AgentDetector`                       | finds the QA's agent CLIs, the way Orca does: fs probes, no subprocess |
 | `AgentRunner`                         | spawns one, streams its JSON, reads a `--json-schema` answer back      |
+| `Harness`                             | everything said to the agent: system prompt sections and answer shapes |
+| `DeviceToolServer`                    | hands the device to the agent as MCP tools on 127.0.0.1, during a run  |
 | `WebDriver`                           | drives Chrome over playwright-core, one profile per workspace          |
 | `LiveStream`                          | serves the device's frames as MJPEG on 127.0.0.1, for the device panel |
-| `RunCoordinator`                      | walks a plan: describe, act, shoot, judge, one step at a time          |
+| `RunCoordinator`                      | walks a plan a step at a time: the agent acts through tools and judges |
 | `ResourceCollector` / `ProcessOwners` | one `ps` sweep, charged to whoever started it                          |
 | `Archive`                             | the QA's projects, workspaces and plans, as files on disk              |
 
@@ -77,4 +88,5 @@ screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `
 - `dependencies` ship inside the app and `devDependencies` do not. Everything the page uses,
   React included, is bundled by Vite, so it is a devDependency.
 - A runtime dependency in `src/main` ships to every user: today `playwright-core` drives the web
-  target and `yaml` writes the plans. Think twice before a third.
+  target, `yaml` writes the plans and `@modelcontextprotocol/sdk` serves the device tools. Think
+  twice before a fourth.
