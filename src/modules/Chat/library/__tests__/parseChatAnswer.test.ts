@@ -39,8 +39,16 @@ describe('parseChatAnswer', () => {
     ).toEqual({ reply: 'Here.', plan: null });
   });
 
+  it('takes an answer in prose as the reply, when the agent skipped the schema', () => {
+    expect(parseChatAnswer('  In r-05, 3 passed and 2 were blocked.\n')).toEqual({
+      reply: 'In r-05, 3 passed and 2 were blocked.',
+      plan: null,
+    });
+  });
+
   it('gives up on an answer that is neither a reply nor a plan', () => {
-    expect(parseChatAnswer('not json')).toBeNull();
+    expect(parseChatAnswer('   ')).toBeNull();
     expect(parseChatAnswer(JSON.stringify({ reply: '  ' }))).toBeNull();
+    expect(parseChatAnswer(JSON.stringify({ verdict: 'passed' }))).toBeNull();
   });
 });

@@ -191,7 +191,7 @@ describe('useChatViewModel', () => {
     });
 
     it('says so when the answer is not in a shape it can read', async () => {
-      answering({ text: 'I would rather not.' });
+      answering({ text: JSON.stringify({ verdict: 'passed' }) });
       const { result } = renderHook(() => useChatViewModel());
 
       act(() => {

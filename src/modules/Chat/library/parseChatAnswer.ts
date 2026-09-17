@@ -10,7 +10,10 @@ export function parseChatAnswer(
   try {
     read = JSON.parse(answer) as { reply?: unknown; plan?: unknown };
   } catch {
-    return null;
+    // A resumed session sometimes answers in prose and skips the schema; the prose is still the reply.
+    const prose = answer.trim();
+
+    return prose.length === 0 ? null : { reply: prose, plan: null };
   }
 
   const reply = typeof read.reply === 'string' ? read.reply.trim() : '';
