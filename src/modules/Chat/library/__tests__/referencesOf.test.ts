@@ -28,6 +28,15 @@ describe('referencesOf', () => {
     expect(run?.facts.some((fact) => fact.includes('step 2 failed'))).toBe(true);
   });
 
+  it('tells runs of the same plan apart by when they started', () => {
+    const workspace = walkRun({ verdicts: ['passed'], isFinished: true });
+    const [run] = referencesOf(workspace);
+
+    expect(run?.title).toBe(
+      `${workspace.runs[0]?.what ?? ''} · ${workspace.runs[0]?.startedAt ?? ''}`,
+    );
+  });
+
   it('has only the plan to offer before anything ran', () => {
     expect(referencesOf(makeWorkspace()).every(({ kind }) => kind === 'case')).toBe(true);
   });

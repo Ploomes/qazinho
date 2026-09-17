@@ -7,7 +7,7 @@ export function referencesOf(workspace: IWorkspace): IChatReference[] {
   const runs = workspace.runs.map<IChatReference>((run) => ({
     kind: 'run',
     id: run.id,
-    title: run.what,
+    title: `${run.what} · ${run.startedAt}`,
     facts: [
       `started ${run.startedAt}, took ${String(run.durationSec)}s`,
       `${String(run.counts.passed)} passed, ${String(run.counts.failed)} failed, ${String(run.counts.blocked)} blocked, ${String(run.counts.skipped)} skipped`,
