@@ -1,5 +1,7 @@
 import type { IRunCoordinator, IStepResult, IWalkRun, IWalkStep } from './types';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
+import type { DeviceToolServer } from '@/main/classes/agents/DeviceToolServer';
+import type { Harness } from '@/main/classes/agents/Harness';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
 import type { IDeviceDriver } from '@/main/classes/devices/types';
 import type {
@@ -13,11 +15,10 @@ import type {
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { stripAnsi } from '@/main/library';
-import { RUN_PROMPTS, RUN_SCHEMAS, RUN_WALK } from './constants';
+import { RUN_WALK } from './constants';
 import {
   agentFailure,
   driverFor,
-  parseActions,
   parseNote,
   parseVerdict,
   skippedOutcome,
@@ -31,6 +32,8 @@ export class RunCoordinator {
   private readonly findIos: IRunCoordinator['findIos'];
   private readonly dataRoot: string;
   private readonly live: LiveStream;
+  private readonly tools: DeviceToolServer;
+  private readonly harness: Harness;
   private readonly onEvent: (event: IRunEvent) => void;
   private readonly stopping = new Set<string>();
   private readonly walking = new Set<string>();
@@ -44,6 +47,8 @@ export class RunCoordinator {
     this.findIos = props.findIos;
     this.dataRoot = props.dataRoot;
     this.live = props.live;
+    this.tools = props.tools;
+    this.harness = props.harness;
     this.onEvent = props.onEvent;
   }
 
@@ -97,7 +102,6 @@ export class RunCoordinator {
 
     if (!this.walking.has(workspaceId)) return;
 
-    // Waiting for the step in flight would hold the QA for as long as the agent thinks.
     this.stopping.add(workspaceId);
     this.runner.cancel(workspaceId);
     void this.drivers.get(workspaceId)?.close();
@@ -132,10 +136,12 @@ export class RunCoordinator {
       this.drivers.set(run.workspaceId, driver);
       await mkdir(run.shotDir, { recursive: true });
       await driver.open();
+      this.tools.attach({ workspaceId: run.workspaceId, driver });
       await this.watch({ workspaceId: run.workspaceId, driver });
     } catch (reason) {
       await driver?.close();
       this.drivers.delete(run.workspaceId);
+      this.tools.detach(run.workspaceId);
       this.live.end(run.workspaceId);
 
       if (this.stopping.has(run.workspaceId)) {
@@ -161,6 +167,7 @@ export class RunCoordinator {
 
     await driver.close();
     this.drivers.delete(run.workspaceId);
+    this.tools.detach(run.workspaceId);
     this.live.end(run.workspaceId);
     this.onEvent(
       broke === null
@@ -219,63 +226,35 @@ export class RunCoordinator {
       command: run.command,
     };
 
-    let session = props.session;
-    let broke: string | null = null;
+    const harness = this.harness.run(run.target);
+    const mcpConfig = this.tools.mcpConfigFor(run.workspaceId);
 
-    // A failed action goes back to the agent with what went wrong, so it can find another way.
-    for (let attempt = 0; attempt < RUN_WALK.attempts; attempt += 1) {
-      const asked = await this.runner.ask({
-        ...ask,
-        sessionId: session,
-        schema: RUN_SCHEMAS.action,
-        prompt: RUN_PROMPTS.act({
-          action: step.action,
-          target: run.target,
-          screen: await driver.describe(),
-          failure: broke,
-        }),
-      });
+    if (mcpConfig === null)
+      throw new Error('The device tools are not up, so the agent cannot act.');
 
-      if (this.stopping.has(run.workspaceId)) return null;
-
-      const failed = agentFailure(asked);
-
-      if (failed !== null) throw new Error(failed);
-
-      session = asked.sessionId;
-
-      const note = parseNote(asked.text);
-
-      if (note.length > 0)
-        this.onEvent({ kind: 'note', workspaceId: run.workspaceId, text: note });
-
-      broke = await this.carryOut({ driver, answer: asked.text });
-
-      if (broke === null) break;
-    }
-
-    const shot = await driver.shoot(join(run.shotDir, `step-${String(index + 1)}.jpg`));
-
-    if (this.stopping.has(run.workspaceId)) return null;
-
-    const judged = await this.runner.ask({
+    // One call per step: the agent looks, acts and corrects itself through the tools, then judges.
+    const asked = await this.runner.ask({
       ...ask,
-      sessionId: session,
-      schema: RUN_SCHEMAS.verdict,
-      prompt: RUN_PROMPTS.judge({
-        action: step.action,
-        expected: step.expected,
-        screen: await driver.describe(),
-      }),
+      sessionId: props.session,
+      schema: harness.schema,
+      systemPrompt: harness.systemPrompt,
+      mcpConfig,
+      prompt: this.harness.step(step),
     });
 
     if (this.stopping.has(run.workspaceId)) return null;
 
-    const failedJudging = agentFailure(judged);
+    const failed = agentFailure(asked);
 
-    if (failedJudging !== null) throw new Error(failedJudging);
+    if (failed !== null) throw new Error(failed);
 
-    const verdict = parseVerdict(judged.text);
+    const verdict = parseVerdict(asked.text);
+    const note = parseNote(asked.text);
+
+    if (note.length > 0)
+      this.onEvent({ kind: 'note', workspaceId: run.workspaceId, text: note });
+
+    const shot = await driver.shoot(join(run.shotDir, `step-${String(index + 1)}.jpg`));
 
     const outcome: IStepOutcome = {
       workspaceId: run.workspaceId,
@@ -284,8 +263,8 @@ export class RunCoordinator {
       index,
       action: step.action,
       expected: step.expected,
-      verdict: broke === null ? verdict.verdict : 'blocked',
-      why: broke ?? verdict.why,
+      verdict: verdict.verdict,
+      why: verdict.why,
       got: verdict.got,
       title: verdict.title,
       severity: verdict.severity,
@@ -296,22 +275,7 @@ export class RunCoordinator {
 
     this.onEvent({ kind: 'step', outcome });
 
-    return { session: judged.sessionId, verdict: outcome.verdict };
-  }
-
-  private async carryOut(props: {
-    driver: IDeviceDriver;
-    answer: string;
-  }): Promise<string | null> {
-    for (const action of parseActions(props.answer)) {
-      try {
-        await props.driver.act(action);
-      } catch (reason) {
-        return this.explain(reason);
-      }
-    }
-
-    return null;
+    return { session: asked.sessionId, verdict: outcome.verdict };
   }
 
   private async reopen(props: { driver: IDeviceDriver; url: string }): Promise<void> {

@@ -5,6 +5,8 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { AgentDetector } from '@/main/classes/agents/AgentDetector';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
+import { DeviceToolServer } from '@/main/classes/agents/DeviceToolServer';
+import { Harness } from '@/main/classes/agents/Harness';
 import { AndroidDriver } from '@/main/classes/devices/AndroidDriver';
 import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
 import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
@@ -79,6 +81,10 @@ describe('a real run on a phone', () => {
     const tools = new DeviceToolDetector().detect();
     const sdkRoot = tools.androidSdk.path ?? '';
 
+    const deviceTools = new DeviceToolServer();
+
+    await deviceTools.start();
+
     const coordinator = new RunCoordinator({
       runner: new AgentRunner({ owners, onEvent: () => undefined }),
       findIos: async () => null,
@@ -86,6 +92,8 @@ describe('a real run on a phone', () => {
         (await new AgentDetector().detect()).find((one) => one.id === id)?.path ?? null,
       findAndroid: async () => ({ sdkRoot, avd: (await listAvds(sdkRoot))[0] ?? '' }),
       live: new LiveStream(),
+      tools: deviceTools,
+      harness: new Harness(),
       dataRoot: await mkdtemp(join(tmpdir(), 'gocrash-android-run-')),
       onEvent: (event) => events.push(event),
     });

@@ -6,6 +6,8 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { AgentDetector } from '@/main/classes/agents/AgentDetector';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
+import { DeviceToolServer } from '@/main/classes/agents/DeviceToolServer';
+import { Harness } from '@/main/classes/agents/Harness';
 import { LiveStream } from '@/main/classes/devices/LiveStream';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
@@ -30,6 +32,10 @@ describe('a real run', () => {
     const owners = new ProcessOwners();
     const events: IRunEvent[] = [];
 
+    const deviceTools = new DeviceToolServer();
+
+    await deviceTools.start();
+
     const coordinator = new RunCoordinator({
       runner: new AgentRunner({ owners, onEvent: () => undefined }),
       findAndroid: async () => null,
@@ -37,6 +43,8 @@ describe('a real run', () => {
       findCommand: async (id) =>
         (await new AgentDetector().detect()).find((one) => one.id === id)?.path ?? null,
       live: new LiveStream(),
+      tools: deviceTools,
+      harness: new Harness(),
       dataRoot: await mkdtemp(join(tmpdir(), 'gocrash-smoke-')),
       onEvent: (event) => events.push(event),
     });

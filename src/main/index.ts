@@ -10,6 +10,8 @@ import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron';
 import { CHANNELS } from '@/constants';
 import { AgentDetector } from '@/main/classes/agents/AgentDetector';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
+import { DeviceToolServer } from '@/main/classes/agents/DeviceToolServer';
+import { Harness } from '@/main/classes/agents/Harness';
 import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
 import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
 import { listSimulators } from '@/main/classes/devices/IosDriver/library';
@@ -30,6 +32,8 @@ const resources = new ResourceCollector({
 const deviceTools = new DeviceToolDetector();
 const archive = new Archive(PATHS.data);
 const live = new LiveStream();
+const tools = new DeviceToolServer();
+const harness = new Harness();
 
 function broadcast(props: { channel: string; event: IAgentEvent | IRunEvent }): void {
   for (const open of BrowserWindow.getAllWindows())
@@ -72,6 +76,8 @@ const runs = new RunCoordinator({
   findIos,
   dataRoot: PATHS.data,
   live,
+  tools,
+  harness,
   onEvent: (event) => broadcast({ channel: CHANNELS.runEvent, event }),
 });
 
@@ -135,6 +141,7 @@ function createWindow(): void {
 
 void app.whenReady().then(async () => {
   await live.start();
+  await tools.start();
 
   ipcMain.handle(CHANNELS.detectAgents, () => agents.detect());
   ipcMain.handle(CHANNELS.readResources, () => resources.snapshot());
@@ -172,6 +179,7 @@ void app.whenReady().then(async () => {
 
 app.on('will-quit', () => {
   live.close();
+  tools.close();
 });
 
 app.on('window-all-closed', () => {

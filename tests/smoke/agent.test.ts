@@ -5,6 +5,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
+import { DeviceToolServer } from '@/main/classes/agents/DeviceToolServer';
+import { Harness } from '@/main/classes/agents/Harness';
 import { LiveStream } from '@/main/classes/devices/LiveStream';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
@@ -16,17 +18,40 @@ const PAGE = `<!doctype html><html><body>
   <p id="out">Signed out</p>
 </body></html>`;
 
-// Answers the way Claude Code does under --json-schema: a StructuredOutput tool call, then a result.
+const SDK = join(
+  process.cwd(),
+  'node_modules',
+  '@modelcontextprotocol',
+  'sdk',
+  'dist',
+  'cjs',
+  'client',
+);
+
+// Works the way Claude Code does with --mcp-config: it calls the device tools, sees each result,
+// and answers under --json-schema through a StructuredOutput tool call.
 const RESOURCEFUL = `#!/usr/bin/env node
-let prompt = '';
-process.stdin.on('data', (chunk) => { prompt += chunk; });
-process.stdin.on('end', () => {
+const { Client } = require(${JSON.stringify(join(SDK, 'index.js'))});
+const { StreamableHTTPClientTransport } = require(${JSON.stringify(join(SDK, 'streamableHttp.js'))});
+const argv = process.argv;
+process.stdin.resume();
+process.stdin.on('end', async () => {
   const said = (input) => console.log(JSON.stringify({ type: 'assistant', session_id: 's1',
     message: { content: [{ type: 'tool_use', name: 'StructuredOutput', input }] } }));
-  if (prompt.includes('You are judging')) said({ verdict: 'passed', why: 'It says Signed in.', got: 'Signed in' });
-  else if (prompt.includes('Your last try')) said({ actions: [{ kind: 'click', target: 'Sign in', value: '' }],
-    note: 'There is no Log in button, so I used Sign in.' });
-  else said({ actions: [{ kind: 'click', target: 'Log in', value: '' }] });
+  const harnessed = argv.includes('--append-system-prompt') && argv.includes('--strict-mcp-config');
+  const config = JSON.parse(argv[argv.indexOf('--mcp-config') + 1]);
+  const client = new Client({ name: 'fake-agent', version: '1.0.0' });
+  await client.connect(new StreamableHTTPClientTransport(new URL(config.mcpServers.gocrash.url)));
+  const first = await client.callTool({ name: 'click', arguments: { target: 'Log in' } });
+  const second = first.isError ? await client.callTool({ name: 'click', arguments: { target: 'Sign in' } }) : first;
+  const saw = second.content[0].text;
+  await client.close();
+  said({
+    verdict: harnessed && saw.includes('Signed in') ? 'passed' : 'failed',
+    why: 'The page says Signed in.',
+    got: saw.slice(0, 80),
+    ...(first.isError ? { note: 'There is no Log in button, so I used Sign in.' } : {}),
+  });
   console.log(JSON.stringify({ type: 'result', result: '', is_error: false, session_id: 's1' }));
 });
 `;
@@ -52,12 +77,18 @@ async function walkWith(script: string): Promise<IRunEvent[]> {
   await chmod(agent, 0o755);
 
   const events: IRunEvent[] = [];
+  const deviceTools = new DeviceToolServer();
+
+  await deviceTools.start();
+
   const coordinator = new RunCoordinator({
     runner: new AgentRunner({ owners: new ProcessOwners(), onEvent: () => undefined }),
     findAndroid: async () => null,
     findIos: async () => null,
     findCommand: async () => agent,
     live: new LiveStream(),
+    tools: deviceTools,
+    harness: new Harness(),
     dataRoot: root,
     onEvent: (event) => events.push(event),
   });
@@ -92,7 +123,7 @@ afterAll(() => {
 });
 
 describe('an agent on a real browser', () => {
-  it('finds another way when its first try fails, and tells the QA what it did', async () => {
+  it('acts through the device tools, works around a failed one, and tells the QA', async () => {
     const events = await walkWith(RESOURCEFUL);
     const step = events.find((event) => event.kind === 'step');
 

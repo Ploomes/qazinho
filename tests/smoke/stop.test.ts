@@ -5,6 +5,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
+import { DeviceToolServer } from '@/main/classes/agents/DeviceToolServer';
+import { Harness } from '@/main/classes/agents/Harness';
 import { LiveStream } from '@/main/classes/devices/LiveStream';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
@@ -29,12 +31,18 @@ describe('stopping a run', () => {
     await chmod(agent, 0o755);
 
     const events: IRunEvent[] = [];
+    const deviceTools = new DeviceToolServer();
+
+    await deviceTools.start();
+
     const coordinator = new RunCoordinator({
       runner: new AgentRunner({ owners: new ProcessOwners(), onEvent: () => undefined }),
       findAndroid: async () => null,
       findIos: async () => null,
       findCommand: async () => agent,
       live: new LiveStream(),
+      tools: deviceTools,
+      harness: new Harness(),
       dataRoot: root,
       onEvent: (event) => events.push(event),
     });
