@@ -63,6 +63,7 @@ Three suites that need something real behind them. They have their own config
 | `stop.test.ts`     | Stop ends a run while a fake agent is still thinking                    |
 | `agent.test.ts`    | a fake agent retries a failed action, leaves a note, or errors out      |
 | `tools.test.ts`    | an MCP client lists, calls and fails the device tools on real Chrome    |
+| `setup.test.ts`    | the installer runs a fake npm, streams its lines, and fails honestly    |
 
 `run.test.ts` spends the QA's tokens and needs an agent installed. Run it by hand after touching
 the run pipeline.
