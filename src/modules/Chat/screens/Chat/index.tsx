@@ -25,7 +25,6 @@ export const Chat: React.FC = () => {
     liveText,
     draft,
     suggestions,
-    targetLabel,
     agentLabel,
     onDraftChange,
     onSend,
@@ -135,7 +134,6 @@ export const Chat: React.FC = () => {
 
       <Composer
         value={draft}
-        targetLabel={targetLabel}
         agentLabel={agentLabel}
         onChange={onDraftChange}
         onSend={onSend}

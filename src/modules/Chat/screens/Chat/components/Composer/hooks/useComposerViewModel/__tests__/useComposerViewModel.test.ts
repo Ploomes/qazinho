@@ -7,7 +7,6 @@ import { useAppStore } from '@/store';
 
 const PROPS = {
   value: 'Test the whole checkout',
-  targetLabel: 'Web · https://crmweb.com',
   agentLabel: 'Claude Code · Sonnet',
   onChange: vi.fn(),
   onSend: vi.fn(),

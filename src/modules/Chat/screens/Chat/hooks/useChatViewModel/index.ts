@@ -107,7 +107,6 @@ export const useChatViewModel = () => {
     liveText: isAgentTyping ? liveText : '',
     draft,
     suggestions: CHAT.suggestions,
-    targetLabel: target === null ? 'No target' : `${target.label} · ${target.value}`,
     agentLabel: t('TITLEBAR.AGENT', { agent: agentName, model: modelName }),
     onDraftChange: setDraft,
     onSend: () => {

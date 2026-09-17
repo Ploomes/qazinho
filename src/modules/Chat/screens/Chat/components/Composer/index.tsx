@@ -14,7 +14,6 @@ export const Composer: React.FC<IComposerProps> = (props) => {
   return (
     <div className="composer">
       <div className="composer__chips">
-        <Chip>{props.targetLabel}</Chip>
         <span className="composer__agent">
           <Chip dotTone="var(--pass)" hasCaret onClick={onAgentClick}>
             {props.agentLabel}

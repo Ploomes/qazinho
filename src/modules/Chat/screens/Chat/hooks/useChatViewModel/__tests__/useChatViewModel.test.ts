@@ -79,14 +79,6 @@ describe('useChatViewModel', () => {
     expect(result.current.suggestions).toHaveLength(2);
   });
 
-  it('names the target the run would go to', () => {
-    answering({});
-
-    const { result } = renderHook(() => useChatViewModel());
-
-    expect(result.current.targetLabel).toBe('Web · https://shop.test');
-  });
-
   describe('onSend', () => {
     it("asks the QA's own agent, on the model they picked", async () => {
       const ask = answering({ text: DRAFTED });
