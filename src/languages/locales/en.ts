@@ -286,6 +286,13 @@ export const en = {
     ROW_ACCOUNT: 'account',
     ROW_SITE: 'site',
     ROW_SINCE: 'connected on',
+    INSTALL: 'Install',
+    INSTALL_STEP: 'installing · step {{stage}} of {{stages}}',
+    INSTALLED: 'installed',
+    COPY: 'Copy',
+    COPIED: 'Copied',
+    TRY_AGAIN: 'Try again',
+    RUN_IT_YOURSELF: 'or run it yourself in a terminal',
   },
   STATUS: {
     RUNNING: 'running',

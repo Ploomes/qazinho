@@ -1,0 +1,119 @@
+.install-progress {
+  overflow: hidden;
+}
+
+.install-progress__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+}
+
+.install-progress__bar {
+  display: flex;
+  gap: var(--space-2);
+  height: 5px;
+}
+
+.install-progress__segment {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--line);
+  transition: background-color var(--dur) var(--ease);
+}
+
+.install-progress__segment--done {
+  background: var(--amber);
+}
+
+.install-progress__segment--current {
+  background: var(--amber-soft);
+}
+
+.install-progress__segment--current::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--amber), transparent);
+  animation: gc-shimmer 1.2s var(--ease) infinite;
+  content: '';
+}
+
+.install-progress__meta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.install-progress__label {
+  flex: none;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
+
+.install-progress__line {
+  overflow: hidden;
+  color: var(--ink2);
+  font: var(--font-mono-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.install-progress__done {
+  display: inline-flex;
+  gap: var(--space-3);
+  color: var(--pass);
+  font: var(--font-mono-md);
+}
+
+.install-progress__error {
+  max-height: 120px;
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  overflow: auto;
+  border-radius: var(--radius-sm);
+  background: var(--fail-soft);
+  color: var(--fail);
+  font: 400 11px/1.5 var(--font-mono);
+  white-space: pre-wrap;
+}
+
+.install-progress__command {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+}
+
+.install-progress__code {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  color: var(--ink);
+  font: var(--font-mono-sm);
+  white-space: nowrap;
+  user-select: text;
+}
+
+.install-progress__copy {
+  flex: none;
+  padding: 6px var(--space-4);
+  border: none;
+  border-radius: var(--radius-xs);
+  background: var(--raise2);
+  color: var(--ink2);
+  font: var(--font-ui-xs);
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.install-progress__copy:hover {
+  background: var(--sel);
+  color: var(--ink);
+}

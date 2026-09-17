@@ -287,6 +287,13 @@ export const pt: typeof en = {
     ROW_ACCOUNT: 'conta',
     ROW_SITE: 'site',
     ROW_SINCE: 'conectado em',
+    INSTALL: 'Instalar',
+    INSTALL_STEP: 'instalando · passo {{stage}} de {{stages}}',
+    INSTALLED: 'instalado',
+    COPY: 'Copiar',
+    COPIED: 'Copiado',
+    TRY_AGAIN: 'Tentar de novo',
+    RUN_IT_YOURSELF: 'ou rode você mesmo num terminal',
   },
   STATUS: {
     RUNNING: 'rodando',
