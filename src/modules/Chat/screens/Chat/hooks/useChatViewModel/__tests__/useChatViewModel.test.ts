@@ -220,4 +220,48 @@ describe('useChatViewModel', () => {
       expect(ask).not.toHaveBeenCalled();
     });
   });
+
+  describe('mentions', () => {
+    it('offers what the @ being typed could point at', () => {
+      answering({});
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onDraftChange('explain @TC-0');
+      });
+
+      expect(result.current.mentions.map(({ id }) => id)).toEqual(['TC-01', 'TC-02']);
+    });
+
+    it('offers nothing while the QA is not mentioning', () => {
+      answering({});
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onDraftChange('explain TC-0');
+      });
+
+      expect(result.current.mentions).toEqual([]);
+    });
+
+    it('completes the draft with the reference the QA picked', () => {
+      answering({});
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onDraftChange('explain @TC');
+      });
+      act(() => {
+        result.current.onPickMention('TC-02');
+      });
+
+      expect(result.current.draft).toBe('explain @TC-02 ');
+    });
+  });
 });

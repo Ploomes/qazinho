@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { mentionsIn, parseChatAnswer, referencesOf } from '@/modules/Chat/library';
+import {
+  insertMention,
+  mentionCandidates,
+  mentionQueryOf,
+  mentionsIn,
+  parseChatAnswer,
+  referencesOf,
+} from '@/modules/Chat/library';
 import { CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { flattenPlanSteps } from '@/modules/Run/library';
@@ -107,7 +114,14 @@ export const useChatViewModel = () => {
     draft,
     suggestions: CHAT.suggestions,
     agentLabel: t('TITLEBAR.AGENT', { agent: agentName, model: modelName }),
+    mentions: mentionCandidates({
+      references: workspace === null ? [] : referencesOf(workspace),
+      query: mentionQueryOf(draft),
+    }),
     onDraftChange: setDraft,
+    onPickMention: (id: string) => {
+      setDraft(insertMention({ draft, id }));
+    },
     onSend: () => {
       send(draft);
     },
