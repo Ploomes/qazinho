@@ -58,7 +58,7 @@ export const pt: typeof en = {
     YOU: 'Você',
     EMPTY_TITLE: 'Nada quebrou por aqui ainda.',
     EMPTY_BODY:
-      'Diga o que quer cobrir. O agente escreve os casos, você corrige o que ele errar.',
+      'Pergunte sobre o app, uma run ou um bug, ou diga o que cobrir e o agente escreve os casos. Digite @ para apontar algo.',
     PLACEHOLDER: 'Pergunte qualquer coisa ao agente · @ aponta uma run, bug ou caso',
     SEND: 'Enviar',
     MENTION_HEADING: 'Apontar para o agente',

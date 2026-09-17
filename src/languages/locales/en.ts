@@ -56,7 +56,7 @@ export const en = {
     YOU: 'You',
     EMPTY_TITLE: 'Nothing has crashed here yet.',
     EMPTY_BODY:
-      'Say what you want covered. The agent writes the cases, you fix what it got wrong.',
+      'Ask about the app, a run or a bug, or say what to cover and the agent drafts the cases. Type @ to point at something.',
     PLACEHOLDER: 'Ask the agent anything · @ points at a run, bug or case',
     SEND: 'Send',
     MENTION_HEADING: 'Point the agent at',
