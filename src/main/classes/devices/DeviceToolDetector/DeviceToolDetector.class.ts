@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { findExistingPath, findOnPath } from '@/main/library';
 import { TOOL_PATHS } from './constants';
 
-/** Looks for what a device target needs. It downloads none of it: it reports what is here. */
+/** Looks for what a device target needs, and reports what is here. */
 export class DeviceToolDetector {
   private detected: IDeviceTools | null = null;
 
@@ -24,9 +24,13 @@ export class DeviceToolDetector {
       process.platform === 'darwin' ? findExistingPath([...TOOL_PATHS.xcode]) : null;
 
     // idb is the only way to tap an iOS simulator: simctl boots and installs, but never touches.
+    // pipx puts its client in ~/.local/bin.
     const idb =
       process.platform === 'darwin'
-        ? findOnPath({ command: 'idb', directories: [...TOOL_PATHS.idb] })
+        ? findOnPath({
+            command: 'idb',
+            directories: [...TOOL_PATHS.idb, join(home, '.local', 'bin')],
+          })
         : null;
 
     this.detected = {
@@ -36,5 +40,10 @@ export class DeviceToolDetector {
     };
 
     return this.detected;
+  }
+
+  /** Drops the cache, so the next look sees what an install just put on disk. */
+  public forget(): void {
+    this.detected = null;
   }
 }

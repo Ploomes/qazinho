@@ -1,12 +1,12 @@
 import type { IDetectedAgent } from '@/types';
 import { readFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
-import { isAbsolute, join } from 'node:path';
-import { findOnPath, mergePathSegments } from '@/main/library';
-import { AGENT_PROBES, INSTALL_DIRS } from './constants';
-import { defaultModelOf, hydrateShellPath } from './library';
+import { join } from 'node:path';
+import { findOnPath, hydrateShellPath, searchDirectories } from '@/main/library';
+import { AGENT_PROBES } from './constants';
+import { defaultModelOf } from './library';
 
-/** Finds the agents already on this machine. gocrash installs nothing and downloads nothing. */
+/** Finds the agents already on this machine, the way Orca does: file probes, no subprocess per agent. */
 export class AgentDetector {
   private detected: IDetectedAgent[] | null = null;
 
@@ -14,7 +14,11 @@ export class AgentDetector {
   public async detect(): Promise<IDetectedAgent[]> {
     if (this.detected) return this.detected;
 
-    const directories = await this.directories();
+    const directories = searchDirectories({
+      appPath: process.env.PATH,
+      shellPath: await hydrateShellPath(),
+      home: homedir(),
+    });
 
     this.detected = await Promise.all(
       AGENT_PROBES.map(async ({ config, ...probe }) => {
@@ -36,16 +40,8 @@ export class AgentDetector {
     return this.detected;
   }
 
-  private async directories(): Promise<string[]> {
-    const home = homedir();
-    const installDirs = INSTALL_DIRS.map((directory) =>
-      isAbsolute(directory) ? directory : join(home, directory),
-    );
-
-    return mergePathSegments([
-      process.env.PATH,
-      await hydrateShellPath(),
-      ...installDirs,
-    ]);
+  /** Drops the cache, so the next look sees what an install just put on disk. */
+  public forget(): void {
+    this.detected = null;
   }
 }
