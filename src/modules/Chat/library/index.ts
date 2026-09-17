@@ -6,6 +6,7 @@ export * from './appendRunMessages';
 export * from './appendUserMessage';
 export * from './formatClock';
 export * from './insertMention';
+export * from './mentionCandidates';
 export * from './mentionQueryOf';
 export * from './mentionsIn';
 export * from './parseChatAnswer';
