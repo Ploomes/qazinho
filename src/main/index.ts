@@ -93,7 +93,11 @@ async function askAgent(ask: IAskAgent) {
     };
   }
 
-  const chat = harness.chat({ target: ask.target, steps: ask.steps });
+  const chat = harness.chat({
+    target: ask.target,
+    steps: ask.steps,
+    references: ask.references,
+  });
 
   return agentRunner.ask({
     workspaceId: ask.workspaceId,

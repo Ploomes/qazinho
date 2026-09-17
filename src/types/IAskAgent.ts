@@ -1,3 +1,4 @@
+import type { IChatReference } from './IChatReference';
 import type { IFlatStep } from './IFlatStep';
 import type { ITargetUnderTest } from './ITargetUnderTest';
 
@@ -10,4 +11,5 @@ export interface IAskAgent {
   text: string;
   target: ITargetUnderTest | null;
   steps: IFlatStep[];
+  references: IChatReference[];
 }

@@ -1,10 +1,14 @@
-import type { IFlatStep, ITargetUnderTest } from '@/types';
+import type { IChatReference, IFlatStep, ITargetUnderTest } from '@/types';
 import { CHAT_SCHEMA, DEVICE_BRIEF, HARNESS_SECTIONS, STEP_SCHEMA } from './constants';
-import { describePlan, renderSections } from './library';
+import { describePlan, describeReferences, renderSections } from './library';
 
 /** What gocrash says to the QA's agent: the system prompt, the message and the answer's shape. */
 export class Harness {
-  public chat(props: { target: ITargetUnderTest | null; steps: IFlatStep[] }): {
+  public chat(props: {
+    target: ITargetUnderTest | null;
+    steps: IFlatStep[];
+    references: IChatReference[];
+  }): {
     systemPrompt: string;
     schema: string;
   } {
@@ -22,6 +26,7 @@ export class Harness {
             ...describePlan(props.steps),
           ],
         },
+        describeReferences(props.references),
       ]),
       schema: CHAT_SCHEMA,
     };

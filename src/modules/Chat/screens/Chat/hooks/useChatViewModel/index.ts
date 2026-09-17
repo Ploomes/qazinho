@@ -59,6 +59,7 @@ export const useChatViewModel = () => {
       text,
       target: target === null ? null : { kind: target.kind, value: target.value },
       steps: flattenPlanSteps(workspace.plan),
+      references: [],
     }).then((turn) => {
       if (turn.isError) {
         landAgentError({ workspaceId, text: turn.text });
