@@ -99,6 +99,13 @@ export default config(
 
       'max-params': ['error', 2],
 
+      // The MCP SDK only exports its subpaths through a "./*" wildcard, which Node needs spelled
+      // with ".js" and the TypeScript resolver cannot follow.
+      'import-x/no-unresolved': [
+        'error',
+        { ignore: ['^@modelcontextprotocol/sdk/.+\\.js$'] },
+      ],
+
       '@typescript-eslint/member-ordering': [
         'error',
         {
