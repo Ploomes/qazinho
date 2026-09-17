@@ -28,7 +28,6 @@ export class AgentRunner {
     const { command, prompt, workspaceId } = props;
     const child = spawn(command, buildAskArgs(props), {
       stdio: ['pipe', 'pipe', 'pipe'],
-      // POSIX: its own process group, so a stop reaches the tools the agent spawned too.
       detached: process.platform !== 'win32',
     });
 

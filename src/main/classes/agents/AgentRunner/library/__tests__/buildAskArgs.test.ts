@@ -38,4 +38,36 @@ describe('buildAskArgs', () => {
     expect(args).toContain('--json-schema');
     expect(args.at(-1)).toBe('{"type":"object"}');
   });
+
+  it('hands the harness its instructions once, as the system prompt', () => {
+    const args = buildAskArgs({
+      model: '',
+      sessionId: null,
+      systemPrompt: 'You test web apps.',
+    });
+
+    expect(args.slice(-2)).toEqual(['--append-system-prompt', 'You test web apps.']);
+  });
+
+  it('gives the agent the device tools and takes every other tool away', () => {
+    const args = buildAskArgs({
+      model: '',
+      sessionId: null,
+      mcpConfig: '{"mcpServers":{}}',
+    });
+
+    expect(args.slice(-7)).toEqual([
+      '--mcp-config',
+      '{"mcpServers":{}}',
+      '--strict-mcp-config',
+      '--tools',
+      '',
+      '--allowedTools',
+      'mcp__gocrash',
+    ]);
+  });
+
+  it('does NOT restrict the agent tools when no device is attached', () => {
+    expect(buildAskArgs({ model: '', sessionId: null })).not.toContain('--tools');
+  });
 });
