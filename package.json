@@ -78,6 +78,7 @@
     "*.{ts,tsx,js,mjs,json,md,yml,yaml,css,html}": "prettier --write"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "playwright-core": "^1.63.0",
     "yaml": "^2.9.1"
   }
