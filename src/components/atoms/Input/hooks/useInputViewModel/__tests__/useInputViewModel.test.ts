@@ -46,4 +46,20 @@ describe('useInputViewModel', () => {
       expect(result.current.className).toBe('input input--mono input--bare');
     });
   });
+
+  describe('type', () => {
+    it('hides what is typed in a secret field, like a token', () => {
+      const { result } = renderHook(() =>
+        useInputViewModel({ ...PROPS, isSecret: true }),
+      );
+
+      expect(result.current.type).toBe('password');
+    });
+
+    it('shows what is typed everywhere else', () => {
+      const { result } = renderHook(() => useInputViewModel(PROPS));
+
+      expect(result.current.type).toBe('text');
+    });
+  });
 });

@@ -5,4 +5,5 @@ export interface IInputProps {
   placeholder?: string;
   isMono?: boolean;
   isBare?: boolean;
+  isSecret?: boolean;
 }
