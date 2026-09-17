@@ -9,4 +9,5 @@ export const PATHS = {
   icon: join(__dirname, '../../build/icon.png'),
   data: app.getPath('userData'),
   profiles: join(app.getPath('userData'), 'profiles'),
+  integrations: join(app.getPath('userData'), 'integrations.bin'),
 } as const;

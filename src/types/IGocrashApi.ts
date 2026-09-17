@@ -1,12 +1,20 @@
 import type { IAgentEvent } from './IAgentEvent';
 import type { IAgentTurn } from './IAgentTurn';
 import type { IAskAgent } from './IAskAgent';
+import type { IConnectIntegration } from './IConnectIntegration';
+import type { IConnectResult } from './IConnectResult';
 import type { IDetectedAgent } from './IDetectedAgent';
 import type { IDeviceTools } from './IDeviceTools';
+import type { IInstallResult } from './IInstallResult';
+import type { IIntegrationStatus } from './IIntegrationStatus';
+import type { IMachineCheck } from './IMachineCheck';
+import type { InstallableId } from './InstallableId';
+import type { IntegrationId } from './IntegrationId';
 import type { IResourceSnapshot } from './IResourceSnapshot';
 import type { IRunEvent } from './IRunEvent';
 import type { ISavedState } from './ISavedState';
 import type { ISavedWorkspace } from './ISavedWorkspace';
+import type { ISetupEvent } from './ISetupEvent';
 import type { IStartRun } from './IStartRun';
 import type { PickKind } from './PickKind';
 import type { Platform } from './Platform';
@@ -29,4 +37,10 @@ export interface IGocrashApi {
   removeWorkspace: (workspaceId: string) => Promise<void>;
   readShot: (file: string) => Promise<string | null>;
   pickFile: (kind: PickKind) => Promise<string | null>;
+  checkMachine: () => Promise<IMachineCheck>;
+  installTool: (item: InstallableId) => Promise<IInstallResult>;
+  onSetupEvent: (listener: (event: ISetupEvent) => void) => () => void;
+  listIntegrations: () => Promise<IIntegrationStatus[]>;
+  connectIntegration: (connecting: IConnectIntegration) => Promise<IConnectResult>;
+  disconnectIntegration: (id: IntegrationId) => Promise<void>;
 }

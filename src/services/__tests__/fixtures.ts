@@ -26,5 +26,23 @@ export function fakeGocrashApi(platform: Platform): IGocrashApi {
     removeWorkspace: () => Promise.resolve(),
     readShot: () => Promise.resolve(null),
     pickFile: () => Promise.resolve(null),
+    checkMachine: () =>
+      Promise.resolve({
+        agents: [],
+        tools: {
+          androidSdk: { isFound: false, path: null },
+          xcode: { isFound: false, path: null },
+          idb: { isFound: false, path: null },
+        },
+        managers: {
+          npm: { isFound: true, path: '/bin/npm' },
+          brew: { isFound: true, path: '/bin/brew' },
+        },
+      }),
+    installTool: () => Promise.resolve({ isInstalled: true }),
+    onSetupEvent: () => () => undefined,
+    listIntegrations: () => Promise.resolve([]),
+    connectIntegration: () => Promise.resolve({ isConnected: false, error: 'offline' }),
+    disconnectIntegration: () => Promise.resolve(),
   };
 }

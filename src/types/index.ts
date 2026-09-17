@@ -13,6 +13,7 @@ export type * from './IGocrashApi';
 export type * from './IInstallResult';
 export type * from './IIntegrationStatus';
 export type * from './IIosSetup';
+export type * from './IMachineCheck';
 export type * from './InstallableId';
 export type * from './IntegrationId';
 export type * from './IProcessSample';

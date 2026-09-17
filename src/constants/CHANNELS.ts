@@ -15,4 +15,10 @@ export const CHANNELS = {
   removeWorkspace: 'state:remove',
   readShot: 'state:shot',
   pickFile: 'files:pick',
+  checkMachine: 'machine:check',
+  installTool: 'setup:install',
+  setupEvent: 'setup:event',
+  listIntegrations: 'integrations:list',
+  connectIntegration: 'integrations:connect',
+  disconnectIntegration: 'integrations:disconnect',
 } as const;

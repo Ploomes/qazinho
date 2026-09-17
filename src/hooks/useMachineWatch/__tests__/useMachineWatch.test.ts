@@ -55,6 +55,12 @@ beforeEach(() => {
     removeWorkspace: vi.fn(),
     readShot: vi.fn().mockResolvedValue(null),
     pickFile: vi.fn().mockResolvedValue(null),
+    checkMachine: vi.fn(),
+    installTool: vi.fn(),
+    onSetupEvent: vi.fn().mockReturnValue(() => undefined),
+    listIntegrations: vi.fn().mockResolvedValue([]),
+    connectIntegration: vi.fn(),
+    disconnectIntegration: vi.fn(),
   };
 });
 

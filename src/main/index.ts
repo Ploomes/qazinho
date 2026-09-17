@@ -1,12 +1,17 @@
 import type {
   IAgentEvent,
   IAskAgent,
+  IConnectIntegration,
+  InstallableId,
+  IntegrationId,
   IRunEvent,
   ISavedWorkspace,
+  ISetupEvent,
   IStartRun,
   PickKind,
 } from '@/types';
-import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron';
+import { homedir } from 'node:os';
+import { app, BrowserWindow, dialog, ipcMain, safeStorage, shell } from 'electron';
 import { CHANNELS } from '@/constants';
 import { AgentDetector } from '@/main/classes/agents/AgentDetector';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
@@ -16,12 +21,18 @@ import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
 import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
 import { listSimulators } from '@/main/classes/devices/IosDriver/library';
 import { LiveStream } from '@/main/classes/devices/LiveStream';
+import { IntegrationVault } from '@/main/classes/integrations/IntegrationVault';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { ResourceCollector } from '@/main/classes/resources/ResourceCollector';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
+import { SetupInstaller } from '@/main/classes/setup/SetupInstaller';
 import { Archive } from '@/main/classes/storage/Archive';
 import { FILE_FILTERS, PATHS, WINDOW } from '@/main/constants';
-import { isInternalNavigation } from '@/main/library';
+import {
+  hydrateShellPath,
+  isInternalNavigation,
+  searchDirectories,
+} from '@/main/library';
 
 const agents = new AgentDetector();
 const owners = new ProcessOwners();
@@ -35,10 +46,32 @@ const live = new LiveStream();
 const tools = new DeviceToolServer();
 const harness = new Harness();
 
-function broadcast(props: { channel: string; event: IAgentEvent | IRunEvent }): void {
+function broadcast(props: {
+  channel: string;
+  event: IAgentEvent | IRunEvent | ISetupEvent;
+}): void {
   for (const open of BrowserWindow.getAllWindows())
     open.webContents.send(props.channel, props.event);
 }
+
+const installer = new SetupInstaller({
+  onEvent: (event) => broadcast({ channel: CHANNELS.setupEvent, event }),
+  directories: async () =>
+    searchDirectories({
+      appPath: process.env.PATH,
+      shellPath: await hydrateShellPath(),
+      home: homedir(),
+    }),
+});
+const vault = new IntegrationVault({
+  file: PATHS.integrations,
+  cipher: {
+    isAvailable: () => safeStorage.isEncryptionAvailable(),
+    encrypt: (plain) => safeStorage.encryptString(plain),
+    decrypt: (sealed) => safeStorage.decryptString(sealed),
+  },
+  fetcher: (url, init) => fetch(url, init),
+});
 
 const agentRunner = new AgentRunner({
   owners,
@@ -109,6 +142,17 @@ async function askAgent(ask: IAskAgent) {
     systemPrompt: chat.systemPrompt,
     hasNoTools: true,
   });
+}
+
+async function checkMachine() {
+  agents.forget();
+  deviceTools.forget();
+
+  return {
+    agents: await agents.detect(),
+    tools: deviceTools.detect(),
+    managers: await installer.managers(),
+  };
 }
 
 async function pickFile(kind: PickKind) {
@@ -187,6 +231,17 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.readShot, (_event, file: string) => archive.readShot(file));
   ipcMain.handle(CHANNELS.pickFile, (_event, kind: PickKind) => pickFile(kind));
+  ipcMain.handle(CHANNELS.checkMachine, () => checkMachine());
+  ipcMain.handle(CHANNELS.installTool, (_event, item: InstallableId) =>
+    installer.install(item),
+  );
+  ipcMain.handle(CHANNELS.listIntegrations, () => vault.list());
+  ipcMain.handle(CHANNELS.connectIntegration, (_event, connecting: IConnectIntegration) =>
+    vault.connect(connecting),
+  );
+  ipcMain.handle(CHANNELS.disconnectIntegration, (_event, id: IntegrationId) =>
+    vault.disconnect(id),
+  );
 
   createWindow();
 

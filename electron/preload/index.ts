@@ -2,13 +2,21 @@ import type {
   IAgentEvent,
   IAgentTurn,
   IAskAgent,
+  IConnectIntegration,
+  IConnectResult,
   IDetectedAgent,
   IDeviceTools,
   IGocrashApi,
+  IInstallResult,
+  IIntegrationStatus,
+  IMachineCheck,
+  InstallableId,
+  IntegrationId,
   IResourceSnapshot,
   IRunEvent,
   ISavedState,
   ISavedWorkspace,
+  ISetupEvent,
   IStartRun,
   PickKind,
   Platform,
@@ -65,6 +73,29 @@ const api: IGocrashApi = {
     ipcRenderer.invoke(CHANNELS.readShot, file) as Promise<string | null>,
   pickFile: (kind: PickKind) =>
     ipcRenderer.invoke(CHANNELS.pickFile, kind) as Promise<string | null>,
+  checkMachine: () => ipcRenderer.invoke(CHANNELS.checkMachine) as Promise<IMachineCheck>,
+  installTool: (item: InstallableId) =>
+    ipcRenderer.invoke(CHANNELS.installTool, item) as Promise<IInstallResult>,
+  onSetupEvent: (listener: (event: ISetupEvent) => void) => {
+    const forward = (_: unknown, event: ISetupEvent) => {
+      listener(event);
+    };
+
+    ipcRenderer.on(CHANNELS.setupEvent, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.setupEvent, forward);
+    };
+  },
+  listIntegrations: () =>
+    ipcRenderer.invoke(CHANNELS.listIntegrations) as Promise<IIntegrationStatus[]>,
+  connectIntegration: (connecting: IConnectIntegration) =>
+    ipcRenderer.invoke(
+      CHANNELS.connectIntegration,
+      connecting,
+    ) as Promise<IConnectResult>,
+  disconnectIntegration: (id: IntegrationId) =>
+    ipcRenderer.invoke(CHANNELS.disconnectIntegration, id) as Promise<void>,
 };
 
 contextBridge.exposeInMainWorld('gocrash', api);
