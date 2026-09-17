@@ -40,6 +40,8 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
 - `will-navigate` is cancelled unless `isInternalNavigation` says the target is the app itself.
 - `window.open` never opens a window: `https:` links go to the system browser, everything else is
   denied.
+- **A tracker token never reaches the page.** It crosses to main once, is checked, and is sealed
+  with `safeStorage`; the page only ever sees the account it belongs to.
 - `index.html` carries a CSP. Loosen one directive with a reason, never the whole policy.
 
 ## IPC
@@ -82,6 +84,8 @@ screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `
 | `RunCoordinator`                      | walks a plan a step at a time: the agent acts through tools and judges |
 | `ResourceCollector` / `ProcessOwners` | one `ps` sweep, charged to whoever started it                          |
 | `Archive`                             | the QA's projects, workspaces and plans, as files on disk              |
+| `SetupInstaller`                      | installs an agent CLI or idb on request, streaming each line it prints |
+| `IntegrationVault`                    | checks a tracker token and keeps it sealed with `safeStorage`          |
 
 ## Dependencies
 

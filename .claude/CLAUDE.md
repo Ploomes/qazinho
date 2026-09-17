@@ -10,9 +10,10 @@ name is the pitch: go crash your app before your users do.
 | Android | an `.apk`                               | the QA's own AVD, through `adb` and `uiautomator` | end to end       |
 | iOS     | a simulator `.app` build, not an `.ipa` | `simctl` boots and shoots; `idb` reads and taps   | simctl half only |
 
-gocrash installs none of it. It finds the SDK, the emulator and idb where they already are, and
-names what is missing where the QA reads it. **iOS needs `brew install idb-companion`**: simctl
-has no command that touches the screen.
+gocrash finds the SDK, the emulator and idb where they already are, and names what is missing
+where the QA reads it. **It installs only what is light, and only when the QA asks**: the agent
+CLIs over npm, and idb over Homebrew and pipx (simctl has no command that touches the screen).
+The Android SDK and Xcode are too big: the first-run setup links to them and checks again.
 
 Built for technical QA teams, and for QA moving from manual to technical. A project is an
 environment with one or more targets. Workspaces hold a test plan, and several run in parallel.
@@ -50,8 +51,12 @@ against a real simulator. The tap path goes through idb, which was not installed
 this was written on, so `parseElements` reads idb's tree tolerantly and has never seen the real
 thing. Run `tests/smoke/ios.test.ts` once idb is installed before trusting it.
 
-**Still to build for 0.1:** the agent cannot ask the QA a question mid-run, and no issue tracker
-is connected.
+**A first run walks the machine** (`Onboarding`): language, the agent, the device tools, the
+trackers. GitHub and Jira connect for real: the token is checked with the tracker and sealed by
+the OS keychain.
+
+**Still to build for 0.1:** the agent cannot ask the QA a question mid-run, and a connected
+tracker does not receive a bug yet.
 
 ## Mandatory rules
 
