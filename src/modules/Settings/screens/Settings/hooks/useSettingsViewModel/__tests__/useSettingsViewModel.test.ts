@@ -10,7 +10,6 @@ beforeEach(() => {
     tab: 'agents',
     agent: 'Claude Code',
     model: 'sonnet',
-    integrations: { github: false, jira: false },
     editingKeybindId: null,
   });
 });
@@ -63,13 +62,10 @@ describe('useSettingsViewModel', () => {
     expect(result.current.agents[2]?.path).toBe('not found');
   });
 
-  it('asks for what a tracker needs until it is connected', () => {
+  it('offers GitHub and Jira as trackers to connect', () => {
     const { result } = renderHook(() => useSettingsViewModel());
-    const github = result.current.integrations.find(({ id }) => id === 'github');
 
-    expect(github?.isConnected).toBe(false);
-    expect(github?.pill).toBe('idle');
-    expect(github?.action).toBe('Connect');
+    expect(result.current.integrations.map(({ id }) => id)).toEqual(['github', 'jira']);
   });
 
   it('shows the keys being waited for on the shortcut under edit', () => {
@@ -103,21 +99,6 @@ describe('useSettingsViewModel', () => {
       });
 
       expect(useSettingsStore.getState().model).toBe('sonnet');
-    });
-  });
-
-  describe('onToggleIntegration', () => {
-    it('connects and disconnects one tracker without touching the other', () => {
-      const { result } = renderHook(() => useSettingsViewModel());
-
-      act(() => {
-        result.current.onToggleIntegration('github');
-      });
-
-      expect(useSettingsStore.getState().integrations).toEqual({
-        github: true,
-        jira: false,
-      });
     });
   });
 

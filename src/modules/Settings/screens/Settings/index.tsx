@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { Logo, StatusPill } from '@/components/atoms';
+import { Logo } from '@/components/atoms';
+import { IntegrationCard } from '@/modules/Setup/components';
 import { useSettingsViewModel } from './hooks';
 import './styles.css';
 
@@ -20,7 +21,6 @@ export const Settings: React.FC = () => {
     onSelectAgent,
     onSelectTheme,
     onSelectLanguage,
-    onToggleIntegration,
     onEditKeybind,
   } = useSettingsViewModel();
   const { t } = useTranslation();
@@ -148,56 +148,7 @@ export const Settings: React.FC = () => {
           {tab === 'integrations' && (
             <div className="settings__stack">
               {integrations.map((item) => (
-                <div
-                  key={item.id}
-                  className={
-                    item.isConnected
-                      ? 'settings__integration settings__integration--on'
-                      : 'settings__integration'
-                  }
-                >
-                  <div className="settings__integration-head">
-                    <span className="settings__logo">
-                      <img src={item.logo} alt={item.name} />
-                    </span>
-                    <span className="settings__card-text">
-                      <span className="settings__integration-name">{item.name}</span>
-                      <span className="settings__integration-text">{item.text}</span>
-                    </span>
-                    <StatusPill status={item.pill} label={item.status} />
-                    <button
-                      type="button"
-                      className={
-                        item.isConnected
-                          ? 'settings__connect settings__connect--on'
-                          : 'settings__connect'
-                      }
-                      onClick={() => {
-                        onToggleIntegration(item.id);
-                      }}
-                    >
-                      {item.action}
-                    </button>
-                  </div>
-
-                  {item.isConnected ? (
-                    <div className="settings__integration-rows">
-                      {item.rows.map((row) => (
-                        <div key={row.label} className="settings__integration-row">
-                          <span className="settings__integration-key">{row.label}</span>
-                          <span className="settings__integration-value">{row.value}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="settings__integration-needs">
-                      <span className="settings__eyebrow">
-                        {t('SETTINGS.WHAT_IT_NEEDS')}
-                      </span>
-                      <p className="settings__integration-text">{item.needs}</p>
-                    </div>
-                  )}
-                </div>
+                <IntegrationCard key={item.id} integration={item} />
               ))}
               <p className="settings__note">{t('SETTINGS.INTEGRATIONS_NOTE')}</p>
             </div>

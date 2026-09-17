@@ -252,28 +252,6 @@ export const pt: typeof en = {
     DEVICES_NOTE:
       'O gocrash nunca baixa SDK, emulador ou Xcode. Ele encontra o que já está aqui e diz o que falta.',
     IOS_OFF: 'targets de iOS estão desligados',
-    CONNECTED: 'conectado',
-    NOT_CONNECTED: 'não conectado',
-    WHAT_IT_NEEDS: 'o que precisa',
-    GITHUB_TEXT:
-      'Alcance seus repositórios: leia o código por trás de um passo que falhou, abra uma issue para um bug e abra um pull request com a correção.',
-    GITHUB_NEEDS:
-      'Um token com acesso aos repositórios que você quiser. O gocrash só escreve quando você pede: uma issue de um bug que você escolheu, um pull request que você revisou antes.',
-    JIRA_TEXT:
-      'Envie um bug para um projeto com screenshots, passos e esperado vs. obtido já preenchidos.',
-    JIRA_NEEDS:
-      'Seu site do Jira, a chave de um projeto e um API token. A primeira issue é um rascunho que você revisa antes de ser criada.',
-    ROW_ACCOUNT: 'conta',
-    ROW_REPOSITORIES: 'repositórios',
-    ROW_REPOSITORIES_VALUE: 'todos os que você liberar',
-    ROW_SCOPE: 'escopo',
-    ROW_SCOPE_VALUE: 'ler código · criar issues · abrir pull requests',
-    ROW_SITE: 'site',
-    ROW_PROJECT: 'projeto',
-    ROW_PROJECT_VALUE: 'você escolhe no primeiro envio',
-    ROW_ISSUE_TYPE: 'tipo de issue',
-    ROW_ISSUE_TYPE_VALUE: 'Bug',
-    NOT_LINKED: 'ainda não vinculado',
     INTEGRATIONS_NOTE: 'Nada é enviado sozinho. Você escolhe a run, o bug e o momento.',
     THEME_LIGHT: 'Claro',
     THEME_DARK: 'Escuro',
@@ -287,6 +265,28 @@ export const pt: typeof en = {
     ABOUT_NOTE:
       'Vá quebrar seu app antes que seus usuários quebrem. Seu agente, seus emuladores, seus screenshots. Nada sai desta máquina.',
     LICENCE: 'Licença',
+  },
+  SETUP: {
+    CONNECTED: 'conectado',
+    NOT_CONNECTED: 'não conectado',
+    WHAT_IT_NEEDS: 'o que precisa',
+    GITHUB_TEXT:
+      'Registre os bugs que uma run encontra como issues nos seus repositórios.',
+    GITHUB_NEEDS:
+      'Um personal access token que leia sua conta e crie issues. O gocrash confere com o GitHub e guarda selado no chaveiro desta máquina.',
+    JIRA_TEXT: 'Registre os bugs que uma run encontra como issues num projeto do Jira.',
+    JIRA_NEEDS:
+      'Seu site do Jira Cloud, seu email e um API token. O gocrash confere com o Jira e guarda o token selado no chaveiro desta máquina.',
+    NOT_FILED_YET:
+      'Enviar um bug para o tracker ainda não foi construído. A conexão é conferida e guardada para quando for.',
+    FIELD_TOKEN: 'token',
+    FIELD_SITE: 'site',
+    FIELD_EMAIL: 'email',
+    CREATE_TOKEN: 'Criar um token ↗',
+    CHECKING_TOKEN: 'Conferindo…',
+    ROW_ACCOUNT: 'conta',
+    ROW_SITE: 'site',
+    ROW_SINCE: 'conectado em',
   },
   STATUS: {
     RUNNING: 'rodando',

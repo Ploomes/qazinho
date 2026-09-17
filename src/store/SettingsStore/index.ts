@@ -14,7 +14,6 @@ export const useSettingsStore = create<ISettingsStore>()(
       language: 'en',
       keybinds: KEYBINDS,
       editingKeybindId: null,
-      integrations: { github: false, jira: false },
 
       selectTab: (tab) => set({ tab }),
 
@@ -34,11 +33,6 @@ export const useSettingsStore = create<ISettingsStore>()(
             keybind.id === keybindId ? { ...keybind, combo } : keybind,
           ),
         })),
-
-      toggleIntegration: (name) =>
-        set((state) => ({
-          integrations: { ...state.integrations, [name]: !state.integrations[name] },
-        })),
     }),
     {
       name: STORAGE.settings,
@@ -46,14 +40,13 @@ export const useSettingsStore = create<ISettingsStore>()(
       migrate: (persisted, version) =>
         migrateSettings({ persisted, version }) as Pick<
           ISettingsStore,
-          'agent' | 'model' | 'language' | 'keybinds' | 'integrations'
+          'agent' | 'model' | 'language' | 'keybinds'
         >,
-      partialize: ({ agent, model, language, keybinds, integrations }) => ({
+      partialize: ({ agent, model, language, keybinds }) => ({
         agent,
         model,
         language,
         keybinds,
-        integrations,
       }),
     },
   ),

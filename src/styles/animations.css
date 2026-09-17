@@ -118,3 +118,9 @@
     width: 100%;
   }
 }
+
+@keyframes gc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

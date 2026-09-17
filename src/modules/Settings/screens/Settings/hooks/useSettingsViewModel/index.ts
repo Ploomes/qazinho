@@ -2,11 +2,11 @@ import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ABOUT_LINKS,
-  INTEGRATIONS,
   LANGUAGES,
   SETTINGS_TABS,
   THEMES,
 } from '@/modules/Settings/constants';
+import { INTEGRATIONS } from '@/modules/Setup/constants';
 import { Platform } from '@/services';
 import { useAppStore, useMachineStore, useSettingsStore } from '@/store';
 
@@ -23,11 +23,9 @@ export const useSettingsViewModel = () => {
   const keybinds = useSettingsStore((state) => state.keybinds);
   const editingKeybindId = useSettingsStore((state) => state.editingKeybindId);
   const editKeybind = useSettingsStore((state) => state.editKeybind);
-  const integrations = useSettingsStore((state) => state.integrations);
   const selectTab = useSettingsStore((state) => state.selectTab);
   const selectAgent = useSettingsStore((state) => state.selectAgent);
   const selectLanguage = useSettingsStore((state) => state.selectLanguage);
-  const toggleIntegration = useSettingsStore((state) => state.toggleIntegration);
   const isMac = Platform.isMac();
 
   const iosTool = (props: {
@@ -101,25 +99,7 @@ export const useSettingsViewModel = () => {
         missing: t('TOOLS.IDB_MISSING'),
       }),
     ],
-    integrations: INTEGRATIONS.map((item) => {
-      const isConnected = integrations[item.id];
-
-      return {
-        id: item.id,
-        name: item.name,
-        logo: item.logo,
-        text: t(item.textKey),
-        needs: t(item.needsKey),
-        isConnected,
-        pill: isConnected ? ('passed' as const) : ('idle' as const),
-        status: isConnected ? t('SETTINGS.CONNECTED') : t('SETTINGS.NOT_CONNECTED'),
-        action: isConnected ? t('COMMON.DISCONNECT') : t('COMMON.CONNECT'),
-        rows: item.rows.map((row) => ({
-          label: t(row.labelKey),
-          value: t(row.valueKey),
-        })),
-      };
-    }),
+    integrations: INTEGRATIONS,
     themes: THEMES.map((item) => ({
       id: item.id,
       label: t(item.labelKey),
@@ -143,7 +123,6 @@ export const useSettingsViewModel = () => {
     onSelectAgent: selectAgent,
     onSelectTheme: setTheme,
     onSelectLanguage: selectLanguage,
-    onToggleIntegration: toggleIntegration,
     onEditKeybind: (keybindId: string) => {
       editKeybind(editingKeybindId === keybindId ? null : keybindId);
     },

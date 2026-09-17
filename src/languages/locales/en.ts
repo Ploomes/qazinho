@@ -251,28 +251,6 @@ export const en = {
     DEVICES_NOTE:
       'gocrash never downloads an SDK, an emulator or Xcode. It finds what is already here and says what is missing.',
     IOS_OFF: 'iOS targets are off',
-    CONNECTED: 'connected',
-    NOT_CONNECTED: 'not connected',
-    WHAT_IT_NEEDS: 'what it needs',
-    GITHUB_TEXT:
-      'Reach your repositories: read the code behind a failing step, file an issue for a bug, and open a pull request with the fix.',
-    GITHUB_NEEDS:
-      'A token with access to the repos you want. gocrash only writes when you ask for it: an issue from a bug you picked, a pull request you reviewed first.',
-    JIRA_TEXT:
-      'Send a bug to a project with its screenshots, the steps and the expected vs. got already filled in.',
-    JIRA_NEEDS:
-      'Your Jira site, a project key and an API token. The first issue is a draft you review before it is created.',
-    ROW_ACCOUNT: 'account',
-    ROW_REPOSITORIES: 'repositories',
-    ROW_REPOSITORIES_VALUE: 'all the ones you grant',
-    ROW_SCOPE: 'scope',
-    ROW_SCOPE_VALUE: 'read code · create issues · open pull requests',
-    ROW_SITE: 'site',
-    ROW_PROJECT: 'project',
-    ROW_PROJECT_VALUE: 'you pick on the first send',
-    ROW_ISSUE_TYPE: 'issue type',
-    ROW_ISSUE_TYPE_VALUE: 'Bug',
-    NOT_LINKED: 'not linked yet',
     INTEGRATIONS_NOTE:
       'Nothing is sent anywhere on its own. You pick the run, the bug and the moment.',
     THEME_LIGHT: 'Light',
@@ -287,6 +265,27 @@ export const en = {
     ABOUT_NOTE:
       'Go crash your app before your users do. Your agent, your emulators, your screenshots. Nothing leaves this machine.',
     LICENCE: 'Licence',
+  },
+  SETUP: {
+    CONNECTED: 'connected',
+    NOT_CONNECTED: 'not connected',
+    WHAT_IT_NEEDS: 'what it needs',
+    GITHUB_TEXT: 'File the bugs a run finds as issues in your repositories.',
+    GITHUB_NEEDS:
+      "A personal access token that can read your account and create issues. gocrash checks it with GitHub, then seals it in this machine's keychain.",
+    JIRA_TEXT: 'File the bugs a run finds as issues in a Jira project.',
+    JIRA_NEEDS:
+      "Your Jira Cloud site, your email and an API token. gocrash checks them with Jira, then seals the token in this machine's keychain.",
+    NOT_FILED_YET:
+      'Sending a bug to the tracker is not built yet. The connection is checked and kept for when it is.',
+    FIELD_TOKEN: 'token',
+    FIELD_SITE: 'site',
+    FIELD_EMAIL: 'email',
+    CREATE_TOKEN: 'Create a token ↗',
+    CHECKING_TOKEN: 'Checking…',
+    ROW_ACCOUNT: 'account',
+    ROW_SITE: 'site',
+    ROW_SINCE: 'connected on',
   },
   STATUS: {
     RUNNING: 'running',
