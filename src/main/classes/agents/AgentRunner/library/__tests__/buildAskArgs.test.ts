@@ -70,4 +70,10 @@ describe('buildAskArgs', () => {
   it('does NOT restrict the agent tools when no device is attached', () => {
     expect(buildAskArgs({ model: '', sessionId: null })).not.toContain('--tools');
   });
+
+  it('takes every tool away from a call that is only talk', () => {
+    expect(
+      buildAskArgs({ model: '', sessionId: null, hasNoTools: true }).slice(-2),
+    ).toEqual(['--tools', '']);
+  });
 });

@@ -2,9 +2,9 @@ import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 
 /** The flags that make the CLI answer once, in JSON, on the session it already has. */
 export function buildAskArgs(
-  props: Omit<IRunAgent, 'workspaceId' | 'agentId' | 'prompt' | 'command'>,
+  props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command'>,
 ): string[] {
-  const { model, sessionId, schema, systemPrompt, mcpConfig } = props;
+  const { model, sessionId, schema, systemPrompt, mcpConfig, hasNoTools = false } = props;
 
   return [
     '--print',
@@ -28,5 +28,7 @@ export function buildAskArgs(
           '--allowedTools',
           'mcp__gocrash',
         ]),
+    // A chat is only talk: the agent gets no shell and no edits on the QA's machine.
+    ...(mcpConfig === undefined && hasNoTools ? ['--tools', ''] : []),
   ];
 }
