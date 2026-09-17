@@ -155,6 +155,9 @@ function createWindow(): void {
 }
 
 void app.whenReady().then(async () => {
+  // macOS: in dev the dock shows Electron's own icon; a packaged build gets build/icon.png from electron-builder.
+  if (!app.isPackaged) app.dock?.setIcon(PATHS.icon);
+
   await live.start();
   await tools.start();
 
