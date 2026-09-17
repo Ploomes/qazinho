@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { MACHINE_WATCH } from '@/hooks/useMachineWatch/constants';
-import { Agent, Machine } from '@/services';
-import { useMachineStore, useWorkspaceStore } from '@/store';
+import { Agent, Integrations, Machine, Setup } from '@/services';
+import { useMachineStore, useSetupStore, useWorkspaceStore } from '@/store';
 
-/** Detection runs once; the meters keep reading, because a device can come up at any time. */
+/** Detection runs once; the meters keep reading, because a device can come up at any time. Installs report here. */
 export const useMachineWatch = () => {
   const setAgents = useMachineStore((state) => state.setAgents);
   const setResources = useMachineStore((state) => state.setResources);
@@ -11,6 +11,8 @@ export const useMachineWatch = () => {
   const setUsage = useMachineStore((state) => state.setUsage);
   const setLiveText = useWorkspaceStore((state) => state.setLiveText);
   const setContext = useWorkspaceStore((state) => state.setContext);
+  const followInstall = useSetupStore((state) => state.followInstall);
+  const setIntegrations = useSetupStore((state) => state.setIntegrations);
 
   useEffect(() => {
     void Machine.detectAgents().then(setAgents);
@@ -19,6 +21,12 @@ export const useMachineWatch = () => {
   useEffect(() => {
     void Machine.detectDeviceTools().then(setTools);
   }, [setTools]);
+
+  useEffect(() => {
+    void Integrations.list().then(setIntegrations);
+  }, [setIntegrations]);
+
+  useEffect(() => Setup.onEvent(followInstall), [followInstall]);
 
   useEffect(
     () =>

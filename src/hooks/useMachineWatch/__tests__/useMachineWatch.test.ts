@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
-import type { IAgentEvent } from '@/types';
+import type { IAgentEvent, ISetupEvent } from '@/types';
 import { renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMachineWatch } from '@/hooks/useMachineWatch';
 import { MACHINE_WATCH } from '@/hooks/useMachineWatch/constants';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
-import { useMachineStore, useWorkspaceStore } from '@/store';
+import { useMachineStore, useSetupStore, useWorkspaceStore } from '@/store';
 
 const AGENTS = [
   {
@@ -143,5 +143,45 @@ describe('useMachineWatch', () => {
     expect(first?.context).toBeNull();
     expect(second?.context).toEqual({ tokens: 50_000, window: 200_000 });
     expect(useMachineStore.getState().usage?.fiveHourUsed).toBe(0.3);
+  });
+
+  it('knows which trackers are connected from the start', async () => {
+    window.gocrash.listIntegrations = vi
+      .fn()
+      .mockResolvedValue([
+        { id: 'github', account: 'octoqa', site: null, connectedAt: '2026-09-16' },
+      ]);
+
+    renderHook(() => useMachineWatch());
+
+    await waitFor(() => {
+      expect(useSetupStore.getState().integrations).toMatchObject([
+        { account: 'octoqa' },
+      ]);
+    });
+  });
+
+  it('follows an install line by line', () => {
+    let hear: (event: ISetupEvent) => void = () => undefined;
+
+    window.gocrash.onSetupEvent = vi.fn((listener: (event: ISetupEvent) => void) => {
+      hear = listener;
+
+      return () => undefined;
+    });
+    useSetupStore.setState({
+      installs: { idb: { phase: 'installing', stage: 1, stages: 4, line: '' } },
+    });
+
+    renderHook(() => useMachineWatch());
+
+    hear({ item: 'idb', stage: 2, stages: 4, line: '==> Pouring' });
+
+    expect(useSetupStore.getState().installs.idb).toEqual({
+      phase: 'installing',
+      stage: 2,
+      stages: 4,
+      line: '==> Pouring',
+    });
   });
 });

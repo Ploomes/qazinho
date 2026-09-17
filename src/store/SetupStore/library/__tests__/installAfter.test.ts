@@ -1,0 +1,44 @@
+import { describe, expect, it } from 'vitest';
+import { installAfter } from '@/store/SetupStore/library';
+
+const INSTALLING = { phase: 'installing' as const, stage: 1, stages: 4, line: '' };
+
+describe('installAfter', () => {
+  it('follows the stage and the last line of an install under way', () => {
+    expect(
+      installAfter({
+        state: INSTALLING,
+        news: { item: 'idb', stage: 2, stages: 4, line: '==> Pouring idb-companion' },
+      }),
+    ).toEqual({
+      phase: 'installing',
+      stage: 2,
+      stages: 4,
+      line: '==> Pouring idb-companion',
+    });
+  });
+
+  it('marks it installed when it ends well', () => {
+    expect(installAfter({ state: INSTALLING, news: { isInstalled: true } })).toEqual({
+      phase: 'installed',
+    });
+  });
+
+  it('keeps the error and the command when it fails', () => {
+    expect(
+      installAfter({
+        state: INSTALLING,
+        news: { isInstalled: false, error: 'EACCES', command: 'npm install -g x' },
+      }),
+    ).toEqual({ phase: 'failed', error: 'EACCES', command: 'npm install -g x' });
+  });
+
+  it('does NOT reopen an install that already ended because of a late line', () => {
+    expect(
+      installAfter({
+        state: { phase: 'installed' },
+        news: { item: 'codex', stage: 1, stages: 1, line: 'late' },
+      }),
+    ).toEqual({ phase: 'installed' });
+  });
+});
