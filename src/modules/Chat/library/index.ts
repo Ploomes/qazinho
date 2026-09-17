@@ -5,3 +5,4 @@ export * from './appendPlanCard';
 export * from './appendRunMessages';
 export * from './appendUserMessage';
 export * from './formatClock';
+export * from './parseChatAnswer';
