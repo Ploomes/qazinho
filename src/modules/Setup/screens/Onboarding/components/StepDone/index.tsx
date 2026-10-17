@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { Intern } from '@/components/atoms';
 import { useStepDoneViewModel } from './hooks';
 import './styles.css';
 
@@ -9,7 +8,6 @@ export const StepDone: React.FC = () => {
 
   return (
     <div className="step-done">
-      <Intern mood="passed" size={88} />
       {rows.map((row) => (
         <div
           key={row.id}

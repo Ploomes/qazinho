@@ -3,20 +3,23 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ONBOARDING_STEPS } from '@/modules/Setup/constants';
 import { useMachineCheck } from '@/modules/Setup/hooks';
+import { moodOfSetup } from '@/modules/Setup/library';
 import { useAppStore, useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
 export const useOnboardingViewModel = () => {
   const { t } = useTranslation();
   const [step, setStep] = useState<OnboardingStep>('welcome');
   const [direction, setDirection] = useState(1);
+  const [saidStep, setSaidStep] = useState<OnboardingStep | null>(null);
   const hasChecked = useRef(false);
   const agents = useMachineStore((state) => state.agents);
   const integrations = useSetupStore((state) => state.integrations);
+  const installs = useSetupStore((state) => state.installs);
   const agentInUse = useSettingsStore((state) => state.agent);
   const selectAgent = useSettingsStore((state) => state.selectAgent);
   const finishOnboarding = useSettingsStore((state) => state.finishOnboarding);
   const openModal = useAppStore((state) => state.openModal);
-  const { check } = useMachineCheck();
+  const { isChecking, check } = useMachineCheck();
 
   // The first look happens on the way in, so the agents step opens on what is really here.
   useEffect(() => {
@@ -44,13 +47,15 @@ export const useOnboardingViewModel = () => {
 
   return {
     step,
-    enterX: 24 * direction,
-    exitX: -24 * direction,
-    eyebrow: t('SETUP.STEP_OF', { step: index + 1, total: ONBOARDING_STEPS.length }),
-    title: t(`SETUP.${step.toUpperCase()}_TITLE` as 'SETUP.WELCOME_TITLE'),
-    body: t(`SETUP.${step.toUpperCase()}_BODY` as 'SETUP.WELCOME_BODY'),
-    progress: `${String(Math.round((index / last) * 100))}%`,
-    progressLabel: t('SETUP.PROGRESS', { done: index, total: last }),
+    enterY: 16 * direction,
+    exitY: -16 * direction,
+    mood: moodOfSetup({ step, installs: Object.values(installs), isChecking, hasAgent }),
+    say:
+      step === 'agents' && !hasAgent && !isChecking
+        ? t('SETUP.AGENTS_SAY_NONE')
+        : t(`SETUP.${step.toUpperCase()}_SAY` as 'SETUP.WELCOME_SAY'),
+    // What the step holds comes in once the Estagiário finished his line, and stays after.
+    isSaid: saidStep === step,
     isFirst: index === 0,
     isLast: index === last,
     nextLabel:
@@ -61,10 +66,9 @@ export const useOnboardingViewModel = () => {
           : step === 'integrations' && integrations.length === 0
             ? t('SETUP.SKIP_FOR_NOW')
             : t('SETUP.CONTINUE'),
-    rail: ONBOARDING_STEPS.map((item, position) => ({
+    dots: ONBOARDING_STEPS.map((item, position) => ({
       id: item.id,
       label: t(item.labelKey),
-      mark: position < index ? '✓' : String(position + 1).padStart(2, '0'),
       ariaCurrent: position === index ? ('step' as const) : undefined,
       state:
         position < index
@@ -77,6 +81,9 @@ export const useOnboardingViewModel = () => {
         go(position);
       },
     })),
+    onSaid: () => {
+      setSaidStep(step);
+    },
     onNext: () => {
       // Leaving the agents step on an agent that is not here would start the app on one that cannot answer.
       const found = agents.find(({ isFound }) => isFound);

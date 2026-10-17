@@ -1,0 +1,25 @@
+import type { InternMood } from '@/components/atoms/Intern/types';
+import type { InstallState, OnboardingStep } from '@/modules/Setup/types';
+
+/** How the Estagiário looks on each step of the first run, and while it installs or checks the machine. */
+export function moodOfSetup(props: {
+  step: OnboardingStep;
+  installs: (InstallState | undefined)[];
+  isChecking: boolean;
+  hasAgent: boolean;
+}): InternMood {
+  const { step, installs, isChecking, hasAgent } = props;
+  const isAtTheMachine = step === 'agents' || step === 'devices';
+
+  if (step === 'done') return 'passed';
+
+  if (isAtTheMachine && installs.some((install) => install?.phase === 'installing'))
+    return 'running';
+
+  if (isAtTheMachine && installs.some((install) => install?.phase === 'failed'))
+    return 'broken';
+
+  if (isAtTheMachine && isChecking) return 'thinking';
+
+  return step === 'agents' && !hasAgent ? 'flaky' : 'neutral';
+}

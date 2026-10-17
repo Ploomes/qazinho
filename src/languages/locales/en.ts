@@ -293,14 +293,23 @@ export const en = {
     COPIED: 'Copied',
     TRY_AGAIN: 'Try again',
     RUN_IT_YOURSELF: 'or run it yourself in a terminal',
-    RAIL_TITLE: 'Set up QAzinho',
     STEP_WELCOME: 'Welcome',
     STEP_AGENTS: 'Agent',
     STEP_DEVICES: 'Devices',
     STEP_INTEGRATIONS: 'Trackers',
     STEP_DONE: 'Ready',
-    STEP_OF: 'step {{step}} of {{total}}',
-    PROGRESS: '{{done}} of {{total}} done',
+    WELCOME_SAY:
+      "Hi! I'm the Intern. I'll get this machine ready to crash apps: your agent, your devices and where the bugs go. Which language do we speak?",
+    AGENTS_SAY:
+      'First, who tests with me? I drive an AI agent you already have, signed in to your own account. Here is what I found on this machine.',
+    AGENTS_SAY_NONE:
+      "Hmm, I couldn't find an agent on this machine. Install one below and I'll look again. Without one I can't write or run a plan.",
+    DEVICES_SAY:
+      'Now the devices. The web needs nothing else. Android and iOS need their SDKs, and those are too big for me to install, so I point you to them.',
+    INTEGRATIONS_SAY:
+      'Want me to send the bugs somewhere? Connect GitHub or Jira, or skip it and do it later in Settings.',
+    DONE_SAY:
+      'All set! This is what I found on this machine. Shall we go crash something?',
     SKIP_SETUP: 'Skip setup',
     BACK: 'Back',
     START: 'Let’s start',
@@ -309,16 +318,7 @@ export const en = {
     SKIP_FOR_NOW: 'Skip for now',
     OPEN_APP: 'Open QAzinho',
     CREATE_PROJECT: 'Create my first project',
-    WELCOME_TITLE: 'Let’s get this machine ready to crash apps.',
-    WELCOME_BODY:
-      'Everything runs here: your agent, your emulators, your browser. This takes a minute: QAzinho looks at what is installed and installs what is light enough to install from here.',
-    WELCOME_AGENTS: 'The AI agent that writes and runs your tests',
-    WELCOME_DEVICES: 'What Android and iOS targets need on this machine',
-    WELCOME_TRACKERS: 'Where the bugs go, if you want them to go anywhere',
     LANGUAGE: 'language',
-    AGENTS_TITLE: 'Pick the agent that tests for you.',
-    AGENTS_BODY:
-      'QAzinho has no model of its own. It drives an agent CLI installed on this machine, signed in to your own account.',
     AGENT_ABOUT: 'runs as {{command}}',
     AGENT_IN_USE: 'in use',
     AGENT_USE: 'Use this one',
@@ -334,9 +334,6 @@ export const en = {
       'Without an agent QAzinho cannot write a plan or run one. You can install one later in Settings.',
     CHECK_AGAIN: 'Check again',
     CHECKING: 'checking…',
-    DEVICES_TITLE: 'Get your devices ready.',
-    DEVICES_BODY:
-      'Web needs nothing more. Android and iOS need their SDKs, which are too big to install from here: QAzinho points you to them and checks again.',
     ANDROID_ABOUT: 'Runs your own emulators through adb.',
     GET_ANDROID_STUDIO: 'Get Android Studio ↗',
     XCODE_ABOUT: 'Boots the iOS simulator and installs your build on it.',
@@ -348,10 +345,6 @@ export const en = {
       'Found the SDK after installing it? Open it once so it finishes setting up, then check again.',
     IOS_OFF_NOTE: 'iOS needs a Mac, so its tools stay off on this machine.',
     MAC_ONLY: 'macOS only',
-    INTEGRATIONS_TITLE: 'Connect where your bugs go.',
-    INTEGRATIONS_BODY: 'Optional. Skip it now and connect a tracker later in Settings.',
-    DONE_TITLE: 'All set.',
-    DONE_BODY: 'This is what QAzinho found on this machine.',
     DONE_AGENT: 'agent',
     DONE_TRACKERS: 'trackers',
     DONE_READY: 'ready',

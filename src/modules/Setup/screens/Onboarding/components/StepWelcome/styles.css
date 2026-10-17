@@ -4,32 +4,6 @@
   gap: var(--space-7);
 }
 
-.step-welcome__checks {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.step-welcome__check {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 18px;
-  border: 1px solid var(--line2);
-  border-radius: var(--radius-lg);
-  background: var(--raise);
-  color: var(--ink);
-  font: var(--font-ui-md);
-}
-
-.step-welcome__glyph {
-  color: var(--lime-ink);
-  font: var(--font-mono-md);
-}
-
 .step-welcome__section {
   display: flex;
   flex-direction: column;

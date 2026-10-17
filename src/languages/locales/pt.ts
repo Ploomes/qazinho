@@ -294,14 +294,23 @@ export const pt: typeof en = {
     COPIED: 'Copiado',
     TRY_AGAIN: 'Tentar de novo',
     RUN_IT_YOURSELF: 'ou rode você mesmo num terminal',
-    RAIL_TITLE: 'Configurar o QAzinho',
     STEP_WELCOME: 'Boas-vindas',
     STEP_AGENTS: 'Agente',
     STEP_DEVICES: 'Dispositivos',
     STEP_INTEGRATIONS: 'Trackers',
     STEP_DONE: 'Pronto',
-    STEP_OF: 'passo {{step}} de {{total}}',
-    PROGRESS: '{{done}} de {{total}} feitos',
+    WELCOME_SAY:
+      'Oi! Eu sou o Estagiário. Vou deixar esta máquina pronta para quebrar apps: seu agente, seus dispositivos e para onde vão os bugs. Em que língua a gente conversa?',
+    AGENTS_SAY:
+      'Primeiro: quem testa comigo? Eu uso um agente de IA que você já tem, logado na sua própria conta. Olha o que eu achei nesta máquina.',
+    AGENTS_SAY_NONE:
+      'Hmm, não achei nenhum agente nesta máquina. Instale um aqui embaixo que eu procuro de novo. Sem um agente eu não escrevo nem rodo um plano.',
+    DEVICES_SAY:
+      'Agora os dispositivos. A web não precisa de mais nada. Android e iOS precisam dos SDKs, que são grandes demais para eu instalar, então eu mostro onde baixar.',
+    INTEGRATIONS_SAY:
+      'Quer que eu mande os bugs para algum lugar? Conecte o GitHub ou o Jira, ou pule e faça isso depois nas Settings.',
+    DONE_SAY:
+      'Prontinho! Isso é o que eu achei nesta máquina. Bora quebrar alguma coisa?',
     SKIP_SETUP: 'Pular configuração',
     BACK: 'Voltar',
     START: 'Vamos começar',
@@ -310,16 +319,7 @@ export const pt: typeof en = {
     SKIP_FOR_NOW: 'Pular por agora',
     OPEN_APP: 'Abrir o QAzinho',
     CREATE_PROJECT: 'Criar meu primeiro projeto',
-    WELCOME_TITLE: 'Vamos deixar esta máquina pronta para quebrar apps.',
-    WELCOME_BODY:
-      'Tudo roda aqui: seu agente, seus emuladores, seu navegador. Leva um minuto: o QAzinho vê o que já está instalado e instala o que é leve o bastante para instalar daqui.',
-    WELCOME_AGENTS: 'O agente de IA que escreve e roda seus testes',
-    WELCOME_DEVICES: 'O que targets Android e iOS precisam nesta máquina',
-    WELCOME_TRACKERS: 'Para onde vão os bugs, se você quiser mandar para algum lugar',
     LANGUAGE: 'idioma',
-    AGENTS_TITLE: 'Escolha o agente que testa por você.',
-    AGENTS_BODY:
-      'O QAzinho não tem modelo próprio. Ele usa um agente CLI instalado nesta máquina, logado na sua própria conta.',
     AGENT_ABOUT: 'roda como {{command}}',
     AGENT_IN_USE: 'em uso',
     AGENT_USE: 'Usar este',
@@ -335,9 +335,6 @@ export const pt: typeof en = {
       'Sem um agente o QAzinho não escreve nem roda um plano. Dá para instalar um depois nas Settings.',
     CHECK_AGAIN: 'Verificar de novo',
     CHECKING: 'verificando…',
-    DEVICES_TITLE: 'Prepare seus dispositivos.',
-    DEVICES_BODY:
-      'Web não precisa de mais nada. Android e iOS precisam dos SDKs, que são grandes demais para instalar daqui: o QAzinho mostra onde baixar e verifica de novo.',
     ANDROID_ABOUT: 'Roda seus próprios emuladores pelo adb.',
     GET_ANDROID_STUDIO: 'Baixar Android Studio ↗',
     XCODE_ABOUT: 'Liga o simulador de iOS e instala seu build nele.',
@@ -350,10 +347,6 @@ export const pt: typeof en = {
     IOS_OFF_NOTE:
       'iOS precisa de um Mac, então as ferramentas dele ficam desligadas nesta máquina.',
     MAC_ONLY: 'só no macOS',
-    INTEGRATIONS_TITLE: 'Conecte para onde vão seus bugs.',
-    INTEGRATIONS_BODY: 'Opcional. Pule agora e conecte um tracker depois nas Settings.',
-    DONE_TITLE: 'Tudo pronto.',
-    DONE_BODY: 'Isto é o que o QAzinho encontrou nesta máquina.',
     DONE_AGENT: 'agente',
     DONE_TRACKERS: 'trackers',
     DONE_READY: 'pronto',

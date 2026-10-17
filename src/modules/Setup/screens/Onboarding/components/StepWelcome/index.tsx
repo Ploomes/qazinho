@@ -8,27 +8,6 @@ export const StepWelcome: React.FC = () => {
 
   return (
     <div className="step-welcome">
-      <ol className="step-welcome__checks">
-        <li className="step-welcome__check">
-          <span className="step-welcome__glyph" aria-hidden="true">
-            01
-          </span>
-          {t('SETUP.WELCOME_AGENTS')}
-        </li>
-        <li className="step-welcome__check">
-          <span className="step-welcome__glyph" aria-hidden="true">
-            02
-          </span>
-          {t('SETUP.WELCOME_DEVICES')}
-        </li>
-        <li className="step-welcome__check">
-          <span className="step-welcome__glyph" aria-hidden="true">
-            03
-          </span>
-          {t('SETUP.WELCOME_TRACKERS')}
-        </li>
-      </ol>
-
       <div className="step-welcome__section">
         <span className="step-welcome__eyebrow">{t('SETUP.LANGUAGE')}</span>
         <div className="step-welcome__languages">

@@ -77,7 +77,20 @@ afterAll(async () => {
 describe('the built page, with no bridge behind it', () => {
   it('opens on the first-run setup, and walks it without a bridge', async () => {
     expect(await page.locator('.titlebar').count()).toBe(1);
-    expect(await page.locator('body').innerText()).toContain('Set up QAzinho');
+    expect(await page.locator('.speech-bubble').innerText()).toContain("I'm the Intern");
+    // Electron swallows a click in the drag strip, and Skip setup sits inside it.
+    expect(
+      await page.locator('.onboarding__skip').evaluate((skip: object) => {
+        // The callback runs in the page, where DOM types are not in this project's lib.
+        const web = globalThis as unknown as {
+          getComputedStyle: (one: object) => {
+            getPropertyValue: (name: string) => string;
+          };
+        };
+
+        return web.getComputedStyle(skip).getPropertyValue('-webkit-app-region');
+      }),
+    ).toBe('no-drag');
 
     for (const name of [
       'Let’s start',

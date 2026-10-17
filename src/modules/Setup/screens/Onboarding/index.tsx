@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Button, Logo } from '@/components/atoms';
+import { Button, Intern } from '@/components/atoms';
+import { SpeechBubble } from '@/components/molecules';
 import { MOTION } from '@/constants';
 import {
   StepAgents,
@@ -15,17 +16,16 @@ import './styles.css';
 export const Onboarding: React.FC = () => {
   const {
     step,
-    enterX,
-    exitX,
-    eyebrow,
-    title,
-    body,
-    progress,
-    progressLabel,
+    enterY,
+    exitY,
+    mood,
+    say,
+    isSaid,
     isFirst,
     isLast,
     nextLabel,
-    rail,
+    dots,
+    onSaid,
     onNext,
     onBack,
     onSkipAll,
@@ -36,95 +36,103 @@ export const Onboarding: React.FC = () => {
 
   return (
     <section className="onboarding">
-      <nav className="onboarding__rail">
-        <div className="onboarding__brand">
-          <Logo size={22} />
-          <span className="onboarding__brand-name">{t('SETUP.RAIL_TITLE')}</span>
-        </div>
-
-        <ol className="onboarding__steps">
-          {rail.map((item) => (
-            <li key={item.id}>
-              <button
-                type="button"
-                className={`onboarding__step onboarding__step--${item.state}`}
-                disabled={!item.canVisit}
-                aria-current={item.ariaCurrent}
-                onClick={item.onVisit}
-              >
-                <span className="onboarding__step-number">{item.mark}</span>
-                {item.label}
-              </button>
-            </li>
-          ))}
-        </ol>
-
-        <div className="onboarding__rail-foot">
-          <div
-            className="onboarding__progress"
-            role="progressbar"
-            aria-label={progressLabel}
+      <AnimatePresence>
+        {!isLast && (
+          <motion.button
+            key="skip"
+            type="button"
+            className="onboarding__skip"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+            onClick={onSkipAll}
           >
-            <motion.span
-              className="onboarding__progress-fill"
-              animate={{ width: progress }}
-              transition={{ duration: MOTION.durationSlow, ease: MOTION.ease }}
-            />
-          </div>
-          <span className="onboarding__progress-label">{progressLabel}</span>
-          {!isLast && (
-            <button type="button" className="onboarding__skip" onClick={onSkipAll}>
-              {t('SETUP.SKIP_SETUP')}
-            </button>
-          )}
-        </div>
-      </nav>
+            {t('SETUP.SKIP_SETUP')}
+          </motion.button>
+        )}
+      </AnimatePresence>
 
-      <div className="onboarding__content">
+      <div className="onboarding__stage">
+        <div className="onboarding__speaker">
+          <motion.div
+            className="onboarding__intern"
+            initial={{ opacity: 0, scale: 0.8, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: MOTION.durationSlow, ease: MOTION.ease }}
+          >
+            <Intern mood={mood} size={128} />
+          </motion.div>
+          <SpeechBubble text={say} onSaid={onSaid} />
+        </div>
+
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={step}
-            className="onboarding__page"
-            initial={{ opacity: 0, x: enterX }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: exitX }}
+            className="onboarding__content"
+            initial={{ opacity: 0, y: enterY }}
+            animate={isSaid ? { opacity: 1, y: 0 } : { opacity: 0, y: enterY }}
+            exit={{ opacity: 0, y: exitY }}
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
-            <header className="onboarding__head">
-              <span className="onboarding__eyebrow">{eyebrow}</span>
-              <h1 className="onboarding__title">{title}</h1>
-              <p className="onboarding__body">{body}</p>
-            </header>
-
             {step === 'welcome' && <StepWelcome />}
             {step === 'agents' && <StepAgents />}
             {step === 'devices' && <StepDevices />}
             {step === 'integrations' && <StepIntegrations />}
             {step === 'done' && <StepDone />}
-
-            <footer className="onboarding__footer">
-              {!isFirst && (
-                <Button variant="ghost" onClick={onBack}>
-                  {t('SETUP.BACK')}
-                </Button>
-              )}
-              <span className="onboarding__spacer" />
-              {isLast ? (
-                <>
-                  <Button onClick={onCreateProject}>{t('SETUP.CREATE_PROJECT')}</Button>
-                  <Button variant="primary" onClick={onFinish}>
-                    {t('SETUP.OPEN_APP')}
-                  </Button>
-                </>
-              ) : (
-                <Button variant="primary" onClick={onNext}>
-                  {nextLabel}
-                </Button>
-              )}
-            </footer>
           </motion.div>
         </AnimatePresence>
       </div>
+
+      <footer className="onboarding__footer">
+        <div className="onboarding__back">
+          <AnimatePresence>
+            {!isFirst && (
+              <motion.div
+                key="back"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+              >
+                <Button variant="ghost" onClick={onBack}>
+                  {t('SETUP.BACK')}
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <ol className="onboarding__dots">
+          {dots.map((dot) => (
+            <li key={dot.id}>
+              <button
+                type="button"
+                className={`onboarding__dot onboarding__dot--${dot.state}`}
+                disabled={!dot.canVisit}
+                aria-label={dot.label}
+                aria-current={dot.ariaCurrent}
+                onClick={dot.onVisit}
+              />
+            </li>
+          ))}
+        </ol>
+
+        <div className="onboarding__next">
+          {isLast ? (
+            <>
+              <Button onClick={onCreateProject}>{t('SETUP.CREATE_PROJECT')}</Button>
+              <Button variant="primary" onClick={onFinish}>
+                {t('SETUP.OPEN_APP')}
+              </Button>
+            </>
+          ) : (
+            <Button variant="primary" onClick={onNext}>
+              {nextLabel}
+            </Button>
+          )}
+        </div>
+      </footer>
     </section>
   );
 };

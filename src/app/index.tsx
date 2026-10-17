@@ -25,7 +25,7 @@ export const App: React.FC = () => {
   return (
     <MotionConfig reducedMotion="user">
       <div className="app">
-        <Titlebar />
+        <Titlebar isBare={isOnboarding} />
         <div className="app__body">
           {isOnboarding && <Onboarding />}
           {!isOnboarding && hasSidebar && <Sidebar />}

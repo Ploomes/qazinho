@@ -50,27 +50,26 @@ describe('useOnboardingViewModel', () => {
     });
   });
 
-  describe('rail', () => {
+  describe('dots', () => {
     it('marks the steps behind as done, and lets the QA go back to them only', () => {
       const { result } = renderHook(() => useOnboardingViewModel());
 
       walkTo(result, 2);
 
-      expect(result.current.rail.map(({ state }) => state)).toEqual([
+      expect(result.current.dots.map(({ state }) => state)).toEqual([
         'done',
         'done',
         'current',
         'todo',
         'todo',
       ]);
-      expect(result.current.rail.map(({ canVisit }) => canVisit)).toEqual([
+      expect(result.current.dots.map(({ canVisit }) => canVisit)).toEqual([
         true,
         true,
         false,
         false,
         false,
       ]);
-      expect(result.current.progress).toBe('50%');
     });
 
     it('goes back to a step that was done', () => {
@@ -78,10 +77,47 @@ describe('useOnboardingViewModel', () => {
 
       walkTo(result, 3);
       act(() => {
-        result.current.rail[1]?.onVisit();
+        result.current.dots[1]?.onVisit();
       });
 
       expect(result.current.step).toBe('agents');
+    });
+  });
+
+  describe('say', () => {
+    it('greets the QA in the bubble, and holds the step until the line is out', () => {
+      const { result } = renderHook(() => useOnboardingViewModel());
+
+      expect(result.current.say).toContain('the Intern');
+      expect(result.current.isSaid).toBe(false);
+
+      act(() => {
+        result.current.onSaid();
+      });
+
+      expect(result.current.isSaid).toBe(true);
+    });
+
+    it('says something new on the next step, and holds it again until said', () => {
+      const { result } = renderHook(() => useOnboardingViewModel());
+
+      act(() => {
+        result.current.onSaid();
+      });
+      walkTo(result, 1);
+
+      expect(result.current.isSaid).toBe(false);
+    });
+
+    it('owns up when there is no agent on this machine, looking suspicious', async () => {
+      const { result } = renderHook(() => useOnboardingViewModel());
+
+      walkTo(result, 1);
+
+      await waitFor(() => {
+        expect(result.current.say).toContain("couldn't find an agent");
+      });
+      expect(result.current.mood).toBe('flaky');
     });
   });
 
