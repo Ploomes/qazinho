@@ -2,37 +2,51 @@ import type { InternMood } from '@/components/atoms/Intern/types';
 import { describe, expect, it } from 'vitest';
 import { drawIntern } from '@/components/atoms/Intern/library';
 
+const METHODS = [
+  'setTransform',
+  'clearRect',
+  'translate',
+  'rotate',
+  'scale',
+  'save',
+  'restore',
+  'beginPath',
+  'moveTo',
+  'lineTo',
+  'ellipse',
+  'arc',
+  'roundRect',
+  'closePath',
+];
+
 /** A 2D context that remembers every colour it painted with and every transform it took. */
 function recorder() {
   const painted = new Set<string>();
   const calls: string[] = [];
-  const context = new Proxy(
-    {
-      fillStyle: '',
-      strokeStyle: '',
-      lineWidth: 0,
-      lineCap: '',
-      lineJoin: '',
-      globalAlpha: 1,
+  const context = {
+    fillStyle: '',
+    strokeStyle: '',
+    lineWidth: 0,
+    lineCap: '',
+    lineJoin: '',
+    globalAlpha: 1,
+    fill() {
+      painted.add(context.fillStyle);
     },
-    {
-      get: (target, key: string) =>
-        key in target
-          ? target[key as keyof typeof target]
-          : (...args: unknown[]) => {
-              calls.push(`${key}(${args.map(String).join(',')})`);
-              if (key === 'fill') painted.add(String(target.fillStyle));
-              if (key === 'stroke') painted.add(String(target.strokeStyle));
-            },
-      set: (target, key: string, value: unknown) => {
-        Object.assign(target, { [key]: value });
-
-        return true;
-      },
+    stroke() {
+      painted.add(context.strokeStyle);
     },
-  ) as unknown as CanvasRenderingContext2D;
+    ...Object.fromEntries(
+      METHODS.map((name) => [
+        name,
+        (...args: unknown[]) => {
+          calls.push(`${name}(${args.map(String).join(',')})`);
+        },
+      ]),
+    ),
+  };
 
-  return { context, painted, calls };
+  return { context: context as unknown as CanvasRenderingContext2D, painted, calls };
 }
 
 const MOODS: InternMood[] = [
