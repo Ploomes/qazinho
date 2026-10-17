@@ -9,9 +9,9 @@ import '@fontsource/ibm-plex-sans/500.css';
 import '@fontsource/ibm-plex-sans/600.css';
 import '@fontsource/space-grotesk/500.css';
 import '@fontsource/space-grotesk/600.css';
-import '@/styles/tokens.css';
-import '@/styles/base.css';
-import '@/styles/animations.css';
+import '@/shared/styles/tokens.css';
+import '@/shared/styles/base.css';
+import '@/shared/styles/animations.css';
 
 const container = document.getElementById('root');
 

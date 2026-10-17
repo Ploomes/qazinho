@@ -24,7 +24,7 @@ const NO_PAGE_IN_NODE = {
     '@/store/**',
     '@/shared/hooks/**',
     '@/services/**',
-    '@/styles/**',
+    '@/shared/styles/**',
   ],
   message:
     'The main process and the preload never import the page. Share a type through @/shared/types.',
