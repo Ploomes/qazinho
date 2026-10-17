@@ -363,6 +363,9 @@ export const pt: typeof en = {
     DONE_NO_TRACKERS: 'nenhum conectado',
     DONE_NOTE: 'O que faltar dá para configurar depois nas Settings.',
   },
+  MASCOT: {
+    NAME: 'Estagiário',
+  },
   STATUS: {
     RUNNING: 'rodando',
     NEEDS_YOU: 'precisa de você',

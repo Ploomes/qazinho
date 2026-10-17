@@ -361,6 +361,9 @@ export const en = {
     DONE_NO_TRACKERS: 'none connected',
     DONE_NOTE: 'Anything missing can be set up later in Settings.',
   },
+  MASCOT: {
+    NAME: 'Intern',
+  },
   STATUS: {
     RUNNING: 'running',
     NEEDS_YOU: 'needs you',
