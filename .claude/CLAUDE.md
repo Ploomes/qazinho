@@ -25,8 +25,11 @@ environment with one or more targets. Workspaces hold a test plan, and several r
 2. **The agent is the user's.** Claude Code, Codex, Gemini CLI or any other, spoken to over ACP
    (Agent Client Protocol). QAzinho builds the QA harness around it and never offers a login to a
    model provider or holds a provider key of its own.
-3. **Open core.** The app is MIT and free, with no artificial limit for one user. Pro adds team
-   hosting, and nothing local is shaped around it.
+3. **A Salve Software product, closed source, in two plans.** Free is the whole desktop app, with
+   no account and no artificial limit: download it and use it. Pro is a paid web platform for a
+   company: an account and an org, where the QA syncs the projects on their machine to share
+   projects, plans and runs. The desktop app never needs Pro and nothing local is shaped around
+   it. Today the work is the desktop app; the platform comes later (`ROADMAP.md`).
 4. **The page is a web page and nothing more.** No Node, no Electron, no filesystem. It asks the
    main process through `window.qazinho`, whose contract lives in `src/types/`.
 5. **Nothing in the interface is a mock.** Every number, screenshot and verdict on screen came
