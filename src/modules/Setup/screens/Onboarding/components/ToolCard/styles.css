@@ -5,7 +5,10 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: var(--raise);
-  transition: border-color var(--dur) var(--ease);
+  transition:
+    border-color var(--dur) var(--ease),
+    background-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
 }
 
 .tool-card--missing {
@@ -19,23 +22,39 @@
 }
 
 .tool-card__mark {
+  display: flex;
   flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-pill);
+  color: var(--on-lime);
+  font: 700 11px/1 var(--font-ui);
+  transition:
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.tool-card__mark::before {
   width: 8px;
   height: 8px;
-  margin-top: 6px;
   border-radius: var(--radius-pill);
   background: var(--ink3);
+  content: '';
   transition:
     background-color var(--dur) var(--ease),
     box-shadow var(--dur) var(--ease);
 }
 
-.tool-card--found .tool-card__mark {
+.tool-card--found .tool-card__mark::before {
   background: var(--pass);
   box-shadow: 0 0 0 4px var(--pass-soft);
 }
 
-.tool-card--missing .tool-card__mark {
+.tool-card--missing .tool-card__mark::before {
   background: var(--attn);
   box-shadow: 0 0 0 4px var(--attn-soft);
 }
@@ -82,4 +101,54 @@
   font: 400 11px/1.4 var(--font-mono);
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.tool-card--option {
+  cursor: pointer;
+}
+
+.tool-card--option:hover {
+  border-color: var(--ink3);
+}
+
+.tool-card--option:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 2px;
+}
+
+.tool-card--option .tool-card__mark {
+  border-color: var(--ink3);
+}
+
+.tool-card--option .tool-card__mark::before {
+  display: none;
+}
+
+.tool-card--option:hover .tool-card__mark {
+  border-color: var(--ink2);
+}
+
+.tool-card--option .tool-card__badge {
+  color: var(--ink3);
+}
+
+.tool-card--selected,
+.tool-card--selected:hover {
+  border-color: var(--lime);
+  background: linear-gradient(var(--lime-soft), var(--lime-soft)), var(--raise);
+  box-shadow: 0 0 0 1px var(--lime);
+  cursor: default;
+}
+
+.tool-card--selected .tool-card__mark,
+.tool-card--selected:hover .tool-card__mark {
+  border-color: var(--lime);
+  background: var(--lime);
+}
+
+.tool-card--selected .tool-card__badge {
+  padding: 3px var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--lime);
+  color: var(--on-lime);
 }

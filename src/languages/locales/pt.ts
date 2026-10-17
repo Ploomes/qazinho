@@ -322,7 +322,6 @@ export const pt: typeof en = {
     LANGUAGE: 'idioma',
     AGENT_ABOUT: 'roda como {{command}}',
     AGENT_IN_USE: 'em uso',
-    AGENT_USE: 'Usar este',
     AGENT_SIGN_IN:
       'Instalado. Rode {{command}} uma vez num terminal para fazer login antes do primeiro chat.',
     FOUND: 'encontrado',

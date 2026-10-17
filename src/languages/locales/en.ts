@@ -321,7 +321,6 @@ export const en = {
     LANGUAGE: 'language',
     AGENT_ABOUT: 'runs as {{command}}',
     AGENT_IN_USE: 'in use',
-    AGENT_USE: 'Use this one',
     AGENT_SIGN_IN:
       'Installed. Run {{command}} once in a terminal to sign in before the first chat.',
     FOUND: 'found',

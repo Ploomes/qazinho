@@ -14,7 +14,11 @@ export const StepAgents: React.FC = () => {
 
   return (
     <div className="step-agents">
-      <div className="step-agents__list">
+      <div
+        className="step-agents__list"
+        role="radiogroup"
+        aria-label={t('SETUP.STEP_AGENTS')}
+      >
         {rows.map((row) => (
           <ToolCard
             key={row.id}
@@ -23,12 +27,10 @@ export const StepAgents: React.FC = () => {
             detail={row.detail}
             state={row.state}
             badge={row.badge}
+            isSelected={row.isInUse}
+            onSelect={row.onUse}
             action={
-              row.canUse ? (
-                <Button size="sm" onClick={row.onUse}>
-                  {t('SETUP.AGENT_USE')}
-                </Button>
-              ) : row.canInstall ? (
+              row.canInstall ? (
                 <Button size="sm" variant="primary" onClick={row.onInstall}>
                   {t('SETUP.INSTALL')}
                 </Button>
