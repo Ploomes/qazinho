@@ -13,7 +13,8 @@ expected. The QA stays in charge; the agent is the assistant.
 
 QAzinho finds the SDK, the emulator and idb where they already are, and names what is missing
 where the QA reads it. **It installs only what is light, and only when the QA asks**: the agent
-CLIs over npm, and idb over Homebrew and pipx (simctl has no command that touches the screen).
+CLIs over npm, and idb as Homebrew's companion plus its Python client in a virtualenv of its own
+(simctl has no command that touches the screen).
 The Android SDK and Xcode are too big: the first-run setup links to them and checks again.
 
 Built for technical QA teams, and for QA moving from manual to technical. A project is an
