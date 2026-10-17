@@ -30,6 +30,7 @@ describe('useSpeechBubbleViewModel', () => {
     beats(2);
 
     expect(result.current.said).toBe(LINE.slice(0, SPEECH.charsPerBeat * 2));
+    expect(result.current.said + result.current.unsaid).toBe(LINE);
   });
 
   it('says it is done once the whole line is out, exactly once', () => {
@@ -42,6 +43,7 @@ describe('useSpeechBubbleViewModel', () => {
     rerender();
 
     expect(result.current.said).toBe(LINE);
+    expect(result.current.unsaid).toBe('');
     expect(result.current.isStreaming).toBe(false);
     expect(onSaid).toHaveBeenCalledOnce();
   });
@@ -56,7 +58,7 @@ describe('useSpeechBubbleViewModel', () => {
     rerender({ text: 'Oi! Eu sou o Estagiário.' });
 
     expect(result.current.said).toBe('');
-    expect(result.current.reserve).toBe('Oi! Eu sou o Estagiário.');
+    expect(result.current.unsaid).toBe('Oi! Eu sou o Estagiário.');
   });
 
   describe('onSkip', () => {
@@ -73,5 +75,11 @@ describe('useSpeechBubbleViewModel', () => {
       expect(result.current.said).toBe(LINE);
       expect(onSaid).toHaveBeenCalledOnce();
     });
+  });
+
+  it('leaves the height to the text until the text has been measured', () => {
+    const { result } = renderHook(() => useSpeechBubbleViewModel({ text: LINE }));
+
+    expect(result.current.style).toBeUndefined();
   });
 });

@@ -1,7 +1,9 @@
 .speech-bubble {
   position: relative;
-  display: grid;
+  display: block;
+  box-sizing: border-box;
   width: 100%;
+  height: calc(var(--speech-text-height) + 2 * var(--space-6) + 2px);
   padding: var(--space-6) var(--space-7);
   border: 1px solid var(--line);
   border-radius: var(--radius-2xl);
@@ -11,6 +13,7 @@
   text-align: left;
   text-wrap: pretty;
   cursor: default;
+  transition: height var(--dur) var(--ease);
   animation: gc-in var(--dur) var(--ease);
 }
 
@@ -27,22 +30,26 @@
   content: '';
 }
 
-.speech-bubble__reserve,
-.speech-bubble__said {
-  grid-area: 1 / 1;
-}
-
-.speech-bubble__reserve {
+.speech-bubble__unsaid {
   visibility: hidden;
 }
 
 .speech-bubble__caret {
-  display: inline-block;
+  position: relative;
+}
+
+.speech-bubble__caret::after {
+  position: absolute;
+  top: 0.12em;
+  left: 2px;
   width: 8px;
-  height: 1.05em;
-  margin-left: 2px;
+  height: 1.1em;
   border-radius: 2px;
   background: var(--lime);
-  vertical-align: text-bottom;
   animation: gc-caret 0.9s infinite;
+  content: '';
+}
+
+.speech-bubble__text {
+  display: block;
 }
