@@ -6,10 +6,11 @@ import type {
   IToolStatus,
 } from '@/shared/types';
 import { spawn } from 'node:child_process';
-import { delimiter } from 'node:path';
+import { homedir } from 'node:os';
+import { delimiter, isAbsolute } from 'node:path';
 import { findOnPath } from '@/main/library';
-import { INSTALL, INSTALL_RECIPES } from './constants';
-import { commandLineOf, explainFailure, linesOf } from './library';
+import { INSTALL } from './constants';
+import { commandLineOf, explainFailure, linesOf, recipeFor } from './library';
 
 /** Installs the light tools QAzinho drives, on the QA's say-so, and tells the page each line. */
 export class SetupInstaller {
@@ -34,7 +35,7 @@ export class SetupInstaller {
   }
 
   public async install(item: InstallableId): Promise<IInstallResult> {
-    const steps = INSTALL_RECIPES[item];
+    const steps = recipeFor({ item, home: homedir() });
     const command = commandLineOf(steps);
 
     if (this.installing.has(item))
@@ -51,32 +52,41 @@ export class SetupInstaller {
       const directories = await this.directories();
 
       for (const [index, step] of steps.entries()) {
-        const path = findOnPath({ command: step.command, directories });
+        const at = { item, stage: index + 1, stages: steps.length };
+        const path = this.resolve({ command: step.command, directories });
 
         if (path === null)
           return {
             isInstalled: false,
-            error: INSTALL.missing[step.command],
+            error:
+              INSTALL.missing[step.command] ??
+              `${step.command} is not on this machine. Run the command below in a terminal.`,
             command,
             isFix: false,
           };
 
-        const failed = await this.runStep({
-          item,
-          path,
-          step,
-          stage: index + 1,
-          stages: steps.length,
-          directories,
-        });
+        if (await this.isDone({ step, directories })) {
+          this.onEvent({ ...at, line: `✓ ${[step.command, ...step.args].join(' ')}` });
 
-        if (failed !== null)
-          return {
-            isInstalled: false,
-            error: failed.error,
-            command: failed.fix ?? command,
-            isFix: failed.fix !== null,
-          };
+          continue;
+        }
+
+        const failed = await this.runStep({ ...at, path, step, directories });
+
+        if (failed === null) continue;
+
+        if (await this.isDone({ step, directories })) {
+          this.onEvent({ ...at, line: failed.error.split('\n')[0] ?? '' });
+
+          continue;
+        }
+
+        return {
+          isInstalled: false,
+          error: failed.error,
+          command: failed.fix ?? command,
+          isFix: failed.fix !== null,
+        };
       }
 
       return { isInstalled: true };
@@ -145,6 +155,49 @@ export class SetupInstaller {
               ? { error: `${step.command} stopped with code ${String(code)}.`, fix: null }
               : explainFailure(tail),
         );
+      });
+    });
+  }
+
+  private resolve(props: { command: string; directories: string[] }): string | null {
+    return isAbsolute(props.command)
+      ? props.command
+      : findOnPath({ command: props.command, directories: props.directories });
+  }
+
+  /** Whether a step's goal is already met, so it is skipped, or was met even though the step complained. */
+  private async isDone(props: {
+    step: IInstallStep;
+    directories: string[];
+  }): Promise<boolean> {
+    const check = props.step.doneIf;
+    const path =
+      check === undefined
+        ? null
+        : this.resolve({ command: check.command, directories: props.directories });
+
+    if (check === undefined || path === null) return false;
+
+    return new Promise((settle) => {
+      const child = spawn(path, check.args, {
+        stdio: 'ignore',
+        env: {
+          ...process.env,
+          PATH: props.directories.join(delimiter),
+          HOMEBREW_NO_AUTO_UPDATE: '1',
+        },
+      });
+      const timeout = setTimeout(() => {
+        child.kill('SIGTERM');
+      }, INSTALL.checkTimeoutMs);
+
+      child.on('error', () => {
+        clearTimeout(timeout);
+        settle(false);
+      });
+      child.on('close', (code) => {
+        clearTimeout(timeout);
+        settle(code === 0);
       });
     });
   }
