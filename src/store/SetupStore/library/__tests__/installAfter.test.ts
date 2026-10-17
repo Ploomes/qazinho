@@ -28,9 +28,19 @@ describe('installAfter', () => {
     expect(
       installAfter({
         state: INSTALLING,
-        news: { isInstalled: false, error: 'EACCES', command: 'npm install -g x' },
+        news: {
+          isInstalled: false,
+          error: 'EACCES',
+          command: 'npm install -g x',
+          isFix: false,
+        },
       }),
-    ).toEqual({ phase: 'failed', error: 'EACCES', command: 'npm install -g x' });
+    ).toEqual({
+      phase: 'failed',
+      error: 'EACCES',
+      command: 'npm install -g x',
+      isFix: false,
+    });
   });
 
   it('does NOT reopen an install that already ended because of a late line', () => {

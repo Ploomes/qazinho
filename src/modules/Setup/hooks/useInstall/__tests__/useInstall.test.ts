@@ -28,9 +28,12 @@ describe('useInstall', () => {
   });
 
   it('keeps the error and does NOT look again when the install fails', async () => {
-    window.qazinho.installTool = vi
-      .fn()
-      .mockResolvedValue({ isInstalled: false, error: 'EACCES', command: 'npm i -g x' });
+    window.qazinho.installTool = vi.fn().mockResolvedValue({
+      isInstalled: false,
+      error: 'EACCES',
+      command: 'npm i -g x',
+      isFix: false,
+    });
     const check = vi.spyOn(window.qazinho, 'checkMachine');
     const { result } = renderHook(() => useInstall());
 
@@ -40,6 +43,7 @@ describe('useInstall', () => {
       phase: 'failed',
       error: 'EACCES',
       command: 'npm i -g x',
+      isFix: false,
     });
     expect(check).not.toHaveBeenCalled();
   });

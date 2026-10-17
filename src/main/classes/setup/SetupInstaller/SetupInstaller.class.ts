@@ -9,7 +9,7 @@ import { spawn } from 'node:child_process';
 import { delimiter } from 'node:path';
 import { findOnPath } from '@/main/library';
 import { INSTALL, INSTALL_RECIPES } from './constants';
-import { commandLineOf, linesOf } from './library';
+import { commandLineOf, explainFailure, linesOf } from './library';
 
 /** Installs the light tools QAzinho drives, on the QA's say-so, and tells the page each line. */
 export class SetupInstaller {
@@ -38,7 +38,12 @@ export class SetupInstaller {
     const command = commandLineOf(steps);
 
     if (this.installing.has(item))
-      return { isInstalled: false, error: `${item} is already installing.`, command };
+      return {
+        isInstalled: false,
+        error: `${item} is already installing.`,
+        command,
+        isFix: false,
+      };
 
     this.installing.add(item);
 
@@ -49,7 +54,12 @@ export class SetupInstaller {
         const path = findOnPath({ command: step.command, directories });
 
         if (path === null)
-          return { isInstalled: false, error: INSTALL.missing[step.command], command };
+          return {
+            isInstalled: false,
+            error: INSTALL.missing[step.command],
+            command,
+            isFix: false,
+          };
 
         const failed = await this.runStep({
           item,
@@ -60,7 +70,13 @@ export class SetupInstaller {
           directories,
         });
 
-        if (failed !== null) return { isInstalled: false, error: failed, command };
+        if (failed !== null)
+          return {
+            isInstalled: false,
+            error: failed.error,
+            command: failed.fix ?? command,
+            isFix: failed.fix !== null,
+          };
       }
 
       return { isInstalled: true };
@@ -76,7 +92,7 @@ export class SetupInstaller {
     stage: number;
     stages: number;
     directories: string[];
-  }): Promise<string | null> {
+  }): Promise<{ error: string; fix: string | null } | null> {
     const { item, path, step, stage, stages, directories } = props;
     const tail: string[] = [];
     const say = (line: string) => {
@@ -117,7 +133,7 @@ export class SetupInstaller {
 
       child.on('error', (reason) => {
         clearTimeout(timeout);
-        settle(reason.message);
+        settle({ error: reason.message, fix: null });
       });
 
       child.on('close', (code) => {
@@ -125,7 +141,9 @@ export class SetupInstaller {
         settle(
           code === 0
             ? null
-            : tail.join('\n') || `${step.command} stopped with code ${String(code)}.`,
+            : tail.length === 0
+              ? { error: `${step.command} stopped with code ${String(code)}.`, fix: null }
+              : explainFailure(tail),
         );
       });
     });

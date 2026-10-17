@@ -2,4 +2,4 @@
 export type InstallState =
   | { phase: 'installing'; stage: number; stages: number; line: string }
   | { phase: 'installed' }
-  | { phase: 'failed'; error: string; command: string };
+  | { phase: 'failed'; error: string; command: string; isFix: boolean };

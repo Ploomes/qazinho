@@ -41,6 +41,10 @@ export const useInstallProgressViewModel = (props: IInstallProgressProps) => {
     line: state.phase === 'installing' ? state.line : '',
     error: state.phase === 'failed' ? state.error : '',
     command: state.phase === 'failed' ? state.command : '',
+    commandLabel:
+      state.phase === 'failed' && state.isFix
+        ? t('SETUP.FIX_IT_YOURSELF')
+        : t('SETUP.RUN_IT_YOURSELF'),
     copyLabel: isCopied ? t('SETUP.COPIED') : t('SETUP.COPY'),
     onCopy: async () => {
       if (state.phase !== 'failed') return;

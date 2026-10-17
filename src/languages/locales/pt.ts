@@ -293,6 +293,7 @@ export const pt: typeof en = {
     COPY: 'Copiar',
     COPIED: 'Copiado',
     TRY_AGAIN: 'Tentar de novo',
+    FIX_IT_YOURSELF: 'rode isto num terminal e então tente de novo',
     RUN_IT_YOURSELF: 'ou rode você mesmo num terminal',
     STEP_WELCOME: 'Boas-vindas',
     STEP_AGENTS: 'Agente',

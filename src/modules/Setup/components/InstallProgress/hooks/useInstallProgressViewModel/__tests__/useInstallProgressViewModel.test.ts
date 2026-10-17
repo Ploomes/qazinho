@@ -4,7 +4,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { INSTALL_PROGRESS } from '@/modules/Setup/components/InstallProgress/constants';
 import { useInstallProgressViewModel } from '@/modules/Setup/components/InstallProgress/hooks/useInstallProgressViewModel';
 
-const FAILED = { phase: 'failed' as const, error: 'EACCES', command: 'npm install -g x' };
+const FAILED = {
+  phase: 'failed' as const,
+  error: 'EACCES',
+  command: 'npm install -g x',
+  isFix: false,
+};
 
 afterEach(() => {
   vi.useRealTimers();
@@ -74,6 +79,28 @@ describe('useInstallProgressViewModel', () => {
       await act(() => result.current.onCopy());
 
       expect(writeText).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('commandLabel', () => {
+    it('asks the QA to run the fix the command suggested, then try again', () => {
+      const { result } = renderHook(() =>
+        useInstallProgressViewModel({
+          state: { ...FAILED, command: 'sudo chown -R qa /opt/x', isFix: true },
+          onRetry: vi.fn(),
+        }),
+      );
+
+      expect(result.current.command).toBe('sudo chown -R qa /opt/x');
+      expect(result.current.commandLabel).toBe('run this in a terminal, then try again');
+    });
+
+    it('offers the install itself when there is no fix to suggest', () => {
+      const { result } = renderHook(() =>
+        useInstallProgressViewModel({ state: FAILED, onRetry: vi.fn() }),
+      );
+
+      expect(result.current.commandLabel).toBe('or run it yourself in a terminal');
     });
   });
 });

@@ -21,7 +21,9 @@ describe('moodOfSetup', () => {
       moodOfSetup({
         ...CALM,
         step: 'agents',
-        installs: [{ phase: 'failed', error: 'EACCES', command: 'npm i -g x' }],
+        installs: [
+          { phase: 'failed', error: 'EACCES', command: 'npm i -g x', isFix: false },
+        ],
       }),
     ).toBe('broken');
   });

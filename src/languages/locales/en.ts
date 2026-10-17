@@ -292,6 +292,7 @@ export const en = {
     COPY: 'Copy',
     COPIED: 'Copied',
     TRY_AGAIN: 'Try again',
+    FIX_IT_YOURSELF: 'run this in a terminal, then try again',
     RUN_IT_YOURSELF: 'or run it yourself in a terminal',
     STEP_WELCOME: 'Welcome',
     STEP_AGENTS: 'Agent',

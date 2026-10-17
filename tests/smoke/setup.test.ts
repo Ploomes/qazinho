@@ -62,4 +62,22 @@ describe('installing a tool', () => {
     expect(!result.isInstalled && result.error).toContain('nodejs.org');
     expect(events).toEqual([]);
   });
+
+  it('shows the error past any warning, and offers the fix the command suggested', async () => {
+    const { installer } = await installerWith(`#!/bin/sh
+echo "Warning: The following taps are not trusted: oven-sh/bun" 1>&2
+echo "Error: The following directories are not writable by your user:" 1>&2
+echo "  /opt/homebrew/lib/python3.14/site-packages" 1>&2
+echo "  sudo chown -R qa /opt/homebrew/lib/python3.14/site-packages" 1>&2
+exit 1
+`);
+    const result = await installer.install('claude-code');
+
+    expect(result).toMatchObject({
+      isInstalled: false,
+      command: 'sudo chown -R qa /opt/homebrew/lib/python3.14/site-packages',
+      isFix: true,
+    });
+    expect(!result.isInstalled && result.error).not.toContain('Warning');
+  });
 });

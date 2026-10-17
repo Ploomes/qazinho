@@ -7,8 +7,18 @@ import { useInstallProgressViewModel } from './hooks';
 import './styles.css';
 
 export const InstallProgress: React.FC<IInstallProgressProps> = (props) => {
-  const { phase, segments, label, line, error, command, copyLabel, onCopy, onRetry } =
-    useInstallProgressViewModel(props);
+  const {
+    phase,
+    segments,
+    label,
+    line,
+    error,
+    command,
+    commandLabel,
+    copyLabel,
+    onCopy,
+    onRetry,
+  } = useInstallProgressViewModel(props);
   const { t } = useTranslation();
 
   return (
@@ -47,7 +57,7 @@ export const InstallProgress: React.FC<IInstallProgressProps> = (props) => {
         {phase === 'failed' && (
           <>
             <p className="install-progress__error">{error}</p>
-            <span className="install-progress__label">{t('SETUP.RUN_IT_YOURSELF')}</span>
+            <span className="install-progress__label">{commandLabel}</span>
             <div className="install-progress__command">
               <code className="install-progress__code">{command}</code>
               <button
