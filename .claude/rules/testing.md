@@ -58,7 +58,7 @@ Three suites that need something real behind them. They have their own config
 | ------------------ | ----------------------------------------------------------------------- |
 | `run.test.ts`      | the product: real Chrome, the QA's own agent, a plan walked and judged  |
 | `page.test.ts`     | `out/renderer` in plain Chrome, with no bridge: the page must not crash |
-| `electron.test.ts` | the packaged window, where `window.gocrash` is the real preload         |
+| `electron.test.ts` | the packaged window, where `window.qazinho` is the real preload         |
 | `stream.test.ts`   | windowless Chrome streamed as MJPEG over loopback, with no agent        |
 | `stop.test.ts`     | Stop ends a run while a fake agent is still thinking                    |
 | `agent.test.ts`    | a fake agent retries a failed action, leaves a note, or errors out      |

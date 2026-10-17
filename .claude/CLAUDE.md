@@ -1,4 +1,4 @@
-# gocrash
+# QAzinho
 
 A local-first desktop app where AI agents test web and mobile apps from a test plan. The QA writes
 the plan and orchestrates; the agent opens the app, walks the flows and reports what broke. The
@@ -10,7 +10,7 @@ name is the pitch: go crash your app before your users do.
 | Android | an `.apk`                               | the QA's own AVD, through `adb` and `uiautomator` | end to end       |
 | iOS     | a simulator `.app` build, not an `.ipa` | `simctl` boots and shoots; `idb` reads and taps   | simctl half only |
 
-gocrash finds the SDK, the emulator and idb where they already are, and names what is missing
+QAzinho finds the SDK, the emulator and idb where they already are, and names what is missing
 where the QA reads it. **It installs only what is light, and only when the QA asks**: the agent
 CLIs over npm, and idb over Homebrew and pipx (simctl has no command that touches the screen).
 The Android SDK and Xcode are too big: the first-run setup links to them and checks again.
@@ -21,14 +21,14 @@ environment with one or more targets. Workspaces hold a test plan, and several r
 ## The rules that are not up for negotiation
 
 1. **Everything runs on the user's machine.** Emulators, simulators, browsers and runs. The free
-   app never needs a gocrash backend; only Pro's team hosting uses one.
+   app never needs a QAzinho backend; only Pro's team hosting uses one.
 2. **The agent is the user's.** Claude Code, Codex, Gemini CLI or any other, spoken to over ACP
-   (Agent Client Protocol). gocrash builds the QA harness around it and never offers a login to a
+   (Agent Client Protocol). QAzinho builds the QA harness around it and never offers a login to a
    model provider or holds a provider key of its own.
 3. **Open core.** The app is MIT and free, with no artificial limit for one user. Pro adds team
    hosting, and nothing local is shaped around it.
 4. **The page is a web page and nothing more.** No Node, no Electron, no filesystem. It asks the
-   main process through `window.gocrash`, whose contract lives in `src/types/`.
+   main process through `window.qazinho`, whose contract lives in `src/types/`.
 5. **Nothing in the interface is a mock.** Every number, screenshot and verdict on screen came
    back from the machine. When something is not built yet, it says so where a QA can read it.
 

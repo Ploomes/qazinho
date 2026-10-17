@@ -11,8 +11,8 @@ field needs explaining, the explanation belongs in the interface's own one-line 
 nowhere, the field name is wrong.
 
 ```ts
-/** What the preload exposes to the page as `window.gocrash`. Data and purposeful functions only. */
-export interface IGocrashApi {
+/** What the preload exposes to the page as `window.qazinho`. Data and purposeful functions only. */
+export interface IQazinhoApi {
   platform: Platform;
 }
 ```

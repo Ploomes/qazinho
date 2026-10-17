@@ -13,7 +13,7 @@ src/
 ├── hooks/  store/  services/  styles/
 ├── app/  index.tsx  index.html
 electron/
-└── preload/     ← the bridge: exposes window.gocrash through contextBridge, nothing else
+└── preload/     ← the bridge: exposes window.qazinho through contextBridge, nothing else
 ```
 
 Everything under `src/` that is not `src/main/` is **the page**: React, no Node.
@@ -46,15 +46,15 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
 
 ## IPC
 
-- The contract is `IGocrashApi` in `src/types/`. The preload implements it, and the page reads it
-  from `window.gocrash`, typed in `src/global.d.ts`.
+- The contract is `IQazinhoApi` in `src/types/`. The preload implements it, and the page reads it
+  from `window.qazinho`, typed in `src/global.d.ts`.
 - **The channel names live in `src/constants/CHANNELS.ts`**, and only main and the preload read them. A string
   written twice is a call that never answers and never errors. The page never sees a channel: it
   goes through `src/services/`.
 - **Expose functions with a purpose, never `ipcRenderer` itself.** A page that can send any
   channel is a page with Node.
 - Structured clone carries no functions and no class instances. What crosses is data.
-- The page never calls `window.gocrash` from a view. It goes through `src/services/`.
+- The page never calls `window.qazinho` from a view. It goes through `src/services/`.
 
 ## The harness
 

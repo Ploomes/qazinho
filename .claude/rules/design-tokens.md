@@ -1,6 +1,6 @@
 # Design tokens
 
-gocrash has no design system package. The scale is a set of CSS custom properties in
+QAzinho has no design system package. The scale is a set of CSS custom properties in
 `src/styles/tokens.css`, declared on `[data-theme]`, and every value comes from
 `assets/prototype.html`.
 

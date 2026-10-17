@@ -1,6 +1,6 @@
 # Components — the layered anatomy
 
-gocrash has no design system package. Every shared visual component lives in
+QAzinho has no design system package. Every shared visual component lives in
 `src/components/`, split by **atomic design**:
 
 ```

@@ -27,7 +27,7 @@ that re-exports. A class folder **never** sits loose in `classes/`: it always go
 | Class       | `<PascalCase>.class.ts`      | `AndroidEmulator.class.ts`                    |
 | Library     | `camelCase.ts`, one function | `library/isInternalNavigation.ts`             |
 | Constant    | `SCREAMING_SNAKE.ts`, one    | `constants/DEFAULT_WINDOW_SIZE.ts`            |
-| Type        | `<TypeName>.ts`, one type    | `types/IGocrashApi.ts`                        |
+| Type        | `<TypeName>.ts`, one type    | `types/IQazinhoApi.ts`                        |
 | Test        | `__tests__/<name>.test.ts`   | `__tests__/isInternalNavigation.test.ts`      |
 
 The file is named after the thing it exports, and it exports one thing. A file that holds two
@@ -60,8 +60,8 @@ functions stay there because they touch `electron` and `library/` may not.
 
 ## Types
 
-- **One type per file, and the file is named after the type.** `IGocrashApi` lives in
-  `types/IGocrashApi.ts`, never in a `types/Api.ts` that holds nine.
+- **One type per file, and the file is named after the type.** `IQazinhoApi` lives in
+  `types/IQazinhoApi.ts`, never in a `types/Api.ts` that holds nine.
 - An `interface` carries the `I` prefix: `IWorkspace`, `ISidebarProps`. A `type` or an `enum`
   does not: `RunVerdict`, `WorkspaceStatus`.
 - Applies to siblings too: the `RunVerdict` that only exists for `IRunStep` still gets its file.
@@ -69,7 +69,7 @@ functions stay there because they touch `electron` and `library/` may not.
   enters no barrel.
 - **A domain's types live with the domain**, in `src/modules/<Domain>/types/`. A module may
   import another module's types: `ITestCase` reads `StepVerdict` from `@/modules/Run/types`.
-- `src/types/` is **only what is global to every side**: today `IGocrashApi` and `Platform`, the
+- `src/types/` is **only what is global to every side**: today `IQazinhoApi` and `Platform`, the
   contract the preload publishes and the page consumes. Nothing domain-shaped goes there.
 - A `types/` barrel re-exports with `export type *`, never `export *`.
 - A result with more than one shape is a **discriminated union**, not an optional flag.
@@ -114,7 +114,7 @@ src/
 ├── languages/        ← i18next, en and pt (i18n.md)
 ├── hooks/            ← hooks used across modules
 ├── store/            ← zustand stores
-├── services/         ← the only callers of window.gocrash
+├── services/         ← the only callers of window.qazinho
 ├── styles/           ← tokens.css, base.css, animations.css
 └── types/            ← contracts, imported by every side
 ```
@@ -137,7 +137,7 @@ repository.
 within the same directory is still right for `./library/`, `./constants/` and `./types/`.
 
 ```ts
-import type { IGocrashApi } from '@/types';
+import type { IQazinhoApi } from '@/types';
 import { isInternalNavigation } from '@/main/library';
 ```
 
