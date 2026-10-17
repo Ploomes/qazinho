@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import {
   useArchive,
   useKeybinds,
+  useLanguage,
   useMachineWatch,
   useRunEvents,
   useRunTicker,
@@ -17,6 +18,7 @@ export const useAppViewModel = () => {
   const hasOnboarded = useSettingsStore((state) => state.hasOnboarded);
 
   useArchive();
+  useLanguage();
   useKeybinds();
   useRunTicker();
   useRunEvents();

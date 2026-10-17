@@ -2,6 +2,7 @@ import type { ISettingsStore } from './types';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { LEGACY_STORAGE, STORAGE } from '@/constants';
+import { resolveLanguage } from '@/languages/library';
 import { KEYBINDS } from '@/modules/Settings/constants';
 import { withLegacyKeys } from '@/store/library';
 import { migrateSettings } from './library';
@@ -12,7 +13,8 @@ export const useSettingsStore = create<ISettingsStore>()(
       tab: 'agents',
       agent: 'Claude Code',
       model: '',
-      language: 'en',
+      // A first launch speaks the system's language until the QA picks one.
+      language: resolveLanguage(navigator.language),
       keybinds: KEYBINDS,
       editingKeybindId: null,
       hasOnboarded: false,

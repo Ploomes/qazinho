@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useAppViewModel } from '@/app/hooks/useAppViewModel';
+import { i18n } from '@/languages';
 import { useAppStore, useSettingsStore } from '@/store';
 
 describe('useAppViewModel', () => {
@@ -79,5 +80,21 @@ describe('useAppViewModel', () => {
     });
 
     expect(renderHook(() => useAppViewModel()).result.current.hasMedia).toBe(true);
+  });
+
+  it('speaks the language the QA picked, and switches as soon as they pick another', async () => {
+    useSettingsStore.setState({ language: 'pt' });
+
+    renderHook(() => useAppViewModel());
+
+    await waitFor(() => {
+      expect(i18n.language).toBe('pt');
+    });
+
+    useSettingsStore.setState({ language: 'en' });
+
+    await waitFor(() => {
+      expect(i18n.language).toBe('en');
+    });
   });
 });
