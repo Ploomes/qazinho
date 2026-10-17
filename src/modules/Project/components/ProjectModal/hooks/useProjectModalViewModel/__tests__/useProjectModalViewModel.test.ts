@@ -3,11 +3,11 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { useProjectModalViewModel } from '@/modules/Project/components/ProjectModal/hooks/useProjectModalViewModel';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
-import { fakeGocrashApi } from '@/services/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 beforeEach(() => {
-  window.gocrash = fakeGocrashApi('darwin');
+  window.qazinho = fakeQazinhoApi('darwin');
   useAppStore.setState({
     projects: [],
     modal: 'project',
@@ -19,7 +19,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'gocrash');
+  Reflect.deleteProperty(window, 'qazinho');
 });
 
 describe('useProjectModalViewModel', () => {
@@ -67,7 +67,7 @@ describe('useProjectModalViewModel', () => {
   });
 
   it('says iOS is macOS only anywhere else', () => {
-    window.gocrash = fakeGocrashApi('win32');
+    window.qazinho = fakeQazinhoApi('win32');
 
     const { result } = renderHook(() => useProjectModalViewModel());
 

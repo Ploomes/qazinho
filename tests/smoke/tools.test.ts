@@ -30,12 +30,12 @@ function textOf(result: Awaited<ReturnType<Client['callTool']>>): string {
 
 async function connect(workspaceId: string): Promise<Client> {
   const config = JSON.parse(tools.mcpConfigFor(workspaceId) ?? '{}') as {
-    mcpServers: { gocrash: { url: string } };
+    mcpServers: { qazinho: { url: string } };
   };
   const client = new Client({ name: 'smoke', version: '1.0.0' });
 
   await client.connect(
-    new StreamableHTTPClientTransport(new URL(config.mcpServers.gocrash.url)),
+    new StreamableHTTPClientTransport(new URL(config.mcpServers.qazinho.url)),
   );
 
   return client;
@@ -47,7 +47,7 @@ beforeAll(async () => {
 
   driver = new WebDriver({
     url: `http://127.0.0.1:${String(PORT)}/`,
-    profileDir: await mkdtemp(join(tmpdir(), 'gocrash-tools-')),
+    profileDir: await mkdtemp(join(tmpdir(), 'qazinho-tools-')),
   });
   await driver.open();
   tools.attach({ workspaceId: 'w1', driver });

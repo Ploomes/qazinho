@@ -14,12 +14,12 @@ const SAVED = {
 };
 
 beforeEach(async () => {
-  root = await mkdtemp(join(tmpdir(), 'gocrash-archive-'));
+  root = await mkdtemp(join(tmpdir(), 'qazinho-archive-'));
   archive = new Archive(root);
 });
 
 describe('Archive', () => {
-  it('a machine that has never run gocrash has no projects and no workspaces', async () => {
+  it('a machine that has never run QAzinho has no projects and no workspaces', async () => {
     expect(await archive.read()).toEqual({ projects: '[]', workspaces: [] });
   });
 

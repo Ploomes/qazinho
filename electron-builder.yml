@@ -1,5 +1,5 @@
-appId: com.salvesoftware.gocrash
-productName: gocrash
+appId: com.salvesoftware.qazinho
+productName: QAzinho
 directories:
   output: release
   buildResources: build

@@ -4,7 +4,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useChatViewModel } from '@/modules/Chat/screens/Chat/hooks/useChatViewModel';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
-import { fakeGocrashApi } from '@/services/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import {
   useAppStore,
   useMachineStore,
@@ -45,7 +45,7 @@ function answering(turn: Partial<IAgentTurn>) {
     }),
   );
 
-  window.gocrash = { ...fakeGocrashApi('darwin'), askAgent: ask };
+  window.qazinho = { ...fakeQazinhoApi('darwin'), askAgent: ask };
 
   return ask;
 }
@@ -69,7 +69,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'gocrash');
+  Reflect.deleteProperty(window, 'qazinho');
 });
 
 describe('useChatViewModel', () => {
@@ -172,7 +172,7 @@ describe('useChatViewModel', () => {
       });
     });
 
-    it('shows a gocrash error when the agent breaks, never a verdict', async () => {
+    it('shows a QAzinho error when the agent breaks, never a verdict', async () => {
       answering({ isError: true, text: 'claude: command not found' });
       const { result } = renderHook(() => useChatViewModel());
 

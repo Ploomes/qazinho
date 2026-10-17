@@ -1,4 +1,4 @@
-/** One line of the agent CLI's stream-json output, narrowed to what gocrash reads. */
+/** One line of the agent CLI's stream-json output, narrowed to what QAzinho reads. */
 export interface IAgentLine {
   type: string;
   subtype?: string;

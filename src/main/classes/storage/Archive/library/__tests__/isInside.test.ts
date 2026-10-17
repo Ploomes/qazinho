@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { isInside } from '@/main/classes/storage/Archive/library';
 
-const ROOT = '/Users/qa/Library/Application Support/gocrash';
+const ROOT = '/Users/qa/Library/Application Support/QAzinho';
 
 describe('isInside', () => {
-  it('a screenshot gocrash wrote is inside its own folder', () => {
+  it('a screenshot QAzinho wrote is inside its own folder', () => {
     expect(isInside({ root: ROOT, file: `${ROOT}/runs/w1/r-01/step-1.jpg` })).toBe(true);
   });
 

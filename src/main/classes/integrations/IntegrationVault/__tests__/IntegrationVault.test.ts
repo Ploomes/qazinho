@@ -17,7 +17,7 @@ function fakeCipher(isAvailable = true): IVaultCipher {
 }
 
 async function vaultWith(props: { cipher?: IVaultCipher; body?: unknown }) {
-  const file = join(await mkdtemp(join(tmpdir(), 'gocrash-vault-')), 'integrations.bin');
+  const file = join(await mkdtemp(join(tmpdir(), 'qazinho-vault-')), 'integrations.bin');
   const { fetcher } = fakeTracker({
     status: 200,
     body: props.body ?? { login: 'octoqa' },

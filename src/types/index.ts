@@ -9,7 +9,7 @@ export type * from './IConnectResult';
 export type * from './IDetectedAgent';
 export type * from './IDeviceTools';
 export type * from './IFlatStep';
-export type * from './IGocrashApi';
+export type * from './IQazinhoApi';
 export type * from './IInstallResult';
 export type * from './IIntegrationStatus';
 export type * from './IIosSetup';

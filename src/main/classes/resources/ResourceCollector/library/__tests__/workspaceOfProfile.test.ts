@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { workspaceOfProfile } from '@/main/classes/resources/ResourceCollector/library';
 
-const ROOT = '/Users/qa/Library/Application Support/gocrash/profiles';
+const ROOT = '/Users/qa/Library/Application Support/QAzinho/profiles';
 
 describe('workspaceOfProfile', () => {
   it('reads the workspace a browser was started for out of its own flags', () => {

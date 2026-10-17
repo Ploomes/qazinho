@@ -14,7 +14,7 @@ const NO_UPWARD_RELATIVE = {
 const NO_NODE_IN_THE_PAGE = {
   group: ['node:*', 'fs', 'path', 'os', 'child_process', 'worker_threads', 'electron'],
   message:
-    'This code runs in the page. No Node builtins and no electron: ask the main process through window.gocrash.',
+    'This code runs in the page. No Node builtins and no electron: ask the main process through window.qazinho.',
 };
 
 const NO_PAGE_IN_NODE = {
@@ -38,7 +38,7 @@ const NO_FRAMER_MOTION = {
 const NO_NODE_FOLDERS_IN_THE_PAGE = {
   group: ['@/main/**', '**/electron/**'],
   message:
-    'The page never imports src/main or electron/. Ask the main process through window.gocrash.',
+    'The page never imports src/main or electron/. Ask the main process through window.qazinho.',
 };
 
 export default config(

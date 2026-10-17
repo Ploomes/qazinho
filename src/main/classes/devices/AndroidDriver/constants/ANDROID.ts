@@ -8,7 +8,7 @@ export const ANDROID = {
   maxBufferBytes: 64 * 1024 * 1024,
   settleMs: 1_200,
   waitMs: 1_000,
-  dumpFile: '/sdcard/gocrash-ui.xml',
+  dumpFile: '/sdcard/qazinho-ui.xml',
   keys: {
     back: 'KEYCODE_BACK',
     home: 'KEYCODE_HOME',

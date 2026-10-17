@@ -30,7 +30,7 @@ describe('useTitlebarViewModel', () => {
         ramMb: 2230,
         ramCeilingGb: 64,
         processes: [
-          sample({ name: 'gocrash', kind: 'app', ramMb: 1800 }),
+          sample({ name: 'qazinho', kind: 'app', ramMb: 1800 }),
           sample({ name: 'claude', kind: 'agent', workspaceId: 'w1', ramMb: 430 }),
         ],
       },

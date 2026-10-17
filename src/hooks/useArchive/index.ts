@@ -6,7 +6,7 @@ import { useAppStore, useWorkspaceStore } from '@/store';
 import { ARCHIVE } from './constants';
 import { asJson, lastWritten, saveLater } from './library';
 
-/** gocrash remembers: what the QA made is read back on start and written as it changes. */
+/** QAzinho remembers: what the QA made is read back on start and written as it changes. */
 export const useArchive = () => {
   const loadProjects = useAppStore((state) => state.loadProjects);
   const loadWorkspaces = useWorkspaceStore((state) => state.loadWorkspaces);

@@ -8,7 +8,7 @@ describe('resolveLanguage', () => {
     expect(resolveLanguage('PT-pt')).toBe('pt');
   });
 
-  it('falls back to English for a language gocrash does not speak yet', () => {
+  it('falls back to English for a language QAzinho does not speak yet', () => {
     expect(resolveLanguage('es-419')).toBe('en');
     expect(resolveLanguage('ja')).toBe('en');
   });

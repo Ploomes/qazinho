@@ -1,7 +1,7 @@
-import type { IGocrashApi, Platform } from '@/types';
+import type { IQazinhoApi, Platform } from '@/types';
 
 /** A bridge like the preload's, for a test that needs the page to have one. */
-export function fakeGocrashApi(platform: Platform): IGocrashApi {
+export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
   return {
     platform,
     detectAgents: () => Promise.resolve([]),

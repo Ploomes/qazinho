@@ -45,7 +45,7 @@ describe('a real run', () => {
       live: new LiveStream(),
       tools: deviceTools,
       harness: new Harness(),
-      dataRoot: await mkdtemp(join(tmpdir(), 'gocrash-smoke-')),
+      dataRoot: await mkdtemp(join(tmpdir(), 'qazinho-smoke-')),
       onEvent: (event) => events.push(event),
     });
 

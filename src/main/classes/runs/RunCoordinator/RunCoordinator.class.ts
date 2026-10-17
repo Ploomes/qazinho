@@ -62,7 +62,7 @@ export class RunCoordinator {
       this.onEvent({
         kind: 'failed',
         workspaceId: run.workspaceId,
-        text: `gocrash cannot find ${run.agentId} on this machine. Install it, or pick another agent in Settings.`,
+        text: `QAzinho cannot find ${run.agentId} on this machine. Install it, or pick another agent in Settings.`,
       });
 
       return;
@@ -119,10 +119,10 @@ export class RunCoordinator {
     ios: IIosSetup | null;
   }): string | null {
     if (props.kind === 'android' && props.android === null)
-      return 'gocrash found no Android emulator to open. Make one in Android Studio, then run the plan again.';
+      return 'QAzinho found no Android emulator to open. Make one in Android Studio, then run the plan again.';
 
     if (props.kind === 'ios' && props.ios === null)
-      return 'gocrash needs idb to tap an iOS simulator, and a simulator to open. Install idb with `brew install idb-companion`, then run the plan again.';
+      return 'QAzinho needs idb to tap an iOS simulator, and a simulator to open. Install idb with `brew install idb-companion`, then run the plan again.';
 
     return null;
   }

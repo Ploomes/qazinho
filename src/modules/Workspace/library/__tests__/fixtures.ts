@@ -81,7 +81,7 @@ export function makeOutcome(props: {
     tookMs: 2_000,
     screenshot:
       verdict === 'skipped' ? null : `data:image/jpeg;base64,shot-${String(index)}`,
-    shotFile: verdict === 'skipped' ? null : `/tmp/gocrash/step-${String(index + 1)}.jpg`,
+    shotFile: verdict === 'skipped' ? null : `/tmp/qazinho/step-${String(index + 1)}.jpg`,
   };
 }
 

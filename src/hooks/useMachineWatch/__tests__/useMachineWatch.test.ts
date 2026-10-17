@@ -38,7 +38,7 @@ beforeEach(() => {
     hasDetected: false,
   });
 
-  window.gocrash = {
+  window.qazinho = {
     platform: 'darwin',
     detectAgents: vi.fn().mockResolvedValue(AGENTS),
     readResources: vi.fn().mockResolvedValue(RESOURCES),
@@ -65,7 +65,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'gocrash');
+  Reflect.deleteProperty(window, 'qazinho');
 });
 
 describe('useMachineWatch', () => {
@@ -75,7 +75,7 @@ describe('useMachineWatch', () => {
     await waitFor(() => {
       expect(useMachineStore.getState().agents).toEqual(AGENTS);
     });
-    expect(window.gocrash.detectAgents).toHaveBeenCalledTimes(1);
+    expect(window.qazinho.detectAgents).toHaveBeenCalledTimes(1);
   });
 
   it('reads the meters straight away, without waiting for the first tick', async () => {
@@ -102,12 +102,12 @@ describe('useMachineWatch', () => {
 
     vi.advanceTimersByTime(MACHINE_WATCH.pollMs * 2);
 
-    expect(window.gocrash.readResources).toHaveBeenCalledTimes(3);
+    expect(window.qazinho.readResources).toHaveBeenCalledTimes(3);
 
     unmount();
     vi.advanceTimersByTime(MACHINE_WATCH.pollMs * 2);
 
-    expect(window.gocrash.readResources).toHaveBeenCalledTimes(3);
+    expect(window.qazinho.readResources).toHaveBeenCalledTimes(3);
 
     vi.useRealTimers();
   });
@@ -115,7 +115,7 @@ describe('useMachineWatch', () => {
   it('files the context window under the workspace the agent answered', () => {
     let hear: (event: IAgentEvent) => void = () => undefined;
 
-    window.gocrash.onAgentEvent = vi.fn((listener: (event: IAgentEvent) => void) => {
+    window.qazinho.onAgentEvent = vi.fn((listener: (event: IAgentEvent) => void) => {
       hear = listener;
 
       return () => undefined;
@@ -146,7 +146,7 @@ describe('useMachineWatch', () => {
   });
 
   it('knows which trackers are connected from the start', async () => {
-    window.gocrash.listIntegrations = vi
+    window.qazinho.listIntegrations = vi
       .fn()
       .mockResolvedValue([
         { id: 'github', account: 'octoqa', site: null, connectedAt: '2026-09-16' },
@@ -164,7 +164,7 @@ describe('useMachineWatch', () => {
   it('follows an install line by line', () => {
     let hear: (event: ISetupEvent) => void = () => undefined;
 
-    window.gocrash.onSetupEvent = vi.fn((listener: (event: ISetupEvent) => void) => {
+    window.qazinho.onSetupEvent = vi.fn((listener: (event: ISetupEvent) => void) => {
       hear = listener;
 
       return () => undefined;

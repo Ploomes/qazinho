@@ -1,4 +1,4 @@
-/** Where the QA gets what is too big for gocrash to install. */
+/** Where the QA gets what is too big for QAzinho to install. */
 export const SETUP_LINKS = {
   androidStudio: 'https://developer.android.com/studio',
   xcode: 'https://apps.apple.com/app/xcode/id497799835',

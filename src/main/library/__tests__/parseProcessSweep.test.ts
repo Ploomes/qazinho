@@ -3,7 +3,7 @@ import { parseProcessSweep } from '@/main/library';
 
 const SWEEP = [
   '  501     1   21:05.80  12480 /sbin/launchd',
-  ' 1234   501   0:12.50 189320 /Applications/gocrash.app/Contents/MacOS/gocrash',
+  ' 1234   501   0:12.50 189320 /Applications/QAzinho.app/Contents/MacOS/QAzinho',
   ' 1240  1234   0:04.00  43008 claude --print --model sonnet',
 ].join('\n');
 

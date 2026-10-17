@@ -25,7 +25,7 @@ describe('the live device stream', () => {
     const live = new LiveStream();
     const driver = new WebDriver({
       url: 'http://127.0.0.1:4323/',
-      profileDir: await mkdtemp(join(tmpdir(), 'gocrash-stream-')),
+      profileDir: await mkdtemp(join(tmpdir(), 'qazinho-stream-')),
     });
 
     await live.start();

@@ -28,7 +28,7 @@ export const Titlebar: React.FC = () => {
     <header className={isMac ? 'titlebar titlebar--mac' : 'titlebar'}>
       <div className="titlebar__brand">
         <Logo />
-        <span className="titlebar__wordmark">gocrash</span>
+        <span className="titlebar__wordmark">QAzinho</span>
       </div>
 
       <div className="titlebar__meters">

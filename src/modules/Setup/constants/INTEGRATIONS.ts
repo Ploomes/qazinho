@@ -9,7 +9,7 @@ export const INTEGRATIONS: IIntegration[] = [
     logo: github,
     textKey: 'SETUP.GITHUB_TEXT',
     needsKey: 'SETUP.GITHUB_NEEDS',
-    tokenUrl: 'https://github.com/settings/tokens/new?scopes=repo&description=gocrash',
+    tokenUrl: 'https://github.com/settings/tokens/new?scopes=repo&description=QAzinho',
     fields: [
       {
         id: 'token',

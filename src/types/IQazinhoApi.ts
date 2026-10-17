@@ -19,8 +19,8 @@ import type { IStartRun } from './IStartRun';
 import type { PickKind } from './PickKind';
 import type { Platform } from './Platform';
 
-/** What the preload exposes to the page as `window.gocrash`. Data and purposeful functions only. */
-export interface IGocrashApi {
+/** What the preload exposes to the page as `window.qazinho`. Data and purposeful functions only. */
+export interface IQazinhoApi {
   platform: Platform;
   detectAgents: () => Promise<IDetectedAgent[]>;
   readResources: () => Promise<IResourceSnapshot>;

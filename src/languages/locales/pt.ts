@@ -25,7 +25,7 @@ export const pt: typeof en = {
     TIP_WEEK: 'Esta semana',
     TIP_LEFT: '{{percent}}% restante',
     TIP_RESETS: 'reseta às {{resets}}',
-    TIP_NOTE: 'Informado pelo {{agent}}. O gocrash só lê.',
+    TIP_NOTE: 'Informado pelo {{agent}}. O QAzinho só lê.',
   },
   SIDEBAR: {
     NEW_WORKSPACE: 'Novo workspace aqui',
@@ -68,7 +68,7 @@ export const pt: typeof en = {
     MENTION_CASE: 'caso',
     AGENT_NEEDS_YOU: 'o agente precisa de você',
     HOLDING: 'a run está esperando · {{elapsed}}',
-    ERROR_KICKER: 'erro do gocrash · não é resultado de teste',
+    ERROR_KICKER: 'erro do QAzinho · não é resultado de teste',
     PLAN_CARD_TITLE: 'Plano · {{cases}} casos · {{steps}} passos',
     PLAN_CARD_SUBTITLE: 'Leia, corrija o que estiver errado e então rode.',
     PLAN_CARD_ACTION: 'Abrir no Plano →',
@@ -122,7 +122,7 @@ export const pt: typeof en = {
     ALL: 'tudo',
     NO_SHOT: 'Este passo não tem screenshot.',
     NO_IOS_TARGET:
-      'O gocrash ainda não dirige um simulador de iOS: tocar nele precisa de XCUITest, que não está pronto. Escolha um target web ou Android.',
+      'O QAzinho ainda não dirige um simulador de iOS: tocar nele precisa de XCUITest, que não está pronto. Escolha um target web ou Android.',
   },
   BUG: {
     EMPTY_TITLE: 'Nenhum bug ainda.',
@@ -198,7 +198,7 @@ export const pt: typeof en = {
     WEB_PLACEHOLDER: 'https://staging.sualoja.com',
     ANDROID: 'Android',
     ANDROID_TEXT:
-      'Solte um .apk de debug. O gocrash instala num emulador que você já tem.',
+      'Solte um .apk de debug. O QAzinho instala num emulador que você já tem.',
     ANDROID_PLACEHOLDER: 'solte seu .apk aqui, ou escolha um',
     IOS: 'iOS',
     IOS_TEXT:
@@ -248,9 +248,9 @@ export const pt: typeof en = {
     MAKE_DEFAULT: 'Tornar padrão',
     NOT_ON_PATH: 'Fora do PATH',
     AGENTS_NOTE:
-      'O gocrash não tem modelo próprio. Ele dirige o agente que você já tem instalado.',
+      'O QAzinho não tem modelo próprio. Ele dirige o agente que você já tem instalado.',
     DEVICES_NOTE:
-      'O gocrash nunca baixa SDK, emulador ou Xcode. Ele encontra o que já está aqui e diz o que falta.',
+      'O QAzinho nunca baixa SDK, emulador ou Xcode. Ele encontra o que já está aqui e diz o que falta.',
     IOS_OFF: 'targets de iOS estão desligados',
     INTEGRATIONS_NOTE: 'Nada é enviado sozinho. Você escolhe a run, o bug e o momento.',
     THEME_LIGHT: 'Claro',
@@ -273,10 +273,10 @@ export const pt: typeof en = {
     GITHUB_TEXT:
       'Registre os bugs que uma run encontra como issues nos seus repositórios.',
     GITHUB_NEEDS:
-      'Um personal access token que leia sua conta e crie issues. O gocrash confere com o GitHub e guarda selado no chaveiro desta máquina.',
+      'Um personal access token que leia sua conta e crie issues. O QAzinho confere com o GitHub e guarda selado no chaveiro desta máquina.',
     JIRA_TEXT: 'Registre os bugs que uma run encontra como issues num projeto do Jira.',
     JIRA_NEEDS:
-      'Seu site do Jira Cloud, seu email e um API token. O gocrash confere com o Jira e guarda o token selado no chaveiro desta máquina.',
+      'Seu site do Jira Cloud, seu email e um API token. O QAzinho confere com o Jira e guarda o token selado no chaveiro desta máquina.',
     NOT_FILED_YET:
       'Enviar um bug para o tracker ainda não foi construído. A conexão é conferida e guardada para quando for.',
     FIELD_TOKEN: 'token',
@@ -294,7 +294,7 @@ export const pt: typeof en = {
     COPIED: 'Copiado',
     TRY_AGAIN: 'Tentar de novo',
     RUN_IT_YOURSELF: 'ou rode você mesmo num terminal',
-    RAIL_TITLE: 'Configurar o gocrash',
+    RAIL_TITLE: 'Configurar o QAzinho',
     STEP_WELCOME: 'Boas-vindas',
     STEP_AGENTS: 'Agente',
     STEP_DEVICES: 'Dispositivos',
@@ -308,18 +308,18 @@ export const pt: typeof en = {
     CONTINUE: 'Continuar',
     CONTINUE_WITHOUT_AGENT: 'Continuar sem agente',
     SKIP_FOR_NOW: 'Pular por agora',
-    OPEN_APP: 'Abrir o gocrash',
+    OPEN_APP: 'Abrir o QAzinho',
     CREATE_PROJECT: 'Criar meu primeiro projeto',
     WELCOME_TITLE: 'Vamos deixar esta máquina pronta para quebrar apps.',
     WELCOME_BODY:
-      'Tudo roda aqui: seu agente, seus emuladores, seu navegador. Leva um minuto: o gocrash vê o que já está instalado e instala o que é leve o bastante para instalar daqui.',
+      'Tudo roda aqui: seu agente, seus emuladores, seu navegador. Leva um minuto: o QAzinho vê o que já está instalado e instala o que é leve o bastante para instalar daqui.',
     WELCOME_AGENTS: 'O agente de IA que escreve e roda seus testes',
     WELCOME_DEVICES: 'O que targets Android e iOS precisam nesta máquina',
     WELCOME_TRACKERS: 'Para onde vão os bugs, se você quiser mandar para algum lugar',
     LANGUAGE: 'idioma',
     AGENTS_TITLE: 'Escolha o agente que testa por você.',
     AGENTS_BODY:
-      'O gocrash não tem modelo próprio. Ele usa um agente CLI instalado nesta máquina, logado na sua própria conta.',
+      'O QAzinho não tem modelo próprio. Ele usa um agente CLI instalado nesta máquina, logado na sua própria conta.',
     AGENT_ABOUT: 'roda como {{command}}',
     AGENT_IN_USE: 'em uso',
     AGENT_USE: 'Usar este',
@@ -332,12 +332,12 @@ export const pt: typeof en = {
     NEEDS_NPM:
       'Instalar um agente precisa do npm, e esta máquina não tem. Instale o Node.js e verifique de novo.',
     NO_AGENT:
-      'Sem um agente o gocrash não escreve nem roda um plano. Dá para instalar um depois nas Settings.',
+      'Sem um agente o QAzinho não escreve nem roda um plano. Dá para instalar um depois nas Settings.',
     CHECK_AGAIN: 'Verificar de novo',
     CHECKING: 'verificando…',
     DEVICES_TITLE: 'Prepare seus dispositivos.',
     DEVICES_BODY:
-      'Web não precisa de mais nada. Android e iOS precisam dos SDKs, que são grandes demais para instalar daqui: o gocrash mostra onde baixar e verifica de novo.',
+      'Web não precisa de mais nada. Android e iOS precisam dos SDKs, que são grandes demais para instalar daqui: o QAzinho mostra onde baixar e verifica de novo.',
     ANDROID_ABOUT: 'Roda seus próprios emuladores pelo adb.',
     GET_ANDROID_STUDIO: 'Baixar Android Studio ↗',
     XCODE_ABOUT: 'Liga o simulador de iOS e instala seu build nele.',
@@ -353,7 +353,7 @@ export const pt: typeof en = {
     INTEGRATIONS_TITLE: 'Conecte para onde vão seus bugs.',
     INTEGRATIONS_BODY: 'Opcional. Pule agora e conecte um tracker depois nas Settings.',
     DONE_TITLE: 'Tudo pronto.',
-    DONE_BODY: 'Isto é o que o gocrash encontrou nesta máquina.',
+    DONE_BODY: 'Isto é o que o QAzinho encontrou nesta máquina.',
     DONE_AGENT: 'agente',
     DONE_TRACKERS: 'trackers',
     DONE_READY: 'pronto',

@@ -2,7 +2,7 @@
 import { renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { useStepDoneViewModel } from '@/modules/Setup/screens/Onboarding/components/StepDone/hooks/useStepDoneViewModel';
-import { fakeGocrashApi } from '@/services/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
 const CLAUDE = {
@@ -25,11 +25,11 @@ beforeEach(() => {
   });
   useSettingsStore.setState({ agent: 'Claude Code' });
   useSetupStore.setState({ integrations: [] });
-  window.gocrash = fakeGocrashApi('darwin');
+  window.qazinho = fakeQazinhoApi('darwin');
 });
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'gocrash');
+  Reflect.deleteProperty(window, 'qazinho');
 });
 
 function rowOf(id: string) {

@@ -1,4 +1,4 @@
-/** The agents gocrash knows how to drive, the binary each installs, and where it keeps its default model. */
+/** The agents QAzinho knows how to drive, the binary each installs, and where it keeps its default model. */
 export const AGENT_PROBES = [
   {
     id: 'claude-code',

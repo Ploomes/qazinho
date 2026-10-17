@@ -24,7 +24,7 @@ describe('stopping a run', () => {
 
     await new Promise<void>((ready) => site.listen(4324, '127.0.0.1', ready));
 
-    const root = await mkdtemp(join(tmpdir(), 'gocrash-stop-'));
+    const root = await mkdtemp(join(tmpdir(), 'qazinho-stop-'));
     const agent = join(root, 'slow-agent');
 
     await writeFile(agent, `#!/bin/sh\nsleep ${String(THINKING_SEC)}\n`);

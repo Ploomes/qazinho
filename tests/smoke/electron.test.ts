@@ -28,7 +28,7 @@ beforeAll(async () => {
     args: [
       join(process.cwd(), 'out', 'main', 'index.js'),
       // Electron: its own data directory, so a run here never touches the QA's real projects.
-      `--user-data-dir=${await mkdtemp(join(tmpdir(), 'gocrash-e2e-'))}`,
+      `--user-data-dir=${await mkdtemp(join(tmpdir(), 'qazinho-e2e-'))}`,
     ],
   });
 
@@ -53,9 +53,9 @@ describe('the real window', () => {
     expect(await page.locator('.titlebar').count()).toBe(1);
     const bridge = await page.evaluate(() => {
       // The callback runs in the page, where `window` is not in this project's lib.
-      const web = globalThis as unknown as { gocrash?: unknown };
+      const web = globalThis as unknown as { qazinho?: unknown };
 
-      return typeof web.gocrash;
+      return typeof web.qazinho;
     });
 
     expect(bridge).toBe('object');

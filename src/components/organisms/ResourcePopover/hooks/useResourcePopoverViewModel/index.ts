@@ -21,8 +21,8 @@ export const useResourcePopoverViewModel = () => {
 
   const itself: IProcessNode = {
     ...rollUp(app),
-    id: 'gocrash',
-    name: `gocrash · ${String(app.length)} processes`,
+    id: 'qazinho',
+    name: `QAzinho · ${String(app.length)} processes`,
     level: 0,
     workspaceId: null,
     canShutDown: false,

@@ -21,7 +21,7 @@ describe('toSaved', () => {
     const saved = toSaved(walkRun({ verdicts: [...BROKE], isFinished: true }));
 
     expect(saved.json).not.toContain('data:image/jpeg');
-    expect(saved.json).toContain('/tmp/gocrash/step-5.jpg');
+    expect(saved.json).toContain('/tmp/qazinho/step-5.jpg');
   });
 
   it('a run in flight is not saved as still running, because nothing is', () => {
@@ -44,6 +44,6 @@ describe('toSaved', () => {
     const after = roundTrip(walkRun({ verdicts: [...BROKE], isFinished: true }));
 
     expect(after?.bugs[0]?.shots.at(-1)?.src).toBeNull();
-    expect(after?.bugs[0]?.shots.at(-1)?.file).toBe('/tmp/gocrash/step-5.jpg');
+    expect(after?.bugs[0]?.shots.at(-1)?.file).toBe('/tmp/qazinho/step-5.jpg');
   });
 });

@@ -1,8 +1,8 @@
-import type { IGocrashApi } from '@/types';
+import type { IQazinhoApi } from '@/types';
 
 declare global {
   interface Window {
-    gocrash: IGocrashApi;
+    qazinho: IQazinhoApi;
   }
 }
 

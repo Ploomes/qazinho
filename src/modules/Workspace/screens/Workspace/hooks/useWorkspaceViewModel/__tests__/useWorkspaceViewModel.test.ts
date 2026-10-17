@@ -66,7 +66,7 @@ describe('useWorkspaceViewModel', () => {
       expect(useWorkspaceStore.getState().workspaces[0]?.status).toBe('running');
     });
 
-    it('runs an android target too, because gocrash drives a phone now', () => {
+    it('runs an android target too, because QAzinho drives a phone now', () => {
       useAppStore.setState({
         projects: [
           {

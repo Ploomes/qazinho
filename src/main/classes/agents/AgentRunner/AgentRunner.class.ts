@@ -13,7 +13,7 @@ import {
   toUsage,
 } from './library';
 
-/** Drives the QA's own agent CLI. gocrash owns no model and holds no provider key. */
+/** Drives the QA's own agent CLI. QAzinho owns no model and holds no provider key. */
 export class AgentRunner {
   private readonly onEvent: (event: IAgentEvent) => void;
   private readonly owners: IAgentRunner['owners'];

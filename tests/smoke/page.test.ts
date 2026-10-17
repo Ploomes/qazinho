@@ -77,7 +77,7 @@ afterAll(async () => {
 describe('the built page, with no bridge behind it', () => {
   it('opens on the first-run setup, and walks it without a bridge', async () => {
     expect(await page.locator('.titlebar').count()).toBe(1);
-    expect(await page.locator('body').innerText()).toContain('Set up gocrash');
+    expect(await page.locator('body').innerText()).toContain('Set up QAzinho');
 
     for (const name of [
       'Let’s start',
@@ -87,7 +87,7 @@ describe('the built page, with no bridge behind it', () => {
     ])
       await page.getByRole('button', { name, exact: true }).click();
 
-    await page.getByRole('button', { name: 'Open gocrash' }).click();
+    await page.getByRole('button', { name: 'Open QAzinho' }).click();
   });
 
   it('lands on the welcome screen once the setup is done', async () => {
@@ -221,7 +221,7 @@ describe('the built page, with no bridge behind it', () => {
       await page.waitForTimeout(150);
     }
 
-    expect(await page.locator('body').innerText()).toContain('gocrash');
+    expect(await page.locator('body').innerText()).toContain('QAzinho');
   });
 
   it('says nothing to the console the whole way through', () => {

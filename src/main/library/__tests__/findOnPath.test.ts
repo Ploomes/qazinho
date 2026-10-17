@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { findOnPath } from '@/main/library';
 
 function directoryWith(props: { command: string; isExecutable: boolean }): string {
-  const directory = mkdtempSync(join(tmpdir(), 'gocrash-path-'));
+  const directory = mkdtempSync(join(tmpdir(), 'qazinho-path-'));
   const file = join(directory, props.command);
 
   writeFileSync(file, '#!/bin/sh\n');

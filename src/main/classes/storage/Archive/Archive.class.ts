@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { ARCHIVE } from './constants';
 import { isInside, readTextOr } from './library';
 
-/** Everything gocrash keeps between sessions, as files the QA can open, diff and commit. */
+/** Everything QAzinho keeps between sessions, as files the QA can open, diff and commit. */
 export class Archive {
   private readonly root: string;
 

@@ -3,7 +3,7 @@ import { isInternalNavigation } from '@/main/library';
 
 const DEV_URL = 'http://localhost:5173/';
 const PACKAGED_URL =
-  'file:///Applications/gocrash.app/Contents/Resources/app/out/renderer/index.html';
+  'file:///Applications/QAzinho.app/Contents/Resources/app/out/renderer/index.html';
 
 describe('isInternalNavigation', () => {
   it('any path on the dev server origin stays inside the app', () => {

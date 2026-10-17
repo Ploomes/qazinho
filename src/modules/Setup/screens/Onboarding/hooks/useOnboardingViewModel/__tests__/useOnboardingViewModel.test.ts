@@ -2,7 +2,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useOnboardingViewModel } from '@/modules/Setup/screens/Onboarding/hooks/useOnboardingViewModel';
-import { fakeGocrashApi } from '@/services/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAppStore, useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
 const CODEX = {
@@ -19,11 +19,11 @@ beforeEach(() => {
   useSetupStore.setState({ integrations: [], managers: null, isChecking: false });
   useMachineStore.setState({ agents: [] });
   useAppStore.setState({ modal: null });
-  window.gocrash = fakeGocrashApi('darwin');
+  window.qazinho = fakeQazinhoApi('darwin');
 });
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'gocrash');
+  Reflect.deleteProperty(window, 'qazinho');
 });
 
 function walkTo(
@@ -38,7 +38,7 @@ function walkTo(
 
 describe('useOnboardingViewModel', () => {
   it('opens on the welcome, and looks at the machine once on the way in', async () => {
-    const check = vi.spyOn(window.gocrash, 'checkMachine');
+    const check = vi.spyOn(window.qazinho, 'checkMachine');
     const { result, rerender } = renderHook(() => useOnboardingViewModel());
 
     rerender();

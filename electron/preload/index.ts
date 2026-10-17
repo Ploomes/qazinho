@@ -6,7 +6,7 @@ import type {
   IConnectResult,
   IDetectedAgent,
   IDeviceTools,
-  IGocrashApi,
+  IQazinhoApi,
   IInstallResult,
   IIntegrationStatus,
   IMachineCheck,
@@ -24,7 +24,7 @@ import type {
 import { contextBridge, ipcRenderer } from 'electron';
 import { CHANNELS } from '@/constants';
 
-const api: IGocrashApi = {
+const api: IQazinhoApi = {
   platform: process.platform as Platform,
   detectAgents: () =>
     ipcRenderer.invoke(CHANNELS.detectAgents) as Promise<IDetectedAgent[]>,
@@ -98,4 +98,4 @@ const api: IGocrashApi = {
     ipcRenderer.invoke(CHANNELS.disconnectIntegration, id) as Promise<void>,
 };
 
-contextBridge.exposeInMainWorld('gocrash', api);
+contextBridge.exposeInMainWorld('qazinho', api);

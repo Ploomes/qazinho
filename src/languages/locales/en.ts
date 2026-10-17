@@ -23,7 +23,7 @@ export const en = {
     TIP_WEEK: 'This week',
     TIP_LEFT: '{{percent}}% left',
     TIP_RESETS: 'resets at {{resets}}',
-    TIP_NOTE: 'Reported by {{agent}}. gocrash only reads it.',
+    TIP_NOTE: 'Reported by {{agent}}. QAzinho only reads it.',
   },
   SIDEBAR: {
     NEW_WORKSPACE: 'New workspace here',
@@ -66,7 +66,7 @@ export const en = {
     MENTION_CASE: 'case',
     AGENT_NEEDS_YOU: 'the agent needs you',
     HOLDING: 'the run is holding · {{elapsed}}',
-    ERROR_KICKER: 'gocrash error · not a test result',
+    ERROR_KICKER: 'QAzinho error · not a test result',
     PLAN_CARD_TITLE: 'Plan · {{cases}} cases · {{steps}} steps',
     PLAN_CARD_SUBTITLE: 'Read it, change what is wrong, then run it.',
     PLAN_CARD_ACTION: 'Open in Plan →',
@@ -121,7 +121,7 @@ export const en = {
     ALL: 'all',
     NO_SHOT: 'This step has no screenshot.',
     NO_IOS_TARGET:
-      'gocrash cannot drive an iOS simulator yet: tapping one needs XCUITest, which is not built. Pick a web or Android target.',
+      'QAzinho cannot drive an iOS simulator yet: tapping one needs XCUITest, which is not built. Pick a web or Android target.',
   },
   BUG: {
     EMPTY_TITLE: 'No bugs yet.',
@@ -197,7 +197,7 @@ export const en = {
     WEB_PLACEHOLDER: 'https://staging.yourshop.com',
     ANDROID: 'Android',
     ANDROID_TEXT:
-      'Drop a debug .apk. gocrash installs it on an emulator you already have.',
+      'Drop a debug .apk. QAzinho installs it on an emulator you already have.',
     ANDROID_PLACEHOLDER: 'drop your .apk here, or pick one',
     IOS: 'iOS',
     IOS_TEXT:
@@ -247,9 +247,9 @@ export const en = {
     MAKE_DEFAULT: 'Make default',
     NOT_ON_PATH: 'Not on PATH',
     AGENTS_NOTE:
-      'gocrash has no model of its own. It drives whichever agent you already have installed.',
+      'QAzinho has no model of its own. It drives whichever agent you already have installed.',
     DEVICES_NOTE:
-      'gocrash never downloads an SDK, an emulator or Xcode. It finds what is already here and says what is missing.',
+      'QAzinho never downloads an SDK, an emulator or Xcode. It finds what is already here and says what is missing.',
     IOS_OFF: 'iOS targets are off',
     INTEGRATIONS_NOTE:
       'Nothing is sent anywhere on its own. You pick the run, the bug and the moment.',
@@ -272,10 +272,10 @@ export const en = {
     WHAT_IT_NEEDS: 'what it needs',
     GITHUB_TEXT: 'File the bugs a run finds as issues in your repositories.',
     GITHUB_NEEDS:
-      "A personal access token that can read your account and create issues. gocrash checks it with GitHub, then seals it in this machine's keychain.",
+      "A personal access token that can read your account and create issues. QAzinho checks it with GitHub, then seals it in this machine's keychain.",
     JIRA_TEXT: 'File the bugs a run finds as issues in a Jira project.',
     JIRA_NEEDS:
-      "Your Jira Cloud site, your email and an API token. gocrash checks them with Jira, then seals the token in this machine's keychain.",
+      "Your Jira Cloud site, your email and an API token. QAzinho checks them with Jira, then seals the token in this machine's keychain.",
     NOT_FILED_YET:
       'Sending a bug to the tracker is not built yet. The connection is checked and kept for when it is.',
     FIELD_TOKEN: 'token',
@@ -293,7 +293,7 @@ export const en = {
     COPIED: 'Copied',
     TRY_AGAIN: 'Try again',
     RUN_IT_YOURSELF: 'or run it yourself in a terminal',
-    RAIL_TITLE: 'Set up gocrash',
+    RAIL_TITLE: 'Set up QAzinho',
     STEP_WELCOME: 'Welcome',
     STEP_AGENTS: 'Agent',
     STEP_DEVICES: 'Devices',
@@ -307,18 +307,18 @@ export const en = {
     CONTINUE: 'Continue',
     CONTINUE_WITHOUT_AGENT: 'Continue without an agent',
     SKIP_FOR_NOW: 'Skip for now',
-    OPEN_APP: 'Open gocrash',
+    OPEN_APP: 'Open QAzinho',
     CREATE_PROJECT: 'Create my first project',
     WELCOME_TITLE: 'Let’s get this machine ready to crash apps.',
     WELCOME_BODY:
-      'Everything runs here: your agent, your emulators, your browser. This takes a minute: gocrash looks at what is installed and installs what is light enough to install from here.',
+      'Everything runs here: your agent, your emulators, your browser. This takes a minute: QAzinho looks at what is installed and installs what is light enough to install from here.',
     WELCOME_AGENTS: 'The AI agent that writes and runs your tests',
     WELCOME_DEVICES: 'What Android and iOS targets need on this machine',
     WELCOME_TRACKERS: 'Where the bugs go, if you want them to go anywhere',
     LANGUAGE: 'language',
     AGENTS_TITLE: 'Pick the agent that tests for you.',
     AGENTS_BODY:
-      'gocrash has no model of its own. It drives an agent CLI installed on this machine, signed in to your own account.',
+      'QAzinho has no model of its own. It drives an agent CLI installed on this machine, signed in to your own account.',
     AGENT_ABOUT: 'runs as {{command}}',
     AGENT_IN_USE: 'in use',
     AGENT_USE: 'Use this one',
@@ -331,12 +331,12 @@ export const en = {
     NEEDS_NPM:
       'Installing an agent needs npm, and this machine has none. Install Node.js, then check again.',
     NO_AGENT:
-      'Without an agent gocrash cannot write a plan or run one. You can install one later in Settings.',
+      'Without an agent QAzinho cannot write a plan or run one. You can install one later in Settings.',
     CHECK_AGAIN: 'Check again',
     CHECKING: 'checking…',
     DEVICES_TITLE: 'Get your devices ready.',
     DEVICES_BODY:
-      'Web needs nothing more. Android and iOS need their SDKs, which are too big to install from here: gocrash points you to them and checks again.',
+      'Web needs nothing more. Android and iOS need their SDKs, which are too big to install from here: QAzinho points you to them and checks again.',
     ANDROID_ABOUT: 'Runs your own emulators through adb.',
     GET_ANDROID_STUDIO: 'Get Android Studio ↗',
     XCODE_ABOUT: 'Boots the iOS simulator and installs your build on it.',
@@ -351,7 +351,7 @@ export const en = {
     INTEGRATIONS_TITLE: 'Connect where your bugs go.',
     INTEGRATIONS_BODY: 'Optional. Skip it now and connect a tracker later in Settings.',
     DONE_TITLE: 'All set.',
-    DONE_BODY: 'This is what gocrash found on this machine.',
+    DONE_BODY: 'This is what QAzinho found on this machine.',
     DONE_AGENT: 'agent',
     DONE_TRACKERS: 'trackers',
     DONE_READY: 'ready',

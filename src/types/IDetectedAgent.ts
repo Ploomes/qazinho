@@ -1,4 +1,4 @@
-/** An agent gocrash found on this machine. gocrash installs nothing: it looks, and reports. */
+/** An agent QAzinho found on this machine. QAzinho installs nothing: it looks, and reports. */
 export interface IDetectedAgent {
   id: string;
   name: string;

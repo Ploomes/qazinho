@@ -7,7 +7,7 @@ import { collectSubtree } from '@/main/library';
 import { BYTES_IN_GB } from './constants';
 import { cpuPercent, sweepProcesses, toSample, workspaceOfProfile } from './library';
 
-/** What gocrash costs this machine: the app itself, plus everything it started. */
+/** What QAzinho costs this machine: the app itself, plus everything it started. */
 export class ResourceCollector {
   private readonly owners: ProcessOwners;
   private readonly profileRoot: string;
@@ -30,7 +30,7 @@ export class ResourceCollector {
   }
 
   private async collect(): Promise<IResourceSnapshot> {
-    // The sweep's own ps is a child of this process, and not something gocrash is running.
+    // The sweep's own ps is a child of this process, and not something QAzinho is running.
     const rows = (await sweepProcesses()).filter(
       (row) => !(row.parentPid === process.pid && row.name === 'ps'),
     );

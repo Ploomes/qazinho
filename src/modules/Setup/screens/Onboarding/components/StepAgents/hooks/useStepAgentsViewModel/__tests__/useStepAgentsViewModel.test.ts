@@ -2,7 +2,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useStepAgentsViewModel } from '@/modules/Setup/screens/Onboarding/components/StepAgents/hooks/useStepAgentsViewModel';
-import { fakeGocrashApi } from '@/services/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
 const CLAUDE = {
@@ -30,11 +30,11 @@ beforeEach(() => {
   useMachineStore.setState({ agents: [CLAUDE, CODEX] });
   useSetupStore.setState({ managers: WITH_NPM, installs: {}, isChecking: false });
   useSettingsStore.setState({ agent: 'Claude Code', model: '' });
-  window.gocrash = fakeGocrashApi('darwin');
+  window.qazinho = fakeQazinhoApi('darwin');
 });
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'gocrash');
+  Reflect.deleteProperty(window, 'qazinho');
 });
 
 describe('useStepAgentsViewModel', () => {
@@ -83,7 +83,7 @@ describe('useStepAgentsViewModel', () => {
   });
 
   describe('onUse', () => {
-    it('makes a found agent the one gocrash drives', () => {
+    it('makes a found agent the one QAzinho drives', () => {
       useMachineStore.setState({
         agents: [CLAUDE, { ...CODEX, isFound: true, path: '/bin/codex' }],
       });
@@ -99,7 +99,7 @@ describe('useStepAgentsViewModel', () => {
 
   describe('onInstall', () => {
     it('installs the agent behind the row', () => {
-      const install = vi.spyOn(window.gocrash, 'installTool');
+      const install = vi.spyOn(window.qazinho, 'installTool');
       const { result } = renderHook(() => useStepAgentsViewModel());
 
       act(() => {

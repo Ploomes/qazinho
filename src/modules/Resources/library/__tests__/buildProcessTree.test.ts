@@ -7,7 +7,7 @@ const PROJECT = { id: 'p1', name: 'Shop · staging', targets: [] };
 const WORKSPACE = makeWorkspace();
 
 const RUNNING = [
-  sample({ name: 'gocrash', kind: 'app', ramMb: 300 }),
+  sample({ name: 'qazinho', kind: 'app', ramMb: 300 }),
   sample({ name: 'claude', kind: 'agent', workspaceId: 'w1', ramMb: 420 }),
   sample({ name: 'Google Chrome', kind: 'device', workspaceId: 'w1', ramMb: 1024 }),
   sample({ name: 'Google Chrome Helper', kind: 'device', workspaceId: 'w1', ramMb: 512 }),
@@ -18,7 +18,7 @@ describe('buildProcessTree', () => {
     const tree = buildProcessTree({
       projects: [PROJECT],
       workspaces: [WORKSPACE],
-      processes: [sample({ name: 'gocrash', kind: 'app' })],
+      processes: [sample({ name: 'qazinho', kind: 'app' })],
     });
 
     expect(tree).toEqual([]);

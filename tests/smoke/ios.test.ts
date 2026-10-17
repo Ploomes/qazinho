@@ -7,7 +7,7 @@ import { IosDriver } from '@/main/classes/devices/IosDriver';
 import { listSimulators } from '@/main/classes/devices/IosDriver/library';
 
 /** A simulator build on disk: the `.app` folder out of DerivedData, never an `.ipa`. */
-const APP = process.env.GOCRASH_SMOKE_APP ?? '';
+const APP = process.env.QAZINHO_SMOKE_APP ?? '';
 
 const tools = new DeviceToolDetector().detect();
 const hasIdb = tools.idb.isFound && APP.length > 0;
@@ -22,7 +22,7 @@ beforeAll(async () => {
 
   if (udid === undefined) throw new Error('No iPhone simulator on this machine.');
 
-  shotDir = await mkdtemp(join(tmpdir(), 'gocrash-ios-'));
+  shotDir = await mkdtemp(join(tmpdir(), 'qazinho-ios-'));
   driver = new IosDriver({ idb: tools.idb.path ?? '', udid, app: APP });
 
   await driver.open();
@@ -67,7 +67,7 @@ describe.skipIf(!hasIdb)(
 describe.skipIf(hasIdb)('an iOS smoke with nothing to drive', () => {
   it('says what is missing instead of passing quietly', () => {
     console.log(
-      `iOS smoke skipped: idb ${tools.idb.isFound ? 'found' : 'missing (brew install idb-companion)'}, GOCRASH_SMOKE_APP ${APP.length > 0 ? 'set' : 'unset'}.`,
+      `iOS smoke skipped: idb ${tools.idb.isFound ? 'found' : 'missing (brew install idb-companion)'}, QAZINHO_SMOKE_APP ${APP.length > 0 ? 'set' : 'unset'}.`,
     );
 
     expect(hasIdb).toBe(false);

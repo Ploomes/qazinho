@@ -1,5 +1,5 @@
 export const CHAT = {
-  unreadable: 'The agent answered, but not in a shape gocrash could read. Ask it again.',
+  unreadable: 'The agent answered, but not in a shape QAzinho could read. Ask it again.',
   suggestions: [
     {
       labelKey: 'CHAT.SUGGESTION_CHECKOUT',

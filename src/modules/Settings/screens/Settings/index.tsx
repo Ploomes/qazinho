@@ -237,7 +237,7 @@ export const Settings: React.FC = () => {
               <div className="settings__about-head">
                 <Logo size={46} />
                 <div className="settings__about-names">
-                  <span className="settings__about-name">gocrash</span>
+                  <span className="settings__about-name">QAzinho</span>
                   <span className="settings__about-version">
                     {t('SETTINGS.ABOUT_VERSION')}
                   </span>

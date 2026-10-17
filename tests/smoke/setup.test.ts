@@ -15,7 +15,7 @@ exit ${String(exitCode)}
 }
 
 async function installerWith(script: string | null) {
-  const bin = await mkdtemp(join(tmpdir(), 'gocrash-setup-'));
+  const bin = await mkdtemp(join(tmpdir(), 'qazinho-setup-'));
 
   if (script !== null) {
     await writeFile(join(bin, 'npm'), script);

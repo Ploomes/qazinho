@@ -2,7 +2,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMachineCheck } from '@/modules/Setup/hooks/useMachineCheck';
-import { fakeGocrashApi } from '@/services/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useMachineStore, useSetupStore } from '@/store';
 
 const AGENT = {
@@ -17,8 +17,8 @@ const AGENT = {
 beforeEach(() => {
   useSetupStore.setState({ managers: null, isChecking: false });
   useMachineStore.setState({ agents: [] });
-  window.gocrash = {
-    ...fakeGocrashApi('darwin'),
+  window.qazinho = {
+    ...fakeQazinhoApi('darwin'),
     checkMachine: vi.fn().mockResolvedValue({
       agents: [AGENT],
       tools: {
@@ -35,7 +35,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'gocrash');
+  Reflect.deleteProperty(window, 'qazinho');
 });
 
 describe('useMachineCheck', () => {

@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { findExistingPath } from '@/main/library';
 
-const REAL = mkdtempSync(join(tmpdir(), 'gocrash-tool-'));
+const REAL = mkdtempSync(join(tmpdir(), 'qazinho-tool-'));
 
 describe('findExistingPath', () => {
   it('answers with the first candidate that is really there', () => {

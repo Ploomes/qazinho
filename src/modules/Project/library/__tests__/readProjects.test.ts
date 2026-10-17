@@ -8,7 +8,7 @@ const PROJECT = {
 };
 
 describe('readProjects', () => {
-  it('reads back what gocrash wrote', () => {
+  it('reads back what QAzinho wrote', () => {
     expect(readProjects(JSON.stringify([PROJECT]))).toEqual([PROJECT]);
   });
 

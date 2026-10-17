@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useIntegrationCardViewModel } from '@/modules/Setup/components/IntegrationCard/hooks/useIntegrationCardViewModel';
 import { INTEGRATIONS } from '@/modules/Setup/constants';
-import { fakeGocrashApi } from '@/services/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useSettingsStore, useSetupStore } from '@/store';
 
 const [GITHUB, JIRA] = INTEGRATIONS;
@@ -20,11 +20,11 @@ const CONNECTED = {
 beforeEach(() => {
   useSetupStore.setState({ integrations: [] });
   useSettingsStore.setState({ language: 'en' });
-  window.gocrash = fakeGocrashApi('darwin');
+  window.qazinho = fakeQazinhoApi('darwin');
 });
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'gocrash');
+  Reflect.deleteProperty(window, 'qazinho');
 });
 
 function typeInto(
@@ -53,7 +53,7 @@ describe('useIntegrationCardViewModel', () => {
 
     it('disconnects a connected tracker, on the machine and on screen', async () => {
       useSetupStore.setState({ integrations: [CONNECTED] });
-      const disconnect = vi.spyOn(window.gocrash, 'disconnectIntegration');
+      const disconnect = vi.spyOn(window.qazinho, 'disconnectIntegration');
       const { result } = renderHook(() =>
         useIntegrationCardViewModel({ integration: GITHUB }),
       );
@@ -67,7 +67,7 @@ describe('useIntegrationCardViewModel', () => {
 
   describe('onConnect', () => {
     it('connects with what was typed, and shows the account it came back as', async () => {
-      window.gocrash.connectIntegration = vi
+      window.qazinho.connectIntegration = vi
         .fn()
         .mockResolvedValue({ isConnected: true, status: CONNECTED });
       const { result } = renderHook(() =>
@@ -78,7 +78,7 @@ describe('useIntegrationCardViewModel', () => {
       typeInto(result, { token: 'ghp_abc' });
       await act(() => result.current.onConnect());
 
-      expect(window.gocrash.connectIntegration).toHaveBeenCalledWith({
+      expect(window.qazinho.connectIntegration).toHaveBeenCalledWith({
         id: 'github',
         token: 'ghp_abc',
       });
@@ -90,7 +90,7 @@ describe('useIntegrationCardViewModel', () => {
     });
 
     it('keeps the form open with the reason when the tracker refuses', async () => {
-      window.gocrash.connectIntegration = vi
+      window.qazinho.connectIntegration = vi
         .fn()
         .mockResolvedValue({ isConnected: false, error: 'Bad token.' });
       const { result } = renderHook(() =>
@@ -106,7 +106,7 @@ describe('useIntegrationCardViewModel', () => {
     });
 
     it('does NOT ask Jira anything until the site, the email and the token are there', async () => {
-      const connect = vi.spyOn(window.gocrash, 'connectIntegration');
+      const connect = vi.spyOn(window.qazinho, 'connectIntegration');
       const { result } = renderHook(() =>
         useIntegrationCardViewModel({ integration: JIRA }),
       );
@@ -121,7 +121,7 @@ describe('useIntegrationCardViewModel', () => {
     });
 
     it('clears the reason once the QA types again', async () => {
-      window.gocrash.connectIntegration = vi
+      window.qazinho.connectIntegration = vi
         .fn()
         .mockResolvedValue({ isConnected: false, error: 'Bad token.' });
       const { result } = renderHook(() =>

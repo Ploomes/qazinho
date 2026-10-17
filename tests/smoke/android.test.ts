@@ -15,7 +15,7 @@ import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
 
 /** A real apk on disk. Pull one off the emulator with `adb pull $(adb shell pm path <pkg>)`. */
-const APK = process.env.GOCRASH_SMOKE_APK ?? '/tmp/demo.apk';
+const APK = process.env.QAZINHO_SMOKE_APK ?? '/tmp/demo.apk';
 
 let driver: AndroidDriver;
 let shotDir: string;
@@ -29,7 +29,7 @@ beforeAll(async () => {
 
   if (avd === undefined) throw new Error('No AVD on this machine.');
 
-  shotDir = await mkdtemp(join(tmpdir(), 'gocrash-android-'));
+  shotDir = await mkdtemp(join(tmpdir(), 'qazinho-android-'));
   driver = new AndroidDriver({ sdkRoot, avd, apk: APK });
 
   await driver.open();
@@ -94,7 +94,7 @@ describe('a real run on a phone', () => {
       live: new LiveStream(),
       tools: deviceTools,
       harness: new Harness(),
-      dataRoot: await mkdtemp(join(tmpdir(), 'gocrash-android-run-')),
+      dataRoot: await mkdtemp(join(tmpdir(), 'qazinho-android-run-')),
       onEvent: (event) => events.push(event),
     });
 

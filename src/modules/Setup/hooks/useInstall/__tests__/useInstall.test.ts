@@ -2,21 +2,21 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useInstall } from '@/modules/Setup/hooks/useInstall';
-import { fakeGocrashApi } from '@/services/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useSetupStore } from '@/store';
 
 beforeEach(() => {
   useSetupStore.setState({ installs: {} });
-  window.gocrash = fakeGocrashApi('darwin');
+  window.qazinho = fakeQazinhoApi('darwin');
 });
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'gocrash');
+  Reflect.deleteProperty(window, 'qazinho');
 });
 
 describe('useInstall', () => {
   it('installs, then looks at the machine again so the new tool shows up', async () => {
-    const check = vi.spyOn(window.gocrash, 'checkMachine');
+    const check = vi.spyOn(window.qazinho, 'checkMachine');
     const { result } = renderHook(() => useInstall());
 
     await act(() => result.current.install('claude-code'));
@@ -28,10 +28,10 @@ describe('useInstall', () => {
   });
 
   it('keeps the error and does NOT look again when the install fails', async () => {
-    window.gocrash.installTool = vi
+    window.qazinho.installTool = vi
       .fn()
       .mockResolvedValue({ isInstalled: false, error: 'EACCES', command: 'npm i -g x' });
-    const check = vi.spyOn(window.gocrash, 'checkMachine');
+    const check = vi.spyOn(window.qazinho, 'checkMachine');
     const { result } = renderHook(() => useInstall());
 
     await act(() => result.current.install('codex'));
@@ -48,7 +48,7 @@ describe('useInstall', () => {
     useSetupStore.setState({
       installs: { idb: { phase: 'installing', stage: 2, stages: 4, line: '' } },
     });
-    const install = vi.spyOn(window.gocrash, 'installTool');
+    const install = vi.spyOn(window.qazinho, 'installTool');
     const { result } = renderHook(() => useInstall());
 
     await act(() => result.current.install('idb'));

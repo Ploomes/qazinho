@@ -39,7 +39,7 @@ process.stdin.on('end', async () => {
   const harnessed = argv.includes('--append-system-prompt') && argv.includes('--strict-mcp-config');
   const config = JSON.parse(argv[argv.indexOf('--mcp-config') + 1]);
   const client = new Client({ name: 'fake-agent', version: '1.0.0' });
-  await client.connect(new StreamableHTTPClientTransport(new URL(config.mcpServers.gocrash.url)));
+  await client.connect(new StreamableHTTPClientTransport(new URL(config.mcpServers.qazinho.url)));
   const first = await client.callTool({ name: 'click', arguments: { target: 'Log in' } });
   const second = first.isError ? await client.callTool({ name: 'click', arguments: { target: 'Sign in' } }) : first;
   const saw = second.content[0].text;
@@ -69,7 +69,7 @@ const server = createServer((_request, response) => {
 });
 
 async function walkWith(script: string): Promise<IRunEvent[]> {
-  const root = await mkdtemp(join(tmpdir(), 'gocrash-agent-'));
+  const root = await mkdtemp(join(tmpdir(), 'qazinho-agent-'));
   const agent = join(root, 'agent');
 
   await writeFile(agent, script);

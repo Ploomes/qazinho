@@ -6,7 +6,7 @@ import { findOnPath } from '@/main/library';
 import { INSTALL, INSTALL_RECIPES } from './constants';
 import { commandLineOf, lastLineOf } from './library';
 
-/** Installs the light tools gocrash drives, on the QA's say-so, and tells the page each line. */
+/** Installs the light tools QAzinho drives, on the QA's say-so, and tells the page each line. */
 export class SetupInstaller {
   private readonly onEvent: (event: ISetupEvent) => void;
   private readonly directories: () => Promise<string[]>;

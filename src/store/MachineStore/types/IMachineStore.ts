@@ -5,7 +5,7 @@ import type {
   IResourceSnapshot,
 } from '@/types';
 
-/** What this machine actually has, and what gocrash is costing it right now. */
+/** What this machine actually has, and what QAzinho is costing it right now. */
 export interface IMachineStore {
   agents: IDetectedAgent[];
   resources: IResourceSnapshot;

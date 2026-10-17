@@ -1,4 +1,4 @@
-/** An agent gocrash found on this machine. gocrash never installs one. */
+/** An agent QAzinho found on this machine. QAzinho never installs one. */
 export interface IAgentOption {
   name: string;
   isFound: boolean;

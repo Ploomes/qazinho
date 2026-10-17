@@ -7,7 +7,7 @@ import {
   renderSections,
 } from './library';
 
-/** What gocrash says to the QA's agent: the system prompt, the message and the answer's shape. */
+/** What QAzinho says to the QA's agent: the system prompt, the message and the answer's shape. */
 export class Harness {
   public chat(props: {
     target: ITargetUnderTest | null;

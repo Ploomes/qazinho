@@ -1,6 +1,6 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
 
-/** A broken agent is a gocrash error, never a test result: it gets its own block. */
+/** A broken agent is a QAzinho error, never a test result: it gets its own block. */
 export function appendAgentError(props: {
   workspace: IWorkspace;
   text: string;

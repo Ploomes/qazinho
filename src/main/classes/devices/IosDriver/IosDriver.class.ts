@@ -92,7 +92,7 @@ export class IosDriver implements IDeviceDriver {
     return { file, dataUrl: `data:image/png;base64,${image.toString('base64')}` };
   }
 
-  /** gocrash only shuts down what gocrash started: a simulator the QA opened stays open. */
+  /** QAzinho only shuts down what QAzinho started: a simulator the QA opened stays open. */
   public async stream(): Promise<boolean> {
     return Promise.resolve(false);
   }

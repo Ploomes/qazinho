@@ -4,7 +4,7 @@ import { IOS } from '@/main/classes/devices/IosDriver/constants';
 
 const run = promisify(execFile);
 
-/** Every word gocrash says to a simulator goes through here, idb and simctl alike. */
+/** Every word QAzinho says to a simulator goes through here, idb and simctl alike. */
 export async function runTool(props: {
   command: string;
   args: string[];

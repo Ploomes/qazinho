@@ -1,22 +1,22 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from 'vitest';
-import { fakeGocrashApi } from '@/services/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { Platform } from '@/services/Platform';
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'gocrash');
+  Reflect.deleteProperty(window, 'qazinho');
 });
 
 describe('Platform', () => {
   it('reads the platform the preload published', () => {
-    window.gocrash = fakeGocrashApi('win32');
+    window.qazinho = fakeQazinhoApi('win32');
 
     expect(Platform.current()).toBe('win32');
     expect(Platform.isMac()).toBe(false);
   });
 
   it('knows a Mac, because iOS targets and the traffic lights depend on it', () => {
-    window.gocrash = fakeGocrashApi('darwin');
+    window.qazinho = fakeQazinhoApi('darwin');
 
     expect(Platform.isMac()).toBe(true);
   });

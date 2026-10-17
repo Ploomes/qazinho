@@ -63,7 +63,7 @@ describe('buildAskArgs', () => {
       '--tools',
       '',
       '--allowedTools',
-      'mcp__gocrash',
+      'mcp__qazinho',
     ]);
   });
 

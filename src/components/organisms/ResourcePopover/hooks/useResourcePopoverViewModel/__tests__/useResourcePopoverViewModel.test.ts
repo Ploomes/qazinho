@@ -9,7 +9,7 @@ import { useAppStore, useMachineStore, useWorkspaceStore } from '@/store';
 const PROJECT = { id: 'p1', name: 'Shop · staging', targets: [] };
 
 const PROCESSES = [
-  sample({ name: 'gocrash', kind: 'app', ramMb: 300 }),
+  sample({ name: 'qazinho', kind: 'app', ramMb: 300 }),
   sample({ name: 'claude', kind: 'agent', workspaceId: 'w1', ramMb: 430 }),
   sample({ name: 'Google Chrome', kind: 'device', workspaceId: 'w1', ramMb: 1500 }),
 ];
@@ -29,11 +29,11 @@ describe('useResourcePopoverViewModel', () => {
     expect(result.current.header).toBe('3 running · 2.2 GB');
   });
 
-  it('shows gocrash itself above the projects it is running', () => {
+  it('shows QAzinho itself above the projects it is running', () => {
     const { result } = renderHook(() => useResourcePopoverViewModel());
 
     expect(result.current.nodes.map(({ id }) => id)).toEqual([
-      'gocrash',
+      'qazinho',
       'p1',
       'w1',
       'w1-agent',

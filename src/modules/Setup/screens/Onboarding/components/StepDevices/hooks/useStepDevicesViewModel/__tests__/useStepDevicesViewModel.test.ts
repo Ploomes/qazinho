@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SETUP_LINKS } from '@/modules/Setup/constants';
 import { useStepDevicesViewModel } from '@/modules/Setup/screens/Onboarding/components/StepDevices/hooks/useStepDevicesViewModel';
-import { fakeGocrashApi } from '@/services/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useMachineStore, useSetupStore } from '@/store';
 
 const MANAGERS = {
@@ -20,11 +20,11 @@ beforeEach(() => {
     },
   });
   useSetupStore.setState({ managers: MANAGERS, installs: {}, isChecking: false });
-  window.gocrash = fakeGocrashApi('darwin');
+  window.qazinho = fakeQazinhoApi('darwin');
 });
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'gocrash');
+  Reflect.deleteProperty(window, 'qazinho');
 });
 
 describe('useStepDevicesViewModel', () => {
@@ -65,7 +65,7 @@ describe('useStepDevicesViewModel', () => {
   });
 
   it('turns the iOS tools off away from a Mac', () => {
-    window.gocrash = fakeGocrashApi('linux');
+    window.qazinho = fakeQazinhoApi('linux');
     const { result } = renderHook(() => useStepDevicesViewModel());
 
     expect(result.current.xcode).toMatchObject({ state: 'off', link: null });
@@ -74,7 +74,7 @@ describe('useStepDevicesViewModel', () => {
 
   describe('onInstallIdb', () => {
     it('installs idb', () => {
-      const install = vi.spyOn(window.gocrash, 'installTool');
+      const install = vi.spyOn(window.qazinho, 'installTool');
       const { result } = renderHook(() => useStepDevicesViewModel());
 
       act(() => {

@@ -112,7 +112,7 @@ export class AndroidDriver implements IDeviceDriver {
     return { file, dataUrl: `data:image/png;base64,${image.toString('base64')}` };
   }
 
-  /** gocrash only shuts down what gocrash started: an emulator the QA opened stays open. */
+  /** QAzinho only shuts down what QAzinho started: an emulator the QA opened stays open. */
   public async stream(): Promise<boolean> {
     return Promise.resolve(false);
   }
@@ -162,7 +162,7 @@ export class AndroidDriver implements IDeviceDriver {
 
     if (tools === null)
       throw new Error(
-        'No build-tools in the Android SDK, so gocrash cannot read the apk.',
+        'No build-tools in the Android SDK, so QAzinho cannot read the apk.',
       );
 
     const dumped = await runAdb({

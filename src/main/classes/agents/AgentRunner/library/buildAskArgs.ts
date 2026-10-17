@@ -26,7 +26,7 @@ export function buildAskArgs(
           '--tools',
           '',
           '--allowedTools',
-          'mcp__gocrash',
+          'mcp__qazinho',
         ]),
     // A chat is only talk: the agent gets no shell and no edits on the QA's machine.
     ...(mcpConfig === undefined && hasNoTools ? ['--tools', ''] : []),
