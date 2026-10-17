@@ -1,4 +1,4 @@
-# gocrash — logo assets
+# QAzinho — logo assets
 
 A whole play triangle, fractured by cracks. Nothing is displaced: the triangle
 stays level and complete, and the break is carried by one jagged crack with two
@@ -40,12 +40,12 @@ bottom-right edge). It is part of the mark, not an effect layered on later.
 
 ## Files
 
-- `gocrash-mark.svg` / `-mid` / `-micro` — the three optical sizes
-- `gocrash-mark-white.svg` / `-black.svg` — one-colour, shadow retuned per ground
-- `gocrash-icon-tile.svg`, `-16.svg`, `favicon.svg` — app icon, crack shows the tile amber through it
-- `gocrash-wordmark-sliced.svg` / `-black.svg` — display wordmark
-- `gocrash-wordmark-solid.svg` — UI wordmark, unsliced
-- `gocrash-lockup-horizontal.svg`, `gocrash-lockup-stacked.svg`
+- `qazinho-mark.svg` / `-mid` / `-micro` — the three optical sizes
+- `qazinho-mark-white.svg` / `-black.svg` — one-colour, shadow retuned per ground
+- `qazinho-icon-tile.svg`, `-16.svg`, `favicon.svg` — app icon, crack shows the tile amber through it
+- `qazinho-wordmark-sliced.svg` / `-black.svg` — display wordmark
+- `qazinho-wordmark-solid.svg` — UI wordmark, unsliced
+- `qazinho-lockup-horizontal.svg`, `qazinho-lockup-stacked.svg`
 - `png/` — mark and icon at 16, 32, 48, 64, 128, 256, 512, 1024 px, correct optical size and shadow per size
 
 ## Rules
@@ -56,6 +56,6 @@ bottom-right edge). It is part of the mark, not an effect layered on later.
 
 ## Type
 
-Space Grotesk 600, lowercase, letter-spacing -0.045em. The wordmark SVGs use live
+Space Grotesk 600, written QAzinho (QA in capitals), letter-spacing -0.045em. The wordmark SVGs use live
 text — **convert to outlines before handoff**, or the font must be installed
 wherever they render.
