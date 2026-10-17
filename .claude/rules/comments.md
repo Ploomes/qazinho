@@ -1,57 +1,39 @@
 # Comments
 
-**As lean as possible.** One line or nothing.
+**No comments in the code.** Not `//`, not `/* */`, not `{/* */}` in JSX, not in CSS. The code,
+its names and its tests say what it does; a commit message says why it changed.
 
-## JSDoc: allowed, short
+## JSDoc, and only here
 
-One line on a class, method, function or type. It says what **that** thing is, or why it exists.
+JSDoc is the one exception, so hovering a name in the editor explains it. It goes **only** above:
 
-**Never inside an interface body.** A member comment breaks the shape you are trying to read. If a
-field needs explaining, the explanation belongs in the interface's own one-line JSDoc. If it fits
-nowhere, the field name is wrong.
+| Where                                        | Example                                          |
+| -------------------------------------------- | ------------------------------------------------ |
+| A function in a `library/` file              | `export function isInternalNavigation(...)`      |
+| A type in a `types/` file                    | `export interface IQazinhoApi`, `export type …`  |
+| A class declaration, and each of its methods | `export class AgentRunner`, `public async ask()` |
+| A component declaration                      | `export const Composer: React.FC<...>`           |
 
-```ts
-/** What the preload exposes to the page as `window.qazinho`. Data and purposeful functions only. */
-export interface IQazinhoApi {
-  platform: Platform;
-}
-```
-
-**Paragraph blocks are forbidden.** If it does not fit on one line, what is left over is decision
-context: it goes to the README or a commit message, not into the file.
-
-The test: if the text stays true when pasted onto another thing of the same kind, it says
-nothing. `"Checks the navigation"` fits any guard; `"A hash change on the packaged page is still
-the app; any other file on disk is not"` fits this one.
-
-A good name needs no JSDoc.
-
-## Comments inside a function
-
-**Would deleting this make someone break the code?** If not, delete it. Four kinds get through:
-
-| Kind                           | Example                                                                           |
-| ------------------------------ | --------------------------------------------------------------------------------- |
-| Looks like a bug and is not    | comparing `pathname` for a `file:` page, because every `file:` origin is `"null"` |
-| Deliberate absence             | `window-all-closed` not quitting on macOS, because apps stay in the dock          |
-| Invisible trap                 | a sandboxed preload can `require` only `electron` and a few polyfills             |
-| Compatibility with the outside | the CSP allowing inline styles, because React's `style` prop writes them          |
-
-Not allowed: narrating the next block, repeating the function name, explaining the pattern instead
-of the instance.
-
-## A comment carrying third-party behaviour
-
-A rule that came from Electron, Chromium, Android or Xcode **says where it came from**.
+Nowhere else: not on a constant, a view model, a hook, a store, a service function, a variable, a
+CSS rule, or inside an interface body.
 
 ```ts
-// Electron: a sandboxed preload cannot require anything but `electron`.
+/** Whether a navigation stays inside the app: same origin, or the packaged page itself. */
+export function isInternalNavigation(appUrl: string, url: string): boolean {}
 ```
 
-## Exception
+- **Two lines at most.** One is better. Small, plain, saying what the thing does.
+- It says what **that** thing does. If it stays true pasted onto another thing of the same kind,
+  it says nothing.
+- A good name needs no JSDoc: leave it out rather than repeat the name.
 
-`TODO(<feature>):` marking work that already has a contract and no implementation. When a path is
-unimplemented, **an explicit error beats a silent `TODO`**: say what to do in the message and let
-it throw.
+## Tests are the exception
 
-When in doubt, do not comment.
+In `__tests__/` and `tests/`, comments and JSDoc are free: a test may explain the trap it guards,
+the fake it builds, or why a case exists.
+
+## What used to be a comment
+
+A trap that would have been a comment (Electron swallowing a click in a drag region, a CDP frame
+that needs an ack) becomes a test that fails when someone falls into it, a name that says it, or a
+line in the commit message.
