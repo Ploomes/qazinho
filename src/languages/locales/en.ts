@@ -40,7 +40,7 @@ export const en = {
     META_BUG_OTHER: '{{count}} bugs',
   },
   WELCOME: {
-    TITLE: 'No projects yet. Nothing to crash.',
+    TITLE: 'No projects yet.',
     BODY: 'A project is one environment: one URL, or one build. Staging and production are separate projects.',
     ACTION: 'New project',
   },
@@ -54,7 +54,7 @@ export const en = {
   },
   CHAT: {
     YOU: 'You',
-    EMPTY_TITLE: 'Nothing has crashed here yet.',
+    EMPTY_TITLE: 'What are we testing today?',
     EMPTY_BODY:
       'Ask about the app, a run or a bug, or say what to cover and the agent drafts the cases. Type @ to point at something.',
     PLACEHOLDER: 'Ask the agent anything · @ points at a run, bug or case',
@@ -263,7 +263,7 @@ export const en = {
     ABOUT_VERSION: '0.1.0 · MIT',
     ABOUT_BY: 'by Salve Software',
     ABOUT_NOTE:
-      'Go crash your app before your users do. Your agent, your emulators, your screenshots. Nothing leaves this machine.',
+      'Your QA assistant: plan tests, run them and keep your work organised, with your own AI agent. Nothing leaves this machine.',
     LICENCE: 'Licence',
   },
   SETUP: {
@@ -299,7 +299,7 @@ export const en = {
     STEP_INTEGRATIONS: 'Trackers',
     STEP_DONE: 'Ready',
     WELCOME_SAY:
-      "Hi! I'm the Intern. I'll get this machine ready to crash apps: your agent, your devices and where the bugs go. Which language do we speak?",
+      "Hi! I'm the Intern, your QA assistant: I help you plan tests, run them and keep it all organised. Let's set this machine up first. Which language do we speak?",
     AGENTS_SAY:
       'First, who tests with me? I drive an AI agent you already have, signed in to your own account. Here is what I found on this machine.',
     AGENTS_SAY_NONE:
@@ -309,7 +309,7 @@ export const en = {
     INTEGRATIONS_SAY:
       'Want me to send the bugs somewhere? Connect GitHub or Jira, or skip it and do it later in Settings.',
     DONE_SAY:
-      'All set! This is what I found on this machine. Shall we go crash something?',
+      'All set! Here is what I found on this machine. Shall we plan your first tests?',
     SKIP_SETUP: 'Skip setup',
     BACK: 'Back',
     START: 'Let’s start',

@@ -42,7 +42,7 @@ export const pt: typeof en = {
     META_BUG_OTHER: '{{count}} bugs',
   },
   WELCOME: {
-    TITLE: 'Nenhum projeto ainda. Nada para quebrar.',
+    TITLE: 'Nenhum projeto ainda.',
     BODY: 'Um projeto é um ambiente: uma URL, ou um build. Staging e produção são projetos separados.',
     ACTION: 'Novo projeto',
   },
@@ -56,7 +56,7 @@ export const pt: typeof en = {
   },
   CHAT: {
     YOU: 'Você',
-    EMPTY_TITLE: 'Nada quebrou por aqui ainda.',
+    EMPTY_TITLE: 'O que vamos testar hoje?',
     EMPTY_BODY:
       'Pergunte sobre o app, uma run ou um bug, ou diga o que cobrir e o agente escreve os casos. Digite @ para apontar algo.',
     PLACEHOLDER: 'Pergunte qualquer coisa ao agente · @ aponta uma run, bug ou caso',
@@ -263,7 +263,7 @@ export const pt: typeof en = {
     ABOUT_VERSION: '0.1.0 · MIT',
     ABOUT_BY: 'por Salve Software',
     ABOUT_NOTE:
-      'Vá quebrar seu app antes que seus usuários quebrem. Seu agente, seus emuladores, seus screenshots. Nada sai desta máquina.',
+      'Seu assistente de QA: planeje testes, execute e organize seu trabalho com o seu próprio agente de IA. Nada sai desta máquina.',
     LICENCE: 'Licença',
   },
   SETUP: {
@@ -300,7 +300,7 @@ export const pt: typeof en = {
     STEP_INTEGRATIONS: 'Trackers',
     STEP_DONE: 'Pronto',
     WELCOME_SAY:
-      'Oi! Eu sou o Estagiário. Vou deixar esta máquina pronta para quebrar apps: seu agente, seus dispositivos e para onde vão os bugs. Em que língua a gente conversa?',
+      'Oi! Eu sou o Estagiário, seu assistente de QA: te ajudo a planejar testes, executar e manter tudo organizado. Primeiro vamos preparar esta máquina. Em que língua a gente conversa?',
     AGENTS_SAY:
       'Primeiro: quem testa comigo? Eu uso um agente de IA que você já tem, logado na sua própria conta. Olha o que eu achei nesta máquina.',
     AGENTS_SAY_NONE:
@@ -310,7 +310,7 @@ export const pt: typeof en = {
     INTEGRATIONS_SAY:
       'Quer que eu mande os bugs para algum lugar? Conecte o GitHub ou o Jira, ou pule e faça isso depois nas Settings.',
     DONE_SAY:
-      'Prontinho! Isso é o que eu achei nesta máquina. Bora quebrar alguma coisa?',
+      'Prontinho! Isso é o que eu achei nesta máquina. Bora planejar seus primeiros testes?',
     SKIP_SETUP: 'Pular configuração',
     BACK: 'Voltar',
     START: 'Vamos começar',
