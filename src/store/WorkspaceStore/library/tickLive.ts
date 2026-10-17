@@ -1,4 +1,4 @@
-import type { IWorkspace } from '@/modules/Workspace/types';
+import type { IWorkspace } from '@/modules/Workspace';
 
 /** A held run stops counting: the clock says how long the device has been worked, not waited. */
 export function tickLive(props: { workspace: IWorkspace; seconds: number }): IWorkspace {

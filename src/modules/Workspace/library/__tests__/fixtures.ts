@@ -1,7 +1,7 @@
-import type { ITestCase } from '@/modules/Plan/types';
+import type { ITestCase } from '@/modules/Plan';
 import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IStepOutcome, StepVerdict } from '@/types';
-import { flattenPlanSteps } from '@/modules/Run/library';
+import { flattenPlanSteps } from '@/modules/Run';
 import { finishRun } from '@/modules/Workspace/library/finishRun';
 import { landStep } from '@/modules/Workspace/library/landStep';
 import { startRun } from '@/modules/Workspace/library/startRun';

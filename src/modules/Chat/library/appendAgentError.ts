@@ -1,4 +1,4 @@
-import type { IWorkspace } from '@/modules/Workspace/types';
+import type { IWorkspace } from '@/modules/Workspace';
 
 /** A broken agent is a QAzinho error, never a test result: it gets its own block. */
 export function appendAgentError(props: {

@@ -1,5 +1,5 @@
 import type { Language } from '@/languages/types';
-import type { IKeybind, SettingsTab } from '@/modules/Settings/types';
+import type { IKeybind, SettingsTab } from '@/modules/Settings';
 
 /** What the QA has set up on this machine: the agent, the devices and the shortcuts. */
 export interface ISettingsStore {

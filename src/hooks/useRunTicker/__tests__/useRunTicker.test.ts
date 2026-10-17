@@ -2,8 +2,8 @@
 import { renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRunTicker } from '@/hooks/useRunTicker';
-import { RUN_CLOCK } from '@/modules/Run/constants';
-import { startRun } from '@/modules/Workspace/library';
+import { RUN_CLOCK } from '@/modules/Run';
+import { startRun } from '@/modules/Workspace';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useWorkspaceStore } from '@/store';
 

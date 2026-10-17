@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { MOTION } from '@/constants';
 import { DEVICE, DEVICE_STATE_KEY } from '@/modules/Device/constants';
 import { deviceStateOf, formatElapsed, moodOfStatus } from '@/modules/Device/library';
-import { useRunControls } from '@/modules/Run/hooks';
+import { useRunControls } from '@/modules/Run';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useDevicePanelViewModel = () => {

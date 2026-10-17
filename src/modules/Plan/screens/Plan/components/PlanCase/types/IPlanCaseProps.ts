@@ -1,5 +1,5 @@
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
-import type { IRunCase } from '@/modules/Run/types';
+import type { IRunCase } from '@/modules/Run';
 
 export interface IPlanCaseProps {
   testCase: ITestCase;

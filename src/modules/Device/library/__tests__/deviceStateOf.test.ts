@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { deviceStateOf } from '@/modules/Device/library';
-import { startRun } from '@/modules/Workspace/library';
+import { startRun } from '@/modules/Workspace';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 
 const RUNNING = startRun({

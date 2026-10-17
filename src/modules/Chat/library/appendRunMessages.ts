@@ -1,5 +1,5 @@
 import type { ChatMessage } from '@/modules/Chat/types';
-import type { IWorkspace } from '@/modules/Workspace/types';
+import type { IWorkspace } from '@/modules/Workspace';
 import type { IStepOutcome } from '@/types';
 
 /** A step that did not hold up gets a verdict in the chat; the rest of the run is read in Runs. */

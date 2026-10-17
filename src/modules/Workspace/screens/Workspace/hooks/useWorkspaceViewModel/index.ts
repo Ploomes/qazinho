@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useRunControls } from '@/modules/Run/hooks';
+import { useRunControls } from '@/modules/Run';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useWorkspaceViewModel = () => {

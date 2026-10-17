@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SIDEBAR_STATUS } from '@/app/components/Sidebar/constants';
 import { STATUS } from '@/components/atoms/StatusPill/constants';
-import { workspaceMeta } from '@/modules/Workspace/library';
+import { workspaceMeta } from '@/modules/Workspace';
 import { Archive } from '@/services';
 import { useAppStore, useWorkspaceStore } from '@/store';
 

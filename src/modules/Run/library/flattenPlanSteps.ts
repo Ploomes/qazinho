@@ -1,4 +1,4 @@
-import type { ITestCase } from '@/modules/Plan/types';
+import type { ITestCase } from '@/modules/Plan';
 import type { IFlatStep } from '@/modules/Run/types';
 
 export function flattenPlanSteps(plan: ITestCase[]): IFlatStep[] {

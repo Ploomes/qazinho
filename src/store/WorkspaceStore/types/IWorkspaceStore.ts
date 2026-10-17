@@ -1,7 +1,7 @@
-import type { BugFilter } from '@/modules/Bug/types';
-import type { ITestCase } from '@/modules/Plan/types';
-import type { RunFilter } from '@/modules/Run/types';
-import type { IWorkspace, WorkspaceTab } from '@/modules/Workspace/types';
+import type { BugFilter } from '@/modules/Bug';
+import type { ITestCase } from '@/modules/Plan';
+import type { RunFilter } from '@/modules/Run';
+import type { IWorkspace, WorkspaceTab } from '@/modules/Workspace';
 import type { IStepOutcome } from '@/types';
 
 /** The workspaces and everything the QA can poke inside one of them. */

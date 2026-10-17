@@ -1,4 +1,4 @@
-import type { ITestCase } from '@/modules/Plan/types';
+import type { ITestCase } from '@/modules/Plan';
 import { describe, expect, it } from 'vitest';
 import { flattenPlanSteps } from '@/modules/Run/library';
 

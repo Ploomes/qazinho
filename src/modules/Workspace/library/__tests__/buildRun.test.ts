@@ -1,4 +1,4 @@
-import type { StepVerdict } from '@/modules/Run/types';
+import type { StepVerdict } from '@/modules/Run';
 import { describe, expect, it } from 'vitest';
 import { buildRun } from '@/modules/Workspace/library';
 import { walkRun } from './fixtures';

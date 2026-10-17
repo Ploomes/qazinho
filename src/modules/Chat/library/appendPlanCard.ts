@@ -1,5 +1,5 @@
-import type { ITestCase } from '@/modules/Plan/types';
-import type { IWorkspace } from '@/modules/Workspace/types';
+import type { ITestCase } from '@/modules/Plan';
+import type { IWorkspace } from '@/modules/Workspace';
 import { flattenPlanSteps } from '@/modules/Run/library';
 
 /** The plan never lands in the chat as text: the card hands it to the Plan tab. */

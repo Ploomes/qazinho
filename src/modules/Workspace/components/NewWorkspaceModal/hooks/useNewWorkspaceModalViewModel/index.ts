@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toPlanKind } from '@/modules/Plan/library';
+import { toPlanKind } from '@/modules/Plan';
 import { PLATFORM_LABEL } from '@/modules/Workspace/constants';
 import { useAppStore, useWorkspaceStore } from '@/store';
 

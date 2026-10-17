@@ -1,4 +1,4 @@
-import type { StepVerdict } from '@/modules/Run/types';
+import type { StepVerdict } from '@/modules/Run';
 
 export interface IVerdictMessage {
   id: string;

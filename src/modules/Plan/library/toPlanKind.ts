@@ -1,4 +1,4 @@
-import type { TargetKind } from '@/modules/Project/types';
+import type { TargetKind } from '@/modules/Project';
 
 /** A plan is drafted for a screen size, not for an OS: Android and iOS read the same. */
 export function toPlanKind(kind: TargetKind): 'web' | 'mobile' {

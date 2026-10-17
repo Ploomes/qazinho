@@ -1,4 +1,4 @@
-import type { IWorkspace } from '@/modules/Workspace/types';
+import type { IWorkspace } from '@/modules/Workspace';
 import type { IChatReference } from '@/types';
 import { caseVerdict } from '@/modules/Run/library';
 

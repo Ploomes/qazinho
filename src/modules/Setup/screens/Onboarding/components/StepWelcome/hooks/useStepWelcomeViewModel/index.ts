@@ -1,4 +1,4 @@
-import { LANGUAGES } from '@/modules/Settings/constants';
+import { LANGUAGES } from '@/modules/Settings';
 import { useSettingsStore } from '@/store';
 
 export const useStepWelcomeViewModel = () => {

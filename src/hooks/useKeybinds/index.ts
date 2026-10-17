@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useRunControls } from '@/modules/Run/hooks';
+import { useRunControls } from '@/modules/Run';
 import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 import { comboOf } from './library';
 

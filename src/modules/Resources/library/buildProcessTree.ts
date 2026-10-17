@@ -1,6 +1,6 @@
-import type { IProject } from '@/modules/Project/types';
+import type { IProject } from '@/modules/Project';
 import type { IProcessNode } from '@/modules/Resources/types';
-import type { IWorkspace } from '@/modules/Workspace/types';
+import type { IWorkspace } from '@/modules/Workspace';
 import type { IProcessSample } from '@/types';
 import { RESOURCES } from '@/modules/Resources/constants';
 import { rollUp } from './rollUp';

@@ -1,4 +1,4 @@
-import type { ITestCase } from '@/modules/Plan/types';
+import type { ITestCase } from '@/modules/Plan';
 import type { IWorkspace } from '@/modules/Workspace/types';
 import type { ISavedWorkspace } from '@/types';
 import { parse } from 'yaml';

@@ -6,7 +6,7 @@ import {
   SETTINGS_TABS,
   THEMES,
 } from '@/modules/Settings/constants';
-import { INTEGRATIONS } from '@/modules/Setup/constants';
+import { INTEGRATIONS } from '@/modules/Setup';
 import { Platform } from '@/services';
 import { useAppStore, useMachineStore, useSettingsStore } from '@/store';
 

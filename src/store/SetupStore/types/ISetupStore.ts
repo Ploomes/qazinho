@@ -1,4 +1,4 @@
-import type { InstallState } from '@/modules/Setup/types';
+import type { InstallState } from '@/modules/Setup';
 import type {
   IInstallResult,
   IIntegrationStatus,

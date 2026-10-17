@@ -1,4 +1,4 @@
-import type { ITestCase } from '@/modules/Plan/types';
+import type { ITestCase } from '@/modules/Plan';
 import { parseDraftedPlan } from '@/modules/Plan/library';
 
 /** A chat answer is a reply, with a plan only when the QA asked for one; null when it is neither. */

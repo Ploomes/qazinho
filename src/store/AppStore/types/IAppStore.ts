@@ -3,7 +3,7 @@ import type { Modal } from './Modal';
 import type { ModelMenuAt } from './ModelMenuAt';
 import type { Screen } from './Screen';
 import type { Theme } from './Theme';
-import type { IProject } from '@/modules/Project/types';
+import type { IProject } from '@/modules/Project';
 
 /** The shell: which screen is up, which project is selected, and what is floating over it. */
 export interface IAppStore {

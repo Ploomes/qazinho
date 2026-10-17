@@ -2,10 +2,10 @@ import type { IAgentContext } from './IAgentContext';
 import type { IIssue } from './IIssue';
 import type { ILiveRun } from './ILiveRun';
 import type { WorkspaceStatus } from './WorkspaceStatus';
-import type { IBug } from '@/modules/Bug/types';
-import type { ChatMessage } from '@/modules/Chat/types';
-import type { ITestCase } from '@/modules/Plan/types';
-import type { IRun } from '@/modules/Run/types';
+import type { IBug } from '@/modules/Bug';
+import type { ChatMessage } from '@/modules/Chat';
+import type { ITestCase } from '@/modules/Plan';
+import type { IRun } from '@/modules/Run';
 
 /** One front of testing inside a project: its own chat, device, plan and runs. */
 export interface IWorkspace {

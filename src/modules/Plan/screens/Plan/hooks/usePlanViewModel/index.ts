@@ -1,5 +1,5 @@
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
-import type { IRunCase } from '@/modules/Run/types';
+import type { IRunCase } from '@/modules/Run';
 import { useTranslation } from 'react-i18next';
 import {
   addCase,
@@ -9,8 +9,7 @@ import {
   removeCase,
   removeStep,
 } from '@/modules/Plan/library';
-import { useRunControls } from '@/modules/Run/hooks';
-import { flattenPlanSteps } from '@/modules/Run/library';
+import { useRunControls, flattenPlanSteps } from '@/modules/Run';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const usePlanViewModel = () => {

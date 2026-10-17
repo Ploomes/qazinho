@@ -2,7 +2,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { usePlanViewModel } from '@/modules/Plan/screens/Plan/hooks/usePlanViewModel';
-import { startRun } from '@/modules/Workspace/library';
+import { startRun } from '@/modules/Workspace';
 import {
   CASES,
   makeWorkspace,

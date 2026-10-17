@@ -1,6 +1,6 @@
 import type { IBugCardProps } from '@/modules/Bug/screens/Bugs/components/BugCard/types';
 import type { IBugShot } from '@/modules/Bug/types';
-import { useModelInUse } from '@/modules/Settings/hooks';
+import { useModelInUse } from '@/modules/Settings';
 import { useAppStore } from '@/store';
 
 export const useBugCardViewModel = (props: IBugCardProps) => {

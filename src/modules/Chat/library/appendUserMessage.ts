@@ -1,4 +1,4 @@
-import type { IWorkspace } from '@/modules/Workspace/types';
+import type { IWorkspace } from '@/modules/Workspace';
 
 export function appendUserMessage(props: {
   workspace: IWorkspace;

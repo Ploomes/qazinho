@@ -1,7 +1,7 @@
 import type { ITitlebarProps } from '@/components/organisms/Titlebar/types';
 import { useTranslation } from 'react-i18next';
 import { formatResetsAt } from '@/components/organisms/Titlebar/library';
-import { useModelInUse } from '@/modules/Settings/hooks';
+import { useModelInUse } from '@/modules/Settings';
 import { Platform } from '@/services';
 import { useAppStore, useMachineStore } from '@/store';
 

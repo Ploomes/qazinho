@@ -1,4 +1,4 @@
-import type { IWorkspace } from '@/modules/Workspace/types';
+import type { IWorkspace } from '@/modules/Workspace';
 import { describe, expect, it } from 'vitest';
 import { answerAsk } from '@/modules/Chat/library';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';

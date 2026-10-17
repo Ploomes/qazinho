@@ -1,4 +1,4 @@
-import type { ChatMessage } from '@/modules/Chat/types';
+import type { ChatMessage } from '@/modules/Chat';
 import type { IWorkspace } from '@/modules/Workspace/types';
 import { buildRun } from './buildRun';
 

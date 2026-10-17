@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { readProjects } from '@/modules/Project/library';
-import { fromSaved, toSaved } from '@/modules/Workspace/library';
+import { readProjects } from '@/modules/Project';
+import { fromSaved, toSaved } from '@/modules/Workspace';
 import { Archive } from '@/services';
 import { useAppStore, useWorkspaceStore } from '@/store';
 import { ARCHIVE } from './constants';

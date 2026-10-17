@@ -1,8 +1,7 @@
-import type { IProcessNode } from '@/modules/Resources/types';
+import type { IProcessNode } from '@/modules/Resources';
 import { useTranslation } from 'react-i18next';
 import { useDismiss } from '@/hooks';
-import { MB_IN_GB } from '@/modules/Resources/constants';
-import { buildProcessTree, rollUp } from '@/modules/Resources/library';
+import { MB_IN_GB, buildProcessTree, rollUp } from '@/modules/Resources';
 import { Run } from '@/services';
 import { useAppStore, useMachineStore, useWorkspaceStore } from '@/store';
 

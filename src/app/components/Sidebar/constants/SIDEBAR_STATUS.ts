@@ -1,4 +1,4 @@
-import type { WorkspaceStatus } from '@/modules/Workspace/types';
+import type { WorkspaceStatus } from '@/modules/Workspace';
 
 /** The glyph a workspace row carries, and how it moves. Colour is never the only clue. */
 export const SIDEBAR_STATUS: Record<

@@ -1,4 +1,4 @@
-import type { InstallState } from '@/modules/Setup/types';
+import type { InstallState } from '@/modules/Setup';
 import type { IInstallResult, ISetupEvent } from '@/types';
 
 /** The install's next state, from a line it printed or from how it ended. A line after the end changes nothing. */

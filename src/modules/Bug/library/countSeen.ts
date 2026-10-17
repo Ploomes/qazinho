@@ -1,4 +1,4 @@
-import type { IWorkspace } from '@/modules/Workspace/types';
+import type { IWorkspace } from '@/modules/Workspace';
 
 /** A bug the QA has seen before carries more weight than one that showed up once. */
 export function countSeen(props: {

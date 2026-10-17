@@ -10,8 +10,8 @@ import {
 } from '@/modules/Chat/library';
 import { CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
-import { flattenPlanSteps } from '@/modules/Run/library';
-import { useModelInUse } from '@/modules/Settings/hooks';
+import { flattenPlanSteps } from '@/modules/Run';
+import { useModelInUse } from '@/modules/Settings';
 import { Agent } from '@/services';
 import {
   useAppStore,

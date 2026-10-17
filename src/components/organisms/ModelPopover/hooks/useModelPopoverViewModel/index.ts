@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useDismiss } from '@/hooks';
-import { MODELS } from '@/modules/Settings/constants';
-import { useModelInUse } from '@/modules/Settings/hooks';
+import { MODELS, useModelInUse } from '@/modules/Settings';
 import { useAppStore, useMachineStore, useSettingsStore } from '@/store';
 
 export const useModelPopoverViewModel = () => {

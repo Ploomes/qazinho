@@ -1,5 +1,5 @@
 import type { IBug, IBugShot } from '@/modules/Bug/types';
-import type { IWorkspace } from '@/modules/Workspace/types';
+import type { IWorkspace } from '@/modules/Workspace';
 import type { IStepOutcome } from '@/types';
 import { countSeen } from './countSeen';
 
