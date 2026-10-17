@@ -54,7 +54,11 @@ export const Onboarding: React.FC = () => {
       </AnimatePresence>
 
       <div className="onboarding__stage">
-        <div className="onboarding__speaker">
+        <motion.div
+          layout="position"
+          className="onboarding__speaker"
+          transition={{ duration: MOTION.durationSlow, ease: MOTION.ease }}
+        >
           <motion.div
             className="onboarding__intern"
             initial={{ opacity: 0, scale: 0.8, y: 12 }}
@@ -64,7 +68,7 @@ export const Onboarding: React.FC = () => {
             <Intern mood={mood} size={128} />
           </motion.div>
           <SpeechBubble text={say} onSaid={onSaid} />
-        </div>
+        </motion.div>
 
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
