@@ -2,19 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { INTERN_MOODS } from '@/components/atoms/Intern/constants';
 
 describe('INTERN_MOODS', () => {
-  it('has a strip for each theme, its frames and a word for every mood', () => {
+  it('has a loop length and a word for every mood', () => {
     for (const mood of Object.values(INTERN_MOODS)) {
-      expect(mood.light).toMatch(/\.png$/);
-      expect(mood.dark).toMatch(/-escuro\.png$/);
-      expect(mood.frames).toBeGreaterThan(1);
-      expect(mood.frameMs).toBeGreaterThan(0);
+      expect(mood.loopMs).toBeGreaterThan(0);
       expect(mood.labelKey).toMatch(/^MASCOT\.MOOD_/);
     }
   });
 
-  it('never shows one mood with the art of another', () => {
-    expect(INTERN_MOODS.bug.light).toContain('estagiario-bug');
-    expect(INTERN_MOODS.sleeping.dark).toContain('estagiario-dormindo');
-    expect(INTERN_MOODS.flaky.light).toContain('estagiario-desconfiado');
+  it('keeps the pace the designer gave him: a slow sleep and a quick celebration', () => {
+    expect(INTERN_MOODS.sleeping.loopMs).toBe(2880);
+    expect(INTERN_MOODS.passed.loopMs).toBe(1200);
   });
 });

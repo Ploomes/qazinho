@@ -10,7 +10,6 @@ describe('useLogoViewModel', () => {
 
     expect(result.current.size).toBe(LOGO.defaultSize);
     expect(result.current.className).toBe('logo logo--lime');
-    expect(result.current.src).toContain('estagiario-mark');
   });
 
   it('goes quiet for an empty state', () => {

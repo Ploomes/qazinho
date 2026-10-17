@@ -1,16 +1,8 @@
 // @vitest-environment jsdom
 import { renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { INTERN } from '@/components/atoms/Intern/constants';
 import { useInternViewModel } from '@/components/atoms/Intern/hooks/useInternViewModel';
-import { useAppStore } from '@/store';
-
-function styleOf(result: { current: ReturnType<typeof useInternViewModel> }) {
-  return result.current.style as Record<string, string | number>;
-}
-
-beforeEach(() => {
-  useAppStore.setState({ theme: 'dark' });
-});
 
 describe('useInternViewModel', () => {
   it('names the Estagiário and his mood, so the picture is never the only clue', () => {
@@ -19,29 +11,22 @@ describe('useInternViewModel', () => {
     expect(result.current.alt).toBe('Intern, found a bug');
   });
 
-  it('plays the strip made for the theme, so his marks never vanish on Tinta', () => {
-    const dark = renderHook(() => useInternViewModel({ mood: 'sleeping' }));
+  it('draws at the density of the screen, so he stays sharp on a Retina display', () => {
+    window.devicePixelRatio = 2;
 
-    expect(styleOf(dark.result)['--intern-sheet']).toContain(
-      'estagiario-dormindo-escuro',
+    const { result } = renderHook(() =>
+      useInternViewModel({ mood: 'neutral', size: 40 }),
     );
 
-    useAppStore.setState({ theme: 'light' });
+    expect(result.current.pixels).toBe(80);
+    expect(result.current.style).toEqual({ '--intern-size': '40px' });
 
-    const light = renderHook(() => useInternViewModel({ mood: 'sleeping' }));
-
-    expect(styleOf(light.result)['--intern-sheet']).not.toContain('-escuro');
+    window.devicePixelRatio = 1;
   });
 
-  it('plays every frame at the pace of the original animation', () => {
-    const { result } = renderHook(() =>
-      useInternViewModel({ mood: 'sleeping', size: 40 }),
-    );
+  it('falls back to the size of an empty state', () => {
+    const { result } = renderHook(() => useInternViewModel({ mood: 'sleeping' }));
 
-    expect(styleOf(result)).toMatchObject({
-      '--intern-size': '40px',
-      '--intern-frames': 48,
-      '--intern-duration': '2880ms',
-    });
+    expect(result.current.pixels).toBe(INTERN.defaultSize);
   });
 });

@@ -3,9 +3,17 @@ import { useInternViewModel } from './hooks';
 import './styles.css';
 
 export const Intern: React.FC<IInternProps> = (props) => {
-  const { alt, style } = useInternViewModel(props);
+  const { canvasRef, pixels, alt, style } = useInternViewModel(props);
 
   return (
-    <span key={props.mood} className="intern" role="img" aria-label={alt} style={style} />
+    <canvas
+      ref={canvasRef}
+      className="intern"
+      width={pixels}
+      height={pixels}
+      role="img"
+      aria-label={alt}
+      style={style}
+    />
   );
 };
