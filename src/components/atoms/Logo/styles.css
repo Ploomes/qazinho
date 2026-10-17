@@ -1,12 +1,11 @@
 .logo {
   display: block;
   flex: none;
+  object-fit: contain;
 }
 
-.logo--lime .logo__mark {
-  fill: var(--lime);
-}
-
-.logo--quiet .logo__mark {
-  fill: var(--ink3);
+/* An empty state keeps the head, quietly: the colour belongs to what the QA can act on. */
+.logo--quiet {
+  opacity: 0.35;
+  filter: grayscale(1);
 }

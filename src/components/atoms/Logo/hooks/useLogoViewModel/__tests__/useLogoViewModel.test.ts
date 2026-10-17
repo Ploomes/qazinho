@@ -10,19 +10,12 @@ describe('useLogoViewModel', () => {
 
     expect(result.current.size).toBe(LOGO.defaultSize);
     expect(result.current.className).toBe('logo logo--lime');
+    expect(result.current.src).toContain('estagiario-mark');
   });
 
   it('goes quiet for an empty state', () => {
     const { result } = renderHook(() => useLogoViewModel({ size: 56, tone: 'quiet' }));
 
     expect(result.current.className).toBe('logo logo--quiet');
-  });
-
-  it('gives each mark its own mask, so two on one page never share a crack', () => {
-    const first = renderHook(() => useLogoViewModel({})).result.current;
-    const second = renderHook(() => useLogoViewModel({})).result.current;
-
-    expect(first.maskId).not.toBe(second.maskId);
-    expect(first.maskUrl).toBe(`url(#${first.maskId})`);
   });
 });
