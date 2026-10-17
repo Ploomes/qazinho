@@ -1,8 +1,9 @@
 import type { ISettingsStore } from './types';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { STORAGE } from '@/constants';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { LEGACY_STORAGE, STORAGE } from '@/constants';
 import { KEYBINDS } from '@/modules/Settings/constants';
+import { withLegacyKeys } from '@/store/library';
 import { migrateSettings } from './library';
 
 export const useSettingsStore = create<ISettingsStore>()(
@@ -39,6 +40,9 @@ export const useSettingsStore = create<ISettingsStore>()(
     }),
     {
       name: STORAGE.settings,
+      storage: createJSONStorage(() =>
+        withLegacyKeys({ storage: localStorage, legacy: LEGACY_STORAGE }),
+      ),
       version: 1,
       migrate: (persisted, version) =>
         migrateSettings({ persisted, version }) as Pick<

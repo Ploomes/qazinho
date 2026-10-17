@@ -8,6 +8,8 @@ export const PATHS = {
   preload: join(__dirname, '../preload/index.js'),
   icon: join(__dirname, '../../build/icon.png'),
   data: app.getPath('userData'),
+  // Where the app kept the QA's work while it was still called gocrash.
+  legacyData: join(app.getPath('appData'), 'gocrash'),
   profiles: join(app.getPath('userData'), 'profiles'),
   integrations: join(app.getPath('userData'), 'integrations.bin'),
 } as const;

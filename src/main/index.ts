@@ -29,10 +29,14 @@ import { SetupInstaller } from '@/main/classes/setup/SetupInstaller';
 import { Archive } from '@/main/classes/storage/Archive';
 import { FILE_FILTERS, PATHS, WINDOW } from '@/main/constants';
 import {
+  adoptDataDir,
   hydrateShellPath,
   isInternalNavigation,
   searchDirectories,
 } from '@/main/library';
+
+// Before anything reads the data folder: the app was gocrash, and the QA's work is still there.
+adoptDataDir({ from: PATHS.legacyData, to: PATHS.data });
 
 const agents = new AgentDetector();
 const owners = new ProcessOwners();
@@ -120,7 +124,7 @@ async function askAgent(ask: IAskAgent) {
   if (!command) {
     return {
       sessionId: ask.sessionId,
-      text: `gocrash cannot find ${ask.agentId} on this machine. Install it, or pick another agent in Settings.`,
+      text: `QAzinho cannot find ${ask.agentId} on this machine. Install it, or pick another agent in Settings.`,
       usage: null,
       isError: true,
     };
@@ -170,7 +174,7 @@ function createWindow(): void {
   const window = new BrowserWindow({
     ...WINDOW,
     show: false,
-    title: 'gocrash',
+    title: 'QAzinho',
     backgroundColor: '#0a0b0d',
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: 16, y: 16 },
