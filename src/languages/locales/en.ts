@@ -363,6 +363,15 @@ export const en = {
   },
   MASCOT: {
     NAME: 'Intern',
+    ALT: '{{name}}, {{mood}}',
+    MOOD_NEUTRAL: 'idle',
+    MOOD_RUNNING: 'running the tests',
+    MOOD_PASSED: 'every test passed',
+    MOOD_BUG: 'found a bug',
+    MOOD_FLAKY: 'suspicious of a flaky test',
+    MOOD_THINKING: 'thinking',
+    MOOD_BROKEN: 'something broke',
+    MOOD_SLEEPING: 'nothing to do',
   },
   STATUS: {
     RUNNING: 'running',

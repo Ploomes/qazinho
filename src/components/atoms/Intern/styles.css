@@ -1,0 +1,25 @@
+.intern {
+  display: block;
+  flex: none;
+  width: var(--intern-size);
+  height: var(--intern-size);
+  background-image: var(--intern-sheet);
+  background-repeat: no-repeat;
+  background-size: calc(var(--intern-size) * var(--intern-frames)) 100%;
+  animation:
+    gc-in var(--dur) var(--ease),
+    intern-play var(--intern-duration) steps(var(--intern-frames)) infinite;
+}
+
+@keyframes intern-play {
+  to {
+    background-position: calc(var(--intern-size) * var(--intern-frames) * -1) 0;
+  }
+}
+
+/* The loop is decoration: a QA who asked for less motion gets the first frame and the word. */
+@media (prefers-reduced-motion: reduce) {
+  .intern {
+    animation: none;
+  }
+}

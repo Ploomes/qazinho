@@ -365,6 +365,15 @@ export const pt: typeof en = {
   },
   MASCOT: {
     NAME: 'Estagiário',
+    ALT: '{{name}}, {{mood}}',
+    MOOD_NEUTRAL: 'parado',
+    MOOD_RUNNING: 'rodando os testes',
+    MOOD_PASSED: 'todos os testes passaram',
+    MOOD_BUG: 'achou um bug',
+    MOOD_FLAKY: 'desconfiado de um teste instável',
+    MOOD_THINKING: 'pensando',
+    MOOD_BROKEN: 'algo quebrou',
+    MOOD_SLEEPING: 'nada para fazer',
   },
   STATUS: {
     RUNNING: 'rodando',
