@@ -9,7 +9,6 @@ export const useSpeechBubbleViewModel = (props: ISpeechBubbleProps) => {
   const [shown, setShown] = useState({ text, count: 0 });
   const saidFor = useRef<string | null>(null);
 
-  // A new line starts from its first character, even when it replaces one still streaming.
   const count = shown.text === text ? shown.count : 0;
   const isDone = isStill || count >= text.length;
 
@@ -41,7 +40,6 @@ export const useSpeechBubbleViewModel = (props: ISpeechBubbleProps) => {
   return {
     said: isDone ? text : text.slice(0, count),
     isStreaming: !isDone,
-    // The whole line is laid out from the start, so the bubble never grows while it streams.
     reserve: text,
     onSkip: () => {
       setShown({ text, count: text.length });
