@@ -152,6 +152,8 @@ import { Chat } from '@/modules/Chat';
   through the whole `index.ts` from below closes that loop, and a Vitest run sees half-loaded
   modules. A type-only import (`import type`) may use the `index.ts` anywhere, since it is erased.
 - `src/components/` has an `index.ts` for atoms, molecules, organisms and templates together.
+- `src/main/classes/` and each category in it (`agents/`, `devices/`…) have an `index.ts`; the
+  composition root imports `@/main/classes`. A class imports another class by its own path.
 
 ## Language
 
