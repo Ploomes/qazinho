@@ -31,7 +31,7 @@ environment with one or more targets. Workspaces hold a test plan, and several r
    projects, plans and runs. The desktop app never needs Pro and nothing local is shaped around
    it. Today the work is the desktop app; the platform comes later (`ROADMAP.md`).
 4. **The page is a web page and nothing more.** No Node, no Electron, no filesystem. It asks the
-   main process through `window.qazinho`, whose contract lives in `src/types/`.
+   main process through `window.qazinho`, whose contract lives in `src/shared/types/`.
 5. **Nothing in the interface is a mock.** Every number, screenshot and verdict on screen came
    back from the machine. When something is not built yet, it says so where a QA can read it.
 

@@ -1,6 +1,6 @@
 # Tests
 
-Vitest. `node` for `src/main` and `src/types`, `jsdom` for anything in the page.
+Vitest. `node` for `src/main` and `src/shared/types`, `jsdom` for anything in the page.
 
 | Command              | What                                             |
 | -------------------- | ------------------------------------------------ |
@@ -15,7 +15,7 @@ src/main/library/
 ├── isInternalNavigation.ts
 └── __tests__/isInternalNavigation.test.ts
 
-src/components/atoms/Button/hooks/useButtonViewModel/
+src/shared/components/atoms/Button/hooks/useButtonViewModel/
 ├── index.ts
 └── __tests__/useButtonViewModel.test.ts
 ```

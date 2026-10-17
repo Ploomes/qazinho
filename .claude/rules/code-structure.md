@@ -20,15 +20,15 @@ that re-exports. A class folder **never** sits loose in `classes/`: it always go
 
 ## File names
 
-| File        | Pattern                      | Example                                       |
-| ----------- | ---------------------------- | --------------------------------------------- |
-| Root folder | `lowercase`                  | `src/components/`, `src/modules/`, `src/app/` |
-| Folder      | `PascalCase`                 | `classes/devices/AndroidEmulator/`            |
-| Class       | `<PascalCase>.class.ts`      | `AndroidEmulator.class.ts`                    |
-| Library     | `camelCase.ts`, one function | `library/isInternalNavigation.ts`             |
-| Constant    | `SCREAMING_SNAKE.ts`, one    | `constants/DEFAULT_WINDOW_SIZE.ts`            |
-| Type        | `<TypeName>.ts`, one type    | `types/IQazinhoApi.ts`                        |
-| Test        | `__tests__/<name>.test.ts`   | `__tests__/isInternalNavigation.test.ts`      |
+| File        | Pattern                      | Example                                   |
+| ----------- | ---------------------------- | ----------------------------------------- |
+| Root folder | `lowercase`                  | `src/shared/`, `src/modules/`, `src/app/` |
+| Folder      | `PascalCase`                 | `classes/devices/AndroidEmulator/`        |
+| Class       | `<PascalCase>.class.ts`      | `AndroidEmulator.class.ts`                |
+| Library     | `camelCase.ts`, one function | `library/isInternalNavigation.ts`         |
+| Constant    | `SCREAMING_SNAKE.ts`, one    | `constants/DEFAULT_WINDOW_SIZE.ts`        |
+| Type        | `<TypeName>.ts`, one type    | `types/IQazinhoApi.ts`                    |
+| Test        | `__tests__/<name>.test.ts`   | `__tests__/isInternalNavigation.test.ts`  |
 
 The file is named after the thing it exports, and it exports one thing. A file that holds two
 functions, two types or two constants grows without anyone noticing.
@@ -69,7 +69,7 @@ functions stay there because they touch `electron` and `library/` may not.
   enters no barrel.
 - **A domain's types live with the domain**, in `src/modules/<Domain>/types/`. A module may
   import another module's types: `ITestCase` reads `StepVerdict` from `@/modules/Run/types`.
-- `src/types/` is **only what is global to every side**: today `IQazinhoApi` and `Platform`, the
+- `src/shared/types/` is **only what is global to every side**: today `IQazinhoApi` and `Platform`, the
   contract the preload publishes and the page consumes. Nothing domain-shaped goes there.
 - A `types/` barrel re-exports with `export type *`, never `export *`.
 - A result with more than one shape is a **discriminated union**, not an optional flag.
@@ -109,20 +109,23 @@ electron/preload/
 src/
 ├── index.html  index.tsx  global.d.ts
 ├── app/              ← the shell, with the anatomy of any component
-├── components/       ← atoms, molecules, organisms, templates (components.md)
+├── shared/
+│   ├── components/   ← atoms, molecules, organisms, templates (components.md)
+│   ├── constants/    ← values every side shares
+│   ├── hooks/        ← hooks used across modules
+│   ├── library/      ← functions used across the page, one per file
+│   └── types/        ← contracts, imported by every side
 ├── modules/<Domain>/screens/<Screen>/
 ├── languages/        ← i18next, en and pt (i18n.md)
-├── hooks/            ← hooks used across modules
-├── store/            ← zustand stores
+├── store/            ← zustand stores; each store keeps its own library/
 ├── services/         ← the only callers of window.qazinho
-├── styles/           ← tokens.css, base.css, animations.css
-└── types/            ← contracts, imported by every side
+└── styles/           ← tokens.css, base.css, animations.css
 ```
 
 - A screen → `src/modules/<Domain>/screens/<Screen>/`.
 - A component or hook owned by a domain but used by another module →
   `src/modules/<Domain>/components/` or `hooks/`.
-- A component with no domain, reused across modules → `src/components/`.
+- A component with no domain, reused across modules → `src/shared/components/`.
 - A subcomponent of one screen → `components/` **inside** that screen's folder.
 
 ## Every folder of things has an `index.ts`
@@ -151,7 +154,7 @@ import { Chat } from '@/modules/Chat';
   carries its screens, the screens import the store, and the store imports those libraries: going
   through the whole `index.ts` from below closes that loop, and a Vitest run sees half-loaded
   modules. A type-only import (`import type`) may use the `index.ts` anywhere, since it is erased.
-- `src/components/` has an `index.ts` for atoms, molecules, organisms and templates together.
+- `src/shared/components/` has an `index.ts` for atoms, molecules, organisms and templates together.
 - `src/main/classes/` and each category in it (`agents/`, `devices/`…) have an `index.ts`; the
   composition root imports `@/main/classes`. A class imports another class by its own path.
 
@@ -167,7 +170,7 @@ repository.
 within the same directory is still right for `./library/`, `./constants/` and `./types/`.
 
 ```ts
-import type { IQazinhoApi } from '@/types';
+import type { IQazinhoApi } from '@/shared/types';
 import { isInternalNavigation } from '@/main/library';
 ```
 

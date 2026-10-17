@@ -20,13 +20,13 @@
 
 `tsconfig.json` only references the other two, so the editor and ESLint see both.
 
-| Config               | Covers                                                 | Types         |
-| -------------------- | ------------------------------------------------------ | ------------- |
-| `tsconfig.node.json` | `src/main`, `src/types`, `electron/`, `tests/`, config | `node`        |
-| `tsconfig.web.json`  | all of `src/` except `src/main`                        | `vite/client` |
+| Config               | Covers                                                        | Types         |
+| -------------------- | ------------------------------------------------------------- | ------------- |
+| `tsconfig.node.json` | `src/main`, `src/shared/types`, `electron/`, `tests/`, config | `node`        |
+| `tsconfig.web.json`  | all of `src/` except `src/main`                               | `vite/client` |
 
-**`tsconfig.web.json` has no Node types.** An `import 'node:fs'` in the page or in `src/types`
-does not compile. `src/types` sits in both on purpose: it has to compile in each world.
+**`tsconfig.web.json` has no Node types.** An `import 'node:fs'` in the page or in `src/shared/types`
+does not compile. `src/shared/types` sits in both on purpose: it has to compile in each world.
 
 Both are `composite` so they can be referenced. `typecheck` passes `--composite false` with
 `--noEmit`, because a composite project wants to emit declarations.

@@ -18,7 +18,7 @@ beginning and an end belongs to Motion, because React knows when it starts.
 ## The rules
 
 - **Import `motion` from `motion/react`.** Never from `framer-motion`.
-- **Durations and easings come from `MOTION`** in `src/constants/MOTION.ts`, which mirrors the CSS
+- **Durations and easings come from `MOTION`** in `src/shared/constants/MOTION.ts`, which mirrors the CSS
   tokens. A raw `0.28` in a component is the same bug as a raw `#c6f432`.
 - **The view holds the markup, the view model holds the state.** `animate={...}` may read a value
   the view model returned; it may not decide it.

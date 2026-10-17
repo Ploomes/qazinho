@@ -1,10 +1,10 @@
 # Components — the layered anatomy
 
 QAzinho has no design system package. Every shared visual component lives in
-`src/components/`, split by **atomic design**:
+`src/shared/components/`, split by **atomic design**:
 
 ```
-src/components/
+src/shared/components/
 ├── atoms/        Button, Chip, StatusPill, Input, IconButton, Meter, Kbd, Logo, Intern
 ├── molecules/    TabBar, SidebarRow, CountTile, TargetCard, MetaGrid
 ├── organisms/    Titlebar, Sidebar, Composer, PlanCase, DevicePanel, ResourcePopover
