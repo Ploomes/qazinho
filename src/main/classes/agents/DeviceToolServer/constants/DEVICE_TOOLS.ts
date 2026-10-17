@@ -1,6 +1,6 @@
 import type { IDeviceTool } from '@/main/classes/agents/DeviceToolServer/types';
 
-/** The device, as tools the agent calls one at a time and sees the result of. */
+/** The device, as tools the agent calls and sees the result of, and the tool it reports a step with. */
 export const DEVICE_TOOLS: IDeviceTool[] = [
   {
     name: 'look',
@@ -63,6 +63,31 @@ export const DEVICE_TOOLS: IDeviceTool[] = [
         value: { type: 'string', description: 'Milliseconds, e.g. "1000".' },
       },
       required: ['value'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'report',
+    description:
+      'Report a step once you judged it, by its number. The answer says what to do next.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        step: { type: 'integer', description: 'The number of the step you judged.' },
+        verdict: { type: 'string', enum: ['passed', 'failed', 'blocked'] },
+        why: { type: 'string', description: 'Why, against what the QA expected.' },
+        got: { type: 'string', description: 'What the device actually showed.' },
+        title: {
+          type: 'string',
+          description: 'When it failed: the line a developer would know the bug by.',
+        },
+        severity: { type: 'string', enum: ['high', 'medium', 'low'] },
+        note: {
+          type: 'string',
+          description: 'When you worked around something: one sentence for the QA.',
+        },
+      },
+      required: ['step', 'verdict', 'why', 'got'],
       additionalProperties: false,
     },
   },
