@@ -1,4 +1,3 @@
-/** Geometry of the device panel, taken from the prototype. */
 export const DEVICE = {
   defaultWidth: 470,
   minWidth: 320,

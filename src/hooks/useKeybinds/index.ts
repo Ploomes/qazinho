@@ -3,7 +3,6 @@ import { useRunControls } from '@/modules/Run';
 import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 import { comboOf } from './library';
 
-/** The one place a key becomes an action. What each key does is the QA's to change. */
 export const useKeybinds = () => {
   const keybinds = useSettingsStore((state) => state.keybinds);
   const editingKeybindId = useSettingsStore((state) => state.editingKeybindId);

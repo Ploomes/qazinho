@@ -1,4 +1,3 @@
-/** A phone screen holds less than a page, and an accessibility tree holds more than a person reads. */
 export const IOS = {
   screenTextLimit: 2_000,
   controlLimit: 40,

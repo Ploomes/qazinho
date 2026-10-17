@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Archive } from '@/services';
 
-/** A screenshot from a run this session is already in hand; an older one is read back on sight. */
 export const useShot = (props: { src: string | null; file: string | null }) => {
   const [read, setRead] = useState<{ file: string; shot: string | null } | null>(null);
   const { src, file } = props;

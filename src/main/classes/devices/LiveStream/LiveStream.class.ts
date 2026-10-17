@@ -79,7 +79,6 @@ export class LiveStream {
 
     const latest = this.latest.get(workspaceId);
 
-    // A viewer that arrives between frames would stay blank until the page next changes.
     if (latest)
       response.write(mjpegPart({ boundary: LIVE_STREAM.boundary, jpeg: latest }));
 

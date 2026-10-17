@@ -27,7 +27,6 @@ const PLAN = {
   required: ['summary', 'cases'],
 };
 
-/** A chat answer is always a reply; a plan comes with it only when the QA asked for one. */
 export const CHAT_SCHEMA = JSON.stringify({
   type: 'object',
   properties: { reply: { type: 'string' }, plan: PLAN },

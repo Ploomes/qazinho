@@ -1,4 +1,3 @@
-/** What the QA reads when a tracker refuses, by what went wrong. */
 export const TRACKER_ERRORS = {
   unauthorized:
     'The tracker did not accept these credentials. Check the token and try again.',

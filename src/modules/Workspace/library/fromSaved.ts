@@ -34,7 +34,6 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     sessionId: read.sessionId ?? null,
     status: read.status ?? 'idle',
     issue: read.issue ?? null,
-    // Workspaces saved before the action log was dropped still carry one.
     chat: (read.chat ?? []).filter((message) => (message.kind as string) !== 'action'),
     plan: readPlan(saved.planYaml),
     runs: read.runs ?? [],

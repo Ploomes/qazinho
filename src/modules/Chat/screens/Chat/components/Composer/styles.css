@@ -30,7 +30,6 @@
   border-color: var(--lime);
 }
 
-/* The field fills the whole box, so a click anywhere but the send button lands in it. */
 .composer__field .input--bare {
   align-self: stretch;
   min-height: 54px;

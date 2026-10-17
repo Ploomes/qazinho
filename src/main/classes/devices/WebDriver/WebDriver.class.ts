@@ -84,7 +84,6 @@ export class WebDriver implements IDeviceDriver {
 
     const session = await this.context.newCDPSession(this.page);
 
-    // Chrome DevTools Protocol: no frame comes after one that was never acknowledged.
     session.on('Page.screencastFrame', (frame) => {
       onFrame(Buffer.from(frame.data, 'base64'));
       void session
@@ -114,7 +113,6 @@ export class WebDriver implements IDeviceDriver {
 
   /** Waits for what an action started to finish, so the page the agent reads next is the new one. */
   private async settle(page: Page): Promise<void> {
-    // A page that keeps polling never goes idle; past the budget it is read as it is.
     await page
       .waitForLoadState('networkidle', { timeout: WEB_DRIVER.settleMs })
       .catch(() => undefined);

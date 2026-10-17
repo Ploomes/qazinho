@@ -19,7 +19,6 @@ export async function describePage(page: Page): Promise<string> {
         nodes
           .slice(0, limit)
           .map((node) => {
-            // The callback runs in the page, where DOM types are not in this project's lib.
             const element = node as unknown as {
               getAttribute: (name: string) => string | null;
               innerText: string;

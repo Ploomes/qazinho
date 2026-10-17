@@ -4,7 +4,6 @@ export function defaultModelOf(props: {
   text: string;
 }): string | null {
   if (props.format === 'toml') {
-    // TOML: a key before the first [table] header belongs to the root, where the default model lives.
     const root = props.text.split(/^\s*\[/m)[0] ?? '';
     const match = /^\s*model\s*=\s*"([^"]+)"/m.exec(root);
 

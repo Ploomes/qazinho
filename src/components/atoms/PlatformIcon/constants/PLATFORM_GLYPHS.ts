@@ -1,7 +1,6 @@
 import type { IPlatformGlyph } from '@/components/atoms/PlatformIcon/types';
 import type { TargetKind } from '@/types';
 
-/** Android and Apple from Simple Icons 16.31 (CC0), the globe from Lucide 1.46 (ISC). */
 export const PLATFORM_GLYPHS: Record<TargetKind, IPlatformGlyph> = {
   web: {
     strokes: [

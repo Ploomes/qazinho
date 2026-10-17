@@ -3,7 +3,6 @@ import { MACHINE_WATCH } from '@/hooks/useMachineWatch/constants';
 import { Agent, Integrations, Machine, Setup } from '@/services';
 import { useMachineStore, useSetupStore, useWorkspaceStore } from '@/store';
 
-/** Detection runs once; the meters keep reading, because a device can come up at any time. Installs report here. */
 export const useMachineWatch = () => {
   const setAgents = useMachineStore((state) => state.setAgents);
   const setResources = useMachineStore((state) => state.setResources);

@@ -13,7 +13,6 @@
 }
 
 .onboarding__skip {
-  /* Electron: it sits inside the window's drag strip, which would swallow the click. */
   -webkit-app-region: no-drag;
   position: absolute;
   z-index: 2;

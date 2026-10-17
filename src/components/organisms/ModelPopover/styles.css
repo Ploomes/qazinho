@@ -1,5 +1,4 @@
 .model-popover {
-  /* Electron: the titlebar is a drag region, and it swallows every click a child gets. */
   -webkit-app-region: no-drag;
   position: absolute;
   z-index: 32;

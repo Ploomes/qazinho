@@ -1,4 +1,3 @@
-/** What a modal does to the window behind it: dimmed and blurred, faded in with the panel. */
 export const BACKDROP = {
   blur: 'blur(2px)',
   clear: 'blur(0px)',

@@ -8,7 +8,6 @@ import {
   useWorkspaceStore,
 } from '@/store';
 
-/** Run, hold and stop: the machine and the page are told in the same breath, from one place. */
 export const useRunControls = () => {
   const { t } = useTranslation();
   const projects = useAppStore((state) => state.projects);

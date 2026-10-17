@@ -12,7 +12,6 @@ export function isInternalNavigation(appUrl: string, target: string): boolean {
 
   if (app.protocol !== url.protocol) return false;
 
-  // Every `file:` origin is the string "null", so origins can never tell two files apart.
   if (app.protocol === 'file:') return app.pathname === url.pathname;
 
   return app.origin === url.origin;

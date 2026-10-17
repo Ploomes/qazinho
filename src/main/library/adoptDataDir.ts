@@ -11,7 +11,6 @@ export function adoptDataDir(props: { from: string; to: string }): boolean {
 
   cpSync(from, to, { recursive: true, force: false, errorOnExist: false });
 
-  // A run keeps its screenshots by absolute path, and the archive only reads inside its own folder.
   const workspaces = join(to, 'workspaces');
   const oldRoot = JSON.stringify(from).slice(1, -1);
   const newRoot = JSON.stringify(to).slice(1, -1);

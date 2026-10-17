@@ -1,7 +1,5 @@
 import type { InternMood } from '@/components/atoms/Intern/types';
 
-// Ported from the designer's assets/animations/estagiario-anim.js. Base units: the figure is
-// 240 × 235 with the head's top at y = 44; the stage around it is 320 × 320.
 const TAU = Math.PI * 2;
 const LIME = '#c6f432';
 const DARK = '#141414';
@@ -28,7 +26,6 @@ function pill(c: CanvasRenderingContext2D, box: [number, number, number, number]
   c.fill();
 }
 
-// A rectangle whose four corners are quarter ellipses: the head and the sprout.
 function roundBox(
   c: CanvasRenderingContext2D,
   shape: {
@@ -314,7 +311,6 @@ export function drawIntern(props: {
 }): void {
   const { context: c, size, mood, t, mark, isFigure } = props;
   const pose = POSES[mood](t);
-  // The stage leaves room for a z or a badge; the figure alone fills the square, for a logo.
   const scale = isFigure ? size / FIGURE.width : size / STAGE;
   const footX = isFigure ? size / 2 : 160 * scale;
   const footY = isFigure

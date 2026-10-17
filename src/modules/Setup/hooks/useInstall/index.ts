@@ -3,7 +3,6 @@ import { useMachineCheck } from '@/modules/Setup/hooks/useMachineCheck';
 import { Setup } from '@/services';
 import { useSetupStore } from '@/store';
 
-/** Installs a tool and, once it lands, looks at the machine again so every screen sees it. */
 export const useInstall = () => {
   const installs = useSetupStore((state) => state.installs);
   const startInstall = useSetupStore((state) => state.startInstall);

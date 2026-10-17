@@ -3,7 +3,6 @@
   flex: none;
 }
 
-/* An empty state keeps the head, quietly: the colour belongs to what the QA can act on. */
 .logo--quiet {
   opacity: 0.35;
   filter: grayscale(1);

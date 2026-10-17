@@ -1,7 +1,6 @@
 import type { IProcessRow } from '@/main/types';
 import { parseCpuTime } from './parseCpuTime';
 
-/** A program path may hold spaces, so the name is what comes before the first flag. */
 function nameOf(command: string): string {
   const flag = command.search(/\s-{1,2}\w/);
 

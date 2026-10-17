@@ -27,7 +27,6 @@ export const useMentionPickerViewModel = (props: IMentionPickerProps) => {
         onHighlight(index);
       },
     })),
-    // A press would take the focus out of the input, and the QA would have to click back into it.
     onPointerDown: (event: PointerEvent) => {
       event.preventDefault();
     },

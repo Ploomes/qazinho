@@ -3,7 +3,6 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { CHAT_SCROLL } from '@/modules/Chat/screens/Chat/constants';
 import { isNearBottom, isNearTop } from '@/modules/Chat/screens/Chat/library';
 
-/** Opens a chat at its end, keeps a reader at the end in view, and loads older messages upward. */
 export const useChatScroll = (props: {
   workspaceId: string | null;
   messages: ChatMessage[];
@@ -46,7 +45,6 @@ export const useChatScroll = (props: {
   useLayoutEffect(() => {
     const list = listRef.current;
 
-    // Older messages grow the list above the reader; keeping the distance from the end holds them in place.
     if (list && fromBottom.current !== null) {
       list.scrollTop = list.scrollHeight - fromBottom.current;
       fromBottom.current = null;

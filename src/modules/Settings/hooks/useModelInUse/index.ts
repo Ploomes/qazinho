@@ -3,7 +3,6 @@ import { MODELS } from '@/modules/Settings/constants';
 import { modelNameOf } from '@/modules/Settings/library';
 import { useMachineStore, useSettingsStore } from '@/store';
 
-/** The agent and the model a run or a chat will actually use, named for the QA. */
 export const useModelInUse = () => {
   const { t } = useTranslation();
   const agent = useSettingsStore((state) => state.agent);

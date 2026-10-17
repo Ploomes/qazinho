@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Run } from '@/services';
 import { useSettingsStore, useWorkspaceStore } from '@/store';
 
-/** The one place a run on the machine becomes state the page can draw. */
 export const useRunEvents = () => {
   const markDoing = useWorkspaceStore((state) => state.markDoing);
   const markStreaming = useWorkspaceStore((state) => state.markStreaming);

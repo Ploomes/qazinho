@@ -206,7 +206,6 @@ export class RunCoordinator {
     let began = Date.now();
     let isOver = false;
 
-    // Everything is filed once the case is over: its closing words would only cost another call.
     const endCase = (said: string) => {
       isOver = true;
       setImmediate(() => {
@@ -326,7 +325,6 @@ export class RunCoordinator {
   }
 
   private async reopen(props: { driver: IDeviceDriver; url: string }): Promise<void> {
-    // Every case starts from the same place, or the one before it decides what this one sees.
     try {
       await props.driver.act({ kind: 'goto', target: props.url, value: '' });
     } catch {

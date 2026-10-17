@@ -21,7 +21,6 @@ export const useOnboardingViewModel = () => {
   const openModal = useAppStore((state) => state.openModal);
   const { isChecking, check } = useMachineCheck();
 
-  // The first look happens on the way in, so the agents step opens on what is really here.
   useEffect(() => {
     if (hasChecked.current) return;
 
@@ -54,7 +53,6 @@ export const useOnboardingViewModel = () => {
       step === 'agents' && !hasAgent && !isChecking
         ? t('SETUP.AGENTS_SAY_NONE')
         : t(`SETUP.${step.toUpperCase()}_SAY` as 'SETUP.WELCOME_SAY'),
-    // What the step holds comes in once the Estagiário finished his line, and stays after.
     isSaid: saidStep === step,
     isFirst: index === 0,
     isLast: index === last,
@@ -85,7 +83,6 @@ export const useOnboardingViewModel = () => {
       setSaidStep(step);
     },
     onNext: () => {
-      // Leaving the agents step on an agent that is not here would start the app on one that cannot answer.
       const found = agents.find(({ isFound }) => isFound);
       const isInUseHere = agents.some(
         ({ name, isFound }) => isFound && name === agentInUse,

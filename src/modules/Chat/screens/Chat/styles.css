@@ -12,8 +12,6 @@
   flex-direction: column;
   gap: var(--space-6);
   min-height: 0;
-  /* The list reaches into the body's right padding, so its scrollbar sits away from the cards
-     while the messages still end where the composer does. */
   margin-right: calc(var(--space-6) * -1);
   padding-right: calc(var(--space-6) - var(--scrollbar-size));
   overflow-y: auto;

@@ -41,7 +41,6 @@ export class SetupInstaller {
       const directories = await this.directories();
 
       for (const [index, step] of steps.entries()) {
-        // Looked up at each step: pipx only exists once the step before it installed it.
         const path = findOnPath({ command: step.command, directories });
 
         if (path === null)
@@ -87,7 +86,6 @@ export class SetupInstaller {
         env: {
           ...process.env,
           PATH: directories.join(delimiter),
-          // Homebrew: an auto-update before the install can take minutes and asks nothing useful.
           HOMEBREW_NO_AUTO_UPDATE: '1',
           HOMEBREW_NO_ENV_HINTS: '1',
           NONINTERACTIVE: '1',

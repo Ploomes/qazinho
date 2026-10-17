@@ -19,12 +19,9 @@ export class DeviceToolDetector {
       ...TOOL_PATHS.androidSdk.map((directory) => join(home, directory)),
     ]);
 
-    // Xcode only exists on macOS, so anywhere else the iOS target stays off.
     const xcode =
       process.platform === 'darwin' ? findExistingPath([...TOOL_PATHS.xcode]) : null;
 
-    // idb is the only way to tap an iOS simulator: simctl boots and installs, but never touches.
-    // pipx puts its client in ~/.local/bin.
     const idb =
       process.platform === 'darwin'
         ? findOnPath({

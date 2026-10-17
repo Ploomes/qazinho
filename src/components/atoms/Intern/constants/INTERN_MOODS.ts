@@ -1,6 +1,5 @@
 import type { InternMood } from '@/components/atoms/Intern/types';
 
-/** How long one loop of each mood lasts, from the designer's animations, and the word for it. */
 export const INTERN_MOODS: Record<
   InternMood,
   { loopMs: number; labelKey: `MASCOT.MOOD_${string}` }

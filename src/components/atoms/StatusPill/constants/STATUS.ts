@@ -1,7 +1,6 @@
 import type { PillStatus } from '@/components/atoms/StatusPill/types';
 import type { ParseKeys } from 'i18next';
 
-/** Every status carries a glyph and a word, so colour is never the only clue. */
 export const STATUS: Record<
   PillStatus,
   { glyph: string; labelKey: ParseKeys; tone: string }

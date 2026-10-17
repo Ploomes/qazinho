@@ -30,7 +30,6 @@ export class ResourceCollector {
   }
 
   private async collect(): Promise<IResourceSnapshot> {
-    // The sweep's own ps is a child of this process, and not something QAzinho is running.
     const rows = (await sweepProcesses()).filter(
       (row) => !(row.parentPid === process.pid && row.name === 'ps'),
     );

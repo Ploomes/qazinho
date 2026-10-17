@@ -85,7 +85,6 @@ export class DeviceToolServer {
 
     mcp.setRequestHandler(ListToolsRequestSchema, () => ({ tools: DEVICE_TOOLS }));
     mcp.setRequestHandler(CallToolRequestSchema, (call) =>
-      // One call at a time per device: a report sent with the next action is filed before that action runs.
       this.inTurn({
         workspaceId,
         call: () =>
@@ -93,7 +92,6 @@ export class DeviceToolServer {
       }),
     );
 
-    // Stateless: every request gets its own server and transport, and nothing outlives it.
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: undefined,
       enableJsonResponse: true,
@@ -150,7 +148,6 @@ export class DeviceToolServer {
 
       await device.driver.act(read.action);
 
-      // The agent sees what its action did in the same answer, so it can correct course at once.
       return said(`Done. The device now shows:\n${await device.driver.describe()}`);
     } catch (reason) {
       const message = reason instanceof Error ? reason.message : String(reason);

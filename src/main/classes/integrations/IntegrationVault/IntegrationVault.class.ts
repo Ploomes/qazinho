@@ -59,7 +59,6 @@ export class IntegrationVault {
 
       return JSON.parse(this.cipher.decrypt(sealed)) as IStoredIntegration[];
     } catch {
-      // No file yet, or one sealed by a keychain this machine no longer has: nothing is connected.
       return [];
     }
   }

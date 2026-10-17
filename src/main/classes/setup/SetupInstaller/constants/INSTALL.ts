@@ -1,4 +1,3 @@
-/** How long one install command may take, how much of its output a failure keeps, and what a missing manager means. */
 export const INSTALL = {
   timeoutMs: 10 * 60_000,
   tailLines: 12,

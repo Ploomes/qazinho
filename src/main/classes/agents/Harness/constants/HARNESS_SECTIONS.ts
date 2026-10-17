@@ -1,6 +1,5 @@
 import type { IHarnessSection } from '@/main/classes/agents/Harness/types';
 
-/** Everything QAzinho tells the QA's agent about its job, edited here and nowhere else. */
 export const HARNESS_SECTIONS = {
   identity: {
     title: 'Who you are',

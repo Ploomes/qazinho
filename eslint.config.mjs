@@ -99,8 +99,6 @@ export default config(
 
       'max-params': ['error', 2],
 
-      // The MCP SDK only exports its subpaths through a "./*" wildcard, which Node needs spelled
-      // with ".js" and the TypeScript resolver cannot follow.
       'import-x/no-unresolved': [
         'error',
         { ignore: ['^@modelcontextprotocol/sdk/.+\\.js$'] },
@@ -158,7 +156,6 @@ export default config(
   },
 
   {
-    // @/types is imported by the page, by src/main and by the preload, so it imports none of them.
     files: ['src/types/**/*.ts'],
     rules: {
       'no-restricted-imports': ['error', { patterns: [NO_NODE_IN_THE_PAGE] }],
@@ -172,9 +169,6 @@ export default config(
   },
 
   {
-    // A class holds the class, a view holds the JSX, a view model holds the state. Each file
-    // holds one thing: a function belongs in `library/`, a value in `constants/`, a type in
-    // `types/`. A `library/` file may keep a private helper, because it still exports one thing.
     files: ['**/*.class.ts', 'src/**/hooks/**/index.ts', 'src/**/*.tsx'],
     ignores: ['src/index.tsx', 'src/**/__tests__/**'],
     rules: {

@@ -1,7 +1,6 @@
 import type { IInstallStep } from '@/main/classes/setup/SetupInstaller/types';
 import type { InstallableId } from '@/types';
 
-/** The commands behind each install, in order. idb is two halves: Homebrew's companion and pipx's client. */
 export const INSTALL_RECIPES: Record<InstallableId, IInstallStep[]> = {
   'claude-code': [
     { command: 'npm', args: ['install', '-g', '@anthropic-ai/claude-code'] },

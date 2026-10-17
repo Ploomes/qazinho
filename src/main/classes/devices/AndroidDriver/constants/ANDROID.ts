@@ -1,4 +1,3 @@
-/** A phone screen holds less than a page, and a hierarchy dump holds far more than a person reads. */
 export const ANDROID = {
   screenTextLimit: 2_000,
   controlLimit: 40,

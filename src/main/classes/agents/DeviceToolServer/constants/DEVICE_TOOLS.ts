@@ -1,6 +1,5 @@
 import type { IDeviceTool } from '@/main/classes/agents/DeviceToolServer/types';
 
-/** The device, as tools the agent calls and sees the result of, and the tool it reports a step with. */
 export const DEVICE_TOOLS: IDeviceTool[] = [
   {
     name: 'look',

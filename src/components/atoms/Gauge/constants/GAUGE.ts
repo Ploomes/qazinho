@@ -1,4 +1,3 @@
-/** The ring's own geometry: a component's intrinsic dimension, not a value on the scale. */
 export const GAUGE = {
   size: 16,
   stroke: 2.5,

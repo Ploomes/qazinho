@@ -1,4 +1,3 @@
-/** Mirrors the motion tokens in `src/styles/tokens.css`, for the values Motion needs in JS. */
 export const MOTION = {
   ease: [0.2, 0.8, 0.3, 1],
   durationFast: 0.16,

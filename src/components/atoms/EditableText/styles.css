@@ -6,7 +6,6 @@
   background: transparent;
   color: var(--ink2);
   font: var(--font-ui-sm);
-  /* Chromium 123: the textarea grows with its own content, so no measuring in JS. */
   field-sizing: content;
   resize: none;
   transition:

@@ -50,7 +50,6 @@
   flex: 1;
   flex-direction: column;
   min-height: 0;
-  /* The scrollbar gutter is always reserved, so the right padding gives back its width. */
   padding: var(--space-7) var(--space-6) var(--space-8) var(--space-8);
   overflow-y: auto;
   scrollbar-gutter: stable;

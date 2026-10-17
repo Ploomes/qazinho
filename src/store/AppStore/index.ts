@@ -79,7 +79,6 @@ export const useAppStore = create<IAppStore>()(
           };
         }),
 
-      // The two popovers share the top-right corner, so opening one closes the other.
       toggleResources: () =>
         set((state) => ({
           isResourcesOpen: !state.isResourcesOpen,

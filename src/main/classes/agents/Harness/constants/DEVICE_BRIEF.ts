@@ -1,6 +1,5 @@
 import type { TargetKind } from '@/types';
 
-/** What the tools mean on each platform: the same six tools reach a browser and a phone. */
 export const DEVICE_BRIEF: Record<TargetKind, string[]> = {
   web: [
     'The device is a real Chrome browser.',

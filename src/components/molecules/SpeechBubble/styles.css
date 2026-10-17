@@ -14,7 +14,6 @@
   animation: gc-in var(--dur) var(--ease);
 }
 
-/* The tail, pointing back at whoever is speaking on the left. */
 .speech-bubble::before {
   position: absolute;
   top: 26px;

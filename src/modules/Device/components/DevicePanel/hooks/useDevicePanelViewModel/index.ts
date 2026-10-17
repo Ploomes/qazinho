@@ -45,13 +45,11 @@ export const useDevicePanelViewModel = () => {
     isOpen,
     width,
     panelWidth: isOpen ? width : DEVICE.railWidth,
-    // A drag has to follow the pointer; easing each move would leave the panel behind it.
     widthTransition: isResizing
       ? { duration: 0 }
       : { duration: MOTION.durationSlow, ease: MOTION.ease },
     innerStyle: { '--device-width': `${String(width)}px` } as CSSProperties,
     isPhone,
-    // A stopped run with nothing captured has no screen worth keeping up.
     hasScreen: isRunLive || (live?.shot ?? null) !== null,
     hasControls: isRunLive,
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),

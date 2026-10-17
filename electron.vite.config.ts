@@ -20,7 +20,6 @@ export default defineConfig({
     root: 'src',
     resolve: { alias },
     plugins: [react()],
-    // The brand assets are the design handoff, and live outside the page's root.
     server: { fs: { allow: [fileURLToPath(new URL('.', import.meta.url))] } },
     build: {
       rollupOptions: {

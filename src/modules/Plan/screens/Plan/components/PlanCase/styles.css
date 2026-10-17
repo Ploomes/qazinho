@@ -64,7 +64,6 @@
   margin: 0;
 }
 
-/* A multi-line textarea has no first baseline to share, so the short columns match its first line by hand. */
 .plan-case__label,
 .plan-case__step-number,
 .plan-case__verdict {
@@ -81,7 +80,6 @@
   margin: 0;
 }
 
-/* The textarea's own padding and border would push its text off the column it sits in. */
 .plan-case__body .editable-text {
   width: calc(100% + 10px);
   margin: -3px -5px;

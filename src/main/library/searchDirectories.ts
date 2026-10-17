@@ -1,7 +1,6 @@
 import { isAbsolute, join } from 'node:path';
 import { mergePathSegments } from './mergePathSegments';
 
-// Where agents, Homebrew and pipx land when the PATH the app inherited does not mention them.
 const INSTALL_DIRS = [
   '/opt/homebrew/bin',
   '/usr/local/bin',

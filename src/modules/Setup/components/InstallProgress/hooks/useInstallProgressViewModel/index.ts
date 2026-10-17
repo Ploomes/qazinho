@@ -22,7 +22,6 @@ export const useInstallProgressViewModel = (props: IInstallProgressProps) => {
 
   return {
     phase: state.phase,
-    // One segment per command: the ones that ran are full, the one running shimmers.
     segments:
       state.phase === 'installing'
         ? Array.from({ length: state.stages }, (_, index) => ({

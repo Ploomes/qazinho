@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { RUN_CLOCK } from '@/modules/Run';
 import { useWorkspaceStore } from '@/store';
 
-/** Drives every live run's clock: one tick, all workspaces, so parallel runs stay in step. */
 export const useRunTicker = () => {
   const tickClock = useWorkspaceStore((state) => state.tickClock);
 

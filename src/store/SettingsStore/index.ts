@@ -13,7 +13,6 @@ export const useSettingsStore = create<ISettingsStore>()(
       tab: 'agents',
       agent: 'Claude Code',
       model: '',
-      // A first launch speaks the system's language until the QA picks one.
       language: resolveLanguage(navigator.language),
       keybinds: KEYBINDS,
       editingKeybindId: null,

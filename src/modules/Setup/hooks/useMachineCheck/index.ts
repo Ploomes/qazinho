@@ -1,7 +1,6 @@
 import { Machine } from '@/services';
 import { useMachineStore, useSetupStore } from '@/store';
 
-/** Looks at the machine again from scratch, and lands what it found where every screen reads it. */
 export const useMachineCheck = () => {
   const isChecking = useSetupStore((state) => state.isChecking);
   const startChecking = useSetupStore((state) => state.startChecking);
