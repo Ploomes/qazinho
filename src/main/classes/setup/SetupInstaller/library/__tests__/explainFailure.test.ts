@@ -41,4 +41,19 @@ describe('explainFailure', () => {
   it('has no fix to offer when the output suggested none', () => {
     expect(explainFailure(['Error: No such formula']).fix).toBeNull();
   });
+
+  it('offers the Command Line Tools when Homebrew asks for them', () => {
+    expect(
+      explainFailure([
+        '==> Installing idb-companion from facebook/fb',
+        'Error: Xcode alone is not sufficient on Tahoe.',
+        'Install the Command Line Tools:',
+        'xcode-select --install',
+      ]),
+    ).toEqual({
+      error:
+        'Error: Xcode alone is not sufficient on Tahoe.\nInstall the Command Line Tools:\nxcode-select --install',
+      fix: 'xcode-select --install',
+    });
+  });
 });
