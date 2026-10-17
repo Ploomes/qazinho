@@ -125,6 +125,34 @@ src/
 - A component with no domain, reused across modules → `src/components/`.
 - A subcomponent of one screen → `components/` **inside** that screen's folder.
 
+## Every folder of things has an `index.ts`
+
+A folder that holds several things (`components/`, `screens/`, `library/`, `hooks/`,
+`constants/`, `types/`) re-exports them from an `index.ts`, and a caller imports the folder, never
+one file inside it.
+
+**Each module has an `index.ts` at its root**, re-exporting its `components`, `constants`, `hooks`,
+`library` and `screens`, and its `types` with `export type *`. Another module imports it whole:
+
+```ts
+// ❌ from another module
+import { flattenPlanSteps } from '@/modules/Run/library';
+import { Chat } from '@/modules/Chat/screens/Chat';
+
+// ✅
+import { flattenPlanSteps } from '@/modules/Run';
+import { Chat } from '@/modules/Chat';
+```
+
+- **Inside a module, files import their own module by path** (`@/modules/Run/library`), never
+  through its own `index.ts`, which would import the file back.
+- **The bottom layers import a module's pure folder, not its `index.ts`:** `src/store/`, and a
+  module's `library/` and `constants/`, write `@/modules/Chat/library`. A module's `index.ts`
+  carries its screens, the screens import the store, and the store imports those libraries: going
+  through the whole `index.ts` from below closes that loop, and a Vitest run sees half-loaded
+  modules. A type-only import (`import type`) may use the `index.ts` anywhere, since it is erased.
+- `src/components/` has an `index.ts` for atoms, molecules, organisms and templates together.
+
 ## Language
 
 **All code is in English**: names, every string the code emits, error messages, UI copy,
