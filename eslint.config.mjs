@@ -23,7 +23,6 @@ const NO_PAGE_IN_NODE = {
     '@/modules/**',
     '@/store/**',
     '@/shared/hooks/**',
-    '@/shared/library/**',
     '@/services/**',
     '@/styles/**',
   ],

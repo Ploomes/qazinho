@@ -1,4 +1,3 @@
-export * from './adoptDataDir';
 export * from './collectSubtree';
 export * from './findExistingPath';
 export * from './findOnPath';

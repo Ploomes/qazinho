@@ -11,7 +11,6 @@ import type {
   PickKind,
 } from '@/shared/types';
 import { homedir } from 'node:os';
-import { join } from 'node:path';
 import { app, BrowserWindow, dialog, ipcMain, safeStorage, shell } from 'electron';
 import {
   AgentDetector,
@@ -31,15 +30,11 @@ import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
 import { listSimulators } from '@/main/classes/devices/IosDriver/library';
 import { FILE_FILTERS, PATHS, WINDOW } from '@/main/constants';
 import {
-  adoptDataDir,
   hydrateShellPath,
   isInternalNavigation,
   searchDirectories,
 } from '@/main/library';
 import { CHANNELS } from '@/shared/constants';
-
-if (PATHS.data === join(app.getPath('appData'), app.getName()))
-  adoptDataDir({ from: PATHS.legacyData, to: PATHS.data });
 
 const agents = new AgentDetector();
 const owners = new ProcessOwners();

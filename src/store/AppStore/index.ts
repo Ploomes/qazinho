@@ -1,8 +1,7 @@
 import type { IAppStore } from './types';
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
-import { LEGACY_STORAGE, STORAGE } from '@/shared/constants';
-import { withLegacyKeys } from '@/shared/library';
+import { persist } from 'zustand/middleware';
+import { STORAGE } from '@/shared/constants';
 
 export const useAppStore = create<IAppStore>()(
   persist(
@@ -99,9 +98,6 @@ export const useAppStore = create<IAppStore>()(
     }),
     {
       name: STORAGE.appearance,
-      storage: createJSONStorage(() =>
-        withLegacyKeys({ storage: localStorage, legacy: LEGACY_STORAGE }),
-      ),
       partialize: ({ theme }) => ({ theme }),
     },
   ),

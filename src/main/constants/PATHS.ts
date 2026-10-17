@@ -7,7 +7,6 @@ export const PATHS = {
   preload: join(__dirname, '../preload/index.js'),
   icon: join(__dirname, '../../build/icon.png'),
   data: app.getPath('userData'),
-  legacyData: join(app.getPath('appData'), 'gocrash'),
   profiles: join(app.getPath('userData'), 'profiles'),
   integrations: join(app.getPath('userData'), 'integrations.bin'),
 } as const;
