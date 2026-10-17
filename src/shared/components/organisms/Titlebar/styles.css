@@ -34,8 +34,8 @@
 }
 
 .titlebar__wordmark {
-  font: 700 15px/1 var(--font-display);
-  letter-spacing: -0.04em;
+  font: 800 16px/1 var(--font-display);
+  letter-spacing: -0.035em;
   color: var(--ink);
 }
 
