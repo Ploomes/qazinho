@@ -53,7 +53,6 @@ describe('a real run', () => {
       workspaceId: 'w-smoke',
       agentId: 'claude-code',
       model: 'sonnet',
-      sessionId: null,
       target: { kind: 'web' as const, value: 'http://127.0.0.1:4321/' },
       runId: 'r-01',
       steps: [

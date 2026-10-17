@@ -1,6 +1,11 @@
 import type { IChatReference, IFlatStep, ITargetUnderTest } from '@/types';
-import { CHAT_SCHEMA, DEVICE_BRIEF, HARNESS_SECTIONS, STEP_SCHEMA } from './constants';
-import { describePlan, describeReferences, renderSections } from './library';
+import { CHAT_SCHEMA, DEVICE_BRIEF, HARNESS_SECTIONS } from './constants';
+import {
+  describeCase,
+  describePlan,
+  describeReferences,
+  renderSections,
+} from './library';
 
 /** What gocrash says to the QA's agent: the system prompt, the message and the answer's shape. */
 export class Harness {
@@ -32,26 +37,19 @@ export class Harness {
     };
   }
 
-  public run(target: ITargetUnderTest): { systemPrompt: string; schema: string } {
-    return {
-      systemPrompt: renderSections([
-        HARNESS_SECTIONS.identity,
-        HARNESS_SECTIONS.testing,
-        HARNESS_SECTIONS.run,
-        {
-          title: 'The device',
-          lines: [...DEVICE_BRIEF[target.kind], `The app under test is ${target.value}.`],
-        },
-      ]),
-      schema: STEP_SCHEMA,
-    };
+  public run(target: ITargetUnderTest): string {
+    return renderSections([
+      HARNESS_SECTIONS.identity,
+      HARNESS_SECTIONS.testing,
+      HARNESS_SECTIONS.run,
+      {
+        title: 'The device',
+        lines: [...DEVICE_BRIEF[target.kind], `The app under test is ${target.value}.`],
+      },
+    ]);
   }
 
-  public step(step: IFlatStep): string {
-    return [
-      `${step.caseId} · ${step.caseTitle}, step ${String(step.numberInCase)}.`,
-      `Carry out: ${step.action}`,
-      `The QA expects: ${step.expected}`,
-    ].join('\n');
+  public walk(props: { steps: IFlatStep[]; screen: string }): string {
+    return describeCase(props);
   }
 }

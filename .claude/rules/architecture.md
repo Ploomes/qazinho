@@ -62,8 +62,8 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
 the system prompt as titled sections, the device brief per platform, and the answer schemas. The
 page never writes a prompt: the chat sends the QA's words, the app and the plan, and main adds the
 harness once through `--append-system-prompt`. A run gives the agent the device as MCP tools
-(`DeviceToolServer`) and no other tool, so within a step it looks, acts, corrects itself and
-judges in one turn.
+(`DeviceToolServer`) and no other tool. One agent turn walks a whole case: it acts, corrects
+itself, and files each step with the `report` tool as soon as it is judged.
 
 ## Heavy work stays off the main process
 
@@ -81,7 +81,7 @@ screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `
 | `DeviceToolServer`                    | hands the device to the agent as MCP tools on 127.0.0.1, during a run  |
 | `WebDriver`                           | drives Chrome over playwright-core, one profile per workspace          |
 | `LiveStream`                          | serves the device's frames as MJPEG on 127.0.0.1, for the device panel |
-| `RunCoordinator`                      | walks a plan a step at a time: the agent acts through tools and judges |
+| `RunCoordinator`                      | walks a plan a case per agent turn: it acts and reports through tools  |
 | `ResourceCollector` / `ProcessOwners` | one `ps` sweep, charged to whoever started it                          |
 | `Archive`                             | the QA's projects, workspaces and plans, as files on disk              |
 | `SetupInstaller`                      | installs an agent CLI or idb on request, streaming each line it prints |

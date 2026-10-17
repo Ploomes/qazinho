@@ -11,7 +11,6 @@ function run(props: { kind: TargetKind; value: string }): IWalkRun {
     workspaceId: 'w1',
     agentId: 'claude-code',
     model: 'sonnet',
-    sessionId: null,
     target: props,
     runId: 'r-01',
     steps: [],

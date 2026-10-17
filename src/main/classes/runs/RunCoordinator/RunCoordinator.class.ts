@@ -1,27 +1,28 @@
-import type { IRunCoordinator, IStepResult, IWalkRun, IWalkStep } from './types';
+import type { IRunCoordinator, IWalkRun } from './types';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { DeviceToolServer } from '@/main/classes/agents/DeviceToolServer';
+import type { IStepReport } from '@/main/classes/agents/DeviceToolServer/types';
 import type { Harness } from '@/main/classes/agents/Harness';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
 import type { IDeviceDriver } from '@/main/classes/devices/types';
 import type {
   IAndroidSetup,
+  IFlatStep,
   IIosSetup,
   IRunEvent,
   IStartRun,
-  IStepOutcome,
   TargetKind,
 } from '@/types';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { stripAnsi } from '@/main/library';
-import { RUN_WALK } from './constants';
+import { RUN_WALK, UNWALKED } from './constants';
 import {
   agentFailure,
+  casesOf,
   driverFor,
-  parseNote,
-  parseVerdict,
-  skippedOutcome,
+  outcomeOfReport,
+  unwalkedOutcome,
 } from './library';
 
 /** Walks a plan on a real device: the agent drives, the requirement judges. */
@@ -181,101 +182,147 @@ export class RunCoordinator {
     driver: IDeviceDriver;
   }): Promise<void> {
     const { run, driver } = props;
-    const broken = new Set<string>();
-    let session: string | null = run.sessionId;
-    let walkedCase = '';
 
-    for (const [index, step] of run.steps.entries()) {
+    for (const steps of casesOf(run.steps)) {
       await this.holdWhilePaused(run.workspaceId);
 
       if (this.stopping.has(run.workspaceId)) break;
 
-      if (step.caseId !== walkedCase) {
-        walkedCase = step.caseId;
-        await this.reopen({ driver, url: run.target.value });
-      }
+      await this.reopen({ driver, url: run.target.value });
 
-      if (broken.has(step.caseId)) {
-        this.onEvent({
-          kind: 'step',
-          outcome: skippedOutcome({ step, index, workspaceId: run.workspaceId }),
-        });
-
-        continue;
-      }
-
-      this.onEvent({ kind: 'doing', workspaceId: run.workspaceId, index });
-
-      const result = await this.walkStep({ run, driver, step, index, session });
-
-      if (result === null) break;
-
-      session = result.session;
-
-      if (result.verdict !== 'passed') broken.add(step.caseId);
+      if (!(await this.walkCase({ run, driver, steps }))) break;
     }
   }
 
-  private async walkStep(props: IWalkStep): Promise<IStepResult | null> {
-    const { run, driver, step, index } = props;
-    const began = Date.now();
-    const ask = {
-      workspaceId: run.workspaceId,
-      agentId: run.agentId,
-      model: run.model,
-      command: run.command,
+  /** One agent turn per case, in a session of its own: it acts and reports each step through the tools. */
+  private async walkCase(props: {
+    run: IWalkRun;
+    driver: IDeviceDriver;
+    steps: { step: IFlatStep; index: number }[];
+  }): Promise<boolean> {
+    const { run, driver } = props;
+    const { workspaceId } = run;
+    const pending = [...props.steps];
+    let began = Date.now();
+    let isOver = false;
+
+    // Everything is filed once the case is over: its closing words would only cost another call.
+    const endCase = (said: string) => {
+      isOver = true;
+      setImmediate(() => {
+        this.runner.cancel(workspaceId);
+      });
+
+      return said;
     };
 
-    const harness = this.harness.run(run.target);
-    const mcpConfig = this.tools.mcpConfigFor(run.workspaceId);
+    const unwalked = (verdict: 'skipped' | 'blocked') => {
+      for (const [position, { step, index }] of pending.entries())
+        this.onEvent({
+          kind: 'step',
+          outcome: unwalkedOutcome({
+            step,
+            index,
+            workspaceId,
+            verdict: position === 0 ? verdict : 'skipped',
+            why:
+              position === 0 && verdict === 'blocked'
+                ? UNWALKED.unreported
+                : UNWALKED.skipped,
+          }),
+        });
+
+      pending.length = 0;
+    };
+
+    const onReport = async (report: IStepReport): Promise<string> => {
+      const walking = pending[0];
+
+      if (walking === undefined)
+        return 'Every step of this case is reported. End your turn now.';
+
+      if (report.step !== walking.step.numberInCase)
+        return `Step ${String(walking.step.numberInCase)} is not reported yet: carry it out and report it first.`;
+
+      pending.shift();
+
+      if (report.note.length > 0)
+        this.onEvent({ kind: 'note', workspaceId, text: report.note });
+
+      const shot = await driver.shoot(
+        join(run.shotDir, `step-${String(walking.index + 1)}.jpg`),
+      );
+
+      this.onEvent({
+        kind: 'step',
+        outcome: outcomeOfReport({
+          report,
+          step: walking.step,
+          index: walking.index,
+          workspaceId,
+          tookMs: Date.now() - began,
+          shot,
+        }),
+      });
+
+      if (report.verdict !== 'passed') {
+        unwalked('skipped');
+
+        return endCase('Filed. The case stops here because this step did not hold up.');
+      }
+
+      const next = pending[0];
+
+      if (next === undefined)
+        return endCase('Filed. That was the last step of this case.');
+
+      await this.holdWhilePaused(workspaceId);
+
+      if (this.stopping.has(workspaceId))
+        return 'The QA stopped the run: end your turn now.';
+
+      began = Date.now();
+      this.onEvent({ kind: 'doing', workspaceId, index: next.index });
+
+      return `Filed. Next is step ${String(next.step.numberInCase)}: ${next.step.action}`;
+    };
+
+    const mcpConfig = this.tools.mcpConfigFor(workspaceId);
 
     if (mcpConfig === null)
       throw new Error('The device tools are not up, so the agent cannot act.');
 
-    // One call per step: the agent looks, acts and corrects itself through the tools, then judges.
+    const first = pending[0];
+
+    if (first !== undefined)
+      this.onEvent({ kind: 'doing', workspaceId, index: first.index });
+
+    this.tools.attach({ workspaceId, driver, onReport });
+
     const asked = await this.runner.ask({
-      ...ask,
-      sessionId: props.session,
-      schema: harness.schema,
-      systemPrompt: harness.systemPrompt,
+      workspaceId,
+      command: run.command,
+      model: run.model,
+      sessionId: null,
+      systemPrompt: this.harness.run(run.target),
       mcpConfig,
-      prompt: this.harness.step(step),
+      prompt: this.harness.walk({
+        steps: pending.map(({ step }) => step),
+        screen: await driver.describe().catch(() => ''),
+      }),
     });
 
-    if (this.stopping.has(run.workspaceId)) return null;
+    if (this.stopping.has(workspaceId)) return false;
+
+    if (isOver) return true;
 
     const failed = agentFailure(asked);
 
     if (failed !== null) throw new Error(failed);
 
-    const verdict = parseVerdict(asked.text);
-    const note = parseNote(asked.text);
+    unwalked('blocked');
 
-    if (note.length > 0)
-      this.onEvent({ kind: 'note', workspaceId: run.workspaceId, text: note });
-
-    const shot = await driver.shoot(join(run.shotDir, `step-${String(index + 1)}.jpg`));
-
-    const outcome: IStepOutcome = {
-      workspaceId: run.workspaceId,
-      caseId: step.caseId,
-      stepNumber: step.numberInCase,
-      index,
-      action: step.action,
-      expected: step.expected,
-      verdict: verdict.verdict,
-      why: verdict.why,
-      got: verdict.got,
-      title: verdict.title,
-      severity: verdict.severity,
-      tookMs: Date.now() - began,
-      screenshot: shot?.dataUrl ?? null,
-      shotFile: shot?.file ?? null,
-    };
-
-    this.onEvent({ kind: 'step', outcome });
-
-    return { session: asked.sessionId, verdict: outcome.verdict };
+    return true;
   }
 
   private async reopen(props: { driver: IDeviceDriver; url: string }): Promise<void> {

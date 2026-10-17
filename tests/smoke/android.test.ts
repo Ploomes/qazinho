@@ -102,7 +102,6 @@ describe('a real run on a phone', () => {
       workspaceId: 'w-android',
       agentId: 'claude-code',
       model: 'sonnet',
-      sessionId: null,
       target: { kind: 'android', value: APK },
       runId: 'r-01',
       steps: [

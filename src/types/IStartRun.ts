@@ -6,7 +6,6 @@ export interface IStartRun {
   workspaceId: string;
   agentId: string;
   model: string;
-  sessionId: string | null;
   target: ITargetUnderTest;
   runId: string;
   steps: IFlatStep[];

@@ -1,12 +1,14 @@
 import type { IFlatStep, IStepOutcome } from '@/types';
 
-/** A step nobody walked, because the one before it in the same case did not hold up. */
-export function skippedOutcome(props: {
+/** A step with no verdict of the agent's own: skipped after a step that failed, or never reported. */
+export function unwalkedOutcome(props: {
   step: IFlatStep;
   index: number;
   workspaceId: string;
+  verdict: 'skipped' | 'blocked';
+  why: string;
 }): IStepOutcome {
-  const { step, index, workspaceId } = props;
+  const { step, index, workspaceId, verdict, why } = props;
 
   return {
     workspaceId,
@@ -15,8 +17,8 @@ export function skippedOutcome(props: {
     index,
     action: step.action,
     expected: step.expected,
-    verdict: 'skipped',
-    why: 'Skipped because the step before it did not hold up.',
+    verdict,
+    why,
     got: '',
     title: '',
     severity: 'medium',

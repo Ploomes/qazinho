@@ -52,7 +52,6 @@ describe('stopping a run', () => {
       workspaceId: 'w-stop',
       agentId: 'slow',
       model: '',
-      sessionId: null,
       target: { kind: 'web', value: 'http://127.0.0.1:4324/' },
       runId: 'r-01',
       steps: [

@@ -29,15 +29,13 @@ const SDK = join(
 );
 
 // Works the way Claude Code does with --mcp-config: it calls the device tools, sees each result,
-// and answers under --json-schema through a StructuredOutput tool call.
+// and reports the step through the report tool.
 const RESOURCEFUL = `#!/usr/bin/env node
 const { Client } = require(${JSON.stringify(join(SDK, 'index.js'))});
 const { StreamableHTTPClientTransport } = require(${JSON.stringify(join(SDK, 'streamableHttp.js'))});
 const argv = process.argv;
 process.stdin.resume();
 process.stdin.on('end', async () => {
-  const said = (input) => console.log(JSON.stringify({ type: 'assistant', session_id: 's1',
-    message: { content: [{ type: 'tool_use', name: 'StructuredOutput', input }] } }));
   const harnessed = argv.includes('--append-system-prompt') && argv.includes('--strict-mcp-config');
   const config = JSON.parse(argv[argv.indexOf('--mcp-config') + 1]);
   const client = new Client({ name: 'fake-agent', version: '1.0.0' });
@@ -45,13 +43,14 @@ process.stdin.on('end', async () => {
   const first = await client.callTool({ name: 'click', arguments: { target: 'Log in' } });
   const second = first.isError ? await client.callTool({ name: 'click', arguments: { target: 'Sign in' } }) : first;
   const saw = second.content[0].text;
-  await client.close();
-  said({
+  await client.callTool({ name: 'report', arguments: {
+    step: 1,
     verdict: harnessed && saw.includes('Signed in') ? 'passed' : 'failed',
     why: 'The page says Signed in.',
     got: saw.slice(0, 80),
     ...(first.isError ? { note: 'There is no Log in button, so I used Sign in.' } : {}),
-  });
+  } });
+  await client.close();
   console.log(JSON.stringify({ type: 'result', result: '', is_error: false, session_id: 's1' }));
 });
 `;
@@ -97,7 +96,6 @@ async function walkWith(script: string): Promise<IRunEvent[]> {
     workspaceId: 'w-agent',
     agentId: 'fake',
     model: '',
-    sessionId: null,
     target: { kind: 'web', value: `http://127.0.0.1:${String(PORT)}/` },
     runId: 'r-01',
     steps: [

@@ -46,7 +46,6 @@ export const useRunControls = () => {
       workspaceId: workspace.id,
       agentId: detected.find(({ name }) => name === agentName)?.id ?? 'claude-code',
       model,
-      sessionId: workspace.sessionId,
       target: { kind: target.kind, value: target.value },
       runId,
       steps,
