@@ -62,8 +62,9 @@
   gap: var(--space-4);
 }
 
-.chat__mark {
-  opacity: 0.35;
+.chat__gutter--intern {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .chat__empty-title {

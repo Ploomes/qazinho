@@ -26,7 +26,13 @@ export const Runs: React.FC = () => {
   const { t } = useTranslation();
 
   if (isEmpty || run === null) {
-    return <EmptyState title={t('RUN.EMPTY_TITLE')} body={t('RUN.EMPTY_BODY')} />;
+    return (
+      <EmptyState
+        mood="sleeping"
+        title={t('RUN.EMPTY_TITLE')}
+        body={t('RUN.EMPTY_BODY')}
+      />
+    );
   }
 
   return (

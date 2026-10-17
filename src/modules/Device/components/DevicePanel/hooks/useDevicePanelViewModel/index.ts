@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MOTION } from '@/constants';
 import { DEVICE, DEVICE_STATE_KEY } from '@/modules/Device/constants';
-import { deviceStateOf, formatElapsed } from '@/modules/Device/library';
+import { deviceStateOf, formatElapsed, moodOfStatus } from '@/modules/Device/library';
 import { useRunControls } from '@/modules/Run/hooks';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
@@ -56,6 +56,7 @@ export const useDevicePanelViewModel = () => {
     hasControls: isRunLive,
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
     stateText: t(DEVICE_STATE_KEY[state] as never),
+    mood: moodOfStatus(workspace?.status ?? null),
     deviceLabel: isPhone ? 'Emulator · Pixel 7 · API 34' : 'Chrome 1280 × 800',
     shot: live?.shot ?? null,
     stream: live?.isDone === false ? live.streamUrl : null,

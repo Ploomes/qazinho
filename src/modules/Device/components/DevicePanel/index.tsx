@@ -1,6 +1,13 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Button, Chip, Eyebrow, IconButton, StatusPill } from '@/components/atoms';
+import {
+  Button,
+  Chip,
+  Eyebrow,
+  IconButton,
+  Intern,
+  StatusPill,
+} from '@/components/atoms';
 import { MOTION } from '@/constants';
 import { DeviceScreen } from './components';
 import { useDevicePanelViewModel } from './hooks';
@@ -18,6 +25,7 @@ export const DevicePanel: React.FC = () => {
     hasControls,
     pauseLabel,
     stateText,
+    mood,
     deviceLabel,
     shot,
     stream,
@@ -87,7 +95,10 @@ export const DevicePanel: React.FC = () => {
             <div className="device-panel__inner" style={innerStyle}>
               <header className="device-panel__header">
                 <Chip hasCaret>{deviceLabel}</Chip>
-                <span className="device-panel__state">{stateText}</span>
+                <span className="device-panel__state">
+                  <Intern mood={mood} size={22} />
+                  {stateText}
+                </span>
                 <span className="device-panel__collapse">
                   <IconButton
                     glyph="→|"
@@ -101,6 +112,7 @@ export const DevicePanel: React.FC = () => {
               <div className="device-panel__viewport">
                 {!hasScreen && (
                   <div className="device-panel__off">
+                    <Intern mood="sleeping" size={72} />
                     <span>{t('DEVICE.NO_DEVICE')}</span>
                     <span>{t('DEVICE.NO_DEVICE_BODY')}</span>
                   </div>

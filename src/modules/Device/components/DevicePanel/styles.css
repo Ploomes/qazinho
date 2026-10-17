@@ -38,6 +38,9 @@
 }
 
 .device-panel__state {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   color: var(--ink3);
   font: var(--font-mono-sm);
 }

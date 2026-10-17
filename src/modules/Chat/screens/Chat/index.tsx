@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Chip, Logo } from '@/components/atoms';
+import { Chip, Intern } from '@/components/atoms';
 import { MOTION } from '@/constants';
 import {
   AgentMessage,
@@ -41,9 +41,7 @@ export const Chat: React.FC = () => {
     <div className="chat">
       {isEmpty ? (
         <div className="chat__empty">
-          <span className="chat__mark">
-            <Logo size={42} tone="quiet" />
-          </span>
+          <Intern mood="neutral" />
           <span className="chat__empty-title">{t('CHAT.EMPTY_TITLE')}</span>
           <p className="chat__empty-body">{t('CHAT.EMPTY_BODY')}</p>
           <div className="chat__suggestions">
@@ -124,7 +122,9 @@ export const Chat: React.FC = () => {
 
           {isAgentTyping && (
             <div className="chat__row">
-              <div className="chat__gutter" />
+              <div className="chat__gutter chat__gutter--intern">
+                <Intern mood="thinking" size={40} />
+              </div>
               <div className="chat__live">
                 {liveText !== '' && <p className="chat__live-text">{liveText}</p>}
                 <TypingDots />

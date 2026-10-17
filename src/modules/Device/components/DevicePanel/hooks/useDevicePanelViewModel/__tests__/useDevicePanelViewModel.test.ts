@@ -24,6 +24,18 @@ describe('useDevicePanelViewModel', () => {
     expect(result.current.stateText).toBe('idle');
   });
 
+  it('puts the Estagiário in the mood of the workspace: asleep before a run, alarmed at a failure', () => {
+    const { result } = renderHook(() => useDevicePanelViewModel());
+
+    expect(result.current.mood).toBe('sleeping');
+
+    useWorkspaceStore.setState({
+      workspaces: [{ ...makeWorkspace(), status: 'failed' }],
+    });
+
+    expect(renderHook(() => useDevicePanelViewModel()).result.current.mood).toBe('bug');
+  });
+
   it('describes the browser for a URL and the emulator for a build', () => {
     const { result } = renderHook(() => useDevicePanelViewModel());
 

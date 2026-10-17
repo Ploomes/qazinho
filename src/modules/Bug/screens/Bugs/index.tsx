@@ -20,7 +20,9 @@ export const Bugs: React.FC = () => {
   const { t } = useTranslation();
 
   if (isEmpty) {
-    return <EmptyState title={t('BUG.EMPTY_TITLE')} body={t('BUG.EMPTY_BODY')} />;
+    return (
+      <EmptyState mood="passed" title={t('BUG.EMPTY_TITLE')} body={t('BUG.EMPTY_BODY')} />
+    );
   }
 
   return (

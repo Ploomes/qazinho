@@ -30,6 +30,7 @@ export const Plan: React.FC = () => {
   if (isEmpty) {
     return (
       <EmptyState
+        mood="neutral"
         title={t('PLAN.EMPTY_TITLE')}
         body={t('PLAN.EMPTY_BODY')}
         action={
