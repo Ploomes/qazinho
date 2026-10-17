@@ -1,9 +1,10 @@
 # QAzinho
 
-A local-first desktop app where AI agents test your web and mobile apps from a test plan.
+Your QA assistant, on your desktop.
 
-Go crash your app before your users do. You write the plan, the agent opens the app, walks the
-flows and tells you what broke.
+Plan tests with your own AI agent, run them on web, Android and iOS, and keep your test work
+organised. You stay in charge: the agent drafts the plan with you, walks the flows on a real
+device and tells you what it saw.
 
 - **Web, Android and iOS.** A URL, an `.apk`, or a simulator `.app` build.
 - **Your agent.** Claude Code, Codex, Gemini CLI or any other agent that speaks ACP.

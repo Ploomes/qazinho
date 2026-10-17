@@ -1,8 +1,9 @@
 # QAzinho
 
-A local-first desktop app where AI agents test web and mobile apps from a test plan. The QA writes
-the plan and orchestrates; the agent opens the app, walks the flows and reports what broke. The
-name is the pitch: go crash your app before your users do.
+A local-first desktop QA assistant. A QA professional plans tests, runs them on web and mobile
+apps, and keeps their test work organised, with their own AI agent alongside: the agent drafts the
+plan with them, walks the flows on a real device and reports what it saw against what the QA
+expected. The QA stays in charge; the agent is the assistant.
 
 | Target  | Input                                   | Driven by                                         | Verified         |
 | ------- | --------------------------------------- | ------------------------------------------------- | ---------------- |

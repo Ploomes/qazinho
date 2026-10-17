@@ -10,8 +10,7 @@ src/
 │   ├── types/       ← contracts every side agrees on; imports none of them
 │   ├── constants/   ← values every side shares, the IPC channel names included
 │   ├── components/  ← atoms, molecules, organisms, templates (components.md)
-│   ├── hooks/       ← hooks used across modules
-│   └── library/     ← functions used across the page, one per file
+│   └── hooks/       ← hooks used across modules
 ├── modules/         ← screens, grouped by domain
 ├── store/  services/  languages/  styles/
 ├── app/  index.tsx  index.html

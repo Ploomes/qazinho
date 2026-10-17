@@ -113,7 +113,6 @@ src/
 │   ├── components/   ← atoms, molecules, organisms, templates (components.md)
 │   ├── constants/    ← values every side shares
 │   ├── hooks/        ← hooks used across modules
-│   ├── library/      ← functions used across the page, one per file
 │   └── types/        ← contracts, imported by every side
 ├── modules/<Domain>/screens/<Screen>/
 ├── languages/        ← i18next, en and pt (i18n.md)
