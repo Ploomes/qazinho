@@ -1,4 +1,4 @@
-import type { TargetKind } from '@/types';
+import type { TargetKind } from '@/shared/types';
 
 export interface ISidebarWorkspaceRow {
   kind: 'workspace';

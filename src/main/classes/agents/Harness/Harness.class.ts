@@ -1,4 +1,4 @@
-import type { IChatReference, IFlatStep, ITargetUnderTest } from '@/types';
+import type { IChatReference, IFlatStep, ITargetUnderTest } from '@/shared/types';
 import { CHAT_SCHEMA, DEVICE_BRIEF, HARNESS_SECTIONS } from './constants';
 import {
   describeCase,

@@ -1,4 +1,4 @@
-import type { IChatReference } from '@/types';
+import type { IChatReference } from '@/shared/types';
 
 const LIMIT = 8;
 

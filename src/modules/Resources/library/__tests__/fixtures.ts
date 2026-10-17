@@ -1,4 +1,4 @@
-import type { IProcessSample, ProcessKind } from '@/types';
+import type { IProcessSample, ProcessKind } from '@/shared/types';
 
 export function sample(props: {
   name: string;

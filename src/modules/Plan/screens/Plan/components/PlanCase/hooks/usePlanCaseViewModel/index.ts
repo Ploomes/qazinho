@@ -1,7 +1,7 @@
 import type { IPlanCaseProps } from '@/modules/Plan/screens/Plan/components/PlanCase/types';
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
 import { useTranslation } from 'react-i18next';
-import { STATUS } from '@/components/atoms/StatusPill/constants';
+import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 
 export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
   const { testCase, isOpen, isLocked, onToggle } = props;

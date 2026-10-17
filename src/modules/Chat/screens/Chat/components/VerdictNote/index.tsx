@@ -1,6 +1,6 @@
 import type { IVerdictNoteProps } from './types';
-import { StatusPill } from '@/components/atoms';
-import { ExpectedGot } from '@/components/molecules';
+import { StatusPill } from '@/shared/components/atoms';
+import { ExpectedGot } from '@/shared/components/molecules';
 import './styles.css';
 
 export const VerdictNote: React.FC<IVerdictNoteProps> = ({ message }) => (

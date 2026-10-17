@@ -1,5 +1,5 @@
 import type { IIntegrationField } from './IIntegrationField';
-import type { IntegrationId } from '@/types';
+import type { IntegrationId } from '@/shared/types';
 import type { ParseKeys } from 'i18next';
 
 /** An issue tracker QAzinho can connect to, what it asks for, and where the QA makes a token. */

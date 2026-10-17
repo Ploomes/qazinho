@@ -2,7 +2,7 @@ import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { DeviceToolServer } from '@/main/classes/agents/DeviceToolServer';
 import type { Harness } from '@/main/classes/agents/Harness';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
-import type { IAndroidSetup, IIosSetup, IRunEvent } from '@/types';
+import type { IAndroidSetup, IIosSetup, IRunEvent } from '@/shared/types';
 
 export interface IRunCoordinator {
   runner: AgentRunner;

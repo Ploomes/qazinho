@@ -19,15 +19,16 @@ const NO_NODE_IN_THE_PAGE = {
 
 const NO_PAGE_IN_NODE = {
   group: [
-    '@/components/**',
+    '@/shared/components/**',
     '@/modules/**',
     '@/store/**',
-    '@/hooks/**',
+    '@/shared/hooks/**',
+    '@/shared/library/**',
     '@/services/**',
     '@/styles/**',
   ],
   message:
-    'The main process and the preload never import the page. Share a type through @/types.',
+    'The main process and the preload never import the page. Share a type through @/shared/types.',
 };
 
 const NO_FRAMER_MOTION = {
@@ -156,7 +157,7 @@ export default config(
   },
 
   {
-    files: ['src/types/**/*.ts'],
+    files: ['src/shared/types/**/*.ts'],
     rules: {
       'no-restricted-imports': ['error', { patterns: [NO_NODE_IN_THE_PAGE] }],
       '@typescript-eslint/no-restricted-imports': [

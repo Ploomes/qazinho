@@ -1,4 +1,4 @@
-import type { IInstallResult, InstallableId, ISetupEvent } from '@/types';
+import type { IInstallResult, InstallableId, ISetupEvent } from '@/shared/types';
 import { NO_INSTALL } from './constants';
 
 /** The only caller of the install side of the bridge. */

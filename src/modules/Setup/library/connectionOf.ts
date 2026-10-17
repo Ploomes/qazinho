@@ -1,4 +1,4 @@
-import type { IConnectIntegration, IntegrationId } from '@/types';
+import type { IConnectIntegration, IntegrationId } from '@/shared/types';
 
 /** What the QA typed, shaped for the tracker it is for; null while a field it needs is still empty. */
 export function connectionOf(props: {

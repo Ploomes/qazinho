@@ -1,5 +1,5 @@
 import type { IWalkRun } from '@/main/classes/runs/RunCoordinator/types';
-import type { TargetKind } from '@/types';
+import type { TargetKind } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
 import { AndroidDriver } from '@/main/classes/devices/AndroidDriver';
 import { IosDriver } from '@/main/classes/devices/IosDriver';

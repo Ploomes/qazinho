@@ -1,4 +1,4 @@
-import type { IStartRun } from '@/types';
+import type { IStartRun } from '@/shared/types';
 
 export interface IWalkRun extends IStartRun {
   command: string;

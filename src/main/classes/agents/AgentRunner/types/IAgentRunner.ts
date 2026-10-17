@@ -1,5 +1,5 @@
 import type { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
-import type { IAgentEvent } from '@/types';
+import type { IAgentEvent } from '@/shared/types';
 
 export interface IAgentRunner {
   onEvent: (event: IAgentEvent) => void;

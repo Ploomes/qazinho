@@ -1,4 +1,4 @@
-import type { StepVerdict } from '@/types';
+import type { StepVerdict } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
 import { countSeen } from '@/modules/Bug/library';
 import { walkRun } from '@/modules/Workspace/library/__tests__/fixtures';

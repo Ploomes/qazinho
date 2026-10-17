@@ -1,4 +1,4 @@
-import type { IResourceSnapshot } from '@/types';
+import type { IResourceSnapshot } from '@/shared/types';
 
 export const NO_RESOURCES: IResourceSnapshot = {
   cpu: 0,

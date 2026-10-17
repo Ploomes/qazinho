@@ -6,7 +6,7 @@ import type {
   InstallableId,
   IntegrationId,
   ISetupEvent,
-} from '@/types';
+} from '@/shared/types';
 
 /** What setting the machine up is doing: the managers an install needs, installs under way, and trackers. */
 export interface ISetupStore {

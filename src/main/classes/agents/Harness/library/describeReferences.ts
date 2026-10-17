@@ -1,5 +1,5 @@
 import type { IHarnessSection } from '@/main/classes/agents/Harness/types';
-import type { IChatReference } from '@/types';
+import type { IChatReference } from '@/shared/types';
 
 /** What the QA pointed at with @, as a section the agent explains from. */
 export function describeReferences(references: IChatReference[]): IHarnessSection {

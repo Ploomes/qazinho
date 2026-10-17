@@ -1,4 +1,4 @@
-import type { IFlatStep } from '@/types';
+import type { IFlatStep } from '@/shared/types';
 
 /** The flat plan cut back into its cases, each step keeping its place in the whole run. */
 export function casesOf(steps: IFlatStep[]): { step: IFlatStep; index: number }[][] {

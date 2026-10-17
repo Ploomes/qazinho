@@ -1,5 +1,5 @@
 import type { IWorkspace } from '@/modules/Workspace';
-import type { IChatReference } from '@/types';
+import type { IChatReference } from '@/shared/types';
 import { caseVerdict } from '@/modules/Run/library';
 
 /** Everything in a workspace the QA can point at with @, newest runs first, with the facts behind each. */

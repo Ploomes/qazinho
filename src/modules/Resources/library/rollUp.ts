@@ -1,4 +1,4 @@
-import type { IProcessSample } from '@/types';
+import type { IProcessSample } from '@/shared/types';
 
 const MB_IN_GB = 1024;
 

@@ -1,4 +1,4 @@
-import type { IRunEvent } from '@/types';
+import type { IRunEvent } from '@/shared/types';
 import { mkdtemp, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';

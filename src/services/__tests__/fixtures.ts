@@ -1,4 +1,4 @@
-import type { IQazinhoApi, Platform } from '@/types';
+import type { IQazinhoApi, Platform } from '@/shared/types';
 
 /** A bridge like the preload's, for a test that needs the page to have one. */
 export function fakeQazinhoApi(platform: Platform): IQazinhoApi {

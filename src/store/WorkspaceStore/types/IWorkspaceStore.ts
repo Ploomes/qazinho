@@ -2,7 +2,7 @@ import type { BugFilter } from '@/modules/Bug';
 import type { ITestCase } from '@/modules/Plan';
 import type { RunFilter } from '@/modules/Run';
 import type { IWorkspace, WorkspaceTab } from '@/modules/Workspace';
-import type { IStepOutcome } from '@/types';
+import type { IStepOutcome } from '@/shared/types';
 
 /** The workspaces and everything the QA can poke inside one of them. */
 export interface IWorkspaceStore {

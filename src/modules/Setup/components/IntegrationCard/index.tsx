@@ -1,8 +1,8 @@
 import type { IIntegrationCardProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Button, Input, StatusPill } from '@/components/atoms';
-import { MOTION } from '@/constants';
+import { Button, Input, StatusPill } from '@/shared/components/atoms';
+import { MOTION } from '@/shared/constants';
 import { useIntegrationCardViewModel } from './hooks';
 import './styles.css';
 

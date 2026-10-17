@@ -3,7 +3,7 @@ import type {
   IConnectResult,
   IIntegrationStatus,
   IntegrationId,
-} from '@/types';
+} from '@/shared/types';
 import { NO_CONNECTION } from './constants';
 
 /** The only caller of the tracker side of the bridge. Tokens go in; only accounts come back. */

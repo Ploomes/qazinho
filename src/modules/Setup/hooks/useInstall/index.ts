@@ -1,4 +1,4 @@
-import type { InstallableId } from '@/types';
+import type { InstallableId } from '@/shared/types';
 import { useMachineCheck } from '@/modules/Setup/hooks/useMachineCheck';
 import { Setup } from '@/services';
 import { useSetupStore } from '@/store';

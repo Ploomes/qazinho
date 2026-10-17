@@ -1,6 +1,6 @@
 import type { IStepReport } from '@/main/classes/agents/DeviceToolServer/types';
 import type { IShot } from '@/main/classes/devices/types';
-import type { IFlatStep, IStepOutcome } from '@/types';
+import type { IFlatStep, IStepOutcome } from '@/shared/types';
 
 /** A step as the run files it: the agent's report, the screenshot taken when it arrived, and the time it took. */
 export function outcomeOfReport(props: {

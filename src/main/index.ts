@@ -9,11 +9,10 @@ import type {
   ISetupEvent,
   IStartRun,
   PickKind,
-} from '@/types';
+} from '@/shared/types';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { app, BrowserWindow, dialog, ipcMain, safeStorage, shell } from 'electron';
-import { CHANNELS } from '@/constants';
 import {
   AgentDetector,
   AgentRunner,
@@ -37,6 +36,7 @@ import {
   isInternalNavigation,
   searchDirectories,
 } from '@/main/library';
+import { CHANNELS } from '@/shared/constants';
 
 if (PATHS.data === join(app.getPath('appData'), app.getName()))
   adoptDataDir({ from: PATHS.legacyData, to: PATHS.data });

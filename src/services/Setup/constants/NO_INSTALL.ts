@@ -1,4 +1,4 @@
-import type { IInstallResult } from '@/types';
+import type { IInstallResult } from '@/shared/types';
 
 export const NO_INSTALL: IInstallResult = {
   isInstalled: false,

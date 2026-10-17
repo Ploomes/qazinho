@@ -1,10 +1,10 @@
 import type { ISettingsStore } from './types';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { LEGACY_STORAGE, STORAGE } from '@/constants';
 import { resolveLanguage } from '@/languages/library';
 import { KEYBINDS } from '@/modules/Settings/constants';
-import { withLegacyKeys } from '@/store/library';
+import { LEGACY_STORAGE, STORAGE } from '@/shared/constants';
+import { withLegacyKeys } from '@/shared/library';
 import { migrateSettings } from './library';
 
 export const useSettingsStore = create<ISettingsStore>()(

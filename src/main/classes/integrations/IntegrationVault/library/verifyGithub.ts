@@ -1,5 +1,5 @@
 import type { Fetcher } from '@/main/classes/integrations/IntegrationVault/types';
-import type { IConnectResult } from '@/types';
+import type { IConnectResult } from '@/shared/types';
 import { TRACKER_ERRORS } from '@/main/classes/integrations/IntegrationVault/constants';
 import { trackerRefusal } from './trackerRefusal';
 

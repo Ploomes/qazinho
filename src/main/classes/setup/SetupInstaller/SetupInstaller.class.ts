@@ -1,5 +1,10 @@
 import type { IInstallStep, ISetupInstaller } from './types';
-import type { IInstallResult, InstallableId, ISetupEvent, IToolStatus } from '@/types';
+import type {
+  IInstallResult,
+  InstallableId,
+  ISetupEvent,
+  IToolStatus,
+} from '@/shared/types';
 import { spawn } from 'node:child_process';
 import { delimiter } from 'node:path';
 import { findOnPath } from '@/main/library';

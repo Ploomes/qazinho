@@ -1,4 +1,4 @@
-import type { IDetectedAgent } from '@/types';
+import type { IDetectedAgent } from '@/shared/types';
 import { readFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';

@@ -1,4 +1,4 @@
-import type { IAgentTurn } from '@/types';
+import type { IAgentTurn } from '@/shared/types';
 
 export const NO_BRIDGE: IAgentTurn = {
   sessionId: null,

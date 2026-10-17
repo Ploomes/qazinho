@@ -3,7 +3,7 @@ import type {
   IDetectedAgent,
   IDeviceTools,
   IResourceSnapshot,
-} from '@/types';
+} from '@/shared/types';
 
 /** What this machine actually has, and what QAzinho is costing it right now. */
 export interface IMachineStore {

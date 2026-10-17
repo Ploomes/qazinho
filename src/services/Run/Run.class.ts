@@ -1,4 +1,4 @@
-import type { IRunEvent, IStartRun } from '@/types';
+import type { IRunEvent, IStartRun } from '@/shared/types';
 
 /** The only caller of the run side of the bridge. */
 export class Run {

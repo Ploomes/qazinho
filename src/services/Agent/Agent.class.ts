@@ -1,4 +1,4 @@
-import type { IAgentEvent, IAgentTurn, IAskAgent } from '@/types';
+import type { IAgentEvent, IAgentTurn, IAskAgent } from '@/shared/types';
 import { NO_BRIDGE } from './constants';
 
 /** The only caller of the agent side of the bridge. */

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { Eyebrow, Input, PlatformIcon } from '@/components/atoms';
-import { ModalFrame } from '@/components/templates';
+import { Eyebrow, Input, PlatformIcon } from '@/shared/components/atoms';
+import { ModalFrame } from '@/shared/components/templates';
 import { useNewWorkspaceModalViewModel } from './hooks';
 import './styles.css';
 

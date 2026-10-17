@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { STATUS } from '@/components/atoms/StatusPill/constants';
-import { MOTION } from '@/constants';
 import { RUN_FILTERS, RUN_PAGE_SIZE, RUN_VERDICTS } from '@/modules/Run/constants';
 import { caseVerdict, filterCases, pageOf } from '@/modules/Run/library';
+import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
+import { MOTION } from '@/shared/constants';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useRunsViewModel = () => {

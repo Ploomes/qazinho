@@ -1,4 +1,4 @@
-import type { IChatReference } from '@/types';
+import type { IChatReference } from '@/shared/types';
 
 /** The references a message still points at: a mention deleted from the text is dropped. */
 export function mentionsIn(props: {

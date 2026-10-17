@@ -6,7 +6,7 @@ import {
   useMachineWatch,
   useRunEvents,
   useRunTicker,
-} from '@/hooks';
+} from '@/shared/hooks';
 import { useAppStore, useSettingsStore } from '@/store';
 
 export const useAppViewModel = () => {

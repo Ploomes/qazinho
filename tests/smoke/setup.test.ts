@@ -1,4 +1,4 @@
-import type { ISetupEvent } from '@/types';
+import type { ISetupEvent } from '@/shared/types';
 import { chmod, mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';

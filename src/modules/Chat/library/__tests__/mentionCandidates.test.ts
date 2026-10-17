@@ -1,4 +1,4 @@
-import type { IChatReference } from '@/types';
+import type { IChatReference } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
 import { mentionCandidates } from '@/modules/Chat/library';
 

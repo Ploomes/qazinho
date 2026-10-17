@@ -1,4 +1,4 @@
-import type { IDeviceTools } from '@/types';
+import type { IDeviceTools } from '@/shared/types';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { findExistingPath, findOnPath } from '@/main/library';

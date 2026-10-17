@@ -1,10 +1,10 @@
 import { AnimatePresence, MotionConfig } from 'motion/react';
-import { Lightbox, Titlebar } from '@/components/organisms';
 import { DevicePanel } from '@/modules/Device';
 import { ProjectModal, Welcome } from '@/modules/Project';
 import { Settings } from '@/modules/Settings';
 import { Onboarding } from '@/modules/Setup';
 import { NewWorkspaceModal, Workspace } from '@/modules/Workspace';
+import { Lightbox, Titlebar } from '@/shared/components/organisms';
 import { Sidebar } from './components/Sidebar';
 import { useAppViewModel } from './hooks';
 import './styles.css';

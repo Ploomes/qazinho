@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { Logo } from '@/components/atoms';
 import { IntegrationCard } from '@/modules/Setup';
+import { Logo } from '@/shared/components/atoms';
 import { useSettingsViewModel } from './hooks';
 import './styles.css';
 

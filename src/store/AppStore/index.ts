@@ -1,8 +1,8 @@
 import type { IAppStore } from './types';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { LEGACY_STORAGE, STORAGE } from '@/constants';
-import { withLegacyKeys } from '@/store/library';
+import { LEGACY_STORAGE, STORAGE } from '@/shared/constants';
+import { withLegacyKeys } from '@/shared/library';
 
 export const useAppStore = create<IAppStore>()(
   persist(

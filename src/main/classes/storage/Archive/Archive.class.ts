@@ -1,4 +1,4 @@
-import type { ISavedState, ISavedWorkspace } from '@/types';
+import type { ISavedState, ISavedWorkspace } from '@/shared/types';
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { ARCHIVE } from './constants';

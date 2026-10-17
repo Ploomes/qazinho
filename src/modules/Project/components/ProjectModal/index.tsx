@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { Button, Eyebrow, Input } from '@/components/atoms';
-import { FileField } from '@/components/molecules';
-import { ModalFrame } from '@/components/templates';
+import { Button, Eyebrow, Input } from '@/shared/components/atoms';
+import { FileField } from '@/shared/components/molecules';
+import { ModalFrame } from '@/shared/components/templates';
 import { useProjectModalViewModel } from './hooks';
 import './styles.css';
 

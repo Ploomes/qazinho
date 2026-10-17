@@ -1,5 +1,5 @@
 import type { IAgentLine } from '@/main/types';
-import type { IAgentUsage } from '@/types';
+import type { IAgentUsage } from '@/shared/types';
 
 const EMPTY: IAgentUsage = {
   fiveHourUsed: null,

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { EmptyState } from '@/components/atoms';
+import { EmptyState } from '@/shared/components/atoms';
 import { BugCard } from './components';
 import { useBugsViewModel } from './hooks';
 import './styles.css';

@@ -1,8 +1,8 @@
 import type { IComposerProps } from './types';
 import { AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Chip } from '@/components/atoms';
-import { ModelPopover } from '@/components/organisms/ModelPopover';
+import { Chip } from '@/shared/components/atoms';
+import { ModelPopover } from '@/shared/components/organisms/ModelPopover';
 import { MentionPicker } from './components';
 import { useComposerViewModel } from './hooks';
 import './styles.css';

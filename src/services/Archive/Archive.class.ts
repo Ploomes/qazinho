@@ -1,4 +1,4 @@
-import type { ISavedState, ISavedWorkspace } from '@/types';
+import type { ISavedState, ISavedWorkspace } from '@/shared/types';
 import { NOTHING_SAVED } from './constants';
 
 /** The only caller of the disk side of the bridge. */

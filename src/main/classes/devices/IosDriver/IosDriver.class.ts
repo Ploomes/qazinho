@@ -1,6 +1,6 @@
 import type { IIosDriver } from './types';
 import type { IDeviceDriver, IShot } from '@/main/classes/devices/types';
-import type { IStepAction } from '@/types';
+import type { IStepAction } from '@/shared/types';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { IOS } from './constants';

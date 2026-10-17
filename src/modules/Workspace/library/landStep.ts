@@ -1,5 +1,5 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
-import type { IStepOutcome } from '@/types';
+import type { IStepOutcome } from '@/shared/types';
 import { makeBug } from '@/modules/Bug/library';
 import { appendRunMessages } from '@/modules/Chat/library';
 

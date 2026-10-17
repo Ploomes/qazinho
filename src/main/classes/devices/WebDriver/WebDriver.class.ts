@@ -1,6 +1,6 @@
 import type { IWebDriver } from './types';
 import type { IDeviceDriver, IShot } from '@/main/classes/devices/types';
-import type { IStepAction } from '@/types';
+import type { IStepAction } from '@/shared/types';
 import type { BrowserContext, CDPSession, Page } from 'playwright-core';
 import { chromium } from 'playwright-core';
 import { WEB_DRIVER } from './constants';

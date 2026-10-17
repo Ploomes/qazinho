@@ -1,5 +1,5 @@
 import type { IRunStep } from './IRunStep';
-import type { StepVerdict } from '@/types';
+import type { StepVerdict } from '@/shared/types';
 
 export interface IRunCase {
   id: string;

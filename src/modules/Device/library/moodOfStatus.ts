@@ -1,5 +1,5 @@
-import type { InternMood } from '@/components/atoms/Intern/types';
 import type { WorkspaceStatus } from '@/modules/Workspace';
+import type { InternMood } from '@/shared/components/atoms/Intern/types';
 
 const MOODS: Record<WorkspaceStatus, InternMood> = {
   idle: 'sleeping',

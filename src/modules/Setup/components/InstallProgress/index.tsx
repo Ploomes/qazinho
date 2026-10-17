@@ -1,8 +1,8 @@
 import type { IInstallProgressProps } from './types';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/atoms';
-import { MOTION } from '@/constants';
+import { Button } from '@/shared/components/atoms';
+import { MOTION } from '@/shared/constants';
 import { useInstallProgressViewModel } from './hooks';
 import './styles.css';
 

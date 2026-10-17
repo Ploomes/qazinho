@@ -1,7 +1,7 @@
 import type { IResourceCollector } from './types';
 import type { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import type { IProcessRow } from '@/main/types';
-import type { IProcessSample, IResourceSnapshot } from '@/types';
+import type { IProcessSample, IResourceSnapshot } from '@/shared/types';
 import { availableParallelism, totalmem } from 'node:os';
 import { collectSubtree } from '@/main/library';
 import { BYTES_IN_GB } from './constants';

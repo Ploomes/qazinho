@@ -1,5 +1,5 @@
 import type { IProcessRow } from '@/main/types';
-import type { IProcessSample, ProcessKind } from '@/types';
+import type { IProcessSample, ProcessKind } from '@/shared/types';
 import { basename } from 'node:path';
 
 export function toSample(props: {

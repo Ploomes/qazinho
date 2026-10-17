@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Chip, Intern } from '@/components/atoms';
-import { MOTION } from '@/constants';
+import { Chip, Intern } from '@/shared/components/atoms';
+import { MOTION } from '@/shared/constants';
 import {
   AgentMessage,
   AskBlock,

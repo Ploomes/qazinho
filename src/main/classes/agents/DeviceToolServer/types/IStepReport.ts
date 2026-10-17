@@ -1,4 +1,4 @@
-import type { Severity } from '@/types';
+import type { Severity } from '@/shared/types';
 
 /** A step the agent judged, as it reported it through the `report` tool. */
 export interface IStepReport {

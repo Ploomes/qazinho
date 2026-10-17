@@ -1,4 +1,4 @@
-import type { IDeviceTools } from '@/types';
+import type { IDeviceTools } from '@/shared/types';
 
 export const NO_TOOLS: IDeviceTools = {
   androidSdk: { isFound: false, path: null },

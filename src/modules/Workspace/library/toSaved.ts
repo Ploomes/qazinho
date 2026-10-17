@@ -1,5 +1,5 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
-import type { ISavedWorkspace } from '@/types';
+import type { ISavedWorkspace } from '@/shared/types';
 import { stringify } from 'yaml';
 
 /** Screenshots stay on disk as files, so what is written here is text a QA can read. */

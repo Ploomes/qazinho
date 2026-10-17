@@ -12,7 +12,7 @@ import type {
   IRunEvent,
   IStartRun,
   TargetKind,
-} from '@/types';
+} from '@/shared/types';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { stripAnsi } from '@/main/library';

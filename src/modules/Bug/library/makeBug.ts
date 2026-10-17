@@ -1,6 +1,6 @@
 import type { IBug, IBugShot } from '@/modules/Bug/types';
 import type { IWorkspace } from '@/modules/Workspace';
-import type { IStepOutcome } from '@/types';
+import type { IStepOutcome } from '@/shared/types';
 import { countSeen } from './countSeen';
 
 function shotsFor(props: {

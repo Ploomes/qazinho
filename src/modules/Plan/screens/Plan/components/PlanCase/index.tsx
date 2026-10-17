@@ -1,8 +1,8 @@
 import type { IPlanCaseProps } from './types';
 import { AnimatePresence, motion, Reorder } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { EditableText, StatusPill } from '@/components/atoms';
-import { MOTION } from '@/constants';
+import { EditableText, StatusPill } from '@/shared/components/atoms';
+import { MOTION } from '@/shared/constants';
 import { usePlanCaseViewModel } from './hooks';
 import './styles.css';
 

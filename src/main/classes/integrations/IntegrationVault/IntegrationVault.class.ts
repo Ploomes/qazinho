@@ -9,7 +9,7 @@ import type {
   IConnectResult,
   IIntegrationStatus,
   IntegrationId,
-} from '@/types';
+} from '@/shared/types';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { TRACKER_ERRORS } from './constants';

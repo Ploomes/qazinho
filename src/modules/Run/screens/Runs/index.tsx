@@ -1,8 +1,8 @@
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Eyebrow, EmptyState, StatusPill } from '@/components/atoms';
-import { CountTile, Screenshot } from '@/components/molecules';
-import { MOTION } from '@/constants';
+import { Eyebrow, EmptyState, StatusPill } from '@/shared/components/atoms';
+import { CountTile, Screenshot } from '@/shared/components/molecules';
+import { MOTION } from '@/shared/constants';
 import { useRunsViewModel } from './hooks';
 import './styles.css';
 

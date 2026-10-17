@@ -1,6 +1,6 @@
 import type { IRun, IRunCase, IRunStep } from '@/modules/Run';
 import type { IWorkspace } from '@/modules/Workspace/types';
-import type { IStepOutcome } from '@/types';
+import type { IStepOutcome } from '@/shared/types';
 import { caseVerdict, countVerdicts } from '@/modules/Run/library';
 
 const MS_IN_SECOND = 1_000;

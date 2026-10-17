@@ -1,4 +1,4 @@
-import type { InstallableId } from '@/types';
+import type { InstallableId } from '@/shared/types';
 
 const AGENTS: InstallableId[] = ['claude-code', 'codex', 'gemini-cli'];
 

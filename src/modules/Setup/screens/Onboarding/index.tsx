@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Button, Intern } from '@/components/atoms';
-import { SpeechBubble } from '@/components/molecules';
-import { MOTION } from '@/constants';
+import { Button, Intern } from '@/shared/components/atoms';
+import { SpeechBubble } from '@/shared/components/molecules';
+import { MOTION } from '@/shared/constants';
 import {
   StepAgents,
   StepDevices,

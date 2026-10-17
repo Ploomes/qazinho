@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { Button, StatusPill } from '@/components/atoms';
 import { Bugs } from '@/modules/Bug';
 import { Chat } from '@/modules/Chat';
 import { Plan } from '@/modules/Plan';
 import { Runs } from '@/modules/Run';
+import { Button, StatusPill } from '@/shared/components/atoms';
 import { WorkspaceTabs } from './components';
 import { useWorkspaceViewModel } from './hooks';
 import './styles.css';

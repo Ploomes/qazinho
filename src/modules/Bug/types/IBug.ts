@@ -1,6 +1,6 @@
 import type { IBugReproStep } from './IBugReproStep';
 import type { IBugShot } from './IBugShot';
-import type { Severity } from '@/types';
+import type { Severity } from '@/shared/types';
 
 /** A failed step the agent could explain, with everything a developer needs to reproduce it. */
 export interface IBug {

@@ -1,4 +1,4 @@
-import type { PickKind } from '@/types';
+import type { PickKind } from '@/shared/types';
 
 /** The only caller of the file-picking side of the bridge. A page cannot open a dialog. */
 export class Files {

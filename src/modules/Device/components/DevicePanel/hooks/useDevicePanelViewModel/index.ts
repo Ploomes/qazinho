@@ -2,10 +2,10 @@ import type { IDeviceStep } from '@/modules/Device/types';
 import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MOTION } from '@/constants';
 import { DEVICE, DEVICE_STATE_KEY } from '@/modules/Device/constants';
 import { deviceStateOf, formatElapsed, moodOfStatus } from '@/modules/Device/library';
 import { useRunControls } from '@/modules/Run';
+import { MOTION } from '@/shared/constants';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useDevicePanelViewModel = () => {

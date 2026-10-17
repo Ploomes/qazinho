@@ -1,5 +1,5 @@
 import type { IAgentRunner, IRunAgent } from './types';
-import type { IAgentEvent, IAgentTurn, IAgentUsage } from '@/types';
+import type { IAgentEvent, IAgentTurn, IAgentUsage } from '@/shared/types';
 import type { ChildProcess } from 'node:child_process';
 import { spawn } from 'node:child_process';
 import { createInterface } from 'node:readline';

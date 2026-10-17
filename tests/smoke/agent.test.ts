@@ -1,4 +1,4 @@
-import type { IRunEvent } from '@/types';
+import type { IRunEvent } from '@/shared/types';
 import { chmod, mkdtemp, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';

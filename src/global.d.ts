@@ -1,4 +1,4 @@
-import type { IQazinhoApi } from '@/types';
+import type { IQazinhoApi } from '@/shared/types';
 
 declare global {
   interface Window {

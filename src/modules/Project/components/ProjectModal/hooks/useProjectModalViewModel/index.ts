@@ -1,5 +1,5 @@
 import type { ITarget } from '@/modules/Project/types';
-import type { TargetKind } from '@/types';
+import type { TargetKind } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { newProjectId } from '@/modules/Project/library';

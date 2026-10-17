@@ -1,4 +1,4 @@
-import type { ISetupEvent } from '@/types';
+import type { ISetupEvent } from '@/shared/types';
 
 export interface ISetupInstaller {
   onEvent: (event: ISetupEvent) => void;

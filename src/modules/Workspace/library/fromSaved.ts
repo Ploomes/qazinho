@@ -1,6 +1,6 @@
 import type { ITestCase } from '@/modules/Plan';
 import type { IWorkspace } from '@/modules/Workspace/types';
-import type { ISavedWorkspace } from '@/types';
+import type { ISavedWorkspace } from '@/shared/types';
 import { parse } from 'yaml';
 
 function readPlan(yaml: string): ITestCase[] {

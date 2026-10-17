@@ -1,4 +1,4 @@
-import type { ProcessKind } from '@/types';
+import type { ProcessKind } from '@/shared/types';
 
 export interface IProcessClaim {
   workspaceId: string | null;

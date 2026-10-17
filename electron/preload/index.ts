@@ -20,9 +20,9 @@ import type {
   IStartRun,
   PickKind,
   Platform,
-} from '@/types';
+} from '@/shared/types';
 import { contextBridge, ipcRenderer } from 'electron';
-import { CHANNELS } from '@/constants';
+import { CHANNELS } from '@/shared/constants';
 
 const api: IQazinhoApi = {
   platform: process.platform as Platform,

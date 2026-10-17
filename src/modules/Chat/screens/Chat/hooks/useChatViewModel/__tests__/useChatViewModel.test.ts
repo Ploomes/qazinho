@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import type { IAgentTurn, IAskAgent } from '@/types';
+import type { IAgentTurn, IAskAgent } from '@/shared/types';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useChatViewModel } from '@/modules/Chat/screens/Chat/hooks/useChatViewModel';

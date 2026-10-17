@@ -1,6 +1,6 @@
 import type { IErrorBlockProps } from './types';
 import { useTranslation } from 'react-i18next';
-import { Eyebrow, Intern } from '@/components/atoms';
+import { Eyebrow, Intern } from '@/shared/components/atoms';
 import './styles.css';
 
 /** A broken tool is never a test result: this block can never look like a verdict. */

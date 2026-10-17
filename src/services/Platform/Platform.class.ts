@@ -1,4 +1,4 @@
-import type { Platform as PlatformName } from '@/types';
+import type { Platform as PlatformName } from '@/shared/types';
 
 /** The only reader of `window.qazinho.platform`. Views ask this, never the bridge. */
 export class Platform {

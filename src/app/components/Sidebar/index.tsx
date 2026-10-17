@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { PlatformIcon } from '@/components/atoms';
-import { MOTION } from '@/constants';
+import { PlatformIcon } from '@/shared/components/atoms';
+import { MOTION } from '@/shared/constants';
 import { GEAR_PATH } from './constants';
 import { useSidebarViewModel } from './hooks';
 import './styles.css';

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Button, Intern } from '@/components/atoms';
+import { Button, Intern } from '@/shared/components/atoms';
 import { useWelcomeViewModel } from './hooks';
 import './styles.css';
 

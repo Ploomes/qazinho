@@ -1,4 +1,4 @@
-import type { IFlatStep } from '@/types';
+import type { IFlatStep } from '@/shared/types';
 
 /** The plan the workspace holds, written out so the agent can talk about it or change it. */
 export function describePlan(steps: IFlatStep[]): string[] {

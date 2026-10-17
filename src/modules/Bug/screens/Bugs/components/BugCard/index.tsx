@@ -1,7 +1,7 @@
 import type { IBugCardProps } from './types';
 import { useTranslation } from 'react-i18next';
-import { Button, Eyebrow } from '@/components/atoms';
-import { ExpectedGot, MetaGrid, Screenshot } from '@/components/molecules';
+import { Button, Eyebrow } from '@/shared/components/atoms';
+import { ExpectedGot, MetaGrid, Screenshot } from '@/shared/components/molecules';
 import { useBugCardViewModel } from './hooks';
 import './styles.css';
 

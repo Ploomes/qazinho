@@ -1,5 +1,5 @@
 import type { IShot } from './IShot';
-import type { IStepAction } from '@/types';
+import type { IStepAction } from '@/shared/types';
 
 /** What a run needs from a device, whether it is a browser or a phone. */
 export interface IDeviceDriver {

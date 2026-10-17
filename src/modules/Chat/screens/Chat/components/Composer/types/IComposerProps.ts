@@ -1,4 +1,4 @@
-import type { IChatReference } from '@/types';
+import type { IChatReference } from '@/shared/types';
 
 /** `mentions` is what the @ being typed could point at, empty when the QA is not mentioning. */
 export interface IComposerProps {

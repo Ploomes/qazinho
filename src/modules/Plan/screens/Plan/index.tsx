@@ -1,6 +1,6 @@
 import { Reorder } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Button, EmptyState } from '@/components/atoms';
+import { Button, EmptyState } from '@/shared/components/atoms';
 import { PlanCase } from './components';
 import { usePlanViewModel } from './hooks';
 import './styles.css';

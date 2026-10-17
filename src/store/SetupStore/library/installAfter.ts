@@ -1,5 +1,5 @@
 import type { InstallState } from '@/modules/Setup';
-import type { IInstallResult, ISetupEvent } from '@/types';
+import type { IInstallResult, ISetupEvent } from '@/shared/types';
 
 /** The install's next state, from a line it printed or from how it ended. A line after the end changes nothing. */
 export function installAfter(props: {

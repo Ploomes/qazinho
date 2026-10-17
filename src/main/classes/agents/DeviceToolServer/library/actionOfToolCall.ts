@@ -1,4 +1,4 @@
-import type { IStepAction } from '@/types';
+import type { IStepAction } from '@/shared/types';
 
 const ACTIONS = ['goto', 'click', 'fill', 'press', 'wait'];
 

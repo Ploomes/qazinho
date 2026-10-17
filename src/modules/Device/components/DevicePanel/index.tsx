@@ -7,8 +7,8 @@ import {
   IconButton,
   Intern,
   StatusPill,
-} from '@/components/atoms';
-import { MOTION } from '@/constants';
+} from '@/shared/components/atoms';
+import { MOTION } from '@/shared/constants';
 import { DeviceScreen } from './components';
 import { useDevicePanelViewModel } from './hooks';
 import './styles.css';

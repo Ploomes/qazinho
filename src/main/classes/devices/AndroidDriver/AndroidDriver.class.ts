@@ -1,6 +1,6 @@
 import type { IAndroidDriver } from './types';
 import type { IDeviceDriver, IShot } from '@/main/classes/devices/types';
-import type { IStepAction } from '@/types';
+import type { IStepAction } from '@/shared/types';
 import { spawn } from 'node:child_process';
 import { readdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';

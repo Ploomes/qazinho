@@ -1,6 +1,6 @@
 import type { ChatMessage } from '@/modules/Chat/types';
 import type { IWorkspace } from '@/modules/Workspace';
-import type { IStepOutcome } from '@/types';
+import type { IStepOutcome } from '@/shared/types';
 
 /** A step that did not hold up gets a verdict in the chat; the rest of the run is read in Runs. */
 export function appendRunMessages(props: {

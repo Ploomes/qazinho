@@ -1,4 +1,4 @@
-import type { IConnectResult } from '@/types';
+import type { IConnectResult } from '@/shared/types';
 
 export const NO_CONNECTION: IConnectResult = {
   isConnected: false,

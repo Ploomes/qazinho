@@ -24,8 +24,8 @@
     "vitest.config.ts",
     "tests/**/*",
     "src/main/**/*",
-    "src/types/**/*",
-    "src/constants/**/*",
+    "src/shared/types/**/*",
+    "src/shared/constants/**/*",
     "electron/**/*"
   ],
   "exclude": ["tests/vitest.setup.ts"]

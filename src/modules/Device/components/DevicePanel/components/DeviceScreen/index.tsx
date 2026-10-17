@@ -1,7 +1,7 @@
 import type { IDeviceScreenProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { MOTION } from '@/constants';
+import { MOTION } from '@/shared/constants';
 import './styles.css';
 
 export const DeviceScreen: React.FC<IDeviceScreenProps> = (props) => {

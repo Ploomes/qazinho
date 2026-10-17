@@ -1,4 +1,4 @@
-import type { IFlatStep } from '@/types';
+import type { IFlatStep } from '@/shared/types';
 
 /** One case to walk, as the message that starts the agent's turn: every step in order, and the screen it starts on. */
 export function describeCase(props: { steps: IFlatStep[]; screen: string }): string {

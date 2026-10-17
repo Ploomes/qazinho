@@ -1,5 +1,5 @@
 import type { IInstallStep } from '@/main/classes/setup/SetupInstaller/types';
-import type { InstallableId } from '@/types';
+import type { InstallableId } from '@/shared/types';
 
 export const INSTALL_RECIPES: Record<InstallableId, IInstallStep[]> = {
   'claude-code': [

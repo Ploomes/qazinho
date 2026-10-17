@@ -3,7 +3,7 @@ import type {
   IDeviceTools,
   IMachineCheck,
   IResourceSnapshot,
-} from '@/types';
+} from '@/shared/types';
 import { NO_RESOURCES, NO_TOOLS } from './constants';
 
 /** The only caller of the machine side of the bridge. Views ask this, never `window.qazinho`. */

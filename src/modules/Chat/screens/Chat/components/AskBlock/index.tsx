@@ -1,6 +1,6 @@
 import type { IAskBlockProps } from './types';
 import { useTranslation } from 'react-i18next';
-import { Eyebrow } from '@/components/atoms';
+import { Eyebrow } from '@/shared/components/atoms';
 import './styles.css';
 
 export const AskBlock: React.FC<IAskBlockProps> = ({ message, onAnswer }) => {

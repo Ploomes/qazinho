@@ -2,9 +2,9 @@ import type { SidebarRow } from '@/app/components/Sidebar/types';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SIDEBAR_STATUS } from '@/app/components/Sidebar/constants';
-import { STATUS } from '@/components/atoms/StatusPill/constants';
 import { workspaceMeta } from '@/modules/Workspace';
 import { Archive } from '@/services';
+import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useSidebarViewModel = () => {
