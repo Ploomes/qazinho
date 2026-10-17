@@ -319,7 +319,7 @@ export const pt: typeof en = {
     DEVICES_SAY_IOS_NO_MAC:
       'O iOS precisa de um Mac, então nesta máquina não dá para testar no iOS.',
     INTEGRATIONS_SAY:
-      'Quer que eu mande os bugs para algum lugar? Conecte o GitHub ou o Jira, ou pule e faça isso depois nas Settings.',
+      'Quer que eu mande os bugs para algum lugar? Conecte o GitHub ou o Jira, ou pule e faça isso depois nas Configurações.',
     DONE_SAY:
       'Prontinho! Isso é o que eu achei nesta máquina. Bora planejar seus primeiros testes?',
     SKIP_SETUP: 'Pular configuração',
@@ -342,7 +342,7 @@ export const pt: typeof en = {
     NEEDS_NPM:
       'Instalar um agente precisa do npm, e esta máquina não tem. Instale o Node.js e verifique de novo.',
     NO_AGENT:
-      'Sem um agente o QAzinho não escreve nem roda um plano. Dá para instalar um depois nas Settings.',
+      'Sem um agente o QAzinho não escreve nem roda um plano. Dá para instalar um depois nas Configurações.',
     CHECK_AGAIN: 'Verificar de novo',
     CHECKING: 'verificando…',
     ANDROID_ABOUT: 'Roda seus próprios emuladores pelo adb.',
@@ -364,7 +364,7 @@ export const pt: typeof en = {
     DONE_NEEDS_SDK: 'precisa do Android SDK',
     DONE_NEEDS_IOS: 'precisa do Xcode e do idb',
     DONE_NO_TRACKERS: 'nenhum conectado',
-    DONE_NOTE: 'O que faltar dá para configurar depois nas Settings.',
+    DONE_NOTE: 'O que faltar dá para configurar depois nas Configurações.',
   },
   MASCOT: {
     NAME: 'Estagiário',
