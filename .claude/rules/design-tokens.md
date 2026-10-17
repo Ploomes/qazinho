@@ -46,8 +46,8 @@ that exists in one theme and not the other is a bug.
 
 ## The three families
 
-`Space Grotesk` for display only (titles, wordmark, counters), `IBM Plex Sans` for every piece
-of body and UI text, `IBM Plex Mono` for anything technical: ids, timestamps, paths, counters,
+`Bricolage Grotesque` for display only (titles, counters, and the wordmark at 800 with tightened tracking, as in the logo), `IBM Plex Sans` for every piece
+of body and UI text, `JetBrains Mono` for anything technical: ids, timestamps, paths, counters,
 uppercase eyebrows, badges, keycaps and status glyphs.
 
 ## When a value is not on the scale
