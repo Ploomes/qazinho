@@ -9,7 +9,7 @@ import { spawn } from 'node:child_process';
 import { delimiter } from 'node:path';
 import { findOnPath } from '@/main/library';
 import { INSTALL, INSTALL_RECIPES } from './constants';
-import { commandLineOf, lastLineOf } from './library';
+import { commandLineOf, linesOf } from './library';
 
 /** Installs the light tools QAzinho drives, on the QA's say-so, and tells the page each line. */
 export class SetupInstaller {
@@ -102,13 +102,14 @@ export class SetupInstaller {
       }, INSTALL.timeoutMs);
 
       const read = (chunk: Buffer) => {
-        const line = lastLineOf(chunk.toString());
+        const lines = linesOf(chunk.toString());
+        const last = lines.at(-1);
 
-        if (line.length === 0) return;
+        if (last === undefined) return;
 
-        tail.push(line);
+        tail.push(...lines);
         tail.splice(0, Math.max(0, tail.length - INSTALL.tailLines));
-        say(line);
+        say(last);
       };
 
       child.stdout.on('data', read);

@@ -1,2 +1,2 @@
 export * from './commandLineOf';
-export * from './lastLineOf';
+export * from './linesOf';
