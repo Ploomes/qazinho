@@ -4,7 +4,7 @@ import { defineConfig } from 'electron-vite';
 
 const alias = {
   '@': fileURLToPath(new URL('./src', import.meta.url)),
-  '@brand': fileURLToPath(new URL('./assets/logo', import.meta.url)),
+  '@brand': fileURLToPath(new URL('./assets', import.meta.url)),
 };
 
 export default defineConfig({
