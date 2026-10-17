@@ -59,10 +59,10 @@
 .integration-card__action {
   flex: none;
   padding: var(--space-3) 14px;
-  border: 1px solid var(--amber);
+  border: 1px solid var(--lime);
   border-radius: 9px;
-  background: var(--amber);
-  color: var(--on-amber);
+  background: var(--lime);
+  color: var(--on-lime);
   font: 500 12px/1 var(--font-ui);
   transition:
     background-color var(--dur-fast) var(--ease),
@@ -156,14 +156,14 @@
 
 .integration-card__link {
   margin-right: auto;
-  color: var(--amber-ink);
+  color: var(--lime-ink);
   font: var(--font-ui-sm);
   text-decoration: none;
   transition: color var(--dur-fast) var(--ease);
 }
 
 .integration-card__link:hover {
-  color: var(--amber);
+  color: var(--lime);
 }
 
 .integration-card__spinner {

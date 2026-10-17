@@ -113,7 +113,7 @@
 }
 
 .settings__card--on {
-  border-color: var(--amber);
+  border-color: var(--lime);
 }
 
 .settings__card--top {
@@ -207,7 +207,7 @@
 }
 
 .settings__theme--on {
-  border-color: var(--amber);
+  border-color: var(--lime);
 }
 
 .settings__swatch {
@@ -234,7 +234,7 @@
 
 .settings__swatch-accent {
   width: 16%;
-  background: var(--amber);
+  background: var(--lime);
 }
 
 .settings__theme-label {
@@ -268,7 +268,7 @@
 }
 
 .settings__language--on {
-  border-color: var(--amber);
+  border-color: var(--lime);
   background: var(--sel);
 }
 
@@ -305,8 +305,8 @@
 }
 
 .settings__keybind--editing {
-  border-color: var(--amber);
-  background: var(--amber-soft);
+  border-color: var(--lime);
+  background: var(--lime-soft);
 }
 
 .settings__keybind-label {
@@ -325,8 +325,8 @@
 }
 
 .settings__keybind--editing .settings__keybind-keys {
-  border-color: var(--amber);
-  color: var(--amber-ink);
+  border-color: var(--lime);
+  color: var(--lime-ink);
   animation: gc-breathe 1.4s ease-in-out infinite;
 }
 

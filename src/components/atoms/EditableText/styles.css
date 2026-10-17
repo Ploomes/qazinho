@@ -19,7 +19,7 @@
 }
 
 .editable-text:focus {
-  border-color: var(--amber);
+  border-color: var(--lime);
   outline: none;
 }
 

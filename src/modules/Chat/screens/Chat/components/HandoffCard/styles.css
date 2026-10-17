@@ -22,8 +22,8 @@
 }
 
 .handoff-card__tile--accent {
-  background: var(--amber-soft);
-  color: var(--amber-ink);
+  background: var(--lime-soft);
+  color: var(--lime-ink);
 }
 
 .handoff-card__title {
@@ -39,7 +39,7 @@
 
 .handoff-card__action {
   margin-left: auto;
-  color: var(--amber-ink);
+  color: var(--lime-ink);
   font: var(--font-ui-md);
   white-space: nowrap;
 }

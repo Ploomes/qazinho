@@ -21,7 +21,7 @@
 }
 
 .gauge__used--tight {
-  stroke: var(--amber);
+  stroke: var(--lime);
 }
 
 .gauge__used--empty {

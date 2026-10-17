@@ -8,7 +8,7 @@
 .user-message__mention {
   padding: 0 var(--space-2);
   border-radius: var(--radius-xs);
-  background: var(--amber-soft);
-  color: var(--amber-ink);
+  background: var(--lime-soft);
+  color: var(--lime-ink);
   font: var(--font-mono-md);
 }

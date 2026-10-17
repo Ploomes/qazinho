@@ -29,7 +29,7 @@
 
 .lightbox__kicker {
   flex: none;
-  color: var(--amber-ink);
+  color: var(--lime-ink);
   font: 500 11px/1 var(--font-mono);
 }
 

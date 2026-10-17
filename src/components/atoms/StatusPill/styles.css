@@ -18,9 +18,9 @@
   font-size: 12px;
 }
 
-.status-pill--amber {
-  background: var(--amber-soft);
-  color: var(--amber-ink);
+.status-pill--lime {
+  background: var(--lime-soft);
+  color: var(--lime-ink);
 }
 
 .status-pill--attn {

@@ -1,8 +1,9 @@
 # Design tokens
 
 QAzinho has no design system package. The scale is a set of CSS custom properties in
-`src/styles/tokens.css`, declared on `[data-theme]`, and every value comes from
-`assets/prototype.html`.
+`src/styles/tokens.css`, declared on `[data-theme]`. The layout comes from `assets/prototype.html`;
+the colours come from the QAzinho brand: Lima Estagiário `#C6F432` (`--lime`), Tinta `#141414`,
+Bug `#FF4D2E` (`--fail`) and Papel `#F4F2EA`.
 
 ## Never hardcode what the scale defines
 
@@ -13,7 +14,7 @@ bug unless it is component geometry (see below).
 /* ❌ */
 padding: 9px 16px;
 border-radius: 9px;
-color: #f3a82c;
+color: #c6f432;
 font:
   500 13px/1 'IBM Plex Sans',
   sans-serif;
@@ -21,7 +22,7 @@ font:
 /* ✅ */
 padding: var(--space-3) var(--space-5);
 border-radius: var(--radius-md);
-color: var(--amber);
+color: var(--lime);
 font: var(--font-ui-md);
 ```
 
@@ -32,7 +33,7 @@ font: var(--font-ui-md);
 | Surfaces  | `--bg --win --panel --center --raise --raise2 --screen`                        |
 | Lines     | `--line --line2 --sel --stripe`                                                |
 | Ink       | `--ink --ink2 --ink3`                                                          |
-| Accent    | `--amber --amber-ink --amber-soft --on-amber`                                  |
+| Accent    | `--lime --lime-ink --lime-soft --on-lime`                                      |
 | Verdicts  | `--pass --fail --block --skip --attn`, each with a `-soft` pair                |
 | Space     | `--space-1 2px` · `2 4` · `3 8` · `4 12` · `5 16` · `6 20` · `7 24` · `8 30`   |
 | Radius    | `--radius-xs 6` · `sm 8` · `md 10` · `lg 12` · `xl 14` · `2xl 16` · `pill 999` |

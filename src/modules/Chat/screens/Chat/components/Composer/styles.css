@@ -27,7 +27,7 @@
 }
 
 .composer__field:focus-within {
-  border-color: var(--amber);
+  border-color: var(--lime);
 }
 
 /* The field fills the whole box, so a click anywhere but the send button lands in it. */
@@ -47,8 +47,8 @@
   height: 30px;
   border: none;
   border-radius: var(--radius-sm);
-  background: var(--amber);
-  color: var(--on-amber);
+  background: var(--lime);
+  color: var(--on-lime);
   transition:
     background-color var(--dur-fast) var(--ease),
     color var(--dur-fast) var(--ease);

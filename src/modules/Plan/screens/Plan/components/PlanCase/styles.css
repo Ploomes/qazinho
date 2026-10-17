@@ -214,6 +214,6 @@
 }
 
 .plan-case__add:hover {
-  border-color: var(--amber);
-  color: var(--amber-ink);
+  border-color: var(--lime);
+  color: var(--lime-ink);
 }

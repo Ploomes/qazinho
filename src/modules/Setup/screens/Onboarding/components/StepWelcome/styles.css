@@ -26,7 +26,7 @@
 }
 
 .step-welcome__glyph {
-  color: var(--amber-ink);
+  color: var(--lime-ink);
   font: var(--font-mono-md);
 }
 
@@ -68,7 +68,7 @@
 
 .step-welcome__language--on,
 .step-welcome__language--on:hover {
-  border-color: var(--amber);
+  border-color: var(--lime);
   background: var(--sel);
 }
 

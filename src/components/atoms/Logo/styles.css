@@ -3,8 +3,8 @@
   flex: none;
 }
 
-.logo--amber .logo__mark {
-  fill: var(--amber);
+.logo--lime .logo__mark {
+  fill: var(--lime);
 }
 
 .logo--quiet .logo__mark {

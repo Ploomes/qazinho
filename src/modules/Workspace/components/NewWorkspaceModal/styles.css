@@ -23,7 +23,7 @@
 }
 
 .new-workspace__platform--chosen {
-  border-color: var(--amber);
+  border-color: var(--lime);
   background: var(--sel);
   color: var(--ink);
 }

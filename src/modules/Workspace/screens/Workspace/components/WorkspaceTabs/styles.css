@@ -26,5 +26,5 @@
 }
 
 .workspace-tabs__tab--active .workspace-tabs__badge {
-  color: var(--amber-ink);
+  color: var(--lime-ink);
 }

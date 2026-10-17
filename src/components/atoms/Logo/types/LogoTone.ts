@@ -1,1 +1,1 @@
-export type LogoTone = 'amber' | 'quiet';
+export type LogoTone = 'lime' | 'quiet';

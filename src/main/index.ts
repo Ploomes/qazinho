@@ -175,7 +175,7 @@ function createWindow(): void {
     ...WINDOW,
     show: false,
     title: 'QAzinho',
-    backgroundColor: '#0a0b0d',
+    backgroundColor: '#0e0e0e',
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: 16, y: 16 },
     webPreferences: {

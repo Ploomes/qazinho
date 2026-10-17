@@ -7,7 +7,7 @@ export const SIDEBAR_STATUS: Record<
 > = {
   running: {
     glyph: '▸',
-    tone: 'var(--amber-ink)',
+    tone: 'var(--lime-ink)',
     animation: 'gc-pulse 1.8s ease-in-out infinite',
   },
   attention: {

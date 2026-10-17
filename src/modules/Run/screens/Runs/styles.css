@@ -324,7 +324,7 @@
 
 .runs__bug-open {
   flex: none;
-  color: var(--amber-ink);
+  color: var(--lime-ink);
   font: 500 12px/1 var(--font-ui);
   white-space: nowrap;
 }

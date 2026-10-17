@@ -91,8 +91,8 @@
 }
 
 .onboarding__step--current .onboarding__step-number {
-  border-color: var(--amber);
-  color: var(--amber-ink);
+  border-color: var(--lime);
+  color: var(--lime-ink);
 }
 
 .onboarding__step--done .onboarding__step-number {
@@ -120,7 +120,7 @@
   display: block;
   height: 100%;
   border-radius: 2px;
-  background: var(--amber);
+  background: var(--lime);
 }
 
 .onboarding__progress-label {
@@ -168,7 +168,7 @@
 }
 
 .onboarding__eyebrow {
-  color: var(--amber-ink);
+  color: var(--lime-ink);
   font: 500 var(--eyebrow-size) / 1 var(--font-mono);
   letter-spacing: var(--eyebrow-tracking);
   text-transform: uppercase;

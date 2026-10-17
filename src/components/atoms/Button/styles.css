@@ -23,8 +23,8 @@
 .button--primary {
   border-color: transparent;
   border-radius: 9px;
-  background: var(--amber);
-  color: var(--on-amber);
+  background: var(--lime);
+  color: var(--on-lime);
   font: var(--font-ui-strong);
 }
 

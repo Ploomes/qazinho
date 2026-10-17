@@ -55,7 +55,7 @@
 }
 
 .mention-picker__id {
-  color: var(--amber-ink);
+  color: var(--lime-ink);
   font: var(--font-mono-md);
 }
 

@@ -41,6 +41,6 @@
   width: 5px;
   height: 5px;
   border-radius: var(--radius-pill);
-  background: var(--amber);
+  background: var(--lime);
   animation: gc-pulse 1.8s ease-in-out infinite;
 }

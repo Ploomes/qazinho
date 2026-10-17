@@ -11,7 +11,7 @@
 }
 
 .input:focus {
-  border-color: var(--amber);
+  border-color: var(--lime);
 }
 
 .input::placeholder {
