@@ -5,6 +5,7 @@
 | Command                           | What it does                                           |
 | --------------------------------- | ------------------------------------------------------ |
 | `npm run dev`                     | opens the app with the renderer on Vite's dev server   |
+| `npm run dev:reset`               | the same on an empty data folder: a first run, again   |
 | `npm run build`                   | builds main, preload and renderer into `out/`          |
 | `npm run preview`                 | opens the app from `out/`                              |
 | `npm run package`                 | builds an installer for the current OS into `release/` |

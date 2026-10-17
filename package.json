@@ -20,6 +20,7 @@
   },
   "scripts": {
     "dev": "electron-vite dev",
+    "dev:reset": "node scripts/dev-reset.mjs",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
     "package": "npm run build && electron-builder",
