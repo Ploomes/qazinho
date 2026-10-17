@@ -27,7 +27,7 @@ export class WebDriver implements IDeviceDriver {
     });
     this.page = this.context.pages()[0] ?? (await this.context.newPage());
 
-    await this.page.goto(this.url, { timeout: WEB_DRIVER.actionTimeoutMs });
+    await this.page.goto(this.url, { timeout: WEB_DRIVER.gotoTimeoutMs });
   }
 
   public async act(action: IStepAction): Promise<void> {
@@ -36,13 +36,15 @@ export class WebDriver implements IDeviceDriver {
     if (!page) throw new Error('The browser is not open.');
 
     if (action.kind === 'goto') {
-      await page.goto(action.target, { timeout: WEB_DRIVER.actionTimeoutMs });
+      await page.goto(action.target, { timeout: WEB_DRIVER.gotoTimeoutMs });
+      await this.settle(page);
 
       return;
     }
 
     if (action.kind === 'press') {
       await page.keyboard.press(action.target.length > 0 ? action.target : 'Enter');
+      await this.settle(page);
 
       return;
     }
@@ -59,7 +61,10 @@ export class WebDriver implements IDeviceDriver {
 
     if (action.kind === 'fill')
       await locator.fill(action.value, { timeout: WEB_DRIVER.actionTimeoutMs });
-    else await locator.click({ timeout: WEB_DRIVER.actionTimeoutMs });
+    else {
+      await locator.click({ timeout: WEB_DRIVER.actionTimeoutMs });
+      await this.settle(page);
+    }
   }
 
   public async describe(): Promise<string> {
@@ -105,5 +110,13 @@ export class WebDriver implements IDeviceDriver {
     await this.context?.close().catch(() => undefined);
     this.context = null;
     this.page = null;
+  }
+
+  /** Waits for what an action started to finish, so the page the agent reads next is the new one. */
+  private async settle(page: Page): Promise<void> {
+    // A page that keeps polling never goes idle; past the budget it is read as it is.
+    await page
+      .waitForLoadState('networkidle', { timeout: WEB_DRIVER.settleMs })
+      .catch(() => undefined);
   }
 }
