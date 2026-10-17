@@ -14,20 +14,22 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { app, BrowserWindow, dialog, ipcMain, safeStorage, shell } from 'electron';
 import { CHANNELS } from '@/constants';
-import { AgentDetector } from '@/main/classes/agents/AgentDetector';
-import { AgentRunner } from '@/main/classes/agents/AgentRunner';
-import { DeviceToolServer } from '@/main/classes/agents/DeviceToolServer';
-import { Harness } from '@/main/classes/agents/Harness';
+import {
+  AgentDetector,
+  AgentRunner,
+  Archive,
+  DeviceToolDetector,
+  DeviceToolServer,
+  Harness,
+  IntegrationVault,
+  LiveStream,
+  ProcessOwners,
+  ResourceCollector,
+  RunCoordinator,
+  SetupInstaller,
+} from '@/main/classes';
 import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
-import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
 import { listSimulators } from '@/main/classes/devices/IosDriver/library';
-import { LiveStream } from '@/main/classes/devices/LiveStream';
-import { IntegrationVault } from '@/main/classes/integrations/IntegrationVault';
-import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
-import { ResourceCollector } from '@/main/classes/resources/ResourceCollector';
-import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
-import { SetupInstaller } from '@/main/classes/setup/SetupInstaller';
-import { Archive } from '@/main/classes/storage/Archive';
 import { FILE_FILTERS, PATHS, WINDOW } from '@/main/constants';
 import {
   adoptDataDir,
@@ -36,8 +38,6 @@ import {
   searchDirectories,
 } from '@/main/library';
 
-// Before anything reads the data folder: the app was gocrash, and the QA's work is still there.
-// A window opened on another folder, as a test does with --user-data-dir, is left alone.
 if (PATHS.data === join(app.getPath('appData'), app.getName()))
   adoptDataDir({ from: PATHS.legacyData, to: PATHS.data });
 
@@ -206,7 +206,6 @@ function createWindow(): void {
 }
 
 void app.whenReady().then(async () => {
-  // macOS: in dev the dock shows Electron's own icon; a packaged build gets build/icon.png from electron-builder.
   if (!app.isPackaged) app.dock?.setIcon(PATHS.icon);
 
   await live.start();
@@ -263,6 +262,5 @@ app.on('will-quit', () => {
 });
 
 app.on('window-all-closed', () => {
-  // macOS: an app stays in the dock with no window open.
   if (process.platform !== 'darwin') app.quit();
 });
