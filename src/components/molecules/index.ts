@@ -3,5 +3,6 @@ export * from './ExpectedGot';
 export * from './FileField';
 export * from './MetaGrid';
 export * from './Screenshot';
+export * from './SpeechBubble';
 export * from './Stripes';
 export * from './Tooltip';

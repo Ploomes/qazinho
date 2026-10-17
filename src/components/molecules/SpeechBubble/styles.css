@@ -1,0 +1,49 @@
+.speech-bubble {
+  position: relative;
+  display: grid;
+  width: 100%;
+  padding: var(--space-6) var(--space-7);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-2xl);
+  background: var(--raise);
+  color: var(--ink);
+  font: 500 17px/1.5 var(--font-ui);
+  text-align: left;
+  text-wrap: pretty;
+  cursor: default;
+  animation: gc-in var(--dur) var(--ease);
+}
+
+/* The tail, pointing back at whoever is speaking on the left. */
+.speech-bubble::before {
+  position: absolute;
+  top: 26px;
+  left: -8px;
+  width: 14px;
+  height: 14px;
+  border-bottom: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  background: var(--raise);
+  transform: rotate(45deg);
+  content: '';
+}
+
+.speech-bubble__reserve,
+.speech-bubble__said {
+  grid-area: 1 / 1;
+}
+
+.speech-bubble__reserve {
+  visibility: hidden;
+}
+
+.speech-bubble__caret {
+  display: inline-block;
+  width: 8px;
+  height: 1.05em;
+  margin-left: 2px;
+  border-radius: 2px;
+  background: var(--lime);
+  vertical-align: text-bottom;
+  animation: gc-caret 0.9s infinite;
+}
