@@ -1,10 +1,12 @@
+import type { ITitlebarProps } from '@/components/organisms/Titlebar/types';
 import { useTranslation } from 'react-i18next';
 import { formatResetsAt } from '@/components/organisms/Titlebar/library';
 import { useModelInUse } from '@/modules/Settings/hooks';
 import { Platform } from '@/services';
 import { useAppStore, useMachineStore } from '@/store';
 
-export const useTitlebarViewModel = () => {
+export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
+  const { isBare = false } = props;
   const { t } = useTranslation();
   const isResourcesOpen = useAppStore((state) => state.isResourcesOpen);
   const modelMenuAt = useAppStore((state) => state.modelMenuAt);
@@ -24,7 +26,14 @@ export const useTitlebarViewModel = () => {
     usage?.sevenDayUsed == null ? null : 100 - Math.round(usage.sevenDayUsed * 100);
 
   return {
-    isMac: Platform.isMac(),
+    isBare,
+    className: [
+      'titlebar',
+      Platform.isMac() ? 'titlebar--mac' : '',
+      isBare ? 'titlebar--bare' : '',
+    ]
+      .filter((part) => part.length > 0)
+      .join(' '),
     isResourcesOpen,
     isModelMenuOpen: modelMenuAt === 'titlebar',
     cpuLabel: t('TITLEBAR.CPU', { percent: cpu }),

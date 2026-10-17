@@ -10,6 +10,20 @@
   -webkit-app-region: drag;
 }
 
+.titlebar.titlebar--bare {
+  /* Floats over the setup, so its ground runs up to the top of the window. */
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  border-bottom-color: transparent;
+  background: transparent;
+  transition:
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
 .titlebar--mac {
   padding-left: 90px;
 }

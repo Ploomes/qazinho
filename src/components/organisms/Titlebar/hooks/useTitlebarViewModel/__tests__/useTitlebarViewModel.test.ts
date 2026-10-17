@@ -23,6 +23,20 @@ describe('useTitlebarViewModel', () => {
     expect(result.current.processLabel).toBe('0 processes');
   });
 
+  it('keeps only the drag strip during the first-run setup', () => {
+    const { result } = renderHook(() => useTitlebarViewModel({ isBare: true }));
+
+    expect(result.current.isBare).toBe(true);
+    expect(result.current.className).toContain('titlebar--bare');
+  });
+
+  it('shows the whole bar everywhere else', () => {
+    const { result } = renderHook(() => useTitlebarViewModel());
+
+    expect(result.current.isBare).toBe(false);
+    expect(result.current.className).not.toContain('titlebar--bare');
+  });
+
   it('reads what the machine reported, not a guess', () => {
     useMachineStore.setState({
       resources: {
