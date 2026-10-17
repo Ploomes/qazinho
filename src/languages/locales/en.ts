@@ -304,8 +304,18 @@ export const en = {
       'First, who tests with me? I drive an AI agent you already have, signed in to your own account. Here is what I found on this machine.',
     AGENTS_SAY_NONE:
       "Hmm, I couldn't find an agent on this machine. Install one below and I'll look again. Without one I can't write or run a plan.",
-    DEVICES_SAY:
-      'Now the devices. The web needs nothing else. Android and iOS need their SDKs, and those are too big for me to install, so I point you to them.',
+    DEVICES_SAY_INTRO: 'Now the devices. The web needs nothing else.',
+    DEVICES_SAY_ANDROID_READY: 'Android is ready: I found the SDK.',
+    DEVICES_SAY_ANDROID_MISSING:
+      "Android needs the Android SDK, which is too big for me to install, so I'll point you to it.",
+    DEVICES_SAY_IOS_READY: 'iOS is ready too, with Xcode and idb.',
+    DEVICES_SAY_IOS_NEEDS_IDB:
+      'For iOS, Xcode is here; I only need idb, and that one I can install.',
+    DEVICES_SAY_IOS_NEEDS_XCODE:
+      'For iOS I still need Xcode, which comes from the App Store.',
+    DEVICES_SAY_IOS_NEEDS_BOTH:
+      'For iOS I need Xcode, from the App Store, and idb, which I can install myself.',
+    DEVICES_SAY_IOS_NO_MAC: "iOS needs a Mac, so on this machine I can't test on iOS.",
     INTEGRATIONS_SAY:
       'Want me to send the bugs somewhere? Connect GitHub or Jira, or skip it and do it later in Settings.',
     DONE_SAY:

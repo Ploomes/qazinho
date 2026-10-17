@@ -109,6 +109,48 @@ describe('useOnboardingViewModel', () => {
       expect(result.current.isSaid).toBe(false);
     });
 
+    it('says iOS cannot be tested on the devices step of a machine that is not a Mac', () => {
+      window.qazinho = fakeQazinhoApi('linux');
+      const { result } = renderHook(() => useOnboardingViewModel());
+
+      walkTo(result, 2);
+
+      expect(result.current.say).toContain(
+        "iOS needs a Mac, so on this machine I can't test on iOS.",
+      );
+    });
+
+    it('tells a Mac with every tool that iOS is ready', async () => {
+      const tools = {
+        androidSdk: { isFound: true, path: '/sdk' },
+        xcode: { isFound: true, path: '/Applications/Xcode.app' },
+        idb: { isFound: true, path: '/bin/idb' },
+      };
+
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        checkMachine: () =>
+          Promise.resolve({
+            agents: [],
+            tools,
+            managers: {
+              npm: { isFound: true, path: '/bin/npm' },
+              brew: { isFound: true, path: '/bin/brew' },
+            },
+          }),
+      };
+      const { result } = renderHook(() => useOnboardingViewModel());
+
+      await waitFor(() => {
+        expect(useMachineStore.getState().tools).toEqual(tools);
+      });
+      walkTo(result, 2);
+
+      expect(result.current.say).toBe(
+        'Now the devices. The web needs nothing else. Android is ready: I found the SDK. iOS is ready too, with Xcode and idb.',
+      );
+    });
+
     it('owns up when there is no agent on this machine, looking suspicious', async () => {
       const { result } = renderHook(() => useOnboardingViewModel());
 

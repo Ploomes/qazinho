@@ -305,8 +305,18 @@ export const pt: typeof en = {
       'Primeiro: quem testa comigo? Eu uso um agente de IA que você já tem, logado na sua própria conta. Olha o que eu achei nesta máquina.',
     AGENTS_SAY_NONE:
       'Hmm, não achei nenhum agente nesta máquina. Instale um aqui embaixo que eu procuro de novo. Sem um agente eu não escrevo nem rodo um plano.',
-    DEVICES_SAY:
-      'Agora os dispositivos. A web não precisa de mais nada. Android e iOS precisam dos SDKs, que são grandes demais para eu instalar, então eu mostro onde baixar.',
+    DEVICES_SAY_INTRO: 'Agora os dispositivos. A web não precisa de mais nada.',
+    DEVICES_SAY_ANDROID_READY: 'O Android está pronto: achei o SDK.',
+    DEVICES_SAY_ANDROID_MISSING:
+      'O Android precisa do Android SDK, que é grande demais para eu instalar, então eu mostro onde baixar.',
+    DEVICES_SAY_IOS_READY: 'O iOS também está pronto, com o Xcode e o idb.',
+    DEVICES_SAY_IOS_NEEDS_IDB:
+      'Para o iOS, o Xcode já está aqui; só falta o idb, e esse eu mesmo instalo.',
+    DEVICES_SAY_IOS_NEEDS_XCODE: 'Para o iOS ainda falta o Xcode, que vem da App Store.',
+    DEVICES_SAY_IOS_NEEDS_BOTH:
+      'Para o iOS preciso do Xcode, da App Store, e do idb, que eu mesmo instalo.',
+    DEVICES_SAY_IOS_NO_MAC:
+      'O iOS precisa de um Mac, então nesta máquina não dá para testar no iOS.',
     INTEGRATIONS_SAY:
       'Quer que eu mande os bugs para algum lugar? Conecte o GitHub ou o Jira, ou pule e faça isso depois nas Settings.',
     DONE_SAY:

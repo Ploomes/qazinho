@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ONBOARDING_STEPS } from '@/modules/Setup/constants';
 import { useMachineCheck } from '@/modules/Setup/hooks';
-import { moodOfSetup } from '@/modules/Setup/library';
+import { devicesLineOf, moodOfSetup } from '@/modules/Setup/library';
+import { Platform } from '@/services';
 import { useAppStore, useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
 export const useOnboardingViewModel = () => {
@@ -13,6 +14,7 @@ export const useOnboardingViewModel = () => {
   const [saidStep, setSaidStep] = useState<OnboardingStep | null>(null);
   const hasChecked = useRef(false);
   const agents = useMachineStore((state) => state.agents);
+  const tools = useMachineStore((state) => state.tools);
   const integrations = useSetupStore((state) => state.integrations);
   const installs = useSetupStore((state) => state.installs);
   const agentInUse = useSettingsStore((state) => state.agent);
@@ -52,7 +54,11 @@ export const useOnboardingViewModel = () => {
     say:
       step === 'agents' && !hasAgent && !isChecking
         ? t('SETUP.AGENTS_SAY_NONE')
-        : t(`SETUP.${step.toUpperCase()}_SAY` as 'SETUP.WELCOME_SAY'),
+        : step === 'devices'
+          ? devicesLineOf({ isMac: Platform.isMac(), tools })
+              .map((key) => t(key))
+              .join(' ')
+          : t(`SETUP.${step.toUpperCase()}_SAY` as 'SETUP.WELCOME_SAY'),
     isSaid: saidStep === step,
     isFirst: index === 0,
     isLast: index === last,
