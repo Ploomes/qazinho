@@ -113,12 +113,12 @@ src/
 │   ├── components/   ← atoms, molecules, organisms, templates (components.md)
 │   ├── constants/    ← values every side shares
 │   ├── hooks/        ← hooks used across modules
+│   ├── styles/       ← tokens.css, base.css, animations.css
 │   └── types/        ← contracts, imported by every side
 ├── modules/<Domain>/screens/<Screen>/
 ├── languages/        ← i18next, en and pt (i18n.md)
 ├── store/            ← zustand stores; each store keeps its own library/
-├── services/         ← the only callers of window.qazinho
-└── styles/           ← tokens.css, base.css, animations.css
+└── services/         ← the only callers of window.qazinho
 ```
 
 - A screen → `src/modules/<Domain>/screens/<Screen>/`.

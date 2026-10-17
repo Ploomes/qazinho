@@ -10,9 +10,10 @@ src/
 │   ├── types/       ← contracts every side agrees on; imports none of them
 │   ├── constants/   ← values every side shares, the IPC channel names included
 │   ├── components/  ← atoms, molecules, organisms, templates (components.md)
-│   └── hooks/       ← hooks used across modules
+│   ├── hooks/       ← hooks used across modules
+│   └── styles/      ← tokens.css, base.css, animations.css
 ├── modules/         ← screens, grouped by domain
-├── store/  services/  languages/  styles/
+├── store/  services/  languages/
 ├── app/  index.tsx  index.html
 electron/
 └── preload/     ← the bridge: exposes window.qazinho through contextBridge, nothing else

@@ -1,7 +1,7 @@
 # Design tokens
 
 QAzinho has no design system package. The scale is a set of CSS custom properties in
-`src/styles/tokens.css`, declared on `[data-theme]`. The layout comes from `assets/prototype.html`;
+`src/shared/styles/tokens.css`, declared on `[data-theme]`. The layout comes from `assets/prototype.html`;
 the colours come from the QAzinho brand: Lima Estagiário `#C6F432` (`--lime`), Tinta `#141414`,
 Bug `#FF4D2E` (`--fail`) and Papel `#F4F2EA`.
 
