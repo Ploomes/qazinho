@@ -11,6 +11,7 @@ import type {
   PickKind,
 } from '@/types';
 import { homedir } from 'node:os';
+import { join } from 'node:path';
 import { app, BrowserWindow, dialog, ipcMain, safeStorage, shell } from 'electron';
 import { CHANNELS } from '@/constants';
 import { AgentDetector } from '@/main/classes/agents/AgentDetector';
@@ -36,7 +37,9 @@ import {
 } from '@/main/library';
 
 // Before anything reads the data folder: the app was gocrash, and the QA's work is still there.
-adoptDataDir({ from: PATHS.legacyData, to: PATHS.data });
+// A window opened on another folder, as a test does with --user-data-dir, is left alone.
+if (PATHS.data === join(app.getPath('appData'), app.getName()))
+  adoptDataDir({ from: PATHS.legacyData, to: PATHS.data });
 
 const agents = new AgentDetector();
 const owners = new ProcessOwners();
