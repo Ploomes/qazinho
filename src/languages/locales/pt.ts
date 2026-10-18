@@ -2,6 +2,9 @@ import type { en } from './en';
 
 export const pt: typeof en = {
   COMMON: {
+    OPEN_PAGE_AGAIN: 'Abrir a página de novo ↗',
+    TRY_AGAIN: 'Tentar de novo',
+    DONE: 'Pronto',
     CANCEL: 'Cancelar',
     BY_SALVE: 'por Salve Software',
     CLOSE: 'Fechar',
@@ -337,7 +340,6 @@ export const pt: typeof en = {
       'Uma página do {{server}} abriu no seu navegador. Permita o acesso por lá; esta janela fecha sozinha.',
     HINT_TERMINAL:
       'No Terminal, escolha {{server}}, depois Authenticate, e permita o acesso no navegador.',
-    OPEN_PAGE_AGAIN: 'Abrir a página de novo ↗',
     FAIL_UNSUPPORTED: 'O QAzinho não configura servidores MCP no {{agent}}.',
     FAIL_ADD: 'O {{agent}} não adicionou o {{server}}.',
     FAIL_SCREEN: 'O {{agent}} não chegou ao login do {{server}}.',
@@ -345,9 +347,7 @@ export const pt: typeof en = {
     FAIL_TIMEOUT: 'O login demorou demais, e o QAzinho parou de esperar.',
     FAIL_CLOSED: 'O {{agent}} fechou antes de terminar o login.',
     FAIL_MANUAL: 'Rode isto num terminal, escolha {{server}} e depois Authenticate:',
-    TRY_AGAIN: 'Tentar de novo',
     USE_TERMINAL: 'Fazer pelo Terminal',
-    DONE: 'Pronto',
     NO_AGENT_NOTE:
       'Instale o {{agent}} primeiro, ou escolha outro agente em Agentes: o MCP fica dentro dele.',
     UNSUPPORTED_NOTE:

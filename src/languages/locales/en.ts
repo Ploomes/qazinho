@@ -1,5 +1,8 @@
 export const en = {
   COMMON: {
+    OPEN_PAGE_AGAIN: 'Open the page again ↗',
+    TRY_AGAIN: 'Try again',
+    DONE: 'Done',
     CANCEL: 'Cancel',
     BY_SALVE: 'by Salve Software',
     CLOSE: 'Close',
@@ -336,7 +339,6 @@ export const en = {
       'A {{server}} page opened in your browser. Allow access there; this window closes on its own.',
     HINT_TERMINAL:
       'In Terminal, pick {{server}}, choose Authenticate and allow access in the browser.',
-    OPEN_PAGE_AGAIN: 'Open the page again ↗',
     FAIL_UNSUPPORTED: 'QAzinho cannot set up MCP servers in {{agent}}.',
     FAIL_ADD: '{{agent}} did not add {{server}}.',
     FAIL_SCREEN: '{{agent}} did not get to the {{server}} sign-in.',
@@ -344,9 +346,7 @@ export const en = {
     FAIL_TIMEOUT: 'The sign-in took too long, so QAzinho stopped waiting.',
     FAIL_CLOSED: '{{agent}} closed before the sign-in finished.',
     FAIL_MANUAL: 'Run this in a terminal, pick {{server}} and choose Authenticate:',
-    TRY_AGAIN: 'Try again',
     USE_TERMINAL: 'Do it in Terminal',
-    DONE: 'Done',
     NO_AGENT_NOTE:
       'Install {{agent}} first, or pick another agent in Agents: the MCP lives in it.',
     UNSUPPORTED_NOTE:

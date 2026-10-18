@@ -1,0 +1,79 @@
+import type { IStepsPopupProps } from '@/shared/components/organisms/StepsPopup/types';
+import type { CSSProperties } from 'react';
+import { useEffect, useState } from 'react';
+import {
+  STEP_MARKS,
+  STEPS_POPUP,
+} from '@/shared/components/organisms/StepsPopup/constants';
+import { MOTION } from '@/shared/constants';
+
+export const useStepsPopupViewModel = (props: IStepsPopupProps) => {
+  const { tone, onCancel, onClose } = props;
+  const [code, setCode] = useState('');
+  const isWorking = tone === 'working';
+  const isConnected = tone === 'connected';
+
+  useEffect(() => {
+    const leave = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+
+      if (isWorking) onCancel();
+      else onClose();
+    };
+
+    window.addEventListener('keydown', leave);
+
+    return () => {
+      window.removeEventListener('keydown', leave);
+    };
+  }, [isWorking, onCancel, onClose]);
+
+  useEffect(() => {
+    if (!isConnected) return;
+
+    const timer = setTimeout(onClose, STEPS_POPUP.closeAfterMs);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [isConnected, onClose]);
+
+  return {
+    style: {
+      '--steps-width': `${String(STEPS_POPUP.width)}px`,
+      '--steps-badge': `${String(STEPS_POPUP.badge)}px`,
+      '--steps-mark': `${String(STEPS_POPUP.mark)}px`,
+      '--steps-detail': `${String(STEPS_POPUP.detailHeight)}px`,
+    } as CSSProperties,
+    badgeClass: `steps-popup__badge steps-popup__badge--${tone}`,
+    badgeMark: isConnected
+      ? STEP_MARKS.done
+      : tone === 'failed'
+        ? STEP_MARKS.failed
+        : null,
+    rows: props.rows.map((row, index) => ({
+      ...row,
+      className: `steps-popup__step steps-popup__step--${row.state}`,
+      markClass: `steps-popup__mark steps-popup__mark--${row.state}`,
+      mark: STEP_MARKS[row.state],
+      delay: Math.min(index * MOTION.stagger, MOTION.maxStagger),
+    })),
+    detailClass: props.detail?.isCommand
+      ? 'steps-popup__detail steps-popup__detail--command'
+      : 'steps-popup__detail',
+    code,
+    canSendCode: code.trim() !== '',
+    onCodeChange: (value: string) => {
+      setCode(value);
+    },
+    onCodeSubmit: () => {
+      if (props.code === null || code.trim() === '') return;
+
+      props.code.onSubmit(code.trim());
+      setCode('');
+    },
+    onBackdrop: () => {
+      if (!isWorking) onClose();
+    },
+  };
+};

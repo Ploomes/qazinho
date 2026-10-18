@@ -1,4 +1,4 @@
-export const MCP_SIGN_IN = {
+export const STEPS_POPUP = {
   width: 408,
   badge: 44,
   mark: 18,

@@ -1,4 +1,4 @@
-.mcp-sign-in {
+.steps-popup {
   position: fixed;
   inset: 0;
   z-index: 40;
@@ -9,11 +9,11 @@
   -webkit-app-region: no-drag;
 }
 
-.mcp-sign-in__panel {
+.steps-popup__panel {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
-  width: var(--sign-in-width);
+  width: var(--steps-width);
   max-width: calc(100% - var(--space-8) * 2);
   padding: var(--space-7);
   border: var(--edge-width-xl) solid var(--edge);
@@ -22,19 +22,19 @@
   box-shadow: var(--sticker-hero);
 }
 
-.mcp-sign-in__head {
+.steps-popup__head {
   display: flex;
   align-items: center;
   gap: var(--space-5);
 }
 
-.mcp-sign-in__badge {
+.steps-popup__badge {
   position: relative;
   display: grid;
   flex: none;
   place-items: center;
-  width: var(--sign-in-badge);
-  height: var(--sign-in-badge);
+  width: var(--steps-badge);
+  height: var(--steps-badge);
   border: 1px solid var(--line);
   border-radius: var(--radius-pill);
   background: var(--raise2);
@@ -43,7 +43,7 @@
     border-color var(--dur) var(--ease);
 }
 
-.mcp-sign-in__badge--working::after {
+.steps-popup__badge--working::after {
   position: absolute;
   inset: calc(var(--space-2) * -1);
   border: 1.5px solid var(--lime);
@@ -54,56 +54,61 @@
   content: '';
 }
 
-.mcp-sign-in__badge--connected {
+.steps-popup__badge--connected {
   border-color: var(--lime);
   background: var(--lime);
 }
 
-.mcp-sign-in__badge--failed {
+.steps-popup__badge--failed {
   border-color: var(--fail);
   background: var(--fail-soft);
 }
 
-.mcp-sign-in__logo {
+.steps-popup__badge-art {
+  display: grid;
+  place-items: center;
+}
+
+.steps-popup__badge-art > img {
   display: block;
-  width: 40%;
+  width: 17px;
   height: auto;
 }
 
-.mcp-sign-in__badge-mark {
+.steps-popup__badge-mark {
   font: 600 18px/1 var(--font-mono);
 }
 
-.mcp-sign-in__badge--connected .mcp-sign-in__badge-mark {
+.steps-popup__badge--connected .steps-popup__badge-mark {
   color: var(--on-lime);
 }
 
-.mcp-sign-in__badge--failed .mcp-sign-in__badge-mark {
+.steps-popup__badge--failed .steps-popup__badge-mark {
   color: var(--fail);
 }
 
-.mcp-sign-in__titles {
+.steps-popup__titles {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
   min-width: 0;
 }
 
-.mcp-sign-in__title {
+.steps-popup__title {
   margin: 0;
   color: var(--ink);
   font: var(--font-display-md);
   letter-spacing: var(--display-tracking);
 }
 
-.mcp-sign-in__subtitle {
+.steps-popup__subtitle {
   margin: 0;
   color: var(--ink2);
   font: var(--font-ui-sm);
   text-wrap: pretty;
 }
 
-.mcp-sign-in__steps {
+.steps-popup__steps {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -112,7 +117,7 @@
   list-style: none;
 }
 
-.mcp-sign-in__step {
+.steps-popup__step {
   position: relative;
   display: flex;
   align-items: center;
@@ -122,10 +127,10 @@
   transition: color var(--dur) var(--ease);
 }
 
-.mcp-sign-in__step + .mcp-sign-in__step::before {
+.steps-popup__step + .steps-popup__step::before {
   position: absolute;
   bottom: 100%;
-  left: calc(var(--sign-in-mark) / 2 - 0.5px);
+  left: calc(var(--steps-mark) / 2 - 0.5px);
   width: 1px;
   height: var(--space-4);
   background: var(--line);
@@ -133,28 +138,28 @@
   content: '';
 }
 
-.mcp-sign-in__step--done + .mcp-sign-in__step::before {
+.steps-popup__step--done + .steps-popup__step::before {
   background: var(--lime);
 }
 
-.mcp-sign-in__step--active {
+.steps-popup__step--active {
   color: var(--ink);
 }
 
-.mcp-sign-in__step--done {
+.steps-popup__step--done {
   color: var(--ink2);
 }
 
-.mcp-sign-in__step--failed {
+.steps-popup__step--failed {
   color: var(--fail);
 }
 
-.mcp-sign-in__mark {
+.steps-popup__mark {
   display: grid;
   flex: none;
   place-items: center;
-  width: var(--sign-in-mark);
-  height: var(--sign-in-mark);
+  width: var(--steps-mark);
+  height: var(--steps-mark);
   border: 1.5px solid var(--line);
   border-radius: var(--radius-pill);
   font: 600 10px/1 var(--font-mono);
@@ -164,34 +169,34 @@
     color var(--dur) var(--ease);
 }
 
-.mcp-sign-in__mark--active {
+.steps-popup__mark--active {
   border-color: var(--lime);
   border-right-color: transparent;
   animation: gc-spin 0.8s linear infinite;
 }
 
-.mcp-sign-in__mark--done {
+.steps-popup__mark--done {
   border-color: var(--lime);
   background: var(--lime);
   color: var(--on-lime);
 }
 
-.mcp-sign-in__mark--failed {
+.steps-popup__mark--failed {
   border-color: var(--fail);
   background: var(--fail-soft);
   color: var(--fail);
 }
 
-.mcp-sign-in__label {
+.steps-popup__label {
   min-width: 0;
   text-wrap: pretty;
 }
 
-.mcp-sign-in__note {
+.steps-popup__note {
   overflow: hidden;
 }
 
-.mcp-sign-in__hint {
+.steps-popup__hint {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
@@ -200,14 +205,14 @@
   background: var(--lime-soft);
 }
 
-.mcp-sign-in__hint-text {
+.steps-popup__hint-text {
   margin: 0;
   color: var(--ink2);
   font: var(--font-ui-sm);
   text-wrap: pretty;
 }
 
-.mcp-sign-in__link {
+.steps-popup__link {
   align-self: flex-start;
   color: var(--lime-ink);
   font: 500 12px/1.4 var(--font-ui);
@@ -215,12 +220,12 @@
   transition: opacity var(--dur-fast) var(--ease);
 }
 
-.mcp-sign-in__link:hover {
+.steps-popup__link:hover {
   opacity: 0.75;
 }
 
-.mcp-sign-in__detail {
-  max-height: var(--sign-in-detail);
+.steps-popup__detail {
+  max-height: var(--steps-detail);
   margin: 0;
   padding: var(--space-4) var(--space-5);
   overflow: auto;
@@ -232,13 +237,50 @@
   word-break: break-word;
 }
 
-.mcp-sign-in__detail--command {
+.steps-popup__detail--command {
   background: var(--raise2);
   color: var(--ink);
 }
 
-.mcp-sign-in__foot {
+.steps-popup__foot {
   display: flex;
   justify-content: flex-end;
   gap: var(--space-3);
+}
+
+.steps-popup__code {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.steps-popup__code-label {
+  color: var(--ink2);
+  font: var(--font-ui-xs);
+}
+
+.steps-popup__code-row {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.steps-popup__code-input {
+  flex: 1;
+  min-width: 0;
+  padding: 7px var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--raise);
+  color: var(--ink);
+  font: var(--font-mono-sm);
+  outline: none;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
+}
+
+.steps-popup__code-input:focus {
+  border-color: var(--lime);
+  box-shadow: 0 0 0 3px var(--lime-soft);
 }
