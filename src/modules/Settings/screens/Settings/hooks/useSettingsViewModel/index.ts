@@ -136,7 +136,7 @@ export const useSettingsViewModel = () => {
 
       return {
         id: item.id,
-        label: item.label,
+        label: t(item.labelKey),
         isEditing,
         keys: isEditing ? t('SETTINGS.PRESS_KEYS') : item.combo,
       };

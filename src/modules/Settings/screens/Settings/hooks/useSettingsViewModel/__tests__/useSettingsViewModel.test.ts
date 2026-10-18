@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { i18n } from '@/languages';
 import { useSettingsViewModel } from '@/modules/Settings/screens/Settings/hooks/useSettingsViewModel';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAppStore, useMachineStore, useSettingsStore } from '@/store';
@@ -93,6 +94,17 @@ describe('useSettingsViewModel', () => {
     const { result } = renderHook(() => useSettingsViewModel());
 
     expect(result.current.integrations.map(({ id }) => id)).toEqual(['github', 'jira']);
+  });
+
+  it('names every shortcut in the language the QA reads', async () => {
+    await i18n.changeLanguage('pt');
+
+    const { result } = renderHook(() => useSettingsViewModel());
+
+    expect(result.current.keybinds.find(({ id }) => id === 'run')?.label).toBe(
+      'Rodar o plano',
+    );
+    await i18n.changeLanguage('en');
   });
 
   it('shows the keys being waited for on the shortcut under edit', () => {

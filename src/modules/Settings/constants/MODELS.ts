@@ -2,9 +2,9 @@ import type { IModelOption } from '@/modules/Settings/types';
 
 export const MODELS: Record<string, IModelOption[]> = {
   'Claude Code': [
-    { id: 'haiku', name: 'Haiku', note: 'fastest', isLocked: false },
-    { id: 'sonnet', name: 'Sonnet', note: 'the everyday one', isLocked: false },
-    { id: 'opus', name: 'Opus', note: 'slower, more stubborn', isLocked: false },
-    { id: 'fable', name: 'Fable', note: 'not on your key', isLocked: true },
+    { id: 'haiku', name: 'Haiku', noteKey: 'MODEL.NOTE_HAIKU', isLocked: false },
+    { id: 'sonnet', name: 'Sonnet', noteKey: 'MODEL.NOTE_SONNET', isLocked: false },
+    { id: 'opus', name: 'Opus', noteKey: 'MODEL.NOTE_OPUS', isLocked: false },
+    { id: 'fable', name: 'Fable', noteKey: 'MODEL.NOTE_FABLE', isLocked: true },
   ],
 };

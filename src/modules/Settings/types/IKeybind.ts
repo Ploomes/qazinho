@@ -1,5 +1,7 @@
+import type { ParseKeys } from 'i18next';
+
 export interface IKeybind {
   id: string;
-  label: string;
+  labelKey: ParseKeys;
   combo: string;
 }

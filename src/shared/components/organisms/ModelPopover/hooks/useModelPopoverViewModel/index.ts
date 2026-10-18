@@ -22,7 +22,7 @@ export const useModelPopoverViewModel = () => {
       note: defaultModel ?? t('MODEL.AGENT_DEFAULT_UNKNOWN'),
       isLocked: false,
     },
-    ...(MODELS[agent] ?? []),
+    ...(MODELS[agent] ?? []).map(({ noteKey, ...one }) => ({ ...one, note: t(noteKey) })),
   ];
 
   const agents = detected.map((one) => ({

@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 import { resolveLanguage } from '@/languages/library';
 import { KEYBINDS } from '@/modules/Settings/constants';
 import { STORAGE } from '@/shared/constants';
-import { migrateSettings } from './library';
+import { keybindsOf, migrateSettings } from './library';
 
 export const useSettingsStore = create<ISettingsStore>()(
   persist(
@@ -46,6 +46,15 @@ export const useSettingsStore = create<ISettingsStore>()(
           ISettingsStore,
           'agent' | 'model' | 'language' | 'keybinds' | 'hasOnboarded'
         >,
+      merge: (persisted, current) => {
+        const saved = (persisted ?? {}) as Partial<ISettingsStore>;
+
+        return {
+          ...current,
+          ...saved,
+          keybinds: keybindsOf({ saved: saved.keybinds, table: KEYBINDS }),
+        };
+      },
       partialize: ({ agent, model, language, keybinds, hasOnboarded }) => ({
         agent,
         model,
