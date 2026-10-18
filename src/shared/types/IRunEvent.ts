@@ -7,5 +7,6 @@ export type IRunEvent =
   | { kind: 'doing'; workspaceId: string; index: number }
   | { kind: 'streaming'; workspaceId: string; url: string }
   | { kind: 'note'; workspaceId: string; text: string }
+  | { kind: 'cost'; workspaceId: string; costUsd: number }
   | { kind: 'done'; workspaceId: string }
   | { kind: 'failed'; workspaceId: string; failure: RunFailure };

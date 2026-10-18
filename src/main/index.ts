@@ -173,6 +173,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
       sessionId: ask.sessionId,
       text: '',
       usage: null,
+      costUsd: null,
       isError: true,
       answer: null,
       failure: { reason: 'agent-missing', agentId: ask.agentId },

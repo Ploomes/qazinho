@@ -12,7 +12,13 @@ import {
 } from '@/modules/Chat/library';
 import { DEVICE } from '@/modules/Device/constants';
 import { RUN_CLOCK } from '@/modules/Run/constants';
-import { endRun, landStep, resumeRun, startRun } from '@/modules/Workspace/library';
+import {
+  endRun,
+  landCost,
+  landStep,
+  resumeRun,
+  startRun,
+} from '@/modules/Workspace/library';
 import { mapWorkspace, tickWorkspaces } from './library';
 
 export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
@@ -250,6 +256,15 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         workspaceId,
         change: (workspace) =>
           appendAgentMessage({ workspace, text, who, at: formatClock(new Date()) }),
+      }),
+    })),
+
+  landCost: ({ workspaceId, costUsd }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => landCost({ workspace, costUsd }),
       }),
     })),
 

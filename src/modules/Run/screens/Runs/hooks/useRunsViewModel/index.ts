@@ -1,20 +1,21 @@
-import type { RunEnd } from '@/modules/Run/types';
+import type { IRun, RunEnd } from '@/modules/Run/types';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatElapsed } from '@/modules/Device/library';
 import {
   RUN_ENDS,
   RUN_FILTERS,
   RUN_PAGE_SIZE,
   RUN_VERDICTS,
 } from '@/modules/Run/constants';
-import { caseVerdict, filterCases, pageOf } from '@/modules/Run/library';
+import { caseVerdict, filterCases, formatCost, pageOf } from '@/modules/Run/library';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 import { MOTION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useRunsViewModel = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const workspace = useSelectedWorkspacePart((opened) => ({
     runs: opened.runs,
     bugs: opened.bugs,
@@ -46,6 +47,14 @@ export const useRunsViewModel = () => {
     return end === null ? null : { glyph: end.glyph, label: t(end.labelKey) };
   };
 
+  const factsOf = (item: IRun) =>
+    item.costUsd === null
+      ? formatElapsed(item.durationSec)
+      : t('RUN.FACTS', {
+          duration: formatElapsed(item.durationSec),
+          cost: formatCost({ costUsd: item.costUsd, language: i18n.language }),
+        });
+
   const onOpenBug = (bugId: string) => {
     toggleBug(bugId);
     selectTab('bugs');
@@ -70,10 +79,13 @@ export const useRunsViewModel = () => {
       what: t('RUN.WHOLE_PLAN'),
       isSelected: item.id === run?.id,
       ended: endOf(item.endedBy),
+      facts: factsOf(item),
     })),
     run,
     title: run === null ? '' : t('RUN.TITLE', { id: run.id }),
     runEnded: run === null ? null : endOf(run.endedBy),
+    runFacts: run === null ? '' : factsOf(run),
+    factsNote: t('RUN.COST_NOTE'),
     reportRef,
     pager: {
       isShown: paged.pageCount > 1,

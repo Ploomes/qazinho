@@ -53,6 +53,7 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
     meta: workspace.name,
     startedAt: live?.startedAt ?? '',
     durationSec: live?.elapsedSec ?? tookSec(outcomes),
+    costUsd: live?.costUsd ?? null,
     counts: countVerdicts(outcomes.map((outcome) => outcome.verdict)),
     cases,
     endedBy,

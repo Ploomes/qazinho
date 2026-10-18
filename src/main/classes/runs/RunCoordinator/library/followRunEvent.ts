@@ -14,5 +14,8 @@ export function followRunEvent(props: {
   if (event.kind === 'step')
     return { ...run, doingIndex: -1, outcomes: [...run.outcomes, event.outcome] };
 
+  if (event.kind === 'cost')
+    return { ...run, costUsd: (run.costUsd ?? 0) + event.costUsd };
+
   return run;
 }

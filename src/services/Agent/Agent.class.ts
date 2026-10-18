@@ -14,6 +14,7 @@ export class Agent {
         sessionId: null,
         text: i18n.t('COMMON.NO_BRIDGE'),
         usage: null,
+        costUsd: null,
         isError: true,
         answer: null,
         failure: null,

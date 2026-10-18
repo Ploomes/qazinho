@@ -9,14 +9,14 @@ import {
   moodOfStatus,
   viewportOf,
 } from '@/modules/Device/library';
-import { useRunControls } from '@/modules/Run';
+import { formatCost, useRunControls } from '@/modules/Run';
 import { Run } from '@/services';
 import { MOTION } from '@/shared/constants';
 import { useSelectedWorkspace } from '@/shared/hooks/useSelectedWorkspace';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useDevicePanelViewModel = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const projects = useAppStore((state) => state.projects);
   const workspace = useSelectedWorkspace();
   const isOpen = useWorkspaceStore((state) => state.isDevicePanelOpen);
@@ -134,7 +134,13 @@ export const useDevicePanelViewModel = () => {
     shot: live?.shot ?? null,
     stream,
     urlText: target?.value ?? '',
-    elapsedLabel: t('DEVICE.LIVE', { elapsed: formatElapsed(live?.elapsedSec ?? 0) }),
+    elapsedLabel:
+      live?.costUsd == null
+        ? t('DEVICE.LIVE', { elapsed: formatElapsed(live?.elapsedSec ?? 0) })
+        : t('DEVICE.LIVE_COST', {
+            elapsed: formatElapsed(live.elapsedSec),
+            cost: formatCost({ costUsd: live.costUsd, language: i18n.language }),
+          }),
     isLive: state === 'driving',
     steps,
     doingLabel:

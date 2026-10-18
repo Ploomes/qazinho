@@ -10,6 +10,7 @@ const RUN: IRunInFlight = {
   streamUrl: null,
   outcomes: [],
   isPaused: false,
+  costUsd: null,
 };
 
 const OUTCOME = { workspaceId: 'w1', index: 0, verdict: 'passed' } as IStepOutcome;
@@ -49,5 +50,20 @@ describe('followRunEvent', () => {
         event: { kind: 'note', workspaceId: 'w1', text: 'hi' },
       }),
     ).toBe(RUN);
+  });
+
+  it('adds up what each case cost, so a page that opens later shows the run so far', () => {
+    const once = followRunEvent({
+      run: RUN,
+      event: { kind: 'cost', workspaceId: 'w1', costUsd: 0.02 },
+    });
+
+    expect(once.costUsd).toBe(0.02);
+    expect(
+      followRunEvent({
+        run: once,
+        event: { kind: 'cost', workspaceId: 'w1', costUsd: 0.03 },
+      }).costUsd,
+    ).toBeCloseTo(0.05);
   });
 });

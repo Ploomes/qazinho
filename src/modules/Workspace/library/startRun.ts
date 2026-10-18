@@ -23,6 +23,7 @@ export function startRun(props: {
       outcomes: [],
       shot: null,
       streamUrl: null,
+      costUsd: null,
     },
   };
 }

@@ -61,6 +61,7 @@ export interface IWorkspaceStore {
   setContext: (props: { workspaceId: string; tokens: number; window: number }) => void;
   markStreaming: (props: { workspaceId: string; url: string }) => void;
   landNote: (props: { workspaceId: string; text: string; who: string }) => void;
+  landCost: (props: { workspaceId: string; costUsd: number }) => void;
   landStep: (outcome: IStepOutcome) => void;
   landRunDone: (workspaceId: string) => void;
   landRunFailed: (props: { workspaceId: string; text: string }) => void;

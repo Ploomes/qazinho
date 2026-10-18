@@ -9,4 +9,5 @@ export interface IRunInFlight {
   streamUrl: string | null;
   outcomes: IStepOutcome[];
   isPaused: boolean;
+  costUsd: number | null;
 }

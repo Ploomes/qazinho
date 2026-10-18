@@ -10,6 +10,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
         sessionId: null,
         text: '',
         usage: null,
+        costUsd: null,
         isError: false,
         answer: null,
         failure: null,

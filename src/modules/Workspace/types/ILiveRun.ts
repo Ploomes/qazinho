@@ -11,4 +11,5 @@ export interface ILiveRun {
   outcomes: IStepOutcome[];
   shot: string | null;
   streamUrl: string | null;
+  costUsd: number | null;
 }

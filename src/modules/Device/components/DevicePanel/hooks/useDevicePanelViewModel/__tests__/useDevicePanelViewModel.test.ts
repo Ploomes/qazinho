@@ -244,6 +244,28 @@ describe('useDevicePanelViewModel', () => {
     });
   });
 
+  describe('elapsedLabel', () => {
+    it('adds what the run cost so far, once its agent said', () => {
+      const walked = walkRun({ verdicts: ['passed'] });
+
+      useWorkspaceStore.setState({ workspaces: [walked] });
+
+      expect(
+        renderHook(() => useDevicePanelViewModel()).result.current.elapsedLabel,
+      ).toBe('live · 0:00');
+
+      useWorkspaceStore.setState({
+        workspaces: [
+          { ...walked, live: { ...walked.live!, elapsedSec: 75, costUsd: 0.042 } },
+        ],
+      });
+
+      expect(
+        renderHook(() => useDevicePanelViewModel()).result.current.elapsedLabel,
+      ).toBe('live · 1:15 · $0.042');
+    });
+  });
+
   describe('panelWidth', () => {
     it('makes room for the handle beside the content, so nothing is cut at the window edge', () => {
       const { result } = renderHook(() => useDevicePanelViewModel());

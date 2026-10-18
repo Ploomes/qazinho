@@ -19,6 +19,7 @@ function inFlight(props: Partial<IRunInFlight> = {}): IRunInFlight {
       makeOutcome({ workspace, index: 1, verdict: 'failed' }),
     ],
     isPaused: false,
+    costUsd: 0.3,
     ...props,
   };
 }
@@ -47,6 +48,7 @@ describe('resumeRun', () => {
       startedAt: '22:19',
       streamUrl: 'http://127.0.0.1:5000/t/w1',
       shot: 'data:image/jpeg;base64,shot-1',
+      costUsd: 0.3,
     });
     expect(workspace.live?.outcomes).toHaveLength(2);
   });

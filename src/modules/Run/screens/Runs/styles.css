@@ -84,6 +84,13 @@
   font: var(--font-ui-md);
 }
 
+.runs__history-facts {
+  flex: none;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+  white-space: nowrap;
+}
+
 .runs__history-when {
   width: 74px;
   color: var(--ink3);
@@ -146,6 +153,11 @@
 .runs__meta {
   color: var(--ink3);
   font: 400 11px/1.6 var(--font-mono);
+}
+
+.runs__facts {
+  margin-left: var(--space-3);
+  white-space: nowrap;
 }
 
 .runs__counts {

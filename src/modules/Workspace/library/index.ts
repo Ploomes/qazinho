@@ -2,6 +2,7 @@ export * from './bugOfSaved';
 export * from './buildRun';
 export * from './endRun';
 export * from './fromSaved';
+export * from './landCost';
 export * from './landStep';
 export * from './messageOfSaved';
 export * from './resumeRun';

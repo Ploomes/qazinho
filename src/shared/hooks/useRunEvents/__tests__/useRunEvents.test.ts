@@ -17,6 +17,7 @@ const RUN: IRunInFlight = {
   streamUrl: 'http://127.0.0.1:5000/t/w1',
   outcomes: [],
   isPaused: false,
+  costUsd: 0.12,
 };
 
 /** A page that opened while main was still walking a run: the bridge says so. */
@@ -50,6 +51,7 @@ describe('useRunEvents', () => {
         doingIndex: 1,
         isRunning: true,
         streamUrl: 'http://127.0.0.1:5000/t/w1',
+        costUsd: 0.12,
       });
     });
     expect(useWorkspaceStore.getState().workspaces[0]?.status).toBe('running');

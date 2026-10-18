@@ -167,6 +167,9 @@ export const pt: typeof en = {
     ENDED_INTERRUPTED: 'interrompida',
     OPEN_IN_BUGS: 'Abrir em Bugs →',
     DURATION: '{{seconds}}s',
+    FACTS: '{{duration}} · {{cost}}',
+    COST_NOTE:
+      'Quanto a run levou, e quanto o agente disse que ela custou, a preço de API.',
     STEP_SHOT: '{{id}} · passo {{number}}',
     PASSED: 'passou',
     FAILED: 'falhou',
@@ -229,6 +232,7 @@ export const pt: typeof en = {
     STEPS_EMPTY: 'Aperte Rodar plano e os passos aparecem aqui, um de cada vez.',
     RAIL: '|← device',
     LIVE: 'ao vivo · {{elapsed}}',
+    LIVE_COST: 'ao vivo · {{elapsed}} · {{cost}}',
     HIDE: 'Esconder o device',
     NO_SHOT: 'o primeiro screenshot chega quando o primeiro passo terminar.',
     SHOT_ALT: 'o device depois do último passo',

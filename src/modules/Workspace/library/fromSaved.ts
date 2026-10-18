@@ -7,8 +7,8 @@ import { viewportOf } from '@/modules/Device/library';
 import { bugOfSaved } from './bugOfSaved';
 import { messageOfSaved } from './messageOfSaved';
 
-type SavedRun = Omit<IRun, 'endedBy'> &
-  Partial<Pick<IRun, 'endedBy'>> & { title?: string; what?: string };
+type SavedRun = Omit<IRun, 'endedBy' | 'costUsd'> &
+  Partial<Pick<IRun, 'endedBy' | 'costUsd'>> & { title?: string; what?: string };
 
 function readPlan(yaml: string): ITestCase[] {
   try {
@@ -51,6 +51,7 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
       ({ title: _title, what: _what, ...run }) => ({
         ...run,
         endedBy: run.endedBy ?? 'finished',
+        costUsd: run.costUsd ?? null,
       }),
     ),
     bugs: (read.bugs ?? []).map(bugOfSaved),

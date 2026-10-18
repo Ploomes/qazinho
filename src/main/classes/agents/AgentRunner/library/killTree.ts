@@ -1,8 +1,11 @@
-/** Stops an agent and everything it started: on POSIX the agent leads its own process group. */
-export function killTree(child: {
-  pid?: number | undefined;
-  kill: (signal: NodeJS.Signals) => boolean;
-}): void {
+/** Signals an agent and everything it started: on POSIX the agent leads its own process group. */
+export function killTree(
+  child: {
+    pid?: number | undefined;
+    kill: (signal: NodeJS.Signals) => boolean;
+  },
+  signal: NodeJS.Signals = 'SIGTERM',
+): void {
   if (child.pid === undefined) return;
 
   if (process.platform === 'win32') {
@@ -12,8 +15,8 @@ export function killTree(child: {
   }
 
   try {
-    process.kill(-child.pid, 'SIGTERM');
+    process.kill(-child.pid, signal);
   } catch {
-    child.kill('SIGTERM');
+    child.kill(signal);
   }
 }

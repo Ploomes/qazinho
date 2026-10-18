@@ -9,6 +9,7 @@ export const useRunEvents = () => {
   const markDoing = useWorkspaceStore((state) => state.markDoing);
   const markStreaming = useWorkspaceStore((state) => state.markStreaming);
   const landNote = useWorkspaceStore((state) => state.landNote);
+  const landCost = useWorkspaceStore((state) => state.landCost);
   const agent = useSettingsStore((state) => state.agent);
   const landStep = useWorkspaceStore((state) => state.landStep);
   const landRunDone = useWorkspaceStore((state) => state.landRunDone);
@@ -25,6 +26,8 @@ export const useRunEvents = () => {
           markStreaming({ workspaceId: event.workspaceId, url: event.url });
         else if (event.kind === 'note')
           landNote({ workspaceId: event.workspaceId, text: event.text, who: agent });
+        else if (event.kind === 'cost')
+          landCost({ workspaceId: event.workspaceId, costUsd: event.costUsd });
         else if (event.kind === 'step') landStep(event.outcome);
         else if (event.kind === 'done') landRunDone(event.workspaceId);
         else
@@ -33,7 +36,17 @@ export const useRunEvents = () => {
             text: t(RUN_FAILURE_KEYS[event.failure.reason], { ...event.failure, agent }),
           });
       }),
-    [agent, t, markDoing, markStreaming, landNote, landStep, landRunDone, landRunFailed],
+    [
+      agent,
+      t,
+      markDoing,
+      markStreaming,
+      landNote,
+      landCost,
+      landStep,
+      landRunDone,
+      landRunFailed,
+    ],
   );
 
   useEffect(() => {

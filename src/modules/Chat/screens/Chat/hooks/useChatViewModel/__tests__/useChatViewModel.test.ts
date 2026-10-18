@@ -43,6 +43,7 @@ function answering(turn: Partial<IChatTurn>) {
       sessionId: 'session-1',
       text: '',
       usage: null,
+      costUsd: null,
       isError: false,
       answer: null,
       failure: null,

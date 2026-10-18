@@ -12,6 +12,7 @@ import { AGENT_RUN } from './constants';
 import {
   buildAskArgs,
   buildCodexArgs,
+  costOf,
   hearCodex,
   killTree,
   readAgentLine,
@@ -78,6 +79,7 @@ export class AgentRunner {
     let structured = '';
     let spoken = '';
     let isError = false;
+    let costUsd: number | null = null;
     let stderr = '';
 
     child.stderr.on('data', (chunk: Buffer) => {
@@ -140,6 +142,7 @@ export class AgentRunner {
       if (event.type === 'result') {
         result = event.result ?? '';
         isError = event.is_error === true;
+        costUsd = costOf(event);
       }
     });
 
@@ -165,10 +168,17 @@ export class AgentRunner {
       text: structured.length > 0 ? structured : said,
       usage,
       isError: isError || code !== 0,
+      costUsd,
     };
   }
 
+  /** Interrupts the workspace's agent the way Ctrl+C does, so it still says what the turn cost, and ends it if it lingers. */
   public cancel(workspaceId: string): void {
-    for (const child of this.asking.get(workspaceId) ?? []) killTree(child);
+    for (const child of this.asking.get(workspaceId) ?? []) {
+      killTree(child, 'SIGINT');
+      setTimeout(() => {
+        if (child.exitCode === null && child.signalCode === null) killTree(child);
+      }, AGENT_RUN.interruptGraceMs).unref();
+    }
   }
 }

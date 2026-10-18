@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { i18n } from '@/languages';
 import { useRunsViewModel } from '@/modules/Run/screens/Runs/hooks/useRunsViewModel';
-import { endRun } from '@/modules/Workspace/library';
+import { endRun, landCost } from '@/modules/Workspace/library';
 import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
@@ -220,5 +220,21 @@ describe('useRunsViewModel', () => {
 
       expect(result.current.pager.isShown).toBe(false);
     });
+  });
+
+  it('tells how long a run took and what its agent said it cost', () => {
+    const paid = landCost({
+      workspace: walkRun({ verdicts: ['passed'] }),
+      costUsd: 0.25,
+    });
+
+    useWorkspaceStore.setState({
+      workspaces: [endRun({ workspace: paid, at: '09:42', endedBy: 'finished' })],
+    });
+
+    const view = renderHook(() => useRunsViewModel()).result.current;
+
+    expect(view.runFacts).toBe('0:00 · $0.25');
+    expect(view.runs[0]?.facts).toBe('0:00 · $0.25');
   });
 });

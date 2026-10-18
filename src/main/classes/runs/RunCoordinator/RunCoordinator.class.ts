@@ -92,6 +92,7 @@ export class RunCoordinator {
       streamUrl: null,
       outcomes: [],
       isPaused: false,
+      costUsd: null,
     });
 
     try {
@@ -218,29 +219,38 @@ export class RunCoordinator {
     );
   }
 
+  /** Walks the cases in order, and ends once each case's agent said what it cost, or after a short wait. */
   private async walkSteps(props: {
     run: IWalkRun;
     driver: IDeviceDriver;
   }): Promise<RunFailure | null> {
     const { run, driver } = props;
+    const costs: Promise<void>[] = [];
 
-    for (const [position, steps] of casesOf(run.steps).entries()) {
-      await this.holdWhilePaused(run.workspaceId);
+    try {
+      for (const [position, steps] of casesOf(run.steps).entries()) {
+        await this.holdWhilePaused(run.workspaceId);
 
-      if (this.stopping.has(run.workspaceId)) break;
+        if (this.stopping.has(run.workspaceId)) break;
 
-      if (position > 0) await driver.restart().catch(() => undefined);
+        if (position > 0) await driver.restart().catch(() => undefined);
 
-      if (this.stopping.has(run.workspaceId)) break;
+        if (this.stopping.has(run.workspaceId)) break;
 
-      const walked = await this.walkCase({ run, driver, steps });
+        const walked = await this.walkCase({ run, driver, steps, costs });
 
-      if (walked === false) break;
+        if (walked === false) break;
 
-      if (walked !== true) return walked;
+        if (walked !== true) return walked;
+      }
+
+      return null;
+    } finally {
+      await Promise.race([
+        Promise.all(costs),
+        new Promise((wake) => setTimeout(wake, RUN_WALK.costsWaitMs)),
+      ]);
     }
-
-    return null;
   }
 
   /** One agent turn per case, in a session of its own: true goes on, false stops, a failure stops and says why. */
@@ -248,16 +258,25 @@ export class RunCoordinator {
     run: IWalkRun;
     driver: IDeviceDriver;
     steps: { step: IFlatStep; index: number }[];
+    costs: Promise<void>[];
   }): Promise<boolean | RunFailure> {
     const { run, driver } = props;
     const { workspaceId } = run;
     const pending = [...props.steps];
     let began = Date.now();
     let isOver = false;
+    let over: () => void = () => undefined;
+    const caseOver = new Promise<null>((resolve) => {
+      over = () => {
+        resolve(null);
+      };
+    });
 
     const endCase = (said: string) => {
       isOver = true;
+      over();
       setImmediate(() => {
+        this.tools.detach(workspaceId);
         this.runner.cancel(workspaceId);
       });
 
@@ -351,7 +370,7 @@ export class RunCoordinator {
 
     if (this.stopping.has(workspaceId)) return false;
 
-    const asked = await this.runner.ask({
+    const asking = this.runner.ask({
       workspaceId,
       agentId: run.agentId,
       command: run.command,
@@ -367,9 +386,20 @@ export class RunCoordinator {
       prompt: this.harness.walk({ steps: pending.map(({ step }) => step), screen }),
     });
 
+    props.costs.push(
+      asking.then(
+        ({ costUsd }) => {
+          if (costUsd !== null) this.emit({ kind: 'cost', workspaceId, costUsd });
+        },
+        () => undefined,
+      ),
+    );
+
+    const asked = await Promise.race([asking, caseOver]);
+
     if (this.stopping.has(workspaceId)) return false;
 
-    if (isOver) return true;
+    if (isOver || asked === null) return true;
 
     const failed = agentFailure(asked);
 
