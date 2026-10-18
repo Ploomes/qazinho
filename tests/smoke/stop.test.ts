@@ -1,5 +1,5 @@
 import type { IRunEvent } from '@/shared/types';
-import { chmod, mkdtemp, writeFile } from 'node:fs/promises';
+import { chmod, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -74,6 +74,80 @@ describe('stopping a run', () => {
     expect(Date.now() - began).toBeLessThan(STOP_AFTER_MS + STOPPED_WITHIN_MS);
     expect(events.some((event) => event.kind === 'step')).toBe(false);
     expect(events.at(-1)).toEqual({ kind: 'done', workspaceId: 'w-stop' });
+
+    site.close();
+  });
+
+  /**
+   * Stop pressed as one case ended and the next began: the next agent was asked all the same,
+   * with the browser already closing under it, and the run went on for a minute.
+   */
+  it('does NOT ask the agent for the next case once the QA stopped between cases', async () => {
+    const site = createServer((_request, response) => {
+      response.writeHead(200, { 'content-type': 'text/html' });
+      response.end('<!doctype html><h1>Shop</h1>');
+    });
+
+    await new Promise<void>((ready) => site.listen(4341, '127.0.0.1', ready));
+
+    const root = await mkdtemp(join(tmpdir(), 'qazinho-stop-'));
+    const agent = join(root, 'agent');
+    const asked = join(root, 'asked');
+
+    // The first case's agent answers at once without reporting; any later one would think for long.
+    await writeFile(
+      agent,
+      `#!/bin/sh\necho asked >> ${asked}\nif [ $(wc -l < ${asked}) -gt 1 ]; then sleep ${String(THINKING_SEC)}; fi\n`,
+    );
+    await chmod(agent, 0o755);
+
+    const events: IRunEvent[] = [];
+    const deviceTools = new McpHost();
+
+    await deviceTools.start();
+
+    const coordinator: RunCoordinator = new RunCoordinator({
+      runner: new AgentRunner({ owners: new ProcessOwners(), onEvent: () => undefined }),
+      findAndroid: async () => null,
+      findIos: async () => null,
+      findCommand: async () => agent,
+      live: new LiveStream(),
+      tools: deviceTools,
+      harness: new Harness(),
+      dataRoot: root,
+      onEvent: (event) => {
+        events.push(event);
+
+        if (event.kind === 'doing' && event.index === 1)
+          coordinator.stop('w-stop-between');
+      },
+    });
+
+    const step = (caseId: string) => ({
+      caseId,
+      caseTitle: 'Shop',
+      casePriority: 'P1',
+      caseGoal: '',
+      casePreconditions: '',
+      numberInCase: 1,
+      action: 'Look at the page',
+      expected: 'It says Shop',
+    });
+
+    const began = Date.now();
+
+    await coordinator.start({
+      workspaceId: 'w-stop-between',
+      agentId: 'fake',
+      model: '',
+      target: { kind: 'web', value: 'http://127.0.0.1:4341/' },
+      runId: 'r-01',
+      steps: [step('TC-01'), step('TC-02')],
+    });
+
+    expect(Date.now() - began).toBeLessThan(STOPPED_WITHIN_MS * 3);
+    expect((await readFile(asked, 'utf8')).trim().split('\n')).toHaveLength(1);
+    expect(events.at(-1)).toEqual({ kind: 'done', workspaceId: 'w-stop-between' });
 
     site.close();
   });

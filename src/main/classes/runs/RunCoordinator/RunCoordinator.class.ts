@@ -226,6 +226,8 @@ export class RunCoordinator {
 
       if (position > 0) await driver.restart().catch(() => undefined);
 
+      if (this.stopping.has(run.workspaceId)) break;
+
       const walked = await this.walkCase({ run, driver, steps });
 
       if (walked === false) break;
@@ -340,6 +342,10 @@ export class RunCoordinator {
 
     this.tools.attach({ workspaceId, driver, onReport });
 
+    const screen = await driver.describe().catch(() => '');
+
+    if (this.stopping.has(workspaceId)) return false;
+
     const asked = await this.runner.ask({
       workspaceId,
       agentId: run.agentId,
@@ -352,10 +358,7 @@ export class RunCoordinator {
       }),
       mcpConfig,
       allowedTools: this.harness.toolsFor('runner').allowedTools,
-      prompt: this.harness.walk({
-        steps: pending.map(({ step }) => step),
-        screen: await driver.describe().catch(() => ''),
-      }),
+      prompt: this.harness.walk({ steps: pending.map(({ step }) => step), screen }),
     });
 
     if (this.stopping.has(workspaceId)) return false;
