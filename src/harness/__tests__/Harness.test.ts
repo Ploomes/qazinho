@@ -39,6 +39,7 @@ describe('Harness', () => {
     it('tells the agent about an empty workspace exactly as it did before', async () => {
       const chat = harness.chat({
         target: null,
+        viewport: null,
         steps: [],
         references: [],
         look: null,
@@ -51,6 +52,7 @@ describe('Harness', () => {
     it('adds the app, what QAzinho saw of it, the plan and what the QA pointed at, after the corpus', async () => {
       const chat = harness.chat({
         target: { kind: 'web', value: 'https://shop.test' },
+        viewport: DESKTOP,
         steps: STEPS,
         references: REFERENCES,
         look: {
@@ -67,6 +69,7 @@ describe('Harness', () => {
       expect(
         harness.chat({
           target: null,
+          viewport: null,
           steps: [],
           references: [],
           look: null,
@@ -110,6 +113,7 @@ describe('Harness', () => {
       expect(
         harness.chat({
           target: null,
+          viewport: null,
           steps: [],
           references: [],
           look: null,

@@ -110,6 +110,51 @@ describe('useChatViewModel', () => {
     expect(ask.mock.calls[0]?.[0].text).toBe("Let's create a test plan.");
   });
 
+  describe('the size a run takes', () => {
+    it('tells the agent the size the device is set to, so a plan never counts on another', async () => {
+      const ask = answering({ answer: DRAFTED });
+
+      useWorkspaceStore.setState({
+        workspaces: [{ ...makeWorkspace([]), viewportId: 'phone' }],
+      });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onSuggestion('Plan the checkout.');
+      });
+
+      await waitFor(() => {
+        expect(ask).toHaveBeenCalledOnce();
+      });
+      expect(ask.mock.calls[0]?.[0].viewport).toEqual({ width: 390, height: 844 });
+    });
+
+    it('names no size for a phone app, which runs at the size the device is', async () => {
+      const ask = answering({ answer: DRAFTED });
+
+      useAppStore.setState({
+        projects: [
+          {
+            ...PROJECT,
+            targets: [{ id: 't1', kind: 'android', label: 'Android', value: '/app.apk' }],
+          },
+        ],
+      });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onSuggestion('Plan the checkout.');
+      });
+
+      await waitFor(() => {
+        expect(ask).toHaveBeenCalledOnce();
+      });
+      expect(ask.mock.calls[0]?.[0].viewport).toBeNull();
+    });
+  });
+
   describe('the answer as it arrives', () => {
     it('shows what the agent is writing while it works', () => {
       answering({});

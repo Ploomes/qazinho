@@ -115,6 +115,7 @@ describe('Codex in the chat', () => {
     const harness = new Harness();
     const chat = harness.chat({
       target: null,
+      viewport: null,
       steps: [],
       references: [],
       look: null,

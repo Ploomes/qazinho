@@ -179,6 +179,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
 
   const chat = harness.chat({
     target: ask.target,
+    viewport: ask.viewport,
     steps: ask.steps,
     references: ask.references,
     look: ask.target?.kind === 'web' ? await peek.look(ask.target.value) : null,

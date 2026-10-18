@@ -68,6 +68,8 @@ under its header.
 
 ## This workspace
 The app under test is web: https://shop.test.
+Its runs drive Chrome at 1280 × 800, the size the QA picked for the device.
+A case cannot pick a size of its own: to cover another size, the QA switches the device and runs the plan again.
 The plan the workspace holds right now:
 TC-01 · Coupon · P1
   Goal: A valid coupon takes 10% off.

@@ -28,6 +28,7 @@ describe('a real chat', () => {
     const harness = new Harness();
     const chat = harness.chat({
       target: { kind: 'web', value: 'https://shop.test' },
+      viewport: { width: 1280, height: 800 },
       steps: [],
       references: [],
       look: null,

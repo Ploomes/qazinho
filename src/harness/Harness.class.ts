@@ -14,6 +14,7 @@ import {
   describeLook,
   describePlan,
   describeReferences,
+  describeSize,
   fillSections,
   renderSections,
   sectionsFor,
@@ -53,6 +54,7 @@ export class Harness {
   /** One chat message: the workspace, what QAzinho saw of the app and what the QA pointed at, and the answer's shape. */
   public chat(props: {
     target: ITargetUnderTest | null;
+    viewport: IViewport | null;
     steps: IFlatStep[];
     references: IChatReference[];
     look: AppLook | null;
@@ -71,6 +73,7 @@ export class Harness {
               props.target === null
                 ? 'The workspace has no app to test yet.'
                 : `The app under test is ${props.target.kind}: ${props.target.value}.`,
+              ...describeSize(props.viewport),
               ...describePlan(props.steps),
             ],
           },

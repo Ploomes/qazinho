@@ -12,6 +12,7 @@ import {
 } from '@/modules/Chat/library';
 import { CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
+import { viewportOf } from '@/modules/Device';
 import { planOfDraft } from '@/modules/Plan';
 import { flattenPlanSteps, RUN_ENDS } from '@/modules/Run';
 import { Agent } from '@/services';
@@ -32,6 +33,7 @@ export const useChatViewModel = () => {
     id: opened.id,
     projectId: opened.projectId,
     targetId: opened.targetId,
+    viewportId: opened.viewportId,
     sessionId: opened.sessionId,
     chat: opened.chat,
     plan: opened.plan,
@@ -54,6 +56,7 @@ export const useChatViewModel = () => {
 
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
+  const size = viewportOf(workspace?.viewportId);
   const references = workspace === null ? [] : referencesOf(workspace);
   const mentionQuery = mentionQueryOf(draft);
   const agentId = detected.find(({ name }) => name === agentName)?.id ?? 'claude-code';
@@ -79,6 +82,8 @@ export const useChatViewModel = () => {
       sessionId: workspace.sessionId,
       text: props.text,
       target: target === null ? null : { kind: target.kind, value: target.value },
+      viewport:
+        target?.kind === 'web' ? { width: size.width, height: size.height } : null,
       steps: flattenPlanSteps(workspace.plan),
       references: props.references,
     }).then((turn) => {
