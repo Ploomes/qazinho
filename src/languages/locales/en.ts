@@ -277,7 +277,6 @@ export const en = {
     MAKE_DEFAULT: 'Make default',
     NOT_ON_PATH: 'Not on PATH',
     NOT_SIGNED_IN: 'Not signed in',
-    EXPERIMENTAL: '{{note}} · experimental',
     AGENTS_NOTE:
       'QAzinho has no model of its own. It drives whichever agent you already have installed.',
     DEVICES_NOTE:
@@ -395,8 +394,6 @@ export const en = {
       'Installed. Run {{command}} once in a terminal to sign in before the first chat.',
     FOUND: 'found',
     SIGNED_OUT: 'signed out',
-    AGENT_EXPERIMENTAL:
-      'Experimental: QAzinho drives {{name}} too, but has not been tried against a signed-in {{name}} yet.',
     AGENT_SIGNED_OUT:
       'Not signed in, so every chat and run would fail. Run {{login}} in a terminal, then check again.',
     MISSING: 'missing',

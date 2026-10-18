@@ -279,7 +279,6 @@ export const pt: typeof en = {
     MAKE_DEFAULT: 'Tornar padrão',
     NOT_ON_PATH: 'Fora do PATH',
     NOT_SIGNED_IN: 'Sem login',
-    EXPERIMENTAL: '{{note}} · experimental',
     AGENTS_NOTE:
       'O QAzinho não tem modelo próprio. Ele dirige o agente que você já tem instalado.',
     DEVICES_NOTE:
@@ -397,8 +396,6 @@ export const pt: typeof en = {
       'Instalado. Rode {{command}} uma vez num terminal para fazer login antes do primeiro chat.',
     FOUND: 'encontrado',
     SIGNED_OUT: 'sem login',
-    AGENT_EXPERIMENTAL:
-      'Experimental: o QAzinho também usa o {{name}}, mas ainda não foi testado com um {{name}} com login.',
     AGENT_SIGNED_OUT:
       'Sem login, todo chat e toda run falhariam. Rode {{login}} num terminal e verifique de novo.',
     MISSING: 'faltando',

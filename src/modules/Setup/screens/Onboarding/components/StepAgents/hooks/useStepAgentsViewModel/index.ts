@@ -1,9 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import {
-  AGENT_LOGINS,
-  EXPERIMENTAL_AGENTS,
-  SETUP_LINKS,
-} from '@/modules/Setup/constants';
+import { AGENT_LOGINS, SETUP_LINKS } from '@/modules/Setup/constants';
 import { useInstall, useMachineCheck } from '@/modules/Setup/hooks';
 import { installableAgentOf } from '@/modules/Setup/library';
 import { useMachineStore, useSettingsStore, useSetupStore } from '@/store';
@@ -52,9 +48,7 @@ export const useStepAgentsViewModel = () => {
             })
           : agent.isFound && state?.phase === 'installed'
             ? t('SETUP.AGENT_SIGN_IN', { command: agent.command })
-            : agent.isFound && EXPERIMENTAL_AGENTS.includes(agent.id)
-              ? t('SETUP.AGENT_EXPERIMENTAL', { name: agent.name })
-              : '',
+            : '',
         onUse: () => {
           selectAgent(agent.name);
         },

@@ -34,7 +34,7 @@ describe('useSettingsViewModel', () => {
     expect(result.current.tabs).toHaveLength(7);
   });
 
-  it('names the default agent, and offers the other one marked experimental', () => {
+  it('names the default agent and offers the other one', () => {
     useMachineStore.setState({
       agents: [
         agent({ id: 'claude-code', name: 'Claude Code' }),
@@ -46,7 +46,7 @@ describe('useSettingsViewModel', () => {
 
     expect(result.current.agents.map(({ note }) => note)).toEqual([
       'Default agent',
-      'Make default · experimental',
+      'Make default',
     ]);
   });
 
@@ -60,7 +60,7 @@ describe('useSettingsViewModel', () => {
 
     const { result } = renderHook(() => useSettingsViewModel());
 
-    expect(result.current.agents[1]?.note).toBe('Not signed in · experimental');
+    expect(result.current.agents[1]?.note).toBe('Not signed in');
   });
 
   it('flags an agent that is not on PATH', () => {

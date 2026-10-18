@@ -71,16 +71,6 @@ describe('useStepAgentsViewModel', () => {
       expect(codex?.signIn).toContain('Run codex login in a terminal');
     });
 
-    it('says Codex is experimental, not yet tried signed in', () => {
-      useMachineStore.setState({
-        agents: [CLAUDE, { ...CODEX, isFound: true, path: '/bin/codex' }],
-      });
-
-      expect(
-        renderHook(() => useStepAgentsViewModel()).result.current.rows[1]?.signIn,
-      ).toContain('Experimental');
-    });
-
     it('does NOT count a signed-out agent as one QAzinho can work with', () => {
       useMachineStore.setState({ agents: [{ ...CLAUDE, isSignedIn: false }, CODEX] });
 

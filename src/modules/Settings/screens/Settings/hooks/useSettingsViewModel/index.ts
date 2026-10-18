@@ -7,7 +7,7 @@ import {
   SETTINGS_TABS,
   THEMES,
 } from '@/modules/Settings/constants';
-import { EXPERIMENTAL_AGENTS, INTEGRATIONS, MCP_SERVERS } from '@/modules/Setup';
+import { INTEGRATIONS, MCP_SERVERS } from '@/modules/Setup';
 import { Mcp, Platform } from '@/services';
 import { useAppStore, useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
@@ -82,10 +82,7 @@ export const useSettingsViewModel = () => {
         path: item.path ?? t('TOOLS.NOT_FOUND_PATH'),
         isFound: item.isFound,
         isDefault,
-        note:
-          item.isFound && EXPERIMENTAL_AGENTS.includes(item.id)
-            ? t('SETTINGS.EXPERIMENTAL', { note })
-            : note,
+        note,
       };
     }),
     devices: [

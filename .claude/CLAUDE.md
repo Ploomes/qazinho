@@ -61,9 +61,9 @@ thing. Run `tests/smoke/ios.test.ts` once idb is installed before trusting it.
 trackers. GitHub and Jira connect for real: the token is checked with the tracker and sealed by
 the OS keychain.
 
-**Codex is experimental.** QAzinho drives it through `codex exec --json` and its own MCP server,
-checked against a fake Codex built from the real one's events; no signed-in Codex has been run.
-The app says so where the QA picks an agent.
+**Codex is not verified yet.** QAzinho drives it through `codex exec --json` and its own MCP
+server, checked against a fake Codex built from the real one's events; no signed-in Codex has been
+run. That is ours to know, not the QA's: no caveat about QAzinho's own testing goes in the interface.
 
 **Still to build for 0.1:** the agent cannot ask the QA a question mid-run, and a connected
 tracker does not receive a bug yet.
