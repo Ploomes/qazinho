@@ -57,6 +57,7 @@ Three suites that need something real behind them. They have their own config
 | File               | What it drives                                                          |
 | ------------------ | ----------------------------------------------------------------------- |
 | `run.test.ts`      | the product: real Chrome, the QA's own agent, a plan walked and judged  |
+| `chat.test.ts`     | the QA's own agent answers the chat in the schema, with a readable plan |
 | `page.test.ts`     | `out/renderer` in plain Chrome, with no bridge: the page must not crash |
 | `electron.test.ts` | the packaged window, where `window.qazinho` is the real preload         |
 | `stream.test.ts`   | windowless Chrome streamed as MJPEG over loopback, with no agent        |
@@ -65,8 +66,8 @@ Three suites that need something real behind them. They have their own config
 | `tools.test.ts`    | an MCP client lists, calls and fails the device tools on real Chrome    |
 | `setup.test.ts`    | the installer runs a fake npm, streams its lines, and fails honestly    |
 
-`run.test.ts` spends the QA's tokens and needs an agent installed. Run it by hand after touching
-the run pipeline.
+`run.test.ts` and `chat.test.ts` spend the QA's tokens and need an agent installed. Run them by
+hand after touching the run pipeline or an answer schema.
 
 **A synthetic click is not a click.** Playwright drives the page over CDP, which skips the hit
 test the window manager does — so `-webkit-app-region: drag` swallowing a real click is

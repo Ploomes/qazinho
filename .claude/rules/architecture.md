@@ -85,6 +85,8 @@ answers one question per channel, for a target `{ role, platform }`:
 - **The harness never imports `src/main`.** What it needs from a device is a port in its types
   (`IDevicePort`), and main hands it the driver. ESLint enforces it both ways: the page never
   imports the harness, and the harness never imports main or the page.
+- **An answer's shape is one zod schema.** It becomes the `--json-schema` the CLI gets, and main
+  reads the answer back through the same schema, so the page receives it checked (`IChatTurn`).
 - **The prompts are pinned.** `src/harness/__tests__/__prompts__/` holds what the agent reads for each
   role and platform; changing what the agent is told is a diff of those files.
 
@@ -115,5 +117,5 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 - `dependencies` ship inside the app and `devDependencies` do not. Everything the page uses,
   React included, is bundled by Vite, so it is a devDependency.
 - A runtime dependency in `src/main` ships to every user: today `playwright-core` drives the web
-  target, `yaml` writes the plans and `@modelcontextprotocol/sdk` serves the device tools. Think
-  twice before a fourth.
+  target, `yaml` writes the plans, `@modelcontextprotocol/sdk` serves the device tools, and `zod`
+  shapes the answers (the MCP SDK ships it anyway). Think twice before a fifth.
