@@ -85,8 +85,10 @@ answers one question per channel, for a target `{ role, platform }`:
 - **The harness never imports `src/main`.** What it needs from a device is a port in its types
   (`IDevicePort`), and main hands it the driver. ESLint enforces it both ways: the page never
   imports the harness, and the harness never imports main or the page.
-- **An answer's shape is one zod schema.** It becomes the `--json-schema` the CLI gets, and main
-  reads the answer back through the same schema, so the page receives it checked (`IChatTurn`).
+- **Every shape the agent fills is one zod schema**: the chat answer and each tool's arguments. It
+  becomes the JSON Schema the agent reads (`--json-schema`, or the MCP tool list), and the same
+  schema reads back what the agent sent, with the message the agent gets when it breaks a rule.
+  `jsonSchemaOf` drops the `$schema` key, which makes Claude Code ignore a schema in silence.
 - **The prompts are pinned.** `src/harness/__tests__/__prompts__/` holds what the agent reads for each
   role and platform; changing what the agent is told is a diff of those files.
 
