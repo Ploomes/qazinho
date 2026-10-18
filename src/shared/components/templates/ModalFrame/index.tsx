@@ -2,7 +2,7 @@ import type { IModalFrameProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/shared/components/atoms';
-import { BACKDROP, MOTION } from '@/shared/constants';
+import { BACKDROP, MOTION, STICKER } from '@/shared/constants';
 import { useModalFrameViewModel } from './hooks';
 import './styles.css';
 
@@ -22,9 +22,9 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
       <motion.div
         className="modal-frame__panel"
         style={{ width: props.width }}
-        initial={{ opacity: 0, scale: 0.94, y: 18 }}
-        animate={{ opacity: 1, scale: 1, y: 0, transition: BACKDROP.panelSpring }}
-        exit={{ opacity: 0, scale: 0.97, y: 8, transition: BACKDROP.panelExit }}
+        initial={STICKER.panel.initial}
+        animate={STICKER.panel.animate}
+        exit={STICKER.panel.exit}
         onClick={(event) => {
           event.stopPropagation();
         }}

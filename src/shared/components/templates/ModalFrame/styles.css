@@ -14,7 +14,7 @@
   flex-direction: column;
   max-height: 86%;
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: var(--edge-width-xl) solid var(--edge);
   border-radius: var(--radius-2xl);
   background: var(--win);
   box-shadow: var(--sticker-hero);
@@ -27,8 +27,8 @@
 
 .modal-frame__title {
   margin: 0;
-  font: 600 20px/1.2 var(--font-display);
-  letter-spacing: -0.02em;
+  font: var(--font-display-lg);
+  letter-spacing: var(--display-tracking);
   color: var(--ink);
 }
 

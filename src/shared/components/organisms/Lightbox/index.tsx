@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { IconButton } from '@/shared/components/atoms';
-import { BACKDROP, MOTION } from '@/shared/constants';
+import { BACKDROP, MOTION, STICKER } from '@/shared/constants';
 import { useLightboxViewModel } from './hooks';
 import './styles.css';
 
@@ -23,9 +23,14 @@ export const Lightbox: React.FC = () => {
       <motion.div
         className="lightbox__panel"
         style={{ width: frameWidth }}
-        initial={{ opacity: 0, scale: 0.92, y: 18 }}
-        animate={{ opacity: 1, scale: 1, y: 0, transition: BACKDROP.panelSpring }}
-        exit={{ opacity: 0, scale: 0.96, y: 8, transition: BACKDROP.panelExit }}
+        initial={{ opacity: 0, scale: 0.96, y: 14 }}
+        animate={{ opacity: 1, scale: 1, y: 0, transition: STICKER.spring }}
+        exit={{
+          opacity: 0,
+          scale: 0.98,
+          y: 8,
+          transition: { duration: MOTION.durationFast, ease: MOTION.easeIn },
+        }}
         onClick={(event) => {
           event.stopPropagation();
         }}

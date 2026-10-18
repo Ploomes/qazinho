@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { IconButton } from '@/shared/components/atoms';
-import { MOTION } from '@/shared/constants';
+import { STICKER } from '@/shared/constants';
 import { useResourcePopoverViewModel } from './hooks';
 import './styles.css';
 
@@ -13,10 +13,9 @@ export const ResourcePopover: React.FC = () => {
     <motion.div
       ref={ref}
       className="resource-popover"
-      initial={{ opacity: 0, scale: 0.97, y: -6 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.97, y: -6 }}
-      transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+      initial={STICKER.pop.initial}
+      animate={STICKER.pop.animate}
+      exit={STICKER.pop.exit}
       style={{ transformOrigin: 'top right' }}
     >
       <header className="resource-popover__head">

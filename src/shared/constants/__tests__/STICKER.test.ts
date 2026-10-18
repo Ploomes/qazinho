@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { STICKER } from '@/shared/constants';
 
-const MOVES = [STICKER.slap, STICKER.panel, STICKER.pop, STICKER.hero];
+const MOVES = [STICKER.slap, STICKER.panel, STICKER.pop, STICKER.rise, STICKER.hero];
 
 describe('STICKER', () => {
   it('lands every sticker flat on the desk: whole, upright and fully opaque', () => {
@@ -27,6 +27,11 @@ describe('STICKER', () => {
 
     expect(ratio).toBeGreaterThan(0.5);
     expect(ratio).toBeLessThan(0.75);
+  });
+
+  it('picks a dragged sticker up without turning its text past 2°', () => {
+    expect(STICKER.drag.scale).toBeGreaterThan(1);
+    expect(Math.abs(STICKER.drag.rotate)).toBeLessThanOrEqual(2);
   });
 
   it('wobbles once and comes back upright', () => {

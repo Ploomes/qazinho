@@ -2,7 +2,7 @@ import type { IMentionPickerProps } from './types';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Eyebrow } from '@/shared/components/atoms';
-import { MOTION } from '@/shared/constants';
+import { STICKER } from '@/shared/constants';
 import { useMentionPickerViewModel } from './hooks';
 import './styles.css';
 
@@ -14,10 +14,9 @@ export const MentionPicker: React.FC<IMentionPickerProps> = (props) => {
   return (
     <motion.div
       className="mention-picker"
-      initial={{ opacity: 0, scale: 0.98, y: 6 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.98, y: 6 }}
-      transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+      initial={STICKER.rise.initial}
+      animate={STICKER.rise.animate}
+      exit={STICKER.rise.exit}
       onPointerDown={onPointerDown}
     >
       <div className="mention-picker__head">

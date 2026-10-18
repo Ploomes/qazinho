@@ -6,8 +6,8 @@
   z-index: 30;
   width: 430px;
   overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 13px;
+  border: var(--edge-width-lg) solid var(--edge);
+  border-radius: var(--radius-xl);
   background: var(--win);
   box-shadow: var(--sticker-lift);
 }

@@ -2,7 +2,7 @@ import type { IModelPopoverProps } from './types';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Eyebrow } from '@/shared/components/atoms';
-import { MOTION } from '@/shared/constants';
+import { STICKER } from '@/shared/constants';
 import { useModelPopoverViewModel } from './hooks';
 import './styles.css';
 
@@ -23,10 +23,9 @@ export const ModelPopover: React.FC<IModelPopoverProps> = (props) => {
     <motion.div
       ref={ref}
       className={`model-popover model-popover--${props.at}`}
-      initial={{ opacity: 0, scale: 0.97, y: -6 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.97, y: -6 }}
-      transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+      initial={STICKER.pop.initial}
+      animate={STICKER.pop.animate}
+      exit={STICKER.pop.exit}
       style={{ transformOrigin: props.at === 'titlebar' ? 'top right' : 'bottom left' }}
     >
       <div className="model-popover__section">

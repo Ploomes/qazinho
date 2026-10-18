@@ -2,7 +2,7 @@ import type { IMcpSignInProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/shared/components/atoms';
-import { BACKDROP, MOTION } from '@/shared/constants';
+import { BACKDROP, MOTION, STICKER } from '@/shared/constants';
 import { useMcpSignInViewModel } from './hooks';
 import './styles.css';
 
@@ -45,9 +45,9 @@ export const McpSignIn: React.FC<IMcpSignInProps> = (props) => {
         aria-modal="true"
         aria-labelledby="mcp-sign-in-title"
         layout
-        initial={{ opacity: 0, scale: 0.94, y: 18 }}
-        animate={{ opacity: 1, scale: 1, y: 0, transition: BACKDROP.panelSpring }}
-        exit={{ opacity: 0, scale: 0.97, y: 8, transition: BACKDROP.panelExit }}
+        initial={STICKER.panel.initial}
+        animate={STICKER.panel.animate}
+        exit={STICKER.panel.exit}
         onClick={(event) => {
           event.stopPropagation();
         }}
@@ -76,7 +76,7 @@ export const McpSignIn: React.FC<IMcpSignInProps> = (props) => {
                     opacity: 1,
                     scale: 1,
                     rotate: 0,
-                    transition: BACKDROP.panelSpring,
+                    transition: STICKER.spring,
                   }}
                   exit={{ opacity: 0, scale: 0.4 }}
                 >
@@ -126,7 +126,7 @@ export const McpSignIn: React.FC<IMcpSignInProps> = (props) => {
                         animate={{
                           opacity: 1,
                           scale: 1,
-                          transition: BACKDROP.panelSpring,
+                          transition: STICKER.spring,
                         }}
                         exit={{ opacity: 0, scale: 0.3 }}
                       >
