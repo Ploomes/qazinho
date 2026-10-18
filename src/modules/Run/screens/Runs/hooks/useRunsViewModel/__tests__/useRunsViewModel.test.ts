@@ -222,19 +222,32 @@ describe('useRunsViewModel', () => {
     });
   });
 
-  it('tells how long a run took and what its agent said it cost', () => {
-    const paid = landCost({
-      workspace: walkRun({ verdicts: ['passed'] }),
-      costUsd: 0.25,
+  describe('current', () => {
+    it('puts the run on show at the top, with how long it took and what it cost', () => {
+      const paid = landCost({
+        workspace: walkRun({ verdicts: ['passed'] }),
+        costUsd: 0.25,
+      });
+
+      useWorkspaceStore.setState({
+        workspaces: [endRun({ workspace: paid, at: '09:42', endedBy: 'finished' })],
+      });
+
+      expect(renderHook(() => useRunsViewModel()).result.current.current).toMatchObject({
+        id: 'r-01',
+        isSelected: true,
+        facts: '0:00 · $0.25',
+      });
     });
+  });
 
-    useWorkspaceStore.setState({
-      workspaces: [endRun({ workspace: paid, at: '09:42', endedBy: 'finished' })],
+  describe('onToTop', () => {
+    it('does NOT offer the way back up while the picker is in view', () => {
+      useWorkspaceStore.setState({
+        workspaces: [walkRun({ verdicts: ['passed'], isFinished: true })],
+      });
+
+      expect(renderHook(() => useRunsViewModel()).result.current.showsToTop).toBe(false);
     });
-
-    const view = renderHook(() => useRunsViewModel()).result.current;
-
-    expect(view.runFacts).toBe('0:00 · $0.25');
-    expect(view.runs[0]?.facts).toBe('0:00 · $0.25');
   });
 });

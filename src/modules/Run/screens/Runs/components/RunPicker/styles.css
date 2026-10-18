@@ -1,0 +1,108 @@
+.run-picker {
+  position: relative;
+}
+
+.run-picker__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--raise);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease);
+}
+
+.run-picker__trigger:hover,
+.run-picker__trigger[aria-expanded='true'] {
+  border-color: var(--line2);
+  background: var(--raise2);
+}
+
+.run-picker__caret {
+  flex: none;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
+
+.run-picker__menu {
+  position: absolute;
+  top: calc(100% + var(--space-3));
+  right: 0;
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--edge-width-lg) solid var(--edge);
+  border-radius: var(--radius-xl);
+  background: var(--win);
+  box-shadow: var(--sticker-lift);
+  transform-origin: top center;
+}
+
+.run-picker__option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.run-picker__option:hover {
+  background: var(--raise2);
+}
+
+.run-picker__option--selected,
+.run-picker__option--selected:hover {
+  border-color: var(--line);
+  background: var(--sel);
+}
+
+.run-picker__pager {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3) 0;
+}
+
+.run-picker__pager-label {
+  margin-right: auto;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
+
+.run-picker__pager-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--line2);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink2);
+  font: var(--font-mono-md);
+}
+
+.run-picker__pager-button:hover:not(:disabled) {
+  border-color: var(--line);
+  background: var(--sel);
+  color: var(--ink);
+}
+
+.run-picker__pager-button:disabled {
+  opacity: 0.4;
+}

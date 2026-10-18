@@ -1,5 +1,5 @@
 import type { IRun, RunEnd } from '@/modules/Run/types';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatElapsed } from '@/modules/Device/library';
 import {
@@ -28,7 +28,8 @@ export const useRunsViewModel = () => {
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const [page, setPage] = useState(0);
-  const reportRef = useRef<HTMLDivElement>(null);
+  const [isAtTop, setAtTop] = useState(true);
+  const topRef = useRef<HTMLDivElement>(null);
 
   const runs = workspace?.runs ?? [];
   const bugs = workspace?.bugs ?? [];
@@ -55,6 +56,38 @@ export const useRunsViewModel = () => {
           cost: formatCost({ costUsd: item.costUsd, language: i18n.language }),
         });
 
+  const hasRun = run !== null;
+
+  useEffect(() => {
+    const top = topRef.current;
+
+    if (top === null || typeof IntersectionObserver === 'undefined') return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setAtTop(entry?.isIntersecting ?? true);
+    });
+
+    observer.observe(top);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasRun]);
+
+  const summaryOf = (item: IRun) => ({
+    id: item.id,
+    what: t('RUN.WHOLE_PLAN'),
+    isSelected: item.id === run?.id,
+    ended: endOf(item.endedBy),
+    counts: item.counts,
+    facts: factsOf(item),
+    startedAt: item.startedAt,
+  });
+
+  const toTop = () => {
+    topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   const onOpenBug = (bugId: string) => {
     toggleBug(bugId);
     selectTab('bugs');
@@ -74,19 +107,16 @@ export const useRunsViewModel = () => {
   };
 
   return {
-    runs: paged.items.map((item) => ({
-      ...item,
-      what: t('RUN.WHOLE_PLAN'),
-      isSelected: item.id === run?.id,
-      ended: endOf(item.endedBy),
-      facts: factsOf(item),
-    })),
+    runs: paged.items.map(summaryOf),
+    current: run === null ? null : summaryOf(run),
     run,
     title: run === null ? '' : t('RUN.TITLE', { id: run.id }),
     runEnded: run === null ? null : endOf(run.endedBy),
     runFacts: run === null ? '' : factsOf(run),
     factsNote: t('RUN.COST_NOTE'),
-    reportRef,
+    topRef,
+    showsToTop: !isAtTop,
+    onToTop: toTop,
     pager: {
       isShown: paged.pageCount > 1,
       label: t('RUN.PAGE', { from: paged.from, to: paged.to, total: runs.length }),
@@ -130,7 +160,7 @@ export const useRunsViewModel = () => {
     onSelectRun: (runId: string) => {
       selectRun(runId);
       setRunFilter('all');
-      reportRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      toTop();
     },
     onPreviousPage: () => {
       setPage(paged.page - 1);

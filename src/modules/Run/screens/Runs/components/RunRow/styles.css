@@ -1,0 +1,64 @@
+.run-row {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.run-row__id {
+  flex: none;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
+
+.run-row__what {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font: var(--font-ui-md);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.run-row__ended {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--attn-soft);
+  color: var(--attn);
+  font: var(--font-mono-xs);
+}
+
+.run-row__tally {
+  flex: none;
+  font: var(--font-mono-sm);
+}
+
+.run-row__tally--passed {
+  color: var(--pass);
+}
+
+.run-row__tally--failed {
+  color: var(--fail);
+}
+
+.run-row__tally--blocked {
+  color: var(--block);
+}
+
+.run-row__tally--skipped {
+  color: var(--skip);
+}
+
+.run-row__facts,
+.run-row__when {
+  flex: none;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+  white-space: nowrap;
+}
