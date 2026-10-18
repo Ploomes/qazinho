@@ -8,7 +8,7 @@ import {
   makeWorkspace,
   walkRun,
 } from '@/modules/Workspace/library/__tests__/fixtures';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 beforeEach(() => {
   useAppStore.setState({ selectedWorkspaceId: 'w1' });
@@ -75,6 +75,40 @@ describe('usePlanViewModel', () => {
       });
 
       expect(useWorkspaceStore.getState().workspaces[0]?.plan[0]?.id).toBe('TC-01');
+    });
+
+    /**
+     * A paused run unlocked the plan, but main walks the steps it started with: a case changed
+     * or removed while paused came back from the run under the wrong title, or not at all.
+     */
+    it('does NOT let the plan change while the run is paused either', () => {
+      const started = startRun({
+        workspace: makeWorkspace(),
+        startedAt: '09:41',
+        runId: 'r-01',
+      });
+
+      useWorkspaceStore.setState({
+        workspaces: [{ ...started, live: { ...started.live!, isRunning: false } }],
+      });
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      expect(result.current.isLocked).toBe(true);
+    });
+
+    it('names the agent that is running the plan', () => {
+      useSettingsStore.setState({ agent: 'Codex' });
+      useWorkspaceStore.setState({
+        workspaces: [
+          startRun({ workspace: makeWorkspace(), startedAt: '09:41', runId: 'r-01' }),
+        ],
+      });
+
+      expect(renderHook(() => usePlanViewModel()).result.current.lockedLabel).toBe(
+        'Codex is running this plan. Stop the run if you want to change it.',
+      );
+      useSettingsStore.setState({ agent: 'Claude Code' });
     });
   });
 });

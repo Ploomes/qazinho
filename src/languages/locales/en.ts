@@ -132,7 +132,7 @@ export const en = {
     EXPECTED_PLACEHOLDER: 'what you expect to see',
     RUN_ALL: 'Run all',
     STOP_RUN: 'Stop the run',
-    LOCKED: 'Claude is running this plan. Stop the run if you want to change it.',
+    LOCKED: '{{agent}} is running this plan. Stop the run if you want to change it.',
     GOAL: 'goal',
     BEFORE: 'before',
     COLUMN_NUMBER: '#',

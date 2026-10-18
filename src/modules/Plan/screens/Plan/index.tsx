@@ -11,6 +11,7 @@ export const Plan: React.FC = () => {
     lastRuns,
     openCaseId,
     isLocked,
+    lockedLabel,
     isEmpty,
     summary,
     onToggleCase,
@@ -66,7 +67,7 @@ export const Plan: React.FC = () => {
       {isLocked && (
         <div className="plan__locked">
           <span aria-hidden="true">🔒</span>
-          {t('PLAN.LOCKED')}
+          {lockedLabel}
         </div>
       )}
 

@@ -11,19 +11,20 @@ import {
 } from '@/modules/Plan/library';
 import { flattenPlanSteps, useRunActions } from '@/modules/Run';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
-import { useWorkspaceStore } from '@/store';
+import { useSettingsStore, useWorkspaceStore } from '@/store';
 
 export const usePlanViewModel = () => {
   const { t } = useTranslation();
   const workspace = useSelectedWorkspacePart((opened) => ({
     id: opened.id,
     plan: opened.plan,
-    isLocked: opened.live?.isRunning === true,
+    isLocked: opened.live !== null && !opened.live.isDone,
     latest: opened.runs[0] ?? null,
   }));
   const openCaseId = useWorkspaceStore((state) => state.openCaseId);
   const toggleCase = useWorkspaceStore((state) => state.toggleCase);
   const setPlan = useWorkspaceStore((state) => state.setPlan);
+  const agent = useSettingsStore((state) => state.agent);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const { onRun, onStop } = useRunActions();
 
@@ -47,6 +48,7 @@ export const usePlanViewModel = () => {
     lastRuns,
     openCaseId,
     isLocked,
+    lockedLabel: t('PLAN.LOCKED', { agent }),
     isEmpty: plan.length === 0,
     summary: t('PLAN.SUMMARY', {
       cases: plan.length,

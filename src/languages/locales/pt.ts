@@ -134,7 +134,7 @@ export const pt: typeof en = {
     EXPECTED_PLACEHOLDER: 'o que você espera ver',
     RUN_ALL: 'Rodar tudo',
     STOP_RUN: 'Parar a run',
-    LOCKED: 'O Claude está rodando este plano. Pare a run se quiser mudá-lo.',
+    LOCKED: 'O {{agent}} está rodando este plano. Pare a run se quiser mudá-lo.',
     GOAL: 'objetivo',
     BEFORE: 'antes',
     COLUMN_NUMBER: '#',
