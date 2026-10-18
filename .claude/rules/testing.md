@@ -54,25 +54,26 @@ origin'`, never `'isInternalNavigation() returns false'`.
 Three suites that need something real behind them. They have their own config
 (`tests/vitest.smoke.ts`), their own command, and CI never runs them.
 
-| File               | What it drives                                                               |
-| ------------------ | ---------------------------------------------------------------------------- |
-| `run.test.ts`      | the product: real Chrome, the QA's own agent, a plan walked and judged       |
-| `chat.test.ts`     | the QA's own agent asks, confirms, then writes a plan in the schema          |
-| `visual.test.ts`   | the QA's own agent fails a page whose text is right and whose screen is not  |
-| `page.test.ts`     | `out/renderer` in plain Chrome, with no bridge: the page must not crash      |
-| `electron.test.ts` | the packaged window, where `window.qazinho` is the real preload              |
-| `stream.test.ts`   | windowless Chrome as MJPEG over loopback, framed to the page, sharp in focus |
-| `stop.test.ts`     | Stop ends a run while a fake agent is still thinking                         |
-| `agent.test.ts`    | a fake agent retries a failed action, leaves a note, or errors out           |
-| `codex.test.ts`    | a fake Codex chats in the strict schema, resumes, runs a case, signs out     |
-| `tools.test.ts`    | an MCP client lists, calls and fails the device tools on real Chrome         |
-| `peek.test.ts`     | a windowless Chrome reads a page for the chat, or says why it did not open   |
-| `fresh.test.ts`    | a case starts on a browser with nothing saved, and the stream follows it     |
-| `save.test.ts`     | the lightbox downloads a screenshot through main, to where the dialog says   |
-| `setup.test.ts`    | the installer runs a fake npm, streams its lines, and fails honestly         |
-| `terminal.test.ts` | a full-screen program out of sight: its screen read, its keys, its page      |
-| `mcp.test.ts`      | a fake `/mcp` and Codex: Figma's MCP added, signed in, refused, cancelled    |
-| `login.test.ts`    | a fake `claude auth login` and `codex login`: page, code, refusal, cancel    |
+| File                   | What it drives                                                               |
+| ---------------------- | ---------------------------------------------------------------------------- |
+| `run.test.ts`          | the product: real Chrome, the QA's own agent, a plan walked and judged       |
+| `chat.test.ts`         | the QA's own agent asks, confirms, then writes a plan in the schema          |
+| `visual.test.ts`       | the QA's own agent fails a page whose text is right and whose screen is not  |
+| `page.test.ts`         | `out/renderer` in plain Chrome, with no bridge: the page must not crash      |
+| `electron.test.ts`     | the packaged window, where `window.qazinho` is the real preload              |
+| `stream.test.ts`       | windowless Chrome as MJPEG over loopback, framed to the page, sharp in focus |
+| `stop.test.ts`         | Stop ends a run while a fake agent is still thinking                         |
+| `agent.test.ts`        | a fake agent retries a failed action, leaves a note, or errors out           |
+| `codex.test.ts`        | a fake Codex chats in the strict schema, resumes, runs a case, signs out     |
+| `tools.test.ts`        | an MCP client lists, calls and fails the device tools on real Chrome         |
+| `peek.test.ts`         | a windowless Chrome reads a page for the chat, or says why it did not open   |
+| `fresh.test.ts`        | a case starts on a browser with nothing saved, and the stream follows it     |
+| `device-fresh.test.ts` | fixture apps built from source on a real AVD and simulator: data cleared     |
+| `save.test.ts`         | the lightbox downloads a screenshot through main, to where the dialog says   |
+| `setup.test.ts`        | the installer runs a fake npm, streams its lines, and fails honestly         |
+| `terminal.test.ts`     | a full-screen program out of sight: its screen read, its keys, its page      |
+| `mcp.test.ts`          | a fake `/mcp` and Codex: Figma's MCP added, signed in, refused, cancelled    |
+| `login.test.ts`        | a fake `claude auth login` and `codex login`: page, code, refusal, cancel    |
 
 `run.test.ts`, `chat.test.ts` and `visual.test.ts` spend the QA's tokens and need an agent installed. Run them by
 hand after touching the run pipeline or an answer schema.
