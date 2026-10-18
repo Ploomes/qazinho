@@ -1,4 +1,4 @@
-import { mkdtemp, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -69,6 +69,19 @@ describe('Archive', () => {
   it('refuses a file outside its own folder, however it is asked for', async () => {
     expect(await archive.readShot('/etc/passwd')).toBeNull();
     expect(await archive.readShot(join(root, '..', '..', '.ssh', 'id_rsa'))).toBeNull();
+  });
+
+  it('hands over the bytes of a screenshot it keeps, and of nothing outside it', async () => {
+    const file = join(root, 'runs', 'w1', 'r-01', 'step-1.jpg');
+
+    await mkdir(join(root, 'runs', 'w1', 'r-01'), { recursive: true });
+    await writeFile(file, Buffer.from([0x89, 0x50, 0x4e, 0x47]));
+
+    expect(await archive.readShotBytes(file)).toEqual(
+      Buffer.from([0x89, 0x50, 0x4e, 0x47]),
+    );
+    expect(await archive.readShotBytes('/etc/passwd')).toBeNull();
+    expect(await archive.readShotBytes(join(root, 'gone.jpg'))).toBeNull();
   });
 
   it('a screenshot that is no longer on disk is nothing, not a crash', async () => {

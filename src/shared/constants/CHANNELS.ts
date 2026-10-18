@@ -20,6 +20,7 @@ export const CHANNELS = {
   saveWorkspace: 'state:workspace',
   removeWorkspace: 'state:remove',
   readShot: 'state:shot',
+  saveShot: 'state:save-shot',
   pickFile: 'files:pick',
   checkMachine: 'machine:check',
   installTool: 'setup:install',

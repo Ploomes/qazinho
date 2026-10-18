@@ -28,6 +28,7 @@ import type {
   IViewport,
   PickKind,
   Platform,
+  SaveOutcome,
 } from '@/shared/types';
 import { contextBridge, ipcRenderer } from 'electron';
 import { CHANNELS } from '@/shared/constants';
@@ -102,6 +103,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.removeWorkspace, workspaceId) as Promise<void>,
   readShot: (file: string) =>
     ipcRenderer.invoke(CHANNELS.readShot, file) as Promise<string | null>,
+  saveShot: (props: { file: string | null; src: string | null; name: string }) =>
+    ipcRenderer.invoke(CHANNELS.saveShot, props) as Promise<SaveOutcome>,
   pickFile: (kind: PickKind) =>
     ipcRenderer.invoke(CHANNELS.pickFile, kind) as Promise<string | null>,
   checkMachine: () => ipcRenderer.invoke(CHANNELS.checkMachine) as Promise<IMachineCheck>,

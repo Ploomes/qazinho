@@ -41,15 +41,16 @@ export class Archive {
 
   /** The page cannot read disk, so a screenshot it no longer holds comes back inline. */
   public async readShot(file: string): Promise<string | null> {
+    const image = await this.readShotBytes(file);
+
+    return image === null ? null : `data:image/jpeg;base64,${image.toString('base64')}`;
+  }
+
+  /** A screenshot's own bytes, read only from inside the archive. */
+  public async readShotBytes(file: string): Promise<Buffer | null> {
     if (!isInside({ root: this.root, file })) return null;
 
-    try {
-      const image = await readFile(file);
-
-      return `data:image/jpeg;base64,${image.toString('base64')}`;
-    } catch {
-      return null;
-    }
+    return readFile(file).catch(() => null);
   }
 
   private folderOf(id: string): string {

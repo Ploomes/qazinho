@@ -61,6 +61,7 @@ beforeEach(() => {
     saveWorkspace: vi.fn(),
     removeWorkspace: vi.fn(),
     readShot: vi.fn().mockResolvedValue(null),
+    saveShot: vi.fn(),
     pickFile: vi.fn().mockResolvedValue(null),
     checkMachine: vi.fn(),
     installTool: vi.fn(),

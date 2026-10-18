@@ -44,6 +44,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     saveWorkspace: () => Promise.resolve(),
     removeWorkspace: () => Promise.resolve(),
     readShot: () => Promise.resolve(null),
+    saveShot: () => Promise.resolve('cancelled'),
     pickFile: () => Promise.resolve(null),
     checkMachine: () =>
       Promise.resolve({

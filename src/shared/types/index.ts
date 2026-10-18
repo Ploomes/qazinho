@@ -53,6 +53,7 @@ export type * from './McpSignInStep';
 export type * from './PickKind';
 export type * from './Platform';
 export type * from './ProcessKind';
+export type * from './SaveOutcome';
 export type * from './Severity';
 export type * from './StepVerdict';
 export type * from './TargetKind';

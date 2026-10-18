@@ -26,6 +26,7 @@ import type { McpActionResult } from './McpActionResult';
 import type { McpSignInProgress } from './McpSignInProgress';
 import type { PickKind } from './PickKind';
 import type { Platform } from './Platform';
+import type { SaveOutcome } from './SaveOutcome';
 
 /** What the preload exposes to the page as `window.qazinho`. Data and purposeful functions only. */
 export interface IQazinhoApi {
@@ -51,6 +52,11 @@ export interface IQazinhoApi {
   saveWorkspace: (saved: ISavedWorkspace) => Promise<void>;
   removeWorkspace: (workspaceId: string) => Promise<void>;
   readShot: (file: string) => Promise<string | null>;
+  saveShot: (props: {
+    file: string | null;
+    src: string | null;
+    name: string;
+  }) => Promise<SaveOutcome>;
   pickFile: (kind: PickKind) => Promise<string | null>;
   checkMachine: () => Promise<IMachineCheck>;
   installTool: (item: InstallableId) => Promise<IInstallResult>;

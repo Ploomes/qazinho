@@ -15,8 +15,11 @@ import type {
   IViewport,
   McpSignInProgress,
   PickKind,
+  SaveOutcome,
 } from '@/shared/types';
+import { writeFile } from 'node:fs/promises';
 import { homedir, tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { app, BrowserWindow, dialog, ipcMain, safeStorage, shell } from 'electron';
 import { Harness, McpHost } from '@/harness';
 import {
@@ -38,7 +41,10 @@ import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
 import { listSimulators } from '@/main/classes/devices/IosDriver/library';
 import { FILE_FILTERS, PATHS, WINDOW } from '@/main/constants';
 import {
+  bytesOfDataUrl,
+  fileNameOf,
   hydrateShellPath,
+  imageExtensionOf,
   isInternalNavigation,
   searchDirectories,
 } from '@/main/library';
@@ -188,6 +194,42 @@ async function checkMachine() {
   };
 }
 
+async function shotBytes(props: {
+  file: string | null;
+  src: string | null;
+}): Promise<Buffer | null> {
+  if (props.file !== null) return archive.readShotBytes(props.file);
+
+  return props.src === null ? null : bytesOfDataUrl(props.src);
+}
+
+async function saveShot(props: {
+  file: string | null;
+  src: string | null;
+  name: string;
+}): Promise<SaveOutcome> {
+  const bytes = await shotBytes(props);
+
+  if (bytes === null) return 'failed';
+
+  const extension = imageExtensionOf(bytes);
+  const options = {
+    defaultPath: join(app.getPath('downloads'), `${fileNameOf(props.name)}.${extension}`),
+    filters: [{ name: extension.toUpperCase(), extensions: [extension] }],
+  };
+  const [open] = BrowserWindow.getAllWindows();
+  const picked = open
+    ? await dialog.showSaveDialog(open, options)
+    : await dialog.showSaveDialog(options);
+
+  if (picked.canceled || picked.filePath === undefined) return 'cancelled';
+
+  return writeFile(picked.filePath, bytes).then(
+    () => 'saved' as const,
+    () => 'failed' as const,
+  );
+}
+
 async function pickFile(kind: PickKind) {
   const [open] = BrowserWindow.getAllWindows();
   const filters = [FILE_FILTERS[kind]];
@@ -283,6 +325,11 @@ void app.whenReady().then(async () => {
     archive.removeWorkspace(workspaceId),
   );
   ipcMain.handle(CHANNELS.readShot, (_event, file: string) => archive.readShot(file));
+  ipcMain.handle(
+    CHANNELS.saveShot,
+    (_event, props: { file: string | null; src: string | null; name: string }) =>
+      saveShot(props),
+  );
   ipcMain.handle(CHANNELS.pickFile, (_event, kind: PickKind) => pickFile(kind));
   ipcMain.handle(CHANNELS.checkMachine, () => checkMachine());
   ipcMain.handle(CHANNELS.installTool, (_event, item: InstallableId) =>

@@ -1,4 +1,4 @@
-import type { ISavedState, ISavedWorkspace } from '@/shared/types';
+import type { ISavedState, ISavedWorkspace, SaveOutcome } from '@/shared/types';
 import { NOTHING_SAVED } from './constants';
 
 /** The only caller of the disk side of the bridge. */
@@ -21,5 +21,13 @@ export class Archive {
 
   public static async readShot(file: string): Promise<string | null> {
     return (await window.qazinho?.readShot(file)) ?? null;
+  }
+
+  public static async saveShot(props: {
+    file: string | null;
+    src: string | null;
+    name: string;
+  }): Promise<SaveOutcome> {
+    return (await window.qazinho?.saveShot(props)) ?? 'failed';
   }
 }
