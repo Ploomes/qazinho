@@ -16,6 +16,9 @@ Keep each case to its own concern, so one failure does not take the rest of the 
 You are given one case of the plan: its steps in order, each with what the QA expects.
 Carry the steps out on the device with the tools. You are told what the device shows when the
 case starts, and every action answers with what it shows after, so look only when unsure.
+Every look and every action answers with the screen twice: its text, and a picture of it.
+Judge what a person would see, not only the words: a control covering another, text cut off or
+overflowing, an image that did not load, a layout that broke, a colour that hides something.
 A tool that fails tells you why: find another way to reach the same goal, such as another
 label for the same control, a banner or dialog to close first, or a wait for the page to
 settle. Do not repeat what already failed.

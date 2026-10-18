@@ -10,9 +10,20 @@ import { WebDriver } from '@/main/classes/devices/WebDriver';
 
 const PORT = 4326;
 
-const PAGE = `<!doctype html><html><body>
+/**
+ * "Load more" answers late on purpose: its text lands 300 ms after the click, and a banner pushes
+ * the page down as it does. Reading the page as soon as the network was idle used to miss both.
+ */
+const PAGE = `<!doctype html><html><body style="margin:0;font:16px sans-serif">
+  <div id="slot"></div>
   <button onclick="document.getElementById('out').textContent='Signed in'">Sign in</button>
+  <button onclick="setTimeout(() => {
+    document.getElementById('slot').innerHTML = '<div style=height:240px;background:#fc0>Sale</div>';
+    document.getElementById('more').textContent = 'Loaded 20 more';
+  }, 300)">Load more</button>
   <p id="out">Signed out</p>
+  <p id="more">Nothing more yet</p>
+  <div style="height:900px"></div>
 </body></html>`;
 
 const site = createServer((_request, response) => {
@@ -85,6 +96,32 @@ describe('the device as MCP tools', () => {
 
     expect(clicked.isError).toBe(false);
     expect(textOf(clicked)).toContain('Signed in');
+    await client.close();
+  });
+
+  it('shows the agent a picture of the screen next to its text', async () => {
+    const client = await connect('w1');
+    const looked = await client.callTool({ name: 'look', arguments: {} });
+    const picture = (
+      looked.content as { type: string; mimeType?: string; data?: string }[]
+    ).find(({ type }) => type === 'image');
+
+    expect(picture?.mimeType).toBe('image/jpeg');
+    expect(Buffer.from(picture?.data ?? '', 'base64').subarray(0, 2)).toEqual(
+      Buffer.from([0xff, 0xd8]),
+    );
+    await client.close();
+  });
+
+  it('waits for a late answer, and says how far the page jumped meanwhile', async () => {
+    const client = await connect('w1');
+    const loaded = await client.callTool({
+      name: 'click',
+      arguments: { target: 'Load more' },
+    });
+
+    expect(textOf(loaded)).toContain('Loaded 20 more');
+    expect(textOf(loaded)).toMatch(/the layout shifted \d\.\d\d in \d+ moves?/);
     await client.close();
   });
 
