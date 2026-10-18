@@ -23,7 +23,7 @@ describe('useModelPopoverViewModel', () => {
   });
 
   it('still offers the agent default for an agent that lists no models', () => {
-    useSettingsStore.setState({ agent: 'Gemini CLI' });
+    useSettingsStore.setState({ agent: 'An agent QAzinho has no model list for' });
 
     const { result } = renderHook(() => useModelPopoverViewModel());
 

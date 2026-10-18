@@ -8,5 +8,4 @@ export const AGENTS: IAgentOption[] = [
     path: '/opt/homebrew/bin/claude',
   },
   { name: 'Codex', isFound: true, note: 'found', path: '/usr/local/bin/codex' },
-  { name: 'Gemini CLI', isFound: false, note: 'not found', path: 'not found on PATH' },
 ];

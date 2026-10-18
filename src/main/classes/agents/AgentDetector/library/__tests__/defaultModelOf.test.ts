@@ -8,12 +8,6 @@ describe('defaultModelOf', () => {
     );
   });
 
-  it('reads a model kept as an object with a name, the way Gemini CLI keeps it', () => {
-    expect(
-      defaultModelOf({ format: 'json', text: '{"model": {"name": "gemini-2.5-pro"}}' }),
-    ).toBe('gemini-2.5-pro');
-  });
-
   it('reads the root model of a Codex config, not one inside a table', () => {
     const text = 'model = "gpt-5"\n\n[profiles.fast]\nmodel = "gpt-5-mini"\n';
 

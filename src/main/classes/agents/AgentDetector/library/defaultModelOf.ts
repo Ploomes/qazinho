@@ -12,13 +12,8 @@ export function defaultModelOf(props: {
 
   try {
     const read = JSON.parse(props.text) as { model?: unknown };
-    const model = read.model;
 
-    if (typeof model === 'string') return model;
-    if (typeof model === 'object' && model !== null && 'name' in model)
-      return typeof model.name === 'string' ? model.name : null;
-
-    return null;
+    return typeof read.model === 'string' ? read.model : null;
   } catch {
     return null;
   }

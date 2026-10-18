@@ -109,11 +109,11 @@ describe('useMcpCardViewModel', () => {
       expect(showing('missing').result.current.needs).toContain('in Codex, your agent');
     });
 
-    it('says which agents it works with when the QA picked another one', () => {
+    it('says which agents it works with, for an agent QAzinho has no recipe for yet', () => {
       agentWith({ states: ['unsupported'] });
-      useSettingsStore.setState({ agent: 'Gemini CLI' });
+      useSettingsStore.setState({ agent: 'Future CLI' });
 
-      expect(showing('unsupported').result.current.note).toContain('not in Gemini CLI');
+      expect(showing('unsupported').result.current.note).toContain('not in Future CLI');
     });
 
     it('does NOT say checking forever when the list came back without it', () => {

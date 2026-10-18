@@ -11,5 +11,4 @@ export const MODELS: Record<string, IModelOption[]> = {
     { id: 'mini', name: 'Codex mini', note: 'fastest', isLocked: false },
     { id: 'codex', name: 'Codex', note: 'the everyday one', isLocked: false },
   ],
-  'Gemini CLI': [],
 };

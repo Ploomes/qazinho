@@ -157,8 +157,8 @@ describe('an agent QAzinho cannot set up', () => {
       folder: tmpdir(),
     });
 
-    expect(await mcp.list('gemini-cli')).toEqual([{ id: 'figma', state: 'unsupported' }]);
+    expect(await mcp.list('future-cli')).toEqual([{ id: 'figma', state: 'unsupported' }]);
     expect(await none.list('claude-code')).toEqual([{ id: 'figma', state: 'no-agent' }]);
-    expect(await mcp.connect(FIGMA_IN('gemini-cli'))).toMatchObject({ ok: false });
+    expect(await mcp.connect(FIGMA_IN('future-cli'))).toMatchObject({ ok: false });
   });
 });

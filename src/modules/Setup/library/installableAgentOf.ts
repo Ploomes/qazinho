@@ -1,6 +1,6 @@
 import type { InstallableId } from '@/shared/types';
 
-const AGENTS: InstallableId[] = ['claude-code', 'codex', 'gemini-cli'];
+const AGENTS: InstallableId[] = ['claude-code', 'codex'];
 
 /** The install behind a detected agent, or null for an agent QAzinho cannot install. */
 export function installableAgentOf(agentId: string): InstallableId | null {

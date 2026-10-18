@@ -13,7 +13,6 @@ describe('recipeFor', () => {
   it('installs every agent globally with npm, in one command', () => {
     expect(lines('claude-code')).toEqual(['npm install -g @anthropic-ai/claude-code']);
     expect(lines('codex')).toEqual(['npm install -g @openai/codex']);
-    expect(lines('gemini-cli')).toEqual(['npm install -g @google/gemini-cli']);
   });
 
   it('installs the idb companion before the client that talks to it', () => {

@@ -11,10 +11,4 @@ export const AGENT_PROBES = [
     command: 'codex',
     config: { file: '.codex/config.toml', format: 'toml' },
   },
-  {
-    id: 'gemini-cli',
-    name: 'Gemini CLI',
-    command: 'gemini',
-    config: { file: '.gemini/settings.json', format: 'json' },
-  },
 ] as const;

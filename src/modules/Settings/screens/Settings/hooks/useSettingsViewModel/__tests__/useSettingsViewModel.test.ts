@@ -14,6 +14,17 @@ beforeEach(() => {
   });
 });
 
+/** An agent found on the machine, the way AgentDetector reports it. */
+function agent(props: { id: string; name: string }) {
+  return {
+    ...props,
+    command: props.id,
+    isFound: true,
+    path: `/bin/${props.id}`,
+    defaultModel: null,
+  };
+}
+
 describe('useSettingsViewModel', () => {
   it('opens on the agents panel, because nothing runs without one', () => {
     const { result } = renderHook(() => useSettingsViewModel());
@@ -22,33 +33,11 @@ describe('useSettingsViewModel', () => {
     expect(result.current.tabs).toHaveLength(7);
   });
 
-  it('names the default agent, offers the others, and flags one that is not on PATH', () => {
+  it('names the default agent and offers the other one', () => {
     useMachineStore.setState({
       agents: [
-        {
-          id: 'claude',
-          name: 'Claude Code',
-          command: 'claude',
-          isFound: true,
-          path: '/bin/claude',
-          defaultModel: null,
-        },
-        {
-          id: 'codex',
-          name: 'Codex',
-          command: 'codex',
-          isFound: true,
-          path: '/bin/codex',
-          defaultModel: null,
-        },
-        {
-          id: 'gemini',
-          name: 'Gemini CLI',
-          command: 'gemini',
-          isFound: false,
-          path: null,
-          defaultModel: null,
-        },
+        agent({ id: 'claude-code', name: 'Claude Code' }),
+        agent({ id: 'codex', name: 'Codex' }),
       ],
     });
 
@@ -57,9 +46,24 @@ describe('useSettingsViewModel', () => {
     expect(result.current.agents.map(({ note }) => note)).toEqual([
       'Default agent',
       'Make default',
+    ]);
+  });
+
+  it('flags an agent that is not on PATH', () => {
+    useMachineStore.setState({
+      agents: [
+        agent({ id: 'claude-code', name: 'Claude Code' }),
+        { ...agent({ id: 'codex', name: 'Codex' }), isFound: false, path: null },
+      ],
+    });
+
+    const { result } = renderHook(() => useSettingsViewModel());
+
+    expect(result.current.agents.map(({ note }) => note)).toEqual([
+      'Default agent',
       'Not on PATH',
     ]);
-    expect(result.current.agents[2]?.path).toBe('not found');
+    expect(result.current.agents[1]?.path).toBe('not found');
   });
 
   it('offers GitHub and Jira as trackers to connect', () => {

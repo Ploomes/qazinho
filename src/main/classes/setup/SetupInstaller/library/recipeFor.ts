@@ -5,7 +5,6 @@ import { join } from 'node:path';
 const AGENTS: Record<Exclude<InstallableId, 'idb'>, string> = {
   'claude-code': '@anthropic-ai/claude-code',
   codex: '@openai/codex',
-  'gemini-cli': '@google/gemini-cli',
 };
 
 /** The commands that install a tool, in order. idb's client gets a Python of its own, so Homebrew's Pythons are never touched. */
