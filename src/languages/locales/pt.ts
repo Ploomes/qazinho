@@ -101,8 +101,7 @@ export const pt: typeof en = {
     RUN_CARD_SUBTITLE: 'Contadores, screenshots e o esperado vs. obtido de cada falha.',
     RUN_CARD_ACTION: 'Abrir em Runs →',
     SUGGESTION_PLAN: 'Criar um plano de teste',
-    SUGGESTION_PLAN_TEXT:
-      'Escreva um plano de teste para este app: os fluxos principais, os casos de borda e o que tem mais chance de quebrar.',
+    SUGGESTION_PLAN_TEXT: 'Vamos criar um plano de teste.',
     SUGGESTION_SIGN_UP: 'Cobrir o cadastro e a primeira compra',
     SUGGESTION_SIGN_UP_TEXT:
       'Cubra o cadastro e a primeira compra numa instalação limpa.',

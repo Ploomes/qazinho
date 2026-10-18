@@ -86,12 +86,16 @@ describe('useChatViewModel', () => {
     expect(result.current.suggestions).toHaveLength(2);
   });
 
-  it('starts the suggestions with a test plan, and sends it in the language the QA reads', async () => {
+  /**
+   * The suggestion only opens the conversation: a long ask for flows and edge cases read as an
+   * order to write the plan at once, and the agent guessed instead of asking.
+   */
+  it('starts the suggestions with a test plan, and only opens the conversation about it', async () => {
     const ask = answering({ answer: DRAFTED });
     const { result } = renderHook(() => useChatViewModel());
     const [plan] = result.current.suggestions;
 
-    expect(plan?.label).toBe('Write a test plan');
+    expect(plan?.label).toBe('Create a test plan');
 
     act(() => {
       result.current.onSuggestion(plan?.text ?? '');
@@ -100,7 +104,7 @@ describe('useChatViewModel', () => {
     await waitFor(() => {
       expect(ask).toHaveBeenCalledOnce();
     });
-    expect(ask.mock.calls[0]?.[0].text).toMatch(/^Write a test plan for this app/);
+    expect(ask.mock.calls[0]?.[0].text).toBe("Let's create a test plan.");
   });
 
   describe('the answer as it arrives', () => {
