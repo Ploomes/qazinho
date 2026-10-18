@@ -13,6 +13,8 @@ export const Settings: React.FC = () => {
     tabs,
     agents,
     devices,
+    needsNpm,
+    nodeUrl,
     needsBrew,
     brewUrl,
     onInstallIdb,
@@ -118,8 +120,37 @@ export const Settings: React.FC = () => {
                       </Button>
                     </span>
                   )}
+                  {item.canInstall && (
+                    <span className="settings__agent-sign-in">
+                      <Button size="sm" variant="primary" onClick={item.onInstall}>
+                        {t('SETUP.INSTALL')}
+                      </Button>
+                    </span>
+                  )}
+                  <AnimatePresence initial={false}>
+                    {item.install !== null && (
+                      <InstallProgress
+                        key="install"
+                        state={item.install}
+                        onRetry={item.onInstall}
+                      />
+                    )}
+                  </AnimatePresence>
                 </div>
               ))}
+              {needsNpm && (
+                <p className="settings__note">
+                  {t('SETUP.NEEDS_NPM')}{' '}
+                  <a
+                    className="settings__link"
+                    href={nodeUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    nodejs.org ↗
+                  </a>
+                </p>
+              )}
               <p className="settings__note">{t('SETTINGS.AGENTS_NOTE')}</p>
             </div>
           )}

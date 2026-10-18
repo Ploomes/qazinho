@@ -10,6 +10,7 @@ import {
 } from '@/modules/Settings/constants';
 import {
   INTEGRATIONS,
+  installableAgentOf,
   MCP_SERVERS,
   SETUP_LINKS,
   useAgentSignIn,
@@ -43,6 +44,7 @@ export const useSettingsViewModel = () => {
   const { isChecking, check } = useMachineCheck();
   const idbInstall = installs.idb;
   const hasBrew = managers?.brew.isFound ?? false;
+  const hasNpm = managers?.npm.isFound ?? false;
 
   const agentId = detected.find(({ name }) => name === agent)?.id ?? 'claude-code';
 
@@ -51,7 +53,8 @@ export const useSettingsViewModel = () => {
   }, [tab, agentId, landMcpServers]);
 
   useEffect(() => {
-    if (tab === 'devices' && managers === null && !isChecking) void check();
+    if ((tab === 'devices' || tab === 'agents') && managers === null && !isChecking)
+      void check();
   }, [tab, managers, isChecking, check]);
 
   const iosTool = (props: {
@@ -96,6 +99,8 @@ export const useSettingsViewModel = () => {
             : t('SETTINGS.MAKE_DEFAULT');
 
       const canSignIn = item.isFound && item.isSignedIn === false;
+      const installable = installableAgentOf(item.id);
+      const state = installable === null ? undefined : installs[installable];
 
       return {
         name: item.name,
@@ -109,11 +114,22 @@ export const useSettingsViewModel = () => {
           ...(isDefault ? ['settings__card--on'] : []),
           ...(canSignIn ? ['settings__card--signed-out'] : []),
         ].join(' '),
+        canInstall:
+          !item.isFound &&
+          installable !== null &&
+          hasNpm &&
+          state?.phase !== 'installing',
+        install: state !== undefined && state.phase !== 'installed' ? state : null,
         onSignIn: () => {
           signIn.onSignIn(item.id);
         },
+        onInstall: () => {
+          if (installable !== null) void install(installable);
+        },
       };
     }),
+    needsNpm: managers !== null && !hasNpm && detected.some(({ isFound }) => !isFound),
+    nodeUrl: SETUP_LINKS.nodejs,
     devices: [
       {
         name: 'Android SDK',

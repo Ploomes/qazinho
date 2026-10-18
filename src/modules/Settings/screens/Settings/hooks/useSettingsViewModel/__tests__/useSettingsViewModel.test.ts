@@ -7,6 +7,7 @@ import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAppStore, useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
 beforeEach(() => {
+  useSetupStore.setState({ managers: null, isChecking: false, installs: {} });
   useAppStore.setState({ theme: 'dark' });
   useSettingsStore.setState({
     tab: 'agents',
@@ -127,6 +128,70 @@ describe('useSettingsViewModel', () => {
     );
   });
 
+  /** The first run promises an agent can be installed later in Settings, and Settings could not. */
+  describe('installing an agent', () => {
+    afterEach(() => {
+      Reflect.deleteProperty(window, 'qazinho');
+      useSetupStore.setState({ managers: null, installs: {} });
+      useMachineStore.setState({ agents: [] });
+    });
+
+    it('offers to install an agent that is missing when npm is there', () => {
+      window.qazinho = fakeQazinhoApi('darwin');
+      useMachineStore.setState({
+        agents: [
+          { ...agent({ id: 'codex', name: 'Codex' }), isFound: false, path: null },
+        ],
+      });
+      useSetupStore.setState({
+        managers: {
+          npm: { isFound: true, path: '/bin/npm' },
+          brew: { isFound: true, path: '/bin/brew' },
+        },
+      });
+
+      const { result } = renderHook(() => useSettingsViewModel());
+
+      expect(result.current.agents[0]?.canInstall).toBe(true);
+      expect(result.current.needsNpm).toBe(false);
+    });
+
+    it('does NOT offer it without npm, and says npm comes first', () => {
+      window.qazinho = fakeQazinhoApi('darwin');
+      useMachineStore.setState({
+        agents: [
+          { ...agent({ id: 'codex', name: 'Codex' }), isFound: false, path: null },
+        ],
+      });
+      useSetupStore.setState({
+        managers: {
+          npm: { isFound: false, path: null },
+          brew: { isFound: true, path: '/bin/brew' },
+        },
+      });
+
+      const { result } = renderHook(() => useSettingsViewModel());
+
+      expect(result.current.agents[0]?.canInstall).toBe(false);
+      expect(result.current.needsNpm).toBe(true);
+    });
+
+    it('does NOT offer to install an agent that is already here', () => {
+      window.qazinho = fakeQazinhoApi('darwin');
+      useMachineStore.setState({ agents: [agent({ id: 'codex', name: 'Codex' })] });
+      useSetupStore.setState({
+        managers: {
+          npm: { isFound: true, path: '/bin/npm' },
+          brew: { isFound: true, path: '/bin/brew' },
+        },
+      });
+
+      expect(
+        renderHook(() => useSettingsViewModel()).result.current.agents[0]?.canInstall,
+      ).toBe(false);
+    });
+  });
+
   /** The devices tab told a QA missing idb to type "brew install idb-companion". */
   describe('installing idb', () => {
     afterEach(() => {
@@ -136,6 +201,10 @@ describe('useSettingsViewModel', () => {
 
     it('checks the machine when the devices tab opens, so it knows whether brew is there', async () => {
       const checkMachine = vi.fn(fakeQazinhoApi('darwin').checkMachine);
+
+      // A check an earlier test started may still land; let it, then start from nothing.
+      await new Promise((later) => setTimeout(later, 0));
+      useSetupStore.setState({ managers: null, isChecking: false });
 
       window.qazinho = { ...fakeQazinhoApi('darwin'), checkMachine };
       useSettingsStore.setState({ tab: 'devices' });
