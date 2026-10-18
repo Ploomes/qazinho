@@ -56,6 +56,7 @@ import {
   WINDOW_SHOW_FALLBACK_MS,
 } from '@/main/constants';
 import {
+  agentFailure,
   bytesOfDataUrl,
   fileNameOf,
   fittedBounds,
@@ -170,10 +171,11 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
   if (!command) {
     return {
       sessionId: ask.sessionId,
-      text: `QAzinho cannot find ${ask.agentId} on this machine. Install it, or pick another agent in Settings.`,
+      text: '',
       usage: null,
       isError: true,
       answer: null,
+      failure: { reason: 'agent-missing', agentId: ask.agentId },
     };
   }
 
@@ -197,7 +199,11 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     allowedTools: chat.tools.allowedTools,
   });
 
-  return { ...turn, answer: turn.isError ? null : harness.readChat(turn.text) };
+  return {
+    ...turn,
+    answer: turn.isError ? null : harness.readChat(turn.text),
+    failure: agentFailure(turn),
+  };
 }
 
 async function checkMachine() {

@@ -1,6 +1,5 @@
 import type { ICodexLine } from '@/main/types';
 import type { IAgentUsage } from '@/shared/types';
-import { codexFailure } from './codexFailure';
 
 /** What one Codex event says: the session, a message, the usage, or how the turn ended. */
 export function hearCodex(props: { line: ICodexLine; usage: IAgentUsage | null }): {
@@ -33,7 +32,7 @@ export function hearCodex(props: { line: ICodexLine; usage: IAgentUsage | null }
     return {
       ended: {
         isError: true,
-        text: codexFailure(line.error?.message ?? 'Codex stopped.'),
+        text: line.error?.message ?? '',
       },
     };
 

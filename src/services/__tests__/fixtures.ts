@@ -12,6 +12,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
         usage: null,
         isError: false,
         answer: null,
+        failure: null,
       }),
     onAgentEvent: () => () => undefined,
     signInAgent: (agentId) =>

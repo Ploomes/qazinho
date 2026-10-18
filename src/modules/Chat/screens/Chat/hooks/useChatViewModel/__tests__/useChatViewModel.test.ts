@@ -45,6 +45,7 @@ function answering(turn: Partial<IChatTurn>) {
       usage: null,
       isError: false,
       answer: null,
+      failure: null,
       ...turn,
     }),
   );
@@ -337,6 +338,26 @@ describe('useChatViewModel', () => {
         });
       });
       expect(useWorkspaceStore.getState().workspaces[0]?.plan).toHaveLength(0);
+    });
+
+    /** A signed-out Codex used to tell the QA to run codex login in a terminal, in English. */
+    it('tells the QA where to sign a signed-out agent in, in their language', async () => {
+      await i18n.changeLanguage('pt');
+      answering({ isError: true, failure: { reason: 'agent-signed-out' } });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onSuggestion('Testa');
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
+          kind: 'error',
+          text: 'O Claude Code está deslogado. Faça login nele em Configurações → Agentes e pergunte de novo.',
+        });
+      });
+      await i18n.changeLanguage('en');
     });
 
     it('says it in the language the QA reads', async () => {

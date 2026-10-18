@@ -53,7 +53,7 @@ describe('hearCodex', () => {
     ).toEqual({
       ended: {
         isError: true,
-        text: 'Codex is not signed in. Run codex login in a terminal, then try again.',
+        text: 'unexpected status 401 Unauthorized: Missing bearer or basic authentication in header',
       },
     });
   });

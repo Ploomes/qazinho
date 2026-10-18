@@ -1,6 +1,5 @@
 export * from './buildAskArgs';
 export * from './buildCodexArgs';
-export * from './codexFailure';
 export * from './hearCodex';
 export * from './killTree';
 export * from './readAgentLine';

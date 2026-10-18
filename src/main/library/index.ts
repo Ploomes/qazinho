@@ -1,3 +1,4 @@
+export * from './agentFailure';
 export * from './authorizeUrlIn';
 export * from './bytesOfDataUrl';
 export * from './collectSubtree';

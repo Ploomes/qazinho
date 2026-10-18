@@ -109,6 +109,10 @@ export const en = {
     TYPING: 'the agent is reading what you wrote',
     UNREADABLE:
       'The agent answered, but not in a shape QAzinho could read. Ask it again.',
+    FAILED_AGENT_SIGNED_OUT:
+      '{{agent}} is signed out. Sign it in from Settings → Agents, then ask again.',
+    FAILED_AGENT_ERROR: 'The agent answered with an error: {{said}}',
+    FAILED_AGENT_SILENT: 'The agent stopped answering. Ask it again.',
   },
   PLAN: {
     EMPTY_TITLE: 'No plan yet.',
@@ -169,6 +173,8 @@ export const en = {
       'Chrome could not open {{url}} ({{code}}). Check that the app is up and that this machine can reach it, then run the plan again.',
     FAILED_AGENT_ERROR: 'The agent answered with an error, so the run stopped: {{said}}',
     FAILED_AGENT_SILENT: 'The agent stopped answering, so the run stopped too.',
+    FAILED_AGENT_SIGNED_OUT:
+      '{{agent}} is signed out, so the run stopped. Sign it in from Settings → Agents, then run the plan again.',
     FAILED_OTHER: 'The run stopped: {{said}}',
   },
   BUG: {

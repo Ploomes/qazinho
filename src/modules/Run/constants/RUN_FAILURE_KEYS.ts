@@ -5,6 +5,7 @@ export const RUN_FAILURE_KEYS = {
   'no-emulator': 'RUN.FAILED_NO_EMULATOR',
   'no-simulator': 'RUN.FAILED_NO_SIMULATOR',
   unreachable: 'RUN.FAILED_UNREACHABLE',
+  'agent-signed-out': 'RUN.FAILED_AGENT_SIGNED_OUT',
   'agent-error': 'RUN.FAILED_AGENT_ERROR',
   'agent-silent': 'RUN.FAILED_AGENT_SILENT',
   other: 'RUN.FAILED_OTHER',

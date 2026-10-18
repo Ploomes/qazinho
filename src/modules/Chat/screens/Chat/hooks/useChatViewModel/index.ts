@@ -10,7 +10,7 @@ import {
   mentionsIn,
   referencesOf,
 } from '@/modules/Chat/library';
-import { CHAT } from '@/modules/Chat/screens/Chat/constants';
+import { CHAT, CHAT_FAILURE_KEYS } from '@/modules/Chat/screens/Chat/constants';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { viewportOf } from '@/modules/Device';
 import { planOfDraft } from '@/modules/Plan';
@@ -89,7 +89,16 @@ export const useChatViewModel = () => {
       references: props.references,
     }).then((turn) => {
       if (turn.isError) {
-        landAgentError({ workspaceId, text: turn.text });
+        landAgentError({
+          workspaceId,
+          text:
+            turn.failure === null
+              ? turn.text
+              : t(CHAT_FAILURE_KEYS[turn.failure.reason], {
+                  ...turn.failure,
+                  agent: agentName,
+                }),
+        });
 
         return;
       }

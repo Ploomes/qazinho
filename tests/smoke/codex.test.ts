@@ -9,6 +9,7 @@ import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { LiveStream } from '@/main/classes/devices/LiveStream';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
+import { agentFailure } from '@/main/library';
 
 /**
  * A Codex that speaks `codex exec --json` the way the real one does: thread.started, items, and
@@ -145,7 +146,7 @@ describe('Codex in the chat', () => {
     expect((await calls()).at(-1)?.slice(0, 3)).toEqual(['exec', 'resume', 'thread-1']);
   });
 
-  it('turns a signed-out Codex into the line that fixes it', async () => {
+  it('reads a signed-out Codex as signed out, for the page to say how to sign it in', async () => {
     await writeFile(join(root, 'signed-out'), '');
 
     const turn = await runner().ask({
@@ -159,10 +160,8 @@ describe('Codex in the chat', () => {
 
     await rm(join(root, 'signed-out'));
 
-    expect(turn).toMatchObject({
-      isError: true,
-      text: 'Codex is not signed in. Run codex login in a terminal, then try again.',
-    });
+    expect(turn.isError).toBe(true);
+    expect(agentFailure(turn)).toEqual({ reason: 'agent-signed-out' });
   });
 });
 

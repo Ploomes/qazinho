@@ -17,9 +17,9 @@ import type {
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { WEB_DRIVER } from '@/main/classes/devices/WebDriver/constants';
+import { agentFailure } from '@/main/library';
 import { RUN_WALK, UNWALKED } from './constants';
 import {
-  agentFailure,
   casesOf,
   driverFor,
   failureOf,

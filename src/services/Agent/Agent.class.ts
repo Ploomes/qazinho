@@ -16,6 +16,7 @@ export class Agent {
         usage: null,
         isError: true,
         answer: null,
+        failure: null,
       }
     );
   }

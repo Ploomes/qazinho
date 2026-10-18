@@ -111,6 +111,10 @@ export const pt: typeof en = {
     TYPING: 'o agente está lendo o que você escreveu',
     UNREADABLE:
       'O agente respondeu, mas num formato que o QAzinho não conseguiu ler. Pergunte de novo.',
+    FAILED_AGENT_SIGNED_OUT:
+      'O {{agent}} está deslogado. Faça login nele em Configurações → Agentes e pergunte de novo.',
+    FAILED_AGENT_ERROR: 'O agente respondeu com um erro: {{said}}',
+    FAILED_AGENT_SILENT: 'O agente parou de responder. Pergunte de novo.',
   },
   PLAN: {
     EMPTY_TITLE: 'Nenhum plano ainda.',
@@ -171,6 +175,8 @@ export const pt: typeof en = {
       'O Chrome não conseguiu abrir {{url}} ({{code}}). Confira se o app está no ar e se esta máquina o alcança, e rode o plano de novo.',
     FAILED_AGENT_ERROR: 'O agente respondeu com um erro, então a run parou: {{said}}',
     FAILED_AGENT_SILENT: 'O agente parou de responder, então a run parou também.',
+    FAILED_AGENT_SIGNED_OUT:
+      'O {{agent}} está deslogado, então a run parou. Faça login nele em Configurações → Agentes e rode o plano de novo.',
     FAILED_OTHER: 'A run parou: {{said}}',
   },
   BUG: {
