@@ -57,6 +57,23 @@ describe('flattenPlanSteps', () => {
     expect(flattenPlanSteps([])).toEqual([]);
   });
 
+  /** A case added by hand starts with a blank step; a run sent it to the agent as "1. ". */
+  it('skips a step with nothing to do yet, and keeps the number the plan shows', () => {
+    const steps = flattenPlanSteps([
+      {
+        ...CASE,
+        steps: [
+          { action: '  ', expected: '' },
+          { action: 'Pay with the test card', expected: 'A confirmation' },
+        ],
+      },
+    ]);
+
+    expect(steps.map(({ action, numberInCase }) => [action, numberInCase])).toEqual([
+      ['Pay with the test card', 2],
+    ]);
+  });
+
   it('skips a case that has no steps yet', () => {
     expect(flattenPlanSteps([{ ...CASE, steps: [] }])).toEqual([]);
   });
