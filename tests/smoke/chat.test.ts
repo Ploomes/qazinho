@@ -30,6 +30,7 @@ describe('a real chat', () => {
       target: { kind: 'web', value: 'https://shop.test' },
       steps: [],
       references: [],
+      look: null,
     });
     const runner = new AgentRunner({
       owners: new ProcessOwners(),

@@ -157,6 +157,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     target: ask.target,
     steps: ask.steps,
     references: ask.references,
+    look: null,
   });
 
   const turn = await agentRunner.ask({

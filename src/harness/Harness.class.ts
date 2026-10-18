@@ -1,6 +1,6 @@
 import type { ICorpusFile, IHarnessSection } from '@/harness/context/types';
 import type { IHarnessTools } from '@/harness/tools/types';
-import type { HarnessRole, IHarnessTarget } from '@/harness/types';
+import type { AppLook, HarnessRole, IHarnessTarget } from '@/harness/types';
 import type {
   IChatAnswer,
   IChatReference,
@@ -11,6 +11,7 @@ import type {
 import { CORPUS } from '@/harness/context/constants';
 import {
   describeCase,
+  describeLook,
   describePlan,
   describeReferences,
   fillSections,
@@ -49,11 +50,12 @@ export class Harness {
     return toolsOfRole({ grants: TOOL_GRANTS, role, server: MCP_HOST.name });
   }
 
-  /** One chat message: the workspace and what the QA pointed at, and the shape the answer comes in. */
+  /** One chat message: the workspace, what QAzinho saw of the app and what the QA pointed at, and the answer's shape. */
   public chat(props: {
     target: ITargetUnderTest | null;
     steps: IFlatStep[];
     references: IChatReference[];
+    look: AppLook | null;
   }): {
     systemPrompt: string;
     schema: string;
@@ -72,6 +74,7 @@ export class Harness {
               ...describePlan(props.steps),
             ],
           },
+          describeLook(props.look),
           describeReferences(props.references),
         ],
       }),

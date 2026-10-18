@@ -68,6 +68,16 @@ TC-01 · Coupon
   1. Open the cart → The cart shows
   2. Apply SAVE10 → 10% off
 
+## What QAzinho saw of the app
+QAzinho opened https://shop.test in a browser before this message. Its page reads:
+URL: https://shop.test/
+TITLE: Shop
+TEXT:
+New in: summer shoes
+CONTROLS:
+a: Cart
+button: Sign in
+
 ## What the QA pointed at
 bug BUG-01 · Expired coupon
   severity high

@@ -41,24 +41,31 @@ const DESKTOP = { width: 1280, height: 800 };
 describe('Harness', () => {
   describe('chat', () => {
     it('tells the agent about an empty workspace exactly as it did before', async () => {
-      const chat = harness.chat({ target: null, steps: [], references: [] });
+      const chat = harness.chat({ target: null, steps: [], references: [], look: null });
 
       await expect(chat.systemPrompt).toMatchFileSnapshot('./__prompts__/chat-empty.txt');
       await expect(chat.schema).toMatchFileSnapshot('./__prompts__/chat-schema.txt');
     });
 
-    it('adds the app, the plan and what the QA pointed at, after the corpus', async () => {
+    it('adds the app, what QAzinho saw of it, the plan and what the QA pointed at, after the corpus', async () => {
       const chat = harness.chat({
         target: { kind: 'web', value: 'https://shop.test' },
         steps: STEPS,
         references: REFERENCES,
+        look: {
+          url: 'https://shop.test',
+          isOpen: true,
+          page: 'URL: https://shop.test/\nTITLE: Shop\nTEXT:\nNew in: summer shoes\nCONTROLS:\na: Cart\nbutton: Sign in',
+        },
       });
 
       await expect(chat.systemPrompt).toMatchFileSnapshot('./__prompts__/chat-full.txt');
     });
 
     it('takes every tool away from the chat', () => {
-      expect(harness.chat({ target: null, steps: [], references: [] }).tools).toEqual({
+      expect(
+        harness.chat({ target: null, steps: [], references: [], look: null }).tools,
+      ).toEqual({
         groups: [],
         allowedTools: [],
       });
@@ -95,7 +102,8 @@ describe('Harness', () => {
         harness.run({ target: { kind: 'web', value: 'x' }, viewport: DESKTOP }),
       ).not.toContain('## Talking with the QA');
       expect(
-        harness.chat({ target: null, steps: [], references: [] }).systemPrompt,
+        harness.chat({ target: null, steps: [], references: [], look: null })
+          .systemPrompt,
       ).not.toContain('## Running a case');
     });
   });

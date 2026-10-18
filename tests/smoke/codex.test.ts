@@ -113,7 +113,7 @@ afterAll(() => {
 describe('Codex in the chat', () => {
   it('answers in the strict schema, briefed by the harness, and resumes the same thread', async () => {
     const harness = new Harness();
-    const chat = harness.chat({ target: null, steps: [], references: [] });
+    const chat = harness.chat({ target: null, steps: [], references: [], look: null });
     const ask = (sessionId: string | null) =>
       runner().ask({
         workspaceId: 'w-codex',
