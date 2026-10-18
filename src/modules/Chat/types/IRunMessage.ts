@@ -1,3 +1,5 @@
+import type { RunEnd } from '@/modules/Run/types';
+
 export interface IRunMessage {
   id: string;
   kind: 'run';
@@ -5,4 +7,5 @@ export interface IRunMessage {
   runId: string;
   passed: number;
   failed: number;
+  endedBy: RunEnd;
 }

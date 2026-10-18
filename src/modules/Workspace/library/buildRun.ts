@@ -1,4 +1,4 @@
-import type { IRun, IRunCase, IRunStep } from '@/modules/Run';
+import type { IRun, IRunCase, IRunStep, RunEnd } from '@/modules/Run';
 import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IStepOutcome } from '@/shared/types';
 import { caseVerdict, countVerdicts } from '@/modules/Run/library';
@@ -11,8 +11,9 @@ function tookSec(outcomes: IStepOutcome[]): number {
   );
 }
 
-/** The finished run, read back from what the device actually did. */
-export function buildRun(workspace: IWorkspace): IRun {
+/** The run as it ended, read back from what the device actually did. */
+export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRun {
+  const { workspace, endedBy } = props;
   const live = workspace.live;
   const outcomes = live?.outcomes ?? [];
   const id = live?.id ?? 'r-01';
@@ -56,5 +57,6 @@ export function buildRun(workspace: IWorkspace): IRun {
     durationSec: live?.elapsedSec ?? tookSec(outcomes),
     counts: countVerdicts(outcomes.map((outcome) => outcome.verdict)),
     cases,
+    endedBy,
   };
 }

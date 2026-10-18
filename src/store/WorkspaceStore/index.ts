@@ -12,13 +12,7 @@ import {
 } from '@/modules/Chat/library';
 import { DEVICE } from '@/modules/Device/constants';
 import { RUN_CLOCK } from '@/modules/Run/constants';
-import {
-  finishRun,
-  landStep,
-  resumeRun,
-  startRun,
-  stopRun,
-} from '@/modules/Workspace/library';
+import { endRun, landStep, resumeRun, startRun } from '@/modules/Workspace/library';
 import { mapWorkspace, tickLive } from './library';
 
 export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
@@ -222,7 +216,8 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
-        change: stopRun,
+        change: (workspace) =>
+          endRun({ workspace, at: formatClock(new Date()), endedBy: 'stopped' }),
       }),
     })),
 
@@ -287,7 +282,8 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
-        change: (workspace) => finishRun({ workspace, at: formatClock(new Date()) }),
+        change: (workspace) =>
+          endRun({ workspace, at: formatClock(new Date()), endedBy: 'finished' }),
       }),
     })),
 
@@ -296,19 +292,16 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
-        change: (workspace) => ({
-          ...appendAgentError({ workspace, text, at: formatClock(new Date()) }),
-          status: 'stopped',
-          live: workspace.live
-            ? {
-                ...workspace.live,
-                isRunning: false,
-                isDone: true,
-                doingIndex: -1,
-                streamUrl: null,
-              }
-            : null,
-        }),
+        change: (workspace) => {
+          const at = formatClock(new Date());
+          const ended = endRun({
+            workspace: appendAgentError({ workspace, text, at }),
+            at,
+            endedBy: 'broke',
+          });
+
+          return ended.live === workspace.live ? { ...ended, status: 'stopped' } : ended;
+        },
       }),
     })),
 

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { formatClock } from '@/modules/Chat/library';
 import { readProjects } from '@/modules/Project';
 import { fromSaved, toSaved } from '@/modules/Workspace';
 import { Archive } from '@/services';
@@ -24,7 +25,10 @@ export const useArchive = () => {
       held.keep(ARCHIVE.projectsKey, asJson(projects));
 
       for (const workspace of workspaces)
-        held.keep(workspace.id, JSON.stringify(toSaved(workspace)));
+        held.keep(
+          workspace.id,
+          JSON.stringify(toSaved({ workspace, at: formatClock(new Date()) })),
+        );
 
       loadProjects(projects);
       loadWorkspaces(workspaces);
@@ -60,7 +64,7 @@ export const useArchive = () => {
         if (workspace === before.workspaces.find(({ id }) => id === workspace.id))
           continue;
 
-        const saved = toSaved(workspace);
+        const saved = toSaved({ workspace, at: formatClock(new Date()) });
 
         if (!held.isNew(workspace.id, JSON.stringify(saved))) continue;
 

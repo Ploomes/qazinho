@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { fromSaved, toSaved } from '@/modules/Workspace/library';
 import { makeWorkspace } from './fixtures';
 
-const SAVED = toSaved(makeWorkspace());
+const SAVED = toSaved({ workspace: makeWorkspace(), at: '09:44' });
 
 describe('fromSaved', () => {
   it('a workspace file that is not json is left out, not a crash', () => {
@@ -24,7 +24,9 @@ describe('fromSaved', () => {
 
   it('keeps the window size the workspace picked, and opens one saved before sizes at desktop', () => {
     expect(
-      fromSaved(toSaved({ ...makeWorkspace(), viewportId: 'tablet' }))?.viewportId,
+      fromSaved(
+        toSaved({ workspace: { ...makeWorkspace(), viewportId: 'tablet' }, at: '09:44' }),
+      )?.viewportId,
     ).toBe('tablet');
 
     const json = JSON.stringify({ id: 'w1', projectId: 'p1' });
@@ -55,6 +57,32 @@ describe('fromSaved', () => {
       window: 200,
     });
     expect(fromSaved({ id: 'w1', json: broken, planYaml: '' })?.context).toBeNull();
+  });
+
+  it('reads a run saved before runs said how they ended as one that finished', () => {
+    const json = JSON.stringify({
+      id: 'w1',
+      projectId: 'p1',
+      chat: [
+        { id: 'm-1', kind: 'run', at: '09:42', runId: 'r-01', passed: 1, failed: 0 },
+      ],
+      runs: [
+        {
+          id: 'r-01',
+          title: 'Run r-01',
+          what: 'The whole plan',
+          meta: 'Checkout regression',
+          startedAt: '09:41',
+          durationSec: 4,
+          counts: { passed: 1, failed: 0, blocked: 0, skipped: 0 },
+          cases: [],
+        },
+      ],
+    });
+    const workspace = fromSaved({ id: 'w1', json, planYaml: '' });
+
+    expect(workspace?.runs[0]?.endedBy).toBe('finished');
+    expect(workspace?.chat[0]).toMatchObject({ kind: 'run', endedBy: 'finished' });
   });
 
   it('drops the action logs an older chat still carries', () => {

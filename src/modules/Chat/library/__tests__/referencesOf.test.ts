@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { referencesOf } from '@/modules/Chat/library';
+import { endRun } from '@/modules/Workspace/library';
 import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 
 describe('referencesOf', () => {
@@ -26,6 +27,20 @@ describe('referencesOf', () => {
 
     expect(run?.facts).toContain('4 passed, 1 failed, 0 blocked, 1 skipped');
     expect(run?.facts.some((fact) => fact.includes('step 2 failed'))).toBe(true);
+  });
+
+  it('says how a run ended, so the agent never takes a stopped run for the whole plan', () => {
+    const finished = walkRun({ verdicts: ['passed'], isFinished: true });
+    const stopped = endRun({
+      workspace: walkRun({ verdicts: ['passed'] }),
+      at: '09:43',
+      endedBy: 'stopped',
+    });
+
+    expect(referencesOf(finished)[0]?.facts[0]).toMatch(/walked the whole plan$/);
+    expect(referencesOf(stopped)[0]?.facts[0]).toMatch(
+      /stopped by the QA before the end$/,
+    );
   });
 
   it('tells runs of the same plan apart by when they started', () => {

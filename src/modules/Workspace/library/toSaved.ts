@@ -1,10 +1,12 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
 import type { ISavedWorkspace } from '@/shared/types';
 import { stringify } from 'yaml';
+import { endRun } from './endRun';
 
-/** Screenshots stay on disk as files, so what is written here is text a QA can read. */
-export function toSaved(workspace: IWorkspace): ISavedWorkspace {
-  const { plan, live, ...rest } = workspace;
+/** Text a QA can read, screenshots left as files; a run in flight is kept as one QAzinho interrupted, which it is if it closes now. */
+export function toSaved(props: { workspace: IWorkspace; at: string }): ISavedWorkspace {
+  const workspace = endRun({ ...props, endedBy: 'interrupted' });
+  const { plan, ...rest } = workspace;
 
   return {
     id: workspace.id,
@@ -13,7 +15,6 @@ export function toSaved(workspace: IWorkspace): ISavedWorkspace {
       {
         ...rest,
         live: null,
-        status: live?.isRunning === true ? 'idle' : rest.status,
         runs: rest.runs.map((run) => ({
           ...run,
           cases: run.cases.map((runCase) => ({

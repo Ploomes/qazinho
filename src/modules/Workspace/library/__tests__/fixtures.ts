@@ -2,7 +2,7 @@ import type { ITestCase } from '@/modules/Plan';
 import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IStepOutcome, StepVerdict } from '@/shared/types';
 import { flattenPlanSteps } from '@/modules/Run';
-import { finishRun } from '@/modules/Workspace/library/finishRun';
+import { endRun } from '@/modules/Workspace/library/endRun';
 import { landStep } from '@/modules/Workspace/library/landStep';
 import { startRun } from '@/modules/Workspace/library/startRun';
 
@@ -108,6 +108,6 @@ export function walkRun(props: {
     });
 
   return props.isFinished === true
-    ? finishRun({ workspace: walked, at: '09:42' })
+    ? endRun({ workspace: walked, at: '09:42', endedBy: 'finished' })
     : walked;
 }

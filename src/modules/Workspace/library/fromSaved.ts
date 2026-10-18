@@ -1,8 +1,12 @@
+import type { ChatMessage } from '@/modules/Chat';
 import type { ITestCase } from '@/modules/Plan';
+import type { IRun } from '@/modules/Run';
 import type { IWorkspace } from '@/modules/Workspace/types';
 import type { ISavedWorkspace } from '@/shared/types';
 import { parse } from 'yaml';
 import { viewportOf } from '@/modules/Device/library';
+
+type SavedRun = Omit<IRun, 'endedBy'> & Partial<Pick<IRun, 'endedBy'>>;
 
 function readPlan(yaml: string): ITestCase[] {
   try {
@@ -36,9 +40,21 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     sessionId: read.sessionId ?? null,
     status: read.status ?? 'idle',
     issue: read.issue ?? null,
-    chat: (read.chat ?? []).filter((message) => (message.kind as string) !== 'action'),
+    chat: (read.chat ?? [])
+      .filter((message) => (message.kind as string) !== 'action')
+      .map((message): ChatMessage =>
+        message.kind === 'run'
+          ? {
+              ...message,
+              endedBy: (message as Partial<typeof message>).endedBy ?? 'finished',
+            }
+          : message,
+      ),
     plan: readPlan(saved.planYaml),
-    runs: read.runs ?? [],
+    runs: ((read.runs ?? []) as SavedRun[]).map((run) => ({
+      ...run,
+      endedBy: run.endedBy ?? 'finished',
+    })),
     bugs: read.bugs ?? [],
     live: null,
     hasBeenAsked: read.hasBeenAsked ?? false,

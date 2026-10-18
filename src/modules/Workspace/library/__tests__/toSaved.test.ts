@@ -6,28 +6,50 @@ import { makeWorkspace, walkRun } from './fixtures';
 const BROKE = ['passed', 'passed', 'passed', 'passed', 'failed'] as const;
 
 function roundTrip(workspace: IWorkspace): IWorkspace | null {
-  return fromSaved(toSaved(workspace));
+  return fromSaved(toSaved({ workspace, at: '09:44' }));
 }
 
 describe('toSaved', () => {
   it('writes the plan as yaml, so a QA can read it in an editor', () => {
-    const saved = toSaved(makeWorkspace());
+    const saved = toSaved({ workspace: makeWorkspace(), at: '09:44' });
 
     expect(saved.planYaml).toContain('cases:');
     expect(saved.planYaml).toContain('Open the store and find a product');
   });
 
   it('leaves the screenshots out, because they are already files on disk', () => {
-    const saved = toSaved(walkRun({ verdicts: [...BROKE], isFinished: true }));
+    const saved = toSaved({
+      workspace: walkRun({ verdicts: [...BROKE], isFinished: true }),
+      at: '09:44',
+    });
 
     expect(saved.json).not.toContain('data:image/jpeg');
     expect(saved.json).toContain('/tmp/qazinho/step-5.jpg');
   });
 
-  it('a run in flight is not saved as still running, because nothing is', () => {
-    const saved = toSaved(walkRun({ verdicts: ['passed'] }));
+  /**
+   * The saved file is what comes back if QAzinho closes now, and a run cannot outlive the app:
+   * kept as live it would come back running with nothing driving it, and dropped it would leave
+   * the bugs it found pointing at a run that is not there.
+   */
+  it('keeps a run in flight as one QAzinho interrupted, with what it walked so far', () => {
+    const saved = JSON.parse(
+      toSaved({ workspace: walkRun({ verdicts: ['passed', 'failed'] }), at: '09:44' })
+        .json,
+    ) as IWorkspace;
 
-    expect(JSON.parse(saved.json)).toMatchObject({ live: null, status: 'idle' });
+    expect(saved.live).toBeNull();
+    expect(saved.status).toBe('failed');
+    expect(saved.runs[0]).toMatchObject({
+      id: 'r-01',
+      endedBy: 'interrupted',
+      counts: { passed: 1, failed: 1 },
+    });
+    expect(saved.chat.at(-1)).toMatchObject({
+      kind: 'run',
+      at: '09:44',
+      endedBy: 'interrupted',
+    });
   });
 
   it('comes back the way it went in', () => {

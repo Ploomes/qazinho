@@ -1,6 +1,6 @@
 import type { IRunInFlight } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
-import { finishRun, landStep, resumeRun, startRun } from '@/modules/Workspace/library';
+import { endRun, landStep, resumeRun, startRun } from '@/modules/Workspace/library';
 import { makeOutcome, makeWorkspace } from './fixtures';
 
 const STARTED = 1_000_000;
@@ -91,8 +91,21 @@ describe('resumeRun', () => {
     expect(resumed({ workspace: following })).toBe(following);
   });
 
+  it('drops the record saved as interrupted, since the run is still walking', () => {
+    const interrupted = endRun({
+      workspace: resumed(),
+      at: '22:25',
+      endedBy: 'interrupted',
+    });
+    const followed = resumed({ workspace: interrupted });
+
+    expect(followed.runs).toEqual([]);
+    expect(followed.chat.filter(({ kind }) => kind === 'run')).toEqual([]);
+    expect(followed.live?.isDone).toBe(false);
+  });
+
   it('lets the run finish into a run the QA can open, with what it decided before the reload', () => {
-    const finished = finishRun({ workspace: resumed(), at: '22:30' });
+    const finished = endRun({ workspace: resumed(), at: '22:30', endedBy: 'finished' });
 
     expect(finished.runs[0]?.counts).toMatchObject({ passed: 1, failed: 1 });
   });

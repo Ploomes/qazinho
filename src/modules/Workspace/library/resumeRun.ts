@@ -2,7 +2,7 @@ import type { ILiveRun, IWorkspace } from '@/modules/Workspace/types';
 import type { IRunInFlight } from '@/shared/types';
 import { makeBug } from '@/modules/Bug/library';
 
-/** A run main kept walking while the page was away: the page follows it again, and its failures become bugs. */
+/** A run main kept walking while the page was away: the page follows it again, its failures become bugs, and the record saved as interrupted goes. */
 export function resumeRun(props: {
   workspace: IWorkspace;
   run: IRunInFlight;
@@ -13,6 +13,14 @@ export function resumeRun(props: {
 
   if (workspace.live && !workspace.live.isDone && workspace.live.id === run.runId)
     return workspace;
+
+  const walking: IWorkspace = {
+    ...workspace,
+    runs: workspace.runs.filter(({ id }) => id !== run.runId),
+    chat: workspace.chat.filter(
+      (message) => message.kind !== 'run' || message.runId !== run.runId,
+    ),
+  };
 
   const live: ILiveRun = {
     id: run.runId,
@@ -31,7 +39,7 @@ export function resumeRun(props: {
     .filter(({ verdict }) => verdict === 'failed')
     .filter(
       (outcome) =>
-        !workspace.bugs.some(
+        !walking.bugs.some(
           (bug) =>
             bug.runId === run.runId &&
             bug.caseId === outcome.caseId &&
@@ -46,6 +54,6 @@ export function resumeRun(props: {
           makeBug({ workspace: current, outcome, outcomes: run.outcomes }),
         ],
       }),
-      { ...workspace, status: 'running', live },
+      { ...walking, status: 'running', live },
     );
 }

@@ -2,6 +2,13 @@ import type { IWorkspace } from '@/modules/Workspace';
 import type { IChatReference } from '@/shared/types';
 import { caseVerdict } from '@/modules/Run/library';
 
+const ENDINGS = {
+  finished: 'walked the whole plan',
+  stopped: 'stopped by the QA before the end',
+  broke: 'broke before the end',
+  interrupted: 'cut short when QAzinho closed',
+} as const;
+
 /** Everything in a workspace the QA can point at with @, newest runs first, with the facts behind each. */
 export function referencesOf(workspace: IWorkspace): IChatReference[] {
   const runs = workspace.runs.map<IChatReference>((run) => ({
@@ -9,7 +16,7 @@ export function referencesOf(workspace: IWorkspace): IChatReference[] {
     id: run.id,
     title: `${run.what} · ${run.startedAt}`,
     facts: [
-      `started ${run.startedAt}, took ${String(run.durationSec)}s`,
+      `started ${run.startedAt}, took ${String(run.durationSec)}s, ${ENDINGS[run.endedBy]}`,
       `${String(run.counts.passed)} passed, ${String(run.counts.failed)} failed, ${String(run.counts.blocked)} blocked, ${String(run.counts.skipped)} skipped`,
       ...run.cases.flatMap((runCase) => [
         `${runCase.id} ${runCase.title}: ${caseVerdict(runCase.steps)}`,
