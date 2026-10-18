@@ -291,8 +291,8 @@ export const en = {
       'These live in your own agent, not in QAzinho: you sign in there, and QAzinho never sees the sign-in.',
     INTEGRATIONS_NOTE:
       'Nothing is sent anywhere on its own. You pick the run, the bug and the moment.',
-    THEME_LIGHT: 'Light',
-    THEME_DARK: 'Dark',
+    THEME_LIGHT: 'Paper',
+    THEME_DARK: 'Night',
     APPEARANCE_NOTE:
       'Every status carries an icon and a word, so colour is never the only clue.',
     LANGUAGE: 'interface language',

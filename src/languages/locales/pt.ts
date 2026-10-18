@@ -292,8 +292,8 @@ export const pt: typeof en = {
     MCPS_NOTE:
       'Eles ficam no seu próprio agente, não no QAzinho: você faz o login lá, e o QAzinho nunca vê esse login.',
     INTEGRATIONS_NOTE: 'Nada é enviado sozinho. Você escolhe a run, o bug e o momento.',
-    THEME_LIGHT: 'Claro',
-    THEME_DARK: 'Escuro',
+    THEME_LIGHT: 'Papel',
+    THEME_DARK: 'Noite',
     APPEARANCE_NOTE:
       'Todo status tem ícone e palavra, então a cor nunca é a única pista.',
     LANGUAGE: 'idioma da interface',

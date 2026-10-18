@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { IntegrationCard, McpCard } from '@/modules/Setup';
-import { Logo } from '@/shared/components/atoms';
+import { Logo, Tag, Wordmark } from '@/shared/components/atoms';
 import { useSettingsViewModel } from './hooks';
 import './styles.css';
 
@@ -245,13 +245,15 @@ export const Settings: React.FC = () => {
           {tab === 'about' && (
             <div className="settings__about">
               <div className="settings__about-head">
-                <Logo size={46} />
+                <Logo size={84} />
                 <div className="settings__about-names">
-                  <span className="settings__about-name">QAzinho</span>
+                  <span className="settings__about-name">
+                    <Wordmark />
+                  </span>
                   <span className="settings__about-version">
                     {t('SETTINGS.ABOUT_VERSION')}
                   </span>
-                  <span className="settings__about-by">{t('SETTINGS.ABOUT_BY')}</span>
+                  <Tag>{t('SETTINGS.ABOUT_BY')}</Tag>
                 </div>
               </div>
               <p className="settings__about-note">{t('SETTINGS.ABOUT_NOTE')}</p>
