@@ -97,7 +97,9 @@ export const Settings: React.FC = () => {
                       >
                         {item.name}
                       </span>
-                      <span className="settings__card-path">{item.path}</span>
+                      <span className="settings__card-path" title={item.path}>
+                        {item.path}
+                      </span>
                     </span>
                     <span
                       className={
@@ -145,7 +147,9 @@ export const Settings: React.FC = () => {
                   </span>
                   <span className="settings__card-text settings__card-text--loose">
                     <span className="settings__card-name">{item.name}</span>
-                    <span className="settings__card-path">{item.path}</span>
+                    <span className="settings__card-path" title={item.path}>
+                      {item.path}
+                    </span>
                     <span
                       className={
                         item.isFound
