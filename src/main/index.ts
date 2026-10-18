@@ -6,6 +6,7 @@ import type {
   InstallableId,
   IntegrationId,
   IRunEvent,
+  McpServerId,
   ISavedWorkspace,
   ISetupEvent,
   IStartRun,
@@ -16,6 +17,7 @@ import { app, BrowserWindow, dialog, ipcMain, safeStorage, shell } from 'electro
 import { Harness, McpHost } from '@/harness';
 import {
   AgentDetector,
+  AgentMcp,
   AgentRunner,
   Archive,
   DeviceToolDetector,
@@ -64,6 +66,10 @@ const installer = new SetupInstaller({
       shellPath: await hydrateShellPath(),
       home: homedir(),
     }),
+});
+const mcp = new AgentMcp({
+  findClaude: () => findCommand('claude-code'),
+  folder: PATHS.agentHome,
 });
 const vault = new IntegrationVault({
   file: PATHS.integrations,
@@ -247,6 +253,10 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.disconnectIntegration, (_event, id: IntegrationId) =>
     vault.disconnect(id),
   );
+  ipcMain.handle(CHANNELS.listMcpServers, () => mcp.list());
+  ipcMain.handle(CHANNELS.addMcpServer, (_event, id: McpServerId) => mcp.add(id));
+  ipcMain.handle(CHANNELS.removeMcpServer, (_event, id: McpServerId) => mcp.remove(id));
+  ipcMain.handle(CHANNELS.signInMcpServer, (_event, id: McpServerId) => mcp.signIn(id));
 
   createWindow();
 

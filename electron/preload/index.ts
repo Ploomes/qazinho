@@ -10,6 +10,9 @@ import type {
   IInstallResult,
   IIntegrationStatus,
   IMachineCheck,
+  IMcpServerStatus,
+  McpActionResult,
+  McpServerId,
   InstallableId,
   IntegrationId,
   IResourceSnapshot,
@@ -99,6 +102,14 @@ const api: IQazinhoApi = {
     ) as Promise<IConnectResult>,
   disconnectIntegration: (id: IntegrationId) =>
     ipcRenderer.invoke(CHANNELS.disconnectIntegration, id) as Promise<void>,
+  listMcpServers: () =>
+    ipcRenderer.invoke(CHANNELS.listMcpServers) as Promise<IMcpServerStatus[]>,
+  addMcpServer: (id: McpServerId) =>
+    ipcRenderer.invoke(CHANNELS.addMcpServer, id) as Promise<McpActionResult>,
+  removeMcpServer: (id: McpServerId) =>
+    ipcRenderer.invoke(CHANNELS.removeMcpServer, id) as Promise<McpActionResult>,
+  signInMcpServer: (id: McpServerId) =>
+    ipcRenderer.invoke(CHANNELS.signInMcpServer, id) as Promise<McpActionResult>,
 };
 
 contextBridge.exposeInMainWorld('qazinho', api);

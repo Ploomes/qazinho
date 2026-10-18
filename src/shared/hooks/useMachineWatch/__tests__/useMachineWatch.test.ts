@@ -62,6 +62,10 @@ beforeEach(() => {
     listIntegrations: vi.fn().mockResolvedValue([]),
     connectIntegration: vi.fn(),
     disconnectIntegration: vi.fn(),
+    listMcpServers: vi.fn(),
+    addMcpServer: vi.fn(),
+    removeMcpServer: vi.fn(),
+    signInMcpServer: vi.fn(),
   };
 });
 

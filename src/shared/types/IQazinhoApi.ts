@@ -8,6 +8,7 @@ import type { IDeviceTools } from './IDeviceTools';
 import type { IInstallResult } from './IInstallResult';
 import type { IIntegrationStatus } from './IIntegrationStatus';
 import type { IMachineCheck } from './IMachineCheck';
+import type { IMcpServerStatus } from './IMcpServerStatus';
 import type { InstallableId } from './InstallableId';
 import type { IntegrationId } from './IntegrationId';
 import type { IResourceSnapshot } from './IResourceSnapshot';
@@ -17,6 +18,8 @@ import type { ISavedState } from './ISavedState';
 import type { ISavedWorkspace } from './ISavedWorkspace';
 import type { ISetupEvent } from './ISetupEvent';
 import type { IStartRun } from './IStartRun';
+import type { McpActionResult } from './McpActionResult';
+import type { McpServerId } from './McpServerId';
 import type { PickKind } from './PickKind';
 import type { Platform } from './Platform';
 
@@ -45,4 +48,8 @@ export interface IQazinhoApi {
   listIntegrations: () => Promise<IIntegrationStatus[]>;
   connectIntegration: (connecting: IConnectIntegration) => Promise<IConnectResult>;
   disconnectIntegration: (id: IntegrationId) => Promise<void>;
+  listMcpServers: () => Promise<IMcpServerStatus[]>;
+  addMcpServer: (id: McpServerId) => Promise<McpActionResult>;
+  removeMcpServer: (id: McpServerId) => Promise<McpActionResult>;
+  signInMcpServer: (id: McpServerId) => Promise<McpActionResult>;
 }

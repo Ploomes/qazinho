@@ -51,5 +51,9 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     listIntegrations: () => Promise.resolve([]),
     connectIntegration: () => Promise.resolve({ isConnected: false, error: 'offline' }),
     disconnectIntegration: () => Promise.resolve(),
+    listMcpServers: () => Promise.resolve([{ id: 'figma', state: 'missing' }]),
+    addMcpServer: () => Promise.resolve({ ok: true }),
+    removeMcpServer: () => Promise.resolve({ ok: true }),
+    signInMcpServer: () => Promise.resolve({ ok: true }),
   };
 }

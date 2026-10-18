@@ -19,6 +19,10 @@ export const CHANNELS = {
   installTool: 'setup:install',
   setupEvent: 'setup:event',
   listIntegrations: 'integrations:list',
+  listMcpServers: 'mcp:list',
+  addMcpServer: 'mcp:add',
+  removeMcpServer: 'mcp:remove',
+  signInMcpServer: 'mcp:sign-in',
   connectIntegration: 'integrations:connect',
   disconnectIntegration: 'integrations:disconnect',
 } as const;
