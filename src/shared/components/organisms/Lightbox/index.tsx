@@ -1,12 +1,22 @@
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { IconButton } from '@/shared/components/atoms';
+import { Button, IconButton } from '@/shared/components/atoms';
 import { BACKDROP, MOTION, STICKER } from '@/shared/constants';
 import { useLightboxViewModel } from './hooks';
 import './styles.css';
 
 export const Lightbox: React.FC = () => {
-  const { media, shot, frameWidth, onClose } = useLightboxViewModel();
+  const {
+    media,
+    shot,
+    frameWidth,
+    canSave,
+    isSaving,
+    saveGlyph,
+    saveLabel,
+    onSave,
+    onClose,
+  } = useLightboxViewModel();
   const { t } = useTranslation();
 
   if (media === null) return null;
@@ -38,7 +48,12 @@ export const Lightbox: React.FC = () => {
         <header className="lightbox__panel-head">
           <span className="lightbox__kicker">{media.kicker}</span>
           <span className="lightbox__title">{media.title}</span>
-          <span className="lightbox__close">
+          <span className="lightbox__actions">
+            {canSave && (
+              <Button size="sm" variant="ghost" disabled={isSaving} onClick={onSave}>
+                <span aria-hidden="true">{saveGlyph}</span> {saveLabel}
+              </Button>
+            )}
             <IconButton glyph="✕" label={t('COMMON.CLOSE')} size="sm" onClick={onClose} />
           </span>
         </header>

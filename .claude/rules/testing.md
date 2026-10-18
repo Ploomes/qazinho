@@ -67,6 +67,7 @@ Three suites that need something real behind them. They have their own config
 | `codex.test.ts`    | a fake Codex chats in the strict schema, resumes, runs a case, signs out     |
 | `tools.test.ts`    | an MCP client lists, calls and fails the device tools on real Chrome         |
 | `peek.test.ts`     | a windowless Chrome reads a page for the chat, or says why it did not open   |
+| `save.test.ts`     | the lightbox downloads a screenshot through main, to where the dialog says   |
 | `setup.test.ts`    | the installer runs a fake npm, streams its lines, and fails honestly         |
 | `terminal.test.ts` | a full-screen program out of sight: its screen read, its keys, its page      |
 | `mcp.test.ts`      | a fake `/mcp` and Codex: Figma's MCP added, signed in, refused, cancelled    |
