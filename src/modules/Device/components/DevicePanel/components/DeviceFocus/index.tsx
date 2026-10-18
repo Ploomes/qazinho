@@ -1,8 +1,9 @@
 import type { IDeviceFocusProps } from './types';
-import { AnimatePresence, motion } from 'motion/react';
+import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { DeviceScreen } from '@/modules/Device/components/DevicePanel/components/DeviceScreen';
 import { LiveClock } from '@/modules/Device/components/DevicePanel/components/LiveClock';
+import { ViewportPicker } from '@/modules/Device/components/DevicePanel/components/ViewportPicker';
 import { DEVICE } from '@/modules/Device/constants';
 import { Button, Eyebrow, Intern, Kbd, StatusPill } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
@@ -11,7 +12,8 @@ import './styles.css';
 
 /** The device filling the app while the agent drives it, with the run beside it; Esc puts it back. */
 export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
-  const { style, nowEyebrow, now, nowNumber, rows } = useDeviceFocusViewModel(props);
+  const { style, nowEyebrow, now, nowNumber, rows, hasViewports } =
+    useDeviceFocusViewModel(props);
   const { t } = useTranslation();
 
   return (
@@ -72,52 +74,13 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
           </p>
         </div>
 
-        {props.viewports.length > 0 && (
-          <div className="device-focus__viewports">
-            <Eyebrow>{t('DEVICE.VIEWPORT')}</Eyebrow>
-            <div className="device-focus__viewport-list" role="radiogroup">
-              {props.viewports.map((option) => (
-                <button
-                  key={option.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={option.isActive}
-                  className={
-                    option.isActive
-                      ? 'device-focus__viewport device-focus__viewport--on'
-                      : 'device-focus__viewport'
-                  }
-                  onClick={() => {
-                    props.onSelectViewport(option.id);
-                  }}
-                >
-                  {option.isActive && (
-                    <motion.span
-                      layoutId={DEVICE.viewportLayoutId}
-                      className="device-focus__viewport-mark"
-                      transition={{ duration: MOTION.duration, ease: MOTION.ease }}
-                    />
-                  )}
-                  <span className="device-focus__viewport-label">{option.label}</span>
-                  <span className="device-focus__viewport-size">{option.size}</span>
-                </button>
-              ))}
-            </div>
-            <AnimatePresence initial={false}>
-              {props.viewportNote !== '' && (
-                <motion.p
-                  key="next"
-                  className="device-focus__viewport-note"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: MOTION.duration, ease: MOTION.ease }}
-                >
-                  {props.viewportNote}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </div>
+        {hasViewports && (
+          <ViewportPicker
+            viewports={props.viewports}
+            note={props.viewportNote}
+            layoutId={DEVICE.viewportLayoutId}
+            onSelect={props.onSelectViewport}
+          />
         )}
 
         {props.hasControls && (

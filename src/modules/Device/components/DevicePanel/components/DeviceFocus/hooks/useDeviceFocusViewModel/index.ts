@@ -38,5 +38,6 @@ export const useDeviceFocusViewModel = (props: IDeviceFocusProps) => {
     now: current === null ? t('DEVICE.FOCUS_ALL_DONE') : current.action,
     nowNumber: current === null ? null : current.number,
     rows: steps.map((step) => ({ ...step, isCurrent: step.number === current?.number })),
+    hasViewports: props.viewports.length > 0,
   };
 };

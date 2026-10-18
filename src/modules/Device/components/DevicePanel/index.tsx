@@ -9,7 +9,7 @@ import {
   StatusPill,
 } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
-import { DeviceFocus, DeviceScreen, LiveClock } from './components';
+import { DeviceFocus, DeviceScreen, LiveClock, ViewportPicker } from './components';
 import { useDevicePanelViewModel } from './hooks';
 import './styles.css';
 
@@ -35,6 +35,8 @@ export const DevicePanel: React.FC = () => {
     stateText,
     mood,
     viewports,
+    hasViewportPicker,
+    viewportLayoutId,
     viewportNote,
     screenRatio,
     onSelectViewport,
@@ -177,6 +179,17 @@ export const DevicePanel: React.FC = () => {
                   </motion.div>
                 )}
               </div>
+
+              {hasViewportPicker && (
+                <div className="device-panel__size">
+                  <ViewportPicker
+                    viewports={viewports}
+                    note={viewportNote}
+                    layoutId={viewportLayoutId}
+                    onSelect={onSelectViewport}
+                  />
+                </div>
+              )}
 
               {hasControls && (
                 <div className="device-panel__controls">

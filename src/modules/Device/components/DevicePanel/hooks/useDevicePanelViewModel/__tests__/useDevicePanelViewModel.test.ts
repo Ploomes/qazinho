@@ -60,6 +60,36 @@ describe('useDevicePanelViewModel', () => {
       ).toEqual([]);
     });
 
+    it('lets the size be picked before the first run, not only up close', () => {
+      const { result } = renderHook(() => useDevicePanelViewModel());
+
+      expect(result.current.hasScreen).toBe(false);
+      expect(result.current.hasViewportPicker).toBe(true);
+      expect(result.current.viewportNote).toBe('The next run opens at this size.');
+    });
+
+    it('does NOT offer a size for a phone app, nor beside the device while it is up close', () => {
+      useWorkspaceStore.setState({
+        workspaces: [{ ...makeWorkspace(), planKind: 'mobile' }],
+      });
+
+      expect(
+        renderHook(() => useDevicePanelViewModel()).result.current.hasViewportPicker,
+      ).toBe(false);
+
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: [] })] });
+
+      const { result, unmount } = renderHook(() => useDevicePanelViewModel());
+
+      act(() => {
+        result.current.onFocus();
+      });
+
+      expect(result.current.isFocused).toBe(true);
+      expect(result.current.hasViewportPicker).toBe(false);
+      unmount();
+    });
+
     it('keeps the size picked between runs, and says the next run opens at it', () => {
       const resizeDevice = vi.fn(() => Promise.resolve());
 

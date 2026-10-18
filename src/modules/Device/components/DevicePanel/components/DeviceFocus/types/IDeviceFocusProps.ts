@@ -1,4 +1,4 @@
-import type { IDeviceStep, ViewportId } from '@/modules/Device/types';
+import type { IDeviceStep, IViewportChoice, ViewportId } from '@/modules/Device/types';
 import type { InternMood } from '@/shared/components/atoms/Intern/types';
 
 /** The device on its own, filling the app: the screen, what the agent is on, and the run's controls. */
@@ -15,7 +15,7 @@ export interface IDeviceFocusProps {
   doingLabel: string;
   hasControls: boolean;
   pauseLabel: string;
-  viewports: { id: ViewportId; label: string; size: string; isActive: boolean }[];
+  viewports: IViewportChoice[];
   viewportNote: string;
   ratio: number;
   onSelectViewport: (viewportId: ViewportId) => void;

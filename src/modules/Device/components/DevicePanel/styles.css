@@ -154,6 +154,11 @@
   text-align: center;
 }
 
+.device-panel__size {
+  flex: none;
+  padding: 0 var(--space-4) var(--space-4);
+}
+
 .device-panel__controls {
   display: flex;
   flex: none;

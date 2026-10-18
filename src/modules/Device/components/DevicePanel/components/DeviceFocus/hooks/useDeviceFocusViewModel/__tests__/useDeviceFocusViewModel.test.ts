@@ -79,4 +79,15 @@ describe('useDeviceFocusViewModel', () => {
 
     expect(onClose).toHaveBeenCalledOnce();
   });
+
+  it('offers the window sizes beside a browser, and none beside a phone', () => {
+    expect(
+      focus({
+        viewports: [
+          { id: 'desktop', label: 'Desktop', size: '1280 × 800', isActive: true },
+        ],
+      }).hasViewports,
+    ).toBe(true);
+    expect(focus({ isPhone: true, viewports: [] }).hasViewports).toBe(false);
+  });
 });

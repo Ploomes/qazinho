@@ -1,4 +1,4 @@
-import type { IDeviceStep, ViewportId } from '@/modules/Device/types';
+import type { IDeviceStep, IViewportChoice, ViewportId } from '@/modules/Device/types';
 import type { CSSProperties } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -52,6 +52,14 @@ export const useDevicePanelViewModel = () => {
   const hasScreen = isRunLive || (live?.shot ?? null) !== null;
   const isFocused = isFocusedNow && hasScreen;
   const stream = live?.isDone === false ? live.streamUrl : null;
+  const viewports: IViewportChoice[] = isPhone
+    ? []
+    : VIEWPORTS.map((option) => ({
+        id: option.id,
+        label: t(option.labelKey),
+        size: `${String(option.width)} × ${String(option.height)}`,
+        isActive: option.id === viewport.id,
+      }));
   const workspaceId = workspace?.id ?? null;
 
   useEffect(() => {
@@ -90,14 +98,9 @@ export const useDevicePanelViewModel = () => {
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
     stateText: t(DEVICE_STATE_KEY[state] as never),
     mood: moodOfStatus(workspace?.status ?? null),
-    viewports: isPhone
-      ? []
-      : VIEWPORTS.map((option) => ({
-          id: option.id,
-          label: t(option.labelKey),
-          size: `${String(option.width)} × ${String(option.height)}`,
-          isActive: option.id === viewport.id,
-        })),
+    viewports,
+    hasViewportPicker: viewports.length > 0 && !isFocused,
+    viewportLayoutId: DEVICE.panelViewportLayoutId,
     viewportNote: isRunLive ? '' : t('DEVICE.VIEWPORT_NEXT'),
     screenRatio: viewport.width / viewport.height,
     onSelectViewport: (viewportId: ViewportId) => {
