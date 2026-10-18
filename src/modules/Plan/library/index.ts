@@ -2,6 +2,7 @@ export * from './addCase';
 export * from './addStep';
 export * from './editCase';
 export * from './editStep';
+export * from './keepVerdicts';
 export * from './mapCase';
 export * from './nextCaseId';
 export * from './planOfDraft';
