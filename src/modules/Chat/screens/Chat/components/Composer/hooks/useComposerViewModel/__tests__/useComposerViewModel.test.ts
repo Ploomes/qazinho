@@ -25,6 +25,24 @@ const MENTIONING = {
   ],
 };
 
+const EVERY_KIND = {
+  ...PROPS,
+  value: 'look at @',
+  mentionQuery: '',
+  hasReferences: true,
+  mentions: [
+    { kind: 'run' as const, id: 'r-01', title: 'The whole plan', facts: [] },
+    {
+      kind: 'bug' as const,
+      id: 'BUG-01',
+      title: 'Coupon accepts expired codes',
+      facts: [],
+    },
+    { kind: 'case' as const, id: 'TC-01', title: 'Login', facts: [] },
+    { kind: 'case' as const, id: 'TC-02', title: 'Logout', facts: [] },
+  ],
+};
+
 function pressed(key: string, shiftKey = false) {
   return {
     key,
@@ -181,6 +199,104 @@ describe('useComposerViewModel', () => {
       rerender({ ...MENTIONING, value: 'what happened in @r-' });
 
       expect(result.current.isPickerOpen).toBe(true);
+    });
+
+    it('opens on the cases, with what each tab holds', () => {
+      const { result } = renderHook(() => useComposerViewModel(EVERY_KIND));
+
+      expect(result.current.tabs).toEqual([
+        { kind: 'case', count: 2, isActive: true },
+        { kind: 'bug', count: 1, isActive: false },
+        { kind: 'run', count: 1, isActive: false },
+      ]);
+      expect(result.current.shown.map(({ id }) => id)).toEqual(['TC-01', 'TC-02']);
+    });
+
+    it('opens on the tab that holds what was typed', () => {
+      const { result } = renderHook(() =>
+        useComposerViewModel({
+          ...EVERY_KIND,
+          value: 'look at @BUG',
+          mentionQuery: 'BUG',
+          mentions: EVERY_KIND.mentions.filter(({ kind }) => kind === 'bug'),
+        }),
+      );
+
+      expect(result.current.tabs.find(({ isActive }) => isActive)?.kind).toBe('bug');
+    });
+
+    it('switches tabs with the side arrows, and picks from the tab that is open', () => {
+      const onPickMention = vi.fn();
+      const { result } = renderHook(() =>
+        useComposerViewModel({ ...EVERY_KIND, onPickMention }),
+      );
+
+      act(() => {
+        result.current.onKeyDown(pressed('ArrowRight'));
+      });
+
+      expect(result.current.shown.map(({ id }) => id)).toEqual(['BUG-01']);
+
+      act(() => {
+        result.current.onKeyDown(pressed('ArrowLeft'));
+      });
+      act(() => {
+        result.current.onKeyDown(pressed('ArrowLeft'));
+      });
+
+      expect(result.current.shown.map(({ id }) => id)).toEqual(['r-01']);
+
+      act(() => {
+        result.current.onKeyDown(pressed('Enter'));
+      });
+
+      expect(onPickMention).toHaveBeenCalledWith('r-01');
+    });
+
+    it('skips a tab that holds nothing', () => {
+      const { result } = renderHook(() =>
+        useComposerViewModel({
+          ...EVERY_KIND,
+          mentions: EVERY_KIND.mentions.filter(({ kind }) => kind !== 'bug'),
+        }),
+      );
+
+      act(() => {
+        result.current.onKeyDown(pressed('ArrowRight'));
+      });
+
+      expect(result.current.tabs.find(({ isActive }) => isActive)?.kind).toBe('run');
+    });
+
+    it('leaves the side arrows to the text when only one tab holds something', () => {
+      const { result } = renderHook(() => useComposerViewModel(MENTIONING));
+      const right = pressed('ArrowRight');
+
+      act(() => {
+        result.current.onKeyDown(right);
+      });
+
+      expect(right.preventDefault).not.toHaveBeenCalled();
+    });
+
+    it('keeps the tab the QA opened while it still holds a match', () => {
+      const { result, rerender } = renderHook((props) => useComposerViewModel(props), {
+        initialProps: EVERY_KIND,
+      });
+
+      act(() => {
+        result.current.onTab('run');
+      });
+      rerender({ ...EVERY_KIND, value: 'look at @r' });
+
+      expect(result.current.tabs.find(({ isActive }) => isActive)?.kind).toBe('run');
+
+      rerender({
+        ...EVERY_KIND,
+        mentions: EVERY_KIND.mentions.filter(({ kind }) => kind !== 'run'),
+      });
+
+      expect(result.current.tabs.find(({ isActive }) => isActive)?.kind).toBe('case');
     });
 
     it('never highlights past the end when the list gets shorter', () => {

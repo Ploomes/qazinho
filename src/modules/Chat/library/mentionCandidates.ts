@@ -1,8 +1,6 @@
 import type { IChatReference } from '@/shared/types';
 
-const LIMIT = 8;
-
-/** What the @ picker offers for the word being typed: an id or a title that holds it, at most eight. */
+/** What the @ picker offers for the word being typed: every id or title that holds it, for the tabs to sort. */
 export function mentionCandidates(props: {
   references: IChatReference[];
   query: string | null;
@@ -11,11 +9,9 @@ export function mentionCandidates(props: {
 
   const query = props.query.toLowerCase();
 
-  return props.references
-    .filter(
-      (reference) =>
-        reference.id.toLowerCase().includes(query) ||
-        reference.title.toLowerCase().includes(query),
-    )
-    .slice(0, LIMIT);
+  return props.references.filter(
+    (reference) =>
+      reference.id.toLowerCase().includes(query) ||
+      reference.title.toLowerCase().includes(query),
+  );
 }

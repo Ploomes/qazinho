@@ -6,31 +6,73 @@ import { useMentionPickerViewModel } from '@/modules/Chat/screens/Chat/component
 
 const PROPS = {
   references: [
-    { kind: 'run' as const, id: 'r-02', title: 'The whole plan', facts: [] },
     {
       kind: 'bug' as const,
       id: 'BUG-01',
       title: 'Coupon accepts expired codes',
       facts: [],
     },
+    { kind: 'bug' as const, id: 'BUG-02', title: 'Cart forgets the coupon', facts: [] },
+  ],
+  tabs: [
+    { kind: 'case' as const, count: 3, isActive: false },
+    { kind: 'bug' as const, count: 2, isActive: true },
+    { kind: 'run' as const, count: 0, isActive: false },
   ],
   query: '',
   hasReferences: true,
   highlighted: 1,
   onPick: vi.fn(),
   onHighlight: vi.fn(),
+  onTab: vi.fn(),
 };
 
 describe('useMentionPickerViewModel', () => {
-  describe('rows', () => {
-    it('labels each reference with its kind and marks the highlighted one', () => {
+  describe('tabs', () => {
+    it('offers the cases, the bugs and the runs, each with what it holds', () => {
       const { result } = renderHook(() => useMentionPickerViewModel(PROPS));
 
       expect(
-        result.current.rows.map(({ kindKey, isHighlighted }) => [kindKey, isHighlighted]),
+        result.current.tabs.map(({ label, count, isActive, isDisabled }) => [
+          label,
+          count,
+          isActive,
+          isDisabled,
+        ]),
       ).toEqual([
-        ['CHAT.MENTION_RUN', false],
-        ['CHAT.MENTION_BUG', true],
+        ['Cases', 3, false, false],
+        ['Bugs', 2, true, false],
+        ['Runs', 0, false, true],
+      ]);
+    });
+
+    it('opens the tab that was clicked', () => {
+      const onTab = vi.fn();
+      const { result } = renderHook(() => useMentionPickerViewModel({ ...PROPS, onTab }));
+
+      result.current.tabs[0]?.onClick();
+
+      expect(onTab).toHaveBeenCalledWith('case');
+    });
+
+    it('offers no tab while the workspace has nothing to point at', () => {
+      const { result } = renderHook(() =>
+        useMentionPickerViewModel({ ...PROPS, references: [], hasReferences: false }),
+      );
+
+      expect(result.current.tabs).toEqual([]);
+    });
+  });
+
+  describe('rows', () => {
+    it('lists what the tab holds and marks the highlighted one', () => {
+      const { result } = renderHook(() => useMentionPickerViewModel(PROPS));
+
+      expect(
+        result.current.rows.map(({ id, isHighlighted }) => [id, isHighlighted]),
+      ).toEqual([
+        ['BUG-01', false],
+        ['BUG-02', true],
       ]);
     });
 
@@ -42,7 +84,7 @@ describe('useMentionPickerViewModel', () => {
 
       result.current.rows[0]?.onClick();
 
-      expect(onPick).toHaveBeenCalledWith('r-02');
+      expect(onPick).toHaveBeenCalledWith('BUG-01');
     });
 
     it('moves the highlight to the row under the pointer', () => {
@@ -70,7 +112,7 @@ describe('useMentionPickerViewModel', () => {
       const { result } = renderHook(() => useMentionPickerViewModel(PROPS));
 
       expect(result.current.isEmpty).toBe(false);
-      expect(result.current.hint).toContain('Enter to pick');
+      expect(result.current.hint).toContain('← → to switch tabs');
     });
 
     it('says the workspace has nothing to point at yet', () => {

@@ -2,12 +2,14 @@ import type { IMentionPickerProps } from './types';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Eyebrow } from '@/shared/components/atoms';
-import { STICKER } from '@/shared/constants';
+import { MOTION, STICKER } from '@/shared/constants';
+import { MENTION_TAB_MARK } from './constants';
 import { useMentionPickerViewModel } from './hooks';
 import './styles.css';
 
+/** What the QA can point the agent at with @, a tab for the plan's cases, one for bugs and one for runs. */
 export const MentionPicker: React.FC<IMentionPickerProps> = (props) => {
-  const { listRef, isEmpty, emptyText, hint, rows, onPointerDown } =
+  const { listRef, isEmpty, emptyText, hint, tabs, rows, onPointerDown } =
     useMentionPickerViewModel(props);
   const { t } = useTranslation();
 
@@ -21,6 +23,40 @@ export const MentionPicker: React.FC<IMentionPickerProps> = (props) => {
     >
       <div className="mention-picker__head">
         <Eyebrow>{t('CHAT.MENTION_HEADING')}</Eyebrow>
+        {tabs.length > 0 && (
+          <div
+            className="mention-picker__tabs"
+            role="tablist"
+            aria-label={t('CHAT.MENTION_HEADING')}
+          >
+            {tabs.map((tab) => (
+              <button
+                key={tab.kind}
+                type="button"
+                role="tab"
+                aria-selected={tab.isActive}
+                tabIndex={-1}
+                disabled={tab.isDisabled}
+                className={
+                  tab.isActive
+                    ? 'mention-picker__tab mention-picker__tab--active'
+                    : 'mention-picker__tab'
+                }
+                onClick={tab.onClick}
+              >
+                {tab.isActive && (
+                  <motion.span
+                    layoutId={MENTION_TAB_MARK}
+                    className="mention-picker__tab-mark"
+                    transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+                  />
+                )}
+                <span className="mention-picker__tab-label">{tab.label}</span>
+                <span className="mention-picker__tab-count">{tab.count}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {isEmpty && <p className="mention-picker__empty">{emptyText}</p>}
@@ -46,7 +82,6 @@ export const MentionPicker: React.FC<IMentionPickerProps> = (props) => {
             onClick={row.onClick}
             onPointerEnter={row.onPointerEnter}
           >
-            <span className="mention-picker__kind">{t(row.kindKey)}</span>
             <span className="mention-picker__id">@{row.id}</span>
             <span className="mention-picker__title">{row.title}</span>
           </button>

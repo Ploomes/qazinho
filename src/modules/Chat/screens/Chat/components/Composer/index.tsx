@@ -10,9 +10,12 @@ export const Composer: React.FC<IComposerProps> = (props) => {
     canSend,
     isPickerOpen,
     highlighted,
+    shown,
+    tabs,
     onSendClick,
     onPick,
     onHighlight,
+    onTab,
     onInputChange,
     onKeyDown,
   } = useComposerViewModel(props);
@@ -25,12 +28,14 @@ export const Composer: React.FC<IComposerProps> = (props) => {
           {isPickerOpen && (
             <MentionPicker
               key="mentions"
-              references={props.mentions}
+              references={shown}
+              tabs={tabs}
               query={props.mentionQuery ?? ''}
               hasReferences={props.hasReferences}
               highlighted={highlighted}
               onPick={onPick}
               onHighlight={onHighlight}
+              onTab={onTab}
             />
           )}
         </AnimatePresence>

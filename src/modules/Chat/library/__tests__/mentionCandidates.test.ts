@@ -33,11 +33,11 @@ describe('mentionCandidates', () => {
     expect(mentionCandidates({ references: REFERENCES, query: null })).toEqual([]);
   });
 
-  it('never offers more than eight, so the picker stays a short list', () => {
+  it('offers every match, for the picker to sort into its tabs', () => {
     const many = Array.from({ length: 12 }, (_, index) =>
       reference(`R-${String(index)}`, 'run'),
     );
 
-    expect(mentionCandidates({ references: many, query: '' })).toHaveLength(8);
+    expect(mentionCandidates({ references: many, query: '' })).toHaveLength(12);
   });
 });
