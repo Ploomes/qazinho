@@ -1,0 +1,14 @@
+.wordmark {
+  display: inline-block;
+  padding: 0.14em;
+  color: var(--brand-ink);
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  -webkit-text-stroke: 0.26em var(--edge);
+  paint-order: stroke fill;
+  filter: drop-shadow(0 0.05em 0.1em rgba(0, 0, 0, 0.32))
+    drop-shadow(0 0.01em 0.01em rgba(0, 0, 0, 0.2));
+}

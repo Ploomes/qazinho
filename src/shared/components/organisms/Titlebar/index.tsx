@@ -1,6 +1,6 @@
 import type { ITitlebarProps } from './types';
 import { AnimatePresence } from 'motion/react';
-import { Gauge, Logo, Meter } from '@/shared/components/atoms';
+import { Gauge, Logo, Meter, Wordmark } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { ModelPopover } from '@/shared/components/organisms/ModelPopover';
 import { ResourcePopover } from '@/shared/components/organisms/ResourcePopover';
@@ -30,8 +30,10 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
     <header className={className}>
       {!isBare && (
         <div className="titlebar__brand">
-          <Logo />
-          <span className="titlebar__wordmark">QAzinho</span>
+          <Logo size={24} />
+          <span className="titlebar__wordmark">
+            <Wordmark />
+          </span>
         </div>
       )}
 

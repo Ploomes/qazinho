@@ -1,0 +1,17 @@
+.tag {
+  display: inline-block;
+  max-width: 100%;
+  padding: 5px 10px 4px;
+  overflow: hidden;
+  border: var(--edge-width) solid var(--edge);
+  border-radius: var(--radius-pill);
+  background: var(--brand-ink);
+  color: var(--lime);
+  font: var(--font-mono-tag);
+  letter-spacing: var(--tag-tracking);
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: var(--sticker-rest);
+  rotate: var(--tilt-sm);
+}
