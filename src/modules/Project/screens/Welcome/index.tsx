@@ -4,7 +4,8 @@ import './styles.css';
 
 /** The empty middle of the app: the way to a first project, or to a workspace once a project exists. */
 export const Welcome: React.FC = () => {
-  const { mood, title, body, action, onAction } = useWelcomeViewModel();
+  const { mood, title, body, action, settings, onAction, onSettings } =
+    useWelcomeViewModel();
 
   return (
     <section className="welcome">
@@ -15,6 +16,11 @@ export const Welcome: React.FC = () => {
         <Button variant="primary" onClick={onAction}>
           {action}
         </Button>
+        {settings !== null && (
+          <Button variant="ghost" size="sm" onClick={onSettings}>
+            {settings}
+          </Button>
+        )}
       </div>
     </section>
   );

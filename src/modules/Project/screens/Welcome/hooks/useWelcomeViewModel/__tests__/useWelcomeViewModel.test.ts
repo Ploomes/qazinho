@@ -29,6 +29,27 @@ describe('useWelcomeViewModel', () => {
     expect(result.current.action).toBe('New workspace');
   });
 
+  describe('onSettings', () => {
+    /** There is no sidebar before the first project, so Settings had no way in. */
+    it('leads to Settings while there is no project', () => {
+      const { result } = renderHook(() => useWelcomeViewModel());
+
+      expect(result.current.settings).toBe('Settings');
+
+      act(() => {
+        result.current.onSettings();
+      });
+
+      expect(useAppStore.getState().screen).toBe('settings');
+    });
+
+    it('does NOT offer it once a project exists: the sidebar has it', () => {
+      useAppStore.setState({ projects: [SHOP] });
+
+      expect(renderHook(() => useWelcomeViewModel()).result.current.settings).toBeNull();
+    });
+  });
+
   describe('onAction', () => {
     it('opens the project modal while there is no project', () => {
       const { result } = renderHook(() => useWelcomeViewModel());

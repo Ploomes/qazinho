@@ -90,6 +90,16 @@ describe('useAppViewModel', () => {
     expect(result.current.isWelcome).toBe(true);
   });
 
+  /** With no project, the welcome screen covered Settings, and nothing else led there. */
+  it('opens Settings even before the first project', () => {
+    useAppStore.setState({ screen: 'settings', projects: [] });
+
+    const { result } = renderHook(() => useAppViewModel());
+
+    expect(result.current.isSettings).toBe(true);
+    expect(result.current.isWelcome).toBe(false);
+  });
+
   it('hides the app sidebar while settings take the whole window', () => {
     useAppStore.setState({
       screen: 'settings',

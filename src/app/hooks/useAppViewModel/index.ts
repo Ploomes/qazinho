@@ -39,7 +39,7 @@ export const useAppViewModel = () => {
     hasMedia: media !== null,
     isOnboarding: !hasOnboarded,
     hasSidebar: projects.length > 0 && screen !== 'settings',
-    isWelcome: screen === 'welcome' || projects.length === 0,
+    isWelcome: screen !== 'settings' && (screen === 'welcome' || projects.length === 0),
     isWorkspace: screen === 'workspace',
     isSettings: screen === 'settings',
   };

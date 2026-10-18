@@ -7,6 +7,7 @@ export const useWelcomeViewModel = () => {
   const selectedProjectId = useAppStore((state) => state.selectedProjectId);
   const openModal = useAppStore((state) => state.openModal);
   const openWorkspaceModal = useAppStore((state) => state.openWorkspaceModal);
+  const openSettings = useAppStore((state) => state.openSettings);
 
   const project = projects.find(({ id }) => id === selectedProjectId) ?? projects[0];
 
@@ -16,9 +17,11 @@ export const useWelcomeViewModel = () => {
       title: t('WELCOME.TITLE'),
       body: t('WELCOME.BODY'),
       action: t('WELCOME.ACTION'),
+      settings: t('COMMON.SETTINGS'),
       onAction: () => {
         openModal('project');
       },
+      onSettings: openSettings,
     };
 
   return {
@@ -26,8 +29,10 @@ export const useWelcomeViewModel = () => {
     title: t('WELCOME.PICK_TITLE'),
     body: t('WELCOME.PICK_BODY', { project: project.name }),
     action: t('WELCOME.PICK_ACTION'),
+    settings: null,
     onAction: () => {
       openWorkspaceModal(project.id);
     },
+    onSettings: openSettings,
   };
 };
