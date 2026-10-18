@@ -239,7 +239,7 @@ export const en = {
     RUNNING: '{{count}} running · {{ram}} GB',
     SHUT_DOWN: 'shut down',
     NAMED_PROCESSES: '{{name}} · {{count}} processes',
-    NOTE: 'emulators eat a few GB each. shut one down if things get slow.',
+    NOTE: 'Every device running takes memory: shut one down if the machine slows down.',
     CLOSE: 'Close resources',
   },
   MODEL: {

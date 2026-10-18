@@ -241,7 +241,7 @@ export const pt: typeof en = {
     RUNNING: '{{count}} rodando · {{ram}} GB',
     SHUT_DOWN: 'desligar',
     NAMED_PROCESSES: '{{name}} · {{count}} processos',
-    NOTE: 'emuladores comem alguns GB cada. desligue um se ficar lento.',
+    NOTE: 'Cada device rodando ocupa memória: desligue um se a máquina ficar lenta.',
     CLOSE: 'Fechar recursos',
   },
   MODEL: {
