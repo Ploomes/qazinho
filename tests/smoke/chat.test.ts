@@ -28,6 +28,7 @@ describe('a real chat', () => {
       onEvent: () => undefined,
     }).ask({
       workspaceId: 'w-chat',
+      agentId: 'claude-code',
       command: command ?? 'claude',
       model: 'haiku',
       sessionId: null,

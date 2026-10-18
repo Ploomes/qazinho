@@ -147,6 +147,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
 
   const turn = await agentRunner.ask({
     workspaceId: ask.workspaceId,
+    agentId: ask.agentId,
     command,
     model: ask.model,
     sessionId: ask.sessionId,

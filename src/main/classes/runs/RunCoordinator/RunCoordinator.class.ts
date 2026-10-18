@@ -321,6 +321,7 @@ export class RunCoordinator {
 
     const asked = await this.runner.ask({
       workspaceId,
+      agentId: run.agentId,
       command: run.command,
       model: run.model,
       sessionId: null,

@@ -2,7 +2,7 @@ import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 
 /** The flags that make the CLI answer once, in JSON, on the session it already has. */
 export function buildAskArgs(
-  props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command'>,
+  props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command' | 'agentId'>,
 ): string[] {
   const { model, sessionId, schema, systemPrompt, mcpConfig, allowedTools } = props;
 

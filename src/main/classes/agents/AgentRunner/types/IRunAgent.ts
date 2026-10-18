@@ -1,6 +1,7 @@
 /** One call to the agent's CLI, with the harness around it: its system prompt and the tools it may use. */
 export interface IRunAgent {
   workspaceId: string;
+  agentId: string;
   command: string;
   model: string;
   sessionId: string | null;
