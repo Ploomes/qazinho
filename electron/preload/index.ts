@@ -1,4 +1,5 @@
 import type {
+  AgentSignInProgress,
   IAgentEvent,
   IChatTurn,
   IAskAgent,
@@ -50,6 +51,23 @@ const api: IQazinhoApi = {
 
     return () => {
       ipcRenderer.off(CHANNELS.agentEvent, forward);
+    };
+  },
+  signInAgent: (agentId: string) =>
+    ipcRenderer.invoke(CHANNELS.signInAgent, agentId) as Promise<AgentSignInProgress>,
+  cancelAgentSignIn: (agentId: string) =>
+    ipcRenderer.invoke(CHANNELS.cancelAgentSignIn, agentId) as Promise<void>,
+  sendAgentSignInCode: (props: { agentId: string; code: string }) =>
+    ipcRenderer.invoke(CHANNELS.sendAgentSignInCode, props) as Promise<void>,
+  onAgentSignIn: (listener: (progress: AgentSignInProgress) => void) => {
+    const forward = (_: unknown, progress: AgentSignInProgress) => {
+      listener(progress);
+    };
+
+    ipcRenderer.on(CHANNELS.agentSignInEvent, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.agentSignInEvent, forward);
     };
   },
   startRun: (run: IStartRun) =>

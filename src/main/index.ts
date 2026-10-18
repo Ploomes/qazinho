@@ -1,4 +1,5 @@
 import type {
+  AgentSignInProgress,
   IAgentEvent,
   IAskAgent,
   IChatTurn,
@@ -20,6 +21,7 @@ import { app, BrowserWindow, dialog, ipcMain, safeStorage, shell } from 'electro
 import { Harness, McpHost } from '@/harness';
 import {
   AgentDetector,
+  AgentLogin,
   AgentMcp,
   AgentRunner,
   Archive,
@@ -55,7 +57,7 @@ const harness = new Harness();
 
 function broadcast(props: {
   channel: string;
-  event: IAgentEvent | IRunEvent | ISetupEvent | McpSignInProgress;
+  event: IAgentEvent | IRunEvent | ISetupEvent | McpSignInProgress | AgentSignInProgress;
 }): void {
   for (const open of BrowserWindow.getAllWindows())
     open.webContents.send(props.channel, props.event);
@@ -78,6 +80,13 @@ const mcp = new AgentMcp({
   },
   onProgress: (progress) =>
     broadcast({ channel: CHANNELS.mcpSignInEvent, event: progress }),
+  folder: PATHS.agentHome,
+});
+const login = new AgentLogin({
+  findAgent: (agentId) => findCommand(agentId),
+  openUrl: (url) => shell.openExternal(url),
+  onProgress: (progress) =>
+    broadcast({ channel: CHANNELS.agentSignInEvent, event: progress }),
   folder: PATHS.agentHome,
 });
 const vault = new IntegrationVault({
@@ -228,6 +237,18 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.detectAgents, () => agents.detect());
   ipcMain.handle(CHANNELS.readResources, () => resources.snapshot());
   ipcMain.handle(CHANNELS.detectDeviceTools, () => deviceTools.detect());
+  ipcMain.handle(CHANNELS.signInAgent, (_event, agentId: string) =>
+    login.signIn(agentId),
+  );
+  ipcMain.handle(CHANNELS.cancelAgentSignIn, (_event, agentId: string) => {
+    login.cancel(agentId);
+  });
+  ipcMain.handle(
+    CHANNELS.sendAgentSignInCode,
+    (_event, props: { agentId: string; code: string }) => {
+      login.sendCode(props);
+    },
+  );
   ipcMain.handle(CHANNELS.askAgent, (_event, ask: IAskAgent) => askAgent(ask));
   ipcMain.handle(CHANNELS.startRun, (_event, run: IStartRun) => runs.start(run));
   ipcMain.handle(CHANNELS.stopRun, (_event, workspaceId: string) => {
@@ -289,6 +310,7 @@ app.on('will-quit', () => {
   live.close();
   tools.close();
   mcp.close();
+  login.close();
 });
 
 app.on('window-all-closed', () => {

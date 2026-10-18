@@ -1,3 +1,4 @@
+import type { AgentSignInProgress } from './AgentSignInProgress';
 import type { IAgentEvent } from './IAgentEvent';
 import type { IAskAgent } from './IAskAgent';
 import type { IChatTurn } from './IChatTurn';
@@ -34,6 +35,10 @@ export interface IQazinhoApi {
   detectDeviceTools: () => Promise<IDeviceTools>;
   askAgent: (ask: IAskAgent) => Promise<IChatTurn>;
   onAgentEvent: (listener: (event: IAgentEvent) => void) => () => void;
+  signInAgent: (agentId: string) => Promise<AgentSignInProgress>;
+  cancelAgentSignIn: (agentId: string) => Promise<void>;
+  sendAgentSignInCode: (props: { agentId: string; code: string }) => Promise<void>;
+  onAgentSignIn: (listener: (progress: AgentSignInProgress) => void) => () => void;
   startRun: (run: IStartRun) => Promise<void>;
   pauseRun: (props: { workspaceId: string; isPaused: boolean }) => Promise<void>;
   stopRun: (workspaceId: string) => Promise<void>;

@@ -1,3 +1,7 @@
+export type * from './AgentSignInFailure';
+export type * from './AgentSignInPhase';
+export type * from './AgentSignInProgress';
+export type * from './AgentSignInStep';
 export type * from './IActionMotion';
 export type * from './IAgentEvent';
 export type * from './IAgentTurn';
