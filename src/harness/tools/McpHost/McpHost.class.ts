@@ -10,7 +10,7 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { MCP_HOST } from '@/harness/tools/constants';
-import { callDeviceTool, DEVICE_TOOLS } from '@/harness/tools/servers/device';
+import { callDeviceTool, listDeviceTools } from '@/harness/tools/servers/device';
 import { workspaceOfPath } from './library';
 
 /** Serves QAzinho's MCP tools on loopback, one address per workspace, for the length of a run. */
@@ -82,7 +82,7 @@ export class McpHost {
       { capabilities: { tools: {} } },
     );
 
-    mcp.setRequestHandler(ListToolsRequestSchema, () => ({ tools: DEVICE_TOOLS }));
+    mcp.setRequestHandler(ListToolsRequestSchema, () => ({ tools: listDeviceTools() }));
     mcp.setRequestHandler(CallToolRequestSchema, (call) =>
       this.inTurn({
         workspaceId,

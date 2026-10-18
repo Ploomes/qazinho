@@ -1,7 +1,6 @@
 import type { IAttachDevice, ToolAnswer } from '@/harness/tools/servers/device/types';
 import { stripAnsi } from '@/harness/library';
-import { actionOfToolCall } from './actionOfToolCall';
-import { reportOfToolCall } from './reportOfToolCall';
+import { readToolCall } from './readToolCall';
 
 function said(text: string, isError = false): ToolAnswer {
   return { content: [{ type: 'text', text }], isError };
@@ -13,24 +12,18 @@ export async function callDeviceTool(props: {
   call: { name: string; args: Record<string, unknown> | undefined };
 }): Promise<ToolAnswer> {
   const { device } = props;
-  const { name, args } = props.call;
+  const read = readToolCall(props.call);
 
   try {
-    if (name === 'look') return said(await device.driver.describe());
+    if (read.kind === 'refused') return said(read.error, true);
 
-    if (name === 'report') {
-      const read = reportOfToolCall(args);
+    if (read.kind === 'look') return said(await device.driver.describe());
 
-      if ('error' in read) return said(read.error, true);
-
+    if (read.kind === 'report') {
       if (!device.onReport) return said('There is no run to report to.', true);
 
       return said(await device.onReport(read.report));
     }
-
-    const read = actionOfToolCall({ name, args });
-
-    if ('error' in read) return said(read.error, true);
 
     await device.driver.act(read.action);
 

@@ -1,6 +1,6 @@
 import type { IChatReference, IFlatStep } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
-import { DEVICE_TOOLS, Harness } from '@/harness';
+import { Harness, listDeviceTools } from '@/harness';
 
 /**
  * The files in __prompts__ are what the agent read before the harness moved to src/harness/.
@@ -109,7 +109,7 @@ describe('Harness', () => {
 
   describe('the device tools', () => {
     it('lists them to the agent exactly as pinned', async () => {
-      await expect(JSON.stringify(DEVICE_TOOLS, null, 2)).toMatchFileSnapshot(
+      await expect(JSON.stringify(listDeviceTools(), null, 2)).toMatchFileSnapshot(
         './__prompts__/device-tools.txt',
       );
     });

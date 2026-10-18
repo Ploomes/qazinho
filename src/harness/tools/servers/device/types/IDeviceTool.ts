@@ -1,6 +1,8 @@
-/** One device action offered to the agent as an MCP tool, with the JSON Schema of its arguments. */
+import type { z } from 'zod';
+
+/** One tool on the device: its name, what the agent reads about it, and the arguments it takes. */
 export interface IDeviceTool {
-  name: 'look' | 'goto' | 'click' | 'fill' | 'press' | 'wait' | 'report';
+  name: string;
   description: string;
-  inputSchema: Record<string, unknown>;
+  input: z.ZodObject;
 }

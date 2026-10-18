@@ -16,6 +16,7 @@
       "properties": {
         "target": {
           "type": "string",
+          "minLength": 1,
           "description": "The URL to open."
         }
       },
@@ -33,6 +34,7 @@
       "properties": {
         "target": {
           "type": "string",
+          "minLength": 1,
           "description": "What the control says."
         }
       },
@@ -50,6 +52,7 @@
       "properties": {
         "target": {
           "type": "string",
+          "minLength": 1,
           "description": "The field label, placeholder or hint."
         },
         "value": {
@@ -72,6 +75,7 @@
       "properties": {
         "target": {
           "type": "string",
+          "minLength": 1,
           "description": "The key."
         }
       },
@@ -89,6 +93,7 @@
       "properties": {
         "value": {
           "type": "string",
+          "minLength": 1,
           "description": "Milliseconds, e.g. \"1000\"."
         }
       },
@@ -106,6 +111,8 @@
       "properties": {
         "step": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991,
           "description": "The number of the step you judged."
         },
         "verdict": {
@@ -118,6 +125,7 @@
         },
         "why": {
           "type": "string",
+          "minLength": 1,
           "description": "Why, against what the QA expected."
         },
         "got": {
