@@ -36,4 +36,23 @@ describe('strictSchemaOf', () => {
 
     expect(strict.items).toMatchObject({ required: ['a'], additionalProperties: false });
   });
+
+  /**
+   * OpenAI's strict mode refused minItems and maxItems when it launched, and whether it takes
+   * them now is not settled. A refused keyword fails the whole call, so the bounds stay with
+   * Claude Code's schema and the corpus, and Codex gets the array without them.
+   */
+  it('drops the bounds of an array, which strict mode may refuse', () => {
+    const strict = strictSchemaOf({
+      type: 'object',
+      properties: {
+        options: { type: 'array', minItems: 1, maxItems: 4, items: { type: 'string' } },
+      },
+      required: ['options'],
+    });
+
+    expect(strict.properties).toEqual({
+      options: { type: 'array', items: { type: 'string' } },
+    });
+  });
 });

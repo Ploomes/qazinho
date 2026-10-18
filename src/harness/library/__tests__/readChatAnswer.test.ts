@@ -80,6 +80,12 @@ describe('readChatAnswer', () => {
     expect(answer?.plan?.cases).toEqual([CASE]);
   });
 
+  it('reads the nulls Codex sends for what it left out', () => {
+    expect(
+      readChatAnswer(JSON.stringify({ reply: 'Hi.', questions: null, plan: null })),
+    ).toEqual({ reply: 'Hi.', questions: [], plan: null });
+  });
+
   it('takes prose the agent printed instead of JSON as the reply', () => {
     expect(readChatAnswer('I could not reach the page.')).toEqual({
       reply: 'I could not reach the page.',
