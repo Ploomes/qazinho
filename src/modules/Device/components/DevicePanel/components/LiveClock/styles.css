@@ -7,6 +7,7 @@
   background: var(--win);
   color: var(--ink2);
   font: var(--font-mono-xs);
+  white-space: nowrap;
 }
 
 .live-clock__dot {

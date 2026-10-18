@@ -52,7 +52,6 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
           <span className="device-focus__state">
             <Intern mood={props.mood} size={26} isStill />
             {props.stateText}
-            {props.isLive && <LiveClock label={props.elapsedLabel} />}
           </span>
           <Button size="sm" variant="ghost" onClick={props.onClose}>
             {t('DEVICE.FOCUS_LEAVE')}
@@ -61,7 +60,10 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
         </div>
 
         <div className="device-focus__now">
-          <Eyebrow>{nowEyebrow}</Eyebrow>
+          <span className="device-focus__now-head">
+            <Eyebrow>{nowEyebrow}</Eyebrow>
+            {props.isLive && <LiveClock label={props.elapsedLabel} />}
+          </span>
           <p className="device-focus__now-text">
             {nowNumber !== null && (
               <span className="device-focus__now-number">{nowNumber}</span>
