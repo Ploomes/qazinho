@@ -48,12 +48,12 @@ export const Chat: React.FC = () => {
           <div className="chat__suggestions">
             {suggestions.map((suggestion) => (
               <Chip
-                key={suggestion.labelKey}
+                key={suggestion.id}
                 onClick={() => {
                   onSuggestion(suggestion.text);
                 }}
               >
-                {t(suggestion.labelKey)}
+                {suggestion.label}
               </Chip>
             ))}
           </div>

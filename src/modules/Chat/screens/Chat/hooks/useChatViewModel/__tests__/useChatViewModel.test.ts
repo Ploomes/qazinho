@@ -83,6 +83,23 @@ describe('useChatViewModel', () => {
     expect(result.current.suggestions).toHaveLength(2);
   });
 
+  it('starts the suggestions with a test plan, and sends it in the language the QA reads', async () => {
+    const ask = answering({ answer: DRAFTED });
+    const { result } = renderHook(() => useChatViewModel());
+    const [plan] = result.current.suggestions;
+
+    expect(plan?.label).toBe('Write a test plan');
+
+    act(() => {
+      result.current.onSuggestion(plan?.text ?? '');
+    });
+
+    await waitFor(() => {
+      expect(ask).toHaveBeenCalledOnce();
+    });
+    expect(ask.mock.calls[0]?.[0].text).toMatch(/^Write a test plan for this app/);
+  });
+
   describe('onSend', () => {
     it("asks the QA's own agent, on the model they picked", async () => {
       const ask = answering({ answer: DRAFTED });

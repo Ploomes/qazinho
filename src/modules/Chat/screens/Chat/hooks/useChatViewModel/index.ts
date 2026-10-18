@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   insertMention,
   mentionCandidates,
@@ -20,6 +21,7 @@ import {
 
 export const useChatViewModel = () => {
   const [draft, setDraft] = useState('');
+  const { t } = useTranslation();
 
   const projects = useAppStore((state) => state.projects);
   const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
@@ -111,7 +113,11 @@ export const useChatViewModel = () => {
     isAgentTyping,
     liveText: isAgentTyping ? liveText : '',
     draft,
-    suggestions: CHAT.suggestions,
+    suggestions: CHAT.suggestions.map(({ labelKey, textKey }) => ({
+      id: labelKey,
+      label: t(labelKey),
+      text: t(textKey),
+    })),
     mentions: mentionCandidates({ references, query: mentionQuery }),
     mentionQuery,
     hasReferences: references.length > 0,

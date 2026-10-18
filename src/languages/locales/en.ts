@@ -83,8 +83,11 @@ export const en = {
     RUN_CARD_SUBTITLE:
       'Counters, screenshots and the expected vs. got for every failure.',
     RUN_CARD_ACTION: 'Open in Runs →',
-    SUGGESTION_CHECKOUT: 'Test the whole checkout',
+    SUGGESTION_PLAN: 'Write a test plan',
+    SUGGESTION_PLAN_TEXT:
+      'Write a test plan for this app: its main flows, the edge cases and what is most likely to break.',
     SUGGESTION_SIGN_UP: 'Cover sign up and the first purchase',
+    SUGGESTION_SIGN_UP_TEXT: 'Cover sign up and the first purchase on a clean install.',
   },
   PLAN: {
     EMPTY_TITLE: 'No plan yet.',
