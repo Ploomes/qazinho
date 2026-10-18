@@ -41,6 +41,15 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       workspaces: state.workspaces.filter(({ id }) => id !== workspaceId),
     })),
 
+  renameWorkspace: ({ workspaceId, name }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => ({ ...workspace, name }),
+      }),
+    })),
+
   removeWorkspacesOf: (projectId) =>
     set((state) => ({
       workspaces: state.workspaces.filter(
