@@ -88,7 +88,7 @@ export const useDevicePanelViewModel = () => {
           isActive: option.id === viewport.id,
         })),
     viewportNote: isRunLive ? '' : t('DEVICE.VIEWPORT_NEXT'),
-    focusRatio: viewport.width / viewport.height,
+    screenRatio: viewport.width / viewport.height,
     onSelectViewport: (viewportId: ViewportId) => {
       if (!workspace || viewportId === viewport.id) return;
 

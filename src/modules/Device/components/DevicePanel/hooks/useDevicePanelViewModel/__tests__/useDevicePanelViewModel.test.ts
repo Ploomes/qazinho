@@ -48,7 +48,7 @@ describe('useDevicePanelViewModel', () => {
         ['tablet', '820 × 1180', false],
         ['phone', '390 × 844', false],
       ]);
-      expect(result.current.focusRatio).toBe(1280 / 800);
+      expect(result.current.screenRatio).toBe(1280 / 800);
 
       useWorkspaceStore.setState({
         workspaces: [{ ...makeWorkspace(), planKind: 'mobile' }],
@@ -71,7 +71,7 @@ describe('useDevicePanelViewModel', () => {
       });
 
       expect(useWorkspaceStore.getState().workspaces[0]?.viewportId).toBe('phone');
-      expect(result.current.focusRatio).toBe(390 / 844);
+      expect(result.current.screenRatio).toBe(390 / 844);
       expect(result.current.viewportNote).toBe('The next run opens at this size.');
       expect(resizeDevice).not.toHaveBeenCalled();
     });

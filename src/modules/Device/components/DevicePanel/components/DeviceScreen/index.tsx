@@ -2,19 +2,21 @@ import type { IDeviceScreenProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { MOTION } from '@/shared/constants';
+import { useDeviceScreenViewModel } from './hooks';
 import './styles.css';
 
 export const DeviceScreen: React.FC<IDeviceScreenProps> = (props) => {
   const { shot, stream, isLive, elapsedLabel } = props;
+  const { className, style } = useDeviceScreenViewModel(props);
   const { t } = useTranslation();
 
   return (
-    <div className="device-screen">
+    <div className={className} style={style}>
       <AnimatePresence initial={false} mode="popLayout">
         {stream !== null ? (
           <img
             key="stream"
-            className="device-screen__shot"
+            className="device-screen__stream"
             src={stream}
             alt={t('DEVICE.SHOT_ALT')}
           />

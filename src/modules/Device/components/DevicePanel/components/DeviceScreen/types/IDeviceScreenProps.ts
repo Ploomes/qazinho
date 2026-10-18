@@ -3,4 +3,5 @@ export interface IDeviceScreenProps {
   stream: string | null;
   isLive: boolean;
   elapsedLabel: string;
+  ratio: number;
 }

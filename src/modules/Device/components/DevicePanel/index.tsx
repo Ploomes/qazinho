@@ -36,7 +36,7 @@ export const DevicePanel: React.FC = () => {
     mood,
     viewports,
     viewportNote,
-    focusRatio,
+    screenRatio,
     onSelectViewport,
     shot,
     stream,
@@ -161,6 +161,7 @@ export const DevicePanel: React.FC = () => {
                       stream={stream}
                       isLive={isLive}
                       elapsedLabel={elapsedLabel}
+                      ratio={screenRatio}
                     />
                   </motion.div>
                 )}
@@ -182,6 +183,7 @@ export const DevicePanel: React.FC = () => {
                       stream={stream}
                       isLive={isLive}
                       elapsedLabel={elapsedLabel}
+                      ratio={screenRatio}
                     />
                   </motion.div>
                 )}
@@ -237,7 +239,7 @@ export const DevicePanel: React.FC = () => {
               pauseLabel={pauseLabel}
               viewports={viewports}
               viewportNote={viewportNote}
-              ratio={focusRatio}
+              ratio={screenRatio}
               onSelectViewport={onSelectViewport}
               onPause={onPause}
               onStop={onStop}

@@ -41,6 +41,7 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
             stream={props.stream}
             isLive={props.isLive}
             elapsedLabel={props.elapsedLabel}
+            ratio={props.ratio}
           />
         </motion.div>
       </div>
