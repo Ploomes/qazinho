@@ -24,9 +24,10 @@ environment with one or more targets. Workspaces hold a test plan, and several r
 
 1. **Everything runs on the user's machine.** Emulators, simulators, browsers and runs. The free
    app never needs a QAzinho backend; only Pro's team hosting uses one.
-2. **The agent is the user's.** Claude Code, Codex, Gemini CLI or any other, spoken to over ACP
-   (Agent Client Protocol). QAzinho builds the QA harness around it and never offers a login to a
-   model provider or holds a provider key of its own.
+2. **The agent is the user's.** Claude Code or Codex for now, driven through their own CLIs; more
+   agents come later, one at a time, each checked against the real CLI before it is offered.
+   QAzinho builds the QA harness around it and never offers a login to a model provider or holds
+   a provider key of its own.
 3. **A Salve Software product, closed source, in two plans.** Free is the whole desktop app, with
    no account and no artificial limit: download it and use it. Pro is a paid web platform for a
    company: an account and an org, where the QA syncs the projects on their machine to share

@@ -7,7 +7,7 @@ organised. You stay in charge: the agent drafts the plan with you, walks the flo
 device and tells you what it saw.
 
 - **Web, Android and iOS.** A URL, an `.apk`, or a simulator `.app` build.
-- **Your agent.** Claude Code, Codex, Gemini CLI or any other agent that speaks ACP.
+- **Your agent.** Claude Code or Codex, the one already on your machine. More agents later.
 - **Your machine.** Emulators, simulators, browsers and runs stay local. Nothing goes to a QAzinho
   server.
 - **Free and open source.** MIT, with no limits for one user. A Pro plan will host plans and runs
