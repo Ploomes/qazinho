@@ -19,6 +19,7 @@ export const Settings: React.FC = () => {
     languages,
     keybinds,
     links,
+    version,
     signIn,
     signInAgent,
     onCancelSignIn,
@@ -262,9 +263,7 @@ export const Settings: React.FC = () => {
                   <span className="settings__about-name">
                     <Wordmark />
                   </span>
-                  <span className="settings__about-version">
-                    {t('SETTINGS.ABOUT_VERSION')}
-                  </span>
+                  <span className="settings__about-version">{version}</span>
                   <Tag>{t('COMMON.BY_SALVE')}</Tag>
                 </div>
               </div>

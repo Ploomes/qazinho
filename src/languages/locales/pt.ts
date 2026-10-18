@@ -353,7 +353,7 @@ export const pt: typeof en = {
     KEYBIND_RESOURCES: 'Abrir Recursos',
     KEYBIND_SETTINGS: 'Abrir Configurações',
     SHORTCUTS_NOTE: 'Clique num atalho e aperte as teclas que quiser.',
-    ABOUT_VERSION: '0.1.0 · MIT',
+    ABOUT_VERSION: '{{version}} · MIT',
     ABOUT_NOTE:
       'Seu assistente de QA: planeje testes, execute e organize seu trabalho com o seu próprio agente de IA. Nada sai desta máquina.',
     LICENCE: 'Licença',

@@ -96,6 +96,14 @@ describe('useSettingsViewModel', () => {
     expect(result.current.integrations.map(({ id }) => id)).toEqual(['github', 'jira']);
   });
 
+  /** About used to say 0.1.0 whatever build it was. */
+  it('shows the version the app was built as', () => {
+    const { result } = renderHook(() => useSettingsViewModel());
+
+    expect(result.current.version).toBe(`${__QAZINHO_VERSION__} · MIT`);
+    expect(result.current.version).toMatch(/^\d+\.\d+\.\d+/);
+  });
+
   it('names every shortcut in the language the QA reads', async () => {
     await i18n.changeLanguage('pt');
 

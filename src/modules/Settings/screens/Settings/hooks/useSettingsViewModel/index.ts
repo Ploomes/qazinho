@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ABOUT_LINKS,
+  APP_VERSION,
   LANGUAGES,
   SETTINGS_TABS,
   THEMES,
@@ -142,6 +143,7 @@ export const useSettingsViewModel = () => {
       };
     }),
     links: ABOUT_LINKS,
+    version: t('SETTINGS.ABOUT_VERSION', { version: APP_VERSION }),
     signIn: signIn.signIn,
     signInAgent: signIn.signInAgent,
     onCancelSignIn: signIn.onCancelSignIn,
