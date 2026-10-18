@@ -1,5 +1,6 @@
 export const WEB_DRIVER = {
   viewport: { width: 1280, height: 800 },
+  maxPixelRatio: 2,
   waitMs: 1_000,
   streamQuality: 70,
   actionTimeoutMs: 5_000,

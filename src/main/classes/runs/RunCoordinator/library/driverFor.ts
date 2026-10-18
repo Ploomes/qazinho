@@ -20,5 +20,6 @@ export function driverFor(run: IWalkRun): IDeviceDriver {
     url: run.target.value,
     profileDir: run.profileDir,
     viewport: run.viewport,
+    pixelRatio: run.pixelRatio,
   });
 }

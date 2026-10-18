@@ -5,4 +5,5 @@ export interface IWebDriver {
   url: string;
   profileDir: string;
   viewport?: IViewport;
+  pixelRatio?: number;
 }

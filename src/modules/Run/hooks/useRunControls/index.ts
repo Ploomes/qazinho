@@ -53,6 +53,7 @@ export const useRunControls = () => {
         width: viewportOf(workspace.viewportId).width,
         height: viewportOf(workspace.viewportId).height,
       },
+      pixelRatio: window.devicePixelRatio,
     });
   };
 

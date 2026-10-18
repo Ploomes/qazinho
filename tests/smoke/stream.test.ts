@@ -146,4 +146,41 @@ describe('the live device stream', () => {
     await driver.close();
     site.close();
   });
+
+  /**
+   * The window renders at the QA's pixel ratio, so the page and its evidence are sharp on a Retina
+   * screen. The agent's glance is scaled back down: at 2x it would read four times the pixels.
+   */
+  it("renders at the display's pixel ratio, and the agent still reads the page at its size", async () => {
+    const site = createServer((_request, response) => {
+      response.writeHead(200, { 'content-type': 'text/html' });
+      response.end(COUNTER);
+    });
+
+    await new Promise<void>((ready) => site.listen(4325, '127.0.0.1', ready));
+
+    const folder = await mkdtemp(join(tmpdir(), 'qazinho-ratio-'));
+    const driver = new WebDriver({
+      url: 'http://127.0.0.1:4325/',
+      profileDir: join(folder, 'profile'),
+      pixelRatio: 2,
+    });
+
+    await driver.open();
+
+    const shot = await driver.shoot(join(folder, 'shot.jpg'));
+    const glance = await driver.glance();
+
+    expect(sizeOf(Buffer.from(shot?.dataUrl.split(',')[1] ?? '', 'base64'))).toEqual({
+      width: 2560,
+      height: 1600,
+    });
+    expect(sizeOf(Buffer.from(glance?.data ?? '', 'base64'))).toEqual({
+      width: 960,
+      height: 600,
+    });
+
+    await driver.close();
+    site.close();
+  });
 });

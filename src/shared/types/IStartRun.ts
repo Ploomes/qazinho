@@ -11,4 +11,5 @@ export interface IStartRun {
   runId: string;
   steps: IFlatStep[];
   viewport?: IViewport;
+  pixelRatio?: number;
 }

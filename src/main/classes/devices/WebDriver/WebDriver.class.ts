@@ -10,6 +10,7 @@ import { describePage, findLocator, summarizeMotion } from './library';
 export class WebDriver implements IDeviceDriver {
   private readonly url: string;
   private readonly profileDir: string;
+  private readonly pixelRatio: number;
   private context: BrowserContext | null = null;
   private page: Page | null = null;
   private screencast: CDPSession | null = null;
@@ -21,6 +22,10 @@ export class WebDriver implements IDeviceDriver {
     this.url = props.url;
     this.profileDir = props.profileDir;
     this.viewport = props.viewport ?? WEB_DRIVER.viewport;
+    this.pixelRatio = Math.min(
+      Math.max(props.pixelRatio ?? 1, 1),
+      WEB_DRIVER.maxPixelRatio,
+    );
   }
 
   public async open(): Promise<void> {
@@ -28,6 +33,8 @@ export class WebDriver implements IDeviceDriver {
       channel: 'chrome',
       headless: true,
       viewport: { ...this.viewport },
+      deviceScaleFactor: this.pixelRatio,
+      args: [`--force-device-scale-factor=${String(this.pixelRatio)}`],
     });
     await this.context.addInitScript(MOTION_PROBE);
     this.page = this.context.pages()[0] ?? (await this.context.newPage());
@@ -85,7 +92,7 @@ export class WebDriver implements IDeviceDriver {
     const shot = await cdp.send('Page.captureScreenshot', {
       format: 'jpeg',
       quality: WEB_DRIVER.glanceQuality,
-      clip: { x, y, ...this.viewport, scale: WEB_DRIVER.glanceScale },
+      clip: { x, y, ...this.viewport, scale: WEB_DRIVER.glanceScale / this.pixelRatio },
     });
 
     return { data: shot.data, mimeType: 'image/jpeg' };
