@@ -11,6 +11,7 @@ import '@fontsource/ibm-plex-sans/500.css';
 import '@fontsource/ibm-plex-sans/600.css';
 import '@fontsource/jetbrains-mono/400.css';
 import '@fontsource/jetbrains-mono/500.css';
+import '@fontsource/jetbrains-mono/700.css';
 import '@/shared/styles/tokens.css';
 import '@/shared/styles/base.css';
 import '@/shared/styles/animations.css';

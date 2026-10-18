@@ -13,7 +13,7 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--win);
-  box-shadow: var(--shadow-popover);
+  box-shadow: var(--sticker-lift);
   white-space: nowrap;
   pointer-events: none;
 }

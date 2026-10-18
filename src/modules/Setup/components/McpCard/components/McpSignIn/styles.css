@@ -19,7 +19,7 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-2xl);
   background: var(--win);
-  box-shadow: var(--shadow-modal);
+  box-shadow: var(--sticker-hero);
 }
 
 .mcp-sign-in__head {

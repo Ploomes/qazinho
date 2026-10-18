@@ -26,7 +26,7 @@
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-modal);
+  box-shadow: var(--sticker-hero);
 }
 
 .device-focus__phone {
@@ -39,7 +39,7 @@
   border-radius: 34px;
   box-shadow:
     0 0 0 1px var(--line),
-    var(--shadow-modal);
+    var(--sticker-hero);
 }
 
 .device-focus__chrome {

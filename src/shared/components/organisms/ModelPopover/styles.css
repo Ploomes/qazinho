@@ -7,7 +7,7 @@
   border: 1px solid var(--line);
   border-radius: 13px;
   background: var(--win);
-  box-shadow: var(--shadow-popover);
+  box-shadow: var(--sticker-lift);
 }
 
 .model-popover__section {

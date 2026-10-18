@@ -17,7 +17,7 @@
   border: 1px solid var(--line);
   border-radius: 13px;
   background: var(--win);
-  box-shadow: var(--shadow-modal);
+  box-shadow: var(--sticker-hero);
 }
 
 .lightbox__panel-head {

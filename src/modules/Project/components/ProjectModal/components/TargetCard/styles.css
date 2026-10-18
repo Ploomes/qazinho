@@ -62,7 +62,7 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-pill);
   background: var(--win);
-  box-shadow: var(--shadow-popover);
+  box-shadow: var(--sticker-lift);
 }
 
 .target-card__lock:has(.target-card__guide) {
