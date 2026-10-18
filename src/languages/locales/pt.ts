@@ -107,6 +107,9 @@ export const pt: typeof en = {
     SUGGESTION_FEATURE: 'Testar uma funcionalidade',
     SUGGESTION_FEATURE_TEXT: 'Quero testar uma funcionalidade específica.',
     VERDICT_STEP: 'Passo {{number}} · {{action}}',
+    TYPING: 'o agente está lendo o que você escreveu',
+    UNREADABLE:
+      'O agente respondeu, mas num formato que o QAzinho não conseguiu ler. Pergunte de novo.',
   },
   PLAN: {
     EMPTY_TITLE: 'Nenhum plano ainda.',

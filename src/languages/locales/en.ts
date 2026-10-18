@@ -105,6 +105,9 @@ export const en = {
     SUGGESTION_FEATURE: 'Test a feature',
     SUGGESTION_FEATURE_TEXT: 'I want to test a specific feature.',
     VERDICT_STEP: 'Step {{number}} · {{action}}',
+    TYPING: 'the agent is reading what you wrote',
+    UNREADABLE:
+      'The agent answered, but not in a shape QAzinho could read. Ask it again.',
   },
   PLAN: {
     EMPTY_TITLE: 'No plan yet.',

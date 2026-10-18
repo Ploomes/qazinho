@@ -100,7 +100,7 @@ export const useChatViewModel = () => {
         !answer ||
         (answer.reply.length === 0 && plan === null && answer.questions.length === 0)
       ) {
-        landAgentError({ workspaceId, text: CHAT.unreadable });
+        landAgentError({ workspaceId, text: t('CHAT.UNREADABLE') });
 
         return;
       }

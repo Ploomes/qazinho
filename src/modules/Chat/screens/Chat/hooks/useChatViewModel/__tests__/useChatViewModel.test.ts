@@ -2,6 +2,7 @@
 import type { IAskAgent, IChatAnswer, IChatQuestion, IChatTurn } from '@/shared/types';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { i18n } from '@/languages';
 import { useChatViewModel } from '@/modules/Chat/screens/Chat/hooks/useChatViewModel';
 import { endRun } from '@/modules/Workspace/library';
 import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
@@ -336,6 +337,25 @@ describe('useChatViewModel', () => {
         });
       });
       expect(useWorkspaceStore.getState().workspaces[0]?.plan).toHaveLength(0);
+    });
+
+    it('says it in the language the QA reads', async () => {
+      await i18n.changeLanguage('pt');
+      answering({ text: JSON.stringify({ verdict: 'passed' }), answer: null });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onSuggestion('Testa');
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
+          kind: 'error',
+          text: expect.stringContaining('O agente respondeu') as string,
+        });
+      });
+      await i18n.changeLanguage('en');
     });
 
     it('does NOT send an empty draft', () => {
