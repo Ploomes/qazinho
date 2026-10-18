@@ -11,13 +11,16 @@ export const useBugsViewModel = () => {
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
   const setBugFilter = useWorkspaceStore((state) => state.setBugFilter);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
+  const selectRun = useWorkspaceStore((state) => state.selectRun);
 
   const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
   const bugs = workspace?.bugs ?? [];
+  const runIds = new Set((workspace?.runs ?? []).map(({ id }) => id));
   const shown =
     bugFilter === 'all' ? bugs : bugs.filter(({ severity }) => severity === bugFilter);
 
-  const onOpenRun = () => {
+  const onOpenRun = (runId: string) => {
+    selectRun(runId);
     selectTab('runs');
   };
 
@@ -26,7 +29,7 @@ export const useBugsViewModel = () => {
   };
 
   return {
-    bugs: shown,
+    bugs: shown.map((bug) => ({ bug, hasRun: runIds.has(bug.runId) })),
     openBugId,
     filters: BUG_FILTERS,
     filter: bugFilter,

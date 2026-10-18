@@ -57,6 +57,35 @@ describe('useBugsViewModel', () => {
     });
   });
 
+  describe('onOpenRun', () => {
+    it('opens the Runs tab on the run the bug was caught in', () => {
+      const { result } = renderHook(() => useBugsViewModel());
+
+      act(() => {
+        result.current.onOpenRun('r-01');
+      });
+
+      expect(useWorkspaceStore.getState()).toMatchObject({
+        tab: 'runs',
+        selectedRunId: 'r-01',
+      });
+    });
+
+    /**
+     * Before runs that ended early were kept, a stopped run left its bugs pointing at nothing,
+     * and those bugs are still on disk.
+     */
+    it('does NOT offer a run that is not there', () => {
+      useWorkspaceStore.setState({
+        workspaces: [{ ...WORKSPACE, bugs: [BUG], runs: [] }],
+      });
+
+      const { result } = renderHook(() => useBugsViewModel());
+
+      expect(result.current.bugs[0]?.hasRun).toBe(false);
+    });
+  });
+
   describe('onToggleBug', () => {
     it('opens a bug and closes it again', () => {
       const { result } = renderHook(() => useBugsViewModel());

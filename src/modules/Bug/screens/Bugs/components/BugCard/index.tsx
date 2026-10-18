@@ -6,7 +6,8 @@ import { useBugCardViewModel } from './hooks';
 import './styles.css';
 
 export const BugCard: React.FC<IBugCardProps> = (props) => {
-  const { caret, meta, onHeadClick, onOpenShot } = useBugCardViewModel(props);
+  const { caret, meta, hasRun, onHeadClick, onOpenRunClick, onOpenShot } =
+    useBugCardViewModel(props);
   const { bug } = props;
   const { t } = useTranslation();
 
@@ -73,9 +74,11 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
           <ExpectedGot isBug expected={bug.expected} got={bug.got} />
 
           <div className="bug-card__actions">
-            <Button size="sm" onClick={props.onOpenRun}>
-              {t('BUG.OPEN_RUN', { id: bug.runId })}
-            </Button>
+            {hasRun && (
+              <Button size="sm" onClick={onOpenRunClick}>
+                {t('BUG.OPEN_RUN', { id: bug.runId })}
+              </Button>
+            )}
             <Button size="sm" onClick={props.onOpenCase}>
               {t('BUG.OPEN_CASE', { id: bug.caseId })}
             </Button>

@@ -17,8 +17,12 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
       { key: 'seen', value: bug.seen },
       { key: 'agent', value: `${agent} · ${modelName}` },
     ],
+    hasRun: props.hasRun,
     onHeadClick: () => {
       onToggle(bug.id);
+    },
+    onOpenRunClick: () => {
+      props.onOpenRun(bug.runId);
     },
     onOpenShot: (shot: IBugShot) => {
       openMedia({

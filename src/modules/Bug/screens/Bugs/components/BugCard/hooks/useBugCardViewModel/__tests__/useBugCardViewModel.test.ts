@@ -12,6 +12,7 @@ const BUG = WORKSPACE.bugs[0]!;
 const PROPS = {
   bug: BUG,
   isOpen: false,
+  hasRun: true,
   onToggle: vi.fn(),
   onOpenRun: vi.fn(),
   onOpenCase: vi.fn(),
@@ -35,6 +36,16 @@ describe('useBugCardViewModel', () => {
     const { result } = renderHook(() => useBugCardViewModel({ ...PROPS, isOpen: true }));
 
     expect(result.current.caret).toBe('▾');
+  });
+
+  it('opens the run the bug was caught in', () => {
+    const onOpenRun = vi.fn();
+    const { result } = renderHook(() => useBugCardViewModel({ ...PROPS, onOpenRun }));
+
+    result.current.onOpenRunClick();
+
+    expect(onOpenRun).toHaveBeenCalledWith('r-01');
+    expect(result.current.hasRun).toBe(true);
   });
 
   it('toggles its own bug', () => {
