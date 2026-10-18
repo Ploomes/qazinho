@@ -4,7 +4,7 @@ import { Chat } from '@/modules/Chat';
 import { Plan } from '@/modules/Plan';
 import { Runs } from '@/modules/Run';
 import { Button, StatusPill } from '@/shared/components/atoms';
-import { WorkspaceTabs } from './components';
+import { WorkspaceName, WorkspaceTabs } from './components';
 import { useWorkspaceViewModel } from './hooks';
 import './styles.css';
 
@@ -23,6 +23,7 @@ export const Workspace: React.FC = () => {
     isLive,
     pauseLabel,
     onSelectTab,
+    onRename,
     onRun,
     onPause,
     onStop,
@@ -34,7 +35,7 @@ export const Workspace: React.FC = () => {
   return (
     <section className="workspace">
       <header className="workspace__header">
-        <h1 className="workspace__title">{name}</h1>
+        <WorkspaceName name={name} onRename={onRename} />
         {issueKey !== null && <span className="workspace__issue">{issueKey}</span>}
         {statusLabel === null ? (
           <StatusPill status={status} shape="round" />

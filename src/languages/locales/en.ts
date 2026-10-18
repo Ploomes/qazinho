@@ -49,6 +49,7 @@ export const en = {
     PICK_ACTION: 'New workspace',
   },
   WORKSPACE: {
+    RENAME: 'Rename workspace',
     RUN_PLAN: 'Run plan',
     TAB_CHAT: 'Chat',
     TAB_PLAN: 'Plan',

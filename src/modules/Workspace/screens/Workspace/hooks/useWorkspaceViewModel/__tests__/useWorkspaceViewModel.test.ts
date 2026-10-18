@@ -129,4 +129,16 @@ describe('useWorkspaceViewModel', () => {
       );
     });
   });
+
+  describe('onRename', () => {
+    it('renames the open workspace, so the sidebar and the disk follow', () => {
+      const { result } = renderHook(() => useWorkspaceViewModel());
+
+      act(() => {
+        result.current.onRename('Checkout');
+      });
+
+      expect(useWorkspaceStore.getState().workspaces[0]?.name).toBe('Checkout');
+    });
+  });
 });

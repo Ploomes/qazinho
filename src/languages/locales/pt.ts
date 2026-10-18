@@ -51,6 +51,7 @@ export const pt: typeof en = {
     PICK_ACTION: 'Novo workspace',
   },
   WORKSPACE: {
+    RENAME: 'Renomear workspace',
     RUN_PLAN: 'Rodar plano',
     TAB_CHAT: 'Chat',
     TAB_PLAN: 'Plano',

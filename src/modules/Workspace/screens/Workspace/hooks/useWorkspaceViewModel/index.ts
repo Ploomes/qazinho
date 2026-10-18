@@ -8,6 +8,7 @@ export const useWorkspaceViewModel = () => {
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const tab = useWorkspaceStore((state) => state.tab);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
+  const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
   const { steps, live, isLive, isPaused, canRun, onRun, onPause, onStop } =
     useRunControls();
 
@@ -33,6 +34,9 @@ export const useWorkspaceViewModel = () => {
     isPaused,
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
     onSelectTab: selectTab,
+    onRename: (name: string) => {
+      if (workspace) renameWorkspace({ workspaceId: workspace.id, name });
+    },
     onRun,
     onPause,
     onStop,
