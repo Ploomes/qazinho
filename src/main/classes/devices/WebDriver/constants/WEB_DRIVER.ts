@@ -5,6 +5,11 @@ export const WEB_DRIVER = {
   actionTimeoutMs: 5_000,
   gotoTimeoutMs: 15_000,
   settleMs: 2_000,
+  quietMs: 300,
+  quietCapMs: 1_500,
+  quietPollMs: 100,
+  glanceScale: 0.75,
+  glanceQuality: 60,
   pageTextLimit: 2_000,
   elementLimit: 40,
 } as const;

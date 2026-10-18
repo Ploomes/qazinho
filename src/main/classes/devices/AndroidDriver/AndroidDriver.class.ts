@@ -1,6 +1,6 @@
 import type { IAndroidDriver } from './types';
 import type { IDeviceDriver, IShot } from '@/main/classes/devices/types';
-import type { IStepAction } from '@/shared/types';
+import type { IActionMotion, IDeviceImage, IStepAction } from '@/shared/types';
 import { spawn } from 'node:child_process';
 import { readdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -100,6 +100,20 @@ export class AndroidDriver implements IDeviceDriver {
       nodes: await this.read(),
       app: frontPackage(focused) || this.app,
     });
+  }
+
+  /** The emulator's screen as the agent reads it, straight from screencap. */
+  public async glance(): Promise<IDeviceImage | null> {
+    if (this.serial.length === 0) return null;
+
+    const image = await this.raw(['exec-out', 'screencap', '-p']);
+
+    return { data: image.toString('base64'), mimeType: 'image/png' };
+  }
+
+  /** A phone has no layout-shift timeline to read, so it says nothing about motion. */
+  public async motion(): Promise<IActionMotion | null> {
+    return Promise.resolve(null);
   }
 
   public async shoot(file: string): Promise<IShot | null> {

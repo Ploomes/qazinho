@@ -1,7 +1,9 @@
 import type { IIosDriver } from './types';
 import type { IDeviceDriver, IShot } from '@/main/classes/devices/types';
-import type { IStepAction } from '@/shared/types';
-import { readFile } from 'node:fs/promises';
+import type { IActionMotion, IDeviceImage, IStepAction } from '@/shared/types';
+import { randomUUID } from 'node:crypto';
+import { readFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { IOS } from './constants';
 import {
@@ -82,6 +84,24 @@ export class IosDriver implements IDeviceDriver {
 
   public async describe(): Promise<string> {
     return describeIosScreen({ elements: await this.read(), app: this.bundle });
+  }
+
+  /** The simulator's screen as the agent reads it, through a file simctl writes and QAzinho removes. */
+  public async glance(): Promise<IDeviceImage | null> {
+    const file = join(tmpdir(), `qazinho-glance-${randomUUID()}.png`);
+
+    try {
+      await this.simctl(['io', this.udid, 'screenshot', file]);
+
+      return { data: (await readFile(file)).toString('base64'), mimeType: 'image/png' };
+    } finally {
+      await rm(file, { force: true });
+    }
+  }
+
+  /** A simulator has no layout-shift timeline to read, so it says nothing about motion. */
+  public async motion(): Promise<IActionMotion | null> {
+    return Promise.resolve(null);
   }
 
   public async shoot(file: string): Promise<IShot | null> {
