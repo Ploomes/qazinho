@@ -27,7 +27,12 @@ const keysOf = (actions: { key: string }[]) => actions.map(({ key }) => key);
 
 describe('useAgentSignInViewModel', () => {
   it('opens the sign-in first, with nothing for the QA to do yet', () => {
-    const { result } = signingIn({ phase: 'working', at: 'start', url: null });
+    const { result } = signingIn({
+      phase: 'working',
+      at: 'start',
+      url: null,
+      opensAt: null,
+    });
 
     expect(result.current).toMatchObject({
       tone: 'working',
@@ -43,11 +48,26 @@ describe('useAgentSignInViewModel', () => {
     expect(keysOf(result.current.actions)).toEqual(['cancel']);
   });
 
+  it('says the page opens in a few seconds, before the agent opens it', () => {
+    const { result } = signingIn({
+      phase: 'working',
+      at: 'start',
+      url: null,
+      opensAt: Date.now() + 3_000,
+    });
+
+    expect(result.current.hint).toBe(
+      'The Claude Code sign-in page opens in your browser in 3s.',
+    );
+    expect(result.current).toMatchObject({ page: null, code: null });
+  });
+
   it('points at the page in the browser, with a field for the code it may show', () => {
     const { result, props } = signingIn({
       phase: 'working',
       at: 'browser',
       url: 'https://claude.com/cai/oauth/authorize',
+      opensAt: null,
     });
 
     expect(result.current.hint).toContain('The Claude Code sign-in page opened');
@@ -64,7 +84,12 @@ describe('useAgentSignInViewModel', () => {
   it('does NOT ask for a code an agent never takes', () => {
     expect(
       signingIn(
-        { phase: 'working', at: 'browser', url: 'https://auth.openai.com/oauth' },
+        {
+          phase: 'working',
+          at: 'browser',
+          url: 'https://auth.openai.com/oauth',
+          opensAt: null,
+        },
         false,
       ).result.current.code,
     ).toBeNull();

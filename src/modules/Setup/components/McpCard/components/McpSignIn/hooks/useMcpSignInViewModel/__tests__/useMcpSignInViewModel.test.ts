@@ -27,7 +27,12 @@ const keysOf = (actions: { key: string }[]) => actions.map(({ key }) => key);
 describe('useMcpSignInViewModel', () => {
   describe('the steps', () => {
     it('marks what is done, what runs now and what is still to come', () => {
-      const { result } = signingIn({ phase: 'working', at: 'open', url: null });
+      const { result } = signingIn({
+        phase: 'working',
+        at: 'open',
+        url: null,
+        opensAt: null,
+      });
 
       expect(result.current.rows.map(({ state }) => state)).toEqual([
         'done',
@@ -90,6 +95,7 @@ describe('useMcpSignInViewModel', () => {
         phase: 'working',
         at: 'browser',
         url: 'https://www.figma.com/oauth/mcp',
+        opensAt: null,
       });
 
       expect(result.current.hint).toContain('A Figma page opened in your browser');
@@ -99,17 +105,36 @@ describe('useMcpSignInViewModel', () => {
       });
     });
 
+    it('says the page opens in a few seconds first, with no link to open it twice', () => {
+      const { result } = signingIn({
+        phase: 'working',
+        at: 'browser',
+        url: 'https://www.figma.com/oauth/mcp',
+        opensAt: Date.now() + 3_000,
+      });
+
+      expect(result.current.hint).toBe(
+        'A Figma page opens in your browser in 3s. Allow access there.',
+      );
+      expect(result.current.page).toBeNull();
+    });
+
     it('waits for the page before pointing at the browser', () => {
-      const { result } = signingIn({ phase: 'working', at: 'browser', url: null });
+      const { result } = signingIn({
+        phase: 'working',
+        at: 'browser',
+        url: null,
+        opensAt: null,
+      });
 
       expect(result.current).toMatchObject({ hint: null, page: null });
     });
 
     it('points at Terminal on the way round', () => {
-      const { result } = signingIn({ phase: 'working', at: 'terminal', url: null }, [
-        'check',
-        'terminal',
-      ]);
+      const { result } = signingIn(
+        { phase: 'working', at: 'terminal', url: null, opensAt: null },
+        ['check', 'terminal'],
+      );
 
       expect(result.current.hint).toContain('In Terminal, pick Figma');
     });
@@ -148,7 +173,12 @@ describe('useMcpSignInViewModel', () => {
 
   describe('the buttons', () => {
     it('only cancels while working', () => {
-      const { result, props } = signingIn({ phase: 'working', at: 'open', url: null });
+      const { result, props } = signingIn({
+        phase: 'working',
+        at: 'open',
+        url: null,
+        opensAt: null,
+      });
 
       expect(keysOf(result.current.actions)).toEqual(['cancel']);
       result.current.actions[0]?.onClick();

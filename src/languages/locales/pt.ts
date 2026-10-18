@@ -336,6 +336,8 @@ export const pt: typeof en = {
     STEP_AUTHORIZE: 'Pedir acesso ao {{server}}',
     STEP_BROWSER: 'Permitir o acesso no navegador',
     STEP_TERMINAL: 'Concluir no Terminal',
+    HINT_SOON:
+      'Uma página do {{server}} abre no seu navegador em {{seconds}} s. Permita o acesso por lá.',
     HINT_BROWSER:
       'Uma página do {{server}} abriu no seu navegador. Permita o acesso por lá; esta janela fecha sozinha.',
     HINT_TERMINAL:
@@ -365,6 +367,7 @@ export const pt: typeof en = {
     LOGIN_FAILED: 'O {{agent}} continua sem login',
     LOGIN_STEP_START: 'Abrir o login do {{agent}}',
     LOGIN_STEP_BROWSER: 'Entrar na página aberta no navegador',
+    LOGIN_SOON: 'A página de login do {{agent}} abre no seu navegador em {{seconds}} s.',
     LOGIN_HINT:
       'A página de login do {{agent}} abriu no seu navegador. Entre por lá; esta janela fecha sozinha.',
     LOGIN_CODE: 'A página mostrou um código? Cole aqui.',

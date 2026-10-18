@@ -335,6 +335,8 @@ export const en = {
     STEP_AUTHORIZE: 'Ask {{server}} for access',
     STEP_BROWSER: 'Allow access in your browser',
     STEP_TERMINAL: 'Finish in Terminal',
+    HINT_SOON:
+      'A {{server}} page opens in your browser in {{seconds}}s. Allow access there.',
     HINT_BROWSER:
       'A {{server}} page opened in your browser. Allow access there; this window closes on its own.',
     HINT_TERMINAL:
@@ -364,6 +366,7 @@ export const en = {
     LOGIN_FAILED: '{{agent}} is not signed in',
     LOGIN_STEP_START: 'Open the {{agent}} sign-in',
     LOGIN_STEP_BROWSER: 'Sign in on the page in your browser',
+    LOGIN_SOON: 'The {{agent}} sign-in page opens in your browser in {{seconds}}s.',
     LOGIN_HINT:
       'The {{agent}} sign-in page opened in your browser. Sign in there; this window closes on its own.',
     LOGIN_CODE: 'Did the page show a code? Paste it here.',

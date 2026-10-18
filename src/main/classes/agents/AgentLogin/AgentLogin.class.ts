@@ -7,6 +7,7 @@ import type {
 import type { ChildProcessWithoutNullStreams } from 'node:child_process';
 import { spawn } from 'node:child_process';
 import { mkdir } from 'node:fs/promises';
+import { setTimeout as sleep } from 'node:timers/promises';
 import { LinkCatcher } from '@/main/classes/agents/LinkCatcher';
 import { authorizeUrlIn, stripAnsi } from '@/main/library';
 import { AGENT_LOGIN, LOGIN_RECIPES } from './constants';
@@ -77,7 +78,7 @@ export class AgentLogin {
       return progress;
     };
 
-    report({ phase: 'working', at: 'start', url: null });
+    report({ phase: 'working', at: 'start', url: null, opensAt: null });
 
     const recipe = LOGIN_RECIPES[agentId];
     const command = await this.findAgent(agentId);
@@ -87,6 +88,15 @@ export class AgentLogin {
     if (signal.aborted) return report({ phase: 'cancelled' });
 
     takesCode = recipe.takesCode;
+    report({
+      phase: 'working',
+      at: 'start',
+      url: null,
+      opensAt: Date.now() + AGENT_LOGIN.headsUpMs,
+    });
+    await sleep(AGENT_LOGIN.headsUpMs, undefined, { signal }).catch(() => undefined);
+
+    if (signal.aborted) return report({ phase: 'cancelled' });
 
     const catcher = await LinkCatcher.create();
 
@@ -124,7 +134,7 @@ export class AgentLogin {
       };
       const show = (link: string) => {
         url = link;
-        report({ phase: 'working', at: 'browser', url: link });
+        report({ phase: 'working', at: 'browser', url: link, opensAt: null });
       };
       const look = setInterval(() => {
         void catcher.links().then((links) => {

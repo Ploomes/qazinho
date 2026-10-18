@@ -43,7 +43,14 @@ export const useMcpCardViewModel = (props: IMcpCardProps) => {
 
   const begin = async (inTerminal: boolean) => {
     setError('');
-    setSignIn({ target, steps: ['check'], phase: 'working', at: 'check', url: null });
+    setSignIn({
+      target,
+      steps: ['check'],
+      phase: 'working',
+      at: 'check',
+      url: null,
+      opensAt: null,
+    });
 
     const ended = await Mcp.connect({ target, inTerminal });
 

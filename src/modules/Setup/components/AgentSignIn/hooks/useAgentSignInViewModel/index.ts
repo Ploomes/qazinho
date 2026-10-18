@@ -9,6 +9,7 @@ import {
   AGENT_SIGN_IN_FAILURES,
   AGENT_SIGN_IN_STEPS,
 } from '@/modules/Setup/components/AgentSignIn/constants';
+import { useCountdown } from '@/shared/hooks';
 
 export const useAgentSignInViewModel = (props: IAgentSignInProps) => {
   const { progress, onCancel, onClose, onRetry, onCode } = props;
@@ -16,12 +17,14 @@ export const useAgentSignInViewModel = (props: IAgentSignInProps) => {
   const names = { agent: props.agent };
   const failure = progress.phase === 'failed' ? progress : null;
   const working = progress.phase === 'working' ? progress : null;
+  const seconds = useCountdown(working?.opensAt ?? null);
   const at =
     progress.phase === 'working' || progress.phase === 'failed' ? progress.at : null;
   const reached = at === null ? progress.steps.length : progress.steps.indexOf(at);
   const tone: StepsTone =
     progress.phase === 'connected' ? 'connected' : failure ? 'failed' : 'working';
-  const isInBrowser = working?.at === 'browser' && working.url !== null;
+  const isInBrowser =
+    seconds === null && working?.at === 'browser' && working.url !== null;
   const actions: IStepsAction[] =
     tone === 'working'
       ? [
@@ -79,7 +82,12 @@ export const useAgentSignInViewModel = (props: IAgentSignInProps) => {
 
       return { key: step, label: t(AGENT_SIGN_IN_STEPS[step], names), state };
     }),
-    hint: isInBrowser ? t('SETUP.LOGIN_HINT', names) : null,
+    hint:
+      seconds !== null
+        ? t('SETUP.LOGIN_SOON', { ...names, seconds })
+        : isInBrowser
+          ? t('SETUP.LOGIN_HINT', names)
+          : null,
     page:
       isInBrowser && working.url !== null
         ? { url: working.url, label: t('COMMON.OPEN_PAGE_AGAIN') }

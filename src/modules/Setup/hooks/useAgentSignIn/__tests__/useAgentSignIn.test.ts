@@ -56,6 +56,7 @@ const IN_BROWSER: AgentSignInProgress = {
   phase: 'working',
   at: 'browser',
   url: 'https://claude.com/cai/oauth/authorize',
+  opensAt: null,
 };
 
 beforeEach(() => {

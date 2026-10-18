@@ -33,6 +33,7 @@ export const useAgentSignIn = () => {
         phase: 'working',
         at: 'start',
         url: null,
+        opensAt: null,
       },
       name: agents.find(({ id }) => id === agentId)?.name ?? agentId,
     });

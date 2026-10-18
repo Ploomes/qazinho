@@ -9,6 +9,7 @@ import {
   MCP_SIGN_IN_FAILURES,
   MCP_SIGN_IN_STEPS,
 } from '@/modules/Setup/components/McpCard/components/McpSignIn/constants';
+import { useCountdown } from '@/shared/hooks';
 
 export const useMcpSignInViewModel = (props: IMcpSignInProps) => {
   const { progress, onCancel, onClose, onRetry, onUseTerminal } = props;
@@ -16,6 +17,7 @@ export const useMcpSignInViewModel = (props: IMcpSignInProps) => {
   const names = { server: props.server.name, agent: props.agent };
   const failure = progress.phase === 'failed' ? progress : null;
   const working = progress.phase === 'working' ? progress : null;
+  const seconds = useCountdown(working?.opensAt ?? null);
   const at =
     progress.phase === 'working' || progress.phase === 'failed' ? progress.at : null;
   const reached = at === null ? progress.steps.length : progress.steps.indexOf(at);
@@ -91,13 +93,15 @@ export const useMcpSignInViewModel = (props: IMcpSignInProps) => {
       return { key: step, label: t(MCP_SIGN_IN_STEPS[step], names), state };
     }),
     hint:
-      working?.at === 'browser' && working.url !== null
-        ? t('MCP.HINT_BROWSER', names)
-        : working?.at === 'terminal'
-          ? t('MCP.HINT_TERMINAL', names)
-          : null,
+      seconds !== null
+        ? t('MCP.HINT_SOON', { ...names, seconds })
+        : working?.at === 'browser' && working.url !== null
+          ? t('MCP.HINT_BROWSER', names)
+          : working?.at === 'terminal'
+            ? t('MCP.HINT_TERMINAL', names)
+            : null,
     page:
-      working?.at === 'browser' && working.url !== null
+      seconds === null && working?.at === 'browser' && working.url !== null
         ? { url: working.url, label: t('COMMON.OPEN_PAGE_AGAIN') }
         : null,
     detail:

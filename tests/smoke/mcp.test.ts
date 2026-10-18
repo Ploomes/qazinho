@@ -278,6 +278,14 @@ describe.skipIf(!existsSync('/usr/bin/expect'))(
         steps: ['check', 'add', 'open', 'authorize', 'browser'],
       });
       expect(walked(reported)).toEqual(['check', 'add', 'open', 'authorize', 'browser']);
+      expect(
+        reported.some(
+          (progress) =>
+            progress.phase === 'working' &&
+            progress.at === 'browser' &&
+            progress.opensAt !== null,
+        ),
+      ).toBe(true);
       expect(await calls()).toContain(
         'mcp add --transport http --scope user figma https://mcp.figma.com/mcp',
       );

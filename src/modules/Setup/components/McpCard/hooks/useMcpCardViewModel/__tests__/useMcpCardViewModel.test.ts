@@ -217,6 +217,7 @@ describe('useMcpCardViewModel', () => {
           phase: 'working',
           at: 'browser',
           url: 'https://www.figma.com/oauth',
+          opensAt: null,
         });
       });
 
@@ -229,6 +230,7 @@ describe('useMcpCardViewModel', () => {
           phase: 'working',
           at: 'check',
           url: null,
+          opensAt: null,
         });
       });
 
@@ -297,6 +299,7 @@ describe('useMcpCardViewModel', () => {
           phase: 'working',
           at: 'add',
           url: null,
+          opensAt: null,
         });
       });
 

@@ -124,6 +124,17 @@ describe("signing in to the QA's Claude Code", () => {
     });
     expect(await calls()).toBe('auth login --claudeai');
     expect(opened).toEqual([AUTOMATIC]);
+
+    const headsUp = reported.find(
+      (progress) => progress.phase === 'working' && progress.opensAt !== null,
+    );
+
+    expect(headsUp).toMatchObject({ at: 'start' });
+    expect(reported.indexOf(headsUp!)).toBeLessThan(
+      reported.findIndex(
+        (progress) => progress.phase === 'working' && progress.at === 'browser',
+      ),
+    );
     expect(
       reported.find(
         (progress) => progress.phase === 'working' && progress.at === 'browser',

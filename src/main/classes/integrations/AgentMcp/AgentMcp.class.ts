@@ -116,7 +116,7 @@ export class AgentMcp {
       return progress;
     };
 
-    report({ phase: 'working', at: 'check', url: null });
+    report({ phase: 'working', at: 'check', url: null, opensAt: null });
 
     const recipe = MCP_RECIPES[target.agentId];
     const command = await this.findAgent(target.agentId);
@@ -169,7 +169,7 @@ export class AgentMcp {
       });
 
     if (listed === null) {
-      report({ phase: 'working', at: 'add', url: null });
+      report({ phase: 'working', at: 'add', url: null, opensAt: null });
 
       const added = await this.attempt({
         command,
@@ -193,7 +193,7 @@ export class AgentMcp {
   }
 
   private async signInHidden(run: IMcpSignInRun): Promise<McpSignInProgress> {
-    run.report({ phase: 'working', at: 'open', url: null });
+    run.report({ phase: 'working', at: 'open', url: null, opensAt: null });
 
     const terminal = await AgentTerminal.open({
       command: run.command,
@@ -216,12 +216,12 @@ export class AgentMcp {
         ...props,
         canUseTerminal: props.failure === 'screen' || props.failure === 'closed',
       });
-    const reach = (step: McpSignInStep) => {
+    const reach = (step: McpSignInStep, opensAt: number | null = null) => {
       at = step;
       deadline =
         Date.now() +
         (step === 'browser' ? AGENT_MCP.browserSignInMs : AGENT_MCP.stepWaitMs);
-      run.report({ phase: 'working', at, url });
+      run.report({ phase: 'working', at, url, opensAt });
     };
 
     try {
@@ -256,6 +256,13 @@ export class AgentMcp {
 
         if (seen.link !== null && seen.link !== url) {
           url = seen.link;
+          reach('browser', Date.now() + AGENT_MCP.headsUpMs);
+          await sleep(AGENT_MCP.headsUpMs, undefined, { signal: run.signal }).catch(
+            () => undefined,
+          );
+
+          if (run.signal.aborted) break;
+
           await this.openUrl(url);
           reach('browser');
         }
@@ -284,8 +291,19 @@ export class AgentMcp {
   private async signInInBrowser(
     run: IMcpSignInRun & { args: string[]; first: McpSignInStep },
   ): Promise<McpSignInProgress> {
-    run.report({ phase: 'working', at: run.first, url: null });
+    run.report({
+      phase: 'working',
+      at: run.first,
+      url: null,
+      opensAt: Date.now() + AGENT_MCP.headsUpMs,
+    });
+    await sleep(AGENT_MCP.headsUpMs, undefined, { signal: run.signal }).catch(
+      () => undefined,
+    );
 
+    if (run.signal.aborted) return run.report({ phase: 'cancelled' });
+
+    run.report({ phase: 'working', at: run.first, url: null, opensAt: null });
     await mkdir(this.folder, { recursive: true });
 
     const child = spawn(run.command, run.args, { cwd: this.folder });
@@ -335,7 +353,7 @@ export class AgentMcp {
         url = found;
         clearTimeout(noUrl);
         void this.openUrl(found);
-        run.report({ phase: 'working', at: 'browser', url: found });
+        run.report({ phase: 'working', at: 'browser', url: found, opensAt: null });
       };
 
       run.signal.addEventListener('abort', stop, { once: true });
@@ -388,7 +406,7 @@ export class AgentMcp {
       { mode: 0o755 },
     );
     await this.openScript(script);
-    run.report({ phase: 'working', at: 'terminal', url: null });
+    run.report({ phase: 'working', at: 'terminal', url: null, opensAt: null });
 
     while (!run.signal.aborted && Date.now() < deadline) {
       await sleep(AGENT_MCP.pollMs);
