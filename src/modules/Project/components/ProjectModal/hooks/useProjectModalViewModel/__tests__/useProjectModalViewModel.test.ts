@@ -231,6 +231,63 @@ describe('useProjectModalViewModel', () => {
       ]);
     });
 
+    /** Targets used to be saved as "Android · Pixel 7" and "iOS · iPhone 16", phones nobody picked. */
+    it('names a target in use by its platform, whatever an older project saved', () => {
+      useAppStore.setState({
+        projects: [
+          {
+            ...SAVED,
+            targets: [
+              { ...SAVED.targets[0]!, label: 'Web · staging' },
+              { id: 't-android', kind: 'android', label: 'Android', value: '/x/app.apk' },
+            ],
+          },
+        ],
+      });
+      useWorkspaceStore.setState({
+        workspaces: [{ ...makeWorkspace(), projectId: 'p1', targetId: 't-web' }],
+      });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onUrlChange('');
+      });
+
+      expect(result.current.footerHint).toBe(
+        'A workspace runs against Web, so it cannot go empty',
+      );
+    });
+
+    it('saves a target under its platform name, dropping a phone an older project made up', () => {
+      useAppStore.setState({
+        projects: [
+          {
+            ...SAVED,
+            targets: [
+              ...SAVED.targets,
+              {
+                id: 't-android',
+                kind: 'android' as const,
+                label: 'Android · Pixel 7',
+                value: '/x/app.apk',
+              },
+            ],
+          },
+        ],
+      });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onConfirm();
+      });
+
+      expect(
+        useAppStore.getState().projects[0]?.targets.map(({ label }) => label),
+      ).toEqual(['Web', 'Android']);
+    });
+
     it('does NOT let a target a workspace runs against go empty', () => {
       useWorkspaceStore.setState({
         workspaces: [{ ...makeWorkspace(), projectId: 'p1', targetId: 't-web' }],

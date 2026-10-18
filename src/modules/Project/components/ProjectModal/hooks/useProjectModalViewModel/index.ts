@@ -3,6 +3,7 @@ import type { ITarget } from '@/modules/Project/types';
 import type { TargetKind } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TARGET_NAME_KEYS } from '@/modules/Project/components/ProjectModal/constants';
 import { newProjectId } from '@/modules/Project/library';
 import { SETUP_LINKS } from '@/modules/Setup/constants';
 import { Archive, Files, Platform, Run } from '@/services';
@@ -61,30 +62,25 @@ export const useProjectModalViewModel = () => {
           : t('PROJECT.NEEDS_TARGET')
         : orphaned === null
           ? undefined
-          : t('PROJECT.TARGET_IN_USE', { target: orphaned.label });
+          : t('PROJECT.TARGET_IN_USE', { target: t(TARGET_NAME_KEYS[orphaned.kind]) });
 
-  const targetFor = (props: { kind: TargetKind; label: string }): ITarget[] => {
-    const value = values[props.kind];
+  const targetFor = (kind: TargetKind): ITarget[] => {
+    const value = values[kind];
 
     if (value.length === 0) return [];
 
-    const kept = saved(props.kind);
+    const kept = saved(kind);
+    const label = t(TARGET_NAME_KEYS[kind]);
 
     return [
-      kept === null
-        ? { id: `t-${props.kind}`, kind: props.kind, label: props.label, value }
-        : { ...kept, value },
+      kept === null ? { id: `t-${kind}`, kind, label, value } : { ...kept, label, value },
     ];
   };
 
   const onConfirm = () => {
     if (blocking !== undefined) return;
 
-    const targets = [
-      ...targetFor({ kind: 'web', label: 'Web' }),
-      ...targetFor({ kind: 'android', label: 'Android · Pixel 7' }),
-      ...targetFor({ kind: 'ios', label: 'iOS · iPhone 16' }),
-    ];
+    const targets = [...targetFor('web'), ...targetFor('android'), ...targetFor('ios')];
 
     if (editing) updateProject({ ...editing, name: name.trim(), targets });
     else addProject({ id: newProjectId(), name: name.trim(), targets });
