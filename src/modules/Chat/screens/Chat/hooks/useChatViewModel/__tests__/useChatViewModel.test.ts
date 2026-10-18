@@ -83,7 +83,10 @@ describe('useChatViewModel', () => {
     const { result } = renderHook(() => useChatViewModel());
 
     expect(result.current.isEmpty).toBe(true);
-    expect(result.current.suggestions).toHaveLength(2);
+    expect(result.current.suggestions.map(({ label, text }) => [label, text])).toEqual([
+      ['Create a test plan', "Let's create a test plan."],
+      ['Test a feature', 'I want to test a specific feature.'],
+    ]);
   });
 
   /**

@@ -100,8 +100,8 @@ export const en = {
     RUN_CARD_ACTION: 'Open in Runs →',
     SUGGESTION_PLAN: 'Create a test plan',
     SUGGESTION_PLAN_TEXT: "Let's create a test plan.",
-    SUGGESTION_SIGN_UP: 'Cover sign up and the first purchase',
-    SUGGESTION_SIGN_UP_TEXT: 'Cover sign up and the first purchase on a clean install.',
+    SUGGESTION_FEATURE: 'Test a feature',
+    SUGGESTION_FEATURE_TEXT: 'I want to test a specific feature.',
   },
   PLAN: {
     EMPTY_TITLE: 'No plan yet.',

@@ -102,9 +102,8 @@ export const pt: typeof en = {
     RUN_CARD_ACTION: 'Abrir em Runs →',
     SUGGESTION_PLAN: 'Criar um plano de teste',
     SUGGESTION_PLAN_TEXT: 'Vamos criar um plano de teste.',
-    SUGGESTION_SIGN_UP: 'Cobrir o cadastro e a primeira compra',
-    SUGGESTION_SIGN_UP_TEXT:
-      'Cubra o cadastro e a primeira compra numa instalação limpa.',
+    SUGGESTION_FEATURE: 'Testar uma funcionalidade',
+    SUGGESTION_FEATURE_TEXT: 'Quero testar uma funcionalidade específica.',
   },
   PLAN: {
     EMPTY_TITLE: 'Nenhum plano ainda.',
