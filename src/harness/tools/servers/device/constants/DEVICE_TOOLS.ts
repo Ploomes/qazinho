@@ -80,7 +80,8 @@ export const DEVICE_TOOLS = [
       }),
       why: textNamed({
         message: '"report" needs "why": what the verdict rests on.',
-        description: 'Why, against what the QA expected.',
+        description:
+          'What the verdict rests on: what you saw, held against what the QA expected.',
       }),
       got: z
         .string({ error: '"report" needs "got": what the device actually showed.' })

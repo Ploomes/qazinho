@@ -22,6 +22,7 @@ and "blocked" only when you truly could not carry the step out. Say in "got" wha
 When it failed, give "title", the line a developer would recognise the bug by, and "severity".
 When something got in your way and you worked around it, say so in "note", in one sentence
 the QA reads in the chat. Leave "note" out when the step went as planned.
+Write "why", "got", "title" and "note" in the language the case is written in.
 Time matters: call report and the first action of the next step together, in the same turn.
 report answers with what comes next. When it says the case is over, end your turn with no
 summary.
