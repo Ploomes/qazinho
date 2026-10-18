@@ -113,7 +113,6 @@ describe('the built page, with no bridge behind it', () => {
     await page.getByPlaceholder('https://staging.yourshop.com').fill('https://shop.test');
     await page.getByRole('button', { name: 'Create project' }).click();
 
-    await page.getByRole('button', { name: 'New workspace here' }).first().click();
     await page.getByPlaceholder('Checkout regression').fill('Cart');
     await page.getByRole('button', { name: 'Create workspace' }).click();
 

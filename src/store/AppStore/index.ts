@@ -49,7 +49,7 @@ export const useAppStore = create<IAppStore>()(
         set((state) => ({
           projects: [...state.projects, project],
           selectedProjectId: project.id,
-          modal: null,
+          modal: 'workspace',
         })),
 
       loadProjects: (projects) =>

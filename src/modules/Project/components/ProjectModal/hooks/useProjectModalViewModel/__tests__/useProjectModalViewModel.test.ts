@@ -55,7 +55,25 @@ describe('useProjectModalViewModel', () => {
     expect(project?.name).toBe('Shop · staging');
     expect(project?.targets).toHaveLength(1);
     expect(project?.targets[0]?.kind).toBe('web');
-    expect(useAppStore.getState().modal).toBeNull();
+  });
+
+  it('goes straight on to the first workspace of the new project', () => {
+    const { result } = renderHook(() => useProjectModalViewModel());
+
+    act(() => {
+      result.current.onNameChange('Shop · staging');
+      result.current.onUrlChange('https://staging.shop.test');
+    });
+    act(() => {
+      result.current.onConfirm();
+    });
+
+    const [project] = useAppStore.getState().projects;
+
+    expect(useAppStore.getState()).toMatchObject({
+      modal: 'workspace',
+      selectedProjectId: project?.id,
+    });
   });
 
   it('turns iOS off when Xcode is not there, even on a Mac', () => {
