@@ -4,6 +4,7 @@ import type { IActionMotion, IDeviceImage, IStepAction, IViewport } from '@/shar
 /** What a run needs from a device, whether it is a browser or a phone. */
 export interface IDeviceDriver {
   open: () => Promise<void>;
+  restart: () => Promise<void>;
   act: (action: IStepAction) => Promise<void>;
   describe: () => Promise<string>;
   glance: () => Promise<IDeviceImage | null>;

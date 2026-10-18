@@ -2,15 +2,17 @@ import type { IWebDriver } from './types';
 import type { IDeviceDriver, IShot } from '@/main/classes/devices/types';
 import type { IActionMotion, IDeviceImage, IStepAction, IViewport } from '@/shared/types';
 import type { BrowserContext, CDPSession, Page } from 'playwright-core';
+import { rm } from 'node:fs/promises';
 import { chromium } from 'playwright-core';
 import { MOTION_PROBE, WEB_DRIVER } from './constants';
-import { describePage, findLocator, pagesOf, summarizeMotion } from './library';
+import { describePage, findLocator, originOf, pagesOf, summarizeMotion } from './library';
 
 /** Drives a real Chrome on this machine with no window of its own; the QA watches it in the device panel. */
 export class WebDriver implements IDeviceDriver {
   private readonly url: string;
   private readonly profileDir: string;
   private readonly pixelRatio: number;
+  private readonly origins = new Set<string>();
   private context: BrowserContext | null = null;
   private page: Page | null = null;
   private screencast: CDPSession | null = null;
@@ -30,7 +32,9 @@ export class WebDriver implements IDeviceDriver {
     );
   }
 
+  /** Opens Chrome on an empty profile, so a run never starts with what an earlier one saved. */
   public async open(): Promise<void> {
+    await rm(this.profileDir, { recursive: true, force: true });
     this.context = await chromium.launchPersistentContext(this.profileDir, {
       channel: 'chrome',
       headless: true,
@@ -39,10 +43,49 @@ export class WebDriver implements IDeviceDriver {
       args: [`--force-device-scale-factor=${String(this.pixelRatio)}`],
     });
     await this.context.addInitScript(MOTION_PROBE);
+    this.context.on('page', (page) => {
+      this.follow(page);
+    });
     this.page = this.context.pages()[0] ?? (await this.context.newPage());
+    this.follow(this.page);
 
     await this.fit();
     await this.page.goto(this.url, { timeout: WEB_DRIVER.gotoTimeoutMs });
+  }
+
+  /** Starts the app over for someone who never opened it: no cookie, nothing stored, one new tab on its address. */
+  public async restart(): Promise<void> {
+    const context = this.context;
+
+    if (!context) throw new Error('The browser is not open.');
+
+    await this.screencast?.detach().catch(() => undefined);
+    await this.cdp?.detach().catch(() => undefined);
+    this.screencast = null;
+    this.cdp = null;
+    this.lastMotion = null;
+
+    const page = await context.newPage();
+
+    for (const stale of context.pages())
+      if (stale !== page) await stale.close().catch(() => undefined);
+
+    this.page = page;
+    await context.clearCookies();
+    await context.clearPermissions();
+
+    const cdp = await this.session();
+
+    for (const origin of this.origins)
+      await cdp
+        ?.send('Storage.clearDataForOrigin', { origin, storageTypes: 'all' })
+        .catch(() => undefined);
+
+    await this.fit();
+
+    if (this.onFrame) await this.watch(this.onFrame);
+
+    await page.goto(this.url, { timeout: WEB_DRIVER.gotoTimeoutMs });
   }
 
   /** Carries one action out, and keeps how the page moved while it ran for `motion` to hand over. */
@@ -128,18 +171,7 @@ export class WebDriver implements IDeviceDriver {
   public async stream(onFrame: (jpeg: Buffer) => void): Promise<boolean> {
     if (!this.context || !this.page) return false;
 
-    const session = await this.context.newCDPSession(this.page);
-
-    session.on('Page.screencastFrame', (frame) => {
-      onFrame(Buffer.from(frame.data, 'base64'));
-      void session
-        .send('Page.screencastFrameAck', { sessionId: frame.sessionId })
-        .catch(() => undefined);
-    });
-
-    this.screencast = session;
-    this.onFrame = onFrame;
-    await this.cast();
+    await this.watch(onFrame);
 
     return true;
   }
@@ -170,6 +202,33 @@ export class WebDriver implements IDeviceDriver {
     await this.context?.close().catch(() => undefined);
     this.context = null;
     this.page = null;
+  }
+
+  /** Streams the open tab's frames to whoever watches; a new tab needs a new watch. */
+  private async watch(onFrame: (jpeg: Buffer) => void): Promise<void> {
+    if (!this.context || !this.page) return;
+
+    const session = await this.context.newCDPSession(this.page);
+
+    session.on('Page.screencastFrame', (frame) => {
+      onFrame(Buffer.from(frame.data, 'base64'));
+      void session
+        .send('Page.screencastFrameAck', { sessionId: frame.sessionId })
+        .catch(() => undefined);
+    });
+
+    this.screencast = session;
+    this.onFrame = onFrame;
+    await this.cast();
+  }
+
+  /** Keeps every site a tab opened, so a fresh start clears what each one stored. */
+  private follow(page: Page): void {
+    page.on('framenavigated', (frame) => {
+      const origin = originOf(frame.url());
+
+      if (origin !== null) this.origins.add(origin);
+    });
   }
 
   private async perform(props: { page: Page; action: IStepAction }): Promise<void> {

@@ -36,15 +36,14 @@ export class AndroidDriver implements IDeviceDriver {
     this.serial = (await this.running())[0] ?? (await this.boot());
     this.app = await this.install();
 
-    await this.shell([
-      'monkey',
-      '-p',
-      this.app,
-      '-c',
-      'android.intent.category.LAUNCHER',
-      '1',
-    ]);
-    await this.settle();
+    await this.launchFresh();
+  }
+
+  /** Starts the app over with its data cleared, the way it was the day it was installed. */
+  public async restart(): Promise<void> {
+    if (this.serial.length === 0) throw new Error('The emulator is not open.');
+
+    await this.launchFresh();
   }
 
   public async act(action: IStepAction): Promise<void> {
@@ -147,6 +146,20 @@ export class AndroidDriver implements IDeviceDriver {
 
     this.serial = '';
     this.isOurs = false;
+  }
+
+  private async launchFresh(): Promise<void> {
+    await this.shell(['am', 'force-stop', this.app]);
+    await this.shell(['pm', 'clear', this.app]);
+    await this.shell([
+      'monkey',
+      '-p',
+      this.app,
+      '-c',
+      'android.intent.category.LAUNCHER',
+      '1',
+    ]);
+    await this.settle();
   }
 
   private async boot(): Promise<string> {

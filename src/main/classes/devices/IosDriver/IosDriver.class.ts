@@ -39,9 +39,12 @@ export class IosDriver implements IDeviceDriver {
 
     this.bundle = await this.identify();
 
-    await this.simctl(['install', this.udid, this.app]);
-    await this.simctl(['launch', this.udid, this.bundle]);
-    await this.settle();
+    await this.installFresh();
+  }
+
+  /** Starts the app over on a fresh install: a simulator keeps an app's data until the app is removed. */
+  public async restart(): Promise<void> {
+    await this.installFresh();
   }
 
   public async act(action: IStepAction): Promise<void> {
@@ -131,6 +134,14 @@ export class IosDriver implements IDeviceDriver {
     if (this.isOurs) await this.simctl(['shutdown', this.udid]).catch(() => '');
 
     this.isOurs = false;
+  }
+
+  private async installFresh(): Promise<void> {
+    await this.simctl(['terminate', this.udid, this.bundle]).catch(() => '');
+    await this.simctl(['uninstall', this.udid, this.bundle]).catch(() => '');
+    await this.simctl(['install', this.udid, this.app]);
+    await this.simctl(['launch', this.udid, this.bundle]);
+    await this.settle();
   }
 
   private async identify(): Promise<string> {

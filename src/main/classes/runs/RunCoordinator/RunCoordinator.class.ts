@@ -219,12 +219,12 @@ export class RunCoordinator {
   }): Promise<void> {
     const { run, driver } = props;
 
-    for (const steps of casesOf(run.steps)) {
+    for (const [position, steps] of casesOf(run.steps).entries()) {
       await this.holdWhilePaused(run.workspaceId);
 
       if (this.stopping.has(run.workspaceId)) break;
 
-      await this.reopen({ driver, url: run.target.value });
+      if (position > 0) await driver.restart().catch(() => undefined);
 
       if (!(await this.walkCase({ run, driver, steps }))) break;
     }
@@ -363,14 +363,6 @@ export class RunCoordinator {
     unwalked('blocked');
 
     return true;
-  }
-
-  private async reopen(props: { driver: IDeviceDriver; url: string }): Promise<void> {
-    try {
-      await props.driver.act({ kind: 'goto', target: props.url, value: '' });
-    } catch {
-      return;
-    }
   }
 
   private async watch(props: {

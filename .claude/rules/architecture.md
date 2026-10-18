@@ -142,7 +142,7 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `WebDriver`                           | drives Chrome over playwright-core, one profile per workspace                   |
 | `LiveStream`                          | serves the device's frames as MJPEG on 127.0.0.1, for the device panel          |
 | `AppPeek`                             | opens a web target for a moment before the chat, and reads what its page shows  |
-| `RunCoordinator`                      | walks a plan a case per agent turn: it acts and reports through tools           |
+| `RunCoordinator`                      | walks a plan a case per agent turn, each on the app opened anew (`restart`)     |
 | `ResourceCollector` / `ProcessOwners` | one `ps` sweep, charged to whoever started it                                   |
 | `Archive`                             | the QA's projects, workspaces and plans, as files on disk                       |
 | `SetupInstaller`                      | installs an agent CLI or idb on request, streaming each line it prints          |
