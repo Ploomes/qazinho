@@ -170,7 +170,7 @@ export const pt: typeof en = {
     OPEN_CASE: 'Abrir {{id}} no plano',
   },
   DEVICE: {
-    IDLE: 'parado',
+    IDLE: 'ocioso',
     DRIVING: 'o agente está dirigindo',
     HOLDING: 'esperando por você',
     STOPPED: 'parado',
@@ -508,7 +508,7 @@ export const pt: typeof en = {
     BLOCKED: 'bloqueado',
     SKIPPED: 'pulado',
     STOPPED: 'parado',
-    IDLE: 'parado',
+    IDLE: 'ocioso',
     NOT_RUN: 'não rodou',
   },
 };
