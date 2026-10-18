@@ -1,19 +1,19 @@
 import type { IAgentTerminal, ITerminalScreen, ITerminalView } from './types';
 import type { ChildProcessWithoutNullStreams } from 'node:child_process';
 import { spawn } from 'node:child_process';
-import { randomUUID } from 'node:crypto';
 import { constants } from 'node:fs';
-import { access, chmod, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { access, mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { AGENT_TERMINAL, LINK_CATCHER, RELAY_SCRIPT } from './constants';
+import { LinkCatcher } from '@/main/classes/agents/LinkCatcher';
+import { AGENT_TERMINAL, RELAY_SCRIPT } from './constants';
 import { blankScreen, paintScreen } from './library';
 
 /** An agent CLI's full-screen interface, run in a terminal nobody sees: QAzinho reads its screen and presses its keys. */
 export class AgentTerminal {
   private readonly child: ChildProcessWithoutNullStreams;
-  private readonly linksFile: string;
+  private readonly catcher: LinkCatcher;
   private screen: ITerminalScreen = blankScreen({
     height: AGENT_TERMINAL.height,
     width: AGENT_TERMINAL.width,
@@ -23,10 +23,10 @@ export class AgentTerminal {
 
   private constructor(props: {
     child: ChildProcessWithoutNullStreams;
-    linksFile: string;
+    catcher: LinkCatcher;
   }) {
     this.child = props.child;
-    this.linksFile = props.linksFile;
+    this.catcher = props.catcher;
     this.child.stdout.setEncoding('utf8');
     this.child.stdout.on('data', (output: string) => {
       this.screen = paintScreen({ screen: this.screen, output });
@@ -53,12 +53,9 @@ export class AgentTerminal {
   /** Starts the agent in a hidden terminal. A page it asks the browser to open is caught, not opened. */
   public static async open(props: IAgentTerminal): Promise<AgentTerminal> {
     const relay = join(tmpdir(), AGENT_TERMINAL.relayFile);
-    const catcher = join(tmpdir(), AGENT_TERMINAL.catcherFile);
-    const linksFile = join(tmpdir(), `${AGENT_TERMINAL.linksPrefix}${randomUUID()}`);
+    const catcher = await LinkCatcher.create();
 
     await writeFile(relay, RELAY_SCRIPT);
-    await writeFile(catcher, LINK_CATCHER);
-    await chmod(catcher, 0o755);
     await mkdir(props.cwd, { recursive: true });
 
     const child = spawn(
@@ -66,25 +63,18 @@ export class AgentTerminal {
       ['-f', relay, props.command, ...props.args],
       {
         cwd: props.cwd,
-        env: {
-          ...props.env,
-          TERM: 'xterm-256color',
-          BROWSER: catcher,
-          QAZINHO_LINKS: linksFile,
-        },
+        env: { ...props.env, TERM: 'xterm-256color', ...catcher.env() },
       },
     );
 
-    return new AgentTerminal({ child, linksFile });
+    return new AgentTerminal({ child, catcher });
   }
 
   /** What the agent shows now, the pages it asked a browser to open, and whether it has closed. */
   public async view(): Promise<ITerminalView> {
-    const links = await readFile(this.linksFile, 'utf8').catch(() => '');
-
     return {
       rows: this.screen.cells.map((cells) => cells.join('').trimEnd()),
-      links: links.split('\n').filter((link) => link !== ''),
+      links: await this.catcher.links(),
       hasExited: this.hasExited,
     };
   }
@@ -140,6 +130,6 @@ export class AgentTerminal {
   /** Ends the agent and the terminal around it. */
   public close(): void {
     this.child.kill();
-    void rm(this.linksFile, { force: true });
+    this.catcher.dispose();
   }
 }

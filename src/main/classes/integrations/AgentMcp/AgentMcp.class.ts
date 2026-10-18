@@ -22,9 +22,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { AgentTerminal } from '@/main/classes/agents/AgentTerminal';
+import { authorizeUrlIn } from '@/main/library';
 import { AGENT_MCP, MCP_CATALOG, MCP_RECIPES, MCP_ROUTE_STEPS } from './constants';
 import {
-  authorizeUrlIn,
   nextMcpMove,
   parseCodexMcpList,
   parseMcpList,

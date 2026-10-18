@@ -3,8 +3,6 @@ export const AGENT_TERMINAL = {
   height: 50,
   width: 160,
   relayFile: 'qazinho-terminal-relay.exp',
-  catcherFile: 'qazinho-terminal-browser.sh',
-  linksPrefix: 'qazinho-terminal-links-',
   lookMs: 50,
   settleMs: 120,
   staleMs: 600,

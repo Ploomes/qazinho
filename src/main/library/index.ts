@@ -1,3 +1,4 @@
+export * from './authorizeUrlIn';
 export * from './collectSubtree';
 export * from './findExistingPath';
 export * from './findOnPath';

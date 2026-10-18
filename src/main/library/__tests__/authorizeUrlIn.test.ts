@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { authorizeUrlIn } from '@/main/classes/integrations/AgentMcp/library';
+import { authorizeUrlIn } from '@/main/library';
 
 describe('authorizeUrlIn', () => {
   it('finds the sign-in address in what Codex printed', () => {
