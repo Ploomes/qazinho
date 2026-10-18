@@ -1,4 +1,4 @@
 export * from './callDeviceTool';
-export * from './listDeviceTools';
 export * from './readToolCall';
+export * from './registerDeviceTools';
 export * from './textNamed';

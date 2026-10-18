@@ -3,14 +3,10 @@ import type { IncomingMessage, Server as HttpServer, ServerResponse } from 'node
 import type { AddressInfo } from 'node:net';
 import { randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-} from '@modelcontextprotocol/sdk/types.js';
 import { MCP_HOST } from '@/harness/tools/constants';
-import { callDeviceTool, listDeviceTools } from '@/harness/tools/servers/device';
+import { callDeviceTool, registerDeviceTools } from '@/harness/tools/servers/device';
 import { workspaceOfPath } from './library';
 
 /** Serves QAzinho's MCP tools on loopback, one address per workspace, for the length of a run. */
@@ -77,22 +73,13 @@ export class McpHost {
       return;
     }
 
-    const mcp = new Server(
-      { name: MCP_HOST.name, version: MCP_HOST.version },
-      { capabilities: { tools: {} } },
-    );
+    const mcp = new McpServer({ name: MCP_HOST.name, version: MCP_HOST.version });
 
-    mcp.setRequestHandler(ListToolsRequestSchema, () => ({ tools: listDeviceTools() }));
-    mcp.setRequestHandler(CallToolRequestSchema, (call) =>
-      this.inTurn({
-        workspaceId,
-        call: () =>
-          callDeviceTool({
-            device,
-            call: { name: call.params.name, args: call.params.arguments },
-          }),
-      }),
-    );
+    registerDeviceTools({
+      mcp,
+      call: (call) =>
+        this.inTurn({ workspaceId, call: () => callDeviceTool({ device, call }) }),
+    });
 
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: undefined,

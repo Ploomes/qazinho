@@ -1,6 +1,9 @@
 import type { IChatReference, IFlatStep } from '@/shared/types';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { describe, expect, it } from 'vitest';
-import { Harness, listDeviceTools } from '@/harness';
+import { Harness, registerDeviceTools } from '@/harness';
 
 /**
  * The files in __prompts__ are what the agent read before the harness moved to src/harness/.
@@ -108,10 +111,22 @@ describe('Harness', () => {
   });
 
   describe('the device tools', () => {
+    /** Listed the way the agent lists them: an MCP client over an in-memory pipe, no network. */
     it('lists them to the agent exactly as pinned', async () => {
-      await expect(JSON.stringify(listDeviceTools(), null, 2)).toMatchFileSnapshot(
+      const mcp = new McpServer({ name: 'qazinho', version: '0' });
+      const client = new Client({ name: 'pin', version: '0' });
+      const [ours, theirs] = InMemoryTransport.createLinkedPair();
+
+      registerDeviceTools({ mcp, call: () => Promise.reject(new Error('not called')) });
+      await mcp.connect(ours);
+      await client.connect(theirs);
+
+      const { tools } = await client.listTools();
+
+      await expect(JSON.stringify(tools, null, 2)).toMatchFileSnapshot(
         './__prompts__/device-tools.txt',
       );
+      await client.close();
     });
   });
 });

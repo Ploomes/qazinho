@@ -5,7 +5,10 @@
     "inputSchema": {
       "type": "object",
       "properties": {},
-      "additionalProperties": false
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
     }
   },
   {
@@ -23,7 +26,10 @@
       "required": [
         "target"
       ],
-      "additionalProperties": false
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
     }
   },
   {
@@ -41,7 +47,10 @@
       "required": [
         "target"
       ],
-      "additionalProperties": false
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
     }
   },
   {
@@ -64,7 +73,10 @@
         "target",
         "value"
       ],
-      "additionalProperties": false
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
     }
   },
   {
@@ -82,7 +94,10 @@
       "required": [
         "target"
       ],
-      "additionalProperties": false
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
     }
   },
   {
@@ -100,7 +115,10 @@
       "required": [
         "value"
       ],
-      "additionalProperties": false
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
     }
   },
   {
@@ -155,7 +173,10 @@
         "why",
         "got"
       ],
-      "additionalProperties": false
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
     }
   }
 ]
