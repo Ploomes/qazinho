@@ -10,6 +10,7 @@ import {
   findNode,
   frontPackage,
   launchArgs,
+  needsReinstall,
   newestBuildTools,
   packageOfApk,
   parseDevices,
@@ -201,7 +202,12 @@ export class AndroidDriver implements IDeviceDriver {
 
     if (app === null) throw new Error(`${this.apk} does not name a package.`);
 
-    await this.adb(['install', '-r', '-t', this.apk]);
+    await this.adb(['install', '-r', '-t', this.apk]).catch(async (reason: unknown) => {
+      if (!needsReinstall(String(reason))) throw reason;
+
+      await this.adb(['uninstall', app]);
+      await this.adb(['install', '-t', this.apk]);
+    });
 
     return app;
   }

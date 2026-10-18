@@ -5,6 +5,7 @@ export * from './findNode';
 export * from './frontPackage';
 export * from './launchArgs';
 export * from './listAvds';
+export * from './needsReinstall';
 export * from './newestBuildTools';
 export * from './packageOfApk';
 export * from './parseAvds';
