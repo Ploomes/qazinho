@@ -16,7 +16,7 @@ import type {
   McpSignInProgress,
   PickKind,
 } from '@/shared/types';
-import { homedir } from 'node:os';
+import { homedir, tmpdir } from 'node:os';
 import { app, BrowserWindow, dialog, ipcMain, safeStorage, shell } from 'electron';
 import { Harness, McpHost } from '@/harness';
 import {
@@ -24,6 +24,7 @@ import {
   AgentLogin,
   AgentMcp,
   AgentRunner,
+  AppPeek,
   Archive,
   DeviceToolDetector,
   IntegrationVault,
@@ -54,6 +55,7 @@ const archive = new Archive(PATHS.data);
 const live = new LiveStream();
 const tools = new McpHost();
 const harness = new Harness();
+const peek = new AppPeek({ folder: tmpdir() });
 
 function broadcast(props: {
   channel: string;
@@ -157,7 +159,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     target: ask.target,
     steps: ask.steps,
     references: ask.references,
-    look: null,
+    look: ask.target?.kind === 'web' ? await peek.look(ask.target.value) : null,
   });
 
   const turn = await agentRunner.ask({
