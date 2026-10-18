@@ -1,0 +1,244 @@
+.mcp-sign-in {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.42);
+  -webkit-app-region: no-drag;
+}
+
+.mcp-sign-in__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: var(--sign-in-width);
+  max-width: calc(100% - var(--space-8) * 2);
+  padding: var(--space-7);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-2xl);
+  background: var(--win);
+  box-shadow: var(--shadow-modal);
+}
+
+.mcp-sign-in__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.mcp-sign-in__badge {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--sign-in-badge);
+  height: var(--sign-in-badge);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--raise2);
+  transition:
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.mcp-sign-in__badge--working::after {
+  position: absolute;
+  inset: calc(var(--space-2) * -1);
+  border: 1.5px solid var(--lime);
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  border-radius: var(--radius-pill);
+  animation: gc-spin 1.1s linear infinite;
+  content: '';
+}
+
+.mcp-sign-in__badge--connected {
+  border-color: var(--lime);
+  background: var(--lime);
+}
+
+.mcp-sign-in__badge--failed {
+  border-color: var(--fail);
+  background: var(--fail-soft);
+}
+
+.mcp-sign-in__logo {
+  display: block;
+  width: 40%;
+  height: auto;
+}
+
+.mcp-sign-in__badge-mark {
+  font: 600 18px/1 var(--font-mono);
+}
+
+.mcp-sign-in__badge--connected .mcp-sign-in__badge-mark {
+  color: var(--on-lime);
+}
+
+.mcp-sign-in__badge--failed .mcp-sign-in__badge-mark {
+  color: var(--fail);
+}
+
+.mcp-sign-in__titles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.mcp-sign-in__title {
+  margin: 0;
+  color: var(--ink);
+  font: 600 18px/1.25 var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+.mcp-sign-in__subtitle {
+  margin: 0;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  text-wrap: pretty;
+}
+
+.mcp-sign-in__steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mcp-sign-in__step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--ink3);
+  font: var(--font-ui-md);
+  transition: color var(--dur) var(--ease);
+}
+
+.mcp-sign-in__step + .mcp-sign-in__step::before {
+  position: absolute;
+  bottom: 100%;
+  left: calc(var(--sign-in-mark) / 2 - 0.5px);
+  width: 1px;
+  height: var(--space-4);
+  background: var(--line);
+  transition: background-color var(--dur) var(--ease);
+  content: '';
+}
+
+.mcp-sign-in__step--done + .mcp-sign-in__step::before {
+  background: var(--lime);
+}
+
+.mcp-sign-in__step--active {
+  color: var(--ink);
+}
+
+.mcp-sign-in__step--done {
+  color: var(--ink2);
+}
+
+.mcp-sign-in__step--failed {
+  color: var(--fail);
+}
+
+.mcp-sign-in__mark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--sign-in-mark);
+  height: var(--sign-in-mark);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-pill);
+  font: 600 10px/1 var(--font-mono);
+  transition:
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.mcp-sign-in__mark--active {
+  border-color: var(--lime);
+  border-right-color: transparent;
+  animation: gc-spin 0.8s linear infinite;
+}
+
+.mcp-sign-in__mark--done {
+  border-color: var(--lime);
+  background: var(--lime);
+  color: var(--on-lime);
+}
+
+.mcp-sign-in__mark--failed {
+  border-color: var(--fail);
+  background: var(--fail-soft);
+  color: var(--fail);
+}
+
+.mcp-sign-in__label {
+  min-width: 0;
+  text-wrap: pretty;
+}
+
+.mcp-sign-in__note {
+  overflow: hidden;
+}
+
+.mcp-sign-in__hint {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  background: var(--lime-soft);
+}
+
+.mcp-sign-in__hint-text {
+  margin: 0;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  text-wrap: pretty;
+}
+
+.mcp-sign-in__link {
+  align-self: flex-start;
+  color: var(--lime-ink);
+  font: 500 12px/1.4 var(--font-ui);
+  text-decoration: none;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.mcp-sign-in__link:hover {
+  opacity: 0.75;
+}
+
+.mcp-sign-in__detail {
+  max-height: var(--sign-in-detail);
+  margin: 0;
+  padding: var(--space-4) var(--space-5);
+  overflow: auto;
+  border-radius: var(--radius-md);
+  background: var(--fail-soft);
+  color: var(--fail);
+  font: var(--font-mono-sm);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.mcp-sign-in__detail--command {
+  background: var(--raise2);
+  color: var(--ink);
+}
+
+.mcp-sign-in__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}

@@ -325,6 +325,33 @@ export const pt: typeof en = {
       'Termine no terminal e no navegador: escolha {{server}}, Authenticate e permita o acesso. Este card se atualiza sozinho.',
     WAITING_BROWSER:
       'Termine no navegador: permita o acesso ao {{name}}. Este card se atualiza sozinho.',
+    SIGN_IN_TITLE: 'Conectando o {{server}} ao {{agent}}',
+    SIGN_IN_SUBTITLE:
+      'O QAzinho faz cada passo no {{agent}} por você. Só o último é seu.',
+    SIGN_IN_DONE: '{{server}} conectado',
+    SIGN_IN_DONE_SUBTITLE: 'O {{agent}} já pode abrir seus arquivos do {{server}}.',
+    SIGN_IN_FAILED: '{{server}} não conectou',
+    STEP_CHECK: 'Procurar o {{server}} no {{agent}}',
+    STEP_ADD: 'Adicionar o {{server}} ao {{agent}}',
+    STEP_OPEN: 'Abrir o {{agent}} em segundo plano',
+    STEP_AUTHORIZE: 'Pedir acesso ao {{server}}',
+    STEP_BROWSER: 'Permitir o acesso no navegador',
+    STEP_TERMINAL: 'Concluir no Terminal',
+    HINT_BROWSER:
+      'Uma página do {{server}} abriu no seu navegador. Permita o acesso por lá; esta janela fecha sozinha.',
+    HINT_TERMINAL:
+      'No Terminal, escolha {{server}}, depois Authenticate, e permita o acesso no navegador.',
+    OPEN_PAGE_AGAIN: 'Abrir a página de novo ↗',
+    FAIL_UNSUPPORTED: 'O QAzinho não configura servidores MCP no {{agent}}.',
+    FAIL_ADD: 'O {{agent}} não adicionou o {{server}}.',
+    FAIL_SCREEN: 'O {{agent}} não chegou ao login do {{server}}.',
+    FAIL_REFUSED: 'O {{server}} não liberou o acesso ao {{agent}}.',
+    FAIL_TIMEOUT: 'O login demorou demais, e o QAzinho parou de esperar.',
+    FAIL_CLOSED: 'O {{agent}} fechou antes de terminar o login.',
+    FAIL_MANUAL: 'Rode isto num terminal, escolha {{server}} e depois Authenticate:',
+    TRY_AGAIN: 'Tentar de novo',
+    USE_TERMINAL: 'Fazer pelo Terminal',
+    DONE: 'Pronto',
     NO_AGENT_NOTE:
       'Instale o {{agent}} primeiro, ou escolha outro agente em Agentes: o MCP fica dentro dele.',
     UNSUPPORTED_NOTE:

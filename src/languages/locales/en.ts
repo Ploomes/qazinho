@@ -324,6 +324,33 @@ export const en = {
       'Finish in the terminal and the browser: pick {{server}}, choose Authenticate, allow access. This card updates on its own.',
     WAITING_BROWSER:
       'Finish in the browser: allow access to {{name}}. This card updates on its own.',
+    SIGN_IN_TITLE: 'Connecting {{server}} to {{agent}}',
+    SIGN_IN_SUBTITLE:
+      'QAzinho takes each step in {{agent}} for you. Only the last one is yours.',
+    SIGN_IN_DONE: '{{server}} is connected',
+    SIGN_IN_DONE_SUBTITLE: '{{agent}} can open your {{server}} files from now on.',
+    SIGN_IN_FAILED: '{{server}} is not connected',
+    STEP_CHECK: 'Look for {{server}} in {{agent}}',
+    STEP_ADD: 'Add {{server}} to {{agent}}',
+    STEP_OPEN: 'Open {{agent}} in the background',
+    STEP_AUTHORIZE: 'Ask {{server}} for access',
+    STEP_BROWSER: 'Allow access in your browser',
+    STEP_TERMINAL: 'Finish in Terminal',
+    HINT_BROWSER:
+      'A {{server}} page opened in your browser. Allow access there; this window closes on its own.',
+    HINT_TERMINAL:
+      'In Terminal, pick {{server}}, choose Authenticate and allow access in the browser.',
+    OPEN_PAGE_AGAIN: 'Open the page again ↗',
+    FAIL_UNSUPPORTED: 'QAzinho cannot set up MCP servers in {{agent}}.',
+    FAIL_ADD: '{{agent}} did not add {{server}}.',
+    FAIL_SCREEN: '{{agent}} did not get to the {{server}} sign-in.',
+    FAIL_REFUSED: '{{server}} did not let {{agent}} in.',
+    FAIL_TIMEOUT: 'The sign-in took too long, so QAzinho stopped waiting.',
+    FAIL_CLOSED: '{{agent}} closed before the sign-in finished.',
+    FAIL_MANUAL: 'Run this in a terminal, pick {{server}} and choose Authenticate:',
+    TRY_AGAIN: 'Try again',
+    USE_TERMINAL: 'Do it in Terminal',
+    DONE: 'Done',
     NO_AGENT_NOTE:
       'Install {{agent}} first, or pick another agent in Agents: the MCP lives in it.',
     UNSUPPORTED_NOTE:
