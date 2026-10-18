@@ -7,7 +7,7 @@ import {
   SETTINGS_TABS,
   THEMES,
 } from '@/modules/Settings/constants';
-import { INTEGRATIONS, MCP_SERVERS } from '@/modules/Setup';
+import { EXPERIMENTAL_AGENTS, INTEGRATIONS, MCP_SERVERS } from '@/modules/Setup';
 import { Mcp, Platform } from '@/services';
 import { useAppStore, useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
@@ -69,19 +69,23 @@ export const useSettingsViewModel = () => {
     })),
     agents: detected.map((item) => {
       const isDefault = item.name === agent;
+      const note = !item.isFound
+        ? t('SETTINGS.NOT_ON_PATH')
+        : item.isSignedIn === false
+          ? t('SETTINGS.NOT_SIGNED_IN')
+          : isDefault
+            ? t('SETTINGS.DEFAULT_AGENT')
+            : t('SETTINGS.MAKE_DEFAULT');
 
       return {
         name: item.name,
         path: item.path ?? t('TOOLS.NOT_FOUND_PATH'),
         isFound: item.isFound,
         isDefault,
-        note: !item.isFound
-          ? t('SETTINGS.NOT_ON_PATH')
-          : item.isSignedIn === false
-            ? t('SETTINGS.NOT_SIGNED_IN')
-            : isDefault
-              ? t('SETTINGS.DEFAULT_AGENT')
-              : t('SETTINGS.MAKE_DEFAULT'),
+        note:
+          item.isFound && EXPERIMENTAL_AGENTS.includes(item.id)
+            ? t('SETTINGS.EXPERIMENTAL', { note })
+            : note,
       };
     }),
     devices: [

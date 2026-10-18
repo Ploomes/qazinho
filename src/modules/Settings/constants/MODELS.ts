@@ -7,8 +7,4 @@ export const MODELS: Record<string, IModelOption[]> = {
     { id: 'opus', name: 'Opus', note: 'slower, more stubborn', isLocked: false },
     { id: 'fable', name: 'Fable', note: 'not on your key', isLocked: true },
   ],
-  Codex: [
-    { id: 'mini', name: 'Codex mini', note: 'fastest', isLocked: false },
-    { id: 'codex', name: 'Codex', note: 'the everyday one', isLocked: false },
-  ],
 };
