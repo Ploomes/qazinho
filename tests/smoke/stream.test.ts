@@ -51,11 +51,11 @@ describe('the live device stream', () => {
       response.end(PAGE);
     });
 
-    await new Promise<void>((ready) => site.listen(4323, '127.0.0.1', ready));
+    await new Promise<void>((ready) => site.listen(4335, '127.0.0.1', ready));
 
     const live = new LiveStream();
     const driver = new WebDriver({
-      url: 'http://127.0.0.1:4323/',
+      url: 'http://127.0.0.1:4335/',
       profileDir: await mkdtemp(join(tmpdir(), 'qazinho-stream-')),
     });
 
@@ -111,11 +111,11 @@ describe('the live device stream', () => {
       response.end(COUNTER);
     });
 
-    await new Promise<void>((ready) => site.listen(4324, '127.0.0.1', ready));
+    await new Promise<void>((ready) => site.listen(4336, '127.0.0.1', ready));
 
     const frames: Buffer[] = [];
     const driver = new WebDriver({
-      url: 'http://127.0.0.1:4324/',
+      url: 'http://127.0.0.1:4336/',
       profileDir: await mkdtemp(join(tmpdir(), 'qazinho-frame-')),
     });
 
@@ -157,11 +157,11 @@ describe('the live device stream', () => {
       response.end(COUNTER);
     });
 
-    await new Promise<void>((ready) => site.listen(4325, '127.0.0.1', ready));
+    await new Promise<void>((ready) => site.listen(4337, '127.0.0.1', ready));
 
     const folder = await mkdtemp(join(tmpdir(), 'qazinho-ratio-'));
     const driver = new WebDriver({
-      url: 'http://127.0.0.1:4325/',
+      url: 'http://127.0.0.1:4337/',
       profileDir: join(folder, 'profile'),
       pixelRatio: 2,
     });
@@ -195,11 +195,11 @@ describe('the live device stream', () => {
       response.end(COUNTER);
     });
 
-    await new Promise<void>((ready) => site.listen(4326, '127.0.0.1', ready));
+    await new Promise<void>((ready) => site.listen(4338, '127.0.0.1', ready));
 
     const frames: Buffer[] = [];
     const driver = new WebDriver({
-      url: 'http://127.0.0.1:4326/',
+      url: 'http://127.0.0.1:4338/',
       profileDir: await mkdtemp(join(tmpdir(), 'qazinho-focus-')),
       pixelRatio: 2,
     });
