@@ -112,34 +112,6 @@
   box-shadow: 0 0 0 1px var(--line);
 }
 
-.device-panel__screen {
-  position: relative;
-  flex: 1;
-  min-height: 0;
-}
-
-.device-panel__live {
-  position: absolute;
-  top: var(--space-3);
-  left: var(--space-3);
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--win);
-  color: var(--ink2);
-  font: var(--font-mono-xs);
-}
-
-.device-panel__live-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: var(--radius-pill);
-  background: var(--lime);
-  animation: gc-pulse 1.8s ease-in-out infinite;
-}
-
 .device-panel__off {
   display: flex;
   flex-direction: column;
