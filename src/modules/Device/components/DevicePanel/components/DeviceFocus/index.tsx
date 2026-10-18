@@ -54,7 +54,7 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
       >
         <div className="device-focus__top">
           <span className="device-focus__state">
-            <Intern mood={props.mood} size={26} />
+            <Intern mood={props.mood} size={26} isStill />
             {props.stateText}
           </span>
           <Button size="sm" variant="ghost" onClick={props.onClose}>

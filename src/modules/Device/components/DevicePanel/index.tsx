@@ -106,7 +106,7 @@ export const DevicePanel: React.FC = () => {
             <div className="device-panel__inner" style={innerStyle}>
               <header className="device-panel__header">
                 <span className="device-panel__state">
-                  <Intern mood={mood} size={22} />
+                  <Intern mood={mood} size={22} isStill />
                   {stateText}
                 </span>
                 <span className="device-panel__collapse">
