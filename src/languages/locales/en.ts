@@ -251,6 +251,7 @@ export const en = {
     AGENTS: 'Agents',
     DEVICES: 'Devices',
     INTEGRATIONS: 'Integrations',
+    MCPS: 'MCPs',
     APPEARANCE: 'Appearance',
     SHORTCUTS: 'Shortcuts',
     ABOUT: 'About',
@@ -263,6 +264,8 @@ export const en = {
     DEVICES_NOTE:
       'QAzinho never downloads an SDK, an emulator or Xcode. It finds what is already here and says what is missing.',
     IOS_OFF: 'iOS targets are off',
+    MCPS_NOTE:
+      'These live in your own agent, not in QAzinho: you sign in there, and QAzinho never sees the sign-in.',
     INTEGRATIONS_NOTE:
       'Nothing is sent anywhere on its own. You pick the run, the bug and the moment.',
     THEME_LIGHT: 'Light',
@@ -277,6 +280,27 @@ export const en = {
     ABOUT_NOTE:
       'Your QA assistant: plan tests, run them and keep your work organised, with your own AI agent. Nothing leaves this machine.',
     LICENCE: 'Licence',
+  },
+  MCP: {
+    FIGMA_TEXT:
+      'Lets the agent open your Figma prototypes and check the app against them.',
+    FIGMA_NEEDS:
+      "Figma's MCP server in your Claude Code, signed in to your Figma account. QAzinho adds it to Claude Code; you sign in once, in the terminal it opens.",
+    CHECKING: 'checking',
+    CONNECTED: 'connected',
+    NEEDS_SIGN_IN: 'needs sign-in',
+    NOT_ADDED: 'not added',
+    FAILED: 'not answering',
+    NO_AGENT: 'needs Claude Code',
+    ADD: 'Add and sign in',
+    SIGN_IN: 'Sign in',
+    REMOVE: 'Remove',
+    WORKING: 'Working…',
+    WAITING:
+      'Finish in the terminal and the browser: pick {{server}}, choose Authenticate, allow access. This card updates on its own.',
+    ONLY_CLAUDE:
+      'MCPs are set up in Claude Code for now; your default agent is {{agent}}.',
+    NO_CLAUDE: 'Install Claude Code first: the MCP lives in it.',
   },
   SETUP: {
     CONNECTED: 'connected',

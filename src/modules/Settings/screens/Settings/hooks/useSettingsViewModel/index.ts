@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ABOUT_LINKS,
@@ -6,9 +7,9 @@ import {
   SETTINGS_TABS,
   THEMES,
 } from '@/modules/Settings/constants';
-import { INTEGRATIONS } from '@/modules/Setup';
-import { Platform } from '@/services';
-import { useAppStore, useMachineStore, useSettingsStore } from '@/store';
+import { INTEGRATIONS, MCP_SERVERS } from '@/modules/Setup';
+import { Mcp, Platform } from '@/services';
+import { useAppStore, useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
 export const useSettingsViewModel = () => {
   const { t } = useTranslation();
@@ -26,7 +27,12 @@ export const useSettingsViewModel = () => {
   const selectTab = useSettingsStore((state) => state.selectTab);
   const selectAgent = useSettingsStore((state) => state.selectAgent);
   const selectLanguage = useSettingsStore((state) => state.selectLanguage);
+  const landMcpServers = useSetupStore((state) => state.landMcpServers);
   const isMac = Platform.isMac();
+
+  useEffect(() => {
+    if (tab === 'mcps') void Mcp.list().then(landMcpServers);
+  }, [tab, landMcpServers]);
 
   const iosTool = (props: {
     name: string;
@@ -100,6 +106,7 @@ export const useSettingsViewModel = () => {
       }),
     ],
     integrations: INTEGRATIONS,
+    mcpServers: MCP_SERVERS,
     themes: THEMES.map((item) => ({
       id: item.id,
       label: t(item.labelKey),

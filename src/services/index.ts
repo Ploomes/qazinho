@@ -3,6 +3,7 @@ export * from './Archive';
 export * from './Files';
 export * from './Integrations';
 export * from './Machine';
+export * from './Mcp';
 export * from './Platform';
 export * from './Run';
 export * from './Setup';

@@ -3,6 +3,7 @@ import type {
   IInstallResult,
   IIntegrationStatus,
   IMachineCheck,
+  IMcpServerStatus,
   InstallableId,
   IntegrationId,
   ISetupEvent,
@@ -14,6 +15,7 @@ export interface ISetupStore {
   isChecking: boolean;
   installs: Partial<Record<InstallableId, InstallState>>;
   integrations: IIntegrationStatus[];
+  mcpServers: IMcpServerStatus[] | null;
   startChecking: () => void;
   landCheck: (managers: IMachineCheck['managers']) => void;
   startInstall: (item: InstallableId) => void;
@@ -22,4 +24,5 @@ export interface ISetupStore {
   setIntegrations: (integrations: IIntegrationStatus[]) => void;
   landIntegration: (status: IIntegrationStatus) => void;
   dropIntegration: (id: IntegrationId) => void;
+  landMcpServers: (servers: IMcpServerStatus[]) => void;
 }

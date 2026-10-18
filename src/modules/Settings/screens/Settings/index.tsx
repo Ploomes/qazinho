@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { IntegrationCard } from '@/modules/Setup';
+import { IntegrationCard, McpCard } from '@/modules/Setup';
 import { Logo } from '@/shared/components/atoms';
 import { useSettingsViewModel } from './hooks';
 import './styles.css';
@@ -12,6 +12,7 @@ export const Settings: React.FC = () => {
     agents,
     devices,
     integrations,
+    mcpServers,
     themes,
     languages,
     keybinds,
@@ -151,6 +152,15 @@ export const Settings: React.FC = () => {
                 <IntegrationCard key={item.id} integration={item} />
               ))}
               <p className="settings__note">{t('SETTINGS.INTEGRATIONS_NOTE')}</p>
+            </div>
+          )}
+
+          {tab === 'mcps' && (
+            <div className="settings__stack">
+              {mcpServers.map((item) => (
+                <McpCard key={item.id} server={item} />
+              ))}
+              <p className="settings__note">{t('SETTINGS.MCPS_NOTE')}</p>
             </div>
           )}
 

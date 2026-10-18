@@ -19,7 +19,7 @@ describe('useSettingsViewModel', () => {
     const { result } = renderHook(() => useSettingsViewModel());
 
     expect(result.current.tab).toBe('agents');
-    expect(result.current.tabs).toHaveLength(6);
+    expect(result.current.tabs).toHaveLength(7);
   });
 
   it('names the default agent, offers the others, and flags one that is not on PATH', () => {

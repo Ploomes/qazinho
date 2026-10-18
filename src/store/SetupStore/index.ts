@@ -7,6 +7,7 @@ export const useSetupStore = create<ISetupStore>((set) => ({
   isChecking: false,
   installs: {},
   integrations: [],
+  mcpServers: null,
 
   startChecking: () => set({ isChecking: true }),
 
@@ -37,6 +38,8 @@ export const useSetupStore = create<ISetupStore>((set) => ({
     })),
 
   setIntegrations: (integrations) => set({ integrations }),
+
+  landMcpServers: (mcpServers) => set({ mcpServers }),
 
   landIntegration: (status) =>
     set((state) => ({

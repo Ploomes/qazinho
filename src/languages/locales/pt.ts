@@ -253,6 +253,7 @@ export const pt: typeof en = {
     AGENTS: 'Agentes',
     DEVICES: 'Dispositivos',
     INTEGRATIONS: 'Integrações',
+    MCPS: 'MCPs',
     APPEARANCE: 'Aparência',
     SHORTCUTS: 'Atalhos',
     ABOUT: 'Sobre',
@@ -265,6 +266,8 @@ export const pt: typeof en = {
     DEVICES_NOTE:
       'O QAzinho nunca baixa SDK, emulador ou Xcode. Ele encontra o que já está aqui e diz o que falta.',
     IOS_OFF: 'targets de iOS estão desligados',
+    MCPS_NOTE:
+      'Eles ficam no seu próprio agente, não no QAzinho: você faz o login lá, e o QAzinho nunca vê esse login.',
     INTEGRATIONS_NOTE: 'Nada é enviado sozinho. Você escolhe a run, o bug e o momento.',
     THEME_LIGHT: 'Claro',
     THEME_DARK: 'Escuro',
@@ -278,6 +281,27 @@ export const pt: typeof en = {
     ABOUT_NOTE:
       'Seu assistente de QA: planeje testes, execute e organize seu trabalho com o seu próprio agente de IA. Nada sai desta máquina.',
     LICENCE: 'Licença',
+  },
+  MCP: {
+    FIGMA_TEXT:
+      'Deixa o agente abrir seus protótipos do Figma e conferir o app contra eles.',
+    FIGMA_NEEDS:
+      'O MCP do Figma no seu Claude Code, com login na sua conta do Figma. O QAzinho adiciona ele ao Claude Code; você faz o login uma vez, no terminal que ele abre.',
+    CHECKING: 'verificando',
+    CONNECTED: 'conectado',
+    NEEDS_SIGN_IN: 'falta o login',
+    NOT_ADDED: 'não adicionado',
+    FAILED: 'sem resposta',
+    NO_AGENT: 'precisa do Claude Code',
+    ADD: 'Adicionar e fazer login',
+    SIGN_IN: 'Fazer login',
+    REMOVE: 'Remover',
+    WORKING: 'Trabalhando…',
+    WAITING:
+      'Termine no terminal e no navegador: escolha {{server}}, Authenticate e permita o acesso. Este card se atualiza sozinho.',
+    ONLY_CLAUDE:
+      'Por enquanto os MCPs são configurados no Claude Code; seu agente padrão é o {{agent}}.',
+    NO_CLAUDE: 'Instale o Claude Code primeiro: o MCP fica dentro dele.',
   },
   SETUP: {
     CONNECTED: 'conectado',

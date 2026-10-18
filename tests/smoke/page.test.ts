@@ -228,7 +228,14 @@ describe('the built page, with no bridge behind it', () => {
     await page.keyboard.press('Meta+,');
     await page.waitForTimeout(200);
 
-    for (const tab of ['devices', 'integrations', 'appearance', 'shortcuts', 'about']) {
+    for (const tab of [
+      'devices',
+      'integrations',
+      'mcps',
+      'appearance',
+      'shortcuts',
+      'about',
+    ]) {
       await page.locator('.settings__nav-item', { hasText: tab }).first().click();
       await page.waitForTimeout(150);
     }
