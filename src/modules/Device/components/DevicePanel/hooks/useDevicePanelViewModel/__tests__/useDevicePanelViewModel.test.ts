@@ -183,4 +183,48 @@ describe('useDevicePanelViewModel', () => {
       expect(result.current.hasScreen).toBe(false);
     });
   });
+
+  describe('focus', () => {
+    it('does NOT offer focus while there is no screen to show', () => {
+      expect(renderHook(() => useDevicePanelViewModel()).result.current.canFocus).toBe(
+        false,
+      );
+    });
+
+    it('puts the device in focus once there is a screen, and brings it back', () => {
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
+
+      const { result } = renderHook(() => useDevicePanelViewModel());
+
+      expect(result.current.canFocus).toBe(true);
+
+      act(() => {
+        result.current.onFocus();
+      });
+
+      expect(result.current).toMatchObject({ isFocused: true, canFocus: false });
+
+      act(() => {
+        result.current.onUnfocus();
+      });
+
+      expect(result.current.isFocused).toBe(false);
+    });
+
+    it('lets go of focus when the screen goes away', () => {
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
+
+      const { result, rerender } = renderHook(() => useDevicePanelViewModel());
+
+      act(() => {
+        result.current.onFocus();
+      });
+      act(() => {
+        useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+      });
+      rerender();
+
+      expect(result.current.isFocused).toBe(false);
+    });
+  });
 });

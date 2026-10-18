@@ -166,6 +166,12 @@ export const pt: typeof en = {
     HIDE: 'Esconder o device',
     NO_SHOT: 'o primeiro screenshot chega quando o primeiro passo terminar.',
     SHOT_ALT: 'o device depois do último passo',
+    FOCUS: 'Focar no device',
+    FOCUS_LEAVE: 'Voltar',
+    FOCUS_NOW: 'agora',
+    FOCUS_NEXT: 'próximo',
+    FOCUS_ALL_DONE: 'Todos os passos terminaram.',
+    FOCUSED: 'O device está em foco. Esc traz ele de volta para cá.',
   },
   RESOURCES: {
     TITLE: 'Recursos',

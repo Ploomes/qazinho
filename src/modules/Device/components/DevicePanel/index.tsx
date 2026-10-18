@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Button,
@@ -9,13 +10,21 @@ import {
   StatusPill,
 } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
-import { DeviceScreen } from './components';
+import { DeviceFocus, DeviceScreen } from './components';
 import { useDevicePanelViewModel } from './hooks';
 import './styles.css';
 
 export const DevicePanel: React.FC = () => {
   const {
     isOpen,
+    isFocused,
+    canFocus,
+    focusLabel,
+    focusedText,
+    frameLayoutId,
+    frameTransition,
+    onFocus,
+    onUnfocus,
     width,
     panelWidth,
     widthTransition,
@@ -100,6 +109,24 @@ export const DevicePanel: React.FC = () => {
                   {stateText}
                 </span>
                 <span className="device-panel__collapse">
+                  <AnimatePresence initial={false}>
+                    {canFocus && (
+                      <motion.span
+                        key="focus"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+                      >
+                        <IconButton
+                          glyph="⤢"
+                          label={focusLabel}
+                          size="sm"
+                          onClick={onFocus}
+                        />
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
                   <IconButton
                     glyph="→|"
                     label={t('DEVICE.HIDE')}
@@ -118,19 +145,31 @@ export const DevicePanel: React.FC = () => {
                   </div>
                 )}
 
-                {hasScreen && isPhone && (
-                  <div className="device-panel__phone">
+                {hasScreen && isFocused && (
+                  <p className="device-panel__focused">{focusedText}</p>
+                )}
+
+                {hasScreen && !isFocused && isPhone && (
+                  <motion.div
+                    layoutId={frameLayoutId}
+                    transition={frameTransition}
+                    className="device-panel__phone"
+                  >
                     <DeviceScreen
                       shot={shot}
                       stream={stream}
                       isLive={isLive}
                       elapsedLabel={elapsedLabel}
                     />
-                  </div>
+                  </motion.div>
                 )}
 
-                {hasScreen && !isPhone && (
-                  <div className="device-panel__browser">
+                {hasScreen && !isFocused && !isPhone && (
+                  <motion.div
+                    layoutId={frameLayoutId}
+                    transition={frameTransition}
+                    className="device-panel__browser"
+                  >
                     <div className="device-panel__chrome">
                       <span className="device-panel__dot" />
                       <span className="device-panel__dot" />
@@ -143,7 +182,7 @@ export const DevicePanel: React.FC = () => {
                       isLive={isLive}
                       elapsedLabel={elapsedLabel}
                     />
-                  </div>
+                  </motion.div>
                 )}
               </div>
 
@@ -177,6 +216,32 @@ export const DevicePanel: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {createPortal(
+        <AnimatePresence>
+          {isFocused && (
+            <DeviceFocus
+              key="focus"
+              isPhone={isPhone}
+              shot={shot}
+              stream={stream}
+              isLive={isLive}
+              elapsedLabel={elapsedLabel}
+              urlText={urlText}
+              stateText={stateText}
+              mood={mood}
+              steps={steps}
+              doingLabel={doingLabel}
+              hasControls={hasControls}
+              pauseLabel={pauseLabel}
+              onPause={onPause}
+              onStop={onStop}
+              onClose={onUnfocus}
+            />
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
     </motion.aside>
   );
 };

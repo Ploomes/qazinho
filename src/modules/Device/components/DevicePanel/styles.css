@@ -94,6 +94,15 @@
   white-space: nowrap;
 }
 
+.device-panel__focused {
+  max-width: 220px;
+  margin: 0;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+  text-align: center;
+  animation: gc-in var(--dur) var(--ease);
+}
+
 .device-panel__phone {
   aspect-ratio: 9 / 19.5;
   max-height: 100%;

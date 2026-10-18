@@ -1,0 +1,146 @@
+.device-focus {
+  position: fixed;
+  inset: var(--focus-top) 0 0 0;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--focus-side);
+  background: var(--bg);
+}
+
+.device-focus__stage {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  padding: var(--space-7);
+  container-type: size;
+}
+
+.device-focus__browser {
+  --focus-width: min(100cqw, (100cqh - var(--focus-chrome)) * var(--focus-ratio));
+
+  display: flex;
+  flex-direction: column;
+  width: var(--focus-width);
+  height: calc(var(--focus-width) / var(--focus-ratio) + var(--focus-chrome));
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
+}
+
+.device-focus__phone {
+  display: flex;
+  height: 100cqh;
+  aspect-ratio: 9 / 19.5;
+  max-width: 100cqw;
+  overflow: hidden;
+  border: 10px solid var(--raise2);
+  border-radius: 34px;
+  box-shadow:
+    0 0 0 1px var(--line),
+    var(--shadow-modal);
+}
+
+.device-focus__chrome {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-3);
+  height: var(--focus-chrome);
+  padding: 0 var(--space-4);
+  background: var(--raise2);
+}
+
+.device-focus__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: var(--radius-pill);
+  background: var(--line);
+}
+
+.device-focus__url {
+  flex: 1;
+  overflow: hidden;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.device-focus__side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-height: 0;
+  padding: var(--space-6);
+  overflow-y: auto;
+  border-left: 1px solid var(--line2);
+  background: var(--panel);
+}
+
+.device-focus__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.device-focus__state {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--ink2);
+  font: var(--font-mono-sm);
+}
+
+.device-focus__now {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.device-focus__now-text {
+  display: flex;
+  gap: var(--space-3);
+  margin: 0;
+  color: var(--ink);
+  font: var(--font-display-sm);
+  text-wrap: pretty;
+}
+
+.device-focus__now-number {
+  flex: none;
+  color: var(--lime-ink);
+  font: var(--font-mono-md);
+  line-height: inherit;
+}
+
+.device-focus__controls {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.device-focus__steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.device-focus__step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.device-focus__step--current {
+  background: var(--raise);
+  color: var(--ink);
+}

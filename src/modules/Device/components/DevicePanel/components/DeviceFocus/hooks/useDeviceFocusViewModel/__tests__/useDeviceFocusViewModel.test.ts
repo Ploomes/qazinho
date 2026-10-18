@@ -1,0 +1,72 @@
+// @vitest-environment jsdom
+import type { IDeviceFocusProps } from '@/modules/Device/components/DevicePanel/components/DeviceFocus/types';
+import type { IDeviceStep } from '@/modules/Device/types';
+import { renderHook } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { useDeviceFocusViewModel } from '@/modules/Device/components/DevicePanel/components/DeviceFocus/hooks/useDeviceFocusViewModel';
+
+const step = (number: number, verdict: IDeviceStep['verdict']): IDeviceStep => ({
+  number,
+  action: `Step ${String(number)}`,
+  verdict,
+});
+
+const focus = (props: Partial<IDeviceFocusProps>) =>
+  renderHook(() =>
+    useDeviceFocusViewModel({
+      isPhone: false,
+      shot: null,
+      stream: null,
+      isLive: true,
+      elapsedLabel: '',
+      urlText: '',
+      stateText: '',
+      mood: 'running',
+      steps: [],
+      doingLabel: '',
+      hasControls: true,
+      pauseLabel: 'Pause',
+      onPause: vi.fn(),
+      onStop: vi.fn(),
+      onClose: vi.fn(),
+      ...props,
+    }),
+  ).result.current;
+
+describe('useDeviceFocusViewModel', () => {
+  it('puts the step the agent is on up front, and marks it in the list', () => {
+    const view = focus({
+      steps: [step(1, 'passed'), step(2, 'running'), step(3, 'pending')],
+    });
+
+    expect(view).toMatchObject({ nowEyebrow: 'now', now: 'Step 2', nowNumber: 2 });
+    expect(view.rows.map(({ isCurrent }) => isCurrent)).toEqual([false, true, false]);
+  });
+
+  it('shows the next step between two, while nothing is running', () => {
+    expect(focus({ steps: [step(1, 'passed'), step(2, 'pending')] })).toMatchObject({
+      nowEyebrow: 'next',
+      now: 'Step 2',
+    });
+  });
+
+  it('says every step is done once none is left', () => {
+    expect(focus({ steps: [step(1, 'passed'), step(2, 'failed')] })).toMatchObject({
+      now: 'Every step is done.',
+      nowNumber: null,
+    });
+  });
+
+  it('leaves on Escape, and on no other key', () => {
+    const onClose = vi.fn();
+
+    focus({ onClose });
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+
+    expect(onClose).not.toHaveBeenCalled();
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+    expect(onClose).toHaveBeenCalledOnce();
+  });
+});

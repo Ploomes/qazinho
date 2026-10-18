@@ -26,6 +26,7 @@ export const useDevicePanelViewModel = () => {
     onStop,
   } = useRunControls();
   const [isResizing, setResizing] = useState(false);
+  const [isFocusedNow, setFocused] = useState(false);
 
   const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
@@ -41,8 +42,23 @@ export const useDevicePanelViewModel = () => {
       (live?.doingIndex === index ? 'running' : 'pending'),
   }));
 
+  const hasScreen = isRunLive || (live?.shot ?? null) !== null;
+  const isFocused = isFocusedNow && hasScreen;
+
   return {
     isOpen,
+    isFocused,
+    canFocus: hasScreen && !isFocused,
+    focusLabel: t('DEVICE.FOCUS'),
+    focusedText: t('DEVICE.FOCUSED'),
+    frameLayoutId: DEVICE.frameLayoutId,
+    frameTransition: { duration: MOTION.durationSlow, ease: MOTION.ease },
+    onFocus: () => {
+      setFocused(true);
+    },
+    onUnfocus: () => {
+      setFocused(false);
+    },
     width,
     panelWidth: isOpen ? width : DEVICE.railWidth,
     widthTransition: isResizing
@@ -50,7 +66,7 @@ export const useDevicePanelViewModel = () => {
       : { duration: MOTION.durationSlow, ease: MOTION.ease },
     innerStyle: { '--device-width': `${String(width)}px` } as CSSProperties,
     isPhone,
-    hasScreen: isRunLive || (live?.shot ?? null) !== null,
+    hasScreen,
     hasControls: isRunLive,
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
     stateText: t(DEVICE_STATE_KEY[state] as never),

@@ -6,4 +6,8 @@ export const DEVICE = {
   handleWidth: 5,
   headerHeight: 52,
   phoneAspect: '9 / 19.5',
+  frameLayoutId: 'device-frame',
+  focusSide: 340,
+  focusChrome: 36,
+  focusRatio: 1280 / 800,
 } as const;
