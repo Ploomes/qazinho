@@ -12,7 +12,7 @@ export const SessionTip: React.FC<ISessionTipProps> = (props) => (
           <span className="session-tip__value">{row.value}</span>
         </span>
         <span className="session-tip__bar">
-          <span className="session-tip__fill" style={{ width: row.fillWidth }} />
+          <span className={row.fillClassName} style={{ width: row.fillWidth }} />
         </span>
         {row.detail !== null && <span className="session-tip__detail">{row.detail}</span>}
       </span>

@@ -19,7 +19,7 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
     ramLabel,
     processLabel,
     agentLabel,
-    sessionLeft,
+    sessionUsed,
     sessionLabel,
     sessionTip,
     onToggleResources,
@@ -53,7 +53,7 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
             <span>{processLabel}</span>
           </button>
 
-          {sessionLeft !== null && (
+          {sessionUsed !== null && (
             <Tooltip
               content={
                 <SessionTip
@@ -64,7 +64,7 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
               }
             >
               <span className="titlebar__session" tabIndex={0}>
-                <Gauge value={sessionLeft} label={sessionLabel ?? ''} />
+                <Gauge value={sessionUsed} fills="used" label={sessionLabel ?? ''} />
                 <span>{sessionLabel}</span>
               </span>
             </Tooltip>

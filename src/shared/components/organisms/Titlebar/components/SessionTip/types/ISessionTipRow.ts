@@ -4,4 +4,5 @@ export interface ISessionTipRow {
   value: string;
   detail: string | null;
   fillWidth: string;
+  fillClassName: string;
 }

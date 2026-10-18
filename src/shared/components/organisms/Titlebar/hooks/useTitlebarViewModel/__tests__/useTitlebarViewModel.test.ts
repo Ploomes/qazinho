@@ -73,7 +73,7 @@ describe('useTitlebarViewModel', () => {
   });
 
   describe('sessionTip', () => {
-    it('spells out what is left of the session, when it resets, and the week', () => {
+    it('spells out how much of the session and of the week is used, the way agents show it', () => {
       useMachineStore.setState({
         usage: {
           fiveHourUsed: 0.44,
@@ -90,17 +90,40 @@ describe('useTitlebarViewModel', () => {
         {
           id: 'session',
           label: '5-hour session',
-          value: '56% left',
+          value: '44% used',
           detail: null,
-          fillWidth: '56%',
+          fillWidth: '44%',
+          fillClassName: 'session-tip__fill session-tip__fill--easy',
         },
         {
           id: 'week',
           label: 'This week',
-          value: '82% left',
+          value: '18% used',
           detail: null,
-          fillWidth: '82%',
+          fillWidth: '18%',
+          fillClassName: 'session-tip__fill session-tip__fill--easy',
         },
+      ]);
+    });
+
+    it('warns on a bar as it nears the limit, not only on the ring', () => {
+      useMachineStore.setState({
+        usage: {
+          fiveHourUsed: 0.95,
+          sevenDayUsed: 0.8,
+          resetsAt: 0,
+          contextTokens: 0,
+          contextWindow: 0,
+        },
+      });
+
+      const { result } = renderHook(() => useTitlebarViewModel());
+
+      expect(
+        result.current.sessionTip.rows.map(({ fillClassName }) => fillClassName),
+      ).toEqual([
+        'session-tip__fill session-tip__fill--empty',
+        'session-tip__fill session-tip__fill--tight',
       ]);
     });
 
@@ -134,7 +157,7 @@ describe('useTitlebarViewModel', () => {
       });
 
       expect(renderHook(() => useTitlebarViewModel()).result.current.sessionLabel).toBe(
-        '60% session',
+        '40% of session used',
       );
     });
   });

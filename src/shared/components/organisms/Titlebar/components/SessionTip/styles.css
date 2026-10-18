@@ -55,7 +55,18 @@
   display: block;
   height: 100%;
   border-radius: inherit;
+}
+
+.session-tip__fill--easy {
   background: var(--pass);
+}
+
+.session-tip__fill--tight {
+  background: var(--lime);
+}
+
+.session-tip__fill--empty {
+  background: var(--fail);
 }
 
 .session-tip__note {

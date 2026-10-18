@@ -2,6 +2,7 @@ import type { ITitlebarProps } from '@/shared/components/organisms/Titlebar/type
 import { useTranslation } from 'react-i18next';
 import { useModelInUse } from '@/modules/Settings';
 import { Platform } from '@/services';
+import { gaugeTone } from '@/shared/components/atoms/Gauge/library';
 import { formatResetsAt } from '@/shared/components/organisms/Titlebar/library';
 import { useAppStore, useMachineStore } from '@/store';
 
@@ -20,10 +21,9 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
   const ramGb = resources.ramMb / 1024;
   const processCount = resources.processes.length;
 
-  const sessionLeft = usage?.fiveHourUsed == null ? null : 1 - usage.fiveHourUsed;
-  const sessionPercent = Math.round((sessionLeft ?? 0) * 100);
-  const weekPercent =
-    usage?.sevenDayUsed == null ? null : 100 - Math.round(usage.sevenDayUsed * 100);
+  const sessionUsed = usage?.fiveHourUsed ?? null;
+  const sessionPercent = Math.round((sessionUsed ?? 0) * 100);
+  const weekUsed = usage?.sevenDayUsed ?? null;
 
   return {
     isBare,
@@ -47,12 +47,12 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
         ? t('TITLEBAR.PROCESSES_ONE')
         : t('TITLEBAR.PROCESSES_OTHER', { count: processCount }),
     agentLabel: t('TITLEBAR.AGENT', { agent, model: modelName }),
-    sessionLeft,
+    sessionUsed,
     sessionLabel:
-      sessionLeft === null
+      sessionUsed === null
         ? null
         : (usage?.resetsAt ?? 0) > 0
-          ? t('TITLEBAR.SESSION_LEFT', {
+          ? t('TITLEBAR.SESSION_USED', {
               percent: sessionPercent,
               resets: formatResetsAt({
                 resetsAt: usage?.resetsAt ?? 0,
@@ -66,7 +66,7 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
         {
           id: 'session',
           label: t('TITLEBAR.TIP_SESSION'),
-          value: t('TITLEBAR.TIP_LEFT', { percent: sessionPercent }),
+          value: t('TITLEBAR.TIP_USED', { percent: sessionPercent }),
           detail:
             (usage?.resetsAt ?? 0) > 0
               ? t('TITLEBAR.TIP_RESETS', {
@@ -77,16 +77,18 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
                 })
               : null,
           fillWidth: `${String(sessionPercent)}%`,
+          fillClassName: `session-tip__fill session-tip__fill--${gaugeTone(1 - (sessionUsed ?? 0))}`,
         },
-        ...(weekPercent === null
+        ...(weekUsed === null
           ? []
           : [
               {
                 id: 'week',
                 label: t('TITLEBAR.TIP_WEEK'),
-                value: t('TITLEBAR.TIP_LEFT', { percent: weekPercent }),
+                value: t('TITLEBAR.TIP_USED', { percent: Math.round(weekUsed * 100) }),
                 detail: null,
-                fillWidth: `${String(weekPercent)}%`,
+                fillWidth: `${String(Math.round(weekUsed * 100))}%`,
+                fillClassName: `session-tip__fill session-tip__fill--${gaugeTone(1 - weekUsed)}`,
               },
             ]),
       ],
