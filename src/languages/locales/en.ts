@@ -43,6 +43,10 @@ export const en = {
     TITLE: 'No projects yet.',
     BODY: 'A project is one environment: one URL, or one build. Staging and production are separate projects.',
     ACTION: 'New project',
+    PICK_TITLE: 'Pick a workspace, or start a new one.',
+    PICK_BODY:
+      'A workspace is one front of testing in {{project}}: its own chat with the agent, its own plan, runs and device.',
+    PICK_ACTION: 'New workspace',
   },
   WORKSPACE: {
     RUN_PLAN: 'Run plan',

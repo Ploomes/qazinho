@@ -1,19 +1,18 @@
-import { useTranslation } from 'react-i18next';
 import { Button, Intern } from '@/shared/components/atoms';
 import { useWelcomeViewModel } from './hooks';
 import './styles.css';
 
+/** The empty middle of the app: the way to a first project, or to a workspace once a project exists. */
 export const Welcome: React.FC = () => {
-  const { onNewProject } = useWelcomeViewModel();
-  const { t } = useTranslation();
+  const { mood, title, body, action, onAction } = useWelcomeViewModel();
 
   return (
     <section className="welcome">
-      <Intern mood="sleeping" size={112} />
-      <h1 className="welcome__title">{t('WELCOME.TITLE')}</h1>
-      <p className="welcome__body">{t('WELCOME.BODY')}</p>
-      <Button variant="primary" onClick={onNewProject}>
-        {t('WELCOME.ACTION')}
+      <Intern mood={mood} size={112} />
+      <h1 className="welcome__title">{title}</h1>
+      <p className="welcome__body">{body}</p>
+      <Button variant="primary" onClick={onAction}>
+        {action}
       </Button>
     </section>
   );

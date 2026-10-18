@@ -45,6 +45,10 @@ export const pt: typeof en = {
     TITLE: 'Nenhum projeto ainda.',
     BODY: 'Um projeto é um ambiente: uma URL, ou um build. Staging e produção são projetos separados.',
     ACTION: 'Novo projeto',
+    PICK_TITLE: 'Escolha um workspace ou comece um novo.',
+    PICK_BODY:
+      'Um workspace é uma frente de teste em {{project}}: seu próprio chat com o agente, seu plano, suas runs e seu dispositivo.',
+    PICK_ACTION: 'Novo workspace',
   },
   WORKSPACE: {
     RUN_PLAN: 'Rodar plano',
