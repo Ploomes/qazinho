@@ -20,3 +20,39 @@
 .chip__caret {
   color: var(--ink3);
 }
+
+button.chip {
+  border: var(--edge-width) solid var(--edge);
+  background: var(--raise2);
+  color: var(--ink);
+  box-shadow: var(--sticker-rest);
+  transition:
+    translate var(--dur-fast) var(--ease),
+    rotate var(--dur-fast) var(--ease),
+    scale var(--dur-press) var(--ease),
+    box-shadow var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+button.chip:hover {
+  box-shadow: var(--sticker-lift);
+  filter: none;
+}
+
+button.chip:active {
+  box-shadow: var(--sticker-press);
+  transform: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  button.chip:hover {
+    translate: 0 -2px;
+    rotate: var(--tilt-xs);
+  }
+
+  button.chip:active {
+    translate: 0 1px;
+    rotate: 0deg;
+    scale: 0.97;
+  }
+}

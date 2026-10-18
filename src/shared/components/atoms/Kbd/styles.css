@@ -3,7 +3,8 @@
   align-items: center;
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--line);
-  border-radius: 7px;
+  border-bottom-width: var(--edge-width-lg);
+  border-radius: var(--radius-sm);
   background: var(--raise2);
   color: var(--ink2);
   font: var(--font-mono-sm);

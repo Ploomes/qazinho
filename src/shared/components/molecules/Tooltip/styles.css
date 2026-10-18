@@ -10,7 +10,7 @@
   z-index: 35;
   display: block;
   padding: var(--space-4) 14px;
-  border: 1px solid var(--line);
+  border: var(--edge-width) solid var(--edge);
   border-radius: var(--radius-md);
   background: var(--win);
   box-shadow: var(--sticker-lift);

@@ -4,7 +4,7 @@
   justify-content: center;
   gap: var(--space-3);
   border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   background: var(--raise);
   color: var(--ink);
   font: var(--font-ui-md);
@@ -20,12 +20,56 @@
   font: var(--font-ui-sm);
 }
 
+.button--secondary:hover:not(:disabled) {
+  border-color: var(--ink3);
+  background: var(--raise2);
+  filter: none;
+}
+
 .button--primary {
-  border-color: transparent;
-  border-radius: 9px;
+  border: var(--edge-width) solid var(--edge);
   background: var(--lime);
   color: var(--on-lime);
   font: var(--font-ui-strong);
+  box-shadow: var(--sticker-rest);
+  transition:
+    translate var(--dur-fast) var(--ease),
+    rotate var(--dur-fast) var(--ease),
+    scale var(--dur-press) var(--ease),
+    box-shadow var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.button--primary.button--md {
+  padding: 7px calc(var(--space-5) + var(--space-1));
+}
+
+.button--primary.button--sm {
+  padding: 6px var(--space-4);
+}
+
+.button--primary:hover:not(:disabled) {
+  box-shadow: var(--sticker-lift);
+  filter: none;
+}
+
+.button--primary:active:not(:disabled) {
+  box-shadow: var(--sticker-press);
+  transform: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .button--primary:hover:not(:disabled) {
+    translate: 0 -2px;
+    rotate: var(--tilt-xs);
+  }
+
+  .button--primary:active:not(:disabled) {
+    translate: 0 1px;
+    rotate: 0deg;
+    scale: 0.98;
+  }
 }
 
 .button--ghost {
@@ -34,10 +78,21 @@
   color: var(--ink2);
 }
 
+.button--ghost:hover:not(:disabled) {
+  background: var(--sel);
+  color: var(--ink);
+  filter: none;
+}
+
 .button--danger {
   border-color: var(--fail);
   background: transparent;
   color: var(--fail);
+}
+
+.button--danger:hover:not(:disabled) {
+  background: var(--fail-soft);
+  filter: none;
 }
 
 .button--danger-quiet {
@@ -54,4 +109,5 @@
   border-color: transparent;
   background: var(--line);
   color: var(--ink3);
+  box-shadow: none;
 }

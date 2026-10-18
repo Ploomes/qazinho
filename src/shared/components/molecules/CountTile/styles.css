@@ -5,11 +5,14 @@
   gap: 5px;
   min-width: 74px;
   padding: 10px var(--space-5);
-  border-radius: var(--radius-md);
+  border: var(--edge-width) solid var(--edge);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--sticker-rest);
 }
 
 .count-tile__count {
   font: var(--font-display-md);
+  letter-spacing: var(--display-tracking);
 }
 
 .count-tile__label {
@@ -18,21 +21,21 @@
 }
 
 .count-tile--passed {
-  background: var(--pass-soft);
+  background: color-mix(in srgb, var(--pass) 16%, var(--raise));
   color: var(--pass);
 }
 
 .count-tile--failed {
-  background: var(--fail-soft);
+  background: color-mix(in srgb, var(--fail) 16%, var(--raise));
   color: var(--fail);
 }
 
 .count-tile--blocked {
-  background: var(--block-soft);
+  background: color-mix(in srgb, var(--block) 16%, var(--raise));
   color: var(--block);
 }
 
 .count-tile--skipped {
-  background: var(--skip-soft);
+  background: color-mix(in srgb, var(--skip) 16%, var(--raise));
   color: var(--skip);
 }

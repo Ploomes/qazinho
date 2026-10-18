@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: center;
   border: 1px solid var(--line);
-  border-radius: 7px;
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--ink2);
   font: var(--font-mono-md);

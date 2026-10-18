@@ -3,11 +3,12 @@
   display: block;
   box-sizing: border-box;
   width: 100%;
-  height: calc(var(--speech-text-height) + 2 * var(--space-6) + 2px);
+  height: calc(var(--speech-text-height) + 2 * var(--space-6) + 2 * var(--edge-width-lg));
   padding: var(--space-6) var(--space-7);
-  border: 1px solid var(--line);
+  border: var(--edge-width-lg) solid var(--edge);
   border-radius: var(--radius-2xl);
   background: var(--raise);
+  box-shadow: var(--sticker-rest);
   color: var(--ink);
   font: 500 17px/1.5 var(--font-ui);
   text-align: left;
@@ -16,14 +17,20 @@
   animation: gc-in var(--dur) var(--ease);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .speech-bubble {
+    animation: gc-stick 0.42s var(--ease) both;
+  }
+}
+
 .speech-bubble::before {
   position: absolute;
   top: 26px;
-  left: -8px;
-  width: 14px;
-  height: 14px;
-  border-bottom: 1px solid var(--line);
-  border-left: 1px solid var(--line);
+  left: -10px;
+  width: 16px;
+  height: 16px;
+  border-bottom: var(--edge-width-lg) solid var(--edge);
+  border-left: var(--edge-width-lg) solid var(--edge);
   background: var(--raise);
   transform: rotate(45deg);
   content: '';
