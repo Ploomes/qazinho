@@ -138,7 +138,11 @@ describe('Codex in the chat', () => {
 
     expect(first.isError).toBe(false);
     expect(first.sessionId).toBe('thread-1');
-    expect(harness.readChat(first.text)).toEqual({ reply: 'Hi, QA here', plan: null });
+    expect(harness.readChat(first.text)).toEqual({
+      reply: 'Hi, QA here',
+      questions: [],
+      plan: null,
+    });
     expect(first.usage?.contextTokens).toBe(1500);
 
     await ask(first.sessionId);
