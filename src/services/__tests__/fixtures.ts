@@ -53,7 +53,10 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     connectIntegration: () => Promise.resolve({ isConnected: false, error: 'offline' }),
     disconnectIntegration: () => Promise.resolve(),
     listMcpServers: () => Promise.resolve([{ id: 'figma', state: 'missing' }]),
-    connectMcpServer: () => Promise.resolve({ ok: true, via: 'terminal' }),
+    connectMcpServer: (signIn) =>
+      Promise.resolve({ target: signIn.target, steps: ['check'], phase: 'connected' }),
+    cancelMcpSignIn: () => Promise.resolve(),
+    onMcpSignIn: () => () => undefined,
     removeMcpServer: () => Promise.resolve({ ok: true }),
   };
 }

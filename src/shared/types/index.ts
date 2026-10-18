@@ -43,7 +43,6 @@ export type * from './McpServerState';
 export type * from './McpSignInFailure';
 export type * from './McpSignInPhase';
 export type * from './McpSignInProgress';
-export type * from './McpSignInResult';
 export type * from './McpSignInStep';
 export type * from './PickKind';
 export type * from './Platform';

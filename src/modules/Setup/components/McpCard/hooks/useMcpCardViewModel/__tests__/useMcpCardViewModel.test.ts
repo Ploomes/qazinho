@@ -1,40 +1,67 @@
 // @vitest-environment jsdom
 import type {
   IMcpServerStatus,
+  IMcpSignIn,
   McpActionResult,
   McpServerState,
-  McpSignInResult,
+  McpSignInPhase,
+  McpSignInProgress,
 } from '@/shared/types';
-import { act, renderHook, waitFor } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { act, renderHook } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMcpCardViewModel } from '@/modules/Setup/components/McpCard/hooks/useMcpCardViewModel';
 import { MCP_SERVERS } from '@/modules/Setup/constants';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
 const FIGMA = MCP_SERVERS[0]!;
+const IN_CODEX = { id: 'figma' as const, agentId: 'codex' };
+const STEPS = ['check', 'add', 'browser'] as const;
 
-/** An agent whose Figma server moves through `states`, one per list call, the last one staying. */
-function agentWith(props: { states: McpServerState[]; connect?: McpSignInResult }) {
+/**
+ * An agent whose Figma server moves through `states`, one per list call, the last one staying.
+ * A sign-in stays open until the test reports its steps and ends it, the way main does.
+ */
+function agentWith(props: { states: McpServerState[] }) {
   const queue = [...props.states];
-  const listMcpServers = vi.fn((_: string) =>
-    Promise.resolve<IMcpServerStatus[]>([
-      { id: 'figma', state: queue.length > 1 ? queue.shift()! : queue[0]! },
-    ]),
-  );
-  const connectMcpServer = vi.fn(() =>
-    Promise.resolve<McpSignInResult>(props.connect ?? { ok: true, via: 'terminal' }),
-  );
-  const removeMcpServer = vi.fn(() => Promise.resolve<McpActionResult>({ ok: true }));
+  const listeners = new Set<(progress: McpSignInProgress) => void>();
+  const endings: ((progress: McpSignInProgress) => void)[] = [];
+  const api = {
+    listMcpServers: vi.fn((_: string) =>
+      Promise.resolve<IMcpServerStatus[]>([
+        { id: 'figma', state: queue.length > 1 ? queue.shift()! : queue[0]! },
+      ]),
+    ),
+    connectMcpServer: vi.fn(
+      (_: IMcpSignIn) =>
+        new Promise<McpSignInProgress>((end) => {
+          endings.push(end);
+        }),
+    ),
+    cancelMcpSignIn: vi.fn((_: unknown) => Promise.resolve()),
+    onMcpSignIn: vi.fn((listener: (progress: McpSignInProgress) => void) => {
+      listeners.add(listener);
 
-  window.qazinho = {
-    ...fakeQazinhoApi('darwin'),
-    listMcpServers,
-    connectMcpServer,
-    removeMcpServer,
+      return () => {
+        listeners.delete(listener);
+      };
+    }),
+    removeMcpServer: vi.fn((_: unknown) =>
+      Promise.resolve<McpActionResult>({ ok: true }),
+    ),
   };
 
-  return { listMcpServers, connectMcpServer, removeMcpServer };
+  window.qazinho = { ...fakeQazinhoApi('darwin'), ...api };
+
+  return {
+    ...api,
+    report: (progress: McpSignInProgress) => {
+      for (const listener of listeners) listener(progress);
+    },
+    end: (phase: McpSignInPhase) => {
+      endings.shift()?.({ target: IN_CODEX, steps: [...STEPS], ...phase });
+    },
+  };
 }
 
 const showing = (state: McpServerState | null) => {
@@ -69,10 +96,6 @@ beforeEach(() => {
       },
     ],
   });
-});
-
-afterEach(() => {
-  vi.useRealTimers();
 });
 
 describe('useMcpCardViewModel', () => {
@@ -129,65 +152,34 @@ describe('useMcpCardViewModel', () => {
   });
 
   describe('onAction', () => {
-    it('connects through the agent the QA picked, and waits where it signs in', async () => {
-      const agent = agentWith({
-        states: ['needs-auth'],
-        connect: { ok: true, via: 'browser' },
-      });
+    it('signs in through the agent the QA picked, out of sight, showing the first step at once', async () => {
+      const agent = agentWith({ states: ['missing'] });
       const { result } = showing('missing');
 
-      await act(() => result.current.onAction());
+      await act(async () => {
+        void result.current.onAction();
+      });
 
       expect(agent.connectMcpServer).toHaveBeenCalledWith({
-        id: 'figma',
-        agentId: 'codex',
+        target: IN_CODEX,
+        inTerminal: false,
       });
-      expect(agent.listMcpServers).toHaveBeenCalledWith('codex');
-      expect(result.current.waiting).toContain('Finish in the browser');
+      expect(result.current.signIn).toMatchObject({ phase: 'working', at: 'check' });
+      expect(result.current).toMatchObject({ isBusy: true, action: 'Working…' });
     });
 
-    it('waits in the terminal when the agent signs in there', async () => {
-      agentWith({ states: ['needs-auth'], connect: { ok: true, via: 'terminal' } });
-      useSettingsStore.setState({ agent: 'Claude Code' });
-
-      const { result } = showing('needs-auth');
-
-      await act(() => result.current.onAction());
-
-      expect(result.current.waiting).toContain('pick figma');
-    });
-
-    it('does NOT wait when the sign-in did not start, and says why', async () => {
-      agentWith({
-        states: ['missing'],
-        connect: { ok: false, error: 'codex: no such command' },
-      });
+    it('does NOT start a second sign-in while one is open', async () => {
+      const agent = agentWith({ states: ['missing'] });
       const { result } = showing('missing');
 
-      await act(() => result.current.onAction());
-
-      expect(result.current.error).toBe('codex: no such command');
-      expect(result.current.waiting).toBeNull();
-    });
-
-    it('keeps checking while the QA signs in, and stops once it is connected', async () => {
-      vi.useFakeTimers({ shouldAdvanceTime: true });
-
-      const agent = agentWith({ states: ['needs-auth', 'needs-auth', 'connected'] });
-      const { result } = showing('needs-auth');
-
-      await act(() => result.current.onAction());
-      await act(() => vi.advanceTimersByTimeAsync(4_000));
-      await waitFor(() => {
-        expect(result.current.statusLabel).toBe('connected');
+      await act(async () => {
+        void result.current.onAction();
+      });
+      await act(async () => {
+        void result.current.onAction();
       });
 
-      const calls = agent.listMcpServers.mock.calls.length;
-
-      await act(() => vi.advanceTimersByTimeAsync(12_000));
-
-      expect(agent.listMcpServers.mock.calls.length).toBe(calls);
-      expect(result.current.waiting).toBeNull();
+      expect(agent.connectMcpServer).toHaveBeenCalledTimes(1);
     });
 
     it('removes a connected server', async () => {
@@ -196,10 +188,7 @@ describe('useMcpCardViewModel', () => {
 
       await act(() => result.current.onAction());
 
-      expect(agent.removeMcpServer).toHaveBeenCalledWith({
-        id: 'figma',
-        agentId: 'codex',
-      });
+      expect(agent.removeMcpServer).toHaveBeenCalledWith(IN_CODEX);
       expect(result.current.statusLabel).toBe('not added');
     });
 
@@ -210,6 +199,138 @@ describe('useMcpCardViewModel', () => {
       await act(() => result.current.onAction());
 
       expect(agent.connectMcpServer).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('the sign-in under way', () => {
+    it("follows the steps main reports for this server, and not another agent's", async () => {
+      const agent = agentWith({ states: ['missing'] });
+      const { result } = showing('missing');
+
+      await act(async () => {
+        void result.current.onAction();
+      });
+      act(() => {
+        agent.report({
+          target: IN_CODEX,
+          steps: [...STEPS],
+          phase: 'working',
+          at: 'browser',
+          url: 'https://www.figma.com/oauth',
+        });
+      });
+
+      expect(result.current.signIn).toMatchObject({ at: 'browser', steps: STEPS });
+
+      act(() => {
+        agent.report({
+          target: { id: 'figma', agentId: 'claude-code' },
+          steps: ['check'],
+          phase: 'working',
+          at: 'check',
+          url: null,
+        });
+      });
+
+      expect(result.current.signIn).toMatchObject({ at: 'browser' });
+    });
+
+    it('shows how it ended, and reads the list again', async () => {
+      const agent = agentWith({ states: ['connected'] });
+      const { result } = showing('missing');
+
+      await act(async () => {
+        void result.current.onAction();
+      });
+      await act(async () => {
+        agent.end({ phase: 'connected' });
+      });
+
+      expect(result.current.signIn).toMatchObject({ phase: 'connected' });
+      expect(result.current.statusLabel).toBe('connected');
+      expect(result.current.isBusy).toBe(true);
+
+      act(() => {
+        result.current.onCloseSignIn();
+      });
+
+      expect(result.current).toMatchObject({
+        signIn: null,
+        isBusy: false,
+        action: 'Remove',
+      });
+    });
+
+    it('cancels: the popup closes at once and main is told to stop', async () => {
+      const agent = agentWith({ states: ['missing'] });
+      const { result } = showing('missing');
+
+      await act(async () => {
+        void result.current.onAction();
+      });
+      act(() => {
+        result.current.onCancelSignIn();
+      });
+
+      expect(result.current.signIn).toBeNull();
+      expect(agent.cancelMcpSignIn).toHaveBeenCalledWith(IN_CODEX);
+
+      await act(async () => {
+        agent.end({ phase: 'cancelled' });
+      });
+
+      expect(result.current.signIn).toBeNull();
+    });
+
+    it('does NOT reopen when a late step arrives after the popup closed', async () => {
+      const agent = agentWith({ states: ['missing'] });
+      const { result } = showing('missing');
+
+      await act(async () => {
+        void result.current.onAction();
+      });
+      act(() => {
+        result.current.onCloseSignIn();
+        agent.report({
+          target: IN_CODEX,
+          steps: [...STEPS],
+          phase: 'working',
+          at: 'add',
+          url: null,
+        });
+      });
+
+      expect(result.current.signIn).toBeNull();
+    });
+
+    it('tries again in Terminal after a failure, when the QA asks', async () => {
+      const agent = agentWith({ states: ['missing'] });
+      const { result } = showing('missing');
+
+      await act(async () => {
+        void result.current.onAction();
+      });
+      await act(async () => {
+        agent.end({
+          phase: 'failed',
+          at: 'browser',
+          failure: 'screen',
+          said: '',
+          canUseTerminal: true,
+        });
+      });
+
+      expect(result.current.signIn).toMatchObject({ phase: 'failed', failure: 'screen' });
+
+      await act(async () => {
+        result.current.onSignInInTerminal();
+      });
+
+      expect(agent.connectMcpServer).toHaveBeenLastCalledWith({
+        target: IN_CODEX,
+        inTerminal: true,
+      });
+      expect(result.current.signIn).toMatchObject({ phase: 'working', at: 'check' });
     });
   });
 });

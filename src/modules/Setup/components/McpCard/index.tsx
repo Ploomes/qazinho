@@ -1,8 +1,10 @@
 import type { IMcpCardProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { StatusPill } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
+import { McpSignIn } from './components';
 import { useMcpCardViewModel } from './hooks';
 import './styles.css';
 
@@ -19,8 +21,13 @@ export const McpCard: React.FC<IMcpCardProps> = (props) => {
     isBusy,
     error,
     note,
-    waiting,
+    agent,
+    signIn,
     onAction,
+    onCancelSignIn,
+    onCloseSignIn,
+    onRetrySignIn,
+    onSignInInTerminal,
   } = useMcpCardViewModel(props);
   const { t } = useTranslation();
 
@@ -64,19 +71,6 @@ export const McpCard: React.FC<IMcpCardProps> = (props) => {
         <p className="mcp-card__about">{needs}</p>
 
         <AnimatePresence initial={false}>
-          {waiting !== null && (
-            <motion.p
-              key="waiting"
-              className="mcp-card__waiting"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: MOTION.duration, ease: MOTION.ease }}
-            >
-              <span className="mcp-card__spinner" aria-hidden="true" />
-              {waiting}
-            </motion.p>
-          )}
           {error !== '' && (
             <motion.p
               key="error"
@@ -103,6 +97,24 @@ export const McpCard: React.FC<IMcpCardProps> = (props) => {
           )}
         </AnimatePresence>
       </div>
+
+      {createPortal(
+        <AnimatePresence>
+          {signIn !== null && (
+            <McpSignIn
+              key="sign-in"
+              server={props.server}
+              agent={agent}
+              progress={signIn}
+              onCancel={onCancelSignIn}
+              onClose={onCloseSignIn}
+              onRetry={onRetrySignIn}
+              onUseTerminal={onSignInInTerminal}
+            />
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
     </div>
   );
 };

@@ -7,10 +7,12 @@ import type {
   IntegrationId,
   IRunEvent,
   IMcpServerTarget,
+  IMcpSignIn,
   ISavedWorkspace,
   ISetupEvent,
   IStartRun,
   IViewport,
+  McpSignInProgress,
   PickKind,
 } from '@/shared/types';
 import { homedir } from 'node:os';
@@ -53,7 +55,7 @@ const harness = new Harness();
 
 function broadcast(props: {
   channel: string;
-  event: IAgentEvent | IRunEvent | ISetupEvent;
+  event: IAgentEvent | IRunEvent | ISetupEvent | McpSignInProgress;
 }): void {
   for (const open of BrowserWindow.getAllWindows())
     open.webContents.send(props.channel, props.event);
@@ -74,6 +76,8 @@ const mcp = new AgentMcp({
   openScript: async (file) => {
     await shell.openPath(file);
   },
+  onProgress: (progress) =>
+    broadcast({ channel: CHANNELS.mcpSignInEvent, event: progress }),
   folder: PATHS.agentHome,
 });
 const vault = new IntegrationVault({
@@ -264,9 +268,12 @@ void app.whenReady().then(async () => {
     vault.disconnect(id),
   );
   ipcMain.handle(CHANNELS.listMcpServers, (_event, agentId: string) => mcp.list(agentId));
-  ipcMain.handle(CHANNELS.connectMcpServer, (_event, target: IMcpServerTarget) =>
-    mcp.connect(target),
+  ipcMain.handle(CHANNELS.connectMcpServer, (_event, signIn: IMcpSignIn) =>
+    mcp.connect(signIn),
   );
+  ipcMain.handle(CHANNELS.cancelMcpSignIn, (_event, target: IMcpServerTarget) => {
+    mcp.cancel(target);
+  });
   ipcMain.handle(CHANNELS.removeMcpServer, (_event, target: IMcpServerTarget) =>
     mcp.remove(target),
   );
@@ -281,6 +288,7 @@ void app.whenReady().then(async () => {
 app.on('will-quit', () => {
   live.close();
   tools.close();
+  mcp.close();
 });
 
 app.on('window-all-closed', () => {

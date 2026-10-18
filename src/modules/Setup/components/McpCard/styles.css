@@ -105,16 +105,6 @@
   text-transform: uppercase;
 }
 
-.mcp-card__waiting {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin: 0;
-  overflow: hidden;
-  color: var(--lime-ink);
-  font: var(--font-ui-sm);
-}
-
 .mcp-card__error {
   margin: 0;
   padding: var(--space-3) var(--space-4);

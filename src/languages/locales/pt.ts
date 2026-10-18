@@ -321,10 +321,6 @@ export const pt: typeof en = {
     SIGN_IN: 'Fazer login',
     REMOVE: 'Remover',
     WORKING: 'Trabalhando…',
-    WAITING_TERMINAL:
-      'Termine no terminal e no navegador: escolha {{server}}, Authenticate e permita o acesso. Este card se atualiza sozinho.',
-    WAITING_BROWSER:
-      'Termine no navegador: permita o acesso ao {{name}}. Este card se atualiza sozinho.',
     SIGN_IN_TITLE: 'Conectando o {{server}} ao {{agent}}',
     SIGN_IN_SUBTITLE:
       'O QAzinho faz cada passo no {{agent}} por você. Só o último é seu.',

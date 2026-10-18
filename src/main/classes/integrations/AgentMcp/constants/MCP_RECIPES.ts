@@ -16,7 +16,7 @@ export const MCP_RECIPES: Partial<Record<string, IMcpRecipe>> = {
     ],
     login: () => ['/mcp'],
     remove: (name) => ['mcp', 'remove', '--scope', 'user', name],
-    signIn: 'terminal',
+    signIn: 'hidden',
   },
   codex: {
     list: ['mcp', 'list', '--json'],

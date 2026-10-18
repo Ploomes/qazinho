@@ -1,9 +1,8 @@
 import type { IMcpCardProps } from '@/modules/Setup/components/McpCard/types';
-import type { McpActionResult, McpSignInResult } from '@/shared/types';
+import type { McpActionResult, McpSignInProgress } from '@/shared/types';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MCP_LOOK } from '@/modules/Setup/components/McpCard/constants';
-import { MCP_WAIT } from '@/modules/Setup/constants/MCP_WAIT';
 import { Mcp } from '@/services';
 import { useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
@@ -16,9 +15,7 @@ export const useMcpCardViewModel = (props: IMcpCardProps) => {
   const detected = useMachineStore((store) => store.agents);
   const [isBusy, setIsBusy] = useState(false);
   const [error, setError] = useState('');
-  const [wait, setWait] = useState<{ until: number; via: 'terminal' | 'browser' } | null>(
-    null,
-  );
+  const [signIn, setSignIn] = useState<McpSignInProgress | null>(null);
 
   const agentId = detected.find(({ name }) => name === agent)?.id ?? 'claude-code';
   const state =
@@ -26,25 +23,32 @@ export const useMcpCardViewModel = (props: IMcpCardProps) => {
       ? null
       : (servers.find(({ id }) => id === server.id)?.state ?? 'failed');
   const target = { id: server.id, agentId };
-  const isWaiting = wait !== null && state !== 'connected';
 
-  useEffect(() => {
-    if (wait === null || state === 'connected') return;
+  useEffect(
+    () =>
+      Mcp.onSignIn((progress) => {
+        if (progress.target.id !== server.id || progress.target.agentId !== agentId)
+          return;
 
-    const timer = setInterval(() => {
-      if (Date.now() > wait.until) setWait(null);
-      else void Mcp.list(agentId).then(landMcpServers);
-    }, MCP_WAIT.pollMs);
+        setSignIn((shown) => (shown === null ? null : progress));
+      }),
+    [server.id, agentId],
+  );
 
-    return () => {
-      clearInterval(timer);
-    };
-  }, [wait, state, agentId, landMcpServers]);
-
-  const settle = async (result: McpActionResult | McpSignInResult) => {
+  const settle = async (result: McpActionResult) => {
     landMcpServers(await Mcp.list(agentId));
 
     if (!result.ok) setError(result.error);
+  };
+
+  const begin = async (inTerminal: boolean) => {
+    setError('');
+    setSignIn({ target, steps: ['check'], phase: 'working', at: 'check', url: null });
+
+    const ended = await Mcp.connect({ target, inTerminal });
+
+    setSignIn((shown) => (shown === null || ended.phase === 'cancelled' ? null : ended));
+    landMcpServers(await Mcp.list(agentId));
   };
 
   const look = MCP_LOOK[state ?? 'checking'];
@@ -56,6 +60,7 @@ export const useMcpCardViewModel = (props: IMcpCardProps) => {
         : state === 'connected'
           ? t('MCP.REMOVE')
           : null;
+  const isWorking = isBusy || signIn !== null;
 
   return {
     isConnected: state === 'connected',
@@ -63,9 +68,9 @@ export const useMcpCardViewModel = (props: IMcpCardProps) => {
     needs: t(server.needsKey, { agent }),
     pill: look.pill,
     statusLabel: t(look.labelKey),
-    action: isBusy ? t('MCP.WORKING') : action,
+    action: isWorking ? t('MCP.WORKING') : action,
     isQuiet: state === 'connected',
-    isBusy,
+    isBusy: isWorking,
     error,
     note:
       state === 'no-agent'
@@ -73,34 +78,38 @@ export const useMcpCardViewModel = (props: IMcpCardProps) => {
         : state === 'unsupported'
           ? t('MCP.UNSUPPORTED_NOTE', { agent })
           : null,
-    waiting: !isWaiting
-      ? null
-      : wait.via === 'terminal'
-        ? t('MCP.WAITING_TERMINAL', { server: server.id })
-        : t('MCP.WAITING_BROWSER', { name: server.name }),
+    agent,
+    signIn,
     onAction: async () => {
-      if (isBusy || action === null) return;
+      if (isWorking || action === null) return;
+
+      if (state !== 'connected') {
+        await begin(false);
+
+        return;
+      }
 
       setIsBusy(true);
       setError('');
 
       try {
-        if (state === 'connected') {
-          setWait(null);
-          await settle(await Mcp.remove(target));
-
-          return;
-        }
-
-        const connected = await Mcp.connect(target);
-
-        await settle(connected);
-
-        if (connected.ok)
-          setWait({ until: Date.now() + MCP_WAIT.forMs, via: connected.via });
+        await settle(await Mcp.remove(target));
       } finally {
         setIsBusy(false);
       }
+    },
+    onCancelSignIn: () => {
+      setSignIn(null);
+      void Mcp.cancel(target);
+    },
+    onCloseSignIn: () => {
+      setSignIn(null);
+    },
+    onRetrySignIn: () => {
+      void begin(false);
+    },
+    onSignInInTerminal: () => {
+      void begin(true);
     },
   };
 };

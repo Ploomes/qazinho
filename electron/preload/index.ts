@@ -13,7 +13,8 @@ import type {
   IMcpServerStatus,
   McpActionResult,
   IMcpServerTarget,
-  McpSignInResult,
+  IMcpSignIn,
+  McpSignInProgress,
   InstallableId,
   IntegrationId,
   IResourceSnapshot,
@@ -108,8 +109,21 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.disconnectIntegration, id) as Promise<void>,
   listMcpServers: (agentId: string) =>
     ipcRenderer.invoke(CHANNELS.listMcpServers, agentId) as Promise<IMcpServerStatus[]>,
-  connectMcpServer: (target: IMcpServerTarget) =>
-    ipcRenderer.invoke(CHANNELS.connectMcpServer, target) as Promise<McpSignInResult>,
+  connectMcpServer: (signIn: IMcpSignIn) =>
+    ipcRenderer.invoke(CHANNELS.connectMcpServer, signIn) as Promise<McpSignInProgress>,
+  cancelMcpSignIn: (target: IMcpServerTarget) =>
+    ipcRenderer.invoke(CHANNELS.cancelMcpSignIn, target) as Promise<void>,
+  onMcpSignIn: (listener: (progress: McpSignInProgress) => void) => {
+    const forward = (_: unknown, progress: McpSignInProgress) => {
+      listener(progress);
+    };
+
+    ipcRenderer.on(CHANNELS.mcpSignInEvent, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.mcpSignInEvent, forward);
+    };
+  },
   removeMcpServer: (target: IMcpServerTarget) =>
     ipcRenderer.invoke(CHANNELS.removeMcpServer, target) as Promise<McpActionResult>,
 };

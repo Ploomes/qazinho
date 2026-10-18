@@ -65,6 +65,8 @@ beforeEach(() => {
     disconnectIntegration: vi.fn(),
     listMcpServers: vi.fn(),
     connectMcpServer: vi.fn(),
+    cancelMcpSignIn: vi.fn(),
+    onMcpSignIn: vi.fn().mockReturnValue(() => undefined),
     removeMcpServer: vi.fn(),
   };
 });

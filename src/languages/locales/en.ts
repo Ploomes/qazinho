@@ -320,10 +320,6 @@ export const en = {
     SIGN_IN: 'Sign in',
     REMOVE: 'Remove',
     WORKING: 'Working…',
-    WAITING_TERMINAL:
-      'Finish in the terminal and the browser: pick {{server}}, choose Authenticate, allow access. This card updates on its own.',
-    WAITING_BROWSER:
-      'Finish in the browser: allow access to {{name}}. This card updates on its own.',
     SIGN_IN_TITLE: 'Connecting {{server}} to {{agent}}',
     SIGN_IN_SUBTITLE:
       'QAzinho takes each step in {{agent}} for you. Only the last one is yours.',

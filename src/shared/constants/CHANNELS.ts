@@ -22,6 +22,8 @@ export const CHANNELS = {
   listIntegrations: 'integrations:list',
   listMcpServers: 'mcp:list',
   connectMcpServer: 'mcp:connect',
+  cancelMcpSignIn: 'mcp:cancel',
+  mcpSignInEvent: 'mcp:event',
   removeMcpServer: 'mcp:remove',
   connectIntegration: 'integrations:connect',
   disconnectIntegration: 'integrations:disconnect',

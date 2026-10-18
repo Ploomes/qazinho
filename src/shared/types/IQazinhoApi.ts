@@ -10,18 +10,19 @@ import type { IIntegrationStatus } from './IIntegrationStatus';
 import type { IMachineCheck } from './IMachineCheck';
 import type { IMcpServerStatus } from './IMcpServerStatus';
 import type { IMcpServerTarget } from './IMcpServerTarget';
+import type { IMcpSignIn } from './IMcpSignIn';
 import type { InstallableId } from './InstallableId';
 import type { IntegrationId } from './IntegrationId';
 import type { IResourceSnapshot } from './IResourceSnapshot';
 import type { IRunEvent } from './IRunEvent';
 import type { IRunInFlight } from './IRunInFlight';
-import type { IViewport } from './IViewport';
 import type { ISavedState } from './ISavedState';
 import type { ISavedWorkspace } from './ISavedWorkspace';
 import type { ISetupEvent } from './ISetupEvent';
 import type { IStartRun } from './IStartRun';
+import type { IViewport } from './IViewport';
 import type { McpActionResult } from './McpActionResult';
-import type { McpSignInResult } from './McpSignInResult';
+import type { McpSignInProgress } from './McpSignInProgress';
 import type { PickKind } from './PickKind';
 import type { Platform } from './Platform';
 
@@ -52,6 +53,8 @@ export interface IQazinhoApi {
   connectIntegration: (connecting: IConnectIntegration) => Promise<IConnectResult>;
   disconnectIntegration: (id: IntegrationId) => Promise<void>;
   listMcpServers: (agentId: string) => Promise<IMcpServerStatus[]>;
-  connectMcpServer: (target: IMcpServerTarget) => Promise<McpSignInResult>;
+  connectMcpServer: (signIn: IMcpSignIn) => Promise<McpSignInProgress>;
+  cancelMcpSignIn: (target: IMcpServerTarget) => Promise<void>;
+  onMcpSignIn: (listener: (progress: McpSignInProgress) => void) => () => void;
   removeMcpServer: (target: IMcpServerTarget) => Promise<McpActionResult>;
 }
