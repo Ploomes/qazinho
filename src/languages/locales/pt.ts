@@ -220,6 +220,7 @@ export const pt: typeof en = {
     NOTHING_RUNNING: 'nada rodando',
     RUNNING: '{{count}} rodando · {{ram}} GB',
     SHUT_DOWN: 'desligar',
+    NAMED_PROCESSES: '{{name}} · {{count}} processos',
     NOTE: 'emuladores comem alguns GB cada. desligue um se ficar lento.',
     CLOSE: 'Fechar recursos',
   },

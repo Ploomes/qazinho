@@ -218,6 +218,7 @@ export const en = {
     NOTHING_RUNNING: 'nothing running',
     RUNNING: '{{count}} running · {{ram}} GB',
     SHUT_DOWN: 'shut down',
+    NAMED_PROCESSES: '{{name}} · {{count}} processes',
     NOTE: 'emulators eat a few GB each. shut one down if things get slow.',
     CLOSE: 'Close resources',
   },

@@ -18,10 +18,13 @@ export const useResourcePopoverViewModel = () => {
 
   const app = resources.processes.filter(({ kind }) => kind === 'app');
 
+  const named = (props: { name: string; count: number }) =>
+    props.count === 1 ? props.name : t('RESOURCES.NAMED_PROCESSES', props);
+
   const itself: IProcessNode = {
     ...rollUp(app),
     id: 'qazinho',
-    name: `QAzinho · ${String(app.length)} processes`,
+    name: named({ name: 'QAzinho', count: app.length }),
     level: 0,
     workspaceId: null,
     canShutDown: false,
@@ -31,6 +34,7 @@ export const useResourcePopoverViewModel = () => {
     projects,
     workspaces,
     processes: resources.processes,
+    named,
   });
 
   return {

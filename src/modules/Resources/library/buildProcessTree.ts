@@ -2,24 +2,16 @@ import type { IProject } from '@/modules/Project';
 import type { IProcessNode } from '@/modules/Resources/types';
 import type { IWorkspace } from '@/modules/Workspace';
 import type { IProcessSample } from '@/shared/types';
-import { RESOURCES } from '@/modules/Resources/constants';
 import { rollUp } from './rollUp';
 
-function deviceName(props: { workspace: IWorkspace; samples: IProcessSample[] }): string {
-  if (props.workspace.planKind === 'mobile') return RESOURCES.emulatorName;
-
-  const one = props.samples[0]?.name ?? 'Browser';
-
-  return props.samples.length === 1
-    ? one
-    : `${one} · ${String(props.samples.length)} processes`;
-}
+type Named = (props: { name: string; count: number }) => string;
 
 function ranBy(props: {
   workspace: IWorkspace;
   samples: IProcessSample[];
+  named: Named;
 }): IProcessNode[] {
-  const { workspace, samples } = props;
+  const { workspace, samples, named } = props;
   const agent = samples.filter(({ kind }) => kind === 'agent');
   const device = samples.filter(({ kind }) => kind === 'device');
 
@@ -41,7 +33,7 @@ function ranBy(props: {
           {
             ...rollUp(device),
             id: `${workspace.id}-device`,
-            name: deviceName({ workspace, samples: device }),
+            name: named({ name: device[0]?.name ?? '', count: device.length }),
             level: 2 as const,
             workspaceId: workspace.id,
             canShutDown: true,
@@ -50,13 +42,14 @@ function ranBy(props: {
   ];
 }
 
-/** A project only shows up once something under it is running. Nothing idles in this tree. */
+/** A project only shows up once something under it is running; `named` words a line that adds several processes up. */
 export function buildProcessTree(props: {
   projects: IProject[];
   workspaces: IWorkspace[];
   processes: IProcessSample[];
+  named: Named;
 }): IProcessNode[] {
-  const { projects, workspaces, processes } = props;
+  const { projects, workspaces, processes, named } = props;
 
   return projects.flatMap((project) => {
     const children = workspaces
@@ -65,7 +58,7 @@ export function buildProcessTree(props: {
         const samples = processes.filter(
           ({ workspaceId }) => workspaceId === workspace.id,
         );
-        const running = ranBy({ workspace, samples });
+        const running = ranBy({ workspace, samples, named });
 
         if (running.length === 0) return [];
 
