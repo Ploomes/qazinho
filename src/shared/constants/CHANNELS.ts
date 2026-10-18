@@ -20,9 +20,8 @@ export const CHANNELS = {
   setupEvent: 'setup:event',
   listIntegrations: 'integrations:list',
   listMcpServers: 'mcp:list',
-  addMcpServer: 'mcp:add',
+  connectMcpServer: 'mcp:connect',
   removeMcpServer: 'mcp:remove',
-  signInMcpServer: 'mcp:sign-in',
   connectIntegration: 'integrations:connect',
   disconnectIntegration: 'integrations:disconnect',
 } as const;

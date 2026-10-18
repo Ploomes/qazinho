@@ -285,22 +285,26 @@ export const en = {
     FIGMA_TEXT:
       'Lets the agent open your Figma prototypes and check the app against them.',
     FIGMA_NEEDS:
-      "Figma's MCP server in your Claude Code, signed in to your Figma account. QAzinho adds it to Claude Code; you sign in once, in the terminal it opens.",
+      "Figma's MCP server in {{agent}}, your agent, signed in to your Figma account. QAzinho adds it there; you sign in once.",
     CHECKING: 'checking',
     CONNECTED: 'connected',
     NEEDS_SIGN_IN: 'needs sign-in',
     NOT_ADDED: 'not added',
     FAILED: 'not answering',
-    NO_AGENT: 'needs Claude Code',
+    NO_AGENT: 'agent not found',
+    UNSUPPORTED: 'not for this agent yet',
     ADD: 'Add and sign in',
     SIGN_IN: 'Sign in',
     REMOVE: 'Remove',
     WORKING: 'Working…',
-    WAITING:
+    WAITING_TERMINAL:
       'Finish in the terminal and the browser: pick {{server}}, choose Authenticate, allow access. This card updates on its own.',
-    ONLY_CLAUDE:
-      'MCPs are set up in Claude Code for now; your default agent is {{agent}}.',
-    NO_CLAUDE: 'Install Claude Code first: the MCP lives in it.',
+    WAITING_BROWSER:
+      'Finish in the browser: allow access to {{name}}. This card updates on its own.',
+    NO_AGENT_NOTE:
+      'Install {{agent}} first, or pick another agent in Agents: the MCP lives in it.',
+    UNSUPPORTED_NOTE:
+      'QAzinho sets up MCPs in Claude Code and Codex for now, not in {{agent}}. Pick one of them in Agents.',
   },
   SETUP: {
     CONNECTED: 'connected',

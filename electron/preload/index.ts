@@ -12,7 +12,8 @@ import type {
   IMachineCheck,
   IMcpServerStatus,
   McpActionResult,
-  McpServerId,
+  IMcpServerTarget,
+  McpSignInResult,
   InstallableId,
   IntegrationId,
   IResourceSnapshot,
@@ -102,14 +103,12 @@ const api: IQazinhoApi = {
     ) as Promise<IConnectResult>,
   disconnectIntegration: (id: IntegrationId) =>
     ipcRenderer.invoke(CHANNELS.disconnectIntegration, id) as Promise<void>,
-  listMcpServers: () =>
-    ipcRenderer.invoke(CHANNELS.listMcpServers) as Promise<IMcpServerStatus[]>,
-  addMcpServer: (id: McpServerId) =>
-    ipcRenderer.invoke(CHANNELS.addMcpServer, id) as Promise<McpActionResult>,
-  removeMcpServer: (id: McpServerId) =>
-    ipcRenderer.invoke(CHANNELS.removeMcpServer, id) as Promise<McpActionResult>,
-  signInMcpServer: (id: McpServerId) =>
-    ipcRenderer.invoke(CHANNELS.signInMcpServer, id) as Promise<McpActionResult>,
+  listMcpServers: (agentId: string) =>
+    ipcRenderer.invoke(CHANNELS.listMcpServers, agentId) as Promise<IMcpServerStatus[]>,
+  connectMcpServer: (target: IMcpServerTarget) =>
+    ipcRenderer.invoke(CHANNELS.connectMcpServer, target) as Promise<McpSignInResult>,
+  removeMcpServer: (target: IMcpServerTarget) =>
+    ipcRenderer.invoke(CHANNELS.removeMcpServer, target) as Promise<McpActionResult>,
 };
 
 contextBridge.exposeInMainWorld('qazinho', api);

@@ -1,8 +1,9 @@
 const quote = (text: string) => `'${text.replace(/'/g, `'\\''`)}'`;
 
-/** The script Terminal runs to sign the QA in: Claude Code, opened straight on its MCP servers. */
+/** The script Terminal runs to sign the QA in: the agent, opened straight on its MCP servers. */
 export function signInScript(props: {
-  claude: string;
+  command: string;
+  args: string[];
   folder: string;
   server: string;
 }): string {
@@ -11,7 +12,7 @@ export function signInScript(props: {
     `cd ${quote(props.folder)}`,
     'clear',
     `echo ${quote(`QAzinho: pick "${props.server}" below, choose Authenticate and finish in the browser. Then close this window.`)}`,
-    `exec ${quote(props.claude)} '/mcp'`,
+    `exec ${[props.command, ...props.args].map(quote).join(' ')}`,
     '',
   ].join('\n');
 }

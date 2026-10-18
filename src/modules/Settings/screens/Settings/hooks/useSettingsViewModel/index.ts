@@ -30,9 +30,11 @@ export const useSettingsViewModel = () => {
   const landMcpServers = useSetupStore((state) => state.landMcpServers);
   const isMac = Platform.isMac();
 
+  const agentId = detected.find(({ name }) => name === agent)?.id ?? 'claude-code';
+
   useEffect(() => {
-    if (tab === 'mcps') void Mcp.list().then(landMcpServers);
-  }, [tab, landMcpServers]);
+    if (tab === 'mcps') void Mcp.list(agentId).then(landMcpServers);
+  }, [tab, agentId, landMcpServers]);
 
   const iosTool = (props: {
     name: string;

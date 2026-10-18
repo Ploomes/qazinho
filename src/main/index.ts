@@ -6,7 +6,7 @@ import type {
   InstallableId,
   IntegrationId,
   IRunEvent,
-  McpServerId,
+  IMcpServerTarget,
   ISavedWorkspace,
   ISetupEvent,
   IStartRun,
@@ -68,7 +68,11 @@ const installer = new SetupInstaller({
     }),
 });
 const mcp = new AgentMcp({
-  findClaude: () => findCommand('claude-code'),
+  findAgent: (agentId) => findCommand(agentId),
+  openUrl: (url) => shell.openExternal(url),
+  openScript: async (file) => {
+    await shell.openPath(file);
+  },
   folder: PATHS.agentHome,
 });
 const vault = new IntegrationVault({
@@ -253,10 +257,13 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.disconnectIntegration, (_event, id: IntegrationId) =>
     vault.disconnect(id),
   );
-  ipcMain.handle(CHANNELS.listMcpServers, () => mcp.list());
-  ipcMain.handle(CHANNELS.addMcpServer, (_event, id: McpServerId) => mcp.add(id));
-  ipcMain.handle(CHANNELS.removeMcpServer, (_event, id: McpServerId) => mcp.remove(id));
-  ipcMain.handle(CHANNELS.signInMcpServer, (_event, id: McpServerId) => mcp.signIn(id));
+  ipcMain.handle(CHANNELS.listMcpServers, (_event, agentId: string) => mcp.list(agentId));
+  ipcMain.handle(CHANNELS.connectMcpServer, (_event, target: IMcpServerTarget) =>
+    mcp.connect(target),
+  );
+  ipcMain.handle(CHANNELS.removeMcpServer, (_event, target: IMcpServerTarget) =>
+    mcp.remove(target),
+  );
 
   createWindow();
 

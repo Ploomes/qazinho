@@ -1,49 +1,50 @@
 import type { IMcpCardProps } from '@/modules/Setup/components/McpCard/types';
-import type { McpActionResult } from '@/shared/types';
+import type { McpActionResult, McpSignInResult } from '@/shared/types';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MCP_LOOK } from '@/modules/Setup/components/McpCard/constants';
 import { MCP_WAIT } from '@/modules/Setup/constants/MCP_WAIT';
 import { Mcp } from '@/services';
-import { useSettingsStore, useSetupStore } from '@/store';
+import { useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
 export const useMcpCardViewModel = (props: IMcpCardProps) => {
   const { server } = props;
   const { t } = useTranslation();
-  const state = useSetupStore(
-    (store) => store.mcpServers?.find(({ id }) => id === server.id)?.state ?? null,
-  );
+  const servers = useSetupStore((store) => store.mcpServers);
   const landMcpServers = useSetupStore((store) => store.landMcpServers);
   const agent = useSettingsStore((store) => store.agent);
+  const detected = useMachineStore((store) => store.agents);
   const [isBusy, setIsBusy] = useState(false);
   const [error, setError] = useState('');
-  const [waitUntil, setWaitUntil] = useState<number | null>(null);
-  const isWaiting = waitUntil !== null && state !== 'connected';
+  const [wait, setWait] = useState<{ until: number; via: 'terminal' | 'browser' } | null>(
+    null,
+  );
+
+  const agentId = detected.find(({ name }) => name === agent)?.id ?? 'claude-code';
+  const state =
+    servers === null
+      ? null
+      : (servers.find(({ id }) => id === server.id)?.state ?? 'failed');
+  const target = { id: server.id, agentId };
+  const isWaiting = wait !== null && state !== 'connected';
 
   useEffect(() => {
-    if (waitUntil === null || state === 'connected') return;
+    if (wait === null || state === 'connected') return;
 
     const timer = setInterval(() => {
-      if (Date.now() > waitUntil) setWaitUntil(null);
-      else void Mcp.list().then(landMcpServers);
+      if (Date.now() > wait.until) setWait(null);
+      else void Mcp.list(agentId).then(landMcpServers);
     }, MCP_WAIT.pollMs);
 
     return () => {
       clearInterval(timer);
     };
-  }, [waitUntil, state, landMcpServers]);
+  }, [wait, state, agentId, landMcpServers]);
 
-  const settle = async (result: McpActionResult): Promise<boolean> => {
-    landMcpServers(await Mcp.list());
+  const settle = async (result: McpActionResult | McpSignInResult) => {
+    landMcpServers(await Mcp.list(agentId));
 
     if (!result.ok) setError(result.error);
-
-    return result.ok;
-  };
-
-  const signIn = async () => {
-    if (await settle(await Mcp.signIn(server.id)))
-      setWaitUntil(Date.now() + MCP_WAIT.forMs);
   };
 
   const look = MCP_LOOK[state ?? 'checking'];
@@ -59,7 +60,7 @@ export const useMcpCardViewModel = (props: IMcpCardProps) => {
   return {
     isConnected: state === 'connected',
     text: t(server.textKey),
-    needs: t(server.needsKey),
+    needs: t(server.needsKey, { agent }),
     pill: look.pill,
     statusLabel: t(look.labelKey),
     action: isBusy ? t('MCP.WORKING') : action,
@@ -68,11 +69,15 @@ export const useMcpCardViewModel = (props: IMcpCardProps) => {
     error,
     note:
       state === 'no-agent'
-        ? t('MCP.NO_CLAUDE')
-        : agent !== 'Claude Code'
-          ? t('MCP.ONLY_CLAUDE', { agent })
+        ? t('MCP.NO_AGENT_NOTE', { agent })
+        : state === 'unsupported'
+          ? t('MCP.UNSUPPORTED_NOTE', { agent })
           : null,
-    waiting: isWaiting ? t('MCP.WAITING', { server: server.id }) : null,
+    waiting: !isWaiting
+      ? null
+      : wait.via === 'terminal'
+        ? t('MCP.WAITING_TERMINAL', { server: server.id })
+        : t('MCP.WAITING_BROWSER', { name: server.name }),
     onAction: async () => {
       if (isBusy || action === null) return;
 
@@ -80,12 +85,19 @@ export const useMcpCardViewModel = (props: IMcpCardProps) => {
       setError('');
 
       try {
-        if (state === 'missing') {
-          if (await settle(await Mcp.add(server.id))) await signIn();
-        } else if (state === 'connected') {
-          setWaitUntil(null);
-          await settle(await Mcp.remove(server.id));
-        } else await signIn();
+        if (state === 'connected') {
+          setWait(null);
+          await settle(await Mcp.remove(target));
+
+          return;
+        }
+
+        const connected = await Mcp.connect(target);
+
+        await settle(connected);
+
+        if (connected.ok)
+          setWait({ until: Date.now() + MCP_WAIT.forMs, via: connected.via });
       } finally {
         setIsBusy(false);
       }

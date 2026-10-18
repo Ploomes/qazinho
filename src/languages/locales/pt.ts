@@ -286,22 +286,26 @@ export const pt: typeof en = {
     FIGMA_TEXT:
       'Deixa o agente abrir seus protótipos do Figma e conferir o app contra eles.',
     FIGMA_NEEDS:
-      'O MCP do Figma no seu Claude Code, com login na sua conta do Figma. O QAzinho adiciona ele ao Claude Code; você faz o login uma vez, no terminal que ele abre.',
+      'O MCP do Figma no {{agent}}, o seu agente, com login na sua conta do Figma. O QAzinho adiciona ele lá; você faz o login uma vez.',
     CHECKING: 'verificando',
     CONNECTED: 'conectado',
     NEEDS_SIGN_IN: 'falta o login',
     NOT_ADDED: 'não adicionado',
     FAILED: 'sem resposta',
-    NO_AGENT: 'precisa do Claude Code',
+    NO_AGENT: 'agente não encontrado',
+    UNSUPPORTED: 'ainda não para este agente',
     ADD: 'Adicionar e fazer login',
     SIGN_IN: 'Fazer login',
     REMOVE: 'Remover',
     WORKING: 'Trabalhando…',
-    WAITING:
+    WAITING_TERMINAL:
       'Termine no terminal e no navegador: escolha {{server}}, Authenticate e permita o acesso. Este card se atualiza sozinho.',
-    ONLY_CLAUDE:
-      'Por enquanto os MCPs são configurados no Claude Code; seu agente padrão é o {{agent}}.',
-    NO_CLAUDE: 'Instale o Claude Code primeiro: o MCP fica dentro dele.',
+    WAITING_BROWSER:
+      'Termine no navegador: permita o acesso ao {{name}}. Este card se atualiza sozinho.',
+    NO_AGENT_NOTE:
+      'Instale o {{agent}} primeiro, ou escolha outro agente em Agentes: o MCP fica dentro dele.',
+    UNSUPPORTED_NOTE:
+      'Por enquanto o QAzinho configura MCPs no Claude Code e no Codex, não no {{agent}}. Escolha um deles em Agentes.',
   },
   SETUP: {
     CONNECTED: 'conectado',

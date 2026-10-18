@@ -2,9 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { signInScript } from '@/main/classes/integrations/AgentMcp/library';
 
 describe('signInScript', () => {
-  it('opens Claude Code on its MCP list, from QAzinho own folder, in a login shell', () => {
+  it('opens the agent on its MCP list, from QAzinho own folder, in a login shell', () => {
     const script = signInScript({
-      claude: '/opt/bin/claude',
+      command: '/opt/bin/claude',
+      args: ['/mcp'],
       folder: '/data/agent',
       server: 'figma',
     });
@@ -17,7 +18,12 @@ describe('signInScript', () => {
   /** A path with a quote in it must not end the string and run the rest as a command. */
   it('quotes a path with a quote in it', () => {
     expect(
-      signInScript({ claude: "/Users/o'brien/claude", folder: '/x', server: 'figma' }),
+      signInScript({
+        command: "/Users/o'brien/claude",
+        args: ['/mcp'],
+        folder: '/x',
+        server: 'figma',
+      }),
     ).toContain(`exec '/Users/o'\\''brien/claude' '/mcp'`);
   });
 });

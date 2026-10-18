@@ -12,4 +12,5 @@ export const MCP_LOOK: Record<
   failed: { pill: 'failed', labelKey: 'MCP.FAILED' },
   missing: { pill: 'idle', labelKey: 'MCP.NOT_ADDED' },
   'no-agent': { pill: 'idle', labelKey: 'MCP.NO_AGENT' },
+  unsupported: { pill: 'idle', labelKey: 'MCP.UNSUPPORTED' },
 };

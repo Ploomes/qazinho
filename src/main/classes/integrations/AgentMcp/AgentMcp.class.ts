@@ -1,94 +1,207 @@
-import type { IAgentMcp } from './types';
-import type { IMcpServerStatus, McpActionResult, McpServerId } from '@/shared/types';
+import type { IAgentMcp, IListedMcpServer, IMcpRecipe } from './types';
+import type {
+  IMcpServerStatus,
+  IMcpServerTarget,
+  McpActionResult,
+  McpServerId,
+  McpServerState,
+  McpSignInResult,
+} from '@/shared/types';
+import { spawn } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { AGENT_MCP, MCP_CATALOG } from './constants';
-import { parseMcpList, runCommand, signInScript } from './library';
+import { AGENT_MCP, MCP_CATALOG, MCP_RECIPES } from './constants';
+import {
+  authorizeUrlIn,
+  parseCodexMcpList,
+  parseMcpList,
+  runCommand,
+  signInScript,
+} from './library';
 
-/** The MCP servers QAzinho sets up in the QA's own Claude Code: added there, signed in there, read from there. */
+/** The MCP servers QAzinho sets up in the QA's own agent: added there, signed in there, read back from there. */
 export class AgentMcp {
-  private readonly findClaude: () => Promise<string | null>;
+  private readonly findAgent: (agentId: string) => Promise<string | null>;
+  private readonly openUrl: (url: string) => Promise<void>;
+  private readonly openScript: (file: string) => Promise<void>;
   private readonly folder: string;
 
   public constructor(props: IAgentMcp) {
-    this.findClaude = props.findClaude;
+    this.findAgent = props.findAgent;
+    this.openUrl = props.openUrl;
+    this.openScript = props.openScript;
     this.folder = props.folder;
   }
 
-  /** Where each server QAzinho knows stands in Claude Code, matched by address, whatever the QA named it. */
-  public async list(): Promise<IMcpServerStatus[]> {
+  /** Where each server QAzinho knows stands in the agent, matched by address, whatever the QA named it. */
+  public async list(agentId: string): Promise<IMcpServerStatus[]> {
     const ids = Object.keys(MCP_CATALOG) as McpServerId[];
-    const claude = await this.findClaude();
+    const recipe = MCP_RECIPES[agentId];
+    const command = await this.findAgent(agentId);
 
-    if (claude === null) return ids.map((id) => ({ id, state: 'no-agent' }));
+    if (!recipe || command === null)
+      return ids.map((id) => ({ id, state: recipe ? 'no-agent' : 'unsupported' }));
 
-    const listed = parseMcpList(
-      await this.claude({ claude, args: ['mcp', 'list'] }).catch(() => ''),
+    const listed = await this.listed({ recipe, command });
+
+    return ids.map((id) => ({ id, state: this.stateIn({ listed, id }) }));
+  }
+
+  /** Adds the server when it is missing and starts the sign-in, in Terminal or in the browser, as the agent does it. */
+  public async connect(target: IMcpServerTarget): Promise<McpSignInResult> {
+    const recipe = MCP_RECIPES[target.agentId];
+    const command = await this.findAgent(target.agentId);
+
+    if (!recipe || command === null)
+      return { ok: false, error: 'QAzinho cannot set up MCP servers in this agent yet.' };
+
+    const server = MCP_CATALOG[target.id];
+    const state = this.stateIn({
+      listed: await this.listed({ recipe, command }),
+      id: target.id,
+    });
+
+    if (recipe.signIn === 'browser')
+      return this.signInInBrowser({
+        command,
+        args: state === 'missing' ? recipe.add(server) : recipe.login(server.name),
+      });
+
+    if (state === 'missing') {
+      const added = await this.attempt({
+        command,
+        args: recipe.add(server),
+        isDone: (said) => /already exists/i.test(said),
+      });
+
+      if (!added.ok) return added;
+    }
+
+    return this.signInInTerminal({
+      command,
+      args: recipe.login(server.name),
+      server: server.name,
+    });
+  }
+
+  /** Takes the server back out of the agent; one already gone counts as removed. */
+  public async remove(target: IMcpServerTarget): Promise<McpActionResult> {
+    const recipe = MCP_RECIPES[target.agentId];
+    const command = await this.findAgent(target.agentId);
+
+    if (!recipe || command === null)
+      return { ok: false, error: 'QAzinho cannot set up MCP servers in this agent yet.' };
+
+    return this.attempt({
+      command,
+      args: recipe.remove(MCP_CATALOG[target.id].name),
+      isDone: (said) => /no mcp server named|not found/i.test(said),
+    });
+  }
+
+  private async listed(props: {
+    recipe: IMcpRecipe;
+    command: string;
+  }): Promise<IListedMcpServer[]> {
+    const printed = await this.run({
+      command: props.command,
+      args: props.recipe.list,
+    }).catch(() => '');
+
+    return props.recipe.reads === 'codex'
+      ? parseCodexMcpList(printed)
+      : parseMcpList(printed);
+  }
+
+  private stateIn(props: {
+    listed: IListedMcpServer[];
+    id: McpServerId;
+  }): McpServerState {
+    return (
+      props.listed.find(({ target }) => target === MCP_CATALOG[props.id].url)?.state ??
+      'missing'
     );
-
-    return ids.map((id) => ({
-      id,
-      state:
-        listed.find(({ target }) => target === MCP_CATALOG[id].url)?.state ?? 'missing',
-    }));
   }
 
-  /** Adds the server to Claude Code for every project of the QA's; one already there counts as added. */
-  public async add(id: McpServerId): Promise<McpActionResult> {
-    const { name, url } = MCP_CATALOG[id];
-
-    return this.attempt({
-      args: ['mcp', 'add', '--transport', 'http', '--scope', 'user', name, url],
-      isDone: (said) => /already exists/i.test(said),
-    });
-  }
-
-  /** Takes the server back out of Claude Code; one already gone counts as removed. */
-  public async remove(id: McpServerId): Promise<McpActionResult> {
-    return this.attempt({
-      args: ['mcp', 'remove', '--scope', 'user', MCP_CATALOG[id].name],
-      isDone: (said) => /no .*server .*found|not found/i.test(said),
-    });
-  }
-
-  /** Opens Terminal on Claude Code's MCP list, where the QA signs in; the sign-in itself never passes through QAzinho. */
-  public async signIn(id: McpServerId): Promise<McpActionResult> {
-    const claude = await this.findClaude();
-
-    if (claude === null)
-      return { ok: false, error: 'Claude Code is not on this machine.' };
-
+  private async signInInTerminal(props: {
+    command: string;
+    args: string[];
+    server: string;
+  }): Promise<McpSignInResult> {
     if (process.platform !== 'darwin')
       return {
         ok: false,
-        error: `Open a terminal, run claude "/mcp", pick ${MCP_CATALOG[id].name} and choose Authenticate.`,
+        error: `Open a terminal, run ${[props.command, ...props.args].join(' ')}, pick ${props.server} and choose Authenticate.`,
       };
 
     const script = join(tmpdir(), AGENT_MCP.signInFile);
 
     await mkdir(this.folder, { recursive: true });
-    await writeFile(
-      script,
-      signInScript({ claude, folder: this.folder, server: MCP_CATALOG[id].name }),
-      { mode: 0o755 },
-    );
-    await runCommand({ command: 'open', args: ['-a', 'Terminal', script] });
+    await writeFile(script, signInScript({ ...props, folder: this.folder }), {
+      mode: 0o755,
+    });
+    await this.openScript(script);
 
-    return { ok: true };
+    return { ok: true, via: 'terminal' };
+  }
+
+  private async signInInBrowser(props: {
+    command: string;
+    args: string[];
+  }): Promise<McpSignInResult> {
+    await mkdir(this.folder, { recursive: true });
+
+    const child = spawn(props.command, props.args, { cwd: this.folder });
+    const giveUp = setTimeout(() => child.kill(), AGENT_MCP.browserSignInMs);
+    let printed = '';
+
+    child.on('close', () => {
+      clearTimeout(giveUp);
+    });
+
+    return new Promise<McpSignInResult>((done) => {
+      const noUrl = setTimeout(() => {
+        child.kill();
+        done({
+          ok: false,
+          error: printed.trim() || 'The agent never asked for a sign-in.',
+        });
+      }, AGENT_MCP.urlWaitMs);
+
+      const hear = (chunk: Buffer) => {
+        printed += chunk.toString();
+
+        const url = authorizeUrlIn(printed);
+
+        if (url === null) return;
+
+        clearTimeout(noUrl);
+        void this.openUrl(url).then(() => {
+          done({ ok: true, via: 'browser' });
+        });
+      };
+
+      child.stdout.on('data', hear);
+      child.stderr.on('data', hear);
+      child.on('close', (code) => {
+        clearTimeout(noUrl);
+        done(
+          code === 0
+            ? { ok: true, via: 'browser' }
+            : { ok: false, error: printed.trim() },
+        );
+      });
+    });
   }
 
   private async attempt(props: {
+    command: string;
     args: string[];
     isDone: (said: string) => boolean;
   }): Promise<McpActionResult> {
-    const claude = await this.findClaude();
-
-    if (claude === null)
-      return { ok: false, error: 'Claude Code is not on this machine.' };
-
     try {
-      await this.claude({ claude, args: props.args });
+      await this.run(props);
 
       return { ok: true };
     } catch (reason) {
@@ -98,9 +211,9 @@ export class AgentMcp {
     }
   }
 
-  private async claude(props: { claude: string; args: string[] }): Promise<string> {
+  private async run(props: { command: string; args: string[] }): Promise<string> {
     await mkdir(this.folder, { recursive: true });
 
-    return runCommand({ command: props.claude, args: props.args, cwd: this.folder });
+    return runCommand({ ...props, cwd: this.folder });
   }
 }

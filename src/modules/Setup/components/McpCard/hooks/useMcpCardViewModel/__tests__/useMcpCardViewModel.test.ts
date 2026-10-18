@@ -1,40 +1,40 @@
 // @vitest-environment jsdom
-import type { IMcpServerStatus, McpActionResult, McpServerState } from '@/shared/types';
+import type {
+  IMcpServerStatus,
+  McpActionResult,
+  McpServerState,
+  McpSignInResult,
+} from '@/shared/types';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMcpCardViewModel } from '@/modules/Setup/components/McpCard/hooks/useMcpCardViewModel';
 import { MCP_SERVERS } from '@/modules/Setup/constants';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useSettingsStore, useSetupStore } from '@/store';
+import { useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
 const FIGMA = MCP_SERVERS[0]!;
-const OK: McpActionResult = { ok: true };
 
-/** A Claude Code whose Figma server moves through `states`, one per list call. */
-function agentWith(props: {
-  states: McpServerState[];
-  add?: McpActionResult;
-  signIn?: McpActionResult;
-}) {
+/** An agent whose Figma server moves through `states`, one per list call, the last one staying. */
+function agentWith(props: { states: McpServerState[]; connect?: McpSignInResult }) {
   const queue = [...props.states];
-  const listMcpServers = vi.fn(() =>
+  const listMcpServers = vi.fn((_: string) =>
     Promise.resolve<IMcpServerStatus[]>([
       { id: 'figma', state: queue.length > 1 ? queue.shift()! : queue[0]! },
     ]),
   );
-  const addMcpServer = vi.fn(() => Promise.resolve(props.add ?? OK));
-  const removeMcpServer = vi.fn(() => Promise.resolve(OK));
-  const signInMcpServer = vi.fn(() => Promise.resolve(props.signIn ?? OK));
+  const connectMcpServer = vi.fn(() =>
+    Promise.resolve<McpSignInResult>(props.connect ?? { ok: true, via: 'terminal' }),
+  );
+  const removeMcpServer = vi.fn(() => Promise.resolve<McpActionResult>({ ok: true }));
 
   window.qazinho = {
     ...fakeQazinhoApi('darwin'),
     listMcpServers,
-    addMcpServer,
+    connectMcpServer,
     removeMcpServer,
-    signInMcpServer,
   };
 
-  return { listMcpServers, addMcpServer, removeMcpServer, signInMcpServer };
+  return { listMcpServers, connectMcpServer, removeMcpServer };
 }
 
 const showing = (state: McpServerState | null) => {
@@ -46,7 +46,27 @@ const showing = (state: McpServerState | null) => {
 };
 
 beforeEach(() => {
-  useSettingsStore.setState({ agent: 'Claude Code' });
+  useSettingsStore.setState({ agent: 'Codex' });
+  useMachineStore.setState({
+    agents: [
+      {
+        id: 'claude-code',
+        name: 'Claude Code',
+        command: 'claude',
+        isFound: true,
+        path: '/bin/claude',
+        defaultModel: null,
+      },
+      {
+        id: 'codex',
+        name: 'Codex',
+        command: 'codex',
+        isFound: true,
+        path: '/bin/codex',
+        defaultModel: null,
+      },
+    ],
+  });
 });
 
 afterEach(() => {
@@ -66,48 +86,85 @@ describe('useMcpCardViewModel', () => {
       },
       { state: 'failed', pill: 'failed', label: 'not answering', action: 'Sign in' },
       { state: 'connected', pill: 'passed', label: 'connected', action: 'Remove' },
-      { state: 'no-agent', pill: 'idle', label: 'needs Claude Code', action: null },
-    ] as const)('when Claude Code reports $state', ({ state, pill, label, action }) => {
+      { state: 'no-agent', pill: 'idle', label: 'agent not found', action: null },
+      {
+        state: 'unsupported',
+        pill: 'idle',
+        label: 'not for this agent yet',
+        action: null,
+      },
+    ] as const)('when the agent reports $state', ({ state, pill, label, action }) => {
       agentWith({ states: ['missing'] });
 
-      const { result } = showing(state);
-
-      expect(result.current).toMatchObject({ pill, statusLabel: label, action });
+      expect(showing(state).result.current).toMatchObject({
+        pill,
+        statusLabel: label,
+        action,
+      });
     });
 
-    it('says MCPs live in Claude Code when the default agent is another one', () => {
+    it('names the agent the MCP goes into, the one the QA picked', () => {
       agentWith({ states: ['missing'] });
-      useSettingsStore.setState({ agent: 'Codex' });
 
-      expect(showing('missing').result.current.note).toContain(
-        'your default agent is Codex',
-      );
+      expect(showing('missing').result.current.needs).toContain('in Codex, your agent');
+    });
+
+    it('says which agents it works with when the QA picked another one', () => {
+      agentWith({ states: ['unsupported'] });
+      useSettingsStore.setState({ agent: 'Gemini CLI' });
+
+      expect(showing('unsupported').result.current.note).toContain('not in Gemini CLI');
+    });
+
+    it('does NOT say checking forever when the list came back without it', () => {
+      agentWith({ states: ['missing'] });
+      useSetupStore.setState({ mcpServers: [] });
+
+      const { result } = renderHook(() => useMcpCardViewModel({ server: FIGMA }));
+
+      expect(result.current.statusLabel).toBe('not answering');
     });
   });
 
   describe('onAction', () => {
-    it('adds the server, then opens the sign-in and waits for it', async () => {
-      const agent = agentWith({ states: ['needs-auth'] });
-      const { result } = showing('missing');
-
-      await act(() => result.current.onAction());
-
-      expect(agent.addMcpServer).toHaveBeenCalledWith('figma');
-      expect(agent.signInMcpServer).toHaveBeenCalledWith('figma');
-      expect(result.current.waiting).toContain('pick figma');
-    });
-
-    it('does NOT open the sign-in when adding failed, and says why', async () => {
+    it('connects through the agent the QA picked, and waits where it signs in', async () => {
       const agent = agentWith({
-        states: ['missing'],
-        add: { ok: false, error: 'claude: no such command' },
+        states: ['needs-auth'],
+        connect: { ok: true, via: 'browser' },
       });
       const { result } = showing('missing');
 
       await act(() => result.current.onAction());
 
-      expect(agent.signInMcpServer).not.toHaveBeenCalled();
-      expect(result.current.error).toBe('claude: no such command');
+      expect(agent.connectMcpServer).toHaveBeenCalledWith({
+        id: 'figma',
+        agentId: 'codex',
+      });
+      expect(agent.listMcpServers).toHaveBeenCalledWith('codex');
+      expect(result.current.waiting).toContain('Finish in the browser');
+    });
+
+    it('waits in the terminal when the agent signs in there', async () => {
+      agentWith({ states: ['needs-auth'], connect: { ok: true, via: 'terminal' } });
+      useSettingsStore.setState({ agent: 'Claude Code' });
+
+      const { result } = showing('needs-auth');
+
+      await act(() => result.current.onAction());
+
+      expect(result.current.waiting).toContain('pick figma');
+    });
+
+    it('does NOT wait when the sign-in did not start, and says why', async () => {
+      agentWith({
+        states: ['missing'],
+        connect: { ok: false, error: 'codex: no such command' },
+      });
+      const { result } = showing('missing');
+
+      await act(() => result.current.onAction());
+
+      expect(result.current.error).toBe('codex: no such command');
       expect(result.current.waiting).toBeNull();
     });
 
@@ -137,18 +194,20 @@ describe('useMcpCardViewModel', () => {
 
       await act(() => result.current.onAction());
 
-      expect(agent.removeMcpServer).toHaveBeenCalledWith('figma');
+      expect(agent.removeMcpServer).toHaveBeenCalledWith({
+        id: 'figma',
+        agentId: 'codex',
+      });
       expect(result.current.statusLabel).toBe('not added');
     });
 
-    it('does nothing while Claude Code is missing', async () => {
-      const agent = agentWith({ states: ['no-agent'] });
-      const { result } = showing('no-agent');
+    it('does nothing for an agent it cannot set up', async () => {
+      const agent = agentWith({ states: ['unsupported'] });
+      const { result } = showing('unsupported');
 
       await act(() => result.current.onAction());
 
-      expect(agent.addMcpServer).not.toHaveBeenCalled();
-      expect(agent.signInMcpServer).not.toHaveBeenCalled();
+      expect(agent.connectMcpServer).not.toHaveBeenCalled();
     });
   });
 });

@@ -63,9 +63,8 @@ beforeEach(() => {
     connectIntegration: vi.fn(),
     disconnectIntegration: vi.fn(),
     listMcpServers: vi.fn(),
-    addMcpServer: vi.fn(),
+    connectMcpServer: vi.fn(),
     removeMcpServer: vi.fn(),
-    signInMcpServer: vi.fn(),
   };
 });
 
