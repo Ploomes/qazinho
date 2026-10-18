@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { DeviceToolServer } from '@/main/classes/agents/DeviceToolServer';
+import { McpHost } from '@/harness';
 import { WebDriver } from '@/main/classes/devices/WebDriver';
 
 const PORT = 4326;
@@ -19,7 +19,7 @@ const site = createServer((_request, response) => {
   response.writeHead(200, { 'content-type': 'text/html' });
   response.end(PAGE);
 });
-const tools = new DeviceToolServer();
+const tools = new McpHost();
 let driver: WebDriver;
 
 function textOf(result: Awaited<ReturnType<Client['callTool']>>): string {

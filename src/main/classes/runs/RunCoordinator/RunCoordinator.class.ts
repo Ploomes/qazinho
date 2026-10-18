@@ -1,8 +1,6 @@
 import type { IRunCoordinator, IWalkRun } from './types';
+import type { Harness, IStepReport, McpHost } from '@/harness';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
-import type { DeviceToolServer } from '@/main/classes/agents/DeviceToolServer';
-import type { IStepReport } from '@/main/classes/agents/DeviceToolServer/types';
-import type { Harness } from '@/main/classes/agents/Harness';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
 import type { IDeviceDriver } from '@/main/classes/devices/types';
 import type {
@@ -33,7 +31,7 @@ export class RunCoordinator {
   private readonly findIos: IRunCoordinator['findIos'];
   private readonly dataRoot: string;
   private readonly live: LiveStream;
-  private readonly tools: DeviceToolServer;
+  private readonly tools: McpHost;
   private readonly harness: Harness;
   private readonly onEvent: (event: IRunEvent) => void;
   private readonly stopping = new Set<string>();
@@ -305,6 +303,7 @@ export class RunCoordinator {
       sessionId: null,
       systemPrompt: this.harness.run(run.target),
       mcpConfig,
+      allowedTools: this.harness.toolsFor('runner').allowedTools,
       prompt: this.harness.walk({
         steps: pending.map(({ step }) => step),
         screen: await driver.describe().catch(() => ''),

@@ -1,4 +1,4 @@
-import type { IStepReport } from '@/main/classes/agents/DeviceToolServer/types';
+import type { IStepReport } from '@/harness';
 import type { IShot } from '@/main/classes/devices/types';
 import type { IFlatStep, IStepOutcome } from '@/shared/types';
 

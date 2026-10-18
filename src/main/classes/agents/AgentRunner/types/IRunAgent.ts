@@ -8,5 +8,5 @@ export interface IRunAgent {
   schema?: string;
   systemPrompt?: string;
   mcpConfig?: string;
-  hasNoTools?: boolean;
+  allowedTools?: string[];
 }

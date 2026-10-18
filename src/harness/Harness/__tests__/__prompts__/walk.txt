@@ -1,0 +1,10 @@
+TC-01 · Coupon
+Carry out these steps in order, and report each one as soon as you judged it:
+1. Open the cart
+   The QA expects: The cart shows
+2. Apply SAVE10
+   The QA expects: 10% off
+
+The device shows right now:
+Cart
+[button] Apply

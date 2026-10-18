@@ -3,10 +3,9 @@ import { mkdtemp, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { Harness, McpHost } from '@/harness';
 import { AgentDetector } from '@/main/classes/agents/AgentDetector';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
-import { DeviceToolServer } from '@/main/classes/agents/DeviceToolServer';
-import { Harness } from '@/main/classes/agents/Harness';
 import { AndroidDriver } from '@/main/classes/devices/AndroidDriver';
 import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
 import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
@@ -81,7 +80,7 @@ describe('a real run on a phone', () => {
     const tools = new DeviceToolDetector().detect();
     const sdkRoot = tools.androidSdk.path ?? '';
 
-    const deviceTools = new DeviceToolServer();
+    const deviceTools = new McpHost();
 
     await deviceTools.start();
 

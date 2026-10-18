@@ -4,7 +4,7 @@ import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 export function buildAskArgs(
   props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command'>,
 ): string[] {
-  const { model, sessionId, schema, systemPrompt, mcpConfig, hasNoTools = false } = props;
+  const { model, sessionId, schema, systemPrompt, mcpConfig, allowedTools } = props;
 
   return [
     '--print',
@@ -24,8 +24,8 @@ export function buildAskArgs(
           '--tools',
           '',
           '--allowedTools',
-          'mcp__qazinho',
+          ...(allowedTools ?? []),
         ]),
-    ...(mcpConfig === undefined && hasNoTools ? ['--tools', ''] : []),
+    ...(mcpConfig === undefined && allowedTools?.length === 0 ? ['--tools', ''] : []),
   ];
 }

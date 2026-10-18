@@ -49,11 +49,12 @@ describe('buildAskArgs', () => {
     expect(args.slice(-2)).toEqual(['--append-system-prompt', 'You test web apps.']);
   });
 
-  it('gives the agent the device tools and takes every other tool away', () => {
+  it('gives the agent the tools the harness granted and takes every other tool away', () => {
     const args = buildAskArgs({
       model: '',
       sessionId: null,
       mcpConfig: '{"mcpServers":{}}',
+      allowedTools: ['mcp__qazinho'],
     });
 
     expect(args.slice(-7)).toEqual([
@@ -73,7 +74,7 @@ describe('buildAskArgs', () => {
 
   it('takes every tool away from a call that is only talk', () => {
     expect(
-      buildAskArgs({ model: '', sessionId: null, hasNoTools: true }).slice(-2),
+      buildAskArgs({ model: '', sessionId: null, allowedTools: [] }).slice(-2),
     ).toEqual(['--tools', '']);
   });
 });

@@ -4,9 +4,8 @@ import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { Harness, McpHost } from '@/harness';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
-import { DeviceToolServer } from '@/main/classes/agents/DeviceToolServer';
-import { Harness } from '@/main/classes/agents/Harness';
 import { LiveStream } from '@/main/classes/devices/LiveStream';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
@@ -76,7 +75,7 @@ async function walkWith(script: string): Promise<IRunEvent[]> {
   await chmod(agent, 0o755);
 
   const events: IRunEvent[] = [];
-  const deviceTools = new DeviceToolServer();
+  const deviceTools = new McpHost();
 
   await deviceTools.start();
 

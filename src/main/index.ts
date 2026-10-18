@@ -12,13 +12,12 @@ import type {
 } from '@/shared/types';
 import { homedir } from 'node:os';
 import { app, BrowserWindow, dialog, ipcMain, safeStorage, shell } from 'electron';
+import { Harness, McpHost } from '@/harness';
 import {
   AgentDetector,
   AgentRunner,
   Archive,
   DeviceToolDetector,
-  DeviceToolServer,
-  Harness,
   IntegrationVault,
   LiveStream,
   ProcessOwners,
@@ -45,7 +44,7 @@ const resources = new ResourceCollector({
 const deviceTools = new DeviceToolDetector();
 const archive = new Archive(PATHS.data);
 const live = new LiveStream();
-const tools = new DeviceToolServer();
+const tools = new McpHost();
 const harness = new Harness();
 
 function broadcast(props: {
@@ -142,7 +141,7 @@ async function askAgent(ask: IAskAgent) {
     prompt: ask.text,
     schema: chat.schema,
     systemPrompt: chat.systemPrompt,
-    hasNoTools: true,
+    allowedTools: chat.tools.allowedTools,
   });
 }
 
