@@ -10,6 +10,7 @@ export const Runs: React.FC = () => {
   const {
     runs,
     run,
+    title,
     runEnded,
     reportRef,
     pager,
@@ -48,7 +49,7 @@ export const Runs: React.FC = () => {
         >
           <div className="runs__head">
             <div className="runs__heading">
-              <h2 className="runs__title">{run.title}</h2>
+              <h2 className="runs__title">{title}</h2>
               <span className="runs__meta">
                 {run.meta}
                 {runEnded !== null && (

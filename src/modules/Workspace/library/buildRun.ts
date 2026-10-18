@@ -50,8 +50,6 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
 
   return {
     id,
-    title: `Run ${id} · the whole plan`,
-    what: 'The whole plan',
     meta: workspace.name,
     startedAt: live?.startedAt ?? '',
     durationSec: live?.elapsedSec ?? tookSec(outcomes),

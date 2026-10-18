@@ -9,14 +9,16 @@ const ENDINGS = {
   interrupted: 'cut short when QAzinho closed',
 } as const;
 
-/** Everything in a workspace the QA can point at with @, newest runs first, with the facts behind each. */
-export function referencesOf(
-  workspace: Pick<IWorkspace, 'runs' | 'bugs' | 'plan'>,
-): IChatReference[] {
+/** Everything in a workspace the QA can point at with @, newest runs first, with the facts behind each; `wholePlan` names a run in the QA's language. */
+export function referencesOf(props: {
+  workspace: Pick<IWorkspace, 'runs' | 'bugs' | 'plan'>;
+  wholePlan: string;
+}): IChatReference[] {
+  const { workspace } = props;
   const runs = workspace.runs.map<IChatReference>((run) => ({
     kind: 'run',
     id: run.id,
-    title: `${run.what} · ${run.startedAt}`,
+    title: `${props.wholePlan} · ${run.startedAt}`,
     facts: [
       `started ${run.startedAt}, took ${String(run.durationSec)}s, ${ENDINGS[run.endedBy]}`,
       `${String(run.counts.passed)} passed, ${String(run.counts.failed)} failed, ${String(run.counts.blocked)} blocked, ${String(run.counts.skipped)} skipped`,

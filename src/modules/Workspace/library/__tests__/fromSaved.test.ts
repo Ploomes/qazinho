@@ -85,6 +85,30 @@ describe('fromSaved', () => {
     expect(workspace?.chat[0]).toMatchObject({ kind: 'run', endedBy: 'finished' });
   });
 
+  it('drops the English title an older run kept, which Runs now writes itself', () => {
+    const json = JSON.stringify({
+      id: 'w1',
+      projectId: 'p1',
+      runs: [
+        {
+          id: 'r-01',
+          title: 'Run r-01 · the whole plan',
+          what: 'The whole plan',
+          meta: 'Checkout regression',
+          startedAt: '09:41',
+          durationSec: 4,
+          counts: { passed: 1, failed: 0, blocked: 0, skipped: 0 },
+          cases: [],
+          endedBy: 'finished',
+        },
+      ],
+    });
+    const run = fromSaved({ id: 'w1', json, planYaml: '' })?.runs[0];
+
+    expect(run).not.toHaveProperty('title');
+    expect(run).not.toHaveProperty('what');
+  });
+
   it('drops the action logs an older chat still carries', () => {
     const json = JSON.stringify({
       id: 'w1',

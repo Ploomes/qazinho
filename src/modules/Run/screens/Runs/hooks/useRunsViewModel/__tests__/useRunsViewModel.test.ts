@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { i18n } from '@/languages';
 import { useRunsViewModel } from '@/modules/Run/screens/Runs/hooks/useRunsViewModel';
 import { endRun } from '@/modules/Workspace/library';
 import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
@@ -28,6 +29,16 @@ describe('useRunsViewModel', () => {
 
     expect(result.current.isEmpty).toBe(false);
     expect(result.current.run?.id).toBe('r-01');
+  });
+
+  it('names the run and what it walked in the language the QA reads', async () => {
+    await i18n.changeLanguage('pt');
+
+    const { result } = renderHook(() => useRunsViewModel());
+
+    expect(result.current.title).toBe('Run r-01 · o plano inteiro');
+    expect(result.current.runs[0]?.what).toBe('O plano inteiro');
+    await i18n.changeLanguage('en');
   });
 
   it('marks a run that ended before the end, and leaves a finished one plain', () => {

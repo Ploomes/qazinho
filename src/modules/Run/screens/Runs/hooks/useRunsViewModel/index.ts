@@ -69,10 +69,12 @@ export const useRunsViewModel = () => {
   return {
     runs: paged.items.map((item) => ({
       ...item,
+      what: t('RUN.WHOLE_PLAN'),
       isSelected: item.id === run?.id,
       ended: endOf(item.endedBy),
     })),
     run,
+    title: run === null ? '' : t('RUN.TITLE', { id: run.id }),
     runEnded: run === null ? null : endOf(run.endedBy),
     reportRef,
     pager: {

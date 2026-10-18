@@ -121,7 +121,9 @@ export const useDevicePanelViewModel = () => {
     isLive: state === 'driving',
     steps,
     doingLabel:
-      live === null ? '' : `${String(live.outcomes.length)} of ${String(steps.length)}`,
+      live === null
+        ? ''
+        : t('DEVICE.STEPS_PROGRESS', { done: live.outcomes.length, total: steps.length }),
     onToggle: toggleDevicePanel,
     onResize: setDeviceWidth,
     onResizeStart: () => {

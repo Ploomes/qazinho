@@ -57,7 +57,8 @@ export const useChatViewModel = () => {
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
   const size = viewportOf(workspace?.viewportId);
-  const references = workspace === null ? [] : referencesOf(workspace);
+  const wholePlan = t('RUN.WHOLE_PLAN');
+  const references = workspace === null ? [] : referencesOf({ workspace, wholePlan });
   const mentionQuery = mentionQueryOf(draft);
   const agentId = detected.find(({ name }) => name === agentName)?.id ?? 'claude-code';
   const { listRef, visible, onScroll } = useChatScroll({
@@ -128,7 +129,10 @@ export const useChatViewModel = () => {
   const send = (text: string) => {
     if (!workspace || text.trim().length === 0) return;
 
-    const references = mentionsIn({ text, references: referencesOf(workspace) });
+    const references = mentionsIn({
+      text,
+      references: referencesOf({ workspace, wholePlan }),
+    });
 
     sendMessage({
       workspaceId: workspace.id,

@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { i18n } from '@/languages';
 import { useDevicePanelViewModel } from '@/modules/Device/components/DevicePanel/hooks/useDevicePanelViewModel';
 import { DEVICE } from '@/modules/Device/constants';
 import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
@@ -110,6 +111,18 @@ describe('useDevicePanelViewModel', () => {
     expect(result.current.steps[1]?.verdict).toBe('running');
     expect(result.current.steps[2]?.verdict).toBe('pending');
     expect(result.current.doingLabel).toBe('1 of 6');
+  });
+
+  it('counts the steps done in the language the QA reads', async () => {
+    const walked = walkRun({ verdicts: ['passed'] });
+
+    useWorkspaceStore.setState({ workspaces: [walked] });
+    await i18n.changeLanguage('pt');
+
+    const { result } = renderHook(() => useDevicePanelViewModel());
+
+    expect(result.current.doingLabel).toBe('1 de 6');
+    await i18n.changeLanguage('en');
   });
 
   it('shows the live stream while the run goes, and drops it once the run is over', () => {
