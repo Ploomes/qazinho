@@ -75,7 +75,14 @@ export const useArchive = () => {
       }
     });
 
+    const flush = () => {
+      later.flush();
+    };
+
+    window.addEventListener('pagehide', flush);
+
     return () => {
+      window.removeEventListener('pagehide', flush);
       later.flush();
       stop();
     };

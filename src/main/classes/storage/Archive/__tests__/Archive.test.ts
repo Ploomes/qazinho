@@ -87,4 +87,26 @@ describe('Archive', () => {
   it('a screenshot that is no longer on disk is nothing, not a crash', async () => {
     expect(await archive.readShot(join(root, 'gone.jpg'))).toBeNull();
   });
+
+  /**
+   * Quitting mid-run used to lose the step that landed last: its save was still on its way when
+   * the app went, and the run the QA had watched never reached the disk.
+   */
+  it('says a save is on its way, and waits for it before the app may quit', async () => {
+    const saving = archive.saveWorkspace(SAVED);
+
+    expect(archive.isWriting()).toBe(true);
+
+    await archive.settle();
+
+    expect(archive.isWriting()).toBe(false);
+    expect((await archive.read()).workspaces).toEqual([SAVED]);
+    await saving;
+  });
+
+  it('has nothing on its way once every save landed', async () => {
+    await archive.saveProjects('[]');
+
+    expect(archive.isWriting()).toBe(false);
+  });
 });

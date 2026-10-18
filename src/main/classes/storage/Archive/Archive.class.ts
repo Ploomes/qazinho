@@ -7,6 +7,7 @@ import { isInside, readTextOr } from './library';
 /** Everything QAzinho keeps between sessions, as files the QA can open, diff and commit. */
 export class Archive {
   private readonly root: string;
+  private readonly writing = new Set<Promise<void>>();
 
   public constructor(root: string) {
     this.root = root;
@@ -23,16 +24,30 @@ export class Archive {
   }
 
   public async saveProjects(json: string): Promise<void> {
-    await mkdir(this.root, { recursive: true });
-    await writeFile(join(this.root, ARCHIVE.projects), json, 'utf8');
+    await this.track(async () => {
+      await mkdir(this.root, { recursive: true });
+      await writeFile(join(this.root, ARCHIVE.projects), json, 'utf8');
+    });
   }
 
   public async saveWorkspace(saved: ISavedWorkspace): Promise<void> {
     const folder = this.folderOf(saved.id);
 
-    await mkdir(folder, { recursive: true });
-    await writeFile(join(folder, ARCHIVE.workspace), saved.json, 'utf8');
-    await writeFile(join(folder, ARCHIVE.plan), saved.planYaml, 'utf8');
+    await this.track(async () => {
+      await mkdir(folder, { recursive: true });
+      await writeFile(join(folder, ARCHIVE.workspace), saved.json, 'utf8');
+      await writeFile(join(folder, ARCHIVE.plan), saved.planYaml, 'utf8');
+    });
+  }
+
+  /** Whether a save is still on its way to disk. */
+  public isWriting(): boolean {
+    return this.writing.size > 0;
+  }
+
+  /** Waits for every save on its way to disk, so quitting never cuts one in half. */
+  public async settle(): Promise<void> {
+    await Promise.allSettled([...this.writing]);
   }
 
   public async removeWorkspace(id: string): Promise<void> {
@@ -51,6 +66,18 @@ export class Archive {
     if (!isInside({ root: this.root, file })) return null;
 
     return readFile(file).catch(() => null);
+  }
+
+  private async track(write: () => Promise<void>): Promise<void> {
+    const writing = write();
+
+    this.writing.add(writing);
+
+    try {
+      await writing;
+    } finally {
+      this.writing.delete(writing);
+    }
   }
 
   private folderOf(id: string): string {

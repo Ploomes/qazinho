@@ -408,7 +408,16 @@ void app.whenReady().then(async () => {
   });
 });
 
-app.on('will-quit', () => {
+app.on('will-quit', (event) => {
+  if (archive.isWriting()) {
+    event.preventDefault();
+    void archive.settle().finally(() => {
+      app.quit();
+    });
+
+    return;
+  }
+
   live.close();
   tools.close();
   mcp.close();
