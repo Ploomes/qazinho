@@ -22,6 +22,7 @@ export const CHANNELS = {
   readShot: 'state:shot',
   saveShot: 'state:save-shot',
   pickFile: 'files:pick',
+  fitWindow: 'window:fit',
   checkMachine: 'machine:check',
   installTool: 'setup:install',
   setupEvent: 'setup:event',

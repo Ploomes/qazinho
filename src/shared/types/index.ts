@@ -57,3 +57,4 @@ export type * from './SaveOutcome';
 export type * from './Severity';
 export type * from './StepVerdict';
 export type * from './TargetKind';
+export type * from './WindowFit';

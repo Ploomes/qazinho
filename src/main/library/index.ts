@@ -4,6 +4,7 @@ export * from './collectSubtree';
 export * from './fileNameOf';
 export * from './findExistingPath';
 export * from './findOnPath';
+export * from './fittedBounds';
 export * from './hydrateShellPath';
 export * from './imageExtensionOf';
 export * from './isInternalNavigation';

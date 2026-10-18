@@ -63,6 +63,7 @@ beforeEach(() => {
     readShot: vi.fn().mockResolvedValue(null),
     saveShot: vi.fn(),
     pickFile: vi.fn().mockResolvedValue(null),
+    fitWindow: vi.fn(),
     checkMachine: vi.fn(),
     installTool: vi.fn(),
     onSetupEvent: vi.fn().mockReturnValue(() => undefined),

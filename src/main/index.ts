@@ -16,11 +16,20 @@ import type {
   McpSignInProgress,
   PickKind,
   SaveOutcome,
+  WindowFit,
 } from '@/shared/types';
 import { writeFile } from 'node:fs/promises';
 import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { app, BrowserWindow, dialog, ipcMain, safeStorage, shell } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  ipcMain,
+  safeStorage,
+  screen,
+  shell,
+} from 'electron';
 import { Harness, McpHost } from '@/harness';
 import {
   AgentDetector,
@@ -39,10 +48,17 @@ import {
 } from '@/main/classes';
 import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
 import { listSimulators } from '@/main/classes/devices/IosDriver/library';
-import { FILE_FILTERS, PATHS, WINDOW } from '@/main/constants';
+import {
+  FILE_FILTERS,
+  PATHS,
+  WINDOW,
+  WINDOW_FITS,
+  WINDOW_SHOW_FALLBACK_MS,
+} from '@/main/constants';
 import {
   bytesOfDataUrl,
   fileNameOf,
+  fittedBounds,
   hydrateShellPath,
   imageExtensionOf,
   isInternalNavigation,
@@ -230,6 +246,22 @@ async function saveShot(props: {
   );
 }
 
+function fitWindow(props: { window: BrowserWindow; fit: WindowFit }): void {
+  const { window, fit } = props;
+  const isVisible = window.isVisible();
+
+  window.setBounds(
+    fittedBounds({
+      size: WINDOW_FITS[fit],
+      area: screen.getDisplayMatching(window.getBounds()).workArea,
+      current: isVisible ? window.getBounds() : null,
+    }),
+    isVisible,
+  );
+
+  if (!isVisible) window.show();
+}
+
 async function pickFile(kind: PickKind) {
   const [open] = BrowserWindow.getAllWindows();
   const filters = [FILE_FILTERS[kind]];
@@ -257,7 +289,11 @@ function createWindow(): void {
     },
   });
 
-  window.once('ready-to-show', () => window.show());
+  window.once('ready-to-show', () => {
+    setTimeout(() => {
+      if (!window.isDestroyed() && !window.isVisible()) window.show();
+    }, WINDOW_SHOW_FALLBACK_MS);
+  });
 
   window.webContents.on('will-navigate', (event, target) => {
     if (!isInternalNavigation(window.webContents.getURL(), target))
@@ -331,6 +367,11 @@ void app.whenReady().then(async () => {
       saveShot(props),
   );
   ipcMain.handle(CHANNELS.pickFile, (_event, kind: PickKind) => pickFile(kind));
+  ipcMain.handle(CHANNELS.fitWindow, (event, fit: WindowFit) => {
+    const window = BrowserWindow.fromWebContents(event.sender);
+
+    if (window !== null) fitWindow({ window, fit });
+  });
   ipcMain.handle(CHANNELS.checkMachine, () => checkMachine());
   ipcMain.handle(CHANNELS.installTool, (_event, item: InstallableId) =>
     installer.install(item),

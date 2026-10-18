@@ -1,0 +1,1 @@
+export const WINDOW_SHOW_FALLBACK_MS = 1_500;

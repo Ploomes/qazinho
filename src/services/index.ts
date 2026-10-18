@@ -1,4 +1,5 @@
 export * from './Agent';
+export * from './AppWindow';
 export * from './Archive';
 export * from './Files';
 export * from './Integrations';

@@ -29,6 +29,7 @@ import type {
   PickKind,
   Platform,
   SaveOutcome,
+  WindowFit,
 } from '@/shared/types';
 import { contextBridge, ipcRenderer } from 'electron';
 import { CHANNELS } from '@/shared/constants';
@@ -107,6 +108,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.saveShot, props) as Promise<SaveOutcome>,
   pickFile: (kind: PickKind) =>
     ipcRenderer.invoke(CHANNELS.pickFile, kind) as Promise<string | null>,
+  fitWindow: (fit: WindowFit) =>
+    ipcRenderer.invoke(CHANNELS.fitWindow, fit) as Promise<void>,
   checkMachine: () => ipcRenderer.invoke(CHANNELS.checkMachine) as Promise<IMachineCheck>,
   installTool: (item: InstallableId) =>
     ipcRenderer.invoke(CHANNELS.installTool, item) as Promise<IInstallResult>,

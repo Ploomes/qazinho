@@ -27,6 +27,7 @@ import type { McpSignInProgress } from './McpSignInProgress';
 import type { PickKind } from './PickKind';
 import type { Platform } from './Platform';
 import type { SaveOutcome } from './SaveOutcome';
+import type { WindowFit } from './WindowFit';
 
 /** What the preload exposes to the page as `window.qazinho`. Data and purposeful functions only. */
 export interface IQazinhoApi {
@@ -58,6 +59,7 @@ export interface IQazinhoApi {
     name: string;
   }) => Promise<SaveOutcome>;
   pickFile: (kind: PickKind) => Promise<string | null>;
+  fitWindow: (fit: WindowFit) => Promise<void>;
   checkMachine: () => Promise<IMachineCheck>;
   installTool: (item: InstallableId) => Promise<IInstallResult>;
   onSetupEvent: (listener: (event: ISetupEvent) => void) => () => void;

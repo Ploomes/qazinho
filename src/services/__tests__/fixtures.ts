@@ -46,6 +46,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     readShot: () => Promise.resolve(null),
     saveShot: () => Promise.resolve('cancelled'),
     pickFile: () => Promise.resolve(null),
+    fitWindow: () => Promise.resolve(),
     checkMachine: () =>
       Promise.resolve({
         agents: [],
