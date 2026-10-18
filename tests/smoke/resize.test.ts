@@ -11,7 +11,7 @@ import { WebDriver } from '@/main/classes/devices/WebDriver';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
 
-const PORT = 4342;
+const PORT = 4346;
 const PHONE = { width: 390, height: 844 };
 const DESKTOP = { width: 1280, height: 800 };
 
