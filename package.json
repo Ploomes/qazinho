@@ -8,11 +8,11 @@
   "author": "Salve Software",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Salve-Software/gocrash.git"
+    "url": "git+https://github.com/Salve-Software/qazinho.git"
   },
-  "homepage": "https://github.com/Salve-Software/gocrash#readme",
+  "homepage": "https://github.com/Salve-Software/qazinho#readme",
   "bugs": {
-    "url": "https://github.com/Salve-Software/gocrash/issues"
+    "url": "https://github.com/Salve-Software/qazinho/issues"
   },
   "main": "./out/main/index.js",
   "engines": {
