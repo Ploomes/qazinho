@@ -106,18 +106,18 @@ screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `
 
 Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 
-| Class                                 | What it does                                                           |
-| ------------------------------------- | ---------------------------------------------------------------------- |
-| `AgentDetector`                       | finds the QA's agent CLIs, the way Orca does: fs probes, no subprocess |
-| `AgentRunner`                         | spawns one, streams its JSON, reads a `--json-schema` answer back      |
-| `WebDriver`                           | drives Chrome over playwright-core, one profile per workspace          |
-| `LiveStream`                          | serves the device's frames as MJPEG on 127.0.0.1, for the device panel |
-| `RunCoordinator`                      | walks a plan a case per agent turn: it acts and reports through tools  |
-| `ResourceCollector` / `ProcessOwners` | one `ps` sweep, charged to whoever started it                          |
-| `Archive`                             | the QA's projects, workspaces and plans, as files on disk              |
-| `SetupInstaller`                      | installs an agent CLI or idb on request, streaming each line it prints |
-| `IntegrationVault`                    | checks a tracker token and keeps it sealed with `safeStorage`          |
-| `AgentMcp`                            | adds an MCP server to the QA's Claude Code and opens its sign-in       |
+| Class                                 | What it does                                                                    |
+| ------------------------------------- | ------------------------------------------------------------------------------- |
+| `AgentDetector`                       | finds the QA's agent CLIs, the way Orca does: fs probes, no subprocess          |
+| `AgentRunner`                         | spawns Claude Code or Codex, each in its own dialect, and reads the answer back |
+| `WebDriver`                           | drives Chrome over playwright-core, one profile per workspace                   |
+| `LiveStream`                          | serves the device's frames as MJPEG on 127.0.0.1, for the device panel          |
+| `RunCoordinator`                      | walks a plan a case per agent turn: it acts and reports through tools           |
+| `ResourceCollector` / `ProcessOwners` | one `ps` sweep, charged to whoever started it                                   |
+| `Archive`                             | the QA's projects, workspaces and plans, as files on disk                       |
+| `SetupInstaller`                      | installs an agent CLI or idb on request, streaming each line it prints          |
+| `IntegrationVault`                    | checks a tracker token and keeps it sealed with `safeStorage`                   |
+| `AgentMcp`                            | adds an MCP server to the QA's Claude Code and opens its sign-in                |
 
 ## Dependencies
 

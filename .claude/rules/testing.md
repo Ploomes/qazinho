@@ -64,6 +64,7 @@ Three suites that need something real behind them. They have their own config
 | `stream.test.ts`   | windowless Chrome streamed as MJPEG over loopback, with no agent            |
 | `stop.test.ts`     | Stop ends a run while a fake agent is still thinking                        |
 | `agent.test.ts`    | a fake agent retries a failed action, leaves a note, or errors out          |
+| `codex.test.ts`    | a fake Codex chats in the strict schema, resumes, runs a case, signs out    |
 | `tools.test.ts`    | an MCP client lists, calls and fails the device tools on real Chrome        |
 | `setup.test.ts`    | the installer runs a fake npm, streams its lines, and fails honestly        |
 | `mcp.test.ts`      | a fake Claude Code and Codex get Figma's MCP added, signed in and removed   |
