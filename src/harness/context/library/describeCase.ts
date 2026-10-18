@@ -1,6 +1,6 @@
 import type { IFlatStep } from '@/shared/types';
 
-/** One case to walk, as the message that starts the agent's turn: every step in order, and the screen it starts on. */
+/** One case to walk, as the message that starts the agent's turn: what it needs, every step in order, and the screen it starts on. */
 export function describeCase(props: { steps: IFlatStep[]; screen: string }): string {
   const { steps, screen } = props;
   const [first] = steps;
@@ -9,6 +9,10 @@ export function describeCase(props: { steps: IFlatStep[]; screen: string }): str
 
   return [
     `${first.caseId} · ${first.caseTitle}`,
+    ...(first.caseGoal.length > 0 ? [`Goal: ${first.caseGoal}`] : []),
+    ...(first.casePreconditions.length > 0
+      ? [`Preconditions: ${first.casePreconditions}`]
+      : []),
     'Carry out these steps in order, and report each one as soon as you judged it:',
     ...steps.flatMap((step) => [
       `${String(step.numberInCase)}. ${step.action}`,

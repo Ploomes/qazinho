@@ -107,6 +107,9 @@ describe('a real run on a phone', () => {
         {
           caseId: 'TC-01',
           caseTitle: 'The demo app opens',
+          casePriority: 'P1',
+          caseGoal: '',
+          casePreconditions: '',
           numberInCase: 1,
           action: 'Tap the Settings tab at the bottom of the screen',
           expected: 'A settings screen opens',
@@ -114,6 +117,9 @@ describe('a real run on a phone', () => {
         {
           caseId: 'TC-02',
           caseTitle: 'Something that is not there',
+          casePriority: 'P1',
+          caseGoal: '',
+          casePreconditions: '',
           numberInCase: 1,
           action: 'Read the shopping cart total on the screen',
           expected: 'The screen shows a cart total in dollars',

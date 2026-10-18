@@ -5,6 +5,9 @@ import { unwalkedOutcome } from '@/main/classes/runs/RunCoordinator/library';
 const STEP = {
   caseId: 'tc-1',
   caseTitle: 'Checkout',
+  casePriority: 'P1',
+  caseGoal: '',
+  casePreconditions: '',
   numberInCase: 3,
   action: 'Pay with the saved card',
   expected: 'The order is confirmed',

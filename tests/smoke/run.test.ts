@@ -58,6 +58,9 @@ describe('a real run', () => {
         {
           caseId: 'TC-01',
           caseTitle: 'Cart',
+          casePriority: 'P1',
+          caseGoal: '',
+          casePreconditions: '',
           numberInCase: 1,
           action: 'Click the Add to cart button',
           expected: 'The page says the item was added to the cart',
@@ -65,6 +68,9 @@ describe('a real run', () => {
         {
           caseId: 'TC-01',
           caseTitle: 'Cart',
+          casePriority: 'P1',
+          caseGoal: '',
+          casePreconditions: '',
           numberInCase: 2,
           action: 'Read the cart total on the page',
           expected: 'The page shows a cart total in dollars',
@@ -72,6 +78,9 @@ describe('a real run', () => {
         {
           caseId: 'TC-01',
           caseTitle: 'Cart',
+          casePriority: 'P1',
+          caseGoal: '',
+          casePreconditions: '',
           numberInCase: 3,
           action: 'Click the checkout button',
           expected: 'The checkout page opens',

@@ -4,6 +4,9 @@ import { describeCase } from '@/harness/context/library';
 const STEP = {
   caseId: 'TC-01',
   caseTitle: 'Sign in',
+  casePriority: 'P1',
+  caseGoal: '',
+  casePreconditions: '',
   numberInCase: 1,
   action: 'Open the sign in page',
   expected: 'The form shows',
@@ -32,6 +35,30 @@ describe('describeCase', () => {
         '   The QA expects: The form shows',
         '2. Sign in',
         '   The QA expects: The home page opens',
+      ].join('\n'),
+    );
+  });
+
+  it('says what the case is for and what it needs before step 1, so the agent sets it up', () => {
+    expect(
+      describeCase({
+        steps: [
+          {
+            ...STEP,
+            caseGoal: 'A member gets in.',
+            casePreconditions: 'Account qa@shop.test, password Test-1234.',
+          },
+        ],
+        screen: '',
+      }),
+    ).toBe(
+      [
+        'TC-01 · Sign in',
+        'Goal: A member gets in.',
+        'Preconditions: Account qa@shop.test, password Test-1234.',
+        'Carry out these steps in order, and report each one as soon as you judged it:',
+        '1. Open the sign in page',
+        '   The QA expects: The form shows',
       ].join('\n'),
     );
   });

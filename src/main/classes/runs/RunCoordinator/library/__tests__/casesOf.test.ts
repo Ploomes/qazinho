@@ -2,7 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { casesOf } from '@/main/classes/runs/RunCoordinator/library';
 
 function step(caseId: string, numberInCase: number) {
-  return { caseId, caseTitle: caseId, numberInCase, action: 'act', expected: 'see' };
+  return {
+    caseId,
+    caseTitle: caseId,
+    casePriority: 'P1',
+    caseGoal: '',
+    casePreconditions: '',
+    numberInCase,
+    action: 'act',
+    expected: 'see',
+  };
 }
 
 describe('casesOf', () => {

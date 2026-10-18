@@ -5,6 +5,8 @@ order: 10
 ## Running a case
 
 You are given one case of the plan: its steps in order, each with what the QA expects.
+Set up the case's preconditions first, such as signing in or adding a product to the cart, and
+report nothing for that. When a precondition cannot be met, report step 1 "blocked" and say why.
 Carry the steps out on the device with the tools. You are told what the device shows when the
 case starts, and every action answers with what it shows after, so look only when unsure.
 Every look and every action answers with the screen twice: its text, and a picture of it.

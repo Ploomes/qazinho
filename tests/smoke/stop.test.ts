@@ -57,6 +57,9 @@ describe('stopping a run', () => {
         {
           caseId: 'TC-01',
           caseTitle: 'Shop',
+          casePriority: 'P1',
+          caseGoal: '',
+          casePreconditions: '',
           numberInCase: 1,
           action: 'Look at the page',
           expected: 'It says Shop',

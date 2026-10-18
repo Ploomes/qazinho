@@ -9,22 +9,18 @@ import { Harness, registerDeviceTools } from '@/harness';
  * The files in __prompts__ are what the agent read before the harness moved to src/harness/.
  * Any change to what the agent is told shows up here as a diff of one of them, on purpose.
  */
-const STEPS = [
-  {
-    caseId: 'TC-01',
-    caseTitle: 'Coupon',
-    numberInCase: 1,
-    action: 'Open the cart',
-    expected: 'The cart shows',
-  },
-  {
-    caseId: 'TC-01',
-    caseTitle: 'Coupon',
-    numberInCase: 2,
-    action: 'Apply SAVE10',
-    expected: '10% off',
-  },
-] as IFlatStep[];
+const COUPON = {
+  caseId: 'TC-01',
+  caseTitle: 'Coupon',
+  casePriority: 'P1',
+  caseGoal: 'A valid coupon takes 10% off.',
+  casePreconditions: 'One product in the cart.',
+};
+
+const STEPS: IFlatStep[] = [
+  { ...COUPON, numberInCase: 1, action: 'Open the cart', expected: 'The cart shows' },
+  { ...COUPON, numberInCase: 2, action: 'Apply SAVE10', expected: '10% off' },
+];
 
 const REFERENCES: IChatReference[] = [
   {
@@ -41,7 +37,12 @@ const DESKTOP = { width: 1280, height: 800 };
 describe('Harness', () => {
   describe('chat', () => {
     it('tells the agent about an empty workspace exactly as it did before', async () => {
-      const chat = harness.chat({ target: null, steps: [], references: [], look: null });
+      const chat = harness.chat({
+        target: null,
+        steps: [],
+        references: [],
+        look: null,
+      });
 
       await expect(chat.systemPrompt).toMatchFileSnapshot('./__prompts__/chat-empty.txt');
       await expect(chat.schema).toMatchFileSnapshot('./__prompts__/chat-schema.txt');
@@ -64,7 +65,12 @@ describe('Harness', () => {
 
     it('takes every tool away from the chat', () => {
       expect(
-        harness.chat({ target: null, steps: [], references: [], look: null }).tools,
+        harness.chat({
+          target: null,
+          steps: [],
+          references: [],
+          look: null,
+        }).tools,
       ).toEqual({
         groups: [],
         allowedTools: [],
@@ -102,8 +108,12 @@ describe('Harness', () => {
         harness.run({ target: { kind: 'web', value: 'x' }, viewport: DESKTOP }),
       ).not.toContain('## Talking with the QA');
       expect(
-        harness.chat({ target: null, steps: [], references: [], look: null })
-          .systemPrompt,
+        harness.chat({
+          target: null,
+          steps: [],
+          references: [],
+          look: null,
+        }).systemPrompt,
       ).not.toContain('## Running a case');
     });
   });

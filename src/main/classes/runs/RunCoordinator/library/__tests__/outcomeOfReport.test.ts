@@ -4,6 +4,9 @@ import { outcomeOfReport } from '@/main/classes/runs/RunCoordinator/library';
 const STEP = {
   caseId: 'TC-02',
   caseTitle: 'Coupon',
+  casePriority: 'P1',
+  caseGoal: '',
+  casePreconditions: '',
   numberInCase: 2,
   action: 'Apply SAVE10',
   expected: 'The total drops by 10%',

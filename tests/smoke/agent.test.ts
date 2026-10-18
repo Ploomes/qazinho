@@ -111,6 +111,9 @@ async function walkWith(
       {
         caseId: 'TC-01',
         caseTitle: 'Sign in',
+        casePriority: 'P1',
+        caseGoal: '',
+        casePreconditions: '',
         numberInCase: 1,
         action: 'Click the Log in button',
         expected: 'The page says Signed in',

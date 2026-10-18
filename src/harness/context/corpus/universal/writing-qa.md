@@ -9,3 +9,6 @@ A step is one action on the app and the result the QA expects from it.
 Write what a QA would check, in the QA's own words, never in code.
 Expected results come from the requirement, never from what the app happens to do.
 Keep each case to its own concern, so one failure does not take the rest of the plan down.
+Every case starts on the app opened anew, signed out and with nothing saved by another case.
+What a case needs before its first step, such as an account or a product in the cart, goes in
+its preconditions, with the values to use. Leave out what every case starts with.

@@ -1,4 +1,6 @@
 TC-01 · Coupon
+Goal: A valid coupon takes 10% off.
+Preconditions: One product in the cart.
 Carry out these steps in order, and report each one as soon as you judged it:
 1. Open the cart
    The QA expects: The cart shows

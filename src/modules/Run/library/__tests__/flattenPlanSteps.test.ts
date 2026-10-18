@@ -42,6 +42,17 @@ describe('flattenPlanSteps', () => {
     expect(first?.expected).toBe('The cart badge reads 1');
   });
 
+  it('carries what the case needs before it starts, so the agent can set it up', () => {
+    const [first, second] = flattenPlanSteps([CASE]);
+
+    expect(first).toMatchObject({
+      casePriority: 'P1',
+      caseGoal: 'A card order goes through.',
+      casePreconditions: 'One product in the cart.',
+    });
+    expect(second?.casePreconditions).toBe('One product in the cart.');
+  });
+
   it('has nothing to walk when the plan is empty', () => {
     expect(flattenPlanSteps([])).toEqual([]);
   });

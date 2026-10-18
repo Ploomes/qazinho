@@ -22,6 +22,9 @@ const STEPS = [
   {
     caseId: 'TC-01',
     caseTitle: 'Price shows',
+    casePriority: 'P1',
+    caseGoal: '',
+    casePreconditions: '',
     numberInCase: 1,
     action: 'Open the product page',
     expected:
@@ -30,6 +33,9 @@ const STEPS = [
   {
     caseId: 'TC-02',
     caseTitle: 'Photo loads',
+    casePriority: 'P1',
+    caseGoal: '',
+    casePreconditions: '',
     numberInCase: 1,
     action: 'Look at the product photo, on the left',
     expected: 'The photo of the shoe shows, loaded.',
@@ -37,6 +43,9 @@ const STEPS = [
   {
     caseId: 'TC-03',
     caseTitle: 'Free shipping note',
+    casePriority: 'P1',
+    caseGoal: '',
+    casePreconditions: '',
     numberInCase: 1,
     action: 'Read the shipping note under the price',
     expected: 'The note "Frete grátis para todo o Brasil" is readable.',
@@ -44,6 +53,9 @@ const STEPS = [
   {
     caseId: 'TC-04',
     caseTitle: 'Add to cart',
+    casePriority: 'P1',
+    caseGoal: '',
+    casePreconditions: '',
     numberInCase: 1,
     action: 'Click Adicionar ao carrinho',
     expected: 'The cart at the top shows Carrinho (1).',

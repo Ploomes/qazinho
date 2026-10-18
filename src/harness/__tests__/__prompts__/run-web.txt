@@ -11,9 +11,14 @@ A step is one action on the app and the result the QA expects from it.
 Write what a QA would check, in the QA's own words, never in code.
 Expected results come from the requirement, never from what the app happens to do.
 Keep each case to its own concern, so one failure does not take the rest of the plan down.
+Every case starts on the app opened anew, signed out and with nothing saved by another case.
+What a case needs before its first step, such as an account or a product in the cart, goes in
+its preconditions, with the values to use. Leave out what every case starts with.
 
 ## Running a case
 You are given one case of the plan: its steps in order, each with what the QA expects.
+Set up the case's preconditions first, such as signing in or adding a product to the cart, and
+report nothing for that. When a precondition cannot be met, report step 1 "blocked" and say why.
 Carry the steps out on the device with the tools. You are told what the device shows when the
 case starts, and every action answers with what it shows after, so look only when unsure.
 Every look and every action answers with the screen twice: its text, and a picture of it.
