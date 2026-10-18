@@ -27,7 +27,7 @@ export const DevicePanel: React.FC = () => {
     width,
     panelWidth,
     widthTransition,
-    innerStyle,
+    panelStyle,
     isPhone,
     hasScreen,
     hasControls,
@@ -59,6 +59,7 @@ export const DevicePanel: React.FC = () => {
   return (
     <motion.aside
       className="device-panel"
+      style={panelStyle}
       initial={false}
       animate={{ width: panelWidth }}
       transition={widthTransition}
@@ -105,7 +106,7 @@ export const DevicePanel: React.FC = () => {
               }}
             />
 
-            <div className="device-panel__inner" style={innerStyle}>
+            <div className="device-panel__inner">
               <header className="device-panel__header">
                 <span className="device-panel__state">
                   <Intern mood={mood} size={22} isStill />

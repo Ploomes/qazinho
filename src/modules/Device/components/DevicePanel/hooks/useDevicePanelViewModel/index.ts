@@ -87,11 +87,16 @@ export const useDevicePanelViewModel = () => {
       setFocused(false);
     },
     width,
-    panelWidth: isOpen ? width : DEVICE.railWidth,
+    panelWidth: isOpen ? width + DEVICE.handleWidth : DEVICE.railWidth,
     widthTransition: isResizing
       ? { duration: 0 }
       : { duration: MOTION.durationSlow, ease: MOTION.ease },
-    innerStyle: { '--device-width': `${String(width)}px` } as CSSProperties,
+    panelStyle: {
+      '--device-width': `${String(width)}px`,
+      '--device-handle': `${String(DEVICE.handleWidth)}px`,
+      '--device-rail': `${String(DEVICE.railWidth)}px`,
+      '--device-header': `${String(DEVICE.headerHeight)}px`,
+    } as CSSProperties,
     isPhone,
     hasScreen,
     hasControls: isRunLive,

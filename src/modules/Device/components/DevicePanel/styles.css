@@ -12,7 +12,7 @@
 }
 
 .device-panel__handle {
-  width: 5px;
+  width: var(--device-handle);
   background: var(--line2);
   cursor: col-resize;
 }
@@ -32,7 +32,7 @@
   flex: none;
   align-items: center;
   gap: var(--space-3);
-  height: 52px;
+  height: var(--device-header);
   padding: 0 var(--space-4);
   border-bottom: 1px solid var(--line2);
 }
@@ -190,7 +190,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 46px;
+  width: var(--device-rail);
   border-left: 1px solid var(--line2);
   background: var(--panel);
   color: var(--ink3);

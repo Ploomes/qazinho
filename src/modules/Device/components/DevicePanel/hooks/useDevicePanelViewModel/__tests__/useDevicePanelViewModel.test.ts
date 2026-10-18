@@ -209,6 +209,16 @@ describe('useDevicePanelViewModel', () => {
   });
 
   describe('panelWidth', () => {
+    it('makes room for the handle beside the content, so nothing is cut at the window edge', () => {
+      const { result } = renderHook(() => useDevicePanelViewModel());
+
+      expect(result.current.panelWidth).toBe(DEVICE.defaultWidth + DEVICE.handleWidth);
+      expect(result.current.panelStyle).toMatchObject({
+        '--device-width': `${String(DEVICE.defaultWidth)}px`,
+        '--device-handle': `${String(DEVICE.handleWidth)}px`,
+      });
+    });
+
     it('narrows to the rail when the panel is hidden, so the width can animate', () => {
       useWorkspaceStore.setState({ isDevicePanelOpen: false });
 
