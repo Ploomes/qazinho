@@ -211,7 +211,6 @@ describe('useQuestionRoundViewModel', () => {
       });
 
       expect(view.result.current).toMatchObject({
-        eyebrow: 'Answered',
         isAnswered: true,
         isOpen: false,
         canSend: false,
@@ -221,6 +220,58 @@ describe('useQuestionRoundViewModel', () => {
         said: 'the scanner first',
         options: [{ label: 'The app', isPicked: true }],
       });
+    });
+  });
+
+  describe('onToggle', () => {
+    const answered = (questions: IChatQuestion[]) =>
+      render({
+        message: round({
+          questions,
+          answers: questions.map(() => ({ picked: [], text: 'mine' })),
+        }),
+        isAnswerable: false,
+      }).view;
+
+    it('folds an answered round into one line that counts the questions answered', () => {
+      const view = answered([SCOPE, FLOWS]);
+
+      expect(view.result.current).toMatchObject({
+        summary: 'You answered 2 questions',
+        isExpanded: false,
+        isBodyShown: false,
+        caret: '▸',
+      });
+    });
+
+    it('opens the answers on a click, and folds them again on the next', () => {
+      const view = answered([SCOPE, FLOWS]);
+
+      act(() => {
+        view.result.current.onToggle();
+      });
+
+      expect(view.result.current).toMatchObject({ isBodyShown: true, caret: '▾' });
+
+      act(() => {
+        view.result.current.onToggle();
+      });
+
+      expect(view.result.current.isBodyShown).toBe(false);
+    });
+
+    it('counts a single question in the singular', () => {
+      expect(answered([GATE]).result.current.summary).toBe('You answered 1 question');
+    });
+
+    it('does NOT fold a round still waiting for its answers', () => {
+      const { view } = render({ message: round({ questions: [SCOPE] }) });
+
+      act(() => {
+        view.result.current.onToggle();
+      });
+
+      expect(view.result.current.isBodyShown).toBe(true);
     });
   });
 

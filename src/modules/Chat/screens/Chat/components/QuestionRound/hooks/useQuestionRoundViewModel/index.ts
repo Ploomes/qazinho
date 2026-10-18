@@ -4,6 +4,7 @@ import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { QUESTION_ROUND } from '@/modules/Chat/screens/Chat/components/QuestionRound/constants';
+import { MOTION } from '@/shared/constants';
 
 export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
   const { message, isAnswerable, onAnswer } = props;
@@ -11,6 +12,7 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
   const [drafts, setDrafts] = useState<IQuestionAnswer[]>(() =>
     message.questions.map(() => ({ picked: [], text: '' })),
   );
+  const [isExpanded, setExpanded] = useState(false);
 
   const isAnswered = message.answers !== null;
   const isOpen = isAnswerable && !isAnswered;
@@ -32,8 +34,16 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
     style: {
       '--option-min-width': `${String(QUESTION_ROUND.optionMinWidth)}px`,
     } as CSSProperties,
-    eyebrow: isAnswered ? t('CHAT.QUESTIONS_ANSWERED') : t('CHAT.QUESTIONS'),
+    eyebrow: t('CHAT.QUESTIONS'),
+    summary:
+      message.questions.length === 1
+        ? t('CHAT.QUESTIONS_ANSWERED_ONE')
+        : t('CHAT.QUESTIONS_ANSWERED_OTHER', { count: message.questions.length }),
+    caret: isExpanded ? '▾' : '▸',
     isAnswered,
+    isExpanded,
+    isBodyShown: !isAnswered || isExpanded,
+    bodyTransition: { duration: MOTION.duration, ease: MOTION.ease },
     isOpen,
     canSend: isOpen && isComplete,
     sendLabel: t('CHAT.QUESTIONS_SEND'),
@@ -92,6 +102,9 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
     },
     onSend: () => {
       if (isOpen && isComplete) send(drafts);
+    },
+    onToggle: () => {
+      if (isAnswered) setExpanded(!isExpanded);
     },
   };
 };
