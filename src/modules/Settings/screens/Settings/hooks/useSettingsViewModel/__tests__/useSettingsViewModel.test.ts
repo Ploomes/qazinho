@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useSettingsViewModel } from '@/modules/Settings/screens/Settings/hooks/useSettingsViewModel';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAppStore, useMachineStore, useSettingsStore } from '@/store';
 
 beforeEach(() => {
@@ -50,7 +51,7 @@ describe('useSettingsViewModel', () => {
     ]);
   });
 
-  it('flags an agent that is there but signed out', () => {
+  it('flags an agent that is there but signed out, and offers to sign it in from here', () => {
     useMachineStore.setState({
       agents: [
         agent({ id: 'claude-code', name: 'Claude Code' }),
@@ -60,7 +61,15 @@ describe('useSettingsViewModel', () => {
 
     const { result } = renderHook(() => useSettingsViewModel());
 
-    expect(result.current.agents[1]?.note).toBe('Not signed in');
+    expect(result.current.agents[1]).toMatchObject({
+      note: 'Not signed in',
+      canSignIn: true,
+      className: 'settings__card settings__card--signed-out',
+    });
+    expect(result.current.agents[0]).toMatchObject({
+      canSignIn: false,
+      className: 'settings__card settings__card--on',
+    });
   });
 
   it('flags an agent that is not on PATH', () => {
@@ -96,6 +105,33 @@ describe('useSettingsViewModel', () => {
     expect(result.current.keybinds.find(({ id }) => id === 'run')?.keys).toBe(
       'press the keys',
     );
+  });
+
+  describe('signing an agent in', () => {
+    afterEach(() => {
+      Reflect.deleteProperty(window, 'qazinho');
+    });
+
+    it("runs that agent's own sign-in in the popup", async () => {
+      window.qazinho = fakeQazinhoApi('darwin');
+      useMachineStore.setState({
+        agents: [{ ...agent({ id: 'codex', name: 'Codex' }), isSignedIn: false }],
+      });
+
+      const signIn = vi.spyOn(window.qazinho, 'signInAgent');
+      const { result } = renderHook(() => useSettingsViewModel());
+
+      await act(async () => {
+        result.current.agents[0]?.onSignIn();
+      });
+
+      expect(signIn).toHaveBeenCalledWith('codex');
+      expect(result.current.signIn).toMatchObject({
+        agentId: 'codex',
+        phase: 'connected',
+      });
+      expect(result.current.signInAgent).toBe('Codex');
+    });
   });
 
   describe('onSelectAgent', () => {

@@ -52,7 +52,7 @@ describe('useStepAgentsViewModel', () => {
       });
     });
 
-    it('flags an agent found but signed out, and says how to sign in', () => {
+    it('flags an agent found but signed out, and offers to sign it in from here', () => {
       useMachineStore.setState({
         agents: [
           CLAUDE,
@@ -67,8 +67,10 @@ describe('useStepAgentsViewModel', () => {
         state: 'missing',
         badge: 'signed out',
         canInstall: false,
+        canSignIn: true,
       });
-      expect(codex?.signIn).toContain('Run codex login in a terminal');
+      expect(codex?.signIn).toContain('Sign in and it is ready');
+      expect(codex?.signIn).not.toContain('terminal');
     });
 
     it('does NOT count a signed-out agent as one QAzinho can work with', () => {
@@ -107,14 +109,50 @@ describe('useStepAgentsViewModel', () => {
       expect(result.current.rows[1]?.install).toMatchObject({ phase: 'installing' });
     });
 
-    it('tells the QA to sign in once a fresh install is found', () => {
+    it('offers the sign-in once a fresh install says it is signed out', () => {
       useMachineStore.setState({
-        agents: [CLAUDE, { ...CODEX, isFound: true, path: '/bin/codex' }],
+        agents: [
+          CLAUDE,
+          { ...CODEX, isFound: true, path: '/bin/codex', isSignedIn: false },
+        ],
       });
       useSetupStore.setState({ installs: { codex: { phase: 'installed' } } });
       const { result } = renderHook(() => useStepAgentsViewModel());
 
-      expect(result.current.rows[1]?.signIn).toContain('codex');
+      expect(result.current.rows[1]?.canSignIn).toBe(true);
+    });
+
+    it('does NOT offer a sign-in to an agent that is signed in', () => {
+      const { result } = renderHook(() => useStepAgentsViewModel());
+
+      expect(result.current.rows[0]).toMatchObject({ canSignIn: false, signIn: '' });
+    });
+  });
+
+  describe('onSignIn', () => {
+    it("runs the agent's own sign-in in a popup, and checks the machine again once it is in", async () => {
+      useMachineStore.setState({
+        agents: [
+          CLAUDE,
+          { ...CODEX, isFound: true, path: '/bin/codex', isSignedIn: false },
+        ],
+      });
+
+      const signIn = vi.spyOn(window.qazinho, 'signInAgent');
+      const check = vi.spyOn(window.qazinho, 'checkMachine');
+      const { result } = renderHook(() => useStepAgentsViewModel());
+
+      await act(async () => {
+        result.current.rows[1]?.onSignIn();
+      });
+
+      expect(signIn).toHaveBeenCalledWith('codex');
+      expect(result.current.signIn).toMatchObject({
+        agentId: 'codex',
+        phase: 'connected',
+      });
+      expect(result.current.signInAgent).toBe('Codex');
+      expect(check).toHaveBeenCalled();
     });
   });
 

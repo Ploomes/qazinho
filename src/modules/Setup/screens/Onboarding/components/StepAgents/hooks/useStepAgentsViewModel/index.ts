@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { AGENT_LOGINS, SETUP_LINKS } from '@/modules/Setup/constants';
-import { useInstall, useMachineCheck } from '@/modules/Setup/hooks';
+import { SETUP_LINKS } from '@/modules/Setup/constants';
+import { useAgentSignIn, useInstall, useMachineCheck } from '@/modules/Setup/hooks';
 import { installableAgentOf } from '@/modules/Setup/library';
 import { useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
@@ -12,9 +12,11 @@ export const useStepAgentsViewModel = () => {
   const selectAgent = useSettingsStore((state) => state.selectAgent);
   const { installs, install } = useInstall();
   const { isChecking, check } = useMachineCheck();
+  const signIn = useAgentSignIn();
   const hasNpm = managers?.npm.isFound ?? false;
 
   return {
+    ...signIn,
     isChecking,
     needsNpm: managers !== null && !hasNpm && agents.some(({ isFound }) => !isFound),
     nodeUrl: SETUP_LINKS.nodejs,
@@ -42,18 +44,16 @@ export const useStepAgentsViewModel = () => {
         canInstall:
           !agent.isFound && item !== null && hasNpm && state?.phase !== 'installing',
         install: state ?? null,
-        signIn: isSignedOut
-          ? t('SETUP.AGENT_SIGNED_OUT', {
-              login: AGENT_LOGINS[agent.id] ?? agent.command,
-            })
-          : agent.isFound && state?.phase === 'installed'
-            ? t('SETUP.AGENT_SIGN_IN', { command: agent.command })
-            : '',
+        canSignIn: isSignedOut,
+        signIn: isSignedOut ? t('SETUP.AGENT_SIGNED_OUT') : '',
         onUse: () => {
           selectAgent(agent.name);
         },
         onInstall: () => {
           if (item !== null) void install(item);
+        },
+        onSignIn: () => {
+          signIn.onSignIn(agent.id);
         },
       };
     }),

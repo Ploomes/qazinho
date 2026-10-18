@@ -1,6 +1,8 @@
+import { AnimatePresence } from 'motion/react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { IntegrationCard, McpCard } from '@/modules/Setup';
-import { Logo, Tag, Wordmark } from '@/shared/components/atoms';
+import { AgentSignIn, IntegrationCard, McpCard } from '@/modules/Setup';
+import { Button, Logo, Tag, Wordmark } from '@/shared/components/atoms';
 import { useSettingsViewModel } from './hooks';
 import './styles.css';
 
@@ -17,6 +19,12 @@ export const Settings: React.FC = () => {
     languages,
     keybinds,
     links,
+    signIn,
+    signInAgent,
+    onCancelSignIn,
+    onCloseSignIn,
+    onRetrySignIn,
+    onSignInCode,
     onBack,
     onSelectTab,
     onSelectAgent,
@@ -59,48 +67,52 @@ export const Settings: React.FC = () => {
           {tab === 'agents' && (
             <div className="settings__stack">
               {agents.map((item) => (
-                <button
-                  key={item.name}
-                  type="button"
-                  className={
-                    item.isDefault
-                      ? 'settings__card settings__card--on'
-                      : 'settings__card'
-                  }
-                  disabled={!item.isFound}
-                  onClick={() => {
-                    onSelectAgent(item.name);
-                  }}
-                >
-                  <span
-                    className={
-                      item.isFound
-                        ? 'settings__dot settings__dot--found'
-                        : 'settings__dot'
-                    }
-                  />
-                  <span className="settings__card-text">
+                <div key={item.name} className="settings__agent">
+                  <button
+                    type="button"
+                    className={item.className}
+                    disabled={!item.isFound}
+                    onClick={() => {
+                      onSelectAgent(item.name);
+                    }}
+                  >
                     <span
                       className={
                         item.isFound
-                          ? 'settings__card-name'
-                          : 'settings__card-name settings__card-name--muted'
+                          ? 'settings__dot settings__dot--found'
+                          : 'settings__dot'
+                      }
+                    />
+                    <span className="settings__card-text">
+                      <span
+                        className={
+                          item.isFound
+                            ? 'settings__card-name'
+                            : 'settings__card-name settings__card-name--muted'
+                        }
+                      >
+                        {item.name}
+                      </span>
+                      <span className="settings__card-path">{item.path}</span>
+                    </span>
+                    <span
+                      className={
+                        item.isFound
+                          ? 'settings__card-note'
+                          : 'settings__card-note settings__card-note--missing'
                       }
                     >
-                      {item.name}
+                      {item.note}
                     </span>
-                    <span className="settings__card-path">{item.path}</span>
-                  </span>
-                  <span
-                    className={
-                      item.isFound
-                        ? 'settings__card-note'
-                        : 'settings__card-note settings__card-note--missing'
-                    }
-                  >
-                    {item.note}
-                  </span>
-                </button>
+                  </button>
+                  {item.canSignIn && (
+                    <span className="settings__agent-sign-in">
+                      <Button size="sm" variant="primary" onClick={item.onSignIn}>
+                        {t('SETUP.SIGN_IN')}
+                      </Button>
+                    </span>
+                  )}
+                </div>
               ))}
               <p className="settings__note">{t('SETTINGS.AGENTS_NOTE')}</p>
             </div>
@@ -279,6 +291,23 @@ export const Settings: React.FC = () => {
           )}
         </div>
       </div>
+
+      {createPortal(
+        <AnimatePresence>
+          {signIn !== null && (
+            <AgentSignIn
+              key="sign-in"
+              agent={signInAgent}
+              progress={signIn}
+              onCancel={onCancelSignIn}
+              onClose={onCloseSignIn}
+              onRetry={onRetrySignIn}
+              onCode={onSignInCode}
+            />
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
     </section>
   );
 };

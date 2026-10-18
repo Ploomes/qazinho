@@ -353,6 +353,26 @@ export const en = {
       'QAzinho sets up MCPs in Claude Code and Codex for now, not in {{agent}}. Pick one of them in Agents.',
   },
   SETUP: {
+    SIGN_IN: 'Sign in',
+    AGENT_SIGNED_OUT:
+      'Not signed in, so chat and runs would fail. Sign in and it is ready.',
+    LOGIN_TITLE: 'Signing in to {{agent}}',
+    LOGIN_SUBTITLE:
+      '{{agent}} signs you in on its own page. QAzinho never sees your password.',
+    LOGIN_DONE: '{{agent}} is signed in',
+    LOGIN_DONE_SUBTITLE: 'Chat and runs use your own account from now on.',
+    LOGIN_FAILED: '{{agent}} is not signed in',
+    LOGIN_STEP_START: 'Open the {{agent}} sign-in',
+    LOGIN_STEP_BROWSER: 'Sign in on the page in your browser',
+    LOGIN_HINT:
+      'The {{agent}} sign-in page opened in your browser. Sign in there; this window closes on its own.',
+    LOGIN_CODE: 'Did the page show a code? Paste it here.',
+    LOGIN_CODE_PLACEHOLDER: 'code',
+    LOGIN_CODE_SEND: 'Send',
+    LOGIN_FAIL_UNSUPPORTED: 'QAzinho does not know how to sign {{agent}} in.',
+    LOGIN_FAIL_REFUSED: 'The sign-in did not go through.',
+    LOGIN_FAIL_TIMEOUT: 'The sign-in took too long, so QAzinho stopped waiting.',
+    LOGIN_FAIL_CLOSED: '{{agent}} closed before the sign-in finished.',
     CONNECTED: 'connected',
     NOT_CONNECTED: 'not connected',
     WHAT_IT_NEEDS: 'what it needs',
@@ -418,12 +438,8 @@ export const en = {
     LANGUAGE: 'language',
     AGENT_ABOUT: 'runs as {{command}}',
     AGENT_IN_USE: 'in use',
-    AGENT_SIGN_IN:
-      'Installed. Run {{command}} once in a terminal to sign in before the first chat.',
     FOUND: 'found',
     SIGNED_OUT: 'signed out',
-    AGENT_SIGNED_OUT:
-      'Not signed in, so every chat and run would fail. Run {{login}} in a terminal, then check again.',
     MISSING: 'missing',
     OFF: 'off',
     NOT_ON_MACHINE: 'not on this machine',

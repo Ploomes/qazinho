@@ -7,7 +7,7 @@ import {
   SETTINGS_TABS,
   THEMES,
 } from '@/modules/Settings/constants';
-import { INTEGRATIONS, MCP_SERVERS } from '@/modules/Setup';
+import { INTEGRATIONS, MCP_SERVERS, useAgentSignIn } from '@/modules/Setup';
 import { Mcp, Platform } from '@/services';
 import { useAppStore, useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
@@ -29,6 +29,7 @@ export const useSettingsViewModel = () => {
   const selectLanguage = useSettingsStore((state) => state.selectLanguage);
   const landMcpServers = useSetupStore((state) => state.landMcpServers);
   const isMac = Platform.isMac();
+  const signIn = useAgentSignIn();
 
   const agentId = detected.find(({ name }) => name === agent)?.id ?? 'claude-code';
 
@@ -77,12 +78,23 @@ export const useSettingsViewModel = () => {
             ? t('SETTINGS.DEFAULT_AGENT')
             : t('SETTINGS.MAKE_DEFAULT');
 
+      const canSignIn = item.isFound && item.isSignedIn === false;
+
       return {
         name: item.name,
         path: item.path ?? t('TOOLS.NOT_FOUND_PATH'),
         isFound: item.isFound,
         isDefault,
         note,
+        canSignIn,
+        className: [
+          'settings__card',
+          ...(isDefault ? ['settings__card--on'] : []),
+          ...(canSignIn ? ['settings__card--signed-out'] : []),
+        ].join(' '),
+        onSignIn: () => {
+          signIn.onSignIn(item.id);
+        },
       };
     }),
     devices: [
@@ -130,6 +142,12 @@ export const useSettingsViewModel = () => {
       };
     }),
     links: ABOUT_LINKS,
+    signIn: signIn.signIn,
+    signInAgent: signIn.signInAgent,
+    onCancelSignIn: signIn.onCancelSignIn,
+    onCloseSignIn: signIn.onCloseSignIn,
+    onRetrySignIn: signIn.onRetrySignIn,
+    onSignInCode: signIn.onSignInCode,
     onBack: closeSettings,
     onSelectTab: selectTab,
     onSelectAgent: selectAgent,

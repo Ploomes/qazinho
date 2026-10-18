@@ -425,3 +425,22 @@ button.settings__card:hover:not(:disabled) {
   background: var(--raise);
   color: var(--ink);
 }
+
+.settings__agent {
+  position: relative;
+}
+
+.settings__card--signed-out {
+  padding-right: 148px;
+}
+
+.settings__card--signed-out .settings__card-note {
+  color: var(--attn);
+}
+
+.settings__agent-sign-in {
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  translate: 0 -50%;
+}

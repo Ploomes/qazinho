@@ -354,6 +354,26 @@ export const pt: typeof en = {
       'Por enquanto o QAzinho configura MCPs no Claude Code e no Codex, não no {{agent}}. Escolha um deles em Agentes.',
   },
   SETUP: {
+    SIGN_IN: 'Fazer login',
+    AGENT_SIGNED_OUT:
+      'Sem login, o chat e as runs falhariam. Faça login e ele fica pronto.',
+    LOGIN_TITLE: 'Fazendo login no {{agent}}',
+    LOGIN_SUBTITLE:
+      'O {{agent}} faz o login na página dele. O QAzinho nunca vê a sua senha.',
+    LOGIN_DONE: 'Login feito no {{agent}}',
+    LOGIN_DONE_SUBTITLE: 'O chat e as runs já usam a sua conta.',
+    LOGIN_FAILED: 'O {{agent}} continua sem login',
+    LOGIN_STEP_START: 'Abrir o login do {{agent}}',
+    LOGIN_STEP_BROWSER: 'Entrar na página aberta no navegador',
+    LOGIN_HINT:
+      'A página de login do {{agent}} abriu no seu navegador. Entre por lá; esta janela fecha sozinha.',
+    LOGIN_CODE: 'A página mostrou um código? Cole aqui.',
+    LOGIN_CODE_PLACEHOLDER: 'código',
+    LOGIN_CODE_SEND: 'Enviar',
+    LOGIN_FAIL_UNSUPPORTED: 'O QAzinho não sabe fazer o login do {{agent}}.',
+    LOGIN_FAIL_REFUSED: 'O login não foi concluído.',
+    LOGIN_FAIL_TIMEOUT: 'O login demorou demais, e o QAzinho parou de esperar.',
+    LOGIN_FAIL_CLOSED: 'O {{agent}} fechou antes de terminar o login.',
     CONNECTED: 'conectado',
     NOT_CONNECTED: 'não conectado',
     WHAT_IT_NEEDS: 'o que precisa',
@@ -420,12 +440,8 @@ export const pt: typeof en = {
     LANGUAGE: 'idioma',
     AGENT_ABOUT: 'roda como {{command}}',
     AGENT_IN_USE: 'em uso',
-    AGENT_SIGN_IN:
-      'Instalado. Rode {{command}} uma vez num terminal para fazer login antes do primeiro chat.',
     FOUND: 'encontrado',
     SIGNED_OUT: 'sem login',
-    AGENT_SIGNED_OUT:
-      'Sem login, todo chat e toda run falhariam. Rode {{login}} num terminal e verifique de novo.',
     MISSING: 'faltando',
     OFF: 'desligado',
     NOT_ON_MACHINE: 'não está nesta máquina',

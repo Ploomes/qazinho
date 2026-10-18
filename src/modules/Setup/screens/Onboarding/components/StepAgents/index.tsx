@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { InstallProgress } from '@/modules/Setup/components';
+import { AgentSignIn, InstallProgress } from '@/modules/Setup/components';
 import { ToolCard } from '@/modules/Setup/screens/Onboarding/components/ToolCard';
 import { Button } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
@@ -8,8 +9,20 @@ import { useStepAgentsViewModel } from './hooks';
 import './styles.css';
 
 export const StepAgents: React.FC = () => {
-  const { isChecking, needsNpm, nodeUrl, hasAgent, rows, onCheckAgain } =
-    useStepAgentsViewModel();
+  const {
+    isChecking,
+    needsNpm,
+    nodeUrl,
+    hasAgent,
+    rows,
+    signIn,
+    signInAgent,
+    onCheckAgain,
+    onCancelSignIn,
+    onCloseSignIn,
+    onRetrySignIn,
+    onSignInCode,
+  } = useStepAgentsViewModel();
   const { t } = useTranslation();
 
   return (
@@ -30,7 +43,11 @@ export const StepAgents: React.FC = () => {
             isSelected={row.isInUse}
             onSelect={row.onUse}
             action={
-              row.canInstall ? (
+              row.canSignIn ? (
+                <Button size="sm" variant="primary" onClick={row.onSignIn}>
+                  {t('SETUP.SIGN_IN')}
+                </Button>
+              ) : row.canInstall ? (
                 <Button size="sm" variant="primary" onClick={row.onInstall}>
                   {t('SETUP.INSTALL')}
                 </Button>
@@ -95,6 +112,23 @@ export const StepAgents: React.FC = () => {
           </motion.p>
         )}
       </AnimatePresence>
+
+      {createPortal(
+        <AnimatePresence>
+          {signIn !== null && (
+            <AgentSignIn
+              key="sign-in"
+              agent={signInAgent}
+              progress={signIn}
+              onCancel={onCancelSignIn}
+              onClose={onCloseSignIn}
+              onRetry={onRetrySignIn}
+              onCode={onSignInCode}
+            />
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
 
       <div className="step-agents__recheck">
         <Button size="sm" variant="ghost" disabled={isChecking} onClick={onCheckAgain}>
