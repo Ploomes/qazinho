@@ -13,7 +13,7 @@ export class WebDriver implements IDeviceDriver {
   private context: BrowserContext | null = null;
   private page: Page | null = null;
   private screencast: CDPSession | null = null;
-  private glancer: CDPSession | null = null;
+  private cdp: CDPSession | null = null;
   private lastMotion: IActionMotion | null = null;
   private viewport: IViewport;
 
@@ -32,6 +32,7 @@ export class WebDriver implements IDeviceDriver {
     await this.context.addInitScript(MOTION_PROBE);
     this.page = this.context.pages()[0] ?? (await this.context.newPage());
 
+    await this.fit();
     await this.page.goto(this.url, { timeout: WEB_DRIVER.gotoTimeoutMs });
   }
 
@@ -74,14 +75,14 @@ export class WebDriver implements IDeviceDriver {
 
   /** The visible part of the page, scaled down, as the agent reads it. */
   public async glance(): Promise<IDeviceImage | null> {
-    if (!this.context || !this.page) return null;
+    const cdp = await this.session();
 
-    this.glancer ??= await this.context.newCDPSession(this.page);
+    if (!cdp || !this.page) return null;
 
     const [x, y] = await this.page.evaluate<[number, number]>(
       '[window.scrollX, window.scrollY]',
     );
-    const shot = await this.glancer.send('Page.captureScreenshot', {
+    const shot = await cdp.send('Page.captureScreenshot', {
       format: 'jpeg',
       quality: WEB_DRIVER.glanceQuality,
       clip: { x, y, ...this.viewport, scale: WEB_DRIVER.glanceScale },
@@ -127,6 +128,7 @@ export class WebDriver implements IDeviceDriver {
     if (!this.page) return;
 
     await this.page.setViewportSize(viewport);
+    await this.fit();
 
     if (this.screencast) {
       await this.screencast.send('Page.stopScreencast').catch(() => undefined);
@@ -136,9 +138,9 @@ export class WebDriver implements IDeviceDriver {
 
   public async close(): Promise<void> {
     await this.screencast?.detach().catch(() => undefined);
-    await this.glancer?.detach().catch(() => undefined);
+    await this.cdp?.detach().catch(() => undefined);
     this.screencast = null;
-    this.glancer = null;
+    this.cdp = null;
     await this.context?.close().catch(() => undefined);
     this.context = null;
     this.page = null;
@@ -220,11 +222,33 @@ export class WebDriver implements IDeviceDriver {
     });
   }
 
+  private async session(): Promise<CDPSession | null> {
+    if (!this.context || !this.page) return null;
+
+    this.cdp ??= await this.context.newCDPSession(this.page);
+
+    return this.cdp;
+  }
+
+  /** Sizes the window around the viewport, so the stream frames the whole page and nothing below it. */
+  private async fit(): Promise<void> {
+    const cdp = await this.session();
+
+    if (!cdp) return;
+
+    await cdp
+      .send('Browser.getWindowForTarget')
+      .then(({ windowId }) =>
+        cdp.send('Browser.setContentsSize', { windowId, ...this.viewport }),
+      )
+      .catch(() => undefined);
+  }
+
+  /** Caps a frame by its height alone: Chrome keeps a window 500 pixels wide, so a narrower page comes framed wider. */
   private async cast(): Promise<void> {
     await this.screencast?.send('Page.startScreencast', {
       format: 'jpeg',
       quality: WEB_DRIVER.streamQuality,
-      maxWidth: this.viewport.width,
       maxHeight: this.viewport.height,
     });
   }
