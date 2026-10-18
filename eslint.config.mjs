@@ -36,9 +36,15 @@ const NO_FRAMER_MOTION = {
 };
 
 const NO_NODE_FOLDERS_IN_THE_PAGE = {
-  group: ['@/main/**', '**/electron/**'],
+  group: ['@/main/**', '@/harness/**', '**/electron/**'],
   message:
     'The page never imports src/main or electron/. Ask the main process through window.qazinho.',
+};
+
+const NO_MAIN_IN_THE_HARNESS = {
+  group: ['@/main/**', '**/electron/**'],
+  message:
+    'The harness never imports src/main. Declare what it needs as a port in its types, and let main fill it.',
 };
 
 export default config(
@@ -139,8 +145,18 @@ export default config(
   },
 
   {
+    files: ['src/harness/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        { patterns: [NO_UPWARD_RELATIVE, NO_PAGE_IN_NODE, NO_MAIN_IN_THE_HARNESS] },
+      ],
+    },
+  },
+
+  {
     files: ['src/**/*.{ts,tsx}'],
-    ignores: ['src/main/**/*.ts'],
+    ignores: ['src/main/**/*.ts', 'src/harness/**/*.ts'],
     plugins: { 'react-hooks': reactHooks },
     rules: {
       ...reactHooks.configs.recommended.rules,
