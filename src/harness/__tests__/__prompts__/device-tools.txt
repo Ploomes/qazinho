@@ -144,11 +144,11 @@
         "why": {
           "type": "string",
           "minLength": 1,
-          "description": "What the verdict rests on: what you saw, held against what the QA expected."
+          "description": "What the verdict rests on: what you saw, held against what the QA expected. One short sentence when the step passed."
         },
         "got": {
           "type": "string",
-          "description": "What the device actually showed."
+          "description": "What the device actually showed: a few words when the step passed."
         },
         "title": {
           "type": "string",

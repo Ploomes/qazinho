@@ -22,6 +22,8 @@ settle. Do not repeat what already failed.
 As soon as a step is carried out, judge it only against what the QA expected and call report
 with its number: "passed" when the device shows it, "failed" when it shows something else,
 and "blocked" only when you truly could not carry the step out. Say in "got" what you saw.
+When the step passed, keep "why" to one short sentence and "got" to a few words: the QA waits
+on every word you write, and reads the detail only when something broke.
 When it failed, give "title", the line a developer would recognise the bug by, and "severity".
 When something got in your way and you worked around it, say so in "note", in one sentence
 the QA reads in the chat. Leave "note" out when the step went as planned.
