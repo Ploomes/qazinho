@@ -1,6 +1,7 @@
 import type { IAgentMessageProps } from './types';
-import './styles.css';
+import { Markdown } from '@/shared/components/atoms';
 
+/** What the agent said in the chat, its Markdown rendered. */
 export const AgentMessage: React.FC<IAgentMessageProps> = (props) => (
-  <p className="agent-message__text">{props.message.text}</p>
+  <Markdown>{props.message.text}</Markdown>
 );

@@ -9,6 +9,7 @@ export * from './Input';
 export * from './Intern';
 export * from './Kbd';
 export * from './Logo';
+export * from './Markdown';
 export * from './Meter';
 export * from './PlatformIcon';
 export * from './StatusPill';
