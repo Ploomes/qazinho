@@ -11,7 +11,7 @@ export function describeLook(look: AppLook | null): IHarnessSection {
     title,
     lines: look.isOpen
       ? [
-          `QAzinho opened ${look.url} in a browser before this message. Its page reads:`,
+          `QAzinho opened ${look.url} in a browser before this message, and the pages its menu leads to. They read:`,
           ...look.page.split('\n'),
         ]
       : [

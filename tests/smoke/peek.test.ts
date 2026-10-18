@@ -39,6 +39,38 @@ describe('a look at the app before the chat', () => {
     site.close();
   });
 
+  /**
+   * The home page alone left the agent guessing at the rest: it planned clicks on a product page
+   * the shop did not have. The pages the menu leads to are read too, and never one that signs out.
+   */
+  it('reads the pages the menu leads to, and never one that signs out', async () => {
+    const visited: string[] = [];
+    const site = createServer((request, response) => {
+      visited.push(request.url ?? '');
+      response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
+      response.end(
+        request.url === '/'
+          ? '<header><a href="/produtos">Produtos</a><a href="/sair">Sair</a></header><h1>Início</h1>'
+          : request.url === '/produtos'
+            ? '<header><a href="/">Início</a></header><h1>Produtos</h1><button>Comprar</button><button>Comprar</button>'
+            : '<h1>Você saiu</h1>',
+      );
+    });
+
+    await new Promise<void>((ready) => site.listen(4332, '127.0.0.1', ready));
+
+    const look = await new AppPeek({
+      folder: await mkdtemp(join(tmpdir(), 'qazinho-peek-')),
+    }).look('http://127.0.0.1:4332/');
+
+    expect(look.isOpen && look.page).toContain('Início');
+    expect(look.isOpen && look.page).toContain('URL: http://127.0.0.1:4332/produtos');
+    expect(look.isOpen && look.page).toContain('button: Comprar #2');
+    expect(visited).not.toContain('/sair');
+
+    site.close();
+  });
+
   it('says why a page did not open, and tries again the next time', async () => {
     const closed = createServer();
 

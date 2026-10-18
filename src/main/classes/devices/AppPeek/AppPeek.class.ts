@@ -6,7 +6,7 @@ import { WebDriver } from '@/main/classes/devices/WebDriver';
 import { stripAnsi } from '@/main/library';
 import { APP_PEEK } from './constants';
 
-/** Opens the web app under test for a moment before the chat, so the agent asks about what the app shows. */
+/** Opens the web app under test and the pages its menu leads to, before the chat, so the agent asks about what is there. */
 export class AppPeek {
   private readonly folder: string;
   private readonly looks = new Map<string, { at: number; look: Promise<AppLook> }>();
@@ -40,7 +40,19 @@ export class AppPeek {
       await driver.open();
       await driver.act({ kind: 'wait', target: '', value: String(APP_PEEK.settleMs) });
 
-      return { url, isOpen: true, page: await driver.describe() };
+      const pages = [await driver.describe()];
+
+      for (const link of (await driver.navigation()).slice(0, APP_PEEK.menuPages)) {
+        const isOpen = await driver.act({ kind: 'goto', target: link, value: '' }).then(
+          () => true,
+          () => false,
+        );
+
+        if (isOpen)
+          pages.push((await driver.describe()).slice(0, APP_PEEK.menuPageChars));
+      }
+
+      return { url, isOpen: true, page: pages.join('\n\n') };
     } catch (reason) {
       const said = stripAnsi(reason instanceof Error ? reason.message : String(reason));
 

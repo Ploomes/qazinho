@@ -4,7 +4,7 @@ import type { IActionMotion, IDeviceImage, IStepAction, IViewport } from '@/shar
 import type { BrowserContext, CDPSession, Page } from 'playwright-core';
 import { chromium } from 'playwright-core';
 import { MOTION_PROBE, WEB_DRIVER } from './constants';
-import { describePage, findLocator, summarizeMotion } from './library';
+import { describePage, findLocator, pagesOf, summarizeMotion } from './library';
 
 /** Drives a real Chrome on this machine with no window of its own; the QA watches it in the device panel. */
 export class WebDriver implements IDeviceDriver {
@@ -102,6 +102,19 @@ export class WebDriver implements IDeviceDriver {
 
   public async describe(): Promise<string> {
     return this.page ? describePage(this.page) : '';
+  }
+
+  /** The pages the open page's header and menus lead to, on its own site, in the order they show. */
+  public async navigation(): Promise<string[]> {
+    if (!this.page) return [];
+
+    const hrefs = await this.page
+      .$$eval('header a[href], nav a[href]', (links) =>
+        links.map((link) => (link as unknown as { href: string }).href),
+      )
+      .catch(() => []);
+
+    return pagesOf({ hrefs, current: this.page.url() });
   }
 
   public async shoot(file: string): Promise<IShot | null> {

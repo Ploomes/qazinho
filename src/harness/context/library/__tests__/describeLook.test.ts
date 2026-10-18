@@ -10,7 +10,7 @@ describe('describeLook', () => {
         page: 'TITLE: Rotuz\nTEXT:\nThe score of what you eat',
       }).lines,
     ).toEqual([
-      'QAzinho opened https://rotuz.test/ in a browser before this message. Its page reads:',
+      'QAzinho opened https://rotuz.test/ in a browser before this message, and the pages its menu leads to. They read:',
       'TITLE: Rotuz',
       'TEXT:',
       'The score of what you eat',

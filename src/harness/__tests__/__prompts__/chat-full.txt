@@ -71,7 +71,7 @@ TC-01 · Coupon
   2. Apply SAVE10 → 10% off
 
 ## What QAzinho saw of the app
-QAzinho opened https://shop.test in a browser before this message. Its page reads:
+QAzinho opened https://shop.test in a browser before this message, and the pages its menu leads to. They read:
 URL: https://shop.test/
 TITLE: Shop
 TEXT:
