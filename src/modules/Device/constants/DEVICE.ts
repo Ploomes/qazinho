@@ -5,6 +5,8 @@ export const DEVICE = {
   railWidth: 46,
   handleWidth: 5,
   headerHeight: 52,
+  chromeHeight: 32,
+  stepsMinHeight: 150,
   phoneAspect: '9 / 19.5',
   frameLayoutId: 'device-frame',
   viewportLayoutId: 'device-viewport',

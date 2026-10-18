@@ -25,6 +25,7 @@
   min-width: 0;
   border-left: 1px solid var(--line2);
   background: var(--panel);
+  container-type: inline-size;
 }
 
 .device-panel__header {
@@ -50,21 +51,45 @@
 }
 
 .device-panel__viewport {
+  --frame-line: 1px;
+
   display: flex;
-  flex: 1;
+  flex: none;
   align-items: center;
   justify-content: center;
-  min-height: 0;
   padding: var(--space-5);
 }
 
+.device-panel__viewport--fill {
+  flex: 4 1 0;
+  min-height: 0;
+}
+
+.device-panel__viewport--browser {
+  flex: 0 1 auto;
+  height: calc(
+    (100cqw - 2 * var(--space-5) - 2 * var(--frame-line)) / var(--device-ratio) +
+      var(--device-chrome) + 2 * var(--frame-line) + 2 * var(--space-5)
+  );
+  min-height: 0;
+  container-type: size;
+}
+
 .device-panel__browser {
+  --screen-width: min(
+    100cqw - 2 * var(--frame-line),
+    (100cqh - var(--device-chrome) - 2 * var(--frame-line)) * var(--device-ratio)
+  );
+
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: 100%;
+  width: calc(var(--screen-width) + 2 * var(--frame-line));
+  height: calc(
+    var(--screen-width) / var(--device-ratio) + var(--device-chrome) + 2 *
+      var(--frame-line)
+  );
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: var(--frame-line) solid var(--line);
   border-radius: var(--radius-md);
 }
 
@@ -73,7 +98,7 @@
   flex: none;
   align-items: center;
   gap: var(--space-3);
-  height: 32px;
+  height: var(--device-chrome);
   padding: 0 var(--space-4);
   background: var(--raise2);
 }
@@ -139,8 +164,8 @@
 }
 
 .device-panel__steps {
-  flex: none;
-  max-height: 290px;
+  flex: 1 1 0;
+  min-height: var(--device-steps-min);
   padding: var(--space-4);
   border-top: 1px solid var(--line2);
   overflow-y: auto;

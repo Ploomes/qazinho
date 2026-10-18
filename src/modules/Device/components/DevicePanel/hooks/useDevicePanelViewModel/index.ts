@@ -96,9 +96,18 @@ export const useDevicePanelViewModel = () => {
       '--device-handle': `${String(DEVICE.handleWidth)}px`,
       '--device-rail': `${String(DEVICE.railWidth)}px`,
       '--device-header': `${String(DEVICE.headerHeight)}px`,
+      '--device-chrome': `${String(DEVICE.chromeHeight)}px`,
+      '--device-ratio': String(viewport.width / viewport.height),
+      '--device-steps-min': `${String(DEVICE.stepsMinHeight)}px`,
     } as CSSProperties,
     isPhone,
     hasScreen,
+    viewportClassName:
+      !hasScreen || isFocused
+        ? 'device-panel__viewport'
+        : isPhone
+          ? 'device-panel__viewport device-panel__viewport--fill'
+          : 'device-panel__viewport device-panel__viewport--browser',
     hasControls: isRunLive,
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
     stateText: t(DEVICE_STATE_KEY[state] as never),

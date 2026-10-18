@@ -208,6 +208,42 @@ describe('useDevicePanelViewModel', () => {
     });
   });
 
+  describe('viewportClassName', () => {
+    it('hugs the screen of a browser, fills the height for a phone, and leaves the empty device alone', () => {
+      expect(
+        renderHook(() => useDevicePanelViewModel()).result.current.viewportClassName,
+      ).toBe('device-panel__viewport');
+
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: [] })] });
+
+      expect(
+        renderHook(() => useDevicePanelViewModel()).result.current.viewportClassName,
+      ).toBe('device-panel__viewport device-panel__viewport--browser');
+
+      useWorkspaceStore.setState({
+        workspaces: [{ ...walkRun({ verdicts: [] }), planKind: 'mobile' }],
+      });
+
+      expect(
+        renderHook(() => useDevicePanelViewModel()).result.current.viewportClassName,
+      ).toBe('device-panel__viewport device-panel__viewport--fill');
+    });
+
+    it('frames the screen in the shape of the size picked', () => {
+      useWorkspaceStore.setState({
+        workspaces: [{ ...walkRun({ verdicts: [] }), viewportId: 'phone' }],
+      });
+
+      expect(
+        renderHook(() => useDevicePanelViewModel()).result.current.panelStyle,
+      ).toMatchObject({
+        '--device-ratio': String(390 / 844),
+        '--device-chrome': `${String(DEVICE.chromeHeight)}px`,
+        '--device-steps-min': `${String(DEVICE.stepsMinHeight)}px`,
+      });
+    });
+  });
+
   describe('panelWidth', () => {
     it('makes room for the handle beside the content, so nothing is cut at the window edge', () => {
       const { result } = renderHook(() => useDevicePanelViewModel());

@@ -30,6 +30,7 @@ export const DevicePanel: React.FC = () => {
     panelStyle,
     isPhone,
     hasScreen,
+    viewportClassName,
     hasControls,
     pauseLabel,
     stateText,
@@ -141,7 +142,7 @@ export const DevicePanel: React.FC = () => {
                 </span>
               </header>
 
-              <div className="device-panel__viewport">
+              <div className={viewportClassName}>
                 {!hasScreen && (
                   <div className="device-panel__off">
                     <Intern mood="sleeping" size={72} />
