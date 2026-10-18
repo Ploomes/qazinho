@@ -42,7 +42,7 @@ export const Chat: React.FC = () => {
     <div className="chat">
       {isEmpty ? (
         <div className="chat__empty">
-          <Intern mood="neutral" />
+          <Intern mood="neutral" size={112} />
           <span className="chat__empty-title">{t('CHAT.EMPTY_TITLE')}</span>
           <p className="chat__empty-body">{t('CHAT.EMPTY_BODY')}</p>
           <div className="chat__suggestions">

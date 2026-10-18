@@ -4,10 +4,25 @@
   gap: var(--space-4);
   width: 100%;
   padding: var(--space-4) var(--space-5);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
+  border: var(--edge-width-lg) solid var(--edge);
+  border-radius: var(--radius-xl);
   background: var(--raise);
+  box-shadow: var(--sticker-rest);
   text-align: left;
+  transition:
+    translate var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
+}
+
+.handoff-card:hover {
+  box-shadow: var(--sticker-lift);
+  filter: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .handoff-card:hover {
+    translate: 0 -2px;
+  }
 }
 
 .handoff-card__tile {
@@ -16,7 +31,7 @@
   justify-content: center;
   width: 34px;
   height: 34px;
-  border-radius: 9px;
+  border-radius: var(--radius-md);
   background: var(--raise2);
   color: var(--ink2);
 }

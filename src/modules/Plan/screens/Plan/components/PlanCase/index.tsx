@@ -2,12 +2,13 @@ import type { IPlanCaseProps } from './types';
 import { AnimatePresence, motion, Reorder } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { EditableText, StatusPill } from '@/shared/components/atoms';
-import { MOTION } from '@/shared/constants';
+import { MOTION, STICKER } from '@/shared/constants';
 import { usePlanCaseViewModel } from './hooks';
 import './styles.css';
 
 export const PlanCase: React.FC<IPlanCaseProps> = (props) => {
   const {
+    className,
     steps,
     caret,
     verdict,
@@ -18,16 +19,20 @@ export const PlanCase: React.FC<IPlanCaseProps> = (props) => {
     onStepAdd,
     onStepRemove,
     onCaseRemove,
+    onPickUp,
+    onPutDown,
   } = usePlanCaseViewModel(props);
   const { t } = useTranslation();
 
   return (
     <Reorder.Item
       value={props.testCase}
-      className="plan-case"
+      className={className}
       layout="position"
       dragListener={!props.isLocked}
-      whileDrag={{ scale: 1.012, zIndex: 6 }}
+      whileDrag={STICKER.drag}
+      onDragStart={onPickUp}
+      onDragEnd={onPutDown}
     >
       <div className="plan-case__head">
         <button type="button" className="plan-case__open" onClick={onHeadClick}>

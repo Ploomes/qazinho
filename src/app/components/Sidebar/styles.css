@@ -29,11 +29,11 @@
 }
 
 .sidebar__project-name {
-  flex: 1;
+  display: flex;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  max-width: calc(100% - 32px);
+  margin-right: auto;
+  padding: var(--space-1) 0;
 }
 
 .sidebar__project-settings {
@@ -81,7 +81,7 @@
 
 .sidebar__row {
   position: relative;
-  border-radius: 9px;
+  border-radius: var(--radius-md);
   transition: background-color var(--dur-fast) var(--ease);
 }
 
@@ -168,10 +168,12 @@
 }
 
 .sidebar__meta--waiting {
-  padding: 2px var(--space-2);
-  border-radius: 5px;
+  padding: 1px var(--space-3);
+  border: var(--edge-width) solid var(--edge);
+  border-radius: var(--radius-pill);
   background: var(--attn);
   color: var(--on-attn);
+  box-shadow: var(--sticker-rest);
 }
 
 .sidebar__remove {
@@ -269,10 +271,17 @@
   gap: var(--space-3);
   margin: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--attn);
-  border-radius: var(--radius-md);
-  background: var(--attn-soft);
-  animation: gc-glow 2.8s ease-in-out infinite;
+  border: var(--edge-width-lg) solid var(--edge);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--attn) 18%, var(--raise));
+  box-shadow: var(--sticker-rest);
+  animation: gc-in var(--dur) var(--ease);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sidebar__banner {
+    animation: gc-stick 0.42s var(--ease) both;
+  }
 }
 
 .sidebar__banner-glyph {

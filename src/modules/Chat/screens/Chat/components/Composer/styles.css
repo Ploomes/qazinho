@@ -10,15 +10,19 @@
   align-items: center;
   gap: var(--space-4);
   padding-right: 10px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
+  border: var(--edge-width) solid var(--edge);
+  border-radius: var(--radius-xl);
   background: var(--raise);
+  box-shadow: var(--sticker-rest);
   cursor: text;
-  transition: border-color var(--dur-fast) var(--ease);
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
 }
 
 .composer__field:focus-within {
   border-color: var(--lime);
+  box-shadow: var(--sticker-lift);
 }
 
 .composer__field .input--bare {
@@ -33,18 +37,48 @@
   flex: none;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  border: none;
-  border-radius: var(--radius-sm);
+  width: 34px;
+  height: 34px;
+  border: var(--edge-width) solid var(--edge);
+  border-radius: var(--radius-pill);
   background: var(--lime);
   color: var(--on-lime);
+  box-shadow: var(--sticker-rest);
   transition:
+    translate var(--dur-fast) var(--ease),
+    rotate var(--dur-fast) var(--ease),
+    scale var(--dur-press) var(--ease),
+    box-shadow var(--dur-fast) var(--ease),
     background-color var(--dur-fast) var(--ease),
     color var(--dur-fast) var(--ease);
 }
 
+.composer__send:hover:not(:disabled) {
+  box-shadow: var(--sticker-lift);
+  filter: none;
+}
+
+.composer__send:active:not(:disabled) {
+  box-shadow: var(--sticker-press);
+  transform: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .composer__send:hover:not(:disabled) {
+    translate: 0 -2px;
+    rotate: -6deg;
+  }
+
+  .composer__send:active:not(:disabled) {
+    translate: 0 1px;
+    rotate: 0deg;
+    scale: 0.94;
+  }
+}
+
 .composer__send:disabled {
+  border-color: transparent;
   background: var(--line);
   color: var(--ink3);
+  box-shadow: none;
 }

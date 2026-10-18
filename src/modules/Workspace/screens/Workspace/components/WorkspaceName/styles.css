@@ -16,7 +16,7 @@
   background: transparent;
   color: var(--ink);
   font: var(--font-display-lg);
-  letter-spacing: -0.02em;
+  letter-spacing: var(--display-tracking);
   text-align: left;
   cursor: text;
   transition:

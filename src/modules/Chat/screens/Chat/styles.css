@@ -66,8 +66,9 @@
 }
 
 .chat__empty-title {
-  font: var(--font-display-sm);
   color: var(--ink);
+  font: var(--font-display-lg);
+  letter-spacing: var(--display-tracking);
 }
 
 .chat__empty-body {
@@ -82,9 +83,21 @@
 .chat__suggestions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: var(--space-4);
   justify-content: center;
-  margin-top: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.chat__suggestions > .chip:nth-child(odd) {
+  rotate: 1.2deg;
+}
+
+.chat__suggestions > .chip:nth-child(even) {
+  rotate: -1.2deg;
+}
+
+.chat__suggestions > .chip:hover {
+  rotate: 0deg;
 }
 
 .chat__live {

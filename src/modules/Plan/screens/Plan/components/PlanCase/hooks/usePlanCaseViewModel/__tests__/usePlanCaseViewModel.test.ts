@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { usePlanCaseViewModel } from '@/modules/Plan/screens/Plan/components/PlanCase/hooks/usePlanCaseViewModel';
 import { CASES } from '@/modules/Workspace/library/__tests__/fixtures';
@@ -128,5 +128,25 @@ describe('usePlanCaseViewModel', () => {
     );
 
     expect(result.current.canRemoveStep).toBe(false);
+  });
+
+  describe('picking a case up', () => {
+    it('lifts it as a sticker while it is dragged, and lays it flat once dropped', () => {
+      const { result } = renderHook(() => usePlanCaseViewModel(PROPS));
+
+      expect(result.current.className).toBe('plan-case');
+
+      act(() => {
+        result.current.onPickUp();
+      });
+
+      expect(result.current.className).toBe('plan-case plan-case--picked');
+
+      act(() => {
+        result.current.onPutDown();
+      });
+
+      expect(result.current.className).toBe('plan-case');
+    });
   });
 });

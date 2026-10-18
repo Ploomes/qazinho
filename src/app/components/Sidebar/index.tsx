@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { PlatformIcon } from '@/shared/components/atoms';
+import { PlatformIcon, Tag } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { GEAR_PATH } from './constants';
 import { useSidebarViewModel } from './hooks';
@@ -43,7 +43,9 @@ export const Sidebar: React.FC = () => {
           if (row.kind === 'header') {
             return (
               <div key={row.id} className="sidebar__project">
-                <span className="sidebar__project-name">{row.name}</span>
+                <span className="sidebar__project-name">
+                  <Tag>{row.name}</Tag>
+                </span>
                 <button
                   type="button"
                   className="sidebar__project-settings"

@@ -1,5 +1,6 @@
 import type { IPlanCaseProps } from '@/modules/Plan/screens/Plan/components/PlanCase/types';
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 
@@ -7,8 +8,10 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
   const { testCase, isOpen, isLocked, onToggle } = props;
   const { t } = useTranslation();
   const caseId = testCase.id;
+  const [isPickedUp, setIsPickedUp] = useState(false);
 
   return {
+    className: isPickedUp ? 'plan-case plan-case--picked' : 'plan-case',
     steps: testCase.steps.map((step, index) => {
       const verdict =
         props.lastRun?.steps.find(({ number }) => number === index + 1)?.verdict ??
@@ -42,6 +45,12 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     },
     onCaseRemove: () => {
       props.onRemoveCase(caseId);
+    },
+    onPickUp: () => {
+      setIsPickedUp(true);
+    },
+    onPutDown: () => {
+      setIsPickedUp(false);
     },
   };
 };
