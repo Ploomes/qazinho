@@ -1,0 +1,122 @@
+.target-card {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--raise);
+  transition:
+    border-color var(--dur) var(--ease),
+    background-color var(--dur) var(--ease);
+}
+
+.target-card--locked {
+  border-style: dashed;
+  background: transparent;
+}
+
+.target-card__body {
+  grid-area: 1 / 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+  gap: var(--space-6);
+  align-items: center;
+  padding: var(--space-5) var(--space-6);
+}
+
+.target-card__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.target-card__name {
+  color: var(--ink);
+  font: var(--font-ui-strong);
+}
+
+.target-card__text {
+  margin: 0;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  text-wrap: pretty;
+}
+
+.target-card__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.target-card__veil {
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+}
+
+.target-card__lock {
+  max-width: 100%;
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--win);
+  box-shadow: var(--shadow-popover);
+}
+
+.target-card__lock:has(.target-card__guide) {
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+}
+
+.target-card__reason {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.target-card__icon {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  color: var(--ink3);
+}
+
+.target-card__reason-text {
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  white-space: nowrap;
+}
+
+.target-card__guide {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 460px;
+}
+
+.target-card__guide-text {
+  margin: 0;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  text-wrap: pretty;
+}
+
+.target-card__guide-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.target-card__link {
+  margin-right: auto;
+  color: var(--lime-ink);
+  font: var(--font-ui-sm);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.target-card__link:hover {
+  color: var(--lime);
+}

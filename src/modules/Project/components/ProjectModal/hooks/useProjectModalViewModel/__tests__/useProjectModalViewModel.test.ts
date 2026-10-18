@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { useProjectModalViewModel } from '@/modules/Project/components/ProjectModal/hooks/useProjectModalViewModel';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useMachineStore, useWorkspaceStore } from '@/store';
 
 beforeEach(() => {
   window.qazinho = fakeQazinhoApi('darwin');
@@ -76,20 +76,75 @@ describe('useProjectModalViewModel', () => {
     });
   });
 
-  it('turns iOS off when Xcode is not there, even on a Mac', () => {
-    const { result } = renderHook(() => useProjectModalViewModel());
+  describe('locks', () => {
+    it('locks iOS behind setting up Xcode when this Mac has none', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
 
-    expect(result.current.isMac).toBe(true);
-    expect(result.current.isIosAvailable).toBe(false);
-    expect(result.current.xcodeNote).toBe('Xcode not found');
-  });
+      expect(result.current.isMac).toBe(true);
+      expect(result.current.iosLock).toMatchObject({
+        reason: 'Needs Xcode on this Mac',
+        setUp: {
+          label: 'Set up iOS',
+          link: { url: expect.stringContaining('apps.apple.com') },
+        },
+      });
+    });
 
-  it('says iOS is macOS only anywhere else', () => {
-    window.qazinho = fakeQazinhoApi('win32');
+    it('locks iOS with nothing to set up away from a Mac', () => {
+      window.qazinho = fakeQazinhoApi('win32');
 
-    const { result } = renderHook(() => useProjectModalViewModel());
+      expect(renderHook(() => useProjectModalViewModel()).result.current.iosLock).toEqual(
+        {
+          reason: 'Testing iOS needs a Mac',
+          setUp: null,
+        },
+      );
+    });
 
-    expect(result.current.xcodeNote).toBe('macOS only');
+    it('locks Android behind setting up the SDK when this machine has none', () => {
+      expect(
+        renderHook(() => useProjectModalViewModel()).result.current.androidLock,
+      ).toMatchObject({
+        setUp: {
+          label: 'Set up Android',
+          link: { url: expect.stringContaining('android.com') },
+        },
+      });
+    });
+
+    it('frees a target once its tools are found', () => {
+      useMachineStore.setState({
+        tools: {
+          androidSdk: { isFound: true, path: '/sdk' },
+          xcode: { isFound: true, path: '/Applications/Xcode.app' },
+          idb: { isFound: false, path: null },
+        },
+      });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.androidLock).toBeNull();
+      expect(result.current.iosLock).toBeNull();
+    });
+
+    it('does NOT lock a target the project already has, so it can still be changed or cleared', () => {
+      useAppStore.setState({
+        editingProjectId: 'p1',
+        projects: [
+          {
+            id: 'p1',
+            name: 'Shop',
+            targets: [
+              { id: 't-android', kind: 'android', label: 'Android', value: '/x/app.apk' },
+            ],
+          },
+        ],
+      });
+
+      expect(
+        renderHook(() => useProjectModalViewModel()).result.current.androidLock,
+      ).toBeNull();
+    });
   });
 
   describe('footerHint', () => {

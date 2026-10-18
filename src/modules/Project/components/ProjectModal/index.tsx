@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Eyebrow, Input } from '@/shared/components/atoms';
 import { FileField } from '@/shared/components/molecules';
 import { ModalFrame } from '@/shared/components/templates';
+import { TargetCard } from './components';
 import { useProjectModalViewModel } from './hooks';
 import './styles.css';
 
@@ -18,9 +19,8 @@ export const ProjectModal: React.FC = () => {
     confirmLabel,
     canConfirm,
     deleteQuestion,
-    androidNote,
-    xcodeNote,
-    isIosAvailable,
+    androidLock,
+    iosLock,
     footerHint,
     onNameChange,
     onUrlChange,
@@ -76,61 +76,37 @@ export const ProjectModal: React.FC = () => {
       <div>
         <Eyebrow>{t('PROJECT.TARGETS')}</Eyebrow>
         <div className="project-modal__targets">
-          <div className="project-modal__target">
-            <div className="project-modal__target-head">
-              <span className="project-modal__target-name">{t('PROJECT.WEB')}</span>
-              <p className="project-modal__target-text">{t('PROJECT.WEB_TEXT')}</p>
-            </div>
-            <div className="project-modal__target-field">
-              <Input
-                isMono
-                value={url}
-                label={t('PROJECT.WEB')}
-                placeholder={t('PROJECT.WEB_PLACEHOLDER')}
-                onChange={onUrlChange}
-              />
-            </div>
-          </div>
+          <TargetCard name={t('PROJECT.WEB')} text={t('PROJECT.WEB_TEXT')} lock={null}>
+            <Input
+              isMono
+              value={url}
+              label={t('PROJECT.WEB')}
+              placeholder={t('PROJECT.WEB_PLACEHOLDER')}
+              onChange={onUrlChange}
+            />
+          </TargetCard>
 
-          <div className="project-modal__target">
-            <div className="project-modal__target-head">
-              <span className="project-modal__target-name">{t('PROJECT.ANDROID')}</span>
-              <p className="project-modal__target-text">{t('PROJECT.ANDROID_TEXT')}</p>
-            </div>
-            <div className="project-modal__target-field">
-              <FileField
-                value={apk}
-                label={t('PROJECT.ANDROID')}
-                placeholder={t('PROJECT.ANDROID_PLACEHOLDER')}
-                onPick={onPickApk}
-              />
-              <span className="project-modal__note">{androidNote}</span>
-            </div>
-          </div>
-
-          <div
-            className={
-              isIosAvailable
-                ? 'project-modal__target'
-                : 'project-modal__target project-modal__target--off'
-            }
+          <TargetCard
+            name={t('PROJECT.ANDROID')}
+            text={t('PROJECT.ANDROID_TEXT')}
+            lock={androidLock}
           >
-            <div className="project-modal__target-head">
-              <span className="project-modal__target-name">{t('PROJECT.IOS')}</span>
-              <p className="project-modal__target-text">{t('PROJECT.IOS_TEXT')}</p>
-            </div>
-            <div className="project-modal__target-field">
-              {isIosAvailable && (
-                <FileField
-                  value={app}
-                  label={t('PROJECT.IOS')}
-                  placeholder={t('PROJECT.IOS_PLACEHOLDER')}
-                  onPick={onPickApp}
-                />
-              )}
-              <span className="project-modal__note">{xcodeNote}</span>
-            </div>
-          </div>
+            <FileField
+              value={apk}
+              label={t('PROJECT.ANDROID')}
+              placeholder={t('PROJECT.ANDROID_PLACEHOLDER')}
+              onPick={onPickApk}
+            />
+          </TargetCard>
+
+          <TargetCard name={t('PROJECT.IOS')} text={t('PROJECT.IOS_TEXT')} lock={iosLock}>
+            <FileField
+              value={app}
+              label={t('PROJECT.IOS')}
+              placeholder={t('PROJECT.IOS_PLACEHOLDER')}
+              onPick={onPickApp}
+            />
+          </TargetCard>
         </div>
       </div>
     </ModalFrame>

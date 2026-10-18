@@ -1,8 +1,10 @@
+import type { ITargetLock } from '@/modules/Project/components/ProjectModal/components/TargetCard/types';
 import type { ITarget } from '@/modules/Project/types';
 import type { TargetKind } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { newProjectId } from '@/modules/Project/library';
+import { SETUP_LINKS } from '@/modules/Setup/constants';
 import { Archive, Files, Platform, Run } from '@/services';
 import { useAppStore, useMachineStore, useWorkspaceStore } from '@/store';
 
@@ -124,15 +126,29 @@ export const useProjectModalViewModel = () => {
         : own.length === 1
           ? t('PROJECT.DELETE_QUESTION_ONE')
           : t('PROJECT.DELETE_QUESTION_OTHER', { count: own.length }),
-    androidNote: tools.androidSdk.isFound
-      ? t('TOOLS.ANDROID_FOUND')
-      : t('TOOLS.ANDROID_MISSING'),
-    xcodeNote: isMac
-      ? tools.xcode.isFound
-        ? t('TOOLS.XCODE_FOUND')
-        : t('TOOLS.XCODE_MISSING')
-      : t('PROJECT.IOS_MAC_ONLY'),
-    isIosAvailable: isMac && tools.xcode.isFound,
+    androidLock:
+      tools.androidSdk.isFound || apk.length > 0
+        ? null
+        : ({
+            reason: t('PROJECT.ANDROID_LOCKED'),
+            setUp: {
+              label: t('PROJECT.ANDROID_SET_UP'),
+              guide: t('PROJECT.ANDROID_GUIDE'),
+              link: { label: t('PROJECT.ANDROID_LINK'), url: SETUP_LINKS.androidStudio },
+            },
+          } satisfies ITargetLock),
+    iosLock: !isMac
+      ? ({ reason: t('PROJECT.IOS_LOCKED_MAC'), setUp: null } satisfies ITargetLock)
+      : tools.xcode.isFound || app.length > 0
+        ? null
+        : ({
+            reason: t('PROJECT.IOS_LOCKED'),
+            setUp: {
+              label: t('PROJECT.IOS_SET_UP'),
+              guide: t('PROJECT.IOS_GUIDE'),
+              link: { label: t('PROJECT.IOS_LINK'), url: SETUP_LINKS.xcode },
+            },
+          } satisfies ITargetLock),
     footerHint: blocking,
     onNameChange: setName,
     onUrlChange: setUrl,
