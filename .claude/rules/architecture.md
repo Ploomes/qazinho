@@ -6,6 +6,7 @@ worlds. **`src/` is the app**; the Electron plumbing stays out of the way.
 ```
 src/
 ├── main/            ← Node + Electron: the window, the filesystem, child processes
+├── harness/         ← the product harness: what the QA's agent is told, and QAzinho's MCP tools
 ├── shared/          ← what every part of the app reaches for
 │   ├── types/       ← contracts every side agrees on; imports none of them
 │   ├── constants/   ← values every side shares, the IPC channel names included
@@ -19,18 +20,20 @@ electron/
 └── preload/     ← the bridge: exposes window.qazinho through contextBridge, nothing else
 ```
 
-Everything under `src/` that is not `src/main/` is **the page**: React, no Node.
+Everything under `src/` that is not `src/main/` or `src/harness/` is **the page**: React, no Node.
 
 | Folder             | Runs in             | May import                                                        |
 | ------------------ | ------------------- | ----------------------------------------------------------------- |
 | `src/main`         | Node                | `electron`, Node builtins, `@/shared/types`, `@/shared/constants` |
+| `src/harness`      | Node, inside main   | Node builtins, `@/shared/types`, `@/shared/constants`             |
 | `electron/preload` | a sandboxed preload | `electron`, `@/shared/types`, `@/shared/constants`                |
 | the page           | the page            | `@/shared/types` and the rest of the page                         |
 | `src/shared/types` | all of the above    | nothing                                                           |
 
 ## The boundary is enforced, not agreed
 
-- `tsconfig.web.json` covers the page **without Node's types** and excludes `src/main`:
+- `tsconfig.web.json` covers the page **without Node's types** and excludes `src/main` and
+  `src/harness`:
   `import 'node:fs'` does not compile there.
 - ESLint `no-restricted-imports` bans Node builtins and `electron` in the page and in
   `src/shared/types`, and bans the page importing `src/main` or `electron/`.
@@ -61,12 +64,29 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
 
 ## The harness
 
-**Everything the QA's agent is told lives in `Harness`**, in `src/main/classes/agents/Harness/`:
-the system prompt as titled sections, the device brief per platform, and the answer schemas. The
-page never writes a prompt: the chat sends the QA's words, the app and the plan, and main adds the
-harness once through `--append-system-prompt`. A run gives the agent the device as MCP tools
-(`DeviceToolServer`) and no other tool. One agent turn walks a whole case: it acts, corrects
-itself, and files each step with the `report` tool as soon as it is judged.
+**Everything the QA's agent is told lives in `src/harness/`**, a product harness that sits on top
+of the agent's own (Claude Code's). Main runs it, and the agent's CLI stays the engine: no SDK. It
+answers one question per channel, for a target `{ role, platform }`:
+
+| Channel | Where                    | Becomes                                                   |
+| ------- | ------------------------ | --------------------------------------------------------- |
+| context | `context/corpus/**/*.md` | the system prompt, through `--append-system-prompt`       |
+| tools   | `tools/`                 | QAzinho's MCP server and the `--allowedTools` a role gets |
+| schemas | `schemas/`               | the shape an answer must take, through `--json-schema`    |
+
+- **The corpus is prose in `.md`, one `## Title` section per file.** Where a file lives says who
+  reads it: `universal/` every call, `role/<role>/` one role (`chat`, `runner`), `platform/<x>.md`
+  one device. The frontmatter's `order` sorts a layer. Layers go from the most stable to the least,
+  and what a call adds (the workspace, the @ references) comes after, so the prefix stays the
+  same between calls. `{{app}}` is filled per call; a placeholder nothing fills throws.
+- **The tools are granted per role** (`TOOL_GRANTS`). Today the runner gets the device and the
+  chat gets nothing: it runs with every tool taken away. `McpHost` serves the tools on loopback,
+  one address per workspace, for the length of a run.
+- **The harness never imports `src/main`.** What it needs from a device is a port in its types
+  (`IDevicePort`), and main hands it the driver. ESLint enforces it both ways: the page never
+  imports the harness, and the harness never imports main or the page.
+- **The prompts are pinned.** `Harness/__tests__/__prompts__/` holds what the agent reads for each
+  role and platform; changing what the agent is told is a diff of those files.
 
 ## Heavy work stays off the main process
 
@@ -76,12 +96,12 @@ screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `
 
 ## What the main process owns
 
+Besides the harness's `Harness` and `McpHost`, which main builds and wires:
+
 | Class                                 | What it does                                                           |
 | ------------------------------------- | ---------------------------------------------------------------------- |
 | `AgentDetector`                       | finds the QA's agent CLIs, the way Orca does: fs probes, no subprocess |
 | `AgentRunner`                         | spawns one, streams its JSON, reads a `--json-schema` answer back      |
-| `Harness`                             | everything said to the agent: system prompt sections and answer shapes |
-| `DeviceToolServer`                    | hands the device to the agent as MCP tools on 127.0.0.1, during a run  |
 | `WebDriver`                           | drives Chrome over playwright-core, one profile per workspace          |
 | `LiveStream`                          | serves the device's frames as MJPEG on 127.0.0.1, for the device panel |
 | `RunCoordinator`                      | walks a plan a case per agent turn: it acts and reports through tools  |
