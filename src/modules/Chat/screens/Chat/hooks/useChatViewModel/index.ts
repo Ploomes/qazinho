@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   insertMention,
   mentionCandidates,
@@ -11,7 +10,6 @@ import {
 import { CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { flattenPlanSteps } from '@/modules/Run';
-import { useModelInUse } from '@/modules/Settings';
 import { Agent } from '@/services';
 import {
   useAppStore,
@@ -28,8 +26,6 @@ export const useChatViewModel = () => {
   const detected = useMachineStore((state) => state.agents);
   const agentName = useSettingsStore((state) => state.agent);
   const model = useSettingsStore((state) => state.model);
-  const { modelName } = useModelInUse();
-  const { t } = useTranslation();
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const isAgentTyping = useWorkspaceStore((state) => state.isAgentTyping);
   const liveText = useWorkspaceStore((state) => state.liveText);
@@ -113,7 +109,6 @@ export const useChatViewModel = () => {
     liveText: isAgentTyping ? liveText : '',
     draft,
     suggestions: CHAT.suggestions,
-    agentLabel: t('TITLEBAR.AGENT', { agent: agentName, model: modelName }),
     mentions: mentionCandidates({
       references: workspace === null ? [] : referencesOf(workspace),
       query: mentionQueryOf(draft),

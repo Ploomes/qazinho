@@ -4,15 +4,6 @@
   gap: var(--space-3);
 }
 
-.composer__chips {
-  display: flex;
-  gap: var(--space-3);
-}
-
-.composer__agent {
-  position: relative;
-}
-
 .composer__field {
   position: relative;
   display: flex;

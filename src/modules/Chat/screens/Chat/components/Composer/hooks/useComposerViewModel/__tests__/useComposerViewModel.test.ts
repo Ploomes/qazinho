@@ -3,11 +3,9 @@ import type { KeyboardEvent } from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { useComposerViewModel } from '@/modules/Chat/screens/Chat/components/Composer/hooks/useComposerViewModel';
-import { useAppStore } from '@/store';
 
 const PROPS = {
   value: 'Test the whole checkout',
-  agentLabel: 'Claude Code · Sonnet',
   mentions: [],
   onChange: vi.fn(),
   onSend: vi.fn(),
@@ -70,40 +68,6 @@ describe('useComposerViewModel', () => {
     result.current.onKeyDown(pressed('Enter', true));
 
     expect(onSend).not.toHaveBeenCalled();
-  });
-
-  describe('onAgentClick', () => {
-    it('opens the model menu where the chip is, not up in the titlebar', () => {
-      useAppStore.setState({ modelMenuAt: null });
-
-      const { result } = renderHook(() => useComposerViewModel(PROPS));
-
-      act(() => {
-        result.current.onAgentClick();
-      });
-
-      expect(useAppStore.getState().modelMenuAt).toBe('composer');
-    });
-
-    it('closes it again when the chip is clicked twice', () => {
-      useAppStore.setState({ modelMenuAt: 'composer' });
-
-      const { result } = renderHook(() => useComposerViewModel(PROPS));
-
-      act(() => {
-        result.current.onAgentClick();
-      });
-
-      expect(useAppStore.getState().modelMenuAt).toBeNull();
-    });
-
-    it('does NOT think it is open when the titlebar opened it', () => {
-      useAppStore.setState({ modelMenuAt: 'titlebar' });
-
-      const { result } = renderHook(() => useComposerViewModel(PROPS));
-
-      expect(result.current.isModelMenuOpen).toBe(false);
-    });
   });
 
   describe('the @ picker', () => {

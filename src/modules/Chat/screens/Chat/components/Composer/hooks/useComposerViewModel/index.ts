@@ -1,14 +1,11 @@
 import type { IComposerProps } from '@/modules/Chat/screens/Chat/components/Composer/types';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 import { useState } from 'react';
-import { useAppStore } from '@/store';
 
 export const useComposerViewModel = (props: IComposerProps) => {
   const { value, mentions, onChange, onSend, onPickMention } = props;
   const [highlight, setHighlight] = useState(0);
   const [dismissedAt, setDismissedAt] = useState<string | null>(null);
-  const modelMenuAt = useAppStore((state) => state.modelMenuAt);
-  const toggleModelMenu = useAppStore((state) => state.toggleModelMenu);
 
   const canSend = value.trim().length > 0;
   const isPickerOpen = mentions.length > 0 && dismissedAt !== value;
@@ -40,7 +37,6 @@ export const useComposerViewModel = (props: IComposerProps) => {
     canSend,
     isPickerOpen,
     highlighted,
-    isModelMenuOpen: modelMenuAt === 'composer',
     onSendClick,
     onPick: pick,
     onHighlight: setHighlight,
@@ -59,9 +55,6 @@ export const useComposerViewModel = (props: IComposerProps) => {
 
       event.preventDefault();
       onSendClick();
-    },
-    onAgentClick: () => {
-      toggleModelMenu('composer');
     },
   };
 };

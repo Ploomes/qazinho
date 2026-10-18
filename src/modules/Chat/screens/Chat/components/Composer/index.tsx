@@ -1,8 +1,6 @@
 import type { IComposerProps } from './types';
 import { AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Chip } from '@/shared/components/atoms';
-import { ModelPopover } from '@/shared/components/organisms/ModelPopover';
 import { MentionPicker } from './components';
 import { useComposerViewModel } from './hooks';
 import './styles.css';
@@ -12,30 +10,16 @@ export const Composer: React.FC<IComposerProps> = (props) => {
     canSend,
     isPickerOpen,
     highlighted,
-    isModelMenuOpen,
     onSendClick,
     onPick,
     onHighlight,
     onInputChange,
     onKeyDown,
-    onAgentClick,
   } = useComposerViewModel(props);
   const { t } = useTranslation();
 
   return (
     <div className="composer">
-      <div className="composer__chips">
-        <span className="composer__agent">
-          <Chip dotTone="var(--pass)" hasCaret onClick={onAgentClick}>
-            {props.agentLabel}
-          </Chip>
-
-          <AnimatePresence>
-            {isModelMenuOpen && <ModelPopover key="model" at="composer" />}
-          </AnimatePresence>
-        </span>
-      </div>
-
       <div className="composer__field">
         <AnimatePresence>
           {isPickerOpen && (
