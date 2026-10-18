@@ -91,7 +91,6 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   landAgentText: ({ workspaceId, text, who, sessionId }) =>
     set((state) => ({
       isAgentTyping: false,
-      liveText: '',
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -105,7 +104,6 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   landPlan: ({ workspaceId, summary, plan, who, sessionId }) =>
     set((state) => ({
       isAgentTyping: false,
-      liveText: '',
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,

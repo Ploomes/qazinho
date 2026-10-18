@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Chip, Intern } from '@/shared/components/atoms';
+import { Chip, Intern, Markdown } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import {
   AgentMessage,
@@ -122,15 +122,20 @@ export const Chat: React.FC = () => {
           ))}
 
           {isAgentTyping && (
-            <div className="chat__row">
+            <motion.div
+              className="chat__row"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: MOTION.durationSlow, ease: MOTION.ease }}
+            >
               <div className="chat__gutter chat__gutter--intern">
                 <Intern mood="thinking" size={40} />
               </div>
-              <div className="chat__live">
-                {liveText !== '' && <p className="chat__live-text">{liveText}</p>}
+              <div className="chat__body chat__live">
+                {liveText !== '' && <Markdown isRevealing>{liveText}</Markdown>}
                 <TypingDots />
               </div>
-            </div>
+            </motion.div>
           )}
         </div>
       )}

@@ -49,6 +49,9 @@ export const useChatViewModel = () => {
     messages: workspace?.chat ?? [],
     isAgentTyping,
   });
+  const lastAgentId =
+    (workspace?.chat ?? []).filter(({ kind }) => kind === 'agent').at(-1)?.id ?? null;
+  const hasPreview = !isAgentTyping && liveText !== '';
 
   const send = (text: string) => {
     if (!workspace || text.trim().length === 0) return;
@@ -106,7 +109,10 @@ export const useChatViewModel = () => {
   };
 
   return {
-    messages: visible,
+    messages: visible.map(({ message, isNew }) => ({
+      message,
+      isNew: isNew && !(hasPreview && message.id === lastAgentId),
+    })),
     listRef,
     onScroll,
     isEmpty: (workspace?.chat.length ?? 0) === 0,

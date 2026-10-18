@@ -101,6 +101,58 @@ describe('useChatViewModel', () => {
     expect(ask.mock.calls[0]?.[0].text).toMatch(/^Write a test plan for this app/);
   });
 
+  describe('the answer as it arrives', () => {
+    it('shows what the agent is writing while it works', () => {
+      answering({});
+      useWorkspaceStore.setState({ isAgentTyping: true, liveText: 'Two **cases**.' });
+
+      expect(renderHook(() => useChatViewModel()).result.current.liveText).toBe(
+        'Two **cases**.',
+      );
+    });
+
+    it('puts the final answer where the preview was, without it entering again', () => {
+      answering({});
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        useWorkspaceStore.setState({ isAgentTyping: true, liveText: 'Two cases.' });
+      });
+      act(() => {
+        useWorkspaceStore.getState().landAgentText({
+          workspaceId: 'w1',
+          text: 'Two cases.',
+          who: 'Claude Code',
+          sessionId: null,
+        });
+      });
+
+      expect(result.current.liveText).toBe('');
+      expect(result.current.messages.at(-1)).toMatchObject({ isNew: false });
+    });
+
+    it('lets an answer with no preview enter like any new message', () => {
+      answering({});
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        useWorkspaceStore.setState({ isAgentTyping: true, liveText: '' });
+      });
+      act(() => {
+        useWorkspaceStore.getState().landAgentText({
+          workspaceId: 'w1',
+          text: 'Two cases.',
+          who: 'Claude Code',
+          sessionId: null,
+        });
+      });
+
+      expect(result.current.messages.at(-1)).toMatchObject({ isNew: true });
+    });
+  });
+
   describe('onSend', () => {
     it("asks the QA's own agent, on the model they picked", async () => {
       const ask = answering({ answer: DRAFTED });
