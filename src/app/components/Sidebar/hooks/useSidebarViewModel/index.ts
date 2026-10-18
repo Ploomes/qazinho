@@ -32,6 +32,13 @@ export const useSidebarViewModel = () => {
     ...workspaces
       .filter((workspace) => workspace.projectId === project.id)
       .map((workspace) => ({
+        workspace,
+        shown:
+          workspace.live !== null && !workspace.live.isDone && !workspace.live.isRunning
+            ? ('paused' as const)
+            : workspace.status,
+      }))
+      .map(({ workspace, shown }) => ({
         kind: 'workspace' as const,
         id: workspace.id,
         name: workspace.name,
@@ -41,10 +48,10 @@ export const useSidebarViewModel = () => {
           count: workspaceMeta(workspace).count,
           current: workspace.live?.outcomes.length ?? 0,
         }),
-        glyph: SIDEBAR_STATUS[workspace.status].glyph,
-        statusLabel: t(STATUS[workspace.status].labelKey),
-        tone: SIDEBAR_STATUS[workspace.status].tone,
-        animation: SIDEBAR_STATUS[workspace.status].animation,
+        glyph: SIDEBAR_STATUS[shown].glyph,
+        statusLabel: t(STATUS[shown].labelKey),
+        tone: SIDEBAR_STATUS[shown].tone,
+        animation: SIDEBAR_STATUS[shown].animation,
         isSelected: workspace.id === selectedWorkspaceId,
         isWaiting: workspace.status === 'attention',
         isRemoving: workspace.id === removingWorkspaceId,

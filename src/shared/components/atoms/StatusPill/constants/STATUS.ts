@@ -6,6 +6,7 @@ export const STATUS: Record<
   { glyph: string; labelKey: ParseKeys; tone: string }
 > = {
   running: { glyph: '▸', labelKey: 'STATUS.RUNNING', tone: 'lime' },
+  paused: { glyph: '‖', labelKey: 'STATUS.PAUSED', tone: 'attn' },
   attention: { glyph: '!', labelKey: 'STATUS.NEEDS_YOU', tone: 'attn' },
   failed: { glyph: '✕', labelKey: 'STATUS.FAILED', tone: 'fail' },
   passed: { glyph: '✓', labelKey: 'STATUS.PASSED', tone: 'pass' },

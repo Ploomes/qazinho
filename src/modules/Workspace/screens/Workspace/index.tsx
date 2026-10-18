@@ -16,6 +16,7 @@ export const Workspace: React.FC = () => {
     issueKey,
     status,
     statusLabel,
+    liveStatus,
     planCount,
     runCount,
     bugCount,
@@ -40,7 +41,7 @@ export const Workspace: React.FC = () => {
         {statusLabel === null ? (
           <StatusPill status={status} shape="round" />
         ) : (
-          <StatusPill status="running" shape="round" label={statusLabel} />
+          <StatusPill status={liveStatus} shape="round" label={statusLabel} />
         )}
 
         <div className="workspace__actions">

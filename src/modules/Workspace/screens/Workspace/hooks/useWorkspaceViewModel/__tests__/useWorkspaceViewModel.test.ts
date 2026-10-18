@@ -55,6 +55,23 @@ describe('useWorkspaceViewModel', () => {
     expect(result.current.statusLabel).toBe('running · step 1 of 6');
   });
 
+  it('says the run is paused, with its step, while it waits for the QA', () => {
+    const started = startRun({
+      workspace: makeWorkspace(),
+      startedAt: '09:41',
+      runId: 'r-01',
+    });
+
+    useWorkspaceStore.setState({
+      workspaces: [{ ...started, live: { ...started.live!, isRunning: false } }],
+    });
+
+    const { result } = renderHook(() => useWorkspaceViewModel());
+
+    expect(result.current.liveStatus).toBe('paused');
+    expect(result.current.statusLabel).toBe('paused · step 1 of 6');
+  });
+
   /** The header read "step 0 of 1" while the first step ran. */
   it('names the step being walked, and never one past the last', () => {
     useWorkspaceStore.setState({

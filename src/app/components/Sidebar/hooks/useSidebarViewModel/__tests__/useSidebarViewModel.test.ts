@@ -2,6 +2,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useSidebarViewModel } from '@/app/components/Sidebar/hooks/useSidebarViewModel';
+import { startRun } from '@/modules/Workspace/library';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
@@ -24,6 +25,26 @@ describe('useSidebarViewModel', () => {
       const { result } = renderHook(() => useSidebarViewModel());
 
       expect(result.current.rows.map(({ kind }) => kind)).toEqual(['header', 'add']);
+    });
+
+    /** A paused run read "running" in the sidebar while it waited for the QA. */
+    it('marks a paused run as paused, not running', () => {
+      const started = startRun({
+        workspace: makeWorkspace(),
+        startedAt: '09:41',
+        runId: 'r-01',
+      });
+
+      useWorkspaceStore.setState({
+        workspaces: [{ ...started, live: { ...started.live!, isRunning: false } }],
+      });
+
+      expect(
+        renderHook(() => useSidebarViewModel()).result.current.rows[1],
+      ).toMatchObject({
+        statusLabel: 'paused',
+        glyph: '‖',
+      });
     });
 
     it('nests every workspace under the project it belongs to', () => {

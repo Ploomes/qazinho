@@ -32,8 +32,9 @@ export const useWorkspaceViewModel = () => {
     name: workspace?.name ?? '',
     issueKey: workspace?.issueKey ?? null,
     status: workspace?.status ?? 'idle',
+    liveStatus: isPaused ? ('paused' as const) : ('running' as const),
     statusLabel: isLive
-      ? t('WORKSPACE.LIVE_STEP', {
+      ? t(isPaused ? 'WORKSPACE.PAUSED_STEP' : 'WORKSPACE.LIVE_STEP', {
           current: Math.min((workspace?.walked ?? 0) + 1, workspace?.stepCount ?? 0),
           total: workspace?.stepCount ?? 0,
         })

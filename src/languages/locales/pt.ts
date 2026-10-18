@@ -69,6 +69,7 @@ export const pt: typeof en = {
     TAB_RUNS: 'Runs',
     TAB_BUGS: 'Bugs',
     LIVE_STEP: 'rodando · passo {{current}} de {{total}}',
+    PAUSED_STEP: 'pausado · passo {{current}} de {{total}}',
   },
   CHAT: {
     YOU: 'Você',
@@ -558,6 +559,7 @@ export const pt: typeof en = {
   },
   STATUS: {
     RUNNING: 'rodando',
+    PAUSED: 'pausado',
     NEEDS_YOU: 'precisa de você',
     FAILED: 'falhou',
     PASSED: 'passou',

@@ -67,6 +67,7 @@ export const en = {
     TAB_RUNS: 'Runs',
     TAB_BUGS: 'Bugs',
     LIVE_STEP: 'running · step {{current}} of {{total}}',
+    PAUSED_STEP: 'paused · step {{current}} of {{total}}',
   },
   CHAT: {
     YOU: 'You',
@@ -555,6 +556,7 @@ export const en = {
   },
   STATUS: {
     RUNNING: 'running',
+    PAUSED: 'paused',
     NEEDS_YOU: 'needs you',
     FAILED: 'failed',
     PASSED: 'passed',

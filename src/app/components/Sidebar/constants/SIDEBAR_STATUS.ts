@@ -1,7 +1,7 @@
 import type { WorkspaceStatus } from '@/modules/Workspace';
 
 export const SIDEBAR_STATUS: Record<
-  WorkspaceStatus,
+  WorkspaceStatus | 'paused',
   { glyph: string; tone: string; animation: string }
 > = {
   running: {
@@ -9,6 +9,7 @@ export const SIDEBAR_STATUS: Record<
     tone: 'var(--lime-ink)',
     animation: 'gc-pulse 1.8s ease-in-out infinite',
   },
+  paused: { glyph: '‖', tone: 'var(--attn)', animation: 'none' },
   attention: {
     glyph: '!',
     tone: 'var(--attn)',
