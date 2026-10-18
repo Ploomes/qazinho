@@ -1,11 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import { BUG_FILTERS } from '@/modules/Bug/constants';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
+import { useWorkspaceStore } from '@/store';
 
 export const useBugsViewModel = () => {
   const { t } = useTranslation();
-  const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
-  const workspaces = useWorkspaceStore((state) => state.workspaces);
+  const workspace = useSelectedWorkspacePart((opened) => ({
+    bugs: opened.bugs,
+    runs: opened.runs,
+  }));
   const openBugId = useWorkspaceStore((state) => state.openBugId);
   const bugFilter = useWorkspaceStore((state) => state.bugFilter);
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
@@ -13,7 +16,6 @@ export const useBugsViewModel = () => {
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const selectRun = useWorkspaceStore((state) => state.selectRun);
 
-  const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
   const bugs = workspace?.bugs ?? [];
   const runIds = new Set((workspace?.runs ?? []).map(({ id }) => id));
   const shown =

@@ -10,7 +10,7 @@ import './styles.css';
 
 export const Workspace: React.FC = () => {
   const {
-    workspace,
+    hasWorkspace,
     tab,
     name,
     issueKey,
@@ -30,7 +30,7 @@ export const Workspace: React.FC = () => {
   } = useWorkspaceViewModel();
   const { t } = useTranslation();
 
-  if (!workspace) return null;
+  if (!hasWorkspace) return null;
 
   return (
     <section className="workspace">

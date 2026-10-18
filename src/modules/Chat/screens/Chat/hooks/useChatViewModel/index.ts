@@ -15,6 +15,7 @@ import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { planOfDraft } from '@/modules/Plan';
 import { flattenPlanSteps, RUN_ENDS } from '@/modules/Run';
 import { Agent } from '@/services';
+import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import {
   useAppStore,
   useMachineStore,
@@ -27,11 +28,19 @@ export const useChatViewModel = () => {
   const { t } = useTranslation();
 
   const projects = useAppStore((state) => state.projects);
-  const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
+  const workspace = useSelectedWorkspacePart((opened) => ({
+    id: opened.id,
+    projectId: opened.projectId,
+    targetId: opened.targetId,
+    sessionId: opened.sessionId,
+    chat: opened.chat,
+    plan: opened.plan,
+    runs: opened.runs,
+    bugs: opened.bugs,
+  }));
   const detected = useMachineStore((state) => state.agents);
   const agentName = useSettingsStore((state) => state.agent);
   const model = useSettingsStore((state) => state.model);
-  const workspaces = useWorkspaceStore((state) => state.workspaces);
   const isAgentTyping = useWorkspaceStore((state) => state.isAgentTyping);
   const liveText = useWorkspaceStore((state) => state.liveText);
   const sendMessage = useWorkspaceStore((state) => state.sendMessage);
@@ -43,7 +52,6 @@ export const useChatViewModel = () => {
   const answerAsk = useWorkspaceStore((state) => state.answerAsk);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
 
-  const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
   const references = workspace === null ? [] : referencesOf(workspace);

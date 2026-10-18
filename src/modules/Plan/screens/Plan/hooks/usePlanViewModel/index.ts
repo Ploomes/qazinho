@@ -9,23 +9,27 @@ import {
   removeCase,
   removeStep,
 } from '@/modules/Plan/library';
-import { useRunControls, flattenPlanSteps } from '@/modules/Run';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { flattenPlanSteps, useRunActions } from '@/modules/Run';
+import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
+import { useWorkspaceStore } from '@/store';
 
 export const usePlanViewModel = () => {
   const { t } = useTranslation();
-  const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
-  const workspaces = useWorkspaceStore((state) => state.workspaces);
+  const workspace = useSelectedWorkspacePart((opened) => ({
+    id: opened.id,
+    plan: opened.plan,
+    isLocked: opened.live?.isRunning === true,
+    latest: opened.runs[0] ?? null,
+  }));
   const openCaseId = useWorkspaceStore((state) => state.openCaseId);
   const toggleCase = useWorkspaceStore((state) => state.toggleCase);
   const setPlan = useWorkspaceStore((state) => state.setPlan);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
-  const { onRun, onStop } = useRunControls();
+  const { onRun, onStop } = useRunActions();
 
-  const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
   const workspaceId = workspace?.id ?? null;
   const plan = workspace?.plan ?? [];
-  const isLocked = workspace?.live?.isRunning === true;
+  const isLocked = workspace?.isLocked === true;
 
   const write = (cases: ITestCase[]) => {
     if (workspaceId === null || isLocked) return;
@@ -33,7 +37,7 @@ export const usePlanViewModel = () => {
     setPlan({ workspaceId, plan: cases });
   };
 
-  const latest = workspace?.runs[0] ?? null;
+  const latest = workspace?.latest ?? null;
   const lastRuns: Record<string, IRunCase> = Object.fromEntries(
     (latest?.cases ?? []).map((runCase) => [runCase.id, runCase]),
   );

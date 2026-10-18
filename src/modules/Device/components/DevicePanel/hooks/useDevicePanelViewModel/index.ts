@@ -12,13 +12,13 @@ import {
 import { useRunControls } from '@/modules/Run';
 import { Run } from '@/services';
 import { MOTION } from '@/shared/constants';
+import { useSelectedWorkspace } from '@/shared/hooks/useSelectedWorkspace';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useDevicePanelViewModel = () => {
   const { t } = useTranslation();
-  const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
   const projects = useAppStore((state) => state.projects);
-  const workspaces = useWorkspaceStore((state) => state.workspaces);
+  const workspace = useSelectedWorkspace();
   const isOpen = useWorkspaceStore((state) => state.isDevicePanelOpen);
   const width = useWorkspaceStore((state) => state.deviceWidth);
   const toggleDevicePanel = useWorkspaceStore((state) => state.toggleDevicePanel);
@@ -35,7 +35,6 @@ export const useDevicePanelViewModel = () => {
   const [isResizing, setResizing] = useState(false);
   const [isFocusedNow, setFocused] = useState(false);
 
-  const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
   const state = deviceStateOf(workspace);

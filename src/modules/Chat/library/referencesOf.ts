@@ -10,7 +10,9 @@ const ENDINGS = {
 } as const;
 
 /** Everything in a workspace the QA can point at with @, newest runs first, with the facts behind each. */
-export function referencesOf(workspace: IWorkspace): IChatReference[] {
+export function referencesOf(
+  workspace: Pick<IWorkspace, 'runs' | 'bugs' | 'plan'>,
+): IChatReference[] {
   const runs = workspace.runs.map<IChatReference>((run) => ({
     kind: 'run',
     id: run.id,

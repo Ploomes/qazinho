@@ -30,7 +30,7 @@ describe('useWorkspaceViewModel', () => {
 
     const { result } = renderHook(() => useWorkspaceViewModel());
 
-    expect(result.current.workspace).toBeNull();
+    expect(result.current.hasWorkspace).toBe(false);
     expect(result.current.canRun).toBe(false);
   });
 

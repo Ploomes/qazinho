@@ -1,35 +1,47 @@
 import { useTranslation } from 'react-i18next';
-import { useRunControls } from '@/modules/Run';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { flattenPlanSteps, useRunActions } from '@/modules/Run';
+import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
+import { useWorkspaceStore } from '@/store';
 
 export const useWorkspaceViewModel = () => {
   const { t } = useTranslation();
-  const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
-  const workspaces = useWorkspaceStore((state) => state.workspaces);
+  const workspace = useSelectedWorkspacePart((opened) => ({
+    id: opened.id,
+    name: opened.name,
+    issueKey: opened.issue?.key ?? null,
+    status: opened.status,
+    planCount: opened.plan.length,
+    runCount: opened.runs.length,
+    bugCount: opened.bugs.length,
+    stepCount: flattenPlanSteps(opened.plan).length,
+    walked: opened.live?.outcomes.length ?? 0,
+    isLive: opened.live !== null && !opened.live.isDone,
+    isPaused: opened.live !== null && !opened.live.isRunning && !opened.live.isDone,
+  }));
   const tab = useWorkspaceStore((state) => state.tab);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
-  const { steps, live, isLive, isPaused, canRun, onRun, onPause, onStop } =
-    useRunControls();
+  const { onRun, onPause, onStop } = useRunActions();
 
-  const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
+  const isLive = workspace?.isLive === true;
+  const isPaused = workspace?.isPaused === true;
 
   return {
-    workspace,
+    hasWorkspace: workspace !== null,
     tab,
     name: workspace?.name ?? '',
-    issueKey: workspace?.issue?.key ?? null,
+    issueKey: workspace?.issueKey ?? null,
     status: workspace?.status ?? 'idle',
     statusLabel: isLive
       ? t('WORKSPACE.LIVE_STEP', {
-          current: live?.outcomes.length ?? 0,
-          total: steps.length,
+          current: workspace?.walked ?? 0,
+          total: workspace?.stepCount ?? 0,
         })
       : null,
-    planCount: workspace?.plan.length ?? 0,
-    runCount: workspace?.runs.length ?? 0,
-    bugCount: workspace?.bugs.length ?? 0,
-    canRun,
+    planCount: workspace?.planCount ?? 0,
+    runCount: workspace?.runCount ?? 0,
+    bugCount: workspace?.bugCount ?? 0,
+    canRun: (workspace?.stepCount ?? 0) > 0 && !isLive,
     isLive,
     isPaused,
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),

@@ -10,12 +10,16 @@ import {
 import { caseVerdict, filterCases, pageOf } from '@/modules/Run/library';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 import { MOTION } from '@/shared/constants';
+import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useRunsViewModel = () => {
   const { t } = useTranslation();
-  const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
-  const workspaces = useWorkspaceStore((state) => state.workspaces);
+  const workspace = useSelectedWorkspacePart((opened) => ({
+    runs: opened.runs,
+    bugs: opened.bugs,
+    isTall: opened.planKind === 'mobile',
+  }));
   const selectedRunId = useWorkspaceStore((state) => state.selectedRunId);
   const runFilter = useWorkspaceStore((state) => state.runFilter);
   const selectRun = useWorkspaceStore((state) => state.selectRun);
@@ -26,7 +30,6 @@ export const useRunsViewModel = () => {
   const [page, setPage] = useState(0);
   const reportRef = useRef<HTMLDivElement>(null);
 
-  const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
   const runs = workspace?.runs ?? [];
   const bugs = workspace?.bugs ?? [];
   const run = runs.find(({ id }) => id === selectedRunId) ?? runs[0] ?? null;
@@ -57,7 +60,7 @@ export const useRunsViewModel = () => {
     openMedia({
       kicker: run?.id ?? '',
       title: props.label,
-      isTall: workspace?.planKind === 'mobile',
+      isTall: workspace?.isTall === true,
       src: props.src,
       file: props.file,
     });
