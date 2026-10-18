@@ -35,6 +35,7 @@ describe('describeCase', () => {
         '   The QA expects: The form shows',
         '2. Sign in',
         '   The QA expects: The home page opens',
+        'Write what you report and note in the language these steps are written in.',
       ].join('\n'),
     );
   });
@@ -59,7 +60,15 @@ describe('describeCase', () => {
         'Carry out these steps in order, and report each one as soon as you judged it:',
         '1. Open the sign in page',
         '   The QA expects: The form shows',
+        'Write what you report and note in the language these steps are written in.',
       ].join('\n'),
+    );
+  });
+
+  /** A Portuguese case came back with an English note: the rule sat only in the system prompt. */
+  it('asks for the report in the language of the steps, next to the steps', () => {
+    expect(describeCase({ steps: [STEP], screen: '' })).toContain(
+      'in the language these steps are written in',
     );
   });
 

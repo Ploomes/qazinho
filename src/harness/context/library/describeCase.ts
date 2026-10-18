@@ -18,6 +18,7 @@ export function describeCase(props: { steps: IFlatStep[]; screen: string }): str
       `${String(step.numberInCase)}. ${step.action}`,
       `   The QA expects: ${step.expected}`,
     ]),
+    'Write what you report and note in the language these steps are written in.',
     ...(screen.length === 0 ? [] : ['', 'The device shows right now:', screen]),
   ].join('\n');
 }
