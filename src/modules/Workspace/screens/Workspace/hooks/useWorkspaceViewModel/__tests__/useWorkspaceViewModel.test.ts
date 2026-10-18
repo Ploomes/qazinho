@@ -52,7 +52,22 @@ describe('useWorkspaceViewModel', () => {
     const { result } = renderHook(() => useWorkspaceViewModel());
 
     expect(result.current.isLive).toBe(true);
-    expect(result.current.statusLabel).toBe('running · step 0 of 6');
+    expect(result.current.statusLabel).toBe('running · step 1 of 6');
+  });
+
+  /** The header read "step 0 of 1" while the first step ran. */
+  it('names the step being walked, and never one past the last', () => {
+    useWorkspaceStore.setState({
+      workspaces: [
+        walkRun({
+          verdicts: ['passed', 'passed', 'passed', 'passed', 'passed', 'passed'],
+        }),
+      ],
+    });
+
+    expect(renderHook(() => useWorkspaceViewModel()).result.current.statusLabel).toBe(
+      'running · step 6 of 6',
+    );
   });
 
   describe('onRun', () => {

@@ -34,7 +34,7 @@ export const useWorkspaceViewModel = () => {
     status: workspace?.status ?? 'idle',
     statusLabel: isLive
       ? t('WORKSPACE.LIVE_STEP', {
-          current: workspace?.walked ?? 0,
+          current: Math.min((workspace?.walked ?? 0) + 1, workspace?.stepCount ?? 0),
           total: workspace?.stepCount ?? 0,
         })
       : null,
