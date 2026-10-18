@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import type { IAskAgent, IChatAnswer, IChatTurn } from '@/shared/types';
+import type { IAskAgent, IChatAnswer, IChatQuestion, IChatTurn } from '@/shared/types';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useChatViewModel } from '@/modules/Chat/screens/Chat/hooks/useChatViewModel';
@@ -294,6 +294,111 @@ describe('useChatViewModel', () => {
       });
 
       expect(ask).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('a round of questions', () => {
+    const SCOPE: IChatQuestion = {
+      header: 'Scope',
+      question: 'What should the plan cover?',
+      options: [
+        { label: 'The checkout', description: 'From the cart to the receipt.' },
+        { label: 'The whole shop', description: 'Every flow a buyer takes.' },
+      ],
+      isMultiSelect: false,
+    };
+
+    async function asked(reply: string) {
+      const ask = answering({ answer: { reply, questions: [SCOPE], plan: null } });
+      const view = renderHook(() => useChatViewModel());
+
+      act(() => {
+        view.result.current.onDraftChange('Write a test plan');
+      });
+      act(() => {
+        view.result.current.onSend();
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
+          kind: 'questions',
+        });
+      });
+
+      return { ask, view };
+    }
+
+    it("puts the agent's questions under its reply, waiting for the QA", async () => {
+      const { view } = await asked('Two things first.');
+      const chat = useWorkspaceStore.getState().workspaces[0]?.chat ?? [];
+
+      expect(chat.map(({ kind }) => kind)).toEqual(['user', 'agent', 'questions']);
+      expect(view.result.current.messages.at(-1)).toMatchObject({ isAnswerable: true });
+      expect(view.result.current.messages[1]).toMatchObject({ isAnswerable: false });
+    });
+
+    it('lands a round that came with no reply', async () => {
+      await asked('');
+
+      const chat = useWorkspaceStore.getState().workspaces[0]?.chat ?? [];
+
+      expect(chat.map(({ kind }) => kind)).toEqual(['user', 'questions']);
+    });
+
+    it('sends the answers to the agent, and keeps them on the round', async () => {
+      const { ask, view } = await asked('Two things first.');
+      const round = useWorkspaceStore.getState().workspaces[0]?.chat.at(-1);
+      const answers = [{ picked: ['The checkout'], text: 'with a coupon' }];
+
+      act(() => {
+        view.result.current.onAnswerQuestions({ messageId: round?.id ?? '', answers });
+      });
+
+      await waitFor(() => {
+        expect(ask).toHaveBeenCalledTimes(2);
+      });
+      expect(ask.mock.calls[1]?.[0].text).toBe(
+        'Scope (What should the plan cover?): The checkout — with a coupon',
+      );
+      expect(useWorkspaceStore.getState().workspaces[0]?.chat[2]).toMatchObject({
+        kind: 'questions',
+        answers,
+      });
+    });
+
+    it('does NOT take answers while the agent is still working', async () => {
+      const { ask, view } = await asked('Two things first.');
+      const round = useWorkspaceStore.getState().workspaces[0]?.chat.at(-1);
+
+      act(() => {
+        useWorkspaceStore.setState({ isAgentTyping: true });
+      });
+      act(() => {
+        view.result.current.onAnswerQuestions({
+          messageId: round?.id ?? '',
+          answers: [{ picked: ['The checkout'], text: '' }],
+        });
+      });
+
+      expect(ask).toHaveBeenCalledOnce();
+      expect(view.result.current.messages.at(-1)).toMatchObject({ isAnswerable: false });
+    });
+
+    it('stops offering a round once the QA wrote something else instead', async () => {
+      const { view } = await asked('Two things first.');
+
+      act(() => {
+        view.result.current.onDraftChange('Actually, just the login');
+      });
+      act(() => {
+        view.result.current.onSend();
+      });
+
+      const round = view.result.current.messages.find(
+        ({ message }) => message.kind === 'questions',
+      );
+
+      expect(round).toMatchObject({ isAnswerable: false });
     });
   });
 

@@ -8,6 +8,7 @@ import {
   Composer,
   ErrorBlock,
   HandoffCard,
+  QuestionRound,
   TypingDots,
   UserMessage,
   VerdictNote,
@@ -33,6 +34,7 @@ export const Chat: React.FC = () => {
     onSend,
     onSuggestion,
     onAnswer,
+    onAnswerQuestions,
     onOpenPlan,
     onOpenRuns,
   } = useChatViewModel();
@@ -60,7 +62,7 @@ export const Chat: React.FC = () => {
         </div>
       ) : (
         <div ref={listRef} className="chat__messages" onScroll={onScroll}>
-          {messages.map(({ message, isNew }) => (
+          {messages.map(({ message, isNew, isAnswerable }) => (
             <motion.div
               key={message.id}
               className="chat__row"
@@ -89,6 +91,13 @@ export const Chat: React.FC = () => {
                 {message.kind === 'verdict' && <VerdictNote message={message} />}
                 {message.kind === 'ask' && (
                   <AskBlock message={message} onAnswer={onAnswer} />
+                )}
+                {message.kind === 'questions' && (
+                  <QuestionRound
+                    message={message}
+                    isAnswerable={isAnswerable}
+                    onAnswer={onAnswerQuestions}
+                  />
                 )}
                 {message.kind === 'error' && <ErrorBlock message={message} />}
                 {message.kind === 'plan' && (

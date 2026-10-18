@@ -1,6 +1,9 @@
+import type { IQuestionAnswer } from '@/modules/Chat/types';
+import type { IChatReference } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  formatAnswers,
   insertMention,
   mentionCandidates,
   mentionQueryOf,
@@ -34,6 +37,8 @@ export const useChatViewModel = () => {
   const sendMessage = useWorkspaceStore((state) => state.sendMessage);
   const landAgentText = useWorkspaceStore((state) => state.landAgentText);
   const landPlan = useWorkspaceStore((state) => state.landPlan);
+  const landQuestions = useWorkspaceStore((state) => state.landQuestions);
+  const answerQuestions = useWorkspaceStore((state) => state.answerQuestions);
   const landAgentError = useWorkspaceStore((state) => state.landAgentError);
   const answerAsk = useWorkspaceStore((state) => state.answerAsk);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
@@ -52,25 +57,22 @@ export const useChatViewModel = () => {
   const lastAgentId =
     (workspace?.chat ?? []).filter(({ kind }) => kind === 'agent').at(-1)?.id ?? null;
   const hasPreview = !isAgentTyping && liveText !== '';
+  const lastId = (workspace?.chat ?? []).at(-1)?.id ?? null;
 
-  const send = (text: string) => {
-    if (!workspace || text.trim().length === 0) return;
+  const askAgent = (props: { text: string; references: IChatReference[] }) => {
+    if (!workspace) return;
 
     const workspaceId = workspace.id;
-    const references = mentionsIn({ text, references: referencesOf(workspace) });
-
-    sendMessage({ workspaceId, text, mentions: references.map(({ id }) => id) });
-    setDraft('');
 
     void Agent.ask({
       workspaceId,
       agentId,
       model,
       sessionId: workspace.sessionId,
-      text,
+      text: props.text,
       target: target === null ? null : { kind: target.kind, value: target.value },
       steps: flattenPlanSteps(workspace.plan),
-      references,
+      references: props.references,
     }).then((turn) => {
       if (turn.isError) {
         landAgentError({ workspaceId, text: turn.text });
@@ -81,30 +83,59 @@ export const useChatViewModel = () => {
       const { answer } = turn;
       const plan = answer?.plan ? planOfDraft(answer.plan.cases) : null;
 
-      if (!answer || (answer.reply.length === 0 && plan === null)) {
+      if (
+        !answer ||
+        (answer.reply.length === 0 && plan === null && answer.questions.length === 0)
+      ) {
         landAgentError({ workspaceId, text: CHAT.unreadable });
 
         return;
       }
 
-      if (plan === null) {
+      if (plan === null)
         landAgentText({
           workspaceId,
           text: answer.reply,
           who: agentName,
           sessionId: turn.sessionId,
         });
+      else
+        landPlan({
+          workspaceId,
+          summary: answer.reply,
+          plan,
+          who: agentName,
+          sessionId: turn.sessionId,
+        });
 
-        return;
-      }
+      landQuestions({ workspaceId, questions: answer.questions });
+    });
+  };
 
-      landPlan({
-        workspaceId,
-        summary: answer.reply,
-        plan,
-        who: agentName,
-        sessionId: turn.sessionId,
-      });
+  const send = (text: string) => {
+    if (!workspace || text.trim().length === 0) return;
+
+    const references = mentionsIn({ text, references: referencesOf(workspace) });
+
+    sendMessage({
+      workspaceId: workspace.id,
+      text,
+      mentions: references.map(({ id }) => id),
+    });
+    setDraft('');
+    askAgent({ text, references });
+  };
+
+  const answer = (props: { messageId: string; answers: IQuestionAnswer[] }) => {
+    const round = workspace?.chat.find(({ id }) => id === props.messageId);
+
+    if (!workspace || round?.kind !== 'questions' || round.answers !== null) return;
+    if (isAgentTyping) return;
+
+    answerQuestions({ workspaceId: workspace.id, ...props });
+    askAgent({
+      text: formatAnswers({ questions: round.questions, answers: props.answers }),
+      references: [],
     });
   };
 
@@ -112,6 +143,11 @@ export const useChatViewModel = () => {
     messages: visible.map(({ message, isNew }) => ({
       message,
       isNew: isNew && !(hasPreview && message.id === lastAgentId),
+      isAnswerable:
+        message.kind === 'questions' &&
+        message.answers === null &&
+        message.id === lastId &&
+        !isAgentTyping,
     })),
     listRef,
     onScroll,
@@ -138,6 +174,7 @@ export const useChatViewModel = () => {
     onAnswer: (reply: string) => {
       if (workspace) answerAsk({ workspaceId: workspace.id, reply });
     },
+    onAnswerQuestions: answer,
     onOpenPlan: () => {
       selectTab('plan');
     },
