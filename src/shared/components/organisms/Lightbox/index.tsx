@@ -9,7 +9,8 @@ export const Lightbox: React.FC = () => {
   const {
     media,
     shot,
-    frameWidth,
+    frameStyle,
+    onShotLoad,
     canSave,
     isSaving,
     saveGlyph,
@@ -32,7 +33,6 @@ export const Lightbox: React.FC = () => {
     >
       <motion.div
         className="lightbox__panel"
-        style={{ width: frameWidth }}
         initial={{ opacity: 0, scale: 0.96, y: 14 }}
         animate={{ opacity: 1, scale: 1, y: 0, transition: STICKER.spring }}
         exit={{
@@ -58,15 +58,16 @@ export const Lightbox: React.FC = () => {
           </span>
         </header>
 
-        <div
-          className={
-            media.isTall ? 'lightbox__frame lightbox__frame--tall' : 'lightbox__frame'
-          }
-        >
+        <div className="lightbox__frame" style={frameStyle}>
           {shot === null ? (
             <p className="lightbox__missing">{t('RUN.NO_SHOT')}</p>
           ) : (
-            <img className="lightbox__shot" src={shot} alt={media.title} />
+            <img
+              className="lightbox__shot"
+              src={shot}
+              alt={media.title}
+              onLoad={onShotLoad}
+            />
           )}
         </div>
       </motion.div>

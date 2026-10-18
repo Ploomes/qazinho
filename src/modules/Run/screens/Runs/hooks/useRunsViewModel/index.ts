@@ -18,7 +18,6 @@ export const useRunsViewModel = () => {
   const workspace = useSelectedWorkspacePart((opened) => ({
     runs: opened.runs,
     bugs: opened.bugs,
-    isTall: opened.planKind === 'mobile',
   }));
   const selectedRunId = useWorkspaceStore((state) => state.selectedRunId);
   const runFilter = useWorkspaceStore((state) => state.runFilter);
@@ -60,7 +59,6 @@ export const useRunsViewModel = () => {
     openMedia({
       kicker: run?.id ?? '',
       title: props.label,
-      isTall: workspace?.isTall === true,
       src: props.src,
       file: props.file,
     });

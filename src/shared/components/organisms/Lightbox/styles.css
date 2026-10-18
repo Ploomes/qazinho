@@ -50,12 +50,20 @@
   margin-left: auto;
 }
 
+@property --shot-ratio {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1.6;
+}
+
 .lightbox__frame {
   display: flex;
   align-items: center;
   justify-content: center;
-  aspect-ratio: 16 / 10;
+  width: min(var(--shot-max-width), calc(var(--shot-max-height) * var(--shot-ratio)));
+  aspect-ratio: var(--shot-ratio);
   overflow: hidden;
+  transition: --shot-ratio var(--dur) var(--ease);
   border-radius: var(--radius-md);
   background: var(--screen);
 }
@@ -71,8 +79,4 @@
   color: var(--ink3);
   font: var(--font-ui-sm);
   text-align: center;
-}
-
-.lightbox__frame--tall {
-  aspect-ratio: 9 / 19.5;
 }

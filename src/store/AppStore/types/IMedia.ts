@@ -2,7 +2,6 @@
 export interface IMedia {
   kicker: string;
   title: string;
-  isTall: boolean;
   src: string | null;
   file: string | null;
 }

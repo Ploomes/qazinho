@@ -1,9 +1,10 @@
 import type { SaveOutcome } from '@/shared/types';
 import type { IMedia } from '@/store/AppStore/types';
+import type { CSSProperties, SyntheticEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Archive } from '@/services';
-import { SAVE_BUTTON } from '@/shared/components/organisms/Lightbox/constants';
+import { LIGHTBOX, SAVE_BUTTON } from '@/shared/components/organisms/Lightbox/constants';
 import { useShot } from '@/shared/hooks';
 import { useAppStore } from '@/store';
 
@@ -17,7 +18,11 @@ export const useLightboxViewModel = () => {
     state: SaveOutcome | 'saving';
   } | null>(null);
 
+  const [measured, setMeasured] = useState<{ shot: string; ratio: number } | null>(null);
+
   const state = saving !== null && saving.media === media ? saving.state : 'idle';
+  const ratio =
+    measured !== null && measured.shot === shot ? measured.ratio : LIGHTBOX.ratio;
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -34,7 +39,17 @@ export const useLightboxViewModel = () => {
   return {
     media,
     shot,
-    frameWidth: media?.isTall === true ? 320 : 560,
+    frameStyle: {
+      '--shot-ratio': String(ratio),
+      '--shot-max-width': LIGHTBOX.maxWidth,
+      '--shot-max-height': LIGHTBOX.maxHeight,
+    } as CSSProperties,
+    onShotLoad: (event: SyntheticEvent<HTMLImageElement>) => {
+      const { naturalWidth, naturalHeight } = event.currentTarget;
+
+      if (shot !== null && naturalWidth > 0 && naturalHeight > 0)
+        setMeasured({ shot, ratio: naturalWidth / naturalHeight });
+    },
     canSave: shot !== null,
     isSaving: state === 'saving',
     saveGlyph: SAVE_BUTTON[state].glyph,

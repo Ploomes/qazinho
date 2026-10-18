@@ -45,7 +45,6 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
       openMedia({
         kicker: `${bug.id} · ${step}`,
         title: shot.label,
-        isTall: false,
         src: shot.src,
         file: shot.file,
       });

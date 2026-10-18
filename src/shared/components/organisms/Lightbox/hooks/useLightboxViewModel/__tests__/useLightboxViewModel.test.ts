@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import type { SaveOutcome } from '@/shared/types';
+import type { SyntheticEvent } from 'react';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
@@ -9,7 +10,6 @@ import { useAppStore } from '@/store';
 const SHOT = {
   kicker: 'run r-01',
   title: 'the step that broke',
-  isTall: false,
   src: 'data:image/jpeg;base64,shot',
   file: null,
 };
@@ -37,16 +37,46 @@ describe('useLightboxViewModel', () => {
     expect(result.current.media?.title).toBe('the step that broke');
   });
 
-  it('frames a phone narrower than a browser', () => {
-    const wide = renderHook(() => useLightboxViewModel());
+  describe('onShotLoad', () => {
+    const loaded = (size: { naturalWidth: number; naturalHeight: number }) =>
+      ({ currentTarget: size }) as unknown as SyntheticEvent<HTMLImageElement>;
 
-    expect(wide.result.current.frameWidth).toBe(560);
+    it('frames a shot in its own shape once it loads: a phone stands tall', () => {
+      const { result } = renderHook(() => useLightboxViewModel());
 
-    useAppStore.setState({ media: { ...SHOT, isTall: true, src: null, file: null } });
+      expect(result.current.frameStyle).toMatchObject({ '--shot-ratio': '1.6' });
 
-    const tall = renderHook(() => useLightboxViewModel());
+      act(() => {
+        result.current.onShotLoad(loaded({ naturalWidth: 780, naturalHeight: 1688 }));
+      });
 
-    expect(tall.result.current.frameWidth).toBe(320);
+      expect(result.current.frameStyle).toMatchObject({
+        '--shot-ratio': String(780 / 1688),
+      });
+    });
+
+    it("does NOT carry one shot's shape over to the next one opened", () => {
+      const { result } = renderHook(() => useLightboxViewModel());
+
+      act(() => {
+        result.current.onShotLoad(loaded({ naturalWidth: 780, naturalHeight: 1688 }));
+      });
+      act(() => {
+        useAppStore.setState({ media: { ...SHOT, src: 'data:image/jpeg;base64,other' } });
+      });
+
+      expect(result.current.frameStyle).toMatchObject({ '--shot-ratio': '1.6' });
+    });
+
+    it('keeps the frame it has when a picture reports no size', () => {
+      const { result } = renderHook(() => useLightboxViewModel());
+
+      act(() => {
+        result.current.onShotLoad(loaded({ naturalWidth: 0, naturalHeight: 0 }));
+      });
+
+      expect(result.current.frameStyle).toMatchObject({ '--shot-ratio': '1.6' });
+    });
   });
 
   describe('onSave', () => {
