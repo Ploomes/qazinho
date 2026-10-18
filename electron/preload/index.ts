@@ -14,6 +14,7 @@ import type {
   IntegrationId,
   IResourceSnapshot,
   IRunEvent,
+  IRunInFlight,
   ISavedState,
   ISavedWorkspace,
   ISetupEvent,
@@ -51,6 +52,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.pauseRun, props) as Promise<void>,
   stopRun: (workspaceId: string) =>
     ipcRenderer.invoke(CHANNELS.stopRun, workspaceId) as Promise<void>,
+  runsInFlight: () =>
+    ipcRenderer.invoke(CHANNELS.runsInFlight) as Promise<IRunInFlight[]>,
   onRunEvent: (listener: (event: IRunEvent) => void) => {
     const forward = (_: unknown, event: IRunEvent) => {
       listener(event);

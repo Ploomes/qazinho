@@ -1,0 +1,53 @@
+import type { IRunInFlight, IStepOutcome } from '@/shared/types';
+import { describe, expect, it } from 'vitest';
+import { followRunEvent } from '@/main/classes/runs/RunCoordinator/library';
+
+const RUN: IRunInFlight = {
+  workspaceId: 'w1',
+  runId: 'r-01',
+  startedAtMs: 0,
+  doingIndex: -1,
+  streamUrl: null,
+  outcomes: [],
+  isPaused: false,
+};
+
+const OUTCOME = { workspaceId: 'w1', index: 0, verdict: 'passed' } as IStepOutcome;
+
+describe('followRunEvent', () => {
+  it('moves to the step the agent is on', () => {
+    expect(
+      followRunEvent({ run: RUN, event: { kind: 'doing', workspaceId: 'w1', index: 3 } })
+        .doingIndex,
+    ).toBe(3);
+  });
+
+  it('keeps the stream address, so a page that opens later can watch', () => {
+    expect(
+      followRunEvent({
+        run: RUN,
+        event: { kind: 'streaming', workspaceId: 'w1', url: 'http://x' },
+      }).streamUrl,
+    ).toBe('http://x');
+  });
+
+  it('keeps every verdict, and is on no step until the next one starts', () => {
+    const doing = { ...RUN, doingIndex: 0 };
+    const after = followRunEvent({
+      run: doing,
+      event: { kind: 'step', outcome: OUTCOME },
+    });
+
+    expect(after.outcomes).toEqual([OUTCOME]);
+    expect(after.doingIndex).toBe(-1);
+  });
+
+  it('does NOT change for a note, which only the chat keeps', () => {
+    expect(
+      followRunEvent({
+        run: RUN,
+        event: { kind: 'note', workspaceId: 'w1', text: 'hi' },
+      }),
+    ).toBe(RUN);
+  });
+});

@@ -25,6 +25,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     startRun: () => Promise.resolve(),
     pauseRun: () => Promise.resolve(),
     stopRun: () => Promise.resolve(),
+    runsInFlight: () => Promise.resolve([]),
     onRunEvent: () => () => undefined,
     readState: () => Promise.resolve({ projects: '[]', workspaces: [] }),
     saveProjects: () => Promise.resolve(),

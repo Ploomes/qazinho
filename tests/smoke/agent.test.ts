@@ -1,4 +1,4 @@
-import type { IRunEvent } from '@/shared/types';
+import type { IRunEvent, IRunInFlight } from '@/shared/types';
 import { chmod, mkdtemp, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
@@ -67,7 +67,12 @@ const server = createServer((_request, response) => {
   response.end(PAGE);
 });
 
-async function walkWith(script: string): Promise<IRunEvent[]> {
+/** Walks one step with a fake agent; `inFlight` is what main held when the step landed, and after. */
+async function walkWith(
+  script: string,
+): Promise<
+  IRunEvent[] & { inFlight: { atStep: IRunInFlight[]; after: IRunInFlight[] } }
+> {
   const root = await mkdtemp(join(tmpdir(), 'qazinho-agent-'));
   const agent = join(root, 'agent');
 
@@ -75,6 +80,7 @@ async function walkWith(script: string): Promise<IRunEvent[]> {
   await chmod(agent, 0o755);
 
   const events: IRunEvent[] = [];
+  const inFlight = { atStep: [] as IRunInFlight[], after: [] as IRunInFlight[] };
   const deviceTools = new McpHost();
 
   await deviceTools.start();
@@ -88,7 +94,11 @@ async function walkWith(script: string): Promise<IRunEvent[]> {
     tools: deviceTools,
     harness: new Harness(),
     dataRoot: root,
-    onEvent: (event) => events.push(event),
+    onEvent: (event) => {
+      events.push(event);
+
+      if (event.kind === 'step') inFlight.atStep = coordinator.inFlight();
+    },
   });
 
   await coordinator.start({
@@ -108,7 +118,9 @@ async function walkWith(script: string): Promise<IRunEvent[]> {
     ],
   });
 
-  return events;
+  inFlight.after = coordinator.inFlight();
+
+  return Object.assign(events, { inFlight });
 }
 
 beforeAll(async () => {
@@ -131,6 +143,17 @@ describe('an agent on a real browser', () => {
     });
     expect(step?.kind === 'step' && step.outcome.verdict).toBe('passed');
     expect(events.at(-1)).toEqual({ kind: 'done', workspaceId: 'w-agent' });
+  });
+
+  it('holds the run in flight while it walks, so a page that reloads picks it up', async () => {
+    const { inFlight } = await walkWith(RESOURCEFUL);
+
+    expect(inFlight.atStep).toHaveLength(1);
+    expect(inFlight.atStep[0]).toMatchObject({ workspaceId: 'w-agent', runId: 'r-01' });
+    expect(inFlight.atStep[0]?.outcomes.map(({ verdict }) => verdict)).toEqual([
+      'passed',
+    ]);
+    expect(inFlight.after).toEqual([]);
   });
 
   it('stops the run with the agent error instead of blocking every step', async () => {

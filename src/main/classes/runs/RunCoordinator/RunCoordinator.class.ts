@@ -8,6 +8,7 @@ import type {
   IFlatStep,
   IIosSetup,
   IRunEvent,
+  IRunInFlight,
   IStartRun,
   TargetKind,
 } from '@/shared/types';
@@ -19,6 +20,7 @@ import {
   agentFailure,
   casesOf,
   driverFor,
+  followRunEvent,
   outcomeOfReport,
   unwalkedOutcome,
 } from './library';
@@ -38,6 +40,7 @@ export class RunCoordinator {
   private readonly walking = new Set<string>();
   private readonly paused = new Set<string>();
   private readonly drivers = new Map<string, IDeviceDriver>();
+  private readonly inFlightRuns = new Map<string, IRunInFlight>();
 
   public constructor(props: IRunCoordinator) {
     this.runner = props.runner;
@@ -57,7 +60,7 @@ export class RunCoordinator {
     const command = await this.findCommand(run.agentId);
 
     if (!command) {
-      this.onEvent({
+      this.emit({
         kind: 'failed',
         workspaceId: run.workspaceId,
         text: `QAzinho cannot find ${run.agentId} on this machine. Install it, or pick another agent in Settings.`,
@@ -71,12 +74,21 @@ export class RunCoordinator {
     const missing = this.whatIsMissing({ kind: run.target.kind, android, ios });
 
     if (missing !== null) {
-      this.onEvent({ kind: 'failed', workspaceId: run.workspaceId, text: missing });
+      this.emit({ kind: 'failed', workspaceId: run.workspaceId, text: missing });
 
       return;
     }
 
     this.walking.add(run.workspaceId);
+    this.inFlightRuns.set(run.workspaceId, {
+      workspaceId: run.workspaceId,
+      runId: run.runId,
+      startedAtMs: Date.now(),
+      doingIndex: -1,
+      streamUrl: null,
+      outcomes: [],
+      isPaused: false,
+    });
 
     try {
       await this.walk({
@@ -91,6 +103,7 @@ export class RunCoordinator {
       });
     } finally {
       this.walking.delete(run.workspaceId);
+      this.inFlightRuns.delete(run.workspaceId);
       this.stopping.delete(run.workspaceId);
       this.paused.delete(run.workspaceId);
     }
@@ -109,6 +122,16 @@ export class RunCoordinator {
   public setPaused(props: { workspaceId: string; isPaused: boolean }): void {
     if (props.isPaused) this.paused.add(props.workspaceId);
     else this.paused.delete(props.workspaceId);
+
+    const run = this.inFlightRuns.get(props.workspaceId);
+
+    if (run)
+      this.inFlightRuns.set(props.workspaceId, { ...run, isPaused: props.isPaused });
+  }
+
+  /** The runs still walking, as they stand: a page that opened mid-run picks them up from here. */
+  public inFlight(): IRunInFlight[] {
+    return [...this.inFlightRuns.values()];
   }
 
   private whatIsMissing(props: {
@@ -144,12 +167,12 @@ export class RunCoordinator {
       this.live.end(run.workspaceId);
 
       if (this.stopping.has(run.workspaceId)) {
-        this.onEvent({ kind: 'done', workspaceId: run.workspaceId });
+        this.emit({ kind: 'done', workspaceId: run.workspaceId });
 
         return;
       }
 
-      this.onEvent({
+      this.emit({
         kind: 'failed',
         workspaceId: run.workspaceId,
         text: this.explain(reason),
@@ -168,7 +191,7 @@ export class RunCoordinator {
     this.drivers.delete(run.workspaceId);
     this.tools.detach(run.workspaceId);
     this.live.end(run.workspaceId);
-    this.onEvent(
+    this.emit(
       broke === null
         ? { kind: 'done', workspaceId: run.workspaceId }
         : { kind: 'failed', workspaceId: run.workspaceId, text: broke },
@@ -215,7 +238,7 @@ export class RunCoordinator {
 
     const unwalked = (verdict: 'skipped' | 'blocked') => {
       for (const [position, { step, index }] of pending.entries())
-        this.onEvent({
+        this.emit({
           kind: 'step',
           outcome: unwalkedOutcome({
             step,
@@ -244,13 +267,13 @@ export class RunCoordinator {
       pending.shift();
 
       if (report.note.length > 0)
-        this.onEvent({ kind: 'note', workspaceId, text: report.note });
+        this.emit({ kind: 'note', workspaceId, text: report.note });
 
       const shot = await driver.shoot(
         join(run.shotDir, `step-${String(walking.index + 1)}.jpg`),
       );
 
-      this.onEvent({
+      this.emit({
         kind: 'step',
         outcome: outcomeOfReport({
           report,
@@ -279,7 +302,7 @@ export class RunCoordinator {
         return 'The QA stopped the run: end your turn now.';
 
       began = Date.now();
-      this.onEvent({ kind: 'doing', workspaceId, index: next.index });
+      this.emit({ kind: 'doing', workspaceId, index: next.index });
 
       return `Filed. Next is step ${String(next.step.numberInCase)}: ${next.step.action}`;
     };
@@ -292,7 +315,7 @@ export class RunCoordinator {
     const first = pending[0];
 
     if (first !== undefined)
-      this.onEvent({ kind: 'doing', workspaceId, index: first.index });
+      this.emit({ kind: 'doing', workspaceId, index: first.index });
 
     this.tools.attach({ workspaceId, driver, onReport });
 
@@ -341,8 +364,7 @@ export class RunCoordinator {
     });
     const url = this.live.urlFor(workspaceId);
 
-    if (isStreaming && url !== null)
-      this.onEvent({ kind: 'streaming', workspaceId, url });
+    if (isStreaming && url !== null) this.emit({ kind: 'streaming', workspaceId, url });
   }
 
   private async holdWhilePaused(workspaceId: string): Promise<void> {
@@ -352,5 +374,15 @@ export class RunCoordinator {
 
   private explain(reason: unknown): string {
     return stripAnsi(reason instanceof Error ? reason.message : String(reason));
+  }
+
+  private emit(event: IRunEvent): void {
+    const workspaceId =
+      event.kind === 'step' ? event.outcome.workspaceId : event.workspaceId;
+    const run = this.inFlightRuns.get(workspaceId);
+
+    if (run) this.inFlightRuns.set(workspaceId, followRunEvent({ run, event }));
+
+    this.onEvent(event);
   }
 }

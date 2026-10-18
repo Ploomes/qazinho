@@ -217,6 +217,7 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.stopRun, (_event, workspaceId: string) => {
     runs.stop(workspaceId);
   });
+  ipcMain.handle(CHANNELS.runsInFlight, () => runs.inFlight());
   ipcMain.handle(
     CHANNELS.pauseRun,
     (_event, props: { workspaceId: string; isPaused: boolean }) => {

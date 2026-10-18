@@ -22,6 +22,7 @@ export type * from './IntegrationId';
 export type * from './IProcessSample';
 export type * from './IResourceSnapshot';
 export type * from './IRunEvent';
+export type * from './IRunInFlight';
 export type * from './ISavedState';
 export type * from './ISavedWorkspace';
 export type * from './ISetupEvent';

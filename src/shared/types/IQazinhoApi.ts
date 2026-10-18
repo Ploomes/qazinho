@@ -12,6 +12,7 @@ import type { InstallableId } from './InstallableId';
 import type { IntegrationId } from './IntegrationId';
 import type { IResourceSnapshot } from './IResourceSnapshot';
 import type { IRunEvent } from './IRunEvent';
+import type { IRunInFlight } from './IRunInFlight';
 import type { ISavedState } from './ISavedState';
 import type { ISavedWorkspace } from './ISavedWorkspace';
 import type { ISetupEvent } from './ISetupEvent';
@@ -30,6 +31,7 @@ export interface IQazinhoApi {
   startRun: (run: IStartRun) => Promise<void>;
   pauseRun: (props: { workspaceId: string; isPaused: boolean }) => Promise<void>;
   stopRun: (workspaceId: string) => Promise<void>;
+  runsInFlight: () => Promise<IRunInFlight[]>;
   onRunEvent: (listener: (event: IRunEvent) => void) => () => void;
   readState: () => Promise<ISavedState>;
   saveProjects: (json: string) => Promise<void>;
