@@ -66,6 +66,10 @@ export const en = {
     SEND: 'Send',
     MENTION_HEADING: 'Point the agent at',
     MENTION_HINT: '↑ ↓ to move · Enter to pick · Esc to close',
+    MENTION_HINT_EMPTY: 'Esc to close',
+    MENTION_NOTHING_YET:
+      'Nothing to point at yet. Cases show up once there is a plan; runs and bugs once it has run.',
+    MENTION_NO_MATCH: 'Nothing here matches “{{query}}”.',
     MENTION_RUN: 'run',
     MENTION_BUG: 'bug',
     MENTION_CASE: 'case',

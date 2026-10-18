@@ -24,6 +24,19 @@
   overflow-y: auto;
 }
 
+.mention-picker__empty {
+  margin: 0;
+  padding: var(--space-3) var(--space-5) var(--space-4);
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  text-wrap: pretty;
+  animation: gc-in var(--dur-fast) var(--ease);
+}
+
+.mention-picker__list:empty {
+  display: none;
+}
+
 .mention-picker__row {
   display: grid;
   grid-template-columns: 44px auto minmax(0, 1fr);

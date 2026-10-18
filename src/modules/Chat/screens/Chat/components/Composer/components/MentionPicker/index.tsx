@@ -7,7 +7,8 @@ import { useMentionPickerViewModel } from './hooks';
 import './styles.css';
 
 export const MentionPicker: React.FC<IMentionPickerProps> = (props) => {
-  const { listRef, rows, onPointerDown } = useMentionPickerViewModel(props);
+  const { listRef, isEmpty, emptyText, hint, rows, onPointerDown } =
+    useMentionPickerViewModel(props);
   const { t } = useTranslation();
 
   return (
@@ -22,6 +23,8 @@ export const MentionPicker: React.FC<IMentionPickerProps> = (props) => {
       <div className="mention-picker__head">
         <Eyebrow>{t('CHAT.MENTION_HEADING')}</Eyebrow>
       </div>
+
+      {isEmpty && <p className="mention-picker__empty">{emptyText}</p>}
 
       <div
         ref={listRef}
@@ -51,7 +54,7 @@ export const MentionPicker: React.FC<IMentionPickerProps> = (props) => {
         ))}
       </div>
 
-      <div className="mention-picker__foot">{t('CHAT.MENTION_HINT')}</div>
+      <div className="mention-picker__foot">{hint}</div>
     </motion.div>
   );
 };

@@ -39,6 +39,8 @@ export const useChatViewModel = () => {
   const workspace = workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
+  const references = workspace === null ? [] : referencesOf(workspace);
+  const mentionQuery = mentionQueryOf(draft);
   const agentId = detected.find(({ name }) => name === agentName)?.id ?? 'claude-code';
   const { listRef, visible, onScroll } = useChatScroll({
     workspaceId: workspace?.id ?? null,
@@ -109,10 +111,9 @@ export const useChatViewModel = () => {
     liveText: isAgentTyping ? liveText : '',
     draft,
     suggestions: CHAT.suggestions,
-    mentions: mentionCandidates({
-      references: workspace === null ? [] : referencesOf(workspace),
-      query: mentionQueryOf(draft),
-    }),
+    mentions: mentionCandidates({ references, query: mentionQuery }),
+    mentionQuery,
+    hasReferences: references.length > 0,
     onDraftChange: setDraft,
     onPickMention: (id: string) => {
       setDraft(insertMention({ draft, id }));

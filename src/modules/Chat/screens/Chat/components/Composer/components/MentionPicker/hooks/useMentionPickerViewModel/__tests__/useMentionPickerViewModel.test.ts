@@ -14,6 +14,8 @@ const PROPS = {
       facts: [],
     },
   ],
+  query: '',
+  hasReferences: true,
   highlighted: 1,
   onPick: vi.fn(),
   onHighlight: vi.fn(),
@@ -60,6 +62,33 @@ describe('useMentionPickerViewModel', () => {
       );
 
       expect(result.current.rows).toEqual([]);
+    });
+  });
+
+  describe('the empty state', () => {
+    it('stays out of the way while there are rows', () => {
+      const { result } = renderHook(() => useMentionPickerViewModel(PROPS));
+
+      expect(result.current.isEmpty).toBe(false);
+      expect(result.current.hint).toContain('Enter to pick');
+    });
+
+    it('says the workspace has nothing to point at yet', () => {
+      const { result } = renderHook(() =>
+        useMentionPickerViewModel({ ...PROPS, references: [], hasReferences: false }),
+      );
+
+      expect(result.current.isEmpty).toBe(true);
+      expect(result.current.emptyText).toContain('Nothing to point at yet');
+      expect(result.current.hint).toBe('Esc to close');
+    });
+
+    it('says the word typed matches nothing, when there is something to match', () => {
+      const { result } = renderHook(() =>
+        useMentionPickerViewModel({ ...PROPS, references: [], query: 'zzz' }),
+      );
+
+      expect(result.current.emptyText).toBe('Nothing here matches “zzz”.');
     });
   });
 

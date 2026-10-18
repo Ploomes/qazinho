@@ -7,6 +7,8 @@ import { useComposerViewModel } from '@/modules/Chat/screens/Chat/components/Com
 const PROPS = {
   value: 'Test the whole checkout',
   mentions: [],
+  mentionQuery: null,
+  hasReferences: false,
   onChange: vi.fn(),
   onSend: vi.fn(),
   onPickMention: vi.fn(),
@@ -15,6 +17,8 @@ const PROPS = {
 const MENTIONING = {
   ...PROPS,
   value: 'what happened in @r',
+  mentionQuery: 'r',
+  hasReferences: true,
   mentions: [
     { kind: 'run' as const, id: 'r-02', title: 'The whole plan', facts: [] },
     { kind: 'run' as const, id: 'r-01', title: 'Checkout only', facts: [] },
@@ -78,8 +82,47 @@ describe('useComposerViewModel', () => {
       expect(result.current.highlighted).toBe(0);
     });
 
-    it('does NOT open when nothing could be mentioned', () => {
+    it('does NOT open while the QA is not mentioning', () => {
       const { result } = renderHook(() => useComposerViewModel(PROPS));
+
+      expect(result.current.isPickerOpen).toBe(false);
+    });
+
+    it('opens on a bare @ even when the workspace has nothing to point at yet', () => {
+      const { result } = renderHook(() =>
+        useComposerViewModel({ ...PROPS, value: '@', mentionQuery: '' }),
+      );
+
+      expect(result.current.isPickerOpen).toBe(true);
+    });
+
+    it('still sends on Enter when the open picker has no row to pick', () => {
+      const onSend = vi.fn();
+      const { result } = renderHook(() =>
+        useComposerViewModel({
+          ...PROPS,
+          value: 'look at @zzz',
+          mentionQuery: 'zzz',
+          onSend,
+        }),
+      );
+
+      act(() => {
+        result.current.onKeyDown(pressed('ArrowDown'));
+        result.current.onKeyDown(pressed('Enter'));
+      });
+
+      expect(onSend).toHaveBeenCalledOnce();
+    });
+
+    it('closes an empty picker on Escape', () => {
+      const { result } = renderHook(() =>
+        useComposerViewModel({ ...PROPS, value: '@', mentionQuery: '' }),
+      );
+
+      act(() => {
+        result.current.onKeyDown(pressed('Escape'));
+      });
 
       expect(result.current.isPickerOpen).toBe(false);
     });

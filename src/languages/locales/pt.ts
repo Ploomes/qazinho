@@ -68,6 +68,10 @@ export const pt: typeof en = {
     SEND: 'Enviar',
     MENTION_HEADING: 'Apontar para o agente',
     MENTION_HINT: '↑ ↓ para mover · Enter para escolher · Esc para fechar',
+    MENTION_HINT_EMPTY: 'Esc para fechar',
+    MENTION_NOTHING_YET:
+      'Nada para apontar ainda. Os casos aparecem quando houver um plano; runs e bugs, depois de rodar.',
+    MENTION_NO_MATCH: 'Nada aqui combina com “{{query}}”.',
     MENTION_RUN: 'run',
     MENTION_BUG: 'bug',
     MENTION_CASE: 'caso',

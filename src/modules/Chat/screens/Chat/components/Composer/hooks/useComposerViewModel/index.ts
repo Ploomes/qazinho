@@ -3,12 +3,12 @@ import type { ChangeEvent, KeyboardEvent } from 'react';
 import { useState } from 'react';
 
 export const useComposerViewModel = (props: IComposerProps) => {
-  const { value, mentions, onChange, onSend, onPickMention } = props;
+  const { value, mentions, mentionQuery, onChange, onSend, onPickMention } = props;
   const [highlight, setHighlight] = useState(0);
   const [dismissedAt, setDismissedAt] = useState<string | null>(null);
 
   const canSend = value.trim().length > 0;
-  const isPickerOpen = mentions.length > 0 && dismissedAt !== value;
+  const isPickerOpen = mentionQuery !== null && dismissedAt !== value;
   const highlighted = Math.min(highlight, mentions.length - 1);
 
   const onSendClick = () => {
@@ -23,11 +23,12 @@ export const useComposerViewModel = (props: IComposerProps) => {
   const onPickerKey = (event: KeyboardEvent<HTMLInputElement>): boolean => {
     const picked = mentions[highlighted];
 
-    if (event.key === 'ArrowDown') setHighlight((highlighted + 1) % mentions.length);
+    if (event.key === 'Escape') setDismissedAt(value);
+    else if (mentions.length === 0) return false;
+    else if (event.key === 'ArrowDown') setHighlight((highlighted + 1) % mentions.length);
     else if (event.key === 'ArrowUp')
       setHighlight((highlighted - 1 + mentions.length) % mentions.length);
     else if ((event.key === 'Enter' || event.key === 'Tab') && picked) pick(picked.id);
-    else if (event.key === 'Escape') setDismissedAt(value);
     else return false;
 
     return true;

@@ -26,6 +26,8 @@ export const Chat: React.FC = () => {
     draft,
     suggestions,
     mentions,
+    mentionQuery,
+    hasReferences,
     onDraftChange,
     onPickMention,
     onSend,
@@ -136,6 +138,8 @@ export const Chat: React.FC = () => {
       <Composer
         value={draft}
         mentions={mentions}
+        mentionQuery={mentionQuery}
+        hasReferences={hasReferences}
         onChange={onDraftChange}
         onSend={onSend}
         onPickMention={onPickMention}

@@ -26,6 +26,8 @@ export const Composer: React.FC<IComposerProps> = (props) => {
             <MentionPicker
               key="mentions"
               references={props.mentions}
+              query={props.mentionQuery ?? ''}
+              hasReferences={props.hasReferences}
               highlighted={highlighted}
               onPick={onPick}
               onHighlight={onHighlight}

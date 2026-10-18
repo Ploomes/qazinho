@@ -246,6 +246,22 @@ describe('useChatViewModel', () => {
       });
 
       expect(result.current.mentions).toEqual([]);
+      expect(result.current.mentionQuery).toBeNull();
+    });
+
+    it('knows the workspace has something to point at, so an empty list means no match', () => {
+      answering({});
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onDraftChange('explain @zzz');
+      });
+
+      expect(result.current.mentions).toEqual([]);
+      expect(result.current.mentionQuery).toBe('zzz');
+      expect(result.current.hasReferences).toBe(true);
     });
 
     it('completes the draft with the reference the QA picked', () => {
