@@ -7,7 +7,7 @@ import { useAppStore, useMachineStore } from '@/store';
 
 export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
   const { isBare = false } = props;
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isResourcesOpen = useAppStore((state) => state.isResourcesOpen);
   const modelMenuAt = useAppStore((state) => state.modelMenuAt);
   const toggleResources = useAppStore((state) => state.toggleResources);
@@ -54,7 +54,10 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
         : (usage?.resetsAt ?? 0) > 0
           ? t('TITLEBAR.SESSION_LEFT', {
               percent: sessionPercent,
-              resets: formatResetsAt(usage?.resetsAt ?? 0),
+              resets: formatResetsAt({
+                resetsAt: usage?.resetsAt ?? 0,
+                language: i18n.language,
+              }),
             })
           : t('TITLEBAR.SESSION_ONLY', { percent: sessionPercent }),
     sessionTip: {
@@ -66,7 +69,12 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
           value: t('TITLEBAR.TIP_LEFT', { percent: sessionPercent }),
           detail:
             (usage?.resetsAt ?? 0) > 0
-              ? t('TITLEBAR.TIP_RESETS', { resets: formatResetsAt(usage?.resetsAt ?? 0) })
+              ? t('TITLEBAR.TIP_RESETS', {
+                  resets: formatResetsAt({
+                    resetsAt: usage?.resetsAt ?? 0,
+                    language: i18n.language,
+                  }),
+                })
               : null,
           fillWidth: `${String(sessionPercent)}%`,
         },

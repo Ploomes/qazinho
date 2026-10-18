@@ -27,4 +27,14 @@ describe('useLanguage', () => {
     });
     expect(i18n.t('COMMON.CANCEL')).toBe('Cancelar');
   });
+
+  it('tells the page which language it speaks, for screen readers and spelling', async () => {
+    useSettingsStore.setState({ language: 'pt' });
+
+    renderHook(() => useLanguage());
+
+    await waitFor(() => {
+      expect(document.documentElement.lang).toBe('pt');
+    });
+  });
 });
