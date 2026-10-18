@@ -14,7 +14,7 @@ export const INTEGRATIONS: IIntegration[] = [
       {
         id: 'token',
         labelKey: 'SETUP.FIELD_TOKEN',
-        placeholder: 'ghp_… or github_pat_…',
+        placeholder: 'ghp_… / github_pat_…',
         isSecret: true,
       },
     ],

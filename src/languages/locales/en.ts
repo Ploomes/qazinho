@@ -19,6 +19,7 @@ export const en = {
     FILTER: 'filter',
     EXPECTED: 'expected',
     GOT: 'got',
+    NO_BRIDGE: 'QAzinho is not talking to the machine. Restart the app.',
   },
   TITLEBAR: {
     CPU: 'CPU {{percent}}%',

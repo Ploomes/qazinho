@@ -21,6 +21,7 @@ export const pt: typeof en = {
     FILTER: 'filtro',
     EXPECTED: 'esperado',
     GOT: 'obtido',
+    NO_BRIDGE: 'O QAzinho não está falando com a máquina. Reinicie o app.',
   },
   TITLEBAR: {
     CPU: 'CPU {{percent}}%',

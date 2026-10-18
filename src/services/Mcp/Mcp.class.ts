@@ -5,7 +5,7 @@ import type {
   McpActionResult,
   McpSignInProgress,
 } from '@/shared/types';
-import { NO_BRIDGE_MCP } from './constants';
+import { i18n } from '@/languages';
 
 /** The only caller of the MCP side of the bridge: servers that live in the QA's own agent. */
 export class Mcp {
@@ -21,7 +21,7 @@ export class Mcp {
         phase: 'failed',
         at: 'check',
         failure: 'unsupported',
-        said: NO_BRIDGE_MCP.error,
+        said: i18n.t('COMMON.NO_BRIDGE'),
         canUseTerminal: false,
       }
     );
@@ -36,6 +36,11 @@ export class Mcp {
   }
 
   public static async remove(target: IMcpServerTarget): Promise<McpActionResult> {
-    return (await window.qazinho?.removeMcpServer(target)) ?? NO_BRIDGE_MCP;
+    return (
+      (await window.qazinho?.removeMcpServer(target)) ?? {
+        ok: false,
+        error: i18n.t('COMMON.NO_BRIDGE'),
+      }
+    );
   }
 }

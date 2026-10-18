@@ -4,7 +4,7 @@ import type {
   IIntegrationStatus,
   IntegrationId,
 } from '@/shared/types';
-import { NO_CONNECTION } from './constants';
+import { i18n } from '@/languages';
 
 /** The only caller of the tracker side of the bridge. Tokens go in; only accounts come back. */
 export class Integrations {
@@ -13,7 +13,12 @@ export class Integrations {
   }
 
   public static async connect(connecting: IConnectIntegration): Promise<IConnectResult> {
-    return (await window.qazinho?.connectIntegration(connecting)) ?? NO_CONNECTION;
+    return (
+      (await window.qazinho?.connectIntegration(connecting)) ?? {
+        isConnected: false,
+        error: i18n.t('COMMON.NO_BRIDGE'),
+      }
+    );
   }
 
   public static async disconnect(id: IntegrationId): Promise<void> {

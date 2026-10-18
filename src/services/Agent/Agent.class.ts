@@ -4,12 +4,20 @@ import type {
   IAskAgent,
   IChatTurn,
 } from '@/shared/types';
-import { NO_BRIDGE } from './constants';
+import { i18n } from '@/languages';
 
 /** The only caller of the agent side of the bridge. */
 export class Agent {
   public static async ask(ask: IAskAgent): Promise<IChatTurn> {
-    return (await window.qazinho?.askAgent(ask)) ?? NO_BRIDGE;
+    return (
+      (await window.qazinho?.askAgent(ask)) ?? {
+        sessionId: null,
+        text: i18n.t('COMMON.NO_BRIDGE'),
+        usage: null,
+        isError: true,
+        answer: null,
+      }
+    );
   }
 
   public static onEvent(listener: (event: IAgentEvent) => void): () => void {
