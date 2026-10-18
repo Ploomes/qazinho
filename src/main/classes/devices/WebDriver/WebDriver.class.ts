@@ -53,6 +53,7 @@ export class WebDriver implements IDeviceDriver {
     await this.context.addInitScript(MOTION_PROBE);
     this.context.on('page', (page) => {
       this.follow(page);
+      void this.adopt(page);
     });
     this.page = this.context.pages()[0] ?? (await this.context.newPage());
     this.follow(this.page);
@@ -236,6 +237,31 @@ export class WebDriver implements IDeviceDriver {
     this.screencast = session;
     this.onFrame = onFrame;
     await this.cast();
+  }
+
+  /** Turns to a tab the app opened, the way a person's eyes do, and back to the one that opened it when it closes. */
+  private async adopt(page: Page): Promise<void> {
+    const opener = await page.opener().catch(() => null);
+
+    if (opener === null) return;
+
+    page.once('close', () => {
+      if (this.page === page && !opener.isClosed()) void this.show(opener);
+    });
+    await this.show(page);
+  }
+
+  private async show(page: Page): Promise<void> {
+    await this.screencast?.detach().catch(() => undefined);
+    await this.cdp?.detach().catch(() => undefined);
+    this.screencast = null;
+    this.cdp = null;
+    this.page = page;
+    await page.waitForLoadState('domcontentloaded').catch(() => undefined);
+    await page.setViewportSize(this.viewport).catch(() => undefined);
+    await this.fit();
+
+    if (this.onFrame) await this.watch(this.onFrame);
   }
 
   /** Keeps every site a tab opened, so a fresh start clears what each one stored, and answers its dialogs as a person pressing OK would. */
