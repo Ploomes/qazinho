@@ -10,18 +10,21 @@ import { WebDriver } from '@/main/classes/devices/WebDriver';
  * form, with the page's heading saying "Entrar" too. The agent called the button "Entrar #2",
  * and the click used to land on the heading.
  */
-const PAGE = `<!doctype html><html><body>
+const PAGE = `<!doctype html><html><head><meta charset="utf-8"></head><body>
   <header><a href="#menu">Entrar</a></header>
   <h1>Entrar</h1>
   <form onsubmit="event.preventDefault(); document.getElementById('out').textContent = 'Form sent'">
     <input aria-label="E-mail"><button>Entrar</button>
   </form>
   <p id="out">Nothing sent</p>
+  <label>State <select onchange="document.getElementById('state').textContent = 'Picked ' + this.value"><option value="">Choose</option><option value="SP">São Paulo</option></select></label>
+  <label>Nickname <input></label>
+  <p id="state">Nothing picked</p>
 </body></html>`;
 
 const PORT = 4339;
 const site = createServer((_request, response) => {
-  response.writeHead(200, { 'content-type': 'text/html' });
+  response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
   response.end(PAGE);
 });
 let driver: WebDriver;
@@ -58,5 +61,30 @@ describe('controls that read alike in different roles', () => {
     await driver.act({ kind: 'click', target: 'Entrar #1', value: '' });
 
     expect(await driver.describe()).toContain('URL: http://127.0.0.1:4339/#menu');
+  });
+});
+
+/**
+ * A form labelled the plain way, with <label>: look listed its fields with no name at all, and
+ * a fill on the state dropdown failed, since a dropdown is not typed in.
+ */
+describe('a form labelled with <label>', () => {
+  it('lists each field by its label', async () => {
+    const screen = await driver.describe();
+
+    expect(screen).toContain('select: State');
+    expect(screen).toContain('input: Nickname');
+  });
+
+  it('picks the option a fill names on a dropdown, by what it reads', async () => {
+    await driver.act({ kind: 'fill', target: 'State', value: 'São Paulo' });
+
+    expect(await driver.describe()).toContain('Picked SP');
+  });
+
+  it('says which options there are when the one named is not', async () => {
+    await expect(
+      driver.act({ kind: 'fill', target: 'State', value: 'Bahia' }),
+    ).rejects.toThrow('It offers: Choose, São Paulo.');
   });
 });

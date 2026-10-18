@@ -66,7 +66,7 @@ Three suites that need something real behind them. They have their own config
 | `agent.test.ts`        | a fake agent retries a failed action, leaves a note, or errors out           |
 | `codex.test.ts`        | a fake Codex chats in the strict schema, resumes, runs a case, signs out     |
 | `tools.test.ts`        | an MCP client lists, calls and fails the device tools on real Chrome         |
-| `locate.test.ts`       | a link and a button that read alike: numbered by look, clicked by number     |
+| `locate.test.ts`       | alike controls numbered, fields named by their label, a dropdown picked      |
 | `dialog.test.ts`       | a confirm and an alert answered OK, and look telling what they asked         |
 | `peek.test.ts`         | a windowless Chrome reads a page for the chat, or says why it did not open   |
 | `fresh.test.ts`        | a case starts on a browser with nothing saved, and the stream follows it     |

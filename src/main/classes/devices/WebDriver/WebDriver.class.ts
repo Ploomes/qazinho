@@ -5,7 +5,14 @@ import type { BrowserContext, CDPSession, Page } from 'playwright-core';
 import { rm } from 'node:fs/promises';
 import { chromium } from 'playwright-core';
 import { MOTION_PROBE, WEB_DRIVER } from './constants';
-import { describePage, findLocator, originOf, pagesOf, summarizeMotion } from './library';
+import {
+  describePage,
+  findLocator,
+  optionOf,
+  originOf,
+  pagesOf,
+  summarizeMotion,
+} from './library';
 
 /** Drives a real Chrome on this machine with no window of its own; the QA watches it in the device panel. */
 export class WebDriver implements IDeviceDriver {
@@ -273,9 +280,43 @@ export class WebDriver implements IDeviceDriver {
 
     if (!locator) throw new Error(`Nothing on the page answers to "${action.target}".`);
 
-    if (action.kind === 'fill')
-      await locator.fill(action.value, { timeout: WEB_DRIVER.actionTimeoutMs });
-    else await locator.click({ timeout: WEB_DRIVER.actionTimeoutMs });
+    if (action.kind !== 'fill') {
+      await locator.click({ timeout: WEB_DRIVER.actionTimeoutMs });
+
+      return;
+    }
+
+    const options = await locator
+      .evaluate((element) => {
+        const select = element as unknown as {
+          tagName: string;
+          options?: { [index: number]: { label: string; value: string }; length: number };
+        };
+
+        if (select.tagName !== 'SELECT' || !select.options) return null;
+
+        return Array.from({ length: select.options.length }, (_, index) => ({
+          label: select.options?.[index]?.label ?? '',
+          value: select.options?.[index]?.value ?? '',
+        }));
+      })
+      .catch(() => null);
+    const timeout = WEB_DRIVER.actionTimeoutMs;
+
+    if (options === null) {
+      await locator.fill(action.value, { timeout });
+
+      return;
+    }
+
+    const option = optionOf({ options, wanted: action.value });
+
+    if (option === null)
+      throw new Error(
+        `"${action.target}" has no option "${action.value}". It offers: ${options.map(({ label }) => label).join(', ')}.`,
+      );
+
+    await locator.selectOption(option.value, { timeout });
   }
 
   private async markOf(page: Page): Promise<{ origin: number; at: number } | null> {

@@ -8,28 +8,46 @@ export async function listControls(
   try {
     return await page.$$eval(CONTROL_SELECTOR, (nodes) =>
       nodes.flatMap((node, at) => {
+        type Copy = {
+          querySelectorAll: (selector: string) => {
+            forEach: (each: (one: { remove: () => void }) => void) => void;
+          };
+          textContent: string | null;
+        };
         const element = node as unknown as {
           getClientRects: () => { length: number };
           getAttribute: (name: string) => string | null;
           innerText: string;
           tagName: string;
+          labels?: {
+            [index: number]: { cloneNode: (deep: boolean) => Copy };
+            length: number;
+          } | null;
         };
 
         if (element.getClientRects().length === 0) return [];
 
-        const label = (
-          element.getAttribute('aria-label') ??
-          element.getAttribute('placeholder') ??
-          element.getAttribute('name') ??
-          element.innerText ??
-          ''
-        )
-          .trim()
-          .slice(0, 60);
+        const role = element.tagName.toLowerCase();
+        const first =
+          element.labels && element.labels.length > 0 ? element.labels[0] : undefined;
+        const own = first?.cloneNode(true);
 
-        return label.length === 0
-          ? []
-          : [{ role: element.tagName.toLowerCase(), label, at }];
+        own?.querySelectorAll('input, select, textarea, button').forEach((one) => {
+          one.remove();
+        });
+
+        const label =
+          [
+            element.getAttribute('aria-label'),
+            own?.textContent,
+            element.getAttribute('placeholder'),
+            element.getAttribute('name'),
+            role === 'select' ? '' : element.innerText,
+          ]
+            .map((text) => (text ?? '').replace(/\s+/g, ' ').trim())
+            .find((text) => text.length > 0) ?? '';
+
+        return label.length === 0 ? [] : [{ role, label: label.slice(0, 60), at }];
       }),
     );
   } catch {
