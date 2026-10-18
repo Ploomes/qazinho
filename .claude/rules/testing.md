@@ -66,7 +66,7 @@ Three suites that need something real behind them. They have their own config
 | `agent.test.ts`    | a fake agent retries a failed action, leaves a note, or errors out          |
 | `tools.test.ts`    | an MCP client lists, calls and fails the device tools on real Chrome        |
 | `setup.test.ts`    | the installer runs a fake npm, streams its lines, and fails honestly        |
-| `mcp.test.ts`      | a fake Claude Code gets Figma's MCP added, listed and removed               |
+| `mcp.test.ts`      | a fake Claude Code and Codex get Figma's MCP added, signed in and removed   |
 
 `run.test.ts`, `chat.test.ts` and `visual.test.ts` spend the QA's tokens and need an agent installed. Run them by
 hand after touching the run pipeline or an answer schema.
