@@ -21,4 +21,5 @@ you need is a value only the QA has, such as an account or a link, the option sa
 goes, such as "Write the account in the field below", next to the real way out, such as
 "Plan without signing in".
 All the questions go in one round, five at most. Ask again only when an answer opened a new
-gap. The QA's answers come in their next message, one line per question, under its header.
+gap. QAzinho sends what the QA picked and wrote as their next message, one line per question,
+under its header.
