@@ -138,8 +138,9 @@
 
 .runs__title {
   margin: 0;
-  font: 600 17px/1.2 var(--font-display);
   color: var(--ink);
+  font: var(--font-display-md);
+  letter-spacing: var(--display-tracking);
 }
 
 .runs__meta {
@@ -175,9 +176,12 @@
 }
 
 .runs__filter--active {
-  border-color: var(--line);
+  border-color: var(--lime);
   background: var(--sel);
   color: var(--ink);
+  box-shadow:
+    0 0 0 1px var(--lime),
+    var(--sticker-rest);
 }
 
 .runs__cases {
@@ -189,7 +193,7 @@
 .runs__case {
   overflow: hidden;
   border: 1px solid var(--line2);
-  border-radius: 11px;
+  border-radius: var(--radius-lg);
 }
 
 .runs__case-head {
@@ -290,16 +294,29 @@
   gap: 11px;
   max-width: 100%;
   padding: 9px 13px;
-  border: 1px solid var(--bug-tone);
-  border-radius: 9px;
-  background: var(--attn-soft);
+  border: var(--edge-width) solid var(--edge);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--bug-tone) 16%, var(--raise));
+  box-shadow: var(--sticker-rest);
   text-align: left;
+  transition:
+    translate var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
+}
+
+.runs__bug:hover {
+  box-shadow: var(--sticker-lift);
+  filter: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .runs__bug:hover {
+    translate: 0 -2px;
+  }
 }
 
 .runs__bug--high {
   --bug-tone: var(--fail);
-
-  background: var(--fail-soft);
 }
 
 .runs__bug-mark {

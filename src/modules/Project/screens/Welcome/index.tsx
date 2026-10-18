@@ -8,12 +8,14 @@ export const Welcome: React.FC = () => {
 
   return (
     <section className="welcome">
-      <Intern mood={mood} size={112} />
-      <h1 className="welcome__title">{title}</h1>
-      <p className="welcome__body">{body}</p>
-      <Button variant="primary" onClick={onAction}>
-        {action}
-      </Button>
+      <div className="welcome__board" data-theme="indigo">
+        <Intern mood={mood} size={136} isOnIndigo />
+        <h1 className="welcome__title">{title}</h1>
+        <p className="welcome__body">{body}</p>
+        <Button variant="primary" onClick={onAction}>
+          {action}
+        </Button>
+      </div>
     </section>
   );
 };

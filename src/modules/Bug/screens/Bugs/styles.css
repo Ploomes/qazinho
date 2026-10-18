@@ -31,8 +31,12 @@
 }
 
 .bugs__filter--active {
+  border-color: var(--lime);
   background: var(--sel);
   color: var(--ink);
+  box-shadow:
+    0 0 0 1px var(--lime),
+    var(--sticker-rest);
 }
 
 .bugs__list {

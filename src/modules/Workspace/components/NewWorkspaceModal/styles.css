@@ -11,7 +11,7 @@
   gap: var(--space-3);
   padding: 10px 14px;
   border: 1px solid var(--line);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--ink2);
   font: var(--font-ui-md);
@@ -26,12 +26,15 @@
   border-color: var(--lime);
   background: var(--sel);
   color: var(--ink);
+  box-shadow:
+    0 0 0 1px var(--lime),
+    var(--sticker-rest);
 }
 
 .new-workspace__issue {
   padding: var(--space-5);
-  border: 1px dashed var(--line);
-  border-radius: var(--radius-md);
+  border: 1.5px dashed var(--line);
+  border-radius: var(--radius-lg);
   color: var(--ink2);
   font: var(--font-ui-sm);
   text-wrap: pretty;

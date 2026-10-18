@@ -1,7 +1,7 @@
 .bug-card {
   overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: 13px;
+  border-radius: var(--radius-xl);
   background: var(--raise);
 }
 
@@ -44,11 +44,22 @@
 
 .bug-card__new {
   padding: 3px var(--space-3);
-  border-radius: 5px;
-  background: var(--fail-soft);
-  color: var(--fail);
-  font: var(--font-mono-xs);
-  animation: gc-breathe 2.4s ease-in-out infinite;
+  border: var(--edge-width) solid var(--edge);
+  border-radius: var(--radius-pill);
+  background: var(--fail);
+  color: var(--brand-ink);
+  font: var(--font-mono-tag);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: var(--sticker-rest);
+  rotate: var(--tilt-sm);
+  animation: gc-in var(--dur) var(--ease);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bug-card__new {
+    animation: gc-slap 0.46s var(--ease) both;
+  }
 }
 
 .bug-card__body {

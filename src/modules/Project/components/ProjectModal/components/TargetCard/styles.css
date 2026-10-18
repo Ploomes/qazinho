@@ -2,7 +2,7 @@
   display: grid;
   overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   background: var(--raise);
   transition:
     border-color var(--dur) var(--ease),
@@ -59,7 +59,7 @@
 .target-card__lock {
   max-width: 100%;
   padding: var(--space-3) var(--space-3) var(--space-3) var(--space-5);
-  border: 1px solid var(--line);
+  border: var(--edge-width) solid var(--edge);
   border-radius: var(--radius-pill);
   background: var(--win);
   box-shadow: var(--sticker-lift);
@@ -67,7 +67,7 @@
 
 .target-card__lock:has(.target-card__guide) {
   padding: var(--space-4) var(--space-5);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
 }
 
 .target-card__reason {
