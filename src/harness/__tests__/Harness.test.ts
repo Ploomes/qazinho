@@ -92,7 +92,11 @@ describe('Harness', () => {
         }[kind];
 
         await expect(
-          harness.run({ target: { kind, value: app }, viewport: DESKTOP }),
+          harness.run({
+            target: { kind, value: app },
+            viewport: DESKTOP,
+            language: 'en',
+          }),
         ).toMatchFileSnapshot(`./__prompts__/run-${kind}.txt`);
       },
     );
@@ -102,13 +106,31 @@ describe('Harness', () => {
         harness.run({
           target: { kind: 'web', value: 'x' },
           viewport: { width: 390, height: 844 },
+          language: 'en',
         }),
       ).toContain('in a 390 × 844 window, width by height in pixels');
     });
 
+    it('has the runner write its verdicts in the language the QA reads, whatever the case is in', () => {
+      const prompt = harness.run({
+        target: { kind: 'web', value: 'x' },
+        viewport: DESKTOP,
+        language: 'pt',
+      });
+
+      expect(prompt).toContain(
+        'in Brazilian Portuguese, the language the QA reads QAzinho in',
+      );
+      expect(prompt).not.toContain('{{language}}');
+    });
+
     it('does NOT tell a run how to chat, nor the chat how to run', () => {
       expect(
-        harness.run({ target: { kind: 'web', value: 'x' }, viewport: DESKTOP }),
+        harness.run({
+          target: { kind: 'web', value: 'x' },
+          viewport: DESKTOP,
+          language: 'en',
+        }),
       ).not.toContain('## Talking with the QA');
       expect(
         harness.chat({

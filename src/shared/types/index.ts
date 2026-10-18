@@ -43,6 +43,7 @@ export type * from './IStepOutcome';
 export type * from './ITargetUnderTest';
 export type * from './IToolStatus';
 export type * from './IViewport';
+export type * from './Language';
 export type * from './McpActionResult';
 export type * from './McpServerId';
 export type * from './McpServerState';

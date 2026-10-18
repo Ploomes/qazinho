@@ -54,6 +54,7 @@ describe('a real run', () => {
       model: 'sonnet',
       target: { kind: 'web' as const, value: 'http://127.0.0.1:4321/' },
       runId: 'r-01',
+      language: 'en',
       steps: [
         {
           caseId: 'TC-01',

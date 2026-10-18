@@ -111,6 +111,7 @@ describe.skipIf(!hasIdb)('a real run on a simulator', () => {
       model: 'haiku',
       target: { kind: 'ios', value: app ?? '' },
       runId: 'r-01',
+      language: 'en',
       steps: [
         {
           caseId: 'TC-01',

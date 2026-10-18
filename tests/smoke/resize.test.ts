@@ -82,6 +82,7 @@ done
       model: '',
       target: { kind: 'web', value: `http://127.0.0.1:${String(PORT)}/` },
       runId: 'r-01',
+      language: 'en',
       steps: [step('TC-01'), step('TC-02')],
     });
 

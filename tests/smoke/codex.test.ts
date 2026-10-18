@@ -191,6 +191,7 @@ describe('Codex on a run', () => {
       model: '',
       target: { kind: 'web', value: `http://127.0.0.1:${String(PORT)}/` },
       runId: 'r-01',
+      language: 'en',
       steps: [
         {
           caseId: 'TC-01',

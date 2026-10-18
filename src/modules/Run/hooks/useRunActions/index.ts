@@ -60,6 +60,7 @@ export const useRunActions = () => {
         target: { kind: target.kind, value: target.value },
         runId,
         steps,
+        language: useSettingsStore.getState().language,
         viewport: { width: viewport.width, height: viewport.height },
         pixelRatio: window.devicePixelRatio,
       });

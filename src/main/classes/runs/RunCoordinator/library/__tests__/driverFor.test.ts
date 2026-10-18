@@ -14,6 +14,7 @@ function run(props: { kind: TargetKind; value: string }): IWalkRun {
     target: props,
     runId: 'r-01',
     steps: [],
+    language: 'en',
     command: '/bin/claude',
     shotDir: '/tmp/shots',
     profileDir: '/tmp/profile',

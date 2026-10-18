@@ -7,7 +7,9 @@ import type {
   IFlatStep,
   ITargetUnderTest,
   IViewport,
+  Language,
 } from '@/shared/types';
+import { LANGUAGE_NAMES } from '@/harness/constants';
 import { CORPUS } from '@/harness/context/constants';
 import {
   describeCase,
@@ -91,13 +93,18 @@ export class Harness {
     return readChatAnswer(text);
   }
 
-  /** The system prompt of a run on one device; a browser also gets the window size it opens at. */
-  public run(props: { target: ITargetUnderTest; viewport: IViewport }): string {
+  /** The system prompt of a run on one device, in the language the QA reads; a browser also gets the window size. */
+  public run(props: {
+    target: ITargetUnderTest;
+    viewport: IViewport;
+    language: Language;
+  }): string {
     return this.contextFor({
       target: { role: 'runner', platform: props.target.kind },
       values: {
         app: props.target.value,
         viewport: `${String(props.viewport.width)} × ${String(props.viewport.height)}`,
+        language: LANGUAGE_NAMES[props.language],
       },
     });
   }

@@ -108,6 +108,7 @@ describe('a real run on a phone', () => {
       model: 'haiku',
       target: { kind: 'android', value: apk },
       runId: 'r-01',
+      language: 'en',
       steps: [
         {
           caseId: 'TC-01',

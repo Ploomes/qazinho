@@ -53,6 +53,7 @@ describe('stopping a run', () => {
       model: '',
       target: { kind: 'web', value: 'http://127.0.0.1:4324/' },
       runId: 'r-01',
+      language: 'en',
       steps: [
         {
           caseId: 'TC-01',
@@ -142,6 +143,7 @@ describe('stopping a run', () => {
       model: '',
       target: { kind: 'web', value: 'http://127.0.0.1:4341/' },
       runId: 'r-01',
+      language: 'en',
       steps: [step('TC-01'), step('TC-02')],
     });
 

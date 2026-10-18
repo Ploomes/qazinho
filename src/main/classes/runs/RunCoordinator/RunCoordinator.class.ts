@@ -360,6 +360,7 @@ export class RunCoordinator {
       systemPrompt: this.harness.run({
         target: run.target,
         viewport: this.viewports.get(workspaceId) ?? run.viewport ?? WEB_DRIVER.viewport,
+        language: run.language,
       }),
       mcpConfig,
       allowedTools: this.harness.toolsFor('runner').allowedTools,

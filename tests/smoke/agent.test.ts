@@ -108,6 +108,7 @@ async function walkWith(
     model: '',
     target: { kind: 'web', value: url },
     runId: 'r-01',
+    language: 'en',
     steps: [
       {
         caseId: 'TC-01',

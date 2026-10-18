@@ -102,6 +102,7 @@ describe('a real run on a page that only looks broken', () => {
       model: 'sonnet',
       target: { kind: 'web', value: `http://127.0.0.1:${String(PORT)}/` },
       runId: 'r-01',
+      language: 'en',
       steps: STEPS,
     });
 
