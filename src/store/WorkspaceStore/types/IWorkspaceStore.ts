@@ -1,9 +1,10 @@
 import type { BugFilter } from '@/modules/Bug';
+import type { IQuestionAnswer } from '@/modules/Chat';
 import type { ViewportId } from '@/modules/Device';
 import type { ITestCase } from '@/modules/Plan';
 import type { RunFilter } from '@/modules/Run';
 import type { IWorkspace, WorkspaceTab } from '@/modules/Workspace';
-import type { IRunInFlight, IStepOutcome } from '@/shared/types';
+import type { IChatQuestion, IRunInFlight, IStepOutcome } from '@/shared/types';
 
 /** The workspaces and everything the QA can poke inside one of them. */
 export interface IWorkspaceStore {
@@ -41,6 +42,12 @@ export interface IWorkspaceStore {
     plan: ITestCase[];
     who: string;
     sessionId: string | null;
+  }) => void;
+  landQuestions: (props: { workspaceId: string; questions: IChatQuestion[] }) => void;
+  answerQuestions: (props: {
+    workspaceId: string;
+    messageId: string;
+    answers: IQuestionAnswer[];
   }) => void;
   landAgentError: (props: { workspaceId: string; text: string }) => void;
   setLiveText: (text: string) => void;

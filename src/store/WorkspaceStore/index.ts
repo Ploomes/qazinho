@@ -2,9 +2,11 @@ import type { IWorkspaceStore } from './types';
 import { create } from 'zustand';
 import {
   answerAsk,
+  answerRound,
   appendAgentError,
   appendAgentMessage,
   appendPlanCard,
+  appendQuestions,
   appendUserMessage,
   formatClock,
 } from '@/modules/Chat/library';
@@ -120,6 +122,27 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
             sessionId: sessionId ?? workspace.sessionId,
           };
         },
+      }),
+    })),
+
+  landQuestions: ({ workspaceId, questions }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          appendQuestions({ workspace, questions, at: formatClock(new Date()) }),
+      }),
+    })),
+
+  answerQuestions: ({ workspaceId, messageId, answers }) =>
+    set((state) => ({
+      isAgentTyping: true,
+      liveText: '',
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => answerRound({ workspace, messageId, answers }),
       }),
     })),
 

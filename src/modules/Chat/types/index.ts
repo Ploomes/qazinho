@@ -4,6 +4,8 @@ export type * from './IAskMessage';
 export type * from './IAskOption';
 export type * from './IErrorMessage';
 export type * from './IPlanMessage';
+export type * from './IQuestionAnswer';
+export type * from './IQuestionsMessage';
 export type * from './IRunMessage';
 export type * from './IUserMessage';
 export type * from './IVerdictMessage';
