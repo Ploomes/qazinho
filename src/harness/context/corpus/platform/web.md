@@ -13,4 +13,7 @@ An action waits for the page to stop changing before it answers, and says how th
 meanwhile: layout shifts, and frames that ran long. A shift of 0.1 or more that no input
 explains, or a frame over 200 ms, is a jump a person notices even when the text ends up right:
 fail the step for it, and say in "got" what moved. Smaller movement goes in "note".
+A dialog the page opens, an alert, a confirm or a prompt, is answered OK at once, and the screen
+lists what it said under DIALOGS. A step that needs Cancel on one cannot be carried out: report
+it "blocked" and say so.
 The app under test is {{app}}.

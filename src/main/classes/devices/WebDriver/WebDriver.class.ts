@@ -13,6 +13,7 @@ export class WebDriver implements IDeviceDriver {
   private readonly profileDir: string;
   private readonly pixelRatio: number;
   private readonly origins = new Set<string>();
+  private readonly dialogs: string[] = [];
   private context: BrowserContext | null = null;
   private page: Page | null = null;
   private screencast: CDPSession | null = null;
@@ -143,8 +144,16 @@ export class WebDriver implements IDeviceDriver {
     return { data: shot.data, mimeType: 'image/jpeg' };
   }
 
+  /** What the page shows, and the dialogs it opened since the last look, each answered OK. */
   public async describe(): Promise<string> {
-    return this.page ? describePage(this.page) : '';
+    if (!this.page) return '';
+
+    const page = await describePage(this.page);
+    const shown = this.dialogs.splice(0);
+
+    return shown.length === 0
+      ? page
+      : [page, 'DIALOGS (answered OK):', ...shown].join('\n');
   }
 
   /** The pages the open page's header and menus lead to, on its own site, in the order they show. */
@@ -222,12 +231,16 @@ export class WebDriver implements IDeviceDriver {
     await this.cast();
   }
 
-  /** Keeps every site a tab opened, so a fresh start clears what each one stored. */
+  /** Keeps every site a tab opened, so a fresh start clears what each one stored, and answers its dialogs as a person pressing OK would. */
   private follow(page: Page): void {
     page.on('framenavigated', (frame) => {
       const origin = originOf(frame.url());
 
       if (origin !== null) this.origins.add(origin);
+    });
+    page.on('dialog', (dialog) => {
+      this.dialogs.push(`${dialog.type()}: ${dialog.message()}`);
+      void dialog.accept(dialog.defaultValue()).catch(() => undefined);
     });
   }
 
