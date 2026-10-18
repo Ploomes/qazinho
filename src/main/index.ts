@@ -10,6 +10,7 @@ import type {
   ISavedWorkspace,
   ISetupEvent,
   IStartRun,
+  IViewport,
   PickKind,
 } from '@/shared/types';
 import { homedir } from 'node:os';
@@ -229,6 +230,10 @@ void app.whenReady().then(async () => {
     runs.stop(workspaceId);
   });
   ipcMain.handle(CHANNELS.runsInFlight, () => runs.inFlight());
+  ipcMain.handle(
+    CHANNELS.resizeDevice,
+    (_event, props: { workspaceId: string; viewport: IViewport }) => runs.resize(props),
+  );
   ipcMain.handle(
     CHANNELS.pauseRun,
     (_event, props: { workspaceId: string; isPaused: boolean }) => {

@@ -6,6 +6,7 @@ import type {
   IChatReference,
   IFlatStep,
   ITargetUnderTest,
+  IViewport,
 } from '@/shared/types';
 import { CORPUS } from '@/harness/context/constants';
 import {
@@ -84,11 +85,14 @@ export class Harness {
     return readChatAnswer(text);
   }
 
-  /** The system prompt of a run on one device. */
-  public run(target: ITargetUnderTest): string {
+  /** The system prompt of a run on one device; a browser also gets the window size it opens at. */
+  public run(props: { target: ITargetUnderTest; viewport: IViewport }): string {
     return this.contextFor({
-      target: { role: 'runner', platform: target.kind },
-      values: { app: target.value },
+      target: { role: 'runner', platform: props.target.kind },
+      values: {
+        app: props.target.value,
+        viewport: `${String(props.viewport.width)} × ${String(props.viewport.height)}`,
+      },
     });
   }
 

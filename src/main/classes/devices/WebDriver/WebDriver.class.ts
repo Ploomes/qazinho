@@ -1,6 +1,6 @@
 import type { IWebDriver } from './types';
 import type { IDeviceDriver, IShot } from '@/main/classes/devices/types';
-import type { IActionMotion, IDeviceImage, IStepAction } from '@/shared/types';
+import type { IActionMotion, IDeviceImage, IStepAction, IViewport } from '@/shared/types';
 import type { BrowserContext, CDPSession, Page } from 'playwright-core';
 import { chromium } from 'playwright-core';
 import { MOTION_PROBE, WEB_DRIVER } from './constants';
@@ -15,17 +15,19 @@ export class WebDriver implements IDeviceDriver {
   private screencast: CDPSession | null = null;
   private glancer: CDPSession | null = null;
   private lastMotion: IActionMotion | null = null;
+  private viewport: IViewport;
 
   public constructor(props: IWebDriver) {
     this.url = props.url;
     this.profileDir = props.profileDir;
+    this.viewport = props.viewport ?? WEB_DRIVER.viewport;
   }
 
   public async open(): Promise<void> {
     this.context = await chromium.launchPersistentContext(this.profileDir, {
       channel: 'chrome',
       headless: true,
-      viewport: { ...WEB_DRIVER.viewport },
+      viewport: { ...this.viewport },
     });
     await this.context.addInitScript(MOTION_PROBE);
     this.page = this.context.pages()[0] ?? (await this.context.newPage());
@@ -82,7 +84,7 @@ export class WebDriver implements IDeviceDriver {
     const shot = await this.glancer.send('Page.captureScreenshot', {
       format: 'jpeg',
       quality: WEB_DRIVER.glanceQuality,
-      clip: { x, y, ...WEB_DRIVER.viewport, scale: WEB_DRIVER.glanceScale },
+      clip: { x, y, ...this.viewport, scale: WEB_DRIVER.glanceScale },
     });
 
     return { data: shot.data, mimeType: 'image/jpeg' };
@@ -112,16 +114,24 @@ export class WebDriver implements IDeviceDriver {
         .catch(() => undefined);
     });
 
-    await session.send('Page.startScreencast', {
-      format: 'jpeg',
-      quality: WEB_DRIVER.streamQuality,
-      maxWidth: WEB_DRIVER.viewport.width,
-      maxHeight: WEB_DRIVER.viewport.height,
-    });
-
     this.screencast = session;
+    await this.cast();
 
     return true;
+  }
+
+  /** Gives the page a new window size mid-run, and the stream the frames to match. */
+  public async resize(viewport: IViewport): Promise<void> {
+    this.viewport = viewport;
+
+    if (!this.page) return;
+
+    await this.page.setViewportSize(viewport);
+
+    if (this.screencast) {
+      await this.screencast.send('Page.stopScreencast').catch(() => undefined);
+      await this.cast();
+    }
   }
 
   public async close(): Promise<void> {
@@ -207,6 +217,15 @@ export class WebDriver implements IDeviceDriver {
     return summarizeMotion({
       shifts: probed.shifts.filter(({ at }) => at >= props.since),
       frames: probed.frames.filter(({ at }) => at >= props.since),
+    });
+  }
+
+  private async cast(): Promise<void> {
+    await this.screencast?.send('Page.startScreencast', {
+      format: 'jpeg',
+      quality: WEB_DRIVER.streamQuality,
+      maxWidth: this.viewport.width,
+      maxHeight: this.viewport.height,
     });
   }
 

@@ -23,6 +23,7 @@ import type {
   ISavedWorkspace,
   ISetupEvent,
   IStartRun,
+  IViewport,
   PickKind,
   Platform,
 } from '@/shared/types';
@@ -56,6 +57,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.pauseRun, props) as Promise<void>,
   stopRun: (workspaceId: string) =>
     ipcRenderer.invoke(CHANNELS.stopRun, workspaceId) as Promise<void>,
+  resizeDevice: (props: { workspaceId: string; viewport: IViewport }) =>
+    ipcRenderer.invoke(CHANNELS.resizeDevice, props) as Promise<void>,
   runsInFlight: () =>
     ipcRenderer.invoke(CHANNELS.runsInFlight) as Promise<IRunInFlight[]>,
   onRunEvent: (listener: (event: IRunEvent) => void) => {

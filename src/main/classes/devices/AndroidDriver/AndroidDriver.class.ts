@@ -1,6 +1,6 @@
 import type { IAndroidDriver } from './types';
 import type { IDeviceDriver, IShot } from '@/main/classes/devices/types';
-import type { IActionMotion, IDeviceImage, IStepAction } from '@/shared/types';
+import type { IActionMotion, IDeviceImage, IStepAction, IViewport } from '@/shared/types';
 import { spawn } from 'node:child_process';
 import { readdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -114,6 +114,11 @@ export class AndroidDriver implements IDeviceDriver {
   /** A phone has no layout-shift timeline to read, so it says nothing about motion. */
   public async motion(): Promise<IActionMotion | null> {
     return Promise.resolve(null);
+  }
+
+  /** A emulator keeps the size of the device it is, so a new window size changes nothing. */
+  public async resize(_viewport: IViewport): Promise<void> {
+    return Promise.resolve();
   }
 
   public async shoot(file: string): Promise<IShot | null> {

@@ -33,6 +33,23 @@ const site = createServer((_request, response) => {
 const tools = new McpHost();
 let driver: WebDriver;
 
+/** Reads a JPEG's size from its start-of-frame marker, so a test can check a picture without decoding it. */
+function jpegSize(jpeg: Buffer): { width: number; height: number } | null {
+  let at = 2;
+
+  while (at + 9 < jpeg.length) {
+    const marker = jpeg[at + 1] ?? 0;
+    const length = jpeg.readUInt16BE(at + 2);
+
+    if (marker >= 0xc0 && marker <= 0xc2)
+      return { height: jpeg.readUInt16BE(at + 5), width: jpeg.readUInt16BE(at + 7) };
+
+    at += 2 + length;
+  }
+
+  return null;
+}
+
 function textOf(result: Awaited<ReturnType<Client['callTool']>>): string {
   const [first] = result.content as { type: string; text?: string }[];
 
@@ -110,6 +127,27 @@ describe('the device as MCP tools', () => {
     expect(Buffer.from(picture?.data ?? '', 'base64').subarray(0, 2)).toEqual(
       Buffer.from([0xff, 0xd8]),
     );
+    await client.close();
+  });
+
+  it('resizes the browser mid-session, and the picture the agent gets follows it', async () => {
+    const client = await connect('w1');
+    const sizeOf = async () => {
+      const looked = await client.callTool({ name: 'look', arguments: {} });
+      const picture = (looked.content as { type: string; data?: string }[]).find(
+        ({ type }) => type === 'image',
+      );
+
+      return jpegSize(Buffer.from(picture?.data ?? '', 'base64'));
+    };
+
+    expect(await sizeOf()).toEqual({ width: 960, height: 600 });
+
+    await driver.resize({ width: 390, height: 844 });
+
+    expect(await sizeOf()).toEqual({ width: 293, height: 633 });
+
+    await driver.resize({ width: 1280, height: 800 });
     await client.close();
   });
 

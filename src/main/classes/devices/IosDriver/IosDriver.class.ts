@@ -1,6 +1,6 @@
 import type { IIosDriver } from './types';
 import type { IDeviceDriver, IShot } from '@/main/classes/devices/types';
-import type { IActionMotion, IDeviceImage, IStepAction } from '@/shared/types';
+import type { IActionMotion, IDeviceImage, IStepAction, IViewport } from '@/shared/types';
 import { randomUUID } from 'node:crypto';
 import { readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -102,6 +102,11 @@ export class IosDriver implements IDeviceDriver {
   /** A simulator has no layout-shift timeline to read, so it says nothing about motion. */
   public async motion(): Promise<IActionMotion | null> {
     return Promise.resolve(null);
+  }
+
+  /** A simulator keeps the size of the device it is, so a new window size changes nothing. */
+  public async resize(_viewport: IViewport): Promise<void> {
+    return Promise.resolve();
   }
 
   public async shoot(file: string): Promise<IShot | null> {

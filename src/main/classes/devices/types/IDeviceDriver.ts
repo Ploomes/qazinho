@@ -1,5 +1,5 @@
 import type { IShot } from './IShot';
-import type { IActionMotion, IDeviceImage, IStepAction } from '@/shared/types';
+import type { IActionMotion, IDeviceImage, IStepAction, IViewport } from '@/shared/types';
 
 /** What a run needs from a device, whether it is a browser or a phone. */
 export interface IDeviceDriver {
@@ -8,6 +8,7 @@ export interface IDeviceDriver {
   describe: () => Promise<string>;
   glance: () => Promise<IDeviceImage | null>;
   motion: () => Promise<IActionMotion | null>;
+  resize: (viewport: IViewport) => Promise<void>;
   shoot: (file: string) => Promise<IShot | null>;
   stream: (onFrame: (jpeg: Buffer) => void) => Promise<boolean>;
   close: () => Promise<void>;

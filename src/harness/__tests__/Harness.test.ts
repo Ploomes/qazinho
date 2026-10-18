@@ -36,6 +36,7 @@ const REFERENCES: IChatReference[] = [
 ];
 
 const harness = new Harness();
+const DESKTOP = { width: 1280, height: 800 };
 
 describe('Harness', () => {
   describe('chat', () => {
@@ -74,16 +75,25 @@ describe('Harness', () => {
           ios: '/tmp/App.app',
         }[kind];
 
-        await expect(harness.run({ kind, value: app })).toMatchFileSnapshot(
-          `./__prompts__/run-${kind}.txt`,
-        );
+        await expect(
+          harness.run({ target: { kind, value: app }, viewport: DESKTOP }),
+        ).toMatchFileSnapshot(`./__prompts__/run-${kind}.txt`);
       },
     );
 
+    it('tells a web run the size of the window it drives', () => {
+      expect(
+        harness.run({
+          target: { kind: 'web', value: 'x' },
+          viewport: { width: 390, height: 844 },
+        }),
+      ).toContain('in a 390 × 844 window, width by height in pixels');
+    });
+
     it('does NOT tell a run how to chat, nor the chat how to run', () => {
-      expect(harness.run({ kind: 'web', value: 'x' })).not.toContain(
-        '## Talking with the QA',
-      );
+      expect(
+        harness.run({ target: { kind: 'web', value: 'x' }, viewport: DESKTOP }),
+      ).not.toContain('## Talking with the QA');
       expect(
         harness.chat({ target: null, steps: [], references: [] }).systemPrompt,
       ).not.toContain('## Running a case');

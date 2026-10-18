@@ -10,10 +10,12 @@ import type {
   IRunEvent,
   IRunInFlight,
   IStartRun,
+  IViewport,
   TargetKind,
 } from '@/shared/types';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
+import { WEB_DRIVER } from '@/main/classes/devices/WebDriver/constants';
 import { stripAnsi } from '@/main/library';
 import { RUN_WALK, UNWALKED } from './constants';
 import {
@@ -127,6 +129,14 @@ export class RunCoordinator {
 
     if (run)
       this.inFlightRuns.set(props.workspaceId, { ...run, isPaused: props.isPaused });
+  }
+
+  /** Resizes the browser of a run under way; the next run starts at the size the workspace keeps. */
+  public async resize(props: {
+    workspaceId: string;
+    viewport: IViewport;
+  }): Promise<void> {
+    await this.drivers.get(props.workspaceId)?.resize(props.viewport);
   }
 
   /** The runs still walking, as they stand: a page that opened mid-run picks them up from here. */
@@ -325,7 +335,10 @@ export class RunCoordinator {
       command: run.command,
       model: run.model,
       sessionId: null,
-      systemPrompt: this.harness.run(run.target),
+      systemPrompt: this.harness.run({
+        target: run.target,
+        viewport: run.viewport ?? WEB_DRIVER.viewport,
+      }),
       mcpConfig,
       allowedTools: this.harness.toolsFor('runner').allowedTools,
       prompt: this.harness.walk({

@@ -16,5 +16,9 @@ export function driverFor(run: IWalkRun): IDeviceDriver {
   if (run.target.kind === 'ios')
     return new IosDriver({ idb: run.idb, udid: run.udid, app: run.target.value });
 
-  return new WebDriver({ url: run.target.value, profileDir: run.profileDir });
+  return new WebDriver({
+    url: run.target.value,
+    profileDir: run.profileDir,
+    viewport: run.viewport,
+  });
 }
