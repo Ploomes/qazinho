@@ -93,8 +93,19 @@
   gap: var(--space-5);
   width: 100%;
   max-width: 680px;
-  padding: var(--space-5) 0 var(--space-7);
-  background: linear-gradient(transparent, var(--indigo-dusk) 40%);
+  padding: var(--space-4) 0 var(--space-7);
+  background: var(--indigo-dusk);
+}
+
+.onboarding__footer::before {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  height: var(--space-7);
+  background: linear-gradient(transparent, var(--indigo-dusk));
+  content: '';
+  pointer-events: none;
 }
 
 .onboarding__back {
