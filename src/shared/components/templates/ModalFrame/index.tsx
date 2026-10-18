@@ -1,5 +1,5 @@
 import type { IModalFrameProps } from './types';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/shared/components/atoms';
 import { BACKDROP, MOTION } from '@/shared/constants';
@@ -38,9 +38,20 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
 
         <footer className="modal-frame__foot">
           {props.aside}
-          {props.hint !== undefined && (
-            <span className="modal-frame__hint">{props.hint}</span>
-          )}
+          <AnimatePresence mode="wait" initial={false}>
+            {props.hint !== undefined && (
+              <motion.span
+                key={props.hint}
+                className="modal-frame__hint"
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+              >
+                {props.hint}
+              </motion.span>
+            )}
+          </AnimatePresence>
           <div className="modal-frame__actions">
             <Button onClick={props.onCancel}>{t('COMMON.CANCEL')}</Button>
             <Button
