@@ -31,7 +31,7 @@ export const useDeviceFocusViewModel = (props: IDeviceFocusProps) => {
       '--focus-top': `${String(TITLEBAR.height)}px`,
       '--focus-side': `${String(DEVICE.focusSide)}px`,
       '--focus-chrome': `${String(DEVICE.focusChrome)}px`,
-      '--focus-ratio': String(DEVICE.focusRatio),
+      '--focus-ratio': String(props.ratio),
     } as CSSProperties,
     nowEyebrow:
       current?.verdict === 'running' ? t('DEVICE.FOCUS_NOW') : t('DEVICE.FOCUS_NEXT'),

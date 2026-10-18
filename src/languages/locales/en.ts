@@ -170,6 +170,11 @@ export const en = {
     FOCUS_NEXT: 'next',
     FOCUS_ALL_DONE: 'Every step is done.',
     FOCUSED: 'The device is in focus. Esc brings it back here.',
+    VIEWPORT: 'screen',
+    VIEWPORT_DESKTOP: 'Desktop',
+    VIEWPORT_TABLET: 'Tablet',
+    VIEWPORT_PHONE: 'Phone',
+    VIEWPORT_NEXT: 'The next run opens at this size.',
   },
   RESOURCES: {
     TITLE: 'Resources',

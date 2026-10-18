@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Button,
-  Chip,
   Eyebrow,
   IconButton,
   Intern,
@@ -35,7 +34,10 @@ export const DevicePanel: React.FC = () => {
     pauseLabel,
     stateText,
     mood,
-    deviceLabel,
+    viewports,
+    viewportNote,
+    focusRatio,
+    onSelectViewport,
     shot,
     stream,
     urlText,
@@ -103,7 +105,6 @@ export const DevicePanel: React.FC = () => {
 
             <div className="device-panel__inner" style={innerStyle}>
               <header className="device-panel__header">
-                <Chip hasCaret>{deviceLabel}</Chip>
                 <span className="device-panel__state">
                   <Intern mood={mood} size={22} />
                   {stateText}
@@ -234,6 +235,10 @@ export const DevicePanel: React.FC = () => {
               doingLabel={doingLabel}
               hasControls={hasControls}
               pauseLabel={pauseLabel}
+              viewports={viewports}
+              viewportNote={viewportNote}
+              ratio={focusRatio}
+              onSelectViewport={onSelectViewport}
               onPause={onPause}
               onStop={onStop}
               onClose={onUnfocus}

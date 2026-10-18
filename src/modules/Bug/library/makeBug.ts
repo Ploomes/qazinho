@@ -1,6 +1,7 @@
 import type { IBug, IBugShot } from '@/modules/Bug/types';
 import type { IWorkspace } from '@/modules/Workspace';
 import type { IStepOutcome } from '@/shared/types';
+import { viewportOf } from '@/modules/Device/library';
 import { countSeen } from './countSeen';
 
 function shotsFor(props: {
@@ -49,7 +50,9 @@ export function makeBug(props: {
     caseTitle: testCase?.title ?? outcome.caseId,
     step,
     target:
-      workspace.planKind === 'web' ? 'Web · Chrome 1280 × 800' : 'Android · emulator',
+      workspace.planKind === 'web'
+        ? `Web · Chrome ${String(viewportOf(workspace.viewportId).width)} × ${String(viewportOf(workspace.viewportId).height)}`
+        : 'Android · emulator',
     seen: countSeen({ workspace, caseId: outcome.caseId, step }),
     repro: outcomes
       .filter((one) => one.caseId === outcome.caseId && one.index <= outcome.index)

@@ -40,6 +40,7 @@ export const useNewWorkspaceModalViewModel = () => {
       bugs: [],
       live: null,
       hasBeenAsked: false,
+      viewportId: 'desktop',
       context: null,
     });
 

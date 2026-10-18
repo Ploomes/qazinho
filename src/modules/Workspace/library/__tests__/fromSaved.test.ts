@@ -22,6 +22,16 @@ describe('fromSaved', () => {
     expect(workspace?.plan).toEqual([]);
   });
 
+  it('keeps the window size the workspace picked, and opens one saved before sizes at desktop', () => {
+    expect(
+      fromSaved(toSaved({ ...makeWorkspace(), viewportId: 'tablet' }))?.viewportId,
+    ).toBe('tablet');
+
+    const json = JSON.stringify({ id: 'w1', projectId: 'p1' });
+
+    expect(fromSaved({ id: 'w1', json, planYaml: '' })?.viewportId).toBe('desktop');
+  });
+
   it('never comes back running, because nothing on the machine is', () => {
     const json = JSON.stringify({ id: 'w1', projectId: 'p1', status: 'running' });
 

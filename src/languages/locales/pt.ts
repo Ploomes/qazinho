@@ -172,6 +172,11 @@ export const pt: typeof en = {
     FOCUS_NEXT: 'próximo',
     FOCUS_ALL_DONE: 'Todos os passos terminaram.',
     FOCUSED: 'O device está em foco. Esc traz ele de volta para cá.',
+    VIEWPORT: 'tela',
+    VIEWPORT_DESKTOP: 'Desktop',
+    VIEWPORT_TABLET: 'Tablet',
+    VIEWPORT_PHONE: 'Celular',
+    VIEWPORT_NEXT: 'A próxima run abre neste tamanho.',
   },
   RESOURCES: {
     TITLE: 'Recursos',

@@ -4,6 +4,7 @@ import type { ILiveRun } from './ILiveRun';
 import type { WorkspaceStatus } from './WorkspaceStatus';
 import type { IBug } from '@/modules/Bug';
 import type { ChatMessage } from '@/modules/Chat';
+import type { ViewportId } from '@/modules/Device';
 import type { ITestCase } from '@/modules/Plan';
 import type { IRun } from '@/modules/Run';
 
@@ -14,6 +15,7 @@ export interface IWorkspace {
   name: string;
   targetId: string;
   planKind: 'web' | 'mobile';
+  viewportId: ViewportId;
   sessionId: string | null;
   context: IAgentContext | null;
   status: WorkspaceStatus;

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { viewportOf } from '@/modules/Device/library';
 import { flattenPlanSteps } from '@/modules/Run/library';
 import { Run } from '@/services';
 import {
@@ -48,6 +49,10 @@ export const useRunControls = () => {
       target: { kind: target.kind, value: target.value },
       runId,
       steps,
+      viewport: {
+        width: viewportOf(workspace.viewportId).width,
+        height: viewportOf(workspace.viewportId).height,
+      },
     });
   };
 

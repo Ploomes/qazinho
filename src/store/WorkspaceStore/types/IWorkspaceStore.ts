@@ -1,4 +1,5 @@
 import type { BugFilter } from '@/modules/Bug';
+import type { ViewportId } from '@/modules/Device';
 import type { ITestCase } from '@/modules/Plan';
 import type { RunFilter } from '@/modules/Run';
 import type { IWorkspace, WorkspaceTab } from '@/modules/Workspace';
@@ -24,6 +25,7 @@ export interface IWorkspaceStore {
   askRemoveWorkspace: (workspaceId: string | null) => void;
   removeWorkspace: (workspaceId: string) => void;
   renameWorkspace: (props: { workspaceId: string; name: string }) => void;
+  setViewport: (props: { workspaceId: string; viewportId: ViewportId }) => void;
   removeWorkspacesOf: (projectId: string) => void;
   selectTab: (tab: WorkspaceTab) => void;
   sendMessage: (props: { workspaceId: string; text: string; mentions: string[] }) => void;

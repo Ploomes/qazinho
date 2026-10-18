@@ -1,5 +1,5 @@
 import type { IDeviceFocusProps } from './types';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { DeviceScreen } from '@/modules/Device/components/DevicePanel/components/DeviceScreen';
 import { DEVICE } from '@/modules/Device/constants';
@@ -72,6 +72,54 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
             {now}
           </p>
         </div>
+
+        {props.viewports.length > 0 && (
+          <div className="device-focus__viewports">
+            <Eyebrow>{t('DEVICE.VIEWPORT')}</Eyebrow>
+            <div className="device-focus__viewport-list" role="radiogroup">
+              {props.viewports.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={option.isActive}
+                  className={
+                    option.isActive
+                      ? 'device-focus__viewport device-focus__viewport--on'
+                      : 'device-focus__viewport'
+                  }
+                  onClick={() => {
+                    props.onSelectViewport(option.id);
+                  }}
+                >
+                  {option.isActive && (
+                    <motion.span
+                      layoutId={DEVICE.viewportLayoutId}
+                      className="device-focus__viewport-mark"
+                      transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+                    />
+                  )}
+                  <span className="device-focus__viewport-label">{option.label}</span>
+                  <span className="device-focus__viewport-size">{option.size}</span>
+                </button>
+              ))}
+            </div>
+            <AnimatePresence initial={false}>
+              {props.viewportNote !== '' && (
+                <motion.p
+                  key="next"
+                  className="device-focus__viewport-note"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+                >
+                  {props.viewportNote}
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
 
         {props.hasControls && (
           <div className="device-focus__controls">

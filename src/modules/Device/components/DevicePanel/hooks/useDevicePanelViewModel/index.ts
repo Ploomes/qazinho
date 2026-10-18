@@ -1,10 +1,16 @@
-import type { IDeviceStep } from '@/modules/Device/types';
+import type { IDeviceStep, ViewportId } from '@/modules/Device/types';
 import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DEVICE, DEVICE_STATE_KEY } from '@/modules/Device/constants';
-import { deviceStateOf, formatElapsed, moodOfStatus } from '@/modules/Device/library';
+import { DEVICE, DEVICE_STATE_KEY, VIEWPORTS } from '@/modules/Device/constants';
+import {
+  deviceStateOf,
+  formatElapsed,
+  moodOfStatus,
+  viewportOf,
+} from '@/modules/Device/library';
 import { useRunControls } from '@/modules/Run';
+import { Run } from '@/services';
 import { MOTION } from '@/shared/constants';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
@@ -17,6 +23,7 @@ export const useDevicePanelViewModel = () => {
   const width = useWorkspaceStore((state) => state.deviceWidth);
   const toggleDevicePanel = useWorkspaceStore((state) => state.toggleDevicePanel);
   const setDeviceWidth = useWorkspaceStore((state) => state.setDeviceWidth);
+  const setViewport = useWorkspaceStore((state) => state.setViewport);
   const {
     steps: planSteps,
     live,
@@ -33,6 +40,7 @@ export const useDevicePanelViewModel = () => {
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
   const state = deviceStateOf(workspace);
   const isPhone = workspace?.planKind === 'mobile';
+  const viewport = viewportOf(workspace?.viewportId);
 
   const steps: IDeviceStep[] = planSteps.map((step, index) => ({
     number: index + 1,
@@ -71,7 +79,30 @@ export const useDevicePanelViewModel = () => {
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
     stateText: t(DEVICE_STATE_KEY[state] as never),
     mood: moodOfStatus(workspace?.status ?? null),
-    deviceLabel: isPhone ? 'Emulator · Pixel 7 · API 34' : 'Chrome 1280 × 800',
+    viewports: isPhone
+      ? []
+      : VIEWPORTS.map((option) => ({
+          id: option.id,
+          label: t(option.labelKey),
+          size: `${String(option.width)} × ${String(option.height)}`,
+          isActive: option.id === viewport.id,
+        })),
+    viewportNote: isRunLive ? '' : t('DEVICE.VIEWPORT_NEXT'),
+    focusRatio: viewport.width / viewport.height,
+    onSelectViewport: (viewportId: ViewportId) => {
+      if (!workspace || viewportId === viewport.id) return;
+
+      setViewport({ workspaceId: workspace.id, viewportId });
+
+      if (isRunLive) {
+        const picked = viewportOf(viewportId);
+
+        Run.resize({
+          workspaceId: workspace.id,
+          viewport: { width: picked.width, height: picked.height },
+        });
+      }
+    },
     shot: live?.shot ?? null,
     stream: live?.isDone === false ? live.streamUrl : null,
     urlText: target?.value ?? '',

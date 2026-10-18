@@ -26,6 +26,10 @@ const focus = (props: Partial<IDeviceFocusProps>) =>
       doingLabel: '',
       hasControls: true,
       pauseLabel: 'Pause',
+      viewports: [],
+      viewportNote: '',
+      ratio: 1.6,
+      onSelectViewport: vi.fn(),
       onPause: vi.fn(),
       onStop: vi.fn(),
       onClose: vi.fn(),
@@ -54,6 +58,12 @@ describe('useDeviceFocusViewModel', () => {
     expect(focus({ steps: [step(1, 'passed'), step(2, 'failed')] })).toMatchObject({
       now: 'Every step is done.',
       nowNumber: null,
+    });
+  });
+
+  it('shapes the screen to the window size the run drives', () => {
+    expect(focus({ ratio: 390 / 844 }).style).toMatchObject({
+      '--focus-ratio': String(390 / 844),
     });
   });
 

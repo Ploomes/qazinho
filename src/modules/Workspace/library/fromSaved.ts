@@ -2,6 +2,7 @@ import type { ITestCase } from '@/modules/Plan';
 import type { IWorkspace } from '@/modules/Workspace/types';
 import type { ISavedWorkspace } from '@/shared/types';
 import { parse } from 'yaml';
+import { viewportOf } from '@/modules/Device/library';
 
 function readPlan(yaml: string): ITestCase[] {
   try {
@@ -31,6 +32,7 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     name: read.name ?? read.id,
     targetId: read.targetId ?? '',
     planKind: read.planKind ?? 'web',
+    viewportId: viewportOf(read.viewportId).id,
     sessionId: read.sessionId ?? null,
     status: read.status ?? 'idle',
     issue: read.issue ?? null,

@@ -59,6 +59,15 @@ describe('makeBug', () => {
     expect(bugFrom().seen).toBe('once');
   });
 
+  it('names the browser at the window size the run drove', () => {
+    const phone = walkRun({
+      workspace: { ...makeWorkspace(), viewportId: 'phone' },
+      verdicts: BROKE,
+    });
+
+    expect(phone.bugs[0]?.target).toBe('Web · Chrome 390 × 844');
+  });
+
   it('describes a phone when the target is a build', () => {
     const mobile = walkRun({
       workspace: { ...makeWorkspace(), planKind: 'mobile' },

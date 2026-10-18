@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDevicePanelViewModel } from '@/modules/Device/components/DevicePanel/hooks/useDevicePanelViewModel';
 import { DEVICE } from '@/modules/Device/constants';
 import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 beforeEach(() => {
@@ -36,19 +37,63 @@ describe('useDevicePanelViewModel', () => {
     expect(renderHook(() => useDevicePanelViewModel()).result.current.mood).toBe('bug');
   });
 
-  it('describes the browser for a URL and the emulator for a build', () => {
-    const { result } = renderHook(() => useDevicePanelViewModel());
+  describe('window size', () => {
+    it('offers the window sizes for a browser, the one kept marked, and none for a phone', () => {
+      const { result } = renderHook(() => useDevicePanelViewModel());
 
-    expect(result.current.deviceLabel).toBe('Chrome 1280 × 800');
+      expect(
+        result.current.viewports.map(({ id, size, isActive }) => [id, size, isActive]),
+      ).toEqual([
+        ['desktop', '1280 × 800', true],
+        ['tablet', '820 × 1180', false],
+        ['phone', '390 × 844', false],
+      ]);
+      expect(result.current.focusRatio).toBe(1280 / 800);
 
-    useWorkspaceStore.setState({
-      workspaces: [{ ...makeWorkspace(), planKind: 'mobile' }],
+      useWorkspaceStore.setState({
+        workspaces: [{ ...makeWorkspace(), planKind: 'mobile' }],
+      });
+
+      expect(
+        renderHook(() => useDevicePanelViewModel()).result.current.viewports,
+      ).toEqual([]);
     });
 
-    const mobile = renderHook(() => useDevicePanelViewModel());
+    it('keeps the size picked between runs, and says the next run opens at it', () => {
+      const resizeDevice = vi.fn(() => Promise.resolve());
 
-    expect(mobile.result.current.isPhone).toBe(true);
-    expect(mobile.result.current.deviceLabel).toBe('Emulator · Pixel 7 · API 34');
+      window.qazinho = { ...fakeQazinhoApi('darwin'), resizeDevice };
+
+      const { result } = renderHook(() => useDevicePanelViewModel());
+
+      act(() => {
+        result.current.onSelectViewport('phone');
+      });
+
+      expect(useWorkspaceStore.getState().workspaces[0]?.viewportId).toBe('phone');
+      expect(result.current.focusRatio).toBe(390 / 844);
+      expect(result.current.viewportNote).toBe('The next run opens at this size.');
+      expect(resizeDevice).not.toHaveBeenCalled();
+    });
+
+    it('resizes the browser of a run under way', () => {
+      const resizeDevice = vi.fn(() => Promise.resolve());
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), resizeDevice };
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: [] })] });
+
+      const { result } = renderHook(() => useDevicePanelViewModel());
+
+      act(() => {
+        result.current.onSelectViewport('tablet');
+      });
+
+      expect(resizeDevice).toHaveBeenCalledWith({
+        workspaceId: 'w1',
+        viewport: { width: 820, height: 1180 },
+      });
+      expect(result.current.viewportNote).toBe('');
+    });
   });
 
   it('marks the step the agent is on while it drives', () => {

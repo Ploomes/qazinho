@@ -1,4 +1,4 @@
-import type { IRunEvent, IRunInFlight, IStartRun } from '@/shared/types';
+import type { IRunEvent, IRunInFlight, IStartRun, IViewport } from '@/shared/types';
 
 /** The only caller of the run side of the bridge. */
 export class Run {
@@ -12,6 +12,10 @@ export class Run {
 
   public static stop(workspaceId: string): void {
     void window.qazinho?.stopRun(workspaceId);
+  }
+
+  public static resize(props: { workspaceId: string; viewport: IViewport }): void {
+    void window.qazinho?.resizeDevice(props);
   }
 
   public static async inFlight(): Promise<IRunInFlight[]> {
