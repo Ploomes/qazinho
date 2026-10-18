@@ -12,6 +12,7 @@ const CODEX = {
   isFound: true,
   path: '/bin/codex',
   defaultModel: null,
+  isSignedIn: true,
 };
 
 beforeEach(() => {

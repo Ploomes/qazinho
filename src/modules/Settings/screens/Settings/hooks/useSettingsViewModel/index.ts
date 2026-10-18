@@ -77,9 +77,11 @@ export const useSettingsViewModel = () => {
         isDefault,
         note: !item.isFound
           ? t('SETTINGS.NOT_ON_PATH')
-          : isDefault
-            ? t('SETTINGS.DEFAULT_AGENT')
-            : t('SETTINGS.MAKE_DEFAULT'),
+          : item.isSignedIn === false
+            ? t('SETTINGS.NOT_SIGNED_IN')
+            : isDefault
+              ? t('SETTINGS.DEFAULT_AGENT')
+              : t('SETTINGS.MAKE_DEFAULT'),
       };
     }),
     devices: [

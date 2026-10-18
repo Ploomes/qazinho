@@ -1,4 +1,4 @@
-/** An agent QAzinho found on this machine. QAzinho installs nothing: it looks, and reports. */
+/** An agent QAzinho found on this machine, and whether it is signed in; null when the agent would not say. */
 export interface IDetectedAgent {
   id: string;
   name: string;
@@ -6,4 +6,5 @@ export interface IDetectedAgent {
   isFound: boolean;
   path: string | null;
   defaultModel: string | null;
+  isSignedIn: boolean | null;
 }

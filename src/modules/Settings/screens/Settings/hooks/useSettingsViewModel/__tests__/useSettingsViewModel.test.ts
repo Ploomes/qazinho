@@ -22,6 +22,7 @@ function agent(props: { id: string; name: string }) {
     isFound: true,
     path: `/bin/${props.id}`,
     defaultModel: null,
+    isSignedIn: true,
   };
 }
 
@@ -47,6 +48,19 @@ describe('useSettingsViewModel', () => {
       'Default agent',
       'Make default',
     ]);
+  });
+
+  it('flags an agent that is there but signed out', () => {
+    useMachineStore.setState({
+      agents: [
+        agent({ id: 'claude-code', name: 'Claude Code' }),
+        { ...agent({ id: 'codex', name: 'Codex' }), isSignedIn: false },
+      ],
+    });
+
+    const { result } = renderHook(() => useSettingsViewModel());
+
+    expect(result.current.agents[1]?.note).toBe('Not signed in');
   });
 
   it('flags an agent that is not on PATH', () => {

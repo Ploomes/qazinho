@@ -12,6 +12,7 @@ const CLAUDE = {
   isFound: true,
   path: '/bin/claude',
   defaultModel: null,
+  isSignedIn: true,
 };
 
 beforeEach(() => {

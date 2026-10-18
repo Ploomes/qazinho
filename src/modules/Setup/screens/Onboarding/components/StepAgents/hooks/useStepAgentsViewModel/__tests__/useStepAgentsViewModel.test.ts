@@ -12,6 +12,7 @@ const CLAUDE = {
   isFound: true,
   path: '/bin/claude',
   defaultModel: null,
+  isSignedIn: true,
 };
 const CODEX = {
   ...CLAUDE,
@@ -49,6 +50,41 @@ describe('useStepAgentsViewModel', () => {
         canInstall: true,
         detail: 'not on this machine',
       });
+    });
+
+    it('flags an agent found but signed out, and says how to sign in', () => {
+      useMachineStore.setState({
+        agents: [
+          CLAUDE,
+          { ...CODEX, isFound: true, path: '/bin/codex', isSignedIn: false },
+        ],
+      });
+
+      const { result } = renderHook(() => useStepAgentsViewModel());
+      const codex = result.current.rows[1];
+
+      expect(codex).toMatchObject({
+        state: 'missing',
+        badge: 'signed out',
+        canInstall: false,
+      });
+      expect(codex?.signIn).toContain('Run codex login in a terminal');
+    });
+
+    it('does NOT count a signed-out agent as one QAzinho can work with', () => {
+      useMachineStore.setState({ agents: [{ ...CLAUDE, isSignedIn: false }, CODEX] });
+
+      expect(renderHook(() => useStepAgentsViewModel()).result.current.hasAgent).toBe(
+        false,
+      );
+    });
+
+    it('counts an agent that would not say whether it is signed in, rather than block on it', () => {
+      useMachineStore.setState({ agents: [{ ...CLAUDE, isSignedIn: null }, CODEX] });
+
+      expect(renderHook(() => useStepAgentsViewModel()).result.current.hasAgent).toBe(
+        true,
+      );
     });
 
     it('does NOT offer an install when this machine has no npm, and says what to get', () => {

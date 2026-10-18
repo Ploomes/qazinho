@@ -56,6 +56,7 @@ beforeEach(() => {
         isFound: true,
         path: '/bin/claude',
         defaultModel: null,
+        isSignedIn: true,
       },
       {
         id: 'codex',
@@ -64,6 +65,7 @@ beforeEach(() => {
         isFound: true,
         path: '/bin/codex',
         defaultModel: null,
+        isSignedIn: true,
       },
     ],
   });

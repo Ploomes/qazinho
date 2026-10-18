@@ -11,6 +11,7 @@ const CLAUDE = {
   isFound: true,
   path: '/bin/claude',
   defaultModel: 'opus[1m]',
+  isSignedIn: true,
 };
 
 beforeEach(() => {
@@ -30,7 +31,9 @@ describe('useModelInUse', () => {
   });
 
   it('says default when the agent config names no model', () => {
-    useMachineStore.setState({ agents: [{ ...CLAUDE, defaultModel: null }] });
+    useMachineStore.setState({
+      agents: [{ ...CLAUDE, defaultModel: null, isSignedIn: true }],
+    });
 
     expect(renderHook(() => useModelInUse()).result.current.modelName).toBe(
       'Agent default',

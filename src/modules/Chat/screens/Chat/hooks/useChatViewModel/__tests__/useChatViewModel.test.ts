@@ -63,6 +63,7 @@ beforeEach(() => {
         isFound: true,
         path: '/bin/claude',
         defaultModel: null,
+        isSignedIn: true,
       },
     ],
   });
