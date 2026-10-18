@@ -8,6 +8,9 @@ import './styles.css';
 export const Composer: React.FC<IComposerProps> = (props) => {
   const {
     canSend,
+    isLocked,
+    placeholder,
+    fieldClassName,
     isPickerOpen,
     highlighted,
     shown,
@@ -23,7 +26,7 @@ export const Composer: React.FC<IComposerProps> = (props) => {
 
   return (
     <div className="composer">
-      <div className="composer__field">
+      <div className={fieldClassName}>
         <AnimatePresence>
           {isPickerOpen && (
             <MentionPicker
@@ -43,8 +46,9 @@ export const Composer: React.FC<IComposerProps> = (props) => {
         <input
           className="input input--bare"
           value={props.value}
-          placeholder={t('CHAT.PLACEHOLDER')}
-          aria-label={t('CHAT.PLACEHOLDER')}
+          placeholder={placeholder}
+          aria-label={placeholder}
+          disabled={isLocked}
           role="combobox"
           aria-expanded={isPickerOpen}
           aria-controls="mention-picker"

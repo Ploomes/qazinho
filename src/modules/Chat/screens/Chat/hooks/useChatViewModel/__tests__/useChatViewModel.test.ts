@@ -186,7 +186,7 @@ describe('useChatViewModel', () => {
       });
 
       expect(result.current.liveText).toBe('');
-      expect(result.current.messages.at(-1)).toMatchObject({ isNew: false });
+      expect(result.current.items.at(-1)).toMatchObject({ isNew: false });
     });
 
     it('lets an answer with no preview enter like any new message', () => {
@@ -206,7 +206,7 @@ describe('useChatViewModel', () => {
         });
       });
 
-      expect(result.current.messages.at(-1)).toMatchObject({ isNew: true });
+      expect(result.current.items.at(-1)).toMatchObject({ isNew: true });
     });
   });
 
@@ -323,19 +323,22 @@ describe('useChatViewModel', () => {
     });
 
     /** A plan the chat wrote mid-run replaced the one main was walking: the run's report came back under the wrong cases. */
-    it('does NOT change the plan while a run walks it, and says so', async () => {
+    it('does NOT change the plan when a run began while the agent was writing it, and says so', async () => {
       answering({ answer: DRAFTED });
-      useWorkspaceStore.setState({
-        workspaces: [
-          startRun({ workspace: makeWorkspace(), startedAt: '09:41', runId: 'r-01' }),
-        ],
-      });
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
 
       const before = useWorkspaceStore.getState().workspaces[0]?.plan;
       const { result } = renderHook(() => useChatViewModel());
 
       act(() => {
         result.current.onSuggestion('Add a case for the coupon.');
+        useWorkspaceStore.setState({
+          workspaces: useWorkspaceStore
+            .getState()
+            .workspaces.map((workspace) =>
+              startRun({ workspace, startedAt: '09:41', runId: 'r-01' }),
+            ),
+        });
       });
 
       await waitFor(() => {
@@ -453,8 +456,8 @@ describe('useChatViewModel', () => {
       const chat = useWorkspaceStore.getState().workspaces[0]?.chat ?? [];
 
       expect(chat.map(({ kind }) => kind)).toEqual(['user', 'agent', 'questions']);
-      expect(view.result.current.messages.at(-1)).toMatchObject({ isAnswerable: true });
-      expect(view.result.current.messages[1]).toMatchObject({ isAnswerable: false });
+      expect(view.result.current.items.at(-1)).toMatchObject({ isAnswerable: true });
+      expect(view.result.current.items[1]).toMatchObject({ isAnswerable: false });
     });
 
     it('lands a round that came with no reply', async () => {
@@ -501,7 +504,7 @@ describe('useChatViewModel', () => {
       });
 
       expect(ask).toHaveBeenCalledOnce();
-      expect(view.result.current.messages.at(-1)).toMatchObject({ isAnswerable: false });
+      expect(view.result.current.items.at(-1)).toMatchObject({ isAnswerable: false });
     });
 
     it('stops offering a round once the QA wrote something else instead', async () => {
@@ -514,15 +517,20 @@ describe('useChatViewModel', () => {
         view.result.current.onSend();
       });
 
-      const round = view.result.current.messages.find(
-        ({ message }) => message.kind === 'questions',
+      const round = view.result.current.items.find(
+        (item) => item.kind === 'message' && item.message.kind === 'questions',
       );
 
       expect(round).toMatchObject({ isAnswerable: false });
     });
   });
 
-  describe('a run card', () => {
+  describe('a run in the chat', () => {
+    const sectionOf = (view: { items: { kind: string }[] }) =>
+      view.items.find((item) => item.kind === 'run') as
+        | (ReturnType<typeof useChatViewModel>['items'][number] & { kind: 'run' })
+        | undefined;
+
     it('says how the run ended when it did not walk the whole plan', () => {
       answering({});
       useWorkspaceStore.setState({
@@ -535,11 +543,9 @@ describe('useChatViewModel', () => {
         ],
       });
 
-      const card = renderHook(() => useChatViewModel()).result.current.messages.find(
-        ({ message }) => message.kind === 'run',
+      expect(sectionOf(renderHook(() => useChatViewModel()).result.current)?.title).toBe(
+        'Run r-01 · stopped · 1 passed · 1 failed',
       );
-
-      expect(card?.runTitle).toBe('Run r-01 · stopped · 1 passed · 1 failed');
     });
 
     it('keeps the plain title for a run that walked it all', () => {
@@ -548,11 +554,114 @@ describe('useChatViewModel', () => {
         workspaces: [walkRun({ verdicts: ['passed'], isFinished: true })],
       });
 
-      const card = renderHook(() => useChatViewModel()).result.current.messages.find(
-        ({ message }) => message.kind === 'run',
+      expect(sectionOf(renderHook(() => useChatViewModel()).result.current)?.title).toBe(
+        'Run r-01 · 1 passed · 0 failed',
+      );
+    });
+
+    it('keeps what a run said in one folded section, with the step it is on while it goes', () => {
+      answering({});
+
+      const walked = walkRun({ verdicts: ['passed', 'failed'] });
+
+      useWorkspaceStore.setState({ workspaces: [walked] });
+      act(() => {
+        useWorkspaceStore.getState().landNote({
+          workspaceId: 'w1',
+          text: 'I closed a banner first.',
+          who: 'Claude Code',
+        });
+      });
+
+      const view = renderHook(() => useChatViewModel()).result.current;
+      const section = sectionOf(view);
+
+      expect(view.items.map(({ kind }) => kind)).toEqual(['run']);
+      expect(section).toMatchObject({
+        title: 'Run r-01 · running · step 3 of 6',
+        isLive: true,
+        isExpanded: false,
+        isExpandable: true,
+        countLabel: '2 messages',
+        openLabel: null,
+      });
+      expect(section?.rows.map(({ message }) => message.kind)).toEqual([
+        'verdict',
+        'note',
+      ]);
+    });
+
+    it('opens a section and folds it again', () => {
+      answering({});
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['failed'] })] });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onToggleRun('r-01');
+      });
+
+      expect(sectionOf(result.current)?.isExpanded).toBe(true);
+
+      act(() => {
+        result.current.onToggleRun('r-01');
+      });
+
+      expect(sectionOf(result.current)?.isExpanded).toBe(false);
+    });
+
+    it('opens the report of the very run it was clicked on', () => {
+      answering({});
+      useWorkspaceStore.setState({
+        workspaces: [walkRun({ verdicts: ['failed'], isFinished: true })],
+        selectedRunId: null,
+      });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      expect(sectionOf(result.current)?.openLabel).toBe('Open in Runs →');
+
+      act(() => {
+        result.current.onOpenRun('r-01');
+      });
+
+      expect(useWorkspaceStore.getState()).toMatchObject({
+        selectedRunId: 'r-01',
+        tab: 'runs',
+      });
+    });
+  });
+
+  describe('a chat while a run goes', () => {
+    it('does NOT send, and says the run has to end or be stopped first', () => {
+      const ask = answering({});
+
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      expect(result.current.lockedText).toBe(
+        'A run is going: stop it, or wait for it to end, to talk to the agent.',
       );
 
-      expect(card?.runTitle).toBe('Run r-01 · 1 passed · 0 failed');
+      act(() => {
+        result.current.onDraftChange('What is it doing?');
+      });
+      act(() => {
+        result.current.onSend();
+      });
+
+      expect(ask).not.toHaveBeenCalled();
+      expect(useWorkspaceStore.getState().workspaces[0]?.chat).toHaveLength(0);
+    });
+
+    it('lets the QA talk again once the run is over', () => {
+      answering({});
+      useWorkspaceStore.setState({
+        workspaces: [walkRun({ verdicts: ['passed'], isFinished: true })],
+      });
+
+      expect(renderHook(() => useChatViewModel()).result.current.lockedText).toBeNull();
     });
   });
 

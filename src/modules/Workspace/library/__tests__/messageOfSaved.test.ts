@@ -12,16 +12,30 @@ const VERDICT = {
 
 describe('messageOfSaved', () => {
   it('reads a verdict saved today as it was', () => {
-    const today = { ...VERDICT, stepNumber: 3, action: 'Apply EXPIRED10' };
+    const today = { ...VERDICT, runId: 'r-01', stepNumber: 3, action: 'Apply EXPIRED10' };
 
     expect(messageOfSaved(today)).toEqual(today);
+  });
+
+  it('reads a verdict saved before the chat kept runs together as belonging to none', () => {
+    expect(
+      messageOfSaved({ ...VERDICT, stepNumber: 3, action: 'Apply EXPIRED10' }),
+    ).toMatchObject({ runId: null });
+    expect(
+      messageOfSaved({ id: 'm-4', kind: 'error', at: '09:42', text: 'x', fix: null }),
+    ).toMatchObject({ runId: null });
   });
 
   /** A verdict used to be one English line; the chat now writes it in the QA's language. */
   it('reads the step and the action out of the line an older verdict kept', () => {
     expect(
       messageOfSaved({ ...VERDICT, text: 'Step 3 failed · Apply EXPIRED10 · then pay' }),
-    ).toEqual({ ...VERDICT, stepNumber: 3, action: 'Apply EXPIRED10 · then pay' });
+    ).toEqual({
+      ...VERDICT,
+      runId: null,
+      stepNumber: 3,
+      action: 'Apply EXPIRED10 · then pay',
+    });
   });
 
   it('keeps a line it cannot read as the action, with no step number', () => {

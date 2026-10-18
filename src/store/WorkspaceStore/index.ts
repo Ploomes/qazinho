@@ -7,6 +7,7 @@ import {
   appendAgentMessage,
   appendPlanCard,
   appendQuestions,
+  appendRunNote,
   appendUserMessage,
   formatClock,
 } from '@/modules/Chat/library';
@@ -255,7 +256,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         workspaces: state.workspaces,
         workspaceId,
         change: (workspace) =>
-          appendAgentMessage({ workspace, text, who, at: formatClock(new Date()) }),
+          appendRunNote({ workspace, text, who, at: formatClock(new Date()) }),
       }),
     })),
 
@@ -310,7 +311,12 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         change: (workspace) => {
           const at = formatClock(new Date());
           const ended = endRun({
-            workspace: appendAgentError({ workspace, text, at }),
+            workspace: appendAgentError({
+              workspace,
+              text,
+              at,
+              runId: workspace.live?.isDone === false ? workspace.live.id : null,
+            }),
             at,
             endedBy: 'broke',
           });

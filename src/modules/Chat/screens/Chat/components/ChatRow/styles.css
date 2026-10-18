@@ -1,0 +1,32 @@
+.chat-row {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.chat-row__gutter {
+  flex: none;
+  width: var(--chat-gutter);
+  text-align: right;
+}
+
+.chat-row__who {
+  display: block;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
+
+.chat-row__who--agent {
+  color: var(--lime-ink);
+}
+
+.chat-row__at {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+}
+
+.chat-row__body {
+  flex: 1;
+  min-width: 0;
+}

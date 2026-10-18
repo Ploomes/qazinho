@@ -8,6 +8,7 @@ import { useVerdictNoteViewModel } from '@/modules/Chat/screens/Chat/components/
 const MESSAGE: IVerdictMessage = {
   id: 'm-3',
   kind: 'verdict',
+  runId: 'r-01',
   at: '09:42',
   verdict: 'failed',
   stepNumber: 3,

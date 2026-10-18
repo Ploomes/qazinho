@@ -2,16 +2,20 @@ import type { IComposerProps } from '@/modules/Chat/screens/Chat/components/Comp
 import type { IChatReference } from '@/shared/types';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MENTION_TABS } from '@/modules/Chat/screens/Chat/components/Composer/constants';
 
 export const useComposerViewModel = (props: IComposerProps) => {
-  const { value, mentions, mentionQuery, onChange, onSend, onPickMention } = props;
+  const { value, mentions, mentionQuery, lockedText, onChange, onSend, onPickMention } =
+    props;
+  const { t } = useTranslation();
   const [highlight, setHighlight] = useState(0);
   const [dismissedAt, setDismissedAt] = useState<string | null>(null);
   const [chosenTab, setChosenTab] = useState<IChatReference['kind'] | null>(null);
 
-  const canSend = value.trim().length > 0;
-  const isPickerOpen = mentionQuery !== null && dismissedAt !== value;
+  const isLocked = lockedText !== null;
+  const canSend = !isLocked && value.trim().length > 0;
+  const isPickerOpen = !isLocked && mentionQuery !== null && dismissedAt !== value;
   const filled = MENTION_TABS.filter((kind) =>
     mentions.some((mention) => mention.kind === kind),
   );
@@ -56,6 +60,11 @@ export const useComposerViewModel = (props: IComposerProps) => {
 
   return {
     canSend,
+    isLocked,
+    placeholder: lockedText ?? t('CHAT.PLACEHOLDER'),
+    fieldClassName: isLocked
+      ? 'composer__field composer__field--locked'
+      : 'composer__field',
     isPickerOpen,
     highlighted,
     shown,

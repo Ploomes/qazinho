@@ -25,25 +25,8 @@
 
 .chat__gutter {
   flex: none;
-  width: 58px;
+  width: var(--chat-gutter);
   text-align: right;
-}
-
-.chat__who {
-  display: block;
-  color: var(--ink3);
-  font: var(--font-mono-sm);
-}
-
-.chat__who--agent {
-  color: var(--lime-ink);
-}
-
-.chat__at {
-  display: block;
-  margin-top: var(--space-1);
-  color: var(--ink3);
-  font: var(--font-mono-xs);
 }
 
 .chat__body {

@@ -1,9 +1,12 @@
-import type { IQuestionAnswer, IRunMessage } from '@/modules/Chat/types';
+import type { ChatItem, IQuestionAnswer, IRunMessage } from '@/modules/Chat/types';
 import type { IChatReference } from '@/shared/types';
+import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   formatAnswers,
+  groupRunMessages,
+  withLiveRun,
   insertMention,
   mentionCandidates,
   mentionQueryOf,
@@ -12,9 +15,9 @@ import {
 } from '@/modules/Chat/library';
 import { CHAT, CHAT_FAILURE_KEYS } from '@/modules/Chat/screens/Chat/constants';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
-import { viewportOf } from '@/modules/Device';
+import { formatElapsed, viewportOf } from '@/modules/Device';
 import { planOfDraft } from '@/modules/Plan';
-import { flattenPlanSteps, RUN_ENDS } from '@/modules/Run';
+import { flattenPlanSteps, formatCost, RUN_ENDS } from '@/modules/Run';
 import { Agent } from '@/services';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import {
@@ -26,7 +29,8 @@ import {
 
 export const useChatViewModel = () => {
   const [draft, setDraft] = useState('');
-  const { t } = useTranslation();
+  const [expandedRuns, setExpandedRuns] = useState<string[]>([]);
+  const { t, i18n } = useTranslation();
 
   const projects = useAppStore((state) => state.projects);
   const workspace = useSelectedWorkspacePart((opened) => ({
@@ -39,6 +43,13 @@ export const useChatViewModel = () => {
     plan: opened.plan,
     runs: opened.runs,
     bugs: opened.bugs,
+    liveId: opened.live?.id ?? null,
+    liveStartedAt: opened.live?.startedAt ?? '',
+    isWalking: opened.live !== null && !opened.live.isDone,
+    isPaused: opened.live !== null && !opened.live.isRunning && !opened.live.isDone,
+    walked: opened.live?.outcomes.length ?? 0,
+    elapsedSec: opened.live?.elapsedSec ?? 0,
+    liveCostUsd: opened.live?.costUsd ?? null,
   }));
   const detected = useMachineStore((state) => state.agents);
   const agentName = useSettingsStore((state) => state.agent);
@@ -53,6 +64,7 @@ export const useChatViewModel = () => {
   const landAgentError = useWorkspaceStore((state) => state.landAgentError);
   const answerAsk = useWorkspaceStore((state) => state.answerAsk);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
+  const selectRun = useWorkspaceStore((state) => state.selectRun);
 
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
@@ -144,8 +156,10 @@ export const useChatViewModel = () => {
     });
   };
 
+  const isWalking = workspace?.isWalking === true;
+
   const send = (text: string) => {
-    if (!workspace || text.trim().length === 0) return;
+    if (!workspace || text.trim().length === 0 || isWalking) return;
 
     const references = mentionsIn({
       text,
@@ -174,7 +188,7 @@ export const useChatViewModel = () => {
     const round = workspace?.chat.find(({ id }) => id === props.messageId);
 
     if (!workspace || round?.kind !== 'questions' || round.answers !== null) return;
-    if (isAgentTyping) return;
+    if (isAgentTyping || isWalking) return;
 
     answerQuestions({ workspaceId: workspace.id, ...props });
     askAgent({
@@ -183,17 +197,99 @@ export const useChatViewModel = () => {
     });
   };
 
+  const factsOf = (props: { seconds: number; costUsd: number | null }) =>
+    props.costUsd === null
+      ? formatElapsed(props.seconds)
+      : t('RUN.FACTS', {
+          duration: formatElapsed(props.seconds),
+          cost: formatCost({ costUsd: props.costUsd, language: i18n.language }),
+        });
+
+  const sectionOf = (item: Extract<ChatItem, { kind: 'run' }>) => {
+    const isLive = item.runId === workspace?.liveId && isWalking;
+    const saved = workspace?.runs.find(({ id }) => id === item.runId) ?? null;
+    const stepCount = flattenPlanSteps(workspace?.plan ?? []).length;
+    const progress = {
+      id: item.runId,
+      current: Math.min((workspace?.walked ?? 0) + 1, stepCount),
+      total: stepCount,
+    };
+    const count = item.messages.length;
+
+    return {
+      kind: 'run' as const,
+      key: `run-${item.runId}`,
+      runId: item.runId,
+      at: item.at,
+      title:
+        item.card !== null
+          ? runTitleOf(item.card)
+          : isLive
+            ? t(
+                workspace?.isPaused ? 'CHAT.RUN_SECTION_PAUSED' : 'CHAT.RUN_SECTION_LIVE',
+                progress,
+              )
+            : t('CHAT.RUN_SECTION', { id: item.runId }),
+      facts: isLive
+        ? factsOf({
+            seconds: workspace?.elapsedSec ?? 0,
+            costUsd: workspace?.liveCostUsd ?? null,
+          })
+        : saved === null
+          ? ''
+          : factsOf({ seconds: saved.durationSec, costUsd: saved.costUsd }),
+      countLabel:
+        count === 0
+          ? ''
+          : count === 1
+            ? t('CHAT.RUN_MESSAGES_ONE')
+            : t('CHAT.RUN_MESSAGES_OTHER', { count }),
+      isLive,
+      isExpanded: expandedRuns.includes(item.runId),
+      isExpandable: count > 0,
+      openLabel: saved === null ? null : t('CHAT.RUN_CARD_ACTION'),
+      rows: item.messages.map(({ message, isNew }) => ({
+        key: message.id,
+        message,
+        isNew,
+      })),
+    };
+  };
+
   return {
-    messages: visible.map(({ message, isNew }) => ({
-      message,
-      isNew: isNew && !(hasPreview && message.id === lastAgentId),
-      isAnswerable:
-        message.kind === 'questions' &&
-        message.answers === null &&
-        message.id === lastId &&
-        !isAgentTyping,
-      runTitle: message.kind === 'run' ? runTitleOf(message) : '',
-    })),
+    chatStyle: { '--chat-gutter': `${String(CHAT.gutterWidth)}px` } as CSSProperties,
+    items: withLiveRun({
+      items: groupRunMessages(visible),
+      liveId: isWalking ? (workspace?.liveId ?? null) : null,
+      at: workspace?.liveStartedAt ?? '',
+    }).map((item) =>
+      item.kind === 'run'
+        ? sectionOf(item)
+        : {
+            kind: 'message' as const,
+            key: item.message.id,
+            message: item.message,
+            isNew: item.isNew && !(hasPreview && item.message.id === lastAgentId),
+            isAnswerable:
+              item.message.kind === 'questions' &&
+              item.message.answers === null &&
+              item.message.id === lastId &&
+              !isAgentTyping &&
+              !isWalking,
+          },
+    ),
+    lockedText: isWalking ? t('CHAT.LOCKED_RUNNING') : null,
+    onToggleRun: (runId: string) => {
+      setExpandedRuns(
+        expandedRuns.includes(runId)
+          ? expandedRuns.filter((id) => id !== runId)
+          : [...expandedRuns, runId],
+      );
+    },
+    onOpenRun: (runId: string) => {
+      selectRun(runId);
+      selectTab('runs');
+    },
     listRef,
     onScroll,
     isEmpty: (workspace?.chat.length ?? 0) === 0,
@@ -222,9 +318,6 @@ export const useChatViewModel = () => {
     onAnswerQuestions: answer,
     onOpenPlan: () => {
       selectTab('plan');
-    },
-    onOpenRuns: () => {
-      selectTab('runs');
     },
   };
 };

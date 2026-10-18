@@ -1,0 +1,16 @@
+import type { ReactNode } from 'react';
+
+/** A run in the chat, folded into one line: how it stands, and everything it said underneath. */
+export interface IRunSectionProps {
+  at: string;
+  title: string;
+  facts: string;
+  countLabel: string;
+  isLive: boolean;
+  isExpanded: boolean;
+  isExpandable: boolean;
+  openLabel: string | null;
+  onToggle: () => void;
+  onOpen: () => void;
+  children: ReactNode;
+}

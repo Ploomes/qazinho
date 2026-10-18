@@ -107,8 +107,6 @@ export const en = {
     RUN_CARD_TITLE: 'Run {{id}} · {{passed}} passed · {{failed}} failed',
     RUN_CARD_TITLE_ENDED:
       'Run {{id}} · {{ended}} · {{passed}} passed · {{failed}} failed',
-    RUN_CARD_SUBTITLE:
-      'Counters, screenshots and the expected vs. got for every failure.',
     RUN_CARD_ACTION: 'Open in Runs →',
     SUGGESTION_PLAN: 'Create a test plan',
     SUGGESTION_PLAN_TEXT: "Let's create a test plan.",

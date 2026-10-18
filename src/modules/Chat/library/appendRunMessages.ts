@@ -18,6 +18,7 @@ export function appendRunMessages(props: {
     {
       id: `m-${String(chat.length + 1)}`,
       kind: 'verdict',
+      runId: workspace.live?.id ?? null,
       at,
       verdict: outcome.verdict,
       stepNumber: outcome.stepNumber,

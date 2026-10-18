@@ -25,6 +25,15 @@
   box-shadow: var(--sticker-lift);
 }
 
+.composer__field--locked {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.composer__field--locked .input--bare {
+  cursor: not-allowed;
+}
+
 .composer__field .input--bare {
   align-self: stretch;
   min-height: 54px;

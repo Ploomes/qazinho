@@ -9,6 +9,8 @@ export function messageOfSaved(saved: SavedMessage): ChatMessage | null {
 
   if (saved.kind === 'run') return { ...saved, endedBy: saved.endedBy ?? 'finished' };
 
+  if (saved.kind === 'error') return { ...saved, runId: saved.runId ?? null };
+
   if (saved.kind !== 'verdict') return saved;
 
   const { text, ...verdict } = saved;
@@ -16,6 +18,7 @@ export function messageOfSaved(saved: SavedMessage): ChatMessage | null {
 
   return {
     ...verdict,
+    runId: verdict.runId ?? null,
     stepNumber: verdict.stepNumber ?? Number(read?.[1] ?? 0),
     action: verdict.action ?? read?.[2] ?? text ?? '',
   };

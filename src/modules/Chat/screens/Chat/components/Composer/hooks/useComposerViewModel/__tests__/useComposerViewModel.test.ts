@@ -6,6 +6,7 @@ import { useComposerViewModel } from '@/modules/Chat/screens/Chat/components/Com
 
 const PROPS = {
   value: 'Test the whole checkout',
+  lockedText: null,
   mentions: [],
   mentionQuery: null,
   hasReferences: false,
@@ -52,6 +53,47 @@ function pressed(key: string, shiftKey = false) {
 }
 
 describe('useComposerViewModel', () => {
+  describe('a chat locked while a run goes', () => {
+    const LOCKED =
+      'A run is going: stop it, or wait for it to end, to talk to the agent.';
+
+    it('does NOT send, not even what was already typed, and says why in the field', () => {
+      const onSend = vi.fn();
+      const { result } = renderHook(() =>
+        useComposerViewModel({ ...PROPS, lockedText: LOCKED, onSend }),
+      );
+
+      result.current.onSendClick();
+      result.current.onKeyDown(pressed('Enter'));
+
+      expect(onSend).not.toHaveBeenCalled();
+      expect(result.current).toMatchObject({
+        canSend: false,
+        isLocked: true,
+        placeholder: LOCKED,
+        fieldClassName: 'composer__field composer__field--locked',
+      });
+    });
+
+    it('does NOT open the @ list while locked', () => {
+      const { result } = renderHook(() =>
+        useComposerViewModel({ ...MENTIONING, lockedText: LOCKED }),
+      );
+
+      expect(result.current.isPickerOpen).toBe(false);
+    });
+
+    it('asks for a message again once the run is over', () => {
+      const { result } = renderHook(() => useComposerViewModel(PROPS));
+
+      expect(result.current).toMatchObject({
+        isLocked: false,
+        placeholder: 'Ask the agent anything · @ points at a run, bug or case',
+        fieldClassName: 'composer__field',
+      });
+    });
+  });
+
   it('sends what the QA typed', () => {
     const onSend = vi.fn();
     const { result } = renderHook(() => useComposerViewModel({ ...PROPS, onSend }));

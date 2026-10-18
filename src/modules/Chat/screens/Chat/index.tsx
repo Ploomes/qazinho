@@ -2,29 +2,21 @@ import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Chip, Intern, Markdown } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
-import {
-  AgentMessage,
-  AskBlock,
-  Composer,
-  ErrorBlock,
-  HandoffCard,
-  QuestionRound,
-  TypingDots,
-  UserMessage,
-  VerdictNote,
-} from './components';
+import { ChatRow, Composer, RunSection, TypingDots } from './components';
 import { useChatViewModel } from './hooks';
 import './styles.css';
 
 export const Chat: React.FC = () => {
   const {
-    messages,
+    chatStyle,
+    items,
     listRef,
     onScroll,
     isEmpty,
     isAgentTyping,
     liveText,
     draft,
+    lockedText,
     suggestions,
     mentions,
     mentionQuery,
@@ -36,12 +28,13 @@ export const Chat: React.FC = () => {
     onAnswer,
     onAnswerQuestions,
     onOpenPlan,
-    onOpenRuns,
+    onToggleRun,
+    onOpenRun,
   } = useChatViewModel();
   const { t } = useTranslation();
 
   return (
-    <div className="chat">
+    <div className="chat" style={chatStyle}>
       {isEmpty ? (
         <div className="chat__empty">
           <Intern mood="neutral" size={112} />
@@ -62,69 +55,49 @@ export const Chat: React.FC = () => {
         </div>
       ) : (
         <div ref={listRef} className="chat__messages" onScroll={onScroll}>
-          {messages.map(({ message, isNew, isAnswerable, runTitle }) => (
-            <motion.div
-              key={message.id}
-              className="chat__row"
-              initial={isNew ? { opacity: 0, y: 10 } : false}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: MOTION.durationSlow, ease: MOTION.ease }}
-            >
-              <div className="chat__gutter">
-                <span
-                  className={
-                    message.kind === 'agent' ? 'chat__who chat__who--agent' : 'chat__who'
-                  }
-                >
-                  {message.kind === 'user'
-                    ? t('CHAT.YOU')
-                    : message.kind === 'agent'
-                      ? message.who
-                      : ''}
-                </span>
-                <span className="chat__at">{message.at}</span>
-              </div>
-
-              <div className="chat__body">
-                {message.kind === 'user' && <UserMessage message={message} />}
-                {message.kind === 'agent' && <AgentMessage message={message} />}
-                {message.kind === 'verdict' && <VerdictNote message={message} />}
-                {message.kind === 'ask' && (
-                  <AskBlock message={message} onAnswer={onAnswer} />
-                )}
-                {message.kind === 'questions' && (
-                  <QuestionRound
-                    message={message}
-                    isAnswerable={isAnswerable}
-                    onAnswer={onAnswerQuestions}
+          {items.map((item) =>
+            item.kind === 'message' ? (
+              <ChatRow
+                key={item.key}
+                message={item.message}
+                isNew={item.isNew}
+                isAnswerable={item.isAnswerable}
+                onAnswer={onAnswer}
+                onAnswerQuestions={onAnswerQuestions}
+                onOpenPlan={onOpenPlan}
+              />
+            ) : (
+              <RunSection
+                key={item.key}
+                at={item.at}
+                title={item.title}
+                facts={item.facts}
+                countLabel={item.countLabel}
+                isLive={item.isLive}
+                isExpanded={item.isExpanded}
+                isExpandable={item.isExpandable}
+                openLabel={item.openLabel}
+                onToggle={() => {
+                  onToggleRun(item.runId);
+                }}
+                onOpen={() => {
+                  onOpenRun(item.runId);
+                }}
+              >
+                {item.rows.map((row) => (
+                  <ChatRow
+                    key={row.key}
+                    message={row.message}
+                    isNew={row.isNew}
+                    isAnswerable={false}
+                    onAnswer={onAnswer}
+                    onAnswerQuestions={onAnswerQuestions}
+                    onOpenPlan={onOpenPlan}
                   />
-                )}
-                {message.kind === 'error' && <ErrorBlock message={message} />}
-                {message.kind === 'plan' && (
-                  <HandoffCard
-                    isAccent
-                    glyph="▤"
-                    title={t('CHAT.PLAN_CARD_TITLE', {
-                      cases: message.caseCount,
-                      steps: message.stepCount,
-                    })}
-                    subtitle={t('CHAT.PLAN_CARD_SUBTITLE')}
-                    action={t('CHAT.PLAN_CARD_ACTION')}
-                    onOpen={onOpenPlan}
-                  />
-                )}
-                {message.kind === 'run' && (
-                  <HandoffCard
-                    glyph="↻"
-                    title={runTitle}
-                    subtitle={t('CHAT.RUN_CARD_SUBTITLE')}
-                    action={t('CHAT.RUN_CARD_ACTION')}
-                    onOpen={onOpenRuns}
-                  />
-                )}
-              </div>
-            </motion.div>
-          ))}
+                ))}
+              </RunSection>
+            ),
+          )}
 
           {isAgentTyping && (
             <motion.div
@@ -147,6 +120,7 @@ export const Chat: React.FC = () => {
 
       <Composer
         value={draft}
+        lockedText={lockedText}
         mentions={mentions}
         mentionQuery={mentionQuery}
         hasReferences={hasReferences}
