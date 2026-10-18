@@ -56,9 +56,9 @@ per workspace, with the plan beside it in YAML.
 
 `npm run test:smoke` proves it: it drives the real browser with the real agent.
 
-**Android works the same way**, proven by `npm run test:smoke`: it installs a real apk on the
-QA's own AVD, reads the screen out of `uiautomator`, taps what the agent named, and judges what
-it sees.
+**Android works the same way**, proven by `tests/smoke/android.test.ts`: it installs a visit
+counter built from source on the QA's own AVD, reads the screen out of `uiautomator`, taps what
+the agent named, and judges what it sees.
 
 **iOS works the same way**, proven by `tests/smoke/ios.test.ts`: a visit counter built from
 source for the simulator (`tests/smoke/fixtures/`), read and tapped through idb, and a plan walked

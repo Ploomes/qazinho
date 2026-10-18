@@ -12,49 +12,58 @@ import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
 import { LiveStream } from '@/main/classes/devices/LiveStream';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
+import { buildFixtureApk } from './fixtures/buildFixtureApk';
 
-/** A real apk on disk. Pull one off the emulator with `adb pull $(adb shell pm path <pkg>)`. */
-const APK = process.env.QAZINHO_SMOKE_APK ?? '/tmp/demo.apk';
+/** The visit counter in fixtures/android, built from source: "Visits: N" and a "Save visit" button. */
+const sdkRoot = new DeviceToolDetector().detect().androidSdk.path ?? '';
 
-let driver: AndroidDriver;
+let apk = '';
+let avd = '';
+let driver: AndroidDriver | null = null;
 let shotDir: string;
 
 beforeAll(async () => {
-  const sdkRoot = new DeviceToolDetector().detect().androidSdk.path;
+  if (sdkRoot === '') throw new Error('No Android SDK on this machine.');
 
-  if (sdkRoot === null) throw new Error('No Android SDK on this machine.');
+  avd = (await listAvds(sdkRoot))[0] ?? '';
 
-  const avd = (await listAvds(sdkRoot))[0];
+  if (avd === '') throw new Error('No AVD on this machine.');
 
-  if (avd === undefined) throw new Error('No AVD on this machine.');
+  apk = (await buildFixtureApk(sdkRoot)) ?? '';
+
+  if (apk === '') throw new Error('The fixture apk did not build: is a JDK installed?');
 
   shotDir = await mkdtemp(join(tmpdir(), 'qazinho-android-'));
-  driver = new AndroidDriver({ sdkRoot, avd, apk: APK });
+  driver = new AndroidDriver({ sdkRoot, avd, apk });
 
   await driver.open();
 }, 300_000);
 
 afterAll(async () => {
-  await driver.close();
+  await driver?.close();
 });
 
 describe('a real Android emulator', () => {
   it('installs the apk and brings it to the front', async () => {
-    expect(await driver.describe()).toContain('APP: com.callstack.expodemo');
+    expect(await driver?.describe()).toContain('APP: app.qazinho.fixture');
   });
 
   it('reads the screen the way a person does', async () => {
-    const screen = await driver.describe();
-
-    console.log(screen.slice(0, 700));
+    const screen = (await driver?.describe()) ?? '';
 
     expect(screen).toContain('TEXT:');
-    expect(screen).toContain('CONTROLS:');
-    expect(screen.length).toBeGreaterThan(40);
+    expect(screen).toContain('Visits: 0');
+    expect(screen).toMatch(/button: save visit/i);
+  });
+
+  it('taps what the agent names, and the app answers', async () => {
+    await driver?.act({ kind: 'click', target: 'Save visit', value: '' });
+
+    expect(await driver?.describe()).toContain('Visits: 1');
   });
 
   it('takes a screenshot the page can draw', async () => {
-    const shot = await driver.shoot(join(shotDir, 'step-1.png'));
+    const shot = await driver?.shoot(join(shotDir, 'step-1.png'));
 
     expect(shot?.dataUrl.startsWith('data:image/png;base64,')).toBe(true);
     expect((await stat(shot?.file ?? '')).size).toBeGreaterThan(5_000);
@@ -62,34 +71,30 @@ describe('a real Android emulator', () => {
 
   it('refuses a target that is not on the screen, instead of tapping nowhere', async () => {
     await expect(
-      driver.act({ kind: 'click', target: 'a button that does not exist', value: '' }),
+      driver?.act({ kind: 'click', target: 'a button that does not exist', value: '' }),
     ).rejects.toThrow('answers to');
   });
 
   it('presses a key the phone understands', async () => {
-    await driver.act({ kind: 'press', target: 'back', value: '' });
+    await driver?.act({ kind: 'press', target: 'back', value: '' });
 
-    expect(await driver.describe()).toContain('APP:');
+    expect(await driver?.describe()).toContain('APP:');
   });
 }, 300_000);
 
 describe('a real run on a phone', () => {
   it('walks a plan on the emulator with the QA own agent', async () => {
-    const owners = new ProcessOwners();
     const events: IRunEvent[] = [];
-    const tools = new DeviceToolDetector().detect();
-    const sdkRoot = tools.androidSdk.path ?? '';
-
     const deviceTools = new McpHost();
 
     await deviceTools.start();
 
     const coordinator = new RunCoordinator({
-      runner: new AgentRunner({ owners, onEvent: () => undefined }),
+      runner: new AgentRunner({ owners: new ProcessOwners(), onEvent: () => undefined }),
       findIos: async () => null,
       findCommand: async (id) =>
         (await new AgentDetector().detect()).find((one) => one.id === id)?.path ?? null,
-      findAndroid: async () => ({ sdkRoot, avd: (await listAvds(sdkRoot))[0] ?? '' }),
+      findAndroid: async () => ({ sdkRoot, avd }),
       live: new LiveStream(),
       tools: deviceTools,
       harness: new Harness(),
@@ -100,24 +105,24 @@ describe('a real run on a phone', () => {
     await coordinator.start({
       workspaceId: 'w-android',
       agentId: 'claude-code',
-      model: 'sonnet',
-      target: { kind: 'android', value: APK },
+      model: 'haiku',
+      target: { kind: 'android', value: apk },
       runId: 'r-01',
       steps: [
         {
           caseId: 'TC-01',
-          caseTitle: 'The demo app opens',
+          caseTitle: 'A visit is saved',
           casePriority: 'P1',
-          caseGoal: '',
+          caseGoal: 'Saving a visit counts it.',
           casePreconditions: '',
           numberInCase: 1,
-          action: 'Tap the Settings tab at the bottom of the screen',
-          expected: 'A settings screen opens',
+          action: 'Tap Save visit',
+          expected: 'The screen shows Visits: 1',
         },
         {
           caseId: 'TC-02',
           caseTitle: 'Something that is not there',
-          casePriority: 'P1',
+          casePriority: 'P2',
           caseGoal: '',
           casePreconditions: '',
           numberInCase: 1,
@@ -127,14 +132,14 @@ describe('a real run on a phone', () => {
       ],
     });
 
-    for (const event of events)
-      console.log(
-        event.kind === 'step'
-          ? `step ${String(event.outcome.index)} ${event.outcome.verdict} · title="${event.outcome.title}" · got=${event.outcome.got} · shot=${String(event.outcome.screenshot?.length ?? 0)} bytes`
-          : JSON.stringify(event),
-      );
+    const steps = events.flatMap((event) =>
+      event.kind === 'step' ? [event.outcome] : [],
+    );
+
+    for (const step of steps)
+      console.log(`step ${String(step.index)} ${step.verdict} · got=${step.got}`);
 
     expect(events.at(-1)?.kind).toBe('done');
-    expect(events.filter((event) => event.kind === 'step')).toHaveLength(2);
+    expect(steps.map(({ verdict }) => verdict)).toEqual(['passed', 'failed']);
   }, 600_000);
 });
