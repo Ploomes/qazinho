@@ -105,7 +105,7 @@ src/main/
 ├── index.ts          ← app lifecycle and window creation
 └── classes/  library/  types/  constants/
 src/harness/          ← one folder per channel, not a classes/ tree (architecture.md)
-├── Harness/          ← the class every caller goes through
+├── Harness.class.ts  ← the class every caller goes through, at the root
 ├── context/          ← corpus/ of .md, and the library that reads and renders it
 ├── tools/            ← McpHost/, servers/<group>/, the grants per role
 └── schemas/  library/  types/

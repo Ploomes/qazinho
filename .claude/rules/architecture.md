@@ -85,7 +85,7 @@ answers one question per channel, for a target `{ role, platform }`:
 - **The harness never imports `src/main`.** What it needs from a device is a port in its types
   (`IDevicePort`), and main hands it the driver. ESLint enforces it both ways: the page never
   imports the harness, and the harness never imports main or the page.
-- **The prompts are pinned.** `Harness/__tests__/__prompts__/` holds what the agent reads for each
+- **The prompts are pinned.** `src/harness/__tests__/__prompts__/` holds what the agent reads for each
   role and platform; changing what the agent is told is a diff of those files.
 
 ## Heavy work stays off the main process
