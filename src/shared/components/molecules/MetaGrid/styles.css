@@ -1,6 +1,7 @@
 .meta-grid {
   display: grid;
   grid-template-columns: auto 1fr;
+  align-items: baseline;
   gap: var(--space-3) var(--space-5);
   margin: 0;
 }
