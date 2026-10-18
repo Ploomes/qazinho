@@ -3,6 +3,7 @@ import type { en } from './en';
 export const pt: typeof en = {
   COMMON: {
     CANCEL: 'Cancelar',
+    BY_SALVE: 'por Salve Software',
     CLOSE: 'Fechar',
     CONNECT: 'Conectar',
     DISCONNECT: 'Desconectar',
@@ -300,7 +301,6 @@ export const pt: typeof en = {
     LANGUAGE_NOTE: 'Planos de teste mantêm o idioma em que você os escreveu.',
     SHORTCUTS_NOTE: 'Clique num atalho e aperte as teclas que quiser.',
     ABOUT_VERSION: '0.1.0 · MIT',
-    ABOUT_BY: 'por Salve Software',
     ABOUT_NOTE:
       'Seu assistente de QA: planeje testes, execute e organize seu trabalho com o seu próprio agente de IA. Nada sai desta máquina.',
     LICENCE: 'Licença',

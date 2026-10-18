@@ -55,6 +55,7 @@
   --brand-paper: #f4f2ea;
   --indigo: #6a4dff;
   --indigo-deep: #3d20c4;
+  --indigo-dusk: #2a1594;
   --on-indigo: #f4f2ea;
   --indigo-shadow: rgba(26, 14, 80, 0.36);
 
@@ -160,4 +161,52 @@
   --sticker-hero:
     0 0 0 1px rgba(40, 30, 10, 0.16), 0 2px 3px rgba(40, 30, 10, 0.1),
     0 34px 80px -30px rgba(60, 50, 30, 0.45);
+}
+
+[data-theme='indigo'] {
+  --bg: #2a1594;
+  --win: #2f19a8;
+  --panel: #2a1594;
+  --center: #3a22c8;
+  --raise: #1d1e23;
+  --raise2: #24262b;
+  --screen: #191a1e;
+
+  --line: rgba(244, 242, 234, 0.22);
+  --line2: rgba(244, 242, 234, 0.12);
+  --sel: rgba(244, 242, 234, 0.1);
+  --stripe: rgba(244, 242, 234, 0.06);
+
+  --ink: #f4f2ea;
+  --ink2: #e2dcff;
+  --ink3: #c3b8f6;
+
+  --lime: #c6f432;
+  --lime-ink: #c6f432;
+  --lime-soft: rgba(198, 244, 50, 0.16);
+  --on-lime: #141414;
+  --on-attn: #141414;
+
+  --pass: #4fc98c;
+  --pass-soft: rgba(79, 201, 140, 0.16);
+  --fail: #ff6a4f;
+  --fail-soft: rgba(255, 77, 46, 0.18);
+  --block: #b9c6ef;
+  --block-soft: rgba(155, 173, 226, 0.16);
+  --skip: #a59fc4;
+  --skip-soft: rgba(127, 125, 118, 0.16);
+  --attn: #ffa25a;
+  --attn-soft: rgba(255, 149, 64, 0.16);
+
+  --edge: #ffffff;
+  --sticker-rest:
+    0 0 0 1px rgba(26, 14, 80, 0.3), 0 1px 1px rgba(26, 14, 80, 0.35),
+    0 10px 22px -8px rgba(26, 14, 80, 0.65);
+  --sticker-lift:
+    0 0 0 1px rgba(26, 14, 80, 0.3), 0 3px 3px rgba(26, 14, 80, 0.3),
+    0 20px 34px -12px rgba(26, 14, 80, 0.75);
+  --sticker-press: 0 0 0 1px rgba(26, 14, 80, 0.32), 0 1px 0 rgba(26, 14, 80, 0.45);
+  --sticker-hero:
+    0 0 0 1px rgba(26, 14, 80, 0.35), 0 2px 3px rgba(26, 14, 80, 0.35),
+    0 40px 90px -30px rgba(26, 14, 80, 0.85);
 }

@@ -1,6 +1,7 @@
 export const en = {
   COMMON: {
     CANCEL: 'Cancel',
+    BY_SALVE: 'by Salve Software',
     CLOSE: 'Close',
     CONNECT: 'Connect',
     DISCONNECT: 'Disconnect',
@@ -299,7 +300,6 @@ export const en = {
     LANGUAGE_NOTE: 'Test plans keep the language you wrote them in.',
     SHORTCUTS_NOTE: 'Click a shortcut and press the keys you want.',
     ABOUT_VERSION: '0.1.0 · MIT',
-    ABOUT_BY: 'by Salve Software',
     ABOUT_NOTE:
       'Your QA assistant: plan tests, run them and keep your work organised, with your own AI agent. Nothing leaves this machine.',
     LICENCE: 'Licence',

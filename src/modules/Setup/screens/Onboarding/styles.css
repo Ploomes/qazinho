@@ -11,7 +11,30 @@
   overflow-y: auto;
   scrollbar-gutter: stable both-edges;
   background:
-    radial-gradient(circle at 50% 30%, var(--lime-soft), transparent 46%), var(--center);
+    radial-gradient(60% 50% at 50% 28%, rgba(198, 244, 50, 0.1), transparent 70%),
+    radial-gradient(
+      120% 90% at 50% 0%,
+      var(--indigo) 0%,
+      var(--indigo-deep) 55%,
+      var(--indigo-dusk) 100%
+    );
+  color: var(--ink);
+}
+
+.onboarding__brand {
+  position: absolute;
+  top: 52px;
+  left: var(--space-8);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.onboarding__wordmark {
+  font-size: 30px;
+  rotate: var(--tilt-sm);
 }
 
 .onboarding__skip {
@@ -24,7 +47,7 @@
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--ink3);
+  color: var(--ink2);
   font: var(--font-ui-sm);
   transition:
     color var(--dur-fast) var(--ease),
@@ -32,7 +55,7 @@
 }
 
 .onboarding__skip:hover {
-  background: var(--raise);
+  background: var(--sel);
   color: var(--ink);
 }
 
@@ -71,7 +94,7 @@
   width: 100%;
   max-width: 680px;
   padding: var(--space-5) 0 var(--space-7);
-  background: linear-gradient(transparent, var(--center) 32%);
+  background: linear-gradient(transparent, var(--indigo-dusk) 40%);
 }
 
 .onboarding__back {
@@ -122,4 +145,10 @@
 
 .onboarding__dot:disabled {
   cursor: default;
+}
+
+@media (max-height: 720px) {
+  .onboarding__brand {
+    display: none;
+  }
 }

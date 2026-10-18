@@ -253,7 +253,7 @@ export const Settings: React.FC = () => {
                   <span className="settings__about-version">
                     {t('SETTINGS.ABOUT_VERSION')}
                   </span>
-                  <Tag>{t('SETTINGS.ABOUT_BY')}</Tag>
+                  <Tag>{t('COMMON.BY_SALVE')}</Tag>
                 </div>
               </div>
               <p className="settings__about-note">{t('SETTINGS.ABOUT_NOTE')}</p>

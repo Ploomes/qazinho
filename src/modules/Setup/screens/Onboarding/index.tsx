@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Button, Intern } from '@/shared/components/atoms';
+import { Button, Intern, Tag, Wordmark } from '@/shared/components/atoms';
 import { SpeechBubble } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
 import {
@@ -35,7 +35,14 @@ export const Onboarding: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="onboarding">
+    <section className="onboarding" data-theme="indigo">
+      <div className="onboarding__brand">
+        <span className="onboarding__wordmark">
+          <Wordmark />
+        </span>
+        <Tag>{t('COMMON.BY_SALVE')}</Tag>
+      </div>
+
       <AnimatePresence>
         {!isLast && (
           <motion.button
@@ -59,14 +66,9 @@ export const Onboarding: React.FC = () => {
           className="onboarding__speaker"
           transition={{ duration: MOTION.durationSlow, ease: MOTION.ease }}
         >
-          <motion.div
-            className="onboarding__intern"
-            initial={{ opacity: 0, scale: 0.8, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: MOTION.durationSlow, ease: MOTION.ease }}
-          >
-            <Intern mood={mood} size={128} />
-          </motion.div>
+          <div className="onboarding__intern">
+            <Intern mood={mood} size={136} isOnIndigo />
+          </div>
           <SpeechBubble text={say} onSaid={onSaid} />
         </motion.div>
 
