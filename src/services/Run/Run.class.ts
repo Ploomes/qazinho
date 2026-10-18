@@ -18,6 +18,10 @@ export class Run {
     void window.qazinho?.resizeDevice(props);
   }
 
+  public static focus(props: { workspaceId: string; isFocused: boolean }): void {
+    void window.qazinho?.focusDevice(props);
+  }
+
   public static async inFlight(): Promise<IRunInFlight[]> {
     return (await window.qazinho?.runsInFlight()) ?? [];
   }

@@ -139,6 +139,11 @@ export class RunCoordinator {
     await this.drivers.get(props.workspaceId)?.resize(props.viewport);
   }
 
+  /** Streams a run's device at full detail while the QA watches it up close. */
+  public async focus(props: { workspaceId: string; isFocused: boolean }): Promise<void> {
+    await this.drivers.get(props.workspaceId)?.focus(props.isFocused);
+  }
+
   /** The runs still walking, as they stand: a page that opened mid-run picks them up from here. */
   public inFlight(): IRunInFlight[] {
     return [...this.inFlightRuns.values()];

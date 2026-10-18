@@ -43,6 +43,7 @@ export interface IQazinhoApi {
   pauseRun: (props: { workspaceId: string; isPaused: boolean }) => Promise<void>;
   stopRun: (workspaceId: string) => Promise<void>;
   resizeDevice: (props: { workspaceId: string; viewport: IViewport }) => Promise<void>;
+  focusDevice: (props: { workspaceId: string; isFocused: boolean }) => Promise<void>;
   runsInFlight: () => Promise<IRunInFlight[]>;
   onRunEvent: (listener: (event: IRunEvent) => void) => () => void;
   readState: () => Promise<ISavedState>;

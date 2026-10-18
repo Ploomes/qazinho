@@ -260,6 +260,10 @@ void app.whenReady().then(async () => {
     (_event, props: { workspaceId: string; viewport: IViewport }) => runs.resize(props),
   );
   ipcMain.handle(
+    CHANNELS.focusDevice,
+    (_event, props: { workspaceId: string; isFocused: boolean }) => runs.focus(props),
+  );
+  ipcMain.handle(
     CHANNELS.pauseRun,
     (_event, props: { workspaceId: string; isPaused: boolean }) => {
       runs.setPaused(props);

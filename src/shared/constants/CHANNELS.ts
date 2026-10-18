@@ -12,6 +12,7 @@ export const CHANNELS = {
   pauseRun: 'run:pause',
   stopRun: 'run:stop',
   resizeDevice: 'run:resize',
+  focusDevice: 'run:focus',
   runsInFlight: 'run:in-flight',
   runEvent: 'run:event',
   readState: 'state:read',

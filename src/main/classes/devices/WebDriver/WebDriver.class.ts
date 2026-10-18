@@ -15,8 +15,10 @@ export class WebDriver implements IDeviceDriver {
   private page: Page | null = null;
   private screencast: CDPSession | null = null;
   private cdp: CDPSession | null = null;
+  private onFrame: ((jpeg: Buffer) => void) | null = null;
   private lastMotion: IActionMotion | null = null;
   private viewport: IViewport;
+  private isFocused = false;
 
   public constructor(props: IWebDriver) {
     this.url = props.url;
@@ -123,9 +125,16 @@ export class WebDriver implements IDeviceDriver {
     });
 
     this.screencast = session;
+    this.onFrame = onFrame;
     await this.cast();
 
     return true;
+  }
+
+  /** Streams at the display's full detail while the QA watches the device up close, and at 1x otherwise. */
+  public async focus(isFocused: boolean): Promise<void> {
+    this.isFocused = isFocused;
+    await this.recast();
   }
 
   /** Gives the page a new window size mid-run, and the stream the frames to match. */
@@ -136,11 +145,7 @@ export class WebDriver implements IDeviceDriver {
 
     await this.page.setViewportSize(viewport);
     await this.fit();
-
-    if (this.screencast) {
-      await this.screencast.send('Page.stopScreencast').catch(() => undefined);
-      await this.cast();
-    }
+    await this.recast();
   }
 
   public async close(): Promise<void> {
@@ -148,6 +153,7 @@ export class WebDriver implements IDeviceDriver {
     await this.cdp?.detach().catch(() => undefined);
     this.screencast = null;
     this.cdp = null;
+    this.onFrame = null;
     await this.context?.close().catch(() => undefined);
     this.context = null;
     this.page = null;
@@ -251,13 +257,35 @@ export class WebDriver implements IDeviceDriver {
       .catch(() => undefined);
   }
 
+  private async recast(): Promise<void> {
+    if (!this.screencast) return;
+
+    await this.screencast.send('Page.stopScreencast').catch(() => undefined);
+    await this.cast().catch(() => undefined);
+    await this.still();
+  }
+
   /** Caps a frame by its height alone: Chrome keeps a window 500 pixels wide, so a narrower page comes framed wider. */
   private async cast(): Promise<void> {
+    const detail = this.isFocused ? this.pixelRatio : 1;
+
     await this.screencast?.send('Page.startScreencast', {
       format: 'jpeg',
       quality: WEB_DRIVER.streamQuality,
-      maxHeight: this.viewport.height,
+      maxHeight: Math.round(this.viewport.height * detail),
     });
+  }
+
+  /** Hands the stream the page as it stands: a page standing still sends no frame when the stream restarts. */
+  private async still(): Promise<void> {
+    const shot = await this.screencast
+      ?.send('Page.captureScreenshot', {
+        format: 'jpeg',
+        quality: WEB_DRIVER.streamQuality,
+      })
+      .catch(() => null);
+
+    if (shot) this.onFrame?.(Buffer.from(shot.data, 'base64'));
   }
 
   /** Waits for what an action started to finish, so the page the agent reads next is the new one. */

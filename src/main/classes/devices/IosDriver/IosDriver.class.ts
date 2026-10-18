@@ -109,6 +109,11 @@ export class IosDriver implements IDeviceDriver {
     return Promise.resolve();
   }
 
+  /** A simulator is not streamed, so watching it up close changes nothing. */
+  public async focus(): Promise<void> {
+    return Promise.resolve();
+  }
+
   public async shoot(file: string): Promise<IShot | null> {
     await this.simctl(['io', this.udid, 'screenshot', file]);
 

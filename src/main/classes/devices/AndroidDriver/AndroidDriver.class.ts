@@ -121,6 +121,11 @@ export class AndroidDriver implements IDeviceDriver {
     return Promise.resolve();
   }
 
+  /** An emulator is not streamed, so watching it up close changes nothing. */
+  public async focus(): Promise<void> {
+    return Promise.resolve();
+  }
+
   public async shoot(file: string): Promise<IShot | null> {
     if (this.serial.length === 0) return null;
 

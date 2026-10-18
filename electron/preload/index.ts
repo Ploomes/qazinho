@@ -78,6 +78,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.stopRun, workspaceId) as Promise<void>,
   resizeDevice: (props: { workspaceId: string; viewport: IViewport }) =>
     ipcRenderer.invoke(CHANNELS.resizeDevice, props) as Promise<void>,
+  focusDevice: (props: { workspaceId: string; isFocused: boolean }) =>
+    ipcRenderer.invoke(CHANNELS.focusDevice, props) as Promise<void>,
   runsInFlight: () =>
     ipcRenderer.invoke(CHANNELS.runsInFlight) as Promise<IRunInFlight[]>,
   onRunEvent: (listener: (event: IRunEvent) => void) => {

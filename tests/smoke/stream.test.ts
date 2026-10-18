@@ -183,4 +183,59 @@ describe('the live device stream', () => {
     await driver.close();
     site.close();
   });
+
+  /**
+   * A frame at 2x costs about three times the CPU of one at 1x on a page that animates, so the
+   * panel streams at 1x and only focus asks for the display's detail. A page standing still sends
+   * no frame when the stream restarts, so focus hands over a still at once.
+   */
+  it('streams at full detail only while the QA watches up close', async () => {
+    const site = createServer((_request, response) => {
+      response.writeHead(200, { 'content-type': 'text/html' });
+      response.end(COUNTER);
+    });
+
+    await new Promise<void>((ready) => site.listen(4326, '127.0.0.1', ready));
+
+    const frames: Buffer[] = [];
+    const driver = new WebDriver({
+      url: 'http://127.0.0.1:4326/',
+      profileDir: await mkdtemp(join(tmpdir(), 'qazinho-focus-')),
+      pixelRatio: 2,
+    });
+
+    await driver.open();
+    await driver.stream((jpeg) => {
+      frames.push(jpeg);
+    });
+
+    expect(await frameAfterChange({ driver, frames })).toEqual({
+      width: 1280,
+      height: 800,
+    });
+
+    const before = frames.length;
+
+    await driver.focus(true);
+
+    expect(frames.length).toBeGreaterThan(before);
+    expect(sizeOf(frames.at(-1) ?? Buffer.alloc(0))).toEqual({
+      width: 2560,
+      height: 1600,
+    });
+    expect(await frameAfterChange({ driver, frames })).toEqual({
+      width: 2560,
+      height: 1600,
+    });
+
+    await driver.focus(false);
+
+    expect(await frameAfterChange({ driver, frames })).toEqual({
+      width: 1280,
+      height: 800,
+    });
+
+    await driver.close();
+    site.close();
+  });
 });

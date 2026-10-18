@@ -1,6 +1,6 @@
 import type { IDeviceStep, ViewportId } from '@/modules/Device/types';
 import type { CSSProperties } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DEVICE, DEVICE_STATE_KEY, VIEWPORTS } from '@/modules/Device/constants';
 import {
@@ -52,6 +52,18 @@ export const useDevicePanelViewModel = () => {
 
   const hasScreen = isRunLive || (live?.shot ?? null) !== null;
   const isFocused = isFocusedNow && hasScreen;
+  const stream = live?.isDone === false ? live.streamUrl : null;
+  const workspaceId = workspace?.id ?? null;
+
+  useEffect(() => {
+    if (workspaceId === null || stream === null || !isFocused) return;
+
+    Run.focus({ workspaceId, isFocused: true });
+
+    return () => {
+      Run.focus({ workspaceId, isFocused: false });
+    };
+  }, [workspaceId, stream, isFocused]);
 
   return {
     isOpen,
@@ -104,7 +116,7 @@ export const useDevicePanelViewModel = () => {
       }
     },
     shot: live?.shot ?? null,
-    stream: live?.isDone === false ? live.streamUrl : null,
+    stream,
     urlText: target?.value ?? '',
     elapsedLabel: t('DEVICE.LIVE', { elapsed: formatElapsed(live?.elapsedSec ?? 0) }),
     isLive: state === 'driving',

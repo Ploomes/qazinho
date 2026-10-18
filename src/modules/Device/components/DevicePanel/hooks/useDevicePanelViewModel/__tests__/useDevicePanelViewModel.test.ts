@@ -256,6 +256,85 @@ describe('useDevicePanelViewModel', () => {
       expect(result.current.isFocused).toBe(false);
     });
 
+    it('streams the device at full detail while it is in focus, and at 1x once it leaves', () => {
+      const focusDevice = vi.fn(() => Promise.resolve());
+      const walked = walkRun({ verdicts: ['passed'] });
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), focusDevice };
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...walked,
+            live: { ...walked.live!, streamUrl: 'http://127.0.0.1:5000/t/w1' },
+          },
+        ],
+      });
+
+      const { result } = renderHook(() => useDevicePanelViewModel());
+
+      expect(focusDevice).not.toHaveBeenCalled();
+
+      act(() => {
+        result.current.onFocus();
+      });
+
+      expect(focusDevice).toHaveBeenLastCalledWith({
+        workspaceId: 'w1',
+        isFocused: true,
+      });
+
+      act(() => {
+        result.current.onUnfocus();
+      });
+
+      expect(focusDevice).toHaveBeenLastCalledWith({
+        workspaceId: 'w1',
+        isFocused: false,
+      });
+    });
+
+    it('drops the detail once the run is over, even with the device still in focus', () => {
+      const focusDevice = vi.fn(() => Promise.resolve());
+      const walked = walkRun({ verdicts: ['passed'] });
+      const streaming = { ...walked.live!, streamUrl: 'http://127.0.0.1:5000/t/w1' };
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), focusDevice };
+      useWorkspaceStore.setState({ workspaces: [{ ...walked, live: streaming }] });
+
+      const { result } = renderHook(() => useDevicePanelViewModel());
+
+      act(() => {
+        result.current.onFocus();
+      });
+      act(() => {
+        useWorkspaceStore.setState({
+          workspaces: [{ ...walked, live: { ...streaming, isDone: true } }],
+        });
+      });
+
+      expect(result.current.isFocused).toBe(true);
+      expect(focusDevice).toHaveBeenLastCalledWith({
+        workspaceId: 'w1',
+        isFocused: false,
+      });
+    });
+
+    it('does NOT ask for detail when the screen in focus is a screenshot', () => {
+      const focusDevice = vi.fn(() => Promise.resolve());
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), focusDevice };
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
+
+      const { result } = renderHook(() => useDevicePanelViewModel());
+
+      act(() => {
+        result.current.onFocus();
+      });
+
+      expect(result.current.isFocused).toBe(true);
+      expect(focusDevice).not.toHaveBeenCalled();
+    });
+
     it('lets go of focus when the screen goes away', () => {
       useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
 

@@ -9,6 +9,7 @@ export interface IDeviceDriver {
   glance: () => Promise<IDeviceImage | null>;
   motion: () => Promise<IActionMotion | null>;
   resize: (viewport: IViewport) => Promise<void>;
+  focus: (isFocused: boolean) => Promise<void>;
   shoot: (file: string) => Promise<IShot | null>;
   stream: (onFrame: (jpeg: Buffer) => void) => Promise<boolean>;
   close: () => Promise<void>;
