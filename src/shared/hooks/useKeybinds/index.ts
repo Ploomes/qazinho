@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useRunControls } from '@/modules/Run';
+import { useRunActions } from '@/modules/Run';
 import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 import { comboOf } from './library';
 
@@ -13,7 +13,7 @@ export const useKeybinds = () => {
   const toggleResources = useAppStore((state) => state.toggleResources);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const toggleDevicePanel = useWorkspaceStore((state) => state.toggleDevicePanel);
-  const { onRun, onStop } = useRunControls();
+  const { onRun, onStop } = useRunActions();
 
   useEffect(() => {
     const doing: Record<string, () => void> = {
