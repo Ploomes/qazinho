@@ -13,7 +13,7 @@ import {
 import { DEVICE } from '@/modules/Device/constants';
 import { RUN_CLOCK } from '@/modules/Run/constants';
 import { endRun, landStep, resumeRun, startRun } from '@/modules/Workspace/library';
-import { mapWorkspace, tickLive } from './library';
+import { mapWorkspace, tickWorkspaces } from './library';
 
 export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   workspaces: [],
@@ -306,11 +306,14 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
     })),
 
   tickClock: () =>
-    set((state) => ({
-      workspaces: state.workspaces.map((workspace) =>
-        tickLive({ workspace, seconds: RUN_CLOCK.tickMs / 1_000 }),
-      ),
-    })),
+    set((state) => {
+      const workspaces = tickWorkspaces({
+        workspaces: state.workspaces,
+        seconds: RUN_CLOCK.tickMs / 1_000,
+      });
+
+      return workspaces === state.workspaces ? state : { workspaces };
+    }),
 
   toggleCase: (caseId) =>
     set((state) => ({ openCaseId: state.openCaseId === caseId ? null : caseId })),
