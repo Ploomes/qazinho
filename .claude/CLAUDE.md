@@ -31,8 +31,9 @@ screen follows it.
    app never needs a QAzinho backend; only Pro's team hosting uses one.
 2. **The agent is the user's.** Claude Code or Codex for now, driven through their own CLIs; more
    agents come later, one at a time, each checked against the real CLI before it is offered.
-   QAzinho builds the QA harness around it and never offers a login to a model provider or holds
-   a provider key of its own.
+   QAzinho builds the QA harness around it and never holds a provider key or a login of its own.
+   When the agent is signed out, QAzinho starts the agent's own sign-in (`claude auth login`,
+   `codex login`): the page opens in the QA's browser, and the agent keeps what it gets.
 3. **A Salve Software product, closed source, in two plans.** Free is the whole desktop app, with
    no account and no artificial limit: download it and use it. Pro is a paid web platform for a
    company: an account and an org, where the QA syncs the projects on their machine to share

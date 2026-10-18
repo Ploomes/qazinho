@@ -56,6 +56,13 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
     can open it again. Codex prints its page (`codex mcp login`).
   - Each step reaches the page as `McpSignInProgress`. Terminal (`claude "/mcp"`) stays as the
     way round when the hidden screens are not what `nextMcpMove` knows.
+- **An agent's sign-in never passes through QAzinho either.** `AgentLogin` runs the agent's own
+  login (`claude auth login`, `codex login`) out of sight and reports each step.
+  - `LinkCatcher` hands the agent a `$BROWSER` that writes the page down, and QAzinho opens it
+    in the QA's browser. Codex opens its own, and QAzinho only points at it.
+  - A code the page shows goes to the agent's stdin. What the agent gets stays with the agent.
+- **Nothing asks the QA to type a command.** A flow that runs a CLI runs it out of sight and shows
+  its steps in `StepsPopup`. Terminal is only a way round after a failure.
 - **A tracker token never reaches the page.** It crosses to main once, is checked, and is sealed
   with `safeStorage`; the page only ever sees the account it belongs to.
 - `index.html` carries a CSP. Loosen one directive with a reason, never the whole policy.
@@ -125,6 +132,8 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `IntegrationVault`                    | checks a tracker token and keeps it sealed with `safeStorage`                   |
 | `AgentTerminal`                       | runs an agent's full-screen interface out of sight: reads it, presses its keys  |
 | `AgentMcp`                            | adds an MCP server to the QA's agent and signs it in there, step by step        |
+| `AgentLogin`                          | signs the QA's agent in through its own login, step by step                     |
+| `LinkCatcher`                         | gives an agent a `$BROWSER` that writes down the pages it wants opened          |
 
 ## Dependencies
 

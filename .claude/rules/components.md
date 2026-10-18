@@ -8,7 +8,7 @@ src/shared/components/
 ├── atoms/        Button, Chip, StatusPill, Input, IconButton, Meter, Kbd, Logo, Intern, Markdown,
 │                 Wordmark, Tag
 ├── molecules/    TabBar, SidebarRow, CountTile, TargetCard, MetaGrid
-├── organisms/    Titlebar, Sidebar, Composer, PlanCase, DevicePanel, ResourcePopover
+├── organisms/    Titlebar, Sidebar, Composer, PlanCase, DevicePanel, ResourcePopover, StepsPopup
 └── templates/    AppShell, ModalFrame
 ```
 
