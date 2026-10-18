@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { i18n } from '@/languages';
 import { useBugsViewModel } from '@/modules/Bug/screens/Bugs/hooks/useBugsViewModel';
 import { walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
@@ -20,6 +21,10 @@ beforeEach(() => {
   });
 });
 
+afterEach(async () => {
+  await i18n.changeLanguage('en');
+});
+
 describe('useBugsViewModel', () => {
   it('counts the bugs in the singular when there is only one', () => {
     const { result } = renderHook(() => useBugsViewModel());
@@ -36,6 +41,19 @@ describe('useBugsViewModel', () => {
   });
 
   describe('onFilter', () => {
+    it('offers every severity by name, with the one in use marked', async () => {
+      await i18n.changeLanguage('pt');
+
+      const { result } = renderHook(() => useBugsViewModel());
+
+      expect(result.current.filters).toEqual([
+        { id: 'all', label: 'todos', isActive: true },
+        { id: 'high', label: 'alta', isActive: false },
+        { id: 'medium', label: 'média', isActive: false },
+        { id: 'low', label: 'baixa', isActive: false },
+      ]);
+    });
+
     it('keeps the bugs of that severity', () => {
       const { result } = renderHook(() => useBugsViewModel());
 

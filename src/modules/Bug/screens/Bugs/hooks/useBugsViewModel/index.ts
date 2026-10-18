@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { BUG_FILTERS } from '@/modules/Bug/constants';
+import { BUG_FILTER_KEYS, BUG_FILTERS } from '@/modules/Bug/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import { useWorkspaceStore } from '@/store';
 
@@ -33,8 +33,11 @@ export const useBugsViewModel = () => {
   return {
     bugs: shown.map((bug) => ({ bug, hasRun: runIds.has(bug.runId) })),
     openBugId,
-    filters: BUG_FILTERS,
-    filter: bugFilter,
+    filters: BUG_FILTERS.map((id) => ({
+      id,
+      label: t(BUG_FILTER_KEYS[id]),
+      isActive: id === bugFilter,
+    })),
     isEmpty: bugs.length === 0,
     summary:
       bugs.length === 1

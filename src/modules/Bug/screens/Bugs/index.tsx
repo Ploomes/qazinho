@@ -9,7 +9,6 @@ export const Bugs: React.FC = () => {
     bugs,
     openBugId,
     filters,
-    filter,
     isEmpty,
     summary,
     onToggleBug,
@@ -32,16 +31,16 @@ export const Bugs: React.FC = () => {
         <div className="bugs__filters">
           {filters.map((item) => (
             <button
-              key={item}
+              key={item.id}
               type="button"
               className={
-                item === filter ? 'bugs__filter bugs__filter--active' : 'bugs__filter'
+                item.isActive ? 'bugs__filter bugs__filter--active' : 'bugs__filter'
               }
               onClick={() => {
-                onFilter(item);
+                onFilter(item.id);
               }}
             >
-              {item}
+              {item.label}
             </button>
           ))}
         </div>

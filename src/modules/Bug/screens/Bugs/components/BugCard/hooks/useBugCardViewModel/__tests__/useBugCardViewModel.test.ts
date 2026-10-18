@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { renderHook } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { i18n } from '@/languages';
 import { useBugCardViewModel } from '@/modules/Bug/screens/Bugs/components/BugCard/hooks/useBugCardViewModel';
 import { walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 
@@ -18,6 +19,10 @@ const PROPS = {
   onOpenCase: vi.fn(),
 };
 
+afterEach(async () => {
+  await i18n.changeLanguage('en');
+});
+
 describe('useBugCardViewModel', () => {
   it('says where the bug came from, so a developer can find it again', () => {
     const { result } = renderHook(() => useBugCardViewModel(PROPS));
@@ -30,6 +35,35 @@ describe('useBugCardViewModel', () => {
       'agent',
     ]);
     expect(result.current.meta[1]?.value).toBe('TC-02 · step 2');
+  });
+
+  it('writes every label and word on the card in the language the QA reads', async () => {
+    await i18n.changeLanguage('pt');
+
+    const { result } = renderHook(() => useBugCardViewModel(PROPS));
+
+    expect(result.current.meta.map(({ label }) => label)).toEqual([
+      'run',
+      'caso',
+      'alvo',
+      'visto',
+      'agente',
+    ]);
+    expect(result.current.meta[1]?.value).toBe('TC-02 · passo 2');
+    expect(result.current.meta[3]?.value).toBe('uma vez');
+    expect(result.current.severity).toBe('alta');
+    expect(result.current.shots.map(({ label }) => label)).toEqual([
+      'antes',
+      'o passo que quebrou',
+    ]);
+  });
+
+  it('counts the runs in a row that caught it once there is more than one', () => {
+    const { result } = renderHook(() =>
+      useBugCardViewModel({ ...PROPS, bug: { ...BUG, seenRuns: 3 } }),
+    );
+
+    expect(result.current.meta[3]?.value).toBe('3 runs in a row');
   });
 
   it('turns the caret down once the card is open', () => {

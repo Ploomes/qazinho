@@ -1,3 +1,3 @@
 export interface IMetaGridProps {
-  rows: { key: string; value: string }[];
+  rows: { key: string; label: string; value: string }[];
 }

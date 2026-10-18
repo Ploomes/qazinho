@@ -1,0 +1,5 @@
+import type { IBug } from '@/modules/Bug';
+
+/** A bug as its file keeps it: one saved before bugs counted in numbers says its step and how often it was seen in words. */
+export type SavedBug = Omit<IBug, 'stepNumber' | 'seenRuns'> &
+  Partial<Pick<IBug, 'stepNumber' | 'seenRuns'>> & { step?: string; seen?: string };

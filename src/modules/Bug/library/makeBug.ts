@@ -13,17 +13,13 @@ function shotsFor(props: {
     .at(-1);
 
   const broke = {
-    label: 'the step that broke',
     isBad: true,
     src: props.outcome.screenshot,
     file: props.outcome.shotFile,
   };
 
   return before
-    ? [
-        { label: 'before', isBad: false, src: before.screenshot, file: before.shotFile },
-        broke,
-      ]
+    ? [{ isBad: false, src: before.screenshot, file: before.shotFile }, broke]
     : [broke];
 }
 
@@ -34,13 +30,12 @@ export function makeBug(props: {
   outcomes: IStepOutcome[];
 }): IBug {
   const { workspace, outcome, outcomes } = props;
-  const step = `step ${String(outcome.stepNumber)}`;
   const testCase = workspace.plan.find(({ id }) => id === outcome.caseId);
 
   return {
     id: `BUG-${String(workspace.bugs.length + 1).padStart(2, '0')}`,
     severity: outcome.severity,
-    title: outcome.title.length > 0 ? outcome.title : `${outcome.action} did not hold up`,
+    title: outcome.title.length > 0 ? outcome.title : outcome.action,
     body: outcome.why,
     expected: outcome.expected,
     got: outcome.got,
@@ -48,12 +43,16 @@ export function makeBug(props: {
     runWhen: workspace.live?.startedAt ?? '',
     caseId: outcome.caseId,
     caseTitle: testCase?.title ?? outcome.caseId,
-    step,
+    stepNumber: outcome.stepNumber,
     target:
       workspace.planKind === 'web'
         ? `Web · Chrome ${String(viewportOf(workspace.viewportId).width)} × ${String(viewportOf(workspace.viewportId).height)}`
-        : 'Android · emulator',
-    seen: countSeen({ workspace, caseId: outcome.caseId, step }),
+        : 'Android',
+    seenRuns: countSeen({
+      workspace,
+      caseId: outcome.caseId,
+      stepNumber: outcome.stepNumber,
+    }),
     repro: outcomes
       .filter((one) => one.caseId === outcome.caseId && one.index <= outcome.index)
       .map((one) => ({ action: one.action, isBad: one.index === outcome.index })),

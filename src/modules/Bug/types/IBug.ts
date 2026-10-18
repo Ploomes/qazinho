@@ -14,9 +14,9 @@ export interface IBug {
   runWhen: string;
   caseId: string;
   caseTitle: string;
-  step: string;
+  stepNumber: number;
   target: string;
-  seen: string;
+  seenRuns: number;
   repro: IBugReproStep[];
   shots: IBugShot[];
   isNew: boolean;

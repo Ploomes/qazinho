@@ -52,9 +52,9 @@ describe('resumeRun', () => {
   });
 
   it('files the failures it missed as bugs, so they are not lost with the reload', () => {
-    expect(resumed().bugs.map(({ caseId, step }) => `${caseId} ${step}`)).toEqual([
-      'TC-01 step 2',
-    ]);
+    expect(
+      resumed().bugs.map(({ caseId, stepNumber }) => `${caseId} ${String(stepNumber)}`),
+    ).toEqual(['TC-01 2']);
   });
 
   it('does NOT file a failure twice when the page already had it as a bug', () => {

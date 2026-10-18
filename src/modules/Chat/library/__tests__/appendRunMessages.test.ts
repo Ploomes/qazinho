@@ -45,6 +45,20 @@ describe('appendRunMessages', () => {
     });
   });
 
+  it('keeps the step as a number and its own words, so the chat names it in the language the QA reads', () => {
+    const chat = appendRunMessages({
+      workspace: WORKSPACE,
+      outcome: outcome({ index: 4, verdict: 'failed' }),
+      at: '09:41',
+    });
+
+    expect(chat.at(-1)).toMatchObject({
+      stepNumber: 2,
+      action: 'Leave the house number empty',
+    });
+    expect(chat.at(-1)).not.toHaveProperty('text');
+  });
+
   it('a step nobody could carry out gets a verdict too', () => {
     const chat = appendRunMessages({
       workspace: WORKSPACE,

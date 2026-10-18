@@ -1,6 +1,11 @@
 import type { StepVerdict } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
-import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
+import { makeBug } from '@/modules/Bug/library';
+import {
+  makeOutcome,
+  makeWorkspace,
+  walkRun,
+} from '@/modules/Workspace/library/__tests__/fixtures';
 
 const BROKE: StepVerdict[] = ['passed', 'passed', 'passed', 'passed', 'failed'];
 
@@ -14,11 +19,23 @@ describe('makeBug', () => {
 
     expect(bug.caseId).toBe('TC-02');
     expect(bug.caseTitle).toBe('Checkout with a test card');
-    expect(bug.step).toBe('step 2');
+    expect(bug.stepNumber).toBe(2);
   });
 
   it('carries what the QA expected, taken from the plan and not from the app', () => {
     expect(bugFrom().expected).toBe('An inline error asks for it');
+  });
+
+  it('names the bug after the step when the agent gave it no title, in the words of the plan', () => {
+    const workspace = walkRun({ verdicts: [] });
+    const outcome = {
+      ...makeOutcome({ workspace, index: 0, verdict: 'failed' }),
+      title: '',
+    };
+
+    expect(makeBug({ workspace, outcome, outcomes: [outcome] }).title).toBe(
+      outcome.action,
+    );
   });
 
   it('takes the title and the severity the agent gave it', () => {
@@ -41,10 +58,7 @@ describe('makeBug', () => {
   it('attaches the screenshot of the step before and the step that broke', () => {
     const bug = bugFrom();
 
-    expect(bug.shots.map(({ label }) => label)).toEqual([
-      'before',
-      'the step that broke',
-    ]);
+    expect(bug.shots.map(({ isBad }) => isBad)).toEqual([false, true]);
     expect(bug.shots[1]?.src).toBe('data:image/jpeg;base64,shot-4');
   });
 
@@ -56,7 +70,7 @@ describe('makeBug', () => {
   });
 
   it('says it was seen once until a run before it caught the same thing', () => {
-    expect(bugFrom().seen).toBe('once');
+    expect(bugFrom().seenRuns).toBe(1);
   });
 
   it('names the browser at the window size the run drove', () => {
@@ -74,6 +88,6 @@ describe('makeBug', () => {
       verdicts: BROKE,
     });
 
-    expect(mobile.bugs[0]?.target).toBe('Android · emulator');
+    expect(mobile.bugs[0]?.target).toBe('Android');
   });
 });

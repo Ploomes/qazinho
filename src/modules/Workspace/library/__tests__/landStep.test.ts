@@ -34,7 +34,7 @@ describe('landStep', () => {
     const workspace = walkRun({ verdicts: ['passed', 'failed'] });
 
     expect(workspace.bugs).toHaveLength(1);
-    expect(workspace.bugs[0]?.step).toBe('step 2');
+    expect(workspace.bugs[0]?.stepNumber).toBe(2);
   });
 
   it('a step that lands with nothing running is ignored', () => {

@@ -43,7 +43,7 @@ export function resumeRun(props: {
           (bug) =>
             bug.runId === run.runId &&
             bug.caseId === outcome.caseId &&
-            bug.step === `step ${String(outcome.stepNumber)}`,
+            bug.stepNumber === outcome.stepNumber,
         ),
     )
     .reduce<IWorkspace>(

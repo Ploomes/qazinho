@@ -5,7 +5,8 @@ export interface IVerdictMessage {
   kind: 'verdict';
   at: string;
   verdict: StepVerdict;
-  text: string;
+  stepNumber: number;
+  action: string;
   expected: string | null;
   got: string | null;
 }

@@ -35,7 +35,7 @@ export function referencesOf(
     id: bug.id,
     title: bug.title,
     facts: [
-      `severity ${bug.severity}, caught in ${bug.runId} on ${bug.caseId} ${bug.step}`,
+      `severity ${bug.severity}, caught in ${bug.runId} on ${bug.caseId} step ${String(bug.stepNumber)}`,
       `expected: ${bug.expected}`,
       `got: ${bug.got}`,
       ...(bug.body.length > 0 ? [bug.body] : []),

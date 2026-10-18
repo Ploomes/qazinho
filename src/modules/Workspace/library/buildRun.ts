@@ -34,7 +34,7 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
             (bug) =>
               bug.runId === id &&
               bug.caseId === outcome.caseId &&
-              bug.step === `step ${String(outcome.stepNumber)}`,
+              bug.stepNumber === outcome.stepNumber,
           )?.id ?? null,
       }));
 

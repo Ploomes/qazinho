@@ -6,8 +6,16 @@ import { useBugCardViewModel } from './hooks';
 import './styles.css';
 
 export const BugCard: React.FC<IBugCardProps> = (props) => {
-  const { caret, meta, hasRun, onHeadClick, onOpenRunClick, onOpenShot } =
-    useBugCardViewModel(props);
+  const {
+    caret,
+    severity,
+    meta,
+    shots,
+    hasRun,
+    onHeadClick,
+    onOpenRunClick,
+    onOpenShot,
+  } = useBugCardViewModel(props);
   const { bug } = props;
   const { t } = useTranslation();
 
@@ -25,7 +33,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
         <span className="bug-card__id">{bug.id}</span>
         <span className="bug-card__title">{bug.title}</span>
         {bug.isNew && <span className="bug-card__new">{t('BUG.JUST_CAUGHT')}</span>}
-        <span className="bug-card__id">{bug.severity}</span>
+        <span className="bug-card__id">{severity}</span>
         <span aria-hidden="true">{caret}</span>
       </button>
 
@@ -41,7 +49,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
           <div>
             <Eyebrow>{t('BUG.SCREENSHOTS')}</Eyebrow>
             <div className="bug-card__shots">
-              {bug.shots.map((shot) => (
+              {shots.map((shot) => (
                 <Screenshot
                   key={shot.label}
                   label={shot.label}

@@ -1,10 +1,11 @@
-import type { ChatMessage } from '@/modules/Chat';
 import type { ITestCase } from '@/modules/Plan';
 import type { IRun } from '@/modules/Run';
-import type { IWorkspace } from '@/modules/Workspace/types';
+import type { IWorkspace, SavedBug, SavedMessage } from '@/modules/Workspace/types';
 import type { ISavedWorkspace } from '@/shared/types';
 import { parse } from 'yaml';
 import { viewportOf } from '@/modules/Device/library';
+import { bugOfSaved } from './bugOfSaved';
+import { messageOfSaved } from './messageOfSaved';
 
 type SavedRun = Omit<IRun, 'endedBy'> & Partial<Pick<IRun, 'endedBy'>>;
 
@@ -20,10 +21,13 @@ function readPlan(yaml: string): ITestCase[] {
 
 /** A file somebody edited by hand may be nonsense, so what cannot be read is left out. */
 export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
-  let read: Partial<IWorkspace>;
+  let read: Partial<Omit<IWorkspace, 'chat' | 'bugs'>> & {
+    chat?: SavedMessage[];
+    bugs?: SavedBug[];
+  };
 
   try {
-    read = JSON.parse(saved.json) as Partial<IWorkspace>;
+    read = JSON.parse(saved.json) as typeof read;
   } catch {
     return null;
   }
@@ -40,22 +44,13 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     sessionId: read.sessionId ?? null,
     status: read.status ?? 'idle',
     issue: read.issue ?? null,
-    chat: (read.chat ?? [])
-      .filter((message) => (message.kind as string) !== 'action')
-      .map((message): ChatMessage =>
-        message.kind === 'run'
-          ? {
-              ...message,
-              endedBy: (message as Partial<typeof message>).endedBy ?? 'finished',
-            }
-          : message,
-      ),
+    chat: (read.chat ?? []).map(messageOfSaved).filter((message) => message !== null),
     plan: readPlan(saved.planYaml),
     runs: ((read.runs ?? []) as SavedRun[]).map((run) => ({
       ...run,
       endedBy: run.endedBy ?? 'finished',
     })),
-    bugs: read.bugs ?? [],
+    bugs: (read.bugs ?? []).map(bugOfSaved),
     live: null,
     hasBeenAsked: read.hasBeenAsked ?? false,
     context:
