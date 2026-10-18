@@ -115,6 +115,13 @@ Agents, Playwright and device drivers will run in child processes (`utilityProce
 emulator never freezes a window. **Video frames never cross IPC**: Chrome runs with no window, and its CDP
 screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `<img>`.
 
+- Chrome renders at the QA's pixel ratio, capped at 2, and its window is sized around the
+  viewport (`Browser.setContentsSize`), or a frame cuts the foot of the page off.
+- The stream runs at 1x in the panel, and at the pixel ratio only while the device is in focus
+  (`focusDevice`): a 2x frame costs about three times the CPU on a page that animates.
+- Chrome keeps a window at least 500px wide, so a phone-sized page streams framed wider, and
+  `DeviceScreen` cuts the stream to the viewport's shape.
+
 ## What the main process owns
 
 Besides the harness's `Harness` and `McpHost`, which main builds and wires:
