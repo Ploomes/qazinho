@@ -9,6 +9,7 @@ import {
   describeScreen,
   findNode,
   frontPackage,
+  launchArgs,
   newestBuildTools,
   packageOfApk,
   parseDevices,
@@ -65,15 +66,7 @@ export class AndroidDriver implements IDeviceDriver {
     }
 
     if (action.kind === 'goto') {
-      await this.shell([
-        'monkey',
-        '-p',
-        this.app,
-        '-c',
-        'android.intent.category.LAUNCHER',
-        '1',
-      ]);
-      await this.settle();
+      await this.launch();
 
       return;
     }
@@ -151,14 +144,11 @@ export class AndroidDriver implements IDeviceDriver {
   private async launchFresh(): Promise<void> {
     await this.shell(['am', 'force-stop', this.app]);
     await this.shell(['pm', 'clear', this.app]);
-    await this.shell([
-      'monkey',
-      '-p',
-      this.app,
-      '-c',
-      'android.intent.category.LAUNCHER',
-      '1',
-    ]);
+    await this.launch();
+  }
+
+  private async launch(): Promise<void> {
+    await this.shell(launchArgs(this.app));
     await this.settle();
   }
 
