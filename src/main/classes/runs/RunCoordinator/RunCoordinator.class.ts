@@ -44,6 +44,7 @@ export class RunCoordinator {
   private readonly paused = new Set<string>();
   private readonly drivers = new Map<string, IDeviceDriver>();
   private readonly inFlightRuns = new Map<string, IRunInFlight>();
+  private readonly viewports = new Map<string, IViewport>();
 
   public constructor(props: IRunCoordinator) {
     this.runner = props.runner;
@@ -109,6 +110,7 @@ export class RunCoordinator {
       this.inFlightRuns.delete(run.workspaceId);
       this.stopping.delete(run.workspaceId);
       this.paused.delete(run.workspaceId);
+      this.viewports.delete(run.workspaceId);
     }
   }
 
@@ -132,11 +134,14 @@ export class RunCoordinator {
       this.inFlightRuns.set(props.workspaceId, { ...run, isPaused: props.isPaused });
   }
 
-  /** Resizes the browser of a run under way; the next run starts at the size the workspace keeps. */
+  /** Resizes the device of a run under way, for the cases still to come too; the next run starts at the workspace's size. */
   public async resize(props: {
     workspaceId: string;
     viewport: IViewport;
   }): Promise<void> {
+    if (!this.walking.has(props.workspaceId)) return;
+
+    this.viewports.set(props.workspaceId, props.viewport);
     await this.drivers.get(props.workspaceId)?.resize(props.viewport);
   }
 
@@ -354,7 +359,7 @@ export class RunCoordinator {
       sessionId: null,
       systemPrompt: this.harness.run({
         target: run.target,
-        viewport: run.viewport ?? WEB_DRIVER.viewport,
+        viewport: this.viewports.get(workspaceId) ?? run.viewport ?? WEB_DRIVER.viewport,
       }),
       mcpConfig,
       allowedTools: this.harness.toolsFor('runner').allowedTools,
