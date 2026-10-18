@@ -106,6 +106,15 @@ answers one question per channel, for a target `{ role, platform }`:
   becomes the JSON Schema the agent reads (`--json-schema`, or the MCP tool list), and the same
   schema reads back what the agent sent, with the message the agent gets when it breaks a rule.
   `jsonSchemaOf` drops the `$schema` key, which makes Claude Code ignore a schema in silence.
+- **A plan comes out of a conversation, never out of a guess** (`role/chat/planning.md`), the way
+  the Ploomes harness builds a screen:
+  - Look: before a chat message on a web target, `AppPeek` opens the app and the agent reads
+    what its page showed.
+  - Ask: one round of closed questions in the answer's `questions`, each with two to four
+    options and the QA's own words always open. The page draws it as `QuestionRound` and sends
+    the answers back as the next message.
+  - Confirm: the plan about to be written, with one option alone.
+  - Write: `plan` is filled only once the QA picked that option.
 - **The prompts are pinned.** `src/harness/__tests__/__prompts__/` holds what the agent reads for each
   role and platform; changing what the agent is told is a diff of those files.
 
@@ -132,6 +141,7 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `AgentRunner`                         | spawns Claude Code or Codex, each in its own dialect, and reads the answer back |
 | `WebDriver`                           | drives Chrome over playwright-core, one profile per workspace                   |
 | `LiveStream`                          | serves the device's frames as MJPEG on 127.0.0.1, for the device panel          |
+| `AppPeek`                             | opens a web target for a moment before the chat, and reads what its page shows  |
 | `RunCoordinator`                      | walks a plan a case per agent turn: it acts and reports through tools           |
 | `ResourceCollector` / `ProcessOwners` | one `ps` sweep, charged to whoever started it                                   |
 | `Archive`                             | the QA's projects, workspaces and plans, as files on disk                       |

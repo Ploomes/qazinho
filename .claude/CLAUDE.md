@@ -47,7 +47,9 @@ screen follows it.
 ## State
 
 **The web target works end to end.** A QA makes a project and a workspace, talks to their own
-agent, gets a plan, runs it, and watches real Chrome be driven step by step: the agent reads the
+agent, gets a plan, runs it, and watches real Chrome be driven step by step. The plan comes out
+of a conversation: the agent looks at the app, asks one round of questions in the chat, and
+confirms what it will write before it writes it. In the run, the agent reads the
 page, acts, the run screenshots it, and the agent judges what it sees against what the QA
 expected. A failed step becomes a bug with its evidence. Everything is kept on disk, one folder
 per workspace, with the plan beside it in YAML.
