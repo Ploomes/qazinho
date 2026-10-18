@@ -115,14 +115,23 @@ export const useChatViewModel = () => {
         return;
       }
 
-      if (plan === null)
+      const live = useWorkspaceStore
+        .getState()
+        .workspaces.find(({ id }) => id === workspaceId)?.live;
+      const isWalking = live !== null && live !== undefined && !live.isDone;
+
+      if (plan === null || isWalking)
         landAgentText({
           workspaceId,
           text: answer.reply,
           who: agentName,
           sessionId: turn.sessionId,
         });
-      else
+
+      if (plan !== null && isWalking)
+        landAgentError({ workspaceId, text: t('CHAT.PLAN_WHILE_RUNNING') });
+
+      if (plan !== null && !isWalking)
         landPlan({
           workspaceId,
           summary: answer.reply,

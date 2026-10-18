@@ -4,7 +4,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
 import { useChatViewModel } from '@/modules/Chat/screens/Chat/hooks/useChatViewModel';
-import { endRun } from '@/modules/Workspace/library';
+import { endRun, startRun } from '@/modules/Workspace/library';
 import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import {
@@ -319,6 +319,31 @@ describe('useChatViewModel', () => {
           kind: 'error',
         });
       });
+    });
+
+    /** A plan the chat wrote mid-run replaced the one main was walking: the run's report came back under the wrong cases. */
+    it('does NOT change the plan while a run walks it, and says so', async () => {
+      answering({ answer: DRAFTED });
+      useWorkspaceStore.setState({
+        workspaces: [
+          startRun({ workspace: makeWorkspace(), startedAt: '09:41', runId: 'r-01' }),
+        ],
+      });
+
+      const before = useWorkspaceStore.getState().workspaces[0]?.plan;
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onSuggestion('Add a case for the coupon.');
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
+          kind: 'error',
+          text: expect.stringContaining('a run is walking it') as string,
+        });
+      });
+      expect(useWorkspaceStore.getState().workspaces[0]?.plan).toBe(before);
     });
 
     it('says so when the answer is not in a shape it can read', async () => {
