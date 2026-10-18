@@ -9,6 +9,5 @@ export * from './insertMention';
 export * from './mentionCandidates';
 export * from './mentionQueryOf';
 export * from './mentionsIn';
-export * from './parseChatAnswer';
 export * from './referencesOf';
 export * from './splitMentions';

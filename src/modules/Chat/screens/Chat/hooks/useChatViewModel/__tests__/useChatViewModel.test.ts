@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import type { IAgentTurn, IAskAgent } from '@/shared/types';
+import type { IAskAgent, IChatAnswer, IChatTurn } from '@/shared/types';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useChatViewModel } from '@/modules/Chat/screens/Chat/hooks/useChatViewModel';
@@ -18,7 +18,7 @@ const PROJECT = {
   targets: [{ id: 't1', kind: 'web' as const, label: 'Web', value: 'https://shop.test' }],
 };
 
-const DRAFTED = JSON.stringify({
+const DRAFTED: IChatAnswer = {
   reply: 'Two cases over the checkout.',
   plan: {
     summary: 'Two cases over the checkout.',
@@ -32,15 +32,16 @@ const DRAFTED = JSON.stringify({
       },
     ],
   },
-});
+};
 
-function answering(turn: Partial<IAgentTurn>) {
-  const ask = vi.fn((_: IAskAgent): Promise<IAgentTurn> =>
+function answering(turn: Partial<IChatTurn>) {
+  const ask = vi.fn((_: IAskAgent): Promise<IChatTurn> =>
     Promise.resolve({
       sessionId: 'session-1',
       text: '',
       usage: null,
       isError: false,
+      answer: null,
       ...turn,
     }),
   );
@@ -84,7 +85,7 @@ describe('useChatViewModel', () => {
 
   describe('onSend', () => {
     it("asks the QA's own agent, on the model they picked", async () => {
-      const ask = answering({ text: DRAFTED });
+      const ask = answering({ answer: DRAFTED });
       const { result } = renderHook(() => useChatViewModel());
 
       act(() => {
@@ -108,7 +109,7 @@ describe('useChatViewModel', () => {
     });
 
     it('turns the first answer into the plan, and remembers the session', async () => {
-      answering({ text: DRAFTED });
+      answering({ answer: DRAFTED });
       const { result } = renderHook(() => useChatViewModel());
 
       act(() => {
@@ -126,7 +127,7 @@ describe('useChatViewModel', () => {
     });
 
     it('talks without touching the plan when the answer carries none', async () => {
-      const ask = answering({ text: JSON.stringify({ reply: '1 + 1 is 2.' }) });
+      const ask = answering({ answer: { reply: '1 + 1 is 2.', plan: null } });
       useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
 
       const { result } = renderHook(() => useChatViewModel());
@@ -150,7 +151,7 @@ describe('useChatViewModel', () => {
     });
 
     it('hands the agent what the QA mentioned, and keeps the mention on the message', async () => {
-      const ask = answering({ text: JSON.stringify({ reply: 'It checks out.' }) });
+      const ask = answering({ answer: { reply: 'It checks out.', plan: null } });
       useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
 
       const { result } = renderHook(() => useChatViewModel());
@@ -191,7 +192,7 @@ describe('useChatViewModel', () => {
     });
 
     it('says so when the answer is not in a shape it can read', async () => {
-      answering({ text: JSON.stringify({ verdict: 'passed' }) });
+      answering({ text: JSON.stringify({ verdict: 'passed' }), answer: null });
       const { result } = renderHook(() => useChatViewModel());
 
       act(() => {

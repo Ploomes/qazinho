@@ -1,6 +1,7 @@
 import type {
   IAgentEvent,
   IAskAgent,
+  IChatTurn,
   IConnectIntegration,
   InstallableId,
   IntegrationId,
@@ -115,7 +116,7 @@ const runs = new RunCoordinator({
   onEvent: (event) => broadcast({ channel: CHANNELS.runEvent, event }),
 });
 
-async function askAgent(ask: IAskAgent) {
+async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
   const command = await findCommand(ask.agentId);
 
   if (!command) {
@@ -124,6 +125,7 @@ async function askAgent(ask: IAskAgent) {
       text: `QAzinho cannot find ${ask.agentId} on this machine. Install it, or pick another agent in Settings.`,
       usage: null,
       isError: true,
+      answer: null,
     };
   }
 
@@ -133,7 +135,7 @@ async function askAgent(ask: IAskAgent) {
     references: ask.references,
   });
 
-  return agentRunner.ask({
+  const turn = await agentRunner.ask({
     workspaceId: ask.workspaceId,
     command,
     model: ask.model,
@@ -143,6 +145,8 @@ async function askAgent(ask: IAskAgent) {
     systemPrompt: chat.systemPrompt,
     allowedTools: chat.tools.allowedTools,
   });
+
+  return { ...turn, answer: turn.isError ? null : harness.readChat(turn.text) };
 }
 
 async function checkMachine() {

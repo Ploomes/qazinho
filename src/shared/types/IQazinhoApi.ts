@@ -1,6 +1,6 @@
 import type { IAgentEvent } from './IAgentEvent';
-import type { IAgentTurn } from './IAgentTurn';
 import type { IAskAgent } from './IAskAgent';
+import type { IChatTurn } from './IChatTurn';
 import type { IConnectIntegration } from './IConnectIntegration';
 import type { IConnectResult } from './IConnectResult';
 import type { IDetectedAgent } from './IDetectedAgent';
@@ -25,7 +25,7 @@ export interface IQazinhoApi {
   detectAgents: () => Promise<IDetectedAgent[]>;
   readResources: () => Promise<IResourceSnapshot>;
   detectDeviceTools: () => Promise<IDeviceTools>;
-  askAgent: (ask: IAskAgent) => Promise<IAgentTurn>;
+  askAgent: (ask: IAskAgent) => Promise<IChatTurn>;
   onAgentEvent: (listener: (event: IAgentEvent) => void) => () => void;
   startRun: (run: IStartRun) => Promise<void>;
   pauseRun: (props: { workspaceId: string; isPaused: boolean }) => Promise<void>;

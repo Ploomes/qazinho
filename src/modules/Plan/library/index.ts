@@ -4,7 +4,7 @@ export * from './editCase';
 export * from './editStep';
 export * from './mapCase';
 export * from './nextCaseId';
-export * from './parseDraftedPlan';
+export * from './planOfDraft';
 export * from './removeCase';
 export * from './removeStep';
 export * from './toPlanKind';

@@ -4,11 +4,11 @@ import {
   mentionCandidates,
   mentionQueryOf,
   mentionsIn,
-  parseChatAnswer,
   referencesOf,
 } from '@/modules/Chat/library';
 import { CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
+import { planOfDraft } from '@/modules/Plan';
 import { flattenPlanSteps } from '@/modules/Run';
 import { Agent } from '@/services';
 import {
@@ -73,15 +73,16 @@ export const useChatViewModel = () => {
         return;
       }
 
-      const answer = parseChatAnswer(turn.text);
+      const { answer } = turn;
+      const plan = answer?.plan ? planOfDraft(answer.plan.cases) : null;
 
-      if (!answer) {
+      if (!answer || (answer.reply.length === 0 && plan === null)) {
         landAgentError({ workspaceId, text: CHAT.unreadable });
 
         return;
       }
 
-      if (answer.plan === null) {
+      if (plan === null) {
         landAgentText({
           workspaceId,
           text: answer.reply,
@@ -95,7 +96,7 @@ export const useChatViewModel = () => {
       landPlan({
         workspaceId,
         summary: answer.reply,
-        plan: answer.plan,
+        plan,
         who: agentName,
         sessionId: turn.sessionId,
       });

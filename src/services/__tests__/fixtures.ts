@@ -6,7 +6,13 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     platform,
     detectAgents: () => Promise.resolve([]),
     askAgent: () =>
-      Promise.resolve({ sessionId: null, text: '', usage: null, isError: false }),
+      Promise.resolve({
+        sessionId: null,
+        text: '',
+        usage: null,
+        isError: false,
+        answer: null,
+      }),
     onAgentEvent: () => () => undefined,
     detectDeviceTools: () =>
       Promise.resolve({

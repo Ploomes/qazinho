@@ -1,6 +1,6 @@
 import type {
   IAgentEvent,
-  IAgentTurn,
+  IChatTurn,
   IAskAgent,
   IConnectIntegration,
   IConnectResult,
@@ -33,7 +33,7 @@ const api: IQazinhoApi = {
   detectDeviceTools: () =>
     ipcRenderer.invoke(CHANNELS.detectDeviceTools) as Promise<IDeviceTools>,
   askAgent: (ask: IAskAgent) =>
-    ipcRenderer.invoke(CHANNELS.askAgent, ask) as Promise<IAgentTurn>,
+    ipcRenderer.invoke(CHANNELS.askAgent, ask) as Promise<IChatTurn>,
   onAgentEvent: (listener: (event: IAgentEvent) => void) => {
     const forward = (_: unknown, event: IAgentEvent) => {
       listener(event);

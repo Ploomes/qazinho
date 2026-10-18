@@ -1,7 +1,12 @@
 import type { ICorpusFile, IHarnessSection } from '@/harness/context/types';
 import type { IHarnessTools } from '@/harness/tools/types';
 import type { HarnessRole, IHarnessTarget } from '@/harness/types';
-import type { IChatReference, IFlatStep, ITargetUnderTest } from '@/shared/types';
+import type {
+  IChatAnswer,
+  IChatReference,
+  IFlatStep,
+  ITargetUnderTest,
+} from '@/shared/types';
 import { CORPUS } from '@/harness/context/constants';
 import {
   describeCase,
@@ -11,6 +16,7 @@ import {
   renderSections,
   sectionsFor,
 } from '@/harness/context/library';
+import { readChatAnswer } from '@/harness/library';
 import { CHAT_SCHEMA } from '@/harness/schemas';
 import { MCP_HOST, TOOL_GRANTS } from '@/harness/tools/constants';
 import { toolsOfRole } from '@/harness/tools/library';
@@ -71,6 +77,11 @@ export class Harness {
       schema: CHAT_SCHEMA,
       tools: this.toolsFor('chat'),
     };
+  }
+
+  /** The chat answer out of what the agent printed, checked against the schema it was asked for. */
+  public readChat(text: string): IChatAnswer | null {
+    return readChatAnswer(text);
   }
 
   /** The system prompt of a run on one device. */
