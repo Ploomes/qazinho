@@ -20,6 +20,11 @@ The Android SDK and Xcode are too big: the first-run setup links to them and che
 Built for technical QA teams, and for QA moving from manual to technical. A project is an
 environment with one or more targets. Workspaces hold a test plan, and several run in parallel.
 
+**It looks like a desk with stickers on it** (`rules/sticker-design.md`): the work is printed on
+a Night or Paper surface, and the Estagiário, the wordmark, the main buttons, badges, cards and
+popups are die-cut stickers that slap on and peel off. That design is the face of the app; every
+screen follows it.
+
 ## The rules that are not up for negotiation
 
 1. **Everything runs on the user's machine.** Emulators, simulators, browsers and runs. The free
@@ -73,6 +78,7 @@ tracker does not receive a bug yet.
 @rules/architecture.md
 @rules/code-structure.md
 @rules/components.md
+@rules/sticker-design.md
 @rules/design-tokens.md
 @rules/animation.md
 @rules/i18n.md

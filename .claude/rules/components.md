@@ -5,7 +5,8 @@ QAzinho has no design system package. Every shared visual component lives in
 
 ```
 src/shared/components/
-├── atoms/        Button, Chip, StatusPill, Input, IconButton, Meter, Kbd, Logo, Intern, Markdown
+├── atoms/        Button, Chip, StatusPill, Input, IconButton, Meter, Kbd, Logo, Intern, Markdown,
+│                 Wordmark, Tag
 ├── molecules/    TabBar, SidebarRow, CountTile, TargetCard, MetaGrid
 ├── organisms/    Titlebar, Sidebar, Composer, PlanCase, DevicePanel, ResourcePopover
 └── templates/    AppShell, ModalFrame

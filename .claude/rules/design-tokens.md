@@ -2,8 +2,9 @@
 
 QAzinho has no design system package. The scale is a set of CSS custom properties in
 `src/shared/styles/tokens.css`, declared on `[data-theme]`. The layout comes from `assets/prototype.html`;
-the colours come from the QAzinho brand: Lima Estagiário `#C6F432` (`--lime`), Tinta `#141414`,
-Bug `#FF4D2E` (`--fail`) and Papel `#F4F2EA`.
+the colours come from the QAzinho brand: Lima Estagiário `#C6F432` (`--lime`), Tinta `#141414`
+(`--brand-ink`), Bug `#FF4D2E` (`--fail`), Papel `#F4F2EA` (`--brand-paper`) and the indigo of
+the sticker sheet (`--indigo`). How they become stickers is `sticker-design.md`.
 
 ## Never hardcode what the scale defines
 
@@ -28,27 +29,37 @@ font: var(--font-ui-md);
 
 ## The scales
 
-| Group     | Tokens                                                                         |
-| --------- | ------------------------------------------------------------------------------ |
-| Surfaces  | `--bg --win --panel --center --raise --raise2 --screen`                        |
-| Lines     | `--line --line2 --sel --stripe`                                                |
-| Ink       | `--ink --ink2 --ink3`                                                          |
-| Accent    | `--lime --lime-ink --lime-soft --on-lime`                                      |
-| Verdicts  | `--pass --fail --block --skip --attn`, each with a `-soft` pair                |
-| Space     | `--space-1 2px` · `2 4` · `3 8` · `4 12` · `5 16` · `6 20` · `7 24` · `8 30`   |
-| Radius    | `--radius-xs 6` · `sm 8` · `md 10` · `lg 12` · `xl 14` · `2xl 16` · `pill 999` |
-| Font      | `--font-display --font-ui --font-mono`, plus `--font-ui-sm/md/lg` shorthands   |
-| Motion    | `--ease --dur-fast --dur --dur-slow`                                           |
-| Elevation | `--shadow --shadow-popover --shadow-modal`                                     |
+| Group     | Tokens                                                                              |
+| --------- | ----------------------------------------------------------------------------------- |
+| Surfaces  | `--bg --win --panel --center --raise --raise2 --screen`                             |
+| Lines     | `--line --line2 --sel --stripe`                                                     |
+| Ink       | `--ink --ink2 --ink3`                                                               |
+| Accent    | `--lime --lime-ink --lime-soft --on-lime`                                           |
+| Verdicts  | `--pass --fail --block --skip --attn`, each with a `-soft` pair                     |
+| Space     | `--space-1 2px` · `2 4` · `3 8` · `4 12` · `5 16` · `6 20` · `7 24` · `8 30`        |
+| Radius    | `--radius-xs 6` · `sm 8` · `md 12` · `lg 14` · `xl 18` · `2xl 22` · `pill 999`      |
+| Font      | `--font-display --font-ui --font-mono`, `--font-ui-*`, `--font-display-sm/md/lg/xl` |
+| Type      | `--display-tracking` for display at 800, `--font-mono-tag --tag-tracking` for tags  |
+| Motion    | `--ease --ease-in --dur-press --dur-fast --dur --dur-slow`                          |
+| Sticker   | `--edge`, `--edge-width` 2 · `-lg` 3 · `-xl` 4, and the shadows below               |
+| Elevation | `--sticker-rest --sticker-lift --sticker-press --sticker-hero`                      |
+| Tilt      | `--tilt-xs` -1° · `--tilt-sm` -2° · `--tilt-md` -4°                                 |
+| Brand     | `--brand-ink --brand-paper --indigo --indigo-deep --indigo-dusk --on-indigo`        |
 
-Both themes declare the same names: `[data-theme='dark']` and `[data-theme='light']`. A token
-that exists in one theme and not the other is a bug.
+Both themes declare the same names: `[data-theme='dark']` is Night and `[data-theme='light']`
+is Paper, the two surfaces of the app icon.
+
+`[data-theme='indigo']` is not a theme the QA picks. A brand moment (the onboarding, the welcome
+board) sets it on its own root, so the text on the indigo table reads and the cards on it turn
+into charcoal stickers. It declares the same names too. A token that exists in one scope and not
+the others is a bug.
 
 ## The three families
 
-`Bricolage Grotesque` for display only (titles, counters, and the wordmark at 800 with tightened tracking, as in the logo), `IBM Plex Sans` for every piece
-of body and UI text, `JetBrains Mono` for anything technical: ids, timestamps, paths, counters,
-uppercase eyebrows, badges, keycaps and status glyphs.
+`Bricolage Grotesque` for display only: titles and counters at 800 with `--display-tracking`,
+like the wordmark. `IBM Plex Sans` for every piece of body and UI text. `JetBrains Mono` for
+anything technical: ids, timestamps, paths, counters, uppercase eyebrows, tags, badges, keycaps
+and status glyphs.
 
 ## When a value is not on the scale
 
