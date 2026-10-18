@@ -46,6 +46,9 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
 - `will-navigate` is cancelled unless `isInternalNavigation` says the target is the app itself.
 - `window.open` never opens a window: `https:` links go to the system browser, everything else is
   denied.
+- **An MCP sign-in never passes through QAzinho.** Figma's MCP lives in the QA's own Claude Code:
+  QAzinho adds it there (`claude mcp add --scope user`) and opens Terminal on `claude "/mcp"`,
+  where the QA signs in; it only reads the result back from `claude mcp list`.
 - **A tracker token never reaches the page.** It crosses to main once, is checked, and is sealed
   with `safeStorage`; the page only ever sees the account it belongs to.
 - `index.html` carries a CSP. Loosen one directive with a reason, never the whole policy.
@@ -113,6 +116,7 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `Archive`                             | the QA's projects, workspaces and plans, as files on disk              |
 | `SetupInstaller`                      | installs an agent CLI or idb on request, streaming each line it prints |
 | `IntegrationVault`                    | checks a tracker token and keeps it sealed with `safeStorage`          |
+| `AgentMcp`                            | adds an MCP server to the QA's Claude Code and opens its sign-in       |
 
 ## Dependencies
 
