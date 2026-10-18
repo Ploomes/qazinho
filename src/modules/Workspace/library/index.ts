@@ -2,6 +2,7 @@ export * from './buildRun';
 export * from './finishRun';
 export * from './fromSaved';
 export * from './landStep';
+export * from './resumeRun';
 export * from './startRun';
 export * from './stopRun';
 export * from './toSaved';

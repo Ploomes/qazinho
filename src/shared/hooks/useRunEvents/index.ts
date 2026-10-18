@@ -10,6 +10,8 @@ export const useRunEvents = () => {
   const landStep = useWorkspaceStore((state) => state.landStep);
   const landRunDone = useWorkspaceStore((state) => state.landRunDone);
   const landRunFailed = useWorkspaceStore((state) => state.landRunFailed);
+  const resumeRun = useWorkspaceStore((state) => state.resumeRun);
+  const isLoaded = useWorkspaceStore((state) => state.isLoaded);
 
   useEffect(
     () =>
@@ -26,4 +28,12 @@ export const useRunEvents = () => {
       }),
     [agent, markDoing, markStreaming, landNote, landStep, landRunDone, landRunFailed],
   );
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    void Run.inFlight().then((runs) => {
+      for (const run of runs) resumeRun(run);
+    });
+  }, [isLoaded, resumeRun]);
 };

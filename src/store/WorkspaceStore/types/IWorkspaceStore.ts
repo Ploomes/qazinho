@@ -2,7 +2,7 @@ import type { BugFilter } from '@/modules/Bug';
 import type { ITestCase } from '@/modules/Plan';
 import type { RunFilter } from '@/modules/Run';
 import type { IWorkspace, WorkspaceTab } from '@/modules/Workspace';
-import type { IStepOutcome } from '@/shared/types';
+import type { IRunInFlight, IStepOutcome } from '@/shared/types';
 
 /** The workspaces and everything the QA can poke inside one of them. */
 export interface IWorkspaceStore {
@@ -45,6 +45,7 @@ export interface IWorkspaceStore {
   answerAsk: (props: { workspaceId: string; reply: string }) => void;
   setPlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
   startRun: (props: { workspaceId: string; runId: string }) => void;
+  resumeRun: (run: IRunInFlight) => void;
   pauseRun: (workspaceId: string) => void;
   stopRun: (workspaceId: string) => void;
   markDoing: (props: { workspaceId: string; index: number }) => void;
