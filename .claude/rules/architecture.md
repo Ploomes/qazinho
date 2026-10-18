@@ -47,9 +47,15 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
 - `window.open` never opens a window: `https:` links go to the system browser, everything else is
   denied.
 - **An MCP sign-in never passes through QAzinho.** Figma's MCP lives in the QA's own agent,
-  Claude Code or Codex: QAzinho adds it there and starts the agent's own sign-in, in Terminal
-  (`claude "/mcp"`) or in the browser (`codex mcp login`), then reads the result back from the
-  agent's `mcp list`. Each agent's commands are a recipe in `MCP_RECIPES`.
+  Claude Code or Codex: QAzinho adds it there and runs the agent's own sign-in, and the token
+  stays with the agent. Each agent's commands are a recipe in `MCP_RECIPES`.
+  - Claude Code signs in only from its `/mcp` screens. `AgentTerminal` opens them in a terminal
+    nobody sees (`/usr/bin/expect`, on every Mac) and `nextMcpMove` presses the keys a QA would.
+    It answers yes to the folder trust question only for QAzinho's own agent folder.
+  - The page Claude Code asks `$BROWSER` to open is caught and opened by QAzinho, so the popup
+    can open it again. Codex prints its page (`codex mcp login`).
+  - Each step reaches the page as `McpSignInProgress`. Terminal (`claude "/mcp"`) stays as the
+    way round when the hidden screens are not what `nextMcpMove` knows.
 - **A tracker token never reaches the page.** It crosses to main once, is checked, and is sealed
   with `safeStorage`; the page only ever sees the account it belongs to.
 - `index.html` carries a CSP. Loosen one directive with a reason, never the whole policy.
@@ -117,7 +123,8 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `Archive`                             | the QA's projects, workspaces and plans, as files on disk                       |
 | `SetupInstaller`                      | installs an agent CLI or idb on request, streaming each line it prints          |
 | `IntegrationVault`                    | checks a tracker token and keeps it sealed with `safeStorage`                   |
-| `AgentMcp`                            | adds an MCP server to the QA's Claude Code and opens its sign-in                |
+| `AgentTerminal`                       | runs an agent's full-screen interface out of sight: reads it, presses its keys  |
+| `AgentMcp`                            | adds an MCP server to the QA's agent and signs it in there, step by step        |
 
 ## Dependencies
 
