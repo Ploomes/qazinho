@@ -3,6 +3,7 @@ export * from './decodeXml';
 export * from './describeScreen';
 export * from './findNode';
 export * from './frontPackage';
+export * from './isListedControl';
 export * from './launchArgs';
 export * from './listAvds';
 export * from './needsReinstall';

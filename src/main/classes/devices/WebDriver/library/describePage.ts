@@ -1,6 +1,7 @@
 import type { Page } from 'playwright-core';
 import { WEB_DRIVER } from '@/main/classes/devices/WebDriver/constants';
 import { numberDuplicates } from '@/main/library';
+import { listControls } from './listControls';
 
 /** What the agent is allowed to look at: what a person would see, not the markup, with controls that read alike numbered. */
 export async function describePage(page: Page): Promise<string> {
@@ -13,36 +14,9 @@ export async function describePage(page: Page): Promise<string> {
     .replace(/\n{3,}/g, '\n\n')
     .slice(0, WEB_DRIVER.pageTextLimit);
 
-  const controls = await page
-    .$$eval(
-      'button, a, input, select, textarea, [role=button], [role=link]',
-      (nodes, limit) =>
-        nodes
-          .filter(
-            (node) =>
-              (
-                node as unknown as { getClientRects: () => { length: number } }
-              ).getClientRects().length > 0,
-          )
-          .slice(0, limit)
-          .map((node) => {
-            const element = node as unknown as {
-              getAttribute: (name: string) => string | null;
-              innerText: string;
-              tagName: string;
-            };
-            const label =
-              element.getAttribute('aria-label') ??
-              element.getAttribute('placeholder') ??
-              element.getAttribute('name') ??
-              element.innerText;
-
-            return `${element.tagName.toLowerCase()}: ${(label || '').trim().slice(0, 60)}`;
-          })
-          .filter((line) => line.length > 4),
-      WEB_DRIVER.elementLimit,
-    )
-    .catch(() => []);
+  const controls = (await listControls(page))
+    .slice(0, WEB_DRIVER.elementLimit)
+    .map(({ role, label }) => `${role}: ${label}`);
 
   return [
     `URL: ${page.url()}`,

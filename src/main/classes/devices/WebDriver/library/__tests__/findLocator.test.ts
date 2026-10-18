@@ -120,4 +120,39 @@ describe('findLocator', () => {
       'label',
     );
   });
+
+  /**
+   * The menu's "Entrar" link and the form's "Entrar" button: look numbers them #1 and #2 in page
+   * order, and "Entrar #2" has to be the button, not the second of whatever role came first.
+   */
+  it('takes "#2" as the second control of that name in the list look gave, whatever its role', async () => {
+    const page = fakePage({
+      $$eval: () =>
+        Promise.resolve([
+          { role: 'a', label: 'Início', at: 0 },
+          { role: 'a', label: 'Entrar', at: 3 },
+          { role: 'input', label: 'E-mail', at: 4 },
+          { role: 'button', label: 'Entrar', at: 6 },
+        ]),
+      locator: () => ({
+        nth: (index: number) =>
+          fakeLocator({ name: `listed@${String(index)}`, count: 1 }),
+      }),
+    });
+
+    expect(
+      locatorName(await findLocator({ page, target: 'Entrar #2', kind: 'click' })),
+    ).toBe('listed@6');
+    expect(
+      locatorName(await findLocator({ page, target: 'entrar #1', kind: 'click' })),
+    ).toBe('listed@3');
+  });
+
+  it('falls back to the usual search when the list has no such number', async () => {
+    const page = pageWith({ 'role:button:exact': 3 });
+
+    expect(
+      locatorName(await findLocator({ page, target: 'Comprar #2', kind: 'click' })),
+    ).toBe('role:button:exact#2');
+  });
 });

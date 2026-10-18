@@ -68,4 +68,32 @@ describe('findNode', () => {
   it('a blank target never matches', () => {
     expect(findNode({ nodes: NODES, target: '  ' })).toBeNull();
   });
+
+  /** A screen titled "Entrar" with an "Entrar" button: the tap belongs on the button. */
+  it('taps the control before the text that reads the same', () => {
+    const node = NODES[0];
+
+    if (!node) throw new Error('the dump has no node');
+
+    const nodes = [
+      { ...node, text: 'Entrar', id: 'title', isClickable: false, isEditable: false },
+      { ...node, text: 'Entrar', id: 'submit', isClickable: true },
+    ];
+
+    expect(findNode({ nodes, target: 'Entrar' })?.id).toBe('submit');
+  });
+
+  it('counts "#2" among the controls look listed, not the text around them', () => {
+    const node = NODES[0];
+
+    if (!node) throw new Error('the dump has no node');
+
+    const nodes = [
+      { ...node, text: 'Entrar', id: 'title', isClickable: false, isEditable: false },
+      { ...node, text: 'Entrar', id: 'menu', isClickable: true },
+      { ...node, text: 'Entrar', id: 'submit', isClickable: true },
+    ];
+
+    expect(findNode({ nodes, target: 'Entrar #2' })?.id).toBe('submit');
+  });
 });

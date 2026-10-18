@@ -1,5 +1,6 @@
 import type { IScreenNode } from '@/main/classes/devices/AndroidDriver/types';
 import { ordinalOf, withoutRole } from '@/main/library';
+import { isListedControl } from './isListedControl';
 
 function says(node: IScreenNode): string[] {
   return [node.text, node.desc, node.id].filter((one) => one.length > 0);
@@ -18,10 +19,16 @@ function find(props: { nodes: IScreenNode[]; target: string }): IScreenNode | nu
     says(node).some((one) => one.toLowerCase().includes(wanted)),
   );
 
-  return exact[nth] ?? partial[nth] ?? null;
+  return (
+    exact.filter(isListedControl)[nth] ??
+    exact[nth] ??
+    partial.filter(isListedControl)[nth] ??
+    partial[nth] ??
+    null
+  );
 }
 
-/** The agent names what a person would read, the label before the id, "#2" for the second of several, and a control copied as look lists it. */
+/** The agent names what a person would read, a control before text that reads the same, "#2" for the second look listed, and a control copied as look lists it. */
 export function findNode(props: {
   nodes: IScreenNode[];
   target: string;

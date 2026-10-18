@@ -1,5 +1,22 @@
 import type { Locator, Page } from 'playwright-core';
+import { CONTROL_SELECTOR } from '@/main/classes/devices/WebDriver/constants';
 import { ordinalOf, withoutRole } from '@/main/library';
+import { listControls } from './listControls';
+
+async function listed(props: {
+  page: Page;
+  name: string;
+  nth: number;
+}): Promise<Locator | null> {
+  const wanted = props.name.toLowerCase();
+  const control = (await listControls(props.page)).filter(
+    ({ label }) => label.toLowerCase() === wanted,
+  )[props.nth];
+
+  return control === undefined
+    ? null
+    : props.page.locator(CONTROL_SELECTOR).nth(control.at);
+}
 
 async function locate(props: {
   page: Page;
@@ -7,9 +24,13 @@ async function locate(props: {
   kind: 'click' | 'fill';
 }): Promise<Locator | null> {
   const { page, kind } = props;
-  const { name, nth } = ordinalOf(props.target.trim());
+  const { name, nth, isNumbered } = ordinalOf(props.target.trim());
 
   if (name.length === 0) return null;
+
+  const numbered = isNumbered ? await listed({ page, name, nth }) : null;
+
+  if (numbered !== null) return numbered;
 
   const fields = [
     page.getByLabel(name, { exact: true }),

@@ -1,6 +1,7 @@
 import type { IScreenNode } from '@/main/classes/devices/AndroidDriver/types';
 import { ANDROID } from '@/main/classes/devices/AndroidDriver/constants';
 import { numberDuplicates } from '@/main/library';
+import { isListedControl } from './isListedControl';
 
 function labelOf(node: IScreenNode): string {
   const label = node.text.length > 0 ? node.text : node.desc;
@@ -10,18 +11,14 @@ function labelOf(node: IScreenNode): string {
 
 /** What the agent is allowed to look at: what a person would read on the screen. */
 export function describeScreen(props: { nodes: IScreenNode[]; app: string }): string {
-  const readable = props.nodes.filter(
-    (node) => node.text.length > 0 || node.desc.length > 0 || node.isEditable,
-  );
-
-  const text = readable
+  const text = props.nodes
     .filter((node) => node.text.length > 0)
     .map((node) => node.text)
     .join('\n')
     .slice(0, ANDROID.screenTextLimit);
 
-  const controls = readable
-    .filter((node) => node.isClickable || node.isEditable || node.desc.length > 0)
+  const controls = props.nodes
+    .filter(isListedControl)
     .slice(0, ANDROID.controlLimit)
     .map(labelOf);
 

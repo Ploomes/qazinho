@@ -8,7 +8,14 @@ function pageShowing(props: { text: string; controls: string[] }) {
     url: () => 'https://shop.test/cart',
     title: () => Promise.resolve('Cart'),
     locator: () => ({ innerText: () => Promise.resolve(props.text) }),
-    $$eval: () => Promise.resolve(props.controls),
+    $$eval: () =>
+      Promise.resolve(
+        props.controls.map((line, at) => {
+          const [role = '', label = ''] = line.split(': ');
+
+          return { role, label, at };
+        }),
+      ),
   });
 }
 
@@ -29,6 +36,15 @@ describe('describePage', () => {
         'button: Checkout',
       ].join('\n'),
     );
+  });
+
+  it('numbers a menu link and a form button that read alike, in the order they show', async () => {
+    const page = pageShowing({
+      text: 'Entrar',
+      controls: ['a: Entrar', 'button: Entrar'],
+    });
+
+    expect(await describePage(page)).toContain('a: Entrar #1\nbutton: Entrar #2');
   });
 
   it('a page longer than the limit is cut, so one screen never eats the context', async () => {
