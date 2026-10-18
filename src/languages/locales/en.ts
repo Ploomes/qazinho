@@ -159,6 +159,17 @@ export const en = {
     NO_SHOT: 'This step has no screenshot.',
     NO_TARGET:
       'The target this workspace runs on is gone from its project. Add it back in the project settings, then run again.',
+    FAILED_AGENT_MISSING:
+      'QAzinho cannot find {{agent}} on this machine. Install it, or pick another agent in Settings.',
+    FAILED_NO_EMULATOR:
+      'QAzinho found no Android emulator to open. Make one in Android Studio, then run the plan again.',
+    FAILED_NO_SIMULATOR:
+      'QAzinho needs idb and an iPhone simulator to drive iOS, and one of them is missing: Settings → Devices shows which.',
+    FAILED_UNREACHABLE:
+      'Chrome could not open {{url}} ({{code}}). Check that the app is up and that this machine can reach it, then run the plan again.',
+    FAILED_AGENT_ERROR: 'The agent answered with an error, so the run stopped: {{said}}',
+    FAILED_AGENT_SILENT: 'The agent stopped answering, so the run stopped too.',
+    FAILED_OTHER: 'The run stopped: {{said}}',
   },
   BUG: {
     EMPTY_TITLE: 'No bugs yet.',

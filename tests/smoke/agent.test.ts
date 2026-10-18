@@ -70,6 +70,7 @@ const server = createServer((_request, response) => {
 /** Walks one step with a fake agent; `inFlight` is what main held when the step landed, and after. */
 async function walkWith(
   script: string,
+  url = `http://127.0.0.1:${String(PORT)}/`,
 ): Promise<
   IRunEvent[] & { inFlight: { atStep: IRunInFlight[]; after: IRunInFlight[] } }
 > {
@@ -105,7 +106,7 @@ async function walkWith(
     workspaceId: 'w-agent',
     agentId: 'fake',
     model: '',
-    target: { kind: 'web', value: `http://127.0.0.1:${String(PORT)}/` },
+    target: { kind: 'web', value: url },
     runId: 'r-01',
     steps: [
       {
@@ -159,13 +160,29 @@ describe('an agent on a real browser', () => {
     expect(inFlight.after).toEqual([]);
   });
 
+  it("names the address a run could not open, instead of Chrome's own words", async () => {
+    const events = await walkWith(RESOURCEFUL, 'http://127.0.0.1:4334/');
+
+    expect(events.at(-1)).toMatchObject({
+      kind: 'failed',
+      failure: {
+        reason: 'unreachable',
+        url: 'http://127.0.0.1:4334/',
+        code: 'ERR_CONNECTION_REFUSED',
+      },
+    });
+  });
+
   it('stops the run with the agent error instead of blocking every step', async () => {
     const events = await walkWith(BROKEN);
 
     expect(events.some((event) => event.kind === 'step')).toBe(false);
     expect(events.at(-1)).toMatchObject({
       kind: 'failed',
-      text: expect.stringContaining('API Error: 400') as string,
+      failure: {
+        reason: 'agent-error',
+        said: expect.stringContaining('API Error: 400') as string,
+      },
     });
   });
 });

@@ -1,7 +1,9 @@
 // @vitest-environment jsdom
-import type { IRunInFlight } from '@/shared/types';
-import { renderHook, waitFor } from '@testing-library/react';
+import type { IRunEvent, IRunInFlight } from '@/shared/types';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { i18n } from '@/languages';
+import { startRun } from '@/modules/Workspace/library';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useRunEvents } from '@/shared/hooks/useRunEvents';
@@ -51,5 +53,50 @@ describe('useRunEvents', () => {
       });
     });
     expect(useWorkspaceStore.getState().workspaces[0]?.status).toBe('running');
+  });
+
+  /**
+   * A run that could not open the app used to land Playwright's own words in the chat:
+   * "page.goto: net::ERR_UNSAFE_PORT … Call log: …", in English whatever the QA reads.
+   */
+  it("says why a run stopped in the QA's language, with the address it could not open", async () => {
+    let send: (event: IRunEvent) => void = () => undefined;
+
+    window.qazinho = {
+      ...fakeQazinhoApi('darwin'),
+      onRunEvent: (listener) => {
+        send = listener;
+
+        return () => undefined;
+      },
+    };
+    useWorkspaceStore.setState({
+      workspaces: [
+        startRun({ workspace: makeWorkspace(), startedAt: '09:41', runId: 'r-01' }),
+      ],
+    });
+    await i18n.changeLanguage('pt');
+
+    renderHook(() => {
+      useRunEvents();
+    });
+
+    act(() => {
+      send({
+        kind: 'failed',
+        workspaceId: 'w1',
+        failure: {
+          reason: 'unreachable',
+          url: 'http://127.0.0.1:3000/',
+          code: 'ERR_CONNECTION_REFUSED',
+        },
+      });
+    });
+
+    expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
+      kind: 'error',
+      text: 'O Chrome não conseguiu abrir http://127.0.0.1:3000/ (ERR_CONNECTION_REFUSED). Confira se o app está no ar e se esta máquina o alcança, e rode o plano de novo.',
+    });
+    await i18n.changeLanguage('en');
   });
 });

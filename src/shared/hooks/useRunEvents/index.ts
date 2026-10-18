@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { RUN_FAILURE_KEYS } from '@/modules/Run/constants';
 import { Run } from '@/services';
 import { useSettingsStore, useWorkspaceStore } from '@/store';
 
 export const useRunEvents = () => {
+  const { t } = useTranslation();
   const markDoing = useWorkspaceStore((state) => state.markDoing);
   const markStreaming = useWorkspaceStore((state) => state.markStreaming);
   const landNote = useWorkspaceStore((state) => state.landNote);
@@ -24,9 +27,13 @@ export const useRunEvents = () => {
           landNote({ workspaceId: event.workspaceId, text: event.text, who: agent });
         else if (event.kind === 'step') landStep(event.outcome);
         else if (event.kind === 'done') landRunDone(event.workspaceId);
-        else landRunFailed({ workspaceId: event.workspaceId, text: event.text });
+        else
+          landRunFailed({
+            workspaceId: event.workspaceId,
+            text: t(RUN_FAILURE_KEYS[event.failure.reason], { ...event.failure, agent }),
+          });
       }),
-    [agent, markDoing, markStreaming, landNote, landStep, landRunDone, landRunFailed],
+    [agent, t, markDoing, markStreaming, landNote, landStep, landRunDone, landRunFailed],
   );
 
   useEffect(() => {

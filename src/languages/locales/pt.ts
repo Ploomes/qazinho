@@ -161,6 +161,17 @@ export const pt: typeof en = {
     NO_SHOT: 'Este passo não tem screenshot.',
     NO_TARGET:
       'O target em que este workspace roda saiu do projeto. Adicione de volta nas configurações do projeto e rode de novo.',
+    FAILED_AGENT_MISSING:
+      'O QAzinho não encontra o {{agent}} nesta máquina. Instale, ou escolha outro agente em Configurações.',
+    FAILED_NO_EMULATOR:
+      'O QAzinho não achou um emulador Android para abrir. Crie um no Android Studio e rode o plano de novo.',
+    FAILED_NO_SIMULATOR:
+      'O QAzinho precisa do idb e de um simulador de iPhone para dirigir o iOS, e falta um deles: Configurações → Dispositivos mostra qual.',
+    FAILED_UNREACHABLE:
+      'O Chrome não conseguiu abrir {{url}} ({{code}}). Confira se o app está no ar e se esta máquina o alcança, e rode o plano de novo.',
+    FAILED_AGENT_ERROR: 'O agente respondeu com um erro, então a run parou: {{said}}',
+    FAILED_AGENT_SILENT: 'O agente parou de responder, então a run parou também.',
+    FAILED_OTHER: 'A run parou: {{said}}',
   },
   BUG: {
     EMPTY_TITLE: 'Nenhum bug ainda.',

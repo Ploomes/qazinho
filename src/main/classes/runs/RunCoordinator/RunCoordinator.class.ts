@@ -11,17 +11,18 @@ import type {
   IRunInFlight,
   IStartRun,
   IViewport,
+  RunFailure,
   TargetKind,
 } from '@/shared/types';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { WEB_DRIVER } from '@/main/classes/devices/WebDriver/constants';
-import { stripAnsi } from '@/main/library';
 import { RUN_WALK, UNWALKED } from './constants';
 import {
   agentFailure,
   casesOf,
   driverFor,
+  failureOf,
   followRunEvent,
   outcomeOfReport,
   unwalkedOutcome,
@@ -65,7 +66,7 @@ export class RunCoordinator {
       this.emit({
         kind: 'failed',
         workspaceId: run.workspaceId,
-        text: `QAzinho cannot find ${run.agentId} on this machine. Install it, or pick another agent in Settings.`,
+        failure: { reason: 'agent-missing', agentId: run.agentId },
       });
 
       return;
@@ -76,7 +77,7 @@ export class RunCoordinator {
     const missing = this.whatIsMissing({ kind: run.target.kind, android, ios });
 
     if (missing !== null) {
-      this.emit({ kind: 'failed', workspaceId: run.workspaceId, text: missing });
+      this.emit({ kind: 'failed', workspaceId: run.workspaceId, failure: missing });
 
       return;
     }
@@ -153,12 +154,11 @@ export class RunCoordinator {
     kind: TargetKind;
     android: IAndroidSetup | null;
     ios: IIosSetup | null;
-  }): string | null {
+  }): RunFailure | null {
     if (props.kind === 'android' && props.android === null)
-      return 'QAzinho found no Android emulator to open. Make one in Android Studio, then run the plan again.';
+      return { reason: 'no-emulator' };
 
-    if (props.kind === 'ios' && props.ios === null)
-      return 'QAzinho needs idb to tap an iOS simulator, and a simulator to open. Install idb with `brew install idb-companion`, then run the plan again.';
+    if (props.kind === 'ios' && props.ios === null) return { reason: 'no-simulator' };
 
     return null;
   }
@@ -190,16 +190,16 @@ export class RunCoordinator {
       this.emit({
         kind: 'failed',
         workspaceId: run.workspaceId,
-        text: this.explain(reason),
+        failure: failureOf(reason),
       });
 
       return;
     }
 
     const broke = await this.walkSteps({ run, driver }).then(
-      () => null,
+      (failure) => failure,
       (reason: unknown) =>
-        this.stopping.has(run.workspaceId) ? null : this.explain(reason),
+        this.stopping.has(run.workspaceId) ? null : failureOf(reason),
     );
 
     await driver.close();
@@ -209,14 +209,14 @@ export class RunCoordinator {
     this.emit(
       broke === null
         ? { kind: 'done', workspaceId: run.workspaceId }
-        : { kind: 'failed', workspaceId: run.workspaceId, text: broke },
+        : { kind: 'failed', workspaceId: run.workspaceId, failure: broke },
     );
   }
 
   private async walkSteps(props: {
     run: IWalkRun;
     driver: IDeviceDriver;
-  }): Promise<void> {
+  }): Promise<RunFailure | null> {
     const { run, driver } = props;
 
     for (const [position, steps] of casesOf(run.steps).entries()) {
@@ -226,16 +226,22 @@ export class RunCoordinator {
 
       if (position > 0) await driver.restart().catch(() => undefined);
 
-      if (!(await this.walkCase({ run, driver, steps }))) break;
+      const walked = await this.walkCase({ run, driver, steps });
+
+      if (walked === false) break;
+
+      if (walked !== true) return walked;
     }
+
+    return null;
   }
 
-  /** One agent turn per case, in a session of its own: it acts and reports each step through the tools. */
+  /** One agent turn per case, in a session of its own: true goes on, false stops, a failure stops and says why. */
   private async walkCase(props: {
     run: IWalkRun;
     driver: IDeviceDriver;
     steps: { step: IFlatStep; index: number }[];
-  }): Promise<boolean> {
+  }): Promise<boolean | RunFailure> {
     const { run, driver } = props;
     const { workspaceId } = run;
     const pending = [...props.steps];
@@ -358,7 +364,7 @@ export class RunCoordinator {
 
     const failed = agentFailure(asked);
 
-    if (failed !== null) throw new Error(failed);
+    if (failed !== null) return failed;
 
     unwalked('blocked');
 
@@ -381,10 +387,6 @@ export class RunCoordinator {
   private async holdWhilePaused(workspaceId: string): Promise<void> {
     while (this.paused.has(workspaceId) && !this.stopping.has(workspaceId))
       await new Promise((wake) => setTimeout(wake, RUN_WALK.holdMs));
-  }
-
-  private explain(reason: unknown): string {
-    return stripAnsi(reason instanceof Error ? reason.message : String(reason));
   }
 
   private emit(event: IRunEvent): void {

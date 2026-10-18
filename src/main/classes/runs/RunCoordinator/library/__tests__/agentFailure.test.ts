@@ -8,9 +8,10 @@ describe('agentFailure', () => {
         isError: true,
         text: 'API Error: 400 model: String should have at least 1 character',
       }),
-    ).toBe(
-      'The agent answered with an error, so the run stopped: API Error: 400 model: String should have at least 1 character',
-    );
+    ).toEqual({
+      reason: 'agent-error',
+      said: 'API Error: 400 model: String should have at least 1 character',
+    });
   });
 
   it('does NOT stop a run the agent answered', () => {
@@ -18,8 +19,6 @@ describe('agentFailure', () => {
   });
 
   it('still says why when the agent errored in silence', () => {
-    expect(agentFailure({ isError: true, text: '' })).toBe(
-      'The agent stopped answering, so the run stopped too.',
-    );
+    expect(agentFailure({ isError: true, text: '' })).toEqual({ reason: 'agent-silent' });
   });
 });
