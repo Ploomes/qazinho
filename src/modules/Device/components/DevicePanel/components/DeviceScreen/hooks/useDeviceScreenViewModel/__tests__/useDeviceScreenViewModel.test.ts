@@ -9,8 +9,6 @@ const screen = (props: Partial<IDeviceScreenProps>) =>
     useDeviceScreenViewModel({
       shot: null,
       stream: null,
-      isLive: true,
-      elapsedLabel: '',
       ratio: 1280 / 800,
       ...props,
     }),

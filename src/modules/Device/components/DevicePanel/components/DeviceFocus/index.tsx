@@ -2,6 +2,7 @@ import type { IDeviceFocusProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { DeviceScreen } from '@/modules/Device/components/DevicePanel/components/DeviceScreen';
+import { LiveClock } from '@/modules/Device/components/DevicePanel/components/LiveClock';
 import { DEVICE } from '@/modules/Device/constants';
 import { Button, Eyebrow, Intern, Kbd, StatusPill } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
@@ -36,13 +37,7 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
               <span className="device-focus__url">{props.urlText}</span>
             </div>
           )}
-          <DeviceScreen
-            shot={props.shot}
-            stream={props.stream}
-            isLive={props.isLive}
-            elapsedLabel={props.elapsedLabel}
-            ratio={props.ratio}
-          />
+          <DeviceScreen shot={props.shot} stream={props.stream} ratio={props.ratio} />
         </motion.div>
       </div>
 
@@ -57,6 +52,7 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
           <span className="device-focus__state">
             <Intern mood={props.mood} size={26} isStill />
             {props.stateText}
+            {props.isLive && <LiveClock label={props.elapsedLabel} />}
           </span>
           <Button size="sm" variant="ghost" onClick={props.onClose}>
             {t('DEVICE.FOCUS_LEAVE')}

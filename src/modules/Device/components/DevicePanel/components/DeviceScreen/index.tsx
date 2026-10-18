@@ -6,7 +6,7 @@ import { useDeviceScreenViewModel } from './hooks';
 import './styles.css';
 
 export const DeviceScreen: React.FC<IDeviceScreenProps> = (props) => {
-  const { shot, stream, isLive, elapsedLabel } = props;
+  const { shot, stream } = props;
   const { className, style } = useDeviceScreenViewModel(props);
   const { t } = useTranslation();
 
@@ -35,13 +35,6 @@ export const DeviceScreen: React.FC<IDeviceScreenProps> = (props) => {
           />
         )}
       </AnimatePresence>
-
-      {isLive && (
-        <span className="device-screen__live">
-          <span className="device-screen__live-dot" />
-          {elapsedLabel}
-        </span>
-      )}
     </div>
   );
 };

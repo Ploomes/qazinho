@@ -9,7 +9,7 @@ import {
   StatusPill,
 } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
-import { DeviceFocus, DeviceScreen } from './components';
+import { DeviceFocus, DeviceScreen, LiveClock } from './components';
 import { useDevicePanelViewModel } from './hooks';
 import './styles.css';
 
@@ -108,6 +108,7 @@ export const DevicePanel: React.FC = () => {
                 <span className="device-panel__state">
                   <Intern mood={mood} size={22} isStill />
                   {stateText}
+                  {isLive && <LiveClock label={elapsedLabel} />}
                 </span>
                 <span className="device-panel__collapse">
                   <AnimatePresence initial={false}>
@@ -156,13 +157,7 @@ export const DevicePanel: React.FC = () => {
                     transition={frameTransition}
                     className="device-panel__phone"
                   >
-                    <DeviceScreen
-                      shot={shot}
-                      stream={stream}
-                      isLive={isLive}
-                      elapsedLabel={elapsedLabel}
-                      ratio={screenRatio}
-                    />
+                    <DeviceScreen shot={shot} stream={stream} ratio={screenRatio} />
                   </motion.div>
                 )}
 
@@ -178,13 +173,7 @@ export const DevicePanel: React.FC = () => {
                       <span className="device-panel__dot" />
                       <span className="device-panel__url">{urlText}</span>
                     </div>
-                    <DeviceScreen
-                      shot={shot}
-                      stream={stream}
-                      isLive={isLive}
-                      elapsedLabel={elapsedLabel}
-                      ratio={screenRatio}
-                    />
+                    <DeviceScreen shot={shot} stream={stream} ratio={screenRatio} />
                   </motion.div>
                 )}
               </div>
