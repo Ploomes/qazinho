@@ -5,7 +5,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
 import { useChatViewModel } from '@/modules/Chat/screens/Chat/hooks/useChatViewModel';
 import { endRun, startRun } from '@/modules/Workspace/library';
-import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
+import {
+  makeWorkspace,
+  WALKED_BY,
+  walkRun,
+} from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import {
   useAppStore,
@@ -336,7 +340,7 @@ describe('useChatViewModel', () => {
           workspaces: useWorkspaceStore
             .getState()
             .workspaces.map((workspace) =>
-              startRun({ workspace, startedAt: '09:41', runId: 'r-01' }),
+              startRun({ workspace, startedAt: '09:41', runId: 'r-01', by: WALKED_BY }),
             ),
         });
       });

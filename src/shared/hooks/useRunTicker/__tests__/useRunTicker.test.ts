@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { RUN_CLOCK } from '@/modules/Run';
 import { startRun } from '@/modules/Workspace';
-import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import { makeWorkspace, WALKED_BY } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useRunTicker } from '@/shared/hooks/useRunTicker';
 import { useWorkspaceStore } from '@/store';
 
@@ -17,7 +17,12 @@ beforeEach(() => {
   vi.useFakeTimers();
   useWorkspaceStore.setState({
     workspaces: [
-      startRun({ workspace: makeWorkspace(), startedAt: '09:41', runId: 'r-01' }),
+      startRun({
+        workspace: makeWorkspace(),
+        startedAt: '09:41',
+        runId: 'r-01',
+        by: WALKED_BY,
+      }),
     ],
   });
 });

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { viewportOf } from '@/modules/Device/library';
-import { flattenPlanSteps } from '@/modules/Run/library';
+import { flattenPlanSteps, walkedByOf } from '@/modules/Run/library';
 import { Run } from '@/services';
 import {
   useAppStore,
@@ -39,8 +39,14 @@ export const useRunActions = () => {
       if (!workspace || steps.length === 0 || (live !== null && !live.isDone)) return;
 
       const runId = `r-${String(workspace.runs.length + 1).padStart(2, '0')}`;
+      const { agent, model } = useSettingsStore.getState();
+      const { agents } = useMachineStore.getState();
 
-      start({ workspaceId: workspace.id, runId });
+      start({
+        workspaceId: workspace.id,
+        runId,
+        by: walkedByOf({ agent, model, targetKind: target?.kind ?? 'web', agents }),
+      });
 
       if (target === null) {
         landRunFailed({ workspaceId: workspace.id, text: t('RUN.NO_TARGET') });
@@ -48,14 +54,11 @@ export const useRunActions = () => {
         return;
       }
 
-      const { agent, model } = useSettingsStore.getState();
       const viewport = viewportOf(workspace.viewportId);
 
       Run.start({
         workspaceId: workspace.id,
-        agentId:
-          useMachineStore.getState().agents.find(({ name }) => name === agent)?.id ??
-          'claude-code',
+        agentId: agents.find(({ name }) => name === agent)?.id ?? 'claude-code',
         model,
         target: { kind: target.kind, value: target.value },
         runId,

@@ -178,17 +178,17 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
-  startRun: ({ workspaceId, runId }) =>
+  startRun: ({ workspaceId, runId, by }) =>
     set((state) => ({
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
         change: (workspace) =>
-          startRun({ workspace, runId, startedAt: formatClock(new Date()) }),
+          startRun({ workspace, runId, by, startedAt: formatClock(new Date()) }),
       }),
     })),
 
-  resumeRun: (run) =>
+  resumeRun: ({ run, by }) =>
     set((state) => ({
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
@@ -197,6 +197,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
           resumeRun({
             workspace,
             run,
+            by,
             now: Date.now(),
             startedAt: formatClock(new Date(run.startedAtMs)),
           }),

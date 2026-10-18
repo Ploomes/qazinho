@@ -22,6 +22,12 @@ describe('bugOfSaved', () => {
     expect(bugOfSaved(older)).not.toHaveProperty('step');
   });
 
+  it('reads an older bug that never said who caught it as caught by nobody named', () => {
+    const { agent: _agent, modelName: _model, ...older } = BUG;
+
+    expect(bugOfSaved(older)).toMatchObject({ agent: '', modelName: null });
+  });
+
   it('counts an older bug seen "once" as one run', () => {
     const { seenRuns: _seen, ...rest } = BUG;
 

@@ -1,3 +1,4 @@
+import type { IWalkedBy } from './IWalkedBy';
 import type { IStepOutcome } from '@/shared/types';
 
 /** The run in flight: the step it is on, how long it has been going, and what it has decided. */
@@ -12,4 +13,5 @@ export interface ILiveRun {
   shot: string | null;
   streamUrl: string | null;
   costUsd: number | null;
+  by: IWalkedBy;
 }

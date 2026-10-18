@@ -1,4 +1,4 @@
-import type { ILiveRun, IWorkspace } from '@/modules/Workspace/types';
+import type { ILiveRun, IWalkedBy, IWorkspace } from '@/modules/Workspace/types';
 import type { IRunInFlight } from '@/shared/types';
 import { makeBug } from '@/modules/Bug/library';
 
@@ -8,8 +8,9 @@ export function resumeRun(props: {
   run: IRunInFlight;
   now: number;
   startedAt: string;
+  by: IWalkedBy;
 }): IWorkspace {
-  const { workspace, run, now, startedAt } = props;
+  const { workspace, run, now, startedAt, by } = props;
 
   if (workspace.live && !workspace.live.isDone && workspace.live.id === run.runId)
     return workspace;
@@ -34,6 +35,7 @@ export function resumeRun(props: {
       run.outcomes.findLast(({ screenshot }) => screenshot !== null)?.screenshot ?? null,
     streamUrl: run.streamUrl,
     costUsd: run.costUsd,
+    by,
   };
 
   return run.outcomes

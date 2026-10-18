@@ -1,13 +1,11 @@
 import type { IBugCardProps } from '@/modules/Bug/screens/Bugs/components/BugCard/types';
 import { useTranslation } from 'react-i18next';
 import { SEVERITY_KEYS } from '@/modules/Bug/constants';
-import { useModelInUse } from '@/modules/Settings';
 import { useAppStore } from '@/store';
 
 export const useBugCardViewModel = (props: IBugCardProps) => {
   const { bug, isOpen, onToggle } = props;
   const { t } = useTranslation();
-  const { agent, modelName } = useModelInUse();
   const openMedia = useAppStore((state) => state.openMedia);
 
   const step = t('BUG.STEP', { number: bug.stepNumber });
@@ -31,7 +29,15 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
             ? t('BUG.SEEN_RUNS', { count: bug.seenRuns })
             : t('BUG.SEEN_ONCE'),
       },
-      { key: 'agent', label: t('BUG.META_AGENT'), value: `${agent} · ${modelName}` },
+      ...(bug.agent === ''
+        ? []
+        : [
+            {
+              key: 'agent',
+              label: t('BUG.META_AGENT'),
+              value: `${bug.agent} · ${bug.modelName ?? t('MODEL.AGENT_DEFAULT')}`,
+            },
+          ]),
     ],
     shots,
     hasRun: props.hasRun,

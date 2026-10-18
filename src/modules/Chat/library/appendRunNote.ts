@@ -1,14 +1,14 @@
 import type { IWorkspace } from '@/modules/Workspace';
 import { appendAgentMessage } from './appendAgentMessage';
 
-/** A note the agent left while it walked a step, kept with the run it walks. */
+/** A note the agent left while it walked a step, kept with the run it walks and signed by the agent walking it. */
 export function appendRunNote(props: {
   workspace: IWorkspace;
   text: string;
   who: string;
   at: string;
 }): IWorkspace {
-  const { workspace, text, who, at } = props;
+  const { workspace, text, at } = props;
   const said = text.trim();
   const { live } = workspace;
 
@@ -25,7 +25,7 @@ export function appendRunNote(props: {
         kind: 'note',
         at,
         runId: live.id,
-        who,
+        who: live.by.agent,
         text: said,
       },
     ],

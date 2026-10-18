@@ -15,6 +15,8 @@ export function bugOfSaved(saved: SavedBug): IBug {
     ...bug,
     stepNumber: bug.stepNumber ?? numberIn(step) ?? 1,
     seenRuns: bug.seenRuns ?? numberIn(seen) ?? 1,
+    agent: bug.agent ?? '',
+    modelName: bug.modelName ?? null,
     shots: bug.shots.map(({ isBad, src, file }) => ({ isBad, src, file })),
   };
 }

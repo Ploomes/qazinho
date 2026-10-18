@@ -1,6 +1,7 @@
 import type { IBug, IBugShot } from '@/modules/Bug/types';
+import type { ViewportId } from '@/modules/Device/types';
 import type { IWorkspace } from '@/modules/Workspace';
-import type { IStepOutcome } from '@/shared/types';
+import type { IStepOutcome, TargetKind } from '@/shared/types';
 import { viewportOf } from '@/modules/Device/library';
 import { countSeen } from './countSeen';
 
@@ -23,7 +24,17 @@ function shotsFor(props: {
     : [broke];
 }
 
-/** Turns the step that broke into something a developer can act on. */
+function targetOf(props: { kind: TargetKind; viewportId: ViewportId }): string {
+  if (props.kind === 'ios') return 'iOS';
+
+  if (props.kind === 'android') return 'Android';
+
+  const viewport = viewportOf(props.viewportId);
+
+  return `Web · Chrome ${String(viewport.width)} × ${String(viewport.height)}`;
+}
+
+/** Turns the step that broke into something a developer can act on, with who caught it and on what. */
 export function makeBug(props: {
   workspace: IWorkspace;
   outcome: IStepOutcome;
@@ -31,6 +42,7 @@ export function makeBug(props: {
 }): IBug {
   const { workspace, outcome, outcomes } = props;
   const testCase = workspace.plan.find(({ id }) => id === outcome.caseId);
+  const by = workspace.live?.by ?? null;
 
   return {
     id: `BUG-${String(workspace.bugs.length + 1).padStart(2, '0')}`,
@@ -44,10 +56,12 @@ export function makeBug(props: {
     caseId: outcome.caseId,
     caseTitle: testCase?.title ?? outcome.caseId,
     stepNumber: outcome.stepNumber,
-    target:
-      workspace.planKind === 'web'
-        ? `Web · Chrome ${String(viewportOf(workspace.viewportId).width)} × ${String(viewportOf(workspace.viewportId).height)}`
-        : 'Android',
+    target: targetOf({
+      kind: by?.targetKind ?? (workspace.planKind === 'web' ? 'web' : 'android'),
+      viewportId: workspace.viewportId,
+    }),
+    agent: by?.agent ?? '',
+    modelName: by?.modelName ?? null,
     seenRuns: countSeen({
       workspace,
       caseId: outcome.caseId,

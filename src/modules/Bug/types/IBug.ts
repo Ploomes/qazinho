@@ -16,6 +16,8 @@ export interface IBug {
   caseTitle: string;
   stepNumber: number;
   target: string;
+  agent: string;
+  modelName: string | null;
   seenRuns: number;
   repro: IBugReproStep[];
   shots: IBugShot[];

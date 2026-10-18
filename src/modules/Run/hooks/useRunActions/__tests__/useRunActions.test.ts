@@ -3,9 +3,9 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRunActions } from '@/modules/Run/hooks/useRunActions';
 import { startRun } from '@/modules/Workspace';
-import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import { makeWorkspace, WALKED_BY } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 const PROJECT = {
   id: 'p1',
@@ -55,12 +55,35 @@ describe('useRunActions', () => {
       expect(useWorkspaceStore.getState().workspaces[0]?.live?.isDone).toBe(false);
     });
 
+    it('remembers who walks the run, so what it finds keeps their names when the QA switches later', () => {
+      bridge();
+      useSettingsStore.setState({ agent: 'Claude Code', model: 'opus' });
+
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.onRun();
+      });
+      useSettingsStore.setState({ model: 'haiku' });
+
+      expect(useWorkspaceStore.getState().workspaces[0]?.live?.by).toEqual({
+        agent: 'Claude Code',
+        modelName: 'Opus',
+        targetKind: 'web',
+      });
+    });
+
     it('does NOT start a second run while one is going', () => {
       const { startRunCall } = bridge();
 
       useWorkspaceStore.setState({
         workspaces: [
-          startRun({ workspace: makeWorkspace(), startedAt: '09:41', runId: 'r-01' }),
+          startRun({
+            workspace: makeWorkspace(),
+            startedAt: '09:41',
+            runId: 'r-01',
+            by: WALKED_BY,
+          }),
         ],
       });
 
@@ -88,7 +111,12 @@ describe('useRunActions', () => {
       act(() => {
         useWorkspaceStore.setState({
           workspaces: [
-            startRun({ workspace: makeWorkspace(), startedAt: '09:41', runId: 'r-01' }),
+            startRun({
+              workspace: makeWorkspace(),
+              startedAt: '09:41',
+              runId: 'r-01',
+              by: WALKED_BY,
+            }),
           ],
         });
       });
@@ -109,7 +137,12 @@ describe('useRunActions', () => {
 
     useWorkspaceStore.setState({
       workspaces: [
-        startRun({ workspace: makeWorkspace(), startedAt: '09:41', runId: 'r-01' }),
+        startRun({
+          workspace: makeWorkspace(),
+          startedAt: '09:41',
+          runId: 'r-01',
+          by: WALKED_BY,
+        }),
       ],
     });
     renderHook(() => {

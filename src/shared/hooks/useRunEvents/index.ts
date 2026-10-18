@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RUN_FAILURE_KEYS } from '@/modules/Run/constants';
+import { walkedByOf } from '@/modules/Run/library';
 import { Run } from '@/services';
-import { useSettingsStore, useWorkspaceStore } from '@/store';
+import { useMachineStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 export const useRunEvents = () => {
   const { t } = useTranslation();
@@ -53,7 +54,19 @@ export const useRunEvents = () => {
     if (!isLoaded) return;
 
     void Run.inFlight().then((runs) => {
-      for (const run of runs) resumeRun(run);
+      const { agents } = useMachineStore.getState();
+      const { agent } = useSettingsStore.getState();
+
+      for (const run of runs)
+        resumeRun({
+          run,
+          by: walkedByOf({
+            agent: agents.find(({ id }) => id === run.agentId)?.name ?? agent,
+            model: run.model,
+            targetKind: run.targetKind,
+            agents,
+          }),
+        });
     });
   }, [isLoaded, resumeRun]);
 };

@@ -2,7 +2,11 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { startRun } from '@/modules/Workspace/library';
-import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
+import {
+  makeWorkspace,
+  WALKED_BY,
+  walkRun,
+} from '@/modules/Workspace/library/__tests__/fixtures';
 import { useWorkspaceViewModel } from '@/modules/Workspace/screens/Workspace/hooks/useWorkspaceViewModel';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
@@ -45,7 +49,12 @@ describe('useWorkspaceViewModel', () => {
   it('reads the live step in the header while the agent is driving', () => {
     useWorkspaceStore.setState({
       workspaces: [
-        startRun({ workspace: makeWorkspace(), startedAt: '09:41', runId: 'r-01' }),
+        startRun({
+          workspace: makeWorkspace(),
+          startedAt: '09:41',
+          runId: 'r-01',
+          by: WALKED_BY,
+        }),
       ],
     });
 
@@ -60,6 +69,7 @@ describe('useWorkspaceViewModel', () => {
       workspace: makeWorkspace(),
       startedAt: '09:41',
       runId: 'r-01',
+      by: WALKED_BY,
     });
 
     useWorkspaceStore.setState({

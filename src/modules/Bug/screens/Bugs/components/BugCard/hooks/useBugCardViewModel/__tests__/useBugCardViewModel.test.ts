@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
 import { useBugCardViewModel } from '@/modules/Bug/screens/Bugs/components/BugCard/hooks/useBugCardViewModel';
 import { walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
+import { useSettingsStore } from '@/store';
 
 const WORKSPACE = walkRun({
   verdicts: ['passed', 'passed', 'passed', 'passed', 'failed'],
@@ -35,6 +36,39 @@ describe('useBugCardViewModel', () => {
       'agent',
     ]);
     expect(result.current.meta[1]?.value).toBe('TC-02 · step 2');
+  });
+
+  it('names the agent and the model that caught it, not the ones picked now', () => {
+    useSettingsStore.setState({ agent: 'Codex', model: '' });
+
+    const { result } = renderHook(() =>
+      useBugCardViewModel({
+        ...PROPS,
+        bug: { ...BUG, agent: 'Claude Code', modelName: 'Opus' },
+      }),
+    );
+
+    expect(result.current.meta.find(({ key }) => key === 'agent')?.value).toBe(
+      'Claude Code · Opus',
+    );
+  });
+
+  it("says the agent's own default when it named no model", () => {
+    const { result } = renderHook(() =>
+      useBugCardViewModel({ ...PROPS, bug: { ...BUG, modelName: null } }),
+    );
+
+    expect(result.current.meta.find(({ key }) => key === 'agent')?.value).toBe(
+      'Claude Code · Agent default',
+    );
+  });
+
+  it('does NOT make up who caught an older bug that never said', () => {
+    const { result } = renderHook(() =>
+      useBugCardViewModel({ ...PROPS, bug: { ...BUG, agent: '', modelName: null } }),
+    );
+
+    expect(result.current.meta.map(({ key }) => key)).not.toContain('agent');
   });
 
   it('writes every label and word on the card in the language the QA reads', async () => {

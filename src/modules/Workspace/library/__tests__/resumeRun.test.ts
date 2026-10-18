@@ -1,7 +1,7 @@
 import type { IRunInFlight } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
 import { endRun, landStep, resumeRun, startRun } from '@/modules/Workspace/library';
-import { makeOutcome, makeWorkspace } from './fixtures';
+import { makeOutcome, makeWorkspace, WALKED_BY } from './fixtures';
 
 const STARTED = 1_000_000;
 
@@ -20,6 +20,9 @@ function inFlight(props: Partial<IRunInFlight> = {}): IRunInFlight {
     ],
     isPaused: false,
     costUsd: 0.3,
+    agentId: 'claude-code',
+    model: 'haiku',
+    targetKind: 'web',
     ...props,
   };
 }
@@ -32,6 +35,7 @@ const resumed = (
     run: props.run ?? inFlight(),
     now: STARTED + 95_400,
     startedAt: '22:19',
+    by: WALKED_BY,
   });
 
 describe('resumeRun', () => {
@@ -64,6 +68,7 @@ describe('resumeRun', () => {
       workspace: makeWorkspace(),
       runId: 'r-01',
       startedAt: '22:19',
+      by: WALKED_BY,
     });
     const landed = landStep({
       workspace: landStep({
@@ -88,6 +93,7 @@ describe('resumeRun', () => {
       workspace: makeWorkspace(),
       runId: 'r-01',
       startedAt: '22:19',
+      by: WALKED_BY,
     });
 
     expect(resumed({ workspace: following })).toBe(following);

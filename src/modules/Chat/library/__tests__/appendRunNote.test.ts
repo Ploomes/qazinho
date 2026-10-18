@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { appendRunNote } from '@/modules/Chat/library';
-import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
+import {
+  makeWorkspace,
+  WALKED_BY,
+  walkRun,
+} from '@/modules/Workspace/library/__tests__/fixtures';
 
 describe('appendRunNote', () => {
   it('keeps a note with the run it was left in', () => {
@@ -17,6 +21,17 @@ describe('appendRunNote', () => {
       who: 'Claude Code',
       text: 'I closed a banner first.',
     });
+  });
+
+  it('signs a note with the agent walking the run, not the one picked since', () => {
+    const noted = appendRunNote({
+      workspace: walkRun({ verdicts: ['passed'], by: { ...WALKED_BY, agent: 'Codex' } }),
+      text: 'Closed a dialog.',
+      who: 'Claude Code',
+      at: '09:41',
+    });
+
+    expect(noted.chat.at(-1)).toMatchObject({ kind: 'note', who: 'Codex' });
   });
 
   it('writes a note that came with no run going as the agent speaking', () => {

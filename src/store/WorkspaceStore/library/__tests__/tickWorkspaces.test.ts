@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { startRun } from '@/modules/Workspace';
-import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import { makeWorkspace, WALKED_BY } from '@/modules/Workspace/library/__tests__/fixtures';
 import { tickWorkspaces } from '@/store/WorkspaceStore/library';
 
 const IDLE = makeWorkspace();
@@ -8,6 +8,7 @@ const RUNNING = startRun({
   workspace: { ...makeWorkspace(), id: 'w2' },
   startedAt: '09:41',
   runId: 'r-01',
+  by: WALKED_BY,
 });
 
 describe('tickWorkspaces', () => {

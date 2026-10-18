@@ -4,10 +4,10 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
 import { startRun } from '@/modules/Workspace/library';
-import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import { makeWorkspace, WALKED_BY } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useRunEvents } from '@/shared/hooks/useRunEvents';
-import { useWorkspaceStore } from '@/store';
+import { useMachineStore, useWorkspaceStore } from '@/store';
 
 const RUN: IRunInFlight = {
   workspaceId: 'w1',
@@ -18,6 +18,9 @@ const RUN: IRunInFlight = {
   outcomes: [],
   isPaused: false,
   costUsd: 0.12,
+  agentId: 'claude-code',
+  model: 'sonnet',
+  targetKind: 'web',
 };
 
 /** A page that opened while main was still walking a run: the bridge says so. */
@@ -57,6 +60,37 @@ describe('useRunEvents', () => {
     expect(useWorkspaceStore.getState().workspaces[0]?.status).toBe('running');
   });
 
+  it('picks the run up with the agent and model main walks it with, as the QA calls them', async () => {
+    bridgeWithRunInFlight();
+    useMachineStore.setState({
+      agents: [
+        {
+          id: 'claude-code',
+          name: 'Claude Code',
+          command: 'claude',
+          isFound: true,
+          path: '/usr/local/bin/claude',
+          defaultModel: null,
+          isSignedIn: true,
+        },
+      ],
+    });
+
+    renderHook(() => {
+      useRunEvents();
+    });
+    useWorkspaceStore.setState({ isLoaded: true });
+
+    await waitFor(() => {
+      expect(useWorkspaceStore.getState().workspaces[0]?.live?.by).toEqual({
+        agent: 'Claude Code',
+        modelName: 'Sonnet',
+        targetKind: 'web',
+      });
+    });
+    useMachineStore.setState({ agents: [] });
+  });
+
   /**
    * A run that could not open the app used to land Playwright's own words in the chat:
    * "page.goto: net::ERR_UNSAFE_PORT … Call log: …", in English whatever the QA reads.
@@ -74,7 +108,12 @@ describe('useRunEvents', () => {
     };
     useWorkspaceStore.setState({
       workspaces: [
-        startRun({ workspace: makeWorkspace(), startedAt: '09:41', runId: 'r-01' }),
+        startRun({
+          workspace: makeWorkspace(),
+          startedAt: '09:41',
+          runId: 'r-01',
+          by: WALKED_BY,
+        }),
       ],
     });
     await i18n.changeLanguage('pt');

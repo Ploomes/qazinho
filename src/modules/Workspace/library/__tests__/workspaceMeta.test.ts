@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { startRun, workspaceMeta } from '@/modules/Workspace/library';
-import { makeWorkspace } from './fixtures';
+import { makeWorkspace, WALKED_BY } from './fixtures';
 
 describe('workspaceMeta', () => {
   it('reads new while the workspace has no plan', () => {
@@ -22,6 +22,7 @@ describe('workspaceMeta', () => {
       workspace: makeWorkspace(),
       startedAt: '09:41',
       runId: 'r-01',
+      by: WALKED_BY,
     });
 
     expect(workspaceMeta(running)).toEqual({ key: 'SIDEBAR.META_PROGRESS', count: 6 });

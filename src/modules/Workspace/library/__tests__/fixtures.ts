@@ -1,5 +1,5 @@
 import type { ITestCase } from '@/modules/Plan';
-import type { IWorkspace } from '@/modules/Workspace/types';
+import type { IWalkedBy, IWorkspace } from '@/modules/Workspace/types';
 import type { IStepOutcome, StepVerdict } from '@/shared/types';
 import { flattenPlanSteps } from '@/modules/Run';
 import { endRun } from '@/modules/Workspace/library/endRun';
@@ -37,6 +37,12 @@ export const CASES: ITestCase[] = [
     lastVerdict: null,
   },
 ];
+
+export const WALKED_BY: IWalkedBy = {
+  agent: 'Claude Code',
+  modelName: 'Haiku',
+  targetKind: 'web',
+};
 
 export function makeWorkspace(plan: ITestCase[] = CASES): IWorkspace {
   return {
@@ -91,11 +97,13 @@ export function walkRun(props: {
   workspace?: IWorkspace;
   verdicts: StepVerdict[];
   isFinished?: boolean;
+  by?: IWalkedBy;
 }): IWorkspace {
   const started = startRun({
     workspace: props.workspace ?? makeWorkspace(),
     startedAt: '09:41',
     runId: 'r-01',
+    by: props.by ?? WALKED_BY,
   });
 
   let walked = started;

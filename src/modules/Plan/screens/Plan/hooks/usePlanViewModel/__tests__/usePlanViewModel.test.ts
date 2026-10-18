@@ -6,6 +6,7 @@ import { startRun } from '@/modules/Workspace';
 import {
   CASES,
   makeWorkspace,
+  WALKED_BY,
   walkRun,
 } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
@@ -62,7 +63,12 @@ describe('usePlanViewModel', () => {
     it('does NOT let the plan move while the agent is running it', () => {
       useWorkspaceStore.setState({
         workspaces: [
-          startRun({ workspace: makeWorkspace(), startedAt: '09:41', runId: 'r-01' }),
+          startRun({
+            workspace: makeWorkspace(),
+            startedAt: '09:41',
+            runId: 'r-01',
+            by: WALKED_BY,
+          }),
         ],
       });
 
@@ -86,6 +92,7 @@ describe('usePlanViewModel', () => {
         workspace: makeWorkspace(),
         startedAt: '09:41',
         runId: 'r-01',
+        by: WALKED_BY,
       });
 
       useWorkspaceStore.setState({
@@ -101,7 +108,12 @@ describe('usePlanViewModel', () => {
       useSettingsStore.setState({ agent: 'Codex' });
       useWorkspaceStore.setState({
         workspaces: [
-          startRun({ workspace: makeWorkspace(), startedAt: '09:41', runId: 'r-01' }),
+          startRun({
+            workspace: makeWorkspace(),
+            startedAt: '09:41',
+            runId: 'r-01',
+            by: WALKED_BY,
+          }),
         ],
       });
 

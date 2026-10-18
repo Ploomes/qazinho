@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { endRun, landStep, startRun } from '@/modules/Workspace/library';
-import { makeOutcome, makeWorkspace, walkRun } from './fixtures';
+import { makeOutcome, makeWorkspace, WALKED_BY, walkRun } from './fixtures';
 
 describe('endRun', () => {
   describe('a run that walked the whole plan', () => {
@@ -150,7 +150,12 @@ describe('endRun', () => {
       at: '09:43',
       endedBy: 'interrupted',
     });
-    const again = startRun({ workspace: interrupted, startedAt: '09:50', runId: 'r-01' });
+    const again = startRun({
+      workspace: interrupted,
+      startedAt: '09:50',
+      runId: 'r-01',
+      by: WALKED_BY,
+    });
     const walked = landStep({
       workspace: again,
       outcome: makeOutcome({ workspace: again, index: 0, verdict: 'passed' }),
@@ -167,6 +172,7 @@ describe('endRun', () => {
       workspace: makeWorkspace(),
       startedAt: '09:41',
       runId: 'r-01',
+      by: WALKED_BY,
     });
 
     const workspace = endRun({ workspace: started, at: '09:41', endedBy: 'stopped' });

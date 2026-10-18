@@ -11,6 +11,9 @@ const RUN: IRunInFlight = {
   outcomes: [],
   isPaused: false,
   costUsd: null,
+  agentId: 'claude-code',
+  model: 'haiku',
+  targetKind: 'web',
 };
 
 const OUTCOME = { workspaceId: 'w1', index: 0, verdict: 'passed' } as IStepOutcome;

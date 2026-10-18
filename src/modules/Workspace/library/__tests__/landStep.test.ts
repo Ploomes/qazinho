@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { landStep, startRun } from '@/modules/Workspace/library';
-import { makeOutcome, makeWorkspace, walkRun } from './fixtures';
+import { makeOutcome, makeWorkspace, WALKED_BY, walkRun } from './fixtures';
 
 describe('landStep', () => {
   it('keeps what the device decided, in the order it decided it', () => {
@@ -54,6 +54,7 @@ describe('landStep', () => {
       workspace: makeWorkspace(),
       startedAt: '09:41',
       runId: 'r-01',
+      by: WALKED_BY,
     });
     const doing = { ...started, live: { ...started.live!, doingIndex: 0 } };
 

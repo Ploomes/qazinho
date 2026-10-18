@@ -93,6 +93,9 @@ export class RunCoordinator {
       outcomes: [],
       isPaused: false,
       costUsd: null,
+      agentId: run.agentId,
+      model: run.model,
+      targetKind: run.target.kind,
     });
 
     try {

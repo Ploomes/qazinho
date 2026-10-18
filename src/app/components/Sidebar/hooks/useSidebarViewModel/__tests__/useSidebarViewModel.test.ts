@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useSidebarViewModel } from '@/app/components/Sidebar/hooks/useSidebarViewModel';
 import { startRun } from '@/modules/Workspace/library';
-import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import { makeWorkspace, WALKED_BY } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 const PROJECT = { id: 'p1', name: 'Shop · staging', targets: [] };
@@ -33,6 +33,7 @@ describe('useSidebarViewModel', () => {
         workspace: makeWorkspace(),
         startedAt: '09:41',
         runId: 'r-01',
+        by: WALKED_BY,
       });
 
       useWorkspaceStore.setState({

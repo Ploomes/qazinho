@@ -3,7 +3,7 @@ import type { IQuestionAnswer } from '@/modules/Chat';
 import type { ViewportId } from '@/modules/Device';
 import type { ITestCase } from '@/modules/Plan';
 import type { RunFilter } from '@/modules/Run';
-import type { IWorkspace, WorkspaceTab } from '@/modules/Workspace';
+import type { IWalkedBy, IWorkspace, WorkspaceTab } from '@/modules/Workspace';
 import type { IChatQuestion, IRunInFlight, IStepOutcome } from '@/shared/types';
 
 /** The workspaces and everything the QA can poke inside one of them. */
@@ -53,8 +53,8 @@ export interface IWorkspaceStore {
   setLiveText: (text: string) => void;
   answerAsk: (props: { workspaceId: string; reply: string }) => void;
   setPlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
-  startRun: (props: { workspaceId: string; runId: string }) => void;
-  resumeRun: (run: IRunInFlight) => void;
+  startRun: (props: { workspaceId: string; runId: string; by: IWalkedBy }) => void;
+  resumeRun: (props: { run: IRunInFlight; by: IWalkedBy }) => void;
   pauseRun: (workspaceId: string) => void;
   stopRun: (workspaceId: string) => void;
   markDoing: (props: { workspaceId: string; index: number }) => void;

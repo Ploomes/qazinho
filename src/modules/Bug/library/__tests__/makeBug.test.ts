@@ -4,6 +4,7 @@ import { makeBug } from '@/modules/Bug/library';
 import {
   makeOutcome,
   makeWorkspace,
+  WALKED_BY,
   walkRun,
 } from '@/modules/Workspace/library/__tests__/fixtures';
 
@@ -82,12 +83,24 @@ describe('makeBug', () => {
     expect(phone.bugs[0]?.target).toBe('Web · Chrome 390 × 844');
   });
 
-  it('describes a phone when the target is a build', () => {
-    const mobile = walkRun({
-      workspace: { ...makeWorkspace(), planKind: 'mobile' },
-      verdicts: BROKE,
-    });
+  it('names the phone the run walked on: an Android build, or an iOS one', () => {
+    const on = (targetKind: 'android' | 'ios') =>
+      walkRun({
+        workspace: { ...makeWorkspace(), planKind: 'mobile' },
+        verdicts: BROKE,
+        by: { ...WALKED_BY, targetKind },
+      }).bugs[0]?.target;
 
-    expect(mobile.bugs[0]?.target).toBe('Android');
+    expect(on('android')).toBe('Android');
+    expect(on('ios')).toBe('iOS');
+  });
+
+  it('keeps the agent and the model that caught it, whatever the QA picks afterwards', () => {
+    const bug = walkRun({
+      verdicts: BROKE,
+      by: { agent: 'Codex', modelName: null, targetKind: 'web' },
+    }).bugs[0];
+
+    expect(bug).toMatchObject({ agent: 'Codex', modelName: null });
   });
 });
