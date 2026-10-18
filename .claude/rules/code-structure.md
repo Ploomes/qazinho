@@ -107,7 +107,7 @@ src/main/
 src/harness/          ← one folder per channel, not a classes/ tree (architecture.md)
 ├── Harness.class.ts  ← the class every caller goes through, at the root
 ├── context/          ← corpus/ of .md, and the library that reads and renders it
-├── tools/            ← McpHost/, servers/<group>/, the grants per role
+├── tools/            ← McpHost.class.ts, servers/<group>/, the grants per role
 └── schemas/  library/  types/
 electron/preload/
 └── index.ts          ← the contextBridge call, nothing else
@@ -131,6 +131,9 @@ src/
   `src/modules/<Domain>/components/` or `hooks/`.
 - A component with no domain, reused across modules → `src/shared/components/`.
 - A subcomponent of one screen → `components/` **inside** that screen's folder.
+- **In `src/harness/`, a class sits at the root of the folder it serves** (`Harness.class.ts`,
+  `tools/McpHost.class.ts`), and shares that folder's `library/`, `types/` and `constants/`. A
+  class folder there would only repeat the name of the folder around it.
 
 ## Every folder of things has an `index.ts`
 

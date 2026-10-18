@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { workspaceOfPath } from '@/harness/tools/McpHost/library';
+import { workspaceOfPath } from '@/harness/tools/library';
 
 describe('workspaceOfPath', () => {
   it('reads the workspace out of a path carrying this launch token', () => {
