@@ -159,8 +159,8 @@ export const pt: typeof en = {
     SKIPPED: 'pulado',
     ALL: 'tudo',
     NO_SHOT: 'Este passo não tem screenshot.',
-    NO_IOS_TARGET:
-      'O QAzinho ainda não dirige um simulador de iOS: tocar nele precisa de XCUITest, que não está pronto. Escolha um target web ou Android.',
+    NO_TARGET:
+      'O target em que este workspace roda saiu do projeto. Adicione de volta nas configurações do projeto e rode de novo.',
   },
   BUG: {
     EMPTY_TITLE: 'Nenhum bug ainda.',

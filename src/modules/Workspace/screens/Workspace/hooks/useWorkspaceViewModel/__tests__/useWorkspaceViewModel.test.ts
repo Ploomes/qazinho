@@ -87,7 +87,8 @@ describe('useWorkspaceViewModel', () => {
       expect(useWorkspaceStore.getState().workspaces[0]?.status).toBe('running');
     });
 
-    it('says so instead of pretending when the target is an iOS build', () => {
+    /** iOS runs were refused here while idb had never tapped a real simulator; it has now. */
+    it('runs an iOS build on the simulator, the way it runs the rest', () => {
       useAppStore.setState({
         projects: [
           {
@@ -103,10 +104,25 @@ describe('useWorkspaceViewModel', () => {
         result.current.onRun();
       });
 
+      expect(useWorkspaceStore.getState().workspaces[0]?.status).toBe('running');
+    });
+
+    it('says so instead of pretending when the target left the project', () => {
+      useAppStore.setState({ projects: [{ ...PROJECT, targets: [] }] });
+
+      const { result } = renderHook(() => useWorkspaceViewModel());
+
+      act(() => {
+        result.current.onRun();
+      });
+
       const [workspace] = useWorkspaceStore.getState().workspaces;
 
       expect(workspace?.status).toBe('stopped');
-      expect(workspace?.chat.at(-1)).toMatchObject({ kind: 'error' });
+      expect(workspace?.chat.at(-1)).toMatchObject({
+        kind: 'error',
+        text: expect.stringContaining('gone from its project') as string,
+      });
     });
   });
 

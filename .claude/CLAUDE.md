@@ -5,11 +5,11 @@ apps, and keeps their test work organised, with their own AI agent alongside: th
 plan with them, walks the flows on a real device and reports what it saw against what the QA
 expected. The QA stays in charge; the agent is the assistant.
 
-| Target  | Input                                   | Driven by                                         | Verified         |
-| ------- | --------------------------------------- | ------------------------------------------------- | ---------------- |
-| web     | the environment's URL                   | Playwright over the QA's own Chrome               | end to end       |
-| Android | an `.apk`                               | the QA's own AVD, through `adb` and `uiautomator` | end to end       |
-| iOS     | a simulator `.app` build, not an `.ipa` | `simctl` boots and shoots; `idb` reads and taps   | simctl half only |
+| Target  | Input                                   | Driven by                                         | Verified   |
+| ------- | --------------------------------------- | ------------------------------------------------- | ---------- |
+| web     | the environment's URL                   | Playwright over the QA's own Chrome               | end to end |
+| Android | an `.apk`                               | the QA's own AVD, through `adb` and `uiautomator` | end to end |
+| iOS     | a simulator `.app` build, not an `.ipa` | `simctl` boots and shoots; `idb` reads and taps   | end to end |
 
 QAzinho finds the SDK, the emulator and idb where they already are, and names what is missing
 where the QA reads it. **It installs only what is light, and only when the QA asks**: the agent
@@ -60,10 +60,10 @@ per workspace, with the plan beside it in YAML.
 QA's own AVD, reads the screen out of `uiautomator`, taps what the agent named, and judges what
 it sees.
 
-**iOS is built but half-proven.** Booting, installing, launching and screenshotting are verified
-against a real simulator. The tap path goes through idb, which was not installed on the machine
-this was written on, so `parseElements` reads idb's tree tolerantly and has never seen the real
-thing. Run `tests/smoke/ios.test.ts` once idb is installed before trusting it.
+**iOS works the same way**, proven by `tests/smoke/ios.test.ts`: a visit counter built from
+source for the simulator (`tests/smoke/fixtures/`), read and tapped through idb, and a plan walked
+and judged by the QA's own agent. Every case starts on the app opened anew: Android clears its
+data, iOS reinstalls it, the web clears the browser (`device-fresh.test.ts`, `fresh.test.ts`).
 
 **A first run walks the machine** (`Onboarding`): language, the agent, the device tools, the
 trackers. GitHub and Jira connect for real: the token is checked with the tracker and sealed by

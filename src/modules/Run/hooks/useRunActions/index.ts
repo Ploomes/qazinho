@@ -42,8 +42,8 @@ export const useRunActions = () => {
 
       start({ workspaceId: workspace.id, runId });
 
-      if (target === null || target.kind === 'ios') {
-        landRunFailed({ workspaceId: workspace.id, text: t('RUN.NO_IOS_TARGET') });
+      if (target === null) {
+        landRunFailed({ workspaceId: workspace.id, text: t('RUN.NO_TARGET') });
 
         return;
       }

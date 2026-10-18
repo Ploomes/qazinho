@@ -157,8 +157,8 @@ export const en = {
     SKIPPED: 'skipped',
     ALL: 'all',
     NO_SHOT: 'This step has no screenshot.',
-    NO_IOS_TARGET:
-      'QAzinho cannot drive an iOS simulator yet: tapping one needs XCUITest, which is not built. Pick a web or Android target.',
+    NO_TARGET:
+      'The target this workspace runs on is gone from its project. Add it back in the project settings, then run again.',
   },
   BUG: {
     EMPTY_TITLE: 'No bugs yet.',
