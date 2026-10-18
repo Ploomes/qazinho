@@ -38,6 +38,8 @@ summary.
 ## The device
 The device is a real Chrome browser in a 1280 × 800 window, width by height in pixels.
 Name a control the way a person reads it: the button label, the field label, the link text.
+When several controls read alike, the page lists them numbered, like "button: Buy #2": name the
+one you mean by its words and number, "Buy #2".
 For goto, the target is the URL. For press, the target is the key.
 An action waits for the page to stop changing before it answers, and says how the page moved
 meanwhile: layout shifts, and frames that ran long. A shift of 0.1 or more that no input

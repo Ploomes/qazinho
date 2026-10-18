@@ -1,5 +1,6 @@
 import type { IScreenNode } from '@/main/classes/devices/AndroidDriver/types';
 import { ANDROID } from '@/main/classes/devices/AndroidDriver/constants';
+import { numberDuplicates } from '@/main/library';
 
 function labelOf(node: IScreenNode): string {
   const label = node.text.length > 0 ? node.text : node.desc;
@@ -24,5 +25,11 @@ export function describeScreen(props: { nodes: IScreenNode[]; app: string }): st
     .slice(0, ANDROID.controlLimit)
     .map(labelOf);
 
-  return [`APP: ${props.app}`, 'TEXT:', text, 'CONTROLS:', ...controls].join('\n');
+  return [
+    `APP: ${props.app}`,
+    'TEXT:',
+    text,
+    'CONTROLS:',
+    ...numberDuplicates(controls),
+  ].join('\n');
 }

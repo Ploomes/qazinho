@@ -16,6 +16,20 @@ describe('findElement', () => {
     expect(findElement({ elements: ELEMENTS, target: 'with Apple' })?.x).toBe(10);
   });
 
+  it('takes the second of several that read alike when the agent says #2', () => {
+    const rows = [
+      { label: 'Buy', role: 'Button', x: 1, y: 1 },
+      { label: 'Buy', role: 'Button', x: 2, y: 2 },
+    ];
+
+    expect(findElement({ elements: rows, target: 'Buy #2' })?.x).toBe(2);
+    expect(findElement({ elements: rows, target: 'Buy #3' })).toBeNull();
+  });
+
+  it('finds a control the agent copied the way look lists it', () => {
+    expect(findElement({ elements: ELEMENTS, target: 'button: Sign in' })?.x).toBe(20);
+  });
+
   it('does not care about case', () => {
     expect(findElement({ elements: ELEMENTS, target: 'SIGN IN' })?.x).toBe(20);
   });

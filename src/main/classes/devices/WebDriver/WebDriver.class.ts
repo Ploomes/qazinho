@@ -180,7 +180,11 @@ export class WebDriver implements IDeviceDriver {
       return;
     }
 
-    const locator = await findLocator({ page, target: action.target });
+    const locator = await findLocator({
+      page,
+      target: action.target,
+      kind: action.kind === 'fill' ? 'fill' : 'click',
+    });
 
     if (!locator) throw new Error(`Nothing on the page answers to "${action.target}".`);
 

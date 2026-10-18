@@ -14,6 +14,26 @@ describe('findNode', () => {
     );
   });
 
+  it('takes the second of several that read alike when the agent says #2', () => {
+    const node = NODES[0];
+
+    if (!node) throw new Error('the dump has no node');
+
+    const rows = [
+      { ...node, text: 'Buy', id: 'first' },
+      { ...node, text: 'Buy', id: 'second' },
+    ];
+
+    expect(findNode({ nodes: rows, target: 'Buy #2' })?.id).toBe('second');
+    expect(findNode({ nodes: rows, target: 'Buy #3' })).toBeNull();
+  });
+
+  it('finds a control the agent copied the way look lists it', () => {
+    expect(findNode({ nodes: NODES, target: 'textview: Connected devices' })?.text).toBe(
+      'Connected devices',
+    );
+  });
+
   it('does not care about case', () => {
     expect(findNode({ nodes: NODES, target: 'search settings' })?.id).toBe(
       'search_bar_title',

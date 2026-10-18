@@ -1,7 +1,8 @@
 import type { Page } from 'playwright-core';
 import { WEB_DRIVER } from '@/main/classes/devices/WebDriver/constants';
+import { numberDuplicates } from '@/main/library';
 
-/** What the agent is allowed to look at: what a person would see, not the markup. */
+/** What the agent is allowed to look at: what a person would see, not the markup, with controls that read alike numbered. */
 export async function describePage(page: Page): Promise<string> {
   const text = (
     await page
@@ -17,6 +18,12 @@ export async function describePage(page: Page): Promise<string> {
       'button, a, input, select, textarea, [role=button], [role=link]',
       (nodes, limit) =>
         nodes
+          .filter(
+            (node) =>
+              (
+                node as unknown as { getClientRects: () => { length: number } }
+              ).getClientRects().length > 0,
+          )
           .slice(0, limit)
           .map((node) => {
             const element = node as unknown as {
@@ -43,6 +50,6 @@ export async function describePage(page: Page): Promise<string> {
     'TEXT:',
     text,
     'CONTROLS:',
-    ...controls,
+    ...numberDuplicates(controls),
   ].join('\n');
 }
