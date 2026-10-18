@@ -8,6 +8,32 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 let app: ElectronApplication;
 let page: Page;
 const said: string[] = [];
+const sizes: { welcome: number[] | null; app: number[] | null } = {
+  welcome: null,
+  app: null,
+};
+
+/** The window's size once it is on screen, or nothing while it is still hidden. */
+async function shownSize(): Promise<number[] | null> {
+  return app.evaluate(({ BrowserWindow }) => {
+    const [open] = BrowserWindow.getAllWindows();
+
+    return open?.isVisible() === true ? open.getSize() : null;
+  });
+}
+
+/** Polls the window until its size is what `isDone` waits for; a resize animates on macOS. */
+async function sizeOnce(isDone: (size: number[] | null) => boolean) {
+  for (let look = 0; look < 40; look += 1) {
+    const size = await shownSize();
+
+    if (isDone(size)) return size;
+
+    await new Promise((later) => setTimeout(later, 100));
+  }
+
+  return shownSize();
+}
 
 /** The resources popover redraws on every sweep, so its X moves until the list settles. */
 async function waitUntilStill(selector: string) {
@@ -40,8 +66,10 @@ beforeAll(async () => {
   page.on('pageerror', (reason) => said.push(reason.message));
 
   await page.waitForSelector('.titlebar');
+  sizes.welcome = await sizeOnce((size) => size !== null);
   // A fresh data directory is a first run: past the setup is the app these tests look at.
   await page.locator('.onboarding__skip').click();
+  sizes.app = await sizeOnce((size) => size?.[0] !== sizes.welcome?.[0]);
 }, 120_000);
 
 afterAll(async () => {
@@ -49,6 +77,12 @@ afterAll(async () => {
 });
 
 describe('the real window', () => {
+  /** The window opens hidden, and the page says which size it wants before it shows. */
+  it('opens small for the welcome, and grows to full once the QA is in', () => {
+    expect(sizes.welcome).toEqual([1120, 740]);
+    expect(sizes.app).toEqual([1440, 900]);
+  });
+
   it('opens, and the bridge answers', async () => {
     expect(await page.locator('.titlebar').count()).toBe(1);
     const bridge = await page.evaluate(() => {

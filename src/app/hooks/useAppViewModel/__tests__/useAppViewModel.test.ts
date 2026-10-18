@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
-import { renderHook, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAppViewModel } from '@/app/hooks/useAppViewModel';
 import { i18n } from '@/languages';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAppStore, useSettingsStore } from '@/store';
 
 describe('useAppViewModel', () => {
@@ -17,6 +18,37 @@ describe('useAppViewModel', () => {
     const { result } = renderHook(() => useAppViewModel());
 
     expect(result.current.isOnboarding).toBe(true);
+  });
+
+  describe('the window', () => {
+    afterEach(() => {
+      Reflect.deleteProperty(window, 'qazinho');
+    });
+
+    it('opens small while the QA is welcomed, and grows once they are in', () => {
+      const fitWindow = vi.fn(() => Promise.resolve());
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), fitWindow };
+      useSettingsStore.setState({ hasOnboarded: false });
+      renderHook(() => useAppViewModel());
+
+      expect(fitWindow).toHaveBeenLastCalledWith('onboarding');
+
+      act(() => {
+        useSettingsStore.getState().finishOnboarding();
+      });
+
+      expect(fitWindow).toHaveBeenLastCalledWith('app');
+    });
+
+    it('opens full straight away once the welcome was done', () => {
+      const fitWindow = vi.fn(() => Promise.resolve());
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), fitWindow };
+      renderHook(() => useAppViewModel());
+
+      expect(fitWindow).toHaveBeenCalledExactlyOnceWith('app');
+    });
   });
 
   it('does NOT show the setup again once it was done', () => {

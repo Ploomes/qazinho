@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { AppWindow } from '@/services';
 import {
   useArchive,
   useKeybinds,
@@ -27,6 +28,10 @@ export const useAppViewModel = () => {
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
+
+  useEffect(() => {
+    AppWindow.fit(hasOnboarded ? 'app' : 'onboarding');
+  }, [hasOnboarded]);
 
   return {
     screen,
