@@ -16,7 +16,7 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
   const isOpen = isAnswerable && !isAnswered;
   const shown = message.answers ?? drafts;
   const isInstant =
-    message.questions.length === 1 && message.questions[0]?.isMultiSelect === false;
+    message.questions.length === 1 && message.questions[0]?.options.length === 1;
   const isComplete = drafts.every(
     ({ picked, text }) => picked.length > 0 || text.trim().length > 0,
   );

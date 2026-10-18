@@ -101,6 +101,43 @@ describe('useQuestionRoundViewModel', () => {
       });
     });
 
+    /**
+     * A round asking for an account offered "Write it in the field below": one click sent it with
+     * the field still empty, and the agent asked for the account again.
+     */
+    it('waits for Answer on a lone question with several options, so the QA can write below', () => {
+      const VALUES: IChatQuestion = {
+        header: 'Account',
+        question: 'Which account should the cases sign in with?',
+        options: [
+          { label: 'Write it in the field below', description: 'The cases use it.' },
+          { label: 'Plan without signing in', description: 'Only what a visitor sees.' },
+        ],
+        isMultiSelect: false,
+      };
+      const { onAnswer, view } = render({ message: round({ questions: [VALUES] }) });
+
+      act(() => {
+        view.result.current.onPick({ index: 0, label: 'Write it in the field below' });
+      });
+
+      expect(onAnswer).not.toHaveBeenCalled();
+
+      act(() => {
+        view.result.current.onText({ index: 0, text: 'qa@shop.test / Test-1234' });
+      });
+      act(() => {
+        view.result.current.onSend();
+      });
+
+      expect(onAnswer).toHaveBeenCalledWith({
+        messageId: 'm-3',
+        answers: [
+          { picked: ['Write it in the field below'], text: 'qa@shop.test / Test-1234' },
+        ],
+      });
+    });
+
     it('does NOT change a round the QA can no longer answer', () => {
       const { onAnswer, view } = render({
         message: round({ questions: [GATE] }),
