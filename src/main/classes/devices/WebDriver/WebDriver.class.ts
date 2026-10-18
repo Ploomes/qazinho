@@ -58,6 +58,7 @@ export class WebDriver implements IDeviceDriver {
     this.page = this.context.pages()[0] ?? (await this.context.newPage());
     this.follow(this.page);
 
+    await this.page.setViewportSize(this.viewport);
     await this.fit();
     await this.page.goto(this.url, { timeout: WEB_DRIVER.gotoTimeoutMs });
   }
@@ -80,6 +81,7 @@ export class WebDriver implements IDeviceDriver {
       if (stale !== page) await stale.close().catch(() => undefined);
 
     this.page = page;
+    await page.setViewportSize(this.viewport);
     await context.clearCookies();
     await context.clearPermissions();
 
