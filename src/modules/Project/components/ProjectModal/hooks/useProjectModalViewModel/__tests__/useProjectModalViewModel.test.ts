@@ -164,6 +164,36 @@ describe('useProjectModalViewModel', () => {
       expect(result.current.footerHint).toBe('Add one target: a URL, an .apk or a .app');
     });
 
+    it('says when the web address is not one a browser could open', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onNameChange('Shop · staging');
+        result.current.onUrlChange('my shop');
+      });
+
+      expect(result.current.footerHint).toBe(
+        'That is not a web address: write it the way you would in a browser, like staging.yourshop.com',
+      );
+      expect(result.current.canConfirm).toBe(false);
+    });
+
+    it('saves an address typed without its scheme the way a browser opens it', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onNameChange('Shop · staging');
+        result.current.onUrlChange('staging.shop.com');
+      });
+      act(() => {
+        result.current.onConfirm();
+      });
+
+      expect(useAppStore.getState().projects.at(-1)?.targets[0]?.value).toBe(
+        'https://staging.shop.com',
+      );
+    });
+
     it('says nothing once the button can be pressed', () => {
       const { result } = renderHook(() => useProjectModalViewModel());
 

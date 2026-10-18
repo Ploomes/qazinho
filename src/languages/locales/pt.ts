@@ -291,6 +291,8 @@ export const pt: typeof en = {
     NEEDS_NAME_EDIT: 'Um projeto precisa de nome',
     NEEDS_TARGET_EDIT: 'Mantenha um target: uma URL, um .apk ou um .app',
     TARGET_IN_USE: 'Um workspace roda em {{target}}, então ele não pode ficar vazio',
+    WEB_INVALID:
+      'Isso não é um endereço web: escreva como num navegador, como staging.sualoja.com',
     DELETE: 'Excluir projeto',
     DELETE_QUESTION_EMPTY: 'Excluir este projeto?',
     DELETE_QUESTION_ONE: 'Excluir junto com o workspace dele?',

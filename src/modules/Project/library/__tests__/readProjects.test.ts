@@ -20,6 +20,20 @@ describe('readProjects', () => {
     expect(readProjects('{ nope')).toEqual([]);
   });
 
+  it('reads a web address an older project saved with no scheme the way a browser opens it', () => {
+    const typed = {
+      ...PROJECT,
+      targets: [
+        { id: 't1', kind: 'web', label: 'Web', value: 'loja.test' },
+        { id: 't2', kind: 'android', label: 'Android', value: '/x/app.apk' },
+      ],
+    };
+
+    expect(
+      readProjects(JSON.stringify([typed]))[0]?.targets.map(({ value }) => value),
+    ).toEqual(['http://loja.test', '/x/app.apk']);
+  });
+
   it('an entry with no id is skipped, and the rest still load', () => {
     const json = JSON.stringify([{ name: 'no id' }, PROJECT]);
 

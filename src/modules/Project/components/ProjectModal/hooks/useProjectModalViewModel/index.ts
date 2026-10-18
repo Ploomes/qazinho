@@ -4,7 +4,7 @@ import type { TargetKind } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TARGET_NAME_KEYS } from '@/modules/Project/components/ProjectModal/constants';
-import { newProjectId } from '@/modules/Project/library';
+import { newProjectId, webAddressOf } from '@/modules/Project/library';
 import { SETUP_LINKS } from '@/modules/Setup/constants';
 import { Archive, Files, Platform, Run } from '@/services';
 import { useAppStore, useMachineStore, useWorkspaceStore } from '@/store';
@@ -37,8 +37,9 @@ export const useProjectModalViewModel = () => {
   const isMac = Platform.isMac();
   const isEditing = editing !== null;
   const own = workspaces.filter((workspace) => workspace.projectId === editing?.id);
+  const address = webAddressOf(url);
   const values: Record<TargetKind, string> = {
-    web: url.trim(),
+    web: address ?? url.trim(),
     android: apk.trim(),
     ios: app.trim(),
   };
@@ -56,13 +57,15 @@ export const useProjectModalViewModel = () => {
       ? isEditing
         ? t('PROJECT.NEEDS_NAME_EDIT')
         : t('PROJECT.NEEDS_NAME')
-      : !hasTarget
-        ? isEditing
-          ? t('PROJECT.NEEDS_TARGET_EDIT')
-          : t('PROJECT.NEEDS_TARGET')
-        : orphaned === null
-          ? undefined
-          : t('PROJECT.TARGET_IN_USE', { target: t(TARGET_NAME_KEYS[orphaned.kind]) });
+      : url.trim().length > 0 && address === null
+        ? t('PROJECT.WEB_INVALID')
+        : !hasTarget
+          ? isEditing
+            ? t('PROJECT.NEEDS_TARGET_EDIT')
+            : t('PROJECT.NEEDS_TARGET')
+          : orphaned === null
+            ? undefined
+            : t('PROJECT.TARGET_IN_USE', { target: t(TARGET_NAME_KEYS[orphaned.kind]) });
 
   const targetFor = (kind: TargetKind): ITarget[] => {
     const value = values[kind];

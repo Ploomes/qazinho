@@ -289,6 +289,8 @@ export const en = {
     NEEDS_NAME_EDIT: 'A project needs a name',
     NEEDS_TARGET_EDIT: 'Keep one target: a URL, an .apk or a .app',
     TARGET_IN_USE: 'A workspace runs against {{target}}, so it cannot go empty',
+    WEB_INVALID:
+      'That is not a web address: write it the way you would in a browser, like staging.yourshop.com',
     DELETE: 'Delete project',
     DELETE_QUESTION_EMPTY: 'Delete this project?',
     DELETE_QUESTION_ONE: 'Delete it and its workspace?',
