@@ -9,6 +9,8 @@ export type * from './IAgentUsage';
 export type * from './IAndroidSetup';
 export type * from './IAskAgent';
 export type * from './IChatAnswer';
+export type * from './IChatQuestion';
+export type * from './IChatQuestionOption';
 export type * from './IChatReference';
 export type * from './IChatTurn';
 export type * from './IConnectIntegration';

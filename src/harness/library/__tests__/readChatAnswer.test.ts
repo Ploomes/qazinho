@@ -9,10 +9,21 @@ const CASE = {
   steps: [{ action: 'Pay', expected: 'A confirmation appears' }],
 };
 
+const QUESTION = {
+  header: 'Scope',
+  question: 'What should the plan cover?',
+  options: [
+    { label: 'The checkout', description: 'From the cart to the receipt.' },
+    { label: 'The whole shop', description: 'Every flow a buyer takes.' },
+  ],
+  multiSelect: false,
+};
+
 describe('readChatAnswer', () => {
   it('reads a reply with no plan', () => {
     expect(readChatAnswer(JSON.stringify({ reply: '  1 + 1 is 2. ' }))).toEqual({
       reply: '1 + 1 is 2.',
+      questions: [],
       plan: null,
     });
   });
@@ -28,20 +39,51 @@ describe('readChatAnswer', () => {
     expect(answer?.plan?.cases).toEqual([CASE]);
   });
 
+  it('reads the questions the agent puts to the QA', () => {
+    const answer = readChatAnswer(
+      JSON.stringify({ reply: 'Two things first.', questions: [QUESTION] }),
+    );
+
+    expect(answer?.questions).toEqual([
+      {
+        header: 'Scope',
+        question: 'What should the plan cover?',
+        options: QUESTION.options,
+        isMultiSelect: false,
+      },
+    ]);
+  });
+
   it('keeps the reply when the plan breaks the schema, and drops only the plan', () => {
     const answer = readChatAnswer(
       JSON.stringify({
         reply: 'Here it is.',
+        questions: [QUESTION],
         plan: { summary: 'x', cases: [{ ...CASE, priority: 'urgent' }] },
       }),
     );
 
-    expect(answer).toEqual({ reply: 'Here it is.', plan: null });
+    expect(answer).toMatchObject({ reply: 'Here it is.', plan: null });
+    expect(answer?.questions).toHaveLength(1);
+  });
+
+  it('drops a round with a question that offers nothing to pick, and keeps the rest', () => {
+    const answer = readChatAnswer(
+      JSON.stringify({
+        reply: 'Here it is.',
+        questions: [{ ...QUESTION, options: [] }],
+        plan: { summary: 'One case.', cases: [CASE] },
+      }),
+    );
+
+    expect(answer?.questions).toEqual([]);
+    expect(answer?.plan?.cases).toEqual([CASE]);
   });
 
   it('takes prose the agent printed instead of JSON as the reply', () => {
     expect(readChatAnswer('I could not reach the page.')).toEqual({
       reply: 'I could not reach the page.',
+      questions: [],
       plan: null,
     });
   });

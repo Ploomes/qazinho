@@ -20,6 +20,7 @@ const PROJECT = {
 
 const DRAFTED: IChatAnswer = {
   reply: 'Two cases over the checkout.',
+  questions: [],
   plan: {
     summary: 'Two cases over the checkout.',
     cases: [
@@ -197,7 +198,9 @@ describe('useChatViewModel', () => {
     });
 
     it('talks without touching the plan when the answer carries none', async () => {
-      const ask = answering({ answer: { reply: '1 + 1 is 2.', plan: null } });
+      const ask = answering({
+        answer: { reply: '1 + 1 is 2.', questions: [], plan: null },
+      });
       useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
 
       const { result } = renderHook(() => useChatViewModel());
@@ -221,7 +224,9 @@ describe('useChatViewModel', () => {
     });
 
     it('hands the agent what the QA mentioned, and keeps the mention on the message', async () => {
-      const ask = answering({ answer: { reply: 'It checks out.', plan: null } });
+      const ask = answering({
+        answer: { reply: 'It checks out.', questions: [], plan: null },
+      });
       useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
 
       const { result } = renderHook(() => useChatViewModel());
