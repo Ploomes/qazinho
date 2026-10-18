@@ -54,19 +54,20 @@ origin'`, never `'isInternalNavigation() returns false'`.
 Three suites that need something real behind them. They have their own config
 (`tests/vitest.smoke.ts`), their own command, and CI never runs them.
 
-| File               | What it drives                                                          |
-| ------------------ | ----------------------------------------------------------------------- |
-| `run.test.ts`      | the product: real Chrome, the QA's own agent, a plan walked and judged  |
-| `chat.test.ts`     | the QA's own agent answers the chat in the schema, with a readable plan |
-| `page.test.ts`     | `out/renderer` in plain Chrome, with no bridge: the page must not crash |
-| `electron.test.ts` | the packaged window, where `window.qazinho` is the real preload         |
-| `stream.test.ts`   | windowless Chrome streamed as MJPEG over loopback, with no agent        |
-| `stop.test.ts`     | Stop ends a run while a fake agent is still thinking                    |
-| `agent.test.ts`    | a fake agent retries a failed action, leaves a note, or errors out      |
-| `tools.test.ts`    | an MCP client lists, calls and fails the device tools on real Chrome    |
-| `setup.test.ts`    | the installer runs a fake npm, streams its lines, and fails honestly    |
+| File               | What it drives                                                              |
+| ------------------ | --------------------------------------------------------------------------- |
+| `run.test.ts`      | the product: real Chrome, the QA's own agent, a plan walked and judged      |
+| `chat.test.ts`     | the QA's own agent answers the chat in the schema, with a readable plan     |
+| `visual.test.ts`   | the QA's own agent fails a page whose text is right and whose screen is not |
+| `page.test.ts`     | `out/renderer` in plain Chrome, with no bridge: the page must not crash     |
+| `electron.test.ts` | the packaged window, where `window.qazinho` is the real preload             |
+| `stream.test.ts`   | windowless Chrome streamed as MJPEG over loopback, with no agent            |
+| `stop.test.ts`     | Stop ends a run while a fake agent is still thinking                        |
+| `agent.test.ts`    | a fake agent retries a failed action, leaves a note, or errors out          |
+| `tools.test.ts`    | an MCP client lists, calls and fails the device tools on real Chrome        |
+| `setup.test.ts`    | the installer runs a fake npm, streams its lines, and fails honestly        |
 
-`run.test.ts` and `chat.test.ts` spend the QA's tokens and need an agent installed. Run them by
+`run.test.ts`, `chat.test.ts` and `visual.test.ts` spend the QA's tokens and need an agent installed. Run them by
 hand after touching the run pipeline or an answer schema.
 
 **A synthetic click is not a click.** Playwright drives the page over CDP, which skips the hit
