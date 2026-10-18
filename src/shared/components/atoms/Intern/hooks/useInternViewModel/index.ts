@@ -8,13 +8,19 @@ import { drawIntern } from '@/shared/components/atoms/Intern/library';
 import { useAppStore } from '@/store';
 
 export const useInternViewModel = (props: IInternProps) => {
-  const { mood, size = INTERN.defaultSize, isStill = false, isFigure = false } = props;
+  const {
+    mood,
+    size = INTERN.defaultSize,
+    isStill = false,
+    isFigure = false,
+    isOnIndigo = false,
+  } = props;
   const { t } = useTranslation();
   const theme = useAppStore((state) => state.theme);
   const isCalm = useReducedMotion() ?? false;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pixels = Math.round(size * window.devicePixelRatio);
-  const mark = INTERN.mark[theme];
+  const shadow = isOnIndigo ? INTERN.shadow.indigo : INTERN.shadow[theme];
   const isMoving = !isStill && !isCalm;
 
   useEffect(() => {
@@ -22,11 +28,20 @@ export const useInternViewModel = (props: IInternProps) => {
 
     if (!context) return;
 
-    const draw = (t: number) => {
-      drawIntern({ context, size: pixels, mood, t, mark, isFigure });
+    const sheet = document.createElement('canvas');
+
+    sheet.width = pixels;
+    sheet.height = pixels;
+
+    const layer = sheet.getContext('2d');
+
+    if (!layer) return;
+
+    const draw = (phase: number) => {
+      drawIntern({ context, layer, size: pixels, mood, t: phase, shadow, isFigure });
     };
 
-    draw(0);
+    draw(INTERN_MOODS[mood].stillAt);
 
     if (!isMoving) return;
 
@@ -39,7 +54,7 @@ export const useInternViewModel = (props: IInternProps) => {
     return () => {
       cancelAnimationFrame(frame);
     };
-  }, [mood, pixels, mark, isFigure, isMoving]);
+  }, [mood, pixels, shadow, isFigure, isMoving]);
 
   return {
     canvasRef,

@@ -2,10 +2,13 @@ import type { InternMood } from '@/shared/components/atoms/Intern/types';
 
 const TAU = Math.PI * 2;
 const LIME = '#c6f432';
-const DARK = '#141414';
+const INK = '#141414';
 const RED = '#ff4d2e';
-const STAGE = 320;
-const FIGURE = { width: 240, height: 235 };
+const WHITE = '#ffffff';
+const EDGE = 13;
+const FRAME = { stage: { span: 340, foot: 0.86 }, figure: { span: 300, foot: 0.893 } };
+const TILT = (-6 * Math.PI) / 180;
+const FOOT = { x: 120, y: 235 };
 
 type Pose = {
   sway?: number;
@@ -15,7 +18,7 @@ type Pose = {
   sx?: number;
   sy?: number;
   eyes: (c: CanvasRenderingContext2D) => void;
-  extra?: (c: CanvasRenderingContext2D, mark: string) => void;
+  extra?: (c: CanvasRenderingContext2D) => void;
 };
 
 function pill(c: CanvasRenderingContext2D, box: [number, number, number, number]): void {
@@ -26,7 +29,7 @@ function pill(c: CanvasRenderingContext2D, box: [number, number, number, number]
   c.fill();
 }
 
-function roundBox(
+function traceBox(
   c: CanvasRenderingContext2D,
   shape: {
     x: number;
@@ -41,7 +44,6 @@ function roundBox(
   const [trx, tr] = shape.top;
   const [brx, br] = shape.bottom;
 
-  c.beginPath();
   c.moveTo(x + trx, y);
   c.lineTo(x + w - trx, y);
   c.ellipse(x + w - trx, y + tr, trx, tr, 0, -Math.PI / 2, 0);
@@ -52,18 +54,21 @@ function roundBox(
   c.lineTo(x, y + tr);
   c.ellipse(x + trx, y + tr, trx, tr, 0, Math.PI, Math.PI * 1.5);
   c.closePath();
-  c.fill();
 }
 
-function head(c: CanvasRenderingContext2D, sway: number): void {
-  c.fillStyle = LIME;
+function traceHead(c: CanvasRenderingContext2D): void {
+  traceBox(c, { x: 0, y: 44, w: 240, h: 191, top: [104, 83], bottom: [56, 45] });
+}
+
+function traceBody(c: CanvasRenderingContext2D, sway: number): void {
+  c.beginPath();
   c.save();
   c.translate(127.5, 52);
   c.rotate(sway - (8 * Math.PI) / 180);
   c.translate(-22.5, -49);
-  roundBox(c, { x: 0, y: 0, w: 45, h: 56, top: [22.5, 31.4], bottom: [13.5, 24.6] });
+  traceBox(c, { x: 0, y: 0, w: 45, h: 56, top: [22.5, 31.4], bottom: [13.5, 24.6] });
   c.restore();
-  roundBox(c, { x: 0, y: 44, w: 240, h: 191, top: [104, 83], bottom: [56, 45] });
+  traceHead(c);
 }
 
 function stroke(
@@ -82,6 +87,43 @@ function stroke(
   c.stroke();
 }
 
+function stickerLine(
+  c: CanvasRenderingContext2D,
+  line: { points: number[][]; width: number; colour: string },
+): void {
+  stroke(c, { ...line, width: line.width + 20, colour: WHITE });
+  stroke(c, line);
+}
+
+function dot(
+  c: CanvasRenderingContext2D,
+  circle: { x: number; y: number; r: number },
+): void {
+  c.beginPath();
+  c.arc(circle.x, circle.y, circle.r, 0, TAU);
+  c.fill();
+}
+
+function badge(
+  c: CanvasRenderingContext2D,
+  place: { pulse: number; turn: number },
+): void {
+  c.save();
+  c.translate(228, 64);
+  c.rotate(place.turn);
+  c.scale(place.pulse, place.pulse);
+  c.fillStyle = WHITE;
+  dot(c, { x: 0, y: 0, r: 41 });
+  c.fillStyle = RED;
+  dot(c, { x: 0, y: 0, r: 32 });
+  c.fillStyle = WHITE;
+  c.beginPath();
+  c.roundRect(-5.5, -20, 11, 25, 5.5);
+  c.fill();
+  dot(c, { x: 0, y: 14, r: 6 });
+  c.restore();
+}
+
 const POSES: Record<InternMood, (t: number) => Pose> = {
   neutral: (t) => {
     const blink = t > 0.78 && t < 0.88 ? Math.sin(((t - 0.78) / 0.1) * Math.PI) : 0;
@@ -91,7 +133,7 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
       sway: 0.06 * Math.sin(TAU * t),
       dy: -3 * Math.sin(TAU * t),
       eyes: (c) => {
-        c.fillStyle = DARK;
+        c.fillStyle = INK;
         pill(c, [65.5, 138 - h / 2, 33, h]);
         pill(c, [134.5, 138 - h / 2, 33, h]);
       },
@@ -104,7 +146,7 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
       sway: -0.14 * Math.sin(TAU * t),
       rot: 0.025 * Math.sin(TAU * t),
       eyes: (c) => {
-        c.fillStyle = DARK;
+        c.fillStyle = INK;
         pill(c, [65.5 + ox, 110, 33, 56]);
         pill(c, [134.5 + ox, 110, 33, 56]);
       },
@@ -139,7 +181,7 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
           ? 0.25 * Math.sin((Math.PI * t) / 0.5)
           : -0.08 * Math.sin(TAU * (t - 0.5) * 2),
       eyes: (c) => {
-        c.strokeStyle = DARK;
+        c.strokeStyle = INK;
         c.lineWidth = 13;
         c.lineCap = 'round';
         for (const x of [82, 151]) {
@@ -152,13 +194,12 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
   },
   bug: (t) => {
     const look = 18 * Math.sin(TAU * t);
-    const pulse = 1 + 0.12 * Math.sin(TAU * t * 2);
 
     return {
       dx: 3.5 * Math.sin(TAU * t * 10),
       sway: 0.18 * Math.sin(TAU * t * 5),
       eyes: (c) => {
-        c.fillStyle = DARK;
+        c.fillStyle = INK;
         for (const x of [82, 151]) {
           c.beginPath();
           c.ellipse(x + look, 136, 24, 34, 0, 0, TAU);
@@ -166,20 +207,10 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
         }
       },
       extra: (c) => {
-        c.save();
-        c.translate(230, 62);
-        c.scale(pulse, pulse);
-        c.rotate(0.15 * Math.sin(TAU * t * 2));
-        c.fillStyle = RED;
-        c.beginPath();
-        c.arc(0, 0, 32, 0, TAU);
-        c.fill();
-        c.fillStyle = '#fff';
-        pill(c, [-5, -19, 10, 24]);
-        c.beginPath();
-        c.arc(0, 14, 5.5, 0, TAU);
-        c.fill();
-        c.restore();
+        badge(c, {
+          pulse: 1 + 0.12 * Math.sin(TAU * t * 2),
+          turn: 0.15 * Math.sin(TAU * t * 2),
+        });
       },
     };
   },
@@ -190,7 +221,7 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
       rot: -0.035 * Math.sin(TAU * t),
       sway: 0.05 * Math.sin(TAU * t),
       eyes: (c) => {
-        c.fillStyle = DARK;
+        c.fillStyle = INK;
         pill(c, [60 + ox, 132, 44, 13]);
         pill(c, [134.5 + ox, 110, 33, 56]);
       },
@@ -204,17 +235,17 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
       sway: 0.08 * Math.sin(TAU * t),
       rot: 0.02 * Math.sin(TAU * t),
       eyes: (c) => {
-        c.fillStyle = DARK;
+        c.fillStyle = INK;
         pill(c, [56 + ox, 90, 33, 56]);
         pill(c, [125 + ox, 90, 33, 56]);
       },
-      extra: (c, mark) => {
-        c.fillStyle = mark;
-        [196, 222, 248].forEach((x, index) => {
+      extra: (c) => {
+        [196, 226, 256].forEach((x, index) => {
           if (index >= dots) return;
-          c.beginPath();
-          c.arc(x, 14, 8, 0, TAU);
-          c.fill();
+          c.fillStyle = WHITE;
+          dot(c, { x, y: 12, r: 15 });
+          c.fillStyle = INK;
+          dot(c, { x, y: 12, r: 8.5 });
         });
       },
     };
@@ -235,7 +266,7 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
               [x + 17, 155],
             ],
             width: 13,
-            colour: DARK,
+            colour: INK,
           });
           stroke(c, {
             points: [
@@ -243,20 +274,20 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
               [x - 17, 155],
             ],
             width: 13,
-            colour: DARK,
+            colour: INK,
           });
         }
       },
       extra: (c) => {
         if (t < 0.5 && frame % 4 < 2)
-          stroke(c, {
+          stickerLine(c, {
             points: [
-              [230, 40],
+              [226, 44],
               [244, 30],
-              [236, 22],
-              [252, 8],
+              [234, 20],
+              [256, 2],
             ],
-            width: 7,
+            width: 8,
             colour: RED,
           });
       },
@@ -270,20 +301,20 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
       sx: 1 - 0.02 * breath,
       sway: 0.05 * breath,
       eyes: (c) => {
-        c.fillStyle = DARK;
+        c.fillStyle = INK;
         pill(c, [60, 144, 44, 13]);
         pill(c, [129, 144, 44, 13]);
       },
-      extra: (c, mark) => {
+      extra: (c) => {
         for (let k = 0; k < 2; k += 1) {
           const u = (t + k * 0.5) % 1;
           const fade = u < 0.15 ? u / 0.15 : 1 - (u - 0.15) / 0.85;
-          const s = 18 + 14 * u;
-          const x = 205 + 24 * u;
-          const y = 40 - 70 * u;
+          const s = 18 + 12 * u;
+          const x = 204 + 22 * u;
+          const y = 34 - 56 * u;
 
           c.globalAlpha = Math.max(0, Math.min(1, fade));
-          stroke(c, {
+          stickerLine(c, {
             points: [
               [x, y],
               [x + s, y],
@@ -291,7 +322,7 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
               [x + s, y + s],
             ],
             width: 6,
-            colour: mark,
+            colour: INK,
           });
           c.globalAlpha = 1;
         }
@@ -300,31 +331,77 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
   },
 };
 
-/** Draws the Estagiário in a mood at phase `t` (0 to 1) on a square canvas of `size` pixels. */
+/** Draws the Estagiário as a sticker in a mood at phase `t` (0 to 1): cut on `layer`, then laid on `context` with its shadows. */
 export function drawIntern(props: {
   context: CanvasRenderingContext2D;
+  layer: CanvasRenderingContext2D;
   size: number;
   mood: InternMood;
   t: number;
-  mark: string;
+  shadow: string;
   isFigure: boolean;
 }): void {
-  const { context: c, size, mood, t, mark, isFigure } = props;
+  const { context: c, layer: l, size, mood, t } = props;
   const pose = POSES[mood](t);
-  const scale = isFigure ? size / FIGURE.width : size / STAGE;
-  const footX = isFigure ? size / 2 : 160 * scale;
-  const footY = isFigure
-    ? (size + FIGURE.height * scale) / 2
-    : (40 + FIGURE.height) * scale;
+  const frame = props.isFigure ? FRAME.figure : FRAME.stage;
+  const unit = size / frame.span;
+
+  l.setTransform(1, 0, 0, 1, 0, 0);
+  l.clearRect(0, 0, size, size);
+  l.globalAlpha = 1;
+  l.translate(
+    (frame.span / 2 + (pose.dx ?? 0)) * unit,
+    (frame.span * frame.foot + (pose.dy ?? 0)) * unit,
+  );
+  l.rotate(TILT + (pose.rot ?? 0));
+  l.scale((pose.sx ?? 1) * unit, (pose.sy ?? 1) * unit);
+  l.translate(-FOOT.x, -FOOT.y);
+
+  traceBody(l, pose.sway ?? 0);
+  l.lineJoin = 'round';
+  l.strokeStyle = 'rgba(0, 0, 0, 0.07)';
+  l.lineWidth = EDGE * 2 + 2.5;
+  l.stroke();
+  l.strokeStyle = WHITE;
+  l.lineWidth = EDGE * 2;
+  l.stroke();
+  l.fillStyle = WHITE;
+  l.fill();
+  l.fillStyle = LIME;
+  l.fill();
+
+  l.save();
+  l.beginPath();
+  traceHead(l);
+  l.clip();
+
+  const shade = l.createLinearGradient(0, 160, 0, 235);
+
+  shade.addColorStop(0, 'rgba(90, 130, 0, 0)');
+  shade.addColorStop(1, 'rgba(90, 130, 0, 0.1)');
+  l.fillStyle = shade;
+  l.fillRect(0, 150, 240, 90);
+  l.restore();
+
+  l.fillStyle = 'rgba(255, 255, 255, 0.5)';
+  l.beginPath();
+  l.ellipse(50, 98, 24, 7.5, -0.62, 0, TAU);
+  l.fill();
+  dot(l, { x: 80, y: 72, r: 4.5 });
+
+  pose.eyes(l);
+  pose.extra?.(l);
 
   c.setTransform(1, 0, 0, 1, 0, 0);
   c.clearRect(0, 0, size, size);
-  c.globalAlpha = 1;
-  c.translate(footX + (pose.dx ?? 0) * scale, footY + (pose.dy ?? 0) * scale);
-  c.rotate(pose.rot ?? 0);
-  c.scale((pose.sx ?? 1) * scale, (pose.sy ?? 1) * scale);
-  c.translate(-FIGURE.width / 2, -FIGURE.height);
-  head(c, pose.sway ?? 0);
-  pose.eyes(c);
-  pose.extra?.(c, mark);
+  c.save();
+  c.shadowColor = props.shadow;
+  c.shadowBlur = 22 * unit;
+  c.shadowOffsetY = 11 * unit;
+  c.drawImage(l.canvas, 0, 0);
+  c.shadowColor = 'rgba(0, 0, 0, 0.16)';
+  c.shadowBlur = 3 * unit;
+  c.shadowOffsetY = 2 * unit;
+  c.drawImage(l.canvas, 0, 0);
+  c.restore();
 }

@@ -5,3 +5,9 @@
   height: var(--intern-size);
   animation: gc-in var(--dur) var(--ease);
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  .intern {
+    animation: gc-slap 0.46s var(--ease) both;
+  }
+}
