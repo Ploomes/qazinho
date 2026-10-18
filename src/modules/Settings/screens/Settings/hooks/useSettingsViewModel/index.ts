@@ -8,7 +8,14 @@ import {
   SETTINGS_TABS,
   THEMES,
 } from '@/modules/Settings/constants';
-import { INTEGRATIONS, MCP_SERVERS, useAgentSignIn } from '@/modules/Setup';
+import {
+  INTEGRATIONS,
+  MCP_SERVERS,
+  SETUP_LINKS,
+  useAgentSignIn,
+  useInstall,
+  useMachineCheck,
+} from '@/modules/Setup';
 import { Mcp, Platform } from '@/services';
 import { useAppStore, useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
@@ -29,14 +36,23 @@ export const useSettingsViewModel = () => {
   const selectAgent = useSettingsStore((state) => state.selectAgent);
   const selectLanguage = useSettingsStore((state) => state.selectLanguage);
   const landMcpServers = useSetupStore((state) => state.landMcpServers);
+  const managers = useSetupStore((state) => state.managers);
   const isMac = Platform.isMac();
   const signIn = useAgentSignIn();
+  const { installs, install } = useInstall();
+  const { isChecking, check } = useMachineCheck();
+  const idbInstall = installs.idb;
+  const hasBrew = managers?.brew.isFound ?? false;
 
   const agentId = detected.find(({ name }) => name === agent)?.id ?? 'claude-code';
 
   useEffect(() => {
     if (tab === 'mcps') void Mcp.list(agentId).then(landMcpServers);
   }, [tab, agentId, landMcpServers]);
+
+  useEffect(() => {
+    if (tab === 'devices' && managers === null && !isChecking) void check();
+  }, [tab, managers, isChecking, check]);
 
   const iosTool = (props: {
     name: string;
@@ -107,22 +123,41 @@ export const useSettingsViewModel = () => {
         status: tools.androidSdk.isFound
           ? t('TOOLS.ANDROID_FOUND')
           : t('TOOLS.ANDROID_MISSING'),
+        canInstall: false,
+        install: null,
       },
-      iosTool({
-        name: 'Xcode',
-        isFound: tools.xcode.isFound,
-        path: tools.xcode.path ?? t('TOOLS.NOT_FOUND_PATH'),
-        found: t('TOOLS.XCODE_FOUND'),
-        missing: t('TOOLS.XCODE_MISSING'),
-      }),
-      iosTool({
-        name: 'idb',
-        isFound: tools.idb.isFound,
-        path: tools.idb.path ?? t('TOOLS.IDB_INSTALL'),
-        found: t('TOOLS.IDB_FOUND'),
-        missing: t('TOOLS.IDB_MISSING'),
-      }),
+      {
+        ...iosTool({
+          name: 'Xcode',
+          isFound: tools.xcode.isFound,
+          path: tools.xcode.path ?? t('TOOLS.NOT_FOUND_PATH'),
+          found: t('TOOLS.XCODE_FOUND'),
+          missing: t('TOOLS.XCODE_MISSING'),
+        }),
+        canInstall: false,
+        install: null,
+      },
+      {
+        ...iosTool({
+          name: 'idb',
+          isFound: tools.idb.isFound,
+          path: tools.idb.path ?? t('TOOLS.NOT_FOUND_PATH'),
+          found: t('TOOLS.IDB_FOUND'),
+          missing: t('TOOLS.IDB_MISSING'),
+        }),
+        canInstall:
+          isMac && !tools.idb.isFound && hasBrew && idbInstall?.phase !== 'installing',
+        install:
+          idbInstall !== undefined && idbInstall.phase !== 'installed'
+            ? idbInstall
+            : null,
+      },
     ],
+    needsBrew: isMac && managers !== null && !hasBrew && !tools.idb.isFound,
+    brewUrl: SETUP_LINKS.brew,
+    onInstallIdb: () => {
+      void install('idb');
+    },
     integrations: INTEGRATIONS,
     mcpServers: MCP_SERVERS,
     themes: THEMES.map((item) => ({

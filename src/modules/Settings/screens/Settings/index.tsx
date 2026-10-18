@@ -1,7 +1,7 @@
 import { AnimatePresence } from 'motion/react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { AgentSignIn, IntegrationCard, McpCard } from '@/modules/Setup';
+import { AgentSignIn, InstallProgress, IntegrationCard, McpCard } from '@/modules/Setup';
 import { Button, Logo, Tag, Wordmark } from '@/shared/components/atoms';
 import { useSettingsViewModel } from './hooks';
 import './styles.css';
@@ -13,6 +13,9 @@ export const Settings: React.FC = () => {
     tabs,
     agents,
     devices,
+    needsBrew,
+    brewUrl,
+    onInstallIdb,
     integrations,
     mcpServers,
     themes,
@@ -152,9 +155,36 @@ export const Settings: React.FC = () => {
                     >
                       {item.status}
                     </span>
+                    <AnimatePresence initial={false}>
+                      {item.install !== null && (
+                        <InstallProgress
+                          key="install"
+                          state={item.install}
+                          onRetry={onInstallIdb}
+                        />
+                      )}
+                    </AnimatePresence>
                   </span>
+                  {item.canInstall && (
+                    <Button size="sm" variant="primary" onClick={onInstallIdb}>
+                      {t('SETUP.INSTALL')}
+                    </Button>
+                  )}
                 </div>
               ))}
+              {needsBrew && (
+                <p className="settings__note">
+                  {t('SETUP.NEEDS_BREW')}{' '}
+                  <a
+                    className="settings__link"
+                    href={brewUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    brew.sh ↗
+                  </a>
+                </p>
+              )}
               <p className="settings__note">{t('SETTINGS.DEVICES_NOTE')}</p>
             </div>
           )}

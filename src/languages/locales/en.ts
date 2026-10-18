@@ -266,7 +266,6 @@ export const en = {
     NOT_FOUND_PATH: 'not found',
     IDB_FOUND: 'idb found',
     IDB_MISSING: 'idb not found',
-    IDB_INSTALL: 'brew install idb-companion',
   },
   PROJECT: {
     ANDROID_LOCKED: 'Needs the Android SDK on this machine',

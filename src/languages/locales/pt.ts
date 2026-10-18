@@ -268,7 +268,6 @@ export const pt: typeof en = {
     NOT_FOUND_PATH: 'não encontrado',
     IDB_FOUND: 'idb encontrado',
     IDB_MISSING: 'idb não encontrado',
-    IDB_INSTALL: 'brew install idb-companion',
   },
   PROJECT: {
     ANDROID_LOCKED: 'Precisa do Android SDK nesta máquina',

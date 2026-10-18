@@ -1,10 +1,10 @@
 // @vitest-environment jsdom
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
 import { useSettingsViewModel } from '@/modules/Settings/screens/Settings/hooks/useSettingsViewModel';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useMachineStore, useSettingsStore } from '@/store';
+import { useAppStore, useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
 beforeEach(() => {
   useAppStore.setState({ theme: 'dark' });
@@ -125,6 +125,61 @@ describe('useSettingsViewModel', () => {
     expect(result.current.keybinds.find(({ id }) => id === 'run')?.keys).toBe(
       'press the keys',
     );
+  });
+
+  /** The devices tab told a QA missing idb to type "brew install idb-companion". */
+  describe('installing idb', () => {
+    afterEach(() => {
+      Reflect.deleteProperty(window, 'qazinho');
+      useSetupStore.setState({ managers: null, installs: {} });
+    });
+
+    it('checks the machine when the devices tab opens, so it knows whether brew is there', async () => {
+      const checkMachine = vi.fn(fakeQazinhoApi('darwin').checkMachine);
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), checkMachine };
+      useSettingsStore.setState({ tab: 'devices' });
+      renderHook(() => useSettingsViewModel());
+
+      await waitFor(() => {
+        expect(useSetupStore.getState().managers).not.toBeNull();
+      });
+      expect(checkMachine).toHaveBeenCalledOnce();
+    });
+
+    it('offers to install idb when it is missing and brew is there, instead of a command', () => {
+      window.qazinho = fakeQazinhoApi('darwin');
+      useSetupStore.setState({
+        managers: {
+          npm: { isFound: true, path: '/bin/npm' },
+          brew: { isFound: true, path: '/bin/brew' },
+        },
+      });
+
+      const { result } = renderHook(() => useSettingsViewModel());
+      const idb = result.current.devices.find(({ name }) => name === 'idb');
+
+      expect(idb?.canInstall).toBe(true);
+      expect(idb?.path).not.toContain('brew install');
+      expect(result.current.needsBrew).toBe(false);
+    });
+
+    it('does NOT offer it without brew, and says brew comes first', () => {
+      window.qazinho = fakeQazinhoApi('darwin');
+      useSetupStore.setState({
+        managers: {
+          npm: { isFound: true, path: '/bin/npm' },
+          brew: { isFound: false, path: null },
+        },
+      });
+
+      const { result } = renderHook(() => useSettingsViewModel());
+
+      expect(result.current.devices.find(({ name }) => name === 'idb')?.canInstall).toBe(
+        false,
+      );
+      expect(result.current.needsBrew).toBe(true);
+    });
   });
 
   describe('signing an agent in', () => {
