@@ -3,7 +3,8 @@ import type { IAskAgent, IChatAnswer, IChatQuestion, IChatTurn } from '@/shared/
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useChatViewModel } from '@/modules/Chat/screens/Chat/hooks/useChatViewModel';
-import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import { endRun } from '@/modules/Workspace/library';
+import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import {
   useAppStore,
@@ -399,6 +400,40 @@ describe('useChatViewModel', () => {
       );
 
       expect(round).toMatchObject({ isAnswerable: false });
+    });
+  });
+
+  describe('a run card', () => {
+    it('says how the run ended when it did not walk the whole plan', () => {
+      answering({});
+      useWorkspaceStore.setState({
+        workspaces: [
+          endRun({
+            workspace: walkRun({ verdicts: ['passed', 'failed'] }),
+            at: '09:43',
+            endedBy: 'stopped',
+          }),
+        ],
+      });
+
+      const card = renderHook(() => useChatViewModel()).result.current.messages.find(
+        ({ message }) => message.kind === 'run',
+      );
+
+      expect(card?.runTitle).toBe('Run r-01 · stopped · 1 passed · 1 failed');
+    });
+
+    it('keeps the plain title for a run that walked it all', () => {
+      answering({});
+      useWorkspaceStore.setState({
+        workspaces: [walkRun({ verdicts: ['passed'], isFinished: true })],
+      });
+
+      const card = renderHook(() => useChatViewModel()).result.current.messages.find(
+        ({ message }) => message.kind === 'run',
+      );
+
+      expect(card?.runTitle).toBe('Run r-01 · 1 passed · 0 failed');
     });
   });
 

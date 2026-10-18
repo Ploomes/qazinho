@@ -10,6 +10,7 @@ export const Runs: React.FC = () => {
   const {
     runs,
     run,
+    runEnded,
     reportRef,
     pager,
     counts,
@@ -48,7 +49,14 @@ export const Runs: React.FC = () => {
           <div className="runs__head">
             <div className="runs__heading">
               <h2 className="runs__title">{run.title}</h2>
-              <span className="runs__meta">{run.meta}</span>
+              <span className="runs__meta">
+                {run.meta}
+                {runEnded !== null && (
+                  <span className="runs__ended">
+                    <span aria-hidden="true">{runEnded.glyph}</span> {runEnded.label}
+                  </span>
+                )}
+              </span>
             </div>
 
             <div className="runs__counts">
@@ -175,6 +183,11 @@ export const Runs: React.FC = () => {
           >
             <span className="runs__history-id">{item.id}</span>
             <span className="runs__history-what">{item.what}</span>
+            {item.ended !== null && (
+              <span className="runs__ended">
+                <span aria-hidden="true">{item.ended.glyph}</span> {item.ended.label}
+              </span>
+            )}
             <span className="runs__tally runs__tally--passed">
               ✓ {item.counts.passed}
             </span>

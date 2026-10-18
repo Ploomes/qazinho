@@ -1,6 +1,12 @@
+import type { RunEnd } from '@/modules/Run/types';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RUN_FILTERS, RUN_PAGE_SIZE, RUN_VERDICTS } from '@/modules/Run/constants';
+import {
+  RUN_ENDS,
+  RUN_FILTERS,
+  RUN_PAGE_SIZE,
+  RUN_VERDICTS,
+} from '@/modules/Run/constants';
 import { caseVerdict, filterCases, pageOf } from '@/modules/Run/library';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 import { MOTION } from '@/shared/constants';
@@ -32,6 +38,12 @@ export const useRunsViewModel = () => {
     verdict: caseVerdict(runCase.steps),
   }));
 
+  const endOf = (endedBy: RunEnd) => {
+    const end = RUN_ENDS[endedBy];
+
+    return end === null ? null : { glyph: end.glyph, label: t(end.labelKey) };
+  };
+
   const onOpenBug = (bugId: string) => {
     toggleBug(bugId);
     selectTab('bugs');
@@ -55,8 +67,10 @@ export const useRunsViewModel = () => {
     runs: paged.items.map((item) => ({
       ...item,
       isSelected: item.id === run?.id,
+      ended: endOf(item.endedBy),
     })),
     run,
+    runEnded: run === null ? null : endOf(run.endedBy),
     reportRef,
     pager: {
       isShown: paged.pageCount > 1,

@@ -2,6 +2,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useRunsViewModel } from '@/modules/Run/screens/Runs/hooks/useRunsViewModel';
+import { endRun } from '@/modules/Workspace/library';
 import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
@@ -27,6 +28,23 @@ describe('useRunsViewModel', () => {
 
     expect(result.current.isEmpty).toBe(false);
     expect(result.current.run?.id).toBe('r-01');
+  });
+
+  it('marks a run that ended before the end, and leaves a finished one plain', () => {
+    const stopped = endRun({
+      workspace: walkRun({ verdicts: ['passed', 'failed'] }),
+      at: '09:43',
+      endedBy: 'stopped',
+    });
+
+    expect(renderHook(() => useRunsViewModel()).result.current.runEnded).toBeNull();
+
+    useWorkspaceStore.setState({ workspaces: [stopped] });
+
+    const { result } = renderHook(() => useRunsViewModel());
+
+    expect(result.current.runEnded).toEqual({ glyph: '■', label: 'stopped' });
+    expect(result.current.runs[0]?.ended).toEqual({ glyph: '■', label: 'stopped' });
   });
 
   it('has nothing to show before the first run', () => {

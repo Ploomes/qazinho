@@ -93,6 +93,8 @@ export const en = {
     PLAN_CARD_SUBTITLE: 'Read it, change what is wrong, then run it.',
     PLAN_CARD_ACTION: 'Open in Plan →',
     RUN_CARD_TITLE: 'Run {{id}} · {{passed}} passed · {{failed}} failed',
+    RUN_CARD_TITLE_ENDED:
+      'Run {{id}} · {{ended}} · {{passed}} passed · {{failed}} failed',
     RUN_CARD_SUBTITLE:
       'Counters, screenshots and the expected vs. got for every failure.',
     RUN_CARD_ACTION: 'Open in Runs →',
@@ -136,6 +138,9 @@ export const en = {
     PREVIOUS_PAGE: 'Previous runs',
     NEXT_PAGE: 'Next runs',
     WHOLE_PLAN: 'The whole plan',
+    ENDED_STOPPED: 'stopped',
+    ENDED_BROKE: 'broke',
+    ENDED_INTERRUPTED: 'interrupted',
     OPEN_IN_BUGS: 'Open in Bugs →',
     DURATION: '{{seconds}}s',
     STEP_SHOT: '{{id}} · step {{number}}',

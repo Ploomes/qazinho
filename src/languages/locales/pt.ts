@@ -95,6 +95,8 @@ export const pt: typeof en = {
     PLAN_CARD_SUBTITLE: 'Leia, corrija o que estiver errado e então rode.',
     PLAN_CARD_ACTION: 'Abrir no Plano →',
     RUN_CARD_TITLE: 'Run {{id}} · {{passed}} passaram · {{failed}} falharam',
+    RUN_CARD_TITLE_ENDED:
+      'Run {{id}} · {{ended}} · {{passed}} passaram · {{failed}} falharam',
     RUN_CARD_SUBTITLE: 'Contadores, screenshots e o esperado vs. obtido de cada falha.',
     RUN_CARD_ACTION: 'Abrir em Runs →',
     SUGGESTION_PLAN: 'Criar um plano de teste',
@@ -138,6 +140,9 @@ export const pt: typeof en = {
     PREVIOUS_PAGE: 'Runs anteriores',
     NEXT_PAGE: 'Próximas runs',
     WHOLE_PLAN: 'O plano inteiro',
+    ENDED_STOPPED: 'parada',
+    ENDED_BROKE: 'quebrou',
+    ENDED_INTERRUPTED: 'interrompida',
     OPEN_IN_BUGS: 'Abrir em Bugs →',
     DURATION: '{{seconds}}s',
     STEP_SHOT: '{{id}} · passo {{number}}',

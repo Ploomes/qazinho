@@ -1,4 +1,4 @@
-import type { IQuestionAnswer } from '@/modules/Chat/types';
+import type { IQuestionAnswer, IRunMessage } from '@/modules/Chat/types';
 import type { IChatReference } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ import {
 import { CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { planOfDraft } from '@/modules/Plan';
-import { flattenPlanSteps } from '@/modules/Run';
+import { flattenPlanSteps, RUN_ENDS } from '@/modules/Run';
 import { Agent } from '@/services';
 import {
   useAppStore,
@@ -126,6 +126,15 @@ export const useChatViewModel = () => {
     askAgent({ text, references });
   };
 
+  const runTitleOf = (message: IRunMessage) => {
+    const end = RUN_ENDS[message.endedBy];
+    const tally = { id: message.runId, passed: message.passed, failed: message.failed };
+
+    return end === null
+      ? t('CHAT.RUN_CARD_TITLE', tally)
+      : t('CHAT.RUN_CARD_TITLE_ENDED', { ...tally, ended: t(end.labelKey) });
+  };
+
   const answer = (props: { messageId: string; answers: IQuestionAnswer[] }) => {
     const round = workspace?.chat.find(({ id }) => id === props.messageId);
 
@@ -148,6 +157,7 @@ export const useChatViewModel = () => {
         message.answers === null &&
         message.id === lastId &&
         !isAgentTyping,
+      runTitle: message.kind === 'run' ? runTitleOf(message) : '',
     })),
     listRef,
     onScroll,

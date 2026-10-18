@@ -62,7 +62,7 @@ export const Chat: React.FC = () => {
         </div>
       ) : (
         <div ref={listRef} className="chat__messages" onScroll={onScroll}>
-          {messages.map(({ message, isNew, isAnswerable }) => (
+          {messages.map(({ message, isNew, isAnswerable, runTitle }) => (
             <motion.div
               key={message.id}
               className="chat__row"
@@ -116,11 +116,7 @@ export const Chat: React.FC = () => {
                 {message.kind === 'run' && (
                   <HandoffCard
                     glyph="↻"
-                    title={t('CHAT.RUN_CARD_TITLE', {
-                      id: message.runId,
-                      passed: message.passed,
-                      failed: message.failed,
-                    })}
+                    title={runTitle}
                     subtitle={t('CHAT.RUN_CARD_SUBTITLE')}
                     action={t('CHAT.RUN_CARD_ACTION')}
                     onOpen={onOpenRuns}
