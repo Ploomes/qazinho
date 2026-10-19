@@ -1,33 +1,33 @@
 .run-section {
   display: flex;
-  flex-direction: column;
-  animation: gc-in var(--dur) var(--ease);
-}
-
-.run-section__head {
-  display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-6);
+  animation: gc-in var(--dur) var(--ease);
 }
 
 .run-section__at {
   flex: none;
   width: var(--chat-gutter);
+  padding-top: var(--space-5);
   color: var(--ink3);
   font: var(--font-mono-xs);
   text-align: right;
 }
 
-.run-section__bar {
-  display: flex;
+.run-section__box {
   flex: 1;
-  align-items: center;
-  gap: var(--space-3);
   min-width: 0;
-  padding-right: var(--space-4);
+  overflow: hidden;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--raise);
+}
+
+.run-section__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-right: var(--space-4);
 }
 
 .run-section__toggle {
@@ -114,19 +114,10 @@
 }
 
 .run-section__rows {
-  position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
-  padding-top: var(--space-6);
-}
-
-.run-section__rows::before {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(var(--chat-gutter) + var(--space-6) / 2);
-  width: 1px;
-  background: var(--line);
-  content: '';
+  gap: var(--space-5);
+  padding: var(--space-5);
+  border-top: 1px solid var(--line2);
+  background: var(--panel);
 }

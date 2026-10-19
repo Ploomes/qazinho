@@ -47,4 +47,11 @@ describe('useChatRowViewModel', () => {
     expect(row(message, { isNew: true }).initial).toEqual({ opacity: 0, y: 10 });
     expect(row(message).initial).toBe(false);
   });
+
+  it('reads as a log line inside a run, and as a chat row everywhere else', () => {
+    const message: ChatMessage = { id: 'm-1', kind: 'user', at: '09:41', text: 'hi' };
+
+    expect(row(message, { isNested: true }).className).toBe('chat-row chat-row--nested');
+    expect(row(message).className).toBe('chat-row');
+  });
 });

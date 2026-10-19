@@ -3,15 +3,15 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useRunSectionViewModel } from './hooks';
 import './styles.css';
 
-/** A run in the chat as one line that opens onto everything the run said: its notes, its failed steps. */
+/** A run in the chat as one box: its line on top, and when opened, everything the run said inside it. */
 export const RunSection: React.FC<IRunSectionProps> = (props) => {
   const { caret, facts, isBodyShown, hasOpen, className, bodyTransition, onToggle } =
     useRunSectionViewModel(props);
 
   return (
     <section className={className}>
-      <div className="run-section__head">
-        <span className="run-section__at">{props.at}</span>
+      <span className="run-section__at">{props.at}</span>
+      <div className="run-section__box">
         <div className="run-section__bar">
           <button
             type="button"
@@ -34,22 +34,22 @@ export const RunSection: React.FC<IRunSectionProps> = (props) => {
             </button>
           )}
         </div>
-      </div>
 
-      <AnimatePresence initial={false}>
-        {isBodyShown && (
-          <motion.div
-            key="body"
-            className="run-section__body"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={bodyTransition}
-          >
-            <div className="run-section__rows">{props.children}</div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        <AnimatePresence initial={false}>
+          {isBodyShown && (
+            <motion.div
+              key="body"
+              className="run-section__body"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={bodyTransition}
+            >
+              <div className="run-section__rows">{props.children}</div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </section>
   );
 };

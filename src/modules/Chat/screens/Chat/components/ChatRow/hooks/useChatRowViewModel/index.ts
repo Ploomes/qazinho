@@ -9,6 +9,7 @@ export const useChatRowViewModel = (props: IChatRowProps) => {
   const isAgent = message.kind === 'agent' || message.kind === 'note';
 
   return {
+    className: props.isNested === true ? 'chat-row chat-row--nested' : 'chat-row',
     who:
       message.kind === 'user'
         ? t('CHAT.YOU')

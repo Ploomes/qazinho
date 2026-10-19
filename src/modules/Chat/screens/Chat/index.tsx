@@ -93,6 +93,7 @@ export const Chat: React.FC = () => {
                     message={row.message}
                     isNew={row.isNew}
                     isAnswerable={false}
+                    isNested
                     onAnswer={onAnswer}
                     onAnswerQuestions={onAnswerQuestions}
                     onOpenPlan={onOpenPlan}

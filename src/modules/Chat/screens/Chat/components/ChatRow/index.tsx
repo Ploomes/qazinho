@@ -14,13 +14,14 @@ import './styles.css';
 
 /** One message in the chat: who said it and when in the gutter, the message beside it. */
 export const ChatRow: React.FC<IChatRowProps> = (props) => {
-  const { who, whoClassName, initial, transition } = useChatRowViewModel(props);
+  const { className, who, whoClassName, initial, transition } =
+    useChatRowViewModel(props);
   const { message } = props;
   const { t } = useTranslation();
 
   return (
     <motion.div
-      className="chat-row"
+      className={className}
       initial={initial}
       animate={{ opacity: 1, y: 0 }}
       transition={transition}
