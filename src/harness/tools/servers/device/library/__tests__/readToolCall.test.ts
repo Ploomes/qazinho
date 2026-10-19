@@ -128,4 +128,27 @@ describe('readToolCall', () => {
       });
     });
   });
+
+  describe('a bug on the side of a step', () => {
+    const BUG = {
+      title: ' Yearly price differs ',
+      severity: 'medium',
+      expected: 'One yearly price',
+      got: '$20.49 on the page, $20.40 on the phone',
+    };
+
+    it('reads a bug the step does not ask about', () => {
+      expect(readToolCall({ name: 'bug', args: BUG })).toEqual({
+        kind: 'finding',
+        finding: { ...BUG, title: 'Yearly price differs' },
+      });
+    });
+
+    it('does NOT file a bug with nothing to know it by, and tells the agent why', () => {
+      expect(readToolCall({ name: 'bug', args: { ...BUG, title: '  ' } })).toEqual({
+        kind: 'refused',
+        error: '"bug" needs "title": the line a developer would know the bug by.',
+      });
+    });
+  });
 });

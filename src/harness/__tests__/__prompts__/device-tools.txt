@@ -178,5 +178,47 @@
     "execution": {
       "taskSupport": "forbidden"
     }
+  },
+  {
+    "name": "bug",
+    "description": "File a bug you saw that the step does not ask about, such as a wrong price, a broken link or two texts that disagree. The step keeps its own verdict: carry on with it.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The line a developer would know the bug by."
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "expected": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What the app should show."
+        },
+        "got": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What the device actually showed."
+        }
+      },
+      "required": [
+        "title",
+        "severity",
+        "expected",
+        "got"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
   }
 ]

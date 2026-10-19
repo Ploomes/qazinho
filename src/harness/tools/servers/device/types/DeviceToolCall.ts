@@ -1,3 +1,4 @@
+import type { IStepFinding } from './IStepFinding';
 import type { IStepReport } from './IStepReport';
 import type { IStepAction } from '@/shared/types';
 
@@ -6,4 +7,5 @@ export type DeviceToolCall =
   | { kind: 'look' }
   | { kind: 'act'; action: IStepAction }
   | { kind: 'report'; report: IStepReport }
+  | { kind: 'finding'; finding: IStepFinding }
   | { kind: 'refused'; error: string };

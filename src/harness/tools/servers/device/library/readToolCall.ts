@@ -28,6 +28,18 @@ export function readToolCall(props: {
     };
   }
 
+  if (tool.name === 'bug') {
+    const read = tool.input.safeParse(props.args ?? {});
+
+    if (!read.success)
+      return {
+        kind: 'refused',
+        error: read.error.issues[0]?.message ?? 'File it again.',
+      };
+
+    return { kind: 'finding', finding: read.data };
+  }
+
   const read = tool.input.safeParse(props.args ?? {});
 
   if (!read.success)

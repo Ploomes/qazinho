@@ -104,4 +104,26 @@ export const DEVICE_TOOLS = [
         .optional(),
     }),
   },
+  {
+    name: 'bug',
+    description:
+      'File a bug you saw that the step does not ask about, such as a wrong price, a broken link or two texts that disagree. The step keeps its own verdict: carry on with it.',
+    input: z.object({
+      title: textNamed({
+        message: '"bug" needs "title": the line a developer would know the bug by.',
+        description: 'The line a developer would know the bug by.',
+      }),
+      severity: z.enum(['high', 'medium', 'low'], {
+        error: '"severity" is high, medium or low.',
+      }),
+      expected: textNamed({
+        message: '"bug" needs "expected": what the app should show.',
+        description: 'What the app should show.',
+      }),
+      got: textNamed({
+        message: '"bug" needs "got": what the device actually showed.',
+        description: 'What the device actually showed.',
+      }),
+    }),
+  },
 ] as const;

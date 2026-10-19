@@ -1,4 +1,8 @@
-import type { IAttachDevice, IStepReport } from '@/harness/tools/servers/device/types';
+import type {
+  IAttachDevice,
+  IStepFinding,
+  IStepReport,
+} from '@/harness/tools/servers/device/types';
 import type { IActionMotion, IDeviceImage, IStepAction } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
 import { callDeviceTool } from '@/harness/tools/servers/device/library';
@@ -10,6 +14,7 @@ function fakeDevice(
   props: {
     fails?: string;
     onReport?: IAttachDevice['onReport'];
+    onFinding?: IAttachDevice['onFinding'];
     image?: IDeviceImage | null;
     motion?: IActionMotion | null;
     blind?: boolean;
@@ -31,6 +36,7 @@ function fakeDevice(
       },
     },
     onReport: props.onReport,
+    onFinding: props.onFinding,
   };
 
   return { device, acted };
@@ -173,6 +179,40 @@ describe('callDeviceTool', () => {
       });
 
       expect(text(answer)).toMatch(/^Done\. The device now shows:/);
+    });
+  });
+
+  describe('a bug on the side of a step', () => {
+    const BUG = {
+      title: 'Yearly price differs',
+      severity: 'medium',
+      expected: 'One yearly price',
+      got: '$20.49 and $20.40',
+    };
+
+    it('hands the bug to the run and says what the run answered', async () => {
+      const filed: IStepFinding[] = [];
+      const { device } = fakeDevice({
+        onFinding: async (finding) => {
+          filed.push(finding);
+
+          return 'Filed as a bug. Carry on with step 2.';
+        },
+      });
+
+      const answer = await callDeviceTool({ device, call: { name: 'bug', args: BUG } });
+
+      expect(filed).toEqual([BUG]);
+      expect(text(answer)).toBe('Filed as a bug. Carry on with step 2.');
+    });
+
+    it('does NOT file a bug with no run to file it in', async () => {
+      const answer = await callDeviceTool({
+        device: fakeDevice().device,
+        call: { name: 'bug', args: BUG },
+      });
+
+      expect(answer.isError).toBe(true);
     });
   });
 });

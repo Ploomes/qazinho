@@ -45,6 +45,12 @@ export async function callDeviceTool(props: {
       return said(await device.onReport(read.report));
     }
 
+    if (read.kind === 'finding') {
+      if (!device.onFinding) return said('There is no run to file a bug in.', true);
+
+      return said(await device.onFinding(read.finding));
+    }
+
     await device.driver.act(read.action);
 
     const motion = describeMotion(await device.driver.motion());
