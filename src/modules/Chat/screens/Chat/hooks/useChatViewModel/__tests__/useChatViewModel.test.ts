@@ -636,6 +636,32 @@ describe('useChatViewModel', () => {
     });
   });
 
+  describe('what the agent knows of the runs', () => {
+    it('tells the agent how the latest run went with every message, though it never walked it', async () => {
+      const ask = answering({});
+
+      useWorkspaceStore.setState({
+        workspaces: [walkRun({ verdicts: ['passed', 'failed'], isFinished: true })],
+      });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onDraftChange('Why did the checkout fail?');
+      });
+      act(() => {
+        result.current.onSend();
+      });
+
+      await waitFor(() => {
+        expect(ask).toHaveBeenCalledOnce();
+      });
+      expect(ask.mock.calls[0]?.[0].runs).toMatchObject([
+        { kind: 'run', id: 'r-01', title: 'The whole plan · 09:41' },
+      ]);
+    });
+  });
+
   describe('a chat while a run goes', () => {
     it('does NOT send, and says the run has to end or be stopped first', () => {
       const ask = answering({});

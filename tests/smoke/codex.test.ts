@@ -119,6 +119,7 @@ describe('Codex in the chat', () => {
       viewport: null,
       steps: [],
       references: [],
+      runs: [],
       look: null,
     });
     const ask = (sessionId: string | null) =>

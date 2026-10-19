@@ -31,6 +31,21 @@ const REFERENCES: IChatReference[] = [
   },
 ];
 
+const RUNS = [
+  {
+    kind: 'run' as const,
+    id: 'r-02',
+    title: 'The whole plan · 10:02',
+    facts: [
+      'started 10:02, took 84s, cost $0.041, walked the whole plan',
+      '2 passed, 1 failed, 0 blocked, 0 skipped',
+      'TC-02 Checkout: failed',
+      '  step 1 failed: Apply EXPIRED10 (The expired coupon took 10% off.)',
+      'note: Closed a cookie banner first.',
+    ],
+  },
+];
+
 const harness = new Harness();
 const DESKTOP = { width: 1280, height: 800 };
 
@@ -42,6 +57,7 @@ describe('Harness', () => {
         viewport: null,
         steps: [],
         references: [],
+        runs: [],
         look: null,
       });
 
@@ -55,6 +71,7 @@ describe('Harness', () => {
         viewport: DESKTOP,
         steps: STEPS,
         references: REFERENCES,
+        runs: RUNS,
         look: {
           url: 'https://shop.test',
           isOpen: true,
@@ -65,6 +82,35 @@ describe('Harness', () => {
       await expect(chat.systemPrompt).toMatchFileSnapshot('./__prompts__/chat-full.txt');
     });
 
+    it('tells the chat how the latest runs went, which it never walked itself', () => {
+      const prompt = harness.chat({
+        target: null,
+        viewport: null,
+        steps: [],
+        references: [],
+        runs: RUNS,
+        look: null,
+      }).systemPrompt;
+
+      expect(prompt).toContain(
+        '## Runs in this workspace\nrun r-02 · The whole plan · 10:02',
+      );
+      expect(prompt).toContain('  note: Closed a cookie banner first.');
+    });
+
+    it('says nothing of runs before the first one', () => {
+      expect(
+        harness.chat({
+          target: null,
+          viewport: null,
+          steps: [],
+          references: [],
+          runs: [],
+          look: null,
+        }).systemPrompt,
+      ).not.toContain('## Runs in this workspace');
+    });
+
     it('takes every tool away from the chat', () => {
       expect(
         harness.chat({
@@ -72,6 +118,7 @@ describe('Harness', () => {
           viewport: null,
           steps: [],
           references: [],
+          runs: [],
           look: null,
         }).tools,
       ).toEqual({
@@ -138,6 +185,7 @@ describe('Harness', () => {
           viewport: null,
           steps: [],
           references: [],
+          runs: [],
           look: null,
         }).systemPrompt,
       ).not.toContain('## Running a case');

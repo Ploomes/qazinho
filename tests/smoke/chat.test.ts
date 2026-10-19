@@ -31,6 +31,7 @@ describe('a real chat', () => {
       viewport: { width: 1280, height: 800 },
       steps: [],
       references: [],
+      runs: [],
       look: null,
     });
     const runner = new AgentRunner({

@@ -12,6 +12,7 @@ import {
   mentionQueryOf,
   mentionsIn,
   referencesOf,
+  runHistoryOf,
 } from '@/modules/Chat/library';
 import { CHAT, CHAT_FAILURE_KEYS } from '@/modules/Chat/screens/Chat/constants';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
@@ -99,6 +100,7 @@ export const useChatViewModel = () => {
         target?.kind === 'web' ? { width: size.width, height: size.height } : null,
       steps: flattenPlanSteps(workspace.plan),
       references: props.references,
+      runs: runHistoryOf({ workspace, wholePlan }),
     }).then((turn) => {
       if (turn.isError) {
         landAgentError({

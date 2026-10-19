@@ -3,7 +3,7 @@ import type { IFlatStep } from './IFlatStep';
 import type { ITargetUnderTest } from './ITargetUnderTest';
 import type { IViewport } from './IViewport';
 
-/** What the page asks in the chat: the QA's own words, and the workspace they are about. */
+/** What the page asks in the chat: the QA's own words, the workspace they are about, and how its latest runs went. */
 export interface IAskAgent {
   workspaceId: string;
   agentId: string;
@@ -14,4 +14,5 @@ export interface IAskAgent {
   viewport: IViewport | null;
   steps: IFlatStep[];
   references: IChatReference[];
+  runs: IChatReference[];
 }

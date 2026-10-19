@@ -16,6 +16,7 @@ import {
   describeLook,
   describePlan,
   describeReferences,
+  describeRuns,
   describeSize,
   fillSections,
   renderSections,
@@ -53,12 +54,13 @@ export class Harness {
     return toolsOfRole({ grants: TOOL_GRANTS, role, server: MCP_HOST.name });
   }
 
-  /** One chat message: the workspace, what QAzinho saw of the app and what the QA pointed at, and the answer's shape. */
+  /** One chat message: the workspace and its latest runs, what QAzinho saw of the app and what the QA pointed at, and the answer's shape. */
   public chat(props: {
     target: ITargetUnderTest | null;
     viewport: IViewport | null;
     steps: IFlatStep[];
     references: IChatReference[];
+    runs: IChatReference[];
     look: AppLook | null;
   }): {
     systemPrompt: string;
@@ -79,6 +81,7 @@ export class Harness {
               ...describePlan(props.steps),
             ],
           },
+          describeRuns(props.runs),
           describeLook(props.look),
           describeReferences(props.references),
         ],

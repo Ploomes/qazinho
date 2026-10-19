@@ -21,6 +21,7 @@ const ASK = {
   viewport: null,
   steps: [],
   references: [],
+  runs: [],
 };
 
 describe('a page with no bridge', () => {

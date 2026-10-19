@@ -185,6 +185,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     viewport: ask.viewport,
     steps: ask.steps,
     references: ask.references,
+    runs: ask.runs,
     look: ask.target?.kind === 'web' ? await peek.look(ask.target.value) : null,
   });
 
