@@ -19,6 +19,12 @@ export function saveLater(settleMs: number): ISaveLater {
       );
     },
 
+    drop: (key) => {
+      window.clearTimeout(timers.get(key));
+      timers.delete(key);
+      pending.delete(key);
+    },
+
     flush: () => {
       for (const [key, write] of pending) {
         window.clearTimeout(timers.get(key));

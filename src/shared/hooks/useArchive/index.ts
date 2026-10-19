@@ -58,7 +58,10 @@ export const useArchive = () => {
       if (!before.isLoaded || state.workspaces === before.workspaces) return;
 
       for (const gone of before.workspaces)
-        if (!state.workspaces.some(({ id }) => id === gone.id)) held.forget(gone.id);
+        if (!state.workspaces.some(({ id }) => id === gone.id)) {
+          held.forget(gone.id);
+          later.drop(gone.id);
+        }
 
       for (const workspace of state.workspaces) {
         if (workspace === before.workspaces.find(({ id }) => id === workspace.id))

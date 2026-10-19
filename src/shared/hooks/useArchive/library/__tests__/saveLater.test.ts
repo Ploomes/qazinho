@@ -36,6 +36,18 @@ describe('saveLater', () => {
     expect(second).toHaveBeenCalledTimes(1);
   });
 
+  it('does NOT write a workspace removed while its write was waiting', () => {
+    const later = saveLater(700);
+    const write = vi.fn();
+
+    later.save('w1', write);
+    later.drop('w1');
+    vi.advanceTimersByTime(700);
+    later.flush();
+
+    expect(write).not.toHaveBeenCalled();
+  });
+
   it('nothing is lost when the page goes away mid-wait', () => {
     const later = saveLater(700);
     const write = vi.fn();

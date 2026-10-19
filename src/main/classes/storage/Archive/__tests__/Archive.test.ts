@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -46,6 +47,17 @@ describe('Archive', () => {
     await archive.removeWorkspace('w1');
 
     expect((await archive.read()).workspaces).toEqual([]);
+  });
+
+  it('removing a workspace takes the screenshots of its runs too', async () => {
+    const shots = join(root, 'runs', 'w1', 'r-01');
+
+    await archive.saveWorkspace(SAVED);
+    await mkdir(shots, { recursive: true });
+    await writeFile(join(shots, 'step-1.jpg'), 'jpeg');
+    await archive.removeWorkspace('w1');
+
+    expect(existsSync(join(root, 'runs', 'w1'))).toBe(false);
   });
 
   it('removing a workspace that was never there is not an error', async () => {

@@ -50,8 +50,10 @@ export class Archive {
     await Promise.allSettled([...this.writing]);
   }
 
+  /** Takes a workspace off the disk with the screenshots of its runs. */
   public async removeWorkspace(id: string): Promise<void> {
     await rm(this.folderOf(id), { recursive: true, force: true });
+    await rm(join(this.root, ARCHIVE.runs, id), { recursive: true, force: true });
   }
 
   /** The page cannot read disk, so a screenshot it no longer holds comes back inline. */

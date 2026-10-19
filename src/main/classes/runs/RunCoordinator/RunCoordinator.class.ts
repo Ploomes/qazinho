@@ -18,6 +18,7 @@ import type {
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { WEB_DRIVER } from '@/main/classes/devices/WebDriver/constants';
+import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { agentFailure } from '@/main/library';
 import { RUN_WALK, UNWALKED } from './constants';
 import {
@@ -106,7 +107,7 @@ export class RunCoordinator {
       await this.walk({
         ...run,
         command,
-        shotDir: join(this.dataRoot, 'runs', run.workspaceId, run.runId),
+        shotDir: join(this.dataRoot, ARCHIVE.runs, run.workspaceId, run.runId),
         profileDir: join(this.dataRoot, RUN_WALK.profiles, run.workspaceId),
         sdkRoot: android?.sdkRoot ?? '',
         avd: android?.avd ?? '',
