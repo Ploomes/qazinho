@@ -1,4 +1,11 @@
-import type { IRunEvent, IRunInFlight, IStartRun, IViewport } from '@/shared/types';
+import type {
+  IRunEvent,
+  IRunInFlight,
+  IRunRef,
+  IStartRun,
+  IViewport,
+  SaveOutcome,
+} from '@/shared/types';
 
 /** The only caller of the run side of the bridge. */
 export class Run {
@@ -28,5 +35,15 @@ export class Run {
 
   public static onEvent(listener: (event: IRunEvent) => void): () => void {
     return window.qazinho?.onRunEvent(listener) ?? (() => undefined);
+  }
+
+  public static async replayUrl(run: IRunRef): Promise<string | null> {
+    return (await window.qazinho?.replayUrl(run)) ?? null;
+  }
+
+  public static async saveReplay(
+    props: IRunRef & { name: string },
+  ): Promise<SaveOutcome> {
+    return (await window.qazinho?.saveReplay(props)) ?? 'failed';
   }
 }

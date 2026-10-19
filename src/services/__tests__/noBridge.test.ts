@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from 'vitest';
 import { i18n } from '@/languages';
-import { Agent, Integrations, Mcp, Setup } from '@/services';
+import { Agent, Integrations, Mcp, Run, Setup } from '@/services';
 
 /**
  * The page opened with no bridge, in a plain browser, has nothing to ask. Each service says so
@@ -47,5 +47,12 @@ describe('a page with no bridge', () => {
       error: said,
     });
     expect(await Setup.install('claude-code')).toMatchObject({ error: said });
+  });
+
+  it('has no recording to play or to save', async () => {
+    expect(await Run.replayUrl({ workspaceId: 'w1', runId: 'r-01' })).toBeNull();
+    expect(await Run.saveReplay({ workspaceId: 'w1', runId: 'r-01', name: 'r-01' })).toBe(
+      'failed',
+    );
   });
 });

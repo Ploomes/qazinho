@@ -16,6 +16,8 @@ export const CHANNELS = {
   focusDevice: 'run:focus',
   runsInFlight: 'run:in-flight',
   runEvent: 'run:event',
+  replayUrl: 'run:replay-url',
+  saveReplay: 'run:save-replay',
   recorderStart: 'recorder:start',
   recorderStop: 'recorder:stop',
   recorderWrite: 'recorder:write',

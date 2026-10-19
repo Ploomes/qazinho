@@ -17,6 +17,7 @@ import type { IntegrationId } from './IntegrationId';
 import type { IResourceSnapshot } from './IResourceSnapshot';
 import type { IRunEvent } from './IRunEvent';
 import type { IRunInFlight } from './IRunInFlight';
+import type { IRunRef } from './IRunRef';
 import type { ISavedState } from './ISavedState';
 import type { ISavedWorkspace } from './ISavedWorkspace';
 import type { ISetupEvent } from './ISetupEvent';
@@ -49,6 +50,8 @@ export interface IQazinhoApi {
   focusDevice: (props: { workspaceId: string; isFocused: boolean }) => Promise<void>;
   runsInFlight: () => Promise<IRunInFlight[]>;
   onRunEvent: (listener: (event: IRunEvent) => void) => () => void;
+  replayUrl: (run: IRunRef) => Promise<string | null>;
+  saveReplay: (props: IRunRef & { name: string }) => Promise<SaveOutcome>;
   readState: () => Promise<ISavedState>;
   saveProjects: (json: string) => Promise<void>;
   saveWorkspace: (saved: ISavedWorkspace) => Promise<void>;

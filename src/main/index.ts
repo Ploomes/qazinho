@@ -9,6 +9,7 @@ import type {
   InstallableId,
   IntegrationId,
   IRunEvent,
+  IRunRef,
   IMcpServerTarget,
   IMcpSignIn,
   ISavedWorkspace,
@@ -20,7 +21,7 @@ import type {
   SaveOutcome,
   WindowFit,
 } from '@/shared/types';
-import { writeFile } from 'node:fs/promises';
+import { copyFile, writeFile } from 'node:fs/promises';
 import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
@@ -47,6 +48,7 @@ import {
   ProcessOwners,
   ResourceCollector,
   RunCoordinator,
+  ReplayServer,
   RunRecorder,
   SetupInstaller,
 } from '@/main/classes';
@@ -81,6 +83,7 @@ const resources = new ResourceCollector({
 const deviceTools = new DeviceToolDetector();
 const archive = new Archive(PATHS.data);
 const live = new LiveStream();
+const replays = new ReplayServer(PATHS.data);
 const tools = new McpHost();
 const harness = new Harness();
 const peek = new AppPeek({ folder: tmpdir() });
@@ -294,6 +297,24 @@ async function shotBytes(props: {
   return props.src === null ? null : bytesOfDataUrl(props.src);
 }
 
+async function saveReplay(props: IRunRef & { name: string }): Promise<SaveOutcome> {
+  const options = {
+    defaultPath: join(app.getPath('downloads'), `${fileNameOf(props.name)}.mp4`),
+    filters: [{ name: 'MP4', extensions: ['mp4'] }],
+  };
+  const [open] = appWindows();
+  const picked = open
+    ? await dialog.showSaveDialog(open, options)
+    : await dialog.showSaveDialog(options);
+
+  if (picked.canceled || picked.filePath === undefined) return 'cancelled';
+
+  return copyFile(replays.fileOf(props), picked.filePath).then(
+    () => 'saved' as const,
+    () => 'failed' as const,
+  );
+}
+
 async function saveShot(props: {
   file: string | null;
   src: string | null;
@@ -388,6 +409,7 @@ void app.whenReady().then(async () => {
   if (!app.isPackaged) app.dock?.setIcon(PATHS.icon);
 
   await live.start();
+  await replays.start();
   await tools.start();
 
   ipcMain.handle(CHANNELS.detectAgents, () => agents.detect());
@@ -413,6 +435,10 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.askAgent, (_event, ask: IAskAgent) => askAgent(ask));
   ipcMain.handle(CHANNELS.startRun, (_event, run: IStartRun) => runs.start(run));
+  ipcMain.handle(CHANNELS.replayUrl, (_event, run: IRunRef) => replays.urlFor(run));
+  ipcMain.handle(CHANNELS.saveReplay, (_event, props: IRunRef & { name: string }) =>
+    saveReplay(props),
+  );
   ipcMain.handle(CHANNELS.stopRun, (_event, workspaceId: string) => {
     runs.stop(workspaceId);
   });
@@ -493,6 +519,7 @@ app.on('will-quit', (event) => {
   }
 
   live.close();
+  replays.close();
   tools.close();
   mcp.close();
   login.close();

@@ -42,6 +42,8 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     resizeDevice: () => Promise.resolve(),
     focusDevice: () => Promise.resolve(),
     onRunEvent: () => () => undefined,
+    replayUrl: () => Promise.resolve(null),
+    saveReplay: () => Promise.resolve('cancelled' as const),
     readState: () => Promise.resolve({ projects: '[]', workspaces: [] }),
     saveProjects: () => Promise.resolve(),
     saveWorkspace: () => Promise.resolve(),

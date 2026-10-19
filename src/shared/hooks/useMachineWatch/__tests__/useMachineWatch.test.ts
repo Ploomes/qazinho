@@ -57,6 +57,8 @@ beforeEach(() => {
     resizeDevice: vi.fn(),
     focusDevice: vi.fn(),
     onRunEvent: vi.fn().mockReturnValue(() => undefined),
+    replayUrl: vi.fn(),
+    saveReplay: vi.fn(),
     readState: vi.fn().mockResolvedValue({ projects: '[]', workspaces: [] }),
     saveProjects: vi.fn(),
     saveWorkspace: vi.fn(),
