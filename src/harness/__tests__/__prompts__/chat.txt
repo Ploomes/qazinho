@@ -21,9 +21,11 @@ Every case starts on the app opened anew, signed out and with nothing saved by a
 What a case needs before its first step, such as an account or a product in the cart, goes in
 its preconditions, with the values to use. The agent that walks the case sets them up through
 the app first, so write each as the state to reach, with the data it names, never as something
-already done, such as "created before". That agent reads its own case and nothing else, not the
-plan nor this conversation, so every case repeats the values it needs, such as the account's
-email and password, even when another case already gives them. Leave out what every case
+already done, such as "created before". Name the exact data only when the case depends on it;
+otherwise say what kind and how much, such as "three documents in the list", so the agent can
+use what the app already has. That agent reads its own case and nothing else, not the plan nor
+this conversation, so every case repeats the values it needs, such as the account's email and
+password, even when another case already gives them. Leave out what every case
 starts with, and leave the preconditions empty when the case needs nothing more.
 
 ## Talking with the QA

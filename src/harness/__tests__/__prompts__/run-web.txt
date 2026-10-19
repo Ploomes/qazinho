@@ -21,9 +21,11 @@ Every case starts on the app opened anew, signed out and with nothing saved by a
 What a case needs before its first step, such as an account or a product in the cart, goes in
 its preconditions, with the values to use. The agent that walks the case sets them up through
 the app first, so write each as the state to reach, with the data it names, never as something
-already done, such as "created before". That agent reads its own case and nothing else, not the
-plan nor this conversation, so every case repeats the values it needs, such as the account's
-email and password, even when another case already gives them. Leave out what every case
+already done, such as "created before". Name the exact data only when the case depends on it;
+otherwise say what kind and how much, such as "three documents in the list", so the agent can
+use what the app already has. That agent reads its own case and nothing else, not the plan nor
+this conversation, so every case repeats the values it needs, such as the account's email and
+password, even when another case already gives them. Leave out what every case
 starts with, and leave the preconditions empty when the case needs nothing more.
 
 ## Running a case
@@ -32,8 +34,9 @@ Set up the case's preconditions first, such as signing in or adding a product to
 report nothing for that, not even in "note": every case starts empty, so setting it up is the
 job, not a problem. A precondition names a state to reach, even when it reads as done before:
 data it names that the app does not have yet, such as an appointment or a product, you create
-through the app. Report step 1 "blocked" only when the app gives you no way to reach it, and
-say why.
+through the app. When it names data only to have something to work on, and the app cannot
+create it, use data of the same kind the app already has, and say so in "note". Report step 1
+"blocked" only when the app gives you no way to reach it, and say why.
 Carry the steps out on the device with the tools. You are told what the device shows when the
 case starts, and every action answers with what it shows after, so look only when unsure.
 Every look and every action answers with the screen twice: its text, and a picture of it.

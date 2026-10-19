@@ -9,8 +9,9 @@ Set up the case's preconditions first, such as signing in or adding a product to
 report nothing for that, not even in "note": every case starts empty, so setting it up is the
 job, not a problem. A precondition names a state to reach, even when it reads as done before:
 data it names that the app does not have yet, such as an appointment or a product, you create
-through the app. Report step 1 "blocked" only when the app gives you no way to reach it, and
-say why.
+through the app. When it names data only to have something to work on, and the app cannot
+create it, use data of the same kind the app already has, and say so in "note". Report step 1
+"blocked" only when the app gives you no way to reach it, and say why.
 Carry the steps out on the device with the tools. You are told what the device shows when the
 case starts, and every action answers with what it shows after, so look only when unsure.
 Every look and every action answers with the screen twice: its text, and a picture of it.
