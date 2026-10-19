@@ -8,6 +8,7 @@ import {
   formatElapsed,
   moodOfStatus,
   imageRatioOf,
+  shownUrlOf,
   stepVerdictsOf,
   viewportOf,
 } from '@/modules/Device/library';
@@ -162,7 +163,7 @@ export const useDevicePanelViewModel = () => {
     },
     shot,
     stream,
-    urlText: target?.value ?? '',
+    urlText: shownUrlOf(target?.value ?? ''),
     elapsedLabel:
       live?.costUsd == null
         ? t('DEVICE.LIVE', { elapsed: formatElapsed(live?.elapsedSec ?? 0) })
