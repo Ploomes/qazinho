@@ -40,6 +40,7 @@ describe('usePlanCaseViewModel', () => {
           bugId: null,
           shot: null,
           shotFile: null,
+          span: null,
         },
         {
           number: 2,
@@ -49,6 +50,7 @@ describe('usePlanCaseViewModel', () => {
           bugId: null,
           shot: null,
           shotFile: null,
+          span: null,
         },
       ],
     };

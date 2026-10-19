@@ -5,6 +5,7 @@ export * from './fromSaved';
 export * from './landCost';
 export * from './landFinding';
 export * from './landStep';
+export * from './landVideo';
 export * from './messageOfSaved';
 export * from './resumeRun';
 export * from './startRun';

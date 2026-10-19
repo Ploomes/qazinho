@@ -8,6 +8,7 @@ import type {
   IChatQuestion,
   IRunFinding,
   IRunInFlight,
+  IRunVideo,
   IStepOutcome,
 } from '@/shared/types';
 
@@ -75,6 +76,7 @@ export interface IWorkspaceStore {
   landFinding: (props: { workspaceId: string; finding: IRunFinding }) => void;
   landStep: (outcome: IStepOutcome) => void;
   landRunDone: (workspaceId: string) => void;
+  landVideo: (props: { workspaceId: string; runId: string; video: IRunVideo }) => void;
   landRunFailed: (props: { workspaceId: string; text: string }) => void;
   tickClock: () => void;
   toggleCase: (caseId: string) => void;

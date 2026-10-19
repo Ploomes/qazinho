@@ -1,4 +1,5 @@
 import type { IRunFinding } from './IRunFinding';
+import type { IRunVideo } from './IRunVideo';
 import type { IStepOutcome } from './IStepOutcome';
 import type { RunFailure } from './RunFailure';
 
@@ -11,4 +12,5 @@ export type IRunEvent =
   | { kind: 'cost'; workspaceId: string; costUsd: number }
   | { kind: 'finding'; workspaceId: string; finding: IRunFinding }
   | { kind: 'done'; workspaceId: string }
+  | { kind: 'video'; workspaceId: string; runId: string; video: IRunVideo }
   | { kind: 'failed'; workspaceId: string; failure: RunFailure };

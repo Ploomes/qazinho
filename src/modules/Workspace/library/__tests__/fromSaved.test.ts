@@ -123,4 +123,44 @@ describe('fromSaved', () => {
       fromSaved({ id: 'w1', json, planYaml: '' })?.chat.map(({ kind }) => kind),
     ).toEqual(['user']);
   });
+
+  it('reads a run saved before recordings as one with no video, its steps out of time', () => {
+    const json = JSON.stringify({
+      id: 'w1',
+      projectId: 'p1',
+      runs: [
+        {
+          id: 'r-01',
+          meta: 'Checkout regression',
+          startedAt: '09:41',
+          durationSec: 4,
+          counts: { passed: 1, failed: 0, blocked: 0, skipped: 0 },
+          cases: [
+            {
+              id: 'TC-01',
+              title: 'Sign in',
+              verdict: 'passed',
+              durationSec: 4,
+              steps: [
+                {
+                  number: 1,
+                  action: 'Open the page',
+                  verdict: 'passed',
+                  why: null,
+                  bugId: null,
+                  shot: null,
+                  shotFile: null,
+                },
+              ],
+            },
+          ],
+          endedBy: 'finished',
+        },
+      ],
+    });
+    const run = fromSaved({ id: 'w1', json, planYaml: '' })?.runs[0];
+
+    expect(run?.video).toBeNull();
+    expect(run?.cases[0]?.steps[0]?.span).toBeNull();
+  });
 });

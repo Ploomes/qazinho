@@ -18,6 +18,7 @@ export function bugOfSaved(saved: SavedBug): IBug {
     agent: bug.agent ?? '',
     modelName: bug.modelName ?? null,
     isIncidental: bug.isIncidental ?? false,
+    at: bug.at ?? null,
     shots: bug.shots.map(({ isBad, src, file }) => ({ isBad, src, file })),
   };
 }

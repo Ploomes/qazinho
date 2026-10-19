@@ -103,4 +103,8 @@ describe('makeBug', () => {
 
     expect(bug).toMatchObject({ agent: 'Codex', modelName: null });
   });
+
+  it('says when it was caught: the moment its step came back', () => {
+    expect(bugFrom().at).toBe(1_760_000_010_000);
+  });
 });

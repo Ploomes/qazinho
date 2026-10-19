@@ -18,6 +18,7 @@ import {
   landCost,
   landFinding,
   landStep,
+  landVideo,
   resumeRun,
   startRun,
 } from '@/modules/Workspace/library';
@@ -336,6 +337,15 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         workspaceId,
         change: (workspace) =>
           endRun({ workspace, at: formatClock(new Date()), endedBy: 'finished' }),
+      }),
+    })),
+
+  landVideo: ({ workspaceId, runId, video }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => landVideo({ workspace, runId, video }),
       }),
     })),
 

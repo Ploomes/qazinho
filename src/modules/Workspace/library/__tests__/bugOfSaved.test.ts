@@ -48,4 +48,10 @@ describe('bugOfSaved', () => {
 
     expect(bugOfSaved(older).isIncidental).toBe(false);
   });
+
+  it('reads an older bug as caught at no moment it can show', () => {
+    const { at: _at, ...older } = BUG;
+
+    expect(bugOfSaved(older).at).toBeNull();
+  });
 });

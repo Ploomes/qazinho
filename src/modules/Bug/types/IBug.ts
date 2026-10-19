@@ -2,7 +2,7 @@ import type { IBugReproStep } from './IBugReproStep';
 import type { IBugShot } from './IBugShot';
 import type { Severity } from '@/shared/types';
 
-/** A failed step the agent could explain, or a bug it saw on the side of one, with everything a developer needs to reproduce it. */
+/** A failed step the agent could explain, or a bug it saw on the side of one, with everything a developer needs to reproduce it and when it was caught. */
 export interface IBug {
   id: string;
   severity: Severity;
@@ -23,4 +23,5 @@ export interface IBug {
   shots: IBugShot[];
   isNew: boolean;
   isIncidental: boolean;
+  at: number | null;
 }

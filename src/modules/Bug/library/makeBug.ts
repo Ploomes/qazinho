@@ -73,5 +73,6 @@ export function makeBug(props: {
     shots: shotsFor({ outcome, outcomes }),
     isNew: true,
     isIncidental: false,
+    at: outcome.at,
   };
 }

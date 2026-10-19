@@ -75,4 +75,14 @@ describe('landFinding', () => {
 
     expect(step?.bugId).toBe(failure?.id);
   });
+
+  it('keeps the moment the bug was seen, so the video finds it', () => {
+    const workspace = landFinding({
+      workspace: walkRun({ verdicts: ['passed'], isFinished: false }),
+      finding: FINDING,
+      at: '22:15',
+    });
+
+    expect(workspace.bugs.at(-1)?.at).toBe(1_760_000_003_000);
+  });
 });

@@ -78,4 +78,23 @@ describe('buildRun', () => {
 
     expect(run.id).toBe('r-01');
   });
+
+  it('places each step in time, from when it began to when it came back', () => {
+    const run = buildRun({
+      workspace: walkRun({ verdicts: ['passed', 'passed'] }),
+      endedBy: 'finished',
+    });
+
+    expect(run.cases[0]?.steps.map(({ span }) => span)).toEqual([
+      { from: 1_760_000_000_000, to: 1_760_000_002_000 },
+      { from: 1_760_000_002_000, to: 1_760_000_004_000 },
+    ]);
+  });
+
+  it('leaves the recording for later, since it is written after the run ends', () => {
+    expect(
+      buildRun({ workspace: walkRun({ verdicts: ['passed'] }), endedBy: 'finished' })
+        .video,
+    ).toBeNull();
+  });
 });

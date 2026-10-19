@@ -29,6 +29,7 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
         why: outcome.why.length > 0 ? outcome.why : null,
         shot: outcome.screenshot,
         shotFile: outcome.shotFile,
+        span: { from: outcome.at - outcome.tookMs, to: outcome.at },
         bugId:
           [...workspace.bugs]
             .sort((one, other) => Number(one.isIncidental) - Number(other.isIncidental))
@@ -59,5 +60,6 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
     counts: countVerdicts(outcomes.map((outcome) => outcome.verdict)),
     cases,
     endedBy,
+    video: null,
   };
 }

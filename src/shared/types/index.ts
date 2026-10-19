@@ -37,6 +37,7 @@ export type * from './IResourceSnapshot';
 export type * from './IRunEvent';
 export type * from './IRunFinding';
 export type * from './IRunInFlight';
+export type * from './IRunVideo';
 export type * from './ISavedState';
 export type * from './ISavedWorkspace';
 export type * from './ISetupEvent';
