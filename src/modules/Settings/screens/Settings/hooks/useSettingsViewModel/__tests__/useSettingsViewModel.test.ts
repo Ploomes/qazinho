@@ -101,8 +101,19 @@ describe('useSettingsViewModel', () => {
   it('shows the version the app was built as', () => {
     const { result } = renderHook(() => useSettingsViewModel());
 
-    expect(result.current.version).toBe(`${__QAZINHO_VERSION__} · MIT`);
-    expect(result.current.version).toMatch(/^\d+\.\d+\.\d+/);
+    expect(result.current.version).toBe(`version ${__QAZINHO_VERSION__}`);
+    expect(result.current.version).toMatch(/^version \d+\.\d+\.\d+/);
+  });
+
+  /** QAzinho is closed source: About once said MIT, and linked into a repository users cannot open. */
+  it('says whose app it is, all rights reserved, and nothing of an open licence', () => {
+    const { result } = renderHook(() => useSettingsViewModel());
+
+    expect(result.current.rights).toBe(
+      `© ${String(new Date().getFullYear())} Salve Software. All rights reserved.`,
+    );
+    expect(result.current.version).not.toContain('MIT');
+    expect(result.current).not.toHaveProperty('links');
   });
 
   it('names every shortcut in the language the QA reads', async () => {

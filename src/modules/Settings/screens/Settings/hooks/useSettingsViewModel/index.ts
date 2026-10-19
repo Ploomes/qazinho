@@ -2,7 +2,6 @@ import type { CSSProperties } from 'react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  ABOUT_LINKS,
   APP_VERSION,
   LANGUAGES,
   SETTINGS_TABS,
@@ -193,8 +192,8 @@ export const useSettingsViewModel = () => {
         keys: isEditing ? t('SETTINGS.PRESS_KEYS') : item.combo,
       };
     }),
-    links: ABOUT_LINKS,
     version: t('SETTINGS.ABOUT_VERSION', { version: APP_VERSION }),
+    rights: t('SETTINGS.ABOUT_RIGHTS', { year: new Date().getFullYear() }),
     signIn: signIn.signIn,
     signInAgent: signIn.signInAgent,
     onCancelSignIn: signIn.onCancelSignIn,

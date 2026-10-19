@@ -382,10 +382,10 @@ export const en = {
     KEYBIND_RESOURCES: 'Open Resources',
     KEYBIND_SETTINGS: 'Open Settings',
     SHORTCUTS_NOTE: 'Click a shortcut and press the keys you want.',
-    ABOUT_VERSION: '{{version}} · MIT',
+    ABOUT_VERSION: 'version {{version}}',
     ABOUT_NOTE:
       'Your QA assistant: plan tests, run them and keep your work organised, with your own AI agent. Nothing leaves this machine.',
-    LICENCE: 'Licence',
+    ABOUT_RIGHTS: '© {{year}} Salve Software. All rights reserved.',
   },
   MCP: {
     FIGMA_TEXT:

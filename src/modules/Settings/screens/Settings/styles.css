@@ -410,9 +410,10 @@ button.settings__card:hover:not(:disabled) {
   text-wrap: pretty;
 }
 
-.settings__about-links {
-  display: flex;
-  gap: 10px;
+.settings__about-rights {
+  margin: 0;
+  color: var(--ink3);
+  font: var(--font-ui-xs);
 }
 
 .settings__link {
@@ -423,11 +424,6 @@ button.settings__card:hover:not(:disabled) {
   color: var(--ink2);
   font: 500 13px/1 var(--font-ui);
   text-decoration: none;
-}
-
-.settings__link--primary {
-  background: var(--raise);
-  color: var(--ink);
 }
 
 .settings__agent {

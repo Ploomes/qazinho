@@ -385,10 +385,10 @@ export const pt: typeof en = {
     KEYBIND_RESOURCES: 'Abrir Recursos',
     KEYBIND_SETTINGS: 'Abrir Configurações',
     SHORTCUTS_NOTE: 'Clique num atalho e aperte as teclas que quiser.',
-    ABOUT_VERSION: '{{version}} · MIT',
+    ABOUT_VERSION: 'versão {{version}}',
     ABOUT_NOTE:
       'Seu assistente de QA: planeje testes, execute e organize seu trabalho com o seu próprio agente de IA. Nada sai desta máquina.',
-    LICENCE: 'Licença',
+    ABOUT_RIGHTS: '© {{year}} Salve Software. Todos os direitos reservados.',
   },
   MCP: {
     FIGMA_TEXT:

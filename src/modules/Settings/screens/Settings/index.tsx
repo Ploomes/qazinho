@@ -23,8 +23,8 @@ export const Settings: React.FC = () => {
     themes,
     languages,
     keybinds,
-    links,
     version,
+    rights,
     signIn,
     signInAgent,
     onCancelSignIn,
@@ -333,24 +333,7 @@ export const Settings: React.FC = () => {
                 </div>
               </div>
               <p className="settings__about-note">{t('SETTINGS.ABOUT_NOTE')}</p>
-              <div className="settings__about-links">
-                <a
-                  className="settings__link settings__link--primary"
-                  href={links.repository}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  GitHub
-                </a>
-                <a
-                  className="settings__link"
-                  href={links.licence}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {t('SETTINGS.LICENCE')}
-                </a>
-              </div>
+              <p className="settings__about-rights">{rights}</p>
             </div>
           )}
         </div>
