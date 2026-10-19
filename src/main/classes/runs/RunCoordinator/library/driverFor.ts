@@ -14,10 +14,16 @@ export function driverFor(props: { run: IWalkRun; shrink?: ShrinkImage }): IDevi
       sdkRoot: run.sdkRoot,
       avd: run.avd,
       apk: run.target.value,
+      ...(props.shrink === undefined ? {} : { shrink: props.shrink }),
     });
 
   if (run.target.kind === 'ios')
-    return new IosDriver({ idb: run.idb, udid: run.udid, app: run.target.value });
+    return new IosDriver({
+      idb: run.idb,
+      udid: run.udid,
+      app: run.target.value,
+      ...(props.shrink === undefined ? {} : { shrink: props.shrink }),
+    });
 
   return new WebDriver({
     url: run.target.value,

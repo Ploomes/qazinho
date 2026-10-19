@@ -1,10 +1,12 @@
 import type { IIosDriver } from './types';
 import type { IDeviceDriver, IShot } from '@/main/classes/devices/types';
+import type { ShrinkImage } from '@/main/types';
 import type { IActionMotion, IDeviceImage, IStepAction, IViewport } from '@/shared/types';
 import { randomUUID } from 'node:crypto';
 import { readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { phoneGlance } from '@/main/library';
 import { IOS } from './constants';
 import {
   bundleOfPlist,
@@ -20,6 +22,7 @@ export class IosDriver implements IDeviceDriver {
   private readonly idb: string;
   private readonly udid: string;
   private readonly app: string;
+  private readonly shrink: ShrinkImage | null;
   private bundle = '';
   private isOurs = false;
 
@@ -27,6 +30,7 @@ export class IosDriver implements IDeviceDriver {
     this.idb = props.idb;
     this.udid = props.udid;
     this.app = props.app;
+    this.shrink = props.shrink ?? null;
   }
 
   public async open(): Promise<void> {
@@ -96,7 +100,7 @@ export class IosDriver implements IDeviceDriver {
     try {
       await this.simctl(['io', this.udid, 'screenshot', file]);
 
-      return { data: (await readFile(file)).toString('base64'), mimeType: 'image/png' };
+      return phoneGlance({ image: await readFile(file), shrink: this.shrink });
     } finally {
       await rm(file, { force: true });
     }

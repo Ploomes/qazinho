@@ -1,9 +1,11 @@
 import type { IAndroidDriver } from './types';
 import type { IDeviceDriver, IShot } from '@/main/classes/devices/types';
+import type { ShrinkImage } from '@/main/types';
 import type { IActionMotion, IDeviceImage, IStepAction, IViewport } from '@/shared/types';
 import { spawn } from 'node:child_process';
 import { readdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { phoneGlance } from '@/main/library';
 import { ANDROID } from './constants';
 import {
   describeScreen,
@@ -24,6 +26,7 @@ export class AndroidDriver implements IDeviceDriver {
   private readonly sdkRoot: string;
   private readonly avd: string;
   private readonly apk: string;
+  private readonly shrink: ShrinkImage | null;
   private serial = '';
   private app = '';
   private isOurs = false;
@@ -32,6 +35,7 @@ export class AndroidDriver implements IDeviceDriver {
     this.sdkRoot = props.sdkRoot;
     this.avd = props.avd;
     this.apk = props.apk;
+    this.shrink = props.shrink ?? null;
   }
 
   public async open(): Promise<void> {
@@ -95,13 +99,13 @@ export class AndroidDriver implements IDeviceDriver {
     });
   }
 
-  /** The emulator's screen as the agent reads it, straight from screencap. */
+  /** The emulator's screen as the agent reads it, from screencap, shrunk to what the agent needs. */
   public async glance(): Promise<IDeviceImage | null> {
     if (this.serial.length === 0) return null;
 
     const image = await this.raw(['exec-out', 'screencap', '-p']);
 
-    return { data: image.toString('base64'), mimeType: 'image/png' };
+    return phoneGlance({ image, shrink: this.shrink });
   }
 
   /** A phone has no layout-shift timeline to read, so it says nothing about motion. */
