@@ -23,6 +23,8 @@ const PAGE = `<!doctype html><html><head><meta charset="utf-8"></head><body>
   <label>Birth date <input type="date" onchange="document.getElementById('born').textContent = 'Born ' + this.value"></label>
   <p id="born">No date yet</p>
   <shop-button>Subscribe now</shop-button>
+  <div role="tablist"><div role="tab" tabindex="0">Summary</div><div role="tab" tabindex="-1">Invoices</div></div>
+  <div role="switch" aria-checked="false" tabindex="0" aria-label="Dark mode"></div>
   <script>
     customElements.define('shop-button', class extends HTMLElement {
       connectedCallback() {
@@ -126,5 +128,18 @@ describe('a date field', () => {
 describe('a button inside a web component', () => {
   it('is listed by the words slotted into it', async () => {
     expect(await driver.describe()).toContain('button: Subscribe now');
+  });
+});
+
+/**
+ * Tabs and switches built from divs with an ARIA role, as most component libraries draw them:
+ * a click on one worked, but look listed none, so the agent did not know they were controls.
+ */
+describe('controls drawn as divs with an ARIA role', () => {
+  it('are listed by their role and their words', async () => {
+    const screen = await driver.describe();
+
+    expect(screen).toContain('tab: Invoices');
+    expect(screen).toContain('switch: Dark mode');
   });
 });

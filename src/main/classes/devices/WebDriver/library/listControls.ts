@@ -33,7 +33,7 @@ export async function listControls(
 
         if (element.getClientRects().length === 0) return [];
 
-        const role = element.tagName.toLowerCase();
+        const role = element.getAttribute('role') ?? element.tagName.toLowerCase();
         const first =
           element.labels && element.labels.length > 0 ? element.labels[0] : undefined;
         const own = first?.cloneNode(true);
