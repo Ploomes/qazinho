@@ -7,6 +7,7 @@ import {
   deviceStateOf,
   formatElapsed,
   moodOfStatus,
+  stepVerdictsOf,
   viewportOf,
 } from '@/modules/Device/library';
 import { formatCost, useRunControls } from '@/modules/Run';
@@ -42,13 +43,17 @@ export const useDevicePanelViewModel = () => {
   const isPhone = workspace?.planKind === 'mobile';
   const viewport = viewportOf(workspace?.viewportId);
 
+  const lastRun = workspace?.runs[0] ?? null;
+  const verdicts = stepVerdictsOf({ steps: planSteps, live, lastRun });
   const steps: IDeviceStep[] = planSteps.map((step, index) => ({
     number: index + 1,
     action: step.action,
-    verdict:
-      live?.outcomes.find((outcome) => outcome.index === index)?.verdict ??
-      (live?.doingIndex === index ? 'running' : 'pending'),
+    verdict: verdicts[index] ?? 'pending',
   }));
+  const walked =
+    live?.outcomes.length ??
+    lastRun?.cases.reduce((total, runCase) => total + runCase.steps.length, 0) ??
+    null;
 
   const hasScreen = isRunLive || (live?.shot ?? null) !== null;
   const isFocused = isFocusedNow && hasScreen;
@@ -149,9 +154,9 @@ export const useDevicePanelViewModel = () => {
     isLive: state === 'driving',
     steps,
     doingLabel:
-      live === null
+      walked === null
         ? ''
-        : t('DEVICE.STEPS_PROGRESS', { done: live.outcomes.length, total: steps.length }),
+        : t('DEVICE.STEPS_PROGRESS', { done: walked, total: steps.length }),
     onToggle: toggleDevicePanel,
     onResize: setDeviceWidth,
     onResizeStart: () => {

@@ -248,6 +248,23 @@ describe('useDevicePanelViewModel', () => {
     });
   });
 
+  describe('steps', () => {
+    it('shows how the last run went when none is going, the app reopened included', () => {
+      const finished = walkRun({ verdicts: ['passed', 'failed'], isFinished: true });
+
+      useWorkspaceStore.setState({ workspaces: [{ ...finished, live: null }] });
+
+      const { result } = renderHook(() => useDevicePanelViewModel());
+
+      expect(result.current.steps.map(({ verdict }) => verdict).slice(0, 3)).toEqual([
+        'passed',
+        'failed',
+        'pending',
+      ]);
+      expect(result.current.doingLabel).toBe('2 of 6');
+    });
+  });
+
   describe('viewportClassName', () => {
     it('hugs the screen of a browser, fills the height for a phone, and leaves the empty device alone', () => {
       expect(
