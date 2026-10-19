@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SIDEBAR_STATUS } from '@/app/components/Sidebar/constants';
 import { workspaceMeta } from '@/modules/Workspace';
-import { Archive } from '@/services';
+import { Agent, Archive, Run } from '@/services';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
@@ -65,6 +65,8 @@ export const useSidebarViewModel = () => {
   const onNewProject = useCallback(() => openModal('project'), [openModal]);
 
   const onRemoveWorkspace = (workspaceId: string) => {
+    Run.stop(workspaceId);
+    void Agent.stop(workspaceId);
     removeWorkspace(workspaceId);
     Archive.removeWorkspace(workspaceId);
 

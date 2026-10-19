@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useSidebarViewModel } from '@/app/components/Sidebar/hooks/useSidebarViewModel';
 import { startRun } from '@/modules/Workspace/library';
 import { makeWorkspace, WALKED_BY } from '@/modules/Workspace/library/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 const PROJECT = { id: 'p1', name: 'Shop · staging', targets: [] };
@@ -167,6 +168,23 @@ describe('useSidebarViewModel', () => {
 
       expect(useWorkspaceStore.getState().workspaces).toEqual([]);
       expect(useWorkspaceStore.getState().removingWorkspaceId).toBeNull();
+    });
+
+    it('stops what the removed workspace had going, its run and its agent', () => {
+      const stopRun = vi.fn(() => Promise.resolve());
+      const stopAgent = vi.fn(() => Promise.resolve());
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), stopRun, stopAgent };
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onRemoveWorkspace('w1');
+      });
+
+      expect(stopRun).toHaveBeenCalledWith('w1');
+      expect(stopAgent).toHaveBeenCalledWith('w1');
     });
 
     it('leaves the workspace screen when the one on it is gone', () => {
