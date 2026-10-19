@@ -69,9 +69,11 @@ data, iOS reinstalls it, the web clears the browser (`device-fresh.test.ts`, `fr
 trackers. GitHub and Jira connect for real: the token is checked with the tracker and sealed by
 the OS keychain.
 
-**Codex is not verified yet.** QAzinho drives it through `codex exec --json` and its own MCP
-server, checked against a fake Codex built from the real one's events; no signed-in Codex has been
-run. That is ours to know, not the QA's: no caveat about QAzinho's own testing goes in the interface.
+**Codex is half verified.** QAzinho drives it through `codex exec --json` and its own MCP server,
+checked against a fake Codex built from the real one's events. The chat has answered through a
+real signed-in Codex (CLI 0.163.0), in the strict schema; a run, with the device tools over MCP,
+has not. That is ours to know, not the QA's: no caveat about QAzinho's own testing goes in the
+interface.
 
 **Still to build for 0.1:** the agent cannot ask the QA a question mid-run, and a connected
 tracker does not receive a bug yet.
