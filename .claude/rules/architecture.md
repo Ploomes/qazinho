@@ -94,8 +94,12 @@ answers one question per channel, for a target `{ role, platform }`:
 - **The corpus is prose in `.md`, one `## Title` section per file.** Where a file lives says who
   reads it: `universal/` every call, `role/<role>/` one role (`chat`, `runner`), `platform/<x>.md`
   one device. The frontmatter's `order` sorts a layer. Layers go from the most stable to the least,
-  and what a call adds (the workspace, the @ references) comes after, so the prefix stays the
-  same between calls. `{{app}}` is filled per call; a placeholder nothing fills throws.
+  and what a call adds (the workspace, its latest runs, the @ references) comes after, so the
+  prefix stays the same between calls. `{{app}}` is filled per call; a placeholder nothing fills throws.
+- **A run is walked by agents of its own.** Each case gets a fresh agent with the runner's
+  prompt and the device tools, and nothing of the chat. The chat's agent learns how the runs
+  went from the history every message carries (`runHistoryOf`): the latest run step by step,
+  the ones before by what broke.
 - **The tools are granted per role** (`TOOL_GRANTS`). Today the runner gets the device and the
   chat gets nothing: it runs with every tool taken away. `McpHost` serves the tools on loopback,
   one address per workspace, for the length of a run.
