@@ -55,8 +55,8 @@ export const useChatViewModel = () => {
   const detected = useMachineStore((state) => state.agents);
   const agentName = useSettingsStore((state) => state.agent);
   const model = useSettingsStore((state) => state.model);
-  const isAgentTyping = useWorkspaceStore((state) => state.isAgentTyping);
-  const liveText = useWorkspaceStore((state) => state.liveText);
+  const askingIds = useWorkspaceStore((state) => state.askingIds);
+  const liveTexts = useWorkspaceStore((state) => state.liveTexts);
   const sendMessage = useWorkspaceStore((state) => state.sendMessage);
   const landAgentText = useWorkspaceStore((state) => state.landAgentText);
   const landPlan = useWorkspaceStore((state) => state.landPlan);
@@ -69,6 +69,8 @@ export const useChatViewModel = () => {
   const openBugId = useWorkspaceStore((state) => state.openBugId);
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
 
+  const isAgentTyping = workspace !== null && askingIds.includes(workspace.id);
+  const liveText = workspace === null ? '' : (liveTexts[workspace.id] ?? '');
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
   const size = viewportOf(workspace?.viewportId);
@@ -172,7 +174,7 @@ export const useChatViewModel = () => {
   const liveId = isWalking ? (workspace?.liveId ?? null) : null;
 
   const send = (text: string) => {
-    if (!workspace || text.trim().length === 0 || isWalking) return;
+    if (!workspace || text.trim().length === 0 || isWalking || isAgentTyping) return;
 
     const references = mentionsIn({
       text,

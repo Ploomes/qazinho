@@ -34,8 +34,8 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   bugFilter: 'all',
   isDevicePanelOpen: true,
   deviceWidth: DEVICE.defaultWidth,
-  isAgentTyping: false,
-  liveText: '',
+  askingIds: [],
+  liveTexts: {},
   removingWorkspaceId: null,
 
   addWorkspace: (workspace) =>
@@ -78,12 +78,13 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   selectTab: (tab) => set({ tab }),
 
-  setLiveText: (liveText) => set({ liveText }),
+  setLiveText: ({ workspaceId, text }) =>
+    set((state) => ({ liveTexts: { ...state.liveTexts, [workspaceId]: text } })),
 
   sendMessage: ({ workspaceId, text, mentions }) =>
     set((state) => ({
-      isAgentTyping: true,
-      liveText: '',
+      askingIds: [...state.askingIds.filter((id) => id !== workspaceId), workspaceId],
+      liveTexts: { ...state.liveTexts, [workspaceId]: '' },
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -94,7 +95,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   landAgentText: ({ workspaceId, text, who, sessionId }) =>
     set((state) => ({
-      isAgentTyping: false,
+      askingIds: state.askingIds.filter((id) => id !== workspaceId),
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -107,7 +108,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   landPlan: ({ workspaceId, summary, plan, who, sessionId }) =>
     set((state) => ({
-      isAgentTyping: false,
+      askingIds: state.askingIds.filter((id) => id !== workspaceId),
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -139,8 +140,8 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   answerQuestions: ({ workspaceId, messageId, answers }) =>
     set((state) => ({
-      isAgentTyping: true,
-      liveText: '',
+      askingIds: [...state.askingIds.filter((id) => id !== workspaceId), workspaceId],
+      liveTexts: { ...state.liveTexts, [workspaceId]: '' },
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -150,8 +151,8 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   landAgentError: ({ workspaceId, text }) =>
     set((state) => ({
-      isAgentTyping: false,
-      liveText: '',
+      askingIds: state.askingIds.filter((id) => id !== workspaceId),
+      liveTexts: { ...state.liveTexts, [workspaceId]: '' },
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,

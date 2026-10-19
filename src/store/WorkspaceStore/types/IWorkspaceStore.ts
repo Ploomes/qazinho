@@ -23,8 +23,8 @@ export interface IWorkspaceStore {
   bugFilter: BugFilter;
   isDevicePanelOpen: boolean;
   deviceWidth: number;
-  isAgentTyping: boolean;
-  liveText: string;
+  askingIds: string[];
+  liveTexts: Record<string, string>;
   removingWorkspaceId: string | null;
   addWorkspace: (workspace: IWorkspace) => void;
   loadWorkspaces: (workspaces: IWorkspace[]) => void;
@@ -55,7 +55,7 @@ export interface IWorkspaceStore {
     answers: IQuestionAnswer[];
   }) => void;
   landAgentError: (props: { workspaceId: string; text: string }) => void;
-  setLiveText: (text: string) => void;
+  setLiveText: (props: { workspaceId: string; text: string }) => void;
   answerAsk: (props: { workspaceId: string; reply: string }) => void;
   setPlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
   startRun: (props: { workspaceId: string; runId: string; by: IWalkedBy }) => void;

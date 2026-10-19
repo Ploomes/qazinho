@@ -76,7 +76,11 @@ beforeEach(() => {
       },
     ],
   });
-  useWorkspaceStore.setState({ workspaces: [makeWorkspace([])], isAgentTyping: false });
+  useWorkspaceStore.setState({
+    workspaces: [makeWorkspace([])],
+    askingIds: [],
+    liveTexts: {},
+  });
 });
 
 afterEach(() => {
@@ -165,7 +169,10 @@ describe('useChatViewModel', () => {
   describe('the answer as it arrives', () => {
     it('shows what the agent is writing while it works', () => {
       answering({});
-      useWorkspaceStore.setState({ isAgentTyping: true, liveText: 'Two **cases**.' });
+      useWorkspaceStore.setState({
+        askingIds: ['w1'],
+        liveTexts: { w1: 'Two **cases**.' },
+      });
 
       expect(renderHook(() => useChatViewModel()).result.current.liveText).toBe(
         'Two **cases**.',
@@ -178,7 +185,10 @@ describe('useChatViewModel', () => {
       const { result } = renderHook(() => useChatViewModel());
 
       act(() => {
-        useWorkspaceStore.setState({ isAgentTyping: true, liveText: 'Two cases.' });
+        useWorkspaceStore.setState({
+          askingIds: ['w1'],
+          liveTexts: { w1: 'Two cases.' },
+        });
       });
       act(() => {
         useWorkspaceStore.getState().landAgentText({
@@ -199,7 +209,7 @@ describe('useChatViewModel', () => {
       const { result } = renderHook(() => useChatViewModel());
 
       act(() => {
-        useWorkspaceStore.setState({ isAgentTyping: true, liveText: '' });
+        useWorkspaceStore.setState({ askingIds: ['w1'], liveTexts: { w1: '' } });
       });
       act(() => {
         useWorkspaceStore.getState().landAgentText({
@@ -239,6 +249,34 @@ describe('useChatViewModel', () => {
       });
     });
 
+    it('does NOT send a second message while the agent still answers the first', () => {
+      const ask = answering({});
+
+      useWorkspaceStore.setState({ askingIds: ['w1'] });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onDraftChange('And another thing');
+      });
+      act(() => {
+        result.current.onSend();
+      });
+
+      expect(ask).not.toHaveBeenCalled();
+      expect(useWorkspaceStore.getState().workspaces[0]?.chat).toHaveLength(0);
+    });
+
+    it('shows the agent at work only in the workspace it answers in', () => {
+      answering({});
+      useWorkspaceStore.setState({ askingIds: ['w2'], liveTexts: { w2: 'Elsewhere.' } });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      expect(result.current.isAgentTyping).toBe(false);
+      expect(result.current.liveText).toBe('');
+    });
+
     it('turns the first answer into the plan, and remembers the session', async () => {
       answering({ answer: DRAFTED });
       const { result } = renderHook(() => useChatViewModel());
@@ -254,7 +292,7 @@ describe('useChatViewModel', () => {
         expect(useWorkspaceStore.getState().workspaces[0]?.plan).toHaveLength(1);
       });
       expect(useWorkspaceStore.getState().workspaces[0]?.sessionId).toBe('session-1');
-      expect(useWorkspaceStore.getState().isAgentTyping).toBe(false);
+      expect(useWorkspaceStore.getState().askingIds).toEqual([]);
     });
 
     it('talks without touching the plan when the answer carries none', async () => {
@@ -498,7 +536,7 @@ describe('useChatViewModel', () => {
       const round = useWorkspaceStore.getState().workspaces[0]?.chat.at(-1);
 
       act(() => {
-        useWorkspaceStore.setState({ isAgentTyping: true });
+        useWorkspaceStore.setState({ askingIds: ['w1'] });
       });
       act(() => {
         view.result.current.onAnswerQuestions({

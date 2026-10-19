@@ -37,7 +37,7 @@ export const useMachineWatch = () => {
             tokens: event.usage.contextTokens,
             window: event.usage.contextWindow,
           });
-        } else setLiveText(event.text);
+        } else setLiveText({ workspaceId: event.workspaceId, text: event.text });
       }),
     [setUsage, setContext, setLiveText],
   );
