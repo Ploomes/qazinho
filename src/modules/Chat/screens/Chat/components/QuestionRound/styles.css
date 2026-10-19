@@ -74,9 +74,12 @@
   gap: var(--space-6);
 }
 
+.question-round--answered .question-round__fold {
+  overflow: hidden;
+}
+
 .question-round--answered .question-round__body {
   padding: 0 var(--space-5) var(--space-5);
-  overflow: hidden;
 }
 
 .question-round__question {

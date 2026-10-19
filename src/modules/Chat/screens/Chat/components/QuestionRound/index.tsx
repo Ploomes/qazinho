@@ -56,84 +56,86 @@ export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
         {isBodyShown && (
           <motion.div
             key="body"
-            className="question-round__body"
+            className="question-round__fold"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={bodyTransition}
           >
-            {questions.map((question) => (
-              <div key={question.key} className="question-round__question">
-                <span className="question-round__header">{question.header}</span>
-                <p className="question-round__ask">{question.question}</p>
-                {question.hint !== '' && (
-                  <span className="question-round__hint">{question.hint}</span>
-                )}
+            <div className="question-round__body">
+              {questions.map((question) => (
+                <div key={question.key} className="question-round__question">
+                  <span className="question-round__header">{question.header}</span>
+                  <p className="question-round__ask">{question.question}</p>
+                  {question.hint !== '' && (
+                    <span className="question-round__hint">{question.hint}</span>
+                  )}
 
-                <div
-                  className="question-round__options"
-                  role={question.isMultiSelect ? 'group' : 'radiogroup'}
-                  aria-label={question.question}
-                >
-                  {question.options.map((option) => (
-                    <button
-                      key={option.label}
-                      type="button"
-                      role={question.isMultiSelect ? 'checkbox' : 'radio'}
-                      aria-checked={option.isPicked}
-                      disabled={!isOpen}
-                      className={
-                        option.isPicked
-                          ? 'question-round__option question-round__option--picked'
-                          : 'question-round__option'
-                      }
-                      onClick={() => {
-                        onPick({ index: question.index, label: option.label });
-                      }}
-                    >
-                      <span
+                  <div
+                    className="question-round__options"
+                    role={question.isMultiSelect ? 'group' : 'radiogroup'}
+                    aria-label={question.question}
+                  >
+                    {question.options.map((option) => (
+                      <button
+                        key={option.label}
+                        type="button"
+                        role={question.isMultiSelect ? 'checkbox' : 'radio'}
+                        aria-checked={option.isPicked}
+                        disabled={!isOpen}
                         className={
-                          question.isMultiSelect
-                            ? 'question-round__mark question-round__mark--box'
-                            : 'question-round__mark'
+                          option.isPicked
+                            ? 'question-round__option question-round__option--picked'
+                            : 'question-round__option'
                         }
-                        aria-hidden="true"
+                        onClick={() => {
+                          onPick({ index: question.index, label: option.label });
+                        }}
                       >
-                        {option.isPicked ? '✓' : ''}
-                      </span>
-                      <span className="question-round__choice">
-                        <span className="question-round__label">{option.label}</span>
-                        <span className="question-round__description">
-                          {option.description}
+                        <span
+                          className={
+                            question.isMultiSelect
+                              ? 'question-round__mark question-round__mark--box'
+                              : 'question-round__mark'
+                          }
+                          aria-hidden="true"
+                        >
+                          {option.isPicked ? '✓' : ''}
                         </span>
-                      </span>
-                    </button>
-                  ))}
+                        <span className="question-round__choice">
+                          <span className="question-round__label">{option.label}</span>
+                          <span className="question-round__description">
+                            {option.description}
+                          </span>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {isOpen && (
+                    <Input
+                      value={question.text}
+                      label={textLabel}
+                      placeholder={textLabel}
+                      onChange={(text) => {
+                        onText({ index: question.index, text });
+                      }}
+                    />
+                  )}
+                  {question.said !== '' && (
+                    <p className="question-round__said">{question.said}</p>
+                  )}
                 </div>
+              ))}
 
-                {isOpen && (
-                  <Input
-                    value={question.text}
-                    label={textLabel}
-                    placeholder={textLabel}
-                    onChange={(text) => {
-                      onText({ index: question.index, text });
-                    }}
-                  />
-                )}
-                {question.said !== '' && (
-                  <p className="question-round__said">{question.said}</p>
-                )}
-              </div>
-            ))}
-
-            {isOpen && (
-              <div className="question-round__footer">
-                <Button variant="primary" disabled={!canSend} onClick={onSend}>
-                  {sendLabel}
-                </Button>
-              </div>
-            )}
+              {isOpen && (
+                <div className="question-round__footer">
+                  <Button variant="primary" disabled={!canSend} onClick={onSend}>
+                    {sendLabel}
+                  </Button>
+                </div>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
