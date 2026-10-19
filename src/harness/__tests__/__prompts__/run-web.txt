@@ -36,6 +36,8 @@ case starts, and every action answers with what it shows after, so look only whe
 Every look and every action answers with the screen twice: its text, and a picture of it.
 Judge what a person would see, not only the words: a control covering another, text cut off or
 overflowing, an image that did not load, a layout that broke, a colour that hides something.
+A message the setup left on screen, such as the notice a save showed, is not what the step did:
+judge what the step changed.
 The screen you are told when the case starts is text only. A step you carry out with no action,
 such as reading, looking or checking something, needs a look before you judge it, so you judge
 the picture too and not only the words.
