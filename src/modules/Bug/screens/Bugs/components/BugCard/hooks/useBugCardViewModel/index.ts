@@ -16,6 +16,7 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
 
   return {
     caret: isOpen ? '▾' : '▸',
+    hasBody: bug.body.length > 0,
     severity: t(SEVERITY_KEYS[bug.severity]),
     meta: [
       { key: 'run', label: t('BUG.META_RUN'), value: `${bug.runId} · ${bug.runWhen}` },

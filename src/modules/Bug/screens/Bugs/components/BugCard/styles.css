@@ -42,6 +42,16 @@
   white-space: nowrap;
 }
 
+.bug-card__outside {
+  flex: none;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+  white-space: nowrap;
+}
+
 .bug-card__new {
   padding: 3px var(--space-3);
   border: var(--edge-width) solid var(--edge);

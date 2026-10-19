@@ -65,6 +65,7 @@ Three suites that need something real behind them. They have their own config
 | `stop.test.ts`         | Stop ends a run while a fake agent is still thinking                         |
 | `resize.test.ts`       | the device resized mid-run: the cases still to come are told the new size    |
 | `cost.test.ts`         | each case's agent, ended with Ctrl+C, says what it cost before the run ends  |
+| `finding.test.ts`      | a bug filed on the side of a step: its screen, and the next case told of it  |
 | `agent.test.ts`        | a fake agent retries a failed action, leaves a note, or errors out           |
 | `codex.test.ts`        | a fake Codex chats in the strict schema, resumes, runs a case, signs out     |
 | `tools.test.ts`        | an MCP client lists, calls and fails the device tools on real Chrome         |

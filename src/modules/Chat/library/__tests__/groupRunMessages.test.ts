@@ -69,4 +69,19 @@ describe('groupRunMessages', () => {
       'message',
     ]);
   });
+
+  it('keeps a bug found on the side of a step with the run that found it', () => {
+    const finding: ChatMessage = {
+      id: 'm-6',
+      kind: 'finding',
+      at: '09:41',
+      runId: 'r-01',
+      bugId: 'BUG-02',
+      title: 'Yearly price differs',
+    };
+
+    expect(groupRunMessages([NOTE, finding].map(shown)).map(({ kind }) => kind)).toEqual([
+      'run',
+    ]);
+  });
 });

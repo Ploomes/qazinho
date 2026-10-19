@@ -8,6 +8,7 @@ import './styles.css';
 export const BugCard: React.FC<IBugCardProps> = (props) => {
   const {
     caret,
+    hasBody,
     severity,
     meta,
     shots,
@@ -32,6 +33,9 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
         />
         <span className="bug-card__id">{bug.id}</span>
         <span className="bug-card__title">{bug.title}</span>
+        {bug.isIncidental && (
+          <span className="bug-card__outside">{t('BUG.OUTSIDE_PLAN')}</span>
+        )}
         {bug.isNew && <span className="bug-card__new">{t('BUG.JUST_CAUGHT')}</span>}
         <span className="bug-card__id">{severity}</span>
         <span aria-hidden="true">{caret}</span>
@@ -39,7 +43,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
 
       {props.isOpen && (
         <div className="bug-card__body">
-          <p className="bug-card__text">{bug.body}</p>
+          {hasBody && <p className="bug-card__text">{bug.body}</p>}
 
           <div>
             <Eyebrow>{t('BUG.WHERE')}</Eyebrow>

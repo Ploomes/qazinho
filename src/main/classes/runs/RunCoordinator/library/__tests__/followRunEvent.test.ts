@@ -11,6 +11,7 @@ const RUN: IRunInFlight = {
   outcomes: [],
   isPaused: false,
   costUsd: null,
+  findings: [],
   agentId: 'claude-code',
   model: 'haiku',
   targetKind: 'web',
@@ -68,5 +69,25 @@ describe('followRunEvent', () => {
         event: { kind: 'cost', workspaceId: 'w1', costUsd: 0.03 },
       }).costUsd,
     ).toBeCloseTo(0.05);
+  });
+
+  it('keeps every bug filed on the side of a step, for a page that opens later', () => {
+    const finding = {
+      caseId: 'TC-01',
+      stepNumber: 2,
+      index: 1,
+      action: 'Open Premium',
+      title: 'Yearly price differs',
+      severity: 'medium' as const,
+      expected: 'One price',
+      got: '$20.49 and $20.40',
+      screenshot: null,
+      shotFile: null,
+    };
+
+    expect(
+      followRunEvent({ run: RUN, event: { kind: 'finding', workspaceId: 'w1', finding } })
+        .findings,
+    ).toEqual([finding]);
   });
 });

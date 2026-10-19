@@ -27,6 +27,7 @@ describe('describeCase', () => {
         ],
         screen: '',
         language: 'en',
+        filed: [],
       }),
     ).toBe(
       [
@@ -53,6 +54,7 @@ describe('describeCase', () => {
         ],
         screen: '',
         language: 'en',
+        filed: [],
       }),
     ).toBe(
       [
@@ -73,7 +75,9 @@ describe('describeCase', () => {
    * asked for the language of the steps: it now names the language the QA reads.
    */
   it('asks for the report in the language the QA reads, next to the steps', () => {
-    expect(describeCase({ steps: [STEP], screen: '', language: 'pt' })).toContain(
+    expect(
+      describeCase({ steps: [STEP], screen: '', language: 'pt', filed: [] }),
+    ).toContain(
       'Write what you report and note in Brazilian Portuguese, whatever language these steps are in.',
     );
   });
@@ -84,13 +88,34 @@ describe('describeCase', () => {
         steps: [STEP],
         screen: 'Sign in · [button] Continue',
         language: 'en',
+        filed: [],
       }),
     ).toContain('The device shows right now:\nSign in · [button] Continue');
   });
 
   it('tells the agent to stop at once when there is nothing to walk', () => {
-    expect(describeCase({ steps: [], screen: 'Home', language: 'en' })).toBe(
+    expect(describeCase({ steps: [], screen: 'Home', language: 'en', filed: [] })).toBe(
       'This case has no steps. End your turn.',
     );
+  });
+
+  /** The same layout jump was filed three times, once by each case's own agent. */
+  it('lists the bugs the run already filed, so a later case does not file them again', () => {
+    expect(
+      describeCase({
+        steps: [STEP],
+        screen: '',
+        language: 'en',
+        filed: ['Home page jumps while loading', 'Yearly price differs'],
+      }),
+    ).toContain(
+      'Bugs this run already filed, not to file again:\n- Home page jumps while loading\n- Yearly price differs',
+    );
+  });
+
+  it('lists nothing before the run filed anything', () => {
+    expect(
+      describeCase({ steps: [STEP], screen: '', language: 'en', filed: [] }),
+    ).not.toContain('already filed');
   });
 });

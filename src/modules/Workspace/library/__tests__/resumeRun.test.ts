@@ -20,6 +20,7 @@ function inFlight(props: Partial<IRunInFlight> = {}): IRunInFlight {
     ],
     isPaused: false,
     costUsd: 0.3,
+    findings: [],
     agentId: 'claude-code',
     model: 'haiku',
     targetKind: 'web',
@@ -116,5 +117,32 @@ describe('resumeRun', () => {
     const finished = endRun({ workspace: resumed(), at: '22:30', endedBy: 'finished' });
 
     expect(finished.runs[0]?.counts).toMatchObject({ passed: 1, failed: 1 });
+  });
+
+  it('files the bugs found on the side while the page was away, once', () => {
+    const finding = {
+      caseId: 'TC-01',
+      stepNumber: 1,
+      index: 0,
+      action: 'Open the target URL',
+      title: 'Yearly price differs',
+      severity: 'low' as const,
+      expected: 'One price',
+      got: 'Two prices',
+      screenshot: null,
+      shotFile: null,
+    };
+    const once = resumed({ run: inFlight({ findings: [finding] }) });
+
+    expect(once.bugs.filter(({ isIncidental }) => isIncidental)).toHaveLength(1);
+    expect(
+      resumeRun({
+        workspace: { ...once, live: null },
+        run: inFlight({ findings: [finding] }),
+        now: STARTED,
+        startedAt: '22:19',
+        by: WALKED_BY,
+      }).bugs.filter(({ isIncidental }) => isIncidental),
+    ).toHaveLength(1);
   });
 });

@@ -42,4 +42,10 @@ describe('bugOfSaved', () => {
 
     expect(bugOfSaved(older).shots).toEqual([{ isBad: true, src: null, file: '/s.jpg' }]);
   });
+
+  it('reads an older bug as one the plan asked about', () => {
+    const { isIncidental: _side, ...older } = BUG;
+
+    expect(bugOfSaved(older).isIncidental).toBe(false);
+  });
 });

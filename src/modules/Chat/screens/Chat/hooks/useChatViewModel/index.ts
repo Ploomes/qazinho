@@ -66,6 +66,8 @@ export const useChatViewModel = () => {
   const answerAsk = useWorkspaceStore((state) => state.answerAsk);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const selectRun = useWorkspaceStore((state) => state.selectRun);
+  const openBugId = useWorkspaceStore((state) => state.openBugId);
+  const toggleBug = useWorkspaceStore((state) => state.toggleBug);
 
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
@@ -291,6 +293,11 @@ export const useChatViewModel = () => {
     onOpenRun: (runId: string) => {
       selectRun(runId);
       selectTab('runs');
+    },
+    onOpenBug: (bugId: string) => {
+      if (openBugId !== bugId) toggleBug(bugId);
+
+      selectTab('bugs');
     },
     listRef,
     onScroll,

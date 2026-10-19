@@ -113,7 +113,12 @@ export class Harness {
   }
 
   /** The message that starts the agent's turn on one case, in the language the QA reads. */
-  public walk(props: { steps: IFlatStep[]; screen: string; language: Language }): string {
+  public walk(props: {
+    steps: IFlatStep[];
+    screen: string;
+    language: Language;
+    filed: string[];
+  }): string {
     return describeCase(props);
   }
 }

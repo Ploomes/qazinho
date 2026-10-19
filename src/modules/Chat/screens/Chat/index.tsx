@@ -30,6 +30,7 @@ export const Chat: React.FC = () => {
     onOpenPlan,
     onToggleRun,
     onOpenRun,
+    onOpenBug,
   } = useChatViewModel();
   const { t } = useTranslation();
 
@@ -65,6 +66,7 @@ export const Chat: React.FC = () => {
                 onAnswer={onAnswer}
                 onAnswerQuestions={onAnswerQuestions}
                 onOpenPlan={onOpenPlan}
+                onOpenBug={onOpenBug}
               />
             ) : (
               <RunSection
@@ -93,6 +95,7 @@ export const Chat: React.FC = () => {
                     onAnswer={onAnswer}
                     onAnswerQuestions={onAnswerQuestions}
                     onOpenPlan={onOpenPlan}
+                    onOpenBug={onOpenBug}
                   />
                 ))}
               </RunSection>

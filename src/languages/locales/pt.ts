@@ -200,6 +200,7 @@ export const pt: typeof en = {
     SUMMARY_ONE: '1 bug, encontrado pelo agente',
     SUMMARY_OTHER: '{{count}} bugs, encontrados pelo agente',
     JUST_CAUGHT: 'recém-encontrado',
+    OUTSIDE_PLAN: 'fora do plano',
     WHERE: 'de onde veio',
     SCREENSHOTS: 'screenshots',
     HOW_TO: 'como chegar lá',

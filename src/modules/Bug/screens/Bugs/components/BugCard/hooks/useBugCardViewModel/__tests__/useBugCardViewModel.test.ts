@@ -124,4 +124,14 @@ describe('useBugCardViewModel', () => {
 
     expect(onToggle).toHaveBeenCalledWith('BUG-01');
   });
+
+  it('leaves out the explanation a bug found on the side of a step never had', () => {
+    expect(renderHook(() => useBugCardViewModel(PROPS)).result.current.hasBody).toBe(
+      true,
+    );
+    expect(
+      renderHook(() => useBugCardViewModel({ ...PROPS, bug: { ...BUG, body: '' } }))
+        .result.current.hasBody,
+    ).toBe(false);
+  });
 });

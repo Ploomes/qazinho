@@ -30,12 +30,14 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
         shot: outcome.screenshot,
         shotFile: outcome.shotFile,
         bugId:
-          workspace.bugs.find(
-            (bug) =>
-              bug.runId === id &&
-              bug.caseId === outcome.caseId &&
-              bug.stepNumber === outcome.stepNumber,
-          )?.id ?? null,
+          [...workspace.bugs]
+            .sort((one, other) => Number(one.isIncidental) - Number(other.isIncidental))
+            .find(
+              (bug) =>
+                bug.runId === id &&
+                bug.caseId === outcome.caseId &&
+                bug.stepNumber === outcome.stepNumber,
+            )?.id ?? null,
       }));
 
       return {

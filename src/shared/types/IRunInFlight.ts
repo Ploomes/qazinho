@@ -1,3 +1,4 @@
+import type { IRunFinding } from './IRunFinding';
 import type { IStepOutcome } from './IStepOutcome';
 import type { TargetKind } from './TargetKind';
 
@@ -11,6 +12,7 @@ export interface IRunInFlight {
   outcomes: IStepOutcome[];
   isPaused: boolean;
   costUsd: number | null;
+  findings: IRunFinding[];
   agentId: string;
   model: string;
   targetKind: TargetKind;

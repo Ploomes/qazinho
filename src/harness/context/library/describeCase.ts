@@ -1,13 +1,14 @@
 import type { IFlatStep, Language } from '@/shared/types';
 import { LANGUAGE_NAMES } from '@/harness/constants';
 
-/** One case to walk, as the message that starts the agent's turn: what it needs, every step in order, the language to report in, and the screen it starts on. */
+/** One case to walk, as the message that starts the agent's turn: what it needs, every step in order, the language to report in, what the run already filed, and the screen it starts on. */
 export function describeCase(props: {
   steps: IFlatStep[];
   screen: string;
   language: Language;
+  filed: string[];
 }): string {
-  const { steps, screen, language } = props;
+  const { steps, screen, language, filed } = props;
   const [first] = steps;
 
   if (first === undefined) return 'This case has no steps. End your turn.';
@@ -24,6 +25,13 @@ export function describeCase(props: {
       `   The QA expects: ${step.expected}`,
     ]),
     `Write what you report and note in ${LANGUAGE_NAMES[language]}, whatever language these steps are in.`,
+    ...(filed.length === 0
+      ? []
+      : [
+          '',
+          'Bugs this run already filed, not to file again:',
+          ...filed.map((title) => `- ${title}`),
+        ]),
     ...(screen.length === 0 ? [] : ['', 'The device shows right now:', screen]),
   ].join('\n');
 }

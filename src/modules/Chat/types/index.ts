@@ -4,6 +4,7 @@ export type * from './IAgentMessage';
 export type * from './IAskMessage';
 export type * from './IAskOption';
 export type * from './IErrorMessage';
+export type * from './IFindingMessage';
 export type * from './INoteMessage';
 export type * from './IPlanMessage';
 export type * from './IQuestionAnswer';

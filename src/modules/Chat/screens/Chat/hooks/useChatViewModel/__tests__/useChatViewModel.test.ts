@@ -662,6 +662,37 @@ describe('useChatViewModel', () => {
     });
   });
 
+  describe('onOpenBug', () => {
+    it('opens the bug a run filed on the side of a step, in Bugs', () => {
+      answering({});
+      useWorkspaceStore.setState({ openBugId: null, tab: 'chat' });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onOpenBug('BUG-09');
+      });
+
+      expect(useWorkspaceStore.getState()).toMatchObject({
+        openBugId: 'BUG-09',
+        tab: 'bugs',
+      });
+    });
+
+    it('does NOT fold the bug when it was already open', () => {
+      answering({});
+      useWorkspaceStore.setState({ openBugId: 'BUG-09', tab: 'chat' });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onOpenBug('BUG-09');
+      });
+
+      expect(useWorkspaceStore.getState().openBugId).toBe('BUG-09');
+    });
+  });
+
   describe('a chat while a run goes', () => {
     it('does NOT send, and says the run has to end or be stopped first', () => {
       const ask = answering({});

@@ -1,8 +1,13 @@
 import type { IBug } from '@/modules/Bug';
 
 /** A bug as its file keeps it: one saved before bugs counted in numbers says its step and how often it was seen in words. */
-export type SavedBug = Omit<IBug, 'stepNumber' | 'seenRuns' | 'agent' | 'modelName'> &
-  Partial<Pick<IBug, 'stepNumber' | 'seenRuns' | 'agent' | 'modelName'>> & {
+export type SavedBug = Omit<
+  IBug,
+  'stepNumber' | 'seenRuns' | 'agent' | 'modelName' | 'isIncidental'
+> &
+  Partial<
+    Pick<IBug, 'stepNumber' | 'seenRuns' | 'agent' | 'modelName' | 'isIncidental'>
+  > & {
     step?: string;
     seen?: string;
   };

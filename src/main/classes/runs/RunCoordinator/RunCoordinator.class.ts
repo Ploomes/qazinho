@@ -1,5 +1,5 @@
 import type { IRunCoordinator, IWalkRun } from './types';
-import type { Harness, IStepReport, McpHost } from '@/harness';
+import type { Harness, IStepFinding, IStepReport, McpHost } from '@/harness';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
 import type { IDeviceDriver } from '@/main/classes/devices/types';
@@ -93,6 +93,7 @@ export class RunCoordinator {
       outcomes: [],
       isPaused: false,
       costUsd: null,
+      findings: [],
       agentId: run.agentId,
       model: run.model,
       targetKind: run.target.kind,
@@ -229,6 +230,7 @@ export class RunCoordinator {
   }): Promise<RunFailure | null> {
     const { run, driver } = props;
     const costs: Promise<void>[] = [];
+    const filed: string[] = [];
 
     try {
       for (const [position, steps] of casesOf(run.steps).entries()) {
@@ -240,7 +242,7 @@ export class RunCoordinator {
 
         if (this.stopping.has(run.workspaceId)) break;
 
-        const walked = await this.walkCase({ run, driver, steps, costs });
+        const walked = await this.walkCase({ run, driver, steps, costs, filed });
 
         if (walked === false) break;
 
@@ -262,6 +264,7 @@ export class RunCoordinator {
     driver: IDeviceDriver;
     steps: { step: IFlatStep; index: number }[];
     costs: Promise<void>[];
+    filed: string[];
   }): Promise<boolean | RunFailure> {
     const { run, driver } = props;
     const { workspaceId } = run;
@@ -335,6 +338,9 @@ export class RunCoordinator {
         }),
       });
 
+      if (report.verdict === 'failed' && report.title.length > 0)
+        props.filed.push(report.title);
+
       if (report.verdict !== 'passed') {
         unwalked('skipped');
 
@@ -357,6 +363,37 @@ export class RunCoordinator {
       return `Filed. Next is step ${String(next.step.numberInCase)}: ${next.step.action}`;
     };
 
+    let findings = 0;
+
+    const onFinding = async (finding: IStepFinding): Promise<string> => {
+      const walking = pending[0];
+
+      if (walking === undefined || isOver) return 'This case is over: end your turn now.';
+
+      findings += 1;
+      props.filed.push(finding.title);
+
+      const shot = await driver.shoot(
+        join(run.shotDir, `finding-${String(walking.index + 1)}-${String(findings)}.jpg`),
+      );
+
+      this.emit({
+        kind: 'finding',
+        workspaceId,
+        finding: {
+          ...finding,
+          caseId: walking.step.caseId,
+          stepNumber: walking.step.numberInCase,
+          index: walking.index,
+          action: walking.step.action,
+          screenshot: shot?.dataUrl ?? null,
+          shotFile: shot?.file ?? null,
+        },
+      });
+
+      return `Filed as a bug. Carry on with step ${String(walking.step.numberInCase)}.`;
+    };
+
     const mcpConfig = this.tools.mcpConfigFor(workspaceId);
 
     if (mcpConfig === null)
@@ -367,7 +404,7 @@ export class RunCoordinator {
     if (first !== undefined)
       this.emit({ kind: 'doing', workspaceId, index: first.index });
 
-    this.tools.attach({ workspaceId, driver, onReport });
+    this.tools.attach({ workspaceId, driver, onReport, onFinding });
 
     const screen = await driver.describe().catch(() => '');
 
@@ -390,6 +427,7 @@ export class RunCoordinator {
         steps: pending.map(({ step }) => step),
         screen,
         language: run.language,
+        filed: [...props.filed],
       }),
     });
 

@@ -18,6 +18,7 @@ const RUN: IRunInFlight = {
   outcomes: [],
   isPaused: false,
   costUsd: 0.12,
+  findings: [],
   agentId: 'claude-code',
   model: 'sonnet',
   targetKind: 'web',

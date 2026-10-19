@@ -1,0 +1,55 @@
+.finding-note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  max-width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--attn) 12%, var(--raise));
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.finding-note:hover {
+  background: color-mix(in srgb, var(--attn) 20%, var(--raise));
+}
+
+.finding-note__mark {
+  flex: none;
+  width: var(--space-3);
+  height: var(--space-3);
+  border-radius: var(--radius-xs);
+  background: var(--attn);
+}
+
+.finding-note__id {
+  flex: none;
+  color: var(--attn);
+  font: var(--font-mono-sm);
+}
+
+.finding-note__title {
+  flex: 1;
+  min-width: 0;
+  color: var(--ink);
+  font: var(--font-ui-md);
+}
+
+.finding-note__tag {
+  flex: none;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+  white-space: nowrap;
+}
+
+.finding-note__open {
+  flex: none;
+  color: var(--lime-ink);
+  font: var(--font-ui-sm);
+  white-space: nowrap;
+}

@@ -16,6 +16,7 @@ import { RUN_CLOCK } from '@/modules/Run/constants';
 import {
   endRun,
   landCost,
+  landFinding,
   landStep,
   resumeRun,
   startRun,
@@ -267,6 +268,16 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         workspaces: state.workspaces,
         workspaceId,
         change: (workspace) => landCost({ workspace, costUsd }),
+      }),
+    })),
+
+  landFinding: ({ workspaceId, finding }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          landFinding({ workspace, finding, at: formatClock(new Date()) }),
       }),
     })),
 

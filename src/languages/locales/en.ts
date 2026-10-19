@@ -196,6 +196,7 @@ export const en = {
     SUMMARY_ONE: '1 bug, caught by the agent',
     SUMMARY_OTHER: '{{count}} bugs, caught by the agent',
     JUST_CAUGHT: 'just caught',
+    OUTSIDE_PLAN: 'outside the plan',
     WHERE: 'where it came from',
     SCREENSHOTS: 'screenshots',
     HOW_TO: 'how to get there',

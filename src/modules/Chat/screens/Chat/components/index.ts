@@ -3,6 +3,7 @@ export * from './AskBlock';
 export * from './ChatRow';
 export * from './Composer';
 export * from './ErrorBlock';
+export * from './FindingNote';
 export * from './HandoffCard';
 export * from './QuestionRound';
 export * from './RunSection';

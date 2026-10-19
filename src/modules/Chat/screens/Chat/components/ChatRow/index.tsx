@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { AgentMessage } from '@/modules/Chat/screens/Chat/components/AgentMessage';
 import { AskBlock } from '@/modules/Chat/screens/Chat/components/AskBlock';
 import { ErrorBlock } from '@/modules/Chat/screens/Chat/components/ErrorBlock';
+import { FindingNote } from '@/modules/Chat/screens/Chat/components/FindingNote';
 import { HandoffCard } from '@/modules/Chat/screens/Chat/components/HandoffCard';
 import { QuestionRound } from '@/modules/Chat/screens/Chat/components/QuestionRound';
 import { UserMessage } from '@/modules/Chat/screens/Chat/components/UserMessage';
@@ -46,6 +47,9 @@ export const ChatRow: React.FC<IChatRowProps> = (props) => {
           />
         )}
         {message.kind === 'error' && <ErrorBlock message={message} />}
+        {message.kind === 'finding' && (
+          <FindingNote message={message} onOpenBug={props.onOpenBug} />
+        )}
         {message.kind === 'plan' && (
           <HandoffCard
             isAccent

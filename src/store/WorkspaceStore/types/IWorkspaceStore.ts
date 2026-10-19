@@ -4,7 +4,12 @@ import type { ViewportId } from '@/modules/Device';
 import type { ITestCase } from '@/modules/Plan';
 import type { RunFilter } from '@/modules/Run';
 import type { IWalkedBy, IWorkspace, WorkspaceTab } from '@/modules/Workspace';
-import type { IChatQuestion, IRunInFlight, IStepOutcome } from '@/shared/types';
+import type {
+  IChatQuestion,
+  IRunFinding,
+  IRunInFlight,
+  IStepOutcome,
+} from '@/shared/types';
 
 /** The workspaces and everything the QA can poke inside one of them. */
 export interface IWorkspaceStore {
@@ -62,6 +67,7 @@ export interface IWorkspaceStore {
   markStreaming: (props: { workspaceId: string; url: string }) => void;
   landNote: (props: { workspaceId: string; text: string; who: string }) => void;
   landCost: (props: { workspaceId: string; costUsd: number }) => void;
+  landFinding: (props: { workspaceId: string; finding: IRunFinding }) => void;
   landStep: (outcome: IStepOutcome) => void;
   landRunDone: (workspaceId: string) => void;
   landRunFailed: (props: { workspaceId: string; text: string }) => void;

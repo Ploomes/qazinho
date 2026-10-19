@@ -8,4 +8,5 @@ export interface IChatRowProps {
   onAnswer: (reply: string) => void;
   onAnswerQuestions: (props: { messageId: string; answers: IQuestionAnswer[] }) => void;
   onOpenPlan: () => void;
+  onOpenBug: (bugId: string) => void;
 }

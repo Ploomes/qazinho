@@ -72,5 +72,6 @@ export function makeBug(props: {
       .map((one) => ({ action: one.action, isBad: one.index === outcome.index })),
     shots: shotsFor({ outcome, outcomes }),
     isNew: true,
+    isIncidental: false,
   };
 }
