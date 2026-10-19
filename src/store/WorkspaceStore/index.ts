@@ -21,7 +21,7 @@ import {
   resumeRun,
   startRun,
 } from '@/modules/Workspace/library';
-import { mapWorkspace, tickWorkspaces } from './library';
+import { mapWorkspace, tickWorkspaces, withoutKey } from './library';
 
 export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   workspaces: [],
@@ -36,6 +36,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   deviceWidth: DEVICE.defaultWidth,
   askingIds: [],
   liveTexts: {},
+  retries: {},
   removingWorkspaceId: null,
 
   addWorkspace: (workspace) =>
@@ -79,11 +80,20 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   selectTab: (tab) => set({ tab }),
 
   setLiveText: ({ workspaceId, text }) =>
-    set((state) => ({ liveTexts: { ...state.liveTexts, [workspaceId]: text } })),
+    set((state) => ({
+      liveTexts: { ...state.liveTexts, [workspaceId]: text },
+      retries: withoutKey({ record: state.retries, key: workspaceId }),
+    })),
+
+  setRetry: ({ workspaceId, attempt, maxRetries }) =>
+    set((state) => ({
+      retries: { ...state.retries, [workspaceId]: { attempt, maxRetries } },
+    })),
 
   sendMessage: ({ workspaceId, text, mentions }) =>
     set((state) => ({
       askingIds: [...state.askingIds.filter((id) => id !== workspaceId), workspaceId],
+      retries: withoutKey({ record: state.retries, key: workspaceId }),
       liveTexts: { ...state.liveTexts, [workspaceId]: '' },
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
@@ -96,6 +106,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   landAgentText: ({ workspaceId, text, who, agentId, sessionId }) =>
     set((state) => ({
       askingIds: state.askingIds.filter((id) => id !== workspaceId),
+      retries: withoutKey({ record: state.retries, key: workspaceId }),
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -110,6 +121,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   landPlan: ({ workspaceId, summary, plan, who, agentId, sessionId }) =>
     set((state) => ({
       askingIds: state.askingIds.filter((id) => id !== workspaceId),
+      retries: withoutKey({ record: state.retries, key: workspaceId }),
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -143,6 +155,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   answerQuestions: ({ workspaceId, messageId, answers }) =>
     set((state) => ({
       askingIds: [...state.askingIds.filter((id) => id !== workspaceId), workspaceId],
+      retries: withoutKey({ record: state.retries, key: workspaceId }),
       liveTexts: { ...state.liveTexts, [workspaceId]: '' },
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
@@ -154,6 +167,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   landAgentError: ({ workspaceId, text }) =>
     set((state) => ({
       askingIds: state.askingIds.filter((id) => id !== workspaceId),
+      retries: withoutKey({ record: state.retries, key: workspaceId }),
       liveTexts: { ...state.liveTexts, [workspaceId]: '' },
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
@@ -166,6 +180,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   landAgentStopped: (workspaceId) =>
     set((state) => ({
       askingIds: state.askingIds.filter((id) => id !== workspaceId),
+      retries: withoutKey({ record: state.retries, key: workspaceId }),
       liveTexts: { ...state.liveTexts, [workspaceId]: '' },
     })),
 

@@ -166,6 +166,41 @@ describe('useChatViewModel', () => {
     });
   });
 
+  describe('an agent that cannot reach its service', () => {
+    it('says it is trying again, and which try it is on', () => {
+      answering({});
+      useWorkspaceStore.setState({
+        askingIds: ['w1'],
+        retries: { w1: { attempt: 3, maxRetries: 10 } },
+      });
+
+      expect(renderHook(() => useChatViewModel()).result.current.retryText).toBe(
+        'The agent cannot reach its service, so it is trying again (3 of 10).',
+      );
+    });
+
+    it('stops saying so once the answer starts coming in', () => {
+      answering({});
+      useWorkspaceStore.setState({
+        askingIds: ['w1'],
+        retries: { w1: { attempt: 3, maxRetries: 10 } },
+      });
+      useWorkspaceStore.getState().setLiveText({ workspaceId: 'w1', text: 'Two cases.' });
+
+      expect(renderHook(() => useChatViewModel()).result.current.retryText).toBe('');
+    });
+
+    it('does NOT show the retry of another workspace', () => {
+      answering({});
+      useWorkspaceStore.setState({
+        askingIds: ['w1'],
+        retries: { w2: { attempt: 2, maxRetries: 10 } },
+      });
+
+      expect(renderHook(() => useChatViewModel()).result.current.retryText).toBe('');
+    });
+  });
+
   describe('the answer as it arrives', () => {
     it('shows what the agent is writing while it works', () => {
       answering({});

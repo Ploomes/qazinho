@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Chip, Intern, Markdown } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
@@ -15,6 +15,7 @@ export const Chat: React.FC = () => {
     isEmpty,
     isAgentTyping,
     liveText,
+    retryText,
     draft,
     lockedText,
     suggestions,
@@ -118,6 +119,21 @@ export const Chat: React.FC = () => {
               <div className="chat__body chat__live">
                 {liveText !== '' && <Markdown isRevealing>{liveText}</Markdown>}
                 <TypingDots />
+                <AnimatePresence initial={false}>
+                  {retryText !== '' && (
+                    <motion.p
+                      key="retry"
+                      className="chat__retry"
+                      role="status"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+                    >
+                      {retryText}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
               </div>
             </motion.div>
           )}

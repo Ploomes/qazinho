@@ -9,6 +9,7 @@ export const useMachineWatch = () => {
   const setTools = useMachineStore((state) => state.setTools);
   const setUsage = useMachineStore((state) => state.setUsage);
   const setLiveText = useWorkspaceStore((state) => state.setLiveText);
+  const setRetry = useWorkspaceStore((state) => state.setRetry);
   const setContext = useWorkspaceStore((state) => state.setContext);
   const followInstall = useSetupStore((state) => state.followInstall);
   const setIntegrations = useSetupStore((state) => state.setIntegrations);
@@ -37,9 +38,15 @@ export const useMachineWatch = () => {
             tokens: event.usage.contextTokens,
             window: event.usage.contextWindow,
           });
+        } else if (event.kind === 'retry') {
+          setRetry({
+            workspaceId: event.workspaceId,
+            attempt: event.attempt,
+            maxRetries: event.maxRetries,
+          });
         } else setLiveText({ workspaceId: event.workspaceId, text: event.text });
       }),
-    [setUsage, setContext, setLiveText],
+    [setUsage, setContext, setLiveText, setRetry],
   );
 
   useEffect(() => {

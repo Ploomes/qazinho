@@ -80,6 +80,8 @@ export const pt: typeof en = {
     PLACEHOLDER: 'Pergunte qualquer coisa ao agente · @ aponta uma run, bug ou caso',
     SEND: 'Enviar',
     STOP_ANSWER: 'Parar a resposta',
+    RETRYING:
+      'O agente não está conseguindo falar com o serviço dele e vai tentar de novo ({{attempt}} de {{max}}).',
     MENTION_HEADING: 'Apontar para o agente',
     MENTION_HINT:
       '↑ ↓ para mover · ← → troca de aba · Enter para escolher · Esc para fechar',

@@ -90,6 +90,13 @@
   align-items: stretch;
 }
 
+.chat__retry {
+  overflow: hidden;
+  margin: 0;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+}
+
 .chat__live > .typing-dots {
   align-self: flex-start;
 }

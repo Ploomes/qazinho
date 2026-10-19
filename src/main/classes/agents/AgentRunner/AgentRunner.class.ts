@@ -16,6 +16,7 @@ import {
   hearCodex,
   killTree,
   readAgentLine,
+  retryOf,
   strictSchemaOf,
   toStructured,
   toText,
@@ -122,6 +123,10 @@ export class AgentRunner {
       }
 
       sessionId = event.session_id ?? sessionId;
+
+      const retry = retryOf(event);
+
+      if (retry !== null) this.onEvent({ kind: 'retry', workspaceId, ...retry });
 
       if (event.type === 'rate_limit_event' || event.type === 'result') {
         usage = toUsage({ previous: usage, line: event });

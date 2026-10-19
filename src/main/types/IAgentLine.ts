@@ -18,4 +18,6 @@ export interface IAgentLine {
   usage?: { input_tokens?: number; cache_read_input_tokens?: number };
   modelUsage?: Record<string, { contextWindow?: number }>;
   total_cost_usd?: number;
+  attempt?: number;
+  max_retries?: number;
 }

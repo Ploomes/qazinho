@@ -4,6 +4,7 @@ export * from './costOf';
 export * from './hearCodex';
 export * from './killTree';
 export * from './readAgentLine';
+export * from './retryOf';
 export * from './strictSchemaOf';
 export * from './toStructured';
 export * from './toText';

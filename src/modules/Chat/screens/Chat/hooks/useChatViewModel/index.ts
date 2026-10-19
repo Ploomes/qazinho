@@ -59,6 +59,7 @@ export const useChatViewModel = () => {
   const model = useSettingsStore((state) => state.model);
   const askingIds = useWorkspaceStore((state) => state.askingIds);
   const liveTexts = useWorkspaceStore((state) => state.liveTexts);
+  const retries = useWorkspaceStore((state) => state.retries);
   const sendMessage = useWorkspaceStore((state) => state.sendMessage);
   const landAgentText = useWorkspaceStore((state) => state.landAgentText);
   const landPlan = useWorkspaceStore((state) => state.landPlan);
@@ -74,6 +75,7 @@ export const useChatViewModel = () => {
 
   const isAgentTyping = workspace !== null && askingIds.includes(workspace.id);
   const liveText = workspace === null ? '' : (liveTexts[workspace.id] ?? '');
+  const retry = workspace === null ? undefined : retries[workspace.id];
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
   const size = viewportOf(workspace?.viewportId);
@@ -345,6 +347,10 @@ export const useChatViewModel = () => {
     isEmpty: (workspace?.chat.length ?? 0) === 0,
     isAgentTyping,
     liveText: isAgentTyping ? liveText : '',
+    retryText:
+      isAgentTyping && retry !== undefined
+        ? t('CHAT.RETRYING', { attempt: retry.attempt, max: retry.maxRetries })
+        : '',
     draft,
     suggestions: CHAT.suggestions.map(({ labelKey, textKey }) => ({
       id: labelKey,
