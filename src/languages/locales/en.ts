@@ -386,7 +386,8 @@ export const en = {
     KEYBIND_BUGS: 'Go to Bugs',
     KEYBIND_RESOURCES: 'Open Resources',
     KEYBIND_SETTINGS: 'Open Settings',
-    SHORTCUTS_NOTE: 'Click a shortcut and press the keys you want.',
+    SHORTCUTS_NOTE:
+      'Click a shortcut and press the keys you want, holding ⌘ or ⌥. Esc leaves it as it was.',
     ABOUT_VERSION: 'version {{version}}',
     ABOUT_NOTE:
       'Your QA assistant: plan tests, run them and keep your work organised, with your own AI agent. Nothing leaves this machine.',

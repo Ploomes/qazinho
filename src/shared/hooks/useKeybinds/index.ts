@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { useRunActions } from '@/modules/Run';
 import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
-import { comboOf } from './library';
+import { comboOf, isBindable } from './library';
 
 export const useKeybinds = () => {
   const keybinds = useSettingsStore((state) => state.keybinds);
   const editingKeybindId = useSettingsStore((state) => state.editingKeybindId);
   const setKeybind = useSettingsStore((state) => state.setKeybind);
+  const editKeybind = useSettingsStore((state) => state.editKeybind);
   const selectedProjectId = useAppStore((state) => state.selectedProjectId);
   const openWorkspaceModal = useAppStore((state) => state.openWorkspaceModal);
   const openSettings = useAppStore((state) => state.openSettings);
@@ -46,7 +47,9 @@ export const useKeybinds = () => {
 
       if (editingKeybindId !== null) {
         event.preventDefault();
-        setKeybind({ keybindId: editingKeybindId, combo });
+
+        if (event.key === 'Escape') editKeybind(null);
+        else if (isBindable(combo)) setKeybind({ keybindId: editingKeybindId, combo });
 
         return;
       }
@@ -69,6 +72,7 @@ export const useKeybinds = () => {
     keybinds,
     editingKeybindId,
     setKeybind,
+    editKeybind,
     selectedProjectId,
     openWorkspaceModal,
     openSettings,

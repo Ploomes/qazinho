@@ -389,7 +389,8 @@ export const pt: typeof en = {
     KEYBIND_BUGS: 'Ir para Bugs',
     KEYBIND_RESOURCES: 'Abrir Recursos',
     KEYBIND_SETTINGS: 'Abrir Configurações',
-    SHORTCUTS_NOTE: 'Clique num atalho e aperte as teclas que quiser.',
+    SHORTCUTS_NOTE:
+      'Clique num atalho e aperte as teclas que quiser, segurando ⌘ ou ⌥. Esc deixa como estava.',
     ABOUT_VERSION: 'versão {{version}}',
     ABOUT_NOTE:
       'Seu assistente de QA: planeje testes, execute e organize seu trabalho com o seu próprio agente de IA. Nada sai desta máquina.',
