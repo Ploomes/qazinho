@@ -14,6 +14,7 @@ import { WebDriver } from '@/main/classes/devices/WebDriver';
 const PAGE = `<!doctype html><html><body>
   <button onclick="document.getElementById('out').textContent = confirm('Delete the item?') ? 'Deleted' : 'Kept'">Delete</button>
   <button onclick="alert('Saved!'); document.getElementById('out').textContent = 'After the alert'">Save</button>
+  <button onclick="document.getElementById('out').textContent = 'Named ' + prompt('Name?', 'old name')">Rename</button>
   <p id="out">Nothing yet</p>
 </body></html>`;
 
@@ -70,5 +71,18 @@ describe('a dialog the page opens', () => {
     await driver.act({ kind: 'click', target: 'Delete', value: '' });
 
     expect(await driver.describe()).toContain('(answered OK)');
+  });
+
+  it('takes what a prompt asks for from the click that opens it', async () => {
+    await driver.act({ kind: 'click', target: 'Rename', value: '', promptText: 'Ana' });
+
+    const named = await driver.describe();
+
+    expect(named).toContain('Named Ana');
+    expect(named).toContain('prompt: Name? (answered OK with "Ana")');
+
+    await driver.act({ kind: 'click', target: 'Rename', value: '' });
+
+    expect(await driver.describe()).toContain('Named old name');
   });
 });

@@ -48,7 +48,12 @@ export function readToolCall(props: {
 
   if (tool.name === 'look') return { kind: 'look' };
 
-  const args = read.data as { target?: string; value?: string; dialog?: DialogAnswer };
+  const args = read.data as {
+    target?: string;
+    value?: string;
+    dialog?: DialogAnswer;
+    promptText?: string;
+  };
 
   return {
     kind: 'act',
@@ -57,6 +62,7 @@ export function readToolCall(props: {
       target: args.target ?? '',
       value: args.value ?? '',
       ...(args.dialog === undefined ? {} : { dialog: args.dialog }),
+      ...(args.promptText === undefined ? {} : { promptText: args.promptText }),
     },
   };
 }

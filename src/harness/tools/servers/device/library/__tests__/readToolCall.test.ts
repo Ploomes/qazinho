@@ -28,6 +28,18 @@ describe('readToolCall', () => {
       });
     });
 
+    it('carries what a click types into the prompt it opens', () => {
+      expect(
+        readToolCall({
+          name: 'click',
+          args: { target: 'Edit', promptText: 'New title' },
+        }),
+      ).toEqual({
+        kind: 'act',
+        action: { kind: 'click', target: 'Edit', value: '', promptText: 'New title' },
+      });
+    });
+
     it('does NOT take a dialog answer other than ok or cancel', () => {
       expect(
         readToolCall({ name: 'click', args: { target: 'Delete', dialog: 'maybe' } }),

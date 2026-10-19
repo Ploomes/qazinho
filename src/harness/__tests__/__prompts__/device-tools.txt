@@ -50,6 +50,10 @@
             "cancel"
           ],
           "description": "How to answer a browser dialog the click opens, such as \"Are you sure?\": ok unless the step says to cancel it."
+        },
+        "promptText": {
+          "type": "string",
+          "description": "What to type into a browser prompt the click opens, such as a new title, before it is answered ok."
         }
       },
       "required": [
@@ -105,6 +109,10 @@
             "cancel"
           ],
           "description": "How to answer a browser dialog the key opens, such as \"Are you sure?\": ok unless the step says to cancel it."
+        },
+        "promptText": {
+          "type": "string",
+          "description": "What to type into a browser prompt the key opens, such as a new title, before it is answered ok."
         }
       },
       "required": [

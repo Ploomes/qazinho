@@ -6,4 +6,5 @@ export interface IStepAction {
   target: string;
   value: string;
   dialog?: DialogAnswer;
+  promptText?: string;
 }

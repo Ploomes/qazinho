@@ -17,5 +17,6 @@ explains, or a frame over 200 ms, is a jump a person notices even when the text 
 fail the step for it, and say in "got" what moved. Smaller movement goes in "note".
 A dialog the page opens, an alert, a confirm or a prompt, is answered OK at once, and the screen
 lists what it said under DIALOGS, with the answer. When a step says to cancel one, set "dialog"
-to "cancel" on the click or key that opens it.
+to "cancel" on the click or key that opens it; a prompt that asks for text takes it from
+"promptText" on that same click or key.
 The app under test is {{app}}.

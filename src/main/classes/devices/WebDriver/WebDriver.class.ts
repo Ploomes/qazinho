@@ -38,6 +38,7 @@ export class WebDriver implements IDeviceDriver {
   private viewport: IViewport;
   private isFocused = false;
   private dialogAnswer: DialogAnswer = 'ok';
+  private promptText: string | null = null;
 
   public constructor(props: IWebDriver) {
     this.url = props.url;
@@ -117,6 +118,7 @@ export class WebDriver implements IDeviceDriver {
 
     this.lastMotion = null;
     this.dialogAnswer = action.dialog ?? 'ok';
+    this.promptText = action.promptText ?? null;
 
     try {
       const before = await this.markOf(page);
@@ -139,6 +141,7 @@ export class WebDriver implements IDeviceDriver {
       });
     } finally {
       this.dialogAnswer = 'ok';
+      this.promptText = null;
     }
   }
 
@@ -306,13 +309,15 @@ export class WebDriver implements IDeviceDriver {
     });
     page.on('dialog', (dialog) => {
       const isOk = this.dialogAnswer === 'ok';
+      const typed = dialog.type() === 'prompt' ? this.promptText : null;
+      const answer = typed === null ? '' : ` with "${typed}"`;
 
       this.dialogs.push(
-        `${dialog.type()}: ${dialog.message()} (answered ${isOk ? 'OK' : 'Cancel'})`,
+        `${dialog.type()}: ${dialog.message()} (answered ${isOk ? `OK${answer}` : 'Cancel'})`,
       );
-      void (isOk ? dialog.accept(dialog.defaultValue()) : dialog.dismiss()).catch(
-        () => undefined,
-      );
+      void (
+        isOk ? dialog.accept(typed ?? dialog.defaultValue()) : dialog.dismiss()
+      ).catch(() => undefined);
     });
   }
 

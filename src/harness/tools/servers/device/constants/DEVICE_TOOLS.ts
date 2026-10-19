@@ -34,6 +34,12 @@ export const DEVICE_TOOLS = [
           'How to answer a browser dialog the click opens, such as "Are you sure?": ok unless the step says to cancel it.',
         )
         .optional(),
+      promptText: z
+        .string()
+        .describe(
+          'What to type into a browser prompt the click opens, such as a new title, before it is answered ok.',
+        )
+        .optional(),
     }),
   },
   {
@@ -63,6 +69,12 @@ export const DEVICE_TOOLS = [
         .enum(['ok', 'cancel'], { error: '"dialog" is ok or cancel.' })
         .describe(
           'How to answer a browser dialog the key opens, such as "Are you sure?": ok unless the step says to cancel it.',
+        )
+        .optional(),
+      promptText: z
+        .string()
+        .describe(
+          'What to type into a browser prompt the key opens, such as a new title, before it is answered ok.',
         )
         .optional(),
     }),
