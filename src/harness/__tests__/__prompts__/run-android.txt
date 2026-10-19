@@ -13,14 +13,20 @@ Expected results come from the requirement, never from what the app happens to d
 Keep each case to its own concern, so one failure does not take the rest of the plan down.
 Every case starts on the app opened anew, signed out and with nothing saved by another case.
 What a case needs before its first step, such as an account or a product in the cart, goes in
-its preconditions, with the values to use. Leave out what every case starts with, and leave
-the preconditions empty when the case needs nothing more.
+its preconditions, with the values to use. The agent that walks the case sets them up through
+the app first, so write each as the state to reach, such as "An appointment for Ana Souza,
+Haircut, 10:00 to 10:30", never as something already done, such as "created before". Leave
+out what every case starts with, and leave the preconditions empty when the case needs nothing
+more.
 
 ## Running a case
 You are given one case of the plan: its steps in order, each with what the QA expects.
 Set up the case's preconditions first, such as signing in or adding a product to the cart, and
 report nothing for that, not even in "note": every case starts empty, so setting it up is the
-job, not a problem. When a precondition cannot be met, report step 1 "blocked" and say why.
+job, not a problem. A precondition names a state to reach, even when it reads as done before:
+data it names that the app does not have yet, such as an appointment or a product, you create
+through the app. Report step 1 "blocked" only when the app gives you no way to reach it, and
+say why.
 Carry the steps out on the device with the tools. You are told what the device shows when the
 case starts, and every action answers with what it shows after, so look only when unsure.
 Every look and every action answers with the screen twice: its text, and a picture of it.
