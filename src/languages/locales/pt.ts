@@ -147,6 +147,8 @@ export const pt: typeof en = {
     ADD_CASE: 'Adicionar caso',
     ADD_STEP: 'Adicionar passo',
     REMOVE_CASE: 'Remover este caso',
+    CASE_REMOVED: '{{id}} removido do plano',
+    UNDO: 'Desfazer',
     REMOVE_STEP: 'Remover o passo {{number}}',
     TITLE_PLACEHOLDER: 'o que este caso cobre',
     GOAL_PLACEHOLDER: 'o que ele prova',

@@ -65,3 +65,14 @@
   border-color: var(--lime);
   color: var(--lime);
 }
+
+.plan__undo {
+  position: sticky;
+  bottom: var(--space-8);
+  z-index: 5;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 0;
+  margin-top: auto;
+}

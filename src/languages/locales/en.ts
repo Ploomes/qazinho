@@ -144,6 +144,8 @@ export const en = {
     ADD_CASE: 'Add a case',
     ADD_STEP: 'Add a step',
     REMOVE_CASE: 'Remove this case',
+    CASE_REMOVED: '{{id}} removed from the plan',
+    UNDO: 'Undo',
     REMOVE_STEP: 'Remove step {{number}}',
     TITLE_PLACEHOLDER: 'what this case covers',
     GOAL_PLACEHOLDER: 'what it proves',

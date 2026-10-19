@@ -1,5 +1,7 @@
+import type { ICaseRemoval } from '@/modules/Plan/screens/Plan/types';
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
 import type { IRunCase } from '@/modules/Run';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   addCase,
@@ -30,6 +32,7 @@ export const usePlanViewModel = () => {
   const agent = useSettingsStore((state) => state.agent);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const { onRun, onStop } = useRunActions();
+  const [removal, setRemoval] = useState<ICaseRemoval | null>(null);
 
   const workspaceId = workspace?.id ?? null;
   const plan = workspace?.plan ?? [];
@@ -41,6 +44,13 @@ export const usePlanViewModel = () => {
     setPlan({ workspaceId, plan: cases });
   };
 
+  const undoable =
+    removal !== null &&
+    removal.workspaceId === workspaceId &&
+    removal.after === plan &&
+    !isLocked
+      ? removal
+      : null;
   const latest = workspace?.latest ?? null;
   const stepCount = flattenPlanSteps(plan).length;
   const lastRuns: Record<string, IRunCase> = Object.fromEntries(
@@ -83,8 +93,36 @@ export const usePlanViewModel = () => {
         }),
       );
     },
+    undo:
+      undoable === null
+        ? null
+        : {
+            key: undoable.key,
+            text: t('PLAN.CASE_REMOVED', { id: undoable.caseId }),
+            actionLabel: t('PLAN.UNDO'),
+          },
     onRemoveCase: (caseId: string) => {
-      write(removeCase({ plan, caseId }));
+      if (workspaceId === null || isLocked) return;
+
+      const after = removeCase({ plan, caseId });
+
+      write(after);
+      setRemoval({
+        key: `${caseId}@${String(Date.now())}`,
+        workspaceId,
+        caseId,
+        before: plan,
+        after,
+      });
+    },
+    onUndo: () => {
+      if (undoable === null) return;
+
+      write(undoable.before);
+      setRemoval(null);
+    },
+    onUndoExpire: () => {
+      setRemoval(null);
     },
     onEditCase: (props: { caseId: string; fields: Partial<ITestCase> }) => {
       write(editCase({ plan, ...props }));
