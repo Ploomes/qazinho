@@ -165,6 +165,8 @@ const runs = new RunCoordinator({
   onEvent: (event) => broadcast({ channel: CHANNELS.runEvent, event }),
 });
 
+const toldChats = new Map<string, Record<string, string>>();
+
 async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
   const command = await findCommand(ask.agentId);
 
@@ -181,6 +183,8 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
   }
 
   const chat = harness.chat({
+    text: ask.text,
+    told: (ask.sessionId === null ? undefined : toldChats.get(ask.sessionId)) ?? {},
     target: ask.target,
     viewport: ask.viewport,
     steps: ask.steps,
@@ -195,11 +199,13 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     command,
     model: ask.model,
     sessionId: ask.sessionId,
-    prompt: ask.text,
+    prompt: chat.prompt,
     schema: chat.schema,
     systemPrompt: chat.systemPrompt,
     allowedTools: chat.tools.allowedTools,
   });
+
+  if (!turn.isError && turn.sessionId !== null) toldChats.set(turn.sessionId, chat.told);
 
   return {
     ...turn,

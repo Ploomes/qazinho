@@ -115,6 +115,8 @@ describe('Codex in the chat', () => {
   it('answers in the strict schema, briefed by the harness, and resumes the same thread', async () => {
     const harness = new Harness();
     const chat = harness.chat({
+      text: 'QA here',
+      told: {},
       target: null,
       viewport: null,
       steps: [],

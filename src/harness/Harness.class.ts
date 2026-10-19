@@ -1,4 +1,4 @@
-import type { ICorpusFile, IHarnessSection } from '@/harness/context/types';
+import type { ICorpusFile } from '@/harness/context/types';
 import type { IHarnessTools } from '@/harness/tools/types';
 import type { AppLook, HarnessRole, IHarnessTarget } from '@/harness/types';
 import type {
@@ -12,6 +12,8 @@ import type {
 import { LANGUAGE_NAMES } from '@/harness/constants';
 import { CORPUS } from '@/harness/context/constants';
 import {
+  changedSections,
+  chatMessageOf,
   describeCase,
   describeLook,
   describePlan,
@@ -35,18 +37,14 @@ export class Harness {
     this.corpus = corpus;
   }
 
-  /** The system prompt for a target: the corpus it reads, then what this call adds on top. */
+  /** The system prompt for a target: the corpus it reads, with this call's values filled in. */
   public contextFor(props: {
     target: IHarnessTarget;
     values?: Record<string, string>;
-    volatile?: IHarnessSection[];
   }): string {
     const sections = sectionsFor({ corpus: this.corpus, target: props.target });
 
-    return renderSections([
-      ...fillSections({ sections, values: props.values ?? {} }),
-      ...(props.volatile ?? []),
-    ]);
+    return renderSections(fillSections({ sections, values: props.values ?? {} }));
   }
 
   /** The tools a role may call; a role with none runs with every tool taken away. */
@@ -54,8 +52,10 @@ export class Harness {
     return toolsOfRole({ grants: TOOL_GRANTS, role, server: MCP_HOST.name });
   }
 
-  /** One chat message: the workspace and its latest runs, what QAzinho saw of the app and what the QA pointed at, and the answer's shape. */
+  /** One chat message: the corpus as its system prompt, and the QA's words opened by what the agent has not been told yet. */
   public chat(props: {
+    text: string;
+    told: Record<string, string>;
     target: ITargetUnderTest | null;
     viewport: IViewport | null;
     steps: IFlatStep[];
@@ -64,28 +64,36 @@ export class Harness {
     look: AppLook | null;
   }): {
     systemPrompt: string;
+    prompt: string;
+    told: Record<string, string>;
     schema: string;
     tools: IHarnessTools;
   } {
+    const news = changedSections({
+      sections: [
+        {
+          title: 'This workspace',
+          lines: [
+            props.target === null
+              ? 'The workspace has no app to test yet.'
+              : `The app under test is ${props.target.kind}: ${props.target.value}.`,
+            ...describeSize(props.viewport),
+            ...describePlan(props.steps),
+          ],
+        },
+        describeRuns(props.runs),
+        describeLook(props.look),
+      ],
+      told: props.told,
+    });
+
     return {
-      systemPrompt: this.contextFor({
-        target: { role: 'chat' },
-        volatile: [
-          {
-            title: 'This workspace',
-            lines: [
-              props.target === null
-                ? 'The workspace has no app to test yet.'
-                : `The app under test is ${props.target.kind}: ${props.target.value}.`,
-              ...describeSize(props.viewport),
-              ...describePlan(props.steps),
-            ],
-          },
-          describeRuns(props.runs),
-          describeLook(props.look),
-          describeReferences(props.references),
-        ],
+      systemPrompt: this.contextFor({ target: { role: 'chat' } }),
+      prompt: chatMessageOf({
+        sections: [...news.changed, describeReferences(props.references)],
+        text: props.text,
       }),
+      told: news.told,
       schema: CHAT_SCHEMA,
       tools: this.toolsFor('chat'),
     };

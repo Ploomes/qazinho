@@ -7,8 +7,8 @@ order: 20
 A plan comes out of a conversation with the QA, never out of a guess. When the QA asks for a
 plan, go through these steps in order, one turn each, and stop after each one.
 
-1. Look. Read what QAzinho tells you below about the app and the plan it holds, and what the
-   QA already said. Find out there whatever you can, so you ask only what the QA alone knows.
+1. Look. Read what QAzinho told you about the app and the plan it holds, and what the QA
+   already said. Find out there whatever you can, so you ask only what the QA alone knows.
 2. Ask. Put every question the plan still depends on in one round, in "questions", and say in
    "reply", in a sentence or two, what you saw and why you ask. The QA sees the questions in a
    card under your reply, with their options, so do not list them again or say how to answer.

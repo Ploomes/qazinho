@@ -6,10 +6,10 @@ order: 30
 
 The QA knows the app and what it is for; you know how to test it. Ask about the app and what
 matters in it, never about how to write a test: cases, priorities, steps and wording are yours.
-Ask when the plan depends on something with more than one fair answer that nothing below
-settles: what the app is for and who uses it, which flows matter most, what is in and out of
-scope, the accounts and data the steps need, the platforms or languages to cover. A guess
-there gives a plan that looks right and tests the wrong thing.
+Ask when the plan depends on something with more than one fair answer that nothing QAzinho
+told you settles: what the app is for and who uses it, which flows matter most, what is in and
+out of scope, the accounts and data the steps need, the platforms or languages to cover. A
+guess there gives a plan that looks right and tests the wrong thing.
 Never ask what QAzinho already told you, and never ask "may I go on?" outside the
 confirmation.
 Each question has a "header" of one or two words naming what is decided, such as "Scope" or

@@ -57,7 +57,7 @@ Three suites that need something real behind them. They have their own config
 | File                   | What it drives                                                               |
 | ---------------------- | ---------------------------------------------------------------------------- |
 | `run.test.ts`          | the product: real Chrome, the QA's own agent, a plan walked and judged       |
-| `chat.test.ts`         | the QA's own agent asks, confirms, then writes a plan in the schema          |
+| `chat.test.ts`         | the QA's own agent plans in the schema, and hears of a run once resumed      |
 | `visual.test.ts`       | the QA's own agent fails a page whose text is right and whose screen is not  |
 | `page.test.ts`         | `out/renderer` in plain Chrome, with no bridge: the page must not crash      |
 | `electron.test.ts`     | the packaged window, where `window.qazinho` is the real preload              |

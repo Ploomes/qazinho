@@ -49,48 +49,80 @@ const RUNS = [
 const harness = new Harness();
 const DESKTOP = { width: 1280, height: 800 };
 
+const EMPTY_CHAT = {
+  text: 'Hi',
+  told: {},
+  target: null,
+  viewport: null,
+  steps: [],
+  references: [],
+  runs: [],
+  look: null,
+};
+
+const FULL_CHAT = {
+  text: 'Write a test plan for this app.',
+  told: {},
+  target: { kind: 'web' as const, value: 'https://shop.test' },
+  viewport: DESKTOP,
+  steps: STEPS,
+  references: REFERENCES,
+  runs: RUNS,
+  look: {
+    url: 'https://shop.test',
+    isOpen: true as const,
+    page: 'URL: https://shop.test/\nTITLE: Shop\nTEXT:\nNew in: summer shoes\nCONTROLS:\na: Cart\nbutton: Sign in',
+  },
+};
+
 describe('Harness', () => {
   describe('chat', () => {
-    it('tells the agent about an empty workspace exactly as it did before', async () => {
-      const chat = harness.chat({
-        target: null,
-        viewport: null,
-        steps: [],
-        references: [],
-        runs: [],
-        look: null,
-      });
+    it('keeps the corpus alone in the system prompt, the one a resumed session holds on to', async () => {
+      const chat = harness.chat(EMPTY_CHAT);
 
-      await expect(chat.systemPrompt).toMatchFileSnapshot('./__prompts__/chat-empty.txt');
+      await expect(chat.systemPrompt).toMatchFileSnapshot('./__prompts__/chat.txt');
       await expect(chat.schema).toMatchFileSnapshot('./__prompts__/chat-schema.txt');
     });
 
-    it('adds the app, what QAzinho saw of it, the plan and what the QA pointed at, after the corpus', async () => {
-      const chat = harness.chat({
-        target: { kind: 'web', value: 'https://shop.test' },
-        viewport: DESKTOP,
-        steps: STEPS,
-        references: REFERENCES,
-        runs: RUNS,
-        look: {
-          url: 'https://shop.test',
-          isOpen: true,
-          page: 'URL: https://shop.test/\nTITLE: Shop\nTEXT:\nNew in: summer shoes\nCONTROLS:\na: Cart\nbutton: Sign in',
-        },
+    it('opens the first message with the app, the plan, the runs, what QAzinho saw and what the QA pointed at', async () => {
+      await expect(harness.chat(FULL_CHAT).prompt).toMatchFileSnapshot(
+        './__prompts__/chat-message.txt',
+      );
+    });
+
+    it('does NOT change the system prompt with what the workspace holds', () => {
+      expect(harness.chat(FULL_CHAT).systemPrompt).toBe(
+        harness.chat(EMPTY_CHAT).systemPrompt,
+      );
+    });
+
+    it('tells a resumed chat what changed since its last message, and what the QA points at each time', () => {
+      const first = harness.chat({ ...FULL_CHAT, runs: [] });
+      const second = harness.chat({
+        ...FULL_CHAT,
+        told: first.told,
+        text: 'What failed?',
       });
 
-      await expect(chat.systemPrompt).toMatchFileSnapshot('./__prompts__/chat-full.txt');
+      expect(second.prompt).toContain(
+        '## Runs in this workspace\nrun r-02 · The whole plan · 10:02',
+      );
+      expect(second.prompt).toContain('## What the QA pointed at\nbug BUG-01');
+      expect(second.prompt).not.toContain('## This workspace');
+      expect(second.prompt).not.toContain('## What QAzinho saw of the app');
+      expect(second.prompt.endsWith('</qazinho>\n\nWhat failed?')).toBe(true);
+    });
+
+    it('sends the QA words alone when nothing changed and nothing is pointed at', () => {
+      const first = harness.chat(EMPTY_CHAT);
+
+      expect(
+        harness.chat({ ...EMPTY_CHAT, told: first.told, text: 'Thanks' }).prompt,
+      ).toBe('Thanks');
     });
 
     it('tells the chat how the latest runs went, which it never walked itself', () => {
-      const prompt = harness.chat({
-        target: null,
-        viewport: null,
-        steps: [],
-        references: [],
-        runs: RUNS,
-        look: null,
-      }).systemPrompt;
+      const { prompt } = harness.chat({ ...EMPTY_CHAT, runs: RUNS });
 
       expect(prompt).toContain(
         '## Runs in this workspace\nrun r-02 · The whole plan · 10:02',
@@ -99,29 +131,11 @@ describe('Harness', () => {
     });
 
     it('says nothing of runs before the first one', () => {
-      expect(
-        harness.chat({
-          target: null,
-          viewport: null,
-          steps: [],
-          references: [],
-          runs: [],
-          look: null,
-        }).systemPrompt,
-      ).not.toContain('## Runs in this workspace');
+      expect(harness.chat(EMPTY_CHAT).prompt).not.toContain('## Runs in this workspace');
     });
 
     it('takes every tool away from the chat', () => {
-      expect(
-        harness.chat({
-          target: null,
-          viewport: null,
-          steps: [],
-          references: [],
-          runs: [],
-          look: null,
-        }).tools,
-      ).toEqual({
+      expect(harness.chat(EMPTY_CHAT).tools).toEqual({
         groups: [],
         allowedTools: [],
       });
@@ -179,16 +193,7 @@ describe('Harness', () => {
           language: 'en',
         }),
       ).not.toContain('## Talking with the QA');
-      expect(
-        harness.chat({
-          target: null,
-          viewport: null,
-          steps: [],
-          references: [],
-          runs: [],
-          look: null,
-        }).systemPrompt,
-      ).not.toContain('## Running a case');
+      expect(harness.chat(EMPTY_CHAT).systemPrompt).not.toContain('## Running a case');
     });
   });
 
