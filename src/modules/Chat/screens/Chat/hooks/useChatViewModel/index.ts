@@ -182,7 +182,17 @@ export const useChatViewModel = () => {
 
   const runTitleOf = (message: IRunMessage) => {
     const end = RUN_ENDS[message.endedBy];
-    const tally = { id: message.runId, passed: message.passed, failed: message.failed };
+    const tally = {
+      id: message.runId,
+      passed:
+        message.passed === 1
+          ? t('CHAT.RUN_PASSED_ONE')
+          : t('CHAT.RUN_PASSED_OTHER', { count: message.passed }),
+      failed:
+        message.failed === 1
+          ? t('CHAT.RUN_FAILED_ONE')
+          : t('CHAT.RUN_FAILED_OTHER', { count: message.failed }),
+    };
 
     return end === null
       ? t('CHAT.RUN_CARD_TITLE', tally)

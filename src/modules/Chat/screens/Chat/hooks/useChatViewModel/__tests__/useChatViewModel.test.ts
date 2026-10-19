@@ -563,6 +563,19 @@ describe('useChatViewModel', () => {
       );
     });
 
+    it('counts one case in the singular, in Portuguese too', async () => {
+      answering({});
+      useWorkspaceStore.setState({
+        workspaces: [walkRun({ verdicts: ['passed'], isFinished: true })],
+      });
+      await i18n.changeLanguage('pt');
+
+      const title = sectionOf(renderHook(() => useChatViewModel()).result.current)?.title;
+
+      await i18n.changeLanguage('en');
+      expect(title).toBe('Run r-01 · 1 passou · 0 falharam');
+    });
+
     it('leaves loose the error of a run that broke before its first step', () => {
       answering({});
       useWorkspaceStore.setState({
