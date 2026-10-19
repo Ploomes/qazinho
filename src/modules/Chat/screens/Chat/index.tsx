@@ -121,7 +121,7 @@ export const Chat: React.FC = () => {
                 <TypingDots />
                 <AnimatePresence initial={false}>
                   {retryText !== '' && (
-                    <motion.p
+                    <motion.div
                       key="retry"
                       className="chat__retry"
                       role="status"
@@ -130,8 +130,8 @@ export const Chat: React.FC = () => {
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: MOTION.duration, ease: MOTION.ease }}
                     >
-                      {retryText}
-                    </motion.p>
+                      <p className="chat__retry-text">{retryText}</p>
+                    </motion.div>
                   )}
                 </AnimatePresence>
               </div>
