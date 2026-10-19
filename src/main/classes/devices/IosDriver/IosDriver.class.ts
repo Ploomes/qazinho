@@ -6,7 +6,7 @@ import { randomUUID } from 'node:crypto';
 import { readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { phoneGlance } from '@/main/library';
+import { imageExtensionOf, phoneGlance } from '@/main/library';
 import { IOS } from './constants';
 import {
   bundleOfPlist,
@@ -125,8 +125,9 @@ export class IosDriver implements IDeviceDriver {
     await this.simctl(['io', this.udid, 'screenshot', file]);
 
     const image = await readFile(file);
+    const mime = imageExtensionOf(image) === 'png' ? 'image/png' : 'image/jpeg';
 
-    return { file, dataUrl: `data:image/png;base64,${image.toString('base64')}` };
+    return { file, dataUrl: `data:${mime};base64,${image.toString('base64')}` };
   }
 
   /** QAzinho only shuts down what QAzinho started: a simulator the QA opened stays open. */
