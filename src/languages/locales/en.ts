@@ -232,7 +232,7 @@ export const en = {
     HIDE: 'Hide the device',
     NO_SHOT: 'the first screenshot lands when the first step is done.',
     SHOT_ALT: 'the device after the last step',
-    FOCUS: 'Focus on the device',
+    FOCUS: 'Expand',
     FOCUS_LEAVE: 'Back',
     FOCUS_NOW: 'now',
     FOCUS_NEXT: 'next',

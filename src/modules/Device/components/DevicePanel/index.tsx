@@ -111,7 +111,7 @@ export const DevicePanel: React.FC = () => {
               <header className="device-panel__header">
                 <span className="device-panel__state">
                   <Intern mood={mood} size={22} isStill />
-                  {stateText}
+                  <span className="device-panel__state-text">{stateText}</span>
                   {isLive && <LiveClock label={elapsedLabel} />}
                 </span>
                 <span className="device-panel__collapse">
@@ -124,12 +124,10 @@ export const DevicePanel: React.FC = () => {
                         exit={{ opacity: 0, scale: 0.9 }}
                         transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
                       >
-                        <IconButton
-                          glyph="⤢"
-                          label={focusLabel}
-                          size="sm"
-                          onClick={onFocus}
-                        />
+                        <Button size="sm" variant="secondary" onClick={onFocus}>
+                          <span aria-hidden="true">⤢</span>
+                          {focusLabel}
+                        </Button>
                       </motion.span>
                     )}
                   </AnimatePresence>

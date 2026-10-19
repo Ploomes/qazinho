@@ -208,6 +208,12 @@ describe('useDevicePanelViewModel', () => {
     });
   });
 
+  it('names the way to the device up close with a word, not only an icon', () => {
+    expect(renderHook(() => useDevicePanelViewModel()).result.current.focusLabel).toBe(
+      'Expand',
+    );
+  });
+
   describe('viewportClassName', () => {
     it('hugs the screen of a browser, fills the height for a phone, and leaves the empty device alone', () => {
       expect(

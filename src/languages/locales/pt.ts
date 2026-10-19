@@ -236,7 +236,7 @@ export const pt: typeof en = {
     HIDE: 'Esconder o device',
     NO_SHOT: 'o primeiro screenshot chega quando o primeiro passo terminar.',
     SHOT_ALT: 'o device depois do último passo',
-    FOCUS: 'Focar no device',
+    FOCUS: 'Ampliar',
     FOCUS_LEAVE: 'Voltar',
     FOCUS_NOW: 'agora',
     FOCUS_NEXT: 'próximo',
