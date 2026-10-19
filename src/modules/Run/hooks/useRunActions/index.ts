@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { viewportOf } from '@/modules/Device/library';
-import { flattenPlanSteps, walkedByOf } from '@/modules/Run/library';
+import { flattenPlanSteps, nextRunId, walkedByOf } from '@/modules/Run/library';
 import { Run } from '@/services';
 import {
   useAppStore,
@@ -38,7 +38,7 @@ export const useRunActions = () => {
 
       if (!workspace || steps.length === 0 || (live !== null && !live.isDone)) return;
 
-      const runId = `r-${String(workspace.runs.length + 1).padStart(2, '0')}`;
+      const runId = nextRunId(workspace);
       const { agent, model } = useSettingsStore.getState();
       const { agents } = useMachineStore.getState();
 
