@@ -277,6 +277,38 @@ describe('useChatViewModel', () => {
       expect(result.current.liveText).toBe('');
     });
 
+    it('stops the agent of this workspace when the QA asks', () => {
+      answering({});
+
+      const stop = vi.fn(() => Promise.resolve());
+
+      window.qazinho = { ...window.qazinho, stopAgent: stop };
+      useWorkspaceStore.setState({ askingIds: ['w1'] });
+      renderHook(() => useChatViewModel()).result.current.onStop();
+
+      expect(stop).toHaveBeenCalledWith('w1');
+    });
+
+    it('lands no error for an answer the QA stopped, and frees the chat', async () => {
+      answering({ isError: true, failure: { reason: 'stopped' } });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onDraftChange('Plan the checkout');
+      });
+      act(() => {
+        result.current.onSend();
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().askingIds).toEqual([]);
+      });
+      expect(
+        useWorkspaceStore.getState().workspaces[0]?.chat.map(({ kind }) => kind),
+      ).toEqual(['user']);
+    });
+
     it('turns the first answer into the plan, and remembers the session', async () => {
       answering({ answer: DRAFTED });
       const { result } = renderHook(() => useChatViewModel());

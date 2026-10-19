@@ -166,52 +166,70 @@ const runs = new RunCoordinator({
 });
 
 const toldChats = new Map<string, Record<string, string>>();
+const askingChats = new Set<string>();
+const stoppedChats = new Set<string>();
 
 async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
   const command = await findCommand(ask.agentId);
+  const unanswered = {
+    sessionId: ask.sessionId,
+    text: '',
+    usage: null,
+    costUsd: null,
+    isError: true,
+    answer: null,
+  };
 
-  if (!command) {
+  if (!command)
     return {
-      sessionId: ask.sessionId,
-      text: '',
-      usage: null,
-      costUsd: null,
-      isError: true,
-      answer: null,
+      ...unanswered,
       failure: { reason: 'agent-missing', agentId: ask.agentId },
     };
+
+  askingChats.add(ask.workspaceId);
+
+  try {
+    const chat = harness.chat({
+      text: ask.text,
+      told: (ask.sessionId === null ? undefined : toldChats.get(ask.sessionId)) ?? {},
+      target: ask.target,
+      viewport: ask.viewport,
+      steps: ask.steps,
+      references: ask.references,
+      runs: ask.runs,
+      look: ask.target?.kind === 'web' ? await peek.look(ask.target.value) : null,
+    });
+
+    if (stoppedChats.has(ask.workspaceId))
+      return { ...unanswered, failure: { reason: 'stopped' } };
+
+    const turn = await agentRunner.ask({
+      workspaceId: ask.workspaceId,
+      agentId: ask.agentId,
+      command,
+      model: ask.model,
+      sessionId: ask.sessionId,
+      prompt: chat.prompt,
+      schema: chat.schema,
+      systemPrompt: chat.systemPrompt,
+      allowedTools: chat.tools.allowedTools,
+    });
+
+    if (stoppedChats.has(ask.workspaceId))
+      return { ...turn, isError: true, answer: null, failure: { reason: 'stopped' } };
+
+    if (!turn.isError && turn.sessionId !== null)
+      toldChats.set(turn.sessionId, chat.told);
+
+    return {
+      ...turn,
+      answer: turn.isError ? null : harness.readChat(turn.text),
+      failure: agentFailure(turn),
+    };
+  } finally {
+    askingChats.delete(ask.workspaceId);
+    stoppedChats.delete(ask.workspaceId);
   }
-
-  const chat = harness.chat({
-    text: ask.text,
-    told: (ask.sessionId === null ? undefined : toldChats.get(ask.sessionId)) ?? {},
-    target: ask.target,
-    viewport: ask.viewport,
-    steps: ask.steps,
-    references: ask.references,
-    runs: ask.runs,
-    look: ask.target?.kind === 'web' ? await peek.look(ask.target.value) : null,
-  });
-
-  const turn = await agentRunner.ask({
-    workspaceId: ask.workspaceId,
-    agentId: ask.agentId,
-    command,
-    model: ask.model,
-    sessionId: ask.sessionId,
-    prompt: chat.prompt,
-    schema: chat.schema,
-    systemPrompt: chat.systemPrompt,
-    allowedTools: chat.tools.allowedTools,
-  });
-
-  if (!turn.isError && turn.sessionId !== null) toldChats.set(turn.sessionId, chat.told);
-
-  return {
-    ...turn,
-    answer: turn.isError ? null : harness.readChat(turn.text),
-    failure: agentFailure(turn),
-  };
 }
 
 async function checkMachine() {
@@ -338,6 +356,12 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.cancelAgentSignIn, (_event, agentId: string) => {
     login.cancel(agentId);
+  });
+  ipcMain.handle(CHANNELS.stopAgent, (_event, workspaceId: string) => {
+    if (!askingChats.has(workspaceId)) return;
+
+    stoppedChats.add(workspaceId);
+    agentRunner.cancel(workspaceId);
   });
   ipcMain.handle(
     CHANNELS.sendAgentSignInCode,

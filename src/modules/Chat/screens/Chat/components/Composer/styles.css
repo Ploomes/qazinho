@@ -119,6 +119,12 @@
   }
 }
 
+.composer__send--stop {
+  background: var(--raise2);
+  color: var(--ink);
+  font: var(--font-ui-xs);
+}
+
 .composer__send:disabled {
   border-color: transparent;
   background: var(--line);

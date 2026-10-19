@@ -63,6 +63,7 @@ export const useChatViewModel = () => {
   const landQuestions = useWorkspaceStore((state) => state.landQuestions);
   const answerQuestions = useWorkspaceStore((state) => state.answerQuestions);
   const landAgentError = useWorkspaceStore((state) => state.landAgentError);
+  const landAgentStopped = useWorkspaceStore((state) => state.landAgentStopped);
   const answerAsk = useWorkspaceStore((state) => state.answerAsk);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const selectRun = useWorkspaceStore((state) => state.selectRun);
@@ -106,6 +107,12 @@ export const useChatViewModel = () => {
       references: props.references,
       runs: runHistoryOf({ workspace, wholePlan }),
     }).then((turn) => {
+      if (turn.failure?.reason === 'stopped') {
+        landAgentStopped(workspaceId);
+
+        return;
+      }
+
       if (turn.isError) {
         landAgentError({
           workspaceId,
@@ -310,6 +317,9 @@ export const useChatViewModel = () => {
           },
     ),
     lockedText: isWalking ? t('CHAT.LOCKED_RUNNING') : null,
+    onStop: () => {
+      if (workspace !== null && isAgentTyping) void Agent.stop(workspace.id);
+    },
     onToggleRun: (runId: string) => {
       setExpandedRuns(
         expandedRuns.includes(runId)

@@ -22,6 +22,10 @@ export class Agent {
     );
   }
 
+  public static async stop(workspaceId: string): Promise<void> {
+    await window.qazinho?.stopAgent(workspaceId);
+  }
+
   public static onEvent(listener: (event: IAgentEvent) => void): () => void {
     return window.qazinho?.onAgentEvent(listener) ?? (() => undefined);
   }

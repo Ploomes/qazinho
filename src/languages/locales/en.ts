@@ -76,6 +76,7 @@ export const en = {
       'Ask about the app, a run or a bug, or say what to cover and the agent drafts the cases. Type @ to point at something.',
     PLACEHOLDER: 'Ask the agent anything · @ points at a run, bug or case',
     SEND: 'Send',
+    STOP_ANSWER: 'Stop the answer',
     MENTION_HEADING: 'Point the agent at',
     MENTION_HINT: '↑ ↓ to move · ← → to switch tabs · Enter to pick · Esc to close',
     MENTION_HINT_EMPTY: 'Esc to close',

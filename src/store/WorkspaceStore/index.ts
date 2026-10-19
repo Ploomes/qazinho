@@ -161,6 +161,12 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
+  landAgentStopped: (workspaceId) =>
+    set((state) => ({
+      askingIds: state.askingIds.filter((id) => id !== workspaceId),
+      liveTexts: { ...state.liveTexts, [workspaceId]: '' },
+    })),
+
   answerAsk: ({ workspaceId, reply }) =>
     set((state) => ({
       workspaces: mapWorkspace({

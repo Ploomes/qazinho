@@ -3,6 +3,7 @@ export const CHANNELS = {
   readResources: 'resources:read',
   detectDeviceTools: 'devices:detect',
   askAgent: 'agent:ask',
+  stopAgent: 'agent:stop',
   agentEvent: 'agent:event',
   signInAgent: 'agent:sign-in',
   cancelAgentSignIn: 'agent:sign-in-cancel',

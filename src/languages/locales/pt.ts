@@ -78,6 +78,7 @@ export const pt: typeof en = {
       'Pergunte sobre o app, uma run ou um bug, ou diga o que cobrir e o agente escreve os casos. Digite @ para apontar algo.',
     PLACEHOLDER: 'Pergunte qualquer coisa ao agente · @ aponta uma run, bug ou caso',
     SEND: 'Enviar',
+    STOP_ANSWER: 'Parar a resposta',
     MENTION_HEADING: 'Apontar para o agente',
     MENTION_HINT:
       '↑ ↓ para mover · ← → troca de aba · Enter para escolher · Esc para fechar',

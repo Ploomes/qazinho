@@ -36,6 +36,7 @@ export interface IQazinhoApi {
   readResources: () => Promise<IResourceSnapshot>;
   detectDeviceTools: () => Promise<IDeviceTools>;
   askAgent: (ask: IAskAgent) => Promise<IChatTurn>;
+  stopAgent: (workspaceId: string) => Promise<void>;
   onAgentEvent: (listener: (event: IAgentEvent) => void) => () => void;
   signInAgent: (agentId: string) => Promise<AgentSignInProgress>;
   cancelAgentSignIn: (agentId: string) => Promise<void>;

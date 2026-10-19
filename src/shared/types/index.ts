@@ -2,6 +2,7 @@ export type * from './AgentSignInFailure';
 export type * from './AgentSignInPhase';
 export type * from './AgentSignInProgress';
 export type * from './AgentSignInStep';
+export type * from './ChatFailure';
 export type * from './DialogAnswer';
 export type * from './IActionMotion';
 export type * from './IAgentEvent';

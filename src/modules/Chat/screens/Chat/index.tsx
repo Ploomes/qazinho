@@ -25,6 +25,7 @@ export const Chat: React.FC = () => {
     onDraftChange,
     onPickMention,
     onSend,
+    onStop,
     onSuggestion,
     onAnswer,
     onAnswerQuestions,
@@ -126,12 +127,14 @@ export const Chat: React.FC = () => {
       <Composer
         value={draft}
         lockedText={lockedText}
+        isAnswering={isAgentTyping}
         mentions={mentions}
         referenceIds={referenceIds}
         mentionQuery={mentionQuery}
         hasReferences={hasReferences}
         onChange={onDraftChange}
         onSend={onSend}
+        onStop={onStop}
         onPickMention={onPickMention}
       />
     </div>

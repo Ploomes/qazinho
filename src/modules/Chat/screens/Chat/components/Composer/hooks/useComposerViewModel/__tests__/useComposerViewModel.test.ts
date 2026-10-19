@@ -7,12 +7,14 @@ import { useComposerViewModel } from '@/modules/Chat/screens/Chat/components/Com
 const PROPS = {
   value: 'Test the whole checkout',
   lockedText: null,
+  isAnswering: false,
   mentions: [],
   referenceIds: ['TC-05', 'r-01'],
   mentionQuery: null,
   hasReferences: false,
   onChange: vi.fn(),
   onSend: vi.fn(),
+  onStop: vi.fn(),
   onPickMention: vi.fn(),
 };
 
@@ -109,7 +111,7 @@ describe('useComposerViewModel', () => {
 
       expect(onSend).not.toHaveBeenCalled();
       expect(result.current).toMatchObject({
-        canSend: false,
+        canPress: false,
         isLocked: true,
         placeholder: LOCKED,
         fieldClassName: 'composer__field composer__field--locked',
@@ -150,11 +152,40 @@ describe('useComposerViewModel', () => {
       useComposerViewModel({ ...PROPS, value: '   ', onSend }),
     );
 
-    expect(result.current.canSend).toBe(false);
+    expect(result.current.canPress).toBe(false);
 
     result.current.onSendClick();
 
     expect(onSend).not.toHaveBeenCalled();
+  });
+
+  it('turns the button into stop while the agent answers, and stops it', () => {
+    const onStop = vi.fn();
+    const onSend = vi.fn();
+    const { result } = renderHook(() =>
+      useComposerViewModel({ ...PROPS, isAnswering: true, onStop, onSend }),
+    );
+
+    expect(result.current.button.label).toBe('Stop the answer');
+    expect(result.current.canPress).toBe(true);
+
+    result.current.onButtonClick();
+
+    expect(onStop).toHaveBeenCalledOnce();
+    expect(onSend).not.toHaveBeenCalled();
+  });
+
+  it('does NOT send, nor stop the agent, on Enter while it answers', () => {
+    const onStop = vi.fn();
+    const onSend = vi.fn();
+    const { result } = renderHook(() =>
+      useComposerViewModel({ ...PROPS, isAnswering: true, onStop, onSend }),
+    );
+
+    result.current.onKeyDown(pressed('Enter'));
+
+    expect(onSend).not.toHaveBeenCalled();
+    expect(onStop).not.toHaveBeenCalled();
   });
 
   it('sends on Enter', () => {

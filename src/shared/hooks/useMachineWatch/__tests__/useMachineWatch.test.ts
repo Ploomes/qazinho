@@ -44,6 +44,7 @@ beforeEach(() => {
     readResources: vi.fn().mockResolvedValue(RESOURCES),
     detectDeviceTools: vi.fn().mockResolvedValue(TOOLS),
     askAgent: vi.fn(),
+    stopAgent: vi.fn(),
     onAgentEvent: vi.fn().mockReturnValue(() => undefined),
     signInAgent: vi.fn(),
     cancelAgentSignIn: vi.fn(),

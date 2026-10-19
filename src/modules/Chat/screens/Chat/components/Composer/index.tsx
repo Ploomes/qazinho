@@ -1,6 +1,5 @@
 import type { IComposerProps } from './types';
-import { AnimatePresence } from 'motion/react';
-import { useTranslation } from 'react-i18next';
+import { AnimatePresence, motion } from 'motion/react';
 import { MentionPicker } from './components';
 import { useComposerViewModel } from './hooks';
 import './styles.css';
@@ -10,22 +9,23 @@ export const Composer: React.FC<IComposerProps> = (props) => {
     mirrorRef,
     parts,
     onInputScroll,
-    canSend,
+    canPress,
     isLocked,
+    button,
+    glyphMotion,
     placeholder,
     fieldClassName,
     isPickerOpen,
     highlighted,
     shown,
     tabs,
-    onSendClick,
+    onButtonClick,
     onPick,
     onHighlight,
     onTab,
     onInputChange,
     onKeyDown,
   } = useComposerViewModel(props);
-  const { t } = useTranslation();
 
   return (
     <div className="composer">
@@ -75,12 +75,17 @@ export const Composer: React.FC<IComposerProps> = (props) => {
         </div>
         <button
           type="button"
-          className="composer__send"
-          disabled={!canSend}
-          aria-label={t('CHAT.SEND')}
-          onClick={onSendClick}
+          className={button.className}
+          disabled={!canPress}
+          aria-label={button.label}
+          title={button.label}
+          onClick={onButtonClick}
         >
-          <span aria-hidden="true">↑</span>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span key={button.glyph} aria-hidden="true" {...glyphMotion}>
+              {button.glyph}
+            </motion.span>
+          </AnimatePresence>
         </button>
       </div>
     </div>

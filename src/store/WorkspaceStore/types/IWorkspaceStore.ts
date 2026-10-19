@@ -55,6 +55,7 @@ export interface IWorkspaceStore {
     answers: IQuestionAnswer[];
   }) => void;
   landAgentError: (props: { workspaceId: string; text: string }) => void;
+  landAgentStopped: (workspaceId: string) => void;
   setLiveText: (props: { workspaceId: string; text: string }) => void;
   answerAsk: (props: { workspaceId: string; reply: string }) => void;
   setPlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;

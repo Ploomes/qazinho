@@ -44,6 +44,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.detectDeviceTools) as Promise<IDeviceTools>,
   askAgent: (ask: IAskAgent) =>
     ipcRenderer.invoke(CHANNELS.askAgent, ask) as Promise<IChatTurn>,
+  stopAgent: (workspaceId: string) =>
+    ipcRenderer.invoke(CHANNELS.stopAgent, workspaceId) as Promise<void>,
   onAgentEvent: (listener: (event: IAgentEvent) => void) => {
     const forward = (_: unknown, event: IAgentEvent) => {
       listener(event);
