@@ -27,20 +27,20 @@ function run(props: { kind: TargetKind; value: string }): IWalkRun {
 
 describe('driverFor', () => {
   it('drives a URL with a browser', () => {
-    expect(driverFor(run({ kind: 'web', value: 'https://shop.test' }))).toBeInstanceOf(
-      WebDriver,
-    );
+    expect(
+      driverFor({ run: run({ kind: 'web', value: 'https://shop.test' }) }),
+    ).toBeInstanceOf(WebDriver);
   });
 
   it('drives an apk with a phone', () => {
-    expect(driverFor(run({ kind: 'android', value: '/tmp/app.apk' }))).toBeInstanceOf(
-      AndroidDriver,
-    );
+    expect(
+      driverFor({ run: run({ kind: 'android', value: '/tmp/app.apk' }) }),
+    ).toBeInstanceOf(AndroidDriver);
   });
 
   it('drives a simulator build with idb', () => {
-    expect(driverFor(run({ kind: 'ios', value: '/tmp/App.app' }))).toBeInstanceOf(
-      IosDriver,
-    );
+    expect(
+      driverFor({ run: run({ kind: 'ios', value: '/tmp/App.app' }) }),
+    ).toBeInstanceOf(IosDriver);
   });
 });

@@ -26,6 +26,7 @@ import {
   BrowserWindow,
   dialog,
   ipcMain,
+  nativeImage,
   safeStorage,
   screen,
   shell,
@@ -163,6 +164,11 @@ const runs = new RunCoordinator({
   tools,
   harness,
   onEvent: (event) => broadcast({ channel: CHANNELS.runEvent, event }),
+  shrink: ({ image, width, height, quality }) =>
+    nativeImage
+      .createFromBuffer(image)
+      .resize({ width, height, quality: 'best' })
+      .toJPEG(quality),
 });
 
 const toldChats = new Map<string, Record<string, string>>();

@@ -11,6 +11,7 @@ export const WEB_DRIVER = {
   quietPollMs: 100,
   glanceScale: 0.75,
   glanceQuality: 60,
+  wholeQuality: 92,
   pageTextLimit: 2_000,
   elementLimit: 40,
 } as const;

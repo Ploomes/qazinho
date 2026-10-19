@@ -3,6 +3,7 @@ import type { Harness, IStepFinding, IStepReport, McpHost } from '@/harness';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
 import type { IDeviceDriver } from '@/main/classes/devices/types';
+import type { ShrinkImage } from '@/main/types';
 import type {
   IAndroidSetup,
   IFlatStep,
@@ -39,6 +40,7 @@ export class RunCoordinator {
   private readonly tools: McpHost;
   private readonly harness: Harness;
   private readonly onEvent: (event: IRunEvent) => void;
+  private readonly shrink: ShrinkImage | null;
   private readonly stopping = new Set<string>();
   private readonly walking = new Set<string>();
   private readonly paused = new Set<string>();
@@ -56,6 +58,7 @@ export class RunCoordinator {
     this.tools = props.tools;
     this.harness = props.harness;
     this.onEvent = props.onEvent;
+    this.shrink = props.shrink ?? null;
   }
 
   public async start(run: IStartRun): Promise<void> {
@@ -179,7 +182,7 @@ export class RunCoordinator {
     let driver: IDeviceDriver | null = null;
 
     try {
-      driver = driverFor(run);
+      driver = driverFor(this.shrink === null ? { run } : { run, shrink: this.shrink });
       this.drivers.set(run.workspaceId, driver);
       await mkdir(run.shotDir, { recursive: true });
       await driver.open();

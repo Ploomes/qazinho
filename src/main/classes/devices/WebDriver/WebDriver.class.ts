@@ -1,5 +1,6 @@
 import type { IWebDriver } from './types';
 import type { IDeviceDriver, IShot } from '@/main/classes/devices/types';
+import type { ShrinkImage } from '@/main/types';
 import type {
   DialogAnswer,
   IActionMotion,
@@ -25,6 +26,7 @@ export class WebDriver implements IDeviceDriver {
   private readonly url: string;
   private readonly profileDir: string;
   private readonly pixelRatio: number;
+  private readonly shrink: ShrinkImage | null;
   private readonly origins = new Set<string>();
   private readonly dialogs: string[] = [];
   private context: BrowserContext | null = null;
@@ -45,6 +47,7 @@ export class WebDriver implements IDeviceDriver {
       Math.max(props.pixelRatio ?? 1, 1),
       WEB_DRIVER.maxPixelRatio,
     );
+    this.shrink = props.shrink ?? null;
   }
 
   /** Opens Chrome on an empty profile, so a run never starts with what an earlier one saved. */
@@ -148,7 +151,7 @@ export class WebDriver implements IDeviceDriver {
     return motion;
   }
 
-  /** The visible part of the page, scaled down, as the agent reads it. */
+  /** The visible part of the page, scaled down, as the agent reads it: shot whole and shrunk, since Chrome drawing it small drops 1px borders. */
   public async glance(): Promise<IDeviceImage | null> {
     const cdp = await this.session();
 
@@ -157,13 +160,31 @@ export class WebDriver implements IDeviceDriver {
     const [x, y] = await this.page.evaluate<[number, number]>(
       '[window.scrollX, window.scrollY]',
     );
-    const shot = await cdp.send('Page.captureScreenshot', {
+    const area = { x, y, ...this.viewport };
+
+    if (this.shrink === null) {
+      const small = await cdp.send('Page.captureScreenshot', {
+        format: 'jpeg',
+        quality: WEB_DRIVER.glanceQuality,
+        clip: { ...area, scale: WEB_DRIVER.glanceScale / this.pixelRatio },
+      });
+
+      return { data: small.data, mimeType: 'image/jpeg' };
+    }
+
+    const whole = await cdp.send('Page.captureScreenshot', {
       format: 'jpeg',
+      quality: WEB_DRIVER.wholeQuality,
+      clip: { ...area, scale: 1 },
+    });
+    const shrunk = this.shrink({
+      image: Buffer.from(whole.data, 'base64'),
+      width: Math.round(this.viewport.width * WEB_DRIVER.glanceScale),
+      height: Math.round(this.viewport.height * WEB_DRIVER.glanceScale),
       quality: WEB_DRIVER.glanceQuality,
-      clip: { x, y, ...this.viewport, scale: WEB_DRIVER.glanceScale / this.pixelRatio },
     });
 
-    return { data: shot.data, mimeType: 'image/jpeg' };
+    return { data: shrunk.toString('base64'), mimeType: 'image/jpeg' };
   }
 
   /** What the page shows, and the dialogs it opened since the last look, with how each was answered. */
