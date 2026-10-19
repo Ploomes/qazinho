@@ -322,6 +322,42 @@ describe('useDevicePanelViewModel', () => {
         '--device-steps-min': `${String(DEVICE.stepsMinHeight)}px`,
       });
     });
+
+    it('frames a phone in the shape of its own screen, a foldable nearly square', () => {
+      const header = new Uint8Array(33);
+
+      header.set([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+      new DataView(header.buffer).setUint32(16, 1768);
+      new DataView(header.buffer).setUint32(20, 2208);
+
+      const walked = { ...walkRun({ verdicts: [] }), planKind: 'mobile' as const };
+
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...walked,
+            live: walked.live && {
+              ...walked.live,
+              shot: `data:image/png;base64,${btoa(String.fromCharCode(...header))}`,
+            },
+          },
+        ],
+      });
+
+      expect(renderHook(() => useDevicePanelViewModel()).result.current.screenRatio).toBe(
+        1768 / 2208,
+      );
+    });
+
+    it('frames a phone tall until its first screenshot comes', () => {
+      useWorkspaceStore.setState({
+        workspaces: [{ ...walkRun({ verdicts: [] }), planKind: 'mobile' }],
+      });
+
+      expect(renderHook(() => useDevicePanelViewModel()).result.current.screenRatio).toBe(
+        DEVICE.phoneRatio,
+      );
+    });
   });
 
   describe('elapsedLabel', () => {

@@ -8,7 +8,7 @@ export const DEVICE = {
   headerHeight: 52,
   chromeHeight: 32,
   stepsMinHeight: 150,
-  phoneAspect: '9 / 19.5',
+  phoneRatio: 9 / 19.5,
   frameLayoutId: 'device-frame',
   viewportLayoutId: 'device-viewport',
   panelViewportLayoutId: 'device-panel-viewport',

@@ -7,6 +7,7 @@ import {
   deviceStateOf,
   formatElapsed,
   moodOfStatus,
+  pngRatioOf,
   stepVerdictsOf,
   viewportOf,
 } from '@/modules/Device/library';
@@ -51,6 +52,10 @@ export const useDevicePanelViewModel = () => {
   const state = deviceStateOf(workspace);
   const isPhone = workspace?.planKind === 'mobile';
   const viewport = viewportOf(workspace?.viewportId);
+  const shot = live?.shot ?? null;
+  const screenRatio = isPhone
+    ? ((shot === null ? null : pngRatioOf(shot)) ?? DEVICE.phoneRatio)
+    : viewport.width / viewport.height;
 
   const lastRun = workspace?.runs[0] ?? null;
   const verdicts = stepVerdictsOf({ steps: planSteps, live, lastRun });
@@ -121,7 +126,7 @@ export const useDevicePanelViewModel = () => {
       '--device-rail': `${String(DEVICE.railWidth)}px`,
       '--device-header': `${String(DEVICE.headerHeight)}px`,
       '--device-chrome': `${String(DEVICE.chromeHeight)}px`,
-      '--device-ratio': String(viewport.width / viewport.height),
+      '--device-ratio': String(screenRatio),
       '--device-steps-min': `${String(DEVICE.stepsMinHeight)}px`,
     } as CSSProperties,
     isPhone,
@@ -140,7 +145,7 @@ export const useDevicePanelViewModel = () => {
     hasViewportPicker: viewports.length > 0 && !isFocused,
     viewportLayoutId: DEVICE.panelViewportLayoutId,
     viewportNote: isRunLive ? '' : t('DEVICE.VIEWPORT_NEXT'),
-    screenRatio: viewport.width / viewport.height,
+    screenRatio,
     onSelectViewport: (viewportId: ViewportId) => {
       if (!workspace || viewportId === viewport.id) return;
 
@@ -155,7 +160,7 @@ export const useDevicePanelViewModel = () => {
         });
       }
     },
-    shot: live?.shot ?? null,
+    shot,
     stream,
     urlText: target?.value ?? '',
     elapsedLabel:

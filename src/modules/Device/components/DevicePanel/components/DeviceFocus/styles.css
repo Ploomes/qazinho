@@ -32,7 +32,7 @@
 .device-focus__phone {
   display: flex;
   height: 100cqh;
-  aspect-ratio: 9 / 19.5;
+  aspect-ratio: var(--focus-ratio);
   max-width: 100cqw;
   overflow: hidden;
   border: 10px solid var(--raise2);

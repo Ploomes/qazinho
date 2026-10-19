@@ -154,7 +154,7 @@
 }
 
 .device-panel__phone {
-  aspect-ratio: 9 / 19.5;
+  aspect-ratio: var(--device-ratio);
   max-height: 100%;
   overflow: hidden;
   border: 8px solid var(--raise2);
