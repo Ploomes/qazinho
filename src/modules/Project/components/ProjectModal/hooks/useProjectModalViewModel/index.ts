@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { TARGET_NAME_KEYS } from '@/modules/Project/components/ProjectModal/constants';
 import { newProjectId, webAddressOf } from '@/modules/Project/library';
 import { SETUP_LINKS } from '@/modules/Setup/constants';
-import { Archive, Files, Platform, Run } from '@/services';
+import { Agent, Archive, Files, Platform, Run } from '@/services';
 import { useAppStore, useMachineStore, useWorkspaceStore } from '@/store';
 
 export const useProjectModalViewModel = () => {
@@ -93,8 +93,8 @@ export const useProjectModalViewModel = () => {
     if (!editing) return;
 
     for (const workspace of own) {
-      if (workspace.live && !workspace.live.isDone) Run.stop(workspace.id);
-
+      Run.stop(workspace.id);
+      void Agent.stop(workspace.id);
       Archive.removeWorkspace(workspace.id);
     }
 

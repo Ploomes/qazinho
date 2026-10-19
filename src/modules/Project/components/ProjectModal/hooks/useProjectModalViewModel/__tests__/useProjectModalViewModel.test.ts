@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useProjectModalViewModel } from '@/modules/Project/components/ProjectModal/hooks/useProjectModalViewModel';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
@@ -359,6 +359,25 @@ describe('useProjectModalViewModel', () => {
       expect(useAppStore.getState().projects).toEqual([]);
       expect(useAppStore.getState().screen).toBe('welcome');
       expect(useWorkspaceStore.getState().workspaces.map(({ id }) => id)).toEqual(['w2']);
+    });
+
+    it('stops what each of its workspaces had going, its run and its agent', () => {
+      const stopRun = vi.fn(() => Promise.resolve());
+      const stopAgent = vi.fn(() => Promise.resolve());
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), stopRun, stopAgent };
+      useWorkspaceStore.setState({
+        workspaces: [{ ...makeWorkspace(), id: 'w1', projectId: 'p1' }],
+      });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onDelete();
+      });
+
+      expect(stopRun).toHaveBeenCalledWith('w1');
+      expect(stopAgent).toHaveBeenCalledWith('w1');
     });
   });
 });
