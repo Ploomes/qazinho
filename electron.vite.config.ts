@@ -29,7 +29,10 @@ export default defineConfig({
     server: { fs: { allow: [fileURLToPath(new URL('.', import.meta.url))] } },
     build: {
       rollupOptions: {
-        input: fileURLToPath(new URL('./src/index.html', import.meta.url)),
+        input: {
+          index: fileURLToPath(new URL('./src/index.html', import.meta.url)),
+          recorder: fileURLToPath(new URL('./src/recorder.html', import.meta.url)),
+        },
       },
     },
   },

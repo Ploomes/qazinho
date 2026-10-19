@@ -32,7 +32,8 @@ import type {
   WindowFit,
 } from '@/shared/types';
 import { contextBridge, ipcRenderer } from 'electron';
-import { CHANNELS } from '@/shared/constants';
+import { CHANNELS, RECORDER_ARGUMENT } from '@/shared/constants';
+import { recorderApi } from './recorderApi';
 
 const api: IQazinhoApi = {
   platform: process.platform as Platform,
@@ -156,4 +157,6 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.removeMcpServer, target) as Promise<McpActionResult>,
 };
 
-contextBridge.exposeInMainWorld('qazinho', api);
+if (process.argv.includes(RECORDER_ARGUMENT))
+  contextBridge.exposeInMainWorld('qazinhoRecorder', recorderApi);
+else contextBridge.exposeInMainWorld('qazinho', api);
