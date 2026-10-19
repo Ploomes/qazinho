@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import type { KeyboardEvent } from 'react';
+import type { KeyboardEvent, UIEvent } from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { useComposerViewModel } from '@/modules/Chat/screens/Chat/components/Composer/hooks/useComposerViewModel';
@@ -8,6 +8,7 @@ const PROPS = {
   value: 'Test the whole checkout',
   lockedText: null,
   mentions: [],
+  referenceIds: ['TC-05', 'r-01'],
   mentionQuery: null,
   hasReferences: false,
   onChange: vi.fn(),
@@ -53,6 +54,46 @@ function pressed(key: string, shiftKey = false) {
 }
 
 describe('useComposerViewModel', () => {
+  describe('parts', () => {
+    it('marks what a typed @ points at, so it stands out in the field', () => {
+      const { result } = renderHook(() =>
+        useComposerViewModel({ ...PROPS, value: 'why did @TC-05 fail in @r-01?' }),
+      );
+
+      expect(
+        result.current.parts.map(({ text, isMention }) => [text, isMention]),
+      ).toEqual([
+        ['why did ', false],
+        ['@TC-05', true],
+        [' fail in ', false],
+        ['@r-01', true],
+        ['?', false],
+      ]);
+    });
+
+    it('does NOT mark an @ that points at nothing, or is still being typed', () => {
+      const { result } = renderHook(() =>
+        useComposerViewModel({ ...PROPS, value: 'look at @TC-0 and @TC-99' }),
+      );
+
+      expect(result.current.parts.some(({ isMention }) => isMention)).toBe(false);
+    });
+  });
+
+  describe('onInputScroll', () => {
+    it('scrolls the marked copy of the text along with the field', () => {
+      const { result } = renderHook(() => useComposerViewModel(PROPS));
+      const mirror = document.createElement('div');
+
+      result.current.mirrorRef.current = mirror;
+      result.current.onInputScroll({
+        currentTarget: { scrollLeft: 120 },
+      } as unknown as UIEvent<HTMLInputElement>);
+
+      expect(mirror.scrollLeft).toBe(120);
+    });
+  });
+
   describe('a chat locked while a run goes', () => {
     const LOCKED =
       'A run is going: stop it, or wait for it to end, to talk to the agent.';

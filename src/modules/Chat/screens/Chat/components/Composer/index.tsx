@@ -7,6 +7,9 @@ import './styles.css';
 
 export const Composer: React.FC<IComposerProps> = (props) => {
   const {
+    mirrorRef,
+    parts,
+    onInputScroll,
     canSend,
     isLocked,
     placeholder,
@@ -43,19 +46,33 @@ export const Composer: React.FC<IComposerProps> = (props) => {
           )}
         </AnimatePresence>
 
-        <input
-          className="input input--bare"
-          value={props.value}
-          placeholder={placeholder}
-          aria-label={placeholder}
-          disabled={isLocked}
-          role="combobox"
-          aria-expanded={isPickerOpen}
-          aria-controls="mention-picker"
-          aria-autocomplete="list"
-          onChange={onInputChange}
-          onKeyDown={onKeyDown}
-        />
+        <div className="composer__text">
+          <div ref={mirrorRef} className="composer__mirror" aria-hidden="true">
+            {parts.map((part) =>
+              part.isMention ? (
+                <span key={part.key} className="composer__mention">
+                  {part.text}
+                </span>
+              ) : (
+                part.text
+              ),
+            )}
+          </div>
+          <input
+            className="input input--bare composer__input"
+            value={props.value}
+            placeholder={placeholder}
+            aria-label={placeholder}
+            disabled={isLocked}
+            role="combobox"
+            aria-expanded={isPickerOpen}
+            aria-controls="mention-picker"
+            aria-autocomplete="list"
+            onChange={onInputChange}
+            onKeyDown={onKeyDown}
+            onScroll={onInputScroll}
+          />
+        </div>
         <button
           type="button"
           className="composer__send"

@@ -311,6 +311,7 @@ export const useChatViewModel = () => {
       text: t(textKey),
     })),
     mentions: mentionCandidates({ references, query: mentionQuery }),
+    referenceIds: references.map(({ id }) => id),
     mentionQuery,
     hasReferences: references.length > 0,
     onDraftChange: setDraft,

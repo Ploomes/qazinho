@@ -19,6 +19,7 @@ export const Chat: React.FC = () => {
     lockedText,
     suggestions,
     mentions,
+    referenceIds,
     mentionQuery,
     hasReferences,
     onDraftChange,
@@ -125,6 +126,7 @@ export const Chat: React.FC = () => {
         value={draft}
         lockedText={lockedText}
         mentions={mentions}
+        referenceIds={referenceIds}
         mentionQuery={mentionQuery}
         hasReferences={hasReferences}
         onChange={onDraftChange}
