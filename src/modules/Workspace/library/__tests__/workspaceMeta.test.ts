@@ -12,8 +12,22 @@ describe('workspaceMeta', () => {
 
   it('counts the steps of the plan once one is drafted', () => {
     expect(workspaceMeta(makeWorkspace())).toEqual({
-      key: 'SIDEBAR.META_STEPS',
+      key: 'SIDEBAR.META_STEPS_OTHER',
       count: 6,
+    });
+  });
+
+  it('counts a single step in the singular', () => {
+    const plan = makeWorkspace()
+      .plan.slice(0, 1)
+      .map((testCase) => ({
+        ...testCase,
+        steps: testCase.steps.slice(0, 1),
+      }));
+
+    expect(workspaceMeta(makeWorkspace(plan))).toEqual({
+      key: 'SIDEBAR.META_STEPS_ONE',
+      count: 1,
     });
   });
 

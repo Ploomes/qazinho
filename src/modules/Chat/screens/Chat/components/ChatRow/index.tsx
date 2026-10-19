@@ -14,7 +14,7 @@ import './styles.css';
 
 /** One message in the chat: who said it and when in the gutter, the message beside it. */
 export const ChatRow: React.FC<IChatRowProps> = (props) => {
-  const { className, who, whoClassName, initial, transition } =
+  const { planTitle, className, who, whoClassName, initial, transition } =
     useChatRowViewModel(props);
   const { message } = props;
   const { t } = useTranslation();
@@ -55,10 +55,7 @@ export const ChatRow: React.FC<IChatRowProps> = (props) => {
           <HandoffCard
             isAccent
             glyph="▤"
-            title={t('CHAT.PLAN_CARD_TITLE', {
-              cases: message.caseCount,
-              steps: message.stepCount,
-            })}
+            title={planTitle}
             subtitle={t('CHAT.PLAN_CARD_SUBTITLE')}
             action={t('CHAT.PLAN_CARD_ACTION')}
             onOpen={props.onOpenPlan}

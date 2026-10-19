@@ -24,6 +24,21 @@ describe('usePlanViewModel', () => {
     expect(result.current.isEmpty).toBe(false);
   });
 
+  it('counts one case of one step in the singular', () => {
+    const plan = makeWorkspace()
+      .plan.slice(0, 1)
+      .map((testCase) => ({
+        ...testCase,
+        steps: testCase.steps.slice(0, 1),
+      }));
+
+    useWorkspaceStore.setState({ workspaces: [makeWorkspace(plan)] });
+
+    expect(renderHook(() => usePlanViewModel()).result.current.summary).toBe(
+      '1 case · 1 step',
+    );
+  });
+
   it('has nothing to show before the agent drafts', () => {
     useWorkspaceStore.setState({ workspaces: [makeWorkspace([])] });
 

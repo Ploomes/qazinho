@@ -42,6 +42,7 @@ export const usePlanViewModel = () => {
   };
 
   const latest = workspace?.latest ?? null;
+  const stepCount = flattenPlanSteps(plan).length;
   const lastRuns: Record<string, IRunCase> = Object.fromEntries(
     (latest?.cases ?? []).map((runCase) => [runCase.id, runCase]),
   );
@@ -54,8 +55,14 @@ export const usePlanViewModel = () => {
     lockedLabel: t('PLAN.LOCKED', { agent }),
     isEmpty: plan.length === 0,
     summary: t('PLAN.SUMMARY', {
-      cases: plan.length,
-      steps: flattenPlanSteps(plan).length,
+      cases:
+        plan.length === 1
+          ? t('PLAN.CASES_ONE')
+          : t('PLAN.CASES_OTHER', { count: plan.length }),
+      steps:
+        stepCount === 1
+          ? t('PLAN.STEPS_ONE')
+          : t('PLAN.STEPS_OTHER', { count: stepCount }),
     }),
     onToggleCase: toggleCase,
     onReorder: write,

@@ -10,7 +10,8 @@ export function workspaceMeta(workspace: IWorkspace): { key: string; count: numb
   if (workspace.bugs.length === 1) return { key: 'SIDEBAR.META_BUG_ONE', count: 1 };
   if (workspace.bugs.length > 1)
     return { key: 'SIDEBAR.META_BUG_OTHER', count: workspace.bugs.length };
-  if (steps.length > 0) return { key: 'SIDEBAR.META_STEPS', count: steps.length };
+  if (steps.length === 1) return { key: 'SIDEBAR.META_STEPS_ONE', count: 1 };
+  if (steps.length > 1) return { key: 'SIDEBAR.META_STEPS_OTHER', count: steps.length };
 
   return { key: 'SIDEBAR.META_NEW', count: 0 };
 }

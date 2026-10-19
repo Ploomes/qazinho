@@ -143,7 +143,7 @@ describe('the built page, with no bridge behind it', () => {
     await page.waitForTimeout(150);
 
     expect(await page.locator('.plan-case__step-number').count()).toBe(2);
-    expect(await page.locator('body').innerText()).toContain('1 cases · 2 steps');
+    expect(await page.locator('body').innerText()).toContain('1 case · 1 step');
   });
 
   it('opens the resources popover and the model menu, and closes them again', async () => {
