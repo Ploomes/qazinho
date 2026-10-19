@@ -88,7 +88,7 @@ afterAll(async () => {
 });
 
 describe('the device as MCP tools', () => {
-  it('lists the actions an agent can take on the device, and the tool it reports with', async () => {
+  it('lists the actions an agent can take on the device, and the tools it reports and files bugs with', async () => {
     const client = await connect('w1');
     const listed = await client.listTools();
 
@@ -100,6 +100,7 @@ describe('the device as MCP tools', () => {
       'press',
       'wait',
       'report',
+      'bug',
     ]);
     await client.close();
   });
