@@ -11,8 +11,11 @@
 }
 
 .step-agents__sign-in {
-  margin: var(--space-4) 0 0;
   overflow: hidden;
+}
+
+.step-agents__sign-in-text {
+  margin: var(--space-4) 0 0;
   color: var(--ink2);
   font: var(--font-ui-sm);
 }
