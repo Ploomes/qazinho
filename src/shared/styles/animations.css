@@ -199,3 +199,12 @@
     transform: none;
   }
 }
+
+@keyframes gc-drain {
+  from {
+    scale: 1 1;
+  }
+  to {
+    scale: 0 1;
+  }
+}
