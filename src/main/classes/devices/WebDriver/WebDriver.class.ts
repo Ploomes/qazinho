@@ -1,6 +1,12 @@
 import type { IWebDriver } from './types';
 import type { IDeviceDriver, IShot } from '@/main/classes/devices/types';
-import type { IActionMotion, IDeviceImage, IStepAction, IViewport } from '@/shared/types';
+import type {
+  DialogAnswer,
+  IActionMotion,
+  IDeviceImage,
+  IStepAction,
+  IViewport,
+} from '@/shared/types';
 import type { BrowserContext, CDPSession, Page } from 'playwright-core';
 import { rm } from 'node:fs/promises';
 import { chromium } from 'playwright-core';
@@ -29,6 +35,7 @@ export class WebDriver implements IDeviceDriver {
   private lastMotion: IActionMotion | null = null;
   private viewport: IViewport;
   private isFocused = false;
+  private dialogAnswer: DialogAnswer = 'ok';
 
   public constructor(props: IWebDriver) {
     this.url = props.url;
@@ -99,32 +106,37 @@ export class WebDriver implements IDeviceDriver {
     await page.goto(this.url, { timeout: WEB_DRIVER.gotoTimeoutMs });
   }
 
-  /** Carries one action out, and keeps how the page moved while it ran for `motion` to hand over. */
+  /** Carries one action out, answering the dialogs it opens the way it says, and keeps how the page moved for `motion`. */
   public async act(action: IStepAction): Promise<void> {
     const page = this.page;
 
     if (!page) throw new Error('The browser is not open.');
 
     this.lastMotion = null;
+    this.dialogAnswer = action.dialog ?? 'ok';
 
-    const before = await this.markOf(page);
+    try {
+      const before = await this.markOf(page);
 
-    await this.perform({ page, action });
+      await this.perform({ page, action });
 
-    const acted = await this.markOf(page);
+      const acted = await this.markOf(page);
 
-    if (action.kind === 'goto' || action.kind === 'press' || action.kind === 'click')
-      await this.settle(page);
+      if (action.kind === 'goto' || action.kind === 'press' || action.kind === 'click')
+        await this.settle(page);
 
-    if (action.kind !== 'wait' && acted !== null)
-      await this.waitForQuiet({ page, from: acted });
+      if (action.kind !== 'wait' && acted !== null)
+        await this.waitForQuiet({ page, from: acted });
 
-    const after = await this.markOf(page);
+      const after = await this.markOf(page);
 
-    this.lastMotion = await this.motionSince({
-      page,
-      since: after?.origin === before?.origin ? (before?.at ?? 0) : 0,
-    });
+      this.lastMotion = await this.motionSince({
+        page,
+        since: after?.origin === before?.origin ? (before?.at ?? 0) : 0,
+      });
+    } finally {
+      this.dialogAnswer = 'ok';
+    }
   }
 
   /** How the page moved during the last action, handed over once. */
@@ -154,16 +166,14 @@ export class WebDriver implements IDeviceDriver {
     return { data: shot.data, mimeType: 'image/jpeg' };
   }
 
-  /** What the page shows, and the dialogs it opened since the last look, each answered OK. */
+  /** What the page shows, and the dialogs it opened since the last look, with how each was answered. */
   public async describe(): Promise<string> {
     if (!this.page) return '';
 
     const page = await describePage(this.page);
     const shown = this.dialogs.splice(0);
 
-    return shown.length === 0
-      ? page
-      : [page, 'DIALOGS (answered OK):', ...shown].join('\n');
+    return shown.length === 0 ? page : [page, 'DIALOGS:', ...shown].join('\n');
   }
 
   /** The pages the open page's header and menus lead to, on its own site, in the order they show. */
@@ -266,7 +276,7 @@ export class WebDriver implements IDeviceDriver {
     if (this.onFrame) await this.watch(this.onFrame);
   }
 
-  /** Keeps every site a tab opened, so a fresh start clears what each one stored, and answers its dialogs as a person pressing OK would. */
+  /** Keeps every site a tab opened, so a fresh start clears what each one stored, and answers its dialogs, OK unless the action said cancel. */
   private follow(page: Page): void {
     page.on('framenavigated', (frame) => {
       const origin = originOf(frame.url());
@@ -274,8 +284,14 @@ export class WebDriver implements IDeviceDriver {
       if (origin !== null) this.origins.add(origin);
     });
     page.on('dialog', (dialog) => {
-      this.dialogs.push(`${dialog.type()}: ${dialog.message()}`);
-      void dialog.accept(dialog.defaultValue()).catch(() => undefined);
+      const isOk = this.dialogAnswer === 'ok';
+
+      this.dialogs.push(
+        `${dialog.type()}: ${dialog.message()} (answered ${isOk ? 'OK' : 'Cancel'})`,
+      );
+      void (isOk ? dialog.accept(dialog.defaultValue()) : dialog.dismiss()).catch(
+        () => undefined,
+      );
     });
   }
 

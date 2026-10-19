@@ -19,6 +19,21 @@ describe('readToolCall', () => {
       });
     });
 
+    it('carries the answer a click gives the dialog it opens', () => {
+      expect(
+        readToolCall({ name: 'click', args: { target: 'Delete', dialog: 'cancel' } }),
+      ).toEqual({
+        kind: 'act',
+        action: { kind: 'click', target: 'Delete', value: '', dialog: 'cancel' },
+      });
+    });
+
+    it('does NOT take a dialog answer other than ok or cancel', () => {
+      expect(
+        readToolCall({ name: 'click', args: { target: 'Delete', dialog: 'maybe' } }),
+      ).toEqual({ kind: 'refused', error: '"dialog" is ok or cancel.' });
+    });
+
     it('waits without a target', () => {
       expect(readToolCall({ name: 'wait', args: { value: '500' } })).toEqual({
         kind: 'act',

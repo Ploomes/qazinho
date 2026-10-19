@@ -28,6 +28,12 @@ export const DEVICE_TOOLS = [
         message: '"click" needs a target: say what the control or URL is.',
         description: 'What the control says.',
       }),
+      dialog: z
+        .enum(['ok', 'cancel'], { error: '"dialog" is ok or cancel.' })
+        .describe(
+          'How to answer a browser dialog the click opens, such as "Are you sure?": ok unless the step says to cancel it.',
+        )
+        .optional(),
     }),
   },
   {
@@ -53,6 +59,12 @@ export const DEVICE_TOOLS = [
         message: '"press" needs a target: say what the control or URL is.',
         description: 'The key.',
       }),
+      dialog: z
+        .enum(['ok', 'cancel'], { error: '"dialog" is ok or cancel.' })
+        .describe(
+          'How to answer a browser dialog the key opens, such as "Are you sure?": ok unless the step says to cancel it.',
+        )
+        .optional(),
     }),
   },
   {

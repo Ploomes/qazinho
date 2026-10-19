@@ -70,7 +70,7 @@ Three suites that need something real behind them. They have their own config
 | `codex.test.ts`        | a fake Codex chats in the strict schema, resumes, runs a case, signs out     |
 | `tools.test.ts`        | an MCP client lists, calls and fails the device tools on real Chrome         |
 | `locate.test.ts`       | alike controls numbered, fields named by their label, a dropdown picked      |
-| `dialog.test.ts`       | a confirm and an alert answered OK, and look telling what they asked         |
+| `dialog.test.ts`       | a confirm answered OK or Cancel as the click says, and look telling it       |
 | `tabs.test.ts`         | a link's new tab and a sign-in window: the device turns to them and back     |
 | `peek.test.ts`         | a windowless Chrome reads a page for the chat, or says why it did not open   |
 | `fresh.test.ts`        | a case starts on a browser with nothing saved, and the stream follows it     |

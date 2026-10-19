@@ -8,7 +8,8 @@ import { WebDriver } from '@/main/classes/devices/WebDriver';
 /**
  * "Delete" asks first, with the browser's own confirm, and "Save" says so with an alert. Chrome
  * driven by Playwright closed both in silence, as Cancel: the item was never deleted, and the agent
- * never knew a dialog had been there.
+ * never knew a dialog had been there. Then every dialog was answered OK, and a step that cancels
+ * a deletion could only be blocked: a click now says how to answer what it opens.
  */
 const PAGE = `<!doctype html><html><body>
   <button onclick="document.getElementById('out').textContent = confirm('Delete the item?') ? 'Deleted' : 'Kept'">Delete</button>
@@ -44,7 +45,7 @@ describe('a dialog the page opens', () => {
     const screen = await driver.describe();
 
     expect(screen).toContain('Deleted');
-    expect(screen).toContain('DIALOGS (answered OK):\nconfirm: Delete the item?');
+    expect(screen).toContain('DIALOGS:\nconfirm: Delete the item? (answered OK)');
   });
 
   it('tells each dialog once, and an alert by what it said', async () => {
@@ -56,5 +57,18 @@ describe('a dialog the page opens', () => {
 
     expect(screen).toContain('After the alert');
     expect(screen).toContain('alert: Saved!');
+  });
+
+  it('is answered Cancel when the click says so, and OK again on the next one', async () => {
+    await driver.act({ kind: 'click', target: 'Delete', value: '', dialog: 'cancel' });
+
+    const cancelled = await driver.describe();
+
+    expect(cancelled).toContain('Kept');
+    expect(cancelled).toContain('confirm: Delete the item? (answered Cancel)');
+
+    await driver.act({ kind: 'click', target: 'Delete', value: '' });
+
+    expect(await driver.describe()).toContain('(answered OK)');
   });
 });

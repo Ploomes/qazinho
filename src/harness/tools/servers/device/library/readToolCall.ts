@@ -1,4 +1,5 @@
 import type { DeviceToolCall } from '@/harness/tools/servers/device/types';
+import type { DialogAnswer } from '@/shared/types';
 import { DEVICE_TOOLS } from '@/harness/tools/servers/device/constants';
 
 /** Reads a tool call against the tool's own schema; a call that breaks it is refused with the reason. */
@@ -47,7 +48,7 @@ export function readToolCall(props: {
 
   if (tool.name === 'look') return { kind: 'look' };
 
-  const args = read.data as { target?: string; value?: string };
+  const args = read.data as { target?: string; value?: string; dialog?: DialogAnswer };
 
   return {
     kind: 'act',
@@ -55,6 +56,7 @@ export function readToolCall(props: {
       kind: tool.name,
       target: args.target ?? '',
       value: args.value ?? '',
+      ...(args.dialog === undefined ? {} : { dialog: args.dialog }),
     },
   };
 }
