@@ -6,7 +6,7 @@ import { MOTION, STICKER } from '@/shared/constants';
 import { usePlanCaseViewModel } from './hooks';
 import './styles.css';
 
-export const PlanCase: React.FC<IPlanCaseProps> = (props) => {
+export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
   const {
     className,
     steps,
@@ -26,9 +26,21 @@ export const PlanCase: React.FC<IPlanCaseProps> = (props) => {
 
   return (
     <Reorder.Item
+      ref={ref}
       value={props.testCase}
       className={className}
       layout="position"
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{
+        opacity: 1,
+        scale: 1,
+        transition: { duration: MOTION.duration, ease: MOTION.ease },
+      }}
+      exit={{
+        opacity: 0,
+        scale: 0.98,
+        transition: { duration: MOTION.durationFast, ease: MOTION.easeIn },
+      }}
       dragListener={!props.isLocked}
       whileDrag={STICKER.drag}
       onDragStart={onPickUp}

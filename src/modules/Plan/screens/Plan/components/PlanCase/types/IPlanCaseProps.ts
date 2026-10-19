@@ -1,7 +1,9 @@
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
 import type { IRunCase } from '@/modules/Run';
+import type { Ref } from 'react';
 
 export interface IPlanCaseProps {
+  ref?: Ref<HTMLLIElement>;
   testCase: ITestCase;
   lastRun?: IRunCase;
   isOpen: boolean;

@@ -1,4 +1,4 @@
-import { Reorder } from 'motion/react';
+import { AnimatePresence, Reorder } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Button, EmptyState } from '@/shared/components/atoms';
 import { PlanCase } from './components';
@@ -72,21 +72,23 @@ export const Plan: React.FC = () => {
       )}
 
       <Reorder.Group axis="y" values={plan} onReorder={onReorder} className="plan__cases">
-        {plan.map((testCase) => (
-          <PlanCase
-            key={testCase.id}
-            testCase={testCase}
-            lastRun={lastRuns[testCase.id]}
-            isOpen={openCaseId === testCase.id}
-            isLocked={isLocked}
-            onToggle={onToggleCase}
-            onEditCase={onEditCase}
-            onRemoveCase={onRemoveCase}
-            onAddStep={onAddStep}
-            onRemoveStep={onRemoveStep}
-            onEditStep={onEditStep}
-          />
-        ))}
+        <AnimatePresence initial={false} mode="popLayout">
+          {plan.map((testCase) => (
+            <PlanCase
+              key={testCase.id}
+              testCase={testCase}
+              lastRun={lastRuns[testCase.id]}
+              isOpen={openCaseId === testCase.id}
+              isLocked={isLocked}
+              onToggle={onToggleCase}
+              onEditCase={onEditCase}
+              onRemoveCase={onRemoveCase}
+              onAddStep={onAddStep}
+              onRemoveStep={onRemoveStep}
+              onEditStep={onEditStep}
+            />
+          ))}
+        </AnimatePresence>
       </Reorder.Group>
 
       {!isLocked && (
