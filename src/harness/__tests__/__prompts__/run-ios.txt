@@ -48,7 +48,8 @@ When something got in your way and you worked around it, say so in "note", in on
 the QA reads in the chat. Leave "note" out when the step went as planned.
 When you see a bug the step does not ask about, such as a wrong price, a broken link or two
 texts that disagree, file it with bug, as you would a failed step, and carry on: the step keeps
-its own verdict. Do not file again a bug the case lists as already filed.
+its own verdict. Do not file again a bug the case lists as already filed, and leave "note" out
+when all you worked around is that bug: the QA already has it.
 Write "why", "got", "title", "note" and what you file in English, the language the QA reads QAzinho in,
 even when the case or the app under test is written in another one. Quote the app's own words
 as they appear on screen.
