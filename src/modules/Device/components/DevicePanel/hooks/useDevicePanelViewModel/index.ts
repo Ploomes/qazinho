@@ -12,8 +12,9 @@ import {
 } from '@/modules/Device/library';
 import { formatCost, useRunControls } from '@/modules/Run';
 import { Run } from '@/services';
-import { MOTION } from '@/shared/constants';
+import { MOTION, SHELL } from '@/shared/constants';
 import { useSelectedWorkspace } from '@/shared/hooks/useSelectedWorkspace';
+import { useWindowWidth } from '@/shared/hooks/useWindowWidth';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useDevicePanelViewModel = () => {
@@ -34,9 +35,17 @@ export const useDevicePanelViewModel = () => {
     onPause,
     onStop,
   } = useRunControls();
+  const windowWidth = useWindowWidth();
   const [isResizing, setResizing] = useState(false);
   const [isFocusedNow, setFocused] = useState(false);
 
+  const fitted = Math.max(
+    DEVICE.minWidth,
+    Math.min(
+      width,
+      windowWidth - SHELL.sidebarWidth - SHELL.centerMinWidth - DEVICE.handleWidth,
+    ),
+  );
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
   const state = deviceStateOf(workspace);
@@ -87,6 +96,10 @@ export const useDevicePanelViewModel = () => {
     isFocused,
     canFocus: hasScreen && !isFocused,
     focusLabel: t('DEVICE.FOCUS'),
+    focusLabelClassName:
+      fitted < DEVICE.compactWidth
+        ? 'device-panel__focus-label device-panel__focus-label--hidden'
+        : 'device-panel__focus-label',
     focusedText: t('DEVICE.FOCUSED'),
     frameLayoutId: DEVICE.frameLayoutId,
     frameTransition: { duration: MOTION.durationSlow, ease: MOTION.ease },
@@ -96,14 +109,14 @@ export const useDevicePanelViewModel = () => {
     onUnfocus: () => {
       setFocused(false);
     },
-    width,
-    panelWidth: isOpen ? width + DEVICE.handleWidth : DEVICE.railWidth,
+    width: fitted,
+    panelWidth: isOpen ? fitted + DEVICE.handleWidth : DEVICE.railWidth,
     panelClassName: isResizing ? 'device-panel device-panel--resizing' : 'device-panel',
     widthTransition: isResizing
       ? { duration: 0 }
       : { duration: MOTION.durationSlow, ease: MOTION.ease },
     panelStyle: {
-      '--device-width': `${String(width)}px`,
+      '--device-width': `${String(fitted)}px`,
       '--device-handle': `${String(DEVICE.handleWidth)}px`,
       '--device-rail': `${String(DEVICE.railWidth)}px`,
       '--device-header': `${String(DEVICE.headerHeight)}px`,

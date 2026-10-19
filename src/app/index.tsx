@@ -11,6 +11,7 @@ import './styles.css';
 
 export const App: React.FC = () => {
   const {
+    shellStyle,
     isOnboarding,
     hasSidebar,
     isWelcome,
@@ -22,7 +23,7 @@ export const App: React.FC = () => {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="app">
+      <div className="app" style={shellStyle}>
         <Titlebar isBare={isOnboarding} />
         <div className="app__body">
           {isOnboarding && <Onboarding />}

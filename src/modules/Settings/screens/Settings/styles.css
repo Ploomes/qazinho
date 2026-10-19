@@ -10,7 +10,7 @@
   flex: none;
   flex-direction: column;
   gap: 3px;
-  width: 268px;
+  width: var(--sidebar-width);
   padding: var(--space-4) var(--space-4);
   border-right: 1px solid var(--line2);
   background: var(--panel);

@@ -1,5 +1,7 @@
+import type { CSSProperties } from 'react';
 import { useEffect } from 'react';
 import { AppWindow } from '@/services';
+import { SHELL } from '@/shared/constants';
 import {
   useArchive,
   useKeybinds,
@@ -34,6 +36,7 @@ export const useAppViewModel = () => {
   }, [hasOnboarded]);
 
   return {
+    shellStyle: { '--sidebar-width': `${String(SHELL.sidebarWidth)}px` } as CSSProperties,
     screen,
     modal,
     hasMedia: media !== null,

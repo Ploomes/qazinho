@@ -6,9 +6,15 @@ import { useDevicePanelViewModel } from '@/modules/Device/components/DevicePanel
 import { DEVICE } from '@/modules/Device/constants';
 import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
+import { SHELL } from '@/shared/constants';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
+function windowOf(width: number) {
+  Object.defineProperty(window, 'innerWidth', { configurable: true, value: width });
+}
+
 beforeEach(() => {
+  windowOf(1440);
   useAppStore.setState({ selectedWorkspaceId: 'w1' });
   useWorkspaceStore.setState({
     workspaces: [makeWorkspace()],
@@ -208,6 +214,23 @@ describe('useDevicePanelViewModel', () => {
     });
   });
 
+  it('keeps the expand button to its icon in a narrow panel, with its word still read aloud', () => {
+    windowOf(1024);
+
+    const { result } = renderHook(() => useDevicePanelViewModel());
+
+    expect(result.current.focusLabel).toBe('Expand');
+    expect(result.current.focusLabelClassName).toContain(
+      'device-panel__focus-label--hidden',
+    );
+  });
+
+  it('does NOT hide the expand word when the panel has room', () => {
+    expect(
+      renderHook(() => useDevicePanelViewModel()).result.current.focusLabelClassName,
+    ).toBe('device-panel__focus-label');
+  });
+
   it('names the way to the device up close with a word, not only an icon', () => {
     expect(renderHook(() => useDevicePanelViewModel()).result.current.focusLabel).toBe(
       'Expand',
@@ -334,6 +357,25 @@ describe('useDevicePanelViewModel', () => {
         '--device-width': `${String(DEVICE.defaultWidth)}px`,
         '--device-handle': `${String(DEVICE.handleWidth)}px`,
       });
+    });
+
+    it('gives way in a small window, so the chat keeps the room it needs', () => {
+      windowOf(1100);
+
+      const { result } = renderHook(() => useDevicePanelViewModel());
+
+      expect(result.current.width).toBe(
+        1100 - SHELL.sidebarWidth - SHELL.centerMinWidth - DEVICE.handleWidth,
+      );
+      expect(useWorkspaceStore.getState().deviceWidth).toBe(DEVICE.defaultWidth);
+    });
+
+    it('does NOT go narrower than its narrowest, even in the smallest window', () => {
+      windowOf(900);
+
+      expect(renderHook(() => useDevicePanelViewModel()).result.current.width).toBe(
+        DEVICE.minWidth,
+      );
     });
 
     it('narrows to the rail when the panel is hidden, so the width can animate', () => {

@@ -19,6 +19,7 @@ export const DevicePanel: React.FC = () => {
     isFocused,
     canFocus,
     focusLabel,
+    focusLabelClassName,
     focusedText,
     frameLayoutId,
     frameTransition,
@@ -127,7 +128,7 @@ export const DevicePanel: React.FC = () => {
                       >
                         <Button size="sm" variant="secondary" onClick={onFocus}>
                           <span aria-hidden="true">⤢</span>
-                          {focusLabel}
+                          <span className={focusLabelClassName}>{focusLabel}</span>
                         </Button>
                       </motion.span>
                     )}
