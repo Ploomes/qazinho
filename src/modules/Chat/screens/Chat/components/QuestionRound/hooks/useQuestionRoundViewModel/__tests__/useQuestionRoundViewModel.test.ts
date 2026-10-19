@@ -85,14 +85,25 @@ describe('useQuestionRoundViewModel', () => {
       ).toEqual([false, true]);
     });
 
-    it('answers at once a round of one question that takes one option', () => {
+    /**
+     * The confirmation used to answer on the click of its lone option, while the card still showed
+     * Answer and a field: the QA had no chance to add a word, nor to look before it went.
+     */
+    it('waits for Answer on the confirmation too, so the QA can add words after picking', () => {
       const { onAnswer, view } = render({ message: round({ questions: [GATE] }) });
+
+      act(() => {
+        view.result.current.onPick({ index: 0, label: 'Write the plan' });
+      });
+
+      expect(onAnswer).not.toHaveBeenCalled();
+      expect(view.result.current.canSend).toBe(true);
 
       act(() => {
         view.result.current.onText({ index: 0, text: 'and keep it short' });
       });
       act(() => {
-        view.result.current.onPick({ index: 0, label: 'Write the plan' });
+        view.result.current.onSend();
       });
 
       expect(onAnswer).toHaveBeenCalledWith({

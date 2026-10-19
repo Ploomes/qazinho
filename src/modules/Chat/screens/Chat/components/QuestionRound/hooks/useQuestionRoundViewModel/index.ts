@@ -17,15 +17,9 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
   const isAnswered = message.answers !== null;
   const isOpen = isAnswerable && !isAnswered;
   const shown = message.answers ?? drafts;
-  const isInstant =
-    message.questions.length === 1 && message.questions[0]?.options.length === 1;
   const isComplete = drafts.every(
     ({ picked, text }) => picked.length > 0 || text.trim().length > 0,
   );
-
-  const send = (answers: IQuestionAnswer[]) => {
-    onAnswer({ messageId: message.id, answers });
-  };
 
   const draftsWith = (change: { index: number; draft: IQuestionAnswer }) =>
     drafts.map((draft, index) => (index === change.index ? change.draft : draft));
@@ -78,18 +72,13 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
       const toggled = draft.picked.includes(picking.label)
         ? draft.picked.filter((label) => label !== picking.label)
         : [...draft.picked, picking.label];
-      const next = draftsWith({
-        index: picking.index,
-        draft: { ...draft, picked: question.isMultiSelect ? toggled : [picking.label] },
-      });
 
-      if (isInstant) {
-        send(next);
-
-        return;
-      }
-
-      setDrafts(next);
+      setDrafts(
+        draftsWith({
+          index: picking.index,
+          draft: { ...draft, picked: question.isMultiSelect ? toggled : [picking.label] },
+        }),
+      );
     },
     onText: (typing: { index: number; text: string }) => {
       const draft = drafts[typing.index];
@@ -101,7 +90,7 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
       );
     },
     onSend: () => {
-      if (isOpen && isComplete) send(drafts);
+      if (isOpen && isComplete) onAnswer({ messageId: message.id, answers: drafts });
     },
     onToggle: () => {
       if (isAnswered) setExpanded(!isExpanded);
