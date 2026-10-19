@@ -47,6 +47,7 @@ import {
   ProcessOwners,
   ResourceCollector,
   RunCoordinator,
+  RunRecorder,
   SetupInstaller,
 } from '@/main/classes';
 import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
@@ -84,12 +85,23 @@ const tools = new McpHost();
 const harness = new Harness();
 const peek = new AppPeek({ folder: tmpdir() });
 
+const recorder = new RunRecorder({
+  dataRoot: PATHS.data,
+  preload: PATHS.preload,
+  page: PATHS.devServer
+    ? { url: `${PATHS.devServer}/recorder.html` }
+    : { file: PATHS.recorder },
+});
+
+function appWindows(): BrowserWindow[] {
+  return BrowserWindow.getAllWindows().filter((open) => !recorder.owns(open));
+}
+
 function broadcast(props: {
   channel: string;
   event: IAgentEvent | IRunEvent | ISetupEvent | McpSignInProgress | AgentSignInProgress;
 }): void {
-  for (const open of BrowserWindow.getAllWindows())
-    open.webContents.send(props.channel, props.event);
+  for (const open of appWindows()) open.webContents.send(props.channel, props.event);
 }
 
 const installer = new SetupInstaller({
@@ -167,6 +179,7 @@ const runs = new RunCoordinator({
   tools,
   harness,
   onEvent: (event) => broadcast({ channel: CHANNELS.runEvent, event }),
+  recorder,
   shrink: ({ image, width, height, quality }) =>
     nativeImage
       .createFromBuffer(image)
@@ -295,7 +308,7 @@ async function saveShot(props: {
     defaultPath: join(app.getPath('downloads'), `${fileNameOf(props.name)}.${extension}`),
     filters: [{ name: extension.toUpperCase(), extensions: [extension] }],
   };
-  const [open] = BrowserWindow.getAllWindows();
+  const [open] = appWindows();
   const picked = open
     ? await dialog.showSaveDialog(open, options)
     : await dialog.showSaveDialog(options);
@@ -325,7 +338,7 @@ function fitWindow(props: { window: BrowserWindow; fit: WindowFit }): void {
 }
 
 async function pickFile(kind: PickKind) {
-  const [open] = BrowserWindow.getAllWindows();
+  const [open] = appWindows();
   const filters = [FILE_FILTERS[kind]];
 
   const picked = open
@@ -465,7 +478,7 @@ void app.whenReady().then(async () => {
   createWindow();
 
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    if (appWindows().length === 0) createWindow();
   });
 });
 

@@ -1,4 +1,4 @@
-import type { IRunCoordinator, IWalkRun } from './types';
+import type { IRunCoordinator, IVideoRecorder, IWalkRun } from './types';
 import type { Harness, IStepFinding, IStepReport, McpHost } from '@/harness';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
@@ -42,6 +42,7 @@ export class RunCoordinator {
   private readonly harness: Harness;
   private readonly onEvent: (event: IRunEvent) => void;
   private readonly shrink: ShrinkImage | null;
+  private readonly recorder: IVideoRecorder | null;
   private readonly stopping = new Set<string>();
   private readonly walking = new Set<string>();
   private readonly paused = new Set<string>();
@@ -60,6 +61,7 @@ export class RunCoordinator {
     this.harness = props.harness;
     this.onEvent = props.onEvent;
     this.shrink = props.shrink ?? null;
+    this.recorder = props.recorder ?? null;
   }
 
   public async start(run: IStartRun): Promise<void> {
@@ -194,17 +196,11 @@ export class RunCoordinator {
       this.drivers.delete(run.workspaceId);
       this.tools.detach(run.workspaceId);
       this.live.end(run.workspaceId);
-
-      if (this.stopping.has(run.workspaceId)) {
-        this.emit({ kind: 'done', workspaceId: run.workspaceId });
-
-        return;
-      }
-
-      this.emit({
-        kind: 'failed',
-        workspaceId: run.workspaceId,
-        failure: failureOf(reason),
+      await this.finish({
+        run,
+        ended: this.stopping.has(run.workspaceId)
+          ? { kind: 'done', workspaceId: run.workspaceId }
+          : { kind: 'failed', workspaceId: run.workspaceId, failure: failureOf(reason) },
       });
 
       return;
@@ -220,11 +216,25 @@ export class RunCoordinator {
     this.drivers.delete(run.workspaceId);
     this.tools.detach(run.workspaceId);
     this.live.end(run.workspaceId);
-    this.emit(
-      broke === null
-        ? { kind: 'done', workspaceId: run.workspaceId }
-        : { kind: 'failed', workspaceId: run.workspaceId, failure: broke },
-    );
+    await this.finish({
+      run,
+      ended:
+        broke === null
+          ? { kind: 'done', workspaceId: run.workspaceId }
+          : { kind: 'failed', workspaceId: run.workspaceId, failure: broke },
+    });
+  }
+
+  /** Says how the run ended at once, then hands over its recording once the file is whole. */
+  private async finish(props: { run: IWalkRun; ended: IRunEvent }): Promise<void> {
+    const { run, ended } = props;
+
+    this.emit(ended);
+
+    const video = await this.recorder?.stop(run.workspaceId).catch(() => null);
+
+    if (video)
+      this.emit({ kind: 'video', workspaceId: run.workspaceId, runId: run.runId, video });
   }
 
   /** Walks the cases in order, and ends once each case's agent said what it cost, or after a short wait. */
@@ -476,7 +486,12 @@ export class RunCoordinator {
     });
     const url = this.live.urlFor(workspaceId);
 
-    if (isStreaming && url !== null) this.emit({ kind: 'streaming', workspaceId, url });
+    if (!isStreaming || url === null) return;
+
+    this.emit({ kind: 'streaming', workspaceId, url });
+    await this.recorder
+      ?.start({ workspaceId, runId: run.runId, url })
+      .catch(() => undefined);
   }
 
   private async holdWhilePaused(workspaceId: string): Promise<void> {

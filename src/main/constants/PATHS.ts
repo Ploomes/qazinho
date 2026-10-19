@@ -5,6 +5,7 @@ export const PATHS = {
   devServer: process.env.ELECTRON_RENDERER_URL,
   renderer: join(__dirname, '../renderer/index.html'),
   preload: join(__dirname, '../preload/index.js'),
+  recorder: join(__dirname, '../renderer/recorder.html'),
   icon: join(__dirname, '../../build/icon.png'),
   data: app.getPath('userData'),
   profiles: join(app.getPath('userData'), 'profiles'),

@@ -1,3 +1,4 @@
+import type { IVideoRecorder } from './IVideoRecorder';
 import type { Harness, McpHost } from '@/harness';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
@@ -15,4 +16,5 @@ export interface IRunCoordinator {
   harness: Harness;
   onEvent: (event: IRunEvent) => void;
   shrink?: ShrinkImage;
+  recorder?: IVideoRecorder;
 }
