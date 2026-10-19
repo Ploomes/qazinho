@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 import { resolveLanguage } from '@/languages/library';
 import { KEYBINDS } from '@/modules/Settings/constants';
 import { STORAGE } from '@/shared/constants';
-import { keybindsOf, migrateSettings } from './library';
+import { keybindsOf, migrateSettings, rebind } from './library';
 
 export const useSettingsStore = create<ISettingsStore>()(
   persist(
@@ -31,9 +31,7 @@ export const useSettingsStore = create<ISettingsStore>()(
       setKeybind: ({ keybindId, combo }) =>
         set((state) => ({
           editingKeybindId: null,
-          keybinds: state.keybinds.map((keybind) =>
-            keybind.id === keybindId ? { ...keybind, combo } : keybind,
-          ),
+          keybinds: rebind({ keybinds: state.keybinds, keybindId, combo }),
         })),
 
       finishOnboarding: () => set({ hasOnboarded: true }),
