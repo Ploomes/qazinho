@@ -23,6 +23,10 @@ beginning and an end belongs to Motion, because React knows when it starts.
 - **The view holds the markup, the view model holds the state.** `animate={...}` may read a value
   the view model returned; it may not decide it.
 - **Exit needs `AnimatePresence`**, and the element needs a stable `key`.
+- **A fold animates `height` on an element with no padding, margin or border**, and
+  `overflow: hidden`. Height 0 cannot squeeze padding, so the fold stops short and snaps shut.
+  Its spacing goes on an element inside it. In a column with a `gap`, the fold cancels the gap
+  with a negative margin of the same token and carries it inside (`.chat__retry`).
 - **Respect the system.** Wrap the app in `MotionConfig reducedMotion="user"`, once, in the shell.
   Nothing else checks the media query.
 - A component that only fades in on mount does not need Motion. `animation: gc-in` is enough.
