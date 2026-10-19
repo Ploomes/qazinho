@@ -38,7 +38,7 @@ export const ViewportPicker: React.FC<IViewportPickerProps> = (props) => {
       </div>
       <AnimatePresence initial={false}>
         {hasNote && (
-          <motion.p
+          <motion.div
             key="next"
             className="viewport-picker__note"
             initial={{ opacity: 0, height: 0 }}
@@ -46,8 +46,8 @@ export const ViewportPicker: React.FC<IViewportPickerProps> = (props) => {
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
-            {props.note}
-          </motion.p>
+            <p className="viewport-picker__note-text">{props.note}</p>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
