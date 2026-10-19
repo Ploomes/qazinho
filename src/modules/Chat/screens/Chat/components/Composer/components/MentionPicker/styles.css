@@ -75,11 +75,15 @@
   color: var(--lime-ink);
 }
 
+.mention-picker__viewport {
+  overflow: hidden;
+}
+
 .mention-picker__list {
   display: flex;
   flex-direction: column;
-  max-height: 264px;
-  padding: var(--space-2) var(--space-3);
+  height: 100%;
+  padding: var(--mention-list-padding) var(--space-3);
   overflow-y: auto;
 }
 
@@ -92,17 +96,15 @@
   animation: gc-in var(--dur-fast) var(--ease);
 }
 
-.mention-picker__list:empty {
-  display: none;
-}
-
 .mention-picker__row {
   display: grid;
+  flex: none;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: var(--space-4);
   width: 100%;
-  padding: var(--space-3);
+  height: var(--mention-row-height);
+  padding: 0 var(--space-3);
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;

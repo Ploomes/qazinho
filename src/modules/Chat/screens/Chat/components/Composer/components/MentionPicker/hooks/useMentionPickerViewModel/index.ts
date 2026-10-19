@@ -1,8 +1,12 @@
 import type { IMentionPickerProps } from '@/modules/Chat/screens/Chat/components/Composer/components/MentionPicker/types';
-import type { PointerEvent } from 'react';
+import type { CSSProperties, PointerEvent } from 'react';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MENTION_TAB_KEYS } from '@/modules/Chat/screens/Chat/components/Composer/components/MentionPicker/constants';
+import {
+  MENTION_PICKER,
+  MENTION_TAB_KEYS,
+} from '@/modules/Chat/screens/Chat/components/Composer/components/MentionPicker/constants';
+import { MOTION } from '@/shared/constants';
 
 export const useMentionPickerViewModel = (props: IMentionPickerProps) => {
   const { references, query, hasReferences, highlighted, onPick, onHighlight, onTab } =
@@ -17,6 +21,10 @@ export const useMentionPickerViewModel = (props: IMentionPickerProps) => {
   }, [highlighted]);
 
   const isEmpty = references.length === 0;
+  const rowsShown = Math.min(
+    MENTION_PICKER.maxRows,
+    Math.max(references.length, ...props.tabs.map(({ count }) => count)),
+  );
 
   return {
     listRef,
@@ -48,6 +56,15 @@ export const useMentionPickerViewModel = (props: IMentionPickerProps) => {
         onHighlight(index);
       },
     })),
+    listStyle: {
+      '--mention-row-height': `${String(MENTION_PICKER.rowHeight)}px`,
+      '--mention-list-padding': `${String(MENTION_PICKER.listPadding)}px`,
+    } as CSSProperties,
+    listHeight:
+      rowsShown === 0
+        ? 0
+        : rowsShown * MENTION_PICKER.rowHeight + 2 * MENTION_PICKER.listPadding,
+    listTransition: { duration: MOTION.duration, ease: MOTION.ease },
     onPointerDown: (event: PointerEvent) => {
       event.preventDefault();
     },

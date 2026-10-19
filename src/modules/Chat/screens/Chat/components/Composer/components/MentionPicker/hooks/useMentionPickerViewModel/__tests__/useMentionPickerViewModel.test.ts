@@ -2,6 +2,7 @@
 import type { PointerEvent } from 'react';
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { MENTION_PICKER } from '@/modules/Chat/screens/Chat/components/Composer/components/MentionPicker/constants';
 import { useMentionPickerViewModel } from '@/modules/Chat/screens/Chat/components/Composer/components/MentionPicker/hooks/useMentionPickerViewModel';
 
 const PROPS = {
@@ -142,6 +143,48 @@ describe('useMentionPickerViewModel', () => {
       result.current.onPointerDown(event);
 
       expect(event.preventDefault).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe('listHeight', () => {
+    const height = (rows: number) =>
+      rows * MENTION_PICKER.rowHeight + 2 * MENTION_PICKER.listPadding;
+
+    it('keeps the height of the fullest tab, so switching tabs does not jump', () => {
+      const onBugs = renderHook(() => useMentionPickerViewModel(PROPS)).result.current;
+      const onRuns = renderHook(() =>
+        useMentionPickerViewModel({
+          ...PROPS,
+          references: [],
+          tabs: PROPS.tabs.map((tab) => ({ ...tab, isActive: tab.kind === 'run' })),
+        }),
+      ).result.current;
+
+      expect(onBugs.listHeight).toBe(height(3));
+      expect(onRuns.listHeight).toBe(height(3));
+    });
+
+    it('stops growing at a handful of rows, and scrolls the rest', () => {
+      const many = renderHook(() =>
+        useMentionPickerViewModel({
+          ...PROPS,
+          tabs: [{ kind: 'case', count: 40, isActive: true }],
+        }),
+      ).result.current;
+
+      expect(many.listHeight).toBe(height(MENTION_PICKER.maxRows));
+    });
+
+    it('closes the list when nothing matches the @ being typed', () => {
+      const none = renderHook(() =>
+        useMentionPickerViewModel({
+          ...PROPS,
+          references: [],
+          tabs: PROPS.tabs.map((tab) => ({ ...tab, count: 0 })),
+        }),
+      ).result.current;
+
+      expect(none.listHeight).toBe(0);
     });
   });
 });

@@ -9,8 +9,18 @@ import './styles.css';
 
 /** What the QA can point the agent at with @, a tab for the plan's cases, one for bugs and one for runs. */
 export const MentionPicker: React.FC<IMentionPickerProps> = (props) => {
-  const { listRef, isEmpty, emptyText, hint, tabs, rows, onPointerDown } =
-    useMentionPickerViewModel(props);
+  const {
+    listRef,
+    isEmpty,
+    emptyText,
+    hint,
+    tabs,
+    rows,
+    listStyle,
+    listHeight,
+    listTransition,
+    onPointerDown,
+  } = useMentionPickerViewModel(props);
   const { t } = useTranslation();
 
   return (
@@ -61,32 +71,40 @@ export const MentionPicker: React.FC<IMentionPickerProps> = (props) => {
 
       {isEmpty && <p className="mention-picker__empty">{emptyText}</p>}
 
-      <div
-        ref={listRef}
-        id="mention-picker"
-        role="listbox"
-        className="mention-picker__list"
+      <motion.div
+        className="mention-picker__viewport"
+        style={listStyle}
+        initial={false}
+        animate={{ height: listHeight }}
+        transition={listTransition}
       >
-        {rows.map((row) => (
-          <button
-            key={row.id}
-            type="button"
-            role="option"
-            aria-selected={row.isHighlighted}
-            tabIndex={-1}
-            className={
-              row.isHighlighted
-                ? 'mention-picker__row mention-picker__row--highlighted'
-                : 'mention-picker__row'
-            }
-            onClick={row.onClick}
-            onPointerEnter={row.onPointerEnter}
-          >
-            <span className="mention-picker__id">@{row.id}</span>
-            <span className="mention-picker__title">{row.title}</span>
-          </button>
-        ))}
-      </div>
+        <div
+          ref={listRef}
+          id="mention-picker"
+          role="listbox"
+          className="mention-picker__list"
+        >
+          {rows.map((row) => (
+            <button
+              key={row.id}
+              type="button"
+              role="option"
+              aria-selected={row.isHighlighted}
+              tabIndex={-1}
+              className={
+                row.isHighlighted
+                  ? 'mention-picker__row mention-picker__row--highlighted'
+                  : 'mention-picker__row'
+              }
+              onClick={row.onClick}
+              onPointerEnter={row.onPointerEnter}
+            >
+              <span className="mention-picker__id">@{row.id}</span>
+              <span className="mention-picker__title">{row.title}</span>
+            </button>
+          ))}
+        </div>
+      </motion.div>
 
       <div className="mention-picker__foot">{hint}</div>
     </motion.div>
