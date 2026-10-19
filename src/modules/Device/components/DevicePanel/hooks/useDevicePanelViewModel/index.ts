@@ -7,7 +7,7 @@ import {
   deviceStateOf,
   formatElapsed,
   moodOfStatus,
-  pngRatioOf,
+  imageRatioOf,
   stepVerdictsOf,
   viewportOf,
 } from '@/modules/Device/library';
@@ -54,7 +54,7 @@ export const useDevicePanelViewModel = () => {
   const viewport = viewportOf(workspace?.viewportId);
   const shot = live?.shot ?? null;
   const screenRatio = isPhone
-    ? ((shot === null ? null : pngRatioOf(shot)) ?? DEVICE.phoneRatio)
+    ? ((shot === null ? null : imageRatioOf(shot)) ?? DEVICE.phoneRatio)
     : viewport.width / viewport.height;
 
   const lastRun = workspace?.runs[0] ?? null;

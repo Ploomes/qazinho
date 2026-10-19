@@ -84,6 +84,7 @@
 .device-panel__viewport--fill {
   flex: 4 1 0;
   min-height: 0;
+  container-type: size;
 }
 
 .device-panel__viewport--browser {
@@ -154,10 +155,18 @@
 }
 
 .device-panel__phone {
+  --phone-edge: 8px;
+
+  display: flex;
+  flex-direction: column;
+  box-sizing: content-box;
+  height: min(
+    100cqh - 2 * var(--phone-edge),
+    (100cqw - 2 * var(--phone-edge)) / var(--device-ratio)
+  );
   aspect-ratio: var(--device-ratio);
-  max-height: 100%;
   overflow: hidden;
-  border: 8px solid var(--raise2);
+  border: var(--phone-edge) solid var(--raise2);
   border-radius: 26px;
   box-shadow: 0 0 0 1px var(--line);
 }

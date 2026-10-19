@@ -30,12 +30,18 @@
 }
 
 .device-focus__phone {
+  --phone-edge: 10px;
+
   display: flex;
-  height: 100cqh;
+  flex-direction: column;
+  box-sizing: content-box;
+  height: min(
+    100cqh - 2 * var(--phone-edge),
+    (100cqw - 2 * var(--phone-edge)) / var(--focus-ratio)
+  );
   aspect-ratio: var(--focus-ratio);
-  max-width: 100cqw;
   overflow: hidden;
-  border: 10px solid var(--raise2);
+  border: var(--phone-edge) solid var(--raise2);
   border-radius: 34px;
   box-shadow:
     0 0 0 1px var(--line),
