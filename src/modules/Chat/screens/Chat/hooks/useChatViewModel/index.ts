@@ -161,6 +161,7 @@ export const useChatViewModel = () => {
   };
 
   const isWalking = workspace?.isWalking === true;
+  const liveId = isWalking ? (workspace?.liveId ?? null) : null;
 
   const send = (text: string) => {
     if (!workspace || text.trim().length === 0 || isWalking) return;
@@ -263,8 +264,14 @@ export const useChatViewModel = () => {
   return {
     chatStyle: { '--chat-gutter': `${String(CHAT.gutterWidth)}px` } as CSSProperties,
     items: withLiveRun({
-      items: groupRunMessages(visible),
-      liveId: isWalking ? (workspace?.liveId ?? null) : null,
+      items: groupRunMessages({
+        messages: visible,
+        runIds: [
+          ...(workspace?.runs.map(({ id }) => id) ?? []),
+          ...(liveId === null ? [] : [liveId]),
+        ],
+      }),
+      liveId,
       at: workspace?.liveStartedAt ?? '',
     }).map((item) =>
       item.kind === 'run'

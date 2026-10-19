@@ -36,7 +36,10 @@ const CARD: ChatMessage = {
 
 describe('groupRunMessages', () => {
   it('keeps what a run said together where it began, its card on top', () => {
-    const items = groupRunMessages([USER, NOTE, FAILED, CARD].map(shown));
+    const items = groupRunMessages({
+      messages: [USER, NOTE, FAILED, CARD].map(shown),
+      runIds: ['r-01'],
+    });
 
     expect(items.map(({ kind }) => kind)).toEqual(['message', 'run']);
     expect(items[1]).toMatchObject({ runId: 'r-01', at: '09:41', card: CARD });
@@ -55,7 +58,10 @@ describe('groupRunMessages', () => {
     };
 
     expect(
-      groupRunMessages([NOTE, reply, FAILED].map(shown)).map((item) =>
+      groupRunMessages({
+        messages: [NOTE, reply, FAILED].map(shown),
+        runIds: ['r-01'],
+      }).map((item) =>
         item.kind === 'run' ? `run ${String(item.messages.length)}` : item.message.id,
       ),
     ).toEqual(['run 2', 'm-4']);
@@ -64,10 +70,11 @@ describe('groupRunMessages', () => {
   it('leaves alone what no run said, a verdict saved before runs were kept together included', () => {
     const older: ChatMessage = { ...FAILED, runId: null };
 
-    expect(groupRunMessages([USER, older].map(shown)).map(({ kind }) => kind)).toEqual([
-      'message',
-      'message',
-    ]);
+    expect(
+      groupRunMessages({ messages: [USER, older].map(shown), runIds: ['r-01'] }).map(
+        ({ kind }) => kind,
+      ),
+    ).toEqual(['message', 'message']);
   });
 
   it('keeps a bug found on the side of a step with the run that found it', () => {
@@ -80,8 +87,28 @@ describe('groupRunMessages', () => {
       title: 'Yearly price differs',
     };
 
-    expect(groupRunMessages([NOTE, finding].map(shown)).map(({ kind }) => kind)).toEqual([
-      'run',
-    ]);
+    expect(
+      groupRunMessages({ messages: [NOTE, finding].map(shown), runIds: ['r-01'] }).map(
+        ({ kind }) => kind,
+      ),
+    ).toEqual(['run']);
+  });
+
+  it('leaves loose what a run that never walked a step said, such as why it could not start', () => {
+    const broke: ChatMessage = {
+      id: 'm-7',
+      kind: 'error',
+      runId: 'r-02',
+      at: '09:50',
+      text: 'Chrome could not open http://127.0.0.1:4999/.',
+      fix: null,
+    };
+
+    expect(
+      groupRunMessages({
+        messages: [NOTE, CARD, broke].map(shown),
+        runIds: ['r-01'],
+      }).map((item) => (item.kind === 'run' ? item.runId : item.message.id)),
+    ).toEqual(['r-01', 'm-7']);
   });
 });

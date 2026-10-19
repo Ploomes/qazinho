@@ -563,6 +563,31 @@ describe('useChatViewModel', () => {
       );
     });
 
+    it('leaves loose the error of a run that broke before its first step', () => {
+      answering({});
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...makeWorkspace([]),
+            chat: [
+              {
+                id: 'm-1',
+                kind: 'error',
+                runId: 'r-01',
+                at: '09:41',
+                text: 'Chrome could not open http://127.0.0.1:4999/.',
+                fix: null,
+              },
+            ],
+          },
+        ],
+      });
+
+      expect(
+        renderHook(() => useChatViewModel()).result.current.items.map(({ kind }) => kind),
+      ).toEqual(['message']);
+    });
+
     it('keeps what a run said in one folded section, with the step it is on while it goes', () => {
       answering({});
 

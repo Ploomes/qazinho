@@ -9,17 +9,18 @@ function runIdOf(message: ChatMessage): string | null {
   return null;
 }
 
-/** Keeps everything one run said in the chat together, where the run began; the rest stays as it was. */
-export function groupRunMessages(
-  messages: { message: ChatMessage; isNew: boolean }[],
-): ChatItem[] {
+/** Keeps everything a kept or going run said in the chat together, where it began; what a run that never walked a step said stays loose. */
+export function groupRunMessages(props: {
+  messages: { message: ChatMessage; isNew: boolean }[];
+  runIds: string[];
+}): ChatItem[] {
   const items: ChatItem[] = [];
   const runs = new Map<string, Extract<ChatItem, { kind: 'run' }>>();
 
-  for (const shown of messages) {
+  for (const shown of props.messages) {
     const runId = runIdOf(shown.message);
 
-    if (runId === null) {
+    if (runId === null || !props.runIds.includes(runId)) {
       items.push({ kind: 'message', ...shown });
       continue;
     }
