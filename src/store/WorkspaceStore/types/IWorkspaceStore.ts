@@ -39,6 +39,7 @@ export interface IWorkspaceStore {
     workspaceId: string;
     text: string;
     who: string;
+    agentId: string;
     sessionId: string | null;
   }) => void;
   landPlan: (props: {
@@ -46,6 +47,7 @@ export interface IWorkspaceStore {
     summary: string;
     plan: ITestCase[];
     who: string;
+    agentId: string;
     sessionId: string | null;
   }) => void;
   landQuestions: (props: { workspaceId: string; questions: IChatQuestion[] }) => void;

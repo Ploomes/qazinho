@@ -53,6 +53,7 @@ export function makeWorkspace(plan: ITestCase[] = CASES): IWorkspace {
     planKind: 'web',
     viewportId: 'desktop',
     sessionId: null,
+    sessionAgentId: null,
     status: 'idle',
     issue: null,
     chat: [],

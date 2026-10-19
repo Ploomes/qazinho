@@ -43,6 +43,7 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     planKind: read.planKind ?? 'web',
     viewportId: viewportOf(read.viewportId).id,
     sessionId: read.sessionId ?? null,
+    sessionAgentId: read.sessionAgentId ?? null,
     status: read.status ?? 'idle',
     issue: read.issue ?? null,
     chat: (read.chat ?? []).map(messageOfSaved).filter((message) => message !== null),

@@ -32,6 +32,7 @@ export const useNewWorkspaceModalViewModel = () => {
       targetId: chosen.id,
       planKind: toPlanKind(chosen.kind),
       sessionId: null,
+      sessionAgentId: null,
       status: 'idle',
       issue: null,
       chat: [],

@@ -9,6 +9,7 @@ export * from './fittedBounds';
 export * from './hydrateShellPath';
 export * from './imageExtensionOf';
 export * from './isInternalNavigation';
+export * from './isLostSession';
 export * from './mergePathSegments';
 export * from './numberDuplicates';
 export * from './ordinalOf';

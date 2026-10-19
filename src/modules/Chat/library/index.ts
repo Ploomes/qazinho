@@ -17,5 +17,6 @@ export * from './mentionsIn';
 export * from './referencesOf';
 export * from './runFactsOf';
 export * from './runHistoryOf';
+export * from './sessionFor';
 export * from './splitMentions';
 export * from './withLiveRun';

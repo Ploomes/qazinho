@@ -13,6 +13,7 @@ import {
   mentionsIn,
   referencesOf,
   runHistoryOf,
+  sessionFor,
 } from '@/modules/Chat/library';
 import { CHAT, CHAT_FAILURE_KEYS } from '@/modules/Chat/screens/Chat/constants';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
@@ -40,6 +41,7 @@ export const useChatViewModel = () => {
     targetId: opened.targetId,
     viewportId: opened.viewportId,
     sessionId: opened.sessionId,
+    sessionAgentId: opened.sessionAgentId,
     chat: opened.chat,
     plan: opened.plan,
     runs: opened.runs,
@@ -98,7 +100,7 @@ export const useChatViewModel = () => {
       workspaceId,
       agentId,
       model,
-      sessionId: workspace.sessionId,
+      sessionId: sessionFor({ workspace, agentId }),
       text: props.text,
       target: target === null ? null : { kind: target.kind, value: target.value },
       viewport:
@@ -158,6 +160,7 @@ export const useChatViewModel = () => {
           workspaceId,
           text: answer.reply,
           who: agentName,
+          agentId,
           sessionId: turn.sessionId,
         });
 
@@ -170,6 +173,7 @@ export const useChatViewModel = () => {
           summary: answer.reply,
           plan,
           who: agentName,
+          agentId,
           sessionId: turn.sessionId,
         });
 

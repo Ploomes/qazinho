@@ -195,6 +195,7 @@ describe('useChatViewModel', () => {
           workspaceId: 'w1',
           text: 'Two cases.',
           who: 'Claude Code',
+          agentId: 'claude-code',
           sessionId: null,
         });
       });
@@ -216,6 +217,7 @@ describe('useChatViewModel', () => {
           workspaceId: 'w1',
           text: 'Two cases.',
           who: 'Claude Code',
+          agentId: 'claude-code',
           sessionId: null,
         });
       });
@@ -307,6 +309,36 @@ describe('useChatViewModel', () => {
       expect(
         useWorkspaceStore.getState().workspaces[0]?.chat.map(({ kind }) => kind),
       ).toEqual(['user']);
+    });
+
+    it('starts a session of its own when the workspace talked to another agent before', async () => {
+      const ask = answering({ answer: { reply: 'Hi.', questions: [], plan: null } });
+
+      useWorkspaceStore.setState({
+        workspaces: [
+          { ...makeWorkspace([]), sessionId: 's-codex', sessionAgentId: 'codex' },
+        ],
+      });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onDraftChange('Hello');
+      });
+      act(() => {
+        result.current.onSend();
+      });
+
+      await waitFor(() => {
+        expect(ask).toHaveBeenCalledOnce();
+      });
+      expect(ask.mock.calls[0]?.[0].sessionId).toBeNull();
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]).toMatchObject({
+          sessionId: 'session-1',
+          sessionAgentId: 'claude-code',
+        });
+      });
     });
 
     it('turns the first answer into the plan, and remembers the session', async () => {

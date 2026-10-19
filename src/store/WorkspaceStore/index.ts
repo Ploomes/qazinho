@@ -93,7 +93,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
-  landAgentText: ({ workspaceId, text, who, sessionId }) =>
+  landAgentText: ({ workspaceId, text, who, agentId, sessionId }) =>
     set((state) => ({
       askingIds: state.askingIds.filter((id) => id !== workspaceId),
       workspaces: mapWorkspace({
@@ -102,11 +102,12 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         change: (workspace) => ({
           ...appendAgentMessage({ workspace, text, who, at: formatClock(new Date()) }),
           sessionId: sessionId ?? workspace.sessionId,
+          sessionAgentId: sessionId === null ? workspace.sessionAgentId : agentId,
         }),
       }),
     })),
 
-  landPlan: ({ workspaceId, summary, plan, who, sessionId }) =>
+  landPlan: ({ workspaceId, summary, plan, who, agentId, sessionId }) =>
     set((state) => ({
       askingIds: state.askingIds.filter((id) => id !== workspaceId),
       workspaces: mapWorkspace({
@@ -123,6 +124,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
           return {
             ...appendPlanCard({ workspace: said, plan, at: formatClock(new Date()) }),
             sessionId: sessionId ?? workspace.sessionId,
+            sessionAgentId: sessionId === null ? workspace.sessionAgentId : agentId,
           };
         },
       }),

@@ -17,6 +17,7 @@ export interface IWorkspace {
   planKind: 'web' | 'mobile';
   viewportId: ViewportId;
   sessionId: string | null;
+  sessionAgentId: string | null;
   context: IAgentContext | null;
   status: WorkspaceStatus;
   issue: IIssue | null;

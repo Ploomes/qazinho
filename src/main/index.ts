@@ -1,6 +1,8 @@
+import type { AppLook } from '@/harness';
 import type {
   AgentSignInProgress,
   IAgentEvent,
+  IAgentTurn,
   IAskAgent,
   IChatTurn,
   IConnectIntegration,
@@ -64,6 +66,7 @@ import {
   hydrateShellPath,
   imageExtensionOf,
   isInternalNavigation,
+  isLostSession,
   searchDirectories,
 } from '@/main/library';
 import { CHANNELS } from '@/shared/constants';
@@ -175,6 +178,38 @@ const toldChats = new Map<string, Record<string, string>>();
 const askingChats = new Set<string>();
 const stoppedChats = new Set<string>();
 
+async function askOnce(props: {
+  ask: IAskAgent;
+  command: string;
+  sessionId: string | null;
+  look: AppLook | null;
+}): Promise<{ turn: IAgentTurn; told: Record<string, string> }> {
+  const { ask, command, sessionId, look } = props;
+  const chat = harness.chat({
+    text: ask.text,
+    told: (sessionId === null ? undefined : toldChats.get(sessionId)) ?? {},
+    target: ask.target,
+    viewport: ask.viewport,
+    steps: ask.steps,
+    references: ask.references,
+    runs: ask.runs,
+    look,
+  });
+  const turn = await agentRunner.ask({
+    workspaceId: ask.workspaceId,
+    agentId: ask.agentId,
+    command,
+    model: ask.model,
+    sessionId,
+    prompt: chat.prompt,
+    schema: chat.schema,
+    systemPrompt: chat.systemPrompt,
+    allowedTools: chat.tools.allowedTools,
+  });
+
+  return { turn, told: chat.told };
+}
+
 async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
   const command = await findCommand(ask.agentId);
   const unanswered = {
@@ -195,37 +230,25 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
   askingChats.add(ask.workspaceId);
 
   try {
-    const chat = harness.chat({
-      text: ask.text,
-      told: (ask.sessionId === null ? undefined : toldChats.get(ask.sessionId)) ?? {},
-      target: ask.target,
-      viewport: ask.viewport,
-      steps: ask.steps,
-      references: ask.references,
-      runs: ask.runs,
-      look: ask.target?.kind === 'web' ? await peek.look(ask.target.value) : null,
-    });
+    const look = ask.target?.kind === 'web' ? await peek.look(ask.target.value) : null;
 
     if (stoppedChats.has(ask.workspaceId))
       return { ...unanswered, failure: { reason: 'stopped' } };
 
-    const turn = await agentRunner.ask({
-      workspaceId: ask.workspaceId,
-      agentId: ask.agentId,
-      command,
-      model: ask.model,
-      sessionId: ask.sessionId,
-      prompt: chat.prompt,
-      schema: chat.schema,
-      systemPrompt: chat.systemPrompt,
-      allowedTools: chat.tools.allowedTools,
-    });
+    const first = await askOnce({ ask, command, sessionId: ask.sessionId, look });
+    const isLost =
+      first.turn.isError &&
+      ask.sessionId !== null &&
+      !stoppedChats.has(ask.workspaceId) &&
+      isLostSession(first.turn.text);
+    const { turn, told } = isLost
+      ? await askOnce({ ask, command, sessionId: null, look })
+      : first;
 
     if (stoppedChats.has(ask.workspaceId))
       return { ...turn, isError: true, answer: null, failure: { reason: 'stopped' } };
 
-    if (!turn.isError && turn.sessionId !== null)
-      toldChats.set(turn.sessionId, chat.told);
+    if (!turn.isError && turn.sessionId !== null) toldChats.set(turn.sessionId, told);
 
     return {
       ...turn,
