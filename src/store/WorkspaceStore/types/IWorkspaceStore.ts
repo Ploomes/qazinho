@@ -78,5 +78,6 @@ export interface IWorkspaceStore {
   setRunFilter: (filter: RunFilter) => void;
   setBugFilter: (filter: BugFilter) => void;
   toggleDevicePanel: () => void;
+  setDevicePanelOpen: (isOpen: boolean) => void;
   setDeviceWidth: (width: number) => void;
 }

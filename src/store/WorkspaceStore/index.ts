@@ -363,6 +363,11 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   toggleDevicePanel: () =>
     set((state) => ({ isDevicePanelOpen: !state.isDevicePanelOpen })),
 
+  setDevicePanelOpen: (isOpen) =>
+    set((state) =>
+      state.isDevicePanelOpen === isOpen ? state : { isDevicePanelOpen: isOpen },
+    ),
+
   setDeviceWidth: (width) =>
     set({ deviceWidth: Math.min(Math.max(width, DEVICE.minWidth), DEVICE.maxWidth) }),
 }));

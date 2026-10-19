@@ -22,6 +22,7 @@ export const useDevicePanelViewModel = () => {
   const isOpen = useWorkspaceStore((state) => state.isDevicePanelOpen);
   const width = useWorkspaceStore((state) => state.deviceWidth);
   const toggleDevicePanel = useWorkspaceStore((state) => state.toggleDevicePanel);
+  const setDevicePanelOpen = useWorkspaceStore((state) => state.setDevicePanelOpen);
   const setDeviceWidth = useWorkspaceStore((state) => state.setDeviceWidth);
   const setViewport = useWorkspaceStore((state) => state.setViewport);
   const {
@@ -61,6 +62,10 @@ export const useDevicePanelViewModel = () => {
         isActive: option.id === viewport.id,
       }));
   const workspaceId = workspace?.id ?? null;
+
+  useEffect(() => {
+    setDevicePanelOpen(isRunLive);
+  }, [workspaceId, isRunLive, setDevicePanelOpen]);
 
   useEffect(() => {
     if (workspaceId === null || stream === null || !isFocused) return;

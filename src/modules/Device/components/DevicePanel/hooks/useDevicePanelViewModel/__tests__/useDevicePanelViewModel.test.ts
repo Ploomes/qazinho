@@ -214,6 +214,40 @@ describe('useDevicePanelViewModel', () => {
     );
   });
 
+  describe('isOpen', () => {
+    it('opens itself when a run starts, and folds once the run is over', () => {
+      const { result, rerender } = renderHook(() => useDevicePanelViewModel());
+
+      expect(result.current.isOpen).toBe(false);
+
+      act(() => {
+        useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: [] })] });
+      });
+      rerender();
+
+      expect(result.current.isOpen).toBe(true);
+
+      act(() => {
+        useWorkspaceStore.setState({
+          workspaces: [walkRun({ verdicts: ['passed'], isFinished: true })],
+        });
+      });
+      rerender();
+
+      expect(result.current.isOpen).toBe(false);
+    });
+
+    it('leaves the panel the QA opened alone until a run starts or ends', () => {
+      const { result } = renderHook(() => useDevicePanelViewModel());
+
+      act(() => {
+        result.current.onToggle();
+      });
+
+      expect(result.current.isOpen).toBe(true);
+    });
+  });
+
   describe('viewportClassName', () => {
     it('hugs the screen of a browser, fills the height for a phone, and leaves the empty device alone', () => {
       expect(
@@ -274,6 +308,8 @@ describe('useDevicePanelViewModel', () => {
 
   describe('panelWidth', () => {
     it('makes room for the handle beside the content, so nothing is cut at the window edge', () => {
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: [] })] });
+
       const { result } = renderHook(() => useDevicePanelViewModel());
 
       expect(result.current.panelWidth).toBe(DEVICE.defaultWidth + DEVICE.handleWidth);
