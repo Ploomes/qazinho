@@ -1,3 +1,4 @@
+import type { ILiveFrame } from './types';
 import type { IncomingMessage, Server, ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { randomUUID } from 'node:crypto';
@@ -5,11 +6,11 @@ import { createServer } from 'node:http';
 import { LIVE_STREAM } from './constants';
 import { mjpegPart, workspaceOfPath } from './library';
 
-/** Serves each workspace's device as MJPEG on loopback, so video never crosses IPC. */
+/** Serves each workspace's device as MJPEG on loopback, so video never crosses IPC: to the page's <img>, and to the recorder window. */
 export class LiveStream {
   private readonly token = randomUUID();
   private readonly viewers = new Map<string, Set<ServerResponse>>();
-  private readonly latest = new Map<string, Buffer>();
+  private readonly latest = new Map<string, ILiveFrame>();
   private server: Server | null = null;
   private port = 0;
 
@@ -34,10 +35,12 @@ export class LiveStream {
     return `http://${LIVE_STREAM.host}:${String(this.port)}/${this.token}/${encodeURIComponent(workspaceId)}`;
   }
 
-  public push(props: { workspaceId: string; jpeg: Buffer }): void {
-    this.latest.set(props.workspaceId, props.jpeg);
+  public push(props: { workspaceId: string; jpeg: Buffer; ratio: number }): void {
+    const frame = { jpeg: props.jpeg, at: Date.now(), ratio: props.ratio };
 
-    const part = mjpegPart({ boundary: LIVE_STREAM.boundary, jpeg: props.jpeg });
+    this.latest.set(props.workspaceId, frame);
+
+    const part = mjpegPart({ boundary: LIVE_STREAM.boundary, ...frame });
 
     for (const viewer of this.viewers.get(props.workspaceId) ?? []) viewer.write(part);
   }
@@ -69,6 +72,7 @@ export class LiveStream {
     response.writeHead(200, {
       'Content-Type': `multipart/x-mixed-replace; boundary=${LIVE_STREAM.boundary}`,
       'Cache-Control': 'no-store',
+      'Access-Control-Allow-Origin': '*',
       Connection: 'close',
     });
 
@@ -79,8 +83,7 @@ export class LiveStream {
 
     const latest = this.latest.get(workspaceId);
 
-    if (latest)
-      response.write(mjpegPart({ boundary: LIVE_STREAM.boundary, jpeg: latest }));
+    if (latest) response.write(mjpegPart({ boundary: LIVE_STREAM.boundary, ...latest }));
 
     request.on('close', () => {
       viewers.delete(response);

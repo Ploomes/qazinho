@@ -63,7 +63,7 @@ describe('the live device stream', () => {
     await driver.open();
 
     const isStreaming = await driver.stream((jpeg) => {
-      live.push({ workspaceId: 'w1', jpeg });
+      live.push({ workspaceId: 'w1', jpeg, ratio: 1280 / 800 });
     });
     const url = live.urlFor('w1');
 

@@ -188,7 +188,7 @@ export class RunCoordinator {
       await mkdir(run.shotDir, { recursive: true });
       await driver.open();
       this.tools.attach({ workspaceId: run.workspaceId, driver });
-      await this.watch({ workspaceId: run.workspaceId, driver });
+      await this.watch({ run, driver });
     } catch (reason) {
       await driver?.close();
       this.drivers.delete(run.workspaceId);
@@ -465,13 +465,14 @@ export class RunCoordinator {
     return true;
   }
 
-  private async watch(props: {
-    workspaceId: string;
-    driver: IDeviceDriver;
-  }): Promise<void> {
-    const { workspaceId, driver } = props;
+  private async watch(props: { run: IWalkRun; driver: IDeviceDriver }): Promise<void> {
+    const { run, driver } = props;
+    const { workspaceId } = run;
     const isStreaming = await driver.stream((jpeg) => {
-      this.live.push({ workspaceId, jpeg });
+      const viewport =
+        this.viewports.get(workspaceId) ?? run.viewport ?? WEB_DRIVER.viewport;
+
+      this.live.push({ workspaceId, jpeg, ratio: viewport.width / viewport.height });
     });
     const url = this.live.urlFor(workspaceId);
 
