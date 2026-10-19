@@ -24,5 +24,5 @@ already done, such as "created before". Name the exact data only when the case d
 otherwise say what kind and how much, such as "three documents in the list", so the agent can
 use what the app already has. That agent reads its own case and nothing else, not the plan nor
 this conversation, so every case repeats the values it needs, such as the account's email and
-password, even when another case already gives them. Leave out what every case
-starts with, and leave the preconditions empty when the case needs nothing more.
+password, even when another case already gives them. Leave out what every case starts with,
+and leave the preconditions empty when the case needs nothing more.
