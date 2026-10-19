@@ -17,7 +17,7 @@ import {
 import { CHAT, CHAT_FAILURE_KEYS } from '@/modules/Chat/screens/Chat/constants';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { formatElapsed, viewportOf } from '@/modules/Device';
-import { planOfDraft } from '@/modules/Plan';
+import { caseIdsUsed, planOfDraft } from '@/modules/Plan';
 import { flattenPlanSteps, formatCost, RUN_ENDS } from '@/modules/Run';
 import { Agent } from '@/services';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
@@ -120,7 +120,17 @@ export const useChatViewModel = () => {
       }
 
       const { answer } = turn;
-      const plan = answer?.plan ? planOfDraft(answer.plan.cases) : null;
+      const now = useWorkspaceStore
+        .getState()
+        .workspaces.find(({ id }) => id === workspaceId);
+      const plan =
+        answer?.plan && now !== undefined
+          ? planOfDraft({
+              cases: answer.plan.cases,
+              plan: now.plan,
+              used: caseIdsUsed(now),
+            })
+          : null;
 
       if (
         !answer ||
@@ -131,9 +141,7 @@ export const useChatViewModel = () => {
         return;
       }
 
-      const live = useWorkspaceStore
-        .getState()
-        .workspaces.find(({ id }) => id === workspaceId)?.live;
+      const live = now?.live;
       const isWalking = live !== null && live !== undefined && !live.isDone;
 
       if (plan === null || isWalking)

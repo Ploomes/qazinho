@@ -53,7 +53,8 @@ plan, go through these steps in order, one turn each, and stop after each one.
 Never fill "plan" before the QA confirmed it, not even as a draft. Skip the questions only when
 nothing is left open; a new plan is never written without the confirmation.
 For a change to the plan the QA has, ask only about the change, and make it at once when it
-leaves nothing open.
+leaves nothing open. Write the whole plan back, and give every case you keep or change the id
+QAzinho shows for it, so its runs and bugs stay with it. A new case has no id.
 
 ## Asking the QA
 The QA knows the app and what it is for; you know how to test it. Ask about the app and what

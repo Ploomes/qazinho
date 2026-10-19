@@ -15,6 +15,21 @@ function fieldOf(props: { value: unknown; key: string }): unknown {
     : undefined;
 }
 
+function withoutNullIds(plan: unknown): unknown {
+  const cases = fieldOf({ value: plan, key: 'cases' });
+
+  if (!Array.isArray(cases)) return plan;
+
+  return {
+    ...(plan as Record<string, unknown>),
+    cases: cases.map((one: unknown) =>
+      fieldOf({ value: one, key: 'id' }) === null
+        ? { ...(one as Record<string, unknown>), id: undefined }
+        : one,
+    ),
+  };
+}
+
 /** Checks a chat answer against its schema; prose is still a reply, and a part that breaks the schema costs only itself. */
 export function readChatAnswer(text: string): IChatAnswer | null {
   const json = jsonOf(text);
@@ -38,6 +53,6 @@ export function readChatAnswer(text: string): IChatAnswer | null {
       ...question,
       isMultiSelect: multiSelect,
     })),
-    plan: CHAT_ANSWER.shape.plan.safeParse(field('plan')).data ?? null,
+    plan: CHAT_ANSWER.shape.plan.safeParse(withoutNullIds(field('plan'))).data ?? null,
   };
 }

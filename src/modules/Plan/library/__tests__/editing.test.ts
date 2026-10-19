@@ -83,7 +83,7 @@ describe('removeCase', () => {
 
 describe('addCase', () => {
   it('adds an empty case with one empty step at the end', () => {
-    const plan = addCase(CASES);
+    const plan = addCase({ plan: CASES, used: [] });
 
     expect(plan).toHaveLength(3);
     expect(plan[2]).toMatchObject({
@@ -93,20 +93,22 @@ describe('addCase', () => {
       lastVerdict: null,
     });
   });
+
+  it('does NOT take the id of a case removed from the plan that a run or a bug still names', () => {
+    expect(addCase({ plan: CASES, used: ['TC-03'] })[2]?.id).toBe('TC-04');
+  });
 });
 
 describe('nextCaseId', () => {
   it('numbers after the highest already used, not after the count', () => {
-    const plan = [{ ...CASES[0]!, id: 'TC-09' }];
-
-    expect(nextCaseId(plan)).toBe('TC-10');
+    expect(nextCaseId(['TC-09'])).toBe('TC-10');
   });
 
-  it('starts at one on an empty plan', () => {
+  it('starts at one when nothing was used', () => {
     expect(nextCaseId([])).toBe('TC-01');
   });
 
   it('ignores an id the agent wrote in its own shape', () => {
-    expect(nextCaseId([{ ...CASES[0]!, id: 'checkout' }])).toBe('TC-01');
+    expect(nextCaseId(['checkout'])).toBe('TC-01');
   });
 });

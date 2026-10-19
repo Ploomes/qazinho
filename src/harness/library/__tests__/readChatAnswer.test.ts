@@ -39,6 +39,29 @@ describe('readChatAnswer', () => {
     expect(answer?.plan?.cases).toEqual([CASE]);
   });
 
+  it('keeps the id of a case the agent kept, so its runs and bugs stay with it', () => {
+    const answer = readChatAnswer(
+      JSON.stringify({
+        reply: 'Changed TC-03.',
+        plan: { summary: '', cases: [{ ...CASE, id: 'TC-03' }] },
+      }),
+    );
+
+    expect(answer?.plan?.cases[0]?.id).toBe('TC-03');
+  });
+
+  it('reads a new case in strict mode, where Codex writes its missing id as null', () => {
+    const answer = readChatAnswer(
+      JSON.stringify({
+        reply: 'Added one.',
+        plan: { summary: '', cases: [{ ...CASE, id: null }] },
+      }),
+    );
+
+    expect(answer?.plan?.cases).toHaveLength(1);
+    expect(answer?.plan?.cases[0]?.id).toBeUndefined();
+  });
+
   it('reads the questions the agent puts to the QA', () => {
     const answer = readChatAnswer(
       JSON.stringify({ reply: 'Two things first.', questions: [QUESTION] }),

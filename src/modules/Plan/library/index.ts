@@ -1,5 +1,6 @@
 export * from './addCase';
 export * from './addStep';
+export * from './caseIdsUsed';
 export * from './editCase';
 export * from './editStep';
 export * from './keepVerdicts';

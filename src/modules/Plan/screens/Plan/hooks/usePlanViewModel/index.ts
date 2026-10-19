@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   addCase,
   addStep,
+  caseIdsUsed,
   editCase,
   editStep,
   removeCase,
@@ -20,6 +21,8 @@ export const usePlanViewModel = () => {
     plan: opened.plan,
     isLocked: opened.live !== null && !opened.live.isDone,
     latest: opened.runs[0] ?? null,
+    runs: opened.runs,
+    bugs: opened.bugs,
   }));
   const openCaseId = useWorkspaceStore((state) => state.openCaseId);
   const toggleCase = useWorkspaceStore((state) => state.toggleCase);
@@ -62,7 +65,16 @@ export const usePlanViewModel = () => {
       selectTab('chat');
     },
     onAddCase: () => {
-      write(addCase(plan));
+      write(
+        addCase({
+          plan,
+          used: caseIdsUsed({
+            plan,
+            runs: workspace?.runs ?? [],
+            bugs: workspace?.bugs ?? [],
+          }),
+        }),
+      );
     },
     onRemoveCase: (caseId: string) => {
       write(removeCase({ plan, caseId }));
