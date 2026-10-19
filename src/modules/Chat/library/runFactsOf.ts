@@ -8,6 +8,13 @@ const ENDINGS = {
   interrupted: 'cut short when QAzinho closed',
 } as const;
 
+function tallyOf(verdicts: string[]): string {
+  const count = (wanted: string) =>
+    String(verdicts.filter((verdict) => verdict === wanted).length);
+
+  return `${count('passed')} passed, ${count('failed')} failed, ${count('blocked')} blocked, ${count('skipped')} skipped`;
+}
+
 /** What QAzinho knows of one run, as the lines its agent reads: every step, or only the ones that failed or were blocked. */
 export function runFactsOf(props: { run: IRun; isBrief: boolean }): string[] {
   const { run, isBrief } = props;
@@ -15,7 +22,8 @@ export function runFactsOf(props: { run: IRun; isBrief: boolean }): string[] {
 
   return [
     `started ${run.startedAt}, took ${String(run.durationSec)}s${cost}, ${ENDINGS[run.endedBy]}`,
-    `${String(run.counts.passed)} passed, ${String(run.counts.failed)} failed, ${String(run.counts.blocked)} blocked, ${String(run.counts.skipped)} skipped`,
+    `cases: ${tallyOf(run.cases.map((runCase) => caseVerdict(runCase.steps)))}`,
+    `steps: ${String(run.counts.passed)} passed, ${String(run.counts.failed)} failed, ${String(run.counts.blocked)} blocked, ${String(run.counts.skipped)} skipped`,
     ...run.cases.flatMap((runCase) => {
       const steps = isBrief
         ? runCase.steps.filter(

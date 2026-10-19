@@ -12,7 +12,8 @@ describe('runFactsOf', () => {
     const facts = runFactsOf({ run: RUN, isBrief: false });
 
     expect(facts[0]).toBe('started 09:41, took 0s, walked the whole plan');
-    expect(facts[1]).toBe('4 passed, 1 failed, 0 blocked, 1 skipped');
+    expect(facts[1]).toBe('cases: 1 passed, 1 failed, 0 blocked, 0 skipped');
+    expect(facts[2]).toBe('steps: 4 passed, 1 failed, 0 blocked, 1 skipped');
     expect(facts).toContain('  step 1 passed: Open the target URL');
     expect(facts).toContain(
       '  step 2 failed: Leave the house number empty (The page did not do it.)',
@@ -28,7 +29,7 @@ describe('runFactsOf', () => {
   it('keeps only what failed or was blocked when brief, and leaves a case that held out', () => {
     const facts = runFactsOf({ run: RUN, isBrief: true });
 
-    expect(facts.slice(2)).toEqual([
+    expect(facts.slice(3)).toEqual([
       'TC-02 Checkout with a test card: failed',
       '  step 2 failed: Leave the house number empty (The page did not do it.)',
     ]);

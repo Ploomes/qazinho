@@ -24,7 +24,7 @@ describe('referencesOf', () => {
     });
     const [run] = referencesOf({ workspace, wholePlan: 'The whole plan' });
 
-    expect(run?.facts).toContain('4 passed, 1 failed, 0 blocked, 1 skipped');
+    expect(run?.facts).toContain('steps: 4 passed, 1 failed, 0 blocked, 1 skipped');
     expect(run?.facts.some((fact) => fact.includes('step 2 failed'))).toBe(true);
   });
 

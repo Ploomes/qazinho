@@ -38,7 +38,8 @@ const RUNS = [
     title: 'The whole plan · 10:02',
     facts: [
       'started 10:02, took 84s, cost $0.041, walked the whole plan',
-      '2 passed, 1 failed, 0 blocked, 0 skipped',
+      'cases: 1 passed, 1 failed, 0 blocked, 0 skipped',
+      'steps: 2 passed, 1 failed, 0 blocked, 0 skipped',
       'TC-02 Checkout: failed',
       '  step 1 failed: Apply EXPIRED10 (The expired coupon took 10% off.)',
       'note: Closed a cookie banner first.',
