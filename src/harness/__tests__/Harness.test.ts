@@ -195,11 +195,11 @@ describe('Harness', () => {
   describe('walk', () => {
     it('starts a case with its steps and the screen it starts on', async () => {
       await expect(
-        harness.walk({ steps: STEPS, screen: 'Cart\n[button] Apply' }),
+        harness.walk({ steps: STEPS, screen: 'Cart\n[button] Apply', language: 'en' }),
       ).toMatchFileSnapshot('./__prompts__/walk.txt');
-      await expect(harness.walk({ steps: [], screen: '' })).toMatchFileSnapshot(
-        './__prompts__/walk-empty.txt',
-      );
+      await expect(
+        harness.walk({ steps: [], screen: '', language: 'en' }),
+      ).toMatchFileSnapshot('./__prompts__/walk-empty.txt');
     });
   });
 

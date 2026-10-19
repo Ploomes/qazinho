@@ -386,7 +386,11 @@ export class RunCoordinator {
       }),
       mcpConfig,
       allowedTools: this.harness.toolsFor('runner').allowedTools,
-      prompt: this.harness.walk({ steps: pending.map(({ step }) => step), screen }),
+      prompt: this.harness.walk({
+        steps: pending.map(({ step }) => step),
+        screen,
+        language: run.language,
+      }),
     });
 
     props.costs.push(

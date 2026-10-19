@@ -1,8 +1,13 @@
-import type { IFlatStep } from '@/shared/types';
+import type { IFlatStep, Language } from '@/shared/types';
+import { LANGUAGE_NAMES } from '@/harness/constants';
 
-/** One case to walk, as the message that starts the agent's turn: what it needs, every step in order, and the screen it starts on. */
-export function describeCase(props: { steps: IFlatStep[]; screen: string }): string {
-  const { steps, screen } = props;
+/** One case to walk, as the message that starts the agent's turn: what it needs, every step in order, the language to report in, and the screen it starts on. */
+export function describeCase(props: {
+  steps: IFlatStep[];
+  screen: string;
+  language: Language;
+}): string {
+  const { steps, screen, language } = props;
   const [first] = steps;
 
   if (first === undefined) return 'This case has no steps. End your turn.';
@@ -18,7 +23,7 @@ export function describeCase(props: { steps: IFlatStep[]; screen: string }): str
       `${String(step.numberInCase)}. ${step.action}`,
       `   The QA expects: ${step.expected}`,
     ]),
-    'Write what you report and note in the language these steps are written in.',
+    `Write what you report and note in ${LANGUAGE_NAMES[language]}, whatever language these steps are in.`,
     ...(screen.length === 0 ? [] : ['', 'The device shows right now:', screen]),
   ].join('\n');
 }

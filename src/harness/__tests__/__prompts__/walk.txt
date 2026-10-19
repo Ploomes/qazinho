@@ -6,7 +6,7 @@ Carry out these steps in order, and report each one as soon as you judged it:
    The QA expects: The cart shows
 2. Apply SAVE10
    The QA expects: 10% off
-Write what you report and note in the language these steps are written in.
+Write what you report and note in English, whatever language these steps are in.
 
 The device shows right now:
 Cart
