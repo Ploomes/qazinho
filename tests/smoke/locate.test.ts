@@ -20,6 +20,8 @@ const PAGE = `<!doctype html><html><head><meta charset="utf-8"></head><body>
   <label>State <select onchange="document.getElementById('state').textContent = 'Picked ' + this.value"><option value="">Choose</option><option value="SP">São Paulo</option></select></label>
   <label>Nickname <input></label>
   <p id="state">Nothing picked</p>
+  <label>Birth date <input type="date" onchange="document.getElementById('born').textContent = 'Born ' + this.value"></label>
+  <p id="born">No date yet</p>
 </body></html>`;
 
 const PORT = 4339;
@@ -86,5 +88,25 @@ describe('a form labelled with <label>', () => {
     await expect(
       driver.act({ kind: 'fill', target: 'State', value: 'Bahia' }),
     ).rejects.toThrow('It offers: Choose, São Paulo.');
+  });
+});
+
+/**
+ * Chrome keeps a date field as YYYY-MM-DD whatever it shows, and Playwright fills it only that
+ * way: "10/05/1990", the way a Brazilian plan writes it, failed with a bare "Malformed value".
+ */
+describe('a date field', () => {
+  it('takes a date written the way the browser keeps it', async () => {
+    await driver.act({ kind: 'fill', target: 'Birth date', value: '1990-05-10' });
+
+    expect(await driver.describe()).toContain('Born 1990-05-10');
+  });
+
+  it('says how to write it when it was written another way', async () => {
+    await expect(
+      driver.act({ kind: 'fill', target: 'Birth date', value: '10/05/1990' }),
+    ).rejects.toThrow(
+      '"Birth date" takes a date written YYYY-MM-DD, such as 1990-05-10.',
+    );
   });
 });

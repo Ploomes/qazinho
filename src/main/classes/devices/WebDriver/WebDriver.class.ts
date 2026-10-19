@@ -10,7 +10,7 @@ import type {
 import type { BrowserContext, CDPSession, Page } from 'playwright-core';
 import { rm } from 'node:fs/promises';
 import { chromium } from 'playwright-core';
-import { MOTION_PROBE, WEB_DRIVER } from './constants';
+import { FIELD_FORMATS, MOTION_PROBE, WEB_DRIVER } from './constants';
 import {
   describePage,
   findLocator,
@@ -348,7 +348,14 @@ export class WebDriver implements IDeviceDriver {
     const timeout = WEB_DRIVER.actionTimeoutMs;
 
     if (options === null) {
-      await locator.fill(action.value, { timeout });
+      await locator.fill(action.value, { timeout }).catch(async (reason: unknown) => {
+        const type = await locator.getAttribute('type').catch(() => null);
+        const format = FIELD_FORMATS[type ?? ''];
+
+        throw format === undefined
+          ? reason
+          : new Error(`"${action.target}" takes ${format}.`);
+      });
 
       return;
     }
