@@ -356,12 +356,14 @@ describe('useDevicePanelViewModel', () => {
       });
 
       expect(result.current.widthTransition.duration).toBe(0);
+      expect(result.current.panelClassName).toBe('device-panel device-panel--resizing');
 
       act(() => {
         result.current.onResizeEnd();
       });
 
       expect(result.current.widthTransition.duration).toBeGreaterThan(0);
+      expect(result.current.panelClassName).toBe('device-panel');
     });
   });
 

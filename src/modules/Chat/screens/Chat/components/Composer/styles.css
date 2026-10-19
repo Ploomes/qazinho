@@ -17,7 +17,8 @@
   cursor: text;
   transition:
     border-color var(--dur-fast) var(--ease),
-    box-shadow var(--dur-fast) var(--ease);
+    box-shadow var(--dur-fast) var(--ease),
+    opacity var(--dur) var(--ease);
 }
 
 .composer__field:focus-within {

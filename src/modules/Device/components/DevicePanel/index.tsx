@@ -26,6 +26,7 @@ export const DevicePanel: React.FC = () => {
     onUnfocus,
     width,
     panelWidth,
+    panelClassName,
     widthTransition,
     panelStyle,
     isPhone,
@@ -59,7 +60,7 @@ export const DevicePanel: React.FC = () => {
 
   return (
     <motion.aside
-      className="device-panel"
+      className={panelClassName}
       style={panelStyle}
       initial={false}
       animate={{ width: panelWidth }}

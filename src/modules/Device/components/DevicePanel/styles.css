@@ -79,6 +79,7 @@
 
 .device-panel__viewport--browser {
   flex: 0 1 auto;
+  transition: height var(--dur) var(--ease);
   height: calc(
     (100cqw - 2 * var(--space-5) - 2 * var(--frame-line)) / var(--device-ratio) +
       var(--device-chrome) + 2 * var(--frame-line) + 2 * var(--space-5)
@@ -103,6 +104,9 @@
   overflow: hidden;
   border: var(--frame-line) solid var(--line);
   border-radius: var(--radius-md);
+  transition:
+    width var(--dur) var(--ease),
+    height var(--dur) var(--ease);
 }
 
 .device-panel__chrome {
@@ -205,4 +209,9 @@
   color: var(--ink3);
   font: var(--font-mono-sm);
   writing-mode: vertical-rl;
+}
+
+.device-panel--resizing .device-panel__viewport--browser,
+.device-panel--resizing .device-panel__browser {
+  transition: none;
 }

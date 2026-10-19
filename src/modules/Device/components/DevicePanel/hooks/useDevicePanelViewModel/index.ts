@@ -98,6 +98,7 @@ export const useDevicePanelViewModel = () => {
     },
     width,
     panelWidth: isOpen ? width + DEVICE.handleWidth : DEVICE.railWidth,
+    panelClassName: isResizing ? 'device-panel device-panel--resizing' : 'device-panel',
     widthTransition: isResizing
       ? { duration: 0 }
       : { duration: MOTION.durationSlow, ease: MOTION.ease },
