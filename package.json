@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "A local-first desktop app where AI agents test your web and mobile apps from a test plan.",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "author": "Salve Software",
   "repository": {
     "type": "git",

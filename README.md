@@ -10,8 +10,8 @@ device and tells you what it saw.
 - **Your agent.** Claude Code or Codex, the one already on your machine. More agents later.
 - **Your machine.** Emulators, simulators, browsers and runs stay local. Nothing goes to a QAzinho
   server.
-- **Free and open source.** MIT, with no limits for one user. A Pro plan will host plans and runs
-  for teams.
+- **Free for one user.** The whole desktop app, with no account and no limit. A Pro plan will
+  host plans and runs for teams.
 
 > **Status:** early scaffold. Nothing above works yet.
 
@@ -28,4 +28,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) before opening a PR.
 
 ## License
 
-[MIT](LICENSE) © Salve Software
+Proprietary. © 2026 Salve Software. All rights reserved. See [LICENSE](LICENSE).
