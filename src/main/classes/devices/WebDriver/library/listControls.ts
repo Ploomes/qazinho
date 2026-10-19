@@ -14,9 +14,15 @@ export async function listControls(
           };
           textContent: string | null;
         };
+        type Slot = {
+          assignedNodes?: (options: { flatten: boolean }) => ArrayLike<{
+            textContent: string | null;
+          }>;
+        };
         const element = node as unknown as {
           getClientRects: () => { length: number };
           getAttribute: (name: string) => string | null;
+          querySelectorAll: (selector: 'slot') => ArrayLike<Slot>;
           innerText: string;
           tagName: string;
           labels?: {
@@ -36,6 +42,11 @@ export async function listControls(
           one.remove();
         });
 
+        const slotted = Array.from(element.querySelectorAll('slot'))
+          .flatMap((slot) => Array.from(slot.assignedNodes?.({ flatten: true }) ?? []))
+          .map((one) => one.textContent ?? '')
+          .join(' ');
+
         const label =
           [
             element.getAttribute('aria-label'),
@@ -43,6 +54,7 @@ export async function listControls(
             element.getAttribute('placeholder'),
             element.getAttribute('name'),
             role === 'select' ? '' : element.innerText,
+            slotted,
           ]
             .map((text) => (text ?? '').replace(/\s+/g, ' ').trim())
             .find((text) => text.length > 0) ?? '';

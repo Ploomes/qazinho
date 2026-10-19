@@ -22,6 +22,14 @@ const PAGE = `<!doctype html><html><head><meta charset="utf-8"></head><body>
   <p id="state">Nothing picked</p>
   <label>Birth date <input type="date" onchange="document.getElementById('born').textContent = 'Born ' + this.value"></label>
   <p id="born">No date yet</p>
+  <shop-button>Subscribe now</shop-button>
+  <script>
+    customElements.define('shop-button', class extends HTMLElement {
+      connectedCallback() {
+        this.attachShadow({ mode: 'open' }).innerHTML = '<button><slot></slot></button>';
+      }
+    });
+  </script>
 </body></html>`;
 
 const PORT = 4339;
@@ -108,5 +116,15 @@ describe('a date field', () => {
     ).rejects.toThrow(
       '"Birth date" takes a date written YYYY-MM-DD, such as 1990-05-10.',
     );
+  });
+});
+
+/**
+ * A design system's button: the <button> lives in a shadow root, and its words are the host's,
+ * slotted in. Its innerText is empty, so look left it out of the controls the agent reads.
+ */
+describe('a button inside a web component', () => {
+  it('is listed by the words slotted into it', async () => {
+    expect(await driver.describe()).toContain('button: Subscribe now');
   });
 });
