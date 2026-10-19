@@ -294,6 +294,8 @@ export class RunCoordinator {
     };
 
     const unwalked = (verdict: 'skipped' | 'blocked') => {
+      const at = Date.now();
+
       for (const [position, { step, index }] of pending.entries())
         this.emit({
           kind: 'step',
@@ -306,6 +308,7 @@ export class RunCoordinator {
               position === 0 && verdict === 'blocked'
                 ? UNWALKED.unreported
                 : UNWALKED.skipped,
+            at,
           }),
         });
 
@@ -329,6 +332,7 @@ export class RunCoordinator {
       const shot = await driver.shoot(
         join(run.shotDir, `step-${String(walking.index + 1)}.jpg`),
       );
+      const at = Date.now();
 
       this.emit({
         kind: 'step',
@@ -337,7 +341,8 @@ export class RunCoordinator {
           step: walking.step,
           index: walking.index,
           workspaceId,
-          tookMs: Date.now() - began,
+          tookMs: at - began,
+          at,
           shot,
         }),
       });
@@ -390,6 +395,7 @@ export class RunCoordinator {
           stepNumber: walking.step.numberInCase,
           index: walking.index,
           action: walking.step.action,
+          at: Date.now(),
           screenshot: shot?.dataUrl ?? null,
           shotFile: shot?.file ?? null,
         },

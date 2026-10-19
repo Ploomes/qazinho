@@ -2,16 +2,17 @@ import type { IStepReport } from '@/harness';
 import type { IShot } from '@/main/classes/devices/types';
 import type { IFlatStep, IStepOutcome } from '@/shared/types';
 
-/** A step as the run files it: the agent's report, the screenshot taken when it arrived, and the time it took. */
+/** A step as the run files it: the agent's report, the screenshot taken when it arrived, the time it took and when it came. */
 export function outcomeOfReport(props: {
   report: IStepReport;
   step: IFlatStep;
   index: number;
   workspaceId: string;
   tookMs: number;
+  at: number;
   shot: IShot | null;
 }): IStepOutcome {
-  const { report, step, index, workspaceId, tookMs, shot } = props;
+  const { report, step, index, workspaceId, tookMs, at, shot } = props;
 
   return {
     workspaceId,
@@ -26,6 +27,7 @@ export function outcomeOfReport(props: {
     title: report.title,
     severity: report.severity,
     tookMs,
+    at,
     screenshot: shot?.dataUrl ?? null,
     shotFile: shot?.file ?? null,
   };

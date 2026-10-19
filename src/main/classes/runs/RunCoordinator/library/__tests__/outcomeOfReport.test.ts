@@ -23,7 +23,7 @@ const REPORT = {
 };
 
 describe('outcomeOfReport', () => {
-  it('files the verdict with the step it belongs to and how long it took', () => {
+  it('files the verdict with the step it belongs to, how long it took and when it came', () => {
     expect(
       outcomeOfReport({
         report: REPORT,
@@ -31,6 +31,7 @@ describe('outcomeOfReport', () => {
         index: 5,
         workspaceId: 'w1',
         tookMs: 4200,
+        at: 1_760_000_004_200,
         shot: null,
       }),
     ).toMatchObject({
@@ -42,6 +43,7 @@ describe('outcomeOfReport', () => {
       title: 'Coupon SAVE10 does not change the total',
       severity: 'high',
       tookMs: 4200,
+      at: 1_760_000_004_200,
     });
   });
 
@@ -53,6 +55,7 @@ describe('outcomeOfReport', () => {
         index: 5,
         workspaceId: 'w1',
         tookMs: 0,
+        at: 1_760_000_000_000,
         shot: { file: '/runs/step-6.jpg', dataUrl: 'data:image/jpeg;base64,AA' },
       }),
     ).toMatchObject({

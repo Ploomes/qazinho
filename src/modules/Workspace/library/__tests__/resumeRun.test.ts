@@ -129,6 +129,7 @@ describe('resumeRun', () => {
       severity: 'low' as const,
       expected: 'One price',
       got: 'Two prices',
+      at: 1_760_000_000_000,
       screenshot: null,
       shotFile: null,
     };

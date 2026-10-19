@@ -87,6 +87,7 @@ export function makeOutcome(props: {
     title: verdict === 'failed' ? 'Nothing happens on submit' : '',
     severity: 'high',
     tookMs: 2_000,
+    at: 1_760_000_000_000 + (index + 1) * 2_000,
     screenshot:
       verdict === 'skipped' ? null : `data:image/jpeg;base64,shot-${String(index)}`,
     shotFile: verdict === 'skipped' ? null : `/tmp/qazinho/step-${String(index + 1)}.jpg`,

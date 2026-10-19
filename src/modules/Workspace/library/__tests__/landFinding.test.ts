@@ -12,6 +12,7 @@ const FINDING: IRunFinding = {
   severity: 'medium',
   expected: 'One yearly price',
   got: '$20.49 on the page, $20.40 on the phone',
+  at: 1_760_000_003_000,
   screenshot: 'data:image/jpeg;base64,finding',
   shotFile: '/tmp/qazinho/finding-2-1.jpg',
 };

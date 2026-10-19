@@ -7,8 +7,9 @@ export function unwalkedOutcome(props: {
   workspaceId: string;
   verdict: 'skipped' | 'blocked';
   why: string;
+  at: number;
 }): IStepOutcome {
-  const { step, index, workspaceId, verdict, why } = props;
+  const { step, index, workspaceId, verdict, why, at } = props;
 
   return {
     workspaceId,
@@ -23,6 +24,7 @@ export function unwalkedOutcome(props: {
     title: '',
     severity: 'medium',
     tookMs: 0,
+    at,
     screenshot: null,
     shotFile: null,
   };

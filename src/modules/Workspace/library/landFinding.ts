@@ -26,6 +26,7 @@ export function landFinding(props: {
     title: finding.title,
     severity: finding.severity,
     tookMs: 0,
+    at: finding.at,
     screenshot: finding.screenshot,
     shotFile: finding.shotFile,
   };

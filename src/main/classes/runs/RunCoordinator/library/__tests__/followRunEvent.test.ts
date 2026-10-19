@@ -81,6 +81,7 @@ describe('followRunEvent', () => {
       severity: 'medium' as const,
       expected: 'One price',
       got: '$20.49 and $20.40',
+      at: 1_760_000_000_000,
       screenshot: null,
       shotFile: null,
     };

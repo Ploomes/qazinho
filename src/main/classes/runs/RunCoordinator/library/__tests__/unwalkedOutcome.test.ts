@@ -14,17 +14,19 @@ const STEP = {
 };
 
 describe('unwalkedOutcome', () => {
-  it('a step the run never walked says so instead of passing', () => {
+  it('a step the run never walked says so instead of passing, at the time it was given up', () => {
     const outcome = unwalkedOutcome({
       step: STEP,
       index: 4,
       workspaceId: 'w-1',
       verdict: 'skipped',
       why: UNWALKED.skipped,
+      at: 1_760_000_000_000,
     });
 
     expect(outcome.verdict).toBe('skipped');
     expect(outcome.why).toContain('did not hold up');
+    expect(outcome.at).toBe(1_760_000_000_000);
   });
 
   it('a step the agent never reported is blocked, not passed', () => {
@@ -35,6 +37,7 @@ describe('unwalkedOutcome', () => {
         workspaceId: 'w-1',
         verdict: 'blocked',
         why: UNWALKED.unreported,
+        at: 1_760_000_000_000,
       }).verdict,
     ).toBe('blocked');
   });
@@ -47,6 +50,7 @@ describe('unwalkedOutcome', () => {
         workspaceId: 'w-1',
         verdict: 'skipped',
         why: '',
+        at: 1_760_000_000_000,
       }),
     ).toMatchObject({
       workspaceId: 'w-1',
