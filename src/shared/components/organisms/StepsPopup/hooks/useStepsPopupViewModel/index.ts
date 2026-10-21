@@ -10,6 +10,9 @@ import { MOTION } from '@/shared/constants';
 export const useStepsPopupViewModel = (props: IStepsPopupProps) => {
   const { tone, onCancel, onClose } = props;
   const [code, setCode] = useState('');
+  const [copied, setCopied] = useState<string | null>(null);
+  const { shownCode, page } = props;
+  const isShownCopied = shownCode !== null && copied === shownCode.code;
   const isWorking = tone === 'working';
   const isConnected = tone === 'connected';
 
@@ -71,6 +74,15 @@ export const useStepsPopupViewModel = (props: IStepsPopupProps) => {
 
       props.code.onSubmit(code.trim());
       setCode('');
+    },
+    shownCopyLabel: isShownCopied ? shownCode.copied : (shownCode?.copy ?? ''),
+    onCopyShown: () => {
+      if (shownCode === null) return;
+
+      void navigator.clipboard?.writeText(shownCode.code).catch(() => undefined);
+      setCopied(shownCode.code);
+
+      if (page !== null) window.open(page.url, '_blank', 'noreferrer');
     },
     onBackdrop: () => {
       if (!isWorking) onClose();

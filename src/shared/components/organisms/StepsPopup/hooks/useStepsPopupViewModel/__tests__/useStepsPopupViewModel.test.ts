@@ -23,6 +23,7 @@ function popup(tone: StepsTone, extra: Partial<IStepsPopupProps> = {}) {
     page: null,
     detail: null,
     code: null,
+    shownCode: null,
     actions: [],
     onCancel: vi.fn(),
     onClose: vi.fn(),
@@ -40,6 +41,7 @@ function press(key: string) {
 
 afterEach(() => {
   vi.useRealTimers();
+  vi.restoreAllMocks();
 });
 
 describe('useStepsPopupViewModel', () => {
@@ -105,6 +107,56 @@ describe('useStepsPopupViewModel', () => {
 
       expect(result.current.canSendCode).toBe(false);
       expect(onSubmit).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('onCopyShown', () => {
+    const SHOWN = {
+      code: 'AA0B-11E8',
+      label: 'Your one-time code',
+      copy: 'Copy and open GitHub',
+      copied: 'Copied',
+    };
+
+    it('copies the code, opens its page, and says so on the button', () => {
+      const writeText = vi.fn().mockResolvedValue(undefined);
+      const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+
+      Object.defineProperty(navigator, 'clipboard', {
+        value: { writeText },
+        configurable: true,
+      });
+
+      const { result } = popup('working', {
+        shownCode: SHOWN,
+        page: { url: 'https://github.com/login/device', label: 'Open again' },
+      });
+
+      expect(result.current.shownCopyLabel).toBe('Copy and open GitHub');
+
+      act(() => {
+        result.current.onCopyShown();
+      });
+
+      expect(writeText).toHaveBeenCalledWith('AA0B-11E8');
+      expect(open).toHaveBeenCalledWith(
+        'https://github.com/login/device',
+        '_blank',
+        'noreferrer',
+      );
+      expect(result.current.shownCopyLabel).toBe('Copied');
+    });
+
+    it('does NOT copy anything while there is no code to show', () => {
+      const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+      const { result } = popup('working');
+
+      act(() => {
+        result.current.onCopyShown();
+      });
+
+      expect(open).not.toHaveBeenCalled();
+      expect(result.current.shownCopyLabel).toBe('');
     });
   });
 

@@ -17,6 +17,8 @@ export const StepsPopup: React.FC<IStepsPopupProps> = (props) => {
     canSendCode,
     onCodeChange,
     onCodeSubmit,
+    shownCopyLabel,
+    onCopyShown,
     onBackdrop,
   } = useStepsPopupViewModel(props);
 
@@ -140,6 +142,34 @@ export const StepsPopup: React.FC<IStepsPopupProps> = (props) => {
             >
               <div className="steps-popup__hint">
                 <p className="steps-popup__hint-text">{props.hint}</p>
+                {props.shownCode !== null && (
+                  <div className="steps-popup__shown">
+                    <span className="steps-popup__code-label">
+                      {props.shownCode.label}
+                    </span>
+                    <span className="steps-popup__shown-row">
+                      <output className="steps-popup__shown-code">
+                        {props.shownCode.code}
+                      </output>
+                      <Button size="sm" variant="primary" onClick={onCopyShown}>
+                        <AnimatePresence mode="wait" initial={false}>
+                          <motion.span
+                            key={shownCopyLabel}
+                            initial={{ opacity: 0, y: 4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -4 }}
+                            transition={{
+                              duration: MOTION.durationFast,
+                              ease: MOTION.ease,
+                            }}
+                          >
+                            {shownCopyLabel}
+                          </motion.span>
+                        </AnimatePresence>
+                      </Button>
+                    </span>
+                  </div>
+                )}
                 {props.page !== null && (
                   <a
                     className="steps-popup__link"

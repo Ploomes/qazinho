@@ -286,3 +286,29 @@
   border-color: var(--lime);
   box-shadow: 0 0 0 3px var(--lime-soft);
 }
+
+.steps-popup__shown {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.steps-popup__shown-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.steps-popup__shown-code {
+  flex: 1;
+  padding: var(--space-3) var(--space-4);
+  border: 1px dashed var(--line2);
+  border-radius: var(--radius-md);
+  background: var(--raise);
+  color: var(--ink);
+  font: var(--font-mono-lg);
+  letter-spacing: var(--tag-tracking);
+  text-align: center;
+  user-select: all;
+}

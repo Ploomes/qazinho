@@ -12,6 +12,7 @@
   --font-mono-xs: 400 10px/1 var(--font-mono);
   --font-mono-sm: 400 11px/1 var(--font-mono);
   --font-mono-md: 500 12px/1 var(--font-mono);
+  --font-mono-lg: 600 18px/1 var(--font-mono);
   --font-mono-tag: 700 10px/1 var(--font-mono);
 
   --font-display-sm: 700 16px/1.3 var(--font-display);

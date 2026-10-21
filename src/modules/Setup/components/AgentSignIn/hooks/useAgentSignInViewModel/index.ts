@@ -105,6 +105,7 @@ export const useAgentSignInViewModel = (props: IAgentSignInProps) => {
             onSubmit: onCode,
           }
         : null,
+    shownCode: null,
     actions,
     onCancel,
     onClose,
