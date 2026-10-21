@@ -16,12 +16,11 @@ export const useRunActions = () => {
   const stop = useWorkspaceStore((state) => state.stopRun);
   const landRunFailed = useWorkspaceStore((state) => state.landRunFailed);
 
-  const opened = () => {
-    const { projects, selectedWorkspaceId } = useAppStore.getState();
+  const opened = (workspaceId: string | null) => {
+    const { projects } = useAppStore.getState();
     const workspace =
-      useWorkspaceStore
-        .getState()
-        .workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null;
+      useWorkspaceStore.getState().workspaces.find(({ id }) => id === workspaceId) ??
+      null;
     const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
 
     return {
@@ -30,46 +29,65 @@ export const useRunActions = () => {
     };
   };
 
+  const selectedId = () => useAppStore.getState().selectedWorkspaceId;
+
+  const runWorkspace = (workspaceId: string | null): string | null => {
+    const { workspace, target } = opened(workspaceId);
+    const steps = flattenPlanSteps(workspace?.plan ?? []);
+    const live = workspace?.live ?? null;
+
+    if (!workspace || steps.length === 0 || (live !== null && !live.isDone)) return null;
+
+    const runId = nextRunId(workspace);
+    const { agent, model } = useSettingsStore.getState();
+    const { agents } = useMachineStore.getState();
+
+    start({
+      workspaceId: workspace.id,
+      runId,
+      by: walkedByOf({ agent, model, targetKind: target?.kind ?? 'web', agents }),
+    });
+
+    if (target === null) {
+      landRunFailed({ workspaceId: workspace.id, text: t('RUN.NO_TARGET') });
+
+      return runId;
+    }
+
+    const viewport = viewportOf(workspace.viewportId);
+
+    Run.start({
+      workspaceId: workspace.id,
+      agentId: agents.find(({ name }) => name === agent)?.id ?? 'claude-code',
+      model,
+      target: { kind: target.kind, value: target.value },
+      runId,
+      steps,
+      language: useSettingsStore.getState().language,
+      viewport: { width: viewport.width, height: viewport.height },
+      pixelRatio: window.devicePixelRatio,
+    });
+
+    return runId;
+  };
+
+  const stopWorkspace = (workspaceId: string | null): void => {
+    const { workspace } = opened(workspaceId);
+
+    if (!workspace?.live || workspace.live.isDone) return;
+
+    stop(workspace.id);
+    Run.stop(workspace.id);
+  };
+
   return {
+    runWorkspace,
+    stopWorkspace,
     onRun: () => {
-      const { workspace, target } = opened();
-      const steps = flattenPlanSteps(workspace?.plan ?? []);
-      const live = workspace?.live ?? null;
-
-      if (!workspace || steps.length === 0 || (live !== null && !live.isDone)) return;
-
-      const runId = nextRunId(workspace);
-      const { agent, model } = useSettingsStore.getState();
-      const { agents } = useMachineStore.getState();
-
-      start({
-        workspaceId: workspace.id,
-        runId,
-        by: walkedByOf({ agent, model, targetKind: target?.kind ?? 'web', agents }),
-      });
-
-      if (target === null) {
-        landRunFailed({ workspaceId: workspace.id, text: t('RUN.NO_TARGET') });
-
-        return;
-      }
-
-      const viewport = viewportOf(workspace.viewportId);
-
-      Run.start({
-        workspaceId: workspace.id,
-        agentId: agents.find(({ name }) => name === agent)?.id ?? 'claude-code',
-        model,
-        target: { kind: target.kind, value: target.value },
-        runId,
-        steps,
-        language: useSettingsStore.getState().language,
-        viewport: { width: viewport.width, height: viewport.height },
-        pixelRatio: window.devicePixelRatio,
-      });
+      runWorkspace(selectedId());
     },
     onPause: () => {
-      const { workspace } = opened();
+      const { workspace } = opened(selectedId());
 
       if (!workspace?.live) return;
 
@@ -77,12 +95,7 @@ export const useRunActions = () => {
       Run.setPaused({ workspaceId: workspace.id, isPaused: workspace.live.isRunning });
     },
     onStop: () => {
-      const { workspace } = opened();
-
-      if (!workspace?.live || workspace.live.isDone) return;
-
-      stop(workspace.id);
-      Run.stop(workspace.id);
+      stopWorkspace(selectedId());
     },
   };
 };

@@ -129,6 +129,66 @@ describe('useRunActions', () => {
     });
   });
 
+  describe('runWorkspace', () => {
+    it('runs a workspace that is not the one open, and says the run it started', () => {
+      const { startRunCall } = bridge();
+
+      useWorkspaceStore.setState({
+        workspaces: [makeWorkspace(), { ...makeWorkspace(), id: 'w2', name: 'Login' }],
+      });
+
+      const { result } = renderHook(() => useRunActions());
+      let runId: string | null = null;
+
+      act(() => {
+        runId = result.current.runWorkspace('w2');
+      });
+
+      expect(runId).toBe('r-01');
+      expect(startRunCall).toHaveBeenCalledWith(
+        expect.objectContaining({ workspaceId: 'w2' }),
+      );
+    });
+
+    it('starts nothing, and says so, for a workspace with no plan or one that is not there', () => {
+      const { startRunCall } = bridge();
+
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace([])] });
+
+      const { result } = renderHook(() => useRunActions());
+
+      expect(result.current.runWorkspace('w1')).toBeNull();
+      expect(result.current.runWorkspace('w9')).toBeNull();
+      expect(startRunCall).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('stopWorkspace', () => {
+    it('stops the run of a workspace that is not the one open', () => {
+      const { stopRunCall } = bridge();
+
+      useAppStore.setState({ selectedWorkspaceId: null });
+      useWorkspaceStore.setState({
+        workspaces: [
+          startRun({
+            workspace: makeWorkspace(),
+            startedAt: '09:41',
+            runId: 'r-01',
+            by: WALKED_BY,
+          }),
+        ],
+      });
+
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.stopWorkspace('w1');
+      });
+
+      expect(stopRunCall).toHaveBeenCalledWith('w1');
+    });
+  });
+
   /**
    * The keybinds hold these actions at the root of the app. They read the workspace when they
    * are used, so a run's clock never renders the whole app again.
