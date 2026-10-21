@@ -1,0 +1,58 @@
+.moment-tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ink2);
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.moment-tile:hover {
+  color: var(--ink);
+}
+
+.moment-tile__screen {
+  position: relative;
+  display: block;
+  width: var(--moment-width);
+  height: var(--moment-height);
+  overflow: hidden;
+  border: 1px solid var(--line2);
+  border-radius: var(--radius-xs);
+  background: var(--screen);
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.moment-tile:hover .moment-tile__screen {
+  border-color: var(--lime);
+}
+
+.moment-tile__frame {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.moment-tile__play {
+  position: absolute;
+  right: var(--space-2);
+  bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-6);
+  height: var(--space-6);
+  border-radius: var(--radius-pill);
+  background: var(--lime);
+  color: var(--on-lime);
+  font: var(--font-mono-xs);
+}
+
+.moment-tile__label {
+  font: var(--font-ui-xs);
+}

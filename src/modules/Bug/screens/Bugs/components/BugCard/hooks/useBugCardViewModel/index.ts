@@ -1,6 +1,8 @@
 import type { IBugCardProps } from '@/modules/Bug/screens/Bugs/components/BugCard/types';
+import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SEVERITY_KEYS } from '@/modules/Bug/constants';
+import { BUG_CARD } from '@/modules/Bug/screens/Bugs/components/BugCard/constants';
 import { useAppStore } from '@/store';
 
 export const useBugCardViewModel = (props: IBugCardProps) => {
@@ -41,6 +43,11 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
           ]),
     ],
     shots,
+    moment: props.moment,
+    shotsStyle: {
+      '--moment-width': `${String(BUG_CARD.momentWidthPx)}px`,
+      '--moment-height': `${String(BUG_CARD.momentHeightPx)}px`,
+    } as CSSProperties,
     hasRun: props.hasRun,
     onHeadClick: () => {
       onToggle(bug.id);

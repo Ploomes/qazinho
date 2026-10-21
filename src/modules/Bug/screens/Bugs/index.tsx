@@ -47,11 +47,12 @@ export const Bugs: React.FC = () => {
       </div>
 
       <div className="bugs__list">
-        {bugs.map(({ bug, hasRun }) => (
+        {bugs.map(({ bug, hasRun, moment }) => (
           <BugCard
             key={bug.id}
             bug={bug}
             hasRun={hasRun}
+            moment={moment}
             isOpen={openBugId === bug.id}
             onToggle={onToggleBug}
             onOpenRun={onOpenRun}

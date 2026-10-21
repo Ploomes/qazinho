@@ -2,6 +2,7 @@ import type { IBugCardProps } from './types';
 import { useTranslation } from 'react-i18next';
 import { Button, Eyebrow } from '@/shared/components/atoms';
 import { ExpectedGot, MetaGrid, Screenshot } from '@/shared/components/molecules';
+import { MomentTile } from './components';
 import { useBugCardViewModel } from './hooks';
 import './styles.css';
 
@@ -12,6 +13,8 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
     severity,
     meta,
     shots,
+    moment,
+    shotsStyle,
     hasRun,
     onHeadClick,
     onOpenRunClick,
@@ -52,7 +55,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
 
           <div>
             <Eyebrow>{t('BUG.SCREENSHOTS')}</Eyebrow>
-            <div className="bug-card__shots">
+            <div className="bug-card__shots" style={shotsStyle}>
               {shots.map((shot) => (
                 <Screenshot
                   key={shot.label}
@@ -66,6 +69,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
                   }}
                 />
               ))}
+              {moment !== null && <MomentTile bugId={bug.id} moment={moment} />}
             </div>
           </div>
 

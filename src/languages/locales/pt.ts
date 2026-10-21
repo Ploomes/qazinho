@@ -226,6 +226,7 @@ export const pt: typeof en = {
     FAILED_OTHER: 'A run parou: {{said}}',
   },
   BUG: {
+    WATCH_MOMENT: 'Ver o momento',
     EMPTY_TITLE: 'Nenhum bug ainda.',
     EMPTY_BODY:
       'Todo passo que falhou e que o agente consegue explicar aparece aqui, com a evidência junto.',

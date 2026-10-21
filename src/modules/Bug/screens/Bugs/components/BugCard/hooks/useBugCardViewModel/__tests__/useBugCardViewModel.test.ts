@@ -15,6 +15,7 @@ const PROPS = {
   bug: BUG,
   isOpen: false,
   hasRun: true,
+  moment: null,
   onToggle: vi.fn(),
   onOpenRun: vi.fn(),
   onOpenCase: vi.fn(),
@@ -133,5 +134,13 @@ describe('useBugCardViewModel', () => {
       renderHook(() => useBugCardViewModel({ ...PROPS, bug: { ...BUG, body: '' } }))
         .result.current.hasBody,
     ).toBe(false);
+  });
+
+  it('hands the card the moment of the run video it was caught in, to show beside its screenshots', () => {
+    const moment = { workspaceId: 'w1', runId: 'r-01', atMs: 9_500 };
+    const { result } = renderHook(() => useBugCardViewModel({ ...PROPS, moment }));
+
+    expect(result.current.moment).toEqual(moment);
+    expect(renderHook(() => useBugCardViewModel(PROPS)).result.current.moment).toBeNull();
   });
 });

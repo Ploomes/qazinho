@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { i18n } from '@/languages';
 import { useBugsViewModel } from '@/modules/Bug/screens/Bugs/hooks/useBugsViewModel';
-import { walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
+import { recordedRun, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 const WORKSPACE = walkRun({
@@ -120,5 +120,23 @@ describe('useBugsViewModel', () => {
 
       expect(useWorkspaceStore.getState().openBugId).toBeNull();
     });
+  });
+
+  it("places a bug in its run's video, a moment that the card can show", () => {
+    useWorkspaceStore.setState({ workspaces: [recordedRun()] });
+
+    const { result } = renderHook(() => useBugsViewModel());
+
+    expect(result.current.bugs[0]?.moment).toEqual({
+      workspaceId: 'w1',
+      runId: 'r-01',
+      atMs: 9_500,
+    });
+  });
+
+  it('has no moment to show for a bug whose run has no video', () => {
+    const { result } = renderHook(() => useBugsViewModel());
+
+    expect(result.current.bugs[0]?.moment).toBeNull();
   });
 });

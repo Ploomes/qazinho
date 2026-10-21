@@ -222,6 +222,7 @@ export const en = {
     FAILED_OTHER: 'The run stopped: {{said}}',
   },
   BUG: {
+    WATCH_MOMENT: 'Watch the moment',
     EMPTY_TITLE: 'No bugs yet.',
     EMPTY_BODY:
       'Every failed step the agent can explain shows up here, with its evidence attached.',

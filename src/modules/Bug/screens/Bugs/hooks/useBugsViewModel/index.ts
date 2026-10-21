@@ -6,6 +6,7 @@ import { useWorkspaceStore } from '@/store';
 export const useBugsViewModel = () => {
   const { t } = useTranslation();
   const workspace = useSelectedWorkspacePart((opened) => ({
+    id: opened.id,
     bugs: opened.bugs,
     runs: opened.runs,
   }));
@@ -17,7 +18,7 @@ export const useBugsViewModel = () => {
   const selectRun = useWorkspaceStore((state) => state.selectRun);
 
   const bugs = workspace?.bugs ?? [];
-  const runIds = new Set((workspace?.runs ?? []).map(({ id }) => id));
+  const runs = workspace?.runs ?? [];
   const shown =
     bugFilter === 'all' ? bugs : bugs.filter(({ severity }) => severity === bugFilter);
 
@@ -31,7 +32,23 @@ export const useBugsViewModel = () => {
   };
 
   return {
-    bugs: shown.map((bug) => ({ bug, hasRun: runIds.has(bug.runId) })),
+    bugs: shown.map((bug) => {
+      const run = runs.find(({ id }) => id === bug.runId);
+      const video = run?.video ?? null;
+
+      return {
+        bug,
+        hasRun: run !== undefined,
+        moment:
+          workspace === null || video === null || bug.at === null
+            ? null
+            : {
+                workspaceId: workspace.id,
+                runId: bug.runId,
+                atMs: Math.max(0, bug.at - video.startedAt),
+              },
+      };
+    }),
     openBugId,
     filters: BUG_FILTERS.map((id) => ({
       id,
