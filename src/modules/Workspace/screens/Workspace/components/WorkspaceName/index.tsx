@@ -1,5 +1,6 @@
 import type { IWorkspaceNameProps } from './types';
 import { useTranslation } from 'react-i18next';
+import { Icon } from '@/shared/components/atoms';
 import { WORKSPACE_NAME } from './constants';
 import { useWorkspaceNameViewModel } from './hooks';
 import './styles.css';
@@ -31,20 +32,9 @@ export const WorkspaceName: React.FC<IWorkspaceNameProps> = (props) => {
         onClick={onStart}
       >
         <span className="workspace-name__text">{props.name}</span>
-        <svg
-          className="workspace-name__pencil"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          {WORKSPACE_NAME.pencil.map((path) => (
-            <path key={path} d={path} />
-          ))}
-        </svg>
+        <span className="workspace-name__pencil">
+          <Icon name="edit" size={15} />
+        </span>
       </button>
     </h1>
   );

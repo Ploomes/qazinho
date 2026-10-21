@@ -101,12 +101,6 @@ describe('useBugCardViewModel', () => {
     expect(result.current.meta[3]?.value).toBe('3 runs in a row');
   });
 
-  it('turns the caret down once the card is open', () => {
-    const { result } = renderHook(() => useBugCardViewModel({ ...PROPS, isOpen: true }));
-
-    expect(result.current.caret).toBe('▾');
-  });
-
   it('opens the run the bug was caught in', () => {
     const onOpenRun = vi.fn();
     const { result } = renderHook(() => useBugCardViewModel({ ...PROPS, onOpenRun }));

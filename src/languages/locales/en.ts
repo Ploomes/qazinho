@@ -319,7 +319,7 @@ export const en = {
     STEPS: 'steps',
     STEPS_PROGRESS: '{{done}} of {{total}}',
     STEPS_EMPTY: 'Hit Run plan and the steps show up here, one at a time.',
-    RAIL: '|← device',
+    RAIL: 'device',
     LIVE: 'live · {{elapsed}}',
     LIVE_COST: 'live · {{elapsed}} · {{cost}}',
     HIDE: 'Hide the device',

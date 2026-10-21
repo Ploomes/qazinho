@@ -321,7 +321,7 @@ export const pt: typeof en = {
     STEPS: 'passos',
     STEPS_PROGRESS: '{{done}} de {{total}}',
     STEPS_EMPTY: 'Aperte Rodar plano e os passos aparecem aqui, um de cada vez.',
-    RAIL: '|← device',
+    RAIL: 'device',
     LIVE: 'ao vivo · {{elapsed}}',
     LIVE_COST: 'ao vivo · {{elapsed}} · {{cost}}',
     HIDE: 'Esconder o device',

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Eyebrow,
+  Icon,
   IconButton,
   Intern,
   StatusPill,
@@ -81,7 +82,8 @@ export const DevicePanel: React.FC = () => {
             exit={{ opacity: 0, transition: { duration: MOTION.durationFast } }}
             onClick={onToggle}
           >
-            {t('DEVICE.RAIL')}
+            <Icon name="reveal" />
+            <span>{t('DEVICE.RAIL')}</span>
           </motion.button>
         )}
 
@@ -127,7 +129,7 @@ export const DevicePanel: React.FC = () => {
                         transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
                       >
                         <Button size="sm" variant="secondary" onClick={onFocus}>
-                          <span aria-hidden="true">⤢</span>
+                          <Icon name="focus" />
                           <span className={focusLabelClassName}>{focusLabel}</span>
                         </Button>
                       </motion.span>

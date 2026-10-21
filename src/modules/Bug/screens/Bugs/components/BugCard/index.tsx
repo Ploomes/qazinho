@@ -1,6 +1,6 @@
 import type { IBugCardProps } from './types';
 import { useTranslation } from 'react-i18next';
-import { Button, Eyebrow } from '@/shared/components/atoms';
+import { Button, Caret, Eyebrow } from '@/shared/components/atoms';
 import { ExpectedGot, MetaGrid, Screenshot } from '@/shared/components/molecules';
 import { MomentTile } from './components';
 import { useBugCardViewModel } from './hooks';
@@ -8,7 +8,6 @@ import './styles.css';
 
 export const BugCard: React.FC<IBugCardProps> = (props) => {
   const {
-    caret,
     hasBody,
     severity,
     meta,
@@ -41,7 +40,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
         )}
         {bug.isNew && <span className="bug-card__new">{t('BUG.JUST_CAUGHT')}</span>}
         <span className="bug-card__id">{severity}</span>
-        <span aria-hidden="true">{caret}</span>
+        <Caret isOpen={props.isOpen} />
       </button>
 
       {props.isOpen && (

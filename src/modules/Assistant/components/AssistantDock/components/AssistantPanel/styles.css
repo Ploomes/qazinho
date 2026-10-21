@@ -98,7 +98,7 @@
   font: var(--font-mono-sm);
 }
 
-.assistant-panel__tool-glyph {
+.assistant-panel__tool-icon {
   display: grid;
   flex: none;
   place-items: center;
@@ -106,7 +106,7 @@
   height: var(--space-4);
 }
 
-.assistant-panel__tool--doing .assistant-panel__tool-glyph::before {
+.assistant-panel__tool--doing .assistant-panel__tool-icon::before {
   width: var(--space-3);
   height: var(--space-3);
   border-radius: var(--radius-pill);
@@ -119,11 +119,11 @@
   color: var(--ink2);
 }
 
-.assistant-panel__tool--done .assistant-panel__tool-glyph {
+.assistant-panel__tool--done .assistant-panel__tool-icon {
   color: var(--pass);
 }
 
-.assistant-panel__tool--failed .assistant-panel__tool-glyph,
+.assistant-panel__tool--failed .assistant-panel__tool-icon,
 .assistant-panel__tool-failed {
   color: var(--fail);
 }
@@ -296,7 +296,8 @@
   font: var(--font-ui-sm);
 }
 
-.assistant-panel__secret-glyph {
+.assistant-panel__secret-icon {
+  display: inline-flex;
   flex: none;
   color: var(--attn);
   font: var(--font-mono-md);

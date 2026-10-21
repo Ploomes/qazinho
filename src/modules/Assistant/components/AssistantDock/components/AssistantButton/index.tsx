@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { Intern } from '@/shared/components/atoms';
+import { Icon, Intern } from '@/shared/components/atoms';
 import { STICKER } from '@/shared/constants';
 import { FACE_SWAP } from './constants';
 import { useAssistantButtonViewModel } from './hooks';
@@ -41,7 +41,7 @@ export const AssistantButton: React.FC = () => {
             animate={FACE_SWAP.animate}
             exit={FACE_SWAP.exit}
           >
-            ✕
+            <Icon name="close" />
           </motion.span>
         ) : (
           <motion.span

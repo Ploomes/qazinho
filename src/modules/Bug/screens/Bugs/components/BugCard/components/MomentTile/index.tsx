@@ -1,4 +1,5 @@
 import type { IMomentTileProps } from './types';
+import { Icon } from '@/shared/components/atoms';
 import { useMomentTileViewModel } from './hooks';
 import './styles.css';
 
@@ -21,8 +22,8 @@ export const MomentTile: React.FC<IMomentTileProps> = (props) => {
             onLoadedMetadata={onLoadedMetadata}
           />
         )}
-        <span className="moment-tile__play" aria-hidden="true">
-          ▶
+        <span className="moment-tile__play">
+          <Icon name="play" />
         </span>
       </span>
       <span className="moment-tile__label">{label}</span>

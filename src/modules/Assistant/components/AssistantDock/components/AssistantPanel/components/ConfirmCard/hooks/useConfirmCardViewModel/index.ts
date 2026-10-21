@@ -42,8 +42,12 @@ export const useConfirmCardViewModel = (props: IConfirmCardProps) => {
         : message.decision === 'kept'
           ? t('ASSISTANT.KEPT')
           : t('ASSISTANT.EXPIRED'),
-    glyph:
-      message.decision === 'confirmed' ? '✓' : message.decision === 'kept' ? '↺' : '–',
+    icon:
+      message.decision === 'confirmed'
+        ? ('check' as const)
+        : message.decision === 'kept'
+          ? ('replay' as const)
+          : ('skip' as const),
     onGo: () => {
       if (isOpen) settleConfirm({ id: message.id, decision: 'confirmed' });
     },

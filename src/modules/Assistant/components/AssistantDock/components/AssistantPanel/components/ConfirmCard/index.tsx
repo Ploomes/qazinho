@@ -1,6 +1,6 @@
 import type { IConfirmCardProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
-import { Button } from '@/shared/components/atoms';
+import { Button, Icon } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { useConfirmCardViewModel } from './hooks';
 import './styles.css';
@@ -15,7 +15,7 @@ export const ConfirmCard: React.FC<IConfirmCardProps> = (props) => {
     isOpen,
     className,
     result,
-    glyph,
+    icon,
     onGo,
     onKeep,
   } = useConfirmCardViewModel(props);
@@ -48,7 +48,7 @@ export const ConfirmCard: React.FC<IConfirmCardProps> = (props) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
-            <span aria-hidden="true">{glyph}</span> {result}
+            <Icon name={icon} /> {result}
           </motion.span>
         )}
       </AnimatePresence>

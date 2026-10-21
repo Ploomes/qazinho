@@ -71,7 +71,12 @@ export const useBuildProgressViewModel = (props: IBuildProgressProps) => {
       return {
         step,
         className: `build-progress__step build-progress__step--${state}`,
-        glyph: state === 'done' ? '✓' : state === 'failed' ? '✕' : '',
+        icon:
+          state === 'done'
+            ? ('check' as const)
+            : state === 'failed'
+              ? ('close' as const)
+              : null,
         label:
           step === 'code'
             ? build.bytes > 0 && state === 'doing'

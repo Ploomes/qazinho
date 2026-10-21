@@ -1,5 +1,6 @@
 import type { IUndoToastProps } from './types';
 import { motion } from 'motion/react';
+import { Icon } from '@/shared/components/atoms';
 import { STICKER } from '@/shared/constants';
 import { useUndoToastViewModel } from './hooks';
 import './styles.css';
@@ -19,7 +20,7 @@ export const UndoToast: React.FC<IUndoToastProps> = (props) => {
     >
       <span className="undo-toast__text">{props.text}</span>
       <button type="button" className="undo-toast__undo" onClick={onUndoClick}>
-        <span aria-hidden="true">↩</span>
+        <Icon name="undo" />
         {props.actionLabel}
       </button>
       <span

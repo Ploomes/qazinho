@@ -58,7 +58,7 @@
   color: var(--ink2);
 }
 
-.build-progress__glyph {
+.build-progress__mark {
   display: grid;
   flex: none;
   place-items: center;
@@ -67,16 +67,16 @@
   font: var(--font-mono-sm);
 }
 
-.build-progress__step--done .build-progress__glyph {
+.build-progress__step--done .build-progress__mark {
   color: var(--pass);
 }
 
-.build-progress__step--failed .build-progress__glyph {
+.build-progress__step--failed .build-progress__mark {
   color: var(--fail);
 }
 
-.build-progress__step--waiting .build-progress__glyph::before,
-.build-progress__step--doing .build-progress__glyph::before {
+.build-progress__step--waiting .build-progress__mark::before,
+.build-progress__step--doing .build-progress__mark::before {
   width: var(--space-2);
   height: var(--space-2);
   border-radius: var(--radius-pill);
@@ -84,7 +84,7 @@
   content: '';
 }
 
-.build-progress__step--doing .build-progress__glyph::before {
+.build-progress__step--doing .build-progress__mark::before {
   width: var(--space-3);
   height: var(--space-3);
   background: var(--lime);

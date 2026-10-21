@@ -221,6 +221,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: var(--space-3);
   width: var(--device-rail);
   border-left: 1px solid var(--line2);
   background: var(--panel);

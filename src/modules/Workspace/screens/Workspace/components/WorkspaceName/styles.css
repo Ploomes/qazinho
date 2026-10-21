@@ -36,9 +36,8 @@
 }
 
 .workspace-name__pencil {
+  display: inline-flex;
   flex: none;
-  width: 15px;
-  height: 15px;
   color: var(--ink3);
   opacity: 0;
   transform: translateX(-4px);

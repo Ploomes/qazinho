@@ -6,7 +6,7 @@ import { BUG_CARD } from '@/modules/Bug/screens/Bugs/components/BugCard/constant
 import { useAppStore } from '@/store';
 
 export const useBugCardViewModel = (props: IBugCardProps) => {
-  const { bug, isOpen, onToggle } = props;
+  const { bug, onToggle } = props;
   const { t } = useTranslation();
   const openMedia = useAppStore((state) => state.openMedia);
 
@@ -17,7 +17,6 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
   }));
 
   return {
-    caret: isOpen ? '▾' : '▸',
     hasBody: bug.body.length > 0,
     severity: t(SEVERITY_KEYS[bug.severity]),
     meta: [

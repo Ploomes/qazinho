@@ -80,7 +80,7 @@ describe('useConfirmCardViewModel', () => {
       expect(result.current).toMatchObject({
         isOpen: false,
         result: 'Deleted',
-        glyph: '✓',
+        icon: 'check',
       });
     });
 

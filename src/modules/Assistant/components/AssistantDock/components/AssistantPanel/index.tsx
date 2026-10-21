@@ -1,6 +1,13 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { BuildProgress } from '@/modules/Build';
-import { Button, Chip, IconButton, Intern, Markdown } from '@/shared/components/atoms';
+import {
+  Button,
+  Chip,
+  Icon,
+  IconButton,
+  Intern,
+  Markdown,
+} from '@/shared/components/atoms';
 import { MOTION, STICKER } from '@/shared/constants';
 import { ConfirmCard } from './components';
 import { useAssistantPanelViewModel } from './hooks';
@@ -134,8 +141,8 @@ export const AssistantPanel: React.FC = () => {
               {row.kind === 'agent' && <Markdown>{row.text}</Markdown>}
               {row.kind === 'tool' && (
                 <span className={row.className}>
-                  <span className="assistant-panel__tool-glyph" aria-hidden="true">
-                    {row.glyph}
+                  <span className="assistant-panel__tool-icon">
+                    {row.icon !== null && <Icon name={row.icon} />}
                   </span>
                   <span className="assistant-panel__tool-text">{row.text}</span>
                   {row.failed !== '' && (
@@ -192,8 +199,8 @@ export const AssistantPanel: React.FC = () => {
           >
             <div className="assistant-panel__secret-body">
               <span className="assistant-panel__secret-text">
-                <span className="assistant-panel__secret-glyph" aria-hidden="true">
-                  !
+                <span className="assistant-panel__secret-icon">
+                  <Icon name="attention" />
                 </span>
                 {secretWarning}
               </span>
@@ -233,7 +240,7 @@ export const AssistantPanel: React.FC = () => {
               transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
             >
               <Button size="sm" variant="secondary" onClick={onStop}>
-                <span aria-hidden="true">■</span> {stopLabel}
+                <Icon name="stop" /> {stopLabel}
               </Button>
             </motion.span>
           ) : (

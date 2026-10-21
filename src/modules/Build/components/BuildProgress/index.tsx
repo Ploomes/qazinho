@@ -1,6 +1,6 @@
 import type { IBuildProgressProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
-import { Button, Intern } from '@/shared/components/atoms';
+import { Button, Icon, Intern } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { useBuildProgressViewModel } from './hooks';
 import './styles.css';
@@ -22,8 +22,8 @@ export const BuildProgress: React.FC<IBuildProgressProps> = (props) => {
       <ol className="build-progress__steps">
         {view.steps.map((step) => (
           <li key={step.step} className={step.className}>
-            <span className="build-progress__glyph" aria-hidden="true">
-              {step.glyph}
+            <span className="build-progress__mark">
+              {step.icon !== null && <Icon name={step.icon} />}
             </span>
             <span className="build-progress__label">{step.label}</span>
           </li>
@@ -65,7 +65,7 @@ export const BuildProgress: React.FC<IBuildProgressProps> = (props) => {
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
             <span className="build-progress__built-line">
-              <span aria-hidden="true">✓</span> {view.built}
+              <Icon name="check" /> {view.built}
             </span>
             {view.builtNote !== '' && (
               <span className="build-progress__note">{view.builtNote}</span>
@@ -89,7 +89,7 @@ export const BuildProgress: React.FC<IBuildProgressProps> = (props) => {
         <div className="build-progress__actions">
           {view.isWorking && (
             <Button size="sm" variant="secondary" onClick={view.onStop}>
-              <span aria-hidden="true">■</span> {view.stopLabel}
+              <Icon name="stop" /> {view.stopLabel}
             </Button>
           )}
           {view.canRetry && (

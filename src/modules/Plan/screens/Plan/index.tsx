@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, Reorder } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Button, EmptyState, IconButton } from '@/shared/components/atoms';
+import { Button, EmptyState, Icon, IconButton } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { PlanCase, UndoToast } from './components';
 import { usePlanViewModel } from './hooks';
@@ -109,7 +109,7 @@ export const Plan: React.FC = () => {
 
           {isLocked && (
             <div className="plan__locked">
-              <span aria-hidden="true">🔒</span>
+              <Icon name="lock" />
               {lockedLabel}
             </div>
           )}
@@ -141,7 +141,7 @@ export const Plan: React.FC = () => {
 
           {!isLocked && (
             <button type="button" className="plan__add" onClick={onAddCase}>
-              <span aria-hidden="true">+</span>
+              <Icon name="plus" />
               {t('PLAN.ADD_CASE')}
             </button>
           )}
