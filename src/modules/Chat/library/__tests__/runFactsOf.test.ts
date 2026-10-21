@@ -7,11 +7,14 @@ const RUN = walkRun({
   isFinished: true,
 }).runs[0]!;
 
+/** The fixture's first step began at 1_760_000_000_000, read on the clock the tests run under. */
+const DAY = new Date(1_760_000_000_000).toLocaleDateString('sv-SE');
+
 describe('runFactsOf', () => {
   it('reads a run step by step, with how it ended', () => {
     const facts = runFactsOf({ run: RUN, isBrief: false });
 
-    expect(facts[0]).toBe('started 09:41, took 0s, walked the whole plan');
+    expect(facts[0]).toBe(`started ${DAY} at 09:41, took 0s, walked the whole plan`);
     expect(facts[1]).toBe('cases: 1 passed, 1 failed, 0 blocked, 0 skipped');
     expect(facts[2]).toBe('steps: 4 passed, 1 failed, 0 blocked, 1 skipped');
     expect(facts).toContain('  step 1 passed: Open the target URL');
@@ -22,7 +25,21 @@ describe('runFactsOf', () => {
 
   it('says what the run cost when its agent said', () => {
     expect(runFactsOf({ run: { ...RUN, costUsd: 0.0412 }, isBrief: false })[0]).toBe(
-      'started 09:41, took 0s, cost $0.041, walked the whole plan',
+      `started ${DAY} at 09:41, took 0s, cost $0.041, walked the whole plan`,
+    );
+  });
+
+  it('gives only the time of a run whose steps kept no time', () => {
+    const untimed = {
+      ...RUN,
+      cases: RUN.cases.map((runCase) => ({
+        ...runCase,
+        steps: runCase.steps.map((step) => ({ ...step, span: null })),
+      })),
+    };
+
+    expect(runFactsOf({ run: untimed, isBrief: false })[0]).toBe(
+      'started 09:41, took 0s, walked the whole plan',
     );
   });
 

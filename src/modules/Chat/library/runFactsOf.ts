@@ -1,5 +1,5 @@
 import type { IRun } from '@/modules/Run';
-import { caseVerdict } from '@/modules/Run/library';
+import { caseVerdict, runDayOf } from '@/modules/Run/library';
 
 const ENDINGS = {
   finished: 'walked the whole plan',
@@ -19,9 +19,10 @@ function tallyOf(verdicts: string[]): string {
 export function runFactsOf(props: { run: IRun; isBrief: boolean }): string[] {
   const { run, isBrief } = props;
   const cost = run.costUsd === null ? '' : `, cost $${run.costUsd.toFixed(3)}`;
+  const day = runDayOf(run);
 
   return [
-    `started ${run.startedAt}, took ${String(run.durationSec)}s${cost}, ${ENDINGS[run.endedBy]}`,
+    `started ${day === null ? '' : `${day} at `}${run.startedAt}, took ${String(run.durationSec)}s${cost}, ${ENDINGS[run.endedBy]}`,
     `cases: ${tallyOf(run.cases.map((runCase) => caseVerdict(runCase.steps)))}`,
     `steps: ${String(run.counts.passed)} passed, ${String(run.counts.failed)} failed, ${String(run.counts.blocked)} blocked, ${String(run.counts.skipped)} skipped`,
     ...run.cases.flatMap((runCase) => {
