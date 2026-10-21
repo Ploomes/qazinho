@@ -39,6 +39,26 @@ describe('useModalFrameViewModel', () => {
     expect(onConfirm).not.toHaveBeenCalled();
   });
 
+  it('lays the body out alone when it has no nav', () => {
+    const { result } = renderHook(() => useModalFrameViewModel(PROPS));
+
+    expect(result.current.isBeside).toBe(false);
+    expect(result.current.panelStyle).toMatchObject({ width: 740, height: undefined });
+  });
+
+  it('puts the body beside a nav, at the height asked for, so its sections do not jump', () => {
+    const { result } = renderHook(() =>
+      useModalFrameViewModel({ ...PROPS, nav: 'sections', height: 640 }),
+    );
+
+    expect(result.current.isBeside).toBe(true);
+    expect(result.current.panelStyle).toMatchObject({
+      width: 740,
+      height: 640,
+      '--modal-nav-width': '184px',
+    });
+  });
+
   it('closes on Escape, the way every modal in the app does', () => {
     const onCancel = vi.fn();
     renderHook(() => useModalFrameViewModel({ ...PROPS, onCancel }));

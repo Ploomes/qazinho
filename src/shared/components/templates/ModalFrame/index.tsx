@@ -7,7 +7,7 @@ import { useModalFrameViewModel } from './hooks';
 import './styles.css';
 
 export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
-  const { onConfirmClick } = useModalFrameViewModel(props);
+  const { isBeside, panelStyle, onConfirmClick } = useModalFrameViewModel(props);
   const { t } = useTranslation();
 
   return (
@@ -21,7 +21,7 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
     >
       <motion.div
         className="modal-frame__panel"
-        style={{ width: props.width }}
+        style={panelStyle}
         initial={STICKER.panel.initial}
         animate={STICKER.panel.animate}
         exit={STICKER.panel.exit}
@@ -34,7 +34,14 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
           <p className="modal-frame__subtitle">{props.subtitle}</p>
         </header>
 
-        <div className="modal-frame__body">{props.children}</div>
+        {isBeside ? (
+          <div className="modal-frame__split">
+            <div className="modal-frame__nav">{props.nav}</div>
+            <div className="modal-frame__beside">{props.children}</div>
+          </div>
+        ) : (
+          <div className="modal-frame__body">{props.children}</div>
+        )}
 
         <footer className="modal-frame__foot">
           {props.aside}

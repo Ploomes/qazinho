@@ -50,6 +50,31 @@
   scrollbar-gutter: stable;
 }
 
+.modal-frame__split {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  border-top: 1px solid var(--line2);
+}
+
+.modal-frame__nav {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: var(--modal-nav-width);
+  padding: var(--space-5) var(--space-4);
+  border-right: 1px solid var(--line2);
+  overflow-y: auto;
+}
+
+.modal-frame__beside {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
 .modal-frame__foot {
   display: flex;
   flex: none;
