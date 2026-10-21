@@ -146,7 +146,8 @@ answers one question per channel, for a target `{ role, platform }`:
   - The next run walks a case with a recipe on the device with no agent and checks each proof
     (`replayCase`): it costs nothing and takes seconds. When a proof does not show, the case
     starts over with the agent, which records it again, and its steps read as healed.
-  - "Run with the agent" walks every case with the agent. The report says "no AI" or
+  - "Run everything with the agent", in the run button's menu (`RunButton`), walks every case
+    with the agent; each way says in the menu what it does. The report says "no AI" or
     "healed" on each case, and `CodeExport` turns the recipes into a Playwright file or a
     Maestro flow per case. The chat's agent learns how the runs
     went from the history the next message carries (`runHistoryOf`): the latest run step by
