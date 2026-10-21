@@ -850,7 +850,7 @@ describe('useChatViewModel', () => {
 
       const { result } = renderHook(() => useChatViewModel());
 
-      expect(sectionOf(result.current)?.openLabel).toBe('Open in Runs →');
+      expect(sectionOf(result.current)?.openLabel).toBe('Open in Runs');
 
       act(() => {
         result.current.onOpenRun('r-01');

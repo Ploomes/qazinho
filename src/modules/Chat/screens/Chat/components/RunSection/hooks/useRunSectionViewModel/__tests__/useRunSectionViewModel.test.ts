@@ -31,10 +31,10 @@ describe('useRunSectionViewModel', () => {
 
       expect(onToggle).toHaveBeenCalledOnce();
       expect(section({ isExpanded: true })).toMatchObject({
-        caret: '▾',
+        hasCaret: true,
         isBodyShown: true,
       });
-      expect(section()).toMatchObject({ caret: '▸', isBodyShown: false });
+      expect(section()).toMatchObject({ hasCaret: true, isBodyShown: false });
     });
 
     it('does NOT open a run that said nothing in the chat', () => {
@@ -44,7 +44,7 @@ describe('useRunSectionViewModel', () => {
       view.onToggle();
 
       expect(onToggle).not.toHaveBeenCalled();
-      expect(view).toMatchObject({ caret: '', isBodyShown: false });
+      expect(view).toMatchObject({ hasCaret: false, isBodyShown: false });
     });
   });
 
@@ -55,7 +55,7 @@ describe('useRunSectionViewModel', () => {
 
   it('offers the report only once the run has one', () => {
     expect(section().hasOpen).toBe(false);
-    expect(section({ openLabel: 'Open in Runs →' }).hasOpen).toBe(true);
+    expect(section({ openLabel: 'Open in Runs' }).hasOpen).toBe(true);
   });
 
   it('marks the run that is still going', () => {

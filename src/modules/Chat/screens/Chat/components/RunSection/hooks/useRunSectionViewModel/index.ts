@@ -5,7 +5,7 @@ export const useRunSectionViewModel = (props: IRunSectionProps) => {
   const isBodyShown = props.isExpandable && props.isExpanded;
 
   return {
-    caret: props.isExpandable ? (props.isExpanded ? '▾' : '▸') : '',
+    hasCaret: props.isExpandable,
     facts: [props.facts, props.countLabel].filter((part) => part !== '').join(' · '),
     isBodyShown,
     hasOpen: props.openLabel !== null,

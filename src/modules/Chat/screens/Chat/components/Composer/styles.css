@@ -77,6 +77,10 @@
   box-shadow: 0 0 0 2px var(--lime-soft);
 }
 
+.composer__icon {
+  display: inline-flex;
+}
+
 .composer__send {
   display: flex;
   flex: none;

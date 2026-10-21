@@ -1,7 +1,7 @@
 import type { IQuestionRoundProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
-import { LOCK_ICON } from '@/modules/Project';
-import { Button, Eyebrow, Input } from '@/shared/components/atoms';
+import { Button, Caret, Eyebrow, Icon, Input } from '@/shared/components/atoms';
+import { MOTION } from '@/shared/constants';
 import { useQuestionRoundViewModel } from './hooks';
 import './styles.css';
 
@@ -11,7 +11,6 @@ export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
     style,
     eyebrow,
     summary,
-    caret,
     isAnswered,
     isExpanded,
     isBodyShown,
@@ -41,12 +40,12 @@ export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
           aria-expanded={isExpanded}
           onClick={onToggle}
         >
-          <span className="question-round__summary-mark" aria-hidden="true">
-            ✓
+          <span className="question-round__summary-mark">
+            <Icon name="check" />
           </span>
           <span className="question-round__summary-text">{summary}</span>
-          <span className="question-round__caret" aria-hidden="true">
-            {caret}
+          <span className="question-round__caret">
+            <Caret isOpen={isExpanded} />
           </span>
         </button>
       ) : (
@@ -101,7 +100,23 @@ export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
                           }
                           aria-hidden="true"
                         >
-                          {option.isPicked ? '✓' : ''}
+                          <AnimatePresence initial={false}>
+                            {option.isPicked && (
+                              <motion.span
+                                key="picked"
+                                className="question-round__tick"
+                                initial={{ opacity: 0, scale: 0.4 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.4 }}
+                                transition={{
+                                  duration: MOTION.durationFast,
+                                  ease: MOTION.ease,
+                                }}
+                              >
+                                <Icon name="check" />
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
                         </span>
                         <span className="question-round__choice">
                           <span className="question-round__label">{option.label}</span>
@@ -111,20 +126,9 @@ export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
                           {option.secrets !== null && (
                             <span className={option.secrets.className}>
                               <span className="question-round__secrets-label">
-                                <svg
-                                  className="question-round__lock"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                >
-                                  {LOCK_ICON.map((path) => (
-                                    <path key={path} d={path} />
-                                  ))}
-                                </svg>
+                                <span className="question-round__lock">
+                                  <Icon name="lock" />
+                                </span>
                                 {option.secrets.label}
                               </span>
                               <span className="question-round__secret-names">

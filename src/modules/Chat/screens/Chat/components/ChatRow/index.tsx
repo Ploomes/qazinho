@@ -59,7 +59,7 @@ export const ChatRow: React.FC<IChatRowProps> = (props) => {
         {message.kind === 'plan' && (
           <HandoffCard
             isAccent
-            glyph="▤"
+            icon="plan"
             title={planTitle}
             subtitle={t('CHAT.PLAN_CARD_SUBTITLE')}
             action={t('CHAT.PLAN_CARD_ACTION')}

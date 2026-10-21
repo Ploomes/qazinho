@@ -125,11 +125,11 @@ export const useComposerViewModel = (props: IComposerProps) => {
     button: isAnswering
       ? {
           label: t('CHAT.STOP_ANSWER'),
-          glyph: '■',
+          icon: 'stop' as const,
           className: 'composer__send composer__send--stop',
         }
-      : { label: t('CHAT.SEND'), glyph: '↑', className: 'composer__send' },
-    glyphMotion: {
+      : { label: t('CHAT.SEND'), icon: 'up' as const, className: 'composer__send' },
+    iconMotion: {
       initial: { opacity: 0, scale: 0.6 },
       animate: { opacity: 1, scale: 1 },
       exit: { opacity: 0, scale: 0.6 },

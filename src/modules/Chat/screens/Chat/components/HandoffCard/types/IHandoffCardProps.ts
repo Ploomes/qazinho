@@ -1,5 +1,7 @@
+import type { IconName } from '@/shared/components/atoms/Icon/types';
+
 export interface IHandoffCardProps {
-  glyph: string;
+  icon: IconName;
   title: string;
   subtitle: string;
   action: string;

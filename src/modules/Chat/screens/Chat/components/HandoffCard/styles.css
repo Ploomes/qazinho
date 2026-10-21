@@ -53,8 +53,25 @@
 }
 
 .handoff-card__action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   margin-left: auto;
   color: var(--lime-ink);
   font: var(--font-ui-md);
   white-space: nowrap;
+}
+
+.handoff-card__arrow {
+  display: inline-flex;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .handoff-card__arrow {
+    transition: translate var(--dur-fast) var(--ease);
+  }
+
+  .handoff-card:hover .handoff-card__arrow {
+    translate: var(--space-1) 0;
+  }
 }

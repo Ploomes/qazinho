@@ -64,6 +64,7 @@
 }
 
 .question-round__caret {
+  display: inline-flex;
   flex: none;
   color: var(--ink3);
 }
@@ -209,10 +210,13 @@
 }
 
 .question-round__lock {
+  display: inline-flex;
   flex: none;
-  width: 12px;
-  height: 12px;
   color: var(--lime-ink);
+}
+
+.question-round__tick {
+  display: inline-flex;
 }
 
 .question-round__secret-names {

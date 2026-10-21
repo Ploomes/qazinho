@@ -33,7 +33,6 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
       message.questions.length === 1
         ? t('CHAT.QUESTIONS_ANSWERED_ONE')
         : t('CHAT.QUESTIONS_ANSWERED_OTHER', { count: message.questions.length }),
-    caret: isExpanded ? '▾' : '▸',
     isAnswered,
     isExpanded,
     isBodyShown: !isAnswered || isExpanded,

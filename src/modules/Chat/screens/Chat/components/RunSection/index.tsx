@@ -1,11 +1,12 @@
 import type { IRunSectionProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
+import { Caret, Icon } from '@/shared/components/atoms';
 import { useRunSectionViewModel } from './hooks';
 import './styles.css';
 
 /** A run in the chat as one box: its line on top, and when opened, everything the run said inside it. */
 export const RunSection: React.FC<IRunSectionProps> = (props) => {
-  const { caret, facts, isBodyShown, hasOpen, className, bodyTransition, onToggle } =
+  const { hasCaret, facts, isBodyShown, hasOpen, className, bodyTransition, onToggle } =
     useRunSectionViewModel(props);
 
   return (
@@ -19,8 +20,8 @@ export const RunSection: React.FC<IRunSectionProps> = (props) => {
             aria-expanded={isBodyShown}
             onClick={onToggle}
           >
-            <span className="run-section__caret" aria-hidden="true">
-              {caret}
+            <span className="run-section__caret">
+              {hasCaret && <Caret isOpen={isBodyShown} />}
             </span>
             <span className="run-section__dot" aria-hidden="true" />
             <span className="run-section__text">
@@ -31,6 +32,7 @@ export const RunSection: React.FC<IRunSectionProps> = (props) => {
           {hasOpen && (
             <button type="button" className="run-section__open" onClick={props.onOpen}>
               {props.openLabel}
+              <Icon name="arrow" />
             </button>
           )}
         </div>

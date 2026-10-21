@@ -1,4 +1,5 @@
 import type { IHandoffCardProps } from './types';
+import { Icon } from '@/shared/components/atoms';
 import './styles.css';
 
 /** The chat never holds the plan or the report: it hands them to their tab. */
@@ -12,12 +13,17 @@ export const HandoffCard: React.FC<IHandoffCardProps> = (props) => (
       }
       aria-hidden="true"
     >
-      {props.glyph}
+      <Icon name={props.icon} size={18} />
     </span>
     <span>
       <span className="handoff-card__title">{props.title}</span>
       <p className="handoff-card__subtitle">{props.subtitle}</p>
     </span>
-    <span className="handoff-card__action">{props.action}</span>
+    <span className="handoff-card__action">
+      {props.action}
+      <span className="handoff-card__arrow">
+        <Icon name="arrow" />
+      </span>
+    </span>
   </button>
 );

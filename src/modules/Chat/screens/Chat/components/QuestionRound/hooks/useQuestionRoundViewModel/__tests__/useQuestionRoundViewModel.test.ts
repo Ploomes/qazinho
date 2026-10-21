@@ -273,7 +273,6 @@ describe('useQuestionRoundViewModel', () => {
         summary: 'You answered 2 questions',
         isExpanded: false,
         isBodyShown: false,
-        caret: '▸',
       });
     });
 
@@ -284,7 +283,7 @@ describe('useQuestionRoundViewModel', () => {
         view.result.current.onToggle();
       });
 
-      expect(view.result.current).toMatchObject({ isBodyShown: true, caret: '▾' });
+      expect(view.result.current).toMatchObject({ isBodyShown: true, isExpanded: true });
 
       act(() => {
         view.result.current.onToggle();

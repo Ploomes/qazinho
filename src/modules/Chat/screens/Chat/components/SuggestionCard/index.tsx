@@ -1,6 +1,6 @@
 import type { ISuggestionCardProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
-import { Button, Eyebrow, Markdown } from '@/shared/components/atoms';
+import { Button, Eyebrow, Icon, Markdown } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { useSuggestionCardViewModel } from './hooks';
 import './styles.css';
@@ -37,7 +37,7 @@ export const SuggestionCard: React.FC<ISuggestionCardProps> = (props) => {
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
             >
-              <span aria-hidden="true">✓</span> {takenLabel}
+              <Icon name="check" /> {takenLabel}
             </motion.span>
           ) : (
             <motion.span

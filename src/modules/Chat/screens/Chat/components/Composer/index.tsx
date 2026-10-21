@@ -1,5 +1,6 @@
 import type { IComposerProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
+import { Icon } from '@/shared/components/atoms';
 import { CommandPicker, MentionPicker } from './components';
 import { useComposerViewModel } from './hooks';
 import './styles.css';
@@ -12,7 +13,7 @@ export const Composer: React.FC<IComposerProps> = (props) => {
     canPress,
     isLocked,
     button,
-    glyphMotion,
+    iconMotion,
     placeholder,
     fieldClassName,
     isPickerOpen,
@@ -128,8 +129,8 @@ export const Composer: React.FC<IComposerProps> = (props) => {
           onClick={onButtonClick}
         >
           <AnimatePresence mode="wait" initial={false}>
-            <motion.span key={button.glyph} aria-hidden="true" {...glyphMotion}>
-              {button.glyph}
+            <motion.span key={button.icon} className="composer__icon" {...iconMotion}>
+              <Icon name={button.icon} size={16} />
             </motion.span>
           </AnimatePresence>
         </button>
