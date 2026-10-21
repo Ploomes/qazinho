@@ -1,5 +1,11 @@
-import type { IRunCoordinator, IVideoRecorder, IWalkRun } from './types';
-import type { Harness, IStepFinding, IStepReport, McpHost } from '@/harness';
+import type {
+  ICaseRecipe,
+  IRecipeBook,
+  IRunCoordinator,
+  IVideoRecorder,
+  IWalkRun,
+} from './types';
+import type { Harness, IDevicePort, IStepFinding, IStepReport, McpHost } from '@/harness';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
 import type { IDeviceDriver } from '@/main/classes/devices/types';
@@ -12,22 +18,30 @@ import type {
   IRunInFlight,
   IRunVideo,
   IStartRun,
+  IStepAction,
+  IStepOutcome,
   IViewport,
   RunFailure,
   TargetKind,
 } from '@/shared/types';
-import { mkdir } from 'node:fs/promises';
-import { join } from 'node:path';
+import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 import { WEB_DRIVER } from '@/main/classes/devices/WebDriver/constants';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { agentFailure } from '@/main/library';
 import { RUN_WALK, UNWALKED } from './constants';
 import {
+  bookWith,
   casesOf,
   driverFor,
   failureOf,
   followRunEvent,
   outcomeOfReport,
+  proofHolds,
+  readBook,
+  recipeFor,
+  recipeOf,
+  replayedOutcome,
   unwalkedOutcome,
 } from './library';
 
@@ -257,6 +271,8 @@ export class RunCoordinator {
     const { run, driver } = props;
     const costs: Promise<void>[] = [];
     const filed: string[] = [];
+    const book = await this.readBook(run.workspaceId);
+    const recorded: ICaseRecipe[] = [];
 
     try {
       for (const [position, steps] of casesOf(run.steps).entries()) {
@@ -268,7 +284,36 @@ export class RunCoordinator {
 
         if (this.stopping.has(run.workspaceId)) break;
 
-        const walked = await this.walkCase({ run, driver, steps, costs, filed });
+        const recipe =
+          run.mode === 'agent'
+            ? null
+            : recipeFor({
+                book,
+                steps: steps.map(({ step }) => step),
+                targetKind: run.target.kind,
+              });
+        const replayed =
+          recipe === null ? null : await this.replayCase({ run, driver, steps, recipe });
+
+        if (replayed === 'stopped') break;
+
+        if (replayed === 'replayed') continue;
+
+        if (replayed === 'diverged') {
+          await driver.restart().catch(() => undefined);
+
+          if (this.stopping.has(run.workspaceId)) break;
+        }
+
+        const walked = await this.walkCase({
+          run,
+          driver,
+          steps,
+          costs,
+          filed,
+          recorded,
+          isHealing: replayed === 'diverged',
+        });
 
         if (walked === false) break;
 
@@ -277,6 +322,12 @@ export class RunCoordinator {
 
       return null;
     } finally {
+      if (recorded.length > 0)
+        await this.writeBook({
+          workspaceId: run.workspaceId,
+          book: bookWith({ book, recipes: recorded }),
+        }).catch(() => undefined);
+
       await Promise.race([
         Promise.all(costs),
         new Promise((wake) => setTimeout(wake, RUN_WALK.costsWaitMs)),
@@ -284,17 +335,21 @@ export class RunCoordinator {
     }
   }
 
-  /** One agent turn per case, in a session of its own: true goes on, false stops, a failure stops and says why. */
+  /** One agent turn per case, in a session of its own, kept as a recipe once every step passed with its proof: true goes on, false stops, a failure stops and says why. */
   private async walkCase(props: {
     run: IWalkRun;
     driver: IDeviceDriver;
     steps: { step: IFlatStep; index: number }[];
     costs: Promise<void>[];
     filed: string[];
+    recorded: ICaseRecipe[];
+    isHealing: boolean;
   }): Promise<boolean | RunFailure> {
     const { run, driver } = props;
     const { workspaceId } = run;
     const pending = [...props.steps];
+    const actions = new Map<number, IStepAction[]>();
+    const proofs = new Map<number, string>();
     let began = Date.now();
     let isOver = false;
     let over: () => void = () => undefined;
@@ -356,18 +411,23 @@ export class RunCoordinator {
       );
       const at = Date.now();
 
+      const outcome = outcomeOfReport({
+        report,
+        step: walking.step,
+        index: walking.index,
+        workspaceId,
+        tookMs: at - began,
+        at,
+        shot,
+      });
+
       this.emit({
         kind: 'step',
-        outcome: outcomeOfReport({
-          report,
-          step: walking.step,
-          index: walking.index,
-          workspaceId,
-          tookMs: at - began,
-          at,
-          shot,
-        }),
+        outcome: props.isHealing ? { ...outcome, by: 'healed' } : outcome,
       });
+
+      if (report.verdict === 'passed')
+        proofs.set(walking.step.numberInCase, report.proof);
 
       if (report.verdict === 'failed' && report.title.length > 0)
         props.filed.push(report.title);
@@ -380,8 +440,20 @@ export class RunCoordinator {
 
       const next = pending[0];
 
-      if (next === undefined)
+      if (next === undefined) {
+        const recipe = recipeOf({
+          steps: props.steps.map(({ step }) => step),
+          targetKind: run.target.kind,
+          actions,
+          proofs,
+          runId: run.runId,
+          at,
+        });
+
+        if (recipe !== null) props.recorded.push(recipe);
+
         return endCase('Filed. That was the last step of this case.');
+      }
 
       await this.holdWhilePaused(workspaceId);
 
@@ -436,7 +508,24 @@ export class RunCoordinator {
     if (first !== undefined)
       this.emit({ kind: 'doing', workspaceId, index: first.index });
 
-    this.tools.attach({ workspaceId, driver, onReport, onFinding });
+    const port: IDevicePort = {
+      describe: () => driver.describe(),
+      glance: () => driver.glance(),
+      motion: () => driver.motion(),
+      act: async (action) => {
+        await driver.act(action);
+
+        const walking = pending[0];
+
+        if (walking !== undefined)
+          actions.set(walking.step.numberInCase, [
+            ...(actions.get(walking.step.numberInCase) ?? []),
+            action,
+          ]);
+      },
+    };
+
+    this.tools.attach({ workspaceId, driver: port, onReport, onFinding });
 
     const screen = await driver.describe().catch(() => '');
 
@@ -508,6 +597,94 @@ export class RunCoordinator {
     await this.recorder
       ?.start({ workspaceId, runId: run.runId, url })
       .catch(() => undefined);
+  }
+
+  /** Walks a case again without the agent, the way its recipe says, checking each step's proof; its steps are told only once the whole case held. */
+  private async replayCase(props: {
+    run: IWalkRun;
+    driver: IDeviceDriver;
+    steps: { step: IFlatStep; index: number }[];
+    recipe: ICaseRecipe;
+  }): Promise<'replayed' | 'diverged' | 'stopped'> {
+    const { run, driver, recipe } = props;
+    const { workspaceId } = run;
+    const outcomes: IStepOutcome[] = [];
+
+    for (const { step, index } of props.steps) {
+      await this.holdWhilePaused(workspaceId);
+
+      if (this.stopping.has(workspaceId)) return 'stopped';
+
+      const kept = recipe.steps.find(({ number }) => number === step.numberInCase);
+
+      if (kept === undefined) return 'diverged';
+
+      this.emit({ kind: 'doing', workspaceId, index });
+
+      const began = Date.now();
+      const isDone = await (async () => {
+        for (const action of kept.actions) await driver.act(action);
+      })().then(
+        () => true,
+        () => false,
+      );
+
+      if (!isDone || !(await this.proofShows({ driver, proof: kept.proof })))
+        return 'diverged';
+
+      const shot = await driver.shoot(join(run.shotDir, `step-${String(index + 1)}.jpg`));
+      const at = Date.now();
+
+      outcomes.push(
+        replayedOutcome({
+          step,
+          index,
+          workspaceId,
+          proof: kept.proof,
+          tookMs: at - began,
+          at,
+          shot,
+        }),
+      );
+    }
+
+    for (const outcome of outcomes) this.emit({ kind: 'step', outcome });
+
+    return 'replayed';
+  }
+
+  private async proofShows(props: {
+    driver: IDeviceDriver;
+    proof: string;
+  }): Promise<boolean> {
+    for (let tries = 0; tries < RUN_WALK.proofChecks; tries += 1) {
+      const screen = await props.driver.describe().catch(() => '');
+
+      if (proofHolds({ screen, proof: props.proof })) return true;
+
+      await new Promise((wake) => setTimeout(wake, RUN_WALK.proofWaitMs));
+    }
+
+    return false;
+  }
+
+  private bookFile(workspaceId: string): string {
+    return join(this.dataRoot, ARCHIVE.workspaces, workspaceId, ARCHIVE.recipes);
+  }
+
+  private async readBook(workspaceId: string): Promise<IRecipeBook> {
+    return readBook(await readFile(this.bookFile(workspaceId), 'utf8').catch(() => null));
+  }
+
+  private async writeBook(props: {
+    workspaceId: string;
+    book: IRecipeBook;
+  }): Promise<void> {
+    const file = this.bookFile(props.workspaceId);
+
+    if ((await stat(dirname(file)).catch(() => null))?.isDirectory() !== true) return;
+
+    await writeFile(file, JSON.stringify(props.book, null, 2));
   }
 
   private async holdWhilePaused(workspaceId: string): Promise<void> {
