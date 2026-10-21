@@ -105,5 +105,8 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     onAssistantEvent: () => () => undefined,
     onAppToolCall: () => () => undefined,
     answerAppTool: () => undefined,
+    startBuild: () => Promise.resolve({ isBuilt: false, failure: { reason: 'stopped' } }),
+    stopBuild: () => Promise.resolve(),
+    onBuildEvent: () => () => undefined,
   };
 }

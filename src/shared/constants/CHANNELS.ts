@@ -54,4 +54,7 @@ export const CHANNELS = {
   assistantEvent: 'assistant:event',
   appToolCall: 'assistant:tool',
   appToolAnswer: 'assistant:tool-answer',
+  startBuild: 'build:start',
+  stopBuild: 'build:stop',
+  buildEvent: 'build:event',
 } as const;

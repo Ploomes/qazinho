@@ -7,6 +7,7 @@ import type {
   IAppToolAnswer,
   IAskAgent,
   IAssistantAsk,
+  IBuildEvent,
   IChatTurn,
   ICodeCopy,
   IConnectIntegration,
@@ -20,6 +21,7 @@ import type {
   IMcpSignIn,
   ISavedWorkspace,
   ISetupEvent,
+  IStartBuild,
   IStartRun,
   IViewport,
   McpSignInProgress,
@@ -27,6 +29,7 @@ import type {
   SaveOutcome,
   WindowFit,
 } from '@/shared/types';
+import { execFile } from 'node:child_process';
 import { copyFile, stat, writeFile } from 'node:fs/promises';
 import { homedir, tmpdir } from 'node:os';
 import { extname, join } from 'node:path';
@@ -47,6 +50,7 @@ import {
   AgentMcp,
   AgentRunner,
   AppBridge,
+  AppBuilder,
   AppPeek,
   Archive,
   AssistantAgent,
@@ -64,6 +68,8 @@ import {
   RunRecorder,
   SetupInstaller,
 } from '@/main/classes';
+import { APP_BUILDER } from '@/main/classes/builds/AppBuilder/constants';
+import { buildIdOf } from '@/main/classes/builds/AppBuilder/library';
 import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
 import { listSimulators } from '@/main/classes/devices/IosDriver/library';
 import {
@@ -78,6 +84,7 @@ import {
   agentFailure,
   bytesOfDataUrl,
   fileNameOf,
+  findExistingPath,
   fittedBounds,
   hydrateShellPath,
   imageExtensionOf,
@@ -133,7 +140,8 @@ function broadcast(props: {
     | ISetupEvent
     | McpSignInProgress
     | AgentSignInProgress
-    | GithubSignInProgress;
+    | GithubSignInProgress
+    | IBuildEvent;
 }): void {
   for (const open of appWindows()) open.webContents.send(props.channel, props.event);
 }
@@ -188,14 +196,51 @@ const vault = new IntegrationVault({
 const agentRunner = new AgentRunner({
   owners,
   folder: PATHS.agentHome,
-  onEvent: (event) =>
+  onEvent: (event) => {
+    const buildId = buildIdOf(event.workspaceId);
+
+    if (buildId !== null) {
+      if (event.kind === 'text' || event.kind === 'action')
+        builder.hear({ buildId, text: event.text });
+
+      return;
+    }
+
     broadcast({
       channel:
         event.workspaceId === ASSISTANT.scope
           ? CHANNELS.assistantEvent
           : CHANNELS.agentEvent,
       event,
+    });
+  },
+});
+
+const builder = new AppBuilder({
+  github,
+  runner: agentRunner,
+  harness,
+  root: PATHS.builds,
+  findCommand,
+  machine: async () => {
+    const found = deviceTools.detect();
+
+    return {
+      androidSdk: found.androidSdk.path,
+      javaHome: findExistingPath([process.env.JAVA_HOME, ...APP_BUILDER.javaHomes]),
+      hasXcode: found.xcode.isFound,
+      path: (await commandDirectories()).join(':'),
+    };
+  },
+  readPlist: (file) =>
+    new Promise((settle) => {
+      execFile('plutil', ['-convert', 'json', '-o', '-', file], (error, stdout) => {
+        settle(error === null ? stdout : null);
+      });
     }),
+  onEvent: (event) => {
+    broadcast({ channel: CHANNELS.buildEvent, event });
+  },
 });
 
 async function findCommand(agentId: string): Promise<string | null> {
@@ -553,6 +598,7 @@ void app.whenReady().then(async () => {
   await replays.start();
   await tools.start();
   void codeCopies.sweep();
+  void builder.sweep();
 
   ipcMain.handle(CHANNELS.detectAgents, () => agents.detect());
   ipcMain.handle(CHANNELS.readResources, () => resources.snapshot());
@@ -666,6 +712,12 @@ void app.whenReady().then(async () => {
   });
   ipcMain.on(CHANNELS.appToolAnswer, (_event, answer: IAppToolAnswer) => {
     bridge.answer(answer);
+  });
+  ipcMain.handle(CHANNELS.startBuild, (_event, build: IStartBuild) =>
+    builder.start(build),
+  );
+  ipcMain.handle(CHANNELS.stopBuild, (_event, buildId: string) => {
+    builder.stop(buildId);
   });
 
   createWindow();

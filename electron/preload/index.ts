@@ -6,6 +6,9 @@ import type {
   IAppToolRequest,
   IAssistantAsk,
   IAssistantTurn,
+  IBuildEvent,
+  IBuildResult,
+  IStartBuild,
   IChatTurn,
   IAskAgent,
   IBranchList,
@@ -231,6 +234,21 @@ const api: IQazinhoApi = {
   },
   answerAppTool: (answer: IAppToolAnswer) => {
     ipcRenderer.send(CHANNELS.appToolAnswer, answer);
+  },
+  startBuild: (build: IStartBuild) =>
+    ipcRenderer.invoke(CHANNELS.startBuild, build) as Promise<IBuildResult>,
+  stopBuild: (buildId: string) =>
+    ipcRenderer.invoke(CHANNELS.stopBuild, buildId) as Promise<void>,
+  onBuildEvent: (listener: (event: IBuildEvent) => void) => {
+    const forward = (_: unknown, event: IBuildEvent) => {
+      listener(event);
+    };
+
+    ipcRenderer.on(CHANNELS.buildEvent, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.buildEvent, forward);
+    };
   },
 };
 

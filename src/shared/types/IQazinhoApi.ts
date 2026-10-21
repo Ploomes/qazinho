@@ -7,6 +7,8 @@ import type { IAskAgent } from './IAskAgent';
 import type { IAssistantAsk } from './IAssistantAsk';
 import type { IAssistantTurn } from './IAssistantTurn';
 import type { IBranchList } from './IBranchList';
+import type { IBuildEvent } from './IBuildEvent';
+import type { IBuildResult } from './IBuildResult';
 import type { IChatTurn } from './IChatTurn';
 import type { IConnectIntegration } from './IConnectIntegration';
 import type { IConnectResult } from './IConnectResult';
@@ -31,6 +33,7 @@ import type { IRunRef } from './IRunRef';
 import type { ISavedState } from './ISavedState';
 import type { ISavedWorkspace } from './ISavedWorkspace';
 import type { ISetupEvent } from './ISetupEvent';
+import type { IStartBuild } from './IStartBuild';
 import type { IStartRun } from './IStartRun';
 import type { IViewport } from './IViewport';
 import type { McpActionResult } from './McpActionResult';
@@ -98,4 +101,7 @@ export interface IQazinhoApi {
   onAssistantEvent: (listener: (event: IAgentEvent) => void) => () => void;
   onAppToolCall: (listener: (request: IAppToolRequest) => void) => () => void;
   answerAppTool: (answer: IAppToolAnswer) => void;
+  startBuild: (build: IStartBuild) => Promise<IBuildResult>;
+  stopBuild: (buildId: string) => Promise<void>;
+  onBuildEvent: (listener: (event: IBuildEvent) => void) => () => void;
 }
