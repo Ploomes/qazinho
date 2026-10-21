@@ -24,6 +24,11 @@ src/shared/components/
 - **Every icon is Phosphor's**, drawn by the `Icon` atom by its name in `ICONS`. A name says what
   the icon means (`close`, `external`, `attention`), and a caret where it points (`caretDown`).
 - Bold by default, solid (`fill`) for what is on: media controls, logos, the open marker.
+- **A status wears its glyph in a solid circle**: `passed`, `failed`, `blocked`, `skipped`,
+  `attention`, `running`, `paused`, `stopped`, and `idle` and `pending` as an outline. The bare
+  glyph (`check`, `close`, `play`) is a control, or a mark inside a shape of its own.
+- An icon sized by its text never draws under `--icon-min`: at the size of small text, a bare
+  check read as a typed ✓.
 - A character is never an icon: no ✓, ✕, ↗ or ▸ in a view, a constant or a string. A key in a
   shortcut (⌘, ↵) is text, and stays one; so is an arrow inside a sentence.
 - Something that folds open wears the `Caret` atom, which turns as it opens.

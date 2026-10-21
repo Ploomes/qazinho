@@ -37,6 +37,7 @@ font: var(--font-ui-md);
 | Accent    | `--lime --lime-ink --lime-soft --on-lime`                                           |
 | Verdicts  | `--pass --fail --block --skip --attn`, each with a `-soft` pair                     |
 | Space     | `--space-1 2px` · `2 4` · `3 8` · `4 12` · `5 16` · `6 20` · `7 24` · `8 30`        |
+| Icon      | `--icon-min` 12px, the smallest an icon sized by its text draws                     |
 | Radius    | `--radius-xs 6` · `sm 8` · `md 12` · `lg 14` · `xl 18` · `2xl 22` · `pill 999`      |
 | Font      | `--font-display --font-ui --font-mono`, `--font-ui-*`, `--font-display-sm/md/lg/xl` |
 | Type      | `--display-tracking` for display at 800, `--font-mono-tag --tag-tracking` for tags  |
