@@ -54,4 +54,10 @@ describe('bugOfSaved', () => {
 
     expect(bugOfSaved(older).at).toBeNull();
   });
+
+  it('reads an older bug as never seen again', () => {
+    const { sightings: _sightings, ...older } = BUG;
+
+    expect(bugOfSaved(older).sightings).toEqual([]);
+  });
 });

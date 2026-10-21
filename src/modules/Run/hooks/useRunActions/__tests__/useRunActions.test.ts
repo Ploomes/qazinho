@@ -3,7 +3,11 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRunActions } from '@/modules/Run/hooks/useRunActions';
 import { startRun } from '@/modules/Workspace';
-import { makeWorkspace, WALKED_BY } from '@/modules/Workspace/library/__tests__/fixtures';
+import {
+  makeWorkspace,
+  WALKED_BY,
+  walkRun,
+} from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
@@ -55,6 +59,38 @@ describe('useRunActions', () => {
         }),
       );
       expect(useWorkspaceStore.getState().workspaces[0]?.live?.isDone).toBe(false);
+    });
+
+    /** The run used to start blank, and its agents filed again the bugs the Bugs tab already had. */
+    it('tells the run the bugs already open, so its agents count one seen again', () => {
+      const { startRunCall } = bridge();
+      const walked = walkRun({
+        workspace: { ...makeWorkspace(), id: 'w1' },
+        verdicts: ['passed', 'passed', 'passed', 'passed', 'failed'],
+        isFinished: true,
+      });
+
+      useWorkspaceStore.setState({ workspaces: [walked] });
+
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.onRun();
+      });
+
+      expect(startRunCall).toHaveBeenCalledWith(
+        expect.objectContaining({
+          bugs: [
+            {
+              id: 'BUG-01',
+              title: 'Nothing happens on submit',
+              caseId: 'TC-02',
+              stepNumber: 2,
+              isIncidental: false,
+            },
+          ],
+        }),
+      );
     });
 
     it('walks every case with the agent when the QA asks for it', () => {

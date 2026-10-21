@@ -1,5 +1,6 @@
 import type { RunMode } from '@/shared/types';
 import { useTranslation } from 'react-i18next';
+import { knownBugsOf } from '@/modules/Bug/library';
 import { viewportOf } from '@/modules/Device/library';
 import { flattenPlanSteps, nextRunId, walkedByOf } from '@/modules/Run/library';
 import { Run } from '@/services';
@@ -81,6 +82,7 @@ export const useRunActions = () => {
       pixelRatio: window.devicePixelRatio,
       mode,
       ...(isExploring ? { minutes: EXPLORATION.minutes } : {}),
+      bugs: knownBugsOf(workspace.bugs),
     });
 
     return runId;

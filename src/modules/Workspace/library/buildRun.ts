@@ -1,6 +1,7 @@
 import type { IRun, IRunCase, IRunStep, RunEnd } from '@/modules/Run';
 import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IStepOutcome } from '@/shared/types';
+import { appearancesOf } from '@/modules/Bug/library';
 import { caseVerdict, countVerdicts, flattenPlanSteps } from '@/modules/Run/library';
 import { EXPLORATION } from '@/shared/constants';
 
@@ -59,11 +60,13 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
         bugId:
           [...workspace.bugs]
             .sort((one, other) => Number(one.isIncidental) - Number(other.isIncidental))
-            .find(
-              (bug) =>
-                bug.runId === id &&
-                bug.caseId === outcome.caseId &&
-                bug.stepNumber === outcome.stepNumber,
+            .find((bug) =>
+              appearancesOf(bug).some(
+                (seen) =>
+                  seen.runId === id &&
+                  seen.caseId === outcome.caseId &&
+                  seen.stepNumber === outcome.stepNumber,
+              ),
             )?.id ?? null,
       }));
       const unreached: IRunStep[] =

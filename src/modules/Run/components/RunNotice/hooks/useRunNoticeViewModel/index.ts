@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isSeenIn } from '@/modules/Bug/library';
 import { RUN_NOTICE } from '@/modules/Run/components/RunNotice/constants';
 import { useOpenRun } from '@/modules/Run/hooks/useOpenRun';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
@@ -17,7 +18,7 @@ export const useRunNoticeViewModel = () => {
 
   const run = workspace?.runs.find(({ id }) => id === notice?.runId) ?? null;
   const bugCount = (workspace?.bugs ?? []).filter(
-    ({ runId }) => runId === run?.id,
+    (bug) => run !== null && isSeenIn({ bug, runId: run.id }),
   ).length;
   const isExploration = run?.kind === 'explore';
   const held =

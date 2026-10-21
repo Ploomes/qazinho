@@ -1,9 +1,9 @@
 import type { ILiveRun, IWalkedBy, IWorkspace } from '@/modules/Workspace/types';
 import type { IRunInFlight } from '@/shared/types';
-import { makeBug } from '@/modules/Bug/library';
+import { catchBug } from '@/modules/Bug/library';
 import { landFinding } from './landFinding';
 
-/** A run main kept walking while the page was away: the page follows it again, its failures and side findings become bugs, and the record saved as interrupted goes. */
+/** A run main kept walking while the page was away: the page follows it again, its failures and side findings land on their bugs once, and the record saved as interrupted goes. */
 export function resumeRun(props: {
   workspace: IWorkspace;
   run: IRunInFlight;
@@ -42,37 +42,21 @@ export function resumeRun(props: {
 
   const failed = run.outcomes
     .filter(({ verdict }) => verdict === 'failed')
-    .filter(
-      (outcome) =>
-        !walking.bugs.some(
-          (bug) =>
-            !bug.isIncidental &&
-            bug.runId === run.runId &&
-            bug.caseId === outcome.caseId &&
-            bug.stepNumber === outcome.stepNumber,
-        ),
-    )
     .reduce<IWorkspace>(
       (current, outcome) => ({
         ...current,
-        bugs: [
-          ...current.bugs,
-          makeBug({ workspace: current, outcome, outcomes: run.outcomes }),
-        ],
+        bugs: catchBug({
+          workspace: current,
+          outcome,
+          outcomes: run.outcomes,
+          isIncidental: false,
+        }).bugs,
       }),
       { ...walking, status: 'running', live },
     );
 
-  return run.findings
-    .filter(
-      (finding) =>
-        !failed.bugs.some(
-          (bug) =>
-            bug.isIncidental && bug.runId === run.runId && bug.title === finding.title,
-        ),
-    )
-    .reduce<IWorkspace>(
-      (current, finding) => landFinding({ workspace: current, finding, at: startedAt }),
-      failed,
-    );
+  return run.findings.reduce<IWorkspace>(
+    (current, finding) => landFinding({ workspace: current, finding, at: startedAt }),
+    failed,
+  );
 }

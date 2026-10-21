@@ -1,6 +1,7 @@
 import type { IRunEvent, IRunRef } from '@/shared/types';
 import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isSeenIn } from '@/modules/Bug/library';
 import { RUN_FAILURE_KEYS } from '@/modules/Run/constants';
 import { useOpenRun } from '@/modules/Run/hooks/useOpenRun';
 import { walkedByOf } from '@/modules/Run/library';
@@ -54,7 +55,7 @@ export const useRunEvents = () => {
 
     if (useSettingsStore.getState().runAlert !== 'system') return;
 
-    const bugs = workspace.bugs.filter(({ runId }) => runId === run.id).length;
+    const bugs = workspace.bugs.filter((bug) => isSeenIn({ bug, runId: run.id })).length;
     const isExploration = run.kind === 'explore';
     const tally = [
       ...(isExploration

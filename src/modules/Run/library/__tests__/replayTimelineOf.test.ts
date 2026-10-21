@@ -84,6 +84,39 @@ describe('replayTimelineOf', () => {
     expect(replayTimelineOf({ run: workspace.runs[0]!, bugs })?.marks).toEqual([]);
   });
 
+  it('pins a bug an older run caught at the moment this run caught it again', () => {
+    const workspace = recorded(VERDICTS);
+    const [bug] = workspace.bugs;
+    const bugs = [
+      {
+        ...bug!,
+        runId: 'r-09',
+        at: 1_759_000_000_000,
+        sightings: [
+          {
+            runId: 'r-01',
+            runWhen: '09:41',
+            caseId: 'TC-02',
+            stepNumber: 2,
+            at: 1_760_000_010_000,
+            shot: { isBad: true, src: null, file: null },
+          },
+        ],
+      },
+    ];
+
+    expect(replayTimelineOf({ run: workspace.runs[0]!, bugs })?.marks).toEqual([
+      {
+        bugId: 'BUG-01',
+        title: 'Nothing happens on submit',
+        severity: 'high',
+        atMs: 9_500,
+        caseId: 'TC-02',
+        stepNumber: 2,
+      },
+    ]);
+  });
+
   it('has nothing to lay out for a run with no recording', () => {
     const walked = walkRun({ verdicts: ['passed'], isFinished: true });
 

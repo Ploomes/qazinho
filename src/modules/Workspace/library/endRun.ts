@@ -2,6 +2,7 @@ import type { ChatMessage } from '@/modules/Chat';
 import type { ITestCase } from '@/modules/Plan';
 import type { IRunCase, RunEnd } from '@/modules/Run';
 import type { IWorkspace } from '@/modules/Workspace/types';
+import { isSeenIn } from '@/modules/Bug/library';
 import { buildRun } from './buildRun';
 
 function isSettled(props: {
@@ -37,7 +38,7 @@ export function endRun(props: {
   if (live.outcomes.length === 0) return { ...settled, status: 'stopped' };
 
   const run = buildRun({ workspace: settled, endedBy });
-  const filed = workspace.bugs.filter(({ runId }) => runId === run.id).length;
+  const filed = workspace.bugs.filter((bug) => isSeenIn({ bug, runId: run.id })).length;
 
   const card: ChatMessage = {
     id: `m-${String(settled.chat.length + 1)}`,

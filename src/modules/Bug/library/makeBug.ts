@@ -71,6 +71,7 @@ export function makeBug(props: {
       .filter((one) => one.caseId === outcome.caseId && one.index <= outcome.index)
       .map((one) => ({ action: one.action, isBad: one.index === outcome.index })),
     shots: shotsFor({ outcome, outcomes }),
+    sightings: [],
     isNew: true,
     isIncidental: false,
     at: outcome.at,

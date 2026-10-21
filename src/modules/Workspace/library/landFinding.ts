@@ -1,8 +1,8 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IRunFinding, IStepOutcome } from '@/shared/types';
-import { makeBug } from '@/modules/Bug/library';
+import { catchBug } from '@/modules/Bug/library';
 
-/** A bug the run's agent filed on the side of a step: it joins the bugs, marked outside the plan, and the run's section says so. */
+/** A bug the run's agent filed on the side of a step: it lands outside the plan, on the bug already open it is or as a new one, and the run's section says so once. */
 export function landFinding(props: {
   workspace: IWorkspace;
   finding: IRunFinding;
@@ -29,15 +29,21 @@ export function landFinding(props: {
     at: finding.at,
     screenshot: finding.screenshot,
     shotFile: finding.shotFile,
+    ...(finding.sameAs === undefined ? {} : { sameAs: finding.sameAs }),
   };
-  const bug = {
-    ...makeBug({ workspace, outcome: seen, outcomes: [...live.outcomes, seen] }),
+  const caught = catchBug({
+    workspace,
+    outcome: seen,
+    outcomes: [...live.outcomes, seen],
     isIncidental: true,
-  };
+  });
+  const bug = caught.bugs.find(({ id }) => id === caught.bugId);
+
+  if (caught.how === 'repeat' || bug === undefined) return workspace;
 
   return {
     ...workspace,
-    bugs: [...workspace.bugs, bug],
+    bugs: caught.bugs,
     chat: [
       ...workspace.chat,
       {
@@ -47,6 +53,7 @@ export function landFinding(props: {
         runId: live.id,
         bugId: bug.id,
         title: bug.title,
+        ...(caught.how === 'again' ? { isSeenAgain: true } : {}),
       },
     ],
   };

@@ -1,5 +1,6 @@
 import type { IBug } from '@/modules/Bug/types';
 import type { IReplayTimeline, IRun } from '@/modules/Run/types';
+import { appearancesOf } from '@/modules/Bug/library';
 
 /** A run's video laid out as chapters and marks, each placed by when it happened; null for a run with no recording. */
 export function replayTimelineOf(props: {
@@ -48,18 +49,20 @@ export function replayTimelineOf(props: {
     durationMs: video.durationMs,
     chapters,
     marks: bugs.flatMap((bug) =>
-      bug.runId !== run.id || bug.at === null
-        ? []
-        : [
-            {
-              bugId: bug.id,
-              title: bug.title,
-              severity: bug.severity,
-              atMs: offset(bug.at),
-              caseId: bug.caseId,
-              stepNumber: bug.stepNumber,
-            },
-          ],
+      appearancesOf(bug).flatMap((seen) =>
+        seen.runId !== run.id || seen.at === null
+          ? []
+          : [
+              {
+                bugId: bug.id,
+                title: bug.title,
+                severity: bug.severity,
+                atMs: offset(seen.at),
+                caseId: seen.caseId,
+                stepNumber: seen.stepNumber,
+              },
+            ],
+      ),
     ),
   };
 }

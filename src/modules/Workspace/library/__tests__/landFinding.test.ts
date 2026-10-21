@@ -1,7 +1,7 @@
 import type { IRunFinding } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
-import { endRun, landFinding } from '@/modules/Workspace/library';
-import { makeWorkspace, walkRun } from './fixtures';
+import { endRun, landFinding, startRun } from '@/modules/Workspace/library';
+import { makeWorkspace, WALKED_BY, walkRun } from './fixtures';
 
 const FINDING: IRunFinding = {
   caseId: 'TC-01',
@@ -84,5 +84,45 @@ describe('landFinding', () => {
     });
 
     expect(workspace.bugs.at(-1)?.at).toBe(1_760_000_003_000);
+  });
+
+  /** The agent heard BUG-01 was open and said this was it, so the Bugs tab keeps one bug. */
+  it('lands a finding the agent named on the bug already open, and says it was seen again', () => {
+    const workspace = startRun({
+      workspace: landFinding({
+        workspace: walkRun({ verdicts: ['passed'] }),
+        finding: FINDING,
+        at: '22:18',
+      }),
+      startedAt: '22:30',
+      runId: 'r-02',
+      by: WALKED_BY,
+    });
+    const landed = landFinding({
+      workspace,
+      finding: { ...FINDING, title: 'The two prices still differ', sameAs: 'BUG-01' },
+      at: '22:31',
+    });
+
+    expect(landed.bugs).toHaveLength(1);
+    expect(landed.bugs[0]).toMatchObject({ seenRuns: 2, isNew: true });
+    expect(landed.bugs[0]?.sightings.map(({ runId }) => runId)).toEqual(['r-02']);
+    expect(landed.chat.at(-1)).toMatchObject({
+      kind: 'finding',
+      runId: 'r-02',
+      bugId: 'BUG-01',
+      title: 'Yearly price differs',
+      isSeenAgain: true,
+    });
+  });
+
+  it('does NOT file nor say again a bug this run already caught', () => {
+    const once = landFinding({
+      workspace: walkRun({ verdicts: ['passed'] }),
+      finding: FINDING,
+      at: '22:18',
+    });
+
+    expect(landFinding({ workspace: once, finding: FINDING, at: '22:19' })).toBe(once);
   });
 });

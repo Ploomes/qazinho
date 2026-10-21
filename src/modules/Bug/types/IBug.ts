@@ -1,8 +1,9 @@
 import type { IBugReproStep } from './IBugReproStep';
 import type { IBugShot } from './IBugShot';
+import type { IBugSighting } from './IBugSighting';
 import type { Severity } from '@/shared/types';
 
-/** A failed step the agent could explain, or a bug it saw on the side of one, with everything a developer needs to reproduce it and when it was caught. */
+/** A failed step the agent could explain, or a bug it saw on the side of one, with all a developer needs to reproduce it, when it was caught and each time it was caught again. */
 export interface IBug {
   id: string;
   severity: Severity;
@@ -21,6 +22,7 @@ export interface IBug {
   seenRuns: number;
   repro: IBugReproStep[];
   shots: IBugShot[];
+  sightings: IBugSighting[];
   isNew: boolean;
   isIncidental: boolean;
   at: number | null;

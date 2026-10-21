@@ -1,7 +1,7 @@
 import type { StepVerdict } from '@/modules/Run';
 import { describe, expect, it } from 'vitest';
-import { buildRun } from '@/modules/Workspace/library';
-import { walkRun } from './fixtures';
+import { buildRun, landStep, startRun } from '@/modules/Workspace/library';
+import { makeOutcome, WALKED_BY, walkRun } from './fixtures';
 
 const VERDICTS: StepVerdict[] = [
   'passed',
@@ -146,5 +146,25 @@ describe('buildRun', () => {
       buildRun({ workspace: walkRun({ verdicts: ['passed'] }), endedBy: 'finished' })
         .video,
     ).toBeNull();
+  });
+
+  it('points a step that failed again at the bug already open, not at nothing', () => {
+    const second = startRun({
+      workspace: walkRun({
+        verdicts: ['passed', 'passed', 'passed', 'passed', 'failed'],
+        isFinished: true,
+      }),
+      startedAt: '10:05',
+      runId: 'r-02',
+      by: WALKED_BY,
+    });
+    const walked = landStep({
+      workspace: second,
+      outcome: makeOutcome({ workspace: second, index: 4, verdict: 'failed' }),
+      at: '10:06',
+    });
+    const run = buildRun({ workspace: walked, endedBy: 'finished' });
+
+    expect(run.cases.find(({ id }) => id === 'TC-02')?.steps[1]?.bugId).toBe('BUG-01');
   });
 });

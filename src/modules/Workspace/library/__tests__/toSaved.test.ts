@@ -68,4 +68,39 @@ describe('toSaved', () => {
     expect(after?.bugs[0]?.shots.at(-1)?.src).toBeNull();
     expect(after?.bugs[0]?.shots.at(-1)?.file).toBe('/tmp/qazinho/step-5.jpg');
   });
+
+  it('leaves the screenshot of a bug seen again out too, keeping where it is on disk', () => {
+    const walked = walkRun({ verdicts: [...BROKE], isFinished: true });
+    const [bug] = walked.bugs;
+    const saved = toSaved({
+      workspace: {
+        ...walked,
+        bugs: [
+          {
+            ...bug!,
+            sightings: [
+              {
+                runId: 'r-02',
+                runWhen: '10:05',
+                caseId: 'TC-02',
+                stepNumber: 2,
+                at: 1_760_000_100_000,
+                shot: {
+                  isBad: true,
+                  src: 'data:image/jpeg;base64,again',
+                  file: '/tmp/qazinho/r-02/step-5.jpg',
+                },
+              },
+            ],
+          },
+        ],
+      },
+      at: '10:10',
+    });
+
+    expect(saved.json).not.toContain('base64,again');
+    expect(fromSaved(saved)?.bugs[0]?.sightings[0]?.shot.file).toBe(
+      '/tmp/qazinho/r-02/step-5.jpg',
+    );
+  });
 });

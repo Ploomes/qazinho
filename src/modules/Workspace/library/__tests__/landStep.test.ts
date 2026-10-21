@@ -66,4 +66,28 @@ describe('landStep', () => {
 
     expect(workspace.live?.doingIndex).toBe(-1);
   });
+
+  /** r-02 failed the same step as r-01 and the Bugs tab read BUG-01 and BUG-02, almost alike. */
+  it('lands a step that fails again on the bug it failed for before, seen in two runs', () => {
+    const second = startRun({
+      workspace: walkRun({
+        verdicts: ['passed', 'passed', 'passed', 'passed', 'failed'],
+        isFinished: true,
+      }),
+      startedAt: '10:05',
+      runId: 'r-02',
+      by: WALKED_BY,
+    });
+    const workspace = landStep({
+      workspace: second,
+      outcome: {
+        ...makeOutcome({ workspace: second, index: 4, verdict: 'failed' }),
+        title: 'Submit does nothing',
+      },
+      at: '10:06',
+    });
+
+    expect(workspace.bugs.map(({ id }) => id)).toEqual(['BUG-01']);
+    expect(workspace.bugs[0]).toMatchObject({ seenRuns: 2, isNew: true });
+  });
 });
