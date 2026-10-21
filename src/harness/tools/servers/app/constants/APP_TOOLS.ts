@@ -5,7 +5,7 @@ export const APP_TOOLS = [
   {
     name: 'workspace_details',
     description:
-      'Read one workspace in full: its project and target, every case of its plan with its steps, its runs, and its bugs.',
+      'Read one workspace in full: its project and target, every case of its plan with its steps, its runs, its bugs, and the questions its chat waits on the QA to answer.',
     input: z.object({
       workspace: textNamed({
         message: '"workspace_details" needs "workspace": its id or its name.',

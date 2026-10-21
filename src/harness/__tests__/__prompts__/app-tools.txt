@@ -1,7 +1,7 @@
 [
   {
     "name": "workspace_details",
-    "description": "Read one workspace in full: its project and target, every case of its plan with its steps, its runs, and its bugs.",
+    "description": "Read one workspace in full: its project and target, every case of its plan with its steps, its runs, its bugs, and the questions its chat waits on the QA to answer.",
     "inputSchema": {
       "type": "object",
       "properties": {
