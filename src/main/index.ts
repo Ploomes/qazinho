@@ -47,6 +47,7 @@ import {
 import { Harness, McpHost } from '@/harness';
 import {
   AgentDetector,
+  AndroidDriver,
   AgentLogin,
   AgentMcp,
   AgentRunner,
@@ -60,7 +61,9 @@ import {
   GithubCli,
   GithubRepos,
   IntegrationVault,
+  IosDriver,
   LiveStream,
+  PhonePeek,
   ProcessOwners,
   ResourceCollector,
   RunCoordinator,
@@ -283,6 +286,22 @@ async function findIos() {
   return udid === undefined ? null : { idb, udid };
 }
 
+const phonePeek = new PhonePeek({
+  openDevice: async (target) => {
+    if (target.kind === 'android') {
+      const android = await findAndroid();
+
+      return android === null
+        ? null
+        : new AndroidDriver({ ...android, apk: target.value });
+    }
+
+    const ios = await findIos();
+
+    return ios === null ? null : new IosDriver({ ...ios, app: target.value });
+  },
+  isBusy: (kind) => runs.inFlight().some(({ targetKind }) => targetKind === kind),
+});
 const runs = new RunCoordinator({
   runner: agentRunner,
   findCommand,
@@ -387,9 +406,24 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
 
   askingChats.add(ask.workspaceId);
 
+  const phone =
+    ask.target !== null && ask.target.kind !== 'web' && ask.steps.length === 0
+      ? { kind: ask.target.kind, value: ask.target.value }
+      : null;
+
+  if (phone !== null && !phonePeek.isKept(phone))
+    broadcast({
+      channel: CHANNELS.agentEvent,
+      event: { kind: 'look', workspaceId: ask.workspaceId, device: phone.kind },
+    });
+
   try {
     const [look, prepared] = await Promise.all([
-      ask.target?.kind === 'web' ? peek.look(ask.target.value) : Promise.resolve(null),
+      ask.target?.kind === 'web'
+        ? peek.look(ask.target.value)
+        : phone === null
+          ? Promise.resolve(null)
+          : phonePeek.look(phone),
       ask.code === null
         ? Promise.resolve(null)
         : codeCopies.prepare({
