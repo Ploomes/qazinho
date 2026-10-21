@@ -4,6 +4,15 @@ export const ANDROID = {
   labelLimit: 60,
   bootTimeoutMs: 180_000,
   shutdownTimeoutMs: 60_000,
+  swipeMs: 350,
+  longPressMs: 1_000,
+  dragMs: 1_500,
+  scrollTries: 8,
+  notOnPhone: {
+    hover: 'A phone has no mouse to hover with: tap or long press instead.',
+    upload:
+      "A phone picks files in the app's own picker: tap through it instead of uploading.",
+  },
   commandTimeoutMs: 60_000,
   maxBufferBytes: 64 * 1024 * 1024,
   settleMs: 1_200,

@@ -12,7 +12,7 @@ import { spawn } from 'node:child_process';
 import { readdir, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
-import { phoneGlance } from '@/main/library';
+import { phoneGlance, swipeOf } from '@/main/library';
 import { ANDROID } from './constants';
 import {
   bootArgs,
@@ -93,9 +93,43 @@ export class AndroidDriver implements IDeviceDriver {
       return;
     }
 
-    const node = findNode({ nodes: await this.read(), target: action.target });
+    if (action.kind === 'scroll') {
+      await this.scroll({ direction: action.value, until: action.target });
+
+      return;
+    }
+
+    if (action.kind === 'hover' || action.kind === 'upload')
+      throw new Error(ANDROID.notOnPhone[action.kind]);
+
+    const nodes = await this.read();
+    const node = findNode({ nodes, target: action.target });
 
     if (!node) throw new Error(`Nothing on the screen answers to "${action.target}".`);
+
+    if (action.kind === 'long_press') {
+      const [x, y] = [String(node.x), String(node.y)];
+
+      await this.shell(['input', 'swipe', x, y, x, y, String(ANDROID.longPressMs)]);
+      await this.settle();
+
+      return;
+    }
+
+    if (action.kind === 'drag') {
+      const drop = findNode({ nodes, target: action.value });
+
+      if (!drop) throw new Error(`Nothing on the screen answers to "${action.value}".`);
+
+      const points = [node.x, node.y, drop.x, drop.y].map(String);
+
+      await this.shell(['input', 'draganddrop', ...points, String(ANDROID.dragMs)]).catch(
+        () => this.shell(['input', 'swipe', ...points, String(ANDROID.dragMs)]),
+      );
+      await this.settle();
+
+      return;
+    }
 
     await this.shell(['input', 'tap', String(node.x), String(node.y)]);
 
@@ -286,6 +320,55 @@ export class AndroidDriver implements IDeviceDriver {
     await this.shell(['uiautomator', 'dump', ANDROID.dumpFile]);
 
     return parseViewHierarchy(await this.shell(['cat', ANDROID.dumpFile]));
+  }
+
+  private async scroll(props: { direction: string; until: string }): Promise<void> {
+    const size = screenSizeOf(await this.shell(['wm', 'size']).catch(() => ''));
+
+    if (size === null) throw new Error('The emulator did not say how big its screen is.');
+
+    const { from, to } = swipeOf({ size, direction: props.direction });
+    const until = props.until.trim();
+    const swipe = async () => {
+      await this.shell([
+        'input',
+        'swipe',
+        ...[from.x, from.y, to.x, to.y].map(String),
+        String(ANDROID.swipeMs),
+      ]);
+      await this.settle();
+    };
+
+    if (until === '') {
+      await swipe();
+
+      return;
+    }
+
+    const isShown = async () => {
+      const found = findNode({ nodes: await this.read(), target: until });
+
+      return (
+        found !== null &&
+        found !== undefined &&
+        found.x >= 0 &&
+        found.y >= 0 &&
+        found.x <= size.width &&
+        found.y <= size.height
+      );
+    };
+
+    for (let tries = 0; tries < ANDROID.scrollTries; tries += 1) {
+      if (await isShown()) return;
+
+      await swipe();
+    }
+
+    if (await isShown()) return;
+
+    throw new Error(
+      `Nothing on the screen reads "${until}" after scrolling ${props.direction}.`,
+    );
   }
 
   private async gone(): Promise<void> {
