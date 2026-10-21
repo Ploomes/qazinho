@@ -1,3 +1,4 @@
+export * from './adbTextsOf';
 export * from './bootArgs';
 export * from './centreOf';
 export * from './decodeXml';

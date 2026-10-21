@@ -33,6 +33,12 @@ beforeAll(async () => {
   }
 }, 300_000);
 
+/** A password with every character a shell or a keyboard could get wrong. */
+const TYPED = 'P@ss $& (x) "q" \'a\' ;b|c<d>e*f?g[h]{i}~#!';
+
+/** The same for Android, whose adb types no double quote, with a %s that input text would read as a space. */
+const ANDROID_TYPED = "P@ss $& (x) 'a' ;b|c<d>e*f?g[h]{i}~#! 50%s off";
+
 async function visits(driver: AndroidDriver | IosDriver): Promise<string> {
   return /Visits: \d+/.exec(await driver.describe())?.[0] ?? '';
 }
@@ -96,6 +102,32 @@ describe('a fresh start on a real Android emulator', () => {
 
     await driver.act({ kind: 'scroll', target: 'Row 40', value: 'down' });
     expect(await driver.describe()).toContain('Row 40');
+  }, 600_000);
+
+  it('types a value character for character, whatever the shell would read', async (context) => {
+    if (apk === null || avd === undefined || driver === null) {
+      context.skip();
+
+      return;
+    }
+
+    await driver.restart();
+    await driver.act({ kind: 'fill', target: 'Note', value: ANDROID_TYPED });
+    expect(await driver.describe()).toContain(ANDROID_TYPED);
+  }, 600_000);
+
+  it('says plainly that it cannot type a double quote, and types nothing', async (context) => {
+    if (apk === null || avd === undefined || driver === null) {
+      context.skip();
+
+      return;
+    }
+
+    await driver.restart();
+    await expect(
+      driver.act({ kind: 'fill', target: 'Note', value: 'say "hi"' }),
+    ).rejects.toThrow('Android cannot type a double quote');
+    expect(await driver.describe()).toContain('edittext: Note');
   }, 600_000);
 
   /** goto brought the app back as it was and back left it running: neither closed it for real. */
@@ -183,6 +215,18 @@ describe('a fresh start on a real iOS simulator', () => {
 
     await driver.act({ kind: 'scroll', target: 'Row 40', value: 'down' });
     expect(await driver.describe()).toContain('Row 40');
+  }, 600_000);
+
+  it('types a value character for character', async (context) => {
+    if (app === null || udid === undefined || driver === null) {
+      context.skip();
+
+      return;
+    }
+
+    await driver.restart();
+    await driver.act({ kind: 'fill', target: 'Note', value: TYPED });
+    expect(await driver.describe()).toContain(`Noted: ${TYPED}`);
   }, 600_000);
 
   it('reopens the app with what it saved kept', async (context) => {

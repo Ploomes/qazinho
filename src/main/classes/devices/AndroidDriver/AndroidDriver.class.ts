@@ -15,6 +15,7 @@ import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { phoneGlance, swipeOf } from '@/main/library';
 import { ANDROID } from './constants';
 import {
+  adbTextsOf,
   bootArgs,
   describeScreen,
   findNode,
@@ -131,11 +132,16 @@ export class AndroidDriver implements IDeviceDriver {
       return;
     }
 
+    if (action.kind === 'fill' && action.value.includes('"'))
+      throw new Error(ANDROID.noDoubleQuote);
+
     await this.shell(['input', 'tap', String(node.x), String(node.y)]);
 
     if (action.kind === 'fill') {
       await this.settle();
-      await this.shell(['input', 'text', action.value.replace(/ /g, '%s')]);
+
+      for (const chunk of adbTextsOf(action.value))
+        await this.shell(['input', 'text', chunk]);
     }
 
     await this.settle();

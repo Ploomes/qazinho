@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -38,12 +39,16 @@ public class Main extends Activity {
         return true;
       }
     });
+    EditText note = new EditText(this);
+    note.setSingleLine(true);
+    note.setContentDescription("Note");
     LinearLayout layout = new LinearLayout(this);
     layout.setOrientation(LinearLayout.VERTICAL);
     layout.setPadding(48, 160, 48, 48);
     layout.addView(count);
     layout.addView(keep);
     layout.addView(hold);
+    layout.addView(note);
     for (int row = 1; row <= 40; row++) {
       TextView line = new TextView(this);
       line.setTextSize(20);

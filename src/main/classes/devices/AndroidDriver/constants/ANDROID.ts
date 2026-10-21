@@ -13,6 +13,8 @@ export const ANDROID = {
     upload:
       "A phone picks files in the app's own picker: tap through it instead of uploading.",
   },
+  noDoubleQuote:
+    'Android cannot type a double quote (") through adb, so QAzinho does not fill a field with a text that has one. Change that text, or the variable it comes from.',
   commandTimeoutMs: 60_000,
   maxBufferBytes: 64 * 1024 * 1024,
   settleMs: 1_200,

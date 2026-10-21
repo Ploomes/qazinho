@@ -3,6 +3,7 @@
 @interface Counter : UIViewController
 @property(nonatomic, strong) UILabel *count;
 @property(nonatomic, strong) UILabel *hold;
+@property(nonatomic, strong) UILabel *noted;
 @end
 
 @implementation Counter
@@ -26,12 +27,28 @@
   self.hold.userInteractionEnabled = YES;
   [self.hold addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(held:)]];
   [scroll addSubview:self.hold];
+  UITextField *note = [[UITextField alloc] initWithFrame:CGRectMake(40, 330, 300, 40)];
+  note.accessibilityLabel = @"Note";
+  note.borderStyle = UITextBorderStyleRoundedRect;
+  note.autocorrectionType = UITextAutocorrectionTypeNo;
+  note.autocapitalizationType = UITextAutocapitalizationTypeNone;
+  note.smartQuotesType = UITextSmartQuotesTypeNo;
+  note.smartDashesType = UITextSmartDashesTypeNo;
+  note.smartInsertDeleteType = UITextSmartInsertDeleteTypeNo;
+  [note addTarget:self action:@selector(noted:) forControlEvents:UIControlEventEditingChanged];
+  [scroll addSubview:note];
+  self.noted = [[UILabel alloc] initWithFrame:CGRectMake(40, 380, 300, 40)];
+  self.noted.text = @"Noted:";
+  [scroll addSubview:self.noted];
   for (NSInteger row = 1; row <= 40; row++) {
-    UILabel *line = [[UILabel alloc] initWithFrame:CGRectMake(40, 340 + (row - 1) * 50, 300, 40)];
+    UILabel *line = [[UILabel alloc] initWithFrame:CGRectMake(40, 440 + (row - 1) * 50, 300, 40)];
     line.text = [NSString stringWithFormat:@"Row %ld", (long)row];
     [scroll addSubview:line];
   }
-  scroll.contentSize = CGSizeMake(self.view.bounds.size.width, 340 + 40 * 50 + 120);
+  scroll.contentSize = CGSizeMake(self.view.bounds.size.width, 440 + 40 * 50 + 120);
+}
+- (void)noted:(UITextField *)note {
+  self.noted.text = [@"Noted: " stringByAppendingString:note.text];
 }
 - (void)held:(UILongPressGestureRecognizer *)press {
   if (press.state == UIGestureRecognizerStateBegan) self.hold.text = @"Held long";
