@@ -252,6 +252,7 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `AssistantAgent`                      | asks the QA's agent as the Estagiário, with the app tools served for the turn       |
 | `AppBridge`                           | hands each app tool call to the page and waits for what it did                      |
 | `AppBuilder`                          | builds an .apk or .app from a branch with the QA's agent, and keeps what it made    |
+| `UsageReader`                         | reads the account's limits through Claude Code's own `/usage`, which spends nothing |
 
 ## Dependencies
 
