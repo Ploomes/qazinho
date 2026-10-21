@@ -28,6 +28,50 @@ describe('playwrightOf', () => {
     );
   });
 
+  it('finds a target with the very locator the run used, and picks the option a dropdown took', () => {
+    const file = playwrightOf({
+      url: 'https://loja.test/',
+      viewport: { width: 1280, height: 800 },
+      cases: [
+        {
+          steps: STEPS,
+          recipe: {
+            ...RECIPE,
+            steps: [
+              {
+                number: 1,
+                actions: [
+                  {
+                    kind: 'click',
+                    target: 'Entrar #2',
+                    value: '',
+                    locator:
+                      "locator('button, a, input, select, textarea, [role=button]').nth(5)",
+                  },
+                  {
+                    kind: 'fill',
+                    target: 'Estado',
+                    value: 'São Paulo',
+                    locator: "getByLabel('Estado', { exact: true }).visible().first()",
+                    option: 'SP',
+                  },
+                ],
+                proof: 'Sair',
+              },
+            ],
+          },
+        },
+      ],
+    });
+
+    expect(file).toContain(
+      "  await tab.locator('button, a, input, select, textarea, [role=button]').nth(5).click();",
+    );
+    expect(file).toContain(
+      '  await tab.getByLabel(\'Estado\', { exact: true }).visible().first().selectOption("SP");',
+    );
+  });
+
   it('cancels only the dialog a step said to cancel, and answers the rest OK', () => {
     expect(FILE).toContain(
       [

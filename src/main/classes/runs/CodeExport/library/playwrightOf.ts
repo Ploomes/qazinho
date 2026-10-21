@@ -64,11 +64,19 @@ function lineOf(action: IStepAction): string[] {
     case 'click':
       return [
         ...dialog,
-        `await control(tab, ${aimed(action.target)}).click();`,
+        action.locator === undefined
+          ? `await control(tab, ${aimed(action.target)}).click();`
+          : `await tab.${action.locator}.click();`,
         ...reset,
       ];
     case 'fill':
-      return [`await field(tab, ${aimed(action.target)}).fill(${quoted(action.value)});`];
+      return [
+        action.locator === undefined
+          ? `await field(tab, ${aimed(action.target)}).fill(${quoted(action.value)});`
+          : action.option === undefined
+            ? `await tab.${action.locator}.fill(${quoted(action.value)});`
+            : `await tab.${action.locator}.selectOption(${quoted(action.option)});`,
+      ];
     case 'press':
       return [
         ...dialog,
