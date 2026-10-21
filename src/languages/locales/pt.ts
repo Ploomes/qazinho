@@ -65,6 +65,9 @@ export const pt: typeof en = {
   WORKSPACE: {
     RENAME: 'Renomear workspace',
     RUN_PLAN: 'Rodar plano',
+    RUN_WITH_AGENT: 'Rodar com o agente',
+    RUN_WITH_AGENT_TIP:
+      'O agente anda e julga cada caso, mesmo os que uma run aprovada já gravou.',
     TAB_CHAT: 'Chat',
     TAB_PLAN: 'Plano',
     TAB_RUNS: 'Runs',
@@ -204,6 +207,11 @@ export const pt: typeof en = {
     NOTICE_WATCH: 'Assistir',
     WATCH_CASE: 'Assistir ao take do {{id}}',
     TAKE: 'Take',
+    BY_REPLAY: 'sem IA',
+    BY_REPLAY_TIP: 'Repetido sem o agente: os passos e a prova de uma run que passou.',
+    BY_HEALED: 'curado',
+    BY_HEALED_TIP: 'O app mudou, então o agente refez este caso e gravou de novo.',
+    PROOF: 'conferido na tela: “{{proof}}”',
     REPLAY_RUN: 'Run {{id}} · o plano inteiro',
     REPLAY_CASE: 'Take · {{id}}',
     REPLAY_BUG: 'O momento do {{id}}',

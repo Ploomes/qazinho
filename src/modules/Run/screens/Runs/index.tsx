@@ -143,6 +143,11 @@ export const Runs: React.FC = () => {
                     <span aria-hidden="true">▶</span> {runCase.take.label}
                   </button>
                 )}
+                {runCase.walk !== null && (
+                  <span className={runCase.walk.className} title={runCase.walk.title}>
+                    {runCase.walk.label}
+                  </span>
+                )}
                 <span className="runs__case-duration">{runCase.duration}</span>
                 <StatusPill status={runCase.verdict} />
               </div>
@@ -186,7 +191,7 @@ export const Runs: React.FC = () => {
                         </button>
                       )}
 
-                      {step.hasNote && <span className="runs__why">{step.why}</span>}
+                      {step.hasNote && <span className="runs__why">{step.note}</span>}
                     </div>
 
                     <Screenshot

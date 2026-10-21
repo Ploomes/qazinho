@@ -94,6 +94,53 @@ describe('useRunsViewModel', () => {
     expect(failed?.hasNote).toBe(false);
   });
 
+  it('marks a case walked again without the agent, and says what it checked on screen', () => {
+    const replayed = finishedWorkspace();
+    const [run] = replayed.runs;
+
+    if (run === undefined) throw new Error('fixture');
+
+    useWorkspaceStore.setState({
+      workspaces: [
+        {
+          ...replayed,
+          runs: [
+            {
+              ...run,
+              cases: run.cases.map((runCase, position) => ({
+                ...runCase,
+                steps: runCase.steps.map((step) =>
+                  position === 0
+                    ? { ...step, by: 'replay' as const, proof: 'Visits: 1', why: null }
+                    : { ...step, by: 'healed' as const },
+                ),
+              })),
+            },
+          ],
+        },
+      ],
+    });
+
+    const { result } = renderHook(() => useRunsViewModel());
+    const [first, second] = result.current.cases;
+
+    expect(first?.walk).toMatchObject({
+      label: 'no AI',
+      className: 'runs__walk runs__walk--replay',
+    });
+    expect(first?.steps[0]).toMatchObject({
+      hasNote: true,
+      note: 'checked on screen: “Visits: 1”',
+    });
+    expect(second?.walk).toMatchObject({ label: 'healed' });
+  });
+
+  it('does NOT mark a case the agent walked on its own', () => {
+    const { result } = renderHook(() => useRunsViewModel());
+
+    expect(result.current.cases.map(({ walk }) => walk)).toEqual([null, null]);
+  });
+
   it('mutes a step that never ran, and keeps its note', () => {
     const { result } = renderHook(() => useRunsViewModel());
     const skipped = result.current.cases[1]?.steps.find(

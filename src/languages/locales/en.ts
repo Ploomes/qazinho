@@ -63,6 +63,9 @@ export const en = {
   WORKSPACE: {
     RENAME: 'Rename workspace',
     RUN_PLAN: 'Run plan',
+    RUN_WITH_AGENT: 'Run with the agent',
+    RUN_WITH_AGENT_TIP:
+      'The agent walks and judges every case, even one a passing run already recorded.',
     TAB_CHAT: 'Chat',
     TAB_PLAN: 'Plan',
     TAB_RUNS: 'Runs',
@@ -200,6 +203,13 @@ export const en = {
     NOTICE_WATCH: 'Watch',
     WATCH_CASE: 'Watch the take of {{id}}',
     TAKE: 'Take',
+    BY_REPLAY: 'no AI',
+    BY_REPLAY_TIP:
+      'Walked again without the agent: the steps and the proof of a run that passed.',
+    BY_HEALED: 'healed',
+    BY_HEALED_TIP:
+      'The app changed, so the agent walked this case again and recorded it anew.',
+    PROOF: 'checked on screen: “{{proof}}”',
     REPLAY_RUN: 'Run {{id}} · the whole plan',
     REPLAY_CASE: 'Take · {{id}}',
     REPLAY_BUG: 'The moment of {{id}}',

@@ -8,7 +8,13 @@ import {
   RUN_PAGE_SIZE,
   RUN_VERDICTS,
 } from '@/modules/Run/constants';
-import { caseVerdict, filterCases, formatCost, pageOf } from '@/modules/Run/library';
+import {
+  caseVerdict,
+  caseWalkOf,
+  filterCases,
+  formatCost,
+  pageOf,
+} from '@/modules/Run/library';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 import { MOTION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
@@ -154,6 +160,17 @@ export const useRunsViewModel = () => {
     cases: filterCases({ cases: judged, filter: runFilter }).map((runCase) => ({
       ...runCase,
       duration: t('RUN.DURATION', { seconds: runCase.durationSec }),
+      walk: (() => {
+        const walk = caseWalkOf(runCase.steps);
+
+        return walk === null
+          ? null
+          : {
+              label: t(walk === 'replay' ? 'RUN.BY_REPLAY' : 'RUN.BY_HEALED'),
+              title: t(walk === 'replay' ? 'RUN.BY_REPLAY_TIP' : 'RUN.BY_HEALED_TIP'),
+              className: `runs__walk runs__walk--${walk}`,
+            };
+      })(),
       take:
         canWatch && runCase.steps.some(({ span }) => span !== null)
           ? {
@@ -176,7 +193,11 @@ export const useRunsViewModel = () => {
             bug === null
               ? null
               : { id: bug.id, title: bug.title, isHigh: bug.severity === 'high' },
-          hasNote: step.why !== null && bug === null,
+          note:
+            step.by === 'replay' && step.proof !== undefined
+              ? t('RUN.PROOF', { proof: step.proof })
+              : step.why,
+          hasNote: (step.why !== null || step.by === 'replay') && bug === null,
           shotLabel: t('RUN.STEP_SHOT', { id: runCase.id, number: step.number }),
         };
       }),

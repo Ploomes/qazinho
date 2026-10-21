@@ -154,6 +154,23 @@
   font: var(--font-mono-sm);
 }
 
+.runs__walk {
+  flex: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  font: var(--font-mono-sm);
+}
+
+.runs__walk--replay {
+  background: var(--lime-soft);
+  color: var(--lime-ink);
+}
+
+.runs__walk--healed {
+  background: var(--attn-soft);
+  color: var(--attn);
+}
+
 .runs__take {
   display: inline-flex;
   align-items: center;
