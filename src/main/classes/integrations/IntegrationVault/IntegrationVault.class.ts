@@ -1,9 +1,5 @@
-import type {
-  Fetcher,
-  IIntegrationVault,
-  IStoredIntegration,
-  IVaultCipher,
-} from './types';
+import type { Fetcher, IIntegrationVault, IStoredIntegration } from './types';
+import type { IVaultCipher } from '@/main/types';
 import type {
   IConnectIntegration,
   IConnectResult,

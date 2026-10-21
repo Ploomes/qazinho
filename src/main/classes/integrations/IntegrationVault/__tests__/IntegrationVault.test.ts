@@ -1,4 +1,4 @@
-import type { IVaultCipher } from '@/main/classes/integrations/IntegrationVault/types';
+import type { IVaultCipher } from '@/main/types';
 import type { IGithubStatus } from '@/shared/types';
 import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';

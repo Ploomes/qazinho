@@ -1,5 +1,5 @@
 import type { Fetcher } from './Fetcher';
-import type { IVaultCipher } from './IVaultCipher';
+import type { IVaultCipher } from '@/main/types';
 import type { IGithubStatus } from '@/shared/types';
 
 export interface IIntegrationVault {
