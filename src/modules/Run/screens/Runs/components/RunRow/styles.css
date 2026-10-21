@@ -75,3 +75,9 @@
     display: none;
   }
 }
+
+@container run-row (width < 330px) {
+  .run-row__what {
+    display: none;
+  }
+}

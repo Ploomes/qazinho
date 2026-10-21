@@ -55,6 +55,12 @@
   }
 }
 
+@container run-picker (width < 420px) {
+  .run-picker__count {
+    display: none;
+  }
+}
+
 .run-picker__handle {
   display: flex;
   flex: none;

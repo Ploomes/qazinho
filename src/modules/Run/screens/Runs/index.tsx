@@ -108,20 +108,22 @@ export const Runs: React.FC = () => {
 
         <div className="runs__filters">
           <Eyebrow>{t('COMMON.FILTER')}</Eyebrow>
-          {filters.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={
-                item.isActive ? 'runs__filter runs__filter--active' : 'runs__filter'
-              }
-              onClick={() => {
-                onFilter(item.id);
-              }}
-            >
-              {item.label}
-            </button>
-          ))}
+          <div className="runs__filter-list">
+            {filters.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className={
+                  item.isActive ? 'runs__filter runs__filter--active' : 'runs__filter'
+                }
+                onClick={() => {
+                  onFilter(item.id);
+                }}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="runs__cases">
