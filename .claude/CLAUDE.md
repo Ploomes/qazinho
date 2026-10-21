@@ -92,6 +92,15 @@ once. A real Claude Code (Haiku) explored a booking app with six planted bugs an
 about a minute, logging in with the project's variables; `tests/smoke/explore.test.ts` drives a
 fake agent on real Chrome, and through the app only a fake explorer has gone yet.
 
+**A project keeps its logins and secrets as variables**: a name, what it holds, and a value
+sealed by the OS keychain in main, which never reaches the page or an agent again. The QA adds
+them in the project's window, or types them in a window the chat or the Estagiário opens: when a
+plan needs an account, the chat's agent offers the variables that fit and an option that creates
+what is missing. A step names one as `${NAME}`. The run types its value, reads any value the
+screen shows back as its name, and keeps the name in recipes and exported code. On Linux with no
+secret store QAzinho keeps none, and Android types every character but a double quote, which it
+refuses. `tests/smoke/variables.test.ts` proves the run on real Chrome with a fake agent.
+
 **Every run is recorded and plays back with its timeline.** A browser is recorded from its live
 stream, a simulator by `simctl`, an emulator by its console. The run's video opens in a theater:
 a chapter per case in its verdict's colour, a pin per bug, a still of any moment under the

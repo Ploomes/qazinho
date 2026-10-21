@@ -74,7 +74,7 @@ Three suites that need something real behind them. They have their own config
 | `tabs.test.ts`         | a link's new tab and a sign-in window: the device turns to them and back     |
 | `peek.test.ts`         | a windowless Chrome reads a page for the chat, or says why it did not open   |
 | `fresh.test.ts`        | a case starts on a browser with nothing saved, and the stream follows it     |
-| `device-fresh.test.ts` | fixture apps on a real AVD and simulator: cleared, reopened, scrolled, held  |
+| `device-fresh.test.ts` | fixture apps on a real AVD and simulator: cleared, reopened, held, typed     |
 | `save.test.ts`         | the lightbox downloads a screenshot through main, to where the dialog says   |
 | `setup.test.ts`        | the installer runs a fake npm, streams its lines, and fails honestly         |
 | `terminal.test.ts`     | a full-screen program out of sight: its screen read, its keys, its page      |
@@ -86,6 +86,7 @@ Three suites that need something real behind them. They have their own config
 | `build.test.ts`        | a fake gh hands over a branch and a fake agent builds it: an APK kept        |
 | `replay.test.ts`       | a case recorded, walked again with no agent asked, healed when the app moves |
 | `explore.test.ts`      | a fake explorer on real Chrome: screens, a bug, a plan, and the clock        |
+| `variables.test.ts`    | a fake agent signs in with `${NAME}`: the page gets the value, the agent not |
 
 `run.test.ts`, `chat.test.ts` and `visual.test.ts` spend the QA's tokens and need an agent installed. Run them by
 hand after touching the run pipeline or an answer schema.

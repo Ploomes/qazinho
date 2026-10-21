@@ -70,6 +70,16 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
   its steps in `StepsPopup`. Terminal is only a way round after a failure.
 - **A tracker token never reaches the page.** It crosses to main once, is checked, and is sealed
   with `safeStorage`; the page only ever sees the account it belongs to.
+- **A variable's value never leaves main once sealed.** `VariableVault` keeps each project's
+  variables in one file sealed with `safeStorage`, and no channel hands a value back: the page
+  and the agents know a name and what it holds.
+  - The page sends a value only to save it, from the project's window or the window an agent
+    asks for (`VariablesModal`); no app tool carries one, and the Estagiário hears only names.
+  - A run reaches the device through `variablePort`: a `${NAME}` is typed as its value, every
+    value that shows is read back as its name, in the screen and in why an action failed, and
+    a recipe keeps the name, never a locator that holds a value.
+  - On Linux, Electron seals with a fixed key when there is no GNOME Keyring or KWallet, and
+    still says it can encrypt: `isSealable` refuses that, for variables and Jira's token.
 - **GitHub's login never passes through QAzinho either.** QAzinho talks to GitHub through the
   QA's own GitHub CLI (`GithubCli`), the way it drives the QA's agent, and keeps no token.
   - Connecting runs gh's device flow out of sight; the popup shows the one-time code and opens
@@ -211,6 +221,9 @@ answers one question per channel, for a target `{ role, platform }`:
   - Ask: one round of closed questions in the answer's `questions`, each with two to four
     options and the QA's own words always open. The page draws it as `QuestionRound` and sends
     the answers back as the next message.
+  - A secret is never asked in words (`role/chat/variables.md`): an option whose `variables`
+    lists what is missing opens the window for the values, and the next message names the
+    variables kept, with the project's variables in a section of their own.
   - Confirm: the plan about to be written, with one option alone.
   - Write: `plan` is filled only once the QA picked that option.
 - **The prompts are pinned.** `src/harness/__tests__/__prompts__/` holds what the agent reads for each
@@ -278,6 +291,7 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `AppBridge`                           | hands each app tool call to the page and waits for what it did                           |
 | `AppBuilder`                          | builds an .apk or .app from a branch with the QA's agent, and keeps what it made         |
 | `UsageReader`                         | reads the account's limits through Claude Code's own `/usage`, which spends nothing      |
+| `VariableVault`                       | keeps each project's variables sealed by the keychain; only a run reads a value          |
 
 ## Dependencies
 
