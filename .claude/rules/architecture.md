@@ -184,7 +184,9 @@ answers one question per channel, for a target `{ role, platform }`:
 - **A plan comes out of a conversation, never out of a guess** (`role/chat/planning.md`), the way
   the Ploomes harness builds a screen:
   - Look: before a chat message on a web target, `AppPeek` opens the app and the agent reads
-    what its page showed.
+    what its page showed. On an Android or iOS target with no plan yet, `PhonePeek` opens the
+    app on the emulator or simulator, with no window, and the agent reads its first screen; the
+    chat says so while it waits.
   - Ask: one round of closed questions in the answer's `questions`, each with two to four
     options and the QA's own words always open. The page draws it as `QuestionRound` and sends
     the answers back as the next message.
@@ -227,32 +229,33 @@ screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `
 
 Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 
-| Class                                 | What it does                                                                        |
-| ------------------------------------- | ----------------------------------------------------------------------------------- |
-| `AgentDetector`                       | finds the QA's agent CLIs, the way Orca does: fs probes, no subprocess              |
-| `AgentRunner`                         | spawns Claude Code or Codex, each in its own dialect, and reads the answer back     |
-| `WebDriver`                           | drives Chrome over playwright-core, one profile per workspace                       |
-| `LiveStream`                          | serves the device's frames as MJPEG on 127.0.0.1, for the device panel              |
-| `AppPeek`                             | opens a web target for a moment before the chat, and reads what its page shows      |
-| `RunCoordinator`                      | walks a plan a case per agent turn, each on the app opened anew (`restart`)         |
-| `ResourceCollector` / `ProcessOwners` | one `ps` sweep, charged to whoever started it                                       |
-| `Archive`                             | the QA's projects, workspaces and plans, as files on disk                           |
-| `SetupInstaller`                      | installs an agent CLI, idb or gh on request, streaming each line it prints          |
-| `IntegrationVault`                    | connects the trackers: GitHub as gh's account, Jira's token sealed by `safeStorage` |
-| `AgentTerminal`                       | runs an agent's full-screen interface out of sight: reads it, presses its keys      |
-| `AgentMcp`                            | adds an MCP server to the QA's agent and signs it in there, step by step            |
-| `AgentLogin`                          | signs the QA's agent in through its own login, step by step                         |
-| `LinkCatcher`                         | gives an agent a `$BROWSER` that writes down the pages it wants opened              |
-| `RunRecorder`                         | records a run's live stream into an MP4, through the hidden recorder window         |
-| `ReplayServer`                        | serves a run's recording to the page's `<video>` on 127.0.0.1, with ranges          |
-| `RunAlerts`                           | calls the QA back when a run ends while they are away: a notification, a badge      |
-| `GithubCli`                           | talks to GitHub through the QA's own gh: status, device-flow sign-in, API, tar      |
-| `GithubRepos`                         | lists the QA's repositories and a repository's branches, kept for a little while    |
-| `CodeCopies`                          | copies a branch for the agent to read while it plans, with its diff, then drops it  |
-| `AssistantAgent`                      | asks the QA's agent as the Estagiário, with the app tools served for the turn       |
-| `AppBridge`                           | hands each app tool call to the page and waits for what it did                      |
-| `AppBuilder`                          | builds an .apk or .app from a branch with the QA's agent, and keeps what it made    |
-| `UsageReader`                         | reads the account's limits through Claude Code's own `/usage`, which spends nothing |
+| Class                                 | What it does                                                                             |
+| ------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `AgentDetector`                       | finds the QA's agent CLIs, the way Orca does: fs probes, no subprocess                   |
+| `AgentRunner`                         | spawns Claude Code or Codex, each in its own dialect, and reads the answer back          |
+| `WebDriver`                           | drives Chrome over playwright-core, one profile per workspace                            |
+| `LiveStream`                          | serves the device's frames as MJPEG on 127.0.0.1, for the device panel                   |
+| `AppPeek`                             | opens a web target for a moment before the chat, and reads what its page shows           |
+| `PhonePeek`                           | opens a phone app on the emulator or simulator before a plan, and reads its first screen |
+| `RunCoordinator`                      | walks a plan a case per agent turn, each on the app opened anew (`restart`)              |
+| `ResourceCollector` / `ProcessOwners` | one `ps` sweep, charged to whoever started it                                            |
+| `Archive`                             | the QA's projects, workspaces and plans, as files on disk                                |
+| `SetupInstaller`                      | installs an agent CLI, idb or gh on request, streaming each line it prints               |
+| `IntegrationVault`                    | connects the trackers: GitHub as gh's account, Jira's token sealed by `safeStorage`      |
+| `AgentTerminal`                       | runs an agent's full-screen interface out of sight: reads it, presses its keys           |
+| `AgentMcp`                            | adds an MCP server to the QA's agent and signs it in there, step by step                 |
+| `AgentLogin`                          | signs the QA's agent in through its own login, step by step                              |
+| `LinkCatcher`                         | gives an agent a `$BROWSER` that writes down the pages it wants opened                   |
+| `RunRecorder`                         | records a run's live stream into an MP4, through the hidden recorder window              |
+| `ReplayServer`                        | serves a run's recording to the page's `<video>` on 127.0.0.1, with ranges               |
+| `RunAlerts`                           | calls the QA back when a run ends while they are away: a notification, a badge           |
+| `GithubCli`                           | talks to GitHub through the QA's own gh: status, device-flow sign-in, API, tar           |
+| `GithubRepos`                         | lists the QA's repositories and a repository's branches, kept for a little while         |
+| `CodeCopies`                          | copies a branch for the agent to read while it plans, with its diff, then drops it       |
+| `AssistantAgent`                      | asks the QA's agent as the Estagiário, with the app tools served for the turn            |
+| `AppBridge`                           | hands each app tool call to the page and waits for what it did                           |
+| `AppBuilder`                          | builds an .apk or .app from a branch with the QA's agent, and keeps what it made         |
+| `UsageReader`                         | reads the account's limits through Claude Code's own `/usage`, which spends nothing      |
 
 ## Dependencies
 

@@ -64,6 +64,10 @@ the agent named, and judges what it sees.
 source for the simulator (`tests/smoke/fixtures/`), read and tapped through idb, and a plan walked
 and judged by the QA's own agent. Every case starts on the app opened anew: Android clears its
 data, iOS reinstalls it, the web clears the browser (`device-fresh.test.ts`, `fresh.test.ts`).
+A step that closes the app and opens it again does it for real with `reopen`, its data kept:
+Android stops the app, iOS terminates it, the web opens its address in a new tab. Before a plan
+on a phone, the chat opens the app on the emulator or simulator and reads its first screen. An
+iOS app that does not adopt UIScene does not launch on iOS 27, and QAzinho says it closed at once.
 
 **Every run is recorded and plays back with its timeline.** A browser is recorded from its live
 stream, a simulator by `simctl`, an emulator by its console. The run's video opens in a theater:
