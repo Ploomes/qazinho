@@ -1,4 +1,5 @@
 export * from './agents';
+export * from './assistant';
 export * from './devices';
 export * from './integrations';
 export * from './resources';

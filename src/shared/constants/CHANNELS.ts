@@ -49,4 +49,9 @@ export const CHANNELS = {
   githubSignInEvent: 'github:sign-in-event',
   listRepositories: 'github:repositories',
   listBranches: 'github:branches',
+  askAssistant: 'assistant:ask',
+  stopAssistant: 'assistant:stop',
+  assistantEvent: 'assistant:event',
+  appToolCall: 'assistant:tool',
+  appToolAnswer: 'assistant:tool-answer',
 } as const;

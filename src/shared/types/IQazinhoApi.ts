@@ -1,7 +1,11 @@
 import type { AgentSignInProgress } from './AgentSignInProgress';
 import type { GithubSignInProgress } from './GithubSignInProgress';
 import type { IAgentEvent } from './IAgentEvent';
+import type { IAppToolAnswer } from './IAppToolAnswer';
+import type { IAppToolRequest } from './IAppToolRequest';
 import type { IAskAgent } from './IAskAgent';
+import type { IAssistantAsk } from './IAssistantAsk';
+import type { IAssistantTurn } from './IAssistantTurn';
 import type { IBranchList } from './IBranchList';
 import type { IChatTurn } from './IChatTurn';
 import type { IConnectIntegration } from './IConnectIntegration';
@@ -89,4 +93,9 @@ export interface IQazinhoApi {
   cancelMcpSignIn: (target: IMcpServerTarget) => Promise<void>;
   onMcpSignIn: (listener: (progress: McpSignInProgress) => void) => () => void;
   removeMcpServer: (target: IMcpServerTarget) => Promise<McpActionResult>;
+  askAssistant: (ask: IAssistantAsk) => Promise<IAssistantTurn>;
+  stopAssistant: () => Promise<void>;
+  onAssistantEvent: (listener: (event: IAgentEvent) => void) => () => void;
+  onAppToolCall: (listener: (request: IAppToolRequest) => void) => () => void;
+  answerAppTool: (answer: IAppToolAnswer) => void;
 }

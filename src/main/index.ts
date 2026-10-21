@@ -4,7 +4,9 @@ import type {
   GithubSignInProgress,
   IAgentEvent,
   IAgentTurn,
+  IAppToolAnswer,
   IAskAgent,
+  IAssistantAsk,
   IChatTurn,
   ICodeCopy,
   IConnectIntegration,
@@ -25,7 +27,7 @@ import type {
   SaveOutcome,
   WindowFit,
 } from '@/shared/types';
-import { copyFile, writeFile } from 'node:fs/promises';
+import { copyFile, stat, writeFile } from 'node:fs/promises';
 import { homedir, tmpdir } from 'node:os';
 import { extname, join } from 'node:path';
 import {
@@ -44,8 +46,10 @@ import {
   AgentLogin,
   AgentMcp,
   AgentRunner,
+  AppBridge,
   AppPeek,
   Archive,
+  AssistantAgent,
   CodeCopies,
   DeviceToolDetector,
   GithubCli,
@@ -63,6 +67,7 @@ import {
 import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
 import { listSimulators } from '@/main/classes/devices/IosDriver/library';
 import {
+  ASSISTANT,
   FILE_FILTERS,
   PATHS,
   WINDOW,
@@ -80,7 +85,7 @@ import {
   isLostSession,
   searchDirectories,
 } from '@/main/library';
-import { CHANNELS } from '@/shared/constants';
+import { ASSISTANT_WAIT, CHANNELS } from '@/shared/constants';
 
 const agents = new AgentDetector();
 const owners = new ProcessOwners();
@@ -183,7 +188,14 @@ const vault = new IntegrationVault({
 const agentRunner = new AgentRunner({
   owners,
   folder: PATHS.agentHome,
-  onEvent: (event) => broadcast({ channel: CHANNELS.agentEvent, event }),
+  onEvent: (event) =>
+    broadcast({
+      channel:
+        event.workspaceId === ASSISTANT.scope
+          ? CHANNELS.assistantEvent
+          : CHANNELS.agentEvent,
+      event,
+    }),
 });
 
 async function findCommand(agentId: string): Promise<string | null> {
@@ -226,6 +238,33 @@ const runs = new RunCoordinator({
       .createFromBuffer(image)
       .resize({ width, height, quality: 'best' })
       .toJPEG(quality),
+});
+
+const bridge = new AppBridge({
+  timeoutMs: ASSISTANT_WAIT.toolMs,
+  send: (request) => {
+    const [open] = appWindows();
+
+    if (!open) return false;
+
+    open.webContents.send(CHANNELS.appToolCall, request);
+
+    return true;
+  },
+});
+
+const assistant = new AssistantAgent({
+  runner: agentRunner,
+  tools,
+  harness,
+  bridge,
+  findCommand,
+  kindOf: (path) =>
+    stat(path).then(
+      (found) => (found.isDirectory() ? 'directory' : found.isFile() ? 'file' : null),
+      () => null,
+    ),
+  home: homedir(),
 });
 
 const toldChats = new Map<string, Record<string, string>>();
@@ -479,6 +518,14 @@ function createWindow(): void {
     alerts.seen();
   });
 
+  window.webContents.on('did-finish-load', () => {
+    bridge.dropAll();
+  });
+
+  window.on('closed', () => {
+    bridge.dropAll();
+  });
+
   window.once('ready-to-show', () => {
     setTimeout(() => {
       if (!window.isDestroyed() && !window.isVisible()) window.show();
@@ -611,6 +658,15 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.removeMcpServer, (_event, target: IMcpServerTarget) =>
     mcp.remove(target),
   );
+  ipcMain.handle(CHANNELS.askAssistant, (_event, ask: IAssistantAsk) =>
+    assistant.ask(ask),
+  );
+  ipcMain.handle(CHANNELS.stopAssistant, () => {
+    assistant.stop();
+  });
+  ipcMain.on(CHANNELS.appToolAnswer, (_event, answer: IAppToolAnswer) => {
+    bridge.answer(answer);
+  });
 
   createWindow();
 

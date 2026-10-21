@@ -2,6 +2,10 @@ import type {
   AgentSignInProgress,
   GithubSignInProgress,
   IAgentEvent,
+  IAppToolAnswer,
+  IAppToolRequest,
+  IAssistantAsk,
+  IAssistantTurn,
   IChatTurn,
   IAskAgent,
   IBranchList,
@@ -200,6 +204,34 @@ const api: IQazinhoApi = {
   },
   removeMcpServer: (target: IMcpServerTarget) =>
     ipcRenderer.invoke(CHANNELS.removeMcpServer, target) as Promise<McpActionResult>,
+  askAssistant: (ask: IAssistantAsk) =>
+    ipcRenderer.invoke(CHANNELS.askAssistant, ask) as Promise<IAssistantTurn>,
+  stopAssistant: () => ipcRenderer.invoke(CHANNELS.stopAssistant) as Promise<void>,
+  onAssistantEvent: (listener: (event: IAgentEvent) => void) => {
+    const forward = (_: unknown, event: IAgentEvent) => {
+      listener(event);
+    };
+
+    ipcRenderer.on(CHANNELS.assistantEvent, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.assistantEvent, forward);
+    };
+  },
+  onAppToolCall: (listener: (request: IAppToolRequest) => void) => {
+    const forward = (_: unknown, request: IAppToolRequest) => {
+      listener(request);
+    };
+
+    ipcRenderer.on(CHANNELS.appToolCall, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.appToolCall, forward);
+    };
+  },
+  answerAppTool: (answer: IAppToolAnswer) => {
+    ipcRenderer.send(CHANNELS.appToolAnswer, answer);
+  },
 };
 
 if (process.argv.includes(RECORDER_ARGUMENT))

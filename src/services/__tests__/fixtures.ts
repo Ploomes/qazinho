@@ -92,5 +92,18 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     cancelMcpSignIn: () => Promise.resolve(),
     onMcpSignIn: () => () => undefined,
     removeMcpServer: () => Promise.resolve({ ok: true }),
+    askAssistant: () =>
+      Promise.resolve({
+        sessionId: null,
+        text: '',
+        usage: null,
+        costUsd: null,
+        isError: false,
+        failure: null,
+      }),
+    stopAssistant: () => Promise.resolve(),
+    onAssistantEvent: () => () => undefined,
+    onAppToolCall: () => () => undefined,
+    answerAppTool: () => undefined,
   };
 }
