@@ -234,6 +234,21 @@ export const APP_TOOLS = [
     }),
   },
   {
+    name: 'ask_workspace_chat',
+    description:
+      "Send a message to a workspace's own chat in the QA's name, and open it there: its agent answers in that chat, as when the QA types there. Use it when the QA wants a test plan written or changed.",
+    input: z.object({
+      workspace: textNamed({
+        message: '"ask_workspace_chat" needs "workspace": its id or its name.',
+        description: 'The workspace, by its id or its name.',
+      }),
+      text: textNamed({
+        message: '"ask_workspace_chat" needs "text": the message for its agent.',
+        description: "The message, as the QA would write it there, in the QA's language.",
+      }),
+    }),
+  },
+  {
     name: 'stop_run',
     description: 'Stop the run going on in a workspace.',
     input: z.object({

@@ -399,6 +399,33 @@
     }
   },
   {
+    "name": "ask_workspace_chat",
+    "description": "Send a message to a workspace's own chat in the QA's name, and open it there: its agent answers in that chat, as when the QA types there. Use it when the QA wants a test plan written or changed.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "workspace": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The workspace, by its id or its name."
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The message, as the QA would write it there, in the QA's language."
+        }
+      },
+      "required": [
+        "workspace",
+        "text"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
     "name": "stop_run",
     "description": "Stop the run going on in a workspace.",
     "inputSchema": {
