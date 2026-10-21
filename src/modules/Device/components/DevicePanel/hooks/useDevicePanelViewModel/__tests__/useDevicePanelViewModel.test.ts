@@ -279,12 +279,13 @@ describe('useDevicePanelViewModel', () => {
 
       const { result } = renderHook(() => useDevicePanelViewModel());
 
-      expect(result.current.steps.map(({ verdict }) => verdict).slice(0, 3)).toEqual([
+      expect(result.current.steps.map(({ verdict }) => verdict).slice(0, 4)).toEqual([
         'passed',
         'failed',
+        'skipped',
         'pending',
       ]);
-      expect(result.current.doingLabel).toBe('2 of 6');
+      expect(result.current.doingLabel).toBe('3 of 6');
     });
   });
 

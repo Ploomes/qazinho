@@ -24,7 +24,7 @@ describe('stepVerdictsOf', () => {
     expect(stepVerdictsOf({ steps: STEPS, live: null, lastRun })).toEqual([
       'passed',
       'failed',
-      'pending',
+      'skipped',
       'pending',
       'pending',
       'pending',

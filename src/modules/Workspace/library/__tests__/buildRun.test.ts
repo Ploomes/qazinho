@@ -55,12 +55,33 @@ describe('buildRun', () => {
 
   it('leaves out a case the run never reached', () => {
     const run = buildRun({
-      workspace: walkRun({ verdicts: ['passed', 'passed'] }),
+      workspace: walkRun({ verdicts: ['passed', 'passed', 'passed'] }),
       endedBy: 'finished',
     });
 
     expect(run.cases.map(({ id }) => id)).toEqual(['TC-01']);
-    expect(run.cases[0]?.steps).toHaveLength(2);
+    expect(run.cases[0]?.steps).toHaveLength(3);
+  });
+
+  /**
+   * A stop in the middle of a case left it reading "passed" in the run's report, with only the
+   * first of its steps walked.
+   */
+  it('skips the steps a stop left unwalked, so a case cut short never reads passed', () => {
+    const run = buildRun({
+      workspace: walkRun({ verdicts: ['passed', 'passed'] }),
+      endedBy: 'stopped',
+    });
+
+    expect(run.cases[0]).toMatchObject({ verdict: 'skipped' });
+    expect(
+      run.cases[0]?.steps.map(({ number, verdict, span }) => [number, verdict, span]),
+    ).toEqual([
+      [1, 'passed', { from: 1_760_000_000_000, to: 1_760_000_002_000 }],
+      [2, 'passed', { from: 1_760_000_002_000, to: 1_760_000_004_000 }],
+      [3, 'skipped', null],
+    ]);
+    expect(run.counts).toEqual({ passed: 2, failed: 0, blocked: 0, skipped: 1 });
   });
 
   it('says how the run ended', () => {
@@ -81,13 +102,14 @@ describe('buildRun', () => {
 
   it('places each step in time, from when it began to when it came back', () => {
     const run = buildRun({
-      workspace: walkRun({ verdicts: ['passed', 'passed'] }),
+      workspace: walkRun({ verdicts: ['passed', 'passed', 'passed'] }),
       endedBy: 'finished',
     });
 
     expect(run.cases[0]?.steps.map(({ span }) => span)).toEqual([
       { from: 1_760_000_000_000, to: 1_760_000_002_000 },
       { from: 1_760_000_002_000, to: 1_760_000_004_000 },
+      { from: 1_760_000_004_000, to: 1_760_000_006_000 },
     ]);
   });
 

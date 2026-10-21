@@ -109,6 +109,7 @@ describe('endRun', () => {
 
       expect(stopped.status).toBe('stopped');
       expect(stopped.plan[0]?.lastVerdict).toBeNull();
+      expect(stopped.runs[0]?.cases[0]?.verdict).toBe('skipped');
     });
 
     it('does NOT file what arrives after the stop', () => {

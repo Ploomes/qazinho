@@ -1,7 +1,7 @@
 import type { IRun, IRunCase, IRunStep, RunEnd } from '@/modules/Run';
 import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IStepOutcome } from '@/shared/types';
-import { caseVerdict, countVerdicts } from '@/modules/Run/library';
+import { caseVerdict, countVerdicts, flattenPlanSteps } from '@/modules/Run/library';
 
 const MS_IN_SECOND = 1_000;
 
@@ -11,7 +11,7 @@ function tookSec(outcomes: IStepOutcome[]): number {
   );
 }
 
-/** The run as it ended, read back from what the device actually did. */
+/** The run as it ended, read back from what the device actually did; the steps it never reached in a case it began read as skipped. */
 export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRun {
   const { workspace, endedBy } = props;
   const live = workspace.live;
@@ -22,7 +22,7 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
     .map((testCase) => {
       const mine = outcomes.filter((outcome) => outcome.caseId === testCase.id);
 
-      const steps: IRunStep[] = mine.map((outcome) => ({
+      const walked: IRunStep[] = mine.map((outcome) => ({
         number: outcome.stepNumber,
         action: outcome.action,
         verdict: outcome.verdict,
@@ -40,6 +40,26 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
                 bug.stepNumber === outcome.stepNumber,
             )?.id ?? null,
       }));
+      const unreached: IRunStep[] =
+        walked.length === 0
+          ? []
+          : flattenPlanSteps([testCase])
+              .filter(({ numberInCase }) =>
+                walked.every(({ number }) => number !== numberInCase),
+              )
+              .map(({ numberInCase, action }) => ({
+                number: numberInCase,
+                action,
+                verdict: 'skipped',
+                why: null,
+                shot: null,
+                shotFile: null,
+                span: null,
+                bugId: null,
+              }));
+      const steps = [...walked, ...unreached].sort(
+        (one, other) => one.number - other.number,
+      );
 
       return {
         id: testCase.id,
@@ -57,7 +77,12 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
     startedAt: live?.startedAt ?? '',
     durationSec: live?.elapsedSec ?? tookSec(outcomes),
     costUsd: live?.costUsd ?? null,
-    counts: countVerdicts(outcomes.map((outcome) => outcome.verdict)),
+    counts: countVerdicts([
+      ...outcomes.map((outcome) => outcome.verdict),
+      ...cases.flatMap(({ steps }) =>
+        steps.flatMap(({ span, verdict }) => (span === null ? [verdict] : [])),
+      ),
+    ]),
     cases,
     endedBy,
     video: null,

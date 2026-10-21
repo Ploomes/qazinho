@@ -4,13 +4,17 @@ import type { IRunCase, RunEnd } from '@/modules/Run';
 import type { IWorkspace } from '@/modules/Workspace/types';
 import { buildRun } from './buildRun';
 
-function isSettled(props: { walked: IRunCase; testCase: ITestCase }): boolean {
-  const { walked, testCase } = props;
+function isSettled(props: {
+  walked: IRunCase;
+  testCase: ITestCase;
+  reached: number;
+}): boolean {
+  const { walked, testCase, reached } = props;
 
   return (
     walked.verdict === 'failed' ||
     walked.verdict === 'blocked' ||
-    walked.steps.length >= testCase.steps.length
+    reached >= testCase.steps.length
   );
 }
 
@@ -54,7 +58,9 @@ export function endRun(props: {
     plan: workspace.plan.map((testCase) => {
       const walked = run.cases.find(({ id }) => id === testCase.id);
 
-      return walked && isSettled({ walked, testCase })
+      const reached = live.outcomes.filter(({ caseId }) => caseId === testCase.id).length;
+
+      return walked && isSettled({ walked, testCase, reached })
         ? { ...testCase, lastVerdict: walked.verdict }
         : testCase;
     }),
