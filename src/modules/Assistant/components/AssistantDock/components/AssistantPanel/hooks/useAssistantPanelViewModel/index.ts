@@ -198,9 +198,9 @@ export const useAssistantPanelViewModel = () => {
           className: `assistant-panel__tool assistant-panel__tool--${message.state}`,
           icon:
             message.state === 'done'
-              ? ('check' as const)
+              ? ('passed' as const)
               : message.state === 'failed'
-                ? ('close' as const)
+                ? ('failed' as const)
                 : null,
           text: t(message.state === 'done' ? label.done : label.doing, {
             ...message.call.args,

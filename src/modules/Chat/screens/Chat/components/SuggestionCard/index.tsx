@@ -37,7 +37,7 @@ export const SuggestionCard: React.FC<ISuggestionCardProps> = (props) => {
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
             >
-              <Icon name="check" /> {takenLabel}
+              <Icon name="passed" /> {takenLabel}
             </motion.span>
           ) : (
             <motion.span

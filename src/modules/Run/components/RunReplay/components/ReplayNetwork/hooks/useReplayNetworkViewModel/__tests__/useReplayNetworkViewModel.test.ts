@@ -111,7 +111,7 @@ describe('useReplayNetworkViewModel', () => {
 
       expect(answered).toMatchObject({
         statusKey: 'done',
-        icon: 'close',
+        icon: 'failed',
         statusText: '500',
         method: 'POST',
         path: '/api/checkout',

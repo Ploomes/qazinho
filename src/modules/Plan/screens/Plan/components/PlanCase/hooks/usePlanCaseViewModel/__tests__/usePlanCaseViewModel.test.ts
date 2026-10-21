@@ -59,8 +59,8 @@ describe('usePlanCaseViewModel', () => {
     expect(
       result.current.steps.map(({ verdict, verdictIcon }) => [verdict, verdictIcon]),
     ).toEqual([
-      ['passed', 'check'],
-      ['failed', 'close'],
+      ['passed', 'passed'],
+      ['failed', 'failed'],
       ['pending', 'pending'],
     ]);
   });

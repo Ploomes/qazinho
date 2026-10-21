@@ -70,7 +70,7 @@ export const useSettingsViewModel = () => {
       ? {
           name: props.name,
           isFound: props.isFound,
-          icon: props.isFound ? ('check' as const) : ('attention' as const),
+          icon: props.isFound ? ('passed' as const) : ('attention' as const),
           path: props.path,
           status: props.isFound ? props.found : props.missing,
         }
@@ -136,7 +136,7 @@ export const useSettingsViewModel = () => {
       {
         name: 'Android SDK',
         isFound: tools.androidSdk.isFound,
-        icon: tools.androidSdk.isFound ? ('check' as const) : ('attention' as const),
+        icon: tools.androidSdk.isFound ? ('passed' as const) : ('attention' as const),
         path: tools.androidSdk.path ?? t('TOOLS.NOT_FOUND_PATH'),
         status: tools.androidSdk.isFound
           ? t('TOOLS.ANDROID_FOUND')

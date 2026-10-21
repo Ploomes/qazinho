@@ -44,10 +44,10 @@ export const useConfirmCardViewModel = (props: IConfirmCardProps) => {
           : t('ASSISTANT.EXPIRED'),
     icon:
       message.decision === 'confirmed'
-        ? ('check' as const)
+        ? ('passed' as const)
         : message.decision === 'kept'
           ? ('replay' as const)
-          : ('skip' as const),
+          : ('skipped' as const),
     onGo: () => {
       if (isOpen) settleConfirm({ id: message.id, decision: 'confirmed' });
     },

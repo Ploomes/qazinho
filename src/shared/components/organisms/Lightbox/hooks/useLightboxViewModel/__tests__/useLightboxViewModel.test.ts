@@ -98,7 +98,7 @@ describe('useLightboxViewModel', () => {
       });
 
       await waitFor(() => {
-        expect(result.current).toMatchObject({ saveIcon: 'check', saveLabel: 'Saved' });
+        expect(result.current).toMatchObject({ saveIcon: 'passed', saveLabel: 'Saved' });
       });
       expect(result.current.isSaving).toBe(false);
     });

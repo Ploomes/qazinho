@@ -58,8 +58,8 @@ describe('useRunsViewModel', () => {
 
     const { result } = renderHook(() => useRunsViewModel());
 
-    expect(result.current.runEnded).toEqual({ icon: 'stop', label: 'stopped' });
-    expect(result.current.runs[0]?.ended).toEqual({ icon: 'stop', label: 'stopped' });
+    expect(result.current.runEnded).toEqual({ icon: 'stopped', label: 'stopped' });
+    expect(result.current.runs[0]?.ended).toEqual({ icon: 'stopped', label: 'stopped' });
   });
 
   it('has nothing to show before the first run', () => {
@@ -77,10 +77,10 @@ describe('useRunsViewModel', () => {
     expect(
       result.current.counts.map(({ status, icon, count }) => [status, icon, count]),
     ).toEqual([
-      ['passed', 'check', 4],
-      ['failed', 'close', 1],
+      ['passed', 'passed', 4],
+      ['failed', 'failed', 1],
       ['blocked', 'blocked', 0],
-      ['skipped', 'skip', 1],
+      ['skipped', 'skipped', 1],
     ]);
   });
 

@@ -24,7 +24,7 @@ describe('useStatusPillViewModel', () => {
     );
 
     expect(result.current.label).toBe('running · step 2 of 6');
-    expect(result.current.icon).toBe('play');
+    expect(result.current.icon).toBe('running');
   });
 
   it('is square unless it is asked to be round', () => {

@@ -9,6 +9,21 @@ describe('ICONS', () => {
     ).toBe(true);
   });
 
+  it('draws each status in a solid circle, apart from the bare glyph a control wears', () => {
+    expect(
+      [
+        ICONS.passed,
+        ICONS.failed,
+        ICONS.skipped,
+        ICONS.running,
+        ICONS.paused,
+        ICONS.stopped,
+      ].map(({ weight }) => weight),
+    ).toEqual(['fill', 'fill', 'fill', 'fill', 'fill', 'fill']);
+    expect([ICONS.check.weight, ICONS.close.weight]).toEqual(['bold', 'bold']);
+    expect(ICONS.passed.glyph).not.toBe(ICONS.check.glyph);
+  });
+
   it('keeps the media controls solid, the way a player draws them', () => {
     expect([ICONS.play.weight, ICONS.pause.weight, ICONS.stop.weight]).toEqual([
       'fill',

@@ -6,18 +6,18 @@ export const SIDEBAR_STATUS: Record<
   { icon: IconName; tone: string; animation: string }
 > = {
   running: {
-    icon: 'play',
+    icon: 'running',
     tone: 'var(--lime-ink)',
     animation: 'gc-pulse 1.8s ease-in-out infinite',
   },
-  paused: { icon: 'pause', tone: 'var(--attn)', animation: 'none' },
+  paused: { icon: 'paused', tone: 'var(--attn)', animation: 'none' },
   attention: {
     icon: 'attention',
     tone: 'var(--attn)',
     animation: 'gc-blink 2.4s ease-in-out infinite',
   },
-  failed: { icon: 'close', tone: 'var(--fail)', animation: 'none' },
-  passed: { icon: 'check', tone: 'var(--pass)', animation: 'none' },
-  stopped: { icon: 'stop', tone: 'var(--ink3)', animation: 'none' },
+  failed: { icon: 'failed', tone: 'var(--fail)', animation: 'none' },
+  passed: { icon: 'passed', tone: 'var(--pass)', animation: 'none' },
+  stopped: { icon: 'stopped', tone: 'var(--ink3)', animation: 'none' },
   idle: { icon: 'idle', tone: 'var(--ink3)', animation: 'none' },
 };

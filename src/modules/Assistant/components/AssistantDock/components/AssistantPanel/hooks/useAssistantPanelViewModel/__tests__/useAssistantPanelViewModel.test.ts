@@ -347,7 +347,7 @@ describe('useAssistantPanelViewModel', () => {
       expect(result.current.status).toBe('thinking…');
       expect(result.current.rows[1]).toMatchObject({
         kind: 'tool',
-        icon: 'check',
+        icon: 'passed',
         text: 'Opened Checkout regression',
         failed: '',
       });
@@ -398,7 +398,7 @@ describe('useAssistantPanelViewModel', () => {
       const { result } = renderHook(() => useAssistantPanelViewModel());
 
       expect(result.current.rows[0]).toMatchObject({
-        icon: 'close',
+        icon: 'failed',
         text: 'Reading the latest run of Checkout regression',
         failed: "didn't work",
       });

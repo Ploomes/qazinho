@@ -49,7 +49,7 @@ export const InstallProgress: React.FC<IInstallProgressProps> = (props) => {
 
         {phase === 'installed' && (
           <span className="install-progress__done">
-            <Icon name="check" />
+            <Icon name="passed" />
             {label}
           </span>
         )}

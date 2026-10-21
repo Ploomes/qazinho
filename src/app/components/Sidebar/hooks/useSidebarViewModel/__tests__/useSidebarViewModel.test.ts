@@ -45,7 +45,7 @@ describe('useSidebarViewModel', () => {
         renderHook(() => useSidebarViewModel()).result.current.rows[1],
       ).toMatchObject({
         statusLabel: 'paused',
-        icon: 'pause',
+        icon: 'paused',
       });
     });
 
