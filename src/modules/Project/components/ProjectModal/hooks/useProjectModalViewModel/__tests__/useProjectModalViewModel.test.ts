@@ -4,7 +4,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useProjectModalViewModel } from '@/modules/Project/components/ProjectModal/hooks/useProjectModalViewModel';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useMachineStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useBuildStore,
+  useMachineStore,
+  useSetupStore,
+  useWorkspaceStore,
+} from '@/store';
 
 beforeEach(() => {
   window.qazinho = fakeQazinhoApi('darwin');
@@ -16,6 +22,8 @@ beforeEach(() => {
     screen: 'welcome',
   });
   useWorkspaceStore.setState({ workspaces: [] });
+  useSetupStore.setState({ integrations: [] });
+  useBuildStore.setState({ builds: [] });
 });
 
 afterEach(() => {
@@ -405,6 +413,94 @@ describe('useProjectModalViewModel', () => {
 
       expect(stopRun).toHaveBeenCalledWith('w1');
       expect(stopAgent).toHaveBeenCalledWith('w1');
+    });
+  });
+  describe('building from the code', () => {
+    const SAVED = {
+      id: 'p1',
+      name: 'Lojinha',
+      targets: [
+        { id: 't1', kind: 'web' as const, label: 'Web', value: 'https://loja.test' },
+      ],
+      repositories: [{ owner: 'acme', name: 'loja-app', baseBranch: 'main' }],
+    };
+    const BUILT = {
+      id: 'b1',
+      projectId: 'p1',
+      platform: 'android' as const,
+      repository: 'acme/loja-app',
+      branch: 'main',
+      startedAt: 0,
+      phase: 'built' as const,
+      step: 'artifact' as const,
+      bytes: 0,
+      lines: [],
+      result: {
+        isBuilt: true as const,
+        artifact: '/apps/p1/loja.apk',
+        bytes: 9,
+        commit: 'c0ffee1',
+        summary: '',
+      },
+    };
+
+    beforeEach(() => {
+      useAppStore.setState({ projects: [SAVED], editingProjectId: 'p1' });
+      useSetupStore.setState({
+        integrations: [{ id: 'github', account: 'octoqa', site: null, connectedAt: '' }],
+      });
+    });
+
+    it('offers it once GitHub is connected and the project names a repository', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.androidBuilder.isShown).toBe(true);
+
+      act(() => {
+        useSetupStore.setState({ integrations: [] });
+      });
+
+      expect(result.current.androidBuilder.isShown).toBe(false);
+    });
+
+    it('takes what a build started here made as the target it fills', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        useBuildStore.setState({ builds: [BUILT] });
+        result.current.androidBuilder.onStart('b1');
+      });
+
+      expect(result.current.apk).toBe('/apps/p1/loja.apk');
+      expect(result.current.canConfirm).toBe(true);
+    });
+
+    it('follows a build of this project that started elsewhere, while it goes', () => {
+      useBuildStore.setState({ builds: [{ ...BUILT, phase: 'working', result: null }] });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.androidBuilder.buildId).toBe('b1');
+      expect(result.current.iosBuilder.buildId).toBeNull();
+    });
+
+    it('lets a file the QA picks win over a build', async () => {
+      window.qazinho.pickFile = vi.fn().mockResolvedValue('/Downloads/picked.apk');
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        useBuildStore.setState({ builds: [BUILT] });
+        result.current.androidBuilder.onStart('b1');
+      });
+      act(() => {
+        result.current.onPickApk();
+      });
+
+      await vi.waitFor(() => {
+        expect(result.current.apk).toBe('/Downloads/picked.apk');
+      });
+      expect(result.current.androidBuilder.buildId).toBeNull();
     });
   });
 });

@@ -1,13 +1,19 @@
 import type { ITargetLock } from '@/modules/Project/components/ProjectModal/components/TargetCard/types';
 import type { IProjectRepository, ITarget } from '@/modules/Project/types';
-import type { TargetKind } from '@/shared/types';
+import type { BuildPlatform, TargetKind } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TARGET_NAME_KEYS } from '@/modules/Project/components/ProjectModal/constants';
 import { newProjectId, webAddressOf } from '@/modules/Project/library';
 import { SETUP_LINKS } from '@/modules/Setup/constants';
 import { Agent, Archive, Files, Platform, Run } from '@/services';
-import { useAppStore, useMachineStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useBuildStore,
+  useMachineStore,
+  useSetupStore,
+  useWorkspaceStore,
+} from '@/store';
 
 export const useProjectModalViewModel = () => {
   const { t } = useTranslation();
@@ -19,6 +25,10 @@ export const useProjectModalViewModel = () => {
   const removeProject = useAppStore((state) => state.removeProject);
   const closeModal = useAppStore((state) => state.closeModal);
   const tools = useMachineStore((state) => state.tools);
+  const isGithubConnected = useSetupStore((state) =>
+    state.integrations.some(({ id }) => id === 'github'),
+  );
+  const builds = useBuildStore((state) => state.builds);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const removeWorkspacesOf = useWorkspaceStore((state) => state.removeWorkspacesOf);
 
@@ -36,6 +46,30 @@ export const useProjectModalViewModel = () => {
     editing?.repositories ?? [],
   );
   const [isConfirmingDelete, setConfirmingDelete] = useState(false);
+  const [buildIds, setBuildIds] = useState<Record<BuildPlatform, string | null>>({
+    android: null,
+    ios: null,
+  });
+
+  const buildOf = (platform: BuildPlatform) => {
+    const ongoing =
+      editing === null
+        ? undefined
+        : builds.find(
+            (build) =>
+              build.projectId === editing.id &&
+              build.platform === platform &&
+              build.phase === 'working',
+          );
+    const buildId = buildIds[platform] ?? ongoing?.id ?? null;
+    const result = builds.find(({ id }) => id === buildId)?.result ?? null;
+
+    return { buildId, artifact: result?.isBuilt === true ? result.artifact : null };
+  };
+  const androidBuild = buildOf('android');
+  const iosBuild = buildOf('ios');
+  const apkValue = androidBuild.artifact ?? apk;
+  const appValue = iosBuild.artifact ?? app;
 
   const isMac = Platform.isMac();
   const isEditing = editing !== null;
@@ -43,8 +77,8 @@ export const useProjectModalViewModel = () => {
   const address = webAddressOf(url);
   const values: Record<TargetKind, string> = {
     web: address ?? url.trim(),
-    android: apk.trim(),
-    ios: app.trim(),
+    android: apkValue.trim(),
+    ios: appValue.trim(),
   };
   const hasTarget = Object.values(values).some((value) => value.length > 0);
 
@@ -108,12 +142,26 @@ export const useProjectModalViewModel = () => {
     });
   };
 
+  const builderOf = (props: { platform: BuildPlatform; buildId: string | null }) => ({
+    isShown: isGithubConnected && repositories.length > 0,
+    buildId: props.buildId,
+    onStart: (buildId: string) => {
+      setBuildIds((ids) => ({ ...ids, [props.platform]: buildId }));
+    },
+    onReset: () => {
+      setBuildIds((ids) => ({ ...ids, [props.platform]: null }));
+    },
+  });
+
   return {
     name,
     url,
-    apk,
-    app,
+    apk: apkValue,
+    app: appValue,
     repositories,
+    projectId: editing?.id ?? null,
+    androidBuilder: builderOf({ platform: 'android', buildId: androidBuild.buildId }),
+    iosBuilder: builderOf({ platform: 'ios', buildId: iosBuild.buildId }),
     isMac,
     isEditing,
     isConfirmingDelete,
@@ -130,7 +178,7 @@ export const useProjectModalViewModel = () => {
           ? t('PROJECT.DELETE_QUESTION_ONE')
           : t('PROJECT.DELETE_QUESTION_OTHER', { count: own.length }),
     androidLock:
-      tools.androidSdk.isFound || apk.length > 0
+      tools.androidSdk.isFound || apkValue.length > 0
         ? null
         : ({
             reason: t('PROJECT.ANDROID_LOCKED'),
@@ -142,7 +190,7 @@ export const useProjectModalViewModel = () => {
           } satisfies ITargetLock),
     iosLock: !isMac
       ? ({ reason: t('PROJECT.IOS_LOCKED_MAC'), setUp: null } satisfies ITargetLock)
-      : tools.xcode.isFound || app.length > 0
+      : tools.xcode.isFound || appValue.length > 0
         ? null
         : ({
             reason: t('PROJECT.IOS_LOCKED'),
@@ -158,12 +206,18 @@ export const useProjectModalViewModel = () => {
     onUrlChange: setUrl,
     onPickApk: () => {
       void Files.pick('apk').then((picked) => {
-        if (picked !== null) setApk(picked);
+        if (picked === null) return;
+
+        setBuildIds((ids) => ({ ...ids, android: null }));
+        setApk(picked);
       });
     },
     onPickApp: () => {
       void Files.pick('app').then((picked) => {
-        if (picked !== null) setApp(picked);
+        if (picked === null) return;
+
+        setBuildIds((ids) => ({ ...ids, ios: null }));
+        setApp(picked);
       });
     },
     onCancel: closeModal,

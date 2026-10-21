@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Eyebrow, Input } from '@/shared/components/atoms';
 import { FileField } from '@/shared/components/molecules';
 import { ModalFrame } from '@/shared/components/templates';
-import { RepoField, TargetCard } from './components';
+import { BuildFromCode, RepoField, TargetCard } from './components';
 import { useProjectModalViewModel } from './hooks';
 import './styles.css';
 
@@ -13,6 +13,9 @@ export const ProjectModal: React.FC = () => {
     apk,
     app,
     repositories,
+    projectId,
+    androidBuilder,
+    iosBuilder,
     isEditing,
     isConfirmingDelete,
     title,
@@ -99,6 +102,16 @@ export const ProjectModal: React.FC = () => {
               placeholder={t('PROJECT.ANDROID_PLACEHOLDER')}
               onPick={onPickApk}
             />
+            {androidBuilder.isShown && (
+              <BuildFromCode
+                platform="android"
+                projectId={projectId}
+                repositories={repositories}
+                buildId={androidBuilder.buildId}
+                onStart={androidBuilder.onStart}
+                onReset={androidBuilder.onReset}
+              />
+            )}
           </TargetCard>
 
           <TargetCard name={t('PROJECT.IOS')} text={t('PROJECT.IOS_TEXT')} lock={iosLock}>
@@ -108,6 +121,16 @@ export const ProjectModal: React.FC = () => {
               placeholder={t('PROJECT.IOS_PLACEHOLDER')}
               onPick={onPickApp}
             />
+            {iosBuilder.isShown && (
+              <BuildFromCode
+                platform="ios"
+                projectId={projectId}
+                repositories={repositories}
+                buildId={iosBuilder.buildId}
+                onStart={iosBuilder.onStart}
+                onReset={iosBuilder.onReset}
+              />
+            )}
           </TargetCard>
         </div>
       </div>

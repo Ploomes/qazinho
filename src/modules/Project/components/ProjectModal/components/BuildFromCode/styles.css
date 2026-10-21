@@ -1,0 +1,66 @@
+.build-from-code {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--space-3);
+}
+
+.build-from-code__open {
+  display: flex;
+}
+
+.build-from-code__fold {
+  overflow: hidden;
+}
+
+.build-from-code__pick {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--line2);
+  border-radius: var(--radius-lg);
+  background: var(--raise);
+}
+
+.build-from-code__repositories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.build-from-code__repository {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--line2);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--ink2);
+  font: var(--font-mono-sm);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.build-from-code__repository:hover {
+  border-color: var(--ink3);
+  color: var(--ink);
+}
+
+.build-from-code__repository--chosen,
+.build-from-code__repository--chosen:hover {
+  border-color: var(--lime);
+  background: var(--sel);
+  color: var(--ink);
+}
+
+.build-from-code__branch {
+  color: var(--ink2);
+  font: var(--font-mono-sm);
+}
+
+.build-from-code__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
