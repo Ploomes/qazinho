@@ -2,8 +2,7 @@ import type { IVariableFieldProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { TargetCard } from '@/modules/Project/components/ProjectModal/components/TargetCard';
-import { LOCK_ICON } from '@/modules/Project/constants';
-import { Button, IconButton } from '@/shared/components/atoms';
+import { Button, Icon, IconButton } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { VariableEditor } from './components';
 import { useVariableFieldViewModel } from './hooks';
@@ -88,20 +87,9 @@ export const VariableField: React.FC<IVariableFieldProps> = (props) => {
                     )}
                     <span className="variable-field__description">{row.description}</span>
                     <span className="variable-field__sealed" title={sealedLabel}>
-                      <svg
-                        className="variable-field__lock"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        {LOCK_ICON.map((path) => (
-                          <path key={path} d={path} />
-                        ))}
-                      </svg>
+                      <span className="variable-field__lock">
+                        <Icon name="lock" size={12} />
+                      </span>
                       <span aria-label={sealedLabel}>••••••</span>
                     </span>
                     <IconButton
@@ -159,7 +147,7 @@ export const VariableField: React.FC<IVariableFieldProps> = (props) => {
         {canAdd && (
           <div className="variable-field__add">
             <Button size="sm" variant="ghost" onClick={onAdd}>
-              <span aria-hidden="true">+</span> {addLabel}
+              <Icon name="plus" /> {addLabel}
             </Button>
           </div>
         )}

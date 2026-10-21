@@ -101,9 +101,8 @@
 }
 
 .target-card__icon {
+  display: inline-flex;
   flex: none;
-  width: 15px;
-  height: 15px;
   color: var(--ink3);
 }
 

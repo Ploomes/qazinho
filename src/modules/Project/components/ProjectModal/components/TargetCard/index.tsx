@@ -1,8 +1,7 @@
 import type { ITargetCardProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { LOCK_ICON } from '@/modules/Project/constants';
-import { Button, PlatformIcon } from '@/shared/components/atoms';
+import { Button, Icon, PlatformIcon } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { useTargetCardViewModel } from './hooks';
 import './styles.css';
@@ -91,7 +90,7 @@ export const TargetCard: React.FC<ITargetCardProps> = (props) => {
                         target="_blank"
                         rel="noreferrer"
                       >
-                        {guide.link.label}
+                        {guide.link.label} <Icon name="external" />
                       </a>
                       <Button size="sm" variant="ghost" onClick={onBack}>
                         {t('SETUP.BACK')}
@@ -115,20 +114,9 @@ export const TargetCard: React.FC<ITargetCardProps> = (props) => {
                     exit={{ opacity: 0, y: 6 }}
                     transition={{ duration: MOTION.duration, ease: MOTION.ease }}
                   >
-                    <svg
-                      className="target-card__icon"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      {LOCK_ICON.map((path) => (
-                        <path key={path} d={path} />
-                      ))}
-                    </svg>
+                    <span className="target-card__icon">
+                      <Icon name="lock" size={15} />
+                    </span>
                     <span className="target-card__reason-text">{props.lock.reason}</span>
                     {props.lock.setUp !== null && (
                       <Button size="sm" variant="primary" onClick={onSetUp}>

@@ -7,7 +7,7 @@ import { useTargetCardViewModel } from '@/modules/Project/components/ProjectModa
 const SET_UP = {
   label: 'Set up Android',
   guide: 'Install Android Studio.',
-  link: { label: 'Android Studio ↗', url: 'https://developer.android.com/studio' },
+  link: { label: 'Android Studio', url: 'https://developer.android.com/studio' },
 };
 
 const card = (lock: ITargetCardProps['lock']) =>

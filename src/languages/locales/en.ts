@@ -404,13 +404,13 @@ export const en = {
     ANDROID_SET_UP: 'Set up Android',
     ANDROID_GUIDE:
       'Install Android Studio, then make an emulator in its Device Manager. QAzinho finds both on its own; check again once they are there.',
-    ANDROID_LINK: 'Android Studio ↗',
+    ANDROID_LINK: 'Android Studio',
     IOS_LOCKED: 'Needs Xcode on this Mac',
     IOS_LOCKED_MAC: 'Testing iOS needs a Mac',
     IOS_SET_UP: 'Set up iOS',
     IOS_GUIDE:
       'Install Xcode from the App Store and open it once, so it finishes setting up. Then check again.',
-    IOS_LINK: 'Xcode on the App Store ↗',
+    IOS_LINK: 'Xcode on the App Store',
     NEW_TITLE: 'New project',
     NEW_SUBTITLE: 'One environment of the app you test. Add as many targets as you need.',
     NAME: 'project name',

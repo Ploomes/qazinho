@@ -407,13 +407,13 @@ export const pt: typeof en = {
     ANDROID_SET_UP: 'Configurar Android',
     ANDROID_GUIDE:
       'Instale o Android Studio e crie um emulador no Device Manager dele. O QAzinho encontra os dois sozinho; verifique de novo quando estiverem lá.',
-    ANDROID_LINK: 'Android Studio ↗',
+    ANDROID_LINK: 'Android Studio',
     IOS_LOCKED: 'Precisa do Xcode neste Mac',
     IOS_LOCKED_MAC: 'Testar iOS precisa de um Mac',
     IOS_SET_UP: 'Configurar iOS',
     IOS_GUIDE:
       'Instale o Xcode pela App Store e abra uma vez, para ele terminar de se configurar. Depois verifique de novo.',
-    IOS_LINK: 'Xcode na App Store ↗',
+    IOS_LINK: 'Xcode na App Store',
     NEW_TITLE: 'Novo projeto',
     NEW_SUBTITLE: 'Um ambiente do app que você testa. Adicione quantos targets precisar.',
     NAME: 'nome do projeto',

@@ -28,8 +28,7 @@
 }
 
 .variable-form__lock {
-  width: 11px;
-  height: 11px;
+  display: inline-flex;
   color: var(--lime-ink);
 }
 

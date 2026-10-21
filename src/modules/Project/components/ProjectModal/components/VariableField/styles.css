@@ -58,8 +58,7 @@
 }
 
 .variable-field__lock {
-  width: 12px;
-  height: 12px;
+  display: inline-flex;
   color: var(--lime-ink);
 }
 

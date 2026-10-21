@@ -1,7 +1,7 @@
 import type { IBuildFromCodeProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { BuildProgress } from '@/modules/Build';
-import { Button } from '@/shared/components/atoms';
+import { Button, Icon } from '@/shared/components/atoms';
 import { SearchList } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
 import { useBuildFromCodeViewModel } from './hooks';
@@ -113,7 +113,7 @@ export const BuildFromCode: React.FC<IBuildFromCodeProps> = (props) => {
             transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
           >
             <Button size="sm" variant="secondary" onClick={onOpen}>
-              <span aria-hidden="true">✦</span> {openLabel}
+              <Icon name="sparkle" /> {openLabel}
             </Button>
           </motion.span>
         )}
