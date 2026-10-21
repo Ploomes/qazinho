@@ -201,9 +201,12 @@ export class AndroidDriver implements IDeviceDriver {
     };
   }
 
+  /** Shuts down an emulator QAzinho started, and waits until it is gone, so the next run or look never finds it half shut. */
   public async close(): Promise<void> {
-    if (this.isOurs && this.serial.length > 0)
+    if (this.isOurs && this.serial.length > 0) {
       await this.adb(['emu', 'kill']).catch(() => '');
+      await this.gone();
+    }
 
     this.serial = '';
     this.isOurs = false;
@@ -283,6 +286,20 @@ export class AndroidDriver implements IDeviceDriver {
     await this.shell(['uiautomator', 'dump', ANDROID.dumpFile]);
 
     return parseViewHierarchy(await this.shell(['cat', ANDROID.dumpFile]));
+  }
+
+  private async gone(): Promise<void> {
+    const until = Date.now() + ANDROID.shutdownTimeoutMs;
+
+    while (Date.now() < until) {
+      const listed = await runAdb({ adb: this.adbPath(), args: ['devices'] }).catch(
+        () => '',
+      );
+
+      if (!listed.includes(this.serial)) return;
+
+      await new Promise((wake) => setTimeout(wake, ANDROID.waitMs));
+    }
   }
 
   private async running(): Promise<string[]> {

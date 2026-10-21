@@ -3,6 +3,7 @@ export const ANDROID = {
   controlLimit: 40,
   labelLimit: 60,
   bootTimeoutMs: 180_000,
+  shutdownTimeoutMs: 60_000,
   commandTimeoutMs: 60_000,
   maxBufferBytes: 64 * 1024 * 1024,
   settleMs: 1_200,
