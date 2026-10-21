@@ -399,6 +399,27 @@
     }
   },
   {
+    "name": "explore_app",
+    "description": "Explore a workspace's app with the QA's agent, with no plan, as the QA's Explore button does, and open it so they watch: for some minutes the agent goes through the app on its own, notes each screen, files what is broken, and leaves a suggested plan in the workspace's chat. This answers once it started; it goes on by itself.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "workspace": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The workspace, by its id or its name."
+        }
+      },
+      "required": [
+        "workspace"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
     "name": "ask_workspace_chat",
     "description": "Send a message to a workspace's own chat in the QA's name, and open it there: its agent answers in that chat, as when the QA types there. Use it when the QA wants a test plan written or changed.",
     "inputSchema": {

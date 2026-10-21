@@ -60,6 +60,10 @@ export const TOOL_LABELS: Record<
     done: 'ASSISTANT.TOOL_RENAME_WORKSPACE_DONE',
   },
   run_plan: { doing: 'ASSISTANT.TOOL_RUN_PLAN', done: 'ASSISTANT.TOOL_RUN_PLAN_DONE' },
+  explore_app: {
+    doing: 'ASSISTANT.TOOL_EXPLORE_APP',
+    done: 'ASSISTANT.TOOL_EXPLORE_APP_DONE',
+  },
   stop_run: { doing: 'ASSISTANT.TOOL_STOP_RUN', done: 'ASSISTANT.TOOL_STOP_RUN_DONE' },
   ask_workspace_chat: {
     doing: 'ASSISTANT.TOOL_ASK_WORKSPACE_CHAT',

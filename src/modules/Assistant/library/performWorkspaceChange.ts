@@ -3,11 +3,15 @@ import type { IWorkspace } from '@/modules/Workspace/types';
 import type { AppToolCall } from '@/shared/types';
 import { toPlanKind } from '@/modules/Plan/library';
 import { flattenPlanSteps } from '@/modules/Run/library';
+import { EXPLORATION } from '@/shared/constants';
 import { findByRef } from './findByRef';
 
 type WorkspaceCall = Extract<
   AppToolCall,
-  { name: 'create_workspace' | 'rename_workspace' | 'run_plan' | 'stop_run' }
+  {
+    name:
+      'create_workspace' | 'rename_workspace' | 'run_plan' | 'explore_app' | 'stop_run';
+  }
 >;
 
 function failed(text: string): IToolDone {
@@ -123,6 +127,24 @@ export function performWorkspaceChange(props: {
     state.projects
       .find(({ id }) => id === workspace.projectId)
       ?.targets.find(({ id }) => id === workspace.targetId) ?? null;
+
+  if (call.name === 'explore_app') {
+    if (live !== null) return failed(`${workspace.id} is already running ${live.id}.`);
+
+    if (target === null)
+      return failed(
+        `The target ${workspace.id} tests on is gone from its project: give the project that target again, or make a new workspace.`,
+      );
+
+    const runId = port.exploreWorkspace(workspace.id);
+
+    if (runId === null) return failed('QAzinho could not start the exploration.');
+
+    return {
+      text: `Started exploration ${runId} of ${workspace.id} "${workspace.name}" on ${target.kind}, on screen now. It goes on by itself for ${String(EXPLORATION.minutes)} minutes, and leaves a suggested plan in the workspace's chat.`,
+      isError: false,
+    };
+  }
 
   if (steps === 0)
     return failed(

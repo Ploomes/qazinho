@@ -15,6 +15,7 @@ export function subjectOf(props: { call: AppToolCall; state: IAppState }): strin
     case 'workspace_details':
     case 'open_workspace':
     case 'run_plan':
+    case 'explore_app':
     case 'stop_run':
     case 'ask_workspace_chat':
     case 'delete_workspace':

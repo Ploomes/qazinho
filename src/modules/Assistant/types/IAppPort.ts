@@ -36,6 +36,7 @@ export interface IAppPort {
   renameWorkspace: (props: { workspaceId: string; name: string }) => void;
   removeWorkspace: (workspaceId: string) => void;
   runWorkspace: (workspaceId: string) => string | null;
+  exploreWorkspace: (workspaceId: string) => string | null;
   stopWorkspace: (workspaceId: string) => void;
   askWorkspaceChat: (props: { workspaceId: string; text: string }) => void;
   changeSettings: (props: {

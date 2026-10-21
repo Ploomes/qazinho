@@ -415,7 +415,7 @@ describe('useAssistantPanelViewModel', () => {
         'abilities',
         'lastRun',
         'summary',
-        'newWorkspace',
+        'explore',
       ]);
 
       act(() => {

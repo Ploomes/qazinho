@@ -10,7 +10,7 @@ export function suggestionsFor(props: {
   return [
     'abilities' as const,
     ...(openRuns !== null && openRuns > 0 ? (['lastRun'] as const) : []),
-    ...(openRuns !== null ? (['summary'] as const) : []),
+    ...(openRuns !== null ? (['summary', 'explore'] as const) : []),
     hasProjects ? ('newWorkspace' as const) : ('firstProject' as const),
     'theme' as const,
   ].slice(0, 4);

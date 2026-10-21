@@ -126,6 +126,11 @@ export function fakePort(
 
       return props.runId === undefined ? 'r-02' : props.runId;
     },
+    exploreWorkspace: (workspaceId) => {
+      did.push(`explore ${workspaceId}`);
+
+      return props.runId === undefined ? 'r-02' : props.runId;
+    },
     stopWorkspace: (workspaceId) => {
       did.push(`stop ${workspaceId}`);
     },

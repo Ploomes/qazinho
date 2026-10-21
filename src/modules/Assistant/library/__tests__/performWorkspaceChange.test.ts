@@ -71,6 +71,54 @@ describe('performWorkspaceChange', () => {
     expect(did).toEqual(['rename w2 Login social']);
   });
 
+  describe('explore_app', () => {
+    it('explores a workspace with no plan yet, and says the exploration it started', () => {
+      const { port, did } = fakePort();
+
+      expect(
+        performWorkspaceChange({
+          call: { name: 'explore_app', args: { workspace: 'Login' } },
+          port,
+        }),
+      ).toEqual({
+        text: 'Started exploration r-02 of w2 "Login" on android, on screen now. It goes on by itself for 10 minutes, and leaves a suggested plan in the workspace\'s chat.',
+        isError: false,
+      });
+      expect(did).toEqual(['explore w2']);
+    });
+
+    it('does NOT explore while something already walks, nor without a target', () => {
+      const live = CHECKOUT.live;
+      const running = fakePort({
+        state: {
+          workspaces: [
+            {
+              ...CHECKOUT,
+              live: live === null ? null : { ...live, id: 'r-02', isDone: false },
+            },
+          ],
+        },
+      });
+      const gone = fakePort({
+        state: { workspaces: [{ ...CHECKOUT, targetId: 't-gone' }] },
+      });
+
+      expect(
+        performWorkspaceChange({
+          call: { name: 'explore_app', args: { workspace: 'w1' } },
+          port: running.port,
+        }).text,
+      ).toBe('w1 is already running r-02.');
+      expect(
+        performWorkspaceChange({
+          call: { name: 'explore_app', args: { workspace: 'w1' } },
+          port: gone.port,
+        }).isError,
+      ).toBe(true);
+      expect([...running.did, ...gone.did]).toEqual([]);
+    });
+  });
+
   describe('run_plan', () => {
     it('runs a workspace with a plan, and says the run it started', () => {
       const { port, did } = fakePort();

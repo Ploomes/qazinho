@@ -36,6 +36,7 @@ export async function performAppTool(props: {
     case 'create_workspace':
     case 'rename_workspace':
     case 'run_plan':
+    case 'explore_app':
     case 'stop_run':
       return performWorkspaceChange({ call, port });
     case 'ask_workspace_chat':

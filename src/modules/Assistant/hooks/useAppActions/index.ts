@@ -134,6 +134,12 @@ export const useAppActions = () => {
 
         return runWorkspace(workspaceId);
       },
+      exploreWorkspace: (workspaceId) => {
+        bringForward();
+        useAppStore.getState().selectWorkspace(workspaceId);
+
+        return runWorkspace(workspaceId, 'explore');
+      },
       stopWorkspace,
       askWorkspaceChat: ({ workspaceId, text }) => {
         bringForward();

@@ -2,12 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { suggestionsFor } from '@/modules/Assistant/library';
 
 describe('suggestionsFor', () => {
-  it('offers to read the latest run of the workspace on screen when it has one', () => {
+  it('offers to read the latest run of the workspace on screen when it has one, and to explore it', () => {
     expect(suggestionsFor({ hasProjects: true, openRuns: 2 })).toEqual([
       'abilities',
       'lastRun',
       'summary',
-      'newWorkspace',
+      'explore',
     ]);
   });
 
@@ -15,9 +15,15 @@ describe('suggestionsFor', () => {
     expect(suggestionsFor({ hasProjects: true, openRuns: 0 })).toEqual([
       'abilities',
       'summary',
+      'explore',
       'newWorkspace',
-      'theme',
     ]);
+  });
+
+  it('does NOT offer an exploration away from any workspace', () => {
+    expect(suggestionsFor({ hasProjects: true, openRuns: null })).not.toContain(
+      'explore',
+    );
   });
 
   it('offers a first project to a QA with none, away from any workspace', () => {
