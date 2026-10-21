@@ -1,4 +1,6 @@
-/** What QAzinho saw when it opened the web app for the chat, or why it could not open it. */
+import type { TargetKind } from '@/shared/types';
+
+/** What QAzinho saw when it opened the app under test for the chat, in a browser or on a phone, or why it could not open it. */
 export type AppLook =
-  | { url: string; isOpen: true; page: string }
-  | { url: string; isOpen: false; reason: string };
+  | { kind: TargetKind; where: string; isOpen: true; page: string }
+  | { kind: TargetKind; where: string; isOpen: false; reason: string };

@@ -52,11 +52,16 @@ export class AppPeek {
           pages.push((await driver.describe()).slice(0, APP_PEEK.menuPageChars));
       }
 
-      return { url, isOpen: true, page: pages.join('\n\n') };
+      return { kind: 'web', where: url, isOpen: true, page: pages.join('\n\n') };
     } catch (reason) {
       const said = stripAnsi(reason instanceof Error ? reason.message : String(reason));
 
-      return { url, isOpen: false, reason: said.split('\n')[0] ?? said };
+      return {
+        kind: 'web',
+        where: url,
+        isOpen: false,
+        reason: said.split('\n')[0] ?? said,
+      };
     } finally {
       await driver.close();
       await rm(profileDir, { recursive: true, force: true });

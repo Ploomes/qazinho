@@ -85,7 +85,8 @@ const FULL_CHAT = {
   references: REFERENCES,
   runs: RUNS,
   look: {
-    url: 'https://shop.test',
+    kind: 'web' as const,
+    where: 'https://shop.test',
     isOpen: true as const,
     page: 'URL: https://shop.test/\nTITLE: Shop\nTEXT:\nNew in: summer shoes\nCONTROLS:\na: Cart\nbutton: Sign in',
   },
