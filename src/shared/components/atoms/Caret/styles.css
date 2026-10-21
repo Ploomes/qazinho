@@ -1,0 +1,14 @@
+.caret {
+  display: inline-flex;
+  flex: none;
+}
+
+.caret--open {
+  rotate: 90deg;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .caret {
+    transition: rotate var(--dur) var(--ease);
+  }
+}
