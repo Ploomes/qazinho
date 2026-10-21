@@ -747,6 +747,7 @@ void app.whenReady().then(async () => {
       isAway: !(BrowserWindow.fromWebContents(event.sender)?.isFocused() ?? false),
     });
   });
+  ipcMain.handle(CHANNELS.runNetwork, (_event, run: IRunRef) => archive.readNetwork(run));
   ipcMain.handle(CHANNELS.saveReplay, (_event, props: IRunRef & { name: string }) =>
     saveReplay(props),
   );

@@ -1,6 +1,7 @@
 import type {
   ExportOutcome,
   IExportCode,
+  INetworkEntry,
   IRunEndNotice,
   IRunEvent,
   IRunInFlight,
@@ -48,6 +49,10 @@ export class Run {
 
   public static async replayUrl(run: IRunRef): Promise<string | null> {
     return (await window.qazinho?.replayUrl(run)) ?? null;
+  }
+
+  public static async network(run: IRunRef): Promise<INetworkEntry[] | null> {
+    return (await window.qazinho?.runNetwork(run)) ?? null;
   }
 
   public static async saveReplay(

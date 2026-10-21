@@ -47,6 +47,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     onRunEvent: () => () => undefined,
     replayUrl: () => Promise.resolve(null),
     saveReplay: () => Promise.resolve('cancelled' as const),
+    runNetwork: () => Promise.resolve(null),
     alertRunEnded: () => undefined,
     onOpenRun: () => () => undefined,
     readState: () => Promise.resolve({ projects: '[]', workspaces: [] }),

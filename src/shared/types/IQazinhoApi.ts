@@ -25,6 +25,7 @@ import type { IMachineCheck } from './IMachineCheck';
 import type { IMcpServerStatus } from './IMcpServerStatus';
 import type { IMcpServerTarget } from './IMcpServerTarget';
 import type { IMcpSignIn } from './IMcpSignIn';
+import type { INetworkEntry } from './INetworkEntry';
 import type { InstallableId } from './InstallableId';
 import type { IntegrationId } from './IntegrationId';
 import type { IProjectVariables } from './IProjectVariables';
@@ -73,6 +74,7 @@ export interface IQazinhoApi {
   onRunEvent: (listener: (event: IRunEvent) => void) => () => void;
   replayUrl: (run: IRunRef) => Promise<string | null>;
   saveReplay: (props: IRunRef & { name: string }) => Promise<SaveOutcome>;
+  runNetwork: (run: IRunRef) => Promise<INetworkEntry[] | null>;
   alertRunEnded: (notice: IRunEndNotice) => void;
   onOpenRun: (listener: (run: IRunRef) => void) => () => void;
   readState: () => Promise<ISavedState>;

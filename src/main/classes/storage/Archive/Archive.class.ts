@@ -1,8 +1,13 @@
-import type { ISavedState, ISavedWorkspace } from '@/shared/types';
+import type {
+  INetworkEntry,
+  IRunRef,
+  ISavedState,
+  ISavedWorkspace,
+} from '@/shared/types';
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { ARCHIVE } from './constants';
-import { isInside, readTextOr } from './library';
+import { isInside, networkOf, readTextOr } from './library';
 
 /** Everything QAzinho keeps between sessions, as files the QA can open, diff and commit. */
 export class Archive {
@@ -54,6 +59,23 @@ export class Archive {
   public async removeWorkspace(id: string): Promise<void> {
     await rm(this.folderOf(id), { recursive: true, force: true });
     await rm(join(this.root, ARCHIVE.runs, id), { recursive: true, force: true });
+  }
+
+  /** The requests a web run kept beside its video; null for a run that kept none, such as one on a phone. */
+  public async readNetwork(run: IRunRef): Promise<INetworkEntry[] | null> {
+    const file = join(
+      this.root,
+      ARCHIVE.runs,
+      run.workspaceId,
+      run.runId,
+      ARCHIVE.network,
+    );
+
+    if (!isInside({ root: this.root, file })) return null;
+
+    const text = await readFile(file, 'utf8').catch(() => null);
+
+    return text === null ? null : networkOf(text);
   }
 
   /** The page cannot read disk, so a screenshot it no longer holds comes back inline. */

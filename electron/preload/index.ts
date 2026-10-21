@@ -4,9 +4,9 @@ import type {
   GithubSignInProgress,
   IAgentEvent,
   IAgentLimits,
-  IApplyVariables,
   IAppToolAnswer,
   IAppToolRequest,
+  IApplyVariables,
   IAskAgent,
   IAssistantAsk,
   IAssistantTurn,
@@ -26,8 +26,7 @@ import type {
   IMcpServerStatus,
   IMcpServerTarget,
   IMcpSignIn,
-  InstallableId,
-  IntegrationId,
+  INetworkEntry,
   IProjectVariables,
   IQazinhoApi,
   IRepositoryList,
@@ -43,6 +42,8 @@ import type {
   IStartBuild,
   IStartRun,
   IViewport,
+  InstallableId,
+  IntegrationId,
   McpActionResult,
   McpSignInProgress,
   PickKind,
@@ -126,6 +127,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.replayUrl, run) as Promise<string | null>,
   saveReplay: (props: IRunRef & { name: string }) =>
     ipcRenderer.invoke(CHANNELS.saveReplay, props) as Promise<SaveOutcome>,
+  runNetwork: (run: IRunRef) =>
+    ipcRenderer.invoke(CHANNELS.runNetwork, run) as Promise<INetworkEntry[] | null>,
   alertRunEnded: (notice: IRunEndNotice) => {
     ipcRenderer.send(CHANNELS.alertRunEnded, notice);
   },
