@@ -83,6 +83,15 @@ Code has recorded a web and an Android plan this way, both walked again with no 
 exported Playwright file passed in Chrome; the Maestro flows have not run in Maestro yet.
 `tests/smoke/replay.test.ts` proves it with a fake agent.
 
+**An exploration needs no plan.** From the empty chat, the workspace's Explore button or the
+Estagiário, the QA's agent goes through the app on its own for ten minutes: it notes each screen
+it reaches, files what is broken as bugs, and finishes with a suggested plan that waits on a
+card in the chat until the QA takes it into the plan. It is a run of its own, recorded like one,
+its screens the steps of one case; a finish with more than a third of the time left is sent back
+once. A real Claude Code (Haiku) explored a booking app with six planted bugs and found four in
+about a minute, logging in with the project's variables; `tests/smoke/explore.test.ts` drives a
+fake agent on real Chrome, and through the app only a fake explorer has gone yet.
+
 **Every run is recorded and plays back with its timeline.** A browser is recorded from its live
 stream, a simulator by `simctl`, an emulator by its console. The run's video opens in a theater:
 a chapter per case in its verdict's colour, a pin per bug, a still of any moment under the

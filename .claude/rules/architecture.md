@@ -108,8 +108,8 @@ answers one question per channel, for a target `{ role, platform }`:
 | schemas | `schemas/`               | the shape an answer must take, through `--json-schema`    |
 
 - **The corpus is prose in `.md`, one `## Title` section per file.** Where a file lives says who
-  reads it: `universal/` every call, `role/<role>/` one role (`chat`, `runner`, `assistant`,
-  `builder`),
+  reads it: `universal/` every call, `role/<role>/` one role (`chat`, `runner`, `explorer`,
+  `assistant`, `builder`),
   `platform/<x>.md` one device. The frontmatter's `order` sorts a layer. Layers go from the most stable to the least.
   `{{app}}` is filled per call; a placeholder nothing fills throws.
 - **A chat's system prompt is the corpus alone.** Claude Code keeps the system prompt a session
@@ -133,10 +133,18 @@ answers one question per channel, for a target `{ role, platform }`:
     Maestro flow per case. The chat's agent learns how the runs
     went from the history the next message carries (`runHistoryOf`): the latest run step by
     step, the ones before by what broke.
-- **The tools are granted per role** (`TOOL_GRANTS`). The runner gets the device, the assistant
-  gets the app, and the chat gets nothing: it runs with every tool taken away. `McpHost` serves
-  the tools on loopback, one address per workspace for the length of a run, and one under the
-  `~assistant` scope while the assistant answers.
+- **An exploration is walked by one agent with no plan** (`role/explorer/`). It gets the device
+  for a set time with `screen`, `bug` and `finish` in place of `report` (`TOOLS_LEFT_OUT`):
+  - Each action answers with the time left, and none is carried out once it is up; a finish
+    with more than a third of it left is sent back once (`earlyFinish`).
+  - Each screen it notes is a step of one case (`EXPLORATION.caseId`), each bug a finding on
+    the screen noted last, and its finish the plan it suggests, which the chat keeps on a card
+    until the QA takes it into the plan (`takeSuggestion`). The chat's agent hears it in the
+    run history.
+- **The tools are granted per role** (`TOOL_GRANTS`). The runner and the explorer get the
+  device, the assistant gets the app, and the chat gets nothing: it runs with every tool taken
+  away. `McpHost` serves the tools on loopback, one address per workspace for the length of a
+  run, and one under the `~assistant` scope while the assistant answers.
 - **The Estagiário in the corner is an agent of its own** (`role/assistant/`). It does in QAzinho
   what the QA does by hand, through the app tools (`servers/app/`), and talks about any project,
   workspace, run or bug:
