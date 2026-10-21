@@ -1,5 +1,11 @@
 import type { IShot } from './IShot';
-import type { IActionMotion, IDeviceImage, IStepAction, IViewport } from '@/shared/types';
+import type {
+  IActionMotion,
+  IDeviceImage,
+  IRunVideo,
+  IStepAction,
+  IViewport,
+} from '@/shared/types';
 
 /** What a run needs from a device, whether it is a browser or a phone. */
 export interface IDeviceDriver {
@@ -13,5 +19,7 @@ export interface IDeviceDriver {
   focus: (isFocused: boolean) => Promise<void>;
   shoot: (file: string) => Promise<IShot | null>;
   stream: (onFrame: (jpeg: Buffer) => void) => Promise<boolean>;
+  record: (folder: string) => Promise<boolean>;
+  stopRecording: () => Promise<IRunVideo | null>;
   close: () => Promise<void>;
 }

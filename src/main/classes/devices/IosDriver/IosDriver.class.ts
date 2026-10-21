@@ -1,12 +1,21 @@
 import type { IIosDriver } from './types';
 import type { IDeviceDriver, IShot } from '@/main/classes/devices/types';
 import type { ShrinkImage } from '@/main/types';
-import type { IActionMotion, IDeviceImage, IStepAction, IViewport } from '@/shared/types';
+import type {
+  IActionMotion,
+  IDeviceImage,
+  IRunVideo,
+  IStepAction,
+  IViewport,
+} from '@/shared/types';
+import type { ChildProcess } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { imageExtensionOf, phoneGlance } from '@/main/library';
+import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
+import { imageExtensionOf, mp4FactsOf, phoneGlance } from '@/main/library';
 import { IOS } from './constants';
 import {
   bundleOfPlist,
@@ -25,6 +34,8 @@ export class IosDriver implements IDeviceDriver {
   private readonly shrink: ShrinkImage | null;
   private bundle = '';
   private isOurs = false;
+  private recording: { process: ChildProcess; file: string; startedAt: number } | null =
+    null;
 
   public constructor(props: IIosDriver) {
     this.idb = props.idb;
@@ -133,6 +144,70 @@ export class IosDriver implements IDeviceDriver {
   /** QAzinho only shuts down what QAzinho started: a simulator the QA opened stays open. */
   public async stream(): Promise<boolean> {
     return Promise.resolve(false);
+  }
+
+  /** Records the simulator's screen into the run's folder until stopped, from the moment simctl says it started. */
+  public async record(folder: string): Promise<boolean> {
+    const file = join(folder, ARCHIVE.videos.mp4);
+    const child = spawn(
+      'xcrun',
+      ['simctl', 'io', this.udid, 'recordVideo', '--codec=h264', '--force', file],
+      { stdio: ['ignore', 'ignore', 'pipe'] },
+    );
+    const isStarted = await new Promise<boolean>((settle) => {
+      const timer = setTimeout(() => {
+        settle(false);
+      }, IOS.recordStartMs);
+      const end = (started: boolean) => {
+        clearTimeout(timer);
+        settle(started);
+      };
+
+      child.stderr.on('data', (chunk: Buffer) => {
+        if (chunk.toString().includes(IOS.recordStarted)) end(true);
+      });
+      child.once('exit', () => {
+        end(false);
+      });
+      child.once('error', () => {
+        end(false);
+      });
+    });
+
+    if (!isStarted) {
+      child.kill('SIGKILL');
+
+      return false;
+    }
+
+    this.recording = { process: child, file, startedAt: Date.now() };
+
+    return true;
+  }
+
+  /** Ends the recording the way simctl writes its file whole, and reads how long and how large it came out. */
+  public async stopRecording(): Promise<IRunVideo | null> {
+    const recording = this.recording;
+
+    this.recording = null;
+
+    if (recording === null) return null;
+
+    const exited = new Promise<void>((done) => {
+      recording.process.once('exit', () => {
+        done();
+      });
+    });
+
+    recording.process.kill('SIGINT');
+    await Promise.race([
+      exited,
+      new Promise((wake) => setTimeout(wake, IOS.recordStopMs)),
+    ]);
+
+    const facts = mp4FactsOf(await readFile(recording.file).catch(() => null));
+
+    return facts === null ? null : { startedAt: recording.startedAt, ...facts };
   }
 
   public async close(): Promise<void> {

@@ -1,4 +1,4 @@
 export const REPLAY_SERVER = {
   host: '127.0.0.1',
-  type: 'video/mp4',
+  types: { '.mp4': 'video/mp4', '.webm': 'video/webm' } as Record<string, string>,
 } as const;

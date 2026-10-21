@@ -8,6 +8,8 @@ export const ANDROID = {
   settleMs: 1_200,
   waitMs: 1_000,
   dumpFile: '/sdcard/qazinho-ui.xml',
+  recordLimitSec: 1_800,
+  recordSettleMs: 1_500,
   keys: {
     back: 'KEYCODE_BACK',
     home: 'KEYCODE_HOME',

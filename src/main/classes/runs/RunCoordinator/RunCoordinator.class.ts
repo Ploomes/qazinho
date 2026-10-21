@@ -10,6 +10,7 @@ import type {
   IIosSetup,
   IRunEvent,
   IRunInFlight,
+  IRunVideo,
   IStartRun,
   IViewport,
   RunFailure,
@@ -192,6 +193,8 @@ export class RunCoordinator {
       this.tools.attach({ workspaceId: run.workspaceId, driver });
       await this.watch({ run, driver });
     } catch (reason) {
+      const recorded = (await driver?.stopRecording().catch(() => null)) ?? null;
+
       await driver?.close();
       this.drivers.delete(run.workspaceId);
       this.tools.detach(run.workspaceId);
@@ -201,6 +204,7 @@ export class RunCoordinator {
         ended: this.stopping.has(run.workspaceId)
           ? { kind: 'done', workspaceId: run.workspaceId }
           : { kind: 'failed', workspaceId: run.workspaceId, failure: failureOf(reason) },
+        recorded,
       });
 
       return;
@@ -212,6 +216,8 @@ export class RunCoordinator {
         this.stopping.has(run.workspaceId) ? null : failureOf(reason),
     );
 
+    const recorded = await driver.stopRecording().catch(() => null);
+
     await driver.close();
     this.drivers.delete(run.workspaceId);
     this.tools.detach(run.workspaceId);
@@ -222,16 +228,22 @@ export class RunCoordinator {
         broke === null
           ? { kind: 'done', workspaceId: run.workspaceId }
           : { kind: 'failed', workspaceId: run.workspaceId, failure: broke },
+      recorded,
     });
   }
 
-  /** Says how the run ended at once, then hands over its recording once the file is whole. */
-  private async finish(props: { run: IWalkRun; ended: IRunEvent }): Promise<void> {
-    const { run, ended } = props;
+  /** Says how the run ended, then hands over its recording: the phone's own, or the one made from the live stream once its file is whole. */
+  private async finish(props: {
+    run: IWalkRun;
+    ended: IRunEvent;
+    recorded: IRunVideo | null;
+  }): Promise<void> {
+    const { run, ended, recorded } = props;
 
     this.emit(ended);
 
-    const video = await this.recorder?.stop(run.workspaceId).catch(() => null);
+    const video =
+      recorded ?? (await this.recorder?.stop(run.workspaceId).catch(() => null));
 
     if (video)
       this.emit({ kind: 'video', workspaceId: run.workspaceId, runId: run.runId, video });
@@ -486,7 +498,11 @@ export class RunCoordinator {
     });
     const url = this.live.urlFor(workspaceId);
 
-    if (!isStreaming || url === null) return;
+    if (!isStreaming || url === null) {
+      await driver.record(run.shotDir).catch(() => false);
+
+      return;
+    }
 
     this.emit({ kind: 'streaming', workspaceId, url });
     await this.recorder

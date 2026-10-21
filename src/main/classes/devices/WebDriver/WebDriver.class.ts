@@ -5,6 +5,7 @@ import type {
   DialogAnswer,
   IActionMotion,
   IDeviceImage,
+  IRunVideo,
   IStepAction,
   IViewport,
 } from '@/shared/types';
@@ -227,6 +228,15 @@ export class WebDriver implements IDeviceDriver {
     await this.watch(onFrame);
 
     return true;
+  }
+
+  /** A browser is recorded from its live stream by the recorder window, so the driver records nothing itself. */
+  public async record(): Promise<boolean> {
+    return Promise.resolve(false);
+  }
+
+  public async stopRecording(): Promise<IRunVideo | null> {
+    return Promise.resolve(null);
   }
 
   /** Streams at the display's full detail while the QA watches the device up close, and at 1x otherwise. */

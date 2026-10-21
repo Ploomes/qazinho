@@ -24,7 +24,7 @@ import type {
 } from '@/shared/types';
 import { copyFile, writeFile } from 'node:fs/promises';
 import { homedir, tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { extname, join } from 'node:path';
 import {
   app,
   BrowserWindow,
@@ -312,9 +312,14 @@ async function shotBytes(props: {
 }
 
 async function saveReplay(props: IRunRef & { name: string }): Promise<SaveOutcome> {
+  const file = await replays.fileOf(props);
+
+  if (file === null) return 'failed';
+
+  const extension = extname(file).slice(1);
   const options = {
-    defaultPath: join(app.getPath('downloads'), `${fileNameOf(props.name)}.mp4`),
-    filters: [{ name: 'MP4', extensions: ['mp4'] }],
+    defaultPath: join(app.getPath('downloads'), `${fileNameOf(props.name)}.${extension}`),
+    filters: [{ name: extension.toUpperCase(), extensions: [extension] }],
   };
   const [open] = appWindows();
   const picked = open
@@ -323,7 +328,7 @@ async function saveReplay(props: IRunRef & { name: string }): Promise<SaveOutcom
 
   if (picked.canceled || picked.filePath === undefined) return 'cancelled';
 
-  return copyFile(replays.fileOf(props), picked.filePath).then(
+  return copyFile(file, picked.filePath).then(
     () => 'saved' as const,
     () => 'failed' as const,
   );

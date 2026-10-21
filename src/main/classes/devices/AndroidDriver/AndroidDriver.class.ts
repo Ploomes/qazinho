@@ -1,10 +1,17 @@
 import type { IAndroidDriver } from './types';
 import type { IDeviceDriver, IShot } from '@/main/classes/devices/types';
 import type { ShrinkImage } from '@/main/types';
-import type { IActionMotion, IDeviceImage, IStepAction, IViewport } from '@/shared/types';
+import type {
+  IActionMotion,
+  IDeviceImage,
+  IRunVideo,
+  IStepAction,
+  IViewport,
+} from '@/shared/types';
 import { spawn } from 'node:child_process';
-import { readdir, writeFile } from 'node:fs/promises';
+import { readdir, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { phoneGlance } from '@/main/library';
 import { ANDROID } from './constants';
 import {
@@ -19,6 +26,7 @@ import {
   parseViewHierarchy,
   runAdb,
   runAdbRaw,
+  screenSizeOf,
 } from './library';
 
 /** Drives an Android emulator through adb. The QA watches the phone work. */
@@ -30,6 +38,7 @@ export class AndroidDriver implements IDeviceDriver {
   private serial = '';
   private app = '';
   private isOurs = false;
+  private recording: { file: string; startedAt: number } | null = null;
 
   public constructor(props: IAndroidDriver) {
     this.sdkRoot = props.sdkRoot;
@@ -136,6 +145,52 @@ export class AndroidDriver implements IDeviceDriver {
   /** QAzinho only shuts down what QAzinho started: an emulator the QA opened stays open. */
   public async stream(): Promise<boolean> {
     return Promise.resolve(false);
+  }
+
+  /** Records the emulator's screen into the run's folder through its console, for as long as its console allows. */
+  public async record(folder: string): Promise<boolean> {
+    const file = join(folder, ARCHIVE.videos.webm);
+    const said = await this.adb([
+      'emu',
+      'screenrecord',
+      'start',
+      '--time-limit',
+      String(ANDROID.recordLimitSec),
+      file,
+    ]).catch(() => '');
+
+    if (!said.trim().startsWith('OK')) return false;
+
+    this.recording = { file, startedAt: Date.now() };
+
+    return true;
+  }
+
+  /** Ends the recording, waits for the emulator to write its file, and says how long it ran and the screen's size. */
+  public async stopRecording(): Promise<IRunVideo | null> {
+    const recording = this.recording;
+
+    this.recording = null;
+
+    if (recording === null) return null;
+
+    const stoppedAt = Date.now();
+
+    await this.adb(['emu', 'screenrecord', 'stop']).catch(() => '');
+    await new Promise((wake) => setTimeout(wake, ANDROID.recordSettleMs));
+
+    const written = await stat(recording.file).catch(() => null);
+
+    if (written === null || written.size === 0) return null;
+
+    const size = screenSizeOf(await this.shell(['wm', 'size']).catch(() => ''));
+
+    return {
+      startedAt: recording.startedAt,
+      durationMs: stoppedAt - recording.startedAt,
+      width: size?.width ?? 0,
+      height: size?.height ?? 0,
+    };
   }
 
   public async close(): Promise<void> {

@@ -54,7 +54,7 @@ export class RunRecorder {
       ARCHIVE.runs,
       props.workspaceId,
       props.runId,
-      ARCHIVE.video,
+      ARCHIVE.videos.mp4,
     );
 
     await mkdir(dirname(file), { recursive: true });

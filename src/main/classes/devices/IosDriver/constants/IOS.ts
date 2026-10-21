@@ -7,6 +7,9 @@ export const IOS = {
   maxBufferBytes: 64 * 1024 * 1024,
   settleMs: 1_200,
   waitMs: 1_000,
+  recordStartMs: 10_000,
+  recordStopMs: 15_000,
+  recordStarted: 'Recording started',
   keys: {
     enter: '40',
     escape: '41',

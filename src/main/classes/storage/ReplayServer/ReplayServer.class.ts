@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { createReadStream } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
-import { join } from 'node:path';
+import { extname, join } from 'node:path';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { REPLAY_SERVER } from './constants';
 import { byteRangeOf, replayOfPath } from './library';
@@ -38,18 +38,21 @@ export class ReplayServer {
 
   /** The address of a run's recording, or null when the run has none on disk. */
   public async urlFor(ref: IRunRef): Promise<string | null> {
-    if (!this.server) return null;
-
-    const found = await stat(this.fileOf(ref)).catch(() => null);
-
-    if (found === null || !found.isFile()) return null;
+    if (!this.server || (await this.fileOf(ref)) === null) return null;
 
     return `http://${REPLAY_SERVER.host}:${String(this.port)}/${this.token}/${encodeURIComponent(ref.workspaceId)}/${encodeURIComponent(ref.runId)}`;
   }
 
-  /** Where a run's recording lives on disk. */
-  public fileOf(ref: IRunRef): string {
-    return join(this.dataRoot, ARCHIVE.runs, ref.workspaceId, ref.runId, ARCHIVE.video);
+  /** Where a run's recording lives on disk: an MP4 from the recorder window or a simulator, a WebM from an emulator. */
+  public async fileOf(ref: IRunRef): Promise<string | null> {
+    for (const name of Object.values(ARCHIVE.videos)) {
+      const file = join(this.dataRoot, ARCHIVE.runs, ref.workspaceId, ref.runId, name);
+      const found = await stat(file).catch(() => null);
+
+      if (found?.isFile() === true) return file;
+    }
+
+    return null;
   }
 
   public close(): void {
@@ -63,10 +66,10 @@ export class ReplayServer {
   }): Promise<void> {
     const { request, response } = props;
     const ref = replayOfPath({ path: request.url ?? '', token: this.token });
-    const file = ref === null ? null : this.fileOf(ref);
+    const file = ref === null ? null : await this.fileOf(ref);
     const found = file === null ? null : await stat(file).catch(() => null);
 
-    if (request.method !== 'GET' || file === null || found === null || !found.isFile()) {
+    if (request.method !== 'GET' || file === null || found === null) {
       response.writeHead(404).end();
 
       return;
@@ -74,7 +77,7 @@ export class ReplayServer {
 
     const range = byteRangeOf({ header: request.headers.range, size: found.size });
     const head = {
-      'Content-Type': REPLAY_SERVER.type,
+      'Content-Type': REPLAY_SERVER.types[extname(file)] ?? 'application/octet-stream',
       'Accept-Ranges': 'bytes',
       'Cache-Control': 'no-cache',
     };
