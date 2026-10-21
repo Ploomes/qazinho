@@ -29,16 +29,26 @@
 }
 @end
 
-@interface App : UIResponder <UIApplicationDelegate>
+@interface Scene : UIResponder <UIWindowSceneDelegate>
 @property(nonatomic, strong) UIWindow *window;
 @end
 
-@implementation App
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)options {
-  self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+@implementation Scene
+- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)options {
+  self.window = [[UIWindow alloc] initWithWindowScene:(UIWindowScene *)scene];
   self.window.rootViewController = [Counter new];
   [self.window makeKeyAndVisible];
-  return YES;
+}
+@end
+
+@interface App : UIResponder <UIApplicationDelegate>
+@end
+
+@implementation App
+- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)session options:(UISceneConnectionOptions *)options {
+  UISceneConfiguration *configuration = [[UISceneConfiguration alloc] initWithName:@"Default" sessionRole:session.role];
+  configuration.delegateClass = [Scene class];
+  return configuration;
 }
 @end
 
