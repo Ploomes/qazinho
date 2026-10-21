@@ -5,6 +5,7 @@ export const RUN_REPLAY = {
   panelWidthPx: 1360,
   panelHeightPx: 920,
   logWidthPx: 340,
+  preparingWidthPx: 56,
   keysFromPx: 1180,
   waitMood: 'thinking',
   waitSize: 64,

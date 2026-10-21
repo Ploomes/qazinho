@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import type { INetworkEntry, ReplayFocus } from '@/modules/Run/types';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRunReplayViewModel } from '@/modules/Run/components/RunReplay/hooks/useRunReplayViewModel';
 import {
   RECORDING,
@@ -388,6 +388,116 @@ describe('useRunReplayViewModel', () => {
         expect(result.current.hasNetwork).toBe(true);
       });
       expect(result.current.faults).toEqual([]);
+    });
+  });
+
+  describe('onSave', () => {
+    it('saves the video as it was recorded while the network is out of sight', async () => {
+      const saveReplay = vi.fn(() => Promise.resolve('saved' as const));
+      const replayVideo = vi.fn(() => Promise.resolve(null));
+
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        replayUrl: () => Promise.resolve(URL),
+        runNetwork: () => Promise.resolve(NETWORK),
+        saveReplay,
+        replayVideo,
+      };
+
+      const result = open();
+
+      await waitFor(() => {
+        expect(result.current.canSave).toBe(true);
+      });
+      act(() => {
+        result.current.onSave();
+      });
+
+      await waitFor(() => {
+        expect(result.current.saveLabel).toBe('Saved');
+      });
+      expect(saveReplay).toHaveBeenCalledWith({
+        workspaceId: 'w1',
+        runId: 'r-01',
+        name: 'Checkout regression r-01',
+      });
+      expect(replayVideo).not.toHaveBeenCalled();
+    });
+
+    it('prepares the video with its network first once the network shows', async () => {
+      useSettingsStore.setState({ replayNetwork: true });
+
+      const replayVideo = vi.fn(() => new Promise<Uint8Array | null>(() => undefined));
+
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        replayUrl: () => Promise.resolve(URL),
+        runNetwork: () => Promise.resolve(NETWORK),
+        replayVideo,
+      };
+
+      const result = open();
+
+      await waitFor(() => {
+        expect(result.current.isNetworkShown).toBe(true);
+      });
+      act(() => {
+        result.current.onSave();
+      });
+
+      expect(result.current).toMatchObject({
+        isPreparing: true,
+        preparingLabel: 'Preparing the video',
+        preparedPercent: 0,
+      });
+      expect(replayVideo).toHaveBeenCalledWith({ workspaceId: 'w1', runId: 'r-01' });
+    });
+
+    it('says it could not save a video it cannot read, and never asks where to save it', async () => {
+      useSettingsStore.setState({ replayNetwork: true });
+
+      const saveVideo = vi.fn(() => Promise.resolve('saved' as const));
+
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        replayUrl: () => Promise.resolve(URL),
+        runNetwork: () => Promise.resolve(NETWORK),
+        replayVideo: () => Promise.resolve(new Uint8Array([1, 2, 3])),
+        saveVideo,
+      };
+
+      const result = open();
+
+      await waitFor(() => {
+        expect(result.current.isNetworkShown).toBe(true);
+      });
+      act(() => {
+        result.current.onSave();
+      });
+
+      await waitFor(() => {
+        expect(result.current.saveLabel).toBe('Could not save');
+      });
+      expect(result.current.isPreparing).toBe(false);
+      expect(saveVideo).not.toHaveBeenCalled();
+    });
+
+    it('says it could not save when the run kept no video to draw on', async () => {
+      useSettingsStore.setState({ replayNetwork: true });
+      withNetwork(NETWORK);
+
+      const result = open();
+
+      await waitFor(() => {
+        expect(result.current.isNetworkShown).toBe(true);
+      });
+      act(() => {
+        result.current.onSave();
+      });
+
+      await waitFor(() => {
+        expect(result.current.saveLabel).toBe('Could not save');
+      });
     });
   });
 });

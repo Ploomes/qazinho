@@ -262,6 +262,8 @@ export const pt: typeof en = {
     REPLAY_TIMELINE: 'Linha do tempo da run',
     REPLAY_NETWORK: 'Rede',
     REPLAY_NETWORK_TIP: 'Mostrar embaixo do vídeo as requisições que o app fez',
+    REPLAY_PREPARING: 'Preparando o vídeo',
+    REPLAY_NETWORK_FILE: '{{name}} com rede',
     NETWORK_COUNT: '{{shown}} de {{total}}',
     NETWORK_ERRORS_ONE: '1 erro',
     NETWORK_ERRORS_OTHER: '{{count}} erros',

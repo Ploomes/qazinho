@@ -260,6 +260,8 @@ export const en = {
     REPLAY_TIMELINE: 'The run’s timeline',
     REPLAY_NETWORK: 'Network',
     REPLAY_NETWORK_TIP: 'Show the requests the app made under the video',
+    REPLAY_PREPARING: 'Preparing the video',
+    REPLAY_NETWORK_FILE: '{{name}} with network',
     NETWORK_COUNT: '{{shown}} of {{total}}',
     NETWORK_ERRORS_ONE: '1 error',
     NETWORK_ERRORS_OTHER: '{{count}} errors',

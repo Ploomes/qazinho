@@ -16,6 +16,10 @@ export const RunReplay: React.FC = () => {
     isSaving,
     saveIcon,
     saveLabel,
+    isPreparing,
+    preparingLabel,
+    preparedPercent,
+    preparingStyle,
     url,
     hasVideo,
     src,
@@ -106,11 +110,51 @@ export const RunReplay: React.FC = () => {
                 onChange={onToggleNetwork}
               />
             )}
-            {canSave && (
-              <Button size="sm" variant="ghost" disabled={isSaving} onClick={onSave}>
-                <Icon name={saveIcon} /> {saveLabel}
-              </Button>
-            )}
+            <AnimatePresence mode="wait" initial={false}>
+              {isPreparing ? (
+                <motion.span
+                  key="preparing"
+                  className="run-replay__preparing"
+                  role="progressbar"
+                  aria-label={preparingLabel}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={preparedPercent}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={swapTransition}
+                >
+                  <span className="run-replay__preparing-icon">
+                    <Icon name="pending" />
+                  </span>
+                  {preparingLabel}
+                  <span className="run-replay__preparing-track">
+                    <span className="run-replay__preparing-fill" style={preparingStyle} />
+                  </span>
+                </motion.span>
+              ) : (
+                canSave && (
+                  <motion.span
+                    key="save"
+                    className="run-replay__save"
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={swapTransition}
+                  >
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={isSaving}
+                      onClick={onSave}
+                    >
+                      <Icon name={saveIcon} /> {saveLabel}
+                    </Button>
+                  </motion.span>
+                )
+              )}
+            </AnimatePresence>
             <IconButton icon="close" label={closeLabel} size="sm" onClick={onClose} />
           </span>
         </header>
