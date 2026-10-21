@@ -15,5 +15,6 @@ export * from './Markdown';
 export * from './Meter';
 export * from './PlatformIcon';
 export * from './StatusPill';
+export * from './Switch';
 export * from './Tag';
 export * from './Wordmark';

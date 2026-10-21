@@ -1,0 +1,71 @@
+.switch {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.switch:hover {
+  background: var(--sel);
+  color: var(--ink);
+  filter: none;
+}
+
+.switch--on {
+  color: var(--ink);
+}
+
+.switch__icon {
+  display: inline-flex;
+  color: var(--ink3);
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.switch--on .switch__icon {
+  color: var(--lime-ink);
+}
+
+.switch__track {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  box-sizing: border-box;
+  width: var(--switch-width);
+  height: var(--switch-height);
+  padding: 0 var(--space-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--raise2);
+  transition:
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.switch--on .switch__track {
+  border-color: var(--lime);
+  background: var(--lime);
+}
+
+.switch__knob {
+  display: block;
+  width: var(--switch-knob);
+  height: var(--switch-knob);
+  border-radius: var(--radius-pill);
+  background: var(--ink3);
+  transition: background-color var(--dur) var(--ease);
+}
+
+.switch--on .switch__knob {
+  background: var(--on-lime);
+}
