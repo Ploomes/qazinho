@@ -93,6 +93,13 @@ rename, run or stop a workspace, change the settings, connect a tracker, and del
 disconnect once the QA confirms on a card. `tests/smoke/assistant.test.ts` drives it with a fake
 agent over the real MCP server; no real agent has driven it yet.
 
+**The app builds from its own code.** A project that names its repositories builds its .apk or
+simulator .app from any branch, from the project's card or by asking the Estagiário. The QA's own
+agent builds it in a copy of the branch: React Native, Expo, Flutter or a native app, a build that
+runs alone on the emulator or simulator. What it made is checked, kept, and becomes the project's
+target. `tests/smoke/build.test.ts` drives it with a fake gh and a fake agent; no real agent has
+built a real app yet.
+
 **Codex is half verified.** QAzinho drives it through `codex exec --json` and its own MCP server,
 checked against a fake Codex built from the real one's events. The chat has answered through a
 real signed-in Codex (CLI 0.163.0), in the strict schema; a run, with the device tools over MCP,

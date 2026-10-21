@@ -83,6 +83,7 @@ Three suites that need something real behind them. They have their own config
 | `record.test.ts`       | the built app records a web run as an H.264 MP4 through its hidden window    |
 | `github.test.ts`       | a fake gh: device-code sign-in and cancel, repositories, branches, a copy    |
 | `assistant.test.ts`    | a fake agent acts through the app tools: a page that answers, waits, or not  |
+| `build.test.ts`        | a fake gh hands over a branch and a fake agent builds it: an APK kept        |
 
 `run.test.ts`, `chat.test.ts` and `visual.test.ts` spend the QA's tokens and need an agent installed. Run them by
 hand after touching the run pipeline or an answer schema.

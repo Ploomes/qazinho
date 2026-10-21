@@ -106,7 +106,8 @@ answers one question per channel, for a target `{ role, platform }`:
 | schemas | `schemas/`               | the shape an answer must take, through `--json-schema`    |
 
 - **The corpus is prose in `.md`, one `## Title` section per file.** Where a file lives says who
-  reads it: `universal/` every call, `role/<role>/` one role (`chat`, `runner`, `assistant`),
+  reads it: `universal/` every call, `role/<role>/` one role (`chat`, `runner`, `assistant`,
+  `builder`),
   `platform/<x>.md` one device. The frontmatter's `order` sorts a layer. Layers go from the most stable to the least.
   `{{app}}` is filled per call; a placeholder nothing fills throws.
 - **A chat's system prompt is the corpus alone.** Claude Code keeps the system prompt a session
@@ -136,6 +137,19 @@ answers one question per channel, for a target `{ role, platform }`:
     reads the server's `timeout`, and Codex `tool_timeout_sec`.
   - A build path is made whole and checked on disk in main before the page hears of it. A
     tracker's token is still typed by the QA in Settings, never in the chat.
+- **The app builds from its own code, by the QA's agent** (`role/builder/`). A project's Android
+  or iOS card, or the assistant's `build_app`, builds the app from a branch of one of the
+  project's repositories, with no terminal:
+  - Main's `AppBuilder` pins the branch to a commit and unpacks it into `builds/work/<build>`.
+  - The agent gets Bash, Read, Grep, Glob, Edit and Write, and the build commands it may run
+    unasked, on that folder alone; never rm, git or curl. Codex works in a workspace-write
+    sandbox with the network on, its caches kept inside the folder.
+  - Its environment carries the QA's PATH, the Android SDK, Android Studio's JDK and `CI=1`.
+  - QAzinho checks what it made: an .apk that is a zip, or an .app the simulator runs and not
+    one for a device. It is found where the agent said, or in the usual output folders. It is
+    kept under `builds/apps/<project>`, the copy is deleted, and it becomes the project's target.
+  - Each step, the agent's words and commands (with the folder said as `.`), and how the build
+    ended reach the page as `IBuildEvent`.
 - **The code plans; the QA says what the app should do** (`role/chat/code.md`). A project names
   its GitHub repositories, each with a base branch. `/code` in the chat picks one of them and a
   branch, and the agent reads that branch while it plans:
@@ -224,6 +238,7 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `CodeCopies`                          | copies a branch for the agent to read while it plans, with its diff, then drops it  |
 | `AssistantAgent`                      | asks the QA's agent as the Estagiário, with the app tools served for the turn       |
 | `AppBridge`                           | hands each app tool call to the page and waits for what it did                      |
+| `AppBuilder`                          | builds an .apk or .app from a branch with the QA's agent, and keeps what it made    |
 
 ## Dependencies
 
