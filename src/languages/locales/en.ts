@@ -258,6 +258,8 @@ export const en = {
     REPLAY_KEYS: 'Space plays and pauses · ← → jump 5s · [ ] jump a case',
     REPLAY_CAUGHT: '{{id}} caught here',
     REPLAY_TIMELINE: 'The run’s timeline',
+    NETWORK_FAILED: 'failed',
+    NETWORK_CANCELED: 'canceled',
     PASSED: 'passed',
     FAILED: 'failed',
     BLOCKED: 'blocked',

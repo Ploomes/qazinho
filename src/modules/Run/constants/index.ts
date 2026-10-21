@@ -1,4 +1,6 @@
+export * from './NETWORK';
 export * from './REPLAY';
+export * from './REQUEST_OUTCOMES';
 export * from './RUN_CLOCK';
 export * from './RUN_ENDS';
 export * from './RUN_FAILURE_KEYS';

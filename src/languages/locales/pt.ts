@@ -260,6 +260,8 @@ export const pt: typeof en = {
     REPLAY_KEYS: 'Espaço reproduz e pausa · ← → pulam 5s · [ ] pulam um caso',
     REPLAY_CAUGHT: '{{id}} pego aqui',
     REPLAY_TIMELINE: 'Linha do tempo da run',
+    NETWORK_FAILED: 'falhou',
+    NETWORK_CANCELED: 'cancelada',
     PASSED: 'passou',
     FAILED: 'falhou',
     BLOCKED: 'bloqueado',
