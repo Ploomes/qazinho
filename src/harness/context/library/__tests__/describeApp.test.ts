@@ -53,6 +53,7 @@ const FULL: IAppSnapshot = {
       bugs: 2,
       latestRun: {
         id: 'r-03',
+        startedOn: '2026-10-20',
         startedAt: '10:42',
         endedBy: 'stopped',
         passed: 3,
@@ -92,7 +93,7 @@ describe('describeApp', () => {
         'Projects:',
         '- p-1 "Lojinha": web https://loja.test · android /Users/qa/loja.apk · repository acme/loja-web, base develop',
         'Workspaces:',
-        '- w-1 "Checkout" in p-1, on web: 1 case, 4 steps · 3 runs, the latest r-03 at 10:42 stopped by the QA: 3 passed, 1 failed, 0 blocked, 0 skipped · 2 bugs · running now · its chat agent is answering',
+        '- w-1 "Checkout" in p-1, on web: 1 case, 4 steps · 3 runs, the latest r-03 on 2026-10-20 at 10:42 stopped by the QA: 3 passed, 1 failed, 0 blocked, 0 skipped · 2 bugs · running now · its chat agent is answering',
         '- w-2 "Login" in p-1, on android: no plan yet · no runs · no bugs · its chat waits on the QA\'s answers to 3 questions',
       ],
     });

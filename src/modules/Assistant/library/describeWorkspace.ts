@@ -1,5 +1,6 @@
 import type { IProject } from '@/modules/Project/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
+import { runDayOf } from '@/modules/Run/library';
 import { openRoundOf } from './openRoundOf';
 
 const ENDINGS = {
@@ -45,10 +46,11 @@ export function describeWorkspace(props: {
       ? ['No runs yet.']
       : [
           'Runs, newest first:',
-          ...workspace.runs.map(
-            (run) =>
-              `- ${run.id} at ${run.startedAt}, ${ENDINGS[run.endedBy]}: ${String(run.counts.passed)} passed, ${String(run.counts.failed)} failed, ${String(run.counts.blocked)} blocked, ${String(run.counts.skipped)} skipped`,
-          ),
+          ...workspace.runs.map((run) => {
+            const day = runDayOf(run);
+
+            return `- ${run.id} ${day === null ? '' : `on ${day} `}at ${run.startedAt}, ${ENDINGS[run.endedBy]}: ${String(run.counts.passed)} passed, ${String(run.counts.failed)} failed, ${String(run.counts.blocked)} blocked, ${String(run.counts.skipped)} skipped`;
+          }),
         ]),
     ...(workspace.bugs.length === 0
       ? ['No bugs.']

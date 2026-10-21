@@ -126,6 +126,7 @@ const APP: IAppSnapshot = {
       bugs: 1,
       latestRun: {
         id: 'r-02',
+        startedOn: '2026-10-20',
         startedAt: '10:02',
         endedBy: 'finished',
         passed: 1,

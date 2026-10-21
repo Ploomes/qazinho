@@ -23,7 +23,7 @@ function workspaceLine(workspace: IAppWorkspaceBrief): string {
       : `${plural({ count: workspace.cases, one: 'case' })}, ${plural({ count: workspace.steps, one: 'step' })}`,
     run === null
       ? 'no runs'
-      : `${plural({ count: workspace.runs, one: 'run' })}, the latest ${run.id} at ${run.startedAt} ${ENDINGS[run.endedBy]}: ${String(run.passed)} passed, ${String(run.failed)} failed, ${String(run.blocked)} blocked, ${String(run.skipped)} skipped`,
+      : `${plural({ count: workspace.runs, one: 'run' })}, the latest ${run.id} ${run.startedOn === null ? '' : `on ${run.startedOn} `}at ${run.startedAt} ${ENDINGS[run.endedBy]}: ${String(run.passed)} passed, ${String(run.failed)} failed, ${String(run.blocked)} blocked, ${String(run.skipped)} skipped`,
     workspace.bugs === 0 ? 'no bugs' : plural({ count: workspace.bugs, one: 'bug' }),
     ...(workspace.isRunning ? ['running now'] : []),
     ...(workspace.isAnswering ? ['its chat agent is answering'] : []),

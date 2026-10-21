@@ -9,6 +9,7 @@ import type {
   Language,
 } from '@/shared/types';
 import type { Screen, Theme } from '@/store/AppStore/types';
+import { runDayOf } from '@/modules/Run/library';
 import { openRoundOf } from './openRoundOf';
 
 const INTEGRATIONS: IntegrationId[] = ['github', 'jira'];
@@ -39,6 +40,7 @@ function briefOf(props: {
         ? null
         : {
             id: latest.id,
+            startedOn: runDayOf(latest),
             startedAt: latest.startedAt,
             endedBy: latest.endedBy,
             ...latest.counts,

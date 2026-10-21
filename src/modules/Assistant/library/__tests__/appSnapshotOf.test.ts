@@ -47,6 +47,7 @@ describe('appSnapshotOf', () => {
         bugs: 1,
         latestRun: {
           id: 'r-01',
+          startedOn: new Date(1_760_000_000_000).toLocaleDateString('sv-SE'),
           startedAt: '09:41',
           endedBy: 'finished',
           passed: 5,
