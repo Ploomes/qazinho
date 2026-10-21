@@ -634,7 +634,7 @@ export const en = {
       'For iOS I need Xcode, from the App Store, and idb, which I can install myself.',
     DEVICES_SAY_IOS_NO_MAC: "iOS needs a Mac, so on this machine I can't test on iOS.",
     INTEGRATIONS_SAY:
-      'Want me to send the bugs somewhere? Connect GitHub or Jira, or skip it and do it later in Settings.',
+      'Want me to read the code of your projects? Connect GitHub, and Jira for the bugs, or skip it and do it later in Settings.',
     DONE_SAY:
       'All set! Here is what I found on this machine. Shall we plan your first tests?',
     SKIP_SETUP: 'Skip setup',

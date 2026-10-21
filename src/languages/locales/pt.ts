@@ -638,7 +638,7 @@ export const pt: typeof en = {
     DEVICES_SAY_IOS_NO_MAC:
       'O iOS precisa de um Mac, então nesta máquina não dá para testar no iOS.',
     INTEGRATIONS_SAY:
-      'Quer que eu mande os bugs para algum lugar? Conecte o GitHub ou o Jira, ou pule e faça isso depois nas Configurações.',
+      'Quer que eu leia o código dos seus projetos? Conecte o GitHub, e o Jira para os bugs, ou pule e faça isso depois nas Configurações.',
     DONE_SAY:
       'Prontinho! Isso é o que eu achei nesta máquina. Bora planejar seus primeiros testes?',
     SKIP_SETUP: 'Pular configuração',
