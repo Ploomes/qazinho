@@ -230,6 +230,8 @@ export const pt: typeof en = {
     WATCH: 'Assistir à run',
     NOTICE_FINISHED: 'Run {{id}} terminou',
     NOTICE_BROKE: 'Run {{id}} parou no meio',
+    NOTICE_EXPLORED: 'Exploração {{id}} terminou',
+    NOTICE_EXPLORE_BROKE: 'Exploração {{id}} parou no meio',
     NOTICE_BODY: '{{workspace}} · {{tally}}',
     NOTICE_OPEN: 'Ver a run',
     NOTICE_WATCH: 'Assistir',

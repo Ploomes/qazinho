@@ -55,13 +55,25 @@ export const useRunEvents = () => {
     if (useSettingsStore.getState().runAlert !== 'system') return;
 
     const bugs = workspace.bugs.filter(({ runId }) => runId === run.id).length;
+    const isExploration = run.kind === 'explore';
     const tally = [
-      t(run.counts.passed === 1 ? 'CHAT.RUN_PASSED_ONE' : 'CHAT.RUN_PASSED_OTHER', {
-        count: run.counts.passed,
-      }),
-      t(run.counts.failed === 1 ? 'CHAT.RUN_FAILED_ONE' : 'CHAT.RUN_FAILED_OTHER', {
-        count: run.counts.failed,
-      }),
+      ...(isExploration
+        ? [
+            t(
+              run.counts.passed === 1
+                ? 'CHAT.EXPLORE_SCREENS_ONE'
+                : 'CHAT.EXPLORE_SCREENS_OTHER',
+              { count: run.counts.passed },
+            ),
+          ]
+        : [
+            t(run.counts.passed === 1 ? 'CHAT.RUN_PASSED_ONE' : 'CHAT.RUN_PASSED_OTHER', {
+              count: run.counts.passed,
+            }),
+            t(run.counts.failed === 1 ? 'CHAT.RUN_FAILED_ONE' : 'CHAT.RUN_FAILED_OTHER', {
+              count: run.counts.failed,
+            }),
+          ]),
       ...(bugs === 0
         ? []
         : [
@@ -74,9 +86,16 @@ export const useRunEvents = () => {
     Run.alert({
       workspaceId: workspace.id,
       runId: run.id,
-      title: t(run.endedBy === 'broke' ? 'RUN.NOTICE_BROKE' : 'RUN.NOTICE_FINISHED', {
-        id: run.id,
-      }),
+      title: t(
+        isExploration
+          ? run.endedBy === 'broke'
+            ? 'RUN.NOTICE_EXPLORE_BROKE'
+            : 'RUN.NOTICE_EXPLORED'
+          : run.endedBy === 'broke'
+            ? 'RUN.NOTICE_BROKE'
+            : 'RUN.NOTICE_FINISHED',
+        { id: run.id },
+      ),
       body: t('RUN.NOTICE_BODY', { workspace: workspace.name, tally }),
     });
   };

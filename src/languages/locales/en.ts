@@ -226,6 +226,8 @@ export const en = {
     WATCH: 'Watch the run',
     NOTICE_FINISHED: 'Run {{id}} finished',
     NOTICE_BROKE: 'Run {{id}} stopped short',
+    NOTICE_EXPLORED: 'Exploration {{id}} finished',
+    NOTICE_EXPLORE_BROKE: 'Exploration {{id}} stopped short',
     NOTICE_BODY: '{{workspace}} · {{tally}}',
     NOTICE_OPEN: 'See the run',
     NOTICE_WATCH: 'Watch',

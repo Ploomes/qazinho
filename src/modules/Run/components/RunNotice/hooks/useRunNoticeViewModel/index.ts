@@ -19,8 +19,17 @@ export const useRunNoticeViewModel = () => {
   const bugCount = (workspace?.bugs ?? []).filter(
     ({ runId }) => runId === run?.id,
   ).length;
-  const held = run === null ? 0 : run.counts.failed + run.counts.blocked;
+  const isExploration = run?.kind === 'explore';
+  const held =
+    run === null ? 0 : isExploration ? bugCount : run.counts.failed + run.counts.blocked;
   const isBroke = run?.endedBy === 'broke';
+  const bugsSaid =
+    bugCount === 0
+      ? ''
+      : t(bugCount === 1 ? 'SIDEBAR.META_BUG_ONE' : 'SIDEBAR.META_BUG_OTHER', {
+          count: bugCount,
+        });
+  const screens = run?.counts.passed ?? 0;
 
   return {
     isShown: notice !== null && run !== null,
@@ -35,11 +44,18 @@ export const useRunNoticeViewModel = () => {
         ? ('bug' as const)
         : ('passed' as const),
     internSize: RUN_NOTICE.internSize,
-    kicker: t(isBroke ? 'RUN.NOTICE_BROKE' : 'RUN.NOTICE_FINISHED', {
-      id: run?.id ?? '',
-    }),
+    kicker: t(
+      isExploration
+        ? isBroke
+          ? 'RUN.NOTICE_EXPLORE_BROKE'
+          : 'RUN.NOTICE_EXPLORED'
+        : isBroke
+          ? 'RUN.NOTICE_BROKE'
+          : 'RUN.NOTICE_FINISHED',
+      { id: run?.id ?? '' },
+    ),
     title: workspace?.name ?? '',
-    tally: (['passed', 'failed', 'blocked'] as const)
+    tally: (isExploration ? [] : (['passed', 'failed', 'blocked'] as const))
       .filter((verdict) => verdict !== 'blocked' || (run?.counts.blocked ?? 0) > 0)
       .map((verdict) => ({
         key: verdict,
@@ -48,12 +64,14 @@ export const useRunNoticeViewModel = () => {
         label: t(STATUS[verdict].labelKey),
         className: `run-notice__count run-notice__count--${STATUS[verdict].tone}`,
       })),
-    bugs:
-      bugCount === 0
-        ? ''
-        : t(bugCount === 1 ? 'SIDEBAR.META_BUG_ONE' : 'SIDEBAR.META_BUG_OTHER', {
-            count: bugCount,
-          }),
+    bugs: isExploration
+      ? [
+          screens === 1
+            ? t('CHAT.EXPLORE_SCREENS_ONE')
+            : t('CHAT.EXPLORE_SCREENS_OTHER', { count: screens }),
+          ...(bugsSaid === '' ? [] : [bugsSaid]),
+        ].join(' · ')
+      : bugsSaid,
     openLabel: t('RUN.NOTICE_OPEN'),
     canWatch: run?.video !== null && run?.video !== undefined,
     watchLabel: t('RUN.NOTICE_WATCH'),

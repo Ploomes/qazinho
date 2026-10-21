@@ -3,7 +3,13 @@ import type { IWorkspace } from '@/modules/Workspace/types';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { useRunNoticeViewModel } from '@/modules/Run/components/RunNotice/hooks/useRunNoticeViewModel';
-import { recordedRun, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
+import { endRun, landFinding, landStep, startRun } from '@/modules/Workspace/library';
+import {
+  recordedRun,
+  walkRun,
+  makeWorkspace,
+  WALKED_BY,
+} from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 function noticing(workspace: IWorkspace, runId = 'r-01') {
@@ -108,6 +114,65 @@ describe('useRunNoticeViewModel', () => {
       });
 
       expect(useAppStore.getState().runNotice).toBeNull();
+    });
+  });
+  it('says an exploration ended by its screens and its bugs, not by verdicts', () => {
+    let workspace = startRun({
+      workspace: makeWorkspace([]),
+      startedAt: '10:00',
+      runId: 'r-01',
+      by: WALKED_BY,
+      kind: 'explore',
+    });
+
+    for (const [index, name] of ['Shop', 'Cart'].entries())
+      workspace = landStep({
+        workspace,
+        outcome: {
+          workspaceId: 'w1',
+          caseId: 'EX',
+          stepNumber: index + 1,
+          index,
+          action: name,
+          expected: '',
+          verdict: 'passed',
+          why: '',
+          got: '',
+          title: '',
+          severity: 'low',
+          tookMs: 1_000,
+          at: 1_760_000_000_000 + index * 1_000,
+          screenshot: null,
+          shotFile: null,
+        },
+        at: '10:00',
+      });
+
+    workspace = landFinding({
+      workspace,
+      finding: {
+        caseId: 'EX',
+        stepNumber: 2,
+        index: 1,
+        action: 'Cart',
+        title: 'Cart total ignores the shirt',
+        severity: 'high',
+        at: 1_760_000_002_000,
+        expected: 'R$ 79,90',
+        got: 'R$ 0,00',
+        screenshot: null,
+        shotFile: null,
+      },
+      at: '10:01',
+    });
+
+    const result = noticing(endRun({ workspace, at: '10:02', endedBy: 'finished' }));
+
+    expect(result.current).toMatchObject({
+      kicker: 'Exploration r-01 finished',
+      bugs: '2 screens · 1 bug',
+      mood: 'bug',
+      tally: [],
     });
   });
 });
