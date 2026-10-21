@@ -15,12 +15,14 @@ src/
 │   └── styles/      ← tokens.css, base.css, animations.css
 ├── modules/         ← screens, grouped by domain
 ├── store/  services/  languages/
-├── app/  index.tsx  index.html
+├── recorder/        ← the recorder window: a second, hidden page that encodes a run's video
+├── app/  index.tsx  index.html  recorder.html
 electron/
 └── preload/     ← the bridge: exposes window.qazinho through contextBridge, nothing else
 ```
 
 Everything under `src/` that is not `src/main/` or `src/harness/` is **the page**: React, no Node.
+`src/recorder/` is a page too, a second one with no React, loaded by `recorder.html`.
 
 | Folder             | Runs in             | May import                                                        |
 | ------------------ | ------------------- | ----------------------------------------------------------------- |
@@ -42,7 +44,10 @@ Everything under `src/` that is not `src/main/` or `src/harness/` is **the page*
 
 Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIntegration: false`.
 
-- A sandboxed preload can require only `electron` and a few polyfills. That is why it stays thin.
+- A sandboxed preload can require only `electron` and a few polyfills. That is why it stays thin,
+  and why there is one: a second entry would share a chunk it cannot require. The recorder window
+  opens with `RECORDER_ARGUMENT`, and the same preload hands it `window.qazinhoRecorder` instead
+  of `window.qazinho`.
 - `will-navigate` is cancelled unless `isInternalNavigation` says the target is the app itself.
 - `window.open` never opens a window: `https:` links go to the system browser, everything else is
   denied.
@@ -138,6 +143,21 @@ screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `
 - Chrome keeps a window at least 500px wide, so a phone-sized page streams framed wider, and
   `DeviceScreen` cuts the stream to the viewport's shape.
 
+**Every run is recorded, and its video never crosses IPC either.**
+
+- A browser is recorded from its live stream. `RunRecorder` opens a hidden window,
+  `src/recorder/`, that reads the same MJPEG over loopback, each frame stamped with when it was
+  captured and the screen's shape. It crops a phone-sized page the way `DeviceScreen` does,
+  encodes H.264 with WebCodecs, and hands the MP4 back in pieces main writes by position.
+- A phone records itself: a simulator with `simctl io recordVideo`, an emulator with its console's
+  `screenrecord`, as WebM, for up to the half hour it allows. It stops before the device closes.
+- `ReplayServer` serves the file to the page's `<video>` on loopback, in the byte ranges a video
+  asks for to seek. The CSP lets media in from loopback, and nothing else.
+- Main stamps each step and finding with when it heard it, so the run's timeline places every
+  case, step and bug in the video (`replayTimelineOf`).
+- **The app's own windows leave the recorder out** (`appWindows`): a broadcast, a dialog or the
+  dock click never lands on it.
+
 ## What the main process owns
 
 Besides the harness's `Harness` and `McpHost`, which main builds and wires:
@@ -158,6 +178,9 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `AgentMcp`                            | adds an MCP server to the QA's agent and signs it in there, step by step        |
 | `AgentLogin`                          | signs the QA's agent in through its own login, step by step                     |
 | `LinkCatcher`                         | gives an agent a `$BROWSER` that writes down the pages it wants opened          |
+| `RunRecorder`                         | records a run's live stream into an MP4, through the hidden recorder window     |
+| `ReplayServer`                        | serves a run's recording to the page's `<video>` on 127.0.0.1, with ranges      |
+| `RunAlerts`                           | calls the QA back when a run ends while they are away: a notification, a badge  |
 
 ## Dependencies
 

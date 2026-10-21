@@ -65,6 +65,15 @@ source for the simulator (`tests/smoke/fixtures/`), read and tapped through idb,
 and judged by the QA's own agent. Every case starts on the app opened anew: Android clears its
 data, iOS reinstalls it, the web clears the browser (`device-fresh.test.ts`, `fresh.test.ts`).
 
+**Every run is recorded and plays back with its timeline.** A browser is recorded from its live
+stream, a simulator by `simctl`, an emulator by its console. The run's video opens in a theater:
+a chapter per case in its verdict's colour, a pin per bug, a still of any moment under the
+cursor, and the steps beside it, kept in step. Each case offers its take in Runs, and each bug
+its moment in Bugs. `tests/smoke/record.test.ts` proves the browser's recording.
+
+**A run that ends calls the QA back** while they are away: a notification with its sound and a
+count on the app's icon, unless they asked to hear only inside the app, where a notice says it.
+
 **A first run walks the machine** (`Onboarding`): language, the agent, the device tools, the
 trackers. GitHub and Jira connect for real: the token is checked with the tracker and sealed by
 the OS keychain.
