@@ -16,6 +16,7 @@ import {
   useMachineWatch,
   useRunEvents,
   useRunTicker,
+  useVariables,
 } from '@/shared/hooks';
 import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
@@ -31,6 +32,7 @@ export const useAppViewModel = () => {
   const isDeviceOpen = useWorkspaceStore((state) => state.isDevicePanelOpen);
 
   useArchive();
+  useVariables();
   useLanguage();
   useKeybinds();
   useRunTicker();

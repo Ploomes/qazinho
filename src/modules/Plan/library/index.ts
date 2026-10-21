@@ -7,6 +7,7 @@ export * from './keepVerdicts';
 export * from './mapCase';
 export * from './nextCaseId';
 export * from './planOfDraft';
+export * from './planWithVariableRenamed';
 export * from './removeCase';
 export * from './removeStep';
 export * from './toPlanKind';
