@@ -1,3 +1,4 @@
+export * from './ASSISTANT_WAIT';
 export * from './BACKDROP';
 export * from './CHANNELS';
 export * from './COUNTDOWN';

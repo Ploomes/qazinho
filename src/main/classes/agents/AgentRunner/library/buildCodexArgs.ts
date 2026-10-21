@@ -1,15 +1,23 @@
 import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 
-function qazinhoUrlOf(mcpConfig: string | undefined): string | null {
+function qazinhoServerOf(mcpConfig: string | undefined): {
+  url: string;
+  timeoutMs: number | null;
+} | null {
   if (mcpConfig === undefined) return null;
 
   try {
     const read = JSON.parse(mcpConfig) as {
-      mcpServers?: { qazinho?: { url?: unknown } };
+      mcpServers?: { qazinho?: { url?: unknown; timeout?: unknown } };
     };
-    const url = read.mcpServers?.qazinho?.url;
+    const server = read.mcpServers?.qazinho;
 
-    return typeof url === 'string' ? url : null;
+    return typeof server?.url === 'string'
+      ? {
+          url: server.url,
+          timeoutMs: typeof server.timeout === 'number' ? server.timeout : null,
+        }
+      : null;
   } catch {
     return null;
   }
@@ -22,7 +30,7 @@ export function buildCodexArgs(
   },
 ): string[] {
   const { model, sessionId, systemPrompt, mcpConfig, schemaFile } = props;
-  const url = qazinhoUrlOf(mcpConfig);
+  const server = qazinhoServerOf(mcpConfig);
 
   return [
     'exec',
@@ -38,7 +46,15 @@ export function buildCodexArgs(
     ...(systemPrompt === undefined
       ? []
       : ['-c', `developer_instructions=${JSON.stringify(systemPrompt)}`]),
-    ...(url === null ? [] : ['-c', `mcp_servers.qazinho.url=${JSON.stringify(url)}`]),
+    ...(server === null
+      ? []
+      : ['-c', `mcp_servers.qazinho.url=${JSON.stringify(server.url)}`]),
+    ...(server === null || server.timeoutMs === null
+      ? []
+      : [
+          '-c',
+          `mcp_servers.qazinho.tool_timeout_sec=${String(Math.ceil(server.timeoutMs / 1000))}`,
+        ]),
     '-',
   ];
 }

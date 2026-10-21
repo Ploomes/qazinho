@@ -45,5 +45,21 @@ describe('buildCodexArgs', () => {
     expect(buildCodexArgs({ ...BASE, mcpConfig })).toContain(
       'mcp_servers.qazinho.url="http://127.0.0.1:5000/t/w1"',
     );
+    expect(buildCodexArgs({ ...BASE, mcpConfig }).join(' ')).not.toContain(
+      'tool_timeout_sec',
+    );
+  });
+
+  /** Codex gives a tool sixty seconds unless told otherwise; the assistant's waits on the QA for longer. */
+  it('lets a tool call take as long as the MCP config says, in whole seconds', () => {
+    const mcpConfig = JSON.stringify({
+      mcpServers: {
+        qazinho: { type: 'http', url: 'http://127.0.0.1:5000/t/~a', timeout: 360_500 },
+      },
+    });
+
+    expect(buildCodexArgs({ ...BASE, mcpConfig })).toContain(
+      'mcp_servers.qazinho.tool_timeout_sec=361',
+    );
   });
 });

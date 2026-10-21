@@ -54,14 +54,20 @@ export class McpHost {
     this.queues.delete(scope);
   }
 
-  /** The `--mcp-config` an agent needs to reach the tools attached under a scope, a workspace or the app, or null before start. */
-  public mcpConfigFor(scope: string): string | null {
+  /** The `--mcp-config` an agent needs to reach the tools attached under a scope, and how long one call may take; null before start. */
+  public mcpConfigFor(scope: string, toolTimeoutMs?: number): string | null {
     if (!this.server) return null;
 
     const url = `http://${MCP_HOST.host}:${String(this.port)}/${this.token}/${encodeURIComponent(scope)}`;
 
     return JSON.stringify({
-      mcpServers: { [MCP_HOST.name]: { type: 'http', url } },
+      mcpServers: {
+        [MCP_HOST.name]: {
+          type: 'http',
+          url,
+          ...(toolTimeoutMs === undefined ? {} : { timeout: toolTimeoutMs }),
+        },
+      },
     });
   }
 
