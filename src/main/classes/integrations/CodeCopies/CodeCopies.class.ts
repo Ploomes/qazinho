@@ -9,11 +9,13 @@ import { changesOf, filesInDiff, refPath } from './library';
 export class CodeCopies {
   private readonly github: IGithubCode;
   private readonly root: string;
+  private readonly now: () => number;
   private readonly copies = new Map<string, ICodeCopy>();
 
   public constructor(props: ICodeCopies) {
     this.github = props.github;
     this.root = props.root;
+    this.now = props.now ?? Date.now;
   }
 
   /** Copies a branch for a workspace and reads what it changed against the base, in place of any copy the workspace had. */
@@ -48,10 +50,14 @@ export class CodeCopies {
 
     onStep({ at: 'download', bytes: 0 });
 
+    let toldAt = this.now();
     const extracted = await this.github.extract({
       path: `${base}/tarball/${commit}`,
       dir,
       onBytes: (bytes) => {
+        if (this.now() - toldAt < CODE_COPIES.progressMs) return;
+
+        toldAt = this.now();
         onStep({ at: 'download', bytes });
       },
     });

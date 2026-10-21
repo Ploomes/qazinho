@@ -39,7 +39,8 @@ function fakeGithub(table: Record<string, GhAnswer>, extract?: GhAnswer) {
 
       await mkdir(props.dir, { recursive: true });
       await writeFile(join(props.dir, 'README.md'), 'loja');
-      props.onBytes?.(2048);
+
+      for (const bytes of [1024, 2048, 3072]) props.onBytes?.(bytes);
 
       return { isOk: true, text: '' } satisfies GhAnswer;
     }),
@@ -51,11 +52,18 @@ function fakeGithub(table: Record<string, GhAnswer>, extract?: GhAnswer) {
 const ok = (text: string): GhAnswer => ({ isOk: true, text });
 const ASK = { owner: 'acme', name: 'loja-web', base: 'develop', branch: 'feat/cupom' };
 
-async function copiesWith(table: Record<string, GhAnswer>, extract?: GhAnswer) {
+async function copiesWith(
+  table: Record<string, GhAnswer>,
+  extra: { extract?: GhAnswer; now?: () => number } = {},
+) {
   const root = join(await mkdtemp(join(tmpdir(), 'qazinho-code-')), 'code');
-  const fake = fakeGithub(table, extract);
+  const fake = fakeGithub(table, extra.extract);
 
-  return { root, ...fake, copies: new CodeCopies({ github: fake.github, root }) };
+  return {
+    root,
+    ...fake,
+    copies: new CodeCopies({ github: fake.github, root, now: extra.now }),
+  };
 }
 
 const TABLE: Record<string, GhAnswer> = {
@@ -170,16 +178,40 @@ describe('CodeCopies', () => {
 
   it('leaves nothing on disk when the download fails', async () => {
     const { copies, root } = await copiesWith(TABLE, {
-      isOk: false,
-      failure: 'unreachable',
-      httpStatus: null,
-      said: 'The download took too long.',
+      extract: {
+        isOk: false,
+        failure: 'unreachable',
+        httpStatus: null,
+        said: 'The download took too long.',
+      },
     });
 
     expect(
       await copies.prepare({ workspaceId: 'w-1', code: ASK, onStep: () => undefined }),
     ).toMatchObject({ isReady: false, failure: 'unreachable' });
     expect(existsSync(join(root, 'w-1'))).toBe(false);
+  });
+
+  it('tells how much has come down a few times a second, not on every chunk', async () => {
+    let clock = 0;
+    const { copies } = await copiesWith(TABLE, {
+      now: () => {
+        clock += 100;
+
+        return clock;
+      },
+    });
+    const told: number[] = [];
+
+    await copies.prepare({
+      workspaceId: 'w-1',
+      code: ASK,
+      onStep: ({ at, bytes }) => {
+        if (at === 'download' && bytes > 0) told.push(bytes);
+      },
+    });
+
+    expect(told).toEqual([3072]);
   });
 
   it('deletes a copy once released, and every copy on a sweep', async () => {

@@ -288,35 +288,33 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
   askingChats.add(ask.workspaceId);
 
   try {
-    const look = ask.target?.kind === 'web' ? await peek.look(ask.target.value) : null;
+    const [look, prepared] = await Promise.all([
+      ask.target?.kind === 'web' ? peek.look(ask.target.value) : Promise.resolve(null),
+      ask.code === null
+        ? Promise.resolve(null)
+        : codeCopies.prepare({
+            workspaceId: ask.workspaceId,
+            code: ask.code,
+            onStep: ({ at, bytes }) => {
+              broadcast({
+                channel: CHANNELS.agentEvent,
+                event: { kind: 'code', workspaceId: ask.workspaceId, step: at, bytes },
+              });
+            },
+          }),
+    ]);
 
-    if (stoppedChats.has(ask.workspaceId))
+    if (stoppedChats.has(ask.workspaceId)) {
+      if (prepared !== null) await codeCopies.release(ask.workspaceId);
+
       return { ...unanswered, failure: { reason: 'stopped' } };
-
-    if (ask.code !== null) {
-      const prepared = await codeCopies.prepare({
-        workspaceId: ask.workspaceId,
-        code: ask.code,
-        onStep: ({ at, bytes }) => {
-          broadcast({
-            channel: CHANNELS.agentEvent,
-            event: { kind: 'code', workspaceId: ask.workspaceId, step: at, bytes },
-          });
-        },
-      });
-
-      if (stoppedChats.has(ask.workspaceId)) {
-        await codeCopies.release(ask.workspaceId);
-
-        return { ...unanswered, failure: { reason: 'stopped' } };
-      }
-
-      if (!prepared.isReady)
-        return {
-          ...unanswered,
-          failure: { reason: 'code', failure: prepared.failure, said: prepared.said },
-        };
     }
+
+    if (prepared !== null && !prepared.isReady)
+      return {
+        ...unanswered,
+        failure: { reason: 'code', failure: prepared.failure, said: prepared.said },
+      };
 
     const code = codeCopies.copyOf(ask.workspaceId);
     const first = await askOnce({ ask, command, sessionId: ask.sessionId, look, code });

@@ -4,4 +4,5 @@ export const CODE_COPIES = {
   compareJq:
     '{commits: .ahead_by, files: [.files[] | {path: .filename, status, additions, deletions}]}',
   diffAccept: 'application/vnd.github.diff',
+  progressMs: 250,
 } as const;
