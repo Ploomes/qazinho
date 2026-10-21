@@ -16,7 +16,7 @@ describe('performSettingsChange', () => {
         port,
       }),
     ).toEqual({
-      text: 'Done: QAzinho is on the Paper theme, it speaks English, a run that ends calls the QA only inside QAzinho.',
+      text: 'Done: QAzinho is on the theme the QA sees as Papel, it speaks English, a run that ends calls the QA only inside QAzinho.',
       isError: false,
     });
     expect(did).toEqual(['change {"theme":"light","language":"en","runAlert":"app"}']);

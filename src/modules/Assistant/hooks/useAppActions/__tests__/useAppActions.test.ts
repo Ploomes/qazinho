@@ -223,9 +223,10 @@ describe('useAppActions', () => {
     });
   });
 
-  it('opens Settings on Integrations and asks the tracker card to connect', async () => {
+  it('opens Settings on Integrations, asks the tracker card to connect, and gets out of the way', async () => {
     const { answers, call } = bridge();
 
+    useAssistantStore.setState({ isOpen: true });
     renderHook(() => {
       useAppActions();
     });
@@ -242,5 +243,6 @@ describe('useAppActions', () => {
     expect(useAppStore.getState().screen).toBe('settings');
     expect(useSettingsStore.getState().tab).toBe('integrations');
     expect(useSetupStore.getState().connectingId).toBe('github');
+    expect(useAssistantStore.getState().isOpen).toBe(false);
   });
 });

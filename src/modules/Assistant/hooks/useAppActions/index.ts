@@ -60,6 +60,8 @@ export const useAppActions = () => {
       }),
       now: () => Date.now(),
       targetLabel: (kind) => t(PLATFORM_LABEL[kind]),
+      themeName: (theme) =>
+        t(theme === 'dark' ? 'SETTINGS.THEME_DARK' : 'SETTINGS.THEME_LIGHT'),
       openWorkspace: ({ workspaceId, tab, runId, bugId }) => {
         const workspaces = useWorkspaceStore.getState();
 
@@ -142,6 +144,7 @@ export const useAppActions = () => {
         bringForward();
         useAppStore.getState().openSettings();
         useSetupStore.getState().askToConnect(id);
+        useAssistantStore.getState().close();
       },
       disconnectIntegration: async (id) => {
         await Integrations.disconnect(id);

@@ -82,6 +82,7 @@ export function fakePort(
     read: () => state,
     now: () => 1_760_000_000_000,
     targetLabel: (kind) => `label ${kind}`,
+    themeName: (theme) => (theme === 'dark' ? 'Noite' : 'Papel'),
     openWorkspace: (open) => {
       did.push(
         `open ${open.workspaceId} ${open.tab} ${open.runId ?? '-'} ${open.bugId ?? '-'}`,

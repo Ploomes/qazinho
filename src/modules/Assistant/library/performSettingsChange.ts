@@ -3,13 +3,18 @@ import type { AppToolCall, IntegrationId } from '@/shared/types';
 
 const NAMES: Record<IntegrationId, string> = { github: 'GitHub', jira: 'Jira' };
 
-function settingsSaid(
-  args: Extract<AppToolCall, { name: 'change_settings' }>['args'],
-): string {
+function settingsSaid(props: {
+  args: Extract<AppToolCall, { name: 'change_settings' }>['args'];
+  port: IAppPort;
+}): string {
+  const { args, port } = props;
+
   return [
     ...(args.theme === undefined
       ? []
-      : [`QAzinho is on the ${args.theme === 'night' ? 'Night' : 'Paper'} theme`]),
+      : [
+          `QAzinho is on the theme the QA sees as ${port.themeName(args.theme === 'night' ? 'dark' : 'light')}`,
+        ]),
     ...(args.language === undefined
       ? []
       : [`it speaks ${args.language === 'pt' ? 'Brazilian Portuguese' : 'English'}`]),
@@ -43,7 +48,7 @@ export async function performSettingsChange(props: {
       ...(runAlert === undefined ? {} : { runAlert }),
     });
 
-    return { text: `Done: ${settingsSaid(call.args)}.`, isError: false };
+    return { text: `Done: ${settingsSaid({ args: call.args, port })}.`, isError: false };
   }
 
   const integration = call.args.integration;

@@ -20,6 +20,7 @@ export interface IAppPort {
   read: () => IAppState;
   now: () => number;
   targetLabel: (kind: TargetKind) => string;
+  themeName: (theme: Theme) => string;
   openWorkspace: (props: {
     workspaceId: string;
     tab: WorkspaceTab;
