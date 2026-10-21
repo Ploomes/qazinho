@@ -1,9 +1,9 @@
-import type { IChatReference, ICodeCopy, IFlatStep } from '@/shared/types';
+import type { IAppSnapshot, IChatReference, ICodeCopy, IFlatStep } from '@/shared/types';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { describe, expect, it } from 'vitest';
-import { Harness, registerDeviceTools } from '@/harness';
+import { Harness, registerAppTools, registerDeviceTools } from '@/harness';
 
 /**
  * The files in __prompts__ are what the agent read before the harness moved to src/harness/.
@@ -90,6 +90,53 @@ const FULL_CHAT = {
     page: 'URL: https://shop.test/\nTITLE: Shop\nTEXT:\nNew in: summer shoes\nCONTROLS:\na: Cart\nbutton: Sign in',
   },
   code: null,
+};
+
+const APP: IAppSnapshot = {
+  screen: 'workspace',
+  openWorkspaceId: 'w-1',
+  openTab: 'bugs',
+  openRunId: null,
+  openBugId: 'BUG-01',
+  language: 'pt',
+  theme: 'night',
+  runAlert: 'system',
+  agent: 'Claude Code',
+  integrations: [
+    { id: 'github', account: 'octoqa' },
+    { id: 'jira', account: null },
+  ],
+  projects: [
+    {
+      id: 'p-1',
+      name: 'Shop',
+      targets: [{ kind: 'web', value: 'https://shop.test' }],
+      repositories: [{ name: 'acme/shop-web', base: 'main' }],
+    },
+  ],
+  workspaces: [
+    {
+      id: 'w-1',
+      name: 'Coupons',
+      projectId: 'p-1',
+      target: 'web',
+      cases: 1,
+      steps: 2,
+      runs: 1,
+      bugs: 1,
+      latestRun: {
+        id: 'r-02',
+        startedAt: '10:02',
+        endedBy: 'finished',
+        passed: 1,
+        failed: 1,
+        blocked: 0,
+        skipped: 0,
+      },
+      isRunning: false,
+      isAnswering: false,
+    },
+  ],
 };
 
 describe('Harness', () => {
@@ -252,6 +299,50 @@ describe('Harness', () => {
     });
   });
 
+  describe('assistant', () => {
+    it('briefs the Estagiário in the corner, and nothing of a chat or a run', async () => {
+      const { systemPrompt } = harness.assistant({ text: 'Oi', told: {}, app: APP });
+
+      await expect(systemPrompt).toMatchFileSnapshot('./__prompts__/assistant.txt');
+      expect(systemPrompt).not.toContain('## Talking with the QA');
+      expect(systemPrompt).not.toContain('## Running a case');
+    });
+
+    it('opens the first message with what is on screen and every project and workspace', async () => {
+      await expect(
+        harness.assistant({ text: 'What broke in Coupons?', told: {}, app: APP }).prompt,
+      ).toMatchFileSnapshot('./__prompts__/assistant-message.txt');
+    });
+
+    it('tells a resumed assistant only what changed, and nothing when nothing did', () => {
+      const first = harness.assistant({ text: 'Oi', told: {}, app: APP });
+      const moved = harness.assistant({
+        text: 'And this one?',
+        told: first.told,
+        app: { ...APP, openTab: 'plan', openBugId: null },
+      });
+
+      expect(moved.prompt).toContain(
+        '## On screen\nThe QA is on the workspace "Coupons" (w-1), on its plan tab.',
+      );
+      expect(moved.prompt).not.toContain('## QAzinho now');
+      expect(
+        harness.assistant({
+          text: 'Thanks',
+          told: moved.told,
+          app: { ...APP, openTab: 'plan', openBugId: null },
+        }).prompt,
+      ).toBe('Thanks');
+    });
+
+    it('gives the assistant the app tools behind QAzinho own MCP server', () => {
+      expect(harness.assistant({ text: 'Oi', told: {}, app: APP }).tools).toEqual({
+        groups: ['app'],
+        allowedTools: ['mcp__qazinho'],
+      });
+    });
+  });
+
   describe('toolsFor', () => {
     it('gives the runner the device, behind QAzinho own MCP server', () => {
       expect(harness.toolsFor('runner')).toEqual({
@@ -276,6 +367,26 @@ describe('Harness', () => {
 
       await expect(JSON.stringify(tools, null, 2)).toMatchFileSnapshot(
         './__prompts__/device-tools.txt',
+      );
+      await client.close();
+    });
+  });
+
+  describe('the app tools', () => {
+    /** Listed the way the assistant lists them: an MCP client over an in-memory pipe, no network. */
+    it('lists them to the agent exactly as pinned', async () => {
+      const mcp = new McpServer({ name: 'qazinho', version: '0' });
+      const client = new Client({ name: 'pin', version: '0' });
+      const [ours, theirs] = InMemoryTransport.createLinkedPair();
+
+      registerAppTools({ mcp, call: () => Promise.reject(new Error('not called')) });
+      await mcp.connect(ours);
+      await client.connect(theirs);
+
+      const { tools } = await client.listTools();
+
+      await expect(JSON.stringify(tools, null, 2)).toMatchFileSnapshot(
+        './__prompts__/app-tools.txt',
       );
       await client.close();
     });

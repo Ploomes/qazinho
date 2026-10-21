@@ -1,3 +1,4 @@
+import type { IAttachApp } from '@/harness/tools/servers/app/types';
 import type { IAttachDevice } from '@/harness/tools/servers/device/types';
 import type { IncomingMessage, Server as HttpServer, ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
@@ -6,13 +7,15 @@ import { createServer } from 'node:http';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { MCP_HOST } from '@/harness/tools/constants';
+import { callAppTool, registerAppTools } from '@/harness/tools/servers/app';
 import { callDeviceTool, registerDeviceTools } from '@/harness/tools/servers/device';
 import { workspaceOfPath } from './library';
 
-/** Serves QAzinho's MCP tools on loopback, one address per workspace, for the length of a run. */
+/** Serves QAzinho's MCP tools on loopback: a workspace's device for the length of a run, and the app while the assistant answers. */
 export class McpHost {
   private readonly token = randomUUID();
   private readonly devices = new Map<string, IAttachDevice>();
+  private readonly apps = new Map<string, IAttachApp>();
   private readonly queues = new Map<string, Promise<unknown>>();
   private server: HttpServer | null = null;
   private port = 0;
@@ -41,11 +44,21 @@ export class McpHost {
     this.queues.delete(workspaceId);
   }
 
-  /** The `--mcp-config` an agent needs to reach this workspace's device, or null before start. */
-  public mcpConfigFor(workspaceId: string): string | null {
+  /** Serves the app tools under the app's scope, each call carried out by it, until `detachApp`. */
+  public attachApp(app: IAttachApp): void {
+    this.apps.set(app.scope, app);
+  }
+
+  public detachApp(scope: string): void {
+    this.apps.delete(scope);
+    this.queues.delete(scope);
+  }
+
+  /** The `--mcp-config` an agent needs to reach the tools attached under a scope, a workspace or the app, or null before start. */
+  public mcpConfigFor(scope: string): string | null {
     if (!this.server) return null;
 
-    const url = `http://${MCP_HOST.host}:${String(this.port)}/${this.token}/${encodeURIComponent(workspaceId)}`;
+    const url = `http://${MCP_HOST.host}:${String(this.port)}/${this.token}/${encodeURIComponent(scope)}`;
 
     return JSON.stringify({
       mcpServers: { [MCP_HOST.name]: { type: 'http', url } },
@@ -54,6 +67,7 @@ export class McpHost {
 
   public close(): void {
     this.devices.clear();
+    this.apps.clear();
     this.queues.clear();
     this.server?.close();
     this.server = null;
@@ -64,10 +78,11 @@ export class McpHost {
     response: ServerResponse;
   }): Promise<void> {
     const { request, response } = props;
-    const workspaceId = workspaceOfPath({ path: request.url ?? '', token: this.token });
-    const device = workspaceId === null ? undefined : this.devices.get(workspaceId);
+    const scope = workspaceOfPath({ path: request.url ?? '', token: this.token });
+    const device = scope === null ? undefined : this.devices.get(scope);
+    const app = scope === null ? undefined : this.apps.get(scope);
 
-    if (!device || workspaceId === null) {
+    if (scope === null || (!device && !app)) {
       response.writeHead(404).end();
 
       return;
@@ -75,11 +90,17 @@ export class McpHost {
 
     const mcp = new McpServer({ name: MCP_HOST.name, version: MCP_HOST.version });
 
-    registerDeviceTools({
-      mcp,
-      call: (call) =>
-        this.inTurn({ workspaceId, call: () => callDeviceTool({ device, call }) }),
-    });
+    if (device)
+      registerDeviceTools({
+        mcp,
+        call: (call) =>
+          this.inTurn({ scope, call: () => callDeviceTool({ device, call }) }),
+      });
+    else if (app)
+      registerAppTools({
+        mcp,
+        call: (call) => this.inTurn({ scope, call: () => callAppTool({ app, call }) }),
+      });
 
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: undefined,
@@ -95,12 +116,12 @@ export class McpHost {
     await transport.handleRequest(request, response);
   }
 
-  private inTurn<T>(props: { workspaceId: string; call: () => Promise<T> }): Promise<T> {
-    const before = this.queues.get(props.workspaceId) ?? Promise.resolve();
+  private inTurn<T>(props: { scope: string; call: () => Promise<T> }): Promise<T> {
+    const before = this.queues.get(props.scope) ?? Promise.resolve();
     const turn = before.then(props.call, props.call);
 
     this.queues.set(
-      props.workspaceId,
+      props.scope,
       turn.catch(() => undefined),
     );
 

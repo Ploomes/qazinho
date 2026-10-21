@@ -7,4 +7,10 @@ describe('TOOL_GRANTS', () => {
 
     expect(device?.roles).toEqual(['runner']);
   });
+
+  it('hands the app to the assistant only: a run or a chat never renames, runs or deletes', () => {
+    const app = TOOL_GRANTS.find(({ group }) => group === 'app');
+
+    expect(app?.roles).toEqual(['assistant']);
+  });
 });

@@ -2,6 +2,7 @@ import type { ICorpusFile } from '@/harness/context/types';
 import type { IHarnessTools } from '@/harness/tools/types';
 import type { AppLook, HarnessRole, IHarnessTarget } from '@/harness/types';
 import type {
+  IAppSnapshot,
   IChatAnswer,
   IChatReference,
   ICodeCopy,
@@ -15,12 +16,14 @@ import { CORPUS } from '@/harness/context/constants';
 import {
   changedSections,
   chatMessageOf,
+  describeApp,
   describeCase,
   describeCode,
   describeLook,
   describePlan,
   describeReferences,
   describeRuns,
+  describeScreen,
   describeSize,
   fillSections,
   renderSections,
@@ -105,6 +108,30 @@ export class Harness {
       schema: CHAT_SCHEMA,
       tools: this.toolsFor('chat'),
       readDirs: props.code === null ? [] : [props.code.root],
+    };
+  }
+
+  /** One message to the assistant: the corpus as its system prompt, the QA's words opened by what changed on screen and in the app, and the app tools. */
+  public assistant(props: {
+    text: string;
+    told: Record<string, string>;
+    app: IAppSnapshot;
+  }): {
+    systemPrompt: string;
+    prompt: string;
+    told: Record<string, string>;
+    tools: IHarnessTools;
+  } {
+    const news = changedSections({
+      sections: [describeScreen(props.app), describeApp(props.app)],
+      told: props.told,
+    });
+
+    return {
+      systemPrompt: this.contextFor({ target: { role: 'assistant' } }),
+      prompt: chatMessageOf({ sections: news.changed, text: props.text }),
+      told: news.told,
+      tools: this.toolsFor('assistant'),
     };
   }
 

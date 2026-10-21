@@ -16,12 +16,12 @@ describe('CORPUS', () => {
     expect(platforms.sort()).toEqual(['android', 'ios', 'web']);
   });
 
-  it('has something for both roles', () => {
+  it('has something for every role', () => {
     const roles = new Set(
       CORPUS.filter(({ layer }) => layer === 'role').map(({ scope }) => scope),
     );
 
-    expect([...roles].sort()).toEqual(['chat', 'runner']);
+    expect([...roles].sort()).toEqual(['assistant', 'chat', 'runner']);
   });
 
   it('never gives two files of one layer and scope the same order, so the prompt never reshuffles', () => {
