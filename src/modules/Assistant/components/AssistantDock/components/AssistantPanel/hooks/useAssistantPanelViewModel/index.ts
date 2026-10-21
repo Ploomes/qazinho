@@ -12,6 +12,7 @@ import {
   secretIn,
   suggestionsFor,
   toolLabelOf,
+  withoutSecret,
 } from '@/modules/Assistant/library';
 import { Assistant } from '@/services';
 import {
@@ -223,13 +224,7 @@ export const useAssistantPanelViewModel = () => {
     secretRemoveLabel: t('ASSISTANT.SECRET_REMOVE'),
     secretSendLabel: t('ASSISTANT.SECRET_SEND'),
     onRemoveSecret: () => {
-      if (secret !== null)
-        setDraft(
-          draft
-            .split(secret)
-            .join('')
-            .replace(/\s{2,}/g, ' '),
-        );
+      if (secret !== null) setDraft(withoutSecret({ text: draft, secret }));
 
       inputRef.current?.focus();
     },

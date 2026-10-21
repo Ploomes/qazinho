@@ -17,3 +17,4 @@ export * from './secretIn';
 export * from './subjectOf';
 export * from './suggestionsFor';
 export * from './toolLabelOf';
+export * from './withoutSecret';
