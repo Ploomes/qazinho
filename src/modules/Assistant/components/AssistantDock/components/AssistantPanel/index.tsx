@@ -28,6 +28,11 @@ export const AssistantPanel: React.FC = () => {
     isTyping,
     liveText,
     draft,
+    secretWarning,
+    secretRemoveLabel,
+    secretSendLabel,
+    onRemoveSecret,
+    onSendSecret,
     placeholder,
     sendLabel,
     stopLabel,
@@ -173,6 +178,32 @@ export const AssistantPanel: React.FC = () => {
           )}
         </AnimatePresence>
       </div>
+
+      <AnimatePresence initial={false}>
+        {secretWarning !== '' && (
+          <motion.div
+            key="secret"
+            className="assistant-panel__secret"
+            role="alert"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+          >
+            <div className="assistant-panel__secret-body">
+              <span className="assistant-panel__secret-text">{secretWarning}</span>
+              <span className="assistant-panel__secret-actions">
+                <Button size="sm" variant="secondary" onClick={onRemoveSecret}>
+                  {secretRemoveLabel}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={onSendSecret}>
+                  {secretSendLabel}
+                </Button>
+              </span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <footer className="assistant-panel__composer">
         <textarea

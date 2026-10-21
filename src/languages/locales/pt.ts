@@ -721,6 +721,10 @@ export const pt: typeof en = {
     STOP: 'Parar',
     HINT: '↵ envia · ⇧↵ nova linha',
     STOPPED: 'Você parou a resposta.',
+    SECRET_WARNING:
+      'Isso parece um token ({{secret}}). Tokens vão em Configurações → Integrações, nunca no chat.',
+    SECRET_REMOVE: 'Tirar do texto',
+    SECRET_SEND: 'Enviar assim mesmo',
     FAILED_OTHER: 'O Estagiário não conseguiu responder: {{said}}',
     TOOL_FAILED: 'não deu certo',
     TOOL_WORKSPACE_DETAILS: 'Lendo {{subject}}',

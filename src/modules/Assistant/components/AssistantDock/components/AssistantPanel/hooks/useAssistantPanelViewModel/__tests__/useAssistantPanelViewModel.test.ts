@@ -253,6 +253,68 @@ describe('useAssistantPanelViewModel', () => {
     });
   });
 
+  describe('onRemoveSecret', () => {
+    it('holds a message with a token back, and takes the token out of it', () => {
+      const { asked } = bridge();
+      const { result } = renderHook(() => useAssistantPanelViewModel());
+
+      act(() => {
+        result.current.onDraft('Conecta o Jira com ATATT3xFfGF0abc123def456 por favor');
+      });
+      act(() => {
+        result.current.onSend();
+      });
+
+      expect(asked).toEqual([]);
+      expect(result.current).toMatchObject({
+        canSend: false,
+        secretWarning:
+          'This looks like a token (ATATT3…). Tokens go in Settings → Integrations, never in the chat.',
+      });
+
+      act(() => {
+        result.current.onRemoveSecret();
+      });
+
+      expect(result.current).toMatchObject({
+        draft: 'Conecta o Jira com por favor',
+        secretWarning: '',
+        canSend: true,
+      });
+    });
+  });
+
+  describe('onSendSecret', () => {
+    it('sends the token only once the QA said so, and warns again for the next one', async () => {
+      const { asked } = bridge();
+      const { result } = renderHook(() => useAssistantPanelViewModel());
+
+      act(() => {
+        result.current.onDraft('o token é ghp_a1b2c3d4e5f6g7h8i9j0k1l2');
+      });
+      act(() => {
+        result.current.onSendSecret();
+      });
+
+      expect(result.current).toMatchObject({ secretWarning: '', canSend: true });
+
+      act(() => {
+        result.current.onSend();
+      });
+
+      expect(asked[0]?.text).toBe('o token é ghp_a1b2c3d4e5f6g7h8i9j0k1l2');
+      await waitFor(() => {
+        expect(useAssistantStore.getState().isAsking).toBe(false);
+      });
+
+      act(() => {
+        result.current.onDraft('e esse ghp_zzzzzzzzzzzzzzzzzzzzzzzz');
+      });
+
+      expect(result.current.canSend).toBe(false);
+    });
+  });
+
   describe('status', () => {
     it('says what the assistant is doing while it works, and thinks between tools', () => {
       useAssistantStore.setState({

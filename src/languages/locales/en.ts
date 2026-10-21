@@ -716,6 +716,10 @@ export const en = {
     STOP: 'Stop',
     HINT: '↵ send · ⇧↵ new line',
     STOPPED: 'You stopped the answer.',
+    SECRET_WARNING:
+      'This looks like a token ({{secret}}). Tokens go in Settings → Integrations, never in the chat.',
+    SECRET_REMOVE: 'Take it out',
+    SECRET_SEND: 'Send anyway',
     FAILED_OTHER: 'The Intern could not answer: {{said}}',
     TOOL_FAILED: "didn't work",
     TOOL_WORKSPACE_DETAILS: 'Reading {{subject}}',

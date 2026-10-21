@@ -7,7 +7,12 @@ import {
   ASSISTANT_FAILURE_KEYS,
   ASSISTANT_SUGGESTIONS,
 } from '@/modules/Assistant/constants';
-import { appSnapshotOf, suggestionsFor, toolLabelOf } from '@/modules/Assistant/library';
+import {
+  appSnapshotOf,
+  secretIn,
+  suggestionsFor,
+  toolLabelOf,
+} from '@/modules/Assistant/library';
 import { Assistant } from '@/services';
 import {
   useAppStore,
@@ -21,6 +26,7 @@ import {
 export const useAssistantPanelViewModel = () => {
   const { t } = useTranslation();
   const [draft, setDraft] = useState('');
+  const [isSecretSent, setSecretSent] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -72,10 +78,16 @@ export const useAssistantPanelViewModel = () => {
     });
   };
 
+  const secret = secretIn(draft);
+
   const ask = (text: string) => {
     const words = text.trim();
 
     if (words === '' || isAsking) return;
+
+    if (secretIn(words) !== null && !isSecretSent) return;
+
+    setSecretSent(false);
 
     const app = useAppStore.getState();
     const workspaces = useWorkspaceStore.getState();
@@ -204,12 +216,36 @@ export const useAssistantPanelViewModel = () => {
     isTyping: isAsking && !isWaiting,
     liveText,
     draft,
+    secretWarning:
+      secret === null || isSecretSent
+        ? ''
+        : t('ASSISTANT.SECRET_WARNING', { secret: `${secret.slice(0, 6)}…` }),
+    secretRemoveLabel: t('ASSISTANT.SECRET_REMOVE'),
+    secretSendLabel: t('ASSISTANT.SECRET_SEND'),
+    onRemoveSecret: () => {
+      if (secret !== null)
+        setDraft(
+          draft
+            .split(secret)
+            .join('')
+            .replace(/\s{2,}/g, ' '),
+        );
+
+      inputRef.current?.focus();
+    },
+    onSendSecret: () => {
+      setSecretSent(true);
+    },
     placeholder: t('ASSISTANT.PLACEHOLDER'),
     sendLabel: t('ASSISTANT.SEND'),
     stopLabel: t('ASSISTANT.STOP'),
-    canSend: draft.trim() !== '' && !isAsking,
+    canSend: draft.trim() !== '' && !isAsking && (secret === null || isSecretSent),
     isAsking,
-    onDraft: setDraft,
+    onDraft: (text: string) => {
+      setDraft(text);
+
+      if (secretIn(text) === null) setSecretSent(false);
+    },
     onSend: () => {
       ask(draft);
     },

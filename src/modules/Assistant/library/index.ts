@@ -13,6 +13,7 @@ export * from './performRemoval';
 export * from './performSettingsChange';
 export * from './performWorkspaceChange';
 export * from './repositoryOfName';
+export * from './secretIn';
 export * from './subjectOf';
 export * from './suggestionsFor';
 export * from './toolLabelOf';

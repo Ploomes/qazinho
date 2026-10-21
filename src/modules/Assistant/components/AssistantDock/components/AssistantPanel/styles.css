@@ -266,3 +266,28 @@
   display: block;
   margin-top: var(--space-3);
 }
+
+.assistant-panel__secret {
+  flex: none;
+  overflow: hidden;
+}
+
+.assistant-panel__secret-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-4) 0;
+  border-top: 1px solid var(--line2);
+  background: var(--attn-soft);
+}
+
+.assistant-panel__secret-text {
+  color: var(--ink);
+  font: var(--font-ui-sm);
+}
+
+.assistant-panel__secret-actions {
+  display: flex;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+}
