@@ -343,6 +343,48 @@ describe('Harness', () => {
     });
   });
 
+  describe('build', () => {
+    const BUILD = {
+      platform: 'android' as const,
+      dir: '/data/builds/work/b-1/src',
+      repository: 'acme/loja-app',
+      branch: 'main',
+      commit: 'c0ffee1234567890',
+      machine: {
+        androidSdk: '/Users/qa/Library/Android/sdk',
+        javaHome: '/Applications/Android Studio.app/Contents/jbr/Contents/Home',
+        hasXcode: true,
+      },
+      language: 'pt' as const,
+    };
+
+    it('briefs the builder, and nothing of a chat, a run or the assistant', async () => {
+      const { systemPrompt, schema } = harness.build(BUILD);
+
+      await expect(systemPrompt).toMatchFileSnapshot('./__prompts__/builder.txt');
+      await expect(schema).toMatchFileSnapshot('./__prompts__/build-schema.txt');
+      expect(systemPrompt).toContain('in Brazilian Portuguese');
+      expect(systemPrompt).not.toContain('## Talking with the QA');
+      expect(systemPrompt).not.toContain('## Being the Estagiário');
+    });
+
+    it('asks for the build with the copy and the machine it runs on', async () => {
+      await expect(harness.build(BUILD).prompt).toMatchFileSnapshot(
+        './__prompts__/build-message.txt',
+      );
+    });
+
+    it('lets the builder run build commands alone in its folder, and never delete or push', () => {
+      const { tools, allowedTools, readDirs } = harness.build(BUILD);
+
+      expect(tools).toEqual(['Bash', 'Read', 'Grep', 'Glob', 'Edit', 'Write']);
+      expect(allowedTools).toContain('Bash(./gradlew:*)');
+      expect(allowedTools).toContain('Bash(xcodebuild:*)');
+      expect(allowedTools.some((tool) => /rm|git|curl/.test(tool))).toBe(false);
+      expect(readDirs).toEqual(['/data/builds/work/b-1/src']);
+    });
+  });
+
   describe('toolsFor', () => {
     it('gives the runner the device, behind QAzinho own MCP server', () => {
       expect(harness.toolsFor('runner')).toEqual({

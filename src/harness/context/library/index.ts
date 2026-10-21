@@ -1,6 +1,7 @@
 export * from './changedSections';
 export * from './chatMessageOf';
 export * from './describeApp';
+export * from './describeBuild';
 export * from './describeCase';
 export * from './describeCode';
 export * from './describeLook';

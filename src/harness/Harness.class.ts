@@ -1,6 +1,12 @@
 import type { ICorpusFile } from '@/harness/context/types';
 import type { IHarnessTools } from '@/harness/tools/types';
-import type { AppLook, HarnessRole, IHarnessTarget } from '@/harness/types';
+import type {
+  AppLook,
+  HarnessRole,
+  IBuildAnswer,
+  IBuildMachine,
+  IHarnessTarget,
+} from '@/harness/types';
 import type {
   IAppSnapshot,
   IChatAnswer,
@@ -17,6 +23,7 @@ import {
   changedSections,
   chatMessageOf,
   describeApp,
+  describeBuild,
   describeCase,
   describeCode,
   describeLook,
@@ -29,9 +36,9 @@ import {
   renderSections,
   sectionsFor,
 } from '@/harness/context/library';
-import { readChatAnswer } from '@/harness/library';
-import { CHAT_SCHEMA } from '@/harness/schemas';
-import { MCP_HOST, TOOL_GRANTS } from '@/harness/tools/constants';
+import { readBuildAnswer, readChatAnswer } from '@/harness/library';
+import { BUILD_SCHEMA, CHAT_SCHEMA } from '@/harness/schemas';
+import { BUILD_TOOLS, MCP_HOST, TOOL_GRANTS } from '@/harness/tools/constants';
 import { toolsOfRole } from '@/harness/tools/library';
 
 /** QAzinho's product harness: what the QA's agent is told, and which of QAzinho's tools it gets. */
@@ -133,6 +140,41 @@ export class Harness {
       told: news.told,
       tools: this.toolsFor('assistant'),
     };
+  }
+
+  /** One build of the app, by an agent of its own: what to build and on what machine, the commands it may run alone, and the folder it works in. */
+  public build(props: {
+    platform: 'android' | 'ios';
+    dir: string;
+    repository: string;
+    branch: string;
+    commit: string;
+    machine: IBuildMachine;
+    language: Language;
+  }): {
+    systemPrompt: string;
+    prompt: string;
+    schema: string;
+    tools: string[];
+    allowedTools: string[];
+    readDirs: string[];
+  } {
+    return {
+      systemPrompt: this.contextFor({
+        target: { role: 'builder' },
+        values: { language: LANGUAGE_NAMES[props.language] },
+      }),
+      prompt: chatMessageOf({ sections: describeBuild(props), text: 'Build it.' }),
+      schema: BUILD_SCHEMA,
+      tools: [...BUILD_TOOLS.tools],
+      allowedTools: [...BUILD_TOOLS.allowed],
+      readDirs: [props.dir],
+    };
+  }
+
+  /** The build answer out of what the agent printed. */
+  public readBuild(text: string): IBuildAnswer {
+    return readBuildAnswer(text);
   }
 
   /** The chat answer out of what the agent printed, checked against the schema it was asked for. */

@@ -1,2 +1,2 @@
-/** Who the agent is in a call: the colleague in a workspace's chat, the one walking a case on the device, or the Estagiário in QAzinho's corner. */
-export type HarnessRole = 'chat' | 'runner' | 'assistant';
+/** Who the agent is in a call: the colleague in a chat, the one walking a case, the Estagiário in the corner, or the one building the app. */
+export type HarnessRole = 'chat' | 'runner' | 'assistant' | 'builder';

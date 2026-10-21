@@ -21,7 +21,7 @@ describe('CORPUS', () => {
       CORPUS.filter(({ layer }) => layer === 'role').map(({ scope }) => scope),
     );
 
-    expect([...roles].sort()).toEqual(['assistant', 'chat', 'runner']);
+    expect([...roles].sort()).toEqual(['assistant', 'builder', 'chat', 'runner']);
   });
 
   it('never gives two files of one layer and scope the same order, so the prompt never reshuffles', () => {
