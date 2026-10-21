@@ -5,6 +5,7 @@ import type {
   IAgentEvent,
   IAgentTurn,
   IAppToolAnswer,
+  IApplyVariables,
   IAskAgent,
   IAssistantAsk,
   IBuildEvent,
@@ -74,6 +75,7 @@ import {
   RunRecorder,
   SetupInstaller,
   UsageReader,
+  VariableVault,
 } from '@/main/classes';
 import { APP_BUILDER } from '@/main/classes/builds/AppBuilder/constants';
 import { buildIdOf } from '@/main/classes/builds/AppBuilder/library';
@@ -207,16 +209,18 @@ const usageReader = new UsageReader({
     return stdout;
   },
 });
+const keychain = {
+  isAvailable: () => safeStorage.isEncryptionAvailable(),
+  encrypt: (plain: string) => safeStorage.encryptString(plain),
+  decrypt: (sealed: Buffer) => safeStorage.decryptString(sealed),
+};
 const vault = new IntegrationVault({
   file: PATHS.integrations,
-  cipher: {
-    isAvailable: () => safeStorage.isEncryptionAvailable(),
-    encrypt: (plain) => safeStorage.encryptString(plain),
-    decrypt: (sealed) => safeStorage.decryptString(sealed),
-  },
+  cipher: keychain,
   fetcher: (url, init) => fetch(url, init),
   github: () => github.status(),
 });
+const variables = new VariableVault({ file: PATHS.variables, cipher: keychain });
 
 const agentRunner = new AgentRunner({
   owners,
@@ -788,6 +792,13 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.disconnectIntegration, (_event, id: IntegrationId) =>
     vault.disconnect(id),
+  );
+  ipcMain.handle(CHANNELS.listVariables, () => variables.list());
+  ipcMain.handle(CHANNELS.applyVariables, (_event, apply: IApplyVariables) =>
+    variables.apply(apply),
+  );
+  ipcMain.handle(CHANNELS.forgetVariables, (_event, projectId: string) =>
+    variables.forget(projectId),
   );
   ipcMain.handle(CHANNELS.githubStatus, () => github.status());
   ipcMain.handle(CHANNELS.signInGithub, () => github.signIn());

@@ -10,6 +10,7 @@ import {
   Mcp,
   Run,
   Setup,
+  Variables,
 } from '@/services';
 
 /**
@@ -123,6 +124,25 @@ describe('a page with no bridge', () => {
         },
       },
     });
+  });
+
+  it('keeps no variable, and says it could not reach main', async () => {
+    expect(await Variables.list()).toEqual([]);
+    expect(
+      await Variables.apply({
+        projectId: 'p-1',
+        changes: [
+          {
+            kind: 'save',
+            name: 'LOGIN_PASSWORD',
+            description: '',
+            value: 'secret',
+            from: null,
+          },
+        ],
+      }),
+    ).toEqual({ isSaved: false, failure: { reason: 'no-bridge' } });
+    await expect(Variables.forget('p-1')).resolves.toBeUndefined();
   });
 
   it('has no recording to play or to save', async () => {

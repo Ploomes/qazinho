@@ -75,6 +75,9 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     listIntegrations: () => Promise.resolve([]),
     connectIntegration: () => Promise.resolve({ isConnected: false, error: 'offline' }),
     disconnectIntegration: () => Promise.resolve(),
+    listVariables: () => Promise.resolve([]),
+    applyVariables: () => Promise.resolve({ isSaved: true, variables: [] }),
+    forgetVariables: () => Promise.resolve(),
     githubStatus: () =>
       Promise.resolve({
         cli: { isFound: false, path: null },

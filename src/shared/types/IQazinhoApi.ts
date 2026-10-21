@@ -3,6 +3,7 @@ import type { ExportOutcome } from './ExportOutcome';
 import type { GithubSignInProgress } from './GithubSignInProgress';
 import type { IAgentEvent } from './IAgentEvent';
 import type { IAgentLimits } from './IAgentLimits';
+import type { IApplyVariables } from './IApplyVariables';
 import type { IAppToolAnswer } from './IAppToolAnswer';
 import type { IAppToolRequest } from './IAppToolRequest';
 import type { IAskAgent } from './IAskAgent';
@@ -26,6 +27,7 @@ import type { IMcpServerTarget } from './IMcpServerTarget';
 import type { IMcpSignIn } from './IMcpSignIn';
 import type { InstallableId } from './InstallableId';
 import type { IntegrationId } from './IntegrationId';
+import type { IProjectVariables } from './IProjectVariables';
 import type { IRepositoryList } from './IRepositoryList';
 import type { IRepositoryRef } from './IRepositoryRef';
 import type { IResourceSnapshot } from './IResourceSnapshot';
@@ -44,6 +46,7 @@ import type { McpSignInProgress } from './McpSignInProgress';
 import type { PickKind } from './PickKind';
 import type { Platform } from './Platform';
 import type { SaveOutcome } from './SaveOutcome';
+import type { VariablesOutcome } from './VariablesOutcome';
 import type { WindowFit } from './WindowFit';
 
 /** What the preload exposes to the page as `window.qazinho`. Data and purposeful functions only. */
@@ -90,6 +93,9 @@ export interface IQazinhoApi {
   listIntegrations: () => Promise<IIntegrationStatus[]>;
   connectIntegration: (connecting: IConnectIntegration) => Promise<IConnectResult>;
   disconnectIntegration: (id: IntegrationId) => Promise<void>;
+  listVariables: () => Promise<IProjectVariables[]>;
+  applyVariables: (apply: IApplyVariables) => Promise<VariablesOutcome>;
+  forgetVariables: (projectId: string) => Promise<void>;
   githubStatus: () => Promise<IGithubStatus>;
   signInGithub: () => Promise<GithubSignInProgress>;
   cancelGithubSignIn: () => Promise<void>;
