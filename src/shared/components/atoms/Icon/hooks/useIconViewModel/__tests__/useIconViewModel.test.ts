@@ -31,6 +31,20 @@ describe('useIconViewModel', () => {
     ).toBe(14);
   });
 
+  /** A 10px check beside 10px text read as a typed ✓, so an icon sized by its text never draws smaller than reads as one. */
+  it('keeps an icon sized by its text from drawing smaller than an icon reads', () => {
+    expect(
+      renderHook(() => useIconViewModel({ name: 'check' })).result.current.className,
+    ).toBe('icon icon--fluid');
+  });
+
+  it('leaves an icon given a size at that size', () => {
+    expect(
+      renderHook(() => useIconViewModel({ name: 'check', size: 10 })).result.current
+        .className,
+    ).toBe('icon');
+  });
+
   it('stays out of what a screen reader says when it has no label', () => {
     expect(
       renderHook(() => useIconViewModel({ name: 'lock' })).result.current,

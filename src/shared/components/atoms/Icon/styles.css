@@ -2,3 +2,8 @@
   flex: none;
   vertical-align: middle;
 }
+
+.icon--fluid {
+  width: max(1em, var(--icon-min));
+  height: max(1em, var(--icon-min));
+}

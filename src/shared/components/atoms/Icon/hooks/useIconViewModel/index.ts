@@ -6,6 +6,7 @@ export const useIconViewModel = (props: IIconProps) => {
 
   return {
     Glyph: glyph,
+    className: props.size === undefined ? 'icon icon--fluid' : 'icon',
     size: props.size ?? '1em',
     weight: props.isFilled === true ? 'fill' : weight,
     isHidden: props.label === undefined,
