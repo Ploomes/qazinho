@@ -51,8 +51,11 @@ agent, gets a plan, runs it, and watches real Chrome be driven step by step. The
 of a conversation: the agent looks at the app, asks one round of questions in the chat, and
 confirms what it will write before it writes it. In the run, the agent reads the
 page, acts, the run screenshots it, and the agent judges what it sees against what the QA
-expected. A failed step becomes a bug with its evidence. Everything is kept on disk, one folder
-per workspace, with the plan beside it in YAML.
+expected. A failed step becomes a bug with its evidence. A bug that comes back is not filed
+twice: each run's agents hear the bugs open and name one seen again, a plan step that fails again
+lands on its bug, and the Bugs tab counts the runs that saw it, with each screen; a fake agent
+walking a plan twice left one bug per problem, each seen in two runs. Everything is kept on disk,
+one folder per workspace, with the plan beside it in YAML.
 
 `npm run test:smoke` proves it: it drives the real browser with the real agent.
 

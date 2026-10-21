@@ -128,6 +128,14 @@ answers one question per channel, for a target `{ role, platform }`:
   `<qazinho>`, and only what changed since that session last read it (`changedSections`).
 - **A run is walked by agents of its own.** Each case gets a fresh agent with the runner's
   prompt and the device tools, and nothing of the chat.
+- **A bug seen again lands on the one open.** Each run carries the workspace's bugs
+  (`IStartRun.bugs`), and every case's agent and the explorer hear the latest of them
+  (`describeKnownBugs`). `bug` and `report` take `sameAs` with one of their ids, kept only when
+  the run was told of it (`keptBugId`).
+  - The page lands a failure or a finding with `catchBug`: on the bug named, else the bug its
+    plan step failed for, else one with the same title, else as a new bug.
+  - The bug keeps each sighting, with its run, step, moment and screen; a run that already caught
+    it changes nothing.
 - **A case that passed is walked again without the agent.** Its run records each step's
   actions, and the agent reports with each pass a `proof`: words on screen that would not be
   there had it failed.
