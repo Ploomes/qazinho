@@ -23,6 +23,45 @@ describe('readToolCall', () => {
      * Asked to close the app and open it again, the runner had only goto, which brings a phone
      * app back as it was, and back, which leaves it running: the app never really closed.
      */
+    it('reads a scroll as its direction, with the words it stops at as the target', () => {
+      expect(
+        readToolCall({ name: 'scroll', args: { direction: 'down', until: ' Row 40 ' } }),
+      ).toEqual({
+        kind: 'act',
+        action: { kind: 'scroll', target: 'Row 40', value: 'down' },
+      });
+      expect(readToolCall({ name: 'scroll', args: { direction: 'left' } })).toEqual({
+        kind: 'act',
+        action: { kind: 'scroll', target: '', value: 'left' },
+      });
+    });
+
+    it('does NOT read a scroll with no direction, and says which ones there are', () => {
+      expect(readToolCall({ name: 'scroll', args: { until: 'Row 40' } })).toEqual({
+        kind: 'refused',
+        error: '"scroll" needs "direction": down, up, left or right.',
+      });
+    });
+
+    it('reads a drag with where it drops, and an upload with the kind of sample', () => {
+      expect(
+        readToolCall({ name: 'drag', args: { target: 'Card A', to: 'Done' } }),
+      ).toEqual({
+        kind: 'act',
+        action: { kind: 'drag', target: 'Card A', value: 'Done' },
+      });
+      expect(
+        readToolCall({ name: 'upload', args: { target: 'Avatar', file: 'image' } }),
+      ).toEqual({
+        kind: 'act',
+        action: { kind: 'upload', target: 'Avatar', value: 'image' },
+      });
+      expect(readToolCall({ name: 'long_press', args: { target: 'Row 3' } })).toEqual({
+        kind: 'act',
+        action: { kind: 'long_press', target: 'Row 3', value: '' },
+      });
+    });
+
     it('reads reopen, which closes the app completely and opens it again, with nothing to aim at', () => {
       expect(readToolCall({ name: 'reopen', args: undefined })).toEqual({
         kind: 'act',
@@ -90,9 +129,9 @@ describe('readToolCall', () => {
     });
 
     it('refuses a tool the device does not have', () => {
-      expect(readToolCall({ name: 'hover', args: { target: 'Menu' } })).toEqual({
+      expect(readToolCall({ name: 'pinch', args: { target: 'Menu' } })).toEqual({
         kind: 'refused',
-        error: 'There is no tool called "hover".',
+        error: 'There is no tool called "pinch".',
       });
     });
 

@@ -52,6 +52,10 @@ export function readToolCall(props: {
   const args = read.data as {
     target?: string;
     value?: string;
+    direction?: string;
+    until?: string;
+    to?: string;
+    file?: string;
     dialog?: DialogAnswer;
     promptText?: string;
   };
@@ -60,8 +64,8 @@ export function readToolCall(props: {
     kind: 'act',
     action: {
       kind: tool.name,
-      target: args.target ?? '',
-      value: args.value ?? '',
+      target: tool.name === 'scroll' ? (args.until ?? '') : (args.target ?? ''),
+      value: args.direction ?? args.to ?? args.file ?? args.value ?? '',
       ...(args.dialog === undefined ? {} : { dialog: args.dialog }),
       ...(args.promptText === undefined ? {} : { promptText: args.promptText }),
     },

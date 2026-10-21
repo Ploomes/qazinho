@@ -86,6 +86,76 @@ export const DEVICE_TOOLS = [
     }),
   },
   {
+    name: 'scroll',
+    description:
+      'Scroll the screen, or the list under it, to bring into view what is not on screen yet. Give the words to stop at when you know them. Scroll before you decide something is missing.',
+    input: z.object({
+      direction: z
+        .enum(['down', 'up', 'left', 'right'], {
+          error: '"scroll" needs "direction": down, up, left or right.',
+        })
+        .describe('Where to look: down shows what is below, right what is to the right.'),
+      until: z
+        .string()
+        .trim()
+        .describe('Words to scroll until they show, as the screen will read them.')
+        .optional(),
+    }),
+  },
+  {
+    name: 'long_press',
+    description:
+      'Hold a finger, or the mouse, on a control: a long press, for the menu, selection or edit it opens.',
+    input: z.object({
+      target: textNamed({
+        message: '"long_press" needs a target: say what the control is.',
+        description: 'What the control says.',
+      }),
+    }),
+  },
+  {
+    name: 'drag',
+    description:
+      'Drag a control and drop it on another: a card onto a column, a row to a new place in its list.',
+    input: z.object({
+      target: textNamed({
+        message: '"drag" needs a target: say what to drag.',
+        description: 'What to drag, as the screen reads it.',
+      }),
+      to: textNamed({
+        message: '"drag" needs "to": say where to drop it.',
+        description: 'What to drop it on, as the screen reads it.',
+      }),
+    }),
+  },
+  {
+    name: 'hover',
+    description:
+      'Rest the mouse on a control, to show what appears on hover: a tooltip, a menu, a preview. In a browser only.',
+    input: z.object({
+      target: textNamed({
+        message: '"hover" needs a target: say what the control is.',
+        description: 'What the control says.',
+      }),
+    }),
+  },
+  {
+    name: 'upload',
+    description:
+      'Pick a sample file in a file field, or in the button that opens the file picker. In a browser only.',
+    input: z.object({
+      target: textNamed({
+        message: '"upload" needs a target: say what the file field or button is.',
+        description: 'The file field or the button that opens the picker.',
+      }),
+      file: z
+        .enum(['image', 'pdf', 'csv', 'text'], {
+          error: '"upload" needs "file": image, pdf, csv or text.',
+        })
+        .describe('The kind of sample file to pick.'),
+    }),
+  },
+  {
     name: 'wait',
     description: 'Wait for the device to settle, in milliseconds, before looking again.',
     input: z.object({
