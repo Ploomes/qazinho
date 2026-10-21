@@ -43,6 +43,7 @@ import {
   bookWith,
   casesOf,
   driverFor,
+  earlyFinish,
   exploredOutcome,
   failureOf,
   followRunEvent,
@@ -623,6 +624,7 @@ export class RunCoordinator {
     let current = { number: 0, name: '' };
     let last = Date.now();
     let isOver = false;
+    let isPushed = false;
     let over: () => void = () => undefined;
     const finished = new Promise<null>((resolve) => {
       over = () => {
@@ -696,6 +698,16 @@ export class RunCoordinator {
 
     const onFinish = (finish: IExploreFinish): Promise<string> => {
       if (isOver) return Promise.resolve('The exploration is over: end your turn now.');
+
+      const early = isPushed
+        ? null
+        : earlyFinish({ leftMs: endsAt - Date.now(), totalMs: minutes * 60_000 });
+
+      if (early !== null) {
+        isPushed = true;
+
+        return Promise.resolve(early);
+      }
 
       this.emit({ kind: 'explored', workspaceId, ...finish });
 

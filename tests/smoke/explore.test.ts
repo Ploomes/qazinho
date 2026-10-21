@@ -54,16 +54,19 @@ process.stdin.on('end', async () => {
   const call = async (name, args) => {
     const answer = await client.callTool({ name, arguments: args });
     hear(answer.content[0].text);
+    return answer.content[0].text;
   };
   await call('screen', { name: 'Shop', about: 'The home, with a link to the cart.' });
   if (!prompt.includes('for 10 minutes')) await new Promise((wake) => setTimeout(wake, 2500));
   await call('click', { target: 'Cart' });
   await call('screen', { name: 'Cart', about: 'What the buyer picked, and the total.' });
   await call('bug', { title: 'Cart total ignores the shirt', severity: 'high', expected: 'Total R$ 79,90', got: 'Total R$ 0,00' });
-  await call('finish', {
+  const finish = {
     summary: 'Two screens. The cart total is wrong.',
     cases: [{ title: 'Cart total adds the items', priority: 'P1', goal: 'The total is the sum of the items.', preconditions: 'One shirt in the cart.', steps: [{ action: 'Open the cart', expected: 'Total R$ 79,90' }] }],
-  });
+  };
+  const said = await call('finish', finish);
+  if (said.includes('still left')) await call('finish', finish);
   await client.close();
   console.log(JSON.stringify({ type: 'result', result: '', is_error: false, session_id: 's1', total_cost_usd: 0.02 }));
 });
@@ -159,6 +162,7 @@ describe('an exploration of the app with no plan', () => {
     expect(told).toMatch(/tools: .*screen.*finish/);
     expect(told).not.toMatch(/tools: .*report/);
     expect(told).toMatch(/Done\..* About (9|10) minutes left\. The device now shows:/);
+    expect(told).toMatch(/About (9|10) minutes are still left: use them\./);
   }, 120_000);
 
   it('does NOT act once the time is up, and still takes the finish', async () => {
