@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useIntegrationCardViewModel } from '@/modules/Setup/components/IntegrationCard/hooks/useIntegrationCardViewModel';
 import { INTEGRATIONS } from '@/modules/Setup/constants';
@@ -27,12 +27,14 @@ const JIRA_CONNECTED = {
 const JIRA_TYPED = { site: 'acme.atlassian.net', email: 'ana@acme.test', token: 't0k' };
 
 beforeEach(() => {
-  useSetupStore.setState({ integrations: [], installs: {} });
+  useSetupStore.setState({ integrations: [], installs: {}, connectingId: null });
   useSettingsStore.setState({ language: 'en' });
   window.qazinho = fakeQazinhoApi('darwin');
 });
 
+/** A card from an earlier test would still answer a connection the assistant asks for, so each test unmounts its own. */
 afterEach(() => {
+  cleanup();
   Reflect.deleteProperty(window, 'qazinho');
 });
 
@@ -248,6 +250,63 @@ describe('useIntegrationCardViewModel', () => {
       typeInto(result, { token: 'nope2' });
 
       expect(result.current.error).toBe('');
+    });
+  });
+  describe('a connection the assistant asked for', () => {
+    it('starts signing gh in once gh answered, and asks only once', async () => {
+      ghIs({ isFound: true, account: null });
+      window.qazinho.signInGithub = vi.fn().mockReturnValue(new Promise(() => undefined));
+      useSetupStore.setState({ connectingId: 'github' });
+
+      const { result } = renderHook(() =>
+        useIntegrationCardViewModel({ integration: GITHUB }),
+      );
+
+      await waitFor(() => {
+        expect(window.qazinho.signInGithub).toHaveBeenCalledTimes(1);
+      });
+      expect(result.current.signIn).toMatchObject({ phase: 'working' });
+      expect(useSetupStore.getState().connectingId).toBeNull();
+    });
+
+    it("opens Jira's form for the QA to type the token in, until they cancel it", () => {
+      useSetupStore.setState({ connectingId: 'jira' });
+
+      const { result } = renderHook(() =>
+        useIntegrationCardViewModel({ integration: JIRA }),
+      );
+
+      expect(result.current.isOpen).toBe(true);
+
+      act(() => {
+        result.current.onCancel();
+      });
+
+      expect(result.current.isOpen).toBe(false);
+      expect(useSetupStore.getState().connectingId).toBeNull();
+    });
+
+    it('does NOT act for another tracker, nor for one already connected', async () => {
+      ghIs({ isFound: true, account: 'octoqa' });
+      window.qazinho.signInGithub = vi.fn();
+      useSetupStore.setState({ connectingId: 'jira' });
+
+      renderHook(() => useIntegrationCardViewModel({ integration: GITHUB }));
+      await waitFor(() => {
+        expect(window.qazinho.githubStatus).toHaveBeenCalled();
+      });
+
+      expect(window.qazinho.signInGithub).not.toHaveBeenCalled();
+      expect(useSetupStore.getState().connectingId).toBe('jira');
+
+      useSetupStore.setState({ integrations: [JIRA_CONNECTED] });
+
+      const { result } = renderHook(() =>
+        useIntegrationCardViewModel({ integration: JIRA }),
+      );
+
+      expect(result.current.isOpen).toBe(false);
+      expect(useSetupStore.getState().connectingId).toBeNull();
     });
   });
 });

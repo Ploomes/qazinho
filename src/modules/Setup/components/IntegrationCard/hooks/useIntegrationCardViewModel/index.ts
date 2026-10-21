@@ -1,6 +1,6 @@
 import type { IIntegrationCardProps } from '@/modules/Setup/components/IntegrationCard/types';
 import type { IIntegrationField } from '@/modules/Setup/types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGithubConnect } from '@/modules/Setup/hooks/useGithubConnect';
 import { connectionOf, formatDay } from '@/modules/Setup/library';
@@ -22,6 +22,8 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
   );
   const landIntegration = useSetupStore((state) => state.landIntegration);
   const dropIntegration = useSetupStore((state) => state.dropIntegration);
+  const connectingId = useSetupStore((state) => state.connectingId);
+  const clearConnect = useSetupStore((state) => state.clearConnect);
   const isCli = integration.via === 'cli';
   const cli = useGithubConnect({ isOn: isCli });
 
@@ -30,10 +32,40 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
   const isCliMissing = isCli && cli.status?.cli.isFound === false;
   const isInstalling = cli.install?.phase === 'installing';
   const isCliBusy = isInstalling || cli.signIn?.phase === 'working';
+  const isCliKnown = cli.status !== null;
+  const isAsked = connectingId === integration.id;
+  const { onConnect: startSignIn, onInstall: installCli } = cli;
+
+  useEffect(() => {
+    if (!isAsked) return;
+
+    if (isConnected) {
+      clearConnect();
+
+      return;
+    }
+
+    if (!isCli || !isCliKnown || isCliBusy) return;
+
+    clearConnect();
+
+    if (isCliMissing) void installCli();
+    else startSignIn();
+  }, [
+    isAsked,
+    isConnected,
+    isCli,
+    isCliKnown,
+    isCliBusy,
+    isCliMissing,
+    clearConnect,
+    installCli,
+    startSignIn,
+  ]);
 
   return {
     isConnected,
-    isOpen: isOpen && !isConnected && !isCli,
+    isOpen: (isOpen || isAsked) && !isConnected && !isCli,
     hasAction: isConnected || isCli || !isOpen,
     isActionBusy: !isConnected && isCliBusy,
     isConnecting,
@@ -117,6 +149,8 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
     onCancel: () => {
       setIsOpen(false);
       setError('');
+
+      if (isAsked) clearConnect();
     },
     onConnect: async () => {
       if (connection === null || isConnecting) return;

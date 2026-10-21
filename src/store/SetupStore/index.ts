@@ -8,6 +8,7 @@ export const useSetupStore = create<ISetupStore>((set) => ({
   installs: {},
   integrations: [],
   mcpServers: null,
+  connectingId: null,
 
   startChecking: () => set({ isChecking: true }),
 
@@ -50,4 +51,8 @@ export const useSetupStore = create<ISetupStore>((set) => ({
     set((state) => ({
       integrations: state.integrations.filter((integration) => integration.id !== id),
     })),
+
+  askToConnect: (connectingId) => set({ connectingId }),
+
+  clearConnect: () => set({ connectingId: null }),
 }));

@@ -9,13 +9,14 @@ import type {
   ISetupEvent,
 } from '@/shared/types';
 
-/** What setting the machine up is doing: the managers an install needs, installs under way, and trackers. */
+/** What setting the machine up is doing: the managers an install needs, installs under way, the trackers, and one asked to connect. */
 export interface ISetupStore {
   managers: IMachineCheck['managers'] | null;
   isChecking: boolean;
   installs: Partial<Record<InstallableId, InstallState>>;
   integrations: IIntegrationStatus[];
   mcpServers: IMcpServerStatus[] | null;
+  connectingId: IntegrationId | null;
   startChecking: () => void;
   landCheck: (managers: IMachineCheck['managers']) => void;
   startInstall: (item: InstallableId) => void;
@@ -25,4 +26,6 @@ export interface ISetupStore {
   landIntegration: (status: IIntegrationStatus) => void;
   dropIntegration: (id: IntegrationId) => void;
   landMcpServers: (servers: IMcpServerStatus[]) => void;
+  askToConnect: (id: IntegrationId) => void;
+  clearConnect: () => void;
 }
