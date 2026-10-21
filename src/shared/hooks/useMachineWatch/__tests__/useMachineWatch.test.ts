@@ -233,6 +233,27 @@ describe('useMachineWatch', () => {
     expect(useMachineStore.getState().usage?.fiveHourUsed).toBe(0.3);
   });
 
+  it('follows a phone being opened to look at the app, and lets go once the agent answers', () => {
+    let hear: (event: IAgentEvent) => void = () => undefined;
+
+    window.qazinho.onAgentEvent = vi.fn((listener: (event: IAgentEvent) => void) => {
+      hear = listener;
+
+      return () => undefined;
+    });
+    useWorkspaceStore.setState({ workspaces: [makeWorkspace()], lookingAt: {} });
+
+    renderHook(() => useMachineWatch());
+
+    hear({ kind: 'look', workspaceId: 'w1', device: 'android' });
+
+    expect(useWorkspaceStore.getState().lookingAt).toEqual({ w1: 'android' });
+
+    hear({ kind: 'text', workspaceId: 'w1', text: 'Vi a tela inicial' });
+
+    expect(useWorkspaceStore.getState().lookingAt).toEqual({});
+  });
+
   it('follows a branch being copied for the agent, and lets go once it answers', () => {
     let hear: (event: IAgentEvent) => void = () => undefined;
 

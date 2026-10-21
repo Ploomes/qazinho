@@ -21,6 +21,7 @@ export const useMachineWatch = () => {
   const setLiveText = useWorkspaceStore((state) => state.setLiveText);
   const setRetry = useWorkspaceStore((state) => state.setRetry);
   const setCodeStep = useWorkspaceStore((state) => state.setCodeStep);
+  const setLooking = useWorkspaceStore((state) => state.setLooking);
   const setContext = useWorkspaceStore((state) => state.setContext);
   const followInstall = useSetupStore((state) => state.followInstall);
   const setIntegrations = useSetupStore((state) => state.setIntegrations);
@@ -61,10 +62,12 @@ export const useMachineWatch = () => {
             step: event.step,
             bytes: event.bytes,
           });
+        } else if (event.kind === 'look') {
+          setLooking({ workspaceId: event.workspaceId, device: event.device });
         } else if (event.kind === 'text')
           setLiveText({ workspaceId: event.workspaceId, text: event.text });
       }),
-    [setUsage, setContext, setLiveText, setRetry, setCodeStep],
+    [setUsage, setContext, setLiveText, setRetry, setCodeStep, setLooking],
   );
 
   useEffect(() => {

@@ -54,6 +54,7 @@ export const useChatViewModel = () => {
   const liveTexts = useWorkspaceStore((state) => state.liveTexts);
   const retries = useWorkspaceStore((state) => state.retries);
   const codeSteps = useWorkspaceStore((state) => state.codeSteps);
+  const lookingAt = useWorkspaceStore((state) => state.lookingAt);
   const isGithubConnected = useSetupStore((state) =>
     state.integrations.some(({ id }) => id === 'github'),
   );
@@ -278,6 +279,14 @@ export const useChatViewModel = () => {
       isAgentTyping && retry !== undefined
         ? t('CHAT.RETRYING', { attempt: retry.attempt, max: retry.maxRetries })
         : '',
+    lookStatus:
+      !isAgentTyping || workspace === null || lookingAt[workspace.id] === undefined
+        ? ''
+        : t(
+            lookingAt[workspace.id] === 'android'
+              ? 'CHAT.LOOKING_ANDROID'
+              : 'CHAT.LOOKING_IOS',
+          ),
     codeStatus:
       !isAgentTyping || codeStep === undefined || sentCommand === undefined
         ? ''

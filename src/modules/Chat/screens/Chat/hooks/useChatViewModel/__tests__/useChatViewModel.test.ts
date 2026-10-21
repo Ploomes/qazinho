@@ -1132,4 +1132,36 @@ describe('useChatViewModel', () => {
       );
     });
   });
+
+  /** Opening a phone app to look at it can take most of a minute: the QA sees why the chat waits. */
+  describe('a look at a phone app', () => {
+    it('says the app is being opened on the emulator while the agent waits on it', () => {
+      useWorkspaceStore.setState({
+        workspaces: [makeWorkspace([])],
+        askingIds: ['w1'],
+        liveTexts: {},
+        lookingAt: { w1: 'android' },
+      });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      expect(result.current.lookStatus).toBe(
+        'Opening the app on the emulator to see its first screen…',
+      );
+    });
+
+    it('does NOT say it once the agent answered, or for another workspace', () => {
+      useWorkspaceStore.setState({
+        workspaces: [makeWorkspace([])],
+        askingIds: [],
+        lookingAt: { w1: 'ios' },
+      });
+
+      expect(renderHook(() => useChatViewModel()).result.current.lookStatus).toBe('');
+
+      useWorkspaceStore.setState({ askingIds: ['w1'], lookingAt: { w2: 'ios' } });
+
+      expect(renderHook(() => useChatViewModel()).result.current.lookStatus).toBe('');
+    });
+  });
 });

@@ -30,6 +30,7 @@ export interface IWorkspaceStore {
   liveTexts: Record<string, string>;
   retries: Record<string, { attempt: number; maxRetries: number }>;
   codeSteps: Record<string, { step: CodeStep; bytes: number }>;
+  lookingAt: Record<string, 'android' | 'ios'>;
   removingWorkspaceId: string | null;
   addWorkspace: (workspace: IWorkspace) => void;
   loadWorkspaces: (workspaces: IWorkspace[]) => void;
@@ -72,6 +73,7 @@ export interface IWorkspaceStore {
   setLiveText: (props: { workspaceId: string; text: string }) => void;
   setRetry: (props: { workspaceId: string; attempt: number; maxRetries: number }) => void;
   setCodeStep: (props: { workspaceId: string; step: CodeStep; bytes: number }) => void;
+  setLooking: (props: { workspaceId: string; device: 'android' | 'ios' }) => void;
   answerAsk: (props: { workspaceId: string; reply: string }) => void;
   setPlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
   startRun: (props: { workspaceId: string; runId: string; by: IWalkedBy }) => void;

@@ -17,6 +17,7 @@ export const Chat: React.FC = () => {
     liveText,
     retryText,
     codeStatus,
+    lookStatus,
     draft,
     lockedText,
     suggestions,
@@ -120,6 +121,19 @@ export const Chat: React.FC = () => {
                 {liveText !== '' && <Markdown isRevealing>{liveText}</Markdown>}
                 <TypingDots />
                 <AnimatePresence initial={false}>
+                  {lookStatus !== '' && (
+                    <motion.div
+                      key="look"
+                      className="chat__retry"
+                      role="status"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+                    >
+                      <p className="chat__retry-text">{lookStatus}</p>
+                    </motion.div>
+                  )}
                   {codeStatus !== '' && (
                     <motion.div
                       key="code"

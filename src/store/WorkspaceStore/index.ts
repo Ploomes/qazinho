@@ -39,6 +39,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   liveTexts: {},
   retries: {},
   codeSteps: {},
+  lookingAt: {},
   removingWorkspaceId: null,
 
   addWorkspace: (workspace) =>
@@ -86,12 +87,16 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       liveTexts: { ...state.liveTexts, [workspaceId]: text },
       retries: withoutKey({ record: state.retries, key: workspaceId }),
       codeSteps: withoutKey({ record: state.codeSteps, key: workspaceId }),
+      lookingAt: withoutKey({ record: state.lookingAt, key: workspaceId }),
     })),
 
   setCodeStep: ({ workspaceId, step, bytes }) =>
     set((state) => ({
       codeSteps: { ...state.codeSteps, [workspaceId]: { step, bytes } },
     })),
+
+  setLooking: ({ workspaceId, device }) =>
+    set((state) => ({ lookingAt: { ...state.lookingAt, [workspaceId]: device } })),
 
   setRetry: ({ workspaceId, attempt, maxRetries }) =>
     set((state) => ({
@@ -103,6 +108,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       askingIds: [...state.askingIds.filter((id) => id !== workspaceId), workspaceId],
       retries: withoutKey({ record: state.retries, key: workspaceId }),
       codeSteps: withoutKey({ record: state.codeSteps, key: workspaceId }),
+      lookingAt: withoutKey({ record: state.lookingAt, key: workspaceId }),
       liveTexts: { ...state.liveTexts, [workspaceId]: '' },
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
@@ -123,6 +129,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       askingIds: state.askingIds.filter((id) => id !== workspaceId),
       retries: withoutKey({ record: state.retries, key: workspaceId }),
       codeSteps: withoutKey({ record: state.codeSteps, key: workspaceId }),
+      lookingAt: withoutKey({ record: state.lookingAt, key: workspaceId }),
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -139,6 +146,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       askingIds: state.askingIds.filter((id) => id !== workspaceId),
       retries: withoutKey({ record: state.retries, key: workspaceId }),
       codeSteps: withoutKey({ record: state.codeSteps, key: workspaceId }),
+      lookingAt: withoutKey({ record: state.lookingAt, key: workspaceId }),
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -175,6 +183,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       askingIds: [...state.askingIds.filter((id) => id !== workspaceId), workspaceId],
       retries: withoutKey({ record: state.retries, key: workspaceId }),
       codeSteps: withoutKey({ record: state.codeSteps, key: workspaceId }),
+      lookingAt: withoutKey({ record: state.lookingAt, key: workspaceId }),
       liveTexts: { ...state.liveTexts, [workspaceId]: '' },
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
@@ -188,6 +197,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       askingIds: state.askingIds.filter((id) => id !== workspaceId),
       retries: withoutKey({ record: state.retries, key: workspaceId }),
       codeSteps: withoutKey({ record: state.codeSteps, key: workspaceId }),
+      lookingAt: withoutKey({ record: state.lookingAt, key: workspaceId }),
       liveTexts: { ...state.liveTexts, [workspaceId]: '' },
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
@@ -202,6 +212,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       askingIds: state.askingIds.filter((id) => id !== workspaceId),
       retries: withoutKey({ record: state.retries, key: workspaceId }),
       codeSteps: withoutKey({ record: state.codeSteps, key: workspaceId }),
+      lookingAt: withoutKey({ record: state.lookingAt, key: workspaceId }),
       liveTexts: { ...state.liveTexts, [workspaceId]: '' },
     })),
 

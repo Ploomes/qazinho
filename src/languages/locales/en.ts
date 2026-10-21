@@ -125,6 +125,8 @@ export const en = {
     TYPING: 'the agent is reading what you wrote',
     UNREADABLE:
       'The agent answered, but not in a shape QAzinho could read. Ask it again.',
+    LOOKING_ANDROID: 'Opening the app on the emulator to see its first screen…',
+    LOOKING_IOS: 'Opening the app on the simulator to see its first screen…',
     FAILED_AGENT_SIGNED_OUT:
       '{{agent}} is signed out. Sign it in from Settings → Agents, then ask again.',
     FAILED_AGENT_ERROR: 'The agent answered with an error: {{said}}',

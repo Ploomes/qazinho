@@ -128,6 +128,8 @@ export const pt: typeof en = {
     TYPING: 'o agente está lendo o que você escreveu',
     UNREADABLE:
       'O agente respondeu, mas num formato que o QAzinho não conseguiu ler. Pergunte de novo.',
+    LOOKING_ANDROID: 'Abrindo o app no emulador para ver a primeira tela…',
+    LOOKING_IOS: 'Abrindo o app no simulador para ver a primeira tela…',
     FAILED_AGENT_SIGNED_OUT:
       'O {{agent}} está deslogado. Faça login nele em Configurações → Agentes e pergunte de novo.',
     FAILED_AGENT_ERROR: 'O agente respondeu com um erro: {{said}}',
