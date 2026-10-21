@@ -9,6 +9,7 @@ import type {
   Language,
 } from '@/shared/types';
 import type { Screen, Theme } from '@/store/AppStore/types';
+import { openRoundOf } from './openRoundOf';
 
 const INTEGRATIONS: IntegrationId[] = ['github', 'jira'];
 
@@ -44,6 +45,7 @@ function briefOf(props: {
           },
     isRunning: workspace.live !== null && !workspace.live.isDone,
     isAnswering: props.askingIds.includes(workspace.id),
+    openQuestions: openRoundOf(workspace).length,
   };
 }
 

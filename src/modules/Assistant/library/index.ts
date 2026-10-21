@@ -4,6 +4,7 @@ export * from './describeRun';
 export * from './describeWorkspace';
 export * from './findByRef';
 export * from './isConfirmCall';
+export * from './openRoundOf';
 export * from './performAppTool';
 export * from './performBuild';
 export * from './performChatAsk';

@@ -1,7 +1,7 @@
 import type { IAppRunBrief } from './IAppRunBrief';
 import type { TargetKind } from './TargetKind';
 
-/** A workspace at a glance: the target it tests on, how big its plan is, its latest run, and what it is busy with. */
+/** A workspace at a glance: the target it tests on, how big its plan is, its latest run, what it is busy with, and how many questions its chat waits on the QA for. */
 export interface IAppWorkspaceBrief {
   id: string;
   name: string;
@@ -14,4 +14,5 @@ export interface IAppWorkspaceBrief {
   latestRun: IAppRunBrief | null;
   isRunning: boolean;
   isAnswering: boolean;
+  openQuestions: number;
 }

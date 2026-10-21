@@ -27,6 +27,7 @@ const APP: IAppSnapshot = {
       latestRun: null,
       isRunning: false,
       isAnswering: false,
+      openQuestions: 0,
     },
   ],
 };

@@ -33,6 +33,51 @@ describe('describeWorkspace', () => {
     expect(text).toContain('No bugs.');
   });
 
+  it('lists the questions its chat waits on, with their options', () => {
+    const text = describeWorkspace({
+      workspace: {
+        ...LOGIN,
+        chat: [
+          {
+            id: 'm-1',
+            kind: 'questions',
+            at: '10:00',
+            questions: [
+              {
+                header: 'Cadastro',
+                question: 'Qual cadastro o plano deve cobrir?',
+                options: [
+                  { label: 'Newsletter', description: '' },
+                  { label: 'Criar conta', description: '' },
+                ],
+                isMultiSelect: false,
+              },
+              {
+                header: 'Campos',
+                question: 'Quais campos valem?',
+                options: [
+                  { label: 'Nome', description: '' },
+                  { label: 'Senha', description: '' },
+                ],
+                isMultiSelect: true,
+              },
+            ],
+            answers: null,
+          },
+        ],
+      },
+      project: PROJECT,
+    });
+
+    expect(text).toContain(
+      [
+        'Its chat agent asked the QA these questions, and waits on their answers in that chat, where the QA picks options or writes their own words:',
+        '1. Cadastro: Qual cadastro o plano deve cobrir? Options: Newsletter · Criar conta.',
+        '2. Campos: Quais campos valem? Options: Nome · Senha, any of them.',
+      ].join('\n'),
+    );
+  });
+
   it('tells a run going on, and how far it walked', () => {
     const live = CHECKOUT.live ?? null;
 

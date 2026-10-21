@@ -1,5 +1,6 @@
 import type { IProject } from '@/modules/Project/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
+import { openRoundOf } from './openRoundOf';
 
 const ENDINGS = {
   finished: 'walked the whole plan',
@@ -8,7 +9,7 @@ const ENDINGS = {
   interrupted: 'cut short when QAzinho closed',
 } as const;
 
-/** A workspace in full for the assistant: where it tests, its plan case by case, its runs, its bugs, and a run going on. */
+/** A workspace in full for the assistant: where it tests, its plan case by case, its runs, its bugs, a run going on, and the questions its chat waits on. */
 export function describeWorkspace(props: {
   workspace: IWorkspace;
   project: IProject | null;
@@ -20,6 +21,7 @@ export function describeWorkspace(props: {
     0,
   );
   const live = workspace.live;
+  const round = openRoundOf(workspace);
 
   return [
     `Workspace ${workspace.id} "${workspace.name}" in project ${project === null ? workspace.projectId : `${project.id} "${project.name}"`}, testing on ${target === null ? 'a target that is gone' : `${target.kind} ${target.value}`}.`,
@@ -61,6 +63,15 @@ export function describeWorkspace(props: {
       ? []
       : [
           `A run is ${live.isRunning ? 'going on' : 'paused'} now: ${live.id}, ${String(live.outcomes.length)} of ${String(steps)} steps walked.`,
+        ]),
+    ...(round.length === 0
+      ? []
+      : [
+          'Its chat agent asked the QA these questions, and waits on their answers in that chat, where the QA picks options or writes their own words:',
+          ...round.map(
+            (question, index) =>
+              `${String(index + 1)}. ${question.header}: ${question.question} Options: ${question.options.map(({ label }) => label).join(' · ')}${question.isMultiSelect ? ', any of them' : ''}.`,
+          ),
         ]),
   ].join('\n');
 }

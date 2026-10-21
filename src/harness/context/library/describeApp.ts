@@ -27,6 +27,11 @@ function workspaceLine(workspace: IAppWorkspaceBrief): string {
     workspace.bugs === 0 ? 'no bugs' : plural({ count: workspace.bugs, one: 'bug' }),
     ...(workspace.isRunning ? ['running now'] : []),
     ...(workspace.isAnswering ? ['its chat agent is answering'] : []),
+    ...(workspace.openQuestions === 0
+      ? []
+      : [
+          `its chat waits on the QA's answers to ${plural({ count: workspace.openQuestions, one: 'question' })}`,
+        ]),
   ];
 
   return `- ${workspace.id} "${workspace.name}" in ${workspace.projectId}, on ${workspace.target ?? 'no target'}: ${parts.join(' · ')}`;
