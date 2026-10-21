@@ -9,7 +9,7 @@ describe('useStatusPillViewModel', () => {
     const { result } = renderHook(() => useStatusPillViewModel({ status: 'attention' }));
 
     expect(result.current.label).toBe('needs you');
-    expect(result.current.glyph).toBe('!');
+    expect(result.current.icon).toBe('attention');
   });
 
   it('reads a step that has not run yet as not run, not as idle', () => {
@@ -24,7 +24,7 @@ describe('useStatusPillViewModel', () => {
     );
 
     expect(result.current.label).toBe('running · step 2 of 6');
-    expect(result.current.glyph).toBe('▸');
+    expect(result.current.icon).toBe('play');
   });
 
   it('is square unless it is asked to be round', () => {
@@ -39,10 +39,9 @@ describe('useStatusPillViewModel', () => {
 });
 
 describe('STATUS', () => {
-  it('gives every status a glyph and a key of its own', () => {
+  it('gives every status a key of its own', () => {
     const keys = Object.values(STATUS).map(({ labelKey }) => labelKey);
 
-    expect(Object.values(STATUS).every(({ glyph }) => glyph.length > 0)).toBe(true);
     expect(new Set(keys).size).toBe(keys.length);
   });
 });

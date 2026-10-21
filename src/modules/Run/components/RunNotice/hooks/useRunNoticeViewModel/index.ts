@@ -59,7 +59,7 @@ export const useRunNoticeViewModel = () => {
       .filter((verdict) => verdict !== 'blocked' || (run?.counts.blocked ?? 0) > 0)
       .map((verdict) => ({
         key: verdict,
-        glyph: STATUS[verdict].glyph,
+        icon: STATUS[verdict].icon,
         count: run?.counts[verdict] ?? 0,
         label: t(STATUS[verdict].labelKey),
         className: `run-notice__count run-notice__count--${STATUS[verdict].tone}`,

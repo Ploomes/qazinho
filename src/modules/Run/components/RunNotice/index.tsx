@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Button, IconButton, Intern } from '@/shared/components/atoms';
+import { Button, Icon, IconButton, Intern } from '@/shared/components/atoms';
 import { STICKER } from '@/shared/constants';
 import { useRunNoticeViewModel } from './hooks';
 import './styles.css';
@@ -44,7 +44,7 @@ export const RunNotice: React.FC = () => {
         <span className="run-notice__tally">
           {tally.map((item) => (
             <span key={item.key} className={item.className} title={item.label}>
-              <span aria-hidden="true">{item.glyph}</span> {item.count}
+              <Icon name={item.icon} /> {item.count}
             </span>
           ))}
           {bugs !== '' && <span className="run-notice__bugs">{bugs}</span>}
@@ -55,7 +55,7 @@ export const RunNotice: React.FC = () => {
           </Button>
           {canWatch && (
             <Button size="sm" variant="ghost" onClick={onWatch}>
-              <span aria-hidden="true">▶</span> {watchLabel}
+              <Icon name="play" /> {watchLabel}
             </Button>
           )}
         </span>

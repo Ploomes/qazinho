@@ -1,5 +1,6 @@
 import type { IFindingNoteProps } from './types';
 import { useTranslation } from 'react-i18next';
+import { Icon } from '@/shared/components/atoms';
 import { useFindingNoteViewModel } from './hooks';
 import './styles.css';
 
@@ -14,7 +15,10 @@ export const FindingNote: React.FC<IFindingNoteProps> = (props) => {
       <span className="finding-note__id">{props.message.bugId}</span>
       <span className="finding-note__title">{props.message.title}</span>
       <span className="finding-note__tag">{t('BUG.OUTSIDE_PLAN')}</span>
-      <span className="finding-note__open">{t('RUN.OPEN_IN_BUGS')}</span>
+      <span className="finding-note__open">
+        {t('RUN.OPEN_IN_BUGS')}
+        <Icon name="arrow" />
+      </span>
     </button>
   );
 };

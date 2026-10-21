@@ -34,8 +34,8 @@ export const useReplayLogViewModel = (props: IReplayLogProps) => {
         id: chapter.caseId,
         title: chapter.title,
         duration: formatElapsed((chapter.toMs - chapter.fromMs) / 1000),
-        glyph: STATUS[chapter.verdict].glyph,
-        glyphClassName: `replay-log__glyph replay-log__glyph--${tone}`,
+        icon: STATUS[chapter.verdict].icon,
+        iconClassName: `replay-log__icon replay-log__icon--${tone}`,
         className: isCurrent
           ? 'replay-log__chapter replay-log__chapter--current'
           : 'replay-log__chapter',
@@ -50,8 +50,8 @@ export const useReplayLogViewModel = (props: IReplayLogProps) => {
             key: `${chapter.caseId}-${String(step.number)}`,
             number: step.number,
             action: step.action,
-            glyph: STATUS[step.verdict].glyph,
-            glyphClassName: `replay-log__glyph replay-log__glyph--${STATUS[step.verdict].tone}`,
+            icon: STATUS[step.verdict].icon,
+            iconClassName: `replay-log__icon replay-log__icon--${STATUS[step.verdict].tone}`,
             className: isNow
               ? 'replay-log__step replay-log__step--now'
               : 'replay-log__step',

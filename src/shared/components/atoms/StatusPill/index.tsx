@@ -1,13 +1,14 @@
 import type { IStatusPillProps } from './types';
+import { Icon } from '@/shared/components/atoms/Icon';
 import { useStatusPillViewModel } from './hooks';
 import './styles.css';
 
 export const StatusPill: React.FC<IStatusPillProps> = (props) => {
-  const { glyph, label, className } = useStatusPillViewModel(props);
+  const { icon, label, className } = useStatusPillViewModel(props);
 
   return (
     <span className={className}>
-      <span aria-hidden="true">{glyph}</span>
+      <Icon name={icon} />
       {label}
     </span>
   );

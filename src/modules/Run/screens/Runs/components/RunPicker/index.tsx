@@ -2,6 +2,7 @@ import type { IRunPickerProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { RunRow } from '@/modules/Run/screens/Runs/components/RunRow';
+import { Icon } from '@/shared/components/atoms';
 import { STICKER } from '@/shared/constants';
 import { useRunPickerViewModel } from './hooks';
 import './styles.css';
@@ -51,8 +52,8 @@ export const RunPicker: React.FC<IRunPickerProps> = (props) => {
                   onPick(row.id);
                 }}
               >
-                <span className="run-picker__check" aria-hidden="true">
-                  {row.check}
+                <span className="run-picker__check">
+                  {row.isSelected && <Icon name="check" />}
                 </span>
                 <RunRow row={row} factsNote={props.factsNote} />
               </button>
@@ -68,7 +69,7 @@ export const RunPicker: React.FC<IRunPickerProps> = (props) => {
                   disabled={!props.pager.canGoBack}
                   onClick={props.onPreviousPage}
                 >
-                  ‹
+                  <Icon name="caretLeft" />
                 </button>
                 <button
                   type="button"
@@ -77,7 +78,7 @@ export const RunPicker: React.FC<IRunPickerProps> = (props) => {
                   disabled={!props.pager.canGoOn}
                   onClick={props.onNextPage}
                 >
-                  ›
+                  <Icon name="caretRight" />
                 </button>
               </div>
             )}

@@ -77,10 +77,13 @@ describe('useRunPickerViewModel', () => {
 
   it('marks the run on show, and no other', () => {
     expect(
-      picker().result.current.rows.map(({ className, check }) => ({ className, check })),
+      picker().result.current.rows.map(({ className, isSelected }) => ({
+        className,
+        isSelected,
+      })),
     ).toEqual([
-      { className: 'run-picker__option run-picker__option--selected', check: '✓' },
-      { className: 'run-picker__option', check: '' },
+      { className: 'run-picker__option run-picker__option--selected', isSelected: true },
+      { className: 'run-picker__option', isSelected: false },
     ]);
   });
 

@@ -180,7 +180,7 @@ export const useRunReplayViewModel = () => {
           key: 'opening',
           kicker: '',
           text: t('RUN.REPLAY_OPENING'),
-          glyph: '…',
+          icon: 'pending' as const,
           tone: 'quiet',
         }
       : moment.isBetween
@@ -188,14 +188,14 @@ export const useRunReplayViewModel = () => {
             key: `between-${chapter.caseId}`,
             kicker: '',
             text: t('RUN.REPLAY_BETWEEN'),
-            glyph: '↻',
+            icon: 'replay' as const,
             tone: 'quiet',
           }
         : {
             key: `${chapter.caseId}-${String(step.number)}`,
             kicker: `${chapter.caseId} · ${t('RUN.REPLAY_STEP', { number: step.number })}`,
             text: step.action,
-            glyph: STATUS[step.verdict].glyph,
+            icon: STATUS[step.verdict].icon,
             tone: STATUS[step.verdict].tone,
           };
 
@@ -212,7 +212,7 @@ export const useRunReplayViewModel = () => {
     closeLabel: t('COMMON.CLOSE'),
     canSave: url !== null && url !== undefined,
     isSaving: saving === 'saving',
-    saveGlyph: SAVE_BUTTON[saving === 'idle' ? 'idle' : saving].glyph,
+    saveIcon: SAVE_BUTTON[saving === 'idle' ? 'idle' : saving].icon,
     saveLabel: t(SAVE_BUTTON[saving === 'idle' ? 'idle' : saving].labelKey),
     url: url ?? null,
     hasVideo: url !== null && url !== undefined,
@@ -236,8 +236,8 @@ export const useRunReplayViewModel = () => {
       key: caption.key,
       kicker: caption.kicker,
       text: caption.text,
-      glyph: caption.glyph,
-      glyphClassName: `run-replay__caption-glyph run-replay__caption-glyph--${caption.tone}`,
+      icon: caption.icon,
+      iconClassName: `run-replay__caption-icon run-replay__caption-icon--${caption.tone}`,
     },
     canWatchWhole: isTakeOver && focus.kind !== 'run',
     takeEndLabel: t('RUN.REPLAY_TAKE_END'),
@@ -250,7 +250,7 @@ export const useRunReplayViewModel = () => {
     flashBugId: flash?.bugId ?? null,
     isReady,
     isPlaying,
-    playGlyph: isPlaying ? '❚❚' : '▶',
+    playIcon: isPlaying ? ('pause' as const) : ('play' as const),
     playLabel: isPlaying ? t('RUN.REPLAY_PAUSE') : t('RUN.REPLAY_PLAY'),
     timeText: `${formatElapsed(currentMs / 1000)} / ${formatElapsed(durationMs / 1000)}`,
     chapterLabel:

@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Button, Eyebrow, EmptyState, StatusPill } from '@/shared/components/atoms';
+import { Button, Eyebrow, EmptyState, Icon, StatusPill } from '@/shared/components/atoms';
 import { CountTile, Screenshot } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
 import { RunPicker } from './components';
@@ -75,7 +75,7 @@ export const Runs: React.FC = () => {
               <h2 className="runs__title">{title}</h2>
               {canWatch && (
                 <Button size="sm" variant="primary" onClick={onWatch}>
-                  <span aria-hidden="true">▶</span> {watchLabel}
+                  <Icon name="play" /> {watchLabel}
                 </Button>
               )}
             </div>
@@ -86,7 +86,7 @@ export const Runs: React.FC = () => {
               </span>
               {runEnded !== null && (
                 <span className="runs__ended">
-                  <span aria-hidden="true">{runEnded.glyph}</span> {runEnded.label}
+                  <Icon name={runEnded.icon} /> {runEnded.label}
                 </span>
               )}
             </span>
@@ -97,7 +97,7 @@ export const Runs: React.FC = () => {
               <CountTile
                 key={item.status}
                 status={item.status}
-                glyph={item.glyph}
+                icon={item.icon}
                 count={item.count}
                 label={item.label}
                 delay={item.delay}
@@ -140,7 +140,7 @@ export const Runs: React.FC = () => {
                     aria-label={runCase.take.title}
                     onClick={runCase.take.onClick}
                   >
-                    <span aria-hidden="true">▶</span> {runCase.take.label}
+                    <Icon name="play" /> {runCase.take.label}
                   </button>
                 )}
                 {runCase.walk !== null && (
@@ -157,10 +157,10 @@ export const Runs: React.FC = () => {
                   <div key={step.number} className="runs__step">
                     <span className="runs__step-number">{step.number}</span>
                     <span
-                      className={`runs__step-glyph runs__step-glyph--${step.verdict}`}
+                      className={`runs__step-icon runs__step-icon--${step.verdict}`}
                       title={step.verdictLabel}
                     >
-                      {step.glyph}
+                      <Icon name={step.icon} />
                     </span>
 
                     <div className="runs__step-body">
@@ -187,7 +187,10 @@ export const Runs: React.FC = () => {
                           <span className="runs__bug-mark" />
                           <span className="runs__bug-id">{step.bug.id}</span>
                           <span className="runs__bug-title">{step.bug.title}</span>
-                          <span className="runs__bug-open">{t('RUN.OPEN_IN_BUGS')}</span>
+                          <span className="runs__bug-open">
+                            {t('RUN.OPEN_IN_BUGS')}
+                            <Icon name="arrow" />
+                          </span>
                         </button>
                       )}
 
@@ -226,7 +229,7 @@ export const Runs: React.FC = () => {
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
             onClick={onToTop}
           >
-            <span aria-hidden="true">↑</span> {t('RUN.TO_TOP')}
+            <Icon name="up" /> {t('RUN.TO_TOP')}
           </motion.button>
         )}
       </AnimatePresence>

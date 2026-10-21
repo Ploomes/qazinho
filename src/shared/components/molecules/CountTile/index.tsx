@@ -1,5 +1,6 @@
 import type { ICountTileProps } from './types';
 import { motion } from 'motion/react';
+import { Icon } from '@/shared/components/atoms';
 import { STICKER } from '@/shared/constants';
 import './styles.css';
 
@@ -12,7 +13,7 @@ export const CountTile: React.FC<ICountTileProps> = (props) => (
   >
     <span className="count-tile__count">{props.count}</span>
     <span className="count-tile__label">
-      <span aria-hidden="true">{props.glyph}</span> {props.label}
+      <Icon name={props.icon} /> {props.label}
     </span>
   </motion.div>
 );

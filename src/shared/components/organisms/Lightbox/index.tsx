@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Button, IconButton } from '@/shared/components/atoms';
+import { Button, Icon, IconButton } from '@/shared/components/atoms';
 import { BACKDROP, MOTION, STICKER } from '@/shared/constants';
 import { useLightboxViewModel } from './hooks';
 import './styles.css';
@@ -13,7 +13,7 @@ export const Lightbox: React.FC = () => {
     onShotLoad,
     canSave,
     isSaving,
-    saveGlyph,
+    saveIcon,
     saveLabel,
     onSave,
     onClose,
@@ -51,7 +51,7 @@ export const Lightbox: React.FC = () => {
           <span className="lightbox__actions">
             {canSave && (
               <Button size="sm" variant="ghost" disabled={isSaving} onClick={onSave}>
-                <span aria-hidden="true">{saveGlyph}</span> {saveLabel}
+                <Icon name={saveIcon} /> {saveLabel}
               </Button>
             )}
             <IconButton

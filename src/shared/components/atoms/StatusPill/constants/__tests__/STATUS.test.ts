@@ -18,7 +18,9 @@ describe('STATUS', () => {
     },
   );
 
-  it('marks each status with a glyph, so colour is never the only clue', () => {
-    expect(Object.values(STATUS).every(({ glyph }) => glyph.length > 0)).toBe(true);
+  it('marks each status with an icon of its own, so colour is never the only clue', () => {
+    const icons = Object.values(STATUS).map(({ icon }) => icon);
+
+    expect(new Set(icons).size).toBe(icons.length);
   });
 });

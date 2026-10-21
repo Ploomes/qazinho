@@ -1,5 +1,6 @@
 import type { IReplayTimelineProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
+import { Icon } from '@/shared/components/atoms';
 import { MOTION, STICKER } from '@/shared/constants';
 import { ReplayPreview } from './components';
 import { useReplayTimelineViewModel } from './hooks';
@@ -39,8 +40,8 @@ export const ReplayTimeline: React.FC<IReplayTimelineProps> = (props) => {
             animate={pin.animate}
             onClick={pin.onClick}
           >
-            <span className="replay-timeline__pin-mark" aria-hidden="true">
-              !
+            <span className="replay-timeline__pin-mark">
+              <Icon name="bug" />
             </span>
             <AnimatePresence>
               {pin.isFlashing && (

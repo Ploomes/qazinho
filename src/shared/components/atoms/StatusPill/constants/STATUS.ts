@@ -1,18 +1,19 @@
+import type { IconName } from '@/shared/components/atoms/Icon/types';
 import type { PillStatus } from '@/shared/components/atoms/StatusPill/types';
 import type { ParseKeys } from 'i18next';
 
 export const STATUS: Record<
   PillStatus,
-  { glyph: string; labelKey: ParseKeys; tone: string }
+  { icon: IconName; labelKey: ParseKeys; tone: string }
 > = {
-  running: { glyph: '▸', labelKey: 'STATUS.RUNNING', tone: 'lime' },
-  paused: { glyph: '‖', labelKey: 'STATUS.PAUSED', tone: 'attn' },
-  attention: { glyph: '!', labelKey: 'STATUS.NEEDS_YOU', tone: 'attn' },
-  failed: { glyph: '✕', labelKey: 'STATUS.FAILED', tone: 'fail' },
-  passed: { glyph: '✓', labelKey: 'STATUS.PASSED', tone: 'pass' },
-  blocked: { glyph: '⊘', labelKey: 'STATUS.BLOCKED', tone: 'block' },
-  skipped: { glyph: '–', labelKey: 'STATUS.SKIPPED', tone: 'skip' },
-  stopped: { glyph: '■', labelKey: 'STATUS.STOPPED', tone: 'quiet' },
-  idle: { glyph: '○', labelKey: 'STATUS.IDLE', tone: 'quiet' },
-  pending: { glyph: '○', labelKey: 'STATUS.NOT_RUN', tone: 'quiet' },
+  running: { icon: 'play', labelKey: 'STATUS.RUNNING', tone: 'lime' },
+  paused: { icon: 'pause', labelKey: 'STATUS.PAUSED', tone: 'attn' },
+  attention: { icon: 'attention', labelKey: 'STATUS.NEEDS_YOU', tone: 'attn' },
+  failed: { icon: 'close', labelKey: 'STATUS.FAILED', tone: 'fail' },
+  passed: { icon: 'check', labelKey: 'STATUS.PASSED', tone: 'pass' },
+  blocked: { icon: 'blocked', labelKey: 'STATUS.BLOCKED', tone: 'block' },
+  skipped: { icon: 'skip', labelKey: 'STATUS.SKIPPED', tone: 'skip' },
+  stopped: { icon: 'stop', labelKey: 'STATUS.STOPPED', tone: 'quiet' },
+  idle: { icon: 'idle', labelKey: 'STATUS.IDLE', tone: 'quiet' },
+  pending: { icon: 'pending', labelKey: 'STATUS.NOT_RUN', tone: 'quiet' },
 };

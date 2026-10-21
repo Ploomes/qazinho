@@ -220,7 +220,7 @@ export const pt: typeof en = {
     ENDED_STOPPED: 'parada',
     ENDED_BROKE: 'quebrou',
     ENDED_INTERRUPTED: 'interrompida',
-    OPEN_IN_BUGS: 'Abrir em Bugs →',
+    OPEN_IN_BUGS: 'Abrir em Bugs',
     DURATION: '{{seconds}}s',
     FACTS: '{{duration}} · {{cost}}',
     COST_NOTE:

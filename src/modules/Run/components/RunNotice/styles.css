@@ -46,6 +46,12 @@
   font: var(--font-mono-sm);
 }
 
+.run-notice__count {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
 .run-notice__count--pass {
   color: var(--pass);
 }

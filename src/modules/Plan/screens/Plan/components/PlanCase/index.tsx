@@ -1,7 +1,7 @@
 import type { IPlanCaseProps } from './types';
 import { AnimatePresence, motion, Reorder } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { EditableText, StatusPill } from '@/shared/components/atoms';
+import { Caret, EditableText, Icon, StatusPill } from '@/shared/components/atoms';
 import { MOTION, STICKER } from '@/shared/constants';
 import { usePlanCaseViewModel } from './hooks';
 import './styles.css';
@@ -10,7 +10,6 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
   const {
     className,
     steps,
-    caret,
     verdict,
     canRemoveStep,
     onHeadClick,
@@ -56,9 +55,9 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
             }
             aria-hidden="true"
           >
-            ⠿
+            <Icon name="drag" />
           </span>
-          <span aria-hidden="true">{caret}</span>
+          <Caret isOpen={props.isOpen} />
           <span className="plan-case__id">{props.testCase.id}</span>
         </button>
 
@@ -82,7 +81,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
             aria-label={t('PLAN.REMOVE_CASE')}
             onClick={onCaseRemove}
           >
-            ✕
+            <Icon name="close" />
           </button>
         )}
       </div>
@@ -157,8 +156,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                     <span
                       className={`plan-case__verdict plan-case__verdict--${step.verdict}`}
                     >
-                      <span aria-hidden="true">{step.verdictGlyph}</span>{' '}
-                      {step.verdictLabel}
+                      <Icon name={step.verdictIcon} /> {step.verdictLabel}
                     </span>
                     {canRemoveStep && (
                       <button
@@ -169,7 +167,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                           onStepRemove(step.number - 1);
                         }}
                       >
-                        ✕
+                        <Icon name="close" />
                       </button>
                     )}
                   </div>

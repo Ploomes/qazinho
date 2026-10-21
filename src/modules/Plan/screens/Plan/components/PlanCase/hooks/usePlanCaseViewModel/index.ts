@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 
 export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
-  const { testCase, isOpen, isLocked, onToggle } = props;
+  const { testCase, isLocked, onToggle } = props;
   const { t } = useTranslation();
   const caseId = testCase.id;
   const [isPickedUp, setIsPickedUp] = useState(false);
@@ -21,11 +21,10 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
         ...step,
         number: index + 1,
         verdict,
-        verdictGlyph: STATUS[verdict].glyph,
+        verdictIcon: STATUS[verdict].icon,
         verdictLabel: t(STATUS[verdict].labelKey),
       };
     }),
-    caret: isOpen ? '▾' : '▸',
     verdict: testCase.lastVerdict ?? 'pending',
     canRemoveStep: testCase.steps.length > 1 && !isLocked,
     onHeadClick: () => {

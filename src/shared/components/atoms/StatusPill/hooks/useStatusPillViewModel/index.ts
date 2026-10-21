@@ -5,10 +5,10 @@ import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 export const useStatusPillViewModel = (props: IStatusPillProps) => {
   const { status, label, shape = 'square' } = props;
   const { t } = useTranslation();
-  const { glyph, labelKey, tone } = STATUS[status];
+  const { icon, labelKey, tone } = STATUS[status];
 
   return {
-    glyph,
+    icon,
     label: label ?? t(labelKey),
     className: ['status-pill', `status-pill--${tone}`, `status-pill--${shape}`].join(' '),
   };

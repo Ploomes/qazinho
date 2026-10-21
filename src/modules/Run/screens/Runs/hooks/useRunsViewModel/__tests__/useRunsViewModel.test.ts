@@ -58,8 +58,8 @@ describe('useRunsViewModel', () => {
 
     const { result } = renderHook(() => useRunsViewModel());
 
-    expect(result.current.runEnded).toEqual({ glyph: '■', label: 'stopped' });
-    expect(result.current.runs[0]?.ended).toEqual({ glyph: '■', label: 'stopped' });
+    expect(result.current.runEnded).toEqual({ icon: 'stop', label: 'stopped' });
+    expect(result.current.runs[0]?.ended).toEqual({ icon: 'stop', label: 'stopped' });
   });
 
   it('has nothing to show before the first run', () => {
@@ -71,16 +71,16 @@ describe('useRunsViewModel', () => {
     expect(result.current.run).toBeNull();
   });
 
-  it('counts every verdict in the order the report shows them, glyph beside each', () => {
+  it('counts every verdict in the order the report shows them, icon beside each', () => {
     const { result } = renderHook(() => useRunsViewModel());
 
     expect(
-      result.current.counts.map(({ status, glyph, count }) => [status, glyph, count]),
+      result.current.counts.map(({ status, icon, count }) => [status, icon, count]),
     ).toEqual([
-      ['passed', '✓', 4],
-      ['failed', '✕', 1],
-      ['blocked', '⊘', 0],
-      ['skipped', '–', 1],
+      ['passed', 'check', 4],
+      ['failed', 'close', 1],
+      ['blocked', 'blocked', 0],
+      ['skipped', 'skip', 1],
     ]);
   });
 

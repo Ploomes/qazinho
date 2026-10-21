@@ -64,8 +64,8 @@
 }
 
 .replay-timeline__pin-mark {
-  font: var(--font-mono-xs);
-  font-weight: 800;
+  display: inline-flex;
+  font: var(--font-mono-sm);
 }
 
 .replay-timeline__callout {

@@ -217,25 +217,28 @@
   font: 400 12px/1.5 var(--font-mono);
 }
 
-.runs__step-glyph {
+.runs__step-icon {
+  display: inline-flex;
   flex: none;
+  align-items: center;
   width: 16px;
+  height: 1.5em;
   font: 600 12px/1.5 var(--font-mono);
 }
 
-.runs__step-glyph--passed {
+.runs__step-icon--passed {
   color: var(--pass);
 }
 
-.runs__step-glyph--failed {
+.runs__step-icon--failed {
   color: var(--fail);
 }
 
-.runs__step-glyph--blocked {
+.runs__step-icon--blocked {
   color: var(--block);
 }
 
-.runs__step-glyph--skipped {
+.runs__step-icon--skipped {
   color: var(--skip);
 }
 
@@ -316,7 +319,10 @@
 }
 
 .runs__bug-open {
+  display: inline-flex;
   flex: none;
+  align-items: center;
+  gap: var(--space-2);
   color: var(--lime-ink);
   font: 500 12px/1 var(--font-ui);
   white-space: nowrap;

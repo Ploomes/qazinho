@@ -57,11 +57,11 @@ describe('usePlanCaseViewModel', () => {
     const { result } = renderHook(() => usePlanCaseViewModel({ ...PROPS, lastRun }));
 
     expect(
-      result.current.steps.map(({ verdict, verdictGlyph }) => [verdict, verdictGlyph]),
+      result.current.steps.map(({ verdict, verdictIcon }) => [verdict, verdictIcon]),
     ).toEqual([
-      ['passed', '✓'],
-      ['failed', '✕'],
-      ['pending', '○'],
+      ['passed', 'check'],
+      ['failed', 'close'],
+      ['pending', 'pending'],
     ]);
   });
 
@@ -77,12 +77,6 @@ describe('usePlanCaseViewModel', () => {
     const { result } = renderHook(() => usePlanCaseViewModel(PROPS));
 
     expect(result.current.verdict).toBe('pending');
-  });
-
-  it('turns the caret down once the case is open', () => {
-    const { result } = renderHook(() => usePlanCaseViewModel({ ...PROPS, isOpen: true }));
-
-    expect(result.current.caret).toBe('▾');
   });
 
   it('asks for its own case to be toggled, not another', () => {

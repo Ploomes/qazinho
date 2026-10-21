@@ -45,27 +45,28 @@
   color: var(--ink);
 }
 
-.replay-log__glyph {
+.replay-log__icon {
+  display: inline-flex;
   flex: none;
+  justify-content: center;
   width: var(--space-4);
   font: var(--font-mono-sm);
-  text-align: center;
 }
 
-.replay-log__glyph--pass {
+.replay-log__icon--pass {
   color: var(--pass);
 }
 
-.replay-log__glyph--fail {
+.replay-log__icon--fail {
   color: var(--fail);
 }
 
-.replay-log__glyph--block {
+.replay-log__icon--block {
   color: var(--block);
 }
 
-.replay-log__glyph--skip,
-.replay-log__glyph--quiet {
+.replay-log__icon--skip,
+.replay-log__icon--quiet {
   color: var(--ink3);
 }
 
@@ -139,7 +140,7 @@
 }
 
 .replay-log__number,
-.replay-log__step .replay-log__glyph,
+.replay-log__step .replay-log__icon,
 .replay-log__action {
   position: relative;
 }

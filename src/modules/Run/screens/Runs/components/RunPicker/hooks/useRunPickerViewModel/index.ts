@@ -23,7 +23,6 @@ export const useRunPickerViewModel = (props: IRunPickerProps) => {
         : t('RUN.PICKER_COUNT_OTHER', { count: props.total }),
     rows: props.runs.map((row) => ({
       ...row,
-      check: row.isSelected ? '✓' : '',
       className: row.isSelected
         ? 'run-picker__option run-picker__option--selected'
         : 'run-picker__option',

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { Button, IconButton, Intern } from '@/shared/components/atoms';
+import { Button, Icon, IconButton, Intern } from '@/shared/components/atoms';
 import { BACKDROP, STICKER } from '@/shared/constants';
 import { ReplayLog, ReplayTimeline } from './components';
 import { useRunReplayViewModel } from './hooks';
@@ -14,7 +14,7 @@ export const RunReplay: React.FC = () => {
     closeLabel,
     canSave,
     isSaving,
-    saveGlyph,
+    saveIcon,
     saveLabel,
     url,
     hasVideo,
@@ -39,7 +39,7 @@ export const RunReplay: React.FC = () => {
     currentMs,
     take,
     flashBugId,
-    playGlyph,
+    playIcon,
     playLabel,
     timeText,
     chapterLabel,
@@ -89,7 +89,7 @@ export const RunReplay: React.FC = () => {
           <span className="run-replay__actions">
             {canSave && (
               <Button size="sm" variant="ghost" disabled={isSaving} onClick={onSave}>
-                <span aria-hidden="true">{saveGlyph}</span> {saveLabel}
+                <Icon name={saveIcon} /> {saveLabel}
               </Button>
             )}
             <IconButton icon="close" label={closeLabel} size="sm" onClick={onClose} />
@@ -144,8 +144,8 @@ export const RunReplay: React.FC = () => {
                   exit={{ opacity: 0, y: -6 }}
                   transition={swapTransition}
                 >
-                  <span className={caption.glyphClassName} aria-hidden="true">
-                    {caption.glyph}
+                  <span className={caption.iconClassName}>
+                    <Icon name={caption.icon} />
                   </span>
                   <span className="run-replay__caption-kicker">{caption.kicker}</span>
                   <span className="run-replay__caption-text">{caption.text}</span>
@@ -177,14 +177,14 @@ export const RunReplay: React.FC = () => {
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.span
-                key={playGlyph}
-                className="run-replay__play-glyph"
+                key={playIcon}
+                className="run-replay__play-icon"
                 initial={{ opacity: 0, scale: 0.6 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.6 }}
                 transition={swapTransition}
               >
-                {playGlyph}
+                <Icon name={playIcon} size={14} />
               </motion.span>
             </AnimatePresence>
           </button>
@@ -218,7 +218,7 @@ export const RunReplay: React.FC = () => {
                 onClick={onWatchWhole}
               >
                 <span className="run-replay__whole-end">{takeEndLabel}</span>
-                {wholeLabel} <span aria-hidden="true">→</span>
+                {wholeLabel} <Icon name="arrow" />
               </motion.button>
             )}
           </AnimatePresence>

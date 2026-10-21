@@ -1,8 +1,9 @@
 import type { RunEnd } from '@/modules/Run/types';
+import type { IconName } from '@/shared/components/atoms/Icon/types';
 
 export const RUN_ENDS = {
   finished: null,
-  stopped: { glyph: '■', labelKey: 'RUN.ENDED_STOPPED' },
-  broke: { glyph: '!', labelKey: 'RUN.ENDED_BROKE' },
-  interrupted: { glyph: '◐', labelKey: 'RUN.ENDED_INTERRUPTED' },
-} as const satisfies Record<RunEnd, { glyph: string; labelKey: string } | null>;
+  stopped: { icon: 'stop', labelKey: 'RUN.ENDED_STOPPED' },
+  broke: { icon: 'attention', labelKey: 'RUN.ENDED_BROKE' },
+  interrupted: { icon: 'half', labelKey: 'RUN.ENDED_INTERRUPTED' },
+} as const satisfies Record<RunEnd, { icon: IconName; labelKey: string } | null>;

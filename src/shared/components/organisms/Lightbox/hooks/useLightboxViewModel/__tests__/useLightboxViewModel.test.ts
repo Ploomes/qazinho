@@ -98,7 +98,7 @@ describe('useLightboxViewModel', () => {
       });
 
       await waitFor(() => {
-        expect(result.current).toMatchObject({ saveGlyph: '✓', saveLabel: 'Saved' });
+        expect(result.current).toMatchObject({ saveIcon: 'check', saveLabel: 'Saved' });
       });
       expect(result.current.isSaving).toBe(false);
     });
@@ -128,7 +128,7 @@ describe('useLightboxViewModel', () => {
 
       await waitFor(() => {
         expect(result.current).toMatchObject({
-          saveGlyph: '!',
+          saveIcon: 'attention',
           saveLabel: 'Could not save',
         });
       });

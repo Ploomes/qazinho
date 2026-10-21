@@ -1,5 +1,6 @@
 import type { IReplayLogProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
+import { Icon } from '@/shared/components/atoms';
 import { useReplayLogViewModel } from './hooks';
 import './styles.css';
 
@@ -15,8 +16,8 @@ export const ReplayLog: React.FC<IReplayLogProps> = (props) => {
       {chapters.map((chapter) => (
         <div key={chapter.key} className={chapter.className}>
           <button type="button" className="replay-log__head" onClick={chapter.onClick}>
-            <span className={chapter.glyphClassName} aria-hidden="true">
-              {chapter.glyph}
+            <span className={chapter.iconClassName}>
+              <Icon name={chapter.icon} />
             </span>
             <span className="replay-log__id">{chapter.id}</span>
             <span className="replay-log__title">{chapter.title}</span>
@@ -50,8 +51,8 @@ export const ReplayLog: React.FC<IReplayLogProps> = (props) => {
                           />
                         )}
                         <span className="replay-log__number">{step.number}</span>
-                        <span className={step.glyphClassName} aria-hidden="true">
-                          {step.glyph}
+                        <span className={step.iconClassName}>
+                          <Icon name={step.icon} />
                         </span>
                         <span className="replay-log__action">{step.action}</span>
                       </button>

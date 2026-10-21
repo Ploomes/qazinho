@@ -217,7 +217,7 @@ export const en = {
     ENDED_STOPPED: 'stopped',
     ENDED_BROKE: 'broke',
     ENDED_INTERRUPTED: 'interrupted',
-    OPEN_IN_BUGS: 'Open in Bugs →',
+    OPEN_IN_BUGS: 'Open in Bugs',
     DURATION: '{{seconds}}s',
     FACTS: '{{duration}} · {{cost}}',
     COST_NOTE: 'How long the run took, and what the agent said it cost at API prices.',

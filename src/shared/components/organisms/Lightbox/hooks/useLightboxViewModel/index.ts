@@ -52,7 +52,7 @@ export const useLightboxViewModel = () => {
     },
     canSave: shot !== null,
     isSaving: state === 'saving',
-    saveGlyph: SAVE_BUTTON[state].glyph,
+    saveIcon: SAVE_BUTTON[state].icon,
     saveLabel: t(SAVE_BUTTON[state].labelKey),
     onSave: () => {
       if (media === null || shot === null || state === 'saving') return;

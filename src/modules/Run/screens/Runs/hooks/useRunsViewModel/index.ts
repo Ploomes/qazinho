@@ -58,7 +58,7 @@ export const useRunsViewModel = () => {
   const endOf = (endedBy: RunEnd) => {
     const end = RUN_ENDS[endedBy];
 
-    return end === null ? null : { glyph: end.glyph, label: t(end.labelKey) };
+    return end === null ? null : { icon: end.icon, label: t(end.labelKey) };
   };
 
   const factsOf = (item: IRun) =>
@@ -156,7 +156,7 @@ export const useRunsViewModel = () => {
     },
     counts: RUN_VERDICTS.map((status, index) => ({
       status,
-      glyph: STATUS[status].glyph,
+      icon: STATUS[status].icon,
       count: run?.counts[status] ?? 0,
       label: t(STATUS[status].labelKey),
       delay: index * MOTION.stagger,
@@ -196,7 +196,7 @@ export const useRunsViewModel = () => {
 
         return {
           ...step,
-          glyph: STATUS[step.verdict].glyph,
+          icon: STATUS[step.verdict].icon,
           verdictLabel: t(STATUS[step.verdict].labelKey),
           isMuted: step.verdict === 'skipped' || step.verdict === 'blocked',
           bug:
