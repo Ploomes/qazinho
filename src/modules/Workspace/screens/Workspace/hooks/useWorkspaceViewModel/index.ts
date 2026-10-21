@@ -57,7 +57,6 @@ export const useWorkspaceViewModel = () => {
     canRun: (workspace?.stepCount ?? 0) > 0 && !isLive,
     canRunWithAgent:
       (workspace?.stepCount ?? 0) > 0 && !isLive && workspace?.hasPassed === true,
-    runWithAgentTip: t('WORKSPACE.RUN_WITH_AGENT_TIP'),
     canExplore: workspace !== null && !isLive,
     exploreTip: t('WORKSPACE.EXPLORE_TIP', { minutes: EXPLORATION.minutes }),
     isLive,

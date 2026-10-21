@@ -5,7 +5,7 @@ import { Plan } from '@/modules/Plan';
 import { Runs } from '@/modules/Run';
 import { Button, StatusPill } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
-import { WorkspaceName, WorkspaceTabs } from './components';
+import { RunButton, WorkspaceName, WorkspaceTabs } from './components';
 import { useWorkspaceViewModel } from './hooks';
 import './styles.css';
 
@@ -23,7 +23,6 @@ export const Workspace: React.FC = () => {
     bugCount,
     canRun,
     canRunWithAgent,
-    runWithAgentTip,
     canExplore,
     exploreTip,
     isLive,
@@ -68,16 +67,12 @@ export const Workspace: React.FC = () => {
                   </Button>
                 </Tooltip>
               )}
-              {canRunWithAgent && (
-                <Tooltip content={runWithAgentTip}>
-                  <Button variant="ghost" onClick={onRunWithAgent}>
-                    {t('WORKSPACE.RUN_WITH_AGENT')}
-                  </Button>
-                </Tooltip>
-              )}
-              <Button variant="primary" disabled={!canRun} onClick={onRun}>
-                {t('WORKSPACE.RUN_PLAN')}
-              </Button>
+              <RunButton
+                canRun={canRun}
+                canChoose={canRunWithAgent}
+                onRun={onRun}
+                onRunWithAgent={onRunWithAgent}
+              />
             </>
           )}
         </div>

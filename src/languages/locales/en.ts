@@ -63,12 +63,15 @@ export const en = {
   WORKSPACE: {
     RENAME: 'Rename workspace',
     RUN_PLAN: 'Run plan',
-    RUN_WITH_AGENT: 'Run with the agent',
+    RUN_WITH_AGENT: 'Run everything with the agent',
     EXPLORE: 'Explore',
     EXPLORE_TIP:
       'The agent goes through the app on its own for {{minutes}} minutes, notes each screen, files what is broken and suggests a plan.',
-    RUN_WITH_AGENT_TIP:
-      'The agent walks and judges every case, even one a passing run already recorded.',
+    RUN_WITH_AGENT_HINT:
+      'The agent walks and judges every case again, even the ones that passed. Slower, and it spends tokens.',
+    RUN_PLAN_HINT:
+      'What passed before runs again without AI, in seconds. The agent walks and judges the rest.',
+    RUN_CHOICES: 'Choose how to run',
     TAB_CHAT: 'Chat',
     TAB_PLAN: 'Plan',
     TAB_RUNS: 'Runs',

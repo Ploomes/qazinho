@@ -65,12 +65,15 @@ export const pt: typeof en = {
   WORKSPACE: {
     RENAME: 'Renomear workspace',
     RUN_PLAN: 'Rodar plano',
-    RUN_WITH_AGENT: 'Rodar com o agente',
+    RUN_WITH_AGENT: 'Rodar tudo com o agente',
     EXPLORE: 'Explorar',
     EXPLORE_TIP:
       'O agente percorre o app sozinho por {{minutes}} minutos, anota cada tela, abre bug do que está quebrado e sugere um plano.',
-    RUN_WITH_AGENT_TIP:
-      'O agente anda e julga cada caso, mesmo os que uma run aprovada já gravou.',
+    RUN_WITH_AGENT_HINT:
+      'O agente anda e julga cada caso de novo, mesmo os que já passaram. Mais lento, e gasta tokens.',
+    RUN_PLAN_HINT:
+      'O que já passou roda de novo sem IA, em segundos. O resto, o agente anda e julga.',
+    RUN_CHOICES: 'Escolher como rodar',
     TAB_CHAT: 'Chat',
     TAB_PLAN: 'Plano',
     TAB_RUNS: 'Runs',
