@@ -1,5 +1,6 @@
 export * from './Agent';
 export * from './AppWindow';
+export * from './Assistant';
 export * from './Archive';
 export * from './Files';
 export * from './Github';

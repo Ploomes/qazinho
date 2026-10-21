@@ -57,6 +57,14 @@ export const useAppStore = create<IAppStore>()(
       loadProjects: (projects) =>
         set({ projects, isLoaded: true, selectedProjectId: projects[0]?.id ?? null }),
 
+      putProject: (project) =>
+        set((state) => ({
+          projects: state.projects.some(({ id }) => id === project.id)
+            ? state.projects.map((one) => (one.id === project.id ? project : one))
+            : [...state.projects, project],
+          selectedProjectId: state.selectedProjectId ?? project.id,
+        })),
+
       updateProject: (project) =>
         set((state) => ({
           projects: state.projects.map((one) => (one.id === project.id ? project : one)),

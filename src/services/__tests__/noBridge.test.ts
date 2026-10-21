@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from 'vitest';
 import { i18n } from '@/languages';
-import { Agent, Github, Integrations, Mcp, Run, Setup } from '@/services';
+import { Agent, Assistant, Github, Integrations, Mcp, Run, Setup } from '@/services';
 
 /**
  * The page opened with no bridge, in a plain browser, has nothing to ask. Each service says so
@@ -58,6 +58,38 @@ describe('a page with no bridge', () => {
       isListed: false,
       failure: 'no-cli',
     });
+  });
+
+  it('has no assistant to ask, and no tool call to carry out', async () => {
+    expect(
+      await Assistant.ask({
+        agentId: 'claude-code',
+        model: '',
+        sessionId: null,
+        text: 'hi',
+        app: {
+          screen: 'home',
+          openWorkspaceId: null,
+          openTab: null,
+          openRunId: null,
+          openBugId: null,
+          language: 'en',
+          theme: 'night',
+          runAlert: 'system',
+          agent: 'Claude Code',
+          integrations: [],
+          projects: [],
+          workspaces: [],
+        },
+      }),
+    ).toMatchObject({
+      isError: true,
+      text: 'QAzinho is not talking to the machine. Restart the app.',
+    });
+    expect(() => {
+      Assistant.onToolCall(() => undefined)();
+      Assistant.answer({ id: 'c-1', text: '', isError: false });
+    }).not.toThrow();
   });
 
   it('has no recording to play or to save', async () => {

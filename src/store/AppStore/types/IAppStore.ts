@@ -33,6 +33,7 @@ export interface IAppStore {
   goHome: () => void;
   addProject: (project: IProject) => void;
   loadProjects: (projects: IProject[]) => void;
+  putProject: (project: IProject) => void;
   updateProject: (project: IProject) => void;
   removeProject: (props: { projectId: string; isOpen: boolean }) => void;
   toggleResources: () => void;
