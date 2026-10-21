@@ -31,6 +31,7 @@ const RUN: IRunInFlight = {
   agentId: 'claude-code',
   model: 'sonnet',
   targetKind: 'web',
+  isExploring: false,
 };
 
 /** A page that opened while main was still walking a run: the bridge says so. */

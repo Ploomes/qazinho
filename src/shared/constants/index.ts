@@ -2,6 +2,7 @@ export * from './ASSISTANT_WAIT';
 export * from './BACKDROP';
 export * from './CHANNELS';
 export * from './COUNTDOWN';
+export * from './EXPLORATION';
 export * from './MOTION';
 export * from './RECORDER_ARGUMENT';
 export * from './SHELL';

@@ -5,4 +5,5 @@ export const RUN_WALK = {
   proofChecks: 3,
   proofWaitMs: 700,
   hiddenFromLength: 4,
+  exploreGraceMs: 90_000,
 } as const;

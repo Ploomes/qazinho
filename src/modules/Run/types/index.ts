@@ -1,3 +1,4 @@
+export type { IFlatStep, IRunVideo, StepVerdict } from '@/shared/types';
 export type * from './IReplayChapter';
 export type * from './IReplayMark';
 export type * from './IReplayMoment';
@@ -11,7 +12,7 @@ export type * from './IRunCounts';
 export type * from './IRunNotice';
 export type * from './IRunSpan';
 export type * from './IRunStep';
+export type * from './IRunSuggestion';
 export type * from './ReplayFocus';
 export type * from './RunEnd';
 export type * from './RunFilter';
-export type { IFlatStep, IRunVideo, StepVerdict } from '@/shared/types';

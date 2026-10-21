@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { viewportOf } from '@/modules/Device/library';
 import { flattenPlanSteps, nextRunId, walkedByOf } from '@/modules/Run/library';
 import { Run } from '@/services';
+import { EXPLORATION } from '@/shared/constants';
 import {
   useAppStore,
   useMachineStore,
@@ -37,10 +38,16 @@ export const useRunActions = () => {
     mode: RunMode = 'replay',
   ): string | null => {
     const { workspace, target } = opened(workspaceId);
-    const steps = flattenPlanSteps(workspace?.plan ?? []);
+    const isExploring = mode === 'explore';
+    const steps = isExploring ? [] : flattenPlanSteps(workspace?.plan ?? []);
     const live = workspace?.live ?? null;
 
-    if (!workspace || steps.length === 0 || (live !== null && !live.isDone)) return null;
+    if (
+      !workspace ||
+      (steps.length === 0 && !isExploring) ||
+      (live !== null && !live.isDone)
+    )
+      return null;
 
     const runId = nextRunId(workspace);
     const { agent, model } = useSettingsStore.getState();
@@ -50,6 +57,7 @@ export const useRunActions = () => {
       workspaceId: workspace.id,
       runId,
       by: walkedByOf({ agent, model, targetKind: target?.kind ?? 'web', agents }),
+      ...(isExploring ? { kind: 'explore' as const } : {}),
     });
 
     if (target === null) {
@@ -72,6 +80,7 @@ export const useRunActions = () => {
       viewport: { width: viewport.width, height: viewport.height },
       pixelRatio: window.devicePixelRatio,
       mode,
+      ...(isExploring ? { minutes: EXPLORATION.minutes } : {}),
     });
 
     return runId;
@@ -94,6 +103,9 @@ export const useRunActions = () => {
     },
     onRunWithAgent: () => {
       runWorkspace(selectedId(), 'agent');
+    },
+    onExplore: () => {
+      runWorkspace(selectedId(), 'explore');
     },
     onPause: () => {
       const { workspace } = opened(selectedId());

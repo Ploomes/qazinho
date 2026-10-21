@@ -5,7 +5,15 @@ import type {
   IVideoRecorder,
   IWalkRun,
 } from './types';
-import type { Harness, IDevicePort, IStepFinding, IStepReport, McpHost } from '@/harness';
+import type {
+  Harness,
+  IDevicePort,
+  IExploredScreen,
+  IExploreFinish,
+  IStepFinding,
+  IStepReport,
+  McpHost,
+} from '@/harness';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
 import type { IDeviceDriver } from '@/main/classes/devices/types';
@@ -29,11 +37,13 @@ import { dirname, join } from 'node:path';
 import { WEB_DRIVER } from '@/main/classes/devices/WebDriver/constants';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { agentFailure } from '@/main/library';
+import { EXPLORATION } from '@/shared/constants';
 import { RUN_WALK, UNWALKED } from './constants';
 import {
   bookWith,
   casesOf,
   driverFor,
+  exploredOutcome,
   failureOf,
   followRunEvent,
   outcomeOfReport,
@@ -122,6 +132,7 @@ export class RunCoordinator {
       agentId: run.agentId,
       model: run.model,
       targetKind: run.target.kind,
+      isExploring: run.mode === 'explore',
     });
 
     try {
@@ -235,7 +246,11 @@ export class RunCoordinator {
       return;
     }
 
-    const broke = await this.walkSteps({ run, driver }).then(
+    const broke = await (
+      run.mode === 'explore'
+        ? this.explore({ run, driver })
+        : this.walkSteps({ run, driver })
+    ).then(
       (failure) => failure,
       (reason: unknown) =>
         this.stopping.has(run.workspaceId) ? null : failureOf(reason),
@@ -591,6 +606,165 @@ export class RunCoordinator {
     unwalked('blocked');
 
     return true;
+  }
+
+  /** Explores the app with no plan, one agent alone until it finishes or its time runs out: each screen it notes is a step of one case, and each bug it files a finding. */
+  private async explore(props: {
+    run: IWalkRun;
+    driver: IDeviceDriver;
+  }): Promise<RunFailure | null> {
+    const { run, driver } = props;
+    const { workspaceId } = run;
+    const minutes = run.minutes ?? EXPLORATION.minutes;
+    const endsAt = Date.now() + minutes * 60_000;
+    const device = variablePort({ device: driver, values: run.values });
+    let screens = 0;
+    let findings = 0;
+    let current = { number: 0, name: '' };
+    let last = Date.now();
+    let isOver = false;
+    let over: () => void = () => undefined;
+    const finished = new Promise<null>((resolve) => {
+      over = () => {
+        resolve(null);
+      };
+    });
+
+    const end = (said: string) => {
+      isOver = true;
+      over();
+      setImmediate(() => {
+        this.tools.detach(workspaceId);
+        this.runner.cancel(workspaceId);
+      });
+
+      return said;
+    };
+
+    const onScreen = async (screen: IExploredScreen): Promise<string> => {
+      if (isOver) return 'The exploration is over: end your turn now.';
+
+      screens += 1;
+
+      const number = screens;
+      const shot = await driver.shoot(join(run.shotDir, `screen-${String(number)}.jpg`));
+      const at = Date.now();
+
+      current = { number, name: screen.name };
+      this.emit({
+        kind: 'step',
+        outcome: exploredOutcome({
+          workspaceId,
+          screen,
+          number,
+          tookMs: at - last,
+          at,
+          shot,
+        }),
+      });
+      last = at;
+
+      return `Noted screen ${String(number)}: ${screen.name}. Carry on exploring.`;
+    };
+
+    const onFinding = async (finding: IStepFinding): Promise<string> => {
+      if (isOver) return 'The exploration is over: end your turn now.';
+
+      findings += 1;
+
+      const shot = await driver.shoot(
+        join(run.shotDir, `finding-explore-${String(findings)}.jpg`),
+      );
+
+      this.emit({
+        kind: 'finding',
+        workspaceId,
+        finding: {
+          ...finding,
+          caseId: EXPLORATION.caseId,
+          stepNumber: current.number,
+          index: Math.max(current.number - 1, 0),
+          action: current.name,
+          at: Date.now(),
+          screenshot: shot?.dataUrl ?? null,
+          shotFile: shot?.file ?? null,
+        },
+      });
+
+      return 'Filed as a bug. Carry on exploring.';
+    };
+
+    const onFinish = (finish: IExploreFinish): Promise<string> => {
+      if (isOver) return Promise.resolve('The exploration is over: end your turn now.');
+
+      this.emit({ kind: 'explored', workspaceId, ...finish });
+
+      return Promise.resolve(end('Thank you. End your turn now, with no summary.'));
+    };
+
+    const mcpConfig = this.tools.mcpConfigFor(workspaceId);
+
+    if (mcpConfig === null)
+      throw new Error('The device tools are not up, so the agent cannot act.');
+
+    this.tools.attach({
+      workspaceId,
+      driver: device,
+      purpose: 'explore',
+      endsAt,
+      onScreen,
+      onFinding,
+      onFinish,
+    });
+
+    const screen = await device.describe().catch(() => '');
+
+    if (this.stopping.has(workspaceId)) return null;
+
+    const asking = this.runner.ask({
+      workspaceId,
+      agentId: run.agentId,
+      command: run.command,
+      model: run.model,
+      sessionId: null,
+      systemPrompt: this.harness.explore({
+        target: run.target,
+        viewport: this.viewports.get(workspaceId) ?? run.viewport ?? WEB_DRIVER.viewport,
+        language: run.language,
+        minutes,
+      }),
+      mcpConfig,
+      allowedTools: this.harness.toolsFor('explorer').allowedTools,
+      prompt: this.harness.startExploring({
+        minutes,
+        screen,
+        variables: run.values.map(({ name, description }) => ({ name, description })),
+      }),
+    });
+    const cost = asking.then(
+      ({ costUsd }) => {
+        if (costUsd !== null) this.emit({ kind: 'cost', workspaceId, costUsd });
+      },
+      () => undefined,
+    );
+    const late = setTimeout(
+      () => {
+        if (!isOver) end('');
+      },
+      endsAt - Date.now() + RUN_WALK.exploreGraceMs,
+    );
+
+    const asked = await Promise.race([asking, finished]);
+
+    clearTimeout(late);
+    await Promise.race([
+      cost,
+      new Promise((wake) => setTimeout(wake, RUN_WALK.costsWaitMs)),
+    ]);
+
+    if (this.stopping.has(workspaceId) || isOver || asked === null) return null;
+
+    return agentFailure(asked);
   }
 
   private async watch(props: { run: IWalkRun; driver: IDeviceDriver }): Promise<void> {

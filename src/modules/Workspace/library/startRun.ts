@@ -1,14 +1,16 @@
 import type { IWalkedBy, IWorkspace } from '@/modules/Workspace/types';
 
+/** Starts a run of the plan, or an exploration, which needs no plan to go. */
 export function startRun(props: {
   workspace: IWorkspace;
   startedAt: string;
   runId: string;
   by: IWalkedBy;
+  kind?: 'explore';
 }): IWorkspace {
-  const { workspace, startedAt, runId, by } = props;
+  const { workspace, startedAt, runId, by, kind } = props;
 
-  if (workspace.plan.length === 0) return workspace;
+  if (workspace.plan.length === 0 && kind !== 'explore') return workspace;
 
   return {
     ...workspace,
@@ -26,6 +28,7 @@ export function startRun(props: {
       streamUrl: null,
       costUsd: null,
       by,
+      ...(kind === undefined ? {} : { kind }),
     },
   };
 }

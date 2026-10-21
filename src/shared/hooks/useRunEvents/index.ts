@@ -19,6 +19,7 @@ export const useRunEvents = () => {
   const landNote = useWorkspaceStore((state) => state.landNote);
   const landCost = useWorkspaceStore((state) => state.landCost);
   const landFinding = useWorkspaceStore((state) => state.landFinding);
+  const landExplored = useWorkspaceStore((state) => state.landExplored);
   const agent = useSettingsStore((state) => state.agent);
   const landStep = useWorkspaceStore((state) => state.landStep);
   const landRunDone = useWorkspaceStore((state) => state.landRunDone);
@@ -92,6 +93,12 @@ export const useRunEvents = () => {
     else if (event.kind === 'finding')
       landFinding({ workspaceId: event.workspaceId, finding: event.finding });
     else if (event.kind === 'step') landStep(event.outcome);
+    else if (event.kind === 'explored')
+      landExplored({
+        workspaceId: event.workspaceId,
+        summary: event.summary,
+        cases: event.cases,
+      });
     else if (event.kind === 'done') {
       const runId = endingOf(event.workspaceId);
 

@@ -1,6 +1,7 @@
 export * from './bookWith';
 export * from './casesOf';
 export * from './driverFor';
+export * from './exploredOutcome';
 export * from './failureOf';
 export * from './fingerprintOf';
 export * from './followRunEvent';

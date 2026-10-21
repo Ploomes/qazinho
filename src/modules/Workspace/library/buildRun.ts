@@ -2,6 +2,7 @@ import type { IRun, IRunCase, IRunStep, RunEnd } from '@/modules/Run';
 import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IStepOutcome } from '@/shared/types';
 import { caseVerdict, countVerdicts, flattenPlanSteps } from '@/modules/Run/library';
+import { EXPLORATION } from '@/shared/constants';
 
 const MS_IN_SECOND = 1_000;
 
@@ -11,14 +12,37 @@ function tookSec(outcomes: IStepOutcome[]): number {
   );
 }
 
-/** The run as it ended, read back from what the device actually did; the steps it never reached in a case it began read as skipped. */
+/** The run as it ended, read back from what the device actually did; the steps it never reached in a case it began read as skipped, and an exploration's screens are its one case. */
 export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRun {
   const { workspace, endedBy } = props;
   const live = workspace.live;
   const outcomes = live?.outcomes ?? [];
   const id = live?.id ?? 'r-01';
 
-  const cases: IRunCase[] = workspace.plan
+  const explored = outcomes.filter(({ caseId }) => caseId === EXPLORATION.caseId);
+  const walkedCases = live?.kind === 'explore' ? [] : workspace.plan;
+  const screens: IRunCase[] =
+    live?.kind === 'explore' && explored.length > 0
+      ? [
+          {
+            id: EXPLORATION.caseId,
+            title: '',
+            verdict: 'passed',
+            durationSec: tookSec(explored),
+            steps: explored.map((outcome) => ({
+              number: outcome.stepNumber,
+              action: outcome.action,
+              verdict: outcome.verdict,
+              why: outcome.why.length > 0 ? outcome.why : null,
+              shot: outcome.screenshot,
+              shotFile: outcome.shotFile,
+              span: { from: outcome.at - outcome.tookMs, to: outcome.at },
+              bugId: null,
+            })),
+          },
+        ]
+      : [];
+  const cases: IRunCase[] = walkedCases
     .map((testCase) => {
       const mine = outcomes.filter((outcome) => outcome.caseId === testCase.id);
 
@@ -71,7 +95,8 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
         steps,
       };
     })
-    .filter((testCase) => testCase.steps.length > 0);
+    .filter((testCase) => testCase.steps.length > 0)
+    .concat(screens);
 
   return {
     id,
@@ -88,5 +113,7 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
     cases,
     endedBy,
     video: null,
+    ...(live?.kind === 'explore' ? { kind: 'explore' as const } : {}),
+    ...(live?.suggestion === undefined ? {} : { suggestion: live.suggestion }),
   };
 }

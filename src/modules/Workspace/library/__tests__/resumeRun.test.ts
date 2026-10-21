@@ -24,6 +24,7 @@ function inFlight(props: Partial<IRunInFlight> = {}): IRunInFlight {
     agentId: 'claude-code',
     model: 'haiku',
     targetKind: 'web',
+    isExploring: false,
     ...props,
   };
 }

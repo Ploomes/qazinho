@@ -37,6 +37,7 @@ export function resumeRun(props: {
     streamUrl: run.streamUrl,
     costUsd: run.costUsd,
     by,
+    ...(run.isExploring ? { kind: 'explore' as const } : {}),
   };
 
   const failed = run.outcomes

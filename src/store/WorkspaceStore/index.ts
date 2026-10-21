@@ -16,11 +16,13 @@ import { RUN_CLOCK } from '@/modules/Run/constants';
 import {
   endRun,
   landCost,
+  landExplored,
   landFinding,
   landStep,
   landVideo,
   resumeRun,
   startRun,
+  takeSuggestion,
 } from '@/modules/Workspace/library';
 import { mapWorkspace, tickWorkspaces, withoutKey } from './library';
 
@@ -235,13 +237,38 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
-  startRun: ({ workspaceId, runId, by }) =>
+  startRun: ({ workspaceId, runId, by, kind }) =>
     set((state) => ({
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
         change: (workspace) =>
-          startRun({ workspace, runId, by, startedAt: formatClock(new Date()) }),
+          startRun({
+            workspace,
+            runId,
+            by,
+            startedAt: formatClock(new Date()),
+            ...(kind === undefined ? {} : { kind }),
+          }),
+      }),
+    })),
+
+  landExplored: ({ workspaceId, summary, cases }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => landExplored({ workspace, summary, cases }),
+      }),
+    })),
+
+  takeSuggestion: ({ workspaceId, messageId }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          takeSuggestion({ workspace, messageId, at: formatClock(new Date()) }),
       }),
     })),
 

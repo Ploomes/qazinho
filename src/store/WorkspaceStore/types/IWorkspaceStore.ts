@@ -8,6 +8,7 @@ import type {
   CodeStep,
   IChatQuestion,
   ICodeSource,
+  IDraftedCase,
   IRunFinding,
   IRunInFlight,
   IRunVideo,
@@ -76,7 +77,18 @@ export interface IWorkspaceStore {
   setLooking: (props: { workspaceId: string; device: 'android' | 'ios' }) => void;
   answerAsk: (props: { workspaceId: string; reply: string }) => void;
   setPlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
-  startRun: (props: { workspaceId: string; runId: string; by: IWalkedBy }) => void;
+  startRun: (props: {
+    workspaceId: string;
+    runId: string;
+    by: IWalkedBy;
+    kind?: 'explore';
+  }) => void;
+  landExplored: (props: {
+    workspaceId: string;
+    summary: string;
+    cases: IDraftedCase[];
+  }) => void;
+  takeSuggestion: (props: { workspaceId: string; messageId: string }) => void;
   resumeRun: (props: { run: IRunInFlight; by: IWalkedBy }) => void;
   pauseRun: (workspaceId: string) => void;
   stopRun: (workspaceId: string) => void;
