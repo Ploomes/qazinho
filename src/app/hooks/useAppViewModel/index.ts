@@ -19,6 +19,7 @@ export const useAppViewModel = () => {
   const modal = useAppStore((state) => state.modal);
   const media = useAppStore((state) => state.media);
   const replay = useAppStore((state) => state.replay);
+  const runNotice = useAppStore((state) => state.runNotice);
   const hasOnboarded = useSettingsStore((state) => state.hasOnboarded);
 
   useArchive();
@@ -41,6 +42,8 @@ export const useAppViewModel = () => {
     screen,
     modal,
     hasMedia: media !== null,
+    hasRunNotice: runNotice !== null,
+    runNoticeKey: runNotice?.key ?? 'run-notice',
     hasReplay: replay !== null,
     replayKey:
       replay === null

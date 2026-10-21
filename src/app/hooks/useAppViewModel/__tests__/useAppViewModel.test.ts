@@ -170,4 +170,20 @@ describe('useAppViewModel', () => {
       expect(i18n.language).toBe('en');
     });
   });
+
+  it('mounts the notice of a run that ended under its own key, so a second one replaces the first', () => {
+    useAppStore.setState({ runNotice: { key: 'k-1', workspaceId: 'w1', runId: 'r-01' } });
+
+    const first = renderHook(() => useAppViewModel()).result.current;
+
+    useAppStore.setState({ runNotice: { key: 'k-2', workspaceId: 'w1', runId: 'r-02' } });
+
+    const second = renderHook(() => useAppViewModel()).result.current;
+
+    expect(first.hasRunNotice).toBe(true);
+    expect(first.runNoticeKey).not.toBe(second.runNoticeKey);
+    useAppStore.setState({ runNotice: null });
+
+    expect(renderHook(() => useAppViewModel()).result.current.hasRunNotice).toBe(false);
+  });
 });

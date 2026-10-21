@@ -1,7 +1,7 @@
 import { AnimatePresence, MotionConfig } from 'motion/react';
 import { DevicePanel } from '@/modules/Device';
 import { ProjectModal, Welcome } from '@/modules/Project';
-import { RunReplay } from '@/modules/Run';
+import { RunNotice, RunReplay } from '@/modules/Run';
 import { Settings } from '@/modules/Settings';
 import { Onboarding } from '@/modules/Setup';
 import { NewWorkspaceModal, Workspace } from '@/modules/Workspace';
@@ -20,6 +20,8 @@ export const App: React.FC = () => {
     isSettings,
     modal,
     hasMedia,
+    hasRunNotice,
+    runNoticeKey,
     hasReplay,
     replayKey,
   } = useAppViewModel();
@@ -40,6 +42,7 @@ export const App: React.FC = () => {
         <AnimatePresence>
           {hasMedia && <Lightbox key="lightbox" />}
           {hasReplay && <RunReplay key={replayKey} />}
+          {hasRunNotice && <RunNotice key={runNoticeKey} />}
           {modal === 'project' && <ProjectModal key="project" />}
           {modal === 'workspace' && <NewWorkspaceModal key="workspace" />}
         </AnimatePresence>

@@ -1,9 +1,16 @@
-import { useEffect } from 'react';
+import type { IRunEvent, IRunRef } from '@/shared/types';
+import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RUN_FAILURE_KEYS } from '@/modules/Run/constants';
+import { useOpenRun } from '@/modules/Run/hooks/useOpenRun';
 import { walkedByOf } from '@/modules/Run/library';
 import { Run } from '@/services';
-import { useMachineStore, useSettingsStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useMachineStore,
+  useSettingsStore,
+  useWorkspaceStore,
+} from '@/store';
 
 export const useRunEvents = () => {
   const { t } = useTranslation();
@@ -19,48 +26,101 @@ export const useRunEvents = () => {
   const landRunFailed = useWorkspaceStore((state) => state.landRunFailed);
   const resumeRun = useWorkspaceStore((state) => state.resumeRun);
   const isLoaded = useWorkspaceStore((state) => state.isLoaded);
+  const showRunNotice = useAppStore((state) => state.showRunNotice);
+  const openRun = useOpenRun();
 
-  useEffect(
-    () =>
-      Run.onEvent((event) => {
-        if (event.kind === 'doing')
-          markDoing({ workspaceId: event.workspaceId, index: event.index });
-        else if (event.kind === 'streaming')
-          markStreaming({ workspaceId: event.workspaceId, url: event.url });
-        else if (event.kind === 'note')
-          landNote({ workspaceId: event.workspaceId, text: event.text, who: agent });
-        else if (event.kind === 'cost')
-          landCost({ workspaceId: event.workspaceId, costUsd: event.costUsd });
-        else if (event.kind === 'finding')
-          landFinding({ workspaceId: event.workspaceId, finding: event.finding });
-        else if (event.kind === 'step') landStep(event.outcome);
-        else if (event.kind === 'done') landRunDone(event.workspaceId);
-        else if (event.kind === 'video')
-          landVideo({
-            workspaceId: event.workspaceId,
-            runId: event.runId,
-            video: event.video,
-          });
-        else
-          landRunFailed({
-            workspaceId: event.workspaceId,
-            text: t(RUN_FAILURE_KEYS[event.failure.reason], { ...event.failure, agent }),
-          });
+  const endingOf = (workspaceId: string) => {
+    const live = useWorkspaceStore
+      .getState()
+      .workspaces.find(({ id }) => id === workspaceId)?.live;
+
+    return live && !live.isDone ? live.id : null;
+  };
+
+  const announce = (props: { workspaceId: string; runId: string | null }) => {
+    const workspace = useWorkspaceStore
+      .getState()
+      .workspaces.find(({ id }) => id === props.workspaceId);
+    const run = workspace?.runs.find(({ id }) => id === props.runId);
+
+    if (!workspace || !run) return;
+
+    showRunNotice({
+      key: `${workspace.id}/${run.id}/${String(Date.now())}`,
+      workspaceId: workspace.id,
+      runId: run.id,
+    });
+
+    if (useSettingsStore.getState().runAlert !== 'system') return;
+
+    const bugs = workspace.bugs.filter(({ runId }) => runId === run.id).length;
+    const tally = [
+      t(run.counts.passed === 1 ? 'CHAT.RUN_PASSED_ONE' : 'CHAT.RUN_PASSED_OTHER', {
+        count: run.counts.passed,
       }),
-    [
-      agent,
-      t,
-      markDoing,
-      markStreaming,
-      landNote,
-      landCost,
-      landFinding,
-      landStep,
-      landRunDone,
-      landVideo,
-      landRunFailed,
-    ],
-  );
+      t(run.counts.failed === 1 ? 'CHAT.RUN_FAILED_ONE' : 'CHAT.RUN_FAILED_OTHER', {
+        count: run.counts.failed,
+      }),
+      ...(bugs === 0
+        ? []
+        : [
+            t(bugs === 1 ? 'SIDEBAR.META_BUG_ONE' : 'SIDEBAR.META_BUG_OTHER', {
+              count: bugs,
+            }),
+          ]),
+    ].join(' · ');
+
+    Run.alert({
+      workspaceId: workspace.id,
+      runId: run.id,
+      title: t(run.endedBy === 'broke' ? 'RUN.NOTICE_BROKE' : 'RUN.NOTICE_FINISHED', {
+        id: run.id,
+      }),
+      body: t('RUN.NOTICE_BODY', { workspace: workspace.name, tally }),
+    });
+  };
+
+  const onRunEvent = useEffectEvent((event: IRunEvent) => {
+    if (event.kind === 'doing')
+      markDoing({ workspaceId: event.workspaceId, index: event.index });
+    else if (event.kind === 'streaming')
+      markStreaming({ workspaceId: event.workspaceId, url: event.url });
+    else if (event.kind === 'note')
+      landNote({ workspaceId: event.workspaceId, text: event.text, who: agent });
+    else if (event.kind === 'cost')
+      landCost({ workspaceId: event.workspaceId, costUsd: event.costUsd });
+    else if (event.kind === 'finding')
+      landFinding({ workspaceId: event.workspaceId, finding: event.finding });
+    else if (event.kind === 'step') landStep(event.outcome);
+    else if (event.kind === 'done') {
+      const runId = endingOf(event.workspaceId);
+
+      landRunDone(event.workspaceId);
+      announce({ workspaceId: event.workspaceId, runId });
+    } else if (event.kind === 'video')
+      landVideo({
+        workspaceId: event.workspaceId,
+        runId: event.runId,
+        video: event.video,
+      });
+    else {
+      const runId = endingOf(event.workspaceId);
+
+      landRunFailed({
+        workspaceId: event.workspaceId,
+        text: t(RUN_FAILURE_KEYS[event.failure.reason], { ...event.failure, agent }),
+      });
+      announce({ workspaceId: event.workspaceId, runId });
+    }
+  });
+
+  const onOpenRun = useEffectEvent((run: IRunRef) => {
+    openRun(run);
+  });
+
+  useEffect(() => Run.onEvent(onRunEvent), []);
+
+  useEffect(() => Run.onOpen(onOpenRun), []);
 
   useEffect(() => {
     if (!isLoaded) return;

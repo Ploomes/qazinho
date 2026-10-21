@@ -1,13 +1,22 @@
 // @vitest-environment jsdom
-import type { IRunEvent, IRunInFlight } from '@/shared/types';
+import type { IRunEvent, IRunInFlight, IRunRef } from '@/shared/types';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
 import { startRun } from '@/modules/Workspace/library';
-import { makeWorkspace, WALKED_BY } from '@/modules/Workspace/library/__tests__/fixtures';
+import {
+  makeWorkspace,
+  WALKED_BY,
+  walkRun,
+} from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useRunEvents } from '@/shared/hooks/useRunEvents';
-import { useMachineStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useMachineStore,
+  useSettingsStore,
+  useWorkspaceStore,
+} from '@/store';
 
 const RUN: IRunInFlight = {
   workspaceId: 'w1',
@@ -140,5 +149,126 @@ describe('useRunEvents', () => {
       text: 'O Chrome não conseguiu abrir http://127.0.0.1:3000/ (ERR_CONNECTION_REFUSED). Confira se o app está no ar e se esta máquina o alcança, e rode o plano de novo.',
     });
     await i18n.changeLanguage('en');
+  });
+
+  describe('a run that ends', () => {
+    /** A bridge that hands the test main's run events and its notification clicks. */
+    function listening() {
+      let send: (event: IRunEvent) => void = () => undefined;
+      let open: (run: IRunRef) => void = () => undefined;
+      const alertRunEnded = vi.fn();
+
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        onRunEvent: (listener) => {
+          send = listener;
+
+          return () => undefined;
+        },
+        onOpenRun: (listener) => {
+          open = listener;
+
+          return () => undefined;
+        },
+        alertRunEnded,
+      };
+      renderHook(() => {
+        useRunEvents();
+      });
+
+      return {
+        alertRunEnded,
+        send: (event: IRunEvent) => {
+          act(() => {
+            send(event);
+          });
+        },
+        open: (run: IRunRef) => {
+          act(() => {
+            open(run);
+          });
+        },
+      };
+    }
+
+    beforeEach(async () => {
+      await i18n.changeLanguage('en');
+      useAppStore.setState({
+        runNotice: null,
+        screen: 'welcome',
+        selectedWorkspaceId: null,
+      });
+      useSettingsStore.setState({ runAlert: 'system' });
+      useWorkspaceStore.setState({
+        workspaces: [
+          walkRun({ verdicts: ['passed', 'passed', 'passed', 'passed', 'failed'] }),
+        ],
+      });
+    });
+
+    it('says so in the app, and asks main to call the QA back if they are away', () => {
+      const { alertRunEnded, send } = listening();
+
+      send({ kind: 'done', workspaceId: 'w1' });
+
+      expect(useAppStore.getState().runNotice).toMatchObject({
+        workspaceId: 'w1',
+        runId: 'r-01',
+      });
+      expect(alertRunEnded).toHaveBeenCalledWith({
+        workspaceId: 'w1',
+        runId: 'r-01',
+        title: 'Run r-01 finished',
+        body: 'Checkout regression · 4 passed · 1 failed · 1 bug',
+      });
+    });
+
+    it('keeps it inside the app when the QA asked for that', () => {
+      useSettingsStore.setState({ runAlert: 'app' });
+
+      const { alertRunEnded, send } = listening();
+
+      send({ kind: 'done', workspaceId: 'w1' });
+
+      expect(useAppStore.getState().runNotice).not.toBeNull();
+      expect(alertRunEnded).not.toHaveBeenCalled();
+    });
+
+    it('says a run that broke on the way stopped short', () => {
+      const { alertRunEnded, send } = listening();
+
+      send({ kind: 'failed', workspaceId: 'w1', failure: { reason: 'agent-silent' } });
+
+      expect(alertRunEnded).toHaveBeenCalledWith(
+        expect.objectContaining({ title: 'Run r-01 stopped short' }),
+      );
+    });
+
+    it('does NOT announce a run the QA stopped themselves', () => {
+      const { alertRunEnded, send } = listening();
+
+      act(() => {
+        useWorkspaceStore.getState().stopRun('w1');
+      });
+      send({ kind: 'done', workspaceId: 'w1' });
+
+      expect(useAppStore.getState().runNotice).toBeNull();
+      expect(alertRunEnded).not.toHaveBeenCalled();
+    });
+
+    it('opens the run whose notification the QA clicked', () => {
+      const { open } = listening();
+
+      open({ workspaceId: 'w1', runId: 'r-01' });
+
+      expect(useAppStore.getState()).toMatchObject({
+        screen: 'workspace',
+        selectedWorkspaceId: 'w1',
+      });
+      expect(useWorkspaceStore.getState()).toMatchObject({
+        tab: 'runs',
+        selectedRunId: 'r-01',
+      });
+    });
   });
 });
