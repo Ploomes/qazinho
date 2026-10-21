@@ -6,4 +6,5 @@ export interface IInputProps {
   isMono?: boolean;
   isBare?: boolean;
   isSecret?: boolean;
+  isAutoFocused?: boolean;
 }

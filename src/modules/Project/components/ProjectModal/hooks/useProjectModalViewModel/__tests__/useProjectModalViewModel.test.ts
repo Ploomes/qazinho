@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
-import { act, renderHook } from '@testing-library/react';
+import type { IApplyVariables } from '@/shared/types';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useProjectModalViewModel } from '@/modules/Project/components/ProjectModal/hooks/useProjectModalViewModel';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
@@ -9,6 +10,7 @@ import {
   useBuildStore,
   useMachineStore,
   useSetupStore,
+  useVariablesStore,
   useWorkspaceStore,
 } from '@/store';
 
@@ -24,6 +26,7 @@ beforeEach(() => {
   useWorkspaceStore.setState({ workspaces: [] });
   useSetupStore.setState({ integrations: [] });
   useBuildStore.setState({ builds: [] });
+  useVariablesStore.setState({ byProject: {}, request: null, settled: null });
 });
 
 afterEach(() => {
@@ -501,6 +504,141 @@ describe('useProjectModalViewModel', () => {
         expect(result.current.apk).toBe('/Downloads/picked.apk');
       });
       expect(result.current.androidBuilder.buildId).toBeNull();
+    });
+  });
+  describe('the variables', () => {
+    const SHOP = {
+      id: 'p1',
+      name: 'Shop',
+      targets: [
+        { id: 't-web', kind: 'web' as const, label: 'Web', value: 'https://shop.test' },
+      ],
+      repositories: [],
+    };
+
+    /** A vault that keeps what it was asked, and answers `isSaved` as told. */
+    function vault(isSaved = true) {
+      const applied: IApplyVariables[] = [];
+
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        applyVariables: (apply) => {
+          applied.push(apply);
+
+          return Promise.resolve(
+            isSaved
+              ? { isSaved: true, variables: [] }
+              : { isSaved: false, failure: { reason: 'no-keychain' } },
+          );
+        },
+      };
+
+      return applied;
+    }
+
+    it('opens on the variables the project keeps, each value left sealed', () => {
+      useAppStore.setState({ projects: [SHOP], editingProjectId: 'p1' });
+      useVariablesStore.setState({
+        byProject: { p1: [{ name: 'LOGIN_EMAIL', description: 'The admin' }] },
+      });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.variables).toEqual([
+        {
+          key: 'saved-LOGIN_EMAIL',
+          name: 'LOGIN_EMAIL',
+          description: 'The admin',
+          value: '',
+          from: 'LOGIN_EMAIL',
+        },
+      ]);
+    });
+
+    it('seals what changed before it saves the project', async () => {
+      const applied = vault();
+
+      useAppStore.setState({ projects: [SHOP], editingProjectId: 'p1' });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onVariablesChange([
+          { key: 'new-0', name: 'TOKEN', description: 'API', value: 'abc', from: null },
+        ]);
+      });
+      act(() => {
+        result.current.onConfirm();
+      });
+
+      await waitFor(() => {
+        expect(useAppStore.getState().modal).toBeNull();
+      });
+      expect(applied).toEqual([
+        {
+          projectId: 'p1',
+          changes: [
+            { kind: 'save', name: 'TOKEN', description: 'API', value: 'abc', from: null },
+          ],
+        },
+      ]);
+    });
+
+    it('gives a new project its variables under the id it is created with', async () => {
+      const applied = vault();
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onNameChange('Shop');
+        result.current.onUrlChange('https://shop.test');
+        result.current.onVariablesChange([
+          { key: 'new-0', name: 'TOKEN', description: '', value: 'abc', from: null },
+        ]);
+      });
+      act(() => {
+        result.current.onConfirm();
+      });
+
+      await waitFor(() => {
+        expect(useAppStore.getState().projects).toHaveLength(1);
+      });
+      expect(applied[0]?.projectId).toBe(useAppStore.getState().projects[0]?.id);
+    });
+
+    it('does NOT save the project when the variables could not be sealed, and says why', async () => {
+      vault(false);
+      useAppStore.setState({ projects: [SHOP], editingProjectId: 'p1' });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onVariablesChange([
+          { key: 'new-0', name: 'TOKEN', description: '', value: 'abc', from: null },
+        ]);
+      });
+      act(() => {
+        result.current.onConfirm();
+      });
+
+      await waitFor(() => {
+        expect(result.current.footerHint).toContain('no keychain');
+      });
+      expect(useAppStore.getState().modal).toBe('project');
+    });
+
+    it('does NOT ask the vault when no variable changed', () => {
+      const applied = vault();
+
+      useAppStore.setState({ projects: [SHOP], editingProjectId: 'p1' });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onConfirm();
+      });
+
+      expect(applied).toEqual([]);
+      expect(useAppStore.getState().modal).toBeNull();
     });
   });
 });

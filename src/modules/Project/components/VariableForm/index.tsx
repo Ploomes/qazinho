@@ -15,6 +15,7 @@ export const VariableForm: React.FC<IVariableFormProps> = (props) => {
           <span className="variable-form__label">{t('VARIABLES.NAME')}</span>
           <Input
             isMono
+            isAutoFocused={props.isNameFocused}
             value={props.name}
             label={t('VARIABLES.NAME')}
             placeholder={t('VARIABLES.NAME_PLACEHOLDER')}
@@ -53,6 +54,7 @@ export const VariableForm: React.FC<IVariableFormProps> = (props) => {
         <Input
           isMono
           isSecret
+          isAutoFocused={props.isValueFocused}
           value={props.value}
           label={t('VARIABLES.VALUE')}
           placeholder={props.valuePlaceholder}

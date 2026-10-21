@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Eyebrow, Input } from '@/shared/components/atoms';
 import { FileField } from '@/shared/components/molecules';
 import { ModalFrame } from '@/shared/components/templates';
-import { BuildFromCode, RepoField, TargetCard } from './components';
+import { BuildFromCode, RepoField, TargetCard, VariableField } from './components';
 import { useProjectModalViewModel } from './hooks';
 import './styles.css';
 
@@ -13,6 +13,8 @@ export const ProjectModal: React.FC = () => {
     apk,
     app,
     repositories,
+    variables,
+    savedVariables,
     projectId,
     androidBuilder,
     iosBuilder,
@@ -28,6 +30,7 @@ export const ProjectModal: React.FC = () => {
     footerHint,
     onNameChange,
     onRepositoriesChange,
+    onVariablesChange,
     onUrlChange,
     onPickApk,
     onPickApp,
@@ -138,6 +141,15 @@ export const ProjectModal: React.FC = () => {
       <div>
         <Eyebrow>{t('PROJECT.CODE')}</Eyebrow>
         <RepoField repositories={repositories} onChange={onRepositoriesChange} />
+      </div>
+
+      <div>
+        <Eyebrow>{t('PROJECT.VARIABLES')}</Eyebrow>
+        <VariableField
+          variables={variables}
+          saved={savedVariables}
+          onChange={onVariablesChange}
+        />
       </div>
     </ModalFrame>
   );

@@ -42,8 +42,9 @@ export const useVariablesModalViewModel = () => {
     asked: t('VARIABLES.ASKED'),
     project: projects.find(({ id }) => id === request?.projectId)?.name ?? '',
     valuePlaceholder: t('VARIABLES.VALUE_PLACEHOLDER'),
-    rows: rows.map((row) => ({
+    rows: rows.map((row, index) => ({
       key: row.key,
+      isValueFocused: index === 0,
       name: row.name,
       description: row.description,
       value: row.value,

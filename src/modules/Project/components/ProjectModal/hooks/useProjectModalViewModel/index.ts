@@ -1,10 +1,16 @@
 import type { ITargetLock } from '@/modules/Project/components/ProjectModal/components/TargetCard/types';
-import type { IProjectRepository, ITarget } from '@/modules/Project/types';
+import type {
+  IProjectRepository,
+  ITarget,
+  IVariableDraft,
+} from '@/modules/Project/types';
 import type { BuildPlatform, TargetKind } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TARGET_NAME_KEYS } from '@/modules/Project/components/ProjectModal/constants';
-import { newProjectId, webAddressOf } from '@/modules/Project/library';
+import { VARIABLE_FAILURE_KEYS } from '@/modules/Project/constants';
+import { useVariableActions } from '@/modules/Project/hooks/useVariableActions';
+import { newProjectId, variableChangesOf, webAddressOf } from '@/modules/Project/library';
 import { SETUP_LINKS } from '@/modules/Setup/constants';
 import { Agent, Archive, Files, Platform, Run } from '@/services';
 import {
@@ -12,6 +18,7 @@ import {
   useBuildStore,
   useMachineStore,
   useSetupStore,
+  useVariablesStore,
   useWorkspaceStore,
 } from '@/store';
 
@@ -35,6 +42,20 @@ export const useProjectModalViewModel = () => {
   const [editing] = useState(
     () => projects.find(({ id }) => id === editingProjectId) ?? null,
   );
+  const byProject = useVariablesStore((state) => state.byProject);
+  const savedVariables = editing === null ? [] : (byProject[editing.id] ?? []);
+  const { applyVariables } = useVariableActions();
+  const [variables, setVariables] = useState<IVariableDraft[]>(() =>
+    savedVariables.map(({ name, description }) => ({
+      key: `saved-${name}`,
+      name,
+      description,
+      value: '',
+      from: name,
+    })),
+  );
+  const [variableFailure, setVariableFailure] = useState<string | null>(null);
+  const [isSaving, setSaving] = useState(false);
   const saved = (kind: TargetKind) =>
     editing?.targets.find((target) => target.kind === kind) ?? null;
 
@@ -118,12 +139,41 @@ export const useProjectModalViewModel = () => {
   };
 
   const onConfirm = () => {
-    if (blocking !== undefined) return;
+    if (blocking !== undefined || isSaving) return;
 
     const targets = [...targetFor('web'), ...targetFor('android'), ...targetFor('ios')];
+    const projectId = editing?.id ?? newProjectId();
+    const changes = variableChangesOf({ saved: savedVariables, drafts: variables });
+    const save = () => {
+      if (editing)
+        updateProject({ ...editing, name: name.trim(), targets, repositories });
+      else addProject({ id: projectId, name: name.trim(), targets, repositories });
+    };
 
-    if (editing) updateProject({ ...editing, name: name.trim(), targets, repositories });
-    else addProject({ id: newProjectId(), name: name.trim(), targets, repositories });
+    if (changes.length === 0) {
+      save();
+
+      return;
+    }
+
+    setSaving(true);
+    setVariableFailure(null);
+    void applyVariables({ projectId, changes }).then((outcome) => {
+      setSaving(false);
+
+      if (outcome.isSaved) {
+        save();
+
+        return;
+      }
+
+      setVariableFailure(
+        t(
+          VARIABLE_FAILURE_KEYS[outcome.failure.reason],
+          'name' in outcome.failure ? { name: outcome.failure.name } : {},
+        ),
+      );
+    });
   };
 
   const onDelete = () => {
@@ -170,7 +220,7 @@ export const useProjectModalViewModel = () => {
       ? t('PROJECT.EDIT_SUBTITLE', { name: editing.name })
       : t('PROJECT.NEW_SUBTITLE'),
     confirmLabel: isEditing ? t('PROJECT.SAVE') : t('PROJECT.CREATE'),
-    canConfirm: blocking === undefined,
+    canConfirm: blocking === undefined && !isSaving,
     deleteQuestion:
       own.length === 0
         ? t('PROJECT.DELETE_QUESTION_EMPTY')
@@ -200,9 +250,15 @@ export const useProjectModalViewModel = () => {
               link: { label: t('PROJECT.IOS_LINK'), url: SETUP_LINKS.xcode },
             },
           } satisfies ITargetLock),
-    footerHint: blocking,
+    footerHint: blocking ?? variableFailure ?? undefined,
     onNameChange: setName,
     onRepositoriesChange: setRepositories,
+    variables,
+    savedVariables,
+    onVariablesChange: (changed: IVariableDraft[]) => {
+      setVariableFailure(null);
+      setVariables(changed);
+    },
     onUrlChange: setUrl,
     onPickApk: () => {
       void Files.pick('apk').then((picked) => {

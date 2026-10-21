@@ -1,0 +1,24 @@
+.variable-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+  padding: var(--space-5);
+  border: 1px solid var(--lime);
+  border-radius: var(--radius-md);
+  background: var(--raise);
+  box-shadow: 0 0 0 3px var(--lime-soft);
+}
+
+.variable-editor__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.variable-editor__problem {
+  flex: 1;
+  min-width: 0;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+}

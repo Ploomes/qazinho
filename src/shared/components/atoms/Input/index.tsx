@@ -12,6 +12,7 @@ export const Input: React.FC<IInputProps> = (props) => {
       value={props.value}
       placeholder={props.placeholder}
       aria-label={props.label}
+      autoFocus={props.isAutoFocused}
       onChange={onInputChange}
     />
   );

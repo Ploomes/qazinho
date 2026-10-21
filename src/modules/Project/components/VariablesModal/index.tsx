@@ -45,6 +45,8 @@ export const VariablesModal: React.FC = () => {
               value={row.value}
               valuePlaceholder={valuePlaceholder}
               note={row.note}
+              isNameFocused={false}
+              isValueFocused={row.isValueFocused}
               onName={row.onName}
               onDescription={row.onDescription}
               onValue={row.onValue}
