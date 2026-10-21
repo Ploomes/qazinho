@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAppViewModel } from '@/app/hooks/useAppViewModel';
 import { i18n } from '@/languages';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useSettingsStore } from '@/store';
+import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 describe('useAppViewModel', () => {
   beforeEach(() => {
@@ -98,6 +98,31 @@ describe('useAppViewModel', () => {
 
     expect(result.current.isSettings).toBe(true);
     expect(result.current.isWelcome).toBe(false);
+  });
+
+  /**
+   * With the device panel shut, the Estagiário's button sat a pixel from the chat's composer,
+   * where a click meant for one could land on the other.
+   */
+  it("makes room beside the Estagiário's button while the device panel is shut, and none once it opens", () => {
+    useAppStore.setState({
+      screen: 'workspace',
+      projects: [{ id: 'p1', name: 'Shop', targets: [], repositories: [] }],
+    });
+    useWorkspaceStore.setState({ isDevicePanelOpen: false });
+
+    const { result } = renderHook(() => useAppViewModel());
+
+    expect(result.current.shellStyle).toMatchObject({
+      '--dock-room': '42px',
+      '--dock-lift': '76px',
+    });
+
+    act(() => {
+      useWorkspaceStore.setState({ isDevicePanelOpen: true });
+    });
+
+    expect(result.current.shellStyle).toMatchObject({ '--dock-room': '0px' });
   });
 
   it('hides the app sidebar while settings take the whole window', () => {

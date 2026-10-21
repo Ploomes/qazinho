@@ -1,6 +1,11 @@
 import type { CSSProperties } from 'react';
 import { useEffect } from 'react';
-import { useAppActions, useAssistantEvents } from '@/modules/Assistant';
+import {
+  ASSISTANT_DOCK,
+  dockRoomOf,
+  useAppActions,
+  useAssistantEvents,
+} from '@/modules/Assistant';
 import { useBuildEvents } from '@/modules/Build';
 import { AppWindow } from '@/services';
 import { SHELL } from '@/shared/constants';
@@ -12,7 +17,7 @@ import {
   useRunEvents,
   useRunTicker,
 } from '@/shared/hooks';
-import { useAppStore, useSettingsStore } from '@/store';
+import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 export const useAppViewModel = () => {
   const theme = useAppStore((state) => state.theme);
@@ -23,6 +28,7 @@ export const useAppViewModel = () => {
   const replay = useAppStore((state) => state.replay);
   const runNotice = useAppStore((state) => state.runNotice);
   const hasOnboarded = useSettingsStore((state) => state.hasOnboarded);
+  const isDeviceOpen = useWorkspaceStore((state) => state.isDevicePanelOpen);
 
   useArchive();
   useLanguage();
@@ -43,7 +49,11 @@ export const useAppViewModel = () => {
   }, [hasOnboarded]);
 
   return {
-    shellStyle: { '--sidebar-width': `${String(SHELL.sidebarWidth)}px` } as CSSProperties,
+    shellStyle: {
+      '--sidebar-width': `${String(SHELL.sidebarWidth)}px`,
+      '--dock-room': `${String(dockRoomOf({ isWorkspace: screen === 'workspace' && projects.length > 0, isDeviceOpen }))}px`,
+      '--dock-lift': `${String(ASSISTANT_DOCK.inset + ASSISTANT_DOCK.buttonSize)}px`,
+    } as CSSProperties,
     screen,
     modal,
     hasMedia: media !== null,

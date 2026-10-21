@@ -2,6 +2,7 @@ export * from './appSnapshotOf';
 export * from './describeBug';
 export * from './describeRun';
 export * from './describeWorkspace';
+export * from './dockRoomOf';
 export * from './findByRef';
 export * from './isConfirmCall';
 export * from './openRoundOf';

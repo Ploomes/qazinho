@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  margin-right: max(0px, var(--dock-room, 0px) - var(--space-6) - var(--scrollbar-size));
+  transition: margin-right var(--dur-slow) var(--ease);
 }
 
 .composer__field {
