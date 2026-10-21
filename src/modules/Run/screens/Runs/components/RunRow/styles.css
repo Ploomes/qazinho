@@ -4,6 +4,7 @@
   align-items: center;
   gap: var(--space-4);
   min-width: 0;
+  container: run-row / inline-size;
 }
 
 .run-row__id {
@@ -61,4 +62,16 @@
   color: var(--ink3);
   font: var(--font-mono-sm);
   white-space: nowrap;
+}
+
+@container run-row (width < 520px) {
+  .run-row__facts {
+    display: none;
+  }
+}
+
+@container run-row (width < 400px) {
+  .run-row__when {
+    display: none;
+  }
 }

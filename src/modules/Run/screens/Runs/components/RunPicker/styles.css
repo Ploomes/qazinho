@@ -17,6 +17,7 @@
     border-color var(--dur-fast) var(--ease),
     background-color var(--dur-fast) var(--ease),
     box-shadow var(--dur-fast) var(--ease);
+  container: run-picker / inline-size;
 }
 
 .run-picker__trigger:hover {
@@ -46,6 +47,12 @@
 .run-picker__trigger:hover .run-picker__label,
 .run-picker__trigger--open .run-picker__label {
   background: var(--line);
+}
+
+@container run-picker (width < 720px) {
+  .run-picker__label {
+    display: none;
+  }
 }
 
 .run-picker__handle {
