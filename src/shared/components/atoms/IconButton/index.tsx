@@ -1,9 +1,10 @@
 import type { IIconButtonProps } from './types';
+import { Icon } from '@/shared/components/atoms/Icon';
 import { useIconButtonViewModel } from './hooks';
 import './styles.css';
 
 export const IconButton: React.FC<IIconButtonProps> = (props) => {
-  const { className, onIconClick } = useIconButtonViewModel(props);
+  const { className, iconSize, onIconClick } = useIconButtonViewModel(props);
 
   return (
     <button
@@ -12,7 +13,7 @@ export const IconButton: React.FC<IIconButtonProps> = (props) => {
       aria-label={props.label}
       onClick={onIconClick}
     >
-      <span aria-hidden="true">{props.glyph}</span>
+      <Icon name={props.icon} size={iconSize} />
     </button>
   );
 };

@@ -54,7 +54,12 @@ export const Lightbox: React.FC = () => {
                 <span aria-hidden="true">{saveGlyph}</span> {saveLabel}
               </Button>
             )}
-            <IconButton glyph="✕" label={t('COMMON.CLOSE')} size="sm" onClick={onClose} />
+            <IconButton
+              icon="close"
+              label={t('COMMON.CLOSE')}
+              size="sm"
+              onClick={onClose}
+            />
           </span>
         </header>
 

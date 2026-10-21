@@ -134,7 +134,7 @@ export const DevicePanel: React.FC = () => {
                     )}
                   </AnimatePresence>
                   <IconButton
-                    glyph="→|"
+                    icon="collapse"
                     label={t('DEVICE.HIDE')}
                     size="sm"
                     onClick={onToggle}

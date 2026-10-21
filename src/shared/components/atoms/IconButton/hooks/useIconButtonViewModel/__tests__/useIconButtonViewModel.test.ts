@@ -3,13 +3,20 @@ import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { useIconButtonViewModel } from '@/shared/components/atoms/IconButton/hooks/useIconButtonViewModel';
 
-const PROPS = { glyph: '✕', label: 'Close', onClick: vi.fn() };
+const PROPS = { icon: 'close' as const, label: 'Close', onClick: vi.fn() };
 
 describe('useIconButtonViewModel', () => {
   it('is the medium square unless another size is asked for', () => {
     const { result } = renderHook(() => useIconButtonViewModel(PROPS));
 
     expect(result.current.className).toBe('icon-button icon-button--md');
+    expect(result.current.iconSize).toBe(16);
+  });
+
+  it('draws a smaller icon in the small button', () => {
+    const { result } = renderHook(() => useIconButtonViewModel({ ...PROPS, size: 'sm' }));
+
+    expect(result.current.iconSize).toBe(14);
   });
 
   it('marks itself active, because a popover trigger stays lit while it is open', () => {

@@ -70,7 +70,7 @@ export const RepoField: React.FC<IRepoFieldProps> = (props) => {
                     <span className="repo-field__chevron" aria-hidden="true" />
                   </button>
                   <IconButton
-                    glyph="✕"
+                    icon="close"
                     size="sm"
                     label={row.removeLabel}
                     onClick={() => {

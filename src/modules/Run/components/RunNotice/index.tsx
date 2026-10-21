@@ -62,7 +62,7 @@ export const RunNotice: React.FC = () => {
       </div>
 
       <span className="run-notice__close">
-        <IconButton glyph="✕" label={closeLabel} size="sm" onClick={onClose} />
+        <IconButton icon="close" label={closeLabel} size="sm" onClick={onClose} />
       </span>
       <span
         className="run-notice__time"

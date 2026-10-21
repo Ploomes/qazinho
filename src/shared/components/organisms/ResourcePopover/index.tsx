@@ -23,7 +23,7 @@ export const ResourcePopover: React.FC = () => {
         <span className="resource-popover__header-note">{header}</span>
         <span className="resource-popover__close">
           <IconButton
-            glyph="✕"
+            icon="close"
             label={t('RESOURCES.CLOSE')}
             size="sm"
             onClick={onClose}

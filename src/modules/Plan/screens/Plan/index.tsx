@@ -90,7 +90,7 @@ export const Plan: React.FC = () => {
                 <div className="plan__export-body">
                   <span className="plan__export-text">{exportNotice}</span>
                   <IconButton
-                    glyph="✕"
+                    icon="close"
                     label={dismissExportLabel}
                     size="sm"
                     onClick={onDismissExport}

@@ -1,5 +1,7 @@
+import type { IconName } from '@/shared/components/atoms/Icon/types';
+
 export interface IIconButtonProps {
-  glyph: string;
+  icon: IconName;
   label: string;
   onClick: () => void;
   size?: 'sm' | 'md';

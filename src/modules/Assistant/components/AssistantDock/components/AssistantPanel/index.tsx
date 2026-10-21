@@ -86,7 +86,7 @@ export const AssistantPanel: React.FC = () => {
                 transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
               >
                 <IconButton
-                  glyph="↺"
+                  icon="replay"
                   label={startOverLabel}
                   size="sm"
                   onClick={onStartOver}
@@ -94,7 +94,7 @@ export const AssistantPanel: React.FC = () => {
               </motion.span>
             )}
           </AnimatePresence>
-          <IconButton glyph="✕" label={closeLabel} size="sm" onClick={onClose} />
+          <IconButton icon="close" label={closeLabel} size="sm" onClick={onClose} />
         </span>
       </header>
 

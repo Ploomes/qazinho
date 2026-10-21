@@ -105,7 +105,7 @@ export const VariableField: React.FC<IVariableFieldProps> = (props) => {
                       <span aria-label={sealedLabel}>••••••</span>
                     </span>
                     <IconButton
-                      glyph="✎"
+                      icon="edit"
                       size="sm"
                       label={row.editLabel}
                       onClick={() => {
@@ -113,7 +113,7 @@ export const VariableField: React.FC<IVariableFieldProps> = (props) => {
                       }}
                     />
                     <IconButton
-                      glyph="✕"
+                      icon="close"
                       size="sm"
                       label={row.removeLabel}
                       onClick={() => {
