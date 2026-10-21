@@ -68,9 +68,9 @@ export const en = {
     EXPLORE_TIP:
       'The agent goes through the app on its own for {{minutes}} minutes, notes each screen, files what is broken and suggests a plan.',
     RUN_WITH_AGENT_HINT:
-      'The agent walks and judges every case again, even the ones that passed. Slower, and it spends tokens.',
+      'The agent walks and judges every case again, even the ones that passed. It takes longer and uses more tokens.',
     RUN_PLAN_HINT:
-      'What passed before runs again without AI, in seconds. The agent walks and judges the rest.',
+      'What passed before runs again without AI: in seconds, and with no tokens spent. The agent walks and judges the rest.',
     RUN_CHOICES: 'Choose how to run',
     TAB_CHAT: 'Chat',
     TAB_PLAN: 'Plan',

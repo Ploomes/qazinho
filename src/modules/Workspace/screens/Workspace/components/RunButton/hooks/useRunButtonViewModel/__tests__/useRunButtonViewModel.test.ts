@@ -99,12 +99,12 @@ describe('useRunButtonViewModel', () => {
 
       expect(plan).toMatchObject({
         title: 'Run plan',
-        hint: 'What passed before runs again without AI, in seconds. The agent walks and judges the rest.',
+        hint: 'What passed before runs again without AI: in seconds, and with no tokens spent. The agent walks and judges the rest.',
         combo: '⌘↵',
       });
       expect(agent).toMatchObject({
         title: 'Run everything with the agent',
-        hint: 'The agent walks and judges every case again, even the ones that passed. Slower, and it spends tokens.',
+        hint: 'The agent walks and judges every case again, even the ones that passed. It takes longer and uses more tokens.',
         combo: null,
       });
     });

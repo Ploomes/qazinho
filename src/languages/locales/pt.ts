@@ -70,9 +70,9 @@ export const pt: typeof en = {
     EXPLORE_TIP:
       'O agente percorre o app sozinho por {{minutes}} minutos, anota cada tela, abre bug do que está quebrado e sugere um plano.',
     RUN_WITH_AGENT_HINT:
-      'O agente anda e julga cada caso de novo, mesmo os que já passaram. Mais lento, e gasta tokens.',
+      'O agente anda e julga cada caso de novo, até os que já passaram. Leva mais tempo e usa mais tokens.',
     RUN_PLAN_HINT:
-      'O que já passou roda de novo sem IA, em segundos. O resto, o agente anda e julga.',
+      'O que já passou roda de novo sem IA: em segundos e sem gastar tokens. O resto, o agente anda e julga.',
     RUN_CHOICES: 'Escolher como rodar',
     TAB_CHAT: 'Chat',
     TAB_PLAN: 'Plano',
