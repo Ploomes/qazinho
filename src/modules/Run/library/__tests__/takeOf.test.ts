@@ -19,7 +19,32 @@ const TIMELINE: IReplayTimeline = {
       verdict: 'failed',
       fromMs: 8_000,
       toMs: 19_500,
-      steps: [],
+      steps: [
+        {
+          number: 1,
+          action: 'Open the cart',
+          verdict: 'passed',
+          bugId: null,
+          fromMs: 8_000,
+          toMs: 12_000,
+        },
+        {
+          number: 2,
+          action: 'Apply the coupon',
+          verdict: 'failed',
+          bugId: 'BUG-01',
+          fromMs: 12_000,
+          toMs: 15_000,
+        },
+        {
+          number: 3,
+          action: 'Scroll to the footer',
+          verdict: 'passed',
+          bugId: null,
+          fromMs: 15_000,
+          toMs: 19_500,
+        },
+      ],
     },
   ],
   marks: [
@@ -47,6 +72,14 @@ const TIMELINE: IReplayTimeline = {
       caseId: 'TC-02',
       stepNumber: 3,
     },
+    {
+      bugId: 'BUG-04',
+      title: 'Logo',
+      severity: 'low',
+      atMs: 3_000,
+      caseId: 'TC-01',
+      stepNumber: 4,
+    },
   ],
 };
 
@@ -66,6 +99,24 @@ describe('takeOf', () => {
     ).toEqual({
       fromMs: 11_000,
       toMs: 16_500,
+    });
+  });
+
+  it('plays a bug filed mid-step on until that step ended, where the screen may only show it later', () => {
+    expect(
+      takeOf({ timeline: TIMELINE, focus: { kind: 'bug', bugId: 'BUG-02' } }),
+    ).toEqual({
+      fromMs: 8_000,
+      toMs: 13_500,
+    });
+  });
+
+  it('plays a bug whose step the video does not place to a moment after it', () => {
+    expect(
+      takeOf({ timeline: TIMELINE, focus: { kind: 'bug', bugId: 'BUG-04' } }),
+    ).toEqual({
+      fromMs: 1_000,
+      toMs: 4_500,
     });
   });
 
