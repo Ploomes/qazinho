@@ -1,6 +1,7 @@
 import type {
   AgentSignInProgress,
   IAgentEvent,
+  IAgentLimits,
   IAskAgent,
   IChatTurn,
 } from '@/shared/types';
@@ -25,6 +26,10 @@ export class Agent {
 
   public static async stop(workspaceId: string): Promise<void> {
     await window.qazinho?.stopAgent(workspaceId);
+  }
+
+  public static async limits(agentId: string): Promise<IAgentLimits | null> {
+    return (await window.qazinho?.readAgentLimits(agentId)) ?? null;
   }
 
   public static onEvent(listener: (event: IAgentEvent) => void): () => void {

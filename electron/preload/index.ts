@@ -2,6 +2,7 @@ import type {
   AgentSignInProgress,
   GithubSignInProgress,
   IAgentEvent,
+  IAgentLimits,
   IAppToolAnswer,
   IAppToolRequest,
   IAssistantAsk,
@@ -61,6 +62,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.askAgent, ask) as Promise<IChatTurn>,
   stopAgent: (workspaceId: string) =>
     ipcRenderer.invoke(CHANNELS.stopAgent, workspaceId) as Promise<void>,
+  readAgentLimits: (agentId: string) =>
+    ipcRenderer.invoke(CHANNELS.readAgentLimits, agentId) as Promise<IAgentLimits | null>,
   onAgentEvent: (listener: (event: IAgentEvent) => void) => {
     const forward = (_: unknown, event: IAgentEvent) => {
       listener(event);

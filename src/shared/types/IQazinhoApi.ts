@@ -1,6 +1,7 @@
 import type { AgentSignInProgress } from './AgentSignInProgress';
 import type { GithubSignInProgress } from './GithubSignInProgress';
 import type { IAgentEvent } from './IAgentEvent';
+import type { IAgentLimits } from './IAgentLimits';
 import type { IAppToolAnswer } from './IAppToolAnswer';
 import type { IAppToolRequest } from './IAppToolRequest';
 import type { IAskAgent } from './IAskAgent';
@@ -51,6 +52,7 @@ export interface IQazinhoApi {
   detectDeviceTools: () => Promise<IDeviceTools>;
   askAgent: (ask: IAskAgent) => Promise<IChatTurn>;
   stopAgent: (workspaceId: string) => Promise<void>;
+  readAgentLimits: (agentId: string) => Promise<IAgentLimits | null>;
   onAgentEvent: (listener: (event: IAgentEvent) => void) => () => void;
   signInAgent: (agentId: string) => Promise<AgentSignInProgress>;
   cancelAgentSignIn: (agentId: string) => Promise<void>;

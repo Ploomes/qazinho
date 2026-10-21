@@ -30,9 +30,10 @@ import type {
   WindowFit,
 } from '@/shared/types';
 import { execFile } from 'node:child_process';
-import { copyFile, stat, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, stat, writeFile } from 'node:fs/promises';
 import { homedir, tmpdir } from 'node:os';
 import { extname, join } from 'node:path';
+import { promisify } from 'node:util';
 import {
   app,
   BrowserWindow,
@@ -67,6 +68,7 @@ import {
   RunAlerts,
   RunRecorder,
   SetupInstaller,
+  UsageReader,
 } from '@/main/classes';
 import { APP_BUILDER } from '@/main/classes/builds/AppBuilder/constants';
 import { buildIdOf } from '@/main/classes/builds/AppBuilder/library';
@@ -181,6 +183,20 @@ const login = new AgentLogin({
   onProgress: (progress) =>
     broadcast({ channel: CHANNELS.agentSignInEvent, event: progress }),
   folder: PATHS.agentHome,
+});
+const usageReader = new UsageReader({
+  findAgent: (agentId) => findCommand(agentId),
+  folder: PATHS.agentHome,
+  exec: async ({ command, args, cwd, timeoutMs }) => {
+    await mkdir(cwd, { recursive: true });
+
+    const { stdout } = await promisify(execFile)(command, [...args], {
+      cwd,
+      timeout: timeoutMs,
+    });
+
+    return stdout;
+  },
 });
 const vault = new IntegrationVault({
   file: PATHS.integrations,
@@ -609,6 +625,9 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.cancelAgentSignIn, (_event, agentId: string) => {
     login.cancel(agentId);
   });
+  ipcMain.handle(CHANNELS.readAgentLimits, (_event, agentId: string) =>
+    usageReader.read(agentId),
+  );
   ipcMain.handle(CHANNELS.stopAgent, (_event, workspaceId: string) => {
     if (!askingChats.has(workspaceId)) return;
 
