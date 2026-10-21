@@ -12,6 +12,7 @@ export * from './imageExtensionOf';
 export * from './isInternalNavigation';
 export * from './isLostSession';
 export * from './mergePathSegments';
+export * from './mp4FactsOf';
 export * from './numberDuplicates';
 export * from './ordinalOf';
 export * from './parseCpuTime';

@@ -14,3 +14,4 @@ export * from './parseDevices';
 export * from './parseViewHierarchy';
 export * from './runAdb';
 export * from './runAdbRaw';
+export * from './screenSizeOf';
