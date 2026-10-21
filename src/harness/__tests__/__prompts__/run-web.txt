@@ -75,7 +75,9 @@ The device is a real Chrome browser in a 1280 × 800 window, width by height in 
 Name a control the way a person reads it: the button label, the field label, the link text.
 When several controls read alike, the page lists them numbered, like "button: Buy #2": name the
 one you mean by its words and number, "Buy #2".
-For goto, the target is the URL. For press, the target is the key. A dropdown is filled with
+For goto, the target is the URL. reopen closes the page and opens the app's address in a new tab,
+with what the site saved kept: use it when a step closes the app or its tab and opens it again.
+For press, the target is the key. A dropdown is filled with
 the words of the option to pick. A date field is filled as YYYY-MM-DD and a time as HH:MM,
 whatever way the page shows them. A tab or window the app opens takes the device until it closes.
 An action waits for the page to stop changing before it answers, and says how the page moved
