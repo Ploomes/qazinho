@@ -1,4 +1,3 @@
-/** What the QA types to connect a tracker. It crosses to main once and never comes back. */
+/** What connecting a tracker takes: nothing for GitHub, which goes through the QA's own gh; for Jira, what the QA typed. */
 export type IConnectIntegration =
-  | { id: 'github'; token: string }
-  | { id: 'jira'; site: string; email: string; token: string };
+  { id: 'github' } | { id: 'jira'; site: string; email: string; token: string };

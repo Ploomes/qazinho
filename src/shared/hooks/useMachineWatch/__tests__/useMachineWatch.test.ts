@@ -3,6 +3,7 @@ import type { IAgentEvent, ISetupEvent } from '@/shared/types';
 import { renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useMachineWatch } from '@/shared/hooks/useMachineWatch';
 import { MACHINE_WATCH } from '@/shared/hooks/useMachineWatch/constants';
 import { useMachineStore, useSetupStore, useWorkspaceStore } from '@/store';
@@ -39,47 +40,14 @@ beforeEach(() => {
   });
 
   window.qazinho = {
-    platform: 'darwin',
+    ...fakeQazinhoApi('darwin'),
     detectAgents: vi.fn().mockResolvedValue(AGENTS),
     readResources: vi.fn().mockResolvedValue(RESOURCES),
     detectDeviceTools: vi.fn().mockResolvedValue(TOOLS),
-    askAgent: vi.fn(),
-    stopAgent: vi.fn(),
     onAgentEvent: vi.fn().mockReturnValue(() => undefined),
-    signInAgent: vi.fn(),
-    cancelAgentSignIn: vi.fn(),
-    sendAgentSignInCode: vi.fn(),
-    onAgentSignIn: vi.fn().mockReturnValue(() => undefined),
-    startRun: vi.fn(),
-    pauseRun: vi.fn(),
-    stopRun: vi.fn(),
-    runsInFlight: vi.fn(),
-    resizeDevice: vi.fn(),
-    focusDevice: vi.fn(),
-    onRunEvent: vi.fn().mockReturnValue(() => undefined),
-    replayUrl: vi.fn(),
-    saveReplay: vi.fn(),
-    alertRunEnded: vi.fn(),
-    onOpenRun: vi.fn().mockReturnValue(() => undefined),
     readState: vi.fn().mockResolvedValue({ projects: '[]', workspaces: [] }),
-    saveProjects: vi.fn(),
-    saveWorkspace: vi.fn(),
-    removeWorkspace: vi.fn(),
-    readShot: vi.fn().mockResolvedValue(null),
-    saveShot: vi.fn(),
-    pickFile: vi.fn().mockResolvedValue(null),
-    fitWindow: vi.fn(),
-    checkMachine: vi.fn(),
-    installTool: vi.fn(),
     onSetupEvent: vi.fn().mockReturnValue(() => undefined),
     listIntegrations: vi.fn().mockResolvedValue([]),
-    connectIntegration: vi.fn(),
-    disconnectIntegration: vi.fn(),
-    listMcpServers: vi.fn(),
-    connectMcpServer: vi.fn(),
-    cancelMcpSignIn: vi.fn(),
-    onMcpSignIn: vi.fn().mockReturnValue(() => undefined),
-    removeMcpServer: vi.fn(),
   };
 });
 

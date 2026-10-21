@@ -43,4 +43,8 @@ export const CHANNELS = {
   removeMcpServer: 'mcp:remove',
   connectIntegration: 'integrations:connect',
   disconnectIntegration: 'integrations:disconnect',
+  githubStatus: 'github:status',
+  signInGithub: 'github:sign-in',
+  cancelGithubSignIn: 'github:sign-in-cancel',
+  githubSignInEvent: 'github:sign-in-event',
 } as const;

@@ -72,6 +72,17 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     listIntegrations: () => Promise.resolve([]),
     connectIntegration: () => Promise.resolve({ isConnected: false, error: 'offline' }),
     disconnectIntegration: () => Promise.resolve(),
+    githubStatus: () =>
+      Promise.resolve({
+        cli: { isFound: false, path: null },
+        account: null,
+        missingScopes: [],
+        failure: 'no-cli',
+      }),
+    signInGithub: () =>
+      Promise.resolve({ steps: ['code', 'browser', 'account'], phase: 'cancelled' }),
+    cancelGithubSignIn: () => Promise.resolve(),
+    onGithubSignIn: () => () => undefined,
     listMcpServers: () => Promise.resolve([{ id: 'figma', state: 'missing' }]),
     connectMcpServer: (signIn) =>
       Promise.resolve({ target: signIn.target, steps: ['check'], phase: 'connected' }),

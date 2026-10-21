@@ -1,6 +1,7 @@
 import type { AppLook } from '@/harness';
 import type {
   AgentSignInProgress,
+  GithubSignInProgress,
   IAgentEvent,
   IAgentTurn,
   IAskAgent,
@@ -44,6 +45,7 @@ import {
   AppPeek,
   Archive,
   DeviceToolDetector,
+  GithubCli,
   IntegrationVault,
   LiveStream,
   ProcessOwners,
@@ -116,19 +118,33 @@ const alerts = new RunAlerts((run) => {
 
 function broadcast(props: {
   channel: string;
-  event: IAgentEvent | IRunEvent | ISetupEvent | McpSignInProgress | AgentSignInProgress;
+  event:
+    | IAgentEvent
+    | IRunEvent
+    | ISetupEvent
+    | McpSignInProgress
+    | AgentSignInProgress
+    | GithubSignInProgress;
 }): void {
   for (const open of appWindows()) open.webContents.send(props.channel, props.event);
 }
 
+async function commandDirectories(): Promise<string[]> {
+  return searchDirectories({
+    appPath: process.env.PATH,
+    shellPath: await hydrateShellPath(),
+    home: homedir(),
+  });
+}
+
 const installer = new SetupInstaller({
   onEvent: (event) => broadcast({ channel: CHANNELS.setupEvent, event }),
-  directories: async () =>
-    searchDirectories({
-      appPath: process.env.PATH,
-      shellPath: await hydrateShellPath(),
-      home: homedir(),
-    }),
+  directories: commandDirectories,
+});
+const github = new GithubCli({
+  directories: commandDirectories,
+  onProgress: (progress) =>
+    broadcast({ channel: CHANNELS.githubSignInEvent, event: progress }),
 });
 const mcp = new AgentMcp({
   findAgent: (agentId) => findCommand(agentId),
@@ -155,6 +171,7 @@ const vault = new IntegrationVault({
     decrypt: (sealed) => safeStorage.decryptString(sealed),
   },
   fetcher: (url, init) => fetch(url, init),
+  github: () => github.status(),
 });
 
 const agentRunner = new AgentRunner({
@@ -520,6 +537,11 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.disconnectIntegration, (_event, id: IntegrationId) =>
     vault.disconnect(id),
   );
+  ipcMain.handle(CHANNELS.githubStatus, () => github.status());
+  ipcMain.handle(CHANNELS.signInGithub, () => github.signIn());
+  ipcMain.handle(CHANNELS.cancelGithubSignIn, () => {
+    github.cancelSignIn();
+  });
   ipcMain.handle(CHANNELS.listMcpServers, (_event, agentId: string) => mcp.list(agentId));
   ipcMain.handle(CHANNELS.connectMcpServer, (_event, signIn: IMcpSignIn) =>
     mcp.connect(signIn),
@@ -553,6 +575,7 @@ app.on('will-quit', (event) => {
   tools.close();
   mcp.close();
   login.close();
+  github.cancelSignIn();
 });
 
 app.on('window-all-closed', () => {

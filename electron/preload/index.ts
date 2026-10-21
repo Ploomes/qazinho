@@ -1,9 +1,11 @@
 import type {
   AgentSignInProgress,
+  GithubSignInProgress,
   IAgentEvent,
   IChatTurn,
   IAskAgent,
   IConnectIntegration,
+  IGithubStatus,
   IConnectResult,
   IDetectedAgent,
   IDeviceTools,
@@ -156,6 +158,22 @@ const api: IQazinhoApi = {
     ) as Promise<IConnectResult>,
   disconnectIntegration: (id: IntegrationId) =>
     ipcRenderer.invoke(CHANNELS.disconnectIntegration, id) as Promise<void>,
+  githubStatus: () => ipcRenderer.invoke(CHANNELS.githubStatus) as Promise<IGithubStatus>,
+  signInGithub: () =>
+    ipcRenderer.invoke(CHANNELS.signInGithub) as Promise<GithubSignInProgress>,
+  cancelGithubSignIn: () =>
+    ipcRenderer.invoke(CHANNELS.cancelGithubSignIn) as Promise<void>,
+  onGithubSignIn: (listener: (progress: GithubSignInProgress) => void) => {
+    const forward = (_: unknown, progress: GithubSignInProgress) => {
+      listener(progress);
+    };
+
+    ipcRenderer.on(CHANNELS.githubSignInEvent, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.githubSignInEvent, forward);
+    };
+  },
   listMcpServers: (agentId: string) =>
     ipcRenderer.invoke(CHANNELS.listMcpServers, agentId) as Promise<IMcpServerStatus[]>,
   connectMcpServer: (signIn: IMcpSignIn) =>

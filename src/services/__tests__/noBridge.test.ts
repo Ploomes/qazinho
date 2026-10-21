@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from 'vitest';
 import { i18n } from '@/languages';
-import { Agent, Integrations, Mcp, Run, Setup } from '@/services';
+import { Agent, Github, Integrations, Mcp, Run, Setup } from '@/services';
 
 /**
  * The page opened with no bridge, in a plain browser, has nothing to ask. Each service says so
@@ -38,7 +38,7 @@ describe('a page with no bridge', () => {
     const said = 'O QAzinho não está falando com a máquina. Reinicie o app.';
 
     expect(await Agent.ask(ASK)).toMatchObject({ text: said });
-    expect(await Integrations.connect({ id: 'github', token: 'ghp_x' })).toEqual({
+    expect(await Integrations.connect({ id: 'github' })).toEqual({
       isConnected: false,
       error: said,
     });
@@ -47,6 +47,11 @@ describe('a page with no bridge', () => {
       error: said,
     });
     expect(await Setup.install('claude-code')).toMatchObject({ error: said });
+  });
+
+  it('has no GitHub CLI to reach GitHub through, and signs nothing in', async () => {
+    expect(await Github.status()).toMatchObject({ account: null, failure: 'no-cli' });
+    expect(await Github.signIn()).toMatchObject({ phase: 'failed', failure: 'missing' });
   });
 
   it('has no recording to play or to save', async () => {

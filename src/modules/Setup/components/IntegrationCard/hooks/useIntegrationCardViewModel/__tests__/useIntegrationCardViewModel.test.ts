@@ -17,6 +17,15 @@ const CONNECTED = {
   connectedAt: '2026-09-16T12:00:00.000Z',
 };
 
+const JIRA_CONNECTED = {
+  id: 'jira' as const,
+  account: 'Ana QA',
+  site: 'https://acme.atlassian.net',
+  connectedAt: '2026-09-16T12:00:00.000Z',
+};
+
+const JIRA_TYPED = { site: 'acme.atlassian.net', email: 'ana@acme.test', token: 't0k' };
+
 beforeEach(() => {
   useSetupStore.setState({ integrations: [] });
   useSettingsStore.setState({ language: 'en' });
@@ -41,14 +50,18 @@ describe('useIntegrationCardViewModel', () => {
   describe('onAction', () => {
     it('opens the form of a tracker that is not connected', async () => {
       const { result } = renderHook(() =>
-        useIntegrationCardViewModel({ integration: GITHUB }),
+        useIntegrationCardViewModel({ integration: JIRA }),
       );
 
       await act(() => result.current.onAction());
 
       expect(result.current.isOpen).toBe(true);
       expect(result.current.hasAction).toBe(false);
-      expect(result.current.fields.map(({ id }) => id)).toEqual(['token']);
+      expect(result.current.fields.map(({ id }) => id)).toEqual([
+        'site',
+        'email',
+        'token',
+      ]);
     });
 
     it('disconnects a connected tracker, on the machine and on screen', async () => {
@@ -69,22 +82,23 @@ describe('useIntegrationCardViewModel', () => {
     it('connects with what was typed, and shows the account it came back as', async () => {
       window.qazinho.connectIntegration = vi
         .fn()
-        .mockResolvedValue({ isConnected: true, status: CONNECTED });
+        .mockResolvedValue({ isConnected: true, status: JIRA_CONNECTED });
       const { result } = renderHook(() =>
-        useIntegrationCardViewModel({ integration: GITHUB }),
+        useIntegrationCardViewModel({ integration: JIRA }),
       );
 
       await act(() => result.current.onAction());
-      typeInto(result, { token: 'ghp_abc' });
+      typeInto(result, JIRA_TYPED);
       await act(() => result.current.onConnect());
 
       expect(window.qazinho.connectIntegration).toHaveBeenCalledWith({
-        id: 'github',
-        token: 'ghp_abc',
+        id: 'jira',
+        ...JIRA_TYPED,
       });
       expect(result.current.isConnected).toBe(true);
       expect(result.current.rows).toEqual([
-        { label: 'account', value: 'octoqa' },
+        { label: 'account', value: 'Ana QA' },
+        { label: 'site', value: 'https://acme.atlassian.net' },
         { label: 'connected on', value: 'Sep 16, 2026' },
       ]);
     });
@@ -94,11 +108,11 @@ describe('useIntegrationCardViewModel', () => {
         .fn()
         .mockResolvedValue({ isConnected: false, error: 'Bad token.' });
       const { result } = renderHook(() =>
-        useIntegrationCardViewModel({ integration: GITHUB }),
+        useIntegrationCardViewModel({ integration: JIRA }),
       );
 
       await act(() => result.current.onAction());
-      typeInto(result, { token: 'nope' });
+      typeInto(result, JIRA_TYPED);
       await act(() => result.current.onConnect());
 
       expect(result.current.error).toBe('Bad token.');
@@ -125,10 +139,10 @@ describe('useIntegrationCardViewModel', () => {
         .fn()
         .mockResolvedValue({ isConnected: false, error: 'Bad token.' });
       const { result } = renderHook(() =>
-        useIntegrationCardViewModel({ integration: GITHUB }),
+        useIntegrationCardViewModel({ integration: JIRA }),
       );
 
-      typeInto(result, { token: 'nope' });
+      typeInto(result, JIRA_TYPED);
       await act(() => result.current.onConnect());
       typeInto(result, { token: 'nope2' });
 

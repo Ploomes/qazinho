@@ -7,6 +7,7 @@ import type {
 } from '@/shared/types';
 import type { ChildProcess } from 'node:child_process';
 import { spawn } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { mkdir } from 'node:fs/promises';
 import { findOnPath, stripAnsi } from '@/main/library';
 import { GITHUB_CLI } from './constants';
@@ -24,6 +25,7 @@ export class GithubCli {
   private readonly directories: () => Promise<string[]>;
   private readonly onProgress: (progress: GithubSignInProgress) => void;
   private signingIn: AbortController | null = null;
+  private readonly found = new Map<string, string>();
 
   public constructor(props: IGithubCli) {
     this.directories = props.directories;
@@ -32,7 +34,7 @@ export class GithubCli {
 
   /** Where the GitHub CLI is on this machine, or null when it is not here. */
   public async find(): Promise<string | null> {
-    return findOnPath({ command: 'gh', directories: await this.directories() });
+    return this.locate('gh');
   }
 
   /** Whether gh is here, whom it is signed in as, and the access QAzinho needs that its login lacks. */
@@ -115,7 +117,7 @@ export class GithubCli {
     if (gh === null)
       return { isOk: false, failure: 'no-cli', httpStatus: null, said: '' };
 
-    const tar = findOnPath({ command: 'tar', directories: await this.directories() });
+    const tar = await this.locate('tar');
 
     await mkdir(props.dir, { recursive: true });
 
@@ -203,6 +205,18 @@ export class GithubCli {
         settle();
       });
     });
+  }
+
+  private async locate(command: string): Promise<string | null> {
+    const known = this.found.get(command);
+
+    if (known !== undefined && existsSync(known)) return known;
+
+    const path = findOnPath({ command, directories: await this.directories() });
+
+    if (path !== null) this.found.set(command, path);
+
+    return path;
   }
 
   private async runSignIn(signal: AbortSignal): Promise<GithubSignInProgress> {

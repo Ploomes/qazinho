@@ -9,15 +9,8 @@ export const INTEGRATIONS: IIntegration[] = [
     logo: github,
     textKey: 'SETUP.GITHUB_TEXT',
     needsKey: 'SETUP.GITHUB_NEEDS',
-    tokenUrl: 'https://github.com/settings/tokens/new?scopes=repo&description=QAzinho',
-    fields: [
-      {
-        id: 'token',
-        labelKey: 'SETUP.FIELD_TOKEN',
-        placeholder: 'ghp_… / github_pat_…',
-        isSecret: true,
-      },
-    ],
+    tokenUrl: 'https://cli.github.com',
+    fields: [],
   },
   {
     id: 'jira',

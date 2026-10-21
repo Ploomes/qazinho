@@ -1,4 +1,5 @@
 import type { AgentSignInProgress } from './AgentSignInProgress';
+import type { GithubSignInProgress } from './GithubSignInProgress';
 import type { IAgentEvent } from './IAgentEvent';
 import type { IAskAgent } from './IAskAgent';
 import type { IChatTurn } from './IChatTurn';
@@ -6,6 +7,7 @@ import type { IConnectIntegration } from './IConnectIntegration';
 import type { IConnectResult } from './IConnectResult';
 import type { IDetectedAgent } from './IDetectedAgent';
 import type { IDeviceTools } from './IDeviceTools';
+import type { IGithubStatus } from './IGithubStatus';
 import type { IInstallResult } from './IInstallResult';
 import type { IIntegrationStatus } from './IIntegrationStatus';
 import type { IMachineCheck } from './IMachineCheck';
@@ -73,6 +75,10 @@ export interface IQazinhoApi {
   listIntegrations: () => Promise<IIntegrationStatus[]>;
   connectIntegration: (connecting: IConnectIntegration) => Promise<IConnectResult>;
   disconnectIntegration: (id: IntegrationId) => Promise<void>;
+  githubStatus: () => Promise<IGithubStatus>;
+  signInGithub: () => Promise<GithubSignInProgress>;
+  cancelGithubSignIn: () => Promise<void>;
+  onGithubSignIn: (listener: (progress: GithubSignInProgress) => void) => () => void;
   listMcpServers: (agentId: string) => Promise<IMcpServerStatus[]>;
   connectMcpServer: (signIn: IMcpSignIn) => Promise<McpSignInProgress>;
   cancelMcpSignIn: (target: IMcpServerTarget) => Promise<void>;

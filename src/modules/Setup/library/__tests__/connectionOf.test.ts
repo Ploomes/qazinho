@@ -2,18 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { connectionOf } from '@/modules/Setup/library';
 
 describe('connectionOf', () => {
-  it('needs only a token for GitHub, trimmed', () => {
-    expect(connectionOf({ id: 'github', values: { token: ' ghp_x \n' } })).toEqual({
-      id: 'github',
-      token: 'ghp_x',
-    });
+  it("needs nothing typed for GitHub, which goes through the QA's own GitHub CLI", () => {
+    expect(connectionOf({ id: 'github', values: {} })).toEqual({ id: 'github' });
   });
 
-  it('needs the site, the email and the token for Jira', () => {
+  it('needs the site, the email and the token for Jira, trimmed', () => {
     expect(
       connectionOf({
         id: 'jira',
-        values: { site: 'acme.atlassian.net', email: 'qa@acme.test', token: 't' },
+        values: { site: ' acme.atlassian.net ', email: 'qa@acme.test', token: 't\n' },
       }),
     ).toEqual({
       id: 'jira',
@@ -27,9 +24,11 @@ describe('connectionOf', () => {
     expect(
       connectionOf({ id: 'jira', values: { site: 'acme.atlassian.net', token: 't' } }),
     ).toBeNull();
-  });
-
-  it('does NOT connect anything without a token', () => {
-    expect(connectionOf({ id: 'github', values: { token: '   ' } })).toBeNull();
+    expect(
+      connectionOf({
+        id: 'jira',
+        values: { site: 'acme.atlassian.net', email: 'qa@acme.test', token: '   ' },
+      }),
+    ).toBeNull();
   });
 });

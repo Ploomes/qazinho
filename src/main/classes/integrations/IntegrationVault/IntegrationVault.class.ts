@@ -7,24 +7,27 @@ import type {
 import type {
   IConnectIntegration,
   IConnectResult,
+  IGithubStatus,
   IIntegrationStatus,
   IntegrationId,
 } from '@/shared/types';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { TRACKER_ERRORS } from './constants';
-import { verifyGithub, verifyJira } from './library';
+import { githubConnectionOf, isCurrentIntegration, verifyJira } from './library';
 
-/** Connects the QA's issue trackers, and keeps their tokens sealed by the OS keychain on this machine. */
+/** Connects the QA's trackers: GitHub through the QA's own gh, Jira with a token sealed by the OS keychain. */
 export class IntegrationVault {
   private readonly file: string;
   private readonly cipher: IVaultCipher;
   private readonly fetcher: Fetcher;
+  private readonly github: () => Promise<IGithubStatus>;
 
   public constructor(props: IIntegrationVault) {
     this.file = props.file;
     this.cipher = props.cipher;
     this.fetcher = props.fetcher;
+    this.github = props.github;
   }
 
   public async list(): Promise<IIntegrationStatus[]> {
@@ -37,7 +40,10 @@ export class IntegrationVault {
 
     const result =
       connecting.id === 'github'
-        ? await verifyGithub({ token: connecting.token, fetcher: this.fetcher })
+        ? githubConnectionOf({
+            status: await this.github(),
+            at: new Date().toISOString(),
+          })
         : await verifyJira({ credentials: connecting, fetcher: this.fetcher });
 
     if (!result.isConnected) return result;
@@ -57,7 +63,9 @@ export class IntegrationVault {
     try {
       const sealed = await readFile(this.file);
 
-      return JSON.parse(this.cipher.decrypt(sealed)) as IStoredIntegration[];
+      return (JSON.parse(this.cipher.decrypt(sealed)) as IStoredIntegration[]).filter(
+        isCurrentIntegration,
+      );
     } catch {
       return [];
     }
