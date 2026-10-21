@@ -2,7 +2,7 @@ import type { ITargetCardProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { LOCK_ICON } from '@/modules/Project/constants';
-import { Button } from '@/shared/components/atoms';
+import { Button, PlatformIcon } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { useTargetCardViewModel } from './hooks';
 import './styles.css';
@@ -11,6 +11,7 @@ import './styles.css';
 export const TargetCard: React.FC<ITargetCardProps> = (props) => {
   const {
     isLocked,
+    className,
     bodyClassName,
     isGuiding,
     guide,
@@ -25,7 +26,7 @@ export const TargetCard: React.FC<ITargetCardProps> = (props) => {
   return (
     <motion.div
       layout
-      className={isLocked ? 'target-card target-card--locked' : 'target-card'}
+      className={className}
       transition={{ layout: { duration: MOTION.duration, ease: MOTION.ease } }}
     >
       <motion.div
@@ -41,8 +42,15 @@ export const TargetCard: React.FC<ITargetCardProps> = (props) => {
         inert={isLocked}
       >
         <div className="target-card__head">
-          <span className="target-card__name">{props.name}</span>
-          <p className="target-card__text">{props.text}</p>
+          {props.platform !== undefined && (
+            <span className="target-card__logo">
+              <PlatformIcon kind={props.platform} size={16} />
+            </span>
+          )}
+          <div className="target-card__words">
+            <span className="target-card__name">{props.name}</span>
+            <p className="target-card__text">{props.text}</p>
+          </div>
         </div>
         <div className="target-card__field">{props.children}</div>
       </motion.div>

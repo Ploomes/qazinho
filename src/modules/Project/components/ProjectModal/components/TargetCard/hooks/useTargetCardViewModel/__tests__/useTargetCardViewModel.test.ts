@@ -20,8 +20,15 @@ describe('useTargetCardViewModel', () => {
     expect(card(null).result.current).toMatchObject({
       isLocked: false,
       isGuiding: false,
+      className: 'target-card',
       bodyClassName: 'target-card__body',
     });
+  });
+
+  it('marks a target this machine cannot reach yet as locked', () => {
+    expect(
+      card({ reason: 'Needs the Android SDK', setUp: SET_UP }).result.current.className,
+    ).toBe('target-card target-card--locked');
   });
 
   it('puts the field under the name when stacked', () => {

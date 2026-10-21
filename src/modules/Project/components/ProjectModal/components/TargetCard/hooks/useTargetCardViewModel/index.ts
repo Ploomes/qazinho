@@ -13,6 +13,7 @@ export const useTargetCardViewModel = (props: ITargetCardProps) => {
 
   return {
     isLocked: lock !== null,
+    className: lock === null ? 'target-card' : 'target-card target-card--locked',
     bodyClassName:
       props.isStacked === true
         ? 'target-card__body target-card__body--stacked'

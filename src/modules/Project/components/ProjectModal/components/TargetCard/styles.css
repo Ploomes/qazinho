@@ -1,35 +1,47 @@
 .target-card {
   display: grid;
   overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-xl);
-  background: var(--raise);
-  transition:
-    border-color var(--dur) var(--ease),
-    background-color var(--dur) var(--ease);
+  transition: background-color var(--dur) var(--ease);
 }
 
-.target-card--locked {
-  border-style: dashed;
-  background: transparent;
+.target-card + .target-card {
+  border-top: 1px solid var(--line);
 }
 
 .target-card__body {
   grid-area: 1 / 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
   gap: var(--space-6);
   align-items: start;
-  padding: var(--space-5) var(--space-6);
+  padding: var(--space-4) var(--space-5);
 }
 
 .target-card__body--stacked {
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-4);
+  gap: var(--space-5);
   align-items: stretch;
+  padding: 0;
 }
 
 .target-card__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.target-card__logo {
+  display: grid;
+  flex: none;
+  place-items: center;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--raise2);
+  color: var(--ink2);
+}
+
+.target-card__words {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -43,9 +55,13 @@
 
 .target-card__text {
   margin: 0;
-  color: var(--ink2);
+  color: var(--ink3);
   font: var(--font-ui-sm);
   text-wrap: pretty;
+}
+
+.target-card__body--stacked .target-card__text {
+  color: var(--ink2);
 }
 
 .target-card__field {
