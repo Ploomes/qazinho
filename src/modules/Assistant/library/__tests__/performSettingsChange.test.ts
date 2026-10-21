@@ -35,6 +35,19 @@ describe('performSettingsChange', () => {
     expect(did).toEqual(['connect jira']);
   });
 
+  /** The Estagiário told the QA to authorize in a browser while a signed-in gh had connected at once. */
+  it("starts GitHub's connection and leaves its steps to the card", async () => {
+    const { port, did } = fakePort({ state: { integrations: [] } });
+    const done = await performSettingsChange({
+      id: 'c-1',
+      call: { name: 'connect_integration', args: { integration: 'github' } },
+      port,
+    });
+
+    expect(done.text).toContain('without guessing the steps');
+    expect(did).toEqual(['connect github']);
+  });
+
   it('does NOT connect a tracker twice', async () => {
     const { port, did } = fakePort();
 

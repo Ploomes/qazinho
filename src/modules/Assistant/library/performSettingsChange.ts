@@ -67,7 +67,7 @@ export async function performSettingsChange(props: {
     return {
       text:
         integration === 'github'
-          ? "Settings is open on Integrations, and GitHub's connection started there: the QA authorizes it in the browser page QAzinho opens, after QAzinho installs the GitHub CLI if it is missing."
+          ? "Settings is open on Integrations, and GitHub's card started connecting: it shows the QA each step, and connects at once when the QA's GitHub CLI is already signed in. Say it started and that the card shows how it goes, without guessing the steps."
           : "Settings is open on Integrations, with Jira's form open: the QA types the site, the email and the token there. Never ask for the token in this chat.",
       isError: false,
     };
