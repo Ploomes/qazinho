@@ -33,6 +33,34 @@ describe('buildRun', () => {
     expect(run.cases[1]?.verdict).toBe('failed');
   });
 
+  it('keeps how a step was walked without the agent, and the words that proved it', () => {
+    const walked = walkRun({ verdicts: ['passed', 'passed', 'passed'] });
+    const live = walked.live;
+
+    if (live === null) throw new Error('fixture');
+
+    const run = buildRun({
+      workspace: {
+        ...walked,
+        live: {
+          ...live,
+          outcomes: live.outcomes.map((outcome, position) =>
+            position === 0
+              ? { ...outcome, by: 'replay' as const, got: 'Results: 3' }
+              : { ...outcome, by: 'healed' as const },
+          ),
+        },
+      },
+      endedBy: 'finished',
+    });
+
+    expect(run.cases[0]?.steps.map(({ by, proof }) => [by, proof])).toEqual([
+      ['replay', 'Results: 3'],
+      ['healed', undefined],
+      ['healed', undefined],
+    ]);
+  });
+
   it('carries the note the agent left on a step that did not pass', () => {
     const run = buildRun({
       workspace: walkRun({ verdicts: VERDICTS }),

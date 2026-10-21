@@ -1,4 +1,5 @@
 export * from './caseVerdict';
+export * from './caseWalkOf';
 export * from './countVerdicts';
 export * from './filterCases';
 export * from './flattenPlanSteps';

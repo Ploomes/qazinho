@@ -23,6 +23,8 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
       const mine = outcomes.filter((outcome) => outcome.caseId === testCase.id);
 
       const walked: IRunStep[] = mine.map((outcome) => ({
+        ...(outcome.by === undefined ? {} : { by: outcome.by }),
+        ...(outcome.by === 'replay' ? { proof: outcome.got } : {}),
         number: outcome.stepNumber,
         action: outcome.action,
         verdict: outcome.verdict,
