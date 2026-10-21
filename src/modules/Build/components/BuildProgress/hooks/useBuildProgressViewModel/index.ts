@@ -53,7 +53,10 @@ export const useBuildProgressViewModel = (props: IBuildProgressProps) => {
             : ('running' as const),
     isWorking,
     internSize: BUILD_PROGRESS.internSize,
-    hasActions: isWorking || build.phase === 'failed' || build.phase === 'stopped',
+    hasActions:
+      isWorking ||
+      (props.onRetry !== undefined &&
+        (build.phase === 'failed' || build.phase === 'stopped')),
     elapsed: formatElapsed(Math.max(0, Math.round((now - build.startedAt) / 1_000))),
     steps: BUILD_STEPS.map((step, index) => {
       const state =
@@ -113,10 +116,14 @@ export const useBuildProgressViewModel = (props: IBuildProgressProps) => {
           }),
     stopLabel: t('BUILD.STOP'),
     retryLabel: t('BUILD.RETRY'),
-    canRetry: build.phase === 'failed' || build.phase === 'stopped',
+    canRetry:
+      props.onRetry !== undefined &&
+      (build.phase === 'failed' || build.phase === 'stopped'),
     onStop: () => {
       stopBuild(build.id);
     },
-    onRetry: props.onRetry,
+    onRetry: () => {
+      props.onRetry?.();
+    },
   };
 };

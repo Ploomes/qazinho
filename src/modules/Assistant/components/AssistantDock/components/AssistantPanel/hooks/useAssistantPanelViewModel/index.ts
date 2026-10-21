@@ -183,6 +183,7 @@ export const useAssistantPanelViewModel = () => {
             subject: message.subject,
           }),
           failed: message.state === 'failed' ? t('ASSISTANT.TOOL_FAILED') : '',
+          buildId: message.buildId ?? null,
         };
       }
 

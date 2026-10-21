@@ -65,6 +65,11 @@ export const TOOL_LABELS: Record<
     doing: 'ASSISTANT.TOOL_CHANGE_SETTINGS',
     done: 'ASSISTANT.TOOL_CHANGE_SETTINGS_DONE',
   },
+  build_app: { doing: 'ASSISTANT.TOOL_BUILD_APP', done: 'ASSISTANT.TOOL_BUILD_APP_DONE' },
+  build_status: {
+    doing: 'ASSISTANT.TOOL_BUILD_STATUS',
+    done: 'ASSISTANT.TOOL_BUILD_STATUS_DONE',
+  },
   connect_integration: {
     doing: 'ASSISTANT.TOOL_CONNECT_INTEGRATION',
     done: 'ASSISTANT.TOOL_CONNECT_INTEGRATION_DONE',

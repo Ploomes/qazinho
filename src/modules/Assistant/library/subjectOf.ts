@@ -26,6 +26,7 @@ export function subjectOf(props: { call: AppToolCall; state: IAppState }): strin
       return call.args.bug;
     case 'open_project':
     case 'update_project':
+    case 'build_app':
     case 'delete_project':
       return nameOf({ items: state.projects, ref: call.args.project });
     case 'link_repository':
@@ -39,6 +40,7 @@ export function subjectOf(props: { call: AppToolCall; state: IAppState }): strin
     case 'disconnect_integration':
       return INTEGRATION_NAMES[call.args.integration];
     case 'list_repositories':
+    case 'build_status':
     case 'open_settings':
     case 'go_home':
     case 'change_settings':

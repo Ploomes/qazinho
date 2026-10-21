@@ -261,3 +261,8 @@
   outline: none;
   box-shadow: 0 0 0 3px var(--lime-soft);
 }
+
+.assistant-panel__build {
+  display: block;
+  margin-top: var(--space-3);
+}

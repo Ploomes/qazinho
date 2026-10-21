@@ -72,6 +72,9 @@ export function fakePort(
         connectedAt: '2026-10-20T10:00:00Z',
       },
     ],
+    builds: [],
+    hasAndroidSdk: true,
+    hasXcode: true,
     ...props.state,
   };
   const did: string[] = [];
@@ -137,6 +140,13 @@ export function fakePort(
       return Promise.resolve();
     },
     listRepositories: () => Promise.resolve(props.repositories ?? REPOSITORIES),
+    startBuild: (build) => {
+      did.push(
+        `build ${build.projectId} ${build.platform} ${build.repository.owner}/${build.repository.name}@${build.branch}`,
+      );
+
+      return 'b-1';
+    },
     listBranches: () =>
       Promise.resolve(
         props.branches ?? {

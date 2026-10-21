@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
+import { BuildProgress } from '@/modules/Build';
 import { Button, Chip, IconButton, Intern, Markdown } from '@/shared/components/atoms';
 import { MOTION, STICKER } from '@/shared/constants';
 import { ConfirmCard } from './components';
@@ -135,6 +136,11 @@ export const AssistantPanel: React.FC = () => {
                   {row.failed !== '' && (
                     <span className="assistant-panel__tool-failed">· {row.failed}</span>
                   )}
+                </span>
+              )}
+              {row.kind === 'tool' && row.buildId !== null && (
+                <span className="assistant-panel__build">
+                  <BuildProgress buildId={row.buildId} />
                 </span>
               )}
               {row.kind === 'confirm' && <ConfirmCard message={row.message} />}

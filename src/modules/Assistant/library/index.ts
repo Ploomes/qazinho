@@ -5,6 +5,7 @@ export * from './describeWorkspace';
 export * from './findByRef';
 export * from './isConfirmCall';
 export * from './performAppTool';
+export * from './performBuild';
 export * from './performOpening';
 export * from './performProjectChange';
 export * from './performReading';

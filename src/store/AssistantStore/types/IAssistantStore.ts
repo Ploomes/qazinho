@@ -28,7 +28,7 @@ export interface IAssistantStore {
   setLiveText: (text: string) => void;
   keepLiveText: () => void;
   startTool: (message: IAssistantToolMessage) => void;
-  endTool: (props: { id: string; isError: boolean }) => void;
+  endTool: (props: { id: string; isError: boolean; buildId?: string }) => void;
   askConfirm: (message: IAssistantConfirmMessage) => void;
   settleConfirm: (props: { id: string; decision: ConfirmDecision }) => void;
   startOver: () => void;

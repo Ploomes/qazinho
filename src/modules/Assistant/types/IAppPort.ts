@@ -5,6 +5,7 @@ import type { IProject } from '@/modules/Project/types';
 import type { RunAlert, SettingsTab } from '@/modules/Settings/types';
 import type { IWorkspace, WorkspaceTab } from '@/modules/Workspace/types';
 import type {
+  BuildPlatform,
   IBranchList,
   IntegrationId,
   IRepositoryList,
@@ -44,6 +45,12 @@ export interface IAppPort {
   disconnectIntegration: (id: IntegrationId) => Promise<void>;
   listRepositories: () => Promise<IRepositoryList>;
   listBranches: (repository: IRepositoryRef) => Promise<IBranchList>;
+  startBuild: (props: {
+    projectId: string;
+    platform: BuildPlatform;
+    repository: IRepositoryRef;
+    branch: string;
+  }) => string;
   confirm: (props: {
     id: string;
     action: ConfirmAction;

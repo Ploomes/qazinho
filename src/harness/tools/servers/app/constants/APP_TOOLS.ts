@@ -285,6 +285,42 @@ export const APP_TOOLS = [
     }),
   },
   {
+    name: 'build_app',
+    description:
+      "Build the app of a project from one of its GitHub repositories, with the QA's own agent: an Android .apk, or an iOS .app for the simulator. Once built, it becomes the project's target on that platform. It takes minutes and goes on by itself: this answers once it started, and build_status says how it goes.",
+    input: z.object({
+      project: textNamed({
+        message: '"build_app" needs "project": its id or its name.',
+        description: 'The project, by its id or its name.',
+      }),
+      platform: z.enum(['android', 'ios'], { error: '"platform" is android or ios.' }),
+      repository: z
+        .string()
+        .trim()
+        .describe(
+          "One of the project's repositories, as owner/name; its only one when left out.",
+        )
+        .optional(),
+      branch: z
+        .string()
+        .trim()
+        .describe("The branch to build; the repository's base branch when left out.")
+        .optional(),
+    }),
+  },
+  {
+    name: 'build_status',
+    description:
+      'Read how the builds started since QAzinho opened went, or are going: what each builds, how far it got, and what it made or why it made nothing.',
+    input: z.object({
+      project: z
+        .string()
+        .trim()
+        .describe("Only this project's builds, by its id or its name.")
+        .optional(),
+    }),
+  },
+  {
     name: 'delete_workspace',
     description:
       'Delete a workspace with its chat, plan, runs and bugs. The QA confirms it on screen, and this answers with what they chose.',

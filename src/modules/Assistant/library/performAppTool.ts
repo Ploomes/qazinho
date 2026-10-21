@@ -1,5 +1,6 @@
 import type { IAppPort, IToolDone } from '@/modules/Assistant/types';
 import type { AppToolCall } from '@/shared/types';
+import { performBuild } from './performBuild';
 import { performOpening } from './performOpening';
 import { performProjectChange } from './performProjectChange';
 import { performReading } from './performReading';
@@ -40,6 +41,9 @@ export async function performAppTool(props: {
     case 'connect_integration':
     case 'disconnect_integration':
       return performSettingsChange({ id, call, port });
+    case 'build_app':
+    case 'build_status':
+      return performBuild({ call, port });
     case 'delete_workspace':
     case 'delete_project':
       return performRemoval({ id, call, port });

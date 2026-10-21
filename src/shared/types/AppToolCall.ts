@@ -1,3 +1,4 @@
+import type { BuildPlatform } from './BuildPlatform';
 import type { IntegrationId } from './IntegrationId';
 import type { Language } from './Language';
 import type { TargetKind } from './TargetKind';
@@ -74,5 +75,15 @@ export type AppToolCall =
     }
   | { name: 'connect_integration'; args: { integration: IntegrationId } }
   | { name: 'disconnect_integration'; args: { integration: IntegrationId } }
+  | {
+      name: 'build_app';
+      args: {
+        project: string;
+        platform: BuildPlatform;
+        repository?: string;
+        branch?: string;
+      };
+    }
+  | { name: 'build_status'; args: { project?: string } }
   | { name: 'delete_workspace'; args: { workspace: string } }
   | { name: 'delete_project'; args: { project: string } };

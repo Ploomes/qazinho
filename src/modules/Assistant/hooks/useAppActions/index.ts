@@ -1,7 +1,8 @@
-import type { ConfirmDecision, IAppPort } from '@/modules/Assistant/types';
+import type { ConfirmDecision, IAppPort, IToolDone } from '@/modules/Assistant/types';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isConfirmCall, performAppTool, subjectOf } from '@/modules/Assistant/library';
+import { useBuildActions } from '@/modules/Build';
 import { useRunActions } from '@/modules/Run';
 import { PLATFORM_LABEL } from '@/modules/Workspace';
 import { Agent, Archive, Assistant, Github, Integrations, Run } from '@/services';
@@ -9,6 +10,8 @@ import { ASSISTANT_WAIT } from '@/shared/constants';
 import {
   useAppStore,
   useAssistantStore,
+  useBuildStore,
+  useMachineStore,
   useSettingsStore,
   useSetupStore,
   useWorkspaceStore,
@@ -17,6 +20,7 @@ import {
 export const useAppActions = () => {
   const { t } = useTranslation();
   const { runWorkspace, stopWorkspace } = useRunActions();
+  const { startBuild } = useBuildActions();
   const waiting = useRef(new Map<string, (decision: ConfirmDecision) => void>());
 
   useEffect(
@@ -50,6 +54,9 @@ export const useAppActions = () => {
         projects: useAppStore.getState().projects,
         workspaces: useWorkspaceStore.getState().workspaces,
         integrations: useSetupStore.getState().integrations,
+        builds: useBuildStore.getState().builds,
+        hasAndroidSdk: useMachineStore.getState().tools.androidSdk.isFound,
+        hasXcode: useMachineStore.getState().tools.xcode.isFound,
       }),
       now: () => Date.now(),
       targetLabel: (kind) => t(PLATFORM_LABEL[kind]),
@@ -142,6 +149,7 @@ export const useAppActions = () => {
       },
       listRepositories: () => Github.repositories(),
       listBranches: (repository) => Github.branches(repository),
+      startBuild: (build) => startBuild(build),
       confirm: ({ id, action, subject, count }) =>
         new Promise<ConfirmDecision>((settle) => {
           waiting.current.set(id, settle);
@@ -167,16 +175,18 @@ export const useAppActions = () => {
         });
 
       void performAppTool({ id, call, port })
-        .catch((reason: unknown) => ({
+        .catch((reason: unknown): IToolDone => ({
           text: `QAzinho could not do it: ${reason instanceof Error ? reason.message : String(reason)}`,
           isError: true,
         }))
         .then((done) => {
           if (!isConfirmCall(call))
-            useAssistantStore.getState().endTool({ id, isError: done.isError });
+            useAssistantStore
+              .getState()
+              .endTool({ id, isError: done.isError, buildId: done.buildId });
 
           Assistant.answer({ id, text: done.text, isError: done.isError });
         });
     });
-  }, [t, runWorkspace, stopWorkspace]);
+  }, [t, runWorkspace, stopWorkspace, startBuild]);
 };

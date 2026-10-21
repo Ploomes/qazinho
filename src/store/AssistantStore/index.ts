@@ -74,11 +74,15 @@ export const useAssistantStore = create<IAssistantStore>((set) => ({
 
   startTool: (message) => set((state) => ({ messages: [...state.messages, message] })),
 
-  endTool: ({ id, isError }) =>
+  endTool: ({ id, isError, buildId }) =>
     set((state) => ({
       messages: state.messages.map((message) =>
         message.kind === 'tool' && message.id === id
-          ? { ...message, state: isError ? 'failed' : 'done' }
+          ? {
+              ...message,
+              state: isError ? 'failed' : 'done',
+              ...(buildId === undefined ? {} : { buildId }),
+            }
           : message,
       ),
     })),
