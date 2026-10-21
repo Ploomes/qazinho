@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useIntegrationCardViewModel } from '@/modules/Setup/components/IntegrationCard/hooks/useIntegrationCardViewModel';
 import { INTEGRATIONS } from '@/modules/Setup/constants';
@@ -27,7 +27,7 @@ const JIRA_CONNECTED = {
 const JIRA_TYPED = { site: 'acme.atlassian.net', email: 'ana@acme.test', token: 't0k' };
 
 beforeEach(() => {
-  useSetupStore.setState({ integrations: [] });
+  useSetupStore.setState({ integrations: [], installs: {} });
   useSettingsStore.setState({ language: 'en' });
   window.qazinho = fakeQazinhoApi('darwin');
 });
@@ -46,7 +46,108 @@ function typeInto(
     });
 }
 
+function ghIs(status: { isFound: boolean; account: string | null }) {
+  window.qazinho.githubStatus = vi.fn().mockResolvedValue({
+    cli: {
+      isFound: status.isFound,
+      path: status.isFound ? '/opt/homebrew/bin/gh' : null,
+    },
+    account: status.account,
+    missingScopes: [],
+    failure: status.isFound ? (status.account === null ? 'signed-out' : null) : 'no-cli',
+  });
+}
+
 describe('useIntegrationCardViewModel', () => {
+  describe('GitHub, through the GitHub CLI', () => {
+    it('offers to install gh when it is not on the machine, and installs it', async () => {
+      ghIs({ isFound: false, account: null });
+      let finish: (result: { isInstalled: boolean }) => void = () => undefined;
+
+      window.qazinho.installTool = vi.fn().mockReturnValue(
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+      );
+      const { result } = renderHook(() =>
+        useIntegrationCardViewModel({ integration: GITHUB }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.action).toBe('Install gh');
+      });
+      expect(result.current.cliLine).toBe(
+        'gh is not on this machine yet. QAzinho installs it with Homebrew.',
+      );
+
+      let installing: Promise<void> = Promise.resolve();
+
+      act(() => {
+        installing = result.current.onAction();
+      });
+
+      expect(window.qazinho.installTool).toHaveBeenCalledWith('gh');
+      expect(result.current.isActionBusy).toBe(true);
+      expect(result.current.action).toBe('Installing gh…');
+
+      await act(async () => {
+        finish({ isInstalled: false });
+        await installing;
+      });
+    });
+
+    it('signs gh in on Connect, and never opens a form for a token', async () => {
+      ghIs({ isFound: true, account: null });
+      window.qazinho.signInGithub = vi.fn().mockReturnValue(new Promise(() => undefined));
+      const { result } = renderHook(() =>
+        useIntegrationCardViewModel({ integration: GITHUB }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.cliLine).toBe('gh is here, not signed in to GitHub yet.');
+      });
+
+      await act(() => result.current.onAction());
+
+      expect(window.qazinho.signInGithub).toHaveBeenCalledTimes(1);
+      expect(result.current.isOpen).toBe(false);
+      expect(result.current.signIn).toMatchObject({ phase: 'working', at: 'code' });
+    });
+
+    it('does NOT start a second sign-in while one is under way', async () => {
+      ghIs({ isFound: true, account: null });
+      window.qazinho.signInGithub = vi.fn().mockReturnValue(new Promise(() => undefined));
+      const { result } = renderHook(() =>
+        useIntegrationCardViewModel({ integration: GITHUB }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.cliLine).not.toBeNull();
+      });
+      await act(() => result.current.onAction());
+      await act(() => result.current.onAction());
+
+      expect(window.qazinho.signInGithub).toHaveBeenCalledTimes(1);
+    });
+
+    it('names whom gh is signed in as, and shows gh as the way GitHub connected', async () => {
+      ghIs({ isFound: true, account: 'octoqa' });
+      useSetupStore.setState({ integrations: [CONNECTED] });
+      const { result } = renderHook(() =>
+        useIntegrationCardViewModel({ integration: GITHUB }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.cliLine).toBe('gh is signed in as octoqa.');
+      });
+      expect(result.current.rows).toEqual([
+        { label: 'account', value: 'octoqa' },
+        { label: 'through', value: 'GitHub CLI' },
+        { label: 'connected on', value: 'Sep 16, 2026' },
+      ]);
+    });
+  });
+
   describe('onAction', () => {
     it('opens the form of a tracker that is not connected', async () => {
       const { result } = renderHook(() =>

@@ -2,6 +2,7 @@ import type { IIntegrationCardProps } from '@/modules/Setup/components/Integrati
 import type { IIntegrationField } from '@/modules/Setup/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useGithubConnect } from '@/modules/Setup/hooks/useGithubConnect';
 import { connectionOf, formatDay } from '@/modules/Setup/library';
 import { Integrations } from '@/services';
 import { useSettingsStore, useSetupStore } from '@/store';
@@ -21,23 +22,48 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
   );
   const landIntegration = useSetupStore((state) => state.landIntegration);
   const dropIntegration = useSetupStore((state) => state.dropIntegration);
+  const isCli = integration.via === 'cli';
+  const cli = useGithubConnect({ isOn: isCli });
 
   const connection = connectionOf({ id: integration.id, values });
   const isConnected = status !== undefined;
+  const isCliMissing = isCli && cli.status?.cli.isFound === false;
+  const isInstalling = cli.install?.phase === 'installing';
+  const isCliBusy = isInstalling || cli.signIn?.phase === 'working';
 
   return {
     isConnected,
-    isOpen: isOpen && !isConnected,
-    hasAction: isConnected || !isOpen,
+    isOpen: isOpen && !isConnected && !isCli,
+    hasAction: isConnected || isCli || !isOpen,
+    isActionBusy: !isConnected && isCliBusy,
     isConnecting,
-    error,
+    error: isCli ? cli.error : error,
     text: t(integration.textKey),
     needs: t(integration.needsKey),
+    cliLine: !isCli
+      ? null
+      : cli.status === null
+        ? null
+        : isCliMissing
+          ? t('SETUP.GITHUB_CLI_MISSING')
+          : cli.status.account === null
+            ? t('SETUP.GITHUB_CLI_SIGNED_OUT')
+            : t('SETUP.GITHUB_CLI_AS', { account: cli.status.account }),
     pill: isConnected ? ('passed' as const) : ('idle' as const),
     statusLabel: isConnected ? t('SETUP.CONNECTED') : t('SETUP.NOT_CONNECTED'),
-    action: isConnected ? t('COMMON.DISCONNECT') : t('COMMON.CONNECT'),
+    action: isConnected
+      ? t('COMMON.DISCONNECT')
+      : isInstalling
+        ? t('SETUP.GITHUB_INSTALLING')
+        : isCliMissing
+          ? t('SETUP.GITHUB_INSTALL')
+          : t('COMMON.CONNECT'),
     connectLabel: isConnecting ? t('SETUP.CHECKING_TOKEN') : t('COMMON.CONNECT'),
     canConnect: connection !== null && !isConnecting,
+    tokenUrl: integration.tokenUrl ?? '',
+    connectedNote: isCli ? t('SETUP.GITHUB_CONNECTED_NOTE') : t('SETUP.NOT_FILED_YET'),
+    install: isCli && cli.install?.phase !== 'installed' ? cli.install : null,
+    signIn: isCli ? cli.signIn : null,
     fields: integration.fields.map((field) => ({
       id: field.id,
       label: t(field.labelKey),
@@ -54,6 +80,7 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
         ? []
         : [
             { label: t('SETUP.ROW_ACCOUNT'), value: status.account },
+            ...(isCli ? [{ label: t('SETUP.ROW_VIA'), value: t('SETUP.VIA_GH') }] : []),
             ...(status.site === null
               ? []
               : [{ label: t('SETUP.ROW_SITE'), value: status.site }]),
@@ -63,15 +90,30 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
             },
           ],
     onAction: async () => {
-      if (!isConnected) {
+      if (isConnected) {
+        await Integrations.disconnect(integration.id);
+        dropIntegration(integration.id);
+
+        return;
+      }
+
+      if (!isCli) {
         setIsOpen((open) => !open);
 
         return;
       }
 
-      await Integrations.disconnect(integration.id);
-      dropIntegration(integration.id);
+      if (isCliBusy) return;
+
+      if (isCliMissing) await cli.onInstall();
+      else cli.onConnect();
     },
+    onInstall: async () => {
+      await cli.onInstall();
+    },
+    onCancelSignIn: cli.onCancelSignIn,
+    onCloseSignIn: cli.onCloseSignIn,
+    onRetrySignIn: cli.onRetrySignIn,
     onCancel: () => {
       setIsOpen(false);
       setError('');

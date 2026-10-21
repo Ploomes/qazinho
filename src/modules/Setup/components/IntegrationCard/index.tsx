@@ -1,6 +1,8 @@
 import type { IIntegrationCardProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
+import { GithubSignIn } from '@/modules/Setup/components/GithubSignIn';
+import { InstallProgress } from '@/modules/Setup/components/InstallProgress';
 import { Button, Input, StatusPill } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { useIntegrationCardViewModel } from './hooks';
@@ -11,18 +13,28 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
     isConnected,
     isOpen,
     hasAction,
+    isActionBusy,
     isConnecting,
     error,
     text,
     needs,
+    cliLine,
     pill,
     statusLabel,
     action,
     connectLabel,
     canConnect,
+    tokenUrl,
+    connectedNote,
+    install,
+    signIn,
     fields,
     rows,
     onAction,
+    onInstall,
+    onCancelSignIn,
+    onCloseSignIn,
+    onRetrySignIn,
     onCancel,
     onConnect,
   } = useIntegrationCardViewModel(props);
@@ -57,10 +69,14 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+              disabled={isActionBusy}
               onClick={() => {
                 void onAction();
               }}
             >
+              {isActionBusy && (
+                <span className="integration-card__spinner" aria-hidden="true" />
+              )}
               {action}
             </motion.button>
           )}
@@ -85,7 +101,7 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
                 </div>
               ))}
             </div>
-            <p className="integration-card__hint">{t('SETUP.NOT_FILED_YET')}</p>
+            <p className="integration-card__hint">{connectedNote}</p>
           </motion.div>
         )}
 
@@ -133,7 +149,7 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
               <div className="integration-card__actions">
                 <a
                   className="integration-card__link"
-                  href={props.integration.tokenUrl}
+                  href={tokenUrl}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -174,8 +190,66 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
                 {t('SETUP.WHAT_IT_NEEDS')}
               </span>
               <p className="integration-card__about">{needs}</p>
+              <AnimatePresence initial={false}>
+                {cliLine !== null && (
+                  <motion.div
+                    key="cli"
+                    className="integration-card__cli-fold"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+                  >
+                    <motion.p
+                      key={cliLine}
+                      className="integration-card__cli"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+                    >
+                      {cliLine}
+                    </motion.p>
+                  </motion.div>
+                )}
+                {error !== '' && (
+                  <motion.div
+                    key="error"
+                    className="integration-card__cli-fold"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+                  >
+                    <p className="integration-card__error">{error}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence initial={false}>
+        {install !== null && (
+          <InstallProgress
+            key="install"
+            state={install}
+            onRetry={() => {
+              void onInstall();
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {signIn !== null && (
+          <GithubSignIn
+            key="github-sign-in"
+            progress={signIn}
+            onCancel={onCancelSignIn}
+            onClose={onCloseSignIn}
+            onRetry={onRetrySignIn}
+          />
         )}
       </AnimatePresence>
     </div>

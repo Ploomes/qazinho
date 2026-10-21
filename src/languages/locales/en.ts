@@ -507,9 +507,38 @@ export const en = {
     CONNECTED: 'connected',
     NOT_CONNECTED: 'not connected',
     WHAT_IT_NEEDS: 'what it needs',
-    GITHUB_TEXT: 'File the bugs a run finds as issues in your repositories.',
+    GITHUB_TEXT:
+      'Let the agent read the code of your repositories to plan tests. Filing bugs as issues comes later.',
     GITHUB_NEEDS:
-      "A personal access token that can read your account and create issues. QAzinho checks it with GitHub, then seals it in this machine's keychain.",
+      'The GitHub CLI (gh), signed in to your account. QAzinho uses its login and keeps no token of its own.',
+    GITHUB_CLI_MISSING:
+      'gh is not on this machine yet. QAzinho installs it with Homebrew.',
+    GITHUB_CLI_SIGNED_OUT: 'gh is here, not signed in to GitHub yet.',
+    GITHUB_CLI_AS: 'gh is signed in as {{account}}.',
+    GITHUB_INSTALL: 'Install gh',
+    GITHUB_INSTALLING: 'Installing gh…',
+    GITHUB_CONNECTED_NOTE:
+      'Projects pick their repositories through it. Filing a bug as an issue is not built yet.',
+    ROW_VIA: 'through',
+    VIA_GH: 'GitHub CLI',
+    GITHUB_LOGIN_TITLE: 'Connecting GitHub',
+    GITHUB_LOGIN_SUBTITLE:
+      'Through the GitHub CLI (gh) on this machine. Its login stays with gh.',
+    GITHUB_LOGIN_DONE: 'GitHub is connected',
+    GITHUB_LOGIN_DONE_SUBTITLE: 'Signed in as {{account}}.',
+    GITHUB_LOGIN_FAILED: 'GitHub is not connected',
+    GITHUB_LOGIN_HINT:
+      'Copy the code and paste it on GitHub. QAzinho moves on by itself once you authorize.',
+    GITHUB_LOGIN_CODE: 'your one-time code',
+    GITHUB_LOGIN_COPY: 'Copy and open GitHub',
+    GITHUB_LOGIN_COPIED: 'Copied · paste it on GitHub',
+    GITHUB_STEP_CODE: 'Ask GitHub for a one-time code',
+    GITHUB_STEP_BROWSER: 'Type the code on GitHub and authorize',
+    GITHUB_STEP_ACCOUNT: 'Connect your account',
+    GITHUB_FAIL_MISSING: 'gh is not on this machine. Install it first.',
+    GITHUB_FAIL_REFUSED: 'GitHub did not authorize the sign-in.',
+    GITHUB_FAIL_TIMEOUT: 'The code expired before it was used. Try again for a new one.',
+    GITHUB_FAIL_CLOSED: 'gh closed before the sign-in finished.',
     JIRA_TEXT: 'File the bugs a run finds as issues in a Jira project.',
     JIRA_NEEDS:
       "Your Jira Cloud site, your email and an API token. QAzinho checks them with Jira, then seals the token in this machine's keychain.",

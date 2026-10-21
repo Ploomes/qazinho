@@ -511,9 +511,37 @@ export const pt: typeof en = {
     NOT_CONNECTED: 'não conectado',
     WHAT_IT_NEEDS: 'o que precisa',
     GITHUB_TEXT:
-      'Registre os bugs que uma run encontra como issues nos seus repositórios.',
+      'Deixe o agente ler o código dos seus repositórios para planejar os testes. Registrar bugs como issues vem depois.',
     GITHUB_NEEDS:
-      'Um personal access token que leia sua conta e crie issues. O QAzinho confere com o GitHub e guarda selado no chaveiro desta máquina.',
+      'O GitHub CLI (gh) conectado à sua conta. O QAzinho usa esse login e não guarda token nenhum.',
+    GITHUB_CLI_MISSING:
+      'O gh ainda não está nesta máquina. O QAzinho instala com o Homebrew.',
+    GITHUB_CLI_SIGNED_OUT: 'O gh está aqui, mas ainda não entrou no GitHub.',
+    GITHUB_CLI_AS: 'O gh está conectado como {{account}}.',
+    GITHUB_INSTALL: 'Instalar o gh',
+    GITHUB_INSTALLING: 'Instalando o gh…',
+    GITHUB_CONNECTED_NOTE:
+      'Os projetos escolhem seus repositórios por aqui. Registrar bug como issue ainda não está pronto.',
+    ROW_VIA: 'pelo',
+    VIA_GH: 'GitHub CLI',
+    GITHUB_LOGIN_TITLE: 'Conectando o GitHub',
+    GITHUB_LOGIN_SUBTITLE: 'Pelo GitHub CLI (gh) desta máquina. O login fica com o gh.',
+    GITHUB_LOGIN_DONE: 'GitHub conectado',
+    GITHUB_LOGIN_DONE_SUBTITLE: 'Conectado como {{account}}.',
+    GITHUB_LOGIN_FAILED: 'O GitHub não conectou',
+    GITHUB_LOGIN_HINT:
+      'Copie o código e cole no GitHub. O QAzinho segue sozinho quando você autorizar.',
+    GITHUB_LOGIN_CODE: 'seu código de uso único',
+    GITHUB_LOGIN_COPY: 'Copiar e abrir o GitHub',
+    GITHUB_LOGIN_COPIED: 'Copiado · cole no GitHub',
+    GITHUB_STEP_CODE: 'Pedir um código de uso único ao GitHub',
+    GITHUB_STEP_BROWSER: 'Digitar o código no GitHub e autorizar',
+    GITHUB_STEP_ACCOUNT: 'Conectar a sua conta',
+    GITHUB_FAIL_MISSING: 'O gh não está nesta máquina. Instale primeiro.',
+    GITHUB_FAIL_REFUSED: 'O GitHub não autorizou a conexão.',
+    GITHUB_FAIL_TIMEOUT:
+      'O código expirou antes de ser usado. Tente de novo para receber outro.',
+    GITHUB_FAIL_CLOSED: 'O gh fechou antes de terminar a conexão.',
     JIRA_TEXT: 'Registre os bugs que uma run encontra como issues num projeto do Jira.',
     JIRA_NEEDS:
       'Seu site do Jira Cloud, seu email e um API token. O QAzinho confere com o Jira e guarda o token selado no chaveiro desta máquina.',
