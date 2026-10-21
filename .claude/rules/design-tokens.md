@@ -46,6 +46,9 @@ font: var(--font-ui-md);
 | Tilt      | `--tilt-xs` -1° · `--tilt-sm` -2° · `--tilt-md` -4°                                 |
 | Brand     | `--brand-ink --brand-paper --indigo --indigo-deep --indigo-dusk --on-indigo`        |
 
+A mono field, the URL input or a file field beside it, reads `--font-mono-field`, so two fields
+in a row stand as tall as each other.
+
 Both themes declare the same names: `[data-theme='dark']` is Night and `[data-theme='light']`
 is Paper, the two surfaces of the app icon.
 

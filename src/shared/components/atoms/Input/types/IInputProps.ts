@@ -4,6 +4,7 @@ export interface IInputProps {
   label: string;
   placeholder?: string;
   isMono?: boolean;
+  isCompact?: boolean;
   isBare?: boolean;
   isSecret?: boolean;
   isAutoFocused?: boolean;

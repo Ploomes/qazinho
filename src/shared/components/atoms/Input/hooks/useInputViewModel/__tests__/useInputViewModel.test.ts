@@ -45,6 +45,14 @@ describe('useInputViewModel', () => {
 
       expect(result.current.className).toBe('input input--mono input--bare');
     });
+
+    it('goes compact for a field in a row, as tall as a file field beside it', () => {
+      const { result } = renderHook(() =>
+        useInputViewModel({ ...PROPS, isMono: true, isCompact: true }),
+      );
+
+      expect(result.current.className).toBe('input input--mono input--compact');
+    });
   });
 
   describe('type', () => {
