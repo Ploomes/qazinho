@@ -1,4 +1,5 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
+import { appearancesOf } from '@/modules/Bug/library';
 
 /** One bug of a workspace in full for the assistant: what was expected and what showed, how to reproduce it, and where it was caught. */
 export function describeBug(props: { workspace: IWorkspace; bugId: string }): {
@@ -34,7 +35,7 @@ export function describeBug(props: { workspace: IWorkspace; bugId: string }): {
                 `${String(index + 1)}. ${step.action}${step.isBad ? ' ← it breaks here' : ''}`,
             ),
           ]),
-      `Seen in ${String(bug.seenRuns)} run${bug.seenRuns === 1 ? '' : 's'}${bug.shots.length === 0 ? '' : `, with ${String(bug.shots.length)} screenshot${bug.shots.length === 1 ? '' : 's'} in Bugs`}.`,
+      `Seen in ${String(bug.seenRuns)} run${bug.seenRuns === 1 ? '' : 's'}${bug.sightings.length === 0 ? '' : ` (${[...new Set(appearancesOf(bug).map(({ runId }) => runId))].join(', ')})`}${bug.shots.length + bug.sightings.length === 0 ? '' : `, with ${String(bug.shots.length + bug.sightings.length)} screenshot${bug.shots.length + bug.sightings.length === 1 ? '' : 's'} in Bugs`}.`,
     ].join('\n'),
     isError: false,
   };

@@ -11,10 +11,17 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
   const openMedia = useAppStore((state) => state.openMedia);
 
   const step = t('BUG.STEP', { number: bug.stepNumber });
-  const shots = bug.shots.map((shot) => ({
-    ...shot,
-    label: t(shot.isBad ? 'BUG.SHOT_BROKE' : 'BUG.SHOT_BEFORE'),
-  }));
+  const last = bug.sightings.at(-1) ?? null;
+  const shots = [
+    ...bug.shots.map((shot) => ({
+      ...shot,
+      label: t(shot.isBad ? 'BUG.SHOT_BROKE' : 'BUG.SHOT_BEFORE'),
+    })),
+    ...bug.sightings.map((sighting) => ({
+      ...sighting.shot,
+      label: t('BUG.SHOT_AGAIN', { run: sighting.runId }),
+    })),
+  ];
 
   return {
     hasBody: bug.body.length > 0,
@@ -31,6 +38,15 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
             ? t('BUG.SEEN_RUNS', { count: bug.seenRuns })
             : t('BUG.SEEN_ONCE'),
       },
+      ...(last === null
+        ? []
+        : [
+            {
+              key: 'last',
+              label: t('BUG.META_LAST'),
+              value: `${last.runId} · ${last.runWhen}`,
+            },
+          ]),
       ...(bug.agent === ''
         ? []
         : [
@@ -48,11 +64,13 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
       '--moment-height': `${String(BUG_CARD.momentHeightPx)}px`,
     } as CSSProperties,
     hasRun: props.hasRun,
+    newLabel: bug.sightings.length > 0 ? t('BUG.SEEN_AGAIN') : t('BUG.JUST_CAUGHT'),
+    openRunLabel: t('BUG.OPEN_RUN', { id: props.lastRunId }),
     onHeadClick: () => {
       onToggle(bug.id);
     },
     onOpenRunClick: () => {
-      props.onOpenRun(bug.runId);
+      props.onOpenRun(props.lastRunId);
     },
     onOpenShot: (shot: (typeof shots)[number]) => {
       openMedia({

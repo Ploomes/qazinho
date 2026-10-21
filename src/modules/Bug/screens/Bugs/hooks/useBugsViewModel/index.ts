@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { BUG_FILTER_KEYS, BUG_FILTERS } from '@/modules/Bug/constants';
+import { appearancesOf } from '@/modules/Bug/library';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import { useWorkspaceStore } from '@/store';
 
@@ -33,19 +34,23 @@ export const useBugsViewModel = () => {
 
   return {
     bugs: shown.map((bug) => {
-      const run = runs.find(({ id }) => id === bug.runId);
+      const latest =
+        appearancesOf(bug).findLast((seen) => runs.some(({ id }) => id === seen.runId)) ??
+        null;
+      const run = runs.find(({ id }) => id === latest?.runId);
       const video = run?.video ?? null;
 
       return {
         bug,
         hasRun: run !== undefined,
+        lastRunId: latest?.runId ?? bug.runId,
         moment:
-          workspace === null || video === null || bug.at === null
+          workspace === null || latest === null || video === null || latest.at === null
             ? null
             : {
                 workspaceId: workspace.id,
-                runId: bug.runId,
-                atMs: Math.max(0, bug.at - video.startedAt),
+                runId: latest.runId,
+                atMs: Math.max(0, latest.at - video.startedAt),
               },
       };
     }),

@@ -15,6 +15,7 @@ const PROPS = {
   bug: BUG,
   isOpen: false,
   hasRun: true,
+  lastRunId: 'r-01',
   moment: null,
   onToggle: vi.fn(),
   onOpenRun: vi.fn(),
@@ -93,12 +94,12 @@ describe('useBugCardViewModel', () => {
     ]);
   });
 
-  it('counts the runs in a row that caught it once there is more than one', () => {
+  it('counts the runs that caught it once there is more than one', () => {
     const { result } = renderHook(() =>
       useBugCardViewModel({ ...PROPS, bug: { ...BUG, seenRuns: 3 } }),
     );
 
-    expect(result.current.meta[3]?.value).toBe('3 runs in a row');
+    expect(result.current.meta[3]?.value).toBe('in 3 runs');
   });
 
   it('opens the run the bug was caught in', () => {
@@ -108,7 +109,68 @@ describe('useBugCardViewModel', () => {
     result.current.onOpenRunClick();
 
     expect(onOpenRun).toHaveBeenCalledWith('r-01');
+    expect(result.current.openRunLabel).toBe('Open r-01');
     expect(result.current.hasRun).toBe(true);
+    expect(result.current.newLabel).toBe('just caught');
+  });
+
+  describe('a bug seen again', () => {
+    const AGAIN = {
+      ...BUG,
+      seenRuns: 2,
+      sightings: [
+        {
+          runId: 'r-02',
+          runWhen: '10:05',
+          caseId: 'TC-02',
+          stepNumber: 2,
+          at: 1_760_000_100_000,
+          shot: { isBad: true, src: null, file: '/tmp/qazinho/r-02/step-5.jpg' },
+        },
+      ],
+    };
+
+    it('says when it was last seen, after how many runs saw it', () => {
+      const { result } = renderHook(() =>
+        useBugCardViewModel({ ...PROPS, bug: AGAIN, lastRunId: 'r-02' }),
+      );
+
+      expect(result.current.meta.map(({ key }) => key)).toEqual([
+        'run',
+        'case',
+        'target',
+        'seen',
+        'last',
+        'agent',
+      ]);
+      expect(result.current.meta[3]?.value).toBe('in 2 runs');
+      expect(result.current.meta[4]?.value).toBe('r-02 · 10:05');
+    });
+
+    it('shows the screen of each time it came back, after the first ones', () => {
+      const { result } = renderHook(() =>
+        useBugCardViewModel({ ...PROPS, bug: AGAIN, lastRunId: 'r-02' }),
+      );
+
+      expect(result.current.shots.map(({ label }) => label)).toEqual([
+        'before',
+        'the step that broke',
+        'again in r-02',
+      ]);
+    });
+
+    it('reads as seen again, and opens the latest run that caught it', () => {
+      const onOpenRun = vi.fn();
+      const { result } = renderHook(() =>
+        useBugCardViewModel({ ...PROPS, bug: AGAIN, lastRunId: 'r-02', onOpenRun }),
+      );
+
+      result.current.onOpenRunClick();
+
+      expect(result.current.newLabel).toBe('seen again');
+      expect(result.current.openRunLabel).toBe('Open r-02');
+      expect(onOpenRun).toHaveBeenCalledWith('r-02');
+    });
   });
 
   it('toggles its own bug', () => {

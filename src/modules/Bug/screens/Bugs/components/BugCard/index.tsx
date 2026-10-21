@@ -15,6 +15,8 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
     moment,
     shotsStyle,
     hasRun,
+    newLabel,
+    openRunLabel,
     onHeadClick,
     onOpenRunClick,
     onOpenShot,
@@ -38,7 +40,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
         {bug.isIncidental && (
           <span className="bug-card__outside">{t('BUG.OUTSIDE_PLAN')}</span>
         )}
-        {bug.isNew && <span className="bug-card__new">{t('BUG.JUST_CAUGHT')}</span>}
+        {bug.isNew && <span className="bug-card__new">{newLabel}</span>}
         <span className="bug-card__id">{severity}</span>
         <Caret isOpen={props.isOpen} />
       </button>
@@ -91,7 +93,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
           <div className="bug-card__actions">
             {hasRun && (
               <Button size="sm" onClick={onOpenRunClick}>
-                {t('BUG.OPEN_RUN', { id: bug.runId })}
+                {openRunLabel}
               </Button>
             )}
             <Button size="sm" onClick={props.onOpenCase}>

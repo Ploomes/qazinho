@@ -139,4 +139,56 @@ describe('useBugsViewModel', () => {
 
     expect(result.current.bugs[0]?.moment).toBeNull();
   });
+
+  describe('a bug seen again', () => {
+    const SIGHTING = {
+      runId: 'r-02',
+      runWhen: '10:05',
+      caseId: 'TC-02',
+      stepNumber: 2,
+      at: 1_760_000_100_000,
+      shot: { isBad: true, src: null, file: '/tmp/qazinho/r-02/step-5.jpg' },
+    };
+
+    it('points it at the latest run that caught it, and the moment there', () => {
+      const recorded = recordedRun();
+      const [first] = recorded.runs;
+      const [bug] = recorded.bugs;
+
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...recorded,
+            runs: [
+              first!,
+              {
+                ...first!,
+                id: 'r-02',
+                video: { ...first!.video!, startedAt: 1_760_000_090_000 },
+              },
+            ],
+            bugs: [{ ...bug!, sightings: [SIGHTING] }],
+          },
+        ],
+      });
+
+      const { result } = renderHook(() => useBugsViewModel());
+
+      expect(result.current.bugs[0]).toMatchObject({
+        lastRunId: 'r-02',
+        hasRun: true,
+        moment: { workspaceId: 'w1', runId: 'r-02', atMs: 10_000 },
+      });
+    });
+
+    it('keeps the run it was first caught in when the later one is gone', () => {
+      useWorkspaceStore.setState({
+        workspaces: [{ ...WORKSPACE, bugs: [{ ...BUG, sightings: [SIGHTING] }] }],
+      });
+
+      const { result } = renderHook(() => useBugsViewModel());
+
+      expect(result.current.bugs[0]).toMatchObject({ lastRunId: 'r-01', hasRun: true });
+    });
+  });
 });

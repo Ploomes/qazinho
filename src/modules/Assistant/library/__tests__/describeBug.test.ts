@@ -20,6 +20,36 @@ describe('describeBug', () => {
     ]);
   });
 
+  it('names the runs that caught a bug seen again, and counts its screens', () => {
+    const [bug] = CHECKOUT.bugs;
+    const { text } = describeBug({
+      workspace: {
+        ...CHECKOUT,
+        bugs: [
+          {
+            ...bug!,
+            seenRuns: 2,
+            sightings: [
+              {
+                runId: 'r-02',
+                runWhen: '10:05',
+                caseId: 'TC-01',
+                stepNumber: 2,
+                at: 1_760_000_100_000,
+                shot: { isBad: true, src: null, file: '/tmp/qazinho/r-02/step-2.jpg' },
+              },
+            ],
+          },
+        ],
+      },
+      bugId: 'BUG-01',
+    });
+
+    expect(text.split('\n').at(-1)).toBe(
+      'Seen in 2 runs (r-01, r-02), with 3 screenshots in Bugs.',
+    );
+  });
+
   it('does NOT make up a bug: it names the bugs there are', () => {
     expect(describeBug({ workspace: CHECKOUT, bugId: 'BUG-07' })).toEqual({
       text: 'w1 has no bug "BUG-07". Its bugs are BUG-01.',
