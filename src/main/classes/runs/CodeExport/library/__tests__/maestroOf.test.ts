@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parseAllDocuments } from 'yaml';
 import { maestroOf } from '@/main/classes/runs/CodeExport/library';
-import { RECIPE, STEPS } from './fixtures';
+import { RECIPE, SIGN_IN, STEPS } from './fixtures';
 
 const FLOW = maestroOf({ appId: 'app.qazinho.loja', steps: STEPS, recipe: RECIPE });
 
@@ -71,5 +71,22 @@ describe('maestroOf', () => {
 
     expect(at).toBeGreaterThan(0);
     expect(body?.[at + 1]).toBe('launchApp');
+  });
+  it("types a project's variable from the environment, and asserts a proof that names one", () => {
+    const flow = maestroOf({ appId: 'app.qazinho.loja', steps: STEPS, recipe: SIGN_IN });
+    const [head, body] = parseAllDocuments(flow).map(
+      (document) => document.toJS() as unknown[],
+    );
+
+    expect(flow.split('\n')[0]).toBe(
+      "# Types the project's variables from the environment: maestro test -e SHOP_EMAIL=… -e SHOP_PASSWORD=…",
+    );
+    expect(head).toMatchObject({ appId: 'app.qazinho.loja' });
+    expect(body).toContainEqual({ inputText: '${SHOP_EMAIL}' });
+    expect(body).toContainEqual({ assertVisible: '.*Welcome, ${SHOP_EMAIL}\\..*' });
+  });
+
+  it('does NOT ask for the environment in a flow with no variable', () => {
+    expect(FLOW).not.toContain('from the environment');
   });
 });

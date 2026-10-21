@@ -1,6 +1,7 @@
 import type { ICaseRecipe } from '@/main/classes/runs/RunCoordinator/types';
 import type { IFlatStep, IStepAction, IViewport } from '@/shared/types';
 import { ordinalOf, sampleFileOf, withoutRole } from '@/main/library';
+import { variablesIn } from './variablesIn';
 
 const WHEEL: Record<string, string> = {
   down: '0, 600',
@@ -43,8 +44,29 @@ async function reopen(page: Page): Promise<Page> {
 }
 `;
 
+const VARIABLE = `function variable(name: string): string {
+  const value = process.env[name];
+
+  if (value === undefined) throw new Error(\`Set \${name} in the environment to run these tests.\`);
+
+  return value;
+}
+`;
+
 function quoted(text: string): string {
-  return JSON.stringify(text);
+  const parts = text.split(/(\$\{[A-Z][A-Z0-9_]*\})/);
+
+  if (parts.length === 1) return JSON.stringify(text);
+
+  return `\`${parts
+    .map((part) => {
+      const name = /^\$\{([A-Z][A-Z0-9_]*)\}$/.exec(part)?.[1];
+
+      return name === undefined
+        ? part.replace(/[\\`]|\$\{/g, (found) => `\\${found}`)
+        : `\${variable(${JSON.stringify(name)})}`;
+    })
+    .join('')}\``;
 }
 
 function aimed(target: string): string {
@@ -124,7 +146,7 @@ function lineOf(action: IStepAction): string[] {
   }
 }
 
-/** A Playwright test file for the cases a web app's runs recorded, each case a test that starts anew and checks each step's proof. */
+/** A Playwright test file for the cases a web app's runs recorded, each case a test that starts anew and checks each step's proof; a variable is read from the environment. */
 export function playwrightOf(props: {
   url: string;
   viewport: IViewport;
@@ -152,12 +174,21 @@ export function playwrightOf(props: {
     ].join('\n');
   });
 
+  const variables = variablesIn(props.cases.map(({ recipe }) => recipe));
+
   return [
     "import { expect, test, type Page } from '@playwright/test';",
     '',
+    ...(variables.length === 0
+      ? []
+      : [
+          `// Types the project's variables from the environment: ${variables.join(', ')}.`,
+          '',
+        ]),
     `const APP = ${quoted(props.url)};`,
     '',
     HELPERS,
+    ...(variables.length === 0 ? [] : [VARIABLE]),
     `test.use({ viewport: { width: ${String(props.viewport.width)}, height: ${String(props.viewport.height)} } });`,
     '',
     tests.join('\n\n'),

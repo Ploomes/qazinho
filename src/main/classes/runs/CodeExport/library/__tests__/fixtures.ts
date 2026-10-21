@@ -63,3 +63,19 @@ export const RECIPE: ICaseRecipe = {
     },
   ],
 };
+
+/** A sign in recorded with the project's variables: the recipe keeps their names, never their values. */
+export const SIGN_IN: ICaseRecipe = {
+  ...RECIPE,
+  steps: [
+    {
+      number: 1,
+      actions: [
+        { kind: 'fill', target: 'E-mail', value: '${SHOP_EMAIL}' },
+        { kind: 'fill', target: 'Senha', value: 'pre`fix ${SHOP_PASSWORD}' },
+        { kind: 'press', target: 'Enter', value: '' },
+      ],
+      proof: 'Welcome, ${SHOP_EMAIL}.',
+    },
+  ],
+};

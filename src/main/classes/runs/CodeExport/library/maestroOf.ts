@@ -1,6 +1,7 @@
 import type { ICaseRecipe } from '@/main/classes/runs/RunCoordinator/types';
 import type { IFlatStep, IStepAction } from '@/shared/types';
 import { ordinalOf, withoutRole } from '@/main/library';
+import { variablesIn } from './variablesIn';
 
 const SWIPES: Record<string, string> = {
   down: '- scroll',
@@ -24,7 +25,12 @@ function yamlText(text: string): string {
 }
 
 function pattern(text: string): string {
-  return text.replace(/[\\^$.|?*+()[\]{}]/g, '\\$&');
+  return text
+    .split(/(\$\{[A-Z][A-Z0-9_]*\})/)
+    .map((part, index) =>
+      index % 2 === 1 ? part : part.replace(/[\\^$.|?*+()[\]{}]/g, '\\$&'),
+    )
+    .join('');
 }
 
 function onOf(props: { command: string; target: string }): string {
@@ -73,7 +79,7 @@ function linesOf(action: IStepAction): string[] {
   }
 }
 
-/** A Maestro flow for one case a phone app's runs recorded: the app opened anew, each step done, and its proof asserted on screen. */
+/** A Maestro flow for one case a phone app's runs recorded: the app opened anew, each step done, and its proof asserted on screen; a variable is read from the environment. */
 export function maestroOf(props: {
   appId: string;
   steps: IFlatStep[];
@@ -90,7 +96,14 @@ export function maestroOf(props: {
     ];
   });
 
+  const variables = variablesIn([props.recipe]);
+
   return [
+    ...(variables.length === 0
+      ? []
+      : [
+          `# Types the project's variables from the environment: maestro test ${variables.map((name) => `-e ${name}=…`).join(' ')}`,
+        ]),
     `appId: ${props.appId}`,
     `name: ${yamlText(`${first?.caseId ?? props.recipe.caseId} · ${first?.caseTitle ?? ''}`)}`,
     '---',

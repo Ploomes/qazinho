@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { playwrightOf } from '@/main/classes/runs/CodeExport/library';
-import { RECIPE, STEPS } from './fixtures';
+import { RECIPE, SIGN_IN, STEPS } from './fixtures';
 
 const FILE = playwrightOf({
   url: 'https://loja.test/',
@@ -127,5 +127,31 @@ describe('playwrightOf', () => {
       ].join('\n'),
     );
     expect(FILE).toContain('dialog.accept(answer.text)');
+  });
+  it("types a project's variable from the environment, and checks a proof that names one", () => {
+    const file = playwrightOf({
+      url: 'https://loja.test/',
+      viewport: { width: 1280, height: 800 },
+      cases: [{ steps: STEPS, recipe: SIGN_IN }],
+    });
+
+    expect(file).toContain(
+      "// Types the project's variables from the environment: SHOP_EMAIL, SHOP_PASSWORD.",
+    );
+    expect(file).toContain('function variable(name: string): string {');
+    expect(file).toContain(
+      '  await field(tab, "E-mail").fill(`${variable("SHOP_EMAIL")}`);',
+    );
+    expect(file).toContain(
+      '  await field(tab, "Senha").fill(`pre\\`fix ${variable("SHOP_PASSWORD")}`);',
+    );
+    expect(file).toContain(
+      '  await expect(tab.getByText(`Welcome, ${variable("SHOP_EMAIL")}.`).first()).toBeVisible();',
+    );
+  });
+
+  it('does NOT add the environment helper to a file with no variable', () => {
+    expect(FILE).not.toContain('function variable(');
+    expect(FILE).not.toContain('from the environment');
   });
 });
