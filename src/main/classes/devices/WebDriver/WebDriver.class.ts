@@ -10,8 +10,11 @@ import type {
   IViewport,
 } from '@/shared/types';
 import type { BrowserContext, CDPSession, Page } from 'playwright-core';
-import { rm } from 'node:fs/promises';
+import { mkdir, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
 import { chromium } from 'playwright-core';
+import { sampleFileOf } from '@/main/library';
 import { FIELD_FORMATS, MOTION_PROBE, WEB_DRIVER } from './constants';
 import {
   describePage,
@@ -36,7 +39,11 @@ export class WebDriver implements IDeviceDriver {
   private cdp: CDPSession | null = null;
   private onFrame: ((jpeg: Buffer) => void) | null = null;
   private lastMotion: IActionMotion | null = null;
-  private resolved: { locator: string; option: string | null } | null = null;
+  private resolved: {
+    locator: string;
+    toLocator: string | null;
+    option: string | null;
+  } | null = null;
   private viewport: IViewport;
   private isFocused = false;
   private dialogAnswer: DialogAnswer = 'ok';
@@ -82,7 +89,11 @@ export class WebDriver implements IDeviceDriver {
   }
 
   /** The locator the last click or fill found its target with, as Playwright writes it, and the option a dropdown took. */
-  public resolution(): { locator: string; option: string | null } | null {
+  public resolution(): {
+    locator: string;
+    toLocator: string | null;
+    option: string | null;
+  } | null {
     return this.resolved;
   }
 
@@ -374,15 +385,77 @@ export class WebDriver implements IDeviceDriver {
       return;
     }
 
+    if (action.kind === 'scroll') {
+      await this.scrollPage({ page, direction: action.value, until: action.target });
+
+      return;
+    }
+
     const locator = await findLocator({
       page,
       target: action.target,
-      kind: action.kind === 'fill' ? 'fill' : 'click',
+      kind: action.kind === 'fill' || action.kind === 'upload' ? 'fill' : 'click',
     });
 
     if (!locator) throw new Error(`Nothing on the page answers to "${action.target}".`);
 
-    this.resolved = { locator: String(locator), option: null };
+    const timeout = WEB_DRIVER.actionTimeoutMs;
+
+    this.resolved = { locator: String(locator), toLocator: null, option: null };
+
+    if (action.kind === 'long_press') {
+      await locator.click({ delay: WEB_DRIVER.longPressMs, timeout });
+
+      return;
+    }
+
+    if (action.kind === 'hover') {
+      await locator.hover({ timeout });
+
+      return;
+    }
+
+    if (action.kind === 'drag') {
+      const drop = await findLocator({ page, target: action.value, kind: 'click' });
+
+      if (!drop) throw new Error(`Nothing on the page answers to "${action.value}".`);
+
+      this.resolved = { locator: String(locator), toLocator: String(drop), option: null };
+      await locator.dragTo(drop, { timeout });
+
+      return;
+    }
+
+    if (action.kind === 'upload') {
+      const sample = sampleFileOf(action.value);
+      const file = join(tmpdir(), WEB_DRIVER.samplesFolder, sample.name);
+
+      await mkdir(dirname(file), { recursive: true });
+      await writeFile(file, sample.bytes);
+
+      const isField = await locator
+        .evaluate((element) => {
+          const field = element as unknown as { tagName: string; type?: string };
+
+          return field.tagName === 'INPUT' && field.type === 'file';
+        })
+        .catch(() => false);
+
+      if (isField) {
+        await locator.setInputFiles(file, { timeout });
+
+        return;
+      }
+
+      const [chooser] = await Promise.all([
+        page.waitForEvent('filechooser', { timeout }),
+        locator.click({ timeout }),
+      ]);
+
+      await chooser.setFiles(file);
+
+      return;
+    }
 
     if (action.kind !== 'fill') {
       await locator.click({ timeout: WEB_DRIVER.actionTimeoutMs });
@@ -405,8 +478,6 @@ export class WebDriver implements IDeviceDriver {
         }));
       })
       .catch(() => null);
-    const timeout = WEB_DRIVER.actionTimeoutMs;
-
     if (options === null) {
       await locator.fill(action.value, { timeout }).catch(async (reason: unknown) => {
         const type = await locator.getAttribute('type').catch(() => null);
@@ -427,8 +498,53 @@ export class WebDriver implements IDeviceDriver {
         `"${action.target}" has no option "${action.value}". It offers: ${options.map(({ label }) => label).join(', ')}.`,
       );
 
-    this.resolved = { locator: String(locator), option: option.value };
+    this.resolved = { locator: String(locator), toLocator: null, option: option.value };
     await locator.selectOption(option.value, { timeout });
+  }
+
+  private async scrollPage(props: {
+    page: Page;
+    direction: string;
+    until: string;
+  }): Promise<void> {
+    const { page, direction } = props;
+    const until = props.until.trim();
+    const { width, height } = this.viewport;
+    const reach = WEB_DRIVER.scrollShare;
+    const [dx, dy] =
+      direction === 'up'
+        ? [0, -height * reach]
+        : direction === 'right'
+          ? [width * reach, 0]
+          : direction === 'left'
+            ? [-width * reach, 0]
+            : [0, height * reach];
+
+    await page.mouse.move(width / 2, height / 2);
+
+    if (until === '') {
+      await page.mouse.wheel(dx, dy);
+      await page.waitForTimeout(WEB_DRIVER.scrollSettleMs);
+
+      return;
+    }
+
+    for (let tries = 0; tries < WEB_DRIVER.scrollTries; tries += 1) {
+      const shown = page.getByText(until).first();
+
+      if (await shown.isVisible().catch(() => false)) {
+        await shown
+          .scrollIntoViewIfNeeded({ timeout: WEB_DRIVER.actionTimeoutMs })
+          .catch(() => undefined);
+
+        return;
+      }
+
+      await page.mouse.wheel(dx, dy);
+      await this.settle(page);
+    }
+
+    throw new Error(`Nothing on the page reads "${until}" after scrolling ${direction}.`);
   }
 
   private async markOf(page: Page): Promise<{ origin: number; at: number } | null> {

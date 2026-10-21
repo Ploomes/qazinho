@@ -22,5 +22,9 @@ export interface IDeviceDriver {
   record: (folder: string) => Promise<boolean>;
   stopRecording: () => Promise<IRunVideo | null>;
   close: () => Promise<void>;
-  resolution?: () => { locator: string; option: string | null } | null;
+  resolution?: () => {
+    locator: string;
+    toLocator: string | null;
+    option: string | null;
+  } | null;
 }

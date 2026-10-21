@@ -14,4 +14,9 @@ export const WEB_DRIVER = {
   wholeQuality: 92,
   pageTextLimit: 2_000,
   elementLimit: 40,
+  longPressMs: 800,
+  scrollShare: 0.8,
+  scrollTries: 10,
+  scrollSettleMs: 400,
+  samplesFolder: 'qazinho-samples',
 } as const;

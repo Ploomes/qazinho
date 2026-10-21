@@ -526,6 +526,7 @@ export class RunCoordinator {
               : {
                   ...action,
                   locator: found.locator,
+                  ...(found.toLocator === null ? {} : { toLocator: found.toLocator }),
                   ...(found.option === null ? {} : { option: found.option }),
                 },
           ]);
