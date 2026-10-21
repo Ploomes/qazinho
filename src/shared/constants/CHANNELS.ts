@@ -18,6 +18,8 @@ export const CHANNELS = {
   runEvent: 'run:event',
   replayUrl: 'run:replay-url',
   saveReplay: 'run:save-replay',
+  alertRunEnded: 'run:alert',
+  openRun: 'run:open',
   recorderStart: 'recorder:start',
   recorderStop: 'recorder:stop',
   recorderWrite: 'recorder:write',

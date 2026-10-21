@@ -8,6 +8,7 @@ import type {
   IConnectIntegration,
   InstallableId,
   IntegrationId,
+  IRunEndNotice,
   IRunEvent,
   IRunRef,
   IMcpServerTarget,
@@ -49,6 +50,7 @@ import {
   ResourceCollector,
   RunCoordinator,
   ReplayServer,
+  RunAlerts,
   RunRecorder,
   SetupInstaller,
 } from '@/main/classes';
@@ -99,6 +101,18 @@ const recorder = new RunRecorder({
 function appWindows(): BrowserWindow[] {
   return BrowserWindow.getAllWindows().filter((open) => !recorder.owns(open));
 }
+
+const alerts = new RunAlerts((run) => {
+  const [open] = appWindows();
+
+  if (!open) return;
+
+  if (open.isMinimized()) open.restore();
+
+  open.show();
+  open.focus();
+  open.webContents.send(CHANNELS.openRun, run);
+});
 
 function broadcast(props: {
   channel: string;
@@ -385,6 +399,10 @@ function createWindow(): void {
     },
   });
 
+  window.on('focus', () => {
+    alerts.seen();
+  });
+
   window.once('ready-to-show', () => {
     setTimeout(() => {
       if (!window.isDestroyed() && !window.isVisible()) window.show();
@@ -436,6 +454,12 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.askAgent, (_event, ask: IAskAgent) => askAgent(ask));
   ipcMain.handle(CHANNELS.startRun, (_event, run: IStartRun) => runs.start(run));
   ipcMain.handle(CHANNELS.replayUrl, (_event, run: IRunRef) => replays.urlFor(run));
+  ipcMain.on(CHANNELS.alertRunEnded, (event, notice: IRunEndNotice) => {
+    alerts.alert({
+      notice,
+      isAway: !(BrowserWindow.fromWebContents(event.sender)?.isFocused() ?? false),
+    });
+  });
   ipcMain.handle(CHANNELS.saveReplay, (_event, props: IRunRef & { name: string }) =>
     saveReplay(props),
   );

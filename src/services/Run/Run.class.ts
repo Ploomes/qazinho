@@ -1,4 +1,5 @@
 import type {
+  IRunEndNotice,
   IRunEvent,
   IRunInFlight,
   IRunRef,
@@ -45,5 +46,13 @@ export class Run {
     props: IRunRef & { name: string },
   ): Promise<SaveOutcome> {
     return (await window.qazinho?.saveReplay(props)) ?? 'failed';
+  }
+
+  public static alert(notice: IRunEndNotice): void {
+    window.qazinho?.alertRunEnded(notice);
+  }
+
+  public static onOpen(listener: (run: IRunRef) => void): () => void {
+    return window.qazinho?.onOpenRun(listener) ?? (() => undefined);
   }
 }

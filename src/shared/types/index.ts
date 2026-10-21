@@ -39,6 +39,7 @@ export type * from './IRecordingDone';
 export type * from './IRecordingStart';
 export type * from './IRecordingStop';
 export type * from './IResourceSnapshot';
+export type * from './IRunEndNotice';
 export type * from './IRunEvent';
 export type * from './IRunFinding';
 export type * from './IRunInFlight';

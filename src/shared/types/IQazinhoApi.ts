@@ -15,6 +15,7 @@ import type { IMcpSignIn } from './IMcpSignIn';
 import type { InstallableId } from './InstallableId';
 import type { IntegrationId } from './IntegrationId';
 import type { IResourceSnapshot } from './IResourceSnapshot';
+import type { IRunEndNotice } from './IRunEndNotice';
 import type { IRunEvent } from './IRunEvent';
 import type { IRunInFlight } from './IRunInFlight';
 import type { IRunRef } from './IRunRef';
@@ -52,6 +53,8 @@ export interface IQazinhoApi {
   onRunEvent: (listener: (event: IRunEvent) => void) => () => void;
   replayUrl: (run: IRunRef) => Promise<string | null>;
   saveReplay: (props: IRunRef & { name: string }) => Promise<SaveOutcome>;
+  alertRunEnded: (notice: IRunEndNotice) => void;
+  onOpenRun: (listener: (run: IRunRef) => void) => () => void;
   readState: () => Promise<ISavedState>;
   saveProjects: (json: string) => Promise<void>;
   saveWorkspace: (saved: ISavedWorkspace) => Promise<void>;

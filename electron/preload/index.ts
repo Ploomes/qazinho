@@ -21,6 +21,7 @@ import type {
   IResourceSnapshot,
   IRunEvent,
   IRunInFlight,
+  IRunEndNotice,
   IRunRef,
   ISavedState,
   ISavedWorkspace,
@@ -103,6 +104,20 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.replayUrl, run) as Promise<string | null>,
   saveReplay: (props: IRunRef & { name: string }) =>
     ipcRenderer.invoke(CHANNELS.saveReplay, props) as Promise<SaveOutcome>,
+  alertRunEnded: (notice: IRunEndNotice) => {
+    ipcRenderer.send(CHANNELS.alertRunEnded, notice);
+  },
+  onOpenRun: (listener: (run: IRunRef) => void) => {
+    const forward = (_: unknown, run: IRunRef) => {
+      listener(run);
+    };
+
+    ipcRenderer.on(CHANNELS.openRun, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.openRun, forward);
+    };
+  },
   readState: () => ipcRenderer.invoke(CHANNELS.readState) as Promise<ISavedState>,
   saveProjects: (json: string) =>
     ipcRenderer.invoke(CHANNELS.saveProjects, json) as Promise<void>,
