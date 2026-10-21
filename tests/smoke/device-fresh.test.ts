@@ -1,3 +1,5 @@
+import { execFileSync } from 'node:child_process';
+import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { AndroidDriver } from '@/main/classes/devices/AndroidDriver';
 import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
@@ -78,6 +80,33 @@ describe('a fresh start on a real Android emulator', () => {
     await next.open();
     expect(await visits(next)).toBe('Visits: 0');
   }, 600_000);
+
+  /** goto brought the app back as it was and back left it running: neither closed it for real. */
+  it('reopens the app for real: a new process, with what it saved kept', async (context) => {
+    if (apk === null || avd === undefined || driver === null) {
+      context.skip();
+
+      return;
+    }
+
+    const pid = () =>
+      execFileSync(join(sdkRoot, 'platform-tools', 'adb'), [
+        'shell',
+        'pidof',
+        'app.qazinho.fixture',
+      ])
+        .toString()
+        .trim();
+
+    await driver.restart();
+    await driver.act({ kind: 'click', target: 'Save visit', value: '' });
+
+    const before = pid();
+
+    await driver.act({ kind: 'reopen', target: '', value: '' });
+    expect(await visits(driver)).toBe('Visits: 1');
+    expect(pid()).not.toBe(before);
+  }, 600_000);
 });
 
 describe('a fresh start on a real iOS simulator', () => {
@@ -122,5 +151,18 @@ describe('a fresh start on a real iOS simulator', () => {
 
     await next.open();
     expect(await visits(next)).toBe('Visits: 0');
+  }, 600_000);
+
+  it('reopens the app with what it saved kept', async (context) => {
+    if (app === null || udid === undefined || driver === null) {
+      context.skip();
+
+      return;
+    }
+
+    await driver.restart();
+    await driver.act({ kind: 'click', target: 'Save visit', value: '' });
+    await driver.act({ kind: 'reopen', target: '', value: '' });
+    expect(await visits(driver)).toBe('Visits: 1');
   }, 600_000);
 });
