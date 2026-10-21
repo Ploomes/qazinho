@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { findElement } from '@/main/classes/devices/IosDriver/library';
 
 const ELEMENTS = [
-  { label: 'Sign in with Apple', role: 'Button', x: 10, y: 10 },
-  { label: 'Sign in', role: 'Button', x: 20, y: 20 },
-  { label: '', role: 'Other', x: 30, y: 30 },
+  { label: 'Sign in with Apple', role: 'Button', x: 10, y: 10, isLaunchIcon: false },
+  { label: 'Sign in', role: 'Button', x: 20, y: 20, isLaunchIcon: false },
+  { label: '', role: 'Other', x: 30, y: 30, isLaunchIcon: false },
 ];
 
 describe('findElement', () => {
@@ -18,8 +18,8 @@ describe('findElement', () => {
 
   it('takes the second of several that read alike when the agent says #2', () => {
     const rows = [
-      { label: 'Buy', role: 'Button', x: 1, y: 1 },
-      { label: 'Buy', role: 'Button', x: 2, y: 2 },
+      { label: 'Buy', role: 'Button', x: 1, y: 1, isLaunchIcon: false },
+      { label: 'Buy', role: 'Button', x: 2, y: 2, isLaunchIcon: false },
     ];
 
     expect(findElement({ elements: rows, target: 'Buy #2' })?.x).toBe(2);

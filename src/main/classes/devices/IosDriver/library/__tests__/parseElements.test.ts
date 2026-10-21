@@ -25,6 +25,14 @@ describe('parseElements', () => {
     ]);
   });
 
+  it("tells an app's icon on the home screen from the app's own controls", () => {
+    const icon = { ...ONE, AXLabel: 'Safari', traits: ['Scrollable', 'LaunchIcon'] };
+
+    expect(
+      parseElements(JSON.stringify([ONE, icon])).map(({ isLaunchIcon }) => isLaunchIcon),
+    ).toEqual([false, true]);
+  });
+
   it('falls back to the value when an element carries no label', () => {
     const valued = { ...ONE, AXLabel: null, AXValue: 'j@shop.test' };
 

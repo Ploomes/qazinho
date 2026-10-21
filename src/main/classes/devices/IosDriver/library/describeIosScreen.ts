@@ -2,11 +2,12 @@ import type { IScreenElement } from '@/main/classes/devices/IosDriver/types';
 import { IOS } from '@/main/classes/devices/IosDriver/constants';
 import { numberDuplicates } from '@/main/library';
 
-/** What the agent is allowed to look at: what a person would read on the screen. */
+/** What the agent is allowed to look at: what a person would read on the screen, and the home screen said as such when the app is not open. */
 export function describeIosScreen(props: {
   elements: IScreenElement[];
   app: string;
 }): string {
+  const isHome = props.elements.some(({ isLaunchIcon }) => isLaunchIcon);
   const labelled = props.elements.filter((one) => one.label.length > 0);
 
   const text = labelled
@@ -19,7 +20,7 @@ export function describeIosScreen(props: {
     .map((one) => `${one.role.toLowerCase()}: ${one.label.slice(0, IOS.labelLimit)}`);
 
   return [
-    `APP: ${props.app}`,
+    isHome ? `APP: the home screen, ${props.app} is not open` : `APP: ${props.app}`,
     'TEXT:',
     text,
     'CONTROLS:',

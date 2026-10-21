@@ -4,6 +4,7 @@ type Described = {
   AXLabel?: unknown;
   AXValue?: unknown;
   type?: unknown;
+  traits?: unknown;
   frame?: { x?: unknown; y?: unknown; width?: unknown; height?: unknown };
 };
 
@@ -37,6 +38,7 @@ function toElement(one: Described): IScreenElement[] {
       role: typeof one.type === 'string' ? one.type : '',
       x: Math.round(x + width / 2),
       y: Math.round(y + height / 2),
+      isLaunchIcon: Array.isArray(one.traits) && one.traits.includes('LaunchIcon'),
     },
   ];
 }

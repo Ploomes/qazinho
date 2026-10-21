@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { describeIosScreen } from '@/main/classes/devices/IosDriver/library';
 
 const ELEMENTS = [
-  { label: 'Settings', role: 'StaticText', x: 10, y: 10 },
-  { label: 'Wi-Fi', role: 'Button', x: 20, y: 20 },
-  { label: '', role: 'Other', x: 30, y: 30 },
+  { label: 'Settings', role: 'StaticText', x: 10, y: 10, isLaunchIcon: false },
+  { label: 'Wi-Fi', role: 'Button', x: 20, y: 20, isLaunchIcon: false },
+  { label: '', role: 'Other', x: 30, y: 30, isLaunchIcon: false },
 ];
 
 describe('describeIosScreen', () => {
@@ -20,6 +20,16 @@ describe('describeIosScreen', () => {
     const said = describeIosScreen({ elements: ELEMENTS, app: 'com.example' });
 
     expect(said).not.toContain('other:');
+  });
+
+  /** An app that failed to launch left the home screen, read as if it were the app. */
+  it('says the home screen is the home screen, and that the app is not open', () => {
+    expect(
+      describeIosScreen({
+        elements: [{ label: 'Safari', role: 'Button', x: 10, y: 10, isLaunchIcon: true }],
+        app: 'app.qazinho.fixture',
+      }).split('\n')[0],
+    ).toBe('APP: the home screen, app.qazinho.fixture is not open');
   });
 
   it('an empty screen is still described, so the agent knows it is empty', () => {
