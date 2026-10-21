@@ -7,5 +7,6 @@ export * from './momentAt';
 export * from './nextRunId';
 export * from './pageOf';
 export * from './replayTimelineOf';
+export * from './runDayOf';
 export * from './takeOf';
 export * from './walkedByOf';
