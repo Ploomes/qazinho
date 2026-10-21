@@ -15,6 +15,7 @@ import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { phoneGlance } from '@/main/library';
 import { ANDROID } from './constants';
 import {
+  bootArgs,
   describeScreen,
   findNode,
   frontPackage,
@@ -215,7 +216,7 @@ export class AndroidDriver implements IDeviceDriver {
   private async boot(): Promise<string> {
     const emulator = join(this.sdkRoot, 'emulator', 'emulator');
 
-    spawn(emulator, ['-avd', this.avd, '-no-boot-anim'], {
+    spawn(emulator, bootArgs(this.avd), {
       detached: true,
       stdio: 'ignore',
     }).unref();

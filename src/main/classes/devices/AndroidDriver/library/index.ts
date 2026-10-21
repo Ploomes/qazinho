@@ -1,3 +1,4 @@
+export * from './bootArgs';
 export * from './centreOf';
 export * from './decodeXml';
 export * from './describeScreen';
