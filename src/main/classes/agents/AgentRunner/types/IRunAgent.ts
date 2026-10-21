@@ -10,4 +10,5 @@ export interface IRunAgent {
   systemPrompt?: string;
   mcpConfig?: string;
   allowedTools?: string[];
+  readDirs?: string[];
 }

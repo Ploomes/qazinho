@@ -4,17 +4,19 @@ import type { AppLook, HarnessRole, IHarnessTarget } from '@/harness/types';
 import type {
   IChatAnswer,
   IChatReference,
+  ICodeCopy,
   IFlatStep,
   ITargetUnderTest,
   IViewport,
   Language,
 } from '@/shared/types';
-import { LANGUAGE_NAMES } from '@/harness/constants';
+import { CODE_SECTION, LANGUAGE_NAMES } from '@/harness/constants';
 import { CORPUS } from '@/harness/context/constants';
 import {
   changedSections,
   chatMessageOf,
   describeCase,
+  describeCode,
   describeLook,
   describePlan,
   describeReferences,
@@ -52,7 +54,7 @@ export class Harness {
     return toolsOfRole({ grants: TOOL_GRANTS, role, server: MCP_HOST.name });
   }
 
-  /** One chat message: the corpus as its system prompt, and the QA's words opened by what the agent has not been told yet. */
+  /** One chat message: the corpus as its system prompt, the QA's words opened by what the agent was not told yet, and the code it may read. */
   public chat(props: {
     text: string;
     told: Record<string, string>;
@@ -62,12 +64,14 @@ export class Harness {
     references: IChatReference[];
     runs: IChatReference[];
     look: AppLook | null;
+    code: ICodeCopy | null;
   }): {
     systemPrompt: string;
     prompt: string;
     told: Record<string, string>;
     schema: string;
     tools: IHarnessTools;
+    readDirs: string[];
   } {
     const news = changedSections({
       sections: [
@@ -83,6 +87,10 @@ export class Harness {
         },
         describeRuns(props.runs),
         describeLook(props.look),
+        describeCode({
+          code: props.code,
+          wasTold: (props.told[CODE_SECTION.title] ?? '') !== '',
+        }),
       ],
       told: props.told,
     });
@@ -96,6 +104,7 @@ export class Harness {
       told: news.told,
       schema: CHAT_SCHEMA,
       tools: this.toolsFor('chat'),
+      readDirs: props.code === null ? [] : [props.code.root],
     };
   }
 

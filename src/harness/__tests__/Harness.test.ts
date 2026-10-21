@@ -1,4 +1,4 @@
-import type { IChatReference, IFlatStep } from '@/shared/types';
+import type { IChatReference, ICodeCopy, IFlatStep } from '@/shared/types';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -59,6 +59,21 @@ const EMPTY_CHAT = {
   references: [],
   runs: [],
   look: null,
+  code: null,
+};
+
+const CODE: ICodeCopy = {
+  repository: 'acme/loja-web',
+  branch: 'feat/cupom',
+  base: 'develop',
+  commit: 'aaa1111222233334444',
+  baseCommit: 'bbb2222333344445555',
+  root: '/data/code/w-1',
+  dir: '/data/code/w-1/acme/loja-web',
+  diffFile: '/data/code/w-1/acme-loja-web.diff',
+  changes: [{ path: 'src/Coupon.tsx', status: 'modified', additions: 40, deletions: 3 }],
+  changedFiles: 1,
+  commits: 2,
 };
 
 const FULL_CHAT = {
@@ -74,6 +89,7 @@ const FULL_CHAT = {
     isOpen: true as const,
     page: 'URL: https://shop.test/\nTITLE: Shop\nTEXT:\nNew in: summer shoes\nCONTROLS:\na: Cart\nbutton: Sign in',
   },
+  code: null,
 };
 
 describe('Harness', () => {
@@ -112,6 +128,28 @@ describe('Harness', () => {
       expect(second.prompt).not.toContain('## This workspace');
       expect(second.prompt).not.toContain('## What QAzinho saw of the app');
       expect(second.prompt.endsWith('</qazinho>\n\nWhat failed?')).toBe(true);
+    });
+
+    it('opens a message planned from code with the branch, its diff, and the folder the agent may read', async () => {
+      const chat = harness.chat({
+        ...EMPTY_CHAT,
+        text: 'Plan from this branch.',
+        code: CODE,
+      });
+
+      await expect(chat.prompt).toMatchFileSnapshot('./__prompts__/chat-code.txt');
+      expect(chat.readDirs).toEqual(['/data/code/w-1']);
+      expect(harness.chat(EMPTY_CHAT).readDirs).toEqual([]);
+    });
+
+    it('tells the agent once that the copy is gone after the plan, and never again', () => {
+      const planning = harness.chat({ ...EMPTY_CHAT, code: CODE });
+      const after = harness.chat({ ...EMPTY_CHAT, told: planning.told, text: 'Thanks' });
+
+      expect(after.prompt).toContain('The copy of the code is gone');
+      expect(
+        harness.chat({ ...EMPTY_CHAT, told: after.told, text: 'And now?' }).prompt,
+      ).toBe('And now?');
     });
 
     it('sends the QA words alone when nothing changed and nothing is pointed at', () => {

@@ -77,4 +77,28 @@ describe('buildAskArgs', () => {
       buildAskArgs({ model: '', sessionId: null, allowedTools: [] }).slice(-2),
     ).toEqual(['--tools', '']);
   });
+
+  it('lets a talk read, search and list the folders it was handed, and nothing else', () => {
+    expect(
+      buildAskArgs({
+        model: '',
+        sessionId: null,
+        allowedTools: [],
+        readDirs: ['/data/code/w-1'],
+      }).slice(-4),
+    ).toEqual(['--tools', 'Read,Grep,Glob', '--add-dir', '/data/code/w-1']);
+  });
+
+  it('does NOT hand a run the folders of a talk', () => {
+    const args = buildAskArgs({
+      model: '',
+      sessionId: null,
+      mcpConfig: '{"mcpServers":{}}',
+      allowedTools: ['mcp__qazinho'],
+      readDirs: ['/data/code/w-1'],
+    });
+
+    expect(args).not.toContain('--add-dir');
+    expect(args).not.toContain('Read,Grep,Glob');
+  });
 });

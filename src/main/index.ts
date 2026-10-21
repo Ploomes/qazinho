@@ -245,6 +245,7 @@ async function askOnce(props: {
     references: ask.references,
     runs: ask.runs,
     look,
+    code: null,
   });
   const turn = await agentRunner.ask({
     workspaceId: ask.workspaceId,
@@ -256,6 +257,7 @@ async function askOnce(props: {
     schema: chat.schema,
     systemPrompt: chat.systemPrompt,
     allowedTools: chat.tools.allowedTools,
+    readDirs: chat.readDirs,
   });
 
   return { turn, told: chat.told };

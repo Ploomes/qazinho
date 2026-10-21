@@ -127,6 +127,7 @@ describe('Codex in the chat', () => {
       references: [],
       runs: [],
       look: null,
+      code: null,
     });
     const ask = (sessionId: string | null) =>
       runner().ask({
