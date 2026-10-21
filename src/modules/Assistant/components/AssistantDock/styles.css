@@ -1,0 +1,15 @@
+.assistant-dock {
+  position: fixed;
+  right: var(--assistant-inset);
+  bottom: var(--assistant-inset);
+  z-index: 29;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--assistant-rise);
+  pointer-events: none;
+}
+
+.assistant-dock > * {
+  pointer-events: auto;
+}

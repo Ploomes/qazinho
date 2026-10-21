@@ -1,6 +1,11 @@
 import { useEffect } from 'react';
 import { useRunActions } from '@/modules/Run';
-import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useAssistantStore,
+  useSettingsStore,
+  useWorkspaceStore,
+} from '@/store';
 import { comboOf, isBindable } from './library';
 
 export const useKeybinds = () => {
@@ -14,6 +19,8 @@ export const useKeybinds = () => {
   const toggleResources = useAppStore((state) => state.toggleResources);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const toggleDevicePanel = useWorkspaceStore((state) => state.toggleDevicePanel);
+  const hasOnboarded = useSettingsStore((state) => state.hasOnboarded);
+  const toggleAssistant = useAssistantStore((state) => state.toggle);
   const { onRun, onStop } = useRunActions();
 
   useEffect(() => {
@@ -35,6 +42,9 @@ export const useKeybinds = () => {
       },
       bugs: () => {
         selectTab('bugs');
+      },
+      assistant: () => {
+        if (hasOnboarded) toggleAssistant();
       },
       resources: toggleResources,
       settings: openSettings,
@@ -79,6 +89,8 @@ export const useKeybinds = () => {
     toggleResources,
     selectTab,
     toggleDevicePanel,
+    hasOnboarded,
+    toggleAssistant,
     onRun,
     onStop,
   ]);

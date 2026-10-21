@@ -1,4 +1,5 @@
 import { AnimatePresence, MotionConfig } from 'motion/react';
+import { AssistantDock } from '@/modules/Assistant';
 import { DevicePanel } from '@/modules/Device';
 import { ProjectModal, Welcome } from '@/modules/Project';
 import { RunNotice, RunReplay } from '@/modules/Run';
@@ -46,6 +47,8 @@ export const App: React.FC = () => {
           {modal === 'project' && <ProjectModal key="project" />}
           {modal === 'workspace' && <NewWorkspaceModal key="workspace" />}
         </AnimatePresence>
+
+        {!isOnboarding && <AssistantDock />}
       </div>
     </MotionConfig>
   );

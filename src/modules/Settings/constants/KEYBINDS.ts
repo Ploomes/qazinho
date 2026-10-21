@@ -9,6 +9,7 @@ export const KEYBINDS: IKeybind[] = [
   { id: 'plan', labelKey: 'SETTINGS.KEYBIND_PLAN', combo: '⌘2' },
   { id: 'runs', labelKey: 'SETTINGS.KEYBIND_RUNS', combo: '⌘3' },
   { id: 'bugs', labelKey: 'SETTINGS.KEYBIND_BUGS', combo: '⌘4' },
+  { id: 'assistant', labelKey: 'SETTINGS.KEYBIND_ASSISTANT', combo: '⌘J' },
   { id: 'resources', labelKey: 'SETTINGS.KEYBIND_RESOURCES', combo: '⌘R' },
   { id: 'settings', labelKey: 'SETTINGS.KEYBIND_SETTINGS', combo: '⌘,' },
 ];
