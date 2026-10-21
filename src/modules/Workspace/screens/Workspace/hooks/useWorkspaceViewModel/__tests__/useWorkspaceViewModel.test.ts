@@ -30,6 +30,22 @@ describe('useWorkspaceViewModel', () => {
     expect(result.current.planCount).toBe(2);
   });
 
+  it('offers a run with the agent once a case passed, which a later run can walk again', () => {
+    const { result } = renderHook(() => useWorkspaceViewModel());
+
+    expect(result.current.canRunWithAgent).toBe(false);
+
+    act(() => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          walkRun({ verdicts: ['passed', 'passed', 'passed'], isFinished: true }),
+        ],
+      });
+    });
+
+    expect(result.current.canRunWithAgent).toBe(true);
+  });
+
   it('has no workspace to show when the selection points nowhere', () => {
     useAppStore.setState({ selectedWorkspaceId: 'gone' });
 

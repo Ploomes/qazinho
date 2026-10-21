@@ -1,3 +1,4 @@
+import type { RunMode } from '@/shared/types';
 import { useTranslation } from 'react-i18next';
 import { viewportOf } from '@/modules/Device/library';
 import { flattenPlanSteps, nextRunId, walkedByOf } from '@/modules/Run/library';
@@ -31,7 +32,10 @@ export const useRunActions = () => {
 
   const selectedId = () => useAppStore.getState().selectedWorkspaceId;
 
-  const runWorkspace = (workspaceId: string | null): string | null => {
+  const runWorkspace = (
+    workspaceId: string | null,
+    mode: RunMode = 'replay',
+  ): string | null => {
     const { workspace, target } = opened(workspaceId);
     const steps = flattenPlanSteps(workspace?.plan ?? []);
     const live = workspace?.live ?? null;
@@ -66,6 +70,7 @@ export const useRunActions = () => {
       language: useSettingsStore.getState().language,
       viewport: { width: viewport.width, height: viewport.height },
       pixelRatio: window.devicePixelRatio,
+      mode,
     });
 
     return runId;
@@ -85,6 +90,9 @@ export const useRunActions = () => {
     stopWorkspace,
     onRun: () => {
       runWorkspace(selectedId());
+    },
+    onRunWithAgent: () => {
+      runWorkspace(selectedId(), 'agent');
     },
     onPause: () => {
       const { workspace } = opened(selectedId());

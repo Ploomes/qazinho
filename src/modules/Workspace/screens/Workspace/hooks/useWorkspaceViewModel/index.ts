@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { flattenPlanSteps, useRunActions } from '@/modules/Run';
+import { caseVerdict, flattenPlanSteps, useRunActions } from '@/modules/Run';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import { useWorkspaceStore } from '@/store';
 
@@ -17,11 +17,14 @@ export const useWorkspaceViewModel = () => {
     walked: opened.live?.outcomes.length ?? 0,
     isLive: opened.live !== null && !opened.live.isDone,
     isPaused: opened.live !== null && !opened.live.isRunning && !opened.live.isDone,
+    hasPassed: opened.runs.some((run) =>
+      run.cases.some(({ steps }) => caseVerdict(steps) === 'passed'),
+    ),
   }));
   const tab = useWorkspaceStore((state) => state.tab);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
-  const { onRun, onPause, onStop } = useRunActions();
+  const { onRun, onRunWithAgent, onPause, onStop } = useRunActions();
 
   const isLive = workspace?.isLive === true;
   const isPaused = workspace?.isPaused === true;
@@ -43,6 +46,9 @@ export const useWorkspaceViewModel = () => {
     runCount: workspace?.runCount ?? 0,
     bugCount: workspace?.bugCount ?? 0,
     canRun: (workspace?.stepCount ?? 0) > 0 && !isLive,
+    canRunWithAgent:
+      (workspace?.stepCount ?? 0) > 0 && !isLive && workspace?.hasPassed === true,
+    runWithAgentTip: t('WORKSPACE.RUN_WITH_AGENT_TIP'),
     isLive,
     isPaused,
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
@@ -51,6 +57,7 @@ export const useWorkspaceViewModel = () => {
       if (workspace) renameWorkspace({ workspaceId: workspace.id, name });
     },
     onRun,
+    onRunWithAgent,
     onPause,
     onStop,
   };

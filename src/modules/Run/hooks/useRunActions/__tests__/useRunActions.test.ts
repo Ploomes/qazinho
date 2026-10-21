@@ -51,9 +51,23 @@ describe('useRunActions', () => {
           workspaceId: 'w1',
           runId: 'r-01',
           target: { kind: 'web', value: 'https://shop.test' },
+          mode: 'replay',
         }),
       );
       expect(useWorkspaceStore.getState().workspaces[0]?.live?.isDone).toBe(false);
+    });
+
+    it('walks every case with the agent when the QA asks for it', () => {
+      const { startRunCall } = bridge();
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.onRunWithAgent();
+      });
+
+      expect(startRunCall).toHaveBeenCalledWith(
+        expect.objectContaining({ mode: 'agent' }),
+      );
     });
 
     it('remembers who walks the run, so what it finds keeps their names when the QA switches later', () => {
