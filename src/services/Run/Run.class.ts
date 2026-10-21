@@ -1,4 +1,6 @@
 import type {
+  ExportOutcome,
+  IExportCode,
   IRunEndNotice,
   IRunEvent,
   IRunInFlight,
@@ -12,6 +14,12 @@ import type {
 export class Run {
   public static start(run: IStartRun): void {
     void window.qazinho?.startRun(run);
+  }
+
+  public static async exportCode(request: IExportCode): Promise<ExportOutcome> {
+    return (
+      (await window.qazinho?.exportCode(request)) ?? { kind: 'failed', reason: 'write' }
+    );
   }
 
   public static setPaused(props: { workspaceId: string; isPaused: boolean }): void {

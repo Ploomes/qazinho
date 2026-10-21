@@ -11,6 +11,7 @@ import type {
   IChatTurn,
   ICodeCopy,
   IConnectIntegration,
+  IExportCode,
   InstallableId,
   IntegrationId,
   IRunEndNotice,
@@ -30,7 +31,7 @@ import type {
   WindowFit,
 } from '@/shared/types';
 import { execFile } from 'node:child_process';
-import { copyFile, mkdir, stat, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readdir, stat, writeFile } from 'node:fs/promises';
 import { homedir, tmpdir } from 'node:os';
 import { extname, join } from 'node:path';
 import { promisify } from 'node:util';
@@ -57,6 +58,7 @@ import {
   Archive,
   AssistantAgent,
   CodeCopies,
+  CodeExport,
   DeviceToolDetector,
   GithubCli,
   GithubRepos,
@@ -75,8 +77,12 @@ import {
 } from '@/main/classes';
 import { APP_BUILDER } from '@/main/classes/builds/AppBuilder/constants';
 import { buildIdOf } from '@/main/classes/builds/AppBuilder/library';
-import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
-import { listSimulators } from '@/main/classes/devices/IosDriver/library';
+import {
+  listAvds,
+  newestBuildTools,
+  packageOfApk,
+} from '@/main/classes/devices/AndroidDriver/library';
+import { bundleOfPlist, listSimulators } from '@/main/classes/devices/IosDriver/library';
 import {
   ASSISTANT,
   FILE_FILTERS,
@@ -301,6 +307,48 @@ const phonePeek = new PhonePeek({
     return ios === null ? null : new IosDriver({ ...ios, app: target.value });
   },
   isBusy: (kind) => runs.inFlight().some(({ targetKind }) => targetKind === kind),
+});
+const codeExport = new CodeExport({
+  dataRoot: PATHS.data,
+  chooseFolder: async () => {
+    const [open] = appWindows();
+    const options = {
+      properties: ['openDirectory' as const, 'createDirectory' as const],
+      defaultPath: app.getPath('downloads'),
+    };
+    const picked = open
+      ? await dialog.showOpenDialog(open, options)
+      : await dialog.showOpenDialog(options);
+
+    return picked.canceled ? null : (picked.filePaths[0] ?? null);
+  },
+  appIdOf: async (target) => {
+    if (target.kind === 'ios') {
+      const printed = await promisify(execFile)('plutil', [
+        '-extract',
+        'CFBundleIdentifier',
+        'raw',
+        join(target.value, 'Info.plist'),
+      ]).catch(() => null);
+
+      return printed === null ? null : bundleOfPlist(printed.stdout) || null;
+    }
+
+    const sdkRoot = deviceTools.detect().androidSdk.path;
+    const tools =
+      sdkRoot === null
+        ? null
+        : newestBuildTools(await readdir(join(sdkRoot, 'build-tools')).catch(() => []));
+
+    if (sdkRoot === null || tools === null) return null;
+
+    const dumped = await promisify(execFile)(
+      join(sdkRoot, 'build-tools', tools, 'aapt2'),
+      ['dump', 'packagename', target.value],
+    ).catch(() => null);
+
+    return dumped === null ? null : packageOfApk(dumped.stdout) || null;
+  },
 });
 const runs = new RunCoordinator({
   runner: agentRunner,
@@ -676,6 +724,9 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.askAgent, (_event, ask: IAskAgent) => askAgent(ask));
   ipcMain.handle(CHANNELS.startRun, (_event, run: IStartRun) => runs.start(run));
+  ipcMain.handle(CHANNELS.exportCode, (_event, request: IExportCode) =>
+    codeExport.export(request),
+  );
   ipcMain.handle(CHANNELS.replayUrl, (_event, run: IRunRef) => replays.urlFor(run));
   ipcMain.on(CHANNELS.alertRunEnded, (event, notice: IRunEndNotice) => {
     alerts.alert({

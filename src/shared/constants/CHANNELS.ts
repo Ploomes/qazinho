@@ -11,6 +11,7 @@ export const CHANNELS = {
   sendAgentSignInCode: 'agent:sign-in-code',
   agentSignInEvent: 'agent:sign-in-event',
   startRun: 'run:start',
+  exportCode: 'run:export-code',
   pauseRun: 'run:pause',
   stopRun: 'run:stop',
   resizeDevice: 'run:resize',

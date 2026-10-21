@@ -1,4 +1,5 @@
 import type { AgentSignInProgress } from './AgentSignInProgress';
+import type { ExportOutcome } from './ExportOutcome';
 import type { GithubSignInProgress } from './GithubSignInProgress';
 import type { IAgentEvent } from './IAgentEvent';
 import type { IAgentLimits } from './IAgentLimits';
@@ -15,6 +16,7 @@ import type { IConnectIntegration } from './IConnectIntegration';
 import type { IConnectResult } from './IConnectResult';
 import type { IDetectedAgent } from './IDetectedAgent';
 import type { IDeviceTools } from './IDeviceTools';
+import type { IExportCode } from './IExportCode';
 import type { IGithubStatus } from './IGithubStatus';
 import type { IInstallResult } from './IInstallResult';
 import type { IIntegrationStatus } from './IIntegrationStatus';
@@ -59,6 +61,7 @@ export interface IQazinhoApi {
   sendAgentSignInCode: (props: { agentId: string; code: string }) => Promise<void>;
   onAgentSignIn: (listener: (progress: AgentSignInProgress) => void) => () => void;
   startRun: (run: IStartRun) => Promise<void>;
+  exportCode: (request: IExportCode) => Promise<ExportOutcome>;
   pauseRun: (props: { workspaceId: string; isPaused: boolean }) => Promise<void>;
   stopRun: (workspaceId: string) => Promise<void>;
   resizeDevice: (props: { workspaceId: string; viewport: IViewport }) => Promise<void>;

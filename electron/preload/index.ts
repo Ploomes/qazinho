@@ -1,7 +1,9 @@
 import type {
   AgentSignInProgress,
+  ExportOutcome,
   GithubSignInProgress,
   IAgentEvent,
+  IExportCode,
   IAgentLimits,
   IAppToolAnswer,
   IAppToolRequest,
@@ -94,6 +96,8 @@ const api: IQazinhoApi = {
   },
   startRun: (run: IStartRun) =>
     ipcRenderer.invoke(CHANNELS.startRun, run) as Promise<void>,
+  exportCode: (request: IExportCode) =>
+    ipcRenderer.invoke(CHANNELS.exportCode, request) as Promise<ExportOutcome>,
   pauseRun: (props: { workspaceId: string; isPaused: boolean }) =>
     ipcRenderer.invoke(CHANNELS.pauseRun, props) as Promise<void>,
   stopRun: (workspaceId: string) =>
