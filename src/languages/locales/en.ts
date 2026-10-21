@@ -760,6 +760,8 @@ export const en = {
     TOOL_RUN_PLAN_DONE: 'Started the plan of {{subject}}',
     TOOL_STOP_RUN: 'Stopping the run of {{subject}}',
     TOOL_STOP_RUN_DONE: 'Stopped the run of {{subject}}',
+    TOOL_ASK_WORKSPACE_CHAT: 'Asking in the chat of {{subject}}',
+    TOOL_ASK_WORKSPACE_CHAT_DONE: 'Asked in the chat of {{subject}}',
     TOOL_CHANGE_SETTINGS: 'Changing your settings',
     TOOL_CHANGE_SETTINGS_DONE: 'Changed your settings',
     TOOL_BUILD_APP: 'Starting a build of {{subject}}',

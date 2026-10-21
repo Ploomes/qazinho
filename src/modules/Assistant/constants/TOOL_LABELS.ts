@@ -61,6 +61,10 @@ export const TOOL_LABELS: Record<
   },
   run_plan: { doing: 'ASSISTANT.TOOL_RUN_PLAN', done: 'ASSISTANT.TOOL_RUN_PLAN_DONE' },
   stop_run: { doing: 'ASSISTANT.TOOL_STOP_RUN', done: 'ASSISTANT.TOOL_STOP_RUN_DONE' },
+  ask_workspace_chat: {
+    doing: 'ASSISTANT.TOOL_ASK_WORKSPACE_CHAT',
+    done: 'ASSISTANT.TOOL_ASK_WORKSPACE_CHAT_DONE',
+  },
   change_settings: {
     doing: 'ASSISTANT.TOOL_CHANGE_SETTINGS',
     done: 'ASSISTANT.TOOL_CHANGE_SETTINGS_DONE',

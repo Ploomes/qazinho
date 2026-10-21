@@ -1,6 +1,7 @@
 import type { IAppPort, IToolDone } from '@/modules/Assistant/types';
 import type { AppToolCall } from '@/shared/types';
 import { performBuild } from './performBuild';
+import { performChatAsk } from './performChatAsk';
 import { performOpening } from './performOpening';
 import { performProjectChange } from './performProjectChange';
 import { performReading } from './performReading';
@@ -37,6 +38,8 @@ export async function performAppTool(props: {
     case 'run_plan':
     case 'stop_run':
       return performWorkspaceChange({ call, port });
+    case 'ask_workspace_chat':
+      return performChatAsk({ call, port });
     case 'change_settings':
     case 'connect_integration':
     case 'disconnect_integration':

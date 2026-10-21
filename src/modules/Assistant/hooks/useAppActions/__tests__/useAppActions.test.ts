@@ -1,5 +1,10 @@
 // @vitest-environment jsdom
-import type { IAppToolAnswer, IAppToolRequest } from '@/shared/types';
+import type {
+  IAppToolAnswer,
+  IAppToolRequest,
+  IAskAgent,
+  IChatTurn,
+} from '@/shared/types';
 import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAppActions } from '@/modules/Assistant/hooks/useAppActions';
@@ -223,6 +228,52 @@ describe('useAppActions', () => {
     expect(useAssistantStore.getState().messages[0]).toMatchObject({
       decision: 'expired',
     });
+  });
+
+  it("hands a request to a workspace's chat, opens it there, and gets out of the way", async () => {
+    const { answers, call } = bridge();
+    const asked: IAskAgent[] = [];
+
+    window.qazinho = {
+      ...window.qazinho,
+      askAgent: (ask) => {
+        asked.push(ask);
+
+        return new Promise<IChatTurn>(() => undefined);
+      },
+    };
+    useAssistantStore.setState({ isOpen: true });
+    renderHook(() => {
+      useAppActions();
+    });
+    act(() => {
+      call({
+        id: 'c-1',
+        call: {
+          name: 'ask_workspace_chat',
+          args: { workspace: 'Login', text: 'Cria um plano para o login' },
+        },
+      });
+    });
+
+    await waitFor(() => {
+      expect(answers[0]?.isError).toBe(false);
+    });
+    expect(useAppStore.getState()).toMatchObject({
+      screen: 'workspace',
+      selectedWorkspaceId: 'w2',
+    });
+    expect(useWorkspaceStore.getState()).toMatchObject({
+      tab: 'chat',
+      askingIds: ['w2'],
+    });
+    expect(
+      useWorkspaceStore.getState().workspaces.find(({ id }) => id === 'w2')?.chat,
+    ).toMatchObject([{ kind: 'user', text: 'Cria um plano para o login' }]);
+    expect(asked.map(({ workspaceId, text }) => [workspaceId, text])).toEqual([
+      ['w2', 'Cria um plano para o login'],
+    ]);
+    expect(useAssistantStore.getState().isOpen).toBe(false);
   });
 
   it('opens Settings on Integrations, asks the tracker card to connect, and gets out of the way', async () => {

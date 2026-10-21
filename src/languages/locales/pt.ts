@@ -765,6 +765,8 @@ export const pt: typeof en = {
     TOOL_RUN_PLAN_DONE: 'Começou o plano de {{subject}}',
     TOOL_STOP_RUN: 'Parando a run de {{subject}}',
     TOOL_STOP_RUN_DONE: 'Parou a run de {{subject}}',
+    TOOL_ASK_WORKSPACE_CHAT: 'Pedindo no chat de {{subject}}',
+    TOOL_ASK_WORKSPACE_CHAT_DONE: 'Pediu no chat de {{subject}}',
     TOOL_CHANGE_SETTINGS: 'Mudando suas configurações',
     TOOL_CHANGE_SETTINGS_DONE: 'Mudou suas configurações',
     TOOL_BUILD_APP: 'Começando um build de {{subject}}',

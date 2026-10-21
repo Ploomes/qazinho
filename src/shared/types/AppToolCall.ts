@@ -65,6 +65,7 @@ export type AppToolCall =
   | { name: 'rename_workspace'; args: { workspace: string; name: string } }
   | { name: 'run_plan'; args: { workspace: string } }
   | { name: 'stop_run'; args: { workspace: string } }
+  | { name: 'ask_workspace_chat'; args: { workspace: string; text: string } }
   | {
       name: 'change_settings';
       args: {

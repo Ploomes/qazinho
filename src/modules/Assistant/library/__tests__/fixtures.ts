@@ -64,6 +64,7 @@ export function fakePort(
   const state: IAppState = {
     projects: [PROJECT],
     workspaces: [CHECKOUT, LOGIN],
+    askingIds: [],
     integrations: [
       {
         id: 'github',
@@ -127,6 +128,9 @@ export function fakePort(
     },
     stopWorkspace: (workspaceId) => {
       did.push(`stop ${workspaceId}`);
+    },
+    askWorkspaceChat: ({ workspaceId, text }) => {
+      did.push(`ask ${workspaceId} ${text}`);
     },
     changeSettings: (settings) => {
       did.push(`change ${JSON.stringify(settings)}`);

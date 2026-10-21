@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isConfirmCall, performAppTool, subjectOf } from '@/modules/Assistant/library';
 import { useBuildActions } from '@/modules/Build';
+import { useChatAgent } from '@/modules/Chat';
 import { useRunActions } from '@/modules/Run';
 import { PLATFORM_LABEL } from '@/modules/Workspace';
 import { Agent, Archive, Assistant, Github, Integrations, Run } from '@/services';
@@ -21,6 +22,7 @@ export const useAppActions = () => {
   const { t } = useTranslation();
   const { runWorkspace, stopWorkspace } = useRunActions();
   const { startBuild } = useBuildActions();
+  const { askAgent } = useChatAgent();
   const waiting = useRef(new Map<string, (decision: ConfirmDecision) => void>());
 
   useEffect(
@@ -53,6 +55,7 @@ export const useAppActions = () => {
       read: () => ({
         projects: useAppStore.getState().projects,
         workspaces: useWorkspaceStore.getState().workspaces,
+        askingIds: useWorkspaceStore.getState().askingIds,
         integrations: useSetupStore.getState().integrations,
         builds: useBuildStore.getState().builds,
         hasAndroidSdk: useMachineStore.getState().tools.androidSdk.isFound,
@@ -132,6 +135,14 @@ export const useAppActions = () => {
         return runWorkspace(workspaceId);
       },
       stopWorkspace,
+      askWorkspaceChat: ({ workspaceId, text }) => {
+        bringForward();
+        useAppStore.getState().selectWorkspace(workspaceId);
+        useWorkspaceStore.getState().selectTab('chat');
+        useWorkspaceStore.getState().sendMessage({ workspaceId, text, mentions: [] });
+        askAgent({ workspaceId, text, references: [], code: null });
+        useAssistantStore.getState().close();
+      },
       changeSettings: ({ theme, language, runAlert }) => {
         if (theme !== undefined) useAppStore.getState().setTheme(theme);
 
@@ -192,5 +203,5 @@ export const useAppActions = () => {
           Assistant.answer({ id, text: done.text, isError: done.isError });
         });
     });
-  }, [t, runWorkspace, stopWorkspace, startBuild]);
+  }, [t, runWorkspace, stopWorkspace, startBuild, askAgent]);
 };
