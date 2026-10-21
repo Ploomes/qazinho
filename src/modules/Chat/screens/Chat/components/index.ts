@@ -7,6 +7,7 @@ export * from './FindingNote';
 export * from './HandoffCard';
 export * from './QuestionRound';
 export * from './RunSection';
+export * from './SuggestionCard';
 export * from './TypingDots';
 export * from './UserMessage';
 export * from './VerdictNote';

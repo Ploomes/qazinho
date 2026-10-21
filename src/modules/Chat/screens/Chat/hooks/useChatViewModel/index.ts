@@ -19,8 +19,9 @@ import { CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { useChatCommand } from '@/modules/Chat/screens/Chat/hooks/useChatCommand';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { formatElapsed } from '@/modules/Device';
-import { flattenPlanSteps, formatCost, RUN_ENDS } from '@/modules/Run';
+import { flattenPlanSteps, formatCost, RUN_ENDS, useRunActions } from '@/modules/Run';
 import { Agent } from '@/services';
+import { EXPLORATION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import { useAppStore, useSetupStore, useWorkspaceStore } from '@/store';
 
@@ -47,6 +48,7 @@ export const useChatViewModel = () => {
     isWalking: opened.live !== null && !opened.live.isDone,
     isPaused: opened.live !== null && !opened.live.isRunning && !opened.live.isDone,
     walked: opened.live?.outcomes.length ?? 0,
+    isExploring: opened.live?.kind === 'explore',
     elapsedSec: opened.live?.elapsedSec ?? 0,
     liveCostUsd: opened.live?.costUsd ?? null,
   }));
@@ -65,6 +67,8 @@ export const useChatViewModel = () => {
   const selectRun = useWorkspaceStore((state) => state.selectRun);
   const openBugId = useWorkspaceStore((state) => state.openBugId);
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
+  const takeSuggestion = useWorkspaceStore((state) => state.takeSuggestion);
+  const { runWorkspace } = useRunActions();
 
   const isAgentTyping = workspace !== null && askingIds.includes(workspace.id);
   const liveText = workspace === null ? '' : (liveTexts[workspace.id] ?? '');
@@ -83,7 +87,9 @@ export const useChatViewModel = () => {
     )
     .at(-1);
   const wholePlan = t('RUN.WHOLE_PLAN');
-  const references = workspace === null ? [] : referencesOf({ workspace, wholePlan });
+  const exploration = t('RUN.EXPLORATION');
+  const references =
+    workspace === null ? [] : referencesOf({ workspace, wholePlan, exploration });
   const mentionQuery = mentionQueryOf(draft);
   const { listRef, visible, onScroll } = useChatScroll({
     workspaceId: workspace?.id ?? null,
@@ -116,7 +122,7 @@ export const useChatViewModel = () => {
 
     const references = mentionsIn({
       text,
-      references: referencesOf({ workspace, wholePlan }),
+      references: referencesOf({ workspace, wholePlan, exploration }),
     });
 
     sendMessage({
@@ -130,8 +136,29 @@ export const useChatViewModel = () => {
     askAgent({ text: asked?.text ?? text, references, code: asked?.code ?? null });
   };
 
+  const screensOf = (count: number) =>
+    count === 1
+      ? t('CHAT.EXPLORE_SCREENS_ONE')
+      : t('CHAT.EXPLORE_SCREENS_OTHER', { count });
+
   const runTitleOf = (message: IRunMessage) => {
     const end = RUN_ENDS[message.endedBy];
+
+    if (message.explored !== undefined) {
+      const explored = {
+        id: message.runId,
+        screens: screensOf(message.explored.screens),
+        bugs:
+          message.explored.bugs === 1
+            ? t('CHAT.EXPLORE_BUGS_ONE')
+            : t('CHAT.EXPLORE_BUGS_OTHER', { count: message.explored.bugs }),
+      };
+
+      return end === null
+        ? t('CHAT.EXPLORE_CARD_TITLE', explored)
+        : t('CHAT.EXPLORE_CARD_TITLE_ENDED', { ...explored, ended: t(end.labelKey) });
+    }
+
     const tally = {
       id: message.runId,
       passed:
@@ -190,12 +217,21 @@ export const useChatViewModel = () => {
       title:
         item.card !== null
           ? runTitleOf(item.card)
-          : isLive
+          : isLive && workspace?.isExploring === true
             ? t(
-                workspace?.isPaused ? 'CHAT.RUN_SECTION_PAUSED' : 'CHAT.RUN_SECTION_LIVE',
-                progress,
+                workspace.isPaused
+                  ? 'CHAT.EXPLORE_SECTION_PAUSED'
+                  : 'CHAT.EXPLORE_SECTION_LIVE',
+                { id: item.runId, screens: screensOf(workspace.walked) },
               )
-            : t('CHAT.RUN_SECTION', { id: item.runId }),
+            : isLive
+              ? t(
+                  workspace?.isPaused
+                    ? 'CHAT.RUN_SECTION_PAUSED'
+                    : 'CHAT.RUN_SECTION_LIVE',
+                  progress,
+                )
+              : t('CHAT.RUN_SECTION', { id: item.runId }),
       facts: isLive
         ? factsOf({
             seconds: workspace?.elapsedSec ?? 0,
@@ -310,6 +346,14 @@ export const useChatViewModel = () => {
           send(t(textKey));
         },
       })),
+      {
+        id: 'CHAT.SUGGESTION_EXPLORE',
+        label: t('CHAT.SUGGESTION_EXPLORE', { minutes: EXPLORATION.minutes }),
+        text: '',
+        onClick: () => {
+          if (workspace !== null) runWorkspace(workspace.id, 'explore');
+        },
+      },
       ...(isGithubConnected && (project?.repositories.length ?? 0) > 0
         ? [
             {
@@ -346,6 +390,9 @@ export const useChatViewModel = () => {
     onAnswerQuestions: answer,
     onOpenPlan: () => {
       selectTab('plan');
+    },
+    onTakeSuggestion: (messageId: string) => {
+      if (workspace !== null) takeSuggestion({ workspaceId: workspace.id, messageId });
     },
   };
 };

@@ -11,3 +11,4 @@ export * from './replayTimelineOf';
 export * from './runDayOf';
 export * from './takeOf';
 export * from './walkedByOf';
+export * from './withExplorationTitle';

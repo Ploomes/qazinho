@@ -33,6 +33,7 @@ describe('runHistoryOf', () => {
         ],
       },
       wholePlan: 'The whole plan',
+      exploration: 'Exploration',
     });
 
     expect(latest).toMatchObject({
@@ -52,6 +53,7 @@ describe('runHistoryOf', () => {
         chat: [],
       },
       wholePlan: 'The whole plan',
+      exploration: 'Exploration',
     });
 
     expect(history.map(({ id }) => id)).toEqual(['r-07', 'r-06', 'r-05', 'r-04', 'r-03']);
@@ -60,8 +62,12 @@ describe('runHistoryOf', () => {
   });
 
   it('has nothing to tell before the first run', () => {
-    expect(runHistoryOf({ workspace: { runs: [], chat: [] }, wholePlan: 'x' })).toEqual(
-      [],
-    );
+    expect(
+      runHistoryOf({
+        workspace: { runs: [], chat: [] },
+        wholePlan: 'x',
+        exploration: 'Exploration',
+      }),
+    ).toEqual([]);
   });
 });

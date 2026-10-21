@@ -218,4 +218,29 @@ describe('useWorkspaceViewModel', () => {
       expect(useWorkspaceStore.getState().workspaces[0]?.name).toBe('Checkout');
     });
   });
+  it('offers an exploration even with no plan, and never while something walks', () => {
+    useWorkspaceStore.setState({ workspaces: [makeWorkspace([])] });
+
+    const { result } = renderHook(() => useWorkspaceViewModel());
+
+    expect(result.current.canExplore).toBe(true);
+    expect(result.current.exploreTip).toContain('10 minutes');
+
+    act(() => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          startRun({
+            workspace: makeWorkspace([]),
+            startedAt: '10:00',
+            runId: 'r-01',
+            by: WALKED_BY,
+            kind: 'explore',
+          }),
+        ],
+      });
+    });
+
+    expect(result.current.canExplore).toBe(false);
+    expect(result.current.statusLabel).toBe('exploring · 0 screens');
+  });
 });

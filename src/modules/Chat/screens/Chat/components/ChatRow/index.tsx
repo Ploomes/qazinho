@@ -7,6 +7,7 @@ import { ErrorBlock } from '@/modules/Chat/screens/Chat/components/ErrorBlock';
 import { FindingNote } from '@/modules/Chat/screens/Chat/components/FindingNote';
 import { HandoffCard } from '@/modules/Chat/screens/Chat/components/HandoffCard';
 import { QuestionRound } from '@/modules/Chat/screens/Chat/components/QuestionRound';
+import { SuggestionCard } from '@/modules/Chat/screens/Chat/components/SuggestionCard';
 import { UserMessage } from '@/modules/Chat/screens/Chat/components/UserMessage';
 import { VerdictNote } from '@/modules/Chat/screens/Chat/components/VerdictNote';
 import { useChatRowViewModel } from './hooks';
@@ -50,6 +51,9 @@ export const ChatRow: React.FC<IChatRowProps> = (props) => {
         {message.kind === 'error' && <ErrorBlock message={message} />}
         {message.kind === 'finding' && (
           <FindingNote message={message} onOpenBug={props.onOpenBug} />
+        )}
+        {message.kind === 'suggestion' && (
+          <SuggestionCard message={message} onTake={props.onTakeSuggestion} />
         )}
         {message.kind === 'plan' && (
           <HandoffCard

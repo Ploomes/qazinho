@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { caseVerdict, flattenPlanSteps, useRunActions } from '@/modules/Run';
+import { EXPLORATION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import { useWorkspaceStore } from '@/store';
 
@@ -15,6 +16,7 @@ export const useWorkspaceViewModel = () => {
     bugCount: opened.bugs.length,
     stepCount: flattenPlanSteps(opened.plan).length,
     walked: opened.live?.outcomes.length ?? 0,
+    isExploring: opened.live?.kind === 'explore',
     isLive: opened.live !== null && !opened.live.isDone,
     isPaused: opened.live !== null && !opened.live.isRunning && !opened.live.isDone,
     hasPassed: opened.runs.some((run) =>
@@ -24,7 +26,7 @@ export const useWorkspaceViewModel = () => {
   const tab = useWorkspaceStore((state) => state.tab);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
-  const { onRun, onRunWithAgent, onPause, onStop } = useRunActions();
+  const { onRun, onRunWithAgent, onExplore, onPause, onStop } = useRunActions();
 
   const isLive = workspace?.isLive === true;
   const isPaused = workspace?.isPaused === true;
@@ -36,12 +38,19 @@ export const useWorkspaceViewModel = () => {
     issueKey: workspace?.issueKey ?? null,
     status: workspace?.status ?? 'idle',
     liveStatus: isPaused ? ('paused' as const) : ('running' as const),
-    statusLabel: isLive
-      ? t(isPaused ? 'WORKSPACE.PAUSED_STEP' : 'WORKSPACE.LIVE_STEP', {
-          current: Math.min((workspace?.walked ?? 0) + 1, workspace?.stepCount ?? 0),
-          total: workspace?.stepCount ?? 0,
-        })
-      : null,
+    statusLabel: !isLive
+      ? null
+      : workspace?.isExploring === true
+        ? t(isPaused ? 'WORKSPACE.PAUSED_EXPLORING' : 'WORKSPACE.LIVE_EXPLORING', {
+            screens:
+              workspace.walked === 1
+                ? t('CHAT.EXPLORE_SCREENS_ONE')
+                : t('CHAT.EXPLORE_SCREENS_OTHER', { count: workspace.walked }),
+          })
+        : t(isPaused ? 'WORKSPACE.PAUSED_STEP' : 'WORKSPACE.LIVE_STEP', {
+            current: Math.min((workspace?.walked ?? 0) + 1, workspace?.stepCount ?? 0),
+            total: workspace?.stepCount ?? 0,
+          }),
     planCount: workspace?.planCount ?? 0,
     runCount: workspace?.runCount ?? 0,
     bugCount: workspace?.bugCount ?? 0,
@@ -49,6 +58,8 @@ export const useWorkspaceViewModel = () => {
     canRunWithAgent:
       (workspace?.stepCount ?? 0) > 0 && !isLive && workspace?.hasPassed === true,
     runWithAgentTip: t('WORKSPACE.RUN_WITH_AGENT_TIP'),
+    canExplore: workspace !== null && !isLive,
+    exploreTip: t('WORKSPACE.EXPLORE_TIP', { minutes: EXPLORATION.minutes }),
     isLive,
     isPaused,
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
@@ -58,6 +69,7 @@ export const useWorkspaceViewModel = () => {
     },
     onRun,
     onRunWithAgent,
+    onExplore,
     onPause,
     onStop,
   };

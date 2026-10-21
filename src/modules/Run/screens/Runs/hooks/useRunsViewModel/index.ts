@@ -14,6 +14,7 @@ import {
   filterCases,
   formatCost,
   pageOf,
+  withExplorationTitle,
 } from '@/modules/Run/library';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 import { MOTION } from '@/shared/constants';
@@ -41,7 +42,11 @@ export const useRunsViewModel = () => {
 
   const runs = workspace?.runs ?? [];
   const bugs = workspace?.bugs ?? [];
-  const run = runs.find(({ id }) => id === selectedRunId) ?? runs[0] ?? null;
+  const picked = runs.find(({ id }) => id === selectedRunId) ?? runs[0] ?? null;
+  const run =
+    picked === null
+      ? null
+      : withExplorationTitle({ run: picked, title: t('RUN.EXPLORATION') });
 
   const paged = pageOf({ items: runs, page, size: RUN_PAGE_SIZE });
 
@@ -91,7 +96,7 @@ export const useRunsViewModel = () => {
 
   const summaryOf = (item: IRun) => ({
     id: item.id,
-    what: t('RUN.WHOLE_PLAN'),
+    what: item.kind === 'explore' ? t('RUN.EXPLORATION') : t('RUN.WHOLE_PLAN'),
     isSelected: item.id === run?.id,
     ended: endOf(item.endedBy),
     counts: item.counts,
@@ -126,7 +131,12 @@ export const useRunsViewModel = () => {
     runTotal: runs.length,
     current: run === null ? null : summaryOf(run),
     run,
-    title: run === null ? '' : t('RUN.TITLE', { id: run.id }),
+    title:
+      run === null
+        ? ''
+        : t(run.kind === 'explore' ? 'RUN.EXPLORATION_TITLE' : 'RUN.TITLE', {
+            id: run.id,
+          }),
     canWatch,
     watchLabel: t('RUN.WATCH'),
     onWatch: () => {

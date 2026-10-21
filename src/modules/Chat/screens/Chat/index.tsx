@@ -37,6 +37,7 @@ export const Chat: React.FC = () => {
     onAnswer,
     onAnswerQuestions,
     onOpenPlan,
+    onTakeSuggestion,
     onToggleRun,
     onOpenRun,
     onOpenBug,
@@ -70,6 +71,7 @@ export const Chat: React.FC = () => {
                 onAnswer={onAnswer}
                 onAnswerQuestions={onAnswerQuestions}
                 onOpenPlan={onOpenPlan}
+                onTakeSuggestion={onTakeSuggestion}
                 onOpenBug={onOpenBug}
               />
             ) : (
@@ -100,6 +102,7 @@ export const Chat: React.FC = () => {
                     onAnswer={onAnswer}
                     onAnswerQuestions={onAnswerQuestions}
                     onOpenPlan={onOpenPlan}
+                    onTakeSuggestion={onTakeSuggestion}
                     onOpenBug={onOpenBug}
                   />
                 ))}

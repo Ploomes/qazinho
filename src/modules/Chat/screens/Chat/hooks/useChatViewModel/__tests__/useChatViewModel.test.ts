@@ -102,7 +102,29 @@ describe('useChatViewModel', () => {
     expect(result.current.suggestions.map(({ label, text }) => [label, text])).toEqual([
       ['Create a test plan', "Let's create a test plan."],
       ['Test a feature', 'I want to test a specific feature.'],
+      ['Explore the app for 10 min', ''],
     ]);
+  });
+
+  it('starts an exploration from its suggestion, with no plan and no message to the agent', () => {
+    const ask = answering({});
+    const start = vi.fn();
+
+    window.qazinho = { ...window.qazinho, startRun: start };
+
+    const { result } = renderHook(() => useChatViewModel());
+
+    act(() => {
+      result.current.suggestions
+        .find(({ id }) => id === 'CHAT.SUGGESTION_EXPLORE')
+        ?.onClick();
+    });
+
+    expect(start).toHaveBeenCalledWith(
+      expect.objectContaining({ mode: 'explore', minutes: 10, steps: [] }),
+    );
+    expect(ask).not.toHaveBeenCalled();
+    expect(useWorkspaceStore.getState().workspaces[0]?.live?.kind).toBe('explore');
   });
 
   /**

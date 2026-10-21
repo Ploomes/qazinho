@@ -8,13 +8,14 @@ const DEPTH = 5;
 export function runHistoryOf(props: {
   workspace: Pick<IWorkspace, 'runs' | 'chat'>;
   wholePlan: string;
+  exploration: string;
 }): IChatReference[] {
   const { workspace } = props;
 
   return workspace.runs.slice(0, DEPTH).map((run, index) => ({
     kind: 'run',
     id: run.id,
-    title: `${props.wholePlan} · ${run.startedAt}`,
+    title: `${run.kind === 'explore' ? props.exploration : props.wholePlan} · ${run.startedAt}`,
     facts: [
       ...runFactsOf({ run, isBrief: index > 0 }),
       ...(index === 0

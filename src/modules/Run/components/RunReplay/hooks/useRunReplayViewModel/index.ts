@@ -7,7 +7,12 @@ import { useTranslation } from 'react-i18next';
 import { formatElapsed } from '@/modules/Device/library';
 import { RUN_REPLAY } from '@/modules/Run/components/RunReplay/constants';
 import { REPLAY } from '@/modules/Run/constants';
-import { momentAt, replayTimelineOf, takeOf } from '@/modules/Run/library';
+import {
+  momentAt,
+  replayTimelineOf,
+  takeOf,
+  withExplorationTitle,
+} from '@/modules/Run/library';
 import { Run } from '@/services';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 import { SAVE_BUTTON } from '@/shared/components/organisms/Lightbox/constants';
@@ -40,7 +45,11 @@ export const useRunReplayViewModel = () => {
 
   const workspaceId = replay?.workspaceId ?? null;
   const runId = replay?.runId ?? null;
-  const run = workspace?.runs.find(({ id }) => id === runId) ?? null;
+  const picked = workspace?.runs.find(({ id }) => id === runId) ?? null;
+  const run =
+    picked === null
+      ? null
+      : withExplorationTitle({ run: picked, title: t('RUN.EXPLORATION') });
   const bugs = workspace?.bugs ?? [];
   const timeline = run === null ? null : replayTimelineOf({ run, bugs });
   const take = timeline === null ? null : takeOf({ timeline, focus });

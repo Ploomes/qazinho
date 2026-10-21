@@ -11,9 +11,11 @@ describe('referencesOf', () => {
     });
 
     expect(
-      referencesOf({ workspace, wholePlan: 'The whole plan' }).map(
-        ({ kind, id }) => `${kind} ${id}`,
-      ),
+      referencesOf({
+        workspace,
+        wholePlan: 'The whole plan',
+        exploration: 'Exploration',
+      }).map(({ kind, id }) => `${kind} ${id}`),
     ).toEqual(['run r-01', 'bug BUG-01', 'case TC-01', 'case TC-02']);
   });
 
@@ -22,7 +24,11 @@ describe('referencesOf', () => {
       verdicts: ['passed', 'passed', 'passed', 'passed', 'failed', 'skipped'],
       isFinished: true,
     });
-    const [run] = referencesOf({ workspace, wholePlan: 'The whole plan' });
+    const [run] = referencesOf({
+      workspace,
+      wholePlan: 'The whole plan',
+      exploration: 'Exploration',
+    });
 
     expect(run?.facts).toContain('steps: 4 passed, 1 failed, 0 blocked, 1 skipped');
     expect(run?.facts.some((fact) => fact.includes('step 2 failed'))).toBe(true);
@@ -37,25 +43,39 @@ describe('referencesOf', () => {
     });
 
     expect(
-      referencesOf({ workspace: finished, wholePlan: 'The whole plan' })[0]?.facts[0],
+      referencesOf({
+        workspace: finished,
+        wholePlan: 'The whole plan',
+        exploration: 'Exploration',
+      })[0]?.facts[0],
     ).toMatch(/walked the whole plan$/);
     expect(
-      referencesOf({ workspace: stopped, wholePlan: 'The whole plan' })[0]?.facts[0],
+      referencesOf({
+        workspace: stopped,
+        wholePlan: 'The whole plan',
+        exploration: 'Exploration',
+      })[0]?.facts[0],
     ).toMatch(/stopped by the QA before the end$/);
   });
 
   it("tells runs of the same plan apart by when they started, named in the QA's language", () => {
     const workspace = walkRun({ verdicts: ['passed'], isFinished: true });
-    const [run] = referencesOf({ workspace, wholePlan: 'O plano inteiro' });
+    const [run] = referencesOf({
+      workspace,
+      wholePlan: 'O plano inteiro',
+      exploration: 'Exploration',
+    });
 
     expect(run?.title).toBe('O plano inteiro · 09:41');
   });
 
   it('has only the plan to offer before anything ran', () => {
     expect(
-      referencesOf({ workspace: makeWorkspace(), wholePlan: 'The whole plan' }).every(
-        ({ kind }) => kind === 'case',
-      ),
+      referencesOf({
+        workspace: makeWorkspace(),
+        wholePlan: 'The whole plan',
+        exploration: 'Exploration',
+      }).every(({ kind }) => kind === 'case'),
     ).toBe(true);
   });
 });

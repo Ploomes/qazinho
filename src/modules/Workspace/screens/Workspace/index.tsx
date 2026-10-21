@@ -24,12 +24,15 @@ export const Workspace: React.FC = () => {
     canRun,
     canRunWithAgent,
     runWithAgentTip,
+    canExplore,
+    exploreTip,
     isLive,
     pauseLabel,
     onSelectTab,
     onRename,
     onRun,
     onRunWithAgent,
+    onExplore,
     onPause,
     onStop,
   } = useWorkspaceViewModel();
@@ -58,6 +61,13 @@ export const Workspace: React.FC = () => {
             </>
           ) : (
             <>
+              {canExplore && (
+                <Tooltip content={exploreTip}>
+                  <Button variant="ghost" onClick={onExplore}>
+                    {t('WORKSPACE.EXPLORE')}
+                  </Button>
+                </Tooltip>
+              )}
               {canRunWithAgent && (
                 <Tooltip content={runWithAgentTip}>
                   <Button variant="ghost" onClick={onRunWithAgent}>

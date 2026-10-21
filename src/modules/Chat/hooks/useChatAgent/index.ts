@@ -54,7 +54,11 @@ export const useChatAgent = () => {
         target?.kind === 'web' ? { width: size.width, height: size.height } : null,
       steps: flattenPlanSteps(workspace.plan),
       references: props.references,
-      runs: runHistoryOf({ workspace, wholePlan: t('RUN.WHOLE_PLAN') }),
+      runs: runHistoryOf({
+        workspace,
+        wholePlan: t('RUN.WHOLE_PLAN'),
+        exploration: t('RUN.EXPLORATION'),
+      }),
       code: props.code,
     }).then((turn) => {
       if (turn.failure?.reason === 'stopped') {
