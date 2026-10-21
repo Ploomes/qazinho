@@ -5,11 +5,12 @@ import type {
   DialogAnswer,
   IActionMotion,
   IDeviceImage,
+  INetworkEntry,
   IRunVideo,
   IStepAction,
   IViewport,
 } from '@/shared/types';
-import type { BrowserContext, CDPSession, Page } from 'playwright-core';
+import type { BrowserContext, CDPSession, Page, Request } from 'playwright-core';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -33,6 +34,8 @@ export class WebDriver implements IDeviceDriver {
   private readonly shrink: ShrinkImage | null;
   private readonly origins = new Set<string>();
   private readonly dialogs: string[] = [];
+  private readonly requests = new Map<Request, INetworkEntry>();
+  private readonly entries: INetworkEntry[] = [];
   private context: BrowserContext | null = null;
   private page: Page | null = null;
   private screencast: CDPSession | null = null;
@@ -71,6 +74,18 @@ export class WebDriver implements IDeviceDriver {
       args: [`--force-device-scale-factor=${String(this.pixelRatio)}`],
     });
     await this.context.addInitScript(MOTION_PROBE);
+    this.context.on('request', (request) => {
+      this.noteRequest(request);
+    });
+    this.context.on('requestfinished', (request) => {
+      void this.settleRequest({ request, failure: null });
+    });
+    this.context.on('requestfailed', (request) => {
+      void this.settleRequest({
+        request,
+        failure: request.failure()?.errorText ?? 'failed',
+      });
+    });
     this.context.on('page', (page) => {
       this.follow(page);
       void this.adopt(page);
@@ -86,6 +101,11 @@ export class WebDriver implements IDeviceDriver {
   /** Starts the app over for someone who never opened it: no cookie, nothing stored, one new tab on its address. */
   public async restart(): Promise<void> {
     await this.openAnew({ isCleared: true });
+  }
+
+  /** The requests the app made since Chrome opened, in the order they started, each with how it ended once it did. */
+  public network(): INetworkEntry[] {
+    return this.entries.map((entry) => ({ ...entry }));
   }
 
   /** The locator the last click or fill found its target with, as Playwright writes it, and the option a dropdown took. */
@@ -303,6 +323,56 @@ export class WebDriver implements IDeviceDriver {
     await this.fit();
 
     if (this.onFrame) await this.watch(this.onFrame);
+  }
+
+  /** Notes a request the app started, up to a limit; only the web's own, never a data: or chrome: address. */
+  private noteRequest(request: Request): void {
+    const url = request.url();
+
+    if (!/^https?:/i.test(url) || this.entries.length >= WEB_DRIVER.networkLimit) return;
+
+    const entry: INetworkEntry = {
+      id: this.entries.length + 1,
+      method: request.method(),
+      url,
+      type: request.resourceType(),
+      status: null,
+      failure: null,
+      startedAt: Date.now(),
+      durationMs: null,
+      size: null,
+    };
+
+    this.entries.push(entry);
+    this.requests.set(request, entry);
+  }
+
+  /** Writes down how a request ended: its status, how long it took, and how big a page or an API call came back. */
+  private async settleRequest(props: {
+    request: Request;
+    failure: string | null;
+  }): Promise<void> {
+    const entry = this.requests.get(props.request);
+
+    if (entry === undefined) return;
+
+    this.requests.delete(props.request);
+
+    const endedAt = Date.now();
+    const response = await props.request.response().catch(() => null);
+    const isSized =
+      props.failure === null &&
+      WEB_DRIVER.sizedRequests.some((type) => type === entry.type);
+    const sizes = isSized ? await props.request.sizes().catch(() => null) : null;
+    const timing = props.request.timing();
+
+    entry.durationMs =
+      timing.responseEnd > 0
+        ? Math.round(timing.responseEnd)
+        : Math.max(0, endedAt - entry.startedAt);
+    entry.failure = props.failure;
+    entry.status = response?.status() ?? null;
+    entry.size = sizes?.responseBodySize ?? null;
   }
 
   /** Keeps every site a tab opened, so a fresh start clears what each one stored, and answers its dialogs, OK unless the action said cancel. */

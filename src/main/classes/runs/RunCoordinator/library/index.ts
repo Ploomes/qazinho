@@ -10,6 +10,7 @@ export * from './followRunEvent';
 export * from './hiddenValues';
 export * from './keptBugId';
 export * from './outcomeOfReport';
+export * from './privateUrlOf';
 export * from './proofHolds';
 export * from './readBook';
 export * from './recipeFor';

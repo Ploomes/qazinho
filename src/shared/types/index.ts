@@ -61,6 +61,7 @@ export type * from './IMachineCheck';
 export type * from './IMcpServerStatus';
 export type * from './IMcpServerTarget';
 export type * from './IMcpSignIn';
+export type * from './INetworkEntry';
 export type * from './InstallableId';
 export type * from './IntegrationId';
 export type * from './IProcessSample';

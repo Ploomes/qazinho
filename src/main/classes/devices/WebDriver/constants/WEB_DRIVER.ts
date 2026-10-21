@@ -19,4 +19,6 @@ export const WEB_DRIVER = {
   scrollTries: 10,
   scrollSettleMs: 400,
   samplesFolder: 'qazinho-samples',
+  networkLimit: 3_000,
+  sizedRequests: ['document', 'fetch', 'xhr'],
 } as const;

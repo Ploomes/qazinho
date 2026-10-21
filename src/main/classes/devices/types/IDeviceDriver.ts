@@ -2,12 +2,13 @@ import type { IShot } from './IShot';
 import type {
   IActionMotion,
   IDeviceImage,
+  INetworkEntry,
   IRunVideo,
   IStepAction,
   IViewport,
 } from '@/shared/types';
 
-/** What a run needs from a device, whether it is a browser or a phone; a browser also says how it found the target of its last action. */
+/** What a run needs from a device, whether it is a browser or a phone; a browser also says how it found its last target, and the requests the app made. */
 export interface IDeviceDriver {
   open: () => Promise<void>;
   restart: () => Promise<void>;
@@ -27,4 +28,5 @@ export interface IDeviceDriver {
     toLocator: string | null;
     option: string | null;
   } | null;
+  network?: () => INetworkEntry[];
 }

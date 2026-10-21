@@ -50,6 +50,7 @@ import {
   followRunEvent,
   keptBugId,
   outcomeOfReport,
+  privateUrlOf,
   proofHolds,
   readBook,
   recipeFor,
@@ -235,6 +236,7 @@ export class RunCoordinator {
       const recorded = (await driver?.stopRecording().catch(() => null)) ?? null;
 
       await driver?.close();
+      await this.keepNetwork({ run, driver });
       this.drivers.delete(run.workspaceId);
       this.tools.detach(run.workspaceId);
       this.live.end(run.workspaceId);
@@ -262,6 +264,7 @@ export class RunCoordinator {
     const recorded = await driver.stopRecording().catch(() => null);
 
     await driver.close();
+    await this.keepNetwork({ run, driver });
     this.drivers.delete(run.workspaceId);
     this.tools.detach(run.workspaceId);
     this.live.end(run.workspaceId);
@@ -273,6 +276,27 @@ export class RunCoordinator {
           : { kind: 'failed', workspaceId: run.workspaceId, failure: broke },
       recorded,
     });
+  }
+
+  /** Keeps the requests a browser saw beside the run's video, each address with its secrets left out; a phone keeps none. */
+  private async keepNetwork(props: {
+    run: IWalkRun;
+    driver: IDeviceDriver | null;
+  }): Promise<void> {
+    const entries = props.driver?.network?.() ?? [];
+
+    if (entries.length === 0) return;
+
+    await writeFile(
+      join(props.run.shotDir, ARCHIVE.network),
+      JSON.stringify(
+        entries.map((entry) => ({
+          ...entry,
+          url: privateUrlOf({ url: entry.url, values: props.run.values }),
+        })),
+      ),
+      'utf8',
+    ).catch(() => undefined);
   }
 
   /** Says how the run ended, then hands over its recording: the phone's own, or the one made from the live stream once its file is whole. */

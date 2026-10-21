@@ -6,4 +6,5 @@ export const ARCHIVE = {
   workspace: 'workspace.json',
   plan: 'plan.yaml',
   recipes: 'recipes.json',
+  network: 'network.json',
 } as const;
