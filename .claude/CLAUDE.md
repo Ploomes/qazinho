@@ -99,7 +99,9 @@ plan needs an account, the chat's agent offers the variables that fit and an opt
 what is missing. A step names one as `${NAME}`. The run types its value, reads any value the
 screen shows back as its name, and keeps the name in recipes and exported code. On Linux with no
 secret store QAzinho keeps none, and Android types every character but a double quote, which it
-refuses. `tests/smoke/variables.test.ts` proves the run on real Chrome with a fake agent.
+refuses. `tests/smoke/variables.test.ts` proves the run on real Chrome with a fake agent, and a
+real Claude Code (Haiku) planned a login asking for the account through the window, then signed
+in with the sealed values: 8 steps of 8, with no value in the plan or the report.
 
 **Every run is recorded and plays back with its timeline.** A browser is recorded from its live
 stream, a simulator by `simctl`, an emulator by its console. The run's video opens in a theater:
