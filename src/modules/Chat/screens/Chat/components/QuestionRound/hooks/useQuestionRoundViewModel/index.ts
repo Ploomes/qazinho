@@ -59,20 +59,25 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
             const isPicked = answer.picked.includes(option.label);
             const kept = answer.kept ?? [];
 
+            const asked = (option.variables ?? []).map(({ name }) => name);
+            const isKept = isPicked && asked.length > 0 && kept.length > 0;
+
             return {
               label: option.label,
               description: option.description,
               isPicked,
-              asks:
-                (option.variables ?? []).length === 0
-                  ? ''
-                  : t('CHAT.QUESTIONS_VARIABLES', {
-                      names: (option.variables ?? []).map(({ name }) => name).join(', '),
-                    }),
-              kept:
-                isPicked && (option.variables ?? []).length > 0 && kept.length > 0
-                  ? t('CHAT.QUESTIONS_KEPT', { names: kept.join(', ') })
-                  : '',
+              secrets:
+                asked.length === 0
+                  ? null
+                  : {
+                      label: isKept
+                        ? t('CHAT.QUESTIONS_KEPT')
+                        : t('CHAT.QUESTIONS_VARIABLES'),
+                      names: isKept ? kept : asked,
+                      className: isKept
+                        ? 'question-round__secrets question-round__secrets--kept'
+                        : 'question-round__secrets',
+                    },
             };
           })
           .filter(({ isPicked }) => isPicked || !isAnswered),

@@ -108,23 +108,32 @@ export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
                           <span className="question-round__description">
                             {option.description}
                           </span>
-                          {option.asks !== '' && (
-                            <span className="question-round__asks">
-                              <svg
-                                className="question-round__lock"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                {LOCK_ICON.map((path) => (
-                                  <path key={path} d={path} />
+                          {option.secrets !== null && (
+                            <span className={option.secrets.className}>
+                              <span className="question-round__secrets-label">
+                                <svg
+                                  className="question-round__lock"
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  {LOCK_ICON.map((path) => (
+                                    <path key={path} d={path} />
+                                  ))}
+                                </svg>
+                                {option.secrets.label}
+                              </span>
+                              <span className="question-round__secret-names">
+                                {option.secrets.names.map((name) => (
+                                  <span key={name} className="question-round__secret">
+                                    {name}
+                                  </span>
                                 ))}
-                              </svg>
-                              {option.kept === '' ? option.asks : option.kept}
+                              </span>
                             </span>
                           )}
                         </span>

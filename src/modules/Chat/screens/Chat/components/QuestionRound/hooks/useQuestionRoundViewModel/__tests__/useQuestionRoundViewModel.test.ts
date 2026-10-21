@@ -320,9 +320,15 @@ describe('useQuestionRoundViewModel', () => {
     it('says it opens a window for the variables, and which ones', () => {
       const { view } = render({ message: round({ questions: [ACCOUNT] }) });
 
-      expect(view.result.current.questions[0]?.options.map(({ asks }) => asks)).toEqual([
-        '',
-        'Opens a window to type SELLER_EMAIL, SELLER_PASSWORD',
+      expect(
+        view.result.current.questions[0]?.options.map(({ secrets }) => secrets),
+      ).toEqual([
+        null,
+        {
+          label: 'Opens a window to type',
+          names: ['SELLER_EMAIL', 'SELLER_PASSWORD'],
+          className: 'question-round__secrets',
+        },
       ]);
     });
 
@@ -344,7 +350,11 @@ describe('useQuestionRoundViewModel', () => {
       await waitFor(() => {
         expect(view.result.current.questions[0]?.options[1]).toMatchObject({
           isPicked: true,
-          kept: 'Kept: SELLER_EMAIL, SELLER_PASSWORD',
+          secrets: {
+            label: 'Kept, sealed',
+            names: ['SELLER_EMAIL', 'SELLER_PASSWORD'],
+            className: 'question-round__secrets question-round__secrets--kept',
+          },
         });
       });
 
