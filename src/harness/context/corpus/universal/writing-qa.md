@@ -5,7 +5,10 @@ order: 20
 ## How QA is written here
 
 A test case has a title, a priority (P1, P2 or P3), a goal, preconditions and steps.
-A step is one action on the app and the result the QA expects from it.
+A step is one action on the app and the result the QA expects from it. A step that closes the
+app and opens it again says only that, such as "Close the app completely and open it again": the
+agent that walks it closes the app for real, so never write a way to close it, such as a force
+stop in the phone's settings.
 Write what a QA would check, in the QA's own words, never in code. Write every field of a
 case, its preconditions included, in the language the QA writes in.
 Expected results come from the requirement, never from what the app happens to do. The
