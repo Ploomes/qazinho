@@ -423,11 +423,11 @@ export const en = {
     ANDROID: 'Android',
     ANDROID_TEXT:
       'Drop a debug .apk. QAzinho installs it on an emulator you already have.',
-    ANDROID_PLACEHOLDER: 'drop your .apk here, or pick one',
+    ANDROID_PLACEHOLDER: 'pick your .apk',
     IOS: 'iOS',
     IOS_TEXT:
       'Drop a simulator build: the .app folder from DerivedData. An .ipa will not work, and neither will a real iPhone.',
-    IOS_PLACEHOLDER: 'drop your .app here, or pick one',
+    IOS_PLACEHOLDER: 'pick your .app',
     IOS_MAC_ONLY: 'macOS only',
     CREATE: 'Create project',
     NEEDS_NAME: 'Name the project to create it',

@@ -426,11 +426,11 @@ export const pt: typeof en = {
     ANDROID: 'Android',
     ANDROID_TEXT:
       'Solte um .apk de debug. O QAzinho instala num emulador que você já tem.',
-    ANDROID_PLACEHOLDER: 'solte seu .apk aqui, ou escolha um',
+    ANDROID_PLACEHOLDER: 'escolha seu .apk',
     IOS: 'iOS',
     IOS_TEXT:
       'Solte um build de simulador: a pasta .app do DerivedData. Um .ipa não funciona, e um iPhone de verdade também não.',
-    IOS_PLACEHOLDER: 'solte seu .app aqui, ou escolha um',
+    IOS_PLACEHOLDER: 'escolha seu .app',
     IOS_MAC_ONLY: 'só no macOS',
     CREATE: 'Criar projeto',
     NEEDS_NAME: 'Dê um nome ao projeto para criá-lo',
