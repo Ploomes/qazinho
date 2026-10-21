@@ -22,6 +22,7 @@ export const Settings: React.FC = () => {
     mcpServers,
     themes,
     languages,
+    runAlerts,
     keybinds,
     version,
     rights,
@@ -36,6 +37,7 @@ export const Settings: React.FC = () => {
     onSelectAgent,
     onSelectTheme,
     onSelectLanguage,
+    onSelectRunAlert,
     onEditKeybind,
   } = useSettingsViewModel();
   const { t } = useTranslation();
@@ -291,6 +293,25 @@ export const Settings: React.FC = () => {
                   ))}
                 </div>
                 <p className="settings__note">{t('SETTINGS.LANGUAGE_NOTE')}</p>
+              </div>
+
+              <div className="settings__section">
+                <span className="settings__eyebrow">{t('SETTINGS.RUN_ALERT')}</span>
+                <div className="settings__choices">
+                  {runAlerts.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className={item.className}
+                      onClick={() => {
+                        onSelectRunAlert(item.id);
+                      }}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+                <p className="settings__note">{t('SETTINGS.RUN_ALERT_NOTE')}</p>
               </div>
             </div>
           )}

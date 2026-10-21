@@ -16,6 +16,7 @@ export const useSettingsStore = create<ISettingsStore>()(
       keybinds: KEYBINDS,
       editingKeybindId: null,
       hasOnboarded: false,
+      runAlert: 'system',
 
       selectTab: (tab) => set({ tab }),
 
@@ -35,6 +36,8 @@ export const useSettingsStore = create<ISettingsStore>()(
         })),
 
       finishOnboarding: () => set({ hasOnboarded: true }),
+
+      selectRunAlert: (runAlert) => set({ runAlert }),
     }),
     {
       name: STORAGE.settings,
@@ -42,7 +45,7 @@ export const useSettingsStore = create<ISettingsStore>()(
       migrate: (persisted, version) =>
         migrateSettings({ persisted, version }) as Pick<
           ISettingsStore,
-          'agent' | 'model' | 'language' | 'keybinds' | 'hasOnboarded'
+          'agent' | 'model' | 'language' | 'keybinds' | 'hasOnboarded' | 'runAlert'
         >,
       merge: (persisted, current) => {
         const saved = (persisted ?? {}) as Partial<ISettingsStore>;
@@ -53,12 +56,13 @@ export const useSettingsStore = create<ISettingsStore>()(
           keybinds: keybindsOf({ saved: saved.keybinds, table: KEYBINDS }),
         };
       },
-      partialize: ({ agent, model, language, keybinds, hasOnboarded }) => ({
+      partialize: ({ agent, model, language, keybinds, hasOnboarded, runAlert }) => ({
         agent,
         model,
         language,
         keybinds,
         hasOnboarded,
+        runAlert,
       }),
     },
   ),

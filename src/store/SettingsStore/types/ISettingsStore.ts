@@ -1,4 +1,4 @@
-import type { IKeybind, SettingsTab } from '@/modules/Settings';
+import type { IKeybind, RunAlert, SettingsTab } from '@/modules/Settings';
 import type { Language } from '@/shared/types';
 
 /** What the QA has set up on this machine: the agent, the devices and the shortcuts. */
@@ -10,6 +10,7 @@ export interface ISettingsStore {
   keybinds: IKeybind[];
   editingKeybindId: string | null;
   hasOnboarded: boolean;
+  runAlert: RunAlert;
   selectTab: (tab: SettingsTab) => void;
   selectAgent: (agent: string) => void;
   selectModel: (model: string) => void;
@@ -17,4 +18,5 @@ export interface ISettingsStore {
   editKeybind: (keybindId: string | null) => void;
   setKeybind: (props: { keybindId: string; combo: string }) => void;
   finishOnboarding: () => void;
+  selectRunAlert: (runAlert: RunAlert) => void;
 }

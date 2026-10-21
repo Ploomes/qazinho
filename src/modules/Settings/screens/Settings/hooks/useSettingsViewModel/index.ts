@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   APP_VERSION,
   LANGUAGES,
+  RUN_ALERTS,
   SETTINGS_TABS,
   THEMES,
 } from '@/modules/Settings/constants';
@@ -35,6 +36,8 @@ export const useSettingsViewModel = () => {
   const selectTab = useSettingsStore((state) => state.selectTab);
   const selectAgent = useSettingsStore((state) => state.selectAgent);
   const selectLanguage = useSettingsStore((state) => state.selectLanguage);
+  const runAlert = useSettingsStore((state) => state.runAlert);
+  const selectRunAlert = useSettingsStore((state) => state.selectRunAlert);
   const landMcpServers = useSetupStore((state) => state.landMcpServers);
   const managers = useSetupStore((state) => state.managers);
   const isMac = Platform.isMac();
@@ -182,6 +185,14 @@ export const useSettingsViewModel = () => {
       swatch: { '--swatch': item.swatch, '--swatch-bar': item.bar } as CSSProperties,
     })),
     languages: LANGUAGES.map((item) => ({ ...item, isActive: item.id === language })),
+    runAlerts: RUN_ALERTS.map((item) => ({
+      id: item.id,
+      label: t(item.labelKey),
+      className:
+        item.id === runAlert
+          ? 'settings__choice settings__choice--on'
+          : 'settings__choice',
+    })),
     keybinds: keybinds.map((item) => {
       const isEditing = item.id === editingKeybindId;
 
@@ -205,6 +216,7 @@ export const useSettingsViewModel = () => {
     onSelectAgent: selectAgent,
     onSelectTheme: setTheme,
     onSelectLanguage: selectLanguage,
+    onSelectRunAlert: selectRunAlert,
     onEditKeybind: (keybindId: string) => {
       editKeybind(editingKeybindId === keybindId ? null : keybindId);
     },

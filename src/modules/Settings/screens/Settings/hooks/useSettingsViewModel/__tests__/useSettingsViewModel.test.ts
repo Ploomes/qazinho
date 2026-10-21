@@ -346,4 +346,28 @@ describe('useSettingsViewModel', () => {
       expect(useAppStore.getState().theme).toBe('light');
     });
   });
+
+  describe('onSelectRunAlert', () => {
+    it('calls the QA back with a notification by default, and keeps it inside the app once asked', () => {
+      useSettingsStore.setState({ runAlert: 'system' });
+
+      const { result } = renderHook(() => useSettingsViewModel());
+
+      expect(
+        result.current.runAlerts.map(({ id, className }) => [id, className]),
+      ).toEqual([
+        ['system', 'settings__choice settings__choice--on'],
+        ['app', 'settings__choice'],
+      ]);
+
+      act(() => {
+        result.current.onSelectRunAlert('app');
+      });
+
+      expect(useSettingsStore.getState().runAlert).toBe('app');
+      expect(result.current.runAlerts[1]?.className).toBe(
+        'settings__choice settings__choice--on',
+      );
+    });
+  });
 });

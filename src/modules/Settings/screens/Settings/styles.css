@@ -328,6 +328,41 @@ button.settings__card:hover:not(:disabled) {
   font: var(--font-mono-sm);
 }
 
+.settings__choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.settings__choice {
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.settings__choice:hover {
+  border-color: var(--line2);
+  color: var(--ink);
+}
+
+.settings__choice--on,
+.settings__choice--on:hover {
+  border-color: var(--lime);
+  background: var(--sel);
+  box-shadow:
+    0 0 0 1px var(--lime),
+    var(--sticker-rest);
+  color: var(--ink);
+}
+
 .settings__keybinds {
   display: flex;
   flex-direction: column;

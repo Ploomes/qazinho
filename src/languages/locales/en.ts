@@ -377,6 +377,11 @@ export const en = {
     NEEDS_TARGET: 'This project has no platform to run on',
   },
   SETTINGS: {
+    RUN_ALERT: 'When a run ends',
+    RUN_ALERT_SYSTEM: 'Notify me, with sound',
+    RUN_ALERT_APP: 'Only inside QAzinho',
+    RUN_ALERT_NOTE:
+      'Away from QAzinho, a notification with its sound calls you back, and the app’s icon counts the runs you have not seen yet.',
     BACK: 'Back to app',
     AGENTS: 'Agents',
     DEVICES: 'Devices',

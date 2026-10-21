@@ -381,6 +381,11 @@ export const pt: typeof en = {
     NEEDS_TARGET: 'Este projeto não tem plataforma para rodar',
   },
   SETTINGS: {
+    RUN_ALERT: 'Quando uma run terminar',
+    RUN_ALERT_SYSTEM: 'Notificar, com som',
+    RUN_ALERT_APP: 'Só dentro do QAzinho',
+    RUN_ALERT_NOTE:
+      'Longe do QAzinho, uma notificação com som te chama de volta, e o ícone do app conta as runs que você ainda não viu.',
     BACK: 'Voltar ao app',
     AGENTS: 'Agentes',
     DEVICES: 'Dispositivos',
