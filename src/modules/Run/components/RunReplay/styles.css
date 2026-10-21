@@ -72,16 +72,28 @@
 }
 
 .run-replay__screen {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--screen);
+}
+
+.run-replay__view {
   position: relative;
   display: flex;
   flex: 1;
   align-items: center;
   justify-content: center;
   min-height: 0;
+}
+
+.run-replay__network {
+  flex: none;
   overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  background: var(--screen);
 }
 
 .run-replay__video {

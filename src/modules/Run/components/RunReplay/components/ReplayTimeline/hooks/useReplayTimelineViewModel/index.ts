@@ -8,10 +8,10 @@ import { REPLAY_TIMELINE } from '@/modules/Run/components/RunReplay/components/R
 import { REPLAY } from '@/modules/Run/constants';
 import { momentAt } from '@/modules/Run/library';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
-import { STICKER } from '@/shared/constants';
+import { MOTION, STICKER } from '@/shared/constants';
 
 export const useReplayTimelineViewModel = (props: IReplayTimelineProps) => {
-  const { timeline, progress, take, flashBugId, onSeek, onScrub } = props;
+  const { timeline, progress, take, flashBugId, faults, onSeek, onScrub } = props;
   const { t } = useTranslation();
   const [hover, setHover] = useState<number | null>(null);
   const isScrubbing = useRef(false);
@@ -94,6 +94,11 @@ export const useReplayTimelineViewModel = (props: IReplayTimelineProps) => {
               '--width': percent(take.toMs - take.fromMs),
             } as CSSProperties,
           },
+    faults: faults.map((ms, index) => ({
+      key: `${String(index)}-${String(ms)}`,
+      style: { '--at': percent(ms) } as CSSProperties,
+    })),
+    faultTransition: { duration: MOTION.duration, ease: MOTION.ease },
     pins: timeline.marks.map((mark, index) => ({
       key: mark.bugId,
       animate:

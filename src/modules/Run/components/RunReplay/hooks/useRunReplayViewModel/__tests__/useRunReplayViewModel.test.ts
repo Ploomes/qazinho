@@ -1,11 +1,15 @@
 // @vitest-environment jsdom
-import type { ReplayFocus } from '@/modules/Run/types';
+import type { INetworkEntry, ReplayFocus } from '@/modules/Run/types';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { useRunReplayViewModel } from '@/modules/Run/components/RunReplay/hooks/useRunReplayViewModel';
-import { recordedRun, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
+import {
+  RECORDING,
+  recordedRun,
+  walkRun,
+} from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 const URL = 'http://127.0.0.1:4000/t0k/w1/r-01';
 
@@ -13,6 +17,47 @@ function open(focus: ReplayFocus = { kind: 'run' }) {
   useAppStore.setState({ replay: { workspaceId: 'w1', runId: 'r-01', focus } });
 
   return renderHook(() => useRunReplayViewModel()).result;
+}
+
+const entry = (props: Partial<INetworkEntry>): INetworkEntry => ({
+  id: 1,
+  method: 'GET',
+  url: 'https://shop.test/',
+  type: 'document',
+  status: 200,
+  failure: null,
+  startedAt: RECORDING.startedAt + 1_000,
+  durationMs: 120,
+  size: 1_884,
+  ...props,
+});
+
+const NETWORK = [
+  entry({ id: 1 }),
+  entry({
+    id: 2,
+    url: 'https://shop.test/logo.png',
+    type: 'image',
+    status: 404,
+    startedAt: RECORDING.startedAt + 2_000,
+  }),
+  entry({
+    id: 3,
+    method: 'POST',
+    url: 'https://shop.test/api/pay',
+    type: 'fetch',
+    status: 500,
+    startedAt: RECORDING.startedAt + 6_000,
+    durationMs: 300,
+  }),
+];
+
+function withNetwork(entries: INetworkEntry[] | null) {
+  window.qazinho = {
+    ...fakeQazinhoApi('darwin'),
+    replayUrl: () => Promise.resolve(URL),
+    runNetwork: () => Promise.resolve(entries),
+  };
 }
 
 function press(key: string) {
@@ -28,6 +73,7 @@ beforeEach(() => {
 
 afterEach(() => {
   useAppStore.setState({ replay: null });
+  useSettingsStore.setState({ replayNetwork: false });
   Reflect.deleteProperty(window, 'qazinho');
 });
 
@@ -259,6 +305,89 @@ describe('useRunReplayViewModel', () => {
       });
 
       expect(open().current.panelStyle).toMatchObject({ '--video-ratio': '1.6' });
+    });
+  });
+
+  describe('network', () => {
+    it('offers the network once the run kept its requests, out of sight until asked', async () => {
+      withNetwork(NETWORK);
+
+      const result = open();
+
+      await waitFor(() => {
+        expect(result.current.hasNetwork).toBe(true);
+      });
+      expect(result.current.isNetworkShown).toBe(false);
+      expect(result.current.requests.map(({ fromMs }) => fromMs)).toEqual([
+        1_000, 2_000, 6_000,
+      ]);
+    });
+
+    it('does NOT offer it for a run that kept no requests', async () => {
+      withNetwork(null);
+
+      const result = open();
+
+      await waitFor(() => {
+        expect(result.current.url).toBe(URL);
+      });
+      expect(result.current.hasNetwork).toBe(false);
+      expect(result.current.isNetworkShown).toBe(false);
+    });
+
+    it('shows it under the video once switched on, and remembers it for the next run', async () => {
+      withNetwork(NETWORK);
+
+      const result = open();
+
+      await waitFor(() => {
+        expect(result.current.hasNetwork).toBe(true);
+      });
+      act(() => {
+        result.current.onToggleNetwork(true);
+      });
+
+      expect(result.current.isNetworkShown).toBe(true);
+      expect(useSettingsStore.getState().replayNetwork).toBe(true);
+    });
+
+    it('marks on the timeline where a failed request came back, the files left out', async () => {
+      useSettingsStore.setState({ replayNetwork: true });
+      withNetwork(NETWORK);
+
+      const result = open();
+
+      await waitFor(() => {
+        expect(result.current.faults).toEqual([6_300]);
+      });
+    });
+
+    it('marks a failed file too, once the QA shows the files', async () => {
+      useSettingsStore.setState({ replayNetwork: true });
+      withNetwork(NETWORK);
+
+      const result = open();
+
+      await waitFor(() => {
+        expect(result.current.hasNetwork).toBe(true);
+      });
+      act(() => {
+        result.current.onToggleFiles();
+      });
+
+      expect(result.current.isShowingFiles).toBe(true);
+      expect(result.current.faults).toEqual([2_120, 6_300]);
+    });
+
+    it('marks nothing while the network is switched off', async () => {
+      withNetwork(NETWORK);
+
+      const result = open();
+
+      await waitFor(() => {
+        expect(result.current.hasNetwork).toBe(true);
+      });
+      expect(result.current.faults).toEqual([]);
     });
   });
 });

@@ -6,7 +6,7 @@ import { ReplayPreview } from './components';
 import { useReplayTimelineViewModel } from './hooks';
 import './styles.css';
 
-/** The run's video as chapters, one per case in its verdict's colour, with a tick per step, a pin per bug and a still under the cursor. */
+/** The run's video as chapters, one per case in its verdict's colour, with a tick per step, a pin per bug, a mark per failed request and a still under the cursor. */
 export const ReplayTimeline: React.FC<IReplayTimelineProps> = (props) => {
   const {
     style,
@@ -18,6 +18,8 @@ export const ReplayTimeline: React.FC<IReplayTimelineProps> = (props) => {
     playheadLeft,
     chapters,
     take,
+    faults,
+    faultTransition,
     pins,
     preview,
     onPointerDown,
@@ -113,6 +115,20 @@ export const ReplayTimeline: React.FC<IReplayTimelineProps> = (props) => {
           </motion.div>
 
           {take !== null && <span className="replay-timeline__take" style={take.style} />}
+
+          <AnimatePresence initial={false}>
+            {faults.map((fault) => (
+              <motion.span
+                key={fault.key}
+                className="replay-timeline__fault"
+                style={fault.style}
+                initial={{ opacity: 0, scaleY: 0 }}
+                animate={{ opacity: 1, scaleY: 1 }}
+                exit={{ opacity: 0, scaleY: 0 }}
+                transition={faultTransition}
+              />
+            ))}
+          </AnimatePresence>
 
           <motion.span className="replay-timeline__head" style={{ left: playheadLeft }} />
         </div>

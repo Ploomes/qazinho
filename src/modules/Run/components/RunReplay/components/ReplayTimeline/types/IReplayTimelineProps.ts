@@ -7,6 +7,7 @@ export interface IReplayTimelineProps {
   currentMs: number;
   take: IReplaySpan | null;
   flashBugId: string | null;
+  faults: number[];
   url: string | null;
   onSeek: (ms: number) => void;
   onScrub: (isScrubbing: boolean) => void;

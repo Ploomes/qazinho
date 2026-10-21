@@ -223,6 +223,19 @@
   pointer-events: none;
 }
 
+.replay-timeline__fault {
+  position: absolute;
+  top: calc(50% + var(--rail-hovered) / 2 + var(--space-1));
+  left: var(--at);
+  width: var(--space-1);
+  height: var(--space-3);
+  translate: -50% 0;
+  border-radius: var(--radius-pill);
+  background: var(--fail);
+  transform-origin: top center;
+  pointer-events: none;
+}
+
 .replay-timeline__head {
   position: absolute;
   top: 50%;

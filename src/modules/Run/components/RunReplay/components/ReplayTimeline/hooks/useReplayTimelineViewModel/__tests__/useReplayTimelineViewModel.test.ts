@@ -21,6 +21,7 @@ function render(props: Partial<IReplayTimelineProps> = {}) {
       currentMs: 0,
       take: null,
       flashBugId: null,
+      faults: [],
       url: 'http://127.0.0.1:4000/t0k/w1/r-01',
       onSeek,
       onScrub,
@@ -191,6 +192,27 @@ describe('useReplayTimelineViewModel', () => {
       });
 
       expect(onSeek).toHaveBeenLastCalledWith(12_000);
+    });
+  });
+
+  describe('faults', () => {
+    it('marks a failed request where its answer came on the rail', () => {
+      const { result } = render({ faults: [TIMELINE.durationMs / 4] });
+
+      expect(result.current.faults.map(({ style }) => style)).toEqual([
+        { '--at': '25%' },
+      ]);
+    });
+
+    it('marks nothing while the network is out of sight', () => {
+      expect(render().result.current.faults).toEqual([]);
+    });
+
+    it('keeps two faults at the same moment apart', () => {
+      const { result } = render({ faults: [1_000, 1_000] });
+      const [one, other] = result.current.faults;
+
+      expect(one?.key).not.toBe(other?.key);
     });
   });
 });

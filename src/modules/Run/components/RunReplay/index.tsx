@@ -1,11 +1,11 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { Button, Icon, IconButton, Intern } from '@/shared/components/atoms';
+import { Button, Icon, IconButton, Intern, Switch } from '@/shared/components/atoms';
 import { BACKDROP, STICKER } from '@/shared/constants';
-import { ReplayLog, ReplayTimeline } from './components';
+import { ReplayLog, ReplayNetwork, ReplayTimeline } from './components';
 import { useRunReplayViewModel } from './hooks';
 import './styles.css';
 
-/** A run's video with its timeline: a chapter per case, a pin per bug, and the steps beside it, all kept in step. */
+/** A run's video with its timeline: a chapter per case, a pin per bug, the steps beside it and, when the QA asks, the requests under it, all kept in step. */
 export const RunReplay: React.FC = () => {
   const {
     isOpen,
@@ -30,6 +30,14 @@ export const RunReplay: React.FC = () => {
     loadingText,
     missingText,
     caption,
+    hasNetwork,
+    isNetworkShown,
+    networkLabel,
+    networkTip,
+    requests,
+    isShowingFiles,
+    faults,
+    foldTransition,
     canWatchWhole,
     takeEndLabel,
     wholeLabel,
@@ -58,6 +66,8 @@ export const RunReplay: React.FC = () => {
     onSeek,
     onScrub,
     onRate,
+    onToggleNetwork,
+    onToggleFiles,
     onWatchWhole,
   } = useRunReplayViewModel();
 
@@ -87,6 +97,15 @@ export const RunReplay: React.FC = () => {
           <span className="run-replay__kicker">{kicker}</span>
           <span className="run-replay__title">{title}</span>
           <span className="run-replay__actions">
+            {hasNetwork && (
+              <Switch
+                icon="network"
+                label={networkLabel}
+                title={networkTip}
+                isOn={isNetworkShown}
+                onChange={onToggleNetwork}
+              />
+            )}
             {canSave && (
               <Button size="sm" variant="ghost" disabled={isSaving} onClick={onSave}>
                 <Icon name={saveIcon} /> {saveLabel}
@@ -99,39 +118,62 @@ export const RunReplay: React.FC = () => {
         <div className="run-replay__body">
           <div className="run-replay__stage">
             <div className="run-replay__screen">
-              {hasVideo && (
-                <video
-                  ref={videoRef}
-                  className="run-replay__video"
-                  src={src}
-                  muted
-                  playsInline
-                  preload="auto"
-                  onLoadedData={onLoaded}
-                  onPlay={onPlay}
-                  onPause={onPause}
-                  onEnded={onPause}
-                  onError={onError}
-                />
-              )}
+              <div className="run-replay__view">
+                {hasVideo && (
+                  <video
+                    ref={videoRef}
+                    className="run-replay__video"
+                    src={src}
+                    muted
+                    playsInline
+                    preload="auto"
+                    onLoadedData={onLoaded}
+                    onPlay={onPlay}
+                    onPause={onPause}
+                    onEnded={onPause}
+                    onError={onError}
+                  />
+                )}
 
-              <AnimatePresence>
-                {isLoading && (
+                <AnimatePresence>
+                  {isLoading && (
+                    <motion.div
+                      key="wait"
+                      className="run-replay__wait"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={swapTransition}
+                    >
+                      <Intern mood={waitMood} size={waitSize} />
+                      <span>{loadingText}</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {hasFailed && <p className="run-replay__missing">{missingText}</p>}
+              </div>
+
+              <AnimatePresence initial={false}>
+                {isNetworkShown && (
                   <motion.div
-                    key="wait"
-                    className="run-replay__wait"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={swapTransition}
+                    key="network"
+                    className="run-replay__network"
+                    initial={{ height: 0 }}
+                    animate={{ height: 'auto' }}
+                    exit={{ height: 0 }}
+                    transition={foldTransition}
                   >
-                    <Intern mood={waitMood} size={waitSize} />
-                    <span>{loadingText}</span>
+                    <ReplayNetwork
+                      requests={requests}
+                      currentMs={currentMs}
+                      isShowingFiles={isShowingFiles}
+                      onToggleFiles={onToggleFiles}
+                      onSeek={onSeek}
+                    />
                   </motion.div>
                 )}
               </AnimatePresence>
-
-              {hasFailed && <p className="run-replay__missing">{missingText}</p>}
             </div>
 
             <div className="run-replay__caption" aria-live="polite">
@@ -163,6 +205,7 @@ export const RunReplay: React.FC = () => {
           currentMs={currentMs}
           take={take}
           flashBugId={flashBugId}
+          faults={faults}
           url={url}
           onSeek={onSeek}
           onScrub={onScrub}

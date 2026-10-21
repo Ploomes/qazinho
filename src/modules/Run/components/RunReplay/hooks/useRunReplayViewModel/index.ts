@@ -1,4 +1,4 @@
-import type { ReplayFocus } from '@/modules/Run/types';
+import type { IReplayRequest, ReplayFocus } from '@/modules/Run/types';
 import type { SaveOutcome } from '@/shared/types';
 import type { CSSProperties, MouseEvent } from 'react';
 import { useAnimationFrame, useMotionValue } from 'motion/react';
@@ -6,9 +6,10 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatElapsed } from '@/modules/Device/library';
 import { RUN_REPLAY } from '@/modules/Run/components/RunReplay/constants';
-import { REPLAY } from '@/modules/Run/constants';
+import { NETWORK, REPLAY } from '@/modules/Run/constants';
 import {
   momentAt,
+  replayRequestsOf,
   replayTimelineOf,
   takeOf,
   withExplorationTitle,
@@ -18,7 +19,7 @@ import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 import { SAVE_BUTTON } from '@/shared/components/organisms/Lightbox/constants';
 import { MOTION } from '@/shared/constants';
 import { useWindowWidth } from '@/shared/hooks';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 export const useRunReplayViewModel = () => {
   const { t } = useTranslation();
@@ -37,6 +38,10 @@ export const useRunReplayViewModel = () => {
   const [isTakeOver, setTakeOver] = useState(false);
   const [saving, setSaving] = useState<SaveOutcome | 'saving' | 'idle'>('idle');
   const [measuredRatio, setMeasuredRatio] = useState<number | null>(null);
+  const [requests, setRequests] = useState<IReplayRequest[]>([]);
+  const [isShowingFiles, setShowingFiles] = useState(false);
+  const isNetworkOn = useSettingsStore((state) => state.replayNetwork);
+  const showReplayNetwork = useSettingsStore((state) => state.showReplayNetwork);
   const videoRef = useRef<HTMLVideoElement>(null);
   const shownMs = useRef(0);
   const wasPlaying = useRef(false);
@@ -64,6 +69,10 @@ export const useRunReplayViewModel = () => {
     run?.video && run.video.width > 0 && run.video.height > 0
       ? run.video.width / run.video.height
       : RUN_REPLAY.fallbackRatio;
+  const videoStartedAt = run?.video?.startedAt ?? null;
+  const videoDurationMs = run?.video?.durationMs ?? 0;
+  const isNetworkShown = requests.length > 0 && isNetworkOn;
+  const errorOutcomes: readonly string[] = NETWORK.errorOutcomes;
   const flash =
     timeline?.marks.find(
       ({ atMs }) => currentMs >= atMs && currentMs - atMs <= RUN_REPLAY.flashMs,
@@ -82,6 +91,29 @@ export const useRunReplayViewModel = () => {
       isCurrent = false;
     };
   }, [workspaceId, runId]);
+
+  useEffect(() => {
+    if (workspaceId === null || runId === null || videoStartedAt === null) return;
+
+    let isCurrent = true;
+
+    void Run.network({ workspaceId, runId }).then((entries) => {
+      if (!isCurrent) return;
+
+      setRequests(
+        entries === null
+          ? []
+          : replayRequestsOf({
+              entries,
+              video: { startedAt: videoStartedAt, durationMs: videoDurationMs },
+            }),
+      );
+    });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [workspaceId, runId, videoStartedAt, videoDurationMs]);
 
   const show = (ms: number) => {
     shownMs.current = ms;
@@ -239,6 +271,21 @@ export const useRunReplayViewModel = () => {
       icon: caption.icon,
       iconClassName: `run-replay__caption-icon run-replay__caption-icon--${caption.tone}`,
     },
+    hasNetwork: requests.length > 0,
+    isNetworkShown,
+    networkLabel: t('RUN.REPLAY_NETWORK'),
+    networkTip: t('RUN.REPLAY_NETWORK_TIP'),
+    requests,
+    isShowingFiles,
+    faults: isNetworkShown
+      ? requests
+          .filter(
+            ({ isFile, outcome }) =>
+              (isShowingFiles || !isFile) && errorOutcomes.includes(outcome),
+          )
+          .map(({ fromMs, toMs }) => toMs ?? fromMs)
+      : [],
+    foldTransition: { duration: MOTION.duration, ease: MOTION.ease },
     canWatchWhole: isTakeOver && focus.kind !== 'run',
     takeEndLabel: t('RUN.REPLAY_TAKE_END'),
     wholeLabel: t('RUN.REPLAY_WHOLE'),
@@ -318,6 +365,10 @@ export const useRunReplayViewModel = () => {
       if (videoRef.current) videoRef.current.playbackRate = next;
 
       setRate(next);
+    },
+    onToggleNetwork: showReplayNetwork,
+    onToggleFiles: () => {
+      setShowingFiles(!isShowingFiles);
     },
     onWatchWhole: () => {
       setFocus({ kind: 'run' });
