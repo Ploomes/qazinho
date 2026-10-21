@@ -75,8 +75,16 @@ its moment in Bugs. `tests/smoke/record.test.ts` proves the browser's recording.
 count on the app's icon, unless they asked to hear only inside the app, where a notice says it.
 
 **A first run walks the machine** (`Onboarding`): language, the agent, the device tools, the
-trackers. GitHub and Jira connect for real: the token is checked with the tracker and sealed by
-the OS keychain.
+trackers. GitHub and Jira connect for real. Jira's token is checked with Jira and sealed by the
+OS keychain.
+
+**GitHub goes through the QA's own GitHub CLI**, and QAzinho keeps no token. Connecting runs gh's
+device flow out of sight, or takes a gh already signed in, and installs gh when it is missing. A
+project then picks its repositories, and `/code` in the chat plans from one of their branches:
+the base branch for the whole app, any other for what it changed. The agent reads a copy of the
+branch, read only, and the copy is gone once the plan is written; the plan keeps the commit it
+came from. A real Claude Code has planned from a public branch this way; through Codex it has not
+been tried. `tests/smoke/github.test.ts` drives a fake gh.
 
 **Codex is half verified.** QAzinho drives it through `codex exec --json` and its own MCP server,
 checked against a fake Codex built from the real one's events. The chat has answered through a

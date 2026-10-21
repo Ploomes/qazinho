@@ -70,6 +70,15 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
   its steps in `StepsPopup`. Terminal is only a way round after a failure.
 - **A tracker token never reaches the page.** It crosses to main once, is checked, and is sealed
   with `safeStorage`; the page only ever sees the account it belongs to.
+- **GitHub's login never passes through QAzinho either.** QAzinho talks to GitHub through the
+  QA's own GitHub CLI (`GithubCli`), the way it drives the QA's agent, and keeps no token.
+  - Connecting runs gh's device flow out of sight; the popup shows the one-time code and opens
+    GitHub. A gh already signed in connects at once, and one missing `repo` or `read:org` is asked
+    for again with `gh auth refresh`.
+  - gh is light, so QAzinho installs it through Homebrew when the QA asks.
+  - Disconnecting only makes QAzinho stop using it: gh stays signed in for the QA's other tools.
+- **The agent runs in QAzinho's own agent folder** (`PATHS.agentHome`), chat and runs alike, so
+  no project's `.claude` settings reach the QA's agent.
 - `index.html` carries a CSP. Loosen one directive with a reason, never the whole policy.
 
 ## IPC
@@ -111,6 +120,19 @@ answers one question per channel, for a target `{ role, platform }`:
 - **The tools are granted per role** (`TOOL_GRANTS`). Today the runner gets the device and the
   chat gets nothing: it runs with every tool taken away. `McpHost` serves the tools on loopback,
   one address per workspace, for the length of a run.
+- **The code plans; the QA says what the app should do** (`role/chat/code.md`). A project names
+  its GitHub repositories, each with a base branch. `/code` in the chat picks one of them and a
+  branch, and the agent reads that branch while it plans:
+  - Main's `CodeCopies` pins the branch and the base to commits, unpacks the branch's tarball
+    into the workspace's own folder under `code/`, and keeps the diff against the base. The base
+    branch itself means the whole app, with nothing to compare.
+  - The message opens with a section on the copy: where it sits, the commits, the files changed
+    and where the diff is (`describeCode`).
+  - Claude Code gets `Read`, `Grep` and `Glob` on that folder alone (`--tools`, `--add-dir`);
+    anything outside it is refused. Codex reads with its own read-only sandbox.
+  - The copy is deleted once a plan comes back, when the workspace goes, and on the next start.
+    The plan keeps where it came from (`planSource`), and the agent hears once that the copy is
+    gone.
 - **The harness never imports `src/main`.** What it needs from a device is a port in its types
   (`IDevicePort`), and main hands it the driver. ESLint enforces it both ways: the page never
   imports the harness, and the harness never imports main or the page.
@@ -162,25 +184,28 @@ screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `
 
 Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 
-| Class                                 | What it does                                                                    |
-| ------------------------------------- | ------------------------------------------------------------------------------- |
-| `AgentDetector`                       | finds the QA's agent CLIs, the way Orca does: fs probes, no subprocess          |
-| `AgentRunner`                         | spawns Claude Code or Codex, each in its own dialect, and reads the answer back |
-| `WebDriver`                           | drives Chrome over playwright-core, one profile per workspace                   |
-| `LiveStream`                          | serves the device's frames as MJPEG on 127.0.0.1, for the device panel          |
-| `AppPeek`                             | opens a web target for a moment before the chat, and reads what its page shows  |
-| `RunCoordinator`                      | walks a plan a case per agent turn, each on the app opened anew (`restart`)     |
-| `ResourceCollector` / `ProcessOwners` | one `ps` sweep, charged to whoever started it                                   |
-| `Archive`                             | the QA's projects, workspaces and plans, as files on disk                       |
-| `SetupInstaller`                      | installs an agent CLI or idb on request, streaming each line it prints          |
-| `IntegrationVault`                    | checks a tracker token and keeps it sealed with `safeStorage`                   |
-| `AgentTerminal`                       | runs an agent's full-screen interface out of sight: reads it, presses its keys  |
-| `AgentMcp`                            | adds an MCP server to the QA's agent and signs it in there, step by step        |
-| `AgentLogin`                          | signs the QA's agent in through its own login, step by step                     |
-| `LinkCatcher`                         | gives an agent a `$BROWSER` that writes down the pages it wants opened          |
-| `RunRecorder`                         | records a run's live stream into an MP4, through the hidden recorder window     |
-| `ReplayServer`                        | serves a run's recording to the page's `<video>` on 127.0.0.1, with ranges      |
-| `RunAlerts`                           | calls the QA back when a run ends while they are away: a notification, a badge  |
+| Class                                 | What it does                                                                        |
+| ------------------------------------- | ----------------------------------------------------------------------------------- |
+| `AgentDetector`                       | finds the QA's agent CLIs, the way Orca does: fs probes, no subprocess              |
+| `AgentRunner`                         | spawns Claude Code or Codex, each in its own dialect, and reads the answer back     |
+| `WebDriver`                           | drives Chrome over playwright-core, one profile per workspace                       |
+| `LiveStream`                          | serves the device's frames as MJPEG on 127.0.0.1, for the device panel              |
+| `AppPeek`                             | opens a web target for a moment before the chat, and reads what its page shows      |
+| `RunCoordinator`                      | walks a plan a case per agent turn, each on the app opened anew (`restart`)         |
+| `ResourceCollector` / `ProcessOwners` | one `ps` sweep, charged to whoever started it                                       |
+| `Archive`                             | the QA's projects, workspaces and plans, as files on disk                           |
+| `SetupInstaller`                      | installs an agent CLI, idb or gh on request, streaming each line it prints          |
+| `IntegrationVault`                    | connects the trackers: GitHub as gh's account, Jira's token sealed by `safeStorage` |
+| `AgentTerminal`                       | runs an agent's full-screen interface out of sight: reads it, presses its keys      |
+| `AgentMcp`                            | adds an MCP server to the QA's agent and signs it in there, step by step            |
+| `AgentLogin`                          | signs the QA's agent in through its own login, step by step                         |
+| `LinkCatcher`                         | gives an agent a `$BROWSER` that writes down the pages it wants opened              |
+| `RunRecorder`                         | records a run's live stream into an MP4, through the hidden recorder window         |
+| `ReplayServer`                        | serves a run's recording to the page's `<video>` on 127.0.0.1, with ranges          |
+| `RunAlerts`                           | calls the QA back when a run ends while they are away: a notification, a badge      |
+| `GithubCli`                           | talks to GitHub through the QA's own gh: status, device-flow sign-in, API, tar      |
+| `GithubRepos`                         | lists the QA's repositories and a repository's branches, kept for a little while    |
+| `CodeCopies`                          | copies a branch for the agent to read while it plans, with its diff, then drops it  |
 
 ## Dependencies
 
