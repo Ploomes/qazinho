@@ -28,6 +28,7 @@ describe('describeCase', () => {
         screen: '',
         language: 'en',
         filed: [],
+        variables: [],
       }),
     ).toBe(
       [
@@ -55,6 +56,7 @@ describe('describeCase', () => {
         screen: '',
         language: 'en',
         filed: [],
+        variables: [],
       }),
     ).toBe(
       [
@@ -76,7 +78,13 @@ describe('describeCase', () => {
    */
   it('asks for the report in the language the QA reads, next to the steps', () => {
     expect(
-      describeCase({ steps: [STEP], screen: '', language: 'pt', filed: [] }),
+      describeCase({
+        steps: [STEP],
+        screen: '',
+        language: 'pt',
+        filed: [],
+        variables: [],
+      }),
     ).toContain(
       'Write what you report and note in Brazilian Portuguese, whatever language these steps are in.',
     );
@@ -89,14 +97,21 @@ describe('describeCase', () => {
         screen: 'Sign in · [button] Continue',
         language: 'en',
         filed: [],
+        variables: [],
       }),
     ).toContain('The device shows right now:\nSign in · [button] Continue');
   });
 
   it('tells the agent to stop at once when there is nothing to walk', () => {
-    expect(describeCase({ steps: [], screen: 'Home', language: 'en', filed: [] })).toBe(
-      'This case has no steps. End your turn.',
-    );
+    expect(
+      describeCase({
+        steps: [],
+        screen: 'Home',
+        language: 'en',
+        filed: [],
+        variables: [],
+      }),
+    ).toBe('This case has no steps. End your turn.');
   });
 
   /** The same layout jump was filed three times, once by each case's own agent. */
@@ -107,6 +122,7 @@ describe('describeCase', () => {
         screen: '',
         language: 'en',
         filed: ['Home page jumps while loading', 'Yearly price differs'],
+        variables: [],
       }),
     ).toContain(
       'Bugs this run already filed, not to file again:\n- Home page jumps while loading\n- Yearly price differs',
@@ -115,7 +131,35 @@ describe('describeCase', () => {
 
   it('lists nothing before the run filed anything', () => {
     expect(
-      describeCase({ steps: [STEP], screen: '', language: 'en', filed: [] }),
+      describeCase({
+        steps: [STEP],
+        screen: '',
+        language: 'en',
+        filed: [],
+        variables: [],
+      }),
     ).not.toContain('already filed');
+  });
+
+  it('lists the variables the case may type, by name and what each holds', () => {
+    expect(
+      describeCase({
+        steps: [STEP],
+        screen: '',
+        language: 'en',
+        filed: [],
+        variables: [
+          { name: 'LOGIN_EMAIL', description: 'The admin on staging' },
+          { name: 'LOGIN_PASSWORD', description: '' },
+        ],
+      }),
+    ).toContain(
+      [
+        '',
+        'Variables the project keeps, to type as written:',
+        '- ${LOGIN_EMAIL}: The admin on staging',
+        '- ${LOGIN_PASSWORD}',
+      ].join('\n'),
+    );
   });
 });

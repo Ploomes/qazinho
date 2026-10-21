@@ -8,6 +8,10 @@ Carry out these steps in order, and report each one as soon as you judged it:
    The QA expects: 10% off
 Write what you report and note in English, whatever language these steps are in.
 
+Variables the project keeps, to type as written:
+- ${SHOP_EMAIL}: The buyer account on staging
+- ${SHOP_PASSWORD}
+
 The device shows right now:
 Cart
 [button] Apply

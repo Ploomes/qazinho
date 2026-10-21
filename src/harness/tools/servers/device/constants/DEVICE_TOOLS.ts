@@ -59,7 +59,9 @@ export const DEVICE_TOOLS = [
       }),
       value: z
         .string({ error: '"fill" needs a value: say what to type.' })
-        .describe('What to type.'),
+        .describe(
+          'What to type. A variable of the project goes as ${NAME}, and QAzinho types its value.',
+        ),
     }),
   },
   {

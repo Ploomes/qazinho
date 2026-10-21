@@ -62,6 +62,7 @@ export const useRunActions = () => {
 
     Run.start({
       workspaceId: workspace.id,
+      projectId: workspace.projectId,
       agentId: agents.find(({ name }) => name === agent)?.id ?? 'claude-code',
       model,
       target: { kind: target.kind, value: target.value },

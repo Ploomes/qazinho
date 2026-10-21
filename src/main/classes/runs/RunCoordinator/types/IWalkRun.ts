@@ -1,3 +1,4 @@
+import type { IVariableValue } from '@/main/types';
 import type { IStartRun } from '@/shared/types';
 
 export interface IWalkRun extends IStartRun {
@@ -8,4 +9,5 @@ export interface IWalkRun extends IStartRun {
   avd: string;
   idb: string;
   udid: string;
+  values: IVariableValue[];
 }

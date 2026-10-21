@@ -9,7 +9,7 @@ import type { Harness, IDevicePort, IStepFinding, IStepReport, McpHost } from '@
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
 import type { IDeviceDriver } from '@/main/classes/devices/types';
-import type { ShrinkImage } from '@/main/types';
+import type { IVariableValue, ShrinkImage } from '@/main/types';
 import type {
   IAndroidSetup,
   IFlatStep,
@@ -41,8 +41,10 @@ import {
   readBook,
   recipeFor,
   recipeOf,
+  recordedAction,
   replayedOutcome,
   unwalkedOutcome,
+  variablePort,
 } from './library';
 
 /** Walks a plan on a real device: the agent drives, the requirement judges. */
@@ -58,6 +60,7 @@ export class RunCoordinator {
   private readonly onEvent: (event: IRunEvent) => void;
   private readonly shrink: ShrinkImage | null;
   private readonly recorder: IVideoRecorder | null;
+  private readonly variablesOf: (projectId: string) => Promise<IVariableValue[]>;
   private readonly stopping = new Set<string>();
   private readonly walking = new Set<string>();
   private readonly paused = new Set<string>();
@@ -77,6 +80,7 @@ export class RunCoordinator {
     this.onEvent = props.onEvent;
     this.shrink = props.shrink ?? null;
     this.recorder = props.recorder ?? null;
+    this.variablesOf = props.variablesOf ?? (() => Promise.resolve([]));
   }
 
   public async start(run: IStartRun): Promise<void> {
@@ -123,6 +127,10 @@ export class RunCoordinator {
     try {
       await this.walk({
         ...run,
+        values:
+          run.projectId === undefined
+            ? []
+            : await this.variablesOf(run.projectId).catch(() => []),
         command,
         shotDir: join(this.dataRoot, ARCHIVE.runs, run.workspaceId, run.runId),
         profileDir: join(this.dataRoot, RUN_WALK.profiles, run.workspaceId),
@@ -204,7 +212,10 @@ export class RunCoordinator {
       this.drivers.set(run.workspaceId, driver);
       await mkdir(run.shotDir, { recursive: true });
       await driver.open();
-      this.tools.attach({ workspaceId: run.workspaceId, driver });
+      this.tools.attach({
+        workspaceId: run.workspaceId,
+        driver: variablePort({ device: driver, values: run.values }),
+      });
       await this.watch({ run, driver });
     } catch (reason) {
       const recorded = (await driver?.stopRecording().catch(() => null)) ?? null;
@@ -508,34 +519,31 @@ export class RunCoordinator {
     if (first !== undefined)
       this.emit({ kind: 'doing', workspaceId, index: first.index });
 
+    const device = variablePort({ device: driver, values: run.values });
     const port: IDevicePort = {
-      describe: () => driver.describe(),
-      glance: () => driver.glance(),
-      motion: () => driver.motion(),
+      describe: () => device.describe(),
+      glance: () => device.glance(),
+      motion: () => device.motion(),
       act: async (action) => {
-        await driver.act(action);
+        await device.act(action);
 
         const walking = pending[0];
-        const found = driver.resolution?.() ?? null;
 
         if (walking !== undefined)
           actions.set(walking.step.numberInCase, [
             ...(actions.get(walking.step.numberInCase) ?? []),
-            found === null
-              ? action
-              : {
-                  ...action,
-                  locator: found.locator,
-                  ...(found.toLocator === null ? {} : { toLocator: found.toLocator }),
-                  ...(found.option === null ? {} : { option: found.option }),
-                },
+            recordedAction({
+              action,
+              found: driver.resolution?.() ?? null,
+              values: run.values,
+            }),
           ]);
       },
     };
 
     this.tools.attach({ workspaceId, driver: port, onReport, onFinding });
 
-    const screen = await driver.describe().catch(() => '');
+    const screen = await device.describe().catch(() => '');
 
     if (this.stopping.has(workspaceId)) return false;
 
@@ -557,6 +565,7 @@ export class RunCoordinator {
         screen,
         language: run.language,
         filed: [...props.filed],
+        variables: run.values.map(({ name, description }) => ({ name, description })),
       }),
     });
 
@@ -617,6 +626,7 @@ export class RunCoordinator {
     const { run, driver, recipe } = props;
     const { workspaceId } = run;
     const outcomes: IStepOutcome[] = [];
+    const device = variablePort({ device: driver, values: run.values });
 
     for (const { step, index } of props.steps) {
       await this.holdWhilePaused(workspaceId);
@@ -631,13 +641,13 @@ export class RunCoordinator {
 
       const began = Date.now();
       const isDone = await (async () => {
-        for (const action of kept.actions) await driver.act(action);
+        for (const action of kept.actions) await device.act(action);
       })().then(
         () => true,
         () => false,
       );
 
-      if (!isDone || !(await this.proofShows({ driver, proof: kept.proof })))
+      if (!isDone || !(await this.proofShows({ device, proof: kept.proof })))
         return 'diverged';
 
       const shot = await driver.shoot(join(run.shotDir, `step-${String(index + 1)}.jpg`));
@@ -662,11 +672,11 @@ export class RunCoordinator {
   }
 
   private async proofShows(props: {
-    driver: IDeviceDriver;
+    device: IDevicePort;
     proof: string;
   }): Promise<boolean> {
     for (let tries = 0; tries < RUN_WALK.proofChecks; tries += 1) {
-      const screen = await props.driver.describe().catch(() => '');
+      const screen = await props.device.describe().catch(() => '');
 
       if (proofHolds({ screen, proof: props.proof })) return true;
 

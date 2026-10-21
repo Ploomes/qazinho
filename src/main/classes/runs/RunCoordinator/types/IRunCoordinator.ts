@@ -2,7 +2,7 @@ import type { IVideoRecorder } from './IVideoRecorder';
 import type { Harness, McpHost } from '@/harness';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
-import type { ShrinkImage } from '@/main/types';
+import type { IVariableValue, ShrinkImage } from '@/main/types';
 import type { IAndroidSetup, IIosSetup, IRunEvent } from '@/shared/types';
 
 export interface IRunCoordinator {
@@ -17,4 +17,5 @@ export interface IRunCoordinator {
   onEvent: (event: IRunEvent) => void;
   shrink?: ShrinkImage;
   recorder?: IVideoRecorder;
+  variablesOf?: (projectId: string) => Promise<IVariableValue[]>;
 }

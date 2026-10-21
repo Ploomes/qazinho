@@ -14,6 +14,7 @@ import type {
   ICodeCopy,
   IFlatStep,
   ITargetUnderTest,
+  IVariableBrief,
   IViewport,
   Language,
 } from '@/shared/types';
@@ -198,12 +199,13 @@ export class Harness {
     });
   }
 
-  /** The message that starts the agent's turn on one case, in the language the QA reads. */
+  /** The message that starts the agent's turn on one case, in the language the QA reads, with the variables it may type. */
   public walk(props: {
     steps: IFlatStep[];
     screen: string;
     language: Language;
     filed: string[];
+    variables: IVariableBrief[];
   }): string {
     return describeCase(props);
   }

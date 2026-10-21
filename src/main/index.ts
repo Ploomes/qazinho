@@ -365,6 +365,7 @@ const runs = new RunCoordinator({
   harness,
   onEvent: (event) => broadcast({ channel: CHANNELS.runEvent, event }),
   recorder,
+  variablesOf: (projectId) => variables.valuesOf(projectId),
   shrink: ({ image, width, height, quality }) =>
     nativeImage
       .createFromBuffer(image)

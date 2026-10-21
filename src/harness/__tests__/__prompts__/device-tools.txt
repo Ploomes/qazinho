@@ -90,7 +90,7 @@
         },
         "value": {
           "type": "string",
-          "description": "What to type."
+          "description": "What to type. A variable of the project goes as ${NAME}, and QAzinho types its value."
         }
       },
       "required": [

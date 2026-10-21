@@ -4,4 +4,5 @@ export const RUN_WALK = {
   profiles: 'profiles',
   proofChecks: 3,
   proofWaitMs: 700,
+  hiddenFromLength: 4,
 } as const;

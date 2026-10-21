@@ -294,10 +294,20 @@ describe('Harness', () => {
           screen: 'Cart\n[button] Apply',
           language: 'en',
           filed: [],
+          variables: [
+            { name: 'SHOP_EMAIL', description: 'The buyer account on staging' },
+            { name: 'SHOP_PASSWORD', description: '' },
+          ],
         }),
       ).toMatchFileSnapshot('./__prompts__/walk.txt');
       await expect(
-        harness.walk({ steps: [], screen: '', language: 'en', filed: [] }),
+        harness.walk({
+          steps: [],
+          screen: '',
+          language: 'en',
+          filed: [],
+          variables: [],
+        }),
       ).toMatchFileSnapshot('./__prompts__/walk-empty.txt');
     });
   });

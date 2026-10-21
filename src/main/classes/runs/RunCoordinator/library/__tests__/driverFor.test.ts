@@ -22,6 +22,7 @@ function run(props: { kind: TargetKind; value: string }): IWalkRun {
     avd: 'Pixel',
     idb: '/opt/homebrew/bin/idb',
     udid: 'UDID',
+    values: [],
   };
 }
 
