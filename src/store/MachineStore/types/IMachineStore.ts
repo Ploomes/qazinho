@@ -1,4 +1,5 @@
 import type {
+  IAgentLimits,
   IAgentUsage,
   IDetectedAgent,
   IDeviceTools,
@@ -16,4 +17,5 @@ export interface IMachineStore {
   setResources: (resources: IResourceSnapshot) => void;
   setTools: (tools: IDeviceTools) => void;
   setUsage: (usage: IAgentUsage) => void;
+  setLimits: (limits: IAgentLimits) => void;
 }

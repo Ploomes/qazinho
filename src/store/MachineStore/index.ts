@@ -19,4 +19,9 @@ export const useMachineStore = create<IMachineStore>((set) => ({
   setTools: (tools) => set({ tools }),
 
   setUsage: (usage) => set({ usage }),
+
+  setLimits: (limits) =>
+    set((state) => ({
+      usage: { contextTokens: 0, contextWindow: 0, ...state.usage, ...limits },
+    })),
 }));

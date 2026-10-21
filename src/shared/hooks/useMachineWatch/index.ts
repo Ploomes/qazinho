@@ -1,13 +1,23 @@
 import { useEffect } from 'react';
 import { Agent, Integrations, Machine, Setup } from '@/services';
 import { MACHINE_WATCH } from '@/shared/hooks/useMachineWatch/constants';
-import { useMachineStore, useSetupStore, useWorkspaceStore } from '@/store';
+import {
+  useMachineStore,
+  useSettingsStore,
+  useSetupStore,
+  useWorkspaceStore,
+} from '@/store';
 
 export const useMachineWatch = () => {
   const setAgents = useMachineStore((state) => state.setAgents);
   const setResources = useMachineStore((state) => state.setResources);
   const setTools = useMachineStore((state) => state.setTools);
   const setUsage = useMachineStore((state) => state.setUsage);
+  const setLimits = useMachineStore((state) => state.setLimits);
+  const agentName = useSettingsStore((state) => state.agent);
+  const agentId = useMachineStore(
+    (state) => state.agents.find(({ name }) => name === agentName)?.id ?? null,
+  );
   const setLiveText = useWorkspaceStore((state) => state.setLiveText);
   const setRetry = useWorkspaceStore((state) => state.setRetry);
   const setCodeStep = useWorkspaceStore((state) => state.setCodeStep);
@@ -56,6 +66,31 @@ export const useMachineWatch = () => {
       }),
     [setUsage, setContext, setLiveText, setRetry, setCodeStep],
   );
+
+  useEffect(() => {
+    if (agentId === null) return;
+
+    let readAt = 0;
+    const read = () => {
+      readAt = Date.now();
+      void Agent.limits(agentId).then((limits) => {
+        if (limits !== null) setLimits(limits);
+      });
+    };
+    const onFocus = () => {
+      if (Date.now() - readAt >= MACHINE_WATCH.limitsFocusMs) read();
+    };
+
+    read();
+    const id = window.setInterval(read, MACHINE_WATCH.limitsMs);
+
+    window.addEventListener('focus', onFocus);
+
+    return () => {
+      window.clearInterval(id);
+      window.removeEventListener('focus', onFocus);
+    };
+  }, [agentId, setLimits]);
 
   useEffect(() => {
     const read = () => {

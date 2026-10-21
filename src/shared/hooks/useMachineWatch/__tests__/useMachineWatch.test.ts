@@ -1,12 +1,17 @@
 // @vitest-environment jsdom
-import type { IAgentEvent, ISetupEvent } from '@/shared/types';
-import { renderHook, waitFor } from '@testing-library/react';
+import type { IAgentEvent, IDetectedAgent, ISetupEvent } from '@/shared/types';
+import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useMachineWatch } from '@/shared/hooks/useMachineWatch';
 import { MACHINE_WATCH } from '@/shared/hooks/useMachineWatch/constants';
-import { useMachineStore, useSetupStore, useWorkspaceStore } from '@/store';
+import {
+  useMachineStore,
+  useSettingsStore,
+  useSetupStore,
+  useWorkspaceStore,
+} from '@/store';
 
 const AGENTS = [
   {
@@ -37,7 +42,9 @@ beforeEach(() => {
       idb: { isFound: false, path: null },
     },
     hasDetected: false,
+    usage: null,
   });
+  useSettingsStore.setState({ agent: 'Claude Code' });
 
   window.qazinho = {
     ...fakeQazinhoApi('darwin'),
@@ -52,8 +59,12 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
   Reflect.deleteProperty(window, 'qazinho');
 });
+
+const KNOWN: IDetectedAgent[] = AGENTS.map((agent) => ({ ...agent, isSignedIn: true }));
 
 describe('useMachineWatch', () => {
   it('asks the machine which agents are installed, once', async () => {
@@ -97,6 +108,96 @@ describe('useMachineWatch', () => {
     expect(window.qazinho.readResources).toHaveBeenCalledTimes(3);
 
     vi.useRealTimers();
+  });
+
+  /**
+   * The titlebar kept "71% of the session · resets 08:00" long after eight: the limits came
+   * only with an agent's answer, so they froze while nothing ran.
+   */
+  it("reads the agent's limits once it is known, then every five minutes, keeping the context", async () => {
+    vi.useFakeTimers();
+
+    const limits = vi.fn((_: string) =>
+      Promise.resolve({
+        fiveHourUsed: 0.03,
+        sevenDayUsed: 0.25,
+        resetsAt: 1_792_600_000,
+      }),
+    );
+
+    window.qazinho.readAgentLimits = limits;
+    useMachineStore.setState({
+      agents: KNOWN,
+      usage: {
+        fiveHourUsed: 0.71,
+        sevenDayUsed: 0.24,
+        resetsAt: 1_792_580_000,
+        contextTokens: 9_000,
+        contextWindow: 200_000,
+      },
+    });
+
+    renderHook(() => useMachineWatch());
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+
+    expect(limits).toHaveBeenCalledWith('claude-code');
+    expect(useMachineStore.getState().usage).toEqual({
+      fiveHourUsed: 0.03,
+      sevenDayUsed: 0.25,
+      resetsAt: 1_792_600_000,
+      contextTokens: 9_000,
+      contextWindow: 200_000,
+    });
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(MACHINE_WATCH.limitsMs);
+    });
+
+    expect(limits).toHaveBeenCalledTimes(2);
+
+    vi.useRealTimers();
+  });
+
+  it('reads the limits again when the window comes back, but not on every glance', async () => {
+    vi.useFakeTimers();
+
+    const limits = vi.fn((_: string) => Promise.resolve(null));
+
+    window.qazinho.readAgentLimits = limits;
+    useMachineStore.setState({ agents: KNOWN });
+
+    renderHook(() => useMachineWatch());
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    window.dispatchEvent(new Event('focus'));
+
+    expect(limits).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(MACHINE_WATCH.limitsFocusMs);
+    });
+    window.dispatchEvent(new Event('focus'));
+
+    expect(limits).toHaveBeenCalledTimes(2);
+    expect(useMachineStore.getState().usage).toBeNull();
+
+    vi.useRealTimers();
+  });
+
+  it('does NOT ask for limits before it knows which agent the QA uses', () => {
+    const limits = vi.fn((_: string) => Promise.resolve(null));
+
+    window.qazinho.readAgentLimits = limits;
+    window.qazinho.detectAgents = vi.fn(
+      () => new Promise<IDetectedAgent[]>(() => undefined),
+    );
+
+    renderHook(() => useMachineWatch());
+
+    expect(limits).not.toHaveBeenCalled();
   });
 
   it('files the context window under the workspace the agent answered', () => {
