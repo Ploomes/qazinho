@@ -109,6 +109,90 @@ describe('useProjectModalViewModel', () => {
     });
   });
 
+  describe('sections', () => {
+    it('opens on the name and the targets', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.section).toBe('general');
+      expect(result.current.isOpen).toEqual({
+        general: true,
+        code: false,
+        variables: false,
+        delete: false,
+      });
+    });
+
+    it('opens the section picked in the nav, and only that one', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onSelectSection('variables');
+      });
+
+      expect(result.current.isOpen).toEqual({
+        general: false,
+        code: false,
+        variables: true,
+        delete: false,
+      });
+    });
+
+    it('does NOT offer deleting a project that is not made yet', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.navItems.map(({ id }) => id)).toEqual([
+        'general',
+        'code',
+        'variables',
+      ]);
+    });
+
+    it('counts the repositories and the variables a project holds, and nothing it does not', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.navItems.map(({ count }) => count)).toEqual([
+        null,
+        null,
+        null,
+      ]);
+
+      act(() => {
+        result.current.onRepositoriesChange([
+          { owner: 'acme', name: 'shop-web', baseBranch: 'main' },
+          { owner: 'acme', name: 'shop-api', baseBranch: 'main' },
+        ]);
+        result.current.onVariablesChange([
+          {
+            key: 'k1',
+            name: 'LOGIN_EMAIL',
+            description: '',
+            value: 'a@b.test',
+            from: null,
+          },
+        ]);
+      });
+
+      expect(result.current.navItems.map(({ count }) => count)).toEqual([null, 2, 1]);
+    });
+
+    it('flags the general section while it keeps the project from being made', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.navItems.map(({ isFlagged }) => isFlagged)).toEqual([
+        true,
+        false,
+        false,
+      ]);
+
+      act(() => {
+        result.current.onNameChange('Shop · staging');
+        result.current.onUrlChange('https://staging.shop.test');
+      });
+
+      expect(result.current.navItems.some(({ isFlagged }) => isFlagged)).toBe(false);
+    });
+  });
+
   describe('locks', () => {
     it('locks iOS behind setting up Xcode when this Mac has none', () => {
       const { result } = renderHook(() => useProjectModalViewModel());
@@ -370,7 +454,7 @@ describe('useProjectModalViewModel', () => {
       expect(result.current.canConfirm).toBe(false);
     });
 
-    it('asks before deleting, then takes the workspaces with it', () => {
+    it('says what goes with the project before it is deleted, then takes the workspaces with it', () => {
       useWorkspaceStore.setState({
         workspaces: [
           { ...makeWorkspace(), id: 'w1', projectId: 'p1' },
@@ -378,16 +462,31 @@ describe('useProjectModalViewModel', () => {
         ],
       });
       useAppStore.setState({ selectedWorkspaceId: 'w1', screen: 'workspace' });
+      useVariablesStore.setState({
+        byProject: {
+          p1: [
+            { name: 'LOGIN_EMAIL', description: 'The admin account' },
+            { name: 'LOGIN_PASSWORD', description: 'Its password' },
+          ],
+        },
+      });
 
       const { result } = renderHook(() => useProjectModalViewModel());
 
-      expect(result.current.deleteQuestion).toBe('Delete it and its workspace?');
-
       act(() => {
-        result.current.onAskDelete();
+        result.current.onSelectSection('delete');
       });
 
-      expect(result.current.isConfirmingDelete).toBe(true);
+      expect(result.current.isOpen.delete).toBe(true);
+      expect(result.current).toMatchObject({
+        deleteTitle: 'Delete Shop · staging',
+        deleteText: 'The project leaves this machine for good, and takes with it:',
+        losses: [
+          'its workspace, with the plan, chat, runs and bugs',
+          'the 2 variables it keeps, values and all',
+        ],
+        hasLosses: true,
+      });
       expect(useAppStore.getState().projects).toHaveLength(1);
 
       act(() => {
@@ -397,6 +496,40 @@ describe('useProjectModalViewModel', () => {
       expect(useAppStore.getState().projects).toEqual([]);
       expect(useAppStore.getState().screen).toBe('welcome');
       expect(useWorkspaceStore.getState().workspaces.map(({ id }) => id)).toEqual(['w2']);
+    });
+
+    it('says a project with nothing in it goes alone', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current).toMatchObject({
+        deleteText:
+          'The project leaves this machine for good. It has no workspace or variable to take with it.',
+        losses: [],
+        hasLosses: false,
+      });
+    });
+
+    it('counts the workspaces that go, once there are more than one', () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          { ...makeWorkspace(), id: 'w1', projectId: 'p1' },
+          { ...makeWorkspace(), id: 'w2', projectId: 'p1' },
+        ],
+      });
+
+      expect(renderHook(() => useProjectModalViewModel()).result.current.losses).toEqual([
+        'its 2 workspaces, with their plans, chats, runs and bugs',
+      ]);
+    });
+
+    it('offers deleting at the foot of the nav', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.navItems.at(-1)).toMatchObject({
+        id: 'delete',
+        label: 'Delete project',
+        isDanger: true,
+      });
     });
 
     it('stops what each of its workspaces had going, its run and its agent', () => {
@@ -624,6 +757,9 @@ describe('useProjectModalViewModel', () => {
         expect(result.current.footerHint).toContain('no keychain');
       });
       expect(useAppStore.getState().modal).toBe('project');
+      expect(
+        result.current.navItems.find(({ id }) => id === 'variables')?.isFlagged,
+      ).toBe(true);
     });
 
     it('does NOT ask the vault when no variable changed', () => {

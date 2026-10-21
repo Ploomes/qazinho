@@ -44,7 +44,6 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
         )}
 
         <footer className="modal-frame__foot">
-          {props.aside}
           <AnimatePresence mode="wait" initial={false}>
             {props.hint !== undefined && (
               <motion.span

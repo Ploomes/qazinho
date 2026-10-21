@@ -11,7 +11,6 @@ export interface IModalFrameProps {
   children: ReactNode;
   nav?: ReactNode;
   hint?: string;
-  aside?: ReactNode;
   onCancel: () => void;
   onConfirm: () => void;
 }

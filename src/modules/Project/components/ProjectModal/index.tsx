@@ -2,10 +2,19 @@ import { useTranslation } from 'react-i18next';
 import { Button, Eyebrow, Input } from '@/shared/components/atoms';
 import { FileField } from '@/shared/components/molecules';
 import { ModalFrame } from '@/shared/components/templates';
-import { BuildFromCode, RepoField, TargetCard, VariableField } from './components';
+import {
+  BuildFromCode,
+  ProjectNav,
+  ProjectPane,
+  RepoField,
+  TargetCard,
+  VariableField,
+} from './components';
+import { PROJECT_MODAL } from './constants';
 import { useProjectModalViewModel } from './hooks';
 import './styles.css';
 
+/** A project's window, in sections down its side: its name and targets, the code it is made of, its variables, and deleting it. */
 export const ProjectModal: React.FC = () => {
   const {
     name,
@@ -19,12 +28,17 @@ export const ProjectModal: React.FC = () => {
     androidBuilder,
     iosBuilder,
     isEditing,
-    isConfirmingDelete,
+    section,
+    navItems,
+    isOpen,
     title,
     subtitle,
     confirmLabel,
     canConfirm,
-    deleteQuestion,
+    deleteTitle,
+    deleteText,
+    losses,
+    hasLosses,
     androidLock,
     iosLock,
     footerHint,
@@ -36,8 +50,7 @@ export const ProjectModal: React.FC = () => {
     onPickApp,
     onCancel,
     onConfirm,
-    onAskDelete,
-    onKeep,
+    onSelectSection,
     onDelete,
   } = useProjectModalViewModel();
   const { t } = useTranslation();
@@ -46,110 +59,140 @@ export const ProjectModal: React.FC = () => {
     <ModalFrame
       title={title}
       subtitle={subtitle}
-      width={720}
+      width={PROJECT_MODAL.width}
+      height={PROJECT_MODAL.height}
       confirmLabel={confirmLabel}
       canConfirm={canConfirm}
       hint={footerHint}
-      aside={
-        isEditing &&
-        (isConfirmingDelete ? (
-          <span className="project-modal__delete">
-            <span className="project-modal__delete-question">{deleteQuestion}</span>
-            <Button variant="danger" size="sm" onClick={onDelete}>
-              {t('PROJECT.DELETE_YES')}
-            </Button>
-            <Button size="sm" onClick={onKeep}>
-              {t('PROJECT.DELETE_NO')}
-            </Button>
-          </span>
-        ) : (
-          <Button variant="danger-quiet" size="sm" onClick={onAskDelete}>
-            {t('PROJECT.DELETE')}
-          </Button>
-        ))
+      nav={
+        <ProjectNav
+          label={t('PROJECT.SECTIONS')}
+          items={navItems}
+          current={section}
+          flagWord={t('PROJECT.SECTION_FLAGGED')}
+          onSelect={onSelectSection}
+        />
       }
       onCancel={onCancel}
       onConfirm={onConfirm}
     >
-      <div>
-        <Eyebrow>{t('PROJECT.NAME')}</Eyebrow>
-        <Input
-          value={name}
-          label={t('PROJECT.NAME')}
-          placeholder={t('PROJECT.NAME_PLACEHOLDER')}
-          onChange={onNameChange}
-        />
-      </div>
-
-      <div>
-        <Eyebrow>{t('PROJECT.TARGETS')}</Eyebrow>
-        <div className="project-modal__targets">
-          <TargetCard name={t('PROJECT.WEB')} text={t('PROJECT.WEB_TEXT')} lock={null}>
+      <div className="project-modal__panes">
+        <ProjectPane label={t('PROJECT.SECTION_GENERAL')} isOpen={isOpen.general}>
+          <div className="project-modal__group">
+            <Eyebrow>{t('PROJECT.NAME')}</Eyebrow>
             <Input
-              isMono
-              value={url}
-              label={t('PROJECT.WEB')}
-              placeholder={t('PROJECT.WEB_PLACEHOLDER')}
-              onChange={onUrlChange}
+              value={name}
+              label={t('PROJECT.NAME')}
+              placeholder={t('PROJECT.NAME_PLACEHOLDER')}
+              onChange={onNameChange}
             />
-          </TargetCard>
+          </div>
 
-          <TargetCard
-            name={t('PROJECT.ANDROID')}
-            text={t('PROJECT.ANDROID_TEXT')}
-            lock={androidLock}
-          >
-            <FileField
-              value={apk}
-              label={t('PROJECT.ANDROID')}
-              placeholder={t('PROJECT.ANDROID_PLACEHOLDER')}
-              onPick={onPickApk}
-            />
-            {androidBuilder.isShown && (
-              <BuildFromCode
+          <div className="project-modal__group">
+            <Eyebrow>{t('PROJECT.TARGETS')}</Eyebrow>
+            <div className="project-modal__targets">
+              <TargetCard
+                platform="web"
+                name={t('PROJECT.WEB')}
+                text={t('PROJECT.WEB_TEXT')}
+                lock={null}
+              >
+                <Input
+                  isMono
+                  isCompact
+                  value={url}
+                  label={t('PROJECT.WEB')}
+                  placeholder={t('PROJECT.WEB_PLACEHOLDER')}
+                  onChange={onUrlChange}
+                />
+              </TargetCard>
+
+              <TargetCard
                 platform="android"
-                projectId={projectId}
-                repositories={repositories}
-                buildId={androidBuilder.buildId}
-                onStart={androidBuilder.onStart}
-                onReset={androidBuilder.onReset}
-              />
-            )}
-          </TargetCard>
+                name={t('PROJECT.ANDROID')}
+                text={t('PROJECT.ANDROID_TEXT')}
+                lock={androidLock}
+              >
+                <FileField
+                  value={apk}
+                  label={t('PROJECT.ANDROID')}
+                  placeholder={t('PROJECT.ANDROID_PLACEHOLDER')}
+                  onPick={onPickApk}
+                />
+                {androidBuilder.isShown && (
+                  <BuildFromCode
+                    platform="android"
+                    projectId={projectId}
+                    repositories={repositories}
+                    buildId={androidBuilder.buildId}
+                    onStart={androidBuilder.onStart}
+                    onReset={androidBuilder.onReset}
+                  />
+                )}
+              </TargetCard>
 
-          <TargetCard name={t('PROJECT.IOS')} text={t('PROJECT.IOS_TEXT')} lock={iosLock}>
-            <FileField
-              value={app}
-              label={t('PROJECT.IOS')}
-              placeholder={t('PROJECT.IOS_PLACEHOLDER')}
-              onPick={onPickApp}
-            />
-            {iosBuilder.isShown && (
-              <BuildFromCode
+              <TargetCard
                 platform="ios"
-                projectId={projectId}
-                repositories={repositories}
-                buildId={iosBuilder.buildId}
-                onStart={iosBuilder.onStart}
-                onReset={iosBuilder.onReset}
-              />
-            )}
-          </TargetCard>
-        </div>
-      </div>
+                name={t('PROJECT.IOS')}
+                text={t('PROJECT.IOS_TEXT')}
+                lock={iosLock}
+              >
+                <FileField
+                  value={app}
+                  label={t('PROJECT.IOS')}
+                  placeholder={t('PROJECT.IOS_PLACEHOLDER')}
+                  onPick={onPickApp}
+                />
+                {iosBuilder.isShown && (
+                  <BuildFromCode
+                    platform="ios"
+                    projectId={projectId}
+                    repositories={repositories}
+                    buildId={iosBuilder.buildId}
+                    onStart={iosBuilder.onStart}
+                    onReset={iosBuilder.onReset}
+                  />
+                )}
+              </TargetCard>
+            </div>
+          </div>
+        </ProjectPane>
 
-      <div>
-        <Eyebrow>{t('PROJECT.CODE')}</Eyebrow>
-        <RepoField repositories={repositories} onChange={onRepositoriesChange} />
-      </div>
+        <ProjectPane label={t('PROJECT.SECTION_CODE')} isOpen={isOpen.code}>
+          <RepoField repositories={repositories} onChange={onRepositoriesChange} />
+        </ProjectPane>
 
-      <div>
-        <Eyebrow>{t('PROJECT.VARIABLES')}</Eyebrow>
-        <VariableField
-          variables={variables}
-          saved={savedVariables}
-          onChange={onVariablesChange}
-        />
+        <ProjectPane label={t('PROJECT.SECTION_VARIABLES')} isOpen={isOpen.variables}>
+          <VariableField
+            variables={variables}
+            saved={savedVariables}
+            onChange={onVariablesChange}
+          />
+        </ProjectPane>
+
+        {isEditing && (
+          <ProjectPane label={t('PROJECT.DELETE')} isOpen={isOpen.delete}>
+            <div className="project-modal__danger">
+              <span className="project-modal__danger-title">{deleteTitle}</span>
+              <p className="project-modal__danger-text">{deleteText}</p>
+              {hasLosses && (
+                <ul className="project-modal__losses">
+                  {losses.map((loss) => (
+                    <li key={loss} className="project-modal__loss">
+                      {loss}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <p className="project-modal__danger-text">{t('PROJECT.DELETE_UNDO')}</p>
+              <div className="project-modal__danger-actions">
+                <Button variant="danger" onClick={onDelete}>
+                  {t('PROJECT.DELETE')}
+                </Button>
+              </div>
+            </div>
+          </ProjectPane>
+        )}
       </div>
     </ModalFrame>
   );

@@ -1,16 +1,75 @@
-.project-modal__targets {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+.project-modal__panes {
+  display: grid;
+  flex: 1;
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 0;
 }
 
-.project-modal__delete {
+.project-modal__group {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: var(--space-3);
 }
 
-.project-modal__delete-question {
-  color: var(--fail);
+.project-modal__targets {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--raise);
+}
+
+.project-modal__danger {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--raise);
+}
+
+.project-modal__danger-title {
+  color: var(--ink);
+  font: var(--font-display-sm);
+}
+
+.project-modal__danger-text {
+  margin: 0;
+  color: var(--ink2);
   font: var(--font-ui-sm);
+  text-wrap: pretty;
+}
+
+.project-modal__losses {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project-modal__loss {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--ink);
+  font: var(--font-ui-sm);
+}
+
+.project-modal__loss::before {
+  flex: none;
+  width: var(--space-3);
+  height: var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--fail);
+  content: '';
+}
+
+.project-modal__danger-actions {
+  display: flex;
+  margin-top: var(--space-2);
 }

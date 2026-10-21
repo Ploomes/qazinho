@@ -1,4 +1,6 @@
+import type { IProjectNavItem } from '@/modules/Project/components/ProjectModal/components/ProjectNav/types';
 import type { ITargetLock } from '@/modules/Project/components/ProjectModal/components/TargetCard/types';
+import type { ProjectSection } from '@/modules/Project/components/ProjectModal/types';
 import type {
   IProjectRepository,
   ITarget,
@@ -7,7 +9,10 @@ import type {
 import type { BuildPlatform, TargetKind } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TARGET_NAME_KEYS } from '@/modules/Project/components/ProjectModal/constants';
+import {
+  PROJECT_SECTIONS,
+  TARGET_NAME_KEYS,
+} from '@/modules/Project/components/ProjectModal/constants';
 import { VARIABLE_FAILURE_KEYS } from '@/modules/Project/constants';
 import { useVariableActions } from '@/modules/Project/hooks/useVariableActions';
 import { newProjectId, variableChangesOf, webAddressOf } from '@/modules/Project/library';
@@ -66,7 +71,7 @@ export const useProjectModalViewModel = () => {
   const [repositories, setRepositories] = useState<IProjectRepository[]>(
     editing?.repositories ?? [],
   );
-  const [isConfirmingDelete, setConfirmingDelete] = useState(false);
+  const [section, setSection] = useState<ProjectSection>('general');
   const [buildIds, setBuildIds] = useState<Record<BuildPlatform, string | null>>({
     android: null,
     ios: null,
@@ -176,6 +181,52 @@ export const useProjectModalViewModel = () => {
     });
   };
 
+  const countOf = (count: number) => (count > 0 ? count : null);
+  const flagged: ProjectSection | null =
+    blocking !== undefined ? 'general' : variableFailure !== null ? 'variables' : null;
+  const navItems: IProjectNavItem[] = [
+    ...PROJECT_SECTIONS.map(({ id, labelKey }) => ({
+      id,
+      label: t(labelKey),
+      count:
+        id === 'code'
+          ? countOf(repositories.length)
+          : id === 'variables'
+            ? countOf(variables.length)
+            : null,
+      isFlagged: flagged === id,
+      isDanger: false,
+    })),
+    ...(isEditing
+      ? [
+          {
+            id: 'delete' as const,
+            label: t('PROJECT.DELETE'),
+            count: null,
+            isFlagged: false,
+            isDanger: true,
+          },
+        ]
+      : []),
+  ];
+  const kept = savedVariables.length;
+  const losses = [
+    ...(own.length === 0
+      ? []
+      : [
+          own.length === 1
+            ? t('PROJECT.DELETE_WORKSPACES_ONE')
+            : t('PROJECT.DELETE_WORKSPACES_OTHER', { count: own.length }),
+        ]),
+    ...(kept === 0
+      ? []
+      : [
+          kept === 1
+            ? t('PROJECT.DELETE_VARIABLES_ONE')
+            : t('PROJECT.DELETE_VARIABLES_OTHER', { count: kept }),
+        ]),
+  ];
+
   const onDelete = () => {
     if (!editing) return;
 
@@ -214,19 +265,25 @@ export const useProjectModalViewModel = () => {
     iosBuilder: builderOf({ platform: 'ios', buildId: iosBuild.buildId }),
     isMac,
     isEditing,
-    isConfirmingDelete,
+    section,
+    navItems,
+    isOpen: {
+      general: section === 'general',
+      code: section === 'code',
+      variables: section === 'variables',
+      delete: section === 'delete',
+    },
     title: isEditing ? t('PROJECT.EDIT_TITLE') : t('PROJECT.NEW_TITLE'),
     subtitle: isEditing
       ? t('PROJECT.EDIT_SUBTITLE', { name: editing.name })
       : t('PROJECT.NEW_SUBTITLE'),
     confirmLabel: isEditing ? t('PROJECT.SAVE') : t('PROJECT.CREATE'),
     canConfirm: blocking === undefined && !isSaving,
-    deleteQuestion:
-      own.length === 0
-        ? t('PROJECT.DELETE_QUESTION_EMPTY')
-        : own.length === 1
-          ? t('PROJECT.DELETE_QUESTION_ONE')
-          : t('PROJECT.DELETE_QUESTION_OTHER', { count: own.length }),
+    deleteTitle: isEditing ? t('PROJECT.DELETE_TITLE', { name: editing.name }) : '',
+    deleteText:
+      losses.length === 0 ? t('PROJECT.DELETE_ALONE') : t('PROJECT.DELETE_TEXT'),
+    losses,
+    hasLosses: losses.length > 0,
     androidLock:
       tools.androidSdk.isFound || apkValue.length > 0
         ? null
@@ -278,12 +335,7 @@ export const useProjectModalViewModel = () => {
     },
     onCancel: closeModal,
     onConfirm,
-    onAskDelete: () => {
-      setConfirmingDelete(true);
-    },
-    onKeep: () => {
-      setConfirmingDelete(false);
-    },
+    onSelectSection: setSection,
     onDelete,
   };
 };
