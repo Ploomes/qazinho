@@ -65,7 +65,11 @@ source for the simulator (`tests/smoke/fixtures/`), read and tapped through idb,
 and judged by the QA's own agent. Every case starts on the app opened anew: Android clears its
 data, iOS reinstalls it, the web clears the browser (`device-fresh.test.ts`, `fresh.test.ts`).
 A step that closes the app and opens it again does it for real with `reopen`, its data kept:
-Android stops the app, iOS terminates it, the web opens its address in a new tab. Before a plan
+Android stops the app, iOS terminates it, the web opens its address in a new tab. The runner
+also scrolls until words show, holds a finger down and drags one thing onto another, and on the
+web it hovers and uploads a sample file QAzinho made. On a phone it scrolls before it calls
+something missing. The browser and both fixture apps prove the scroll and the long press
+(`tools.test.ts`, `device-fresh.test.ts`); a drag on a phone has not met a real app. Before a plan
 on a phone, the chat opens the app on the emulator or simulator and reads its first screen. An
 iOS app that does not adopt UIScene does not launch on iOS 27, and QAzinho says it closed at once.
 
@@ -73,7 +77,8 @@ iOS app that does not adopt UIScene does not launch on iOS 27, and QAzinho says 
 the words on screen that proved it, and the next run repeats them on the device and checks the
 words: seconds and no cost, against tens of seconds and a few cents with the agent. When the
 app changed and a word does not show, the agent walks the case again and records it anew
-("healed"). The recorded cases export as a Playwright test file or Maestro flows. A real Claude
+("healed"). The recorded cases export as a Playwright test file or Maestro flows, gestures
+included. A real Claude
 Code has recorded a web and an Android plan this way, both walked again with no agent, and the
 exported Playwright file passed in Chrome; the Maestro flows have not run in Maestro yet.
 `tests/smoke/replay.test.ts` proves it with a fake agent.

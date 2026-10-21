@@ -68,13 +68,13 @@ Three suites that need something real behind them. They have their own config
 | `finding.test.ts`      | a bug filed on the side of a step: its screen, and the next case told of it  |
 | `agent.test.ts`        | a fake agent retries a failed action, leaves a note, or errors out           |
 | `codex.test.ts`        | a fake Codex chats in the strict schema, resumes, runs a case, signs out     |
-| `tools.test.ts`        | an MCP client lists, calls and fails the device tools on real Chrome         |
+| `tools.test.ts`        | an MCP client calls every device tool on real Chrome, gestures and failures  |
 | `locate.test.ts`       | alike controls numbered, labelled fields, a dropdown, a date, a component    |
 | `dialog.test.ts`       | a confirm answered OK or Cancel, a prompt typed into, and look telling it    |
 | `tabs.test.ts`         | a link's new tab and a sign-in window: the device turns to them and back     |
 | `peek.test.ts`         | a windowless Chrome reads a page for the chat, or says why it did not open   |
 | `fresh.test.ts`        | a case starts on a browser with nothing saved, and the stream follows it     |
-| `device-fresh.test.ts` | fixture apps on a real AVD and simulator: data cleared, and kept on reopen   |
+| `device-fresh.test.ts` | fixture apps on a real AVD and simulator: cleared, reopened, scrolled, held  |
 | `save.test.ts`         | the lightbox downloads a screenshot through main, to where the dialog says   |
 | `setup.test.ts`        | the installer runs a fake npm, streams its lines, and fails honestly         |
 | `terminal.test.ts`     | a full-screen program out of sight: its screen read, its keys, its page      |

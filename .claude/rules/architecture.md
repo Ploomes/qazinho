@@ -123,7 +123,8 @@ answers one question per channel, for a target `{ role, platform }`:
   there had it failed.
   - A case whose every step passed with a proof becomes a recipe, kept in the workspace's
     folder (`recipes.json`), keyed to what the case says and the kind of target
-    (`fingerprintOf`). A web step also keeps the Playwright locator it used.
+    (`fingerprintOf`). A web step also keeps the Playwright locator it used, and a drag the
+    one it dropped on.
   - The next run walks a case with a recipe on the device with no agent and checks each proof
     (`replayCase`): it costs nothing and takes seconds. When a proof does not show, the case
     starts over with the agent, which records it again, and its steps read as healed.
