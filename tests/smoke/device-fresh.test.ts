@@ -81,6 +81,23 @@ describe('a fresh start on a real Android emulator', () => {
     expect(await visits(next)).toBe('Visits: 0');
   }, 600_000);
 
+  it('scrolls until a row far below shows, and holds a finger on a control', async (context) => {
+    if (apk === null || avd === undefined || driver === null) {
+      context.skip();
+
+      return;
+    }
+
+    await driver.restart();
+    expect(await driver.describe()).not.toContain('Row 40');
+
+    await driver.act({ kind: 'long_press', target: 'Hold me', value: '' });
+    expect(await driver.describe()).toContain('Held long');
+
+    await driver.act({ kind: 'scroll', target: 'Row 40', value: 'down' });
+    expect(await driver.describe()).toContain('Row 40');
+  }, 600_000);
+
   /** goto brought the app back as it was and back left it running: neither closed it for real. */
   it('reopens the app for real: a new process, with what it saved kept', async (context) => {
     if (apk === null || avd === undefined || driver === null) {
@@ -151,6 +168,21 @@ describe('a fresh start on a real iOS simulator', () => {
 
     await next.open();
     expect(await visits(next)).toBe('Visits: 0');
+  }, 600_000);
+
+  it('scrolls until a row far below shows, and holds a finger on a control', async (context) => {
+    if (app === null || udid === undefined || driver === null) {
+      context.skip();
+
+      return;
+    }
+
+    await driver.restart();
+    await driver.act({ kind: 'long_press', target: 'Hold me', value: '' });
+    expect(await driver.describe()).toContain('Held long');
+
+    await driver.act({ kind: 'scroll', target: 'Row 40', value: 'down' });
+    expect(await driver.describe()).toContain('Row 40');
   }, 600_000);
 
   it('reopens the app with what it saved kept', async (context) => {

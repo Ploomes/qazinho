@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class Main extends Activity {
@@ -26,11 +27,32 @@ public class Main extends Activity {
         count.setText("Visits: " + next);
       }
     });
+    final TextView hold = new TextView(this);
+    hold.setTextSize(20);
+    hold.setPadding(0, 32, 0, 32);
+    hold.setText("Hold me");
+    hold.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override
+      public boolean onLongClick(View view) {
+        hold.setText("Held long");
+        return true;
+      }
+    });
     LinearLayout layout = new LinearLayout(this);
     layout.setOrientation(LinearLayout.VERTICAL);
     layout.setPadding(48, 160, 48, 48);
     layout.addView(count);
     layout.addView(keep);
-    setContentView(layout);
+    layout.addView(hold);
+    for (int row = 1; row <= 40; row++) {
+      TextView line = new TextView(this);
+      line.setTextSize(20);
+      line.setPadding(0, 24, 0, 24);
+      line.setText("Row " + row);
+      layout.addView(line);
+    }
+    ScrollView scroll = new ScrollView(this);
+    scroll.addView(layout);
+    setContentView(scroll);
   }
 }

@@ -2,6 +2,7 @@
 
 @interface Counter : UIViewController
 @property(nonatomic, strong) UILabel *count;
+@property(nonatomic, strong) UILabel *hold;
 @end
 
 @implementation Counter
@@ -15,8 +16,25 @@
   keep.frame = CGRectMake(40, 220, 200, 44);
   [keep setTitle:@"Save visit" forState:UIControlStateNormal];
   [keep addTarget:self action:@selector(save) forControlEvents:UIControlEventTouchUpInside];
-  [self.view addSubview:self.count];
-  [self.view addSubview:keep];
+  UIScrollView *scroll = [[UIScrollView alloc] initWithFrame:self.view.bounds];
+  scroll.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  [self.view addSubview:scroll];
+  [scroll addSubview:self.count];
+  [scroll addSubview:keep];
+  self.hold = [[UILabel alloc] initWithFrame:CGRectMake(40, 280, 300, 40)];
+  self.hold.text = @"Hold me";
+  self.hold.userInteractionEnabled = YES;
+  [self.hold addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(held:)]];
+  [scroll addSubview:self.hold];
+  for (NSInteger row = 1; row <= 40; row++) {
+    UILabel *line = [[UILabel alloc] initWithFrame:CGRectMake(40, 340 + (row - 1) * 50, 300, 40)];
+    line.text = [NSString stringWithFormat:@"Row %ld", (long)row];
+    [scroll addSubview:line];
+  }
+  scroll.contentSize = CGSizeMake(self.view.bounds.size.width, 340 + 40 * 50 + 120);
+}
+- (void)held:(UILongPressGestureRecognizer *)press {
+  if (press.state == UIGestureRecognizerStateBegan) self.hold.text = @"Held long";
 }
 - (void)show {
   self.count.text = [NSString stringWithFormat:@"Visits: %ld", (long)[NSUserDefaults.standardUserDefaults integerForKey:@"visits"]];

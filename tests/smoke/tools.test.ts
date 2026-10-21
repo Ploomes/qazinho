@@ -29,7 +29,18 @@ const PAGE = `<!doctype html><html><body style="margin:0;font:16px sans-serif">
     document.getElementById('memory').textContent =
       'kept: ' + (localStorage.getItem('kept') || 'none') + ' / tab: ' + (sessionStorage.getItem('tab') || 'none');
   </script>
+  <button id="hold"
+    onmousedown="window.heldAt = Date.now()"
+    onmouseup="document.getElementById('gesture').textContent = Date.now() - window.heldAt > 600 ? 'Held long' : 'Tapped'">Hold me</button>
+  <span id="tip" onmouseenter="document.getElementById('gesture').textContent = 'Hovered'">Help</span>
+  <div id="card" draggable="true" ondragstart="event.dataTransfer.setData('text', 'card')">Card A</div>
+  <div id="done" style="padding:20px;border:1px solid #999"
+    ondragover="event.preventDefault()"
+    ondrop="event.preventDefault(); document.getElementById('gesture').textContent = 'Dropped on Done'">Done</div>
+  <label>Photo <input type="file" onchange="document.getElementById('gesture').textContent = 'Picked ' + this.files[0].name"></label>
+  <p id="gesture">No gesture yet</p>
   <div style="height:900px"></div>
+  <p>Bottom line</p>
 </body></html>`;
 
 const site = createServer((_request, response) => {
@@ -105,6 +116,11 @@ describe('the device as MCP tools', () => {
       'click',
       'fill',
       'press',
+      'scroll',
+      'long_press',
+      'drag',
+      'hover',
+      'upload',
       'wait',
       'report',
       'bug',
@@ -124,6 +140,44 @@ describe('the device as MCP tools', () => {
     expect(textOf(reopened)).toContain('kept: yes / tab: none');
     await client.close();
   });
+
+  it('holds, hovers, drags, picks a sample file and scrolls, on the real browser', async () => {
+    const client = await connect('w1');
+    const said = async (name: string, args: Record<string, unknown>) => {
+      const answered = await client.callTool({ name, arguments: args });
+
+      expect(answered.isError, textOf(answered)).toBeFalsy();
+
+      return textOf(answered);
+    };
+
+    expect(await said('long_press', { target: 'Hold me' })).toContain('Held long');
+    expect(await said('hover', { target: 'Help' })).toContain('Hovered');
+    expect(await said('drag', { target: 'Card A', to: 'Done' })).toContain(
+      'Dropped on Done',
+    );
+    expect(await said('upload', { target: 'Photo', file: 'image' })).toContain(
+      'Picked qazinho-sample.png',
+    );
+    expect(await said('scroll', { direction: 'down', until: 'Bottom line' })).toContain(
+      'Bottom line',
+    );
+    await said('scroll', { direction: 'up', until: 'Sign in' });
+    await said('goto', { target: `http://127.0.0.1:${String(PORT)}/` });
+    await client.close();
+  });
+
+  it('says plainly when a scroll never reaches the words', async () => {
+    const client = await connect('w1');
+    const lost = await client.callTool({
+      name: 'scroll',
+      arguments: { direction: 'down', until: 'Words nobody wrote' },
+    });
+
+    expect(lost.isError).toBe(true);
+    expect(textOf(lost)).toContain('Nothing on the page reads "Words nobody wrote"');
+    await client.close();
+  }, 120_000);
 
   it('acts on the real browser and shows the agent what changed', async () => {
     const client = await connect('w1');
