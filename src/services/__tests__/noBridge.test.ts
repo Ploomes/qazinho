@@ -1,7 +1,16 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from 'vitest';
 import { i18n } from '@/languages';
-import { Agent, Assistant, Github, Integrations, Mcp, Run, Setup } from '@/services';
+import {
+  Agent,
+  Assistant,
+  Builds,
+  Github,
+  Integrations,
+  Mcp,
+  Run,
+  Setup,
+} from '@/services';
 
 /**
  * The page opened with no bridge, in a plain browser, has nothing to ask. Each service says so
@@ -90,6 +99,30 @@ describe('a page with no bridge', () => {
       Assistant.onToolCall(() => undefined)();
       Assistant.answer({ id: 'c-1', text: '', isError: false });
     }).not.toThrow();
+  });
+
+  it('builds nothing, and says why in words the QA reads', async () => {
+    expect(
+      await Builds.start({
+        buildId: 'b-1',
+        projectId: null,
+        platform: 'android',
+        repository: { owner: 'acme', name: 'loja-app' },
+        branch: 'main',
+        agentId: 'claude-code',
+        model: '',
+        language: 'en',
+      }),
+    ).toEqual({
+      isBuilt: false,
+      failure: {
+        reason: 'agent',
+        failure: {
+          reason: 'other',
+          said: 'QAzinho is not talking to the machine. Restart the app.',
+        },
+      },
+    });
   });
 
   it('has no recording to play or to save', async () => {

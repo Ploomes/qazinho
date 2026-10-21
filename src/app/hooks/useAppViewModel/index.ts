@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { useEffect } from 'react';
 import { useAppActions, useAssistantEvents } from '@/modules/Assistant';
+import { useBuildEvents } from '@/modules/Build';
 import { AppWindow } from '@/services';
 import { SHELL } from '@/shared/constants';
 import {
@@ -31,6 +32,7 @@ export const useAppViewModel = () => {
   useMachineWatch();
   useAppActions();
   useAssistantEvents();
+  useBuildEvents();
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
