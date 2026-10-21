@@ -81,6 +81,7 @@ Three suites that need something real behind them. They have their own config
 | `mcp.test.ts`          | a fake `/mcp` and Codex: Figma's MCP added, signed in, refused, cancelled    |
 | `login.test.ts`        | a fake `claude auth login` and `codex login`: page, code, refusal, cancel    |
 | `record.test.ts`       | the built app records a web run as an H.264 MP4 through its hidden window    |
+| `github.test.ts`       | a fake gh: device-code sign-in and cancel, repositories, branches, a copy    |
 
 `run.test.ts`, `chat.test.ts` and `visual.test.ts` spend the QA's tokens and need an agent installed. Run them by
 hand after touching the run pipeline or an answer schema.
