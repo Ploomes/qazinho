@@ -121,4 +121,47 @@ describe('readChatAnswer', () => {
     expect(readChatAnswer(JSON.stringify({ verdict: 'passed' }))).toBeNull();
     expect(readChatAnswer('   ')).toBeNull();
   });
+  describe('an option that creates variables', () => {
+    const ACCOUNT = {
+      header: 'Account',
+      question: 'Which account should the plan sign in with?',
+      options: [
+        { label: 'LOGIN_EMAIL', description: 'The admin the project keeps.' },
+        {
+          label: 'A new account',
+          description: 'Opens a window to type it.',
+          variables: [
+            { name: 'SELLER_EMAIL', description: 'A seller on staging' },
+            { name: 'SELLER_PASSWORD', description: 'Its password' },
+          ],
+        },
+      ],
+      multiSelect: false,
+    };
+
+    it('keeps the variables an option would create, and none on the others', () => {
+      const [question] =
+        readChatAnswer(JSON.stringify({ reply: 'Which account?', questions: [ACCOUNT] }))
+          ?.questions ?? [];
+
+      expect(question?.options).toEqual(ACCOUNT.options);
+    });
+
+    it('reads the nulls Codex writes on the options that create nothing', () => {
+      const [question] =
+        readChatAnswer(
+          JSON.stringify({
+            reply: 'Which account?',
+            questions: [
+              {
+                ...ACCOUNT,
+                options: [{ ...ACCOUNT.options[0], variables: null }, ACCOUNT.options[1]],
+              },
+            ],
+          }),
+        )?.questions ?? [];
+
+      expect(question?.options).toEqual(ACCOUNT.options);
+    });
+  });
 });

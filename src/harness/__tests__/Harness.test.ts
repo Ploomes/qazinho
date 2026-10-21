@@ -60,6 +60,7 @@ const EMPTY_CHAT = {
   runs: [],
   look: null,
   code: null,
+  variables: [],
 };
 
 const CODE: ICodeCopy = {
@@ -91,6 +92,7 @@ const FULL_CHAT = {
     page: 'URL: https://shop.test/\nTITLE: Shop\nTEXT:\nNew in: summer shoes\nCONTROLS:\na: Cart\nbutton: Sign in',
   },
   code: null,
+  variables: [{ name: 'SHOP_EMAIL', description: 'The buyer on staging' }],
 };
 
 const APP: IAppSnapshot = {

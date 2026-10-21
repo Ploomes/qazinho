@@ -11,6 +11,7 @@ import {
   useAppStore,
   useMachineStore,
   useSettingsStore,
+  useVariablesStore,
   useWorkspaceStore,
 } from '@/store';
 
@@ -60,6 +61,7 @@ export const useChatAgent = () => {
         exploration: t('RUN.EXPLORATION'),
       }),
       code: props.code,
+      variables: useVariablesStore.getState().byProject[workspace.projectId] ?? [],
     }).then((turn) => {
       if (turn.failure?.reason === 'stopped') {
         landAgentStopped(workspaceId);

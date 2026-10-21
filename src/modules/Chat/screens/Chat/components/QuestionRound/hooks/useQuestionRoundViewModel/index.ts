@@ -7,7 +7,7 @@ import { QUESTION_ROUND } from '@/modules/Chat/screens/Chat/components/QuestionR
 import { MOTION } from '@/shared/constants';
 
 export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
-  const { message, isAnswerable, onAnswer } = props;
+  const { message, isAnswerable, onAnswer, onVariables } = props;
   const { t } = useTranslation();
   const [drafts, setDrafts] = useState<IQuestionAnswer[]>(() =>
     message.questions.map(() => ({ picked: [], text: '' })),
@@ -55,11 +55,26 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
         text: answer.text,
         said: isAnswered ? answer.text.trim() : '',
         options: question.options
-          .map((option) => ({
-            label: option.label,
-            description: option.description,
-            isPicked: answer.picked.includes(option.label),
-          }))
+          .map((option) => {
+            const isPicked = answer.picked.includes(option.label);
+            const kept = answer.kept ?? [];
+
+            return {
+              label: option.label,
+              description: option.description,
+              isPicked,
+              asks:
+                (option.variables ?? []).length === 0
+                  ? ''
+                  : t('CHAT.QUESTIONS_VARIABLES', {
+                      names: (option.variables ?? []).map(({ name }) => name).join(', '),
+                    }),
+              kept:
+                isPicked && (option.variables ?? []).length > 0 && kept.length > 0
+                  ? t('CHAT.QUESTIONS_KEPT', { names: kept.join(', ') })
+                  : '',
+            };
+          })
           .filter(({ isPicked }) => isPicked || !isAnswered),
       };
     }),
@@ -68,6 +83,34 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
       const draft = drafts[picking.index];
 
       if (!isOpen || !question || !draft) return;
+
+      const variables =
+        question.options.find(({ label }) => label === picking.label)?.variables ?? [];
+
+      if (variables.length > 0) {
+        void onVariables(variables).then((kept) => {
+          if (kept === null) return;
+
+          setDrafts((current) =>
+            current.map((one, index) =>
+              index === picking.index
+                ? {
+                    ...one,
+                    picked: question.isMultiSelect
+                      ? [
+                          ...one.picked.filter((label) => label !== picking.label),
+                          picking.label,
+                        ]
+                      : [picking.label],
+                    kept,
+                  }
+                : one,
+            ),
+          );
+        });
+
+        return;
+      }
 
       const toggled = draft.picked.includes(picking.label)
         ? draft.picked.filter((label) => label !== picking.label)

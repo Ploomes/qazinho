@@ -15,6 +15,25 @@ function fieldOf(props: { value: unknown; key: string }): unknown {
     : undefined;
 }
 
+function withoutNullVariables(questions: unknown): unknown {
+  if (!Array.isArray(questions)) return questions;
+
+  return questions.map((question: unknown) => {
+    const options = fieldOf({ value: question, key: 'options' });
+
+    return Array.isArray(options)
+      ? {
+          ...(question as Record<string, unknown>),
+          options: options.map((option: unknown) =>
+            fieldOf({ value: option, key: 'variables' }) === null
+              ? { ...(option as Record<string, unknown>), variables: undefined }
+              : option,
+          ),
+        }
+      : question;
+  });
+}
+
 function withoutNullIds(plan: unknown): unknown {
   const cases = fieldOf({ value: plan, key: 'cases' });
 
@@ -45,12 +64,19 @@ export function readChatAnswer(text: string): IChatAnswer | null {
 
   if (reply === undefined) return null;
 
-  const questions = CHAT_ANSWER.shape.questions.safeParse(field('questions')).data ?? [];
+  const questions =
+    CHAT_ANSWER.shape.questions.safeParse(withoutNullVariables(field('questions')))
+      .data ?? [];
 
   return {
     reply: reply.trim(),
-    questions: questions.map(({ multiSelect, ...question }) => ({
+    questions: questions.map(({ multiSelect, options, ...question }) => ({
       ...question,
+      options: options.map(({ variables, ...option }) =>
+        variables === undefined || variables.length === 0
+          ? option
+          : { ...option, variables },
+      ),
       isMultiSelect: multiSelect,
     })),
     plan: CHAT_ANSWER.shape.plan.safeParse(withoutNullIds(field('plan'))).data ?? null,

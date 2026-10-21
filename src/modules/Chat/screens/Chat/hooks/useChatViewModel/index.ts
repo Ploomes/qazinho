@@ -1,5 +1,5 @@
 import type { ChatItem, IQuestionAnswer, IRunMessage } from '@/modules/Chat/types';
-import type { IChatReference, ICodeAsk } from '@/shared/types';
+import type { IChatReference, ICodeAsk, IVariableBrief } from '@/shared/types';
 import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +19,7 @@ import { CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { useChatCommand } from '@/modules/Chat/screens/Chat/hooks/useChatCommand';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { formatElapsed } from '@/modules/Device';
+import { useVariableActions } from '@/modules/Project';
 import { flattenPlanSteps, formatCost, RUN_ENDS, useRunActions } from '@/modules/Run';
 import { Agent } from '@/services';
 import { EXPLORATION } from '@/shared/constants';
@@ -69,6 +70,7 @@ export const useChatViewModel = () => {
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
   const takeSuggestion = useWorkspaceStore((state) => state.takeSuggestion);
   const { runWorkspace } = useRunActions();
+  const { askVariables } = useVariableActions();
 
   const isAgentTyping = workspace !== null && askingIds.includes(workspace.id);
   const liveText = workspace === null ? '' : (liveTexts[workspace.id] ?? '');
@@ -391,6 +393,10 @@ export const useChatViewModel = () => {
     onOpenPlan: () => {
       selectTab('plan');
     },
+    onVariables: (drafts: IVariableBrief[]) =>
+      workspace === null
+        ? Promise.resolve(null)
+        : askVariables({ projectId: workspace.projectId, drafts }),
     onTakeSuggestion: (messageId: string) => {
       if (workspace !== null) takeSuggestion({ workspaceId: workspace.id, messageId });
     },

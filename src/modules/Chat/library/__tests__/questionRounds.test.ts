@@ -79,6 +79,23 @@ describe('answerRound', () => {
 });
 
 describe('formatAnswers', () => {
+  it('names the variables the QA kept through an option, never their values', () => {
+    expect(
+      formatAnswers({
+        questions: [ACCOUNT],
+        answers: [
+          {
+            picked: ['A new account'],
+            text: '',
+            kept: ['SELLER_EMAIL', 'SELLER_PASSWORD'],
+          },
+        ],
+      }),
+    ).toBe(
+      'Account (Which account do the steps sign in with?): A new account — kept the variables ${SELLER_EMAIL}, ${SELLER_PASSWORD}',
+    );
+  });
+
   it('says each answer under its question, what was picked before what was written', () => {
     expect(
       formatAnswers({

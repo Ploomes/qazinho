@@ -38,6 +38,7 @@ export const Chat: React.FC = () => {
     onAnswerQuestions,
     onOpenPlan,
     onTakeSuggestion,
+    onVariables,
     onToggleRun,
     onOpenRun,
     onOpenBug,
@@ -72,6 +73,7 @@ export const Chat: React.FC = () => {
                 onAnswerQuestions={onAnswerQuestions}
                 onOpenPlan={onOpenPlan}
                 onTakeSuggestion={onTakeSuggestion}
+                onVariables={onVariables}
                 onOpenBug={onOpenBug}
               />
             ) : (
@@ -103,6 +105,7 @@ export const Chat: React.FC = () => {
                     onAnswerQuestions={onAnswerQuestions}
                     onOpenPlan={onOpenPlan}
                     onTakeSuggestion={onTakeSuggestion}
+                    onVariables={onVariables}
                     onOpenBug={onOpenBug}
                   />
                 ))}

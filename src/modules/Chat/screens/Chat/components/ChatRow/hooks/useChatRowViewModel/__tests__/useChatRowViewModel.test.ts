@@ -15,6 +15,7 @@ const row = (message: ChatMessage, props: Partial<IChatRowProps> = {}) =>
       onAnswerQuestions: vi.fn(),
       onOpenPlan: vi.fn(),
       onTakeSuggestion: vi.fn(),
+      onVariables: vi.fn(),
       onOpenBug: vi.fn(),
       ...props,
     }),

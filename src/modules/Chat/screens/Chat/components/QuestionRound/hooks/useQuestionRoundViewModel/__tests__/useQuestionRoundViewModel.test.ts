@@ -2,7 +2,7 @@
 import type { IQuestionRoundProps } from '@/modules/Chat/screens/Chat/components/QuestionRound/types';
 import type { IQuestionsMessage } from '@/modules/Chat/types';
 import type { IChatQuestion } from '@/shared/types';
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { useQuestionRoundViewModel } from '@/modules/Chat/screens/Chat/components/QuestionRound/hooks/useQuestionRoundViewModel';
 
@@ -37,10 +37,32 @@ function round(props: { questions: IChatQuestion[] } & Partial<IQuestionsMessage
   return { id: 'm-3', kind: 'questions' as const, at: '09:41', answers: null, ...props };
 }
 
+const ACCOUNT: IChatQuestion = {
+  header: 'Account',
+  question: 'Which account should the plan sign in with?',
+  options: [
+    { label: 'LOGIN_EMAIL', description: 'The admin the project keeps.' },
+    {
+      label: 'A new account',
+      description: 'A seller, typed in a window.',
+      variables: [
+        { name: 'SELLER_EMAIL', description: 'A seller on staging' },
+        { name: 'SELLER_PASSWORD', description: 'Its password' },
+      ],
+    },
+  ],
+  isMultiSelect: false,
+};
+
 function render(props: Partial<IQuestionRoundProps> & { message: IQuestionsMessage }) {
   const onAnswer = vi.fn();
   const view = renderHook(() =>
-    useQuestionRoundViewModel({ isAnswerable: true, onAnswer, ...props }),
+    useQuestionRoundViewModel({
+      isAnswerable: true,
+      onAnswer,
+      onVariables: () => Promise.resolve(null),
+      ...props,
+    }),
   );
 
   return { onAnswer, view };
@@ -293,5 +315,68 @@ describe('useQuestionRoundViewModel', () => {
       '',
       'Pick all that apply',
     ]);
+  });
+  describe('an option that creates variables', () => {
+    it('says it opens a window for the variables, and which ones', () => {
+      const { view } = render({ message: round({ questions: [ACCOUNT] }) });
+
+      expect(view.result.current.questions[0]?.options.map(({ asks }) => asks)).toEqual([
+        '',
+        'Opens a window to type SELLER_EMAIL, SELLER_PASSWORD',
+      ]);
+    });
+
+    it('opens the window, and picks the option with the names the QA kept', async () => {
+      const onVariables = vi.fn(() =>
+        Promise.resolve(['SELLER_EMAIL', 'SELLER_PASSWORD']),
+      );
+      const { onAnswer, view } = render({
+        message: round({ questions: [ACCOUNT] }),
+        onVariables,
+      });
+
+      act(() => {
+        view.result.current.onPick({ index: 0, label: 'A new account' });
+      });
+
+      expect(onVariables).toHaveBeenCalledWith(ACCOUNT.options[1]?.variables);
+
+      await waitFor(() => {
+        expect(view.result.current.questions[0]?.options[1]).toMatchObject({
+          isPicked: true,
+          kept: 'Kept: SELLER_EMAIL, SELLER_PASSWORD',
+        });
+      });
+
+      act(() => {
+        view.result.current.onSend();
+      });
+
+      expect(onAnswer).toHaveBeenCalledWith({
+        messageId: 'm-3',
+        answers: [
+          {
+            picked: ['A new account'],
+            text: '',
+            kept: ['SELLER_EMAIL', 'SELLER_PASSWORD'],
+          },
+        ],
+      });
+    });
+
+    it('does NOT pick the option when the QA closed the window without saving', async () => {
+      const onVariables = vi.fn(() => Promise.resolve(null));
+      const { view } = render({ message: round({ questions: [ACCOUNT] }), onVariables });
+
+      act(() => {
+        view.result.current.onPick({ index: 0, label: 'A new account' });
+      });
+
+      await waitFor(() => {
+        expect(onVariables).toHaveBeenCalled();
+      });
+      expect(view.result.current.questions[0]?.options[1]?.isPicked).toBe(false);
+      expect(view.result.current.canSend).toBe(false);
+    });
   });
 });

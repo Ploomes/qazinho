@@ -46,6 +46,7 @@ export const ChatRow: React.FC<IChatRowProps> = (props) => {
             message={message}
             isAnswerable={props.isAnswerable}
             onAnswer={props.onAnswerQuestions}
+            onVariables={props.onVariables}
           />
         )}
         {message.kind === 'error' && <ErrorBlock message={message} />}

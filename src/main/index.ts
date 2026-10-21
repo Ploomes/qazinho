@@ -429,6 +429,7 @@ async function askOnce(props: {
     runs: ask.runs,
     look,
     code,
+    variables: ask.variables,
   });
   const turn = await agentRunner.ask({
     workspaceId: ask.workspaceId,

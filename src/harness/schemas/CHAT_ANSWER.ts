@@ -1,7 +1,27 @@
 import { z } from 'zod';
 import { DRAFTED_CASE } from './DRAFTED_CASE';
 
-const OPTION = z.object({ label: z.string(), description: z.string() });
+const VARIABLE = z.object({
+  name: z
+    .string()
+    .describe('The variable, in capitals with _ between words, such as LOGIN_EMAIL.'),
+  description: z
+    .string()
+    .describe(
+      'What it holds, for whoever picks it later, such as "The admin\'s email on staging".',
+    ),
+});
+
+const OPTION = z.object({
+  label: z.string(),
+  description: z.string(),
+  variables: z
+    .array(VARIABLE)
+    .describe(
+      'Only on the option that creates variables: picking it opens a window where the QA types their values, which you never see.',
+    )
+    .optional(),
+});
 
 const QUESTION = z.object({
   header: z.string(),

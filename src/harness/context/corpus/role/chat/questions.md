@@ -17,9 +17,10 @@ Each question has a "header" of one or two words naming what is decided, such as
 you recommend first, each with a "description" of one sentence on what picking it means for
 the plan. Set "multiSelect" only when several options can be true at once.
 The QA can always write an answer of their own, so never add an option for "other". When what
-you need is a value only the QA has, such as an account or a link, the option says where it
-goes, such as "Write the account in the field below", next to the real way out, such as
-"Plan without signing in".
+you need is a value only the QA has that is not secret, such as a link, the option says where
+it goes, such as "Write the link in the field below", next to the real way out. An account, a
+password, a token or any other secret never goes in the chat: ask for it the way "The project's
+variables" says.
 All the questions go in one round, five at most. Ask again only when an answer opened a new
 gap. QAzinho sends what the QA picked and wrote as their next message, one line per question,
 under its header.

@@ -1,5 +1,6 @@
 import type { IQuestionRoundProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
+import { LOCK_ICON } from '@/modules/Project';
 import { Button, Eyebrow, Input } from '@/shared/components/atoms';
 import { useQuestionRoundViewModel } from './hooks';
 import './styles.css';
@@ -107,6 +108,25 @@ export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
                           <span className="question-round__description">
                             {option.description}
                           </span>
+                          {option.asks !== '' && (
+                            <span className="question-round__asks">
+                              <svg
+                                className="question-round__lock"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                {LOCK_ICON.map((path) => (
+                                  <path key={path} d={path} />
+                                ))}
+                              </svg>
+                              {option.kept === '' ? option.asks : option.kept}
+                            </span>
+                          )}
                         </span>
                       </button>
                     ))}

@@ -124,6 +124,8 @@ export const en = {
     QUESTIONS_PICK_ANY: 'Pick all that apply',
     QUESTIONS_OWN: 'Or write your own answer',
     QUESTIONS_SEND: 'Answer',
+    QUESTIONS_VARIABLES: 'Opens a window to type {{names}}',
+    QUESTIONS_KEPT: 'Kept: {{names}}',
     ERROR_KICKER: 'QAzinho error · not a test result',
     PLAN_CARD_TITLE: 'Plan · {{cases}} · {{steps}}',
     PLAN_CARD_SUBTITLE: 'Read it, change what is wrong, then run it.',

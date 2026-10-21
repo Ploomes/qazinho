@@ -48,6 +48,7 @@ describe('a real chat', () => {
         runs: [],
         look: null,
         code: null,
+        variables: [],
       });
       const turn = await runner.ask({
         workspaceId: 'w-chat',
@@ -120,6 +121,7 @@ describe('a real chat', () => {
       references: [],
       look: null,
       code: null,
+      variables: [],
     };
     const ask = (props: {
       chat: ReturnType<Harness['chat']>;

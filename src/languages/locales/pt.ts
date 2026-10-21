@@ -127,6 +127,8 @@ export const pt: typeof en = {
     QUESTIONS_PICK_ANY: 'Marque quantas quiser',
     QUESTIONS_OWN: 'Ou escreva a sua resposta',
     QUESTIONS_SEND: 'Responder',
+    QUESTIONS_VARIABLES: 'Abre uma janela para você digitar {{names}}',
+    QUESTIONS_KEPT: 'Guardadas: {{names}}',
     ERROR_KICKER: 'erro do QAzinho · não é resultado de teste',
     PLAN_CARD_TITLE: 'Plano · {{cases}} · {{steps}}',
     PLAN_CARD_SUBTITLE: 'Leia, corrija o que estiver errado e então rode.',

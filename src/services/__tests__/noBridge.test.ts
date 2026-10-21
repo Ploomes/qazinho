@@ -33,6 +33,7 @@ const ASK = {
   references: [],
   runs: [],
   code: null,
+  variables: [],
 };
 
 describe('a page with no bridge', () => {

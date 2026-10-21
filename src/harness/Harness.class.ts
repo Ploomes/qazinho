@@ -28,6 +28,7 @@ import {
   describeCase,
   describeCode,
   describeExploration,
+  describeKeptVariables,
   describeLook,
   describePlan,
   describeReferences,
@@ -77,6 +78,7 @@ export class Harness {
     runs: IChatReference[];
     look: AppLook | null;
     code: ICodeCopy | null;
+    variables: IVariableBrief[];
   }): {
     systemPrompt: string;
     prompt: string;
@@ -97,6 +99,7 @@ export class Harness {
             ...describePlan(props.steps),
           ],
         },
+        describeKeptVariables(props.variables),
         describeRuns(props.runs),
         describeLook(props.look),
         describeCode({
