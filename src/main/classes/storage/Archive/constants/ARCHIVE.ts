@@ -5,4 +5,5 @@ export const ARCHIVE = {
   videos: { mp4: 'run.mp4', webm: 'run.webm' },
   workspace: 'workspace.json',
   plan: 'plan.yaml',
+  recipes: 'recipes.json',
 } as const;

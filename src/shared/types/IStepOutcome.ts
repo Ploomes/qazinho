@@ -1,7 +1,7 @@
 import type { Severity } from './Severity';
 import type { StepVerdict } from './StepVerdict';
 
-/** What a run reports about one step: `screenshot` is inline because the page cannot read disk, and `at` is when it came, in epoch ms. */
+/** What a run reports about one step: `screenshot` is inline because the page cannot read disk, `at` is when it came, in epoch ms, and `by` says when no agent walked it, or one walked it after a recipe stopped holding. */
 export interface IStepOutcome {
   workspaceId: string;
   caseId: string;
@@ -18,4 +18,5 @@ export interface IStepOutcome {
   at: number;
   screenshot: string | null;
   shotFile: string | null;
+  by?: 'replay' | 'healed';
 }
