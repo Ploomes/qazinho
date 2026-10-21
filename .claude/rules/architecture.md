@@ -78,7 +78,9 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
   - gh is light, so QAzinho installs it through Homebrew when the QA asks.
   - Disconnecting only makes QAzinho stop using it: gh stays signed in for the QA's other tools.
 - **The agent runs in QAzinho's own agent folder** (`PATHS.agentHome`), chat and runs alike, so
-  no project's `.claude` settings reach the QA's agent.
+  no project's `.claude` settings reach the QA's agent. Claude Code also runs with the QA's own
+  hooks off (`AGENT_RUN.settings`): a hook that rewrites commands, such as rtk's, broke every
+  build's permissions. A company's managed hooks still run.
 - `index.html` carries a CSP. Loosen one directive with a reason, never the whole policy.
 
 ## IPC
@@ -136,7 +138,16 @@ answers one question per channel, for a target `{ role, platform }`:
     (`ASSISTANT_WAIT`). The MCP config tells the agent a call may take that long: Claude Code
     reads the server's `timeout`, and Codex `tool_timeout_sec`.
   - A build path is made whole and checked on disk in main before the page hears of it. A
-    tracker's token is still typed by the QA in Settings, never in the chat.
+    tracker's token is still typed by the QA in Settings, never in the chat, and the composer
+    holds back a message that carries one (`secretIn`) until the QA takes it out or insists.
+  - A plan is written in the workspace's own chat, never in the Estagiário's:
+    `ask_workspace_chat` sends the QA's request there in their name and opens it. It refuses
+    while that chat answers, while a run walks, or while its questions wait on the QA, which
+    `workspace_details` reads back so the Estagiário helps answer them.
+  - The chat and its session outlive a restart (`keptOf`): the latest messages, with nothing
+    left going.
+  - It never covers the device. Its chat opens beside an open device panel, the composer leaves
+    room for its button when the panel is shut (`dockRoomOf`), and the steps scroll past it.
 - **The app builds from its own code, by the QA's agent** (`role/builder/`). A project's Android
   or iOS card, or the assistant's `build_app`, builds the app from a branch of one of the
   project's repositories, with no terminal:
@@ -194,6 +205,8 @@ screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `
   (`focusDevice`): a 2x frame costs about three times the CPU on a page that animates.
 - Chrome keeps a window at least 500px wide, so a phone-sized page streams framed wider, and
   `DeviceScreen` cuts the stream to the viewport's shape.
+- A phone has no window either: the emulator boots with `-no-window` (`bootArgs`) and a
+  simulator through `simctl`, without Simulator.app. The QA sees it only in the device panel.
 
 **Every run is recorded, and its video never crosses IPC either.**
 

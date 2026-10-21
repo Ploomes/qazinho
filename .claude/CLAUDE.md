@@ -90,15 +90,21 @@ been tried. `tests/smoke/github.test.ts` drives a fake gh.
 chat where the QA's own agent talks about any project, workspace, run or bug. It also does what
 the QA could do by hand: open a screen, create or change a project, link a repository, create,
 rename, run or stop a workspace, change the settings, connect a tracker, and delete or
-disconnect once the QA confirms on a card. `tests/smoke/assistant.test.ts` drives it with a fake
-agent over the real MCP server; no real agent has driven it yet.
+disconnect once the QA confirms on a card. A plan it hands to the workspace's own chat, which
+writes it with the QA, and it helps answer that chat's questions. Its chat outlives a restart.
+`tests/smoke/assistant.test.ts` drives it with a fake agent over the real MCP server, and a real
+Claude Code (Haiku) has driven it through a QA's day in both languages; through Codex it has
+not.
 
 **The app builds from its own code.** A project that names its repositories builds its .apk or
 simulator .app from any branch, from the project's card or by asking the Estagiário. The QA's own
 agent builds it in a copy of the branch: React Native, Expo, Flutter or a native app, a build that
 runs alone on the emulator or simulator. What it made is checked, kept, and becomes the project's
-target. `tests/smoke/build.test.ts` drives it with a fake gh and a fake agent; no real agent has
-built a real app yet.
+target. `tests/smoke/build.test.ts` drives it with a fake gh and a fake agent. A real Claude Code
+(Haiku), asked through the Estagiário, has built a native Android app with Gradle from a branch
+a fake gh handed over; React Native, Expo, Flutter and iOS have not been built by a real agent
+yet. QAzinho's calls run with the QA's own Claude Code hooks off: a hook that rewrites commands,
+such as rtk's, made every Gradle command fail the build's permissions.
 
 **Codex is half verified.** QAzinho drives it through `codex exec --json` and its own MCP server,
 checked against a fake Codex built from the real one's events. The chat has answered through a
