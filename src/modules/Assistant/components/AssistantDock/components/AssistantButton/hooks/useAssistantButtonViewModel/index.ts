@@ -15,6 +15,7 @@ export const useAssistantButtonViewModel = () => {
 
   return {
     isOpen,
+    isBusy: isAsking,
     className: isOpen ? 'assistant-button assistant-button--open' : 'assistant-button',
     label,
     tip: combo === null ? label : `${label} · ${combo}`,

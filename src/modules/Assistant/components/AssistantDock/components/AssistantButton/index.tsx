@@ -9,6 +9,7 @@ import './styles.css';
 export const AssistantButton: React.FC = () => {
   const {
     isOpen,
+    isBusy,
     className,
     label,
     tip,
@@ -26,6 +27,7 @@ export const AssistantButton: React.FC = () => {
       className={className}
       aria-label={label}
       aria-expanded={isOpen}
+      aria-busy={isBusy}
       title={tip}
       onClick={onClick}
     >

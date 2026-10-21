@@ -55,13 +55,21 @@ describe('useAssistantButtonViewModel', () => {
 
     const { result } = renderHook(() => useAssistantButtonViewModel());
 
-    expect(result.current).toMatchObject({ mood: 'thinking', isStill: false });
+    expect(result.current).toMatchObject({
+      mood: 'thinking',
+      isStill: false,
+      isBusy: true,
+    });
 
     act(() => {
       useAssistantStore.setState({ isAsking: false });
     });
 
-    expect(result.current).toMatchObject({ mood: 'neutral', isStill: true });
+    expect(result.current).toMatchObject({
+      mood: 'neutral',
+      isStill: true,
+      isBusy: false,
+    });
   });
 
   it('counts the answers that came while the chat was shut', () => {
