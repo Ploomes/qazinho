@@ -1,9 +1,10 @@
 import type { IChatReference } from './IChatReference';
+import type { ICodeAsk } from './ICodeAsk';
 import type { IFlatStep } from './IFlatStep';
 import type { ITargetUnderTest } from './ITargetUnderTest';
 import type { IViewport } from './IViewport';
 
-/** What the page asks in the chat: the QA's own words, the workspace they are about, and how its latest runs went. */
+/** What the page asks in the chat: the QA's own words, the workspace they are about, how its latest runs went, and a branch to plan from. */
 export interface IAskAgent {
   workspaceId: string;
   agentId: string;
@@ -15,4 +16,5 @@ export interface IAskAgent {
   steps: IFlatStep[];
   references: IChatReference[];
   runs: IChatReference[];
+  code: ICodeAsk | null;
 }

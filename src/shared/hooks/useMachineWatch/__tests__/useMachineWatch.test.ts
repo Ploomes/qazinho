@@ -132,6 +132,29 @@ describe('useMachineWatch', () => {
     expect(useMachineStore.getState().usage?.fiveHourUsed).toBe(0.3);
   });
 
+  it('follows a branch being copied for the agent, and lets go once it answers', () => {
+    let hear: (event: IAgentEvent) => void = () => undefined;
+
+    window.qazinho.onAgentEvent = vi.fn((listener: (event: IAgentEvent) => void) => {
+      hear = listener;
+
+      return () => undefined;
+    });
+    useWorkspaceStore.setState({ workspaces: [makeWorkspace()], codeSteps: {} });
+
+    renderHook(() => useMachineWatch());
+
+    hear({ kind: 'code', workspaceId: 'w1', step: 'download', bytes: 2048 });
+
+    expect(useWorkspaceStore.getState().codeSteps).toEqual({
+      w1: { step: 'download', bytes: 2048 },
+    });
+
+    hear({ kind: 'text', workspaceId: 'w1', text: 'Reading the diff' });
+
+    expect(useWorkspaceStore.getState().codeSteps).toEqual({});
+  });
+
   it('knows which trackers are connected from the start', async () => {
     window.qazinho.listIntegrations = vi
       .fn()

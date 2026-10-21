@@ -26,6 +26,7 @@ export type * from './IChatTurn';
 export type * from './ICodeAsk';
 export type * from './ICodeChange';
 export type * from './ICodeCopy';
+export type * from './ICodeSource';
 export type * from './IConnectIntegration';
 export type * from './IConnectResult';
 export type * from './IDetectedAgent';

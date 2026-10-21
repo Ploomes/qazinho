@@ -14,6 +14,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
         isError: false,
         answer: null,
         failure: null,
+        code: null,
       }),
     stopAgent: () => Promise.resolve(),
     onAgentEvent: () => () => undefined,

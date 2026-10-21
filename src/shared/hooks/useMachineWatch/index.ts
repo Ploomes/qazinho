@@ -10,6 +10,7 @@ export const useMachineWatch = () => {
   const setUsage = useMachineStore((state) => state.setUsage);
   const setLiveText = useWorkspaceStore((state) => state.setLiveText);
   const setRetry = useWorkspaceStore((state) => state.setRetry);
+  const setCodeStep = useWorkspaceStore((state) => state.setCodeStep);
   const setContext = useWorkspaceStore((state) => state.setContext);
   const followInstall = useSetupStore((state) => state.followInstall);
   const setIntegrations = useSetupStore((state) => state.setIntegrations);
@@ -44,9 +45,15 @@ export const useMachineWatch = () => {
             attempt: event.attempt,
             maxRetries: event.maxRetries,
           });
+        } else if (event.kind === 'code') {
+          setCodeStep({
+            workspaceId: event.workspaceId,
+            step: event.step,
+            bytes: event.bytes,
+          });
         } else setLiveText({ workspaceId: event.workspaceId, text: event.text });
       }),
-    [setUsage, setContext, setLiveText, setRetry],
+    [setUsage, setContext, setLiveText, setRetry, setCodeStep],
   );
 
   useEffect(() => {

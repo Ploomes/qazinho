@@ -1,5 +1,5 @@
 import type { ChatItem, IQuestionAnswer, IRunMessage } from '@/modules/Chat/types';
-import type { IChatReference } from '@/shared/types';
+import type { IChatReference, ICodeAsk } from '@/shared/types';
 import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +20,7 @@ import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { formatElapsed, viewportOf } from '@/modules/Device';
 import { caseIdsUsed, planOfDraft } from '@/modules/Plan';
 import { flattenPlanSteps, formatCost, RUN_ENDS } from '@/modules/Run';
+import { GITHUB_FAILURE_KEYS } from '@/modules/Setup';
 import { Agent } from '@/services';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import {
@@ -93,7 +94,11 @@ export const useChatViewModel = () => {
   const hasPreview = !isAgentTyping && liveText !== '';
   const lastId = (workspace?.chat ?? []).at(-1)?.id ?? null;
 
-  const askAgent = (props: { text: string; references: IChatReference[] }) => {
+  const askAgent = (props: {
+    text: string;
+    references: IChatReference[];
+    code: ICodeAsk | null;
+  }) => {
     if (!workspace) return;
 
     const workspaceId = workspace.id;
@@ -110,6 +115,7 @@ export const useChatViewModel = () => {
       steps: flattenPlanSteps(workspace.plan),
       references: props.references,
       runs: runHistoryOf({ workspace, wholePlan }),
+      code: props.code,
     }).then((turn) => {
       if (turn.failure?.reason === 'stopped') {
         landAgentStopped(workspaceId);
@@ -123,10 +129,14 @@ export const useChatViewModel = () => {
           text:
             turn.failure === null
               ? turn.text
-              : t(CHAT_FAILURE_KEYS[turn.failure.reason], {
-                  ...turn.failure,
-                  agent: agentName,
-                }),
+              : turn.failure.reason === 'code'
+                ? t('CHAT.FAILED_CODE', {
+                    reason: t(GITHUB_FAILURE_KEYS[turn.failure.failure]),
+                  })
+                : t(CHAT_FAILURE_KEYS[turn.failure.reason], {
+                    ...turn.failure,
+                    agent: agentName,
+                  }),
         });
 
         return;
@@ -200,7 +210,7 @@ export const useChatViewModel = () => {
       mentions: references.map(({ id }) => id),
     });
     setDraft('');
-    askAgent({ text, references });
+    askAgent({ text, references, code: null });
   };
 
   const runTitleOf = (message: IRunMessage) => {
@@ -232,6 +242,7 @@ export const useChatViewModel = () => {
     askAgent({
       text: formatAnswers({ questions: round.questions, answers: props.answers }),
       references: [],
+      code: null,
     });
   };
 

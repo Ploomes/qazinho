@@ -6,6 +6,7 @@ import type {
   IAgentTurn,
   IAskAgent,
   IChatTurn,
+  ICodeCopy,
   IConnectIntegration,
   InstallableId,
   IntegrationId,
@@ -45,6 +46,7 @@ import {
   AgentRunner,
   AppPeek,
   Archive,
+  CodeCopies,
   DeviceToolDetector,
   GithubCli,
   GithubRepos,
@@ -149,6 +151,7 @@ const github = new GithubCli({
     broadcast({ channel: CHANNELS.githubSignInEvent, event: progress }),
 });
 const repos = new GithubRepos({ github });
+const codeCopies = new CodeCopies({ github, root: PATHS.code });
 const mcp = new AgentMcp({
   findAgent: (agentId) => findCommand(agentId),
   openUrl: (url) => shell.openExternal(url),
@@ -234,8 +237,9 @@ async function askOnce(props: {
   command: string;
   sessionId: string | null;
   look: AppLook | null;
+  code: ICodeCopy | null;
 }): Promise<{ turn: IAgentTurn; told: Record<string, string> }> {
-  const { ask, command, sessionId, look } = props;
+  const { ask, command, sessionId, look, code } = props;
   const chat = harness.chat({
     text: ask.text,
     told: (sessionId === null ? undefined : toldChats.get(sessionId)) ?? {},
@@ -245,7 +249,7 @@ async function askOnce(props: {
     references: ask.references,
     runs: ask.runs,
     look,
-    code: null,
+    code,
   });
   const turn = await agentRunner.ask({
     workspaceId: ask.workspaceId,
@@ -272,6 +276,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     costUsd: null,
     isError: true,
     answer: null,
+    code: null,
   };
 
   if (!command)
@@ -288,25 +293,70 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     if (stoppedChats.has(ask.workspaceId))
       return { ...unanswered, failure: { reason: 'stopped' } };
 
-    const first = await askOnce({ ask, command, sessionId: ask.sessionId, look });
+    if (ask.code !== null) {
+      const prepared = await codeCopies.prepare({
+        workspaceId: ask.workspaceId,
+        code: ask.code,
+        onStep: ({ at, bytes }) => {
+          broadcast({
+            channel: CHANNELS.agentEvent,
+            event: { kind: 'code', workspaceId: ask.workspaceId, step: at, bytes },
+          });
+        },
+      });
+
+      if (stoppedChats.has(ask.workspaceId)) {
+        await codeCopies.release(ask.workspaceId);
+
+        return { ...unanswered, failure: { reason: 'stopped' } };
+      }
+
+      if (!prepared.isReady)
+        return {
+          ...unanswered,
+          failure: { reason: 'code', failure: prepared.failure, said: prepared.said },
+        };
+    }
+
+    const code = codeCopies.copyOf(ask.workspaceId);
+    const first = await askOnce({ ask, command, sessionId: ask.sessionId, look, code });
     const isLost =
       first.turn.isError &&
       ask.sessionId !== null &&
       !stoppedChats.has(ask.workspaceId) &&
       isLostSession(first.turn.text);
     const { turn, told } = isLost
-      ? await askOnce({ ask, command, sessionId: null, look })
+      ? await askOnce({ ask, command, sessionId: null, look, code })
       : first;
 
     if (stoppedChats.has(ask.workspaceId))
-      return { ...turn, isError: true, answer: null, failure: { reason: 'stopped' } };
+      return {
+        ...turn,
+        isError: true,
+        answer: null,
+        failure: { reason: 'stopped' },
+        code: null,
+      };
 
     if (!turn.isError && turn.sessionId !== null) toldChats.set(turn.sessionId, told);
 
+    const answer = turn.isError ? null : harness.readChat(turn.text);
+
+    if (answer?.plan && code !== null) await codeCopies.release(ask.workspaceId);
+
     return {
       ...turn,
-      answer: turn.isError ? null : harness.readChat(turn.text),
+      answer,
       failure: agentFailure(turn),
+      code:
+        code === null
+          ? null
+          : {
+              repository: code.repository,
+              branch: code.branch,
+              base: code.base,
+              commit: code.commit,
+            },
     };
   } finally {
     askingChats.delete(ask.workspaceId);
@@ -457,6 +507,7 @@ void app.whenReady().then(async () => {
   await live.start();
   await replays.start();
   await tools.start();
+  void codeCopies.sweep();
 
   ipcMain.handle(CHANNELS.detectAgents, () => agents.detect());
   ipcMain.handle(CHANNELS.readResources, () => resources.snapshot());
@@ -516,9 +567,10 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.saveWorkspace, (_event, saved: ISavedWorkspace) =>
     archive.saveWorkspace(saved),
   );
-  ipcMain.handle(CHANNELS.removeWorkspace, (_event, workspaceId: string) =>
-    archive.removeWorkspace(workspaceId),
-  );
+  ipcMain.handle(CHANNELS.removeWorkspace, async (_event, workspaceId: string) => {
+    await codeCopies.release(workspaceId);
+    await archive.removeWorkspace(workspaceId);
+  });
   ipcMain.handle(CHANNELS.readShot, (_event, file: string) => archive.readShot(file));
   ipcMain.handle(
     CHANNELS.saveShot,

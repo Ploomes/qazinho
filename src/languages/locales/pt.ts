@@ -130,6 +130,7 @@ export const pt: typeof en = {
       'O {{agent}} está deslogado. Faça login nele em Configurações → Agentes e pergunte de novo.',
     FAILED_AGENT_ERROR: 'O agente respondeu com um erro: {{said}}',
     FAILED_AGENT_SILENT: 'O agente parou de responder. Pergunte de novo.',
+    FAILED_CODE: 'O QAzinho não conseguiu pegar o código no GitHub. {{reason}}',
     PLAN_WHILE_RUNNING:
       'O plano ficou como estava: uma run está rodando nele. Peça de novo quando a run terminar.',
   },

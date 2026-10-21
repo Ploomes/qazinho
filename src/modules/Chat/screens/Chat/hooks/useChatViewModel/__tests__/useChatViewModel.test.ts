@@ -52,6 +52,7 @@ function answering(turn: Partial<IChatTurn>) {
       isError: false,
       answer: null,
       failure: null,
+      code: null,
       ...turn,
     }),
   );
@@ -530,6 +531,30 @@ describe('useChatViewModel', () => {
         });
       });
       await i18n.changeLanguage('en');
+    });
+
+    it("says why GitHub would not hand over the code, in the QA's words", async () => {
+      answering({
+        isError: true,
+        failure: {
+          reason: 'code',
+          failure: 'not-found',
+          said: 'gh: Not Found (HTTP 404)',
+        },
+      });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onSuggestion('Plan it');
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
+          kind: 'error',
+          text: 'QAzinho could not get the code from GitHub. GitHub did not find it, or this account cannot see it.',
+        });
+      });
     });
 
     it('says it in the language the QA reads', async () => {

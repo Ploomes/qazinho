@@ -5,6 +5,7 @@ import type { ITestCase } from '@/modules/Plan';
 import type { RunFilter } from '@/modules/Run';
 import type { IWalkedBy, IWorkspace, WorkspaceTab } from '@/modules/Workspace';
 import type {
+  CodeStep,
   IChatQuestion,
   IRunFinding,
   IRunInFlight,
@@ -27,6 +28,7 @@ export interface IWorkspaceStore {
   askingIds: string[];
   liveTexts: Record<string, string>;
   retries: Record<string, { attempt: number; maxRetries: number }>;
+  codeSteps: Record<string, { step: CodeStep; bytes: number }>;
   removingWorkspaceId: string | null;
   addWorkspace: (workspace: IWorkspace) => void;
   loadWorkspaces: (workspaces: IWorkspace[]) => void;
@@ -62,6 +64,7 @@ export interface IWorkspaceStore {
   landAgentStopped: (workspaceId: string) => void;
   setLiveText: (props: { workspaceId: string; text: string }) => void;
   setRetry: (props: { workspaceId: string; attempt: number; maxRetries: number }) => void;
+  setCodeStep: (props: { workspaceId: string; step: CodeStep; bytes: number }) => void;
   answerAsk: (props: { workspaceId: string; reply: string }) => void;
   setPlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
   startRun: (props: { workspaceId: string; runId: string; by: IWalkedBy }) => void;

@@ -127,6 +127,7 @@ export const en = {
       '{{agent}} is signed out. Sign it in from Settings → Agents, then ask again.',
     FAILED_AGENT_ERROR: 'The agent answered with an error: {{said}}',
     FAILED_AGENT_SILENT: 'The agent stopped answering. Ask it again.',
+    FAILED_CODE: 'QAzinho could not get the code from GitHub. {{reason}}',
     PLAN_WHILE_RUNNING:
       'The plan stays as it was: a run is walking it. Ask again once the run ends.',
   },
