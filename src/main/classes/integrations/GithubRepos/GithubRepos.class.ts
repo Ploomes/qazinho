@@ -51,7 +51,7 @@ export class GithubRepos {
       return kept.list;
 
     const base = `repos/${key}`;
-    const [about, pushes, pulls] = await Promise.all([
+    const [about, pushes, pulls, names] = await Promise.all([
       this.github.api({ path: base, jq: '.default_branch' }),
       this.github.api({
         path: `${base}/activity?activity_type=push&time_period=quarter&per_page=${String(GITHUB_REPOS.pageSize)}`,
@@ -61,12 +61,10 @@ export class GithubRepos {
         path: `${base}/pulls?state=open&sort=updated&direction=desc&per_page=${String(GITHUB_REPOS.pullRequests)}`,
         jq: GITHUB_REPOS.pullJq,
       }),
+      this.branchNames(base),
     ]);
 
     if (!about.isOk) return { isListed: false, failure: about.failure };
-
-    const names = await this.branchNames(base);
-
     if (!Array.isArray(names)) return names;
 
     const list: IBranchList = {
