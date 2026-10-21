@@ -1,9 +1,10 @@
 import type { ITestCase } from '@/modules/Plan';
 import type { IWalkedBy, IWorkspace } from '@/modules/Workspace/types';
-import type { IStepOutcome, StepVerdict } from '@/shared/types';
+import type { IRunVideo, IStepOutcome, StepVerdict } from '@/shared/types';
 import { flattenPlanSteps } from '@/modules/Run';
 import { endRun } from '@/modules/Workspace/library/endRun';
 import { landStep } from '@/modules/Workspace/library/landStep';
+import { landVideo } from '@/modules/Workspace/library/landVideo';
 import { startRun } from '@/modules/Workspace/library/startRun';
 
 export const CASES: ITestCase[] = [
@@ -120,4 +121,26 @@ export function walkRun(props: {
   return props.isFinished === true
     ? endRun({ workspace: walked, at: '09:42', endedBy: 'finished' })
     : walked;
+}
+
+/** The recording of `recordedRun`: its first frame comes 500ms after the first step began, and it lasts 12s. */
+export const RECORDING: IRunVideo = {
+  startedAt: 1_760_000_000_500,
+  durationMs: 12_000,
+  width: 1280,
+  height: 800,
+};
+
+/**
+ * A finished run with its recording. Each step takes 2s, so in the video TC-01 runs from 0 to
+ * 5.5s and TC-02 from 5.5s to 11.5s, and the bug its second step became is caught at 9.5s.
+ */
+export function recordedRun(
+  verdicts: StepVerdict[] = ['passed', 'passed', 'passed', 'passed', 'failed', 'skipped'],
+): IWorkspace {
+  return landVideo({
+    workspace: walkRun({ verdicts, isFinished: true }),
+    runId: 'r-01',
+    video: RECORDING,
+  });
 }

@@ -1,3 +1,4 @@
+export * from './REPLAY';
 export * from './RUN_CLOCK';
 export * from './RUN_ENDS';
 export * from './RUN_FAILURE_KEYS';
