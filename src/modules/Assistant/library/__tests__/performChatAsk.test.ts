@@ -23,7 +23,39 @@ describe('performChatAsk', () => {
     const { port, did } = fakePort({ state: { askingIds: ['w2'] } });
 
     expect(performChatAsk({ call: ASK, port })).toEqual({
-      text: 'The agent of w2 "Login" is still answering in its chat: let it finish before asking it again.',
+      text: 'The agent of w2 "Login" is still answering in its chat. You cannot send this later on your own: tell the QA to write it there once the agent is done, or to ask you again then.',
+      isError: true,
+    });
+    expect(did).toEqual([]);
+  });
+
+  it('does NOT leave behind the questions its chat still waits on', () => {
+    const asking = {
+      ...LOGIN,
+      chat: [
+        {
+          id: 'm-1',
+          kind: 'questions' as const,
+          at: '10:00',
+          questions: [
+            {
+              header: 'Cadastro',
+              question: 'Qual cadastro?',
+              options: [
+                { label: 'Newsletter', description: '' },
+                { label: 'Conta', description: '' },
+              ],
+              isMultiSelect: false,
+            },
+          ],
+          answers: null,
+        },
+      ],
+    };
+    const { port, did } = fakePort({ state: { workspaces: [asking] } });
+
+    expect(performChatAsk({ call: ASK, port })).toEqual({
+      text: 'The agent of w2 "Login" asked the QA a question in its chat that they have not answered yet, and a new message would leave it behind. Tell the QA to answer there: each question takes their own words too, where this request fits.',
       isError: true,
     });
     expect(did).toEqual([]);

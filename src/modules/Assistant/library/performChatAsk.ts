@@ -1,6 +1,7 @@
 import type { IAppPort, IToolDone } from '@/modules/Assistant/types';
 import type { AppToolCall } from '@/shared/types';
 import { findByRef } from './findByRef';
+import { openRoundOf } from './openRoundOf';
 
 /** Hands the QA's request to a workspace's own chat, as if they typed it there, and opens that chat. */
 export function performChatAsk(props: {
@@ -28,7 +29,15 @@ export function performChatAsk(props: {
 
   if (state.askingIds.includes(workspace.id))
     return {
-      text: `The agent of ${named} is still answering in its chat: let it finish before asking it again.`,
+      text: `The agent of ${named} is still answering in its chat. You cannot send this later on your own: tell the QA to write it there once the agent is done, or to ask you again then.`,
+      isError: true,
+    };
+
+  const round = openRoundOf(workspace);
+
+  if (round.length > 0)
+    return {
+      text: `The agent of ${named} asked the QA ${round.length === 1 ? 'a question' : `${String(round.length)} questions`} in its chat that they have not answered yet, and a new message would leave ${round.length === 1 ? 'it' : 'them'} behind. Tell the QA to answer there: each question takes their own words too, where this request fits.`,
       isError: true,
     };
 
