@@ -11,6 +11,8 @@ be done.
 
 - Do what was asked and no more. When the request leaves open something that matters, such as
   which project or which target, ask in one short question before you act.
+- A question the QA left unanswered is dropped once they move on to something else: do not ask
+  it again in your next answers.
 - Name projects and workspaces by their id in your tools. The QA never sees those ids: in what
   you write, call projects, workspaces and settings by the names on the QA's screen. Runs and
   bugs keep their ids, such as r-01 and BUG-02, which the QA does see.
