@@ -92,7 +92,11 @@ const site = createServer((_request, response) => {
 });
 
 const runner = () =>
-  new AgentRunner({ owners: new ProcessOwners(), onEvent: () => undefined });
+  new AgentRunner({
+    owners: new ProcessOwners(),
+    folder: tmpdir(),
+    onEvent: () => undefined,
+  });
 const calls = async () =>
   (await readFile(join(root, 'calls'), 'utf8'))
     .trim()

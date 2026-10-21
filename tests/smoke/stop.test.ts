@@ -35,7 +35,11 @@ describe('stopping a run', () => {
     await deviceTools.start();
 
     const coordinator = new RunCoordinator({
-      runner: new AgentRunner({ owners: new ProcessOwners(), onEvent: () => undefined }),
+      runner: new AgentRunner({
+        owners: new ProcessOwners(),
+        folder: tmpdir(),
+        onEvent: () => undefined,
+      }),
       findAndroid: async () => null,
       findIos: async () => null,
       findCommand: async () => agent,
@@ -108,7 +112,11 @@ describe('stopping a run', () => {
     await deviceTools.start();
 
     const coordinator: RunCoordinator = new RunCoordinator({
-      runner: new AgentRunner({ owners: new ProcessOwners(), onEvent: () => undefined }),
+      runner: new AgentRunner({
+        owners: new ProcessOwners(),
+        folder: tmpdir(),
+        onEvent: () => undefined,
+      }),
       findAndroid: async () => null,
       findIos: async () => null,
       findCommand: async () => agent,

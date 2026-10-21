@@ -90,7 +90,11 @@ describe('a real run on a phone', () => {
     await deviceTools.start();
 
     const coordinator = new RunCoordinator({
-      runner: new AgentRunner({ owners: new ProcessOwners(), onEvent: () => undefined }),
+      runner: new AgentRunner({
+        owners: new ProcessOwners(),
+        folder: tmpdir(),
+        onEvent: () => undefined,
+      }),
       findIos: async () => null,
       findCommand: async (id) =>
         (await new AgentDetector().detect()).find((one) => one.id === id)?.path ?? null,

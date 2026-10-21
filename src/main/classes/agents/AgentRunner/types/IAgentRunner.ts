@@ -4,4 +4,5 @@ import type { IAgentEvent } from '@/shared/types';
 export interface IAgentRunner {
   onEvent: (event: IAgentEvent) => void;
   owners: ProcessOwners;
+  folder: string;
 }

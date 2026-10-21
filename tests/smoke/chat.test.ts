@@ -1,4 +1,5 @@
 import type { IChatAnswer } from '@/shared/types';
+import { tmpdir } from 'node:os';
 import { describe, expect, it } from 'vitest';
 import { Harness } from '@/harness';
 import { AgentDetector } from '@/main/classes/agents/AgentDetector';
@@ -28,6 +29,7 @@ describe('a real chat', () => {
     const harness = new Harness();
     const runner = new AgentRunner({
       owners: new ProcessOwners(),
+      folder: tmpdir(),
       onEvent: () => undefined,
     });
     const answers: IChatAnswer[] = [];
@@ -107,6 +109,7 @@ describe('a real chat', () => {
     const harness = new Harness();
     const runner = new AgentRunner({
       owners: new ProcessOwners(),
+      folder: tmpdir(),
       onEvent: () => undefined,
     });
     const workspace = {

@@ -86,7 +86,11 @@ describe('a real run on a page that only looks broken', () => {
     await tools.start();
 
     await new RunCoordinator({
-      runner: new AgentRunner({ owners: new ProcessOwners(), onEvent: () => undefined }),
+      runner: new AgentRunner({
+        owners: new ProcessOwners(),
+        folder: tmpdir(),
+        onEvent: () => undefined,
+      }),
       findAndroid: async () => null,
       findIos: async () => null,
       findCommand: async (id) =>

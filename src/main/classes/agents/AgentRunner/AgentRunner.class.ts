@@ -4,7 +4,7 @@ import type { IAgentEvent, IAgentTurn, IAgentUsage } from '@/shared/types';
 import type { ChildProcess } from 'node:child_process';
 import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
-import { rm, writeFile } from 'node:fs/promises';
+import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
@@ -27,11 +27,13 @@ import {
 export class AgentRunner {
   private readonly onEvent: (event: IAgentEvent) => void;
   private readonly owners: IAgentRunner['owners'];
+  private readonly folder: string;
   private readonly asking = new Map<string, Set<ChildProcess>>();
 
   public constructor(props: IAgentRunner) {
     this.onEvent = props.onEvent;
     this.owners = props.owners;
+    this.folder = props.folder;
   }
 
   public async ask(props: IRunAgent): Promise<IAgentTurn> {
@@ -50,10 +52,13 @@ export class AgentRunner {
         ),
       );
 
+    await mkdir(this.folder, { recursive: true });
+
     const child = spawn(
       command,
       isCodex ? buildCodexArgs({ ...props, schemaFile }) : buildAskArgs(props),
       {
+        cwd: this.folder,
         stdio: ['pipe', 'pipe', 'pipe'],
         detached: process.platform !== 'win32',
       },

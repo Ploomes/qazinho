@@ -159,6 +159,7 @@ const vault = new IntegrationVault({
 
 const agentRunner = new AgentRunner({
   owners,
+  folder: PATHS.agentHome,
   onEvent: (event) => broadcast({ channel: CHANNELS.agentEvent, event }),
 });
 
