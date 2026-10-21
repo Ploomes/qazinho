@@ -139,6 +139,10 @@ export const en = {
       'Write the cases yourself, or say what this workspace covers and let the agent draft them.',
     EMPTY_ACTION: 'Draft it in chat',
     SUMMARY: '{{cases}} · {{steps}}',
+    SOURCE:
+      'Made from the code of {{repository}}: what {{branch}} at {{commit}} changed against {{base}}',
+    SOURCE_WHOLE:
+      'Made from the code of {{repository}}: the whole app on {{branch}} at {{commit}}',
     CASES_ONE: '1 case',
     CASES_OTHER: '{{count}} cases',
     STEPS_ONE: '1 step',

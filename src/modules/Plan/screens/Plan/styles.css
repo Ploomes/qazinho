@@ -26,6 +26,24 @@
   margin-left: auto;
 }
 
+.plan__source {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: calc(var(--space-3) * -1);
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+  animation: gc-in var(--dur) var(--ease);
+}
+
+.plan__source-mark {
+  flex: none;
+  width: var(--space-3);
+  height: var(--space-3);
+  border: var(--edge-width) solid var(--lime);
+  border-radius: var(--radius-pill);
+}
+
 .plan__locked {
   display: flex;
   align-items: center;

@@ -14,6 +14,7 @@ export const Plan: React.FC = () => {
     lockedLabel,
     isEmpty,
     summary,
+    source,
     onToggleCase,
     onReorder,
     onRunAll,
@@ -64,6 +65,13 @@ export const Plan: React.FC = () => {
               )}
             </div>
           </div>
+
+          {source !== null && (
+            <div className="plan__source">
+              <span className="plan__source-mark" aria-hidden="true" />
+              {source}
+            </div>
+          )}
 
           {isLocked && (
             <div className="plan__locked">

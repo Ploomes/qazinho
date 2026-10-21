@@ -203,6 +203,7 @@ export const useChatViewModel = () => {
           workspaceId,
           summary: answer.reply,
           plan,
+          source: turn.code,
           who: agentName,
           agentId,
           sessionId: turn.sessionId,

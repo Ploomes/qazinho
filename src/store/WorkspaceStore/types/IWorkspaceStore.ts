@@ -7,6 +7,7 @@ import type { IWalkedBy, IWorkspace, WorkspaceTab } from '@/modules/Workspace';
 import type {
   CodeStep,
   IChatQuestion,
+  ICodeSource,
   IRunFinding,
   IRunInFlight,
   IRunVideo,
@@ -55,6 +56,7 @@ export interface IWorkspaceStore {
     workspaceId: string;
     summary: string;
     plan: ITestCase[];
+    source: ICodeSource | null;
     who: string;
     agentId: string;
     sessionId: string | null;

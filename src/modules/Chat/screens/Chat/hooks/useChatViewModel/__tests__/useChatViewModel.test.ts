@@ -1072,6 +1072,27 @@ describe('useChatViewModel', () => {
       expect(result.current.command).toBeNull();
     });
 
+    it('keeps the code a plan was made from with the plan', async () => {
+      const source = {
+        repository: 'acme/loja-web',
+        branch: 'feat/cupom',
+        base: 'develop',
+        commit: 'c0ffee0123',
+      };
+
+      answering({ answer: DRAFTED, code: source });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onSuggestion('Write it.');
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.planSource).toEqual(source);
+      });
+    });
+
     it('says how copying the code goes while the agent waits for it', () => {
       answering({});
       useWorkspaceStore.setState({

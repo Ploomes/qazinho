@@ -59,6 +59,7 @@ export function makeWorkspace(plan: ITestCase[] = CASES): IWorkspace {
     issue: null,
     chat: [],
     plan,
+    planSource: null,
     runs: [],
     bugs: [],
     live: null,

@@ -34,6 +34,25 @@ describe('fromSaved', () => {
     expect(fromSaved({ id: 'w1', json, planYaml: '' })?.viewportId).toBe('desktop');
   });
 
+  it('keeps the code a plan was made from across a restart, and none for an older file', () => {
+    const source = {
+      repository: 'acme/loja-web',
+      branch: 'feat/cupom',
+      base: 'develop',
+      commit: 'c0ffee0123',
+    };
+
+    expect(
+      fromSaved(
+        toSaved({ workspace: { ...makeWorkspace(), planSource: source }, at: '09:44' }),
+      )?.planSource,
+    ).toEqual(source);
+
+    const json = JSON.stringify({ id: 'w1', projectId: 'p1' });
+
+    expect(fromSaved({ id: 'w1', json, planYaml: '' })?.planSource).toBeNull();
+  });
+
   it('never comes back running, because nothing on the machine is', () => {
     const json = JSON.stringify({ id: 'w1', projectId: 'p1', status: 'running' });
 

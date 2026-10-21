@@ -12,6 +12,7 @@ import {
   removeCase,
   removeStep,
 } from '@/modules/Plan/library';
+import { PLAN_SOURCE } from '@/modules/Plan/screens/Plan/constants';
 import { flattenPlanSteps, useRunActions } from '@/modules/Run';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import { useSettingsStore, useWorkspaceStore } from '@/store';
@@ -21,6 +22,7 @@ export const usePlanViewModel = () => {
   const workspace = useSelectedWorkspacePart((opened) => ({
     id: opened.id,
     plan: opened.plan,
+    planSource: opened.planSource,
     isLocked: opened.live !== null && !opened.live.isDone,
     latest: opened.runs[0] ?? null,
     runs: opened.runs,
@@ -52,6 +54,7 @@ export const usePlanViewModel = () => {
       ? removal
       : null;
   const latest = workspace?.latest ?? null;
+  const source = workspace?.planSource ?? null;
   const stepCount = flattenPlanSteps(plan).length;
   const lastRuns: Record<string, IRunCase> = Object.fromEntries(
     (latest?.cases ?? []).map((runCase) => [runCase.id, runCase]),
@@ -64,6 +67,21 @@ export const usePlanViewModel = () => {
     isLocked,
     lockedLabel: t('PLAN.LOCKED', { agent }),
     isEmpty: plan.length === 0,
+    source:
+      source === null
+        ? null
+        : source.branch === source.base
+          ? t('PLAN.SOURCE_WHOLE', {
+              repository: source.repository,
+              branch: source.branch,
+              commit: source.commit.slice(0, PLAN_SOURCE.shaLength),
+            })
+          : t('PLAN.SOURCE', {
+              repository: source.repository,
+              branch: source.branch,
+              base: source.base,
+              commit: source.commit.slice(0, PLAN_SOURCE.shaLength),
+            }),
     summary: t('PLAN.SUMMARY', {
       cases:
         plan.length === 1

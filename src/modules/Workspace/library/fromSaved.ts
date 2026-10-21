@@ -5,6 +5,7 @@ import type { ISavedWorkspace } from '@/shared/types';
 import { parse } from 'yaml';
 import { viewportOf } from '@/modules/Device/library';
 import { bugOfSaved } from './bugOfSaved';
+import { codeSourceOf } from './codeSourceOf';
 import { messageOfSaved } from './messageOfSaved';
 
 type SavedRun = Omit<IRun, 'endedBy' | 'costUsd' | 'video'> &
@@ -51,6 +52,7 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     issue: read.issue ?? null,
     chat: (read.chat ?? []).map(messageOfSaved).filter((message) => message !== null),
     plan: readPlan(saved.planYaml),
+    planSource: codeSourceOf(read.planSource),
     runs: ((read.runs ?? []) as SavedRun[]).map(
       ({ title: _title, what: _what, ...run }) => ({
         ...run,

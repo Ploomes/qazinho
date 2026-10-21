@@ -142,6 +142,10 @@ export const pt: typeof en = {
       'Escreva os casos você mesmo, ou diga o que este workspace cobre e deixe o agente rascunhar.',
     EMPTY_ACTION: 'Rascunhar no chat',
     SUMMARY: '{{cases}} · {{steps}}',
+    SOURCE:
+      'Feito do código de {{repository}}: o que a {{branch}} em {{commit}} mudou em relação à {{base}}',
+    SOURCE_WHOLE:
+      'Feito do código de {{repository}}: o app inteiro na {{branch}} em {{commit}}',
     CASES_ONE: '1 caso',
     CASES_OTHER: '{{count}} casos',
     STEPS_ONE: '1 passo',

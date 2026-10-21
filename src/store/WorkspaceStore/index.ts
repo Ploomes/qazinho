@@ -134,7 +134,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
-  landPlan: ({ workspaceId, summary, plan, who, agentId, sessionId }) =>
+  landPlan: ({ workspaceId, summary, plan, source, who, agentId, sessionId }) =>
     set((state) => ({
       askingIds: state.askingIds.filter((id) => id !== workspaceId),
       retries: withoutKey({ record: state.retries, key: workspaceId }),
@@ -152,6 +152,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
           return {
             ...appendPlanCard({ workspace: said, plan, at: formatClock(new Date()) }),
+            planSource: source,
             sessionId: sessionId ?? workspace.sessionId,
             sessionAgentId: sessionId === null ? workspace.sessionAgentId : agentId,
           };

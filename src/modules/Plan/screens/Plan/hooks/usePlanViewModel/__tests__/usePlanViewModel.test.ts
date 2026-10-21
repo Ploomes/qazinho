@@ -39,6 +39,48 @@ describe('usePlanViewModel', () => {
     );
   });
 
+  it('names the code the plan was made from, and nothing for a plan made from talk', () => {
+    expect(renderHook(() => usePlanViewModel()).result.current.source).toBeNull();
+
+    useWorkspaceStore.setState({
+      workspaces: [
+        {
+          ...makeWorkspace(),
+          planSource: {
+            repository: 'acme/loja-web',
+            branch: 'feat/cupom',
+            base: 'develop',
+            commit: 'c0ffee0123456789',
+          },
+        },
+      ],
+    });
+
+    expect(renderHook(() => usePlanViewModel()).result.current.source).toBe(
+      'Made from the code of acme/loja-web: what feat/cupom at c0ffee0 changed against develop',
+    );
+  });
+
+  it('names the whole app when the plan came from the base branch itself', () => {
+    useWorkspaceStore.setState({
+      workspaces: [
+        {
+          ...makeWorkspace(),
+          planSource: {
+            repository: 'acme/loja-web',
+            branch: 'develop',
+            base: 'develop',
+            commit: 'dev0000123',
+          },
+        },
+      ],
+    });
+
+    expect(renderHook(() => usePlanViewModel()).result.current.source).toBe(
+      'Made from the code of acme/loja-web: the whole app on develop at dev0000',
+    );
+  });
+
   it('has nothing to show before the agent drafts', () => {
     useWorkspaceStore.setState({ workspaces: [makeWorkspace([])] });
 
