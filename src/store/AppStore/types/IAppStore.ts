@@ -4,6 +4,7 @@ import type { ModelMenuAt } from './ModelMenuAt';
 import type { Screen } from './Screen';
 import type { Theme } from './Theme';
 import type { IProject } from '@/modules/Project';
+import type { IReplayOpen } from '@/modules/Run';
 
 /** The shell: which screen is up, which project is selected, and what is floating over it. */
 export interface IAppStore {
@@ -18,6 +19,7 @@ export interface IAppStore {
   isResourcesOpen: boolean;
   modelMenuAt: ModelMenuAt | null;
   media: IMedia | null;
+  replay: IReplayOpen | null;
   toggleTheme: () => void;
   setTheme: (theme: Theme) => void;
   openSettings: () => void;
@@ -37,4 +39,6 @@ export interface IAppStore {
   closeModelMenu: () => void;
   openMedia: (media: IMedia) => void;
   closeMedia: () => void;
+  openReplay: (replay: IReplayOpen) => void;
+  closeReplay: () => void;
 }

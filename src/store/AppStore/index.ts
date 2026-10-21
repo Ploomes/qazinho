@@ -17,6 +17,7 @@ export const useAppStore = create<IAppStore>()(
       isResourcesOpen: false,
       modelMenuAt: null,
       media: null,
+      replay: null,
 
       toggleTheme: () =>
         set((state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
@@ -95,6 +96,10 @@ export const useAppStore = create<IAppStore>()(
       openMedia: (media) => set({ media }),
 
       closeMedia: () => set({ media: null }),
+
+      openReplay: (replay) => set({ replay }),
+
+      closeReplay: () => set({ replay: null }),
     }),
     {
       name: STORAGE.appearance,

@@ -18,6 +18,7 @@ export const useAppViewModel = () => {
   const projects = useAppStore((state) => state.projects);
   const modal = useAppStore((state) => state.modal);
   const media = useAppStore((state) => state.media);
+  const replay = useAppStore((state) => state.replay);
   const hasOnboarded = useSettingsStore((state) => state.hasOnboarded);
 
   useArchive();
@@ -40,6 +41,17 @@ export const useAppViewModel = () => {
     screen,
     modal,
     hasMedia: media !== null,
+    hasReplay: replay !== null,
+    replayKey:
+      replay === null
+        ? 'replay'
+        : `replay:${replay.workspaceId}/${replay.runId}/${
+            replay.focus.kind === 'case'
+              ? replay.focus.caseId
+              : replay.focus.kind === 'bug'
+                ? replay.focus.bugId
+                : 'run'
+          }`,
     isOnboarding: !hasOnboarded,
     hasSidebar: projects.length > 0 && screen !== 'settings',
     isWelcome: screen !== 'settings' && (screen === 'welcome' || projects.length === 0),

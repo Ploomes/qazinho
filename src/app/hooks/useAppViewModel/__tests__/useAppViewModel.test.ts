@@ -124,6 +124,37 @@ describe('useAppViewModel', () => {
     expect(renderHook(() => useAppViewModel()).result.current.hasMedia).toBe(true);
   });
 
+  /** A new key per opening replays the theater from its start: a take never inherits another's place. */
+  it('mounts the replay only while one is open, under a key of its own per opening', () => {
+    useAppStore.setState({ replay: null });
+
+    expect(renderHook(() => useAppViewModel()).result.current.hasReplay).toBe(false);
+
+    useAppStore.setState({
+      replay: {
+        workspaceId: 'w1',
+        runId: 'r-01',
+        focus: { kind: 'case', caseId: 'TC-02' },
+      },
+    });
+
+    const casing = renderHook(() => useAppViewModel()).result.current;
+
+    useAppStore.setState({
+      replay: {
+        workspaceId: 'w1',
+        runId: 'r-01',
+        focus: { kind: 'bug', bugId: 'BUG-01' },
+      },
+    });
+
+    const bugging = renderHook(() => useAppViewModel()).result.current;
+
+    expect(casing.hasReplay).toBe(true);
+    expect(casing.replayKey).not.toBe(bugging.replayKey);
+    useAppStore.setState({ replay: null });
+  });
+
   it('speaks the language the QA picked, and switches as soon as they pick another', async () => {
     useSettingsStore.setState({ language: 'pt' });
 

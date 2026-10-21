@@ -1,0 +1,213 @@
+.replay-log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-height: 0;
+  padding: var(--space-2) var(--space-3) var(--space-5) 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.replay-log__eyebrow {
+  padding: 0 var(--space-3) var(--space-3);
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+  letter-spacing: var(--tag-tracking);
+  text-transform: uppercase;
+}
+
+.replay-log__chapter {
+  border-radius: var(--radius-md);
+  transition: background-color var(--dur) var(--ease);
+}
+
+.replay-log__chapter--current {
+  background: var(--raise);
+}
+
+.replay-log__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3);
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--ink2);
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.replay-log__head:hover,
+.replay-log__chapter--current .replay-log__head {
+  color: var(--ink);
+}
+
+.replay-log__glyph {
+  flex: none;
+  width: var(--space-4);
+  font: var(--font-mono-sm);
+  text-align: center;
+}
+
+.replay-log__glyph--pass {
+  color: var(--pass);
+}
+
+.replay-log__glyph--fail {
+  color: var(--fail);
+}
+
+.replay-log__glyph--block {
+  color: var(--block);
+}
+
+.replay-log__glyph--skip,
+.replay-log__glyph--quiet {
+  color: var(--ink3);
+}
+
+.replay-log__id {
+  flex: none;
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+}
+
+.replay-log__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font: var(--font-ui-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.replay-log__duration {
+  flex: none;
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+}
+
+.replay-log__fold {
+  overflow: hidden;
+}
+
+.replay-log__steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0 var(--space-2) var(--space-3);
+  list-style: none;
+}
+
+.replay-log__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.replay-log__step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink2);
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.replay-log__step:hover,
+.replay-log__step--now {
+  color: var(--ink);
+}
+
+.replay-log__now {
+  position: absolute;
+  inset: 0;
+  border-left: var(--edge-width) solid var(--lime);
+  border-radius: var(--radius-sm);
+  background: var(--lime-soft);
+}
+
+.replay-log__number,
+.replay-log__step .replay-log__glyph,
+.replay-log__action {
+  position: relative;
+}
+
+.replay-log__number {
+  flex: none;
+  width: var(--space-4);
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+  line-height: 1.6;
+  text-align: right;
+}
+
+.replay-log__action {
+  min-width: 0;
+  font: var(--font-ui-xs);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.replay-log__bug {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: calc(var(--space-4) * 2 + var(--space-3) * 2);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--line2);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--ink2);
+  font: var(--font-ui-xs);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.replay-log__bug:hover {
+  border-color: var(--fail);
+  color: var(--ink);
+}
+
+.replay-log__bug-mark {
+  flex: none;
+  width: var(--space-3);
+  height: var(--space-3);
+  border-radius: var(--radius-xs);
+  background: var(--ink3);
+}
+
+.replay-log__bug--high .replay-log__bug-mark {
+  background: var(--fail);
+}
+
+.replay-log__bug--medium .replay-log__bug-mark {
+  background: var(--attn);
+}
+
+.replay-log__bug-id {
+  flex: none;
+  color: var(--fail);
+  font: var(--font-mono-xs);
+}
+
+.replay-log__bug-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
