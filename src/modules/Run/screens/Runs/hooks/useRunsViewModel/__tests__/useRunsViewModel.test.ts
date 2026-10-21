@@ -4,7 +4,11 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { i18n } from '@/languages';
 import { useRunsViewModel } from '@/modules/Run/screens/Runs/hooks/useRunsViewModel';
 import { endRun, landCost } from '@/modules/Workspace/library';
-import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
+import {
+  makeWorkspace,
+  recordedRun,
+  walkRun,
+} from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 function finishedWorkspace() {
@@ -248,6 +252,56 @@ describe('useRunsViewModel', () => {
       });
 
       expect(renderHook(() => useRunsViewModel()).result.current.showsToTop).toBe(false);
+    });
+  });
+
+  describe('onWatch', () => {
+    it('offers to watch a run that was recorded, and opens it whole', () => {
+      useWorkspaceStore.setState({ workspaces: [recordedRun()] });
+
+      const { result } = renderHook(() => useRunsViewModel());
+
+      expect(result.current.canWatch).toBe(true);
+      expect(result.current.watchLabel).toBe('Watch the run');
+
+      act(() => {
+        result.current.onWatch();
+      });
+
+      expect(useAppStore.getState().replay).toEqual({
+        workspaceId: 'w1',
+        runId: 'r-01',
+        focus: { kind: 'run' },
+      });
+      useAppStore.setState({ replay: null });
+    });
+
+    it('does NOT offer to watch a run that has no video', () => {
+      const { result } = renderHook(() => useRunsViewModel());
+
+      expect(result.current.canWatch).toBe(false);
+      expect(result.current.cases.every(({ take }) => take === null)).toBe(true);
+    });
+  });
+
+  describe('take', () => {
+    it("opens a case's own take from the case", () => {
+      useWorkspaceStore.setState({ workspaces: [recordedRun()] });
+
+      const { result } = renderHook(() => useRunsViewModel());
+      const take = result.current.cases[1]?.take;
+
+      expect(take?.title).toBe('Watch the take of TC-02');
+
+      act(() => {
+        take?.onClick();
+      });
+
+      expect(useAppStore.getState().replay?.focus).toEqual({
+        kind: 'case',
+        caseId: 'TC-02',
+      });
+      useAppStore.setState({ replay: null });
     });
   });
 });

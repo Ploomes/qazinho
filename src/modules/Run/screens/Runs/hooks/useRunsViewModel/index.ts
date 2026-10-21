@@ -1,4 +1,4 @@
-import type { IRun, RunEnd } from '@/modules/Run/types';
+import type { IRun, ReplayFocus, RunEnd } from '@/modules/Run/types';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatElapsed } from '@/modules/Device/library';
@@ -17,6 +17,7 @@ import { useAppStore, useWorkspaceStore } from '@/store';
 export const useRunsViewModel = () => {
   const { t, i18n } = useTranslation();
   const workspace = useSelectedWorkspacePart((opened) => ({
+    id: opened.id,
     runs: opened.runs,
     bugs: opened.bugs,
   }));
@@ -25,6 +26,7 @@ export const useRunsViewModel = () => {
   const selectRun = useWorkspaceStore((state) => state.selectRun);
   const setRunFilter = useWorkspaceStore((state) => state.setRunFilter);
   const openMedia = useAppStore((state) => state.openMedia);
+  const openReplay = useAppStore((state) => state.openReplay);
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const [page, setPage] = useState(0);
@@ -57,6 +59,13 @@ export const useRunsViewModel = () => {
         });
 
   const hasRun = run !== null;
+  const canWatch = run?.video !== null && run?.video !== undefined;
+
+  const watch = (focus: ReplayFocus) => {
+    if (workspace === null || run === null) return;
+
+    openReplay({ workspaceId: workspace.id, runId: run.id, focus });
+  };
 
   useEffect(() => {
     const top = topRef.current;
@@ -111,6 +120,11 @@ export const useRunsViewModel = () => {
     current: run === null ? null : summaryOf(run),
     run,
     title: run === null ? '' : t('RUN.TITLE', { id: run.id }),
+    canWatch,
+    watchLabel: t('RUN.WATCH'),
+    onWatch: () => {
+      watch({ kind: 'run' });
+    },
     runEnded: run === null ? null : endOf(run.endedBy),
     runFacts: run === null ? '' : factsOf(run),
     factsNote: t('RUN.COST_NOTE'),
@@ -139,6 +153,16 @@ export const useRunsViewModel = () => {
     cases: filterCases({ cases: judged, filter: runFilter }).map((runCase) => ({
       ...runCase,
       duration: t('RUN.DURATION', { seconds: runCase.durationSec }),
+      take:
+        canWatch && runCase.steps.some(({ span }) => span !== null)
+          ? {
+              label: t('RUN.TAKE'),
+              title: t('RUN.WATCH_CASE', { id: runCase.id }),
+              onClick: () => {
+                watch({ kind: 'case', caseId: runCase.id });
+              },
+            }
+          : null,
       steps: runCase.steps.map((step) => {
         const bug = bugs.find(({ id }) => id === step.bugId) ?? null;
 

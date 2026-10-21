@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Eyebrow, EmptyState, StatusPill } from '@/shared/components/atoms';
+import { Button, Eyebrow, EmptyState, StatusPill } from '@/shared/components/atoms';
 import { CountTile, Screenshot } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
 import { RunPicker } from './components';
@@ -13,6 +13,9 @@ export const Runs: React.FC = () => {
     current,
     run,
     title,
+    canWatch,
+    watchLabel,
+    onWatch,
     runEnded,
     runFacts,
     factsNote,
@@ -66,7 +69,14 @@ export const Runs: React.FC = () => {
       >
         <div className="runs__head">
           <div className="runs__heading">
-            <h2 className="runs__title">{title}</h2>
+            <div className="runs__title-row">
+              <h2 className="runs__title">{title}</h2>
+              {canWatch && (
+                <Button size="sm" variant="primary" onClick={onWatch}>
+                  <span aria-hidden="true">▶</span> {watchLabel}
+                </Button>
+              )}
+            </div>
             <span className="runs__meta">
               {run.meta}
               <span className="runs__facts" title={factsNote}>
@@ -118,6 +128,17 @@ export const Runs: React.FC = () => {
               <div className="runs__case-head">
                 <span className="runs__case-id">{runCase.id}</span>
                 <span className="runs__case-title">{runCase.title}</span>
+                {runCase.take !== null && (
+                  <button
+                    type="button"
+                    className="runs__take"
+                    title={runCase.take.title}
+                    aria-label={runCase.take.title}
+                    onClick={runCase.take.onClick}
+                  >
+                    <span aria-hidden="true">▶</span> {runCase.take.label}
+                  </button>
+                )}
                 <span className="runs__case-duration">{runCase.duration}</span>
                 <StatusPill status={runCase.verdict} />
               </div>
