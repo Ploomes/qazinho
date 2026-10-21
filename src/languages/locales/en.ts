@@ -698,6 +698,7 @@ export const en = {
     UNREAD_OTHER: '{{count}} new answers',
     STATUS_IDLE: 'here to help',
     STATUS_THINKING: 'thinking…',
+    STATUS_WAITING: 'waiting for you to answer the card',
     STATUS_ACTING: '{{doing}}…',
     STATUS_TROUBLE: 'something went wrong',
     START_OVER: 'New conversation',

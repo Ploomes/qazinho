@@ -291,6 +291,35 @@ describe('useAssistantPanelViewModel', () => {
       });
     });
 
+    it('waits for the QA while a card asks them, with no dots going', () => {
+      useAssistantStore.setState({
+        isAsking: true,
+        messages: [
+          {
+            kind: 'confirm',
+            id: 'c-1',
+            action: 'delete_workspace',
+            subject: 'Login',
+            count: 0,
+            decision: null,
+          },
+        ],
+      });
+
+      const { result } = renderHook(() => useAssistantPanelViewModel());
+
+      expect(result.current).toMatchObject({
+        status: 'waiting for you to answer the card',
+        isTyping: false,
+      });
+
+      act(() => {
+        useAssistantStore.getState().settleConfirm({ id: 'c-1', decision: 'kept' });
+      });
+
+      expect(result.current).toMatchObject({ status: 'thinking…', isTyping: true });
+    });
+
     it('marks a tool that did not work', () => {
       useAssistantStore.setState({
         messages: [

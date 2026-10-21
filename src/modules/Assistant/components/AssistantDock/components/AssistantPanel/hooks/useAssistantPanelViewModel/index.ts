@@ -129,21 +129,26 @@ export const useAssistantPanelViewModel = () => {
   const doing = messages.findLast(
     (message) => message.kind === 'tool' && message.state === 'doing',
   );
+  const isWaiting = messages.some(
+    (message) => message.kind === 'confirm' && message.decision === null,
+  );
   const last = messages.at(-1);
 
   return {
     listRef,
     inputRef,
     title: t('MASCOT.NAME'),
-    status: isAsking
-      ? doing?.kind === 'tool'
-        ? t('ASSISTANT.STATUS_ACTING', {
-            doing: t(toolLabelOf(doing.call).doing, { subject: doing.subject }),
-          })
-        : t('ASSISTANT.STATUS_THINKING')
-      : last?.kind === 'error'
-        ? t('ASSISTANT.STATUS_TROUBLE')
-        : t('ASSISTANT.STATUS_IDLE'),
+    status: isWaiting
+      ? t('ASSISTANT.STATUS_WAITING')
+      : isAsking
+        ? doing?.kind === 'tool'
+          ? t('ASSISTANT.STATUS_ACTING', {
+              doing: t(toolLabelOf(doing.call).doing, { subject: doing.subject }),
+            })
+          : t('ASSISTANT.STATUS_THINKING')
+        : last?.kind === 'error'
+          ? t('ASSISTANT.STATUS_TROUBLE')
+          : t('ASSISTANT.STATUS_IDLE'),
     mood: isAsking
       ? ('thinking' as const)
       : last?.kind === 'error'
@@ -191,7 +196,7 @@ export const useAssistantPanelViewModel = () => {
         text: message.text,
       };
     }),
-    isTyping: isAsking,
+    isTyping: isAsking && !isWaiting,
     liveText,
     draft,
     placeholder: t('ASSISTANT.PLACEHOLDER'),

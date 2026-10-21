@@ -703,6 +703,7 @@ export const pt: typeof en = {
     UNREAD_OTHER: '{{count}} respostas novas',
     STATUS_IDLE: 'pronto pra ajudar',
     STATUS_THINKING: 'pensando…',
+    STATUS_WAITING: 'esperando você responder o card',
     STATUS_ACTING: '{{doing}}…',
     STATUS_TROUBLE: 'algo deu errado',
     START_OVER: 'Nova conversa',
