@@ -8,21 +8,24 @@ import './styles.css';
 
 /** The run on show at the top of Runs, opening onto every run to switch to. */
 export const RunPicker: React.FC<IRunPickerProps> = (props) => {
-  const { ref, isOpen, caret, rows, onToggle, onPick } = useRunPickerViewModel(props);
+  const { ref, isOpen, triggerClassName, label, count, rows, onToggle, onPick } =
+    useRunPickerViewModel(props);
   const { t } = useTranslation();
 
   return (
     <div ref={ref} className="run-picker">
       <button
         type="button"
-        className="run-picker__trigger"
+        className={triggerClassName}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         onClick={onToggle}
       >
+        <span className="run-picker__label">{label}</span>
         <RunRow row={props.current} factsNote={props.factsNote} />
-        <span className="run-picker__caret" aria-hidden="true">
-          {caret}
+        <span className="run-picker__handle">
+          <span className="run-picker__count">{count}</span>
+          <span className="run-picker__chevron" aria-hidden="true" />
         </span>
       </button>
 
@@ -48,6 +51,9 @@ export const RunPicker: React.FC<IRunPickerProps> = (props) => {
                   onPick(row.id);
                 }}
               >
+                <span className="run-picker__check" aria-hidden="true">
+                  {row.check}
+                </span>
                 <RunRow row={row} factsNote={props.factsNote} />
               </button>
             ))}

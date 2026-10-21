@@ -184,6 +184,9 @@ export const pt: typeof en = {
     COST_NOTE:
       'Quanto a run levou, e quanto o agente disse que ela custou, a preço de API.',
     STEP_SHOT: '{{id}} · passo {{number}}',
+    PICKER_LABEL: 'Run',
+    PICKER_COUNT_ONE: '1 run',
+    PICKER_COUNT_OTHER: '{{count}} runs',
     WATCH: 'Assistir à run',
     NOTICE_FINISHED: 'Run {{id}} terminou',
     NOTICE_BROKE: 'Run {{id}} parou no meio',

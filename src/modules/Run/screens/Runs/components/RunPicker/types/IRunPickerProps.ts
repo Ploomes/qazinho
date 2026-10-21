@@ -4,6 +4,7 @@ import type { IRunRowSummary } from '@/modules/Run/screens/Runs/components/RunRo
 export interface IRunPickerProps {
   current: IRunRowSummary;
   runs: IRunRowSummary[];
+  total: number;
   pager: { isShown: boolean; label: string; canGoBack: boolean; canGoOn: boolean };
   factsNote: string;
   onSelect: (runId: string) => void;

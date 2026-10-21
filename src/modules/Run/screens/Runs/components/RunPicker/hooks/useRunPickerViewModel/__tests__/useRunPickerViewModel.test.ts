@@ -20,6 +20,7 @@ function picker(props: Partial<IRunPickerProps> = {}) {
     useRunPickerViewModel({
       current: run('r-02', true),
       runs: [run('r-02', true), run('r-01')],
+      total: 2,
       pager: { isShown: false, label: '', canGoBack: false, canGoOn: false },
       factsNote: '',
       onSelect: vi.fn(),
@@ -35,13 +36,19 @@ describe('useRunPickerViewModel', () => {
     it('opens the list of runs and closes it again', () => {
       const view = picker();
 
-      expect(view.result.current.isOpen).toBe(false);
+      expect(view.result.current).toMatchObject({
+        isOpen: false,
+        triggerClassName: 'run-picker__trigger',
+      });
 
       act(() => {
         view.result.current.onToggle();
       });
 
-      expect(view.result.current).toMatchObject({ isOpen: true, caret: '▴' });
+      expect(view.result.current).toMatchObject({
+        isOpen: true,
+        triggerClassName: 'run-picker__trigger run-picker__trigger--open',
+      });
 
       act(() => {
         view.result.current.onToggle();
@@ -69,9 +76,26 @@ describe('useRunPickerViewModel', () => {
   });
 
   it('marks the run on show, and no other', () => {
-    expect(picker().result.current.rows.map(({ className }) => className)).toEqual([
-      'run-picker__option run-picker__option--selected',
-      'run-picker__option',
+    expect(
+      picker().result.current.rows.map(({ className, check }) => ({ className, check })),
+    ).toEqual([
+      { className: 'run-picker__option run-picker__option--selected', check: '✓' },
+      { className: 'run-picker__option', check: '' },
     ]);
+  });
+
+  it('counts every run, not only the page of them in the list', () => {
+    expect(picker({ total: 14 }).result.current.count).toBe('14 runs');
+  });
+
+  it('counts a lone run in the singular', () => {
+    expect(
+      picker({ runs: [run('r-01', true)], current: run('r-01', true), total: 1 }).result
+        .current.count,
+    ).toBe('1 run');
+  });
+
+  it('names what the picker picks', () => {
+    expect(picker().result.current.label).toBe('Run');
   });
 });

@@ -224,6 +224,19 @@ describe('useRunsViewModel', () => {
 
       expect(result.current.pager.isShown).toBe(false);
     });
+
+    it('counts every run for the picker, not only the page in its list', () => {
+      manyRuns(12);
+
+      const { result } = renderHook(() => useRunsViewModel());
+
+      act(() => {
+        result.current.onNextPage();
+      });
+
+      expect(result.current.runs).toHaveLength(5);
+      expect(result.current.runTotal).toBe(12);
+    });
   });
 
   describe('current', () => {

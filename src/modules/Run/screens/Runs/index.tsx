@@ -10,6 +10,7 @@ import './styles.css';
 export const Runs: React.FC = () => {
   const {
     runs,
+    runTotal,
     current,
     run,
     title,
@@ -52,6 +53,7 @@ export const Runs: React.FC = () => {
         <RunPicker
           current={current}
           runs={runs}
+          total={runTotal}
           pager={pager}
           factsNote={factsNote}
           onSelect={onSelectRun}

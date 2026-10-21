@@ -117,6 +117,7 @@ export const useRunsViewModel = () => {
 
   return {
     runs: paged.items.map(summaryOf),
+    runTotal: runs.length,
     current: run === null ? null : summaryOf(run),
     run,
     title: run === null ? '' : t('RUN.TITLE', { id: run.id }),
