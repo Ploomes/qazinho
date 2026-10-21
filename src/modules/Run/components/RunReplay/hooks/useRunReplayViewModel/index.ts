@@ -31,6 +31,7 @@ export const useRunReplayViewModel = () => {
   const [currentMs, setCurrentMs] = useState(0);
   const [isTakeOver, setTakeOver] = useState(false);
   const [saving, setSaving] = useState<SaveOutcome | 'saving' | 'idle'>('idle');
+  const [measuredRatio, setMeasuredRatio] = useState<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const shownMs = useRef(0);
   const wasPlaying = useRef(false);
@@ -50,6 +51,10 @@ export const useRunReplayViewModel = () => {
       : momentAt({ timeline, ms: currentMs });
   const chapter = timeline?.chapters[moment.chapterIndex] ?? null;
   const step = chapter?.steps[moment.stepIndex] ?? null;
+  const recordedRatio =
+    run?.video && run.video.width > 0 && run.video.height > 0
+      ? run.video.width / run.video.height
+      : RUN_REPLAY.fallbackRatio;
   const flash =
     timeline?.marks.find(
       ({ atMs }) => currentMs >= atMs && currentMs - atMs <= RUN_REPLAY.flashMs,
@@ -205,9 +210,7 @@ export const useRunReplayViewModel = () => {
     src: url ?? undefined,
     videoRef,
     panelStyle: {
-      '--video-ratio': String(
-        run?.video ? run.video.width / run.video.height : RUN_REPLAY.fallbackRatio,
-      ),
+      '--video-ratio': String(measuredRatio ?? recordedRatio),
       '--panel-width': `${String(RUN_REPLAY.panelWidthPx)}px`,
       '--panel-height': `${String(RUN_REPLAY.panelHeightPx)}px`,
       '--log-width': `${String(RUN_REPLAY.logWidthPx)}px`,
@@ -269,6 +272,9 @@ export const useRunReplayViewModel = () => {
       const video = videoRef.current;
 
       if (!video) return;
+
+      if (video.videoWidth > 0 && video.videoHeight > 0)
+        setMeasuredRatio(video.videoWidth / video.videoHeight);
 
       video.currentTime = (take?.fromMs ?? 0) / 1000;
       show(take?.fromMs ?? 0);

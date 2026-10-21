@@ -221,4 +221,44 @@ describe('useRunReplayViewModel', () => {
       expect(useAppStore.getState().replay).toBeNull();
     });
   });
+
+  describe('onLoaded', () => {
+    it('frames the video in the shape it really has once it loads', () => {
+      const result = open();
+
+      expect(result.current.panelStyle).toMatchObject({
+        '--video-ratio': String(1280 / 800),
+      });
+
+      result.current.videoRef.current = {
+        videoWidth: 1768,
+        videoHeight: 2208,
+        currentTime: 0,
+        play: () => Promise.resolve(),
+      } as unknown as HTMLVideoElement;
+      act(() => {
+        result.current.onLoaded();
+      });
+
+      expect(result.current.panelStyle).toMatchObject({
+        '--video-ratio': String(1768 / 2208),
+      });
+    });
+
+    it("falls back to a screen's usual shape for a recording that never said its size", () => {
+      const [workspace] = useWorkspaceStore.getState().workspaces;
+      const [run] = workspace!.runs;
+
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...workspace!,
+            runs: [{ ...run!, video: { ...run!.video!, width: 0, height: 0 } }],
+          },
+        ],
+      });
+
+      expect(open().current.panelStyle).toMatchObject({ '--video-ratio': '1.6' });
+    });
+  });
 });
