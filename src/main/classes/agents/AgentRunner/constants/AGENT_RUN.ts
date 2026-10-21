@@ -3,4 +3,5 @@ export const AGENT_RUN = {
   interruptGraceMs: 2_000,
   structuredTool: 'StructuredOutput',
   readTools: 'Read,Grep,Glob',
+  settings: '{"disableAllHooks":true}',
 } as const;

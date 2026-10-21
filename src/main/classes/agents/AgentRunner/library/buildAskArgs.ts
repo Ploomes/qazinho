@@ -1,7 +1,7 @@
 import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
 
-/** The flags that make the CLI answer once, in JSON, on the session it already has, with only the tools, commands and folders it was granted. */
+/** The flags that make the CLI answer once, in JSON, on the session it already has, with only the tools, commands and folders it was granted, and none of the QA's own hooks. */
 export function buildAskArgs(
   props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command' | 'agentId'>,
 ): string[] {
@@ -17,6 +17,8 @@ export function buildAskArgs(
     '--output-format',
     'stream-json',
     '--verbose',
+    '--settings',
+    AGENT_RUN.settings,
     ...(model.length === 0 ? [] : ['--model', model]),
     ...(sessionId === null ? [] : ['--resume', sessionId]),
     ...(schema === undefined ? [] : ['--json-schema', schema]),

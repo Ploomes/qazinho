@@ -10,9 +10,21 @@ describe('buildAskArgs', () => {
       '--output-format',
       'stream-json',
       '--verbose',
+      '--settings',
+      '{"disableAllHooks":true}',
       '--model',
       'sonnet',
     ]);
+  });
+
+  /**
+   * A hook of the QA's own rewrote every command a build ran (rtk turns `./gradlew` into
+   * `rtk gradlew`), so none matched the commands the build may run, and Gradle was refused.
+   */
+  it("keeps the QA's own hooks out of every call QAzinho makes", () => {
+    const args = buildAskArgs({ model: '', sessionId: null, tools: ['Bash'] });
+
+    expect(args[args.indexOf('--settings') + 1]).toBe('{"disableAllHooks":true}');
   });
 
   it('leaves the model to the agent when the QA kept its default', () => {
