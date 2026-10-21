@@ -147,15 +147,15 @@ export class AgentRunner {
 
       if (answered.length > 0) structured = answered;
 
-      for (const action of toActions(event))
-        this.onEvent({ kind: 'action', workspaceId, text: action });
-
       const text = toText(event);
 
       if (text.length > 0) {
         spoken = spoken.length > 0 ? `${spoken}\n\n${text}` : text;
         this.onEvent({ kind: 'text', workspaceId, text });
       }
+
+      for (const action of toActions(event))
+        this.onEvent({ kind: 'action', workspaceId, text: action });
 
       if (event.type === 'result') {
         result = event.result ?? '';
