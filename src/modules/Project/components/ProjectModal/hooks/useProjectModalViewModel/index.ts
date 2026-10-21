@@ -1,5 +1,5 @@
 import type { ITargetLock } from '@/modules/Project/components/ProjectModal/components/TargetCard/types';
-import type { ITarget } from '@/modules/Project/types';
+import type { IProjectRepository, ITarget } from '@/modules/Project/types';
 import type { TargetKind } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -32,6 +32,9 @@ export const useProjectModalViewModel = () => {
   const [url, setUrl] = useState(saved('web')?.value ?? '');
   const [apk, setApk] = useState(saved('android')?.value ?? '');
   const [app, setApp] = useState(saved('ios')?.value ?? '');
+  const [repositories, setRepositories] = useState<IProjectRepository[]>(
+    editing?.repositories ?? [],
+  );
   const [isConfirmingDelete, setConfirmingDelete] = useState(false);
 
   const isMac = Platform.isMac();
@@ -85,8 +88,8 @@ export const useProjectModalViewModel = () => {
 
     const targets = [...targetFor('web'), ...targetFor('android'), ...targetFor('ios')];
 
-    if (editing) updateProject({ ...editing, name: name.trim(), targets });
-    else addProject({ id: newProjectId(), name: name.trim(), targets });
+    if (editing) updateProject({ ...editing, name: name.trim(), targets, repositories });
+    else addProject({ id: newProjectId(), name: name.trim(), targets, repositories });
   };
 
   const onDelete = () => {
@@ -110,6 +113,7 @@ export const useProjectModalViewModel = () => {
     url,
     apk,
     app,
+    repositories,
     isMac,
     isEditing,
     isConfirmingDelete,
@@ -150,6 +154,7 @@ export const useProjectModalViewModel = () => {
           } satisfies ITargetLock),
     footerHint: blocking,
     onNameChange: setName,
+    onRepositoriesChange: setRepositories,
     onUrlChange: setUrl,
     onPickApk: () => {
       void Files.pick('apk').then((picked) => {

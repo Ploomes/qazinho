@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Eyebrow, Input } from '@/shared/components/atoms';
 import { FileField } from '@/shared/components/molecules';
 import { ModalFrame } from '@/shared/components/templates';
-import { TargetCard } from './components';
+import { RepoField, TargetCard } from './components';
 import { useProjectModalViewModel } from './hooks';
 import './styles.css';
 
@@ -12,6 +12,7 @@ export const ProjectModal: React.FC = () => {
     url,
     apk,
     app,
+    repositories,
     isEditing,
     isConfirmingDelete,
     title,
@@ -23,6 +24,7 @@ export const ProjectModal: React.FC = () => {
     iosLock,
     footerHint,
     onNameChange,
+    onRepositoriesChange,
     onUrlChange,
     onPickApk,
     onPickApp,
@@ -108,6 +110,11 @@ export const ProjectModal: React.FC = () => {
             />
           </TargetCard>
         </div>
+      </div>
+
+      <div>
+        <Eyebrow>{t('PROJECT.CODE')}</Eyebrow>
+        <RepoField repositories={repositories} onChange={onRepositoriesChange} />
       </div>
     </ModalFrame>
   );

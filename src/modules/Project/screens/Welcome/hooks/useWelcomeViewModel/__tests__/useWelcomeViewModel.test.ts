@@ -4,8 +4,8 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { useWelcomeViewModel } from '@/modules/Project/screens/Welcome/hooks/useWelcomeViewModel';
 import { useAppStore } from '@/store';
 
-const SHOP = { id: 'p1', name: 'Shop · staging', targets: [] };
-const APP = { id: 'p2', name: 'App test', targets: [] };
+const SHOP = { id: 'p1', name: 'Shop · staging', targets: [], repositories: [] };
+const APP = { id: 'p2', name: 'App test', targets: [], repositories: [] };
 
 beforeEach(() => {
   useAppStore.setState({ modal: null, projects: [], selectedProjectId: null });

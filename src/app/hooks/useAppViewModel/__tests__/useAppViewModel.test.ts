@@ -74,7 +74,7 @@ describe('useAppViewModel', () => {
   it('is not the welcome screen once a workspace is open', () => {
     useAppStore.setState({
       screen: 'workspace',
-      projects: [{ id: 'p1', name: 'Shop · staging', targets: [] }],
+      projects: [{ id: 'p1', name: 'Shop · staging', targets: [], repositories: [] }],
     });
 
     const { result } = renderHook(() => useAppViewModel());
@@ -103,7 +103,7 @@ describe('useAppViewModel', () => {
   it('hides the app sidebar while settings take the whole window', () => {
     useAppStore.setState({
       screen: 'settings',
-      projects: [{ id: 'p1', name: 'Shop · staging', targets: [] }],
+      projects: [{ id: 'p1', name: 'Shop · staging', targets: [], repositories: [] }],
     });
 
     const { result } = renderHook(() => useAppViewModel());

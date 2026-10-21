@@ -11,6 +11,7 @@ const PROJECT = {
   id: 'p1',
   name: 'Shop',
   targets: [{ id: 't1', kind: 'web' as const, label: 'Web', value: 'https://shop.test' }],
+  repositories: [],
 };
 
 function bridge() {

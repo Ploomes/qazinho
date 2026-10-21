@@ -373,6 +373,23 @@ export const pt: typeof en = {
     DELETE_QUESTION_OTHER: 'Excluir junto com os {{count}} workspaces dele?',
     DELETE_YES: 'Excluir',
     DELETE_NO: 'Manter',
+    CODE: 'código · opcional',
+    CODE_NAME: 'Repositórios',
+    CODE_TEXT:
+      'Os repositórios do GitHub que formam este projeto. O agente lê o código deles para planejar os testes; as runs não mexem nele.',
+    CODE_LOCKED: 'Conecte o GitHub para escolher os repositórios que formam este projeto',
+    CODE_CONNECT: 'Conectar o GitHub',
+    CODE_SEARCH: 'Adicionar repositório: busque nos seus',
+    CODE_LOADING: 'Lendo seus repositórios…',
+    CODE_NONE: 'Nenhum dos seus repositórios tem “{{query}}”.',
+    CODE_PRIVATE: 'privado',
+    CODE_BASE: 'base',
+    CODE_BASE_LABEL: 'Branch base de {{repository}}: {{branch}}',
+    CODE_REMOVE: 'Tirar {{repository}}',
+    BRANCH_SEARCH: 'Buscar uma branch',
+    BRANCH_LOADING: 'Lendo as branches…',
+    BRANCH_NONE: 'Nenhuma branch tem “{{query}}”.',
+    BRANCH_DEFAULT: 'padrão',
   },
   NEW_WORKSPACE: {
     TITLE: 'Novo workspace',
@@ -632,6 +649,17 @@ export const pt: typeof en = {
     DONE_NEEDS_IOS: 'precisa do Xcode e do idb',
     DONE_NO_TRACKERS: 'nenhum conectado',
     DONE_NOTE: 'O que faltar dá para configurar depois nas Configurações.',
+  },
+  GITHUB: {
+    FAILURE_NO_CLI:
+      'O GitHub CLI não está nesta máquina. Instale em Configurações → Integrações.',
+    FAILURE_SIGNED_OUT:
+      'O GitHub CLI saiu da conta. Conecte o GitHub de novo em Configurações → Integrações.',
+    FAILURE_DENIED:
+      'O GitHub recusou: esta conta pode não ter acesso, ou a organização dela pede SSO.',
+    FAILURE_NOT_FOUND: 'O GitHub não encontrou, ou esta conta não enxerga.',
+    FAILURE_UNREACHABLE: 'O GitHub está fora de alcance desta máquina. Confira a rede.',
+    FAILURE_UNEXPECTED: 'O GitHub respondeu de um jeito que o QAzinho não esperava.',
   },
   MASCOT: {
     NAME: 'Estagiário',

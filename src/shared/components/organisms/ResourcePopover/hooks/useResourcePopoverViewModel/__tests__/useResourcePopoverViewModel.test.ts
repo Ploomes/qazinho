@@ -7,7 +7,7 @@ import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useResourcePopoverViewModel } from '@/shared/components/organisms/ResourcePopover/hooks/useResourcePopoverViewModel';
 import { useAppStore, useMachineStore, useWorkspaceStore } from '@/store';
 
-const PROJECT = { id: 'p1', name: 'Shop · staging', targets: [] };
+const PROJECT = { id: 'p1', name: 'Shop · staging', targets: [], repositories: [] };
 
 const PROCESSES = [
   sample({ name: 'qazinho', kind: 'app', ramMb: 300 }),

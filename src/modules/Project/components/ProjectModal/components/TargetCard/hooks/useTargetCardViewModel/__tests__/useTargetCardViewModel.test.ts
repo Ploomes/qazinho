@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import type { ITargetCardProps } from '@/modules/Project/components/ProjectModal/components/TargetCard/types';
 import { act, renderHook } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { useTargetCardViewModel } from '@/modules/Project/components/ProjectModal/components/TargetCard/hooks/useTargetCardViewModel';
 
 const SET_UP = {
@@ -20,7 +20,24 @@ describe('useTargetCardViewModel', () => {
     expect(card(null).result.current).toMatchObject({
       isLocked: false,
       isGuiding: false,
+      bodyClassName: 'target-card__body',
     });
+  });
+
+  it('puts the field under the name when stacked', () => {
+    const { result } = renderHook(() =>
+      useTargetCardViewModel({
+        name: 'Repositories',
+        text: '',
+        lock: null,
+        isStacked: true,
+        children: null,
+      }),
+    );
+
+    expect(result.current.bodyClassName).toBe(
+      'target-card__body target-card__body--stacked',
+    );
   });
 
   it('opens the set-up guide when asked, and closes it again', () => {
@@ -49,6 +66,21 @@ describe('useTargetCardViewModel', () => {
     });
 
     expect(result.current.isGuiding).toBe(false);
+  });
+
+  it('does the one thing a lock asks for, with no guide to read first', () => {
+    const onSetUp = vi.fn();
+    const { result } = card({
+      reason: 'Connect GitHub to pick repositories',
+      setUp: { label: 'Connect GitHub', onSetUp },
+    });
+
+    act(() => {
+      result.current.onSetUp();
+    });
+
+    expect(onSetUp).toHaveBeenCalledTimes(1);
+    expect(result.current).toMatchObject({ isGuiding: false, guide: null });
   });
 
   it('lets go of the guide once the tools are found', () => {

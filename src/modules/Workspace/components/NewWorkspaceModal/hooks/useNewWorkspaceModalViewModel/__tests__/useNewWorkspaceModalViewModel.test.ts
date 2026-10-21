@@ -11,6 +11,7 @@ const PROJECT = {
     { id: 't1', kind: 'web' as const, label: 'Web', value: 'https://shop.test' },
     { id: 't2', kind: 'android' as const, label: 'Android · Pixel 7', value: 'shop.apk' },
   ],
+  repositories: [],
 };
 
 beforeEach(() => {

@@ -7,7 +7,7 @@ import { makeWorkspace, WALKED_BY } from '@/modules/Workspace/library/__tests__/
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
-const PROJECT = { id: 'p1', name: 'Shop · staging', targets: [] };
+const PROJECT = { id: 'p1', name: 'Shop · staging', targets: [], repositories: [] };
 
 beforeEach(() => {
   useAppStore.setState({
@@ -68,6 +68,7 @@ describe('useSidebarViewModel', () => {
           {
             ...PROJECT,
             targets: [{ id: 't1', kind: 'android', label: 'Android', value: 'a.apk' }],
+            repositories: [],
           },
         ],
       });

@@ -14,6 +14,7 @@ const PROJECT = {
   id: 'p1',
   name: 'Shop · staging',
   targets: [{ id: 't1', kind: 'web' as const, label: 'Web', value: 'https://shop.test' }],
+  repositories: [],
 };
 
 beforeEach(() => {
@@ -116,6 +117,7 @@ describe('useWorkspaceViewModel', () => {
             targets: [
               { id: 't1', kind: 'android', label: 'Android', value: '/tmp/app.apk' },
             ],
+            repositories: [],
           },
         ],
       });
@@ -136,6 +138,7 @@ describe('useWorkspaceViewModel', () => {
           {
             ...PROJECT,
             targets: [{ id: 't1', kind: 'ios', label: 'iOS', value: '/tmp/App.app' }],
+            repositories: [],
           },
         ],
       });
@@ -150,7 +153,7 @@ describe('useWorkspaceViewModel', () => {
     });
 
     it('says so instead of pretending when the target left the project', () => {
-      useAppStore.setState({ projects: [{ ...PROJECT, targets: [] }] });
+      useAppStore.setState({ projects: [{ ...PROJECT, targets: [], repositories: [] }] });
 
       const { result } = renderHook(() => useWorkspaceViewModel());
 

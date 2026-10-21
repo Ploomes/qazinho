@@ -23,6 +23,12 @@
   padding: var(--space-5) var(--space-6);
 }
 
+.target-card__body--stacked {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: stretch;
+}
+
 .target-card__head {
   display: flex;
   flex-direction: column;

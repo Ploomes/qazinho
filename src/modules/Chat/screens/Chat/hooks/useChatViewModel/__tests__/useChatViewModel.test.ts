@@ -22,6 +22,7 @@ const PROJECT = {
   id: 'p1',
   name: 'Shop · staging',
   targets: [{ id: 't1', kind: 'web' as const, label: 'Web', value: 'https://shop.test' }],
+  repositories: [],
 };
 
 const DRAFTED: IChatAnswer = {
@@ -149,6 +150,7 @@ describe('useChatViewModel', () => {
           {
             ...PROJECT,
             targets: [{ id: 't1', kind: 'android', label: 'Android', value: '/app.apk' }],
+            repositories: [],
           },
         ],
       });

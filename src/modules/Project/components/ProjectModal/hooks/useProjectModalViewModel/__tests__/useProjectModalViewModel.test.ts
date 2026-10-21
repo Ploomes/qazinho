@@ -57,6 +57,28 @@ describe('useProjectModalViewModel', () => {
     expect(project?.targets[0]?.kind).toBe('web');
   });
 
+  it('keeps the repositories the project is made of, and none when none were picked', () => {
+    const { result } = renderHook(() => useProjectModalViewModel());
+
+    act(() => {
+      result.current.onNameChange('Shop · staging');
+      result.current.onUrlChange('https://staging.shop.test');
+      result.current.onRepositoriesChange([
+        { owner: 'acme', name: 'shop-web', baseBranch: 'develop' },
+      ]);
+    });
+    act(() => {
+      result.current.onConfirm();
+    });
+
+    expect(useAppStore.getState().projects[0]?.repositories).toEqual([
+      { owner: 'acme', name: 'shop-web', baseBranch: 'develop' },
+    ]);
+    expect(
+      renderHook(() => useProjectModalViewModel()).result.current.repositories,
+    ).toEqual([]);
+  });
+
   it('goes straight on to the first workspace of the new project', () => {
     const { result } = renderHook(() => useProjectModalViewModel());
 
@@ -137,6 +159,7 @@ describe('useProjectModalViewModel', () => {
             targets: [
               { id: 't-android', kind: 'android', label: 'Android', value: '/x/app.apk' },
             ],
+            repositories: [],
           },
         ],
       });
@@ -214,6 +237,7 @@ describe('useProjectModalViewModel', () => {
       targets: [
         { id: 't-web', kind: 'web' as const, label: 'Web', value: 'https://a.test' },
       ],
+      repositories: [],
     };
 
     beforeEach(() => {
@@ -257,6 +281,7 @@ describe('useProjectModalViewModel', () => {
           ...SAVED,
           name: 'Shop · production',
           targets: [{ ...SAVED.targets[0], value: 'https://b.test' }],
+          repositories: [],
         },
       ]);
     });
@@ -271,6 +296,7 @@ describe('useProjectModalViewModel', () => {
               { ...SAVED.targets[0]!, label: 'Web · staging' },
               { id: 't-android', kind: 'android', label: 'Android', value: '/x/app.apk' },
             ],
+            repositories: [],
           },
         ],
       });
@@ -303,6 +329,7 @@ describe('useProjectModalViewModel', () => {
                 value: '/x/app.apk',
               },
             ],
+            repositories: [],
           },
         ],
       });

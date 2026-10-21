@@ -3,7 +3,7 @@ import { buildProcessTree } from '@/modules/Resources/library';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { sample } from './fixtures';
 
-const PROJECT = { id: 'p1', name: 'Shop · staging', targets: [] };
+const PROJECT = { id: 'p1', name: 'Shop · staging', targets: [], repositories: [] };
 const WORKSPACE = makeWorkspace();
 
 const named = (props: { name: string; count: number }) =>

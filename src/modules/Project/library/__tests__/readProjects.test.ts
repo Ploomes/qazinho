@@ -5,6 +5,7 @@ const PROJECT = {
   id: 'p1',
   name: 'Shop · staging',
   targets: [{ id: 't1', kind: 'web', label: 'Web', value: 'https://shop.test' }],
+  repositories: [{ owner: 'acme', name: 'shop-web', baseBranch: 'main' }],
 };
 
 describe('readProjects', () => {
@@ -32,6 +33,13 @@ describe('readProjects', () => {
     expect(
       readProjects(JSON.stringify([typed]))[0]?.targets.map(({ value }) => value),
     ).toEqual(['http://loja.test', '/x/app.apk']);
+  });
+
+  it('reads a project saved before repositories as made of none', () => {
+    const { repositories, ...older } = PROJECT;
+
+    expect(repositories).toHaveLength(1);
+    expect(readProjects(JSON.stringify([older]))[0]?.repositories).toEqual([]);
   });
 
   it('an entry with no id is skipped, and the rest still load', () => {

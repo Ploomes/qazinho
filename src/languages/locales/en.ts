@@ -369,6 +369,23 @@ export const en = {
     DELETE_QUESTION_OTHER: 'Delete it and its {{count}} workspaces?',
     DELETE_YES: 'Delete',
     DELETE_NO: 'Keep',
+    CODE: 'code · optional',
+    CODE_NAME: 'Repositories',
+    CODE_TEXT:
+      'The GitHub repositories this project is made of. The agent reads their code to plan tests; runs never touch it.',
+    CODE_LOCKED: 'Connect GitHub to pick the repositories this project is made of',
+    CODE_CONNECT: 'Connect GitHub',
+    CODE_SEARCH: 'Add a repository: search yours',
+    CODE_LOADING: 'Reading your repositories…',
+    CODE_NONE: 'None of your repositories matches “{{query}}”.',
+    CODE_PRIVATE: 'private',
+    CODE_BASE: 'base',
+    CODE_BASE_LABEL: 'Base branch of {{repository}}: {{branch}}',
+    CODE_REMOVE: 'Remove {{repository}}',
+    BRANCH_SEARCH: 'Search a branch',
+    BRANCH_LOADING: 'Reading the branches…',
+    BRANCH_NONE: 'No branch matches “{{query}}”.',
+    BRANCH_DEFAULT: 'default',
   },
   NEW_WORKSPACE: {
     TITLE: 'New workspace',
@@ -628,6 +645,17 @@ export const en = {
     DONE_NEEDS_IOS: 'needs Xcode and idb',
     DONE_NO_TRACKERS: 'none connected',
     DONE_NOTE: 'Anything missing can be set up later in Settings.',
+  },
+  GITHUB: {
+    FAILURE_NO_CLI:
+      'The GitHub CLI is not on this machine. Install it in Settings → Integrations.',
+    FAILURE_SIGNED_OUT:
+      'The GitHub CLI is signed out. Connect GitHub again in Settings → Integrations.',
+    FAILURE_DENIED:
+      'GitHub refused it: this account may lack access, or its organization asks for SSO.',
+    FAILURE_NOT_FOUND: 'GitHub did not find it, or this account cannot see it.',
+    FAILURE_UNREACHABLE: 'GitHub is out of reach from this machine. Check the network.',
+    FAILURE_UNEXPECTED: 'GitHub answered in a way QAzinho did not expect.',
   },
   MASCOT: {
     NAME: 'Intern',

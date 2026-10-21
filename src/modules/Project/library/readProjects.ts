@@ -1,4 +1,5 @@
 import type { IProject } from '@/modules/Project/types';
+import { repositoriesOf } from './repositoriesOf';
 import { webAddressOf } from './webAddressOf';
 
 /** The file on disk belongs to the QA, so anything unreadable in it is skipped, not fatal; a web address saved with no scheme reads as a browser opens it. */
@@ -23,6 +24,7 @@ export function readProjects(json: string): IProject[] {
     )
     .map((project) => ({
       ...project,
+      repositories: repositoriesOf(project.repositories),
       targets: project.targets.map((target) =>
         target.kind === 'web'
           ? { ...target, value: webAddressOf(target.value) ?? target.value }

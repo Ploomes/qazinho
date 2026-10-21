@@ -7,10 +7,19 @@ import { LOCK_ICON } from './constants';
 import { useTargetCardViewModel } from './hooks';
 import './styles.css';
 
-/** A platform a project can target; one this machine cannot drive yet sits blurred behind how to set it up. */
+/** A part of a project, a platform it targets or the code it is made of; one this machine cannot reach yet sits blurred behind how to set it up. */
 export const TargetCard: React.FC<ITargetCardProps> = (props) => {
-  const { isLocked, isGuiding, checkLabel, isChecking, onSetUp, onBack, onCheckAgain } =
-    useTargetCardViewModel(props);
+  const {
+    isLocked,
+    bodyClassName,
+    isGuiding,
+    guide,
+    checkLabel,
+    isChecking,
+    onSetUp,
+    onBack,
+    onCheckAgain,
+  } = useTargetCardViewModel(props);
   const { t } = useTranslation();
 
   return (
@@ -20,7 +29,7 @@ export const TargetCard: React.FC<ITargetCardProps> = (props) => {
       transition={{ layout: { duration: MOTION.duration, ease: MOTION.ease } }}
     >
       <motion.div
-        className="target-card__body"
+        className={bodyClassName}
         initial={false}
         animate={
           isLocked
@@ -57,7 +66,7 @@ export const TargetCard: React.FC<ITargetCardProps> = (props) => {
               transition={{ duration: MOTION.duration, ease: MOTION.ease }}
             >
               <AnimatePresence initial={false} mode="popLayout">
-                {isGuiding && props.lock.setUp !== null ? (
+                {isGuiding && guide !== null ? (
                   <motion.div
                     key="guide"
                     className="target-card__guide"
@@ -66,15 +75,15 @@ export const TargetCard: React.FC<ITargetCardProps> = (props) => {
                     exit={{ opacity: 0, y: -6 }}
                     transition={{ duration: MOTION.duration, ease: MOTION.ease }}
                   >
-                    <p className="target-card__guide-text">{props.lock.setUp.guide}</p>
+                    <p className="target-card__guide-text">{guide.guide}</p>
                     <div className="target-card__guide-actions">
                       <a
                         className="target-card__link"
-                        href={props.lock.setUp.link.url}
+                        href={guide.link.url}
                         target="_blank"
                         rel="noreferrer"
                       >
-                        {props.lock.setUp.link.label}
+                        {guide.link.label}
                       </a>
                       <Button size="sm" variant="ghost" onClick={onBack}>
                         {t('SETUP.BACK')}
