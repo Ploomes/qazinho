@@ -1,6 +1,6 @@
 import type { IHarnessSection } from '@/harness/context/types';
 import type { IAppRunBrief, IAppSnapshot, IAppWorkspaceBrief } from '@/shared/types';
-import { LANGUAGE_NAMES, THEME_NAMES } from '@/harness/constants';
+import { LANGUAGE_NAMES, SCREEN_NAMES, THEME_NAMES } from '@/harness/constants';
 
 const ENDINGS: Record<IAppRunBrief['endedBy'], string> = {
   finished: 'walked the whole plan',
@@ -48,6 +48,7 @@ export function describeApp(app: IAppSnapshot): IHarnessSection {
           ? 'A run that ends while they are away calls them with a notification and its sound.'
           : 'A run that ends calls them only inside QAzinho.'
       }`,
+      SCREEN_NAMES[app.language],
       [`Their agent is ${app.agent}.`, ...integrations].join(' '),
       ...(app.projects.length === 0
         ? ['There are no projects yet.']
