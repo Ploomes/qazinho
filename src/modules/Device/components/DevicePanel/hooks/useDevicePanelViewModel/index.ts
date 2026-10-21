@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DEVICE, DEVICE_STATE_KEY, VIEWPORTS } from '@/modules/Device/constants';
 import {
+  devicePanelWidthOf,
   deviceStateOf,
   formatElapsed,
   moodOfStatus,
@@ -14,7 +15,7 @@ import {
 } from '@/modules/Device/library';
 import { formatCost, useRunControls } from '@/modules/Run';
 import { Run } from '@/services';
-import { MOTION, SHELL } from '@/shared/constants';
+import { MOTION } from '@/shared/constants';
 import { useSelectedWorkspace } from '@/shared/hooks/useSelectedWorkspace';
 import { useWindowWidth } from '@/shared/hooks/useWindowWidth';
 import { useAppStore, useWorkspaceStore } from '@/store';
@@ -41,13 +42,7 @@ export const useDevicePanelViewModel = () => {
   const [isResizing, setResizing] = useState(false);
   const [isFocusedNow, setFocused] = useState(false);
 
-  const fitted = Math.max(
-    DEVICE.minWidth,
-    Math.min(
-      width,
-      windowWidth - SHELL.sidebarWidth - SHELL.centerMinWidth - DEVICE.handleWidth,
-    ),
-  );
+  const { inner: fitted, outer } = devicePanelWidthOf({ width, windowWidth, isOpen });
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
   const state = deviceStateOf(workspace);
@@ -116,7 +111,7 @@ export const useDevicePanelViewModel = () => {
       setFocused(false);
     },
     width: fitted,
-    panelWidth: isOpen ? fitted + DEVICE.handleWidth : DEVICE.railWidth,
+    panelWidth: outer,
     panelClassName: isResizing ? 'device-panel device-panel--resizing' : 'device-panel',
     widthTransition: isResizing
       ? { duration: 0 }
