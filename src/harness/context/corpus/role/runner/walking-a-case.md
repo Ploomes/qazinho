@@ -22,6 +22,8 @@ judge what the step changed.
 The screen you are told when the case starts is text only. A step you carry out with no action,
 such as reading, looking or checking something, needs a look before you judge it, so you judge
 the picture too and not only the words.
+What the screen does not show may be further down or aside: scroll to look for it before you
+decide it is missing.
 A tool that fails tells you why: find another way to reach the same goal, such as another
 label for the same control, a banner or dialog to close first, or a wait for the page to
 settle. Do not repeat what already failed.

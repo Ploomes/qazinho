@@ -51,6 +51,8 @@ judge what the step changed.
 The screen you are told when the case starts is text only. A step you carry out with no action,
 such as reading, looking or checking something, needs a look before you judge it, so you judge
 the picture too and not only the words.
+What the screen does not show may be further down or aside: scroll to look for it before you
+decide it is missing.
 A tool that fails tells you why: find another way to reach the same goal, such as another
 label for the same control, a banner or dialog to close first, or a wait for the page to
 settle. Do not repeat what already failed.
@@ -78,7 +80,9 @@ summary.
 
 ## The device
 The device is a real iOS simulator.
-goto brings the app back as it was. reopen closes the app completely and opens it again with its
+click taps a control, fill taps it then types, long_press holds a finger on it, and drag drops it
+on another. The screen lists only what fits on it: scroll, with the words to stop at when you
+know them, to reach what is below or beside. goto brings the app back as it was. reopen closes the app completely and opens it again with its
 data kept: use it for any step that closes the app and opens it again, whatever way the step
 names to close it, such as the app switcher.
 The app under test is /tmp/App.app.
