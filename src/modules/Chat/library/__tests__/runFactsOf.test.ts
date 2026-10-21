@@ -23,6 +23,22 @@ describe('runFactsOf', () => {
     );
   });
 
+  it('tells the agent which steps were walked again without it, and which it healed', () => {
+    const cases = RUN.cases.map((runCase, position) => ({
+      ...runCase,
+      steps: runCase.steps.map((step) => ({
+        ...step,
+        by: position === 0 ? ('replay' as const) : ('healed' as const),
+      })),
+    }));
+    const facts = runFactsOf({ run: { ...RUN, cases }, isBrief: false });
+
+    expect(facts).toContain('  step 1 passed without the agent: Open the target URL');
+    expect(facts).toContain(
+      '  step 1 passed by the agent, after the recorded walk stopped holding: Add the product to the cart',
+    );
+  });
+
   it('says what the run cost when its agent said', () => {
     expect(runFactsOf({ run: { ...RUN, costUsd: 0.0412 }, isBrief: false })[0]).toBe(
       `started ${DAY} at 09:41, took 0s, cost $0.041, walked the whole plan`,

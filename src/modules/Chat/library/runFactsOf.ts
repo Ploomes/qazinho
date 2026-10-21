@@ -38,7 +38,7 @@ export function runFactsOf(props: { run: IRun; isBrief: boolean }): string[] {
         `${runCase.id} ${runCase.title}: ${caseVerdict(runCase.steps)}`,
         ...steps.map(
           (step) =>
-            `  step ${String(step.number)} ${step.verdict}: ${step.action}${step.why === null ? '' : ` (${step.why})`}`,
+            `  step ${String(step.number)} ${step.verdict}${step.by === 'replay' ? ' without the agent' : step.by === 'healed' ? ' by the agent, after the recorded walk stopped holding' : ''}: ${step.action}${step.why === null ? '' : ` (${step.why})`}`,
         ),
       ];
     }),
