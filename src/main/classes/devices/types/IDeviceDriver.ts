@@ -7,7 +7,7 @@ import type {
   IViewport,
 } from '@/shared/types';
 
-/** What a run needs from a device, whether it is a browser or a phone. */
+/** What a run needs from a device, whether it is a browser or a phone; a browser also says how it found the target of its last action. */
 export interface IDeviceDriver {
   open: () => Promise<void>;
   restart: () => Promise<void>;
@@ -22,4 +22,5 @@ export interface IDeviceDriver {
   record: (folder: string) => Promise<boolean>;
   stopRecording: () => Promise<IRunVideo | null>;
   close: () => Promise<void>;
+  resolution?: () => { locator: string; option: string | null } | null;
 }

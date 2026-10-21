@@ -36,6 +36,7 @@ export class WebDriver implements IDeviceDriver {
   private cdp: CDPSession | null = null;
   private onFrame: ((jpeg: Buffer) => void) | null = null;
   private lastMotion: IActionMotion | null = null;
+  private resolved: { locator: string; option: string | null } | null = null;
   private viewport: IViewport;
   private isFocused = false;
   private dialogAnswer: DialogAnswer = 'ok';
@@ -80,11 +81,18 @@ export class WebDriver implements IDeviceDriver {
     await this.openAnew({ isCleared: true });
   }
 
+  /** The locator the last click or fill found its target with, as Playwright writes it, and the option a dropdown took. */
+  public resolution(): { locator: string; option: string | null } | null {
+    return this.resolved;
+  }
+
   /** Carries one action out, answering the dialogs it opens the way it says, and keeps how the page moved for `motion`. */
   public async act(action: IStepAction): Promise<void> {
     const page = this.page;
 
     if (!page) throw new Error('The browser is not open.');
+
+    this.resolved = null;
 
     if (action.kind === 'reopen') {
       await this.openAnew({ isCleared: false });
@@ -374,6 +382,8 @@ export class WebDriver implements IDeviceDriver {
 
     if (!locator) throw new Error(`Nothing on the page answers to "${action.target}".`);
 
+    this.resolved = { locator: String(locator), option: null };
+
     if (action.kind !== 'fill') {
       await locator.click({ timeout: WEB_DRIVER.actionTimeoutMs });
 
@@ -417,6 +427,7 @@ export class WebDriver implements IDeviceDriver {
         `"${action.target}" has no option "${action.value}". It offers: ${options.map(({ label }) => label).join(', ')}.`,
       );
 
+    this.resolved = { locator: String(locator), option: option.value };
     await locator.selectOption(option.value, { timeout });
   }
 

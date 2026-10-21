@@ -516,11 +516,18 @@ export class RunCoordinator {
         await driver.act(action);
 
         const walking = pending[0];
+        const found = driver.resolution?.() ?? null;
 
         if (walking !== undefined)
           actions.set(walking.step.numberInCase, [
             ...(actions.get(walking.step.numberInCase) ?? []),
-            action,
+            found === null
+              ? action
+              : {
+                  ...action,
+                  locator: found.locator,
+                  ...(found.option === null ? {} : { option: found.option }),
+                },
           ]);
       },
     };
