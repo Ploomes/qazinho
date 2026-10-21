@@ -12,6 +12,9 @@ Variables the project keeps, to type as written:
 - ${SHOP_EMAIL}: The buyer account on staging
 - ${SHOP_PASSWORD}
 
+Bugs already open in this workspace: when you see one of them again, give its id as "sameAs" instead of filing it anew.
+- BUG-01 · An expired coupon is accepted (TC-03, step 1)
+
 The device shows right now:
 Cart
 [button] Apply

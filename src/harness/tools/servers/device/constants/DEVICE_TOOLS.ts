@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { DRAFTED_CASE } from '@/harness/schemas/DRAFTED_CASE';
+import { bugIdNamed } from '@/harness/tools/library/bugIdNamed';
 import { textNamed } from '@/harness/tools/library/textNamed';
 
 export const DEVICE_TOOLS = [
@@ -212,6 +213,9 @@ export const DEVICE_TOOLS = [
           'When the step passed: a few words the screen shows now that prove it, copied exactly, which would not be there had it failed, such as "Visits: 1". QAzinho walks the step again without you and checks them.',
         )
         .optional(),
+      sameAs: bugIdNamed(
+        'When it failed for a bug the case lists as already open: its id, such as "BUG-01". QAzinho counts it as seen again instead of opening another.',
+      ),
     }),
   },
   {
@@ -234,6 +238,9 @@ export const DEVICE_TOOLS = [
         message: '"bug" needs "got": what the device actually showed.',
         description: 'What the device actually showed.',
       }),
+      sameAs: bugIdNamed(
+        'When it is a bug the message lists as already open: its id, such as "BUG-01". QAzinho counts it as seen again instead of opening another.',
+      ),
     }),
   },
   {

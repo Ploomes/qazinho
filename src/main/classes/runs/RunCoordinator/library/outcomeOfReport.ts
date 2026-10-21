@@ -30,5 +30,6 @@ export function outcomeOfReport(props: {
     at,
     screenshot: shot?.dataUrl ?? null,
     shotFile: shot?.file ?? null,
+    ...(report.sameAs === undefined ? {} : { sameAs: report.sameAs }),
   };
 }

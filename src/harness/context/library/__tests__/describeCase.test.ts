@@ -28,6 +28,7 @@ describe('describeCase', () => {
         screen: '',
         language: 'en',
         filed: [],
+        known: [],
         variables: [],
       }),
     ).toBe(
@@ -56,6 +57,7 @@ describe('describeCase', () => {
         screen: '',
         language: 'en',
         filed: [],
+        known: [],
         variables: [],
       }),
     ).toBe(
@@ -83,6 +85,7 @@ describe('describeCase', () => {
         screen: '',
         language: 'pt',
         filed: [],
+        known: [],
         variables: [],
       }),
     ).toContain(
@@ -97,6 +100,7 @@ describe('describeCase', () => {
         screen: 'Sign in · [button] Continue',
         language: 'en',
         filed: [],
+        known: [],
         variables: [],
       }),
     ).toContain('The device shows right now:\nSign in · [button] Continue');
@@ -109,6 +113,7 @@ describe('describeCase', () => {
         screen: 'Home',
         language: 'en',
         filed: [],
+        known: [],
         variables: [],
       }),
     ).toBe('This case has no steps. End your turn.');
@@ -122,10 +127,35 @@ describe('describeCase', () => {
         screen: '',
         language: 'en',
         filed: ['Home page jumps while loading', 'Yearly price differs'],
+        known: [],
         variables: [],
       }),
     ).toContain(
       'Bugs this run already filed, not to file again:\n- Home page jumps while loading\n- Yearly price differs',
+    );
+  });
+
+  /** The same coupon bug came back as BUG-03 in a run that did not know BUG-01 was open. */
+  it('lists the bugs already open in the workspace, with how to count one seen again', () => {
+    expect(
+      describeCase({
+        steps: [STEP],
+        screen: '',
+        language: 'en',
+        filed: [],
+        known: [
+          {
+            id: 'BUG-01',
+            title: 'An expired coupon is accepted',
+            caseId: 'TC-03',
+            stepNumber: 1,
+            isIncidental: false,
+          },
+        ],
+        variables: [],
+      }),
+    ).toContain(
+      'Bugs already open in this workspace: when you see one of them again, give its id as "sameAs" instead of filing it anew.\n- BUG-01 · An expired coupon is accepted (TC-03, step 1)',
     );
   });
 
@@ -136,6 +166,7 @@ describe('describeCase', () => {
         screen: '',
         language: 'en',
         filed: [],
+        known: [],
         variables: [],
       }),
     ).not.toContain('already filed');
@@ -148,6 +179,7 @@ describe('describeCase', () => {
         screen: '',
         language: 'en',
         filed: [],
+        known: [],
         variables: [
           { name: 'LOGIN_EMAIL', description: 'The admin on staging' },
           { name: 'LOGIN_PASSWORD', description: '' },

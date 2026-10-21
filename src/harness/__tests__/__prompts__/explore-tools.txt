@@ -316,6 +316,11 @@
           "type": "string",
           "minLength": 1,
           "description": "What the device actually showed."
+        },
+        "sameAs": {
+          "type": "string",
+          "pattern": "^BUG-\\d+$",
+          "description": "When it is a bug the message lists as already open: its id, such as \"BUG-01\". QAzinho counts it as seen again instead of opening another."
         }
       },
       "required": [

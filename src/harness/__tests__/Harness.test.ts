@@ -328,6 +328,15 @@ describe('Harness', () => {
           minutes: 10,
           screen: 'Shop\n[link] Cart',
           variables: [{ name: 'SHOP_EMAIL', description: 'The buyer on staging' }],
+          known: [
+            {
+              id: 'BUG-01',
+              title: 'The cart total reads R$ NaN',
+              caseId: 'EX',
+              stepNumber: 2,
+              isIncidental: true,
+            },
+          ],
         }),
       ).toMatchFileSnapshot('./__prompts__/explore.txt');
     });
@@ -348,6 +357,15 @@ describe('Harness', () => {
           screen: 'Cart\n[button] Apply',
           language: 'en',
           filed: [],
+          known: [
+            {
+              id: 'BUG-01',
+              title: 'An expired coupon is accepted',
+              caseId: 'TC-03',
+              stepNumber: 1,
+              isIncidental: false,
+            },
+          ],
           variables: [
             { name: 'SHOP_EMAIL', description: 'The buyer account on staging' },
             { name: 'SHOP_PASSWORD', description: '' },
@@ -360,6 +378,7 @@ describe('Harness', () => {
           screen: '',
           language: 'en',
           filed: [],
+          known: [],
           variables: [],
         }),
       ).toMatchFileSnapshot('./__prompts__/walk-empty.txt');

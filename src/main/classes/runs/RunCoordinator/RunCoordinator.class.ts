@@ -46,7 +46,9 @@ import {
   earlyFinish,
   exploredOutcome,
   failureOf,
+  findingAnswer,
   followRunEvent,
+  keptBugId,
   outcomeOfReport,
   proofHolds,
   readBook,
@@ -438,8 +440,12 @@ export class RunCoordinator {
       );
       const at = Date.now();
 
+      const kept =
+        report.verdict === 'failed'
+          ? keptBugId({ asked: report.sameAs, known: run.bugs ?? [] })
+          : null;
       const outcome = outcomeOfReport({
-        report,
+        report: { ...report, sameAs: kept ?? undefined },
         step: walking.step,
         index: walking.index,
         workspaceId,
@@ -503,6 +509,7 @@ export class RunCoordinator {
       findings += 1;
       props.filed.push(finding.title);
 
+      const kept = keptBugId({ asked: finding.sameAs, known: run.bugs ?? [] });
       const shot = await driver.shoot(
         join(run.shotDir, `finding-${String(walking.index + 1)}-${String(findings)}.jpg`),
       );
@@ -512,6 +519,7 @@ export class RunCoordinator {
         workspaceId,
         finding: {
           ...finding,
+          sameAs: kept ?? undefined,
           caseId: walking.step.caseId,
           stepNumber: walking.step.numberInCase,
           index: walking.index,
@@ -522,7 +530,11 @@ export class RunCoordinator {
         },
       });
 
-      return `Filed as a bug. Carry on with step ${String(walking.step.numberInCase)}.`;
+      return findingAnswer({
+        asked: finding.sameAs,
+        kept,
+        carryOn: `Carry on with step ${String(walking.step.numberInCase)}.`,
+      });
     };
 
     const mcpConfig = this.tools.mcpConfigFor(workspaceId);
@@ -581,6 +593,7 @@ export class RunCoordinator {
         screen,
         language: run.language,
         filed: [...props.filed],
+        known: run.bugs ?? [],
         variables: run.values.map(({ name, description }) => ({ name, description })),
       }),
     });
@@ -674,6 +687,7 @@ export class RunCoordinator {
 
       findings += 1;
 
+      const kept = keptBugId({ asked: finding.sameAs, known: run.bugs ?? [] });
       const shot = await driver.shoot(
         join(run.shotDir, `finding-explore-${String(findings)}.jpg`),
       );
@@ -683,6 +697,7 @@ export class RunCoordinator {
         workspaceId,
         finding: {
           ...finding,
+          sameAs: kept ?? undefined,
           caseId: EXPLORATION.caseId,
           stepNumber: current.number,
           index: Math.max(current.number - 1, 0),
@@ -693,7 +708,11 @@ export class RunCoordinator {
         },
       });
 
-      return 'Filed as a bug. Carry on exploring.';
+      return findingAnswer({
+        asked: finding.sameAs,
+        kept,
+        carryOn: 'Carry on exploring.',
+      });
     };
 
     const onFinish = (finish: IExploreFinish): Promise<string> => {
@@ -751,6 +770,7 @@ export class RunCoordinator {
         minutes,
         screen,
         variables: run.values.map(({ name, description }) => ({ name, description })),
+        known: run.bugs ?? [],
       }),
     });
     const cost = asking.then(

@@ -13,6 +13,7 @@ import type {
   IChatReference,
   ICodeCopy,
   IFlatStep,
+  IKnownBug,
   ITargetUnderTest,
   IVariableBrief,
   IViewport,
@@ -221,21 +222,23 @@ export class Harness {
     });
   }
 
-  /** The message that starts an exploration: how long it goes, the variables it may type, and the screen it starts on. */
+  /** The message that starts an exploration: how long it goes, the variables it may type, the bugs already open, and the screen it starts on. */
   public startExploring(props: {
     minutes: number;
     screen: string;
     variables: IVariableBrief[];
+    known: IKnownBug[];
   }): string {
     return describeExploration(props);
   }
 
-  /** The message that starts the agent's turn on one case, in the language the QA reads, with the variables it may type. */
+  /** The message that starts the agent's turn on one case, in the language the QA reads, with the variables it may type and the bugs already open. */
   public walk(props: {
     steps: IFlatStep[];
     screen: string;
     language: Language;
     filed: string[];
+    known: IKnownBug[];
     variables: IVariableBrief[];
   }): string {
     return describeCase(props);

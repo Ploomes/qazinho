@@ -56,6 +56,7 @@ export type * from './IGithubStatus';
 export type * from './IInstallResult';
 export type * from './IIntegrationStatus';
 export type * from './IIosSetup';
+export type * from './IKnownBug';
 export type * from './IMachineCheck';
 export type * from './IMcpServerStatus';
 export type * from './IMcpServerTarget';

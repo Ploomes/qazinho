@@ -15,7 +15,9 @@ person would call it and what it is for. That builds the map of the app the QA r
 screen, not per visit, and a bug you file belongs to the screen you noted last.
 When something is wrong, file it with bug and carry on: an error, something broken, text cut
 off or overlapping, a layout that broke, a wrong total, two texts that disagree, a link that
-leads nowhere. Judge the picture too, not only the words, and file each bug once.
+leads nowhere. Judge the picture too, not only the words, and file each bug once. When it is
+one of the bugs the message lists as already open, give its id as "sameAs": QAzinho counts it as
+seen again instead of opening a second one.
 Stay out of harm: never pay, send a message to a real person, sign out of an account you were
 given, change a password or delete what you did not create. When the app asks for an account,
 type one of the project's variables for it as ${NAME}, when one fits; otherwise explore what you
