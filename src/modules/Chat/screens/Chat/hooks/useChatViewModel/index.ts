@@ -3,6 +3,7 @@ import type { IChatReference, ICodeAsk } from '@/shared/types';
 import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useChatAgent } from '@/modules/Chat/hooks/useChatAgent';
 import {
   formatAnswers,
   formatSize,
@@ -13,30 +14,21 @@ import {
   mentionQueryOf,
   mentionsIn,
   referencesOf,
-  runHistoryOf,
-  sessionFor,
 } from '@/modules/Chat/library';
-import { CHAT, CHAT_FAILURE_KEYS } from '@/modules/Chat/screens/Chat/constants';
+import { CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { useChatCommand } from '@/modules/Chat/screens/Chat/hooks/useChatCommand';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
-import { formatElapsed, viewportOf } from '@/modules/Device';
-import { caseIdsUsed, planOfDraft } from '@/modules/Plan';
+import { formatElapsed } from '@/modules/Device';
 import { flattenPlanSteps, formatCost, RUN_ENDS } from '@/modules/Run';
-import { GITHUB_FAILURE_KEYS } from '@/modules/Setup';
 import { Agent } from '@/services';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
-import {
-  useAppStore,
-  useMachineStore,
-  useSettingsStore,
-  useSetupStore,
-  useWorkspaceStore,
-} from '@/store';
+import { useAppStore, useSetupStore, useWorkspaceStore } from '@/store';
 
 export const useChatViewModel = () => {
   const [draft, setDraft] = useState('');
   const [expandedRuns, setExpandedRuns] = useState<string[]>([]);
   const { t, i18n } = useTranslation();
+  const chatAgent = useChatAgent();
 
   const projects = useAppStore((state) => state.projects);
   const workspace = useSelectedWorkspacePart((opened) => ({
@@ -58,9 +50,6 @@ export const useChatViewModel = () => {
     elapsedSec: opened.live?.elapsedSec ?? 0,
     liveCostUsd: opened.live?.costUsd ?? null,
   }));
-  const detected = useMachineStore((state) => state.agents);
-  const agentName = useSettingsStore((state) => state.agent);
-  const model = useSettingsStore((state) => state.model);
   const askingIds = useWorkspaceStore((state) => state.askingIds);
   const liveTexts = useWorkspaceStore((state) => state.liveTexts);
   const retries = useWorkspaceStore((state) => state.retries);
@@ -69,12 +58,7 @@ export const useChatViewModel = () => {
     state.integrations.some(({ id }) => id === 'github'),
   );
   const sendMessage = useWorkspaceStore((state) => state.sendMessage);
-  const landAgentText = useWorkspaceStore((state) => state.landAgentText);
-  const landPlan = useWorkspaceStore((state) => state.landPlan);
-  const landQuestions = useWorkspaceStore((state) => state.landQuestions);
   const answerQuestions = useWorkspaceStore((state) => state.answerQuestions);
-  const landAgentError = useWorkspaceStore((state) => state.landAgentError);
-  const landAgentStopped = useWorkspaceStore((state) => state.landAgentStopped);
   const answerAsk = useWorkspaceStore((state) => state.answerAsk);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const selectRun = useWorkspaceStore((state) => state.selectRun);
@@ -97,12 +81,9 @@ export const useChatViewModel = () => {
       message.kind === 'user' && message.command !== undefined ? [message.command] : [],
     )
     .at(-1);
-  const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
-  const size = viewportOf(workspace?.viewportId);
   const wholePlan = t('RUN.WHOLE_PLAN');
   const references = workspace === null ? [] : referencesOf({ workspace, wholePlan });
   const mentionQuery = mentionQueryOf(draft);
-  const agentId = detected.find(({ name }) => name === agentName)?.id ?? 'claude-code';
   const { listRef, visible, onScroll } = useChatScroll({
     workspaceId: workspace?.id ?? null,
     messages: workspace?.chat ?? [],
@@ -118,99 +99,7 @@ export const useChatViewModel = () => {
     references: IChatReference[];
     code: ICodeAsk | null;
   }) => {
-    if (!workspace) return;
-
-    const workspaceId = workspace.id;
-
-    void Agent.ask({
-      workspaceId,
-      agentId,
-      model,
-      sessionId: sessionFor({ workspace, agentId }),
-      text: props.text,
-      target: target === null ? null : { kind: target.kind, value: target.value },
-      viewport:
-        target?.kind === 'web' ? { width: size.width, height: size.height } : null,
-      steps: flattenPlanSteps(workspace.plan),
-      references: props.references,
-      runs: runHistoryOf({ workspace, wholePlan }),
-      code: props.code,
-    }).then((turn) => {
-      if (turn.failure?.reason === 'stopped') {
-        landAgentStopped(workspaceId);
-
-        return;
-      }
-
-      if (turn.isError) {
-        landAgentError({
-          workspaceId,
-          text:
-            turn.failure === null
-              ? turn.text
-              : turn.failure.reason === 'code'
-                ? t('CHAT.FAILED_CODE', {
-                    reason: t(GITHUB_FAILURE_KEYS[turn.failure.failure]),
-                  })
-                : t(CHAT_FAILURE_KEYS[turn.failure.reason], {
-                    ...turn.failure,
-                    agent: agentName,
-                  }),
-        });
-
-        return;
-      }
-
-      const { answer } = turn;
-      const now = useWorkspaceStore
-        .getState()
-        .workspaces.find(({ id }) => id === workspaceId);
-      const plan =
-        answer?.plan && now !== undefined
-          ? planOfDraft({
-              cases: answer.plan.cases,
-              plan: now.plan,
-              used: caseIdsUsed(now),
-            })
-          : null;
-
-      if (
-        !answer ||
-        (answer.reply.length === 0 && plan === null && answer.questions.length === 0)
-      ) {
-        landAgentError({ workspaceId, text: t('CHAT.UNREADABLE') });
-
-        return;
-      }
-
-      const live = now?.live;
-      const isWalking = live !== null && live !== undefined && !live.isDone;
-
-      if (plan === null || isWalking)
-        landAgentText({
-          workspaceId,
-          text: answer.reply,
-          who: agentName,
-          agentId,
-          sessionId: turn.sessionId,
-        });
-
-      if (plan !== null && isWalking)
-        landAgentError({ workspaceId, text: t('CHAT.PLAN_WHILE_RUNNING') });
-
-      if (plan !== null && !isWalking)
-        landPlan({
-          workspaceId,
-          summary: answer.reply,
-          plan,
-          source: turn.code,
-          who: agentName,
-          agentId,
-          sessionId: turn.sessionId,
-        });
-
-      landQuestions({ workspaceId, questions: answer.questions });
-    });
+    if (workspace !== null) chatAgent.askAgent({ workspaceId: workspace.id, ...props });
   };
 
   const isWalking = workspace?.isWalking === true;
