@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { textNamed } from '@/harness/tools/servers/device/library';
+import { textNamed } from '@/harness/tools/library';
 
 const TEXT = textNamed({ message: 'Say it.', description: 'What to say.' });
 

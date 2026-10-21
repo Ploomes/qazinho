@@ -1,4 +1,5 @@
-import type { IAttachDevice, ToolAnswer } from '@/harness/tools/servers/device/types';
+import type { IAttachDevice } from '@/harness/tools/servers/device/types';
+import type { ToolAnswer } from '@/harness/tools/types';
 import { stripAnsi } from '@/harness/library';
 import { describeMotion } from './describeMotion';
 import { readToolCall } from './readToolCall';

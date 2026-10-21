@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { textNamed } from '@/harness/tools/servers/device/library/textNamed';
+import { textNamed } from '@/harness/tools/library/textNamed';
 
 export const DEVICE_TOOLS = [
   {

@@ -1,4 +1,4 @@
-import type { ToolAnswer } from '@/harness/tools/servers/device/types';
+import type { ToolAnswer } from '@/harness/tools/types';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { DEVICE_TOOLS } from '@/harness/tools/servers/device/constants';
 
