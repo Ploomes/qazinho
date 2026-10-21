@@ -132,6 +132,13 @@ export const DEVICE_TOOLS = [
         .trim()
         .describe('When you worked around something: one sentence for the QA.')
         .optional(),
+      proof: z
+        .string()
+        .trim()
+        .describe(
+          'When the step passed: a few words the screen shows now that prove it, copied exactly, which would not be there had it failed, such as "Visits: 1". QAzinho walks the step again without you and checks them.',
+        )
+        .optional(),
     }),
   },
   {

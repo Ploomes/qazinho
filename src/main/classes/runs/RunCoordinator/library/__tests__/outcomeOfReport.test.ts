@@ -20,6 +20,7 @@ const REPORT = {
   title: 'Coupon SAVE10 does not change the total',
   severity: 'high' as const,
   note: '',
+  proof: '',
 };
 
 describe('outcomeOfReport', () => {

@@ -113,7 +113,20 @@ describe('readToolCall', () => {
           title: '',
           severity: 'medium',
           note: '',
+          proof: '',
         },
+      });
+    });
+
+    it('keeps the words that prove a step passed, for QAzinho to check without the agent', () => {
+      expect(
+        readToolCall({
+          name: 'report',
+          args: { ...REPORT, verdict: 'passed', proof: ' Visits: 1 ' },
+        }),
+      ).toMatchObject({
+        kind: 'report',
+        report: { verdict: 'passed', proof: 'Visits: 1' },
       });
     });
 
