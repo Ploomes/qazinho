@@ -7,3 +7,4 @@ export * from './RECORDER_ARGUMENT';
 export * from './SHELL';
 export * from './STICKER';
 export * from './STORAGE';
+export * from './VARIABLE_NAME';

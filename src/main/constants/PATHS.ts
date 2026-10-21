@@ -10,6 +10,7 @@ export const PATHS = {
   data: app.getPath('userData'),
   profiles: join(app.getPath('userData'), 'profiles'),
   integrations: join(app.getPath('userData'), 'integrations.bin'),
+  variables: join(app.getPath('userData'), 'variables.bin'),
   agentHome: join(app.getPath('userData'), 'agent'),
   code: join(app.getPath('userData'), 'code'),
   builds: join(app.getPath('userData'), 'builds'),
