@@ -117,9 +117,21 @@ answers one question per channel, for a target `{ role, platform }`:
   workspace, its latest runs, what `AppPeek` saw, the @ references) opens the message inside
   `<qazinho>`, and only what changed since that session last read it (`changedSections`).
 - **A run is walked by agents of its own.** Each case gets a fresh agent with the runner's
-  prompt and the device tools, and nothing of the chat. The chat's agent learns how the runs
-  went from the history the next message carries (`runHistoryOf`): the latest run step by
-  step, the ones before by what broke.
+  prompt and the device tools, and nothing of the chat.
+- **A case that passed is walked again without the agent.** Its run records each step's
+  actions, and the agent reports with each pass a `proof`: words on screen that would not be
+  there had it failed.
+  - A case whose every step passed with a proof becomes a recipe, kept in the workspace's
+    folder (`recipes.json`), keyed to what the case says and the kind of target
+    (`fingerprintOf`). A web step also keeps the Playwright locator it used.
+  - The next run walks a case with a recipe on the device with no agent and checks each proof
+    (`replayCase`): it costs nothing and takes seconds. When a proof does not show, the case
+    starts over with the agent, which records it again, and its steps read as healed.
+  - "Run with the agent" walks every case with the agent. The report says "no AI" or
+    "healed" on each case, and `CodeExport` turns the recipes into a Playwright file or a
+    Maestro flow per case. The chat's agent learns how the runs
+    went from the history the next message carries (`runHistoryOf`): the latest run step by
+    step, the ones before by what broke.
 - **The tools are granted per role** (`TOOL_GRANTS`). The runner gets the device, the assistant
   gets the app, and the chat gets nothing: it runs with every tool taken away. `McpHost` serves
   the tools on loopback, one address per workspace for the length of a run, and one under the
@@ -237,7 +249,8 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `LiveStream`                          | serves the device's frames as MJPEG on 127.0.0.1, for the device panel                   |
 | `AppPeek`                             | opens a web target for a moment before the chat, and reads what its page shows           |
 | `PhonePeek`                           | opens a phone app on the emulator or simulator before a plan, and reads its first screen |
-| `RunCoordinator`                      | walks a plan a case per agent turn, each on the app opened anew (`restart`)              |
+| `RunCoordinator`                      | walks a plan a case per agent turn, each on the app opened anew, or from its recipe      |
+| `CodeExport`                          | writes the recorded cases as Playwright or Maestro code, in a folder the QA picks        |
 | `ResourceCollector` / `ProcessOwners` | one `ps` sweep, charged to whoever started it                                            |
 | `Archive`                             | the QA's projects, workspaces and plans, as files on disk                                |
 | `SetupInstaller`                      | installs an agent CLI, idb or gh on request, streaming each line it prints               |

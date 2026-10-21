@@ -69,6 +69,15 @@ Android stops the app, iOS terminates it, the web opens its address in a new tab
 on a phone, the chat opens the app on the emulator or simulator and reads its first screen. An
 iOS app that does not adopt UIScene does not launch on iOS 27, and QAzinho says it closed at once.
 
+**A case that passed is walked again without the agent.** Each step's actions are recorded with
+the words on screen that proved it, and the next run repeats them on the device and checks the
+words: seconds and no cost, against tens of seconds and a few cents with the agent. When the
+app changed and a word does not show, the agent walks the case again and records it anew
+("healed"). The recorded cases export as a Playwright test file or Maestro flows. A real Claude
+Code has recorded a web and an Android plan this way, both walked again with no agent, and the
+exported Playwright file passed in Chrome; the Maestro flows have not run in Maestro yet.
+`tests/smoke/replay.test.ts` proves it with a fake agent.
+
 **Every run is recorded and plays back with its timeline.** A browser is recorded from its live
 stream, a simulator by `simctl`, an emulator by its console. The run's video opens in a theater:
 a chapter per case in its verdict's colour, a pin per bug, a still of any moment under the
