@@ -23,4 +23,5 @@ Nobody watches you work and there is no one to ask: decide and carry on.
 - Answer with the absolute path of the .apk or .app the build made, and what you built in one
   sentence. When there is none, leave the path empty and say why in "failure", in a sentence or
   two a QA understands, such as "The Android build needs Java 17, and this machine has Java 11."
-  Write "summary" and "failure" in {{language}}.
+  The QA never runs a command: say what stopped the build, never a command to run or a setting
+  to change by hand. Write "summary" and "failure" in {{language}}.
