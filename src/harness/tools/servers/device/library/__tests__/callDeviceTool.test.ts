@@ -73,6 +73,18 @@ describe('callDeviceTool', () => {
     expect(text(answer)).toContain('The device now shows:\nCart');
   });
 
+  /** A run's record said a step closed and reopened the app, with nothing on how it was done. */
+  it('says the app closed completely and opened again after reopen', async () => {
+    const { device, acted } = fakeDevice();
+
+    expect(
+      text(await callDeviceTool({ device, call: { name: 'reopen', args: {} } })),
+    ).toBe(
+      'Done: the app closed completely and opened again. The device now shows:\nCart · [button] Apply',
+    );
+    expect(acted).toEqual([{ kind: 'reopen', target: '', value: '' }]);
+  });
+
   it('says back why an action failed, with no terminal colour codes', async () => {
     const ESC = String.fromCharCode(27);
     const { device } = fakeDevice({ fails: `${ESC}[2mTimeout${ESC}[22m` });

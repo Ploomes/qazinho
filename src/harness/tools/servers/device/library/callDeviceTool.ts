@@ -56,9 +56,14 @@ export async function callDeviceTool(props: {
 
     const motion = describeMotion(await device.driver.motion());
 
+    const done =
+      read.action.kind === 'reopen'
+        ? 'Done: the app closed completely and opened again.'
+        : 'Done.';
+
     return await shown({
       device,
-      lead: `Done.${motion === null ? '' : ` ${motion}`} The device now shows:\n`,
+      lead: `${done}${motion === null ? '' : ` ${motion}`} The device now shows:\n`,
     });
   } catch (reason) {
     const message = reason instanceof Error ? reason.message : String(reason);
