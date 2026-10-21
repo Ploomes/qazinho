@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
-import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import type { ExportOutcome, IExportCode } from '@/shared/types';
+import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { usePlanViewModel } from '@/modules/Plan/screens/Plan/hooks/usePlanViewModel';
 import { startRun } from '@/modules/Workspace';
 import {
@@ -9,7 +10,36 @@ import {
   WALKED_BY,
   walkRun,
 } from '@/modules/Workspace/library/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
+
+const PROJECT = {
+  id: 'p1',
+  name: 'Shop',
+  targets: [{ id: 't1', kind: 'web' as const, label: 'Web', value: 'https://shop.test' }],
+  repositories: [],
+};
+
+/** A bridge whose export answers with what it is handed, and remembers what it was asked. */
+function exporting(outcome: ExportOutcome) {
+  const asked: IExportCode[] = [];
+
+  window.qazinho = {
+    ...fakeQazinhoApi('darwin'),
+    exportCode: (request) => {
+      asked.push(request);
+
+      return Promise.resolve(outcome);
+    },
+  };
+
+  return asked;
+}
+
+afterEach(() => {
+  cleanup();
+  Reflect.deleteProperty(window, 'qazinho');
+});
 
 beforeEach(() => {
   useAppStore.setState({ selectedWorkspaceId: 'w1' });
@@ -17,6 +47,83 @@ beforeEach(() => {
 });
 
 describe('usePlanViewModel', () => {
+  describe('onExport', () => {
+    beforeEach(() => {
+      useAppStore.setState({ projects: [PROJECT] });
+    });
+
+    it('exports the plan as a run walks it, and says where the code went and what is not recorded', async () => {
+      const asked = exporting({
+        kind: 'saved',
+        folder: '/Users/qa/Downloads',
+        files: ['qazinho.spec.ts'],
+        exported: ['TC-01'],
+        missing: ['TC-02'],
+      });
+      const { result } = renderHook(() => usePlanViewModel());
+
+      expect(result.current.canExport).toBe(true);
+
+      act(() => {
+        result.current.onExport();
+      });
+
+      await waitFor(() => {
+        expect(result.current.exportNotice).toBe(
+          'Exported qazinho.spec.ts to /Users/qa/Downloads. Not recorded yet: TC-02. Each case that passes a run becomes code.',
+        );
+      });
+      expect(asked[0]).toMatchObject({
+        workspaceId: 'w1',
+        target: { kind: 'web', value: 'https://shop.test' },
+        viewport: { width: 1280, height: 800 },
+      });
+      expect(asked[0]?.steps).toHaveLength(6);
+
+      act(() => {
+        result.current.onDismissExport();
+      });
+
+      expect(result.current.exportNotice).toBeNull();
+    });
+
+    it('says when nothing is recorded yet, and stays quiet when the QA called the folder off', async () => {
+      exporting({ kind: 'nothing', missing: ['TC-01', 'TC-02'] });
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      act(() => {
+        result.current.onExport();
+      });
+
+      await waitFor(() => {
+        expect(result.current.exportNotice).toBe(
+          'No case is recorded yet. Run the plan: each case that passes becomes code.',
+        );
+      });
+
+      exporting({ kind: 'cancelled' });
+      act(() => {
+        result.current.onExport();
+      });
+
+      await waitFor(() => {
+        expect(result.current.exportNotice).toBeNull();
+      });
+    });
+
+    it('does NOT offer to export while a run walks the plan, or with no target', () => {
+      useAppStore.setState({ projects: [] });
+
+      expect(renderHook(() => usePlanViewModel()).result.current.canExport).toBe(false);
+
+      useAppStore.setState({ projects: [PROJECT] });
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
+
+      expect(renderHook(() => usePlanViewModel()).result.current.canExport).toBe(false);
+    });
+  });
+
   it('counts the cases and the steps of the plan', () => {
     const { result } = renderHook(() => usePlanViewModel());
 

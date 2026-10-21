@@ -1,6 +1,7 @@
-import { AnimatePresence, Reorder } from 'motion/react';
+import { AnimatePresence, motion, Reorder } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Button, EmptyState } from '@/shared/components/atoms';
+import { Button, EmptyState, IconButton } from '@/shared/components/atoms';
+import { MOTION } from '@/shared/constants';
 import { PlanCase, UndoToast } from './components';
 import { usePlanViewModel } from './hooks';
 import './styles.css';
@@ -19,6 +20,12 @@ export const Plan: React.FC = () => {
     onReorder,
     onRunAll,
     onStop,
+    exportLabel,
+    canExport,
+    exportNotice,
+    dismissExportLabel,
+    onExport,
+    onDismissExport,
     onDraftInChat,
     onAddCase,
     onRemoveCase,
@@ -59,12 +66,39 @@ export const Plan: React.FC = () => {
                   {t('PLAN.STOP_RUN')}
                 </Button>
               ) : (
-                <Button variant="primary" onClick={onRunAll}>
-                  {t('PLAN.RUN_ALL')}
-                </Button>
+                <>
+                  {canExport && <Button onClick={onExport}>{exportLabel}</Button>}
+                  <Button variant="primary" onClick={onRunAll}>
+                    {t('PLAN.RUN_ALL')}
+                  </Button>
+                </>
               )}
             </div>
           </div>
+
+          <AnimatePresence initial={false}>
+            {exportNotice !== null && (
+              <motion.div
+                key="export"
+                className="plan__export"
+                role="status"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+              >
+                <div className="plan__export-body">
+                  <span className="plan__export-text">{exportNotice}</span>
+                  <IconButton
+                    glyph="✕"
+                    label={dismissExportLabel}
+                    size="sm"
+                    onClick={onDismissExport}
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {source !== null && (
             <div className="plan__source">

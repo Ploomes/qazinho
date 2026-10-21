@@ -1,8 +1,10 @@
 import type { ICaseRemoval } from '@/modules/Plan/screens/Plan/types';
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
 import type { IRunCase } from '@/modules/Run';
+import type { ExportOutcome } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { viewportOf } from '@/modules/Device';
 import {
   addCase,
   addStep,
@@ -14,8 +16,9 @@ import {
 } from '@/modules/Plan/library';
 import { PLAN_SOURCE } from '@/modules/Plan/screens/Plan/constants';
 import { flattenPlanSteps, useRunActions } from '@/modules/Run';
+import { Run } from '@/services';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
-import { useSettingsStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 export const usePlanViewModel = () => {
   const { t } = useTranslation();
@@ -27,7 +30,16 @@ export const usePlanViewModel = () => {
     latest: opened.runs[0] ?? null,
     runs: opened.runs,
     bugs: opened.bugs,
+    projectId: opened.projectId,
+    targetId: opened.targetId,
+    viewportId: opened.viewportId,
   }));
+  const target = useAppStore(
+    (state) =>
+      state.projects
+        .find(({ id }) => id === workspace?.projectId)
+        ?.targets.find(({ id }) => id === workspace?.targetId) ?? null,
+  );
   const openCaseId = useWorkspaceStore((state) => state.openCaseId);
   const toggleCase = useWorkspaceStore((state) => state.toggleCase);
   const setPlan = useWorkspaceStore((state) => state.setPlan);
@@ -35,6 +47,7 @@ export const usePlanViewModel = () => {
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const { onRun, onStop } = useRunActions();
   const [removal, setRemoval] = useState<ICaseRemoval | null>(null);
+  const [exported, setExported] = useState<ExportOutcome | null>(null);
 
   const workspaceId = workspace?.id ?? null;
   const plan = workspace?.plan ?? [];
@@ -96,6 +109,44 @@ export const usePlanViewModel = () => {
     onReorder: write,
     onRunAll: onRun,
     onStop,
+    exportLabel: t('PLAN.EXPORT'),
+    canExport: plan.length > 0 && !isLocked && target !== null,
+    exportNotice:
+      exported === null || exported.kind === 'cancelled'
+        ? null
+        : exported.kind === 'saved'
+          ? [
+              t('PLAN.EXPORTED', {
+                files: exported.files.join(', '),
+                folder: exported.folder,
+              }),
+              ...(exported.missing.length === 0
+                ? []
+                : [t('PLAN.EXPORT_MISSING', { cases: exported.missing.join(', ') })]),
+            ].join(' ')
+          : exported.kind === 'nothing'
+            ? t('PLAN.EXPORT_NOTHING')
+            : t(
+                exported.reason === 'app-id'
+                  ? 'PLAN.EXPORT_NO_APP_ID'
+                  : 'PLAN.EXPORT_FAILED',
+              ),
+    dismissExportLabel: t('COMMON.CLOSE'),
+    onExport: () => {
+      if (workspaceId === null || target === null) return;
+
+      const viewport = viewportOf(workspace?.viewportId);
+
+      void Run.exportCode({
+        workspaceId,
+        target: { kind: target.kind, value: target.value },
+        viewport: { width: viewport.width, height: viewport.height },
+        steps: flattenPlanSteps(plan),
+      }).then(setExported);
+    },
+    onDismissExport: () => {
+      setExported(null);
+    },
     onDraftInChat: () => {
       selectTab('chat');
     },

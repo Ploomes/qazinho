@@ -165,6 +165,15 @@ export const en = {
     ACTION_PLACEHOLDER: 'what the agent does',
     EXPECTED_PLACEHOLDER: 'what you expect to see',
     RUN_ALL: 'Run all',
+    EXPORT: 'Export code',
+    EXPORTED: 'Exported {{files}} to {{folder}}.',
+    EXPORT_MISSING:
+      'Not recorded yet: {{cases}}. Each case that passes a run becomes code.',
+    EXPORT_NOTHING:
+      'No case is recorded yet. Run the plan: each case that passes becomes code.',
+    EXPORT_NO_APP_ID:
+      "QAzinho could not read the app's id from its file, so nothing was exported.",
+    EXPORT_FAILED: 'The code could not be written to that folder.',
     STOP_RUN: 'Stop the run',
     LOCKED: '{{agent}} is running this plan. Stop the run if you want to change it.',
     GOAL: 'goal',

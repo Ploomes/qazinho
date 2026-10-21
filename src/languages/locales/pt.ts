@@ -168,6 +168,15 @@ export const pt: typeof en = {
     ACTION_PLACEHOLDER: 'o que o agente faz',
     EXPECTED_PLACEHOLDER: 'o que você espera ver',
     RUN_ALL: 'Rodar tudo',
+    EXPORT: 'Exportar código',
+    EXPORTED: 'Exportado {{files}} para {{folder}}.',
+    EXPORT_MISSING:
+      'Ainda sem gravação: {{cases}}. Cada caso que passar numa run vira código.',
+    EXPORT_NOTHING:
+      'Nenhum caso gravado ainda. Rode o plano: cada caso que passar vira código.',
+    EXPORT_NO_APP_ID:
+      'O QAzinho não conseguiu ler o id do app no arquivo, então nada foi exportado.',
+    EXPORT_FAILED: 'Não deu para gravar o código nessa pasta.',
     STOP_RUN: 'Parar a run',
     LOCKED: 'O {{agent}} está rodando este plano. Pare a run se quiser mudá-lo.',
     GOAL: 'objetivo',
