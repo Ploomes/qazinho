@@ -282,8 +282,17 @@
 }
 
 .assistant-panel__secret-text {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
   color: var(--ink);
   font: var(--font-ui-sm);
+}
+
+.assistant-panel__secret-glyph {
+  flex: none;
+  color: var(--attn);
+  font: var(--font-mono-md);
 }
 
 .assistant-panel__secret-actions {

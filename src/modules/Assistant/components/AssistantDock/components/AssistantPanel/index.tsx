@@ -191,7 +191,12 @@ export const AssistantPanel: React.FC = () => {
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
             <div className="assistant-panel__secret-body">
-              <span className="assistant-panel__secret-text">{secretWarning}</span>
+              <span className="assistant-panel__secret-text">
+                <span className="assistant-panel__secret-glyph" aria-hidden="true">
+                  !
+                </span>
+                {secretWarning}
+              </span>
               <span className="assistant-panel__secret-actions">
                 <Button size="sm" variant="secondary" onClick={onRemoveSecret}>
                   {secretRemoveLabel}
