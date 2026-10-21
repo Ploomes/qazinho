@@ -1,3 +1,4 @@
+import type { IconName } from '@/shared/components/atoms/Icon/types';
 import type { TargetKind } from '@/shared/types';
 
 export interface ISidebarWorkspaceRow {
@@ -6,7 +7,7 @@ export interface ISidebarWorkspaceRow {
   name: string;
   platform: TargetKind | null;
   meta: string;
-  glyph: string;
+  icon: IconName;
   statusLabel: string;
   tone: string;
   animation: string;

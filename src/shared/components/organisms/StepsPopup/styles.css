@@ -76,7 +76,12 @@
 }
 
 .steps-popup__badge-mark {
+  display: inline-flex;
   font: 600 18px/1 var(--font-mono);
+}
+
+.steps-popup__tick {
+  display: inline-flex;
 }
 
 .steps-popup__badge--connected .steps-popup__badge-mark {

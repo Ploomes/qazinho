@@ -1,4 +1,5 @@
 import type { IToolCardProps } from './types';
+import { Icon } from '@/shared/components/atoms';
 import { useToolCardViewModel } from './hooks';
 import './styles.css';
 
@@ -17,9 +18,7 @@ export const ToolCard: React.FC<IToolCardProps> = (props) => {
       onKeyDown={onKeyDown}
     >
       <div className="tool-card__head">
-        <span className="tool-card__mark" aria-hidden="true">
-          {isSelected && '✓'}
-        </span>
+        <span className="tool-card__mark">{isSelected && <Icon name="check" />}</span>
         <span className="tool-card__text">
           <span className="tool-card__name">
             {props.name}

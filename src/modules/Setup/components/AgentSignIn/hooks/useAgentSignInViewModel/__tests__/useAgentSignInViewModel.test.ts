@@ -73,7 +73,7 @@ describe('useAgentSignInViewModel', () => {
     expect(result.current.hint).toContain('The Claude Code sign-in page opened');
     expect(result.current.page).toEqual({
       url: 'https://claude.com/cai/oauth/authorize',
-      label: 'Open the page again ↗',
+      label: 'Open the page again',
     });
 
     result.current.code?.onSubmit('abc-123');

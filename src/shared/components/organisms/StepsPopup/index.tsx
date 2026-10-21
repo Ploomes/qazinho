@@ -1,6 +1,6 @@
 import type { IStepsPopupProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
-import { Button } from '@/shared/components/atoms';
+import { Button, Icon } from '@/shared/components/atoms';
 import { BACKDROP, MOTION, STICKER } from '@/shared/constants';
 import { useStepsPopupViewModel } from './hooks';
 import './styles.css';
@@ -73,7 +73,7 @@ export const StepsPopup: React.FC<IStepsPopupProps> = (props) => {
                   }}
                   exit={{ opacity: 0, scale: 0.4 }}
                 >
-                  {badgeMark}
+                  {badgeMark !== null && <Icon name={badgeMark} />}
                 </motion.span>
               )}
             </AnimatePresence>
@@ -112,14 +112,15 @@ export const StepsPopup: React.FC<IStepsPopupProps> = (props) => {
               >
                 <span className={row.markClass} aria-hidden="true">
                   <AnimatePresence initial={false}>
-                    {row.mark !== '' && (
+                    {row.mark !== null && (
                       <motion.span
                         key={row.mark}
+                        className="steps-popup__tick"
                         initial={{ opacity: 0, scale: 0.3 }}
                         animate={{ opacity: 1, scale: 1, transition: STICKER.spring }}
                         exit={{ opacity: 0, scale: 0.3 }}
                       >
-                        {row.mark}
+                        <Icon name={row.mark} />
                       </motion.span>
                     )}
                   </AnimatePresence>
@@ -177,7 +178,7 @@ export const StepsPopup: React.FC<IStepsPopupProps> = (props) => {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {props.page.label}
+                    {props.page.label} <Icon name="external" />
                   </a>
                 )}
                 {props.code !== null && (

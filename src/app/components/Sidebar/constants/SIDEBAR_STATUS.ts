@@ -1,22 +1,23 @@
 import type { WorkspaceStatus } from '@/modules/Workspace';
+import type { IconName } from '@/shared/components/atoms/Icon/types';
 
 export const SIDEBAR_STATUS: Record<
   WorkspaceStatus | 'paused',
-  { glyph: string; tone: string; animation: string }
+  { icon: IconName; tone: string; animation: string }
 > = {
   running: {
-    glyph: '▸',
+    icon: 'play',
     tone: 'var(--lime-ink)',
     animation: 'gc-pulse 1.8s ease-in-out infinite',
   },
-  paused: { glyph: '‖', tone: 'var(--attn)', animation: 'none' },
+  paused: { icon: 'pause', tone: 'var(--attn)', animation: 'none' },
   attention: {
-    glyph: '!',
+    icon: 'attention',
     tone: 'var(--attn)',
     animation: 'gc-blink 2.4s ease-in-out infinite',
   },
-  failed: { glyph: '✕', tone: 'var(--fail)', animation: 'none' },
-  passed: { glyph: '✓', tone: 'var(--pass)', animation: 'none' },
-  stopped: { glyph: '■', tone: 'var(--ink3)', animation: 'none' },
-  idle: { glyph: '○', tone: 'var(--ink3)', animation: 'none' },
+  failed: { icon: 'close', tone: 'var(--fail)', animation: 'none' },
+  passed: { icon: 'check', tone: 'var(--pass)', animation: 'none' },
+  stopped: { icon: 'stop', tone: 'var(--ink3)', animation: 'none' },
+  idle: { icon: 'idle', tone: 'var(--ink3)', animation: 'none' },
 };

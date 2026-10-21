@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { AgentSignIn, InstallProgress } from '@/modules/Setup/components';
 import { ToolCard } from '@/modules/Setup/screens/Onboarding/components/ToolCard';
-import { Button } from '@/shared/components/atoms';
+import { Button, Icon } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { useStepAgentsViewModel } from './hooks';
 import './styles.css';
@@ -96,7 +96,7 @@ export const StepAgents: React.FC = () => {
               target="_blank"
               rel="noreferrer"
             >
-              nodejs.org ↗
+              nodejs.org <Icon name="external" />
             </a>
           </motion.p>
         )}

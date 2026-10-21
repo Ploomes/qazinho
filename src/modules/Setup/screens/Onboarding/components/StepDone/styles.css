@@ -15,12 +15,13 @@
   background: var(--raise);
 }
 
-.step-done__glyph {
+.step-done__mark {
+  display: inline-flex;
   color: var(--ink3);
   font: var(--font-mono-md);
 }
 
-.step-done__row--ready .step-done__glyph {
+.step-done__row--ready .step-done__mark {
   color: var(--pass);
 }
 

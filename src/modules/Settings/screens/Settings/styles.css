@@ -153,12 +153,16 @@ button.settings__card:hover:not(:disabled) {
   background: var(--pass);
 }
 
-.settings__glyph {
+.settings__mark {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: 1.6em;
   color: var(--fail);
   font: 600 12px/1.6 var(--font-mono);
 }
 
-.settings__glyph--found {
+.settings__mark--found {
   color: var(--pass);
 }
 

@@ -1,8 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { PlatformIcon, Tag } from '@/shared/components/atoms';
+import { Icon, PlatformIcon, Tag } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
-import { GEAR_PATH } from './constants';
 import { useSidebarViewModel } from './hooks';
 import './styles.css';
 
@@ -31,7 +30,9 @@ export const Sidebar: React.FC = () => {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
-            <span className="sidebar__banner-glyph">!</span>
+            <span className="sidebar__banner-icon">
+              <Icon name="attention" />
+            </span>
             <span className="sidebar__banner-name">{waitingName}</span>
             <span className="sidebar__banner-text">{t('SIDEBAR.ASKED_YOU')}</span>
           </motion.div>
@@ -54,21 +55,9 @@ export const Sidebar: React.FC = () => {
                     onProjectSettings(row.projectId);
                   }}
                 >
-                  <svg
-                    className="sidebar__project-settings-icon"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d={GEAR_PATH} />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
+                  <span className="sidebar__project-settings-icon">
+                    <Icon name="settings" size={14} />
+                  </span>
                 </button>
               </div>
             );
@@ -84,7 +73,7 @@ export const Sidebar: React.FC = () => {
                   onNewWorkspace(row.projectId);
                 }}
               >
-                <span aria-hidden="true">+</span>
+                <Icon name="plus" />
                 {t('SIDEBAR.NEW_WORKSPACE')}
               </button>
             );
@@ -119,11 +108,10 @@ export const Sidebar: React.FC = () => {
                     }
                   >
                     <span
-                      className="sidebar__glyph"
+                      className="sidebar__icon"
                       style={{ color: row.tone, animation: row.animation }}
-                      aria-hidden="true"
                     >
-                      {row.glyph}
+                      <Icon name={row.icon} />
                     </span>
                     <span style={{ color: row.tone }}>{row.statusLabel}</span>
                     <span aria-hidden="true">·</span>
@@ -170,7 +158,7 @@ export const Sidebar: React.FC = () => {
                     onAskRemove(row.id);
                   }}
                 >
-                  ✕
+                  <Icon name="close" />
                 </button>
               )}
             </div>
@@ -183,12 +171,12 @@ export const Sidebar: React.FC = () => {
         className="sidebar__add sidebar__add--project"
         onClick={onNewProject}
       >
-        <span aria-hidden="true">+</span>
+        <Icon name="plus" />
         {t('SIDEBAR.NEW_PROJECT')}
       </button>
 
       <button type="button" className="sidebar__settings" onClick={onSettings}>
-        <span aria-hidden="true">⚙</span>
+        <Icon name="settings" />
         {t('COMMON.SETTINGS')}
       </button>
     </nav>

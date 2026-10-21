@@ -1,6 +1,6 @@
 export const en = {
   COMMON: {
-    OPEN_PAGE_AGAIN: 'Open the page again ↗',
+    OPEN_PAGE_AGAIN: 'Open the page again',
     TRY_AGAIN: 'Try again',
     DONE: 'Done',
     CANCEL: 'Cancel',
@@ -684,7 +684,7 @@ export const en = {
     FIELD_TOKEN: 'token',
     FIELD_SITE: 'site',
     FIELD_EMAIL: 'email',
-    CREATE_TOKEN: 'Create a token ↗',
+    CREATE_TOKEN: 'Create a token',
     CHECKING_TOKEN: 'Checking…',
     ROW_ACCOUNT: 'account',
     ROW_SITE: 'site',
@@ -747,9 +747,9 @@ export const en = {
     CHECK_AGAIN: 'Check again',
     CHECKING: 'checking…',
     ANDROID_ABOUT: 'Runs your own emulators through adb.',
-    GET_ANDROID_STUDIO: 'Get Android Studio ↗',
+    GET_ANDROID_STUDIO: 'Get Android Studio',
     XCODE_ABOUT: 'Boots the iOS simulator and installs your build on it.',
-    GET_XCODE: 'Get Xcode ↗',
+    GET_XCODE: 'Get Xcode',
     IDB_ABOUT: 'Reads and taps the iOS simulator screen.',
     NEEDS_BREW:
       'Installing idb needs Homebrew, and this machine has none. Install it, then check again.',

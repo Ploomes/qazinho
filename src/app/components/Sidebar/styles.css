@@ -59,10 +59,8 @@
 }
 
 .sidebar__project-settings-icon {
-  display: block;
-  transform-box: fill-box;
-  transform-origin: center;
-  transition: transform var(--dur) var(--ease);
+  display: inline-flex;
+  transition: rotate var(--dur) var(--ease);
 }
 
 .sidebar__project:hover .sidebar__project-settings,
@@ -76,7 +74,7 @@
 }
 
 .sidebar__project-settings:hover .sidebar__project-settings-icon {
-  transform: rotate(60deg);
+  rotate: 60deg;
 }
 
 .sidebar__row {
@@ -158,7 +156,8 @@
   opacity: 0;
 }
 
-.sidebar__glyph {
+.sidebar__icon {
+  display: inline-flex;
   font: 600 10px/1 var(--font-mono);
 }
 
@@ -284,7 +283,8 @@
   }
 }
 
-.sidebar__banner-glyph {
+.sidebar__banner-icon {
+  display: inline-flex;
   color: var(--attn);
   font: 600 12px/1 var(--font-mono);
   animation: gc-blink 2.4s ease-in-out infinite;

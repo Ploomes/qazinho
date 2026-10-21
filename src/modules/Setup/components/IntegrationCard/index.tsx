@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { GithubSignIn } from '@/modules/Setup/components/GithubSignIn';
 import { InstallProgress } from '@/modules/Setup/components/InstallProgress';
-import { Button, Input, StatusPill } from '@/shared/components/atoms';
+import { Button, Icon, Input, StatusPill } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { useIntegrationCardViewModel } from './hooks';
 import './styles.css';
@@ -153,7 +153,7 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {t('SETUP.CREATE_TOKEN')}
+                  {t('SETUP.CREATE_TOKEN')} <Icon name="external" />
                 </a>
                 <Button variant="ghost" size="sm" onClick={onCancel}>
                   {t('COMMON.CANCEL')}

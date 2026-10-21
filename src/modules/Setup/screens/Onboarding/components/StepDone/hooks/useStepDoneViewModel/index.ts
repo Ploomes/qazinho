@@ -54,6 +54,9 @@ export const useStepDoneViewModel = () => {
                 .join(', '),
         isReady: integrations.length > 0,
       },
-    ],
+    ].map((row) => ({
+      ...row,
+      icon: row.isReady ? ('check' as const) : ('skip' as const),
+    })),
   };
 };

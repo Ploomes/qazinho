@@ -1,24 +1,10 @@
 import type { IPlatformIconProps } from './types';
+import { Icon } from '@/shared/components/atoms/Icon';
 import { usePlatformIconViewModel } from './hooks';
-import './styles.css';
 
+/** The logo of the platform a target runs on: a globe for the web, Android's, or Apple's. */
 export const PlatformIcon: React.FC<IPlatformIconProps> = (props) => {
-  const { size, glyph } = usePlatformIconViewModel(props);
+  const { size, icon } = usePlatformIconViewModel(props);
 
-  return (
-    <svg
-      className="platform-icon"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      {glyph.strokes.map((d) => (
-        <path key={d} className="platform-icon__stroke" d={d} />
-      ))}
-      {glyph.fills.map((d) => (
-        <path key={d} className="platform-icon__fill" d={d} />
-      ))}
-    </svg>
-  );
+  return <Icon name={icon} size={size} />;
 };

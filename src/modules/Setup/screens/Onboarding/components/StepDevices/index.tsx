@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { InstallProgress } from '@/modules/Setup/components';
 import { ToolCard } from '@/modules/Setup/screens/Onboarding/components/ToolCard';
-import { Button } from '@/shared/components/atoms';
+import { Button, Icon } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { useStepDevicesViewModel } from './hooks';
 import './styles.css';
@@ -38,7 +38,7 @@ export const StepDevices: React.FC = () => {
               target="_blank"
               rel="noreferrer"
             >
-              {t('SETUP.GET_ANDROID_STUDIO')}
+              {t('SETUP.GET_ANDROID_STUDIO')} <Icon name="external" />
             </a>
           )
         }
@@ -59,7 +59,7 @@ export const StepDevices: React.FC = () => {
               target="_blank"
               rel="noreferrer"
             >
-              {t('SETUP.GET_XCODE')}
+              {t('SETUP.GET_XCODE')} <Icon name="external" />
             </a>
           )
         }
@@ -102,7 +102,7 @@ export const StepDevices: React.FC = () => {
               target="_blank"
               rel="noreferrer"
             >
-              brew.sh ↗
+              brew.sh <Icon name="external" />
             </a>
           </motion.p>
         )}

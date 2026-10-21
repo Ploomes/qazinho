@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Icon } from '@/shared/components/atoms';
 import { useStepDoneViewModel } from './hooks';
 import './styles.css';
 
@@ -15,8 +16,8 @@ export const StepDone: React.FC = () => {
             row.isReady ? 'step-done__row step-done__row--ready' : 'step-done__row'
           }
         >
-          <span className="step-done__glyph" aria-hidden="true">
-            {row.isReady ? '✓' : '–'}
+          <span className="step-done__mark">
+            <Icon name={row.icon} />
           </span>
           <span className="step-done__label">{row.label}</span>
           <span className="step-done__value">{row.value}</span>

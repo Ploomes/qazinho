@@ -49,7 +49,11 @@ describe('useStepsPopupViewModel', () => {
     it('marks each step by where it stands, and staggers them up to a ceiling', () => {
       const { result } = popup('failed');
 
-      expect(result.current.rows.map(({ mark }) => mark)).toEqual(['✓', '✕', '']);
+      expect(result.current.rows.map(({ mark }) => mark)).toEqual([
+        'check',
+        'close',
+        null,
+      ]);
       expect(result.current.rows[1]?.className).toBe(
         'steps-popup__step steps-popup__step--failed',
       );
@@ -61,8 +65,8 @@ describe('useStepsPopupViewModel', () => {
 
     it('swaps the badge for a check once connected, and a cross once failed', () => {
       expect(popup('working').result.current.badgeMark).toBeNull();
-      expect(popup('connected').result.current.badgeMark).toBe('✓');
-      expect(popup('failed').result.current.badgeMark).toBe('✕');
+      expect(popup('connected').result.current.badgeMark).toBe('check');
+      expect(popup('failed').result.current.badgeMark).toBe('close');
     });
 
     it('sets a command apart from an error', () => {

@@ -2,7 +2,7 @@ import type { en } from './en';
 
 export const pt: typeof en = {
   COMMON: {
-    OPEN_PAGE_AGAIN: 'Abrir a página de novo ↗',
+    OPEN_PAGE_AGAIN: 'Abrir a página de novo',
     TRY_AGAIN: 'Tentar de novo',
     DONE: 'Pronto',
     CANCEL: 'Cancelar',
@@ -686,7 +686,7 @@ export const pt: typeof en = {
     FIELD_TOKEN: 'token',
     FIELD_SITE: 'site',
     FIELD_EMAIL: 'email',
-    CREATE_TOKEN: 'Criar um token ↗',
+    CREATE_TOKEN: 'Criar um token',
     CHECKING_TOKEN: 'Conferindo…',
     ROW_ACCOUNT: 'conta',
     ROW_SITE: 'site',
@@ -749,9 +749,9 @@ export const pt: typeof en = {
     CHECK_AGAIN: 'Verificar de novo',
     CHECKING: 'verificando…',
     ANDROID_ABOUT: 'Roda seus próprios emuladores pelo adb.',
-    GET_ANDROID_STUDIO: 'Baixar Android Studio ↗',
+    GET_ANDROID_STUDIO: 'Baixar Android Studio',
     XCODE_ABOUT: 'Liga o simulador de iOS e instala seu build nele.',
-    GET_XCODE: 'Baixar Xcode ↗',
+    GET_XCODE: 'Baixar Xcode',
     IDB_ABOUT: 'Lê e toca na tela do simulador de iOS.',
     NEEDS_BREW:
       'Instalar o idb precisa do Homebrew, e esta máquina não tem. Instale e verifique de novo.',

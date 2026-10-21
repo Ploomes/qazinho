@@ -2,7 +2,7 @@ import { AnimatePresence } from 'motion/react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { AgentSignIn, InstallProgress, IntegrationCard, McpCard } from '@/modules/Setup';
-import { Button, Logo, Tag, Wordmark } from '@/shared/components/atoms';
+import { Button, Icon, Logo, Tag, Wordmark } from '@/shared/components/atoms';
 import { useSettingsViewModel } from './hooks';
 import './styles.css';
 
@@ -46,7 +46,7 @@ export const Settings: React.FC = () => {
     <section className="settings">
       <nav className="settings__nav">
         <button type="button" className="settings__back" onClick={onBack}>
-          <span aria-hidden="true">←</span>
+          <Icon name="back" />
           {t('SETTINGS.BACK')}
         </button>
 
@@ -149,7 +149,7 @@ export const Settings: React.FC = () => {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    nodejs.org ↗
+                    nodejs.org <Icon name="external" />
                   </a>
                 </p>
               )}
@@ -171,12 +171,11 @@ export const Settings: React.FC = () => {
                   <span
                     className={
                       item.isFound
-                        ? 'settings__glyph settings__glyph--found'
-                        : 'settings__glyph'
+                        ? 'settings__mark settings__mark--found'
+                        : 'settings__mark'
                     }
-                    aria-hidden="true"
                   >
-                    {item.glyph}
+                    <Icon name={item.icon} />
                   </span>
                   <span className="settings__card-text settings__card-text--loose">
                     <span className="settings__card-name">{item.name}</span>
@@ -218,7 +217,7 @@ export const Settings: React.FC = () => {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    brew.sh ↗
+                    brew.sh <Icon name="external" />
                   </a>
                 </p>
               )}

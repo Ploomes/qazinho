@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { PLATFORM_GLYPHS } from '@/shared/components/atoms/PlatformIcon/constants';
+import { PLATFORM_ICONS } from '@/shared/components/atoms/PlatformIcon/constants';
 import { usePlatformIconViewModel } from '@/shared/components/atoms/PlatformIcon/hooks/usePlatformIconViewModel';
 
 describe('usePlatformIconViewModel', () => {
@@ -9,7 +9,7 @@ describe('usePlatformIconViewModel', () => {
     const { result } = renderHook(() => usePlatformIconViewModel({ kind: 'android' }));
 
     expect(result.current.size).toBe(14);
-    expect(result.current.glyph).toBe(PLATFORM_GLYPHS.android);
+    expect(result.current.icon).toBe(PLATFORM_ICONS.android);
   });
 
   it('takes a larger size when one is asked for', () => {

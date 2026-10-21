@@ -1,1 +1,1 @@
-export * from './PLATFORM_GLYPHS';
+export * from './PLATFORM_ICONS';

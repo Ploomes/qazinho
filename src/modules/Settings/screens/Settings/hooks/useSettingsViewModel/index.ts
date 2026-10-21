@@ -70,14 +70,14 @@ export const useSettingsViewModel = () => {
       ? {
           name: props.name,
           isFound: props.isFound,
-          glyph: props.isFound ? '✓' : '!',
+          icon: props.isFound ? ('check' as const) : ('attention' as const),
           path: props.path,
           status: props.isFound ? props.found : props.missing,
         }
       : {
           name: props.name,
           isFound: false,
-          glyph: '!',
+          icon: 'attention' as const,
           path: t('PROJECT.IOS_MAC_ONLY'),
           status: t('SETTINGS.IOS_OFF'),
         };
@@ -136,7 +136,7 @@ export const useSettingsViewModel = () => {
       {
         name: 'Android SDK',
         isFound: tools.androidSdk.isFound,
-        glyph: tools.androidSdk.isFound ? '✓' : '!',
+        icon: tools.androidSdk.isFound ? ('check' as const) : ('attention' as const),
         path: tools.androidSdk.path ?? t('TOOLS.NOT_FOUND_PATH'),
         status: tools.androidSdk.isFound
           ? t('TOOLS.ANDROID_FOUND')

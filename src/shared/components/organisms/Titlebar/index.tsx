@@ -1,6 +1,6 @@
 import type { ITitlebarProps } from './types';
 import { AnimatePresence } from 'motion/react';
-import { Gauge, Logo, Meter, Wordmark } from '@/shared/components/atoms';
+import { Gauge, Icon, Logo, Meter, Wordmark } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { ModelPopover } from '@/shared/components/organisms/ModelPopover';
 import { ResourcePopover } from '@/shared/components/organisms/ResourcePopover';
@@ -77,7 +77,7 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
             onClick={onToggleModelMenu}
           >
             <span>{agentLabel}</span>
-            <span aria-hidden="true">▾</span>
+            <Icon name="caretDown" />
           </button>
         </div>
       )}

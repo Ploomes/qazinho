@@ -18,6 +18,7 @@
 }
 
 .chip__caret {
+  display: inline-flex;
   color: var(--ink3);
 }
 

@@ -1,4 +1,5 @@
 import type { IChipProps } from './types';
+import { Icon } from '@/shared/components/atoms/Icon';
 import { useChipViewModel } from './hooks';
 import './styles.css';
 
@@ -11,8 +12,8 @@ export const Chip: React.FC<IChipProps> = (props) => {
       {hasDot && <span className="chip__dot" style={{ background: dotTone }} />}
       {props.children}
       {hasCaret && (
-        <span className="chip__caret" aria-hidden="true">
-          ▾
+        <span className="chip__caret">
+          <Icon name="caretDown" />
         </span>
       )}
     </>

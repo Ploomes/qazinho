@@ -48,7 +48,7 @@ export const useSidebarViewModel = () => {
           count: workspaceMeta(workspace).count,
           current: workspace.live?.outcomes.length ?? 0,
         }),
-        glyph: SIDEBAR_STATUS[shown].glyph,
+        icon: SIDEBAR_STATUS[shown].icon,
         statusLabel: t(STATUS[shown].labelKey),
         tone: SIDEBAR_STATUS[shown].tone,
         animation: SIDEBAR_STATUS[shown].animation,

@@ -101,7 +101,7 @@ describe('useMcpSignInViewModel', () => {
       expect(result.current.hint).toContain('A Figma page opened in your browser');
       expect(result.current.page).toEqual({
         url: 'https://www.figma.com/oauth/mcp',
-        label: 'Open the page again ↗',
+        label: 'Open the page again',
       });
     });
 
