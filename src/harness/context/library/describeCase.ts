@@ -1,5 +1,6 @@
 import type { IFlatStep, IVariableBrief, Language } from '@/shared/types';
 import { LANGUAGE_NAMES } from '@/harness/constants';
+import { describeVariables } from './describeVariables';
 
 /** One case to walk, as the message that starts the agent's turn: what it needs, every step in order, the language to report in, the variables it may type, what the run already filed, and the screen it starts on. */
 export function describeCase(props: {
@@ -26,15 +27,7 @@ export function describeCase(props: {
       `   The QA expects: ${step.expected}`,
     ]),
     `Write what you report and note in ${LANGUAGE_NAMES[language]}, whatever language these steps are in.`,
-    ...(variables.length === 0
-      ? []
-      : [
-          '',
-          'Variables the project keeps, to type as written:',
-          ...variables.map(({ name, description }) =>
-            description.length === 0 ? `- \${${name}}` : `- \${${name}}: ${description}`,
-          ),
-        ]),
+    ...describeVariables(variables),
     ...(filed.length === 0
       ? []
       : [

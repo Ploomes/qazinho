@@ -1,20 +1,5 @@
 import { z } from 'zod';
-
-const STEP = z.object({ action: z.string(), expected: z.string() });
-
-const CASE = z.object({
-  id: z
-    .string()
-    .describe(
-      'The id of the case this one keeps or changes, such as TC-03; none for a new case.',
-    )
-    .optional(),
-  title: z.string(),
-  priority: z.enum(['P1', 'P2', 'P3']),
-  goal: z.string(),
-  preconditions: z.string(),
-  steps: z.array(STEP),
-});
+import { DRAFTED_CASE } from './DRAFTED_CASE';
 
 const OPTION = z.object({ label: z.string(), description: z.string() });
 
@@ -28,5 +13,5 @@ const QUESTION = z.object({
 export const CHAT_ANSWER = z.object({
   reply: z.string(),
   questions: z.array(QUESTION).optional(),
-  plan: z.object({ summary: z.string(), cases: z.array(CASE) }).optional(),
+  plan: z.object({ summary: z.string(), cases: z.array(DRAFTED_CASE) }).optional(),
 });

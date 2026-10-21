@@ -3,6 +3,7 @@ import type { ToolAnswer } from '@/harness/tools/types';
 import { stripAnsi } from '@/harness/library';
 import { describeMotion } from './describeMotion';
 import { readToolCall } from './readToolCall';
+import { timeLeftOf } from './timeLeftOf';
 
 function said(text: string, isError = false): ToolAnswer {
   return { content: [{ type: 'text', text }], isError };
@@ -38,7 +39,14 @@ export async function callDeviceTool(props: {
   try {
     if (read.kind === 'refused') return said(read.error, true);
 
-    if (read.kind === 'look') return await shown({ device, lead: '' });
+    if (read.kind === 'look')
+      return await shown({
+        device,
+        lead:
+          device.endsAt === undefined
+            ? ''
+            : `${timeLeftOf(device.endsAt - Date.now())} The device shows:\n`,
+      });
 
     if (read.kind === 'report') {
       if (!device.onReport) return said('There is no run to report to.', true);
@@ -52,6 +60,22 @@ export async function callDeviceTool(props: {
       return said(await device.onFinding(read.finding));
     }
 
+    if (read.kind === 'screen') {
+      if (!device.onScreen)
+        return said('There is no exploration to note a screen in.', true);
+
+      return said(await device.onScreen(read.screen));
+    }
+
+    if (read.kind === 'finish') {
+      if (!device.onFinish) return said('There is no exploration to finish.', true);
+
+      return said(await device.onFinish(read.finish));
+    }
+
+    if (device.endsAt !== undefined && Date.now() >= device.endsAt)
+      return said('Time is up: call finish now with what you saw.', true);
+
     await device.driver.act(read.action);
 
     const motion = describeMotion(await device.driver.motion());
@@ -61,9 +85,12 @@ export async function callDeviceTool(props: {
         ? 'Done: the app closed completely and opened again.'
         : 'Done.';
 
+    const left =
+      device.endsAt === undefined ? '' : ` ${timeLeftOf(device.endsAt - Date.now())}`;
+
     return await shown({
       device,
-      lead: `${done}${motion === null ? '' : ` ${motion}`} The device now shows:\n`,
+      lead: `${done}${motion === null ? '' : ` ${motion}`}${left} The device now shows:\n`,
     });
   } catch (reason) {
     const message = reason instanceof Error ? reason.message : String(reason);

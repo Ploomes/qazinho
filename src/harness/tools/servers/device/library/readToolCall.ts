@@ -42,6 +42,20 @@ export function readToolCall(props: {
     return { kind: 'finding', finding: read.data };
   }
 
+  if (tool.name === 'screen' || tool.name === 'finish') {
+    const read = tool.input.safeParse(props.args ?? {});
+
+    if (!read.success)
+      return {
+        kind: 'refused',
+        error: read.error.issues[0]?.message ?? 'Call it again.',
+      };
+
+    return 'name' in read.data
+      ? { kind: 'screen', screen: read.data }
+      : { kind: 'finish', finish: read.data };
+  }
+
   const read = tool.input.safeParse(props.args ?? {});
 
   if (!read.success)

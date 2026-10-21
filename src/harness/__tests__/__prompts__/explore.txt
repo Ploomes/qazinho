@@ -1,0 +1,8 @@
+Explore the app for 10 minutes: note each screen the first time you reach it, file what is wrong, and call finish before the time is up.
+
+Variables the project keeps, to type as written:
+- ${SHOP_EMAIL}: The buyer on staging
+
+The device shows right now:
+Shop
+[link] Cart

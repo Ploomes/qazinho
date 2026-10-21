@@ -1,3 +1,4 @@
+import type { DevicePurpose } from '@/harness/tools/servers/device/types';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -5,7 +6,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { registerDeviceTools } from '@/harness/tools/servers/device/library';
 
 /** The device tools on an MCP server, reached by a client over an in-memory pipe: no network. */
-async function serve() {
+async function serve(purpose: DevicePurpose = 'walk') {
   const calls: { name: string; args: Record<string, unknown> }[] = [];
   const mcp = new McpServer({ name: 'qazinho', version: '0' });
   const client = new Client({ name: 'test', version: '0' });
@@ -13,6 +14,7 @@ async function serve() {
 
   registerDeviceTools({
     mcp,
+    purpose,
     call: async (call) => {
       calls.push(call);
       return { content: [{ type: 'text', text: 'Done.' }], isError: false };
@@ -59,8 +61,27 @@ describe('registerDeviceTools', () => {
 
   it('answers a tool it does not have as an error, not a crash', async () => {
     const { client } = await serve();
-    const result = await client.callTool({ name: 'hover', arguments: {} });
+    const result = await client.callTool({ name: 'pinch', arguments: {} });
 
     expect(result.isError).toBe(true);
+  });
+  it('gives a walk the report, and nothing to note screens or finish with', async () => {
+    const { client } = await serve('walk');
+    const names = (await client.listTools()).tools.map(({ name }) => name);
+
+    expect(names).toContain('report');
+    expect(names).toContain('bug');
+    expect(names).not.toContain('screen');
+    expect(names).not.toContain('finish');
+  });
+
+  it('gives an exploration its screens and its finish, and no report to file a step with', async () => {
+    const { client } = await serve('explore');
+    const names = (await client.listTools()).tools.map(({ name }) => name);
+
+    expect(names).toEqual(
+      expect.arrayContaining(['look', 'click', 'bug', 'screen', 'finish']),
+    );
+    expect(names).not.toContain('report');
   });
 });

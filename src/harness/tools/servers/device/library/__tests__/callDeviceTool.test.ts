@@ -227,4 +227,88 @@ describe('callDeviceTool', () => {
       expect(answer.isError).toBe(true);
     });
   });
+  describe('an exploration', () => {
+    it('hands a screen and a finish to the exploration that hears them', async () => {
+      const heard: string[] = [];
+      const device: IAttachDevice = {
+        ...fakeDevice().device,
+        purpose: 'explore',
+        onScreen: async (screen) => {
+          heard.push(`screen ${screen.name}: ${screen.about}`);
+          return 'Noted.';
+        },
+        onFinish: async (finish) => {
+          heard.push(
+            `finish ${finish.summary} with ${String(finish.cases.length)} cases`,
+          );
+          return 'End your turn now.';
+        },
+      };
+
+      expect(
+        text(
+          await callDeviceTool({
+            device,
+            call: {
+              name: 'screen',
+              args: { name: 'Cart', about: 'What the buyer picked.' },
+            },
+          }),
+        ),
+      ).toBe('Noted.');
+      expect(
+        text(
+          await callDeviceTool({
+            device,
+            call: { name: 'finish', args: { summary: 'The cart works.', cases: [] } },
+          }),
+        ),
+      ).toBe('End your turn now.');
+      expect(heard).toEqual([
+        'screen Cart: What the buyer picked.',
+        'finish The cart works. with 0 cases',
+      ]);
+    });
+
+    it('says how much time is left after each action, and on a look', async () => {
+      const { device } = fakeDevice();
+      const exploring = { ...device, endsAt: Date.now() + 7 * 60_000 + 10_000 };
+
+      expect(
+        text(
+          await callDeviceTool({
+            device: exploring,
+            call: { name: 'click', args: { target: 'Apply' } },
+          }),
+        ),
+      ).toContain('Done. About 7 minutes left. The device now shows:');
+      expect(
+        text(
+          await callDeviceTool({ device: exploring, call: { name: 'look', args: {} } }),
+        ),
+      ).toContain('About 7 minutes left. The device shows:');
+    });
+
+    it('does NOT act once the time is up, and tells the agent to finish', async () => {
+      const { device, acted } = fakeDevice();
+      const answer = await callDeviceTool({
+        device: { ...device, endsAt: Date.now() - 1 },
+        call: { name: 'click', args: { target: 'Apply' } },
+      });
+
+      expect(answer.isError).toBe(true);
+      expect(text(answer)).toBe('Time is up: call finish now with what you saw.');
+      expect(acted).toEqual([]);
+    });
+
+    it('does NOT note a screen when nothing explores', async () => {
+      const answer = await callDeviceTool({
+        device: fakeDevice().device,
+        call: { name: 'screen', args: { name: 'Cart', about: 'The cart.' } },
+      });
+
+      expect(answer.isError).toBe(true);
+      expect(text(answer)).toBe('There is no exploration to note a screen in.');
+    });
+  });
 });

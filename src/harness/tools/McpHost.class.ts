@@ -99,6 +99,7 @@ export class McpHost {
     if (device)
       registerDeviceTools({
         mcp,
+        purpose: device.purpose ?? 'walk',
         call: (call) =>
           this.inTurn({ scope, call: () => callDeviceTool({ device, call }) }),
       });

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { DRAFTED_CASE } from '@/harness/schemas/DRAFTED_CASE';
 import { textNamed } from '@/harness/tools/library/textNamed';
 
 export const DEVICE_TOOLS = [
@@ -216,7 +217,7 @@ export const DEVICE_TOOLS = [
   {
     name: 'bug',
     description:
-      'File a bug you saw that the step does not ask about, such as a wrong price, a broken link or two texts that disagree. The step keeps its own verdict: carry on with it.',
+      'File a bug you saw, such as a wrong price, a broken link or two texts that disagree, and carry on. In a case, file only what the step does not ask about: the step keeps its own verdict.',
     input: z.object({
       title: textNamed({
         message: '"bug" needs "title": the line a developer would know the bug by.',
@@ -233,6 +234,39 @@ export const DEVICE_TOOLS = [
         message: '"bug" needs "got": what the device actually showed.',
         description: 'What the device actually showed.',
       }),
+    }),
+  },
+  {
+    name: 'screen',
+    description:
+      'Note a screen of the app the first time you reach it: what a person would call it and what it is for. QAzinho keeps its picture as a stop on the map of the app.',
+    input: z.object({
+      name: textNamed({
+        message: '"screen" needs "name": what a person would call this screen.',
+        description: 'What a person would call the screen, such as "Cart" or "Sign in".',
+      }),
+      about: textNamed({
+        message: '"screen" needs "about": what the screen is for.',
+        description:
+          'What the screen is for and what a person can do on it, in a sentence.',
+      }),
+    }),
+  },
+  {
+    name: 'finish',
+    description:
+      'End the exploration: what you explored and how it went, and the test cases a plan should hold from what you saw, the most important first.',
+    input: z.object({
+      summary: textNamed({
+        message: '"finish" needs "summary": what you explored and how it went.',
+        description:
+          'What you explored, what held up and what broke, in a few sentences.',
+      }),
+      cases: z
+        .array(DRAFTED_CASE.omit({ id: true }), {
+          error: '"finish" needs "cases": the test cases you suggest, as a list.',
+        })
+        .describe('The test cases you suggest, the most important first.'),
     }),
   },
 ] as const;

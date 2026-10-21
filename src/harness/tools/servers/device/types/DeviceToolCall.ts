@@ -1,3 +1,5 @@
+import type { IExploredScreen } from './IExploredScreen';
+import type { IExploreFinish } from './IExploreFinish';
 import type { IStepFinding } from './IStepFinding';
 import type { IStepReport } from './IStepReport';
 import type { IStepAction } from '@/shared/types';
@@ -8,4 +10,6 @@ export type DeviceToolCall =
   | { kind: 'act'; action: IStepAction }
   | { kind: 'report'; report: IStepReport }
   | { kind: 'finding'; finding: IStepFinding }
+  | { kind: 'screen'; screen: IExploredScreen }
+  | { kind: 'finish'; finish: IExploreFinish }
   | { kind: 'refused'; error: string };

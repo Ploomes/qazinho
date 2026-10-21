@@ -27,6 +27,7 @@ import {
   describeBuild,
   describeCase,
   describeCode,
+  describeExploration,
   describeLook,
   describePlan,
   describeReferences,
@@ -197,6 +198,33 @@ export class Harness {
         language: LANGUAGE_NAMES[props.language],
       },
     });
+  }
+
+  /** The system prompt of an exploration of the app on one device, with no plan: how long it goes, in the language the QA reads. */
+  public explore(props: {
+    target: ITargetUnderTest;
+    viewport: IViewport;
+    language: Language;
+    minutes: number;
+  }): string {
+    return this.contextFor({
+      target: { role: 'explorer', platform: props.target.kind },
+      values: {
+        app: props.target.value,
+        viewport: `${String(props.viewport.width)} × ${String(props.viewport.height)}`,
+        language: LANGUAGE_NAMES[props.language],
+        minutes: String(props.minutes),
+      },
+    });
+  }
+
+  /** The message that starts an exploration: how long it goes, the variables it may type, and the screen it starts on. */
+  public startExploring(props: {
+    minutes: number;
+    screen: string;
+    variables: IVariableBrief[];
+  }): string {
+    return describeExploration(props);
   }
 
   /** The message that starts the agent's turn on one case, in the language the QA reads, with the variables it may type. */

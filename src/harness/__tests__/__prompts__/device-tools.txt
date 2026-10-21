@@ -352,7 +352,7 @@
   },
   {
     "name": "bug",
-    "description": "File a bug you saw that the step does not ask about, such as a wrong price, a broken link or two texts that disagree. The step keeps its own verdict: carry on with it.",
+    "description": "File a bug you saw, such as a wrong price, a broken link or two texts that disagree, and carry on. In a case, file only what the step does not ask about: the step keeps its own verdict.",
     "inputSchema": {
       "type": "object",
       "properties": {

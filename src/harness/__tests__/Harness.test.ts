@@ -286,6 +286,57 @@ describe('Harness', () => {
     });
   });
 
+  describe('explore', () => {
+    it('briefs the explorer on the device, the app and how long it has', async () => {
+      await expect(
+        harness.explore({
+          target: { kind: 'web', value: 'https://shop.test' },
+          viewport: DESKTOP,
+          language: 'en',
+          minutes: 10,
+        }),
+      ).toMatchFileSnapshot('./__prompts__/explore-web.txt');
+    });
+
+    it('does NOT tell the explorer how to walk a case, nor the runner how to explore', () => {
+      const exploring = harness.explore({
+        target: { kind: 'android', value: '/tmp/app.apk' },
+        viewport: DESKTOP,
+        language: 'pt',
+        minutes: 5,
+      });
+
+      expect(exploring).toContain('## Exploring the app');
+      expect(exploring).toContain('for about 5 minutes');
+      expect(exploring).toContain('in Brazilian Portuguese');
+      expect(exploring).not.toContain('## Running a case');
+      expect(
+        harness.run({
+          target: { kind: 'web', value: 'x' },
+          viewport: DESKTOP,
+          language: 'en',
+        }),
+      ).not.toContain('## Exploring the app');
+    });
+
+    it('starts an exploration with its time, the variables and the screen', async () => {
+      await expect(
+        harness.startExploring({
+          minutes: 10,
+          screen: 'Shop\n[link] Cart',
+          variables: [{ name: 'SHOP_EMAIL', description: 'The buyer on staging' }],
+        }),
+      ).toMatchFileSnapshot('./__prompts__/explore.txt');
+    });
+
+    it('gives the explorer the device, behind QAzinho own MCP server', () => {
+      expect(harness.toolsFor('explorer')).toEqual({
+        groups: ['device'],
+        allowedTools: ['mcp__qazinho'],
+      });
+    });
+  });
+
   describe('walk', () => {
     it('starts a case with its steps and the screen it starts on', async () => {
       await expect(
@@ -414,7 +465,11 @@ describe('Harness', () => {
       const client = new Client({ name: 'pin', version: '0' });
       const [ours, theirs] = InMemoryTransport.createLinkedPair();
 
-      registerDeviceTools({ mcp, call: () => Promise.reject(new Error('not called')) });
+      registerDeviceTools({
+        mcp,
+        purpose: 'walk',
+        call: () => Promise.reject(new Error('not called')),
+      });
       await mcp.connect(ours);
       await client.connect(theirs);
 
@@ -422,6 +477,27 @@ describe('Harness', () => {
 
       await expect(JSON.stringify(tools, null, 2)).toMatchFileSnapshot(
         './__prompts__/device-tools.txt',
+      );
+      await client.close();
+    });
+
+    it('lists the explorer its own, exactly as pinned', async () => {
+      const mcp = new McpServer({ name: 'qazinho', version: '0' });
+      const client = new Client({ name: 'pin', version: '0' });
+      const [ours, theirs] = InMemoryTransport.createLinkedPair();
+
+      registerDeviceTools({
+        mcp,
+        purpose: 'explore',
+        call: () => Promise.reject(new Error('not called')),
+      });
+      await mcp.connect(ours);
+      await client.connect(theirs);
+
+      const { tools } = await client.listTools();
+
+      await expect(JSON.stringify(tools, null, 2)).toMatchFileSnapshot(
+        './__prompts__/explore-tools.txt',
       );
       await client.close();
     });

@@ -241,4 +241,44 @@ describe('readToolCall', () => {
       });
     });
   });
+  describe('an exploration', () => {
+    it('reads a screen the explorer reached, trimmed', () => {
+      expect(
+        readToolCall({
+          name: 'screen',
+          args: { name: ' Cart ', about: ' What was picked. ' },
+        }),
+      ).toEqual({ kind: 'screen', screen: { name: 'Cart', about: 'What was picked.' } });
+    });
+
+    it('does NOT note a screen with no name, and tells the agent why', () => {
+      expect(readToolCall({ name: 'screen', args: { about: 'The cart.' } })).toEqual({
+        kind: 'refused',
+        error: '"screen" needs "name": what a person would call this screen.',
+      });
+    });
+
+    it('reads the finish with the cases it suggests', () => {
+      const cases = [
+        {
+          title: 'Apply a coupon',
+          priority: 'P1',
+          goal: 'A valid coupon takes 10% off.',
+          preconditions: 'One product in the cart.',
+          steps: [{ action: 'Apply SAVE10', expected: '10% off' }],
+        },
+      ];
+
+      expect(
+        readToolCall({ name: 'finish', args: { summary: ' The cart works. ', cases } }),
+      ).toEqual({ kind: 'finish', finish: { summary: 'The cart works.', cases } });
+    });
+
+    it('does NOT finish without the cases, and says what is missing', () => {
+      expect(readToolCall({ name: 'finish', args: { summary: 'Done.' } })).toEqual({
+        kind: 'refused',
+        error: '"finish" needs "cases": the test cases you suggest, as a list.',
+      });
+    });
+  });
 });
