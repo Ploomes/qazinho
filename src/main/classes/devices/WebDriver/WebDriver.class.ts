@@ -77,38 +77,7 @@ export class WebDriver implements IDeviceDriver {
 
   /** Starts the app over for someone who never opened it: no cookie, nothing stored, one new tab on its address. */
   public async restart(): Promise<void> {
-    const context = this.context;
-
-    if (!context) throw new Error('The browser is not open.');
-
-    await this.screencast?.detach().catch(() => undefined);
-    await this.cdp?.detach().catch(() => undefined);
-    this.screencast = null;
-    this.cdp = null;
-    this.lastMotion = null;
-
-    const page = await context.newPage();
-
-    for (const stale of context.pages())
-      if (stale !== page) await stale.close().catch(() => undefined);
-
-    this.page = page;
-    await page.setViewportSize(this.viewport);
-    await context.clearCookies();
-    await context.clearPermissions();
-
-    const cdp = await this.session();
-
-    for (const origin of this.origins)
-      await cdp
-        ?.send('Storage.clearDataForOrigin', { origin, storageTypes: 'all' })
-        .catch(() => undefined);
-
-    await this.fit();
-
-    if (this.onFrame) await this.watch(this.onFrame);
-
-    await page.goto(this.url, { timeout: WEB_DRIVER.gotoTimeoutMs });
+    await this.openAnew({ isCleared: true });
   }
 
   /** Carries one action out, answering the dialogs it opens the way it says, and keeps how the page moved for `motion`. */
@@ -116,6 +85,13 @@ export class WebDriver implements IDeviceDriver {
     const page = this.page;
 
     if (!page) throw new Error('The browser is not open.');
+
+    if (action.kind === 'reopen') {
+      await this.openAnew({ isCleared: false });
+      await this.settle(this.page ?? page);
+
+      return;
+    }
 
     this.lastMotion = null;
     this.dialogAnswer = action.dialog ?? 'ok';
@@ -329,6 +305,44 @@ export class WebDriver implements IDeviceDriver {
         isOk ? dialog.accept(typed ?? dialog.defaultValue()) : dialog.dismiss()
       ).catch(() => undefined);
     });
+  }
+
+  private async openAnew(props: { isCleared: boolean }): Promise<void> {
+    const context = this.context;
+
+    if (!context) throw new Error('The browser is not open.');
+
+    await this.screencast?.detach().catch(() => undefined);
+    await this.cdp?.detach().catch(() => undefined);
+    this.screencast = null;
+    this.cdp = null;
+    this.lastMotion = null;
+
+    const page = await context.newPage();
+
+    for (const stale of context.pages())
+      if (stale !== page) await stale.close().catch(() => undefined);
+
+    this.page = page;
+    await page.setViewportSize(this.viewport);
+
+    if (props.isCleared) {
+      await context.clearCookies();
+      await context.clearPermissions();
+
+      const cdp = await this.session();
+
+      for (const origin of this.origins)
+        await cdp
+          ?.send('Storage.clearDataForOrigin', { origin, storageTypes: 'all' })
+          .catch(() => undefined);
+    }
+
+    await this.fit();
+
+    if (this.onFrame) await this.watch(this.onFrame);
+
+    await page.goto(this.url, { timeout: WEB_DRIVER.gotoTimeoutMs });
   }
 
   private async perform(props: { page: Page; action: IStepAction }): Promise<void> {

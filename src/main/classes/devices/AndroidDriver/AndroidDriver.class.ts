@@ -86,6 +86,13 @@ export class AndroidDriver implements IDeviceDriver {
       return;
     }
 
+    if (action.kind === 'reopen') {
+      await this.shell(['am', 'force-stop', this.app]);
+      await this.launch();
+
+      return;
+    }
+
     const node = findNode({ nodes: await this.read(), target: action.target });
 
     if (!node) throw new Error(`Nothing on the screen answers to "${action.target}".`);

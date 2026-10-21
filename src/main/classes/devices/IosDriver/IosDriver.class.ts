@@ -86,6 +86,14 @@ export class IosDriver implements IDeviceDriver {
       return;
     }
 
+    if (action.kind === 'reopen') {
+      await this.simctl(['terminate', this.udid, this.bundle]).catch(() => '');
+      await this.simctl(['launch', this.udid, this.bundle]);
+      await this.settle();
+
+      return;
+    }
+
     const element = findElement({ elements: await this.read(), target: action.target });
 
     if (!element) throw new Error(`Nothing on the screen answers to "${action.target}".`);
