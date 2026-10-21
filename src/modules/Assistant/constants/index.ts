@@ -1,5 +1,6 @@
 export * from './ASSISTANT_DOCK';
 export * from './ASSISTANT_FAILURE_KEYS';
+export * from './ASSISTANT_KEPT';
 export * from './ASSISTANT_SUGGESTIONS';
 export * from './CONFIRM_TEXTS';
 export * from './CONFIRM_TOOLS';
