@@ -89,6 +89,7 @@ import {
   ASSISTANT,
   FILE_FILTERS,
   PATHS,
+  SAVED_VIDEO,
   WINDOW,
   WINDOW_FITS,
   WINDOW_SHOW_FALLBACK_MS,
@@ -600,6 +601,28 @@ async function saveReplay(props: IRunRef & { name: string }): Promise<SaveOutcom
   );
 }
 
+async function saveVideo(props: {
+  name: string;
+  data: Uint8Array;
+}): Promise<SaveOutcome> {
+  const extension = SAVED_VIDEO.extension;
+  const options = {
+    defaultPath: join(app.getPath('downloads'), `${fileNameOf(props.name)}.${extension}`),
+    filters: [{ name: extension.toUpperCase(), extensions: [extension] }],
+  };
+  const [open] = appWindows();
+  const picked = open
+    ? await dialog.showSaveDialog(open, options)
+    : await dialog.showSaveDialog(options);
+
+  if (picked.canceled || picked.filePath === undefined) return 'cancelled';
+
+  return writeFile(picked.filePath, props.data).then(
+    () => 'saved' as const,
+    () => 'failed' as const,
+  );
+}
+
 async function saveShot(props: {
   file: string | null;
   src: string | null;
@@ -750,6 +773,11 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.runNetwork, (_event, run: IRunRef) => archive.readNetwork(run));
   ipcMain.handle(CHANNELS.saveReplay, (_event, props: IRunRef & { name: string }) =>
     saveReplay(props),
+  );
+  ipcMain.handle(CHANNELS.replayVideo, (_event, run: IRunRef) => replays.videoOf(run));
+  ipcMain.handle(
+    CHANNELS.saveVideo,
+    (_event, props: { name: string; data: Uint8Array }) => saveVideo(props),
   );
   ipcMain.handle(CHANNELS.stopRun, (_event, workspaceId: string) => {
     runs.stop(workspaceId);

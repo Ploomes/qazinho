@@ -149,6 +149,8 @@ describe('a page with no bridge', () => {
   it('has no recording to play or to save', async () => {
     expect(await Run.replayUrl({ workspaceId: 'w1', runId: 'r-01' })).toBeNull();
     expect(await Run.network({ workspaceId: 'w1', runId: 'r-01' })).toBeNull();
+    expect(await Run.replayVideo({ workspaceId: 'w1', runId: 'r-01' })).toBeNull();
+    expect(await Run.saveVideo({ name: 'r-01', data: new Uint8Array(4) })).toBe('failed');
     expect(await Run.saveReplay({ workspaceId: 'w1', runId: 'r-01', name: 'r-01' })).toBe(
       'failed',
     );

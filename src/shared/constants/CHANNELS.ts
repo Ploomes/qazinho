@@ -21,6 +21,8 @@ export const CHANNELS = {
   replayUrl: 'run:replay-url',
   saveReplay: 'run:save-replay',
   runNetwork: 'run:network',
+  replayVideo: 'run:replay-video',
+  saveVideo: 'run:save-video',
   alertRunEnded: 'run:alert',
   openRun: 'run:open',
   recorderStart: 'recorder:start',

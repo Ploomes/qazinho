@@ -129,6 +129,10 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.saveReplay, props) as Promise<SaveOutcome>,
   runNetwork: (run: IRunRef) =>
     ipcRenderer.invoke(CHANNELS.runNetwork, run) as Promise<INetworkEntry[] | null>,
+  replayVideo: (run: IRunRef) =>
+    ipcRenderer.invoke(CHANNELS.replayVideo, run) as Promise<Uint8Array | null>,
+  saveVideo: (props: { name: string; data: Uint8Array }) =>
+    ipcRenderer.invoke(CHANNELS.saveVideo, props) as Promise<SaveOutcome>,
   alertRunEnded: (notice: IRunEndNotice) => {
     ipcRenderer.send(CHANNELS.alertRunEnded, notice);
   },

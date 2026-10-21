@@ -75,6 +75,8 @@ export interface IQazinhoApi {
   replayUrl: (run: IRunRef) => Promise<string | null>;
   saveReplay: (props: IRunRef & { name: string }) => Promise<SaveOutcome>;
   runNetwork: (run: IRunRef) => Promise<INetworkEntry[] | null>;
+  replayVideo: (run: IRunRef) => Promise<Uint8Array | null>;
+  saveVideo: (props: { name: string; data: Uint8Array }) => Promise<SaveOutcome>;
   alertRunEnded: (notice: IRunEndNotice) => void;
   onOpenRun: (listener: (run: IRunRef) => void) => () => void;
   readState: () => Promise<ISavedState>;

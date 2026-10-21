@@ -3,10 +3,11 @@ import type { IncomingMessage, Server, ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { randomUUID } from 'node:crypto';
 import { createReadStream } from 'node:fs';
-import { stat } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { extname, join } from 'node:path';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
+import { isInside } from '@/main/classes/storage/Archive/library';
 import { REPLAY_SERVER } from './constants';
 import { byteRangeOf, replayOfPath } from './library';
 
@@ -53,6 +54,21 @@ export class ReplayServer {
     }
 
     return null;
+  }
+
+  /** The bytes of a run's MP4 recording, for the page to draw the network under; null for a run with none, or one a phone recorded in another format. */
+  public async videoOf(ref: IRunRef): Promise<Uint8Array | null> {
+    const file = join(
+      this.dataRoot,
+      ARCHIVE.runs,
+      ref.workspaceId,
+      ref.runId,
+      ARCHIVE.videos.mp4,
+    );
+
+    if (!isInside({ root: join(this.dataRoot, ARCHIVE.runs), file })) return null;
+
+    return readFile(file).catch(() => null);
   }
 
   public close(): void {

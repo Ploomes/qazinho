@@ -48,6 +48,8 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     replayUrl: () => Promise.resolve(null),
     saveReplay: () => Promise.resolve('cancelled' as const),
     runNetwork: () => Promise.resolve(null),
+    replayVideo: () => Promise.resolve(null),
+    saveVideo: () => Promise.resolve('cancelled' as const),
     alertRunEnded: () => undefined,
     onOpenRun: () => () => undefined,
     readState: () => Promise.resolve({ projects: '[]', workspaces: [] }),

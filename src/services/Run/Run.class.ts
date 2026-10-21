@@ -55,6 +55,17 @@ export class Run {
     return (await window.qazinho?.runNetwork(run)) ?? null;
   }
 
+  public static async replayVideo(run: IRunRef): Promise<Uint8Array | null> {
+    return (await window.qazinho?.replayVideo(run)) ?? null;
+  }
+
+  public static async saveVideo(props: {
+    name: string;
+    data: Uint8Array;
+  }): Promise<SaveOutcome> {
+    return (await window.qazinho?.saveVideo(props)) ?? 'failed';
+  }
+
   public static async saveReplay(
     props: IRunRef & { name: string },
   ): Promise<SaveOutcome> {
