@@ -25,6 +25,6 @@ describe('lookOf', () => {
     });
 
     expect(asked.every((name) => name.startsWith('--'))).toBe(true);
-    expect(asked).toHaveLength(13);
+    expect(asked).toHaveLength(14);
   });
 });

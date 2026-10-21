@@ -71,6 +71,7 @@ const LOOK: IStripLook = {
   fail: 'fail',
   failSoft: 'fail-soft',
   lime: 'lime',
+  limeInk: 'lime-ink',
   limeSoft: 'lime-soft',
 };
 

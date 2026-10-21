@@ -12,5 +12,6 @@ export interface IStripLook {
   fail: string;
   failSoft: string;
   lime: string;
+  limeInk: string;
   limeSoft: string;
 }

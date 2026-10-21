@@ -121,7 +121,7 @@ export function drawNetworkStrip(props: {
   context.textBaseline = 'middle';
   context.textAlign = 'left';
 
-  drawArrows({ context, x: left + px(2), y: headY, size: px(9), colour: look.lime });
+  drawArrows({ context, x: left + px(2), y: headY, size: px(9), colour: look.limeInk });
 
   const title = words.title.toUpperCase();
   const count = words.count({ shown: at.shown, total: at.total });

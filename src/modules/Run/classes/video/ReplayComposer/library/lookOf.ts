@@ -13,6 +13,7 @@ const TOKENS: Record<keyof IStripLook, string> = {
   fail: '--fail',
   failSoft: '--fail-soft',
   lime: '--lime',
+  limeInk: '--lime-ink',
   limeSoft: '--lime-soft',
 };
 
@@ -35,6 +36,7 @@ export function lookOf(style: {
     fail: read(TOKENS.fail),
     failSoft: read(TOKENS.failSoft),
     lime: read(TOKENS.lime),
+    limeInk: read(TOKENS.limeInk),
     limeSoft: read(TOKENS.limeSoft),
   };
 }
