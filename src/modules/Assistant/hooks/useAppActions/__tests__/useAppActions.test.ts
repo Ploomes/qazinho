@@ -139,6 +139,7 @@ describe('useAppActions', () => {
   it('waits for the QA before deleting, and deletes nothing they kept', async () => {
     const { answers, call } = bridge();
 
+    useAssistantStore.setState({ isOpen: false });
     renderHook(() => {
       useAppActions();
     });
@@ -159,6 +160,7 @@ describe('useAppActions', () => {
       ]);
     });
     expect(answers).toEqual([]);
+    expect(useAssistantStore.getState().isOpen).toBe(true);
 
     act(() => {
       useAssistantStore.getState().settleConfirm({ id: 'c-1', decision: 'kept' });

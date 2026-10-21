@@ -156,6 +156,7 @@ export const useAppActions = () => {
       confirm: ({ id, action, subject, count }) =>
         new Promise<ConfirmDecision>((settle) => {
           waiting.current.set(id, settle);
+          useAssistantStore.getState().open();
           useAssistantStore
             .getState()
             .askConfirm({ kind: 'confirm', id, action, subject, count, decision: null });
