@@ -266,6 +266,14 @@ screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `
   case, step and bug in the video (`replayTimelineOf`).
 - **The app's own windows leave the recorder out** (`appWindows`): a broadcast, a dialog or the
   dock click never lands on it.
+- **A browser's requests are kept beside its video** (`network.json`). `WebDriver` notes each one
+  Chrome makes, and `privateUrlOf` writes a variable's value in its address as its name and a
+  secret-looking query value as dots before it is kept. A phone keeps none yet.
+- The page draws them under the video (`ReplayNetwork`), and makes the video again to download
+  them drawn in: `ReplayComposer` reads the run's MP4 (`readMp4`), decodes it with WebCodecs,
+  draws the strip on each frame (`drawNetworkStrip`), holds the picture while the screen stood
+  still, and encodes one MP4. The file crosses IPC whole, once each way (`replayVideo`,
+  `saveVideo`); its frames never do.
 
 ## What the main process owns
 

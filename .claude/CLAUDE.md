@@ -112,6 +112,15 @@ a chapter per case in its verdict's colour, a pin per bug, a still of any moment
 cursor, and the steps beside it, kept in step. Each case offers its take in Runs, and each bug
 its moment in Bugs. `tests/smoke/record.test.ts` proves the browser's recording.
 
+**A web run keeps its network beside its video.** Chrome notes each request the app makes, with
+its status, time and size, and the run keeps them with a variable's value written as its name and
+a token as dots. In the theater, the Network switch folds a strip open under the video: each
+request lands as the video reaches it, waits for its answer and jumps the video there on a click,
+and a failed one leaves a mark on the timeline. With the strip shown, Download makes the video
+again with the strip drawn under it. `tests/smoke/network.test.ts` proves the capture on real
+Chrome, and `strip.test.ts` the strip and the download in the built app. A phone run keeps no
+network yet.
+
 **A run that ends calls the QA back** while they are away: a notification with its sound and a
 count on the app's icon, unless they asked to hear only inside the app, where a notice says it.
 

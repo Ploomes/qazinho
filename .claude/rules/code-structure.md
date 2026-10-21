@@ -131,6 +131,8 @@ src/
   `src/modules/<Domain>/components/` or `hooks/`.
 - A component with no domain, reused across modules → `src/shared/components/`.
 - A subcomponent of one screen → `components/` **inside** that screen's folder.
+- A class the page needs, with no React in it → `src/modules/<Domain>/classes/<category>/<Name>/`,
+  as `ReplayComposer`.
 - **In `src/harness/`, a class sits at the root of the folder it serves** (`Harness.class.ts`,
   `tools/McpHost.class.ts`), and shares that folder's `library/`, `types/` and `constants/`. A
   class folder there would only repeat the name of the folder around it.
