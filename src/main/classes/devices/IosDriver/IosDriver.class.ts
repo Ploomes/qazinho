@@ -55,11 +55,13 @@ export class IosDriver implements IDeviceDriver {
     this.bundle = await this.identify();
 
     await this.installFresh();
+    await this.expectOpen();
   }
 
   /** Starts the app over on a fresh install: a simulator keeps an app's data until the app is removed. */
   public async restart(): Promise<void> {
     await this.installFresh();
+    await this.expectOpen();
   }
 
   public async act(action: IStepAction): Promise<void> {
@@ -90,6 +92,7 @@ export class IosDriver implements IDeviceDriver {
       await this.simctl(['terminate', this.udid, this.bundle]).catch(() => '');
       await this.simctl(['launch', this.udid, this.bundle]);
       await this.settle();
+      await this.expectOpen();
 
       return;
     }
@@ -222,6 +225,25 @@ export class IosDriver implements IDeviceDriver {
     if (this.isOurs) await this.simctl(['shutdown', this.udid]).catch(() => '');
 
     this.isOurs = false;
+  }
+
+  private async expectOpen(): Promise<void> {
+    let isHome = false;
+
+    for (let tries = 0; tries < IOS.openChecks; tries += 1) {
+      const elements = await this.read();
+
+      isHome = elements.some(({ isLaunchIcon }) => isLaunchIcon);
+
+      if (!isHome && elements.some(({ label }) => label.trim().length > 0)) return;
+
+      await new Promise((wake) => setTimeout(wake, IOS.settleMs));
+    }
+
+    if (isHome)
+      throw new Error(
+        'The app closed right after it opened: the simulator shows its home screen.',
+      );
   }
 
   private async installFresh(): Promise<void> {

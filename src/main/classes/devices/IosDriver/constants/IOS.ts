@@ -6,6 +6,7 @@ export const IOS = {
   commandTimeoutMs: 120_000,
   maxBufferBytes: 64 * 1024 * 1024,
   settleMs: 1_200,
+  openChecks: 6,
   waitMs: 1_000,
   recordStartMs: 10_000,
   recordStopMs: 15_000,
