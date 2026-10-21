@@ -64,7 +64,9 @@ export const BuildProgress: React.FC<IBuildProgressProps> = (props) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
-            <span aria-hidden="true">✓</span> {view.built}
+            <span className="build-progress__built-line">
+              <span aria-hidden="true">✓</span> {view.built}
+            </span>
             {view.builtNote !== '' && (
               <span className="build-progress__note">{view.builtNote}</span>
             )}

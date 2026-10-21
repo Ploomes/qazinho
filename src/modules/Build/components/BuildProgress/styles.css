@@ -141,3 +141,8 @@
   display: flex;
   gap: var(--space-3);
 }
+
+.build-progress__built-line {
+  display: flex;
+  gap: var(--space-2);
+}

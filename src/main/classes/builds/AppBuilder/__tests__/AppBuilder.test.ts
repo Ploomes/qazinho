@@ -262,6 +262,31 @@ describe('AppBuilder', () => {
   });
 
   describe('hear', () => {
+    it('says the build folder as . in what the agent does', async () => {
+      let finish: (turn: IAgentTurn) => void = () => undefined;
+      const { builder, events, root } = await builderWith({
+        build: () =>
+          new Promise<IAgentTurn>((settle) => {
+            finish = settle;
+          }),
+      });
+      const building = builder.start(BUILD);
+
+      await new Promise((settle) => setTimeout(settle, 50));
+      builder.hear({
+        buildId: 'b1',
+        text: `$ cd ${join(root, 'work', 'b1', 'src')}/android && ls`,
+      });
+      finish(answered({ artifact: '' }));
+      await building;
+
+      expect(events.find(({ kind }) => kind === 'line')).toEqual({
+        kind: 'line',
+        buildId: 'b1',
+        text: '$ cd ./android && ls',
+      });
+    });
+
     it('passes on what the agent does only for a build in flight', async () => {
       let finish: (turn: IAgentTurn) => void = () => undefined;
       const { builder, events } = await builderWith({

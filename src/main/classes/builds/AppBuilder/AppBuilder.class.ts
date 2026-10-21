@@ -30,7 +30,7 @@ export class AppBuilder {
   private readonly onEvent: IAppBuilder['onEvent'];
   private readonly now: () => number;
   private readonly stopped = new Set<string>();
-  private readonly building = new Set<string>();
+  private readonly building = new Map<string, string>();
 
   public constructor(props: IAppBuilder) {
     this.github = props.github;
@@ -48,14 +48,12 @@ export class AppBuilder {
   public async start(build: IStartBuild): Promise<IBuildResult> {
     const { buildId } = build;
     const work = join(this.root, 'work', buildId);
+    const dir = join(work, 'src');
 
-    this.building.add(buildId);
+    this.building.set(buildId, dir);
 
     try {
-      return this.ended({
-        buildId,
-        result: await this.make({ build, dir: join(work, 'src') }),
-      });
+      return this.ended({ buildId, result: await this.make({ build, dir }) });
     } finally {
       this.building.delete(buildId);
       this.stopped.delete(buildId);
@@ -71,10 +69,16 @@ export class AppBuilder {
     this.runner.cancel(`${APP_BUILDER.scopePrefix}${buildId}`);
   }
 
-  /** Hands a line the building agent said or did to the page, as the build's own. */
+  /** Hands a line the building agent said or did to the page, as the build's own, with its folder said as `.`. */
   public hear(props: { buildId: string; text: string }): void {
-    if (this.building.has(props.buildId))
-      this.onEvent({ kind: 'line', buildId: props.buildId, text: props.text });
+    const dir = this.building.get(props.buildId);
+
+    if (dir !== undefined)
+      this.onEvent({
+        kind: 'line',
+        buildId: props.buildId,
+        text: props.text.split(dir).join('.'),
+      });
   }
 
   /** Deletes what builds left half done, for when QAzinho opens after closing in the middle of one. */

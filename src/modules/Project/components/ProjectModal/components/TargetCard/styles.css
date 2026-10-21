@@ -19,7 +19,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
   gap: var(--space-6);
-  align-items: center;
+  align-items: start;
   padding: var(--space-5) var(--space-6);
 }
 
