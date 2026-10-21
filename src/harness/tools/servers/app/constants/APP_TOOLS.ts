@@ -347,6 +347,69 @@ export const APP_TOOLS = [
     }),
   },
   {
+    name: 'ask_variables',
+    description:
+      "Ask the QA to type the values of a project's variables in a window QAzinho opens: an account, a password or a token a plan needs, new or with a value that changes. You never see a value: this answers with the names they kept, once they saved or closed the window.",
+    input: z.object({
+      project: textNamed({
+        message: '"ask_variables" needs "project": its id or its name.',
+        description: 'The project, by its id or its name.',
+      }),
+      variables: z
+        .array(
+          z.object({
+            name: textNamed({
+              message:
+                '"ask_variables" needs each variable\'s "name", such as LOGIN_EMAIL.',
+              description: 'In capitals with _ between words, such as LOGIN_EMAIL.',
+            }),
+            description: z
+              .string({ error: '"ask_variables" needs each variable\'s "description".' })
+              .trim()
+              .describe('What it holds, such as "The admin\'s email on staging".'),
+          }),
+          {
+            error:
+              '"ask_variables" needs "variables": the names and descriptions to ask for.',
+          },
+        )
+        .min(1, { error: '"ask_variables" needs at least one variable.' })
+        .max(10, { error: '"ask_variables" takes ten variables at most.' }),
+    }),
+  },
+  {
+    name: 'update_variable',
+    description:
+      "Rename one of a project's variables or change what it says it holds. Its value stays, and the plans that name it follow a new name; to change a value, use ask_variables.",
+    input: z.object({
+      project: textNamed({
+        message: '"update_variable" needs "project": its id or its name.',
+        description: 'The project, by its id or its name.',
+      }),
+      variable: textNamed({
+        message: '"update_variable" needs "variable": its name, such as LOGIN_EMAIL.',
+        description: 'The variable, by its name.',
+      }),
+      name: z.string().trim().describe('The new name, in capitals with _.').optional(),
+      description: z.string().trim().describe('What it holds now.').optional(),
+    }),
+  },
+  {
+    name: 'delete_variable',
+    description:
+      "Delete one of a project's variables, with its value. The QA confirms it on screen, and this answers with what they chose.",
+    input: z.object({
+      project: textNamed({
+        message: '"delete_variable" needs "project": its id or its name.',
+        description: 'The project, by its id or its name.',
+      }),
+      variable: textNamed({
+        message: '"delete_variable" needs "variable": its name, such as LOGIN_EMAIL.',
+        description: 'The variable, by its name.',
+      }),
+    }),
+  },
+  {
     name: 'delete_workspace',
     description:
       'Delete a workspace with its chat, plan, runs and bugs. The QA confirms it on screen, and this answers with what they chose.',

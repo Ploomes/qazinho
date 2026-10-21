@@ -74,4 +74,72 @@ describe('performRemoval', () => {
     ).toBe(true);
     expect(did).toEqual([]);
   });
+  describe('delete_variable', () => {
+    const KEPT = { p1: [{ name: 'LOJA_EMAIL', description: 'A buyer' }] };
+
+    it('deletes a variable and its value once the QA confirms, naming the plans that still use it', async () => {
+      const { port, did, state } = fakePort({ state: { variables: KEPT } });
+      const [checkout] = state.workspaces;
+
+      state.workspaces = [
+        {
+          ...checkout!,
+          plan: [
+            {
+              ...checkout!.plan[0]!,
+              steps: [{ action: 'Type ${LOJA_EMAIL} in E-mail', expected: 'It shows' }],
+            },
+          ],
+        },
+      ];
+
+      expect(
+        await performRemoval({
+          id: 'c-1',
+          call: {
+            name: 'delete_variable',
+            args: { project: 'p1', variable: '${LOJA_EMAIL}' },
+          },
+          port,
+        }),
+      ).toEqual({
+        text: 'Deleted ${LOJA_EMAIL} and its value from p1 "Lojinha". The plans of "Checkout regression" still name it.',
+        isError: false,
+      });
+      expect(did).toEqual([
+        'confirm delete_variable LOJA_EMAIL 1',
+        'apply p1 [{"kind":"remove","name":"LOJA_EMAIL"}]',
+      ]);
+    });
+
+    it('does NOT delete a variable the QA kept', async () => {
+      const { port, did } = fakePort({ state: { variables: KEPT }, decision: 'kept' });
+
+      expect(
+        (
+          await performRemoval({
+            id: 'c-1',
+            call: {
+              name: 'delete_variable',
+              args: { project: 'p1', variable: 'LOJA_EMAIL' },
+            },
+            port,
+          })
+        ).text,
+      ).toBe('The QA kept ${LOJA_EMAIL}.');
+      expect(did).toEqual(['confirm delete_variable LOJA_EMAIL 0']);
+    });
+
+    it('does NOT ask about a variable the project does not keep', async () => {
+      const { port, did } = fakePort({ state: { variables: KEPT } });
+      const done = await performRemoval({
+        id: 'c-1',
+        call: { name: 'delete_variable', args: { project: 'p1', variable: 'TOKEN' } },
+        port,
+      });
+
+      expect(done.isError).toBe(true);
+      expect(did).toEqual([]);
+    });
+  });
 });

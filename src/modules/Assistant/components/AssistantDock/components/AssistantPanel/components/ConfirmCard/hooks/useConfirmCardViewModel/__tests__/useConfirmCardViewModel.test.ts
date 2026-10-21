@@ -35,6 +35,24 @@ afterEach(() => {
 });
 
 describe('useConfirmCardViewModel', () => {
+  it('asks about a variable by name, and says how many plans still name it', () => {
+    const one = card({
+      ...ASKED,
+      action: 'delete_variable',
+      subject: 'LOJA_EMAIL',
+      count: 1,
+    });
+
+    expect(one.result.current.title).toBe('Delete the variable LOJA_EMAIL?');
+    expect(one.result.current.body).toBe(
+      'Its value goes with it. One plan still names it.',
+    );
+    expect(
+      card({ ...ASKED, action: 'delete_variable', subject: 'LOJA_EMAIL', count: 0 })
+        .result.current.body,
+    ).toBe('Its value goes with it, and no plan names it.');
+  });
+
   it('asks about the project by name, and says how many workspaces go with it', () => {
     const { result } = card(ASKED);
 

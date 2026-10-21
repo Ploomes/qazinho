@@ -605,6 +605,113 @@
     }
   },
   {
+    "name": "ask_variables",
+    "description": "Ask the QA to type the values of a project's variables in a window QAzinho opens: an account, a password or a token a plan needs, new or with a value that changes. You never see a value: this answers with the names they kept, once they saved or closed the window.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The project, by its id or its name."
+        },
+        "variables": {
+          "minItems": 1,
+          "maxItems": 10,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "In capitals with _ between words, such as LOGIN_EMAIL."
+              },
+              "description": {
+                "type": "string",
+                "description": "What it holds, such as \"The admin's email on staging\"."
+              }
+            },
+            "required": [
+              "name",
+              "description"
+            ]
+          }
+        }
+      },
+      "required": [
+        "project",
+        "variables"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
+    "name": "update_variable",
+    "description": "Rename one of a project's variables or change what it says it holds. Its value stays, and the plans that name it follow a new name; to change a value, use ask_variables.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The project, by its id or its name."
+        },
+        "variable": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The variable, by its name."
+        },
+        "name": {
+          "type": "string",
+          "description": "The new name, in capitals with _."
+        },
+        "description": {
+          "type": "string",
+          "description": "What it holds now."
+        }
+      },
+      "required": [
+        "project",
+        "variable"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
+    "name": "delete_variable",
+    "description": "Delete one of a project's variables, with its value. The QA confirms it on screen, and this answers with what they chose.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The project, by its id or its name."
+        },
+        "variable": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The variable, by its name."
+        }
+      },
+      "required": [
+        "project",
+        "variable"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
     "name": "delete_workspace",
     "description": "Delete a workspace with its chat, plan, runs and bugs. The QA confirms it on screen, and this answers with what they chose.",
     "inputSchema": {

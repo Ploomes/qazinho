@@ -38,6 +38,11 @@ export function subjectOf(props: { call: AppToolCall; state: IAppState }): strin
     case 'create_workspace':
     case 'rename_workspace':
       return call.args.name;
+    case 'ask_variables':
+      return call.args.variables.map(({ name }) => name).join(', ');
+    case 'update_variable':
+    case 'delete_variable':
+      return call.args.variable;
     case 'connect_integration':
     case 'disconnect_integration':
       return INTEGRATION_NAMES[call.args.integration];

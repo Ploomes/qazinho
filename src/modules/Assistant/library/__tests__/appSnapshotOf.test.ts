@@ -18,6 +18,7 @@ const BASE = {
   projects: [PROJECT],
   workspaces: [CHECKOUT, LOGIN],
   askingIds: ['w2'],
+  variables: { p1: [{ name: 'LOJA_EMAIL', description: 'A buyer on staging' }] },
 };
 
 describe('appSnapshotOf', () => {
@@ -111,5 +112,13 @@ describe('appSnapshotOf', () => {
     expect(appSnapshotOf({ ...BASE, tab: 'plan', openBugId: 'BUG-01' })).toMatchObject({
       openBugId: null,
     });
+  });
+  it("tells each project's variables by name and what each holds, never a value", () => {
+    const [project] = appSnapshotOf(BASE).projects;
+
+    expect(project?.variables).toEqual([
+      { name: 'LOJA_EMAIL', description: 'A buyer on staging' },
+    ]);
+    expect(appSnapshotOf({ ...BASE, variables: {} }).projects[0]?.variables).toEqual([]);
   });
 });

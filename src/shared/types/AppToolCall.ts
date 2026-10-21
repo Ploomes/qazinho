@@ -65,6 +65,15 @@ export type AppToolCall =
   | { name: 'rename_workspace'; args: { workspace: string; name: string } }
   | { name: 'run_plan'; args: { workspace: string } }
   | { name: 'explore_app'; args: { workspace: string } }
+  | {
+      name: 'ask_variables';
+      args: { project: string; variables: { name: string; description: string }[] };
+    }
+  | {
+      name: 'update_variable';
+      args: { project: string; variable: string; name?: string; description?: string };
+    }
+  | { name: 'delete_variable'; args: { project: string; variable: string } }
   | { name: 'stop_run'; args: { workspace: string } }
   | { name: 'ask_workspace_chat'; args: { workspace: string; text: string } }
   | {

@@ -17,13 +17,21 @@ export const useConfirmCardViewModel = (props: IConfirmCardProps) => {
         ? t('ASSISTANT.CONFIRM_DELETE_WORKSPACE_BODY')
         : message.action === 'disconnect_integration'
           ? t('ASSISTANT.CONFIRM_DISCONNECT_BODY')
-          : message.count === 0
-            ? t('ASSISTANT.CONFIRM_DELETE_PROJECT_BODY_NONE')
-            : message.count === 1
-              ? t('ASSISTANT.CONFIRM_DELETE_PROJECT_BODY_ONE')
-              : t('ASSISTANT.CONFIRM_DELETE_PROJECT_BODY_OTHER', {
-                  count: message.count,
-                }),
+          : message.action === 'delete_variable'
+            ? message.count === 0
+              ? t('ASSISTANT.CONFIRM_DELETE_VARIABLE_BODY_NONE')
+              : message.count === 1
+                ? t('ASSISTANT.CONFIRM_DELETE_VARIABLE_BODY_ONE')
+                : t('ASSISTANT.CONFIRM_DELETE_VARIABLE_BODY_OTHER', {
+                    count: message.count,
+                  })
+            : message.count === 0
+              ? t('ASSISTANT.CONFIRM_DELETE_PROJECT_BODY_NONE')
+              : message.count === 1
+                ? t('ASSISTANT.CONFIRM_DELETE_PROJECT_BODY_ONE')
+                : t('ASSISTANT.CONFIRM_DELETE_PROJECT_BODY_OTHER', {
+                    count: message.count,
+                  }),
     goLabel: t(texts.go),
     keepLabel: t('ASSISTANT.KEEP'),
     isOpen,

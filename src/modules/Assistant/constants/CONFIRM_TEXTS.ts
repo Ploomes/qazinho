@@ -15,6 +15,11 @@ export const CONFIRM_TEXTS: Record<
     go: 'ASSISTANT.DELETE',
     gone: 'ASSISTANT.DELETED',
   },
+  delete_variable: {
+    title: 'ASSISTANT.CONFIRM_DELETE_VARIABLE',
+    go: 'ASSISTANT.DELETE',
+    gone: 'ASSISTANT.DELETED',
+  },
   disconnect_integration: {
     title: 'ASSISTANT.CONFIRM_DISCONNECT',
     go: 'ASSISTANT.DISCONNECT',

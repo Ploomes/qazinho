@@ -37,7 +37,7 @@ function workspaceLine(workspace: IAppWorkspaceBrief): string {
   return `- ${workspace.id} "${workspace.name}" in ${workspace.projectId}, on ${workspace.target ?? 'no target'}: ${parts.join(' · ')}`;
 }
 
-/** QAzinho as it is now: how the QA set it up, the trackers, and every project and workspace by id. */
+/** QAzinho as it is now: how the QA set it up, the trackers, every project with its variables by name, and every workspace by id. */
 export function describeApp(app: IAppSnapshot): IHarnessSection {
   const integrations = app.integrations.map(({ id, account }) =>
     account === null
@@ -59,7 +59,7 @@ export function describeApp(app: IAppSnapshot): IHarnessSection {
         ? ['There are no projects yet.']
         : [
             'Projects:',
-            ...app.projects.map((project) => {
+            ...app.projects.flatMap((project) => {
               const parts = [
                 ...project.targets.map(({ kind, value }) => `${kind} ${value}`),
                 ...project.repositories.map(
@@ -67,7 +67,14 @@ export function describeApp(app: IAppSnapshot): IHarnessSection {
                 ),
               ];
 
-              return `- ${project.id} "${project.name}": ${parts.length === 0 ? 'no targets' : parts.join(' · ')}`;
+              return [
+                `- ${project.id} "${project.name}": ${parts.length === 0 ? 'no targets' : parts.join(' · ')}`,
+                ...project.variables.map(({ name, description }) =>
+                  description.length === 0
+                    ? `  - variable \${${name}}`
+                    : `  - variable \${${name}}: ${description}`,
+                ),
+              ];
             }),
           ]),
       ...(app.projects.length === 0

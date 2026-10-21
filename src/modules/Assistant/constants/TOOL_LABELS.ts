@@ -60,6 +60,14 @@ export const TOOL_LABELS: Record<
     done: 'ASSISTANT.TOOL_RENAME_WORKSPACE_DONE',
   },
   run_plan: { doing: 'ASSISTANT.TOOL_RUN_PLAN', done: 'ASSISTANT.TOOL_RUN_PLAN_DONE' },
+  ask_variables: {
+    doing: 'ASSISTANT.TOOL_ASK_VARIABLES',
+    done: 'ASSISTANT.TOOL_ASK_VARIABLES_DONE',
+  },
+  update_variable: {
+    doing: 'ASSISTANT.TOOL_UPDATE_VARIABLE',
+    done: 'ASSISTANT.TOOL_UPDATE_VARIABLE_DONE',
+  },
   explore_app: {
     doing: 'ASSISTANT.TOOL_EXPLORE_APP',
     done: 'ASSISTANT.TOOL_EXPLORE_APP_DONE',

@@ -6,6 +6,7 @@ import type {
   IAppWorkspaceBrief,
   IIntegrationStatus,
   IntegrationId,
+  IVariableBrief,
   Language,
 } from '@/shared/types';
 import type { Screen, Theme } from '@/store/AppStore/types';
@@ -66,6 +67,7 @@ export function appSnapshotOf(props: {
   projects: IProject[];
   workspaces: IWorkspace[];
   askingIds: string[];
+  variables: Record<string, IVariableBrief[]>;
 }): IAppSnapshot {
   const open = props.workspaces.find(({ id }) => id === props.selectedWorkspaceId);
   const isWorkspace = props.screen === 'workspace' && open !== undefined;
@@ -94,6 +96,10 @@ export function appSnapshotOf(props: {
       repositories: project.repositories.map(({ owner, name, baseBranch }) => ({
         name: `${owner}/${name}`,
         base: baseBranch,
+      })),
+      variables: (props.variables[project.id] ?? []).map(({ name, description }) => ({
+        name,
+        description,
       })),
     })),
     workspaces: props.workspaces.map((workspace) =>

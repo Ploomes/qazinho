@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { isConfirmCall, performAppTool, subjectOf } from '@/modules/Assistant/library';
 import { useBuildActions } from '@/modules/Build';
 import { useChatAgent } from '@/modules/Chat';
+import { useVariableActions } from '@/modules/Project';
 import { useRunActions } from '@/modules/Run';
 import { PLATFORM_LABEL } from '@/modules/Workspace';
 import { Agent, Archive, Assistant, Github, Integrations, Run } from '@/services';
@@ -15,6 +16,7 @@ import {
   useMachineStore,
   useSettingsStore,
   useSetupStore,
+  useVariablesStore,
   useWorkspaceStore,
 } from '@/store';
 
@@ -23,6 +25,7 @@ export const useAppActions = () => {
   const { runWorkspace, stopWorkspace } = useRunActions();
   const { startBuild } = useBuildActions();
   const { askAgent } = useChatAgent();
+  const { askVariables, applyVariables } = useVariableActions();
   const waiting = useRef(new Map<string, (decision: ConfirmDecision) => void>());
 
   useEffect(
@@ -60,6 +63,7 @@ export const useAppActions = () => {
         builds: useBuildStore.getState().builds,
         hasAndroidSdk: useMachineStore.getState().tools.androidSdk.isFound,
         hasXcode: useMachineStore.getState().tools.xcode.isFound,
+        variables: useVariablesStore.getState().byProject,
       }),
       now: () => Date.now(),
       targetLabel: (kind) => t(PLATFORM_LABEL[kind]),
@@ -170,6 +174,9 @@ export const useAppActions = () => {
       listRepositories: () => Github.repositories(),
       listBranches: (repository) => Github.branches(repository),
       startBuild: (build) => startBuild(build),
+      askVariables: ({ projectId, drafts }) =>
+        askVariables({ projectId, drafts, waitMs: ASSISTANT_WAIT.confirmMs }),
+      applyVariables,
       confirm: ({ id, action, subject, count }) =>
         new Promise<ConfirmDecision>((settle) => {
           waiting.current.set(id, settle);
@@ -209,5 +216,13 @@ export const useAppActions = () => {
           Assistant.answer({ id, text: done.text, isError: done.isError });
         });
     });
-  }, [t, runWorkspace, stopWorkspace, startBuild, askAgent]);
+  }, [
+    t,
+    runWorkspace,
+    stopWorkspace,
+    startBuild,
+    askAgent,
+    askVariables,
+    applyVariables,
+  ]);
 };

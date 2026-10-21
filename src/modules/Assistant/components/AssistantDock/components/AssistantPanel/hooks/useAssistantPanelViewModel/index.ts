@@ -21,6 +21,7 @@ import {
   useMachineStore,
   useSettingsStore,
   useSetupStore,
+  useVariablesStore,
   useWorkspaceStore,
 } from '@/store';
 
@@ -116,6 +117,7 @@ export const useAssistantPanelViewModel = () => {
         projects: app.projects,
         workspaces: workspaces.workspaces,
         askingIds: workspaces.askingIds,
+        variables: useVariablesStore.getState().byProject,
       }),
     }).then((turn) => {
       if (turn.failure?.reason === 'stopped') {

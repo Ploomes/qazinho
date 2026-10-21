@@ -115,6 +115,7 @@ const APP: IAppSnapshot = {
       name: 'Shop',
       targets: [{ kind: 'web', value: 'https://shop.test' }],
       repositories: [{ name: 'acme/shop-web', base: 'main' }],
+      variables: [{ name: 'SHOP_EMAIL', description: 'The buyer on staging' }],
     },
   ],
   workspaces: [

@@ -7,6 +7,7 @@ import { performProjectChange } from './performProjectChange';
 import { performReading } from './performReading';
 import { performRemoval } from './performRemoval';
 import { performSettingsChange } from './performSettingsChange';
+import { performVariables } from './performVariables';
 import { performWorkspaceChange } from './performWorkspaceChange';
 
 /** Carries out one of the assistant's app tools through the port, and says what it did for the agent to read. */
@@ -48,8 +49,12 @@ export async function performAppTool(props: {
     case 'build_app':
     case 'build_status':
       return performBuild({ call, port });
+    case 'ask_variables':
+    case 'update_variable':
+      return performVariables({ call, port });
     case 'delete_workspace':
     case 'delete_project':
+    case 'delete_variable':
       return performRemoval({ id, call, port });
   }
 }

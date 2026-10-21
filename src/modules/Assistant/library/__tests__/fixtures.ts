@@ -1,7 +1,7 @@
 import type { ConfirmDecision, IAppPort, IAppState } from '@/modules/Assistant/types';
 import type { IProject } from '@/modules/Project/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
-import type { IBranchList, IRepositoryList } from '@/shared/types';
+import type { IBranchList, IRepositoryList, VariablesOutcome } from '@/shared/types';
 import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 
 export const PROJECT: IProject = {
@@ -59,6 +59,8 @@ export function fakePort(
     repositories?: IRepositoryList;
     branches?: IBranchList;
     runId?: string | null;
+    kept?: string[] | null;
+    applied?: VariablesOutcome;
   } = {},
 ) {
   const state: IAppState = {
@@ -76,6 +78,7 @@ export function fakePort(
     builds: [],
     hasAndroidSdk: true,
     hasXcode: true,
+    variables: {},
     ...props.state,
   };
   const did: string[] = [];
@@ -167,6 +170,18 @@ export function fakePort(
           ],
         },
       ),
+    askVariables: ({ projectId, drafts }) => {
+      did.push(`ask ${projectId} ${drafts.map(({ name }) => name).join(',')}`);
+
+      return Promise.resolve(
+        props.kept === undefined ? drafts.map(({ name }) => name) : props.kept,
+      );
+    },
+    applyVariables: (apply) => {
+      did.push(`apply ${apply.projectId} ${JSON.stringify(apply.changes)}`);
+
+      return Promise.resolve(props.applied ?? { isSaved: true, variables: [] });
+    },
     confirm: (asked) => {
       did.push(`confirm ${asked.action} ${asked.subject} ${String(asked.count)}`);
 

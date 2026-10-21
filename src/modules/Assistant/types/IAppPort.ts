@@ -10,8 +10,11 @@ import type {
   IntegrationId,
   IRepositoryList,
   IRepositoryRef,
+  IVariableBrief,
   Language,
   TargetKind,
+  VariableChange,
+  VariablesOutcome,
 } from '@/shared/types';
 import type { Theme } from '@/store/AppStore/types';
 
@@ -54,6 +57,14 @@ export interface IAppPort {
     repository: IRepositoryRef;
     branch: string;
   }) => string;
+  askVariables: (props: {
+    projectId: string;
+    drafts: IVariableBrief[];
+  }) => Promise<string[] | null>;
+  applyVariables: (props: {
+    projectId: string;
+    changes: VariableChange[];
+  }) => Promise<VariablesOutcome>;
   confirm: (props: {
     id: string;
     action: ConfirmAction;

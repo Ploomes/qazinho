@@ -39,6 +39,10 @@ const FULL: IAppSnapshot = {
         { kind: 'android', value: '/Users/qa/loja.apk' },
       ],
       repositories: [{ name: 'acme/loja-web', base: 'develop' }],
+      variables: [
+        { name: 'LOJA_EMAIL', description: 'A buyer on staging' },
+        { name: 'LOJA_PASSWORD', description: '' },
+      ],
     },
   ],
   workspaces: [
@@ -92,6 +96,8 @@ describe('describeApp', () => {
         'Their agent is Claude Code. GitHub is connected as octoqa. Jira is not connected.',
         'Projects:',
         '- p-1 "Lojinha": web https://loja.test · android /Users/qa/loja.apk · repository acme/loja-web, base develop',
+        '  - variable ${LOJA_EMAIL}: A buyer on staging',
+        '  - variable ${LOJA_PASSWORD}',
         'Workspaces:',
         '- w-1 "Checkout" in p-1, on web: 1 case, 4 steps · 3 runs, the latest r-03 on 2026-10-20 at 10:42 stopped by the QA: 3 passed, 1 failed, 0 blocked, 0 skipped · 2 bugs · running now · its chat agent is answering',
         '- w-2 "Login" in p-1, on android: no plan yet · no runs · no bugs · its chat waits on the QA\'s answers to 3 questions',
