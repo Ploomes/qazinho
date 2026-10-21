@@ -5,8 +5,8 @@ QAzinho has no design system package. Every shared visual component lives in
 
 ```
 src/shared/components/
-├── atoms/        Button, Chip, StatusPill, Input, IconButton, Meter, Kbd, Logo, Intern, Markdown,
-│                 Wordmark, Tag
+├── atoms/        Button, Chip, StatusPill, Input, Icon, IconButton, Caret, Meter, Kbd, Logo,
+│                 Intern, Markdown, Wordmark, Tag
 ├── molecules/    TabBar, SidebarRow, CountTile, TargetCard, MetaGrid
 ├── organisms/    Titlebar, Sidebar, Composer, PlanCase, DevicePanel, ResourcePopover, StepsPopup
 └── templates/    AppShell, ModalFrame
@@ -18,6 +18,16 @@ src/shared/components/
 - **Template**: the arrangement of regions, with no content of its own.
 - A component used by **one screen only** lives in that screen's `components/`, not here.
 - A component owned by a domain lives in `src/modules/<Domain>/components/`.
+
+## Icons
+
+- **Every icon is Phosphor's**, drawn by the `Icon` atom by its name in `ICONS`. A name says what
+  the icon means (`close`, `external`, `attention`), and a caret where it points (`caretDown`).
+- Bold by default, solid (`fill`) for what is on: media controls, logos, the open marker.
+- A character is never an icon: no ✓, ✕, ↗ or ▸ in a view, a constant or a string. A key in a
+  shortcut (⌘, ↵) is text, and stays one; so is an arrow inside a sentence.
+- Something that folds open wears the `Caret` atom, which turns as it opens.
+- A link that leaves the app ends in `external`, and one that moves within it in `arrow`.
 
 ## The anatomy
 
