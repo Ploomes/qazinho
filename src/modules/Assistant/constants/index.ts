@@ -4,4 +4,5 @@ export * from './ASSISTANT_SUGGESTIONS';
 export * from './CONFIRM_TEXTS';
 export * from './CONFIRM_TOOLS';
 export * from './LATEST_RUN_LABEL';
+export * from './OPEN_LABELS';
 export * from './TOOL_LABELS';

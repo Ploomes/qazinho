@@ -15,6 +15,20 @@ describe('toolLabelOf', () => {
     });
   });
 
+  it('says which bug or run it opens', () => {
+    expect(
+      toolLabelOf({ name: 'open_workspace', args: { workspace: 'w1', bug: 'BUG-01' } })
+        .done,
+    ).toBe('ASSISTANT.TOOL_OPEN_BUG_DONE');
+    expect(
+      toolLabelOf({ name: 'open_workspace', args: { workspace: 'w1', run: 'r-01' } })
+        .doing,
+    ).toBe('ASSISTANT.TOOL_OPEN_RUN');
+    expect(toolLabelOf({ name: 'open_workspace', args: { workspace: 'w1' } }).done).toBe(
+      'ASSISTANT.TOOL_OPEN_WORKSPACE_DONE',
+    );
+  });
+
   it('says every other tool by its own name', () => {
     expect(toolLabelOf({ name: 'go_home', args: {} }).done).toBe(
       'ASSISTANT.TOOL_GO_HOME_DONE',

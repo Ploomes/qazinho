@@ -3,6 +3,7 @@ import { i18n } from '@/languages';
 import {
   CONFIRM_TOOLS,
   LATEST_RUN_LABEL,
+  OPEN_LABELS,
   TOOL_LABELS,
 } from '@/modules/Assistant/constants';
 
@@ -17,7 +18,11 @@ describe('TOOL_LABELS', () => {
   });
 
   it('says each tool while it goes and once it is done, in both languages', () => {
-    for (const { doing, done } of [...Object.values(TOOL_LABELS), LATEST_RUN_LABEL])
+    for (const { doing, done } of [
+      ...Object.values(TOOL_LABELS),
+      ...Object.values(OPEN_LABELS),
+      LATEST_RUN_LABEL,
+    ])
       for (const language of ['en', 'pt'])
         for (const key of [doing, done])
           expect(i18n.exists(key, { lng: language }), `${key} in ${language}`).toBe(true);

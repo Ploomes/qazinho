@@ -143,7 +143,10 @@ export const useAssistantPanelViewModel = () => {
       : isAsking
         ? doing?.kind === 'tool'
           ? t('ASSISTANT.STATUS_ACTING', {
-              doing: t(toolLabelOf(doing.call).doing, { subject: doing.subject }),
+              doing: t(toolLabelOf(doing.call).doing, {
+                ...doing.call.args,
+                subject: doing.subject,
+              }),
             })
           : t('ASSISTANT.STATUS_THINKING')
         : last?.kind === 'error'
@@ -180,6 +183,7 @@ export const useAssistantPanelViewModel = () => {
           className: `assistant-panel__tool assistant-panel__tool--${message.state}`,
           glyph: message.state === 'done' ? '✓' : message.state === 'failed' ? '✕' : '',
           text: t(message.state === 'done' ? label.done : label.doing, {
+            ...message.call.args,
             subject: message.subject,
           }),
           failed: message.state === 'failed' ? t('ASSISTANT.TOOL_FAILED') : '',
