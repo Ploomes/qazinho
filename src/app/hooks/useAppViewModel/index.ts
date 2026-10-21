@@ -18,7 +18,12 @@ import {
   useRunTicker,
   useVariables,
 } from '@/shared/hooks';
-import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useSettingsStore,
+  useVariablesStore,
+  useWorkspaceStore,
+} from '@/store';
 
 export const useAppViewModel = () => {
   const theme = useAppStore((state) => state.theme);
@@ -30,6 +35,7 @@ export const useAppViewModel = () => {
   const runNotice = useAppStore((state) => state.runNotice);
   const hasOnboarded = useSettingsStore((state) => state.hasOnboarded);
   const isDeviceOpen = useWorkspaceStore((state) => state.isDevicePanelOpen);
+  const variablesKey = useVariablesStore((state) => state.request?.id ?? null);
 
   useArchive();
   useVariables();
@@ -58,6 +64,7 @@ export const useAppViewModel = () => {
     } as CSSProperties,
     screen,
     modal,
+    variablesKey,
     hasMedia: media !== null,
     hasRunNotice: runNotice !== null,
     runNoticeKey: runNotice?.key ?? 'run-notice',

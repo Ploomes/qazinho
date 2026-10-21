@@ -1,0 +1,39 @@
+.variable-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.variable-form__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  gap: var(--space-4);
+}
+
+.variable-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.variable-form__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+  letter-spacing: var(--tag-tracking);
+  text-transform: uppercase;
+}
+
+.variable-form__lock {
+  width: 11px;
+  height: 11px;
+  color: var(--lime-ink);
+}
+
+.variable-form__note {
+  color: var(--attn);
+  font: var(--font-ui-sm);
+}

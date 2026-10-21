@@ -1,7 +1,7 @@
 import { AnimatePresence, MotionConfig } from 'motion/react';
 import { AssistantDock } from '@/modules/Assistant';
 import { DevicePanel } from '@/modules/Device';
-import { ProjectModal, Welcome } from '@/modules/Project';
+import { ProjectModal, VariablesModal, Welcome } from '@/modules/Project';
 import { RunNotice, RunReplay } from '@/modules/Run';
 import { Settings } from '@/modules/Settings';
 import { Onboarding } from '@/modules/Setup';
@@ -20,6 +20,7 @@ export const App: React.FC = () => {
     isWorkspace,
     isSettings,
     modal,
+    variablesKey,
     hasMedia,
     hasRunNotice,
     runNoticeKey,
@@ -46,6 +47,7 @@ export const App: React.FC = () => {
           {hasRunNotice && <RunNotice key={runNoticeKey} />}
           {modal === 'project' && <ProjectModal key="project" />}
           {modal === 'workspace' && <NewWorkspaceModal key="workspace" />}
+          {variablesKey !== null && <VariablesModal key={variablesKey} />}
         </AnimatePresence>
 
         {!isOnboarding && <AssistantDock />}

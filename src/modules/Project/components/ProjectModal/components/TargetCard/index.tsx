@@ -1,9 +1,9 @@
 import type { ITargetCardProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
+import { LOCK_ICON } from '@/modules/Project/constants';
 import { Button } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
-import { LOCK_ICON } from './constants';
 import { useTargetCardViewModel } from './hooks';
 import './styles.css';
 
