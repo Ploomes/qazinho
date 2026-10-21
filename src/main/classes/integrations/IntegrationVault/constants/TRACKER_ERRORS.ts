@@ -5,7 +5,7 @@ export const TRACKER_ERRORS = {
     'QAzinho could not reach the tracker from this machine. Check the address and the network.',
   unexpected: 'The tracker answered in a way QAzinho did not expect (HTTP {status}).',
   noKeychain:
-    'This machine has no keychain QAzinho can seal a token with, so it will not store one.',
+    'This machine has no keychain QAzinho can seal a token with, so it will not store one. On Linux, open GNOME Keyring or KWallet first.',
   badSite:
     'That does not look like a Jira site. Use the address you open Jira at, like acme.atlassian.net.',
 } as const;

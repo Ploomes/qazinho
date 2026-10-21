@@ -11,6 +11,7 @@ export * from './hydrateShellPath';
 export * from './imageExtensionOf';
 export * from './isInternalNavigation';
 export * from './isLostSession';
+export * from './isSealable';
 export * from './mergePathSegments';
 export * from './mp4FactsOf';
 export * from './numberDuplicates';

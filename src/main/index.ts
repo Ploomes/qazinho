@@ -103,6 +103,7 @@ import {
   imageExtensionOf,
   isInternalNavigation,
   isLostSession,
+  isSealable,
   searchDirectories,
 } from '@/main/library';
 import { ASSISTANT_WAIT, CHANNELS } from '@/shared/constants';
@@ -210,7 +211,13 @@ const usageReader = new UsageReader({
   },
 });
 const keychain = {
-  isAvailable: () => safeStorage.isEncryptionAvailable(),
+  isAvailable: () =>
+    isSealable({
+      platform: process.platform,
+      isAvailable: safeStorage.isEncryptionAvailable(),
+      store:
+        process.platform === 'linux' ? safeStorage.getSelectedStorageBackend() : null,
+    }),
   encrypt: (plain: string) => safeStorage.encryptString(plain),
   decrypt: (sealed: Buffer) => safeStorage.decryptString(sealed),
 };
