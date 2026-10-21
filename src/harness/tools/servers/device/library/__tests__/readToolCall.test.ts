@@ -19,6 +19,17 @@ describe('readToolCall', () => {
       });
     });
 
+    /**
+     * Asked to close the app and open it again, the runner had only goto, which brings a phone
+     * app back as it was, and back, which leaves it running: the app never really closed.
+     */
+    it('reads reopen, which closes the app completely and opens it again, with nothing to aim at', () => {
+      expect(readToolCall({ name: 'reopen', args: undefined })).toEqual({
+        kind: 'act',
+        action: { kind: 'reopen', target: '', value: '' },
+      });
+    });
+
     it('carries the answer a click gives the dialog it opens', () => {
       expect(
         readToolCall({ name: 'click', args: { target: 'Delete', dialog: 'cancel' } }),

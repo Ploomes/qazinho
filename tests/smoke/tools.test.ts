@@ -21,8 +21,14 @@ const PAGE = `<!doctype html><html><body style="margin:0;font:16px sans-serif">
     document.getElementById('slot').innerHTML = '<div style=height:240px;background:#fc0>Sale</div>';
     document.getElementById('more').textContent = 'Loaded 20 more';
   }, 300)">Load more</button>
+  <button onclick="localStorage.setItem('kept', 'yes'); sessionStorage.setItem('tab', 'yes')">Remember</button>
   <p id="out">Signed out</p>
   <p id="more">Nothing more yet</p>
+  <p id="memory"></p>
+  <script>
+    document.getElementById('memory').textContent =
+      'kept: ' + (localStorage.getItem('kept') || 'none') + ' / tab: ' + (sessionStorage.getItem('tab') || 'none');
+  </script>
   <div style="height:900px"></div>
 </body></html>`;
 
@@ -95,6 +101,7 @@ describe('the device as MCP tools', () => {
     expect(listed.tools.map(({ name }) => name)).toEqual([
       'look',
       'goto',
+      'reopen',
       'click',
       'fill',
       'press',
@@ -102,6 +109,19 @@ describe('the device as MCP tools', () => {
       'report',
       'bug',
     ]);
+    await client.close();
+  });
+
+  /** A step that closes the app and opens it again keeps what the site saved, and only that. */
+  it("reopens the app in a new tab: what the site saved stays, the old tab's session goes", async () => {
+    const client = await connect('w1');
+
+    await client.callTool({ name: 'click', arguments: { target: 'Remember' } });
+
+    const reopened = await client.callTool({ name: 'reopen', arguments: {} });
+
+    expect(reopened.isError).toBeFalsy();
+    expect(textOf(reopened)).toContain('kept: yes / tab: none');
     await client.close();
   });
 

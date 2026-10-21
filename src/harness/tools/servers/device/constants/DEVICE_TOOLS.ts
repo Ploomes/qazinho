@@ -20,6 +20,12 @@ export const DEVICE_TOOLS = [
     }),
   },
   {
+    name: 'reopen',
+    description:
+      'Close the app completely and open it again, with what it saved kept, as a person does who swipes it away and taps its icon; in a browser, the page closes and its address opens in a new tab.',
+    input: z.object({}),
+  },
+  {
     name: 'click',
     description:
       'Click or tap a control, named the way a person reads it: the button label, the link text, the row text. When several read alike, look numbers them: name the one you mean, like "Buy #2".',
