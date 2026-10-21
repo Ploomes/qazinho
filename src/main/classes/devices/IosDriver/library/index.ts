@@ -6,3 +6,4 @@ export * from './parseBooted';
 export * from './parseElements';
 export * from './parseSimulators';
 export * from './runTool';
+export * from './screenOf';

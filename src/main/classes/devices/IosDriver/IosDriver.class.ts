@@ -15,7 +15,7 @@ import { readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
-import { imageExtensionOf, mp4FactsOf, phoneGlance } from '@/main/library';
+import { imageExtensionOf, mp4FactsOf, phoneGlance, swipeOf } from '@/main/library';
 import { IOS } from './constants';
 import {
   bundleOfPlist,
@@ -24,6 +24,7 @@ import {
   parseBooted,
   parseElements,
   runTool,
+  screenOf,
 } from './library';
 
 /** Drives an iOS simulator. simctl boots and installs; only idb can touch the screen. */
@@ -97,9 +98,48 @@ export class IosDriver implements IDeviceDriver {
       return;
     }
 
-    const element = findElement({ elements: await this.read(), target: action.target });
+    if (action.kind === 'scroll') {
+      await this.scroll({ direction: action.value, until: action.target });
+
+      return;
+    }
+
+    if (action.kind === 'hover' || action.kind === 'upload')
+      throw new Error(IOS.notOnPhone[action.kind]);
+
+    const elements = await this.read();
+    const element = findElement({ elements, target: action.target });
 
     if (!element) throw new Error(`Nothing on the screen answers to "${action.target}".`);
+
+    if (action.kind === 'long_press') {
+      await this.ui([
+        'tap',
+        String(element.x),
+        String(element.y),
+        '--duration',
+        String(IOS.longPressSec),
+      ]);
+      await this.settle();
+
+      return;
+    }
+
+    if (action.kind === 'drag') {
+      const drop = findElement({ elements, target: action.value });
+
+      if (!drop) throw new Error(`Nothing on the screen answers to "${action.value}".`);
+
+      await this.ui([
+        'swipe',
+        ...[element.x, element.y, drop.x, drop.y].map(String),
+        '--duration',
+        String(IOS.dragSec),
+      ]);
+      await this.settle();
+
+      return;
+    }
 
     await this.ui(['tap', String(element.x), String(element.y)]);
 
@@ -225,6 +265,56 @@ export class IosDriver implements IDeviceDriver {
     if (this.isOurs) await this.simctl(['shutdown', this.udid]).catch(() => '');
 
     this.isOurs = false;
+  }
+
+  private async scroll(props: { direction: string; until: string }): Promise<void> {
+    const size = screenOf(await this.ui(['describe-all']).catch(() => ''));
+
+    if (size === null)
+      throw new Error('The simulator did not say how big its screen is.');
+
+    const { from, to } = swipeOf({ size, direction: props.direction });
+    const until = props.until.trim();
+    const swipe = async () => {
+      await this.ui([
+        'swipe',
+        ...[from.x, from.y, to.x, to.y].map(String),
+        '--duration',
+        String(IOS.swipeSec),
+      ]);
+      await this.settle();
+    };
+
+    if (until === '') {
+      await swipe();
+
+      return;
+    }
+
+    const isShown = async () => {
+      const found = findElement({ elements: await this.read(), target: until });
+
+      return (
+        found !== null &&
+        found !== undefined &&
+        found.x >= 0 &&
+        found.y >= 0 &&
+        found.x <= size.width &&
+        found.y <= size.height
+      );
+    };
+
+    for (let tries = 0; tries < IOS.scrollTries; tries += 1) {
+      if (await isShown()) return;
+
+      await swipe();
+    }
+
+    if (await isShown()) return;
+
+    throw new Error(
+      `Nothing on the screen reads "${until}" after scrolling ${props.direction}.`,
+    );
   }
 
   private async expectOpen(): Promise<void> {
