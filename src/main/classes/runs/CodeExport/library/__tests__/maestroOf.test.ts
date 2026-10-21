@@ -34,6 +34,35 @@ describe('maestroOf', () => {
     expect(body).toContainEqual({ assertVisible: '.*Carrinho 1 \\(R\\$ 79,90\\).*' });
   });
 
+  it('scrolls until the words show, swipes for a plain scroll, and long presses', () => {
+    const [, body] = parseAllDocuments(
+      maestroOf({
+        appId: 'app.qazinho.loja',
+        steps: STEPS.slice(0, 1),
+        recipe: {
+          ...RECIPE,
+          steps: [
+            {
+              number: 1,
+              actions: [
+                { kind: 'scroll', target: 'Row 40', value: 'down' },
+                { kind: 'scroll', target: '', value: 'up' },
+                { kind: 'long_press', target: 'Row 3 #2', value: '' },
+              ],
+              proof: 'Row 40',
+            },
+          ],
+        },
+      }),
+    ).map((document) => document.toJS() as unknown[]);
+
+    expect(body).toContainEqual({
+      scrollUntilVisible: { element: { text: '.*Row 40.*' }, direction: 'DOWN' },
+    });
+    expect(body).toContainEqual({ swipe: { direction: 'DOWN' } });
+    expect(body).toContainEqual({ longPressOn: { text: 'Row 3', index: 1 } });
+  });
+
   it('closes the app for real and opens it again for reopen', () => {
     const [, body] = parseAllDocuments(FLOW).map(
       (document) => document.toJS() as unknown[],

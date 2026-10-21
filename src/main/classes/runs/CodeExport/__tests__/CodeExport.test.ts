@@ -81,6 +81,36 @@ describe('CodeExport', () => {
     );
   });
 
+  it('puts the sample file an upload picked beside the test that uses it', async () => {
+    const { root, picked } = await world('web');
+    const book = join(root, 'workspaces', 'w-1', 'recipes.json');
+    const kept = JSON.parse(await readFile(book, 'utf8')) as {
+      cases: { steps: { actions: unknown[] }[] }[];
+    };
+
+    kept.cases[0]?.steps[0]?.actions.push({
+      kind: 'upload',
+      target: 'Foto',
+      value: 'pdf',
+    });
+    await writeFile(book, JSON.stringify(kept));
+
+    const exporter = new CodeExport({
+      dataRoot: root,
+      chooseFolder: () => Promise.resolve(picked),
+      appIdOf: () => Promise.resolve(null),
+    });
+
+    expect(await exporter.export(request('web'))).toMatchObject({
+      files: ['qazinho.spec.ts', 'files/qazinho-sample.pdf'],
+    });
+    expect(
+      (await readFile(join(picked, 'files', 'qazinho-sample.pdf')))
+        .subarray(0, 5)
+        .toString(),
+    ).toBe('%PDF-');
+  });
+
   it('writes a Maestro flow per recorded case of a phone app, with the id read from its file', async () => {
     const { root, picked } = await world('android');
     const exporter = new CodeExport({

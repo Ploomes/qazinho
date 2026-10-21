@@ -19,6 +19,8 @@ export * from './parseCpuTime';
 export * from './parseProcessSweep';
 export * from './phoneGlance';
 export * from './pngSizeOf';
+export * from './sampleFileOf';
 export * from './searchDirectories';
 export * from './stripAnsi';
+export * from './swipeOf';
 export * from './withoutRole';

@@ -1,6 +1,13 @@
 import type { ICaseRecipe } from '@/main/classes/runs/RunCoordinator/types';
 import type { IFlatStep, IStepAction, IViewport } from '@/shared/types';
-import { ordinalOf, withoutRole } from '@/main/library';
+import { ordinalOf, sampleFileOf, withoutRole } from '@/main/library';
+
+const WHEEL: Record<string, string> = {
+  down: '0, 600',
+  up: '0, -600',
+  right: '600, 0',
+  left: '-600, 0',
+};
 
 const HELPERS = `const answer: { ok: boolean; text?: string } = { ok: true };
 
@@ -46,6 +53,12 @@ function aimed(target: string): string {
   return nth === 0 ? quoted(name) : `${quoted(name)}, ${String(nth)}`;
 }
 
+function aimOf(action: IStepAction): string {
+  return action.locator === undefined
+    ? `control(tab, ${aimed(action.target)})`
+    : `tab.${action.locator}`;
+}
+
 function lineOf(action: IStepAction): string[] {
   const dialog =
     action.dialog === 'cancel'
@@ -85,6 +98,29 @@ function lineOf(action: IStepAction): string[] {
       ];
     case 'wait':
       return [`await tab.waitForTimeout(${String(Number(action.value) || 1_000)});`];
+    case 'scroll':
+      return action.target.trim() === ''
+        ? [`await tab.mouse.wheel(${WHEEL[action.value] ?? WHEEL.down ?? '0, 600'});`]
+        : [
+            `await tab.getByText(${quoted(action.target)}).first().scrollIntoViewIfNeeded();`,
+          ];
+    case 'long_press':
+      return [`await ${aimOf(action)}.click({ delay: 800 });`];
+    case 'drag':
+      return [
+        `await ${aimOf(action)}.dragTo(${action.toLocator === undefined ? `control(tab, ${aimed(action.value)})` : `tab.${action.toLocator}`});`,
+      ];
+    case 'hover':
+      return [`await ${aimOf(action)}.hover();`];
+    case 'upload':
+      return [
+        'await Promise.all([',
+        "  tab.waitForEvent('filechooser').then((chooser) =>",
+        `    chooser.setFiles(${quoted(`files/${sampleFileOf(action.value).name}`)}),`,
+        '  ),',
+        `  ${aimOf(action)}.click(),`,
+        ']);',
+      ];
   }
 }
 

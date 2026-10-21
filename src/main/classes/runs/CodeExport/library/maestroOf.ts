@@ -2,6 +2,13 @@ import type { ICaseRecipe } from '@/main/classes/runs/RunCoordinator/types';
 import type { IFlatStep, IStepAction } from '@/shared/types';
 import { ordinalOf, withoutRole } from '@/main/library';
 
+const SWIPES: Record<string, string> = {
+  down: '- scroll',
+  up: '- swipe:\n    direction: DOWN',
+  right: '- swipe:\n    direction: LEFT',
+  left: '- swipe:\n    direction: RIGHT',
+};
+
 const KEYS: Record<string, string> = {
   back: 'Back',
   home: 'Home',
@@ -20,12 +27,16 @@ function pattern(text: string): string {
   return text.replace(/[\\^$.|?*+()[\]{}]/g, '\\$&');
 }
 
-function tapOf(target: string): string {
-  const { name, nth } = ordinalOf(withoutRole(target) ?? target);
+function onOf(props: { command: string; target: string }): string {
+  const { name, nth } = ordinalOf(withoutRole(props.target) ?? props.target);
 
   return nth === 0
-    ? `- tapOn: ${yamlText(pattern(name))}`
-    : `- tapOn:\n    text: ${yamlText(pattern(name))}\n    index: ${String(nth)}`;
+    ? `- ${props.command}: ${yamlText(pattern(name))}`
+    : `- ${props.command}:\n    text: ${yamlText(pattern(name))}\n    index: ${String(nth)}`;
+}
+
+function tapOf(target: string): string {
+  return onOf({ command: 'tapOn', target });
 }
 
 function linesOf(action: IStepAction): string[] {
@@ -42,6 +53,23 @@ function linesOf(action: IStepAction): string[] {
       return [`- pressKey: ${KEYS[action.target.toLowerCase()] ?? 'Enter'}`];
     case 'wait':
       return ['- waitForAnimationToEnd'];
+    case 'scroll':
+      return action.target.trim() === ''
+        ? [SWIPES[action.value] ?? '- scroll']
+        : [
+            `- scrollUntilVisible:\n    element:\n      text: ${yamlText(`.*${pattern(action.target)}.*`)}\n    direction: ${action.value === 'up' ? 'UP' : action.value === 'left' ? 'LEFT' : action.value === 'right' ? 'RIGHT' : 'DOWN'}`,
+          ];
+    case 'long_press':
+      return [onOf({ command: 'longPressOn', target: action.target })];
+    case 'drag':
+      return [
+        `# drag ${yamlText(action.target)} onto ${yamlText(action.value)}: Maestro has no drag from one element to another, so do this by hand`,
+      ];
+    case 'hover':
+    case 'upload':
+      return [
+        `# ${action.kind} ${yamlText(action.target)}: a phone has no ${action.kind}`,
+      ];
   }
 }
 

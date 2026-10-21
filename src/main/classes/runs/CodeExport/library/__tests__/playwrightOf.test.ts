@@ -72,6 +72,52 @@ describe('playwrightOf', () => {
     );
   });
 
+  it('does the gestures the run did: scroll, long press, drag, hover and upload', () => {
+    const file = playwrightOf({
+      url: 'https://loja.test/',
+      viewport: { width: 1280, height: 800 },
+      cases: [
+        {
+          steps: STEPS,
+          recipe: {
+            ...RECIPE,
+            steps: [
+              {
+                number: 1,
+                actions: [
+                  { kind: 'scroll', target: 'Rodapé', value: 'down' },
+                  { kind: 'scroll', target: '', value: 'up' },
+                  { kind: 'long_press', target: 'Card A', value: '' },
+                  {
+                    kind: 'drag',
+                    target: 'Card A',
+                    value: 'Feito',
+                    locator: "getByText('Card A', { exact: true }).visible().first()",
+                    toLocator: "getByText('Feito', { exact: true }).visible().first()",
+                  },
+                  { kind: 'hover', target: 'Ajuda', value: '' },
+                  { kind: 'upload', target: 'Foto', value: 'image' },
+                ],
+                proof: 'Card A',
+              },
+            ],
+          },
+        },
+      ],
+    });
+
+    expect(file).toContain(
+      '  await tab.getByText("Rodapé").first().scrollIntoViewIfNeeded();',
+    );
+    expect(file).toContain('  await tab.mouse.wheel(0, -600);');
+    expect(file).toContain('  await control(tab, "Card A").click({ delay: 800 });');
+    expect(file).toContain(
+      "  await tab.getByText('Card A', { exact: true }).visible().first().dragTo(tab.getByText('Feito', { exact: true }).visible().first());",
+    );
+    expect(file).toContain('  await control(tab, "Ajuda").hover();');
+    expect(file).toContain('chooser.setFiles("files/qazinho-sample.png")');
+  });
+
   it('cancels only the dialog a step said to cancel, and answers the rest OK', () => {
     expect(FILE).toContain(
       [

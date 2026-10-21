@@ -1,9 +1,10 @@
 import type { ICodeExport } from './types';
 import type { ExportOutcome, IExportCode } from '@/shared/types';
-import { readFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 import { casesOf, readBook, recipeFor } from '@/main/classes/runs/RunCoordinator/library';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
+import { sampleFileOf } from '@/main/library';
 import { CODE_EXPORT } from './constants';
 import { maestroOf, playwrightOf } from './library';
 
@@ -54,23 +55,39 @@ export class CodeExport {
 
     if (folder === null) return { kind: 'cancelled' };
 
-    const files = isWeb
+    const samples = [
+      ...new Set(
+        recorded.flatMap(({ recipe }) =>
+          recipe.steps.flatMap(({ actions }) =>
+            actions.flatMap(({ kind, value }) => (kind === 'upload' ? [value] : [])),
+          ),
+        ),
+      ),
+    ].map((kind) => sampleFileOf(kind));
+    const files: { name: string; content: string | Buffer }[] = isWeb
       ? [
           {
             name: CODE_EXPORT.playwrightFile,
-            text: playwrightOf({
+            content: playwrightOf({
               url: request.target.value,
               viewport: request.viewport,
               cases: recorded,
             }),
           },
+          ...samples.map(({ name, bytes }) => ({
+            name: join(CODE_EXPORT.samplesFolder, name),
+            content: bytes,
+          })),
         ]
       : recorded.map(({ steps, recipe }) => ({
           name: `${recipe.caseId.toLowerCase()}${CODE_EXPORT.maestroExtension}`,
-          text: maestroOf({ appId, steps, recipe }),
+          content: maestroOf({ appId, steps, recipe }),
         }));
     const isWritten = await Promise.all(
-      files.map(({ name, text }) => writeFile(join(folder, name), text)),
+      files.map(async ({ name, content }) => {
+        await mkdir(dirname(join(folder, name)), { recursive: true });
+        await writeFile(join(folder, name), content);
+      }),
     ).then(
       () => true,
       () => false,
