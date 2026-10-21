@@ -2,7 +2,7 @@ import type { IInstallStep } from '@/main/classes/setup/SetupInstaller/types';
 import type { InstallableId } from '@/shared/types';
 import { join } from 'node:path';
 
-const AGENTS: Record<Exclude<InstallableId, 'idb'>, string> = {
+const AGENTS: Record<Exclude<InstallableId, 'idb' | 'gh'>, string> = {
   'claude-code': '@anthropic-ai/claude-code',
   codex: '@openai/codex',
 };
@@ -10,6 +10,15 @@ const AGENTS: Record<Exclude<InstallableId, 'idb'>, string> = {
 /** The commands that install a tool, in order. idb's client gets a Python of its own, so Homebrew's Pythons are never touched. */
 export function recipeFor(props: { item: InstallableId; home: string }): IInstallStep[] {
   const { item, home } = props;
+
+  if (item === 'gh')
+    return [
+      {
+        command: 'brew',
+        args: ['install', 'gh'],
+        doneIf: { command: 'brew', args: ['list', '--versions', 'gh'] },
+      },
+    ];
 
   if (item !== 'idb') return [{ command: 'npm', args: ['install', '-g', AGENTS[item]] }];
 

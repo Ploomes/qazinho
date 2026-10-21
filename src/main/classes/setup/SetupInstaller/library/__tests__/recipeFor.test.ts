@@ -15,6 +15,16 @@ describe('recipeFor', () => {
     expect(lines('codex')).toEqual(['npm install -g @openai/codex']);
   });
 
+  it('installs the GitHub CLI with Homebrew, and skips it when Homebrew already has it', () => {
+    expect(recipeFor({ item: 'gh', home: HOME })).toEqual([
+      {
+        command: 'brew',
+        args: ['install', 'gh'],
+        doneIf: { command: 'brew', args: ['list', '--versions', 'gh'] },
+      },
+    ]);
+  });
+
   it('installs the idb companion before the client that talks to it', () => {
     const idb = lines('idb');
 
