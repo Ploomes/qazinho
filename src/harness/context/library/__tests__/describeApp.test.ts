@@ -84,7 +84,7 @@ describe('describeApp', () => {
     expect(describeApp(FULL)).toEqual({
       title: 'QAzinho now',
       lines: [
-        'The QA reads QAzinho in Brazilian Portuguese, on the Night theme. A run that ends while they are away calls them with a notification and its sound.',
+        'The QA reads QAzinho in Brazilian Portuguese, on the theme it calls Noite. A run that ends while they are away calls them with a notification and its sound.',
         'Their agent is Claude Code. GitHub is connected as octoqa. Jira is not connected.',
         'Projects:',
         '- p-1 "Lojinha": web https://loja.test · android /Users/qa/loja.apk · repository acme/loja-web, base develop',
@@ -97,7 +97,7 @@ describe('describeApp', () => {
 
   it('says there is nothing yet, and how a quiet QAzinho calls the QA', () => {
     expect(describeApp(EMPTY).lines).toEqual([
-      'The QA reads QAzinho in English, on the Paper theme. A run that ends calls them only inside QAzinho.',
+      'The QA reads QAzinho in English, on the theme it calls Paper. A run that ends calls them only inside QAzinho.',
       'Their agent is Codex. GitHub is not connected. Jira is not connected.',
       'There are no projects yet.',
     ]);

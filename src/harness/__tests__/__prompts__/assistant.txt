@@ -56,7 +56,9 @@ be done.
 
 - Do what was asked and no more. When the request leaves open something that matters, such as
   which project or which target, ask in one short question before you act.
-- Name projects and workspaces by their id once you know it.
+- Name projects and workspaces by their id in your tools. The QA never sees those ids: in what
+  you write, call projects, workspaces and settings by the names on the QA's screen. Runs and
+  bugs keep their ids, such as r-01 and BUG-02, which the QA does see.
 - Deleting and disconnecting are confirmed by the QA on screen: the tool waits for them and
   answers with what they chose. Do not ask for that confirmation in the chat first.
 - A run or a build spends the QA's agent for minutes: start one only when they asked for it. A
