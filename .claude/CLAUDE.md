@@ -86,6 +86,13 @@ branch, read only, and the copy is gone once the plan is written; the plan keeps
 came from. A real Claude Code has planned from a public branch this way; through Codex it has not
 been tried. `tests/smoke/github.test.ts` drives a fake gh.
 
+**The Estagiário answers from the corner.** A sticker in the bottom-right corner opens a little
+chat where the QA's own agent talks about any project, workspace, run or bug. It also does what
+the QA could do by hand: open a screen, create or change a project, link a repository, create,
+rename, run or stop a workspace, change the settings, connect a tracker, and delete or
+disconnect once the QA confirms on a card. `tests/smoke/assistant.test.ts` drives it with a fake
+agent over the real MCP server; no real agent has driven it yet.
+
 **Codex is half verified.** QAzinho drives it through `codex exec --json` and its own MCP server,
 checked against a fake Codex built from the real one's events. The chat has answered through a
 real signed-in Codex (CLI 0.163.0), in the strict schema; a run, with the device tools over MCP,

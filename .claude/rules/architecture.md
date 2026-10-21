@@ -106,8 +106,8 @@ answers one question per channel, for a target `{ role, platform }`:
 | schemas | `schemas/`               | the shape an answer must take, through `--json-schema`    |
 
 - **The corpus is prose in `.md`, one `## Title` section per file.** Where a file lives says who
-  reads it: `universal/` every call, `role/<role>/` one role (`chat`, `runner`), `platform/<x>.md`
-  one device. The frontmatter's `order` sorts a layer. Layers go from the most stable to the least.
+  reads it: `universal/` every call, `role/<role>/` one role (`chat`, `runner`, `assistant`),
+  `platform/<x>.md` one device. The frontmatter's `order` sorts a layer. Layers go from the most stable to the least.
   `{{app}}` is filled per call; a placeholder nothing fills throws.
 - **A chat's system prompt is the corpus alone.** Claude Code keeps the system prompt a session
   started with and ignores a new `--append-system-prompt` on `--resume`. What a message adds (the
@@ -117,9 +117,25 @@ answers one question per channel, for a target `{ role, platform }`:
   prompt and the device tools, and nothing of the chat. The chat's agent learns how the runs
   went from the history the next message carries (`runHistoryOf`): the latest run step by
   step, the ones before by what broke.
-- **The tools are granted per role** (`TOOL_GRANTS`). Today the runner gets the device and the
-  chat gets nothing: it runs with every tool taken away. `McpHost` serves the tools on loopback,
-  one address per workspace, for the length of a run.
+- **The tools are granted per role** (`TOOL_GRANTS`). The runner gets the device, the assistant
+  gets the app, and the chat gets nothing: it runs with every tool taken away. `McpHost` serves
+  the tools on loopback, one address per workspace for the length of a run, and one under the
+  `~assistant` scope while the assistant answers.
+- **The Estagiário in the corner is an agent of its own** (`role/assistant/`). It does in QAzinho
+  what the QA does by hand, through the app tools (`servers/app/`), and talks about any project,
+  workspace, run or bug:
+  - Each message opens with what is on screen and how QAzinho is now (`describeScreen`,
+    `describeApp`), sent again only when it changed. The page builds that snapshot.
+  - A tool call is read against its zod schema into an `AppToolCall`, which the page carries out
+    through the same stores and services the QA's clicks use (`performAppTool`), and the answer
+    goes back in words. Main's `AppBridge` hands the call over and waits for the answer.
+  - The compiler holds the zod schemas and the `AppToolCall` type to each other: a tool whose
+    schema and type drift apart does not build.
+  - Deleting and disconnecting wait on a card the QA answers in the chat, for up to five minutes
+    (`ASSISTANT_WAIT`). The MCP config tells the agent a call may take that long: Claude Code
+    reads the server's `timeout`, and Codex `tool_timeout_sec`.
+  - A build path is made whole and checked on disk in main before the page hears of it. A
+    tracker's token is still typed by the QA in Settings, never in the chat.
 - **The code plans; the QA says what the app should do** (`role/chat/code.md`). A project names
   its GitHub repositories, each with a base branch. `/code` in the chat picks one of them and a
   branch, and the agent reads that branch while it plans:
@@ -206,6 +222,8 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `GithubCli`                           | talks to GitHub through the QA's own gh: status, device-flow sign-in, API, tar      |
 | `GithubRepos`                         | lists the QA's repositories and a repository's branches, kept for a little while    |
 | `CodeCopies`                          | copies a branch for the agent to read while it plans, with its diff, then drops it  |
+| `AssistantAgent`                      | asks the QA's agent as the Estagiário, with the app tools served for the turn       |
+| `AppBridge`                           | hands each app tool call to the page and waits for what it did                      |
 
 ## Dependencies
 
