@@ -51,7 +51,8 @@ export const useMachineWatch = () => {
             step: event.step,
             bytes: event.bytes,
           });
-        } else setLiveText({ workspaceId: event.workspaceId, text: event.text });
+        } else if (event.kind === 'text')
+          setLiveText({ workspaceId: event.workspaceId, text: event.text });
       }),
     [setUsage, setContext, setLiveText, setRetry, setCodeStep],
   );

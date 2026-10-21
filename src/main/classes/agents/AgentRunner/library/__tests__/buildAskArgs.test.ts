@@ -72,6 +72,26 @@ describe('buildAskArgs', () => {
     expect(buildAskArgs({ model: '', sessionId: null })).not.toContain('--tools');
   });
 
+  it('gives a build its tools, the commands it may run alone, and the folder it works in', () => {
+    expect(
+      buildAskArgs({
+        model: '',
+        sessionId: null,
+        tools: ['Bash', 'Read', 'Write'],
+        allowedTools: ['Bash(./gradlew:*)', 'Write'],
+        readDirs: ['/builds/b1/src'],
+      }).slice(-7),
+    ).toEqual([
+      '--tools',
+      'Bash,Read,Write',
+      '--allowedTools',
+      'Bash(./gradlew:*)',
+      'Write',
+      '--add-dir',
+      '/builds/b1/src',
+    ]);
+  });
+
   it('takes every tool away from a call that is only talk', () => {
     expect(
       buildAskArgs({ model: '', sessionId: null, allowedTools: [] }).slice(-2),

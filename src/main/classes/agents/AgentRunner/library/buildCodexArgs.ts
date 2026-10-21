@@ -23,13 +23,13 @@ function qazinhoServerOf(mcpConfig: string | undefined): {
   }
 }
 
-/** The flags that make Codex answer once, as JSON lines, read-only, never stopping to ask for approval. */
+/** The flags that make Codex answer once, as JSON lines, never stopping to ask for approval: read-only, or writing in one folder with the network on. */
 export function buildCodexArgs(
   props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command' | 'agentId'> & {
     schemaFile: string | null;
   },
 ): string[] {
-  const { model, sessionId, systemPrompt, mcpConfig, schemaFile } = props;
+  const { model, sessionId, systemPrompt, mcpConfig, schemaFile, writeDir } = props;
   const server = qazinhoServerOf(mcpConfig);
 
   return [
@@ -41,8 +41,16 @@ export function buildCodexArgs(
     ...(schemaFile === null ? [] : ['--output-schema', schemaFile]),
     '-c',
     'approval_policy="never"',
-    '-c',
-    'sandbox_mode="read-only"',
+    ...(writeDir === undefined
+      ? ['-c', 'sandbox_mode="read-only"']
+      : [
+          '-c',
+          'sandbox_mode="workspace-write"',
+          '-c',
+          'sandbox_workspace_write.network_access=true',
+          '-C',
+          writeDir,
+        ]),
     ...(systemPrompt === undefined
       ? []
       : ['-c', `developer_instructions=${JSON.stringify(systemPrompt)}`]),

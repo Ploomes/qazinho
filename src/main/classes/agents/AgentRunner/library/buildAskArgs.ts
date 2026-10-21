@@ -1,13 +1,16 @@
 import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
 
-/** The flags that make the CLI answer once, in JSON, on the session it already has, with only the tools and folders it was granted. */
+/** The flags that make the CLI answer once, in JSON, on the session it already has, with only the tools, commands and folders it was granted. */
 export function buildAskArgs(
   props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command' | 'agentId'>,
 ): string[] {
-  const { model, sessionId, schema, systemPrompt, mcpConfig, allowedTools } = props;
+  const { model, sessionId, schema, systemPrompt, mcpConfig, allowedTools, tools } =
+    props;
   const readDirs = props.readDirs ?? [];
-  const isTalk = mcpConfig === undefined && allowedTools?.length === 0;
+  const isTalk =
+    mcpConfig === undefined && tools === undefined && allowedTools?.length === 0;
+  const isWork = mcpConfig === undefined && tools !== undefined;
 
   return [
     '--print',
@@ -32,6 +35,16 @@ export function buildAskArgs(
     ...(isTalk && readDirs.length === 0 ? ['--tools', ''] : []),
     ...(isTalk && readDirs.length > 0
       ? ['--tools', AGENT_RUN.readTools, ...readDirs.flatMap((dir) => ['--add-dir', dir])]
+      : []),
+    ...(isWork
+      ? [
+          '--tools',
+          tools.join(','),
+          ...((allowedTools ?? []).length === 0
+            ? []
+            : ['--allowedTools', ...(allowedTools ?? [])]),
+          ...readDirs.flatMap((dir) => ['--add-dir', dir]),
+        ]
       : []),
   ];
 }

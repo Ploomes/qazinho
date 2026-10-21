@@ -11,6 +11,18 @@ describe('hearCodex', () => {
     });
   });
 
+  it('takes a command Codex sets out to run, on one line', () => {
+    expect(
+      hear({
+        type: 'item.started',
+        item: {
+          type: 'command_execution',
+          command: "bash -lc './gradlew assembleDebug'\n",
+        },
+      }),
+    ).toEqual({ action: "$ bash -lc './gradlew assembleDebug'" });
+  });
+
   it('takes what the agent said', () => {
     expect(
       hear({ type: 'item.completed', item: { type: 'agent_message', text: ' Done. ' } }),

@@ -50,6 +50,15 @@ describe('buildCodexArgs', () => {
     );
   });
 
+  it('lets a build write in its own folder, with the network on to fetch what it needs', () => {
+    const args = buildCodexArgs({ ...BASE, writeDir: '/builds/b1/src' });
+
+    expect(args).toContain('sandbox_mode="workspace-write"');
+    expect(args).toContain('sandbox_workspace_write.network_access=true');
+    expect(args[args.indexOf('-C') + 1]).toBe('/builds/b1/src');
+    expect(args).not.toContain('sandbox_mode="read-only"');
+  });
+
   /** Codex gives a tool sixty seconds unless told otherwise; the assistant's waits on the QA for longer. */
   it('lets a tool call take as long as the MCP config says, in whole seconds', () => {
     const mcpConfig = JSON.stringify({

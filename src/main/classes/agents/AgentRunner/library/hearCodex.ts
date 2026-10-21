@@ -1,14 +1,22 @@
 import type { ICodexLine } from '@/main/types';
 import type { IAgentUsage } from '@/shared/types';
 
-/** What one Codex event says: the session, a message, the usage, or how the turn ended. */
+/** What one Codex event says: the session, a message, a command it set out to run, the usage, or how the turn ended. */
 export function hearCodex(props: { line: ICodexLine; usage: IAgentUsage | null }): {
   sessionId?: string;
   message?: string;
+  action?: string;
   usage?: IAgentUsage;
   ended?: { isError: boolean; text: string };
 } {
   const { line } = props;
+
+  if (
+    line.type === 'item.started' &&
+    line.item?.type === 'command_execution' &&
+    typeof line.item.command === 'string'
+  )
+    return { action: `$ ${line.item.command.trim().split('\n')[0] ?? ''}` };
 
   if (line.type === 'thread.started' && line.thread_id !== undefined)
     return { sessionId: line.thread_id };

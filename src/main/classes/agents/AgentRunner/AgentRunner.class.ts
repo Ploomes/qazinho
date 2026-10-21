@@ -18,6 +18,7 @@ import {
   readAgentLine,
   retryOf,
   strictSchemaOf,
+  toActions,
   toStructured,
   toText,
   toUsage,
@@ -61,6 +62,7 @@ export class AgentRunner {
         cwd: this.folder,
         stdio: ['pipe', 'pipe', 'pipe'],
         detached: process.platform !== 'win32',
+        ...(props.env === undefined ? {} : { env: { ...process.env, ...props.env } }),
       },
     );
 
@@ -104,6 +106,9 @@ export class AgentRunner {
 
         sessionId = heard.sessionId ?? sessionId;
 
+        if (heard.action !== undefined)
+          this.onEvent({ kind: 'action', workspaceId, text: heard.action });
+
         if (heard.usage) {
           usage = heard.usage;
           this.onEvent({ kind: 'usage', workspaceId, usage });
@@ -141,6 +146,9 @@ export class AgentRunner {
       const answered = toStructured(event);
 
       if (answered.length > 0) structured = answered;
+
+      for (const action of toActions(event))
+        this.onEvent({ kind: 'action', workspaceId, text: action });
 
       const text = toText(event);
 

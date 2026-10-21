@@ -6,6 +6,7 @@ export * from './killTree';
 export * from './readAgentLine';
 export * from './retryOf';
 export * from './strictSchemaOf';
+export * from './toActions';
 export * from './toStructured';
 export * from './toText';
 export * from './toUsage';
