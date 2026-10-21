@@ -98,7 +98,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       retries: { ...state.retries, [workspaceId]: { attempt, maxRetries } },
     })),
 
-  sendMessage: ({ workspaceId, text, mentions }) =>
+  sendMessage: ({ workspaceId, text, mentions, command }) =>
     set((state) => ({
       askingIds: [...state.askingIds.filter((id) => id !== workspaceId), workspaceId],
       retries: withoutKey({ record: state.retries, key: workspaceId }),
@@ -108,7 +108,13 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         workspaces: state.workspaces,
         workspaceId,
         change: (workspace) =>
-          appendUserMessage({ workspace, text, mentions, at: formatClock(new Date()) }),
+          appendUserMessage({
+            workspace,
+            text,
+            mentions,
+            command,
+            at: formatClock(new Date()),
+          }),
       }),
     })),
 

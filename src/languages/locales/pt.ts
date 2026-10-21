@@ -76,8 +76,9 @@ export const pt: typeof en = {
     YOU: 'Você',
     EMPTY_TITLE: 'O que vamos testar hoje?',
     EMPTY_BODY:
-      'Pergunte sobre o app, uma run ou um bug, ou diga o que cobrir e o agente escreve os casos. Digite @ para apontar algo.',
-    PLACEHOLDER: 'Pergunte qualquer coisa ao agente · @ aponta uma run, bug ou caso',
+      'Pergunte sobre o app, uma run ou um bug, ou diga o que cobrir e o agente escreve os casos. Digite @ para apontar algo e / para um comando.',
+    PLACEHOLDER:
+      'Pergunte qualquer coisa ao agente · @ aponta uma run, bug ou caso · / abre os comandos',
     SEND: 'Enviar',
     STOP_ANSWER: 'Parar a resposta',
     RETRYING:
@@ -122,6 +123,7 @@ export const pt: typeof en = {
     SUGGESTION_PLAN_TEXT: 'Vamos criar um plano de teste.',
     SUGGESTION_FEATURE: 'Testar uma funcionalidade',
     SUGGESTION_FEATURE_TEXT: 'Quero testar uma funcionalidade específica.',
+    SUGGESTION_CODE: 'Planejar a partir do código',
     VERDICT_STEP: 'Passo {{number}} · {{action}}',
     TYPING: 'o agente está lendo o que você escreveu',
     UNREADABLE:
@@ -326,6 +328,33 @@ export const pt: typeof en = {
     NOT_FOUND_PATH: 'não encontrado',
     IDB_FOUND: 'idb encontrado',
     IDB_MISSING: 'idb não encontrado',
+  },
+  COMMANDS: {
+    HEADING: 'comandos',
+    CODE_PLAN: 'Plano a partir do código',
+    CODE_PLAN_TEXT:
+      'O agente lê uma branch de um repositório e planeja os testes com você.',
+    NEEDS_GITHUB: 'Conecte o GitHub em Configurações → Integrações antes.',
+    NEEDS_REPOSITORIES:
+      'Adicione os repositórios deste projeto nas configurações dele antes.',
+    REPOSITORY_HEADING: 'repositório',
+    BRANCH_HEADING: 'branch de {{repository}}',
+    BASE: 'base {{branch}}',
+    WHOLE_APP: 'o app inteiro',
+    PICK_REPOSITORY: 'Qual repositório? Digite para buscar',
+    PICK_BRANCH: 'Qual branch? Digite para buscar',
+    NOTE: 'Algo a mais para o agente? Enter envia',
+    BRANCH_LOADING: 'Lendo as branches…',
+    NONE: 'Nada com “{{query}}”.',
+    HINT: '↑↓ escolhe · Enter usa · Esc cancela',
+    CODE_PLAN_SAY:
+      'Planeje os testes do que a branch {{branch}} de {{repository}} mudou em relação à {{base}}.',
+    CODE_PLAN_SAY_WHOLE:
+      'Planeje os testes do app inteiro, a partir do código de {{repository}} na {{branch}}.',
+    STEP_COMMIT: 'Procurando a {{branch}} no GitHub…',
+    STEP_DOWNLOAD: 'Baixando o código de {{repository}}…',
+    STEP_DOWNLOAD_SIZE: 'Baixando o código de {{repository}} · {{size}}',
+    STEP_DIFF: 'Lendo o que mudou desde a {{base}}…',
   },
   PROJECT: {
     ANDROID_LOCKED: 'Precisa do Android SDK nesta máquina',

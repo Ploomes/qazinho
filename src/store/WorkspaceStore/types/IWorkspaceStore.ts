@@ -1,5 +1,5 @@
 import type { BugFilter } from '@/modules/Bug';
-import type { IQuestionAnswer } from '@/modules/Chat';
+import type { IQuestionAnswer, IUserCommand } from '@/modules/Chat';
 import type { ViewportId } from '@/modules/Device';
 import type { ITestCase } from '@/modules/Plan';
 import type { RunFilter } from '@/modules/Run';
@@ -38,7 +38,12 @@ export interface IWorkspaceStore {
   setViewport: (props: { workspaceId: string; viewportId: ViewportId }) => void;
   removeWorkspacesOf: (projectId: string) => void;
   selectTab: (tab: WorkspaceTab) => void;
-  sendMessage: (props: { workspaceId: string; text: string; mentions: string[] }) => void;
+  sendMessage: (props: {
+    workspaceId: string;
+    text: string;
+    mentions: string[];
+    command?: IUserCommand;
+  }) => void;
   landAgentText: (props: {
     workspaceId: string;
     text: string;

@@ -15,6 +15,7 @@ import {
   useAppStore,
   useMachineStore,
   useSettingsStore,
+  useSetupStore,
   useWorkspaceStore,
 } from '@/store';
 
@@ -82,7 +83,9 @@ beforeEach(() => {
     workspaces: [makeWorkspace([])],
     askingIds: [],
     liveTexts: {},
+    codeSteps: {},
   });
+  useSetupStore.setState({ integrations: [] });
 });
 
 afterEach(() => {
@@ -985,6 +988,127 @@ describe('useChatViewModel', () => {
       });
 
       expect(result.current.draft).toBe('explain @TC-02 ');
+    });
+  });
+
+  describe('a plan from the code', () => {
+    const LOJA = { owner: 'acme', name: 'loja-web', baseBranch: 'develop' };
+
+    beforeEach(() => {
+      useAppStore.setState({ projects: [{ ...PROJECT, repositories: [LOJA] }] });
+      useSetupStore.setState({
+        integrations: [
+          { id: 'github', account: 'octoqa', site: null, connectedAt: '2026-10-20' },
+        ],
+      });
+    });
+
+    it('offers to plan from the code once the project has a repository and GitHub is in', () => {
+      answering({});
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      expect(result.current.suggestions.map(({ label }) => label)).toContain(
+        'Plan from the code',
+      );
+
+      useAppStore.setState({ projects: [PROJECT] });
+
+      const { result: bare } = renderHook(() => useChatViewModel());
+
+      expect(bare.current.suggestions.map(({ label }) => label)).not.toContain(
+        'Plan from the code',
+      );
+    });
+
+    it('sends the branch picked with the command, and keeps the command on the message', async () => {
+      const ask = answering({ answer: DRAFTED });
+
+      window.qazinho.listBranches = vi.fn().mockResolvedValue({
+        isListed: true,
+        branches: [
+          { name: 'develop', isDefault: true, pullRequest: null, movedAt: null },
+          { name: 'feat/cupom', isDefault: false, pullRequest: null, movedAt: null },
+        ],
+      });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.suggestions
+          .find(({ label }) => label === 'Plan from the code')
+          ?.onClick();
+      });
+
+      await waitFor(() => {
+        expect(result.current.commandPicker?.rows.map(({ id }) => id)).toEqual([
+          'develop',
+          'feat/cupom',
+        ]);
+      });
+
+      act(() => {
+        result.current.onPickCommand('feat/cupom');
+      });
+      act(() => {
+        result.current.onDraftChange('Focus on the coupon.');
+      });
+      act(() => {
+        result.current.onSend();
+      });
+
+      await waitFor(() => {
+        expect(ask).toHaveBeenCalledOnce();
+      });
+      expect(ask.mock.calls[0]?.[0]).toMatchObject({
+        text: 'Plan the tests for what branch feat/cupom of acme/loja-web changed against develop.\n\nFocus on the coupon.',
+        code: { owner: 'acme', name: 'loja-web', base: 'develop', branch: 'feat/cupom' },
+      });
+      expect(useWorkspaceStore.getState().workspaces[0]?.chat[0]).toMatchObject({
+        kind: 'user',
+        text: 'Focus on the coupon.',
+        command: { repository: 'acme/loja-web', branch: 'feat/cupom', base: 'develop' },
+      });
+      expect(result.current.command).toBeNull();
+    });
+
+    it('says how copying the code goes while the agent waits for it', () => {
+      answering({});
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...makeWorkspace([]),
+            chat: [
+              {
+                id: 'm-1',
+                kind: 'user',
+                at: '09:00',
+                text: '',
+                command: {
+                  id: 'code-plan',
+                  repository: 'acme/loja-web',
+                  branch: 'feat/cupom',
+                  base: 'develop',
+                },
+              },
+            ],
+          },
+        ],
+        askingIds: ['w1'],
+        codeSteps: { w1: { step: 'download', bytes: 3.25 * 1024 * 1024 } },
+      });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      expect(result.current.codeStatus).toBe(
+        'Downloading the code of acme/loja-web · 3.3 MB',
+      );
+
+      useWorkspaceStore.setState({ codeSteps: { w1: { step: 'diff', bytes: 0 } } });
+
+      expect(renderHook(() => useChatViewModel()).result.current.codeStatus).toBe(
+        'Reading what changed since develop…',
+      );
     });
   });
 });

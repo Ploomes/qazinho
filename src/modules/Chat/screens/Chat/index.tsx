@@ -16,6 +16,7 @@ export const Chat: React.FC = () => {
     isAgentTyping,
     liveText,
     retryText,
+    codeStatus,
     draft,
     lockedText,
     suggestions,
@@ -23,11 +24,15 @@ export const Chat: React.FC = () => {
     referenceIds,
     mentionQuery,
     hasReferences,
+    command,
+    commandPicker,
+    onPickCommand,
+    onCommandBack,
+    onCommandCancel,
     onDraftChange,
     onPickMention,
     onSend,
     onStop,
-    onSuggestion,
     onAnswer,
     onAnswerQuestions,
     onOpenPlan,
@@ -46,12 +51,7 @@ export const Chat: React.FC = () => {
           <p className="chat__empty-body">{t('CHAT.EMPTY_BODY')}</p>
           <div className="chat__suggestions">
             {suggestions.map((suggestion) => (
-              <Chip
-                key={suggestion.id}
-                onClick={() => {
-                  onSuggestion(suggestion.text);
-                }}
-              >
+              <Chip key={suggestion.id} onClick={suggestion.onClick}>
                 {suggestion.label}
               </Chip>
             ))}
@@ -120,6 +120,19 @@ export const Chat: React.FC = () => {
                 {liveText !== '' && <Markdown isRevealing>{liveText}</Markdown>}
                 <TypingDots />
                 <AnimatePresence initial={false}>
+                  {codeStatus !== '' && (
+                    <motion.div
+                      key="code"
+                      className="chat__retry"
+                      role="status"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+                    >
+                      <p className="chat__retry-text chat__code-text">{codeStatus}</p>
+                    </motion.div>
+                  )}
                   {retryText !== '' && (
                     <motion.div
                       key="retry"
@@ -148,10 +161,15 @@ export const Chat: React.FC = () => {
         referenceIds={referenceIds}
         mentionQuery={mentionQuery}
         hasReferences={hasReferences}
+        command={command}
+        commandPicker={commandPicker}
         onChange={onDraftChange}
         onSend={onSend}
         onStop={onStop}
         onPickMention={onPickMention}
+        onPickCommand={onPickCommand}
+        onCommandBack={onCommandBack}
+        onCommandCancel={onCommandCancel}
       />
     </div>
   );

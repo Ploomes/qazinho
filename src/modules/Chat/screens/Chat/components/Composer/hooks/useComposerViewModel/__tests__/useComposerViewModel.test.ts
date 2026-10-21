@@ -16,6 +16,34 @@ const PROPS = {
   onSend: vi.fn(),
   onStop: vi.fn(),
   onPickMention: vi.fn(),
+  command: null,
+  commandPicker: null,
+  onPickCommand: vi.fn(),
+  onCommandBack: vi.fn(),
+  onCommandCancel: vi.fn(),
+};
+
+const PICKER = {
+  heading: 'commands',
+  rows: [
+    {
+      id: 'code-plan',
+      label: 'Plan from the code',
+      tag: '/code',
+      detail: null,
+      isDisabled: false,
+    },
+  ],
+  note: null,
+  hint: '↑↓ to choose',
+};
+
+const ON_BRANCH = {
+  name: 'Plan from the code',
+  repository: 'acme/loja-web',
+  branch: null,
+  isReady: false,
+  placeholder: 'Which branch? Type to search',
 };
 
 const MENTIONING = {
@@ -131,7 +159,8 @@ describe('useComposerViewModel', () => {
 
       expect(result.current).toMatchObject({
         isLocked: false,
-        placeholder: 'Ask the agent anything · @ points at a run, bug or case',
+        placeholder:
+          'Ask the agent anything · @ points at a run, bug or case · / for commands',
         fieldClassName: 'composer__field',
       });
     });
@@ -424,6 +453,144 @@ describe('useComposerViewModel', () => {
       rerender({ ...MENTIONING, mentions: MENTIONING.mentions.slice(0, 1) });
 
       expect(result.current.highlighted).toBe(0);
+    });
+  });
+
+  describe('commands', () => {
+    it('opens the commands for a slash, and keeps the @ picker shut meanwhile', () => {
+      const { result } = renderHook(() =>
+        useComposerViewModel({
+          ...PROPS,
+          value: '/',
+          mentionQuery: '',
+          hasReferences: true,
+          commandPicker: PICKER,
+        }),
+      );
+
+      expect(result.current.isCommandOpen).toBe(true);
+      expect(result.current.isPickerOpen).toBe(false);
+    });
+
+    it('picks the highlighted command on Enter instead of sending the slash', () => {
+      const onPickCommand = vi.fn();
+      const onSend = vi.fn();
+      const { result } = renderHook(() =>
+        useComposerViewModel({
+          ...PROPS,
+          value: '/',
+          commandPicker: PICKER,
+          onPickCommand,
+          onSend,
+        }),
+      );
+      const enter = pressed('Enter');
+
+      act(() => {
+        result.current.onKeyDown(enter);
+      });
+
+      expect(onPickCommand).toHaveBeenCalledWith('code-plan');
+      expect(onSend).not.toHaveBeenCalled();
+      expect(enter.preventDefault).toHaveBeenCalled();
+    });
+
+    it('does NOT pick a command that cannot be picked yet', () => {
+      const onPickCommand = vi.fn();
+      const { result } = renderHook(() =>
+        useComposerViewModel({
+          ...PROPS,
+          value: '/',
+          commandPicker: {
+            ...PICKER,
+            rows: PICKER.rows.map((row) => ({ ...row, isDisabled: true })),
+          },
+          onPickCommand,
+        }),
+      );
+
+      act(() => {
+        result.current.onKeyDown(pressed('Enter'));
+      });
+
+      expect(onPickCommand).not.toHaveBeenCalled();
+    });
+
+    it('shuts the slash picker on Escape until the QA types again', () => {
+      const { result } = renderHook(() =>
+        useComposerViewModel({ ...PROPS, value: '/', commandPicker: PICKER }),
+      );
+
+      act(() => {
+        result.current.onKeyDown(pressed('Escape'));
+      });
+
+      expect(result.current.isCommandOpen).toBe(false);
+    });
+
+    it('lets go of a command on Escape, and steps back on Backspace in an empty field', () => {
+      const onCommandCancel = vi.fn();
+      const onCommandBack = vi.fn();
+      const { result } = renderHook(() =>
+        useComposerViewModel({
+          ...PROPS,
+          value: '',
+          command: ON_BRANCH,
+          commandPicker: { ...PICKER, heading: 'branch of acme/loja-web' },
+          onCommandCancel,
+          onCommandBack,
+        }),
+      );
+
+      act(() => {
+        result.current.onKeyDown(pressed('Escape'));
+      });
+
+      expect(onCommandCancel).toHaveBeenCalledTimes(1);
+
+      const { result: typed } = renderHook(() =>
+        useComposerViewModel({ ...PROPS, value: '', command: ON_BRANCH, onCommandBack }),
+      );
+
+      act(() => {
+        typed.current.onKeyDown(pressed('Backspace'));
+      });
+
+      expect(onCommandBack).toHaveBeenCalledTimes(1);
+    });
+
+    it('sends a ready command with no words, and asks for what the command needs next', () => {
+      const onSend = vi.fn();
+      const { result } = renderHook(() =>
+        useComposerViewModel({
+          ...PROPS,
+          value: '',
+          command: {
+            ...ON_BRANCH,
+            branch: 'feat/cupom',
+            isReady: true,
+            placeholder: 'Anything else?',
+          },
+          onSend,
+        }),
+      );
+
+      expect(result.current.placeholder).toBe('Anything else?');
+      expect(result.current.canPress).toBe(true);
+
+      act(() => {
+        result.current.onKeyDown(pressed('Enter'));
+      });
+
+      expect(onSend).toHaveBeenCalledTimes(1);
+    });
+
+    it('does NOT send a command still missing its branch', () => {
+      const { result } = renderHook(() =>
+        useComposerViewModel({ ...PROPS, value: 'something', command: ON_BRANCH }),
+      );
+
+      expect(result.current.canPress).toBe(false);
     });
   });
 });

@@ -1,7 +1,10 @@
+import type { IUserCommand } from './IUserCommand';
+
 export interface IUserMessage {
   id: string;
   kind: 'user';
   at: string;
   text: string;
   mentions?: string[];
+  command?: IUserCommand;
 }

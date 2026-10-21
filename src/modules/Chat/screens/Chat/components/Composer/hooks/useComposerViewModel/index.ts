@@ -18,16 +18,33 @@ export const useComposerViewModel = (props: IComposerProps) => {
     onSend,
     onStop,
     onPickMention,
+    command,
+    commandPicker,
+    onPickCommand,
+    onCommandBack,
+    onCommandCancel,
   } = props;
   const { t } = useTranslation();
   const [highlight, setHighlight] = useState(0);
   const [dismissedAt, setDismissedAt] = useState<string | null>(null);
   const [chosenTab, setChosenTab] = useState<IChatReference['kind'] | null>(null);
+  const [commandHighlight, setCommandHighlight] = useState(0);
+  const [commandDismissedAt, setCommandDismissedAt] = useState<string | null>(null);
   const mirrorRef = useRef<HTMLDivElement>(null);
 
   const isLocked = lockedText !== null;
-  const canSend = !isLocked && !isAnswering && value.trim().length > 0;
-  const isPickerOpen = !isLocked && mentionQuery !== null && dismissedAt !== value;
+  const canSend =
+    !isLocked &&
+    !isAnswering &&
+    (command === null ? value.trim().length > 0 : command.isReady);
+  const isCommandOpen =
+    !isLocked &&
+    commandPicker !== null &&
+    (command !== null || commandDismissedAt !== value);
+  const commandRows = commandPicker?.rows ?? [];
+  const commandActive = Math.min(commandHighlight, Math.max(0, commandRows.length - 1));
+  const isPickerOpen =
+    !isLocked && !isCommandOpen && mentionQuery !== null && dismissedAt !== value;
   const filled = MENTION_TABS.filter((kind) =>
     mentions.some((mention) => mention.kind === kind),
   );
@@ -49,6 +66,29 @@ export const useComposerViewModel = (props: IComposerProps) => {
     setHighlight(0);
     setChosenTab(null);
     onPickMention(id);
+  };
+
+  const pickCommand = (id: string) => {
+    setCommandHighlight(0);
+    onPickCommand(id);
+  };
+
+  const onCommandKey = (event: KeyboardEvent<HTMLInputElement>): boolean => {
+    const picked = commandRows[commandActive];
+
+    if (event.key === 'Escape') {
+      if (command === null) setCommandDismissedAt(value);
+      else onCommandCancel();
+    } else if (commandRows.length === 0) return event.key === 'Enter';
+    else if (event.key === 'ArrowDown')
+      setCommandHighlight((commandActive + 1) % commandRows.length);
+    else if (event.key === 'ArrowUp')
+      setCommandHighlight((commandActive - 1 + commandRows.length) % commandRows.length);
+    else if (event.key === 'Enter' || event.key === 'Tab') {
+      if (picked !== undefined && !picked.isDisabled) pickCommand(picked.id);
+    } else return false;
+
+    return true;
   };
 
   const onPickerKey = (event: KeyboardEvent<HTMLInputElement>): boolean => {
@@ -99,11 +139,22 @@ export const useComposerViewModel = (props: IComposerProps) => {
       if (isAnswering) onStop();
       else onSendClick();
     },
-    placeholder: lockedText ?? t('CHAT.PLACEHOLDER'),
+    placeholder: lockedText ?? command?.placeholder ?? t('CHAT.PLACEHOLDER'),
     fieldClassName: isLocked
       ? 'composer__field composer__field--locked'
       : 'composer__field',
     isPickerOpen,
+    isCommandOpen,
+    commandHighlight: commandActive,
+    commandChip: command,
+    commandMotion: {
+      initial: { opacity: 0, scale: 0.92 },
+      animate: { opacity: 1, scale: 1 },
+      exit: { opacity: 0, scale: 0.92 },
+      transition: { duration: MOTION.durationFast, ease: MOTION.ease },
+    },
+    onPickCommand: pickCommand,
+    onCommandHighlight: setCommandHighlight,
     highlighted,
     shown,
     tabs: MENTION_TABS.map((kind) => ({
@@ -117,9 +168,23 @@ export const useComposerViewModel = (props: IComposerProps) => {
     onTab: showTab,
     onInputChange: (event: ChangeEvent<HTMLInputElement>) => {
       setHighlight(0);
+      setCommandHighlight(0);
       onChange(event.target.value);
     },
     onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
+      if (isCommandOpen && onCommandKey(event)) {
+        event.preventDefault();
+
+        return;
+      }
+
+      if (event.key === 'Backspace' && value === '' && command !== null) {
+        event.preventDefault();
+        onCommandBack();
+
+        return;
+      }
+
       if (isPickerOpen && onPickerKey(event)) {
         event.preventDefault();
 

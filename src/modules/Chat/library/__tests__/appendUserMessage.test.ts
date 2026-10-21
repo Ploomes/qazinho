@@ -54,4 +54,21 @@ describe('appendUserMessage', () => {
 
     expect(workspace.chat[0]).not.toHaveProperty('mentions');
   });
+
+  it('keeps the command the QA gave, even with no words of theirs', () => {
+    const command = {
+      id: 'code-plan' as const,
+      repository: 'acme/loja-web',
+      branch: 'feat/cupom',
+      base: 'develop',
+    };
+    const workspace = appendUserMessage({
+      workspace: makeWorkspace(),
+      text: '  ',
+      at: '19:54',
+      command,
+    });
+
+    expect(workspace.chat[0]).toMatchObject({ kind: 'user', text: '', command });
+  });
 });

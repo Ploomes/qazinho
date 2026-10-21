@@ -1,0 +1,102 @@
+.command-picker {
+  position: absolute;
+  z-index: 32;
+  right: 0;
+  bottom: calc(100% + var(--space-3));
+  left: 0;
+  overflow: hidden;
+  border: var(--edge-width-lg) solid var(--edge);
+  border-radius: var(--radius-xl);
+  background: var(--win);
+  box-shadow: var(--sticker-lift);
+  transform-origin: bottom left;
+}
+
+.command-picker__head {
+  padding: var(--space-4) var(--space-5) var(--space-2);
+}
+
+.command-picker__list {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(var(--command-row-height) * var(--command-rows));
+  padding: var(--space-2) var(--space-3);
+  overflow-y: auto;
+}
+
+.command-picker__row {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-1);
+  width: 100%;
+  min-height: var(--command-row-height);
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink2);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease),
+    opacity var(--dur-fast) var(--ease);
+}
+
+.command-picker__row--highlighted {
+  background: var(--sel);
+  color: var(--ink);
+}
+
+.command-picker__row--disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.command-picker__line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.command-picker__label {
+  overflow: hidden;
+  font: var(--font-mono-md);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.command-picker__tag {
+  flex: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--lime-soft);
+  color: var(--lime-ink);
+  font: var(--font-mono-xs);
+}
+
+.command-picker__detail {
+  overflow: hidden;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.command-picker__note {
+  margin: 0;
+  padding: var(--space-2) var(--space-5) var(--space-4);
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  animation: gc-in var(--dur-fast) var(--ease);
+}
+
+.command-picker__foot {
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--line2);
+  color: var(--ink3);
+  font: var(--font-ui-xs);
+}

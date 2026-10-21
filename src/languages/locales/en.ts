@@ -74,8 +74,9 @@ export const en = {
     YOU: 'You',
     EMPTY_TITLE: 'What are we testing today?',
     EMPTY_BODY:
-      'Ask about the app, a run or a bug, or say what to cover and the agent drafts the cases. Type @ to point at something.',
-    PLACEHOLDER: 'Ask the agent anything · @ points at a run, bug or case',
+      'Ask about the app, a run or a bug, or say what to cover and the agent drafts the cases. Type @ to point at something, and / for a command.',
+    PLACEHOLDER:
+      'Ask the agent anything · @ points at a run, bug or case · / for commands',
     SEND: 'Send',
     STOP_ANSWER: 'Stop the answer',
     RETRYING:
@@ -119,6 +120,7 @@ export const en = {
     SUGGESTION_PLAN_TEXT: "Let's create a test plan.",
     SUGGESTION_FEATURE: 'Test a feature',
     SUGGESTION_FEATURE_TEXT: 'I want to test a specific feature.',
+    SUGGESTION_CODE: 'Plan from the code',
     VERDICT_STEP: 'Step {{number}} · {{action}}',
     TYPING: 'the agent is reading what you wrote',
     UNREADABLE:
@@ -322,6 +324,32 @@ export const en = {
     NOT_FOUND_PATH: 'not found',
     IDB_FOUND: 'idb found',
     IDB_MISSING: 'idb not found',
+  },
+  COMMANDS: {
+    HEADING: 'commands',
+    CODE_PLAN: 'Plan from the code',
+    CODE_PLAN_TEXT:
+      'The agent reads a branch of a repository and plans its tests with you.',
+    NEEDS_GITHUB: 'Connect GitHub in Settings → Integrations first.',
+    NEEDS_REPOSITORIES: "Add this project's repositories in its settings first.",
+    REPOSITORY_HEADING: 'repository',
+    BRANCH_HEADING: 'branch of {{repository}}',
+    BASE: 'base {{branch}}',
+    WHOLE_APP: 'the whole app',
+    PICK_REPOSITORY: 'Which repository? Type to search',
+    PICK_BRANCH: 'Which branch? Type to search',
+    NOTE: 'Anything else for the agent? Enter sends',
+    BRANCH_LOADING: 'Reading the branches…',
+    NONE: 'Nothing matches “{{query}}”.',
+    HINT: '↑↓ to choose · Enter to use · Esc to cancel',
+    CODE_PLAN_SAY:
+      'Plan the tests for what branch {{branch}} of {{repository}} changed against {{base}}.',
+    CODE_PLAN_SAY_WHOLE:
+      'Plan the tests for the whole app, from the code of {{repository}} on {{branch}}.',
+    STEP_COMMIT: 'Finding {{branch}} on GitHub…',
+    STEP_DOWNLOAD: 'Downloading the code of {{repository}}…',
+    STEP_DOWNLOAD_SIZE: 'Downloading the code of {{repository}} · {{size}}',
+    STEP_DIFF: 'Reading what changed since {{base}}…',
   },
   PROJECT: {
     ANDROID_LOCKED: 'Needs the Android SDK on this machine',

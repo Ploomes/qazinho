@@ -101,6 +101,11 @@
   font: var(--font-ui-sm);
 }
 
+.chat__code-text {
+  color: var(--ink2);
+  font: var(--font-mono-sm);
+}
+
 .chat__live > .typing-dots {
   align-self: flex-start;
 }

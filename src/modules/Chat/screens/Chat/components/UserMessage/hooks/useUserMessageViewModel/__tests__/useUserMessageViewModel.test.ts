@@ -46,4 +46,40 @@ describe('useUserMessageViewModel', () => {
 
     expect(new Set(keys).size).toBe(keys.length);
   });
+
+  it('shows the command a message carried, and no empty words under it', async () => {
+    const { i18n } = await import('@/languages');
+
+    await i18n.changeLanguage('en');
+
+    const { result } = renderHook(() =>
+      useUserMessageViewModel({
+        message: {
+          ...message(''),
+          command: {
+            id: 'code-plan',
+            repository: 'acme/loja-web',
+            branch: 'feat/cupom',
+            base: 'develop',
+          },
+        },
+      }),
+    );
+
+    expect(result.current).toMatchObject({
+      hasText: false,
+      command: {
+        name: 'Plan from the code',
+        repository: 'acme/loja-web',
+        branch: 'feat/cupom',
+      },
+    });
+  });
+
+  it('shows no command on a plain message', () => {
+    expect(
+      renderHook(() => useUserMessageViewModel({ message: message('hi') })).result
+        .current,
+    ).toMatchObject({ hasText: true, command: null });
+  });
 });

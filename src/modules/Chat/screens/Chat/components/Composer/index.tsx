@@ -1,6 +1,6 @@
 import type { IComposerProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
-import { MentionPicker } from './components';
+import { CommandPicker, MentionPicker } from './components';
 import { useComposerViewModel } from './hooks';
 import './styles.css';
 
@@ -16,6 +16,12 @@ export const Composer: React.FC<IComposerProps> = (props) => {
     placeholder,
     fieldClassName,
     isPickerOpen,
+    isCommandOpen,
+    commandHighlight,
+    commandChip,
+    commandMotion,
+    onPickCommand,
+    onCommandHighlight,
     highlighted,
     shown,
     tabs,
@@ -31,6 +37,18 @@ export const Composer: React.FC<IComposerProps> = (props) => {
     <div className="composer">
       <div className={fieldClassName}>
         <AnimatePresence>
+          {isCommandOpen && props.commandPicker !== null && (
+            <CommandPicker
+              key="commands"
+              picker={props.commandPicker}
+              highlighted={commandHighlight}
+              onPick={onPickCommand}
+              onHighlight={onCommandHighlight}
+            />
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
           {isPickerOpen && (
             <MentionPicker
               key="mentions"
@@ -43,6 +61,34 @@ export const Composer: React.FC<IComposerProps> = (props) => {
               onHighlight={onHighlight}
               onTab={onTab}
             />
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence initial={false}>
+          {commandChip !== null && (
+            <motion.span key="command" className="composer__command" {...commandMotion}>
+              <span className="composer__command-name">/ {commandChip.name}</span>
+              <AnimatePresence initial={false}>
+                {commandChip.repository !== null && (
+                  <motion.span
+                    key={commandChip.repository}
+                    className="composer__command-part"
+                    {...commandMotion}
+                  >
+                    {commandChip.repository}
+                  </motion.span>
+                )}
+                {commandChip.branch !== null && (
+                  <motion.span
+                    key={`branch-${commandChip.branch}`}
+                    className="composer__command-part composer__command-part--branch"
+                    {...commandMotion}
+                  >
+                    {commandChip.branch}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.span>
           )}
         </AnimatePresence>
 
@@ -65,8 +111,8 @@ export const Composer: React.FC<IComposerProps> = (props) => {
             aria-label={placeholder}
             disabled={isLocked}
             role="combobox"
-            aria-expanded={isPickerOpen}
-            aria-controls="mention-picker"
+            aria-expanded={isPickerOpen || isCommandOpen}
+            aria-controls={isCommandOpen ? 'command-picker' : 'mention-picker'}
             aria-autocomplete="list"
             onChange={onInputChange}
             onKeyDown={onKeyDown}

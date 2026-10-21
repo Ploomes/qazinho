@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   formatAnswers,
+  formatSize,
   groupRunMessages,
   withLiveRun,
   insertMention,
@@ -16,6 +17,7 @@ import {
   sessionFor,
 } from '@/modules/Chat/library';
 import { CHAT, CHAT_FAILURE_KEYS } from '@/modules/Chat/screens/Chat/constants';
+import { useChatCommand } from '@/modules/Chat/screens/Chat/hooks/useChatCommand';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { formatElapsed, viewportOf } from '@/modules/Device';
 import { caseIdsUsed, planOfDraft } from '@/modules/Plan';
@@ -27,6 +29,7 @@ import {
   useAppStore,
   useMachineStore,
   useSettingsStore,
+  useSetupStore,
   useWorkspaceStore,
 } from '@/store';
 
@@ -61,6 +64,10 @@ export const useChatViewModel = () => {
   const askingIds = useWorkspaceStore((state) => state.askingIds);
   const liveTexts = useWorkspaceStore((state) => state.liveTexts);
   const retries = useWorkspaceStore((state) => state.retries);
+  const codeSteps = useWorkspaceStore((state) => state.codeSteps);
+  const isGithubConnected = useSetupStore((state) =>
+    state.integrations.some(({ id }) => id === 'github'),
+  );
   const sendMessage = useWorkspaceStore((state) => state.sendMessage);
   const landAgentText = useWorkspaceStore((state) => state.landAgentText);
   const landPlan = useWorkspaceStore((state) => state.landPlan);
@@ -78,6 +85,18 @@ export const useChatViewModel = () => {
   const liveText = workspace === null ? '' : (liveTexts[workspace.id] ?? '');
   const retry = workspace === null ? undefined : retries[workspace.id];
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
+  const chatCommand = useChatCommand({
+    draft,
+    repositories: project?.repositories ?? [],
+    isGithubConnected,
+    onDraft: setDraft,
+  });
+  const codeStep = workspace === null ? undefined : codeSteps[workspace.id];
+  const sentCommand = (workspace?.chat ?? [])
+    .flatMap((message) =>
+      message.kind === 'user' && message.command !== undefined ? [message.command] : [],
+    )
+    .at(-1);
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
   const size = viewportOf(workspace?.viewportId);
   const wholePlan = t('RUN.WHOLE_PLAN');
@@ -197,7 +216,12 @@ export const useChatViewModel = () => {
   const liveId = isWalking ? (workspace?.liveId ?? null) : null;
 
   const send = (text: string) => {
-    if (!workspace || text.trim().length === 0 || isWalking || isAgentTyping) return;
+    if (!workspace || isWalking || isAgentTyping) return;
+
+    const asked = chatCommand.ask(text);
+
+    if (asked === null && (chatCommand.command !== null || text.trim().length === 0))
+      return;
 
     const references = mentionsIn({
       text,
@@ -208,9 +232,11 @@ export const useChatViewModel = () => {
       workspaceId: workspace.id,
       text,
       mentions: references.map(({ id }) => id),
+      ...(asked === null ? {} : { command: asked.command }),
     });
     setDraft('');
-    askAgent({ text, references, code: null });
+    chatCommand.clear();
+    askAgent({ text: asked?.text ?? text, references, code: asked?.code ?? null });
   };
 
   const runTitleOf = (message: IRunMessage) => {
@@ -362,16 +388,51 @@ export const useChatViewModel = () => {
       isAgentTyping && retry !== undefined
         ? t('CHAT.RETRYING', { attempt: retry.attempt, max: retry.maxRetries })
         : '',
+    codeStatus:
+      !isAgentTyping || codeStep === undefined || sentCommand === undefined
+        ? ''
+        : codeStep.step === 'commit'
+          ? t('COMMANDS.STEP_COMMIT', { branch: sentCommand.branch })
+          : codeStep.step === 'diff'
+            ? t('COMMANDS.STEP_DIFF', { base: sentCommand.base })
+            : codeStep.bytes === 0
+              ? t('COMMANDS.STEP_DOWNLOAD', { repository: sentCommand.repository })
+              : t('COMMANDS.STEP_DOWNLOAD_SIZE', {
+                  repository: sentCommand.repository,
+                  size: formatSize({ bytes: codeStep.bytes, language: i18n.language }),
+                }),
     draft,
-    suggestions: CHAT.suggestions.map(({ labelKey, textKey }) => ({
-      id: labelKey,
-      label: t(labelKey),
-      text: t(textKey),
-    })),
+    suggestions: [
+      ...CHAT.suggestions.map(({ labelKey, textKey }) => ({
+        id: labelKey,
+        label: t(labelKey),
+        text: t(textKey),
+        onClick: () => {
+          send(t(textKey));
+        },
+      })),
+      ...(isGithubConnected && (project?.repositories.length ?? 0) > 0
+        ? [
+            {
+              id: 'CHAT.SUGGESTION_CODE',
+              label: t('CHAT.SUGGESTION_CODE'),
+              text: '',
+              onClick: () => {
+                chatCommand.start('code-plan');
+              },
+            },
+          ]
+        : []),
+    ],
     mentions: mentionCandidates({ references, query: mentionQuery }),
     referenceIds: references.map(({ id }) => id),
     mentionQuery,
     hasReferences: references.length > 0,
+    command: chatCommand.command,
+    commandPicker: chatCommand.picker,
+    onPickCommand: chatCommand.onPick,
+    onCommandBack: chatCommand.onBack,
+    onCommandCancel: chatCommand.onCancel,
     onDraftChange: setDraft,
     onPickMention: (id: string) => {
       setDraft(insertMention({ draft, id }));
