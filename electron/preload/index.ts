@@ -4,6 +4,7 @@ import type {
   IAgentEvent,
   IChatTurn,
   IAskAgent,
+  IBranchList,
   IConnectIntegration,
   IGithubStatus,
   IConnectResult,
@@ -17,6 +18,8 @@ import type {
   McpActionResult,
   IMcpServerTarget,
   IMcpSignIn,
+  IRepositoryList,
+  IRepositoryRef,
   McpSignInProgress,
   InstallableId,
   IntegrationId,
@@ -174,6 +177,10 @@ const api: IQazinhoApi = {
       ipcRenderer.off(CHANNELS.githubSignInEvent, forward);
     };
   },
+  listRepositories: () =>
+    ipcRenderer.invoke(CHANNELS.listRepositories) as Promise<IRepositoryList>,
+  listBranches: (repository: IRepositoryRef) =>
+    ipcRenderer.invoke(CHANNELS.listBranches, repository) as Promise<IBranchList>,
   listMcpServers: (agentId: string) =>
     ipcRenderer.invoke(CHANNELS.listMcpServers, agentId) as Promise<IMcpServerStatus[]>,
   connectMcpServer: (signIn: IMcpSignIn) =>

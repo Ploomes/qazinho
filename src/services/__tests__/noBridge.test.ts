@@ -52,6 +52,11 @@ describe('a page with no bridge', () => {
   it('has no GitHub CLI to reach GitHub through, and signs nothing in', async () => {
     expect(await Github.status()).toMatchObject({ account: null, failure: 'no-cli' });
     expect(await Github.signIn()).toMatchObject({ phase: 'failed', failure: 'missing' });
+    expect(await Github.repositories()).toEqual({ isListed: false, failure: 'no-cli' });
+    expect(await Github.branches({ owner: 'acme', name: 'loja-web' })).toEqual({
+      isListed: false,
+      failure: 'no-cli',
+    });
   });
 
   it('has no recording to play or to save', async () => {

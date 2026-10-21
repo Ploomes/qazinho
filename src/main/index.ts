@@ -12,6 +12,7 @@ import type {
   IRunEndNotice,
   IRunEvent,
   IRunRef,
+  IRepositoryRef,
   IMcpServerTarget,
   IMcpSignIn,
   ISavedWorkspace,
@@ -46,6 +47,7 @@ import {
   Archive,
   DeviceToolDetector,
   GithubCli,
+  GithubRepos,
   IntegrationVault,
   LiveStream,
   ProcessOwners,
@@ -146,6 +148,7 @@ const github = new GithubCli({
   onProgress: (progress) =>
     broadcast({ channel: CHANNELS.githubSignInEvent, event: progress }),
 });
+const repos = new GithubRepos({ github });
 const mcp = new AgentMcp({
   findAgent: (agentId) => findCommand(agentId),
   openUrl: (url) => shell.openExternal(url),
@@ -542,6 +545,10 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.cancelGithubSignIn, () => {
     github.cancelSignIn();
   });
+  ipcMain.handle(CHANNELS.listRepositories, () => repos.repositories());
+  ipcMain.handle(CHANNELS.listBranches, (_event, repository: IRepositoryRef) =>
+    repos.branches(repository),
+  );
   ipcMain.handle(CHANNELS.listMcpServers, (_event, agentId: string) => mcp.list(agentId));
   ipcMain.handle(CHANNELS.connectMcpServer, (_event, signIn: IMcpSignIn) =>
     mcp.connect(signIn),

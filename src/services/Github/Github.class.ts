@@ -1,6 +1,12 @@
-import type { GithubSignInProgress, IGithubStatus } from '@/shared/types';
+import type {
+  GithubSignInProgress,
+  IBranchList,
+  IGithubStatus,
+  IRepositoryList,
+  IRepositoryRef,
+} from '@/shared/types';
 
-/** The only caller of the GitHub side of the bridge: gh's status and its sign-in, as the QA's own login. */
+/** The only caller of the GitHub side of the bridge: gh's status, its sign-in, and the repositories it reads. */
 export class Github {
   public static async status(): Promise<IGithubStatus> {
     return (
@@ -31,5 +37,20 @@ export class Github {
 
   public static onSignIn(listener: (progress: GithubSignInProgress) => void): () => void {
     return window.qazinho?.onGithubSignIn(listener) ?? (() => undefined);
+  }
+
+  public static async repositories(): Promise<IRepositoryList> {
+    return (
+      (await window.qazinho?.listRepositories()) ?? { isListed: false, failure: 'no-cli' }
+    );
+  }
+
+  public static async branches(repository: IRepositoryRef): Promise<IBranchList> {
+    return (
+      (await window.qazinho?.listBranches(repository)) ?? {
+        isListed: false,
+        failure: 'no-cli',
+      }
+    );
   }
 }

@@ -47,4 +47,6 @@ export const CHANNELS = {
   signInGithub: 'github:sign-in',
   cancelGithubSignIn: 'github:sign-in-cancel',
   githubSignInEvent: 'github:sign-in-event',
+  listRepositories: 'github:repositories',
+  listBranches: 'github:branches',
 } as const;
