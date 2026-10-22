@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import type { ISuite, SuiteEvent } from '@/shared/types';
+import type { ISuite, ISuiteChange, SuiteChangeEvent, SuiteEvent } from '@/shared/types';
 import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { useSuiteWatch } from '@/modules/Automation/hooks/useSuiteWatch';
@@ -20,12 +20,21 @@ const SUITE: ISuite = {
   envFileKeys: ['BASE_URL'],
 };
 
+const CHANGE = {
+  id: 'c-01',
+  projectId: 'p1',
+  startedAt: 5,
+  status: 'ready',
+} as ISuiteChange;
+
 let forgotten: string[] = [];
 let listener: ((event: SuiteEvent) => void) | null = null;
+let changeListener: ((event: SuiteChangeEvent) => void) | null = null;
 
 beforeEach(() => {
   forgotten = [];
   listener = null;
+  changeListener = null;
   window.qazinho = {
     ...fakeQazinhoApi('darwin'),
     suiteOf: (projectId) => Promise.resolve(projectId === 'p1' ? SUITE : null),
@@ -59,8 +68,24 @@ beforeEach(() => {
         listener = null;
       };
     },
+    suiteChanges: (projectId) => Promise.resolve(projectId === 'p1' ? [CHANGE] : []),
+    onSuiteChangeEvent: (heard) => {
+      changeListener = heard;
+
+      return () => {
+        changeListener = null;
+      };
+    },
   };
-  useSuiteStore.setState({ suites: {}, lists: {}, runs: {}, live: {}, picked: {} });
+  useSuiteStore.setState({
+    suites: {},
+    lists: {},
+    runs: {},
+    live: {},
+    picked: {},
+    changes: {},
+    changeNotes: {},
+  });
   useAppStore.setState({ projects: [PROJECT('p1'), PROJECT('p2')], isLoaded: true });
 });
 
@@ -89,6 +114,40 @@ describe('useSuiteWatch', () => {
       expect(useSuiteStore.getState().runs.p1?.map(({ id }) => id)).toEqual(['s-01']);
     });
     expect(useSuiteStore.getState().runs.p2).toBeUndefined();
+  });
+
+  it('reads the changes the agent made to each suite', async () => {
+    renderHook(() => {
+      useSuiteWatch();
+    });
+
+    await waitFor(() => {
+      expect(useSuiteStore.getState().changes.p1).toEqual([CHANGE]);
+    });
+  });
+
+  it('hears a change as the agent makes it, and what it says meanwhile', async () => {
+    renderHook(() => {
+      useSuiteWatch();
+    });
+    await waitFor(() => {
+      expect(useSuiteStore.getState().changes.p1).toBeDefined();
+    });
+
+    act(() => {
+      changeListener?.({ kind: 'changed', change: { ...CHANGE, status: 'shipped' } });
+      changeListener?.({
+        kind: 'line',
+        projectId: 'p1',
+        changeId: 'c-01',
+        text: 'Read ./tests',
+      });
+    });
+
+    expect(useSuiteStore.getState().changes.p1?.[0]?.status).toBe('shipped');
+    expect(useSuiteStore.getState().changeNotes['c-01']).toEqual([
+      { id: 1, kind: 'said', text: 'Read ./tests' },
+    ]);
   });
 
   it('hears a run of a suite as it goes', async () => {

@@ -7,7 +7,9 @@ export const useSuiteWatch = () => {
   const projectIds = useAppStore((state) => state.projects.map(({ id }) => id).join(' '));
   const putSuite = useSuiteStore((state) => state.putSuite);
   const putRuns = useSuiteStore((state) => state.putRuns);
+  const putChanges = useSuiteStore((state) => state.putChanges);
   const hear = useSuiteStore((state) => state.hear);
+  const hearChange = useSuiteStore((state) => state.hearChange);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -16,11 +18,21 @@ export const useSuiteWatch = () => {
       void Suites.of(projectId).then(async (suite) => {
         putSuite({ projectId, suite });
 
-        if (suite !== null) putRuns({ projectId, runs: await Suites.runs(projectId) });
+        if (suite === null) return;
+
+        const [runs, changes] = await Promise.all([
+          Suites.runs(projectId),
+          Suites.changes(projectId),
+        ]);
+
+        putRuns({ projectId, runs });
+        putChanges({ projectId, changes });
       });
-  }, [isLoaded, projectIds, putSuite, putRuns]);
+  }, [isLoaded, projectIds, putSuite, putRuns, putChanges]);
 
   useEffect(() => Suites.onEvent(hear), [hear]);
+
+  useEffect(() => Suites.onChangeEvent(hearChange), [hearChange]);
 
   useEffect(
     () =>

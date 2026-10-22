@@ -1,7 +1,7 @@
 import type { ISuiteStore } from './types';
 import { create } from 'zustand';
 import { withoutKey } from '@/store/WorkspaceStore/library';
-import { liveAfter, runsAfter } from './library';
+import { changesAfter, liveAfter, notesAfter, runsAfter } from './library';
 
 export const useSuiteStore = create<ISuiteStore>((set) => ({
   suites: {},
@@ -9,6 +9,8 @@ export const useSuiteStore = create<ISuiteStore>((set) => ({
   runs: {},
   live: {},
   picked: {},
+  changes: {},
+  changeNotes: {},
 
   putSuite: ({ projectId, suite }) =>
     set((state) => ({
@@ -47,6 +49,35 @@ export const useSuiteStore = create<ISuiteStore>((set) => ({
       };
     }),
 
+  putChanges: ({ projectId, changes }) =>
+    set((state) => ({ changes: { ...state.changes, [projectId]: changes } })),
+
+  hearChange: (event) =>
+    set((state) => {
+      if (event.kind !== 'changed')
+        return {
+          changeNotes: {
+            ...state.changeNotes,
+            [event.changeId]: notesAfter({
+              notes: state.changeNotes[event.changeId] ?? [],
+              event,
+            }),
+          },
+        };
+
+      const { change } = event;
+
+      return {
+        changes: {
+          ...state.changes,
+          [change.projectId]: changesAfter({
+            changes: state.changes[change.projectId] ?? [],
+            change,
+          }),
+        },
+      };
+    }),
+
   pickTest: ({ projectId, testId }) =>
     set((state) => ({ picked: { ...state.picked, [projectId]: testId } })),
 
@@ -57,5 +88,6 @@ export const useSuiteStore = create<ISuiteStore>((set) => ({
       runs: withoutKey({ record: state.runs, key: projectId }),
       live: withoutKey({ record: state.live, key: projectId }),
       picked: withoutKey({ record: state.picked, key: projectId }),
+      changes: withoutKey({ record: state.changes, key: projectId }),
     })),
 }));
