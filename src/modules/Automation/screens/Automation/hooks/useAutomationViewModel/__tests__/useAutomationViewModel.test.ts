@@ -603,7 +603,7 @@ describe('useAutomationViewModel', () => {
 
       expect(result.current.pane?.fix).toMatchObject({
         canFix: false,
-        note: 'The agent is fixing another test of this suite.',
+        note: 'The agent is already changing this suite.',
       });
       expect(fixes).toEqual([]);
     });

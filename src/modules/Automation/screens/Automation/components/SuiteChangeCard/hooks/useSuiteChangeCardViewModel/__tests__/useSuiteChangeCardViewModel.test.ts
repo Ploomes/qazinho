@@ -123,7 +123,7 @@ describe('useSuiteChangeCardViewModel', () => {
       expect(
         render({ change: { status: 'ready', check: suiteResult({ status: 'failed' }) } })
           .view.check,
-      ).toMatchObject({ icon: 'failed', text: 'The test still fails in the copy' });
+      ).toMatchObject({ icon: 'failed', text: 'The test fails in the copy' });
       expect(
         render({ change: { status: 'ready', check: null } }).view.check,
       ).toMatchObject({
