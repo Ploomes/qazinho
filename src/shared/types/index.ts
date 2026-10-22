@@ -97,6 +97,7 @@ export type * from './ISuiteBatch';
 export type * from './ISuiteChange';
 export type * from './ISuiteChangeFile';
 export type * from './ISuiteChangeMessage';
+export type * from './ISuitePlanCase';
 export type * from './ISuiteResult';
 export type * from './ISuiteRun';
 export type * from './ISuiteShipped';

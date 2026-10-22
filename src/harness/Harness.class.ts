@@ -186,7 +186,7 @@ export class Harness {
     };
   }
 
-  /** One change to the team's suite, by an agent of its own: the suite in its copy and the test that broke, its file tools on the folders it may read, and QAzinho's tool that runs the tests. */
+  /** One change to the team's suite, by an agent of its own: the suite in its copy and the test that broke or the one to write, its file tools on the folders it may read, and QAzinho's tool that runs the tests. */
   public change(props: IChangeBrief): {
     systemPrompt: string;
     prompt: string;
@@ -202,7 +202,10 @@ export class Harness {
       }),
       prompt: chatMessageOf({
         sections: describeChange(props),
-        text: 'Fix this test, or show that the app is wrong.',
+        text:
+          props.task.kind === 'fix'
+            ? 'Fix this test, or show that the app is wrong.'
+            : 'Write this test, or show that the app does not do it.',
       }),
       schema: CHANGE_SCHEMA,
       tools: [...CHANGE_TOOLS.tools],

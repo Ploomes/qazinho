@@ -1,4 +1,4 @@
-import type { IBrokenTest } from '@/harness/types';
+import type { IBrokenTest, IWantedTest } from '@/harness/types';
 import { describe, expect, it } from 'vitest';
 import { describeChange } from '@/harness/context/library';
 
@@ -22,7 +22,23 @@ const BRIEF = {
   base: 'main',
   commit: 'c0ffee1234',
   commits: ['fix(hc-1139): wait for the menu', 'feat(hc-1201): search by name'],
-  broken: BROKEN,
+  task: { kind: 'fix' as const, broken: BROKEN },
+};
+
+const WANTED: IWantedTest = {
+  text: 'The cart keeps its items after the page reloads.',
+  folder: 'tests/hc-1139',
+  source: {
+    workspace: 'Checkout regression',
+    id: 'TC-03',
+    title: 'Cart survives a reload',
+    goal: 'An item added stays in the cart.',
+    preconditions: 'One product in the cart.',
+    steps: [
+      { action: 'Open the cart.', expected: 'It lists the product.' },
+      { action: 'Reload the page.', expected: 'It still lists the product.' },
+    ],
+  },
 };
 
 describe('describeChange', () => {
@@ -67,7 +83,10 @@ describe('describeChange', () => {
       projects: [],
       base: '',
       commits: [],
-      broken: { ...BROKEN, project: '', path: [], notes: '', screenshots: [] },
+      task: {
+        kind: 'fix',
+        broken: { ...BROKEN, project: '', path: [], notes: '', screenshots: [] },
+      },
     });
     const text = sections.flatMap(({ lines }) => lines).join('\n');
 
@@ -79,5 +98,35 @@ describe('describeChange', () => {
     expect(sections[1]?.lines[0]).toBe(
       'CT-NAV-002 · Abre o carrinho pelo menu, written in tests/hc-1139/ct-nav.spec.ts:13.',
     );
+  });
+
+  it('tells the agent the test to write, in the QA words and from the plan case, and where', () => {
+    expect(
+      describeChange({ ...BRIEF, task: { kind: 'write', wanted: WANTED } })[1],
+    ).toEqual({
+      title: 'The test to write',
+      lines: [
+        'The QA asks for a new test: The cart keeps its items after the page reloads.',
+        'It automates the case TC-03 · Cart survives a reload, from the plan of the workspace "Checkout regression".',
+        'Its goal: An item added stays in the cart.',
+        'What it needs before its first step: One product in the cart.',
+        'Its steps, each with what the QA expects:',
+        '1. Open the cart. Expect: It lists the product.',
+        '2. Reload the page. Expect: It still lists the product.',
+        'Put it in tests/hc-1139.',
+      ],
+    });
+  });
+
+  it('leaves the place to the suite, and the case out, when the QA gave neither', () => {
+    expect(
+      describeChange({
+        ...BRIEF,
+        task: { kind: 'write', wanted: { ...WANTED, folder: '', source: null } },
+      })[1]?.lines,
+    ).toEqual([
+      'The QA asks for a new test: The cart keeps its items after the page reloads.',
+      'Put it where the suite keeps tests like it.',
+    ]);
   });
 });

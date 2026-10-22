@@ -1,12 +1,69 @@
 import type { IHarnessSection } from '@/harness/context/types';
-import type { IChangeBrief } from '@/harness/types';
+import type { IBrokenTest, IChangeBrief, IWantedTest } from '@/harness/types';
 
-/** The team's suite and the test that broke in it, as the sections the agent changing it reads before it starts. */
+function brokenOf(broken: IBrokenTest): IHarnessSection {
+  return {
+    title: 'The test that broke',
+    lines: [
+      `${broken.title}, written in ${broken.file}:${String(broken.line)}${
+        broken.path.length === 0
+          ? ''
+          : `, inside ${broken.path.map((describe) => `"${describe}"`).join(' and ')}`
+      }.`,
+      ...(broken.project === ''
+        ? []
+        : [`It runs in the Playwright project ${broken.project}.`]),
+      'It failed with:',
+      '```',
+      broken.error,
+      '```',
+      ...(broken.notes === ''
+        ? []
+        : [
+            'What Playwright noted of the page and the test when it failed:',
+            '````markdown',
+            broken.notes,
+            '````',
+          ]),
+      ...(broken.screenshots.length === 0
+        ? []
+        : [`Its screenshot: ${broken.screenshots.join(', ')}`]),
+    ],
+  };
+}
+
+function wantedOf(wanted: IWantedTest): IHarnessSection {
+  const { source } = wanted;
+
+  return {
+    title: 'The test to write',
+    lines: [
+      ...(wanted.text === '' ? [] : [`The QA asks for a new test: ${wanted.text}`]),
+      ...(source === null
+        ? []
+        : [
+            `It automates the case ${source.id} · ${source.title}, from the plan of the workspace "${source.workspace}".`,
+            ...(source.goal === '' ? [] : [`Its goal: ${source.goal}`]),
+            ...(source.preconditions === ''
+              ? []
+              : [`What it needs before its first step: ${source.preconditions}`]),
+            'Its steps, each with what the QA expects:',
+            ...source.steps.map(
+              (step, index) =>
+                `${String(index + 1)}. ${step.action} Expect: ${step.expected}`,
+            ),
+          ]),
+      wanted.folder === ''
+        ? 'Put it where the suite keeps tests like it.'
+        : `Put it in ${wanted.folder}.`,
+    ],
+  };
+}
+
+/** The team's suite and what the agent is there to do in it, a test that broke or one to write, as the sections it reads before it starts. */
 export function describeChange(
   props: Omit<IChangeBrief, 'readDirs' | 'language'>,
 ): IHarnessSection[] {
-  const { broken } = props;
-
   return [
     {
       title: "The team's suite",
@@ -24,33 +81,6 @@ export function describeChange(
             ]),
       ],
     },
-    {
-      title: 'The test that broke',
-      lines: [
-        `${broken.title}, written in ${broken.file}:${String(broken.line)}${
-          broken.path.length === 0
-            ? ''
-            : `, inside ${broken.path.map((describe) => `"${describe}"`).join(' and ')}`
-        }.`,
-        ...(broken.project === ''
-          ? []
-          : [`It runs in the Playwright project ${broken.project}.`]),
-        'It failed with:',
-        '```',
-        broken.error,
-        '```',
-        ...(broken.notes === ''
-          ? []
-          : [
-              'What Playwright noted of the page and the test when it failed:',
-              '````markdown',
-              broken.notes,
-              '````',
-            ]),
-        ...(broken.screenshots.length === 0
-          ? []
-          : [`Its screenshot: ${broken.screenshots.join(', ')}`]),
-      ],
-    },
+    props.task.kind === 'fix' ? brokenOf(props.task.broken) : wantedOf(props.task.wanted),
   ];
 }

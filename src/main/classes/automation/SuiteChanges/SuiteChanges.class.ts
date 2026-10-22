@@ -477,7 +477,7 @@ export class SuiteChanges {
       base: props.change.base,
       commit: props.change.commit,
       commits: props.commits,
-      broken: await this.brokenOf({ ask, failed, values }),
+      task: { kind: 'fix', broken: await this.brokenOf({ ask, failed, values }) },
       readDirs: [
         work.work,
         join(folder, SUITE_CHANGES.checks),

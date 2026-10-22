@@ -485,17 +485,22 @@ describe('Harness', () => {
       base: 'main',
       commit: 'c0ffee1234567890',
       commits: ['fix(hc-1139): wait for the menu', 'feat(hc-1201): search by name'],
-      broken: {
-        title: 'CT-NAV-002 · Abre o carrinho pelo menu',
-        file: 'tests/hc-1139/ct-nav.spec.ts',
-        line: 13,
-        project: 'chromium',
-        path: ['CT-NAV · Navegação'],
-        error:
-          "TimeoutError: locator.click: Timeout 2000ms exceeded.\nCall log:\n  - waiting for getByRole('link', { name: 'Meu carrinho' })",
-        notes:
-          '# Page snapshot\n\n```yaml\n- banner:\n  - link "Carrinho 0":\n    - /url: /carrinho\n```',
-        screenshots: ['/data/suites/p-1/runs/s-03/output/1/ct-nav-002/test-failed-1.png'],
+      task: {
+        kind: 'fix' as const,
+        broken: {
+          title: 'CT-NAV-002 · Abre o carrinho pelo menu',
+          file: 'tests/hc-1139/ct-nav.spec.ts',
+          line: 13,
+          project: 'chromium',
+          path: ['CT-NAV · Navegação'],
+          error:
+            "TimeoutError: locator.click: Timeout 2000ms exceeded.\nCall log:\n  - waiting for getByRole('link', { name: 'Meu carrinho' })",
+          notes:
+            '# Page snapshot\n\n```yaml\n- banner:\n  - link "Carrinho 0":\n    - /url: /carrinho\n```',
+          screenshots: [
+            '/data/suites/p-1/runs/s-03/output/1/ct-nav-002/test-failed-1.png',
+          ],
+        },
       },
       readDirs: [
         '/data/suites/p-1/changes/c-01/work',
@@ -523,6 +528,36 @@ describe('Harness', () => {
     });
 
     /** The tests run through QAzinho, which knows the secrets the agent never sees: the agent gets no shell at all. */
+    it('asks for a new test with the QA words, the plan case and where to put it', async () => {
+      await expect(
+        harness.change({
+          ...CHANGE,
+          branch: 'qazinho/test-cart-survives-a-reload',
+          task: {
+            kind: 'write',
+            wanted: {
+              text: 'O carrinho mantém os itens depois de recarregar a página.',
+              folder: 'tests/hc-1139',
+              source: {
+                workspace: 'Regressão do checkout',
+                id: 'TC-03',
+                title: 'O carrinho sobrevive a um reload',
+                goal: 'Um item adicionado continua no carrinho.',
+                preconditions: 'Um produto no carrinho.',
+                steps: [
+                  { action: 'Abrir o carrinho.', expected: 'Ele lista o produto.' },
+                  {
+                    action: 'Recarregar a página.',
+                    expected: 'Ele ainda lista o produto.',
+                  },
+                ],
+              },
+            },
+          },
+        }).prompt,
+      ).toMatchFileSnapshot('./__prompts__/write-message.txt');
+    });
+
     it('lets the automator read and edit its folders and run tests through QAzinho, with no shell', () => {
       const { tools, allowedTools, readDirs } = harness.change(CHANGE);
 
