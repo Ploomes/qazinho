@@ -1,6 +1,7 @@
 export * from './bugOfSaved';
 export * from './buildRun';
 export * from './codeSourceOf';
+export * from './designLinkOf';
 export * from './endRun';
 export * from './fromSaved';
 export * from './landAnswered';

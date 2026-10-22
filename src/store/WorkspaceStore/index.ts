@@ -69,6 +69,15 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
+  setDesign: ({ workspaceId, design }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => ({ ...workspace, design }),
+      }),
+    })),
+
   setViewport: ({ workspaceId, viewportId }) =>
     set((state) => ({
       workspaces: mapWorkspace({

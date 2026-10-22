@@ -10,6 +10,7 @@ export type * from './ICommandPicker';
 export type * from './ICommandRow';
 export type * from './IComposerCommand';
 export type * from './IErrorMessage';
+export type * from './IFigmaCommand';
 export type * from './IFindingMessage';
 export type * from './IJiraCommand';
 export type * from './INoteMessage';

@@ -74,9 +74,100 @@ describe('useChatCommand', () => {
           tag: '/jira',
           isDisabled: false,
         },
+        {
+          id: 'figma-plan',
+          label: 'Check against a Figma design',
+          tag: '/figma',
+          isDisabled: false,
+        },
       ],
     });
     expect(command({ draft: '/code and more' }).result.current.picker).toBeNull();
+  });
+
+  describe('a plan against a Figma design', () => {
+    const LINK = 'https://www.figma.com/design/AbC123/Shop-Checkout?node-id=12-345';
+
+    it('takes the link the QA pastes, and plans against it with their words after', () => {
+      const { result, rerender, onDraft } = command({ draft: '/' });
+
+      act(() => {
+        result.current.onPick('figma-plan');
+      });
+
+      expect(result.current.command).toMatchObject({
+        isReady: false,
+        placeholder: 'Paste the link to a frame or page in Figma',
+      });
+
+      rerender(LINK);
+
+      expect(result.current.picker).toMatchObject({
+        heading: 'Figma design',
+        rows: [{ label: 'Shop Checkout', detail: 'frame 12:345' }],
+        note: null,
+      });
+
+      act(() => {
+        result.current.onPick(result.current.picker?.rows[0]?.id ?? '');
+      });
+      rerender('');
+
+      expect(onDraft).toHaveBeenLastCalledWith('');
+      expect(result.current.command).toMatchObject({
+        isReady: true,
+        parts: [
+          { text: 'Shop Checkout', isStrong: true },
+          { text: 'frame 12:345', isStrong: false },
+        ],
+      });
+      expect(result.current.ask(' Only the cart. ')).toEqual({
+        text: 'Plan the tests against the Figma design Shop Checkout.\n\nOnly the cart.',
+        code: null,
+        jira: null,
+        design: {
+          url: LINK,
+          fileKey: 'AbC123',
+          nodeId: '12:345',
+          name: 'Shop Checkout',
+        },
+        command: { id: 'figma-plan', name: 'Shop Checkout', nodeId: '12:345', url: LINK },
+      });
+    });
+
+    it('says what it pasted is not a Figma design, and offers nothing to pick', () => {
+      const { result, rerender } = command({ draft: '/' });
+
+      act(() => {
+        result.current.onPick('figma-plan');
+      });
+      rerender('https://www.figma.com/board/AbC123/Flow');
+
+      expect(result.current.picker).toMatchObject({
+        rows: [],
+        note: 'That is not a link to a Figma design.',
+      });
+      expect(result.current.ask('')).toBeNull();
+    });
+
+    it('goes back from the design to pasting another', () => {
+      const { result, rerender } = command({ draft: '/' });
+
+      act(() => {
+        result.current.onPick('figma-plan');
+      });
+      rerender(LINK);
+      act(() => {
+        result.current.onPick(LINK);
+      });
+      rerender('');
+      act(() => {
+        result.current.onBack();
+      });
+
+      expect(result.current.command?.isReady).toBe(false);
+      expect(result.current.picker?.heading).toBe('Figma design');
+    });
   });
 
   it('narrows the commands by what follows the slash, in either language', () => {
@@ -122,6 +213,11 @@ describe('useChatCommand', () => {
         'The agent reads a branch of a repository and plans its tests with you.',
       ],
       ['jira-plan', true, 'Connect Jira in Settings → Integrations first.'],
+      [
+        'figma-plan',
+        false,
+        'The agent reads the design through your Figma, plans with you, and each run holds the screens to it.',
+      ],
     ]);
   });
 
@@ -222,6 +318,7 @@ describe('useChatCommand', () => {
         text: 'Plan the tests for what branch feat/cupom of acme/loja-web changed against develop.\n\nFocus on the checkout.',
         code: { owner: 'acme', name: 'loja-web', base: 'develop', branch: 'feat/cupom' },
         jira: null,
+        design: null,
         command: {
           id: 'code-plan',
           repository: 'acme/loja-web',
@@ -409,6 +506,7 @@ describe('useChatCommand', () => {
         text: 'Plan the tests for the Jira story SHOP-12: Aplicar cupom.\n\nOnly the web.',
         code: null,
         jira: { key: 'SHOP-12' },
+        design: null,
         command: {
           id: 'jira-plan',
           key: 'SHOP-12',

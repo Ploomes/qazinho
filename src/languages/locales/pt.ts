@@ -186,6 +186,7 @@ export const pt: typeof en = {
     FAILED_CODE: 'O QAzinho não conseguiu pegar o código no GitHub. {{reason}}',
     FAILED_JIRA: 'O QAzinho não conseguiu ler a {{key}} no Jira. {{reason}}',
     SUGGESTION_JIRA: 'Planejar a partir de uma história do Jira',
+    SUGGESTION_FIGMA: 'Conferir com um design do Figma',
     PLAN_WHILE_RUNNING:
       'O plano ficou como estava: uma run está rodando nele. Peça de novo quando a run terminar.',
   },
@@ -474,6 +475,15 @@ export const pt: typeof en = {
     STEP_STORY: 'Lendo a {{key}} no Jira…',
     STEP_FILES: 'Baixando os anexos da {{key}}…',
     STEP_FILES_SIZE: 'Baixando os anexos da {{key}} · {{size}}',
+    FIGMA_PLAN: 'Conferir com um design do Figma',
+    FIGMA_PLAN_TEXT:
+      'O agente lê o design pelo seu Figma, planeja com você, e cada run confere as telas com ele.',
+    DESIGN_HEADING: 'design do Figma',
+    PICK_DESIGN: 'Cole o link de um frame ou página do Figma',
+    DESIGN_NOT_LINK: 'Isso não é um link de um design do Figma.',
+    DESIGN_NODE: 'frame {{node}}',
+    DESIGN_WHOLE_FILE: 'o arquivo inteiro',
+    FIGMA_PLAN_SAY: 'Planeje os testes conferindo com o design {{name}} do Figma.',
   },
   PROJECT: {
     ANDROID_LOCKED: 'Precisa do Android SDK nesta máquina',

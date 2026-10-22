@@ -73,6 +73,7 @@ export const useChatViewModel = () => {
     state.integrations.some(({ id }) => id === 'jira'),
   );
   const sendMessage = useWorkspaceStore((state) => state.sendMessage);
+  const setDesign = useWorkspaceStore((state) => state.setDesign);
   const answerQuestions = useWorkspaceStore((state) => state.answerQuestions);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const selectRun = useWorkspaceStore((state) => state.selectRun);
@@ -140,6 +141,9 @@ export const useChatViewModel = () => {
       text,
       references: referencesOf({ workspace, wholePlan, exploration }),
     });
+
+    if (asked !== null && asked.design !== null)
+      setDesign({ workspaceId: workspace.id, design: asked.design });
 
     sendMessage({
       workspaceId: workspace.id,
@@ -223,6 +227,8 @@ export const useChatViewModel = () => {
         : readStep.bytes === 0
           ? t('COMMANDS.STEP_FILES', { key: sentCommand.key })
           : t('COMMANDS.STEP_FILES_SIZE', { key: sentCommand.key, size });
+
+    if (sentCommand.id === 'figma-plan') return '';
 
     return readStep.step === 'commit'
       ? t('COMMANDS.STEP_COMMIT', { branch: sentCommand.branch })
@@ -417,6 +423,14 @@ export const useChatViewModel = () => {
             },
           ]
         : []),
+      {
+        id: 'CHAT.SUGGESTION_FIGMA',
+        label: t('CHAT.SUGGESTION_FIGMA'),
+        text: '',
+        onClick: () => {
+          chatCommand.start('figma-plan');
+        },
+      },
       ...(isJiraConnected
         ? [
             {

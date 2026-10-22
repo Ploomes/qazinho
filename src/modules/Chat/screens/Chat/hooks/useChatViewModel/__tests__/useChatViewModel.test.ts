@@ -105,6 +105,7 @@ describe('useChatViewModel', () => {
       ['Create a test plan', "Let's create a test plan."],
       ['Test a feature', 'I want to test a specific feature.'],
       ['Explore the app for 10 min', ''],
+      ['Check against a Figma design', ''],
     ]);
   });
 
@@ -1089,6 +1090,44 @@ describe('useChatViewModel', () => {
       });
 
       expect(result.current.draft).toBe('explain @TC-02 ');
+    });
+  });
+
+  describe('a plan against a Figma design', () => {
+    it('keeps the design on the workspace before the agent hears of it, and the command on the message', async () => {
+      const ask = answering({ answer: DRAFTED });
+      const link = 'https://www.figma.com/design/AbC123/Shop?node-id=12-345';
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.suggestions
+          .find(({ label }) => label === 'Check against a Figma design')
+          ?.onClick();
+      });
+      act(() => {
+        result.current.onDraftChange(link);
+      });
+      act(() => {
+        result.current.onPickCommand(link);
+      });
+      act(() => {
+        result.current.onSend();
+      });
+
+      await waitFor(() => {
+        expect(ask).toHaveBeenCalledOnce();
+      });
+      expect(ask.mock.calls[0]?.[0]).toMatchObject({
+        text: 'Plan the tests against the Figma design Shop.',
+        design: { fileKey: 'AbC123', nodeId: '12:345', name: 'Shop', url: link },
+      });
+      expect(useWorkspaceStore.getState().workspaces[0]?.design).toMatchObject({
+        fileKey: 'AbC123',
+      });
+      expect(useWorkspaceStore.getState().workspaces[0]?.chat[0]).toMatchObject({
+        kind: 'user',
+        command: { id: 'figma-plan', name: 'Shop', nodeId: '12:345', url: link },
+      });
     });
   });
 

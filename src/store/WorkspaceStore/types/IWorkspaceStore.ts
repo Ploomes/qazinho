@@ -8,6 +8,7 @@ import type {
   CodeStep,
   IChatQuestion,
   ICodeSource,
+  IDesignLink,
   IDraftedCase,
   IFiledIssue,
   IJiraIssueRef,
@@ -43,6 +44,7 @@ export interface IWorkspaceStore {
   askRemoveWorkspace: (workspaceId: string | null) => void;
   removeWorkspace: (workspaceId: string) => void;
   renameWorkspace: (props: { workspaceId: string; name: string }) => void;
+  setDesign: (props: { workspaceId: string; design: IDesignLink | null }) => void;
   setViewport: (props: { workspaceId: string; viewportId: ViewportId }) => void;
   removeWorkspacesOf: (projectId: string) => void;
   selectTab: (tab: WorkspaceTab) => void;

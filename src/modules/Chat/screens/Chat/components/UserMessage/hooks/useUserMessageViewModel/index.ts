@@ -20,10 +20,21 @@ export const useUserMessageViewModel = (props: IUserMessageProps) => {
                   { text: command.key, isStrong: true },
                   { text: command.summary, isStrong: false },
                 ]
-              : [
-                  { text: command.repository, isStrong: false },
-                  { text: command.branch, isStrong: true },
-                ]
+              : command.id === 'figma-plan'
+                ? [
+                    { text: command.name, isStrong: true },
+                    {
+                      text:
+                        command.nodeId === null
+                          ? t('COMMANDS.DESIGN_WHOLE_FILE')
+                          : t('COMMANDS.DESIGN_NODE', { node: command.nodeId }),
+                      isStrong: false,
+                    },
+                  ]
+                : [
+                    { text: command.repository, isStrong: false },
+                    { text: command.branch, isStrong: true },
+                  ]
             ).map((part, index) => ({
               key: `${String(index)}-${part.text}`,
               text: part.text,

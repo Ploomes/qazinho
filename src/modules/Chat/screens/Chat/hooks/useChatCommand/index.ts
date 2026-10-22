@@ -12,6 +12,7 @@ import type {
   IBranch,
   IBranchList,
   ICodeAsk,
+  IDesignLink,
   IJiraAsk,
   JiraIssueList,
 } from '@/shared/types';
@@ -20,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { matchesQuery } from '@/modules/Chat/library';
 import { CHAT_COMMANDS, COMMAND_SEARCH } from '@/modules/Chat/screens/Chat/constants';
 import { GITHUB_FAILURE_KEYS, JIRA_FAILURE_KEYS } from '@/modules/Setup';
+import { designLinkOf } from '@/modules/Workspace';
 import { Github, Jira } from '@/services';
 
 export const useChatCommand = (props: {
@@ -48,21 +50,27 @@ export const useChatCommand = (props: {
         ? command.issue === null
           ? 'story'
           : 'ready'
-        : command.repository === null
-          ? 'repository'
-          : command.branch === null
-            ? 'branch'
-            : 'ready';
+        : command.id === 'figma-plan'
+          ? command.design === null
+            ? 'design'
+            : 'ready'
+          : command.repository === null
+            ? 'repository'
+            : command.branch === null
+              ? 'branch'
+              : 'ready';
   const blockerOf = (id: ChatCommandId) =>
-    id === 'jira-plan'
-      ? isJiraConnected
-        ? null
-        : t('COMMANDS.NEEDS_JIRA')
-      : !isGithubConnected
-        ? t('COMMANDS.NEEDS_GITHUB')
-        : repositories.length === 0
-          ? t('COMMANDS.NEEDS_REPOSITORIES')
-          : null;
+    id === 'figma-plan'
+      ? null
+      : id === 'jira-plan'
+        ? isJiraConnected
+          ? null
+          : t('COMMANDS.NEEDS_JIRA')
+        : !isGithubConnected
+          ? t('COMMANDS.NEEDS_GITHUB')
+          : repositories.length === 0
+            ? t('COMMANDS.NEEDS_REPOSITORIES')
+            : null;
   const repository = command?.repository ?? null;
   const base = repository?.baseBranch ?? '';
   const branchList =
@@ -103,7 +111,7 @@ export const useChatCommand = (props: {
     const only =
       id === 'code-plan' && repositories.length === 1 ? (repositories[0] ?? null) : null;
 
-    setCommand({ id, repository: only, branch: null, issue: null });
+    setCommand({ id, repository: only, branch: null, issue: null, design: null });
     if (only !== null) load(only);
     if (id === 'jira-plan') setFound(null);
     onDraft('');
@@ -174,6 +182,24 @@ export const useChatCommand = (props: {
     isDisabled: false,
   }));
 
+  const pasted = step === 'design' ? designLinkOf(typed) : null;
+  const nodeOf = (design: IDesignLink) =>
+    design.nodeId === null
+      ? t('COMMANDS.DESIGN_WHOLE_FILE')
+      : t('COMMANDS.DESIGN_NODE', { node: design.nodeId });
+  const designRows: ICommandRow[] =
+    pasted === null
+      ? []
+      : [
+          {
+            id: pasted.url,
+            label: pasted.name,
+            tag: null,
+            detail: nodeOf(pasted),
+            isDisabled: false,
+          },
+        ];
+
   const rows =
     step === 'command'
       ? commandRows
@@ -181,7 +207,9 @@ export const useChatCommand = (props: {
         ? repositoryRows
         : step === 'story'
           ? storyRows
-          : branchRows;
+          : step === 'design'
+            ? designRows
+            : branchRows;
   const query = (step === 'command' ? (slash ?? '') : draft).trim();
   const note =
     step === 'branch' && branchList === null
@@ -192,26 +220,36 @@ export const useChatCommand = (props: {
           ? t(JIRA_FAILURE_KEYS[found.list.failure])
           : step === 'story' && found?.query !== typed
             ? t('COMMANDS.STORY_SEARCHING')
-            : rows.length === 0 && query !== ''
-              ? t('COMMANDS.NONE', { query })
-              : null;
+            : step === 'design' && typed !== '' && pasted === null
+              ? t('COMMANDS.DESIGN_NOT_LINK')
+              : step === 'design'
+                ? null
+                : rows.length === 0 && query !== ''
+                  ? t('COMMANDS.NONE', { query })
+                  : null;
   const label = CHAT_COMMANDS.find(({ id }) => id === command?.id)?.labelKey;
   const issue = command?.issue ?? null;
   const branch = command?.branch ?? null;
+  const design = command?.design ?? null;
   const parts: ICommandPart[] =
-    issue !== null
+    design !== null
       ? [
-          { key: `key-${issue.key}`, text: issue.key, isStrong: true },
-          { key: `summary-${issue.key}`, text: issue.summary, isStrong: false },
+          { key: `name-${design.url}`, text: design.name, isStrong: true },
+          { key: `node-${design.url}`, text: nodeOf(design), isStrong: false },
         ]
-      : [
-          ...(repository === null
-            ? []
-            : [{ key: keyOf(repository), text: keyOf(repository), isStrong: false }]),
-          ...(branch === null
-            ? []
-            : [{ key: `branch-${branch}`, text: branch, isStrong: true }]),
-        ];
+      : issue !== null
+        ? [
+            { key: `key-${issue.key}`, text: issue.key, isStrong: true },
+            { key: `summary-${issue.key}`, text: issue.summary, isStrong: false },
+          ]
+        : [
+            ...(repository === null
+              ? []
+              : [{ key: keyOf(repository), text: keyOf(repository), isStrong: false }]),
+            ...(branch === null
+              ? []
+              : [{ key: `branch-${branch}`, text: branch, isStrong: true }]),
+          ];
 
   return {
     command:
@@ -228,7 +266,9 @@ export const useChatCommand = (props: {
                   ? t('COMMANDS.PICK_BRANCH')
                   : step === 'story'
                     ? t('COMMANDS.PICK_STORY')
-                    : t('COMMANDS.NOTE'),
+                    : step === 'design'
+                      ? t('COMMANDS.PICK_DESIGN')
+                      : t('COMMANDS.NOTE'),
           } satisfies IComposerCommand),
     picker:
       step === null || step === 'ready'
@@ -241,9 +281,11 @@ export const useChatCommand = (props: {
                   ? typed === ''
                     ? t('COMMANDS.STORY_RECENT')
                     : t('COMMANDS.STORY_HEADING')
-                  : step === 'repository' || repository === null
-                    ? t('COMMANDS.REPOSITORY_HEADING')
-                    : t('COMMANDS.BRANCH_HEADING', { repository: keyOf(repository) }),
+                  : step === 'design'
+                    ? t('COMMANDS.DESIGN_HEADING')
+                    : step === 'repository' || repository === null
+                      ? t('COMMANDS.REPOSITORY_HEADING')
+                      : t('COMMANDS.BRANCH_HEADING', { repository: keyOf(repository) }),
             rows,
             note,
             hint: t('COMMANDS.HINT'),
@@ -262,7 +304,12 @@ export const useChatCommand = (props: {
 
       if (command === null) return;
 
-      if (step === 'story') {
+      if (step === 'design') {
+        if (pasted === null) return;
+
+        setCommand({ ...command, design: pasted });
+        onDraft('');
+      } else if (step === 'story') {
         const picked = stories.find(({ key }) => key === id);
 
         if (picked === undefined) return;
@@ -285,7 +332,8 @@ export const useChatCommand = (props: {
     onBack: () => {
       if (command === null) return;
 
-      if (command.issue !== null) setCommand({ ...command, issue: null });
+      if (command.design !== null) setCommand({ ...command, design: null });
+      else if (command.issue !== null) setCommand({ ...command, issue: null });
       else if (command.branch !== null) setCommand({ ...command, branch: null });
       else if (command.repository !== null && repositories.length > 1)
         setCommand({ ...command, repository: null });
@@ -296,6 +344,25 @@ export const useChatCommand = (props: {
     },
     ask: (words: string) => {
       const note = words.trim();
+
+      if (command?.id === 'figma-plan') {
+        if (command.design === null) return null;
+
+        const say = t('COMMANDS.FIGMA_PLAN_SAY', { name: command.design.name });
+
+        return {
+          text: note === '' ? say : `${say}\n\n${note}`,
+          code: null,
+          jira: null,
+          design: command.design,
+          command: {
+            id: 'figma-plan',
+            name: command.design.name,
+            nodeId: command.design.nodeId,
+            url: command.design.url,
+          } satisfies UserCommand,
+        };
+      }
 
       if (command?.id === 'jira-plan') {
         const { issue } = command;
@@ -311,6 +378,7 @@ export const useChatCommand = (props: {
           text: note === '' ? say : `${say}\n\n${note}`,
           code: null,
           jira: { key: issue.key } satisfies IJiraAsk,
+          design: null,
           command: {
             id: 'jira-plan',
             key: issue.key,
@@ -344,6 +412,7 @@ export const useChatCommand = (props: {
           branch: command.branch,
         } satisfies ICodeAsk,
         jira: null,
+        design: null,
         command: {
           id: 'code-plan',
           repository: name,

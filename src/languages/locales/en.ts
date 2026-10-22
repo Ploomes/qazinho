@@ -183,6 +183,7 @@ export const en = {
     FAILED_CODE: 'QAzinho could not get the code from GitHub. {{reason}}',
     FAILED_JIRA: 'QAzinho could not read {{key}} from Jira. {{reason}}',
     SUGGESTION_JIRA: 'Plan from a Jira story',
+    SUGGESTION_FIGMA: 'Check against a Figma design',
     PLAN_WHILE_RUNNING:
       'The plan stays as it was: a run is walking it. Ask again once the run ends.',
   },
@@ -471,6 +472,15 @@ export const en = {
     STEP_STORY: 'Reading {{key}} from Jira…',
     STEP_FILES: 'Downloading the files of {{key}}…',
     STEP_FILES_SIZE: 'Downloading the files of {{key}} · {{size}}',
+    FIGMA_PLAN: 'Check against a Figma design',
+    FIGMA_PLAN_TEXT:
+      'The agent reads the design through your Figma, plans with you, and each run holds the screens to it.',
+    DESIGN_HEADING: 'Figma design',
+    PICK_DESIGN: 'Paste the link to a frame or page in Figma',
+    DESIGN_NOT_LINK: 'That is not a link to a Figma design.',
+    DESIGN_NODE: 'frame {{node}}',
+    DESIGN_WHOLE_FILE: 'the whole file',
+    FIGMA_PLAN_SAY: 'Plan the tests against the Figma design {{name}}.',
   },
   PROJECT: {
     ANDROID_LOCKED: 'Needs the Android SDK on this machine',

@@ -22,4 +22,11 @@ export const CHAT_COMMANDS: {
     textKey: 'COMMANDS.JIRA_PLAN_TEXT',
     aliases: 'jira story historia issue ticket requisito requirement criterio aceite',
   },
+  {
+    id: 'figma-plan',
+    slug: '/figma',
+    labelKey: 'COMMANDS.FIGMA_PLAN',
+    textKey: 'COMMANDS.FIGMA_PLAN_TEXT',
+    aliases: 'figma design prototipo prototype layout frame tela screen ux ui',
+  },
 ];

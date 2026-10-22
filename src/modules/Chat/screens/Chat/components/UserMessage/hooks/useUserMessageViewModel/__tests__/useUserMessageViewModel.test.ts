@@ -108,6 +108,29 @@ describe('useUserMessageViewModel', () => {
     });
   });
 
+  it('shows the Figma design a plan is checked against, and the frame its link names', () => {
+    const sent = (nodeId: string | null) =>
+      renderHook(() =>
+        useUserMessageViewModel({
+          message: {
+            ...message(''),
+            command: {
+              id: 'figma-plan',
+              name: 'Shop',
+              nodeId,
+              url: 'https://www.figma.com/design/AbC123/Shop',
+            },
+          },
+        }),
+      ).result.current.command;
+
+    expect(sent('12:345')).toMatchObject({
+      name: 'Check against a Figma design',
+      parts: [{ text: 'Shop' }, { text: 'frame 12:345' }],
+    });
+    expect(sent(null)?.parts[1]?.text).toBe('the whole file');
+  });
+
   it('shows no command on a plain message', () => {
     expect(
       renderHook(() => useUserMessageViewModel({ message: message('hi') })).result
