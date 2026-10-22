@@ -1,4 +1,4 @@
-import type { IAgentRunner, IRunAgent } from './types';
+import type { IAgentClock, IAgentRunner, IRunAgent } from './types';
 import type { ICodexLine } from '@/main/types';
 import type { IAgentEvent, IAgentTurn, IAgentUsage } from '@/shared/types';
 import type { ChildProcess } from 'node:child_process';
@@ -29,12 +29,16 @@ export class AgentRunner {
   private readonly onEvent: (event: IAgentEvent) => void;
   private readonly owners: IAgentRunner['owners'];
   private readonly folder: string;
+  private readonly timeoutMs: number;
   private readonly asking = new Map<string, Set<ChildProcess>>();
+  private readonly clocks = new Map<ChildProcess, IAgentClock>();
+  private readonly holds = new Map<string, number>();
 
   public constructor(props: IAgentRunner) {
     this.onEvent = props.onEvent;
     this.owners = props.owners;
     this.folder = props.folder;
+    this.timeoutMs = props.timeoutMs ?? AGENT_RUN.timeoutMs;
   }
 
   public async ask(props: IRunAgent): Promise<IAgentTurn> {
@@ -77,9 +81,9 @@ export class AgentRunner {
     child.stdin.write(prompt);
     child.stdin.end();
 
-    const timeout = setTimeout(() => {
-      killTree(child);
-    }, AGENT_RUN.timeoutMs);
+    this.clocks.set(child, { timer: null, leftMs: this.timeoutMs, since: Date.now() });
+
+    if (!this.holds.has(workspaceId)) this.startClock(child);
 
     let sessionId: string | null = props.sessionId;
     let usage: IAgentUsage | null = null;
@@ -169,7 +173,8 @@ export class AgentRunner {
         if (schemaFile !== null) void rm(schemaFile, { force: true });
       });
       child.on('close', (status) => {
-        clearTimeout(timeout);
+        this.stopClock(child);
+        this.clocks.delete(child);
         asking.delete(child);
 
         if (child.pid !== undefined) this.owners.release(child.pid);
@@ -198,5 +203,61 @@ export class AgentRunner {
         if (child.exitCode === null && child.signalCode === null) killTree(child);
       }, AGENT_RUN.interruptGraceMs).unref();
     }
+  }
+
+  /** Stops the clock that ends the workspace's agent while it waits on the QA, until as many `release` calls: the wait is not its turn's time. */
+  public hold(workspaceId: string): void {
+    const holds = this.holds.get(workspaceId) ?? 0;
+
+    this.holds.set(workspaceId, holds + 1);
+
+    if (holds > 0) return;
+
+    for (const child of this.asking.get(workspaceId) ?? []) this.stopClock(child);
+  }
+
+  /** Starts the clock again once nothing holds it, with the time the agent had left. */
+  public release(workspaceId: string): void {
+    const holds = (this.holds.get(workspaceId) ?? 0) - 1;
+
+    if (holds > 0) {
+      this.holds.set(workspaceId, holds);
+
+      return;
+    }
+
+    this.holds.delete(workspaceId);
+
+    for (const child of this.asking.get(workspaceId) ?? []) this.startClock(child);
+  }
+
+  private startClock(child: ChildProcess): void {
+    const clock = this.clocks.get(child);
+
+    if (clock === undefined || clock.timer !== null) return;
+
+    this.clocks.set(child, {
+      timer: setTimeout(
+        () => {
+          killTree(child);
+        },
+        Math.max(clock.leftMs, 0),
+      ),
+      leftMs: clock.leftMs,
+      since: Date.now(),
+    });
+  }
+
+  private stopClock(child: ChildProcess): void {
+    const clock = this.clocks.get(child);
+
+    if (clock?.timer === undefined || clock.timer === null) return;
+
+    clearTimeout(clock.timer);
+    this.clocks.set(child, {
+      timer: null,
+      leftMs: clock.leftMs - (Date.now() - clock.since),
+      since: Date.now(),
+    });
   }
 }

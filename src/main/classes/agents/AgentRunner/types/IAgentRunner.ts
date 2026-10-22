@@ -5,4 +5,5 @@ export interface IAgentRunner {
   onEvent: (event: IAgentEvent) => void;
   owners: ProcessOwners;
   folder: string;
+  timeoutMs?: number;
 }
