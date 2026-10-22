@@ -22,6 +22,18 @@ describe('SUITE_CHANGE_STATES', () => {
     },
   );
 
+  it.each(['en', 'pt'] as const)(
+    'names every state of a new test with a word of its own in %s',
+    (language) => {
+      const t = i18n.getFixedT(language);
+      const words = Object.values(SUITE_CHANGE_STATES).map(({ writeLabelKey }) =>
+        t(writeLabelKey),
+      );
+
+      expect(new Set(words).size).toBe(words.length);
+    },
+  );
+
   /** An app that is wrong is a bug for the QA to file, never a fix the agent got wrong. */
   it('paints an app that is wrong as a bug', () => {
     expect(SUITE_CHANGE_STATES['app-bug']).toMatchObject({ icon: 'bug', tone: 'fail' });

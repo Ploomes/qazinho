@@ -20,7 +20,7 @@ const CHANGE: ISuiteChange = {
   summary: '',
   message: { commit: '', title: '', body: '' },
   files: [],
-  check: null,
+  checks: [],
   failure: null,
   shipped: null,
 };
@@ -96,7 +96,7 @@ describe('useSuiteChangeCardViewModel', () => {
           status: 'ready',
           step: null,
           summary: 'The link is "Carrinho" now.',
-          check: suiteResult({}),
+          checks: [suiteResult({})],
           files: [
             { path: 'a.ts', status: 'modified', additions: 2, deletions: 1, patch: '' },
             { path: 'b.ts', status: 'added', additions: 5, deletions: 0, patch: '' },
@@ -121,11 +121,12 @@ describe('useSuiteChangeCardViewModel', () => {
 
     it('says when the test still fails in the copy, or could not run again', () => {
       expect(
-        render({ change: { status: 'ready', check: suiteResult({ status: 'failed' }) } })
-          .view.check,
+        render({
+          change: { status: 'ready', checks: [suiteResult({ status: 'failed' })] },
+        }).view.check,
       ).toMatchObject({ icon: 'failed', text: 'The test fails in the copy' });
       expect(
-        render({ change: { status: 'ready', check: null } }).view.check,
+        render({ change: { status: 'ready', checks: [] } }).view.check,
       ).toMatchObject({
         icon: 'attention',
         text: 'QAzinho could not run the test again',
@@ -230,6 +231,64 @@ describe('useSuiteChangeCardViewModel', () => {
         render({ change: { status: 'shipped', shipped: { way: 'branch', url: null } } })
           .view.shipped,
       ).toEqual({ url: null, label: 'Sent as qazinho/fix-ct-nav-001' });
+    });
+  });
+
+  describe('a new test', () => {
+    const WRITE = {
+      ask: {
+        kind: 'write' as const,
+        text: 'The cart keeps its items.',
+        folder: '',
+        source: null,
+      },
+    };
+
+    it('says the agent is writing it', () => {
+      expect(
+        render({ change: { ...WRITE, status: 'working', step: 'agent' } }).view,
+      ).toMatchObject({
+        title: 'The agent is writing it',
+        step: 'The agent is reading the suite and writing the test',
+      });
+    });
+
+    it('counts the tests of its files QAzinho ran again', () => {
+      expect(
+        render({
+          change: {
+            ...WRITE,
+            status: 'ready',
+            checks: [suiteResult({}), suiteResult({ status: 'failed' })],
+          },
+        }).view.check,
+      ).toMatchObject({ icon: 'failed', text: '1 of 2 tests fail in the copy' });
+    });
+
+    /** A new test the app fails is right, and catches a bug: it can still be sent. */
+    it('lets the QA review a new test the app fails', () => {
+      expect(
+        render({
+          change: {
+            ...WRITE,
+            status: 'app-bug',
+            checks: [suiteResult({ status: 'failed' })],
+            files: [
+              {
+                path: 'a.spec.ts',
+                status: 'added',
+                additions: 9,
+                deletions: 0,
+                patch: '',
+              },
+            ],
+          },
+        }).view,
+      ).toMatchObject({
+        title: 'It is the app, not the test',
+        canReview: true,
+        check: { text: 'The test fails in the copy' },
+      });
     });
   });
 });

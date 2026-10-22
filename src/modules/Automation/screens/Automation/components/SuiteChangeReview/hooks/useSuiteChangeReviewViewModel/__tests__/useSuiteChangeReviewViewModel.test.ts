@@ -31,7 +31,7 @@ const CHANGE: ISuiteChange = {
     { path: 'a.spec.ts', status: 'modified', additions: 1, deletions: 1, patch: '' },
     { path: 'b.page.ts', status: 'added', additions: 3, deletions: 0, patch: '' },
   ],
-  check: suiteResult({}),
+  checks: [suiteResult({})],
   failure: null,
   shipped: null,
 };

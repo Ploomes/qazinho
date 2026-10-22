@@ -9,4 +9,5 @@ export const SUITE_CHANGE_CARD = {
     agent: 'AUTOMATION.CHANGE_STEP_AGENT',
     check: 'AUTOMATION.CHANGE_STEP_CHECK',
   } satisfies Record<SuiteChangeStep, ParseKeys>,
+  writeStepKey: 'AUTOMATION.CHANGE_STEP_WRITE' satisfies ParseKeys,
 } as const;

@@ -13,7 +13,7 @@ import type {
   ISuiteChangeFile,
   ISuiteResult,
   ISuiteShipped,
-  SuiteChangeAsk,
+  ISuiteTest,
   SuiteChangeFailure,
   SuiteFailure,
   SuiteShipOutcome,
@@ -26,12 +26,14 @@ import { isInside } from '@/main/classes/storage/Archive/library';
 import { agentFailure } from '@/main/library/agentFailure';
 import { SUITE_CHANGES } from './constants';
 import {
+  askTitleOf,
   branchNameOf,
   changedPathsOf,
   checkReportOf,
   compareUrlOf,
   failureNotesOf,
   patchFilesOf,
+  specFilesOf,
   titleGrepOf,
 } from './library';
 
@@ -89,7 +91,7 @@ export class SuiteChanges {
       summary: '',
       message: { commit: '', title: '', body: '' },
       files: [],
-      check: null,
+      checks: [],
       failure: null,
       shipped: null,
     };
@@ -188,8 +190,17 @@ export class SuiteChanges {
     const change = await this.read(folder);
     const work = await this.workOf(folder);
 
-    if (change === null || work === null || change.status !== 'ready')
+    if (
+      change === null ||
+      work === null ||
+      !(
+        change.status === 'ready' ||
+        (change.status === 'app-bug' && change.files.length > 0)
+      )
+    )
       throw new Error('This change is not ready to send.');
+
+    const title = `${change.ask.kind === 'fix' ? 'Fix' : 'Add a test:'} ${askTitleOf(change.ask)}`;
 
     const ahead = await this.git.run({
       cwd: work.work,
@@ -206,7 +217,7 @@ export class SuiteChanges {
 
       const committed = await this.git.run({
         cwd: work.work,
-        args: ['commit', '-m', change.message.commit || `Fix ${change.ask.test.title}`],
+        args: ['commit', '-m', change.message.commit || title],
         timeoutMs: SUITE_CHANGES.gitTimeoutMs,
       });
 
@@ -235,7 +246,7 @@ export class SuiteChanges {
         path: `repos/${repository}/pulls`,
         method: 'POST',
         fields: {
-          title: change.message.title || `Fix ${change.ask.test.title}`,
+          title: change.message.title || title,
           head: change.branch,
           base: change.base,
           body: change.message.body,
@@ -463,11 +474,10 @@ export class SuiteChanges {
         },
       };
 
-    const failed = await this.suites.resultOf({
-      projectId,
-      runId: ask.runId,
-      testId: ask.test.id,
-    });
+    const failed =
+      ask.kind === 'fix'
+        ? await this.suites.resultOf({ projectId, runId: ask.runId, testId: ask.test.id })
+        : null;
     const suite = await this.registry.suiteOf(projectId);
     const asked = this.harness.change({
       dir: work.dir,
@@ -477,7 +487,16 @@ export class SuiteChanges {
       base: props.change.base,
       commit: props.change.commit,
       commits: props.commits,
-      task: { kind: 'fix', broken: await this.brokenOf({ ask, failed, values }) },
+      task:
+        ask.kind === 'fix'
+          ? {
+              kind: 'fix',
+              broken: await this.brokenOf({ test: ask.test, failed, values }),
+            }
+          : {
+              kind: 'write',
+              wanted: { text: ask.text, folder: ask.folder, source: ask.source },
+            },
       readDirs: [
         work.work,
         join(folder, SUITE_CHANGES.checks),
@@ -532,7 +551,7 @@ export class SuiteChanges {
     answer: IChangeAnswer | null;
   }): Promise<ISuiteChange> {
     const { start, folder, work, values, answer } = props;
-    const { projectId, changeId, ask } = start;
+    const { changeId } = start;
     const change: ISuiteChange = {
       ...props.change,
       step: 'check',
@@ -550,53 +569,90 @@ export class SuiteChanges {
 
     if (answer === null) return { ...change, status: 'stopped', files };
 
-    if (answer.outcome === 'app-bug') return { ...change, status: 'app-bug', files };
-
     if (files.length === 0)
       return {
         ...change,
-        status: 'gave-up',
+        status: answer.outcome === 'app-bug' ? 'app-bug' : 'gave-up',
         files,
         failure: answer.outcome === 'changed' ? { reason: 'no-change' } : null,
       };
 
     if (answer.outcome === 'gave-up') return { ...change, status: 'gave-up', files };
 
-    const verified = await this.checkIn({
-      changeId,
-      projectId,
-      dir: work.dir,
-      folder: join(folder, SUITE_CHANGES.checks, SUITE_CHANGES.finalCheck),
-      project: ask.test.project,
-      filters: [ask.test.file],
-      grep: titleGrepOf(ask.test.title),
-    });
-    const check =
-      verified.tests.find(({ result }) => result.title === ask.test.title)?.result ??
-      verified.tests[0]?.result ??
-      null;
+    const checks = await this.checksOf({ start, folder, work, files });
 
     return {
       ...change,
-      status: this.stopped.has(changeId) ? 'stopped' : 'ready',
+      status: this.stopped.has(changeId)
+        ? 'stopped'
+        : answer.outcome === 'app-bug'
+          ? 'app-bug'
+          : 'ready',
       files,
-      check,
+      checks,
     };
   }
 
+  private async checksOf(props: {
+    start: IStartSuiteChange;
+    folder: string;
+    work: IChangeWork;
+    files: ISuiteChangeFile[];
+  }): Promise<ISuiteResult[]> {
+    const { start, work } = props;
+    const { ask } = start;
+    const folder = join(props.folder, SUITE_CHANGES.checks, SUITE_CHANGES.finalCheck);
+
+    if (ask.kind === 'fix') {
+      const verified = await this.checkIn({
+        changeId: start.changeId,
+        projectId: start.projectId,
+        dir: work.dir,
+        folder,
+        project: ask.test.project,
+        filters: [ask.test.file],
+        grep: titleGrepOf(ask.test.title),
+      });
+      const found =
+        verified.tests.find(({ result }) => result.title === ask.test.title) ??
+        verified.tests[0];
+
+      return found === undefined ? [] : [found.result];
+    }
+
+    const specs = specFilesOf({
+      files: props.files,
+      prefix: relative(work.work, work.dir),
+    });
+
+    if (specs.length === 0) return [];
+
+    const verified = await this.checkIn({
+      changeId: start.changeId,
+      projectId: start.projectId,
+      dir: work.dir,
+      folder,
+      project: '',
+      filters: specs,
+      grep: null,
+    });
+
+    return verified.tests.map(({ result }) => result);
+  }
+
   private async brokenOf(props: {
-    ask: SuiteChangeAsk;
+    test: ISuiteTest;
     failed: { result: ISuiteResult; folder: string } | null;
     values: IVariableValue[];
   }): Promise<IBrokenTest> {
-    const { ask, failed } = props;
+    const { test, failed } = props;
 
     return {
-      title: ask.test.title,
-      file: ask.test.file,
-      line: ask.test.line,
-      project: ask.test.project,
-      path: ask.test.path,
+      title: test.title,
+      file: test.file,
+      line: test.line,
+      project: test.project,
+      path: test.path,
       error: failed?.result.error ?? 'QAzinho kept no error of this test.',
       notes:
         failed === null

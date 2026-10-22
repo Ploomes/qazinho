@@ -48,7 +48,18 @@ describe('branchNameOf', () => {
 
   it('still names a branch for a title with no letter or digit', () => {
     expect(branchNameOf({ kind: 'fix', test: test('· · ·'), runId: 's-01' })).toBe(
-      'qazinho/fix-test',
+      'qazinho/fix-new',
     );
+  });
+
+  it('names the branch of a new test after what the QA asked for', () => {
+    expect(
+      branchNameOf({
+        kind: 'write',
+        text: 'O carrinho mantém os itens depois do reload',
+        folder: '',
+        source: null,
+      }),
+    ).toBe('qazinho/test-o-carrinho-mantem-os-itens-depois-do-reload');
   });
 });

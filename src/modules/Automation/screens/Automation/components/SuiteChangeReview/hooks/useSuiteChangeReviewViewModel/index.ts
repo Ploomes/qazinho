@@ -1,7 +1,7 @@
 import type { ISuiteChangeReviewProps } from '@/modules/Automation/screens/Automation/components/SuiteChangeReview/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { checkLookOf } from '@/modules/Automation/library';
+import { checkLookOf, requestTitleOf } from '@/modules/Automation/library';
 import { SUITE_CHANGE_REVIEW } from '@/modules/Automation/screens/Automation/components/SuiteChangeReview/constants';
 import { Suites } from '@/services';
 
@@ -12,11 +12,15 @@ export const useSuiteChangeReviewViewModel = (props: ISuiteChangeReviewProps) =>
   const [isSent, setSent] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
   const way = props.canOpenPullRequest ? 'pull-request' : 'branch';
-  const check = checkLookOf(change.check);
+  const check = checkLookOf(change.checks);
 
   return {
-    title: t('AUTOMATION.REVIEW_TITLE'),
-    subtitle: t('AUTOMATION.REVIEW_SUBTITLE', { test: change.ask.test.title }),
+    title: t(
+      change.ask.kind === 'write'
+        ? 'AUTOMATION.REVIEW_TITLE_WRITE'
+        : 'AUTOMATION.REVIEW_TITLE',
+    ),
+    subtitle: t('AUTOMATION.REVIEW_SUBTITLE', { test: requestTitleOf(change.ask) }),
     width: SUITE_CHANGE_REVIEW.width,
     height: SUITE_CHANGE_REVIEW.height,
     confirmLabel: t(
@@ -58,7 +62,7 @@ export const useSuiteChangeReviewViewModel = (props: ISuiteChangeReviewProps) =>
     check: {
       icon: check.icon,
       className: `suite-change-review__check suite-change-review__check--${check.tone}`,
-      text: t(check.labelKey),
+      text: t(check.labelKey, { count: check.count, failed: check.failed }),
     },
     pullRequest:
       change.message.title === ''

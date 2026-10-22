@@ -220,7 +220,7 @@ describe('SuiteChanges', () => {
         branch: 'qazinho/fix-ct-nav-002-abre-o-carrinho',
         base: 'main',
         summary: 'The menu link is "Carrinho" now.',
-        check: { status: 'passed' },
+        checks: [expect.objectContaining({ status: 'passed' })],
         failure: null,
       });
       expect(change.files).toEqual([
@@ -498,6 +498,91 @@ describe('SuiteChanges', () => {
       await expect(
         changes.discard({ projectId: 'p', changeId: '../../x' }),
       ).rejects.toThrow('no such change');
+    });
+  });
+
+  describe('writing a new test', () => {
+    const WRITE = {
+      ...START,
+      changeId: 'c-02',
+      ask: {
+        kind: 'write' as const,
+        text: 'The cart keeps its items after a reload.',
+        folder: 'tests/hc-1',
+        source: null,
+      },
+    };
+    const NEW = `import { test } from '@playwright/test';
+
+test('CT-NAV-009 · The cart keeps its items after a reload', async ({ page }) => {
+  await page.reload();
+});
+`;
+
+    /** The agent writes a spec file of its own, the way it would with Write, then answers. */
+    const writes =
+      (outcome: 'changed' | 'app-bug') =>
+      async ({ run }: { run: IRunAgent }) => {
+        await writeFile(
+          join(run.writeDir ?? '', 'tests', 'hc-1', 'ct-cart.spec.ts'),
+          NEW,
+        );
+
+        return answered({
+          outcome,
+          summary: 'Wrote CT-NAV-009.',
+          commit: 'test(hc-1): the cart survives a reload',
+          title: 'CT-NAV-009: the cart survives a reload',
+          body: 'A new test.',
+        });
+      };
+
+    it('writes it on a branch of its own, and runs every test of the files it touched', async () => {
+      const asked: IRunAgent[] = [];
+      const { changes, checks } = await changesWith({
+        agent: async (call) => {
+          asked.push(call.run);
+
+          return writes('changed')(call);
+        },
+      });
+      const change = await changes.start(WRITE);
+
+      expect(change).toMatchObject({
+        status: 'ready',
+        branch: 'qazinho/test-the-cart-keeps-its-items-after-a-reload',
+        checks: [expect.objectContaining({ status: 'passed' })],
+      });
+      expect(change.files).toEqual([
+        expect.objectContaining({ path: 'tests/hc-1/ct-cart.spec.ts', status: 'added' }),
+      ]);
+      expect(checks.at(-1)).toMatchObject({
+        project: '',
+        filters: ['tests/hc-1/ct-cart.spec.ts'],
+        grep: null,
+      });
+      expect(asked[0]?.prompt).toContain('## The test to write');
+      expect(asked[0]?.prompt).toContain('Put it in tests/hc-1.');
+    });
+
+    /** A new test the app fails is right, and catches a bug: it can still be sent. */
+    it('keeps a new test the app fails, and sends it as one that catches a bug', async () => {
+      const { team, changes } = await changesWith({
+        agent: writes('app-bug'),
+        checked: [result({ status: 'failed', error: 'expected the item' })],
+      });
+      const change = await changes.start(WRITE);
+
+      expect(change).toMatchObject({
+        status: 'app-bug',
+        checks: [expect.objectContaining({ status: 'failed' })],
+      });
+      expect(
+        await changes.ship({ projectId: 'p', changeId: 'c-02', way: 'branch' }),
+      ).toMatchObject({ isOk: true, change: { status: 'shipped' } });
+      expect(
+        git({ cwd: team.remote, args: ['log', '-1', '--format=%s', change.branch] }),
+      ).toBe('test(hc-1): the cart survives a reload');
     });
   });
 });

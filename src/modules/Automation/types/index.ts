@@ -3,7 +3,9 @@ export type {
   ISuiteChange,
   ISuiteResult,
   ISuiteRun,
+  ISuitePlanCase,
   ISuiteTest,
+  SuiteChangeAsk,
   SuiteChangeStatus,
 } from '@/shared/types';
 export type * from './IDiffLine';

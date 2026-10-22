@@ -1,17 +1,7 @@
 import type { ISuiteChange, SuiteChangeEvent } from '@/shared/types';
-import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import {
-  chmod,
-  cp,
-  mkdtemp,
-  readFile,
-  realpath,
-  symlink,
-  writeFile,
-} from 'node:fs/promises';
+import { chmod, readFile, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
-import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { Harness, McpHost } from '@/harness';
@@ -23,10 +13,10 @@ import { SuiteRegistry } from '@/main/classes/automation/SuiteRegistry';
 import { SuiteRunner } from '@/main/classes/automation/SuiteRunner';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { findOnPath } from '@/main/library';
+import { git, teamSuite } from './fixtures/teamSuite';
 
 const PORT = 4372;
 const SHOP_KEY = 's3cret-shop-key-77';
-const FIXTURE = join(process.cwd(), 'tests', 'smoke', 'fixtures', 'suite');
 const SDK = join(
   process.cwd(),
   'node_modules',
@@ -87,9 +77,6 @@ process.stdin.on('end', async () => {
 });
 `;
 
-const git = (props: { cwd: string; args: string[] }) =>
-  execFileSync('git', props.args, { cwd: props.cwd, encoding: 'utf8' }).trim();
-
 const events: SuiteChangeEvent[] = [];
 let folder = '';
 let repo = '';
@@ -101,20 +88,8 @@ let tools: McpHost;
 
 beforeAll(async () => {
   await new Promise<void>((ready) => server.listen(PORT, '127.0.0.1', ready));
-  folder = await realpath(await mkdtemp(join(tmpdir(), 'qazinho-fix-')));
-  repo = join(folder, 'e2e');
-  remote = join(folder, 'remote.git');
+  ({ folder, repo, remote } = await teamSuite());
   heard = join(folder, 'heard.json');
-  await cp(FIXTURE, repo, { recursive: true });
-  await symlink(join(process.cwd(), 'node_modules'), join(repo, 'node_modules'));
-  await writeFile(join(repo, '.gitignore'), 'node_modules\n');
-  git({ cwd: folder, args: ['init', '--bare', '--quiet', remote] });
-  git({ cwd: repo, args: ['init', '--quiet', '-b', 'main'] });
-  git({ cwd: repo, args: ['config', 'user.name', 'QA'] });
-  git({ cwd: repo, args: ['config', 'user.email', 'qa@shop.test'] });
-  git({ cwd: repo, args: ['add', '-A'] });
-  git({ cwd: repo, args: ['commit', '--quiet', '-m', 'test(hc-1): navigation'] });
-  git({ cwd: repo, args: ['remote', 'add', 'origin', remote] });
 
   const agent = join(folder, 'agent');
 
@@ -213,7 +188,7 @@ describe("the QA's agent fixes a test of the team's suite", () => {
       status: 'ready',
       branch: 'qazinho/fix-ct-nav-002-opens-the-cart-from-the-menu',
       base: 'main',
-      check: { status: 'passed' },
+      checks: [expect.objectContaining({ status: 'passed' })],
     });
     expect(change.files).toEqual([
       expect.objectContaining({

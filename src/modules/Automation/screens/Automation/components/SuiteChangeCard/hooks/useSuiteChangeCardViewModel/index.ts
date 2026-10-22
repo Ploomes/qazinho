@@ -14,7 +14,10 @@ export const useSuiteChangeCardViewModel = (props: ISuiteChangeCardProps) => {
   const look = SUITE_CHANGE_STATES[change.status];
   const isWorking = change.status === 'working';
   const { failure, shipped } = change;
-  const check = checkLookOf(change.check);
+  const isWrite = change.ask.kind === 'write';
+  const check = checkLookOf(change.checks);
+  const canSend =
+    change.status === 'ready' || (change.status === 'app-bug' && change.files.length > 0);
   const added = change.files.reduce((sum, file) => sum + file.additions, 0);
   const removed = change.files.reduce((sum, file) => sum + file.deletions, 0);
   const canEnd = ['gave-up', 'broke', 'stopped'].includes(change.status);
@@ -27,7 +30,7 @@ export const useSuiteChangeCardViewModel = (props: ISuiteChangeCardProps) => {
     internSize: SUITE_CHANGE_CARD.internSize,
     isStill: !isWorking,
     icon: look.icon,
-    title: t(look.labelKey),
+    title: t(isWrite ? look.writeLabelKey : look.labelKey),
     branch: hasBranch ? change.branch : '',
     from:
       !hasBranch || change.commit === ''
@@ -37,7 +40,14 @@ export const useSuiteChangeCardViewModel = (props: ISuiteChangeCardProps) => {
             commit: change.commit.slice(0, 7),
           }),
     isWorking,
-    step: change.step === null ? '' : t(SUITE_CHANGE_CARD.stepKeys[change.step]),
+    step:
+      change.step === null
+        ? ''
+        : t(
+            change.step === 'agent' && isWrite
+              ? SUITE_CHANGE_CARD.writeStepKey
+              : SUITE_CHANGE_CARD.stepKeys[change.step],
+          ),
     notes: props.notes.slice(-SUITE_CHANGE_CARD.lines).map((note) =>
       note.kind === 'said'
         ? {
@@ -87,14 +97,13 @@ export const useSuiteChangeCardViewModel = (props: ISuiteChangeCardProps) => {
                       { agent },
                     ),
           }),
-    check:
-      change.status !== 'ready'
-        ? null
-        : {
-            icon: check.icon,
-            className: `suite-change-card__check suite-change-card__check--${check.tone}`,
-            text: t(check.labelKey),
-          },
+    check: !canSend
+      ? null
+      : {
+          icon: check.icon,
+          className: `suite-change-card__check suite-change-card__check--${check.tone}`,
+          text: t(check.labelKey, { count: check.count, failed: check.failed }),
+        },
     files:
       change.files.length === 0
         ? ''
@@ -118,7 +127,7 @@ export const useSuiteChangeCardViewModel = (props: ISuiteChangeCardProps) => {
     canStop: isWorking,
     stopLabel: t('AUTOMATION.CHANGE_STOP'),
     onStop: props.onStop,
-    canReview: change.status === 'ready',
+    canReview: canSend,
     reviewLabel: t('AUTOMATION.CHANGE_REVIEW'),
     onReview: props.onReview,
     canDiscard: change.status === 'ready' || change.status === 'app-bug' || canEnd,

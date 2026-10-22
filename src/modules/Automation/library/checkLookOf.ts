@@ -2,16 +2,44 @@ import type { ISuiteResult } from '@/modules/Automation/types';
 import type { IconName } from '@/shared/components/atoms/Icon/types';
 import type { ParseKeys } from 'i18next';
 
-/** How QAzinho's own run of a fixed test reads: it passes in the copy, it still fails, or it could not run again. */
-export function checkLookOf(check: ISuiteResult | null): {
+/** How QAzinho's own run of the tests a change is about reads: they pass in the copy, some fail, or none could run, with how many there were and how many failed. */
+export function checkLookOf(checks: ISuiteResult[]): {
   icon: IconName;
   tone: 'pass' | 'fail' | 'attn';
   labelKey: ParseKeys;
+  count: number;
+  failed: number;
 } {
-  if (check === null)
-    return { icon: 'attention', tone: 'attn', labelKey: 'AUTOMATION.CHANGE_CHECK_NONE' };
+  const count = checks.length;
+  const failed = checks.filter(({ status }) => status !== 'passed').length;
 
-  return check.status === 'passed'
-    ? { icon: 'passed', tone: 'pass', labelKey: 'AUTOMATION.CHANGE_CHECK_PASSED' }
-    : { icon: 'failed', tone: 'fail', labelKey: 'AUTOMATION.CHANGE_CHECK_FAILED' };
+  if (count === 0)
+    return {
+      icon: 'attention',
+      tone: 'attn',
+      labelKey: 'AUTOMATION.CHANGE_CHECK_NONE',
+      count,
+      failed,
+    };
+
+  if (failed === 0)
+    return {
+      icon: 'passed',
+      tone: 'pass',
+      labelKey:
+        count === 1
+          ? 'AUTOMATION.CHANGE_CHECK_PASSED'
+          : 'AUTOMATION.CHANGE_CHECKS_PASSED',
+      count,
+      failed,
+    };
+
+  return {
+    icon: 'failed',
+    tone: 'fail',
+    labelKey:
+      count === 1 ? 'AUTOMATION.CHANGE_CHECK_FAILED' : 'AUTOMATION.CHANGE_CHECKS_FAILED',
+    count,
+    failed,
+  };
 }
