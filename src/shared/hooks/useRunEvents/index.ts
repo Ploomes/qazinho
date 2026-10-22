@@ -1,6 +1,7 @@
 import type { IRunEvent, IRunQuestion, IRunRef } from '@/shared/types';
 import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useBugReviews } from '@/modules/Bug/hooks/useBugReviews';
 import { isSeenIn } from '@/modules/Bug/library';
 import { RUN_FAILURE_KEYS } from '@/modules/Run/constants';
 import { useOpenRun } from '@/modules/Run/hooks/useOpenRun';
@@ -10,6 +11,7 @@ import {
   useAppStore,
   useMachineStore,
   useSettingsStore,
+  useSetupStore,
   useWorkspaceStore,
 } from '@/store';
 
@@ -30,8 +32,10 @@ export const useRunEvents = () => {
   const landRunFailed = useWorkspaceStore((state) => state.landRunFailed);
   const resumeRun = useWorkspaceStore((state) => state.resumeRun);
   const isLoaded = useWorkspaceStore((state) => state.isLoaded);
+  const trackers = useSetupStore((state) => state.integrations.length);
   const showRunNotice = useAppStore((state) => state.showRunNotice);
   const openRun = useOpenRun();
+  const { reviewWorkspace, reviewAll } = useBugReviews();
 
   const endingOf = (workspaceId: string) => {
     const live = useWorkspaceStore
@@ -149,6 +153,7 @@ export const useRunEvents = () => {
 
       landRunDone(event.workspaceId);
       announce({ workspaceId: event.workspaceId, runId });
+      reviewWorkspace(event.workspaceId);
     } else if (event.kind === 'video')
       landVideo({
         workspaceId: event.workspaceId,
@@ -163,6 +168,7 @@ export const useRunEvents = () => {
         text: t(RUN_FAILURE_KEYS[event.failure.reason], { ...event.failure, agent }),
       });
       announce({ workspaceId: event.workspaceId, runId });
+      reviewWorkspace(event.workspaceId);
     }
   });
 
@@ -173,6 +179,14 @@ export const useRunEvents = () => {
   useEffect(() => Run.onEvent(onRunEvent), []);
 
   useEffect(() => Run.onOpen(onOpenRun), []);
+
+  const reviewOnLoad = useEffectEvent(() => {
+    reviewAll();
+  });
+
+  useEffect(() => {
+    if (isLoaded) reviewOnLoad();
+  }, [isLoaded, trackers]);
 
   useEffect(() => {
     if (!isLoaded) return;

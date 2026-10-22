@@ -1,4 +1,5 @@
 export * from './appearancesOf';
+export * from './blocksOfComment';
 export * from './bugReportOf';
 export * from './bugSeenAgain';
 export * from './catchBug';
@@ -11,4 +12,7 @@ export * from './knownBugsOf';
 export * from './makeBug';
 export * from './openBugFor';
 export * from './pasteShotOf';
+export * from './reviewSightingsOf';
 export * from './sightingOf';
+export * from './unreviewedOf';
+export * from './updateReportOf';

@@ -16,6 +16,7 @@ import {
   useAppStore,
   useMachineStore,
   useSettingsStore,
+  useSetupStore,
   useWorkspaceStore,
 } from '@/store';
 
@@ -35,6 +36,13 @@ const RUN: IRunInFlight = {
   isExploring: false,
   question: null,
   asked: [],
+};
+
+const JIRA = {
+  id: 'jira' as const,
+  account: 'qa@acme.com',
+  site: 'acme.atlassian.net',
+  connectedAt: '',
 };
 
 /** A page that opened while main was still walking a run: the bridge says so. */
@@ -258,6 +266,128 @@ describe('useRunEvents', () => {
 
       expect(useAppStore.getState().runNotice).toBeNull();
       expect(alertRun).not.toHaveBeenCalled();
+    });
+
+    it('asks the QA’s agent about a filed bug the run caught again', async () => {
+      const [first] = walkRun({
+        verdicts: ['passed', 'passed', 'passed', 'passed', 'failed'],
+      }).bugs;
+      const workspace = useWorkspaceStore.getState().workspaces[0]!;
+
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...workspace,
+            bugs: [
+              {
+                ...first!,
+                filed: {
+                  tracker: 'jira',
+                  key: 'SHOP-57',
+                  url: 'https://acme.atlassian.net/browse/SHOP-57',
+                  at: '',
+                },
+                reviewedRuns: ['r-00'],
+                sightings: [
+                  {
+                    runId: 'r-01',
+                    runWhen: '09:41',
+                    caseId: 'TC-02',
+                    stepNumber: 2,
+                    at: 1,
+                    shot: { isBad: true, src: null, file: null },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      });
+
+      const { send } = listening();
+      const reviewBug = vi.fn().mockResolvedValue({
+        isReviewed: true,
+        verdict: 'nothing-new',
+        reason: 'Same.',
+        comment: '',
+      });
+
+      window.qazinho.reviewBug = reviewBug;
+      useSetupStore.setState({ integrations: [JIRA] });
+      send({ kind: 'done', workspaceId: 'w1' });
+
+      await waitFor(() => {
+        expect(reviewBug).toHaveBeenCalledWith(
+          expect.objectContaining({
+            workspaceId: 'w1',
+            issue: expect.objectContaining({ key: 'SHOP-57' }),
+          }),
+        );
+      });
+    });
+
+    it('asks again once the bug’s tracker connects', async () => {
+      const [first] = walkRun({
+        verdicts: ['passed', 'passed', 'passed', 'passed', 'failed'],
+      }).bugs;
+      const workspace = useWorkspaceStore.getState().workspaces[0]!;
+
+      useSetupStore.setState({ integrations: [] });
+      useWorkspaceStore.setState({
+        isLoaded: true,
+        workspaces: [
+          {
+            ...workspace,
+            bugs: [
+              {
+                ...first!,
+                filed: {
+                  tracker: 'jira',
+                  key: 'SHOP-57',
+                  url: 'https://acme.atlassian.net/browse/SHOP-57',
+                  at: '',
+                },
+                reviewedRuns: ['r-00'],
+                sightings: [
+                  {
+                    runId: 'r-01',
+                    runWhen: '09:41',
+                    caseId: 'TC-02',
+                    stepNumber: 2,
+                    at: 1,
+                    shot: { isBad: true, src: null, file: null },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      });
+
+      const reviewBug = vi.fn().mockResolvedValue({
+        isReviewed: true,
+        verdict: 'nothing-new',
+        reason: 'Same.',
+        comment: '',
+      });
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), reviewBug };
+      renderHook(() => {
+        useRunEvents();
+      });
+      await act(async () => {
+        await Promise.resolve();
+      });
+
+      expect(reviewBug).not.toHaveBeenCalled();
+
+      act(() => {
+        useSetupStore.setState({ integrations: [JIRA] });
+      });
+
+      await waitFor(() => {
+        expect(reviewBug).toHaveBeenCalledTimes(1);
+      });
     });
 
     it('opens the run whose notification the QA clicked', () => {
