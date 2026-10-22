@@ -47,6 +47,30 @@ describe('useWorkspaceViewModel', () => {
     expect(result.current.canRunWithAgent).toBe(true);
   });
 
+  it('links the story the workspace works from to where it opens, and nothing before one', () => {
+    expect(renderHook(() => useWorkspaceViewModel()).result.current.issue).toBeNull();
+
+    useWorkspaceStore.setState({
+      workspaces: [
+        {
+          ...makeWorkspace(),
+          issue: {
+            key: 'SHOP-12',
+            title: 'Aplicar cupom',
+            source: 'jira',
+            url: 'https://acme.atlassian.net/browse/SHOP-12',
+          },
+        },
+      ],
+    });
+
+    expect(renderHook(() => useWorkspaceViewModel()).result.current.issue).toEqual({
+      key: 'SHOP-12',
+      url: 'https://acme.atlassian.net/browse/SHOP-12',
+      title: 'Aplicar cupom',
+    });
+  });
+
   it('has no workspace to show when the selection points nowhere', () => {
     useAppStore.setState({ selectedWorkspaceId: 'gone' });
 

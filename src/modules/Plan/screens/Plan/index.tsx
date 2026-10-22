@@ -16,6 +16,7 @@ export const Plan: React.FC = () => {
     isEmpty,
     summary,
     source,
+    story,
     onToggleCase,
     onReorder,
     onRunAll,
@@ -99,6 +100,19 @@ export const Plan: React.FC = () => {
               </motion.div>
             )}
           </AnimatePresence>
+
+          {story !== null && (
+            <a
+              className="plan__source plan__source--link"
+              href={story.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span className="plan__source-mark" aria-hidden="true" />
+              {story.text}
+              <Icon name="external" />
+            </a>
+          )}
 
           {source !== null && (
             <div className="plan__source">

@@ -168,6 +168,29 @@ describe('usePlanViewModel', () => {
     );
   });
 
+  it('names the Jira story the plan was made from, with where it opens', () => {
+    expect(renderHook(() => usePlanViewModel()).result.current.story).toBeNull();
+
+    useWorkspaceStore.setState({
+      workspaces: [
+        {
+          ...makeWorkspace(),
+          issue: {
+            key: 'SHOP-12',
+            title: 'Aplicar cupom',
+            source: 'jira',
+            url: 'https://acme.atlassian.net/browse/SHOP-12',
+          },
+        },
+      ],
+    });
+
+    expect(renderHook(() => usePlanViewModel()).result.current.story).toEqual({
+      text: 'Made from the Jira story SHOP-12: Aplicar cupom',
+      url: 'https://acme.atlassian.net/browse/SHOP-12',
+    });
+  });
+
   it('names the whole app when the plan came from the base branch itself', () => {
     useWorkspaceStore.setState({
       workspaces: [

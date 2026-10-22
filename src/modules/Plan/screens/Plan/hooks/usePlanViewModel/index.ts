@@ -26,6 +26,7 @@ export const usePlanViewModel = () => {
     id: opened.id,
     plan: opened.plan,
     planSource: opened.planSource,
+    issue: opened.issue,
     isLocked: opened.live !== null && !opened.live.isDone,
     latest: opened.runs[0] ?? null,
     runs: opened.runs,
@@ -68,6 +69,7 @@ export const usePlanViewModel = () => {
       : null;
   const latest = workspace?.latest ?? null;
   const source = workspace?.planSource ?? null;
+  const issue = workspace?.issue ?? null;
   const stepCount = flattenPlanSteps(plan).length;
   const lastRuns: Record<string, IRunCase> = Object.fromEntries(
     (latest?.cases ?? []).map((runCase) => [runCase.id, runCase]),
@@ -95,6 +97,13 @@ export const usePlanViewModel = () => {
               base: source.base,
               commit: source.commit.slice(0, PLAN_SOURCE.shaLength),
             }),
+    story:
+      issue === null || issue.source !== 'jira'
+        ? null
+        : {
+            text: t('PLAN.STORY', { key: issue.key, summary: issue.title }),
+            url: issue.url,
+          },
     summary: t('PLAN.SUMMARY', {
       cases:
         plan.length === 1

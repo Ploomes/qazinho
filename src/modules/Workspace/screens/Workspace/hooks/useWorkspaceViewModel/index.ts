@@ -9,7 +9,7 @@ export const useWorkspaceViewModel = () => {
   const workspace = useSelectedWorkspacePart((opened) => ({
     id: opened.id,
     name: opened.name,
-    issueKey: opened.issue?.key ?? null,
+    issue: opened.issue,
     status: opened.status,
     planCount: opened.plan.length,
     runCount: opened.runs.length,
@@ -37,7 +37,14 @@ export const useWorkspaceViewModel = () => {
     hasWorkspace: workspace !== null,
     tab,
     name: workspace?.name ?? '',
-    issueKey: workspace?.issueKey ?? null,
+    issue:
+      workspace?.issue === null || workspace?.issue === undefined
+        ? null
+        : {
+            key: workspace.issue.key,
+            url: workspace.issue.url,
+            title: workspace.issue.title,
+          },
     status: workspace?.status ?? 'idle',
     liveStatus: isAsking
       ? ('attention' as const)

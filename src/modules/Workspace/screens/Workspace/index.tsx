@@ -3,7 +3,7 @@ import { Bugs } from '@/modules/Bug';
 import { Chat } from '@/modules/Chat';
 import { Plan } from '@/modules/Plan';
 import { Runs } from '@/modules/Run';
-import { Button, StatusPill } from '@/shared/components/atoms';
+import { Button, Icon, StatusPill } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { RunButton, WorkspaceName, WorkspaceTabs } from './components';
 import { useWorkspaceViewModel } from './hooks';
@@ -14,7 +14,7 @@ export const Workspace: React.FC = () => {
     hasWorkspace,
     tab,
     name,
-    issueKey,
+    issue,
     status,
     statusLabel,
     liveStatus,
@@ -43,7 +43,18 @@ export const Workspace: React.FC = () => {
     <section className="workspace">
       <header className="workspace__header">
         <WorkspaceName name={name} onRename={onRename} />
-        {issueKey !== null && <span className="workspace__issue">{issueKey}</span>}
+        {issue !== null && (
+          <a
+            className="workspace__issue"
+            href={issue.url}
+            target="_blank"
+            rel="noreferrer"
+            title={issue.title}
+          >
+            {issue.key}
+            <Icon name="external" />
+          </a>
+        )}
         {statusLabel === null ? (
           <StatusPill status={status} shape="round" />
         ) : (
