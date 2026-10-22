@@ -40,6 +40,11 @@ export class SuiteRegistry {
     return path === undefined ? null : this.inspect({ projectId, path });
   }
 
+  /** The folder of the suite a project is connected to, as main keeps it; null for none. */
+  public async pathOf(projectId: string): Promise<string | null> {
+    return (await this.read())[projectId] ?? null;
+  }
+
   /** Where the Playwright Test a suite runs on is installed, in its folder or one above it, with its version; null until its packages are installed. */
   public async runnerOf(path: string): Promise<{ cli: string; version: string } | null> {
     for (const file of runnerPathsOf(path)) {

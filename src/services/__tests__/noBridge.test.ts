@@ -160,6 +160,11 @@ describe('a page with no bridge', () => {
   it('connects no suite, and knows of none', async () => {
     expect(await Suites.pick('p-1')).toEqual({ kind: 'cancelled' });
     expect(await Suites.of('p-1')).toBeNull();
+    expect(await Suites.list('p-1')).toEqual({
+      kind: 'failed',
+      reason: 'no-suite',
+      said: '',
+    });
     await expect(Suites.forget('p-1')).resolves.toBeUndefined();
   });
 });

@@ -50,6 +50,7 @@ import type {
   PickKind,
   Platform,
   SaveOutcome,
+  SuiteList,
   SuitePick,
   VariablesOutcome,
   WindowFit,
@@ -141,6 +142,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.suiteOf, projectId) as Promise<ISuite | null>,
   forgetSuite: (projectId: string) =>
     ipcRenderer.invoke(CHANNELS.forgetSuite, projectId) as Promise<void>,
+  listSuite: (projectId: string) =>
+    ipcRenderer.invoke(CHANNELS.listSuite, projectId) as Promise<SuiteList>,
   alertRunEnded: (notice: IRunEndNotice) => {
     ipcRenderer.send(CHANNELS.alertRunEnded, notice);
   },

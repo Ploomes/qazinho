@@ -48,6 +48,7 @@ import type { McpSignInProgress } from './McpSignInProgress';
 import type { PickKind } from './PickKind';
 import type { Platform } from './Platform';
 import type { SaveOutcome } from './SaveOutcome';
+import type { SuiteList } from './SuiteList';
 import type { SuitePick } from './SuitePick';
 import type { VariablesOutcome } from './VariablesOutcome';
 import type { WindowFit } from './WindowFit';
@@ -82,6 +83,7 @@ export interface IQazinhoApi {
   pickSuite: (projectId: string) => Promise<SuitePick>;
   suiteOf: (projectId: string) => Promise<ISuite | null>;
   forgetSuite: (projectId: string) => Promise<void>;
+  listSuite: (projectId: string) => Promise<SuiteList>;
   alertRunEnded: (notice: IRunEndNotice) => void;
   onOpenRun: (listener: (run: IRunRef) => void) => () => void;
   readState: () => Promise<ISavedState>;

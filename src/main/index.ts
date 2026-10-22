@@ -35,7 +35,7 @@ import type {
 import { execFile } from 'node:child_process';
 import { copyFile, mkdir, readdir, stat, writeFile } from 'node:fs/promises';
 import { homedir, tmpdir } from 'node:os';
-import { extname, join } from 'node:path';
+import { delimiter, extname, join } from 'node:path';
 import { promisify } from 'node:util';
 import {
   app,
@@ -77,6 +77,7 @@ import {
   RunRecorder,
   SetupInstaller,
   SuiteRegistry,
+  SuiteRunner,
   UsageReader,
   VariableVault,
 } from '@/main/classes';
@@ -102,6 +103,7 @@ import {
   bytesOfDataUrl,
   fileNameOf,
   findExistingPath,
+  findOnPath,
   fittedBounds,
   hydrateShellPath,
   imageExtensionOf,
@@ -234,6 +236,13 @@ const vault = new IntegrationVault({
 const variables = new VariableVault({ file: PATHS.variables, cipher: keychain });
 const git = new GitCli({ directories: commandDirectories });
 const suites = new SuiteRegistry({ root: PATHS.suites, git });
+const suiteRunner = new SuiteRunner({
+  registry: suites,
+  node: async () =>
+    findOnPath({ command: 'node', directories: await commandDirectories() }),
+  env: suiteEnvOf,
+  root: PATHS.suites,
+});
 
 const agentRunner = new AgentRunner({
   owners,
@@ -671,6 +680,15 @@ function fitWindow(props: { window: BrowserWindow; fit: WindowFit }): void {
   if (!isVisible) window.show();
 }
 
+async function suiteEnvOf(projectId: string): Promise<Record<string, string>> {
+  const values = await variables.valuesOf(projectId).catch(() => []);
+
+  return {
+    PATH: (await commandDirectories()).join(delimiter),
+    ...Object.fromEntries(values.map(({ name, value }) => [name, value])),
+  };
+}
+
 async function pickSuite(projectId: string): Promise<SuitePick> {
   const [open] = appWindows();
   const picked = open
@@ -838,6 +856,9 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.forgetSuite, (_event, projectId: string) =>
     suites.forget(projectId),
+  );
+  ipcMain.handle(CHANNELS.listSuite, (_event, projectId: string) =>
+    suiteRunner.list(projectId),
   );
   ipcMain.handle(CHANNELS.fitWindow, (event, fit: WindowFit) => {
     const window = BrowserWindow.fromWebContents(event.sender);

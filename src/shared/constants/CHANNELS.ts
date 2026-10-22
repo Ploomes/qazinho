@@ -26,6 +26,7 @@ export const CHANNELS = {
   pickSuite: 'suite:pick',
   suiteOf: 'suite:of',
   forgetSuite: 'suite:forget',
+  listSuite: 'suite:list',
   alertRunEnded: 'run:alert',
   openRun: 'run:open',
   recorderStart: 'recorder:start',

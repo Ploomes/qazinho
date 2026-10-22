@@ -1,4 +1,4 @@
-import type { ISuite, SuitePick } from '@/shared/types';
+import type { ISuite, SuiteList, SuitePick } from '@/shared/types';
 
 /** The only caller of the automation side of the bridge: the suite each project runs, kept by main. */
 export class Suites {
@@ -8,6 +8,16 @@ export class Suites {
 
   public static async of(projectId: string): Promise<ISuite | null> {
     return (await window.qazinho?.suiteOf(projectId)) ?? null;
+  }
+
+  public static async list(projectId: string): Promise<SuiteList> {
+    return (
+      (await window.qazinho?.listSuite(projectId)) ?? {
+        kind: 'failed',
+        reason: 'no-suite',
+        said: '',
+      }
+    );
   }
 
   public static async forget(projectId: string): Promise<void> {

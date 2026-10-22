@@ -53,6 +53,8 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     pickSuite: () => Promise.resolve({ kind: 'cancelled' as const }),
     suiteOf: () => Promise.resolve(null),
     forgetSuite: () => Promise.resolve(),
+    listSuite: () =>
+      Promise.resolve({ kind: 'failed' as const, reason: 'no-suite' as const, said: '' }),
     alertRunEnded: () => undefined,
     onOpenRun: () => () => undefined,
     readState: () => Promise.resolve({ projects: '[]', workspaces: [] }),
