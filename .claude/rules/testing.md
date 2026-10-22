@@ -69,6 +69,7 @@ Three suites that need something real behind them. They have their own config
 | `agent.test.ts`        | a fake agent retries a failed action, leaves a note, or errors out           |
 | `codex.test.ts`        | a fake Codex chats in the strict schema, resumes, runs a case, signs out     |
 | `tools.test.ts`        | an MCP client calls every device tool on real Chrome, gestures and failures  |
+| `design.test.ts`       | a fake agent gets Figma on a framed case, measures it and files off-design   |
 | `locate.test.ts`       | alike controls numbered, labelled fields, a dropdown, a date, a component    |
 | `dialog.test.ts`       | a confirm answered OK or Cancel, a prompt typed into, and look telling it    |
 | `tabs.test.ts`         | a link's new tab and a sign-in window: the device turns to them and back     |

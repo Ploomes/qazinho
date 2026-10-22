@@ -174,6 +174,18 @@ branch, read only, and the copy is gone once the plan is written; the plan keeps
 came from. A real Claude Code has planned from a public branch this way; through Codex it has not
 been tried. `tests/smoke/github.test.ts` drives a fake gh.
 
+**A Figma design is held to the screen.** `/figma` in the chat takes the link to a frame or
+page, and the QA's own agent reads it through the Figma MCP it signed in to in Settings: the
+sizes, spacing, colours, type, texts, states and the designers' annotations. It plans with the
+QA, and each step that lands on a designed screen names its frame, which the plan opens in Figma.
+A run hands those cases the same Figma: the agent reads the frame, measures the screen with
+`inspect` (CSS px, type and colours on the web; dp on Android, points on iOS) and files each
+difference as a bug off the design, whose card and issue link the frame. A strict MCP config
+under the same name and address reuses Claude Code's sign-in, checked against the real CLI;
+`tests/smoke/design.test.ts` drives a fake agent on real Chrome, and `tools.test.ts` measures a
+control there. A real agent has not read a real frame yet. Figma counts every read, a few a month
+on some seats, so a case walked again from its recipe checks no design.
+
 **A Jira story becomes the plan's requirement.** With Jira connected, `/jira` in the chat picks a
 story: the ones the QA opened last, or one found by its key or its words. QAzinho reads it whole
 with the QA's own token: the description, the acceptance criteria from whatever field the team

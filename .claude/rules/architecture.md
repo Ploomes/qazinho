@@ -181,8 +181,8 @@ answers one question per channel, for a target `{ role, platform }`:
   - The page holds the question on the live run, draws it as `AskCard` at the end of the chat,
     and keeps how it ended in the run's section (`AskNote`) and on its step in Runs.
 - **The tools are granted per role** (`TOOL_GRANTS`). The runner and the explorer get the
-  device, the assistant gets the app, and the chat gets nothing: it runs with every tool taken
-  away. `McpHost` serves the tools on loopback, one address per workspace for the length of a
+  device, the assistant gets the app, and the chat gets none of QAzinho's: it runs with every
+  tool taken away but the reading ones of the QA's Figma, on a workspace with a design. `McpHost` serves the tools on loopback, one address per workspace for the length of a
   run, and one under the `~assistant` scope while the assistant answers.
 - **The Estagiário in the corner is an agent of its own** (`role/assistant/`). It does in QAzinho
   what the QA does by hand, through the app tools (`servers/app/`), and talks about any project,
@@ -247,6 +247,26 @@ answers one question per channel, for a target `{ role, platform }`:
     `Glob` on that folder alone.
   - The files are deleted once a plan comes back, when the workspace goes, and on the next
     start. The workspace keeps the story (`issue`), which its header and its plan open in Jira.
+- **A Figma design is held to the screen through the QA's own Figma** (`role/chat/design.md`,
+  `role/runner/design.md`). `/figma` in the chat takes the link to a frame or page
+  (`designLinkOf`), and the workspace keeps it (`design`), which its header opens in Figma:
+  - A call on a workspace with a design lists the Figma server beside QAzinho's, under the name
+    and address the agent signed in with (`FIGMA_MCP`, `mcpConfigWith`), so Claude Code reuses
+    its own sign-in under `--strict-mcp-config`. It is granted only the tools that read
+    (`DESIGN_TOOLS`, `designAccessOf`). Codex reads its own MCP config, where QAzinho added it.
+  - The chat names the file and the node (`describeDesign`), and the agent reads the frames as it
+    plans. Each step that lands on a designed screen names its frame (`frame`), and the plan
+    opens it in Figma (`frameUrlOf`).
+  - A case whose steps name frames gets the Figma server too, and its message names the file and
+    each step's frame (`describeCase`). The agent reads the frame, measures the screen with
+    `inspect`, and files each difference with `bug` and the frame's id: a bug off the design,
+    whose card opens the frame and whose issue links it.
+  - `inspect` answers in the unit a design uses (`describeMeasure`): in a browser the box where
+    the page sits, the space to its neighbours (`gapsOf`) and the computed type, colours as hex
+    (`hexOfColor`), spacing, border and corners (`measureLocator`); on Android the box in dp at
+    the screen's density (`densityOf`), on iOS in points (`phoneMeasureOf`), with no style.
+  - Figma counts every read, and some seats get only a few a month: the run reads a frame only on
+    the cases that name one, and a case walked again from its recipe checks no design.
 - **A bug goes to the QA's tracker as an issue**, and the QA does nothing by hand but paste a
   screen into GitHub:
   - The page writes the report in the QA's language (`bugReportOf`): the agent's words, the steps
