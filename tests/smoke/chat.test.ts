@@ -48,6 +48,7 @@ describe('a real chat', () => {
         runs: [],
         look: null,
         code: null,
+        story: null,
         variables: [],
       });
       const turn = await runner.ask({
@@ -121,6 +122,7 @@ describe('a real chat', () => {
       references: [],
       look: null,
       code: null,
+      story: null,
       variables: [],
     };
     const ask = (props: {

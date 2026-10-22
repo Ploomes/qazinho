@@ -490,6 +490,7 @@ async function askOnce(props: {
     runs: ask.runs,
     look,
     code,
+    story: null,
     variables: ask.variables,
   });
   const turn = await agentRunner.ask({

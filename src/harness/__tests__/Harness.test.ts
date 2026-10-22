@@ -1,4 +1,10 @@
-import type { IAppSnapshot, IChatReference, ICodeCopy, IFlatStep } from '@/shared/types';
+import type {
+  IAppSnapshot,
+  IChatReference,
+  ICodeCopy,
+  IFlatStep,
+  IJiraStoryCopy,
+} from '@/shared/types';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -65,6 +71,7 @@ const EMPTY_CHAT = {
   runs: [],
   look: null,
   code: null,
+  story: null,
   variables: [],
 };
 
@@ -82,6 +89,41 @@ const CODE: ICodeCopy = {
   commits: 2,
 };
 
+const STORY: IJiraStoryCopy = {
+  story: {
+    key: 'SHOP-12',
+    url: 'https://acme.atlassian.net/browse/SHOP-12',
+    summary: 'Aplicar cupom no checkout',
+    type: 'Story',
+    status: 'To Do',
+    priority: 'High',
+    labels: [],
+    components: [],
+    parent: '',
+    description: 'O cliente aplica um cupom de desconto no checkout.',
+    acceptance: [
+      {
+        field: 'Acceptance criteria',
+        text: '- SAVE10 takes 10% off\n- An expired coupon is refused',
+      },
+    ],
+    comments: [],
+    links: [],
+    subtasks: [],
+    attachments: [],
+  },
+  root: '/data/jira/w-1/SHOP-12',
+  files: [
+    {
+      filename: 'checkout.png',
+      mimeType: 'image/png',
+      size: 48_210,
+      path: '/data/jira/w-1/SHOP-12/checkout.png',
+      note: 'read',
+    },
+  ],
+};
+
 const FULL_CHAT = {
   text: 'Write a test plan for this app.',
   told: {},
@@ -97,6 +139,7 @@ const FULL_CHAT = {
     page: 'URL: https://shop.test/\nTITLE: Shop\nTEXT:\nNew in: summer shoes\nCONTROLS:\na: Cart\nbutton: Sign in',
   },
   code: null,
+  story: null,
   variables: [{ name: 'SHOP_EMAIL', description: 'The buyer on staging' }],
 };
 
@@ -198,6 +241,37 @@ describe('Harness', () => {
       await expect(chat.prompt).toMatchFileSnapshot('./__prompts__/chat-code.txt');
       expect(chat.readDirs).toEqual(['/data/code/w-1']);
       expect(harness.chat(EMPTY_CHAT).readDirs).toEqual([]);
+    });
+
+    it('opens a message planned from a Jira story with the story, and the folder of its files', async () => {
+      const chat = harness.chat({
+        ...EMPTY_CHAT,
+        text: 'Plan the tests for SHOP-12.',
+        story: STORY,
+      });
+
+      await expect(chat.prompt).toMatchFileSnapshot('./__prompts__/chat-jira.txt');
+      expect(chat.readDirs).toEqual(['/data/jira/w-1/SHOP-12']);
+      expect(
+        harness.chat({ ...EMPTY_CHAT, story: { ...STORY, files: [] } }).readDirs,
+      ).toEqual([]);
+    });
+
+    it('lets the agent read the code and the story at once', () => {
+      expect(harness.chat({ ...EMPTY_CHAT, code: CODE, story: STORY }).readDirs).toEqual([
+        '/data/code/w-1',
+        '/data/jira/w-1/SHOP-12',
+      ]);
+    });
+
+    it("tells the agent once that the story's files are gone after the plan", () => {
+      const planning = harness.chat({ ...EMPTY_CHAT, story: STORY });
+      const after = harness.chat({ ...EMPTY_CHAT, told: planning.told, text: 'Thanks' });
+
+      expect(after.prompt).toContain("The story's files are gone");
+      expect(
+        harness.chat({ ...EMPTY_CHAT, told: after.told, text: 'And now?' }).prompt,
+      ).toBe('And now?');
     });
 
     it('tells the agent once that the copy is gone after the plan, and never again', () => {

@@ -14,6 +14,7 @@ export * from './describeReferences';
 export * from './describeRuns';
 export * from './describeScreen';
 export * from './describeSize';
+export * from './describeStory';
 export * from './describeVariables';
 export * from './fillSections';
 export * from './parseCorpusFile';

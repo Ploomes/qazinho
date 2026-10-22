@@ -15,13 +15,14 @@ import type {
   IChatReference,
   ICodeCopy,
   IFlatStep,
+  IJiraStoryCopy,
   IKnownBug,
   ITargetUnderTest,
   IVariableBrief,
   IViewport,
   Language,
 } from '@/shared/types';
-import { CODE_SECTION, LANGUAGE_NAMES } from '@/harness/constants';
+import { CODE_SECTION, LANGUAGE_NAMES, STORY_SECTION } from '@/harness/constants';
 import { CORPUS } from '@/harness/context/constants';
 import {
   changedSections,
@@ -39,6 +40,7 @@ import {
   describeRuns,
   describeScreen,
   describeSize,
+  describeStory,
   fillSections,
   renderSections,
   sectionsFor,
@@ -76,7 +78,7 @@ export class Harness {
     return toolsOfRole({ grants: TOOL_GRANTS, role, server: MCP_HOST.name });
   }
 
-  /** One chat message: the corpus as its system prompt, the QA's words opened by what the agent was not told yet, and the code it may read. */
+  /** One chat message: the corpus as its system prompt, the QA's words opened by what the agent was not told yet, and the code and the story's files it may read. */
   public chat(props: {
     text: string;
     told: Record<string, string>;
@@ -87,6 +89,7 @@ export class Harness {
     runs: IChatReference[];
     look: AppLook | null;
     code: ICodeCopy | null;
+    story: IJiraStoryCopy | null;
     variables: IVariableBrief[];
   }): {
     systemPrompt: string;
@@ -115,6 +118,10 @@ export class Harness {
           code: props.code,
           wasTold: (props.told[CODE_SECTION.title] ?? '') !== '',
         }),
+        describeStory({
+          story: props.story,
+          wasTold: (props.told[STORY_SECTION.title] ?? '') !== '',
+        }),
       ],
       told: props.told,
     });
@@ -128,7 +135,12 @@ export class Harness {
       told: news.told,
       schema: CHAT_SCHEMA,
       tools: this.toolsFor('chat'),
-      readDirs: props.code === null ? [] : [props.code.root],
+      readDirs: [
+        ...(props.code === null ? [] : [props.code.root]),
+        ...(props.story?.files.some(({ path }) => path !== null) === true
+          ? [props.story.root]
+          : []),
+      ],
     };
   }
 
