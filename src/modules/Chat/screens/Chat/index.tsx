@@ -34,7 +34,6 @@ export const Chat: React.FC = () => {
     onPickMention,
     onSend,
     onStop,
-    onAnswer,
     onAnswerQuestions,
     onOpenPlan,
     onTakeSuggestion,
@@ -69,7 +68,6 @@ export const Chat: React.FC = () => {
                 message={item.message}
                 isNew={item.isNew}
                 isAnswerable={item.isAnswerable}
-                onAnswer={onAnswer}
                 onAnswerQuestions={onAnswerQuestions}
                 onOpenPlan={onOpenPlan}
                 onTakeSuggestion={onTakeSuggestion}
@@ -101,7 +99,6 @@ export const Chat: React.FC = () => {
                     isNew={row.isNew}
                     isAnswerable={false}
                     isNested
-                    onAnswer={onAnswer}
                     onAnswerQuestions={onAnswerQuestions}
                     onOpenPlan={onOpenPlan}
                     onTakeSuggestion={onTakeSuggestion}

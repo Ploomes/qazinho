@@ -6,7 +6,6 @@ export interface IChatRowProps {
   message: ChatMessage;
   isNew: boolean;
   isAnswerable: boolean;
-  onAnswer: (reply: string) => void;
   onAnswerQuestions: (props: { messageId: string; answers: IQuestionAnswer[] }) => void;
   onOpenPlan: () => void;
   onTakeSuggestion: (messageId: string) => void;

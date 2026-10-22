@@ -2,7 +2,7 @@ import type { IChatRowProps } from './types';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { AgentMessage } from '@/modules/Chat/screens/Chat/components/AgentMessage';
-import { AskBlock } from '@/modules/Chat/screens/Chat/components/AskBlock';
+import { AskNote } from '@/modules/Chat/screens/Chat/components/AskNote';
 import { ErrorBlock } from '@/modules/Chat/screens/Chat/components/ErrorBlock';
 import { FindingNote } from '@/modules/Chat/screens/Chat/components/FindingNote';
 import { HandoffCard } from '@/modules/Chat/screens/Chat/components/HandoffCard';
@@ -38,9 +38,7 @@ export const ChatRow: React.FC<IChatRowProps> = (props) => {
           <AgentMessage text={message.text} />
         )}
         {message.kind === 'verdict' && <VerdictNote message={message} />}
-        {message.kind === 'ask' && (
-          <AskBlock message={message} onAnswer={props.onAnswer} />
-        )}
+        {message.kind === 'ask' && <AskNote message={message} />}
         {message.kind === 'questions' && (
           <QuestionRound
             message={message}

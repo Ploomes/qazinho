@@ -1,11 +1,14 @@
-import type { IAskOption } from './IAskOption';
+import type { RunAnswer } from '@/shared/types';
 
-/** The agent stopped and needs the QA; the run holds until one option is picked. */
+/** A question the run's agent asked the QA, kept in the run's section once it ended: what it asked, at which step, and how it was answered. */
 export interface IAskMessage {
   id: string;
   kind: 'ask';
   at: string;
-  text: string;
-  options: IAskOption[];
-  holdingFor: string;
+  runId: string;
+  askId: string;
+  question: string;
+  caseId: string;
+  stepNumber: number;
+  answer: RunAnswer;
 }

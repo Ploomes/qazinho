@@ -1,6 +1,6 @@
 import type { ITestCase } from '@/modules/Plan';
 import type { IWalkedBy, IWorkspace } from '@/modules/Workspace/types';
-import type { IRunVideo, IStepOutcome, StepVerdict } from '@/shared/types';
+import type { IRunQuestion, IRunVideo, IStepOutcome, StepVerdict } from '@/shared/types';
 import { flattenPlanSteps } from '@/modules/Run';
 import { endRun } from '@/modules/Workspace/library/endRun';
 import { landStep } from '@/modules/Workspace/library/landStep';
@@ -38,6 +38,20 @@ export const CASES: ITestCase[] = [
     lastVerdict: null,
   },
 ];
+
+/** What a run's agent asks the QA on the second step of TC-01. */
+export const QUESTION: IRunQuestion = {
+  id: 'q-1',
+  question: 'Which plan should I pick?',
+  options: ['Premium', 'Premium+'],
+  isSecret: false,
+  secret: { name: 'QA_ANSWER_1', description: 'Which plan should I pick?' },
+  caseId: 'TC-01',
+  stepNumber: 2,
+  action: 'Search for a product',
+  askedAtMs: 1_760_000_004_000,
+  waitsUntilMs: 1_760_000_904_000,
+};
 
 export const WALKED_BY: IWalkedBy = {
   agent: 'Claude Code',

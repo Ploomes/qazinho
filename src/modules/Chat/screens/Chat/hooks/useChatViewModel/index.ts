@@ -63,7 +63,6 @@ export const useChatViewModel = () => {
   );
   const sendMessage = useWorkspaceStore((state) => state.sendMessage);
   const answerQuestions = useWorkspaceStore((state) => state.answerQuestions);
-  const answerAsk = useWorkspaceStore((state) => state.answerAsk);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const selectRun = useWorkspaceStore((state) => state.selectRun);
   const openBugId = useWorkspaceStore((state) => state.openBugId);
@@ -386,9 +385,6 @@ export const useChatViewModel = () => {
       send(draft);
     },
     onSuggestion: send,
-    onAnswer: (reply: string) => {
-      if (workspace) answerAsk({ workspaceId: workspace.id, reply });
-    },
     onAnswerQuestions: answer,
     onOpenPlan: () => {
       selectTab('plan');

@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { startRun } from '@/modules/Workspace';
-import { makeWorkspace, WALKED_BY } from '@/modules/Workspace/library/__tests__/fixtures';
+import { landAsked, startRun } from '@/modules/Workspace';
+import {
+  makeWorkspace,
+  QUESTION,
+  WALKED_BY,
+} from '@/modules/Workspace/library/__tests__/fixtures';
 import { tickWorkspaces } from '@/store/WorkspaceStore/library';
 
 const IDLE = makeWorkspace();
@@ -27,5 +31,26 @@ describe('tickWorkspaces', () => {
     const workspaces = [IDLE, { ...makeWorkspace(), id: 'w3' }];
 
     expect(tickWorkspaces({ workspaces, seconds: 1 })).toBe(workspaces);
+  });
+
+  /** The run's clock says how long the device was worked; the QA's minutes go to the question. */
+  it('counts how long a question waits, and stops the run clock meanwhile', () => {
+    const asking = landAsked({ workspace: RUNNING, question: QUESTION });
+    const ticked = tickWorkspaces({ workspaces: [asking], seconds: 1 })[0];
+
+    expect(ticked?.live?.question?.waitedSec).toBe(1);
+    expect(ticked?.live?.elapsedSec).toBe(0);
+  });
+
+  it('counts the wait on a question even while the run is paused', () => {
+    const asking = landAsked({ workspace: RUNNING, question: QUESTION });
+    const paused = {
+      ...asking,
+      live: asking.live && { ...asking.live, isRunning: false },
+    };
+
+    expect(
+      tickWorkspaces({ workspaces: [paused], seconds: 1 })[0]?.live?.question?.waitedSec,
+    ).toBe(1);
   });
 });

@@ -1,5 +1,5 @@
 export * from './AgentMessage';
-export * from './AskBlock';
+export * from './AskNote';
 export * from './ChatRow';
 export * from './Composer';
 export * from './ErrorBlock';

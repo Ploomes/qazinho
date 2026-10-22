@@ -1,7 +1,12 @@
 import type { ChatItem, ChatMessage } from '@/modules/Chat/types';
 
 function runIdOf(message: ChatMessage): string | null {
-  if (message.kind === 'run' || message.kind === 'note' || message.kind === 'finding')
+  if (
+    message.kind === 'run' ||
+    message.kind === 'note' ||
+    message.kind === 'finding' ||
+    message.kind === 'ask'
+  )
     return message.runId;
 
   if (message.kind === 'verdict' || message.kind === 'error') return message.runId;

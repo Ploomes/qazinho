@@ -13,7 +13,7 @@ function tookSec(outcomes: IStepOutcome[]): number {
   );
 }
 
-/** The run as it ended, read back from what the device actually did; the steps it never reached in a case it began read as skipped, and an exploration's screens are its one case. */
+/** The run as it ended, read back from what the device actually did, with what its agent asked the QA; the steps it never reached in a case it began read as skipped, and an exploration's screens are its one case. */
 export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRun {
   const { workspace, endedBy } = props;
   const live = workspace.live;
@@ -118,5 +118,8 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
     video: null,
     ...(live?.kind === 'explore' ? { kind: 'explore' as const } : {}),
     ...(live?.suggestion === undefined ? {} : { suggestion: live.suggestion }),
+    ...(live?.asked === undefined || live.asked.length === 0
+      ? {}
+      : { asked: live.asked }),
   };
 }

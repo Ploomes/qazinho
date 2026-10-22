@@ -94,6 +94,26 @@ describe('groupRunMessages', () => {
     ).toEqual(['run']);
   });
 
+  it('keeps a question the agent asked the QA with the run that asked it', () => {
+    const asked: ChatMessage = {
+      id: 'm-8',
+      kind: 'ask',
+      at: '09:41',
+      runId: 'r-01',
+      askId: 'q-1',
+      question: 'Which plan should I pick?',
+      caseId: 'TC-01',
+      stepNumber: 2,
+      answer: { kind: 'said', text: 'Premium+' },
+    };
+
+    expect(
+      groupRunMessages({ messages: [USER, asked].map(shown), runIds: ['r-01'] }).map(
+        (item) => (item.kind === 'run' ? item.messages.length : item.message.id),
+      ),
+    ).toEqual(['m-1', 1]);
+  });
+
   it('leaves loose what a run that never walked a step said, such as why it could not start', () => {
     const broke: ChatMessage = {
       id: 'm-7',

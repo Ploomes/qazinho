@@ -1,5 +1,6 @@
 export type * from './IAgentContext';
 export type * from './IIssue';
+export type * from './ILiveQuestion';
 export type * from './ILiveRun';
 export type * from './IWalkedBy';
 export type * from './IWorkspace';

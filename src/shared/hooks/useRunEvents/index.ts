@@ -1,4 +1,4 @@
-import type { IRunEvent, IRunRef } from '@/shared/types';
+import type { IRunEvent, IRunQuestion, IRunRef } from '@/shared/types';
 import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isSeenIn } from '@/modules/Bug/library';
@@ -20,6 +20,8 @@ export const useRunEvents = () => {
   const landNote = useWorkspaceStore((state) => state.landNote);
   const landCost = useWorkspaceStore((state) => state.landCost);
   const landFinding = useWorkspaceStore((state) => state.landFinding);
+  const landAsked = useWorkspaceStore((state) => state.landAsked);
+  const landAnswered = useWorkspaceStore((state) => state.landAnswered);
   const landExplored = useWorkspaceStore((state) => state.landExplored);
   const agent = useSettingsStore((state) => state.agent);
   const landStep = useWorkspaceStore((state) => state.landStep);
@@ -101,6 +103,24 @@ export const useRunEvents = () => {
     });
   };
 
+  const announceQuestion = (props: { workspaceId: string; question: IRunQuestion }) => {
+    const workspace = useWorkspaceStore
+      .getState()
+      .workspaces.find(({ id }) => id === props.workspaceId);
+    const live = workspace?.live;
+
+    if (!workspace || !live || live.isDone) return;
+
+    if (useSettingsStore.getState().runAlert !== 'system') return;
+
+    Run.alert({
+      workspaceId: workspace.id,
+      runId: live.id,
+      title: t('RUN.NOTICE_ASKED', { workspace: workspace.name }),
+      body: props.question.question,
+    });
+  };
+
   const onRunEvent = useEffectEvent((event: IRunEvent) => {
     if (event.kind === 'doing')
       markDoing({ workspaceId: event.workspaceId, index: event.index });
@@ -112,7 +132,11 @@ export const useRunEvents = () => {
       landCost({ workspaceId: event.workspaceId, costUsd: event.costUsd });
     else if (event.kind === 'finding')
       landFinding({ workspaceId: event.workspaceId, finding: event.finding });
-    else if (event.kind === 'asked' || event.kind === 'answered') return;
+    else if (event.kind === 'asked') {
+      landAsked({ workspaceId: event.workspaceId, question: event.question });
+      announceQuestion({ workspaceId: event.workspaceId, question: event.question });
+    } else if (event.kind === 'answered')
+      landAnswered({ workspaceId: event.workspaceId, asked: event.asked });
     else if (event.kind === 'step') landStep(event.outcome);
     else if (event.kind === 'explored')
       landExplored({

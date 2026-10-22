@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { deviceStateOf } from '@/modules/Device/library';
-import { startRun } from '@/modules/Workspace';
-import { makeWorkspace, WALKED_BY } from '@/modules/Workspace/library/__tests__/fixtures';
+import { landAsked, startRun } from '@/modules/Workspace';
+import {
+  makeWorkspace,
+  QUESTION,
+  WALKED_BY,
+} from '@/modules/Workspace/library/__tests__/fixtures';
 
 const RUNNING = startRun({
   workspace: makeWorkspace(),
@@ -24,6 +28,12 @@ describe('deviceStateOf', () => {
     const paused = { ...RUNNING, live: { ...RUNNING.live!, isRunning: false } };
 
     expect(deviceStateOf(paused)).toBe('holding');
+  });
+
+  it('holds while the agent waits on the QA', () => {
+    expect(deviceStateOf(landAsked({ workspace: RUNNING, question: QUESTION }))).toBe(
+      'holding',
+    );
   });
 
   it('is stopped once the run is over', () => {

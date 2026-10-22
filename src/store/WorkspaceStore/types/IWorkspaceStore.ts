@@ -9,8 +9,10 @@ import type {
   IChatQuestion,
   ICodeSource,
   IDraftedCase,
+  IRunAsked,
   IRunFinding,
   IRunInFlight,
+  IRunQuestion,
   IRunVideo,
   IStepOutcome,
 } from '@/shared/types';
@@ -75,7 +77,6 @@ export interface IWorkspaceStore {
   setRetry: (props: { workspaceId: string; attempt: number; maxRetries: number }) => void;
   setCodeStep: (props: { workspaceId: string; step: CodeStep; bytes: number }) => void;
   setLooking: (props: { workspaceId: string; device: 'android' | 'ios' }) => void;
-  answerAsk: (props: { workspaceId: string; reply: string }) => void;
   setPlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
   startRun: (props: {
     workspaceId: string;
@@ -98,6 +99,8 @@ export interface IWorkspaceStore {
   landNote: (props: { workspaceId: string; text: string; who: string }) => void;
   landCost: (props: { workspaceId: string; costUsd: number }) => void;
   landFinding: (props: { workspaceId: string; finding: IRunFinding }) => void;
+  landAsked: (props: { workspaceId: string; question: IRunQuestion }) => void;
+  landAnswered: (props: { workspaceId: string; asked: IRunAsked }) => void;
   landStep: (outcome: IStepOutcome) => void;
   landRunDone: (workspaceId: string) => void;
   landVideo: (props: { workspaceId: string; runId: string; video: IRunVideo }) => void;

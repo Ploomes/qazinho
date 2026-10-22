@@ -46,6 +46,57 @@ describe('runHistoryOf', () => {
     expect(latest?.facts).not.toContain('note: Another run.');
   });
 
+  /** The QA's answers are requirements the plan may not hold yet: the chat's agent should know them. */
+  it('tells what the latest run asked the QA and how it ended, a secret by its name alone', () => {
+    const [latest] = runHistoryOf({
+      workspace: {
+        runs: [
+          {
+            ...RUN,
+            asked: [
+              {
+                id: 'q-1',
+                question: 'Which plan should I pick?',
+                caseId: 'TC-01',
+                stepNumber: 2,
+                answer: { kind: 'said', text: 'Premium+' },
+                askedAtMs: 1,
+                answeredAtMs: 2,
+              },
+              {
+                id: 'q-2',
+                question: 'What is the code texted to you?',
+                caseId: 'TC-02',
+                stepNumber: 1,
+                answer: { kind: 'secret', name: 'OTP_CODE', isKept: false },
+                askedAtMs: 3,
+                answeredAtMs: 4,
+              },
+              {
+                id: 'q-3',
+                question: 'Is this banner expected?',
+                caseId: 'TC-02',
+                stepNumber: 2,
+                answer: { kind: 'unanswered' },
+                askedAtMs: 5,
+                answeredAtMs: 6,
+              },
+            ],
+          },
+        ],
+        chat: [],
+      },
+      wholePlan: 'The whole plan',
+      exploration: 'Exploration',
+    });
+
+    expect(latest?.facts.slice(-3)).toEqual([
+      'asked the QA at TC-01 step 2: Which plan should I pick? → they answered: Premium+',
+      'asked the QA at TC-02 step 1: What is the code texted to you? → they typed a secret, as ${OTP_CODE} for that run only',
+      'asked the QA at TC-02 step 2: Is this banner expected? → no answer came in time',
+    ]);
+  });
+
   it('keeps the runs before it by what broke, and only the latest five', () => {
     const history = runHistoryOf({
       workspace: {

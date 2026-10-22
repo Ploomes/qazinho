@@ -1,7 +1,6 @@
 import type { IWorkspaceStore } from './types';
 import { create } from 'zustand';
 import {
-  answerAsk,
   answerRound,
   appendAgentError,
   appendAgentMessage,
@@ -15,6 +14,8 @@ import { DEVICE } from '@/modules/Device/constants';
 import { RUN_CLOCK } from '@/modules/Run/constants';
 import {
   endRun,
+  landAnswered,
+  landAsked,
   landCost,
   landExplored,
   landFinding,
@@ -218,16 +219,6 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       liveTexts: { ...state.liveTexts, [workspaceId]: '' },
     })),
 
-  answerAsk: ({ workspaceId, reply }) =>
-    set((state) => ({
-      workspaces: mapWorkspace({
-        workspaces: state.workspaces,
-        workspaceId,
-        change: (workspace) =>
-          answerAsk({ workspace, reply, at: formatClock(new Date()) }),
-      }),
-    })),
-
   setPlan: ({ workspaceId, plan }) =>
     set((state) => ({
       workspaces: mapWorkspace({
@@ -361,6 +352,25 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         workspaceId,
         change: (workspace) =>
           landFinding({ workspace, finding, at: formatClock(new Date()) }),
+      }),
+    })),
+
+  landAsked: ({ workspaceId, question }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => landAsked({ workspace, question }),
+      }),
+    })),
+
+  landAnswered: ({ workspaceId, asked }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          landAnswered({ workspace, asked, at: formatClock(new Date()) }),
       }),
     })),
 

@@ -3,6 +3,8 @@ export * from './buildRun';
 export * from './codeSourceOf';
 export * from './endRun';
 export * from './fromSaved';
+export * from './landAnswered';
+export * from './landAsked';
 export * from './landCost';
 export * from './landExplored';
 export * from './landFinding';

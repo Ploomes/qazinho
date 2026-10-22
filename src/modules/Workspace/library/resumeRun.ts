@@ -1,9 +1,10 @@
 import type { ILiveRun, IWalkedBy, IWorkspace } from '@/modules/Workspace/types';
 import type { IRunInFlight } from '@/shared/types';
 import { catchBug } from '@/modules/Bug/library';
+import { landAnswered } from './landAnswered';
 import { landFinding } from './landFinding';
 
-/** A run main kept walking while the page was away: the page follows it again, its failures and side findings land on their bugs once, and the record saved as interrupted goes. */
+/** A run main kept walking while the page was away: the page follows it again, with the question its agent waits on, its failures and side findings land on their bugs once, what it asked the QA lands in its section once, and the record saved as interrupted goes. */
 export function resumeRun(props: {
   workspace: IWorkspace;
   run: IRunInFlight;
@@ -38,6 +39,14 @@ export function resumeRun(props: {
     costUsd: run.costUsd,
     by,
     ...(run.isExploring ? { kind: 'explore' as const } : {}),
+    ...(run.question === null
+      ? {}
+      : {
+          question: {
+            ...run.question,
+            waitedSec: Math.max(0, Math.round((now - run.question.askedAtMs) / 1000)),
+          },
+        }),
   };
 
   const failed = run.outcomes
@@ -55,8 +64,13 @@ export function resumeRun(props: {
       { ...walking, status: 'running', live },
     );
 
-  return run.findings.reduce<IWorkspace>(
+  const found = run.findings.reduce<IWorkspace>(
     (current, finding) => landFinding({ workspace: current, finding, at: startedAt }),
     failed,
+  );
+
+  return run.asked.reduce<IWorkspace>(
+    (current, asked) => landAnswered({ workspace: current, asked, at: startedAt }),
+    found,
   );
 }

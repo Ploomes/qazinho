@@ -6,6 +6,7 @@ import { i18n } from '@/languages';
 import { startRun } from '@/modules/Workspace/library';
 import {
   makeWorkspace,
+  QUESTION,
   WALKED_BY,
   walkRun,
 } from '@/modules/Workspace/library/__tests__/fixtures';
@@ -260,8 +261,9 @@ describe('useRunEvents', () => {
     });
 
     it('opens the run whose notification the QA clicked', () => {
-      const { open } = listening();
+      const { open, send } = listening();
 
+      send({ kind: 'done', workspaceId: 'w1' });
       open({ workspaceId: 'w1', runId: 'r-01' });
 
       expect(useAppStore.getState()).toMatchObject({
@@ -272,6 +274,117 @@ describe('useRunEvents', () => {
         tab: 'runs',
         selectedRunId: 'r-01',
       });
+    });
+  });
+
+  describe('a question from the run', () => {
+    function listening() {
+      let send: (event: IRunEvent) => void = () => undefined;
+      let open: (run: IRunRef) => void = () => undefined;
+      const alertRun = vi.fn();
+
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        onRunEvent: (listener) => {
+          send = listener;
+
+          return () => undefined;
+        },
+        onOpenRun: (listener) => {
+          open = listener;
+
+          return () => undefined;
+        },
+        alertRun,
+      };
+      renderHook(() => {
+        useRunEvents();
+      });
+
+      return {
+        alertRun,
+        send: (event: IRunEvent) => {
+          act(() => {
+            send(event);
+          });
+        },
+        open: (run: IRunRef) => {
+          act(() => {
+            open(run);
+          });
+        },
+      };
+    }
+
+    beforeEach(async () => {
+      await i18n.changeLanguage('en');
+      useAppStore.setState({ screen: 'welcome', selectedWorkspaceId: null });
+      useSettingsStore.setState({ runAlert: 'system' });
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
+    });
+
+    it('holds the run on the question, and asks main to call the QA back if they are away', () => {
+      const { alertRun, send } = listening();
+
+      send({ kind: 'asked', workspaceId: 'w1', question: QUESTION });
+
+      expect(useWorkspaceStore.getState().workspaces[0]?.live?.question).toMatchObject({
+        id: 'q-1',
+        waitedSec: 0,
+      });
+      expect(alertRun).toHaveBeenCalledWith({
+        workspaceId: 'w1',
+        runId: 'r-01',
+        title: 'Checkout regression · the agent asks you something',
+        body: 'Which plan should I pick?',
+      });
+    });
+
+    it('keeps the question inside the app when the QA asked for that', () => {
+      useSettingsStore.setState({ runAlert: 'app' });
+
+      const { alertRun, send } = listening();
+
+      send({ kind: 'asked', workspaceId: 'w1', question: QUESTION });
+
+      expect(alertRun).not.toHaveBeenCalled();
+    });
+
+    it("lets the run go on once the question ended, and says so in the run's section", () => {
+      const { send } = listening();
+
+      send({ kind: 'asked', workspaceId: 'w1', question: QUESTION });
+      send({
+        kind: 'answered',
+        workspaceId: 'w1',
+        asked: {
+          id: 'q-1',
+          question: 'Which plan should I pick?',
+          caseId: 'TC-01',
+          stepNumber: 2,
+          answer: { kind: 'secret', name: 'PLAN_CODE', isKept: false },
+          askedAtMs: 1,
+          answeredAtMs: 2,
+        },
+      });
+
+      const workspace = useWorkspaceStore.getState().workspaces[0];
+
+      expect(workspace?.live?.question).toBeUndefined();
+      expect(workspace?.chat.at(-1)).toMatchObject({
+        kind: 'ask',
+        runId: 'r-01',
+        answer: { kind: 'secret', name: 'PLAN_CODE' },
+      });
+    });
+
+    it('opens the chat of a run still going when the QA clicks its notification', () => {
+      const { open } = listening();
+
+      open({ workspaceId: 'w1', runId: 'r-01' });
+
+      expect(useAppStore.getState().selectedWorkspaceId).toBe('w1');
+      expect(useWorkspaceStore.getState().tab).toBe('chat');
     });
   });
 });

@@ -1,0 +1,74 @@
+.ask-note {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line);
+  border-left: var(--edge-width) solid var(--attn);
+  border-radius: var(--radius-md);
+  background: var(--raise);
+}
+
+.ask-note__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ask-note__mark {
+  display: inline-flex;
+  color: var(--attn);
+}
+
+.ask-note__label {
+  color: var(--ink2);
+  font: var(--font-mono-xs);
+  letter-spacing: var(--tag-tracking);
+  text-transform: uppercase;
+}
+
+.ask-note__where {
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+}
+
+.ask-note__question {
+  margin: 0;
+  color: var(--ink);
+  font: var(--font-ui-md);
+  white-space: pre-wrap;
+}
+
+.ask-note__answer {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}
+
+.ask-note__who {
+  flex: none;
+  color: var(--lime-ink);
+  font: var(--font-mono-sm);
+}
+
+.ask-note__lock {
+  display: inline-flex;
+  flex: none;
+  align-self: center;
+  color: var(--lime-ink);
+}
+
+.ask-note__said {
+  min-width: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.ask-note--unanswered .ask-note__said {
+  color: var(--ink3);
+}

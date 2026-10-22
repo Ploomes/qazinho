@@ -3,7 +3,6 @@ export type * from './ChatItem';
 export type * from './ChatMessage';
 export type * from './IAgentMessage';
 export type * from './IAskMessage';
-export type * from './IAskOption';
 export type * from './ICommandDraft';
 export type * from './ICommandPicker';
 export type * from './ICommandRow';

@@ -1,7 +1,7 @@
 import type { IRunInFlight } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
 import { endRun, landStep, resumeRun, startRun } from '@/modules/Workspace/library';
-import { makeOutcome, makeWorkspace, WALKED_BY } from './fixtures';
+import { makeOutcome, makeWorkspace, QUESTION, WALKED_BY } from './fixtures';
 
 const STARTED = 1_000_000;
 
@@ -148,5 +148,35 @@ describe('resumeRun', () => {
         by: WALKED_BY,
       }).bugs.filter(({ isIncidental }) => isIncidental),
     ).toHaveLength(1);
+  });
+
+  it('waits again on the question the agent asked while the page was away, for as long as it has waited', () => {
+    const workspace = resumed({
+      run: inFlight({ question: { ...QUESTION, askedAtMs: STARTED + 60_400 } }),
+    });
+
+    expect(workspace.live?.question).toEqual({
+      ...QUESTION,
+      askedAtMs: STARTED + 60_400,
+      waitedSec: 35,
+    });
+  });
+
+  it("puts the questions already answered in the run's section once, and keeps them", () => {
+    const asked = {
+      id: 'q-1',
+      question: 'Which plan should I pick?',
+      caseId: 'TC-01',
+      stepNumber: 2,
+      answer: { kind: 'unanswered' as const },
+      askedAtMs: STARTED + 1_000,
+      answeredAtMs: STARTED + 901_000,
+    };
+    const once = resumed({ run: inFlight({ asked: [asked] }) });
+    const reloaded = { ...once, live: null };
+    const again = resumed({ workspace: reloaded, run: inFlight({ asked: [asked] }) });
+
+    expect(once.live?.asked).toEqual([asked]);
+    expect(again.chat.filter(({ kind }) => kind === 'ask')).toHaveLength(1);
   });
 });
