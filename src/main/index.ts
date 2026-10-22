@@ -101,8 +101,6 @@ import {
 } from '@/main/classes';
 import { changeIdOf } from '@/main/classes/automation/SuiteChanges/library';
 import { APP_BUILDER } from '@/main/classes/builds/AppBuilder/constants';
-import { BUG_REVIEW } from '@/main/classes/integrations/BugReviewer/constants';
-import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { buildIdOf } from '@/main/classes/builds/AppBuilder/library';
 import {
   listAvds,
@@ -110,6 +108,8 @@ import {
   packageOfApk,
 } from '@/main/classes/devices/AndroidDriver/library';
 import { bundleOfPlist, listSimulators } from '@/main/classes/devices/IosDriver/library';
+import { BUG_REVIEW } from '@/main/classes/integrations/BugReviewer/constants';
+import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import {
   ASSISTANT,
   FILE_FILTERS,
