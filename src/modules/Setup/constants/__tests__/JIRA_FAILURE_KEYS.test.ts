@@ -13,7 +13,7 @@ describe('JIRA_FAILURE_KEYS', () => {
     }
   });
 
-  it('covers the five failures, no more', () => {
-    expect(Object.keys(JIRA_FAILURE_KEYS)).toHaveLength(5);
+  it('covers the six failures, no more', () => {
+    expect(Object.keys(JIRA_FAILURE_KEYS)).toHaveLength(6);
   });
 });

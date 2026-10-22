@@ -853,6 +853,7 @@ export const en = {
       'Jira refused the token. Connect Jira again in Settings → Integrations.',
     FAILURE_NOT_FOUND: 'Jira did not find it, or this account cannot see it.',
     FAILURE_UNREACHABLE: 'Jira is out of reach from this machine. Check the network.',
+    FAILURE_REJECTED: 'Jira refused what QAzinho sent.',
     FAILURE_UNEXPECTED: 'Jira answered in a way QAzinho did not expect.',
   },
   ASSISTANT: {

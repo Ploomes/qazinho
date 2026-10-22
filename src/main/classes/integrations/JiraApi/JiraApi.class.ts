@@ -1,16 +1,26 @@
-import type { IJiraApi, JiraAnswer, JiraFetcher } from './types';
+import type { IJiraApi, JiraAnswer, JiraFetcher, JiraFiled } from './types';
 import type { IJiraCredentials } from '@/main/types';
 import type {
+  IBugReport,
   IJiraIssueRef,
   IJiraStory,
   JiraFailure,
   JiraIssueList,
+  JiraProjectList,
 } from '@/shared/types';
 import { writeFile } from 'node:fs/promises';
-import { JIRA_READ } from './constants';
-import { jiraFailureOf, jiraStoryOf, pickedIssuesOf } from './library';
+import { JIRA_READ, JIRA_WRITE } from './constants';
+import {
+  adfOfReport,
+  bugTypeOf,
+  jiraFailureOf,
+  jiraProjectsOf,
+  jiraSaidOf,
+  jiraStoryOf,
+  pickedIssuesOf,
+} from './library';
 
-/** Talks to the QA's Jira Cloud with the credentials sealed for it: finds issues, and reads a story with its files. */
+/** Talks to the QA's Jira Cloud with the credentials sealed for it: finds issues, reads a story with its files, and files a bug with its own. */
 export class JiraApi {
   private readonly credentials: () => Promise<IJiraCredentials | null>;
   private readonly fetcher: JiraFetcher;
@@ -105,6 +115,135 @@ export class JiraApi {
     );
   }
 
+  /** The projects the QA can file in: the ones they opened last first, then the rest Jira lists. */
+  public async projects(): Promise<JiraProjectList> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isListed: false, failure: 'not-connected' };
+
+    const answers = await Promise.all([
+      this.request({ signed, path: '/rest/api/3/project/recent' }),
+      this.request({
+        signed,
+        path: `/rest/api/3/project/search?maxResults=${String(JIRA_WRITE.projects)}`,
+      }),
+    ]);
+    const [recent, all] = answers;
+
+    if (!recent.isOk && !all.isOk) return { isListed: false, failure: all.failure };
+
+    const seen = new Set<string>();
+
+    return {
+      isListed: true,
+      projects: answers
+        .flatMap((answer) => (answer.isOk ? jiraProjectsOf(answer.body) : []))
+        .filter(({ key }) => {
+          if (seen.has(key)) return false;
+
+          seen.add(key);
+
+          return true;
+        }),
+    };
+  }
+
+  /** Files a bug in a project as an issue of its Bug type, or the type closest to it: the new issue, or why Jira refused it. */
+  public async fileBug(props: {
+    project: string;
+    report: IBugReport;
+  }): Promise<JiraFiled> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isFiled: false, failure: 'not-connected', said: '' };
+
+    const types = await this.request({
+      signed,
+      path: `/rest/api/3/issue/createmeta/${encodeURIComponent(props.project)}/issuetypes`,
+    });
+
+    if (!types.isOk && types.failure !== 'unexpected')
+      return { isFiled: false, failure: types.failure, said: types.said };
+
+    const typeId = types.isOk ? bugTypeOf(types.body) : null;
+    const created = await this.request({
+      signed,
+      path: '/rest/api/3/issue',
+      method: 'POST',
+      json: {
+        fields: {
+          project: { key: props.project },
+          issuetype: typeId === null ? { name: JIRA_WRITE.bugType } : { id: typeId },
+          summary: props.report.title
+            .replace(/\s+/g, ' ')
+            .trim()
+            .slice(0, JIRA_WRITE.summaryLength),
+          description: adfOfReport(props.report),
+        },
+      },
+    });
+
+    if (!created.isOk)
+      return { isFiled: false, failure: created.failure, said: created.said };
+
+    const key = (created.body as { key?: unknown } | null)?.key;
+
+    return typeof key === 'string'
+      ? { isFiled: true, key, url: `${signed.site}/browse/${key}` }
+      : { isFiled: false, failure: 'unexpected', said: '' };
+  }
+
+  /** Attaches one file to an issue; false when Jira did not take it. */
+  public async attach(props: {
+    key: string;
+    name: string;
+    type: string;
+    bytes: Uint8Array;
+  }): Promise<boolean> {
+    const signed = await this.credentials();
+
+    if (signed === null) return false;
+
+    const form = new FormData();
+
+    form.append(
+      'file',
+      new Blob([new Uint8Array(props.bytes)], { type: props.type }),
+      props.name,
+    );
+
+    return (
+      await this.request({
+        signed,
+        path: `/rest/api/3/issue/${encodeURIComponent(props.key)}/attachments`,
+        method: 'POST',
+        form,
+        timeoutMs: JIRA_WRITE.uploadTimeoutMs,
+      })
+    ).isOk;
+  }
+
+  /** Links an issue to another as related, such as a bug to the story it was planned from; false when Jira refused it. */
+  public async relate(props: { key: string; to: string }): Promise<boolean> {
+    const signed = await this.credentials();
+
+    if (signed === null) return false;
+
+    return (
+      await this.request({
+        signed,
+        path: '/rest/api/3/issueLink',
+        method: 'POST',
+        json: {
+          type: { name: JIRA_WRITE.linkType },
+          inwardIssue: { key: props.key },
+          outwardIssue: { key: props.to },
+        },
+        isEmpty: true,
+      })
+    ).isOk;
+  }
+
   private refsOf(props: { body: unknown; site: string }): IJiraIssueRef[] {
     const { key, fields } = (props.body ?? {}) as {
       key?: unknown;
@@ -125,33 +264,51 @@ export class JiraApi {
   private async request(props: {
     signed: IJiraCredentials;
     path: string;
+    method?: 'POST';
+    json?: unknown;
+    form?: FormData;
     isBinary?: boolean;
+    isEmpty?: boolean;
+    timeoutMs?: number;
   }): Promise<JiraAnswer> {
-    const { signed } = props;
+    const { signed, json, form } = props;
     const basic = Buffer.from(`${signed.email}:${signed.token}`).toString('base64');
     const answer = await this.fetcher(`${signed.site}${props.path}`, {
-      method: 'GET',
+      method: props.method ?? 'GET',
       headers: {
         Accept: props.isBinary === true ? '*/*' : 'application/json',
         Authorization: `Basic ${basic}`,
+        ...(json === undefined ? {} : { 'Content-Type': 'application/json' }),
+        ...(form === undefined ? {} : { 'X-Atlassian-Token': 'no-check' }),
       },
+      ...(json === undefined ? {} : { body: JSON.stringify(json) }),
+      ...(form === undefined ? {} : { body: form }),
       signal: AbortSignal.timeout(
-        props.isBinary === true ? JIRA_READ.downloadTimeoutMs : JIRA_READ.timeoutMs,
+        props.timeoutMs ??
+          (props.isBinary === true ? JIRA_READ.downloadTimeoutMs : JIRA_READ.timeoutMs),
       ),
     }).catch(() => null);
 
-    if (answer === null || !answer.ok)
-      return { isOk: false, failure: jiraFailureOf(answer) };
+    if (answer === null) return { isOk: false, failure: 'unreachable', said: '' };
+
+    if (!answer.ok)
+      return {
+        isOk: false,
+        failure: jiraFailureOf(answer),
+        said: jiraSaidOf(await answer.json().catch(() => null)),
+      };
+
+    if (props.isEmpty === true) return { isOk: true, body: null, bytes: null };
 
     if (props.isBinary === true)
       return answer.arrayBuffer().then(
         (bytes): JiraAnswer => ({ isOk: true, body: null, bytes }),
-        (): JiraAnswer => ({ isOk: false, failure: 'unreachable' }),
+        (): JiraAnswer => ({ isOk: false, failure: 'unreachable', said: '' }),
       );
 
     return answer.json().then(
       (body): JiraAnswer => ({ isOk: true, body, bytes: null }),
-      (): JiraAnswer => ({ isOk: false, failure: 'unexpected' }),
+      (): JiraAnswer => ({ isOk: false, failure: 'unexpected', said: '' }),
     );
   }
 }

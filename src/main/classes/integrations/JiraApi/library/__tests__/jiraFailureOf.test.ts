@@ -9,6 +9,11 @@ describe('jiraFailureOf', () => {
     expect(jiraFailureOf({ status: 500 })).toBe('unexpected');
   });
 
+  it('reads what Jira refused to take: a field it requires, or a file too large', () => {
+    expect(jiraFailureOf({ status: 400 })).toBe('rejected');
+    expect(jiraFailureOf({ status: 413 })).toBe('rejected');
+  });
+
   it('calls no answer at all out of reach', () => {
     expect(jiraFailureOf(null)).toBe('unreachable');
   });

@@ -10,6 +10,7 @@ const STORY_REFUSALS: Record<JiraFailure, string> = {
     'Jira refused the token QAzinho keeps. The QA connects Jira again in Settings → Integrations.',
   'not-found': 'Jira did not find that story, or this account cannot see it.',
   unreachable: 'Jira is out of reach from this machine right now.',
+  rejected: 'Jira refused to hand the story over.',
   unexpected: 'Jira answered in a way QAzinho did not expect.',
 };
 

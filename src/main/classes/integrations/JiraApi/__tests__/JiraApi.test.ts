@@ -10,11 +10,21 @@ const SIGNED = { site: SITE, email: 'ana@acme.test', token: 'jira_secret' };
 
 type Route = { status: number; body?: unknown; bytes?: string } | 'offline';
 
-/** A Jira site that answers by path, and remembers what it was asked and with which headers. */
+/** A Jira site that answers by path, and remembers what it was asked, how, with which headers and what was sent. */
 function fakeSite(routes: Record<string, Route>) {
-  const asked: { url: string; headers: Record<string, string> }[] = [];
+  const asked: {
+    url: string;
+    method: string;
+    headers: Record<string, string>;
+    body: string | FormData | undefined;
+  }[] = [];
   const fetcher: JiraFetcher = (url, init) => {
-    asked.push({ url, headers: init.headers });
+    asked.push({
+      url,
+      method: init.method ?? 'GET',
+      headers: init.headers,
+      body: init.body,
+    });
 
     const route = routes[url.replace(SITE, '')];
 
@@ -154,6 +164,173 @@ describe('JiraApi', () => {
       expect(await jira.download({ id: '1', file, maxBytes: 100 })).toBe(false);
       expect(await jira.download({ id: '2', file, maxBytes: 3 })).toBe(false);
       await expect(readFile(file)).rejects.toThrow();
+    });
+  });
+
+  describe('projects', () => {
+    it('lists the projects the QA opened last first, each once', async () => {
+      const { jira } = api({
+        '/rest/api/3/project/recent': {
+          status: 200,
+          body: [{ key: 'OPS', name: 'Operações' }],
+        },
+        '/rest/api/3/project/search?maxResults=100': {
+          status: 200,
+          body: {
+            values: [
+              { key: 'SHOP', name: 'Loja' },
+              { key: 'OPS', name: 'Operações' },
+            ],
+          },
+        },
+      });
+
+      expect(await jira.projects()).toEqual({
+        isListed: true,
+        projects: [
+          { key: 'OPS', name: 'Operações' },
+          { key: 'SHOP', name: 'Loja' },
+        ],
+      });
+    });
+
+    it('lists them even when Jira keeps no recent ones, and says when it lists none', async () => {
+      const { jira } = api({
+        '/rest/api/3/project/search?maxResults=100': {
+          status: 200,
+          body: { values: [{ key: 'SHOP', name: 'Loja' }] },
+        },
+      });
+
+      expect(await jira.projects()).toEqual({
+        isListed: true,
+        projects: [{ key: 'SHOP', name: 'Loja' }],
+      });
+      expect(
+        await api({
+          '/rest/api/3/project/search?maxResults=100': { status: 401 },
+        }).jira.projects(),
+      ).toEqual({ isListed: false, failure: 'unauthorized' });
+    });
+  });
+
+  describe('fileBug', () => {
+    const REPORT = {
+      title: 'Coupon\nrefused',
+      blocks: [{ kind: 'paragraph' as const, text: 'SAVE10 is refused.' }],
+    };
+    const TYPES = {
+      status: 200,
+      body: {
+        issueTypes: [
+          { id: '10001', name: 'Story', subtask: false },
+          { id: '10004', name: 'Bug', subtask: false },
+        ],
+      },
+    };
+
+    it("files the bug as the project's Bug type, its title on one line and its report as a document", async () => {
+      const { jira, asked } = api({
+        '/rest/api/3/issue/createmeta/SHOP/issuetypes': TYPES,
+        '/rest/api/3/issue': { status: 201, body: { id: '20057', key: 'SHOP-57' } },
+      });
+
+      expect(await jira.fileBug({ project: 'SHOP', report: REPORT })).toEqual({
+        isFiled: true,
+        key: 'SHOP-57',
+        url: `${SITE}/browse/SHOP-57`,
+      });
+
+      const sent = asked.find(({ method }) => method === 'POST');
+
+      expect(sent?.headers['Content-Type']).toBe('application/json');
+      expect(JSON.parse(typeof sent?.body === 'string' ? sent.body : 'null')).toEqual({
+        fields: {
+          project: { key: 'SHOP' },
+          issuetype: { id: '10004' },
+          summary: 'Coupon refused',
+          description: {
+            type: 'doc',
+            version: 1,
+            content: [
+              {
+                type: 'paragraph',
+                content: [{ type: 'text', text: 'SAVE10 is refused.' }],
+              },
+            ],
+          },
+        },
+      });
+    });
+
+    it("says in Jira's words why it refused the issue", async () => {
+      const { jira } = api({
+        '/rest/api/3/issue/createmeta/SHOP/issuetypes': TYPES,
+        '/rest/api/3/issue': {
+          status: 400,
+          body: { errorMessages: [], errors: { components: 'Component/s is required.' } },
+        },
+      });
+
+      expect(await jira.fileBug({ project: 'SHOP', report: REPORT })).toEqual({
+        isFiled: false,
+        failure: 'rejected',
+        said: 'Component/s is required.',
+      });
+    });
+
+    it('does NOT file in a project Jira does not have', async () => {
+      const { jira, asked } = api({});
+
+      expect(await jira.fileBug({ project: 'NOPE', report: REPORT })).toMatchObject({
+        isFiled: false,
+        failure: 'not-found',
+      });
+      expect(asked.some(({ method }) => method === 'POST')).toBe(false);
+    });
+  });
+
+  describe('attach and relate', () => {
+    it('attaches a file with the header Jira asks for', async () => {
+      const { jira, asked } = api({
+        '/rest/api/3/issue/SHOP-57/attachments': {
+          status: 200,
+          body: [{ filename: 'tela.png' }],
+        },
+      });
+
+      expect(
+        await jira.attach({
+          key: 'SHOP-57',
+          name: 'tela.png',
+          type: 'image/png',
+          bytes: new Uint8Array([1, 2, 3]),
+        }),
+      ).toBe(true);
+      expect(asked[0]?.headers['X-Atlassian-Token']).toBe('no-check');
+
+      const form = asked[0]?.body;
+      const file = form instanceof FormData ? form.get('file') : null;
+
+      expect(file instanceof File ? [file.name, file.type, file.size] : null).toEqual([
+        'tela.png',
+        'image/png',
+        3,
+      ]);
+    });
+
+    it('relates a bug to its story, and says when Jira refused it', async () => {
+      const { jira, asked } = api({ '/rest/api/3/issueLink': { status: 201 } });
+
+      expect(await jira.relate({ key: 'SHOP-57', to: 'SHOP-12' })).toBe(true);
+      expect(
+        JSON.parse(typeof asked[0]?.body === 'string' ? asked[0].body : 'null'),
+      ).toEqual({
+        type: { name: 'Relates' },
+        inwardIssue: { key: 'SHOP-57' },
+        outwardIssue: { key: 'SHOP-12' },
+      });
+      expect(await api({}).jira.relate({ key: 'SHOP-57', to: 'SHOP-12' })).toBe(false);
     });
   });
 });

@@ -856,6 +856,7 @@ export const pt: typeof en = {
       'O Jira recusou o token. Conecte o Jira de novo em Configurações → Integrações.',
     FAILURE_NOT_FOUND: 'O Jira não encontrou, ou esta conta não enxerga.',
     FAILURE_UNREACHABLE: 'O Jira está fora de alcance desta máquina. Confira a rede.',
+    FAILURE_REJECTED: 'O Jira recusou o que o QAzinho enviou.',
     FAILURE_UNEXPECTED: 'O Jira respondeu de um jeito que o QAzinho não esperava.',
   },
   ASSISTANT: {
