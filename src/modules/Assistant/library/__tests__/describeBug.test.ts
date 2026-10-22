@@ -46,6 +46,36 @@ describe('describeBug', () => {
     );
   });
 
+  it('tells an update for the issue waits on the QA, and when the bug is a regression', () => {
+    const [bug] = CHECKOUT.bugs;
+    const { text } = describeBug({
+      workspace: {
+        ...CHECKOUT,
+        bugs: [
+          {
+            ...bug!,
+            filed: { tracker: 'jira', key: 'SHOP-57', url: 'https://j/SHOP-57', at: '' },
+            review: {
+              runs: ['r-02'],
+              state: 'suggested',
+              verdict: 'regression',
+              reason: 'It is back on mobile.',
+              comment: 'x',
+              url: null,
+              error: '',
+              at: '',
+            },
+          },
+        ],
+      },
+      bugId: 'BUG-01',
+    });
+
+    expect(text).toContain(
+      'It came back after the issue was closed, and an update for SHOP-57 waits on the QA in Bugs: It is back on mobile.',
+    );
+  });
+
   it('names the runs that caught a bug seen again, and counts its screens', () => {
     const [bug] = CHECKOUT.bugs;
     const { text } = describeBug({

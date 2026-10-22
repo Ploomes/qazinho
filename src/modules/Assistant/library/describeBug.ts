@@ -40,6 +40,11 @@ export function describeBug(props: { workspace: IWorkspace; bugId: string }): {
         : [
             `Filed as ${bug.filed.key} in ${bug.filed.tracker === 'jira' ? 'Jira' : 'GitHub'}: ${bug.filed.url}`,
           ]),
+      ...(bug.filed !== null && bug.review?.state === 'suggested'
+        ? [
+            `${bug.review.verdict === 'regression' ? 'It came back after the issue was closed, and an' : 'An'} update for ${bug.filed.key} waits on the QA in Bugs: ${bug.review.reason}`,
+          ]
+        : []),
       `Seen in ${String(bug.seenRuns)} run${bug.seenRuns === 1 ? '' : 's'}${bug.sightings.length === 0 ? '' : ` (${[...new Set(appearancesOf(bug).map(({ runId }) => runId))].join(', ')})`}${bug.shots.length + bug.sightings.length === 0 ? '' : `, with ${String(bug.shots.length + bug.sightings.length)} screenshot${bug.shots.length + bug.sightings.length === 1 ? '' : 's'} in Bugs`}.`,
     ].join('\n'),
     isError: false,
