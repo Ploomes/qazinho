@@ -1,10 +1,15 @@
 import type {
+  IStartSuiteChange,
   IStartSuiteRun,
   ISuite,
+  ISuiteChange,
   ISuiteRun,
+  SuiteChangeEvent,
   SuiteEvent,
   SuiteList,
   SuitePick,
+  SuiteShipOutcome,
+  SuiteShipWay,
 } from '@/shared/types';
 
 /** The only caller of the automation side of the bridge: the suite each project runs, kept by main. */
@@ -53,5 +58,36 @@ export class Suites {
 
   public static async forget(projectId: string): Promise<void> {
     await window.qazinho?.forgetSuite(projectId);
+  }
+
+  public static async change(start: IStartSuiteChange): Promise<ISuiteChange | null> {
+    return (await window.qazinho?.startSuiteChange(start).catch(() => null)) ?? null;
+  }
+
+  public static stopChange(changeId: string): void {
+    void window.qazinho?.stopSuiteChange(changeId);
+  }
+
+  public static async changes(projectId: string): Promise<ISuiteChange[]> {
+    return (await window.qazinho?.suiteChanges(projectId)) ?? [];
+  }
+
+  public static async ship(props: {
+    projectId: string;
+    changeId: string;
+    way: SuiteShipWay;
+  }): Promise<SuiteShipOutcome | null> {
+    return (await window.qazinho?.shipSuiteChange(props).catch(() => null)) ?? null;
+  }
+
+  public static async discard(props: {
+    projectId: string;
+    changeId: string;
+  }): Promise<ISuiteChange | null> {
+    return (await window.qazinho?.discardSuiteChange(props)) ?? null;
+  }
+
+  public static onChangeEvent(listener: (event: SuiteChangeEvent) => void): () => void {
+    return window.qazinho?.onSuiteChangeEvent(listener) ?? (() => undefined);
   }
 }

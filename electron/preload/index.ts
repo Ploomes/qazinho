@@ -41,8 +41,10 @@ import type {
   ISetupEvent,
   IStartBuild,
   IStartRun,
+  IStartSuiteChange,
   IStartSuiteRun,
   ISuite,
+  ISuiteChange,
   ISuiteRun,
   IViewport,
   InstallableId,
@@ -52,9 +54,12 @@ import type {
   PickKind,
   Platform,
   SaveOutcome,
+  SuiteChangeEvent,
   SuiteEvent,
   SuiteList,
   SuitePick,
+  SuiteShipOutcome,
+  SuiteShipWay,
   VariablesOutcome,
   WindowFit,
 } from '@/shared/types';
@@ -164,6 +169,30 @@ const api: IQazinhoApi = {
 
     return () => {
       ipcRenderer.off(CHANNELS.suiteEvent, forward);
+    };
+  },
+  startSuiteChange: (start: IStartSuiteChange) =>
+    ipcRenderer.invoke(CHANNELS.startSuiteChange, start) as Promise<ISuiteChange>,
+  stopSuiteChange: (changeId: string) =>
+    ipcRenderer.invoke(CHANNELS.stopSuiteChange, changeId) as Promise<void>,
+  suiteChanges: (projectId: string) =>
+    ipcRenderer.invoke(CHANNELS.suiteChanges, projectId) as Promise<ISuiteChange[]>,
+  shipSuiteChange: (props: { projectId: string; changeId: string; way: SuiteShipWay }) =>
+    ipcRenderer.invoke(CHANNELS.shipSuiteChange, props) as Promise<SuiteShipOutcome>,
+  discardSuiteChange: (props: { projectId: string; changeId: string }) =>
+    ipcRenderer.invoke(
+      CHANNELS.discardSuiteChange,
+      props,
+    ) as Promise<ISuiteChange | null>,
+  onSuiteChangeEvent: (listener: (event: SuiteChangeEvent) => void) => {
+    const forward = (_: unknown, event: SuiteChangeEvent) => {
+      listener(event);
+    };
+
+    ipcRenderer.on(CHANNELS.suiteChangeEvent, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.suiteChangeEvent, forward);
     };
   },
   alertRunEnded: (notice: IRunEndNotice) => {

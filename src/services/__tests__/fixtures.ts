@@ -58,6 +58,12 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     suiteRuns: () => Promise.resolve([]),
     openSuiteTrace: () => Promise.resolve(false),
     onSuiteEvent: () => () => undefined,
+    startSuiteChange: () => Promise.reject(new Error('no agent here')),
+    stopSuiteChange: () => Promise.resolve(),
+    suiteChanges: () => Promise.resolve([]),
+    shipSuiteChange: () => Promise.reject(new Error('no git here')),
+    discardSuiteChange: () => Promise.resolve(null),
+    onSuiteChangeEvent: () => () => undefined,
     listSuite: () =>
       Promise.resolve({ kind: 'failed' as const, reason: 'no-suite' as const, said: '' }),
     alertRunEnded: () => undefined,

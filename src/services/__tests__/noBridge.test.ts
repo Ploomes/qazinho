@@ -176,4 +176,16 @@ describe('a page with no bridge', () => {
     }).not.toThrow();
     await expect(Suites.forget('p-1')).resolves.toBeUndefined();
   });
+
+  it('starts no change in a suite, and knows of none', async () => {
+    expect(await Suites.changes('p-1')).toEqual([]);
+    expect(await Suites.discard({ projectId: 'p-1', changeId: 'c-01' })).toBeNull();
+    expect(
+      await Suites.ship({ projectId: 'p-1', changeId: 'c-01', way: 'branch' }),
+    ).toBeNull();
+    expect(() => {
+      Suites.stopChange('c-01');
+      Suites.onChangeEvent(() => undefined)();
+    }).not.toThrow();
+  });
 });

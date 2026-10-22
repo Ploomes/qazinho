@@ -41,8 +41,10 @@ import type { ISavedWorkspace } from './ISavedWorkspace';
 import type { ISetupEvent } from './ISetupEvent';
 import type { IStartBuild } from './IStartBuild';
 import type { IStartRun } from './IStartRun';
+import type { IStartSuiteChange } from './IStartSuiteChange';
 import type { IStartSuiteRun } from './IStartSuiteRun';
 import type { ISuite } from './ISuite';
+import type { ISuiteChange } from './ISuiteChange';
 import type { ISuiteRun } from './ISuiteRun';
 import type { IViewport } from './IViewport';
 import type { McpActionResult } from './McpActionResult';
@@ -50,9 +52,12 @@ import type { McpSignInProgress } from './McpSignInProgress';
 import type { PickKind } from './PickKind';
 import type { Platform } from './Platform';
 import type { SaveOutcome } from './SaveOutcome';
+import type { SuiteChangeEvent } from './SuiteChangeEvent';
 import type { SuiteEvent } from './SuiteEvent';
 import type { SuiteList } from './SuiteList';
 import type { SuitePick } from './SuitePick';
+import type { SuiteShipOutcome } from './SuiteShipOutcome';
+import type { SuiteShipWay } from './SuiteShipWay';
 import type { VariablesOutcome } from './VariablesOutcome';
 import type { WindowFit } from './WindowFit';
 
@@ -96,6 +101,19 @@ export interface IQazinhoApi {
     file: string;
   }) => Promise<boolean>;
   onSuiteEvent: (listener: (event: SuiteEvent) => void) => () => void;
+  startSuiteChange: (start: IStartSuiteChange) => Promise<ISuiteChange>;
+  stopSuiteChange: (changeId: string) => Promise<void>;
+  suiteChanges: (projectId: string) => Promise<ISuiteChange[]>;
+  shipSuiteChange: (props: {
+    projectId: string;
+    changeId: string;
+    way: SuiteShipWay;
+  }) => Promise<SuiteShipOutcome>;
+  discardSuiteChange: (props: {
+    projectId: string;
+    changeId: string;
+  }) => Promise<ISuiteChange | null>;
+  onSuiteChangeEvent: (listener: (event: SuiteChangeEvent) => void) => () => void;
   alertRunEnded: (notice: IRunEndNotice) => void;
   onOpenRun: (listener: (run: IRunRef) => void) => () => void;
   readState: () => Promise<ISavedState>;
