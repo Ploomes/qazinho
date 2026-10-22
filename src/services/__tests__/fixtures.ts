@@ -76,6 +76,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     removeWorkspace: () => Promise.resolve(),
     readShot: () => Promise.resolve(null),
     saveShot: () => Promise.resolve('cancelled'),
+    copyShot: () => Promise.resolve(false),
     pickFile: () => Promise.resolve(null),
     fitWindow: () => Promise.resolve(),
     checkMachine: () =>
@@ -113,6 +114,11 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     listRepositories: () => Promise.resolve({ isListed: false, failure: 'no-cli' }),
     listBranches: () => Promise.resolve({ isListed: false, failure: 'no-cli' }),
     searchJira: () => Promise.resolve({ isListed: false, failure: 'not-connected' }),
+    listJiraProjects: () =>
+      Promise.resolve({ isListed: false, failure: 'not-connected' }),
+    fileBug: () =>
+      Promise.resolve({ isFiled: false, failure: 'not-connected', said: '' }),
+    onFilingEvent: () => () => undefined,
     listMcpServers: () => Promise.resolve([{ id: 'figma', state: 'missing' }]),
     connectMcpServer: (signIn) =>
       Promise.resolve({ target: signIn.target, steps: ['check'], phase: 'connected' }),

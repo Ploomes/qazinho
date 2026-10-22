@@ -1,4 +1,5 @@
 export * from './AgentMcp';
+export * from './BugFiler';
 export * from './CodeCopies';
 export * from './GithubCli';
 export * from './GithubRepos';

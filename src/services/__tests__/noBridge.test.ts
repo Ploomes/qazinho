@@ -4,9 +4,11 @@ import { i18n } from '@/languages';
 import {
   Agent,
   Assistant,
+  Bugs,
   Builds,
   Github,
   Integrations,
+  Jira,
   Mcp,
   Run,
   Setup,
@@ -187,6 +189,26 @@ describe('a page with no bridge', () => {
     expect(() => {
       Suites.stopChange('c-01');
       Suites.onChangeEvent(() => undefined)();
+    }).not.toThrow();
+  });
+
+  it('sends no bug to a tracker, and copies no screen', async () => {
+    expect(
+      await Bugs.file({
+        filingId: 'f-1',
+        target: { tracker: 'jira', project: 'SHOP' },
+        story: null,
+        report: { title: 'Coupon refused', blocks: [] },
+        shots: [],
+        video: null,
+      }),
+    ).toEqual({ isFiled: false, failure: 'not-connected', said: '' });
+    expect(await Bugs.copyShot({ file: null, src: 'data:image/png;base64,' })).toBe(
+      false,
+    );
+    expect(await Jira.projects()).toEqual({ isListed: false, failure: 'unreachable' });
+    expect(() => {
+      Bugs.onFiling(() => undefined)();
     }).not.toThrow();
   });
 });

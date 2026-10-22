@@ -2,6 +2,8 @@ import type { AppLook } from '@/harness';
 import type {
   AgentSignInProgress,
   GithubSignInProgress,
+  IFileBug,
+  IFilingEvent,
   IAgentEvent,
   IAgentTurn,
   IAppToolAnswer,
@@ -47,6 +49,8 @@ import { promisify } from 'node:util';
 import {
   app,
   BrowserWindow,
+  clipboard,
+  ClipboardItem,
   dialog,
   ipcMain,
   nativeImage,
@@ -66,6 +70,7 @@ import {
   AppPeek,
   Archive,
   AssistantAgent,
+  BugFiler,
   CodeCopies,
   CodeExport,
   DeviceToolDetector,
@@ -174,7 +179,8 @@ function broadcast(props: {
     | GithubSignInProgress
     | IBuildEvent
     | SuiteEvent
-    | SuiteChangeEvent;
+    | SuiteChangeEvent
+    | IFilingEvent;
 }): void {
   for (const open of appWindows()) open.webContents.send(props.channel, props.event);
 }
@@ -251,6 +257,14 @@ const jira = new JiraApi({
   fetcher: (url, init) => fetch(url, init),
 });
 const jiraStories = new JiraStories({ jira, root: PATHS.jira });
+const bugFiler = new BugFiler({
+  jira,
+  github,
+  readShot: (shot) => shotBytes(shot),
+  recordingOf: (run) => replays.fileOf(run),
+  onEvent: (event) => broadcast({ channel: CHANNELS.filingEvent, event }),
+  now: () => new Date(),
+});
 const variables = new VariableVault({ file: PATHS.variables, cipher: keychain });
 const git = new GitCli({ directories: commandDirectories });
 const suites = new SuiteRegistry({ root: PATHS.suites, git });
@@ -686,6 +700,27 @@ async function shotBytes(props: {
   return served === null ? bytesOfDataUrl(props.src) : readFile(served).catch(() => null);
 }
 
+async function copyShot(props: {
+  file: string | null;
+  src: string | null;
+}): Promise<boolean> {
+  const bytes = await shotBytes(props);
+  const image = bytes === null ? null : nativeImage.createFromBuffer(bytes);
+
+  if (image === null || image.isEmpty()) return false;
+
+  return clipboard
+    .write([
+      new ClipboardItem({
+        'image/png': new Blob([new Uint8Array(image.toPNG())], { type: 'image/png' }),
+      }),
+    ])
+    .then(
+      () => true,
+      () => false,
+    );
+}
+
 async function saveReplay(props: IRunRef & { name: string }): Promise<SaveOutcome> {
   const file = await replays.fileOf(props);
 
@@ -951,6 +986,10 @@ void app.whenReady().then(async () => {
     (_event, props: { file: string | null; src: string | null; name: string }) =>
       saveShot(props),
   );
+  ipcMain.handle(
+    CHANNELS.copyShot,
+    (_event, shot: { file: string | null; src: string | null }) => copyShot(shot),
+  );
   ipcMain.handle(CHANNELS.pickFile, (_event, kind: PickKind) => pickFile(kind));
   ipcMain.handle(CHANNELS.pickSuite, (_event, projectId: string) => pickSuite(projectId));
   ipcMain.handle(CHANNELS.suiteOf, (_event, projectId: string) =>
@@ -1025,6 +1064,8 @@ void app.whenReady().then(async () => {
   });
   ipcMain.handle(CHANNELS.listRepositories, () => repos.repositories());
   ipcMain.handle(CHANNELS.searchJira, (_event, query: string) => jira.search(query));
+  ipcMain.handle(CHANNELS.listJiraProjects, () => jira.projects());
+  ipcMain.handle(CHANNELS.fileBug, (_event, request: IFileBug) => bugFiler.file(request));
   ipcMain.handle(CHANNELS.listBranches, (_event, repository: IRepositoryRef) =>
     repos.branches(repository),
   );

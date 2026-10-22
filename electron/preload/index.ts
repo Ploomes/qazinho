@@ -1,5 +1,6 @@
 import type {
   AgentSignInProgress,
+  BugFiling,
   ExportOutcome,
   GithubSignInProgress,
   IAgentEvent,
@@ -19,6 +20,8 @@ import type {
   IDetectedAgent,
   IDeviceTools,
   IExportCode,
+  IFileBug,
+  IFilingEvent,
   IGithubStatus,
   IInstallResult,
   IIntegrationStatus,
@@ -49,6 +52,7 @@ import type {
   IViewport,
   InstallableId,
   JiraIssueList,
+  JiraProjectList,
   IntegrationId,
   McpActionResult,
   McpSignInProgress,
@@ -224,6 +228,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.readShot, file) as Promise<string | null>,
   saveShot: (props: { file: string | null; src: string | null; name: string }) =>
     ipcRenderer.invoke(CHANNELS.saveShot, props) as Promise<SaveOutcome>,
+  copyShot: (shot: { file: string | null; src: string | null }) =>
+    ipcRenderer.invoke(CHANNELS.copyShot, shot) as Promise<boolean>,
   pickFile: (kind: PickKind) =>
     ipcRenderer.invoke(CHANNELS.pickFile, kind) as Promise<string | null>,
   fitWindow: (fit: WindowFit) =>
@@ -279,6 +285,21 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.listBranches, repository) as Promise<IBranchList>,
   searchJira: (query: string) =>
     ipcRenderer.invoke(CHANNELS.searchJira, query) as Promise<JiraIssueList>,
+  listJiraProjects: () =>
+    ipcRenderer.invoke(CHANNELS.listJiraProjects) as Promise<JiraProjectList>,
+  fileBug: (request: IFileBug) =>
+    ipcRenderer.invoke(CHANNELS.fileBug, request) as Promise<BugFiling>,
+  onFilingEvent: (listener: (event: IFilingEvent) => void) => {
+    const forward = (_: unknown, event: IFilingEvent) => {
+      listener(event);
+    };
+
+    ipcRenderer.on(CHANNELS.filingEvent, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.filingEvent, forward);
+    };
+  },
   listMcpServers: (agentId: string) =>
     ipcRenderer.invoke(CHANNELS.listMcpServers, agentId) as Promise<IMcpServerStatus[]>,
   connectMcpServer: (signIn: IMcpSignIn) =>
