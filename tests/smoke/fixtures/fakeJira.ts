@@ -67,8 +67,8 @@ export function storyOf(props: {
 
 /**
  * A Jira Cloud site on loopback, for QAzinho's Jira client to talk to: it searches, hands over a
- * story and its files, files a bug with its attachments and links, and remembers what it was
- * asked. Only the email and token it knows are let in, and the project LOCKED asks for a field
+ * story and its files, files a bug with its attachments and links, hands a filed one back with
+ * the comments under it and takes more, and remembers what it was asked. Only the email and token it knows are let in, and the project LOCKED asks for a field
  * QAzinho never fills, the way a team's required component does.
  */
 export function fakeJira(props: {
@@ -87,6 +87,7 @@ export function fakeJira(props: {
     bytes: number;
   }[] = [];
   const linked: { type: string; inward: string; outward: string }[] = [];
+  const commented: { key: string; body: unknown }[] = [];
   const asked: string[] = [];
   const basic = `Basic ${Buffer.from(`${JIRA_EMAIL}:${JIRA_TOKEN}`).toString('base64')}`;
   const attachments = Object.entries(props.files).map(([id, file]) => ({
@@ -153,6 +154,36 @@ export function fakeJira(props: {
       }
 
       const issue = /^\/rest\/api\/3\/issue\/([A-Z]+-\d+)$/.exec(url.pathname);
+
+      const made = created.findIndex(
+        (_, index) =>
+          issue?.[1] === `${created[index]?.project ?? ''}-${String(57 + index)}`,
+      );
+
+      if (issue !== null && request.method === 'GET' && made !== -1) {
+        json(response, {
+          status: 200,
+          body: {
+            key: issue[1],
+            fields: {
+              summary: created[made]?.summary,
+              description: created[made]?.description,
+              status: { name: 'To Do', statusCategory: { key: 'new' } },
+              comment: {
+                comments: commented
+                  .filter(({ key }) => key === issue[1])
+                  .map(({ body: said }) => ({
+                    author: { displayName: 'Ana QA' },
+                    created: '',
+                    body: said,
+                  })),
+              },
+            },
+          },
+        });
+
+        return;
+      }
 
       if (issue !== null && request.method === 'GET') {
         if (issue[1] !== 'SHOP-12') {
@@ -276,6 +307,19 @@ export function fakeJira(props: {
         return;
       }
 
+      const commenting = /^\/rest\/api\/3\/issue\/([A-Z]+-\d+)\/comment$/.exec(
+        url.pathname,
+      );
+
+      if (commenting !== null && request.method === 'POST') {
+        const sent = JSON.parse((await body(request)).toString()) as { body: unknown };
+
+        commented.push({ key: commenting[1] ?? '', body: sent.body });
+        json(response, { status: 201, body: { id: `100${String(commented.length)}` } });
+
+        return;
+      }
+
       const attaching = /^\/rest\/api\/3\/issue\/([A-Z]+-\d+)\/attachments$/.exec(
         url.pathname,
       );
@@ -339,5 +383,5 @@ export function fakeJira(props: {
     })();
   });
 
-  return { server, created, attached, linked, asked };
+  return { server, created, attached, linked, commented, asked };
 }
