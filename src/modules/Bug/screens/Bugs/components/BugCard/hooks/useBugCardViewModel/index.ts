@@ -85,6 +85,15 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
       props.onOpenCase(bug.caseId);
     },
     filedKey: filed?.key ?? null,
+    updateChip:
+      bug.review?.state !== 'suggested'
+        ? null
+        : bug.review.verdict === 'regression'
+          ? {
+              label: t('BUG_UPDATE.CHIP_REGRESSION'),
+              className: 'bug-card__update bug-card__update--regression',
+            }
+          : { label: t('BUG_UPDATE.CHIP_UPDATE'), className: 'bug-card__update' },
     sendLabel: t('FILING.SEND'),
     issueLabel:
       filed === null

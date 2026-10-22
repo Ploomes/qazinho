@@ -2,7 +2,7 @@ import type { IBugCardProps } from './types';
 import { useTranslation } from 'react-i18next';
 import { Button, Caret, Eyebrow, Icon } from '@/shared/components/atoms';
 import { ExpectedGot, MetaGrid, Screenshot } from '@/shared/components/molecules';
-import { MomentTile } from './components';
+import { BugUpdate, MomentTile } from './components';
 import { useBugCardViewModel } from './hooks';
 import './styles.css';
 
@@ -20,6 +20,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
     runLabel,
     caseLabel,
     filedKey,
+    updateChip,
     sendLabel,
     issueLabel,
     canCopyScreen,
@@ -57,6 +58,9 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
             {filedKey}
           </span>
         )}
+        {updateChip !== null && (
+          <span className={updateChip.className}>{updateChip.label}</span>
+        )}
         {bug.isNew && <span className="bug-card__new">{newLabel}</span>}
         <span className="bug-card__id">{severity}</span>
         <Caret isOpen={props.isOpen} />
@@ -64,6 +68,8 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
 
       {props.isOpen && (
         <div className="bug-card__body">
+          <BugUpdate workspaceId={props.workspaceId} bug={bug} />
+
           {hasBody && <p className="bug-card__text">{bug.body}</p>}
 
           <div>

@@ -66,6 +66,24 @@
   animation: gc-in var(--dur) var(--ease);
 }
 
+.bug-card__update {
+  flex: none;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--lime);
+  border-radius: var(--radius-pill);
+  background: var(--lime-soft);
+  color: var(--lime-ink);
+  font: var(--font-mono-xs);
+  white-space: nowrap;
+  animation: gc-in var(--dur) var(--ease);
+}
+
+.bug-card__update--regression {
+  border-color: var(--fail);
+  background: var(--fail-soft);
+  color: var(--fail);
+}
+
 .bug-card__new {
   padding: 3px var(--space-3);
   border: var(--edge-width) solid var(--edge);

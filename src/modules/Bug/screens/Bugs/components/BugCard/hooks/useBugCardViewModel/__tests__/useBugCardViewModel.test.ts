@@ -13,6 +13,7 @@ const WORKSPACE = walkRun({
 });
 const BUG = WORKSPACE.bugs[0]!;
 const PROPS = {
+  workspaceId: 'w1',
   bug: BUG,
   isOpen: false,
   hasRun: true,
@@ -282,6 +283,49 @@ describe('useBugCardViewModel', () => {
         expect(result.current.copyLabel).toBe('Copied');
       });
       Reflect.deleteProperty(window, 'qazinho');
+    });
+  });
+
+  describe('the update chip', () => {
+    const REVIEW = {
+      runs: ['r-02'],
+      state: 'suggested' as const,
+      verdict: 'news' as const,
+      reason: '',
+      comment: 'x',
+      url: null,
+      error: '',
+      at: '',
+    };
+
+    it('marks a bug with an update waiting on the QA, and a regression apart', () => {
+      expect(
+        renderHook(() =>
+          useBugCardViewModel({ ...PROPS, bug: { ...BUG, review: REVIEW } }),
+        ).result.current.updateChip,
+      ).toEqual({ label: 'update', className: 'bug-card__update' });
+      expect(
+        renderHook(() =>
+          useBugCardViewModel({
+            ...PROPS,
+            bug: { ...BUG, review: { ...REVIEW, verdict: 'regression' } },
+          }),
+        ).result.current.updateChip,
+      ).toEqual({
+        label: 'regression',
+        className: 'bug-card__update bug-card__update--regression',
+      });
+    });
+
+    it('marks nothing once the update is posted or put aside', () => {
+      expect(
+        renderHook(() =>
+          useBugCardViewModel({
+            ...PROPS,
+            bug: { ...BUG, review: { ...REVIEW, state: 'posted' } },
+          }),
+        ).result.current.updateChip,
+      ).toBeNull();
     });
   });
 });

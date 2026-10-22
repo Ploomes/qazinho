@@ -70,6 +70,7 @@ export const useBugsViewModel = () => {
               },
       };
     }),
+    workspaceId: workspace?.id ?? '',
     openBugId,
     filters: BUG_FILTERS.map((id) => ({
       id,

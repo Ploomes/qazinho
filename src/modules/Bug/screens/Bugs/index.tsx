@@ -8,6 +8,7 @@ import './styles.css';
 export const Bugs: React.FC = () => {
   const {
     bugs,
+    workspaceId,
     openBugId,
     filters,
     isEmpty,
@@ -58,6 +59,7 @@ export const Bugs: React.FC = () => {
         {bugs.map(({ bug, hasRun, hasCase, lastRunId, moment }) => (
           <BugCard
             key={bug.id}
+            workspaceId={workspaceId}
             bug={bug}
             hasRun={hasRun}
             hasCase={hasCase}
