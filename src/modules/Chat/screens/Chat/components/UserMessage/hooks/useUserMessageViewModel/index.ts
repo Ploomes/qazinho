@@ -13,7 +13,25 @@ export const useUserMessageViewModel = (props: IUserMessageProps) => {
     command:
       command === undefined || labelKey === undefined
         ? null
-        : { name: t(labelKey), repository: command.repository, branch: command.branch },
+        : {
+            name: t(labelKey),
+            parts: (command.id === 'jira-plan'
+              ? [
+                  { text: command.key, isStrong: true },
+                  { text: command.summary, isStrong: false },
+                ]
+              : [
+                  { text: command.repository, isStrong: false },
+                  { text: command.branch, isStrong: true },
+                ]
+            ).map((part, index) => ({
+              key: `${String(index)}-${part.text}`,
+              text: part.text,
+              className: part.isStrong
+                ? 'user-message__command-part user-message__command-part--strong'
+                : 'user-message__command-part',
+            })),
+          },
     parts: splitMentions({ text, ids: mentions }).map((part, index) => ({
       ...part,
       key: `${String(index)}-${part.text}`,

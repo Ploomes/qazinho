@@ -70,24 +70,15 @@ export const Composer: React.FC<IComposerProps> = (props) => {
             <motion.span key="command" className="composer__command" {...commandMotion}>
               <span className="composer__command-name">/ {commandChip.name}</span>
               <AnimatePresence initial={false}>
-                {commandChip.repository !== null && (
+                {commandChip.parts.map((part) => (
                   <motion.span
-                    key={commandChip.repository}
-                    className="composer__command-part"
+                    key={part.key}
+                    className={part.className}
                     {...commandMotion}
                   >
-                    {commandChip.repository}
+                    {part.text}
                   </motion.span>
-                )}
-                {commandChip.branch !== null && (
-                  <motion.span
-                    key={`branch-${commandChip.branch}`}
-                    className="composer__command-part composer__command-part--branch"
-                    {...commandMotion}
-                  >
-                    {commandChip.branch}
-                  </motion.span>
-                )}
+                ))}
               </AnimatePresence>
             </motion.span>
           )}

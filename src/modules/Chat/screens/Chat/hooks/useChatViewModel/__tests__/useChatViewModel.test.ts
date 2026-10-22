@@ -1092,6 +1092,122 @@ describe('useChatViewModel', () => {
     });
   });
 
+  describe('a plan from a Jira story', () => {
+    const STORY = {
+      key: 'SHOP-12',
+      summary: 'Aplicar cupom',
+      url: 'https://acme.atlassian.net/browse/SHOP-12',
+    };
+
+    beforeEach(() => {
+      useSetupStore.setState({
+        integrations: [
+          {
+            id: 'jira',
+            account: 'Ana QA',
+            site: 'https://acme.atlassian.net',
+            connectedAt: '2026-10-20',
+          },
+        ],
+      });
+    });
+
+    it('offers to plan from a story once Jira is in, and not before', () => {
+      answering({});
+
+      expect(
+        renderHook(() => useChatViewModel()).result.current.suggestions.map(
+          ({ label }) => label,
+        ),
+      ).toContain('Plan from a Jira story');
+
+      useSetupStore.setState({ integrations: [] });
+
+      expect(
+        renderHook(() => useChatViewModel()).result.current.suggestions.map(
+          ({ label }) => label,
+        ),
+      ).not.toContain('Plan from a Jira story');
+    });
+
+    it('sends the story picked with the command, and keeps the command on the message', async () => {
+      const ask = answering({ answer: DRAFTED });
+
+      window.qazinho.searchJira = vi
+        .fn()
+        .mockResolvedValue({ isListed: true, issues: [STORY] });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.suggestions
+          .find(({ label }) => label === 'Plan from a Jira story')
+          ?.onClick();
+      });
+
+      await waitFor(() => {
+        expect(result.current.commandPicker?.rows.map(({ id }) => id)).toEqual([
+          'SHOP-12',
+        ]);
+      });
+
+      act(() => {
+        result.current.onPickCommand('SHOP-12');
+      });
+      act(() => {
+        result.current.onSend();
+      });
+
+      await waitFor(() => {
+        expect(ask).toHaveBeenCalledOnce();
+      });
+      expect(ask.mock.calls[0]?.[0]).toMatchObject({
+        text: 'Plan the tests for the Jira story SHOP-12: Aplicar cupom.',
+        code: null,
+        jira: { key: 'SHOP-12' },
+      });
+      expect(useWorkspaceStore.getState().workspaces[0]?.chat[0]).toMatchObject({
+        kind: 'user',
+        text: '',
+        command: { id: 'jira-plan', ...STORY },
+      });
+    });
+
+    it('says how reading the story goes while the agent waits for it', () => {
+      answering({});
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...makeWorkspace([]),
+            chat: [
+              {
+                id: 'm-1',
+                kind: 'user',
+                at: '09:00',
+                text: '',
+                command: { id: 'jira-plan', ...STORY },
+              },
+            ],
+          },
+        ],
+        askingIds: ['w1'],
+        readSteps: { w1: { step: 'story', bytes: 0 } },
+      });
+
+      expect(renderHook(() => useChatViewModel()).result.current.readStatus).toBe(
+        'Reading SHOP-12 from Jira…',
+      );
+
+      useWorkspaceStore.setState({
+        readSteps: { w1: { step: 'files', bytes: 2 * 1024 * 1024 } },
+      });
+
+      expect(renderHook(() => useChatViewModel()).result.current.readStatus).toBe(
+        'Downloading the files of SHOP-12 · 2 MB',
+      );
+    });
+  });
+
   describe('a plan from the code', () => {
     const LOJA = { owner: 'acme', name: 'loja-web', baseBranch: 'develop' };
 
@@ -1222,13 +1338,13 @@ describe('useChatViewModel', () => {
 
       const { result } = renderHook(() => useChatViewModel());
 
-      expect(result.current.codeStatus).toBe(
+      expect(result.current.readStatus).toBe(
         'Downloading the code of acme/loja-web · 3.3 MB',
       );
 
       useWorkspaceStore.setState({ readSteps: { w1: { step: 'diff', bytes: 0 } } });
 
-      expect(renderHook(() => useChatViewModel()).result.current.codeStatus).toBe(
+      expect(renderHook(() => useChatViewModel()).result.current.readStatus).toBe(
         'Reading what changed since develop…',
       );
     });

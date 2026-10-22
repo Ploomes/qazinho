@@ -1,30 +1,40 @@
 import type {
   ChatCommandId,
   ICommandDraft,
+  ICommandPart,
   ICommandPicker,
   ICommandRow,
   IComposerCommand,
-  IUserCommand,
+  UserCommand,
 } from '@/modules/Chat/types';
 import type { IProjectRepository } from '@/modules/Project/types';
-import type { IBranch, IBranchList, ICodeAsk } from '@/shared/types';
-import { useState } from 'react';
+import type {
+  IBranch,
+  IBranchList,
+  ICodeAsk,
+  IJiraAsk,
+  JiraIssueList,
+} from '@/shared/types';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { matchesQuery } from '@/modules/Chat/library';
-import { CHAT_COMMANDS } from '@/modules/Chat/screens/Chat/constants';
-import { GITHUB_FAILURE_KEYS } from '@/modules/Setup';
-import { Github } from '@/services';
+import { CHAT_COMMANDS, COMMAND_SEARCH } from '@/modules/Chat/screens/Chat/constants';
+import { GITHUB_FAILURE_KEYS, JIRA_FAILURE_KEYS } from '@/modules/Setup';
+import { Github, Jira } from '@/services';
 
 export const useChatCommand = (props: {
   draft: string;
   repositories: IProjectRepository[];
   isGithubConnected: boolean;
+  isJiraConnected: boolean;
   onDraft: (draft: string) => void;
 }) => {
-  const { draft, repositories, isGithubConnected, onDraft } = props;
+  const { draft, repositories, isGithubConnected, isJiraConnected, onDraft } = props;
   const { t } = useTranslation();
   const [command, setCommand] = useState<ICommandDraft | null>(null);
   const [branchLists, setBranchLists] = useState<Record<string, IBranchList>>({});
+  const [found, setFound] = useState<{ query: string; list: JiraIssueList } | null>(null);
+  const searches = useRef(0);
 
   const keyOf = (repository: IProjectRepository) =>
     `${repository.owner}/${repository.name}`;
@@ -34,20 +44,52 @@ export const useChatCommand = (props: {
       ? slash === null
         ? null
         : 'command'
-      : command.repository === null
-        ? 'repository'
-        : command.branch === null
-          ? 'branch'
-          : 'ready';
-  const blocker = !isGithubConnected
-    ? t('COMMANDS.NEEDS_GITHUB')
-    : repositories.length === 0
-      ? t('COMMANDS.NEEDS_REPOSITORIES')
-      : null;
+      : command.id === 'jira-plan'
+        ? command.issue === null
+          ? 'story'
+          : 'ready'
+        : command.repository === null
+          ? 'repository'
+          : command.branch === null
+            ? 'branch'
+            : 'ready';
+  const blockerOf = (id: ChatCommandId) =>
+    id === 'jira-plan'
+      ? isJiraConnected
+        ? null
+        : t('COMMANDS.NEEDS_JIRA')
+      : !isGithubConnected
+        ? t('COMMANDS.NEEDS_GITHUB')
+        : repositories.length === 0
+          ? t('COMMANDS.NEEDS_REPOSITORIES')
+          : null;
   const repository = command?.repository ?? null;
   const base = repository?.baseBranch ?? '';
   const branchList =
     repository === null ? null : (branchLists[keyOf(repository)] ?? null);
+  const typed = draft.trim();
+
+  useEffect(() => {
+    if (step !== 'story') return;
+
+    const asked = typed;
+    const timer = setTimeout(
+      () => {
+        searches.current += 1;
+
+        const search = searches.current;
+
+        void Jira.search(asked).then((list) => {
+          if (search === searches.current) setFound({ query: asked, list });
+        });
+      },
+      asked === '' ? 0 : COMMAND_SEARCH.debounceMs,
+    );
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [step, typed]);
 
   const load = (picked: IProjectRepository) => {
     if (branchLists[keyOf(picked)] !== undefined) return;
@@ -58,10 +100,12 @@ export const useChatCommand = (props: {
   };
 
   const start = (id: ChatCommandId) => {
-    const only = repositories.length === 1 ? (repositories[0] ?? null) : null;
+    const only =
+      id === 'code-plan' && repositories.length === 1 ? (repositories[0] ?? null) : null;
 
-    setCommand({ id, repository: only, branch: null });
+    setCommand({ id, repository: only, branch: null, issue: null });
     if (only !== null) load(only);
+    if (id === 'jira-plan') setFound(null);
     onDraft('');
   };
 
@@ -70,13 +114,17 @@ export const useChatCommand = (props: {
       text: `${one.slug} ${t(one.labelKey)} ${one.aliases}`,
       query: slash ?? '',
     }),
-  ).map((one) => ({
-    id: one.id,
-    label: t(one.labelKey),
-    tag: one.slug,
-    detail: blocker ?? t(one.textKey),
-    isDisabled: blocker !== null,
-  }));
+  ).map((one) => {
+    const blocker = blockerOf(one.id);
+
+    return {
+      id: one.id,
+      label: t(one.labelKey),
+      tag: one.slug,
+      detail: blocker ?? t(one.textKey),
+      isDisabled: blocker !== null,
+    };
+  });
 
   const repositoryRows: ICommandRow[] = repositories
     .filter((one) => matchesQuery({ text: keyOf(one), query: draft }))
@@ -117,22 +165,53 @@ export const useChatCommand = (props: {
           }))
       : [];
 
+  const stories = found?.list.isListed === true ? found.list.issues : [];
+  const storyRows: ICommandRow[] = stories.map((issue) => ({
+    id: issue.key,
+    label: issue.key,
+    tag: null,
+    detail: issue.summary,
+    isDisabled: false,
+  }));
+
   const rows =
     step === 'command'
       ? commandRows
       : step === 'repository'
         ? repositoryRows
-        : branchRows;
+        : step === 'story'
+          ? storyRows
+          : branchRows;
   const query = (step === 'command' ? (slash ?? '') : draft).trim();
   const note =
     step === 'branch' && branchList === null
       ? t('COMMANDS.BRANCH_LOADING')
       : step === 'branch' && branchList?.isListed === false
         ? t(GITHUB_FAILURE_KEYS[branchList.failure])
-        : rows.length === 0 && query !== ''
-          ? t('COMMANDS.NONE', { query })
-          : null;
+        : step === 'story' && found?.list.isListed === false
+          ? t(JIRA_FAILURE_KEYS[found.list.failure])
+          : step === 'story' && found?.query !== typed
+            ? t('COMMANDS.STORY_SEARCHING')
+            : rows.length === 0 && query !== ''
+              ? t('COMMANDS.NONE', { query })
+              : null;
   const label = CHAT_COMMANDS.find(({ id }) => id === command?.id)?.labelKey;
+  const issue = command?.issue ?? null;
+  const branch = command?.branch ?? null;
+  const parts: ICommandPart[] =
+    issue !== null
+      ? [
+          { key: `key-${issue.key}`, text: issue.key, isStrong: true },
+          { key: `summary-${issue.key}`, text: issue.summary, isStrong: false },
+        ]
+      : [
+          ...(repository === null
+            ? []
+            : [{ key: keyOf(repository), text: keyOf(repository), isStrong: false }]),
+          ...(branch === null
+            ? []
+            : [{ key: `branch-${branch}`, text: branch, isStrong: true }]),
+        ];
 
   return {
     command:
@@ -140,15 +219,16 @@ export const useChatCommand = (props: {
         ? null
         : ({
             name: label === undefined ? '' : t(label),
-            repository: repository === null ? null : keyOf(repository),
-            branch: command.branch,
+            parts,
             isReady: step === 'ready',
             placeholder:
               step === 'repository'
                 ? t('COMMANDS.PICK_REPOSITORY')
                 : step === 'branch'
                   ? t('COMMANDS.PICK_BRANCH')
-                  : t('COMMANDS.NOTE'),
+                  : step === 'story'
+                    ? t('COMMANDS.PICK_STORY')
+                    : t('COMMANDS.NOTE'),
           } satisfies IComposerCommand),
     picker:
       step === null || step === 'ready'
@@ -157,9 +237,13 @@ export const useChatCommand = (props: {
             heading:
               step === 'command'
                 ? t('COMMANDS.HEADING')
-                : step === 'repository' || repository === null
-                  ? t('COMMANDS.REPOSITORY_HEADING')
-                  : t('COMMANDS.BRANCH_HEADING', { repository: keyOf(repository) }),
+                : step === 'story'
+                  ? typed === ''
+                    ? t('COMMANDS.STORY_RECENT')
+                    : t('COMMANDS.STORY_HEADING')
+                  : step === 'repository' || repository === null
+                    ? t('COMMANDS.REPOSITORY_HEADING')
+                    : t('COMMANDS.BRANCH_HEADING', { repository: keyOf(repository) }),
             rows,
             note,
             hint: t('COMMANDS.HINT'),
@@ -178,7 +262,14 @@ export const useChatCommand = (props: {
 
       if (command === null) return;
 
-      if (step === 'repository') {
+      if (step === 'story') {
+        const picked = stories.find(({ key }) => key === id);
+
+        if (picked === undefined) return;
+
+        setCommand({ ...command, issue: picked });
+        onDraft('');
+      } else if (step === 'repository') {
         const picked = repositories.find((one) => keyOf(one) === id);
 
         if (picked === undefined) return;
@@ -194,7 +285,8 @@ export const useChatCommand = (props: {
     onBack: () => {
       if (command === null) return;
 
-      if (command.branch !== null) setCommand({ ...command, branch: null });
+      if (command.issue !== null) setCommand({ ...command, issue: null });
+      else if (command.branch !== null) setCommand({ ...command, branch: null });
       else if (command.repository !== null && repositories.length > 1)
         setCommand({ ...command, repository: null });
       else setCommand(null);
@@ -203,6 +295,31 @@ export const useChatCommand = (props: {
       setCommand(null);
     },
     ask: (words: string) => {
+      const note = words.trim();
+
+      if (command?.id === 'jira-plan') {
+        const { issue } = command;
+
+        if (issue === null) return null;
+
+        const say = t('COMMANDS.JIRA_PLAN_SAY', {
+          key: issue.key,
+          summary: issue.summary,
+        });
+
+        return {
+          text: note === '' ? say : `${say}\n\n${note}`,
+          code: null,
+          jira: { key: issue.key } satisfies IJiraAsk,
+          command: {
+            id: 'jira-plan',
+            key: issue.key,
+            summary: issue.summary,
+            url: issue.url,
+          } satisfies UserCommand,
+        };
+      }
+
       if (command === null || repository === null || command.branch === null) return null;
 
       const name = keyOf(repository);
@@ -217,7 +334,6 @@ export const useChatCommand = (props: {
               branch: command.branch,
               base: repository.baseBranch,
             });
-      const note = words.trim();
 
       return {
         text: note === '' ? say : `${say}\n\n${note}`,
@@ -227,12 +343,13 @@ export const useChatCommand = (props: {
           base: repository.baseBranch,
           branch: command.branch,
         } satisfies ICodeAsk,
+        jira: null,
         command: {
-          id: command.id,
+          id: 'code-plan',
           repository: name,
           branch: command.branch,
           base: repository.baseBranch,
-        } satisfies IUserCommand,
+        } satisfies UserCommand,
       };
     },
     clear: () => {

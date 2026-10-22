@@ -11,10 +11,11 @@ export const UserMessage: React.FC<IUserMessageProps> = (props) => {
       {command !== null && (
         <span className="user-message__command">
           <span className="user-message__command-name">/ {command.name}</span>
-          <span className="user-message__command-part">{command.repository}</span>
-          <span className="user-message__command-part user-message__command-part--branch">
-            {command.branch}
-          </span>
+          {command.parts.map((part) => (
+            <span key={part.key} className={part.className}>
+              {part.text}
+            </span>
+          ))}
         </span>
       )}
       {hasText && (

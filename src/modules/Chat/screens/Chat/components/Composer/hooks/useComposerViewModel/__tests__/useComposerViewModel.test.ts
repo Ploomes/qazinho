@@ -40,8 +40,7 @@ const PICKER = {
 
 const ON_BRANCH = {
   name: 'Plan from the code',
-  repository: 'acme/loja-web',
-  branch: null,
+  parts: [{ key: 'acme/loja-web', text: 'acme/loja-web', isStrong: false }],
   isReady: false,
   placeholder: 'Which branch? Type to search',
 };
@@ -567,7 +566,10 @@ describe('useComposerViewModel', () => {
           value: '',
           command: {
             ...ON_BRANCH,
-            branch: 'feat/cupom',
+            parts: [
+              ...ON_BRANCH.parts,
+              { key: 'branch-feat/cupom', text: 'feat/cupom', isStrong: true },
+            ],
             isReady: true,
             placeholder: 'Anything else?',
           },
@@ -591,6 +593,34 @@ describe('useComposerViewModel', () => {
       );
 
       expect(result.current.canPress).toBe(false);
+    });
+
+    it('shows what the command names so far, the part that matters most standing out', () => {
+      const { result } = renderHook(() =>
+        useComposerViewModel({
+          ...PROPS,
+          command: {
+            ...ON_BRANCH,
+            parts: [
+              { key: 'key-SHOP-12', text: 'SHOP-12', isStrong: true },
+              { key: 'summary-SHOP-12', text: 'Aplicar cupom', isStrong: false },
+            ],
+          },
+        }),
+      );
+
+      expect(result.current.commandChip?.parts).toEqual([
+        {
+          key: 'key-SHOP-12',
+          text: 'SHOP-12',
+          className: 'composer__command-part composer__command-part--strong',
+        },
+        {
+          key: 'summary-SHOP-12',
+          text: 'Aplicar cupom',
+          className: 'composer__command-part',
+        },
+      ]);
     });
   });
 });

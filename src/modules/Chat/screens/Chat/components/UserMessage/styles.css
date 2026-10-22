@@ -43,6 +43,6 @@
   font: var(--font-mono-sm);
 }
 
-.user-message__command-part--branch {
+.user-message__command-part--strong {
   font-weight: 600;
 }

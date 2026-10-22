@@ -1,2 +1,2 @@
-/** A command the QA can give the agent with a slash, instead of plain words. */
-export type ChatCommandId = 'code-plan';
+/** The commands the composer offers after a slash: a plan from the code, or from a Jira story. */
+export type ChatCommandId = 'code-plan' | 'jira-plan';

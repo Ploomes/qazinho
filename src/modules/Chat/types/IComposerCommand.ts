@@ -1,8 +1,9 @@
-/** The command chip in the composer: the command, the repository and branch picked so far, and what the field asks for next. */
+import type { ICommandPart } from './ICommandPart';
+
+/** The command chip in the composer: the command, what it names so far, and what the field asks for next. */
 export interface IComposerCommand {
   name: string;
-  repository: string | null;
-  branch: string | null;
+  parts: ICommandPart[];
   isReady: boolean;
   placeholder: string;
 }

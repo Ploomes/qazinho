@@ -1,5 +1,5 @@
 import type { BugFilter } from '@/modules/Bug';
-import type { IQuestionAnswer, IUserCommand } from '@/modules/Chat';
+import type { IQuestionAnswer, UserCommand } from '@/modules/Chat';
 import type { ViewportId } from '@/modules/Device';
 import type { ITestCase } from '@/modules/Plan';
 import type { RunFilter } from '@/modules/Run';
@@ -49,7 +49,7 @@ export interface IWorkspaceStore {
     workspaceId: string;
     text: string;
     mentions: string[];
-    command?: IUserCommand;
+    command?: UserCommand;
   }) => void;
   landAgentText: (props: {
     workspaceId: string;

@@ -1,4 +1,4 @@
-import type { IUserCommand } from '@/modules/Chat/types';
+import type { UserCommand } from '@/modules/Chat/types';
 import type { IWorkspace } from '@/modules/Workspace';
 
 /** Puts what the QA sent at the end of the chat: their words, trimmed, with what they mentioned and the command they gave. */
@@ -7,7 +7,7 @@ export function appendUserMessage(props: {
   text: string;
   at: string;
   mentions?: string[];
-  command?: IUserCommand;
+  command?: UserCommand;
 }): IWorkspace {
   const { workspace, text, at, mentions = [], command } = props;
   const trimmed = text.trim();

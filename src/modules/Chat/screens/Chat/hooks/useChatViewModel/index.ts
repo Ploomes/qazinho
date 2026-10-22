@@ -1,5 +1,11 @@
 import type { ChatItem, IQuestionAnswer, IRunMessage } from '@/modules/Chat/types';
-import type { IChatReference, ICodeAsk, IVariableBrief, QaReply } from '@/shared/types';
+import type {
+  IChatReference,
+  ICodeAsk,
+  IJiraAsk,
+  IVariableBrief,
+  QaReply,
+} from '@/shared/types';
 import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -58,10 +64,13 @@ export const useChatViewModel = () => {
   const askingIds = useWorkspaceStore((state) => state.askingIds);
   const liveTexts = useWorkspaceStore((state) => state.liveTexts);
   const retries = useWorkspaceStore((state) => state.retries);
-  const codeSteps = useWorkspaceStore((state) => state.readSteps);
+  const readSteps = useWorkspaceStore((state) => state.readSteps);
   const lookingAt = useWorkspaceStore((state) => state.lookingAt);
   const isGithubConnected = useSetupStore((state) =>
     state.integrations.some(({ id }) => id === 'github'),
+  );
+  const isJiraConnected = useSetupStore((state) =>
+    state.integrations.some(({ id }) => id === 'jira'),
   );
   const sendMessage = useWorkspaceStore((state) => state.sendMessage);
   const answerQuestions = useWorkspaceStore((state) => state.answerQuestions);
@@ -81,9 +90,10 @@ export const useChatViewModel = () => {
     draft,
     repositories: project?.repositories ?? [],
     isGithubConnected,
+    isJiraConnected,
     onDraft: setDraft,
   });
-  const codeStep = workspace === null ? undefined : codeSteps[workspace.id];
+  const readStep = workspace === null ? undefined : readSteps[workspace.id];
   const sentCommand = (workspace?.chat ?? [])
     .flatMap((message) =>
       message.kind === 'user' && message.command !== undefined ? [message.command] : [],
@@ -110,9 +120,9 @@ export const useChatViewModel = () => {
     text: string;
     references: IChatReference[];
     code: ICodeAsk | null;
+    jira: IJiraAsk | null;
   }) => {
-    if (workspace !== null)
-      chatAgent.askAgent({ workspaceId: workspace.id, ...props, jira: null });
+    if (workspace !== null) chatAgent.askAgent({ workspaceId: workspace.id, ...props });
   };
 
   const isWalking = workspace?.isWalking === true;
@@ -139,7 +149,12 @@ export const useChatViewModel = () => {
     });
     setDraft('');
     chatCommand.clear();
-    askAgent({ text: asked?.text ?? text, references, code: asked?.code ?? null });
+    askAgent({
+      text: asked?.text ?? text,
+      references,
+      code: asked?.code ?? null,
+      jira: asked?.jira ?? null,
+    });
   };
 
   const screensOf = (count: number) =>
@@ -193,7 +208,32 @@ export const useChatViewModel = () => {
       text: formatAnswers({ questions: round.questions, answers: props.answers }),
       references: [],
       code: null,
+      jira: null,
     });
+  };
+
+  const readStatusOf = () => {
+    if (!isAgentTyping || readStep === undefined || sentCommand === undefined) return '';
+
+    const size = formatSize({ bytes: readStep.bytes, language: i18n.language });
+
+    if (sentCommand.id === 'jira-plan')
+      return readStep.step === 'story'
+        ? t('COMMANDS.STEP_STORY', { key: sentCommand.key })
+        : readStep.bytes === 0
+          ? t('COMMANDS.STEP_FILES', { key: sentCommand.key })
+          : t('COMMANDS.STEP_FILES_SIZE', { key: sentCommand.key, size });
+
+    return readStep.step === 'commit'
+      ? t('COMMANDS.STEP_COMMIT', { branch: sentCommand.branch })
+      : readStep.step === 'diff'
+        ? t('COMMANDS.STEP_DIFF', { base: sentCommand.base })
+        : readStep.bytes === 0
+          ? t('COMMANDS.STEP_DOWNLOAD', { repository: sentCommand.repository })
+          : t('COMMANDS.STEP_DOWNLOAD_SIZE', {
+              repository: sentCommand.repository,
+              size,
+            });
   };
 
   const factsOf = (props: { seconds: number; costUsd: number | null }) =>
@@ -346,19 +386,7 @@ export const useChatViewModel = () => {
               ? 'CHAT.LOOKING_ANDROID'
               : 'CHAT.LOOKING_IOS',
           ),
-    codeStatus:
-      !isAgentTyping || codeStep === undefined || sentCommand === undefined
-        ? ''
-        : codeStep.step === 'commit'
-          ? t('COMMANDS.STEP_COMMIT', { branch: sentCommand.branch })
-          : codeStep.step === 'diff'
-            ? t('COMMANDS.STEP_DIFF', { base: sentCommand.base })
-            : codeStep.bytes === 0
-              ? t('COMMANDS.STEP_DOWNLOAD', { repository: sentCommand.repository })
-              : t('COMMANDS.STEP_DOWNLOAD_SIZE', {
-                  repository: sentCommand.repository,
-                  size: formatSize({ bytes: codeStep.bytes, language: i18n.language }),
-                }),
+    readStatus: readStatusOf(),
     draft,
     suggestions: [
       ...CHAT.suggestions.map(({ labelKey, textKey }) => ({
@@ -385,6 +413,18 @@ export const useChatViewModel = () => {
               text: '',
               onClick: () => {
                 chatCommand.start('code-plan');
+              },
+            },
+          ]
+        : []),
+      ...(isJiraConnected
+        ? [
+            {
+              id: 'CHAT.SUGGESTION_JIRA',
+              label: t('CHAT.SUGGESTION_JIRA'),
+              text: '',
+              onClick: () => {
+                chatCommand.start('jira-plan');
               },
             },
           ]

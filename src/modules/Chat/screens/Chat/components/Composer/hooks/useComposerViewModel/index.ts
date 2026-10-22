@@ -146,7 +146,19 @@ export const useComposerViewModel = (props: IComposerProps) => {
     isPickerOpen,
     isCommandOpen,
     commandHighlight: commandActive,
-    commandChip: command,
+    commandChip:
+      command === null
+        ? null
+        : {
+            name: command.name,
+            parts: command.parts.map((part) => ({
+              key: part.key,
+              text: part.text,
+              className: part.isStrong
+                ? 'composer__command-part composer__command-part--strong'
+                : 'composer__command-part',
+            })),
+          },
     commandMotion: {
       initial: { opacity: 0, scale: 0.92 },
       animate: { opacity: 1, scale: 1 },

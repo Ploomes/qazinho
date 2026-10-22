@@ -170,7 +170,7 @@
   white-space: nowrap;
 }
 
-.composer__command-part--branch {
+.composer__command-part--strong {
   color: var(--ink);
   font-weight: 600;
 }

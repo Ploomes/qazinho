@@ -1,4 +1,4 @@
-import type { IUserCommand } from './IUserCommand';
+import type { UserCommand } from './UserCommand';
 
 export interface IUserMessage {
   id: string;
@@ -6,5 +6,5 @@ export interface IUserMessage {
   at: string;
   text: string;
   mentions?: string[];
-  command?: IUserCommand;
+  command?: UserCommand;
 }

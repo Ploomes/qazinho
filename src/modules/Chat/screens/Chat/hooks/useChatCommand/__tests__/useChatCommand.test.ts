@@ -41,6 +41,7 @@ function command(props: {
   draft?: string;
   repositories?: IProjectRepository[];
   isGithubConnected?: boolean;
+  isJiraConnected?: boolean;
 }) {
   const onDraft = vi.fn();
 
@@ -52,6 +53,7 @@ function command(props: {
           draft,
           repositories: props.repositories ?? [WEB],
           isGithubConnected: props.isGithubConnected ?? true,
+          isJiraConnected: props.isJiraConnected ?? true,
           onDraft,
         }),
       { initialProps: props.draft ?? '' },
@@ -66,13 +68,24 @@ describe('useChatCommand', () => {
       heading: 'commands',
       rows: [
         { id: 'code-plan', label: 'Plan from the code', tag: '/code', isDisabled: false },
+        {
+          id: 'jira-plan',
+          label: 'Plan from a Jira story',
+          tag: '/jira',
+          isDisabled: false,
+        },
       ],
     });
     expect(command({ draft: '/code and more' }).result.current.picker).toBeNull();
   });
 
   it('narrows the commands by what follows the slash, in either language', () => {
-    expect(command({ draft: '/plano' }).result.current.picker?.rows).toHaveLength(1);
+    expect(
+      command({ draft: '/codigo' }).result.current.picker?.rows.map(({ id }) => id),
+    ).toEqual(['code-plan']);
+    expect(
+      command({ draft: '/historia' }).result.current.picker?.rows.map(({ id }) => id),
+    ).toEqual(['jira-plan']);
     expect(command({ draft: '/zzz' }).result.current.picker).toMatchObject({
       rows: [],
       note: 'Nothing matches “zzz”.',
@@ -97,6 +110,21 @@ describe('useChatCommand', () => {
     ).toBe("Add this project's repositories in its settings first.");
   });
 
+  /** Each command needs its own tracker: Jira missing must not lock the plan from the code. */
+  it('locks only the command whose tracker is missing', () => {
+    const rows = command({ draft: '/', isJiraConnected: false }).result.current.picker
+      ?.rows;
+
+    expect(rows?.map(({ id, isDisabled, detail }) => [id, isDisabled, detail])).toEqual([
+      [
+        'code-plan',
+        false,
+        'The agent reads a branch of a repository and plans its tests with you.',
+      ],
+      ['jira-plan', true, 'Connect Jira in Settings → Integrations first.'],
+    ]);
+  });
+
   describe('onPick', () => {
     it('skips the repository step when the project has one, and lists its branches, the base first', async () => {
       const { result, onDraft, rerender } = command({ draft: '/' });
@@ -107,10 +135,9 @@ describe('useChatCommand', () => {
       rerender('');
 
       expect(onDraft).toHaveBeenCalledWith('');
-      expect(result.current.command).toMatchObject({
+      expect(result.current.command).toEqual({
         name: 'Plan from the code',
-        repository: 'acme/loja-web',
-        branch: null,
+        parts: [{ key: 'acme/loja-web', text: 'acme/loja-web', isStrong: false }],
         isReady: false,
         placeholder: 'Which branch? Type to search',
       });
@@ -148,7 +175,9 @@ describe('useChatCommand', () => {
         result.current.onPick('acme/loja-api');
       });
 
-      expect(result.current.command?.repository).toBe('acme/loja-api');
+      expect(result.current.command?.parts.map(({ text }) => text)).toEqual([
+        'acme/loja-api',
+      ]);
       expect(window.qazinho.listBranches).toHaveBeenCalledWith({
         owner: 'acme',
         name: 'loja-api',
@@ -192,6 +221,7 @@ describe('useChatCommand', () => {
       expect(result.current.ask('  Focus on the checkout. ')).toEqual({
         text: 'Plan the tests for what branch feat/cupom of acme/loja-web changed against develop.\n\nFocus on the checkout.',
         code: { owner: 'acme', name: 'loja-web', base: 'develop', branch: 'feat/cupom' },
+        jira: null,
         command: {
           id: 'code-plan',
           repository: 'acme/loja-web',
@@ -239,16 +269,15 @@ describe('useChatCommand', () => {
         result.current.onBack();
       });
 
-      expect(result.current.command).toMatchObject({
-        repository: 'acme/loja-web',
-        branch: null,
-      });
+      expect(result.current.command?.parts.map(({ text }) => text)).toEqual([
+        'acme/loja-web',
+      ]);
 
       act(() => {
         result.current.onBack();
       });
 
-      expect(result.current.command).toMatchObject({ repository: null });
+      expect(result.current.command?.parts).toEqual([]);
 
       act(() => {
         result.current.onBack();
@@ -286,6 +315,153 @@ describe('useChatCommand', () => {
       expect(result.current.picker?.note).toBe(
         'GitHub refused it: this account may lack access, or its organization asks for SSO.',
       );
+    });
+  });
+
+  describe('a plan from a Jira story', () => {
+    const STORIES = {
+      isListed: true as const,
+      issues: [
+        {
+          key: 'SHOP-12',
+          summary: 'Aplicar cupom',
+          url: 'https://acme.atlassian.net/browse/SHOP-12',
+        },
+        {
+          key: 'SHOP-14',
+          summary: 'Frete grátis',
+          url: 'https://acme.atlassian.net/browse/SHOP-14',
+        },
+      ],
+    };
+
+    function pickingStory(draft = '') {
+      const searchJira = vi.fn().mockResolvedValue(STORIES);
+
+      window.qazinho = { ...window.qazinho, searchJira };
+
+      const picking = command({ draft: '/' });
+
+      act(() => {
+        picking.result.current.onPick('jira-plan');
+      });
+      picking.rerender(draft);
+
+      return { ...picking, searchJira };
+    }
+
+    it('lists the stories the QA opened last before they type anything', async () => {
+      const { result, searchJira } = pickingStory();
+
+      await waitFor(() => {
+        expect(result.current.picker?.rows.map(({ id, detail }) => [id, detail])).toEqual(
+          [
+            ['SHOP-12', 'Aplicar cupom'],
+            ['SHOP-14', 'Frete grátis'],
+          ],
+        );
+      });
+      expect(searchJira).toHaveBeenCalledWith('');
+      expect(result.current.picker?.heading).toBe('the stories you opened last');
+      expect(result.current.command).toMatchObject({
+        name: 'Plan from a Jira story',
+        parts: [],
+        placeholder: 'Which story? Type its key or words from it',
+      });
+    });
+
+    it('searches Jira for what the QA types, once they stop typing', async () => {
+      const { result, rerender, searchJira } = pickingStory();
+
+      rerender('cup');
+      rerender('cupom');
+
+      expect(result.current.picker?.note).toBe('Searching Jira…');
+
+      await waitFor(() => {
+        expect(searchJira).toHaveBeenCalledWith('cupom');
+      });
+      expect(searchJira).not.toHaveBeenCalledWith('cup');
+      await waitFor(() => {
+        expect(result.current.picker?.note).toBeNull();
+      });
+      expect(result.current.picker?.heading).toBe('Jira story');
+    });
+
+    it('plans from the story picked, with the QA words after', async () => {
+      const { result } = pickingStory();
+
+      await waitFor(() => {
+        expect(result.current.picker?.rows.length).toBe(2);
+      });
+      act(() => {
+        result.current.onPick('SHOP-12');
+      });
+
+      expect(result.current.command).toMatchObject({
+        isReady: true,
+        parts: [
+          { text: 'SHOP-12', isStrong: true },
+          { text: 'Aplicar cupom', isStrong: false },
+        ],
+      });
+      expect(result.current.ask(' Only the web. ')).toEqual({
+        text: 'Plan the tests for the Jira story SHOP-12: Aplicar cupom.\n\nOnly the web.',
+        code: null,
+        jira: { key: 'SHOP-12' },
+        command: {
+          id: 'jira-plan',
+          key: 'SHOP-12',
+          summary: 'Aplicar cupom',
+          url: 'https://acme.atlassian.net/browse/SHOP-12',
+        },
+      });
+    });
+
+    it('does NOT plan before a story is picked, and steps back to the list', async () => {
+      const { result } = pickingStory();
+
+      expect(result.current.ask('')).toBeNull();
+
+      await waitFor(() => {
+        expect(result.current.picker?.rows.length).toBe(2);
+      });
+      act(() => {
+        result.current.onPick('SHOP-14');
+      });
+      act(() => {
+        result.current.onBack();
+      });
+
+      expect(result.current.command?.isReady).toBe(false);
+
+      act(() => {
+        result.current.onBack();
+      });
+
+      expect(result.current.command).toBeNull();
+    });
+
+    it('says why Jira would not search', async () => {
+      window.qazinho = {
+        ...window.qazinho,
+        searchJira: vi
+          .fn()
+          .mockResolvedValue({ isListed: false, failure: 'unauthorized' }),
+      };
+
+      const { result, rerender } = command({ draft: '/' });
+
+      act(() => {
+        result.current.onPick('jira-plan');
+      });
+      rerender('');
+
+      await waitFor(() => {
+        expect(result.current.picker?.note).toBe(
+          'Jira refused the token. Connect Jira again in Settings → Integrations.',
+        );
+      });
     });
   });
 });

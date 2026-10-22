@@ -70,9 +70,41 @@ describe('useUserMessageViewModel', () => {
       hasText: false,
       command: {
         name: 'Plan from the code',
-        repository: 'acme/loja-web',
-        branch: 'feat/cupom',
+        parts: [
+          { text: 'acme/loja-web', className: 'user-message__command-part' },
+          {
+            text: 'feat/cupom',
+            className: 'user-message__command-part user-message__command-part--strong',
+          },
+        ],
       },
+    });
+  });
+
+  it('shows the Jira story a message planned from, its key standing out', () => {
+    const { result } = renderHook(() =>
+      useUserMessageViewModel({
+        message: {
+          ...message(''),
+          command: {
+            id: 'jira-plan',
+            key: 'SHOP-12',
+            summary: 'Aplicar cupom',
+            url: 'https://acme.atlassian.net/browse/SHOP-12',
+          },
+        },
+      }),
+    );
+
+    expect(result.current.command).toMatchObject({
+      name: 'Plan from a Jira story',
+      parts: [
+        {
+          text: 'SHOP-12',
+          className: 'user-message__command-part user-message__command-part--strong',
+        },
+        { text: 'Aplicar cupom', className: 'user-message__command-part' },
+      ],
     });
   });
 

@@ -16,7 +16,7 @@ export const Chat: React.FC = () => {
     isAgentTyping,
     liveText,
     retryText,
-    codeStatus,
+    readStatus,
     lookStatus,
     draft,
     lockedText,
@@ -153,7 +153,7 @@ export const Chat: React.FC = () => {
                       <p className="chat__retry-text">{lookStatus}</p>
                     </motion.div>
                   )}
-                  {codeStatus !== '' && (
+                  {readStatus !== '' && (
                     <motion.div
                       key="code"
                       className="chat__retry"
@@ -163,7 +163,7 @@ export const Chat: React.FC = () => {
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: MOTION.duration, ease: MOTION.ease }}
                     >
-                      <p className="chat__retry-text chat__code-text">{codeStatus}</p>
+                      <p className="chat__retry-text chat__code-text">{readStatus}</p>
                     </motion.div>
                   )}
                   {retryText !== '' && (

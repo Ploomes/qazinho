@@ -15,4 +15,11 @@ export const CHAT_COMMANDS: {
     textKey: 'COMMANDS.CODE_PLAN_TEXT',
     aliases: 'code codigo plan plano repo repositorio branch',
   },
+  {
+    id: 'jira-plan',
+    slug: '/jira',
+    labelKey: 'COMMANDS.JIRA_PLAN',
+    textKey: 'COMMANDS.JIRA_PLAN_TEXT',
+    aliases: 'jira story historia issue ticket requisito requirement criterio aceite',
+  },
 ];
