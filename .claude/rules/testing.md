@@ -91,6 +91,7 @@ Three suites that need something real behind them. They have their own config
 | `strip.test.ts`        | the built app: a run's requests under its video, and downloaded drawn in     |
 | `suite.test.ts`        | a fixture suite on real Chrome: listed, run by project, one test, stopped    |
 | `fix.test.ts`          | a fake agent fixes a fixture test through run_tests; QAzinho checks, pushes  |
+| `write.test.ts`        | a fake agent writes a new fixture test; QAzinho runs its file and pushes it  |
 
 `run.test.ts`, `chat.test.ts` and `visual.test.ts` spend the QA's tokens and need an agent installed. Run them by
 hand after touching the run pipeline or an answer schema.
