@@ -66,6 +66,8 @@ export const en = {
   },
   WORKSPACE: {
     RENAME: 'Rename workspace',
+    DESIGN_OPEN: 'Open the design in Figma',
+    DESIGN_DROP: 'Stop checking against this design',
     RUN_PLAN: 'Run plan',
     RUN_WITH_AGENT: 'Run everything with the agent',
     EXPLORE: 'Explore',

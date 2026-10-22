@@ -3,7 +3,7 @@ import { Bugs } from '@/modules/Bug';
 import { Chat } from '@/modules/Chat';
 import { Plan } from '@/modules/Plan';
 import { Runs } from '@/modules/Run';
-import { Button, Icon, StatusPill } from '@/shared/components/atoms';
+import { Button, Icon, IconButton, StatusPill } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { RunButton, WorkspaceName, WorkspaceTabs } from './components';
 import { useWorkspaceViewModel } from './hooks';
@@ -15,6 +15,8 @@ export const Workspace: React.FC = () => {
     tab,
     name,
     issue,
+    design,
+    dropDesignLabel,
     status,
     statusLabel,
     liveStatus,
@@ -29,6 +31,7 @@ export const Workspace: React.FC = () => {
     pauseLabel,
     onSelectTab,
     onRename,
+    onDropDesign,
     onRun,
     onRunWithAgent,
     onExplore,
@@ -54,6 +57,29 @@ export const Workspace: React.FC = () => {
             {issue.key}
             <Icon name="external" />
           </a>
+        )}
+        {design !== null && (
+          <span className="workspace__design">
+            <a
+              className="workspace__design-link"
+              href={design.url}
+              target="_blank"
+              rel="noreferrer"
+              title={design.title}
+            >
+              <Icon name="figma" />
+              {design.name}
+              <Icon name="external" />
+            </a>
+            <Tooltip content={dropDesignLabel}>
+              <IconButton
+                icon="close"
+                size="sm"
+                label={dropDesignLabel}
+                onClick={onDropDesign}
+              />
+            </Tooltip>
+          </span>
         )}
         {statusLabel === null ? (
           <StatusPill status={status} shape="round" />

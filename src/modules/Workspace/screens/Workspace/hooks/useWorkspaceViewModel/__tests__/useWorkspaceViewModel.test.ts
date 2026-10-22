@@ -71,6 +71,44 @@ describe('useWorkspaceViewModel', () => {
     });
   });
 
+  describe('the Figma design', () => {
+    const DESIGN = {
+      url: 'https://www.figma.com/design/AbC123/Shop?node-id=12-345',
+      fileKey: 'AbC123',
+      nodeId: '12:345',
+      name: 'Shop',
+    };
+
+    it('links the design the workspace is checked against, and nothing before one', () => {
+      expect(renderHook(() => useWorkspaceViewModel()).result.current.design).toBeNull();
+
+      useWorkspaceStore.setState({
+        workspaces: [{ ...makeWorkspace(), design: DESIGN }],
+      });
+
+      expect(renderHook(() => useWorkspaceViewModel()).result.current.design).toEqual({
+        name: 'Shop',
+        url: DESIGN.url,
+        title: 'Open the design in Figma',
+      });
+    });
+
+    it('stops checking against it when the QA drops it', () => {
+      useWorkspaceStore.setState({
+        workspaces: [{ ...makeWorkspace(), design: DESIGN }],
+      });
+
+      const { result } = renderHook(() => useWorkspaceViewModel());
+
+      act(() => {
+        result.current.onDropDesign();
+      });
+
+      expect(useWorkspaceStore.getState().workspaces[0]?.design).toBeNull();
+      expect(result.current.design).toBeNull();
+    });
+  });
+
   it('has no workspace to show when the selection points nowhere', () => {
     useAppStore.setState({ selectedWorkspaceId: 'gone' });
 

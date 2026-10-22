@@ -10,6 +10,7 @@ export const useWorkspaceViewModel = () => {
     id: opened.id,
     name: opened.name,
     issue: opened.issue,
+    design: opened.design,
     status: opened.status,
     planCount: opened.plan.length,
     runCount: opened.runs.length,
@@ -27,6 +28,7 @@ export const useWorkspaceViewModel = () => {
   const tab = useWorkspaceStore((state) => state.tab);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
+  const setDesign = useWorkspaceStore((state) => state.setDesign);
   const { onRun, onRunWithAgent, onExplore, onPause, onStop } = useRunActions();
 
   const isLive = workspace?.isLive === true;
@@ -45,6 +47,15 @@ export const useWorkspaceViewModel = () => {
             url: workspace.issue.url,
             title: workspace.issue.title,
           },
+    design:
+      workspace?.design === null || workspace?.design === undefined
+        ? null
+        : {
+            name: workspace.design.name,
+            url: workspace.design.url,
+            title: t('WORKSPACE.DESIGN_OPEN'),
+          },
+    dropDesignLabel: t('WORKSPACE.DESIGN_DROP'),
     status: workspace?.status ?? 'idle',
     liveStatus: isAsking
       ? ('attention' as const)
@@ -92,6 +103,9 @@ export const useWorkspaceViewModel = () => {
     onSelectTab: selectTab,
     onRename: (name: string) => {
       if (workspace) renameWorkspace({ workspaceId: workspace.id, name });
+    },
+    onDropDesign: () => {
+      if (workspace) setDesign({ workspaceId: workspace.id, design: null });
     },
     onRun,
     onRunWithAgent,

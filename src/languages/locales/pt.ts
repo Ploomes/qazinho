@@ -68,6 +68,8 @@ export const pt: typeof en = {
   },
   WORKSPACE: {
     RENAME: 'Renomear workspace',
+    DESIGN_OPEN: 'Abrir o design no Figma',
+    DESIGN_DROP: 'Parar de conferir com este design',
     RUN_PLAN: 'Rodar plano',
     RUN_WITH_AGENT: 'Rodar tudo com o agente',
     EXPLORE: 'Explorar',
