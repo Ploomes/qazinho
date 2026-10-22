@@ -35,7 +35,7 @@ import type {
   WindowFit,
 } from '@/shared/types';
 import { execFile } from 'node:child_process';
-import { copyFile, mkdir, readdir, stat, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { homedir, tmpdir } from 'node:os';
 import { delimiter, extname, join } from 'node:path';
 import { promisify } from 'node:util';
@@ -594,7 +594,11 @@ async function shotBytes(props: {
 }): Promise<Buffer | null> {
   if (props.file !== null) return archive.readShotBytes(props.file);
 
-  return props.src === null ? null : bytesOfDataUrl(props.src);
+  if (props.src === null) return null;
+
+  const served = replays.suiteFileOfUrl(props.src);
+
+  return served === null ? bytesOfDataUrl(props.src) : readFile(served).catch(() => null);
 }
 
 async function saveReplay(props: IRunRef & { name: string }): Promise<SaveOutcome> {

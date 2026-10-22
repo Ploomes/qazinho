@@ -65,6 +65,22 @@ export class ReplayServer {
     return `http://${REPLAY_SERVER.host}:${String(this.port)}/${parts.map(encodeURIComponent).join('/')}`;
   }
 
+  /** The file on disk an address this server handed out for a suite leads to; null for any other address. */
+  public suiteFileOfUrl(url: string): string | null {
+    const parsed = URL.canParse(url) ? new URL(url) : null;
+
+    if (
+      !this.server ||
+      parsed === null ||
+      parsed.protocol !== 'http:' ||
+      parsed.hostname !== REPLAY_SERVER.host ||
+      parsed.port !== String(this.port)
+    )
+      return null;
+
+    return this.suiteFileOf(parsed.pathname);
+  }
+
   /** Where a run's recording lives on disk: an MP4 from the recorder window or a simulator, a WebM from an emulator. */
   public async fileOf(ref: IRunRef): Promise<string | null> {
     for (const name of Object.values(ARCHIVE.videos)) {
