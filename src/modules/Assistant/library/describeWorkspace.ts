@@ -10,7 +10,7 @@ const ENDINGS = {
   interrupted: 'cut short when QAzinho closed',
 } as const;
 
-/** A workspace in full for the assistant: where it tests, its plan case by case, its runs, its bugs, a run going on, and the questions its chat waits on. */
+/** A workspace in full for the assistant: where it tests, the Figma design it is checked against, its plan case by case with each step's frame, its runs, its bugs, a run going on, and the questions its chat waits on. */
 export function describeWorkspace(props: {
   workspace: IWorkspace;
   project: IProject | null;
@@ -26,6 +26,11 @@ export function describeWorkspace(props: {
 
   return [
     `Workspace ${workspace.id} "${workspace.name}" in project ${project === null ? workspace.projectId : `${project.id} "${project.name}"`}, testing on ${target === null ? 'a target that is gone' : `${target.kind} ${target.value}`}.`,
+    ...(workspace.design === null
+      ? []
+      : [
+          `It is checked against the Figma design "${workspace.design.name}": ${workspace.design.url}. Its chat reads it through the QA's own Figma, and each run holds the steps that name a frame to that frame.`,
+        ]),
     ...(workspace.plan.length === 0
       ? ['It has no plan yet: its chat writes one with the QA.']
       : [
@@ -38,7 +43,7 @@ export function describeWorkspace(props: {
               : [`  before: ${testCase.preconditions}`]),
             ...testCase.steps.map(
               (step, index) =>
-                `  ${String(index + 1)}. ${step.action} → ${step.expected}`,
+                `  ${String(index + 1)}. ${step.action} → ${step.expected}${step.frame === undefined ? '' : ` [frame ${step.frame}]`}`,
             ),
           ]),
         ]),
@@ -58,7 +63,7 @@ export function describeWorkspace(props: {
           'Bugs:',
           ...workspace.bugs.map(
             (bug) =>
-              `- ${bug.id} · ${bug.severity} · "${bug.title}" · ${bug.caseId} step ${String(bug.stepNumber)} · ${bug.runId}`,
+              `- ${bug.id} · ${bug.severity} · "${bug.title}" · ${bug.caseId} step ${String(bug.stepNumber)} · ${bug.runId}${bug.frame === null ? '' : ` · off the design, frame ${bug.frame}`}`,
           ),
         ]),
     ...(live === null || live.isDone

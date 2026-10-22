@@ -1,7 +1,7 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
 import { appearancesOf } from '@/modules/Bug/library';
 
-/** One bug of a workspace in full for the assistant: what was expected and what showed, how to reproduce it, where it was caught, and the issue it became. */
+/** One bug of a workspace in full for the assistant: what was expected and what showed, the Figma frame it is off, how to reproduce it, where it was caught, and the issue it became. */
 export function describeBug(props: { workspace: IWorkspace; bugId: string }): {
   text: string;
   isError: boolean;
@@ -23,6 +23,11 @@ export function describeBug(props: { workspace: IWorkspace; bugId: string }): {
     text: [
       `Bug ${bug.id} of ${workspace.id} "${workspace.name}": "${bug.title}", severity ${bug.severity}.`,
       `Caught in ${bug.runId} at ${bug.runWhen}, on ${bug.caseId} "${bug.caseTitle}" step ${String(bug.stepNumber)}${bug.isIncidental ? ', on the side of that step' : ''}, walked on ${bug.target} by ${bug.agent}${bug.modelName === null ? '' : ` (${bug.modelName})`}.`,
+      ...(bug.frame === null
+        ? []
+        : [
+            `It is off the design: the screen differs from frame ${bug.frame}${workspace.design === null ? '' : ` of the Figma design "${workspace.design.name}"`}.`,
+          ]),
       `Expected: ${bug.expected}`,
       `Got: ${bug.got}`,
       ...(bug.body.trim() === '' ? [] : [bug.body]),

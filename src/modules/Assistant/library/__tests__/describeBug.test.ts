@@ -21,6 +21,27 @@ describe('describeBug', () => {
     ]);
   });
 
+  it('says a bug is off the design, and which frame of it', () => {
+    const [bug, ...bugs] = CHECKOUT.bugs;
+    const said = describeBug({
+      workspace: {
+        ...CHECKOUT,
+        design: {
+          url: 'https://www.figma.com/design/AbC123/Shop?node-id=1-2',
+          fileKey: 'AbC123',
+          nodeId: '1:2',
+          name: 'Shop',
+        },
+        bugs: [{ ...bug!, frame: '12:345' }, ...bugs],
+      },
+      bugId: bug!.id,
+    });
+
+    expect(said.text).toContain(
+      'It is off the design: the screen differs from frame 12:345 of the Figma design "Shop".',
+    );
+  });
+
   it('names the issue a bug became, and where', () => {
     const [bug] = CHECKOUT.bugs;
     const { text } = describeBug({

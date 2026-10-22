@@ -68,6 +68,7 @@ const FULL: IAppSnapshot = {
       isRunning: true,
       isAnswering: true,
       openQuestions: 0,
+      design: null,
     },
     {
       id: 'w-2',
@@ -82,6 +83,7 @@ const FULL: IAppSnapshot = {
       isRunning: false,
       isAnswering: false,
       openQuestions: 3,
+      design: null,
     },
   ],
 };
@@ -103,6 +105,19 @@ describe('describeApp', () => {
         '- w-2 "Login" in p-1, on android: no plan yet · no runs · no bugs · its chat waits on the QA\'s answers to 3 questions',
       ],
     });
+  });
+
+  it('says which workspace is checked against a Figma design', () => {
+    const [checkout, login] = FULL.workspaces;
+    const lines = describeApp({
+      ...FULL,
+      workspaces: [{ ...checkout!, design: 'Shop' }, login!],
+    }).lines;
+
+    expect(lines.find((line) => line.startsWith('- w-1'))).toContain(
+      'checked against the Figma design "Shop"',
+    );
+    expect(lines.find((line) => line.startsWith('- w-2'))).not.toContain('Figma');
   });
 
   it('says there is nothing yet, and how a quiet QAzinho calls the QA', () => {

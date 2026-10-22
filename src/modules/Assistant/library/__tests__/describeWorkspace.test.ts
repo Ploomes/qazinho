@@ -21,6 +21,37 @@ describe('describeWorkspace', () => {
     expect(text).not.toContain('going on now');
   });
 
+  it('names the Figma design, the frame of each step and the bugs off it', () => {
+    const [first, ...rest] = CHECKOUT.plan;
+    const [bug, ...bugs] = CHECKOUT.bugs;
+    const text = describeWorkspace({
+      workspace: {
+        ...CHECKOUT,
+        design: {
+          url: 'https://www.figma.com/design/AbC123/Shop?node-id=1-2',
+          fileKey: 'AbC123',
+          nodeId: '1:2',
+          name: 'Shop',
+        },
+        plan: [
+          {
+            ...first!,
+            steps: [{ ...first!.steps[0]!, frame: '12:345' }, ...first!.steps.slice(1)],
+          },
+          ...rest,
+        ],
+        bugs: [{ ...bug!, frame: '12:345' }, ...bugs],
+      },
+      project: PROJECT,
+    });
+
+    expect(text).toContain(
+      'It is checked against the Figma design "Shop": https://www.figma.com/design/AbC123/Shop?node-id=1-2.',
+    );
+    expect(text).toMatch(/ {2}1\. .* \[frame 12:345\]/);
+    expect(text).toContain('· r-01 · off the design, frame 12:345');
+  });
+
   it('says what is not there yet, and a target that is gone', () => {
     const text = describeWorkspace({
       workspace: { ...LOGIN, targetId: 't-gone' },

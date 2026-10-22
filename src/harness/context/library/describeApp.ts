@@ -25,6 +25,9 @@ function workspaceLine(workspace: IAppWorkspaceBrief): string {
       ? 'no runs'
       : `${plural({ count: workspace.runs, one: 'run' })}, the latest ${run.id} ${run.startedOn === null ? '' : `on ${run.startedOn} `}at ${run.startedAt} ${ENDINGS[run.endedBy]}: ${String(run.passed)} passed, ${String(run.failed)} failed, ${String(run.blocked)} blocked, ${String(run.skipped)} skipped`,
     workspace.bugs === 0 ? 'no bugs' : plural({ count: workspace.bugs, one: 'bug' }),
+    ...(workspace.design === null
+      ? []
+      : [`checked against the Figma design "${workspace.design}"`]),
     ...(workspace.isRunning ? ['running now'] : []),
     ...(workspace.isAnswering ? ['its chat agent is answering'] : []),
     ...(workspace.openQuestions === 0

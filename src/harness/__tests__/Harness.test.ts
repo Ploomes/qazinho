@@ -198,6 +198,7 @@ const APP: IAppSnapshot = {
       isRunning: false,
       isAnswering: false,
       openQuestions: 0,
+      design: null,
     },
   ],
 };

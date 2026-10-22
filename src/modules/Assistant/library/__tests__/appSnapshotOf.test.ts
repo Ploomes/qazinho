@@ -59,6 +59,7 @@ describe('appSnapshotOf', () => {
         isRunning: false,
         isAnswering: false,
         openQuestions: 0,
+        design: null,
       },
       {
         id: 'w2',
@@ -73,6 +74,7 @@ describe('appSnapshotOf', () => {
         isRunning: false,
         isAnswering: true,
         openQuestions: 0,
+        design: null,
       },
     ]);
   });

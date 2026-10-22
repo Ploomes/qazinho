@@ -36,6 +36,7 @@ function briefOf(props: {
     steps: workspace.plan.reduce((total, testCase) => total + testCase.steps.length, 0),
     runs: workspace.runs.length,
     bugs: workspace.bugs.length,
+    design: workspace.design?.name ?? null,
     latestRun:
       latest === undefined
         ? null
