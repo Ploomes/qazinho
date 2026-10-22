@@ -50,6 +50,23 @@ describe('planOfDraft', () => {
     expect(plan?.[0]).toMatchObject({ title: 'Padded', goal: 'g' });
   });
 
+  it('keeps the Figma node a step’s screen should match, and none for a blank one', () => {
+    const plan = fresh([
+      {
+        ...CARD,
+        steps: [
+          { action: 'Open the cart', expected: 'The cart', frame: ' 12:345 ' },
+          { action: 'Pay', expected: 'Paid', frame: ' ' },
+        ],
+      },
+    ]);
+
+    expect(plan?.[0]?.steps).toEqual([
+      { action: 'Open the cart', expected: 'The cart', frame: '12:345' },
+      { action: 'Pay', expected: 'Paid' },
+    ]);
+  });
+
   it('keeps the id of every case the agent kept, when one in the middle was removed', () => {
     const plan = planOfDraft({
       cases: [

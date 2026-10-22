@@ -456,6 +456,10 @@
                     },
                     "expected": {
                       "type": "string"
+                    },
+                    "frame": {
+                      "type": "string",
+                      "description": "The id of the Figma node this step's screen should match, such as 12:345, from the workspace's design; none when it has no design or the step lands on no designed screen."
                     }
                   },
                   "required": [

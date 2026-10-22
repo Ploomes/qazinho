@@ -22,7 +22,13 @@ export function planOfDraft(props: {
 }): ITestCase[] | null {
   const drafted = props.cases.flatMap<IDraftedCase>((one) => {
     const steps = one.steps
-      .map((step) => ({ action: step.action.trim(), expected: step.expected.trim() }))
+      .map((step) => ({
+        action: step.action.trim(),
+        expected: step.expected.trim(),
+        ...(step.frame === undefined || step.frame.trim() === ''
+          ? {}
+          : { frame: step.frame.trim() }),
+      }))
       .filter((step) => step.action.length > 0 && step.expected.length > 0);
     const title = one.title.trim();
 

@@ -53,6 +53,18 @@ describe('flattenPlanSteps', () => {
     expect(second?.casePreconditions).toBe('One product in the cart.');
   });
 
+  it('carries the Figma node a step’s screen should match, and nothing for a step with none', () => {
+    const [first, second] = flattenPlanSteps([
+      {
+        ...CASE,
+        steps: [{ ...CASE.steps[0]!, frame: '12:345' }, CASE.steps[1]!],
+      },
+    ]);
+
+    expect(first?.frame).toBe('12:345');
+    expect(second).not.toHaveProperty('frame');
+  });
+
   it('has nothing to walk when the plan is empty', () => {
     expect(flattenPlanSteps([])).toEqual([]);
   });

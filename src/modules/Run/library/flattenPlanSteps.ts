@@ -14,6 +14,7 @@ export function flattenPlanSteps(plan: ITestCase[]): IFlatStep[] {
         numberInCase: index + 1,
         action: step.action,
         expected: step.expected,
+        ...(step.frame === undefined ? {} : { frame: step.frame }),
       }))
       .filter((step) => step.action.trim().length > 0),
   );

@@ -62,6 +62,32 @@ describe('readChatAnswer', () => {
     expect(answer?.plan?.cases[0]?.id).toBeUndefined();
   });
 
+  it('keeps the Figma node a step’s screen should match, and drops the null Codex writes for none', () => {
+    const answer = readChatAnswer(
+      JSON.stringify({
+        reply: 'Against the design.',
+        plan: {
+          summary: '',
+          cases: [
+            {
+              ...CASE,
+              id: null,
+              steps: [
+                { action: 'Open the cart', expected: 'The cart', frame: '12:345' },
+                { action: 'Pay', expected: 'A confirmation appears', frame: null },
+              ],
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(answer?.plan?.cases[0]?.steps).toEqual([
+      { action: 'Open the cart', expected: 'The cart', frame: '12:345' },
+      { action: 'Pay', expected: 'A confirmation appears' },
+    ]);
+  });
+
   it('reads the questions the agent puts to the QA', () => {
     const answer = readChatAnswer(
       JSON.stringify({ reply: 'Two things first.', questions: [QUESTION] }),

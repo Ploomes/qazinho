@@ -41,11 +41,23 @@ function withoutNullIds(plan: unknown): unknown {
 
   return {
     ...(plan as Record<string, unknown>),
-    cases: cases.map((one: unknown) =>
-      fieldOf({ value: one, key: 'id' }) === null
-        ? { ...(one as Record<string, unknown>), id: undefined }
-        : one,
-    ),
+    cases: cases.map((one: unknown) => {
+      const steps = fieldOf({ value: one, key: 'steps' });
+
+      return {
+        ...(one as Record<string, unknown>),
+        ...(fieldOf({ value: one, key: 'id' }) === null ? { id: undefined } : {}),
+        ...(Array.isArray(steps)
+          ? {
+              steps: steps.map((step: unknown) =>
+                fieldOf({ value: step, key: 'frame' }) === null
+                  ? { ...(step as Record<string, unknown>), frame: undefined }
+                  : step,
+              ),
+            }
+          : {}),
+      };
+    }),
   };
 }
 
