@@ -4,6 +4,7 @@ import type { ModelMenuAt } from './ModelMenuAt';
 import type { Screen } from './Screen';
 import type { Theme } from './Theme';
 import type { IProject } from '@/modules/Project';
+import type { ProjectSection } from '@/modules/Project/components/ProjectModal/types';
 import type { IReplayOpen, IRunNotice } from '@/modules/Run';
 
 /** The shell: which screen is up, which project is selected, and what is floating over it. */
@@ -14,8 +15,10 @@ export interface IAppStore {
   projects: IProject[];
   isLoaded: boolean;
   editingProjectId: string | null;
+  projectSection: ProjectSection | null;
   selectedWorkspaceId: string | null;
   selectedProjectId: string | null;
+  automationProjectId: string | null;
   isResourcesOpen: boolean;
   modelMenuAt: ModelMenuAt | null;
   media: IMedia | null;
@@ -27,9 +30,11 @@ export interface IAppStore {
   closeSettings: () => void;
   openModal: (modal: Modal) => void;
   openProjectSettings: (projectId: string) => void;
+  openSuiteSettings: (projectId: string) => void;
   openWorkspaceModal: (projectId: string) => void;
   closeModal: () => void;
   selectWorkspace: (workspaceId: string) => void;
+  openAutomation: (projectId: string) => void;
   goHome: () => void;
   addProject: (project: IProject) => void;
   loadProjects: (projects: IProject[]) => void;

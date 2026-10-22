@@ -12,8 +12,10 @@ export const useAppStore = create<IAppStore>()(
       projects: [],
       isLoaded: false,
       editingProjectId: null,
+      projectSection: null,
       selectedWorkspaceId: null,
       selectedProjectId: null,
+      automationProjectId: null,
       isResourcesOpen: false,
       modelMenuAt: null,
       media: null,
@@ -29,23 +31,44 @@ export const useAppStore = create<IAppStore>()(
 
       closeSettings: () =>
         set((state) => ({
-          screen: state.selectedWorkspaceId === null ? 'welcome' : 'workspace',
+          screen:
+            state.automationProjectId !== null
+              ? 'automation'
+              : state.selectedWorkspaceId === null
+                ? 'welcome'
+                : 'workspace',
         })),
 
-      openModal: (modal) => set({ modal, editingProjectId: null }),
+      openModal: (modal) => set({ modal, editingProjectId: null, projectSection: null }),
 
       openProjectSettings: (projectId) =>
-        set({ modal: 'project', editingProjectId: projectId }),
+        set({ modal: 'project', editingProjectId: projectId, projectSection: null }),
+
+      openSuiteSettings: (projectId) =>
+        set({
+          modal: 'project',
+          editingProjectId: projectId,
+          projectSection: 'automation',
+        }),
 
       openWorkspaceModal: (projectId) =>
         set({ modal: 'workspace', selectedProjectId: projectId }),
 
-      closeModal: () => set({ modal: null, editingProjectId: null }),
+      closeModal: () =>
+        set({ modal: null, editingProjectId: null, projectSection: null }),
 
       selectWorkspace: (workspaceId) =>
-        set({ screen: 'workspace', selectedWorkspaceId: workspaceId }),
+        set({
+          screen: 'workspace',
+          selectedWorkspaceId: workspaceId,
+          automationProjectId: null,
+        }),
 
-      goHome: () => set({ screen: 'welcome', selectedWorkspaceId: null }),
+      openAutomation: (projectId) =>
+        set({ screen: 'automation', automationProjectId: projectId }),
+
+      goHome: () =>
+        set({ screen: 'welcome', selectedWorkspaceId: null, automationProjectId: null }),
 
       addProject: (project) =>
         set((state) => ({
@@ -75,12 +98,19 @@ export const useAppStore = create<IAppStore>()(
       removeProject: ({ projectId, isOpen }) =>
         set((state) => {
           const projects = state.projects.filter(({ id }) => id !== projectId);
+          const isShown = isOpen || state.automationProjectId === projectId;
 
           return {
             projects,
             modal: null,
             editingProjectId: null,
-            ...(isOpen ? { screen: 'welcome' as const, selectedWorkspaceId: null } : {}),
+            ...(isShown
+              ? {
+                  screen: 'welcome' as const,
+                  selectedWorkspaceId: null,
+                  automationProjectId: null,
+                }
+              : {}),
             selectedProjectId:
               state.selectedProjectId === projectId
                 ? (projects[0]?.id ?? null)
