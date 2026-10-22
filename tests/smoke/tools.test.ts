@@ -39,6 +39,10 @@ const PAGE = `<!doctype html><html><body style="margin:0;font:16px sans-serif">
     ondrop="event.preventDefault(); document.getElementById('gesture').textContent = 'Dropped on Done'">Done</div>
   <label>Photo <input type="file" onchange="document.getElementById('gesture').textContent = 'Picked ' + this.files[0].name"></label>
   <p id="gesture">No gesture yet</p>
+  <div style="display:flex;gap:12px;padding:20px">
+    <span>Total</span>
+    <button style="margin:0;padding:12px 16px;border:0;border-radius:8px;background:#1f6feb;color:#fff;font:600 16px/24px Arial">Pay now</button>
+  </div>
   <div style="height:900px"></div>
   <p>Bottom line</p>
 </body></html>`;
@@ -111,6 +115,7 @@ describe('the device as MCP tools', () => {
 
     expect(listed.tools.map(({ name }) => name)).toEqual([
       'look',
+      'inspect',
       'goto',
       'reopen',
       'click',
@@ -126,6 +131,31 @@ describe('the device as MCP tools', () => {
       'bug',
       'ask_qa',
     ]);
+    await client.close();
+  });
+
+  /** A design names its sizes, colours and spacing; the agent holds the screen to them with what Chrome computed. */
+  it('measures a control the way a design states it, and says when nothing reads that', async () => {
+    const client = await connect('w1');
+    const measured = textOf(
+      await client.callTool({ name: 'inspect', arguments: { target: 'Pay now' } }),
+    );
+
+    expect(measured).toContain('"Pay now" (button), measured in CSS px:');
+    expect(measured).toMatch(/box: x \d+, y \d+, \d+ × 48/);
+    expect(measured).toContain('space around: nothing above, nothing below, 12 left');
+    expect(measured).toContain('16px / line 24px, weight 600');
+    expect(measured).toContain('colour: #FFFFFF on #1F6FEB');
+    expect(measured).toContain('padding 12px 16px · margin 0px');
+    expect(measured).toContain('corners 8px');
+
+    const missing = await client.callTool({
+      name: 'inspect',
+      arguments: { target: 'No such thing' },
+    });
+
+    expect(missing.isError).toBe(true);
+    expect(textOf(missing)).toContain('Nothing on the page reads "No such thing"');
     await client.close();
   });
 
