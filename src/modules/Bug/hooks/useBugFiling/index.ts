@@ -1,5 +1,5 @@
 import type { FilingChange, IBugFiling, IFilingPlan } from '@/modules/Bug/types';
-import type { IssueTarget } from '@/shared/types';
+import type { BugFiling, IssueTarget } from '@/shared/types';
 import { useEffect, useRef, useState } from 'react';
 import { useSendBug } from '@/modules/Bug/hooks/useSendBug';
 import { filingAfter } from '@/modules/Bug/library';
@@ -65,9 +65,15 @@ export const useBugFiling = () => {
       onReady: () => {
         move({ kind: 'ready' });
       },
-    }).then((result) => {
-      move({ kind: 'ended', result });
-    });
+    })
+      .catch((reason: unknown): BugFiling => ({
+        isFiled: false,
+        failure: 'unexpected',
+        said: reason instanceof Error ? reason.message : String(reason),
+      }))
+      .then((result) => {
+        move({ kind: 'ended', result });
+      });
   };
 
   return {

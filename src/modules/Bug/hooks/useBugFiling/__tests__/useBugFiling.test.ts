@@ -144,5 +144,36 @@ describe('useBugFiling', () => {
 
       expect(result.current.filing).toBeNull();
     });
+
+    /** A main process started before the filer existed has no channel for it: the popup must end, not wait forever. */
+    it('ends in a failure, with what went wrong, when the bridge throws', async () => {
+      window.qazinho.fileBug = () =>
+        Promise.reject(new Error("No handler registered for 'bug:file'"));
+
+      const { result } = renderHook(() => useBugFiling());
+
+      act(() => {
+        result.current.start({
+          workspaceId: WORKSPACE.id,
+          bugId: BUG.id,
+          target: TARGET,
+          title: BUG.title,
+          plan: PLAN,
+        });
+      });
+
+      await waitFor(() => {
+        expect(result.current.filing?.result).toEqual({
+          isFiled: false,
+          failure: 'unexpected',
+          said: "No handler registered for 'bug:file'",
+        });
+      });
+      expect(result.current.filing?.steps.map(({ state }) => state)).toEqual([
+        'done',
+        'failed',
+        'pending',
+      ]);
+    });
   });
 });
