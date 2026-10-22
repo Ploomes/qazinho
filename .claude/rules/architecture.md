@@ -265,6 +265,12 @@ answers one question per channel, for a target `{ role, platform }`:
     the page sits, the space to its neighbours (`gapsOf`) and the computed type, colours as hex
     (`hexOfColor`), spacing, border and corners (`measureLocator`); on Android the box in dp at
     the screen's density (`densityOf`), on iOS in points (`phoneMeasureOf`), with no style.
+  - An exploration gets the Figma server whenever the workspace has a design, and its message
+    names it (`describeExploration`): the explorer reads the frames once, holds each screen a
+    frame draws to it, and suggests cases that name their frames (`role/explorer/design.md`).
+  - The Estagiário links or unlinks a design (`link_design`, `unlink_design`) and hands a chat a
+    plan against one (`ask_workspace_chat`'s `figma`). It reads which workspace has a design, the
+    frame of each step and the bugs off it, and never reads Figma itself.
   - Figma counts every read, and some seats get only a few a month: the run reads a frame only on
     the cases that name one, and a case walked again from its recipe checks no design.
 - **A bug goes to the QA's tracker as an issue**, and the QA does nothing by hand but paste a

@@ -180,7 +180,10 @@ sizes, spacing, colours, type, texts, states and the designers' annotations. It 
 QA, and each step that lands on a designed screen names its frame, which the plan opens in Figma.
 A run hands those cases the same Figma: the agent reads the frame, measures the screen with
 `inspect` (CSS px, type and colours on the web; dp on Android, points on iOS) and files each
-difference as a bug off the design, whose card and issue link the frame. A strict MCP config
+difference as a bug off the design, whose card and issue link the frame. An exploration does
+the same on the screens the design draws, and suggests cases that name their frames. The
+Estagiário links or unlinks a design, hands a workspace's chat a plan against one, and reads
+which steps and bugs belong to a frame. A strict MCP config
 under the same name and address reuses Claude Code's sign-in, checked against the real CLI;
 `tests/smoke/design.test.ts` drives a fake agent on real Chrome, and `tools.test.ts` measures a
 control there. A real agent has not read a real frame yet. Figma counts every read, a few a month
