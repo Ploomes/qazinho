@@ -68,7 +68,8 @@ export function storyOf(props: {
 /**
  * A Jira Cloud site on loopback, for QAzinho's Jira client to talk to: it searches, hands over a
  * story and its files, files a bug with its attachments and links, and remembers what it was
- * asked. Only the email and token it knows are let in.
+ * asked. Only the email and token it knows are let in, and the project LOCKED asks for a field
+ * QAzinho never fills, the way a team's required component does.
  */
 export function fakeJira(props: {
   files: Record<string, { name: string; mimeType: string; bytes: Buffer }>;
@@ -191,6 +192,15 @@ export function fakeJira(props: {
         return;
       }
 
+      if (url.pathname === '/rest/api/3/project/recent') {
+        json(response, {
+          status: 200,
+          body: [{ id: '10000', key: 'SHOP', name: 'Loja' }],
+        });
+
+        return;
+      }
+
       if (url.pathname === '/rest/api/3/project/search') {
         json(response, {
           status: 200,
@@ -234,6 +244,18 @@ export function fakeJira(props: {
             description: unknown;
           };
         };
+        if (sent.fields.project.key === 'LOCKED') {
+          json(response, {
+            status: 400,
+            body: {
+              errorMessages: [],
+              errors: { components: 'Component/s is required.' },
+            },
+          });
+
+          return;
+        }
+
         const key = `${sent.fields.project.key}-${String(57 + created.length)}`;
 
         created.push({
