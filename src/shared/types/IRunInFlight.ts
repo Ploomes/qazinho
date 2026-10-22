@@ -1,8 +1,10 @@
+import type { IRunAsked } from './IRunAsked';
 import type { IRunFinding } from './IRunFinding';
+import type { IRunQuestion } from './IRunQuestion';
 import type { IStepOutcome } from './IStepOutcome';
 import type { TargetKind } from './TargetKind';
 
-/** A run main is still walking, or an exploration it is still on, as it stands now: what a page that just opened needs to pick it up. */
+/** A run main is still walking, or an exploration it is still on, as it stands now, with the question its agent waits on: what a page that just opened needs to pick it up. */
 export interface IRunInFlight {
   workspaceId: string;
   runId: string;
@@ -17,4 +19,6 @@ export interface IRunInFlight {
   model: string;
   targetKind: TargetKind;
   isExploring: boolean;
+  question: IRunQuestion | null;
+  asked: IRunAsked[];
 }

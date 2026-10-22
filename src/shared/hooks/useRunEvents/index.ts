@@ -112,6 +112,7 @@ export const useRunEvents = () => {
       landCost({ workspaceId: event.workspaceId, costUsd: event.costUsd });
     else if (event.kind === 'finding')
       landFinding({ workspaceId: event.workspaceId, finding: event.finding });
+    else if (event.kind === 'asked' || event.kind === 'answered') return;
     else if (event.kind === 'step') landStep(event.outcome);
     else if (event.kind === 'explored')
       landExplored({

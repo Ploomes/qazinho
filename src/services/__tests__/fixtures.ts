@@ -41,6 +41,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     startRun: () => Promise.resolve(),
     pauseRun: () => Promise.resolve(),
     stopRun: () => Promise.resolve(),
+    answerRun: () => Promise.resolve(),
     runsInFlight: () => Promise.resolve([]),
     resizeDevice: () => Promise.resolve(),
     focusDevice: () => Promise.resolve(),

@@ -53,6 +53,7 @@ import type {
   McpSignInProgress,
   PickKind,
   Platform,
+  QaReply,
   SaveOutcome,
   SuiteChangeEvent,
   SuiteEvent,
@@ -117,6 +118,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.pauseRun, props) as Promise<void>,
   stopRun: (workspaceId: string) =>
     ipcRenderer.invoke(CHANNELS.stopRun, workspaceId) as Promise<void>,
+  answerRun: (props: { workspaceId: string; questionId: string; reply: QaReply }) =>
+    ipcRenderer.invoke(CHANNELS.answerRun, props) as Promise<void>,
   resizeDevice: (props: { workspaceId: string; viewport: IViewport }) =>
     ipcRenderer.invoke(CHANNELS.resizeDevice, props) as Promise<void>,
   focusDevice: (props: { workspaceId: string; isFocused: boolean }) =>

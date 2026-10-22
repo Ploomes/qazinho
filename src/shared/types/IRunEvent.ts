@@ -1,10 +1,12 @@
 import type { IDraftedCase } from './IDraftedCase';
+import type { IRunAsked } from './IRunAsked';
 import type { IRunFinding } from './IRunFinding';
+import type { IRunQuestion } from './IRunQuestion';
 import type { IRunVideo } from './IRunVideo';
 import type { IStepOutcome } from './IStepOutcome';
 import type { RunFailure } from './RunFailure';
 
-/** What the page hears while a real run walks the device, or an exploration goes through the app. */
+/** What the page hears while a real run walks the device, or an exploration goes through the app, its agent's questions to the QA included. */
 export type IRunEvent =
   | { kind: 'step'; outcome: IStepOutcome }
   | { kind: 'doing'; workspaceId: string; index: number }
@@ -12,6 +14,8 @@ export type IRunEvent =
   | { kind: 'note'; workspaceId: string; text: string }
   | { kind: 'cost'; workspaceId: string; costUsd: number }
   | { kind: 'finding'; workspaceId: string; finding: IRunFinding }
+  | { kind: 'asked'; workspaceId: string; question: IRunQuestion }
+  | { kind: 'answered'; workspaceId: string; asked: IRunAsked }
   | { kind: 'done'; workspaceId: string }
   | { kind: 'explored'; workspaceId: string; summary: string; cases: IDraftedCase[] }
   | { kind: 'video'; workspaceId: string; runId: string; video: IRunVideo }

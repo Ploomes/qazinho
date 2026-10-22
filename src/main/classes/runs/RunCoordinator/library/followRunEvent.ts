@@ -1,6 +1,6 @@
 import type { IRunEvent, IRunInFlight } from '@/shared/types';
 
-/** A run in flight after one more event: the step it is on, the stream, and what it has judged. */
+/** A run in flight after one more event: the step it is on, the stream, what it has judged, and the question it waits on. */
 export function followRunEvent(props: {
   run: IRunInFlight;
   event: IRunEvent;
@@ -16,6 +16,15 @@ export function followRunEvent(props: {
 
   if (event.kind === 'finding')
     return { ...run, findings: [...run.findings, event.finding] };
+
+  if (event.kind === 'asked') return { ...run, question: event.question };
+
+  if (event.kind === 'answered')
+    return {
+      ...run,
+      question: run.question?.id === event.asked.id ? null : run.question,
+      asked: [...run.asked, event.asked],
+    };
 
   if (event.kind === 'cost')
     return { ...run, costUsd: (run.costUsd ?? 0) + event.costUsd };

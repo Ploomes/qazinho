@@ -1,6 +1,9 @@
+export type * from './IAskQa';
 export type * from './ICaseRecipe';
+export type * from './IOpenQuestion';
 export type * from './IRecipeBook';
 export type * from './IRunCoordinator';
 export type * from './IStepRecipe';
 export type * from './IVideoRecorder';
 export type * from './IWalkRun';
+export type * from './QaOutcome';

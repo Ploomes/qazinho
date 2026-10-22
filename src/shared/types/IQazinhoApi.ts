@@ -51,6 +51,7 @@ import type { McpActionResult } from './McpActionResult';
 import type { McpSignInProgress } from './McpSignInProgress';
 import type { PickKind } from './PickKind';
 import type { Platform } from './Platform';
+import type { QaReply } from './QaReply';
 import type { SaveOutcome } from './SaveOutcome';
 import type { SuiteChangeEvent } from './SuiteChangeEvent';
 import type { SuiteEvent } from './SuiteEvent';
@@ -79,6 +80,11 @@ export interface IQazinhoApi {
   exportCode: (request: IExportCode) => Promise<ExportOutcome>;
   pauseRun: (props: { workspaceId: string; isPaused: boolean }) => Promise<void>;
   stopRun: (workspaceId: string) => Promise<void>;
+  answerRun: (props: {
+    workspaceId: string;
+    questionId: string;
+    reply: QaReply;
+  }) => Promise<void>;
   resizeDevice: (props: { workspaceId: string; viewport: IViewport }) => Promise<void>;
   focusDevice: (props: { workspaceId: string; isFocused: boolean }) => Promise<void>;
   runsInFlight: () => Promise<IRunInFlight[]>;

@@ -1,15 +1,20 @@
 import type {
+  IAskQa,
   ICaseRecipe,
+  IOpenQuestion,
   IRecipeBook,
   IRunCoordinator,
   IVideoRecorder,
   IWalkRun,
+  QaOutcome,
 } from './types';
 import type {
   Harness,
+  IAttachDevice,
   IDevicePort,
   IExploredScreen,
   IExploreFinish,
+  IQaQuestion,
   IStepFinding,
   IStepReport,
   McpHost,
@@ -24,11 +29,15 @@ import type {
   IIosSetup,
   IRunEvent,
   IRunInFlight,
+  IRunQuestion,
   IRunVideo,
   IStartRun,
   IStepAction,
   IStepOutcome,
+  IVariableBrief,
   IViewport,
+  QaReply,
+  RunAnswer,
   RunFailure,
   TargetKind,
 } from '@/shared/types';
@@ -40,6 +49,7 @@ import { agentFailure } from '@/main/library';
 import { EXPLORATION } from '@/shared/constants';
 import { RUN_WALK, UNWALKED } from './constants';
 import {
+  answerWords,
   bookWith,
   casesOf,
   driverFor,
@@ -48,6 +58,7 @@ import {
   failureOf,
   findingAnswer,
   followRunEvent,
+  hiddenValues,
   keptBugId,
   outcomeOfReport,
   privateUrlOf,
@@ -75,12 +86,15 @@ export class RunCoordinator {
   private readonly shrink: ShrinkImage | null;
   private readonly recorder: IVideoRecorder | null;
   private readonly variablesOf: (projectId: string) => Promise<IVariableValue[]>;
+  private readonly keepVariable: NonNullable<IRunCoordinator['keepVariable']>;
+  private readonly askWaitMs: number;
   private readonly stopping = new Set<string>();
   private readonly walking = new Set<string>();
   private readonly paused = new Set<string>();
   private readonly drivers = new Map<string, IDeviceDriver>();
   private readonly inFlightRuns = new Map<string, IRunInFlight>();
   private readonly viewports = new Map<string, IViewport>();
+  private readonly questions = new Map<string, IOpenQuestion>();
 
   public constructor(props: IRunCoordinator) {
     this.runner = props.runner;
@@ -95,6 +109,8 @@ export class RunCoordinator {
     this.shrink = props.shrink ?? null;
     this.recorder = props.recorder ?? null;
     this.variablesOf = props.variablesOf ?? (() => Promise.resolve([]));
+    this.keepVariable = props.keepVariable ?? (() => Promise.resolve(false));
+    this.askWaitMs = props.askWaitMs ?? RUN_WALK.askWaitMs;
   }
 
   public async start(run: IStartRun): Promise<void> {
@@ -137,6 +153,8 @@ export class RunCoordinator {
       model: run.model,
       targetKind: run.target.kind,
       isExploring: run.mode === 'explore',
+      question: null,
+      asked: [],
     });
 
     try {
@@ -155,6 +173,7 @@ export class RunCoordinator {
         udid: ios?.udid ?? '',
       });
     } finally {
+      this.questions.get(run.workspaceId)?.settle({ kind: 'stopped' });
       this.walking.delete(run.workspaceId);
       this.inFlightRuns.delete(run.workspaceId);
       this.stopping.delete(run.workspaceId);
@@ -169,6 +188,7 @@ export class RunCoordinator {
     if (!this.walking.has(workspaceId)) return;
 
     this.stopping.add(workspaceId);
+    this.questions.get(workspaceId)?.settle({ kind: 'stopped' });
     this.runner.cancel(workspaceId);
     void this.drivers.get(workspaceId)?.close();
   }
@@ -181,6 +201,22 @@ export class RunCoordinator {
 
     if (run)
       this.inFlightRuns.set(props.workspaceId, { ...run, isPaused: props.isPaused });
+  }
+
+  /** Hands the QA's reply to the question a run's agent waits on; a reply to a question no longer waiting, or one with nothing in it, changes nothing. */
+  public answer(props: {
+    workspaceId: string;
+    questionId: string;
+    reply: QaReply;
+  }): void {
+    const { workspaceId, questionId, reply } = props;
+    const open = this.questions.get(workspaceId);
+
+    if (open?.question.id !== questionId) return;
+
+    if ((reply.kind === 'said' ? reply.text.trim() : reply.value).length === 0) return;
+
+    open.settle(reply);
   }
 
   /** Resizes the device of a run under way, for the cases still to come too; the next run starts at the workspace's size. */
@@ -405,6 +441,7 @@ export class RunCoordinator {
     const proofs = new Map<number, string>();
     let began = Date.now();
     let isOver = false;
+    let isAnsweredForThisRun = false;
     let over: () => void = () => undefined;
     const caseOver = new Promise<null>((resolve) => {
       over = () => {
@@ -507,7 +544,7 @@ export class RunCoordinator {
           at,
         });
 
-        if (recipe !== null) props.recorded.push(recipe);
+        if (recipe !== null && !isAnsweredForThisRun) props.recorded.push(recipe);
 
         return endCase('Filed. That was the last step of this case.');
       }
@@ -561,7 +598,33 @@ export class RunCoordinator {
       });
     };
 
-    const mcpConfig = this.tools.mcpConfigFor(workspaceId);
+    const onAsk = async (question: IQaQuestion): Promise<string> => {
+      const walking = pending[0];
+
+      if (walking === undefined || isOver) return 'This case is over: end your turn now.';
+
+      const { words, answer } = await this.askQa({
+        run,
+        asked: question,
+        at: {
+          caseId: walking.step.caseId,
+          stepNumber: walking.step.numberInCase,
+          action: walking.step.action,
+        },
+        carryOn: `Carry on with step ${String(walking.step.numberInCase)}.`,
+        noAnswer:
+          'Carry on without it if you can, or report the step blocked and say what you needed.',
+      });
+
+      if (answer?.kind === 'secret' && !answer.isKept) isAnsweredForThisRun = true;
+
+      return isOver ? 'This case is over: end your turn now.' : words;
+    };
+
+    const mcpConfig = this.tools.mcpConfigFor(
+      workspaceId,
+      this.askWaitMs + RUN_WALK.toolMarginMs,
+    );
 
     if (mcpConfig === null)
       throw new Error('The device tools are not up, so the agent cannot act.');
@@ -593,7 +656,7 @@ export class RunCoordinator {
       },
     };
 
-    this.tools.attach({ workspaceId, driver: port, onReport, onFinding });
+    this.tools.attach({ workspaceId, driver: port, onReport, onFinding, onAsk });
 
     const screen = await device.describe().catch(() => '');
 
@@ -654,7 +717,8 @@ export class RunCoordinator {
     const { run, driver } = props;
     const { workspaceId } = run;
     const minutes = run.minutes ?? EXPLORATION.minutes;
-    const endsAt = Date.now() + minutes * 60_000;
+    let endsAt = Date.now() + minutes * 60_000;
+    let late: NodeJS.Timeout | undefined;
     const device = variablePort({ device: driver, values: run.values });
     let screens = 0;
     let findings = 0;
@@ -757,12 +821,56 @@ export class RunCoordinator {
       return Promise.resolve(end('Thank you. End your turn now, with no summary.'));
     };
 
-    const mcpConfig = this.tools.mcpConfigFor(workspaceId);
+    const armLate = () => {
+      clearTimeout(late);
+      late = setTimeout(
+        () => {
+          if (!isOver) end('');
+        },
+        endsAt - Date.now() + RUN_WALK.exploreGraceMs,
+      );
+    };
+
+    const onAsk = async (question: IQaQuestion): Promise<string> => {
+      if (isOver) return 'The exploration is over: end your turn now.';
+
+      if (Date.now() >= endsAt) return 'Time is up: call finish now with what you saw.';
+
+      const began = Date.now();
+
+      clearTimeout(late);
+
+      const { words } = await this.askQa({
+        run,
+        asked: question,
+        at: {
+          caseId: EXPLORATION.caseId,
+          stepNumber: current.number,
+          action: current.name,
+        },
+        carryOn: 'Carry on exploring.',
+        noAnswer: 'Explore what you can reach without it.',
+      });
+
+      if (isOver || this.stopping.has(workspaceId))
+        return 'The exploration is over: end your turn now.';
+
+      endsAt += Date.now() - began;
+      this.tools.attach({ ...attached, endsAt });
+      armLate();
+
+      return words;
+    };
+
+    const mcpConfig = this.tools.mcpConfigFor(
+      workspaceId,
+      this.askWaitMs + RUN_WALK.toolMarginMs,
+    );
 
     if (mcpConfig === null)
       throw new Error('The device tools are not up, so the agent cannot act.');
 
-    this.tools.attach({
+    const attached: IAttachDevice = {
       workspaceId,
       driver: device,
       purpose: 'explore',
@@ -770,7 +878,10 @@ export class RunCoordinator {
       onScreen,
       onFinding,
       onFinish,
-    });
+      onAsk,
+    };
+
+    this.tools.attach(attached);
 
     const screen = await device.describe().catch(() => '');
 
@@ -803,12 +914,7 @@ export class RunCoordinator {
       },
       () => undefined,
     );
-    const late = setTimeout(
-      () => {
-        if (!isOver) end('');
-      },
-      endsAt - Date.now() + RUN_WALK.exploreGraceMs,
-    );
+    armLate();
 
     const asked = await Promise.race([asking, finished]);
 
@@ -933,6 +1039,120 @@ export class RunCoordinator {
     if ((await stat(dirname(file)).catch(() => null))?.isDirectory() !== true) return;
 
     await writeFile(file, JSON.stringify(props.book, null, 2));
+  }
+
+  /** Shows the QA what the agent asked at the step it is on, and waits with the agent's clock held for their reply, the wait's end or a stop: the agent hears it in words, and a secret by its name alone. */
+  private async askQa(
+    props: IAskQa,
+  ): Promise<{ words: string; answer: RunAnswer | null }> {
+    const { run, asked, at } = props;
+    const { workspaceId } = run;
+    const flight = this.inFlightRuns.get(workspaceId);
+
+    if (this.stopping.has(workspaceId) || flight === undefined)
+      return {
+        words: answerWords({ ...props, answer: { kind: 'stopped' } }),
+        answer: null,
+      };
+
+    const { secret } = asked;
+
+    if (
+      secret !== null &&
+      run.values.some(({ name }) => name === secret.name) &&
+      !flight.asked.some(
+        ({ answer }) => answer.kind === 'secret' && answer.name === secret.name,
+      )
+    )
+      return {
+        words: `\${${secret.name}} is a variable of the project already: type it as written instead of asking for it.`,
+        answer: null,
+      };
+
+    const number = flight.asked.length + 1;
+    const askedAtMs = Date.now();
+    const question: IRunQuestion = {
+      id: `q-${String(number)}`,
+      question: asked.question,
+      options: asked.options,
+      isSecret: secret !== null,
+      secret: secret ?? {
+        name: `QA_ANSWER_${String(number)}`,
+        description: asked.question,
+      },
+      ...at,
+      askedAtMs,
+      waitsUntilMs: askedAtMs + this.askWaitMs,
+    };
+
+    this.runner.hold(workspaceId);
+
+    const outcome = await new Promise<QaOutcome>((settle) => {
+      const timer = setTimeout(() => {
+        this.questions.get(workspaceId)?.settle({ kind: 'unanswered' });
+      }, this.askWaitMs);
+
+      this.questions.set(workspaceId, {
+        question,
+        settle: (ended) => {
+          clearTimeout(timer);
+          this.questions.delete(workspaceId);
+          settle(ended);
+        },
+      });
+      this.emit({ kind: 'asked', workspaceId, question });
+    });
+
+    this.runner.release(workspaceId);
+
+    const answer = await this.answerOf({ run, outcome, variable: question.secret });
+
+    this.emit({
+      kind: 'answered',
+      workspaceId,
+      asked: {
+        id: question.id,
+        question: question.question,
+        caseId: at.caseId,
+        stepNumber: at.stepNumber,
+        answer,
+        askedAtMs,
+        answeredAtMs: Date.now(),
+      },
+    });
+
+    return { words: answerWords({ ...props, answer }), answer };
+  }
+
+  /** The QA's reply as the run keeps it: their words with any variable's value read back as its name, or a secret typed from now on as `variable`, and kept in the project when they asked and it could be. */
+  private async answerOf(props: {
+    run: IWalkRun;
+    outcome: QaOutcome;
+    variable: IVariableBrief;
+  }): Promise<RunAnswer> {
+    const { run, outcome } = props;
+
+    if (outcome.kind === 'unanswered' || outcome.kind === 'stopped') return outcome;
+
+    if (outcome.kind === 'said')
+      return {
+        kind: 'said',
+        text: hiddenValues({ text: outcome.text.trim(), values: run.values }),
+      };
+
+    const variable: IVariableValue = { ...props.variable, value: outcome.value };
+    const isKept =
+      outcome.isKept && run.projectId !== undefined
+        ? await this.keepVariable({ projectId: run.projectId, variable }).catch(
+            () => false,
+          )
+        : false;
+    const known = run.values.findIndex(({ name }) => name === variable.name);
+
+    if (known === -1) run.values.push(variable);
+    else run.values.splice(known, 1, variable);
+
+    return { kind: 'secret', name: variable.name, isKept };
   }
 
   private async holdWhilePaused(workspaceId: string): Promise<void> {

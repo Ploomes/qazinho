@@ -198,6 +198,8 @@ describe('an exploration', () => {
         model: 'haiku',
         targetKind: 'web',
         isExploring: true,
+        question: null,
+        asked: [],
       },
       now: 61_000,
       startedAt: '10:00',

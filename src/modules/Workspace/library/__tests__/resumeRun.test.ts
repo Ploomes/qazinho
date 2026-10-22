@@ -25,6 +25,8 @@ function inFlight(props: Partial<IRunInFlight> = {}): IRunInFlight {
     model: 'haiku',
     targetKind: 'web',
     isExploring: false,
+    question: null,
+    asked: [],
     ...props,
   };
 }

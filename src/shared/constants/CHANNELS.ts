@@ -14,6 +14,7 @@ export const CHANNELS = {
   exportCode: 'run:export-code',
   pauseRun: 'run:pause',
   stopRun: 'run:stop',
+  answerRun: 'run:answer',
   resizeDevice: 'run:resize',
   focusDevice: 'run:focus',
   runsInFlight: 'run:in-flight',

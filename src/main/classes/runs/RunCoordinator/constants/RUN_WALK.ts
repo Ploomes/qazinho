@@ -6,4 +6,6 @@ export const RUN_WALK = {
   proofWaitMs: 700,
   hiddenFromLength: 4,
   exploreGraceMs: 90_000,
+  askWaitMs: 15 * 60_000,
+  toolMarginMs: 60_000,
 } as const;

@@ -30,6 +30,7 @@ import type {
   IViewport,
   McpSignInProgress,
   PickKind,
+  QaReply,
   SaveOutcome,
   SuiteChangeEvent,
   SuiteEvent,
@@ -426,6 +427,13 @@ const runs = new RunCoordinator({
   onEvent: (event) => broadcast({ channel: CHANNELS.runEvent, event }),
   recorder,
   variablesOf: (projectId) => variables.valuesOf(projectId),
+  keepVariable: async ({ projectId, variable }) =>
+    (
+      await variables.apply({
+        projectId,
+        changes: [{ kind: 'save', ...variable, from: null }],
+      })
+    ).isSaved,
   shrink: ({ image, width, height, quality }) =>
     nativeImage
       .createFromBuffer(image)
@@ -859,6 +867,12 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.stopRun, (_event, workspaceId: string) => {
     runs.stop(workspaceId);
   });
+  ipcMain.handle(
+    CHANNELS.answerRun,
+    (_event, props: { workspaceId: string; questionId: string; reply: QaReply }) => {
+      runs.answer(props);
+    },
+  );
   ipcMain.handle(CHANNELS.runsInFlight, () => runs.inFlight());
   ipcMain.handle(
     CHANNELS.resizeDevice,

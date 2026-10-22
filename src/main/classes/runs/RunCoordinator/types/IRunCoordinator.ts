@@ -18,4 +18,9 @@ export interface IRunCoordinator {
   shrink?: ShrinkImage;
   recorder?: IVideoRecorder;
   variablesOf?: (projectId: string) => Promise<IVariableValue[]>;
+  keepVariable?: (props: {
+    projectId: string;
+    variable: IVariableValue;
+  }) => Promise<boolean>;
+  askWaitMs?: number;
 }

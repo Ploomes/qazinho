@@ -1,3 +1,4 @@
+export * from './answerWords';
 export * from './bookWith';
 export * from './casesOf';
 export * from './driverFor';

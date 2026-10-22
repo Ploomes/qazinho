@@ -1,4 +1,4 @@
-import type { IRunInFlight, IStepOutcome } from '@/shared/types';
+import type { IRunAsked, IRunInFlight, IRunQuestion, IStepOutcome } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
 import { followRunEvent } from '@/main/classes/runs/RunCoordinator/library';
 
@@ -16,6 +16,8 @@ const RUN: IRunInFlight = {
   model: 'haiku',
   targetKind: 'web',
   isExploring: false,
+  question: null,
+  asked: [],
 };
 
 const OUTCOME = { workspaceId: 'w1', index: 0, verdict: 'passed' } as IStepOutcome;
@@ -91,5 +93,59 @@ describe('followRunEvent', () => {
       followRunEvent({ run: RUN, event: { kind: 'finding', workspaceId: 'w1', finding } })
         .findings,
     ).toEqual([finding]);
+  });
+
+  describe('a question to the QA', () => {
+    const QUESTION: IRunQuestion = {
+      id: 'q-1',
+      question: 'Which plan?',
+      options: ['Premium', 'Premium+'],
+      isSecret: false,
+      secret: { name: 'QA_ANSWER_1', description: 'Which plan?' },
+      caseId: 'TC-01',
+      stepNumber: 2,
+      action: 'Pick a plan',
+      askedAtMs: 1_000,
+      waitsUntilMs: 901_000,
+    };
+    const ASKED: IRunAsked = {
+      id: 'q-1',
+      question: 'Which plan?',
+      caseId: 'TC-01',
+      stepNumber: 2,
+      answer: { kind: 'said', text: 'Premium+' },
+      askedAtMs: 1_000,
+      answeredAtMs: 31_000,
+    };
+
+    it('keeps the question the agent waits on, for a page that opens later', () => {
+      expect(
+        followRunEvent({
+          run: RUN,
+          event: { kind: 'asked', workspaceId: 'w1', question: QUESTION },
+        }).question,
+      ).toEqual(QUESTION);
+    });
+
+    it('lets the question go once answered, and keeps how it was answered', () => {
+      const answered = followRunEvent({
+        run: { ...RUN, question: QUESTION },
+        event: { kind: 'answered', workspaceId: 'w1', asked: ASKED },
+      });
+
+      expect(answered.question).toBeNull();
+      expect(answered.asked).toEqual([ASKED]);
+    });
+
+    it('does NOT let go of a newer question for the answer to an older one', () => {
+      const newer = { ...QUESTION, id: 'q-2' };
+
+      expect(
+        followRunEvent({
+          run: { ...RUN, question: newer },
+          event: { kind: 'answered', workspaceId: 'w1', asked: ASKED },
+        }).question,
+      ).toEqual(newer);
+    });
   });
 });

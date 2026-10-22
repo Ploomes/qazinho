@@ -8,6 +8,7 @@ import type {
   IRunRef,
   IStartRun,
   IViewport,
+  QaReply,
   SaveOutcome,
 } from '@/shared/types';
 
@@ -29,6 +30,14 @@ export class Run {
 
   public static stop(workspaceId: string): void {
     void window.qazinho?.stopRun(workspaceId);
+  }
+
+  public static answer(props: {
+    workspaceId: string;
+    questionId: string;
+    reply: QaReply;
+  }): void {
+    void window.qazinho?.answerRun(props);
   }
 
   public static resize(props: { workspaceId: string; viewport: IViewport }): void {

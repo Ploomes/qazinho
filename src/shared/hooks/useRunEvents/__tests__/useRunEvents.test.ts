@@ -32,6 +32,8 @@ const RUN: IRunInFlight = {
   model: 'sonnet',
   targetKind: 'web',
   isExploring: false,
+  question: null,
+  asked: [],
 };
 
 /** A page that opened while main was still walking a run: the bridge says so. */
