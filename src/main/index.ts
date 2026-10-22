@@ -25,13 +25,16 @@ import type {
   ISetupEvent,
   IStartBuild,
   IStartRun,
+  IStartSuiteChange,
   IStartSuiteRun,
   IViewport,
   McpSignInProgress,
   PickKind,
   SaveOutcome,
+  SuiteChangeEvent,
   SuiteEvent,
   SuitePick,
+  SuiteShipWay,
   WindowFit,
 } from '@/shared/types';
 import { execFile } from 'node:child_process';
@@ -78,11 +81,13 @@ import {
   RunAlerts,
   RunRecorder,
   SetupInstaller,
+  SuiteChanges,
   SuiteRegistry,
   SuiteRunner,
   UsageReader,
   VariableVault,
 } from '@/main/classes';
+import { changeIdOf } from '@/main/classes/automation/SuiteChanges/library';
 import { APP_BUILDER } from '@/main/classes/builds/AppBuilder/constants';
 import { buildIdOf } from '@/main/classes/builds/AppBuilder/library';
 import {
@@ -164,7 +169,8 @@ function broadcast(props: {
     | AgentSignInProgress
     | GithubSignInProgress
     | IBuildEvent
-    | SuiteEvent;
+    | SuiteEvent
+    | SuiteChangeEvent;
 }): void {
   for (const open of appWindows()) open.webContents.send(props.channel, props.event);
 }
@@ -263,6 +269,15 @@ const agentRunner = new AgentRunner({
       return;
     }
 
+    const changeId = changeIdOf(event.workspaceId);
+
+    if (changeId !== null) {
+      if (event.kind === 'text' || event.kind === 'action')
+        suiteChanges.hear({ changeId, text: event.text });
+
+      return;
+    }
+
     broadcast({
       channel:
         event.workspaceId === ASSISTANT.scope
@@ -297,6 +312,23 @@ const builder = new AppBuilder({
     }),
   onEvent: (event) => {
     broadcast({ channel: CHANNELS.buildEvent, event });
+  },
+});
+
+const suiteChanges = new SuiteChanges({
+  registry: suites,
+  suites: suiteRunner,
+  git,
+  github,
+  runner: agentRunner,
+  harness,
+  tools,
+  findCommand,
+  values: (projectId) => variables.valuesOf(projectId).catch(() => []),
+  path: async () => (await commandDirectories()).join(delimiter),
+  root: PATHS.suites,
+  onEvent: (event) => {
+    broadcast({ channel: CHANNELS.suiteChangeEvent, event });
   },
 });
 
@@ -883,6 +915,25 @@ void app.whenReady().then(async () => {
     CHANNELS.openSuiteTrace,
     (_event, trace: { projectId: string; runId: string; file: string }) =>
       suiteRunner.openTrace(trace),
+  );
+  ipcMain.handle(CHANNELS.startSuiteChange, (_event, start: IStartSuiteChange) =>
+    suiteChanges.start(start),
+  );
+  ipcMain.handle(CHANNELS.stopSuiteChange, (_event, changeId: string) => {
+    suiteChanges.stop(changeId);
+  });
+  ipcMain.handle(CHANNELS.suiteChanges, (_event, projectId: string) =>
+    suiteChanges.changes(projectId),
+  );
+  ipcMain.handle(
+    CHANNELS.shipSuiteChange,
+    (_event, props: { projectId: string; changeId: string; way: SuiteShipWay }) =>
+      suiteChanges.ship(props),
+  );
+  ipcMain.handle(
+    CHANNELS.discardSuiteChange,
+    (_event, props: { projectId: string; changeId: string }) =>
+      suiteChanges.discard(props),
   );
   ipcMain.handle(CHANNELS.fitWindow, (event, fit: WindowFit) => {
     const window = BrowserWindow.fromWebContents(event.sender);

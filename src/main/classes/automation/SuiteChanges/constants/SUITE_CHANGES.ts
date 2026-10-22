@@ -1,0 +1,18 @@
+export const SUITE_CHANGES = {
+  scopePrefix: '~change:',
+  changes: 'changes',
+  changeFile: 'change.json',
+  workFile: 'work.json',
+  work: 'work',
+  checks: 'checks',
+  finalCheck: 'final',
+  branchPrefix: 'qazinho/',
+  branchChars: 48,
+  freeBranchTries: 20,
+  envFiles: ['.env'],
+  commits: 12,
+  notesChars: 6_000,
+  reportChars: 16_000,
+  gitTimeoutMs: 120_000,
+  toolTimeoutMs: 15 * 60 * 1000,
+} as const;
