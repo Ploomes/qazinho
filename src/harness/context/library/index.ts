@@ -11,6 +11,7 @@ export * from './describeKnownBugs';
 export * from './describeLook';
 export * from './describePlan';
 export * from './describeReferences';
+export * from './describeReview';
 export * from './describeRuns';
 export * from './describeScreen';
 export * from './describeSize';

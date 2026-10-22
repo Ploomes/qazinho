@@ -550,6 +550,77 @@ describe('Harness', () => {
     });
   });
 
+  describe('review', () => {
+    const REVIEW = {
+      issue: {
+        key: 'SHOP-57',
+        title: 'Cupom expirado é aceito',
+        url: 'https://acme.atlassian.net/browse/SHOP-57',
+        status: 'Em revisão',
+        isClosed: false,
+        body: 'O total cai para R$ 90,00 com o cupom EXPIRED.',
+        comments: [
+          { author: 'Bia Dev', at: '2026-10-22', text: 'Acontece no mobile também?' },
+        ],
+      },
+      bug: {
+        title: 'Cupom expirado é aceito',
+        expected: 'A mensagem "Este cupom expirou"',
+        got: 'O total caiu para R$ 90,00',
+        body: '',
+        caseTitle: 'Um cupom expirado é recusado',
+      },
+      sightings: [
+        {
+          runId: 'r-05',
+          runWhen: '14:02',
+          caseId: 'TC-02',
+          stepNumber: 2,
+          action: 'Aplicar o cupom EXPIRED',
+          note: 'O cupom foi aceito no celular.',
+          target: 'Web · Chrome 390 × 844',
+          shot: '/data/runs/w-1/r-05/step-2.jpg',
+          requests: [],
+        },
+      ],
+      readDirs: ['/data/runs/w-1'],
+      language: 'pt' as const,
+    };
+
+    it('briefs the reporter, and nothing of a chat, a run or the assistant', async () => {
+      const { systemPrompt, schema, readDirs } = harness.review(REVIEW);
+
+      await expect(systemPrompt).toMatchFileSnapshot('./__prompts__/reporter.txt');
+      await expect(schema).toMatchFileSnapshot('./__prompts__/review-schema.txt');
+      expect(systemPrompt).toContain('in Brazilian Portuguese');
+      expect(systemPrompt).not.toContain('## Talking with the QA');
+      expect(systemPrompt).not.toContain('## Being the Estagiário');
+      expect(readDirs).toEqual(['/data/runs/w-1']);
+    });
+
+    it('asks about the issue with the bug and each time it came back', async () => {
+      await expect(harness.review(REVIEW).prompt).toMatchFileSnapshot(
+        './__prompts__/review-message.txt',
+      );
+    });
+
+    it('reads the verdict the reporter answered with', () => {
+      expect(
+        harness.readReview(
+          JSON.stringify({
+            verdict: 'news',
+            reason: 'No celular também.',
+            comment: 'Também no celular.',
+          }),
+        ),
+      ).toEqual({
+        verdict: 'news',
+        reason: 'No celular também.',
+        comment: 'Também no celular.',
+      });
+    });
+  });
+
   describe('change', () => {
     const CHANGE = {
       dir: '/data/suites/p-1/changes/c-01/work/e2e',

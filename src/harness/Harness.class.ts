@@ -8,6 +8,8 @@ import type {
   IChangeAnswer,
   IChangeBrief,
   IHarnessTarget,
+  IReviewAnswer,
+  IReviewBrief,
 } from '@/harness/types';
 import type {
   IAppSnapshot,
@@ -37,6 +39,7 @@ import {
   describeLook,
   describePlan,
   describeReferences,
+  describeReview,
   describeRuns,
   describeScreen,
   describeSize,
@@ -45,8 +48,18 @@ import {
   renderSections,
   sectionsFor,
 } from '@/harness/context/library';
-import { readBuildAnswer, readChangeAnswer, readChatAnswer } from '@/harness/library';
-import { BUILD_SCHEMA, CHANGE_SCHEMA, CHAT_SCHEMA } from '@/harness/schemas';
+import {
+  readBuildAnswer,
+  readChangeAnswer,
+  readChatAnswer,
+  readReviewAnswer,
+} from '@/harness/library';
+import {
+  BUILD_SCHEMA,
+  CHANGE_SCHEMA,
+  CHAT_SCHEMA,
+  REVIEW_SCHEMA,
+} from '@/harness/schemas';
 import {
   BUILD_TOOLS,
   CHANGE_TOOLS,
@@ -224,6 +237,32 @@ export class Harness {
       allowedTools: [...CHANGE_TOOLS.allowed, ...this.toolsFor('automator').allowedTools],
       readDirs: props.readDirs,
     };
+  }
+
+  /** One look at a bug that came back, by an agent of its own: the issue as the team keeps it, the bug and each time it came back, and the folders with their screens, read only. */
+  public review(brief: IReviewBrief): {
+    systemPrompt: string;
+    prompt: string;
+    schema: string;
+    readDirs: string[];
+  } {
+    return {
+      systemPrompt: this.contextFor({
+        target: { role: 'reporter' },
+        values: { language: LANGUAGE_NAMES[brief.language] },
+      }),
+      prompt: chatMessageOf({
+        sections: describeReview(brief),
+        text: 'Does the issue need an update?',
+      }),
+      schema: REVIEW_SCHEMA,
+      readDirs: brief.readDirs,
+    };
+  }
+
+  /** The review out of what the agent printed; null when it answered something else. */
+  public readReview(text: string): IReviewAnswer | null {
+    return readReviewAnswer(text);
   }
 
   /** The change answer out of what the agent printed. */

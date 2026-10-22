@@ -5,3 +5,5 @@ export * from './CHANGE_SCHEMA';
 export * from './CHAT_ANSWER';
 export * from './CHAT_SCHEMA';
 export * from './DRAFTED_CASE';
+export * from './REVIEW_ANSWER';
+export * from './REVIEW_SCHEMA';
