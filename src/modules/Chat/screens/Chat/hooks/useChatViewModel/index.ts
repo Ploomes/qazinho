@@ -1,5 +1,5 @@
 import type { ChatItem, IQuestionAnswer, IRunMessage } from '@/modules/Chat/types';
-import type { IChatReference, ICodeAsk, IVariableBrief } from '@/shared/types';
+import type { IChatReference, ICodeAsk, IVariableBrief, QaReply } from '@/shared/types';
 import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +21,7 @@ import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { formatElapsed } from '@/modules/Device';
 import { useVariableActions } from '@/modules/Project';
 import { flattenPlanSteps, formatCost, RUN_ENDS, useRunActions } from '@/modules/Run';
-import { Agent } from '@/services';
+import { Agent, Run } from '@/services';
 import { EXPLORATION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import { useAppStore, useSetupStore, useWorkspaceStore } from '@/store';
@@ -50,6 +50,8 @@ export const useChatViewModel = () => {
     isPaused: opened.live !== null && !opened.live.isRunning && !opened.live.isDone,
     walked: opened.live?.outcomes.length ?? 0,
     isExploring: opened.live?.kind === 'explore',
+    question:
+      opened.live !== null && !opened.live.isDone ? (opened.live.question ?? null) : null,
     elapsedSec: opened.live?.elapsedSec ?? 0,
     liveCostUsd: opened.live?.costUsd ?? null,
   }));
@@ -92,10 +94,12 @@ export const useChatViewModel = () => {
   const references =
     workspace === null ? [] : referencesOf({ workspace, wholePlan, exploration });
   const mentionQuery = mentionQueryOf(draft);
+  const question = workspace?.question ?? null;
   const { listRef, visible, onScroll } = useChatScroll({
     workspaceId: workspace?.id ?? null,
     messages: workspace?.chat ?? [],
     isAgentTyping,
+    questionId: question === null ? null : `${workspace?.liveId ?? ''}/${question.id}`,
   });
   const lastAgentId =
     (workspace?.chat ?? []).filter(({ kind }) => kind === 'agent').at(-1)?.id ?? null;
@@ -220,16 +224,20 @@ export const useChatViewModel = () => {
           ? runTitleOf(item.card)
           : isLive && workspace?.isExploring === true
             ? t(
-                workspace.isPaused
-                  ? 'CHAT.EXPLORE_SECTION_PAUSED'
-                  : 'CHAT.EXPLORE_SECTION_LIVE',
+                question !== null
+                  ? 'CHAT.EXPLORE_SECTION_ASKED'
+                  : workspace.isPaused
+                    ? 'CHAT.EXPLORE_SECTION_PAUSED'
+                    : 'CHAT.EXPLORE_SECTION_LIVE',
                 { id: item.runId, screens: screensOf(workspace.walked) },
               )
             : isLive
               ? t(
-                  workspace?.isPaused
-                    ? 'CHAT.RUN_SECTION_PAUSED'
-                    : 'CHAT.RUN_SECTION_LIVE',
+                  question !== null
+                    ? 'CHAT.RUN_SECTION_ASKED'
+                    : workspace?.isPaused
+                      ? 'CHAT.RUN_SECTION_PAUSED'
+                      : 'CHAT.RUN_SECTION_LIVE',
                   progress,
                 )
               : t('CHAT.RUN_SECTION', { id: item.runId }),
@@ -287,7 +295,20 @@ export const useChatViewModel = () => {
               !isWalking,
           },
     ),
-    lockedText: isWalking ? t('CHAT.LOCKED_RUNNING') : null,
+    lockedText:
+      question !== null
+        ? t('CHAT.LOCKED_ASKED')
+        : isWalking
+          ? t('CHAT.LOCKED_RUNNING')
+          : null,
+    question:
+      question === null
+        ? null
+        : { key: `${workspace?.liveId ?? ''}/${question.id}`, live: question },
+    onAnswerQuestion: (reply: QaReply) => {
+      if (workspace !== null && question !== null)
+        Run.answer({ workspaceId: workspace.id, questionId: question.id, reply });
+    },
     onStop: () => {
       if (workspace !== null && isAgentTyping) void Agent.stop(workspace.id);
     },
@@ -309,7 +330,7 @@ export const useChatViewModel = () => {
     },
     listRef,
     onScroll,
-    isEmpty: (workspace?.chat.length ?? 0) === 0,
+    isEmpty: (workspace?.chat.length ?? 0) === 0 && liveId === null,
     isAgentTyping,
     liveText: isAgentTyping ? liveText : '',
     retryText:

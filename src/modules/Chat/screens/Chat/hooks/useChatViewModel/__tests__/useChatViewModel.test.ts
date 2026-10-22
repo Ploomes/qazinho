@@ -4,9 +4,10 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
 import { useChatViewModel } from '@/modules/Chat/screens/Chat/hooks/useChatViewModel';
-import { endRun, startRun } from '@/modules/Workspace/library';
+import { endRun, landAsked, startRun } from '@/modules/Workspace/library';
 import {
   makeWorkspace,
+  QUESTION,
   WALKED_BY,
   walkRun,
 } from '@/modules/Workspace/library/__tests__/fixtures';
@@ -950,6 +951,83 @@ describe('useChatViewModel', () => {
       });
 
       expect(renderHook(() => useChatViewModel()).result.current.lockedText).toBeNull();
+    });
+  });
+
+  describe('a question from the run', () => {
+    const asking = () =>
+      landAsked({ workspace: walkRun({ verdicts: ['passed'] }), question: QUESTION });
+
+    it('shows the question the agent waits on, and points the composer at it', () => {
+      answering({});
+      useWorkspaceStore.setState({ workspaces: [asking()] });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      expect(result.current.question).toEqual({
+        key: 'r-01/q-1',
+        live: { ...QUESTION, waitedSec: 0 },
+      });
+      expect(result.current.lockedText).toBe(
+        'The agent waits on your answer, just above.',
+      );
+      expect(
+        result.current.items.find((item) => item.kind === 'run') as { title?: string },
+      ).toMatchObject({ title: 'Run r-01 · waiting for you · step 2 of 6' });
+    });
+
+    it("hands the QA's answer to main, for the question it waits on", () => {
+      answering({});
+
+      const answerRun = vi.fn(() => Promise.resolve());
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), answerRun };
+      useWorkspaceStore.setState({ workspaces: [asking()] });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onAnswerQuestion({ kind: 'said', text: 'Premium+' });
+      });
+
+      expect(answerRun).toHaveBeenCalledWith({
+        workspaceId: 'w1',
+        questionId: 'q-1',
+        reply: { kind: 'said', text: 'Premium+' },
+      });
+    });
+
+    /** A first run in a new workspace walked behind the empty chat's welcome, its question unseen. */
+    it('shows the run and its question in a chat that has said nothing yet', () => {
+      answering({});
+      useWorkspaceStore.setState({
+        workspaces: [
+          landAsked({
+            workspace: startRun({
+              workspace: makeWorkspace(),
+              startedAt: '09:41',
+              runId: 'r-01',
+              by: WALKED_BY,
+            }),
+            question: QUESTION,
+          }),
+        ],
+      });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      expect(result.current.isEmpty).toBe(false);
+      expect(result.current.items.map(({ kind }) => kind)).toEqual(['run']);
+      expect(result.current.question?.key).toBe('r-01/q-1');
+    });
+
+    it('does NOT show a question once its run is over', () => {
+      answering({});
+      useWorkspaceStore.setState({
+        workspaces: [endRun({ workspace: asking(), at: '09:43', endedBy: 'stopped' })],
+      });
+
+      expect(renderHook(() => useChatViewModel()).result.current.question).toBeNull();
     });
   });
 

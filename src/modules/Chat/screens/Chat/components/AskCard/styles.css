@@ -1,0 +1,108 @@
+.ask-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-6);
+  border: var(--edge-width-lg) solid var(--edge);
+  border-radius: var(--radius-xl);
+  background: var(--raise);
+  box-shadow: var(--sticker-rest);
+  transition: opacity var(--dur) var(--ease);
+}
+
+.ask-card--sent {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.ask-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.ask-card__mark {
+  display: inline-flex;
+  color: var(--attn);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ask-card__mark {
+    animation: gc-blink 2.4s ease-in-out infinite;
+  }
+}
+
+.ask-card__where {
+  min-width: 0;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+  overflow-wrap: anywhere;
+}
+
+.ask-card__question {
+  margin: 0;
+  color: var(--ink);
+  font: var(--font-ui-lg);
+  white-space: pre-wrap;
+  text-wrap: pretty;
+}
+
+.ask-card__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.ask-card__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.ask-card__field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.ask-card__input {
+  flex: 1;
+  min-width: 0;
+}
+
+.ask-card__switches {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.ask-card__keep {
+  display: inline-flex;
+}
+
+.ask-card__fold {
+  margin-top: calc(var(--space-4) * -1);
+  overflow: hidden;
+}
+
+.ask-card__secret {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 0;
+  color: var(--lime-ink);
+  font: var(--font-ui-sm);
+}
+
+.ask-card__lock {
+  display: inline-flex;
+  flex: none;
+  padding-top: var(--space-1);
+}
+
+.ask-card__waiting {
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}

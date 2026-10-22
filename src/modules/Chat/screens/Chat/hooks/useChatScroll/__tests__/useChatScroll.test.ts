@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import type { ChatMessage } from '@/modules/Chat/types';
 import { act, renderHook } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 
 function chat(count: number): ChatMessage[] {
@@ -91,5 +91,30 @@ describe('useChatScroll', () => {
 
       expect(result.current.visible).toHaveLength(30);
     });
+  });
+
+  /** The run holds until the QA answers: the card must not wait below where they scrolled to. */
+  it('brings a question the agent asks into view, even when the reader scrolled up', () => {
+    const { result, rerender } = renderHook(
+      (questionId: string | null) =>
+        useChatScroll({
+          workspaceId: 'w1',
+          messages: chat(3),
+          isAgentTyping: false,
+          questionId,
+        }),
+      { initialProps: null as string | null },
+    );
+    const list = scrolledTo(10);
+    const scrollTo = vi.fn();
+
+    list.scrollTo = scrollTo;
+    act(() => {
+      result.current.listRef.current = list;
+      result.current.onScroll();
+    });
+    rerender('r-01/q-1');
+
+    expect(scrollTo).toHaveBeenCalledWith({ top: 3_000, behavior: 'smooth' });
   });
 });

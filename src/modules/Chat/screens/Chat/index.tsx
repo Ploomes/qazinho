@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Chip, Intern, Markdown } from '@/shared/components/atoms';
-import { MOTION } from '@/shared/constants';
-import { ChatRow, Composer, RunSection, TypingDots } from './components';
+import { MOTION, STICKER } from '@/shared/constants';
+import { AskCard, ChatRow, Composer, RunSection, TypingDots } from './components';
 import { useChatViewModel } from './hooks';
 import './styles.css';
 
@@ -34,6 +34,8 @@ export const Chat: React.FC = () => {
     onPickMention,
     onSend,
     onStop,
+    question,
+    onAnswerQuestion,
     onAnswerQuestions,
     onOpenPlan,
     onTakeSuggestion,
@@ -109,6 +111,20 @@ export const Chat: React.FC = () => {
               </RunSection>
             ),
           )}
+
+          <AnimatePresence>
+            {question !== null && (
+              <motion.div
+                key={question.key}
+                className="chat__ask"
+                initial={STICKER.panel.initial}
+                animate={STICKER.panel.animate}
+                exit={STICKER.panel.exit}
+              >
+                <AskCard question={question.live} onAnswer={onAnswerQuestion} />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {isAgentTyping && (
             <motion.div

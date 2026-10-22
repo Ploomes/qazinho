@@ -7,8 +7,9 @@ export const useChatScroll = (props: {
   workspaceId: string | null;
   messages: ChatMessage[];
   isAgentTyping: boolean;
+  questionId?: string | null;
 }) => {
-  const { workspaceId, messages, isAgentTyping } = props;
+  const { workspaceId, messages, isAgentTyping, questionId = null } = props;
   const listRef = useRef<HTMLDivElement>(null);
   const followsEnd = useRef(true);
   const fromBottom = useRef<number | null>(null);
@@ -41,6 +42,15 @@ export const useChatScroll = (props: {
     if (list && followsEnd.current)
       list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
   }, [messages.length, isAgentTyping]);
+
+  useLayoutEffect(() => {
+    const list = listRef.current;
+
+    if (!list || questionId === null) return;
+
+    followsEnd.current = true;
+    list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
+  }, [questionId]);
 
   useLayoutEffect(() => {
     const list = listRef.current;
