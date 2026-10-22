@@ -15,6 +15,7 @@ export const useStepsPopupViewModel = (props: IStepsPopupProps) => {
   const isShownCopied = shownCode !== null && copied === shownCode.code;
   const isWorking = tone === 'working';
   const isConnected = tone === 'connected';
+  const isKept = props.isKept === true;
 
   useEffect(() => {
     const leave = (event: KeyboardEvent) => {
@@ -32,14 +33,14 @@ export const useStepsPopupViewModel = (props: IStepsPopupProps) => {
   }, [isWorking, onCancel, onClose]);
 
   useEffect(() => {
-    if (!isConnected) return;
+    if (!isConnected || isKept) return;
 
     const timer = setTimeout(onClose, STEPS_POPUP.closeAfterMs);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [isConnected, onClose]);
+  }, [isConnected, isKept, onClose]);
 
   return {
     style: {

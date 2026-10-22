@@ -7,6 +7,7 @@ import type { IStepsShownCode } from './IStepsShownCode';
 import type { StepsTone } from './StepsTone';
 import type { ReactNode } from 'react';
 
+/** A popup of steps taken out of sight; one that ended well closes itself a moment later unless `isKept`, when it still asks something of the QA. */
 export interface IStepsPopupProps {
   badge: ReactNode;
   tone: StepsTone;
@@ -19,6 +20,7 @@ export interface IStepsPopupProps {
   code: IStepsCode | null;
   shownCode: IStepsShownCode | null;
   actions: IStepsAction[];
+  isKept?: boolean;
   onCancel: () => void;
   onClose: () => void;
 }

@@ -215,6 +215,18 @@ describe('useStepsPopupViewModel', () => {
       expect(props.onClose).toHaveBeenCalledTimes(1);
     });
 
+    it('does NOT close on its own when it still asks something of the QA', () => {
+      vi.useFakeTimers();
+
+      const { props } = popup('connected', { isKept: true });
+
+      act(() => {
+        vi.advanceTimersByTime(STEPS_POPUP.closeAfterMs * 10);
+      });
+
+      expect(props.onClose).not.toHaveBeenCalled();
+    });
+
     it('does NOT close on its own while working', () => {
       vi.useFakeTimers();
 
