@@ -12,6 +12,13 @@ const STEP = {
   expected: 'The form shows',
 };
 
+const DESIGN = {
+  url: 'https://www.figma.com/design/AbC123/Shop?node-id=1-23',
+  fileKey: 'AbC123',
+  nodeId: '1:23',
+  name: 'Shop',
+};
+
 describe('describeCase', () => {
   it('names the case and lists every step with what the QA expects', () => {
     expect(
@@ -30,6 +37,7 @@ describe('describeCase', () => {
         filed: [],
         known: [],
         variables: [],
+        design: null,
       }),
     ).toBe(
       [
@@ -59,6 +67,7 @@ describe('describeCase', () => {
         filed: [],
         known: [],
         variables: [],
+        design: null,
       }),
     ).toBe(
       [
@@ -87,6 +96,7 @@ describe('describeCase', () => {
         filed: [],
         known: [],
         variables: [],
+        design: null,
       }),
     ).toContain(
       'Write what you report and note in Brazilian Portuguese, whatever language these steps are in.',
@@ -102,6 +112,7 @@ describe('describeCase', () => {
         filed: [],
         known: [],
         variables: [],
+        design: null,
       }),
     ).toContain('The device shows right now:\nSign in · [button] Continue');
   });
@@ -115,6 +126,7 @@ describe('describeCase', () => {
         filed: [],
         known: [],
         variables: [],
+        design: null,
       }),
     ).toBe('This case has no steps. End your turn.');
   });
@@ -129,6 +141,7 @@ describe('describeCase', () => {
         filed: ['Home page jumps while loading', 'Yearly price differs'],
         known: [],
         variables: [],
+        design: null,
       }),
     ).toContain(
       'Bugs this run already filed, not to file again:\n- Home page jumps while loading\n- Yearly price differs',
@@ -153,6 +166,7 @@ describe('describeCase', () => {
           },
         ],
         variables: [],
+        design: null,
       }),
     ).toContain(
       'Bugs already open in this workspace: when you see one of them again, give its id as "sameAs" instead of filing it anew.\n- BUG-01 · An expired coupon is accepted (TC-03, step 1)',
@@ -168,8 +182,49 @@ describe('describeCase', () => {
         filed: [],
         known: [],
         variables: [],
+        design: null,
       }),
     ).not.toContain('already filed');
+  });
+
+  it('names the design file and the frame each step’s screen should match', () => {
+    const text = describeCase({
+      steps: [
+        { ...STEP, frame: '12:345' },
+        { ...STEP, numberInCase: 2, action: 'Sign in', expected: 'Home' },
+      ],
+      screen: '',
+      language: 'en',
+      filed: [],
+      known: [],
+      variables: [],
+      design: DESIGN,
+    });
+
+    expect(text).toContain(
+      'Figma design: https://www.figma.com/design/AbC123/Shop?node-id=1-23 (fileKey AbC123). Hold each step that names a frame to it.',
+    );
+    expect(text).toContain(
+      '1. Open the sign in page\n   The QA expects: The form shows\n   Its screen should match Figma frame 12:345.\n2. Sign in\n   The QA expects: Home\nWrite',
+    );
+  });
+
+  it('says nothing of a design the workspace no longer has, nor of one no step names', () => {
+    const framed = { ...STEP, frame: '12:345' };
+    const base = {
+      screen: '',
+      language: 'en' as const,
+      filed: [],
+      known: [],
+      variables: [],
+    };
+
+    expect(describeCase({ ...base, steps: [framed], design: null })).not.toContain(
+      'Figma',
+    );
+    expect(describeCase({ ...base, steps: [STEP], design: DESIGN })).not.toContain(
+      'Figma',
+    );
   });
 
   it('lists the variables the case may type, by name and what each holds', () => {
@@ -184,6 +239,7 @@ describe('describeCase', () => {
           { name: 'LOGIN_EMAIL', description: 'The admin on staging' },
           { name: 'LOGIN_PASSWORD', description: '' },
         ],
+        design: null,
       }),
     ).toContain(
       [

@@ -478,6 +478,7 @@ describe('Harness', () => {
             { name: 'SHOP_EMAIL', description: 'The buyer account on staging' },
             { name: 'SHOP_PASSWORD', description: '' },
           ],
+          design: null,
         }),
       ).toMatchFileSnapshot('./__prompts__/walk.txt');
       await expect(
@@ -488,6 +489,7 @@ describe('Harness', () => {
           filed: [],
           known: [],
           variables: [],
+          design: null,
         }),
       ).toMatchFileSnapshot('./__prompts__/walk-empty.txt');
     });

@@ -351,6 +351,7 @@ export class Harness {
     filed: string[];
     known: IKnownBug[];
     variables: IVariableBrief[];
+    design: IDesignLink | null;
   }): string {
     return describeCase(props);
   }

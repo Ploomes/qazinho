@@ -93,6 +93,26 @@ describe('useRunActions', () => {
       );
     });
 
+    it('hands the run the Figma design the workspace is checked against', () => {
+      const { startRunCall } = bridge();
+      const design = {
+        url: 'https://www.figma.com/design/AbC123/Shop?node-id=1-23',
+        fileKey: 'AbC123',
+        nodeId: '1:23',
+        name: 'Shop',
+      };
+
+      useWorkspaceStore.setState({ workspaces: [{ ...makeWorkspace(), design }] });
+
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.onRun();
+      });
+
+      expect(startRunCall).toHaveBeenCalledWith(expect.objectContaining({ design }));
+    });
+
     it('walks every case with the agent when the QA asks for it', () => {
       const { startRunCall } = bridge();
       const { result } = renderHook(() => useRunActions());

@@ -43,6 +43,7 @@ import type {
 } from '@/shared/types';
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
+import { mcpConfigWith } from '@/harness';
 import { WEB_DRIVER } from '@/main/classes/devices/WebDriver/constants';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { agentFailure } from '@/main/library';
@@ -629,6 +630,9 @@ export class RunCoordinator {
     if (mcpConfig === null)
       throw new Error('The device tools are not up, so the agent cannot act.');
 
+    const design = this.harness.designAccess(
+      pending.some(({ step }) => step.frame !== undefined) ? (run.design ?? null) : null,
+    );
     const first = pending[0];
 
     if (first !== undefined)
@@ -674,8 +678,12 @@ export class RunCoordinator {
         viewport: this.viewports.get(workspaceId) ?? run.viewport ?? WEB_DRIVER.viewport,
         language: run.language,
       }),
-      mcpConfig,
-      allowedTools: this.harness.toolsFor('runner').allowedTools,
+      mcpConfig:
+        mcpConfigWith({ config: mcpConfig, servers: design.servers }) ?? mcpConfig,
+      allowedTools: [
+        ...this.harness.toolsFor('runner').allowedTools,
+        ...design.allowedTools,
+      ],
       prompt: this.harness.walk({
         steps: pending.map(({ step }) => step),
         screen,
@@ -683,6 +691,7 @@ export class RunCoordinator {
         filed: [...props.filed],
         known: run.bugs ?? [],
         variables: run.values.map(({ name, description }) => ({ name, description })),
+        design: run.design ?? null,
       }),
     });
 

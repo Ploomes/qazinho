@@ -83,6 +83,7 @@ export const useRunActions = () => {
       mode,
       ...(isExploring ? { minutes: EXPLORATION.minutes } : {}),
       bugs: knownBugsOf(workspace.bugs),
+      design: workspace.design,
     });
 
     return runId;
