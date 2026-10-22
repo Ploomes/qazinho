@@ -434,6 +434,11 @@
           "type": "string",
           "minLength": 1,
           "description": "The message, as the QA would write it there, in the QA's language."
+        },
+        "story": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*-\\d+$",
+          "description": "When the QA wants the plan made from a Jira story: its key, such as SHOP-12. QAzinho reads the story, its acceptance criteria and its files for that chat."
         }
       },
       "required": [

@@ -75,7 +75,10 @@ export type AppToolCall =
     }
   | { name: 'delete_variable'; args: { project: string; variable: string } }
   | { name: 'stop_run'; args: { workspace: string } }
-  | { name: 'ask_workspace_chat'; args: { workspace: string; text: string } }
+  | {
+      name: 'ask_workspace_chat';
+      args: { workspace: string; text: string; story?: string };
+    }
   | {
       name: 'change_settings';
       args: {

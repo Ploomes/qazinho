@@ -137,9 +137,19 @@ export function fakePort(
     stopWorkspace: (workspaceId) => {
       did.push(`stop ${workspaceId}`);
     },
-    askWorkspaceChat: ({ workspaceId, text }) => {
-      did.push(`ask ${workspaceId} ${text}`);
+    askWorkspaceChat: ({ workspaceId, text, story }) => {
+      did.push(`ask ${workspaceId} ${text}${story === null ? '' : ` from ${story.key}`}`);
     },
+    findStory: (key) =>
+      Promise.resolve(
+        key === 'SHOP-12'
+          ? {
+              key: 'SHOP-12',
+              summary: 'Aplicar cupom',
+              url: 'https://acme.atlassian.net/browse/SHOP-12',
+            }
+          : 'not-found',
+      ),
     changeSettings: (settings) => {
       did.push(`change ${JSON.stringify(settings)}`);
     },

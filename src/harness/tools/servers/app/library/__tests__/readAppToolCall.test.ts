@@ -43,6 +43,30 @@ describe('readAppToolCall', () => {
     ).toEqual({ kind: 'refused', error: '"integration" is github or jira.' });
   });
 
+  it('reads the Jira story a plan comes from by its key, in capitals, and nothing else as one', () => {
+    expect(
+      readAppToolCall({
+        name: 'ask_workspace_chat',
+        args: { workspace: 'Checkout', text: 'Planeja', story: ' shop-12 ' },
+      }),
+    ).toEqual({
+      kind: 'call',
+      call: {
+        name: 'ask_workspace_chat',
+        args: { workspace: 'Checkout', text: 'Planeja', story: 'SHOP-12' },
+      },
+    });
+    expect(
+      readAppToolCall({
+        name: 'ask_workspace_chat',
+        args: { workspace: 'Checkout', text: 'Planeja', story: 'the coupon story' },
+      }),
+    ).toEqual({
+      kind: 'refused',
+      error: '"story" is the key of a Jira story, such as SHOP-12.',
+    });
+  });
+
   it('refuses a settings change that changes nothing', () => {
     expect(readAppToolCall({ name: 'change_settings', args: {} })).toEqual({
       kind: 'refused',

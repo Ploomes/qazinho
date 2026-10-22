@@ -257,6 +257,17 @@ export const APP_TOOLS = [
         message: '"ask_workspace_chat" needs "text": the message for its agent.',
         description: "The message, as the QA would write it there, in the QA's language.",
       }),
+      story: z
+        .string({ error: '"story" is the key of a Jira story, such as SHOP-12.' })
+        .trim()
+        .toUpperCase()
+        .regex(/^[A-Z][A-Z0-9_]*-\d+$/, {
+          error: '"story" is the key of a Jira story, such as SHOP-12.',
+        })
+        .describe(
+          'When the QA wants the plan made from a Jira story: its key, such as SHOP-12. QAzinho reads the story, its acceptance criteria and its files for that chat.',
+        )
+        .optional(),
     }),
   },
   {

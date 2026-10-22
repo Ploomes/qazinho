@@ -7,7 +7,7 @@ import { useChatAgent } from '@/modules/Chat';
 import { useVariableActions } from '@/modules/Project';
 import { useRunActions } from '@/modules/Run';
 import { PLATFORM_LABEL } from '@/modules/Workspace';
-import { Agent, Archive, Assistant, Github, Integrations, Run } from '@/services';
+import { Agent, Archive, Assistant, Github, Integrations, Jira, Run } from '@/services';
 import { ASSISTANT_WAIT } from '@/shared/constants';
 import {
   useAppStore,
@@ -145,13 +145,34 @@ export const useAppActions = () => {
         return runWorkspace(workspaceId, 'explore');
       },
       stopWorkspace,
-      askWorkspaceChat: ({ workspaceId, text }) => {
+      askWorkspaceChat: ({ workspaceId, text, story }) => {
         bringForward();
         useAppStore.getState().selectWorkspace(workspaceId);
         useWorkspaceStore.getState().selectTab('chat');
-        useWorkspaceStore.getState().sendMessage({ workspaceId, text, mentions: [] });
-        askAgent({ workspaceId, text, references: [], code: null, jira: null });
+        useWorkspaceStore.getState().sendMessage({
+          workspaceId,
+          text,
+          mentions: [],
+          ...(story === null ? {} : { command: { id: 'jira-plan' as const, ...story } }),
+        });
+        askAgent({
+          workspaceId,
+          text:
+            story === null
+              ? text
+              : `${t('COMMANDS.JIRA_PLAN_SAY', { key: story.key, summary: story.summary })}\n\n${text}`,
+          references: [],
+          code: null,
+          jira: story === null ? null : { key: story.key },
+        });
         useAssistantStore.getState().close();
+      },
+      findStory: async (key) => {
+        const found = await Jira.search(key);
+
+        if (!found.isListed) return found.failure;
+
+        return found.issues.find((issue) => issue.key === key) ?? 'not-found';
       },
       changeSettings: ({ theme, language, runAlert }) => {
         if (theme !== undefined) useAppStore.getState().setTheme(theme);

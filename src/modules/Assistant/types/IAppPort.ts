@@ -7,10 +7,12 @@ import type { IWorkspace, WorkspaceTab } from '@/modules/Workspace/types';
 import type {
   BuildPlatform,
   IBranchList,
+  IJiraIssueRef,
   IntegrationId,
   IRepositoryList,
   IRepositoryRef,
   IVariableBrief,
+  JiraFailure,
   Language,
   TargetKind,
   VariableChange,
@@ -41,7 +43,12 @@ export interface IAppPort {
   runWorkspace: (workspaceId: string) => string | null;
   exploreWorkspace: (workspaceId: string) => string | null;
   stopWorkspace: (workspaceId: string) => void;
-  askWorkspaceChat: (props: { workspaceId: string; text: string }) => void;
+  askWorkspaceChat: (props: {
+    workspaceId: string;
+    text: string;
+    story: IJiraIssueRef | null;
+  }) => void;
+  findStory: (key: string) => Promise<IJiraIssueRef | JiraFailure>;
   changeSettings: (props: {
     theme?: Theme;
     language?: Language;
