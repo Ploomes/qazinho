@@ -1,9 +1,9 @@
 import type { IBugReproStep } from './IBugReproStep';
 import type { IBugShot } from './IBugShot';
 import type { IBugSighting } from './IBugSighting';
-import type { Severity } from '@/shared/types';
+import type { IFiledIssue, Severity } from '@/shared/types';
 
-/** A failed step the agent could explain, or a bug it saw on the side of one, with all a developer needs to reproduce it, when it was caught and each time it was caught again. */
+/** A failed step the agent could explain, or a bug it saw on the side of one, with all a developer needs to reproduce it, when it was caught, each time it was caught again, and the issue it became in the QA's tracker. */
 export interface IBug {
   id: string;
   severity: Severity;
@@ -26,4 +26,5 @@ export interface IBug {
   isNew: boolean;
   isIncidental: boolean;
   at: number | null;
+  filed: IFiledIssue | null;
 }

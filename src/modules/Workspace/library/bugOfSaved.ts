@@ -7,7 +7,7 @@ function numberIn(text: string | undefined): number | null {
   return found === null ? null : Number(found[0]);
 }
 
-/** A saved bug read back, an older one included: "step 2" becomes 2, "once" becomes one run, and none was seen again. */
+/** A saved bug read back, an older one included: "step 2" becomes 2, "once" becomes one run, none was seen again and none was filed. */
 export function bugOfSaved(saved: SavedBug): IBug {
   const { step, seen, ...bug } = saved;
 
@@ -19,6 +19,7 @@ export function bugOfSaved(saved: SavedBug): IBug {
     modelName: bug.modelName ?? null,
     isIncidental: bug.isIncidental ?? false,
     at: bug.at ?? null,
+    filed: bug.filed ?? null,
     shots: bug.shots.map(({ isBad, src, file }) => ({ isBad, src, file })),
     sightings: (bug.sightings ?? []).map((sighting) => ({
       ...sighting,

@@ -18,6 +18,7 @@ import {
   landAsked,
   landCost,
   landExplored,
+  landFiled,
   landFinding,
   landStep,
   landVideo,
@@ -464,6 +465,15 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   toggleBug: (bugId) =>
     set((state) => ({ openBugId: state.openBugId === bugId ? null : bugId })),
+
+  landFiled: ({ workspaceId, bugId, issue }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => landFiled({ workspace, bugId, issue }),
+      }),
+    })),
 
   selectRun: (runId) => set({ selectedRunId: runId }),
 

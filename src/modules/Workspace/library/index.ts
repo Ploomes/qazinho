@@ -7,6 +7,7 @@ export * from './landAnswered';
 export * from './landAsked';
 export * from './landCost';
 export * from './landExplored';
+export * from './landFiled';
 export * from './landFinding';
 export * from './landStep';
 export * from './landVideo';

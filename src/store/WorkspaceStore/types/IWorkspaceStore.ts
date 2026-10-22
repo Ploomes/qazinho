@@ -9,6 +9,7 @@ import type {
   IChatQuestion,
   ICodeSource,
   IDraftedCase,
+  IFiledIssue,
   IJiraIssueRef,
   IRunAsked,
   IRunFinding,
@@ -115,6 +116,7 @@ export interface IWorkspaceStore {
   tickClock: () => void;
   toggleCase: (caseId: string) => void;
   toggleBug: (bugId: string) => void;
+  landFiled: (props: { workspaceId: string; bugId: string; issue: IFiledIssue }) => void;
   selectRun: (runId: string | null) => void;
   setRunFilter: (filter: RunFilter) => void;
   setBugFilter: (filter: BugFilter) => void;

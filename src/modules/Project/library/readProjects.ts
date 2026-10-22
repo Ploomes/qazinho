@@ -1,4 +1,5 @@
 import type { IProject } from '@/modules/Project/types';
+import { issueTargetIn } from './issueTargetIn';
 import { repositoriesOf } from './repositoriesOf';
 import { webAddressOf } from './webAddressOf';
 
@@ -22,8 +23,11 @@ export function readProjects(json: string): IProject[] {
         typeof (one as IProject).id === 'string' &&
         Array.isArray((one as IProject).targets),
     )
-    .map((project) => ({
+    .map(({ issueTarget, ...project }) => ({
       ...project,
+      ...(issueTargetIn(issueTarget) === undefined
+        ? {}
+        : { issueTarget: issueTargetIn(issueTarget) }),
       repositories: repositoriesOf(project.repositories),
       targets: project.targets.map((target) =>
         target.kind === 'web'

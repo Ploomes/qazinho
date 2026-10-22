@@ -1,3 +1,4 @@
+export * from './issueTargetIn';
 export * from './newProjectId';
 export * from './readProjects';
 export * from './repositoriesOf';

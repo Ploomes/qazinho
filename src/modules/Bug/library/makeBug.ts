@@ -75,5 +75,6 @@ export function makeBug(props: {
     isNew: true,
     isIncidental: false,
     at: outcome.at,
+    filed: null,
   };
 }

@@ -49,6 +49,19 @@ describe('bugOfSaved', () => {
     expect(bugOfSaved(older).isIncidental).toBe(false);
   });
 
+  it('reads an older bug as never filed, and keeps the issue a newer one became', () => {
+    const { filed: _filed, ...older } = BUG;
+    const issue = {
+      tracker: 'jira' as const,
+      key: 'SHOP-57',
+      url: 'https://acme.atlassian.net/browse/SHOP-57',
+      at: '2026-10-22T12:00:00.000Z',
+    };
+
+    expect(bugOfSaved(older).filed).toBeNull();
+    expect(bugOfSaved({ ...BUG, filed: issue }).filed).toEqual(issue);
+  });
+
   it('reads an older bug as caught at no moment it can show', () => {
     const { at: _at, ...older } = BUG;
 
