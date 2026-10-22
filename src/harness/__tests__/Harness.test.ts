@@ -3,7 +3,12 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { describe, expect, it } from 'vitest';
-import { Harness, registerAppTools, registerDeviceTools } from '@/harness';
+import {
+  Harness,
+  registerAppTools,
+  registerDeviceTools,
+  registerSuiteTools,
+} from '@/harness';
 
 /**
  * The files in __prompts__ are what the agent read before the harness moved to src/harness/.
@@ -471,6 +476,83 @@ describe('Harness', () => {
     });
   });
 
+  describe('change', () => {
+    const CHANGE = {
+      dir: '/data/suites/p-1/changes/c-01/work/e2e',
+      config: 'playwright.config.ts',
+      projects: ['chromium', 'salva-versao'],
+      branch: 'qazinho/fix-ct-nav-002',
+      base: 'main',
+      commit: 'c0ffee1234567890',
+      commits: ['fix(hc-1139): wait for the menu', 'feat(hc-1201): search by name'],
+      broken: {
+        title: 'CT-NAV-002 · Abre o carrinho pelo menu',
+        file: 'tests/hc-1139/ct-nav.spec.ts',
+        line: 13,
+        project: 'chromium',
+        path: ['CT-NAV · Navegação'],
+        error:
+          "TimeoutError: locator.click: Timeout 2000ms exceeded.\nCall log:\n  - waiting for getByRole('link', { name: 'Meu carrinho' })",
+        notes:
+          '# Page snapshot\n\n```yaml\n- banner:\n  - link "Carrinho 0":\n    - /url: /carrinho\n```',
+        screenshots: ['/data/suites/p-1/runs/s-03/output/1/ct-nav-002/test-failed-1.png'],
+      },
+      readDirs: [
+        '/data/suites/p-1/changes/c-01/work',
+        '/data/suites/p-1/changes/c-01/checks',
+        '/data/suites/p-1/runs/s-03',
+      ],
+      language: 'pt' as const,
+    };
+
+    it('briefs the automator, and nothing of a chat, a run, the assistant or a build', async () => {
+      const { systemPrompt, schema } = harness.change(CHANGE);
+
+      await expect(systemPrompt).toMatchFileSnapshot('./__prompts__/automator.txt');
+      await expect(schema).toMatchFileSnapshot('./__prompts__/change-schema.txt');
+      expect(systemPrompt).toContain('in Brazilian Portuguese');
+      expect(systemPrompt).not.toContain('## Talking with the QA');
+      expect(systemPrompt).not.toContain('## Being the Estagiário');
+      expect(systemPrompt).not.toContain('## Building the app');
+    });
+
+    it('asks for the fix with the suite, the test that broke and how it failed', async () => {
+      await expect(harness.change(CHANGE).prompt).toMatchFileSnapshot(
+        './__prompts__/change-message.txt',
+      );
+    });
+
+    /** The tests run through QAzinho, which knows the secrets the agent never sees: the agent gets no shell at all. */
+    it('lets the automator read and edit its folders and run tests through QAzinho, with no shell', () => {
+      const { tools, allowedTools, readDirs } = harness.change(CHANGE);
+
+      expect(tools).toEqual(['Read', 'Grep', 'Glob', 'Edit', 'Write']);
+      expect(allowedTools).toEqual([
+        'Read',
+        'Grep',
+        'Glob',
+        'Edit',
+        'Write',
+        'mcp__qazinho',
+      ]);
+      expect(readDirs).toEqual(CHANGE.readDirs);
+    });
+
+    it('does NOT tell a builder or a runner how to change a suite', () => {
+      expect(
+        harness.build({
+          platform: 'android',
+          dir: '/b',
+          repository: 'a/b',
+          branch: 'main',
+          commit: 'c0ffee1',
+          machine: { androidSdk: null, javaHome: null, hasXcode: false },
+          language: 'en',
+        }).systemPrompt,
+      ).not.toContain("## Changing the team's suite");
+    });
+  });
+
   describe('toolsFor', () => {
     it('gives the runner the device, behind QAzinho own MCP server', () => {
       expect(harness.toolsFor('runner')).toEqual({
@@ -520,6 +602,26 @@ describe('Harness', () => {
 
       await expect(JSON.stringify(tools, null, 2)).toMatchFileSnapshot(
         './__prompts__/explore-tools.txt',
+      );
+      await client.close();
+    });
+  });
+
+  describe('the suite tools', () => {
+    /** Listed the way the automator lists them: an MCP client over an in-memory pipe, no network. */
+    it('lists them to the agent exactly as pinned', async () => {
+      const mcp = new McpServer({ name: 'qazinho', version: '0' });
+      const client = new Client({ name: 'pin', version: '0' });
+      const [ours, theirs] = InMemoryTransport.createLinkedPair();
+
+      registerSuiteTools({ mcp, call: () => Promise.reject(new Error('not called')) });
+      await mcp.connect(ours);
+      await client.connect(theirs);
+
+      const { tools } = await client.listTools();
+
+      await expect(JSON.stringify(tools, null, 2)).toMatchFileSnapshot(
+        './__prompts__/suite-tools.txt',
       );
       await client.close();
     });

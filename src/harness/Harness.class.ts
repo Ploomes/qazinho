@@ -5,6 +5,8 @@ import type {
   HarnessRole,
   IBuildAnswer,
   IBuildMachine,
+  IChangeAnswer,
+  IChangeBrief,
   IHarnessTarget,
 } from '@/harness/types';
 import type {
@@ -27,6 +29,7 @@ import {
   describeApp,
   describeBuild,
   describeCase,
+  describeChange,
   describeCode,
   describeExploration,
   describeKeptVariables,
@@ -40,9 +43,14 @@ import {
   renderSections,
   sectionsFor,
 } from '@/harness/context/library';
-import { readBuildAnswer, readChatAnswer } from '@/harness/library';
-import { BUILD_SCHEMA, CHAT_SCHEMA } from '@/harness/schemas';
-import { BUILD_TOOLS, MCP_HOST, TOOL_GRANTS } from '@/harness/tools/constants';
+import { readBuildAnswer, readChangeAnswer, readChatAnswer } from '@/harness/library';
+import { BUILD_SCHEMA, CHANGE_SCHEMA, CHAT_SCHEMA } from '@/harness/schemas';
+import {
+  BUILD_TOOLS,
+  CHANGE_TOOLS,
+  MCP_HOST,
+  TOOL_GRANTS,
+} from '@/harness/tools/constants';
 import { toolsOfRole } from '@/harness/tools/library';
 
 /** QAzinho's product harness: what the QA's agent is told, and which of QAzinho's tools it gets. */
@@ -176,6 +184,36 @@ export class Harness {
       allowedTools: [...BUILD_TOOLS.allowed],
       readDirs: [props.dir],
     };
+  }
+
+  /** One change to the team's suite, by an agent of its own: the suite in its copy and the test that broke, its file tools on the folders it may read, and QAzinho's tool that runs the tests. */
+  public change(props: IChangeBrief): {
+    systemPrompt: string;
+    prompt: string;
+    schema: string;
+    tools: string[];
+    allowedTools: string[];
+    readDirs: string[];
+  } {
+    return {
+      systemPrompt: this.contextFor({
+        target: { role: 'automator' },
+        values: { language: LANGUAGE_NAMES[props.language] },
+      }),
+      prompt: chatMessageOf({
+        sections: describeChange(props),
+        text: 'Fix this test, or show that the app is wrong.',
+      }),
+      schema: CHANGE_SCHEMA,
+      tools: [...CHANGE_TOOLS.tools],
+      allowedTools: [...CHANGE_TOOLS.allowed, ...this.toolsFor('automator').allowedTools],
+      readDirs: props.readDirs,
+    };
+  }
+
+  /** The change answer out of what the agent printed. */
+  public readChange(text: string): IChangeAnswer {
+    return readChangeAnswer(text);
   }
 
   /** The build answer out of what the agent printed. */
