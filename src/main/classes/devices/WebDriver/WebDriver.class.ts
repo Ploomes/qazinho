@@ -15,11 +15,12 @@ import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { chromium } from 'playwright-core';
-import { sampleFileOf } from '@/main/library';
+import { describeMeasure, sampleFileOf } from '@/main/library';
 import { FIELD_FORMATS, MOTION_PROBE, WEB_DRIVER } from './constants';
 import {
   describePage,
   findLocator,
+  measureLocator,
   optionOf,
   originOf,
   pagesOf,
@@ -214,6 +215,17 @@ export class WebDriver implements IDeviceDriver {
     const shown = this.dialogs.splice(0);
 
     return shown.length === 0 ? page : [page, 'DIALOGS:', ...shown].join('\n');
+  }
+
+  /** One thing on the page measured to hold it to a design: its box in CSS px where the page sits, the space around it, and its computed type, colours and spacing. */
+  public async inspect(target: string): Promise<string> {
+    if (!this.page) throw new Error('The browser is not open.');
+
+    const locator = await findLocator({ page: this.page, target, kind: 'click' });
+
+    if (locator === null) throw new Error(`Nothing on the page reads "${target}".`);
+
+    return describeMeasure(await measureLocator(locator));
   }
 
   /** The pages the open page's header and menus lead to, on its own site, in the order they show. */

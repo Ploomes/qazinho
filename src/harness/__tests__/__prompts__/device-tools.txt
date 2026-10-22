@@ -12,6 +12,27 @@
     }
   },
   {
+    "name": "inspect",
+    "description": "Measure one thing on the screen, to hold it to a design: where it sits and how big it is, its distance to what is around it, and in a browser its type, colours, spacing, border and corners. Name it the way look lists it or the screen reads it.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What the thing says, or how look lists it."
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
     "name": "goto",
     "description": "Open a URL in the browser, or reopen the app from the launcher on a phone.",
     "inputSchema": {
@@ -388,6 +409,10 @@
           "type": "string",
           "pattern": "^BUG-\\d+$",
           "description": "When it is a bug the message lists as already open: its id, such as \"BUG-01\". QAzinho counts it as seen again instead of opening another."
+        },
+        "frame": {
+          "type": "string",
+          "description": "When the bug is a difference from the Figma design: the node id of the frame the screen differs from, such as 12:345."
         }
       },
       "required": [

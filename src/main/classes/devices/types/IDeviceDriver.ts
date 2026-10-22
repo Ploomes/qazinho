@@ -8,12 +8,13 @@ import type {
   IViewport,
 } from '@/shared/types';
 
-/** What a run needs from a device, whether it is a browser or a phone; a browser also says how it found its last target, and the requests the app made. */
+/** What a run needs from a device, whether it is a browser or a phone, measuring what it shows included; a browser also says how it found its last target, and the requests the app made. */
 export interface IDeviceDriver {
   open: () => Promise<void>;
   restart: () => Promise<void>;
   act: (action: IStepAction) => Promise<void>;
   describe: () => Promise<string>;
+  inspect: (target: string) => Promise<string>;
   glance: () => Promise<IDeviceImage | null>;
   motion: () => Promise<IActionMotion | null>;
   resize: (viewport: IViewport) => Promise<void>;

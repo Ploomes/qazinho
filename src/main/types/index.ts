@@ -1,6 +1,10 @@
 export type * from './IAgentLine';
 export type * from './IBounds';
+export type * from './IBox';
 export type * from './ICodexLine';
+export type * from './IElementMeasure';
+export type * from './IElementStyle';
+export type * from './IGaps';
 export type * from './IJiraCredentials';
 export type * from './IProcessRow';
 export type * from './IVariableValue';

@@ -1,4 +1,5 @@
 import type { IScreenNode } from '@/main/classes/devices/AndroidDriver/types';
+import { boxOfBounds } from './boxOfBounds';
 import { centreOf } from './centreOf';
 import { decodeXml } from './decodeXml';
 
@@ -20,9 +21,10 @@ export function parseViewHierarchy(xml: string): IScreenNode[] {
   return [...xml.matchAll(NODE)].flatMap(([, one]) => {
     const held = readAttributes(one ?? '');
     const at = centreOf(held.bounds ?? '');
+    const box = boxOfBounds(held.bounds ?? '');
     const role = (held.class ?? '').split('.').at(-1) ?? '';
 
-    if (!at) return [];
+    if (!at || !box) return [];
 
     return [
       {
@@ -33,6 +35,7 @@ export function parseViewHierarchy(xml: string): IScreenNode[] {
         isClickable: held.clickable === 'true',
         isEditable: EDITABLE.includes(role),
         ...at,
+        box,
       },
     ];
   });

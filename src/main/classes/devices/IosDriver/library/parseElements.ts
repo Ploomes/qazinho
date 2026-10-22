@@ -38,6 +38,7 @@ function toElement(one: Described): IScreenElement[] {
       role: typeof one.type === 'string' ? one.type : '',
       x: Math.round(x + width / 2),
       y: Math.round(y + height / 2),
+      box: { x, y, width, height },
       isLaunchIcon: Array.isArray(one.traits) && one.traits.includes('LaunchIcon'),
     },
   ];

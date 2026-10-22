@@ -1,5 +1,6 @@
 export const ANDROID = {
   screenTextLimit: 2_000,
+  baselineDensity: 160,
   controlLimit: 40,
   labelLimit: 60,
   bootTimeoutMs: 180_000,

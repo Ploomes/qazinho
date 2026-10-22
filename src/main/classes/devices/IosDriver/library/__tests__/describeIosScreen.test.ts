@@ -2,9 +2,30 @@ import { describe, expect, it } from 'vitest';
 import { describeIosScreen } from '@/main/classes/devices/IosDriver/library';
 
 const ELEMENTS = [
-  { label: 'Settings', role: 'StaticText', x: 10, y: 10, isLaunchIcon: false },
-  { label: 'Wi-Fi', role: 'Button', x: 20, y: 20, isLaunchIcon: false },
-  { label: '', role: 'Other', x: 30, y: 30, isLaunchIcon: false },
+  {
+    label: 'Settings',
+    role: 'StaticText',
+    x: 10,
+    y: 10,
+    isLaunchIcon: false,
+    box: { x: 0, y: 0, width: 10, height: 10 },
+  },
+  {
+    label: 'Wi-Fi',
+    role: 'Button',
+    x: 20,
+    y: 20,
+    isLaunchIcon: false,
+    box: { x: 0, y: 0, width: 10, height: 10 },
+  },
+  {
+    label: '',
+    role: 'Other',
+    x: 30,
+    y: 30,
+    isLaunchIcon: false,
+    box: { x: 0, y: 0, width: 10, height: 10 },
+  },
 ];
 
 describe('describeIosScreen', () => {
@@ -26,7 +47,16 @@ describe('describeIosScreen', () => {
   it('says the home screen is the home screen, and that the app is not open', () => {
     expect(
       describeIosScreen({
-        elements: [{ label: 'Safari', role: 'Button', x: 10, y: 10, isLaunchIcon: true }],
+        elements: [
+          {
+            label: 'Safari',
+            role: 'Button',
+            x: 10,
+            y: 10,
+            isLaunchIcon: true,
+            box: { x: 0, y: 0, width: 10, height: 10 },
+          },
+        ],
         app: 'app.qazinho.fixture',
       }).split('\n')[0],
     ).toBe('APP: the home screen, app.qazinho.fixture is not open');

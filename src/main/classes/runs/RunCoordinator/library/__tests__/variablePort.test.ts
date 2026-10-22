@@ -10,6 +10,8 @@ function fakeDevice(failing = false) {
   const typed: IStepAction[] = [];
   const device: IDevicePort = {
     describe: () => Promise.resolve(`[field] Password: ${typed.at(-1)?.value ?? ''}`),
+    inspect: (target) =>
+      Promise.resolve(`"${typed.at(-1)?.value ?? ''}" (${target}), measured in CSS px:`),
     glance: () => Promise.resolve(null),
     motion: () => Promise.resolve(null),
     act: (action) => {
@@ -33,6 +35,17 @@ describe('variablePort', () => {
 
     expect(typed).toEqual([{ kind: 'fill', target: 'Password', value: 'Sup3r-s3cret' }]);
     expect(await port.describe()).toBe('[field] Password: ${LOGIN_PASSWORD}');
+  });
+
+  it('reads a value back as its variable in what it measured', async () => {
+    const { device } = fakeDevice();
+    const port = variablePort({ device, values: VALUES });
+
+    await port.act({ kind: 'fill', target: 'Password', value: '${LOGIN_PASSWORD}' });
+
+    expect(await port.inspect('input')).toBe(
+      '"${LOGIN_PASSWORD}" (input), measured in CSS px:',
+    );
   });
 
   it('does NOT say a value in why an action failed', async () => {

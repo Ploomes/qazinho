@@ -12,11 +12,12 @@ import { spawn } from 'node:child_process';
 import { readdir, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
-import { phoneGlance, swipeOf } from '@/main/library';
+import { describeMeasure, phoneGlance, phoneMeasureOf, swipeOf } from '@/main/library';
 import { ANDROID } from './constants';
 import {
   adbTextsOf,
   bootArgs,
+  densityOf,
   describeScreen,
   findNode,
   frontPackage,
@@ -41,6 +42,7 @@ export class AndroidDriver implements IDeviceDriver {
   private app = '';
   private isOurs = false;
   private recording: { file: string; startedAt: number } | null = null;
+  private density: number | null = null;
 
   public constructor(props: IAndroidDriver) {
     this.sdkRoot = props.sdkRoot;
@@ -154,6 +156,27 @@ export class AndroidDriver implements IDeviceDriver {
       nodes: await this.read(),
       app: frontPackage(focused) || this.app,
     });
+  }
+
+  /** One thing on the screen measured to hold it to a design: its box in dp at the screen's density, the box around it and the space to its neighbours. */
+  public async inspect(target: string): Promise<string> {
+    const nodes = await this.read();
+    const node = findNode({ nodes, target });
+
+    if (!node) throw new Error(`Nothing on the screen reads "${target}".`);
+
+    this.density ??= densityOf(await this.shell(['wm', 'density']).catch(() => ''));
+
+    return describeMeasure(
+      phoneMeasureOf({
+        role: node.role,
+        text: node.text || node.desc || node.id,
+        box: node.box,
+        others: nodes.filter((one) => one !== node).map(({ box }) => box),
+        unit: 'dp',
+        scale: ANDROID.baselineDensity / this.density,
+      }),
+    );
   }
 
   /** The emulator's screen as the agent reads it, from screencap, shrunk to what the agent needs. */

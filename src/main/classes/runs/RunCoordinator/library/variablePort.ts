@@ -3,7 +3,7 @@ import type { IVariableValue } from '@/main/types';
 import { hiddenValues } from './hiddenValues';
 import { resolvedAction } from './resolvedAction';
 
-/** The device as a run reaches it: a ${NAME} typed as its value, and every value that shows read back as its ${NAME}, in what it says and in why it failed. */
+/** The device as a run reaches it: a ${NAME} typed as its value, and every value that shows read back as its ${NAME}, in what it says, what it measures and why it failed. */
 export function variablePort(props: {
   device: IDevicePort;
   values: IVariableValue[];
@@ -21,6 +21,13 @@ export function variablePort(props: {
     describe: async () => {
       try {
         return hiddenValues({ text: await device.describe(), values });
+      } catch (reason) {
+        throw hidden(reason);
+      }
+    },
+    inspect: async (target) => {
+      try {
+        return hiddenValues({ text: await device.inspect(target), values });
       } catch (reason) {
         throw hidden(reason);
       }

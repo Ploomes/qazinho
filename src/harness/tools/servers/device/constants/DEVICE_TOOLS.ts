@@ -12,6 +12,17 @@ export const DEVICE_TOOLS = [
     input: z.object({}),
   },
   {
+    name: 'inspect',
+    description:
+      'Measure one thing on the screen, to hold it to a design: where it sits and how big it is, its distance to what is around it, and in a browser its type, colours, spacing, border and corners. Name it the way look lists it or the screen reads it.',
+    input: z.object({
+      target: textNamed({
+        message: '"inspect" needs a target: say what the thing on screen reads.',
+        description: 'What the thing says, or how look lists it.',
+      }),
+    }),
+  },
+  {
     name: 'goto',
     description:
       'Open a URL in the browser, or reopen the app from the launcher on a phone.',
@@ -242,6 +253,12 @@ export const DEVICE_TOOLS = [
       sameAs: bugIdNamed(
         'When it is a bug the message lists as already open: its id, such as "BUG-01". QAzinho counts it as seen again instead of opening another.',
       ),
+      frame: z
+        .string()
+        .describe(
+          'When the bug is a difference from the Figma design: the node id of the frame the screen differs from, such as 12:345.',
+        )
+        .optional(),
     }),
   },
   {

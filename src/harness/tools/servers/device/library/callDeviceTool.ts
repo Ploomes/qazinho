@@ -48,6 +48,8 @@ export async function callDeviceTool(props: {
             : `${timeLeftOf(device.endsAt - Date.now())} The device shows:\n`,
       });
 
+    if (read.kind === 'inspect') return said(await device.driver.inspect(read.target));
+
     if (read.kind === 'report') {
       if (!device.onReport) return said('There is no run to report to.', true);
 

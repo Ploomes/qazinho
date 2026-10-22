@@ -81,6 +81,9 @@ export function readToolCall(props: {
 
   if (tool.name === 'look') return { kind: 'look' };
 
+  if (tool.name === 'inspect')
+    return { kind: 'inspect', target: (read.data as { target: string }).target };
+
   const args = read.data as {
     target?: string;
     value?: string;

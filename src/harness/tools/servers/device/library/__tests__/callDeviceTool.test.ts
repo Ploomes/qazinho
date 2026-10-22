@@ -25,6 +25,7 @@ function fakeDevice(
     workspaceId: 'w1',
     driver: {
       describe: async () => 'Cart · [button] Apply',
+      inspect: async (target) => `"${target}" (button), measured in CSS px:`,
       glance: async () => {
         if (props.blind === true) throw new Error('no screencap');
         return props.image === undefined ? PICTURE : props.image;
@@ -59,6 +60,26 @@ describe('callDeviceTool', () => {
     expect(text(await callDeviceTool({ device, call: { name: 'look', args: {} } }))).toBe(
       'Cart · [button] Apply',
     );
+  });
+
+  it('measures what the agent named, and touches nothing', async () => {
+    const { device, acted } = fakeDevice();
+    const answer = await callDeviceTool({
+      device,
+      call: { name: 'inspect', args: { target: 'Apply' } },
+    });
+
+    expect(text(answer)).toBe('"Apply" (button), measured in CSS px:');
+    expect(images(answer)).toEqual([]);
+    expect(acted).toEqual([]);
+  });
+
+  it('asks again for what to measure when the agent named nothing', async () => {
+    const { device } = fakeDevice();
+    const answer = await callDeviceTool({ device, call: { name: 'inspect', args: {} } });
+
+    expect(answer.isError).toBe(true);
+    expect(text(answer)).toContain('"inspect" needs a target');
   });
 
   it('acts, then says what the device shows after', async () => {

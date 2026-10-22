@@ -15,7 +15,14 @@ import { readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
-import { imageExtensionOf, mp4FactsOf, phoneGlance, swipeOf } from '@/main/library';
+import {
+  describeMeasure,
+  imageExtensionOf,
+  mp4FactsOf,
+  phoneGlance,
+  phoneMeasureOf,
+  swipeOf,
+} from '@/main/library';
 import { IOS } from './constants';
 import {
   bundleOfPlist,
@@ -153,6 +160,25 @@ export class IosDriver implements IDeviceDriver {
 
   public async describe(): Promise<string> {
     return describeIosScreen({ elements: await this.read(), app: this.bundle });
+  }
+
+  /** One thing on the screen measured to hold it to a design: its box in points, the box around it and the space to its neighbours. */
+  public async inspect(target: string): Promise<string> {
+    const elements = await this.read();
+    const element = findElement({ elements, target });
+
+    if (!element) throw new Error(`Nothing on the screen reads "${target}".`);
+
+    return describeMeasure(
+      phoneMeasureOf({
+        role: element.role,
+        text: element.label,
+        box: element.box,
+        others: elements.filter((one) => one !== element).map(({ box }) => box),
+        unit: 'pt',
+        scale: 1,
+      }),
+    );
   }
 
   /** The simulator's screen as the agent reads it, through a file simctl writes and QAzinho removes. */

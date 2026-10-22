@@ -11,6 +11,7 @@ const NODE: IScreenNode = {
   isEditable: false,
   x: 10,
   y: 10,
+  box: { x: 0, y: 0, width: 20, height: 20 },
 };
 
 describe('isListedControl', () => {

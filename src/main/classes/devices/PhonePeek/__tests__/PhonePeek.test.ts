@@ -22,6 +22,7 @@ function phone(props: { fails?: string } = {}) {
       return Promise.resolve();
     },
     describe: () => Promise.resolve('APP: app.qazinho.visitas\nTEXT:\nVisitas: 0'),
+    inspect: () => Promise.resolve(''),
     glance: () => Promise.resolve(null),
     motion: () => Promise.resolve(null),
     resize: () => Promise.resolve(),

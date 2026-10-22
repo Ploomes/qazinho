@@ -637,6 +637,7 @@ export class RunCoordinator {
     const device = variablePort({ device: driver, values: run.values });
     const port: IDevicePort = {
       describe: () => device.describe(),
+      inspect: (target) => device.inspect(target),
       glance: () => device.glance(),
       motion: () => device.motion(),
       act: async (action) => {
