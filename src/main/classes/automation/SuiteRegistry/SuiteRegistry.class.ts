@@ -1,7 +1,7 @@
 import type { ISuiteRegistry } from './types';
 import type { GitCli } from '@/main/classes/automation/GitCli';
 import type { ISuite, SuitePick } from '@/shared/types';
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, realpath, writeFile } from 'node:fs/promises';
 import { basename, dirname, join } from 'node:path';
 import { SUITE_REGISTRY } from './constants';
 import {
@@ -22,13 +22,14 @@ export class SuiteRegistry {
     this.git = props.git;
   }
 
-  /** Connects a folder to a project once it holds a Playwright suite, in place of any suite the project had. */
+  /** Connects a folder to a project once it holds a Playwright suite, in place of any suite the project had; a link is kept as the folder it leads to, where Playwright reads the files. */
   public async connect(props: { projectId: string; path: string }): Promise<SuitePick> {
-    const suite = await this.inspect(props);
+    const path = await realpath(props.path).catch(() => props.path);
+    const suite = await this.inspect({ projectId: props.projectId, path });
 
     if (suite === null) return { kind: 'failed', reason: 'no-playwright' };
 
-    await this.write({ ...(await this.read()), [props.projectId]: props.path });
+    await this.write({ ...(await this.read()), [props.projectId]: path });
 
     return { kind: 'picked', suite };
   }
