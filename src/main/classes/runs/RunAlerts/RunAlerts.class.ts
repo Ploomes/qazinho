@@ -1,4 +1,4 @@
-import type { IRunEndNotice, IRunRef } from '@/shared/types';
+import type { IRunAlert, IRunRef } from '@/shared/types';
 import { app, Notification } from 'electron';
 
 /** Calls the QA back when a run ends while they are elsewhere: a notification with its sound, and a count on the app's icon until they return. */
@@ -12,7 +12,7 @@ export class RunAlerts {
   }
 
   /** Alerts a run that ended, unless the QA is looking at the app, which tells them itself. */
-  public alert(props: { notice: IRunEndNotice; isAway: boolean }): void {
+  public alert(props: { notice: IRunAlert; isAway: boolean }): void {
     const { notice, isAway } = props;
 
     if (!isAway) return;

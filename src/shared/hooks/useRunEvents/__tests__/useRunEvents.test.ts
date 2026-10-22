@@ -157,7 +157,7 @@ describe('useRunEvents', () => {
     function listening() {
       let send: (event: IRunEvent) => void = () => undefined;
       let open: (run: IRunRef) => void = () => undefined;
-      const alertRunEnded = vi.fn();
+      const alertRun = vi.fn();
 
       window.qazinho = {
         ...fakeQazinhoApi('darwin'),
@@ -171,14 +171,14 @@ describe('useRunEvents', () => {
 
           return () => undefined;
         },
-        alertRunEnded,
+        alertRun,
       };
       renderHook(() => {
         useRunEvents();
       });
 
       return {
-        alertRunEnded,
+        alertRun,
         send: (event: IRunEvent) => {
           act(() => {
             send(event);
@@ -208,7 +208,7 @@ describe('useRunEvents', () => {
     });
 
     it('says so in the app, and asks main to call the QA back if they are away', () => {
-      const { alertRunEnded, send } = listening();
+      const { alertRun, send } = listening();
 
       send({ kind: 'done', workspaceId: 'w1' });
 
@@ -216,7 +216,7 @@ describe('useRunEvents', () => {
         workspaceId: 'w1',
         runId: 'r-01',
       });
-      expect(alertRunEnded).toHaveBeenCalledWith({
+      expect(alertRun).toHaveBeenCalledWith({
         workspaceId: 'w1',
         runId: 'r-01',
         title: 'Run r-01 finished',
@@ -227,26 +227,26 @@ describe('useRunEvents', () => {
     it('keeps it inside the app when the QA asked for that', () => {
       useSettingsStore.setState({ runAlert: 'app' });
 
-      const { alertRunEnded, send } = listening();
+      const { alertRun, send } = listening();
 
       send({ kind: 'done', workspaceId: 'w1' });
 
       expect(useAppStore.getState().runNotice).not.toBeNull();
-      expect(alertRunEnded).not.toHaveBeenCalled();
+      expect(alertRun).not.toHaveBeenCalled();
     });
 
     it('says a run that broke on the way stopped short', () => {
-      const { alertRunEnded, send } = listening();
+      const { alertRun, send } = listening();
 
       send({ kind: 'failed', workspaceId: 'w1', failure: { reason: 'agent-silent' } });
 
-      expect(alertRunEnded).toHaveBeenCalledWith(
+      expect(alertRun).toHaveBeenCalledWith(
         expect.objectContaining({ title: 'Run r-01 stopped short' }),
       );
     });
 
     it('does NOT announce a run the QA stopped themselves', () => {
-      const { alertRunEnded, send } = listening();
+      const { alertRun, send } = listening();
 
       act(() => {
         useWorkspaceStore.getState().stopRun('w1');
@@ -254,7 +254,7 @@ describe('useRunEvents', () => {
       send({ kind: 'done', workspaceId: 'w1' });
 
       expect(useAppStore.getState().runNotice).toBeNull();
-      expect(alertRunEnded).not.toHaveBeenCalled();
+      expect(alertRun).not.toHaveBeenCalled();
     });
 
     it('opens the run whose notification the QA clicked', () => {

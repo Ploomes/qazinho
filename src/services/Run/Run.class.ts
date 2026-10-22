@@ -2,7 +2,7 @@ import type {
   ExportOutcome,
   IExportCode,
   INetworkEntry,
-  IRunEndNotice,
+  IRunAlert,
   IRunEvent,
   IRunInFlight,
   IRunRef,
@@ -72,8 +72,8 @@ export class Run {
     return (await window.qazinho?.saveReplay(props)) ?? 'failed';
   }
 
-  public static alert(notice: IRunEndNotice): void {
-    window.qazinho?.alertRunEnded(notice);
+  public static alert(notice: IRunAlert): void {
+    window.qazinho?.alertRun(notice);
   }
 
   public static onOpen(listener: (run: IRunRef) => void): () => void {

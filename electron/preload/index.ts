@@ -32,7 +32,7 @@ import type {
   IRepositoryList,
   IRepositoryRef,
   IResourceSnapshot,
-  IRunEndNotice,
+  IRunAlert,
   IRunEvent,
   IRunInFlight,
   IRunRef,
@@ -195,8 +195,8 @@ const api: IQazinhoApi = {
       ipcRenderer.off(CHANNELS.suiteChangeEvent, forward);
     };
   },
-  alertRunEnded: (notice: IRunEndNotice) => {
-    ipcRenderer.send(CHANNELS.alertRunEnded, notice);
+  alertRun: (notice: IRunAlert) => {
+    ipcRenderer.send(CHANNELS.alertRun, notice);
   },
   onOpenRun: (listener: (run: IRunRef) => void) => {
     const forward = (_: unknown, run: IRunRef) => {

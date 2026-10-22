@@ -38,7 +38,7 @@ export const CHANNELS = {
   shipSuiteChange: 'suite:change-ship',
   discardSuiteChange: 'suite:change-discard',
   suiteChangeEvent: 'suite:change-event',
-  alertRunEnded: 'run:alert',
+  alertRun: 'run:alert',
   openRun: 'run:open',
   recorderStart: 'recorder:start',
   recorderStop: 'recorder:stop',

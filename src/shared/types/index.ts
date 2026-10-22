@@ -76,7 +76,7 @@ export type * from './IRepository';
 export type * from './IRepositoryList';
 export type * from './IRepositoryRef';
 export type * from './IResourceSnapshot';
-export type * from './IRunEndNotice';
+export type * from './IRunAlert';
 export type * from './IRunEvent';
 export type * from './IRunFinding';
 export type * from './IRunInFlight';

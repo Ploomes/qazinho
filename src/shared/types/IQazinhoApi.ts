@@ -32,7 +32,7 @@ import type { IProjectVariables } from './IProjectVariables';
 import type { IRepositoryList } from './IRepositoryList';
 import type { IRepositoryRef } from './IRepositoryRef';
 import type { IResourceSnapshot } from './IResourceSnapshot';
-import type { IRunEndNotice } from './IRunEndNotice';
+import type { IRunAlert } from './IRunAlert';
 import type { IRunEvent } from './IRunEvent';
 import type { IRunInFlight } from './IRunInFlight';
 import type { IRunRef } from './IRunRef';
@@ -114,7 +114,7 @@ export interface IQazinhoApi {
     changeId: string;
   }) => Promise<ISuiteChange | null>;
   onSuiteChangeEvent: (listener: (event: SuiteChangeEvent) => void) => () => void;
-  alertRunEnded: (notice: IRunEndNotice) => void;
+  alertRun: (notice: IRunAlert) => void;
   onOpenRun: (listener: (run: IRunRef) => void) => () => void;
   readState: () => Promise<ISavedState>;
   saveProjects: (json: string) => Promise<void>;

@@ -15,7 +15,7 @@ import type {
   IExportCode,
   InstallableId,
   IntegrationId,
-  IRunEndNotice,
+  IRunAlert,
   IRunEvent,
   IRunRef,
   IRepositoryRef,
@@ -841,7 +841,7 @@ void app.whenReady().then(async () => {
     codeExport.export(request),
   );
   ipcMain.handle(CHANNELS.replayUrl, (_event, run: IRunRef) => replays.urlFor(run));
-  ipcMain.on(CHANNELS.alertRunEnded, (event, notice: IRunEndNotice) => {
+  ipcMain.on(CHANNELS.alertRun, (event, notice: IRunAlert) => {
     alerts.alert({
       notice,
       isAway: !(BrowserWindow.fromWebContents(event.sender)?.isFocused() ?? false),
