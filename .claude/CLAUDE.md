@@ -137,8 +137,14 @@ their names. When the test is right and the app is wrong, it changes nothing and
 runs the test again in the copy and shows the diff; only once the QA approves does it commit,
 push with the QA's own git and open the pull request through gh. A real Claude Code (Haiku) fixed
 a renamed link in 34 seconds and told a planted search bug apart from a broken test;
-`tests/smoke/fix.test.ts` drives a fake agent over the real tool on real Chrome. Writing a new
-test comes next.
+`tests/smoke/fix.test.ts` drives a fake agent over the real tool on real Chrome.
+
+**The QA's agent also writes a new test** the same way, from the QA's words or a case of one of
+the project's plans, in the folder the QA picks or where the suite keeps its like, with the
+team's fixtures, IDs and tags. QAzinho runs every test of the spec files it touched, and a new
+test the app fails stays, as one that catches a bug. A real Claude Code (Haiku) wrote one from a
+sentence in about a minute and one from a plan case in a minute and a half, each passing in the
+copy; `tests/smoke/write.test.ts` drives a fake agent on real Chrome.
 
 **A run that ends calls the QA back** while they are away: a notification with its sound and a
 count on the app's icon, unless they asked to hear only inside the app, where a notice says it.

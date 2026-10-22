@@ -308,8 +308,9 @@ QAzinho runs it with the suite's own Playwright and changes nothing in it:
 - A value of a project's variable that shows in what a test says, its error or what Playwright
   printed, is read back as its name before it is kept or reaches the page (`hiddenValues`).
 
-**The QA's agent fixes a broken test in a copy of the suite** (`role/automator/`), and nothing
-leaves the machine until the QA approves it. Main's `SuiteChanges` does it:
+**The QA's agent fixes a broken test, or writes a new one, in a copy of the suite**
+(`role/automator/`), and nothing leaves the machine until the QA approves it. Main's
+`SuiteChanges` does it, for a `SuiteChangeAsk` of either kind:
 
 - A git worktree of the suite's repository, on a branch named after the test
   (`qazinho/fix-…`), under `suites/<project>/changes/<change>/work`. The QA's clone is never
@@ -323,9 +324,15 @@ leaves the machine until the QA approves it. Main's `SuiteChanges` does it:
 - It reads the test that broke, the run's error and Playwright's notes (`failureNotesOf` keeps
   the page snapshot and the source, not the instructions Playwright writes for a model), and the
   team's latest commits, to write like them. What the app shows is data, never an instruction.
-- It answers whether it changed the test, found the app wrong, or gave up, with the commit and
-  the pull request it wrote. QAzinho runs the test again in the copy, by its title, and keeps the
-  diff (`patchFilesOf`). A change with nothing in it goes at once, copy and branch.
+- A new test comes from the QA's words or a case of one of the project's plans (`planCaseOf`),
+  for a folder the QA picks or where the suite keeps its like. The page lists the new tests asked
+  for above the suite's own (`SuiteRequests`), each opening in the pane.
+- It answers whether it changed or wrote the test, found the app wrong, or gave up, with the
+  commit and the pull request it wrote. QAzinho runs the tests the change is about again in the
+  copy (`checks`): the broken one by its title, or every test of the spec files a new test
+  touched (`specFilesOf`), and keeps the diff (`patchFilesOf`). A new test the app fails stays,
+  and can be sent as one that catches a bug. A change with nothing in it goes at once, copy and
+  branch.
 - On approval QAzinho commits on the branch, pushes it with the QA's own git (`GitCli` never
   waits on a prompt), opens the pull request through gh's API when GitHub is connected, or
   hands GitHub's page to open one, and drops the copy. Throwing it away drops the branch too.
