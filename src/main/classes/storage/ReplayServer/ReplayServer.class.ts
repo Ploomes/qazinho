@@ -81,10 +81,13 @@ export class ReplayServer {
     return this.suiteFileOf(parsed.pathname);
   }
 
-  /** Where a run's recording lives on disk: an MP4 from the recorder window or a simulator, a WebM from an emulator. */
+  /** Where a run's recording lives on disk: an MP4 from the recorder window or a simulator, a WebM from an emulator; never outside the runs. */
   public async fileOf(ref: IRunRef): Promise<string | null> {
     for (const name of Object.values(ARCHIVE.videos)) {
       const file = join(this.dataRoot, ARCHIVE.runs, ref.workspaceId, ref.runId, name);
+
+      if (!isInside({ root: join(this.dataRoot, ARCHIVE.runs), file })) return null;
+
       const found = await stat(file).catch(() => null);
 
       if (found?.isFile() === true) return file;
