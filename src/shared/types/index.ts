@@ -55,6 +55,7 @@ export type * from './ICodeSource';
 export type * from './ICommentBug';
 export type * from './IConnectIntegration';
 export type * from './IConnectResult';
+export type * from './IDesignLink';
 export type * from './IDetectedAgent';
 export type * from './IDeviceImage';
 export type * from './IDeviceTools';
