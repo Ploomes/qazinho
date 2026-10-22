@@ -82,11 +82,13 @@ export class SuiteRunner {
         startedAt: this.now(),
         endedAt: null,
         status: 'running',
-        total: 0,
+        total: start.expected,
         results: [],
         failure: null,
         said: '',
       },
+      expected: start.expected,
+      counted: 0,
       child: null,
       isStopping: false,
       isBroken: false,
@@ -315,7 +317,8 @@ export class SuiteRunner {
     const { projectId, id: runId } = job.run;
 
     if (report.kind === 'begin') {
-      job.run.total += report.total;
+      job.counted += report.total;
+      job.run.total = Math.max(job.expected, job.counted);
       this.onEvent({ kind: 'total', projectId, runId, total: job.run.total });
     } else if (report.kind === 'test-begin') {
       this.onEvent({ kind: 'testStarted', projectId, runId, testId: report.id });

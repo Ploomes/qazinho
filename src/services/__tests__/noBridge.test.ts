@@ -170,7 +170,7 @@ describe('a page with no bridge', () => {
       await Suites.openTrace({ projectId: 'p-1', runId: 's-01', file: 'trace.zip' }),
     ).toBe(false);
     expect(() => {
-      Suites.run({ projectId: 'p-1', runId: 's-01', batches: [] });
+      Suites.run({ projectId: 'p-1', runId: 's-01', batches: [], expected: 0 });
       Suites.stop('p-1');
       Suites.onEvent(() => undefined)();
     }).not.toThrow();
