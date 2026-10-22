@@ -6,6 +6,7 @@ import {
   useAppActions,
   useAssistantEvents,
 } from '@/modules/Assistant';
+import { useSuiteWatch } from '@/modules/Automation';
 import { useBuildEvents } from '@/modules/Build';
 import { AppWindow } from '@/services';
 import { SHELL } from '@/shared/constants';
@@ -47,6 +48,7 @@ export const useAppViewModel = () => {
   useAppActions();
   useAssistantEvents();
   useBuildEvents();
+  useSuiteWatch();
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -84,5 +86,6 @@ export const useAppViewModel = () => {
     isWelcome: screen !== 'settings' && (screen === 'welcome' || projects.length === 0),
     isWorkspace: screen === 'workspace',
     isSettings: screen === 'settings',
+    isAutomation: screen === 'automation',
   };
 };

@@ -1,5 +1,6 @@
 import { AnimatePresence, MotionConfig } from 'motion/react';
 import { AssistantDock } from '@/modules/Assistant';
+import { Automation } from '@/modules/Automation';
 import { DevicePanel } from '@/modules/Device';
 import { ProjectModal, VariablesModal, Welcome } from '@/modules/Project';
 import { RunNotice, RunReplay } from '@/modules/Run';
@@ -19,6 +20,7 @@ export const App: React.FC = () => {
     isWelcome,
     isWorkspace,
     isSettings,
+    isAutomation,
     modal,
     variablesKey,
     hasMedia,
@@ -39,6 +41,7 @@ export const App: React.FC = () => {
           {!isOnboarding && !isWelcome && isWorkspace && <Workspace />}
           {!isOnboarding && !isWelcome && isWorkspace && <DevicePanel />}
           {!isOnboarding && !isWelcome && isSettings && <Settings />}
+          {!isOnboarding && !isWelcome && isAutomation && <Automation />}
         </div>
 
         <AnimatePresence>
