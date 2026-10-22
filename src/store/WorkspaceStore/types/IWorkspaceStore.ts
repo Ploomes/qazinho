@@ -1,4 +1,4 @@
-import type { BugFilter } from '@/modules/Bug';
+import type { BugFilter, IBugReview } from '@/modules/Bug';
 import type { IQuestionAnswer, UserCommand } from '@/modules/Chat';
 import type { ViewportId } from '@/modules/Device';
 import type { ITestCase } from '@/modules/Plan';
@@ -117,6 +117,7 @@ export interface IWorkspaceStore {
   toggleCase: (caseId: string) => void;
   toggleBug: (bugId: string) => void;
   landFiled: (props: { workspaceId: string; bugId: string; issue: IFiledIssue }) => void;
+  landReview: (props: { workspaceId: string; bugId: string; review: IBugReview }) => void;
   selectRun: (runId: string | null) => void;
   setRunFilter: (filter: RunFilter) => void;
   setBugFilter: (filter: BugFilter) => void;

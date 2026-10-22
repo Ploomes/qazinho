@@ -1,5 +1,6 @@
 export type * from './BugCatchKind';
 export type * from './BugFilter';
+export type * from './BugReviewState';
 export type * from './FilingChange';
 export type * from './FilingRow';
 export type * from './FilingRowState';
@@ -10,8 +11,10 @@ export type * from './IBugFiling';
 export type * from './IBugMoment';
 export type * from './IBugReportWords';
 export type * from './IBugReproStep';
+export type * from './IBugReview';
 export type * from './IBugShot';
 export type * from './IBugSighting';
+export type * from './IBugUpdateWords';
 export type * from './IFilingPlan';
 export type * from './IFilingShot';
 export type { Severity } from '@/shared/types';

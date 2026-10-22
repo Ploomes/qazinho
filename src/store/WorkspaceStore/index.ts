@@ -20,6 +20,7 @@ import {
   landExplored,
   landFiled,
   landFinding,
+  landReview,
   landStep,
   landVideo,
   resumeRun,
@@ -465,6 +466,15 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   toggleBug: (bugId) =>
     set((state) => ({ openBugId: state.openBugId === bugId ? null : bugId })),
+
+  landReview: ({ workspaceId, bugId, review }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => landReview({ workspace, bugId, review }),
+      }),
+    })),
 
   landFiled: ({ workspaceId, bugId, issue }) =>
     set((state) => ({

@@ -16,6 +16,7 @@ describe('landFiled', () => {
     const landed = landFiled({ workspace, bugId: bug?.id ?? '', issue: ISSUE });
 
     expect(landed.bugs[0]?.filed).toEqual(ISSUE);
+    expect(landed.bugs[0]?.reviewedRuns).toEqual(['r-01']);
   });
 
   it('changes nothing for a bug that is no longer there', () => {

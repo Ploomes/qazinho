@@ -28,6 +28,8 @@ const BUG: IBug = {
   isIncidental: false,
   at: 1_760_000_000_000,
   filed: null,
+  reviewedRuns: [],
+  review: null,
 };
 
 /** Words that show where each one lands, the way i18n hands them over. */

@@ -76,5 +76,7 @@ export function makeBug(props: {
     isIncidental: false,
     at: outcome.at,
     filed: null,
+    reviewedRuns: [],
+    review: null,
   };
 }

@@ -9,6 +9,7 @@ export * from './landCost';
 export * from './landExplored';
 export * from './landFiled';
 export * from './landFinding';
+export * from './landReview';
 export * from './landStep';
 export * from './landVideo';
 export * from './messageOfSaved';
