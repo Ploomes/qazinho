@@ -1,5 +1,9 @@
+import type { IFilingPlan } from '@/modules/Bug/types';
+import type { IssueTarget } from '@/shared/types';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BUG_FILTER_KEYS, BUG_FILTERS } from '@/modules/Bug/constants';
+import { useBugFiling } from '@/modules/Bug/hooks/useBugFiling';
 import { appearancesOf } from '@/modules/Bug/library';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import { useWorkspaceStore } from '@/store';
@@ -17,6 +21,8 @@ export const useBugsViewModel = () => {
   const setBugFilter = useWorkspaceStore((state) => state.setBugFilter);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const selectRun = useWorkspaceStore((state) => state.selectRun);
+  const [sendingBugId, setSendingBugId] = useState<string | null>(null);
+  const filings = useBugFiling();
 
   const bugs = workspace?.bugs ?? [];
   const runs = workspace?.runs ?? [];
@@ -31,6 +37,10 @@ export const useBugsViewModel = () => {
   const onOpenCase = () => {
     selectTab('plan');
   };
+
+  const sendingBug = bugs.find(({ id }) => id === sendingBugId) ?? null;
+  const { filing } = filings;
+  const filingBug = bugs.find(({ id }) => id === filing?.bugId) ?? null;
 
   return {
     bugs: shown.map((bug) => {
@@ -69,5 +79,22 @@ export const useBugsViewModel = () => {
     onFilter: setBugFilter,
     onOpenRun,
     onOpenCase,
+    sending:
+      workspace === null || sendingBug === null
+        ? null
+        : { workspaceId: workspace.id, bug: sendingBug },
+    onSend: setSendingBugId,
+    onCancelSend: () => {
+      setSendingBugId(null);
+    },
+    onSendTo: (props: { target: IssueTarget; title: string; plan: IFilingPlan }) => {
+      if (workspace === null || sendingBug === null) return;
+
+      filings.start({ workspaceId: workspace.id, bugId: sendingBug.id, ...props });
+      setSendingBugId(null);
+    },
+    filing: filing === null || filingBug === null ? null : { filing, bug: filingBug },
+    onCloseFiling: filings.close,
+    onRetryFiling: filings.retry,
   };
 };

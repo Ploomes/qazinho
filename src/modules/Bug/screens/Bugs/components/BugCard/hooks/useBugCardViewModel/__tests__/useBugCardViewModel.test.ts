@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
-import { renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
 import { useBugCardViewModel } from '@/modules/Bug/screens/Bugs/components/BugCard/hooks/useBugCardViewModel';
 import { walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useSettingsStore } from '@/store';
 
 const WORKSPACE = walkRun({
@@ -20,6 +21,7 @@ const PROPS = {
   onToggle: vi.fn(),
   onOpenRun: vi.fn(),
   onOpenCase: vi.fn(),
+  onSend: vi.fn(),
 };
 
 afterEach(async () => {
@@ -198,5 +200,66 @@ describe('useBugCardViewModel', () => {
 
     expect(result.current.moment).toEqual(moment);
     expect(renderHook(() => useBugCardViewModel(PROPS)).result.current.moment).toBeNull();
+  });
+
+  describe('the tracker', () => {
+    const FILED = {
+      tracker: 'jira' as const,
+      key: 'SHOP-57',
+      url: 'https://acme.atlassian.net/browse/SHOP-57',
+      at: '2026-10-22T12:00:00.000Z',
+    };
+
+    it('offers to send a bug that went nowhere yet', () => {
+      const onSend = vi.fn();
+      const { result } = renderHook(() => useBugCardViewModel({ ...PROPS, onSend }));
+
+      expect(result.current.filedKey).toBeNull();
+
+      result.current.onSendClick();
+
+      expect(onSend).toHaveBeenCalledWith(BUG.id);
+    });
+
+    it('names the issue a bug became, and opens it', () => {
+      const opened = vi.spyOn(window, 'open').mockReturnValue(null);
+      const { result } = renderHook(() =>
+        useBugCardViewModel({ ...PROPS, bug: { ...BUG, filed: FILED } }),
+      );
+
+      expect(result.current.filedKey).toBe('SHOP-57');
+      expect(result.current.openIssueLabel).toBe('Open SHOP-57');
+      expect(result.current.canCopyScreen).toBe(false);
+
+      result.current.onOpenIssue();
+
+      expect(opened).toHaveBeenCalledWith(FILED.url, '_blank', 'noreferrer');
+      opened.mockRestore();
+    });
+
+    it('copies the screen to paste into a GitHub issue', async () => {
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        copyShot: vi.fn().mockResolvedValue(true),
+      };
+
+      const { result } = renderHook(() =>
+        useBugCardViewModel({
+          ...PROPS,
+          bug: { ...BUG, filed: { ...FILED, tracker: 'github', key: '#42' } },
+        }),
+      );
+
+      expect(result.current.canCopyScreen).toBe(true);
+
+      act(() => {
+        result.current.onCopyScreen();
+      });
+
+      await waitFor(() => {
+        expect(result.current.copyLabel).toBe('Copied');
+      });
+      Reflect.deleteProperty(window, 'qazinho');
+    });
   });
 });

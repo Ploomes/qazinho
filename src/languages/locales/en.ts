@@ -714,7 +714,7 @@ export const en = {
     NOT_CONNECTED: 'not connected',
     WHAT_IT_NEEDS: 'what it needs',
     GITHUB_TEXT:
-      'Let the agent read the code of your repositories to plan tests. Filing bugs as issues comes later.',
+      'Let the agent read the code of your repositories to plan tests, and send the bugs a run finds as issues.',
     GITHUB_NEEDS:
       'The GitHub CLI (gh), signed in to your account. QAzinho uses its login and keeps no token of its own.',
     GITHUB_CLI_MISSING:
@@ -724,7 +724,7 @@ export const en = {
     GITHUB_INSTALL: 'Install gh',
     GITHUB_INSTALLING: 'Installing gh…',
     GITHUB_CONNECTED_NOTE:
-      'Projects pick their repositories through it. Filing a bug as an issue is not built yet.',
+      'Projects pick their repositories through it, and a bug goes to one of them from the Bugs tab.',
     ROW_VIA: 'through',
     VIA_GH: 'GitHub CLI',
     GITHUB_LOGIN_TITLE: 'Connecting GitHub',
@@ -745,11 +745,12 @@ export const en = {
     GITHUB_FAIL_REFUSED: 'GitHub did not authorize the sign-in.',
     GITHUB_FAIL_TIMEOUT: 'The code expired before it was used. Try again for a new one.',
     GITHUB_FAIL_CLOSED: 'gh closed before the sign-in finished.',
-    JIRA_TEXT: 'File the bugs a run finds as issues in a Jira project.',
+    JIRA_TEXT:
+      'Plan from a story and its acceptance criteria, and send the bugs a run finds as issues.',
     JIRA_NEEDS:
       "Your Jira Cloud site, your email and an API token. QAzinho checks them with Jira, then seals the token in this machine's keychain.",
-    NOT_FILED_YET:
-      'Sending a bug to the tracker is not built yet. The connection is checked and kept for when it is.',
+    JIRA_CONNECTED_NOTE:
+      'Type /jira in a workspace’s chat to plan from a story, and send a bug from the Bugs tab.',
     FIELD_TOKEN: 'token',
     FIELD_SITE: 'site',
     FIELD_EMAIL: 'email',

@@ -1,6 +1,6 @@
 import type { IBugCardProps } from './types';
 import { useTranslation } from 'react-i18next';
-import { Button, Caret, Eyebrow } from '@/shared/components/atoms';
+import { Button, Caret, Eyebrow, Icon } from '@/shared/components/atoms';
 import { ExpectedGot, MetaGrid, Screenshot } from '@/shared/components/molecules';
 import { MomentTile } from './components';
 import { useBugCardViewModel } from './hooks';
@@ -17,8 +17,16 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
     hasRun,
     newLabel,
     openRunLabel,
+    filedKey,
+    sendLabel,
+    openIssueLabel,
+    canCopyScreen,
+    copyLabel,
     onHeadClick,
     onOpenRunClick,
+    onSendClick,
+    onOpenIssue,
+    onCopyScreen,
     onOpenShot,
   } = useBugCardViewModel(props);
   const { bug } = props;
@@ -39,6 +47,12 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
         <span className="bug-card__title">{bug.title}</span>
         {bug.isIncidental && (
           <span className="bug-card__outside">{t('BUG.OUTSIDE_PLAN')}</span>
+        )}
+        {filedKey !== null && (
+          <span className="bug-card__filed">
+            <Icon name="link" />
+            {filedKey}
+          </span>
         )}
         {bug.isNew && <span className="bug-card__new">{newLabel}</span>}
         <span className="bug-card__id">{severity}</span>
@@ -99,6 +113,27 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
             <Button size="sm" onClick={props.onOpenCase}>
               {t('BUG.OPEN_CASE', { id: bug.caseId })}
             </Button>
+            <span className="bug-card__tracker">
+              {filedKey === null ? (
+                <Button size="sm" variant="primary" onClick={onSendClick}>
+                  <Icon name="send" />
+                  {sendLabel}
+                </Button>
+              ) : (
+                <>
+                  {canCopyScreen && (
+                    <Button size="sm" onClick={onCopyScreen}>
+                      <Icon name="copy" />
+                      {copyLabel}
+                    </Button>
+                  )}
+                  <Button size="sm" onClick={onOpenIssue}>
+                    {openIssueLabel}
+                    <Icon name="external" />
+                  </Button>
+                </>
+              )}
+            </span>
           </div>
         </div>
       )}

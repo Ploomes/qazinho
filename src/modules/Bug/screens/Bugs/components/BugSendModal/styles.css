@@ -1,0 +1,134 @@
+.bug-send {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.bug-send__part {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.bug-send__label {
+  color: var(--ink);
+  font: var(--font-ui-md);
+}
+
+.bug-send__trackers {
+  display: flex;
+  gap: var(--space-2);
+  width: fit-content;
+  padding: var(--space-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--raise);
+}
+
+.bug-send__tracker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink2);
+  font: var(--font-ui-md);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.bug-send__tracker:hover {
+  color: var(--ink);
+}
+
+.bug-send__tracker--on {
+  background: var(--raise2);
+  color: var(--ink);
+}
+
+.bug-send__tracker:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 2px;
+}
+
+.bug-send__logo {
+  display: block;
+  flex: none;
+  width: var(--bug-send-logo);
+  height: var(--bug-send-logo);
+}
+
+.bug-send__picked {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  border: 1px solid var(--lime);
+  border-radius: var(--radius-md);
+  background: var(--lime-soft);
+}
+
+.bug-send__picked-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font: var(--font-ui-md);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bug-send__picked-detail {
+  flex: none;
+  color: var(--ink2);
+  font: var(--font-mono-sm);
+}
+
+.bug-send__goes {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bug-send__goes-line {
+  overflow: hidden;
+}
+
+.bug-send__goes-body {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}
+
+.bug-send__goes-body .icon {
+  flex: none;
+  color: var(--lime-ink);
+}
+
+.bug-send__fold {
+  overflow: hidden;
+}
+
+.bug-send__note {
+  margin: 0;
+  padding-top: var(--space-2);
+  color: var(--ink3);
+  font: var(--font-ui-xs);
+  text-wrap: pretty;
+}
+
+.bug-send__empty {
+  margin: 0;
+  color: var(--ink2);
+  font: var(--font-ui-lg);
+  text-wrap: pretty;
+}

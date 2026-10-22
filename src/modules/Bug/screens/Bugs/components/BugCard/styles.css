@@ -52,6 +52,20 @@
   white-space: nowrap;
 }
 
+.bug-card__filed {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--lime-ink);
+  font: var(--font-mono-xs);
+  white-space: nowrap;
+  animation: gc-in var(--dur) var(--ease);
+}
+
 .bug-card__new {
   padding: 3px var(--space-3);
   border: var(--edge-width) solid var(--edge);
@@ -106,4 +120,11 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
+}
+
+.bug-card__tracker {
+  display: flex;
+  gap: var(--space-3);
+  margin-left: auto;
+  animation: gc-in var(--dur) var(--ease);
 }

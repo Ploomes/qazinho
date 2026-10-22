@@ -1,14 +1,20 @@
 import type { IBugCardProps } from '@/modules/Bug/screens/Bugs/components/BugCard/types';
 import type { CSSProperties } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SEVERITY_KEYS } from '@/modules/Bug/constants';
+import { pasteShotOf } from '@/modules/Bug/library';
 import { BUG_CARD } from '@/modules/Bug/screens/Bugs/components/BugCard/constants';
+import { Bugs } from '@/services';
 import { useAppStore } from '@/store';
 
 export const useBugCardViewModel = (props: IBugCardProps) => {
   const { bug, onToggle } = props;
   const { t } = useTranslation();
   const openMedia = useAppStore((state) => state.openMedia);
+  const [isCopied, setIsCopied] = useState(false);
+  const { filed } = bug;
+  const screen = filed?.tracker === 'github' ? pasteShotOf(bug) : null;
 
   const step = t('BUG.STEP', { number: bug.stepNumber });
   const last = bug.sightings.at(-1) ?? null;
@@ -71,6 +77,21 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
     },
     onOpenRunClick: () => {
       props.onOpenRun(props.lastRunId);
+    },
+    filedKey: filed?.key ?? null,
+    sendLabel: t('FILING.SEND'),
+    openIssueLabel: filed === null ? '' : t('FILING.OPEN_ISSUE', { key: filed.key }),
+    canCopyScreen: screen !== null,
+    copyLabel: isCopied ? t('FILING.COPIED') : t('FILING.COPY_SCREEN'),
+    onSendClick: () => {
+      props.onSend(bug.id);
+    },
+    onOpenIssue: () => {
+      if (filed !== null) window.open(filed.url, '_blank', 'noreferrer');
+    },
+    onCopyScreen: () => {
+      if (screen !== null)
+        void Bugs.copyShot({ file: screen.file, src: screen.src }).then(setIsCopied);
     },
     onOpenShot: (shot: (typeof shots)[number]) => {
       openMedia({

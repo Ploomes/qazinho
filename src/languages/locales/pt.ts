@@ -716,7 +716,7 @@ export const pt: typeof en = {
     NOT_CONNECTED: 'não conectado',
     WHAT_IT_NEEDS: 'o que precisa',
     GITHUB_TEXT:
-      'Deixe o agente ler o código dos seus repositórios para planejar os testes. Registrar bugs como issues vem depois.',
+      'Deixe o agente ler o código dos seus repositórios para planejar os testes, e envie como issues os bugs que uma run encontra.',
     GITHUB_NEEDS:
       'O GitHub CLI (gh) conectado à sua conta. O QAzinho usa esse login e não guarda token nenhum.',
     GITHUB_CLI_MISSING:
@@ -726,7 +726,7 @@ export const pt: typeof en = {
     GITHUB_INSTALL: 'Instalar o gh',
     GITHUB_INSTALLING: 'Instalando o gh…',
     GITHUB_CONNECTED_NOTE:
-      'Os projetos escolhem seus repositórios por aqui. Registrar bug como issue ainda não está pronto.',
+      'Os projetos escolhem seus repositórios por aqui, e um bug vai para um deles pela aba Bugs.',
     ROW_VIA: 'pelo',
     VIA_GH: 'GitHub CLI',
     GITHUB_LOGIN_TITLE: 'Conectando o GitHub',
@@ -747,11 +747,12 @@ export const pt: typeof en = {
     GITHUB_FAIL_TIMEOUT:
       'O código expirou antes de ser usado. Tente de novo para receber outro.',
     GITHUB_FAIL_CLOSED: 'O gh fechou antes de terminar a conexão.',
-    JIRA_TEXT: 'Registre os bugs que uma run encontra como issues num projeto do Jira.',
+    JIRA_TEXT:
+      'Planeje a partir de uma história e dos critérios de aceite, e envie como issues os bugs que uma run encontra.',
     JIRA_NEEDS:
       'Seu site do Jira Cloud, seu email e um API token. O QAzinho confere com o Jira e guarda o token selado no chaveiro desta máquina.',
-    NOT_FILED_YET:
-      'Enviar um bug para o tracker ainda não foi construído. A conexão é conferida e guardada para quando for.',
+    JIRA_CONNECTED_NOTE:
+      'Digite /jira no chat de um workspace para planejar a partir de uma história, e envie um bug pela aba Bugs.',
     FIELD_TOKEN: 'token',
     FIELD_SITE: 'site',
     FIELD_EMAIL: 'email',

@@ -93,7 +93,9 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
     connectLabel: isConnecting ? t('SETUP.CHECKING_TOKEN') : t('COMMON.CONNECT'),
     canConnect: connection !== null && !isConnecting,
     tokenUrl: integration.tokenUrl ?? '',
-    connectedNote: isCli ? t('SETUP.GITHUB_CONNECTED_NOTE') : t('SETUP.NOT_FILED_YET'),
+    connectedNote: isCli
+      ? t('SETUP.GITHUB_CONNECTED_NOTE')
+      : t('SETUP.JIRA_CONNECTED_NOTE'),
     install: isCli && cli.install?.phase !== 'installed' ? cli.install : null,
     signIn: isCli ? cli.signIn : null,
     fields: integration.fields.map((field) => ({

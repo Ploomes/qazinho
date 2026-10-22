@@ -1,9 +1,11 @@
 // @vitest-environment jsdom
-import { act, renderHook } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
+import { filingPlanOf } from '@/modules/Bug/library';
 import { useBugsViewModel } from '@/modules/Bug/screens/Bugs/hooks/useBugsViewModel';
 import { recordedRun, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 const WORKSPACE = walkRun({
@@ -22,6 +24,7 @@ beforeEach(() => {
 });
 
 afterEach(async () => {
+  Reflect.deleteProperty(window, 'qazinho');
   await i18n.changeLanguage('en');
 });
 
@@ -189,6 +192,68 @@ describe('useBugsViewModel', () => {
       const { result } = renderHook(() => useBugsViewModel());
 
       expect(result.current.bugs[0]).toMatchObject({ lastRunId: 'r-01', hasRun: true });
+    });
+  });
+
+  describe('onSend', () => {
+    it('opens the bug to send, and closes it when the QA cancels', () => {
+      const { result } = renderHook(() => useBugsViewModel());
+
+      expect(result.current.sending).toBeNull();
+
+      act(() => {
+        result.current.onSend(BUG.id);
+      });
+
+      expect(result.current.sending).toEqual({ workspaceId: 'w1', bug: BUG });
+
+      act(() => {
+        result.current.onCancelSend();
+      });
+
+      expect(result.current.sending).toBeNull();
+    });
+
+    it('sends the bug where the QA picked, and follows it in its popup', async () => {
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        fileBug: vi.fn().mockResolvedValue({
+          isFiled: false,
+          failure: 'not-connected',
+          said: '',
+        }),
+      };
+
+      const { result } = renderHook(() => useBugsViewModel());
+      const target = { tracker: 'jira' as const, project: 'SHOP' };
+
+      act(() => {
+        result.current.onSend(BUG.id);
+      });
+      act(() => {
+        result.current.onSendTo({
+          target,
+          title: 'Typed title',
+          plan: filingPlanOf({ workspace: WORKSPACE, bug: BUG, tracker: 'jira' }),
+        });
+      });
+
+      expect(result.current.sending).toBeNull();
+      expect(result.current.filing?.bug).toBe(BUG);
+
+      await waitFor(() => {
+        expect(result.current.filing?.filing.result).toEqual({
+          isFiled: false,
+          failure: 'not-connected',
+          said: '',
+        });
+      });
+
+      act(() => {
+        result.current.onCloseFiling();
+      });
+
+      expect(result.current.filing).toBeNull();
     });
   });
 });

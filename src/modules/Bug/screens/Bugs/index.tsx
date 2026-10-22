@@ -1,6 +1,7 @@
+import { AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { EmptyState } from '@/shared/components/atoms';
-import { BugCard } from './components';
+import { BugCard, BugFilingPopup, BugSendModal } from './components';
 import { useBugsViewModel } from './hooks';
 import './styles.css';
 
@@ -15,6 +16,13 @@ export const Bugs: React.FC = () => {
     onFilter,
     onOpenRun,
     onOpenCase,
+    sending,
+    onSend,
+    onCancelSend,
+    onSendTo,
+    filing,
+    onCloseFiling,
+    onRetryFiling,
   } = useBugsViewModel();
   const { t } = useTranslation();
 
@@ -58,9 +66,34 @@ export const Bugs: React.FC = () => {
             onToggle={onToggleBug}
             onOpenRun={onOpenRun}
             onOpenCase={onOpenCase}
+            onSend={onSend}
           />
         ))}
       </div>
+
+      <AnimatePresence>
+        {sending !== null && (
+          <BugSendModal
+            key="send"
+            workspaceId={sending.workspaceId}
+            bug={sending.bug}
+            onCancel={onCancelSend}
+            onSend={onSendTo}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {filing !== null && (
+          <BugFilingPopup
+            key={filing.filing.filingId}
+            filing={filing.filing}
+            bug={filing.bug}
+            onClose={onCloseFiling}
+            onRetry={onRetryFiling}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
