@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { DRAFTED_CASE } from '@/harness/schemas/DRAFTED_CASE';
 import { bugIdNamed } from '@/harness/tools/library/bugIdNamed';
 import { textNamed } from '@/harness/tools/library/textNamed';
+import { variableNamed } from '@/harness/tools/library/variableNamed';
 
 export const DEVICE_TOOLS = [
   {
@@ -241,6 +242,53 @@ export const DEVICE_TOOLS = [
       sameAs: bugIdNamed(
         'When it is a bug the message lists as already open: its id, such as "BUG-01". QAzinho counts it as seen again instead of opening another.',
       ),
+    }),
+  },
+  {
+    name: 'ask_qa',
+    description:
+      'Ask the QA a question and wait for the answer, when you cannot go on without them: data nothing you were given holds, such as a code sent to their phone, a choice only they can make, or something on screen only they can judge. The run holds until they answer.',
+    input: z.object({
+      question: textNamed({
+        message: '"ask_qa" needs "question": what you need from the QA.',
+        description:
+          'What you need from the QA, short enough to answer at a glance: what you see, and what you need to go on.',
+      }),
+      options: z
+        .array(
+          z
+            .string({ error: '"options" is a list of short answers.' })
+            .trim()
+            .min(1, { error: '"options" holds short answers, none of them blank.' }),
+          { error: '"options" is a list of short answers.' },
+        )
+        .max(4, { error: '"options" holds four answers at most.' })
+        .describe(
+          'When the answer is one of a few: up to four short answers the QA picks from. They can always answer in their own words.',
+        )
+        .optional(),
+      secret: z
+        .object(
+          {
+            name: variableNamed(
+              '"secret" needs "name": the variable to keep it as, in capitals with _ between words, such as OTP_CODE.',
+            ).describe(
+              'The variable, in capitals with _ between words, such as OTP_CODE.',
+            ),
+            description: textNamed({
+              message: '"secret" needs "description": what it holds.',
+              description: 'What it holds, such as "The code texted to the QA\'s phone".',
+            }),
+          },
+          {
+            error:
+              '"secret" is the variable to keep the answer as: a name and what it holds.',
+          },
+        )
+        .describe(
+          'Only when the answer is a secret, such as a password or a code sent to the QA: the variable QAzinho keeps it as. You type it as ${NAME} and never see it.',
+        )
+        .optional(),
     }),
   },
   {

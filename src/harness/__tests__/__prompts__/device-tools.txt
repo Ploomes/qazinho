@@ -401,5 +401,56 @@
     "execution": {
       "taskSupport": "forbidden"
     }
+  },
+  {
+    "name": "ask_qa",
+    "description": "Ask the QA a question and wait for the answer, when you cannot go on without them: data nothing you were given holds, such as a code sent to their phone, a choice only they can make, or something on screen only they can judge. The run holds until they answer.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "question": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What you need from the QA, short enough to answer at a glance: what you see, and what you need to go on."
+        },
+        "options": {
+          "maxItems": 4,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "When the answer is one of a few: up to four short answers the QA picks from. They can always answer in their own words."
+        },
+        "secret": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^[A-Z][A-Z0-9_]*$",
+              "description": "The variable, in capitals with _ between words, such as OTP_CODE."
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1,
+              "description": "What it holds, such as \"The code texted to the QA's phone\"."
+            }
+          },
+          "required": [
+            "name",
+            "description"
+          ],
+          "description": "Only when the answer is a secret, such as a password or a code sent to the QA: the variable QAzinho keeps it as. You type it as ${NAME} and never see it."
+        }
+      },
+      "required": [
+        "question"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
   }
 ]

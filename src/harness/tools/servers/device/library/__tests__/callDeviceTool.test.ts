@@ -227,6 +227,44 @@ describe('callDeviceTool', () => {
       expect(answer.isError).toBe(true);
     });
   });
+  describe('a question for the QA', () => {
+    it('hands the question to the run and passes on what the QA answered', async () => {
+      const { device, acted } = fakeDevice();
+      const asked: unknown[] = [];
+      const answer = await callDeviceTool({
+        device: {
+          ...device,
+          onAsk: async (question) => {
+            asked.push(question);
+
+            return 'The QA answered: Premium+';
+          },
+        },
+        call: {
+          name: 'ask_qa',
+          args: { question: 'Which plan?', options: ['Premium', 'Premium+'] },
+        },
+      });
+
+      expect(asked).toEqual([
+        { question: 'Which plan?', options: ['Premium', 'Premium+'], secret: null },
+      ]);
+      expect(answer.isError).toBe(false);
+      expect(text(answer)).toBe('The QA answered: Premium+');
+      expect(acted).toEqual([]);
+    });
+
+    it('does NOT ask with no run to wait for the answer', async () => {
+      const answer = await callDeviceTool({
+        device: fakeDevice().device,
+        call: { name: 'ask_qa', args: { question: 'Which plan?' } },
+      });
+
+      expect(answer.isError).toBe(true);
+      expect(text(answer)).toBe('There is no QA to ask outside a run.');
+    });
+  });
+
   describe('an exploration', () => {
     it('hands a screen and a finish to the exploration that hears them', async () => {
       const heard: string[] = [];

@@ -241,6 +241,89 @@ describe('readToolCall', () => {
       });
     });
   });
+  describe('a question for the QA', () => {
+    it('reads the question with the answers it offers, trimmed and once each', () => {
+      expect(
+        readToolCall({
+          name: 'ask_qa',
+          args: {
+            question: ' Which plan should I pick? ',
+            options: [' Premium ', 'Premium+', 'Premium'],
+          },
+        }),
+      ).toEqual({
+        kind: 'ask',
+        question: {
+          question: 'Which plan should I pick?',
+          options: ['Premium', 'Premium+'],
+          secret: null,
+        },
+      });
+    });
+
+    it('reads a secret with the variable it is kept as, its name in capitals', () => {
+      expect(
+        readToolCall({
+          name: 'ask_qa',
+          args: {
+            question: 'What is the code texted to your phone?',
+            secret: { name: ' otp_code ', description: 'The code texted to the QA' },
+          },
+        }),
+      ).toEqual({
+        kind: 'ask',
+        question: {
+          question: 'What is the code texted to your phone?',
+          options: [],
+          secret: { name: 'OTP_CODE', description: 'The code texted to the QA' },
+        },
+      });
+    });
+
+    /** A secret is typed, never picked: options beside it would put a value on screen for the agent. */
+    it('leaves the options out of a secret', () => {
+      const read = readToolCall({
+        name: 'ask_qa',
+        args: {
+          question: 'Which password?',
+          options: ['hunter2'],
+          secret: { name: 'ADMIN_PASSWORD', description: 'The admin password' },
+        },
+      });
+
+      expect(read.kind === 'ask' ? read.question.options : null).toEqual([]);
+    });
+
+    it('does NOT ask without a question, nor with more than four answers', () => {
+      expect(readToolCall({ name: 'ask_qa', args: { options: ['Yes'] } })).toEqual({
+        kind: 'refused',
+        error: '"ask_qa" needs "question": what you need from the QA.',
+      });
+      expect(
+        readToolCall({
+          name: 'ask_qa',
+          args: { question: 'Which?', options: ['A', 'B', 'C', 'D', 'E'] },
+        }),
+      ).toEqual({ kind: 'refused', error: '"options" holds four answers at most.' });
+    });
+
+    it('does NOT keep a secret under a name a variable cannot have', () => {
+      expect(
+        readToolCall({
+          name: 'ask_qa',
+          args: {
+            question: 'What is the code?',
+            secret: { name: 'the code', description: 'The code' },
+          },
+        }),
+      ).toEqual({
+        kind: 'refused',
+        error:
+          '"secret" needs "name": the variable to keep it as, in capitals with _ between words, such as OTP_CODE.',
+      });
+    });
+  });
+
   describe('an exploration', () => {
     it('reads a screen the explorer reached, trimmed', () => {
       expect(

@@ -42,6 +42,24 @@ export function readToolCall(props: {
     return { kind: 'finding', finding: read.data };
   }
 
+  if (tool.name === 'ask_qa') {
+    const read = tool.input.safeParse(props.args ?? {});
+
+    if (!read.success)
+      return { kind: 'refused', error: read.error.issues[0]?.message ?? 'Ask again.' };
+
+    const { question, options, secret } = read.data;
+
+    return {
+      kind: 'ask',
+      question: {
+        question,
+        options: secret === undefined ? [...new Set(options ?? [])] : [],
+        secret: secret ?? null,
+      },
+    };
+  }
+
   if (tool.name === 'screen' || tool.name === 'finish') {
     const read = tool.input.safeParse(props.args ?? {});
 

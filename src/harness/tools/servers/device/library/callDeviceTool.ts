@@ -60,6 +60,12 @@ export async function callDeviceTool(props: {
       return said(await device.onFinding(read.finding));
     }
 
+    if (read.kind === 'ask') {
+      if (!device.onAsk) return said('There is no QA to ask outside a run.', true);
+
+      return said(await device.onAsk(read.question));
+    }
+
     if (read.kind === 'screen') {
       if (!device.onScreen)
         return said('There is no exploration to note a screen in.', true);
