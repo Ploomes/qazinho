@@ -14,6 +14,7 @@ export const useBugsViewModel = () => {
     id: opened.id,
     bugs: opened.bugs,
     runs: opened.runs,
+    plan: opened.plan,
   }));
   const openBugId = useWorkspaceStore((state) => state.openBugId);
   const bugFilter = useWorkspaceStore((state) => state.bugFilter);
@@ -21,11 +22,13 @@ export const useBugsViewModel = () => {
   const setBugFilter = useWorkspaceStore((state) => state.setBugFilter);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const selectRun = useWorkspaceStore((state) => state.selectRun);
+  const toggleCase = useWorkspaceStore((state) => state.toggleCase);
   const [sendingBugId, setSendingBugId] = useState<string | null>(null);
   const filings = useBugFiling();
 
   const bugs = workspace?.bugs ?? [];
   const runs = workspace?.runs ?? [];
+  const plan = workspace?.plan ?? [];
   const shown =
     bugFilter === 'all' ? bugs : bugs.filter(({ severity }) => severity === bugFilter);
 
@@ -34,8 +37,10 @@ export const useBugsViewModel = () => {
     selectTab('runs');
   };
 
-  const onOpenCase = () => {
+  const onOpenCase = (caseId: string) => {
     selectTab('plan');
+
+    if (useWorkspaceStore.getState().openCaseId !== caseId) toggleCase(caseId);
   };
 
   const sendingBug = bugs.find(({ id }) => id === sendingBugId) ?? null;
@@ -53,6 +58,7 @@ export const useBugsViewModel = () => {
       return {
         bug,
         hasRun: run !== undefined,
+        hasCase: plan.some(({ id }) => id === bug.caseId),
         lastRunId: latest?.runId ?? bug.runId,
         moment:
           workspace === null || latest === null || video === null || latest.at === null

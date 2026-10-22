@@ -63,7 +63,7 @@ export const useBugFilingPopupViewModel = (props: IBugFilingPopupProps) => {
             : []),
           {
             key: 'open',
-            label: t('FILING.OPEN_ISSUE', { key: filed.issue.key }),
+            label: t('FILING.VIEW_ISSUE', { tracker: name }),
             variant: 'primary',
             onClick: open,
           },

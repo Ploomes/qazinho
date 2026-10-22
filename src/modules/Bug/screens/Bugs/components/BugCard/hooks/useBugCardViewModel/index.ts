@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { SEVERITY_KEYS } from '@/modules/Bug/constants';
 import { pasteShotOf } from '@/modules/Bug/library';
 import { BUG_CARD } from '@/modules/Bug/screens/Bugs/components/BugCard/constants';
+import { INTEGRATIONS } from '@/modules/Setup/constants';
 import { Bugs } from '@/services';
 import { useAppStore } from '@/store';
 
@@ -70,23 +71,33 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
       '--moment-height': `${String(BUG_CARD.momentHeightPx)}px`,
     } as CSSProperties,
     hasRun: props.hasRun,
+    hasCase: props.hasCase,
     newLabel: bug.sightings.length > 0 ? t('BUG.SEEN_AGAIN') : t('BUG.JUST_CAUGHT'),
-    openRunLabel: t('BUG.OPEN_RUN', { id: props.lastRunId }),
+    runLabel: t('BUG.GO_TO_RUN', { id: props.lastRunId }),
+    caseLabel: t('BUG.GO_TO_CASE', { id: bug.caseId }),
     onHeadClick: () => {
       onToggle(bug.id);
     },
-    onOpenRunClick: () => {
+    onRunClick: () => {
       props.onOpenRun(props.lastRunId);
+    },
+    onCaseClick: () => {
+      props.onOpenCase(bug.caseId);
     },
     filedKey: filed?.key ?? null,
     sendLabel: t('FILING.SEND'),
-    openIssueLabel: filed === null ? '' : t('FILING.OPEN_ISSUE', { key: filed.key }),
+    issueLabel:
+      filed === null
+        ? ''
+        : t('FILING.VIEW_ISSUE', {
+            tracker: INTEGRATIONS.find(({ id }) => id === filed.tracker)?.name ?? '',
+          }),
     canCopyScreen: screen !== null,
     copyLabel: isCopied ? t('FILING.COPIED') : t('FILING.COPY_SCREEN'),
     onSendClick: () => {
       props.onSend(bug.id);
     },
-    onOpenIssue: () => {
+    onIssueClick: () => {
       if (filed !== null) window.open(filed.url, '_blank', 'noreferrer');
     },
     onCopyScreen: () => {

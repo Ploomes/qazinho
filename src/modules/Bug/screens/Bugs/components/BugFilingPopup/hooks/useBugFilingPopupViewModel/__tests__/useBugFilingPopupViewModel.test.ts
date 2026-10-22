@@ -86,6 +86,9 @@ describe('useBugFilingPopupViewModel', () => {
       expect(result.current.title).toBe('Filed as SHOP-57');
       expect(result.current.subtitle).toBe('In SHOP. The bug keeps the link.');
       expect(result.current.isKept).toBe(false);
+      expect(result.current.actions.find(({ key }) => key === 'open')?.label).toBe(
+        'View in Jira',
+      );
 
       act(() => {
         result.current.actions.find(({ key }) => key === 'open')?.onClick();

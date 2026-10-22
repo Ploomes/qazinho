@@ -16,6 +16,7 @@ const PROPS = {
   bug: BUG,
   isOpen: false,
   hasRun: true,
+  hasCase: true,
   lastRunId: 'r-01',
   moment: null,
   onToggle: vi.fn(),
@@ -94,6 +95,8 @@ describe('useBugCardViewModel', () => {
       'antes',
       'o passo que quebrou',
     ]);
+    expect(result.current.runLabel).toBe('Ir para a run r-01');
+    expect(result.current.caseLabel).toBe('Ir para o caso TC-02');
   });
 
   it('counts the runs that caught it once there is more than one', () => {
@@ -104,16 +107,35 @@ describe('useBugCardViewModel', () => {
     expect(result.current.meta[3]?.value).toBe('in 3 runs');
   });
 
-  it('opens the run the bug was caught in', () => {
+  it('goes to the run the bug was caught in, named as a run', () => {
     const onOpenRun = vi.fn();
     const { result } = renderHook(() => useBugCardViewModel({ ...PROPS, onOpenRun }));
 
-    result.current.onOpenRunClick();
+    result.current.onRunClick();
 
     expect(onOpenRun).toHaveBeenCalledWith('r-01');
-    expect(result.current.openRunLabel).toBe('Open r-01');
+    expect(result.current.runLabel).toBe('Go to run r-01');
     expect(result.current.hasRun).toBe(true);
     expect(result.current.newLabel).toBe('just caught');
+  });
+
+  it('goes to the case the bug was caught on, named as a case', () => {
+    const onOpenCase = vi.fn();
+    const { result } = renderHook(() => useBugCardViewModel({ ...PROPS, onOpenCase }));
+
+    result.current.onCaseClick();
+
+    expect(onOpenCase).toHaveBeenCalledWith('TC-02');
+    expect(result.current.caseLabel).toBe('Go to case TC-02');
+    expect(result.current.hasCase).toBe(true);
+  });
+
+  it('does NOT offer a case the plan does not have', () => {
+    const { result } = renderHook(() =>
+      useBugCardViewModel({ ...PROPS, hasCase: false }),
+    );
+
+    expect(result.current.hasCase).toBe(false);
   });
 
   describe('a bug seen again', () => {
@@ -167,10 +189,10 @@ describe('useBugCardViewModel', () => {
         useBugCardViewModel({ ...PROPS, bug: AGAIN, lastRunId: 'r-02', onOpenRun }),
       );
 
-      result.current.onOpenRunClick();
+      result.current.onRunClick();
 
       expect(result.current.newLabel).toBe('seen again');
-      expect(result.current.openRunLabel).toBe('Open r-02');
+      expect(result.current.runLabel).toBe('Go to run r-02');
       expect(onOpenRun).toHaveBeenCalledWith('r-02');
     });
   });
@@ -228,10 +250,10 @@ describe('useBugCardViewModel', () => {
       );
 
       expect(result.current.filedKey).toBe('SHOP-57');
-      expect(result.current.openIssueLabel).toBe('Open SHOP-57');
+      expect(result.current.issueLabel).toBe('View in Jira');
       expect(result.current.canCopyScreen).toBe(false);
 
-      result.current.onOpenIssue();
+      result.current.onIssueClick();
 
       expect(opened).toHaveBeenCalledWith(FILED.url, '_blank', 'noreferrer');
       opened.mockRestore();

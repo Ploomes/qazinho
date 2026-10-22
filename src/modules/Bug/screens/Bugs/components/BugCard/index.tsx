@@ -15,17 +15,20 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
     moment,
     shotsStyle,
     hasRun,
+    hasCase,
     newLabel,
-    openRunLabel,
+    runLabel,
+    caseLabel,
     filedKey,
     sendLabel,
-    openIssueLabel,
+    issueLabel,
     canCopyScreen,
     copyLabel,
     onHeadClick,
-    onOpenRunClick,
+    onRunClick,
+    onCaseClick,
     onSendClick,
-    onOpenIssue,
+    onIssueClick,
     onCopyScreen,
     onOpenShot,
   } = useBugCardViewModel(props);
@@ -106,13 +109,15 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
 
           <div className="bug-card__actions">
             {hasRun && (
-              <Button size="sm" onClick={onOpenRunClick}>
-                {openRunLabel}
+              <Button size="sm" onClick={onRunClick}>
+                {runLabel}
               </Button>
             )}
-            <Button size="sm" onClick={props.onOpenCase}>
-              {t('BUG.OPEN_CASE', { id: bug.caseId })}
-            </Button>
+            {hasCase && (
+              <Button size="sm" onClick={onCaseClick}>
+                {caseLabel}
+              </Button>
+            )}
             <span className="bug-card__tracker">
               {filedKey === null ? (
                 <Button size="sm" variant="primary" onClick={onSendClick}>
@@ -127,8 +132,8 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
                       {copyLabel}
                     </Button>
                   )}
-                  <Button size="sm" onClick={onOpenIssue}>
-                    {openIssueLabel}
+                  <Button size="sm" onClick={onIssueClick}>
+                    {issueLabel}
                     <Icon name="external" />
                   </Button>
                 </>

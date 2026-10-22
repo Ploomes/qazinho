@@ -107,6 +107,47 @@ describe('useBugsViewModel', () => {
     });
   });
 
+  describe('onOpenCase', () => {
+    it('goes to the plan with the bug’s case open', () => {
+      useWorkspaceStore.setState({ openCaseId: null, tab: 'bugs' });
+
+      const { result } = renderHook(() => useBugsViewModel());
+
+      act(() => {
+        result.current.onOpenCase('TC-02');
+      });
+
+      expect(useWorkspaceStore.getState()).toMatchObject({
+        tab: 'plan',
+        openCaseId: 'TC-02',
+      });
+    });
+
+    it('does NOT close the case when it was open already', () => {
+      useWorkspaceStore.setState({ openCaseId: 'TC-02', tab: 'bugs' });
+
+      const { result } = renderHook(() => useBugsViewModel());
+
+      act(() => {
+        result.current.onOpenCase('TC-02');
+      });
+
+      expect(useWorkspaceStore.getState().openCaseId).toBe('TC-02');
+    });
+
+    it('offers only a case the plan has, and none for a bug an exploration found', () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          { ...WORKSPACE, bugs: [BUG, { ...BUG, id: 'BUG-02', caseId: 'EX' }] },
+        ],
+      });
+
+      const { result } = renderHook(() => useBugsViewModel());
+
+      expect(result.current.bugs.map(({ hasCase }) => hasCase)).toEqual([true, false]);
+    });
+  });
+
   describe('onToggleBug', () => {
     it('opens a bug and closes it again', () => {
       const { result } = renderHook(() => useBugsViewModel());
