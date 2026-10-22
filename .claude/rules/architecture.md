@@ -74,7 +74,9 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
   variables in one file sealed with `safeStorage`, and no channel hands a value back: the page
   and the agents know a name and what it holds.
   - The page sends a value only to save it, from the project's window or the window an agent
-    asks for (`VariablesModal`); no app tool carries one, and the Estagiário hears only names.
+    asks for (`VariablesModal`), or as the secret answer to a run's question, which only that
+    run types unless the QA keeps it. No app tool carries one, and the Estagiário hears only
+    names.
   - A run reaches the device through `variablePort`: a `${NAME}` is typed as its value, every
     value that shows is read back as its name, in the screen and in why an action failed, and
     a recipe keeps the name, never a locator that holds a value.
@@ -162,6 +164,21 @@ answers one question per channel, for a target `{ role, platform }`:
     the screen noted last, and its finish the plan it suggests, which the chat keeps on a card
     until the QA takes it into the plan (`takeSuggestion`). The chat's agent hears it in the
     run history.
+- **The agent asks the QA mid-run** (`ask_qa`, `asking-the-qa.md` in `role/runner/` and
+  `role/explorer/`). The call holds until the QA answers:
+  - `RunCoordinator` keeps the question (`IOpenQuestion`) and tells the page (`asked`). The
+    page answers through `answerRun`, and how it ended comes back as `answered`: the QA's words,
+    a secret by its name, no answer once `RUN_WALK.askWaitMs` (15 minutes) passed, or a stop.
+  - The agent's turn clock stops while it waits (`AgentRunner.hold`), the explorer's clock
+    moves on by the wait, and the MCP config tells the agent a call may take that long: Claude
+    Code held one for 16 minutes.
+  - A secret crosses to main once and becomes a variable of the run, typed by `variablePort`:
+    the agent reads `${NAME}`, and the page only ever the name. The project keeps it when the
+    QA says so (`keepVariable`), and a case that typed one given for that run alone keeps no
+    recipe.
+  - The QA's words reach the agent with any variable's value read back as its name.
+  - The page holds the question on the live run, draws it as `AskCard` at the end of the chat,
+    and keeps how it ended in the run's section (`AskNote`) and on its step in Runs.
 - **The tools are granted per role** (`TOOL_GRANTS`). The runner and the explorer get the
   device, the assistant gets the app, and the chat gets nothing: it runs with every tool taken
   away. `McpHost` serves the tools on loopback, one address per workspace for the length of a
@@ -361,7 +378,7 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `LinkCatcher`                         | gives an agent a `$BROWSER` that writes down the pages it wants opened                   |
 | `RunRecorder`                         | records a run's live stream into an MP4, through the hidden recorder window              |
 | `ReplayServer`                        | serves a run's recording to the page's `<video>` on 127.0.0.1, with ranges               |
-| `RunAlerts`                           | calls the QA back when a run ends while they are away: a notification, a badge           |
+| `RunAlerts`                           | calls the QA back when a run ends or asks them something: a notification, a badge        |
 | `GithubCli`                           | talks to GitHub through the QA's own gh: status, device-flow sign-in, API, tar           |
 | `GithubRepos`                         | lists the QA's repositories and a repository's branches, kept for a little while         |
 | `CodeCopies`                          | copies a branch for the agent to read while it plans, with its diff, then drops it       |

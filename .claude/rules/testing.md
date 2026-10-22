@@ -87,6 +87,7 @@ Three suites that need something real behind them. They have their own config
 | `replay.test.ts`       | a case recorded, walked again with no agent asked, healed when the app moves |
 | `explore.test.ts`      | a fake explorer on real Chrome: screens, a bug, a plan, and the clock        |
 | `variables.test.ts`    | a fake agent signs in with `${NAME}`: the page gets the value, the agent not |
+| `ask.test.ts`          | a fake agent asks the QA mid-run: a choice, a secret code, silence, a stop   |
 | `network.test.ts`      | real Chrome: each request kept with its status, time and size, secrets out   |
 | `strip.test.ts`        | the built app: a run's requests under its video, and downloaded drawn in     |
 | `suite.test.ts`        | a fixture suite on real Chrome: listed, run by project, one test, stopped    |

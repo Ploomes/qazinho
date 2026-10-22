@@ -146,8 +146,21 @@ test the app fails stays, as one that catches a bug. A real Claude Code (Haiku) 
 sentence in about a minute and one from a plan case in a minute and a half, each passing in the
 copy; `tests/smoke/write.test.ts` drives a fake agent on real Chrome.
 
+**The agent asks the QA mid-run.** A case's agent, or the explorer, that cannot go on without
+the QA calls `ask_qa`: a code texted to their phone, a choice the case leaves open, a screen only
+they can judge. The run holds and the chat shows the question on a card, with the answers it
+offers; the sidebar, the header and the device panel say the run waits on the QA. A secret is
+typed in a hidden field and goes as a variable: the agent types `${NAME}` and never sees it, and
+the project keeps it when the QA says so. With no answer in 15 minutes the agent goes on without
+one, and Stop ends the wait. The answers stay in the run's section and in Runs, on the step they
+were asked at. `tests/smoke/ask.test.ts` proves it with a fake agent on real Chrome. A real Claude
+Code (Haiku) asked in Portuguese which plan to pick and, as a secret, for the code texted to the
+phone, then passed the case, the code in no event; it held one call for 16 minutes. Through Codex
+it has not been tried.
+
 **A run that ends calls the QA back** while they are away: a notification with its sound and a
 count on the app's icon, unless they asked to hear only inside the app, where a notice says it.
+A question from a run calls them back the same way.
 
 **A first run walks the machine** (`Onboarding`): language, the agent, the device tools, the
 trackers. GitHub and Jira connect for real. Jira's token is checked with Jira and sealed by the
@@ -187,8 +200,7 @@ real signed-in Codex (CLI 0.163.0), in the strict schema; a run, with the device
 has not. That is ours to know, not the QA's: no caveat about QAzinho's own testing goes in the
 interface.
 
-**Still to build for 0.1:** the agent cannot ask the QA a question mid-run, and a connected
-tracker does not receive a bug yet.
+**Still to build for 0.1:** a connected tracker does not receive a bug yet.
 
 ## Mandatory rules
 
