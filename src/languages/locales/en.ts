@@ -215,6 +215,11 @@ export const en = {
     EXPECTED_PLACEHOLDER: 'what you expect to see',
     RUN_ALL: 'Run all',
     EXPORT: 'Export code',
+    EXPORT_TIP:
+      'Turns the cases that passed into a Playwright test or Maestro flows, saved in a folder you pick.',
+    RUN_ALL_TIP:
+      'Runs every case of the plan. What passed before runs again without AI, in seconds; the agent walks and judges the rest.',
+    STOP_TIP: 'The agent stops where it is, and the run keeps what it walked.',
     EXPORTED: 'Exported {{files}} to {{folder}}.',
     EXPORT_MISSING:
       'Not recorded yet: {{cases}}. Each case that passes a run becomes code.',

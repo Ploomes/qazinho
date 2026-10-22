@@ -218,6 +218,11 @@ export const pt: typeof en = {
     EXPECTED_PLACEHOLDER: 'o que você espera ver',
     RUN_ALL: 'Rodar tudo',
     EXPORT: 'Exportar código',
+    EXPORT_TIP:
+      'Transforma os casos que passaram num teste Playwright ou em flows do Maestro, salvos numa pasta que você escolhe.',
+    RUN_ALL_TIP:
+      'Roda todos os casos do plano. O que já passou roda de novo sem IA, em segundos; o agente percorre e julga o resto.',
+    STOP_TIP: 'O agente para onde está, e a run guarda o que ele já percorreu.',
     EXPORTED: 'Exportado {{files}} para {{folder}}.',
     EXPORT_MISSING:
       'Ainda sem gravação: {{cases}}. Cada caso que passar numa run vira código.',

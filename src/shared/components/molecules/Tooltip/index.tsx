@@ -5,7 +5,7 @@ import { useTooltipViewModel } from './hooks';
 import './styles.css';
 
 export const Tooltip: React.FC<ITooltipProps> = (props) => {
-  const { isOpen, onOpen, onClose } = useTooltipViewModel();
+  const { isOpen, style, onOpen, onClose } = useTooltipViewModel();
 
   return (
     <span
@@ -22,6 +22,7 @@ export const Tooltip: React.FC<ITooltipProps> = (props) => {
           <motion.span
             key="tip"
             className="tooltip__panel"
+            style={style}
             role="tooltip"
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}

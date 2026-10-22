@@ -1,6 +1,7 @@
 import { AnimatePresence, motion, Reorder } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Button, EmptyState, Icon, IconButton } from '@/shared/components/atoms';
+import { Tooltip } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
 import { PlanCase, UndoToast } from './components';
 import { usePlanViewModel } from './hooks';
@@ -63,15 +64,23 @@ export const Plan: React.FC = () => {
             <span className="plan__note">{t('PLAN.NOTE')}</span>
             <div className="plan__actions">
               {isLocked ? (
-                <Button variant="danger" onClick={onStop}>
-                  {t('PLAN.STOP_RUN')}
-                </Button>
+                <Tooltip content={t('PLAN.STOP_TIP')}>
+                  <Button variant="danger" onClick={onStop}>
+                    {t('PLAN.STOP_RUN')}
+                  </Button>
+                </Tooltip>
               ) : (
                 <>
-                  {canExport && <Button onClick={onExport}>{exportLabel}</Button>}
-                  <Button variant="primary" onClick={onRunAll}>
-                    {t('PLAN.RUN_ALL')}
-                  </Button>
+                  {canExport && (
+                    <Tooltip content={t('PLAN.EXPORT_TIP')}>
+                      <Button onClick={onExport}>{exportLabel}</Button>
+                    </Tooltip>
+                  )}
+                  <Tooltip content={t('PLAN.RUN_ALL_TIP')}>
+                    <Button variant="primary" onClick={onRunAll}>
+                      {t('PLAN.RUN_ALL')}
+                    </Button>
+                  </Tooltip>
                 </>
               )}
             </div>
@@ -90,12 +99,14 @@ export const Plan: React.FC = () => {
               >
                 <div className="plan__export-body">
                   <span className="plan__export-text">{exportNotice}</span>
-                  <IconButton
-                    icon="close"
-                    label={dismissExportLabel}
-                    size="sm"
-                    onClick={onDismissExport}
-                  />
+                  <Tooltip content={dismissExportLabel}>
+                    <IconButton
+                      icon="close"
+                      label={dismissExportLabel}
+                      size="sm"
+                      onClick={onDismissExport}
+                    />
+                  </Tooltip>
                 </div>
               </motion.div>
             )}
