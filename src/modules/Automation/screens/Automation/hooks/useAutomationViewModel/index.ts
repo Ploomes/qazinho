@@ -3,15 +3,19 @@ import type { ChangeEvent, CSSProperties } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  EMPTY_CHANGE_NOTES,
+  EMPTY_SUITE_CHANGES,
   EMPTY_SUITE_RUNS,
   SUITE_FAILURE_KEYS,
   SUITE_RESULT_STATES,
 } from '@/modules/Automation/constants';
 import {
   batchesOf,
+  changeOfTest,
   folderOf,
   formatSuiteWhen,
   lastResultsOf,
+  nextChangeId,
   nextSuiteRunId,
   resultStateOf,
   scopeTestsOf,
@@ -20,7 +24,13 @@ import {
 import { AUTOMATION_LAYOUT } from '@/modules/Automation/screens/Automation/constants';
 import { Suites } from '@/services';
 import { MOTION } from '@/shared/constants';
-import { useAppStore, useSuiteStore } from '@/store';
+import {
+  useAppStore,
+  useMachineStore,
+  useSettingsStore,
+  useSetupStore,
+  useSuiteStore,
+} from '@/store';
 
 export const useAutomationViewModel = () => {
   const { t, i18n } = useTranslation();
@@ -34,6 +44,18 @@ export const useAutomationViewModel = () => {
   const runs = useSuiteStore((state) => state.runs[projectId] ?? EMPTY_SUITE_RUNS);
   const live = useSuiteStore((state) => state.live[projectId] ?? null);
   const pickedId = useSuiteStore((state) => state.picked[projectId] ?? null);
+  const changes = useSuiteStore(
+    (state) => state.changes[projectId] ?? EMPTY_SUITE_CHANGES,
+  );
+  const changeNotes = useSuiteStore((state) => state.changeNotes);
+  const agent = useSettingsStore((state) => state.agent);
+  const agentId = useMachineStore(
+    (state) =>
+      state.agents.find(({ name, isFound }) => name === agent && isFound)?.id ?? null,
+  );
+  const isGithubConnected = useSetupStore((state) =>
+    state.integrations.some(({ id }) => id === 'github'),
+  );
   const putSuite = useSuiteStore((state) => state.putSuite);
   const putList = useSuiteStore((state) => state.putList);
   const pickTest = useSuiteStore((state) => state.pickTest);
@@ -41,6 +63,7 @@ export const useAutomationViewModel = () => {
   const [shut, setShut] = useState<string[]>([]);
   const [isRefused, setRefused] = useState(false);
   const [isReloading, setReloading] = useState(false);
+  const [reviewingId, setReviewingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (projectId === '' || suite === null || list !== null) return;
@@ -72,6 +95,37 @@ export const useAutomationViewModel = () => {
     live === null ? null : (runs.find(({ id }) => id === live.runId) ?? null);
   const latest = isRunning ? null : (runs[0] ?? null);
   const picked = tests.find(({ id }) => id === pickedId) ?? null;
+  const change = picked === null ? null : changeOfTest({ changes, testId: picked.id });
+  const lastOfPicked = picked === null ? undefined : last[picked.id];
+  const isBroken =
+    lastOfPicked?.result.status === 'failed' ||
+    lastOfPicked?.result.status === 'timedOut';
+  const isChanging = changes.some(({ status }) => status === 'working');
+  const hasGit = suite !== null && suite.branch !== null;
+  const reviewing =
+    changes.find(({ id, status }) => id === reviewingId && status === 'ready') ?? null;
+  const fix = () => {
+    if (
+      picked === null ||
+      lastOfPicked === undefined ||
+      agentId === null ||
+      isChanging ||
+      !hasGit
+    )
+      return;
+
+    const { model, language } = useSettingsStore.getState();
+
+    void Suites.change({
+      projectId,
+      changeId: nextChangeId(changes),
+      agentId,
+      model,
+      language,
+      projects,
+      ask: { kind: 'fix', test: picked, runId: lastOfPicked.runId },
+    });
+  };
   const start = (scope: SuiteScope) => {
     const batches = batchesOf({ tests, projects, scope });
 
@@ -288,7 +342,48 @@ export const useAutomationViewModel = () => {
             isRunning: picked.id in going,
             canRun,
             hasProjects: projects.length > 0,
+            fix:
+              change !== null || !isBroken
+                ? null
+                : {
+                    canFix: hasGit && agentId !== null && !isChanging,
+                    note: !hasGit
+                      ? t('AUTOMATION.FIX_NO_GIT')
+                      : agentId === null
+                        ? t('AUTOMATION.FIX_NO_AGENT')
+                        : isChanging
+                          ? t('AUTOMATION.FIX_BUSY')
+                          : t('AUTOMATION.FIX_HINT'),
+                  },
+            change,
+            notes:
+              change === null
+                ? EMPTY_CHANGE_NOTES
+                : (changeNotes[change.id] ?? EMPTY_CHANGE_NOTES),
+            agent,
             onRun: runTest,
+            onFix: fix,
+            onStopFix: () => {
+              if (change !== null) Suites.stopChange(change.id);
+            },
+            onReview: () => {
+              if (change !== null) setReviewingId(change.id);
+            },
+            onDiscard: () => {
+              if (change !== null)
+                void Suites.discard({ projectId, changeId: change.id });
+            },
           },
+    review:
+      reviewing === null
+        ? null
+        : {
+            change: reviewing,
+            canOpenPullRequest:
+              isGithubConnected && suite?.repository != null && reviewing.base !== '',
+          },
+    onCloseReview: () => {
+      setReviewingId(null);
+    },
   };
 };

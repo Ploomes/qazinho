@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { Button, EmptyState, Eyebrow, Icon, IconButton } from '@/shared/components/atoms';
-import { SuiteTestPane, SuiteTree } from './components';
+import { SuiteChangeReview, SuiteTestPane, SuiteTree } from './components';
 import { useAutomationViewModel } from './hooks';
 import './styles.css';
 
@@ -50,6 +50,8 @@ export const Automation: React.FC = () => {
     tree,
     pick,
     pane,
+    review,
+    onCloseReview,
   } = useAutomationViewModel();
 
   if (!hasProject) return null;
@@ -256,11 +258,30 @@ export const Automation: React.FC = () => {
               isRunning={pane.isRunning}
               canRun={pane.canRun}
               hasProjects={pane.hasProjects}
+              fix={pane.fix}
+              change={pane.change}
+              notes={pane.notes}
+              agent={pane.agent}
               onRun={pane.onRun}
+              onFix={pane.onFix}
+              onStopFix={pane.onStopFix}
+              onReview={pane.onReview}
+              onDiscard={pane.onDiscard}
             />
           )}
         </div>
       </div>
+
+      <AnimatePresence>
+        {review !== null && (
+          <SuiteChangeReview
+            key={review.change.id}
+            change={review.change}
+            canOpenPullRequest={review.canOpenPullRequest}
+            onClose={onCloseReview}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 };

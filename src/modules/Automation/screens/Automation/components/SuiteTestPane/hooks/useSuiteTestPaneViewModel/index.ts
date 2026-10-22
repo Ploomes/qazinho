@@ -66,6 +66,17 @@ export const useSuiteTestPaneViewModel = (props: ISuiteTestPaneProps) => {
     isRunning,
     runningWord: t('STATUS.RUNNING'),
     step: props.step,
+    fix:
+      props.fix === null
+        ? null
+        : { ...props.fix, label: t('AUTOMATION.FIX'), onFix: props.onFix },
+    change: props.change,
+    notes: props.notes,
+    agent: props.agent,
+    onStopFix: props.onStopFix,
+    onReview: props.onReview,
+    onDiscard: props.onDiscard,
+    onRetry: props.onFix,
     isNeverRun: current === null && !isRunning,
     neverRunText: t('AUTOMATION.NEVER_RAN'),
     result:

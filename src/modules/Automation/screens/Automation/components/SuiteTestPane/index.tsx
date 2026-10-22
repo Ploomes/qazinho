@@ -1,5 +1,6 @@
 import type { ISuiteTestPaneProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
+import { SuiteChangeCard } from '@/modules/Automation/screens/Automation/components/SuiteChangeCard';
 import { Button, Eyebrow, Icon } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { useSuiteTestPaneViewModel } from './hooks';
@@ -21,6 +22,14 @@ export const SuiteTestPane: React.FC<ISuiteTestPaneProps> = (props) => {
     isRunning,
     runningWord,
     step,
+    fix,
+    change,
+    notes,
+    agent,
+    onStopFix,
+    onReview,
+    onDiscard,
+    onRetry,
     isNeverRun,
     neverRunText,
     result,
@@ -74,6 +83,31 @@ export const SuiteTestPane: React.FC<ISuiteTestPaneProps> = (props) => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {change !== null && (
+        <SuiteChangeCard
+          key={change.id}
+          change={change}
+          notes={notes}
+          agent={agent}
+          onStop={onStopFix}
+          onReview={onReview}
+          onDiscard={onDiscard}
+          onRetry={onRetry}
+        />
+      )}
+
+      {fix !== null && (
+        <div className="suite-test-pane__fix">
+          <Button disabled={!fix.canFix} onClick={fix.onFix}>
+            <span className="suite-test-pane__fix-icon">
+              <Icon name="sparkle" />
+            </span>
+            {fix.label}
+          </Button>
+          <span className="suite-test-pane__fix-note">{fix.note}</span>
+        </div>
+      )}
 
       {isNeverRun && <p className="suite-test-pane__never">{neverRunText}</p>}
 

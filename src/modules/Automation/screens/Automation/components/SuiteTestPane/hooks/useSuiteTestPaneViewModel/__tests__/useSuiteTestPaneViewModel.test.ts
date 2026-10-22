@@ -85,6 +85,7 @@ afterEach(() => {
 
 function render(props: Partial<ISuiteTestPaneProps> = {}) {
   const onRun = vi.fn();
+  const onFix = vi.fn();
   const view = renderHook(() =>
     useSuiteTestPaneViewModel({
       projectId: 'p-1',
@@ -94,12 +95,20 @@ function render(props: Partial<ISuiteTestPaneProps> = {}) {
       isRunning: false,
       canRun: true,
       hasProjects: true,
+      fix: null,
+      change: null,
+      notes: [],
+      agent: 'Claude Code',
       onRun,
+      onFix,
+      onStopFix: vi.fn(),
+      onReview: vi.fn(),
+      onDiscard: vi.fn(),
       ...props,
     }),
   );
 
-  return { onRun, result: view.result };
+  return { onRun, onFix, result: view.result };
 }
 
 describe('useSuiteTestPaneViewModel', () => {
@@ -202,6 +211,36 @@ describe('useSuiteTestPaneViewModel', () => {
       expect(
         render({ runs: [], isRunning: true, step: 'Abrir o menu' }).result.current,
       ).toMatchObject({ isNeverRun: false, isRunning: true, step: 'Abrir o menu' });
+    });
+  });
+
+  describe('fix', () => {
+    it('offers the agent a test that broke, saying how it goes', () => {
+      const { result, onFix } = render({
+        fix: { canFix: true, note: 'On a branch of its own.' },
+      });
+
+      expect(result.current.fix).toMatchObject({
+        canFix: true,
+        label: 'Fix with the agent',
+        note: 'On a branch of its own.',
+      });
+
+      result.current.fix?.onFix();
+
+      expect(onFix).toHaveBeenCalledOnce();
+    });
+
+    it('offers no fix for a test that did not break', () => {
+      expect(render().result.current.fix).toBeNull();
+    });
+
+    it('tries the same fix again from the card', () => {
+      const { result, onFix } = render();
+
+      result.current.onRetry();
+
+      expect(onFix).toHaveBeenCalledOnce();
     });
   });
 
