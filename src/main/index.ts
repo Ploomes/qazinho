@@ -29,6 +29,7 @@ import type {
   McpSignInProgress,
   PickKind,
   SaveOutcome,
+  SuitePick,
   WindowFit,
 } from '@/shared/types';
 import { execFile } from 'node:child_process';
@@ -61,6 +62,7 @@ import {
   CodeCopies,
   CodeExport,
   DeviceToolDetector,
+  GitCli,
   GithubCli,
   GithubRepos,
   IntegrationVault,
@@ -74,6 +76,7 @@ import {
   RunAlerts,
   RunRecorder,
   SetupInstaller,
+  SuiteRegistry,
   UsageReader,
   VariableVault,
 } from '@/main/classes';
@@ -229,6 +232,8 @@ const vault = new IntegrationVault({
   github: () => github.status(),
 });
 const variables = new VariableVault({ file: PATHS.variables, cipher: keychain });
+const git = new GitCli({ directories: commandDirectories });
+const suites = new SuiteRegistry({ root: PATHS.suites, git });
 
 const agentRunner = new AgentRunner({
   owners,
@@ -666,6 +671,18 @@ function fitWindow(props: { window: BrowserWindow; fit: WindowFit }): void {
   if (!isVisible) window.show();
 }
 
+async function pickSuite(projectId: string): Promise<SuitePick> {
+  const [open] = appWindows();
+  const picked = open
+    ? await dialog.showOpenDialog(open, { properties: ['openDirectory'] })
+    : await dialog.showOpenDialog({ properties: ['openDirectory'] });
+  const [path] = picked.filePaths;
+
+  if (picked.canceled || path === undefined) return { kind: 'cancelled' };
+
+  return suites.connect({ projectId, path });
+}
+
 async function pickFile(kind: PickKind) {
   const [open] = appWindows();
   const filters = [FILE_FILTERS[kind]];
@@ -815,6 +832,13 @@ void app.whenReady().then(async () => {
       saveShot(props),
   );
   ipcMain.handle(CHANNELS.pickFile, (_event, kind: PickKind) => pickFile(kind));
+  ipcMain.handle(CHANNELS.pickSuite, (_event, projectId: string) => pickSuite(projectId));
+  ipcMain.handle(CHANNELS.suiteOf, (_event, projectId: string) =>
+    suites.suiteOf(projectId),
+  );
+  ipcMain.handle(CHANNELS.forgetSuite, (_event, projectId: string) =>
+    suites.forget(projectId),
+  );
   ipcMain.handle(CHANNELS.fitWindow, (event, fit: WindowFit) => {
     const window = BrowserWindow.fromWebContents(event.sender);
 

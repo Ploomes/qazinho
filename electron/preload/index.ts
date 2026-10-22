@@ -41,6 +41,7 @@ import type {
   ISetupEvent,
   IStartBuild,
   IStartRun,
+  ISuite,
   IViewport,
   InstallableId,
   IntegrationId,
@@ -49,6 +50,7 @@ import type {
   PickKind,
   Platform,
   SaveOutcome,
+  SuitePick,
   VariablesOutcome,
   WindowFit,
 } from '@/shared/types';
@@ -133,6 +135,12 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.replayVideo, run) as Promise<Uint8Array | null>,
   saveVideo: (props: { name: string; data: Uint8Array }) =>
     ipcRenderer.invoke(CHANNELS.saveVideo, props) as Promise<SaveOutcome>,
+  pickSuite: (projectId: string) =>
+    ipcRenderer.invoke(CHANNELS.pickSuite, projectId) as Promise<SuitePick>,
+  suiteOf: (projectId: string) =>
+    ipcRenderer.invoke(CHANNELS.suiteOf, projectId) as Promise<ISuite | null>,
+  forgetSuite: (projectId: string) =>
+    ipcRenderer.invoke(CHANNELS.forgetSuite, projectId) as Promise<void>,
   alertRunEnded: (notice: IRunEndNotice) => {
     ipcRenderer.send(CHANNELS.alertRunEnded, notice);
   },

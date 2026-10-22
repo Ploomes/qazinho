@@ -10,6 +10,7 @@ import {
   Mcp,
   Run,
   Setup,
+  Suites,
   Variables,
 } from '@/services';
 
@@ -154,5 +155,11 @@ describe('a page with no bridge', () => {
     expect(await Run.saveReplay({ workspaceId: 'w1', runId: 'r-01', name: 'r-01' })).toBe(
       'failed',
     );
+  });
+
+  it('connects no suite, and knows of none', async () => {
+    expect(await Suites.pick('p-1')).toEqual({ kind: 'cancelled' });
+    expect(await Suites.of('p-1')).toBeNull();
+    await expect(Suites.forget('p-1')).resolves.toBeUndefined();
   });
 });

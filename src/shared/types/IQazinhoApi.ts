@@ -41,12 +41,14 @@ import type { ISavedWorkspace } from './ISavedWorkspace';
 import type { ISetupEvent } from './ISetupEvent';
 import type { IStartBuild } from './IStartBuild';
 import type { IStartRun } from './IStartRun';
+import type { ISuite } from './ISuite';
 import type { IViewport } from './IViewport';
 import type { McpActionResult } from './McpActionResult';
 import type { McpSignInProgress } from './McpSignInProgress';
 import type { PickKind } from './PickKind';
 import type { Platform } from './Platform';
 import type { SaveOutcome } from './SaveOutcome';
+import type { SuitePick } from './SuitePick';
 import type { VariablesOutcome } from './VariablesOutcome';
 import type { WindowFit } from './WindowFit';
 
@@ -77,6 +79,9 @@ export interface IQazinhoApi {
   runNetwork: (run: IRunRef) => Promise<INetworkEntry[] | null>;
   replayVideo: (run: IRunRef) => Promise<Uint8Array | null>;
   saveVideo: (props: { name: string; data: Uint8Array }) => Promise<SaveOutcome>;
+  pickSuite: (projectId: string) => Promise<SuitePick>;
+  suiteOf: (projectId: string) => Promise<ISuite | null>;
+  forgetSuite: (projectId: string) => Promise<void>;
   alertRunEnded: (notice: IRunEndNotice) => void;
   onOpenRun: (listener: (run: IRunRef) => void) => () => void;
   readState: () => Promise<ISavedState>;

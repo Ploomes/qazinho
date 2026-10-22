@@ -11,4 +11,5 @@ export * from './Mcp';
 export * from './Platform';
 export * from './Run';
 export * from './Setup';
+export * from './Suites';
 export * from './Variables';

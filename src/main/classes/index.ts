@@ -1,5 +1,6 @@
 export * from './agents';
 export * from './assistant';
+export * from './automation';
 export * from './builds';
 export * from './devices';
 export * from './integrations';
