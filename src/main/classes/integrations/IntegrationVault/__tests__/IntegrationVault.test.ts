@@ -162,4 +162,26 @@ describe('IntegrationVault', () => {
 
     expect(await vault.list()).toEqual([]);
   });
+
+  describe('jira', () => {
+    it('hands main the site and the credentials sealed for it', async () => {
+      const { vault } = await vaultWith({});
+
+      await vault.connect({ ...JIRA, email: ' ana@acme.test ', token: ' jira_secret ' });
+
+      expect(await vault.jira()).toEqual({
+        site: 'https://acme.atlassian.net',
+        email: 'ana@acme.test',
+        token: 'jira_secret',
+      });
+    });
+
+    it('has nothing to hand over while Jira is not connected', async () => {
+      const { vault } = await vaultWith({});
+
+      await vault.connect({ id: 'github' });
+
+      expect(await vault.jira()).toBeNull();
+    });
+  });
 });

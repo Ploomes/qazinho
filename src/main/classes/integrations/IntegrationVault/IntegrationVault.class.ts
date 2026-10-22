@@ -1,5 +1,5 @@
 import type { Fetcher, IIntegrationVault, IStoredIntegration } from './types';
-import type { IVaultCipher } from '@/main/types';
+import type { IJiraCredentials, IVaultCipher } from '@/main/types';
 import type {
   IConnectIntegration,
   IConnectResult,
@@ -53,6 +53,19 @@ export class IntegrationVault {
 
   public async disconnect(id: IntegrationId): Promise<void> {
     await this.write((await this.read()).filter(({ status }) => status.id !== id));
+  }
+
+  /** The Jira site and the credentials sealed for it, for main to call Jira with; null while Jira is not connected. */
+  public async jira(): Promise<IJiraCredentials | null> {
+    const stored = (await this.read()).find(({ status }) => status.id === 'jira');
+
+    if (stored?.credentials.id !== 'jira' || stored.status.site === null) return null;
+
+    return {
+      site: stored.status.site,
+      email: stored.credentials.email.trim(),
+      token: stored.credentials.token.trim(),
+    };
   }
 
   private async read(): Promise<IStoredIntegration[]> {
