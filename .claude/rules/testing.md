@@ -82,6 +82,7 @@ Three suites that need something real behind them. They have their own config
 | `login.test.ts`        | a fake `claude auth login` and `codex login`: page, code, refusal, cancel    |
 | `record.test.ts`       | the built app records a web run as an H.264 MP4 through its hidden window    |
 | `github.test.ts`       | a fake gh: device-code sign-in and cancel, repositories, branches, a copy    |
+| `jira.test.ts`         | a fake Jira site: stories searched and read, their files downloaded          |
 | `assistant.test.ts`    | a fake agent acts through the app tools: a page that answers, waits, or not  |
 | `build.test.ts`        | a fake gh hands over a branch and a fake agent builds it: an APK kept        |
 | `replay.test.ts`       | a case recorded, walked again with no agent asked, healed when the app moves |

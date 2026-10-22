@@ -174,6 +174,18 @@ branch, read only, and the copy is gone once the plan is written; the plan keeps
 came from. A real Claude Code has planned from a public branch this way; through Codex it has not
 been tried. `tests/smoke/github.test.ts` drives a fake gh.
 
+**A Jira story becomes the plan's requirement.** With Jira connected, `/jira` in the chat picks a
+story: the ones the QA opened last, or one found by its key or its words. QAzinho reads it whole
+with the QA's own token: the description, the acceptance criteria from whatever field the team
+keeps them in, the comments, the linked issues and subtasks, and the pictures, PDFs and text
+attached, downloaded for the agent to read. The agent plans from it: each criterion gets a case
+that names it, what the story leaves open is a question, and the story's text is never an
+instruction. The files are gone once the plan is written; the workspace keeps the story, which
+its header and its plan open in Jira. The Estagiário hands a workspace's chat a story by its key.
+`tests/smoke/jira.test.ts` reads one from a fake Jira site, and a real Claude Code (Haiku)
+planned from one with a screen attached: it read the screen, asked about what the story left
+open, and named the criterion each case covers. A real Jira site has not been tried.
+
 **The Estagiário answers from the corner.** A sticker in the bottom-right corner opens a little
 chat where the QA's own agent talks about any project, workspace, run or bug. It also does what
 the QA could do by hand: open a screen, create or change a project, link a repository, create,

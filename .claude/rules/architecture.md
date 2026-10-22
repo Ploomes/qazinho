@@ -69,7 +69,8 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
 - **Nothing asks the QA to type a command.** A flow that runs a CLI runs it out of sight and shows
   its steps in `StepsPopup`. Terminal is only a way round after a failure.
 - **A tracker token never reaches the page.** It crosses to main once, is checked, and is sealed
-  with `safeStorage`; the page only ever sees the account it belongs to.
+  with `safeStorage`; the page only ever sees the account it belongs to. Main unseals Jira's to
+  call Jira (`IntegrationVault.jira`).
 - **A variable's value never leaves main once sealed.** `VariableVault` keeps each project's
   variables in one file sealed with `safeStorage`, and no channel hands a value back: the page
   and the agents know a name and what it holds.
@@ -233,6 +234,19 @@ answers one question per channel, for a target `{ role, platform }`:
   - The copy is deleted once a plan comes back, when the workspace goes, and on the next start.
     The plan keeps where it came from (`planSource`), and the agent hears once that the copy is
     gone.
+- **A Jira story is the requirement** (`role/chat/jira.md`). `/jira` in the chat picks one of the
+  QA's stories, and the agent plans from it:
+  - Main's `JiraApi` talks to Jira Cloud as the QA: the picker's search, with the issue a typed
+    key names first, an issue read with every field and their names, and its files.
+  - `JiraStories` reads the story for a workspace (`jiraStoryOf`): the description and comments
+    out of Atlassian's document format as markdown (`adfToMarkdown`), and the acceptance criteria
+    from any field named for them. It downloads the pictures, PDFs and text it can read into the
+    workspace's own folder under `jira/` (`filesToReadOf`, `fileNameOf`).
+  - The message opens with the story (`describeStory`), its text indented so it can neither
+    start a section nor close `<qazinho>`. Claude Code reads the files with `Read`, `Grep` and
+    `Glob` on that folder alone.
+  - The files are deleted once a plan comes back, when the workspace goes, and on the next
+    start. The workspace keeps the story (`issue`), which its header and its plan open in Jira.
 - **The harness never imports `src/main`.** What it needs from a device is a port in its types
   (`IDevicePort`), and main hands it the driver. ESLint enforces it both ways: the page never
   imports the harness, and the harness never imports main or the page.
@@ -382,6 +396,8 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `GithubCli`                           | talks to GitHub through the QA's own gh: status, device-flow sign-in, API, tar           |
 | `GithubRepos`                         | lists the QA's repositories and a repository's branches, kept for a little while         |
 | `CodeCopies`                          | copies a branch for the agent to read while it plans, with its diff, then drops it       |
+| `JiraApi`                             | talks to the QA's Jira Cloud with the token sealed for it: search, story, files          |
+| `JiraStories`                         | reads a Jira story for the agent to plan from, with the files it can read, then drops it |
 | `AssistantAgent`                      | asks the QA's agent as the Estagiário, with the app tools served for the turn            |
 | `AppBridge`                           | hands each app tool call to the page and waits for what it did                           |
 | `AppBuilder`                          | builds an .apk or .app from a branch with the QA's agent, and keeps what it made         |
