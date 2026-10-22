@@ -25,10 +25,12 @@ import type {
   ISetupEvent,
   IStartBuild,
   IStartRun,
+  IStartSuiteRun,
   IViewport,
   McpSignInProgress,
   PickKind,
   SaveOutcome,
+  SuiteEvent,
   SuitePick,
   WindowFit,
 } from '@/shared/types';
@@ -123,7 +125,7 @@ const resources = new ResourceCollector({
 const deviceTools = new DeviceToolDetector();
 const archive = new Archive(PATHS.data);
 const live = new LiveStream();
-const replays = new ReplayServer(PATHS.data);
+const replays = new ReplayServer({ dataRoot: PATHS.data, suitesRoot: PATHS.suites });
 const tools = new McpHost();
 const harness = new Harness();
 const peek = new AppPeek({ folder: tmpdir() });
@@ -161,7 +163,8 @@ function broadcast(props: {
     | McpSignInProgress
     | AgentSignInProgress
     | GithubSignInProgress
-    | IBuildEvent;
+    | IBuildEvent
+    | SuiteEvent;
 }): void {
   for (const open of appWindows()) open.webContents.send(props.channel, props.event);
 }
@@ -242,6 +245,8 @@ const suiteRunner = new SuiteRunner({
     findOnPath({ command: 'node', directories: await commandDirectories() }),
   env: suiteEnvOf,
   root: PATHS.suites,
+  urlOf: (file) => replays.suiteFileUrl(file),
+  onEvent: (event) => broadcast({ channel: CHANNELS.suiteEvent, event }),
 });
 
 const agentRunner = new AgentRunner({
@@ -859,6 +864,20 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.listSuite, (_event, projectId: string) =>
     suiteRunner.list(projectId),
+  );
+  ipcMain.handle(CHANNELS.runSuite, (_event, start: IStartSuiteRun) => {
+    void suiteRunner.run(start);
+  });
+  ipcMain.handle(CHANNELS.stopSuite, (_event, projectId: string) => {
+    suiteRunner.stop(projectId);
+  });
+  ipcMain.handle(CHANNELS.suiteRuns, (_event, projectId: string) =>
+    suiteRunner.runs(projectId),
+  );
+  ipcMain.handle(
+    CHANNELS.openSuiteTrace,
+    (_event, trace: { projectId: string; runId: string; file: string }) =>
+      suiteRunner.openTrace(trace),
   );
   ipcMain.handle(CHANNELS.fitWindow, (event, fit: WindowFit) => {
     const window = BrowserWindow.fromWebContents(event.sender);

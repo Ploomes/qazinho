@@ -41,7 +41,9 @@ import type {
   ISetupEvent,
   IStartBuild,
   IStartRun,
+  IStartSuiteRun,
   ISuite,
+  ISuiteRun,
   IViewport,
   InstallableId,
   IntegrationId,
@@ -50,6 +52,7 @@ import type {
   PickKind,
   Platform,
   SaveOutcome,
+  SuiteEvent,
   SuiteList,
   SuitePick,
   VariablesOutcome,
@@ -144,6 +147,25 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.forgetSuite, projectId) as Promise<void>,
   listSuite: (projectId: string) =>
     ipcRenderer.invoke(CHANNELS.listSuite, projectId) as Promise<SuiteList>,
+  runSuite: (start: IStartSuiteRun) =>
+    ipcRenderer.invoke(CHANNELS.runSuite, start) as Promise<void>,
+  stopSuite: (projectId: string) =>
+    ipcRenderer.invoke(CHANNELS.stopSuite, projectId) as Promise<void>,
+  suiteRuns: (projectId: string) =>
+    ipcRenderer.invoke(CHANNELS.suiteRuns, projectId) as Promise<ISuiteRun[]>,
+  openSuiteTrace: (trace: { projectId: string; runId: string; file: string }) =>
+    ipcRenderer.invoke(CHANNELS.openSuiteTrace, trace) as Promise<boolean>,
+  onSuiteEvent: (listener: (event: SuiteEvent) => void) => {
+    const forward = (_: unknown, event: SuiteEvent) => {
+      listener(event);
+    };
+
+    ipcRenderer.on(CHANNELS.suiteEvent, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.suiteEvent, forward);
+    };
+  },
   alertRunEnded: (notice: IRunEndNotice) => {
     ipcRenderer.send(CHANNELS.alertRunEnded, notice);
   },

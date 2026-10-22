@@ -165,6 +165,15 @@ describe('a page with no bridge', () => {
       reason: 'no-suite',
       said: '',
     });
+    expect(await Suites.runs('p-1')).toEqual([]);
+    expect(
+      await Suites.openTrace({ projectId: 'p-1', runId: 's-01', file: 'trace.zip' }),
+    ).toBe(false);
+    expect(() => {
+      Suites.run({ projectId: 'p-1', runId: 's-01', batches: [] });
+      Suites.stop('p-1');
+      Suites.onEvent(() => undefined)();
+    }).not.toThrow();
     await expect(Suites.forget('p-1')).resolves.toBeUndefined();
   });
 });
