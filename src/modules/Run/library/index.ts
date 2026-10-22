@@ -1,5 +1,6 @@
 export * from './answerLineOf';
 export * from './appOriginOf';
+export * from './bugVideoOf';
 export * from './caseVerdict';
 export * from './caseWalkOf';
 export * from './clipOfMp4';

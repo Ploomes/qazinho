@@ -1,15 +1,9 @@
 import type { IBugReportWords, IFilingShot } from '@/modules/Bug/types';
-import type { BugFiling, BugVideo, IssueTarget } from '@/shared/types';
+import type { BugFiling, IssueTarget } from '@/shared/types';
 import { useTranslation } from 'react-i18next';
 import { BUG_REPORT } from '@/modules/Bug/constants';
 import { bugReportOf, filingPlanOf } from '@/modules/Bug/library';
-import {
-  clipOfMp4,
-  failedRequestsNear,
-  formatClock,
-  replayTimelineOf,
-  takeOf,
-} from '@/modules/Run';
+import { bugVideoOf, failedRequestsNear, formatClock } from '@/modules/Run';
 import { Bugs, Run } from '@/services';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
@@ -83,26 +77,18 @@ export const useSendBug = () => {
           ? null
           : Run.network({ workspaceId: workspace.id, runId: moment.runId }),
       ]);
-      const timeline = run === null ? null : replayTimelineOf({ run, bugs: [bug] });
-      const mark = timeline?.marks.find(({ bugId }) => bugId === bug.id) ?? null;
-      const span =
-        timeline === null
-          ? null
-          : takeOf({ timeline, focus: { kind: 'bug', bugId: bug.id } });
-      const clip =
-        recording === null || span === null
-          ? null
-          : clipOfMp4({ video: recording, ...span });
-      const video: BugVideo | null =
+      const made =
         run === null
           ? null
-          : clip !== null
-            ? { kind: 'clip', name: t('FILING.NAME_CLIP', { id: bug.id }), data: clip }
-            : {
-                kind: 'recording',
-                name: t('FILING.NAME_RECORDING', { id: bug.id, run: run.id }),
-                run: { workspaceId: workspace.id, runId: run.id },
-              };
+          : bugVideoOf({
+              workspaceId: workspace.id,
+              run,
+              bug,
+              recording,
+              clipName: t('FILING.NAME_CLIP', { id: bug.id }),
+              recordingName: t('FILING.NAME_RECORDING', { id: bug.id, run: run.id }),
+            });
+      const video = made?.video ?? null;
       const report = bugReportOf({
         bug,
         title: props.title,
@@ -125,7 +111,7 @@ export const useSendBug = () => {
             : [
                 video.kind === 'clip'
                   ? t('FILING.FILE_CLIP')
-                  : t('FILING.FILE_RECORDING', { at: formatClock(mark?.atMs ?? 0) }),
+                  : t('FILING.FILE_RECORDING', { at: formatClock(made?.atMs ?? 0) }),
               ]),
         ],
         words,
