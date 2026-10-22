@@ -25,6 +25,41 @@ describe('usePlanCaseViewModel', () => {
     expect(result.current.steps.map(({ number }) => number)).toEqual([1, 2, 3]);
   });
 
+  it('links each step to the Figma frame its screen should match', () => {
+    const design = {
+      url: 'https://www.figma.com/design/AbC123/Shop?node-id=1-2',
+      fileKey: 'AbC123',
+      nodeId: '1:2',
+      name: 'Shop',
+    };
+    const testCase = {
+      ...TEST_CASE,
+      steps: [{ ...TEST_CASE.steps[0]!, frame: '12:345' }, ...TEST_CASE.steps.slice(1)],
+    };
+    const { result } = renderHook(() =>
+      usePlanCaseViewModel({ ...PROPS, testCase, design }),
+    );
+
+    expect(result.current.steps[0]?.frame).toEqual({
+      label: 'frame 12:345',
+      url: 'https://www.figma.com/design/AbC123/Shop?node-id=12-345',
+      title: 'Open this frame in Figma',
+    });
+    expect(result.current.steps[1]?.frame).toBeNull();
+  });
+
+  it('does NOT link a frame once the workspace has no design', () => {
+    const testCase = {
+      ...TEST_CASE,
+      steps: [{ ...TEST_CASE.steps[0]!, frame: '12:345' }],
+    };
+
+    expect(
+      renderHook(() => usePlanCaseViewModel({ ...PROPS, testCase, design: null })).result
+        .current.steps[0]?.frame,
+    ).toBeNull();
+  });
+
   it('shows each step as it went in the last run', () => {
     const lastRun = {
       id: TEST_CASE.id,

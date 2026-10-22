@@ -152,6 +152,19 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                           onStepCommit({ index: step.number - 1, step: { expected } });
                         }}
                       />
+                      {step.frame !== null && (
+                        <a
+                          className="plan-case__frame"
+                          href={step.frame.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          title={step.frame.title}
+                        >
+                          <Icon name="figma" />
+                          {step.frame.label}
+                          <Icon name="external" />
+                        </a>
+                      )}
                     </span>
                     <span
                       className={`plan-case__verdict plan-case__verdict--${step.verdict}`}

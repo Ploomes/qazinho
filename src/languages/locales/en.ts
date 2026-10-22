@@ -190,6 +190,7 @@ export const en = {
       'The plan stays as it was: a run is walking it. Ask again once the run ends.',
   },
   PLAN: {
+    FRAME_OPEN: 'Open this frame in Figma',
     EMPTY_TITLE: 'No plan yet.',
     EMPTY_BODY:
       'Write the cases yourself, or say what this workspace covers and let the agent draft them.',

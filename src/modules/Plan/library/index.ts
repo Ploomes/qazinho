@@ -3,6 +3,7 @@ export * from './addStep';
 export * from './caseIdsUsed';
 export * from './editCase';
 export * from './editStep';
+export * from './frameUrlOf';
 export * from './keepVerdicts';
 export * from './mapCase';
 export * from './nextCaseId';

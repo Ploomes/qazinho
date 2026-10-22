@@ -193,6 +193,7 @@ export const pt: typeof en = {
       'O plano ficou como estava: uma run está rodando nele. Peça de novo quando a run terminar.',
   },
   PLAN: {
+    FRAME_OPEN: 'Abrir este frame no Figma',
     EMPTY_TITLE: 'Nenhum plano ainda.',
     EMPTY_BODY:
       'Escreva os casos você mesmo, ou diga o que este workspace cobre e deixe o agente rascunhar.',

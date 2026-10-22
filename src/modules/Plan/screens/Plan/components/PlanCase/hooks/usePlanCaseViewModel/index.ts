@@ -2,10 +2,12 @@ import type { IPlanCaseProps } from '@/modules/Plan/screens/Plan/components/Plan
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { frameUrlOf } from '@/modules/Plan/library';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 
 export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
   const { testCase, isLocked, onToggle } = props;
+  const design = props.design ?? null;
   const { t } = useTranslation();
   const caseId = testCase.id;
   const [isPickedUp, setIsPickedUp] = useState(false);
@@ -23,6 +25,14 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
         verdict,
         verdictIcon: STATUS[verdict].icon,
         verdictLabel: t(STATUS[verdict].labelKey),
+        frame:
+          design === null || step.frame === undefined
+            ? null
+            : {
+                label: t('COMMANDS.DESIGN_NODE', { node: step.frame }),
+                url: frameUrlOf({ design, frame: step.frame }),
+                title: t('PLAN.FRAME_OPEN'),
+              },
       };
     }),
     verdict: testCase.lastVerdict ?? 'pending',

@@ -1,11 +1,13 @@
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
 import type { IRunCase } from '@/modules/Run';
+import type { IDesignLink } from '@/shared/types';
 import type { Ref } from 'react';
 
 export interface IPlanCaseProps {
   ref?: Ref<HTMLLIElement>;
   testCase: ITestCase;
   lastRun?: IRunCase;
+  design?: IDesignLink | null;
   isOpen: boolean;
   isLocked: boolean;
   onToggle: (caseId: string) => void;

@@ -168,6 +168,21 @@ describe('usePlanViewModel', () => {
     );
   });
 
+  it('hands the cases the Figma design the workspace is checked against', () => {
+    expect(renderHook(() => usePlanViewModel()).result.current.design).toBeNull();
+
+    const design = {
+      url: 'https://www.figma.com/design/AbC123/Shop',
+      fileKey: 'AbC123',
+      nodeId: null,
+      name: 'Shop',
+    };
+
+    useWorkspaceStore.setState({ workspaces: [{ ...makeWorkspace(), design }] });
+
+    expect(renderHook(() => usePlanViewModel()).result.current.design).toEqual(design);
+  });
+
   it('names the Jira story the plan was made from, with where it opens', () => {
     expect(renderHook(() => usePlanViewModel()).result.current.story).toBeNull();
 

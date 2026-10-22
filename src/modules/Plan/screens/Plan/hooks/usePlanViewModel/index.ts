@@ -27,6 +27,7 @@ export const usePlanViewModel = () => {
     plan: opened.plan,
     planSource: opened.planSource,
     issue: opened.issue,
+    design: opened.design,
     isLocked: opened.live !== null && !opened.live.isDone,
     latest: opened.runs[0] ?? null,
     runs: opened.runs,
@@ -78,6 +79,7 @@ export const usePlanViewModel = () => {
   return {
     plan,
     lastRuns,
+    design: workspace?.design ?? null,
     openCaseId,
     isLocked,
     lockedLabel: t('PLAN.LOCKED', { agent }),
