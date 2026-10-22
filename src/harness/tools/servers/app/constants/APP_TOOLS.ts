@@ -223,6 +223,33 @@ export const APP_TOOLS = [
     }),
   },
   {
+    name: 'link_design',
+    description:
+      "Check a workspace against a Figma design, as the QA does with /figma: the link to a frame or page in Figma. Its chat and its runs read the design through the QA's own Figma, and each step that lands on a designed screen is held to its frame.",
+    input: z.object({
+      workspace: textNamed({
+        message: '"link_design" needs "workspace": its id or its name.',
+        description: 'The workspace, by its id or its name.',
+      }),
+      link: textNamed({
+        message: '"link_design" needs "link": the link to a frame or page in Figma.',
+        description:
+          'The link to a frame or page in Figma, such as https://www.figma.com/design/AbC123/Shop?node-id=12-345.',
+      }),
+    }),
+  },
+  {
+    name: 'unlink_design',
+    description:
+      'Stop checking a workspace against its Figma design. Its plan keeps the frames its steps name, for a design linked again.',
+    input: z.object({
+      workspace: textNamed({
+        message: '"unlink_design" needs "workspace": its id or its name.',
+        description: 'The workspace, by its id or its name.',
+      }),
+    }),
+  },
+  {
     name: 'run_plan',
     description:
       "Run a workspace's whole plan on its device, as the QA's Run button does, and open it so they watch. This answers once the run started; it goes on by itself.",
@@ -266,6 +293,13 @@ export const APP_TOOLS = [
         })
         .describe(
           'When the QA wants the plan made from a Jira story: its key, such as SHOP-12. QAzinho reads the story, its acceptance criteria and its files for that chat.',
+        )
+        .optional(),
+      figma: z
+        .string({ error: '"figma" is the link to a frame or page in Figma.' })
+        .trim()
+        .describe(
+          "When the QA wants the plan checked against a Figma design: the link to a frame or page. The workspace keeps it, and its chat reads it through the QA's own Figma.",
         )
         .optional(),
     }),

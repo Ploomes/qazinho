@@ -55,6 +55,14 @@ export const TOOL_LABELS: Record<
     doing: 'ASSISTANT.TOOL_CREATE_WORKSPACE',
     done: 'ASSISTANT.TOOL_CREATE_WORKSPACE_DONE',
   },
+  link_design: {
+    doing: 'ASSISTANT.TOOL_LINK_DESIGN',
+    done: 'ASSISTANT.TOOL_LINK_DESIGN_DONE',
+  },
+  unlink_design: {
+    doing: 'ASSISTANT.TOOL_UNLINK_DESIGN',
+    done: 'ASSISTANT.TOOL_UNLINK_DESIGN_DONE',
+  },
   rename_workspace: {
     doing: 'ASSISTANT.TOOL_RENAME_WORKSPACE',
     done: 'ASSISTANT.TOOL_RENAME_WORKSPACE_DONE',

@@ -125,6 +125,9 @@ export const useAppActions = () => {
       renameWorkspace: (rename) => {
         useWorkspaceStore.getState().renameWorkspace(rename);
       },
+      setDesign: (link) => {
+        useWorkspaceStore.getState().setDesign(link);
+      },
       removeWorkspace: (workspaceId) => {
         Run.stop(workspaceId);
         void Agent.stop(workspaceId);
@@ -147,22 +150,44 @@ export const useAppActions = () => {
         return runWorkspace(workspaceId, 'explore');
       },
       stopWorkspace,
-      askWorkspaceChat: ({ workspaceId, text, story }) => {
+      askWorkspaceChat: ({ workspaceId, text, story, design }) => {
         bringForward();
         useAppStore.getState().selectWorkspace(workspaceId);
         useWorkspaceStore.getState().selectTab('chat');
+
+        if (design !== null)
+          useWorkspaceStore.getState().setDesign({ workspaceId, design });
+
         useWorkspaceStore.getState().sendMessage({
           workspaceId,
           text,
           mentions: [],
-          ...(story === null ? {} : { command: { id: 'jira-plan' as const, ...story } }),
+          ...(story !== null
+            ? { command: { id: 'jira-plan' as const, ...story } }
+            : design !== null
+              ? {
+                  command: {
+                    id: 'figma-plan' as const,
+                    name: design.name,
+                    nodeId: design.nodeId,
+                    url: design.url,
+                  },
+                }
+              : {}),
         });
         askAgent({
           workspaceId,
-          text:
-            story === null
-              ? text
-              : `${t('COMMANDS.JIRA_PLAN_SAY', { key: story.key, summary: story.summary })}\n\n${text}`,
+          text: [
+            ...(story === null
+              ? []
+              : [
+                  t('COMMANDS.JIRA_PLAN_SAY', { key: story.key, summary: story.summary }),
+                ]),
+            ...(design === null
+              ? []
+              : [t('COMMANDS.FIGMA_PLAN_SAY', { name: design.name })]),
+            text,
+          ].join('\n\n'),
           references: [],
           code: null,
           jira: story === null ? null : { key: story.key },

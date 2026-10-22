@@ -71,6 +71,68 @@ describe('performWorkspaceChange', () => {
     expect(did).toEqual(['rename w2 Login social']);
   });
 
+  describe('a Figma design', () => {
+    const LINK = 'https://www.figma.com/design/AbC123/Shop?node-id=12-345';
+
+    it('checks a workspace against the design a link points at', () => {
+      const { port, state, did } = fakePort();
+
+      expect(
+        performWorkspaceChange({
+          call: { name: 'link_design', args: { workspace: 'Login', link: LINK } },
+          port,
+        }),
+      ).toEqual({
+        text: 'w2 "Login" is now checked against the Figma design "Shop", from node 12:345. Its chat reads it through the QA\'s own Figma when it plans, and each run holds the steps that name a frame to it. Its header opens it in Figma.',
+        isError: false,
+      });
+      expect(did).toEqual(['design w2 AbC123']);
+      expect(state.workspaces.find(({ id }) => id === 'w2')?.design?.nodeId).toBe(
+        '12:345',
+      );
+    });
+
+    it('does NOT take a link that is not a Figma design', () => {
+      const { port, did } = fakePort();
+      const done = performWorkspaceChange({
+        call: {
+          name: 'link_design',
+          args: { workspace: 'Login', link: 'https://www.figma.com/board/AbC123/Flow' },
+        },
+        port,
+      });
+
+      expect(done.isError).toBe(true);
+      expect(done.text).toContain('is not a link to a Figma design');
+      expect(did).toEqual([]);
+    });
+
+    it('stops checking against it, and says so when there was none', () => {
+      const { port, did } = fakePort();
+
+      performWorkspaceChange({
+        call: { name: 'link_design', args: { workspace: 'Login', link: LINK } },
+        port,
+      });
+
+      expect(
+        performWorkspaceChange({
+          call: { name: 'unlink_design', args: { workspace: 'Login' } },
+          port,
+        }).text,
+      ).toBe(
+        'w2 "Login" is no longer checked against "Shop". Its plan keeps the frames its steps name.',
+      );
+      expect(
+        performWorkspaceChange({
+          call: { name: 'unlink_design', args: { workspace: 'Login' } },
+          port,
+        }).text,
+      ).toBe('w2 "Login" has no Figma design to unlink.');
+      expect(did).toEqual(['design w2 AbC123', 'design w2 none']);
+    });
+  });
+
   describe('explore_app', () => {
     it('explores a workspace with no plan yet, and says the exploration it started', () => {
       const { port, did } = fakePort();

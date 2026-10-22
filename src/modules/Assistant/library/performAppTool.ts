@@ -37,6 +37,8 @@ export async function performAppTool(props: {
       return performProjectChange({ call, port });
     case 'create_workspace':
     case 'rename_workspace':
+    case 'link_design':
+    case 'unlink_design':
     case 'run_plan':
     case 'explore_app':
     case 'stop_run':

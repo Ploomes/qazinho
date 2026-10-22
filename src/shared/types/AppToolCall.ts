@@ -64,6 +64,8 @@ export type AppToolCall =
       args: { project: string; name: string; target?: TargetKind };
     }
   | { name: 'rename_workspace'; args: { workspace: string; name: string } }
+  | { name: 'link_design'; args: { workspace: string; link: string } }
+  | { name: 'unlink_design'; args: { workspace: string } }
   | { name: 'run_plan'; args: { workspace: string } }
   | { name: 'explore_app'; args: { workspace: string } }
   | {
@@ -88,7 +90,7 @@ export type AppToolCall =
     }
   | {
       name: 'ask_workspace_chat';
-      args: { workspace: string; text: string; story?: string };
+      args: { workspace: string; text: string; story?: string; figma?: string };
     }
   | {
       name: 'change_settings';

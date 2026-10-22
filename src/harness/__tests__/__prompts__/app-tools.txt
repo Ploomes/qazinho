@@ -378,6 +378,54 @@
     }
   },
   {
+    "name": "link_design",
+    "description": "Check a workspace against a Figma design, as the QA does with /figma: the link to a frame or page in Figma. Its chat and its runs read the design through the QA's own Figma, and each step that lands on a designed screen is held to its frame.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "workspace": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The workspace, by its id or its name."
+        },
+        "link": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The link to a frame or page in Figma, such as https://www.figma.com/design/AbC123/Shop?node-id=12-345."
+        }
+      },
+      "required": [
+        "workspace",
+        "link"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
+    "name": "unlink_design",
+    "description": "Stop checking a workspace against its Figma design. Its plan keeps the frames its steps name, for a design linked again.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "workspace": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The workspace, by its id or its name."
+        }
+      },
+      "required": [
+        "workspace"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
     "name": "run_plan",
     "description": "Run a workspace's whole plan on its device, as the QA's Run button does, and open it so they watch. This answers once the run started; it goes on by itself.",
     "inputSchema": {
@@ -439,6 +487,10 @@
           "type": "string",
           "pattern": "^[A-Z][A-Z0-9_]*-\\d+$",
           "description": "When the QA wants the plan made from a Jira story: its key, such as SHOP-12. QAzinho reads the story, its acceptance criteria and its files for that chat."
+        },
+        "figma": {
+          "type": "string",
+          "description": "When the QA wants the plan checked against a Figma design: the link to a frame or page. The workspace keeps it, and its chat reads it through the QA's own Figma."
         }
       },
       "required": [

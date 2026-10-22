@@ -3,6 +3,7 @@ import type { IWorkspace } from '@/modules/Workspace/types';
 import type { AppToolCall } from '@/shared/types';
 import { toPlanKind } from '@/modules/Plan/library';
 import { flattenPlanSteps } from '@/modules/Run/library';
+import { designLinkOf } from '@/modules/Workspace/library';
 import { EXPLORATION } from '@/shared/constants';
 import { findByRef } from './findByRef';
 
@@ -10,7 +11,13 @@ type WorkspaceCall = Extract<
   AppToolCall,
   {
     name:
-      'create_workspace' | 'rename_workspace' | 'run_plan' | 'explore_app' | 'stop_run';
+      | 'create_workspace'
+      | 'rename_workspace'
+      | 'link_design'
+      | 'unlink_design'
+      | 'run_plan'
+      | 'explore_app'
+      | 'stop_run';
   }
 >;
 
@@ -78,7 +85,7 @@ function createWorkspace(props: {
   };
 }
 
-/** Creates, renames, runs or stops a workspace the way the QA's own clicks do. */
+/** Creates, renames, runs or stops a workspace, or links its Figma design, the way the QA's own clicks do. */
 export function performWorkspaceChange(props: {
   call: WorkspaceCall;
   port: IAppPort;
@@ -104,6 +111,37 @@ export function performWorkspaceChange(props: {
 
     return {
       text: `Renamed ${workspace.id} from "${workspace.name}" to "${call.args.name}".`,
+      isError: false,
+    };
+  }
+
+  if (call.name === 'link_design') {
+    const design = designLinkOf(call.args.link);
+
+    if (design === null)
+      return failed(
+        `"${call.args.link}" is not a link to a Figma design. The QA copies it in Figma from a frame or page, with Copy link.`,
+      );
+
+    port.setDesign({ workspaceId: workspace.id, design });
+
+    return {
+      text: `${workspace.id} "${workspace.name}" is now checked against the Figma design "${design.name}"${design.nodeId === null ? ', the whole file' : `, from node ${design.nodeId}`}. Its chat reads it through the QA's own Figma when it plans, and each run holds the steps that name a frame to it. Its header opens it in Figma.`,
+      isError: false,
+    };
+  }
+
+  if (call.name === 'unlink_design') {
+    if (workspace.design === null)
+      return {
+        text: `${workspace.id} "${workspace.name}" has no Figma design to unlink.`,
+        isError: false,
+      };
+
+    port.setDesign({ workspaceId: workspace.id, design: null });
+
+    return {
+      text: `${workspace.id} "${workspace.name}" is no longer checked against "${workspace.design.name}". Its plan keeps the frames its steps name.`,
       isError: false,
     };
   }

@@ -126,6 +126,12 @@ export function fakePort(
       );
       did.push(`rename ${workspaceId} ${name}`);
     },
+    setDesign: ({ workspaceId, design }) => {
+      state.workspaces = state.workspaces.map((one) =>
+        one.id === workspaceId ? { ...one, design } : one,
+      );
+      did.push(`design ${workspaceId} ${design?.fileKey ?? 'none'}`);
+    },
     removeWorkspace: (workspaceId) => {
       state.workspaces = state.workspaces.filter(({ id }) => id !== workspaceId);
       did.push(`remove workspace ${workspaceId}`);
@@ -143,8 +149,10 @@ export function fakePort(
     stopWorkspace: (workspaceId) => {
       did.push(`stop ${workspaceId}`);
     },
-    askWorkspaceChat: ({ workspaceId, text, story }) => {
-      did.push(`ask ${workspaceId} ${text}${story === null ? '' : ` from ${story.key}`}`);
+    askWorkspaceChat: ({ workspaceId, text, story, design }) => {
+      did.push(
+        `ask ${workspaceId} ${text}${story === null ? '' : ` from ${story.key}`}${design === null ? '' : ` against ${design.fileKey}`}`,
+      );
     },
     findStory: (key) =>
       Promise.resolve(

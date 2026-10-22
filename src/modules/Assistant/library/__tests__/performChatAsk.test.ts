@@ -19,6 +19,37 @@ describe('performChatAsk', () => {
     expect(did).toEqual(['ask w2 Cria um plano de teste para o login']);
   });
 
+  it('hands the request with the Figma design the plan is checked against', async () => {
+    const { port, did } = fakePort();
+    const done = await performChatAsk({
+      call: {
+        ...ASK,
+        args: {
+          ...ASK.args,
+          figma: 'https://www.figma.com/design/AbC123/Shop?node-id=12-345',
+        },
+      },
+      port,
+    });
+
+    expect(done.text).toContain(
+      ', checked against the Figma design "Shop", and opened it',
+    );
+    expect(did).toEqual(['ask w2 Cria um plano de teste para o login against AbC123']);
+  });
+
+  it('does NOT send a request with a link that is not a Figma design', async () => {
+    const { port, did } = fakePort();
+    const done = await performChatAsk({
+      call: { ...ASK, args: { ...ASK.args, figma: 'https://example.com/shop' } },
+      port,
+    });
+
+    expect(done).toMatchObject({ isError: true });
+    expect(done.text).toContain('is not a link to a Figma design');
+    expect(did).toEqual([]);
+  });
+
   it('does NOT talk over the chat agent while it is still answering', async () => {
     const { port, did } = fakePort({ state: { askingIds: ['w2'] } });
 

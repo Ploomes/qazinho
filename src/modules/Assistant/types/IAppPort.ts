@@ -8,6 +8,7 @@ import type {
   BugFiling,
   BuildPlatform,
   IBranchList,
+  IDesignLink,
   IJiraIssueRef,
   IntegrationId,
   IRepositoryList,
@@ -41,6 +42,7 @@ export interface IAppPort {
   removeProject: (projectId: string) => void;
   addWorkspace: (workspace: IWorkspace) => void;
   renameWorkspace: (props: { workspaceId: string; name: string }) => void;
+  setDesign: (props: { workspaceId: string; design: IDesignLink | null }) => void;
   removeWorkspace: (workspaceId: string) => void;
   runWorkspace: (workspaceId: string) => string | null;
   exploreWorkspace: (workspaceId: string) => string | null;
@@ -49,6 +51,7 @@ export interface IAppPort {
     workspaceId: string;
     text: string;
     story: IJiraIssueRef | null;
+    design: IDesignLink | null;
   }) => void;
   findStory: (key: string) => Promise<IJiraIssueRef | JiraFailure>;
   sendBug: (props: {

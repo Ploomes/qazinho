@@ -1,5 +1,6 @@
 import type { IAppPort, IToolDone } from '@/modules/Assistant/types';
 import type { AppToolCall, JiraFailure } from '@/shared/types';
+import { designLinkOf } from '@/modules/Workspace/library';
 import { findByRef } from './findByRef';
 import { openRoundOf } from './openRoundOf';
 
@@ -14,7 +15,7 @@ const STORY_REFUSALS: Record<JiraFailure, string> = {
   unexpected: 'Jira answered in a way QAzinho did not expect.',
 };
 
-/** Hands the QA's request to a workspace's own chat, as if they typed it there, with the Jira story it plans from, and opens that chat. */
+/** Hands the QA's request to a workspace's own chat, as if they typed it there, with the Jira story it plans from and the Figma design it is checked against, and opens that chat. */
 export async function performChatAsk(props: {
   call: Extract<AppToolCall, { name: 'ask_workspace_chat' }>;
   port: IAppPort;
@@ -52,16 +53,30 @@ export async function performChatAsk(props: {
       isError: true,
     };
 
+  const link = call.args.figma;
+  const design = link === undefined || link === '' ? null : designLinkOf(link);
+
+  if (link !== undefined && link !== '' && design === null)
+    return {
+      text: `"${link}" is not a link to a Figma design. The QA copies it in Figma from a frame or page, with Copy link.`,
+      isError: true,
+    };
+
   const key = call.args.story;
   const story = key === undefined ? null : await port.findStory(key);
 
   if (typeof story === 'string')
     return { text: `${key ?? ''}: ${STORY_REFUSALS[story]}`, isError: true };
 
-  port.askWorkspaceChat({ workspaceId: workspace.id, text: call.args.text, story });
+  port.askWorkspaceChat({
+    workspaceId: workspace.id,
+    text: call.args.text,
+    story,
+    design,
+  });
 
   return {
-    text: `Sent the message to the chat of ${named}${story === null ? '' : `, with the Jira story ${story.key} "${story.summary}",`} and opened it there. Its agent answers in that chat, not here: before a plan it looks at the app and may ask the QA a round of questions, which they answer there.`,
+    text: `Sent the message to the chat of ${named}${story === null ? '' : `, with the Jira story ${story.key} "${story.summary}",`}${design === null ? '' : `, checked against the Figma design "${design.name}",`} and opened it there. Its agent answers in that chat, not here: before a plan it looks at the app and may ask the QA a round of questions, which they answer there.`,
     isError: false,
   };
 }

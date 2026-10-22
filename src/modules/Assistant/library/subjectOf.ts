@@ -18,6 +18,8 @@ export function subjectOf(props: { call: AppToolCall; state: IAppState }): strin
     case 'explore_app':
     case 'stop_run':
     case 'ask_workspace_chat':
+    case 'link_design':
+    case 'unlink_design':
     case 'delete_workspace':
       return nameOf({ items: state.workspaces, ref: call.args.workspace });
     case 'run_details':
