@@ -1,7 +1,12 @@
 import type { ConfirmDecision, IAppPort, IAppState } from '@/modules/Assistant/types';
 import type { IProject } from '@/modules/Project/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
-import type { IBranchList, IRepositoryList, VariablesOutcome } from '@/shared/types';
+import type {
+  BugFiling,
+  IBranchList,
+  IRepositoryList,
+  VariablesOutcome,
+} from '@/shared/types';
 import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 
 export const PROJECT: IProject = {
@@ -61,6 +66,7 @@ export function fakePort(
     runId?: string | null;
     kept?: string[] | null;
     applied?: VariablesOutcome;
+    filing?: BugFiling;
   } = {},
 ) {
   const state: IAppState = {
@@ -192,8 +198,29 @@ export function fakePort(
 
       return Promise.resolve(props.applied ?? { isSaved: true, variables: [] });
     },
+    sendBug: ({ workspaceId, bugId, target }) => {
+      did.push(
+        `send ${workspaceId} ${bugId} ${target.tracker === 'jira' ? target.project : `${target.owner}/${target.name}`}`,
+      );
+
+      return Promise.resolve(
+        props.filing ?? {
+          isFiled: true,
+          issue: {
+            tracker: target.tracker,
+            key: target.tracker === 'jira' ? `${target.project}-57` : '#42',
+            url: 'https://tracker.test/57',
+            at: '2026-10-22T12:00:00.000Z',
+          },
+          missed: [],
+          linked: null,
+        },
+      );
+    },
     confirm: (asked) => {
-      did.push(`confirm ${asked.action} ${asked.subject} ${String(asked.count)}`);
+      did.push(
+        `confirm ${asked.action} ${asked.subject} ${String(asked.count)}${asked.detail === undefined ? '' : ` ${asked.detail}`}`,
+      );
 
       return Promise.resolve(props.decision ?? 'confirmed');
     },

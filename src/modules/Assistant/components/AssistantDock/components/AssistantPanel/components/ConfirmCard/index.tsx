@@ -5,12 +5,13 @@ import { MOTION } from '@/shared/constants';
 import { useConfirmCardViewModel } from './hooks';
 import './styles.css';
 
-/** Something the assistant would remove, held until the QA answers on this card, which then says what they chose. */
+/** Something the assistant would remove or send out, held until the QA answers on this card, which then says what they chose. */
 export const ConfirmCard: React.FC<IConfirmCardProps> = (props) => {
   const {
     title,
     body,
     goLabel,
+    goVariant,
     keepLabel,
     isOpen,
     className,
@@ -33,7 +34,7 @@ export const ConfirmCard: React.FC<IConfirmCardProps> = (props) => {
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: MOTION.durationFast, ease: MOTION.easeIn }}
           >
-            <Button size="sm" variant="danger" onClick={onGo}>
+            <Button size="sm" variant={goVariant} onClick={onGo}>
               {goLabel}
             </Button>
             <Button size="sm" variant="ghost" onClick={onKeep}>

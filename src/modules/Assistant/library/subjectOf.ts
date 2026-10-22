@@ -25,6 +25,7 @@ export function subjectOf(props: { call: AppToolCall; state: IAppState }): strin
         call.args.run ?? nameOf({ items: state.workspaces, ref: call.args.workspace })
       );
     case 'bug_details':
+    case 'send_bug':
       return call.args.bug;
     case 'open_project':
     case 'update_project':

@@ -7,6 +7,7 @@ export * from './findByRef';
 export * from './isConfirmCall';
 export * from './openRoundOf';
 export * from './performAppTool';
+export * from './performBugSend';
 export * from './performBuild';
 export * from './performChatAsk';
 export * from './performOpening';

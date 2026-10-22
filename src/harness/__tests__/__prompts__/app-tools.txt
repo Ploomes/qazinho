@@ -452,6 +452,51 @@
     }
   },
   {
+    "name": "send_bug",
+    "description": "Send one bug of a workspace to the QA's tracker as an issue. Jira gets its steps, what was expected and what showed, its screens, a clip of the moment and a link to the story the plan came from; GitHub gets its words. Leave the place out to send it where the project's last bug went, else to the Jira project of the story the workspace works from, else to the project's first repository. The QA confirms it on screen, and this answers with the issue it became.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "workspace": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The workspace, by its id or its name."
+        },
+        "bug": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The bug, by its id, such as BUG-02."
+        },
+        "tracker": {
+          "type": "string",
+          "enum": [
+            "jira",
+            "github"
+          ],
+          "description": "The tracker it goes to, when the QA said which."
+        },
+        "project": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$",
+          "description": "The Jira project it goes to, by its key, such as SHOP."
+        },
+        "repository": {
+          "type": "string",
+          "pattern": "^[\\w.-]+\\/[\\w.-]+$",
+          "description": "The GitHub repository it goes to, as owner/name."
+        }
+      },
+      "required": [
+        "workspace",
+        "bug"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
     "name": "stop_run",
     "description": "Stop the run going on in a workspace.",
     "inputSchema": {

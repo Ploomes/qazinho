@@ -1,7 +1,7 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
 import { appearancesOf } from '@/modules/Bug/library';
 
-/** One bug of a workspace in full for the assistant: what was expected and what showed, how to reproduce it, and where it was caught. */
+/** One bug of a workspace in full for the assistant: what was expected and what showed, how to reproduce it, where it was caught, and the issue it became. */
 export function describeBug(props: { workspace: IWorkspace; bugId: string }): {
   text: string;
   isError: boolean;
@@ -34,6 +34,11 @@ export function describeBug(props: { workspace: IWorkspace; bugId: string }): {
               (step, index) =>
                 `${String(index + 1)}. ${step.action}${step.isBad ? ' ← it breaks here' : ''}`,
             ),
+          ]),
+      ...(bug.filed === null
+        ? ['Not sent to a tracker yet.']
+        : [
+            `Filed as ${bug.filed.key} in ${bug.filed.tracker === 'jira' ? 'Jira' : 'GitHub'}: ${bug.filed.url}`,
           ]),
       `Seen in ${String(bug.seenRuns)} run${bug.seenRuns === 1 ? '' : 's'}${bug.sightings.length === 0 ? '' : ` (${[...new Set(appearancesOf(bug).map(({ runId }) => runId))].join(', ')})`}${bug.shots.length + bug.sightings.length === 0 ? '' : `, with ${String(bug.shots.length + bug.sightings.length)} screenshot${bug.shots.length + bug.sightings.length === 1 ? '' : 's'} in Bugs`}.`,
     ].join('\n'),

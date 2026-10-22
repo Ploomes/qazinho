@@ -1042,11 +1042,15 @@ export const en = {
     CONFIRM_DELETE_VARIABLE_BODY_ONE: 'Its value goes with it. One plan still names it.',
     CONFIRM_DELETE_VARIABLE_BODY_OTHER:
       'Its value goes with it. {{count}} plans still name it.',
+    CONFIRM_SEND_BUG: 'Send {{subject}} to {{detail}}?',
+    CONFIRM_SEND_BUG_BODY:
+      'It becomes an issue there, written from the bug: its steps, what was expected and what came, and where it was caught.',
     DELETE: 'Delete',
     DISCONNECT: 'Disconnect',
     KEEP: 'Keep',
     DELETED: 'Deleted',
     DISCONNECTED: 'Disconnected',
+    SENT: 'On its way',
     KEPT: 'Kept',
     EXPIRED: 'No answer came, so nothing changed',
   },

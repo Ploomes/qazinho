@@ -65,6 +65,33 @@ describe('useConfirmCardViewModel', () => {
     });
   });
 
+  it('asks to send a bug where it goes, with a button that does not warn, and says it is on its way', () => {
+    const { result, rerender } = card({
+      ...ASKED,
+      action: 'send_bug',
+      subject: 'BUG-02',
+      count: 0,
+      detail: 'Jira · SHOP',
+    });
+
+    expect(result.current).toMatchObject({
+      title: 'Send BUG-02 to Jira · SHOP?',
+      goLabel: 'Send',
+      goVariant: 'primary',
+    });
+
+    act(() => {
+      result.current.onGo();
+    });
+    rerender();
+
+    expect(result.current.result).toBe('On its way');
+  });
+
+  it('warns on the button that deletes', () => {
+    expect(card(ASKED).result.current.goVariant).toBe('danger');
+  });
+
   describe('onGo', () => {
     it('confirms once, and the card says it was done', () => {
       const { result, rerender } = card(ASKED);

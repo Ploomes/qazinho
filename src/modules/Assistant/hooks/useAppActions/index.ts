@@ -2,6 +2,7 @@ import type { ConfirmDecision, IAppPort, IToolDone } from '@/modules/Assistant/t
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isConfirmCall, performAppTool, subjectOf } from '@/modules/Assistant/library';
+import { useSendBug } from '@/modules/Bug';
 import { useBuildActions } from '@/modules/Build';
 import { useChatAgent } from '@/modules/Chat';
 import { useVariableActions } from '@/modules/Project';
@@ -26,6 +27,7 @@ export const useAppActions = () => {
   const { startBuild } = useBuildActions();
   const { askAgent } = useChatAgent();
   const { askVariables, applyVariables } = useVariableActions();
+  const { send } = useSendBug();
   const waiting = useRef(new Map<string, (decision: ConfirmDecision) => void>());
 
   useEffect(
@@ -167,6 +169,21 @@ export const useAppActions = () => {
         });
         useAssistantStore.getState().close();
       },
+      sendBug: ({ workspaceId, bugId, target }) => {
+        const bug = useWorkspaceStore
+          .getState()
+          .workspaces.find(({ id }) => id === workspaceId)
+          ?.bugs.find(({ id }) => id === bugId);
+
+        return send({
+          filingId: `f-${crypto.randomUUID().slice(0, 8)}`,
+          workspaceId,
+          bugId,
+          target,
+          title: bug?.title ?? '',
+          onReady: () => undefined,
+        });
+      },
       findStory: async (key) => {
         const found = await Jira.search(key);
 
@@ -198,13 +215,19 @@ export const useAppActions = () => {
       askVariables: ({ projectId, drafts }) =>
         askVariables({ projectId, drafts, waitMs: ASSISTANT_WAIT.confirmMs }),
       applyVariables,
-      confirm: ({ id, action, subject, count }) =>
+      confirm: ({ id, action, subject, count, detail }) =>
         new Promise<ConfirmDecision>((settle) => {
           waiting.current.set(id, settle);
           useAssistantStore.getState().open();
-          useAssistantStore
-            .getState()
-            .askConfirm({ kind: 'confirm', id, action, subject, count, decision: null });
+          useAssistantStore.getState().askConfirm({
+            kind: 'confirm',
+            id,
+            action,
+            subject,
+            count,
+            ...(detail === undefined ? {} : { detail }),
+            decision: null,
+          });
           window.setTimeout(() => {
             useAssistantStore.getState().settleConfirm({ id, decision: 'expired' });
           }, ASSISTANT_WAIT.confirmMs);
@@ -245,5 +268,6 @@ export const useAppActions = () => {
     askAgent,
     askVariables,
     applyVariables,
+    send,
   ]);
 };

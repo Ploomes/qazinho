@@ -1,5 +1,6 @@
 import type { BuildPlatform } from './BuildPlatform';
 import type { IntegrationId } from './IntegrationId';
+import type { IssueTracker } from './IssueTracker';
 import type { Language } from './Language';
 import type { TargetKind } from './TargetKind';
 
@@ -75,6 +76,16 @@ export type AppToolCall =
     }
   | { name: 'delete_variable'; args: { project: string; variable: string } }
   | { name: 'stop_run'; args: { workspace: string } }
+  | {
+      name: 'send_bug';
+      args: {
+        workspace: string;
+        bug: string;
+        tracker?: IssueTracker;
+        project?: string;
+        repository?: string;
+      };
+    }
   | {
       name: 'ask_workspace_chat';
       args: { workspace: string; text: string; story?: string };

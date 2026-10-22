@@ -1045,11 +1045,15 @@ export const pt: typeof en = {
     CONFIRM_DELETE_VARIABLE_BODY_ONE: 'O valor vai junto. Um plano ainda usa ela.',
     CONFIRM_DELETE_VARIABLE_BODY_OTHER:
       'O valor vai junto. {{count}} planos ainda usam ela.',
+    CONFIRM_SEND_BUG: 'Enviar {{subject}} para {{detail}}?',
+    CONFIRM_SEND_BUG_BODY:
+      'Ele vira uma issue lá, escrita a partir do bug: os passos, o esperado e o que aconteceu, e onde foi pego.',
     DELETE: 'Excluir',
     DISCONNECT: 'Desconectar',
     KEEP: 'Manter',
     DELETED: 'Excluído',
     DISCONNECTED: 'Desconectado',
+    SENT: 'A caminho',
     KEPT: 'Mantido',
     EXPIRED: 'Ninguém respondeu, então nada mudou',
   },

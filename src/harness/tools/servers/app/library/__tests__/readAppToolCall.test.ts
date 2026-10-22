@@ -67,6 +67,30 @@ describe('readAppToolCall', () => {
     });
   });
 
+  it('reads where a bug goes: a Jira project by its key in capitals, or a repository as owner/name', () => {
+    expect(
+      readAppToolCall({
+        name: 'send_bug',
+        args: { workspace: 'Checkout', bug: 'BUG-02', project: ' shop ' },
+      }),
+    ).toEqual({
+      kind: 'call',
+      call: {
+        name: 'send_bug',
+        args: { workspace: 'Checkout', bug: 'BUG-02', project: 'SHOP' },
+      },
+    });
+    expect(
+      readAppToolCall({
+        name: 'send_bug',
+        args: { workspace: 'Checkout', bug: 'BUG-02', repository: 'the shop repo' },
+      }),
+    ).toEqual({
+      kind: 'refused',
+      error: '"repository" is a GitHub repository, as owner/name.',
+    });
+  });
+
   it('refuses a settings change that changes nothing', () => {
     expect(readAppToolCall({ name: 'change_settings', args: {} })).toEqual({
       kind: 'refused',

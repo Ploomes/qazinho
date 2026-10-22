@@ -5,12 +5,14 @@ import type { IProject } from '@/modules/Project/types';
 import type { RunAlert, SettingsTab } from '@/modules/Settings/types';
 import type { IWorkspace, WorkspaceTab } from '@/modules/Workspace/types';
 import type {
+  BugFiling,
   BuildPlatform,
   IBranchList,
   IJiraIssueRef,
   IntegrationId,
   IRepositoryList,
   IRepositoryRef,
+  IssueTarget,
   IVariableBrief,
   JiraFailure,
   Language,
@@ -49,6 +51,11 @@ export interface IAppPort {
     story: IJiraIssueRef | null;
   }) => void;
   findStory: (key: string) => Promise<IJiraIssueRef | JiraFailure>;
+  sendBug: (props: {
+    workspaceId: string;
+    bugId: string;
+    target: IssueTarget;
+  }) => Promise<BugFiling>;
   changeSettings: (props: {
     theme?: Theme;
     language?: Language;
@@ -77,5 +84,6 @@ export interface IAppPort {
     action: ConfirmAction;
     subject: string;
     count: number;
+    detail?: string;
   }) => Promise<ConfirmDecision>;
 }

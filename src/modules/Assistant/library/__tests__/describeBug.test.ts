@@ -16,8 +16,34 @@ describe('describeBug', () => {
       'To reproduce:',
       '1. Open the target URL',
       '2. Search for a product ← it breaks here',
+      'Not sent to a tracker yet.',
       'Seen in 1 run, with 2 screenshots in Bugs.',
     ]);
+  });
+
+  it('names the issue a bug became, and where', () => {
+    const [bug] = CHECKOUT.bugs;
+    const { text } = describeBug({
+      workspace: {
+        ...CHECKOUT,
+        bugs: [
+          {
+            ...bug!,
+            filed: {
+              tracker: 'github',
+              key: '#42',
+              url: 'https://github.com/acme/loja-web/issues/42',
+              at: '2026-10-22T12:00:00.000Z',
+            },
+          },
+        ],
+      },
+      bugId: 'BUG-01',
+    });
+
+    expect(text).toContain(
+      'Filed as #42 in GitHub: https://github.com/acme/loja-web/issues/42',
+    );
   });
 
   it('names the runs that caught a bug seen again, and counts its screens', () => {

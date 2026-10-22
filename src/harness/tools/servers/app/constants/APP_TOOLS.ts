@@ -271,6 +271,42 @@ export const APP_TOOLS = [
     }),
   },
   {
+    name: 'send_bug',
+    description:
+      "Send one bug of a workspace to the QA's tracker as an issue. Jira gets its steps, what was expected and what showed, its screens, a clip of the moment and a link to the story the plan came from; GitHub gets its words. Leave the place out to send it where the project's last bug went, else to the Jira project of the story the workspace works from, else to the project's first repository. The QA confirms it on screen, and this answers with the issue it became.",
+    input: z.object({
+      workspace: textNamed({
+        message: '"send_bug" needs "workspace": its id or its name.',
+        description: 'The workspace, by its id or its name.',
+      }),
+      bug: textNamed({
+        message: '"send_bug" needs "bug": its id, such as BUG-02.',
+        description: 'The bug, by its id, such as BUG-02.',
+      }),
+      tracker: z
+        .enum(['jira', 'github'], { error: '"tracker" is jira or github.' })
+        .describe('The tracker it goes to, when the QA said which.')
+        .optional(),
+      project: z
+        .string({ error: '"project" is the key of a Jira project, such as SHOP.' })
+        .trim()
+        .toUpperCase()
+        .regex(/^[A-Z][A-Z0-9_]*$/, {
+          error: '"project" is the key of a Jira project, such as SHOP.',
+        })
+        .describe('The Jira project it goes to, by its key, such as SHOP.')
+        .optional(),
+      repository: z
+        .string({ error: '"repository" is a GitHub repository, as owner/name.' })
+        .trim()
+        .regex(/^[\w.-]+\/[\w.-]+$/, {
+          error: '"repository" is a GitHub repository, as owner/name.',
+        })
+        .describe('The GitHub repository it goes to, as owner/name.')
+        .optional(),
+    }),
+  },
+  {
     name: 'stop_run',
     description: 'Stop the run going on in a workspace.',
     input: z.object({
