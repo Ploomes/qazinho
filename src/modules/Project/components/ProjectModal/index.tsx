@@ -7,6 +7,7 @@ import {
   ProjectNav,
   ProjectPane,
   RepoField,
+  SuiteField,
   TargetCard,
   VariableField,
 } from './components';
@@ -14,7 +15,7 @@ import { PROJECT_MODAL } from './constants';
 import { useProjectModalViewModel } from './hooks';
 import './styles.css';
 
-/** A project's window, in sections down its side: its name and targets, the code it is made of, its variables, and deleting it. */
+/** A project's window, in sections down its side: its name and targets, the code it is made of, its variables, its automated suite, and deleting it. */
 export const ProjectModal: React.FC = () => {
   const {
     name,
@@ -23,6 +24,7 @@ export const ProjectModal: React.FC = () => {
     app,
     repositories,
     variables,
+    variableNames,
     savedVariables,
     projectId,
     androidBuilder,
@@ -168,6 +170,10 @@ export const ProjectModal: React.FC = () => {
             saved={savedVariables}
             onChange={onVariablesChange}
           />
+        </ProjectPane>
+
+        <ProjectPane label={t('PROJECT.SECTION_AUTOMATION')} isOpen={isOpen.automation}>
+          <SuiteField projectId={projectId} variableNames={variableNames} />
         </ProjectPane>
 
         {isEditing && (

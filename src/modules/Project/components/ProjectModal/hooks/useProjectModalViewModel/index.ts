@@ -31,6 +31,7 @@ export const useProjectModalViewModel = () => {
   const { t } = useTranslation();
   const projects = useAppStore((state) => state.projects);
   const editingProjectId = useAppStore((state) => state.editingProjectId);
+  const projectSection = useAppStore((state) => state.projectSection);
   const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
   const addProject = useAppStore((state) => state.addProject);
   const updateProject = useAppStore((state) => state.updateProject);
@@ -71,7 +72,7 @@ export const useProjectModalViewModel = () => {
   const [repositories, setRepositories] = useState<IProjectRepository[]>(
     editing?.repositories ?? [],
   );
-  const [section, setSection] = useState<ProjectSection>('general');
+  const [section, setSection] = useState<ProjectSection>(projectSection ?? 'general');
   const [buildIds, setBuildIds] = useState<Record<BuildPlatform, string | null>>({
     android: null,
     ios: null,
@@ -271,6 +272,7 @@ export const useProjectModalViewModel = () => {
       general: section === 'general',
       code: section === 'code',
       variables: section === 'variables',
+      automation: section === 'automation',
       delete: section === 'delete',
     },
     title: isEditing ? t('PROJECT.EDIT_TITLE') : t('PROJECT.NEW_TITLE'),
@@ -311,6 +313,7 @@ export const useProjectModalViewModel = () => {
     onNameChange: setName,
     onRepositoriesChange: setRepositories,
     variables,
+    variableNames: variables.map((variable) => variable.name),
     savedVariables,
     onVariablesChange: (changed: IVariableDraft[]) => {
       setVariableFailure(null);

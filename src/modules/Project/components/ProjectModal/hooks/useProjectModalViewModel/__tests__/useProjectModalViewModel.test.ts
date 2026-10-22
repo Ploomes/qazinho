@@ -20,6 +20,7 @@ beforeEach(() => {
     projects: [],
     modal: 'project',
     editingProjectId: null,
+    projectSection: null,
     selectedWorkspaceId: null,
     screen: 'welcome',
   });
@@ -118,6 +119,7 @@ describe('useProjectModalViewModel', () => {
         general: true,
         code: false,
         variables: false,
+        automation: false,
         delete: false,
       });
     });
@@ -133,6 +135,7 @@ describe('useProjectModalViewModel', () => {
         general: false,
         code: false,
         variables: true,
+        automation: false,
         delete: false,
       });
     });
@@ -144,6 +147,7 @@ describe('useProjectModalViewModel', () => {
         'general',
         'code',
         'variables',
+        'automation',
       ]);
     });
 
@@ -151,6 +155,7 @@ describe('useProjectModalViewModel', () => {
       const { result } = renderHook(() => useProjectModalViewModel());
 
       expect(result.current.navItems.map(({ count }) => count)).toEqual([
+        null,
         null,
         null,
         null,
@@ -172,7 +177,12 @@ describe('useProjectModalViewModel', () => {
         ]);
       });
 
-      expect(result.current.navItems.map(({ count }) => count)).toEqual([null, 2, 1]);
+      expect(result.current.navItems.map(({ count }) => count)).toEqual([
+        null,
+        2,
+        1,
+        null,
+      ]);
     });
 
     it('flags the general section while it keeps the project from being made', () => {
@@ -180,6 +190,7 @@ describe('useProjectModalViewModel', () => {
 
       expect(result.current.navItems.map(({ isFlagged }) => isFlagged)).toEqual([
         true,
+        false,
         false,
         false,
       ]);
@@ -346,6 +357,14 @@ describe('useProjectModalViewModel', () => {
       expect(result.current.name).toBe('Shop · staging');
       expect(result.current.url).toBe('https://a.test');
       expect(result.current.confirmLabel).toBe('Save changes');
+    });
+
+    it("opens on its suite when asked from the suite's screen", () => {
+      useAppStore.getState().openSuiteSettings('p1');
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.section).toBe('automation');
     });
 
     it('stays on the project while it animates out, after the store has let go', () => {
