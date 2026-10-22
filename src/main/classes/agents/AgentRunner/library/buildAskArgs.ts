@@ -1,7 +1,7 @@
 import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
 
-/** The flags that make the CLI answer once, in JSON, on the session it already has, with only the tools, commands and folders it was granted, and none of the QA's own hooks. */
+/** The flags that make the CLI answer once, in JSON, on the session it already has, with only the tools, commands and folders it was granted, QAzinho's own tools beside them, and none of the QA's own hooks. */
 export function buildAskArgs(
   props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command' | 'agentId'>,
 ): string[] {
@@ -30,9 +30,10 @@ export function buildAskArgs(
           mcpConfig,
           '--strict-mcp-config',
           '--tools',
-          '',
+          (tools ?? []).join(','),
           '--allowedTools',
           ...(allowedTools ?? []),
+          ...(tools === undefined ? [] : readDirs.flatMap((dir) => ['--add-dir', dir])),
         ]),
     ...(isTalk && readDirs.length === 0 ? ['--tools', ''] : []),
     ...(isTalk && readDirs.length > 0

@@ -80,6 +80,32 @@ describe('buildAskArgs', () => {
     ]);
   });
 
+  /** The agent changing a team's suite edits files in its copy, and runs the tests only through QAzinho, which holds the secrets. */
+  it('gives an agent its file tools on its folders and QAzinho own tools together', () => {
+    expect(
+      buildAskArgs({
+        model: '',
+        sessionId: null,
+        mcpConfig: '{"mcpServers":{}}',
+        tools: ['Read', 'Edit'],
+        allowedTools: ['Read', 'Edit', 'mcp__qazinho'],
+        readDirs: ['/data/suites/p-1/changes/c-01/work'],
+      }).slice(-11),
+    ).toEqual([
+      '--mcp-config',
+      '{"mcpServers":{}}',
+      '--strict-mcp-config',
+      '--tools',
+      'Read,Edit',
+      '--allowedTools',
+      'Read',
+      'Edit',
+      'mcp__qazinho',
+      '--add-dir',
+      '/data/suites/p-1/changes/c-01/work',
+    ]);
+  });
+
   it('does NOT restrict the agent tools when no device is attached', () => {
     expect(buildAskArgs({ model: '', sessionId: null })).not.toContain('--tools');
   });
