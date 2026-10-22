@@ -2,8 +2,10 @@ import type { AppLook } from '@/harness';
 import type {
   AgentSignInProgress,
   GithubSignInProgress,
+  ICommentBug,
   IFileBug,
   IFilingEvent,
+  IReviewBug,
   IAgentEvent,
   IAgentTurn,
   IAppToolAnswer,
@@ -71,6 +73,7 @@ import {
   Archive,
   AssistantAgent,
   BugFiler,
+  BugReviewer,
   CodeCopies,
   CodeExport,
   DeviceToolDetector,
@@ -98,6 +101,8 @@ import {
 } from '@/main/classes';
 import { changeIdOf } from '@/main/classes/automation/SuiteChanges/library';
 import { APP_BUILDER } from '@/main/classes/builds/AppBuilder/constants';
+import { BUG_REVIEW } from '@/main/classes/integrations/BugReviewer/constants';
+import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { buildIdOf } from '@/main/classes/builds/AppBuilder/library';
 import {
   listAvds,
@@ -292,6 +297,8 @@ const agentRunner = new AgentRunner({
       return;
     }
 
+    if (event.workspaceId.startsWith(BUG_REVIEW.scopePrefix)) return;
+
     const changeId = changeIdOf(event.workspaceId);
 
     if (changeId !== null) {
@@ -309,6 +316,14 @@ const agentRunner = new AgentRunner({
       event,
     });
   },
+});
+
+const bugReviewer = new BugReviewer({
+  filer: bugFiler,
+  runner: agentRunner,
+  harness,
+  findCommand,
+  runsRoot: join(PATHS.data, ARCHIVE.runs),
 });
 
 const builder = new AppBuilder({
@@ -1066,6 +1081,12 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.searchJira, (_event, query: string) => jira.search(query));
   ipcMain.handle(CHANNELS.listJiraProjects, () => jira.projects());
   ipcMain.handle(CHANNELS.fileBug, (_event, request: IFileBug) => bugFiler.file(request));
+  ipcMain.handle(CHANNELS.reviewBug, (_event, request: IReviewBug) =>
+    bugReviewer.review(request),
+  );
+  ipcMain.handle(CHANNELS.commentBug, (_event, request: ICommentBug) =>
+    bugFiler.comment(request),
+  );
   ipcMain.handle(CHANNELS.listBranches, (_event, repository: IRepositoryRef) =>
     repos.branches(repository),
   );

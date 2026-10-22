@@ -119,6 +119,9 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     fileBug: () =>
       Promise.resolve({ isFiled: false, failure: 'not-connected', said: '' }),
     onFilingEvent: () => () => undefined,
+    reviewBug: () => Promise.resolve({ isReviewed: false, failure: 'agent', said: '' }),
+    commentBug: () =>
+      Promise.resolve({ isPosted: false, failure: 'not-connected', said: '' }),
     listMcpServers: () => Promise.resolve([{ id: 'figma', state: 'missing' }]),
     connectMcpServer: (signIn) =>
       Promise.resolve({ target: signIn.target, steps: ['check'], phase: 'connected' }),

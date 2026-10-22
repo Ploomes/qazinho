@@ -6,6 +6,7 @@ export type * from './AppToolCall';
 export type * from './BugComment';
 export type * from './BugFiling';
 export type * from './BugReportBlock';
+export type * from './BugReview';
 export type * from './BugVideo';
 export type * from './BuildFailure';
 export type * from './BuildPlatform';

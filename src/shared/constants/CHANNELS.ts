@@ -78,6 +78,8 @@ export const CHANNELS = {
   fileBug: 'bug:file',
   filingEvent: 'bug:filing',
   copyShot: 'shot:copy',
+  reviewBug: 'bug:review',
+  commentBug: 'bug:comment',
   askAssistant: 'assistant:ask',
   stopAssistant: 'assistant:stop',
   assistantEvent: 'assistant:event',

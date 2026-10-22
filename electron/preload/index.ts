@@ -1,6 +1,8 @@
 import type {
   AgentSignInProgress,
+  BugComment,
   BugFiling,
+  BugReview,
   ExportOutcome,
   GithubSignInProgress,
   IAgentEvent,
@@ -15,6 +17,7 @@ import type {
   IBuildEvent,
   IBuildResult,
   IChatTurn,
+  ICommentBug,
   IConnectIntegration,
   IConnectResult,
   IDetectedAgent,
@@ -35,6 +38,7 @@ import type {
   IRepositoryList,
   IRepositoryRef,
   IResourceSnapshot,
+  IReviewBug,
   IRunAlert,
   IRunEvent,
   IRunInFlight,
@@ -300,6 +304,10 @@ const api: IQazinhoApi = {
       ipcRenderer.off(CHANNELS.filingEvent, forward);
     };
   },
+  reviewBug: (request: IReviewBug) =>
+    ipcRenderer.invoke(CHANNELS.reviewBug, request) as Promise<BugReview>,
+  commentBug: (request: ICommentBug) =>
+    ipcRenderer.invoke(CHANNELS.commentBug, request) as Promise<BugComment>,
   listMcpServers: (agentId: string) =>
     ipcRenderer.invoke(CHANNELS.listMcpServers, agentId) as Promise<IMcpServerStatus[]>,
   connectMcpServer: (signIn: IMcpSignIn) =>

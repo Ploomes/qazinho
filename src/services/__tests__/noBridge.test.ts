@@ -207,6 +207,14 @@ describe('a page with no bridge', () => {
       false,
     );
     expect(await Jira.projects()).toEqual({ isListed: false, failure: 'unreachable' });
+    expect(
+      await Bugs.comment({
+        issue: { tracker: 'jira', key: 'SHOP-57', url: '', at: '' },
+        report: { title: '', blocks: [] },
+        shots: [],
+        video: null,
+      }),
+    ).toEqual({ isPosted: false, failure: 'not-connected', said: '' });
     expect(() => {
       Bugs.onFiling(() => undefined)();
     }).not.toThrow();
