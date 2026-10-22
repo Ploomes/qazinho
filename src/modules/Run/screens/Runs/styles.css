@@ -264,6 +264,66 @@
   font: var(--font-ui-sm);
 }
 
+.runs__asked {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-left: var(--space-4);
+  border-left: var(--edge-width) solid var(--attn);
+}
+
+.runs__asked-head {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+  letter-spacing: var(--tag-tracking);
+  text-transform: uppercase;
+}
+
+.runs__asked-mark {
+  display: inline-flex;
+  color: var(--attn);
+}
+
+.runs__asked-question {
+  color: var(--ink);
+  font: var(--font-ui-sm);
+  white-space: pre-wrap;
+}
+
+.runs__asked-answer {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}
+
+.runs__asked-answer--none {
+  color: var(--ink3);
+}
+
+.runs__asked-who {
+  flex: none;
+  color: var(--lime-ink);
+  font: var(--font-mono-sm);
+}
+
+.runs__asked-lock {
+  display: inline-flex;
+  flex: none;
+  align-self: center;
+  color: var(--lime-ink);
+}
+
+.runs__asked-said {
+  min-width: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .runs__bug {
   --bug-tone: var(--attn);
 

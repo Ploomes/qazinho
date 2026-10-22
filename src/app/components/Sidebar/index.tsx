@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Icon, PlatformIcon, Tag } from '@/shared/components/atoms';
-import { MOTION } from '@/shared/constants';
+import { STICKER } from '@/shared/constants';
 import { useSidebarViewModel } from './hooks';
 import './styles.css';
 
@@ -9,6 +9,7 @@ export const Sidebar: React.FC = () => {
   const {
     rows,
     waitingName,
+    onOpenWaiting,
     onSelectWorkspace,
     onNewWorkspace,
     onNewProject,
@@ -24,19 +25,25 @@ export const Sidebar: React.FC = () => {
     <nav className="sidebar">
       <AnimatePresence>
         {waitingName !== null && (
-          <motion.div
+          <motion.button
+            type="button"
             className="sidebar__banner"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+            initial={STICKER.panel.initial}
+            animate={STICKER.panel.animate}
+            exit={STICKER.panel.exit}
+            onClick={onOpenWaiting}
           >
             <span className="sidebar__banner-icon">
-              <Icon name="attention" />
+              <Icon name="ask" />
             </span>
-            <span className="sidebar__banner-name">{waitingName}</span>
-            <span className="sidebar__banner-text">{t('SIDEBAR.ASKED_YOU')}</span>
-          </motion.div>
+            <span className="sidebar__banner-text">
+              <span className="sidebar__banner-name">{waitingName}</span>
+              <span className="sidebar__banner-said">{t('SIDEBAR.ASKED_YOU')}</span>
+            </span>
+            <span className="sidebar__banner-go">
+              <Icon name="arrow" />
+            </span>
+          </motion.button>
         )}
       </AnimatePresence>
 

@@ -268,34 +268,71 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  width: calc(100% - var(--space-3) * 2);
   margin: var(--space-3);
   padding: var(--space-3) var(--space-4);
   border: var(--edge-width-lg) solid var(--edge);
   border-radius: var(--radius-lg);
   background: color-mix(in srgb, var(--attn) 18%, var(--raise));
   box-shadow: var(--sticker-rest);
-  animation: gc-in var(--dur) var(--ease);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .sidebar__banner {
-    animation: gc-stick 0.42s var(--ease) both;
+    transition:
+      translate var(--dur-fast) var(--ease),
+      rotate var(--dur-fast) var(--ease),
+      scale var(--dur-fast) var(--ease),
+      box-shadow var(--dur-fast) var(--ease);
+  }
+
+  .sidebar__banner:hover {
+    translate: 0 -2px;
+    rotate: var(--tilt-xs);
+    box-shadow: var(--sticker-lift);
+  }
+
+  .sidebar__banner:active {
+    translate: 0 1px;
+    scale: 0.98;
+    box-shadow: var(--sticker-press);
   }
 }
 
 .sidebar__banner-icon {
   display: inline-flex;
+  flex: none;
   color: var(--attn);
   font: 600 12px/1 var(--font-mono);
   animation: gc-blink 2.4s ease-in-out infinite;
 }
 
-.sidebar__banner-name {
-  color: var(--ink);
-  font: var(--font-ui-md);
+.sidebar__banner-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
 }
 
-.sidebar__banner-text {
+.sidebar__banner-name {
+  overflow: hidden;
+  color: var(--ink);
+  font: var(--font-ui-md);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar__banner-said {
   color: var(--ink2);
   font: var(--font-ui-xs);
+}
+
+.sidebar__banner-go {
+  display: inline-flex;
+  flex: none;
+  color: var(--ink2);
 }

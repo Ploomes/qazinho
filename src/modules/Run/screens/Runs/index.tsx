@@ -195,6 +195,35 @@ export const Runs: React.FC = () => {
                       )}
 
                       {step.hasNote && <span className="runs__why">{step.note}</span>}
+
+                      {step.asked.map((asked) => (
+                        <div key={asked.key} className="runs__asked">
+                          <span className="runs__asked-head">
+                            <span className="runs__asked-mark">
+                              <Icon name="ask" />
+                            </span>
+                            {t('RUN.STEP_ASKED')}
+                          </span>
+                          <span className="runs__asked-question">{asked.question}</span>
+                          <span
+                            className={
+                              asked.isAnswered
+                                ? 'runs__asked-answer'
+                                : 'runs__asked-answer runs__asked-answer--none'
+                            }
+                          >
+                            {asked.isAnswered && (
+                              <span className="runs__asked-who">{t('CHAT.YOU')}</span>
+                            )}
+                            {asked.isSecret && (
+                              <span className="runs__asked-lock">
+                                <Icon name="lock" />
+                              </span>
+                            )}
+                            <span className="runs__asked-said">{asked.answer}</span>
+                          </span>
+                        </div>
+                      ))}
                     </div>
 
                     <Screenshot

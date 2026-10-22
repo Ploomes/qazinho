@@ -141,6 +141,78 @@ describe('useRunsViewModel', () => {
     expect(result.current.cases.map(({ walk }) => walk)).toEqual([null, null]);
   });
 
+  it('puts what the agent asked the QA on the step it asked at, with the answer', () => {
+    const asked = finishedWorkspace();
+    const [run] = asked.runs;
+
+    useWorkspaceStore.setState({
+      workspaces: [
+        {
+          ...asked,
+          runs: run
+            ? [
+                {
+                  ...run,
+                  asked: [
+                    {
+                      id: 'q-1',
+                      question: 'Which plan should I pick?',
+                      caseId: 'TC-01',
+                      stepNumber: 2,
+                      answer: { kind: 'said', text: 'Premium+' },
+                      askedAtMs: 1,
+                      answeredAtMs: 2,
+                    },
+                    {
+                      id: 'q-2',
+                      question: 'What is the code?',
+                      caseId: 'TC-02',
+                      stepNumber: 1,
+                      answer: { kind: 'secret', name: 'OTP_CODE', isKept: false },
+                      askedAtMs: 3,
+                      answeredAtMs: 4,
+                    },
+                  ],
+                },
+              ]
+            : [],
+        },
+      ],
+    });
+
+    const { result } = renderHook(() => useRunsViewModel());
+    const steps = result.current.cases.flatMap((runCase) =>
+      runCase.steps.map((step) => ({ caseId: runCase.id, ...step })),
+    );
+
+    expect(
+      steps
+        .filter(({ asked }) => asked.length > 0)
+        .map(({ caseId, number, asked }) => [
+          caseId,
+          number,
+          asked.map(({ question, answer, isSecret }) => ({ question, answer, isSecret })),
+        ]),
+    ).toEqual([
+      [
+        'TC-01',
+        2,
+        [{ question: 'Which plan should I pick?', answer: 'Premium+', isSecret: false }],
+      ],
+      [
+        'TC-02',
+        1,
+        [
+          {
+            question: 'What is the code?',
+            answer: 'a secret, typed as ${OTP_CODE}',
+            isSecret: true,
+          },
+        ],
+      ],
+    ]);
+  });
+
   it('mutes a step that never ran, and keeps its note', () => {
     const { result } = renderHook(() => useRunsViewModel());
     const skipped = result.current.cases[1]?.steps.find(

@@ -3,8 +3,13 @@ import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useSidebarViewModel } from '@/app/components/Sidebar/hooks/useSidebarViewModel';
 import { suiteRun, suiteTest } from '@/modules/Automation/library/__tests__/fixtures';
-import { startRun } from '@/modules/Workspace/library';
-import { makeWorkspace, WALKED_BY } from '@/modules/Workspace/library/__tests__/fixtures';
+import { landAsked, startRun } from '@/modules/Workspace/library';
+import {
+  makeWorkspace,
+  QUESTION,
+  WALKED_BY,
+  walkRun,
+} from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAppStore, useSuiteStore, useWorkspaceStore } from '@/store';
 
@@ -209,14 +214,52 @@ describe('useSidebarViewModel', () => {
   });
 
   describe('waitingName', () => {
-    it('names the workspace that stopped to ask something', () => {
-      useWorkspaceStore.setState({
-        workspaces: [{ ...makeWorkspace(), status: 'attention', name: 'Onboarding' }],
-      });
+    const asking = () => ({
+      ...landAsked({
+        workspace: walkRun({ verdicts: ['passed'] }),
+        question: QUESTION,
+      }),
+      name: 'Onboarding',
+    });
+
+    it('names the workspace whose agent waits on a question', () => {
+      useWorkspaceStore.setState({ workspaces: [asking()] });
 
       const { result } = renderHook(() => useSidebarViewModel());
 
       expect(result.current.waitingName).toBe('Onboarding');
+    });
+
+    it('marks its row as needing the QA, over a run that goes or is paused', () => {
+      const waiting = asking();
+
+      useWorkspaceStore.setState({
+        workspaces: [
+          { ...waiting, live: waiting.live && { ...waiting.live, isRunning: false } },
+        ],
+      });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+      const row = result.current.rows.find(({ kind }) => kind === 'workspace');
+
+      expect(row).toMatchObject({
+        icon: 'attention',
+        statusLabel: 'needs you',
+        isWaiting: true,
+      });
+    });
+
+    it('opens the chat of the workspace that waits, where the question is', () => {
+      useWorkspaceStore.setState({ workspaces: [asking()], tab: 'runs' });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onOpenWaiting();
+      });
+
+      expect(useAppStore.getState().selectedWorkspaceId).toBe('w1');
+      expect(useWorkspaceStore.getState().tab).toBe('chat');
     });
 
     it('names nobody while no agent is waiting', () => {

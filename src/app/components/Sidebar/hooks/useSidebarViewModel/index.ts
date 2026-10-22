@@ -28,6 +28,7 @@ export const useSidebarViewModel = () => {
   const removingWorkspaceId = useWorkspaceStore((state) => state.removingWorkspaceId);
   const askRemoveWorkspace = useWorkspaceStore((state) => state.askRemoveWorkspace);
   const removeWorkspace = useWorkspaceStore((state) => state.removeWorkspace);
+  const selectTab = useWorkspaceStore((state) => state.selectTab);
 
   const suiteRowsOf = (projectId: string): ISidebarSuiteRow[] => {
     const suite = suites[projectId];
@@ -83,9 +84,13 @@ export const useSidebarViewModel = () => {
       .map((workspace) => ({
         workspace,
         shown:
-          workspace.live !== null && !workspace.live.isDone && !workspace.live.isRunning
-            ? ('paused' as const)
-            : workspace.status,
+          workspace.live === null || workspace.live.isDone
+            ? workspace.status
+            : workspace.live.question !== undefined
+              ? ('attention' as const)
+              : !workspace.live.isRunning
+                ? ('paused' as const)
+                : workspace.status,
       }))
       .map(({ workspace, shown }) => ({
         kind: 'workspace' as const,
@@ -102,7 +107,7 @@ export const useSidebarViewModel = () => {
         tone: SIDEBAR_STATUS[shown].tone,
         animation: SIDEBAR_STATUS[shown].animation,
         isSelected: workspace.id === selectedWorkspaceId,
-        isWaiting: workspace.status === 'attention',
+        isWaiting: shown === 'attention',
         isRemoving: workspace.id === removingWorkspaceId,
       })),
     ...suiteRowsOf(project.id),
@@ -110,7 +115,9 @@ export const useSidebarViewModel = () => {
   ]);
 
   const waiting =
-    workspaces.find((workspace) => workspace.status === 'attention') ?? null;
+    workspaces.find(
+      ({ live }) => live !== null && !live.isDone && live.question !== undefined,
+    ) ?? null;
 
   const onNewProject = useCallback(() => openModal('project'), [openModal]);
 
@@ -126,6 +133,12 @@ export const useSidebarViewModel = () => {
   return {
     rows,
     waitingName: waiting?.name ?? null,
+    onOpenWaiting: () => {
+      if (waiting === null) return;
+
+      selectWorkspace(waiting.id);
+      selectTab('chat');
+    },
     onSelectWorkspace: selectWorkspace,
     onNewWorkspace: openWorkspaceModal,
     onNewProject,

@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { startRun } from '@/modules/Workspace/library';
+import { landAsked, startRun } from '@/modules/Workspace/library';
 import {
   makeWorkspace,
+  QUESTION,
   WALKED_BY,
   walkRun,
 } from '@/modules/Workspace/library/__tests__/fixtures';
@@ -97,6 +98,48 @@ describe('useWorkspaceViewModel', () => {
 
     expect(result.current.liveStatus).toBe('paused');
     expect(result.current.statusLabel).toBe('paused · step 1 of 6');
+  });
+
+  it('says the run waits on the QA while its agent asks something, paused or not', () => {
+    const asking = landAsked({
+      workspace: startRun({
+        workspace: makeWorkspace(),
+        startedAt: '09:41',
+        runId: 'r-01',
+        by: WALKED_BY,
+      }),
+      question: QUESTION,
+    });
+
+    useWorkspaceStore.setState({
+      workspaces: [{ ...asking, live: { ...asking.live!, isRunning: false } }],
+    });
+
+    const { result } = renderHook(() => useWorkspaceViewModel());
+
+    expect(result.current.liveStatus).toBe('attention');
+    expect(result.current.statusLabel).toBe('waiting for you · step 1 of 6');
+  });
+
+  it('says an exploration waits on the QA while its agent asks something', () => {
+    useWorkspaceStore.setState({
+      workspaces: [
+        landAsked({
+          workspace: startRun({
+            workspace: makeWorkspace([]),
+            startedAt: '10:00',
+            runId: 'r-01',
+            by: WALKED_BY,
+            kind: 'explore',
+          }),
+          question: QUESTION,
+        }),
+      ],
+    });
+
+    expect(renderHook(() => useWorkspaceViewModel()).result.current.statusLabel).toBe(
+      'waiting for you · 0 screens',
+    );
   });
 
   /** The header read "step 0 of 1" while the first step ran. */

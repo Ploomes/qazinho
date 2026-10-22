@@ -19,6 +19,7 @@ export const useWorkspaceViewModel = () => {
     isExploring: opened.live?.kind === 'explore',
     isLive: opened.live !== null && !opened.live.isDone,
     isPaused: opened.live !== null && !opened.live.isRunning && !opened.live.isDone,
+    isAsking: opened.live?.question !== undefined && opened.live.isDone === false,
     hasPassed: opened.runs.some((run) =>
       run.cases.some(({ steps }) => caseVerdict(steps) === 'passed'),
     ),
@@ -30,6 +31,7 @@ export const useWorkspaceViewModel = () => {
 
   const isLive = workspace?.isLive === true;
   const isPaused = workspace?.isPaused === true;
+  const isAsking = workspace?.isAsking === true;
 
   return {
     hasWorkspace: workspace !== null,
@@ -37,20 +39,38 @@ export const useWorkspaceViewModel = () => {
     name: workspace?.name ?? '',
     issueKey: workspace?.issueKey ?? null,
     status: workspace?.status ?? 'idle',
-    liveStatus: isPaused ? ('paused' as const) : ('running' as const),
+    liveStatus: isAsking
+      ? ('attention' as const)
+      : isPaused
+        ? ('paused' as const)
+        : ('running' as const),
     statusLabel: !isLive
       ? null
       : workspace?.isExploring === true
-        ? t(isPaused ? 'WORKSPACE.PAUSED_EXPLORING' : 'WORKSPACE.LIVE_EXPLORING', {
-            screens:
-              workspace.walked === 1
-                ? t('CHAT.EXPLORE_SCREENS_ONE')
-                : t('CHAT.EXPLORE_SCREENS_OTHER', { count: workspace.walked }),
-          })
-        : t(isPaused ? 'WORKSPACE.PAUSED_STEP' : 'WORKSPACE.LIVE_STEP', {
-            current: Math.min((workspace?.walked ?? 0) + 1, workspace?.stepCount ?? 0),
-            total: workspace?.stepCount ?? 0,
-          }),
+        ? t(
+            isAsking
+              ? 'WORKSPACE.ASKED_EXPLORING'
+              : isPaused
+                ? 'WORKSPACE.PAUSED_EXPLORING'
+                : 'WORKSPACE.LIVE_EXPLORING',
+            {
+              screens:
+                workspace.walked === 1
+                  ? t('CHAT.EXPLORE_SCREENS_ONE')
+                  : t('CHAT.EXPLORE_SCREENS_OTHER', { count: workspace.walked }),
+            },
+          )
+        : t(
+            isAsking
+              ? 'WORKSPACE.ASKED_STEP'
+              : isPaused
+                ? 'WORKSPACE.PAUSED_STEP'
+                : 'WORKSPACE.LIVE_STEP',
+            {
+              current: Math.min((workspace?.walked ?? 0) + 1, workspace?.stepCount ?? 0),
+              total: workspace?.stepCount ?? 0,
+            },
+          ),
     planCount: workspace?.planCount ?? 0,
     runCount: workspace?.runCount ?? 0,
     bugCount: workspace?.bugCount ?? 0,

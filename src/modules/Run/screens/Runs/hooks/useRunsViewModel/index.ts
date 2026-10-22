@@ -9,6 +9,7 @@ import {
   RUN_VERDICTS,
 } from '@/modules/Run/constants';
 import {
+  answerLineOf,
   caseVerdict,
   caseWalkOf,
   filterCases,
@@ -208,6 +209,26 @@ export const useRunsViewModel = () => {
               ? t('RUN.PROOF', { proof: step.proof })
               : step.why,
           hasNote: (step.why !== null || step.by === 'replay') && bug === null,
+          asked: (run?.asked ?? [])
+            .filter(
+              ({ caseId, stepNumber }) =>
+                caseId === runCase.id && stepNumber === step.number,
+            )
+            .map((asked) => {
+              const line = answerLineOf(asked.answer);
+
+              return {
+                key: asked.id,
+                question: asked.question,
+                isAnswered:
+                  asked.answer.kind === 'said' || asked.answer.kind === 'secret',
+                isSecret: asked.answer.kind === 'secret',
+                answer:
+                  line.kind === 'words'
+                    ? line.text
+                    : t(line.key as never, { name: line.name }),
+              };
+            }),
           shotLabel: t('RUN.STEP_SHOT', { id: runCase.id, number: step.number }),
         };
       }),
