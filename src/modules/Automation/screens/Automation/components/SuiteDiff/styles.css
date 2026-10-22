@@ -1,0 +1,123 @@
+.suite-diff {
+  overflow: hidden;
+  border: 1px solid var(--line2);
+  border-radius: var(--radius-md);
+  background: var(--raise);
+}
+
+.suite-diff__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: none;
+  background: var(--raise2);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.suite-diff__head:hover {
+  background: var(--sel);
+}
+
+.suite-diff__status {
+  flex: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  font: var(--font-mono-xs);
+}
+
+.suite-diff__status--modified {
+  background: var(--attn-soft);
+  color: var(--attn);
+}
+
+.suite-diff__status--added {
+  background: var(--pass-soft);
+  color: var(--pass);
+}
+
+.suite-diff__status--deleted {
+  background: var(--fail-soft);
+  color: var(--fail);
+}
+
+.suite-diff__status--renamed {
+  background: var(--lime-soft);
+  color: var(--lime-ink);
+}
+
+.suite-diff__path {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font: var(--font-mono-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.suite-diff__added,
+.suite-diff__removed {
+  flex: none;
+  font: var(--font-mono-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.suite-diff__added {
+  color: var(--pass);
+}
+
+.suite-diff__removed {
+  color: var(--fail);
+}
+
+.suite-diff__fold {
+  overflow: hidden;
+}
+
+.suite-diff__lines {
+  display: grid;
+  grid-template-columns: minmax(100%, max-content);
+  padding: var(--space-2) 0;
+  overflow-x: auto;
+}
+
+.suite-diff__line {
+  display: grid;
+  grid-template-columns: var(--suite-diff-number) var(--suite-diff-number) auto;
+  font: var(--font-mono-sm);
+  line-height: 1.7;
+}
+
+.suite-diff__line--add {
+  background: var(--pass-soft);
+}
+
+.suite-diff__line--del {
+  background: var(--fail-soft);
+}
+
+.suite-diff__line--hunk {
+  color: var(--ink3);
+}
+
+.suite-diff__number {
+  padding-right: var(--space-3);
+  color: var(--ink3);
+  text-align: right;
+  user-select: none;
+}
+
+.suite-diff__text {
+  padding-right: var(--space-5);
+  color: var(--ink);
+  font: inherit;
+  white-space: pre;
+}
+
+.suite-diff__line--hunk .suite-diff__text {
+  color: var(--ink3);
+}
