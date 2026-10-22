@@ -47,6 +47,20 @@ process.stdin.on('end', async () => {
   const config = JSON.parse(argv[argv.indexOf('--mcp-config') + 1]);
   const client = new Client({ name: 'fake-agent', version: '1.0.0' });
   await client.connect(new StreamableHTTPClientTransport(new URL(config.mcpServers.qazinho.url)));
+  if (prompt.startsWith('Explore the app')) {
+    await client.callTool({ name: 'screen', arguments: { name: 'Checkout', about: 'Where the buyer pays.' } });
+    await client.callTool({ name: 'inspect', arguments: { target: 'Pay now' } });
+    await client.callTool({ name: 'bug', arguments: {
+      title: 'Pay now button: corners 8px, not 12px', severity: 'low',
+      expected: 'Corners 12px', got: 'Corners 8px', frame: '12:345',
+    } });
+    const finish = { summary: 'One screen, off the design.', cases: [{ title: 'Checkout matches the design', priority: 'P2', goal: 'The checkout is as designed.', preconditions: '', steps: [{ action: 'Open the checkout', expected: 'The Pay now button', frame: '12:345' }] }] };
+    const said = await client.callTool({ name: 'finish', arguments: finish });
+    if (said.content[0].text.includes('still left')) await client.callTool({ name: 'finish', arguments: finish });
+    await client.close();
+    console.log(JSON.stringify({ type: 'result', result: '', is_error: false, session_id: 's1', total_cost_usd: 0.01 }));
+    return;
+  }
   if (prompt.includes('Its screen should match Figma frame 12:345.')) {
     const measured = await client.callTool({ name: 'inspect', arguments: { target: 'Pay now' } });
     fs.writeFileSync(${JSON.stringify(folder)} + '/inspect', measured.content[0].text);
@@ -162,6 +176,84 @@ describe('a run against a Figma design', () => {
       title: 'Pay now button: corners 8px, not 12px',
       frame: '12:345',
     });
+
+    deviceTools.close();
+    site.close();
+  });
+
+  it('hands an exploration the QA’s Figma and the design, and files what is off it on its frame', async () => {
+    const site = createServer((_request, response) => {
+      response.writeHead(200, { 'content-type': 'text/html' });
+      response.end(
+        '<!doctype html><h1>Checkout</h1><button style="border-radius:8px">Pay now</button>',
+      );
+    });
+
+    await new Promise<void>((ready) => site.listen(PORT + 1, '127.0.0.1', ready));
+
+    const root = await mkdtemp(join(tmpdir(), 'qazinho-design-explore-'));
+    const folder = join(root, 'calls');
+    const agent = join(root, 'agent');
+
+    await writeFile(agent, DESIGNER(folder));
+    await chmod(agent, 0o755);
+    await mkdir(folder);
+    await mkdir(join(root, 'workspaces', 'w-design'), { recursive: true });
+
+    const events: IRunEvent[] = [];
+    const deviceTools = new McpHost();
+
+    await deviceTools.start();
+
+    const coordinator = new RunCoordinator({
+      runner: new AgentRunner({
+        owners: new ProcessOwners(),
+        folder: tmpdir(),
+        onEvent: () => undefined,
+      }),
+      findAndroid: async () => null,
+      findIos: async () => null,
+      findCommand: async () => agent,
+      live: new LiveStream(),
+      tools: deviceTools,
+      harness: new Harness(),
+      dataRoot: root,
+      onEvent: (event) => events.push(event),
+    });
+
+    await coordinator.start({
+      workspaceId: 'w-design',
+      agentId: 'claude-code',
+      model: '',
+      target: { kind: 'web', value: `http://127.0.0.1:${String(PORT + 1)}/` },
+      runId: 'r-02',
+      steps: [],
+      language: 'en',
+      mode: 'explore',
+      minutes: 10,
+      design: DESIGN,
+    });
+
+    const argv = JSON.parse(await readFile(join(folder, 'argv-0'), 'utf8')) as string[];
+    const servers = (
+      JSON.parse(argv[argv.indexOf('--mcp-config') + 1] ?? '{}') as {
+        mcpServers: Record<string, { url: string }>;
+      }
+    ).mcpServers;
+
+    expect(servers.figma?.url).toBe('https://mcp.figma.com/mcp');
+    expect(argv).toContain('mcp__figma__get_metadata');
+    expect(await readFile(join(folder, 'turn-0'), 'utf8')).toContain(
+      '(fileKey AbC123, node 1:2). Hold each screen it draws to its frame.',
+    );
+
+    const finding = events.find((event) => event.kind === 'finding');
+    const explored = events.find((event) => event.kind === 'explored');
+
+    expect(finding?.kind === 'finding' ? finding.finding.frame : null).toBe('12:345');
+    expect(
+      explored?.kind === 'explored' ? explored.cases[0]?.steps[0]?.frame : null,
+    ).toBe('12:345');
 
     deviceTools.close();
     site.close();
