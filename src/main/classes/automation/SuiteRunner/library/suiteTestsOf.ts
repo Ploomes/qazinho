@@ -19,7 +19,7 @@ function textsOf(props: { values: unknown[]; key: string }): string[] {
   });
 }
 
-/** The tests a Playwright JSON report lists, each with its file from the suite's folder, the describes around it and the projects it runs in; null for text that is not such a report. */
+/** The tests a Playwright JSON report lists, once for each project they run in, with their file from the suite's folder and the describes around them; null for text that is not such a report. */
 export function suiteTestsOf(props: {
   text: string;
   root: string;
@@ -57,9 +57,7 @@ export function suiteTestsOf(props: {
         path,
         title: spec.title,
         tags: listOf(spec.tags).filter((tag): tag is string => typeof tag === 'string'),
-        projects: [
-          ...new Set(textsOf({ values: listOf(spec.tests), key: 'projectName' })),
-        ],
+        project: textsOf({ values: listOf(spec.tests), key: 'projectName' })[0] ?? '',
       });
     }
 

@@ -56,7 +56,7 @@ const REPORT = {
               title: 'CT-NAV-002 · Cria pasta @altera-dados',
               line: 40,
               tags: ['altera-dados', 'lento'],
-              projects: ['salva-versao', 'salva-versao'],
+              projects: ['salva-versao'],
             }),
           ],
           suites: [],
@@ -90,15 +90,41 @@ describe('suiteTestsOf', () => {
     ]);
   });
 
-  it('keeps the tags and names each project a test runs in once', () => {
+  it('keeps the tags and the project a test runs in', () => {
     const [, , changing] =
       suiteTestsOf({ text: JSON.stringify(REPORT), root: '/qa/e2e' })?.tests ?? [];
 
     expect(changing).toMatchObject({
       title: 'CT-NAV-002 · Cria pasta @altera-dados',
       tags: ['altera-dados', 'lento'],
-      projects: ['salva-versao'],
+      project: 'salva-versao',
     });
+  });
+
+  /** Playwright lists a test once per project it runs in, each with an id of its own: the one its reporter hears. */
+  it('lists a test running in two projects twice, once in each', () => {
+    const both = {
+      ...REPORT,
+      suites: [
+        {
+          title: 'a.spec.ts',
+          specs: [
+            spec({ id: 'b-1', title: 'Same', line: 3, projects: ['chromium'] }),
+            spec({ id: 'b-2', title: 'Same', line: 3, projects: ['firefox'] }),
+          ],
+          suites: [],
+        },
+      ],
+    };
+
+    expect(
+      suiteTestsOf({ text: JSON.stringify(both), root: '/qa/e2e' })?.tests.map(
+        ({ id, project }) => ({ id, project }),
+      ),
+    ).toEqual([
+      { id: 'b-1', project: 'chromium' },
+      { id: 'b-2', project: 'firefox' },
+    ]);
   });
 
   it('names the projects in the order the config declares them', () => {
