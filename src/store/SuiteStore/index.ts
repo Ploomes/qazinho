@@ -9,6 +9,7 @@ export const useSuiteStore = create<ISuiteStore>((set) => ({
   runs: {},
   live: {},
   picked: {},
+  pickedChanges: {},
   changes: {},
   changeNotes: {},
 
@@ -79,7 +80,16 @@ export const useSuiteStore = create<ISuiteStore>((set) => ({
     }),
 
   pickTest: ({ projectId, testId }) =>
-    set((state) => ({ picked: { ...state.picked, [projectId]: testId } })),
+    set((state) => ({
+      picked: { ...state.picked, [projectId]: testId },
+      pickedChanges: { ...state.pickedChanges, [projectId]: null },
+    })),
+
+  pickChange: ({ projectId, changeId }) =>
+    set((state) => ({
+      picked: { ...state.picked, [projectId]: null },
+      pickedChanges: { ...state.pickedChanges, [projectId]: changeId },
+    })),
 
   drop: (projectId) =>
     set((state) => ({
@@ -89,5 +99,6 @@ export const useSuiteStore = create<ISuiteStore>((set) => ({
       live: withoutKey({ record: state.live, key: projectId }),
       picked: withoutKey({ record: state.picked, key: projectId }),
       changes: withoutKey({ record: state.changes, key: projectId }),
+      pickedChanges: withoutKey({ record: state.pickedChanges, key: projectId }),
     })),
 }));

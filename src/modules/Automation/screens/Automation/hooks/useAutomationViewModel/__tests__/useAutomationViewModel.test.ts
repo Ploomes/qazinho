@@ -22,6 +22,7 @@ import {
   useSettingsStore,
   useSetupStore,
   useSuiteStore,
+  useWorkspaceStore,
 } from '@/store';
 
 const SUITE: ISuite = {
@@ -109,9 +110,11 @@ beforeEach(() => {
     runs: {},
     live: {},
     picked: {},
+    pickedChanges: {},
     changes: {},
     changeNotes: {},
   });
+  useWorkspaceStore.setState({ workspaces: [] });
   useSettingsStore.setState({ agent: 'Claude Code', model: 'haiku', language: 'pt' });
   useMachineStore.setState({
     agents: [
@@ -660,6 +663,146 @@ describe('useAutomationViewModel', () => {
       });
 
       expect(result.current.review?.canOpenPullRequest).toBe(false);
+    });
+  });
+
+  describe('asking for a new test', () => {
+    const REQUEST = {
+      id: 'c-03',
+      projectId: 'p1',
+      startedAt: 3,
+      status: 'working',
+      step: 'agent',
+      files: [],
+      ask: { kind: 'write', text: 'The cart keeps its items.', folder: '', source: null },
+    } as unknown as ISuiteChange;
+
+    it("asks the agent with the QA's words, and picks the request", async () => {
+      const result = await listedView();
+
+      expect(result.current.writing).toBeNull();
+
+      act(() => {
+        result.current.onNewTest();
+      });
+
+      expect(result.current.writing?.folders.map(({ path }) => path)).toEqual([
+        'tests/hc-1',
+        'tests/hc-2',
+      ]);
+
+      act(() => {
+        result.current.writing?.onWrite({
+          text: 'The cart keeps its items.',
+          folder: 'tests/hc-1',
+          source: null,
+        });
+      });
+
+      expect(fixes).toEqual([
+        expect.objectContaining({
+          changeId: 'c-01',
+          ask: {
+            kind: 'write',
+            text: 'The cart keeps its items.',
+            folder: 'tests/hc-1',
+            source: null,
+          },
+        }),
+      ]);
+      expect(result.current.writing).toBeNull();
+      expect(useSuiteStore.getState().pickedChanges.p1).toBe('c-01');
+    });
+
+    it("offers the plan cases of the project's workspaces", async () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            projectId: 'p1',
+            name: 'Checkout',
+            plan: [
+              {
+                id: 'TC-01',
+                title: 'Pays',
+                priority: 'P1',
+                goal: 'It pays.',
+                preconditions: '',
+                steps: [{ action: 'Pay.', expected: 'Paid.' }],
+                lastVerdict: null,
+              },
+            ],
+          },
+          { projectId: 'p9', name: 'Elsewhere', plan: [{ id: 'TC-09' }] },
+        ] as never,
+      });
+
+      const result = await listedView();
+
+      act(() => {
+        result.current.onNewTest();
+      });
+
+      expect(result.current.writing?.cases).toEqual([
+        {
+          workspace: 'Checkout',
+          id: 'TC-01',
+          title: 'Pays',
+          goal: 'It pays.',
+          preconditions: '',
+          steps: [{ action: 'Pay.', expected: 'Paid.' }],
+        },
+      ]);
+    });
+
+    it('shows a request picked in the pane, in place of a test, and tries it again', async () => {
+      useSuiteStore.setState({
+        changes: { p1: [{ ...REQUEST, status: 'gave-up', step: null }] },
+      });
+
+      const result = await listedView();
+
+      act(() => {
+        result.current.tree.onPick('cart');
+      });
+      act(() => {
+        result.current.requests.onPick('c-03');
+      });
+
+      expect(result.current).toMatchObject({
+        pane: null,
+        requestPane: { change: { id: 'c-03' } },
+        requests: { pickedId: 'c-03' },
+      });
+
+      act(() => {
+        result.current.requestPane?.onRetry();
+      });
+
+      expect(fixes).toEqual([
+        expect.objectContaining({ changeId: 'c-04', ask: REQUEST.ask }),
+      ]);
+      expect(useSuiteStore.getState().pickedChanges.p1).toBe('c-04');
+    });
+
+    it('does NOT ask while the agent already changes the suite, and says why', async () => {
+      useSuiteStore.setState({ changes: { p1: [REQUEST] } });
+
+      const result = await listedView();
+
+      act(() => {
+        result.current.onNewTest();
+      });
+
+      expect(result.current.writing).toMatchObject({
+        canWrite: false,
+        note: 'The agent is already changing this suite.',
+      });
+
+      act(() => {
+        result.current.writing?.onWrite({ text: 'x', folder: '', source: null });
+      });
+
+      expect(fixes).toEqual([]);
     });
   });
 });

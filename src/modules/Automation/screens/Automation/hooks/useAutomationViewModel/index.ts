@@ -1,4 +1,9 @@
-import type { SuiteResultState, SuiteScope } from '@/modules/Automation/types';
+import type {
+  ISuitePlanCase,
+  SuiteChangeAsk,
+  SuiteResultState,
+  SuiteScope,
+} from '@/modules/Automation/types';
 import type { ChangeEvent, CSSProperties } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +22,8 @@ import {
   lastResultsOf,
   nextChangeId,
   nextSuiteRunId,
+  planCaseOf,
+  requestsOf,
   resultStateOf,
   scopeTestsOf,
   suiteTreeOf,
@@ -30,6 +37,7 @@ import {
   useSettingsStore,
   useSetupStore,
   useSuiteStore,
+  useWorkspaceStore,
 } from '@/store';
 
 export const useAutomationViewModel = () => {
@@ -48,6 +56,9 @@ export const useAutomationViewModel = () => {
     (state) => state.changes[projectId] ?? EMPTY_SUITE_CHANGES,
   );
   const changeNotes = useSuiteStore((state) => state.changeNotes);
+  const pickedChangeId = useSuiteStore((state) => state.pickedChanges[projectId] ?? null);
+  const pickChange = useSuiteStore((state) => state.pickChange);
+  const workspaces = useWorkspaceStore((state) => state.workspaces);
   const agent = useSettingsStore((state) => state.agent);
   const agentId = useMachineStore(
     (state) =>
@@ -64,6 +75,7 @@ export const useAutomationViewModel = () => {
   const [isRefused, setRefused] = useState(false);
   const [isReloading, setReloading] = useState(false);
   const [reviewingId, setReviewingId] = useState<string | null>(null);
+  const [isWriting, setWriting] = useState(false);
 
   useEffect(() => {
     if (projectId === '' || suite === null || list !== null) return;
@@ -103,28 +115,42 @@ export const useAutomationViewModel = () => {
   const isChanging = changes.some(({ status }) => status === 'working');
   const hasGit = suite !== null && suite.branch !== null;
   const reviewing =
-    changes.find(({ id, status }) => id === reviewingId && status === 'ready') ?? null;
-  const fix = () => {
-    if (
-      picked === null ||
-      lastOfPicked === undefined ||
-      agentId === null ||
-      isChanging ||
-      !hasGit
-    )
-      return;
+    changes.find(
+      ({ id, status, files }) =>
+        id === reviewingId &&
+        (status === 'ready' || (status === 'app-bug' && files.length > 0)),
+    ) ?? null;
+  const requests = requestsOf(changes);
+  const request = requests.find(({ id }) => id === pickedChangeId) ?? null;
+  const canChange = hasGit && agentId !== null && !isChanging;
+  const changeNote = !hasGit
+    ? t('AUTOMATION.WRITE_NO_GIT')
+    : agentId === null
+      ? t('AUTOMATION.FIX_NO_AGENT')
+      : isChanging
+        ? t('AUTOMATION.FIX_BUSY')
+        : '';
+  const ask = (asked: SuiteChangeAsk): string | null => {
+    if (agentId === null || !canChange) return null;
 
     const { model, language } = useSettingsStore.getState();
+    const changeId = nextChangeId(changes);
 
     void Suites.change({
       projectId,
-      changeId: nextChangeId(changes),
+      changeId,
       agentId,
       model,
       language,
       projects,
-      ask: { kind: 'fix', test: picked, runId: lastOfPicked.runId },
+      ask: asked,
     });
+
+    return changeId;
+  };
+  const fix = () => {
+    if (picked !== null && lastOfPicked !== undefined)
+      ask({ kind: 'fix', test: picked, runId: lastOfPicked.runId });
   };
   const start = (scope: SuiteScope) => {
     const batches = batchesOf({ tests, projects, scope });
@@ -331,7 +357,7 @@ export const useAutomationViewModel = () => {
     },
     pick: { title: t('AUTOMATION.PICK'), text: t('AUTOMATION.PICK_TEXT') },
     pane:
-      picked === null
+      picked === null || request !== null
         ? null
         : {
             key: picked.id,
@@ -372,6 +398,68 @@ export const useAutomationViewModel = () => {
             onDiscard: () => {
               if (change !== null)
                 void Suites.discard({ projectId, changeId: change.id });
+            },
+          },
+    newTestLabel: t('AUTOMATION.NEW_TEST'),
+    canAskNewTest: version !== null && list?.kind === 'listed',
+    onNewTest: () => {
+      setWriting(true);
+    },
+    writing: !isWriting
+      ? null
+      : {
+          folders: suiteTreeOf({ tests, query: '' }),
+          cases: workspaces
+            .filter((workspace) => workspace.projectId === projectId)
+            .flatMap((workspace) =>
+              workspace.plan.map((testCase) =>
+                planCaseOf({ workspace: workspace.name, testCase }),
+              ),
+            ),
+          canWrite: canChange,
+          note: changeNote,
+          onWrite: (asked: {
+            text: string;
+            folder: string;
+            source: ISuitePlanCase | null;
+          }) => {
+            const changeId = ask({ kind: 'write', ...asked });
+
+            if (changeId !== null) pickChange({ projectId, changeId });
+
+            setWriting(false);
+          },
+          onClose: () => {
+            setWriting(false);
+          },
+        },
+    requests: {
+      requests,
+      pickedId: request?.id ?? null,
+      onPick: (changeId: string) => {
+        pickChange({ projectId, changeId });
+      },
+    },
+    requestPane:
+      request === null
+        ? null
+        : {
+            change: request,
+            notes: changeNotes[request.id] ?? EMPTY_CHANGE_NOTES,
+            agent,
+            onStop: () => {
+              Suites.stopChange(request.id);
+            },
+            onReview: () => {
+              setReviewingId(request.id);
+            },
+            onDiscard: () => {
+              void Suites.discard({ projectId, changeId: request.id });
+            },
+            onRetry: () => {
+              const changeId = ask(request.ask);
+
+              if (changeId !== null) pickChange({ projectId, changeId });
             },
           },
     review:

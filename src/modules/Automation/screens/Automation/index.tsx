@@ -1,6 +1,13 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { Button, EmptyState, Eyebrow, Icon, IconButton } from '@/shared/components/atoms';
-import { SuiteChangeReview, SuiteTestPane, SuiteTree } from './components';
+import {
+  SuiteChangeReview,
+  SuiteRequestPane,
+  SuiteRequests,
+  SuiteTestPane,
+  SuiteTree,
+  SuiteWriteModal,
+} from './components';
 import { useAutomationViewModel } from './hooks';
 import './styles.css';
 
@@ -52,6 +59,12 @@ export const Automation: React.FC = () => {
     pane,
     review,
     onCloseReview,
+    newTestLabel,
+    canAskNewTest,
+    onNewTest,
+    writing,
+    requests,
+    requestPane,
   } = useAutomationViewModel();
 
   if (!hasProject) return null;
@@ -108,6 +121,14 @@ export const Automation: React.FC = () => {
             </Button>
           ) : (
             <>
+              {canAskNewTest && (
+                <Button variant="ghost" onClick={onNewTest}>
+                  <span className="automation__new-test">
+                    <Icon name="sparkle" />
+                  </span>
+                  {newTestLabel}
+                </Button>
+              )}
               {hasFailed && (
                 <Button disabled={!canRun} onClick={onRunFailed}>
                   {runFailedLabel}
@@ -189,6 +210,12 @@ export const Automation: React.FC = () => {
 
       <div className="automation__body">
         <div className="automation__tree">
+          <SuiteRequests
+            requests={requests.requests}
+            pickedId={requests.pickedId}
+            onPick={requests.onPick}
+          />
+
           <AnimatePresence initial={false}>
             {isListing && (
               <motion.p
@@ -246,7 +273,17 @@ export const Automation: React.FC = () => {
         </div>
 
         <div className="automation__pane">
-          {pane === null ? (
+          {requestPane !== null ? (
+            <SuiteRequestPane
+              change={requestPane.change}
+              notes={requestPane.notes}
+              agent={requestPane.agent}
+              onStop={requestPane.onStop}
+              onReview={requestPane.onReview}
+              onDiscard={requestPane.onDiscard}
+              onRetry={requestPane.onRetry}
+            />
+          ) : pane === null ? (
             <EmptyState mood="thinking" title={pick.title} body={pick.text} />
           ) : (
             <SuiteTestPane
@@ -279,6 +316,17 @@ export const Automation: React.FC = () => {
             change={review.change}
             canOpenPullRequest={review.canOpenPullRequest}
             onClose={onCloseReview}
+          />
+        )}
+        {writing !== null && (
+          <SuiteWriteModal
+            key="write"
+            folders={writing.folders}
+            cases={writing.cases}
+            canWrite={writing.canWrite}
+            note={writing.note}
+            onWrite={writing.onWrite}
+            onClose={writing.onClose}
           />
         )}
       </AnimatePresence>
