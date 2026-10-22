@@ -41,6 +41,15 @@ describe('markdownOfReport', () => {
     );
   });
 
+  it('writes a list as dashes', () => {
+    expect(
+      markdownOfReport({
+        title: 'x',
+        blocks: [{ kind: 'list', items: ['On Android', 'At 390 × 844'] }],
+      }),
+    ).toBe('- On Android\n- At 390 × 844');
+  });
+
   it('keeps a backtick inside an address as code', () => {
     expect(
       markdownOfReport({

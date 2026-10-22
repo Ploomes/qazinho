@@ -2,6 +2,7 @@ export * from './adfOfReport';
 export * from './adfToMarkdown';
 export * from './bugTypeOf';
 export * from './jiraFailureOf';
+export * from './jiraIssueOf';
 export * from './jiraProjectsOf';
 export * from './jiraSaidOf';
 export * from './jiraStoryOf';

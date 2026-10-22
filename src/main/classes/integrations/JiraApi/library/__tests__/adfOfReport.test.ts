@@ -124,6 +124,25 @@ describe('adfOfReport', () => {
     ]);
   });
 
+  it('writes a list as bullets', () => {
+    expect(
+      adfOfReport({ title: 'x', blocks: [{ kind: 'list', items: ['On Android', ''] }] })
+        .content,
+    ).toEqual([
+      {
+        type: 'bulletList',
+        content: [
+          {
+            type: 'listItem',
+            content: [
+              { type: 'paragraph', content: [{ type: 'text', text: 'On Android' }] },
+            ],
+          },
+        ],
+      },
+    ]);
+  });
+
   it('leaves out what is empty: Jira refuses a document with an empty text', () => {
     expect(
       adfOfReport({

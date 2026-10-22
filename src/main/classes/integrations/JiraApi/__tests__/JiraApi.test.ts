@@ -333,4 +333,59 @@ describe('JiraApi', () => {
       expect(await api({}).jira.relate({ key: 'SHOP-57', to: 'SHOP-12' })).toBe(false);
     });
   });
+
+  describe('issue and comment', () => {
+    it('reads the issue with its status and comments, the way a review needs it', async () => {
+      const { jira, asked } = api({
+        '/rest/api/3/issue/SHOP-57?fields=summary,description,status,comment': {
+          status: 200,
+          body: {
+            key: 'SHOP-57',
+            fields: {
+              summary: 'Coupon',
+              status: { name: 'Done', statusCategory: { key: 'done' } },
+            },
+          },
+        },
+      });
+
+      expect(await jira.issue('SHOP-57')).toMatchObject({
+        isRead: true,
+        issue: { key: 'SHOP-57', isClosed: true },
+      });
+      expect(asked[0]?.method).toBe('GET');
+      expect(await api({}).jira.issue('SHOP-99')).toMatchObject({
+        isRead: false,
+        failure: 'not-found',
+      });
+    });
+
+    it('comments under the issue and points at the comment', async () => {
+      const { jira, asked } = api({
+        '/rest/api/3/issue/SHOP-57/comment': { status: 201, body: { id: '10100' } },
+      });
+
+      expect(
+        await jira.comment({
+          key: 'SHOP-57',
+          report: { title: '', blocks: [{ kind: 'paragraph', text: 'Seen again.' }] },
+        }),
+      ).toEqual({
+        isPosted: true,
+        url: `${SITE}/browse/SHOP-57?focusedCommentId=10100`,
+        missed: [],
+      });
+      expect(
+        JSON.parse(typeof asked[0]?.body === 'string' ? asked[0].body : 'null'),
+      ).toEqual({
+        body: {
+          type: 'doc',
+          version: 1,
+          content: [
+            { type: 'paragraph', content: [{ type: 'text', text: 'Seen again.' }] },
+          ],
+        },
+      });
+    });
+  });
 });

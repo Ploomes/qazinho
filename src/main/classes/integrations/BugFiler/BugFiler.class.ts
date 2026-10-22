@@ -1,20 +1,32 @@
 import type { IBugFiler, IEvidenceFile, IGithubFiling, IJiraFiling } from './types';
 import type {
+  BugComment,
   BugFiling,
   BugVideo,
+  FilingFailure,
   FilingStep,
+  ICommentBug,
   IEvidenceShot,
   IFileBug,
+  IFiledIssue,
   IFilingEvent,
   IRunRef,
+  ITrackerIssue,
 } from '@/shared/types';
 import { readFile, stat } from 'node:fs/promises';
 import { extname } from 'node:path';
 import { fileNameOf, imageExtensionOf } from '@/main/library';
 import { BUG_FILING } from './constants';
-import { filingFailureOf, githubIssueOf, markdownOfReport } from './library';
+import {
+  filingFailureOf,
+  githubIssueOf,
+  githubIssuePathOf,
+  githubTrackerIssueOf,
+  htmlUrlOf,
+  markdownOfReport,
+} from './library';
 
-/** Files the QA's bug in their tracker: a Jira issue with its screens and video attached and linked to its story, or a GitHub issue through the QA's gh. */
+/** Files the QA's bug in their tracker, and adds to its issue later: a Jira issue with its screens and video attached and linked to its story, or a GitHub issue through the QA's gh. */
 export class BugFiler {
   private readonly jira: IJiraFiling;
   private readonly github: IGithubFiling;
@@ -39,6 +51,85 @@ export class BugFiler {
     return target.tracker === 'jira'
       ? this.toJira({ request, project: target.project })
       : this.toGithub({ request, repository: `${target.owner}/${target.name}` });
+  }
+
+  /** A filed bug's issue as its tracker keeps it now, for the agent to weigh what came back against; or why it could not be read, in the tracker's words. */
+  public async read(
+    issue: IFiledIssue,
+  ): Promise<
+    | { isRead: true; issue: ITrackerIssue }
+    | { isRead: false; failure: FilingFailure; said: string }
+  > {
+    if (issue.tracker === 'jira') return this.jira.issue(issue.key);
+
+    const path = githubIssuePathOf(issue.url);
+
+    if (path === null) return { isRead: false, failure: 'not-found', said: '' };
+
+    const [read, comments] = await Promise.all([
+      this.github.api({ path }),
+      this.github.api({ path: `${path}/comments` }),
+    ]);
+
+    if (!read.isOk)
+      return { isRead: false, failure: filingFailureOf(read), said: read.said };
+
+    const found = githubTrackerIssueOf({
+      issue: read.text,
+      comments: comments.isOk ? comments.text : '[]',
+    });
+
+    return found === null
+      ? { isRead: false, failure: 'unexpected', said: '' }
+      : { isRead: true, issue: found };
+  }
+
+  /** Posts an update under a bug's issue: a Jira comment with the new screens and video attached to the issue, or a GitHub comment through gh. */
+  public async comment(request: ICommentBug): Promise<BugComment> {
+    const { issue } = request;
+
+    if (issue.tracker === 'github') {
+      const path = githubIssuePathOf(issue.url);
+
+      if (path === null) return { isPosted: false, failure: 'not-found', said: '' };
+
+      const posted = await this.github.api({
+        path: `${path}/comments`,
+        method: 'POST',
+        fields: { body: markdownOfReport(request.report) },
+      });
+
+      if (!posted.isOk)
+        return { isPosted: false, failure: filingFailureOf(posted), said: posted.said };
+
+      return {
+        isPosted: true,
+        url: htmlUrlOf(posted.text) ?? issue.url,
+        missed: [],
+      };
+    }
+
+    const commented = await this.jira.comment({ key: issue.key, report: request.report });
+
+    if (!commented.isPosted) return commented;
+
+    const missed: string[] = [];
+
+    for (const shot of request.shots) {
+      const file = await this.shotFileOf(shot);
+
+      if (file === null || !(await this.jira.attach({ key: issue.key, ...file })))
+        missed.push(file?.name ?? shot.name);
+    }
+
+    if (request.video !== null) {
+      const file = await this.videoFileOf(request.video);
+
+      if (file === null || !(await this.jira.attach({ key: issue.key, ...file })))
+        missed.push(file?.name ?? request.video.name);
+    }
+
+    return { ...commented, missed };
   }
 
   private async toJira(props: {

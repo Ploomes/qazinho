@@ -14,6 +14,10 @@ function markdownOf(block: BugReportBlock): string[] {
       return block.text.trim() === '' ? [] : [`### ${block.text.trim()}`];
     case 'paragraph':
       return block.text.trim() === '' ? [] : [block.text.trim().replace(/\n/g, '  \n')];
+    case 'list':
+      return block.items.length === 0
+        ? []
+        : [block.items.map((item) => `- ${item}`).join('\n')];
     case 'steps':
       return block.items.length === 0
         ? []

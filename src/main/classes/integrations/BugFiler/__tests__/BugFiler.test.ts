@@ -22,10 +22,12 @@ function fakeJira(
 ) {
   const attached: { key: string; name: string; type: string; size: number }[] = [];
   const related: { key: string; to: string }[] = [];
+  const commented: { key: string; report: { blocks: unknown[] } }[] = [];
 
   return {
     attached,
     related,
+    commented,
     jira: {
       fileBug: () =>
         Promise.resolve(
@@ -51,6 +53,28 @@ function fakeJira(
         related.push(link);
 
         return Promise.resolve(props.links ?? true);
+      },
+      issue: (key: string) =>
+        Promise.resolve({
+          isRead: true as const,
+          issue: {
+            key,
+            title: 'Coupon refused',
+            url: `https://acme.atlassian.net/browse/${key}`,
+            status: 'Done',
+            isClosed: true,
+            body: 'SAVE10 is refused.',
+            comments: [],
+          },
+        }),
+      comment: (posted: { key: string; report: { blocks: unknown[] } }) => {
+        commented.push(posted);
+
+        return Promise.resolve({
+          isPosted: true as const,
+          url: `https://acme.atlassian.net/browse/${posted.key}?focusedCommentId=1`,
+          missed: [],
+        });
       },
     },
   };
@@ -298,6 +322,103 @@ describe('BugFiler', () => {
         isFiled: false,
         failure: 'rejected',
         said: 'gh: Issues are disabled for this repo (HTTP 410)',
+      });
+    });
+  });
+
+  describe('updating an issue', () => {
+    const JIRA_ISSUE = {
+      tracker: 'jira' as const,
+      key: 'SHOP-57',
+      url: 'https://acme.atlassian.net/browse/SHOP-57',
+      at: AT.toISOString(),
+    };
+    const GITHUB_ISSUE = {
+      tracker: 'github' as const,
+      key: '#42',
+      url: 'https://github.com/acme/shop/issues/42',
+      at: AT.toISOString(),
+    };
+
+    it('reads a Jira issue as Jira keeps it, and a GitHub one with its comments', async () => {
+      expect(await filer({}).filer.read(JIRA_ISSUE)).toMatchObject({
+        isRead: true,
+        issue: { key: 'SHOP-57', isClosed: true },
+      });
+
+      const gh = fakeGh({
+        'repos/acme/shop/issues/42': {
+          isOk: true,
+          text: JSON.stringify({
+            number: 42,
+            title: 'Coupon',
+            state: 'open',
+            body: 'Drops.',
+          }),
+        },
+        'repos/acme/shop/issues/42/comments': {
+          isOk: true,
+          text: JSON.stringify([
+            { user: { login: 'bia' }, created_at: '', body: 'Mobile?' },
+          ]),
+        },
+      });
+
+      expect(await filer({ github: gh.github }).filer.read(GITHUB_ISSUE)).toMatchObject({
+        isRead: true,
+        issue: {
+          key: '#42',
+          isClosed: false,
+          comments: [{ author: 'bia', text: 'Mobile?' }],
+        },
+      });
+    });
+
+    it('comments on Jira and attaches the new screen to the issue', async () => {
+      const jira = fakeJira();
+
+      expect(
+        await filer({ jira: jira.jira }).filer.comment({
+          issue: JIRA_ISSUE,
+          report: REPORT,
+          shots: [{ name: 'BUG-02 r-05', file: 'broke', src: null }],
+          video: null,
+        }),
+      ).toEqual({
+        isPosted: true,
+        url: 'https://acme.atlassian.net/browse/SHOP-57?focusedCommentId=1',
+        missed: [],
+      });
+      expect(jira.commented.map(({ key }) => key)).toEqual(['SHOP-57']);
+      expect(jira.attached.map(({ name }) => name)).toEqual(['BUG-02 r-05.png']);
+    });
+
+    it('comments on GitHub through gh, in Markdown', async () => {
+      const gh = fakeGh({
+        'repos/acme/shop/issues/42/comments': {
+          isOk: true,
+          text: JSON.stringify({
+            html_url: 'https://github.com/acme/shop/issues/42#issuecomment-9',
+          }),
+        },
+      });
+
+      expect(
+        await filer({ github: gh.github }).filer.comment({
+          issue: GITHUB_ISSUE,
+          report: REPORT,
+          shots: [],
+          video: null,
+        }),
+      ).toEqual({
+        isPosted: true,
+        url: 'https://github.com/acme/shop/issues/42#issuecomment-9',
+        missed: [],
+      });
+      expect(gh.asked.at(-1)).toEqual({
+        path: 'repos/acme/shop/issues/42/comments',
+        method: 'POST',
+        fields: { body: 'SAVE10 is refused.' },
       });
     });
   });

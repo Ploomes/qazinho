@@ -48,6 +48,11 @@ function nodesOf(block: BugReportBlock): IAdfNode[] {
         : [{ type: 'heading', attrs: { level: 3 }, content: text({ text: block.text }) }];
     case 'paragraph':
       return block.text.trim() === '' ? [] : [paragraph(lines(block.text))];
+    case 'list':
+      return list({
+        type: 'bulletList',
+        items: block.items.map((item) => text({ text: item })),
+      });
     case 'steps':
       return list({
         type: 'orderedList',

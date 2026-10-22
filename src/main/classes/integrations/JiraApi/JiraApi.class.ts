@@ -1,9 +1,11 @@
 import type { IJiraApi, JiraAnswer, JiraFetcher, JiraFiled } from './types';
 import type { IJiraCredentials } from '@/main/types';
 import type {
+  BugComment,
   IBugReport,
   IJiraIssueRef,
   IJiraStory,
+  ITrackerIssue,
   JiraFailure,
   JiraIssueList,
   JiraProjectList,
@@ -14,6 +16,7 @@ import {
   adfOfReport,
   bugTypeOf,
   jiraFailureOf,
+  jiraIssueOf,
   jiraProjectsOf,
   jiraSaidOf,
   jiraStoryOf,
@@ -191,6 +194,57 @@ export class JiraApi {
     return typeof key === 'string'
       ? { isFiled: true, key, url: `${signed.site}/browse/${key}` }
       : { isFiled: false, failure: 'unexpected', said: '' };
+  }
+
+  /** An issue as Jira keeps it now, with its status and the team's latest comments, or why Jira did not hand it over. */
+  public async issue(
+    key: string,
+  ): Promise<
+    | { isRead: true; issue: ITrackerIssue }
+    | { isRead: false; failure: JiraFailure; said: string }
+  > {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isRead: false, failure: 'not-connected', said: '' };
+
+    const answer = await this.request({
+      signed,
+      path: `/rest/api/3/issue/${encodeURIComponent(key)}?fields=summary,description,status,comment`,
+    });
+
+    if (!answer.isOk)
+      return { isRead: false, failure: answer.failure, said: answer.said };
+
+    const issue = jiraIssueOf({ issue: answer.body, site: signed.site });
+
+    return issue === null
+      ? { isRead: false, failure: 'unexpected', said: '' }
+      : { isRead: true, issue };
+  }
+
+  /** Adds a comment under an issue, written from a report's blocks: where it sits, or why Jira refused it. */
+  public async comment(props: { key: string; report: IBugReport }): Promise<BugComment> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isPosted: false, failure: 'not-connected', said: '' };
+
+    const answer = await this.request({
+      signed,
+      path: `/rest/api/3/issue/${encodeURIComponent(props.key)}/comment`,
+      method: 'POST',
+      json: { body: adfOfReport(props.report) },
+    });
+
+    if (!answer.isOk)
+      return { isPosted: false, failure: answer.failure, said: answer.said };
+
+    const id = (answer.body as { id?: unknown } | null)?.id;
+
+    return {
+      isPosted: true,
+      url: `${signed.site}/browse/${props.key}${typeof id === 'string' ? `?focusedCommentId=${id}` : ''}`,
+      missed: [],
+    };
   }
 
   /** Attaches one file to an issue; false when Jira did not take it. */
