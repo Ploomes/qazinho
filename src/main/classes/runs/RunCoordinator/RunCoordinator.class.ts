@@ -880,6 +880,7 @@ export class RunCoordinator {
     if (mcpConfig === null)
       throw new Error('The device tools are not up, so the agent cannot act.');
 
+    const design = this.harness.designAccess(run.design ?? null);
     const attached: IAttachDevice = {
       workspaceId,
       driver: device,
@@ -909,13 +910,18 @@ export class RunCoordinator {
         language: run.language,
         minutes,
       }),
-      mcpConfig,
-      allowedTools: this.harness.toolsFor('explorer').allowedTools,
+      mcpConfig:
+        mcpConfigWith({ config: mcpConfig, servers: design.servers }) ?? mcpConfig,
+      allowedTools: [
+        ...this.harness.toolsFor('explorer').allowedTools,
+        ...design.allowedTools,
+      ],
       prompt: this.harness.startExploring({
         minutes,
         screen,
         variables: run.values.map(({ name, description }) => ({ name, description })),
         known: run.bugs ?? [],
+        design: run.design ?? null,
       }),
     });
     const cost = asking.then(

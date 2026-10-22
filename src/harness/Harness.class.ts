@@ -339,6 +339,7 @@ export class Harness {
     screen: string;
     variables: IVariableBrief[];
     known: IKnownBug[];
+    design: IDesignLink | null;
   }): string {
     return describeExploration(props);
   }

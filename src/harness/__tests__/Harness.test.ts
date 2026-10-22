@@ -446,6 +446,7 @@ describe('Harness', () => {
               isIncidental: true,
             },
           ],
+          design: null,
         }),
       ).toMatchFileSnapshot('./__prompts__/explore.txt');
     });
