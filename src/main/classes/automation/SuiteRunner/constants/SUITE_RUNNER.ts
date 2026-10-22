@@ -3,6 +3,7 @@ export const SUITE_RUNNER = {
   runFile: 'run.json',
   runs: 'runs',
   output: 'output',
+  checkId: 'check',
   listTimeoutMs: 120_000,
   stopGraceMs: 4_000,
   saidChars: 1_200,

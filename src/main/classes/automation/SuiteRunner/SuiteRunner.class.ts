@@ -1,4 +1,4 @@
-import type { ISuiteJob, ISuiteRunner, SuiteReport } from './types';
+import type { ISuiteCheck, ISuiteJob, ISuiteRunner, SuiteReport } from './types';
 import type { SuiteRegistry } from '@/main/classes/automation/SuiteRegistry';
 import type {
   IStartSuiteRun,
@@ -15,6 +15,7 @@ import { isAbsolute, join, relative } from 'node:path';
 import { createInterface } from 'node:readline';
 import { killTree } from '@/main/classes/agents/AgentRunner/library';
 import { hiddenValues } from '@/main/classes/runs/RunCoordinator/library/hiddenValues';
+import { isInside } from '@/main/classes/storage/Archive/library';
 import { stripAnsi } from '@/main/library';
 import { SUITE_REPORTER, SUITE_RUNNER } from './constants';
 import { locationOf, suiteReportOf, suiteStatusOf, suiteTestsOf } from './library';
@@ -30,6 +31,7 @@ export class SuiteRunner {
   private readonly onEvent: (event: SuiteEvent) => void;
   private readonly now: () => number;
   private readonly jobs = new Map<string, ISuiteJob>();
+  private readonly checks = new Map<string, ISuiteJob>();
 
   public constructor(props: ISuiteRunner) {
     this.registry = props.registry;
@@ -96,6 +98,7 @@ export class SuiteRunner {
       child: null,
       isStopping: false,
       isBroken: false,
+      isQuiet: false,
     };
     const folder = this.folderOf(job.run);
 
@@ -122,6 +125,7 @@ export class SuiteRunner {
           await this.walk({
             job,
             batch,
+            grep: null,
             ...tools,
             reporter,
             env,
@@ -143,6 +147,100 @@ export class SuiteRunner {
     }
 
     return { ...job.run };
+  }
+
+  /** How one test went in a project's run, with the folder its run keeps its files in; null when the run or the test is not there. */
+  public async resultOf(props: {
+    projectId: string;
+    runId: string;
+    testId: string;
+  }): Promise<{ result: ISuiteResult; folder: string } | null> {
+    const folder = join(this.root, props.projectId, SUITE_RUNNER.runs, props.runId);
+
+    if (!isInside({ root: this.root, file: folder })) return null;
+
+    const run = this.parse(
+      await readFile(join(folder, SUITE_RUNNER.runFile), 'utf8').catch(() => ''),
+    );
+    const result = run?.results.find(({ testId }) => testId === props.testId);
+
+    return result === undefined ? null : { result, folder };
+  }
+
+  /** Runs some tests of a project's suite from another copy of it, such as the one an agent changes, with the project's settings and outside its runs: how each went, its files kept in the folder given. */
+  public async check(props: {
+    projectId: string;
+    path: string;
+    project: string;
+    filters: string[];
+    grep: string | null;
+    folder: string;
+  }): Promise<ISuiteCheck> {
+    const runner = await this.registry.runnerOf(props.path);
+    const node = await this.node();
+
+    if (runner === null || node === null)
+      return {
+        results: [],
+        failure: runner === null ? 'no-runner' : 'no-node',
+        said: '',
+      };
+
+    const job: ISuiteJob = {
+      run: {
+        id: SUITE_RUNNER.checkId,
+        projectId: props.projectId,
+        startedAt: this.now(),
+        endedAt: null,
+        status: 'running',
+        total: 0,
+        results: [],
+        failure: null,
+        said: '',
+      },
+      values: await this.values(props.projectId),
+      expected: 0,
+      counted: 0,
+      child: null,
+      isStopping: false,
+      isBroken: false,
+      isQuiet: true,
+    };
+    const reporter = join(this.root, SUITE_REPORTER.file);
+
+    this.checks.set(props.folder, job);
+
+    try {
+      await mkdir(props.folder, { recursive: true });
+      await writeFile(reporter, SUITE_REPORTER.source);
+      await this.walk({
+        job,
+        batch: { project: props.project, filters: props.filters },
+        grep: props.grep,
+        path: props.path,
+        cli: runner.cli,
+        node,
+        reporter,
+        env: await this.env(props.projectId),
+        folder: props.folder,
+        output: join(props.folder, SUITE_RUNNER.output),
+      });
+    } finally {
+      this.checks.delete(props.folder);
+    }
+
+    return { results: job.run.results, failure: job.run.failure, said: job.run.said };
+  }
+
+  /** Stops a check going in a folder, when the agent that asked for it is stopped. */
+  public stopCheck(folder: string): void {
+    const job = this.checks.get(folder);
+
+    if (job === undefined) return;
+
+    job.isStopping = true;
+
+    if (job.child !== null) killTree(job.child, 'SIGTERM');
   }
 
   /** Stops the run a project has going: Playwright is asked to stop, and made to after a grace. */
@@ -246,6 +344,7 @@ export class SuiteRunner {
   private walk(props: {
     job: ISuiteJob;
     batch: ISuiteBatch;
+    grep: string | null;
     path: string;
     cli: string;
     node: string;
@@ -266,6 +365,7 @@ export class SuiteRunner {
           `--reporter=${props.reporter}`,
           `--output=${props.output}`,
           '--trace=retain-on-failure',
+          ...(props.grep === null ? [] : [`--grep=${props.grep}`]),
           ...batch.filters.map(locationOf),
         ],
         {
@@ -321,14 +421,18 @@ export class SuiteRunner {
     const { job, report } = props;
     const { projectId, id: runId } = job.run;
 
+    const tell = (event: SuiteEvent) => {
+      if (!job.isQuiet) this.onEvent(event);
+    };
+
     if (report.kind === 'begin') {
       job.counted += report.total;
       job.run.total = Math.max(job.expected, job.counted);
-      this.onEvent({ kind: 'total', projectId, runId, total: job.run.total });
+      tell({ kind: 'total', projectId, runId, total: job.run.total });
     } else if (report.kind === 'test-begin') {
-      this.onEvent({ kind: 'testStarted', projectId, runId, testId: report.id });
+      tell({ kind: 'testStarted', projectId, runId, testId: report.id });
     } else if (report.kind === 'step') {
-      this.onEvent({
+      tell({
         kind: 'step',
         projectId,
         runId,
@@ -341,43 +445,43 @@ export class SuiteRunner {
         values: job.values,
       }).slice(-SUITE_RUNNER.saidChars);
     } else if (report.kind === 'test-end') {
-      const result = this.addressed({
-        run: job.run,
-        result: {
-          testId: report.id,
-          title: report.title,
-          file: relative(props.path, report.file),
-          line: report.line,
-          project: report.project,
-          status: report.status,
-          isFlaky: report.outcome === 'flaky',
-          durationMs: report.durationMs,
-          error:
-            report.error === null
-              ? null
-              : hiddenValues({ text: report.error, values: job.values }),
-          attachments: report.attachments.flatMap((attachment) => {
-            const file = relative(props.folder, attachment.path);
+      const found: ISuiteResult = {
+        testId: report.id,
+        title: report.title,
+        file: relative(props.path, report.file),
+        line: report.line,
+        project: report.project,
+        status: report.status,
+        isFlaky: report.outcome === 'flaky',
+        durationMs: report.durationMs,
+        error:
+          report.error === null
+            ? null
+            : hiddenValues({ text: report.error, values: job.values }),
+        attachments: report.attachments.flatMap((attachment) => {
+          const file = relative(props.folder, attachment.path);
 
-            return file.startsWith('..') || isAbsolute(file)
-              ? []
-              : [
-                  {
-                    name: attachment.name,
-                    contentType: attachment.contentType,
-                    file,
-                    url: null,
-                  },
-                ];
-          }),
-        },
-      });
+          return file.startsWith('..') || isAbsolute(file)
+            ? []
+            : [
+                {
+                  name: attachment.name,
+                  contentType: attachment.contentType,
+                  file,
+                  url: null,
+                },
+              ];
+        }),
+      };
+      const result = job.isQuiet
+        ? found
+        : this.addressed({ run: job.run, result: found });
 
       job.run.results = [
         ...job.run.results.filter(({ testId }) => testId !== result.testId),
         result,
       ];
-      this.onEvent({ kind: 'testEnded', projectId, runId, result });
+      tell({ kind: 'testEnded', projectId, runId, result });
     }
   }
 
