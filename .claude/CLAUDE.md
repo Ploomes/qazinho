@@ -128,8 +128,17 @@ project at a time, with the project's variables reaching the tests from the envi
 written to a file. The suite's screen runs everything, the failed, a folder, a file or one test,
 follows each step as it goes, and keeps each run with each test's error, the screen it left and
 its trace, which opens in Playwright's own viewer. `tests/smoke/suite.test.ts` lists and runs a
-fixture suite on real Chrome. The QA's agent does not touch a suite yet: fixing a broken test and
-writing a new one come next.
+fixture suite on real Chrome.
+
+**The QA's agent fixes a broken test of the team's suite**, on a branch of its own in a git
+worktree QAzinho keeps, never in the QA's clone. It reads and edits the copy with no shell, and
+runs the tests through QAzinho's own tool, which knows the project's secrets and hands the agent
+their names. When the test is right and the app is wrong, it changes nothing and says so. QAzinho
+runs the test again in the copy and shows the diff; only once the QA approves does it commit,
+push with the QA's own git and open the pull request through gh. A real Claude Code (Haiku) fixed
+a renamed link in 34 seconds and told a planted search bug apart from a broken test;
+`tests/smoke/fix.test.ts` drives a fake agent over the real tool on real Chrome. Writing a new
+test comes next.
 
 **A run that ends calls the QA back** while they are away: a notification with its sound and a
 count on the app's icon, unless they asked to hear only inside the app, where a notice says it.

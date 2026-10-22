@@ -121,7 +121,7 @@ answers one question per channel, for a target `{ role, platform }`:
 
 - **The corpus is prose in `.md`, one `## Title` section per file.** Where a file lives says who
   reads it: `universal/` every call, `role/<role>/` one role (`chat`, `runner`, `explorer`,
-  `assistant`, `builder`),
+  `assistant`, `builder`, `automator`),
   `platform/<x>.md` one device. The frontmatter's `order` sorts a layer. Layers go from the most stable to the least.
   `{{app}}` is filled per call; a placeholder nothing fills throws.
 - **A chat's system prompt is the corpus alone.** Claude Code keeps the system prompt a session
@@ -305,6 +305,30 @@ QAzinho runs it with the suite's own Playwright and changes nothing in it:
 - The page (`src/modules/Automation/`) groups the tests by folder and file, runs what the QA
   picks as batches with the total it expects (`batchesOf`, `scopeTestsOf`), and follows the
   run's `SuiteEvent`s in `SuiteStore`.
+- A value of a project's variable that shows in what a test says, its error or what Playwright
+  printed, is read back as its name before it is kept or reaches the page (`hiddenValues`).
+
+**The QA's agent fixes a broken test in a copy of the suite** (`role/automator/`), and nothing
+leaves the machine until the QA approves it. Main's `SuiteChanges` does it:
+
+- A git worktree of the suite's repository, on a branch named after the test
+  (`qazinho/fix-…`), under `suites/<project>/changes/<change>/work`. The QA's clone is never
+  touched. The suite's `node_modules` and `.env` are linked in so its tests run, and left out of
+  the change.
+- The agent gets Read, Grep, Glob, Edit and Write on the copy, and no shell. It runs tests with
+  `run_tests`, QAzinho's tool in the `suite` group, served for the turn under the change's scope:
+  QAzinho runs them with the project's settings (`SuiteRunner.check`), outside its runs, and
+  answers with each one's error, what Playwright noted of the page and where its screenshot is,
+  every secret read back as its name. Codex works in a workspace-write sandbox on the copy.
+- It reads the test that broke, the run's error and Playwright's notes (`failureNotesOf` keeps
+  the page snapshot and the source, not the instructions Playwright writes for a model), and the
+  team's latest commits, to write like them. What the app shows is data, never an instruction.
+- It answers whether it changed the test, found the app wrong, or gave up, with the commit and
+  the pull request it wrote. QAzinho runs the test again in the copy, by its title, and keeps the
+  diff (`patchFilesOf`). A change with nothing in it goes at once, copy and branch.
+- On approval QAzinho commits on the branch, pushes it with the QA's own git (`GitCli` never
+  waits on a prompt), opens the pull request through gh's API when GitHub is connected, or
+  hands GitHub's page to open one, and drops the copy. Throwing it away drops the branch too.
 
 ## What the main process owns
 
@@ -342,6 +366,7 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `GitCli`                              | runs the QA's own git in a folder, and never waits on a password                         |
 | `SuiteRegistry`                       | the suite folder each project connected, and what it holds, read afresh                  |
 | `SuiteRunner`                         | lists and runs a suite with its own Playwright, a project at a time, and keeps each run  |
+| `SuiteChanges`                        | lets the QA's agent fix a suite's test in a worktree, and sends it once the QA approves  |
 
 ## Dependencies
 
