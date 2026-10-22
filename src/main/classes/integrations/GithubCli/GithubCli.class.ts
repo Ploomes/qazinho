@@ -87,9 +87,11 @@ export class GithubCli {
     this.signingIn?.abort();
   }
 
-  /** One request to GitHub's REST API as the QA: what GitHub answered, or why it or gh refused. */
+  /** One request to GitHub's REST API as the QA, read or posted: what GitHub answered, or why it or gh refused. */
   public async api(props: {
     path: string;
+    method?: 'POST';
+    fields?: Record<string, string>;
     accept?: string;
     paginate?: boolean;
     jq?: string;
