@@ -63,6 +63,7 @@ export const useChatAgent = () => {
       }),
       code: props.code,
       jira: props.jira,
+      design: workspace.design,
       variables: useVariablesStore.getState().byProject[workspace.projectId] ?? [],
     }).then((turn) => {
       if (turn.failure?.reason === 'stopped') {

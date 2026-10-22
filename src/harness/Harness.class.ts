@@ -1,5 +1,5 @@
 import type { ICorpusFile } from '@/harness/context/types';
-import type { IHarnessTools } from '@/harness/tools/types';
+import type { IDesignAccess, IHarnessTools } from '@/harness/tools/types';
 import type {
   AppLook,
   HarnessRole,
@@ -16,6 +16,7 @@ import type {
   IChatAnswer,
   IChatReference,
   ICodeCopy,
+  IDesignLink,
   IFlatStep,
   IJiraStoryCopy,
   IKnownBug,
@@ -24,7 +25,12 @@ import type {
   IViewport,
   Language,
 } from '@/shared/types';
-import { CODE_SECTION, LANGUAGE_NAMES, STORY_SECTION } from '@/harness/constants';
+import {
+  CODE_SECTION,
+  DESIGN_SECTION,
+  LANGUAGE_NAMES,
+  STORY_SECTION,
+} from '@/harness/constants';
 import { CORPUS } from '@/harness/context/constants';
 import {
   changedSections,
@@ -34,6 +40,7 @@ import {
   describeCase,
   describeChange,
   describeCode,
+  describeDesign,
   describeExploration,
   describeKeptVariables,
   describeLook,
@@ -66,7 +73,7 @@ import {
   MCP_HOST,
   TOOL_GRANTS,
 } from '@/harness/tools/constants';
-import { toolsOfRole } from '@/harness/tools/library';
+import { designAccessOf, toolsOfRole } from '@/harness/tools/library';
 
 /** QAzinho's product harness: what the QA's agent is told, and which of QAzinho's tools it gets. */
 export class Harness {
@@ -91,7 +98,12 @@ export class Harness {
     return toolsOfRole({ grants: TOOL_GRANTS, role, server: MCP_HOST.name });
   }
 
-  /** One chat message: the corpus as its system prompt, the QA's words opened by what the agent was not told yet, and the code and the story's files it may read. */
+  /** The QA's own Figma server and the tools of it that read, for a call on a workspace with a design. */
+  public designAccess(design: IDesignLink | null): IDesignAccess {
+    return designAccessOf(design);
+  }
+
+  /** One chat message: the corpus as its system prompt, the QA's words opened by what the agent was not told yet, the code and the story's files it may read, and the Figma design it may open. */
   public chat(props: {
     text: string;
     told: Record<string, string>;
@@ -103,6 +115,7 @@ export class Harness {
     look: AppLook | null;
     code: ICodeCopy | null;
     story: IJiraStoryCopy | null;
+    design: IDesignLink | null;
     variables: IVariableBrief[];
   }): {
     systemPrompt: string;
@@ -110,6 +123,7 @@ export class Harness {
     told: Record<string, string>;
     schema: string;
     tools: IHarnessTools;
+    design: IDesignAccess;
     readDirs: string[];
   } {
     const news = changedSections({
@@ -135,6 +149,10 @@ export class Harness {
           story: props.story,
           wasTold: (props.told[STORY_SECTION.title] ?? '') !== '',
         }),
+        describeDesign({
+          design: props.design,
+          wasTold: (props.told[DESIGN_SECTION.title] ?? '') !== '',
+        }),
       ],
       told: props.told,
     });
@@ -148,6 +166,7 @@ export class Harness {
       told: news.told,
       schema: CHAT_SCHEMA,
       tools: this.toolsFor('chat'),
+      design: designAccessOf(props.design),
       readDirs: [
         ...(props.code === null ? [] : [props.code.root]),
         ...(props.story?.files.some(({ path }) => path !== null) === true

@@ -71,6 +71,7 @@ export function makeWorkspace(plan: ITestCase[] = CASES): IWorkspace {
     sessionAgentId: null,
     status: 'idle',
     issue: null,
+    design: null,
     chat: [],
     plan,
     planSource: null,

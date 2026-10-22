@@ -5,6 +5,7 @@ export * from './describeBuild';
 export * from './describeCase';
 export * from './describeChange';
 export * from './describeCode';
+export * from './describeDesign';
 export * from './describeExploration';
 export * from './describeKeptVariables';
 export * from './describeKnownBugs';

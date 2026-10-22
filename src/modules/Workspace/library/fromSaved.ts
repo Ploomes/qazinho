@@ -50,6 +50,7 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     sessionAgentId: read.sessionAgentId ?? null,
     status: read.status ?? 'idle',
     issue: read.issue ?? null,
+    design: read.design ?? null,
     chat: (read.chat ?? []).map(messageOfSaved).filter((message) => message !== null),
     plan: readPlan(saved.planYaml),
     planSource: codeSourceOf(read.planSource),

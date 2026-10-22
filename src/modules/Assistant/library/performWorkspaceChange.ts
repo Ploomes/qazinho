@@ -58,6 +58,7 @@ function createWorkspace(props: {
     sessionAgentId: null,
     status: 'idle',
     issue: null,
+    design: null,
     chat: [],
     plan: [],
     runs: [],

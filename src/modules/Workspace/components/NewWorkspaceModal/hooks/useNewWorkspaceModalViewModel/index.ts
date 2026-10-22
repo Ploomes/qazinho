@@ -35,6 +35,7 @@ export const useNewWorkspaceModalViewModel = () => {
       sessionAgentId: null,
       status: 'idle',
       issue: null,
+      design: null,
       chat: [],
       plan: [],
       runs: [],

@@ -129,6 +129,7 @@ describe('Codex in the chat', () => {
       look: null,
       code: null,
       story: null,
+      design: null,
       variables: [],
     });
     const ask = (sessionId: string | null) =>

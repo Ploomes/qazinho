@@ -60,7 +60,7 @@ import {
   screen,
   shell,
 } from 'electron';
-import { Harness, McpHost } from '@/harness';
+import { Harness, McpHost, mcpConfigWith } from '@/harness';
 import {
   AgentDetector,
   AndroidDriver,
@@ -99,6 +99,7 @@ import {
   UsageReader,
   VariableVault,
 } from '@/main/classes';
+import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
 import { changeIdOf } from '@/main/classes/automation/SuiteChanges/library';
 import { APP_BUILDER } from '@/main/classes/builds/AppBuilder/constants';
 import { buildIdOf } from '@/main/classes/builds/AppBuilder/library';
@@ -529,8 +530,10 @@ async function askOnce(props: {
     look,
     code,
     story,
+    design: ask.design,
     variables: ask.variables,
   });
+  const servers = chat.design.servers;
   const turn = await agentRunner.ask({
     workspaceId: ask.workspaceId,
     agentId: ask.agentId,
@@ -540,8 +543,16 @@ async function askOnce(props: {
     prompt: chat.prompt,
     schema: chat.schema,
     systemPrompt: chat.systemPrompt,
-    allowedTools: chat.tools.allowedTools,
+    allowedTools: [...chat.tools.allowedTools, ...chat.design.allowedTools],
     readDirs: chat.readDirs,
+    ...(servers.length === 0
+      ? {}
+      : {
+          mcpConfig: mcpConfigWith({ config: null, servers }) ?? undefined,
+          ...(chat.readDirs.length === 0
+            ? {}
+            : { tools: AGENT_RUN.readTools.split(',') }),
+        }),
   });
 
   return { turn, told: chat.told };

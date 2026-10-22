@@ -61,6 +61,13 @@ const RUNS = [
 const harness = new Harness();
 const DESKTOP = { width: 1280, height: 800 };
 
+const DESIGN = {
+  url: 'https://www.figma.com/design/AbC123/Shop?node-id=1-23',
+  fileKey: 'AbC123',
+  nodeId: '1:23',
+  name: 'Shop',
+};
+
 const EMPTY_CHAT = {
   text: 'Hi',
   told: {},
@@ -72,6 +79,7 @@ const EMPTY_CHAT = {
   look: null,
   code: null,
   story: null,
+  design: null,
   variables: [],
 };
 
@@ -140,6 +148,7 @@ const FULL_CHAT = {
   },
   code: null,
   story: null,
+  design: null,
   variables: [{ name: 'SHOP_EMAIL', description: 'The buyer on staging' }],
 };
 
@@ -262,6 +271,26 @@ describe('Harness', () => {
         '/data/code/w-1',
         '/data/jira/w-1/SHOP-12',
       ]);
+    });
+
+    it('opens a message on a workspace with a design with its file and node, and lets the agent read it through the QA’s Figma', async () => {
+      const chat = harness.chat({
+        ...EMPTY_CHAT,
+        text: 'Plan the checkout against the design.',
+        design: DESIGN,
+      });
+
+      await expect(chat.prompt).toMatchFileSnapshot('./__prompts__/chat-design.txt');
+      expect(chat.design).toEqual({
+        servers: [{ name: 'figma', url: 'https://mcp.figma.com/mcp' }],
+        allowedTools: [
+          'mcp__figma__get_design_context',
+          'mcp__figma__get_metadata',
+          'mcp__figma__get_screenshot',
+          'mcp__figma__get_variable_defs',
+        ],
+      });
+      expect(harness.chat(EMPTY_CHAT).design).toEqual({ servers: [], allowedTools: [] });
     });
 
     it("tells the agent once that the story's files are gone after the plan", () => {
