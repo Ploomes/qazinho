@@ -1,11 +1,13 @@
 import type { SuiteRegistry } from '@/main/classes/automation/SuiteRegistry';
+import type { IVariableValue } from '@/main/types';
 import type { SuiteEvent } from '@/shared/types';
 
-/** What the runner needs: the registry of suites, the QA's node, the settings a project's tests read, the folder it keeps what it makes in, where each run's files are served, and whom to tell as a run goes. */
+/** What the runner needs: the registry of suites, the QA's node, the settings a project's tests read and the values among them to read back as names, the folder it keeps what it makes in, where each run's files are served, and whom to tell as a run goes. */
 export interface ISuiteRunner {
   registry: Pick<SuiteRegistry, 'pathOf' | 'runnerOf'>;
   node: () => Promise<string | null>;
   env: (projectId: string) => Promise<Record<string, string>>;
+  values: (projectId: string) => Promise<IVariableValue[]>;
   root: string;
   urlOf: (props: { projectId: string; runId: string; file: string }) => string | null;
   onEvent: (event: SuiteEvent) => void;

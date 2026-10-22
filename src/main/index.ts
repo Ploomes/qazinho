@@ -244,6 +244,7 @@ const suiteRunner = new SuiteRunner({
   node: async () =>
     findOnPath({ command: 'node', directories: await commandDirectories() }),
   env: suiteEnvOf,
+  values: (projectId) => variables.valuesOf(projectId).catch(() => []),
   root: PATHS.suites,
   urlOf: (file) => replays.suiteFileUrl(file),
   onEvent: (event) => broadcast({ channel: CHANNELS.suiteEvent, event }),

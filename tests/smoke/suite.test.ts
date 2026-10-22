@@ -11,6 +11,7 @@ import { SuiteRunner } from '@/main/classes/automation/SuiteRunner';
 import { findOnPath } from '@/main/library';
 
 const PORT = 4371;
+const SHOP_KEY = 's3cret-shop-key-42';
 const SUITE = join(process.cwd(), 'tests', 'smoke', 'fixtures', 'suite');
 
 /** A shop with a home that links to its products, and no cart link: CT-NAV-002 fails on it. */
@@ -47,7 +48,11 @@ beforeAll(async () => {
     env: async () => ({
       PATH: process.env.PATH ?? '',
       SHOP_URL: `http://127.0.0.1:${String(PORT)}/`,
+      SHOP_KEY,
     }),
+    values: async () => [
+      { name: 'SHOP_KEY', description: 'The shop key', value: SHOP_KEY },
+    ],
     root,
     urlOf: ({ runId, file }) => `served:${runId}/${file}`,
     onEvent: (event) => events.push(event),
@@ -84,6 +89,7 @@ describe("a team's own Playwright suite", () => {
       'leitura CT-NAV-001 · Opens the products',
       'leitura CT-NAV-002 · Opens the cart from the menu',
       'leitura CT-OTH-001 · Opens the home page',
+      'leitura CT-SEC-001 · Reads the shop key',
     ]);
     expect(tests.find(({ title }) => title.startsWith('CT-NAV-001'))).toMatchObject({
       file: 'tests/hc-1/ct-nav.spec.ts',
@@ -99,15 +105,15 @@ describe("a team's own Playwright suite", () => {
         { project: 'leitura', filters: [] },
         { project: 'altera', filters: [] },
       ],
-      expected: 5,
+      expected: 6,
     });
     const started = events.find(
       (event): event is Extract<SuiteEvent, { kind: 'started' }> =>
         event.kind === 'started',
     );
 
-    expect(started?.run.total).toBe(5);
-    expect(run).toMatchObject({ status: 'failed', total: 5 });
+    expect(started?.run.total).toBe(6);
+    expect(run).toMatchObject({ status: 'failed', total: 6 });
     expect(resultOf({ run, title: 'CT-NAV-001' })).toMatchObject({
       status: 'passed',
       project: 'leitura',
@@ -136,6 +142,16 @@ describe("a team's own Playwright suite", () => {
     expect(failed?.attachments.some(({ name }) => name === 'trace')).toBe(true);
   }, 180_000);
 
+  /** The variable reaches the test from the environment, and its value never reaches the page or a run's file. */
+  it("reads a variable's value back as its name in what a test says", async () => {
+    const run = (await runner.runs('p')).find(({ id }) => id === 's-01');
+    const error =
+      run?.results.find(({ title }) => title.startsWith('CT-SEC-001'))?.error ?? '';
+
+    expect(error).toContain('${SHOP_KEY}');
+    expect(error).not.toContain(SHOP_KEY);
+  });
+
   it('runs one test by where it is written, and nothing beside it', async () => {
     const run = await runner.run({
       projectId: 'p',
@@ -155,7 +171,7 @@ describe("a team's own Playwright suite", () => {
       projectId: 'p',
       runId: 's-03',
       batches: [{ project: 'leitura', filters: [] }],
-      expected: 4,
+      expected: 5,
     });
 
     for (let wait = 0; wait < 300; wait += 1) {

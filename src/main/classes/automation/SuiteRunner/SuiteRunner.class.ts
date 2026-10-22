@@ -14,6 +14,7 @@ import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { isAbsolute, join, relative } from 'node:path';
 import { createInterface } from 'node:readline';
 import { killTree } from '@/main/classes/agents/AgentRunner/library';
+import { hiddenValues } from '@/main/classes/runs/RunCoordinator/library/hiddenValues';
 import { stripAnsi } from '@/main/library';
 import { SUITE_REPORTER, SUITE_RUNNER } from './constants';
 import { locationOf, suiteReportOf, suiteStatusOf, suiteTestsOf } from './library';
@@ -23,6 +24,7 @@ export class SuiteRunner {
   private readonly registry: Pick<SuiteRegistry, 'pathOf' | 'runnerOf'>;
   private readonly node: () => Promise<string | null>;
   private readonly env: (projectId: string) => Promise<Record<string, string>>;
+  private readonly values: ISuiteRunner['values'];
   private readonly root: string;
   private readonly urlOf: ISuiteRunner['urlOf'];
   private readonly onEvent: (event: SuiteEvent) => void;
@@ -33,6 +35,7 @@ export class SuiteRunner {
     this.registry = props.registry;
     this.node = props.node;
     this.env = props.env;
+    this.values = props.values;
     this.root = props.root;
     this.urlOf = props.urlOf;
     this.onEvent = props.onEvent;
@@ -87,6 +90,7 @@ export class SuiteRunner {
         failure: null,
         said: '',
       },
+      values: await this.values(start.projectId),
       expected: start.expected,
       counted: 0,
       child: null,
@@ -297,9 +301,10 @@ export class SuiteRunner {
         if (!hasEnded && !job.isStopping) {
           job.isBroken = true;
           job.run.failure = job.run.failure ?? 'unreadable';
-          job.run.said = `${job.run.said}${stripAnsi(said).trim()}`.slice(
-            -SUITE_RUNNER.saidChars,
-          );
+          job.run.said = hiddenValues({
+            text: `${job.run.said}${stripAnsi(said).trim()}`,
+            values: job.values,
+          }).slice(-SUITE_RUNNER.saidChars);
         }
 
         done();
@@ -331,7 +336,10 @@ export class SuiteRunner {
         title: report.title,
       });
     } else if (report.kind === 'error') {
-      job.run.said = `${job.run.said}${report.message}\n`.slice(-SUITE_RUNNER.saidChars);
+      job.run.said = hiddenValues({
+        text: `${job.run.said}${report.message}\n`,
+        values: job.values,
+      }).slice(-SUITE_RUNNER.saidChars);
     } else if (report.kind === 'test-end') {
       const result = this.addressed({
         run: job.run,
@@ -344,7 +352,10 @@ export class SuiteRunner {
           status: report.status,
           isFlaky: report.outcome === 'flaky',
           durationMs: report.durationMs,
-          error: report.error,
+          error:
+            report.error === null
+              ? null
+              : hiddenValues({ text: report.error, values: job.values }),
           attachments: report.attachments.flatMap((attachment) => {
             const file = relative(props.folder, attachment.path);
 
