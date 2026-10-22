@@ -247,6 +247,24 @@ answers one question per channel, for a target `{ role, platform }`:
     `Glob` on that folder alone.
   - The files are deleted once a plan comes back, when the workspace goes, and on the next
     start. The workspace keeps the story (`issue`), which its header and its plan open in Jira.
+- **A bug goes to the QA's tracker as an issue**, and the QA does nothing by hand but paste a
+  screen into GitHub:
+  - The page writes the report in the QA's language (`bugReportOf`): the agent's words, the steps
+    with the one that broke, expected and what came, the requests that failed around it
+    (`failedRequestsNear`) and where it was caught. Its blocks become Atlassian's document format
+    for Jira (`adfOfReport`) and Markdown for GitHub (`markdownOfReport`).
+  - The page cuts a clip of the bug's moment out of the run's MP4 (`clipOfMp4`), copying its
+    frames from the key frame before it with no encoding, and hands it to main whole, once. A
+    phone's WebM goes whole from main, under 25 MB. A screen crosses as the file the run kept,
+    read only inside the archive.
+  - Main's `BugFiler` files it and tells each step (`IFilingEvent`). Jira's `fileBug` takes the
+    project's Bug type, else its Task (`bugTypeOf`), then each file is attached and the issue
+    related to the story. GitHub's goes through `gh api`, labelled bug where the label exists.
+  - GitHub's API takes no picture, so the popup and the bug's card copy the screen to the
+    clipboard as PNG (`copyShot`) for the QA to paste.
+  - The bug keeps its issue (`filed`), and the project where its last bug went (`issueTarget`),
+    which the next one is offered (`issueTargetOf`). The Estagiário's `send_bug` waits on a
+    confirmation card first.
 - **The harness never imports `src/main`.** What it needs from a device is a port in its types
   (`IDevicePort`), and main hands it the driver. ESLint enforces it both ways: the page never
   imports the harness, and the harness never imports main or the page.
@@ -396,7 +414,8 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `GithubCli`                           | talks to GitHub through the QA's own gh: status, device-flow sign-in, API, tar           |
 | `GithubRepos`                         | lists the QA's repositories and a repository's branches, kept for a little while         |
 | `CodeCopies`                          | copies a branch for the agent to read while it plans, with its diff, then drops it       |
-| `JiraApi`                             | talks to the QA's Jira Cloud with the token sealed for it: search, story, files          |
+| `JiraApi`                             | talks to the QA's Jira Cloud with the token sealed for it: search, story, files, bugs    |
+| `BugFiler`                            | files a bug in the QA's tracker: a Jira issue with its files, or a GitHub issue via gh   |
 | `JiraStories`                         | reads a Jira story for the agent to plan from, with the files it can read, then drops it |
 | `AssistantAgent`                      | asks the QA's agent as the Estagiário, with the app tools served for the turn            |
 | `AppBridge`                           | hands each app tool call to the page and waits for what it did                           |

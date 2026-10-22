@@ -186,15 +186,27 @@ its header and its plan open in Jira. The Estagiário hands a workspace's chat a
 planned from one with a screen attached: it read the screen, asked about what the story left
 open, and named the criterion each case covers. A real Jira site has not been tried.
 
+**A bug goes to the QA's tracker as an issue.** An open bug sends itself from its card, or the
+Estagiário sends it once the QA confirms on a card. To Jira it goes as a Bug of the project the QA
+picks: its steps with the one that broke, what was expected and what came, the requests that
+failed around it and where it was caught, with its screens and a clip of the moment cut from the
+run's video attached (a phone's whole recording, when it is under 25 MB), and a link to the story
+the plan came from. To GitHub it goes through the QA's own gh, as a Markdown issue labelled bug;
+GitHub takes pictures only on its own page, so QAzinho copies the screen for the QA to paste. The
+bug keeps its issue's key, and the project keeps where its last bug went.
+`tests/smoke/filing.test.ts` files bugs in a fake Jira and through a fake gh, and the built app
+sent one to each; a real Jira site or repository has not been tried, and a bug seen again after it
+was filed does not reach its issue yet.
+
 **The Estagiário answers from the corner.** A sticker in the bottom-right corner opens a little
 chat where the QA's own agent talks about any project, workspace, run or bug. It also does what
 the QA could do by hand: open a screen, create or change a project, link a repository, create,
-rename, run or stop a workspace, change the settings, connect a tracker, and delete or
-disconnect once the QA confirms on a card. A plan it hands to the workspace's own chat, which
-writes it with the QA, and it helps answer that chat's questions. Its chat outlives a restart.
-`tests/smoke/assistant.test.ts` drives it with a fake agent over the real MCP server, and a real
-Claude Code (Haiku) has driven it through a QA's day in both languages; through Codex it has
-not.
+rename, run or stop a workspace, change the settings, connect a tracker, and delete, disconnect or
+send a bug to a tracker once the QA confirms on a card. A plan it hands to the workspace's own
+chat, which writes it with the QA, and it helps answer that chat's questions. Its chat outlives a
+restart. `tests/smoke/assistant.test.ts` drives it with a fake agent over the real MCP server,
+and a real Claude Code (Haiku) has driven it through a QA's day in both languages; through Codex
+it has not.
 
 **The app builds from its own code.** A project that names its repositories builds its .apk or
 simulator .app from any branch, from the project's card or by asking the Estagiário. The QA's own
@@ -211,8 +223,6 @@ checked against a fake Codex built from the real one's events. The chat has answ
 real signed-in Codex (CLI 0.163.0), in the strict schema; a run, with the device tools over MCP,
 has not. That is ours to know, not the QA's: no caveat about QAzinho's own testing goes in the
 interface.
-
-**Still to build for 0.1:** a connected tracker does not receive a bug yet.
 
 ## Mandatory rules
 
