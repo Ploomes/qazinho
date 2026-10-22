@@ -84,6 +84,7 @@ Three suites that need something real behind them. They have their own config
 | `github.test.ts`       | a fake gh: device-code sign-in and cancel, repositories, branches, a copy    |
 | `jira.test.ts`         | a fake Jira site: stories searched and read, their files downloaded          |
 | `filing.test.ts`       | a fake Jira and gh: a bug filed with its files and story, refusals in words  |
+| `review.test.ts`       | a fake agent weighs a bug seen again against its issue in a fake Jira        |
 | `assistant.test.ts`    | a fake agent acts through the app tools: a page that answers, waits, or not  |
 | `build.test.ts`        | a fake gh hands over a branch and a fake agent builds it: an APK kept        |
 | `replay.test.ts`       | a case recorded, walked again with no agent asked, healed when the app moves |

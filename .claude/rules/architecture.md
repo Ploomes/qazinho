@@ -124,7 +124,7 @@ answers one question per channel, for a target `{ role, platform }`:
 
 - **The corpus is prose in `.md`, one `## Title` section per file.** Where a file lives says who
   reads it: `universal/` every call, `role/<role>/` one role (`chat`, `runner`, `explorer`,
-  `assistant`, `builder`, `automator`),
+  `assistant`, `builder`, `automator`, `reporter`),
   `platform/<x>.md` one device. The frontmatter's `order` sorts a layer. Layers go from the most stable to the least.
   `{{app}}` is filled per call; a placeholder nothing fills throws.
 - **A chat's system prompt is the corpus alone.** Claude Code keeps the system prompt a session
@@ -265,6 +265,20 @@ answers one question per channel, for a target `{ role, platform }`:
   - The bug keeps its issue (`filed`), and the project where its last bug went (`issueTarget`),
     which the next one is offered (`issueTargetOf`). The Estagiário's `send_bug` waits on a
     confirmation card first.
+- **A filed bug seen again reaches its issue as a comment** (`role/reporter/`), weighed by the
+  QA's agent and posted only by the QA:
+  - When a run ends, on start and when a tracker connects, `useBugReviews` takes each filed bug
+    with sightings from runs not yet weighed (`unreviewedOf`), one at a time, and only while its
+    tracker is connected.
+  - Main's `BugReviewer` reads the issue as it stands through `BugFiler.read` (status, text,
+    comments) and asks the agent with the bug and each sighting (`describeReview`), its screens
+    readable in the run's folder. A closed issue is always a regression, and is never reopened.
+  - The agent answers `news`, `regression` or `nothing-new` (`REVIEW_ANSWER`), with a comment
+    in the QA's language for the first two. The bug keeps the review (`IBugReview`), and its
+    runs count as weighed (`reviewedRuns`) once it came back, was posted or put aside.
+  - The card shows it (`BugUpdate`); the QA edits it and posts it, and `BugFiler.comment` writes
+    it under the issue (`updateReportOf`): to Jira with the new screens and clip attached, to
+    GitHub through gh.
 - **The harness never imports `src/main`.** What it needs from a device is a port in its types
   (`IDevicePort`), and main hands it the driver. ESLint enforces it both ways: the page never
   imports the harness, and the harness never imports main or the page.
@@ -416,6 +430,7 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `CodeCopies`                          | copies a branch for the agent to read while it plans, with its diff, then drops it       |
 | `JiraApi`                             | talks to the QA's Jira Cloud with the token sealed for it: search, story, files, bugs    |
 | `BugFiler`                            | files a bug in the QA's tracker: a Jira issue with its files, or a GitHub issue via gh   |
+| `BugReviewer`                         | asks the QA's agent whether a filed bug seen again adds to its issue, as it stands now   |
 | `JiraStories`                         | reads a Jira story for the agent to plan from, with the files it can read, then drops it |
 | `AssistantAgent`                      | asks the QA's agent as the Estagiário, with the app tools served for the turn            |
 | `AppBridge`                           | hands each app tool call to the page and waits for what it did                           |

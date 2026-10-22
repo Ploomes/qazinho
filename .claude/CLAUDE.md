@@ -195,8 +195,16 @@ the plan came from. To GitHub it goes through the QA's own gh, as a Markdown iss
 GitHub takes pictures only on its own page, so QAzinho copies the screen for the QA to paste. The
 bug keeps its issue's key, and the project keeps where its last bug went.
 `tests/smoke/filing.test.ts` files bugs in a fake Jira and through a fake gh, and the built app
-sent one to each; a real Jira site or repository has not been tried, and a bug seen again after it
-was filed does not reach its issue yet.
+sent one to each; a real Jira site or repository has not been tried.
+
+**A bug seen again after it was filed reaches its issue as a comment**, never by rewriting it.
+When a run ends, the QA's agent reads the issue as it stands, its status and comments, beside
+the runs that caught the bug again, and says whether they add something the issue lacks, whether
+the bug came back after the issue was closed, or nothing. What it suggests waits on the bug's
+card, where the QA edits it and posts it with one click, or puts it aside; Jira gets the new
+screens and clip with it. A closed issue is called a regression and never reopened.
+`tests/smoke/review.test.ts` weighs one through a fake agent and a fake Jira, and the built app
+posted one; a real agent has not weighed one yet.
 
 **The Estagiário answers from the corner.** A sticker in the bottom-right corner opens a little
 chat where the QA's own agent talks about any project, workspace, run or bug. It also does what
