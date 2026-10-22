@@ -58,7 +58,7 @@ export const useChatViewModel = () => {
   const askingIds = useWorkspaceStore((state) => state.askingIds);
   const liveTexts = useWorkspaceStore((state) => state.liveTexts);
   const retries = useWorkspaceStore((state) => state.retries);
-  const codeSteps = useWorkspaceStore((state) => state.codeSteps);
+  const codeSteps = useWorkspaceStore((state) => state.readSteps);
   const lookingAt = useWorkspaceStore((state) => state.lookingAt);
   const isGithubConnected = useSetupStore((state) =>
     state.integrations.some(({ id }) => id === 'github'),
@@ -111,7 +111,8 @@ export const useChatViewModel = () => {
     references: IChatReference[];
     code: ICodeAsk | null;
   }) => {
-    if (workspace !== null) chatAgent.askAgent({ workspaceId: workspace.id, ...props });
+    if (workspace !== null)
+      chatAgent.askAgent({ workspaceId: workspace.id, ...props, jira: null });
   };
 
   const isWalking = workspace?.isWalking === true;

@@ -6,6 +6,7 @@ export * from './Archive';
 export * from './Files';
 export * from './Github';
 export * from './Integrations';
+export * from './Jira';
 export * from './Machine';
 export * from './Mcp';
 export * from './Platform';

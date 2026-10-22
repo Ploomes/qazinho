@@ -34,6 +34,7 @@ const ASK = {
   references: [],
   runs: [],
   code: null,
+  jira: null,
   variables: [],
 };
 

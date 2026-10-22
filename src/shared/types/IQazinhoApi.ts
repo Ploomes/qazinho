@@ -47,6 +47,7 @@ import type { ISuite } from './ISuite';
 import type { ISuiteChange } from './ISuiteChange';
 import type { ISuiteRun } from './ISuiteRun';
 import type { IViewport } from './IViewport';
+import type { JiraIssueList } from './JiraIssueList';
 import type { McpActionResult } from './McpActionResult';
 import type { McpSignInProgress } from './McpSignInProgress';
 import type { PickKind } from './PickKind';
@@ -149,6 +150,7 @@ export interface IQazinhoApi {
   onGithubSignIn: (listener: (progress: GithubSignInProgress) => void) => () => void;
   listRepositories: () => Promise<IRepositoryList>;
   listBranches: (repository: IRepositoryRef) => Promise<IBranchList>;
+  searchJira: (query: string) => Promise<JiraIssueList>;
   listMcpServers: (agentId: string) => Promise<IMcpServerStatus[]>;
   connectMcpServer: (signIn: IMcpSignIn) => Promise<McpSignInProgress>;
   cancelMcpSignIn: (target: IMcpServerTarget) => Promise<void>;

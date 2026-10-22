@@ -150,7 +150,7 @@ export const useAppActions = () => {
         useAppStore.getState().selectWorkspace(workspaceId);
         useWorkspaceStore.getState().selectTab('chat');
         useWorkspaceStore.getState().sendMessage({ workspaceId, text, mentions: [] });
-        askAgent({ workspaceId, text, references: [], code: null });
+        askAgent({ workspaceId, text, references: [], code: null, jira: null });
         useAssistantStore.getState().close();
       },
       changeSettings: ({ theme, language, runAlert }) => {

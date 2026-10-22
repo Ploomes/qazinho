@@ -20,6 +20,7 @@ export class Agent {
         answer: null,
         failure: null,
         code: null,
+        story: null,
       }
     );
   }

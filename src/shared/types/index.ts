@@ -56,6 +56,7 @@ export type * from './IGithubStatus';
 export type * from './IInstallResult';
 export type * from './IIntegrationStatus';
 export type * from './IIosSetup';
+export type * from './IJiraAsk';
 export type * from './IJiraAttachment';
 export type * from './IJiraFile';
 export type * from './IJiraIssueRef';

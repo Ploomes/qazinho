@@ -9,12 +9,14 @@ import type {
   IChatQuestion,
   ICodeSource,
   IDraftedCase,
+  IJiraIssueRef,
   IRunAsked,
   IRunFinding,
   IRunInFlight,
   IRunQuestion,
   IRunVideo,
   IStepOutcome,
+  JiraStep,
 } from '@/shared/types';
 
 /** The workspaces and everything the QA can poke inside one of them. */
@@ -32,7 +34,7 @@ export interface IWorkspaceStore {
   askingIds: string[];
   liveTexts: Record<string, string>;
   retries: Record<string, { attempt: number; maxRetries: number }>;
-  codeSteps: Record<string, { step: CodeStep; bytes: number }>;
+  readSteps: Record<string, { step: CodeStep | JiraStep; bytes: number }>;
   lookingAt: Record<string, 'android' | 'ios'>;
   removingWorkspaceId: string | null;
   addWorkspace: (workspace: IWorkspace) => void;
@@ -61,6 +63,7 @@ export interface IWorkspaceStore {
     summary: string;
     plan: ITestCase[];
     source: ICodeSource | null;
+    story: IJiraIssueRef | null;
     who: string;
     agentId: string;
     sessionId: string | null;
@@ -75,7 +78,11 @@ export interface IWorkspaceStore {
   landAgentStopped: (workspaceId: string) => void;
   setLiveText: (props: { workspaceId: string; text: string }) => void;
   setRetry: (props: { workspaceId: string; attempt: number; maxRetries: number }) => void;
-  setCodeStep: (props: { workspaceId: string; step: CodeStep; bytes: number }) => void;
+  setReadStep: (props: {
+    workspaceId: string;
+    step: CodeStep | JiraStep;
+    bytes: number;
+  }) => void;
   setLooking: (props: { workspaceId: string; device: 'android' | 'ios' }) => void;
   setPlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
   startRun: (props: {

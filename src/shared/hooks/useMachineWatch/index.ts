@@ -20,7 +20,7 @@ export const useMachineWatch = () => {
   );
   const setLiveText = useWorkspaceStore((state) => state.setLiveText);
   const setRetry = useWorkspaceStore((state) => state.setRetry);
-  const setCodeStep = useWorkspaceStore((state) => state.setCodeStep);
+  const setReadStep = useWorkspaceStore((state) => state.setReadStep);
   const setLooking = useWorkspaceStore((state) => state.setLooking);
   const setContext = useWorkspaceStore((state) => state.setContext);
   const followInstall = useSetupStore((state) => state.followInstall);
@@ -56,8 +56,8 @@ export const useMachineWatch = () => {
             attempt: event.attempt,
             maxRetries: event.maxRetries,
           });
-        } else if (event.kind === 'code') {
-          setCodeStep({
+        } else if (event.kind === 'code' || event.kind === 'jira') {
+          setReadStep({
             workspaceId: event.workspaceId,
             step: event.step,
             bytes: event.bytes,
@@ -67,7 +67,7 @@ export const useMachineWatch = () => {
         } else if (event.kind === 'text')
           setLiveText({ workspaceId: event.workspaceId, text: event.text });
       }),
-    [setUsage, setContext, setLiveText, setRetry, setCodeStep, setLooking],
+    [setUsage, setContext, setLiveText, setRetry, setReadStep, setLooking],
   );
 
   useEffect(() => {

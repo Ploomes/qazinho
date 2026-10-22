@@ -55,6 +55,7 @@ function answering(turn: Partial<IChatTurn>) {
       answer: null,
       failure: null,
       code: null,
+      story: null,
       ...turn,
     }),
   );
@@ -84,7 +85,7 @@ beforeEach(() => {
     workspaces: [makeWorkspace([])],
     askingIds: [],
     liveTexts: {},
-    codeSteps: {},
+    readSteps: {},
   });
   useSetupStore.setState({ integrations: [] });
 });
@@ -1216,7 +1217,7 @@ describe('useChatViewModel', () => {
           },
         ],
         askingIds: ['w1'],
-        codeSteps: { w1: { step: 'download', bytes: 3.25 * 1024 * 1024 } },
+        readSteps: { w1: { step: 'download', bytes: 3.25 * 1024 * 1024 } },
       });
 
       const { result } = renderHook(() => useChatViewModel());
@@ -1225,7 +1226,7 @@ describe('useChatViewModel', () => {
         'Downloading the code of acme/loja-web · 3.3 MB',
       );
 
-      useWorkspaceStore.setState({ codeSteps: { w1: { step: 'diff', bytes: 0 } } });
+      useWorkspaceStore.setState({ readSteps: { w1: { step: 'diff', bytes: 0 } } });
 
       expect(renderHook(() => useChatViewModel()).result.current.codeStatus).toBe(
         'Reading what changed since develop…',

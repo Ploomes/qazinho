@@ -11,6 +11,7 @@ import type {
   IBuildEvent,
   IChatTurn,
   ICodeCopy,
+  IJiraStoryCopy,
   IConnectIntegration,
   IExportCode,
   InstallableId,
@@ -73,6 +74,8 @@ import {
   GithubRepos,
   IntegrationVault,
   IosDriver,
+  JiraApi,
+  JiraStories,
   LiveStream,
   PhonePeek,
   ProcessOwners,
@@ -243,6 +246,11 @@ const vault = new IntegrationVault({
   fetcher: (url, init) => fetch(url, init),
   github: () => github.status(),
 });
+const jira = new JiraApi({
+  credentials: () => vault.jira(),
+  fetcher: (url, init) => fetch(url, init),
+});
+const jiraStories = new JiraStories({ jira, root: PATHS.jira });
 const variables = new VariableVault({ file: PATHS.variables, cipher: keychain });
 const git = new GitCli({ directories: commandDirectories });
 const suites = new SuiteRegistry({ root: PATHS.suites, git });
@@ -478,8 +486,9 @@ async function askOnce(props: {
   sessionId: string | null;
   look: AppLook | null;
   code: ICodeCopy | null;
+  story: IJiraStoryCopy | null;
 }): Promise<{ turn: IAgentTurn; told: Record<string, string> }> {
-  const { ask, command, sessionId, look, code } = props;
+  const { ask, command, sessionId, look, code, story } = props;
   const chat = harness.chat({
     text: ask.text,
     told: (sessionId === null ? undefined : toldChats.get(sessionId)) ?? {},
@@ -490,7 +499,7 @@ async function askOnce(props: {
     runs: ask.runs,
     look,
     code,
-    story: null,
+    story,
     variables: ask.variables,
   });
   const turn = await agentRunner.ask({
@@ -519,6 +528,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     isError: true,
     answer: null,
     code: null,
+    story: null,
   };
 
   if (!command)
@@ -541,7 +551,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     });
 
   try {
-    const [look, prepared] = await Promise.all([
+    const [look, prepared, read] = await Promise.all([
       ask.target?.kind === 'web'
         ? peek.look(ask.target.value)
         : phone === null
@@ -559,10 +569,23 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
               });
             },
           }),
+      ask.jira === null
+        ? Promise.resolve(null)
+        : jiraStories.prepare({
+            workspaceId: ask.workspaceId,
+            key: ask.jira.key,
+            onStep: ({ at, bytes }) => {
+              broadcast({
+                channel: CHANNELS.agentEvent,
+                event: { kind: 'jira', workspaceId: ask.workspaceId, step: at, bytes },
+              });
+            },
+          }),
     ]);
 
     if (stoppedChats.has(ask.workspaceId)) {
       if (prepared !== null) await codeCopies.release(ask.workspaceId);
+      if (read !== null) await jiraStories.release(ask.workspaceId);
 
       return { ...unanswered, failure: { reason: 'stopped' } };
     }
@@ -573,15 +596,29 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
         failure: { reason: 'code', failure: prepared.failure, said: prepared.said },
       };
 
+    if (read !== null && !read.isReady && ask.jira !== null)
+      return {
+        ...unanswered,
+        failure: { reason: 'jira', failure: read.failure, key: ask.jira.key },
+      };
+
     const code = codeCopies.copyOf(ask.workspaceId);
-    const first = await askOnce({ ask, command, sessionId: ask.sessionId, look, code });
+    const story = jiraStories.storyOf(ask.workspaceId);
+    const first = await askOnce({
+      ask,
+      command,
+      sessionId: ask.sessionId,
+      look,
+      code,
+      story,
+    });
     const isLost =
       first.turn.isError &&
       ask.sessionId !== null &&
       !stoppedChats.has(ask.workspaceId) &&
       isLostSession(first.turn.text);
     const { turn, told } = isLost
-      ? await askOnce({ ask, command, sessionId: null, look, code })
+      ? await askOnce({ ask, command, sessionId: null, look, code, story })
       : first;
 
     if (stoppedChats.has(ask.workspaceId))
@@ -591,6 +628,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
         answer: null,
         failure: { reason: 'stopped' },
         code: null,
+        story: null,
       };
 
     if (!turn.isError && turn.sessionId !== null) toldChats.set(turn.sessionId, told);
@@ -598,6 +636,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     const answer = turn.isError ? null : harness.readChat(turn.text);
 
     if (answer?.plan && code !== null) await codeCopies.release(ask.workspaceId);
+    if (answer?.plan && story !== null) await jiraStories.release(ask.workspaceId);
 
     return {
       ...turn,
@@ -612,6 +651,10 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
               base: code.base,
               commit: code.commit,
             },
+      story:
+        story === null
+          ? null
+          : { key: story.story.key, summary: story.story.summary, url: story.story.url },
     };
   } finally {
     askingChats.delete(ask.workspaceId);
@@ -818,6 +861,7 @@ void app.whenReady().then(async () => {
   await replays.start();
   await tools.start();
   void codeCopies.sweep();
+  void jiraStories.sweep();
   void builder.sweep();
 
   ipcMain.handle(CHANNELS.detectAgents, () => agents.detect());
@@ -898,6 +942,7 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.removeWorkspace, async (_event, workspaceId: string) => {
     await codeCopies.release(workspaceId);
+    await jiraStories.release(workspaceId);
     await archive.removeWorkspace(workspaceId);
   });
   ipcMain.handle(CHANNELS.readShot, (_event, file: string) => archive.readShot(file));
@@ -979,6 +1024,7 @@ void app.whenReady().then(async () => {
     github.cancelSignIn();
   });
   ipcMain.handle(CHANNELS.listRepositories, () => repos.repositories());
+  ipcMain.handle(CHANNELS.searchJira, (_event, query: string) => jira.search(query));
   ipcMain.handle(CHANNELS.listBranches, (_event, repository: IRepositoryRef) =>
     repos.branches(repository),
   );

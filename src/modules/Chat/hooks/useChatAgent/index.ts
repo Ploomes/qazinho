@@ -1,11 +1,11 @@
-import type { IChatReference, ICodeAsk } from '@/shared/types';
+import type { IChatReference, ICodeAsk, IJiraAsk } from '@/shared/types';
 import { useTranslation } from 'react-i18next';
 import { runHistoryOf, sessionFor } from '@/modules/Chat/library';
 import { CHAT_FAILURE_KEYS } from '@/modules/Chat/screens/Chat/constants';
 import { viewportOf } from '@/modules/Device';
 import { caseIdsUsed, planOfDraft } from '@/modules/Plan';
 import { flattenPlanSteps } from '@/modules/Run';
-import { GITHUB_FAILURE_KEYS } from '@/modules/Setup';
+import { GITHUB_FAILURE_KEYS, JIRA_FAILURE_KEYS } from '@/modules/Setup';
 import { Agent } from '@/services';
 import {
   useAppStore,
@@ -23,6 +23,7 @@ export const useChatAgent = () => {
     text: string;
     references: IChatReference[];
     code: ICodeAsk | null;
+    jira: IJiraAsk | null;
   }) => {
     const { workspaceId } = props;
     const workspace = useWorkspaceStore
@@ -61,6 +62,7 @@ export const useChatAgent = () => {
         exploration: t('RUN.EXPLORATION'),
       }),
       code: props.code,
+      jira: props.jira,
       variables: useVariablesStore.getState().byProject[workspace.projectId] ?? [],
     }).then((turn) => {
       if (turn.failure?.reason === 'stopped') {
@@ -79,10 +81,15 @@ export const useChatAgent = () => {
                 ? t('CHAT.FAILED_CODE', {
                     reason: t(GITHUB_FAILURE_KEYS[turn.failure.failure]),
                   })
-                : t(CHAT_FAILURE_KEYS[turn.failure.reason], {
-                    ...turn.failure,
-                    agent: agentName,
-                  }),
+                : turn.failure.reason === 'jira'
+                  ? t('CHAT.FAILED_JIRA', {
+                      key: turn.failure.key,
+                      reason: t(JIRA_FAILURE_KEYS[turn.failure.failure]),
+                    })
+                  : t(CHAT_FAILURE_KEYS[turn.failure.reason], {
+                      ...turn.failure,
+                      agent: agentName,
+                    }),
         });
 
         return;
@@ -131,6 +138,7 @@ export const useChatAgent = () => {
           summary: answer.reply,
           plan,
           source: turn.code,
+          story: turn.story,
           who: agentName,
           agentId,
           sessionId: turn.sessionId,

@@ -13,6 +13,7 @@ export const PATHS = {
   variables: join(app.getPath('userData'), 'variables.bin'),
   agentHome: join(app.getPath('userData'), 'agent'),
   code: join(app.getPath('userData'), 'code'),
+  jira: join(app.getPath('userData'), 'jira'),
   builds: join(app.getPath('userData'), 'builds'),
   suites: join(app.getPath('userData'), 'suites'),
 } as const;

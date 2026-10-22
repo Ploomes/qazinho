@@ -13,5 +13,6 @@ export const ASSISTANT_FAILURE_KEYS: Record<
   'no-simulator': 'ASSISTANT.FAILED_OTHER',
   unreachable: 'ASSISTANT.FAILED_OTHER',
   code: 'ASSISTANT.FAILED_OTHER',
+  jira: 'ASSISTANT.FAILED_OTHER',
   other: 'ASSISTANT.FAILED_OTHER',
 };

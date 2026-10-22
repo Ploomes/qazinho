@@ -184,6 +184,8 @@ export const pt: typeof en = {
     FAILED_AGENT_ERROR: 'O agente respondeu com um erro: {{said}}',
     FAILED_AGENT_SILENT: 'O agente parou de responder. Pergunte de novo.',
     FAILED_CODE: 'O QAzinho não conseguiu pegar o código no GitHub. {{reason}}',
+    FAILED_JIRA: 'O QAzinho não conseguiu ler a {{key}} no Jira. {{reason}}',
+    SUGGESTION_JIRA: 'Planejar a partir de uma história do Jira',
     PLAN_WHILE_RUNNING:
       'O plano ficou como estava: uma run está rodando nele. Peça de novo quando a run terminar.',
   },
@@ -197,6 +199,7 @@ export const pt: typeof en = {
       'Feito do código de {{repository}}: o que a {{branch}} em {{commit}} mudou em relação à {{base}}',
     SOURCE_WHOLE:
       'Feito do código de {{repository}}: o app inteiro na {{branch}} em {{commit}}',
+    STORY: 'Feito da história {{key}} do Jira: {{summary}}',
     CASES_ONE: '1 caso',
     CASES_OTHER: '{{count}} casos',
     STEPS_ONE: '1 passo',
@@ -454,6 +457,18 @@ export const pt: typeof en = {
     STEP_DOWNLOAD: 'Baixando o código de {{repository}}…',
     STEP_DOWNLOAD_SIZE: 'Baixando o código de {{repository}} · {{size}}',
     STEP_DIFF: 'Lendo o que mudou desde a {{base}}…',
+    JIRA_PLAN: 'Plano a partir de uma história do Jira',
+    JIRA_PLAN_TEXT:
+      'O agente lê uma história, os critérios de aceite e os anexos, e planeja os testes com você.',
+    NEEDS_JIRA: 'Conecte o Jira em Configurações → Integrações antes.',
+    STORY_HEADING: 'história do Jira',
+    STORY_RECENT: 'as histórias que você abriu por último',
+    PICK_STORY: 'Qual história? Digite a chave ou palavras dela',
+    STORY_SEARCHING: 'Buscando no Jira…',
+    JIRA_PLAN_SAY: 'Planeje os testes da história {{key}} do Jira: {{summary}}.',
+    STEP_STORY: 'Lendo a {{key}} no Jira…',
+    STEP_FILES: 'Baixando os anexos da {{key}}…',
+    STEP_FILES_SIZE: 'Baixando os anexos da {{key}} · {{size}}',
   },
   PROJECT: {
     ANDROID_LOCKED: 'Precisa do Android SDK nesta máquina',
@@ -833,6 +848,15 @@ export const pt: typeof en = {
     FAILURE_NOT_FOUND: 'O GitHub não encontrou, ou esta conta não enxerga.',
     FAILURE_UNREACHABLE: 'O GitHub está fora de alcance desta máquina. Confira a rede.',
     FAILURE_UNEXPECTED: 'O GitHub respondeu de um jeito que o QAzinho não esperava.',
+  },
+  JIRA: {
+    FAILURE_NOT_CONNECTED:
+      'O Jira não está conectado. Conecte em Configurações → Integrações.',
+    FAILURE_UNAUTHORIZED:
+      'O Jira recusou o token. Conecte o Jira de novo em Configurações → Integrações.',
+    FAILURE_NOT_FOUND: 'O Jira não encontrou, ou esta conta não enxerga.',
+    FAILURE_UNREACHABLE: 'O Jira está fora de alcance desta máquina. Confira a rede.',
+    FAILURE_UNEXPECTED: 'O Jira respondeu de um jeito que o QAzinho não esperava.',
   },
   ASSISTANT: {
     OPEN: 'Falar com o Estagiário',

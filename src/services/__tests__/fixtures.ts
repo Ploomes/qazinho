@@ -15,6 +15,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
         answer: null,
         failure: null,
         code: null,
+        story: null,
       }),
     stopAgent: () => Promise.resolve(),
     readAgentLimits: () => Promise.resolve(null),
@@ -111,6 +112,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     onGithubSignIn: () => () => undefined,
     listRepositories: () => Promise.resolve({ isListed: false, failure: 'no-cli' }),
     listBranches: () => Promise.resolve({ isListed: false, failure: 'no-cli' }),
+    searchJira: () => Promise.resolve({ isListed: false, failure: 'not-connected' }),
     listMcpServers: () => Promise.resolve([{ id: 'figma', state: 'missing' }]),
     connectMcpServer: (signIn) =>
       Promise.resolve({ target: signIn.target, steps: ['check'], phase: 'connected' }),

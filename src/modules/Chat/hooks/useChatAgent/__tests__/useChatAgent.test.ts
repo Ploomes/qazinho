@@ -49,6 +49,7 @@ function answering(turn: Partial<IChatTurn>) {
       answer: null,
       failure: null,
       code: null,
+      story: null,
       ...turn,
     }),
   );
@@ -87,6 +88,7 @@ describe('useChatAgent', () => {
           text: 'Plan the checkout',
           references: [],
           code: null,
+          jira: null,
         });
       });
 
@@ -116,6 +118,7 @@ describe('useChatAgent', () => {
           text: 'Plan it',
           references: [],
           code: null,
+          jira: null,
         });
       });
 
@@ -133,12 +136,70 @@ describe('useChatAgent', () => {
           text: 'Plan it',
           references: [],
           code: null,
+          jira: null,
         });
       });
 
       await waitFor(() => {
         expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
           text: 'Claude Code is signed out. Sign it in from Settings → Agents, then ask again.',
+        });
+      });
+    });
+
+    it('says which story Jira did not hand over, and why', async () => {
+      answering({
+        isError: true,
+        failure: { reason: 'jira', failure: 'not-found', key: 'SHOP-99' },
+      });
+
+      const { result } = renderHook(() => useChatAgent());
+
+      act(() => {
+        result.current.askAgent({
+          workspaceId: 'w1',
+          text: 'Plan SHOP-99',
+          references: [],
+          code: null,
+          jira: { key: 'SHOP-99' },
+        });
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
+          text: 'QAzinho could not read SHOP-99 from Jira. Jira did not find it, or this account cannot see it.',
+        });
+      });
+    });
+
+    it('asks with the story and keeps it as what the workspace works from once the plan lands', async () => {
+      const ask = answering({
+        answer: DRAFTED,
+        story: {
+          key: 'SHOP-12',
+          summary: 'Aplicar cupom',
+          url: 'https://acme.atlassian.net/browse/SHOP-12',
+        },
+      });
+      const { result } = renderHook(() => useChatAgent());
+
+      act(() => {
+        result.current.askAgent({
+          workspaceId: 'w1',
+          text: 'Plan the tests for the Jira story SHOP-12: Aplicar cupom.',
+          references: [],
+          code: null,
+          jira: { key: 'SHOP-12' },
+        });
+      });
+
+      expect(ask.mock.calls[0]?.[0].jira).toEqual({ key: 'SHOP-12' });
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.issue).toEqual({
+          key: 'SHOP-12',
+          title: 'Aplicar cupom',
+          source: 'jira',
+          url: 'https://acme.atlassian.net/browse/SHOP-12',
         });
       });
     });

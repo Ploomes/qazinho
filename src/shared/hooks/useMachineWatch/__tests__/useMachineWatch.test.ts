@@ -262,19 +262,38 @@ describe('useMachineWatch', () => {
 
       return () => undefined;
     });
-    useWorkspaceStore.setState({ workspaces: [makeWorkspace()], codeSteps: {} });
+    useWorkspaceStore.setState({ workspaces: [makeWorkspace()], readSteps: {} });
 
     renderHook(() => useMachineWatch());
 
     hear({ kind: 'code', workspaceId: 'w1', step: 'download', bytes: 2048 });
 
-    expect(useWorkspaceStore.getState().codeSteps).toEqual({
+    expect(useWorkspaceStore.getState().readSteps).toEqual({
       w1: { step: 'download', bytes: 2048 },
     });
 
     hear({ kind: 'text', workspaceId: 'w1', text: 'Reading the diff' });
 
-    expect(useWorkspaceStore.getState().codeSteps).toEqual({});
+    expect(useWorkspaceStore.getState().readSteps).toEqual({});
+  });
+
+  it('follows a Jira story being read for the agent', () => {
+    let hear: (event: IAgentEvent) => void = () => undefined;
+
+    window.qazinho.onAgentEvent = vi.fn((listener: (event: IAgentEvent) => void) => {
+      hear = listener;
+
+      return () => undefined;
+    });
+    useWorkspaceStore.setState({ workspaces: [makeWorkspace()], readSteps: {} });
+
+    renderHook(() => useMachineWatch());
+
+    hear({ kind: 'jira', workspaceId: 'w1', step: 'files', bytes: 4096 });
+
+    expect(useWorkspaceStore.getState().readSteps).toEqual({
+      w1: { step: 'files', bytes: 4096 },
+    });
   });
 
   it('knows which trackers are connected from the start', async () => {

@@ -48,6 +48,7 @@ import type {
   ISuiteRun,
   IViewport,
   InstallableId,
+  JiraIssueList,
   IntegrationId,
   McpActionResult,
   McpSignInProgress,
@@ -276,6 +277,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.listRepositories) as Promise<IRepositoryList>,
   listBranches: (repository: IRepositoryRef) =>
     ipcRenderer.invoke(CHANNELS.listBranches, repository) as Promise<IBranchList>,
+  searchJira: (query: string) =>
+    ipcRenderer.invoke(CHANNELS.searchJira, query) as Promise<JiraIssueList>,
   listMcpServers: (agentId: string) =>
     ipcRenderer.invoke(CHANNELS.listMcpServers, agentId) as Promise<IMcpServerStatus[]>,
   connectMcpServer: (signIn: IMcpSignIn) =>

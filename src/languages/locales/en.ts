@@ -181,6 +181,8 @@ export const en = {
     FAILED_AGENT_ERROR: 'The agent answered with an error: {{said}}',
     FAILED_AGENT_SILENT: 'The agent stopped answering. Ask it again.',
     FAILED_CODE: 'QAzinho could not get the code from GitHub. {{reason}}',
+    FAILED_JIRA: 'QAzinho could not read {{key}} from Jira. {{reason}}',
+    SUGGESTION_JIRA: 'Plan from a Jira story',
     PLAN_WHILE_RUNNING:
       'The plan stays as it was: a run is walking it. Ask again once the run ends.',
   },
@@ -194,6 +196,7 @@ export const en = {
       'Made from the code of {{repository}}: what {{branch}} at {{commit}} changed against {{base}}',
     SOURCE_WHOLE:
       'Made from the code of {{repository}}: the whole app on {{branch}} at {{commit}}',
+    STORY: 'Made from the Jira story {{key}}: {{summary}}',
     CASES_ONE: '1 case',
     CASES_OTHER: '{{count}} cases',
     STEPS_ONE: '1 step',
@@ -451,6 +454,18 @@ export const en = {
     STEP_DOWNLOAD: 'Downloading the code of {{repository}}…',
     STEP_DOWNLOAD_SIZE: 'Downloading the code of {{repository}} · {{size}}',
     STEP_DIFF: 'Reading what changed since {{base}}…',
+    JIRA_PLAN: 'Plan from a Jira story',
+    JIRA_PLAN_TEXT:
+      'The agent reads a story, its acceptance criteria and its files, and plans its tests with you.',
+    NEEDS_JIRA: 'Connect Jira in Settings → Integrations first.',
+    STORY_HEADING: 'Jira story',
+    STORY_RECENT: 'the stories you opened last',
+    PICK_STORY: 'Which story? Type its key or words from it',
+    STORY_SEARCHING: 'Searching Jira…',
+    JIRA_PLAN_SAY: 'Plan the tests for the Jira story {{key}}: {{summary}}.',
+    STEP_STORY: 'Reading {{key}} from Jira…',
+    STEP_FILES: 'Downloading the files of {{key}}…',
+    STEP_FILES_SIZE: 'Downloading the files of {{key}} · {{size}}',
   },
   PROJECT: {
     ANDROID_LOCKED: 'Needs the Android SDK on this machine',
@@ -830,6 +845,15 @@ export const en = {
     FAILURE_NOT_FOUND: 'GitHub did not find it, or this account cannot see it.',
     FAILURE_UNREACHABLE: 'GitHub is out of reach from this machine. Check the network.',
     FAILURE_UNEXPECTED: 'GitHub answered in a way QAzinho did not expect.',
+  },
+  JIRA: {
+    FAILURE_NOT_CONNECTED:
+      'Jira is not connected. Connect it in Settings → Integrations.',
+    FAILURE_UNAUTHORIZED:
+      'Jira refused the token. Connect Jira again in Settings → Integrations.',
+    FAILURE_NOT_FOUND: 'Jira did not find it, or this account cannot see it.',
+    FAILURE_UNREACHABLE: 'Jira is out of reach from this machine. Check the network.',
+    FAILURE_UNEXPECTED: 'Jira answered in a way QAzinho did not expect.',
   },
   ASSISTANT: {
     OPEN: 'Talk to the Intern',
