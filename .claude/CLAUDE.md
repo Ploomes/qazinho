@@ -121,6 +121,16 @@ again with the strip drawn under it. `tests/smoke/network.test.ts` proves the ca
 Chrome, and `strip.test.ts` the strip and the download in the built app. A phone run keeps no
 network yet.
 
+**A team's own Playwright suite runs in QAzinho.** A project connects the folder where the
+team keeps its suite cloned, and QAzinho reads it there and changes nothing in it: the tests by
+folder and file, listed and run by the suite's own Playwright on the QA's node, one Playwright
+project at a time, with the project's variables reaching the tests from the environment, never
+written to a file. The suite's screen runs everything, the failed, a folder, a file or one test,
+follows each step as it goes, and keeps each run with each test's error, the screen it left and
+its trace, which opens in Playwright's own viewer. `tests/smoke/suite.test.ts` lists and runs a
+fixture suite on real Chrome. The QA's agent does not touch a suite yet: fixing a broken test and
+writing a new one come next.
+
 **A run that ends calls the QA back** while they are away: a notification with its sound and a
 count on the app's icon, unless they asked to hear only inside the app, where a notice says it.
 

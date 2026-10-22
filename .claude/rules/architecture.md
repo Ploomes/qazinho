@@ -78,6 +78,8 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
   - A run reaches the device through `variablePort`: a `${NAME}` is typed as its value, every
     value that shows is read back as its name, in the screen and in why an action failed, and
     a recipe keeps the name, never a locator that holds a value.
+  - A team's suite reads a variable from the environment of the Playwright QAzinho starts; it
+    is never written to the suite's `.env`, or anywhere else.
   - On Linux, Electron seals with a fixed key when there is no GNOME Keyring or KWallet, and
     still says it can encrypt: `isSealable` refuses that, for variables and Jira's token.
 - **GitHub's login never passes through QAzinho either.** QAzinho talks to GitHub through the
@@ -276,6 +278,34 @@ screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `
   still, and encodes one MP4. The file crosses IPC whole, once each way (`replayVideo`,
   `saveVideo`); its frames never do.
 
+## A team's own suite runs as it is
+
+A project may connect the Playwright suite the QA's team keeps, from the folder it is cloned in.
+QAzinho runs it with the suite's own Playwright and changes nothing in it:
+
+- `SuiteRegistry` keeps the folder each project connected (`suites/registry.json`), as the folder
+  a link leads to, and reads the rest afresh each time: the config, the Playwright installed in
+  its `node_modules` or in one above it, its branch and remote through `GitCli`, and the keys its
+  `.env.example` and `.env` name.
+- `SuiteRunner` lists the tests with `test --list` and runs them with the QA's node and the
+  suite's own `cli.js`, one Playwright project at a time (`ISuiteBatch`), the way the team runs
+  the project that changes data after the one that only reads.
+  - A reporter QAzinho writes beside its data (`SUITE_REPORTER`) prints a `QAZINHO-SUITE` line
+    per event, read back against a zod schema: a test's start, its `test.step` and `expect`
+    steps, its end with its error and files, and what Playwright says outside any test.
+  - Playwright reads a location as a regular expression tried on the absolute path:
+    `locationOf` anchors each file at a folder boundary and at its end, so `a.spec.ts` never
+    runs `data.spec.ts`.
+  - Each batch writes to a folder of its own (`output/<n>`), since Playwright empties its output
+    folder whenever it starts, and keeps a trace of each failure.
+  - The environment is the QA's PATH and the project's variables over what QAzinho runs with.
+    dotenv never overrides what is set, so a variable wins over the suite's `.env`.
+  - A run is kept as `run.json` under `suites/<project>/runs/<run>`. `ReplayServer` serves its
+    screens and videos to the page on loopback, and a trace opens in Playwright's `show-trace`.
+- The page (`src/modules/Automation/`) groups the tests by folder and file, runs what the QA
+  picks as batches with the total it expects (`batchesOf`, `scopeTestsOf`), and follows the
+  run's `SuiteEvent`s in `SuiteStore`.
+
 ## What the main process owns
 
 Besides the harness's `Harness` and `McpHost`, which main builds and wires:
@@ -309,6 +339,9 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `AppBuilder`                          | builds an .apk or .app from a branch with the QA's agent, and keeps what it made         |
 | `UsageReader`                         | reads the account's limits through Claude Code's own `/usage`, which spends nothing      |
 | `VariableVault`                       | keeps each project's variables sealed by the keychain; only a run reads a value          |
+| `GitCli`                              | runs the QA's own git in a folder, and never waits on a password                         |
+| `SuiteRegistry`                       | the suite folder each project connected, and what it holds, read afresh                  |
+| `SuiteRunner`                         | lists and runs a suite with its own Playwright, a project at a time, and keeps each run  |
 
 ## Dependencies
 
