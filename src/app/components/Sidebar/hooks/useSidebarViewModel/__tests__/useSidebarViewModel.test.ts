@@ -2,10 +2,11 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useSidebarViewModel } from '@/app/components/Sidebar/hooks/useSidebarViewModel';
+import { suiteRun, suiteTest } from '@/modules/Automation/library/__tests__/fixtures';
 import { startRun } from '@/modules/Workspace/library';
 import { makeWorkspace, WALKED_BY } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useSuiteStore, useWorkspaceStore } from '@/store';
 
 const PROJECT = { id: 'p1', name: 'Shop · staging', targets: [], repositories: [] };
 
@@ -18,9 +19,117 @@ beforeEach(() => {
     editingProjectId: null,
   });
   useWorkspaceStore.setState({ workspaces: [], removingWorkspaceId: null });
+  useSuiteStore.setState({ suites: {}, lists: {}, runs: {}, live: {}, picked: {} });
 });
 
+const SUITE = {
+  projectId: 'p1',
+  path: '/qa/e2e',
+  name: 'chat-e2e',
+  config: 'playwright.config.ts',
+  version: '1.63.0',
+  branch: null,
+  repository: null,
+  envKeys: [],
+  envFileKeys: [],
+};
+
 describe('useSidebarViewModel', () => {
+  describe('the suite row', () => {
+    it("shows the suite a project runs under its workspaces, by the suite's name until it was read", () => {
+      useSuiteStore.setState({ suites: { p1: SUITE } });
+
+      const { rows } = renderHook(() => useSidebarViewModel()).result.current;
+
+      expect(rows.map(({ kind }) => kind)).toEqual(['header', 'suite', 'add']);
+      expect(rows[1]).toMatchObject({
+        name: 'Automation',
+        meta: 'chat-e2e',
+        statusLabel: 'idle',
+        isSelected: false,
+      });
+    });
+
+    it('counts the tests once the suite was read, and how far a run going is', () => {
+      useSuiteStore.setState({
+        suites: { p1: SUITE },
+        lists: {
+          p1: {
+            kind: 'listed',
+            tests: [suiteTest({}), suiteTest({ id: 't-2' })],
+            projects: [],
+          },
+        },
+      });
+
+      expect(
+        renderHook(() => useSidebarViewModel()).result.current.rows[1],
+      ).toMatchObject({
+        meta: '2 tests',
+      });
+
+      useSuiteStore.setState({
+        runs: {
+          p1: [suiteRun({ status: 'running', endedAt: null, total: 40, results: [] })],
+        },
+        live: { p1: { runId: 's-01', going: {} } },
+      });
+
+      expect(
+        renderHook(() => useSidebarViewModel()).result.current.rows[1],
+      ).toMatchObject({
+        meta: '0/40',
+        statusLabel: 'running',
+      });
+    });
+
+    it('marks a suite whose last run broke for attention, and one that failed as failed', () => {
+      useSuiteStore.setState({
+        suites: { p1: SUITE },
+        runs: { p1: [suiteRun({ status: 'broke' })] },
+      });
+
+      expect(
+        renderHook(() => useSidebarViewModel()).result.current.rows[1],
+      ).toMatchObject({
+        icon: 'attention',
+      });
+
+      useSuiteStore.setState({ runs: { p1: [suiteRun({ status: 'failed' })] } });
+
+      expect(
+        renderHook(() => useSidebarViewModel()).result.current.rows[1],
+      ).toMatchObject({
+        icon: 'failed',
+        statusLabel: 'failed',
+      });
+    });
+
+    it('opens the suite, and marks its row while it shows', () => {
+      useSuiteStore.setState({ suites: { p1: SUITE } });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onOpenSuite('p1');
+      });
+
+      expect(useAppStore.getState()).toMatchObject({
+        screen: 'automation',
+        automationProjectId: 'p1',
+      });
+      expect(result.current.rows[1]).toMatchObject({ isSelected: true });
+    });
+
+    it('shows no suite row for a project with none', () => {
+      expect(
+        renderHook(() => useSidebarViewModel()).result.current.rows.map(
+          ({ kind }) => kind,
+        ),
+      ).toEqual(['header', 'add']);
+    });
+  });
+
   describe('rows', () => {
     it('opens a project with its header and closes it with the add row', () => {
       const { result } = renderHook(() => useSidebarViewModel());

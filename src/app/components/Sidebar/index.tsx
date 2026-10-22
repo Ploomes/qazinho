@@ -16,6 +16,7 @@ export const Sidebar: React.FC = () => {
     onAskRemove,
     onRemoveWorkspace,
     onProjectSettings,
+    onOpenSuite,
   } = useSidebarViewModel();
   const { t } = useTranslation();
 
@@ -57,6 +58,43 @@ export const Sidebar: React.FC = () => {
                 >
                   <span className="sidebar__project-settings-icon">
                     <Icon name="settings" size={14} />
+                  </span>
+                </button>
+              </div>
+            );
+          }
+
+          if (row.kind === 'suite') {
+            return (
+              <div
+                key={row.id}
+                className={
+                  row.isSelected ? 'sidebar__row sidebar__row--selected' : 'sidebar__row'
+                }
+              >
+                <button
+                  type="button"
+                  className="sidebar__open"
+                  onClick={() => {
+                    onOpenSuite(row.projectId);
+                  }}
+                >
+                  <span className="sidebar__platform">
+                    <Icon name="suite" size={15} />
+                  </span>
+                  <span className="sidebar__text">
+                    <span className="sidebar__name">{row.name}</span>
+                    <span className="sidebar__detail">
+                      <span
+                        className="sidebar__icon"
+                        style={{ color: row.tone, animation: row.animation }}
+                      >
+                        <Icon name={row.icon} />
+                      </span>
+                      <span style={{ color: row.tone }}>{row.statusLabel}</span>
+                      <span aria-hidden="true">·</span>
+                      <span className="sidebar__meta">{row.meta}</span>
+                    </span>
                   </span>
                 </button>
               </div>
