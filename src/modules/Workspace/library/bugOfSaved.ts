@@ -20,6 +20,7 @@ export function bugOfSaved(saved: SavedBug): IBug {
     isIncidental: bug.isIncidental ?? false,
     at: bug.at ?? null,
     filed: bug.filed ?? null,
+    frame: bug.frame ?? null,
     reviewedRuns:
       bug.reviewedRuns ??
       (bug.filed === undefined || bug.filed === null

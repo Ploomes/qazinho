@@ -1,6 +1,6 @@
 import type { IBug } from '@/modules/Bug';
 
-/** A bug as its file keeps it: an older one says its step and how often it was seen in words, and keeps no sightings, no issue and no look at it. */
+/** A bug as its file keeps it: an older one says its step and how often it was seen in words, and keeps no sightings, no issue, no look at it and no Figma frame. */
 export type SavedBug = Omit<
   IBug,
   | 'stepNumber'
@@ -13,6 +13,7 @@ export type SavedBug = Omit<
   | 'filed'
   | 'reviewedRuns'
   | 'review'
+  | 'frame'
 > &
   Partial<
     Pick<
@@ -27,6 +28,7 @@ export type SavedBug = Omit<
       | 'filed'
       | 'reviewedRuns'
       | 'review'
+      | 'frame'
     >
   > & {
     step?: string;

@@ -21,6 +21,8 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
     caseLabel,
     filedKey,
     updateChip,
+    offDesign,
+    frameLabel,
     sendLabel,
     issueLabel,
     canCopyScreen,
@@ -28,6 +30,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
     onHeadClick,
     onRunClick,
     onCaseClick,
+    onFrameClick,
     onSendClick,
     onIssueClick,
     onCopyScreen,
@@ -52,6 +55,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
         {bug.isIncidental && (
           <span className="bug-card__outside">{t('BUG.OUTSIDE_PLAN')}</span>
         )}
+        {offDesign !== null && <span className="bug-card__design">{offDesign}</span>}
         {filedKey !== null && (
           <span className="bug-card__filed">
             <Icon name="link" />
@@ -122,6 +126,13 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
             {hasCase && (
               <Button size="sm" onClick={onCaseClick}>
                 {caseLabel}
+              </Button>
+            )}
+            {frameLabel !== null && (
+              <Button size="sm" onClick={onFrameClick}>
+                <Icon name="figma" />
+                {frameLabel}
+                <Icon name="external" />
               </Button>
             )}
             <span className="bug-card__tracker">

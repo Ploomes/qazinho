@@ -4,7 +4,7 @@ import type { IBugShot } from './IBugShot';
 import type { IBugSighting } from './IBugSighting';
 import type { IFiledIssue, Severity } from '@/shared/types';
 
-/** A failed step the agent could explain, or a bug it saw on the side of one, with all a developer needs to reproduce it, when it was caught, each time it was caught again, the issue it became in the QA's tracker, the runs already weighed against that issue, and the latest look at it. */
+/** A failed step the agent could explain, or a bug it saw on the side of one, with all a developer needs to reproduce it, when it was caught, each time it was caught again, the issue it became in the QA's tracker, the runs already weighed against that issue, the latest look at it, and the Figma frame the screen differs from when it is off the design. */
 export interface IBug {
   id: string;
   severity: Severity;
@@ -30,4 +30,5 @@ export interface IBug {
   filed: IFiledIssue | null;
   reviewedRuns: string[];
   review: IBugReview | null;
+  frame: string | null;
 }

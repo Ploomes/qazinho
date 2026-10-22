@@ -78,5 +78,6 @@ export function makeBug(props: {
     filed: null,
     reviewedRuns: [],
     review: null,
+    frame: outcome.frame ?? null,
   };
 }

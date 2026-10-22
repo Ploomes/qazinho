@@ -30,6 +30,7 @@ const BUG: IBug = {
   filed: null,
   reviewedRuns: [],
   review: null,
+  frame: null,
 };
 
 /** Words that show where each one lands, the way i18n hands them over. */
@@ -47,6 +48,7 @@ const WORDS: IBugReportWords = {
   seen: 'Seen',
   seenRuns: (count) => `in ${String(count)} runs`,
   story: 'Story',
+  design: 'Design',
   caughtBy: 'Caught by',
   agentLine: ({ agent, model }) => `${agent} · ${model ?? 'default'}`,
   noAnswer: 'no answer',
@@ -59,6 +61,7 @@ const REPORT = {
   title: BUG.title,
   app: null,
   story: null,
+  design: null,
   requests: [],
   attached: [],
   words: WORDS,
@@ -159,6 +162,29 @@ describe('bugReportOf', () => {
       kind: 'paragraph',
       text: 'Attached: the screen before, a clip of the moment.',
     });
+  });
+
+  it('links the Figma frame a bug off the design differs from', () => {
+    const report = bugReportOf({
+      ...REPORT,
+      design: {
+        name: 'Shop · frame 12:345',
+        url: 'https://www.figma.com/design/AbC123/Shop?node-id=12-345',
+      },
+    });
+
+    expect(report.blocks).toContainEqual(
+      expect.objectContaining({
+        kind: 'facts',
+        items: expect.arrayContaining([
+          {
+            label: 'Design',
+            value: 'Shop · frame 12:345',
+            url: 'https://www.figma.com/design/AbC123/Shop?node-id=12-345',
+          },
+        ]),
+      }),
+    );
   });
 
   it('leaves out what the bug does not say, and keeps its own title when the QA cleared it', () => {

@@ -4,15 +4,24 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SEVERITY_KEYS } from '@/modules/Bug/constants';
 import { pasteShotOf } from '@/modules/Bug/library';
+import { frameUrlOf } from '@/modules/Plan/library';
 import { BUG_CARD } from '@/modules/Bug/screens/Bugs/components/BugCard/constants';
 import { INTEGRATIONS } from '@/modules/Setup/constants';
 import { Bugs } from '@/services';
-import { useAppStore } from '@/store';
+import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useBugCardViewModel = (props: IBugCardProps) => {
   const { bug, onToggle } = props;
   const { t } = useTranslation();
   const openMedia = useAppStore((state) => state.openMedia);
+  const design = useWorkspaceStore(
+    (state) =>
+      state.workspaces.find(({ id }) => id === props.workspaceId)?.design ?? null,
+  );
+  const frameUrl =
+    design === null || bug.frame === null
+      ? null
+      : frameUrlOf({ design, frame: bug.frame });
   const [isCopied, setIsCopied] = useState(false);
   const { filed } = bug;
   const screen = filed?.tracker === 'github' ? pasteShotOf(bug) : null;
@@ -105,6 +114,11 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
     copyLabel: isCopied ? t('FILING.COPIED') : t('FILING.COPY_SCREEN'),
     onSendClick: () => {
       props.onSend(bug.id);
+    },
+    offDesign: bug.frame === null ? null : t('BUG.OFF_DESIGN'),
+    frameLabel: frameUrl === null ? null : t('BUG.SEE_FRAME'),
+    onFrameClick: () => {
+      if (frameUrl !== null) window.open(frameUrl, '_blank', 'noreferrer');
     },
     onIssueClick: () => {
       if (filed !== null) window.open(filed.url, '_blank', 'noreferrer');

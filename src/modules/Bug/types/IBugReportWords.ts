@@ -12,6 +12,7 @@ export interface IBugReportWords {
   seen: string;
   seenRuns: (count: number) => string;
   story: string;
+  design: string;
   caughtBy: string;
   agentLine: (props: { agent: string; model: string | null }) => string;
   noAnswer: string;

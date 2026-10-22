@@ -5,7 +5,7 @@ import { i18n } from '@/languages';
 import { useBugCardViewModel } from '@/modules/Bug/screens/Bugs/components/BugCard/hooks/useBugCardViewModel';
 import { walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useSettingsStore } from '@/store';
+import { useSettingsStore, useWorkspaceStore } from '@/store';
 
 const WORKSPACE = walkRun({
   verdicts: ['passed', 'passed', 'passed', 'passed', 'failed'],
@@ -137,6 +137,55 @@ describe('useBugCardViewModel', () => {
     );
 
     expect(result.current.hasCase).toBe(false);
+  });
+
+  describe('a bug off the design', () => {
+    const DESIGN = {
+      url: 'https://www.figma.com/design/AbC123/Shop?node-id=1-2',
+      fileKey: 'AbC123',
+      nodeId: '1:2',
+      name: 'Shop',
+    };
+    const OFF = { ...PROPS, bug: { ...BUG, frame: '12:345' } };
+
+    afterEach(() => {
+      useWorkspaceStore.setState({ workspaces: [] });
+      vi.restoreAllMocks();
+    });
+
+    it('says it is off the design, and opens the frame it differs from', () => {
+      const open = vi.spyOn(window, 'open').mockReturnValue(null);
+
+      useWorkspaceStore.setState({ workspaces: [{ ...WORKSPACE, design: DESIGN }] });
+
+      const { result } = renderHook(() => useBugCardViewModel(OFF));
+
+      expect(result.current.offDesign).toBe('off the design');
+      expect(result.current.frameLabel).toBe('See the frame in Figma');
+
+      act(() => {
+        result.current.onFrameClick();
+      });
+
+      expect(open).toHaveBeenCalledWith(
+        'https://www.figma.com/design/AbC123/Shop?node-id=12-345',
+        '_blank',
+        'noreferrer',
+      );
+    });
+
+    it('does NOT offer a frame once the workspace has no design, and nothing for any other bug', () => {
+      useWorkspaceStore.setState({ workspaces: [{ ...WORKSPACE, design: null }] });
+
+      expect(renderHook(() => useBugCardViewModel(OFF)).result.current).toMatchObject({
+        offDesign: 'off the design',
+        frameLabel: null,
+      });
+      expect(renderHook(() => useBugCardViewModel(PROPS)).result.current).toMatchObject({
+        offDesign: null,
+        frameLabel: null,
+      });
+    });
   });
 
   describe('a bug seen again', () => {

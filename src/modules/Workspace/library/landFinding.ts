@@ -30,6 +30,7 @@ export function landFinding(props: {
     screenshot: finding.screenshot,
     shotFile: finding.shotFile,
     ...(finding.sameAs === undefined ? {} : { sameAs: finding.sameAs }),
+    ...(finding.frame === undefined ? {} : { frame: finding.frame }),
   };
   const caught = catchBug({
     workspace,

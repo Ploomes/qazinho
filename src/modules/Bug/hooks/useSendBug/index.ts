@@ -3,6 +3,7 @@ import type { BugFiling, IssueTarget } from '@/shared/types';
 import { useTranslation } from 'react-i18next';
 import { BUG_REPORT } from '@/modules/Bug/constants';
 import { bugReportOf, filingPlanOf } from '@/modules/Bug/library';
+import { frameUrlOf } from '@/modules/Plan/library';
 import { bugVideoOf, failedRequestsNear, formatClock } from '@/modules/Run';
 import { Bugs, Run } from '@/services';
 import { useAppStore, useWorkspaceStore } from '@/store';
@@ -25,6 +26,7 @@ export const useSendBug = () => {
     seen: t('FILING.REPORT_SEEN'),
     seenRuns: (count) => (count > 1 ? t('BUG.SEEN_RUNS', { count }) : t('BUG.SEEN_ONCE')),
     story: t('FILING.REPORT_STORY'),
+    design: t('FILING.REPORT_DESIGN'),
     caughtBy: t('FILING.REPORT_CAUGHT_BY'),
     agentLine: ({ agent, model }) =>
       t('FILING.REPORT_AGENT_LINE', { agent, model: model ?? t('MODEL.AGENT_DEFAULT') }),
@@ -94,6 +96,16 @@ export const useSendBug = () => {
         title: props.title,
         app: target?.kind === 'web' ? target.value : null,
         story: plan.story,
+        design:
+          workspace.design === null || bug.frame === null
+            ? null
+            : {
+                name: t('FILING.REPORT_FRAME', {
+                  name: workspace.design.name,
+                  node: bug.frame,
+                }),
+                url: frameUrlOf({ design: workspace.design, frame: bug.frame }),
+              },
         requests:
           moment === null || moment.at === null || entries === null
             ? []

@@ -8,12 +8,13 @@ function cut(text: string): string {
     : text;
 }
 
-/** A bug written out for the QA's tracker: what the agent saw, how to get there, what was expected and what came, the requests that failed around it, and where it was caught. */
+/** A bug written out for the QA's tracker: what the agent saw, how to get there, what was expected and what came, the requests that failed around it, and where it was caught, the Figma frame it is off included. */
 export function bugReportOf(props: {
   bug: IBug;
   title: string;
   app: string | null;
   story: { key: string; url: string } | null;
+  design: { name: string; url: string } | null;
   requests: INetworkEntry[];
   attached: string[];
   words: IBugReportWords;
@@ -85,6 +86,15 @@ export function bugReportOf(props: {
             ...(props.story === null
               ? []
               : [{ label: words.story, value: props.story.key, url: props.story.url }]),
+            ...(props.design === null
+              ? []
+              : [
+                  {
+                    label: words.design,
+                    value: props.design.name,
+                    url: props.design.url,
+                  },
+                ]),
             ...(bug.agent === ''
               ? []
               : [

@@ -52,6 +52,17 @@
   white-space: nowrap;
 }
 
+.bug-card__design {
+  flex: none;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--attn);
+  border-radius: var(--radius-pill);
+  background: var(--attn-soft);
+  color: var(--attn);
+  font: var(--font-mono-xs);
+  white-space: nowrap;
+}
+
 .bug-card__filed {
   display: inline-flex;
   flex: none;
