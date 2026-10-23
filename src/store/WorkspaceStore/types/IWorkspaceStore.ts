@@ -48,6 +48,7 @@ export interface IWorkspaceStore {
   renameWorkspace: (props: { workspaceId: string; name: string }) => void;
   setDesign: (props: { workspaceId: string; design: IDesignLink | null }) => void;
   setUnreadPlan: (props: { workspaceId: string; unreadPlan: IUnreadPlan | null }) => void;
+  keepPlain: (props: { workspaceId: string; value: string }) => void;
   setPublished: (props: {
     workspaceId: string;
     published: IPublishedPlan | null;

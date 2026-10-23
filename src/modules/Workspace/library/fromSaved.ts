@@ -43,6 +43,7 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     chat: (read.chat ?? []).map(messageOfSaved).filter((message) => message !== null),
     plan: planOfYaml(saved.planYaml),
     unreadPlan: saved.unreadPlan ?? read.unreadPlan ?? null,
+    plainValues: read.plainValues ?? [],
     planSource: codeSourceOf(read.planSource),
     sourcePage: read.sourcePage ?? null,
     published: read.published ?? null,

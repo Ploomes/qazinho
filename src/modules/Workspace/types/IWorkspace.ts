@@ -14,7 +14,7 @@ import type {
   IUnreadPlan,
 } from '@/shared/types';
 
-/** One front of testing inside a project: its own chat, device, plan and runs, the code or Confluence page its plan was made from, the page it was published on, the Figma design it is checked against, and a plan.yaml set aside that did not read. */
+/** One front of testing inside a project: its own chat, device, plan and runs, the code or Confluence page its plan was made from, the page it was published on, the Figma design it is checked against, a plan.yaml set aside that did not read, and what the QA said is no secret though it reads like one. */
 export interface IWorkspace {
   id: string;
   projectId: string;
@@ -31,6 +31,7 @@ export interface IWorkspace {
   chat: ChatMessage[];
   plan: ITestCase[];
   unreadPlan: IUnreadPlan | null;
+  plainValues: string[];
   planSource: ICodeSource | null;
   sourcePage: IConfluencePageRef | null;
   published: IPublishedPlan | null;

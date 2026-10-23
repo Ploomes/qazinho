@@ -77,6 +77,7 @@ export function makeWorkspace(plan: ITestCase[] = CASES): IWorkspace {
     planSource: null,
     sourcePage: null,
     unreadPlan: null,
+    plainValues: [],
     published: null,
     runs: [],
     bugs: [],

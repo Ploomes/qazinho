@@ -198,4 +198,14 @@ describe('fromSaved', () => {
     ).toEqual(unreadPlan);
     expect(fromSaved(SAVED)?.unreadPlan).toBeNull();
   });
+
+  it('keeps what the QA said is no secret across a restart', () => {
+    const json = toSaved({
+      workspace: { ...makeWorkspace(), plainValues: ['12345'] },
+      at: '09:44',
+    }).json;
+
+    expect(fromSaved({ id: 'w1', json, planYaml: '' })?.plainValues).toEqual(['12345']);
+    expect(fromSaved(SAVED)?.plainValues).toEqual([]);
+  });
 });

@@ -45,6 +45,7 @@ export const useNewWorkspaceModalViewModel = () => {
       planSource: null,
       sourcePage: null,
       unreadPlan: null,
+      plainValues: [],
       published: null,
       viewportId: 'desktop',
       context: null,
