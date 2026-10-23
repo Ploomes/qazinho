@@ -1,6 +1,6 @@
 import type { ITitlebarProps } from './types';
 import { AnimatePresence } from 'motion/react';
-import { Gauge, Icon, Logo, Meter, Wordmark } from '@/shared/components/atoms';
+import { Gauge, Icon, Logo, Meter, Tag, Wordmark } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { ModelPopover } from '@/shared/components/organisms/ModelPopover';
 import { ResourcePopover } from '@/shared/components/organisms/ResourcePopover';
@@ -19,6 +19,7 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
     ramLabel,
     processLabel,
     agentLabel,
+    betaLabel,
     sessionUsed,
     sessionLabel,
     sessionTip,
@@ -33,6 +34,9 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
           <Logo size={24} />
           <span className="titlebar__wordmark">
             <Wordmark />
+          </span>
+          <span className="titlebar__beta">
+            <Tag>{betaLabel}</Tag>
           </span>
         </div>
       )}

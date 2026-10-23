@@ -26,6 +26,7 @@ export const pt: typeof en = {
     NO_BRIDGE: 'O QAzinho não está falando com a máquina. Reinicie o app.',
   },
   TITLEBAR: {
+    BETA: 'Beta',
     CPU: 'CPU {{percent}}%',
     RAM: 'RAM {{used}} / {{ceiling}} GB',
     PROCESSES_ONE: '1 processo',

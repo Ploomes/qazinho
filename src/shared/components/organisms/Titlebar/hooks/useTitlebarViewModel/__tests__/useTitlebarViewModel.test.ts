@@ -23,6 +23,12 @@ describe('useTitlebarViewModel', () => {
     expect(result.current.processLabel).toBe('0 processes');
   });
 
+  it('marks the app as a beta beside its name', () => {
+    expect(renderHook(() => useTitlebarViewModel()).result.current.betaLabel).toBe(
+      'Beta',
+    );
+  });
+
   it('keeps only the drag strip during the first-run setup', () => {
     const { result } = renderHook(() => useTitlebarViewModel({ isBare: true }));
 

@@ -47,6 +47,7 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
         ? t('TITLEBAR.PROCESSES_ONE')
         : t('TITLEBAR.PROCESSES_OTHER', { count: processCount }),
     agentLabel: t('TITLEBAR.AGENT', { agent, model: modelName }),
+    betaLabel: t('TITLEBAR.BETA'),
     sessionUsed,
     sessionLabel:
       sessionUsed === null

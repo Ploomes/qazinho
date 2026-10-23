@@ -24,6 +24,7 @@ export const en = {
     NO_BRIDGE: 'QAzinho is not talking to the machine. Restart the app.',
   },
   TITLEBAR: {
+    BETA: 'Beta',
     CPU: 'CPU {{percent}}%',
     RAM: 'RAM {{used}} / {{ceiling}} GB',
     PROCESSES_ONE: '1 process',
