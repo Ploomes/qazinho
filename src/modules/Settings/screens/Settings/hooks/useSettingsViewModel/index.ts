@@ -18,6 +18,7 @@ import {
   useMachineCheck,
 } from '@/modules/Setup';
 import { Mcp, Platform } from '@/services';
+import { comboLabelOf } from '@/shared/hooks/useKeybinds/library';
 import { useAppStore, useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
 export const useSettingsViewModel = () => {
@@ -200,8 +201,14 @@ export const useSettingsViewModel = () => {
         id: item.id,
         label: t(item.labelKey),
         isEditing,
-        keys: isEditing ? t('SETTINGS.PRESS_KEYS') : item.combo,
+        keys: isEditing
+          ? t('SETTINGS.PRESS_KEYS')
+          : comboLabelOf({ combo: item.combo, isMac: Platform.isMac() }),
       };
+    }),
+    shortcutsNote: t('SETTINGS.SHORTCUTS_NOTE', {
+      command: Platform.isMac() ? '⌘' : 'Ctrl',
+      option: Platform.isMac() ? '⌥' : 'Alt',
     }),
     version: t('SETTINGS.ABOUT_VERSION', { version: APP_VERSION }),
     rights: t('SETTINGS.ABOUT_RIGHTS', { year: new Date().getFullYear() }),

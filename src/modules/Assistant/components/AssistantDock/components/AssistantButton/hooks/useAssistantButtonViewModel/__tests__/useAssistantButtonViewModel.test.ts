@@ -3,6 +3,7 @@ import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { useAssistantButtonViewModel } from '@/modules/Assistant/components/AssistantDock/components/AssistantButton/hooks/useAssistantButtonViewModel';
 import { KEYBINDS } from '@/modules/Settings/constants';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAssistantStore, useSettingsStore } from '@/store';
 
 beforeEach(() => {
@@ -12,6 +13,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
+  Reflect.deleteProperty(window, 'qazinho');
 });
 
 describe('useAssistantButtonViewModel', () => {
@@ -85,6 +87,8 @@ describe('useAssistantButtonViewModel', () => {
   });
 
   it('names the shortcut that opens it, and does NOT invent one the QA removed', () => {
+    window.qazinho = fakeQazinhoApi('darwin');
+
     const { result } = renderHook(() => useAssistantButtonViewModel());
 
     expect(result.current.tip).toBe('Talk to the Intern · ⌘J');
@@ -94,5 +98,13 @@ describe('useAssistantButtonViewModel', () => {
     });
 
     expect(result.current.tip).toBe('Talk to the Intern');
+  });
+
+  it('names the shortcut with Ctrl on Windows', () => {
+    window.qazinho = fakeQazinhoApi('win32');
+
+    expect(renderHook(() => useAssistantButtonViewModel()).result.current.tip).toBe(
+      'Talk to the Intern · Ctrl+J',
+    );
   });
 });

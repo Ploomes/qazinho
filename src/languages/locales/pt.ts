@@ -685,7 +685,7 @@ export const pt: typeof en = {
     KEYBIND_ASSISTANT: 'Falar com o Estagiário',
     KEYBIND_SETTINGS: 'Abrir Configurações',
     SHORTCUTS_NOTE:
-      'Clique num atalho e aperte as teclas que quiser, segurando ⌘ ou ⌥. Esc deixa como estava.',
+      'Clique num atalho e aperte as teclas que quiser, segurando {{command}} ou {{option}}. Esc deixa como estava.',
     ABOUT_VERSION: 'versão {{version}}',
     ABOUT_NOTE:
       'Seu assistente de QA: planeje testes, execute e organize seu trabalho com o seu próprio agente de IA. Nada sai desta máquina.',

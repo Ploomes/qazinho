@@ -681,7 +681,7 @@ export const en = {
     KEYBIND_ASSISTANT: 'Talk to the Intern',
     KEYBIND_SETTINGS: 'Open Settings',
     SHORTCUTS_NOTE:
-      'Click a shortcut and press the keys you want, holding ⌘ or ⌥. Esc leaves it as it was.',
+      'Click a shortcut and press the keys you want, holding {{command}} or {{option}}. Esc leaves it as it was.',
     ABOUT_VERSION: 'version {{version}}',
     ABOUT_NOTE:
       'Your QA assistant: plan tests, run them and keep your work organised, with your own AI agent. Nothing leaves this machine.',

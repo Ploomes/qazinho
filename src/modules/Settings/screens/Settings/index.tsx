@@ -24,6 +24,7 @@ export const Settings: React.FC = () => {
     languages,
     runAlerts,
     keybinds,
+    shortcutsNote,
     version,
     rights,
     signIn,
@@ -336,7 +337,7 @@ export const Settings: React.FC = () => {
                   </button>
                 ))}
               </div>
-              <p className="settings__note">{t('SETTINGS.SHORTCUTS_NOTE')}</p>
+              <p className="settings__note">{shortcutsNote}</p>
             </div>
           )}
 

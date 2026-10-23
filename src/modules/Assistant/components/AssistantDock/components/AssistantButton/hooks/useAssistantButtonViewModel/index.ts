@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { ASSISTANT_DOCK } from '@/modules/Assistant/constants';
+import { Platform } from '@/services';
+import { comboLabelOf } from '@/shared/hooks/useKeybinds/library';
 import { useAssistantStore, useSettingsStore } from '@/store';
 
 export const useAssistantButtonViewModel = () => {
@@ -18,7 +20,10 @@ export const useAssistantButtonViewModel = () => {
     isBusy: isAsking,
     className: isOpen ? 'assistant-button assistant-button--open' : 'assistant-button',
     label,
-    tip: combo === null ? label : `${label} · ${combo}`,
+    tip:
+      combo === null
+        ? label
+        : `${label} · ${comboLabelOf({ combo, isMac: Platform.isMac() })}`,
     mood: isAsking
       ? ('thinking' as const)
       : unread > 0
