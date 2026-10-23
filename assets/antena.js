@@ -20,6 +20,71 @@ function eRectP(p, x, y, w, h, trx, tr, brx, br) {
 }
 const HEAD = new Path2D();
 eRectP(HEAD, 0, 44, 240, 191, 104, 83, 56, 45);
+const P2 = (d) => new Path2D(d);
+const leaf = (cx, cy, rx, ry, rot) => {
+  const p = new Path2D();
+  p.ellipse(cx, cy, rx, ry, rot, 0, TAU);
+  return p;
+};
+const TOPS = {
+  antena: {
+    pivot: [150, 60],
+    shapes: [{ p: P2('M150,62 Q152,30 172,14'), w: 10 }, { p: leaf(176, 12, 15, 15, 0) }],
+  },
+  broto: {
+    pivot: [122, 78],
+    shapes: [
+      { p: P2('M122,80 C122,64 121,52 118,40'), w: 11 },
+      { p: leaf(98, 38, 24, 12, -0.5) },
+      { p: leaf(140, 30, 26, 13, 0.45) },
+    ],
+  },
+  cacho: {
+    pivot: [128, 78],
+    shapes: [
+      {
+        p: P2(
+          'M126,80 C118,52 134,26 158,30 C176,34 174,58 156,58 C144,58 142,46 150,42',
+        ),
+        w: 15,
+      },
+    ],
+  },
+  tufo: {
+    pivot: [120, 78],
+    shapes: [
+      { p: P2('M104,80 L94,50'), w: 16 },
+      { p: P2('M121,78 L122,40'), w: 16 },
+      { p: P2('M138,80 L150,52'), w: 16 },
+    ],
+  },
+};
+let VARIANT = 'antena';
+function topPass(x, sway, pass, V) {
+  x.save();
+  x.translate(V.pivot[0], V.pivot[1]);
+  x.rotate(sway);
+  x.translate(-V.pivot[0], -V.pivot[1]);
+  const ext = pass === 'fill' ? 0 : pass === 'border' ? BORDER * 2 : BORDER * 2 + 2.5;
+  const col = pass === 'fill' ? LIME : pass === 'border' ? WHITE : 'rgba(0,0,0,0.07)';
+  x.strokeStyle = col;
+  x.fillStyle = col;
+  x.lineCap = 'round';
+  x.lineJoin = 'round';
+  for (const sh of V.shapes) {
+    if (sh.w) {
+      x.lineWidth = sh.w + ext;
+      x.stroke(sh.p);
+    } else {
+      if (ext) {
+        x.lineWidth = ext;
+        x.stroke(sh.p);
+      }
+      x.fill(sh.p);
+    }
+  }
+  x.restore();
+}
 const TOP0 = new Path2D();
 eRectP(TOP0, 0, 0, 45, 56, 22.5, 31.4, 13.5, 24.6);
 const topPath = (sway) => {
@@ -199,15 +264,19 @@ const MOODS = {
         },
         extra(c) {
           const n = Math.floor(t * 4);
-          [196, 226, 256].forEach((x, i) => {
+          [
+            [62, 18],
+            [34, 0],
+            [6, -18],
+          ].forEach(([x, y], i) => {
             if (i < n) {
               c.fillStyle = WHITE;
               c.beginPath();
-              c.arc(x, 12, 15, 0, TAU);
+              c.arc(x, y, 15, 0, TAU);
               c.fill();
               c.fillStyle = INK;
               c.beginPath();
-              c.arc(x, 12, 8.5, 0, TAU);
+              c.arc(x, y, 8.5, 0, TAU);
               c.fill();
             }
           });
@@ -281,8 +350,8 @@ const MOODS = {
             const u = (t + k * 0.5) % 1;
             const a = u < 0.15 ? u / 0.15 : 1 - (u - 0.15) / 0.85;
             const s = 18 + 12 * u,
-              x = 204 + 22 * u,
-              y = 34 - 56 * u;
+              x = 214 + 22 * u,
+              y = 46 - 56 * u;
             const z = [
               [x, y],
               [x + s, y],
@@ -328,29 +397,29 @@ function drawSticker(c, size, mood, t, opt = {}) {
       .scale((p.sx || 1) * S, (p.sy || 1) * S)
       .translate(-120, -235),
   );
-  const top = topPath(p.sway || 0);
+  const V = TOPS[opt.variant || VARIANT],
+    sw = (p.sway || 0) * 1.4;
   x.lineJoin = 'round';
   x.strokeStyle = 'rgba(0,0,0,0.07)';
   x.lineWidth = BORDER * 2 + 2.5;
   x.stroke(HEAD);
-  x.stroke(top);
+  topPass(x, sw, 'shadow', V);
   x.strokeStyle = WHITE;
   x.lineWidth = BORDER * 2;
   x.stroke(HEAD);
-  x.stroke(top);
   x.fillStyle = WHITE;
   x.fill(HEAD);
-  x.fill(top);
+  topPass(x, sw, 'border', V);
   x.fillStyle = LIME;
   x.fill(HEAD);
-  x.fill(top);
+  topPass(x, sw, 'fill', V);
   x.save();
   x.clip(HEAD);
   const g = x.createLinearGradient(0, 160, 0, 235);
   g.addColorStop(0, 'rgba(90,130,0,0)');
   g.addColorStop(1, 'rgba(90,130,0,0.10)');
   x.fillStyle = g;
-  x.fillRect(0, 150, 240, 90);
+  x.fillRect(-20, 150, 290, 90);
   x.restore();
   x.fillStyle = 'rgba(255,255,255,0.5)';
   x.beginPath();
@@ -359,6 +428,15 @@ function drawSticker(c, size, mood, t, opt = {}) {
   x.beginPath();
   x.arc(80, 72, 4.5, 0, TAU);
   x.fill();
+  x.fillStyle = 'rgba(255,255,255,.6)';
+  x.save();
+  x.translate(150, 60);
+  x.rotate(sw);
+  x.translate(-150, -60);
+  x.beginPath();
+  x.arc(171, 7, 4, 0, TAU);
+  x.fill();
+  x.restore();
   p.eyes(x);
   if (p.extra) p.extra(x);
   c.save();
@@ -398,7 +476,7 @@ const TILES = {
   noite: ['#34363D', '#141518', 'rgba(0,0,0,0.45)'],
   papel: ['#FBF9F3', '#E4DFD1', 'rgba(60,50,30,0.22)'],
 };
-function drawIcon1024(c, key, mood = 'neutro') {
+function drawIcon1024(c, key, mood = 'neutro', variant) {
   const [a, b, sh] = TILES[key],
     T = SQ(100, 100, 824);
   c.setTransform(1, 0, 0, 1, 0, 0);
@@ -425,7 +503,12 @@ function drawIcon1024(c, key, mood = 'neutro') {
   const o = document.createElement('canvas');
   o.width = o.height = 1024;
   const ox = o.getContext('2d');
-  drawSticker(ox, 1024, mood, MOODS[mood].still, { rot: -4, shadow: sh, pad: 20 });
+  drawSticker(ox, 1024, mood, MOODS[mood].still, {
+    rot: -4,
+    shadow: sh,
+    pad: 20,
+    variant,
+  });
   const d = ox.getImageData(0, 0, 1024, 1024).data;
   let x0 = 1024,
     y0 = 1024,
