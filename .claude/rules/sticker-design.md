@@ -6,8 +6,11 @@ accent, the Estagiário, the wordmark, Bricolage Grotesque on titles. Nothing is
 wears a thick cut edge, and nothing slaps onto the screen, except the logo.
 
 **The logo stays a sticker**: the Estagiário in the `Logo` atom (`isSticker`: white cut edge,
-gloss, his -6° and his shadows) and the `Wordmark`, ink with a paper cut edge
-(`--sticker-edge`). Everywhere else he is drawn flat.
+gloss, his -6° and his shadows), the `Wordmark`, ink with a paper cut edge (`--sticker-edge`),
+and the `Tag` that signs it, "BY SALVE SOFTWARE": Tinta with lime mono text, a 2px paper edge,
+its shadow and -2° (`--sticker-edge-width`, `--sticker-shadow`, `--sticker-tilt`). The `Tag` is
+for the lockup alone; a label elsewhere, such as the project's name in the sidebar, is plain mono
+text. Everywhere else he is drawn flat.
 
 It used to be a desk of die-cut stickers: thick paper edges, lifted shadows, tilted badges and
 slapped entrances. That was heavy to use for hours, and the QA asked for something lighter
