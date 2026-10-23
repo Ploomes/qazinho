@@ -80,6 +80,7 @@ export const Chat: React.FC = () => {
               <RunSection
                 key={item.key}
                 at={item.at}
+                day={item.day}
                 title={item.title}
                 facts={item.facts}
                 countLabel={item.countLabel}

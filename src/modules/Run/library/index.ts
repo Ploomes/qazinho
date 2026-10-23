@@ -5,6 +5,7 @@ export * from './caseVerdict';
 export * from './caseWalkOf';
 export * from './clipOfMp4';
 export * from './countVerdicts';
+export * from './dayLabelOf';
 export * from './failedRequestsNear';
 export * from './filterCases';
 export * from './flattenPlanSteps';

@@ -11,7 +11,10 @@ export const RunSection: React.FC<IRunSectionProps> = (props) => {
 
   return (
     <section className={className}>
-      <span className="run-section__at">{props.at}</span>
+      <span className="run-section__at">
+        {props.day !== '' && <span className="run-section__day">{props.day}</span>}
+        {props.at}
+      </span>
       <div className="run-section__box">
         <div className="run-section__bar">
           <button

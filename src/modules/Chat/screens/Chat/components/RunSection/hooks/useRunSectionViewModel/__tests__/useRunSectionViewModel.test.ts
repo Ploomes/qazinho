@@ -8,6 +8,7 @@ const section = (props: Partial<IRunSectionProps> = {}) =>
   renderHook(() =>
     useRunSectionViewModel({
       at: '09:41',
+      day: 'today',
       title: 'Run r-01',
       facts: '3:45',
       countLabel: '2 messages',

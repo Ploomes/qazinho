@@ -744,6 +744,36 @@ describe('useChatViewModel', () => {
       );
     });
 
+    it('says the day a run started above its time, and none when no step kept its time', () => {
+      answering({});
+
+      const walked = walkRun({ verdicts: ['passed'], isFinished: true });
+      const at = (span: { from: number; to: number } | null) => ({
+        ...walked,
+        runs: walked.runs.map((run) => ({
+          ...run,
+          cases: run.cases.map((runCase) => ({
+            ...runCase,
+            steps: runCase.steps.map((step) => ({ ...step, span })),
+          })),
+        })),
+      });
+
+      useWorkspaceStore.setState({
+        workspaces: [at({ from: Date.now(), to: Date.now() + 1_000 })],
+      });
+
+      expect(sectionOf(renderHook(() => useChatViewModel()).result.current)?.day).toBe(
+        'today',
+      );
+
+      useWorkspaceStore.setState({ workspaces: [at(null)] });
+
+      expect(sectionOf(renderHook(() => useChatViewModel()).result.current)?.day).toBe(
+        '',
+      );
+    });
+
     it('keeps the plain title for a run that walked it all', () => {
       answering({});
       useWorkspaceStore.setState({

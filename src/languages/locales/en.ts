@@ -1,5 +1,7 @@
 export const en = {
   COMMON: {
+    TODAY: 'today',
+    YESTERDAY: 'yesterday',
     OPEN_PAGE_AGAIN: 'Open the page again',
     TRY_AGAIN: 'Try again',
     DONE: 'Done',

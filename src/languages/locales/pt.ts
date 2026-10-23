@@ -2,6 +2,8 @@ import type { en } from './en';
 
 export const pt: typeof en = {
   COMMON: {
+    TODAY: 'hoje',
+    YESTERDAY: 'ontem',
     OPEN_PAGE_AGAIN: 'Abrir a página de novo',
     TRY_AGAIN: 'Tentar de novo',
     DONE: 'Pronto',

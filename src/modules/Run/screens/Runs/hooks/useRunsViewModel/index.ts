@@ -12,9 +12,11 @@ import {
   answerLineOf,
   caseVerdict,
   caseWalkOf,
+  dayLabelOf,
   filterCases,
   formatCost,
   pageOf,
+  runDayOf,
   withExplorationTitle,
 } from '@/modules/Run/library';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
@@ -102,7 +104,17 @@ export const useRunsViewModel = () => {
     ended: endOf(item.endedBy),
     counts: item.counts,
     facts: factsOf(item),
-    startedAt: item.startedAt,
+    startedAt: [
+      dayLabelOf({
+        day: runDayOf(item),
+        now: new Date(),
+        language: i18n.language,
+        words: { today: t('COMMON.TODAY'), yesterday: t('COMMON.YESTERDAY') },
+      }),
+      item.startedAt,
+    ]
+      .filter((part) => part !== '')
+      .join(' · '),
   });
 
   const toTop = () => {

@@ -26,7 +26,14 @@ import { useChatCommand } from '@/modules/Chat/screens/Chat/hooks/useChatCommand
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { formatElapsed } from '@/modules/Device';
 import { useVariableActions } from '@/modules/Project';
-import { flattenPlanSteps, formatCost, RUN_ENDS, useRunActions } from '@/modules/Run';
+import {
+  dayLabelOf,
+  flattenPlanSteps,
+  formatCost,
+  RUN_ENDS,
+  runDayOf,
+  useRunActions,
+} from '@/modules/Run';
 import { Agent, Run } from '@/services';
 import { EXPLORATION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
@@ -266,6 +273,17 @@ export const useChatViewModel = () => {
       key: `run-${item.runId}`,
       runId: item.runId,
       at: item.at,
+      day:
+        saved !== null
+          ? dayLabelOf({
+              day: runDayOf(saved),
+              now: new Date(),
+              language: i18n.language,
+              words: { today: t('COMMON.TODAY'), yesterday: t('COMMON.YESTERDAY') },
+            })
+          : isLive
+            ? t('COMMON.TODAY')
+            : '',
       title:
         item.card !== null
           ? runTitleOf(item.card)
