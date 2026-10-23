@@ -225,6 +225,17 @@ export const en = {
     EXPECTED_PLACEHOLDER: 'what you expect to see',
     RUN_ALL: 'Run all',
     EXPORT: 'Export code',
+    PUBLISH: 'Publish in Confluence',
+    PUBLISH_AGAIN: 'Update in Confluence',
+    PUBLISHING: 'Publishing…',
+    PUBLISH_TIP:
+      'A page with each case, its steps and how the last run went, for the team to read.',
+    PUBLISH_AGAIN_TIP:
+      'Writes the plan as it stands now over the page it was published on.',
+    PUBLISHED: 'Published on “{{title}}”.',
+    PUBLISH_FAILED: 'Confluence did not take the plan. {{reason}}',
+    PUBLISHED_ON: 'Published in Confluence: “{{title}}”',
+    PUBLISH_TITLE: 'Test plan · {{workspace}}',
     EXPORT_TIP:
       'Turns the cases that passed into a Playwright test or Maestro flows, saved in a folder you pick.',
     RUN_ALL_TIP:
@@ -906,6 +917,40 @@ export const en = {
       'Confluence is out of reach from this machine. Check the network.',
     FAILURE_REJECTED: 'Confluence refused what QAzinho sent.',
     FAILURE_UNEXPECTED: 'Confluence answered in a way QAzinho did not expect.',
+  },
+  PUBLISH: {
+    TITLE: 'Publish the plan in Confluence',
+    SUBTITLE:
+      'A page with each case and its steps, and how the last run went. Publishing again updates the same page.',
+    CONFIRM: 'Publish',
+    SPACE: 'Space',
+    PICK_SPACE: 'Search for a space',
+    SPACES_LOADING: 'Reading your spaces…',
+    NO_SPACES: 'Confluence lists no space for this account.',
+    NONE_FOUND: 'Nothing matches “{{query}}”.',
+    PARENT: 'Under a page',
+    PARENT_NOTE: 'Optional. With none, the page sits at the top of the space.',
+    PICK_PARENT: 'Search for a page by its title',
+    PAGES_SEARCHING: 'Searching Confluence…',
+    PICK_ANOTHER: 'Pick another',
+    PAGE_TITLE: 'Page title',
+  },
+  PLAN_DOC: {
+    INTRO: 'The test plan: {{cases}} · {{steps}}.',
+    STORY: 'Jira story',
+    PAGE: 'Made from',
+    DESIGN: 'Figma design',
+    LAST_RUN: 'Last run',
+    RUN_LINE: '{{run}} on {{when}}',
+    PRIORITY: 'Priority',
+    GOAL: 'Goal',
+    PRECONDITIONS: 'Preconditions',
+    ACTION: 'Action',
+    EXPECTED: 'Expected',
+    FRAME: 'Figma frame',
+    RESULT: 'Last run',
+    KEPT_BY:
+      'Published from QAzinho. Publishing again writes the plan as it stands over this page.',
   },
   FILING: {
     SEND: 'Send as an issue',

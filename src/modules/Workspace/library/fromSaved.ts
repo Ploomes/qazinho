@@ -55,7 +55,7 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     plan: readPlan(saved.planYaml),
     planSource: codeSourceOf(read.planSource),
     sourcePage: read.sourcePage ?? null,
-    publishedPage: read.publishedPage ?? null,
+    published: read.published ?? null,
     runs: ((read.runs ?? []) as SavedRun[]).map(
       ({ title: _title, what: _what, ...run }) => ({
         ...run,

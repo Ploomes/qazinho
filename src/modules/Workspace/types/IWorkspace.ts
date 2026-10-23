@@ -5,7 +5,7 @@ import type { WorkspaceStatus } from './WorkspaceStatus';
 import type { IBug } from '@/modules/Bug';
 import type { ChatMessage } from '@/modules/Chat';
 import type { ViewportId } from '@/modules/Device';
-import type { ITestCase } from '@/modules/Plan';
+import type { IPublishedPlan, ITestCase } from '@/modules/Plan';
 import type { IRun } from '@/modules/Run';
 import type { ICodeSource, IConfluencePageRef, IDesignLink } from '@/shared/types';
 
@@ -27,7 +27,7 @@ export interface IWorkspace {
   plan: ITestCase[];
   planSource: ICodeSource | null;
   sourcePage: IConfluencePageRef | null;
-  publishedPage: IConfluencePageRef | null;
+  published: IPublishedPlan | null;
   runs: IRun[];
   bugs: IBug[];
   live: ILiveRun | null;

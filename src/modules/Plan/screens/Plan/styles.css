@@ -79,6 +79,15 @@
   background: var(--raise);
 }
 
+.plan__export-body--failed {
+  border-color: var(--fail-soft);
+  background: var(--fail-soft);
+}
+
+.plan__export-body--failed .plan__export-text {
+  color: var(--fail);
+}
+
 .plan__export-text {
   flex: 1;
   color: var(--ink);

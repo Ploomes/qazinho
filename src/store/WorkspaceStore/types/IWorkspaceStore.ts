@@ -1,7 +1,7 @@
 import type { BugFilter, IBugReview } from '@/modules/Bug';
 import type { IQuestionAnswer, UserCommand } from '@/modules/Chat';
 import type { ViewportId } from '@/modules/Device';
-import type { ITestCase } from '@/modules/Plan';
+import type { IPublishedPlan, ITestCase } from '@/modules/Plan';
 import type { RunFilter } from '@/modules/Run';
 import type { IWalkedBy, IWorkspace, WorkspaceTab } from '@/modules/Workspace';
 import type {
@@ -46,9 +46,9 @@ export interface IWorkspaceStore {
   removeWorkspace: (workspaceId: string) => void;
   renameWorkspace: (props: { workspaceId: string; name: string }) => void;
   setDesign: (props: { workspaceId: string; design: IDesignLink | null }) => void;
-  setPublishedPage: (props: {
+  setPublished: (props: {
     workspaceId: string;
-    page: IConfluencePageRef | null;
+    published: IPublishedPlan | null;
   }) => void;
   setViewport: (props: { workspaceId: string; viewportId: ViewportId }) => void;
   removeWorkspacesOf: (projectId: string) => void;

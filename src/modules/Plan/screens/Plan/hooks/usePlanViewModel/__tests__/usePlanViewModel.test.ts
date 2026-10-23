@@ -1,5 +1,10 @@
 // @vitest-environment jsdom
-import type { ExportOutcome, IExportCode } from '@/shared/types';
+import type {
+  ExportOutcome,
+  IExportCode,
+  IPublishPlan,
+  PlanPublished,
+} from '@/shared/types';
 import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { usePlanViewModel } from '@/modules/Plan/screens/Plan/hooks/usePlanViewModel';
@@ -11,7 +16,7 @@ import {
   walkRun,
 } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useSettingsStore, useSetupStore, useWorkspaceStore } from '@/store';
 
 const PROJECT = {
   id: 'p1',
@@ -46,7 +51,155 @@ beforeEach(() => {
   useWorkspaceStore.setState({ workspaces: [makeWorkspace()], openCaseId: null });
 });
 
+/** A bridge whose Confluence takes the plan with the answer given, and remembers what it was handed. */
+function publishing(outcome: PlanPublished) {
+  const asked: IPublishPlan[] = [];
+
+  window.qazinho = {
+    ...fakeQazinhoApi('darwin'),
+    publishPlan: (plan) => {
+      asked.push(plan);
+
+      return Promise.resolve(outcome);
+    },
+  };
+
+  return asked;
+}
+
+const PAGE = {
+  id: '77',
+  title: 'Test plan · Checkout',
+  space: '',
+  url: 'https://acme.atlassian.net/wiki/spaces/QA/pages/77',
+};
+
 describe('usePlanViewModel', () => {
+  describe('publishing in Confluence', () => {
+    beforeEach(() => {
+      useSettingsStore.setState({ language: 'en' });
+      useSetupStore.setState({
+        integrations: [
+          {
+            id: 'jira',
+            account: 'Ana QA',
+            site: 'https://acme.atlassian.net',
+            connectedAt: '2026-10-22T10:00:00.000Z',
+            confluence: true,
+          },
+        ],
+      });
+    });
+
+    it('offers to publish only with Confluence on and a plan to publish', () => {
+      expect(renderHook(() => usePlanViewModel()).result.current.canPublish).toBe(true);
+
+      useSetupStore.setState({ integrations: [] });
+
+      expect(renderHook(() => usePlanViewModel()).result.current.canPublish).toBe(false);
+    });
+
+    it('asks where the first time, publishes the plan there, and keeps the page', async () => {
+      const asked = publishing({ isPublished: true, page: PAGE });
+      const { result } = renderHook(() => usePlanViewModel());
+
+      expect(result.current.publishLabel).toBe('Publish in Confluence');
+
+      act(() => {
+        result.current.onPublish();
+      });
+
+      expect(result.current.isPublishOpen).toBe(true);
+      expect(asked).toEqual([]);
+
+      act(() => {
+        result.current.onConfirmPublish({
+          spaceId: '9',
+          parentId: '5',
+          title: 'Test plan · Checkout',
+        });
+      });
+
+      await waitFor(() => {
+        expect(result.current.publishNotice).toEqual({
+          text: 'Published on “Test plan · Checkout”.',
+          isFailed: false,
+        });
+      });
+      expect(asked[0]).toMatchObject({
+        pageId: null,
+        spaceId: '9',
+        parentId: '5',
+        title: 'Test plan · Checkout',
+      });
+      expect(asked[0]?.blocks.some(({ kind }) => kind === 'table')).toBe(true);
+      expect(useWorkspaceStore.getState().workspaces[0]?.published).toEqual({
+        page: PAGE,
+        spaceId: '9',
+        parentId: '5',
+      });
+      expect(result.current.publishLabel).toBe('Update in Confluence');
+      expect(result.current.publishedOn).toEqual({
+        text: 'Published in Confluence: “Test plan · Checkout”',
+        url: PAGE.url,
+      });
+    });
+
+    it('updates the page it published on, with no question asked', async () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          { ...makeWorkspace(), published: { page: PAGE, spaceId: '9', parentId: null } },
+        ],
+      });
+
+      const asked = publishing({ isPublished: true, page: PAGE });
+      const { result } = renderHook(() => usePlanViewModel());
+
+      act(() => {
+        result.current.onPublish();
+      });
+
+      expect(result.current.isPublishOpen).toBe(false);
+      await waitFor(() => {
+        expect(asked).toHaveLength(1);
+      });
+      expect(asked[0]).toMatchObject({
+        pageId: '77',
+        spaceId: '9',
+        parentId: null,
+        title: 'Test plan · Checkout',
+      });
+    });
+
+    it('does NOT keep a page Confluence refused, and says why in its words', async () => {
+      publishing({
+        isPublished: false,
+        failure: 'rejected',
+        said: 'A page with this title already exists',
+      });
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      act(() => {
+        result.current.onConfirmPublish({ spaceId: '9', parentId: null, title: 'Plan' });
+      });
+
+      await waitFor(() => {
+        expect(result.current.publishNotice).toEqual({
+          text: 'Confluence did not take the plan. Confluence refused what QAzinho sent. A page with this title already exists',
+          isFailed: true,
+        });
+      });
+      expect(useWorkspaceStore.getState().workspaces[0]?.published).toBeNull();
+
+      act(() => {
+        result.current.onDismissPublish();
+      });
+
+      expect(result.current.publishNotice).toBeNull();
+    });
+  });
+
   describe('onExport', () => {
     beforeEach(() => {
       useAppStore.setState({ projects: [PROJECT] });

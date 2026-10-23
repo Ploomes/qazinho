@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, EmptyState, Icon, IconButton } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
-import { PlanCase, UndoToast } from './components';
+import { PlanCase, PublishModal, UndoToast } from './components';
 import { usePlanViewModel } from './hooks';
 import './styles.css';
 
@@ -24,6 +24,18 @@ export const Plan: React.FC = () => {
     onReorder,
     onRunAll,
     onStop,
+    canPublish,
+    isPublishing,
+    publishLabel,
+    publishTip,
+    publishedOn,
+    publishNotice,
+    isPublishOpen,
+    publishTitle,
+    onPublish,
+    onConfirmPublish,
+    onCancelPublish,
+    onDismissPublish,
     exportLabel,
     canExport,
     exportNotice,
@@ -73,6 +85,13 @@ export const Plan: React.FC = () => {
                 </Tooltip>
               ) : (
                 <>
+                  {canPublish && (
+                    <Tooltip content={publishTip}>
+                      <Button disabled={isPublishing} onClick={onPublish}>
+                        {publishLabel}
+                      </Button>
+                    </Tooltip>
+                  )}
                   {canExport && (
                     <Tooltip content={t('PLAN.EXPORT_TIP')}>
                       <Button onClick={onExport}>{exportLabel}</Button>
@@ -113,6 +132,51 @@ export const Plan: React.FC = () => {
               </motion.div>
             )}
           </AnimatePresence>
+
+          <AnimatePresence initial={false}>
+            {publishNotice !== null && (
+              <motion.div
+                key="publish"
+                className="plan__export"
+                role="status"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+              >
+                <div
+                  className={
+                    publishNotice.isFailed
+                      ? 'plan__export-body plan__export-body--failed'
+                      : 'plan__export-body'
+                  }
+                >
+                  <span className="plan__export-text">{publishNotice.text}</span>
+                  <Tooltip content={dismissExportLabel}>
+                    <IconButton
+                      icon="close"
+                      label={dismissExportLabel}
+                      size="sm"
+                      onClick={onDismissPublish}
+                    />
+                  </Tooltip>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {publishedOn !== null && (
+            <a
+              className="plan__source plan__source--link"
+              href={publishedOn.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span className="plan__source-mark" aria-hidden="true" />
+              {publishedOn.text}
+              <Icon name="external" />
+            </a>
+          )}
 
           {story !== null && (
             <a
@@ -188,6 +252,17 @@ export const Plan: React.FC = () => {
           )}
         </div>
       )}
+
+      <AnimatePresence>
+        {isPublishOpen && (
+          <PublishModal
+            key="publish"
+            title={publishTitle}
+            onCancel={onCancelPublish}
+            onConfirm={onConfirmPublish}
+          />
+        )}
+      </AnimatePresence>
 
       <div className="plan__undo">
         <AnimatePresence mode="wait">

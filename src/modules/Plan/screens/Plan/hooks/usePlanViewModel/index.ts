@@ -1,7 +1,7 @@
 import type { ICaseRemoval } from '@/modules/Plan/screens/Plan/types';
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
 import type { IRunCase } from '@/modules/Run';
-import type { ExportOutcome } from '@/shared/types';
+import type { ExportOutcome, PlanPublished } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { viewportOf } from '@/modules/Device';
@@ -11,22 +11,26 @@ import {
   caseIdsUsed,
   editCase,
   editStep,
+  planDocOf,
   removeCase,
   removeStep,
 } from '@/modules/Plan/library';
-import { PLAN_SOURCE } from '@/modules/Plan/screens/Plan/constants';
+import { DOC_VERDICT_KEYS, PLAN_SOURCE } from '@/modules/Plan/screens/Plan/constants';
 import { flattenPlanSteps, useRunActions } from '@/modules/Run';
-import { Run } from '@/services';
+import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
+import { Confluence, Run } from '@/services';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
-import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useSettingsStore, useSetupStore, useWorkspaceStore } from '@/store';
 
 export const usePlanViewModel = () => {
   const { t } = useTranslation();
   const workspace = useSelectedWorkspacePart((opened) => ({
     id: opened.id,
+    name: opened.name,
     plan: opened.plan,
     planSource: opened.planSource,
     sourcePage: opened.sourcePage,
+    published: opened.published,
     issue: opened.issue,
     design: opened.design,
     isLocked: opened.live !== null && !opened.live.isDone,
@@ -51,6 +55,17 @@ export const usePlanViewModel = () => {
   const { onRun, onStop } = useRunActions();
   const [removal, setRemoval] = useState<ICaseRemoval | null>(null);
   const [exported, setExported] = useState<ExportOutcome | null>(null);
+  const [isPublishOpen, setIsPublishOpen] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [publishing, setPublishing] = useState<{
+    workspaceId: string;
+    outcome: PlanPublished;
+  } | null>(null);
+  const isConfluenceOn = useSetupStore((state) =>
+    state.integrations.some(({ id, confluence }) => id === 'jira' && confluence === true),
+  );
+  const setPublished = useWorkspaceStore((state) => state.setPublished);
+  const language = useSettingsStore((state) => state.language);
 
   const workspaceId = workspace?.id ?? null;
   const plan = workspace?.plan ?? [];
@@ -74,6 +89,93 @@ export const usePlanViewModel = () => {
   const issue = workspace?.issue ?? null;
   const sourcePage = workspace?.sourcePage ?? null;
   const stepCount = flattenPlanSteps(plan).length;
+  const published = workspace?.published ?? null;
+  const shownPublishing =
+    publishing !== null && publishing.workspaceId === workspaceId
+      ? publishing.outcome
+      : null;
+
+  const publish = async (props: {
+    pageId: string | null;
+    spaceId: string;
+    parentId: string | null;
+    title: string;
+  }) => {
+    if (workspaceId === null || isPublishing) return;
+
+    const run = (workspace?.runs ?? []).find(({ kind }) => kind !== 'explore') ?? null;
+
+    setIsPublishing(true);
+
+    const outcome = await Confluence.publish({
+      ...props,
+      blocks: planDocOf({
+        plan,
+        run,
+        when:
+          run === null
+            ? ''
+            : new Intl.DateTimeFormat(language, {
+                dateStyle: 'medium',
+                timeStyle: 'short',
+              }).format(new Date(run.startedAt)),
+        story:
+          issue === null || issue.source !== 'jira'
+            ? null
+            : { key: issue.key, url: issue.url },
+        page:
+          sourcePage === null ? null : { title: sourcePage.title, url: sourcePage.url },
+        design: workspace?.design ?? null,
+        words: {
+          intro: ({ cases, steps }) =>
+            t('PLAN_DOC.INTRO', {
+              cases:
+                cases === 1
+                  ? t('PLAN.CASES_ONE')
+                  : t('PLAN.CASES_OTHER', { count: cases }),
+              steps:
+                steps === 1
+                  ? t('PLAN.STEPS_ONE')
+                  : t('PLAN.STEPS_OTHER', { count: steps }),
+            }),
+          story: t('PLAN_DOC.STORY'),
+          page: t('PLAN_DOC.PAGE'),
+          design: t('PLAN_DOC.DESIGN'),
+          lastRun: t('PLAN_DOC.LAST_RUN'),
+          runLine: (line) => t('PLAN_DOC.RUN_LINE', line),
+          priority: t('PLAN_DOC.PRIORITY'),
+          goal: t('PLAN_DOC.GOAL'),
+          preconditions: t('PLAN_DOC.PRECONDITIONS'),
+          action: t('PLAN_DOC.ACTION'),
+          expected: t('PLAN_DOC.EXPECTED'),
+          frame: t('PLAN_DOC.FRAME'),
+          result: t('PLAN_DOC.RESULT'),
+          verdicts: {
+            pending: t(DOC_VERDICT_KEYS.pending),
+            running: t(DOC_VERDICT_KEYS.running),
+            passed: t(DOC_VERDICT_KEYS.passed),
+            failed: t(DOC_VERDICT_KEYS.failed),
+            blocked: t(DOC_VERDICT_KEYS.blocked),
+            skipped: t(DOC_VERDICT_KEYS.skipped),
+          },
+          keptBy: t('PLAN_DOC.KEPT_BY'),
+        },
+      }),
+    });
+
+    setIsPublishing(false);
+    setPublishing({ workspaceId, outcome });
+
+    if (outcome.isPublished)
+      setPublished({
+        workspaceId,
+        published: {
+          page: outcome.page,
+          spaceId: props.spaceId,
+          parentId: props.parentId,
+        },
+      });
+  };
   const lastRuns: Record<string, IRunCase> = Object.fromEntries(
     (latest?.cases ?? []).map((runCase) => [runCase.id, runCase]),
   );
@@ -126,6 +228,70 @@ export const usePlanViewModel = () => {
     onReorder: write,
     onRunAll: onRun,
     onStop,
+    canPublish: isConfluenceOn && plan.length > 0 && !isLocked,
+    isPublishing,
+    publishLabel: isPublishing
+      ? t('PLAN.PUBLISHING')
+      : published === null
+        ? t('PLAN.PUBLISH')
+        : t('PLAN.PUBLISH_AGAIN'),
+    publishTip: published === null ? t('PLAN.PUBLISH_TIP') : t('PLAN.PUBLISH_AGAIN_TIP'),
+    publishedOn:
+      published === null
+        ? null
+        : {
+            text: t('PLAN.PUBLISHED_ON', { title: published.page.title }),
+            url: published.page.url,
+          },
+    publishNotice:
+      shownPublishing === null
+        ? null
+        : shownPublishing.isPublished
+          ? {
+              text: t('PLAN.PUBLISHED', { title: shownPublishing.page.title }),
+              isFailed: false,
+            }
+          : {
+              text: t('PLAN.PUBLISH_FAILED', {
+                reason: [
+                  t(CONFLUENCE_FAILURE_KEYS[shownPublishing.failure]),
+                  shownPublishing.said,
+                ]
+                  .filter((part) => part !== '')
+                  .join(' '),
+              }),
+              isFailed: true,
+            },
+    isPublishOpen,
+    publishTitle: t('PLAN.PUBLISH_TITLE', { workspace: workspace?.name ?? '' }),
+    onPublish: () => {
+      if (published === null) {
+        setIsPublishOpen(true);
+
+        return;
+      }
+
+      void publish({
+        pageId: published.page.id,
+        spaceId: published.spaceId,
+        parentId: published.parentId,
+        title: published.page.title,
+      });
+    },
+    onConfirmPublish: (choice: {
+      spaceId: string;
+      parentId: string | null;
+      title: string;
+    }) => {
+      setIsPublishOpen(false);
+      void publish({ pageId: null, ...choice });
+    },
+    onCancelPublish: () => {
+      setIsPublishOpen(false);
+    },
+    onDismissPublish: () => {
+      setPublishing(null);
+    },
     exportLabel: t('PLAN.EXPORT'),
     canExport: plan.length > 0 && !isLocked && target !== null,
     exportNotice:

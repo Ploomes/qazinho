@@ -228,6 +228,17 @@ export const pt: typeof en = {
     EXPECTED_PLACEHOLDER: 'o que você espera ver',
     RUN_ALL: 'Rodar tudo',
     EXPORT: 'Exportar código',
+    PUBLISH: 'Publicar no Confluence',
+    PUBLISH_AGAIN: 'Atualizar no Confluence',
+    PUBLISHING: 'Publicando…',
+    PUBLISH_TIP:
+      'Uma página com cada caso, seus passos e como foi a última run, para o time ler.',
+    PUBLISH_AGAIN_TIP:
+      'Escreve o plano como está agora por cima da página em que foi publicado.',
+    PUBLISHED: 'Publicado em “{{title}}”.',
+    PUBLISH_FAILED: 'O Confluence não aceitou o plano. {{reason}}',
+    PUBLISHED_ON: 'Publicado no Confluence: “{{title}}”',
+    PUBLISH_TITLE: 'Plano de testes · {{workspace}}',
     EXPORT_TIP:
       'Transforma os casos que passaram num teste Playwright ou em flows do Maestro, salvos numa pasta que você escolhe.',
     RUN_ALL_TIP:
@@ -911,6 +922,40 @@ export const pt: typeof en = {
       'O Confluence está fora de alcance desta máquina. Confira a rede.',
     FAILURE_REJECTED: 'O Confluence recusou o que o QAzinho enviou.',
     FAILURE_UNEXPECTED: 'O Confluence respondeu de um jeito que o QAzinho não esperava.',
+  },
+  PUBLISH: {
+    TITLE: 'Publicar o plano no Confluence',
+    SUBTITLE:
+      'Uma página com cada caso e seus passos, e como foi a última run. Publicar de novo atualiza a mesma página.',
+    CONFIRM: 'Publicar',
+    SPACE: 'Espaço',
+    PICK_SPACE: 'Buscar um espaço',
+    SPACES_LOADING: 'Lendo seus espaços…',
+    NO_SPACES: 'O Confluence não lista nenhum espaço para esta conta.',
+    NONE_FOUND: 'Nada corresponde a “{{query}}”.',
+    PARENT: 'Dentro de uma página',
+    PARENT_NOTE: 'Opcional. Sem nenhuma, a página fica no topo do espaço.',
+    PICK_PARENT: 'Buscar uma página pelo título',
+    PAGES_SEARCHING: 'Buscando no Confluence…',
+    PICK_ANOTHER: 'Escolher outro',
+    PAGE_TITLE: 'Título da página',
+  },
+  PLAN_DOC: {
+    INTRO: 'O plano de testes: {{cases}} · {{steps}}.',
+    STORY: 'História do Jira',
+    PAGE: 'Feito a partir de',
+    DESIGN: 'Design do Figma',
+    LAST_RUN: 'Última run',
+    RUN_LINE: '{{run}} em {{when}}',
+    PRIORITY: 'Prioridade',
+    GOAL: 'Objetivo',
+    PRECONDITIONS: 'Pré-condições',
+    ACTION: 'Ação',
+    EXPECTED: 'Esperado',
+    FRAME: 'Frame do Figma',
+    RESULT: 'Última run',
+    KEPT_BY:
+      'Publicado pelo QAzinho. Publicar de novo escreve o plano como está por cima desta página.',
   },
   FILING: {
     SEND: 'Enviar como issue',
