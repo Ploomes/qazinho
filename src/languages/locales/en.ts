@@ -667,7 +667,10 @@ export const en = {
     PLATFORM: 'platform',
     ISSUE: 'linked issue · optional',
     ISSUE_EMPTY:
-      'No issue tracker connected. Connect one and you can hand the agent a ticket to work from. Without it you and the agent write the plan together.',
+      "Connect Jira and the agent plans from your team's stories. Without it, you and the agent write the plan together.",
+    ISSUE_READY:
+      'Jira is connected: name a story in the chat, by its key such as PROJ-123 or its link, and the agent plans from it.',
+    ISSUE_CONNECT: 'Connect Jira',
     CREATE: 'Create workspace',
     NEEDS_NAME: 'Say what you are testing to create it',
     NEEDS_TARGET: 'This project has no platform to run on',

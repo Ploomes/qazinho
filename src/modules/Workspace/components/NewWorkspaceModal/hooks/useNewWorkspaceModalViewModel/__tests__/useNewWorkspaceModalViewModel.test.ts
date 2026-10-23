@@ -2,7 +2,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useNewWorkspaceModalViewModel } from '@/modules/Workspace/components/NewWorkspaceModal/hooks/useNewWorkspaceModalViewModel';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useSettingsStore, useSetupStore, useWorkspaceStore } from '@/store';
 
 const PROJECT = {
   id: 'p1',
@@ -22,6 +22,7 @@ beforeEach(() => {
     selectedWorkspaceId: null,
   });
   useWorkspaceStore.setState({ workspaces: [] });
+  useSetupStore.setState({ integrations: [] });
 });
 
 describe('useNewWorkspaceModalViewModel', () => {
@@ -78,5 +79,38 @@ describe('useNewWorkspaceModalViewModel', () => {
     });
 
     expect(useWorkspaceStore.getState().workspaces[0]?.planKind).toBe('mobile');
+  });
+
+  describe('the linked issue', () => {
+    /** A new QA read "no tracker connected" and had no way to the place that connects one. */
+    it('takes a QA with no Jira to Settings, Integrations, closing itself', () => {
+      const { result } = renderHook(() => useNewWorkspaceModalViewModel());
+
+      expect(result.current).toMatchObject({
+        canConnect: true,
+        connectLabel: 'Connect Jira',
+      });
+
+      act(() => {
+        result.current.onConnect();
+      });
+
+      expect(useSettingsStore.getState().tab).toBe('integrations');
+      expect(useAppStore.getState().modal).not.toBe('workspace');
+    });
+
+    /** It said no tracker was connected even with Jira connected. */
+    it('says how to plan from a story once Jira is connected, and offers no connecting', () => {
+      useSetupStore.setState({
+        integrations: [
+          { id: 'jira', account: 'Ana QA', site: 'acme.atlassian.net', connectedAt: '' },
+        ],
+      });
+
+      const { result } = renderHook(() => useNewWorkspaceModalViewModel());
+
+      expect(result.current.canConnect).toBe(false);
+      expect(result.current.issueText).toContain('name a story in the chat');
+    });
   });
 });

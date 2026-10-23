@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Eyebrow, Input, PlatformIcon } from '@/shared/components/atoms';
+import { Button, Eyebrow, Input, PlatformIcon } from '@/shared/components/atoms';
 import { ModalFrame } from '@/shared/components/templates';
 import { useNewWorkspaceModalViewModel } from './hooks';
 import './styles.css';
@@ -11,6 +11,10 @@ export const NewWorkspaceModal: React.FC = () => {
     platforms,
     projectName,
     canCreate,
+    issueText,
+    canConnect,
+    connectLabel,
+    onConnect,
     onNameChange,
     onTargetChange,
     onCancel,
@@ -65,7 +69,14 @@ export const NewWorkspaceModal: React.FC = () => {
 
       <div>
         <Eyebrow>{t('NEW_WORKSPACE.ISSUE')}</Eyebrow>
-        <p className="new-workspace__issue">{t('NEW_WORKSPACE.ISSUE_EMPTY')}</p>
+        <div className="new-workspace__issue">
+          <p className="new-workspace__issue-text">{issueText}</p>
+          {canConnect && (
+            <Button size="sm" onClick={onConnect}>
+              {connectLabel}
+            </Button>
+          )}
+        </div>
       </div>
     </ModalFrame>
   );

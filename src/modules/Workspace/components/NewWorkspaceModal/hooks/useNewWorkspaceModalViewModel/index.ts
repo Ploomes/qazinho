@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toPlanKind } from '@/modules/Plan';
 import { PLATFORM_LABEL } from '@/modules/Workspace/constants';
-import { useAppStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useSettingsStore, useSetupStore, useWorkspaceStore } from '@/store';
 
 export const useNewWorkspaceModalViewModel = () => {
   const { t } = useTranslation();
@@ -14,6 +14,11 @@ export const useNewWorkspaceModalViewModel = () => {
   const closeModal = useAppStore((state) => state.closeModal);
   const selectWorkspace = useAppStore((state) => state.selectWorkspace);
   const addWorkspace = useWorkspaceStore((state) => state.addWorkspace);
+  const openSettings = useAppStore((state) => state.openSettings);
+  const selectSettingsTab = useSettingsStore((state) => state.selectTab);
+  const isJiraConnected = useSetupStore((state) =>
+    state.integrations.some(({ id }) => id === 'jira'),
+  );
 
   const project =
     projects.find(({ id }) => id === selectedProjectId) ?? projects[0] ?? null;
@@ -75,6 +80,16 @@ export const useNewWorkspaceModalViewModel = () => {
     chosenTargetId: chosen?.id ?? null,
     projectName: project?.name ?? '',
     canCreate: name.trim().length > 0 && chosen !== null,
+    issueText: t(
+      isJiraConnected ? 'NEW_WORKSPACE.ISSUE_READY' : 'NEW_WORKSPACE.ISSUE_EMPTY',
+    ),
+    canConnect: !isJiraConnected,
+    connectLabel: t('NEW_WORKSPACE.ISSUE_CONNECT'),
+    onConnect: () => {
+      selectSettingsTab('integrations');
+      closeModal();
+      openSettings();
+    },
     onNameChange: setName,
     onTargetChange: setTargetId,
     onCancel: closeModal,
