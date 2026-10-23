@@ -48,6 +48,13 @@ describe('useRunButtonViewModel', () => {
         className: 'run-button run-button--disabled',
       });
     });
+
+    it('says why it cannot run, and nothing once it can', () => {
+      expect(render({ canRun: false }).result.current.blockedTip).toBe(
+        'The plan has no step to run yet: write one in the Plan tab, or draft it in the chat.',
+      );
+      expect(render().result.current.blockedTip).toBeUndefined();
+    });
   });
 
   describe('onToggle', () => {

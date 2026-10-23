@@ -74,6 +74,8 @@ export const pt: typeof en = {
     DESIGN_OPEN: 'Abrir o design no Figma',
     DESIGN_DROP: 'Parar de conferir com este design',
     RUN_PLAN: 'Rodar plano',
+    RUN_NO_STEPS:
+      'O plano ainda não tem passo para rodar: escreva um na aba Plano, ou rascunhe no chat.',
     RUN_WITH_AGENT: 'Rodar tudo com o agente',
     EXPLORE: 'Explorar',
     EXPLORE_TIP:

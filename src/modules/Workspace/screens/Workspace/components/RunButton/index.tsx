@@ -13,6 +13,7 @@ export const RunButton: React.FC<IRunButtonProps> = (props) => {
     style,
     runLabel,
     isDisabled,
+    blockedTip,
     hasChoices,
     chooseLabel,
     isOpen,
@@ -24,7 +25,7 @@ export const RunButton: React.FC<IRunButtonProps> = (props) => {
   } = useRunButtonViewModel(props);
 
   return (
-    <div ref={ref} className={className} style={style}>
+    <div ref={ref} className={className} style={style} title={blockedTip}>
       <div className="run-button__face">
         <button
           type="button"

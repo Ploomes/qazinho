@@ -73,6 +73,8 @@ export const en = {
     DESIGN_DROP: 'Stop checking against this design',
     RUN_PLAN: 'Run plan',
     RUN_WITH_AGENT: 'Run everything with the agent',
+    RUN_NO_STEPS:
+      'The plan has no step to run yet: write one in the Plan tab, or draft it in the chat.',
     EXPLORE: 'Explore',
     EXPLORE_TIP:
       'The agent goes through the app on its own for {{minutes}} minutes, notes each screen, files what is broken and suggests a plan.',

@@ -29,6 +29,7 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
     style: { '--run-menu-width': `${String(RUN_BUTTON.menuWidthPx)}px` } as CSSProperties,
     runLabel: t('WORKSPACE.RUN_PLAN'),
     isDisabled: !canRun,
+    blockedTip: canRun ? undefined : t('WORKSPACE.RUN_NO_STEPS'),
     hasChoices: canChoose,
     chooseLabel: t('WORKSPACE.RUN_CHOICES'),
     isOpen: isMenuOpen,
