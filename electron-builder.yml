@@ -9,6 +9,9 @@ files:
 mac:
   target: dmg
   category: public.app-category.developer-tools
+  hardenedRuntime: true
+dmg:
+  artifactName: ${productName}-${version}-${arch}.${ext}
 win:
   target: nsis
 nsis:
