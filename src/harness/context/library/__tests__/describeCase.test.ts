@@ -117,6 +117,37 @@ describe('describeCase', () => {
     ).toContain('The device shows right now:\nSign in · [button] Continue');
   });
 
+  /** Each case is a fresh agent: without this, the QA was asked the test account's e-mail once per case. */
+  it('hands over what the QA already answered in this run, so the case does not ask again', () => {
+    const message = describeCase({
+      steps: [STEP],
+      screen: '',
+      language: 'pt',
+      filed: [],
+      known: [],
+      variables: [],
+      design: null,
+      told: [
+        { question: 'Qual é o e-mail da conta de teste?', answer: 'ana@banco.test' },
+      ],
+    });
+
+    expect(message).toContain(
+      'What the QA already answered in this run, which holds for this case too: use it instead of asking again.\n- Qual é o e-mail da conta de teste?\n  ana@banco.test',
+    );
+    expect(
+      describeCase({
+        steps: [STEP],
+        screen: '',
+        language: 'pt',
+        filed: [],
+        known: [],
+        variables: [],
+        design: null,
+      }),
+    ).not.toContain('already answered');
+  });
+
   it('tells the agent to stop at once when there is nothing to walk', () => {
     expect(
       describeCase({

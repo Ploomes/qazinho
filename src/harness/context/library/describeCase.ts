@@ -9,7 +9,7 @@ import { LANGUAGE_NAMES } from '@/harness/constants';
 import { describeKnownBugs } from './describeKnownBugs';
 import { describeVariables } from './describeVariables';
 
-/** One case to walk, as the message that starts the agent's turn: its steps in order with the Figma frame each should match, the language to report in, the variables it may type, the bugs already open and filed, and the screen it starts on. */
+/** One case to walk, as the message that starts the agent's turn: its steps in order with the Figma frame each should match, the language to report in, the variables it may type, what the QA already answered in this run, the bugs already open and filed, and the screen it starts on. */
 export function describeCase(props: {
   steps: IFlatStep[];
   screen: string;
@@ -18,8 +18,10 @@ export function describeCase(props: {
   known: IKnownBug[];
   variables: IVariableBrief[];
   design: IDesignLink | null;
+  told?: { question: string; answer: string }[];
 }): string {
   const { steps, screen, language, filed, known, variables, design } = props;
+  const told = props.told ?? [];
   const [first] = steps;
   const framed = design !== null && steps.some(({ frame }) => frame !== undefined);
 
@@ -46,6 +48,13 @@ export function describeCase(props: {
     ]),
     `Write what you report and note in ${LANGUAGE_NAMES[language]}, whatever language these steps are in.`,
     ...describeVariables(variables),
+    ...(told.length === 0
+      ? []
+      : [
+          '',
+          'What the QA already answered in this run, which holds for this case too: use it instead of asking again.',
+          ...told.flatMap(({ question, answer }) => [`- ${question}`, `  ${answer}`]),
+        ]),
     ...describeKnownBugs(known),
     ...(filed.length === 0
       ? []

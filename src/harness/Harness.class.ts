@@ -348,7 +348,7 @@ export class Harness {
     return describeExploration(props);
   }
 
-  /** The message that starts the agent's turn on one case, in the language the QA reads, with the variables it may type and the bugs already open. */
+  /** The message that starts the agent's turn on one case, in the language the QA reads, with the variables it may type, what the QA already answered in the run, and the bugs already open. */
   public walk(props: {
     steps: IFlatStep[];
     screen: string;
@@ -357,6 +357,7 @@ export class Harness {
     known: IKnownBug[];
     variables: IVariableBrief[];
     design: IDesignLink | null;
+    told?: { question: string; answer: string }[];
   }): string {
     return describeCase(props);
   }

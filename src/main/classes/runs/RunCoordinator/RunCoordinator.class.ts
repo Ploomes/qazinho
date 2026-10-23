@@ -703,6 +703,10 @@ export class RunCoordinator {
         known: run.bugs ?? [],
         variables: run.values.map(({ name, description }) => ({ name, description })),
         design: run.design ?? null,
+        told: (this.inFlightRuns.get(workspaceId)?.asked ?? []).flatMap(
+          ({ question, answer }) =>
+            answer.kind === 'said' ? [{ question, answer: answer.text }] : [],
+        ),
       }),
     });
 
