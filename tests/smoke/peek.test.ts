@@ -29,7 +29,7 @@ describe('a look at the app before the chat', () => {
     const peek = new AppPeek({ folder });
     const look = await peek.look('http://127.0.0.1:4331/');
 
-    expect(look).toMatchObject({ url: 'http://127.0.0.1:4331/', isOpen: true });
+    expect(look).toMatchObject({ where: 'http://127.0.0.1:4331/', isOpen: true });
     expect(look.isOpen && look.page).toContain('TITLE: Rotuz');
     expect(look.isOpen && look.page).toContain('The score of what you eat');
     expect(look.isOpen && look.page).toContain('a: Premium');
