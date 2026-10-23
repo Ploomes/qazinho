@@ -66,7 +66,13 @@ function recorder(name: string) {
   };
 }
 
-function draw(props: { mood: InternMood; t: number; isFigure?: boolean; size?: number }) {
+function draw(props: {
+  mood: InternMood;
+  t: number;
+  isFigure?: boolean;
+  size?: number;
+  sticker?: string;
+}) {
   const sheet = recorder('sheet');
   const screen = recorder('screen');
 
@@ -77,6 +83,7 @@ function draw(props: { mood: InternMood; t: number; isFigure?: boolean; size?: n
     mood: props.mood,
     t: props.t,
     isFigure: props.isFigure ?? false,
+    sticker: props.sticker ?? null,
   });
 
   return { sheet, screen };
@@ -132,6 +139,19 @@ describe('drawIntern', () => {
 
     expect(screen.calls.filter((call) => call === 'drawImage(sheet)')).toHaveLength(1);
     expect(screen.shadows.filter((shadow) => shadow !== '')).toEqual([]);
+  });
+
+  it('draws the logo as a sticker: a white edge, laid twice under its shadows, at the designer’s tilt', () => {
+    const { sheet, screen } = draw({
+      mood: 'neutral',
+      t: 0,
+      sticker: 'rgba(0, 0, 0, 0.55)',
+    });
+
+    expect(sheet.painted.has('#ffffff')).toBe(true);
+    expect(sheet.calls).toContain(`rotate(${String((-6 * Math.PI) / 180)})`);
+    expect(screen.calls.filter((call) => call === 'drawImage(sheet)')).toHaveLength(2);
+    expect(screen.shadows).toEqual(['rgba(0, 0, 0, 0.55)', 'rgba(0, 0, 0, 0.16)']);
   });
 
   it('stands him upright', () => {

@@ -5,6 +5,8 @@ const LIME = '#c6f432';
 const INK = '#141414';
 const RED = '#ff4d2e';
 const WHITE = '#ffffff';
+const EDGE = 13;
+const TILT = (-6 * Math.PI) / 180;
 const FRAME = { stage: { span: 340, foot: 0.86 }, figure: { span: 300, foot: 0.893 } };
 const FOOT = { x: 120, y: 235 };
 
@@ -328,7 +330,7 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
   },
 };
 
-/** Draws the Estagiário flat and upright in a mood at phase `t` (0 to 1): drawn on `layer`, then laid on `context`. */
+/** Draws the Estagiário in a mood at phase `t` (0 to 1) on `layer`, then lays him on `context`: flat and upright, or as the logo's sticker when `sticker` names its shadow. */
 export function drawIntern(props: {
   context: CanvasRenderingContext2D;
   layer: CanvasRenderingContext2D;
@@ -336,6 +338,7 @@ export function drawIntern(props: {
   mood: InternMood;
   t: number;
   isFigure: boolean;
+  sticker: string | null;
 }): void {
   const { context: c, layer: l, size, mood, t } = props;
   const pose = POSES[mood](t);
@@ -349,11 +352,22 @@ export function drawIntern(props: {
     (frame.span / 2 + (pose.dx ?? 0)) * unit,
     (frame.span * frame.foot + (pose.dy ?? 0)) * unit,
   );
-  l.rotate(pose.rot ?? 0);
+  l.rotate((props.sticker === null ? 0 : TILT) + (pose.rot ?? 0));
   l.scale((pose.sx ?? 1) * unit, (pose.sy ?? 1) * unit);
   l.translate(-FOOT.x, -FOOT.y);
 
   traceBody(l, pose.sway ?? 0);
+
+  if (props.sticker !== null) {
+    l.lineJoin = 'round';
+    l.strokeStyle = 'rgba(0, 0, 0, 0.07)';
+    l.lineWidth = EDGE * 2 + 2.5;
+    l.stroke();
+    l.strokeStyle = WHITE;
+    l.lineWidth = EDGE * 2;
+    l.stroke();
+  }
+
   l.fillStyle = LIME;
   l.fill();
 
@@ -370,10 +384,34 @@ export function drawIntern(props: {
   l.fillRect(0, 150, 240, 90);
   l.restore();
 
+  if (props.sticker !== null) {
+    l.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    l.beginPath();
+    l.ellipse(50, 98, 24, 7.5, -0.62, 0, TAU);
+    l.fill();
+    dot(l, { x: 80, y: 72, r: 4.5 });
+  }
+
   pose.eyes(l);
   pose.extra?.(l);
 
   c.setTransform(1, 0, 0, 1, 0, 0);
   c.clearRect(0, 0, size, size);
+
+  if (props.sticker === null) {
+    c.drawImage(l.canvas, 0, 0);
+
+    return;
+  }
+
+  c.save();
+  c.shadowColor = props.sticker;
+  c.shadowBlur = 22 * unit;
+  c.shadowOffsetY = 11 * unit;
   c.drawImage(l.canvas, 0, 0);
+  c.shadowColor = 'rgba(0, 0, 0, 0.16)';
+  c.shadowBlur = 3 * unit;
+  c.shadowOffsetY = 2 * unit;
+  c.drawImage(l.canvas, 0, 0);
+  c.restore();
 }

@@ -5,9 +5,18 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { INTERN, INTERN_MOODS } from '@/shared/components/atoms/Intern/constants';
 import { drawIntern } from '@/shared/components/atoms/Intern/library';
+import { useAppStore } from '@/store';
 
 export const useInternViewModel = (props: IInternProps) => {
-  const { mood, size = INTERN.defaultSize, isStill = false, isFigure = false } = props;
+  const {
+    mood,
+    size = INTERN.defaultSize,
+    isStill = false,
+    isFigure = false,
+    isSticker = false,
+  } = props;
+  const theme = useAppStore((state) => state.theme);
+  const sticker = isSticker ? INTERN.stickerShadow[theme] : null;
   const { t } = useTranslation();
   const isCalm = useReducedMotion() ?? false;
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -29,7 +38,7 @@ export const useInternViewModel = (props: IInternProps) => {
     if (!layer) return;
 
     const draw = (phase: number) => {
-      drawIntern({ context, layer, size: pixels, mood, t: phase, isFigure });
+      drawIntern({ context, layer, size: pixels, mood, t: phase, isFigure, sticker });
     };
 
     draw(INTERN_MOODS[mood].stillAt);
@@ -45,7 +54,7 @@ export const useInternViewModel = (props: IInternProps) => {
     return () => {
       cancelAnimationFrame(frame);
     };
-  }, [mood, pixels, isFigure, isMoving]);
+  }, [mood, pixels, isFigure, sticker, isMoving]);
 
   return {
     canvasRef,
