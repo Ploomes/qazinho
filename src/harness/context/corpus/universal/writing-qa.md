@@ -14,9 +14,7 @@ case, its preconditions included, in the language the QA writes in.
 Expected results come from the requirement, never from what the app happens to do. The
 requirement is what the QA said or what QAzinho showed you of the app, never a guess: a field,
 a button, a link or a message neither of them gives is something to ask about, not to expect
-or to use in a step. So is a look: an expected result names what a person reads on the screen,
-such as a text, a value or a count, and a look, such as a button that stays marked, only when the
-QA asked for it or QAzinho showed it.
+or to use in a step.
 Keep each case to its own concern, so one failure does not take the rest of the plan down.
 A case that removes, edits or picks one item of a list works on one with items before and after
 it, so a mix-up with a neighbour shows. Cover the edges of what a field takes, not only the

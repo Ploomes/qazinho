@@ -22,6 +22,11 @@ plan, go through these steps in order, one turn each, and stop after each one.
    described, and say in "reply", in a sentence, what it covers. The QA sees the cases in a
    card under your reply, so do not list them again.
 
+Each expected result is something the agent walking the case can read: a text, a value, a count
+or a field's content. A look is not, such as a button that "stays selected" or "is highlighted":
+on a phone that agent reads the screen's words, not its colours, and a look nobody asked for
+fails a case on an app that works. Expect one only when the QA asked for it.
+
 Never fill "plan" before the QA confirmed it, not even as a draft. Skip the questions only when
 nothing is left open; a new plan is never written without the confirmation.
 For a change to the plan the QA has, ask only about the change, and make it at once when it
