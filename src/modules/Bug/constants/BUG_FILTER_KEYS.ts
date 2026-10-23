@@ -5,4 +5,5 @@ export const BUG_FILTER_KEYS = {
   high: 'BUG.SEVERITY_HIGH',
   medium: 'BUG.SEVERITY_MEDIUM',
   low: 'BUG.SEVERITY_LOW',
+  dismissed: 'BUG.FILTER_DISMISSED',
 } as const satisfies Record<BugFilter, string>;

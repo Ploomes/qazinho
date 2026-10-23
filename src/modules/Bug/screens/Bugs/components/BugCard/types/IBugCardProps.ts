@@ -1,6 +1,6 @@
 import type { IBug, IBugMoment } from '@/modules/Bug/types';
 
-/** A bug in the Bugs tab, open or folded, with the latest run that caught it, the moment it did, whether its case is in the plan, and the way to send it to the QA's tracker. */
+/** A bug in the Bugs tab, open or folded, with the latest run that caught it, the moment it did, whether its case is in the plan, the way to send it to the QA's tracker, and the QA's word that it is no bug. */
 export interface IBugCardProps {
   workspaceId: string;
   bug: IBug;
@@ -13,4 +13,5 @@ export interface IBugCardProps {
   onOpenRun: (runId: string) => void;
   onOpenCase: (caseId: string) => void;
   onSend: (bugId: string) => void;
+  onDismiss: (props: { bugId: string; isDismissed: boolean }) => void;
 }

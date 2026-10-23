@@ -32,6 +32,9 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
     onCaseClick,
     onFrameClick,
     onSendClick,
+    isTrackerShown,
+    dismissLabel,
+    onDismissClick,
     onIssueClick,
     onCopyScreen,
     onOpenShot,
@@ -136,23 +139,30 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
               </Button>
             )}
             <span className="bug-card__tracker">
-              {filedKey === null ? (
-                <Button size="sm" variant="primary" onClick={onSendClick}>
-                  <Icon name="send" />
-                  {sendLabel}
-                </Button>
-              ) : (
+              <Button size="sm" variant="ghost" onClick={onDismissClick}>
+                {dismissLabel}
+              </Button>
+              {isTrackerShown && (
                 <>
-                  {canCopyScreen && (
-                    <Button size="sm" onClick={onCopyScreen}>
-                      <Icon name="copy" />
-                      {copyLabel}
+                  {filedKey === null ? (
+                    <Button size="sm" variant="primary" onClick={onSendClick}>
+                      <Icon name="send" />
+                      {sendLabel}
                     </Button>
+                  ) : (
+                    <>
+                      {canCopyScreen && (
+                        <Button size="sm" onClick={onCopyScreen}>
+                          <Icon name="copy" />
+                          {copyLabel}
+                        </Button>
+                      )}
+                      <Button size="sm" onClick={onIssueClick}>
+                        {issueLabel}
+                        <Icon name="external" />
+                      </Button>
+                    </>
                   )}
-                  <Button size="sm" onClick={onIssueClick}>
-                    {issueLabel}
-                    <Icon name="external" />
-                  </Button>
                 </>
               )}
             </span>

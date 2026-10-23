@@ -24,6 +24,7 @@ const PROPS = {
   onOpenRun: vi.fn(),
   onOpenCase: vi.fn(),
   onSend: vi.fn(),
+  onDismiss: vi.fn(),
 };
 
 afterEach(async () => {
@@ -375,6 +376,39 @@ describe('useBugCardViewModel', () => {
           }),
         ).result.current.updateChip,
       ).toBeNull();
+    });
+  });
+
+  describe('onDismissClick', () => {
+    /** A false positive used to stay among the open bugs for good. */
+    it('lets the QA say it is no bug, and hides the way to send it', () => {
+      const onDismiss = vi.fn();
+      const { result } = renderHook(() => useBugCardViewModel({ ...PROPS, onDismiss }));
+
+      expect(result.current).toMatchObject({
+        dismissLabel: 'Not a bug',
+        isTrackerShown: true,
+      });
+
+      result.current.onDismissClick();
+
+      expect(onDismiss).toHaveBeenCalledWith({ bugId: BUG.id, isDismissed: true });
+    });
+
+    it('opens a dismissed bug again', () => {
+      const onDismiss = vi.fn();
+      const { result } = renderHook(() =>
+        useBugCardViewModel({ ...PROPS, bug: { ...BUG, isDismissed: true }, onDismiss }),
+      );
+
+      expect(result.current).toMatchObject({
+        dismissLabel: 'Open it again',
+        isTrackerShown: false,
+      });
+
+      result.current.onDismissClick();
+
+      expect(onDismiss).toHaveBeenCalledWith({ bugId: BUG.id, isDismissed: false });
     });
   });
 });

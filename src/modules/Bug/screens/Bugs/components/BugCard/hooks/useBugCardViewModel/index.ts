@@ -115,6 +115,11 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
     onSendClick: () => {
       props.onSend(bug.id);
     },
+    isTrackerShown: !bug.isDismissed,
+    dismissLabel: t(bug.isDismissed ? 'BUG.REOPEN' : 'BUG.DISMISS'),
+    onDismissClick: () => {
+      props.onDismiss({ bugId: bug.id, isDismissed: !bug.isDismissed });
+    },
     offDesign: bug.frame === null ? null : t('BUG.OFF_DESIGN'),
     frameLabel: frameUrl === null ? null : t('BUG.SEE_FRAME'),
     onFrameClick: () => {

@@ -78,6 +78,45 @@ describe('useBugsViewModel', () => {
     });
   });
 
+  describe('onDismiss', () => {
+    it('takes a bug the QA says is none out of the open ones, and keeps it under its own filter', () => {
+      const { result } = renderHook(() => useBugsViewModel());
+
+      expect(result.current.filters.map(({ id }) => id)).not.toContain('dismissed');
+
+      act(() => {
+        result.current.onDismiss({ bugId: BUG.id, isDismissed: true });
+      });
+
+      expect(result.current.bugs).toEqual([]);
+      expect(result.current.summary).toBe('No bug open');
+      expect(result.current.isEmpty).toBe(false);
+      expect(result.current.filters.map(({ id }) => id)).toContain('dismissed');
+
+      act(() => {
+        result.current.onFilter('dismissed');
+      });
+
+      expect(result.current.bugs.map(({ bug }) => bug.id)).toEqual([BUG.id]);
+    });
+
+    it('does NOT stay on an empty filter once every bug was opened again', () => {
+      useWorkspaceStore.setState({
+        workspaces: [{ ...WORKSPACE, bugs: [{ ...BUG, isDismissed: true }] }],
+        bugFilter: 'dismissed',
+      });
+
+      const { result } = renderHook(() => useBugsViewModel());
+
+      act(() => {
+        result.current.onDismiss({ bugId: BUG.id, isDismissed: false });
+      });
+
+      expect(result.current.bugs.map(({ bug }) => bug.id)).toEqual([BUG.id]);
+      expect(result.current.filters.find(({ isActive }) => isActive)?.id).toBe('all');
+    });
+  });
+
   describe('onOpenRun', () => {
     it('opens the Runs tab on the run the bug was caught in', () => {
       const { result } = renderHook(() => useBugsViewModel());

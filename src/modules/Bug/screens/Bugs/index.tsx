@@ -17,6 +17,7 @@ export const Bugs: React.FC = () => {
     onFilter,
     onOpenRun,
     onOpenCase,
+    onDismiss,
     sending,
     onSend,
     onCancelSend,
@@ -70,6 +71,7 @@ export const Bugs: React.FC = () => {
             onOpenRun={onOpenRun}
             onOpenCase={onOpenCase}
             onSend={onSend}
+            onDismiss={onDismiss}
           />
         ))}
       </div>

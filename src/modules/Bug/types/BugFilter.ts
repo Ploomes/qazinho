@@ -1,1 +1,1 @@
-export type BugFilter = 'all' | 'high' | 'medium' | 'low';
+export type BugFilter = 'all' | 'high' | 'medium' | 'low' | 'dismissed';

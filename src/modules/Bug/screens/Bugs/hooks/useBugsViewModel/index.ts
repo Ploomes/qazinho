@@ -20,6 +20,7 @@ export const useBugsViewModel = () => {
   const bugFilter = useWorkspaceStore((state) => state.bugFilter);
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
   const setBugFilter = useWorkspaceStore((state) => state.setBugFilter);
+  const dismissBug = useWorkspaceStore((state) => state.dismissBug);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const selectRun = useWorkspaceStore((state) => state.selectRun);
   const toggleCase = useWorkspaceStore((state) => state.toggleCase);
@@ -29,8 +30,15 @@ export const useBugsViewModel = () => {
   const bugs = workspace?.bugs ?? [];
   const runs = workspace?.runs ?? [];
   const plan = workspace?.plan ?? [];
+  const open = bugs.filter(({ isDismissed }) => !isDismissed);
+  const dismissed = bugs.filter(({ isDismissed }) => isDismissed);
+  const filter = bugFilter === 'dismissed' && dismissed.length === 0 ? 'all' : bugFilter;
   const shown =
-    bugFilter === 'all' ? bugs : bugs.filter(({ severity }) => severity === bugFilter);
+    filter === 'dismissed'
+      ? dismissed
+      : filter === 'all'
+        ? open
+        : open.filter(({ severity }) => severity === filter);
 
   const onOpenRun = (runId: string) => {
     selectRun(runId);
@@ -72,16 +80,23 @@ export const useBugsViewModel = () => {
     }),
     workspaceId: workspace?.id ?? '',
     openBugId,
-    filters: BUG_FILTERS.map((id) => ({
-      id,
-      label: t(BUG_FILTER_KEYS[id]),
-      isActive: id === bugFilter,
-    })),
+    filters: BUG_FILTERS.filter((id) => id !== 'dismissed' || dismissed.length > 0).map(
+      (id) => ({
+        id,
+        label: t(BUG_FILTER_KEYS[id]),
+        isActive: id === filter,
+      }),
+    ),
     isEmpty: bugs.length === 0,
     summary:
-      bugs.length === 1
-        ? t('BUG.SUMMARY_ONE')
-        : t('BUG.SUMMARY_OTHER', { count: bugs.length }),
+      open.length === 0
+        ? t('BUG.SUMMARY_NONE')
+        : open.length === 1
+          ? t('BUG.SUMMARY_ONE')
+          : t('BUG.SUMMARY_OTHER', { count: open.length }),
+    onDismiss: (props: { bugId: string; isDismissed: boolean }) => {
+      if (workspace !== null) dismissBug({ workspaceId: workspace.id, ...props });
+    },
     onToggleBug: toggleBug,
     onFilter: setBugFilter,
     onOpenRun,
