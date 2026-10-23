@@ -15,7 +15,19 @@ const STORY_REFUSALS: Record<JiraFailure, string> = {
   unexpected: 'Jira answered in a way QAzinho did not expect.',
 };
 
-/** Hands the QA's request to a workspace's own chat, as if they typed it there, with the Jira story it plans from and the Figma design it is checked against, and opens that chat. */
+const PAGE_REFUSALS: Record<JiraFailure, string> = {
+  'not-connected':
+    "Confluence is off, so QAzinho cannot read the page. The QA turns it on beside Jira, with the switch in Jira's card in Settings → Integrations.",
+  unauthorized:
+    'Confluence refused the Jira account QAzinho keeps. The QA checks that the account can open Confluence on the same site.',
+  'not-found':
+    'Confluence found no page by that title, or this account cannot see it. Ask the QA for its exact title or its link.',
+  unreachable: 'Confluence is out of reach from this machine right now.',
+  rejected: 'Confluence refused to hand the page over.',
+  unexpected: 'Confluence answered in a way QAzinho did not expect.',
+};
+
+/** Hands the QA's request to a workspace's own chat, as if they typed it there, with the Jira story or the Confluence page it plans from and the Figma design it is checked against, and opens that chat. */
 export async function performChatAsk(props: {
   call: Extract<AppToolCall, { name: 'ask_workspace_chat' }>;
   port: IAppPort;
@@ -68,15 +80,22 @@ export async function performChatAsk(props: {
   if (typeof story === 'string')
     return { text: `${key ?? ''}: ${STORY_REFUSALS[story]}`, isError: true };
 
+  const wanted = call.args.confluence;
+  const page = wanted === undefined ? null : await port.findPage(wanted);
+
+  if (typeof page === 'string')
+    return { text: `"${wanted ?? ''}": ${PAGE_REFUSALS[page]}`, isError: true };
+
   port.askWorkspaceChat({
     workspaceId: workspace.id,
     text: call.args.text,
     story,
+    page,
     design,
   });
 
   return {
-    text: `Sent the message to the chat of ${named}${story === null ? '' : `, with the Jira story ${story.key} "${story.summary}",`}${design === null ? '' : `, checked against the Figma design "${design.name}",`} and opened it there. Its agent answers in that chat, not here: before a plan it looks at the app and may ask the QA a round of questions, which they answer there.`,
+    text: `Sent the message to the chat of ${named}${story === null ? '' : `, with the Jira story ${story.key} "${story.summary}",`}${page === null ? '' : `, with the Confluence page "${page.title}",`}${design === null ? '' : `, checked against the Figma design "${design.name}",`} and opened it there. Its agent answers in that chat, not here: before a plan it looks at the app and may ask the QA a round of questions, which they answer there.`,
     isError: false,
   };
 }

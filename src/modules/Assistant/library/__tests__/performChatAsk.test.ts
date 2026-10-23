@@ -149,4 +149,37 @@ describe('performChatAsk', () => {
     });
     expect(did).toEqual([]);
   });
+
+  it('hands the chat the Confluence page the plan comes from, found by its title', async () => {
+    const { port, did } = fakePort();
+
+    expect(
+      await performChatAsk({
+        call: {
+          ...ASK,
+          args: { ...ASK.args, confluence: 'Checkout: cenários do cupom' },
+        },
+        port,
+      }),
+    ).toEqual({
+      text: 'Sent the message to the chat of w2 "Login", with the Confluence page "Checkout: cenários do cupom", and opened it there. Its agent answers in that chat, not here: before a plan it looks at the app and may ask the QA a round of questions, which they answer there.',
+      isError: false,
+    });
+    expect(did.at(-1)).toContain('from page 98304');
+  });
+
+  it('does NOT send while Confluence is off, and says where it is turned on', async () => {
+    const { port, did } = fakePort();
+
+    expect(
+      await performChatAsk({
+        call: { ...ASK, args: { ...ASK.args, confluence: 'off' } },
+        port,
+      }),
+    ).toEqual({
+      text: '"off": Confluence is off, so QAzinho cannot read the page. The QA turns it on beside Jira, with the switch in Jira\'s card in Settings → Integrations.',
+      isError: true,
+    });
+    expect(did).toEqual([]);
+  });
 });

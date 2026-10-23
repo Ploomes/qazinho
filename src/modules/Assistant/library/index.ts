@@ -1,4 +1,5 @@
 export * from './appSnapshotOf';
+export * from './confluenceWantedOf';
 export * from './describeBug';
 export * from './describeRun';
 export * from './describeWorkspace';
@@ -17,6 +18,7 @@ export * from './performRemoval';
 export * from './performSettingsChange';
 export * from './performVariables';
 export * from './performWorkspaceChange';
+export * from './pickPage';
 export * from './repositoryOfName';
 export * from './subjectOf';
 export * from './suggestionsFor';

@@ -8,6 +8,7 @@ import type {
   BugFiling,
   BuildPlatform,
   IBranchList,
+  IConfluencePageRef,
   IDesignLink,
   IJiraIssueRef,
   IntegrationId,
@@ -51,9 +52,11 @@ export interface IAppPort {
     workspaceId: string;
     text: string;
     story: IJiraIssueRef | null;
+    page: IConfluencePageRef | null;
     design: IDesignLink | null;
   }) => void;
   findStory: (key: string) => Promise<IJiraIssueRef | JiraFailure>;
+  findPage: (query: string) => Promise<IConfluencePageRef | JiraFailure>;
   sendBug: (props: {
     workspaceId: string;
     bugId: string;

@@ -295,6 +295,14 @@ export const APP_TOOLS = [
           'When the QA wants the plan made from a Jira story: its key, such as SHOP-12. QAzinho reads the story, its acceptance criteria and its files for that chat.',
         )
         .optional(),
+      confluence: z
+        .string({ error: '"confluence" is the title of a Confluence page, or its link.' })
+        .trim()
+        .min(1, { error: '"confluence" is the title of a Confluence page, or its link.' })
+        .describe(
+          'When the QA wants the plan made from a Confluence page: its title, as the QA named it, or its link. QAzinho finds the page and hands its text to that chat.',
+        )
+        .optional(),
       figma: z
         .string({ error: '"figma" is the link to a frame or page in Figma.' })
         .trim()

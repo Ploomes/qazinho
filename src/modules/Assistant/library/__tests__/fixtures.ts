@@ -149,11 +149,24 @@ export function fakePort(
     stopWorkspace: (workspaceId) => {
       did.push(`stop ${workspaceId}`);
     },
-    askWorkspaceChat: ({ workspaceId, text, story, design }) => {
+    askWorkspaceChat: ({ workspaceId, text, story, page, design }) => {
       did.push(
-        `ask ${workspaceId} ${text}${story === null ? '' : ` from ${story.key}`}${design === null ? '' : ` against ${design.fileKey}`}`,
+        `ask ${workspaceId} ${text}${story === null ? '' : ` from ${story.key}`}${page === null ? '' : ` from page ${page.id}`}${design === null ? '' : ` against ${design.fileKey}`}`,
       );
     },
+    findPage: (query) =>
+      Promise.resolve(
+        /cupom/i.test(query)
+          ? {
+              id: '98304',
+              title: 'Checkout: cenários do cupom',
+              space: 'QA',
+              url: 'https://acme.atlassian.net/wiki/spaces/QA/pages/98304',
+            }
+          : query === 'off'
+            ? 'not-connected'
+            : 'not-found',
+      ),
     findStory: (key) =>
       Promise.resolve(
         key === 'SHOP-12'

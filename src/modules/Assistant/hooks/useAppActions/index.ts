@@ -1,14 +1,29 @@
 import type { ConfirmDecision, IAppPort, IToolDone } from '@/modules/Assistant/types';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isConfirmCall, performAppTool, subjectOf } from '@/modules/Assistant/library';
+import {
+  confluenceWantedOf,
+  isConfirmCall,
+  performAppTool,
+  pickPage,
+  subjectOf,
+} from '@/modules/Assistant/library';
 import { useSendBug } from '@/modules/Bug';
 import { useBuildActions } from '@/modules/Build';
 import { useChatAgent } from '@/modules/Chat';
 import { useVariableActions } from '@/modules/Project';
 import { useRunActions } from '@/modules/Run';
 import { PLATFORM_LABEL } from '@/modules/Workspace';
-import { Agent, Archive, Assistant, Github, Integrations, Jira, Run } from '@/services';
+import {
+  Agent,
+  Archive,
+  Assistant,
+  Confluence,
+  Github,
+  Integrations,
+  Jira,
+  Run,
+} from '@/services';
 import { ASSISTANT_WAIT } from '@/shared/constants';
 import {
   useAppStore,
@@ -150,7 +165,7 @@ export const useAppActions = () => {
         return runWorkspace(workspaceId, 'explore');
       },
       stopWorkspace,
-      askWorkspaceChat: ({ workspaceId, text, story, design }) => {
+      askWorkspaceChat: ({ workspaceId, text, story, page, design }) => {
         bringForward();
         useAppStore.getState().selectWorkspace(workspaceId);
         useWorkspaceStore.getState().selectTab('chat');
@@ -164,16 +179,26 @@ export const useAppActions = () => {
           mentions: [],
           ...(story !== null
             ? { command: { id: 'jira-plan' as const, ...story } }
-            : design !== null
+            : page !== null
               ? {
                   command: {
-                    id: 'figma-plan' as const,
-                    name: design.name,
-                    nodeId: design.nodeId,
-                    url: design.url,
+                    id: 'confluence-plan' as const,
+                    pageId: page.id,
+                    title: page.title,
+                    space: page.space,
+                    url: page.url,
                   },
                 }
-              : {}),
+              : design !== null
+                ? {
+                    command: {
+                      id: 'figma-plan' as const,
+                      name: design.name,
+                      nodeId: design.nodeId,
+                      url: design.url,
+                    },
+                  }
+                : {}),
         });
         askAgent({
           workspaceId,
@@ -183,6 +208,9 @@ export const useAppActions = () => {
               : [
                   t('COMMANDS.JIRA_PLAN_SAY', { key: story.key, summary: story.summary }),
                 ]),
+            ...(page === null
+              ? []
+              : [t('COMMANDS.CONFLUENCE_PLAN_SAY', { title: page.title })]),
             ...(design === null
               ? []
               : [t('COMMANDS.FIGMA_PLAN_SAY', { name: design.name })]),
@@ -191,7 +219,7 @@ export const useAppActions = () => {
           references: [],
           code: null,
           jira: story === null ? null : { key: story.key },
-          confluence: null,
+          confluence: page === null ? null : { pageId: page.id },
         });
         useAssistantStore.getState().close();
       },
@@ -209,6 +237,14 @@ export const useAppActions = () => {
           title: bug?.title ?? '',
           onReady: () => undefined,
         });
+      },
+      findPage: async (query) => {
+        const wanted = confluenceWantedOf(query);
+        const found = await Confluence.search(wanted.title);
+
+        if (!found.isListed) return found.failure;
+
+        return pickPage({ wanted, pages: found.pages }) ?? 'not-found';
       },
       findStory: async (key) => {
         const found = await Jira.search(key);

@@ -488,6 +488,11 @@
           "pattern": "^[A-Z][A-Z0-9_]*-\\d+$",
           "description": "When the QA wants the plan made from a Jira story: its key, such as SHOP-12. QAzinho reads the story, its acceptance criteria and its files for that chat."
         },
+        "confluence": {
+          "type": "string",
+          "minLength": 1,
+          "description": "When the QA wants the plan made from a Confluence page: its title, as the QA named it, or its link. QAzinho finds the page and hands its text to that chat."
+        },
         "figma": {
           "type": "string",
           "description": "When the QA wants the plan checked against a Figma design: the link to a frame or page. The workspace keeps it, and its chat reads it through the QA's own Figma."

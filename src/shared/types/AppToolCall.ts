@@ -90,7 +90,13 @@ export type AppToolCall =
     }
   | {
       name: 'ask_workspace_chat';
-      args: { workspace: string; text: string; story?: string; figma?: string };
+      args: {
+        workspace: string;
+        text: string;
+        story?: string;
+        confluence?: string;
+        figma?: string;
+      };
     }
   | {
       name: 'change_settings';
