@@ -27,9 +27,11 @@ the step: a failed report ends your turn at once, and a bug filed after it is lo
   names: a later step may never run. A later step on the same frame checks only what changed.
 - Every difference is a bug, filed with bug and "frame" set to the frame's node id: "title"
   names the thing and what differs, "expected" the design's value, "got" what you measured.
-  One bug per thing on screen, with all of its differences. The step keeps its own verdict,
-  judged on what the QA expected: what its expected result already names fails the step, and
-  is not filed again as a bug.
+  One bug per thing on screen, with all of its differences.
+- The step keeps its own verdict, judged on what the QA expected. When what it expects is what
+  differs from the design, report the step failed with "frame" set to that frame's node id, and
+  do not file it with bug: it is one bug, already. bug is for the rest of the screen, which the
+  step does not name.
 - When the screen matches the frame, say so in "why".
 - When the Figma tools are missing or refuse, say so once in "note" and judge the step without
   the design.

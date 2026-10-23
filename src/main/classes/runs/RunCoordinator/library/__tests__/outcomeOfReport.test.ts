@@ -48,6 +48,30 @@ describe('outcomeOfReport', () => {
     });
   });
 
+  it('keeps the Figma frame a failed step is off, so its bug is one off the design', () => {
+    const filed = (
+      report: Omit<typeof REPORT, 'verdict'> & {
+        verdict: 'passed' | 'failed';
+        frame?: string;
+      },
+    ) =>
+      outcomeOfReport({
+        report,
+        step: STEP,
+        index: 5,
+        workspaceId: 'w1',
+        tookMs: 0,
+        at: 1,
+        shot: null,
+      });
+
+    expect(filed({ ...REPORT, frame: '12:345' }).frame).toBe('12:345');
+    expect(filed({ ...REPORT, verdict: 'passed', frame: '12:345' })).not.toHaveProperty(
+      'frame',
+    );
+    expect(filed(REPORT)).not.toHaveProperty('frame');
+  });
+
   it('keeps the screenshot taken when the report arrived as the evidence', () => {
     expect(
       outcomeOfReport({

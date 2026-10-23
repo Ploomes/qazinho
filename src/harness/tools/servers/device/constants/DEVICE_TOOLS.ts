@@ -228,6 +228,12 @@ export const DEVICE_TOOLS = [
       sameAs: bugIdNamed(
         'When it failed for a bug the case lists as already open: its id, such as "BUG-01". QAzinho counts it as seen again instead of opening another.',
       ),
+      frame: z
+        .string()
+        .describe(
+          'When it failed because the screen differs from the Figma design in what the step expects: the node id of the frame it differs from, such as 12:345. Do not file that difference again with bug.',
+        )
+        .optional(),
     }),
   },
   {

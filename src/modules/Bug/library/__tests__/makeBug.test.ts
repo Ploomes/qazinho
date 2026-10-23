@@ -39,6 +39,20 @@ describe('makeBug', () => {
     );
   });
 
+  it('marks a step that failed off the design with its Figma frame, and no other', () => {
+    const workspace = walkRun({ verdicts: [] });
+    const outcome = makeOutcome({ workspace, index: 0, verdict: 'failed' });
+
+    expect(
+      makeBug({
+        workspace,
+        outcome: { ...outcome, frame: '1:6' },
+        outcomes: [outcome],
+      }).frame,
+    ).toBe('1:6');
+    expect(makeBug({ workspace, outcome, outcomes: [outcome] }).frame).toBeNull();
+  });
+
   it('takes the title and the severity the agent gave it', () => {
     const bug = bugFrom();
 

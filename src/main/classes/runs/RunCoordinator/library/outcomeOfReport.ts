@@ -2,7 +2,7 @@ import type { IStepReport } from '@/harness';
 import type { IShot } from '@/main/classes/devices/types';
 import type { IFlatStep, IStepOutcome } from '@/shared/types';
 
-/** A step as the run files it: the agent's report, the screenshot taken when it arrived, the time it took and when it came. */
+/** A step as the run files it: the agent's report, the screenshot taken when it arrived, the time it took and when it came; a failure keeps the Figma frame it is off. */
 export function outcomeOfReport(props: {
   report: IStepReport;
   step: IFlatStep;
@@ -31,5 +31,8 @@ export function outcomeOfReport(props: {
     screenshot: shot?.dataUrl ?? null,
     shotFile: shot?.file ?? null,
     ...(report.sameAs === undefined ? {} : { sameAs: report.sameAs }),
+    ...(report.verdict === 'failed' && report.frame !== undefined
+      ? { frame: report.frame }
+      : {}),
   };
 }
