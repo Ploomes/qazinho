@@ -120,6 +120,7 @@ import {
   PATHS,
   SAVED_VIDEO,
   APP_USER_MODEL_ID,
+  APP_VERSION,
   DIAGNOSTICS_LINES,
   WINDOW,
   WINDOW_CONTROLS,
@@ -216,7 +217,7 @@ async function openInTerminal(file: string): Promise<boolean> {
   return true;
 }
 
-const appLog = new AppLog({ folder: app.getPath('logs'), home: homedir() });
+const appLog = new AppLog({ folder: PATHS.logs, home: homedir() });
 
 process.on('uncaughtException', (error) => {
   appLog.write({ level: 'error', scope: 'main', message: error.stack ?? error.message });
@@ -1034,7 +1035,7 @@ void app.whenReady().then(async () => {
   appLog.write({
     level: 'info',
     scope: 'app',
-    message: `QAzinho ${app.getVersion()} started on ${process.platform} ${release()} ${process.arch}`,
+    message: `QAzinho ${APP_VERSION} started on ${process.platform} ${release()} ${process.arch}`,
   });
   app.on('child-process-gone', (_event, details) => {
     if (details.reason !== 'clean-exit')
@@ -1196,7 +1197,7 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.copyDiagnostics, async () => {
     await clipboard.writeText(
       diagnosticsOf({
-        version: app.getVersion(),
+        version: APP_VERSION,
         system: `${process.platform} ${release()} ${process.arch}`,
         versions: {
           electron: process.versions.electron,

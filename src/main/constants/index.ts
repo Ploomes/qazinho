@@ -1,4 +1,5 @@
 export * from './APP_USER_MODEL_ID';
+export * from './APP_VERSION';
 export * from './ASSISTANT';
 export * from './DIAGNOSTICS_LINES';
 export * from './FILE_FILTERS';

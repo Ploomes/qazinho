@@ -15,6 +15,7 @@ const alias = {
 export default defineConfig({
   main: {
     resolve: { alias },
+    define: { __QAZINHO_VERSION__: JSON.stringify(version) },
     build: { lib: { entry: 'src/main/index.ts' } },
   },
   preload: {
