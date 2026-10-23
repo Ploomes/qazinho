@@ -20,3 +20,11 @@
   text-wrap: pretty;
   pointer-events: none;
 }
+
+.tooltip__panel--beside {
+  position: fixed;
+  top: var(--tooltip-top);
+  right: auto;
+  left: var(--tooltip-left);
+  translate: 0 -50%;
+}
