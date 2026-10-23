@@ -46,6 +46,22 @@ describe('useWorkspaceViewModel', () => {
       expect(result.current.isHidden).toBe(true);
       expect(result.current.className).toBe('workspace workspace--hidden');
     });
+
+    /** Squeezed with its column as the panel widened, the chat broke a letter a line while it faded. */
+    it('keeps the chat as wide as it stood beside the panel, so it never squeezes as it fades', () => {
+      Object.defineProperty(window, 'innerWidth', { configurable: true, value: 1440 });
+      useWorkspaceStore.setState({
+        isPanelWide: true,
+        isPanelOpen: true,
+        panelWidth: 560,
+      });
+
+      const { result } = renderHook(() => useWorkspaceViewModel());
+
+      expect(result.current.style).toMatchObject({
+        '--chat-rest': `${String(1440 - 268 - 565)}px`,
+      });
+    });
   });
 
   it('offers a run with the agent once a case passed, which a later run can walk again', () => {

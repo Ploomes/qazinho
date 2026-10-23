@@ -11,6 +11,7 @@ export const Workspace: React.FC = () => {
     hasWorkspace,
     isHidden,
     className,
+    style,
     name,
     issue,
     design,
@@ -37,7 +38,7 @@ export const Workspace: React.FC = () => {
   if (!hasWorkspace) return null;
 
   return (
-    <section className={className} inert={isHidden} aria-hidden={isHidden}>
+    <section className={className} style={style} inert={isHidden} aria-hidden={isHidden}>
       <header className="workspace__header">
         <WorkspaceName name={name} onRename={onRename} />
         {issue !== null && (

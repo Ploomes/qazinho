@@ -168,6 +168,9 @@ describe('useSidePanelViewModel', () => {
       expect(result.current.isWide).toBe(true);
       expect(result.current.canResize).toBe(false);
       expect(result.current.outerWidth).toBe(1600 - SHELL.sidebarWidth);
+      expect(result.current.style).toMatchObject({
+        '--panel-rest': `${String(PANEL.defaultWidth)}px`,
+      });
       expect(result.current.wideLabel).toBe('Bring the chat back');
 
       act(() => {

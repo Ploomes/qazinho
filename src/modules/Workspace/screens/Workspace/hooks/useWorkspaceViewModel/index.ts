@@ -1,7 +1,10 @@
+import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { caseVerdict, flattenPlanSteps, useRunActions } from '@/modules/Run';
-import { EXPLORATION } from '@/shared/constants';
+import { panelWidthOf } from '@/modules/Workspace/library';
+import { EXPLORATION, SHELL } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
+import { useWindowWidth } from '@/shared/hooks/useWindowWidth';
 import { useWorkspaceStore } from '@/store';
 
 export const useWorkspaceViewModel = () => {
@@ -23,6 +26,15 @@ export const useWorkspaceViewModel = () => {
     ),
   }));
   const isHidden = useWorkspaceStore((state) => state.isPanelWide);
+  const isPanelOpen = useWorkspaceStore((state) => state.isPanelOpen);
+  const panelWidth = useWorkspaceStore((state) => state.panelWidth);
+  const windowWidth = useWindowWidth();
+  const panel = panelWidthOf({
+    width: panelWidth,
+    windowWidth,
+    isOpen: isPanelOpen,
+    isWide: false,
+  });
   const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
   const setDesign = useWorkspaceStore((state) => state.setDesign);
   const { onRun, onRunWithAgent, onExplore, onPause, onStop } = useRunActions();
@@ -35,6 +47,9 @@ export const useWorkspaceViewModel = () => {
     hasWorkspace: workspace !== null,
     isHidden,
     className: isHidden ? 'workspace workspace--hidden' : 'workspace',
+    style: {
+      '--chat-rest': `${String(windowWidth - SHELL.sidebarWidth - panel.outer)}px`,
+    } as CSSProperties,
     name: workspace?.name ?? '',
     issue:
       workspace?.issue === null || workspace?.issue === undefined

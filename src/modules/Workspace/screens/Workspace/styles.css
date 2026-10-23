@@ -5,11 +5,16 @@
   min-width: 0;
   overflow: hidden;
   background: var(--center);
+  transition: opacity var(--dur) var(--ease);
   container: workspace / inline-size;
 }
 
 .workspace--hidden {
-  visibility: hidden;
+  opacity: 0;
+}
+
+.workspace--hidden > * {
+  min-width: var(--chat-rest);
 }
 
 .workspace__header {

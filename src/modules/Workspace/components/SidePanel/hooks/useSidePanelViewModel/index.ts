@@ -30,6 +30,7 @@ export const useSidePanelViewModel = () => {
   const [isResizing, setResizing] = useState(false);
 
   const { inner, outer } = panelWidthOf({ width, windowWidth, isOpen, isWide });
+  const rest = panelWidthOf({ width, windowWidth, isOpen, isWide: false }).inner;
   const workspaceId = workspace?.id ?? null;
   const isLive = workspace?.isLive === true;
   const labels: Record<PanelTab, string> = {
@@ -61,6 +62,7 @@ export const useSidePanelViewModel = () => {
       : { duration: MOTION.durationSlow, ease: MOTION.ease },
     style: {
       '--panel-width': `${String(inner)}px`,
+      '--panel-rest': `${String(rest)}px`,
       '--panel-handle': `${String(PANEL.handleWidth)}px`,
       '--panel-rail': `${String(PANEL.railWidth)}px`,
       '--panel-header': `${String(PANEL.headerHeight)}px`,

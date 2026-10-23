@@ -7,7 +7,7 @@
 
 .side-panel__open {
   position: absolute;
-  inset: 0 auto 0 0;
+  inset: 0;
   display: flex;
 }
 
@@ -32,10 +32,10 @@
 
 .side-panel__inner {
   display: flex;
-  flex: none;
+  flex: 1 0 auto;
   flex-direction: column;
-  width: var(--panel-width);
-  min-width: 0;
+  width: 0;
+  min-width: var(--panel-rest);
   border-left: 1px solid var(--line2);
   background: var(--panel);
   container: side-panel / inline-size;
