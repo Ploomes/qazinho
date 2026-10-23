@@ -10,7 +10,9 @@ import {
   ArrowLineRightIcon,
   ArrowRightIcon,
   ArrowsDownUpIcon,
+  ArrowsInLineHorizontalIcon,
   ArrowsOutIcon,
+  ArrowsOutLineHorizontalIcon,
   ArrowUpIcon,
   ArrowUpRightIcon,
   ArrowUUpLeftIcon,
@@ -91,6 +93,7 @@ export const ICONS = {
   image: { glyph: ImageIcon, weight: 'bold' },
   link: { glyph: LinkSimpleIcon, weight: 'bold' },
   lock: { glyph: LockSimpleIcon, weight: 'bold' },
+  narrow: { glyph: ArrowsInLineHorizontalIcon, weight: 'bold' },
   network: { glyph: ArrowsDownUpIcon, weight: 'bold' },
   passed: { glyph: CheckCircleIcon, weight: 'fill' },
   pause: { glyph: PauseIcon, weight: 'fill' },
@@ -117,4 +120,5 @@ export const ICONS = {
   undo: { glyph: ArrowUUpLeftIcon, weight: 'bold' },
   up: { glyph: ArrowUpIcon, weight: 'bold' },
   web: { glyph: GlobeIcon, weight: 'bold' },
+  widen: { glyph: ArrowsOutLineHorizontalIcon, weight: 'bold' },
 } as const satisfies Record<string, { glyph: Icon; weight: IconWeight }>;
