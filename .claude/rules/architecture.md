@@ -189,16 +189,18 @@ answers one question per channel, for a target `{ role, platform }`:
   `search_confluence` and `read_confluence_page` (`servers/sources/`), plus the reading tools
   of the QA's Figma on a workspace with a design, and no other tool. `McpHost` serves the tools on loopback, one address per workspace for the length of a
   run, and one under the `~assistant` scope while the assistant answers.
-  - The chat may use the QA's own MCP servers, such as their company's: they are the QA's to
-    answer for. Claude Code runs it without `--strict-mcp-config` and with
-    `--permission-prompt-tool` on QAzinho's `approve_permission`, which allows any MCP tool and
-    nothing else (`permissionOf`): a file outside the chat's folders stays shut. Codex leaves the
-    QA's servers on for it. QAzinho's server wins a name it shares with one of the QA's, and the
-    chat reads Jira and Confluence through QAzinho's tools first, so a plan keeps its source.
-  - Every other call keeps them out: Claude Code runs with `--strict-mcp-config`, and Codex with
-    each server of the QA's `config.toml` turned off (`codexServersOf`), but the ones QAzinho
-    hands the call. Without a tool to answer it, an Atlassian server of the QA's once left the
-    chat asking her for a permission nobody could grant.
+  - Every agent call may use the QA's own MCP servers, such as their company's: they are the
+    QA's to answer for. `AgentRunner` hands each Claude Code call `--permission-prompt-tool` on
+    QAzinho's `approve_permission` (`withPermissions`), served beside every group's tools and,
+    for a call with none (a build, a review), alone under `~permissions`. It allows any MCP tool
+    and nothing else (`permissionOf`): a file outside a call's folders stays shut. Codex leaves
+    the QA's servers on. QAzinho's server wins a name it shares with one of the QA's, and the
+    corpus (`universal/own-tools.md`) has the agent do with QAzinho's tools whatever they do.
+  - A call made without the permissions (a test's own runner) keeps them out: Claude Code runs
+    with `--strict-mcp-config`, and Codex with each server of the QA's `config.toml` turned off
+    (`codexServersOf`), but the ones QAzinho hands the call. Without a tool to answer it, an
+    Atlassian server of the QA's once left the chat asking her for a permission nobody could
+    grant.
 - **The Estagiário in the corner is an agent of its own** (`role/assistant/`). It does in QAzinho
   what the QA does by hand, through the app tools (`servers/app/`), and talks about any project,
   workspace, run or bug:
