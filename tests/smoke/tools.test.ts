@@ -7,6 +7,7 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { McpHost } from '@/harness';
 import { WebDriver } from '@/main/classes/devices/WebDriver';
+import { variablePort } from '@/main/classes/runs/RunCoordinator/library';
 
 const PORT = 4326;
 
@@ -39,6 +40,8 @@ const PAGE = `<!doctype html><html><body style="margin:0;font:16px sans-serif">
     ondrop="event.preventDefault(); document.getElementById('gesture').textContent = 'Dropped on Done'">Done</div>
   <label>Photo <input type="file" onchange="document.getElementById('gesture').textContent = 'Picked ' + this.files[0].name"></label>
   <p id="gesture">No gesture yet</p>
+  <button onclick="fetch('/api/coupon', { method: 'POST' }).then(() => fetch('/api/total')).then((r) => r.json()).then((t) => { document.getElementById('total').textContent = 'Total ' + t.total; })">Apply coupon</button>
+  <p id="total">Total 100</p>
   <div style="display:flex;gap:12px;padding:20px">
     <span>Total</span>
     <button style="margin:0;padding:12px 16px;border:0;border-radius:8px;background:#1f6feb;color:#fff;font:600 16px/24px Arial">Pay now</button>
@@ -47,7 +50,21 @@ const PAGE = `<!doctype html><html><body style="margin:0;font:16px sans-serif">
   <p>Bottom line</p>
 </body></html>`;
 
-const site = createServer((_request, response) => {
+const site = createServer((request, response) => {
+  if (request.url?.startsWith('/api/coupon') === true) {
+    response.writeHead(500, { 'content-type': 'application/json' });
+    response.end(JSON.stringify({ error: 'Coupon service down', token: 'abc123' }));
+
+    return;
+  }
+
+  if (request.url?.startsWith('/api/total') === true) {
+    response.writeHead(200, { 'content-type': 'application/json' });
+    response.end(JSON.stringify({ total: 90, currency: 'BRL' }));
+
+    return;
+  }
+
   response.writeHead(200, { 'content-type': 'text/html' });
   response.end(PAGE);
 });
@@ -99,7 +116,10 @@ beforeAll(async () => {
     profileDir: await mkdtemp(join(tmpdir(), 'qazinho-tools-')),
   });
   await driver.open();
-  tools.attach({ workspaceId: 'w1', driver });
+  tools.attach({
+    workspaceId: 'w1',
+    driver: variablePort({ device: driver, values: [] }),
+  });
 });
 
 afterAll(async () => {
@@ -116,6 +136,7 @@ describe('the device as MCP tools', () => {
     expect(listed.tools.map(({ name }) => name)).toEqual([
       'look',
       'inspect',
+      'network',
       'goto',
       'reopen',
       'click',
@@ -156,6 +177,29 @@ describe('the device as MCP tools', () => {
 
     expect(missing.isError).toBe(true);
     expect(textOf(missing)).toContain('Nothing on the page reads "No such thing"');
+    await client.close();
+  });
+
+  /** An API call that failed while the agent acted is told with the action, and any call's answer can be read, secrets as dots. */
+  it('tells the API calls that failed during an action, and reads what a call answered', async () => {
+    const client = await connect('w1');
+    const clicked = textOf(
+      await client.callTool({ name: 'click', arguments: { target: 'Apply coupon' } }),
+    );
+
+    expect(clicked).toMatch(
+      /API calls that failed during it:\n- #\d+ POST http:\/\/127\.0\.0\.1:\d+\/api\/coupon → 500 · \d+ ms: \{"error":"Coupon service down","token":"•••"\}/,
+    );
+
+    const listed = textOf(
+      await client.callTool({ name: 'network', arguments: { filter: 'total' } }),
+    );
+    const id = /#(\d+) GET [^ ]+\/api\/total → 200/.exec(listed)?.[1];
+
+    expect(id).toBeDefined();
+    expect(
+      textOf(await client.callTool({ name: 'network', arguments: { id: Number(id) } })),
+    ).toBe(`Call #${id ?? ''} answered:\n{"total":90,"currency":"BRL"}`);
     await client.close();
   });
 

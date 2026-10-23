@@ -37,7 +37,7 @@ const server = createServer((request, response) => {
 
   if (path === '/api/pay') {
     response.writeHead(500, { 'content-type': 'application/json' });
-    response.end('{"error":"down"}');
+    response.end(JSON.stringify({ error: `down for ${EMAIL}`, sessionToken: TOKEN }));
 
     return;
   }
@@ -212,6 +212,14 @@ describe("a web run's network", () => {
     expect(kept).not.toContain(EMAIL);
     expect(kept).not.toContain(encodeURIComponent(EMAIL));
     expect(kept).not.toContain(TOKEN);
+  });
+
+  it('keeps what a failed call answered, its values as their names and its secrets as dots', () => {
+    expect(JSON.parse(find({ path: '/api/pay', method: 'POST' })?.body ?? '{}')).toEqual({
+      error: 'down for ${SHOP_EMAIL}',
+      sessionToken: '•••',
+    });
+    expect(find({ path: '/api/profile' })).not.toHaveProperty('body');
   });
 
   it('notes the requests in the order they started', () => {
