@@ -26,9 +26,7 @@
 }
 
 .workspace-name__text {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
 
 .workspace-name:hover {

@@ -17,6 +17,7 @@
 }
 
 .bug-card__severity {
+  flex: none;
   width: 9px;
   height: 9px;
   border-radius: 2px;
@@ -40,13 +41,12 @@
 }
 
 .bug-card__title {
-  flex: 0 1 auto;
+  flex: 1;
   min-width: 0;
-  overflow: hidden;
   color: var(--ink);
   font: var(--font-ui-md);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 .bug-card__filed {
