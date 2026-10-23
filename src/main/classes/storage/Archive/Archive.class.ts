@@ -5,7 +5,7 @@ import type {
   ISavedWorkspace,
   UnreadPlanRead,
 } from '@/shared/types';
-import { mkdir, readdir, readFile, rename, rm } from 'node:fs/promises';
+import { copyFile, mkdir, readdir, readFile, rename, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { writeAtomically } from '@/main/library';
 import { ARCHIVE } from './constants';
@@ -182,10 +182,18 @@ export class Archive {
     if (fault === null) return { planYaml };
 
     const file = asideNameOf(new Date());
+    const isAside = await rename(plan, join(folder, file)).then(
+      () => true,
+      () =>
+        copyFile(plan, join(folder, file)).then(
+          () => true,
+          () => false,
+        ),
+    );
 
-    await rename(plan, join(folder, file));
-
-    return { planYaml: '', unreadPlan: { file, line: fault.line } };
+    return isAside
+      ? { planYaml: '', unreadPlan: { file, line: fault.line } }
+      : { planYaml };
   }
 
   private async readAside(
@@ -206,7 +214,7 @@ export class Archive {
 
     if (fault !== null) return { planYaml: '', unreadPlan: { file, line: fault.line } };
 
-    await rename(join(folder, file), join(folder, ARCHIVE.plan));
+    await rename(join(folder, file), join(folder, ARCHIVE.plan)).catch(() => undefined);
 
     return { planYaml: yaml };
   }
