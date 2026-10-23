@@ -66,8 +66,8 @@ month: spend them on the screens you reach, never on browsing the file.
 
 - Start with one `get_metadata` on the node the message names, or on the file, to learn the
   frames it holds and what each is called.
-- Figma's tools may ask you to create a session or load a guide first: you have neither and
-  need neither. Read the frames directly.
+- Figma's tools may ask you to create a session first: do it, once. They may also point you to
+  a guide to load: you need none, read the frames directly.
 - When a screen you note is one a frame draws, read that frame once with `get_design_context`:
   its sizes, spacing, colours, type, texts, states and the designers' annotations. Measure the
   screen with `inspect` on what the frame draws, and compare the texts word for word, then the

@@ -285,6 +285,7 @@ describe('Harness', () => {
       expect(chat.design).toEqual({
         servers: [{ name: 'figma', url: 'https://mcp.figma.com/mcp' }],
         allowedTools: [
+          'mcp__figma__create_session',
           'mcp__figma__get_design_context',
           'mcp__figma__get_metadata',
           'mcp__figma__get_screenshot',

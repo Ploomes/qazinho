@@ -125,8 +125,8 @@ seats get only a few a month: read what the plan needs, and nothing twice.
   included.
 - Name the states the design draws: empty, loading, error, disabled. An annotation is a rule of
   the screen: it becomes a step, or a question.
-- Figma's tools may ask you to create a session or load a guide first: you have neither and
-  need neither. Read the frames directly.
+- Figma's tools may ask you to create a session first: do it, once. They may also point you to
+  a guide to load: you need none, read the frames directly.
 - Where the design, the app and the QA disagree, ask which one is right; never guess.
 - When the Figma tools are missing or refuse, say so in "reply": the QA signs in to Figma in
   Settings, under MCPs. Plan from the app meanwhile, with no frames.
