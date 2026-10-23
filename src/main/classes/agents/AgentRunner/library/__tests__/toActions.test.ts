@@ -55,4 +55,18 @@ describe('toActions', () => {
     expect(toActions(turn([{ type: 'text', text: 'Hi' }]))).toEqual([]);
     expect(toActions({ type: 'result', result: 'Done' })).toEqual([]);
   });
+
+  it('names a file a turn writes on Windows by its name too', () => {
+    expect(
+      toActions(
+        turn([
+          {
+            type: 'tool_use',
+            name: 'Write',
+            input: { file_path: 'C:\\b\\android\\local.properties' },
+          },
+        ]),
+      ),
+    ).toEqual(['✎ local.properties']);
+  });
 });

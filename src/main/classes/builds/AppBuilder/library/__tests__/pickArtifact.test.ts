@@ -54,4 +54,22 @@ describe('pickArtifact', () => {
       }),
     ).toBeNull();
   });
+
+  it('takes the release output first on Windows, its folders written with backslashes', () => {
+    expect(
+      pickArtifact({
+        platform: 'android',
+        found: [
+          {
+            path: 'C:\\b\\android\\app\\build\\outputs\\apk\\debug\\app-debug.apk',
+            modifiedMs: 9,
+          },
+          {
+            path: 'C:\\b\\android\\app\\build\\outputs\\apk\\release\\app-release.apk',
+            modifiedMs: 5,
+          },
+        ],
+      }),
+    ).toBe('C:\\b\\android\\app\\build\\outputs\\apk\\release\\app-release.apk');
+  });
 });

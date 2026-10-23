@@ -19,8 +19,17 @@ import type {
   SuiteShipOutcome,
   SuiteShipWay,
 } from '@/shared/types';
-import { mkdir, readdir, readFile, rm, stat, symlink, writeFile } from 'node:fs/promises';
-import { dirname, isAbsolute, join, relative } from 'node:path';
+import {
+  copyFile,
+  mkdir,
+  readdir,
+  readFile,
+  rm,
+  stat,
+  symlink,
+  writeFile,
+} from 'node:fs/promises';
+import { dirname, isAbsolute, join, relative, sep } from 'node:path';
 import { hiddenValues } from '@/main/classes/runs/RunCoordinator/library/hiddenValues';
 import { isInside } from '@/main/classes/storage/Archive/library';
 import { agentFailure } from '@/main/library/agentFailure';
@@ -777,14 +786,21 @@ export class SuiteChanges {
   }): Promise<string[]> {
     const runner = await this.registry.runnerOf(props.suitePath);
     const links: string[] = [];
-    const place = async (at: { from: string; to: string }) => {
+    const place = async (at: { from: string; to: string; isFolder: boolean }) => {
+      const placing =
+        process.platform !== 'win32'
+          ? symlink(at.from, at.to)
+          : at.isFolder
+            ? symlink(at.from, at.to, 'junction')
+            : copyFile(at.from, at.to);
+
       if (
-        await symlink(at.from, at.to).then(
+        await placing.then(
           () => true,
           () => false,
         )
       )
-        links.push(relative(props.work, at.to));
+        links.push(relative(props.work, at.to).split(sep).join('/'));
     };
 
     if (runner !== null) {
@@ -799,6 +815,7 @@ export class SuiteChanges {
             : join(props.work, owner),
           'node_modules',
         ),
+        isFolder: true,
       });
     }
 
@@ -806,7 +823,7 @@ export class SuiteChanges {
       const file = join(props.suitePath, name);
 
       if ((await stat(file).catch(() => null))?.isFile() === true)
-        await place({ from: file, to: join(props.dir, name) });
+        await place({ from: file, to: join(props.dir, name), isFolder: false });
     }
 
     return links;

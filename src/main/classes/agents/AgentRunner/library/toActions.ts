@@ -9,7 +9,7 @@ function shortened(text: string): string {
 }
 
 function nameOf(path: unknown): string {
-  return typeof path === 'string' ? (path.split('/').at(-1) ?? path) : '';
+  return typeof path === 'string' ? (path.split(/[\\/]/).at(-1) ?? path) : '';
 }
 
 /** What an assistant turn sets out to do, as a line each: a command it runs, a file it writes; reading leaves no line. */

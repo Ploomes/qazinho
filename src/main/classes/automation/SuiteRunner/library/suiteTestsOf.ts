@@ -1,5 +1,5 @@
 import type { ISuiteTest } from '@/shared/types';
-import { join, relative } from 'node:path';
+import { join, relative, sep } from 'node:path';
 
 type Entry = Record<string, unknown>;
 
@@ -52,7 +52,7 @@ export function suiteTestsOf(props: {
 
       tests.push({
         id: spec.id,
-        file: relative(props.root, join(rootDir, spec.file)),
+        file: relative(props.root, join(rootDir, spec.file)).split(sep).join('/'),
         line: typeof spec.line === 'number' ? spec.line : 0,
         path,
         title: spec.title,

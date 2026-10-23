@@ -20,7 +20,7 @@ function runs(props: { filter: string; file: string; line: number }): boolean {
 describe('locationOf', () => {
   it('keeps the line of a test, its path matching only itself', () => {
     expect(locationOf('tests/hc-1139/ct-nav.spec.ts:42')).toBe(
-      '(^|/)tests/hc-1139/ct-nav\\.spec\\.ts$:42',
+      '(^|[\\\\/])tests[\\\\/]hc-1139[\\\\/]ct-nav\\.spec\\.ts$:42',
     );
     expect(
       runs({
@@ -72,7 +72,7 @@ describe('locationOf', () => {
   /** Playwright reads each filter as a regular expression: a bracket or a plus in a folder's name must stay a character. */
   it('escapes what a regular expression would read otherwise', () => {
     expect(locationOf('tests/(old)/a+b.spec.ts:7')).toBe(
-      '(^|/)tests/\\(old\\)/a\\+b\\.spec\\.ts$:7',
+      '(^|[\\\\/])tests[\\\\/]\\(old\\)[\\\\/]a\\+b\\.spec\\.ts$:7',
     );
     expect(
       runs({
@@ -81,5 +81,23 @@ describe('locationOf', () => {
         line: 7,
       }),
     ).toBe(true);
+  });
+
+  /** Playwright tries the filter on the absolute path, which on Windows is written with backslashes. */
+  it('runs the file on Windows, where its path has backslashes', () => {
+    expect(
+      runs({
+        filter: 'tests/hc-1139/ct-nav.spec.ts:42',
+        file: 'C:\\Users\\qa\\e2e\\tests\\hc-1139\\ct-nav.spec.ts',
+        line: 42,
+      }),
+    ).toBe(true);
+    expect(
+      runs({
+        filter: 'a.spec.ts',
+        file: 'C:\\Users\\qa\\e2e\\data.spec.ts',
+        line: 1,
+      }),
+    ).toBe(false);
   });
 });

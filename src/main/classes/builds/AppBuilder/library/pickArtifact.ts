@@ -1,8 +1,8 @@
 import type { BuildPlatform } from '@/shared/types';
 
-const NEVER = /unsigned|androidTest|-iphoneos\//i;
-const RELEASE = /\/outputs\/apk\/release\/|Release-iphonesimulator\//;
-const OUTPUT = /\/outputs\/(apk|flutter-apk)\/|-iphonesimulator\//;
+const NEVER = /unsigned|androidTest|-iphoneos[\\/]/i;
+const RELEASE = /[\\/]outputs[\\/]apk[\\/]release[\\/]|Release-iphonesimulator[\\/]/;
+const OUTPUT = /[\\/]outputs[\\/](apk|flutter-apk)[\\/]|-iphonesimulator[\\/]/;
 
 function rankOf(path: string): number {
   if (NEVER.test(path)) return 0;

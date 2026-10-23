@@ -5,7 +5,7 @@ type PathKind = 'file' | 'directory' | null;
 function whole(props: { path: string | undefined; home: string }): string | undefined {
   if (props.path === undefined || props.path === '') return props.path;
 
-  return props.path.replace(/^~(?=$|\/)/, props.home).replace(/(.)\/+$/, '$1');
+  return props.path.replace(/^~(?=$|[\\/])/, props.home).replace(/(.)[\\/]+$/, '$1');
 }
 
 async function problemOf(props: {

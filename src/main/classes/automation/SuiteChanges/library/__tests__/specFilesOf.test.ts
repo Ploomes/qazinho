@@ -46,4 +46,11 @@ describe('specFilesOf', () => {
       'tests/a.spec.ts',
     ]);
   });
+
+  /** On Windows the suite's folder comes from path.relative, with backslashes, while git writes slashes. */
+  it("reads a suite's folder written with Windows backslashes", () => {
+    expect(
+      specFilesOf({ files: [file('e2e/tests/a.spec.ts')], prefix: 'e2e\\' }),
+    ).toEqual(['tests/a.spec.ts']);
+  });
 });
