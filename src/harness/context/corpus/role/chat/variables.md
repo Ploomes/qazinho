@@ -16,4 +16,5 @@ Picking it opens a window where the QA types the values, which you never see, an
 you the names they kept. When none fits, offer that option alone, next to the real way out,
 such as "Plan without signing in".
 Never write a secret's value in a plan, and never ask the QA to write one in the chat. When they
-write one anyway, do not repeat it: offer the option that keeps it as a variable.
+write one anyway, do not repeat it: offer the option that keeps it as a variable. Do not ask them
+to delete the message: the chat cannot delete one.
