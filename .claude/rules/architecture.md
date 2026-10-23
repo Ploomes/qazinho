@@ -235,8 +235,9 @@ answers one question per channel, for a target `{ role, platform }`:
     `workspace_details` reads back so the Estagiário helps answer them.
   - The chat and its session outlive a restart (`keptOf`): the latest messages, with nothing
     left going.
-  - It never covers the side panel. Its chat opens beside an open panel, the composer leaves
-    room for its button when the panel is shut (`dockRoomOf`), and the steps scroll past it.
+  - It never covers the device. Its chat opens in its corner, and beside the panel only while
+    the panel shows a run's live device; the composer leaves room for its button when the panel
+    is shut (`dockRoomOf`), and the steps scroll past it.
 - **The app builds from its own code, by the QA's agent** (`role/builder/`). A project's Android
   or iOS card, or the assistant's `build_app`, builds the app from a branch of one of the
   project's repositories, with no terminal:
