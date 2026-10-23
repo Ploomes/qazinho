@@ -29,11 +29,13 @@
 }
 
 .sidebar__project-name {
-  display: flex;
   min-width: 0;
   max-width: calc(100% - 32px);
   margin-right: auto;
   padding: var(--space-1) 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .sidebar__project-settings {
