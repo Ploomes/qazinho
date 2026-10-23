@@ -1,5 +1,5 @@
 import type { IRun, ReplayFocus, RunEnd } from '@/modules/Run/types';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatElapsed } from '@/modules/Device/library';
 import {
@@ -22,6 +22,7 @@ import {
 } from '@/modules/Run/library';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
+import { useToTop } from '@/shared/hooks/useToTop';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useRunsViewModel = () => {
@@ -38,9 +39,8 @@ export const useRunsViewModel = () => {
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const [page, setPage] = useState(0);
-  const [isAtTop, setAtTop] = useState(true);
   const [toggled, setToggled] = useState<Record<string, boolean>>({});
-  const topRef = useRef<HTMLDivElement>(null);
+  const { topRef, isToTopShown, onToTop } = useToTop();
 
   const runs = workspace?.runs ?? [];
   const bugs = workspace?.bugs ?? [];
@@ -83,7 +83,6 @@ export const useRunsViewModel = () => {
           cost: formatCost({ costUsd: item.costUsd, language: i18n.language }),
         });
 
-  const hasRun = run !== null;
   const canWatch = run?.video !== null && run?.video !== undefined;
 
   const watch = (focus: ReplayFocus) => {
@@ -91,22 +90,6 @@ export const useRunsViewModel = () => {
 
     openReplay({ workspaceId: workspace.id, runId: run.id, focus });
   };
-
-  useEffect(() => {
-    const top = topRef.current;
-
-    if (top === null || typeof IntersectionObserver === 'undefined') return;
-
-    const observer = new IntersectionObserver(([entry]) => {
-      setAtTop(entry?.isIntersecting ?? true);
-    });
-
-    observer.observe(top);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [hasRun]);
 
   const summaryOf = (item: IRun) => ({
     id: item.id,
@@ -131,10 +114,6 @@ export const useRunsViewModel = () => {
       .filter((part) => part !== '')
       .join(' · '),
   });
-
-  const toTop = () => {
-    topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
 
   const onOpenBug = (bugId: string) => {
     toggleBug(bugId);
@@ -174,8 +153,8 @@ export const useRunsViewModel = () => {
     runFacts: run === null ? '' : factsOf(run),
     factsNote: t('RUN.COST_NOTE'),
     topRef,
-    showsToTop: !isAtTop,
-    onToTop: toTop,
+    isToTopShown,
+    onToTop,
     pager: {
       isShown: paged.pageCount > 1,
       label: t('RUN.PAGE', { from: paged.from, to: paged.to, total: runs.length }),
@@ -288,7 +267,7 @@ export const useRunsViewModel = () => {
     isEmpty: runs.length === 0,
     onSelectRun: (runId: string) => {
       selectRun(runId);
-      toTop();
+      onToTop();
     },
     onPreviousPage: () => {
       setPage(paged.page - 1);

@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Button, Caret, EmptyState, Icon, StatusPill } from '@/shared/components/atoms';
-import { Screenshot } from '@/shared/components/molecules';
+import { Screenshot, ToTop } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
 import { RunPicker } from './components';
 import { useRunsViewModel } from './hooks';
@@ -21,7 +21,7 @@ export const Runs: React.FC = () => {
     runFacts,
     factsNote,
     topRef,
-    showsToTop,
+    isToTopShown,
     onToTop,
     pager,
     summary,
@@ -266,22 +266,7 @@ export const Runs: React.FC = () => {
         </div>
       </motion.div>
 
-      <AnimatePresence>
-        {showsToTop && (
-          <motion.button
-            key="to-top"
-            type="button"
-            className="runs__to-top"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 8 }}
-            transition={{ duration: MOTION.duration, ease: MOTION.ease }}
-            onClick={onToTop}
-          >
-            <Icon name="up" /> {t('RUN.TO_TOP')}
-          </motion.button>
-        )}
-      </AnimatePresence>
+      <ToTop isShown={isToTopShown} onClick={onToTop} />
     </div>
   );
 };

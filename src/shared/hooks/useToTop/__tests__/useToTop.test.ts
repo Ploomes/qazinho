@@ -1,0 +1,101 @@
+// @vitest-environment jsdom
+import { act, renderHook } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { useToTop } from '@/shared/hooks';
+
+/** A stand-in for the browser's observer, which jsdom lacks: the test says when the top shows. */
+class FakeObserver {
+  static last: FakeObserver | null = null;
+  public isDisconnected = false;
+
+  public constructor(
+    private readonly onChange: (entries: { isIntersecting: boolean }[]) => void,
+  ) {
+    FakeObserver.last = this;
+  }
+
+  public observe(): void {}
+
+  public disconnect(): void {
+    this.isDisconnected = true;
+  }
+
+  public see(isIntersecting: boolean): void {
+    this.onChange([{ isIntersecting }]);
+  }
+}
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+  FakeObserver.last = null;
+});
+
+describe('useToTop', () => {
+  it('offers the way up once the top of the screen leaves the view, and hides it back', () => {
+    vi.stubGlobal('IntersectionObserver', FakeObserver);
+
+    const { result } = renderHook(() => useToTop());
+
+    act(() => {
+      result.current.topRef(document.createElement('div'));
+    });
+
+    expect(result.current.isToTopShown).toBe(false);
+
+    act(() => {
+      FakeObserver.last?.see(false);
+    });
+
+    expect(result.current.isToTopShown).toBe(true);
+
+    act(() => {
+      FakeObserver.last?.see(true);
+    });
+
+    expect(result.current.isToTopShown).toBe(false);
+  });
+
+  it('scrolls the top of the screen back into view', () => {
+    const top = document.createElement('div');
+    const scrollIntoView = vi.fn();
+
+    top.scrollIntoView = scrollIntoView;
+
+    const { result } = renderHook(() => useToTop());
+
+    act(() => {
+      result.current.topRef(top);
+    });
+    result.current.onToTop();
+
+    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
+  });
+
+  it('does NOT offer the way up where nothing can tell where the top is', () => {
+    const { result } = renderHook(() => useToTop());
+
+    act(() => {
+      result.current.topRef(document.createElement('div'));
+    });
+
+    expect(result.current.isToTopShown).toBe(false);
+  });
+
+  it('stops watching once the top is gone', () => {
+    vi.stubGlobal('IntersectionObserver', FakeObserver);
+
+    const { result } = renderHook(() => useToTop());
+
+    act(() => {
+      result.current.topRef(document.createElement('div'));
+    });
+
+    const observer = FakeObserver.last;
+
+    act(() => {
+      result.current.topRef(null);
+    });
+
+    expect(observer?.isDisconnected).toBe(true);
+  });
+});

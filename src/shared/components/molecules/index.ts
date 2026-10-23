@@ -6,4 +6,5 @@ export * from './Screenshot';
 export * from './SearchList';
 export * from './SpeechBubble';
 export * from './Stripes';
+export * from './ToTop';
 export * from './Tooltip';

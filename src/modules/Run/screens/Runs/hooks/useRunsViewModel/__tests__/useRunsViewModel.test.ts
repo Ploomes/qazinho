@@ -468,7 +468,9 @@ describe('useRunsViewModel', () => {
         workspaces: [walkRun({ verdicts: ['passed'], isFinished: true })],
       });
 
-      expect(renderHook(() => useRunsViewModel()).result.current.showsToTop).toBe(false);
+      expect(renderHook(() => useRunsViewModel()).result.current.isToTopShown).toBe(
+        false,
+      );
     });
   });
 

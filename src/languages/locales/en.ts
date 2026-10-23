@@ -1,5 +1,6 @@
 export const en = {
   COMMON: {
+    TO_TOP: 'Back to the top',
     TODAY: 'today',
     YESTERDAY: 'yesterday',
     OPEN_PAGE_AGAIN: 'Open the page again',
@@ -294,7 +295,6 @@ export const en = {
     EMPTY_TITLE: 'No runs yet.',
     EMPTY_BODY: 'Every run lands here, with its verdicts and screenshots.',
     HISTORY: 'run history',
-    TO_TOP: 'Back to the top',
     PAGE: '{{from}}–{{to}} of {{total}} runs',
     PREVIOUS_PAGE: 'Previous runs',
     NEXT_PAGE: 'Next runs',

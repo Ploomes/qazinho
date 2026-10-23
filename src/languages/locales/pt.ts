@@ -2,6 +2,7 @@ import type { en } from './en';
 
 export const pt: typeof en = {
   COMMON: {
+    TO_TOP: 'Voltar ao topo',
     TODAY: 'hoje',
     YESTERDAY: 'ontem',
     OPEN_PAGE_AGAIN: 'Abrir a página de novo',
@@ -297,7 +298,6 @@ export const pt: typeof en = {
     EMPTY_TITLE: 'Nenhuma run ainda.',
     EMPTY_BODY: 'Toda run aparece aqui, com seus vereditos e screenshots.',
     HISTORY: 'histórico de runs',
-    TO_TOP: 'Voltar ao topo',
     PAGE: '{{from}}–{{to}} de {{total}} runs',
     PREVIOUS_PAGE: 'Runs anteriores',
     NEXT_PAGE: 'Próximas runs',
