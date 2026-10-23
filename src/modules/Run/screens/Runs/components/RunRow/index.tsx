@@ -12,18 +12,14 @@ export const RunRow: React.FC<IRunRowProps> = ({ row, factsNote }) => (
         <Icon name={row.ended.icon} /> {row.ended.label}
       </span>
     )}
-    <span className="run-row__tally run-row__tally--passed">
-      <Icon name="passed" /> {row.counts.passed}
-    </span>
-    <span className="run-row__tally run-row__tally--failed">
-      <Icon name="failed" /> {row.counts.failed}
-    </span>
-    <span className="run-row__tally run-row__tally--blocked">
-      <Icon name="blocked" /> {row.counts.blocked}
-    </span>
-    <span className="run-row__tally run-row__tally--skipped">
-      <Icon name="skipped" /> {row.counts.skipped}
-    </span>
+    {row.tallies.map((tally) => (
+      <span
+        key={tally.status}
+        className={`run-row__tally run-row__tally--${tally.status}`}
+      >
+        <Icon name={tally.icon} /> {tally.count}
+      </span>
+    ))}
     <span className="run-row__facts" title={factsNote}>
       {row.facts}
     </span>

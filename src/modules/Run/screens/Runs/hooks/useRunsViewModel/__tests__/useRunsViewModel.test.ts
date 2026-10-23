@@ -23,7 +23,6 @@ beforeEach(() => {
   useWorkspaceStore.setState({
     workspaces: [finishedWorkspace()],
     selectedRunId: null,
-    runFilter: 'all',
   });
 });
 
@@ -71,22 +70,133 @@ describe('useRunsViewModel', () => {
     expect(result.current.run).toBeNull();
   });
 
-  it('counts every verdict in the order the report shows them, icon beside each', () => {
+  describe('summary', () => {
+    it('says how many cases ran, how each kind went, and the bugs it caught', () => {
+      const { result } = renderHook(() => useRunsViewModel());
+
+      expect(result.current.summary).toEqual({
+        lead: '2 cases',
+        tallies: [
+          { status: 'passed', icon: 'passed', label: '1 passed' },
+          { status: 'failed', icon: 'failed', label: '1 failed' },
+        ],
+        bugs: '1 bug',
+      });
+    });
+
+    it('does NOT name a verdict no case had, nor bugs when none was caught', () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          walkRun({
+            verdicts: ['passed', 'passed', 'passed', 'passed', 'passed', 'passed'],
+            isFinished: true,
+          }),
+        ],
+      });
+
+      const { result } = renderHook(() => useRunsViewModel());
+
+      expect(result.current.summary.tallies.map(({ status }) => status)).toEqual([
+        'passed',
+      ]);
+      expect(result.current.summary.bugs).toBeNull();
+    });
+
+    it('counts the screens of an exploration, which has no cases to tally', () => {
+      const workspace = finishedWorkspace();
+      const runs = workspace.runs.map((run) => ({ ...run, kind: 'explore' as const }));
+
+      useWorkspaceStore.setState({ workspaces: [{ ...workspace, runs }] });
+
+      const { result } = renderHook(() => useRunsViewModel());
+
+      expect(result.current.summary.lead).toBe('6 screens');
+      expect(result.current.summary.tallies).toEqual([]);
+    });
+  });
+
+  it('lists in the picker only the verdicts a run had, steps counted', () => {
     const { result } = renderHook(() => useRunsViewModel());
 
-    expect(
-      result.current.counts.map(({ status, icon, count }) => [status, icon, count]),
-    ).toEqual([
-      ['passed', 'passed', 4],
-      ['failed', 'failed', 1],
-      ['blocked', 'blocked', 0],
-      ['skipped', 'skipped', 1],
+    expect(result.current.runs[0]?.tallies).toEqual([
+      { status: 'passed', icon: 'passed', count: 4 },
+      { status: 'failed', icon: 'failed', count: 1 },
+      { status: 'skipped', icon: 'skipped', count: 1 },
     ]);
+  });
+
+  describe('cases', () => {
+    it('puts the case that failed first and open, the one that passed after it and folded', () => {
+      const { result } = renderHook(() => useRunsViewModel());
+
+      expect(
+        result.current.cases.map(({ id, isOpen, isFirstPassed }) => [
+          id,
+          isOpen,
+          isFirstPassed,
+        ]),
+      ).toEqual([
+        ['TC-02', true, false],
+        ['TC-01', false, true],
+      ]);
+    });
+
+    it('opens a folded case and folds an open one on asking', () => {
+      const { result } = renderHook(() => useRunsViewModel());
+
+      act(() => {
+        result.current.cases[1]?.onToggle();
+      });
+      act(() => {
+        result.current.cases[0]?.onToggle();
+      });
+
+      expect(result.current.cases.map(({ isOpen }) => isOpen)).toEqual([false, true]);
+    });
+
+    it('does NOT head the passed cases apart when every case passed', () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          walkRun({
+            verdicts: ['passed', 'passed', 'passed', 'passed', 'passed', 'passed'],
+            isFinished: true,
+          }),
+        ],
+      });
+
+      const { result } = renderHook(() => useRunsViewModel());
+
+      expect(result.current.cases.some(({ isFirstPassed }) => isFirstPassed)).toBe(false);
+    });
+
+    it('keeps the screens of an exploration open', () => {
+      const workspace = walkRun({
+        verdicts: ['passed', 'passed', 'passed'],
+        isFinished: true,
+      });
+      const runs = workspace.runs.map((run) => ({ ...run, kind: 'explore' as const }));
+
+      useWorkspaceStore.setState({ workspaces: [{ ...workspace, runs }] });
+
+      const { result } = renderHook(() => useRunsViewModel());
+
+      expect(result.current.cases.every(({ isOpen }) => isOpen)).toBe(true);
+    });
+
+    it('marks only the steps that did not pass', () => {
+      const { result } = renderHook(() => useRunsViewModel());
+
+      expect(result.current.cases[0]?.steps.map(({ mark }) => mark)).toEqual([
+        null,
+        'failed',
+        'skipped',
+      ]);
+    });
   });
 
   it('puts the bug on the step that caught it, instead of the agent note', () => {
     const { result } = renderHook(() => useRunsViewModel());
-    const failed = result.current.cases[1]?.steps.find(
+    const failed = result.current.cases[0]?.steps.find(
       ({ verdict }) => verdict === 'failed',
     );
 
@@ -122,7 +232,7 @@ describe('useRunsViewModel', () => {
     });
 
     const { result } = renderHook(() => useRunsViewModel());
-    const [first, second] = result.current.cases;
+    const [second, first] = result.current.cases;
 
     expect(first?.walk).toMatchObject({
       label: 'no AI',
@@ -195,11 +305,6 @@ describe('useRunsViewModel', () => {
         ]),
     ).toEqual([
       [
-        'TC-01',
-        2,
-        [{ question: 'Which plan should I pick?', answer: 'Premium+', isSecret: false }],
-      ],
-      [
         'TC-02',
         1,
         [
@@ -210,12 +315,17 @@ describe('useRunsViewModel', () => {
           },
         ],
       ],
+      [
+        'TC-01',
+        2,
+        [{ question: 'Which plan should I pick?', answer: 'Premium+', isSecret: false }],
+      ],
     ]);
   });
 
   it('mutes a step that never ran, and keeps its note', () => {
     const { result } = renderHook(() => useRunsViewModel());
-    const skipped = result.current.cases[1]?.steps.find(
+    const skipped = result.current.cases[0]?.steps.find(
       ({ verdict }) => verdict === 'skipped',
     );
 
@@ -236,30 +346,7 @@ describe('useRunsViewModel', () => {
 
     const { result } = renderHook(() => useRunsViewModel());
 
-    expect(result.current.cases[1]?.verdict).toBe('blocked');
-  });
-
-  describe('onFilter', () => {
-    it('narrows the report to the failures', () => {
-      const { result } = renderHook(() => useRunsViewModel());
-
-      act(() => {
-        result.current.onFilter('failed');
-      });
-
-      expect(result.current.cases).toHaveLength(1);
-      expect(result.current.cases[0]?.steps[0]?.verdict).toBe('failed');
-    });
-
-    it('shows nothing under a verdict this run never produced', () => {
-      const { result } = renderHook(() => useRunsViewModel());
-
-      act(() => {
-        result.current.onFilter('blocked');
-      });
-
-      expect(result.current.cases).toEqual([]);
-    });
+    expect(result.current.cases[0]?.verdict).toBe('blocked');
   });
 
   describe('onOpenBug', () => {
@@ -276,14 +363,13 @@ describe('useRunsViewModel', () => {
   });
 
   describe('onSelectRun', () => {
-    it('opens the run it was given, with every case back in view', () => {
+    it('opens the run it was given', () => {
       const workspace = finishedWorkspace();
       const [first] = workspace.runs;
       const runs = [{ ...first!, id: 'r-02' }, first!];
 
       useWorkspaceStore.setState({
         workspaces: [{ ...workspace, runs }],
-        runFilter: 'failed',
       });
 
       const { result } = renderHook(() => useRunsViewModel());
@@ -293,7 +379,6 @@ describe('useRunsViewModel', () => {
       });
 
       expect(result.current.run?.id).toBe('r-01');
-      expect(result.current.filter).toBe('all');
     });
   });
 
@@ -421,7 +506,7 @@ describe('useRunsViewModel', () => {
       useWorkspaceStore.setState({ workspaces: [recordedRun()] });
 
       const { result } = renderHook(() => useRunsViewModel());
-      const take = result.current.cases[1]?.take;
+      const take = result.current.cases[0]?.take;
 
       expect(take?.title).toBe('Watch the take of TC-02');
 

@@ -7,7 +7,7 @@ export interface IRunRowSummary {
   what: string;
   isSelected: boolean;
   ended: { icon: IconName; label: string } | null;
-  counts: IRunCounts;
+  tallies: { status: keyof IRunCounts; icon: IconName; count: number }[];
   facts: string;
   startedAt: string;
 }

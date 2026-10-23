@@ -4,23 +4,23 @@ import { useTranslation } from 'react-i18next';
 import { formatElapsed } from '@/modules/Device/library';
 import {
   RUN_ENDS,
-  RUN_FILTERS,
   RUN_PAGE_SIZE,
+  RUN_TALLY_KEYS,
   RUN_VERDICTS,
 } from '@/modules/Run/constants';
 import {
   answerLineOf,
   caseVerdict,
   caseWalkOf,
+  countVerdicts,
   dayLabelOf,
-  filterCases,
+  exceptionFirst,
   formatCost,
   pageOf,
   runDayOf,
   withExplorationTitle,
 } from '@/modules/Run/library';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
-import { MOTION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
@@ -32,15 +32,14 @@ export const useRunsViewModel = () => {
     bugs: opened.bugs,
   }));
   const selectedRunId = useWorkspaceStore((state) => state.selectedRunId);
-  const runFilter = useWorkspaceStore((state) => state.runFilter);
   const selectRun = useWorkspaceStore((state) => state.selectRun);
-  const setRunFilter = useWorkspaceStore((state) => state.setRunFilter);
   const openMedia = useAppStore((state) => state.openMedia);
   const openReplay = useAppStore((state) => state.openReplay);
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const [page, setPage] = useState(0);
   const [isAtTop, setAtTop] = useState(true);
+  const [toggled, setToggled] = useState<Record<string, boolean>>({});
   const topRef = useRef<HTMLDivElement>(null);
 
   const runs = workspace?.runs ?? [];
@@ -57,6 +56,18 @@ export const useRunsViewModel = () => {
     ...runCase,
     verdict: caseVerdict(runCase.steps),
   }));
+  const isExploration = run?.kind === 'explore';
+  const ordered = exceptionFirst(judged);
+  const firstPassed = ordered.some(({ verdict }) => verdict !== 'passed')
+    ? ordered.findIndex(({ verdict }) => verdict === 'passed')
+    : -1;
+  const caseCounts = countVerdicts(judged.map(({ verdict }) => verdict));
+  const screenCount = judged.reduce((total, { steps }) => total + steps.length, 0);
+  const bugCount = new Set(
+    judged.flatMap(({ steps }) =>
+      steps.flatMap(({ bugId }) => (bugId === null ? [] : [bugId])),
+    ),
+  ).size;
 
   const endOf = (endedBy: RunEnd) => {
     const end = RUN_ENDS[endedBy];
@@ -102,7 +113,11 @@ export const useRunsViewModel = () => {
     what: item.kind === 'explore' ? t('RUN.EXPLORATION') : t('RUN.WHOLE_PLAN'),
     isSelected: item.id === run?.id,
     ended: endOf(item.endedBy),
-    counts: item.counts,
+    tallies: RUN_VERDICTS.filter((status) => item.counts[status] > 0).map((status) => ({
+      status,
+      icon: STATUS[status].icon,
+      count: item.counts[status],
+    })),
     facts: factsOf(item),
     startedAt: [
       dayLabelOf({
@@ -167,21 +182,46 @@ export const useRunsViewModel = () => {
       canGoBack: paged.page > 0,
       canGoOn: paged.page < paged.pageCount - 1,
     },
-    counts: RUN_VERDICTS.map((status, index) => ({
-      status,
-      icon: STATUS[status].icon,
-      count: run?.counts[status] ?? 0,
-      label: t(STATUS[status].labelKey),
-      delay: index * MOTION.stagger,
-    })),
-    filters: RUN_FILTERS.map((item) => ({
-      id: item,
-      label: t(`RUN.${item.toUpperCase()}` as 'RUN.ALL'),
-      isActive: item === runFilter,
-    })),
-    filter: runFilter,
-    cases: filterCases({ cases: judged, filter: runFilter }).map((runCase) => ({
+    summary: {
+      lead: isExploration
+        ? t(screenCount === 1 ? 'RUN.SCREENS_ONE' : 'RUN.SCREENS_OTHER', {
+            count: screenCount,
+          })
+        : t(judged.length === 1 ? 'RUN.CASES_ONE' : 'RUN.CASES_OTHER', {
+            count: judged.length,
+          }),
+      tallies: isExploration
+        ? []
+        : RUN_VERDICTS.filter((status) => caseCounts[status] > 0).map((status) => ({
+            status,
+            icon: STATUS[status].icon,
+            label: t(
+              caseCounts[status] === 1
+                ? RUN_TALLY_KEYS[status].one
+                : RUN_TALLY_KEYS[status].other,
+              { count: caseCounts[status] },
+            ),
+          })),
+      bugs:
+        bugCount === 0
+          ? null
+          : t(bugCount === 1 ? 'RUN.BUGS_ONE' : 'RUN.BUGS_OTHER', { count: bugCount }),
+    },
+    passedLabel: t('RUN.PASSED_CASES'),
+    cases: ordered.map((runCase, index) => ({
       ...runCase,
+      isFirstPassed: index === firstPassed,
+      isOpen:
+        toggled[`${run?.id ?? ''}/${runCase.id}`] ??
+        (isExploration || runCase.verdict !== 'passed'),
+      onToggle: () => {
+        const key = `${run?.id ?? ''}/${runCase.id}`;
+
+        setToggled({
+          ...toggled,
+          [key]: !(toggled[key] ?? (isExploration || runCase.verdict !== 'passed')),
+        });
+      },
       duration: t('RUN.DURATION', { seconds: runCase.durationSec }),
       walk: (() => {
         const walk = caseWalkOf(runCase.steps);
@@ -209,7 +249,7 @@ export const useRunsViewModel = () => {
 
         return {
           ...step,
-          icon: STATUS[step.verdict].icon,
+          mark: step.verdict === 'passed' ? null : STATUS[step.verdict].icon,
           verdictLabel: t(STATUS[step.verdict].labelKey),
           isMuted: step.verdict === 'skipped' || step.verdict === 'blocked',
           bug:
@@ -248,7 +288,6 @@ export const useRunsViewModel = () => {
     isEmpty: runs.length === 0,
     onSelectRun: (runId: string) => {
       selectRun(runId);
-      setRunFilter('all');
       toTop();
     },
     onPreviousPage: () => {
@@ -257,7 +296,6 @@ export const useRunsViewModel = () => {
     onNextPage: () => {
       setPage(paged.page + 1);
     },
-    onFilter: setRunFilter,
     onOpenBug,
     onOpenShot,
   };

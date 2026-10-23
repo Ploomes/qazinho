@@ -10,7 +10,7 @@ const run = (id: string, isSelected = false): IRunRowSummary => ({
   what: 'The whole plan',
   isSelected,
   ended: null,
-  counts: { passed: 1, failed: 0, blocked: 0, skipped: 0 },
+  tallies: [{ status: 'passed' as const, icon: 'passed' as const, count: 1 }],
   facts: '0:42',
   startedAt: '09:41',
 });

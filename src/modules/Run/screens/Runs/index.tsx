@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Button, Eyebrow, EmptyState, Icon, StatusPill } from '@/shared/components/atoms';
-import { CountTile, Screenshot } from '@/shared/components/molecules';
+import { Button, Caret, EmptyState, Icon, StatusPill } from '@/shared/components/atoms';
+import { Screenshot } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
 import { RunPicker } from './components';
 import { useRunsViewModel } from './hooks';
@@ -24,14 +24,13 @@ export const Runs: React.FC = () => {
     showsToTop,
     onToTop,
     pager,
-    counts,
-    filters,
+    summary,
+    passedLabel,
     cases,
     isEmpty,
     onSelectRun,
     onPreviousPage,
     onNextPage,
-    onFilter,
     onOpenBug,
     onOpenShot,
   } = useRunsViewModel();
@@ -79,6 +78,22 @@ export const Runs: React.FC = () => {
                 </Button>
               )}
             </div>
+            <p className="runs__summary">
+              <span className="runs__summary-lead">{summary.lead}</span>
+              {summary.tallies.map((tally) => (
+                <span
+                  key={tally.status}
+                  className={`runs__tally runs__tally--${tally.status}`}
+                >
+                  <Icon name={tally.icon} /> {tally.label}
+                </span>
+              ))}
+              {summary.bugs !== null && (
+                <span className="runs__tally runs__tally--bugs">
+                  <Icon name="bug" /> {summary.bugs}
+                </span>
+              )}
+            </p>
             <span className="runs__meta">
               {run.meta}
               <span className="runs__facts" title={factsNote}>
@@ -91,155 +106,160 @@ export const Runs: React.FC = () => {
               )}
             </span>
           </div>
-
-          <div className="runs__counts">
-            {counts.map((item) => (
-              <CountTile
-                key={item.status}
-                status={item.status}
-                icon={item.icon}
-                count={item.count}
-                label={item.label}
-                delay={item.delay}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="runs__filters">
-          <Eyebrow>{t('COMMON.FILTER')}</Eyebrow>
-          <div className="runs__filter-list">
-            {filters.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={
-                  item.isActive ? 'runs__filter runs__filter--active' : 'runs__filter'
-                }
-                onClick={() => {
-                  onFilter(item.id);
-                }}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
         </div>
 
         <div className="runs__cases">
           {cases.map((runCase) => (
-            <div key={runCase.id} className="runs__case">
-              <div className="runs__case-head">
-                <span className="runs__case-id">{runCase.id}</span>
-                <span className="runs__case-title">{runCase.title}</span>
-                {runCase.take !== null && (
+            <div key={runCase.id} className="runs__case-slot">
+              {runCase.isFirstPassed && (
+                <span className="runs__group">{passedLabel}</span>
+              )}
+              <div className="runs__case">
+                <div className="runs__case-head">
                   <button
                     type="button"
-                    className="runs__take"
-                    title={runCase.take.title}
-                    aria-label={runCase.take.title}
-                    onClick={runCase.take.onClick}
+                    className="runs__case-open"
+                    aria-expanded={runCase.isOpen}
+                    onClick={runCase.onToggle}
                   >
-                    <Icon name="play" /> {runCase.take.label}
+                    <Caret isOpen={runCase.isOpen} />
+                    <span className="runs__case-id">{runCase.id}</span>
+                    <span className="runs__case-title">{runCase.title}</span>
                   </button>
-                )}
-                {runCase.walk !== null && (
-                  <span className={runCase.walk.className} title={runCase.walk.title}>
-                    {runCase.walk.label}
-                  </span>
-                )}
-                <span className="runs__case-duration">{runCase.duration}</span>
-                <StatusPill status={runCase.verdict} />
-              </div>
-
-              <div className="runs__steps">
-                {runCase.steps.map((step) => (
-                  <div key={step.number} className="runs__step">
-                    <span className="runs__step-number">{step.number}</span>
-                    <span
-                      className={`runs__step-icon runs__step-icon--${step.verdict}`}
-                      title={step.verdictLabel}
+                  {runCase.take !== null && (
+                    <button
+                      type="button"
+                      className="runs__take"
+                      title={runCase.take.title}
+                      aria-label={runCase.take.title}
+                      onClick={runCase.take.onClick}
                     >
-                      <Icon name={step.icon} />
+                      <Icon name="play" /> {runCase.take.label}
+                    </button>
+                  )}
+                  {runCase.walk !== null && (
+                    <span className={runCase.walk.className} title={runCase.walk.title}>
+                      {runCase.walk.label}
                     </span>
+                  )}
+                  <span className="runs__case-duration">{runCase.duration}</span>
+                  <StatusPill status={runCase.verdict} />
+                </div>
 
-                    <div className="runs__step-body">
-                      <span
-                        className={
-                          step.isMuted
-                            ? 'runs__step-action runs__step-action--muted'
-                            : 'runs__step-action'
-                        }
-                      >
-                        {step.action}
-                      </span>
-
-                      {step.bug !== null && (
-                        <button
-                          type="button"
-                          className={
-                            step.bug.isHigh ? 'runs__bug runs__bug--high' : 'runs__bug'
-                          }
-                          onClick={() => {
-                            onOpenBug(step.bug?.id ?? '');
-                          }}
-                        >
-                          <span className="runs__bug-mark" />
-                          <span className="runs__bug-id">{step.bug.id}</span>
-                          <span className="runs__bug-title">{step.bug.title}</span>
-                          <span className="runs__bug-open">
-                            {t('RUN.OPEN_IN_BUGS')}
-                            <Icon name="arrow" />
-                          </span>
-                        </button>
-                      )}
-
-                      {step.hasNote && <span className="runs__why">{step.note}</span>}
-
-                      {step.asked.map((asked) => (
-                        <div key={asked.key} className="runs__asked">
-                          <span className="runs__asked-head">
-                            <span className="runs__asked-mark">
-                              <Icon name="ask" />
+                <AnimatePresence initial={false}>
+                  {runCase.isOpen && (
+                    <motion.div
+                      key="steps"
+                      className="runs__fold"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+                    >
+                      <div className="runs__steps">
+                        {runCase.steps.map((step) => (
+                          <div key={step.number} className="runs__step">
+                            <span className="runs__step-number">{step.number}</span>
+                            <span
+                              className={`runs__step-icon runs__step-icon--${step.verdict}`}
+                              title={step.verdictLabel}
+                            >
+                              {step.mark !== null && <Icon name={step.mark} />}
                             </span>
-                            {t('RUN.STEP_ASKED')}
-                          </span>
-                          <span className="runs__asked-question">{asked.question}</span>
-                          <span
-                            className={
-                              asked.isAnswered
-                                ? 'runs__asked-answer'
-                                : 'runs__asked-answer runs__asked-answer--none'
-                            }
-                          >
-                            {asked.isAnswered && (
-                              <span className="runs__asked-who">{t('CHAT.YOU')}</span>
-                            )}
-                            {asked.isSecret && (
-                              <span className="runs__asked-lock">
-                                <Icon name="lock" />
-                              </span>
-                            )}
-                            <span className="runs__asked-said">{asked.answer}</span>
-                          </span>
-                        </div>
-                      ))}
-                    </div>
 
-                    <Screenshot
-                      label={step.shotLabel}
-                      src={step.shot}
-                      file={step.shotFile}
-                      onOpen={() => {
-                        onOpenShot({
-                          label: step.shotLabel,
-                          src: step.shot,
-                          file: step.shotFile,
-                        });
-                      }}
-                    />
-                  </div>
-                ))}
+                            <div className="runs__step-body">
+                              <span
+                                className={
+                                  step.isMuted
+                                    ? 'runs__step-action runs__step-action--muted'
+                                    : 'runs__step-action'
+                                }
+                              >
+                                {step.action}
+                              </span>
+
+                              {step.bug !== null && (
+                                <button
+                                  type="button"
+                                  className={
+                                    step.bug.isHigh
+                                      ? 'runs__bug runs__bug--high'
+                                      : 'runs__bug'
+                                  }
+                                  onClick={() => {
+                                    onOpenBug(step.bug?.id ?? '');
+                                  }}
+                                >
+                                  <span className="runs__bug-mark" />
+                                  <span className="runs__bug-id">{step.bug.id}</span>
+                                  <span className="runs__bug-title">
+                                    {step.bug.title}
+                                  </span>
+                                  <span className="runs__bug-open">
+                                    {t('RUN.OPEN_IN_BUGS')}
+                                    <Icon name="arrow" />
+                                  </span>
+                                </button>
+                              )}
+
+                              {step.hasNote && (
+                                <span className="runs__why">{step.note}</span>
+                              )}
+
+                              {step.asked.map((asked) => (
+                                <div key={asked.key} className="runs__asked">
+                                  <span className="runs__asked-head">
+                                    <span className="runs__asked-mark">
+                                      <Icon name="ask" />
+                                    </span>
+                                    {t('RUN.STEP_ASKED')}
+                                  </span>
+                                  <span className="runs__asked-question">
+                                    {asked.question}
+                                  </span>
+                                  <span
+                                    className={
+                                      asked.isAnswered
+                                        ? 'runs__asked-answer'
+                                        : 'runs__asked-answer runs__asked-answer--none'
+                                    }
+                                  >
+                                    {asked.isAnswered && (
+                                      <span className="runs__asked-who">
+                                        {t('CHAT.YOU')}
+                                      </span>
+                                    )}
+                                    {asked.isSecret && (
+                                      <span className="runs__asked-lock">
+                                        <Icon name="lock" />
+                                      </span>
+                                    )}
+                                    <span className="runs__asked-said">
+                                      {asked.answer}
+                                    </span>
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+
+                            <Screenshot
+                              label={step.shotLabel}
+                              src={step.shot}
+                              file={step.shotFile}
+                              onOpen={() => {
+                                onOpenShot({
+                                  label: step.shotLabel,
+                                  src: step.shot,
+                                  file: step.shotFile,
+                                });
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           ))}
