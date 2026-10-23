@@ -5,10 +5,6 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { IntegrationVault } from '@/main/classes/integrations/IntegrationVault';
-import {
-  GITHUB_ERRORS,
-  TRACKER_ERRORS,
-} from '@/main/classes/integrations/IntegrationVault/constants';
 import { fakeTracker } from '@/main/classes/integrations/IntegrationVault/library/__tests__/fixtures';
 
 /** Reverses the text, so a test can tell a sealed file from a plain one. */
@@ -105,7 +101,7 @@ describe('IntegrationVault', () => {
 
     expect(await vault.connect({ id: 'github' })).toEqual({
       isConnected: false,
-      error: GITHUB_ERRORS['signed-out'],
+      failure: { reason: 'github', failure: 'signed-out' },
     });
     expect(await vault.list()).toEqual([]);
   });
@@ -152,7 +148,7 @@ describe('IntegrationVault', () => {
 
     expect(await vault.connect(JIRA)).toEqual({
       isConnected: false,
-      error: TRACKER_ERRORS.noKeychain,
+      failure: { reason: 'no-keychain' },
     });
     expect(await vault.list()).toEqual([]);
   });

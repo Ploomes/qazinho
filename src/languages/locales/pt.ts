@@ -817,6 +817,17 @@ export const pt: typeof en = {
       'Com a mesma conta: digite /confluence no chat para planejar a partir de uma página, e publique um plano pela aba Plano.',
     CONFLUENCE_CHECKING: 'Conferindo o Confluence…',
     FIELD_TOKEN: 'token',
+    CONNECT_UNAUTHORIZED:
+      'O {{tracker}} não aceitou essas credenciais. Confira o e-mail e o token, e tente de novo.',
+    CONNECT_UNREACHABLE:
+      'O QAzinho não conseguiu chegar ao {{tracker}} desta máquina. Confira o endereço e a rede.',
+    CONNECT_UNEXPECTED:
+      'O {{tracker}} respondeu de um jeito que o QAzinho não esperava (HTTP {{status}}).',
+    CONNECT_BAD_SITE:
+      'Isso não parece um site do Jira. Use o endereço em que você abre o Jira, como acme.atlassian.net.',
+    CONNECT_NO_KEYCHAIN:
+      'Esta máquina não tem um chaveiro em que o QAzinho possa selar um token, então ele não guarda nenhum. No Linux, abra o GNOME Keyring ou o KWallet primeiro.',
+    CONNECT_SCOPES: 'O GitHub CLI está conectado sem acesso a {{scopes}}.',
     FIELD_SITE: 'site',
     FIELD_EMAIL: 'email',
     CREATE_TOKEN: 'Criar um token',

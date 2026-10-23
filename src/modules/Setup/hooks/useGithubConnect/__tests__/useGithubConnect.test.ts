@@ -78,7 +78,7 @@ describe('useGithubConnect', () => {
       });
       window.qazinho.connectIntegration = vi
         .fn()
-        .mockResolvedValue({ isConnected: false, error: 'No keychain.' });
+        .mockResolvedValue({ isConnected: false, failure: { reason: 'no-keychain' } });
       const { result } = renderHook(() => useGithubConnect({ isOn: true }));
 
       await act(async () => {
@@ -87,7 +87,7 @@ describe('useGithubConnect', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.error).toBe('No keychain.');
+        expect(result.current.error).toContain('no keychain');
       });
       expect(result.current.signIn).toBeNull();
       expect(useSetupStore.getState().integrations).toEqual([]);

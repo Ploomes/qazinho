@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { TRACKER_ERRORS } from '@/main/classes/integrations/IntegrationVault/constants';
 import { trackerRefusal } from '@/main/classes/integrations/IntegrationVault/library';
 
 describe('trackerRefusal', () => {
@@ -8,15 +7,22 @@ describe('trackerRefusal', () => {
   });
 
   it('blames the credentials on a 401 or a 403', () => {
-    expect(trackerRefusal({ ok: false, status: 401 })).toBe(TRACKER_ERRORS.unauthorized);
-    expect(trackerRefusal({ ok: false, status: 403 })).toBe(TRACKER_ERRORS.unauthorized);
+    expect(trackerRefusal({ ok: false, status: 401 })).toEqual({
+      reason: 'unauthorized',
+    });
+    expect(trackerRefusal({ ok: false, status: 403 })).toEqual({
+      reason: 'unauthorized',
+    });
   });
 
-  it('names the status of anything else', () => {
-    expect(trackerRefusal({ ok: false, status: 502 })).toContain('HTTP 502');
+  it('keeps the status of anything else', () => {
+    expect(trackerRefusal({ ok: false, status: 502 })).toEqual({
+      reason: 'unexpected',
+      status: 502,
+    });
   });
 
   it('calls no answer at all unreachable', () => {
-    expect(trackerRefusal(null)).toBe(TRACKER_ERRORS.unreachable);
+    expect(trackerRefusal(null)).toEqual({ reason: 'unreachable' });
   });
 });

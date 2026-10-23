@@ -1,6 +1,5 @@
 import type { Fetcher } from '@/main/classes/integrations/IntegrationVault/types';
 import type { IConnectResult } from '@/shared/types';
-import { TRACKER_ERRORS } from '@/main/classes/integrations/IntegrationVault/constants';
 import { jiraSiteOf } from './jiraSiteOf';
 import { trackerRefusal } from './trackerRefusal';
 
@@ -12,7 +11,7 @@ export async function verifyJira(props: {
   const { credentials, fetcher } = props;
   const site = jiraSiteOf(credentials.site);
 
-  if (site === null) return { isConnected: false, error: TRACKER_ERRORS.badSite };
+  if (site === null) return { isConnected: false, failure: { reason: 'bad-site' } };
 
   const basic = Buffer.from(
     `${credentials.email.trim()}:${credentials.token.trim()}`,
@@ -24,7 +23,7 @@ export async function verifyJira(props: {
   const refused = trackerRefusal(answer);
 
   if (refused !== null || answer === null)
-    return { isConnected: false, error: refused ?? TRACKER_ERRORS.unreachable };
+    return { isConnected: false, failure: refused ?? { reason: 'unreachable' } };
 
   const me = (await answer.json()) as { displayName?: unknown; emailAddress?: unknown };
   const account =

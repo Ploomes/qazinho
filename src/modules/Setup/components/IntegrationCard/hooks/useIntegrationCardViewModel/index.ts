@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
 import { useGithubConnect } from '@/modules/Setup/hooks/useGithubConnect';
-import { connectionOf, formatDay } from '@/modules/Setup/library';
+import { connectFailureOf, connectionOf, formatDay } from '@/modules/Setup/library';
 import { Confluence, Integrations, Platform } from '@/services';
 import { useSettingsStore, useSetupStore } from '@/store';
 
@@ -199,7 +199,12 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
       setIsConnecting(false);
 
       if (!result.isConnected) {
-        setError(result.error);
+        const told = connectFailureOf({
+          failure: result.failure,
+          tracker: integration.name,
+        });
+
+        setError(t(told.key, told.values));
 
         return;
       }

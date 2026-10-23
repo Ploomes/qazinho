@@ -99,7 +99,8 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     installTool: () => Promise.resolve({ isInstalled: true }),
     onSetupEvent: () => () => undefined,
     listIntegrations: () => Promise.resolve([]),
-    connectIntegration: () => Promise.resolve({ isConnected: false, error: 'offline' }),
+    connectIntegration: () =>
+      Promise.resolve({ isConnected: false, failure: { reason: 'unreachable' } }),
     disconnectIntegration: () => Promise.resolve(),
     listVariables: () => Promise.resolve([]),
     applyVariables: () => Promise.resolve({ isSaved: true, variables: [] }),

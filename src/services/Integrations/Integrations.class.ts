@@ -4,7 +4,6 @@ import type {
   IIntegrationStatus,
   IntegrationId,
 } from '@/shared/types';
-import { i18n } from '@/languages';
 
 /** The only caller of the tracker side of the bridge. Tokens go in; only accounts come back. */
 export class Integrations {
@@ -16,7 +15,7 @@ export class Integrations {
     return (
       (await window.qazinho?.connectIntegration(connecting)) ?? {
         isConnected: false,
-        error: i18n.t('COMMON.NO_BRIDGE'),
+        failure: { reason: 'no-bridge' },
       }
     );
   }

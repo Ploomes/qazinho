@@ -14,6 +14,7 @@ export type * from './BuildStep';
 export type * from './ChatFailure';
 export type * from './CodeStep';
 export type * from './ConfluencePageList';
+export type * from './ConnectFailure';
 export type * from './ConfluenceRead';
 export type * from './ConfluenceSpaceList';
 export type * from './ConfluenceSwitch';

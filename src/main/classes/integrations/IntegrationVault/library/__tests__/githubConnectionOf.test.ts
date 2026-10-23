@@ -1,6 +1,5 @@
 import type { IGithubStatus } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
-import { GITHUB_ERRORS } from '@/main/classes/integrations/IntegrationVault/constants';
 import { githubConnectionOf } from '@/main/classes/integrations/IntegrationVault/library';
 
 const AT = '2026-10-20T09:00:00.000Z';
@@ -24,7 +23,7 @@ describe('githubConnectionOf', () => {
       githubConnectionOf({ status: { ...SIGNED_IN, missingScopes: ['repo'] }, at: AT }),
     ).toEqual({
       isConnected: false,
-      error: 'The GitHub CLI is signed in without access to repo.',
+      failure: { reason: 'scopes', scopes: ['repo'] },
     });
   });
 
@@ -33,15 +32,18 @@ describe('githubConnectionOf', () => {
 
     expect(
       githubConnectionOf({ status: { ...without, failure: 'no-cli' }, at: AT }),
-    ).toEqual({ isConnected: false, error: GITHUB_ERRORS['no-cli'] });
+    ).toEqual({ isConnected: false, failure: { reason: 'github', failure: 'no-cli' } });
     expect(githubConnectionOf({ status: { ...without, failure: null }, at: AT })).toEqual(
       {
         isConnected: false,
-        error: GITHUB_ERRORS['signed-out'],
+        failure: { reason: 'github', failure: 'signed-out' },
       },
     );
     expect(
       githubConnectionOf({ status: { ...without, failure: 'unreachable' }, at: AT }),
-    ).toEqual({ isConnected: false, error: GITHUB_ERRORS.unreachable });
+    ).toEqual({
+      isConnected: false,
+      failure: { reason: 'github', failure: 'unreachable' },
+    });
   });
 });

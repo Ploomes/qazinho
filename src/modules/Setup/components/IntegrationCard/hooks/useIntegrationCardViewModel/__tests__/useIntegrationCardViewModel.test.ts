@@ -224,7 +224,7 @@ describe('useIntegrationCardViewModel', () => {
     it('keeps the form open with the reason when the tracker refuses', async () => {
       window.qazinho.connectIntegration = vi
         .fn()
-        .mockResolvedValue({ isConnected: false, error: 'Bad token.' });
+        .mockResolvedValue({ isConnected: false, failure: { reason: 'unauthorized' } });
       const { result } = renderHook(() =>
         useIntegrationCardViewModel({ integration: JIRA }),
       );
@@ -233,7 +233,9 @@ describe('useIntegrationCardViewModel', () => {
       typeInto(result, JIRA_TYPED);
       await act(() => result.current.onConnect());
 
-      expect(result.current.error).toBe('Bad token.');
+      expect(result.current.error).toBe(
+        'Jira did not accept these credentials. Check the email and the token, and try again.',
+      );
       expect(result.current.isOpen).toBe(true);
     });
 
@@ -255,7 +257,7 @@ describe('useIntegrationCardViewModel', () => {
     it('clears the reason once the QA types again', async () => {
       window.qazinho.connectIntegration = vi
         .fn()
-        .mockResolvedValue({ isConnected: false, error: 'Bad token.' });
+        .mockResolvedValue({ isConnected: false, failure: { reason: 'unauthorized' } });
       const { result } = renderHook(() =>
         useIntegrationCardViewModel({ integration: JIRA }),
       );

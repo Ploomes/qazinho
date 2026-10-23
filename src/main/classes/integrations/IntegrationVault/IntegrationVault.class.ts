@@ -9,7 +9,6 @@ import type {
 } from '@/shared/types';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
-import { TRACKER_ERRORS } from './constants';
 import { githubConnectionOf, isCurrentIntegration, verifyJira } from './library';
 
 /** Connects the QA's trackers: GitHub through the QA's own gh, Jira with a token sealed by the OS keychain, and Confluence beside Jira when the QA turns it on. */
@@ -32,7 +31,7 @@ export class IntegrationVault {
 
   public async connect(connecting: IConnectIntegration): Promise<IConnectResult> {
     if (!this.cipher.isAvailable())
-      return { isConnected: false, error: TRACKER_ERRORS.noKeychain };
+      return { isConnected: false, failure: { reason: 'no-keychain' } };
 
     const result =
       connecting.id === 'github'

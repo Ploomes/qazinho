@@ -813,6 +813,17 @@ export const en = {
       'With the same account: type /confluence in the chat to plan from a page, and publish a plan from the Plan tab.',
     CONFLUENCE_CHECKING: 'Checking Confluence…',
     FIELD_TOKEN: 'token',
+    CONNECT_UNAUTHORIZED:
+      '{{tracker}} did not accept these credentials. Check the email and the token, and try again.',
+    CONNECT_UNREACHABLE:
+      'QAzinho could not reach {{tracker}} from this machine. Check the address and the network.',
+    CONNECT_UNEXPECTED:
+      '{{tracker}} answered in a way QAzinho did not expect (HTTP {{status}}).',
+    CONNECT_BAD_SITE:
+      'That does not look like a Jira site. Use the address you open Jira at, like acme.atlassian.net.',
+    CONNECT_NO_KEYCHAIN:
+      'This machine has no keychain QAzinho can seal a token with, so it will not store one. On Linux, open GNOME Keyring or KWallet first.',
+    CONNECT_SCOPES: 'The GitHub CLI is signed in without access to {{scopes}}.',
     FIELD_SITE: 'site',
     FIELD_EMAIL: 'email',
     CREATE_TOKEN: 'Create a token',

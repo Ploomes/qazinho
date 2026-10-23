@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { TRACKER_ERRORS } from '@/main/classes/integrations/IntegrationVault/constants';
 import { verifyJira } from '@/main/classes/integrations/IntegrationVault/library';
 import { fakeTracker } from './fixtures';
 
@@ -36,7 +35,7 @@ describe('verifyJira', () => {
 
     expect(
       await verifyJira({ credentials: { ...CREDENTIALS, site: 'acme' }, fetcher }),
-    ).toEqual({ isConnected: false, error: TRACKER_ERRORS.badSite });
+    ).toEqual({ isConnected: false, failure: { reason: 'bad-site' } });
     expect(asked).toHaveLength(0);
   });
 
@@ -45,7 +44,7 @@ describe('verifyJira', () => {
 
     expect(await verifyJira({ credentials: CREDENTIALS, fetcher })).toEqual({
       isConnected: false,
-      error: TRACKER_ERRORS.unauthorized,
+      failure: { reason: 'unauthorized' },
     });
   });
 });

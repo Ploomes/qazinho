@@ -1,11 +1,14 @@
 import type { GithubSignInProgress, IGithubStatus } from '@/shared/types';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useInstall } from '@/modules/Setup/hooks/useInstall';
+import { connectFailureOf } from '@/modules/Setup/library';
 import { Github, Integrations } from '@/services';
 import { useSetupStore } from '@/store';
 
 export const useGithubConnect = (props: { isOn: boolean }) => {
   const { isOn } = props;
+  const { t } = useTranslation();
   const landIntegration = useSetupStore((state) => state.landIntegration);
   const { installs, install } = useInstall();
   const [status, setStatus] = useState<IGithubStatus | null>(null);
@@ -47,7 +50,9 @@ export const useGithubConnect = (props: { isOn: boolean }) => {
 
       if (result.isConnected) landIntegration(result.status);
       else {
-        setError(result.error);
+        const told = connectFailureOf({ failure: result.failure, tracker: 'GitHub' });
+
+        setError(t(told.key, told.values));
         setSignIn(null);
         await look();
 

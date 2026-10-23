@@ -59,7 +59,7 @@ describe('a page with no bridge', () => {
     expect(await Agent.ask(ASK)).toMatchObject({ text: said });
     expect(await Integrations.connect({ id: 'github' })).toEqual({
       isConnected: false,
-      error: said,
+      failure: { reason: 'no-bridge' },
     });
     expect(await Mcp.remove({ agentId: 'claude-code', id: 'figma' })).toEqual({
       ok: false,
