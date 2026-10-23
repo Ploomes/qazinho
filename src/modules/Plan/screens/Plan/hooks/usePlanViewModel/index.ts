@@ -46,6 +46,7 @@ export const usePlanViewModel = () => {
     sourcePage: opened.sourcePage,
     published: opened.published,
     unreadPlan: opened.unreadPlan,
+    plainValues: opened.plainValues,
     issue: opened.issue,
     design: opened.design,
     isLocked: opened.live !== null && !opened.live.isDone,
@@ -82,6 +83,7 @@ export const usePlanViewModel = () => {
   );
   const setPublished = useWorkspaceStore((state) => state.setPublished);
   const setUnreadPlan = useWorkspaceStore((state) => state.setUnreadPlan);
+  const keepPlain = useWorkspaceStore((state) => state.keepPlain);
   const [reread, setReread] = useState<{
     workspaceId: string;
     read: Exclude<UnreadPlanRead, { status: 'read' }>;
@@ -118,7 +120,9 @@ export const usePlanViewModel = () => {
   const stepCount = flattenPlanSteps(plan).length;
   const published = workspace?.published ?? null;
   const unreadPlan = workspace?.unreadPlan ?? null;
-  const written = writtenSecretsOf(plan);
+  const written = writtenSecretsOf(plan).filter(
+    ({ value }) => !(workspace?.plainValues ?? []).includes(value),
+  );
   const secret = written[0] ?? null;
   const shownReread =
     reread !== null && reread.workspaceId === workspaceId ? reread.read : null;
@@ -297,7 +301,12 @@ export const usePlanViewModel = () => {
                 ? secretFailure.text
                 : null,
             keepLabel: t('PLAN.SECRET_KEEP'),
+            plainLabel: t('PLAN.SECRET_PLAIN'),
           },
+    onPlainSecret: () => {
+      if (workspaceId !== null && secret !== null)
+        keepPlain({ workspaceId, value: secret.value });
+    },
     onKeepSecret: () => {
       void keepSecret();
     },

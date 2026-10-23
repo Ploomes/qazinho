@@ -770,6 +770,22 @@ describe('usePlanViewModel', () => {
       expect(result.current.secretNotice).toBeNull();
     });
 
+    /** A case that tries a wrong password on purpose writes one that is no secret. */
+    it('stops naming a value the QA said is no secret, and remembers it', () => {
+      writing();
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      act(() => {
+        result.current.onPlainSecret();
+      });
+
+      expect(result.current.secretNotice).toBeNull();
+      expect(useWorkspaceStore.getState().workspaces[0]?.plainValues).toEqual([
+        'Teste-1234',
+      ]);
+    });
+
     it('does NOT touch the plan when the keychain kept nothing, and says why', async () => {
       writing();
       sealing({ isSaved: false, failure: { reason: 'no-keychain' } });

@@ -233,6 +233,7 @@ export const pt: typeof en = {
     SECRET_TOKEN:
       'O {{caseId}} escreve um token no plano, e toda run, teste exportado e página publicada o levaria junto. Guardado como variável, ele fica selado pelo chaveiro e o plano só o nomeia.',
     SECRET_KEEP: 'Guardar como variável',
+    SECRET_PLAIN: 'Não é segredo',
     SECRET_PASSWORD_HOLDS: 'A senha com que o {{caseId}} entra',
     SECRET_TOKEN_HOLDS: 'O token que o {{caseId}} usa',
     UNREAD_LINE:

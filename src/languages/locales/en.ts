@@ -230,6 +230,7 @@ export const en = {
     SECRET_TOKEN:
       '{{caseId}} writes a token out in the plan, where every run, exported test and published page would carry it. Kept as a variable, it is sealed by the keychain and the plan names it.',
     SECRET_KEEP: 'Keep it as a variable',
+    SECRET_PLAIN: 'Not a secret',
     SECRET_PASSWORD_HOLDS: 'The password {{caseId}} signs in with',
     SECRET_TOKEN_HOLDS: 'The token {{caseId}} uses',
     UNREAD_LINE:

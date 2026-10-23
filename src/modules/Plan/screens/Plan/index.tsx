@@ -11,6 +11,7 @@ export const Plan: React.FC = () => {
   const {
     secretNotice,
     onKeepSecret,
+    onPlainSecret,
     unread,
     onShowUnread,
     onReadUnread,
@@ -235,6 +236,9 @@ export const Plan: React.FC = () => {
                       </strong>
                     )}
                   </span>
+                  <Button size="sm" variant="ghost" onClick={onPlainSecret}>
+                    {secretNotice.plainLabel}
+                  </Button>
                   <Button size="sm" onClick={onKeepSecret}>
                     {secretNotice.keepLabel}
                   </Button>
