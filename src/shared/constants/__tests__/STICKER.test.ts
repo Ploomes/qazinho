@@ -4,39 +4,43 @@ import { STICKER } from '@/shared/constants';
 const MOVES = [STICKER.slap, STICKER.panel, STICKER.pop, STICKER.rise, STICKER.hero];
 
 describe('STICKER', () => {
-  it('lands every sticker flat on the desk: whole, upright and fully opaque', () => {
+  it('lands everything flat: whole, upright and fully opaque', () => {
     for (const move of MOVES)
       expect(move.animate).toMatchObject({ opacity: 1, scale: 1, rotate: 0 });
   });
 
-  it('peels every sticker off in under 200ms, quicker than it came in', () => {
+  it('leaves in under 200ms, quicker than it came in', () => {
     for (const move of MOVES) {
       expect(move.exit.opacity).toBe(0);
       expect(move.exit.transition.duration).toBeLessThan(0.2);
     }
   });
 
-  it('slaps small stickers from far and panels from close, so a modal does not eat the page', () => {
-    expect(STICKER.slap.initial.scale).toBeGreaterThan(STICKER.panel.initial.scale);
-    expect(Math.abs(STICKER.panel.initial.rotate)).toBeLessThanOrEqual(2);
+  /** The sticker look was heavy to work in all day: nothing turns, and nothing grows from far. */
+  it('comes in without turning, and from barely smaller than it lands', () => {
+    for (const move of MOVES) {
+      expect(move.initial).not.toHaveProperty('rotate');
+      expect('scale' in move.initial ? move.initial.scale : 1).toBeGreaterThanOrEqual(
+        0.9,
+      );
+      expect('scale' in move.initial ? move.initial.scale : 1).toBeLessThanOrEqual(1);
+    }
   });
 
-  it('springs with a little overshoot, settled well under half a second', () => {
+  it('springs with no overshoot to speak of', () => {
     const { stiffness, damping, mass } = STICKER.spring;
-    const ratio = damping / (2 * Math.sqrt(stiffness * mass));
 
-    expect(ratio).toBeGreaterThan(0.5);
-    expect(ratio).toBeLessThan(0.75);
+    expect(damping / (2 * Math.sqrt(stiffness * mass))).toBeGreaterThanOrEqual(0.8);
   });
 
-  it('picks a dragged sticker up without turning its text past 2°', () => {
+  it('picks a dragged thing up without turning it', () => {
     expect(STICKER.drag.scale).toBeGreaterThan(1);
-    expect(Math.abs(STICKER.drag.rotate)).toBeLessThanOrEqual(2);
+    expect(STICKER.drag).not.toHaveProperty('rotate');
   });
 
-  it('wobbles once and comes back upright', () => {
-    expect(STICKER.wobble.rotate.at(0)).toBe(0);
-    expect(STICKER.wobble.rotate.at(-1)).toBe(0);
-    expect(Math.max(...STICKER.wobble.rotate.map(Math.abs))).toBeLessThanOrEqual(3);
+  it('marks an event once, with a small pulse that comes back to size', () => {
+    expect(STICKER.wobble.scale.at(0)).toBe(1);
+    expect(STICKER.wobble.scale.at(-1)).toBe(1);
+    expect(Math.max(...STICKER.wobble.scale)).toBeLessThanOrEqual(1.05);
   });
 });

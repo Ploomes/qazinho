@@ -1,53 +1,38 @@
-const SPRING = { type: 'spring', stiffness: 400, damping: 24, mass: 1 } as const;
-const PEEL = { duration: 0.18, ease: [0.4, 0, 1, 1] } as const;
-const LAND = { opacity: 1, scale: 1, rotate: 0, y: 0 } as const;
+const SPRING = { type: 'spring', stiffness: 500, damping: 38, mass: 1 } as const;
+const IN = { duration: 0.18, ease: [0.2, 0.8, 0.3, 1] } as const;
+const OUT = { duration: 0.12, ease: [0.4, 0, 1, 1] } as const;
+const LAND = { opacity: 1, scale: 1, rotate: 0, x: 0, y: 0 } as const;
 
 export const STICKER = {
   spring: SPRING,
   slap: {
-    initial: { opacity: 0, scale: 1.3, rotate: 8 },
-    animate: {
-      opacity: 1,
-      scale: 1,
-      rotate: 0,
-      transition: { ...SPRING, opacity: { duration: 0.08 } },
-    },
-    exit: { opacity: 0, scale: 1.04, rotate: 8, x: 6, y: -10, transition: PEEL },
+    initial: { opacity: 0, scale: 0.96 },
+    animate: { ...LAND, transition: IN },
+    exit: { opacity: 0, scale: 0.98, transition: OUT },
   },
   panel: {
-    initial: { opacity: 0, scale: 1.06, rotate: -2, y: 14 },
-    animate: { ...LAND, transition: { ...SPRING, opacity: { duration: 0.12 } } },
-    exit: { opacity: 0, scale: 0.98, rotate: 2, x: 8, y: -14, transition: PEEL },
+    initial: { opacity: 0, scale: 0.98, y: 8 },
+    animate: { ...LAND, transition: IN },
+    exit: { opacity: 0, scale: 0.98, y: 4, transition: OUT },
   },
   pop: {
-    initial: { opacity: 0, scale: 0.9, rotate: -2, y: -6 },
-    animate: { ...LAND, transition: { ...SPRING, opacity: { duration: 0.08 } } },
-    exit: { opacity: 0, scale: 0.96, rotate: 2, y: -6, transition: PEEL },
+    initial: { opacity: 0, y: -4 },
+    animate: { ...LAND, transition: IN },
+    exit: { opacity: 0, y: -4, transition: OUT },
   },
   rise: {
-    initial: { opacity: 0, scale: 0.9, rotate: 2, y: 8 },
-    animate: { ...LAND, transition: { ...SPRING, opacity: { duration: 0.08 } } },
-    exit: { opacity: 0, scale: 0.96, rotate: -2, y: 6, transition: PEEL },
+    initial: { opacity: 0, y: 4 },
+    animate: { ...LAND, transition: IN },
+    exit: { opacity: 0, y: 4, transition: OUT },
   },
   hero: {
-    initial: { opacity: 0, scale: 1.4, rotate: 14 },
-    animate: {
-      opacity: 1,
-      scale: 1,
-      rotate: 0,
-      transition: {
-        type: 'spring',
-        stiffness: 300,
-        damping: 16,
-        mass: 1,
-        opacity: { duration: 0.1 },
-      },
-    },
-    exit: { opacity: 0, scale: 1.04, rotate: 10, x: 10, y: -14, transition: PEEL },
+    initial: { opacity: 0, scale: 0.9 },
+    animate: { ...LAND, transition: { ...SPRING, opacity: { duration: 0.12 } } },
+    exit: { opacity: 0, scale: 0.96, transition: OUT },
   },
-  drag: { scale: 1.03, rotate: -1.5, zIndex: 6 },
+  drag: { scale: 1.02, zIndex: 6 },
   wobble: {
-    rotate: [0, -3, 3, -2, 1, 0],
-    transition: { duration: 0.5, ease: 'easeInOut' },
+    scale: [1, 1.05, 1],
+    transition: { duration: 0.32, ease: 'easeInOut' },
   },
 } as const;

@@ -64,13 +64,8 @@ export const StepsPopup: React.FC<IStepsPopupProps> = (props) => {
                   key={props.tone}
                   className="steps-popup__badge-mark"
                   aria-hidden="true"
-                  initial={{ opacity: 0, scale: 0.4, rotate: -40 }}
-                  animate={{
-                    opacity: 1,
-                    scale: 1,
-                    rotate: 0,
-                    transition: STICKER.spring,
-                  }}
+                  initial={{ opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1, transition: STICKER.spring }}
                   exit={{ opacity: 0, scale: 0.4 }}
                 >
                   {badgeMark !== null && <Icon name={badgeMark} />}

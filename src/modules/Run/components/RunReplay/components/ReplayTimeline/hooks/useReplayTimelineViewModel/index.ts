@@ -105,7 +105,7 @@ export const useReplayTimelineViewModel = (props: IReplayTimelineProps) => {
         mark.bugId === flashBugId
           ? {
               ...STICKER.pop.animate,
-              rotate: [...STICKER.wobble.rotate],
+              scale: [...STICKER.wobble.scale],
               transition: STICKER.wobble.transition,
             }
           : {
