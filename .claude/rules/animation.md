@@ -31,21 +31,19 @@ beginning and an end belongs to Motion, because React knows when it starts.
   Nothing else checks the media query.
 - A component that only fades in on mount does not need Motion. `animation: gc-in` is enough.
 
-## Stickers
+## Entrances and exits
 
-A sticker moves like one (`sticker-design.md`): it slaps on, lifts, presses and peels off.
+Things fade in and out gently (`sticker-design.md`), and nothing turns.
 
 - **Entrances and exits come from `STICKER`** in `src/shared/constants/STICKER.ts`:
-  - `slap` for small stickers, `panel` for modals, `pop` for a popover under its anchor,
+  - `slap` for small things, `panel` for modals, `pop` for a popover under its anchor,
     `rise` for one above it, `hero` for the Estagiário.
-  - `drag` picks a sticker up, and `wobble` marks an event once.
+  - `drag` picks a dragged thing up, and `wobble` marks an event once with a small pulse.
   - Spread the move: `initial={STICKER.panel.initial} animate={STICKER.panel.animate}
 exit={STICKER.panel.exit}`.
-- **A sticker that only lands on mount** uses a keyframe instead: `gc-slap` for a small one,
+- **A thing that only lands on mount** uses a keyframe instead: `gc-slap` for a small one,
   `gc-stick` for a panel. Put it inside `@media (prefers-reduced-motion: no-preference)`, with
   `gc-in` outside it.
-- **Hover and press stay in CSS** and move the individual `translate`, `rotate` and `scale`
-  properties, never `transform`. Motion owns `transform`, and the individual properties add up
-  with it, so a resting tilt or a lift never fights a slap.
-- **Evidence never moves like a sticker.** The lightbox and the device enter straight, with no
-  turn.
+- **Hover and press stay in CSS** and move the individual `translate` and `scale` properties,
+  never `transform`, through `--lift` and `--press`. Motion owns `transform`.
+- **Evidence never moves**: the lightbox and the device enter straight.

@@ -20,10 +20,10 @@ The Android SDK and Xcode are too big: the first-run setup links to them and che
 Built for technical QA teams, and for QA moving from manual to technical. A project is an
 environment with one or more targets. Workspaces hold a test plan, and several run in parallel.
 
-**It looks like a desk with stickers on it** (`rules/sticker-design.md`): the work is printed on
-a Night or Paper surface, and the Estagiário, the wordmark, the main buttons, badges, cards and
-popups are die-cut stickers that slap on and peel off. That design is the face of the app; every
-screen follows it.
+**It is calm and flat to work in all day** (`rules/sticker-design.md`): the work sits on a Night
+or Paper surface, cards and popups are raised only by a 1px line and, when they float, a soft
+shadow, and nothing tilts or slaps on. The brand lives in a few touches: the lime accent, the
+Estagiário drawn flat, the wordmark and Bricolage on titles. Every screen follows it.
 
 ## The rules that are not up for negotiation
 
