@@ -462,18 +462,62 @@ describe('useBugCardViewModel', () => {
       expect(result.current.thumbs.map(({ src }) => src)).toEqual(['data:before']);
     });
 
-    it('shows the step that broke with the one before it, and every step on asking', () => {
+    const stepsUpTo = (props: { total: number; broke: number }) =>
+      Array.from({ length: props.total }, (_, index) => ({
+        action: `Step ${String(index + 1)}`,
+        isBad: index + 1 === props.broke,
+      }));
+
+    it('shows every step of a short bug from the first', () => {
       const { result } = renderHook(() => useBugCardViewModel({ ...PROPS, bug: LONG }));
 
-      expect(result.current.steps.map(({ number }) => number)).toEqual([3, 4]);
-      expect(result.current.stepsToggle).toBe('See all 5 steps');
+      expect(result.current.steps.map(({ number }) => number)).toEqual([1, 2, 3, 4, 5]);
+      expect(result.current.stepsToggle).toBeNull();
+    });
+
+    /** Showing the steps around the failure read as starting from the middle. */
+    it('shows the first steps of a long bug, and the rest on asking', () => {
+      const { result } = renderHook(() =>
+        useBugCardViewModel({
+          ...PROPS,
+          bug: { ...LONG, repro: stepsUpTo({ total: 8, broke: 3 }) },
+        }),
+      );
+
+      expect(result.current.steps.map(({ number }) => number)).toEqual([1, 2, 3, 4, 5]);
+      expect(result.current.stepsToggle).toBe('Show 3 more steps');
 
       act(() => {
         result.current.onStepsToggle();
       });
 
-      expect(result.current.steps).toHaveLength(5);
+      expect(result.current.steps).toHaveLength(8);
       expect(result.current.stepsToggle).toBe('Show fewer');
+    });
+
+    it('does NOT fold away the step that broke, however far down it is', () => {
+      const { result } = renderHook(() =>
+        useBugCardViewModel({
+          ...PROPS,
+          bug: { ...LONG, repro: stepsUpTo({ total: 9, broke: 7 }) },
+        }),
+      );
+
+      expect(result.current.steps.map(({ number }) => number)).toEqual([
+        1, 2, 3, 4, 5, 6, 7,
+      ]);
+      expect(result.current.stepsToggle).toBe('Show 2 more steps');
+    });
+
+    it('says one more step in the singular', () => {
+      const { result } = renderHook(() =>
+        useBugCardViewModel({
+          ...PROPS,
+          bug: { ...LONG, repro: stepsUpTo({ total: 6, broke: 2 }) },
+        }),
+      );
+
+      expect(result.current.stepsToggle).toBe('Show 1 more step');
     });
 
     it('does NOT offer more steps than a short bug has', () => {

@@ -81,10 +81,6 @@
   color: var(--fail);
 }
 
-.bug-card__head .caret {
-  margin-left: auto;
-}
-
 .bug-card__head .bug-card__id {
   margin-right: auto;
 }

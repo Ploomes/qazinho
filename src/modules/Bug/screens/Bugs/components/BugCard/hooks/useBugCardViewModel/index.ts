@@ -44,7 +44,7 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
   const hero = shots.find(({ isBad }) => isBad) ?? shots[0] ?? null;
   const broke = bug.repro.findIndex(({ isBad }) => isBad);
   const numbered = bug.repro.map((repro, index) => ({ ...repro, number: index + 1 }));
-  const near = broke < 0 ? numbered : numbered.slice(Math.max(0, broke - 1), broke + 1);
+  const first = numbered.slice(0, Math.max(BUG_CARD.stepsShown, broke + 1));
   const runWhen =
     bug.sightings.find(({ runId }) => runId === props.lastRunId)?.runWhen ?? bug.runWhen;
 
@@ -62,11 +62,15 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
     },
     hero,
     thumbs: shots.filter((shot) => shot !== hero),
-    steps: isAllSteps ? numbered : near,
+    steps: isAllSteps ? numbered : first,
     stepsToggle:
-      near.length === numbered.length
+      first.length === numbered.length
         ? null
-        : t(isAllSteps ? 'BUG.FEWER_STEPS' : 'BUG.ALL_STEPS', { count: numbered.length }),
+        : isAllSteps
+          ? t('BUG.FEWER_STEPS')
+          : t(numbered.length - first.length === 1 ? 'BUG.MORE_STEP' : 'BUG.MORE_STEPS', {
+              count: numbered.length - first.length,
+            }),
     onStepsToggle: () => {
       setIsAllSteps(!isAllSteps);
     },
