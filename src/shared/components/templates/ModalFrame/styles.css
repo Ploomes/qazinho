@@ -94,3 +94,7 @@
   gap: var(--space-3);
   margin-left: auto;
 }
+
+.modal-frame__panel:focus {
+  outline: none;
+}

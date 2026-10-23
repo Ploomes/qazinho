@@ -7,7 +7,8 @@ import { useModalFrameViewModel } from './hooks';
 import './styles.css';
 
 export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
-  const { isBeside, panelStyle, onConfirmClick } = useModalFrameViewModel(props);
+  const { panelRef, titleId, isBeside, panelStyle, onPanelKeyDown, onConfirmClick } =
+    useModalFrameViewModel(props);
   const { t } = useTranslation();
 
   return (
@@ -20,8 +21,14 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
       onClick={props.onCancel}
     >
       <motion.div
+        ref={panelRef}
         className="modal-frame__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
         style={panelStyle}
+        onKeyDown={onPanelKeyDown}
         initial={STICKER.panel.initial}
         animate={STICKER.panel.animate}
         exit={STICKER.panel.exit}
@@ -30,7 +37,9 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
         }}
       >
         <header className="modal-frame__head">
-          <h2 className="modal-frame__title">{props.title}</h2>
+          <h2 id={titleId} className="modal-frame__title">
+            {props.title}
+          </h2>
           <p className="modal-frame__subtitle">{props.subtitle}</p>
         </header>
 
