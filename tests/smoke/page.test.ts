@@ -132,11 +132,11 @@ describe('the built page, with no bridge behind it', () => {
     await page.locator('.workspace-tabs__tab', { hasText: 'Plan' }).first().click();
     await page.getByRole('button', { name: 'Add a case' }).first().click();
 
-    await page
-      .locator('.plan-case__head .editable-text')
-      .first()
-      .fill('Cart keeps its items');
-    await page.locator('.plan-case__open').first().click();
+    expect(
+      await page.evaluate(() => document.activeElement?.getAttribute('placeholder')),
+    ).toBe('what this case covers');
+
+    await page.keyboard.type('Cart keeps its items');
     await page.getByPlaceholder('what the agent does').first().fill('Add a hat');
     await page.getByPlaceholder('what you expect to see').first().fill('Cart reads 1');
     await page.getByRole('button', { name: 'Add a step' }).first().click();
