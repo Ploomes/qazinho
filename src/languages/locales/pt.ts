@@ -99,7 +99,7 @@ export const pt: typeof en = {
   },
   CHAT: {
     SECRET_WARNING:
-      'Isso parece um token ({{secret}}). O agente leria: guarde como uma variável do projeto.',
+      'Isso parece uma senha ou um token ({{secret}}). O agente leria: guarde como uma variável do projeto.',
     SECRET_REMOVE: 'Tirar do texto',
     SECRET_SEND: 'Enviar assim mesmo',
     YOU: 'Você',
@@ -1149,7 +1149,7 @@ export const pt: typeof en = {
     HINT: '↵ envia · ⇧↵ nova linha',
     STOPPED: 'Você parou a resposta.',
     SECRET_WARNING:
-      'Isso parece um token ({{secret}}). Tokens vão em Configurações → Integrações, nunca no chat.',
+      'Isso parece uma senha ou um token ({{secret}}). Nenhum dos dois vai no chat: um token vai em Configurações → Integrações, uma senha nas variáveis do projeto.',
     SECRET_REMOVE: 'Tirar do texto',
     SECRET_SEND: 'Enviar assim mesmo',
     FAILED_OTHER: 'O Estagiário não conseguiu responder: {{said}}',

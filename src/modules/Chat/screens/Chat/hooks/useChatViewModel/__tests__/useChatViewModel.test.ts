@@ -340,7 +340,7 @@ describe('useChatViewModel', () => {
 
       expect(ask).not.toHaveBeenCalled();
       expect(result.current.secretWarning).toBe(
-        "This looks like a token (ghp_a1…). The agent would read it: keep it as one of the project's variables instead.",
+        "This looks like a password or a token (ghp_a1…). The agent would read it: keep it as one of the project's variables instead.",
       );
 
       act(() => {

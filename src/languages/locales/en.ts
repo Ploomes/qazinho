@@ -97,7 +97,7 @@ export const en = {
   },
   CHAT: {
     SECRET_WARNING:
-      "This looks like a token ({{secret}}). The agent would read it: keep it as one of the project's variables instead.",
+      "This looks like a password or a token ({{secret}}). The agent would read it: keep it as one of the project's variables instead.",
     SECRET_REMOVE: 'Take it out',
     SECRET_SEND: 'Send anyway',
     YOU: 'You',
@@ -1144,7 +1144,7 @@ export const en = {
     HINT: '↵ send · ⇧↵ new line',
     STOPPED: 'You stopped the answer.',
     SECRET_WARNING:
-      'This looks like a token ({{secret}}). Tokens go in Settings → Integrations, never in the chat.',
+      'This looks like a password or a token ({{secret}}). Neither goes in the chat: a token goes in Settings → Integrations, a password in the project’s variables.',
     SECRET_REMOVE: 'Take it out',
     SECRET_SEND: 'Send anyway',
     FAILED_OTHER: 'The Intern could not answer: {{said}}',

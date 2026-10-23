@@ -269,7 +269,7 @@ describe('useAssistantPanelViewModel', () => {
       expect(result.current).toMatchObject({
         canSend: false,
         secretWarning:
-          'This looks like a token (ATATT3…). Tokens go in Settings → Integrations, never in the chat.',
+          'This looks like a password or a token (ATATT3…). Neither goes in the chat: a token goes in Settings → Integrations, a password in the project’s variables.',
       });
 
       act(() => {
