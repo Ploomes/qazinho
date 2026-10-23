@@ -8,6 +8,10 @@ on:
         description: Work out the next version and stop, without tagging or releasing
         type: boolean
         default: false
+      tag:
+        description: Release nothing new; only build the installers of this existing release, such as v0.1.0
+        type: string
+        default: ''
 
 concurrency:
   group: release
@@ -16,11 +20,14 @@ concurrency:
 jobs:
   release:
     name: Release
+    if: inputs.tag == ''
     runs-on: ubuntu-latest
     permissions:
       contents: write
       issues: write
       pull-requests: write
+    outputs:
+      tag: ${{ steps.released.outputs.tag }}
     env:
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
     steps:
@@ -50,3 +57,49 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release ${{ inputs.dry_run && '--dry-run' || '' }}
+
+      # semantic-release tags the release commit it makes; a dry run, or nothing to release, tags none.
+      - name: Released tag
+        id: released
+        run: echo "tag=$(git tag --points-at HEAD --list 'v*' | head -n 1)" >> "$GITHUB_OUTPUT"
+
+  windows:
+    name: Windows installer
+    needs: release
+    # A release created with GITHUB_TOKEN starts no other workflow, so the installer is built here.
+    if: ${{ !cancelled() && !failure() && (inputs.tag != '' || needs.release.outputs.tag != '') }}
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ inputs.tag != '' && inputs.tag || needs.release.outputs.tag }}
+      # electron-builder fetches the Windows Electron it packs; npm's own would go unused.
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ env.TAG }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      # No certificate yet: the installer goes out unsigned, and SmartScreen asks once.
+      - name: Package
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder --win --x64 --publish never
+
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "$TAG" release/*.exe --clobber --repo "$GITHUB_REPOSITORY"
