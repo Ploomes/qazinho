@@ -1,8 +1,9 @@
 import type { ISuiteRegistry } from './types';
 import type { GitCli } from '@/main/classes/automation/GitCli';
 import type { ISuite, SuitePick } from '@/shared/types';
-import { mkdir, readdir, readFile, realpath, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, realpath } from 'node:fs/promises';
 import { basename, dirname, join } from 'node:path';
+import { writeAtomically } from '@/main/library';
 import { SUITE_REGISTRY } from './constants';
 import {
   configFileIn,
@@ -120,6 +121,9 @@ export class SuiteRegistry {
 
   private async write(paths: Record<string, string>): Promise<void> {
     await mkdir(this.root, { recursive: true });
-    await writeFile(join(this.root, SUITE_REGISTRY.file), JSON.stringify(paths, null, 2));
+    await writeAtomically({
+      file: join(this.root, SUITE_REGISTRY.file),
+      data: JSON.stringify(paths, null, 2),
+    });
   }
 }

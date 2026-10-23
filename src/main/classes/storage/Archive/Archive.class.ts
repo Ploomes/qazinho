@@ -4,8 +4,9 @@ import type {
   ISavedState,
   ISavedWorkspace,
 } from '@/shared/types';
-import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
+import { writeAtomically } from '@/main/library';
 import { ARCHIVE } from './constants';
 import { isInside, networkOf, readTextOr } from './library';
 
@@ -31,7 +32,7 @@ export class Archive {
   public async saveProjects(json: string): Promise<void> {
     await this.track(async () => {
       await mkdir(this.root, { recursive: true });
-      await writeFile(join(this.root, ARCHIVE.projects), json, 'utf8');
+      await writeAtomically({ file: join(this.root, ARCHIVE.projects), data: json });
     });
   }
 
@@ -40,8 +41,8 @@ export class Archive {
 
     await this.track(async () => {
       await mkdir(folder, { recursive: true });
-      await writeFile(join(folder, ARCHIVE.workspace), saved.json, 'utf8');
-      await writeFile(join(folder, ARCHIVE.plan), saved.planYaml, 'utf8');
+      await writeAtomically({ file: join(folder, ARCHIVE.workspace), data: saved.json });
+      await writeAtomically({ file: join(folder, ARCHIVE.plan), data: saved.planYaml });
     });
   }
 

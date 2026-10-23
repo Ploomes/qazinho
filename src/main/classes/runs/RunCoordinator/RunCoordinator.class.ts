@@ -46,7 +46,7 @@ import { dirname, join } from 'node:path';
 import { mcpConfigWith } from '@/harness';
 import { WEB_DRIVER } from '@/main/classes/devices/WebDriver/constants';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
-import { agentFailure } from '@/main/library';
+import { agentFailure, writeAtomically } from '@/main/library';
 import { EXPLORATION } from '@/shared/constants';
 import { RUN_WALK, UNWALKED } from './constants';
 import {
@@ -1069,7 +1069,7 @@ export class RunCoordinator {
 
     if ((await stat(dirname(file)).catch(() => null))?.isDirectory() !== true) return;
 
-    await writeFile(file, JSON.stringify(props.book, null, 2));
+    await writeAtomically({ file, data: JSON.stringify(props.book, null, 2) });
   }
 
   /** Shows the QA what the agent asked at the step it is on, and waits with the agent's clock held for their reply, the wait's end or a stop: the agent hears it in words, and a secret by its name alone. */

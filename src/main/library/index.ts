@@ -37,3 +37,4 @@ export * from './spawnCommand';
 export * from './stripAnsi';
 export * from './swipeOf';
 export * from './withoutRole';
+export * from './writeAtomically';

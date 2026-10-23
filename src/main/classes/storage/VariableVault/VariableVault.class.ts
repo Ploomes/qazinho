@@ -5,8 +5,9 @@ import type {
   IProjectVariables,
   VariablesOutcome,
 } from '@/shared/types';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
+import { writeAtomically } from '@/main/library';
 import { variablesAfter, variablesByProject } from './library';
 
 /** Keeps each project's variables sealed by the OS keychain: the page and the agents learn their names, and only a run reads a value, to type it. */
@@ -89,6 +90,9 @@ export class VariableVault {
 
   private async write(stored: IStoredVariable[]): Promise<void> {
     await mkdir(dirname(this.file), { recursive: true });
-    await writeFile(this.file, this.cipher.encrypt(JSON.stringify(stored)));
+    await writeAtomically({
+      file: this.file,
+      data: this.cipher.encrypt(JSON.stringify(stored)),
+    });
   }
 }

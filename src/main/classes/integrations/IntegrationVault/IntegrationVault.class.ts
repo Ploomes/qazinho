@@ -7,8 +7,9 @@ import type {
   IIntegrationStatus,
   IntegrationId,
 } from '@/shared/types';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
+import { writeAtomically } from '@/main/library';
 import { githubConnectionOf, isCurrentIntegration, verifyJira } from './library';
 
 /** Connects the QA's trackers: GitHub through the QA's own gh, Jira with a token sealed by the OS keychain, and Confluence beside Jira when the QA turns it on. */
@@ -108,6 +109,9 @@ export class IntegrationVault {
 
   private async write(stored: IStoredIntegration[]): Promise<void> {
     await mkdir(dirname(this.file), { recursive: true });
-    await writeFile(this.file, this.cipher.encrypt(JSON.stringify(stored)));
+    await writeAtomically({
+      file: this.file,
+      data: this.cipher.encrypt(JSON.stringify(stored)),
+    });
   }
 }
