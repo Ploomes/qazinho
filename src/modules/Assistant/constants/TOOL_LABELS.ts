@@ -63,6 +63,10 @@ export const TOOL_LABELS: Record<
     doing: 'ASSISTANT.TOOL_UNLINK_DESIGN',
     done: 'ASSISTANT.TOOL_UNLINK_DESIGN_DONE',
   },
+  dismiss_bug: {
+    doing: 'ASSISTANT.TOOL_DISMISS_BUG',
+    done: 'ASSISTANT.TOOL_DISMISS_BUG_DONE',
+  },
   rename_workspace: {
     doing: 'ASSISTANT.TOOL_RENAME_WORKSPACE',
     done: 'ASSISTANT.TOOL_RENAME_WORKSPACE_DONE',

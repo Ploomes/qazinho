@@ -126,6 +126,19 @@ export function fakePort(
       );
       did.push(`rename ${workspaceId} ${name}`);
     },
+    dismissBug: ({ workspaceId, bugId, isDismissed }) => {
+      state.workspaces = state.workspaces.map((one) =>
+        one.id === workspaceId
+          ? {
+              ...one,
+              bugs: one.bugs.map((bug) =>
+                bug.id === bugId ? { ...bug, isDismissed } : bug,
+              ),
+            }
+          : one,
+      );
+      did.push(`${isDismissed ? 'dismiss' : 'reopen'} ${bugId}`);
+    },
     setDesign: ({ workspaceId, design }) => {
       state.workspaces = state.workspaces.map((one) =>
         one.id === workspaceId ? { ...one, design } : one,

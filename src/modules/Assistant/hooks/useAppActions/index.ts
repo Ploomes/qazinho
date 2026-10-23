@@ -140,6 +140,9 @@ export const useAppActions = () => {
       renameWorkspace: (rename) => {
         useWorkspaceStore.getState().renameWorkspace(rename);
       },
+      dismissBug: (dismissal) => {
+        useWorkspaceStore.getState().dismissBug(dismissal);
+      },
       setDesign: (link) => {
         useWorkspaceStore.getState().setDesign(link);
       },

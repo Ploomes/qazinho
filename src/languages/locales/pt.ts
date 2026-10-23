@@ -1198,6 +1198,8 @@ export const pt: typeof en = {
     TOOL_UNLINK_DESIGN: 'Desligando o design do Figma de {{subject}}',
     TOOL_UNLINK_DESIGN_DONE: 'Desligou o design do Figma de {{subject}}',
     TOOL_RENAME_WORKSPACE: 'Renomeando para {{subject}}',
+    TOOL_DISMISS_BUG: 'Marcando {{subject}}',
+    TOOL_DISMISS_BUG_DONE: 'Marcou {{subject}}',
     TOOL_RENAME_WORKSPACE_DONE: 'Renomeou para {{subject}}',
     TOOL_RUN_PLAN: 'Rodando o plano de {{subject}}',
     TOOL_RUN_PLAN_DONE: 'Começou o plano de {{subject}}',

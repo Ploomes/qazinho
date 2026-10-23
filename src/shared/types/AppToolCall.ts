@@ -88,6 +88,7 @@ export type AppToolCall =
         repository?: string;
       };
     }
+  | { name: 'dismiss_bug'; args: { workspace: string; bug: string; reopen?: boolean } }
   | {
       name: 'ask_workspace_chat';
       args: {

@@ -1,5 +1,6 @@
 import type { IAppPort, IToolDone } from '@/modules/Assistant/types';
 import type { AppToolCall } from '@/shared/types';
+import { performBugDismiss } from './performBugDismiss';
 import { performBugSend } from './performBugSend';
 import { performBuild } from './performBuild';
 import { performChatAsk } from './performChatAsk';
@@ -47,6 +48,8 @@ export async function performAppTool(props: {
       return performChatAsk({ call, port });
     case 'send_bug':
       return performBugSend({ id, call, port });
+    case 'dismiss_bug':
+      return performBugDismiss({ call, port });
     case 'change_settings':
     case 'connect_integration':
     case 'disconnect_integration':

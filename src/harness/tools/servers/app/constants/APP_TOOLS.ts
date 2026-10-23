@@ -349,6 +349,25 @@ export const APP_TOOLS = [
     }),
   },
   {
+    name: 'dismiss_bug',
+    description:
+      'Say a bug of a workspace is no bug, as the QA does with Not a bug on its card: it leaves the open bugs, and no run hears of it again. With reopen, a bug the QA had said is none is open again. Do it only when the QA said so.',
+    input: z.object({
+      workspace: textNamed({
+        message: '"dismiss_bug" needs "workspace": its id or its name.',
+        description: 'The workspace, by its id or its name.',
+      }),
+      bug: textNamed({
+        message: '"dismiss_bug" needs "bug": its id, such as BUG-02.',
+        description: 'The bug, by its id, such as BUG-02.',
+      }),
+      reopen: z
+        .boolean({ error: '"reopen" is true or false.' })
+        .describe('True to open again a bug the QA had said is none.')
+        .optional(),
+    }),
+  },
+  {
     name: 'stop_run',
     description: 'Stop the run going on in a workspace.',
     input: z.object({

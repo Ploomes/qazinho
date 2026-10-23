@@ -43,6 +43,11 @@ export interface IAppPort {
   removeProject: (projectId: string) => void;
   addWorkspace: (workspace: IWorkspace) => void;
   renameWorkspace: (props: { workspaceId: string; name: string }) => void;
+  dismissBug: (props: {
+    workspaceId: string;
+    bugId: string;
+    isDismissed: boolean;
+  }) => void;
   setDesign: (props: { workspaceId: string; design: IDesignLink | null }) => void;
   removeWorkspace: (workspaceId: string) => void;
   runWorkspace: (workspaceId: string) => string | null;

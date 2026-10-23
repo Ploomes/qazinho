@@ -1193,6 +1193,8 @@ export const en = {
     TOOL_UNLINK_DESIGN: 'Unlinking the Figma design of {{subject}}',
     TOOL_UNLINK_DESIGN_DONE: 'Unlinked the Figma design of {{subject}}',
     TOOL_RENAME_WORKSPACE: 'Renaming to {{subject}}',
+    TOOL_DISMISS_BUG: 'Marking {{subject}}',
+    TOOL_DISMISS_BUG_DONE: 'Marked {{subject}}',
     TOOL_RENAME_WORKSPACE_DONE: 'Renamed to {{subject}}',
     TOOL_RUN_PLAN: 'Running the plan of {{subject}}',
     TOOL_RUN_PLAN_DONE: 'Started the plan of {{subject}}',
