@@ -1,5 +1,6 @@
 export * from './adfOfReport';
 export * from './adfToMarkdown';
+export * from './askAtlassian';
 export * from './bugTypeOf';
 export * from './jiraFailureOf';
 export * from './jiraIssueOf';

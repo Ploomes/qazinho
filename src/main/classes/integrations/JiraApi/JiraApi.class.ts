@@ -14,11 +14,10 @@ import { writeFile } from 'node:fs/promises';
 import { JIRA_READ, JIRA_WRITE } from './constants';
 import {
   adfOfReport,
+  askAtlassian,
   bugTypeOf,
-  jiraFailureOf,
   jiraIssueOf,
   jiraProjectsOf,
-  jiraSaidOf,
   jiraStoryOf,
   pickedIssuesOf,
 } from './library';
@@ -315,54 +314,9 @@ export class JiraApi {
       : [];
   }
 
-  private async request(props: {
-    signed: IJiraCredentials;
-    path: string;
-    method?: 'POST';
-    json?: unknown;
-    form?: FormData;
-    isBinary?: boolean;
-    isEmpty?: boolean;
-    timeoutMs?: number;
-  }): Promise<JiraAnswer> {
-    const { signed, json, form } = props;
-    const basic = Buffer.from(`${signed.email}:${signed.token}`).toString('base64');
-    const answer = await this.fetcher(`${signed.site}${props.path}`, {
-      method: props.method ?? 'GET',
-      headers: {
-        Accept: props.isBinary === true ? '*/*' : 'application/json',
-        Authorization: `Basic ${basic}`,
-        ...(json === undefined ? {} : { 'Content-Type': 'application/json' }),
-        ...(form === undefined ? {} : { 'X-Atlassian-Token': 'no-check' }),
-      },
-      ...(json === undefined ? {} : { body: JSON.stringify(json) }),
-      ...(form === undefined ? {} : { body: form }),
-      signal: AbortSignal.timeout(
-        props.timeoutMs ??
-          (props.isBinary === true ? JIRA_READ.downloadTimeoutMs : JIRA_READ.timeoutMs),
-      ),
-    }).catch(() => null);
-
-    if (answer === null) return { isOk: false, failure: 'unreachable', said: '' };
-
-    if (!answer.ok)
-      return {
-        isOk: false,
-        failure: jiraFailureOf(answer),
-        said: jiraSaidOf(await answer.json().catch(() => null)),
-      };
-
-    if (props.isEmpty === true) return { isOk: true, body: null, bytes: null };
-
-    if (props.isBinary === true)
-      return answer.arrayBuffer().then(
-        (bytes): JiraAnswer => ({ isOk: true, body: null, bytes }),
-        (): JiraAnswer => ({ isOk: false, failure: 'unreachable', said: '' }),
-      );
-
-    return answer.json().then(
-      (body): JiraAnswer => ({ isOk: true, body, bytes: null }),
-      (): JiraAnswer => ({ isOk: false, failure: 'unexpected', said: '' }),
-    );
+  private request(
+    props: Omit<Parameters<typeof askAtlassian>[0], 'fetcher'>,
+  ): Promise<JiraAnswer> {
+    return askAtlassian({ ...props, fetcher: this.fetcher });
   }
 }

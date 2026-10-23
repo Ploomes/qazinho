@@ -2,7 +2,7 @@
 export type JiraFetcher = (
   url: string,
   init: {
-    method?: 'GET' | 'POST';
+    method?: 'GET' | 'POST' | 'PUT';
     headers: Record<string, string>;
     body?: string | FormData;
     signal?: AbortSignal;
