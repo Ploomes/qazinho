@@ -4,5 +4,5 @@ export interface IScreenshotProps {
   file?: string | null;
   onOpen?: () => void;
   isBad?: boolean;
-  size?: 'thumb' | 'shot';
+  size?: 'thumb' | 'shot' | 'hero';
 }

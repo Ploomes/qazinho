@@ -23,6 +23,8 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
       ? null
       : frameUrlOf({ design, frame: bug.frame });
   const [isCopied, setIsCopied] = useState(false);
+  const [isAllSteps, setIsAllSteps] = useState(false);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const { filed } = bug;
   const screen = filed?.tracker === 'github' ? pasteShotOf(bug) : null;
 
@@ -39,7 +41,40 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
     })),
   ];
 
+  const hero = shots.find(({ isBad }) => isBad) ?? shots[0] ?? null;
+  const broke = bug.repro.findIndex(({ isBad }) => isBad);
+  const numbered = bug.repro.map((repro, index) => ({ ...repro, number: index + 1 }));
+  const near = broke < 0 ? numbered : numbered.slice(Math.max(0, broke - 1), broke + 1);
+  const runWhen =
+    bug.sightings.find(({ runId }) => runId === props.lastRunId)?.runWhen ?? bug.runWhen;
+
   return {
+    provenance: {
+      lead: t(bug.isIncidental ? 'BUG.BESIDE_STEP' : 'BUG.AT_STEP', {
+        number: bug.stepNumber,
+      }),
+      caseTitle: bug.caseTitle,
+      run: props.hasRun ? t('BUG.RUN_AT', { when: runWhen }) : null,
+      facts: [
+        bug.target,
+        ...(bug.seenRuns > 1 ? [t('BUG.SEEN_IN', { count: bug.seenRuns })] : []),
+      ].join(' · '),
+    },
+    hero,
+    thumbs: shots.filter((shot) => shot !== hero),
+    steps: isAllSteps ? numbered : near,
+    stepsToggle:
+      near.length === numbered.length
+        ? null
+        : t(isAllSteps ? 'BUG.FEWER_STEPS' : 'BUG.ALL_STEPS', { count: numbered.length }),
+    onStepsToggle: () => {
+      setIsAllSteps(!isAllSteps);
+    },
+    failedHere: t('BUG.FAILED_HERE'),
+    isDetailsOpen,
+    onDetailsToggle: () => {
+      setIsDetailsOpen(!isDetailsOpen);
+    },
     hasBody: bug.body.length > 0,
     severity: t(SEVERITY_KEYS[bug.severity]),
     meta: [
@@ -81,7 +116,11 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
     } as CSSProperties,
     hasRun: props.hasRun,
     hasCase: props.hasCase,
-    newLabel: bug.sightings.length > 0 ? t('BUG.SEEN_AGAIN') : t('BUG.JUST_CAUGHT'),
+    newLabel: !bug.isNew
+      ? undefined
+      : bug.sightings.length > 0
+        ? t('BUG.SEEN_AGAIN')
+        : t('BUG.JUST_CAUGHT'),
     runLabel: t('BUG.GO_TO_RUN', { id: props.lastRunId }),
     caseLabel: t('BUG.GO_TO_CASE', { id: bug.caseId }),
     onHeadClick: () => {

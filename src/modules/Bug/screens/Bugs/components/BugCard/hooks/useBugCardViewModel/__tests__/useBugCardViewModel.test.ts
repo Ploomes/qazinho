@@ -411,4 +411,92 @@ describe('useBugCardViewModel', () => {
       expect(onDismiss).toHaveBeenCalledWith({ bugId: BUG.id, isDismissed: false });
     });
   });
+
+  describe('the card, open', () => {
+    const LONG = {
+      ...BUG,
+      repro: [
+        { action: 'Open the shop', isBad: false },
+        { action: 'Open the cart', isBad: false },
+        { action: 'Type the coupon', isBad: false },
+        { action: 'Apply it', isBad: true },
+        { action: 'Pay', isBad: false },
+      ],
+      shots: [
+        { isBad: false, src: 'data:before', file: null },
+        { isBad: true, src: 'data:broke', file: null },
+      ],
+    };
+
+    /** The run, the case id, the viewport and the model headed the card; the QA read them before the bug. */
+    it('says where it was caught in one line, the case by its title', () => {
+      const { result } = renderHook(() =>
+        useBugCardViewModel({ ...PROPS, bug: { ...LONG, seenRuns: 2 } }),
+      );
+
+      expect(result.current.provenance).toEqual({
+        lead: `At step ${String(LONG.stepNumber)} of`,
+        caseTitle: LONG.caseTitle,
+        run: `the ${LONG.runWhen} run`,
+        facts: `${LONG.target} · seen in 2 runs`,
+      });
+    });
+
+    it('says a bug found beside a step was found beside it, and offers no run that is gone', () => {
+      const { result } = renderHook(() =>
+        useBugCardViewModel({
+          ...PROPS,
+          hasRun: false,
+          bug: { ...LONG, isIncidental: true },
+        }),
+      );
+
+      expect(result.current.provenance.lead).toMatch(/^Beside step/);
+      expect(result.current.provenance.run).toBeNull();
+    });
+
+    it('puts the screen it broke on first, the others beside it', () => {
+      const { result } = renderHook(() => useBugCardViewModel({ ...PROPS, bug: LONG }));
+
+      expect(result.current.hero?.src).toBe('data:broke');
+      expect(result.current.thumbs.map(({ src }) => src)).toEqual(['data:before']);
+    });
+
+    it('shows the step that broke with the one before it, and every step on asking', () => {
+      const { result } = renderHook(() => useBugCardViewModel({ ...PROPS, bug: LONG }));
+
+      expect(result.current.steps.map(({ number }) => number)).toEqual([3, 4]);
+      expect(result.current.stepsToggle).toBe('See all 5 steps');
+
+      act(() => {
+        result.current.onStepsToggle();
+      });
+
+      expect(result.current.steps).toHaveLength(5);
+      expect(result.current.stepsToggle).toBe('Show fewer');
+    });
+
+    it('does NOT offer more steps than a short bug has', () => {
+      const { result } = renderHook(() =>
+        useBugCardViewModel({
+          ...PROPS,
+          bug: { ...LONG, repro: [{ action: 'Apply it', isBad: true }] },
+        }),
+      );
+
+      expect(result.current.stepsToggle).toBeNull();
+    });
+
+    it('keeps how it was found folded until the QA opens it', () => {
+      const { result } = renderHook(() => useBugCardViewModel({ ...PROPS, bug: LONG }));
+
+      expect(result.current.isDetailsOpen).toBe(false);
+
+      act(() => {
+        result.current.onDetailsToggle();
+      });
+
+      expect(result.current.isDetailsOpen).toBe(true);
+    });
+  });
 });

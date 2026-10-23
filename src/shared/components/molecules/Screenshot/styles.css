@@ -17,6 +17,16 @@
   height: 78px;
 }
 
+.screenshot--hero {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  cursor: zoom-in;
+}
+
+.screenshot--hero .screenshot__shot {
+  object-fit: contain;
+}
+
 .screenshot--bad {
   border-color: var(--fail);
 }
