@@ -1,6 +1,7 @@
 export * from './APP_USER_MODEL_ID';
 export * from './APP_VERSION';
 export * from './ASSISTANT';
+export * from './CHAT_SOURCES';
 export * from './DIAGNOSTICS_LINES';
 export * from './FILE_FILTERS';
 export * from './PATHS';

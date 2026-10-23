@@ -1,4 +1,4 @@
-import type { AppLook } from '@/harness';
+import type { AppLook, IAttachSources, SourceCall } from '@/harness';
 import type {
   AgentSignInProgress,
   ConfluenceSwitch,
@@ -62,7 +62,15 @@ import {
   screen,
   shell,
 } from 'electron';
-import { Harness, McpHost, mcpConfigWith } from '@/harness';
+import {
+  Harness,
+  McpHost,
+  mcpConfigWith,
+  pageAnswerOf,
+  pagesFoundOf,
+  sourceFailureOf,
+  storyAnswerOf,
+} from '@/harness';
 import {
   AgentDetector,
   AndroidDriver,
@@ -117,6 +125,7 @@ import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import {
   ASSISTANT,
   FILE_FILTERS,
+  CHAT_SOURCES,
   PATHS,
   SAVED_VIDEO,
   APP_USER_MODEL_ID,
@@ -577,6 +586,87 @@ const confluencePages = new Map<string, IConfluencePage>();
 const askingChats = new Set<string>();
 const stoppedChats = new Set<string>();
 
+async function fetchSource(props: {
+  workspaceId: string;
+  call: SourceCall;
+}): Promise<{ text: string; isError: boolean }> {
+  const { workspaceId, call } = props;
+
+  if (call.name === 'read_jira_story') {
+    const read = await jiraStories.prepare({
+      workspaceId,
+      key: call.key,
+      onStep: ({ at, bytes }) => {
+        broadcast({
+          channel: CHANNELS.agentEvent,
+          event: { kind: 'jira', workspaceId, step: at, bytes },
+        });
+      },
+    });
+
+    return read.isReady
+      ? { text: storyAnswerOf(read.copy), isError: false }
+      : {
+          text: sourceFailureOf({
+            source: 'jira',
+            failure: read.failure,
+            subject: `story ${call.key}`,
+          }),
+          isError: true,
+        };
+  }
+
+  if ((await vault.confluence()) === null)
+    return {
+      text: sourceFailureOf({
+        source: 'confluence',
+        failure: (await vault.jira()) === null ? 'not-connected' : 'off',
+        subject: '',
+      }),
+      isError: true,
+    };
+
+  if (call.name === 'search_confluence') {
+    const found = await confluence.search(call.query);
+
+    return found.isListed
+      ? { text: pagesFoundOf({ query: call.query, pages: found.pages }), isError: false }
+      : {
+          text: sourceFailureOf({
+            source: 'confluence',
+            failure: found.failure,
+            subject: 'its pages',
+          }),
+          isError: true,
+        };
+  }
+
+  const opened = await confluence.page(call.pageId);
+
+  if (!opened.isRead)
+    return {
+      text: sourceFailureOf({
+        source: 'confluence',
+        failure: opened.failure,
+        subject: `page ${call.pageId}`,
+      }),
+      isError: true,
+    };
+
+  const page = { page: opened.page, text: opened.text };
+
+  confluencePages.set(workspaceId, page);
+
+  return { text: pageAnswerOf(page), isError: false };
+}
+
+function sourcesFor(workspaceId: string): IAttachSources {
+  return {
+    scope: `${CHAT_SOURCES.scope}${workspaceId}`,
+    fetch: (call) => fetchSource({ workspaceId, call }),
+  };
+}
+
 async function askOnce(props: {
   ask: IAskAgent;
   command: string;
@@ -602,29 +692,36 @@ async function askOnce(props: {
     design: ask.design,
     variables: ask.variables,
   });
-  const servers = chat.design.servers;
-  const turn = await agentRunner.ask({
-    workspaceId: ask.workspaceId,
-    agentId: ask.agentId,
-    command,
-    model: ask.model,
-    sessionId,
-    prompt: chat.prompt,
-    schema: chat.schema,
-    systemPrompt: chat.systemPrompt,
-    allowedTools: [...chat.tools.allowedTools, ...chat.design.allowedTools],
-    readDirs: chat.readDirs,
-    ...(servers.length === 0
-      ? {}
-      : {
-          mcpConfig: mcpConfigWith({ config: null, servers }) ?? undefined,
-          ...(chat.readDirs.length === 0
-            ? {}
-            : { tools: AGENT_RUN.readTools.split(',') }),
-        }),
+  const sources = sourcesFor(ask.workspaceId);
+  const storyFolder = join(PATHS.jira, ask.workspaceId);
+  const mcpConfig = mcpConfigWith({
+    config: tools.mcpConfigFor(sources.scope, CHAT_SOURCES.toolMs),
+    servers: chat.design.servers,
   });
 
-  return { turn, told: chat.told };
+  await mkdir(storyFolder, { recursive: true });
+  tools.attachSources(sources);
+
+  try {
+    const turn = await agentRunner.ask({
+      workspaceId: ask.workspaceId,
+      agentId: ask.agentId,
+      command,
+      model: ask.model,
+      sessionId,
+      prompt: chat.prompt,
+      schema: chat.schema,
+      systemPrompt: chat.systemPrompt,
+      allowedTools: [...chat.tools.allowedTools, ...chat.design.allowedTools],
+      readDirs: [...new Set([...chat.readDirs, storyFolder])],
+      tools: AGENT_RUN.readTools.split(','),
+      ...(mcpConfig === null ? {} : { mcpConfig }),
+    });
+
+    return { turn, told: chat.told };
+  } finally {
+    tools.detachSources(sources.scope);
+  }
 }
 
 async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
@@ -756,12 +853,23 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
         page: null,
       };
 
-    if (!turn.isError && turn.sessionId !== null) toldChats.set(turn.sessionId, told);
+    const storyRead = jiraStories.storyOf(ask.workspaceId);
+    const pageRead = confluencePages.get(ask.workspaceId) ?? null;
+
+    if (!turn.isError && turn.sessionId !== null)
+      toldChats.set(
+        turn.sessionId,
+        harness.toldAfterReading({
+          told,
+          story: storyRead === story ? null : storyRead,
+          page: pageRead === page ? null : pageRead,
+        }),
+      );
 
     const answer = turn.isError ? null : harness.readChat(turn.text);
 
     if (answer?.plan && code !== null) await codeCopies.release(ask.workspaceId);
-    if (answer?.plan && story !== null) await jiraStories.release(ask.workspaceId);
+    if (answer?.plan && storyRead !== null) await jiraStories.release(ask.workspaceId);
     if (answer?.plan) confluencePages.delete(ask.workspaceId);
 
     return {
@@ -778,10 +886,14 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
               commit: code.commit,
             },
       story:
-        story === null
+        storyRead === null
           ? null
-          : { key: story.story.key, summary: story.story.summary, url: story.story.url },
-      page: page?.page ?? null,
+          : {
+              key: storyRead.story.key,
+              summary: storyRead.story.summary,
+              url: storyRead.story.url,
+            },
+      page: pageRead?.page ?? null,
     };
   } finally {
     askingChats.delete(ask.workspaceId);
