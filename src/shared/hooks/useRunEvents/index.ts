@@ -6,12 +6,13 @@ import { isSeenIn } from '@/modules/Bug/library';
 import { RUN_FAILURE_KEYS } from '@/modules/Run/constants';
 import { useOpenRun } from '@/modules/Run/hooks/useOpenRun';
 import { walkedByOf } from '@/modules/Run/library';
-import { Run } from '@/services';
+import { Run, Variables } from '@/services';
 import {
   useAppStore,
   useMachineStore,
   useSettingsStore,
   useSetupStore,
+  useVariablesStore,
   useWorkspaceStore,
 } from '@/store';
 
@@ -25,6 +26,7 @@ export const useRunEvents = () => {
   const landAsked = useWorkspaceStore((state) => state.landAsked);
   const landAnswered = useWorkspaceStore((state) => state.landAnswered);
   const landExplored = useWorkspaceStore((state) => state.landExplored);
+  const loadVariables = useVariablesStore((state) => state.load);
   const agent = useSettingsStore((state) => state.agent);
   const landStep = useWorkspaceStore((state) => state.landStep);
   const landRunDone = useWorkspaceStore((state) => state.landRunDone);
@@ -139,9 +141,11 @@ export const useRunEvents = () => {
     else if (event.kind === 'asked') {
       landAsked({ workspaceId: event.workspaceId, question: event.question });
       announceQuestion({ workspaceId: event.workspaceId, question: event.question });
-    } else if (event.kind === 'answered')
+    } else if (event.kind === 'answered') {
       landAnswered({ workspaceId: event.workspaceId, asked: event.asked });
-    else if (event.kind === 'step') landStep(event.outcome);
+      if (event.asked.answer.kind === 'secret' && event.asked.answer.isKept)
+        void Variables.list().then(loadVariables);
+    } else if (event.kind === 'step') landStep(event.outcome);
     else if (event.kind === 'explored')
       landExplored({
         workspaceId: event.workspaceId,

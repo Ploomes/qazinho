@@ -17,6 +17,7 @@ import {
   useMachineStore,
   useSettingsStore,
   useSetupStore,
+  useVariablesStore,
   useWorkspaceStore,
 } from '@/store';
 
@@ -505,6 +506,41 @@ describe('useRunEvents', () => {
         kind: 'ask',
         runId: 'r-01',
         answer: { kind: 'secret', name: 'PLAN_CODE' },
+      });
+    });
+
+    /** The plan said LOGIN_PASSWORD was missing right after the QA kept it in an answer. */
+    it("reads the project's variables again once an answer was kept in it", async () => {
+      useVariablesStore.setState({ byProject: {} });
+
+      const { send } = listening();
+
+      window.qazinho = {
+        ...window.qazinho,
+        listVariables: () =>
+          Promise.resolve([
+            { projectId: 'p1', variables: [{ name: 'LOGIN_PASSWORD', description: '' }] },
+          ]),
+      };
+      send({ kind: 'asked', workspaceId: 'w1', question: QUESTION });
+      send({
+        kind: 'answered',
+        workspaceId: 'w1',
+        asked: {
+          id: 'q-1',
+          question: 'The password?',
+          caseId: 'TC-01',
+          stepNumber: 2,
+          answer: { kind: 'secret', name: 'LOGIN_PASSWORD', isKept: true },
+          askedAtMs: 1,
+          answeredAtMs: 2,
+        },
+      });
+
+      await waitFor(() => {
+        expect(useVariablesStore.getState().byProject.p1).toEqual([
+          { name: 'LOGIN_PASSWORD', description: '' },
+        ]);
       });
     });
 
