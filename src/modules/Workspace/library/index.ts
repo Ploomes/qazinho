@@ -14,6 +14,7 @@ export * from './landReview';
 export * from './landStep';
 export * from './landVideo';
 export * from './messageOfSaved';
+export * from './panelWidthOf';
 export * from './resumeRun';
 export * from './startRun';
 export * from './takeSuggestion';
