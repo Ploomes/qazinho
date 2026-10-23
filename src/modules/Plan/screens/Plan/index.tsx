@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, Reorder } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Button, EmptyState, Icon, IconButton } from '@/shared/components/atoms';
-import { Tooltip } from '@/shared/components/molecules';
+import { ToTop, Tooltip } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
 import { PlanCase, PublishModal, UndoToast } from './components';
 import { usePlanViewModel } from './hooks';
@@ -9,6 +9,9 @@ import './styles.css';
 
 export const Plan: React.FC = () => {
   const {
+    topRef,
+    isToTopShown,
+    onToTop,
     secretNotice,
     onKeepSecret,
     onPlainSecret,
@@ -124,7 +127,7 @@ export const Plan: React.FC = () => {
         />
       ) : (
         <div className="plan">
-          <div className="plan__head">
+          <div ref={topRef} className="plan__head">
             <span className="plan__summary">{summary}</span>
             <span className="plan__note">{t('PLAN.NOTE')}</span>
             <div className="plan__actions">
@@ -355,6 +358,8 @@ export const Plan: React.FC = () => {
               {t('PLAN.ADD_CASE')}
             </button>
           )}
+
+          <ToTop isShown={isToTopShown} onClick={onToTop} />
         </div>
       )}
 

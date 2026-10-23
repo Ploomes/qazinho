@@ -28,6 +28,7 @@ import { flattenPlanSteps, useRunActions } from '@/modules/Run';
 import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
 import { Archive, Confluence, Run } from '@/services';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
+import { useToTop } from '@/shared/hooks/useToTop';
 import {
   useAppStore,
   useSettingsStore,
@@ -38,6 +39,7 @@ import {
 
 export const usePlanViewModel = () => {
   const { t } = useTranslation();
+  const { topRef, isToTopShown, onToTop } = useToTop();
   const workspace = useSelectedWorkspacePart((opened) => ({
     id: opened.id,
     name: opened.name,
@@ -288,6 +290,8 @@ export const usePlanViewModel = () => {
   );
 
   return {
+    topRef,
+    onToTop,
     secretNotice:
       secret === null || isLocked
         ? null
@@ -528,6 +532,7 @@ export const usePlanViewModel = () => {
       setFreshCaseId(fresh);
       if (fresh !== null && openCaseId !== fresh) toggleCase(fresh);
     },
+    isToTopShown: isToTopShown && undoable === null,
     undo:
       undoable === null
         ? null

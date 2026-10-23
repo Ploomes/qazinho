@@ -1,12 +1,16 @@
 import { AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { EmptyState } from '@/shared/components/atoms';
+import { ToTop } from '@/shared/components/molecules';
 import { BugCard, BugFilingPopup, BugSendModal } from './components';
 import { useBugsViewModel } from './hooks';
 import './styles.css';
 
 export const Bugs: React.FC = () => {
   const {
+    topRef,
+    isToTopShown,
+    onToTop,
     bugs,
     workspaceId,
     openBugId,
@@ -36,7 +40,7 @@ export const Bugs: React.FC = () => {
 
   return (
     <div className="bugs">
-      <div className="bugs__head">
+      <div ref={topRef} className="bugs__head">
         <span className="bugs__summary">{summary}</span>
         <div className="bugs__filters">
           {filters.map((item) => (
@@ -75,6 +79,8 @@ export const Bugs: React.FC = () => {
           />
         ))}
       </div>
+
+      <ToTop isShown={isToTopShown} onClick={onToTop} />
 
       <AnimatePresence>
         {sending !== null && (

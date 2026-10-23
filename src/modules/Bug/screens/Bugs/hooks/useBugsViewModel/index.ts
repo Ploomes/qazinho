@@ -6,10 +6,12 @@ import { BUG_FILTER_KEYS, BUG_FILTERS } from '@/modules/Bug/constants';
 import { useBugFiling } from '@/modules/Bug/hooks/useBugFiling';
 import { appearancesOf } from '@/modules/Bug/library';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
+import { useToTop } from '@/shared/hooks/useToTop';
 import { useWorkspaceStore } from '@/store';
 
 export const useBugsViewModel = () => {
   const { t } = useTranslation();
+  const { topRef, isToTopShown, onToTop } = useToTop();
   const workspace = useSelectedWorkspacePart((opened) => ({
     id: opened.id,
     bugs: opened.bugs,
@@ -56,6 +58,9 @@ export const useBugsViewModel = () => {
   const filingBug = bugs.find(({ id }) => id === filing?.bugId) ?? null;
 
   return {
+    topRef,
+    isToTopShown,
+    onToTop,
     bugs: shown.map((bug) => {
       const latest =
         appearancesOf(bug).findLast((seen) => runs.some(({ id }) => id === seen.runId)) ??
