@@ -247,6 +247,20 @@ answers one question per channel, for a target `{ role, platform }`:
     `Glob` on that folder alone.
   - The files are deleted once a plan comes back, when the workspace goes, and on the next
     start. The workspace keeps the story (`issue`), which its header and its plan open in Jira.
+- **A Confluence page is a requirement too, and where a plan is published**
+  (`role/chat/confluence.md`). Confluence is turned on beside Jira (`setConfluence`), once
+  `ConfluenceApi.check` reaches it with Jira's account:
+  - Main's `ConfluenceApi` talks to Confluence Cloud on Jira's site with Jira's sealed token
+    (`askAtlassian`): the spaces, a title search in CQL (`cqlOf`), a page read in Atlassian's
+    document format as markdown, and a plan published.
+  - `/confluence` in the chat picks a page. Main reads it for the message (`describePage`), its
+    text indented like a story's, and keeps it for the workspace until a plan comes back. The
+    workspace keeps the page (`sourcePage`), which the plan opens.
+  - The Plan tab writes the plan as blocks (`planDocOf`): where it came from, each case's facts,
+    and its steps as a table with the verdict of the latest run; `adfOfReport` turns them into
+    Atlassian's format. The first publish asks for the space, a parent page if any and a title
+    (`PublishModal`); the workspace keeps the page (`published`), and the next publish writes its
+    next version, or makes it again when it is gone.
 - **A Figma design is held to the screen through the QA's own Figma** (`role/chat/design.md`,
   `role/runner/design.md`). `/figma` in the chat takes the link to a frame or page
   (`designLinkOf`), and the workspace keeps it (`design`), which its header opens in Figma:
@@ -452,6 +466,7 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `Archive`                             | the QA's projects, workspaces and plans, as files on disk                                |
 | `SetupInstaller`                      | installs an agent CLI, idb or gh on request, streaming each line it prints               |
 | `IntegrationVault`                    | connects the trackers: GitHub as gh's account, Jira's token sealed by `safeStorage`      |
+| `ConfluenceApi`                       | reads and publishes Confluence pages on Jira's site, with Jira's token                   |
 | `AgentTerminal`                       | runs an agent's full-screen interface out of sight: reads it, presses its keys           |
 | `AgentMcp`                            | adds an MCP server to the QA's agent and signs it in there, step by step                 |
 | `AgentLogin`                          | signs the QA's agent in through its own login, step by step                              |

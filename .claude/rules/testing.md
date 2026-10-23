@@ -84,6 +84,7 @@ Three suites that need something real behind them. They have their own config
 | `record.test.ts`       | the built app records a web run as an H.264 MP4 through its hidden window    |
 | `github.test.ts`       | a fake gh: device-code sign-in and cancel, repositories, branches, a copy    |
 | `jira.test.ts`         | a fake Jira site: stories searched and read, their files downloaded          |
+| `confluence.test.ts`   | a fake Confluence site: a page searched and read, a plan published twice     |
 | `filing.test.ts`       | a fake Jira and gh: a bug filed with its files and story, refusals in words  |
 | `review.test.ts`       | a fake agent weighs a bug seen again against its issue in a fake Jira        |
 | `assistant.test.ts`    | a fake agent acts through the app tools: a page that answers, waits, or not  |

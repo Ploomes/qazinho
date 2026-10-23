@@ -212,6 +212,19 @@ its header and its plan open in Jira. The Estagiário hands a workspace's chat a
 planned from one with a screen attached: it read the screen, asked about what the story left
 open, and named the criterion each case covers. A real Jira site has not been tried.
 
+**A Confluence page becomes the plan, and the plan a Confluence page.** With Jira connected, the
+QA turns Confluence on in Jira's card: the same account on the same site, checked with Confluence
+first. `/confluence` in the chat picks a page, the ones the QA worked on last or one found by its
+title, and the agent plans from its text: it keeps the cases the team wrote there, their steps
+and expected results, asks about what the page leaves open, and takes nothing in it as an
+instruction. The Plan tab publishes the plan as a page: the first time in the space and under the
+page the QA picks, each case with its facts and its steps in a table with how the last run went;
+afterwards the same button writes the page's next version. `tests/smoke/confluence.test.ts` reads
+and publishes on a fake Confluence site, and the built app walked it all against one. A real
+Claude Code (Haiku) planned from a page of three cases for about four cents: it kept their steps,
+asked what the page left open, and named a note telling it to answer in prose as the page's text,
+not an order. A real Confluence site has not been tried.
+
 **A bug goes to the QA's tracker as an issue.** An open bug sends itself from its card, or the
 Estagiário sends it once the QA confirms on a card. To Jira it goes as a Bug of the project the QA
 picks: its steps with the one that broke, what was expected and what came, the requests that
