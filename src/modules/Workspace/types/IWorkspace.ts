@@ -7,9 +7,14 @@ import type { ChatMessage } from '@/modules/Chat';
 import type { ViewportId } from '@/modules/Device';
 import type { IPublishedPlan, ITestCase } from '@/modules/Plan';
 import type { IRun } from '@/modules/Run';
-import type { ICodeSource, IConfluencePageRef, IDesignLink } from '@/shared/types';
+import type {
+  ICodeSource,
+  IConfluencePageRef,
+  IDesignLink,
+  IUnreadPlan,
+} from '@/shared/types';
 
-/** One front of testing inside a project: its own chat, device, plan and runs, the code or Confluence page its plan was made from, the page it was published on, and the Figma design it is checked against. */
+/** One front of testing inside a project: its own chat, device, plan and runs, the code or Confluence page its plan was made from, the page it was published on, the Figma design it is checked against, and a plan.yaml set aside that did not read. */
 export interface IWorkspace {
   id: string;
   projectId: string;
@@ -25,6 +30,7 @@ export interface IWorkspace {
   design: IDesignLink | null;
   chat: ChatMessage[];
   plan: ITestCase[];
+  unreadPlan: IUnreadPlan | null;
   planSource: ICodeSource | null;
   sourcePage: IConfluencePageRef | null;
   published: IPublishedPlan | null;

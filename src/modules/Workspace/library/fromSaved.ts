@@ -1,9 +1,8 @@
-import type { ITestCase } from '@/modules/Plan';
 import type { IRun } from '@/modules/Run';
 import type { IWorkspace, SavedBug, SavedMessage } from '@/modules/Workspace/types';
 import type { ISavedWorkspace } from '@/shared/types';
-import { parse } from 'yaml';
 import { viewportOf } from '@/modules/Device/library';
+import { planOfYaml } from '@/modules/Plan/library';
 import { bugOfSaved } from './bugOfSaved';
 import { codeSourceOf } from './codeSourceOf';
 import { messageOfSaved } from './messageOfSaved';
@@ -13,16 +12,6 @@ type SavedRun = Omit<IRun, 'endedBy' | 'costUsd' | 'video'> &
     title?: string;
     what?: string;
   };
-
-function readPlan(yaml: string): ITestCase[] {
-  try {
-    const read = parse(yaml) as { cases?: unknown };
-
-    return Array.isArray(read.cases) ? (read.cases as ITestCase[]) : [];
-  } catch {
-    return [];
-  }
-}
 
 /** A file somebody edited by hand may be nonsense, so what cannot be read is left out. */
 export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
@@ -52,7 +41,8 @@ export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
     issue: read.issue ?? null,
     design: read.design ?? null,
     chat: (read.chat ?? []).map(messageOfSaved).filter((message) => message !== null),
-    plan: readPlan(saved.planYaml),
+    plan: planOfYaml(saved.planYaml),
+    unreadPlan: saved.unreadPlan ?? read.unreadPlan ?? null,
     planSource: codeSourceOf(read.planSource),
     sourcePage: read.sourcePage ?? null,
     published: read.published ?? null,

@@ -182,4 +182,20 @@ describe('fromSaved', () => {
     expect(run?.video).toBeNull();
     expect(run?.cases[0]?.steps[0]?.span).toBeNull();
   });
+
+  it('keeps the plan set aside, from disk or from what it saved, until the QA deals with it', () => {
+    const unreadPlan = { file: 'plan.unread-20261023-052607.yaml', line: 7 };
+    const fresh = fromSaved({ ...SAVED, unreadPlan });
+
+    expect(fresh?.unreadPlan).toEqual(unreadPlan);
+    expect(
+      fromSaved({
+        id: 'w1',
+        planYaml: '',
+        json: toSaved({ workspace: { ...makeWorkspace(), unreadPlan }, at: '09:44' })
+          .json,
+      })?.unreadPlan,
+    ).toEqual(unreadPlan);
+    expect(fromSaved(SAVED)?.unreadPlan).toBeNull();
+  });
 });

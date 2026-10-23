@@ -19,6 +19,7 @@ import type {
   IRunQuestion,
   IRunVideo,
   IStepOutcome,
+  IUnreadPlan,
   JiraStep,
 } from '@/shared/types';
 
@@ -46,6 +47,7 @@ export interface IWorkspaceStore {
   removeWorkspace: (workspaceId: string) => void;
   renameWorkspace: (props: { workspaceId: string; name: string }) => void;
   setDesign: (props: { workspaceId: string; design: IDesignLink | null }) => void;
+  setUnreadPlan: (props: { workspaceId: string; unreadPlan: IUnreadPlan | null }) => void;
   setPublished: (props: {
     workspaceId: string;
     published: IPublishedPlan | null;

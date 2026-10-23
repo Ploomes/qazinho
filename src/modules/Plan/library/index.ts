@@ -11,6 +11,8 @@ export * from './moveCase';
 export * from './nextCaseId';
 export * from './planDocOf';
 export * from './planOfDraft';
+export * from './planOfYaml';
+export * from './planWithRestored';
 export * from './planWithVariableRenamed';
 export * from './removeCase';
 export * from './removeStep';
