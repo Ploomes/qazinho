@@ -134,3 +134,19 @@
   flex: none;
   gap: var(--space-3);
 }
+
+@container workspace (width < 560px) {
+  .chat__row {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .chat__gutter {
+    width: auto;
+    text-align: left;
+  }
+
+  .chat__gutter--intern {
+    justify-content: flex-start;
+  }
+}
