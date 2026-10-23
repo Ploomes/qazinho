@@ -96,6 +96,7 @@ export const useSidebarViewModel = () => {
                 ? ('paused' as const)
                 : workspace.status,
       }))
+      .sort((a, b) => Number(b.shown === 'attention') - Number(a.shown === 'attention'))
       .map(({ workspace, shown }) => ({
         kind: 'workspace' as const,
         id: workspace.id,

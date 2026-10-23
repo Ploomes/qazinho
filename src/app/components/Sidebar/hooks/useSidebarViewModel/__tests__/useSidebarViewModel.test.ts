@@ -249,6 +249,24 @@ describe('useSidebarViewModel', () => {
       });
     });
 
+    it('lists the workspace that waits first in its project, the others in their order', () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          { ...makeWorkspace(), id: 'w-a', name: 'Checkout' },
+          { ...asking(), id: 'w-b' },
+          { ...makeWorkspace(), id: 'w-c', name: 'Search' },
+        ],
+      });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(
+        result.current.rows.flatMap((row) =>
+          row.kind === 'workspace' ? [row.name] : [],
+        ),
+      ).toEqual(['Onboarding', 'Checkout', 'Search']);
+    });
+
     it('opens the chat of the workspace that waits, where the question is', () => {
       useWorkspaceStore.setState({ workspaces: [asking()], isPanelWide: true });
 
