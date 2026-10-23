@@ -1,6 +1,7 @@
 import type { ExecFileOptions } from 'node:child_process';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { envWithOnePath } from './envWithOnePath';
 import { launchHere } from './launchHere';
 
 const run = promisify(execFile);
@@ -16,6 +17,9 @@ export async function execCommand(props: {
   const { stdout, stderr } = await run(launch.file, launch.args, {
     maxBuffer: MAX_BUFFER_BYTES,
     ...props.options,
+    ...(props.options?.env === undefined
+      ? {}
+      : { env: envWithOnePath({ env: props.options.env, platform: process.platform }) }),
     encoding: 'utf8',
     windowsHide: true,
     windowsVerbatimArguments: launch.isVerbatim,
