@@ -11,6 +11,8 @@ hold the screen to that frame, detail by detail, before you report the step.
   id: `get_design_context` gives its sizes, spacing, colours, type, texts, states and the
   designers' annotations; `get_variable_defs` the tokens it names. Call `get_screenshot` only
   when those leave you unsure. Figma counts every read: read each frame once in the case.
+- Figma's tools may ask you to create a session or load a guide first: you have neither and
+  need neither. Read the frame directly.
 - Measure the screen with `inspect`, on what the frame draws: titles, texts, fields, buttons,
   icons, and what sits next to each. It answers in the unit the design uses: CSS px in a
   browser, dp on Android, points on iOS.
