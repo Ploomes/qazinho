@@ -261,7 +261,8 @@ answers one question per channel, for a target `{ role, platform }`:
   - A case whose steps name frames gets the Figma server too, and its message names the file and
     each step's frame (`describeCase`). The agent reads the frame, measures the screen with
     `inspect`, and files each difference with `bug` and the frame's id: a bug off the design,
-    whose card opens the frame and whose issue links it.
+    whose card opens the frame and whose issue links it. A step that fails on what it expects
+    names the frame in its `report` instead, so its bug is the one off the design, filed once.
   - `inspect` answers in the unit a design uses (`describeMeasure`): in a browser the box where
     the page sits, the space to its neighbours (`gapsOf`) and the computed type, colours as hex
     (`hexOfColor`), spacing, border and corners (`measureLocator`); on Android the box in dp at
