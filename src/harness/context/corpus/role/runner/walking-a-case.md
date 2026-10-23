@@ -41,7 +41,9 @@ the QA reads in the chat. Leave "note" out when the step went as planned.
 When you see a bug the step does not ask about, such as a wrong price, a broken link or two
 texts that disagree, file it with bug, as you would a failed step, and carry on: the step keeps
 its own verdict. Do not file again a bug the case lists as already filed, and leave "note" out
-when all you worked around is that bug: the QA already has it.
+when all you worked around is that bug: the QA already has it. A bug this run filed has no id
+yet, and needs none: when a step fails for it, report the failure with that bug's title, and
+QAzinho puts it on that bug.
 When what you see is one of the bugs the case lists as already open, give its id as "sameAs",
 both to bug and to report when it failed the step: QAzinho counts it as seen again, with your
 screen, instead of opening a second bug the QA would have to tell apart.

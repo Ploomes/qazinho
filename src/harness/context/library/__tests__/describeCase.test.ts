@@ -144,7 +144,7 @@ describe('describeCase', () => {
         design: null,
       }),
     ).toContain(
-      'Bugs this run already filed, not to file again:\n- Home page jumps while loading\n- Yearly price differs',
+      'Bugs this run already filed, not to file again; they have no id yet, so a step that fails for one is reported with its title:\n- Home page jumps while loading\n- Yearly price differs',
     );
   });
 

@@ -51,7 +51,7 @@ export function describeCase(props: {
       ? []
       : [
           '',
-          'Bugs this run already filed, not to file again:',
+          'Bugs this run already filed, not to file again; they have no id yet, so a step that fails for one is reported with its title:',
           ...filed.map((title) => `- ${title}`),
         ]),
     ...(screen.length === 0 ? [] : ['', 'The device shows right now:', screen]),

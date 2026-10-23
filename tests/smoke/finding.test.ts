@@ -126,7 +126,7 @@ describe('a bug on the side of a step', () => {
     expect(findings[0]?.finding.shotFile).toMatch(/finding-1-1\.jpg$/);
     expect(steps.map(({ verdict }) => verdict)).toEqual(['passed', 'passed']);
     expect(await readFile(join(prompts, 'turn-1'), 'utf8')).toContain(
-      'Bugs this run already filed, not to file again:\n- Yearly price differs',
+      'Bugs this run already filed, not to file again; they have no id yet, so a step that fails for one is reported with its title:\n- Yearly price differs',
     );
 
     deviceTools.close();
