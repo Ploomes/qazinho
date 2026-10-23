@@ -1,37 +1,30 @@
 .expected-got {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--space-3);
-}
-
-.expected-got__item {
-  padding: var(--space-4) var(--space-5);
-  border: 1px solid var(--line2);
+  grid-template-columns: max-content minmax(0, 1fr);
+  margin: 0;
+  border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  background: var(--raise);
+  background: var(--raise2);
+  container-type: inline-size;
 }
 
-.expected-got--bug .expected-got__item--got {
-  border-color: transparent;
-  background: var(--fail-soft);
+.expected-got__row {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  gap: var(--space-5);
+  padding: var(--space-4) var(--space-5);
+}
+
+.expected-got__row + .expected-got__row {
+  border-top: 1px solid var(--line);
 }
 
 .expected-got__label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-2);
+  padding-top: 1px;
   color: var(--ink2);
   font: var(--font-ui-xs);
   font-weight: 600;
-}
-
-.expected-got__item--expected .icon {
-  color: var(--pass);
-}
-
-.expected-got__item--got .icon {
-  color: var(--fail);
 }
 
 .expected-got__value {
@@ -40,4 +33,11 @@
   font: var(--font-ui-sm);
   line-height: 1.55;
   text-wrap: pretty;
+}
+
+@container (width < 360px) {
+  .expected-got__row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+  }
 }

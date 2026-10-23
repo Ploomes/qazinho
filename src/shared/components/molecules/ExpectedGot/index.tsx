@@ -1,9 +1,8 @@
 import type { IExpectedGotProps } from './types';
 import { useTranslation } from 'react-i18next';
-import { Icon } from '@/shared/components/atoms';
 import './styles.css';
 
-/** What the step expected beside what came, each in a box of its own: the expectation plain, what came marked as the failure when it is a bug. */
+/** What the step expected and what came, a row each, label beside the words. */
 export const ExpectedGot: React.FC<IExpectedGotProps> = ({
   expected,
   got,
@@ -12,21 +11,15 @@ export const ExpectedGot: React.FC<IExpectedGotProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div className={isBug ? 'expected-got expected-got--bug' : 'expected-got'}>
-      <div className="expected-got__item expected-got__item--expected">
-        <span className="expected-got__label">
-          <Icon name="passed" />
-          {t('COMMON.EXPECTED')}
-        </span>
-        <p className="expected-got__value">{expected}</p>
+    <dl className={isBug ? 'expected-got expected-got--bug' : 'expected-got'}>
+      <div className="expected-got__row">
+        <dt className="expected-got__label">{t('COMMON.EXPECTED')}</dt>
+        <dd className="expected-got__value">{expected}</dd>
       </div>
-      <div className="expected-got__item expected-got__item--got">
-        <span className="expected-got__label">
-          <Icon name="failed" />
-          {t('COMMON.GOT')}
-        </span>
-        <p className="expected-got__value">{got}</p>
+      <div className="expected-got__row">
+        <dt className="expected-got__label">{t('COMMON.GOT')}</dt>
+        <dd className="expected-got__value">{got}</dd>
       </div>
-    </div>
+    </dl>
   );
 };
