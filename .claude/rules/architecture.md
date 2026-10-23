@@ -102,6 +102,18 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
   build's permissions. A company's managed hooks still run.
 - `index.html` carries a CSP. Loosen one directive with a reason, never the whole policy.
 
+## The workspace
+
+A workspace is three columns: the sidebar, the chat in the middle, and a panel beside it
+(`SidePanel`) whose tabs are the plan, the device (`DeviceView`), the runs and the bugs.
+
+- The chat is always there; the QA picks the panel's tab (`panelTab`), and a run that starts is
+  the one thing that turns it, to the device. `selectTab('chat')` only brings the chat back.
+- The panel keeps the width the QA drags it to, narrowed so the chat keeps `SHELL.centerMinWidth`
+  (`panelWidthOf`). It folds to a rail named after its tab, or widens over the chat, which stays
+  mounted, hidden and inert, so a draft is never lost.
+- The Estagiário hears the tab beside the chat, or that the panel is hidden (`describeScreen`).
+
 ## IPC
 
 - The contract is `IQazinhoApi` in `src/shared/types/`. The preload implements it, and the page reads it
@@ -223,7 +235,7 @@ answers one question per channel, for a target `{ role, platform }`:
     `workspace_details` reads back so the Estagiário helps answer them.
   - The chat and its session outlive a restart (`keptOf`): the latest messages, with nothing
     left going.
-  - It never covers the device. Its chat opens beside an open device panel, the composer leaves
+  - It never covers the side panel. Its chat opens beside an open panel, the composer leaves
     room for its button when the panel is shut (`dockRoomOf`), and the steps scroll past it.
 - **The app builds from its own code, by the QA's agent** (`role/builder/`). A project's Android
   or iOS card, or the assistant's `build_app`, builds the app from a branch of one of the
@@ -382,7 +394,7 @@ screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `
 - Chrome keeps a window at least 500px wide, so a phone-sized page streams framed wider, and
   `DeviceScreen` cuts the stream to the viewport's shape.
 - A phone has no window either: the emulator boots with `-no-window` (`bootArgs`) and a
-  simulator through `simctl`, without Simulator.app. The QA sees it only in the device panel.
+  simulator through `simctl`, without Simulator.app. The QA sees it only in the panel's Device tab.
 
 **Every run is recorded, and its video never crosses IPC either.**
 
@@ -481,7 +493,7 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `AgentDetector`                       | finds the QA's agent CLIs, the way Orca does: fs probes, no subprocess                   |
 | `AgentRunner`                         | spawns Claude Code or Codex, each in its own dialect, and reads the answer back          |
 | `WebDriver`                           | drives Chrome over playwright-core, one profile per workspace                            |
-| `LiveStream`                          | serves the device's frames as MJPEG on 127.0.0.1, for the device panel                   |
+| `LiveStream`                          | serves the device's frames as MJPEG on 127.0.0.1, for the Device tab                     |
 | `AppPeek`                             | opens a web target for a moment before the chat, and reads what its page shows           |
 | `PhonePeek`                           | opens a phone app on the emulator or simulator before a plan, and reads its first screen |
 | `RunCoordinator`                      | walks a plan a case per agent turn, each on the app opened anew, or from its recipe      |

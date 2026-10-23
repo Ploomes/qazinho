@@ -164,7 +164,7 @@ copy; `tests/smoke/write.test.ts` drives a fake agent on real Chrome.
 **The agent asks the QA mid-run.** A case's agent, or the explorer, that cannot go on without
 the QA calls `ask_qa`: a code texted to their phone, a choice the case leaves open, a screen only
 they can judge. The run holds and the chat shows the question on a card, with the answers it
-offers; the sidebar, the header and the device panel say the run waits on the QA. A secret is
+offers; the sidebar, the header and the device say the run waits on the QA. A secret is
 typed in a hidden field and goes as a variable: the agent types `${NAME}` and never sees it, and
 the project keeps it when the QA says so. With no answer in 15 minutes the agent goes on without
 one, and Stop ends the wait. The answers stay in the run's section and in Runs, on the step they

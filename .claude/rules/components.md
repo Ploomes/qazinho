@@ -8,7 +8,7 @@ src/shared/components/
 ├── atoms/        Button, Chip, StatusPill, Input, Icon, IconButton, Caret, Meter, Kbd, Logo,
 │                 Intern, Markdown, Wordmark, Tag
 ├── molecules/    TabBar, SidebarRow, CountTile, TargetCard, MetaGrid
-├── organisms/    Titlebar, Sidebar, Composer, PlanCase, DevicePanel, ResourcePopover, StepsPopup
+├── organisms/    Titlebar, Sidebar, Composer, PlanCase, ResourcePopover, StepsPopup
 └── templates/    AppShell, ModalFrame
 ```
 
@@ -101,7 +101,7 @@ edge. See `testing.md`.
 - Class names are BEM over the component's kebab name: `.status-pill`,
   `.status-pill__icon`, `.status-pill--failed`.
 - **No inline `style`**, except a value the view model computed and CSS cannot know (a dragged
-  card's offset, the device panel's width). It goes in as a custom property:
+  card's offset, the side panel's width). It goes in as a custom property:
   `style={{ '--device-width': widthPx }}`.
 - Colour, spacing, radius, font and duration come from tokens — see `design-tokens.md`.
 

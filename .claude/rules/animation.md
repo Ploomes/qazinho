@@ -4,13 +4,13 @@ Motion (`motion/react`) animates the interface. CSS keeps only what never unmoun
 
 ## Which one, and when
 
-| Use Motion for                                    | Keep in CSS                              |
-| ------------------------------------------------- | ---------------------------------------- |
-| Anything entering or leaving (`AnimatePresence`)  | Ambient loops: a pulsing dot, a shimmer  |
-| A list that reorders (`Reorder`, `layout`)        | The comet stroke on a running case       |
-| Popovers, modals, the lightbox                    | The recording sweep over the device      |
-| Drag: the plan's cases, the device panel's handle | `:hover` and `:active` on a button       |
-| A value the view model computes over time         | Anything that would fight the compositor |
+| Use Motion for                                   | Keep in CSS                              |
+| ------------------------------------------------ | ---------------------------------------- |
+| Anything entering or leaving (`AnimatePresence`) | Ambient loops: a pulsing dot, a shimmer  |
+| A list that reorders (`Reorder`, `layout`)       | The comet stroke on a running case       |
+| Popovers, modals, the lightbox                   | The recording sweep over the device      |
+| Drag: the plan's cases, the side panel's handle  | `:hover` and `:active` on a button       |
+| A value the view model computes over time        | Anything that would fight the compositor |
 
 A loop that runs forever on a mounted element is cheaper as a keyframe. A transition that has a
 beginning and an end belongs to Motion, because React knows when it starts.
