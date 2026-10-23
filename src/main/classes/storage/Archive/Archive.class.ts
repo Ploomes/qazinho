@@ -172,15 +172,42 @@ export class Archive {
   private async readPlan(
     folder: string,
   ): Promise<Pick<ISavedWorkspace, 'planYaml' | 'unreadPlan'>> {
-    const planYaml = await readTextOr({ file: join(folder, ARCHIVE.plan), fallback: '' });
+    const plan = join(folder, ARCHIVE.plan);
+    const planYaml = await readFile(plan, 'utf8').catch(() => null);
+
+    if (planYaml === null) return this.readAside(folder);
+
     const fault = planFaultOf(planYaml);
 
     if (fault === null) return { planYaml };
 
     const file = asideNameOf(new Date());
 
-    await rename(join(folder, ARCHIVE.plan), join(folder, file));
+    await rename(plan, join(folder, file));
 
     return { planYaml: '', unreadPlan: { file, line: fault.line } };
+  }
+
+  private async readAside(
+    folder: string,
+  ): Promise<Pick<ISavedWorkspace, 'planYaml' | 'unreadPlan'>> {
+    const file = (await readdir(folder).catch(() => []))
+      .filter((name) => ARCHIVE.unreadPlan.test(name))
+      .sort()
+      .at(-1);
+    const yaml =
+      file === undefined
+        ? null
+        : await readFile(join(folder, file), 'utf8').catch(() => null);
+
+    if (file === undefined || yaml === null) return { planYaml: '' };
+
+    const fault = planFaultOf(yaml);
+
+    if (fault !== null) return { planYaml: '', unreadPlan: { file, line: fault.line } };
+
+    await rename(join(folder, file), join(folder, ARCHIVE.plan));
+
+    return { planYaml: yaml };
   }
 }

@@ -176,5 +176,37 @@ describe('Archive', () => {
         await archive.readUnreadPlan({ workspaceId: 'w1', file: '../../projects.json' }),
       ).toEqual({ status: 'gone' });
     });
+
+    /** The window reloaded before the page saved that it knew: the next read must still say so. */
+    it('says so again on every read until a plan is saved', async () => {
+      await archive.saveWorkspace({ ...SAVED, planYaml: BROKEN });
+
+      const first = (await archive.read()).workspaces[0]?.unreadPlan;
+
+      expect((await archive.read()).workspaces[0]).toMatchObject({
+        planYaml: '',
+        unreadPlan: first,
+      });
+
+      await archive.saveWorkspace({ ...SAVED, planYaml: 'cases: []\n' });
+
+      expect((await archive.read()).workspaces[0]?.unreadPlan).toBeUndefined();
+    });
+
+    it('takes back on its own a file the QA fixed before QAzinho read it again', async () => {
+      await archive.saveWorkspace({ ...SAVED, planYaml: BROKEN });
+
+      const aside = (await archive.read()).workspaces[0]?.unreadPlan?.file ?? '';
+
+      await writeFile(
+        archive.unreadPlanFile({ workspaceId: 'w1', file: aside }) ?? '',
+        'cases:\n  - id: TC-01\n',
+      );
+
+      expect((await archive.read()).workspaces[0]).toEqual({
+        ...SAVED,
+        planYaml: 'cases:\n  - id: TC-01\n',
+      });
+    });
   });
 });
