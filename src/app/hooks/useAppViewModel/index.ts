@@ -9,6 +9,7 @@ import {
 import { useSuiteWatch } from '@/modules/Automation';
 import { useBuildEvents } from '@/modules/Build';
 import { AppWindow, Platform } from '@/services';
+import { SHELL } from '@/shared/constants';
 import {
   useArchive,
   useKeybinds,
@@ -70,7 +71,8 @@ export const useAppViewModel = () => {
 
   return {
     shellStyle: {
-      '--sidebar-width': `${String(sidebarWidth)}px`,
+      '--sidebar-width': `${String(SHELL.sidebarWidth)}px`,
+      '--sidebar-shown': `${String(sidebarWidth)}px`,
       '--dock-room': `${String(dockRoomOf({ isWorkspace: screen === 'workspace' && projects.length > 0, isPanelOpen }))}px`,
       '--dock-lift': `${String(ASSISTANT_DOCK.inset + ASSISTANT_DOCK.buttonSize)}px`,
     } as CSSProperties,

@@ -146,6 +146,24 @@ describe('useAppViewModel', () => {
     expect(result.current.shellStyle).toMatchObject({ '--dock-room': '0px' });
   });
 
+  /** Settings drew its menu as wide as the sidebar, and a folded sidebar squeezed it a word a line. */
+  it('folds only the sidebar: what is drawn as wide as an open one keeps its width', () => {
+    useSettingsStore.setState({ isSidebarShut: true });
+
+    const { result } = renderHook(() => useAppViewModel());
+
+    expect(result.current.shellStyle).toMatchObject({
+      '--sidebar-width': '268px',
+      '--sidebar-shown': '56px',
+    });
+
+    act(() => {
+      useSettingsStore.setState({ isSidebarShut: false });
+    });
+
+    expect(result.current.shellStyle).toMatchObject({ '--sidebar-shown': '268px' });
+  });
+
   it('hides the app sidebar while settings take the whole window', () => {
     useAppStore.setState({
       screen: 'settings',

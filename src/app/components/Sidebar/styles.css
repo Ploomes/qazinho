@@ -2,7 +2,7 @@
   display: flex;
   flex: none;
   flex-direction: column;
-  width: var(--sidebar-width);
+  width: var(--sidebar-shown);
   overflow: hidden;
   border-right: 1px solid var(--line2);
   background: var(--panel);
