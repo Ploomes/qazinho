@@ -1,7 +1,7 @@
 import type { IKeybind, RunAlert, SettingsTab } from '@/modules/Settings';
 import type { Language } from '@/shared/types';
 
-/** What the QA has set up on this machine: the agent, the devices, the shortcuts, and whether a run's video shows its network. */
+/** What the QA has set up on this machine: the agent, the devices, the shortcuts, whether a run's video shows its network, and whether the sidebar is folded. */
 export interface ISettingsStore {
   tab: SettingsTab;
   agent: string;
@@ -12,6 +12,7 @@ export interface ISettingsStore {
   hasOnboarded: boolean;
   runAlert: RunAlert;
   replayNetwork: boolean;
+  isSidebarShut: boolean;
   selectTab: (tab: SettingsTab) => void;
   selectAgent: (agent: string) => void;
   selectModel: (model: string) => void;
@@ -21,4 +22,5 @@ export interface ISettingsStore {
   finishOnboarding: () => void;
   selectRunAlert: (runAlert: RunAlert) => void;
   showReplayNetwork: (isOn: boolean) => void;
+  toggleSidebar: () => void;
 }

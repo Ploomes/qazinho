@@ -1,12 +1,19 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Icon, PlatformIcon } from '@/shared/components/atoms';
+import { Icon, IconButton, PlatformIcon } from '@/shared/components/atoms';
+import { Tooltip } from '@/shared/components/molecules';
 import { STICKER } from '@/shared/constants';
 import { useSidebarViewModel } from './hooks';
 import './styles.css';
 
 export const Sidebar: React.FC = () => {
   const {
+    className,
+    toggleLabel,
+    onToggle,
+    newWorkspaceHint,
+    newProjectHint,
+    settingsHint,
     rows,
     waitingName,
     onOpenWaiting,
@@ -22,7 +29,7 @@ export const Sidebar: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <nav className="sidebar">
+    <nav className={className}>
       <AnimatePresence>
         {waitingName !== null && (
           <motion.button
@@ -80,12 +87,19 @@ export const Sidebar: React.FC = () => {
                 <button
                   type="button"
                   className="sidebar__open"
+                  title={row.hint}
                   onClick={() => {
                     onOpenSuite(row.projectId);
                   }}
                 >
                   <span className="sidebar__platform">
                     <Icon name="suite" size={15} />
+                    <span
+                      className="sidebar__badge"
+                      style={{ color: row.tone, animation: row.animation }}
+                    >
+                      <Icon name={row.icon} />
+                    </span>
                   </span>
                   <span className="sidebar__text">
                     <span className="sidebar__name">{row.name}</span>
@@ -112,12 +126,13 @@ export const Sidebar: React.FC = () => {
                 key={row.id}
                 type="button"
                 className="sidebar__add"
+                title={newWorkspaceHint}
                 onClick={() => {
                   onNewWorkspace(row.projectId);
                 }}
               >
                 <Icon name="plus" />
-                {t('SIDEBAR.NEW_WORKSPACE')}
+                <span className="sidebar__label">{t('SIDEBAR.NEW_WORKSPACE')}</span>
               </button>
             );
           }
@@ -132,6 +147,7 @@ export const Sidebar: React.FC = () => {
               <button
                 type="button"
                 className="sidebar__open"
+                title={row.hint}
                 onClick={() => {
                   onSelectWorkspace(row.id);
                 }}
@@ -140,6 +156,12 @@ export const Sidebar: React.FC = () => {
                   {row.platform !== null && (
                     <PlatformIcon kind={row.platform} size={15} />
                   )}
+                  <span
+                    className="sidebar__badge"
+                    style={{ color: row.tone, animation: row.animation }}
+                  >
+                    <Icon name={row.icon} />
+                  </span>
                 </span>
                 <span className="sidebar__text">
                   <span className="sidebar__name">{row.name}</span>
@@ -212,16 +234,27 @@ export const Sidebar: React.FC = () => {
       <button
         type="button"
         className="sidebar__add sidebar__add--project"
+        title={newProjectHint}
         onClick={onNewProject}
       >
         <Icon name="plus" />
-        {t('SIDEBAR.NEW_PROJECT')}
+        <span className="sidebar__label">{t('SIDEBAR.NEW_PROJECT')}</span>
       </button>
 
-      <button type="button" className="sidebar__settings" onClick={onSettings}>
-        <Icon name="settings" />
-        {t('COMMON.SETTINGS')}
-      </button>
+      <div className="sidebar__foot">
+        <button
+          type="button"
+          className="sidebar__settings"
+          title={settingsHint}
+          onClick={onSettings}
+        >
+          <Icon name="settings" />
+          <span className="sidebar__label">{t('COMMON.SETTINGS')}</span>
+        </button>
+        <Tooltip content={toggleLabel}>
+          <IconButton icon="sidebar" label={toggleLabel} size="sm" onClick={onToggle} />
+        </Tooltip>
+      </div>
     </nav>
   );
 };

@@ -9,6 +9,7 @@ export * from './useRunTicker';
 export * from './useSelectedWorkspace';
 export * from './useSelectedWorkspacePart';
 export * from './useShot';
+export * from './useSidebarWidth';
 export * from './useToTop';
 export * from './useVariables';
 export * from './useWindowWidth';

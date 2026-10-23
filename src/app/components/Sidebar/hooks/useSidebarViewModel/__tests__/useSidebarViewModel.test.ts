@@ -11,7 +11,7 @@ import {
   walkRun,
 } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useSuiteStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useSettingsStore, useSuiteStore, useWorkspaceStore } from '@/store';
 
 const PROJECT = { id: 'p1', name: 'Shop · staging', targets: [], repositories: [] };
 
@@ -368,6 +368,42 @@ describe('useSidebarViewModel', () => {
 
       expect(useAppStore.getState().screen).toBe('workspace');
       expect(useAppStore.getState().selectedWorkspaceId).toBe('w1');
+    });
+  });
+
+  describe('onToggle', () => {
+    it('folds the sidebar to its rail, naming each row in a hint, and opens it back', () => {
+      useSettingsStore.setState({ isSidebarShut: false });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.className).toBe('sidebar');
+      expect(result.current.toggleLabel).toBe('Fold the sidebar');
+
+      act(() => {
+        result.current.onToggle();
+      });
+
+      expect(result.current.className).toBe('sidebar sidebar--shut');
+      expect(result.current.toggleLabel).toBe('Unfold the sidebar');
+      expect(result.current.newProjectHint).toBe('New project');
+
+      act(() => {
+        result.current.onToggle();
+      });
+
+      expect(result.current.isShut).toBe(false);
+    });
+
+    it('does NOT hang a hint on a row while the sidebar shows its words', () => {
+      useSettingsStore.setState({ isSidebarShut: false });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.newProjectHint).toBeUndefined();
+      expect(
+        result.current.rows.every((row) => !('hint' in row) || row.hint === undefined),
+      ).toBe(true);
     });
   });
 });

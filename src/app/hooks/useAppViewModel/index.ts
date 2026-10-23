@@ -9,7 +9,6 @@ import {
 import { useSuiteWatch } from '@/modules/Automation';
 import { useBuildEvents } from '@/modules/Build';
 import { AppWindow, Platform } from '@/services';
-import { SHELL } from '@/shared/constants';
 import {
   useArchive,
   useKeybinds,
@@ -17,6 +16,7 @@ import {
   useMachineWatch,
   useRunEvents,
   useRunTicker,
+  useSidebarWidth,
   useVariables,
 } from '@/shared/hooks';
 import {
@@ -36,6 +36,7 @@ export const useAppViewModel = () => {
   const runNotice = useAppStore((state) => state.runNotice);
   const hasOnboarded = useSettingsStore((state) => state.hasOnboarded);
   const isPanelOpen = useWorkspaceStore((state) => state.isPanelOpen);
+  const sidebarWidth = useSidebarWidth();
   const variablesKey = useVariablesStore((state) => state.request?.id ?? null);
 
   useArchive();
@@ -69,7 +70,7 @@ export const useAppViewModel = () => {
 
   return {
     shellStyle: {
-      '--sidebar-width': `${String(SHELL.sidebarWidth)}px`,
+      '--sidebar-width': `${String(sidebarWidth)}px`,
       '--dock-room': `${String(dockRoomOf({ isWorkspace: screen === 'workspace' && projects.length > 0, isPanelOpen }))}px`,
       '--dock-lift': `${String(ASSISTANT_DOCK.inset + ASSISTANT_DOCK.buttonSize)}px`,
     } as CSSProperties,

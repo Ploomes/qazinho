@@ -60,6 +60,8 @@ export const pt: typeof en = {
     SUITE_TESTS_ONE: '1 teste',
     SUITE_TESTS_OTHER: '{{count}} testes',
     SUITE_RUNNING: '{{done}}/{{total}}',
+    SHUT: 'Recolher a barra lateral',
+    OPEN: 'Abrir a barra lateral',
   },
   WELCOME: {
     TITLE: 'Nenhum projeto ainda.',
@@ -737,7 +739,8 @@ export const pt: typeof en = {
     KEYBIND_WORKSPACE: 'Novo workspace',
     KEYBIND_RUN: 'Rodar o plano',
     KEYBIND_STOP: 'Parar a run',
-    KEYBIND_DEVICE: 'Mostrar ou esconder o device',
+    KEYBIND_DEVICE: 'Mostrar ou esconder o painel',
+    KEYBIND_SIDEBAR: 'Mostrar ou esconder a barra lateral',
     KEYBIND_CHAT: 'Ir para o Chat',
     KEYBIND_PLAN: 'Ir para o Plano',
     KEYBIND_RUNS: 'Ir para Runs',

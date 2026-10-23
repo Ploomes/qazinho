@@ -18,6 +18,7 @@ export const useSettingsStore = create<ISettingsStore>()(
       hasOnboarded: false,
       runAlert: 'system',
       replayNetwork: false,
+      isSidebarShut: false,
 
       selectTab: (tab) => set({ tab }),
 
@@ -41,6 +42,8 @@ export const useSettingsStore = create<ISettingsStore>()(
       selectRunAlert: (runAlert) => set({ runAlert }),
 
       showReplayNetwork: (replayNetwork) => set({ replayNetwork }),
+
+      toggleSidebar: () => set((state) => ({ isSidebarShut: !state.isSidebarShut })),
     }),
     {
       name: STORAGE.settings,
@@ -55,6 +58,7 @@ export const useSettingsStore = create<ISettingsStore>()(
           | 'hasOnboarded'
           | 'runAlert'
           | 'replayNetwork'
+          | 'isSidebarShut'
         >,
       merge: (persisted, current) => {
         const saved = (persisted ?? {}) as Partial<ISettingsStore>;
@@ -73,6 +77,7 @@ export const useSettingsStore = create<ISettingsStore>()(
         hasOnboarded,
         runAlert,
         replayNetwork,
+        isSidebarShut,
       }) => ({
         agent,
         model,
@@ -81,6 +86,7 @@ export const useSettingsStore = create<ISettingsStore>()(
         hasOnboarded,
         runAlert,
         replayNetwork,
+        isSidebarShut,
       }),
     },
   ),

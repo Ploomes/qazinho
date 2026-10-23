@@ -2,8 +2,9 @@ import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { caseVerdict, flattenPlanSteps, useRunActions } from '@/modules/Run';
 import { panelWidthOf } from '@/modules/Workspace/library';
-import { EXPLORATION, SHELL } from '@/shared/constants';
+import { EXPLORATION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
+import { useSidebarWidth } from '@/shared/hooks/useSidebarWidth';
 import { useWindowWidth } from '@/shared/hooks/useWindowWidth';
 import { useWorkspaceStore } from '@/store';
 
@@ -29,11 +30,13 @@ export const useWorkspaceViewModel = () => {
   const isPanelOpen = useWorkspaceStore((state) => state.isPanelOpen);
   const panelWidth = useWorkspaceStore((state) => state.panelWidth);
   const windowWidth = useWindowWidth();
+  const sidebarWidth = useSidebarWidth();
   const panel = panelWidthOf({
     width: panelWidth,
     windowWidth,
     isOpen: isPanelOpen,
     isWide: false,
+    sidebarWidth,
   });
   const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
   const setDesign = useWorkspaceStore((state) => state.setDesign);
@@ -48,7 +51,7 @@ export const useWorkspaceViewModel = () => {
     isHidden,
     className: isHidden ? 'workspace workspace--hidden' : 'workspace',
     style: {
-      '--chat-rest': `${String(windowWidth - SHELL.sidebarWidth - panel.outer)}px`,
+      '--chat-rest': `${String(windowWidth - sidebarWidth - panel.outer)}px`,
     } as CSSProperties,
     name: workspace?.name ?? '',
     issue:

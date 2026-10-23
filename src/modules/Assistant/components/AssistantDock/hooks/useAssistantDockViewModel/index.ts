@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import { ASSISTANT_DOCK } from '@/modules/Assistant/constants';
 import { panelWidthOf } from '@/modules/Workspace/library';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
+import { useSidebarWidth } from '@/shared/hooks/useSidebarWidth';
 import { useWindowWidth } from '@/shared/hooks/useWindowWidth';
 import { useAppStore, useAssistantStore, useWorkspaceStore } from '@/store';
 
@@ -19,6 +20,7 @@ export const useAssistantDockViewModel = () => {
   const isPanelWide = useWorkspaceStore((state) => state.isPanelWide);
   const panelWidth = useWorkspaceStore((state) => state.panelWidth);
   const windowWidth = useWindowWidth();
+  const sidebarWidth = useSidebarWidth();
   const shift =
     hasDevice && isDeviceShown && run?.isLive === true
       ? panelWidthOf({
@@ -26,6 +28,7 @@ export const useAssistantDockViewModel = () => {
           windowWidth,
           isOpen: true,
           isWide: isPanelWide,
+          sidebarWidth,
         }).outer
       : 0;
 

@@ -6,6 +6,7 @@ import { PANEL } from '@/modules/Workspace/constants';
 import { panelWidthOf } from '@/modules/Workspace/library';
 import { MOTION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
+import { useSidebarWidth } from '@/shared/hooks/useSidebarWidth';
 import { useWindowWidth } from '@/shared/hooks/useWindowWidth';
 import { useWorkspaceStore } from '@/store';
 
@@ -29,8 +30,21 @@ export const useSidePanelViewModel = () => {
   const windowWidth = useWindowWidth();
   const [isResizing, setResizing] = useState(false);
 
-  const { inner, outer } = panelWidthOf({ width, windowWidth, isOpen, isWide });
-  const rest = panelWidthOf({ width, windowWidth, isOpen, isWide: false }).inner;
+  const sidebarWidth = useSidebarWidth();
+  const { inner, outer } = panelWidthOf({
+    width,
+    windowWidth,
+    isOpen,
+    isWide,
+    sidebarWidth,
+  });
+  const rest = panelWidthOf({
+    width,
+    windowWidth,
+    isOpen,
+    isWide: false,
+    sidebarWidth,
+  }).inner;
   const workspaceId = workspace?.id ?? null;
   const isLive = workspace?.isLive === true;
   const labels: Record<PanelTab, string> = {

@@ -58,6 +58,8 @@ export const en = {
     SUITE_TESTS_ONE: '1 test',
     SUITE_TESTS_OTHER: '{{count}} tests',
     SUITE_RUNNING: '{{done}}/{{total}}',
+    SHUT: 'Fold the sidebar',
+    OPEN: 'Unfold the sidebar',
   },
   WELCOME: {
     TITLE: 'No projects yet.',
@@ -733,7 +735,8 @@ export const en = {
     KEYBIND_WORKSPACE: 'New workspace',
     KEYBIND_RUN: 'Run the plan',
     KEYBIND_STOP: 'Stop the run',
-    KEYBIND_DEVICE: 'Show or hide the device',
+    KEYBIND_DEVICE: 'Show or hide the panel',
+    KEYBIND_SIDEBAR: 'Show or hide the sidebar',
     KEYBIND_CHAT: 'Go to Chat',
     KEYBIND_PLAN: 'Go to Plan',
     KEYBIND_RUNS: 'Go to Runs',

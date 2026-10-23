@@ -5,7 +5,7 @@ import { SIDEBAR_STATUS } from '@/app/components/Sidebar/constants';
 import { workspaceMeta } from '@/modules/Workspace';
 import { Agent, Archive, Run } from '@/services';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
-import { useAppStore, useSuiteStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useSettingsStore, useSuiteStore, useWorkspaceStore } from '@/store';
 
 export const useSidebarViewModel = () => {
   const { t } = useTranslation();
@@ -29,6 +29,9 @@ export const useSidebarViewModel = () => {
   const askRemoveWorkspace = useWorkspaceStore((state) => state.askRemoveWorkspace);
   const removeWorkspace = useWorkspaceStore((state) => state.removeWorkspace);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
+  const isShut = useSettingsStore((state) => state.isSidebarShut);
+  const toggleSidebar = useSettingsStore((state) => state.toggleSidebar);
+  const hintOf = (words: string) => (isShut ? words : undefined);
 
   const suiteRowsOf = (projectId: string): ISidebarSuiteRow[] => {
     const suite = suites[projectId];
@@ -68,6 +71,7 @@ export const useSidebarViewModel = () => {
         tone: SIDEBAR_STATUS[shown].tone,
         animation: SIDEBAR_STATUS[shown].animation,
         isSelected: screen === 'automation' && automationProjectId === projectId,
+        hint: hintOf(t('SIDEBAR.SUITE')),
       },
     ];
   };
@@ -109,6 +113,7 @@ export const useSidebarViewModel = () => {
         isSelected: workspace.id === selectedWorkspaceId,
         isWaiting: shown === 'attention',
         isRemoving: workspace.id === removingWorkspaceId,
+        hint: hintOf(workspace.name),
       })),
     ...suiteRowsOf(project.id),
     { kind: 'add' as const, id: `add-${project.id}`, projectId: project.id },
@@ -131,6 +136,13 @@ export const useSidebarViewModel = () => {
   };
 
   return {
+    className: isShut ? 'sidebar sidebar--shut' : 'sidebar',
+    isShut,
+    toggleLabel: t(isShut ? 'SIDEBAR.OPEN' : 'SIDEBAR.SHUT'),
+    onToggle: toggleSidebar,
+    newWorkspaceHint: hintOf(t('SIDEBAR.NEW_WORKSPACE')),
+    newProjectHint: hintOf(t('SIDEBAR.NEW_PROJECT')),
+    settingsHint: hintOf(t('COMMON.SETTINGS')),
     rows,
     waitingName: waiting?.name ?? null,
     onOpenWaiting: () => {

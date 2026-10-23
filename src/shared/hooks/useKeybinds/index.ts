@@ -19,6 +19,7 @@ export const useKeybinds = () => {
   const toggleResources = useAppStore((state) => state.toggleResources);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const togglePanel = useWorkspaceStore((state) => state.togglePanel);
+  const toggleSidebar = useSettingsStore((state) => state.toggleSidebar);
   const hasOnboarded = useSettingsStore((state) => state.hasOnboarded);
   const toggleAssistant = useAssistantStore((state) => state.toggle);
   const { onRun, onStop } = useRunActions();
@@ -31,6 +32,7 @@ export const useKeybinds = () => {
       run: onRun,
       stop: onStop,
       device: togglePanel,
+      sidebar: toggleSidebar,
       chat: () => {
         selectTab('chat');
       },
@@ -89,6 +91,7 @@ export const useKeybinds = () => {
     toggleResources,
     selectTab,
     togglePanel,
+    toggleSidebar,
     hasOnboarded,
     toggleAssistant,
     onRun,
