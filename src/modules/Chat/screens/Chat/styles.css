@@ -97,3 +97,40 @@
 .chat__live > .typing-dots {
   align-self: flex-start;
 }
+
+.chat__secret {
+  flex: none;
+  margin-top: calc(var(--space-6) * -1);
+  overflow: hidden;
+}
+
+.chat__secret-body {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--attn-soft);
+}
+
+.chat__secret-text {
+  display: flex;
+  flex: 1;
+  align-items: baseline;
+  gap: var(--space-3);
+  color: var(--ink);
+  font: var(--font-ui-sm);
+}
+
+.chat__secret-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--attn);
+}
+
+.chat__secret-actions {
+  display: flex;
+  flex: none;
+  gap: var(--space-3);
+}

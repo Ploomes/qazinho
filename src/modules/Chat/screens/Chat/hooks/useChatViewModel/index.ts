@@ -26,7 +26,7 @@ import { CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { useChatCommand } from '@/modules/Chat/screens/Chat/hooks/useChatCommand';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { formatElapsed } from '@/modules/Device';
-import { useVariableActions } from '@/modules/Project';
+import { secretIn, useVariableActions, withoutSecret } from '@/modules/Project';
 import {
   dayLabelOf,
   flattenPlanSteps,
@@ -42,6 +42,7 @@ import { useAppStore, useSetupStore, useWorkspaceStore } from '@/store';
 
 export const useChatViewModel = () => {
   const [draft, setDraft] = useState('');
+  const [isSecretSent, setSecretSent] = useState(false);
   const [expandedRuns, setExpandedRuns] = useState<string[]>([]);
   const { t, i18n } = useTranslation();
   const chatAgent = useChatAgent();
@@ -117,6 +118,7 @@ export const useChatViewModel = () => {
   const references =
     workspace === null ? [] : referencesOf({ workspace, wholePlan, exploration });
   const mentionQuery = mentionQueryOf(draft);
+  const secret = secretIn(draft);
   const question = workspace?.question ?? null;
   const { listRef, visible, onScroll } = useChatScroll({
     workspaceId: workspace?.id ?? null,
@@ -142,8 +144,11 @@ export const useChatViewModel = () => {
   const isWalking = workspace?.isWalking === true;
   const liveId = isWalking ? (workspace?.liveId ?? null) : null;
 
-  const send = (text: string) => {
+  const send = (text: string, isSecretKept = isSecretSent) => {
     if (!workspace || isWalking || isAgentTyping) return;
+    if (secretIn(text) !== null && !isSecretKept) return;
+
+    setSecretSent(false);
 
     const asked = chatCommand.ask(text);
 
@@ -492,7 +497,22 @@ export const useChatViewModel = () => {
     onPickCommand: chatCommand.onPick,
     onCommandBack: chatCommand.onBack,
     onCommandCancel: chatCommand.onCancel,
-    onDraftChange: setDraft,
+    onDraftChange: (text: string) => {
+      setDraft(text);
+      if (secretIn(text) === null) setSecretSent(false);
+    },
+    secretWarning:
+      secret === null || isSecretSent
+        ? ''
+        : t('CHAT.SECRET_WARNING', { secret: `${secret.slice(0, 6)}…` }),
+    secretRemoveLabel: t('CHAT.SECRET_REMOVE'),
+    secretSendLabel: t('CHAT.SECRET_SEND'),
+    onRemoveSecret: () => {
+      if (secret !== null) setDraft(withoutSecret({ text: draft, secret }));
+    },
+    onSendSecret: () => {
+      send(draft, true);
+    },
     onPickMention: (id: string) => {
       setDraft(insertMention({ draft, id }));
     },

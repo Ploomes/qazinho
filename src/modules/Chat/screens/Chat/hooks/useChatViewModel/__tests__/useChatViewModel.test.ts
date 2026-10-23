@@ -318,6 +318,47 @@ describe('useChatViewModel', () => {
       });
     });
 
+    /** A token pasted into the chat would reach the agent; the Intern's chat held one back first. */
+    it('holds back a message with a token until the QA takes it out or insists', async () => {
+      const ask = answering({ answer: DRAFTED });
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onDraftChange('Use ghp_a1b2c3d4e5f6g7h8i9j0k1l2 to read the repo');
+      });
+      act(() => {
+        result.current.onSend();
+      });
+
+      expect(ask).not.toHaveBeenCalled();
+      expect(result.current.secretWarning).toBe(
+        "This looks like a token (ghp_a1…). The agent would read it: keep it as one of the project's variables instead.",
+      );
+
+      act(() => {
+        result.current.onRemoveSecret();
+      });
+
+      expect(result.current.draft).toBe('Use to read the repo');
+      expect(result.current.secretWarning).toBe('');
+
+      act(() => {
+        result.current.onDraftChange(
+          'ghp_a1b2c3d4e5f6g7h8i9j0k1l2 is fake, test the 401',
+        );
+      });
+      act(() => {
+        result.current.onSendSecret();
+      });
+
+      await waitFor(() => {
+        expect(ask).toHaveBeenCalledOnce();
+      });
+      expect(ask.mock.calls[0]?.[0].text).toBe(
+        'ghp_a1b2c3d4e5f6g7h8i9j0k1l2 is fake, test the 401',
+      );
+    });
+
     it('does NOT send a second message while the agent still answers the first', () => {
       const ask = answering({});
 

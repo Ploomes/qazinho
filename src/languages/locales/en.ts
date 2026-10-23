@@ -94,6 +94,10 @@ export const en = {
     ASKED_EXPLORING: 'waiting for you · {{screens}}',
   },
   CHAT: {
+    SECRET_WARNING:
+      "This looks like a token ({{secret}}). The agent would read it: keep it as one of the project's variables instead.",
+    SECRET_REMOVE: 'Take it out',
+    SECRET_SEND: 'Send anyway',
     YOU: 'You',
     EMPTY_TITLE: 'What are we testing today?',
     EMPTY_BODY:

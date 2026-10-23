@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Chip, Intern, Markdown } from '@/shared/components/atoms';
+import { Button, Chip, Icon, Intern, Markdown } from '@/shared/components/atoms';
 import { MOTION, STICKER } from '@/shared/constants';
 import { AskCard, ChatRow, Composer, RunSection, TypingDots } from './components';
 import { useChatViewModel } from './hooks';
@@ -31,6 +31,11 @@ export const Chat: React.FC = () => {
     onCommandBack,
     onCommandCancel,
     onDraftChange,
+    secretWarning,
+    secretRemoveLabel,
+    secretSendLabel,
+    onRemoveSecret,
+    onSendSecret,
     onPickMention,
     onSend,
     onStop,
@@ -186,6 +191,37 @@ export const Chat: React.FC = () => {
           )}
         </div>
       )}
+
+      <AnimatePresence initial={false}>
+        {secretWarning !== '' && (
+          <motion.div
+            key="secret"
+            className="chat__secret"
+            role="alert"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+          >
+            <div className="chat__secret-body">
+              <span className="chat__secret-text">
+                <span className="chat__secret-icon">
+                  <Icon name="attention" />
+                </span>
+                {secretWarning}
+              </span>
+              <span className="chat__secret-actions">
+                <Button size="sm" variant="secondary" onClick={onRemoveSecret}>
+                  {secretRemoveLabel}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={onSendSecret}>
+                  {secretSendLabel}
+                </Button>
+              </span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Composer
         value={draft}

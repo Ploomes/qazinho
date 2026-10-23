@@ -96,6 +96,10 @@ export const pt: typeof en = {
     ASKED_EXPLORING: 'esperando você · {{screens}}',
   },
   CHAT: {
+    SECRET_WARNING:
+      'Isso parece um token ({{secret}}). O agente leria: guarde como uma variável do projeto.',
+    SECRET_REMOVE: 'Tirar do texto',
+    SECRET_SEND: 'Enviar assim mesmo',
     YOU: 'Você',
     EMPTY_TITLE: 'O que vamos testar hoje?',
     EMPTY_BODY:
