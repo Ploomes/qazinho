@@ -1,0 +1,48 @@
+import type {
+  ConfluencePageList,
+  ConfluenceSpaceList,
+  ConfluenceSwitch,
+  IPublishPlan,
+  PlanPublished,
+} from '@/shared/types';
+
+/** The only caller of the Confluence side of the bridge. */
+export class Confluence {
+  public static async turn(isOn: boolean): Promise<ConfluenceSwitch> {
+    return (
+      (await window.qazinho?.switchConfluence(isOn)) ?? {
+        isSwitched: false,
+        failure: 'unreachable',
+        said: '',
+      }
+    );
+  }
+
+  public static async search(query: string): Promise<ConfluencePageList> {
+    return (
+      (await window.qazinho?.searchConfluence(query)) ?? {
+        isListed: false,
+        failure: 'unreachable',
+      }
+    );
+  }
+
+  public static async spaces(): Promise<ConfluenceSpaceList> {
+    return (
+      (await window.qazinho?.listConfluenceSpaces()) ?? {
+        isListed: false,
+        failure: 'unreachable',
+      }
+    );
+  }
+
+  public static async publish(plan: IPublishPlan): Promise<PlanPublished> {
+    return (
+      (await window.qazinho?.publishPlan(plan)) ?? {
+        isPublished: false,
+        failure: 'unreachable',
+        said: '',
+      }
+    );
+  }
+}

@@ -1,10 +1,12 @@
 import type { AppLook } from '@/harness';
 import type {
   AgentSignInProgress,
+  ConfluenceSwitch,
   GithubSignInProgress,
   ICommentBug,
   IFileBug,
   IFilingEvent,
+  IPublishPlan,
   IReviewBug,
   IAgentEvent,
   IAgentTurn,
@@ -76,6 +78,7 @@ import {
   BugReviewer,
   CodeCopies,
   CodeExport,
+  ConfluenceApi,
   DeviceToolDetector,
   GitCli,
   GithubCli,
@@ -263,6 +266,11 @@ const jira = new JiraApi({
   fetcher: (url, init) => fetch(url, init),
 });
 const jiraStories = new JiraStories({ jira, root: PATHS.jira });
+const confluence = new ConfluenceApi({
+  credentials: () => vault.confluence(),
+  jira: () => vault.jira(),
+  fetcher: (url, init) => fetch(url, init),
+});
 const bugFiler = new BugFiler({
   jira,
   github,
@@ -702,6 +710,21 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
   }
 }
 
+async function switchConfluence(isOn: boolean): Promise<ConfluenceSwitch> {
+  if (isOn) {
+    const checked = await confluence.check();
+
+    if (!checked.isOk)
+      return { isSwitched: false, failure: checked.failure, said: checked.said };
+  }
+
+  const status = await vault.setConfluence(isOn);
+
+  return status === null
+    ? { isSwitched: false, failure: 'not-connected', said: '' }
+    : { isSwitched: true, status };
+}
+
 async function checkMachine() {
   agents.forget();
   deviceTools.forget();
@@ -1091,6 +1114,16 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.listRepositories, () => repos.repositories());
   ipcMain.handle(CHANNELS.searchJira, (_event, query: string) => jira.search(query));
   ipcMain.handle(CHANNELS.listJiraProjects, () => jira.projects());
+  ipcMain.handle(CHANNELS.switchConfluence, (_event, isOn: boolean) =>
+    switchConfluence(isOn),
+  );
+  ipcMain.handle(CHANNELS.searchConfluence, (_event, query: string) =>
+    confluence.search(query),
+  );
+  ipcMain.handle(CHANNELS.listConfluenceSpaces, () => confluence.spaces());
+  ipcMain.handle(CHANNELS.publishPlan, (_event, plan: IPublishPlan) =>
+    confluence.publish(plan),
+  );
   ipcMain.handle(CHANNELS.fileBug, (_event, request: IFileBug) => bugFiler.file(request));
   ipcMain.handle(CHANNELS.reviewBug, (_event, request: IReviewBug) =>
     bugReviewer.review(request),

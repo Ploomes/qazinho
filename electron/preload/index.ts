@@ -3,6 +3,9 @@ import type {
   BugComment,
   BugFiling,
   BugReview,
+  ConfluencePageList,
+  ConfluenceSpaceList,
+  ConfluenceSwitch,
   ExportOutcome,
   GithubSignInProgress,
   IAgentEvent,
@@ -34,6 +37,7 @@ import type {
   IMcpSignIn,
   INetworkEntry,
   IProjectVariables,
+  IPublishPlan,
   IQazinhoApi,
   IRepositoryList,
   IRepositoryRef,
@@ -61,6 +65,7 @@ import type {
   McpActionResult,
   McpSignInProgress,
   PickKind,
+  PlanPublished,
   Platform,
   QaReply,
   SaveOutcome,
@@ -291,6 +296,14 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.searchJira, query) as Promise<JiraIssueList>,
   listJiraProjects: () =>
     ipcRenderer.invoke(CHANNELS.listJiraProjects) as Promise<JiraProjectList>,
+  switchConfluence: (isOn: boolean) =>
+    ipcRenderer.invoke(CHANNELS.switchConfluence, isOn) as Promise<ConfluenceSwitch>,
+  searchConfluence: (query: string) =>
+    ipcRenderer.invoke(CHANNELS.searchConfluence, query) as Promise<ConfluencePageList>,
+  listConfluenceSpaces: () =>
+    ipcRenderer.invoke(CHANNELS.listConfluenceSpaces) as Promise<ConfluenceSpaceList>,
+  publishPlan: (plan: IPublishPlan) =>
+    ipcRenderer.invoke(CHANNELS.publishPlan, plan) as Promise<PlanPublished>,
   fileBug: (request: IFileBug) =>
     ipcRenderer.invoke(CHANNELS.fileBug, request) as Promise<BugFiling>,
   onFilingEvent: (listener: (event: IFilingEvent) => void) => {

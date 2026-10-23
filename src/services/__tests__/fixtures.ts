@@ -116,6 +116,14 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     searchJira: () => Promise.resolve({ isListed: false, failure: 'not-connected' }),
     listJiraProjects: () =>
       Promise.resolve({ isListed: false, failure: 'not-connected' }),
+    switchConfluence: () =>
+      Promise.resolve({ isSwitched: false, failure: 'not-connected', said: '' }),
+    searchConfluence: () =>
+      Promise.resolve({ isListed: false, failure: 'not-connected' }),
+    listConfluenceSpaces: () =>
+      Promise.resolve({ isListed: false, failure: 'not-connected' }),
+    publishPlan: () =>
+      Promise.resolve({ isPublished: false, failure: 'not-connected', said: '' }),
     fileBug: () =>
       Promise.resolve({ isFiled: false, failure: 'not-connected', said: '' }),
     onFilingEvent: () => () => undefined,

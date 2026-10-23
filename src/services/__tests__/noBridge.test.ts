@@ -6,6 +6,7 @@ import {
   Assistant,
   Bugs,
   Builds,
+  Confluence,
   Github,
   Integrations,
   Jira,
@@ -208,6 +209,28 @@ describe('a page with no bridge', () => {
       false,
     );
     expect(await Jira.projects()).toEqual({ isListed: false, failure: 'unreachable' });
+    expect(await Confluence.turn(true)).toEqual({
+      isSwitched: false,
+      failure: 'unreachable',
+      said: '',
+    });
+    expect(await Confluence.search('checkout')).toEqual({
+      isListed: false,
+      failure: 'unreachable',
+    });
+    expect(await Confluence.spaces()).toEqual({
+      isListed: false,
+      failure: 'unreachable',
+    });
+    expect(
+      await Confluence.publish({
+        pageId: null,
+        spaceId: '1',
+        parentId: null,
+        title: 'Checkout',
+        blocks: [],
+      }),
+    ).toEqual({ isPublished: false, failure: 'unreachable', said: '' });
     expect(
       await Bugs.comment({
         issue: { tracker: 'jira', key: 'SHOP-57', url: '', at: '' },
