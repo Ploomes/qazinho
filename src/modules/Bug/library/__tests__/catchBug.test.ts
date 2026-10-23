@@ -49,4 +49,46 @@ describe('catchBug', () => {
     expect(twice.how).toBe('repeat');
     expect(twice.bugs).toBe(once.bugs);
   });
+
+  /** The agent filed the coupon with bug, then failed the very step for it: one bug, the plan's. */
+  it("makes a bug filed on the side the plan's once a plan step fails for it", () => {
+    const workspace = secondRun();
+    const aside = catchBug({
+      workspace,
+      outcome: {
+        ...failedAgain(workspace),
+        caseId: 'TC-01',
+        stepNumber: 1,
+        title: 'Coupon taken',
+      },
+      outcomes: [],
+      isIncidental: true,
+    });
+    const failed = catchBug({
+      workspace: { ...workspace, bugs: aside.bugs },
+      outcome: {
+        ...failedAgain(workspace),
+        caseId: 'TC-01',
+        stepNumber: 1,
+        title: 'Coupon taken',
+      },
+      outcomes: [],
+      isIncidental: false,
+    });
+
+    expect(failed).toMatchObject({ bugId: aside.bugId, how: 'repeat' });
+    expect(failed.bugs.find(({ id }) => id === aside.bugId)?.isIncidental).toBe(false);
+  });
+
+  it("does NOT move a plan's bug outside the plan when a finding lands on it", () => {
+    const workspace = secondRun();
+    const caught = catchBug({
+      workspace,
+      outcome: { ...failedAgain(workspace), sameAs: 'BUG-01' },
+      outcomes: [],
+      isIncidental: true,
+    });
+
+    expect(caught.bugs.find(({ id }) => id === 'BUG-01')?.isIncidental).toBe(false);
+  });
 });

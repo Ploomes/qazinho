@@ -1,4 +1,4 @@
-import type { IBugCatch } from '@/modules/Bug/types';
+import type { IBug, IBugCatch } from '@/modules/Bug/types';
 import type { IWorkspace } from '@/modules/Workspace';
 import type { IStepOutcome } from '@/shared/types';
 import { bugSeenAgain } from './bugSeenAgain';
@@ -7,7 +7,13 @@ import { makeBug } from './makeBug';
 import { openBugFor } from './openBugFor';
 import { sightingOf } from './sightingOf';
 
-/** A failed step or a finding as it lands among the bugs: on the bug already open it is, seen again, or as a new bug; once per run. */
+function plannedIf(props: { bug: IBug; isIncidental: boolean }): IBug {
+  return props.isIncidental || !props.bug.isIncidental
+    ? props.bug
+    : { ...props.bug, isIncidental: false };
+}
+
+/** A failed step or a finding as it lands among the bugs: on the bug already open it is, seen again, or as a new bug; once per run. A plan step failing for a bug filed on the side makes it the plan's. */
 export function catchBug(props: {
   workspace: IWorkspace;
   outcome: IStepOutcome;
@@ -31,13 +37,24 @@ export function catchBug(props: {
   }
 
   if (isSeenIn({ bug: open, runId: workspace.live?.id ?? 'r-01' }))
-    return { bugs: workspace.bugs, bugId: open.id, how: 'repeat' };
+    return {
+      bugs:
+        plannedIf({ bug: open, isIncidental }) === open
+          ? workspace.bugs
+          : workspace.bugs.map((bug) =>
+              bug.id === open.id ? plannedIf({ bug, isIncidental }) : bug,
+            ),
+      bugId: open.id,
+      how: 'repeat',
+    };
 
   const sighting = sightingOf({ workspace, outcome });
 
   return {
     bugs: workspace.bugs.map((bug) =>
-      bug.id === open.id ? bugSeenAgain({ bug, sighting }) : bug,
+      bug.id === open.id
+        ? plannedIf({ bug: bugSeenAgain({ bug, sighting }), isIncidental })
+        : bug,
     ),
     bugId: open.id,
     how: 'again',
