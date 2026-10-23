@@ -93,3 +93,15 @@
 .side-panel--resizing * {
   transition: none;
 }
+
+@container side-panel (width < 420px) {
+  .side-panel__header {
+    gap: var(--space-3);
+    padding-left: var(--space-5);
+  }
+
+  .side-panel__scroll {
+    padding-right: var(--space-4);
+    padding-left: var(--space-5);
+  }
+}

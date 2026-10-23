@@ -6,6 +6,7 @@
 
 .plan__head {
   display: flex;
+  flex-wrap: wrap;
   scroll-margin-top: var(--space-7);
   align-items: center;
   gap: var(--space-4);
