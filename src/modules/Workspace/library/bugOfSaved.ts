@@ -18,6 +18,7 @@ export function bugOfSaved(saved: SavedBug): IBug {
     agent: bug.agent ?? '',
     modelName: bug.modelName ?? null,
     isIncidental: bug.isIncidental ?? false,
+    isDismissed: bug.isDismissed ?? false,
     at: bug.at ?? null,
     filed: bug.filed ?? null,
     frame: bug.frame ?? null,

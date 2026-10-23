@@ -26,6 +26,7 @@ const BUG: IBug = {
   sightings: [],
   isNew: true,
   isIncidental: false,
+  isDismissed: false,
   at: 1_760_000_000_000,
   filed: null,
   reviewedRuns: [],

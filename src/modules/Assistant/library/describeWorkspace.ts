@@ -63,7 +63,7 @@ export function describeWorkspace(props: {
           'Bugs:',
           ...workspace.bugs.map(
             (bug) =>
-              `- ${bug.id} · ${bug.severity} · "${bug.title}" · ${bug.caseId} step ${String(bug.stepNumber)} · ${bug.runId}${bug.frame === null ? '' : ` · off the design, frame ${bug.frame}`}`,
+              `- ${bug.id} · ${bug.severity} · "${bug.title}" · ${bug.caseId} step ${String(bug.stepNumber)} · ${bug.runId}${bug.frame === null ? '' : ` · off the design, frame ${bug.frame}`}${bug.isDismissed ? ' · the QA said it is no bug' : ''}`,
           ),
         ]),
     ...(live === null || live.isDone

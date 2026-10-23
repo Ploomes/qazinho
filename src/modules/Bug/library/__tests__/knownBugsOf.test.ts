@@ -18,4 +18,11 @@ describe('knownBugsOf', () => {
   it('tells nothing when no bug is open', () => {
     expect(knownBugsOf([])).toEqual([]);
   });
+
+  /** Told of a false positive, every run's agent named it seen again. */
+  it('does NOT tell a run of a bug the QA said is none', () => {
+    expect(
+      knownBugsOf(secondRun().bugs.map((bug) => ({ ...bug, isDismissed: true }))),
+    ).toEqual([]);
+  });
 });

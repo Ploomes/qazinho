@@ -74,6 +74,7 @@ export function makeBug(props: {
     sightings: [],
     isNew: true,
     isIncidental: false,
+    isDismissed: false,
     at: outcome.at,
     filed: null,
     reviewedRuns: [],

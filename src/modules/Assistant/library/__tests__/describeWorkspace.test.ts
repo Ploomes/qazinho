@@ -52,6 +52,17 @@ describe('describeWorkspace', () => {
     expect(text).toContain('· r-01 · off the design, frame 12:345');
   });
 
+  it('says which bugs the QA said are none', () => {
+    const [bug, ...bugs] = CHECKOUT.bugs;
+    const text = describeWorkspace({
+      workspace: { ...CHECKOUT, bugs: [{ ...bug!, isDismissed: true }, ...bugs] },
+      project: PROJECT,
+    });
+
+    expect(text).toContain(`- ${bug!.id} `);
+    expect(text).toContain('the QA said it is no bug');
+  });
+
   it('says what is not there yet, and a target that is gone', () => {
     const text = describeWorkspace({
       workspace: { ...LOGIN, targetId: 't-gone' },

@@ -87,6 +87,20 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
+  dismissBug: ({ workspaceId, bugId, isDismissed }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => ({
+          ...workspace,
+          bugs: workspace.bugs.map((bug) =>
+            bug.id === bugId ? { ...bug, isDismissed, isNew: false } : bug,
+          ),
+        }),
+      }),
+    })),
+
   keepPlain: ({ workspaceId, value }) =>
     set((state) => ({
       workspaces: mapWorkspace({

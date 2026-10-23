@@ -15,9 +15,10 @@ export function workspaceMeta(workspace: IWorkspace): { key: string; count: numb
   }
   if (workspace.live?.isRunning)
     return { key: 'SIDEBAR.META_PROGRESS', count: steps.length };
-  if (workspace.bugs.length === 1) return { key: 'SIDEBAR.META_BUG_ONE', count: 1 };
-  if (workspace.bugs.length > 1)
-    return { key: 'SIDEBAR.META_BUG_OTHER', count: workspace.bugs.length };
+  const bugs = workspace.bugs.filter(({ isDismissed }) => !isDismissed).length;
+
+  if (bugs === 1) return { key: 'SIDEBAR.META_BUG_ONE', count: 1 };
+  if (bugs > 1) return { key: 'SIDEBAR.META_BUG_OTHER', count: bugs };
   if (steps.length === 1) return { key: 'SIDEBAR.META_STEPS_ONE', count: 1 };
   if (steps.length > 1) return { key: 'SIDEBAR.META_STEPS_OTHER', count: steps.length };
 

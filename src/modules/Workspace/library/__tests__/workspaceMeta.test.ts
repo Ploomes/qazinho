@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { startRun, workspaceMeta } from '@/modules/Workspace/library';
-import { makeWorkspace, WALKED_BY } from './fixtures';
+import { makeWorkspace, WALKED_BY, walkRun } from './fixtures';
 
 describe('workspaceMeta', () => {
   it('reads new while the workspace has no plan', () => {
@@ -62,5 +62,14 @@ describe('workspaceMeta', () => {
       key: 'CHAT.EXPLORE_SCREENS_OTHER',
       count: 0,
     });
+  });
+
+  it('does NOT count a bug the QA said is none', () => {
+    const workspace = makeWorkspace();
+    const bug = walkRun({ verdicts: ['failed'], isFinished: true }).bugs[0]!;
+
+    expect(
+      workspaceMeta({ ...workspace, bugs: [{ ...bug, isDismissed: true }] }),
+    ).toEqual({ key: 'SIDEBAR.META_STEPS_OTHER', count: 6 });
   });
 });

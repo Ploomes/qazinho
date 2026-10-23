@@ -49,6 +49,11 @@ export interface IWorkspaceStore {
   setDesign: (props: { workspaceId: string; design: IDesignLink | null }) => void;
   setUnreadPlan: (props: { workspaceId: string; unreadPlan: IUnreadPlan | null }) => void;
   keepPlain: (props: { workspaceId: string; value: string }) => void;
+  dismissBug: (props: {
+    workspaceId: string;
+    bugId: string;
+    isDismissed: boolean;
+  }) => void;
   setPublished: (props: {
     workspaceId: string;
     published: IPublishedPlan | null;

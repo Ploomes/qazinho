@@ -14,7 +14,7 @@ export const useWorkspaceViewModel = () => {
     status: opened.status,
     planCount: opened.plan.length,
     runCount: opened.runs.length,
-    bugCount: opened.bugs.length,
+    bugCount: opened.bugs.filter(({ isDismissed }) => !isDismissed).length,
     stepCount: flattenPlanSteps(opened.plan).length,
     walked: opened.live?.outcomes.length ?? 0,
     isExploring: opened.live?.kind === 'explore',

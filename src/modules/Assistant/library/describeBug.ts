@@ -22,7 +22,7 @@ export function describeBug(props: { workspace: IWorkspace; bugId: string }): {
   return {
     text: [
       `Bug ${bug.id} of ${workspace.id} "${workspace.name}": "${bug.title}", severity ${bug.severity}.`,
-      `Caught in ${bug.runId} at ${bug.runWhen}, on ${bug.caseId} "${bug.caseTitle}" step ${String(bug.stepNumber)}${bug.isIncidental ? ', on the side of that step' : ''}, walked on ${bug.target} by ${bug.agent}${bug.modelName === null ? '' : ` (${bug.modelName})`}.`,
+      `Caught in ${bug.runId} at ${bug.runWhen}, on ${bug.caseId} "${bug.caseTitle}" step ${String(bug.stepNumber)}${bug.isIncidental ? ', on the side of that step' : ''}${bug.isDismissed ? ', and the QA said it is no bug' : ''}, walked on ${bug.target} by ${bug.agent}${bug.modelName === null ? '' : ` (${bug.modelName})`}.`,
       ...(bug.frame === null
         ? []
         : [

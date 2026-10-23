@@ -49,4 +49,8 @@ describe('unreviewedOf', () => {
       }),
     ).toEqual([]);
   });
+
+  it('weighs nothing for a bug the QA said is none', () => {
+    expect(unreviewedOf({ ...BUG, isDismissed: true })).toEqual([]);
+  });
 });
