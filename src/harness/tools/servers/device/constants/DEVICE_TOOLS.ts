@@ -327,7 +327,7 @@ export const DEVICE_TOOLS = [
           },
         )
         .describe(
-          'Only when the answer is a secret, such as a password or a code sent to the QA: the variable QAzinho keeps it as. You type it as ${NAME} and never see it.',
+          'Only when the answer is a secret, such as a password or a code sent to the QA: the variable QAzinho keeps it as. You type it as ${NAME} and never see it. One answer is one value: for an account, ask for the login first, then for the password as a secret.',
         )
         .optional(),
     }),
