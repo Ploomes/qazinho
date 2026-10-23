@@ -104,8 +104,7 @@ import {
 } from '@/main/classes';
 import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
 import { changeIdOf } from '@/main/classes/automation/SuiteChanges/library';
-import { APP_BUILDER } from '@/main/classes/builds/AppBuilder/constants';
-import { buildIdOf } from '@/main/classes/builds/AppBuilder/library';
+import { buildIdOf, javaHomesOf } from '@/main/classes/builds/AppBuilder/library';
 import {
   listAvds,
   newestBuildTools,
@@ -357,7 +356,10 @@ const builder = new AppBuilder({
 
     return {
       androidSdk: found.androidSdk.path,
-      javaHome: findExistingPath([process.env.JAVA_HOME, ...APP_BUILDER.javaHomes]),
+      javaHome: findExistingPath([
+        process.env.JAVA_HOME,
+        ...javaHomesOf({ platform: process.platform, home: homedir(), env: process.env }),
+      ]),
       hasXcode: found.xcode.isFound,
       path: (await commandDirectories()).join(delimiter),
     };

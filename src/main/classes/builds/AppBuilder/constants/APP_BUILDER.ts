@@ -11,5 +11,4 @@ export const APP_BUILDER = {
     '.npm-cache',
     '.dart_tool',
   ],
-  javaHomes: ['/Applications/Android Studio.app/Contents/jbr/Contents/Home'],
 } as const;

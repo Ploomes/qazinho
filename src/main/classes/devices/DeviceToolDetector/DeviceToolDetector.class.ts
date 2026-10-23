@@ -16,6 +16,9 @@ export class DeviceToolDetector {
     const androidSdk = findExistingPath([
       process.env.ANDROID_HOME,
       process.env.ANDROID_SDK_ROOT,
+      process.env.LOCALAPPDATA === undefined
+        ? undefined
+        : join(process.env.LOCALAPPDATA, 'Android', 'Sdk'),
       ...TOOL_PATHS.androidSdk.map((directory) => join(home, directory)),
     ]);
 
