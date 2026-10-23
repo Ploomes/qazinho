@@ -1,29 +1,43 @@
 .expected-got {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--space-5);
+  gap: var(--space-3);
+}
+
+.expected-got__item {
   padding: var(--space-4) var(--space-5);
   border: 1px solid var(--line2);
   border-radius: var(--radius-md);
   background: var(--raise);
 }
 
-.expected-got--bug {
+.expected-got--bug .expected-got__item--got {
   border-color: transparent;
   background: var(--fail-soft);
 }
 
 .expected-got__label {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   margin-bottom: var(--space-2);
-  color: var(--ink3);
+  color: var(--ink2);
   font: var(--font-ui-xs);
   font-weight: 600;
 }
 
+.expected-got__item--expected .icon {
+  color: var(--pass);
+}
+
+.expected-got__item--got .icon {
+  color: var(--fail);
+}
+
 .expected-got__value {
   margin: 0;
-  color: var(--ink2);
+  color: var(--ink);
   font: var(--font-ui-sm);
+  line-height: 1.55;
   text-wrap: pretty;
 }
