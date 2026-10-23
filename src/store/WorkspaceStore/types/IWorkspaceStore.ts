@@ -2,7 +2,6 @@ import type { BugFilter, IBugReview } from '@/modules/Bug';
 import type { IQuestionAnswer, UserCommand } from '@/modules/Chat';
 import type { ViewportId } from '@/modules/Device';
 import type { IPublishedPlan, ITestCase } from '@/modules/Plan';
-import type { RunFilter } from '@/modules/Run';
 import type { IWalkedBy, IWorkspace, WorkspaceTab } from '@/modules/Workspace';
 import type {
   CodeStep,
@@ -31,7 +30,6 @@ export interface IWorkspaceStore {
   openCaseId: string | null;
   openBugId: string | null;
   selectedRunId: string | null;
-  runFilter: RunFilter;
   bugFilter: BugFilter;
   isDevicePanelOpen: boolean;
   deviceWidth: number;
@@ -135,7 +133,6 @@ export interface IWorkspaceStore {
   landFiled: (props: { workspaceId: string; bugId: string; issue: IFiledIssue }) => void;
   landReview: (props: { workspaceId: string; bugId: string; review: IBugReview }) => void;
   selectRun: (runId: string | null) => void;
-  setRunFilter: (filter: RunFilter) => void;
   setBugFilter: (filter: BugFilter) => void;
   toggleDevicePanel: () => void;
   setDevicePanelOpen: (isOpen: boolean) => void;

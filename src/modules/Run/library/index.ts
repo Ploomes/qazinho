@@ -8,7 +8,6 @@ export * from './countVerdicts';
 export * from './dayLabelOf';
 export * from './exceptionFirst';
 export * from './failedRequestsNear';
-export * from './filterCases';
 export * from './flattenPlanSteps';
 export * from './formatClock';
 export * from './formatCost';

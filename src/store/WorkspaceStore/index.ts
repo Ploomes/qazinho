@@ -36,7 +36,6 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   openCaseId: null,
   openBugId: null,
   selectedRunId: null,
-  runFilter: 'all',
   bugFilter: 'all',
   isDevicePanelOpen: true,
   deviceWidth: DEVICE.defaultWidth,
@@ -550,8 +549,6 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
     })),
 
   selectRun: (runId) => set({ selectedRunId: runId }),
-
-  setRunFilter: (runFilter) => set({ runFilter }),
 
   setBugFilter: (bugFilter) => set({ bugFilter }),
 

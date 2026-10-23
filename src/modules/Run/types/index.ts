@@ -19,4 +19,3 @@ export type * from './IRunSuggestion';
 export type * from './ReplayFocus';
 export type * from './RequestOutcome';
 export type * from './RunEnd';
-export type * from './RunFilter';
