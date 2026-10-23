@@ -12,7 +12,7 @@ import { dirname } from 'node:path';
 import { TRACKER_ERRORS } from './constants';
 import { githubConnectionOf, isCurrentIntegration, verifyJira } from './library';
 
-/** Connects the QA's trackers: GitHub through the QA's own gh, Jira with a token sealed by the OS keychain. */
+/** Connects the QA's trackers: GitHub through the QA's own gh, Jira with a token sealed by the OS keychain, and Confluence beside Jira when the QA turns it on. */
 export class IntegrationVault {
   private readonly file: string;
   private readonly cipher: IVaultCipher;
@@ -44,15 +44,42 @@ export class IntegrationVault {
 
     if (!result.isConnected) return result;
 
-    const kept = (await this.read()).filter(({ status }) => status.id !== connecting.id);
+    const stored = await this.read();
+    const before = stored.find(({ status }) => status.id === connecting.id)?.status;
+    const status =
+      before?.confluence === true
+        ? { ...result.status, confluence: true }
+        : result.status;
+    const kept = stored.filter(({ status: one }) => one.id !== connecting.id);
 
-    await this.write([...kept, { status: result.status, credentials: connecting }]);
+    await this.write([...kept, { status, credentials: connecting }]);
 
-    return result;
+    return { ...result, status };
   }
 
   public async disconnect(id: IntegrationId): Promise<void> {
     await this.write((await this.read()).filter(({ status }) => status.id !== id));
+  }
+
+  /** Turns Confluence on or off beside Jira, on the same site and credentials, and says Jira's status now; null while Jira is not connected. */
+  public async setConfluence(isOn: boolean): Promise<IIntegrationStatus | null> {
+    const stored = await this.read();
+    const jira = stored.find(({ status }) => status.id === 'jira');
+
+    if (jira === undefined) return null;
+
+    const status = { ...jira.status, confluence: isOn };
+
+    await this.write(stored.map((one) => (one === jira ? { ...one, status } : one)));
+
+    return status;
+  }
+
+  /** Jira's credentials for Confluence, on the same site; null while Jira is not connected or Confluence is off. */
+  public async confluence(): Promise<IJiraCredentials | null> {
+    const jira = (await this.read()).find(({ status }) => status.id === 'jira');
+
+    return jira?.status.confluence === true ? this.jira() : null;
   }
 
   /** The Jira site and the credentials sealed for it, for main to call Jira with; null while Jira is not connected. */

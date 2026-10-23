@@ -184,4 +184,50 @@ describe('IntegrationVault', () => {
       expect(await vault.jira()).toBeNull();
     });
   });
+
+  describe('Confluence beside Jira', () => {
+    it('is off until the QA turns it on, and hands Confluence the Jira credentials only then', async () => {
+      const { vault } = await vaultWith({});
+
+      await vault.connect(JIRA);
+
+      expect(await vault.confluence()).toBeNull();
+      expect(await vault.setConfluence(true)).toMatchObject({
+        id: 'jira',
+        confluence: true,
+      });
+      expect(await vault.confluence()).toEqual({
+        site: 'https://acme.atlassian.net',
+        email: 'ana@acme.test',
+        token: 'jira_secret',
+      });
+      expect(await vault.list()).toMatchObject([{ id: 'jira', confluence: true }]);
+
+      await vault.setConfluence(false);
+
+      expect(await vault.confluence()).toBeNull();
+    });
+
+    it('stays on when Jira is connected again', async () => {
+      const { vault } = await vaultWith({});
+
+      await vault.connect(JIRA);
+      await vault.setConfluence(true);
+      await vault.connect(JIRA);
+
+      expect(await vault.confluence()).not.toBeNull();
+    });
+
+    it('cannot be turned on with no Jira, and goes with Jira on disconnect', async () => {
+      const { vault } = await vaultWith({});
+
+      expect(await vault.setConfluence(true)).toBeNull();
+
+      await vault.connect(JIRA);
+      await vault.setConfluence(true);
+      await vault.disconnect('jira');
+
+      expect(await vault.confluence()).toBeNull();
+    });
+  });
 });
