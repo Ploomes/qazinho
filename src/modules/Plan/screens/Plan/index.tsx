@@ -13,6 +13,7 @@ export const Plan: React.FC = () => {
     lastRuns,
     design,
     openCaseId,
+    freshCaseId,
     isLocked,
     lockedLabel,
     isEmpty,
@@ -257,6 +258,7 @@ export const Plan: React.FC = () => {
                   lastRun={lastRuns[testCase.id]}
                   design={design}
                   isOpen={openCaseId === testCase.id}
+                  isFresh={freshCaseId === testCase.id}
                   isLocked={isLocked}
                   onToggle={onToggleCase}
                   onEditCase={onEditCase}

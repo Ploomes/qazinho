@@ -47,4 +47,27 @@ describe('useEditableTextViewModel', () => {
 
     expect(result.current.className).toContain('editable-text--title');
   });
+
+  it('takes the cursor when asked, unless the plan is locked', () => {
+    const focused = renderHook(() =>
+      useEditableTextViewModel({
+        value: '',
+        placeholder: '',
+        isAutoFocused: true,
+        onCommit: vi.fn(),
+      }),
+    );
+    const locked = renderHook(() =>
+      useEditableTextViewModel({
+        value: '',
+        placeholder: '',
+        isAutoFocused: true,
+        isLocked: true,
+        onCommit: vi.fn(),
+      }),
+    );
+
+    expect(focused.result.current.isAutoFocused).toBe(true);
+    expect(locked.result.current.isAutoFocused).toBe(false);
+  });
 });

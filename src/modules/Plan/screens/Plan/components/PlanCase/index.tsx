@@ -11,6 +11,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
     className,
     steps,
     verdict,
+    isTitleFocused,
     canRemoveStep,
     onHeadClick,
     moveLabel,
@@ -75,6 +76,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
           placeholder={t('PLAN.TITLE_PLACEHOLDER')}
           isLocked={props.isLocked}
           isTitle
+          isAutoFocused={isTitleFocused}
           onCommit={(title) => {
             onFieldCommit({ title });
           }}
@@ -147,6 +149,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                         value={step.action}
                         placeholder={t('PLAN.ACTION_PLACEHOLDER')}
                         isLocked={props.isLocked}
+                        isAutoFocused={step.isFresh}
                         onCommit={(action) => {
                           onStepCommit({ index: step.number - 1, step: { action } });
                         }}

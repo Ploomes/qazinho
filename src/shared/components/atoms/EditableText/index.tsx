@@ -3,7 +3,8 @@ import { useEditableTextViewModel } from './hooks';
 import './styles.css';
 
 export const EditableText: React.FC<IEditableTextProps> = (props) => {
-  const { value, isLocked, className, onChange } = useEditableTextViewModel(props);
+  const { value, isLocked, isAutoFocused, className, onChange } =
+    useEditableTextViewModel(props);
 
   return (
     <textarea
@@ -12,6 +13,7 @@ export const EditableText: React.FC<IEditableTextProps> = (props) => {
       rows={1}
       placeholder={props.placeholder}
       readOnly={isLocked}
+      autoFocus={isAutoFocused}
       spellCheck={false}
       onChange={onChange}
     />

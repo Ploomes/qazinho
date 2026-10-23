@@ -12,6 +12,7 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
   const { t } = useTranslation();
   const caseId = testCase.id;
   const [isPickedUp, setIsPickedUp] = useState(false);
+  const [freshStep, setFreshStep] = useState<number | null>(null);
 
   return {
     className: isPickedUp ? 'plan-case plan-case--picked' : 'plan-case',
@@ -23,6 +24,7 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
       return {
         ...step,
         number: index + 1,
+        isFresh: index === freshStep,
         verdict,
         verdictIcon: STATUS[verdict].icon,
         verdictLabel: t(STATUS[verdict].labelKey),
@@ -37,6 +39,7 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
       };
     }),
     verdict: testCase.lastVerdict ?? 'pending',
+    isTitleFocused: props.isFresh === true,
     canRemoveStep: testCase.steps.length > 1 && !isLocked,
     onHeadClick: () => {
       onToggle(caseId);
@@ -56,6 +59,7 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
       props.onEditStep({ caseId, ...change });
     },
     onStepAdd: () => {
+      setFreshStep(testCase.steps.length);
       props.onAddStep(caseId);
     },
     onStepRemove: (index: number) => {

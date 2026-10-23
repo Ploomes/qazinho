@@ -9,6 +9,7 @@ export interface IPlanCaseProps {
   lastRun?: IRunCase;
   design?: IDesignLink | null;
   isOpen: boolean;
+  isFresh?: boolean;
   isLocked: boolean;
   onToggle: (caseId: string) => void;
   onEditCase: (props: { caseId: string; fields: Partial<ITestCase> }) => void;

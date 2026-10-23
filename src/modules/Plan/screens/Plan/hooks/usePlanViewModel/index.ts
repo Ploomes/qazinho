@@ -63,6 +63,7 @@ export const usePlanViewModel = () => {
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const { onRun, onStop } = useRunActions();
   const [removal, setRemoval] = useState<ICaseRemoval | null>(null);
+  const [freshCaseId, setFreshCaseId] = useState<string | null>(null);
   const [exported, setExported] = useState<ExportOutcome | null>(null);
   const [isPublishOpen, setIsPublishOpen] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
@@ -364,17 +365,21 @@ export const usePlanViewModel = () => {
     onDraftInChat: () => {
       selectTab('chat');
     },
+    freshCaseId,
     onAddCase: () => {
-      write(
-        addCase({
+      const added = addCase({
+        plan,
+        used: caseIdsUsed({
           plan,
-          used: caseIdsUsed({
-            plan,
-            runs: workspace?.runs ?? [],
-            bugs: workspace?.bugs ?? [],
-          }),
+          runs: workspace?.runs ?? [],
+          bugs: workspace?.bugs ?? [],
         }),
-      );
+      });
+      const fresh = added.at(-1)?.id ?? null;
+
+      write(added);
+      setFreshCaseId(fresh);
+      if (fresh !== null && openCaseId !== fresh) toggleCase(fresh);
     },
     undo:
       undoable === null

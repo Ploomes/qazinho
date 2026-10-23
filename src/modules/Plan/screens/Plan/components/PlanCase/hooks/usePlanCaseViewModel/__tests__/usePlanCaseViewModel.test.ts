@@ -217,4 +217,45 @@ describe('usePlanCaseViewModel', () => {
       expect(onMoveCase).not.toHaveBeenCalled();
     });
   });
+
+  describe('the cursor', () => {
+    it('lands in the title of a case just added', () => {
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({ ...PROPS, isFresh: true }),
+      );
+
+      expect(result.current.isTitleFocused).toBe(true);
+    });
+
+    it('does NOT jump to a case that was already there', () => {
+      const { result } = renderHook(() => usePlanCaseViewModel(PROPS));
+
+      expect(result.current.isTitleFocused).toBe(false);
+      expect(result.current.steps.some(({ isFresh }) => isFresh)).toBe(false);
+    });
+
+    it('lands in the step just added, the one after the last', () => {
+      const { result, rerender } = renderHook((props) => usePlanCaseViewModel(props), {
+        initialProps: PROPS,
+      });
+
+      act(() => {
+        result.current.onStepAdd();
+      });
+      rerender({
+        ...PROPS,
+        testCase: {
+          ...TEST_CASE,
+          steps: [...TEST_CASE.steps, { action: '', expected: '' }],
+        },
+      });
+
+      expect(result.current.steps.map(({ isFresh }) => isFresh)).toEqual([
+        false,
+        false,
+        false,
+        true,
+      ]);
+    });
+  });
 });

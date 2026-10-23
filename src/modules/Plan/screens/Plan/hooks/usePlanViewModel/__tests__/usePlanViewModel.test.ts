@@ -683,6 +683,22 @@ describe('usePlanViewModel', () => {
     });
   });
 
+  describe('onAddCase', () => {
+    /** Typing right after the click used to land on nothing, and its spaces pressed buttons. */
+    it('opens the new case and puts the cursor in its title', () => {
+      const { result } = renderHook(() => usePlanViewModel());
+
+      act(() => {
+        result.current.onAddCase();
+      });
+
+      const added = useWorkspaceStore.getState().workspaces[0]?.plan.at(-1)?.id;
+
+      expect(result.current.freshCaseId).toBe(added);
+      expect(useWorkspaceStore.getState().openCaseId).toBe(added);
+    });
+  });
+
   describe('onReorder', () => {
     it('moves a case where the QA dropped it', () => {
       const { result } = renderHook(() => usePlanViewModel());

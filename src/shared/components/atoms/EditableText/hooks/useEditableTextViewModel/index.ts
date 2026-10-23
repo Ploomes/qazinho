@@ -6,6 +6,7 @@ export const useEditableTextViewModel = (props: IEditableTextProps) => {
   return {
     value,
     isLocked,
+    isAutoFocused: props.isAutoFocused === true && !isLocked,
     className: isTitle ? 'editable-text editable-text--title' : 'editable-text',
     onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => {
       if (!isLocked) onCommit(event.target.value);

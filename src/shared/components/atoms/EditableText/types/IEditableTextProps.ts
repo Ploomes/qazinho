@@ -3,5 +3,6 @@ export interface IEditableTextProps {
   placeholder: string;
   isLocked?: boolean;
   isTitle?: boolean;
+  isAutoFocused?: boolean;
   onCommit: (value: string) => void;
 }
