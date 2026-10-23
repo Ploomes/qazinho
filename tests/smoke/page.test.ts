@@ -132,9 +132,9 @@ describe('the built page, with no bridge behind it', () => {
     await page.locator('.workspace-tabs__tab', { hasText: 'Plan' }).first().click();
     await page.getByRole('button', { name: 'Add a case' }).first().click();
 
-    expect(
-      await page.evaluate(() => document.activeElement?.getAttribute('placeholder')),
-    ).toBe('what this case covers');
+    expect(await page.locator(':focus').getAttribute('placeholder')).toBe(
+      'what this case covers',
+    );
 
     await page.keyboard.type('Cart keeps its items');
     await page.getByPlaceholder('what the agent does').first().fill('Add a hat');
