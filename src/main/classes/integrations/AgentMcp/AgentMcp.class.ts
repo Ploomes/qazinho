@@ -16,13 +16,12 @@ import type {
   McpSignInProgress,
   McpSignInStep,
 } from '@/shared/types';
-import { spawn } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { AgentTerminal } from '@/main/classes/agents/AgentTerminal';
-import { authorizeUrlIn } from '@/main/library';
+import { authorizeUrlIn, spawnCommand } from '@/main/library';
 import { AGENT_MCP, MCP_CATALOG, MCP_RECIPES, MCP_ROUTE_STEPS } from './constants';
 import {
   nextMcpMove,
@@ -306,7 +305,11 @@ export class AgentMcp {
     run.report({ phase: 'working', at: run.first, url: null, opensAt: null });
     await mkdir(this.folder, { recursive: true });
 
-    const child = spawn(run.command, run.args, { cwd: this.folder });
+    const child = spawnCommand({
+      command: run.command,
+      args: run.args,
+      options: { cwd: this.folder },
+    });
     let printed = '';
     let url: string | null = null;
 

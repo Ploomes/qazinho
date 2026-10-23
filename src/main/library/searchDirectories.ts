@@ -1,10 +1,12 @@
-import { isAbsolute, join } from 'node:path';
+import { posix, win32 } from 'node:path';
 import { mergePathSegments } from './mergePathSegments';
 
-const INSTALL_DIRS = [
+const POSIX_DIRS = [
   '/opt/homebrew/bin',
   '/usr/local/bin',
   '/usr/bin',
+  '/snap/bin',
+  '/home/linuxbrew/.linuxbrew/bin',
   '.local/bin',
   '.bun/bin',
   '.deno/bin',
@@ -12,17 +14,47 @@ const INSTALL_DIRS = [
   '.npm-global/bin',
 ];
 
-/** Every directory a command could be in: the app's PATH, the shell's, then the usual install places. */
+function windowsDirs(props: {
+  home: string;
+  env: Record<string, string | undefined>;
+}): string[] {
+  const appData = props.env.APPDATA ?? win32.join(props.home, 'AppData', 'Roaming');
+  const localAppData =
+    props.env.LOCALAPPDATA ?? win32.join(props.home, 'AppData', 'Local');
+  const programFiles = props.env.ProgramFiles ?? 'C:\\Program Files';
+
+  return [
+    win32.join(appData, 'npm'),
+    win32.join(props.home, '.local', 'bin'),
+    win32.join(props.home, '.claude', 'local'),
+    win32.join(props.home, '.bun', 'bin'),
+    win32.join(localAppData, 'Microsoft', 'WinGet', 'Links'),
+    win32.join(localAppData, 'Programs', 'nodejs'),
+    win32.join(programFiles, 'nodejs'),
+    win32.join(programFiles, 'Git', 'cmd'),
+    win32.join(programFiles, 'GitHub CLI'),
+    win32.join(props.env.SystemRoot ?? 'C:\\Windows', 'System32'),
+  ];
+}
+
+/** Every directory a command could be in: the app's PATH, the shell's, then where installs land on this platform. */
 export function searchDirectories(props: {
   appPath: string | undefined;
   shellPath: string | undefined;
   home: string;
+  platform: NodeJS.Platform;
+  env: Record<string, string | undefined>;
 }): string[] {
-  return mergePathSegments([
-    props.appPath,
-    props.shellPath,
-    ...INSTALL_DIRS.map((directory) =>
-      isAbsolute(directory) ? directory : join(props.home, directory),
-    ),
-  ]);
+  return mergePathSegments({
+    platform: props.platform,
+    segments: [
+      props.appPath,
+      props.shellPath,
+      ...(props.platform === 'win32'
+        ? windowsDirs(props)
+        : POSIX_DIRS.map((directory) =>
+            posix.isAbsolute(directory) ? directory : posix.join(props.home, directory),
+          )),
+    ],
+  });
 }

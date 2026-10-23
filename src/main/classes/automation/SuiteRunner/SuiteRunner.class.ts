@@ -9,14 +9,13 @@ import type {
   SuiteFailure,
   SuiteList,
 } from '@/shared/types';
-import { spawn } from 'node:child_process';
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { isAbsolute, join, relative } from 'node:path';
 import { createInterface } from 'node:readline';
 import { killTree } from '@/main/classes/agents/AgentRunner/library';
 import { hiddenValues } from '@/main/classes/runs/RunCoordinator/library/hiddenValues';
 import { isInside } from '@/main/classes/storage/Archive/library';
-import { stripAnsi } from '@/main/library';
+import { stripAnsi, spawnCommand } from '@/main/library';
 import { SUITE_REPORTER, SUITE_RUNNER } from './constants';
 import { locationOf, suiteReportOf, suiteStatusOf, suiteTestsOf } from './library';
 
@@ -309,11 +308,15 @@ export class SuiteRunner {
     if (tools.failure !== null || relative(this.root, trace).startsWith('..'))
       return false;
 
-    const child = spawn(tools.node, [tools.cli, 'show-trace', trace], {
-      cwd: tools.path,
-      env: { ...process.env, ...(await this.env(props.projectId)) },
-      detached: true,
-      stdio: 'ignore',
+    const child = spawnCommand({
+      command: tools.node,
+      args: [tools.cli, 'show-trace', trace],
+      options: {
+        cwd: tools.path,
+        env: { ...process.env, ...(await this.env(props.projectId)) },
+        detached: true,
+        stdio: 'ignore',
+      },
     });
 
     child.unref();
@@ -356,9 +359,9 @@ export class SuiteRunner {
     const { job, batch, path, folder } = props;
 
     return new Promise((done) => {
-      const child = spawn(
-        props.node,
-        [
+      const child = spawnCommand({
+        command: props.node,
+        args: [
           props.cli,
           'test',
           ...(batch.project === '' ? [] : [`--project=${batch.project}`]),
@@ -368,13 +371,13 @@ export class SuiteRunner {
           ...(props.grep === null ? [] : [`--grep=${props.grep}`]),
           ...batch.filters.map(locationOf),
         ],
-        {
+        options: {
           cwd: path,
           env: { ...process.env, ...SUITE_RUNNER.env, ...props.env },
           stdio: ['ignore', 'pipe', 'pipe'],
           detached: process.platform !== 'win32',
         },
-      );
+      });
       let said = '';
       let hasEnded = false;
       const keep = (text: string) => {
@@ -538,10 +541,14 @@ export class SuiteRunner {
     env: Record<string, string>;
   }): Promise<string> {
     return new Promise((done) => {
-      const child = spawn(props.command, props.args, {
-        cwd: props.cwd,
-        env: { ...process.env, ...SUITE_RUNNER.env, ...props.env },
-        stdio: ['ignore', 'pipe', 'pipe'],
+      const child = spawnCommand({
+        command: props.command,
+        args: props.args,
+        options: {
+          cwd: props.cwd,
+          env: { ...process.env, ...SUITE_RUNNER.env, ...props.env },
+          stdio: ['ignore', 'pipe', 'pipe'],
+        },
       });
       let said = '';
       const hear = (chunk: Buffer) => {

@@ -2,7 +2,7 @@ import type { IDetectedAgent } from '@/shared/types';
 import { readFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { findOnPath, hydrateShellPath, searchDirectories } from '@/main/library';
+import { findOnPath, machineDirectories } from '@/main/library';
 import { AGENT_PROBES } from './constants';
 import { defaultModelOf, isSignedInOf, statusOf } from './library';
 
@@ -14,11 +14,7 @@ export class AgentDetector {
   public async detect(): Promise<IDetectedAgent[]> {
     if (this.detected) return this.detected;
 
-    const directories = searchDirectories({
-      appPath: process.env.PATH,
-      shellPath: await hydrateShellPath(),
-      home: homedir(),
-    });
+    const directories = await machineDirectories();
 
     this.detected = await Promise.all(
       AGENT_PROBES.map(async ({ config, status, ...probe }) => {

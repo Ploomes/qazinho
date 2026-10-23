@@ -10,6 +10,7 @@ export async function runAdbRaw(props: { adb: string; args: string[] }): Promise
     timeout: ANDROID.commandTimeoutMs,
     maxBuffer: ANDROID.maxBufferBytes,
     encoding: 'buffer',
+    windowsHide: true,
   });
 
   return stdout;

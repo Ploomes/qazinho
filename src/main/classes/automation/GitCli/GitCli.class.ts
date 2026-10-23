@@ -1,6 +1,5 @@
 import type { GitAnswer, IGitCli } from './types';
-import { spawn } from 'node:child_process';
-import { findOnPath, stripAnsi } from '@/main/library';
+import { findOnPath, stripAnsi, spawnCommand } from '@/main/library';
 import { GIT_CLI } from './constants';
 
 /** Runs the QA's own git in a folder of theirs, never asking anything at a prompt; what it pushes goes with their own credentials. */
@@ -25,10 +24,14 @@ export class GitCli {
     if (path === null) return { isOk: false, said: 'git is not on this machine.' };
 
     return new Promise<GitAnswer>((done) => {
-      const child = spawn(path, props.args, {
-        cwd: props.cwd,
-        env: { ...process.env, ...GIT_CLI.env },
-        stdio: ['ignore', 'pipe', 'pipe'],
+      const child = spawnCommand({
+        command: path,
+        args: props.args,
+        options: {
+          cwd: props.cwd,
+          env: { ...process.env, ...GIT_CLI.env },
+          stdio: ['ignore', 'pipe', 'pipe'],
+        },
       });
       const out: Buffer[] = [];
       let said = '';

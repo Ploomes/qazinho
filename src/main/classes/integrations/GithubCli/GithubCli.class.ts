@@ -6,10 +6,9 @@ import type {
   IGithubStatus,
 } from '@/shared/types';
 import type { ChildProcess } from 'node:child_process';
-import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { mkdir } from 'node:fs/promises';
-import { findOnPath, stripAnsi } from '@/main/library';
+import { findOnPath, stripAnsi, spawnCommand } from '@/main/library';
 import { GITHUB_CLI } from './constants';
 import {
   apiArgsOf,
@@ -124,15 +123,19 @@ export class GithubCli {
     await mkdir(props.dir, { recursive: true });
 
     return new Promise<GhAnswer>((done) => {
-      const fetching = spawn(gh, apiArgsOf({ path: props.path }), {
-        env: { ...process.env, ...GITHUB_CLI.env },
-        stdio: ['ignore', 'pipe', 'pipe'],
+      const fetching = spawnCommand({
+        command: gh,
+        args: apiArgsOf({ path: props.path }),
+        options: {
+          env: { ...process.env, ...GITHUB_CLI.env },
+          stdio: ['ignore', 'pipe', 'pipe'],
+        },
       });
-      const unpacking = spawn(
-        tar ?? 'tar',
-        ['-xzf', '-', '-C', props.dir, '--strip-components', '1'],
-        { stdio: ['pipe', 'ignore', 'pipe'] },
-      );
+      const unpacking = spawnCommand({
+        command: tar ?? 'tar',
+        args: ['-xzf', '-', '-C', props.dir, '--strip-components', '1'],
+        options: { stdio: ['pipe', 'ignore', 'pipe'] },
+      });
       const ended = { fetching: null as number | null, unpacking: null as number | null };
       let fetchSaid = '';
       let tarSaid = '';
@@ -285,13 +288,17 @@ export class GithubCli {
 
     if (signal.aborted) return Promise.resolve(report({ phase: 'cancelled' }));
 
-    const child: ChildProcess = spawn(props.path, props.args, {
-      env: {
-        ...process.env,
-        ...GITHUB_CLI.env,
-        ...(process.platform === 'win32' ? {} : { GH_BROWSER: 'true' }),
+    const child: ChildProcess = spawnCommand({
+      command: props.path,
+      args: props.args,
+      options: {
+        env: {
+          ...process.env,
+          ...GITHUB_CLI.env,
+          ...(process.platform === 'win32' ? {} : { GH_BROWSER: 'true' }),
+        },
+        stdio: ['pipe', 'pipe', 'pipe'],
       },
-      stdio: ['pipe', 'pipe', 'pipe'],
     });
 
     return new Promise<GithubSignInProgress | null>((done) => {
@@ -356,9 +363,13 @@ export class GithubCli {
     timeoutMs: number;
   }): Promise<GhAnswer> {
     return new Promise<GhAnswer>((done) => {
-      const child = spawn(props.path, props.args, {
-        env: { ...process.env, ...GITHUB_CLI.env },
-        stdio: ['ignore', 'pipe', 'pipe'],
+      const child = spawnCommand({
+        command: props.path,
+        args: props.args,
+        options: {
+          env: { ...process.env, ...GITHUB_CLI.env },
+          stdio: ['ignore', 'pipe', 'pipe'],
+        },
       });
       const out: Buffer[] = [];
       let said = '';

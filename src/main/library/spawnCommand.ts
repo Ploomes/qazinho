@@ -1,0 +1,18 @@
+import type { ChildProcessWithoutNullStreams, SpawnOptions } from 'node:child_process';
+import { spawn } from 'node:child_process';
+import { launchHere } from './launchHere';
+
+/** Starts a command the way this platform needs, with no console window flashing up on Windows; its streams are pipes unless `stdio` says otherwise. */
+export function spawnCommand(props: {
+  command: string;
+  args: string[];
+  options?: SpawnOptions;
+}): ChildProcessWithoutNullStreams {
+  const launch = launchHere(props);
+
+  return spawn(launch.file, launch.args, {
+    ...props.options,
+    windowsHide: true,
+    windowsVerbatimArguments: launch.isVerbatim,
+  }) as ChildProcessWithoutNullStreams;
+}

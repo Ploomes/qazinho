@@ -46,11 +46,9 @@ import type {
   SuiteShipWay,
   WindowFit,
 } from '@/shared/types';
-import { execFile } from 'node:child_process';
 import { copyFile, mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { homedir, tmpdir } from 'node:os';
 import { delimiter, extname, join } from 'node:path';
-import { promisify } from 'node:util';
 import {
   app,
   BrowserWindow,
@@ -131,12 +129,12 @@ import {
   findExistingPath,
   findOnPath,
   fittedBounds,
-  hydrateShellPath,
   imageExtensionOf,
   isInternalNavigation,
   isLostSession,
   isSealable,
-  searchDirectories,
+  machineDirectories,
+  execCommand,
 } from '@/main/library';
 import { ASSISTANT_WAIT, CHANNELS } from '@/shared/constants';
 
@@ -196,11 +194,7 @@ function broadcast(props: {
 }
 
 async function commandDirectories(): Promise<string[]> {
-  return searchDirectories({
-    appPath: process.env.PATH,
-    shellPath: await hydrateShellPath(),
-    home: homedir(),
-  });
+  return machineDirectories();
 }
 
 const installer = new SetupInstaller({
@@ -237,9 +231,10 @@ const usageReader = new UsageReader({
   exec: async ({ command, args, cwd, timeoutMs }) => {
     await mkdir(cwd, { recursive: true });
 
-    const { stdout } = await promisify(execFile)(command, [...args], {
-      cwd,
-      timeout: timeoutMs,
+    const { stdout } = await execCommand({
+      command,
+      args: [...args],
+      options: { cwd, timeout: timeoutMs },
     });
 
     return stdout;
@@ -349,14 +344,22 @@ const builder = new AppBuilder({
       androidSdk: found.androidSdk.path,
       javaHome: findExistingPath([process.env.JAVA_HOME, ...APP_BUILDER.javaHomes]),
       hasXcode: found.xcode.isFound,
-      path: (await commandDirectories()).join(':'),
+      path: (await commandDirectories()).join(delimiter),
     };
   },
   readPlist: (file) =>
     new Promise((settle) => {
-      execFile('plutil', ['-convert', 'json', '-o', '-', file], (error, stdout) => {
-        settle(error === null ? stdout : null);
-      });
+      execCommand({
+        command: 'plutil',
+        args: ['-convert', 'json', '-o', '-', file],
+      }).then(
+        ({ stdout }) => {
+          settle(stdout);
+        },
+        () => {
+          settle(null);
+        },
+      );
     }),
   onEvent: (event) => {
     broadcast({ channel: CHANNELS.buildEvent, event });
@@ -436,12 +439,18 @@ const codeExport = new CodeExport({
   },
   appIdOf: async (target) => {
     if (target.kind === 'ios') {
-      const printed = await promisify(execFile)('plutil', [
-        '-extract',
-        'CFBundleIdentifier',
-        'raw',
-        join(target.value, 'Info.plist'),
-      ]).catch(() => null);
+      const printed =
+        process.platform === 'darwin'
+          ? await execCommand({
+              command: 'plutil',
+              args: [
+                '-extract',
+                'CFBundleIdentifier',
+                'raw',
+                join(target.value, 'Info.plist'),
+              ],
+            }).catch(() => null)
+          : null;
 
       return printed === null ? null : bundleOfPlist(printed.stdout) || null;
     }
@@ -454,10 +463,10 @@ const codeExport = new CodeExport({
 
     if (sdkRoot === null || tools === null) return null;
 
-    const dumped = await promisify(execFile)(
-      join(sdkRoot, 'build-tools', tools, 'aapt2'),
-      ['dump', 'packagename', target.value],
-    ).catch(() => null);
+    const dumped = await execCommand({
+      command: join(sdkRoot, 'build-tools', tools, 'aapt2'),
+      args: ['dump', 'packagename', target.value],
+    }).catch(() => null);
 
     return dumped === null ? null : packageOfApk(dumped.stdout) || null;
   },

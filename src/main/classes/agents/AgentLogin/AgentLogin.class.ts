@@ -5,11 +5,10 @@ import type {
   AgentSignInStep,
 } from '@/shared/types';
 import type { ChildProcessWithoutNullStreams } from 'node:child_process';
-import { spawn } from 'node:child_process';
 import { mkdir } from 'node:fs/promises';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { LinkCatcher } from '@/main/classes/agents/LinkCatcher';
-import { authorizeUrlIn, stripAnsi } from '@/main/library';
+import { authorizeUrlIn, stripAnsi, spawnCommand } from '@/main/library';
 import { AGENT_LOGIN, LOGIN_RECIPES } from './constants';
 
 /** Signs the QA in to their own agent through the agent's own login: its page opens in the browser, and the agent keeps the result. */
@@ -102,9 +101,13 @@ export class AgentLogin {
 
     await mkdir(this.folder, { recursive: true });
 
-    const child = spawn(command, recipe.args, {
-      cwd: this.folder,
-      env: { ...process.env, ...catcher.env() },
+    const child = spawnCommand({
+      command: command,
+      args: recipe.args,
+      options: {
+        cwd: this.folder,
+        env: { ...process.env, ...catcher.env() },
+      },
     });
 
     entry.child = child;

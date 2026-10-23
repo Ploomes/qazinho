@@ -51,4 +51,46 @@ describe('findOnPath', () => {
       join(directory, 'claude'),
     );
   });
+
+  describe('on Windows', () => {
+    function windowsDirectoryWith(names: string[]): string {
+      const directory = mkdtempSync(join(tmpdir(), 'qazinho-path-win-'));
+
+      for (const name of names) writeFileSync(join(directory, name), '');
+
+      return directory;
+    }
+
+    it('finds a command by its .exe, before the npm .cmd shim beside it', () => {
+      const directory = windowsDirectoryWith(['claude', 'claude.cmd', 'claude.exe']);
+
+      expect(
+        findOnPath({ command: 'claude', directories: [directory], platform: 'win32' }),
+      ).toBe(join(directory, 'claude.exe'));
+    });
+
+    /** npm writes an extensionless sh script beside each .cmd; spawning it fails on Windows. */
+    it('takes the npm .cmd shim, and never the sh script with no extension', () => {
+      const directory = windowsDirectoryWith(['codex', 'codex.cmd', 'codex.ps1']);
+
+      expect(
+        findOnPath({ command: 'codex', directories: [directory], platform: 'win32' }),
+      ).toBe(join(directory, 'codex.cmd'));
+      expect(
+        findOnPath({
+          command: 'codex',
+          directories: [windowsDirectoryWith(['codex'])],
+          platform: 'win32',
+        }),
+      ).toBeNull();
+    });
+
+    it('takes a name that already says its extension as it is', () => {
+      const directory = windowsDirectoryWith(['tar.exe']);
+
+      expect(
+        findOnPath({ command: 'tar.exe', directories: [directory], platform: 'win32' }),
+      ).toBe(join(directory, 'tar.exe'));
+    });
+  });
 });

@@ -1,15 +1,21 @@
-/** Keeps the first mention of each directory: a hydrated PATH may repeat what the app already had. */
-export function mergePathSegments(segments: (string | undefined)[]): string[] {
+/** Splits each PATH by the platform's own separator and keeps the first mention of each directory: a hydrated PATH may repeat what the app already had. */
+export function mergePathSegments(props: {
+  segments: (string | undefined)[];
+  platform: NodeJS.Platform;
+}): string[] {
   const seen = new Set<string>();
+  const separator = props.platform === 'win32' ? ';' : ':';
 
-  return segments
+  return props.segments
     .filter((segment): segment is string => segment !== undefined && segment.length > 0)
-    .flatMap((segment) => segment.split(':'))
-    .map((directory) => directory.trim())
+    .flatMap((segment) => segment.split(separator))
+    .map((directory) => directory.trim().replace(/^"(.*)"$/, '$1'))
     .filter((directory) => {
-      if (directory.length === 0 || seen.has(directory)) return false;
+      const key = props.platform === 'win32' ? directory.toLowerCase() : directory;
 
-      seen.add(directory);
+      if (directory.length === 0 || seen.has(key)) return false;
+
+      seen.add(key);
 
       return true;
     });

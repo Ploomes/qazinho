@@ -8,11 +8,16 @@ import type {
   IStepAction,
   IViewport,
 } from '@/shared/types';
-import { spawn } from 'node:child_process';
 import { readdir, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
-import { describeMeasure, phoneGlance, phoneMeasureOf, swipeOf } from '@/main/library';
+import {
+  describeMeasure,
+  phoneGlance,
+  phoneMeasureOf,
+  swipeOf,
+  spawnCommand,
+} from '@/main/library';
 import { ANDROID } from './constants';
 import {
   adbTextsOf,
@@ -289,9 +294,13 @@ export class AndroidDriver implements IDeviceDriver {
   private async boot(): Promise<string> {
     const emulator = join(this.sdkRoot, 'emulator', 'emulator');
 
-    spawn(emulator, bootArgs(this.avd), {
-      detached: true,
-      stdio: 'ignore',
+    spawnCommand({
+      command: emulator,
+      args: bootArgs(this.avd),
+      options: {
+        detached: true,
+        stdio: 'ignore',
+      },
     }).unref();
 
     this.isOurs = true;

@@ -1,4 +1,6 @@
-/** Signals an agent and everything it started: on POSIX the agent leads its own process group. */
+import { spawn } from 'node:child_process';
+
+/** Signals an agent and everything it started: on POSIX the agent leads its own process group, and on Windows, which has no signals, taskkill ends the whole tree. */
 export function killTree(
   child: {
     pid?: number | undefined;
@@ -9,7 +11,12 @@ export function killTree(
   if (child.pid === undefined) return;
 
   if (process.platform === 'win32') {
-    child.kill('SIGTERM');
+    spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], {
+      windowsHide: true,
+      stdio: 'ignore',
+    }).on('error', () => {
+      child.kill('SIGTERM');
+    });
 
     return;
   }

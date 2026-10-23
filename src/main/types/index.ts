@@ -6,6 +6,7 @@ export type * from './IElementMeasure';
 export type * from './IElementStyle';
 export type * from './IGaps';
 export type * from './IJiraCredentials';
+export type * from './ILaunch';
 export type * from './IProcessRow';
 export type * from './IVariableValue';
 export type * from './IVaultCipher';

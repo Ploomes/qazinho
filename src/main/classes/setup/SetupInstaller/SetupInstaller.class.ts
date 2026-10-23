@@ -5,10 +5,9 @@ import type {
   ISetupEvent,
   IToolStatus,
 } from '@/shared/types';
-import { spawn } from 'node:child_process';
 import { homedir } from 'node:os';
 import { delimiter, isAbsolute } from 'node:path';
-import { findOnPath } from '@/main/library';
+import { findOnPath, spawnCommand } from '@/main/library';
 import { INSTALL } from './constants';
 import { commandLineOf, explainFailure, linesOf, recipeFor } from './library';
 
@@ -112,14 +111,18 @@ export class SetupInstaller {
     say(`$ ${[step.command, ...step.args].join(' ')}`);
 
     return new Promise((settle) => {
-      const child = spawn(path, step.args, {
-        stdio: ['ignore', 'pipe', 'pipe'],
-        env: {
-          ...process.env,
-          PATH: directories.join(delimiter),
-          HOMEBREW_NO_AUTO_UPDATE: '1',
-          HOMEBREW_NO_ENV_HINTS: '1',
-          NONINTERACTIVE: '1',
+      const child = spawnCommand({
+        command: path,
+        args: step.args,
+        options: {
+          stdio: ['ignore', 'pipe', 'pipe'],
+          env: {
+            ...process.env,
+            PATH: directories.join(delimiter),
+            HOMEBREW_NO_AUTO_UPDATE: '1',
+            HOMEBREW_NO_ENV_HINTS: '1',
+            NONINTERACTIVE: '1',
+          },
         },
       });
 
@@ -179,12 +182,16 @@ export class SetupInstaller {
     if (check === undefined || path === null) return false;
 
     return new Promise((settle) => {
-      const child = spawn(path, check.args, {
-        stdio: 'ignore',
-        env: {
-          ...process.env,
-          PATH: props.directories.join(delimiter),
-          HOMEBREW_NO_AUTO_UPDATE: '1',
+      const child = spawnCommand({
+        command: path,
+        args: check.args,
+        options: {
+          stdio: 'ignore',
+          env: {
+            ...process.env,
+            PATH: props.directories.join(delimiter),
+            HOMEBREW_NO_AUTO_UPDATE: '1',
+          },
         },
       });
       const timeout = setTimeout(() => {
