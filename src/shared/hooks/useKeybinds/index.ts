@@ -53,7 +53,7 @@ export const useKeybinds = () => {
     const onKeyDown = (event: KeyboardEvent) => {
       const combo = comboOf(event);
 
-      if (combo === null) return;
+      if (combo === null || event.defaultPrevented) return;
 
       if (editingKeybindId !== null) {
         event.preventDefault();
