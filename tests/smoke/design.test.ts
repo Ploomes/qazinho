@@ -69,14 +69,19 @@ process.stdin.on('end', async () => {
       expected: 'Corners 12px, as frame 12:345 draws them', got: 'Corners 8px',
       frame: '12:345',
     } });
+    await client.callTool({ name: 'report', arguments: {
+      step: 1, verdict: 'failed', why: 'The heading reads Checkout, and the frame says Finalizar compra.',
+      got: 'Checkout', title: 'Heading differs from the design', severity: 'medium', frame: '12:345',
+    } });
+  } else {
+    await client.callTool({ name: 'report', arguments: { step: 1, verdict: 'passed', why: 'The button shows.', got: 'Pay now' } });
   }
-  await client.callTool({ name: 'report', arguments: { step: 1, verdict: 'passed', why: 'The button shows.', got: 'Pay now' } });
   setInterval(() => undefined, 1000);
 });
 `;
 
 describe('a run against a Figma design', () => {
-  it('hands a case with a frame the QA’s Figma, and files what it measured off the design on that frame', async () => {
+  it('hands a case with a frame the QA’s Figma: the step fails on its frame, and the rest of the screen is filed beside it', async () => {
     const site = createServer((_request, response) => {
       response.writeHead(200, { 'content-type': 'text/html' });
       response.end(
@@ -176,6 +181,17 @@ describe('a run against a Figma design', () => {
       title: 'Pay now button: corners 8px, not 12px',
       frame: '12:345',
     });
+
+    const steps = events.flatMap((event) =>
+      event.kind === 'step' ? [event.outcome] : [],
+    );
+
+    expect(steps.find(({ caseId }) => caseId === 'TC-01')).toMatchObject({
+      verdict: 'failed',
+      title: 'Heading differs from the design',
+      frame: '12:345',
+    });
+    expect(steps.find(({ caseId }) => caseId === 'TC-02')).not.toHaveProperty('frame');
 
     deviceTools.close();
     site.close();
