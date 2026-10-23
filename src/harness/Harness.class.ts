@@ -73,10 +73,10 @@ import {
   BUILD_TOOLS,
   CHANGE_TOOLS,
   MCP_HOST,
+  PERMISSION_TOOL,
   TOOL_GRANTS,
 } from '@/harness/tools/constants';
 import { designAccessOf, toolsOfRole } from '@/harness/tools/library';
-import { PERMISSION_TOOL } from '@/harness/tools/servers/sources/constants';
 
 /** QAzinho's product harness: what the QA's agent is told, and which of QAzinho's tools it gets. */
 export class Harness {
@@ -179,7 +179,7 @@ export class Harness {
           ? [props.story.root]
           : []),
       ],
-      permissionTool: `mcp__${MCP_HOST.name}__${PERMISSION_TOOL.name}`,
+      permissionTool: PERMISSION_TOOL.granted,
     };
   }
 

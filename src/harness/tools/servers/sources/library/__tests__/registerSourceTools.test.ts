@@ -36,26 +36,11 @@ afterEach(async () => {
 });
 
 describe('registerSourceTools', () => {
-  it('hands each source tool call on, and answers a permission at once without it', async () => {
+  it('hands each source tool call on', async () => {
     const { client, calls } = await serve();
 
     await client.callTool({ name: 'read_jira_story', arguments: { story: 'HC-878' } });
 
-    const answer = await client.callTool({
-      name: 'approve_permission',
-      arguments: {
-        tool_name: 'mcp__acme__lookup',
-        input: { q: 'billing' },
-        tool_use_id: 't1',
-      },
-    });
-
     expect(calls).toEqual([{ name: 'read_jira_story', args: { story: 'HC-878' } }]);
-    expect(answer.content).toEqual([
-      {
-        type: 'text',
-        text: JSON.stringify({ behavior: 'allow', updatedInput: { q: 'billing' } }),
-      },
-    ]);
   });
 });

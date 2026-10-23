@@ -13,9 +13,9 @@ import { callAppTool, registerAppTools } from '@/harness/tools/servers/app';
 import { callDeviceTool, registerDeviceTools } from '@/harness/tools/servers/device';
 import { callSourceTool, registerSourceTools } from '@/harness/tools/servers/sources';
 import { callSuiteTool, registerSuiteTools } from '@/harness/tools/servers/suite';
-import { workspaceOfPath } from './library';
+import { registerPermissionTool, workspaceOfPath } from './library';
 
-/** Serves QAzinho's MCP tools on loopback: a workspace's device for the length of a run, the app while the assistant answers, a team's suite while an agent changes it, and the QA's Jira and Confluence while the chat answers. */
+/** Serves QAzinho's MCP tools on loopback: a workspace's device for the length of a run, the app while the assistant answers, a team's suite while an agent changes it, and the QA's Jira and Confluence while the chat answers; every server, and the permissions scope alone, answers the permissions Claude Code asks. */
 export class McpHost {
   private readonly token = randomUUID();
   private readonly devices = new Map<string, IAttachDevice>();
@@ -118,13 +118,17 @@ export class McpHost {
     const suite = scope === null ? undefined : this.suites.get(scope);
     const sources = scope === null ? undefined : this.sources.get(scope);
 
-    if (scope === null || (!device && !app && !suite && !sources)) {
+    const isPermissions = scope === MCP_HOST.permissionsScope;
+
+    if (scope === null || (!device && !app && !suite && !sources && !isPermissions)) {
       response.writeHead(404).end();
 
       return;
     }
 
     const mcp = new McpServer({ name: MCP_HOST.name, version: MCP_HOST.version });
+
+    registerPermissionTool(mcp);
 
     if (device)
       registerDeviceTools({

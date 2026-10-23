@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { permissionOf } from '@/harness/tools/servers/sources/library';
+import { permissionOf } from '@/harness/tools/library';
 
 describe('permissionOf', () => {
   /** The QA's company MCP is hers to answer for: the chat uses it with no question. */

@@ -61,29 +61,5 @@
     "execution": {
       "taskSupport": "forbidden"
     }
-  },
-  {
-    "name": "approve_permission",
-    "description": "QAzinho answers with it each permission Claude Code would ask the QA for. Never call it yourself: it decides nothing you ask.",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "tool_name": {
-          "type": "string"
-        },
-        "input": {},
-        "tool_use_id": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "tool_name",
-        "input"
-      ],
-      "$schema": "http://json-schema.org/draft-07/schema#"
-    },
-    "execution": {
-      "taskSupport": "forbidden"
-    }
   }
 ]
