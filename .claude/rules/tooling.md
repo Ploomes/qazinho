@@ -102,7 +102,14 @@ pass what a GitHub release body takes, so a release whose notes are that long po
 checks the tag out, packs `QAzinho-Setup-<version>.exe` with electron-builder and attaches it to
 the release. It goes out unsigned until there is a certificate, so SmartScreen asks once. The
 `tag` input builds the installer of a release that already exists, and releases nothing.
-The macOS `.dmg` (signed and notarized) and the Linux AppImage are still to do.
+**The macOS installers are a workflow of their own**, `macos-installer.yml`, since a Mac runner is
+billed at ten times a Linux one and runs only for them. The release calls it once it tags, unless
+its `mac` input is off, and dispatching it with a tag builds the installers of a release that
+exists. It packs `QAzinho-<version>-arm64.dmg` and `-x64.dmg`, signed with the Developer ID
+certificate and notarized with an App Store Connect API key, from five secrets:
+`APPLE_CERTIFICATE_P12` (the `.p12`, as base64), `APPLE_CERTIFICATE_PASSWORD`, `APPLE_API_KEY_P8`
+(the `.p8` file's text), `APPLE_API_KEY_ID` and `APPLE_API_ISSUER`. With any missing it builds
+nothing: an unsigned `.dmg` reads as damaged on a Mac. The Linux AppImage is still to do.
 
 | Commit                               | Effect |
 | ------------------------------------ | ------ |
