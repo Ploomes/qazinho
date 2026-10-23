@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { secretIn } from '@/modules/Assistant/library';
+import { secretIn } from '@/modules/Project/library';
 
 describe('secretIn', () => {
   it('finds a Jira or GitHub token, or an API key, in what the QA typed', () => {

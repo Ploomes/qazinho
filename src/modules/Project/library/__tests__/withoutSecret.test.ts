@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { withoutSecret } from '@/modules/Assistant/library';
+import { withoutSecret } from '@/modules/Project/library';
 
 describe('withoutSecret', () => {
   it('takes the token out and closes the gap it leaves before a comma', () => {

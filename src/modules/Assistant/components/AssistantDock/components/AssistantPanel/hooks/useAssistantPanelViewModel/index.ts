@@ -7,13 +7,8 @@ import {
   ASSISTANT_FAILURE_KEYS,
   ASSISTANT_SUGGESTIONS,
 } from '@/modules/Assistant/constants';
-import {
-  appSnapshotOf,
-  secretIn,
-  suggestionsFor,
-  toolLabelOf,
-  withoutSecret,
-} from '@/modules/Assistant/library';
+import { appSnapshotOf, suggestionsFor, toolLabelOf } from '@/modules/Assistant/library';
+import { secretIn, withoutSecret } from '@/modules/Project';
 import { Assistant } from '@/services';
 import {
   useAppStore,
