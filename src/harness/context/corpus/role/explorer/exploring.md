@@ -29,5 +29,8 @@ Every action answers with how much time is left, and none is carried out once it
 the time: while it lasts there is always more to try, a flow you did not take to the end, the
 edges of a field, a control or a screen you have not used. Call finish when little time is left:
 what you explored and how it went, in a few sentences, and the test cases a plan should hold
-from what you saw, the most important first, written the way QA is written here.
+from what you saw, the most important first, written the way QA is written here. A case names
+as ${NAME} only a variable the project keeps, from the list you were given; what the QA told you
+for this exploration alone, such as a code or an account they did not keep, the case says in
+words, such as "the test account's password", for the run to ask them.
 Write what you note, file and suggest in {{language}}, the language the QA reads QAzinho in.
