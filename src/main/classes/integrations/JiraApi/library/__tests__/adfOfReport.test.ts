@@ -156,4 +156,23 @@ describe('adfOfReport', () => {
       }),
     ).toEqual({ type: 'doc', version: 1, content: [] });
   });
+
+  it('writes what a failed request answered as code after it', () => {
+    const [list] =
+      adfOfReport({
+        title: 'x',
+        blocks: [
+          {
+            kind: 'requests',
+            items: [
+              { call: 'POST /api/coupon', outcome: '→ 500', answer: '{"error":"down"}' },
+            ],
+          },
+        ],
+      }).content ?? [];
+
+    expect(JSON.stringify(list)).toContain(
+      '{"type":"text","text":" — "},{"type":"text","text":"{\\"error\\":\\"down\\"}","marks":[{"type":"code"}]}',
+    );
+  });
 });

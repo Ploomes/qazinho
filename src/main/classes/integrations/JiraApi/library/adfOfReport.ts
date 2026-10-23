@@ -82,6 +82,12 @@ function nodesOf(block: BugReportBlock): IAdfNode[] {
         items: block.items.map((request) => [
           ...text({ text: request.call, marks: [{ type: 'code' }] }),
           ...text({ text: ` ${request.outcome}` }),
+          ...(request.answer === undefined
+            ? []
+            : [
+                ...text({ text: ' — ' }),
+                ...text({ text: request.answer, marks: [{ type: 'code' }] }),
+              ]),
         ]),
       });
   }

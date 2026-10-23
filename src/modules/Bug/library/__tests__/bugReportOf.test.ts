@@ -164,6 +164,44 @@ describe('bugReportOf', () => {
     });
   });
 
+  it('says what a failed request answered, on one line and cut short', () => {
+    const report = bugReportOf({
+      ...REPORT,
+      requests: [
+        {
+          id: 7,
+          method: 'POST',
+          url: 'https://shop.test/api/coupon',
+          type: 'fetch',
+          status: 500,
+          failure: null,
+          startedAt: 1,
+          durationMs: 312,
+          size: 20,
+          body: '{\n  "error": "Coupon service down"\n}',
+        },
+        {
+          id: 8,
+          method: 'POST',
+          url: 'https://shop.test/api/log',
+          type: 'fetch',
+          status: 502,
+          failure: null,
+          startedAt: 2,
+          durationMs: 10,
+          size: 0,
+          body: 'x'.repeat(600),
+        },
+      ],
+    });
+    const requests = report.blocks.find((block) => block.kind === 'requests');
+    const items = requests?.kind === 'requests' ? requests.items : [];
+
+    expect(items[0]?.answer).toBe('{ "error": "Coupon service down" }');
+    expect(items[1]?.answer).toHaveLength(500);
+    expect(items[1]?.answer?.endsWith('…')).toBe(true);
+  });
+
   it('links the Figma frame a bug off the design differs from', () => {
     const report = bugReportOf({
       ...REPORT,

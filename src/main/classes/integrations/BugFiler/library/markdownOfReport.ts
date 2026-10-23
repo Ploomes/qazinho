@@ -45,7 +45,10 @@ function markdownOf(block: BugReportBlock): string[] {
         ? []
         : [
             block.items
-              .map((request) => `- ${code(request.call)} ${request.outcome}`)
+              .map(
+                (request) =>
+                  `- ${code(request.call)} ${request.outcome}${request.answer === undefined ? '' : `\n  ${code(request.answer)}`}`,
+              )
               .join('\n'),
           ];
   }

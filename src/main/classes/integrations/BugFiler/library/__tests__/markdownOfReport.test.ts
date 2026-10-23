@@ -59,6 +59,22 @@ describe('markdownOfReport', () => {
     ).toBe('- ``GET /a`b`` failed');
   });
 
+  it('writes what a failed request answered as code under it', () => {
+    expect(
+      markdownOfReport({
+        title: 'x',
+        blocks: [
+          {
+            kind: 'requests',
+            items: [
+              { call: 'POST /api/coupon', outcome: '→ 500', answer: '{"error":"down"}' },
+            ],
+          },
+        ],
+      }),
+    ).toBe('- `POST /api/coupon` → 500\n  `{"error":"down"}`');
+  });
+
   it('leaves out what is empty', () => {
     expect(
       markdownOfReport({

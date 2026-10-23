@@ -1,8 +1,9 @@
 import type { IBug, IBugSighting } from '@/modules/Bug/types';
 import type { IWorkspace } from '@/modules/Workspace';
 import type { INetworkEntry, IReviewSighting } from '@/shared/types';
+import { BUG_REPORT } from '@/modules/Bug/constants';
 
-/** Each time a filed bug came back, the way the reviewing agent reads it: the run and the step it walked, what its agent noted, the screen it left and the requests that failed around it. */
+/** Each time a filed bug came back, the way the reviewing agent reads it: the run and the step it walked, what its agent noted, the screen it left and the requests that failed around it, with what they answered. */
 export function reviewSightingsOf(props: {
   workspace: IWorkspace;
   bug: IBug;
@@ -28,7 +29,7 @@ export function reviewSightingsOf(props: {
       shot: seen.shot.file,
       requests: (props.failed[seen.runId] ?? []).map(
         (entry) =>
-          `${entry.method} ${entry.url} → ${entry.status === null ? (entry.failure ?? 'no answer') : String(entry.status)}`,
+          `${entry.method} ${entry.url} → ${entry.status === null ? (entry.failure ?? 'no answer') : String(entry.status)}${entry.body === undefined ? '' : `: ${entry.body.replace(/\s+/g, ' ').slice(0, BUG_REPORT.answerLength)}`}`,
       ),
     };
   });

@@ -8,7 +8,20 @@ function cut(text: string): string {
     : text;
 }
 
-/** A bug written out for the QA's tracker: what the agent saw, how to get there, what was expected and what came, the requests that failed around it, and where it was caught, the Figma frame it is off included. */
+function answerOf(body: string | undefined): { answer?: string } {
+  const said = body?.replace(/\s+/g, ' ').trim() ?? '';
+
+  return said === ''
+    ? {}
+    : {
+        answer:
+          said.length > BUG_REPORT.answerLength
+            ? `${said.slice(0, BUG_REPORT.answerLength - 1)}…`
+            : said,
+      };
+}
+
+/** A bug written out for the QA's tracker: what the agent saw, how to get there, what was expected and what came, the requests that failed around it with what they answered, and where it was caught, the Figma frame it is off included. */
 export function bugReportOf(props: {
   bug: IBug;
   title: string;
@@ -53,6 +66,7 @@ export function bugReportOf(props: {
               {
                 kind: 'requests',
                 items: props.requests.map((request) => ({
+                  ...answerOf(request.body),
                   call: `${request.method} ${cut(request.url)}`,
                   outcome: [
                     request.status ?? request.failure ?? words.noAnswer,

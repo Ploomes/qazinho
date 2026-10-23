@@ -3,4 +3,5 @@ export const BUG_REPORT = {
   requestsAfterMs: 2_000,
   requests: 8,
   urlLength: 160,
+  answerLength: 500,
 } as const;
