@@ -218,6 +218,11 @@ export const en = {
     STEPS_OTHER: '{{count}} steps',
     NOTE: 'Click a case to open it, drag it or press Alt+↑↓ to move it, and change any line the agent got wrong.',
     MOVE_CASE: 'Alt+↑ and Alt+↓ move this case',
+    MISSING_ONE:
+      'The plan types {{names}}, which the project does not keep yet: add it, or a run asks you for it each time.',
+    MISSING_OTHER:
+      'The plan types {{names}}, which the project does not keep yet: add them, or a run asks you for them each time.',
+    MISSING_ADD: 'Add the variables',
     ADD_CASE: 'Add a case',
     ADD_STEP: 'Add a step',
     REMOVE_CASE: 'Remove this case',

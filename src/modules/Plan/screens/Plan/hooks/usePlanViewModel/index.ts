@@ -11,17 +11,25 @@ import {
   caseIdsUsed,
   editCase,
   editStep,
+  missingVariablesOf,
   moveCase,
   planDocOf,
   removeCase,
   removeStep,
 } from '@/modules/Plan/library';
 import { DOC_VERDICT_KEYS, PLAN_SOURCE } from '@/modules/Plan/screens/Plan/constants';
+import { useVariableActions } from '@/modules/Project';
 import { flattenPlanSteps, useRunActions } from '@/modules/Run';
 import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
 import { Confluence, Run } from '@/services';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
-import { useAppStore, useSettingsStore, useSetupStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useSettingsStore,
+  useSetupStore,
+  useVariablesStore,
+  useWorkspaceStore,
+} from '@/store';
 
 export const usePlanViewModel = () => {
   const { t } = useTranslation();
@@ -66,6 +74,8 @@ export const usePlanViewModel = () => {
     state.integrations.some(({ id, confluence }) => id === 'jira' && confluence === true),
   );
   const setPublished = useWorkspaceStore((state) => state.setPublished);
+  const kept = useVariablesStore((state) => state.byProject[workspace?.projectId ?? '']);
+  const { askVariables } = useVariableActions();
   const language = useSettingsStore((state) => state.language);
 
   const workspaceId = workspace?.id ?? null;
@@ -91,6 +101,10 @@ export const usePlanViewModel = () => {
   const sourcePage = workspace?.sourcePage ?? null;
   const stepCount = flattenPlanSteps(plan).length;
   const published = workspace?.published ?? null;
+  const missing = missingVariablesOf({
+    plan,
+    kept: (kept ?? []).map(({ name }) => name),
+  });
   const shownPublishing =
     publishing !== null && publishing.workspaceId === workspaceId
       ? publishing.outcome
@@ -229,6 +243,21 @@ export const usePlanViewModel = () => {
     onReorder: write,
     onRunAll: onRun,
     onStop,
+    missingNotice:
+      missing.length === 0 || isLocked
+        ? null
+        : t(missing.length === 1 ? 'PLAN.MISSING_ONE' : 'PLAN.MISSING_OTHER', {
+            names: missing.map((name) => `\${${name}}`).join(', '),
+          }),
+    addMissingLabel: t('PLAN.MISSING_ADD'),
+    onAddMissing: () => {
+      if (workspace === null) return;
+
+      void askVariables({
+        projectId: workspace.projectId,
+        drafts: missing.map((name) => ({ name, description: '' })),
+      });
+    },
     canPublish: isConfluenceOn && plan.length > 0 && !isLocked,
     isPublishing,
     publishLabel: isPublishing

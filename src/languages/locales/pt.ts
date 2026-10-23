@@ -221,6 +221,11 @@ export const pt: typeof en = {
     STEPS_OTHER: '{{count}} passos',
     NOTE: 'Clique num caso para abrir, arraste ou use Alt+↑↓ para mover, e corrija qualquer linha que o agente errou.',
     MOVE_CASE: 'Alt+↑ e Alt+↓ movem este caso',
+    MISSING_ONE:
+      'O plano digita {{names}}, que o projeto ainda não guarda: adicione, ou cada run pergunta a você.',
+    MISSING_OTHER:
+      'O plano digita {{names}}, que o projeto ainda não guarda: adicione, ou cada run pergunta a você.',
+    MISSING_ADD: 'Adicionar as variáveis',
     ADD_CASE: 'Adicionar caso',
     ADD_STEP: 'Adicionar passo',
     REMOVE_CASE: 'Remover este caso',

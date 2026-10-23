@@ -79,6 +79,11 @@
   background: var(--raise);
 }
 
+.plan__export-body--missing {
+  border-color: var(--attn-soft);
+  background: var(--attn-soft);
+}
+
 .plan__export-body--failed {
   border-color: var(--fail-soft);
   background: var(--fail-soft);

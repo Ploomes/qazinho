@@ -16,7 +16,13 @@ import {
   walkRun,
 } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useSettingsStore, useSetupStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useSettingsStore,
+  useSetupStore,
+  useVariablesStore,
+  useWorkspaceStore,
+} from '@/store';
 
 const PROJECT = {
   id: 'p1',
@@ -75,6 +81,76 @@ const PAGE = {
 };
 
 describe('usePlanViewModel', () => {
+  describe('the variables a plan types', () => {
+    const typing = () =>
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...makeWorkspace(),
+            plan: [
+              {
+                id: 'TC-01',
+                title: 'Entrar',
+                priority: 'P1',
+                goal: '',
+                preconditions: '',
+                steps: [
+                  {
+                    action: 'Digitar ${LOGIN_EMAIL} e ${LOGIN_PASSWORD}',
+                    expected: 'Entra',
+                  },
+                ],
+                lastVerdict: null,
+              },
+            ],
+          },
+        ],
+      });
+
+    afterEach(() => {
+      useVariablesStore.setState({ byProject: {}, request: null });
+    });
+
+    /** An exploration's plan named variables no one kept, and each run asked the QA for them. */
+    it('says which ones the project does not keep, and offers to add them', () => {
+      typing();
+      useVariablesStore.setState({
+        byProject: { p1: [{ name: 'LOGIN_PASSWORD', description: 'A senha' }] },
+      });
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      expect(result.current.missingNotice).toBe(
+        'The plan types ${LOGIN_EMAIL}, which the project does not keep yet: add it, or a run asks you for it each time.',
+      );
+
+      act(() => {
+        result.current.onAddMissing();
+      });
+
+      expect(useVariablesStore.getState().request).toMatchObject({
+        projectId: 'p1',
+        drafts: [{ name: 'LOGIN_EMAIL', description: '' }],
+      });
+    });
+
+    it('says nothing when the project keeps every one', () => {
+      typing();
+      useVariablesStore.setState({
+        byProject: {
+          p1: [
+            { name: 'LOGIN_EMAIL', description: '' },
+            { name: 'LOGIN_PASSWORD', description: '' },
+          ],
+        },
+      });
+
+      expect(
+        renderHook(() => usePlanViewModel()).result.current.missingNotice,
+      ).toBeNull();
+    });
+  });
+
   describe('publishing in Confluence', () => {
     beforeEach(() => {
       useSettingsStore.setState({ language: 'en' });

@@ -24,6 +24,9 @@ export const Plan: React.FC = () => {
     onReorder,
     onRunAll,
     onStop,
+    missingNotice,
+    addMissingLabel,
+    onAddMissing,
     canPublish,
     isPublishing,
     publishLabel,
@@ -161,6 +164,27 @@ export const Plan: React.FC = () => {
                       onClick={onDismissPublish}
                     />
                   </Tooltip>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence initial={false}>
+            {missingNotice !== null && (
+              <motion.div
+                key="missing"
+                className="plan__export"
+                role="status"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+              >
+                <div className="plan__export-body plan__export-body--missing">
+                  <span className="plan__export-text">{missingNotice}</span>
+                  <Button size="sm" onClick={onAddMissing}>
+                    {addMissingLabel}
+                  </Button>
                 </div>
               </motion.div>
             )}
