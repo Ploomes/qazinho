@@ -80,6 +80,9 @@ export const useChatViewModel = () => {
   const isJiraConnected = useSetupStore((state) =>
     state.integrations.some(({ id }) => id === 'jira'),
   );
+  const isConfluenceOn = useSetupStore((state) =>
+    state.integrations.some(({ id, confluence }) => id === 'jira' && confluence === true),
+  );
   const sendMessage = useWorkspaceStore((state) => state.sendMessage);
   const setDesign = useWorkspaceStore((state) => state.setDesign);
   const answerQuestions = useWorkspaceStore((state) => state.answerQuestions);
@@ -100,6 +103,7 @@ export const useChatViewModel = () => {
     repositories: project?.repositories ?? [],
     isGithubConnected,
     isJiraConnected,
+    isConfluenceOn,
     onDraft: setDraft,
   });
   const readStep = workspace === null ? undefined : readSteps[workspace.id];
@@ -167,7 +171,7 @@ export const useChatViewModel = () => {
       references,
       code: asked?.code ?? null,
       jira: asked?.jira ?? null,
-      confluence: null,
+      confluence: asked?.confluence ?? null,
     });
   };
 
@@ -239,7 +243,8 @@ export const useChatViewModel = () => {
           ? t('COMMANDS.STEP_FILES', { key: sentCommand.key })
           : t('COMMANDS.STEP_FILES_SIZE', { key: sentCommand.key, size });
 
-    if (sentCommand.id === 'figma-plan') return '';
+    if (sentCommand.id === 'figma-plan' || sentCommand.id === 'confluence-plan')
+      return '';
 
     return readStep.step === 'commit'
       ? t('COMMANDS.STEP_COMMIT', { branch: sentCommand.branch })
@@ -461,6 +466,18 @@ export const useChatViewModel = () => {
               text: '',
               onClick: () => {
                 chatCommand.start('jira-plan');
+              },
+            },
+          ]
+        : []),
+      ...(isConfluenceOn
+        ? [
+            {
+              id: 'CHAT.SUGGESTION_CONFLUENCE',
+              label: t('CHAT.SUGGESTION_CONFLUENCE'),
+              text: '',
+              onClick: () => {
+                chatCommand.start('confluence-plan');
               },
             },
           ]

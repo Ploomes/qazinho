@@ -189,6 +189,7 @@ export const en = {
     FAILED_JIRA: 'QAzinho could not read {{key}} from Jira. {{reason}}',
     FAILED_CONFLUENCE: 'QAzinho could not read the page from Confluence. {{reason}}',
     SUGGESTION_JIRA: 'Plan from a Jira story',
+    SUGGESTION_CONFLUENCE: 'Plan from a Confluence page',
     SUGGESTION_FIGMA: 'Check against a Figma design',
     PLAN_WHILE_RUNNING:
       'The plan stays as it was: a run is walking it. Ask again once the run ends.',
@@ -481,6 +482,15 @@ export const en = {
     STEP_STORY: 'Reading {{key}} from Jira…',
     STEP_FILES: 'Downloading the files of {{key}}…',
     STEP_FILES_SIZE: 'Downloading the files of {{key}} · {{size}}',
+    CONFLUENCE_PLAN: 'Plan from a Confluence page',
+    CONFLUENCE_PLAN_TEXT:
+      'The agent reads a page, such as the cases your team wrote, and plans its tests with you.',
+    NEEDS_CONFLUENCE: 'Turn Confluence on beside Jira in Settings → Integrations first.',
+    PAGE_HEADING: 'Confluence page',
+    PAGE_RECENT: 'the pages you worked on last',
+    PICK_PAGE: 'Which page? Type words from its title',
+    PAGE_SEARCHING: 'Searching Confluence…',
+    CONFLUENCE_PLAN_SAY: 'Plan the tests from the Confluence page “{{title}}”.',
     FIGMA_PLAN: 'Check against a Figma design',
     FIGMA_PLAN_TEXT:
       'The agent reads the design through your Figma, plans with you, and each run holds the screens to it.',

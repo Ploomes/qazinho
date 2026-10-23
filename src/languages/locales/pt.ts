@@ -192,6 +192,7 @@ export const pt: typeof en = {
     FAILED_JIRA: 'O QAzinho não conseguiu ler a {{key}} no Jira. {{reason}}',
     FAILED_CONFLUENCE: 'O QAzinho não conseguiu ler a página no Confluence. {{reason}}',
     SUGGESTION_JIRA: 'Planejar a partir de uma história do Jira',
+    SUGGESTION_CONFLUENCE: 'Planejar a partir de uma página do Confluence',
     SUGGESTION_FIGMA: 'Conferir com um design do Figma',
     PLAN_WHILE_RUNNING:
       'O plano ficou como estava: uma run está rodando nele. Peça de novo quando a run terminar.',
@@ -484,6 +485,17 @@ export const pt: typeof en = {
     STEP_STORY: 'Lendo a {{key}} no Jira…',
     STEP_FILES: 'Baixando os anexos da {{key}}…',
     STEP_FILES_SIZE: 'Baixando os anexos da {{key}} · {{size}}',
+    CONFLUENCE_PLAN: 'Planejar a partir de uma página do Confluence',
+    CONFLUENCE_PLAN_TEXT:
+      'O agente lê uma página, como os cenários que seu time escreveu, e planeja os testes com você.',
+    NEEDS_CONFLUENCE:
+      'Ligue o Confluence junto do Jira em Configurações → Integrações primeiro.',
+    PAGE_HEADING: 'Página do Confluence',
+    PAGE_RECENT: 'as páginas em que você mexeu por último',
+    PICK_PAGE: 'Qual página? Digite palavras do título',
+    PAGE_SEARCHING: 'Buscando no Confluence…',
+    CONFLUENCE_PLAN_SAY:
+      'Planeje os testes a partir da página do Confluence “{{title}}”.',
     FIGMA_PLAN: 'Conferir com um design do Figma',
     FIGMA_PLAN_TEXT:
       'O agente lê o design pelo seu Figma, planeja com você, e cada run confere as telas com ele.',

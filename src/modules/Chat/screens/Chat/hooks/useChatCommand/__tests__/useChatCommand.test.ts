@@ -42,6 +42,7 @@ function command(props: {
   repositories?: IProjectRepository[];
   isGithubConnected?: boolean;
   isJiraConnected?: boolean;
+  isConfluenceOn?: boolean;
 }) {
   const onDraft = vi.fn();
 
@@ -54,6 +55,7 @@ function command(props: {
           repositories: props.repositories ?? [WEB],
           isGithubConnected: props.isGithubConnected ?? true,
           isJiraConnected: props.isJiraConnected ?? true,
+          isConfluenceOn: props.isConfluenceOn ?? true,
           onDraft,
         }),
       { initialProps: props.draft ?? '' },
@@ -72,6 +74,12 @@ describe('useChatCommand', () => {
           id: 'jira-plan',
           label: 'Plan from a Jira story',
           tag: '/jira',
+          isDisabled: false,
+        },
+        {
+          id: 'confluence-plan',
+          label: 'Plan from a Confluence page',
+          tag: '/confluence',
           isDisabled: false,
         },
         {
@@ -204,8 +212,8 @@ describe('useChatCommand', () => {
 
   /** Each command needs its own tracker: Jira missing must not lock the plan from the code. */
   it('locks only the command whose tracker is missing', () => {
-    const rows = command({ draft: '/', isJiraConnected: false }).result.current.picker
-      ?.rows;
+    const rows = command({ draft: '/', isJiraConnected: false, isConfluenceOn: false })
+      .result.current.picker?.rows;
 
     expect(rows?.map(({ id, isDisabled, detail }) => [id, isDisabled, detail])).toEqual([
       [
@@ -214,6 +222,11 @@ describe('useChatCommand', () => {
         'The agent reads a branch of a repository and plans its tests with you.',
       ],
       ['jira-plan', true, 'Connect Jira in Settings → Integrations first.'],
+      [
+        'confluence-plan',
+        true,
+        'Turn Confluence on beside Jira in Settings → Integrations first.',
+      ],
       [
         'figma-plan',
         false,
@@ -508,6 +521,7 @@ describe('useChatCommand', () => {
         text: 'Plan the tests for the Jira story SHOP-12: Aplicar cupom.\n\nOnly the web.',
         code: null,
         jira: { key: 'SHOP-12' },
+        confluence: null,
         design: null,
         command: {
           id: 'jira-plan',
@@ -560,6 +574,126 @@ describe('useChatCommand', () => {
       await waitFor(() => {
         expect(result.current.picker?.note).toBe(
           'Jira refused the token. Connect Jira again in Settings → Integrations.',
+        );
+      });
+    });
+  });
+
+  describe('a plan from a Confluence page', () => {
+    const PAGES = {
+      isListed: true as const,
+      pages: [
+        {
+          id: '98304',
+          title: 'Checkout: cenários',
+          space: 'QA',
+          url: 'https://acme.atlassian.net/wiki/spaces/QA/pages/98304',
+        },
+        {
+          id: '98305',
+          title: 'Frete: regras',
+          space: '',
+          url: 'https://acme.atlassian.net/wiki/pages/98305',
+        },
+      ],
+    };
+
+    function pickingPage() {
+      const searchConfluence = vi.fn().mockResolvedValue(PAGES);
+
+      window.qazinho = { ...window.qazinho, searchConfluence };
+
+      const picking = command({ draft: '/' });
+
+      act(() => {
+        picking.result.current.onPick('confluence-plan');
+      });
+      picking.rerender('');
+
+      return { ...picking, searchConfluence };
+    }
+
+    it('lists the pages the QA worked on last, then searches what they type', async () => {
+      const { result, rerender, searchConfluence } = pickingPage();
+
+      await waitFor(() => {
+        expect(result.current.picker?.rows.map(({ label, tag }) => [label, tag])).toEqual(
+          [
+            ['Checkout: cenários', 'QA'],
+            ['Frete: regras', null],
+          ],
+        );
+      });
+      expect(searchConfluence).toHaveBeenCalledWith('');
+      expect(result.current.picker?.heading).toBe('the pages you worked on last');
+
+      rerender('checkout');
+
+      expect(result.current.picker?.note).toBe('Searching Confluence…');
+      await waitFor(() => {
+        expect(searchConfluence).toHaveBeenCalledWith('checkout');
+      });
+    });
+
+    it('plans from the page picked, with the QA words after', async () => {
+      const { result } = pickingPage();
+
+      expect(result.current.ask('')).toBeNull();
+
+      await waitFor(() => {
+        expect(result.current.picker?.rows.length).toBe(2);
+      });
+      act(() => {
+        result.current.onPick('98304');
+      });
+
+      expect(result.current.command).toMatchObject({
+        isReady: true,
+        parts: [
+          { text: 'Checkout: cenários', isStrong: true },
+          { text: 'QA', isStrong: false },
+        ],
+      });
+      expect(result.current.ask('Only the coupon.')).toEqual({
+        text: 'Plan the tests from the Confluence page “Checkout: cenários”.\n\nOnly the coupon.',
+        code: null,
+        jira: null,
+        confluence: { pageId: '98304' },
+        design: null,
+        command: {
+          id: 'confluence-plan',
+          pageId: '98304',
+          title: 'Checkout: cenários',
+          space: 'QA',
+          url: 'https://acme.atlassian.net/wiki/spaces/QA/pages/98304',
+        },
+      });
+
+      act(() => {
+        result.current.onBack();
+      });
+
+      expect(result.current.command?.isReady).toBe(false);
+    });
+
+    it('says why Confluence would not search', async () => {
+      window.qazinho = {
+        ...window.qazinho,
+        searchConfluence: vi
+          .fn()
+          .mockResolvedValue({ isListed: false, failure: 'not-connected' }),
+      };
+
+      const { result, rerender } = command({ draft: '/' });
+
+      act(() => {
+        result.current.onPick('confluence-plan');
+      });
+      rerender('');
+
+      await waitFor(() => {
+        expect(result.current.picker?.note).toBe(
+          'Confluence is off. Turn it on beside Jira in Settings → Integrations.',
         );
       });
     });

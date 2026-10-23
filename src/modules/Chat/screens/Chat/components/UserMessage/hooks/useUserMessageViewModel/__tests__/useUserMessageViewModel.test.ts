@@ -108,6 +108,27 @@ describe('useUserMessageViewModel', () => {
     });
   });
 
+  it('shows the Confluence page a plan comes from, with its space when it has one', () => {
+    const sent = (space: string) =>
+      renderHook(() =>
+        useUserMessageViewModel({
+          message: {
+            ...message(''),
+            command: {
+              id: 'confluence-plan',
+              pageId: '98304',
+              title: 'Checkout: cenários',
+              space,
+              url: 'https://acme.atlassian.net/wiki/spaces/QA/pages/98304',
+            },
+          },
+        }),
+      ).result.current.command?.parts.map(({ text }) => text);
+
+    expect(sent('QA')).toEqual(['Checkout: cenários', 'QA']);
+    expect(sent('')).toEqual(['Checkout: cenários']);
+  });
+
   it('shows the Figma design a plan is checked against, and the frame its link names', () => {
     const sent = (nodeId: string | null) =>
       renderHook(() =>

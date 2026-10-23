@@ -23,6 +23,13 @@ export const CHAT_COMMANDS: {
     aliases: 'jira story historia issue ticket requisito requirement criterio aceite',
   },
   {
+    id: 'confluence-plan',
+    slug: '/confluence',
+    labelKey: 'COMMANDS.CONFLUENCE_PLAN',
+    textKey: 'COMMANDS.CONFLUENCE_PLAN_TEXT',
+    aliases: 'confluence page pagina doc documento wiki cenarios scenarios casos cases',
+  },
+  {
     id: 'figma-plan',
     slug: '/figma',
     labelKey: 'COMMANDS.FIGMA_PLAN',

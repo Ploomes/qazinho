@@ -12,6 +12,8 @@ import type {
   IBranch,
   IBranchList,
   ICodeAsk,
+  ConfluencePageList,
+  IConfluenceAsk,
   IDesignLink,
   IJiraAsk,
   JiraIssueList,
@@ -20,22 +22,38 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { matchesQuery } from '@/modules/Chat/library';
 import { CHAT_COMMANDS, COMMAND_SEARCH } from '@/modules/Chat/screens/Chat/constants';
-import { GITHUB_FAILURE_KEYS, JIRA_FAILURE_KEYS } from '@/modules/Setup';
+import {
+  CONFLUENCE_FAILURE_KEYS,
+  GITHUB_FAILURE_KEYS,
+  JIRA_FAILURE_KEYS,
+} from '@/modules/Setup';
 import { designLinkOf } from '@/modules/Workspace';
-import { Github, Jira } from '@/services';
+import { Confluence, Github, Jira } from '@/services';
 
 export const useChatCommand = (props: {
   draft: string;
   repositories: IProjectRepository[];
   isGithubConnected: boolean;
   isJiraConnected: boolean;
+  isConfluenceOn: boolean;
   onDraft: (draft: string) => void;
 }) => {
-  const { draft, repositories, isGithubConnected, isJiraConnected, onDraft } = props;
+  const {
+    draft,
+    repositories,
+    isGithubConnected,
+    isJiraConnected,
+    isConfluenceOn,
+    onDraft,
+  } = props;
   const { t } = useTranslation();
   const [command, setCommand] = useState<ICommandDraft | null>(null);
   const [branchLists, setBranchLists] = useState<Record<string, IBranchList>>({});
   const [found, setFound] = useState<{ query: string; list: JiraIssueList } | null>(null);
+  const [foundPages, setFoundPages] = useState<{
+    query: string;
+    list: ConfluencePageList;
+  } | null>(null);
   const searches = useRef(0);
 
   const keyOf = (repository: IProjectRepository) =>
@@ -50,15 +68,19 @@ export const useChatCommand = (props: {
         ? command.issue === null
           ? 'story'
           : 'ready'
-        : command.id === 'figma-plan'
-          ? command.design === null
-            ? 'design'
+        : command.id === 'confluence-plan'
+          ? command.page === null
+            ? 'page'
             : 'ready'
-          : command.repository === null
-            ? 'repository'
-            : command.branch === null
-              ? 'branch'
-              : 'ready';
+          : command.id === 'figma-plan'
+            ? command.design === null
+              ? 'design'
+              : 'ready'
+            : command.repository === null
+              ? 'repository'
+              : command.branch === null
+                ? 'branch'
+                : 'ready';
   const blockerOf = (id: ChatCommandId) =>
     id === 'figma-plan'
       ? null
@@ -66,11 +88,15 @@ export const useChatCommand = (props: {
         ? isJiraConnected
           ? null
           : t('COMMANDS.NEEDS_JIRA')
-        : !isGithubConnected
-          ? t('COMMANDS.NEEDS_GITHUB')
-          : repositories.length === 0
-            ? t('COMMANDS.NEEDS_REPOSITORIES')
-            : null;
+        : id === 'confluence-plan'
+          ? isConfluenceOn
+            ? null
+            : t('COMMANDS.NEEDS_CONFLUENCE')
+          : !isGithubConnected
+            ? t('COMMANDS.NEEDS_GITHUB')
+            : repositories.length === 0
+              ? t('COMMANDS.NEEDS_REPOSITORIES')
+              : null;
   const repository = command?.repository ?? null;
   const base = repository?.baseBranch ?? '';
   const branchList =
@@ -99,6 +125,28 @@ export const useChatCommand = (props: {
     };
   }, [step, typed]);
 
+  useEffect(() => {
+    if (step !== 'page') return;
+
+    const asked = typed;
+    const timer = setTimeout(
+      () => {
+        searches.current += 1;
+
+        const search = searches.current;
+
+        void Confluence.search(asked).then((list) => {
+          if (search === searches.current) setFoundPages({ query: asked, list });
+        });
+      },
+      asked === '' ? 0 : COMMAND_SEARCH.debounceMs,
+    );
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [step, typed]);
+
   const load = (picked: IProjectRepository) => {
     if (branchLists[keyOf(picked)] !== undefined) return;
 
@@ -111,9 +159,17 @@ export const useChatCommand = (props: {
     const only =
       id === 'code-plan' && repositories.length === 1 ? (repositories[0] ?? null) : null;
 
-    setCommand({ id, repository: only, branch: null, issue: null, design: null });
+    setCommand({
+      id,
+      repository: only,
+      branch: null,
+      issue: null,
+      page: null,
+      design: null,
+    });
     if (only !== null) load(only);
     if (id === 'jira-plan') setFound(null);
+    if (id === 'confluence-plan') setFoundPages(null);
     onDraft('');
   };
 
@@ -182,6 +238,15 @@ export const useChatCommand = (props: {
     isDisabled: false,
   }));
 
+  const pages = foundPages?.list.isListed === true ? foundPages.list.pages : [];
+  const pageRows: ICommandRow[] = pages.map((page) => ({
+    id: page.id,
+    label: page.title,
+    tag: page.space === '' ? null : page.space,
+    detail: null,
+    isDisabled: false,
+  }));
+
   const pasted = step === 'design' ? designLinkOf(typed) : null;
   const nodeOf = (design: IDesignLink) =>
     design.nodeId === null
@@ -207,9 +272,11 @@ export const useChatCommand = (props: {
         ? repositoryRows
         : step === 'story'
           ? storyRows
-          : step === 'design'
-            ? designRows
-            : branchRows;
+          : step === 'page'
+            ? pageRows
+            : step === 'design'
+              ? designRows
+              : branchRows;
   const query = (step === 'command' ? (slash ?? '') : draft).trim();
   const note =
     step === 'branch' && branchList === null
@@ -220,15 +287,20 @@ export const useChatCommand = (props: {
           ? t(JIRA_FAILURE_KEYS[found.list.failure])
           : step === 'story' && found?.query !== typed
             ? t('COMMANDS.STORY_SEARCHING')
-            : step === 'design' && typed !== '' && pasted === null
-              ? t('COMMANDS.DESIGN_NOT_LINK')
-              : step === 'design'
-                ? null
-                : rows.length === 0 && query !== ''
-                  ? t('COMMANDS.NONE', { query })
-                  : null;
+            : step === 'page' && foundPages?.list.isListed === false
+              ? t(CONFLUENCE_FAILURE_KEYS[foundPages.list.failure])
+              : step === 'page' && foundPages?.query !== typed
+                ? t('COMMANDS.PAGE_SEARCHING')
+                : step === 'design' && typed !== '' && pasted === null
+                  ? t('COMMANDS.DESIGN_NOT_LINK')
+                  : step === 'design'
+                    ? null
+                    : rows.length === 0 && query !== ''
+                      ? t('COMMANDS.NONE', { query })
+                      : null;
   const label = CHAT_COMMANDS.find(({ id }) => id === command?.id)?.labelKey;
   const issue = command?.issue ?? null;
+  const page = command?.page ?? null;
   const branch = command?.branch ?? null;
   const design = command?.design ?? null;
   const parts: ICommandPart[] =
@@ -242,14 +314,21 @@ export const useChatCommand = (props: {
             { key: `key-${issue.key}`, text: issue.key, isStrong: true },
             { key: `summary-${issue.key}`, text: issue.summary, isStrong: false },
           ]
-        : [
-            ...(repository === null
-              ? []
-              : [{ key: keyOf(repository), text: keyOf(repository), isStrong: false }]),
-            ...(branch === null
-              ? []
-              : [{ key: `branch-${branch}`, text: branch, isStrong: true }]),
-          ];
+        : page !== null
+          ? [
+              { key: `title-${page.id}`, text: page.title, isStrong: true },
+              ...(page.space === ''
+                ? []
+                : [{ key: `space-${page.id}`, text: page.space, isStrong: false }]),
+            ]
+          : [
+              ...(repository === null
+                ? []
+                : [{ key: keyOf(repository), text: keyOf(repository), isStrong: false }]),
+              ...(branch === null
+                ? []
+                : [{ key: `branch-${branch}`, text: branch, isStrong: true }]),
+            ];
 
   return {
     command:
@@ -266,9 +345,11 @@ export const useChatCommand = (props: {
                   ? t('COMMANDS.PICK_BRANCH')
                   : step === 'story'
                     ? t('COMMANDS.PICK_STORY')
-                    : step === 'design'
-                      ? t('COMMANDS.PICK_DESIGN')
-                      : t('COMMANDS.NOTE'),
+                    : step === 'page'
+                      ? t('COMMANDS.PICK_PAGE')
+                      : step === 'design'
+                        ? t('COMMANDS.PICK_DESIGN')
+                        : t('COMMANDS.NOTE'),
           } satisfies IComposerCommand),
     picker:
       step === null || step === 'ready'
@@ -281,11 +362,15 @@ export const useChatCommand = (props: {
                   ? typed === ''
                     ? t('COMMANDS.STORY_RECENT')
                     : t('COMMANDS.STORY_HEADING')
-                  : step === 'design'
-                    ? t('COMMANDS.DESIGN_HEADING')
-                    : step === 'repository' || repository === null
-                      ? t('COMMANDS.REPOSITORY_HEADING')
-                      : t('COMMANDS.BRANCH_HEADING', { repository: keyOf(repository) }),
+                  : step === 'page'
+                    ? typed === ''
+                      ? t('COMMANDS.PAGE_RECENT')
+                      : t('COMMANDS.PAGE_HEADING')
+                    : step === 'design'
+                      ? t('COMMANDS.DESIGN_HEADING')
+                      : step === 'repository' || repository === null
+                        ? t('COMMANDS.REPOSITORY_HEADING')
+                        : t('COMMANDS.BRANCH_HEADING', { repository: keyOf(repository) }),
             rows,
             note,
             hint: t('COMMANDS.HINT'),
@@ -308,6 +393,13 @@ export const useChatCommand = (props: {
         if (pasted === null) return;
 
         setCommand({ ...command, design: pasted });
+        onDraft('');
+      } else if (step === 'page') {
+        const picked = pages.find((one) => one.id === id);
+
+        if (picked === undefined) return;
+
+        setCommand({ ...command, page: picked });
         onDraft('');
       } else if (step === 'story') {
         const picked = stories.find(({ key }) => key === id);
@@ -334,6 +426,7 @@ export const useChatCommand = (props: {
 
       if (command.design !== null) setCommand({ ...command, design: null });
       else if (command.issue !== null) setCommand({ ...command, issue: null });
+      else if (command.page !== null) setCommand({ ...command, page: null });
       else if (command.branch !== null) setCommand({ ...command, branch: null });
       else if (command.repository !== null && repositories.length > 1)
         setCommand({ ...command, repository: null });
@@ -365,6 +458,29 @@ export const useChatCommand = (props: {
         };
       }
 
+      if (command?.id === 'confluence-plan') {
+        const { page: picked } = command;
+
+        if (picked === null) return null;
+
+        const say = t('COMMANDS.CONFLUENCE_PLAN_SAY', { title: picked.title });
+
+        return {
+          text: note === '' ? say : `${say}\n\n${note}`,
+          code: null,
+          jira: null,
+          confluence: { pageId: picked.id } satisfies IConfluenceAsk,
+          design: null,
+          command: {
+            id: 'confluence-plan',
+            pageId: picked.id,
+            title: picked.title,
+            space: picked.space,
+            url: picked.url,
+          } satisfies UserCommand,
+        };
+      }
+
       if (command?.id === 'jira-plan') {
         const { issue } = command;
 
@@ -379,6 +495,7 @@ export const useChatCommand = (props: {
           text: note === '' ? say : `${say}\n\n${note}`,
           code: null,
           jira: { key: issue.key } satisfies IJiraAsk,
+          confluence: null,
           design: null,
           command: {
             id: 'jira-plan',
