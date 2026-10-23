@@ -4,7 +4,7 @@ import { recipeFor } from '@/main/classes/setup/SetupInstaller/library';
 const HOME = '/Users/qa';
 
 function lines(item: Parameters<typeof recipeFor>[0]['item']) {
-  return recipeFor({ item, home: HOME }).map((step) =>
+  return recipeFor({ item, home: HOME, platform: 'darwin' }).map((step) =>
     [step.command, ...step.args].join(' '),
   );
 }
@@ -16,13 +16,21 @@ describe('recipeFor', () => {
   });
 
   it('installs the GitHub CLI with Homebrew, and skips it when Homebrew already has it', () => {
-    expect(recipeFor({ item: 'gh', home: HOME })).toEqual([
+    expect(recipeFor({ item: 'gh', home: HOME, platform: 'darwin' })).toEqual([
       {
         command: 'brew',
         args: ['install', 'gh'],
         doneIf: { command: 'brew', args: ['list', '--versions', 'gh'] },
       },
     ]);
+  });
+
+  it('installs the GitHub CLI with winget on Windows, and skips it when winget lists it', () => {
+    expect(
+      recipeFor({ item: 'gh', home: 'C:\\Users\\qa', platform: 'win32' }).map(
+        ({ command, args, doneIf }) => [command, args[0], args[2], doneIf?.args[0]],
+      ),
+    ).toEqual([['winget', 'install', 'GitHub.cli', 'list']]);
   });
 
   it('installs the idb companion before the client that talks to it', () => {
@@ -47,7 +55,11 @@ describe('recipeFor', () => {
   });
 
   it('knows when each heavy step is already done, so a second run skips it', () => {
-    const [tap, companion, venv, client] = recipeFor({ item: 'idb', home: HOME });
+    const [tap, companion, venv, client] = recipeFor({
+      item: 'idb',
+      home: HOME,
+      platform: 'darwin',
+    });
 
     expect(tap?.doneIf).toEqual({
       command: 'brew',

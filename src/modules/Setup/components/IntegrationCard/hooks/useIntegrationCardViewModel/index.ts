@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
 import { useGithubConnect } from '@/modules/Setup/hooks/useGithubConnect';
 import { connectionOf, formatDay } from '@/modules/Setup/library';
-import { Confluence, Integrations } from '@/services';
+import { Confluence, Integrations, Platform } from '@/services';
 import { useSettingsStore, useSetupStore } from '@/store';
 
 export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
@@ -80,7 +80,9 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
       : cli.status === null
         ? null
         : isCliMissing
-          ? t('SETUP.GITHUB_CLI_MISSING')
+          ? t('SETUP.GITHUB_CLI_MISSING', {
+              installer: Platform.isWindows() ? 'winget' : 'Homebrew',
+            })
           : cli.status.account === null
             ? t('SETUP.GITHUB_CLI_SIGNED_OUT')
             : t('SETUP.GITHUB_CLI_AS', { account: cli.status.account }),

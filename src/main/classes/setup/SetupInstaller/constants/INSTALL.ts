@@ -5,6 +5,8 @@ export const INSTALL = {
   missing: {
     npm: 'QAzinho installs agents with npm, and this machine has no npm. Install Node.js from nodejs.org, then try again.',
     brew: 'QAzinho installs this with Homebrew, and this machine has no Homebrew. Install it from brew.sh, then try again.',
+    winget:
+      'QAzinho installs gh with winget, and this Windows has none. Install App Installer from the Microsoft Store, or gh from cli.github.com, then try again.',
     python3:
       'Installing idb needs Python 3, and this machine has none. Install the Command Line Tools with xcode-select --install, then try again.',
   } as Record<string, string>,

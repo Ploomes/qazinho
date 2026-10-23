@@ -9,4 +9,8 @@ export class Platform {
   public static isMac(): boolean {
     return Platform.current() === 'darwin';
   }
+
+  public static isWindows(): boolean {
+    return Platform.current() === 'win32';
+  }
 }

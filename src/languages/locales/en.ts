@@ -764,7 +764,7 @@ export const en = {
     GITHUB_NEEDS:
       'The GitHub CLI (gh), signed in to your account. QAzinho uses its login and keeps no token of its own.',
     GITHUB_CLI_MISSING:
-      'gh is not on this machine yet. QAzinho installs it with Homebrew.',
+      'gh is not on this machine yet. QAzinho installs it with {{installer}}.',
     GITHUB_CLI_SIGNED_OUT: 'gh is here, not signed in to GitHub yet.',
     GITHUB_CLI_AS: 'gh is signed in as {{account}}.',
     GITHUB_INSTALL: 'Install gh',

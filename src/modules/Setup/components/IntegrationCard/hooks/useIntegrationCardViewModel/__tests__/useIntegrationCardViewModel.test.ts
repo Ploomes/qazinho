@@ -150,6 +150,21 @@ describe('useIntegrationCardViewModel', () => {
     });
   });
 
+  it('says gh comes with winget on Windows', async () => {
+    window.qazinho = fakeQazinhoApi('win32');
+    ghIs({ isFound: false, account: null });
+
+    const { result } = renderHook(() =>
+      useIntegrationCardViewModel({ integration: GITHUB }),
+    );
+
+    await waitFor(() => {
+      expect(result.current.cliLine).toBe(
+        'gh is not on this machine yet. QAzinho installs it with winget.',
+      );
+    });
+  });
+
   describe('onAction', () => {
     it('opens the form of a tracker that is not connected', async () => {
       const { result } = renderHook(() =>

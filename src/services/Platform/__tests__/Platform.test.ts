@@ -13,6 +13,7 @@ describe('Platform', () => {
 
     expect(Platform.current()).toBe('win32');
     expect(Platform.isMac()).toBe(false);
+    expect(Platform.isWindows()).toBe(true);
   });
 
   it('knows a Mac, because iOS targets and the traffic lights depend on it', () => {
@@ -24,5 +25,6 @@ describe('Platform', () => {
   it('answers null outside the app, where there is no bridge at all', () => {
     expect(Platform.current()).toBeNull();
     expect(Platform.isMac()).toBe(false);
+    expect(Platform.isWindows()).toBe(false);
   });
 });

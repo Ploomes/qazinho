@@ -34,7 +34,7 @@ export class SetupInstaller {
   }
 
   public async install(item: InstallableId): Promise<IInstallResult> {
-    const steps = recipeFor({ item, home: homedir() });
+    const steps = recipeFor({ item, home: homedir(), platform: process.platform });
     const command = commandLineOf(steps);
 
     if (this.installing.has(item))

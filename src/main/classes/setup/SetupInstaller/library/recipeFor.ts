@@ -7,9 +7,30 @@ const AGENTS: Record<Exclude<InstallableId, 'idb' | 'gh'>, string> = {
   codex: '@openai/codex',
 };
 
-/** The commands that install a tool, in order. idb's client gets a Python of its own, so Homebrew's Pythons are never touched. */
-export function recipeFor(props: { item: InstallableId; home: string }): IInstallStep[] {
+/** The commands that install a tool, in order: gh with winget on Windows and Homebrew elsewhere. idb's client gets a Python of its own, so Homebrew's Pythons are never touched. */
+export function recipeFor(props: {
+  item: InstallableId;
+  home: string;
+  platform: NodeJS.Platform;
+}): IInstallStep[] {
   const { item, home } = props;
+
+  if (item === 'gh' && props.platform === 'win32')
+    return [
+      {
+        command: 'winget',
+        args: [
+          'install',
+          '--id',
+          'GitHub.cli',
+          '--exact',
+          '--silent',
+          '--accept-package-agreements',
+          '--accept-source-agreements',
+        ],
+        doneIf: { command: 'winget', args: ['list', '--id', 'GitHub.cli', '--exact'] },
+      },
+    ];
 
   if (item === 'gh')
     return [

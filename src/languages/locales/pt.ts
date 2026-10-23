@@ -768,7 +768,7 @@ export const pt: typeof en = {
     GITHUB_NEEDS:
       'O GitHub CLI (gh) conectado à sua conta. O QAzinho usa esse login e não guarda token nenhum.',
     GITHUB_CLI_MISSING:
-      'O gh ainda não está nesta máquina. O QAzinho instala com o Homebrew.',
+      'O gh ainda não está nesta máquina. O QAzinho instala com o {{installer}}.',
     GITHUB_CLI_SIGNED_OUT: 'O gh está aqui, mas ainda não entrou no GitHub.',
     GITHUB_CLI_AS: 'O gh está conectado como {{account}}.',
     GITHUB_INSTALL: 'Instalar o gh',
