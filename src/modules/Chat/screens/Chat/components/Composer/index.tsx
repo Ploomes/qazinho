@@ -102,6 +102,7 @@ export const Composer: React.FC<IComposerProps> = (props) => {
             placeholder={placeholder}
             aria-label={placeholder}
             disabled={isLocked}
+            autoFocus={props.isAutoFocused}
             role="combobox"
             aria-expanded={isPickerOpen || isCommandOpen}
             aria-controls={isCommandOpen ? 'command-picker' : 'mention-picker'}

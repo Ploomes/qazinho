@@ -31,6 +31,7 @@ export const Chat: React.FC = () => {
     onCommandBack,
     onCommandCancel,
     onDraftChange,
+    isComposerFocused,
     secretWarning,
     secretRemoveLabel,
     secretSendLabel,
@@ -227,6 +228,7 @@ export const Chat: React.FC = () => {
         value={draft}
         lockedText={lockedText}
         isAnswering={isAgentTyping}
+        isAutoFocused={isComposerFocused}
         mentions={mentions}
         referenceIds={referenceIds}
         mentionQuery={mentionQuery}

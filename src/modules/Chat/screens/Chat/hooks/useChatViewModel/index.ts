@@ -497,6 +497,7 @@ export const useChatViewModel = () => {
     onPickCommand: chatCommand.onPick,
     onCommandBack: chatCommand.onBack,
     onCommandCancel: chatCommand.onCancel,
+    isComposerFocused: (workspace?.chat.length ?? 0) === 0 && !isWalking,
     onDraftChange: (text: string) => {
       setDraft(text);
       if (secretIn(text) === null) setSecretSent(false);

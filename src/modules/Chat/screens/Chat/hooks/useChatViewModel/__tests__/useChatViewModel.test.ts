@@ -293,6 +293,14 @@ describe('useChatViewModel', () => {
     });
   });
 
+  describe('isComposerFocused', () => {
+    it('puts the cursor in the composer of a chat with nothing in it yet', () => {
+      expect(renderHook(() => useChatViewModel()).result.current.isComposerFocused).toBe(
+        true,
+      );
+    });
+  });
+
   describe('onSend', () => {
     it("asks the QA's own agent, on the model they picked", async () => {
       const ask = answering({ answer: DRAFTED });

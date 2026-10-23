@@ -8,6 +8,7 @@ const PROPS = {
   value: 'Test the whole checkout',
   lockedText: null,
   isAnswering: false,
+  isAutoFocused: false,
   mentions: [],
   referenceIds: ['TC-05', 'r-01'],
   mentionQuery: null,
