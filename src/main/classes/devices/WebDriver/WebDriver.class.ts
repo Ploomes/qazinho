@@ -10,7 +10,13 @@ import type {
   IStepAction,
   IViewport,
 } from '@/shared/types';
-import type { BrowserContext, CDPSession, Page, Request } from 'playwright-core';
+import type {
+  BrowserContext,
+  CDPSession,
+  Page,
+  Request,
+  Response,
+} from 'playwright-core';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -37,6 +43,7 @@ export class WebDriver implements IDeviceDriver {
   private readonly dialogs: string[] = [];
   private readonly requests = new Map<Request, INetworkEntry>();
   private readonly entries: INetworkEntry[] = [];
+  private readonly answers = new Map<number, Response>();
   private context: BrowserContext | null = null;
   private page: Page | null = null;
   private screencast: CDPSession | null = null;
@@ -107,6 +114,27 @@ export class WebDriver implements IDeviceDriver {
   /** The requests the app made since Chrome opened, in the order they started, each with how it ended once it did. */
   public network(): INetworkEntry[] {
     return this.entries.map((entry) => ({ ...entry }));
+  }
+
+  /** The API calls the app made since `since`, in epoch ms, each with how it ended and what it answered when it failed. */
+  public apiCalls(since: number): INetworkEntry[] {
+    return this.entries
+      .filter(
+        ({ type, startedAt }) =>
+          startedAt >= since && WEB_DRIVER.apiRequests.some((one) => one === type),
+      )
+      .map((entry) => ({ ...entry }));
+  }
+
+  /** What an API call answered, cut short, while Chrome still holds it; null once it is gone. */
+  public async responseBody(id: number): Promise<string | null> {
+    const answer = this.answers.get(id);
+
+    if (answer === undefined) return null;
+
+    const text = await answer.text().catch(() => null);
+
+    return text === null ? null : text.slice(0, WEB_DRIVER.bodyChars);
   }
 
   /** The locator the last click or fill found its target with, as Playwright writes it, and the option a dropdown took. */
@@ -359,7 +387,7 @@ export class WebDriver implements IDeviceDriver {
     this.requests.set(request, entry);
   }
 
-  /** Writes down how a request ended: its status, how long it took, and how big a page or an API call came back. */
+  /** Writes down how a request ended: its status, how long it took, how big a page or an API call came back, and what an API call that failed answered. */
   private async settleRequest(props: {
     request: Request;
     failure: string | null;
@@ -385,6 +413,24 @@ export class WebDriver implements IDeviceDriver {
     entry.failure = props.failure;
     entry.status = response?.status() ?? null;
     entry.size = sizes?.responseBodySize ?? null;
+
+    if (response === null || !WEB_DRIVER.apiRequests.some((type) => type === entry.type))
+      return;
+
+    this.answers.set(entry.id, response);
+
+    for (const id of [...this.answers.keys()].slice(
+      0,
+      Math.max(0, this.answers.size - WEB_DRIVER.answersKept),
+    ))
+      this.answers.delete(id);
+
+    if (entry.status !== null && entry.status >= 400) {
+      const text = await response.text().catch(() => null);
+
+      if (text !== null && text.length > 0)
+        entry.body = text.slice(0, WEB_DRIVER.bodyChars);
+    }
   }
 
   /** Keeps every site a tab opened, so a fresh start clears what each one stored, and answers its dialogs, OK unless the action said cancel. */

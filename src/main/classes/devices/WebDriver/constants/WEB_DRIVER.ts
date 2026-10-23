@@ -21,4 +21,7 @@ export const WEB_DRIVER = {
   samplesFolder: 'qazinho-samples',
   networkLimit: 3_000,
   sizedRequests: ['document', 'fetch', 'xhr'],
+  apiRequests: ['fetch', 'xhr'],
+  bodyChars: 4_000,
+  answersKept: 300,
 } as const;

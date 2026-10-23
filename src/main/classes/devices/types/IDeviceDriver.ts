@@ -8,7 +8,7 @@ import type {
   IViewport,
 } from '@/shared/types';
 
-/** What a run needs from a device, whether it is a browser or a phone, measuring what it shows included; a browser also says how it found its last target, and the requests the app made. */
+/** What a run needs from a device, whether it is a browser or a phone, measuring what it shows included; a browser also says how it found its last target, the requests the app made, and what its API calls answered. */
 export interface IDeviceDriver {
   open: () => Promise<void>;
   restart: () => Promise<void>;
@@ -30,4 +30,6 @@ export interface IDeviceDriver {
     option: string | null;
   } | null;
   network?: () => INetworkEntry[];
+  apiCalls?: (since: number) => INetworkEntry[];
+  responseBody?: (id: number) => Promise<string | null>;
 }
