@@ -1136,6 +1136,19 @@ void app.whenReady().then(async () => {
     confluencePages.delete(workspaceId);
     await archive.removeWorkspace(workspaceId);
   });
+  ipcMain.handle(
+    CHANNELS.readUnreadPlan,
+    (_event, unread: { workspaceId: string; file: string }) =>
+      archive.readUnreadPlan(unread),
+  );
+  ipcMain.handle(
+    CHANNELS.showUnreadPlan,
+    (_event, unread: { workspaceId: string; file: string }) => {
+      const file = archive.unreadPlanFile(unread);
+
+      if (file !== null) shell.showItemInFolder(file);
+    },
+  );
   ipcMain.handle(CHANNELS.readShot, (_event, file: string) => archive.readShot(file));
   ipcMain.handle(
     CHANNELS.saveShot,

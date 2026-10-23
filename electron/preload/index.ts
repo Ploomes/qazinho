@@ -76,6 +76,7 @@ import type {
   SuitePick,
   SuiteShipOutcome,
   SuiteShipWay,
+  UnreadPlanRead,
   VariablesOutcome,
   WindowFit,
 } from '@/shared/types';
@@ -234,6 +235,10 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.saveWorkspace, saved) as Promise<void>,
   removeWorkspace: (workspaceId: string) =>
     ipcRenderer.invoke(CHANNELS.removeWorkspace, workspaceId) as Promise<void>,
+  readUnreadPlan: (unread: { workspaceId: string; file: string }) =>
+    ipcRenderer.invoke(CHANNELS.readUnreadPlan, unread) as Promise<UnreadPlanRead>,
+  showUnreadPlan: (unread: { workspaceId: string; file: string }) =>
+    ipcRenderer.invoke(CHANNELS.showUnreadPlan, unread) as Promise<void>,
   readShot: (file: string) =>
     ipcRenderer.invoke(CHANNELS.readShot, file) as Promise<string | null>,
   saveShot: (props: { file: string | null; src: string | null; name: string }) =>

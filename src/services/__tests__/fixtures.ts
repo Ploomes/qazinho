@@ -75,6 +75,8 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     saveProjects: () => Promise.resolve(),
     saveWorkspace: () => Promise.resolve(),
     removeWorkspace: () => Promise.resolve(),
+    readUnreadPlan: () => Promise.resolve({ status: 'gone' as const }),
+    showUnreadPlan: () => Promise.resolve(),
     readShot: () => Promise.resolve(null),
     saveShot: () => Promise.resolve('cancelled'),
     copyShot: () => Promise.resolve(false),

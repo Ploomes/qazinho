@@ -49,6 +49,8 @@ export const CHANNELS = {
   saveProjects: 'state:projects',
   saveWorkspace: 'state:workspace',
   removeWorkspace: 'state:remove',
+  readUnreadPlan: 'state:unread-plan',
+  showUnreadPlan: 'state:unread-plan-show',
   readShot: 'state:shot',
   saveShot: 'state:save-shot',
   pickFile: 'files:pick',

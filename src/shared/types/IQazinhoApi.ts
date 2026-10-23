@@ -74,6 +74,7 @@ import type { SuiteList } from './SuiteList';
 import type { SuitePick } from './SuitePick';
 import type { SuiteShipOutcome } from './SuiteShipOutcome';
 import type { SuiteShipWay } from './SuiteShipWay';
+import type { UnreadPlanRead } from './UnreadPlanRead';
 import type { VariablesOutcome } from './VariablesOutcome';
 import type { WindowFit } from './WindowFit';
 
@@ -141,6 +142,11 @@ export interface IQazinhoApi {
   saveProjects: (json: string) => Promise<void>;
   saveWorkspace: (saved: ISavedWorkspace) => Promise<void>;
   removeWorkspace: (workspaceId: string) => Promise<void>;
+  readUnreadPlan: (unread: {
+    workspaceId: string;
+    file: string;
+  }) => Promise<UnreadPlanRead>;
+  showUnreadPlan: (unread: { workspaceId: string; file: string }) => Promise<void>;
   readShot: (file: string) => Promise<string | null>;
   saveShot: (props: {
     file: string | null;

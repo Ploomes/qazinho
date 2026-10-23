@@ -1,4 +1,9 @@
-import type { ISavedState, ISavedWorkspace, SaveOutcome } from '@/shared/types';
+import type {
+  ISavedState,
+  ISavedWorkspace,
+  SaveOutcome,
+  UnreadPlanRead,
+} from '@/shared/types';
 import { NOTHING_SAVED } from './constants';
 
 /** The only caller of the disk side of the bridge. */
@@ -17,6 +22,17 @@ export class Archive {
 
   public static removeWorkspace(workspaceId: string): void {
     void window.qazinho?.removeWorkspace(workspaceId);
+  }
+
+  public static async readUnreadPlan(unread: {
+    workspaceId: string;
+    file: string;
+  }): Promise<UnreadPlanRead> {
+    return (await window.qazinho?.readUnreadPlan(unread)) ?? { status: 'gone' };
+  }
+
+  public static showUnreadPlan(unread: { workspaceId: string; file: string }): void {
+    void window.qazinho?.showUnreadPlan(unread);
   }
 
   public static async readShot(file: string): Promise<string | null> {
