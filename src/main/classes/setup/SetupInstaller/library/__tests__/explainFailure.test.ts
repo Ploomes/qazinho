@@ -17,7 +17,8 @@ const BREW = [
 
 describe('explainFailure', () => {
   it('starts at the error, so a warning printed before it never buries it', () => {
-    const { error } = explainFailure(BREW);
+    const { failure } = explainFailure(BREW);
+    const error = failure.reason === 'said' ? failure.text : '';
 
     expect(error.split('\n')[0]).toBe(
       'Error: The following directories are not writable by your user:',
@@ -33,7 +34,7 @@ describe('explainFailure', () => {
 
   it('keeps everything when nothing says it is the error', () => {
     expect(explainFailure(['npm ERR! code EACCES', 'npm ERR! path /usr/lib'])).toEqual({
-      error: 'npm ERR! code EACCES\nnpm ERR! path /usr/lib',
+      failure: { reason: 'said', text: 'npm ERR! code EACCES\nnpm ERR! path /usr/lib' },
       fix: null,
     });
   });
@@ -51,8 +52,10 @@ describe('explainFailure', () => {
         'xcode-select --install',
       ]),
     ).toEqual({
-      error:
-        'Error: Xcode alone is not sufficient on Tahoe.\nInstall the Command Line Tools:\nxcode-select --install',
+      failure: {
+        reason: 'said',
+        text: 'Error: Xcode alone is not sufficient on Tahoe.\nInstall the Command Line Tools:\nxcode-select --install',
+      },
       fix: 'xcode-select --install',
     });
   });

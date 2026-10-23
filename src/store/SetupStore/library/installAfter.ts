@@ -11,7 +11,12 @@ export function installAfter(props: {
   if ('isInstalled' in news)
     return news.isInstalled
       ? { phase: 'installed' }
-      : { phase: 'failed', error: news.error, command: news.command, isFix: news.isFix };
+      : {
+          phase: 'failed',
+          failure: news.failure,
+          command: news.command,
+          isFix: news.isFix,
+        };
 
   if (state?.phase !== 'installing') return state;
 

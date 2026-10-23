@@ -1,5 +1,4 @@
 import type { IInstallResult, InstallableId, ISetupEvent } from '@/shared/types';
-import { i18n } from '@/languages';
 
 /** The only caller of the install side of the bridge. */
 export class Setup {
@@ -7,7 +6,7 @@ export class Setup {
     return (
       (await window.qazinho?.installTool(item)) ?? {
         isInstalled: false,
-        error: i18n.t('COMMON.NO_BRIDGE'),
+        failure: { reason: 'no-bridge' },
         command: '',
         isFix: false,
       }

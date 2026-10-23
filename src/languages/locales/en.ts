@@ -813,6 +813,17 @@ export const en = {
       'With the same account: type /confluence in the chat to plan from a page, and publish a plan from the Plan tab.',
     CONFLUENCE_CHECKING: 'Checking Confluence…',
     FIELD_TOKEN: 'token',
+    INSTALL_BUSY: 'It is installing already.',
+    INSTALL_MISSING_NPM:
+      'QAzinho installs agents with npm, and this machine has no npm. Install Node.js from nodejs.org, then try again.',
+    INSTALL_MISSING_BREW:
+      'QAzinho installs this with Homebrew, and this machine has no Homebrew. Install it from brew.sh, then try again.',
+    INSTALL_MISSING_WINGET:
+      'QAzinho installs gh with winget, and this Windows has none. Install App Installer from the Microsoft Store, or gh from cli.github.com, then try again.',
+    INSTALL_MISSING_PYTHON:
+      'Installing idb needs Python 3, and this machine has none. Install the Command Line Tools, then try again.',
+    INSTALL_MISSING_OTHER: '{{tool}} is not on this machine.',
+    INSTALL_STOPPED: '{{tool}} stopped with code {{code}}.',
     CONNECT_UNAUTHORIZED:
       '{{tracker}} did not accept these credentials. Check the email and the token, and try again.',
     CONNECT_UNREACHABLE:

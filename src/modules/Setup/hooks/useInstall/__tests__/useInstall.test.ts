@@ -30,7 +30,7 @@ describe('useInstall', () => {
   it('keeps the error and does NOT look again when the install fails', async () => {
     window.qazinho.installTool = vi.fn().mockResolvedValue({
       isInstalled: false,
-      error: 'EACCES',
+      failure: { reason: 'said', text: 'EACCES' },
       command: 'npm i -g x',
       isFix: false,
     });
@@ -41,7 +41,7 @@ describe('useInstall', () => {
 
     expect(useSetupStore.getState().installs.codex).toEqual({
       phase: 'failed',
-      error: 'EACCES',
+      failure: { reason: 'said', text: 'EACCES' },
       command: 'npm i -g x',
       isFix: false,
     });

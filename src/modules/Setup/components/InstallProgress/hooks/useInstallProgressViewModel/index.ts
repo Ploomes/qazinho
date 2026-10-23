@@ -2,11 +2,13 @@ import type { IInstallProgressProps } from '@/modules/Setup/components/InstallPr
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { INSTALL_PROGRESS } from '@/modules/Setup/components/InstallProgress/constants';
+import { installFailureOf } from '@/modules/Setup/library';
 
 export const useInstallProgressViewModel = (props: IInstallProgressProps) => {
   const { state } = props;
   const { t } = useTranslation();
   const [isCopied, setIsCopied] = useState(false);
+  const told = state.phase === 'failed' ? installFailureOf(state.failure) : null;
 
   useEffect(() => {
     if (!isCopied) return;
@@ -39,7 +41,7 @@ export const useInstallProgressViewModel = (props: IInstallProgressProps) => {
         ? t('SETUP.INSTALL_STEP', { stage: state.stage, stages: state.stages })
         : t('SETUP.INSTALLED'),
     line: state.phase === 'installing' ? state.line : '',
-    error: state.phase === 'failed' ? state.error : '',
+    error: told === null ? '' : 'text' in told ? told.text : t(told.key, told.values),
     command: state.phase === 'failed' ? state.command : '',
     commandLabel:
       state.phase === 'failed' && state.isFix

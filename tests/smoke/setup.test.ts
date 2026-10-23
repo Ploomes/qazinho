@@ -52,14 +52,20 @@ describe('installing a tool', () => {
       isInstalled: false,
       command: 'npm install -g @anthropic-ai/claude-code',
     });
-    expect(!result.isInstalled && result.error).toContain('added 3 packages');
+    expect(!result.isInstalled && result.failure).toMatchObject({
+      reason: 'said',
+      text: expect.stringContaining('added 3 packages') as unknown,
+    });
   });
 
-  it('says to install Node.js when there is no npm, without running anything', async () => {
+  it('says npm is missing, without running anything', async () => {
     const { installer, events } = await installerWith(null);
     const result = await installer.install('codex');
 
-    expect(!result.isInstalled && result.error).toContain('nodejs.org');
+    expect(!result.isInstalled && result.failure).toEqual({
+      reason: 'missing',
+      tool: 'npm',
+    });
     expect(events).toEqual([]);
   });
 
@@ -78,6 +84,8 @@ exit 1
       command: 'sudo chown -R qa /opt/homebrew/lib/python3.14/site-packages',
       isFix: true,
     });
-    expect(!result.isInstalled && result.error).not.toContain('Warning');
+    expect(
+      !result.isInstalled && result.failure.reason === 'said' ? result.failure.text : '',
+    ).not.toContain('Warning');
   });
 });

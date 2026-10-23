@@ -65,7 +65,9 @@ describe('a page with no bridge', () => {
       ok: false,
       error: said,
     });
-    expect(await Setup.install('claude-code')).toMatchObject({ error: said });
+    expect(await Setup.install('claude-code')).toMatchObject({
+      failure: { reason: 'no-bridge' },
+    });
   });
 
   it('has no GitHub CLI to reach GitHub through, and signs nothing in', async () => {

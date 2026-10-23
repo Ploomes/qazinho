@@ -6,7 +6,7 @@ import { useInstallProgressViewModel } from '@/modules/Setup/components/InstallP
 
 const FAILED = {
   phase: 'failed' as const,
-  error: 'EACCES',
+  failure: { reason: 'said' as const, text: 'EACCES' },
   command: 'npm install -g x',
   isFix: false,
 };

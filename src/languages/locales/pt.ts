@@ -817,6 +817,17 @@ export const pt: typeof en = {
       'Com a mesma conta: digite /confluence no chat para planejar a partir de uma página, e publique um plano pela aba Plano.',
     CONFLUENCE_CHECKING: 'Conferindo o Confluence…',
     FIELD_TOKEN: 'token',
+    INSTALL_BUSY: 'Já está instalando.',
+    INSTALL_MISSING_NPM:
+      'O QAzinho instala agentes com o npm, e esta máquina não tem npm. Instale o Node.js em nodejs.org e tente de novo.',
+    INSTALL_MISSING_BREW:
+      'O QAzinho instala isso com o Homebrew, e esta máquina não tem Homebrew. Instale em brew.sh e tente de novo.',
+    INSTALL_MISSING_WINGET:
+      'O QAzinho instala o gh com o winget, e este Windows não tem. Instale o Instalador de Aplicativo pela Microsoft Store, ou o gh em cli.github.com, e tente de novo.',
+    INSTALL_MISSING_PYTHON:
+      'Instalar o idb precisa do Python 3, e esta máquina não tem. Instale as Command Line Tools e tente de novo.',
+    INSTALL_MISSING_OTHER: 'O {{tool}} não está nesta máquina.',
+    INSTALL_STOPPED: 'O {{tool}} parou com o código {{code}}.',
     CONNECT_UNAUTHORIZED:
       'O {{tracker}} não aceitou essas credenciais. Confira o e-mail e o token, e tente de novo.',
     CONNECT_UNREACHABLE:

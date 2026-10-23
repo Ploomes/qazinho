@@ -30,14 +30,14 @@ describe('installAfter', () => {
         state: INSTALLING,
         news: {
           isInstalled: false,
-          error: 'EACCES',
+          failure: { reason: 'said' as const, text: 'EACCES' },
           command: 'npm install -g x',
           isFix: false,
         },
       }),
     ).toEqual({
       phase: 'failed',
-      error: 'EACCES',
+      failure: { reason: 'said' as const, text: 'EACCES' },
       command: 'npm install -g x',
       isFix: false,
     });

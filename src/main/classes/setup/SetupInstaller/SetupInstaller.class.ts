@@ -2,6 +2,7 @@ import type { IInstallStep, ISetupInstaller } from './types';
 import type {
   IInstallResult,
   InstallableId,
+  InstallFailure,
   ISetupEvent,
   IToolStatus,
 } from '@/shared/types';
@@ -40,7 +41,7 @@ export class SetupInstaller {
     if (this.installing.has(item))
       return {
         isInstalled: false,
-        error: `${item} is already installing.`,
+        failure: { reason: 'busy' },
         command,
         isFix: false,
       };
@@ -57,9 +58,7 @@ export class SetupInstaller {
         if (path === null)
           return {
             isInstalled: false,
-            error:
-              INSTALL.missing[step.command] ??
-              `${step.command} is not on this machine. Run the command below in a terminal.`,
+            failure: { reason: 'missing', tool: step.command },
             command,
             isFix: false,
           };
@@ -75,14 +74,15 @@ export class SetupInstaller {
         if (failed === null) continue;
 
         if (await this.isDone({ step, directories })) {
-          this.onEvent({ ...at, line: failed.error.split('\n')[0] ?? '' });
+          if (failed.failure.reason === 'said')
+            this.onEvent({ ...at, line: failed.failure.text.split('\n')[0] ?? '' });
 
           continue;
         }
 
         return {
           isInstalled: false,
-          error: failed.error,
+          failure: failed.failure,
           command: failed.fix ?? command,
           isFix: failed.fix !== null,
         };
@@ -101,7 +101,7 @@ export class SetupInstaller {
     stage: number;
     stages: number;
     directories: string[];
-  }): Promise<{ error: string; fix: string | null } | null> {
+  }): Promise<{ failure: InstallFailure; fix: string | null } | null> {
     const { item, path, step, stage, stages, directories } = props;
     const tail: string[] = [];
     const say = (line: string) => {
@@ -146,7 +146,7 @@ export class SetupInstaller {
 
       child.on('error', (reason) => {
         clearTimeout(timeout);
-        settle({ error: reason.message, fix: null });
+        settle({ failure: { reason: 'said', text: reason.message }, fix: null });
       });
 
       child.on('close', (code) => {
@@ -155,7 +155,10 @@ export class SetupInstaller {
           code === 0
             ? null
             : tail.length === 0
-              ? { error: `${step.command} stopped with code ${String(code)}.`, fix: null }
+              ? {
+                  failure: { reason: 'stopped', tool: step.command, code: code ?? -1 },
+                  fix: null,
+                }
               : explainFailure(tail),
         );
       });
