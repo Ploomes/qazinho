@@ -56,6 +56,7 @@ function answering(turn: Partial<IChatTurn>) {
       failure: null,
       code: null,
       story: null,
+      page: null,
       ...turn,
     }),
   );

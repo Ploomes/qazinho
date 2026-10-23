@@ -79,6 +79,7 @@ const EMPTY_CHAT = {
   look: null,
   code: null,
   story: null,
+  page: null,
   design: null,
   variables: [],
 };
@@ -148,6 +149,7 @@ const FULL_CHAT = {
   },
   code: null,
   story: null,
+  page: null,
   design: null,
   variables: [{ name: 'SHOP_EMAIL', description: 'The buyer on staging' }],
 };
@@ -265,6 +267,25 @@ describe('Harness', () => {
       expect(
         harness.chat({ ...EMPTY_CHAT, story: { ...STORY, files: [] } }).readDirs,
       ).toEqual([]);
+    });
+
+    it('opens a message planned from a Confluence page with its text, and gives the agent no folder for it', async () => {
+      const chat = harness.chat({
+        ...EMPTY_CHAT,
+        text: 'Plan from the checkout cases.',
+        page: {
+          page: {
+            id: '98304',
+            title: 'Checkout: cenários',
+            space: 'QA',
+            url: 'https://acme.atlassian.net/wiki/spaces/QA/pages/98304',
+          },
+          text: '## CT01 · Cupom válido\n\n| # | Ação | Esperado |\n| --- | --- | --- |\n| 1 | Aplicar SAVE10 | Total com 10% off |',
+        },
+      });
+
+      await expect(chat.prompt).toMatchFileSnapshot('./__prompts__/chat-confluence.txt');
+      expect(chat.readDirs).toEqual([]);
     });
 
     it('lets the agent read the code and the story at once', () => {

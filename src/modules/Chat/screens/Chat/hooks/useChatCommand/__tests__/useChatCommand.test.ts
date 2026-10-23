@@ -125,6 +125,7 @@ describe('useChatCommand', () => {
         text: 'Plan the tests against the Figma design Shop Checkout.\n\nOnly the cart.',
         code: null,
         jira: null,
+        confluence: null,
         design: {
           url: LINK,
           fileKey: 'AbC123',
@@ -318,6 +319,7 @@ describe('useChatCommand', () => {
         text: 'Plan the tests for what branch feat/cupom of acme/loja-web changed against develop.\n\nFocus on the checkout.',
         code: { owner: 'acme', name: 'loja-web', base: 'develop', branch: 'feat/cupom' },
         jira: null,
+        confluence: null,
         design: null,
         command: {
           id: 'code-plan',

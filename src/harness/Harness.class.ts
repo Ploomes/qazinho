@@ -18,6 +18,7 @@ import type {
   ICodeCopy,
   IDesignLink,
   IFlatStep,
+  IConfluencePage,
   IJiraStoryCopy,
   IKnownBug,
   ITargetUnderTest,
@@ -50,6 +51,7 @@ import {
   describeRuns,
   describeScreen,
   describeSize,
+  describePage,
   describeStory,
   fillSections,
   renderSections,
@@ -103,7 +105,7 @@ export class Harness {
     return designAccessOf(design);
   }
 
-  /** One chat message: the corpus as its system prompt, the QA's words opened by what the agent was not told yet, the code and the story's files it may read, and the Figma design it may open. */
+  /** One chat message: the corpus as its system prompt, the QA's words opened by what the agent was not told yet, the code and the story's files it may read, the Confluence page, and the Figma design it may open. */
   public chat(props: {
     text: string;
     told: Record<string, string>;
@@ -115,6 +117,7 @@ export class Harness {
     look: AppLook | null;
     code: ICodeCopy | null;
     story: IJiraStoryCopy | null;
+    page: IConfluencePage | null;
     design: IDesignLink | null;
     variables: IVariableBrief[];
   }): {
@@ -149,6 +152,7 @@ export class Harness {
           story: props.story,
           wasTold: (props.told[STORY_SECTION.title] ?? '') !== '',
         }),
+        describePage(props.page),
         describeDesign({
           design: props.design,
           wasTold: (props.told[DESIGN_SECTION.title] ?? '') !== '',

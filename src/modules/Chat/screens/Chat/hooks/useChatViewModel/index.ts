@@ -2,6 +2,7 @@ import type { ChatItem, IQuestionAnswer, IRunMessage } from '@/modules/Chat/type
 import type {
   IChatReference,
   ICodeAsk,
+  IConfluenceAsk,
   IJiraAsk,
   IVariableBrief,
   QaReply,
@@ -129,6 +130,7 @@ export const useChatViewModel = () => {
     references: IChatReference[];
     code: ICodeAsk | null;
     jira: IJiraAsk | null;
+    confluence: IConfluenceAsk | null;
   }) => {
     if (workspace !== null) chatAgent.askAgent({ workspaceId: workspace.id, ...props });
   };
@@ -165,6 +167,7 @@ export const useChatViewModel = () => {
       references,
       code: asked?.code ?? null,
       jira: asked?.jira ?? null,
+      confluence: null,
     });
   };
 
@@ -220,6 +223,7 @@ export const useChatViewModel = () => {
       references: [],
       code: null,
       jira: null,
+      confluence: null,
     });
   };
 

@@ -14,5 +14,6 @@ export const ASSISTANT_FAILURE_KEYS: Record<
   unreachable: 'ASSISTANT.FAILED_OTHER',
   code: 'ASSISTANT.FAILED_OTHER',
   jira: 'ASSISTANT.FAILED_OTHER',
+  confluence: 'ASSISTANT.FAILED_OTHER',
   other: 'ASSISTANT.FAILED_OTHER',
 };

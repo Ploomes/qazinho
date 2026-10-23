@@ -17,6 +17,7 @@ import type {
   IBuildEvent,
   IChatTurn,
   ICodeCopy,
+  IConfluencePage,
   IJiraStoryCopy,
   IConnectIntegration,
   IExportCode,
@@ -515,6 +516,7 @@ const assistant = new AssistantAgent({
 });
 
 const toldChats = new Map<string, Record<string, string>>();
+const confluencePages = new Map<string, IConfluencePage>();
 const askingChats = new Set<string>();
 const stoppedChats = new Set<string>();
 
@@ -525,8 +527,9 @@ async function askOnce(props: {
   look: AppLook | null;
   code: ICodeCopy | null;
   story: IJiraStoryCopy | null;
+  page: IConfluencePage | null;
 }): Promise<{ turn: IAgentTurn; told: Record<string, string> }> {
-  const { ask, command, sessionId, look, code, story } = props;
+  const { ask, command, sessionId, look, code, story, page } = props;
   const chat = harness.chat({
     text: ask.text,
     told: (sessionId === null ? undefined : toldChats.get(sessionId)) ?? {},
@@ -538,6 +541,7 @@ async function askOnce(props: {
     look,
     code,
     story,
+    page,
     design: ask.design,
     variables: ask.variables,
   });
@@ -577,6 +581,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     answer: null,
     code: null,
     story: null,
+    page: null,
   };
 
   if (!command)
@@ -599,7 +604,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     });
 
   try {
-    const [look, prepared, read] = await Promise.all([
+    const [look, prepared, read, opened] = await Promise.all([
       ask.target?.kind === 'web'
         ? peek.look(ask.target.value)
         : phone === null
@@ -629,6 +634,9 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
               });
             },
           }),
+      ask.confluence === null
+        ? Promise.resolve(null)
+        : confluence.page(ask.confluence.pageId),
     ]);
 
     if (stoppedChats.has(ask.workspaceId)) {
@@ -650,8 +658,18 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
         failure: { reason: 'jira', failure: read.failure, key: ask.jira.key },
       };
 
+    if (opened !== null && !opened.isRead)
+      return {
+        ...unanswered,
+        failure: { reason: 'confluence', failure: opened.failure, said: opened.said },
+      };
+
+    if (opened !== null)
+      confluencePages.set(ask.workspaceId, { page: opened.page, text: opened.text });
+
     const code = codeCopies.copyOf(ask.workspaceId);
     const story = jiraStories.storyOf(ask.workspaceId);
+    const page = confluencePages.get(ask.workspaceId) ?? null;
     const first = await askOnce({
       ask,
       command,
@@ -659,6 +677,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
       look,
       code,
       story,
+      page,
     });
     const isLost =
       first.turn.isError &&
@@ -666,7 +685,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
       !stoppedChats.has(ask.workspaceId) &&
       isLostSession(first.turn.text);
     const { turn, told } = isLost
-      ? await askOnce({ ask, command, sessionId: null, look, code, story })
+      ? await askOnce({ ask, command, sessionId: null, look, code, story, page })
       : first;
 
     if (stoppedChats.has(ask.workspaceId))
@@ -677,6 +696,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
         failure: { reason: 'stopped' },
         code: null,
         story: null,
+        page: null,
       };
 
     if (!turn.isError && turn.sessionId !== null) toldChats.set(turn.sessionId, told);
@@ -685,6 +705,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
 
     if (answer?.plan && code !== null) await codeCopies.release(ask.workspaceId);
     if (answer?.plan && story !== null) await jiraStories.release(ask.workspaceId);
+    if (answer?.plan) confluencePages.delete(ask.workspaceId);
 
     return {
       ...turn,
@@ -703,6 +724,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
         story === null
           ? null
           : { key: story.story.key, summary: story.story.summary, url: story.story.url },
+      page: page?.page ?? null,
     };
   } finally {
     askingChats.delete(ask.workspaceId);
@@ -1027,6 +1049,7 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.removeWorkspace, async (_event, workspaceId: string) => {
     await codeCopies.release(workspaceId);
     await jiraStories.release(workspaceId);
+    confluencePages.delete(workspaceId);
     await archive.removeWorkspace(workspaceId);
   });
   ipcMain.handle(CHANNELS.readShot, (_event, file: string) => archive.readShot(file));

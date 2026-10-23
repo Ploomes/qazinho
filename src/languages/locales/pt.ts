@@ -190,6 +190,7 @@ export const pt: typeof en = {
     FAILED_AGENT_SILENT: 'O agente parou de responder. Pergunte de novo.',
     FAILED_CODE: 'O QAzinho não conseguiu pegar o código no GitHub. {{reason}}',
     FAILED_JIRA: 'O QAzinho não conseguiu ler a {{key}} no Jira. {{reason}}',
+    FAILED_CONFLUENCE: 'O QAzinho não conseguiu ler a página no Confluence. {{reason}}',
     SUGGESTION_JIRA: 'Planejar a partir de uma história do Jira',
     SUGGESTION_FIGMA: 'Conferir com um design do Figma',
     PLAN_WHILE_RUNNING:
@@ -882,6 +883,17 @@ export const pt: typeof en = {
     FAILURE_UNREACHABLE: 'O Jira está fora de alcance desta máquina. Confira a rede.',
     FAILURE_REJECTED: 'O Jira recusou o que o QAzinho enviou.',
     FAILURE_UNEXPECTED: 'O Jira respondeu de um jeito que o QAzinho não esperava.',
+  },
+  CONFLUENCE: {
+    FAILURE_NOT_CONNECTED:
+      'O Confluence está desligado. Ligue junto do Jira em Configurações → Integrações.',
+    FAILURE_UNAUTHORIZED:
+      'O Confluence recusou esta conta do Jira. Confira se ela abre o Confluence no mesmo site.',
+    FAILURE_NOT_FOUND: 'O Confluence não encontrou, ou esta conta não enxerga.',
+    FAILURE_UNREACHABLE:
+      'O Confluence está fora de alcance desta máquina. Confira a rede.',
+    FAILURE_REJECTED: 'O Confluence recusou o que o QAzinho enviou.',
+    FAILURE_UNEXPECTED: 'O Confluence respondeu de um jeito que o QAzinho não esperava.',
   },
   FILING: {
     SEND: 'Enviar como issue',

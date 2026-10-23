@@ -1,11 +1,15 @@
-import type { IChatReference, ICodeAsk, IJiraAsk } from '@/shared/types';
+import type { IChatReference, ICodeAsk, IConfluenceAsk, IJiraAsk } from '@/shared/types';
 import { useTranslation } from 'react-i18next';
 import { runHistoryOf, sessionFor } from '@/modules/Chat/library';
 import { CHAT_FAILURE_KEYS } from '@/modules/Chat/screens/Chat/constants';
 import { viewportOf } from '@/modules/Device';
 import { caseIdsUsed, planOfDraft } from '@/modules/Plan';
 import { flattenPlanSteps } from '@/modules/Run';
-import { GITHUB_FAILURE_KEYS, JIRA_FAILURE_KEYS } from '@/modules/Setup';
+import {
+  CONFLUENCE_FAILURE_KEYS,
+  GITHUB_FAILURE_KEYS,
+  JIRA_FAILURE_KEYS,
+} from '@/modules/Setup';
 import { Agent } from '@/services';
 import {
   useAppStore,
@@ -24,6 +28,7 @@ export const useChatAgent = () => {
     references: IChatReference[];
     code: ICodeAsk | null;
     jira: IJiraAsk | null;
+    confluence: IConfluenceAsk | null;
   }) => {
     const { workspaceId } = props;
     const workspace = useWorkspaceStore
@@ -63,6 +68,7 @@ export const useChatAgent = () => {
       }),
       code: props.code,
       jira: props.jira,
+      confluence: props.confluence,
       design: workspace.design,
       variables: useVariablesStore.getState().byProject[workspace.projectId] ?? [],
     }).then((turn) => {
@@ -87,10 +93,14 @@ export const useChatAgent = () => {
                       key: turn.failure.key,
                       reason: t(JIRA_FAILURE_KEYS[turn.failure.failure]),
                     })
-                  : t(CHAT_FAILURE_KEYS[turn.failure.reason], {
-                      ...turn.failure,
-                      agent: agentName,
-                    }),
+                  : turn.failure.reason === 'confluence'
+                    ? t('CHAT.FAILED_CONFLUENCE', {
+                        reason: t(CONFLUENCE_FAILURE_KEYS[turn.failure.failure]),
+                      })
+                    : t(CHAT_FAILURE_KEYS[turn.failure.reason], {
+                        ...turn.failure,
+                        agent: agentName,
+                      }),
         });
 
         return;

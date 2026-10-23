@@ -354,6 +354,7 @@ export const useChatCommand = (props: {
           text: note === '' ? say : `${say}\n\n${note}`,
           code: null,
           jira: null,
+          confluence: null,
           design: command.design,
           command: {
             id: 'figma-plan',
@@ -412,6 +413,7 @@ export const useChatCommand = (props: {
           branch: command.branch,
         } satisfies ICodeAsk,
         jira: null,
+        confluence: null,
         design: null,
         command: {
           id: 'code-plan',

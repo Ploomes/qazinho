@@ -187,6 +187,7 @@ export const en = {
     FAILED_AGENT_SILENT: 'The agent stopped answering. Ask it again.',
     FAILED_CODE: 'QAzinho could not get the code from GitHub. {{reason}}',
     FAILED_JIRA: 'QAzinho could not read {{key}} from Jira. {{reason}}',
+    FAILED_CONFLUENCE: 'QAzinho could not read the page from Confluence. {{reason}}',
     SUGGESTION_JIRA: 'Plan from a Jira story',
     SUGGESTION_FIGMA: 'Check against a Figma design',
     PLAN_WHILE_RUNNING:
@@ -879,6 +880,17 @@ export const en = {
     FAILURE_UNREACHABLE: 'Jira is out of reach from this machine. Check the network.',
     FAILURE_REJECTED: 'Jira refused what QAzinho sent.',
     FAILURE_UNEXPECTED: 'Jira answered in a way QAzinho did not expect.',
+  },
+  CONFLUENCE: {
+    FAILURE_NOT_CONNECTED:
+      'Confluence is off. Turn it on beside Jira in Settings → Integrations.',
+    FAILURE_UNAUTHORIZED:
+      'Confluence refused this Jira account. Check that it can open Confluence on the same site.',
+    FAILURE_NOT_FOUND: 'Confluence did not find it, or this account cannot see it.',
+    FAILURE_UNREACHABLE:
+      'Confluence is out of reach from this machine. Check the network.',
+    FAILURE_REJECTED: 'Confluence refused what QAzinho sent.',
+    FAILURE_UNEXPECTED: 'Confluence answered in a way QAzinho did not expect.',
   },
   FILING: {
     SEND: 'Send as an issue',

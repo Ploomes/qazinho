@@ -38,6 +38,7 @@ const ASK = {
   runs: [],
   code: null,
   jira: null,
+  confluence: null,
   design: null,
   variables: [],
 };

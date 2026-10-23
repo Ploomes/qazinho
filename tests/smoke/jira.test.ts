@@ -114,6 +114,7 @@ describe('Jira as a requirement', () => {
       look: null,
       code: null,
       story: copy,
+      page: null,
       design: null,
       variables: [],
     });

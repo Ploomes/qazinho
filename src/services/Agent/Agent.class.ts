@@ -21,6 +21,7 @@ export class Agent {
         failure: null,
         code: null,
         story: null,
+        page: null,
       }
     );
   }

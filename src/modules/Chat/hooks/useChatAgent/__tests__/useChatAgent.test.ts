@@ -50,6 +50,7 @@ function answering(turn: Partial<IChatTurn>) {
       failure: null,
       code: null,
       story: null,
+      page: null,
       ...turn,
     }),
   );
@@ -89,6 +90,7 @@ describe('useChatAgent', () => {
           references: [],
           code: null,
           jira: null,
+          confluence: null,
         });
       });
 
@@ -119,6 +121,7 @@ describe('useChatAgent', () => {
           references: [],
           code: null,
           jira: null,
+          confluence: null,
         });
       });
 
@@ -137,6 +140,7 @@ describe('useChatAgent', () => {
           references: [],
           code: null,
           jira: null,
+          confluence: null,
         });
       });
 
@@ -162,12 +166,39 @@ describe('useChatAgent', () => {
           references: [],
           code: null,
           jira: { key: 'SHOP-99' },
+          confluence: null,
         });
       });
 
       await waitFor(() => {
         expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
           text: 'QAzinho could not read SHOP-99 from Jira. Jira did not find it, or this account cannot see it.',
+        });
+      });
+    });
+
+    it('says Confluence did not hand the page over, in its own words', async () => {
+      answering({
+        isError: true,
+        failure: { reason: 'confluence', failure: 'not-found', said: 'Page not found' },
+      });
+
+      const { result } = renderHook(() => useChatAgent());
+
+      act(() => {
+        result.current.askAgent({
+          workspaceId: 'w1',
+          text: 'Plan from the page',
+          references: [],
+          code: null,
+          jira: null,
+          confluence: { pageId: '98304' },
+        });
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
+          text: 'QAzinho could not read the page from Confluence. Confluence did not find it, or this account cannot see it.',
         });
       });
     });
@@ -190,6 +221,7 @@ describe('useChatAgent', () => {
           references: [],
           code: null,
           jira: { key: 'SHOP-12' },
+          confluence: null,
         });
       });
 

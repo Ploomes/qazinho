@@ -191,6 +191,7 @@ export const useAppActions = () => {
           references: [],
           code: null,
           jira: story === null ? null : { key: story.key },
+          confluence: null,
         });
         useAssistantStore.getState().close();
       },

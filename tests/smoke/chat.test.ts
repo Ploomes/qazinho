@@ -49,6 +49,7 @@ describe('a real chat', () => {
         look: null,
         code: null,
         story: null,
+        page: null,
         design: null,
         variables: [],
       });
@@ -124,6 +125,7 @@ describe('a real chat', () => {
       look: null,
       code: null,
       story: null,
+      page: null,
       design: null,
       variables: [],
     };

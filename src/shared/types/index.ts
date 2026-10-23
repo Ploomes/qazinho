@@ -58,6 +58,7 @@ export type * from './ICodeCopy';
 export type * from './ICodeSource';
 export type * from './ICommentBug';
 export type * from './IConfluenceAsk';
+export type * from './IConfluencePage';
 export type * from './IConfluencePageRef';
 export type * from './IConfluenceSpace';
 export type * from './IConnectIntegration';
