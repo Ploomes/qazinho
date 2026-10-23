@@ -123,8 +123,10 @@ export const Runs: React.FC = () => {
                     onClick={runCase.onToggle}
                   >
                     <Caret isOpen={runCase.isOpen} />
-                    <span className="runs__case-id">{runCase.id}</span>
-                    <span className="runs__case-title">{runCase.title}</span>
+                    <span className="runs__case-name">
+                      <span className="runs__case-id">{runCase.id}</span>
+                      <span className="runs__case-title">{runCase.title}</span>
+                    </span>
                   </button>
                   {runCase.take !== null && (
                     <button
@@ -134,7 +136,8 @@ export const Runs: React.FC = () => {
                       aria-label={runCase.take.title}
                       onClick={runCase.take.onClick}
                     >
-                      <Icon name="play" /> {runCase.take.label}
+                      <Icon name="play" />
+                      <span className="runs__take-label">{runCase.take.label}</span>
                     </button>
                   )}
                   {runCase.walk !== null && (
