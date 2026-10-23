@@ -687,6 +687,11 @@ export const en = {
     ABOUT_NOTE:
       'Your QA assistant: plan tests, run them and keep your work organised, with your own AI agent. Nothing leaves this machine.',
     ABOUT_RIGHTS: '© {{year}} Salve Software. All rights reserved.',
+    LOGS_NOTE:
+      'When something goes wrong, the log says what QAzinho was doing. It stays on this machine, with no password, token or project in it; send it only if you want to.',
+    LOGS_OPEN: 'Open the log folder',
+    DIAGNOSTICS_COPY: 'Copy diagnostics',
+    DIAGNOSTICS_COPIED: 'Copied',
   },
   MCP: {
     FIGMA_TEXT:

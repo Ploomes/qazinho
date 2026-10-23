@@ -370,4 +370,56 @@ describe('useSettingsViewModel', () => {
       );
     });
   });
+
+  describe('the log', () => {
+    afterEach(() => {
+      Reflect.deleteProperty(window, 'qazinho');
+      vi.useRealTimers();
+    });
+
+    it('opens the folder the log is kept in', () => {
+      const openLogs = vi.fn(() => Promise.resolve());
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), openLogs };
+      renderHook(() => useSettingsViewModel()).result.current.onOpenLogs();
+
+      expect(openLogs).toHaveBeenCalledOnce();
+    });
+
+    it('says it copied the diagnostics for a moment, then offers it again', async () => {
+      vi.useFakeTimers();
+      window.qazinho = fakeQazinhoApi('darwin');
+
+      const { result } = renderHook(() => useSettingsViewModel());
+
+      expect(result.current.copyDiagnosticsLabel).toBe('Copy diagnostics');
+
+      await act(async () => {
+        await result.current.onCopyDiagnostics();
+      });
+
+      expect(result.current.copyDiagnosticsLabel).toBe('Copied');
+
+      act(() => {
+        vi.advanceTimersByTime(2_000);
+      });
+
+      expect(result.current.copyDiagnosticsLabel).toBe('Copy diagnostics');
+    });
+
+    it('does NOT say it copied when nothing was', async () => {
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        copyDiagnostics: () => Promise.resolve(false),
+      };
+
+      const { result } = renderHook(() => useSettingsViewModel());
+
+      await act(async () => {
+        await result.current.onCopyDiagnostics();
+      });
+
+      expect(result.current.copyDiagnosticsLabel).toBe('Copy diagnostics');
+    });
+  });
 });

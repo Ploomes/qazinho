@@ -1,8 +1,9 @@
 import type { CSSProperties } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   APP_VERSION,
+  DIAGNOSTICS_COPIED_MS,
   LANGUAGES,
   RUN_ALERTS,
   SETTINGS_TABS,
@@ -17,11 +18,13 @@ import {
   useInstall,
   useMachineCheck,
 } from '@/modules/Setup';
-import { Mcp, Platform } from '@/services';
+import { Diagnostics, Mcp, Platform } from '@/services';
 import { comboLabelOf } from '@/shared/hooks/useKeybinds/library';
 import { useAppStore, useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
 export const useSettingsViewModel = () => {
+  const [isCopied, setIsCopied] = useState(false);
+
   const { t } = useTranslation();
   const theme = useAppStore((state) => state.theme);
   const setTheme = useAppStore((state) => state.setTheme);
@@ -210,6 +213,22 @@ export const useSettingsViewModel = () => {
       command: Platform.isMac() ? '⌘' : 'Ctrl',
       option: Platform.isMac() ? '⌥' : 'Alt',
     }),
+    logsNote: t('SETTINGS.LOGS_NOTE'),
+    openLogsLabel: t('SETTINGS.LOGS_OPEN'),
+    copyDiagnosticsLabel: isCopied
+      ? t('SETTINGS.DIAGNOSTICS_COPIED')
+      : t('SETTINGS.DIAGNOSTICS_COPY'),
+    onOpenLogs: () => {
+      void Diagnostics.openLogs();
+    },
+    onCopyDiagnostics: async () => {
+      if (!(await Diagnostics.copy())) return;
+
+      setIsCopied(true);
+      setTimeout(() => {
+        setIsCopied(false);
+      }, DIAGNOSTICS_COPIED_MS);
+    },
     version: t('SETTINGS.ABOUT_VERSION', { version: APP_VERSION }),
     rights: t('SETTINGS.ABOUT_RIGHTS', { year: new Date().getFullYear() }),
     signIn: signIn.signIn,

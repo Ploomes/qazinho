@@ -25,6 +25,11 @@ export const Settings: React.FC = () => {
     runAlerts,
     keybinds,
     shortcutsNote,
+    logsNote,
+    openLogsLabel,
+    copyDiagnosticsLabel,
+    onOpenLogs,
+    onCopyDiagnostics,
     version,
     rights,
     signIn,
@@ -354,6 +359,22 @@ export const Settings: React.FC = () => {
                 </div>
               </div>
               <p className="settings__about-note">{t('SETTINGS.ABOUT_NOTE')}</p>
+              <div className="settings__about-logs">
+                <p className="settings__note">{logsNote}</p>
+                <div className="settings__about-actions">
+                  <Button size="sm" onClick={onOpenLogs}>
+                    {openLogsLabel}
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      void onCopyDiagnostics();
+                    }}
+                  >
+                    {copyDiagnosticsLabel}
+                  </Button>
+                </div>
+              </div>
               <p className="settings__about-rights">{rights}</p>
             </div>
           )}

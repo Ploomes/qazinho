@@ -691,6 +691,11 @@ export const pt: typeof en = {
     ABOUT_NOTE:
       'Seu assistente de QA: planeje testes, execute e organize seu trabalho com o seu próprio agente de IA. Nada sai desta máquina.',
     ABOUT_RIGHTS: '© {{year}} Salve Software. Todos os direitos reservados.',
+    LOGS_NOTE:
+      'Quando algo dá errado, o log diz o que o QAzinho estava fazendo. Ele fica nesta máquina, sem senha, token ou projeto; envie só se quiser.',
+    LOGS_OPEN: 'Abrir a pasta do log',
+    DIAGNOSTICS_COPY: 'Copiar diagnóstico',
+    DIAGNOSTICS_COPIED: 'Copiado',
   },
   MCP: {
     FIGMA_TEXT:

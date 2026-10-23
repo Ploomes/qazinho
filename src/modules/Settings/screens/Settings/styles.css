@@ -449,6 +449,22 @@ button.settings__card:hover:not(:disabled) {
   text-wrap: pretty;
 }
 
+.settings__about-logs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 520px;
+}
+
+.settings__about-logs .settings__note {
+  margin: 0;
+}
+
+.settings__about-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
 .settings__about-rights {
   margin: 0;
   color: var(--ink3);

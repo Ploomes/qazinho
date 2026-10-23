@@ -1,0 +1,1 @@
+export const DIAGNOSTICS_COPIED_MS = 1_600;

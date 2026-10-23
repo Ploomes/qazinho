@@ -5,6 +5,7 @@ export * from './Bugs';
 export * from './Builds';
 export * from './Archive';
 export * from './Confluence';
+export * from './Diagnostics';
 export * from './Files';
 export * from './Github';
 export * from './Integrations';
