@@ -53,8 +53,10 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
             <span>{cpuLabel}</span>
             <span aria-hidden="true">·</span>
             <span>{ramLabel}</span>
-            <span aria-hidden="true">·</span>
-            <span>{processLabel}</span>
+            <span className="titlebar__extra" aria-hidden="true">
+              ·
+            </span>
+            <span className="titlebar__extra">{processLabel}</span>
           </button>
 
           {sessionUsed !== null && (
@@ -69,7 +71,7 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
             >
               <span className="titlebar__session" tabIndex={0}>
                 <Gauge value={sessionUsed} fills="used" label={sessionLabel ?? ''} />
-                <span>{sessionLabel}</span>
+                <span className="titlebar__session-label">{sessionLabel}</span>
               </span>
             </Tooltip>
           )}
