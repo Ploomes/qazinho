@@ -309,4 +309,64 @@ describe('useIntegrationCardViewModel', () => {
       expect(useSetupStore.getState().connectingId).toBeNull();
     });
   });
+
+  describe('onConfluence', () => {
+    it('turns Confluence on beside a connected Jira once Confluence answers', async () => {
+      useSetupStore.setState({ integrations: [JIRA_CONNECTED] });
+      window.qazinho.switchConfluence = vi.fn().mockResolvedValue({
+        isSwitched: true,
+        status: { ...JIRA_CONNECTED, confluence: true },
+      });
+
+      const { result } = renderHook(() =>
+        useIntegrationCardViewModel({ integration: JIRA }),
+      );
+
+      expect(result.current.hasConfluence).toBe(true);
+      expect(result.current.isConfluenceOn).toBe(false);
+
+      await act(async () => {
+        await result.current.onConfluence(true);
+      });
+
+      expect(window.qazinho.switchConfluence).toHaveBeenCalledWith(true);
+      expect(result.current.isConfluenceOn).toBe(true);
+      expect(result.current.confluenceError).toBe('');
+    });
+
+    it('does NOT turn it on when Confluence refuses, and says why in its words', async () => {
+      useSetupStore.setState({ integrations: [JIRA_CONNECTED] });
+      window.qazinho.switchConfluence = vi.fn().mockResolvedValue({
+        isSwitched: false,
+        failure: 'unauthorized',
+        said: 'Current user not permitted to use Confluence',
+      });
+
+      const { result } = renderHook(() =>
+        useIntegrationCardViewModel({ integration: JIRA }),
+      );
+
+      await act(async () => {
+        await result.current.onConfluence(true);
+      });
+
+      expect(result.current.isConfluenceOn).toBe(false);
+      expect(result.current.confluenceError).toBe(
+        'Confluence refused this Jira account. Check that it can open Confluence on the same site. Current user not permitted to use Confluence',
+      );
+    });
+
+    it('offers no Confluence on GitHub, nor on a Jira not connected', () => {
+      useSetupStore.setState({ integrations: [CONNECTED] });
+
+      expect(
+        renderHook(() => useIntegrationCardViewModel({ integration: GITHUB })).result
+          .current.hasConfluence,
+      ).toBe(false);
+      expect(
+        renderHook(() => useIntegrationCardViewModel({ integration: JIRA })).result
+          .current.hasConfluence,
+      ).toBe(false);
+    });
+  });
 });

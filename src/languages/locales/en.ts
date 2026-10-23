@@ -775,6 +775,10 @@ export const en = {
       "Your Jira Cloud site, your email and an API token. QAzinho checks them with Jira, then seals the token in this machine's keychain.",
     JIRA_CONNECTED_NOTE:
       'Type /jira in a workspace’s chat to plan from a story, and send a bug from the Bugs tab.',
+    CONFLUENCE_SWITCH: 'Use Confluence too',
+    CONFLUENCE_NOTE:
+      'With the same account: type /confluence in the chat to plan from a page, and publish a plan from the Plan tab.',
+    CONFLUENCE_CHECKING: 'Checking Confluence…',
     FIELD_TOKEN: 'token',
     FIELD_SITE: 'site',
     FIELD_EMAIL: 'email',

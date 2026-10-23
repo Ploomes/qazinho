@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { GithubSignIn } from '@/modules/Setup/components/GithubSignIn';
 import { InstallProgress } from '@/modules/Setup/components/InstallProgress';
-import { Button, Icon, Input, StatusPill } from '@/shared/components/atoms';
+import { Button, Icon, Input, StatusPill, Switch } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { useIntegrationCardViewModel } from './hooks';
 import './styles.css';
@@ -26,6 +26,12 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
     canConnect,
     tokenUrl,
     connectedNote,
+    hasConfluence,
+    isConfluenceOn,
+    confluenceLabel,
+    confluenceNote,
+    confluenceError,
+    onConfluence,
     install,
     signIn,
     fields,
@@ -102,6 +108,32 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
               ))}
             </div>
             <p className="integration-card__hint">{connectedNote}</p>
+            {hasConfluence && (
+              <div className="integration-card__extra">
+                <Switch
+                  label={confluenceLabel}
+                  isOn={isConfluenceOn}
+                  onChange={(isOn) => {
+                    void onConfluence(isOn);
+                  }}
+                />
+                <p className="integration-card__hint">{confluenceNote}</p>
+                <AnimatePresence initial={false}>
+                  {confluenceError !== '' && (
+                    <motion.div
+                      key="confluence-error"
+                      className="integration-card__cli-fold"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+                    >
+                      <p className="integration-card__error">{confluenceError}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
           </motion.div>
         )}
 

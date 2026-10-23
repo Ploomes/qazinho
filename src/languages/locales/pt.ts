@@ -777,6 +777,10 @@ export const pt: typeof en = {
       'Seu site do Jira Cloud, seu email e um API token. O QAzinho confere com o Jira e guarda o token selado no chaveiro desta máquina.',
     JIRA_CONNECTED_NOTE:
       'Digite /jira no chat de um workspace para planejar a partir de uma história, e envie um bug pela aba Bugs.',
+    CONFLUENCE_SWITCH: 'Usar também o Confluence',
+    CONFLUENCE_NOTE:
+      'Com a mesma conta: digite /confluence no chat para planejar a partir de uma página, e publique um plano pela aba Plano.',
+    CONFLUENCE_CHECKING: 'Conferindo o Confluence…',
     FIELD_TOKEN: 'token',
     FIELD_SITE: 'site',
     FIELD_EMAIL: 'email',

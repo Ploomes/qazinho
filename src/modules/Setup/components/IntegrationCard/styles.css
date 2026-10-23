@@ -140,6 +140,28 @@
   font: var(--font-ui-xs);
 }
 
+.integration-card__extra {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line2);
+}
+
+.integration-card__extra .integration-card__hint {
+  margin: 0;
+}
+
+.integration-card__extra > .switch {
+  margin-left: calc(var(--space-4) * -1);
+}
+
+.integration-card__extra .integration-card__cli-fold {
+  align-self: stretch;
+}
+
 .integration-card__fields,
 .integration-card__needs-body {
   display: flex;

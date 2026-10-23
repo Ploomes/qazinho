@@ -2,9 +2,10 @@ import type { IIntegrationCardProps } from '@/modules/Setup/components/Integrati
 import type { IIntegrationField } from '@/modules/Setup/types';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
 import { useGithubConnect } from '@/modules/Setup/hooks/useGithubConnect';
 import { connectionOf, formatDay } from '@/modules/Setup/library';
-import { Integrations } from '@/services';
+import { Confluence, Integrations } from '@/services';
 import { useSettingsStore, useSetupStore } from '@/store';
 
 export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
@@ -16,6 +17,8 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
   );
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState('');
+  const [isSwitching, setIsSwitching] = useState(false);
+  const [confluenceError, setConfluenceError] = useState('');
   const language = useSettingsStore((state) => state.language);
   const status = useSetupStore((state) =>
     state.integrations.find(({ id }) => id === integration.id),
@@ -96,6 +99,35 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
     connectedNote: isCli
       ? t('SETUP.GITHUB_CONNECTED_NOTE')
       : t('SETUP.JIRA_CONNECTED_NOTE'),
+    hasConfluence: integration.id === 'jira' && isConnected,
+    isConfluenceOn: status?.confluence === true,
+    confluenceLabel: isSwitching
+      ? t('SETUP.CONFLUENCE_CHECKING')
+      : t('SETUP.CONFLUENCE_SWITCH'),
+    confluenceNote: t('SETUP.CONFLUENCE_NOTE'),
+    confluenceError,
+    onConfluence: async (isOn: boolean) => {
+      if (isSwitching) return;
+
+      setIsSwitching(true);
+      setConfluenceError('');
+
+      const switched = await Confluence.turn(isOn);
+
+      setIsSwitching(false);
+
+      if (!switched.isSwitched) {
+        setConfluenceError(
+          [t(CONFLUENCE_FAILURE_KEYS[switched.failure]), switched.said]
+            .filter((part) => part !== '')
+            .join(' '),
+        );
+
+        return;
+      }
+
+      landIntegration(switched.status);
+    },
     install: isCli && cli.install?.phase !== 'installed' ? cli.install : null,
     signIn: isCli ? cli.signIn : null,
     fields: integration.fields.map((field) => ({
