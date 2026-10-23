@@ -3,6 +3,7 @@ import type { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import type { IProcessRow } from '@/main/types';
 import type { IProcessSample, IResourceSnapshot } from '@/shared/types';
 import { availableParallelism, totalmem } from 'node:os';
+import { WindowsProcesses } from '@/main/classes/resources/WindowsProcesses';
 import { collectSubtree } from '@/main/library';
 import { BYTES_IN_GB } from './constants';
 import { cpuPercent, sweepProcesses, toSample, workspaceOfProfile } from './library';
@@ -14,6 +15,7 @@ export class ResourceCollector {
   private inflight: Promise<IResourceSnapshot> | null = null;
   private cpuSecondsBefore = new Map<number, number>();
   private sweptAt = 0;
+  private readonly windows = new WindowsProcesses();
 
   public constructor(props: IResourceCollector) {
     this.owners = props.owners;
@@ -30,9 +32,12 @@ export class ResourceCollector {
   }
 
   private async collect(): Promise<IResourceSnapshot> {
-    const rows = (await sweepProcesses()).filter(
-      (row) => !(row.parentPid === process.pid && row.name === 'ps'),
-    );
+    const rows =
+      process.platform === 'win32'
+        ? (await this.windows.sweep()).filter((row) => row.pid !== this.windows.pid)
+        : (await sweepProcesses()).filter(
+            (row) => !(row.parentPid === process.pid && row.name === 'ps'),
+          );
     const now = Date.now();
     const elapsedMs = this.sweptAt === 0 ? 0 : now - this.sweptAt;
     const cores = availableParallelism();

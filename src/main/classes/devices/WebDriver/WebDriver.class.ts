@@ -73,7 +73,7 @@ export class WebDriver implements IDeviceDriver {
 
   /** Opens Chrome on an empty profile, so a run never starts with what an earlier one saved. */
   public async open(): Promise<void> {
-    await rm(this.profileDir, { recursive: true, force: true });
+    await rm(this.profileDir, { recursive: true, force: true, maxRetries: 5 });
     this.context = await chromium.launchPersistentContext(this.profileDir, {
       channel: 'chrome',
       headless: true,

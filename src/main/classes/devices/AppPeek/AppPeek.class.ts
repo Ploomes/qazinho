@@ -64,7 +64,7 @@ export class AppPeek {
       };
     } finally {
       await driver.close();
-      await rm(profileDir, { recursive: true, force: true });
+      await rm(profileDir, { recursive: true, force: true, maxRetries: 5 });
     }
   }
 }
