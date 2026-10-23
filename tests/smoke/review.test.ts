@@ -9,7 +9,7 @@ import { BugFiler, BugReviewer, GithubCli, JiraApi } from '@/main/classes/integr
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { fakeJira, JIRA_EMAIL, JIRA_TOKEN } from './fixtures/fakeJira';
 
-const PORT = 4372;
+const PORT = 4374;
 const SITE = `http://127.0.0.1:${String(PORT)}`;
 
 /**
