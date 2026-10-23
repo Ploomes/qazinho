@@ -44,7 +44,7 @@ beforeAll(async () => {
     response.end(MOVING_PAGE);
   });
 
-  await new Promise<void>((ready) => site.listen(4331, '127.0.0.1', ready));
+  await new Promise<void>((ready) => site.listen(4347, '127.0.0.1', ready));
 
   const bin = await mkdtemp(join(tmpdir(), 'qazinho-record-bin-'));
 
@@ -59,7 +59,7 @@ beforeAll(async () => {
         id: 'p-1',
         name: 'Shop',
         targets: [
-          { id: 't-web', kind: 'web', label: 'Web', value: 'http://127.0.0.1:4331/' },
+          { id: 't-web', kind: 'web', label: 'Web', value: 'http://127.0.0.1:4347/' },
         ],
       },
     ]),
