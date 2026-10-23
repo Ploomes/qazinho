@@ -113,6 +113,8 @@ A workspace is three columns: the sidebar, the chat in the middle, and a panel b
   (`panelWidthOf`). It folds to a rail named after its tab, or widens over the chat, which stays
   mounted, hidden and inert, so a draft is never lost.
 - The Estagiário hears the tab beside the chat, or that the panel is hidden (`describeScreen`).
+- The sidebar folds to a rail of each workspace's platform and state (⌘B), kept in the settings
+  across a restart; the chat and the panel measure their room from its width (`useSidebarWidth`).
 
 ## IPC
 
