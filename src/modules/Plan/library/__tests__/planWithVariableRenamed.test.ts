@@ -44,4 +44,24 @@ describe('planWithVariableRenamed', () => {
 
     expect(renamed?.steps[1]?.action).toBe('Type ${LOGIN_EMAIL_2} in Backup');
   });
+
+  /** Renaming a variable used to drop each step's Figma frame on the way. */
+  it('keeps the Figma frame each step names', () => {
+    const [renamed] = planWithVariableRenamed({
+      plan: [
+        {
+          ...CASE,
+          steps: [{ action: 'Type ${LOGIN_EMAIL}', expected: 'Ok', frame: '12:3' }],
+        },
+      ],
+      from: 'LOGIN_EMAIL',
+      to: 'ADMIN_EMAIL',
+    });
+
+    expect(renamed?.steps[0]).toEqual({
+      action: 'Type ${ADMIN_EMAIL}',
+      expected: 'Ok',
+      frame: '12:3',
+    });
+  });
 });

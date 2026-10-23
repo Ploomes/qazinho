@@ -16,6 +16,7 @@ export function planWithVariableRenamed(props: {
     goal: renamed(testCase.goal),
     preconditions: renamed(testCase.preconditions),
     steps: testCase.steps.map((step) => ({
+      ...step,
       action: renamed(step.action),
       expected: renamed(step.expected),
     })),
