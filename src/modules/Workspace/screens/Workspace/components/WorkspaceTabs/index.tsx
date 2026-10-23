@@ -3,14 +3,16 @@ import { useWorkspaceTabsViewModel } from './hooks';
 import './styles.css';
 
 export const WorkspaceTabs: React.FC<IWorkspaceTabsProps> = (props) => {
-  const { items, onTabClick } = useWorkspaceTabsViewModel(props);
+  const { items, tabsLabel, onTabClick } = useWorkspaceTabsViewModel(props);
 
   return (
-    <div className="workspace-tabs">
+    <div className="workspace-tabs" role="tablist" aria-label={tabsLabel}>
       {items.map((item) => (
         <button
           key={item.id}
           type="button"
+          role="tab"
+          aria-selected={item.isActive}
           className={
             item.isActive
               ? 'workspace-tabs__tab workspace-tabs__tab--active'

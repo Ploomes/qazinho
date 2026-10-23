@@ -81,6 +81,7 @@ export const en = {
     RUN_PLAN_HINT:
       'What passed before runs again without AI: in seconds, and with no tokens spent. The agent walks and judges the rest.',
     RUN_CHOICES: 'Choose how to run',
+    TABS: 'Workspace sections',
     TAB_CHAT: 'Chat',
     TAB_PLAN: 'Plan',
     TAB_RUNS: 'Runs',

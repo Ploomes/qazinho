@@ -83,6 +83,7 @@ export const pt: typeof en = {
     RUN_PLAN_HINT:
       'O que já passou roda de novo sem IA: em segundos e sem gastar tokens. O resto, o agente anda e julga.',
     RUN_CHOICES: 'Escolher como rodar',
+    TABS: 'Seções do workspace',
     TAB_CHAT: 'Chat',
     TAB_PLAN: 'Plano',
     TAB_RUNS: 'Runs',

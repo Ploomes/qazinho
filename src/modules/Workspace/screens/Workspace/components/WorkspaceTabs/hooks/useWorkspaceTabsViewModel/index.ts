@@ -12,5 +12,5 @@ export const useWorkspaceTabsViewModel = (props: IWorkspaceTabsProps) => {
     { id: 'bugs' as const, label: t('WORKSPACE.TAB_BUGS'), badge: String(bugCount) },
   ].map((item) => ({ ...item, isActive: item.id === current }));
 
-  return { items, onTabClick: props.onSelect };
+  return { items, tabsLabel: t('WORKSPACE.TABS'), onTabClick: props.onSelect };
 };

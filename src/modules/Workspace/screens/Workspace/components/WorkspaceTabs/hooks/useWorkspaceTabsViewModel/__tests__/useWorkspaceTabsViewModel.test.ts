@@ -32,4 +32,10 @@ describe('useWorkspaceTabsViewModel', () => {
       expect(result.current.items[0]?.badge).toBe('');
     });
   });
+
+  it('names the tab list, so a screen reader says what the tabs are for', () => {
+    expect(
+      renderHook(() => useWorkspaceTabsViewModel(PROPS)).result.current.tabsLabel,
+    ).toBe('Workspace sections');
+  });
 });
