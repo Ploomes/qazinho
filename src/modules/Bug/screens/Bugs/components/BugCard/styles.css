@@ -96,16 +96,12 @@
 }
 
 .bug-card__new {
-  padding: 3px var(--space-3);
-  border: var(--edge-width) solid var(--edge);
+  padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-pill);
-  background: var(--fail);
-  color: var(--brand-ink);
-  font: var(--font-mono-tag);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  box-shadow: var(--sticker-rest);
-  rotate: var(--tilt-sm);
+  background: var(--fail-soft);
+  color: var(--fail);
+  font: var(--font-mono-xs);
+  white-space: nowrap;
   animation: gc-in var(--dur) var(--ease);
 }
 

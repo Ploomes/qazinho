@@ -37,17 +37,11 @@
 
 .welcome__title {
   margin: var(--space-3) 0 0;
-  padding: 0.14em;
-  color: var(--brand-ink);
+  color: var(--ink);
   font: var(--font-display-xl);
   letter-spacing: var(--display-tracking);
-  word-spacing: 0.16em;
   text-align: center;
   text-wrap: balance;
-  -webkit-text-stroke: 0.26em var(--edge);
-  paint-order: stroke fill;
-  filter: drop-shadow(0 0.05em 0.1em var(--indigo-shadow));
-  rotate: var(--tilt-sm);
 }
 
 .welcome__body {
