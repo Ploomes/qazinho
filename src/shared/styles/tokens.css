@@ -47,13 +47,16 @@
   --radius-2xl: 22px;
   --radius-pill: 999px;
 
-  --edge-width: 2px;
-  --edge-width-lg: 3px;
-  --edge-width-xl: 4px;
+  --edge-width: 1px;
+  --edge-width-lg: 1px;
+  --edge-width-xl: 1px;
 
-  --tilt-xs: -1deg;
-  --tilt-sm: -2deg;
-  --tilt-md: -4deg;
+  --tilt-xs: 0deg;
+  --tilt-sm: 0deg;
+  --tilt-md: 0deg;
+
+  --lift: 0px;
+  --press: 1px;
 
   --brand-ink: #141414;
   --brand-paper: #f4f2ea;
@@ -106,17 +109,11 @@
   --attn: #ff9540;
   --attn-soft: rgba(255, 149, 64, 0.13);
 
-  --edge: #f4f2ea;
-  --sticker-rest:
-    0 0 0 1px rgba(0, 0, 0, 0.45), 0 1px 1px rgba(0, 0, 0, 0.4),
-    0 8px 18px -8px rgba(0, 0, 0, 0.7);
-  --sticker-lift:
-    0 0 0 1px rgba(0, 0, 0, 0.45), 0 3px 3px rgba(0, 0, 0, 0.3),
-    0 18px 30px -12px rgba(0, 0, 0, 0.8);
-  --sticker-press: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(0, 0, 0, 0.5);
-  --sticker-hero:
-    0 0 0 1px rgba(0, 0, 0, 0.5), 0 2px 3px rgba(0, 0, 0, 0.4),
-    0 40px 90px -30px rgba(0, 0, 0, 0.92);
+  --edge: var(--line);
+  --sticker-rest: none;
+  --sticker-lift: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --sticker-press: none;
+  --sticker-hero: 0 16px 40px -12px rgba(0, 0, 0, 0.6);
 }
 
 [data-theme='light'] {
@@ -154,17 +151,11 @@
   --attn: #a9600c;
   --attn-soft: rgba(169, 96, 12, 0.13);
 
-  --edge: #ffffff;
-  --sticker-rest:
-    0 0 0 1px rgba(40, 30, 10, 0.16), 0 1px 1px rgba(40, 30, 10, 0.12),
-    0 8px 16px -8px rgba(60, 50, 30, 0.34);
-  --sticker-lift:
-    0 0 0 1px rgba(40, 30, 10, 0.16), 0 3px 3px rgba(40, 30, 10, 0.1),
-    0 18px 30px -12px rgba(60, 50, 30, 0.4);
-  --sticker-press: 0 0 0 1px rgba(40, 30, 10, 0.18), 0 1px 0 rgba(40, 30, 10, 0.16);
-  --sticker-hero:
-    0 0 0 1px rgba(40, 30, 10, 0.16), 0 2px 3px rgba(40, 30, 10, 0.1),
-    0 34px 80px -30px rgba(60, 50, 30, 0.45);
+  --edge: var(--line);
+  --sticker-rest: none;
+  --sticker-lift: 0 1px 2px rgba(40, 30, 10, 0.1);
+  --sticker-press: none;
+  --sticker-hero: 0 16px 40px -12px rgba(60, 50, 30, 0.3);
 }
 
 [data-theme='indigo'] {
@@ -202,15 +193,9 @@
   --attn: #ffa25a;
   --attn-soft: rgba(255, 149, 64, 0.16);
 
-  --edge: #ffffff;
-  --sticker-rest:
-    0 0 0 1px rgba(26, 14, 80, 0.3), 0 1px 1px rgba(26, 14, 80, 0.35),
-    0 10px 22px -8px rgba(26, 14, 80, 0.65);
-  --sticker-lift:
-    0 0 0 1px rgba(26, 14, 80, 0.3), 0 3px 3px rgba(26, 14, 80, 0.3),
-    0 20px 34px -12px rgba(26, 14, 80, 0.75);
-  --sticker-press: 0 0 0 1px rgba(26, 14, 80, 0.32), 0 1px 0 rgba(26, 14, 80, 0.45);
-  --sticker-hero:
-    0 0 0 1px rgba(26, 14, 80, 0.35), 0 2px 3px rgba(26, 14, 80, 0.35),
-    0 40px 90px -30px rgba(26, 14, 80, 0.85);
+  --edge: var(--line);
+  --sticker-rest: none;
+  --sticker-lift: 0 1px 2px rgba(26, 14, 80, 0.3);
+  --sticker-press: none;
+  --sticker-hero: 0 16px 40px -12px rgba(26, 14, 80, 0.6);
 }

@@ -21,7 +21,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .handoff-card:hover {
-    translate: 0 -2px;
+    translate: 0 var(--lift);
   }
 }
 

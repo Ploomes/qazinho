@@ -47,12 +47,12 @@ button.chip:active {
 
 @media (prefers-reduced-motion: no-preference) {
   button.chip:hover {
-    translate: 0 -2px;
+    translate: 0 var(--lift);
     rotate: var(--tilt-xs);
   }
 
   button.chip:active {
-    translate: 0 1px;
+    translate: 0 var(--press);
     rotate: 0deg;
     scale: 0.97;
   }

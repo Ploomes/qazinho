@@ -82,7 +82,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .mcp-card__action:hover:not(:disabled) {
-    translate: 0 -2px;
+    translate: 0 var(--lift);
     rotate: var(--tilt-xs);
   }
 }

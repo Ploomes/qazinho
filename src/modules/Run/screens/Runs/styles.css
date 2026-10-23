@@ -350,7 +350,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .runs__bug:hover {
-    translate: 0 -2px;
+    translate: 0 var(--lift);
   }
 }
 

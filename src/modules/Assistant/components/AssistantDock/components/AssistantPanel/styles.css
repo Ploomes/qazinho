@@ -220,18 +220,6 @@
   margin-top: var(--space-3);
 }
 
-.assistant-panel__suggestions > .chip:nth-child(odd) {
-  rotate: 1.2deg;
-}
-
-.assistant-panel__suggestions > .chip:nth-child(even) {
-  rotate: -1.2deg;
-}
-
-.assistant-panel__suggestions > .chip:hover {
-  rotate: 0deg;
-}
-
 .assistant-panel__composer {
   display: flex;
   flex: none;

@@ -121,7 +121,7 @@ button.settings__card:hover:not(:disabled) {
 
 @media (prefers-reduced-motion: no-preference) {
   button.settings__card:hover:not(:disabled) {
-    translate: 0 -2px;
+    translate: 0 var(--lift);
   }
 }
 
@@ -244,7 +244,7 @@ button.settings__card:hover:not(:disabled) {
 
 @media (prefers-reduced-motion: no-preference) {
   .settings__theme:hover {
-    translate: 0 -2px;
+    translate: 0 var(--lift);
     rotate: var(--tilt-xs);
   }
 }

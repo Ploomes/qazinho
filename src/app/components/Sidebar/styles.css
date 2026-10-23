@@ -290,13 +290,13 @@
   }
 
   .sidebar__banner:hover {
-    translate: 0 -2px;
+    translate: 0 var(--lift);
     rotate: var(--tilt-xs);
     box-shadow: var(--sticker-lift);
   }
 
   .sidebar__banner:active {
-    translate: 0 1px;
+    translate: 0 var(--press);
     scale: 0.98;
     box-shadow: var(--sticker-press);
   }

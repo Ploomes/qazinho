@@ -71,18 +71,6 @@
   margin-top: var(--space-4);
 }
 
-.chat__suggestions > .chip:nth-child(odd) {
-  rotate: 1.2deg;
-}
-
-.chat__suggestions > .chip:nth-child(even) {
-  rotate: -1.2deg;
-}
-
-.chat__suggestions > .chip:hover {
-  rotate: 0deg;
-}
-
 .chat__live {
   display: flex;
   flex-direction: column;

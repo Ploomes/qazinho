@@ -144,13 +144,13 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .run-button:not(.run-button--disabled) .run-button__face:hover {
-    translate: 0 -2px;
+    translate: 0 var(--lift);
     rotate: var(--tilt-xs);
     box-shadow: var(--sticker-lift);
   }
 
   .run-button:not(.run-button--disabled) .run-button__face:has(:active) {
-    translate: 0 1px;
+    translate: 0 var(--press);
     rotate: 0deg;
     box-shadow: var(--sticker-press);
   }

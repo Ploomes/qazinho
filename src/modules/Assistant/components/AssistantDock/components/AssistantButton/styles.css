@@ -32,12 +32,12 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .assistant-button:hover {
-    translate: 0 -2px;
+    translate: 0 var(--lift);
     rotate: var(--tilt-xs);
   }
 
   .assistant-button:active {
-    translate: 0 1px;
+    translate: 0 var(--press);
     scale: 0.96;
   }
 }
