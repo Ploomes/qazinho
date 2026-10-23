@@ -94,9 +94,15 @@ build. It skips the Electron binary download, because nothing in CI launches the
 re-verifies, then semantic-release tags, writes `CHANGELOG.md`, bumps `package.json` and creates a
 GitHub release. **Nothing is published to npm**: the package is private.
 
-**Installers are not built by CI yet.** `electron-builder.yml` exists and `npm run package` builds
-for the current OS, but it has not been exercised. Building on three runners, macOS signing and
-notarization, and Windows signing are still to do.
+The first release, 0.1.0, counts from `v0.0.0`, a tag on the repository's first commit. Its notes
+pass what a GitHub release body takes, so a release whose notes are that long points to its
+`CHANGELOG.md` instead (`releaseBodyTemplate`).
+
+**The Windows installer is built by the release.** Once semantic-release tags, a Windows runner
+checks the tag out, packs `QAzinho-Setup-<version>.exe` with electron-builder and attaches it to
+the release. It goes out unsigned until there is a certificate, so SmartScreen asks once. The
+`tag` input builds the installer of a release that already exists, and releases nothing.
+The macOS `.dmg` (signed and notarized) and the Linux AppImage are still to do.
 
 | Commit                               | Effect |
 | ------------------------------------ | ------ |
