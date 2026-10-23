@@ -9,6 +9,10 @@ import './styles.css';
 
 export const Plan: React.FC = () => {
   const {
+    unread,
+    onShowUnread,
+    onReadUnread,
+    onDismissUnread,
     plan,
     lastRuns,
     design,
@@ -62,6 +66,45 @@ export const Plan: React.FC = () => {
 
   return (
     <>
+      <AnimatePresence initial={false}>
+        {unread !== null && (
+          <motion.div
+            key="unread"
+            className="plan__unread"
+            role="alert"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+          >
+            <div className="plan__export-body plan__export-body--failed">
+              <span className="plan__export-text">
+                {unread.text}
+                {unread.again !== null && (
+                  <strong className="plan__unread-again">{unread.again}</strong>
+                )}
+              </span>
+              <Button size="sm" onClick={onShowUnread}>
+                {unread.showLabel}
+              </Button>
+              {unread.canRead && (
+                <Button size="sm" onClick={onReadUnread}>
+                  {unread.readLabel}
+                </Button>
+              )}
+              <Tooltip content={unread.dismissLabel}>
+                <IconButton
+                  icon="close"
+                  label={unread.dismissLabel}
+                  size="sm"
+                  onClick={onDismissUnread}
+                />
+              </Tooltip>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {isEmpty ? (
         <EmptyState
           mood="neutral"

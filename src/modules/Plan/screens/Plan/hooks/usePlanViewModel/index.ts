@@ -1,7 +1,7 @@
 import type { ICaseRemoval } from '@/modules/Plan/screens/Plan/types';
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
 import type { IRunCase } from '@/modules/Run';
-import type { ExportOutcome, PlanPublished } from '@/shared/types';
+import type { ExportOutcome, PlanPublished, UnreadPlanRead } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { viewportOf } from '@/modules/Device';
@@ -14,6 +14,8 @@ import {
   missingVariablesOf,
   moveCase,
   planDocOf,
+  planOfYaml,
+  planWithRestored,
   removeCase,
   removeStep,
 } from '@/modules/Plan/library';
@@ -21,7 +23,7 @@ import { DOC_VERDICT_KEYS, PLAN_SOURCE } from '@/modules/Plan/screens/Plan/const
 import { useVariableActions } from '@/modules/Project';
 import { flattenPlanSteps, useRunActions } from '@/modules/Run';
 import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
-import { Confluence, Run } from '@/services';
+import { Archive, Confluence, Run } from '@/services';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import {
   useAppStore,
@@ -40,6 +42,7 @@ export const usePlanViewModel = () => {
     planSource: opened.planSource,
     sourcePage: opened.sourcePage,
     published: opened.published,
+    unreadPlan: opened.unreadPlan,
     issue: opened.issue,
     design: opened.design,
     isLocked: opened.live !== null && !opened.live.isDone,
@@ -75,6 +78,11 @@ export const usePlanViewModel = () => {
     state.integrations.some(({ id, confluence }) => id === 'jira' && confluence === true),
   );
   const setPublished = useWorkspaceStore((state) => state.setPublished);
+  const setUnreadPlan = useWorkspaceStore((state) => state.setUnreadPlan);
+  const [reread, setReread] = useState<{
+    workspaceId: string;
+    read: Exclude<UnreadPlanRead, { status: 'read' }>;
+  } | null>(null);
   const kept = useVariablesStore((state) => state.byProject[workspace?.projectId ?? '']);
   const { askVariables } = useVariableActions();
   const language = useSettingsStore((state) => state.language);
@@ -102,6 +110,9 @@ export const usePlanViewModel = () => {
   const sourcePage = workspace?.sourcePage ?? null;
   const stepCount = flattenPlanSteps(plan).length;
   const published = workspace?.published ?? null;
+  const unreadPlan = workspace?.unreadPlan ?? null;
+  const shownReread =
+    reread !== null && reread.workspaceId === workspaceId ? reread.read : null;
   const missing = missingVariablesOf({
     plan,
     kept: (kept ?? []).map(({ name }) => name),
@@ -110,6 +121,25 @@ export const usePlanViewModel = () => {
     publishing !== null && publishing.workspaceId === workspaceId
       ? publishing.outcome
       : null;
+
+  const readUnread = async () => {
+    if (workspaceId === null || unreadPlan === null) return;
+
+    const read = await Archive.readUnreadPlan({ workspaceId, file: unreadPlan.file });
+
+    if (read.status !== 'read') {
+      setReread({ workspaceId, read });
+
+      return;
+    }
+
+    setReread(null);
+    setPlan({
+      workspaceId,
+      plan: planWithRestored({ plan, restored: planOfYaml(read.yaml) }),
+    });
+    setUnreadPlan({ workspaceId, unreadPlan: null });
+  };
 
   const publish = async (props: {
     pageId: string | null;
@@ -197,6 +227,40 @@ export const usePlanViewModel = () => {
   );
 
   return {
+    unread:
+      unreadPlan === null
+        ? null
+        : {
+            text: t(unreadPlan.line === null ? 'PLAN.UNREAD_SHAPE' : 'PLAN.UNREAD_LINE', {
+              line: unreadPlan.line ?? 0,
+              file: unreadPlan.file,
+            }),
+            again:
+              shownReread === null
+                ? null
+                : shownReread.status === 'gone'
+                  ? t('PLAN.UNREAD_GONE', { file: unreadPlan.file })
+                  : shownReread.line === null
+                    ? t('PLAN.UNREAD_STILL_SHAPE')
+                    : t('PLAN.UNREAD_STILL', { line: shownReread.line }),
+            canRead: shownReread?.status !== 'gone' && !isLocked,
+            showLabel: t('PLAN.UNREAD_SHOW'),
+            readLabel: t('PLAN.UNREAD_READ'),
+            dismissLabel: t('COMMON.CLOSE'),
+          },
+    onShowUnread: () => {
+      if (workspaceId !== null && unreadPlan !== null)
+        Archive.showUnreadPlan({ workspaceId, file: unreadPlan.file });
+    },
+    onReadUnread: () => {
+      void readUnread();
+    },
+    onDismissUnread: () => {
+      if (workspaceId === null) return;
+
+      setReread(null);
+      setUnreadPlan({ workspaceId, unreadPlan: null });
+    },
     plan,
     lastRuns,
     design: workspace?.design ?? null,

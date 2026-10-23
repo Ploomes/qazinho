@@ -226,6 +226,15 @@ export const pt: typeof en = {
     MISSING_OTHER:
       'O plano digita {{names}}, que o projeto ainda não guarda: adicione, ou cada run pergunta a você.',
     MISSING_ADD: 'Adicionar as variáveis',
+    UNREAD_LINE:
+      'O plan.yaml deste workspace não abriu: a linha {{line}} não é YAML que o QAzinho leia. Ele ficou guardado como {{file}} na pasta do workspace, para nada escrever por cima. Corrija lá e leia de novo.',
+    UNREAD_SHAPE:
+      'O plan.yaml deste workspace não abriu: é YAML, mas não uma lista de casos. Ele ficou guardado como {{file}} na pasta do workspace, para nada escrever por cima. Corrija lá e leia de novo.',
+    UNREAD_STILL: 'Ainda não abre, na linha {{line}}.',
+    UNREAD_STILL_SHAPE: 'Ainda não é uma lista de casos.',
+    UNREAD_GONE: '{{file}} não está mais na pasta do workspace.',
+    UNREAD_SHOW: 'Mostrar o arquivo',
+    UNREAD_READ: 'Ler de novo',
     ADD_CASE: 'Adicionar caso',
     ADD_STEP: 'Adicionar passo',
     REMOVE_CASE: 'Remover este caso',

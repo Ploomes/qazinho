@@ -4,6 +4,7 @@ import type {
   IExportCode,
   IPublishPlan,
   PlanPublished,
+  UnreadPlanRead,
 } from '@/shared/types';
 import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -680,6 +681,111 @@ describe('usePlanViewModel', () => {
       });
 
       expect(result.current.undo).toBeNull();
+    });
+  });
+
+  describe('a plan.yaml that did not open', () => {
+    const UNREAD = { file: 'plan.unread-20261023-052607.yaml', line: 7 };
+
+    /** A bridge whose plan set aside reads as told, and remembers each file asked for. */
+    function rereading(read: UnreadPlanRead) {
+      const asked: string[] = [];
+
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        readUnreadPlan: ({ file }) => {
+          asked.push(file);
+
+          return Promise.resolve(read);
+        },
+      };
+
+      return asked;
+    }
+
+    function setAside(plan = makeWorkspace().plan) {
+      useWorkspaceStore.setState({
+        workspaces: [{ ...makeWorkspace(), plan, unreadPlan: UNREAD }],
+      });
+    }
+
+    it('says where the file broke and where it was kept', () => {
+      setAside([]);
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      expect(result.current.unread).toMatchObject({
+        text: expect.stringContaining('line 7'),
+        again: null,
+        canRead: true,
+      });
+      expect(result.current.unread?.text).toContain(UNREAD.file);
+    });
+
+    it('takes the fixed file back into the plan, after the cases written since', async () => {
+      setAside([CASES[0]!]);
+      rereading({
+        status: 'read',
+        yaml: 'cases:\n  - id: TC-01\n    title: From the file\n    steps:\n      - action: Open\n        expected: Opens\n',
+      });
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      act(() => {
+        result.current.onReadUnread();
+      });
+
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.unreadPlan).toBeNull();
+      });
+      expect(
+        useWorkspaceStore.getState().workspaces[0]?.plan.map(({ title }) => title),
+      ).toEqual([CASES[0]!.title, 'From the file']);
+    });
+
+    it('does NOT clear the notice while the file still breaks, and says where now', async () => {
+      setAside([]);
+      rereading({ status: 'unreadable', line: 12 });
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      act(() => {
+        result.current.onReadUnread();
+      });
+
+      await waitFor(() => {
+        expect(result.current.unread?.again).toBe('It still does not open, at line 12.');
+      });
+      expect(useWorkspaceStore.getState().workspaces[0]?.unreadPlan).toEqual(UNREAD);
+    });
+
+    it('stops offering to read a file gone from the folder', async () => {
+      setAside([]);
+      rereading({ status: 'gone' });
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      act(() => {
+        result.current.onReadUnread();
+      });
+
+      await waitFor(() => {
+        expect(result.current.unread?.canRead).toBe(false);
+      });
+    });
+
+    it('lets the notice go, leaving the file where it was kept', () => {
+      setAside([]);
+
+      const asked = rereading({ status: 'gone' });
+      const { result } = renderHook(() => usePlanViewModel());
+
+      act(() => {
+        result.current.onDismissUnread();
+      });
+
+      expect(result.current.unread).toBeNull();
+      expect(asked).toEqual([]);
     });
   });
 

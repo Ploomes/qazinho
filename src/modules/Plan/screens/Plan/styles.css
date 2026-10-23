@@ -89,7 +89,21 @@
   background: var(--fail-soft);
 }
 
-.plan__export-body--failed .plan__export-text {
+.plan__export-body--failed .plan__unread {
+  overflow: hidden;
+}
+
+.plan__unread .plan__export-body {
+  margin-bottom: var(--space-5);
+}
+
+.plan__unread-again {
+  display: block;
+  margin-top: var(--space-2);
+  font-weight: 600;
+}
+
+.plan__export-text {
   color: var(--fail);
 }
 

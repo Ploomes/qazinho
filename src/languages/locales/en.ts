@@ -223,6 +223,15 @@ export const en = {
     MISSING_OTHER:
       'The plan types {{names}}, which the project does not keep yet: add them, or a run asks you for them each time.',
     MISSING_ADD: 'Add the variables',
+    UNREAD_LINE:
+      'This workspace’s plan.yaml did not open: line {{line}} is not YAML QAzinho can read. It is kept as {{file}} in the workspace’s folder, so nothing writes over it. Fix it there and read it again.',
+    UNREAD_SHAPE:
+      'This workspace’s plan.yaml did not open: it is YAML, but not a list of cases. It is kept as {{file}} in the workspace’s folder, so nothing writes over it. Fix it there and read it again.',
+    UNREAD_STILL: 'It still does not open, at line {{line}}.',
+    UNREAD_STILL_SHAPE: 'It still is not a list of cases.',
+    UNREAD_GONE: '{{file}} is no longer in the workspace’s folder.',
+    UNREAD_SHOW: 'Show the file',
+    UNREAD_READ: 'Read it again',
     ADD_CASE: 'Add a case',
     ADD_STEP: 'Add a step',
     REMOVE_CASE: 'Remove this case',
