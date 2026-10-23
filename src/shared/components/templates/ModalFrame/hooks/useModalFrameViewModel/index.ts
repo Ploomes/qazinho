@@ -38,7 +38,12 @@ export const useModalFrameViewModel = (props: IModalFrameProps) => {
     }
 
     return () => {
-      if (opener?.isConnected === true) opener.focus();
+      const isInAnother =
+        document.activeElement instanceof HTMLElement &&
+        document.activeElement.closest('[role="dialog"]') !== null &&
+        !panel?.contains(document.activeElement);
+
+      if (opener?.isConnected === true && !isInAnother) opener.focus();
     };
   }, []);
 
