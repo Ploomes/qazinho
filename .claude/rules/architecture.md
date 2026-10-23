@@ -188,6 +188,10 @@ answers one question per channel, for a target `{ role, platform }`:
   device, the assistant gets the app, and the chat gets none of QAzinho's: it runs with every
   tool taken away but the reading ones of the QA's Figma, on a workspace with a design. `McpHost` serves the tools on loopback, one address per workspace for the length of a
   run, and one under the `~assistant` scope while the assistant answers.
+  - The QA's own MCP servers never reach a call: Claude Code always runs with
+    `--strict-mcp-config`, and Codex with each server of the QA's `config.toml` turned off
+    (`codexServersOf`), but the ones QAzinho hands the call. An Atlassian server of the QA's
+    once offered the chat Confluence, refused for a permission nobody could grant.
 - **The Estagiário in the corner is an agent of its own** (`role/assistant/`). It does in QAzinho
   what the QA does by hand, through the app tools (`servers/app/`), and talks about any project,
   workspace, run or bug:
