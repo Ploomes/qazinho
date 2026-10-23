@@ -85,6 +85,10 @@
   margin-right: auto;
 }
 
+.bug-card__reveal {
+  overflow: hidden;
+}
+
 .bug-card__body {
   display: flex;
   flex-direction: column;
