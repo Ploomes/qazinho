@@ -17,9 +17,10 @@ slapped entrances. That was heavy to use for hours, and the QA asked for somethi
 (2026-10-22). The `--sticker-*`, `--edge-*` and `--tilt-*` tokens and `STICKER` keep their names,
 and now hold the lighter values.
 
-The designer's art is in `assets/`: `adesivo.js` draws the stickers of the old look, and
-`logo/qazinho-lockup.png` is the lockup. Use it for the brand's shapes and colours, not for edges
-or tilt.
+The designer's art is in `assets/`: `antena.js` draws the Estagiário, his antenna and every
+mood, `humores-png/` and `video/` show them, `icone/` holds the app icons, and
+`logo/qazinho-lockup.png` is the lockup. `drawIntern` ports `antena.js` by hand: when the
+designer changes it, port the shapes again. `build/icon.png` is `icone/indigo/app-icon-indigo-1024.png`.
 
 ## Raised or flat
 
