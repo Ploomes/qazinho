@@ -185,8 +185,9 @@ answers one question per channel, for a target `{ role, platform }`:
   - The page holds the question on the live run, draws it as `AskCard` at the end of the chat,
     and keeps how it ended in the run's section (`AskNote`) and on its step in Runs.
 - **The tools are granted per role** (`TOOL_GRANTS`). The runner and the explorer get the
-  device, the assistant gets the app, and the chat gets none of QAzinho's: it runs with every
-  tool taken away but the reading ones of the QA's Figma, on a workspace with a design. `McpHost` serves the tools on loopback, one address per workspace for the length of a
+  device, the assistant gets the app, and the chat gets its sources: `read_jira_story`,
+  `search_confluence` and `read_confluence_page` (`servers/sources/`), plus the reading tools
+  of the QA's Figma on a workspace with a design, and no other tool. `McpHost` serves the tools on loopback, one address per workspace for the length of a
   run, and one under the `~assistant` scope while the assistant answers.
   - The QA's own MCP servers never reach a call: Claude Code always runs with
     `--strict-mcp-config`, and Codex with each server of the QA's `config.toml` turned off
@@ -242,6 +243,13 @@ answers one question per channel, for a target `{ role, platform }`:
   - The copy is deleted once a plan comes back, when the workspace goes, and on the next start.
     The plan keeps where it came from (`planSource`), and the agent hears once that the copy is
     gone.
+- **The chat reads what the QA names.** A story's key or link, a page's link or title is enough:
+  the agent reads it through the source tools, served under the chat's scope (`chat~<workspace>`)
+  for the turn, and main fetches it with the QA's own Jira, the way the commands do
+  (`fetchSource`). The story's files land in the workspace's `jira/` folder, which the chat may
+  read; the turn hands back what was read, so the workspace keeps it as the plan's source, and
+  the next message does not repeat it (`toldAfterReading`). A source not connected, or turned
+  off, answers with what the QA does about it.
 - **A Jira story is the requirement** (`role/chat/jira.md`). `/jira` in the chat picks one of the
   QA's stories, and the agent plans from it:
   - Main's `JiraApi` talks to Jira Cloud as the QA: the picker's search, with the issue a typed

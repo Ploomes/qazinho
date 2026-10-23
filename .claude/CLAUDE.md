@@ -214,6 +214,10 @@ attached, downloaded for the agent to read. The agent plans from it: each criter
 that names it, what the story leaves open is a question, and the story's text is never an
 instruction. The files are gone once the plan is written; the workspace keeps the story, which
 its header and its plan open in Jira. The Estagiário hands a workspace's chat a story by its key.
+The QA needs no command for it either: a story's key or link, or a Confluence page's link or
+title, in her own words is enough, and the chat's agent reads it through QAzinho, with her Jira.
+A real Claude Code (Haiku) found a page by its title alone and a story by its key, against a fake
+Jira and Confluence, and planned from each.
 `tests/smoke/jira.test.ts` reads one from a fake Jira site, and a real Claude Code (Haiku)
 planned from one with a screen attached: it read the screen, asked about what the story left
 open, and named the criterion each case covers. A real Jira site has not been tried.
