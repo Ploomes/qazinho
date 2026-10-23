@@ -462,7 +462,7 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `PhonePeek`                           | opens a phone app on the emulator or simulator before a plan, and reads its first screen |
 | `RunCoordinator`                      | walks a plan a case per agent turn, each on the app opened anew, or from its recipe      |
 | `CodeExport`                          | writes the recorded cases as Playwright or Maestro code, in a folder the QA picks        |
-| `ResourceCollector` / `ProcessOwners` | one `ps` sweep, charged to whoever started it                                            |
+| `ResourceCollector` / `ProcessOwners` | one process sweep (`ps`, or `WindowsProcesses`), charged to whoever started it           |
 | `Archive`                             | the QA's projects, workspaces and plans, as files on disk                                |
 | `SetupInstaller`                      | installs an agent CLI, idb or gh on request, streaming each line it prints               |
 | `IntegrationVault`                    | connects the trackers: GitHub as gh's account, Jira's token sealed by `safeStorage`      |

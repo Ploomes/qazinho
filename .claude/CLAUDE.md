@@ -44,6 +44,9 @@ screen follows it.
    main process through `window.qazinho`, whose contract lives in `src/shared/types/`.
 5. **Nothing in the interface is a mock.** Every number, screenshot and verdict on screen came
    back from the machine. When something is not built yet, it says so where a QA can read it.
+6. **It runs on Windows, Linux and macOS.** Every feature works on all three, the iOS target
+   aside, which only a Mac can run (`rules/platforms.md`). A command, a path, a window or a
+   shortcut that assumes one OS is a bug.
 
 ## State
 
@@ -283,3 +286,4 @@ interface.
 @rules/comments.md
 @rules/testing.md
 @rules/tooling.md
+@rules/platforms.md
