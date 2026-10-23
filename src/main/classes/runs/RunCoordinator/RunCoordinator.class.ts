@@ -61,6 +61,7 @@ import {
   followRunEvent,
   hiddenValues,
   keptBugId,
+  maskedBody,
   outcomeOfReport,
   privateUrlOf,
   proofHolds,
@@ -330,6 +331,14 @@ export class RunCoordinator {
         entries.map((entry) => ({
           ...entry,
           url: privateUrlOf({ url: entry.url, values: props.run.values }),
+          ...(entry.body === undefined
+            ? {}
+            : {
+                body: hiddenValues({
+                  text: maskedBody(entry.body),
+                  values: props.run.values,
+                }),
+              }),
         })),
       ),
       'utf8',
@@ -642,6 +651,8 @@ export class RunCoordinator {
     const port: IDevicePort = {
       describe: () => device.describe(),
       inspect: (target) => device.inspect(target),
+      failedCalls: () => device.failedCalls(),
+      calls: (ask) => device.calls(ask),
       glance: () => device.glance(),
       motion: () => device.motion(),
       act: async (action) => {

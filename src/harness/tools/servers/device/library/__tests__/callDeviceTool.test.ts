@@ -18,14 +18,22 @@ function fakeDevice(
     image?: IDeviceImage | null;
     motion?: IActionMotion | null;
     blind?: boolean;
+    failed?: string[];
   } = {},
 ) {
   const acted: IStepAction[] = [];
+  const asked: { id?: number; filter?: string }[] = [];
   const device: IAttachDevice = {
     workspaceId: 'w1',
     driver: {
       describe: async () => 'Cart · [button] Apply',
       inspect: async (target) => `"${target}" (button), measured in CSS px:`,
+      failedCalls: async () => props.failed ?? [],
+      calls: async (ask) => {
+        asked.push(ask);
+
+        return '#3 POST https://shop.test/api/coupon → 500 · 212 ms';
+      },
       glance: async () => {
         if (props.blind === true) throw new Error('no screencap');
         return props.image === undefined ? PICTURE : props.image;
@@ -40,7 +48,7 @@ function fakeDevice(
     onFinding: props.onFinding,
   };
 
-  return { device, acted };
+  return { device, acted, asked };
 }
 
 type Answer = Awaited<ReturnType<typeof callDeviceTool>>;
@@ -60,6 +68,63 @@ describe('callDeviceTool', () => {
     expect(text(await callDeviceTool({ device, call: { name: 'look', args: {} } }))).toBe(
       'Cart · [button] Apply',
     );
+  });
+
+  it('says which API calls failed while it acted, before what the device shows', async () => {
+    const { device } = fakeDevice({
+      failed: ['#3 POST https://shop.test/api/coupon → 500 · 212 ms: {"error":"down"}'],
+    });
+    const answer = text(
+      await callDeviceTool({
+        device,
+        call: { name: 'click', args: { target: 'Apply' } },
+      }),
+    );
+
+    expect(answer).toContain(
+      'API calls that failed during it:\n- #3 POST https://shop.test/api/coupon → 500 · 212 ms: {"error":"down"}\n The device now shows:',
+    );
+  });
+
+  it('says nothing of calls when none failed', async () => {
+    const { device } = fakeDevice();
+
+    expect(
+      text(
+        await callDeviceTool({
+          device,
+          call: { name: 'click', args: { target: 'Apply' } },
+        }),
+      ),
+    ).not.toContain('API calls');
+  });
+
+  it('lists the API calls, or reads what one answered, and touches nothing', async () => {
+    const { device, asked, acted } = fakeDevice();
+
+    expect(
+      text(
+        await callDeviceTool({
+          device,
+          call: { name: 'network', args: { filter: ' coupon ' } },
+        }),
+      ),
+    ).toBe('#3 POST https://shop.test/api/coupon → 500 · 212 ms');
+    await callDeviceTool({ device, call: { name: 'network', args: { id: 3 } } });
+
+    expect(asked).toEqual([{ filter: 'coupon' }, { id: 3 }]);
+    expect(acted).toEqual([]);
+  });
+
+  it('refuses a call id that is not a number it listed', async () => {
+    const { device } = fakeDevice();
+    const answer = await callDeviceTool({
+      device,
+      call: { name: 'network', args: { id: -1 } },
+    });
+
+    expect(answer.isError).toBe(true);
+    expect(text(answer)).toContain('"id" is the number a call is listed with');
   });
 
   it('measures what the agent named, and touches nothing', async () => {

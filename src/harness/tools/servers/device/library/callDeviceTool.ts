@@ -50,6 +50,8 @@ export async function callDeviceTool(props: {
 
     if (read.kind === 'inspect') return said(await device.driver.inspect(read.target));
 
+    if (read.kind === 'network') return said(await device.driver.calls(read.ask));
+
     if (read.kind === 'report') {
       if (!device.onReport) return said('There is no run to report to.', true);
 
@@ -87,6 +89,11 @@ export async function callDeviceTool(props: {
     await device.driver.act(read.action);
 
     const motion = describeMotion(await device.driver.motion());
+    const failed = await device.driver.failedCalls().catch(() => []);
+    const calls =
+      failed.length === 0
+        ? ''
+        : ` API calls that failed during it:\n${failed.map((line) => `- ${line}`).join('\n')}\n`;
 
     const done =
       read.action.kind === 'reopen'
@@ -98,7 +105,7 @@ export async function callDeviceTool(props: {
 
     return await shown({
       device,
-      lead: `${done}${motion === null ? '' : ` ${motion}`}${left} The device now shows:\n`,
+      lead: `${done}${motion === null ? '' : ` ${motion}`}${left}${calls} The device now shows:\n`,
     });
   } catch (reason) {
     const message = reason instanceof Error ? reason.message : String(reason);

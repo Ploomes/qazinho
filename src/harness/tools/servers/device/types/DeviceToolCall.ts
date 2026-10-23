@@ -9,6 +9,7 @@ import type { IStepAction } from '@/shared/types';
 export type DeviceToolCall =
   | { kind: 'look' }
   | { kind: 'inspect'; target: string }
+  | { kind: 'network'; ask: { id?: number; filter?: string } }
   | { kind: 'act'; action: IStepAction }
   | { kind: 'report'; report: IStepReport }
   | { kind: 'finding'; finding: IStepFinding }

@@ -81,6 +81,18 @@ export function readToolCall(props: {
 
   if (tool.name === 'look') return { kind: 'look' };
 
+  if (tool.name === 'network') {
+    const { id, filter } = read.data as { id?: number; filter?: string };
+
+    return {
+      kind: 'network',
+      ask: {
+        ...(id === undefined ? {} : { id }),
+        ...(filter === undefined || filter === '' ? {} : { filter }),
+      },
+    };
+  }
+
   if (tool.name === 'inspect')
     return { kind: 'inspect', target: (read.data as { target: string }).target };
 

@@ -33,6 +33,29 @@
     }
   },
   {
+    "name": "network",
+    "description": "Read the API calls the app made in the browser: the latest ones, with how each ended and how long it took. Give \"id\" to read what one answered, such as a 200 whose data looks wrong on screen. Secrets read as dots.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991,
+          "description": "The number of a call as listed, to read what it answered."
+        },
+        "filter": {
+          "type": "string",
+          "description": "Words its address holds, such as \"coupon\", to list only those calls."
+        }
+      },
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
     "name": "goto",
     "description": "Open a URL in the browser, or reopen the app from the launcher on a phone.",
     "inputSchema": {

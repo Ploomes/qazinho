@@ -23,6 +23,24 @@ export const DEVICE_TOOLS = [
     }),
   },
   {
+    name: 'network',
+    description:
+      'Read the API calls the app made in the browser: the latest ones, with how each ended and how long it took. Give "id" to read what one answered, such as a 200 whose data looks wrong on screen. Secrets read as dots.',
+    input: z.object({
+      id: z
+        .number({ error: '"id" is the number a call is listed with, such as 12.' })
+        .int({ error: '"id" is the number a call is listed with, such as 12.' })
+        .positive({ error: '"id" is the number a call is listed with, such as 12.' })
+        .describe('The number of a call as listed, to read what it answered.')
+        .optional(),
+      filter: z
+        .string()
+        .trim()
+        .describe('Words its address holds, such as "coupon", to list only those calls.')
+        .optional(),
+    }),
+  },
+  {
     name: 'goto',
     description:
       'Open a URL in the browser, or reopen the app from the launcher on a phone.',

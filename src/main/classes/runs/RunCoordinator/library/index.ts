@@ -1,5 +1,6 @@
 export * from './answerWords';
 export * from './bookWith';
+export * from './callLineOf';
 export * from './casesOf';
 export * from './driverFor';
 export * from './earlyFinish';
@@ -10,6 +11,7 @@ export * from './fingerprintOf';
 export * from './followRunEvent';
 export * from './hiddenValues';
 export * from './keptBugId';
+export * from './maskedBody';
 export * from './outcomeOfReport';
 export * from './privateUrlOf';
 export * from './proofHolds';

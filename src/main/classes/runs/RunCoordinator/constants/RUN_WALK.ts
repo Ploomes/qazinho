@@ -8,4 +8,7 @@ export const RUN_WALK = {
   exploreGraceMs: 90_000,
   askWaitMs: 15 * 60_000,
   toolMarginMs: 60_000,
+  callBodyChars: 300,
+  callsListed: 30,
+  bodyShownChars: 3_000,
 } as const;
