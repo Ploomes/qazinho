@@ -572,7 +572,7 @@ describe('Harness', () => {
       });
 
       expect(moved.prompt).toContain(
-        '## On screen\nThe QA is on the workspace "Coupons" (w-1), on its plan tab.',
+        '## On screen\nThe QA is on the workspace "Coupons" (w-1), on its chat, with its plan tab open in the panel beside it.',
       );
       expect(moved.prompt).not.toContain('## QAzinho now');
       expect(

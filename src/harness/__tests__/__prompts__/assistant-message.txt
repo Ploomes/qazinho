@@ -1,10 +1,10 @@
 <qazinho>
 ## On screen
-The QA is on the workspace "Coupons" (w-1), on its bugs tab, with bug BUG-01 open.
+The QA is on the workspace "Coupons" (w-1), on its chat, with its bugs tab open in the panel beside it, with bug BUG-01 open.
 
 ## QAzinho now
 The QA reads QAzinho in Brazilian Portuguese, on the theme it calls Noite. A run that ends while they are away calls them with a notification and its sound.
-On their screen, home is Início; settings is Configurações, with Agentes, Dispositivos, Integrações, MCPs, Aparência and Atalhos; a workspace's tabs are Chat, Plano, Runs and Bugs; and you are the Estagiário.
+On their screen, home is Início; settings is Configurações, with Agentes, Dispositivos, Integrações, MCPs, Aparência and Atalhos; a workspace keeps its chat in the middle, with a panel beside it whose tabs are Plano, Device, Runs and Bugs; and you are the Estagiário.
 Their agent is Claude Code. GitHub is connected as octoqa. Jira is not connected.
 Projects:
 - p-1 "Shop": web https://shop.test · repository acme/shop-web, base main

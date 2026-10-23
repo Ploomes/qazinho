@@ -7,7 +7,7 @@ import type { Language } from './Language';
 export interface IAppSnapshot {
   screen: 'home' | 'workspace' | 'settings';
   openWorkspaceId: string | null;
-  openTab: 'chat' | 'plan' | 'runs' | 'bugs' | null;
+  openTab: 'plan' | 'device' | 'runs' | 'bugs' | null;
   openRunId: string | null;
   openBugId: string | null;
   language: Language;

@@ -17,7 +17,7 @@ function press(props: { key: string; isHandled: boolean }) {
 }
 
 beforeEach(() => {
-  useWorkspaceStore.setState({ tab: 'chat' });
+  useWorkspaceStore.setState({ panelTab: 'runs' });
 });
 
 afterEach(() => {
@@ -32,7 +32,7 @@ describe('useKeybinds', () => {
 
     press({ key: '2', isHandled: false });
 
-    expect(useWorkspaceStore.getState().tab).toBe('plan');
+    expect(useWorkspaceStore.getState().panelTab).toBe('plan');
   });
 
   /** ⌘↵ in the chat sent the message and ran the whole plan too. */
@@ -43,6 +43,6 @@ describe('useKeybinds', () => {
 
     press({ key: '2', isHandled: true });
 
-    expect(useWorkspaceStore.getState().tab).toBe('chat');
+    expect(useWorkspaceStore.getState().panelTab).toBe('runs');
   });
 });

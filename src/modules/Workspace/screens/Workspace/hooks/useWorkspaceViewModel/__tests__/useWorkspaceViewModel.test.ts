@@ -20,7 +20,7 @@ const PROJECT = {
 
 beforeEach(() => {
   useAppStore.setState({ selectedWorkspaceId: 'w1', projects: [PROJECT] });
-  useWorkspaceStore.setState({ workspaces: [makeWorkspace()], tab: 'chat' });
+  useWorkspaceStore.setState({ workspaces: [makeWorkspace()], isPanelWide: false });
 });
 
 describe('useWorkspaceViewModel', () => {
@@ -28,7 +28,24 @@ describe('useWorkspaceViewModel', () => {
     const { result } = renderHook(() => useWorkspaceViewModel());
 
     expect(result.current.name).toBe('Checkout regression');
-    expect(result.current.planCount).toBe(2);
+  });
+
+  describe('isHidden', () => {
+    it('shows the chat beside the panel', () => {
+      const { result } = renderHook(() => useWorkspaceViewModel());
+
+      expect(result.current.isHidden).toBe(false);
+      expect(result.current.className).toBe('workspace');
+    });
+
+    it('hides the chat, and keeps it out of reach, while the panel is widened over it', () => {
+      useWorkspaceStore.setState({ isPanelWide: true });
+
+      const { result } = renderHook(() => useWorkspaceViewModel());
+
+      expect(result.current.isHidden).toBe(true);
+      expect(result.current.className).toBe('workspace workspace--hidden');
+    });
   });
 
   it('offers a run with the agent once a case passed, which a later run can walk again', () => {

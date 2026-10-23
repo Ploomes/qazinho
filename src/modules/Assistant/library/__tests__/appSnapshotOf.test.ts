@@ -5,7 +5,7 @@ import { CHECKOUT, LOGIN, PROJECT } from './fixtures';
 const BASE = {
   screen: 'workspace' as const,
   selectedWorkspaceId: 'w1',
-  tab: 'runs' as const,
+  panelTab: 'runs' as const,
   selectedRunId: null,
   openBugId: null,
   language: 'pt' as const,
@@ -106,12 +106,16 @@ describe('appSnapshotOf', () => {
   });
 
   it('opens a bug only on the bugs tab', () => {
-    expect(appSnapshotOf({ ...BASE, tab: 'bugs', openBugId: 'BUG-01' })).toMatchObject({
+    expect(
+      appSnapshotOf({ ...BASE, panelTab: 'bugs', openBugId: 'BUG-01' }),
+    ).toMatchObject({
       openTab: 'bugs',
       openRunId: null,
       openBugId: 'BUG-01',
     });
-    expect(appSnapshotOf({ ...BASE, tab: 'plan', openBugId: 'BUG-01' })).toMatchObject({
+    expect(
+      appSnapshotOf({ ...BASE, panelTab: 'plan', openBugId: 'BUG-01' }),
+    ).toMatchObject({
       openBugId: null,
     });
   });

@@ -1,12 +1,11 @@
 import { AnimatePresence, MotionConfig } from 'motion/react';
 import { AssistantDock } from '@/modules/Assistant';
 import { Automation } from '@/modules/Automation';
-import { DevicePanel } from '@/modules/Device';
 import { ProjectModal, VariablesModal, Welcome } from '@/modules/Project';
 import { RunNotice, RunReplay } from '@/modules/Run';
 import { Settings } from '@/modules/Settings';
 import { Onboarding } from '@/modules/Setup';
-import { NewWorkspaceModal, Workspace } from '@/modules/Workspace';
+import { NewWorkspaceModal, SidePanel, Workspace } from '@/modules/Workspace';
 import { Lightbox, Titlebar } from '@/shared/components/organisms';
 import { Sidebar } from './components/Sidebar';
 import { useAppViewModel } from './hooks';
@@ -39,7 +38,7 @@ export const App: React.FC = () => {
           {!isOnboarding && hasSidebar && <Sidebar />}
           {!isOnboarding && isWelcome && <Welcome />}
           {!isOnboarding && !isWelcome && isWorkspace && <Workspace />}
-          {!isOnboarding && !isWelcome && isWorkspace && <DevicePanel />}
+          {!isOnboarding && !isWelcome && isWorkspace && <SidePanel />}
           {!isOnboarding && !isWelcome && isSettings && <Settings />}
           {!isOnboarding && !isWelcome && isAutomation && <Automation />}
         </div>

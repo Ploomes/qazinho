@@ -1,10 +1,4 @@
 export const DEVICE = {
-  defaultWidth: 470,
-  minWidth: 320,
-  maxWidth: 780,
-  compactWidth: 400,
-  railWidth: 46,
-  handleWidth: 5,
   headerHeight: 52,
   chromeHeight: 32,
   stepsMinHeight: 150,

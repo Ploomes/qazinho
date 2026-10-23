@@ -4,6 +4,7 @@ export type * from './ILiveQuestion';
 export type * from './ILiveRun';
 export type * from './IWalkedBy';
 export type * from './IWorkspace';
+export type * from './PanelTab';
 export type * from './IssueSource';
 export type * from './SavedBug';
 export type * from './SavedMessage';

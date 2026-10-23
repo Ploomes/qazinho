@@ -1,6 +1,6 @@
 import type { IProject } from '@/modules/Project/types';
 import type { RunAlert } from '@/modules/Settings/types';
-import type { IWorkspace, WorkspaceTab } from '@/modules/Workspace/types';
+import type { IWorkspace, PanelTab } from '@/modules/Workspace/types';
 import type {
   IAppSnapshot,
   IAppWorkspaceBrief,
@@ -57,7 +57,7 @@ function briefOf(props: {
 export function appSnapshotOf(props: {
   screen: Screen;
   selectedWorkspaceId: string | null;
-  tab: WorkspaceTab;
+  panelTab: PanelTab | null;
   selectedRunId: string | null;
   openBugId: string | null;
   language: Language;
@@ -76,12 +76,12 @@ export function appSnapshotOf(props: {
   return {
     screen: props.screen === 'settings' ? 'settings' : isWorkspace ? 'workspace' : 'home',
     openWorkspaceId: isWorkspace ? open.id : null,
-    openTab: isWorkspace ? props.tab : null,
+    openTab: isWorkspace ? props.panelTab : null,
     openRunId:
-      isWorkspace && props.tab === 'runs'
+      isWorkspace && props.panelTab === 'runs'
         ? (props.selectedRunId ?? open.runs[0]?.id ?? null)
         : null,
-    openBugId: isWorkspace && props.tab === 'bugs' ? props.openBugId : null,
+    openBugId: isWorkspace && props.panelTab === 'bugs' ? props.openBugId : null,
     language: props.language,
     theme: props.theme === 'dark' ? 'night' : 'paper',
     runAlert: props.runAlert,

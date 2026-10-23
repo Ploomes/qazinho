@@ -12,9 +12,6 @@ export const useWorkspaceViewModel = () => {
     issue: opened.issue,
     design: opened.design,
     status: opened.status,
-    planCount: opened.plan.length,
-    runCount: opened.runs.length,
-    bugCount: opened.bugs.filter(({ isDismissed }) => !isDismissed).length,
     stepCount: flattenPlanSteps(opened.plan).length,
     walked: opened.live?.outcomes.length ?? 0,
     isExploring: opened.live?.kind === 'explore',
@@ -25,8 +22,7 @@ export const useWorkspaceViewModel = () => {
       run.cases.some(({ steps }) => caseVerdict(steps) === 'passed'),
     ),
   }));
-  const tab = useWorkspaceStore((state) => state.tab);
-  const selectTab = useWorkspaceStore((state) => state.selectTab);
+  const isHidden = useWorkspaceStore((state) => state.isPanelWide);
   const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
   const setDesign = useWorkspaceStore((state) => state.setDesign);
   const { onRun, onRunWithAgent, onExplore, onPause, onStop } = useRunActions();
@@ -37,7 +33,8 @@ export const useWorkspaceViewModel = () => {
 
   return {
     hasWorkspace: workspace !== null,
-    tab,
+    isHidden,
+    className: isHidden ? 'workspace workspace--hidden' : 'workspace',
     name: workspace?.name ?? '',
     issue:
       workspace?.issue === null || workspace?.issue === undefined
@@ -89,9 +86,6 @@ export const useWorkspaceViewModel = () => {
               total: workspace?.stepCount ?? 0,
             },
           ),
-    planCount: workspace?.planCount ?? 0,
-    runCount: workspace?.runCount ?? 0,
-    bugCount: workspace?.bugCount ?? 0,
     canRun: (workspace?.stepCount ?? 0) > 0 && !isLive,
     canRunWithAgent:
       (workspace?.stepCount ?? 0) > 0 && !isLive && workspace?.hasPassed === true,
@@ -100,7 +94,6 @@ export const useWorkspaceViewModel = () => {
     isLive,
     isPaused,
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
-    onSelectTab: selectTab,
     onRename: (name: string) => {
       if (workspace) renameWorkspace({ workspaceId: workspace.id, name });
     },

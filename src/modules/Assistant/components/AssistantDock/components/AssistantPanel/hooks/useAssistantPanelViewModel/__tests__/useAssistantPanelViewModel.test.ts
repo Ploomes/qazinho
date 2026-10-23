@@ -62,7 +62,7 @@ beforeEach(async () => {
   });
   useWorkspaceStore.setState({
     workspaces: [CHECKOUT, LOGIN],
-    tab: 'runs',
+    panelTab: 'runs',
     askingIds: [],
   });
   useAssistantStore.setState({

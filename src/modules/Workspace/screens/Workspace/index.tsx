@@ -1,18 +1,16 @@
 import { useTranslation } from 'react-i18next';
-import { Bugs } from '@/modules/Bug';
 import { Chat } from '@/modules/Chat';
-import { Plan } from '@/modules/Plan';
-import { Runs } from '@/modules/Run';
 import { Button, Icon, IconButton, StatusPill } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
-import { RunButton, WorkspaceName, WorkspaceTabs } from './components';
+import { RunButton, WorkspaceName } from './components';
 import { useWorkspaceViewModel } from './hooks';
 import './styles.css';
 
 export const Workspace: React.FC = () => {
   const {
     hasWorkspace,
-    tab,
+    isHidden,
+    className,
     name,
     issue,
     design,
@@ -20,16 +18,12 @@ export const Workspace: React.FC = () => {
     status,
     statusLabel,
     liveStatus,
-    planCount,
-    runCount,
-    bugCount,
     canRun,
     canRunWithAgent,
     canExplore,
     exploreTip,
     isLive,
     pauseLabel,
-    onSelectTab,
     onRename,
     onDropDesign,
     onRun,
@@ -43,7 +37,7 @@ export const Workspace: React.FC = () => {
   if (!hasWorkspace) return null;
 
   return (
-    <section className="workspace">
+    <section className={className} inert={isHidden} aria-hidden={isHidden}>
       <header className="workspace__header">
         <WorkspaceName name={name} onRename={onRename} />
         {issue !== null && (
@@ -115,21 +109,8 @@ export const Workspace: React.FC = () => {
         </div>
       </header>
 
-      <div className="workspace__tabs">
-        <WorkspaceTabs
-          current={tab}
-          planCount={planCount}
-          runCount={runCount}
-          bugCount={bugCount}
-          onSelect={onSelectTab}
-        />
-      </div>
-
       <div className="workspace__body">
-        {tab === 'chat' && <Chat />}
-        {tab === 'plan' && <Plan />}
-        {tab === 'runs' && <Runs />}
-        {tab === 'bugs' && <Bugs />}
+        <Chat />
       </div>
     </section>
   );

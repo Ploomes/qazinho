@@ -1,7 +1,7 @@
 import type { IHarnessSection } from '@/harness/context/types';
 import type { IAppSnapshot } from '@/shared/types';
 
-/** Where the QA is in QAzinho as they write: home, settings, or a workspace on one of its tabs, with what is open there. */
+/** Where the QA is in QAzinho as they write: home, settings, or a workspace's chat with the panel beside it on one of its tabs, and what is open there. */
 export function describeScreen(app: IAppSnapshot): IHarnessSection {
   const title = 'On screen';
   const workspace = app.workspaces.find(({ id }) => id === app.openWorkspaceId);
@@ -22,7 +22,9 @@ export function describeScreen(app: IAppSnapshot): IHarnessSection {
   return {
     title,
     lines: [
-      `The QA is on the workspace "${workspace.name}" (${workspace.id}), on its ${app.openTab ?? 'chat'} tab${open}.`,
+      app.openTab === null
+        ? `The QA is on the workspace "${workspace.name}" (${workspace.id}), on its chat, with the panel beside it hidden.`
+        : `The QA is on the workspace "${workspace.name}" (${workspace.id}), on its chat, with its ${app.openTab} tab open in the panel beside it${open}.`,
     ],
   };
 }

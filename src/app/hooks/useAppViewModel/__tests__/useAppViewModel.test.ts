@@ -130,7 +130,7 @@ describe('useAppViewModel', () => {
       screen: 'workspace',
       projects: [{ id: 'p1', name: 'Shop', targets: [], repositories: [] }],
     });
-    useWorkspaceStore.setState({ isDevicePanelOpen: false });
+    useWorkspaceStore.setState({ isPanelOpen: false });
 
     const { result } = renderHook(() => useAppViewModel());
 
@@ -140,7 +140,7 @@ describe('useAppViewModel', () => {
     });
 
     act(() => {
-      useWorkspaceStore.setState({ isDevicePanelOpen: true });
+      useWorkspaceStore.setState({ isPanelOpen: true });
     });
 
     expect(result.current.shellStyle).toMatchObject({ '--dock-room': '0px' });

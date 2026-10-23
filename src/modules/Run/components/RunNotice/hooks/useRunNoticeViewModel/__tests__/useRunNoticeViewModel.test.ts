@@ -15,7 +15,7 @@ import { useAppStore, useWorkspaceStore } from '@/store';
 function noticing(workspace: IWorkspace, runId = 'r-01') {
   useWorkspaceStore.setState({
     workspaces: [workspace],
-    tab: 'chat',
+    isPanelWide: true,
     selectedRunId: null,
   });
   useAppStore.setState({
@@ -78,7 +78,7 @@ describe('useRunNoticeViewModel', () => {
       });
 
       expect(useWorkspaceStore.getState()).toMatchObject({
-        tab: 'runs',
+        panelTab: 'runs',
         selectedRunId: 'r-01',
       });
       expect(useAppStore.getState()).toMatchObject({

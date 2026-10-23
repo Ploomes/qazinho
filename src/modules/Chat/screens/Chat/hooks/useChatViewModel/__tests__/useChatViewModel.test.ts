@@ -941,7 +941,7 @@ describe('useChatViewModel', () => {
 
       expect(useWorkspaceStore.getState()).toMatchObject({
         selectedRunId: 'r-01',
-        tab: 'runs',
+        panelTab: 'runs',
       });
     });
   });
@@ -975,7 +975,7 @@ describe('useChatViewModel', () => {
   describe('onOpenBug', () => {
     it('opens the bug a run filed on the side of a step, in Bugs', () => {
       answering({});
-      useWorkspaceStore.setState({ openBugId: null, tab: 'chat' });
+      useWorkspaceStore.setState({ openBugId: null, isPanelWide: true });
 
       const { result } = renderHook(() => useChatViewModel());
 
@@ -985,13 +985,13 @@ describe('useChatViewModel', () => {
 
       expect(useWorkspaceStore.getState()).toMatchObject({
         openBugId: 'BUG-09',
-        tab: 'bugs',
+        panelTab: 'bugs',
       });
     });
 
     it('does NOT fold the bug when it was already open', () => {
       answering({});
-      useWorkspaceStore.setState({ openBugId: 'BUG-09', tab: 'chat' });
+      useWorkspaceStore.setState({ openBugId: 'BUG-09', isPanelWide: true });
 
       const { result } = renderHook(() => useChatViewModel());
 

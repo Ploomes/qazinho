@@ -10,8 +10,8 @@ import {
   appendUserMessage,
   formatClock,
 } from '@/modules/Chat/library';
-import { DEVICE } from '@/modules/Device/constants';
 import { RUN_CLOCK } from '@/modules/Run/constants';
+import { PANEL } from '@/modules/Workspace/constants';
 import {
   endRun,
   landAnswered,
@@ -32,13 +32,14 @@ import { mapWorkspace, tickWorkspaces, withoutKey } from './library';
 export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   workspaces: [],
   isLoaded: false,
-  tab: 'chat',
+  panelTab: 'plan',
   openCaseId: null,
   openBugId: null,
   selectedRunId: null,
   bugFilter: 'all',
-  isDevicePanelOpen: true,
-  deviceWidth: DEVICE.defaultWidth,
+  isPanelOpen: true,
+  isPanelWide: false,
+  panelWidth: PANEL.defaultWidth,
   askingIds: [],
   liveTexts: {},
   retries: {},
@@ -47,7 +48,10 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   removingWorkspaceId: null,
 
   addWorkspace: (workspace) =>
-    set((state) => ({ workspaces: [...state.workspaces, workspace], tab: 'chat' })),
+    set((state) => ({
+      workspaces: [...state.workspaces, workspace],
+      isPanelWide: false,
+    })),
 
   loadWorkspaces: (workspaces) => set({ workspaces, isLoaded: true }),
 
@@ -137,7 +141,8 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       ),
     })),
 
-  selectTab: (tab) => set({ tab }),
+  selectTab: (tab) =>
+    set(tab === 'chat' ? { isPanelWide: false } : { panelTab: tab, isPanelOpen: true }),
 
   setLiveText: ({ workspaceId, text }) =>
     set((state) => ({
@@ -552,14 +557,12 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   setBugFilter: (bugFilter) => set({ bugFilter }),
 
-  toggleDevicePanel: () =>
-    set((state) => ({ isDevicePanelOpen: !state.isDevicePanelOpen })),
+  togglePanel: () =>
+    set((state) => ({ isPanelOpen: !state.isPanelOpen, isPanelWide: false })),
 
-  setDevicePanelOpen: (isOpen) =>
-    set((state) =>
-      state.isDevicePanelOpen === isOpen ? state : { isDevicePanelOpen: isOpen },
-    ),
+  togglePanelWide: () =>
+    set((state) => ({ isPanelWide: !state.isPanelWide, isPanelOpen: true })),
 
-  setDeviceWidth: (width) =>
-    set({ deviceWidth: Math.min(Math.max(width, DEVICE.minWidth), DEVICE.maxWidth) }),
+  setPanelWidth: (width) =>
+    set({ panelWidth: Math.min(Math.max(width, PANEL.minWidth), PANEL.maxWidth) }),
 }));

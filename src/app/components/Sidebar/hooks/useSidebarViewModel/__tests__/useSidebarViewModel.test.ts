@@ -250,7 +250,7 @@ describe('useSidebarViewModel', () => {
     });
 
     it('opens the chat of the workspace that waits, where the question is', () => {
-      useWorkspaceStore.setState({ workspaces: [asking()], tab: 'runs' });
+      useWorkspaceStore.setState({ workspaces: [asking()], isPanelWide: true });
 
       const { result } = renderHook(() => useSidebarViewModel());
 
@@ -259,7 +259,7 @@ describe('useSidebarViewModel', () => {
       });
 
       expect(useAppStore.getState().selectedWorkspaceId).toBe('w1');
-      expect(useWorkspaceStore.getState().tab).toBe('chat');
+      expect(useWorkspaceStore.getState().isPanelWide).toBe(false);
     });
 
     it('names nobody while no agent is waiting', () => {

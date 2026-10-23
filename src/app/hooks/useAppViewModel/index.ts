@@ -35,7 +35,7 @@ export const useAppViewModel = () => {
   const replay = useAppStore((state) => state.replay);
   const runNotice = useAppStore((state) => state.runNotice);
   const hasOnboarded = useSettingsStore((state) => state.hasOnboarded);
-  const isDeviceOpen = useWorkspaceStore((state) => state.isDevicePanelOpen);
+  const isPanelOpen = useWorkspaceStore((state) => state.isPanelOpen);
   const variablesKey = useVariablesStore((state) => state.request?.id ?? null);
 
   useArchive();
@@ -70,7 +70,7 @@ export const useAppViewModel = () => {
   return {
     shellStyle: {
       '--sidebar-width': `${String(SHELL.sidebarWidth)}px`,
-      '--dock-room': `${String(dockRoomOf({ isWorkspace: screen === 'workspace' && projects.length > 0, isDeviceOpen }))}px`,
+      '--dock-room': `${String(dockRoomOf({ isWorkspace: screen === 'workspace' && projects.length > 0, isPanelOpen }))}px`,
       '--dock-lift': `${String(ASSISTANT_DOCK.inset + ASSISTANT_DOCK.buttonSize)}px`,
     } as CSSProperties,
     screen,

@@ -34,13 +34,19 @@ const APP: IAppSnapshot = {
 };
 
 describe('describeScreen', () => {
-  it('names the workspace on screen, its tab and the run open on it', () => {
+  it('names the workspace on screen, the tab beside its chat and the run open on it', () => {
     expect(describeScreen(APP)).toEqual({
       title: 'On screen',
       lines: [
-        'The QA is on the workspace "Checkout" (w-1), on its runs tab, with run r-03 open.',
+        'The QA is on the workspace "Checkout" (w-1), on its chat, with its runs tab open in the panel beside it, with run r-03 open.',
       ],
     });
+  });
+
+  it('says the panel is hidden when only the chat shows', () => {
+    expect(describeScreen({ ...APP, openTab: null, openRunId: null }).lines).toEqual([
+      'The QA is on the workspace "Checkout" (w-1), on its chat, with the panel beside it hidden.',
+    ]);
   });
 
   it('names the bug open on the bugs tab, and nothing open on another tab', () => {
@@ -48,10 +54,10 @@ describe('describeScreen', () => {
       describeScreen({ ...APP, openTab: 'bugs', openRunId: null, openBugId: 'BUG-02' })
         .lines,
     ).toEqual([
-      'The QA is on the workspace "Checkout" (w-1), on its bugs tab, with bug BUG-02 open.',
+      'The QA is on the workspace "Checkout" (w-1), on its chat, with its bugs tab open in the panel beside it, with bug BUG-02 open.',
     ]);
     expect(describeScreen({ ...APP, openTab: 'plan' }).lines).toEqual([
-      'The QA is on the workspace "Checkout" (w-1), on its plan tab.',
+      'The QA is on the workspace "Checkout" (w-1), on its chat, with its plan tab open in the panel beside it.',
     ]);
   });
 

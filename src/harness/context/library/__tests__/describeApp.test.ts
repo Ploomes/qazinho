@@ -94,7 +94,7 @@ describe('describeApp', () => {
       title: 'QAzinho now',
       lines: [
         'The QA reads QAzinho in Brazilian Portuguese, on the theme it calls Noite. A run that ends while they are away calls them with a notification and its sound.',
-        "On their screen, home is Início; settings is Configurações, with Agentes, Dispositivos, Integrações, MCPs, Aparência and Atalhos; a workspace's tabs are Chat, Plano, Runs and Bugs; and you are the Estagiário.",
+        'On their screen, home is Início; settings is Configurações, with Agentes, Dispositivos, Integrações, MCPs, Aparência and Atalhos; a workspace keeps its chat in the middle, with a panel beside it whose tabs are Plano, Device, Runs and Bugs; and you are the Estagiário.',
         'Their agent is Claude Code. GitHub is connected as octoqa. Jira is not connected.',
         'Projects:',
         '- p-1 "Lojinha": web https://loja.test · android /Users/qa/loja.apk · repository acme/loja-web, base develop',
@@ -123,7 +123,7 @@ describe('describeApp', () => {
   it('says there is nothing yet, and how a quiet QAzinho calls the QA', () => {
     expect(describeApp(EMPTY).lines).toEqual([
       'The QA reads QAzinho in English, on the theme it calls Paper. A run that ends calls them only inside QAzinho.',
-      "On their screen, home is Home; settings is Settings, with Agents, Devices, Integrations, MCPs, Appearance and Shortcuts; a workspace's tabs are Chat, Plan, Runs and Bugs; and you are the Intern.",
+      'On their screen, home is Home; settings is Settings, with Agents, Devices, Integrations, MCPs, Appearance and Shortcuts; a workspace keeps its chat in the middle, with a panel beside it whose tabs are Plan, Device, Runs and Bugs; and you are the Intern.',
       'Their agent is Codex. GitHub is not connected. Jira is not connected.',
       'There are no projects yet.',
     ]);

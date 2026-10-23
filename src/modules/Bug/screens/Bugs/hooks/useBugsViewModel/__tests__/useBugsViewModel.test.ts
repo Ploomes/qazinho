@@ -126,7 +126,7 @@ describe('useBugsViewModel', () => {
       });
 
       expect(useWorkspaceStore.getState()).toMatchObject({
-        tab: 'runs',
+        panelTab: 'runs',
         selectedRunId: 'r-01',
       });
     });
@@ -148,7 +148,7 @@ describe('useBugsViewModel', () => {
 
   describe('onOpenCase', () => {
     it('goes to the plan with the bug’s case open', () => {
-      useWorkspaceStore.setState({ openCaseId: null, tab: 'bugs' });
+      useWorkspaceStore.setState({ openCaseId: null, panelTab: 'bugs' });
 
       const { result } = renderHook(() => useBugsViewModel());
 
@@ -157,13 +157,13 @@ describe('useBugsViewModel', () => {
       });
 
       expect(useWorkspaceStore.getState()).toMatchObject({
-        tab: 'plan',
+        panelTab: 'plan',
         openCaseId: 'TC-02',
       });
     });
 
     it('does NOT close the case when it was open already', () => {
-      useWorkspaceStore.setState({ openCaseId: 'TC-02', tab: 'bugs' });
+      useWorkspaceStore.setState({ openCaseId: 'TC-02', panelTab: 'bugs' });
 
       const { result } = renderHook(() => useBugsViewModel());
 

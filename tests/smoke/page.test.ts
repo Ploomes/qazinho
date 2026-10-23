@@ -119,9 +119,9 @@ describe('the built page, with no bridge behind it', () => {
     expect(await page.locator('body').innerText()).toContain('Cart');
   });
 
-  it('walks every tab of a workspace without falling over', async () => {
-    for (const tab of ['Plan', 'Runs', 'Bugs', 'Chat']) {
-      await page.locator('.workspace-tabs__tab', { hasText: tab }).first().click();
+  it('walks every tab of the panel beside the chat without falling over', async () => {
+    for (const tab of ['Device', 'Runs', 'Bugs', 'Plan']) {
+      await page.locator('.panel-tabs__tab', { hasText: tab }).first().click();
       await page.waitForTimeout(150);
     }
 
@@ -129,7 +129,7 @@ describe('the built page, with no bridge behind it', () => {
   });
 
   it('writes a plan by hand, with no agent anywhere near it', async () => {
-    await page.locator('.workspace-tabs__tab', { hasText: 'Plan' }).first().click();
+    await page.locator('.panel-tabs__tab', { hasText: 'Plan' }).first().click();
     await page.getByRole('button', { name: 'Add a case' }).first().click();
 
     expect(await page.locator(':focus').getAttribute('placeholder')).toBe(
@@ -161,7 +161,7 @@ describe('the built page, with no bridge behind it', () => {
 
   it('closes both popovers on a press outside them, and on Escape', async () => {
     await openModelMenu();
-    await page.locator('.workspace-tabs__tab', { hasText: 'Plan' }).first().click();
+    await page.locator('.panel-tabs__tab', { hasText: 'Plan' }).first().click();
     await page.waitForTimeout(300);
     expect(await page.locator('.model-popover').count()).toBe(0);
 

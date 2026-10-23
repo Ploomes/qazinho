@@ -7,7 +7,7 @@ import { useAppStore, useWorkspaceStore } from '@/store';
 describe('useOpenRun', () => {
   it("opens the run's workspace on Runs, on that run, from wherever the QA was", () => {
     useAppStore.setState({ screen: 'settings', selectedWorkspaceId: 'w9' });
-    useWorkspaceStore.setState({ tab: 'chat', selectedRunId: null });
+    useWorkspaceStore.setState({ isPanelWide: true, selectedRunId: null });
 
     renderHook(() => useOpenRun()).result.current({ workspaceId: 'w1', runId: 'r-03' });
 
@@ -16,7 +16,7 @@ describe('useOpenRun', () => {
       selectedWorkspaceId: 'w1',
     });
     expect(useWorkspaceStore.getState()).toMatchObject({
-      tab: 'runs',
+      panelTab: 'runs',
       selectedRunId: 'r-03',
     });
   });

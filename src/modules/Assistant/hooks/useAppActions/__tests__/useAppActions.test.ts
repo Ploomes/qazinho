@@ -46,7 +46,7 @@ beforeEach(() => {
     selectedWorkspaceId: null,
     modal: null,
   });
-  useWorkspaceStore.setState({ workspaces: [CHECKOUT, LOGIN], tab: 'chat' });
+  useWorkspaceStore.setState({ workspaces: [CHECKOUT, LOGIN], isPanelWide: true });
   useSetupStore.setState({ integrations: [], connectingId: null });
   useAssistantStore.setState({ messages: [], isAsking: true });
 });
@@ -136,7 +136,7 @@ describe('useAppActions', () => {
       modal: null,
     });
     expect(useWorkspaceStore.getState()).toMatchObject({
-      tab: 'runs',
+      panelTab: 'runs',
       selectedRunId: 'r-01',
     });
   });
@@ -264,7 +264,7 @@ describe('useAppActions', () => {
       selectedWorkspaceId: 'w2',
     });
     expect(useWorkspaceStore.getState()).toMatchObject({
-      tab: 'chat',
+      isPanelWide: false,
       askingIds: ['w2'],
     });
     expect(

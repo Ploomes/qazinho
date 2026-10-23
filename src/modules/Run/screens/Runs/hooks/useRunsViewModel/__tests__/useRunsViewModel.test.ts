@@ -357,7 +357,7 @@ describe('useRunsViewModel', () => {
         result.current.onOpenBug('BUG-01');
       });
 
-      expect(useWorkspaceStore.getState().tab).toBe('bugs');
+      expect(useWorkspaceStore.getState().panelTab).toBe('bugs');
       expect(useWorkspaceStore.getState().openBugId).toBe('BUG-01');
     });
   });

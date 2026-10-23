@@ -2,7 +2,7 @@ import type { BugFilter, IBugReview } from '@/modules/Bug';
 import type { IQuestionAnswer, UserCommand } from '@/modules/Chat';
 import type { ViewportId } from '@/modules/Device';
 import type { IPublishedPlan, ITestCase } from '@/modules/Plan';
-import type { IWalkedBy, IWorkspace, WorkspaceTab } from '@/modules/Workspace';
+import type { IWalkedBy, IWorkspace, PanelTab, WorkspaceTab } from '@/modules/Workspace';
 import type {
   CodeStep,
   IChatQuestion,
@@ -26,13 +26,14 @@ import type {
 export interface IWorkspaceStore {
   workspaces: IWorkspace[];
   isLoaded: boolean;
-  tab: WorkspaceTab;
+  panelTab: PanelTab;
   openCaseId: string | null;
   openBugId: string | null;
   selectedRunId: string | null;
   bugFilter: BugFilter;
-  isDevicePanelOpen: boolean;
-  deviceWidth: number;
+  isPanelOpen: boolean;
+  isPanelWide: boolean;
+  panelWidth: number;
   askingIds: string[];
   liveTexts: Record<string, string>;
   retries: Record<string, { attempt: number; maxRetries: number }>;
@@ -134,7 +135,7 @@ export interface IWorkspaceStore {
   landReview: (props: { workspaceId: string; bugId: string; review: IBugReview }) => void;
   selectRun: (runId: string | null) => void;
   setBugFilter: (filter: BugFilter) => void;
-  toggleDevicePanel: () => void;
-  setDevicePanelOpen: (isOpen: boolean) => void;
-  setDeviceWidth: (width: number) => void;
+  togglePanel: () => void;
+  togglePanelWide: () => void;
+  setPanelWidth: (width: number) => void;
 }

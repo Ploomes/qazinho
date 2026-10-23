@@ -402,7 +402,7 @@ describe('useRunEvents', () => {
         selectedWorkspaceId: 'w1',
       });
       expect(useWorkspaceStore.getState()).toMatchObject({
-        tab: 'runs',
+        panelTab: 'runs',
         selectedRunId: 'r-01',
       });
     });
@@ -547,10 +547,11 @@ describe('useRunEvents', () => {
     it('opens the chat of a run still going when the QA clicks its notification', () => {
       const { open } = listening();
 
+      useWorkspaceStore.setState({ isPanelWide: true });
       open({ workspaceId: 'w1', runId: 'r-01' });
 
       expect(useAppStore.getState().selectedWorkspaceId).toBe('w1');
-      expect(useWorkspaceStore.getState().tab).toBe('chat');
+      expect(useWorkspaceStore.getState().isPanelWide).toBe(false);
     });
   });
 });

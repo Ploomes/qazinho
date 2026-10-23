@@ -12,13 +12,22 @@
 }
 
 .plan__summary {
+  flex: none;
   color: var(--ink2);
   font: var(--font-ui-md);
+  white-space: nowrap;
 }
 
 .plan__note {
+  min-width: 0;
   color: var(--ink3);
   font: var(--font-ui-sm);
+}
+
+@container side-panel (width < 760px) {
+  .plan__note {
+    display: none;
+  }
 }
 
 .plan__actions {

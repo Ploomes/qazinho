@@ -101,7 +101,7 @@ export const useAssistantPanelViewModel = () => {
       app: appSnapshotOf({
         screen: app.screen,
         selectedWorkspaceId: app.selectedWorkspaceId,
-        tab: workspaces.tab,
+        panelTab: workspaces.isPanelOpen ? workspaces.panelTab : null,
         selectedRunId: workspaces.selectedRunId,
         openBugId: workspaces.openBugId,
         language: settings.language,

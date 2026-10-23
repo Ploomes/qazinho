@@ -1,4 +1,3 @@
-export * from './devicePanelWidthOf';
 export * from './deviceStateOf';
 export * from './formatElapsed';
 export * from './imageRatioOf';

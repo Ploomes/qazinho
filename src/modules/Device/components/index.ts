@@ -1,1 +1,1 @@
-export * from './DevicePanel';
+export * from './DeviceView';

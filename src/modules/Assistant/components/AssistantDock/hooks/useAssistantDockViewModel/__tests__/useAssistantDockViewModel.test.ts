@@ -31,14 +31,14 @@ describe('useAssistantDockViewModel', () => {
   it('opens the chat beside the open device panel, never over its screen', () => {
     Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true });
     useAppStore.setState({ screen: 'workspace', projects: [PROJECT] });
-    useWorkspaceStore.setState({ isDevicePanelOpen: true, deviceWidth: 470 });
+    useWorkspaceStore.setState({ isPanelOpen: true, panelWidth: 470 });
 
     const { result } = renderHook(() => useAssistantDockViewModel());
 
     expect(result.current.style).toMatchObject({ '--assistant-panel-shift': '475px' });
 
     act(() => {
-      useWorkspaceStore.setState({ isDevicePanelOpen: false });
+      useWorkspaceStore.setState({ isPanelOpen: false });
     });
 
     expect(result.current.style).toMatchObject({ '--assistant-panel-shift': '0px' });
@@ -46,7 +46,7 @@ describe('useAssistantDockViewModel', () => {
 
   it('does NOT move off a workspace, where no device panel shows', () => {
     useAppStore.setState({ screen: 'settings', projects: [PROJECT] });
-    useWorkspaceStore.setState({ isDevicePanelOpen: true, deviceWidth: 470 });
+    useWorkspaceStore.setState({ isPanelOpen: true, panelWidth: 470 });
 
     const { result } = renderHook(() => useAssistantDockViewModel());
 
