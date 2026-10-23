@@ -3,8 +3,8 @@ import type { ICodexLine } from '@/main/types';
 import type { IAgentEvent, IAgentTurn, IAgentUsage } from '@/shared/types';
 import type { ChildProcess } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
-import { mkdir, rm, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
 import { spawnCommand } from '@/main/library';
@@ -12,6 +12,8 @@ import { AGENT_RUN } from './constants';
 import {
   buildAskArgs,
   buildCodexArgs,
+  codexConfigFileOf,
+  codexServersOf,
   costOf,
   hearCodex,
   killTree,
@@ -59,9 +61,19 @@ export class AgentRunner {
 
     await mkdir(this.folder, { recursive: true });
 
+    const ownServers = isCodex
+      ? codexServersOf(
+          await readFile(
+            codexConfigFileOf({ env: { ...process.env, ...props.env }, home: homedir() }),
+            'utf8',
+          ).catch(() => ''),
+        )
+      : [];
     const child = spawnCommand({
       command,
-      args: isCodex ? buildCodexArgs({ ...props, schemaFile }) : buildAskArgs(props),
+      args: isCodex
+        ? buildCodexArgs({ ...props, schemaFile, ownServers })
+        : buildAskArgs(props),
       options: {
         cwd: this.folder,
         stdio: ['pipe', 'pipe', 'pipe'],

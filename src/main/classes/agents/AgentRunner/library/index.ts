@@ -1,5 +1,7 @@
 export * from './buildAskArgs';
 export * from './buildCodexArgs';
+export * from './codexConfigFileOf';
+export * from './codexServersOf';
 export * from './costOf';
 export * from './hearCodex';
 export * from './killTree';

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildCodexArgs } from '@/main/classes/agents/AgentRunner/library';
 
-const BASE = { model: '', sessionId: null, schemaFile: null };
+const BASE = { model: '', sessionId: null, schemaFile: null, ownServers: [] };
 
 describe('buildCodexArgs', () => {
   it('runs one read-only turn as JSON lines, reading the prompt from stdin, never stopping for approval', () => {
@@ -70,5 +70,35 @@ describe('buildCodexArgs', () => {
     expect(buildCodexArgs({ ...BASE, mcpConfig })).toContain(
       'mcp_servers.qazinho.tool_timeout_sec=361',
     );
+  });
+
+  /**
+   * Codex reads the MCP servers of the QA's own config.toml: an Atlassian one would hand the chat
+   * a way to Confluence QAzinho never granted.
+   */
+  it("turns off the QA's own MCP servers, but the ones QAzinho hands the call", () => {
+    const args = buildCodexArgs({
+      ...BASE,
+      ownServers: ['atlassian', 'figma', 'qazinho'],
+      mcpConfig: JSON.stringify({
+        mcpServers: {
+          qazinho: { type: 'http', url: 'http://127.0.0.1:4000/mcp/w-1' },
+          figma: { type: 'http', url: 'https://mcp.figma.com/mcp' },
+        },
+      }),
+    });
+
+    expect(args).toContain('mcp_servers.atlassian.enabled=false');
+    expect(args.join(' ')).not.toContain('figma.enabled=false');
+    expect(args.join(' ')).not.toContain('qazinho.enabled=false');
+  });
+
+  it('turns every one of them off for a call that is only talk', () => {
+    const args = buildCodexArgs({ ...BASE, ownServers: ['atlassian', 'figma'] });
+
+    expect(args.filter((arg) => arg.endsWith('.enabled=false'))).toEqual([
+      'mcp_servers.atlassian.enabled=false',
+      'mcp_servers.figma.enabled=false',
+    ]);
   });
 });
