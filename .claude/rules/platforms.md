@@ -53,6 +53,9 @@ simulators exist only on a Mac, so the iOS target and idb live there alone.
 - A shortcut is kept with ⌘ and ⌥, and Ctrl presses what ⌘ does. The page shows it the way the
   keyboard names it (`comboLabelOf`): Ctrl and Alt off the Mac.
 - Windows shows notifications under the app's own name (`setAppUserModelId`).
+- One QAzinho runs per data folder (`requestSingleInstanceLock`). The Dock keeps a Mac to one,
+  but Windows and Linux start a second app on each launch; it leaves and brings the open window
+  forward.
 
 ## Proving it
 
