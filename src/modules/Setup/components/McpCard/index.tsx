@@ -41,7 +41,19 @@ export const McpCard: React.FC<IMcpCardProps> = (props) => {
           <span className="mcp-card__name">{props.server.name}</span>
           <span className="mcp-card__about">{text}</span>
         </span>
-        <StatusPill status={pill} label={statusLabel} />
+        <AnimatePresence initial={false} mode="popLayout">
+          <motion.span
+            key={pill}
+            className="mcp-card__pill"
+            layout="position"
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.94 }}
+            transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+          >
+            <StatusPill status={pill} label={statusLabel} />
+          </motion.span>
+        </AnimatePresence>
         <AnimatePresence initial={false}>
           {action !== null && (
             <motion.button
@@ -51,6 +63,7 @@ export const McpCard: React.FC<IMcpCardProps> = (props) => {
                 isQuiet ? 'mcp-card__action mcp-card__action--quiet' : 'mcp-card__action'
               }
               disabled={isBusy}
+              layout="position"
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}

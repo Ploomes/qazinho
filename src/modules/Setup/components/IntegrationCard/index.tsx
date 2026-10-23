@@ -60,7 +60,19 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
           <span className="integration-card__name">{props.integration.name}</span>
           <span className="integration-card__about">{text}</span>
         </span>
-        <StatusPill status={pill} label={statusLabel} />
+        <AnimatePresence initial={false} mode="popLayout">
+          <motion.span
+            key={pill}
+            className="integration-card__pill"
+            layout="position"
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.94 }}
+            transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+          >
+            <StatusPill status={pill} label={statusLabel} />
+          </motion.span>
+        </AnimatePresence>
         <AnimatePresence initial={false}>
           {hasAction && (
             <motion.button
@@ -71,6 +83,7 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
                   ? 'integration-card__action integration-card__action--quiet'
                   : 'integration-card__action'
               }
+              layout="position"
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}

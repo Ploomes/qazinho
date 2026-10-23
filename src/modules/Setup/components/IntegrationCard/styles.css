@@ -240,3 +240,8 @@
   color: var(--ink);
   font: var(--font-ui-sm);
 }
+
+.integration-card__pill {
+  display: inline-flex;
+  flex: none;
+}
