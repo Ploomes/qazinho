@@ -3,7 +3,11 @@
 QAzinho is a calm, flat place to work all day. **The surface carries the work**: lists, plans,
 chat, logs, the device's screen. The brand lives in a few touches, never in every piece: the lime
 accent, the Estagiário, the wordmark, Bricolage Grotesque on titles. Nothing is tilted, nothing
-wears a thick cut edge, and nothing slaps onto the screen.
+wears a thick cut edge, and nothing slaps onto the screen, except the logo.
+
+**The logo stays a sticker**: the Estagiário in the `Logo` atom (`isSticker`: white cut edge,
+gloss, his -6° and his shadows) and the `Wordmark`, ink with a paper cut edge
+(`--sticker-edge`). Everywhere else he is drawn flat.
 
 It used to be a desk of die-cut stickers: thick paper edges, lifted shadows, tilted badges and
 slapped entrances. That was heavy to use for hours, and the QA asked for something lighter
@@ -41,13 +45,14 @@ Every value comes from a token in `tokens.css` (`design-tokens.md`).
   shadow for a hovered control, and `--sticker-hero` the one soft shadow a popover or modal casts.
 - **Tilt**: none. `--tilt-*` are 0deg and stay there; nothing that holds text turns.
 - **Type**: titles in Bricolage Grotesque 800 with `--display-tracking`, body in IBM Plex Sans,
-  labels, ids and numbers in JetBrains Mono. The wordmark is plain ink, with no outline.
+  labels, ids and numbers in JetBrains Mono. The wordmark keeps its paper cut edge; a brand
+  headline, such as the welcome's, is plain ink.
 - **Colour**: lime is the accent, the primary button and the Estagiário. A status wears its colour
   softly (`--fail-soft` behind `--fail` text), never a solid block of it. Indigo appears only in
   brand moments (the onboarding, the welcome board), set with `data-theme="indigo"` on their root.
 - **Themes**: Night (dark) and Paper (light). Both declare every token.
 - **The Estagiário** is drawn flat and upright: lime, dark eyes, no white edge, no gloss, no
-  shadow. He still changes mood.
+  shadow. He still changes mood. Only the logo draws him as a sticker.
 
 ## Motion
 

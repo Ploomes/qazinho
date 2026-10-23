@@ -43,6 +43,7 @@ font: var(--font-ui-md);
 | Type      | `--display-tracking` for display at 800, `--font-mono-tag --tag-tracking` for tags            |
 | Motion    | `--ease --ease-in --dur-press --dur-fast --dur --dur-slow`                                    |
 | Line      | `--edge` (the theme's `--line`), `--edge-width` · `-lg` · `-xl`, all 1px                      |
+| Logo      | `--sticker-edge`, the paper cut edge the wordmark keeps                                       |
 | Elevation | `--sticker-rest` none · `--sticker-lift` hairline · `--sticker-press` none · `--sticker-hero` |
 | Hover     | `--lift` 0px, `--press` 1px: how far a control moves under the cursor and the click           |
 | Tilt      | `--tilt-xs` · `--tilt-sm` · `--tilt-md`, all 0°: nothing turns                                |

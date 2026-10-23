@@ -23,7 +23,8 @@ environment with one or more targets. Workspaces hold a test plan, and several r
 **It is calm and flat to work in all day** (`rules/sticker-design.md`): the work sits on a Night
 or Paper surface, cards and popups are raised only by a 1px line and, when they float, a soft
 shadow, and nothing tilts or slaps on. The brand lives in a few touches: the lime accent, the
-Estagiário drawn flat, the wordmark and Bricolage on titles. Every screen follows it.
+Estagiário drawn flat, Bricolage on titles, and the logo, which alone stays a sticker. Every
+screen follows it.
 
 ## The rules that are not up for negotiation
 
