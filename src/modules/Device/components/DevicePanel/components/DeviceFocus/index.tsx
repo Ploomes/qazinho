@@ -96,7 +96,7 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
 
         <div className="device-focus__steps">
           <Eyebrow>
-            {t('DEVICE.STEPS')} {props.doingLabel}
+            {props.stepsWord} {props.doingLabel}
           </Eyebrow>
           {rows.map((row) => (
             <div

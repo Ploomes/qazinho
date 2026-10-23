@@ -55,11 +55,18 @@ export const useDevicePanelViewModel = () => {
 
   const lastRun = workspace?.runs[0] ?? null;
   const verdicts = stepVerdictsOf({ steps: planSteps, live, lastRun });
-  const steps: IDeviceStep[] = planSteps.map((step, index) => ({
-    number: index + 1,
-    action: step.action,
-    verdict: verdicts[index] ?? 'pending',
-  }));
+  const isExploring = live?.kind === 'explore';
+  const steps: IDeviceStep[] = isExploring
+    ? live.outcomes.map((outcome, index) => ({
+        number: index + 1,
+        action: outcome.action,
+        verdict: outcome.verdict,
+      }))
+    : planSteps.map((step, index) => ({
+        number: index + 1,
+        action: step.action,
+        verdict: verdicts[index] ?? 'pending',
+      }));
   const walked =
     live?.outcomes.length ??
     lastRun?.cases.reduce((total, runCase) => total + runCase.steps.length, 0) ??
@@ -168,8 +175,10 @@ export const useDevicePanelViewModel = () => {
           }),
     isLive: state === 'driving',
     steps,
+    stepsWord: t(isExploring ? 'DEVICE.SCREENS' : 'DEVICE.STEPS'),
+    emptyStepsText: t(isExploring ? 'DEVICE.SCREENS_EMPTY' : 'DEVICE.STEPS_EMPTY'),
     doingLabel:
-      walked === null
+      isExploring || walked === null
         ? ''
         : t('DEVICE.STEPS_PROGRESS', { done: walked, total: steps.length }),
     onToggle: toggleDevicePanel,

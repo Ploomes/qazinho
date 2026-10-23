@@ -24,6 +24,7 @@ const focus = (props: Partial<IDeviceFocusProps>) =>
       mood: 'running',
       steps: [],
       doingLabel: '',
+      stepsWord: 'steps',
       hasControls: true,
       pauseLabel: 'Pause',
       viewports: [],

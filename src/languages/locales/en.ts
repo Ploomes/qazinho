@@ -433,6 +433,8 @@ export const en = {
     STEPS: 'steps',
     STEPS_PROGRESS: '{{done}} of {{total}}',
     STEPS_EMPTY: 'Hit Run plan and the steps show up here, one at a time.',
+    SCREENS: 'screens',
+    SCREENS_EMPTY: 'Each screen the agent reaches shows up here.',
     RAIL: 'device',
     LIVE: 'live · {{elapsed}}',
     LIVE_COST: 'live · {{elapsed}} · {{cost}}',

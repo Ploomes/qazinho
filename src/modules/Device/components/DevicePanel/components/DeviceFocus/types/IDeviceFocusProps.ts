@@ -13,6 +13,7 @@ export interface IDeviceFocusProps {
   mood: InternMood;
   steps: IDeviceStep[];
   doingLabel: string;
+  stepsWord: string;
   hasControls: boolean;
   pauseLabel: string;
   viewports: IViewportChoice[];

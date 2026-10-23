@@ -435,6 +435,8 @@ export const pt: typeof en = {
     STEPS: 'passos',
     STEPS_PROGRESS: '{{done}} de {{total}}',
     STEPS_EMPTY: 'Aperte Rodar plano e os passos aparecem aqui, um de cada vez.',
+    SCREENS: 'telas',
+    SCREENS_EMPTY: 'Cada tela a que o agente chega aparece aqui.',
     RAIL: 'device',
     LIVE: 'ao vivo · {{elapsed}}',
     LIVE_COST: 'ao vivo · {{elapsed}} · {{cost}}',

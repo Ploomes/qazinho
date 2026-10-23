@@ -287,6 +287,47 @@ describe('useDevicePanelViewModel', () => {
       ]);
       expect(result.current.doingLabel).toBe('3 of 6');
     });
+
+    /** An exploration has no plan: the panel read "steps 1 of 0" and told the QA to hit Run plan. */
+    it('lists the screens an exploration reached, with no plan count', () => {
+      const walked = walkRun({ verdicts: ['passed'] });
+
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...walked,
+            plan: [],
+            live: {
+              ...walked.live!,
+              kind: 'explore',
+              outcomes: walked.live!.outcomes.map((outcome) => ({
+                ...outcome,
+                action: 'Home',
+              })),
+            },
+          },
+        ],
+      });
+
+      const { result } = renderHook(() => useDevicePanelViewModel());
+
+      expect(result.current.steps).toEqual([
+        { number: 1, action: 'Home', verdict: 'passed' },
+      ]);
+      expect(result.current).toMatchObject({
+        stepsWord: 'screens',
+        doingLabel: '',
+        emptyStepsText: 'Each screen the agent reaches shows up here.',
+      });
+    });
+
+    it('does NOT call a run of the plan anything but steps', () => {
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
+
+      expect(renderHook(() => useDevicePanelViewModel()).result.current.stepsWord).toBe(
+        'steps',
+      );
+    });
   });
 
   describe('viewportClassName', () => {

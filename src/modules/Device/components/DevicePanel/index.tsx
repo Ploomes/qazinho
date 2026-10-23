@@ -51,6 +51,8 @@ export const DevicePanel: React.FC = () => {
     isLive,
     steps,
     doingLabel,
+    stepsWord,
+    emptyStepsText,
     onToggle,
     onResize,
     onResizeStart,
@@ -208,10 +210,10 @@ export const DevicePanel: React.FC = () => {
 
               <div className="device-panel__steps">
                 <Eyebrow>
-                  {t('DEVICE.STEPS')} {doingLabel}
+                  {stepsWord} {doingLabel}
                 </Eyebrow>
                 {steps.length === 0 ? (
-                  <p className="device-panel__step">{t('DEVICE.STEPS_EMPTY')}</p>
+                  <p className="device-panel__step">{emptyStepsText}</p>
                 ) : (
                   steps.map((step) => (
                     <div key={step.number} className="device-panel__step">
@@ -241,6 +243,7 @@ export const DevicePanel: React.FC = () => {
               mood={mood}
               steps={steps}
               doingLabel={doingLabel}
+              stepsWord={stepsWord}
               hasControls={hasControls}
               pauseLabel={pauseLabel}
               viewports={viewports}
