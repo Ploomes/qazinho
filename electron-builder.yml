@@ -11,6 +11,8 @@ mac:
   category: public.app-category.developer-tools
 win:
   target: nsis
+nsis:
+  artifactName: ${productName}-Setup-${version}.${ext}
 linux:
   target: AppImage
   category: Development
