@@ -4,12 +4,12 @@ import { useStatusPillViewModel } from './hooks';
 import './styles.css';
 
 export const StatusPill: React.FC<IStatusPillProps> = (props) => {
-  const { icon, label, className } = useStatusPillViewModel(props);
+  const { icon, label, hasLabel, className } = useStatusPillViewModel(props);
 
   return (
     <span className={className}>
       <Icon name={icon} />
-      {label}
+      {hasLabel && <span className="status-pill__label">{label}</span>}
     </span>
   );
 };

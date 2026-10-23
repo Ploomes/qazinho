@@ -27,6 +27,20 @@ describe('useStatusPillViewModel', () => {
     expect(result.current.icon).toBe('running');
   });
 
+  it('holds no word at all when the caller asks for the glyph alone', () => {
+    const { result } = renderHook(() =>
+      useStatusPillViewModel({ status: 'passed', label: '' }),
+    );
+
+    expect(result.current.hasLabel).toBe(false);
+  });
+
+  it('holds its word by default', () => {
+    const { result } = renderHook(() => useStatusPillViewModel({ status: 'passed' }));
+
+    expect(result.current.hasLabel).toBe(true);
+  });
+
   it('is square unless it is asked to be round', () => {
     const square = renderHook(() => useStatusPillViewModel({ status: 'passed' }));
     const round = renderHook(() =>
