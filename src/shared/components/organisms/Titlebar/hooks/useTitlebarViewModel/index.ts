@@ -29,7 +29,7 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
     isBare,
     className: [
       'titlebar',
-      Platform.isMac() ? 'titlebar--mac' : '',
+      Platform.isMac() ? 'titlebar--mac' : 'titlebar--overlay',
       isBare ? 'titlebar--bare' : '',
     ]
       .filter((part) => part.length > 0)

@@ -27,6 +27,12 @@
   padding-left: 90px;
 }
 
+.titlebar--overlay {
+  padding-right: calc(
+    100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw) + var(--space-4)
+  );
+}
+
 .titlebar__brand {
   display: flex;
   align-items: center;

@@ -41,6 +41,27 @@ describe('useAppViewModel', () => {
       expect(fitWindow).toHaveBeenLastCalledWith('app');
     });
 
+    it("paints Windows' own window controls in the theme on screen, and leaves the Mac's alone", () => {
+      const paintWindowControls = vi.fn(() => Promise.resolve());
+
+      document.documentElement.style.setProperty('--panel', '#121316');
+      document.documentElement.style.setProperty('--ink2', '#b1afa7');
+      window.qazinho = { ...fakeQazinhoApi('win32'), paintWindowControls };
+      renderHook(() => useAppViewModel());
+
+      expect(paintWindowControls).toHaveBeenCalledWith({
+        color: '#121316',
+        symbolColor: '#b1afa7',
+      });
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), paintWindowControls };
+      paintWindowControls.mockClear();
+      renderHook(() => useAppViewModel());
+
+      expect(paintWindowControls).not.toHaveBeenCalled();
+      document.documentElement.removeAttribute('style');
+    });
+
     it('opens full straight away once the welcome was done', () => {
       const fitWindow = vi.fn(() => Promise.resolve());
 

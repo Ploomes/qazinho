@@ -58,6 +58,7 @@ import type { ISuite } from './ISuite';
 import type { ISuiteChange } from './ISuiteChange';
 import type { ISuiteRun } from './ISuiteRun';
 import type { IViewport } from './IViewport';
+import type { IWindowControls } from './IWindowControls';
 import type { JiraIssueList } from './JiraIssueList';
 import type { JiraProjectList } from './JiraProjectList';
 import type { McpActionResult } from './McpActionResult';
@@ -149,6 +150,7 @@ export interface IQazinhoApi {
   copyShot: (shot: { file: string | null; src: string | null }) => Promise<boolean>;
   pickFile: (kind: PickKind) => Promise<string | null>;
   fitWindow: (fit: WindowFit) => Promise<void>;
+  paintWindowControls: (controls: IWindowControls) => Promise<void>;
   checkMachine: () => Promise<IMachineCheck>;
   installTool: (item: InstallableId) => Promise<IInstallResult>;
   onSetupEvent: (listener: (event: ISetupEvent) => void) => () => void;

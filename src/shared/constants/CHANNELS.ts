@@ -53,6 +53,7 @@ export const CHANNELS = {
   saveShot: 'state:save-shot',
   pickFile: 'files:pick',
   fitWindow: 'window:fit',
+  paintWindowControls: 'window:controls',
   checkMachine: 'machine:check',
   installTool: 'setup:install',
   setupEvent: 'setup:event',

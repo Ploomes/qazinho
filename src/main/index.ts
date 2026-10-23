@@ -36,6 +36,7 @@ import type {
   IStartSuiteChange,
   IStartSuiteRun,
   IViewport,
+  IWindowControls,
   McpSignInProgress,
   PickKind,
   QaReply,
@@ -118,7 +119,9 @@ import {
   FILE_FILTERS,
   PATHS,
   SAVED_VIDEO,
+  APP_USER_MODEL_ID,
   WINDOW,
+  WINDOW_CONTROLS,
   WINDOW_FITS,
   WINDOW_SHOW_FALLBACK_MS,
 } from '@/main/constants';
@@ -927,8 +930,9 @@ function createWindow(): void {
     show: false,
     title: 'QAzinho',
     backgroundColor: '#0e0e0e',
-    titleBarStyle: 'hiddenInset',
-    trafficLightPosition: { x: 16, y: 16 },
+    ...(process.platform === 'darwin'
+      ? { titleBarStyle: 'hiddenInset' as const, trafficLightPosition: { x: 16, y: 16 } }
+      : { titleBarStyle: 'hidden' as const, titleBarOverlay: { ...WINDOW_CONTROLS } }),
     webPreferences: {
       preload: PATHS.preload,
       contextIsolation: true,
@@ -968,6 +972,8 @@ function createWindow(): void {
   if (PATHS.devServer) void window.loadURL(PATHS.devServer);
   else void window.loadFile(PATHS.renderer);
 }
+
+if (process.platform === 'win32') app.setAppUserModelId(APP_USER_MODEL_ID);
 
 void app.whenReady().then(async () => {
   if (!app.isPackaged) app.dock?.setIcon(PATHS.icon);
@@ -1115,6 +1121,12 @@ void app.whenReady().then(async () => {
     (_event, props: { projectId: string; changeId: string }) =>
       suiteChanges.discard(props),
   );
+  ipcMain.handle(CHANNELS.paintWindowControls, (event, controls: IWindowControls) => {
+    const window = BrowserWindow.fromWebContents(event.sender);
+
+    if (window !== null && process.platform !== 'darwin')
+      window.setTitleBarOverlay({ ...controls, height: WINDOW_CONTROLS.height });
+  });
   ipcMain.handle(CHANNELS.fitWindow, (event, fit: WindowFit) => {
     const window = BrowserWindow.fromWebContents(event.sender);
 

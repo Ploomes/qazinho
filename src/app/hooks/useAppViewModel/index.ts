@@ -8,7 +8,7 @@ import {
 } from '@/modules/Assistant';
 import { useSuiteWatch } from '@/modules/Automation';
 import { useBuildEvents } from '@/modules/Build';
-import { AppWindow } from '@/services';
+import { AppWindow, Platform } from '@/services';
 import { SHELL } from '@/shared/constants';
 import {
   useArchive,
@@ -52,6 +52,15 @@ export const useAppViewModel = () => {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
+
+    if (Platform.isMac()) return;
+
+    const style = getComputedStyle(document.documentElement);
+    const color = style.getPropertyValue('--panel').trim();
+    const symbolColor = style.getPropertyValue('--ink2').trim();
+
+    if (color !== '' && symbolColor !== '')
+      AppWindow.paintControls({ color, symbolColor });
   }, [theme]);
 
   useEffect(() => {

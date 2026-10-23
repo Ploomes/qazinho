@@ -80,6 +80,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     copyShot: () => Promise.resolve(false),
     pickFile: () => Promise.resolve(null),
     fitWindow: () => Promise.resolve(),
+    paintWindowControls: () => Promise.resolve(),
     checkMachine: () =>
       Promise.resolve({
         agents: [],

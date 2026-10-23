@@ -58,6 +58,7 @@ import type {
   ISuiteChange,
   ISuiteRun,
   IViewport,
+  IWindowControls,
   InstallableId,
   JiraIssueList,
   JiraProjectList,
@@ -243,6 +244,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.pickFile, kind) as Promise<string | null>,
   fitWindow: (fit: WindowFit) =>
     ipcRenderer.invoke(CHANNELS.fitWindow, fit) as Promise<void>,
+  paintWindowControls: (controls: IWindowControls) =>
+    ipcRenderer.invoke(CHANNELS.paintWindowControls, controls) as Promise<void>,
   checkMachine: () => ipcRenderer.invoke(CHANNELS.checkMachine) as Promise<IMachineCheck>,
   installTool: (item: InstallableId) =>
     ipcRenderer.invoke(CHANNELS.installTool, item) as Promise<IInstallResult>,

@@ -143,6 +143,7 @@ export type * from './IToolStatus';
 export type * from './ITrackerIssue';
 export type * from './IVariableBrief';
 export type * from './IViewport';
+export type * from './IWindowControls';
 export type * from './JiraFailure';
 export type * from './JiraIssueList';
 export type * from './JiraProjectList';

@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { sample } from '@/modules/Resources/library/__tests__/fixtures';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useTitlebarViewModel } from '@/shared/components/organisms/Titlebar/hooks/useTitlebarViewModel';
 import { useAppStore, useMachineStore } from '@/store';
 
@@ -34,6 +35,29 @@ describe('useTitlebarViewModel', () => {
 
     expect(result.current.isBare).toBe(true);
     expect(result.current.className).toContain('titlebar--bare');
+  });
+
+  describe('the window controls', () => {
+    afterEach(() => {
+      Reflect.deleteProperty(window, 'qazinho');
+    });
+
+    it("leaves room for the Mac's traffic lights on the left", () => {
+      window.qazinho = fakeQazinhoApi('darwin');
+
+      expect(renderHook(() => useTitlebarViewModel()).result.current.className).toContain(
+        'titlebar--mac',
+      );
+    });
+
+    it("leaves room for Windows' and Linux's own controls on the right", () => {
+      window.qazinho = fakeQazinhoApi('win32');
+
+      const { className } = renderHook(() => useTitlebarViewModel()).result.current;
+
+      expect(className).toContain('titlebar--overlay');
+      expect(className).not.toContain('titlebar--mac');
+    });
   });
 
   it('shows the whole bar everywhere else', () => {
