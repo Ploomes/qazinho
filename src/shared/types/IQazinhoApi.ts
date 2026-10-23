@@ -151,6 +151,8 @@ export interface IQazinhoApi {
   pickFile: (kind: PickKind) => Promise<string | null>;
   fitWindow: (fit: WindowFit) => Promise<void>;
   paintWindowControls: (controls: IWindowControls) => Promise<void>;
+  openLogs: () => Promise<void>;
+  copyDiagnostics: () => Promise<boolean>;
   checkMachine: () => Promise<IMachineCheck>;
   installTool: (item: InstallableId) => Promise<IInstallResult>;
   onSetupEvent: (listener: (event: ISetupEvent) => void) => () => void;

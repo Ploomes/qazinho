@@ -3,6 +3,7 @@ export * from './authorizeUrlIn';
 export * from './bytesOfDataUrl';
 export * from './collectSubtree';
 export * from './describeMeasure';
+export * from './diagnosticsOf';
 export * from './envWithOnePath';
 export * from './execCommand';
 export * from './fileNameOf';

@@ -48,7 +48,7 @@ import type {
   WindowFit,
 } from '@/shared/types';
 import { copyFile, mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
-import { homedir, tmpdir } from 'node:os';
+import { homedir, release, tmpdir } from 'node:os';
 import { delimiter, extname, join } from 'node:path';
 import {
   app,
@@ -66,6 +66,7 @@ import { Harness, McpHost, mcpConfigWith } from '@/harness';
 import {
   AgentDetector,
   AndroidDriver,
+  AppLog,
   AgentLogin,
   AgentMcp,
   AgentRunner,
@@ -119,6 +120,7 @@ import {
   PATHS,
   SAVED_VIDEO,
   APP_USER_MODEL_ID,
+  DIAGNOSTICS_LINES,
   WINDOW,
   WINDOW_CONTROLS,
   WINDOW_FITS,
@@ -137,6 +139,7 @@ import {
   isSealable,
   machineDirectories,
   execCommand,
+  diagnosticsOf,
   linuxTerminalOf,
   spawnCommand,
 } from '@/main/library';
@@ -212,6 +215,19 @@ async function openInTerminal(file: string): Promise<boolean> {
 
   return true;
 }
+
+const appLog = new AppLog({ folder: app.getPath('logs'), home: homedir() });
+
+process.on('uncaughtException', (error) => {
+  appLog.write({ level: 'error', scope: 'main', message: error.stack ?? error.message });
+});
+process.on('unhandledRejection', (reason) => {
+  appLog.write({
+    level: 'error',
+    scope: 'main',
+    message: reason instanceof Error ? (reason.stack ?? reason.message) : String(reason),
+  });
+});
 
 const installer = new SetupInstaller({
   onEvent: (event) => broadcast({ channel: CHANNELS.setupEvent, event }),
@@ -497,7 +513,16 @@ const runs = new RunCoordinator({
   live,
   tools,
   harness,
-  onEvent: (event) => broadcast({ channel: CHANNELS.runEvent, event }),
+  onEvent: (event) => {
+    if (event.kind === 'failed')
+      appLog.write({
+        level: 'warn',
+        scope: 'run',
+        message: `run failed: ${event.failure.reason}`,
+      });
+
+    broadcast({ channel: CHANNELS.runEvent, event });
+  },
   recorder,
   variablesOf: (projectId) => variables.valuesOf(projectId),
   keepVariable: async ({ projectId, variable }) =>
@@ -955,6 +980,22 @@ function createWindow(): void {
     },
   });
 
+  window.webContents.on('console-message', (event) => {
+    if (event.level === 'error')
+      appLog.write({
+        level: 'error',
+        scope: 'page',
+        message: `${event.message} (${event.sourceId}:${String(event.lineNumber)})`,
+      });
+  });
+  window.webContents.on('render-process-gone', (_event, details) => {
+    appLog.write({
+      level: 'error',
+      scope: 'page',
+      message: `the page went away: ${details.reason}, code ${String(details.exitCode)}`,
+    });
+  });
+
   window.on('focus', () => {
     alerts.seen();
   });
@@ -990,6 +1031,19 @@ function createWindow(): void {
 if (process.platform === 'win32') app.setAppUserModelId(APP_USER_MODEL_ID);
 
 void app.whenReady().then(async () => {
+  appLog.write({
+    level: 'info',
+    scope: 'app',
+    message: `QAzinho ${app.getVersion()} started on ${process.platform} ${release()} ${process.arch}`,
+  });
+  app.on('child-process-gone', (_event, details) => {
+    if (details.reason !== 'clean-exit')
+      appLog.write({
+        level: 'warn',
+        scope: 'app',
+        message: `${details.type} process gone: ${details.reason}`,
+      });
+  });
   if (!app.isPackaged) app.dock?.setIcon(PATHS.icon);
 
   await live.start();
@@ -1135,6 +1189,29 @@ void app.whenReady().then(async () => {
     (_event, props: { projectId: string; changeId: string }) =>
       suiteChanges.discard(props),
   );
+  ipcMain.handle(CHANNELS.openLogs, async () => {
+    await mkdir(appLog.where, { recursive: true });
+    await shell.openPath(appLog.where);
+  });
+  ipcMain.handle(CHANNELS.copyDiagnostics, async () => {
+    await clipboard.writeText(
+      diagnosticsOf({
+        version: app.getVersion(),
+        system: `${process.platform} ${release()} ${process.arch}`,
+        versions: {
+          electron: process.versions.electron,
+          chrome: process.versions.chrome,
+          node: process.versions.node,
+        },
+        locale: app.getLocale(),
+        agents: await agents.detect(),
+        devices: deviceTools.detect(),
+        log: await appLog.tail(DIAGNOSTICS_LINES),
+      }),
+    );
+
+    return true;
+  });
   ipcMain.handle(CHANNELS.paintWindowControls, (event, controls: IWindowControls) => {
     const window = BrowserWindow.fromWebContents(event.sender);
 

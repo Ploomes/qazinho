@@ -246,6 +246,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.fitWindow, fit) as Promise<void>,
   paintWindowControls: (controls: IWindowControls) =>
     ipcRenderer.invoke(CHANNELS.paintWindowControls, controls) as Promise<void>,
+  openLogs: () => ipcRenderer.invoke(CHANNELS.openLogs) as Promise<void>,
+  copyDiagnostics: () => ipcRenderer.invoke(CHANNELS.copyDiagnostics) as Promise<boolean>,
   checkMachine: () => ipcRenderer.invoke(CHANNELS.checkMachine) as Promise<IMachineCheck>,
   installTool: (item: InstallableId) =>
     ipcRenderer.invoke(CHANNELS.installTool, item) as Promise<IInstallResult>,
