@@ -5,9 +5,7 @@ const LIME = '#c6f432';
 const INK = '#141414';
 const RED = '#ff4d2e';
 const WHITE = '#ffffff';
-const EDGE = 13;
 const FRAME = { stage: { span: 340, foot: 0.86 }, figure: { span: 300, foot: 0.893 } };
-const TILT = (-6 * Math.PI) / 180;
 const FOOT = { x: 120, y: 235 };
 
 type Pose = {
@@ -91,7 +89,6 @@ function stickerLine(
   c: CanvasRenderingContext2D,
   line: { points: number[][]; width: number; colour: string },
 ): void {
-  stroke(c, { ...line, width: line.width + 20, colour: WHITE });
   stroke(c, line);
 }
 
@@ -331,14 +328,13 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
   },
 };
 
-/** Draws the Estagiário as a sticker in a mood at phase `t` (0 to 1): cut on `layer`, then laid on `context` with its shadows. */
+/** Draws the Estagiário flat and upright in a mood at phase `t` (0 to 1): drawn on `layer`, then laid on `context`. */
 export function drawIntern(props: {
   context: CanvasRenderingContext2D;
   layer: CanvasRenderingContext2D;
   size: number;
   mood: InternMood;
   t: number;
-  shadow: string;
   isFigure: boolean;
 }): void {
   const { context: c, layer: l, size, mood, t } = props;
@@ -353,20 +349,11 @@ export function drawIntern(props: {
     (frame.span / 2 + (pose.dx ?? 0)) * unit,
     (frame.span * frame.foot + (pose.dy ?? 0)) * unit,
   );
-  l.rotate(TILT + (pose.rot ?? 0));
+  l.rotate(pose.rot ?? 0);
   l.scale((pose.sx ?? 1) * unit, (pose.sy ?? 1) * unit);
   l.translate(-FOOT.x, -FOOT.y);
 
   traceBody(l, pose.sway ?? 0);
-  l.lineJoin = 'round';
-  l.strokeStyle = 'rgba(0, 0, 0, 0.07)';
-  l.lineWidth = EDGE * 2 + 2.5;
-  l.stroke();
-  l.strokeStyle = WHITE;
-  l.lineWidth = EDGE * 2;
-  l.stroke();
-  l.fillStyle = WHITE;
-  l.fill();
   l.fillStyle = LIME;
   l.fill();
 
@@ -383,25 +370,10 @@ export function drawIntern(props: {
   l.fillRect(0, 150, 240, 90);
   l.restore();
 
-  l.fillStyle = 'rgba(255, 255, 255, 0.5)';
-  l.beginPath();
-  l.ellipse(50, 98, 24, 7.5, -0.62, 0, TAU);
-  l.fill();
-  dot(l, { x: 80, y: 72, r: 4.5 });
-
   pose.eyes(l);
   pose.extra?.(l);
 
   c.setTransform(1, 0, 0, 1, 0, 0);
   c.clearRect(0, 0, size, size);
-  c.save();
-  c.shadowColor = props.shadow;
-  c.shadowBlur = 22 * unit;
-  c.shadowOffsetY = 11 * unit;
   c.drawImage(l.canvas, 0, 0);
-  c.shadowColor = 'rgba(0, 0, 0, 0.16)';
-  c.shadowBlur = 3 * unit;
-  c.shadowOffsetY = 2 * unit;
-  c.drawImage(l.canvas, 0, 0);
-  c.restore();
 }

@@ -10,7 +10,7 @@ export const Welcome: React.FC = () => {
   return (
     <section className="welcome">
       <div className="welcome__board" data-theme="indigo">
-        <Intern mood={mood} size={136} isOnIndigo />
+        <Intern mood={mood} size={136} />
         <h1 className="welcome__title">{title}</h1>
         <p className="welcome__body">{body}</p>
         <Button variant="primary" onClick={onAction}>

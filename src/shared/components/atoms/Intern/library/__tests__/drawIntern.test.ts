@@ -76,7 +76,6 @@ function draw(props: { mood: InternMood; t: number; isFigure?: boolean; size?: n
     size: props.size ?? 96,
     mood: props.mood,
     t: props.t,
-    shadow: 'rgba(0, 0, 0, 0.55)',
     isFigure: props.isFigure ?? false,
   });
 
@@ -95,15 +94,24 @@ const MOODS: InternMood[] = [
 ];
 
 describe('drawIntern', () => {
-  it('cuts every mood at every phase as a sticker: lime, dark eyes, a white edge', () => {
+  it('draws every mood at every phase in lime with dark eyes', () => {
     for (const mood of MOODS)
       for (const t of [0, 0.25, 0.5, 0.83, 0.99]) {
         const { sheet } = draw({ mood, t });
 
         expect(sheet.painted.has('#c6f432')).toBe(true);
         expect(sheet.painted.has('#141414')).toBe(true);
-        expect(sheet.painted.has('#ffffff')).toBe(true);
       }
+  });
+
+  /** The sticker look was heavy to work in all day: the mascot is flat, with no cut edge and no gloss. */
+  it('draws him flat: no white edge, no gloss', () => {
+    const { sheet } = draw({ mood: 'neutral', t: 0 });
+
+    expect(sheet.painted.has('#ffffff')).toBe(false);
+    expect(
+      [...sheet.painted].some((colour) => colour.startsWith('rgba(255, 255, 255')),
+    ).toBe(false);
   });
 
   it('wipes both canvases before each frame, so a moving pose leaves no trail', () => {
@@ -119,17 +127,17 @@ describe('drawIntern', () => {
     ]);
   });
 
-  it('lays the sticker down twice: once under the shadow it is given, once under a contact shadow', () => {
+  it('lays him down once, with no shadow under him', () => {
     const { screen } = draw({ mood: 'neutral', t: 0 });
 
-    expect(screen.calls.filter((call) => call === 'drawImage(sheet)')).toHaveLength(2);
-    expect(screen.shadows).toEqual(['rgba(0, 0, 0, 0.55)', 'rgba(0, 0, 0, 0.16)']);
+    expect(screen.calls.filter((call) => call === 'drawImage(sheet)')).toHaveLength(1);
+    expect(screen.shadows.filter((shadow) => shadow !== '')).toEqual([]);
   });
 
-  it('stands him at the tilt the designer stuck him on', () => {
+  it('stands him upright', () => {
     const { sheet } = draw({ mood: 'neutral', t: 0 });
 
-    expect(sheet.calls).toContain(`rotate(${String((-6 * Math.PI) / 180)})`);
+    expect(sheet.calls).toContain('rotate(0)');
   });
 
   it('crops a logo tighter than a mood, which keeps room for its marks', () => {

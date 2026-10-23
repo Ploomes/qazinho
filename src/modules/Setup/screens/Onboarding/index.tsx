@@ -67,7 +67,7 @@ export const Onboarding: React.FC = () => {
           transition={{ duration: MOTION.durationSlow, ease: MOTION.ease }}
         >
           <div className="onboarding__intern">
-            <Intern mood={mood} size={136} isOnIndigo />
+            <Intern mood={mood} size={136} />
           </div>
           <SpeechBubble text={say} onSaid={onSaid} />
         </motion.div>
