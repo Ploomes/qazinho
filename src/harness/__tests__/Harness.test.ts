@@ -12,6 +12,7 @@ import { describe, expect, it } from 'vitest';
 import {
   Harness,
   registerAppTools,
+  registerSourceTools,
   registerDeviceTools,
   registerSuiteTools,
 } from '@/harness';
@@ -357,11 +358,32 @@ describe('Harness', () => {
       expect(harness.chat(EMPTY_CHAT).prompt).not.toContain('## Runs in this workspace');
     });
 
-    it('takes every tool away from the chat', () => {
+    /** The QA named a Confluence page in words, and the chat had no way to read it. */
+    it("gives the chat the QA's Jira and Confluence to read, and no other tool of QAzinho", () => {
       expect(harness.chat(EMPTY_CHAT).tools).toEqual({
-        groups: [],
-        allowedTools: [],
+        groups: ['sources'],
+        allowedTools: ['mcp__qazinho'],
       });
+    });
+  });
+
+  describe('toldAfterReading', () => {
+    /** The agent read the story through its own tool: the next message would have handed it over whole again. */
+    it('counts a story the agent read on its own as told, so the next message leaves it out', () => {
+      const told = harness.toldAfterReading({ told: {}, story: STORY, page: null });
+      const next = harness.chat({ ...EMPTY_CHAT, story: STORY, told });
+
+      expect(next.prompt).not.toContain('## The Jira story');
+    });
+
+    it('does NOT touch what was told when the agent read nothing', () => {
+      expect(
+        harness.toldAfterReading({
+          told: { 'This workspace': 'x' },
+          story: null,
+          page: null,
+        }),
+      ).toEqual({ 'This workspace': 'x' });
     });
   });
 
@@ -857,6 +879,26 @@ describe('Harness', () => {
 
       await expect(JSON.stringify(tools, null, 2)).toMatchFileSnapshot(
         './__prompts__/suite-tools.txt',
+      );
+      await client.close();
+    });
+  });
+
+  describe('the source tools', () => {
+    /** Listed the way the chat lists them: an MCP client over an in-memory pipe, no network. */
+    it('lists them to the agent exactly as pinned', async () => {
+      const mcp = new McpServer({ name: 'qazinho', version: '0' });
+      const client = new Client({ name: 'pin', version: '0' });
+      const [ours, theirs] = InMemoryTransport.createLinkedPair();
+
+      registerSourceTools({ mcp, call: () => Promise.reject(new Error('not called')) });
+      await mcp.connect(ours);
+      await client.connect(theirs);
+
+      const { tools } = await client.listTools();
+
+      await expect(JSON.stringify(tools, null, 2)).toMatchFileSnapshot(
+        './__prompts__/source-tools.txt',
       );
       await client.close();
     });

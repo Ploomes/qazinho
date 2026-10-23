@@ -1,5 +1,6 @@
 import type { IAttachApp } from '@/harness/tools/servers/app/types';
 import type { IAttachDevice } from '@/harness/tools/servers/device/types';
+import type { IAttachSources } from '@/harness/tools/servers/sources/types';
 import type { IAttachSuite } from '@/harness/tools/servers/suite/types';
 import type { IncomingMessage, Server as HttpServer, ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
@@ -10,15 +11,17 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import { MCP_HOST } from '@/harness/tools/constants';
 import { callAppTool, registerAppTools } from '@/harness/tools/servers/app';
 import { callDeviceTool, registerDeviceTools } from '@/harness/tools/servers/device';
+import { callSourceTool, registerSourceTools } from '@/harness/tools/servers/sources';
 import { callSuiteTool, registerSuiteTools } from '@/harness/tools/servers/suite';
 import { workspaceOfPath } from './library';
 
-/** Serves QAzinho's MCP tools on loopback: a workspace's device for the length of a run, the app while the assistant answers, and a team's suite while an agent changes it. */
+/** Serves QAzinho's MCP tools on loopback: a workspace's device for the length of a run, the app while the assistant answers, a team's suite while an agent changes it, and the QA's Jira and Confluence while the chat answers. */
 export class McpHost {
   private readonly token = randomUUID();
   private readonly devices = new Map<string, IAttachDevice>();
   private readonly apps = new Map<string, IAttachApp>();
   private readonly suites = new Map<string, IAttachSuite>();
+  private readonly sources = new Map<string, IAttachSources>();
   private readonly queues = new Map<string, Promise<unknown>>();
   private server: HttpServer | null = null;
   private port = 0;
@@ -67,6 +70,16 @@ export class McpHost {
     this.queues.delete(scope);
   }
 
+  /** Serves the source tools under the scope of a chat that answers, each fetch carried out by it, until `detachSources`. */
+  public attachSources(sources: IAttachSources): void {
+    this.sources.set(sources.scope, sources);
+  }
+
+  public detachSources(scope: string): void {
+    this.sources.delete(scope);
+    this.queues.delete(scope);
+  }
+
   /** The `--mcp-config` an agent needs to reach the tools attached under a scope, and how long one call may take; null before start. */
   public mcpConfigFor(scope: string, toolTimeoutMs?: number): string | null {
     if (!this.server) return null;
@@ -88,6 +101,7 @@ export class McpHost {
     this.devices.clear();
     this.apps.clear();
     this.suites.clear();
+    this.sources.clear();
     this.queues.clear();
     this.server?.close();
     this.server = null;
@@ -102,8 +116,9 @@ export class McpHost {
     const device = scope === null ? undefined : this.devices.get(scope);
     const app = scope === null ? undefined : this.apps.get(scope);
     const suite = scope === null ? undefined : this.suites.get(scope);
+    const sources = scope === null ? undefined : this.sources.get(scope);
 
-    if (scope === null || (!device && !app && !suite)) {
+    if (scope === null || (!device && !app && !suite && !sources)) {
       response.writeHead(404).end();
 
       return;
@@ -128,6 +143,12 @@ export class McpHost {
         mcp,
         call: (call) =>
           this.inTurn({ scope, call: () => callSuiteTool({ suite, call }) }),
+      });
+    else if (sources)
+      registerSourceTools({
+        mcp,
+        call: (call) =>
+          this.inTurn({ scope, call: () => callSourceTool({ sources, call }) }),
       });
 
     const transport = new StreamableHTTPServerTransport({

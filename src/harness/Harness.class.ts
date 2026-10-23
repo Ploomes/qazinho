@@ -180,6 +180,23 @@ export class Harness {
     };
   }
 
+  /** What a chat session has read once its agent fetched a story or a page on its own, so the next message does not hand them over again. */
+  public toldAfterReading(props: {
+    told: Record<string, string>;
+    story: IJiraStoryCopy | null;
+    page: IConfluencePage | null;
+  }): Record<string, string> {
+    return changedSections({
+      sections: [
+        ...(props.story === null
+          ? []
+          : [describeStory({ story: props.story, wasTold: false })]),
+        ...(props.page === null ? [] : [describePage(props.page)]),
+      ],
+      told: props.told,
+    }).told;
+  }
+
   /** One message to the assistant: the corpus as its system prompt, the QA's words opened by what changed on screen and in the app, and the app tools. */
   public assistant(props: {
     text: string;
