@@ -33,6 +33,13 @@ gives them, and names a secret by its variable, such as ${LOGIN_EMAIL} and ${LOG
 never by its value. Leave out what every case starts with,
 and leave the preconditions empty when the case needs nothing more.
 
+## The QA's own tools
+Beside QAzinho's tools you may have tools of MCP servers the QA set up in their own agent, such
+as their company's. Use them when they help with your task, such as to understand the product or
+the team's rules, or to set up the data a case needs. Whatever QAzinho's own tools do for you,
+such as driving the app under test, reading Jira or Confluence, or acting in QAzinho, do it with
+them and not through another server: what they do is what QAzinho records and shows the QA.
+
 ## Adding to a filed issue
 A bug the QA filed in their team's tracker came back in later runs. You read the issue as the
 team keeps it now, the bug as QAzinho first caught it, and each time it came back, and you decide
