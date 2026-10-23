@@ -85,6 +85,10 @@ Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIn
     is never written to the suite's `.env`, or anywhere else.
   - On Linux, Electron seals with a fixed key when there is no GNOME Keyring or KWallet, and
     still says it can encrypt: `isSealable` refuses that, for variables and Jira's token.
+  - A password or a token written out in a plan is a variable waiting to be kept: the Plan tab
+    names the case that writes it and seals it in one click, writing `${NAME}` in its place
+    (`writtenSecretsOf`), or takes the QA's word that it is no secret (`plainValues`). Both
+    chats hold back a message that carries one (`secretIn`).
 - **GitHub's login never passes through QAzinho either.** QAzinho talks to GitHub through the
   QA's own GitHub CLI (`GithubCli`), the way it drives the QA's agent, and keeps no token.
   - Connecting runs gh's device flow out of sight; the popup shows the one-time code and opens
@@ -463,7 +467,7 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `RunCoordinator`                      | walks a plan a case per agent turn, each on the app opened anew, or from its recipe      |
 | `CodeExport`                          | writes the recorded cases as Playwright or Maestro code, in a folder the QA picks        |
 | `ResourceCollector` / `ProcessOwners` | one process sweep (`ps`, or `WindowsProcesses`), charged to whoever started it           |
-| `Archive`                             | the QA's projects, workspaces and plans, as files on disk                                |
+| `Archive`                             | the QA's projects, workspaces and plans on disk, each written whole; a broken plan aside |
 | `SetupInstaller`                      | installs an agent CLI, idb or gh on request, streaming each line it prints               |
 | `IntegrationVault`                    | connects the trackers: GitHub as gh's account, Jira's token sealed by `safeStorage`      |
 | `ConfluenceApi`                       | reads and publishes Confluence pages on Jira's site, with Jira's token                   |

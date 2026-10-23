@@ -59,7 +59,9 @@ expected. A failed step becomes a bug with its evidence. A bug that comes back i
 twice: each run's agents hear the bugs open and name one seen again, a plan step that fails again
 lands on its bug, and the Bugs tab counts the runs that saw it, with each screen; a fake agent
 walking a plan twice left one bug per problem, each seen in two runs. Everything is kept on disk,
-one folder per workspace, with the plan beside it in YAML.
+one folder per workspace, with the plan beside it in YAML, each file written whole. A plan.yaml
+broken by hand is set aside, never written over: the Plan tab says at which line, shows the file
+and reads it again once fixed.
 
 `npm run test:smoke` proves it: it drives the real browser with the real agent.
 
@@ -106,7 +108,8 @@ plan needs an account, the chat's agent offers the variables that fit and an opt
 what is missing. A step names one as `${NAME}`. The run types its value, reads any value the
 screen shows back as its name, and keeps the name in recipes and exported code. On Linux with no
 secret store QAzinho keeps none, and Android types every character but a double quote, which it
-refuses. `tests/smoke/variables.test.ts` proves the run on real Chrome with a fake agent, and a
+refuses. A password written out in a plan by hand is offered as a variable from the Plan tab, and
+the chat holds one back. `tests/smoke/variables.test.ts` proves the run on real Chrome with a fake agent, and a
 real Claude Code (Haiku) planned a login asking for the account through the window, then signed
 in with the sealed values: 8 steps of 8, with no value in the plan or the report.
 
