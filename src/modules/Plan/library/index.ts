@@ -7,6 +7,7 @@ export * from './frameUrlOf';
 export * from './keepVerdicts';
 export * from './mapCase';
 export * from './nextCaseId';
+export * from './planDocOf';
 export * from './planOfDraft';
 export * from './planWithVariableRenamed';
 export * from './removeCase';
