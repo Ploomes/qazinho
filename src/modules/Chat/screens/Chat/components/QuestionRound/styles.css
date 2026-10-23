@@ -110,7 +110,7 @@
 
 .question-round__options {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--option-min-width), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--option-min-width), 1fr));
   gap: var(--space-3);
 }
 
