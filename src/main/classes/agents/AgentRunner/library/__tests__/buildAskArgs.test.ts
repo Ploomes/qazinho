@@ -14,7 +14,22 @@ describe('buildAskArgs', () => {
       '{"disableAllHooks":true}',
       '--model',
       'sonnet',
+      '--strict-mcp-config',
     ]);
+  });
+
+  /**
+   * Without it the chat met the QA's own MCP servers: an Atlassian one offered Confluence, the
+   * call was refused for lack of a permission nobody could grant, and the agent asked the QA to
+   * grant it.
+   */
+  it("keeps the QA's own MCP servers out of a call that names none of QAzinho's", () => {
+    expect(buildAskArgs({ model: '', sessionId: null, allowedTools: [] })).toContain(
+      '--strict-mcp-config',
+    );
+    expect(
+      buildAskArgs({ model: '', sessionId: null, tools: ['Bash'], readDirs: ['/b'] }),
+    ).toContain('--strict-mcp-config');
   });
 
   /**
@@ -47,8 +62,7 @@ describe('buildAskArgs', () => {
       schema: '{"type":"object"}',
     });
 
-    expect(args).toContain('--json-schema');
-    expect(args.at(-1)).toBe('{"type":"object"}');
+    expect(args[args.indexOf('--json-schema') + 1]).toBe('{"type":"object"}');
   });
 
   it('hands the harness its instructions once, as the system prompt', () => {
@@ -58,7 +72,8 @@ describe('buildAskArgs', () => {
       systemPrompt: 'You test web apps.',
     });
 
-    expect(args.slice(-2)).toEqual(['--append-system-prompt', 'You test web apps.']);
+    expect(args[args.indexOf('--append-system-prompt') + 1]).toBe('You test web apps.');
+    expect(args.filter((arg) => arg === '--append-system-prompt')).toHaveLength(1);
   });
 
   it('gives the agent the tools the harness granted and takes every other tool away', () => {
