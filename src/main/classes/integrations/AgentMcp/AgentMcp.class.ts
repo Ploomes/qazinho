@@ -35,7 +35,7 @@ import {
 export class AgentMcp {
   private readonly findAgent: (agentId: string) => Promise<string | null>;
   private readonly openUrl: (url: string) => Promise<void>;
-  private readonly openScript: (file: string) => Promise<void>;
+  private readonly openScript: (file: string) => Promise<boolean>;
   private readonly onProgress: (progress: McpSignInProgress) => void;
   private readonly folder: string;
   private readonly signIns = new Map<string, AbortController>();
@@ -389,26 +389,36 @@ export class AgentMcp {
 
   private async signInInTerminal(run: IMcpSignInRun): Promise<McpSignInProgress> {
     const args = run.recipe.login(run.name);
-
-    if (process.platform !== 'darwin')
-      return run.report({
-        phase: 'failed',
-        at: 'terminal',
-        failure: 'manual',
-        said: [run.command, ...args].join(' '),
-        canUseTerminal: false,
-      });
-
-    const script = join(tmpdir(), AGENT_MCP.signInFile);
+    const { platform } = process;
+    const extensions = AGENT_MCP.signInExtensions;
+    const script = join(
+      tmpdir(),
+      `${AGENT_MCP.signInFile}${platform === 'darwin' ? extensions.darwin : platform === 'win32' ? extensions.win32 : extensions.other}`,
+    );
     const deadline = Date.now() + AGENT_MCP.browserSignInMs;
 
     await mkdir(this.folder, { recursive: true });
     await writeFile(
       script,
-      signInScript({ command: run.command, args, folder: this.folder, server: run.name }),
+      signInScript({
+        command: run.command,
+        args,
+        folder: this.folder,
+        server: run.name,
+        platform,
+      }),
       { mode: 0o755 },
     );
-    await this.openScript(script);
+
+    if (!(await this.openScript(script)))
+      return run.report({
+        phase: 'failed',
+        at: 'terminal',
+        failure: 'manual',
+        said: [run.command, ...args].map((part) => JSON.stringify(part)).join(' '),
+        canUseTerminal: false,
+      });
+
     run.report({ phase: 'working', at: 'terminal', url: null, opensAt: null });
 
     while (!run.signal.aborted && Date.now() < deadline) {

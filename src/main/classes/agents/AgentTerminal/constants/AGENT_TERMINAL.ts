@@ -1,5 +1,5 @@
 export const AGENT_TERMINAL = {
-  expect: '/usr/bin/expect',
+  expect: 'expect',
   height: 50,
   width: 160,
   relayFile: 'qazinho-terminal-relay.exp',

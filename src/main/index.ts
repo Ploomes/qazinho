@@ -138,6 +138,8 @@ import {
   isSealable,
   machineDirectories,
   execCommand,
+  linuxTerminalOf,
+  spawnCommand,
 } from '@/main/library';
 import { ASSISTANT_WAIT, CHANNELS } from '@/shared/constants';
 
@@ -200,6 +202,18 @@ async function commandDirectories(): Promise<string[]> {
   return machineDirectories();
 }
 
+async function openInTerminal(file: string): Promise<boolean> {
+  if (process.platform !== 'linux') return (await shell.openPath(file)) === '';
+
+  const terminal = linuxTerminalOf({ directories: await commandDirectories(), file });
+
+  if (terminal === null) return false;
+
+  spawnCommand({ ...terminal, options: { detached: true, stdio: 'ignore' } }).unref();
+
+  return true;
+}
+
 const installer = new SetupInstaller({
   onEvent: (event) => broadcast({ channel: CHANNELS.setupEvent, event }),
   directories: commandDirectories,
@@ -214,9 +228,7 @@ const codeCopies = new CodeCopies({ github, root: PATHS.code });
 const mcp = new AgentMcp({
   findAgent: (agentId) => findCommand(agentId),
   openUrl: (url) => shell.openExternal(url),
-  openScript: async (file) => {
-    await shell.openPath(file);
-  },
+  openScript: (file) => openInTerminal(file),
   onProgress: (progress) =>
     broadcast({ channel: CHANNELS.mcpSignInEvent, event: progress }),
   folder: PATHS.agentHome,

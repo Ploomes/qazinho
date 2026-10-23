@@ -220,6 +220,8 @@ async function agentsWithFakes() {
       },
       openScript: async (file) => {
         opened.scripts.push(await readFile(file, 'utf8'));
+
+        return true;
       },
       onProgress: (progress) => {
         reported.push(progress);
@@ -441,7 +443,7 @@ describe('an agent QAzinho cannot set up', () => {
     const none = new AgentMcp({
       findAgent: () => Promise.resolve(null),
       openUrl: () => Promise.resolve(),
-      openScript: () => Promise.resolve(),
+      openScript: () => Promise.resolve(true),
       onProgress: () => undefined,
       folder: tmpdir(),
     });

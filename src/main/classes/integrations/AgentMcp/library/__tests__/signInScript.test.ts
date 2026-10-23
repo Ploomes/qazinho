@@ -8,6 +8,7 @@ describe('signInScript', () => {
       args: ['/mcp'],
       folder: '/data/agent',
       server: 'figma',
+      platform: 'darwin',
     });
 
     expect(script.split('\n')[0]).toBe('#!/bin/zsh -l');
@@ -23,7 +24,40 @@ describe('signInScript', () => {
         args: ['/mcp'],
         folder: '/x',
         server: 'figma',
+        platform: 'darwin',
       }),
     ).toContain(`exec '/Users/o'\\''brien/claude' '/mcp'`);
+  });
+
+  it('runs in the plain shell on Linux, where zsh may not be', () => {
+    expect(
+      signInScript({
+        command: '/usr/bin/claude',
+        args: ['/mcp'],
+        folder: '/data',
+        server: 'figma',
+        platform: 'linux',
+      }).split('\n')[0],
+    ).toBe('#!/bin/sh');
+  });
+
+  /** cmd.exe would expand a percent sign in a path, and an npm shim must be called to come back. */
+  it('writes a batch file on Windows, its paths quoted and its percent signs doubled', () => {
+    const script = signInScript({
+      command: 'C:\\Users\\Ana\\AppData\\Roaming\\npm\\claude.cmd',
+      args: ['/mcp'],
+      folder: 'C:\\Users\\Ana\\100% QA',
+      server: 'figma',
+      platform: 'win32',
+    });
+
+    expect(script.split('\r\n')).toEqual([
+      '@echo off',
+      'cd /d "C:\\Users\\Ana\\100%% QA"',
+      'cls',
+      'echo QAzinho: pick "figma" below, choose Authenticate and finish in the browser. Then close this window.',
+      'call "C:\\Users\\Ana\\AppData\\Roaming\\npm\\claude.cmd" "/mcp"',
+      '',
+    ]);
   });
 });

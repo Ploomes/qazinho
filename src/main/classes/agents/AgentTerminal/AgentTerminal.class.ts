@@ -1,12 +1,12 @@
 import type { IAgentTerminal, ITerminalScreen, ITerminalView } from './types';
 import type { ChildProcessWithoutNullStreams } from 'node:child_process';
 import { spawn } from 'node:child_process';
-import { constants } from 'node:fs';
-import { access, mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { LinkCatcher } from '@/main/classes/agents/LinkCatcher';
+import { findOnPath, machineDirectories } from '@/main/library';
 import { AGENT_TERMINAL, RELAY_SCRIPT } from './constants';
 import { blankScreen, paintScreen } from './library';
 
@@ -42,12 +42,9 @@ export class AgentTerminal {
     });
   }
 
-  /** Whether this machine has the `expect` the hidden terminal runs on; every Mac does. */
+  /** Whether this machine has the `expect` the hidden terminal runs on: every Mac does, a Linux that installed it does, Windows never. */
   public static async isAvailable(): Promise<boolean> {
-    return access(AGENT_TERMINAL.expect, constants.X_OK).then(
-      () => true,
-      () => false,
-    );
+    return (await AgentTerminal.expect()) !== null;
   }
 
   /** Starts the agent in a hidden terminal. A page it asks the browser to open is caught, not opened. */
@@ -59,7 +56,7 @@ export class AgentTerminal {
     await mkdir(props.cwd, { recursive: true });
 
     const child = spawn(
-      AGENT_TERMINAL.expect,
+      (await AgentTerminal.expect()) ?? AGENT_TERMINAL.expect,
       ['-f', relay, props.command, ...props.args],
       {
         cwd: props.cwd,
@@ -131,5 +128,11 @@ export class AgentTerminal {
   public close(): void {
     this.child.kill();
     this.catcher.dispose();
+  }
+
+  private static async expect(): Promise<string | null> {
+    if (process.platform === 'win32') return null;
+
+    return findOnPath({ command: 'expect', directories: await machineDirectories() });
   }
 }

@@ -18,6 +18,7 @@ export * from './isLostSession';
 export * from './isSealable';
 export * from './launchHere';
 export * from './launchOf';
+export * from './linuxTerminalOf';
 export * from './machineDirectories';
 export * from './mergePathSegments';
 export * from './mp4FactsOf';

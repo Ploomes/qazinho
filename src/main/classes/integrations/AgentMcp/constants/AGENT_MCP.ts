@@ -1,7 +1,8 @@
 export const AGENT_MCP = {
   timeoutMs: 45_000,
   maxBufferBytes: 1024 * 1024,
-  signInFile: 'qazinho-mcp-sign-in.command',
+  signInFile: 'qazinho-mcp-sign-in',
+  signInExtensions: { darwin: '.command', win32: '.cmd', other: '.sh' },
   urlWaitMs: 30_000,
   headsUpMs: 3_000,
   screenWaitMs: 30_000,
