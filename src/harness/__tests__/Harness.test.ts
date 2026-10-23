@@ -358,6 +358,13 @@ describe('Harness', () => {
       expect(harness.chat(EMPTY_CHAT).prompt).not.toContain('## Runs in this workspace');
     });
 
+    /** The QA's company MCP is hers to answer for: the chat may use it, and QAzinho grants it. */
+    it("names the tool that lets the chat use the QA's own MCP servers", () => {
+      expect(harness.chat(EMPTY_CHAT).permissionTool).toBe(
+        'mcp__qazinho__approve_permission',
+      );
+    });
+
     /** The QA named a Confluence page in words, and the chat had no way to read it. */
     it("gives the chat the QA's Jira and Confluence to read, and no other tool of QAzinho", () => {
       expect(harness.chat(EMPTY_CHAT).tools).toEqual({

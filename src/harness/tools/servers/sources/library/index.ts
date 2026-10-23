@@ -3,6 +3,7 @@ export * from './confluencePageIdOf';
 export * from './jiraKeyOf';
 export * from './pageAnswerOf';
 export * from './pagesFoundOf';
+export * from './permissionOf';
 export * from './readSourceToolCall';
 export * from './registerSourceTools';
 export * from './sourceFailureOf';

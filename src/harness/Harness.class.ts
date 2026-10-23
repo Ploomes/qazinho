@@ -76,6 +76,7 @@ import {
   TOOL_GRANTS,
 } from '@/harness/tools/constants';
 import { designAccessOf, toolsOfRole } from '@/harness/tools/library';
+import { PERMISSION_TOOL } from '@/harness/tools/servers/sources/constants';
 
 /** QAzinho's product harness: what the QA's agent is told, and which of QAzinho's tools it gets. */
 export class Harness {
@@ -105,7 +106,7 @@ export class Harness {
     return designAccessOf(design);
   }
 
-  /** One chat message: the corpus as its system prompt, the QA's words opened by what the agent was not told yet, the code and the story's files it may read, the Confluence page, and the Figma design it may open. */
+  /** One chat message: the corpus as its system prompt, the QA's words opened by what the agent was not told yet, the code and the story's files it may read, the Confluence page, the Figma design it may open, and the tool that lets it use the QA's own MCP servers. */
   public chat(props: {
     text: string;
     told: Record<string, string>;
@@ -128,6 +129,7 @@ export class Harness {
     tools: IHarnessTools;
     design: IDesignAccess;
     readDirs: string[];
+    permissionTool: string;
   } {
     const news = changedSections({
       sections: [
@@ -177,6 +179,7 @@ export class Harness {
           ? [props.story.root]
           : []),
       ],
+      permissionTool: `mcp__${MCP_HOST.name}__${PERMISSION_TOOL.name}`,
     };
   }
 
