@@ -89,4 +89,13 @@ describe('markdownOfReport', () => {
       }),
     ).toBe('');
   });
+
+  it('writes a table, its pipes and line breaks kept inside its cells', () => {
+    expect(
+      markdownOfReport({
+        title: 'x',
+        blocks: [{ kind: 'table', head: ['#', 'Action'], rows: [['1', 'a | b\nc']] }],
+      }),
+    ).toBe('| # | Action |\n| --- | --- |\n| 1 | a \\| b c |');
+  });
 });

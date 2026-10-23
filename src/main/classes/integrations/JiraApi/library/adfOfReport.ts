@@ -40,6 +40,10 @@ function list(props: { type: string; items: IAdfNode[][] }): IAdfNode[] {
       ];
 }
 
+function cell(props: { type: string; said: string }): IAdfNode {
+  return { type: props.type, attrs: {}, content: [paragraph(lines(props.said))] };
+}
+
 function nodesOf(block: BugReportBlock): IAdfNode[] {
   switch (block.kind) {
     case 'heading':
@@ -76,6 +80,25 @@ function nodesOf(block: BugReportBlock): IAdfNode[] {
           }),
         ]),
       });
+    case 'table':
+      return block.rows.length === 0
+        ? []
+        : [
+            {
+              type: 'table',
+              attrs: { isNumberColumnEnabled: false, layout: 'default' },
+              content: [
+                {
+                  type: 'tableRow',
+                  content: block.head.map((said) => cell({ type: 'tableHeader', said })),
+                },
+                ...block.rows.map((row) => ({
+                  type: 'tableRow',
+                  content: row.map((said) => cell({ type: 'tableCell', said })),
+                })),
+              ],
+            },
+          ];
     case 'requests':
       return list({
         type: 'bulletList',
@@ -93,7 +116,7 @@ function nodesOf(block: BugReportBlock): IAdfNode[] {
   }
 }
 
-/** A bug's report as a Jira document: headings, paragraphs, the steps in order with the one that broke in bold, facts by label, and the failed requests as code. */
+/** A bug's report or a plan as an Atlassian document: headings, paragraphs, the steps in order with the one that broke in bold, facts by label, the failed requests as code, and tables. */
 export function adfOfReport(report: IBugReport): IAdfNode {
   return { type: 'doc', version: 1, content: report.blocks.flatMap(nodesOf) };
 }

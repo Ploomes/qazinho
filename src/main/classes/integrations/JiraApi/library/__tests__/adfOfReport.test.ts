@@ -175,4 +175,69 @@ describe('adfOfReport', () => {
       '{"type":"text","text":" — "},{"type":"text","text":"{\\"error\\":\\"down\\"}","marks":[{"type":"code"}]}',
     );
   });
+
+  it('writes a table with its header row and one row per item', () => {
+    const [table] =
+      adfOfReport({
+        title: 'x',
+        blocks: [
+          { kind: 'table', head: ['#', 'Action'], rows: [['1', 'Open\nthe cart']] },
+        ],
+      }).content ?? [];
+
+    expect(table).toEqual({
+      type: 'table',
+      attrs: { isNumberColumnEnabled: false, layout: 'default' },
+      content: [
+        {
+          type: 'tableRow',
+          content: [
+            {
+              type: 'tableHeader',
+              attrs: {},
+              content: [{ type: 'paragraph', content: [{ type: 'text', text: '#' }] }],
+            },
+            {
+              type: 'tableHeader',
+              attrs: {},
+              content: [
+                { type: 'paragraph', content: [{ type: 'text', text: 'Action' }] },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'tableRow',
+          content: [
+            {
+              type: 'tableCell',
+              attrs: {},
+              content: [{ type: 'paragraph', content: [{ type: 'text', text: '1' }] }],
+            },
+            {
+              type: 'tableCell',
+              attrs: {},
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [
+                    { type: 'text', text: 'Open' },
+                    { type: 'hardBreak' },
+                    { type: 'text', text: 'the cart' },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('leaves out a table with no rows', () => {
+    expect(
+      adfOfReport({ title: 'x', blocks: [{ kind: 'table', head: ['#'], rows: [] }] })
+        .content,
+    ).toEqual([]);
+  });
 });

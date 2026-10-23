@@ -16,4 +16,15 @@ describe('jiraSaidOf', () => {
     expect(jiraSaidOf('<html>')).toBe('');
     expect(jiraSaidOf({ errorMessages: [42], errors: null })).toBe('');
   });
+
+  it('reads Confluence too: its message, and the title and detail of each error it lists', () => {
+    expect(jiraSaidOf({ message: 'No Confluence' })).toBe('No Confluence');
+    expect(
+      jiraSaidOf({
+        errors: [
+          { title: 'A page with this title already exists', detail: 'Pick another' },
+        ],
+      }),
+    ).toBe('A page with this title already exists Pick another');
+  });
 });

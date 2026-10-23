@@ -40,6 +40,20 @@ function markdownOf(block: BugReportBlock): string[] {
               )
               .join('\n'),
           ];
+    case 'table': {
+      const row = (cells: string[]) =>
+        `| ${cells.map((said) => said.replace(/\|/g, '\\|').replace(/\n/g, ' ')).join(' | ')} |`;
+
+      return block.rows.length === 0
+        ? []
+        : [
+            [
+              row(block.head),
+              row(block.head.map(() => '---')),
+              ...block.rows.map(row),
+            ].join('\n'),
+          ];
+    }
     case 'requests':
       return block.items.length === 0
         ? []
