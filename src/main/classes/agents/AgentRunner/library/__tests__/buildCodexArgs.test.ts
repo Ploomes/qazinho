@@ -101,4 +101,14 @@ describe('buildCodexArgs', () => {
       'mcp_servers.figma.enabled=false',
     ]);
   });
+
+  it("leaves the QA's own servers on for the chat, whose call lets them in", () => {
+    const args = buildCodexArgs({
+      ...BASE,
+      ownServers: ['atlassian'],
+      permissionTool: 'mcp__qazinho__approve_permission',
+    });
+
+    expect(args.join(' ')).not.toContain('enabled=false');
+  });
 });

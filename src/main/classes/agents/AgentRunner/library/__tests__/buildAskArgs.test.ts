@@ -174,4 +174,32 @@ describe('buildAskArgs', () => {
     expect(args).not.toContain('--add-dir');
     expect(args).not.toContain('Read,Grep,Glob');
   });
+
+  /** The QA's company MCP is hers to answer for: the chat uses it, and QAzinho grants each call. */
+  it("lets the QA's own MCP servers into the chat, each call granted by QAzinho's tool", () => {
+    const args = buildAskArgs({
+      model: '',
+      sessionId: null,
+      mcpConfig: '{"mcpServers":{}}',
+      allowedTools: ['mcp__qazinho'],
+      permissionTool: 'mcp__qazinho__approve_permission',
+    });
+
+    expect(args).not.toContain('--strict-mcp-config');
+    expect(args[args.indexOf('--permission-prompt-tool') + 1]).toBe(
+      'mcp__qazinho__approve_permission',
+    );
+  });
+
+  it('does NOT let them into a call with no tool to grant them', () => {
+    const args = buildAskArgs({
+      model: '',
+      sessionId: null,
+      mcpConfig: '{"mcpServers":{}}',
+      allowedTools: ['mcp__qazinho'],
+    });
+
+    expect(args).toContain('--strict-mcp-config');
+    expect(args).not.toContain('--permission-prompt-tool');
+  });
 });

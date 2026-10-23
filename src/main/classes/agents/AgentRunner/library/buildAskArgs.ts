@@ -1,12 +1,13 @@
 import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
 
-/** The flags that make the CLI answer once, in JSON, on the session it already has, with only the tools, commands and folders it was granted, QAzinho's own tools beside them, and none of the QA's own hooks or MCP servers. */
+/** The flags that make the CLI answer once, in JSON, on the session it already has, with only the tools, commands and folders it was granted, QAzinho's own tools beside them, none of the QA's own hooks, and the QA's own MCP servers only when a tool answers the permissions they ask for. */
 export function buildAskArgs(
   props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command' | 'agentId'>,
 ): string[] {
   const { model, sessionId, schema, systemPrompt, mcpConfig, allowedTools, tools } =
     props;
+  const isOwnServers = props.permissionTool !== undefined;
   const readDirs = props.readDirs ?? [];
   const isTalk =
     mcpConfig === undefined && tools === undefined && allowedTools?.length === 0;
@@ -23,12 +24,15 @@ export function buildAskArgs(
     ...(sessionId === null ? [] : ['--resume', sessionId]),
     ...(schema === undefined ? [] : ['--json-schema', schema]),
     ...(systemPrompt === undefined ? [] : ['--append-system-prompt', systemPrompt]),
+    ...(isOwnServers ? ['--permission-prompt-tool', props.permissionTool ?? ''] : []),
     ...(mcpConfig === undefined
-      ? ['--strict-mcp-config']
+      ? isOwnServers
+        ? []
+        : ['--strict-mcp-config']
       : [
           '--mcp-config',
           mcpConfig,
-          '--strict-mcp-config',
+          ...(isOwnServers ? [] : ['--strict-mcp-config']),
           '--tools',
           (tools ?? []).join(','),
           '--allowedTools',

@@ -1,4 +1,4 @@
-/** One call to the agent's CLI, with the harness around it: its system prompt, the tools it may use and the folders, and what its environment adds. */
+/** One call to the agent's CLI, with the harness around it: its system prompt, the tools it may use and the folders, what its environment adds, and, for the chat alone, the tool that answers its permissions, which lets the QA's own MCP servers in. */
 export interface IRunAgent {
   workspaceId: string;
   agentId: string;
@@ -14,4 +14,5 @@ export interface IRunAgent {
   tools?: string[];
   writeDir?: string;
   env?: Record<string, string>;
+  permissionTool?: string;
 }

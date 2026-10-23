@@ -36,7 +36,7 @@ function servedOf(mcpConfig: string | undefined): string[] {
   }
 }
 
-/** The flags that make Codex answer once, as JSON lines, never stopping to ask for approval: read-only, or writing in one folder with the network on; of the QA's own MCP servers, only the ones QAzinho hands the call stay on. */
+/** The flags that make Codex answer once, as JSON lines, never stopping to ask for approval: read-only, or writing in one folder with the network on; the QA's own MCP servers stay on only for a call that lets them in, the chat's, else only the ones QAzinho hands it. */
 export function buildCodexArgs(
   props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command' | 'agentId'> & {
     schemaFile: string | null;
@@ -69,7 +69,7 @@ export function buildCodexArgs(
     ...(systemPrompt === undefined
       ? []
       : ['-c', `developer_instructions=${JSON.stringify(systemPrompt)}`]),
-    ...props.ownServers
+    ...(props.permissionTool === undefined ? props.ownServers : [])
       .filter((name) => !served.includes(name))
       .flatMap((name) => ['-c', `mcp_servers.${name}.enabled=false`]),
     ...(server === null
