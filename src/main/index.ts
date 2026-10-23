@@ -172,16 +172,21 @@ function appWindows(): BrowserWindow[] {
   return BrowserWindow.getAllWindows().filter((open) => !recorder.owns(open));
 }
 
-const alerts = new RunAlerts((run) => {
+function bringForward(): BrowserWindow | null {
   const [open] = appWindows();
 
-  if (!open) return;
+  if (!open) return null;
 
   if (open.isMinimized()) open.restore();
 
   open.show();
   open.focus();
-  open.webContents.send(CHANNELS.openRun, run);
+
+  return open;
+}
+
+const alerts = new RunAlerts((run) => {
+  bringForward()?.webContents.send(CHANNELS.openRun, run);
 });
 
 function broadcast(props: {
@@ -1030,6 +1035,12 @@ function createWindow(): void {
 }
 
 if (process.platform === 'win32') app.setAppUserModelId(APP_USER_MODEL_ID);
+
+if (!app.requestSingleInstanceLock()) app.exit(0);
+
+app.on('second-instance', () => {
+  bringForward();
+});
 
 void app.whenReady().then(async () => {
   appLog.write({
