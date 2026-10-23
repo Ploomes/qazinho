@@ -390,7 +390,7 @@ describe('useSidebarViewModel', () => {
   });
 
   describe('onToggle', () => {
-    it('folds the sidebar to its rail, naming each row in a hint, and opens it back', () => {
+    it('folds the sidebar to its rail, with a tip naming each row, and opens it back', () => {
       useSettingsStore.setState({ isSidebarShut: false });
 
       const { result } = renderHook(() => useSidebarViewModel());
@@ -404,7 +404,7 @@ describe('useSidebarViewModel', () => {
 
       expect(result.current.className).toBe('sidebar sidebar--shut');
       expect(result.current.toggleLabel).toBe('Unfold the sidebar');
-      expect(result.current.newProjectHint).toBe('New project');
+      expect(result.current.hasTips).toBe(true);
 
       act(() => {
         result.current.onToggle();
@@ -413,15 +413,12 @@ describe('useSidebarViewModel', () => {
       expect(result.current.isShut).toBe(false);
     });
 
-    it('does NOT hang a hint on a row while the sidebar shows its words', () => {
+    it('does NOT tip a row while the sidebar shows its words', () => {
       useSettingsStore.setState({ isSidebarShut: false });
 
       const { result } = renderHook(() => useSidebarViewModel());
 
-      expect(result.current.newProjectHint).toBeUndefined();
-      expect(
-        result.current.rows.every((row) => !('hint' in row) || row.hint === undefined),
-      ).toBe(true);
+      expect(result.current.hasTips).toBe(false);
     });
   });
 });

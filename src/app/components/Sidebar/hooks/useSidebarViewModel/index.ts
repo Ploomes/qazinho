@@ -31,7 +31,6 @@ export const useSidebarViewModel = () => {
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const isShut = useSettingsStore((state) => state.isSidebarShut);
   const toggleSidebar = useSettingsStore((state) => state.toggleSidebar);
-  const hintOf = (words: string) => (isShut ? words : undefined);
 
   const suiteRowsOf = (projectId: string): ISidebarSuiteRow[] => {
     const suite = suites[projectId];
@@ -71,7 +70,6 @@ export const useSidebarViewModel = () => {
         tone: SIDEBAR_STATUS[shown].tone,
         animation: SIDEBAR_STATUS[shown].animation,
         isSelected: screen === 'automation' && automationProjectId === projectId,
-        hint: hintOf(t('SIDEBAR.SUITE')),
       },
     ];
   };
@@ -114,7 +112,6 @@ export const useSidebarViewModel = () => {
         isSelected: workspace.id === selectedWorkspaceId,
         isWaiting: shown === 'attention',
         isRemoving: workspace.id === removingWorkspaceId,
-        hint: hintOf(workspace.name),
       })),
     ...suiteRowsOf(project.id),
     { kind: 'add' as const, id: `add-${project.id}`, projectId: project.id },
@@ -141,9 +138,7 @@ export const useSidebarViewModel = () => {
     isShut,
     toggleLabel: t(isShut ? 'SIDEBAR.OPEN' : 'SIDEBAR.SHUT'),
     onToggle: toggleSidebar,
-    newWorkspaceHint: hintOf(t('SIDEBAR.NEW_WORKSPACE')),
-    newProjectHint: hintOf(t('SIDEBAR.NEW_PROJECT')),
-    settingsHint: hintOf(t('COMMON.SETTINGS')),
+    hasTips: isShut,
     rows,
     waitingName: waiting?.name ?? null,
     onOpenWaiting: () => {

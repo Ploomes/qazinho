@@ -11,9 +11,7 @@ export const Sidebar: React.FC = () => {
     className,
     toggleLabel,
     onToggle,
-    newWorkspaceHint,
-    newProjectHint,
-    settingsHint,
+    hasTips,
     rows,
     waitingName,
     onOpenWaiting,
@@ -40,9 +38,20 @@ export const Sidebar: React.FC = () => {
             exit={STICKER.panel.exit}
             onClick={onOpenWaiting}
           >
-            <span className="sidebar__banner-icon">
-              <Icon name="ask" />
-            </span>
+            <Tooltip
+              side="right"
+              isOff={!hasTips}
+              content={
+                <span className="sidebar__tip">
+                  <span className="sidebar__tip-name">{waitingName}</span>
+                  <span className="sidebar__tip-detail">{t('SIDEBAR.ASKED_YOU')}</span>
+                </span>
+              }
+            >
+              <span className="sidebar__banner-icon">
+                <Icon name="ask" />
+              </span>
+            </Tooltip>
             <span className="sidebar__banner-text">
               <span className="sidebar__banner-name">{waitingName}</span>
               <span className="sidebar__banner-said">{t('SIDEBAR.ASKED_YOU')}</span>
@@ -84,56 +93,75 @@ export const Sidebar: React.FC = () => {
                   row.isSelected ? 'sidebar__row sidebar__row--selected' : 'sidebar__row'
                 }
               >
-                <button
-                  type="button"
-                  className="sidebar__open"
-                  title={row.hint}
-                  onClick={() => {
-                    onOpenSuite(row.projectId);
-                  }}
-                >
-                  <span className="sidebar__platform">
-                    <Icon name="suite" size={15} />
-                    <span
-                      className="sidebar__badge"
-                      style={{ color: row.tone, animation: row.animation }}
-                    >
-                      <Icon name={row.icon} />
+                <Tooltip
+                  side="right"
+                  isOff={!hasTips}
+                  content={
+                    <span className="sidebar__tip">
+                      <span className="sidebar__tip-name">{row.name}</span>
+                      <span className="sidebar__tip-detail">
+                        <span style={{ color: row.tone }}>{row.statusLabel}</span>
+                        <span aria-hidden="true">·</span>
+                        <span>{row.meta}</span>
+                      </span>
                     </span>
-                  </span>
-                  <span className="sidebar__text">
-                    <span className="sidebar__name">{row.name}</span>
-                    <span className="sidebar__detail">
+                  }
+                >
+                  <button
+                    type="button"
+                    className="sidebar__open"
+                    onClick={() => {
+                      onOpenSuite(row.projectId);
+                    }}
+                  >
+                    <span className="sidebar__platform">
+                      <Icon name="suite" size={15} />
                       <span
-                        className="sidebar__icon"
+                        className="sidebar__badge"
                         style={{ color: row.tone, animation: row.animation }}
                       >
                         <Icon name={row.icon} />
                       </span>
-                      <span style={{ color: row.tone }}>{row.statusLabel}</span>
-                      <span aria-hidden="true">·</span>
-                      <span className="sidebar__meta">{row.meta}</span>
                     </span>
-                  </span>
-                </button>
+                    <span className="sidebar__text">
+                      <span className="sidebar__name">{row.name}</span>
+                      <span className="sidebar__detail">
+                        <span
+                          className="sidebar__icon"
+                          style={{ color: row.tone, animation: row.animation }}
+                        >
+                          <Icon name={row.icon} />
+                        </span>
+                        <span style={{ color: row.tone }}>{row.statusLabel}</span>
+                        <span aria-hidden="true">·</span>
+                        <span className="sidebar__meta">{row.meta}</span>
+                      </span>
+                    </span>
+                  </button>
+                </Tooltip>
               </div>
             );
           }
 
           if (row.kind === 'add') {
             return (
-              <button
+              <Tooltip
                 key={row.id}
-                type="button"
-                className="sidebar__add"
-                title={newWorkspaceHint}
-                onClick={() => {
-                  onNewWorkspace(row.projectId);
-                }}
+                side="right"
+                isOff={!hasTips}
+                content={t('SIDEBAR.NEW_WORKSPACE')}
               >
-                <Icon name="plus" />
-                <span className="sidebar__label">{t('SIDEBAR.NEW_WORKSPACE')}</span>
-              </button>
+                <button
+                  type="button"
+                  className="sidebar__add"
+                  onClick={() => {
+                    onNewWorkspace(row.projectId);
+                  }}
+                >
+                  <Icon name="plus" />
+                  <span className="sidebar__label">{t('SIDEBAR.NEW_WORKSPACE')}</span>
+                </button>
+              </Tooltip>
             );
           }
 
@@ -144,54 +172,68 @@ export const Sidebar: React.FC = () => {
                 row.isSelected ? 'sidebar__row sidebar__row--selected' : 'sidebar__row'
               }
             >
-              <button
-                type="button"
-                className="sidebar__open"
-                title={row.hint}
-                onClick={() => {
-                  onSelectWorkspace(row.id);
-                }}
-              >
-                <span className="sidebar__platform">
-                  {row.platform !== null && (
-                    <PlatformIcon kind={row.platform} size={15} />
-                  )}
-                  <span
-                    className="sidebar__badge"
-                    style={{ color: row.tone, animation: row.animation }}
-                  >
-                    <Icon name={row.icon} />
+              <Tooltip
+                side="right"
+                isOff={!hasTips}
+                content={
+                  <span className="sidebar__tip">
+                    <span className="sidebar__tip-name">{row.name}</span>
+                    <span className="sidebar__tip-detail">
+                      <span style={{ color: row.tone }}>{row.statusLabel}</span>
+                      <span aria-hidden="true">·</span>
+                      <span>{row.meta}</span>
+                    </span>
                   </span>
-                </span>
-                <span className="sidebar__text">
-                  <span className="sidebar__name">{row.name}</span>
-                  <span
-                    className={
-                      row.isRemoving
-                        ? 'sidebar__detail sidebar__detail--hidden'
-                        : 'sidebar__detail'
-                    }
-                  >
+                }
+              >
+                <button
+                  type="button"
+                  className="sidebar__open"
+                  onClick={() => {
+                    onSelectWorkspace(row.id);
+                  }}
+                >
+                  <span className="sidebar__platform">
+                    {row.platform !== null && (
+                      <PlatformIcon kind={row.platform} size={15} />
+                    )}
                     <span
-                      className="sidebar__icon"
+                      className="sidebar__badge"
                       style={{ color: row.tone, animation: row.animation }}
                     >
                       <Icon name={row.icon} />
                     </span>
-                    <span style={{ color: row.tone }}>{row.statusLabel}</span>
-                    <span aria-hidden="true">·</span>
+                  </span>
+                  <span className="sidebar__text">
+                    <span className="sidebar__name">{row.name}</span>
                     <span
                       className={
-                        row.isWaiting
-                          ? 'sidebar__meta sidebar__meta--waiting'
-                          : 'sidebar__meta'
+                        row.isRemoving
+                          ? 'sidebar__detail sidebar__detail--hidden'
+                          : 'sidebar__detail'
                       }
                     >
-                      {row.meta}
+                      <span
+                        className="sidebar__icon"
+                        style={{ color: row.tone, animation: row.animation }}
+                      >
+                        <Icon name={row.icon} />
+                      </span>
+                      <span style={{ color: row.tone }}>{row.statusLabel}</span>
+                      <span aria-hidden="true">·</span>
+                      <span
+                        className={
+                          row.isWaiting
+                            ? 'sidebar__meta sidebar__meta--waiting'
+                            : 'sidebar__meta'
+                        }
+                      >
+                        {row.meta}
+                      </span>
                     </span>
                   </span>
-                </span>
-              </button>
+                </button>
+              </Tooltip>
 
               {row.isRemoving ? (
                 <span className="sidebar__confirm">
@@ -231,27 +273,25 @@ export const Sidebar: React.FC = () => {
         })}
       </div>
 
-      <button
-        type="button"
-        className="sidebar__add sidebar__add--project"
-        title={newProjectHint}
-        onClick={onNewProject}
-      >
-        <Icon name="plus" />
-        <span className="sidebar__label">{t('SIDEBAR.NEW_PROJECT')}</span>
-      </button>
-
-      <div className="sidebar__foot">
+      <Tooltip side="right" isOff={!hasTips} content={t('SIDEBAR.NEW_PROJECT')}>
         <button
           type="button"
-          className="sidebar__settings"
-          title={settingsHint}
-          onClick={onSettings}
+          className="sidebar__add sidebar__add--project"
+          onClick={onNewProject}
         >
-          <Icon name="settings" />
-          <span className="sidebar__label">{t('COMMON.SETTINGS')}</span>
+          <Icon name="plus" />
+          <span className="sidebar__label">{t('SIDEBAR.NEW_PROJECT')}</span>
         </button>
-        <Tooltip content={toggleLabel}>
+      </Tooltip>
+
+      <div className="sidebar__foot">
+        <Tooltip side="right" isOff={!hasTips} content={t('COMMON.SETTINGS')}>
+          <button type="button" className="sidebar__settings" onClick={onSettings}>
+            <Icon name="settings" />
+            <span className="sidebar__label">{t('COMMON.SETTINGS')}</span>
+          </button>
+        </Tooltip>
+        <Tooltip side="right" content={toggleLabel}>
           <IconButton icon="sidebar" label={toggleLabel} size="sm" onClick={onToggle} />
         </Tooltip>
       </div>

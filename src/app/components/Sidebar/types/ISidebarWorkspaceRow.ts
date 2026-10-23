@@ -12,7 +12,6 @@ export interface ISidebarWorkspaceRow {
   tone: string;
   animation: string;
   isSelected: boolean;
-  hint: string | undefined;
   isWaiting: boolean;
   isRemoving: boolean;
 }

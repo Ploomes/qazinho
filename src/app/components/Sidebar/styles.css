@@ -426,3 +426,31 @@
   margin: var(--space-3) var(--space-2);
   padding: var(--space-3) 0;
 }
+
+.sidebar .tooltip {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar__foot > .tooltip:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar__tip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sidebar__tip-name {
+  color: var(--ink);
+  font: var(--font-ui-md);
+}
+
+.sidebar__tip-detail {
+  display: flex;
+  gap: 6px;
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+}

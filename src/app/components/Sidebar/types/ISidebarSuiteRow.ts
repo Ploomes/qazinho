@@ -12,5 +12,4 @@ export interface ISidebarSuiteRow {
   tone: string;
   animation: string;
   isSelected: boolean;
-  hint: string | undefined;
 }
