@@ -122,6 +122,14 @@ again with the strip drawn under it. `tests/smoke/network.test.ts` proves the ca
 Chrome, and `strip.test.ts` the strip and the download in the built app. A phone run keeps no
 network yet.
 
+**The agent reads the API calls too.** Each action it takes on the web says which API calls failed
+while it ran and what they answered, and `network` lists the latest calls or reads what one
+answered, a 200 whose data looks wrong included: the agent weighs them in its verdict and names
+the call that failed in the bug, as the likely cause. A failed call's answer is kept beside the
+run, and a bug sent to Jira or GitHub carries it under the request. Secrets read as dots and a
+variable's value as its name, everywhere. `tools.test.ts` and `network.test.ts` prove it on real
+Chrome; a real agent has not used it yet.
+
 **A team's own Playwright suite runs in QAzinho.** A project connects the folder where the
 team keeps its suite cloned, and QAzinho reads it there and changes nothing in it: the tests by
 folder and file, listed and run by the suite's own Playwright on the QA's node, one Playwright

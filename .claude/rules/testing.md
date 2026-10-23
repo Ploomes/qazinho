@@ -68,7 +68,7 @@ Three suites that need something real behind them. They have their own config
 | `finding.test.ts`      | a bug filed on the side of a step: its screen, and the next case told of it  |
 | `agent.test.ts`        | a fake agent retries a failed action, leaves a note, or errors out           |
 | `codex.test.ts`        | a fake Codex chats in the strict schema, resumes, runs a case, signs out     |
-| `tools.test.ts`        | an MCP client calls every device tool on real Chrome, gestures and failures  |
+| `tools.test.ts`        | an MCP client calls every device tool on real Chrome, API calls included     |
 | `design.test.ts`       | a fake agent and explorer get Figma, measure the screen, file off-design     |
 | `locate.test.ts`       | alike controls numbered, labelled fields, a dropdown, a date, a component    |
 | `dialog.test.ts`       | a confirm answered OK or Cancel, a prompt typed into, and look telling it    |

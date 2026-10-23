@@ -363,6 +363,12 @@ screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `
 - **A browser's requests are kept beside its video** (`network.json`). `WebDriver` notes each one
   Chrome makes, and `privateUrlOf` writes a variable's value in its address as its name and a
   secret-looking query value as dots before it is kept. A phone keeps none yet.
+- **The agent reads the API calls** (fetch and XHR). `WebDriver` keeps the latest answers
+  (`apiCalls`, `responseBody`) and the start of what a failed call answered (`body`). The run's
+  port (`variablePort`) tells the calls that failed during each action (`failedCalls`) and answers
+  `network` (`calls`): `callLineOf` writes a call, and `maskedBody` puts secret-looking keys and
+  tokens as dots before `hiddenValues` names each variable. The kept `body` is masked the same
+  way, and a bug's report carries it under its request (`answer`).
 - The page draws them under the video (`ReplayNetwork`), and makes the video again to download
   them drawn in: `ReplayComposer` reads the run's MP4 (`readMp4`), decodes it with WebCodecs,
   draws the strip on each frame (`drawNetworkStrip`), holds the picture while the screen stood
