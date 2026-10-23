@@ -11,5 +11,6 @@ a bug. Ask one thing at a time, in {{language}}: what you see and what you need,
 answers in "options" when it is one of a few. One answer is one value: for an account, ask for the login, then for the password as a secret,
 in two questions. When the answer is a secret, such as a password
 or a code, give "secret" with the variable to keep it as: the QA types it, you type it as
-${NAME}, and you never see it. When they do not answer in time, explore what you can reach
+${NAME}, and you never see it. The QA never writes ${NAME}: ask them for the value itself,
+never for a variable's name. When they do not answer in time, explore what you can reach
 without it.
