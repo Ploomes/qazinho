@@ -252,8 +252,9 @@ answers one question per channel, for a target `{ role, platform }`:
   (`designLinkOf`), and the workspace keeps it (`design`), which its header opens in Figma:
   - A call on a workspace with a design lists the Figma server beside QAzinho's, under the name
     and address the agent signed in with (`FIGMA_MCP`, `mcpConfigWith`), so Claude Code reuses
-    its own sign-in under `--strict-mcp-config`. It is granted only the tools that read
-    (`DESIGN_TOOLS`, `designAccessOf`). Codex reads its own MCP config, where QAzinho added it.
+    its own sign-in under `--strict-mcp-config`. It is granted only the tools that read, and the
+    session Figma asks for first (`DESIGN_TOOLS`, `designAccessOf`): denied it, Haiku read
+    nothing. Codex reads its own MCP config, where QAzinho added it.
   - The chat names the file and the node (`describeDesign`), and the agent reads the frames as it
     plans. Each step that lands on a designed screen names its frame (`frame`), and the plan
     opens it in Figma (`frameUrlOf`).

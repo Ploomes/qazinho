@@ -186,8 +186,10 @@ Estagiário links or unlinks a design, hands a workspace's chat a plan against o
 which steps and bugs belong to a frame. A strict MCP config
 under the same name and address reuses Claude Code's sign-in, checked against the real CLI;
 `tests/smoke/design.test.ts` drives a fake agent on real Chrome, and `tools.test.ts` measures a
-control there. A real agent has not read a real frame yet. Figma counts every read, a few a month
-on some seats, so a case walked again from its recipe checks no design.
+control there. A real Claude Code (Haiku) planned from a real frame, captured into Figma from a
+checkout page, and walked a copy with four planted differences: it filed the title, the total's
+size and the button's colour and corners, each on its frame, for about a cent. Figma counts every
+read, a few a month on some seats, so a case walked again from its recipe checks no design.
 
 **A Jira story becomes the plan's requirement.** With Jira connected, `/jira` in the chat picks a
 story: the ones the QA opened last, or one found by its key or its words. QAzinho reads it whole
