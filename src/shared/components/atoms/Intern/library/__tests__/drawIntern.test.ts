@@ -13,6 +13,7 @@ const METHODS = [
   'beginPath',
   'moveTo',
   'lineTo',
+  'quadraticCurveTo',
   'ellipse',
   'arc',
   'roundRect',
@@ -154,6 +155,16 @@ describe('drawIntern', () => {
     expect(screen.shadows).toEqual(['rgba(0, 0, 0, 0.55)', 'rgba(0, 0, 0, 0.16)']);
   });
 
+  /** The designer swapped his stub for an antenna with a ball at its tip, which sways with him. */
+  it('tops him with an antenna, its ball at the tip, swaying with him', () => {
+    const still = draw({ mood: 'neutral', t: 0 });
+    const swaying = draw({ mood: 'neutral', t: 0.25 });
+
+    expect(still.sheet.calls).toContain('quadraticCurveTo(152,30,172,14)');
+    expect(still.sheet.calls).toContain(`arc(176,12,15,0,${String(Math.PI * 2)})`);
+    expect(swaying.sheet.calls).toContain(`rotate(${String(0.06 * 1.4)})`);
+  });
+
   it('stands him upright', () => {
     const { sheet } = draw({ mood: 'neutral', t: 0 });
 
@@ -177,13 +188,18 @@ describe('drawIntern', () => {
     expect(sheet.painted.has('#ff4d2e')).toBe(true);
   });
 
-  it('draws his thoughts as white-edged dots, one more each quarter', () => {
+  it('draws his thoughts as white-edged dots, one more each quarter, rising to his left clear of the antenna', () => {
     const arcs = (t: number) =>
       draw({ mood: 'thinking', t }).sheet.calls.filter((call) =>
-        call.startsWith('arc(196,12'),
+        call.startsWith('arc(62,18'),
       );
 
     expect(arcs(0.1)).toHaveLength(0);
     expect(arcs(0.3)).toHaveLength(2);
+    expect(
+      draw({ mood: 'thinking', t: 0.8 }).sheet.calls.filter((call) =>
+        call.startsWith('arc(6,-18'),
+      ),
+    ).toHaveLength(2);
   });
 });

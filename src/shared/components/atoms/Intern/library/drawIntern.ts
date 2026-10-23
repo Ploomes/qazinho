@@ -9,6 +9,13 @@ const EDGE = 13;
 const TILT = (-6 * Math.PI) / 180;
 const FRAME = { stage: { span: 340, foot: 0.86 }, figure: { span: 300, foot: 0.893 } };
 const FOOT = { x: 120, y: 235 };
+const ANTENNA = {
+  pivot: [150, 60],
+  stalk: [150, 62, 152, 30, 172, 14],
+  width: 10,
+  tip: [176, 12, 15],
+} as const;
+const SWAY = 1.4;
 
 type Pose = {
   sway?: number;
@@ -18,7 +25,7 @@ type Pose = {
   sx?: number;
   sy?: number;
   eyes: (c: CanvasRenderingContext2D) => void;
-  extra?: (c: CanvasRenderingContext2D) => void;
+  extra?: (c: CanvasRenderingContext2D, isSticker: boolean) => void;
 };
 
 function pill(c: CanvasRenderingContext2D, box: [number, number, number, number]): void {
@@ -60,15 +67,37 @@ function traceHead(c: CanvasRenderingContext2D): void {
   traceBox(c, { x: 0, y: 44, w: 240, h: 191, top: [104, 83], bottom: [56, 45] });
 }
 
-function traceBody(c: CanvasRenderingContext2D, sway: number): void {
-  c.beginPath();
+function antenna(
+  c: CanvasRenderingContext2D,
+  pass: { sway: number; colour: string; spread: number },
+): void {
+  const [px, py] = ANTENNA.pivot;
+  const [x0, y0, cx, cy, x1, y1] = ANTENNA.stalk;
+  const [tx, ty, tr] = ANTENNA.tip;
+
   c.save();
-  c.translate(127.5, 52);
-  c.rotate(sway - (8 * Math.PI) / 180);
-  c.translate(-22.5, -49);
-  traceBox(c, { x: 0, y: 0, w: 45, h: 56, top: [22.5, 31.4], bottom: [13.5, 24.6] });
+  c.translate(px, py);
+  c.rotate(pass.sway);
+  c.translate(-px, -py);
+  c.strokeStyle = pass.colour;
+  c.fillStyle = pass.colour;
+  c.lineCap = 'round';
+  c.lineJoin = 'round';
+  c.lineWidth = ANTENNA.width + pass.spread;
+  c.beginPath();
+  c.moveTo(x0, y0);
+  c.quadraticCurveTo(cx, cy, x1, y1);
+  c.stroke();
+  c.beginPath();
+  c.arc(tx, ty, tr, 0, TAU);
+
+  if (pass.spread > 0) {
+    c.lineWidth = pass.spread;
+    c.stroke();
+  }
+
+  c.fill();
   c.restore();
-  traceHead(c);
 }
 
 function stroke(
@@ -89,8 +118,10 @@ function stroke(
 
 function stickerLine(
   c: CanvasRenderingContext2D,
-  line: { points: number[][]; width: number; colour: string },
+  line: { points: number[][]; width: number; colour: string; isSticker: boolean },
 ): void {
+  if (line.isSticker) stroke(c, { ...line, width: line.width + 20, colour: WHITE });
+
   stroke(c, line);
 }
 
@@ -239,12 +270,16 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
         pill(c, [125 + ox, 90, 33, 56]);
       },
       extra: (c) => {
-        [196, 226, 256].forEach((x, index) => {
+        [
+          [62, 18],
+          [34, 0],
+          [6, -18],
+        ].forEach(([x = 0, y = 0], index) => {
           if (index >= dots) return;
           c.fillStyle = WHITE;
-          dot(c, { x, y: 12, r: 15 });
+          dot(c, { x, y, r: 15 });
           c.fillStyle = INK;
-          dot(c, { x, y: 12, r: 8.5 });
+          dot(c, { x, y, r: 8.5 });
         });
       },
     };
@@ -277,9 +312,10 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
           });
         }
       },
-      extra: (c) => {
+      extra: (c, isSticker) => {
         if (t < 0.5 && frame % 4 < 2)
           stickerLine(c, {
+            isSticker,
             points: [
               [226, 44],
               [244, 30],
@@ -304,16 +340,17 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
         pill(c, [60, 144, 44, 13]);
         pill(c, [129, 144, 44, 13]);
       },
-      extra: (c) => {
+      extra: (c, isSticker) => {
         for (let k = 0; k < 2; k += 1) {
           const u = (t + k * 0.5) % 1;
           const fade = u < 0.15 ? u / 0.15 : 1 - (u - 0.15) / 0.85;
           const s = 18 + 12 * u;
-          const x = 204 + 22 * u;
-          const y = 34 - 56 * u;
+          const x = 214 + 22 * u;
+          const y = 46 - 56 * u;
 
           c.globalAlpha = Math.max(0, Math.min(1, fade));
           stickerLine(c, {
+            isSticker,
             points: [
               [x, y],
               [x + s, y],
@@ -330,7 +367,7 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
   },
 };
 
-/** Draws the Estagiário in a mood at phase `t` (0 to 1) on `layer`, then lays him on `context`: flat and upright, or as the logo's sticker when `sticker` names its shadow. */
+/** Draws the Estagiário, his antenna swaying, in a mood at phase `t` (0 to 1) on `layer`, then lays him on `context`: flat and upright, or as the logo's sticker when `sticker` names its shadow. */
 export function drawIntern(props: {
   context: CanvasRenderingContext2D;
   layer: CanvasRenderingContext2D;
@@ -356,20 +393,32 @@ export function drawIntern(props: {
   l.scale((pose.sx ?? 1) * unit, (pose.sy ?? 1) * unit);
   l.translate(-FOOT.x, -FOOT.y);
 
-  traceBody(l, pose.sway ?? 0);
+  const sway = (pose.sway ?? 0) * SWAY;
+  const isSticker = props.sticker !== null;
 
-  if (props.sticker !== null) {
+  if (isSticker) {
     l.lineJoin = 'round';
+    l.beginPath();
+    traceHead(l);
     l.strokeStyle = 'rgba(0, 0, 0, 0.07)';
     l.lineWidth = EDGE * 2 + 2.5;
     l.stroke();
+    antenna(l, { sway, colour: 'rgba(0, 0, 0, 0.07)', spread: EDGE * 2 + 2.5 });
+    l.beginPath();
+    traceHead(l);
     l.strokeStyle = WHITE;
     l.lineWidth = EDGE * 2;
     l.stroke();
+    l.fillStyle = WHITE;
+    l.fill();
+    antenna(l, { sway, colour: WHITE, spread: EDGE * 2 });
   }
 
+  l.beginPath();
+  traceHead(l);
   l.fillStyle = LIME;
   l.fill();
+  antenna(l, { sway, colour: LIME, spread: 0 });
 
   l.save();
   l.beginPath();
@@ -384,16 +433,25 @@ export function drawIntern(props: {
   l.fillRect(0, 150, 240, 90);
   l.restore();
 
-  if (props.sticker !== null) {
+  if (isSticker) {
+    const [px, py] = ANTENNA.pivot;
+
     l.fillStyle = 'rgba(255, 255, 255, 0.5)';
     l.beginPath();
     l.ellipse(50, 98, 24, 7.5, -0.62, 0, TAU);
     l.fill();
     dot(l, { x: 80, y: 72, r: 4.5 });
+    l.save();
+    l.translate(px, py);
+    l.rotate(sway);
+    l.translate(-px, -py);
+    l.fillStyle = 'rgba(255, 255, 255, 0.6)';
+    dot(l, { x: 171, y: 7, r: 4 });
+    l.restore();
   }
 
   pose.eyes(l);
-  pose.extra?.(l);
+  pose.extra?.(l, isSticker);
 
   c.setTransform(1, 0, 0, 1, 0, 0);
   c.clearRect(0, 0, size, size);
