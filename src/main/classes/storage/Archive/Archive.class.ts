@@ -3,12 +3,13 @@ import type {
   IRunRef,
   ISavedState,
   ISavedWorkspace,
+  UnreadPlanRead,
 } from '@/shared/types';
-import { mkdir, readdir, readFile, rm } from 'node:fs/promises';
+import { mkdir, readdir, readFile, rename, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { writeAtomically } from '@/main/library';
 import { ARCHIVE } from './constants';
-import { isInside, networkOf, readTextOr } from './library';
+import { asideNameOf, isInside, networkOf, planFaultOf, readTextOr } from './library';
 
 /** Everything QAzinho keeps between sessions, as files the QA can open, diff and commit. */
 export class Archive {
@@ -79,6 +80,38 @@ export class Archive {
     return text === null ? null : networkOf(text);
   }
 
+  /** A plan set aside, read again once the QA fixed it; one that reads now leaves the folder, since the plan it holds is the workspace's again. */
+  public async readUnreadPlan(props: {
+    workspaceId: string;
+    file: string;
+  }): Promise<UnreadPlanRead> {
+    const file = this.unreadPlanFile(props);
+    const yaml = file === null ? null : await readFile(file, 'utf8').catch(() => null);
+
+    if (file === null || yaml === null) return { status: 'gone' };
+
+    const fault = planFaultOf(yaml);
+
+    if (fault !== null) return { status: 'unreadable', line: fault.line };
+
+    await rm(file, { force: true });
+
+    return { status: 'read', yaml };
+  }
+
+  /** Where a plan set aside sits, for the QA to open it; null for a name QAzinho never gave one. */
+  public unreadPlanFile(props: { workspaceId: string; file: string }): string | null {
+    if (
+      !ARCHIVE.unreadPlan.test(props.file) ||
+      !ARCHIVE.workspaceId.test(props.workspaceId)
+    )
+      return null;
+
+    const file = join(this.folderOf(props.workspaceId), props.file);
+
+    return isInside({ root: this.root, file }) ? file : null;
+  }
+
   /** The page cannot read disk, so a screenshot it no longer holds comes back inline. */
   public async readShot(file: string): Promise<string | null> {
     const image = await this.readShotBytes(file);
@@ -129,13 +162,25 @@ export class Archive {
           file: join(folder, id, ARCHIVE.workspace),
           fallback: '',
         }),
-        planYaml: await readTextOr({
-          file: join(folder, id, ARCHIVE.plan),
-          fallback: '',
-        }),
+        ...(await this.readPlan(join(folder, id))),
       })),
     );
 
     return saved.filter(({ json }) => json.length > 0);
+  }
+
+  private async readPlan(
+    folder: string,
+  ): Promise<Pick<ISavedWorkspace, 'planYaml' | 'unreadPlan'>> {
+    const planYaml = await readTextOr({ file: join(folder, ARCHIVE.plan), fallback: '' });
+    const fault = planFaultOf(planYaml);
+
+    if (fault === null) return { planYaml };
+
+    const file = asideNameOf(new Date());
+
+    await rename(join(folder, ARCHIVE.plan), join(folder, file));
+
+    return { planYaml: '', unreadPlan: { file, line: fault.line } };
   }
 }
