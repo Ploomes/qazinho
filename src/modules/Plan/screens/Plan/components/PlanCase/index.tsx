@@ -8,6 +8,9 @@ import './styles.css';
 
 export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
   const {
+    summary,
+    priority,
+    expectLabel,
     className,
     steps,
     verdict,
@@ -82,7 +85,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
           }}
         />
 
-        <span className="plan-case__priority">{props.testCase.priority}</span>
+        {priority !== null && <span className="plan-case__priority">{priority}</span>}
         <StatusPill status={verdict} />
 
         {!props.isLocked && (
@@ -108,6 +111,16 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
             <div className="plan-case__body">
+              {summary !== null && (
+                <p className={`plan-case__summary plan-case__summary--${summary.tone}`}>
+                  <Icon name={summary.tone} />
+                  <span className="plan-case__summary-text">{summary.text}</span>
+                  {summary.note !== null && (
+                    <span className="plan-case__summary-note">{summary.note}</span>
+                  )}
+                </p>
+              )}
+
               <dl className="plan-case__meta">
                 <dt className="plan-case__label">{t('PLAN.GOAL')}</dt>
                 <dd className="plan-case__field">
@@ -133,37 +146,33 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                 </dd>
               </dl>
 
-              <div className="plan-case__table">
-                <div className="plan-case__row plan-case__row--head">
-                  <span className="plan-case__column">{t('PLAN.COLUMN_NUMBER')}</span>
-                  <span className="plan-case__column">{t('PLAN.COLUMN_ACTION')}</span>
-                  <span className="plan-case__column">{t('PLAN.COLUMN_EXPECTED')}</span>
-                  <span className="plan-case__column">{t('PLAN.COLUMN_LAST_RUN')}</span>
-                </div>
-
+              <ol className="plan-case__steps">
                 {steps.map((step) => (
-                  <div key={step.number} className="plan-case__row">
+                  <li key={step.number} className="plan-case__step">
                     <span className="plan-case__step-number">{step.number}</span>
-                    <span className="plan-case__action">
-                      <EditableText
-                        value={step.action}
-                        placeholder={t('PLAN.ACTION_PLACEHOLDER')}
-                        isLocked={props.isLocked}
-                        isAutoFocused={step.isFresh}
-                        onCommit={(action) => {
-                          onStepCommit({ index: step.number - 1, step: { action } });
-                        }}
-                      />
-                    </span>
-                    <span className="plan-case__expected">
-                      <EditableText
-                        value={step.expected}
-                        placeholder={t('PLAN.EXPECTED_PLACEHOLDER')}
-                        isLocked={props.isLocked}
-                        onCommit={(expected) => {
-                          onStepCommit({ index: step.number - 1, step: { expected } });
-                        }}
-                      />
+                    <div className="plan-case__step-body">
+                      <span className="plan-case__action">
+                        <EditableText
+                          value={step.action}
+                          placeholder={t('PLAN.ACTION_PLACEHOLDER')}
+                          isLocked={props.isLocked}
+                          isAutoFocused={step.isFresh}
+                          onCommit={(action) => {
+                            onStepCommit({ index: step.number - 1, step: { action } });
+                          }}
+                        />
+                      </span>
+                      <span className="plan-case__expected">
+                        <span className="plan-case__expect-label">{expectLabel}</span>
+                        <EditableText
+                          value={step.expected}
+                          placeholder={t('PLAN.EXPECTED_PLACEHOLDER')}
+                          isLocked={props.isLocked}
+                          onCommit={(expected) => {
+                            onStepCommit({ index: step.number - 1, step: { expected } });
+                          }}
+                        />
+                      </span>
                       {step.frame !== null && (
                         <a
                           className="plan-case__frame"
@@ -177,12 +186,14 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                           <Icon name="external" />
                         </a>
                       )}
-                    </span>
-                    <span
-                      className={`plan-case__verdict plan-case__verdict--${step.verdict}`}
-                    >
-                      <Icon name={step.verdictIcon} /> {step.verdictLabel}
-                    </span>
+                    </div>
+                    {step.isVerdictShown && (
+                      <span
+                        className={`plan-case__verdict plan-case__verdict--${step.verdict}`}
+                      >
+                        <Icon name={step.verdictIcon} /> {step.verdictLabel}
+                      </span>
+                    )}
                     {canRemoveStep && (
                       <button
                         type="button"
@@ -195,15 +206,15 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                         <Icon name="close" />
                       </button>
                     )}
-                  </div>
+                  </li>
                 ))}
+              </ol>
 
-                {!props.isLocked && (
-                  <button type="button" className="plan-case__add" onClick={onStepAdd}>
-                    {t('PLAN.ADD_STEP')}
-                  </button>
-                )}
-              </div>
+              {!props.isLocked && (
+                <button type="button" className="plan-case__add" onClick={onStepAdd}>
+                  {t('PLAN.ADD_STEP')}
+                </button>
+              )}
             </div>
           </motion.div>
         )}

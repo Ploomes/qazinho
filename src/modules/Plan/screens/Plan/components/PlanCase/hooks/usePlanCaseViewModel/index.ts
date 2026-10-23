@@ -14,7 +14,48 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
   const [isPickedUp, setIsPickedUp] = useState(false);
   const [freshStep, setFreshStep] = useState<number | null>(null);
 
+  const ran = props.lastRun?.steps ?? [];
+  const stopped = ran.find(
+    ({ verdict }) => verdict === 'failed' || verdict === 'blocked',
+  );
+  const isAllPassed = ran.length > 0 && ran.every(({ verdict }) => verdict === 'passed');
+
   return {
+    summary:
+      stopped !== undefined
+        ? {
+            tone:
+              stopped.verdict === 'failed' ? ('failed' as const) : ('blocked' as const),
+            text: t(
+              stopped.verdict === 'failed'
+                ? 'PLAN.CASE_FAILED_AT'
+                : 'PLAN.CASE_BLOCKED_AT',
+              {
+                number: stopped.number,
+                total: testCase.steps.length,
+                action: stopped.action,
+              },
+            ),
+            note: null,
+          }
+        : isAllPassed
+          ? {
+              tone: 'passed' as const,
+              text: t(
+                ran.length === 1 ? 'PLAN.CASE_PASSED_ONE' : 'PLAN.CASE_PASSED_OTHER',
+                {
+                  count: ran.length,
+                },
+              ),
+              note: ran.some(({ by }) => by === 'healed')
+                ? t('RUN.BY_HEALED')
+                : ran.every(({ by }) => by === 'replay')
+                  ? t('RUN.BY_REPLAY')
+                  : null,
+            }
+          : null,
+    priority: testCase.priority === 'P1' ? testCase.priority : null,
+    expectLabel: t('PLAN.EXPECT'),
     className: isPickedUp ? 'plan-case plan-case--picked' : 'plan-case',
     steps: testCase.steps.map((step, index) => {
       const verdict =
@@ -26,8 +67,10 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
         number: index + 1,
         isFresh: index === freshStep,
         verdict,
+        isVerdictShown: verdict !== 'passed' && verdict !== 'pending',
         verdictIcon: STATUS[verdict].icon,
-        verdictLabel: t(STATUS[verdict].labelKey),
+        verdictLabel:
+          verdict === 'skipped' ? t('PLAN.NOT_REACHED') : t(STATUS[verdict].labelKey),
         frame:
           design === null || step.frame === undefined
             ? null

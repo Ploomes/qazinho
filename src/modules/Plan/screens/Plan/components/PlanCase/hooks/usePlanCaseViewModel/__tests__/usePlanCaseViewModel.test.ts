@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import type { StepVerdict } from '@/shared/types';
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { usePlanCaseViewModel } from '@/modules/Plan/screens/Plan/components/PlanCase/hooks/usePlanCaseViewModel';
@@ -19,8 +20,30 @@ const PROPS = {
   onEditStep: vi.fn(),
 };
 
+const ranStep = (props: {
+  number: number;
+  verdict: StepVerdict;
+  by?: 'replay' | 'healed';
+}) => ({
+  action: `Step ${props.number}`,
+  why: null,
+  bugId: null,
+  shot: null,
+  shotFile: null,
+  span: null,
+  ...props,
+});
+
+const lastRunOf = (steps: ReturnType<typeof ranStep>[]) => ({
+  id: TEST_CASE.id,
+  title: TEST_CASE.title,
+  verdict: 'passed' as const,
+  durationSec: 4,
+  steps,
+});
+
 describe('usePlanCaseViewModel', () => {
-  it('numbers the steps as the table shows them', () => {
+  it('numbers the steps as the list shows them', () => {
     const { result } = renderHook(() => usePlanCaseViewModel(PROPS));
 
     expect(result.current.steps.map(({ number }) => number)).toEqual([1, 2, 3]);
@@ -256,6 +279,97 @@ describe('usePlanCaseViewModel', () => {
         false,
         true,
       ]);
+    });
+  });
+  describe('the last run, in a sentence', () => {
+    it('says every step passed, and that it ran with no AI', () => {
+      const lastRun = lastRunOf(
+        [1, 2, 3].map((number) => ranStep({ number, verdict: 'passed', by: 'replay' })),
+      );
+      const { result } = renderHook(() => usePlanCaseViewModel({ ...PROPS, lastRun }));
+
+      expect(result.current.summary).toEqual({
+        tone: 'passed',
+        text: 'All 3 steps passed in the last run',
+        note: 'no AI',
+      });
+    });
+
+    it('says a step was healed over a run with no AI', () => {
+      const lastRun = lastRunOf([
+        ranStep({ number: 1, verdict: 'passed', by: 'replay' }),
+        ranStep({ number: 2, verdict: 'passed', by: 'healed' }),
+      ]);
+      const { result } = renderHook(() => usePlanCaseViewModel({ ...PROPS, lastRun }));
+
+      expect(result.current.summary?.note).toBe('healed');
+    });
+
+    it('names the step it failed at, of how many, and what it did there', () => {
+      const lastRun = lastRunOf([
+        ranStep({ number: 1, verdict: 'passed' }),
+        ranStep({ number: 2, verdict: 'failed' }),
+        ranStep({ number: 3, verdict: 'skipped' }),
+      ]);
+      const { result } = renderHook(() => usePlanCaseViewModel({ ...PROPS, lastRun }));
+
+      expect(result.current.summary).toEqual({
+        tone: 'failed',
+        text: 'Failed at step 2 of 3: Step 2',
+        note: null,
+      });
+    });
+
+    it('does NOT sum up a case that never ran', () => {
+      expect(
+        renderHook(() => usePlanCaseViewModel(PROPS)).result.current.summary,
+      ).toBeNull();
+    });
+  });
+
+  describe('each step', () => {
+    it('shows a verdict only where the step did not pass', () => {
+      const lastRun = lastRunOf([
+        ranStep({ number: 1, verdict: 'passed' }),
+        ranStep({ number: 2, verdict: 'failed' }),
+        ranStep({ number: 3, verdict: 'skipped' }),
+      ]);
+      const { result } = renderHook(() => usePlanCaseViewModel({ ...PROPS, lastRun }));
+
+      expect(
+        result.current.steps.map(({ isVerdictShown, verdictLabel }) => [
+          isVerdictShown,
+          verdictLabel,
+        ]),
+      ).toEqual([
+        [false, 'passed'],
+        [true, 'failed'],
+        [true, 'not reached'],
+      ]);
+    });
+
+    it('does NOT mark the steps of a case that never ran', () => {
+      const { result } = renderHook(() => usePlanCaseViewModel(PROPS));
+
+      expect(result.current.steps.some(({ isVerdictShown }) => isVerdictShown)).toBe(
+        false,
+      );
+    });
+  });
+
+  describe('the priority', () => {
+    it('stands out only on a P1 case', () => {
+      const p1 = { ...TEST_CASE, priority: 'P1' as const };
+      const p2 = { ...TEST_CASE, priority: 'P2' as const };
+
+      expect(
+        renderHook(() => usePlanCaseViewModel({ ...PROPS, testCase: p1 })).result.current
+          .priority,
+      ).toBe('P1');
+      expect(
+        renderHook(() => usePlanCaseViewModel({ ...PROPS, testCase: p2 })).result.current
+          .priority,
+      ).toBeNull();
     });
   });
 });
