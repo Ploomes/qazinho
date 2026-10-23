@@ -1,10 +1,12 @@
 // @vitest-environment jsdom
 import type {
   ExportOutcome,
+  IApplyVariables,
   IExportCode,
   IPublishPlan,
   PlanPublished,
   UnreadPlanRead,
+  VariablesOutcome,
 } from '@/shared/types';
 import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -681,6 +683,109 @@ describe('usePlanViewModel', () => {
       });
 
       expect(result.current.undo).toBeNull();
+    });
+  });
+
+  describe('a secret written out in the plan', () => {
+    /** A bridge whose keychain answers as told, and remembers what it was asked to keep. */
+    function sealing(outcome: VariablesOutcome) {
+      const asked: IApplyVariables[] = [];
+
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        applyVariables: (apply) => {
+          asked.push(apply);
+
+          return Promise.resolve(outcome);
+        },
+      };
+
+      return asked;
+    }
+
+    const writing = () =>
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...makeWorkspace(),
+            plan: [
+              {
+                ...CASES[0]!,
+                id: 'TC-01',
+                steps: [
+                  {
+                    action: 'Entrar com qa@loja.test e a senha Teste-1234',
+                    expected: 'Entra',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      });
+
+    afterEach(() => {
+      useVariablesStore.setState({ byProject: {}, request: null });
+    });
+
+    /** A QA moving from manual testing wrote the password in the step, and it rode into every run. */
+    it('names the case that writes it and offers to keep it as a variable', () => {
+      writing();
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      expect(result.current.secretNotice).toMatchObject({
+        text: expect.stringContaining('TC-01 writes a password out in the plan'),
+        failure: null,
+      });
+    });
+
+    it('seals it under a free name and writes the name in its place', async () => {
+      writing();
+      useVariablesStore.setState({
+        byProject: { p1: [{ name: 'PASSWORD', description: 'Another one' }] },
+      });
+
+      const asked = sealing({ isSaved: true, variables: [] });
+      const { result } = renderHook(() => usePlanViewModel());
+
+      act(() => {
+        result.current.onKeepSecret();
+      });
+
+      await waitFor(() => {
+        expect(
+          useWorkspaceStore.getState().workspaces[0]?.plan[0]?.steps[0]?.action,
+        ).toBe('Entrar com qa@loja.test e a senha ${PASSWORD_2}');
+      });
+      expect(asked[0]?.changes).toEqual([
+        {
+          kind: 'save',
+          name: 'PASSWORD_2',
+          description: 'The password TC-01 signs in with',
+          value: 'Teste-1234',
+          from: null,
+        },
+      ]);
+      expect(result.current.secretNotice).toBeNull();
+    });
+
+    it('does NOT touch the plan when the keychain kept nothing, and says why', async () => {
+      writing();
+      sealing({ isSaved: false, failure: { reason: 'no-keychain' } });
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      act(() => {
+        result.current.onKeepSecret();
+      });
+
+      await waitFor(() => {
+        expect(result.current.secretNotice?.failure).toContain('no keychain');
+      });
+      expect(
+        useWorkspaceStore.getState().workspaces[0]?.plan[0]?.steps[0]?.action,
+      ).toContain('Teste-1234');
     });
   });
 

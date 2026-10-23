@@ -11,16 +11,19 @@ import {
   caseIdsUsed,
   editCase,
   editStep,
+  freeVariableName,
   missingVariablesOf,
   moveCase,
   planDocOf,
   planOfYaml,
   planWithRestored,
+  planWithSecretNamed,
   removeCase,
   removeStep,
+  writtenSecretsOf,
 } from '@/modules/Plan/library';
 import { DOC_VERDICT_KEYS, PLAN_SOURCE } from '@/modules/Plan/screens/Plan/constants';
-import { useVariableActions } from '@/modules/Project';
+import { useVariableActions, VARIABLE_FAILURE_KEYS } from '@/modules/Project';
 import { flattenPlanSteps, useRunActions } from '@/modules/Run';
 import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
 import { Archive, Confluence, Run } from '@/services';
@@ -84,7 +87,11 @@ export const usePlanViewModel = () => {
     read: Exclude<UnreadPlanRead, { status: 'read' }>;
   } | null>(null);
   const kept = useVariablesStore((state) => state.byProject[workspace?.projectId ?? '']);
-  const { askVariables } = useVariableActions();
+  const { askVariables, applyVariables } = useVariableActions();
+  const [secretFailure, setSecretFailure] = useState<{
+    workspaceId: string;
+    text: string;
+  } | null>(null);
   const language = useSettingsStore((state) => state.language);
 
   const workspaceId = workspace?.id ?? null;
@@ -111,6 +118,8 @@ export const usePlanViewModel = () => {
   const stepCount = flattenPlanSteps(plan).length;
   const published = workspace?.published ?? null;
   const unreadPlan = workspace?.unreadPlan ?? null;
+  const written = writtenSecretsOf(plan);
+  const secret = written[0] ?? null;
   const shownReread =
     reread !== null && reread.workspaceId === workspaceId ? reread.read : null;
   const missing = missingVariablesOf({
@@ -139,6 +148,54 @@ export const usePlanViewModel = () => {
       plan: planWithRestored({ plan, restored: planOfYaml(read.yaml) }),
     });
     setUnreadPlan({ workspaceId, unreadPlan: null });
+  };
+
+  const keepSecret = async () => {
+    if (workspace === null || workspaceId === null || secret === null || isLocked) return;
+
+    const name = freeVariableName({
+      base: secret.kind === 'password' ? 'PASSWORD' : 'TOKEN',
+      taken: (kept ?? []).map((variable) => variable.name),
+    });
+    const outcome = await applyVariables({
+      projectId: workspace.projectId,
+      changes: [
+        {
+          kind: 'save',
+          name,
+          description: t(
+            secret.kind === 'password'
+              ? 'PLAN.SECRET_PASSWORD_HOLDS'
+              : 'PLAN.SECRET_TOKEN_HOLDS',
+            { caseId: secret.caseId },
+          ),
+          value: secret.value,
+          from: null,
+        },
+      ],
+    });
+
+    if (!outcome.isSaved) {
+      setSecretFailure({
+        workspaceId,
+        text: t(VARIABLE_FAILURE_KEYS[outcome.failure.reason], {
+          name: 'name' in outcome.failure ? outcome.failure.name : name,
+        }),
+      });
+
+      return;
+    }
+
+    const now = useWorkspaceStore
+      .getState()
+      .workspaces.find(({ id }) => id === workspaceId);
+
+    setSecretFailure(null);
+    if (now !== undefined)
+      setPlan({
+        workspaceId,
+        plan: planWithSecretNamed({ plan: now.plan, value: secret.value, name }),
+      });
   };
 
   const publish = async (props: {
@@ -227,6 +284,23 @@ export const usePlanViewModel = () => {
   );
 
   return {
+    secretNotice:
+      secret === null || isLocked
+        ? null
+        : {
+            text: t(
+              secret.kind === 'password' ? 'PLAN.SECRET_PASSWORD' : 'PLAN.SECRET_TOKEN',
+              { caseId: secret.caseId },
+            ),
+            failure:
+              secretFailure !== null && secretFailure.workspaceId === workspaceId
+                ? secretFailure.text
+                : null,
+            keepLabel: t('PLAN.SECRET_KEEP'),
+          },
+    onKeepSecret: () => {
+      void keepSecret();
+    },
     unread:
       unreadPlan === null
         ? null

@@ -9,6 +9,8 @@ import './styles.css';
 
 export const Plan: React.FC = () => {
   const {
+    secretNotice,
+    onKeepSecret,
     unread,
     onShowUnread,
     onReadUnread,
@@ -208,6 +210,34 @@ export const Plan: React.FC = () => {
                       onClick={onDismissPublish}
                     />
                   </Tooltip>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence initial={false}>
+            {secretNotice !== null && (
+              <motion.div
+                key="secret"
+                className="plan__export"
+                role="status"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+              >
+                <div className="plan__export-body plan__export-body--missing">
+                  <span className="plan__export-text">
+                    {secretNotice.text}
+                    {secretNotice.failure !== null && (
+                      <strong className="plan__unread-again">
+                        {secretNotice.failure}
+                      </strong>
+                    )}
+                  </span>
+                  <Button size="sm" onClick={onKeepSecret}>
+                    {secretNotice.keepLabel}
+                  </Button>
                 </div>
               </motion.div>
             )}

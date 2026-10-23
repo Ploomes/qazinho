@@ -228,6 +228,13 @@ export const pt: typeof en = {
     MISSING_OTHER:
       'O plano digita {{names}}, que o projeto ainda não guarda: adicione, ou cada run pergunta a você.',
     MISSING_ADD: 'Adicionar as variáveis',
+    SECRET_PASSWORD:
+      'O {{caseId}} escreve uma senha no plano, e toda run, teste exportado e página publicada a levaria junto. Guardada como variável, ela fica selada pelo chaveiro e o plano só a nomeia.',
+    SECRET_TOKEN:
+      'O {{caseId}} escreve um token no plano, e toda run, teste exportado e página publicada o levaria junto. Guardado como variável, ele fica selado pelo chaveiro e o plano só o nomeia.',
+    SECRET_KEEP: 'Guardar como variável',
+    SECRET_PASSWORD_HOLDS: 'A senha com que o {{caseId}} entra',
+    SECRET_TOKEN_HOLDS: 'O token que o {{caseId}} usa',
     UNREAD_LINE:
       'O plan.yaml deste workspace não abriu: a linha {{line}} não é YAML que o QAzinho leia. Ele ficou guardado como {{file}} na pasta do workspace, para nada escrever por cima. Corrija lá e leia de novo.',
     UNREAD_SHAPE:

@@ -225,6 +225,13 @@ export const en = {
     MISSING_OTHER:
       'The plan types {{names}}, which the project does not keep yet: add them, or a run asks you for them each time.',
     MISSING_ADD: 'Add the variables',
+    SECRET_PASSWORD:
+      '{{caseId}} writes a password out in the plan, where every run, exported test and published page would carry it. Kept as a variable, it is sealed by the keychain and the plan names it.',
+    SECRET_TOKEN:
+      '{{caseId}} writes a token out in the plan, where every run, exported test and published page would carry it. Kept as a variable, it is sealed by the keychain and the plan names it.',
+    SECRET_KEEP: 'Keep it as a variable',
+    SECRET_PASSWORD_HOLDS: 'The password {{caseId}} signs in with',
+    SECRET_TOKEN_HOLDS: 'The token {{caseId}} uses',
     UNREAD_LINE:
       'This workspace’s plan.yaml did not open: line {{line}} is not YAML QAzinho can read. It is kept as {{file}} in the workspace’s folder, so nothing writes over it. Fix it there and read it again.',
     UNREAD_SHAPE:
