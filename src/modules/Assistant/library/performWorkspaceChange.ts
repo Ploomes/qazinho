@@ -73,6 +73,8 @@ function createWorkspace(props: {
     live: null,
     hasBeenAsked: false,
     planSource: null,
+    sourcePage: null,
+    publishedPage: null,
     viewportId: 'desktop',
     context: null,
   };

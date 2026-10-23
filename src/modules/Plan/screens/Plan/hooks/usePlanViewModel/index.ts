@@ -26,6 +26,7 @@ export const usePlanViewModel = () => {
     id: opened.id,
     plan: opened.plan,
     planSource: opened.planSource,
+    sourcePage: opened.sourcePage,
     issue: opened.issue,
     design: opened.design,
     isLocked: opened.live !== null && !opened.live.isDone,
@@ -71,6 +72,7 @@ export const usePlanViewModel = () => {
   const latest = workspace?.latest ?? null;
   const source = workspace?.planSource ?? null;
   const issue = workspace?.issue ?? null;
+  const sourcePage = workspace?.sourcePage ?? null;
   const stepCount = flattenPlanSteps(plan).length;
   const lastRuns: Record<string, IRunCase> = Object.fromEntries(
     (latest?.cases ?? []).map((runCase) => [runCase.id, runCase]),
@@ -106,6 +108,10 @@ export const usePlanViewModel = () => {
             text: t('PLAN.STORY', { key: issue.key, summary: issue.title }),
             url: issue.url,
           },
+    page:
+      sourcePage === null
+        ? null
+        : { text: t('PLAN.PAGE', { title: sourcePage.title }), url: sourcePage.url },
     summary: t('PLAN.SUMMARY', {
       cases:
         plan.length === 1

@@ -19,6 +19,7 @@ export const Plan: React.FC = () => {
     summary,
     source,
     story,
+    page,
     onToggleCase,
     onReorder,
     onRunAll,
@@ -122,6 +123,19 @@ export const Plan: React.FC = () => {
             >
               <span className="plan__source-mark" aria-hidden="true" />
               {story.text}
+              <Icon name="external" />
+            </a>
+          )}
+
+          {page !== null && (
+            <a
+              className="plan__source plan__source--link"
+              href={page.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span className="plan__source-mark" aria-hidden="true" />
+              {page.text}
               <Icon name="external" />
             </a>
           )}

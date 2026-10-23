@@ -206,6 +206,7 @@ export const en = {
     SOURCE_WHOLE:
       'Made from the code of {{repository}}: the whole app on {{branch}} at {{commit}}',
     STORY: 'Made from the Jira story {{key}}: {{summary}}',
+    PAGE: 'Made from the Confluence page “{{title}}”',
     CASES_ONE: '1 case',
     CASES_OTHER: '{{count}} cases',
     STEPS_ONE: '1 step',

@@ -235,5 +235,32 @@ describe('useChatAgent', () => {
         });
       });
     });
+
+    it('asks with the page and keeps it as where the plan came from once the plan lands', async () => {
+      const page = {
+        id: '98304',
+        title: 'Checkout: cenários',
+        space: 'QA',
+        url: 'https://acme.atlassian.net/wiki/spaces/QA/pages/98304',
+      };
+      const ask = answering({ answer: DRAFTED, page });
+      const { result } = renderHook(() => useChatAgent());
+
+      act(() => {
+        result.current.askAgent({
+          workspaceId: 'w1',
+          text: 'Plan the tests from the Confluence page “Checkout: cenários”.',
+          references: [],
+          code: null,
+          jira: null,
+          confluence: { pageId: '98304' },
+        });
+      });
+
+      expect(ask.mock.calls[0]?.[0].confluence).toEqual({ pageId: '98304' });
+      await waitFor(() => {
+        expect(useWorkspaceStore.getState().workspaces[0]?.sourcePage).toEqual(page);
+      });
+    });
   });
 });

@@ -206,6 +206,29 @@ describe('usePlanViewModel', () => {
     });
   });
 
+  it('names the Confluence page the plan was made from, with where it opens', () => {
+    expect(renderHook(() => usePlanViewModel()).result.current.page).toBeNull();
+
+    useWorkspaceStore.setState({
+      workspaces: [
+        {
+          ...makeWorkspace(),
+          sourcePage: {
+            id: '98304',
+            title: 'Checkout: cenários',
+            space: 'QA',
+            url: 'https://acme.atlassian.net/wiki/spaces/QA/pages/98304',
+          },
+        },
+      ],
+    });
+
+    expect(renderHook(() => usePlanViewModel()).result.current.page).toEqual({
+      text: 'Made from the Confluence page “Checkout: cenários”',
+      url: 'https://acme.atlassian.net/wiki/spaces/QA/pages/98304',
+    });
+  });
+
   it('names the whole app when the plan came from the base branch itself', () => {
     useWorkspaceStore.setState({
       workspaces: [

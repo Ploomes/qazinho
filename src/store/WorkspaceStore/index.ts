@@ -78,6 +78,15 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
+  setPublishedPage: ({ workspaceId, page }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => ({ ...workspace, publishedPage: page }),
+      }),
+    })),
+
   setViewport: ({ workspaceId, viewportId }) =>
     set((state) => ({
       workspaces: mapWorkspace({
@@ -155,7 +164,17 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
-  landPlan: ({ workspaceId, summary, plan, source, story, who, agentId, sessionId }) =>
+  landPlan: ({
+    workspaceId,
+    summary,
+    plan,
+    source,
+    story,
+    page,
+    who,
+    agentId,
+    sessionId,
+  }) =>
     set((state) => ({
       askingIds: state.askingIds.filter((id) => id !== workspaceId),
       retries: withoutKey({ record: state.retries, key: workspaceId }),
@@ -175,6 +194,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
           return {
             ...appendPlanCard({ workspace: said, plan, at: formatClock(new Date()) }),
             planSource: source,
+            sourcePage: page ?? workspace.sourcePage,
             issue:
               story === null
                 ? workspace.issue

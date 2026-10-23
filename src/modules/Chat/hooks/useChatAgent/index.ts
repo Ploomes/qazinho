@@ -150,6 +150,7 @@ export const useChatAgent = () => {
           plan,
           source: turn.code,
           story: turn.story,
+          page: turn.page,
           who: agentName,
           agentId,
           sessionId: turn.sessionId,

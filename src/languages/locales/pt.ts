@@ -209,6 +209,7 @@ export const pt: typeof en = {
     SOURCE_WHOLE:
       'Feito do código de {{repository}}: o app inteiro na {{branch}} em {{commit}}',
     STORY: 'Feito da história {{key}} do Jira: {{summary}}',
+    PAGE: 'Feito da página “{{title}}” do Confluence',
     CASES_ONE: '1 caso',
     CASES_OTHER: '{{count}} casos',
     STEPS_ONE: '1 passo',
