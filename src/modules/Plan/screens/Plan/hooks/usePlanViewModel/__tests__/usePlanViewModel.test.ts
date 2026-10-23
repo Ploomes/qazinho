@@ -131,6 +131,7 @@ describe('usePlanViewModel', () => {
       expect(useVariablesStore.getState().request).toMatchObject({
         projectId: 'p1',
         drafts: [{ name: 'LOGIN_EMAIL', description: '' }],
+        by: 'plan',
       });
     });
 

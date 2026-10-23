@@ -39,7 +39,7 @@ export const useVariablesModalViewModel = () => {
     width: VARIABLES_MODAL.width,
     title: t('VARIABLES.TITLE'),
     subtitle: t('VARIABLES.SUBTITLE'),
-    asked: t('VARIABLES.ASKED'),
+    asked: request?.by === 'plan' ? t('VARIABLES.PLAN_NAMES') : t('VARIABLES.ASKED'),
     project: projects.find(({ id }) => id === request?.projectId)?.name ?? '',
     valuePlaceholder: t('VARIABLES.VALUE_PLACEHOLDER'),
     rows: rows.map((row, index) => ({

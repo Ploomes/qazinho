@@ -256,6 +256,7 @@ export const usePlanViewModel = () => {
       void askVariables({
         projectId: workspace.projectId,
         drafts: missing.map((name) => ({ name, description: '' })),
+        by: 'plan',
       });
     },
     canPublish: isConfluenceOn && plan.length > 0 && !isLocked,

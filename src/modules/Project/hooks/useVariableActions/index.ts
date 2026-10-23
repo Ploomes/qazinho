@@ -39,6 +39,7 @@ export const useVariableActions = () => {
     projectId: string;
     drafts: IVariableBrief[];
     waitMs?: number;
+    by?: 'agent' | 'plan';
   }): Promise<string[] | null> =>
     new Promise((settle) => {
       const id = crypto.randomUUID();
@@ -58,9 +59,12 @@ export const useVariableActions = () => {
         settle(state.settled.saved);
       });
 
-      useVariablesStore
-        .getState()
-        .ask({ id, projectId: props.projectId, drafts: props.drafts });
+      useVariablesStore.getState().ask({
+        id,
+        projectId: props.projectId,
+        drafts: props.drafts,
+        ...(props.by === undefined ? {} : { by: props.by }),
+      });
     });
 
   return { applyVariables, askVariables };

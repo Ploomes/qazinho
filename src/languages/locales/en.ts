@@ -619,6 +619,7 @@ export const en = {
     SUBTITLE:
       'QAzinho seals each value on this machine. The agent knows the name and what it holds, never the value.',
     ASKED: 'The agent asked for these to go on.',
+    PLAN_NAMES: 'The plan types these: give each its value.',
     SAVE: 'Seal and save',
     SAVING: 'Sealing…',
     REPLACES: 'Replaces the value {{name}} keeps',

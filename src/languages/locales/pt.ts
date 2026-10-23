@@ -624,6 +624,7 @@ export const pt: typeof en = {
     SUBTITLE:
       'O QAzinho sela cada valor neste computador. O agente conhece o nome e o que guarda, nunca o valor.',
     ASKED: 'O agente pediu estas para seguir.',
+    PLAN_NAMES: 'O plano digita estas: dê o valor de cada uma.',
     SAVE: 'Selar e salvar',
     SAVING: 'Selando…',
     REPLACES: 'Substitui o valor que {{name}} guarda',
