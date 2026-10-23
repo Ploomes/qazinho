@@ -20,4 +20,11 @@ describe('earlyFinish', () => {
       /^About 1 minute is still left: use it\./,
     );
   });
+
+  /** Haiku explored a bank's sign-in screen for 42 seconds and called it the whole app. */
+  it('reminds an explorer stopped at a sign-in that the QA holds the way in', () => {
+    expect(earlyFinish({ leftMs: 9 * 60_000, totalMs: TEN_MINUTES })).toContain(
+      'When a sign-in or a code stands in your way, ask the QA for it with ask_qa.',
+    );
+  });
 });

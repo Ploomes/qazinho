@@ -9,5 +9,5 @@ export function earlyFinish(props: { leftMs: number; totalMs: number }): string 
 
   const minutes = Math.max(1, Math.round(leftMs / MINUTE_MS));
 
-  return `About ${String(minutes)} minute${minutes === 1 ? ' is' : 's are'} still left: use ${minutes === 1 ? 'it' : 'them'}. Try what you have not yet, such as the flows you did not take to the end, the edges of each field, and every control and screen you have not used, then call finish again.`;
+  return `About ${String(minutes)} minute${minutes === 1 ? ' is' : 's are'} still left: use ${minutes === 1 ? 'it' : 'them'}. Try what you have not yet, such as the flows you did not take to the end, the edges of each field, and every control and screen you have not used. When a sign-in or a code stands in your way, ask the QA for it with ask_qa. Then call finish again.`;
 }
