@@ -24,6 +24,7 @@ import {
   toStructured,
   toText,
   toUsage,
+  withPermissions,
 } from './library';
 
 /** Drives the QA's own agent CLI, Claude Code or Codex. QAzinho owns no model and holds no provider key. */
@@ -32,6 +33,7 @@ export class AgentRunner {
   private readonly owners: IAgentRunner['owners'];
   private readonly folder: string;
   private readonly timeoutMs: number;
+  private readonly permissions: IAgentRunner['permissions'];
   private readonly asking = new Map<string, Set<ChildProcess>>();
   private readonly clocks = new Map<ChildProcess, IAgentClock>();
   private readonly holds = new Map<string, number>();
@@ -41,9 +43,21 @@ export class AgentRunner {
     this.owners = props.owners;
     this.folder = props.folder;
     this.timeoutMs = props.timeoutMs ?? AGENT_RUN.timeoutMs;
+    this.permissions = props.permissions;
   }
 
-  public async ask(props: IRunAgent): Promise<IAgentTurn> {
+  /** Asks the agent once; every call lets the QA's own MCP servers in, each permission they need answered by QAzinho. */
+  public async ask(asked: IRunAgent): Promise<IAgentTurn> {
+    const props =
+      this.permissions === undefined
+        ? asked
+        : withPermissions({
+            call: asked,
+            permissions: {
+              tool: this.permissions.tool,
+              mcpConfig: this.permissions.mcpConfig(),
+            },
+          });
     const { command, prompt, workspaceId } = props;
     const isCodex = props.agentId === 'codex';
     const schemaFile =

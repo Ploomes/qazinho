@@ -64,8 +64,10 @@ import {
 } from 'electron';
 import {
   Harness,
+  MCP_HOST,
   McpHost,
   mcpConfigWith,
+  PERMISSION_TOOL,
   pageAnswerOf,
   pagesFoundOf,
   sourceFailureOf,
@@ -337,6 +339,10 @@ const suiteRunner = new SuiteRunner({
 const agentRunner = new AgentRunner({
   owners,
   folder: PATHS.agentHome,
+  permissions: {
+    tool: PERMISSION_TOOL.granted,
+    mcpConfig: () => tools.mcpConfigFor(MCP_HOST.permissionsScope),
+  },
   onEvent: (event) => {
     const buildId = buildIdOf(event.workspaceId);
 

@@ -12,3 +12,4 @@ export * from './toActions';
 export * from './toStructured';
 export * from './toText';
 export * from './toUsage';
+export * from './withPermissions';

@@ -6,4 +6,5 @@ export interface IAgentRunner {
   owners: ProcessOwners;
   folder: string;
   timeoutMs?: number;
+  permissions?: { tool: string; mcpConfig: () => string | null };
 }
