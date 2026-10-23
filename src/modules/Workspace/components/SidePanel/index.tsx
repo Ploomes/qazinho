@@ -62,7 +62,9 @@ export const SidePanel: React.FC = () => {
             exit={{ opacity: 0, transition: { duration: MOTION.durationFast } }}
             onClick={onToggle}
           >
-            <Icon name="reveal" />
+            <span className="side-panel__mirror">
+              <Icon name="sidebar" />
+            </span>
             <span>{railLabel}</span>
           </motion.button>
         )}
@@ -115,12 +117,14 @@ export const SidePanel: React.FC = () => {
                     />
                   </Tooltip>
                   <Tooltip content={hideLabel}>
-                    <IconButton
-                      icon="collapse"
-                      label={hideLabel}
-                      size="sm"
-                      onClick={onToggle}
-                    />
+                    <span className="side-panel__mirror">
+                      <IconButton
+                        icon="sidebar"
+                        label={hideLabel}
+                        size="sm"
+                        onClick={onToggle}
+                      />
+                    </span>
                   </Tooltip>
                 </span>
               </header>
