@@ -98,7 +98,7 @@
 }
 
 .bug-card__where {
-  margin: calc(var(--space-3) * -1) 0 0;
+  margin: 0;
   color: var(--ink3);
   font: var(--font-ui-sm);
   text-wrap: pretty;
