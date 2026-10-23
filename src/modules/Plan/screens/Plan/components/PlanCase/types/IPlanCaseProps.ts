@@ -13,6 +13,7 @@ export interface IPlanCaseProps {
   onToggle: (caseId: string) => void;
   onEditCase: (props: { caseId: string; fields: Partial<ITestCase> }) => void;
   onRemoveCase: (caseId: string) => void;
+  onMoveCase: (props: { caseId: string; by: -1 | 1 }) => void;
   onAddStep: (caseId: string) => void;
   onRemoveStep: (props: { caseId: string; index: number }) => void;
   onEditStep: (props: {

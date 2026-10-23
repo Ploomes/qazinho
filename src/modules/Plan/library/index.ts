@@ -6,6 +6,7 @@ export * from './editStep';
 export * from './frameUrlOf';
 export * from './keepVerdicts';
 export * from './mapCase';
+export * from './moveCase';
 export * from './nextCaseId';
 export * from './planDocOf';
 export * from './planOfDraft';

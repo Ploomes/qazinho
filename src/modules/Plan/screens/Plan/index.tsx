@@ -45,6 +45,7 @@ export const Plan: React.FC = () => {
     onDraftInChat,
     onAddCase,
     onRemoveCase,
+    onMoveCase,
     onEditCase,
     onAddStep,
     onRemoveStep,
@@ -236,6 +237,7 @@ export const Plan: React.FC = () => {
                   onToggle={onToggleCase}
                   onEditCase={onEditCase}
                   onRemoveCase={onRemoveCase}
+                  onMoveCase={onMoveCase}
                   onAddStep={onAddStep}
                   onRemoveStep={onRemoveStep}
                   onEditStep={onEditStep}

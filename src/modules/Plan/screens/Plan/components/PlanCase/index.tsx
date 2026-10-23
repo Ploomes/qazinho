@@ -13,6 +13,8 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
     verdict,
     canRemoveStep,
     onHeadClick,
+    moveLabel,
+    onHeadKeyDown,
     onFieldCommit,
     onStepCommit,
     onStepAdd,
@@ -46,7 +48,14 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
       onDragEnd={onPutDown}
     >
       <div className="plan-case__head">
-        <button type="button" className="plan-case__open" onClick={onHeadClick}>
+        <button
+          type="button"
+          className="plan-case__open"
+          aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"
+          aria-description={moveLabel}
+          onClick={onHeadClick}
+          onKeyDown={onHeadKeyDown}
+        >
           <span
             className={
               props.isLocked

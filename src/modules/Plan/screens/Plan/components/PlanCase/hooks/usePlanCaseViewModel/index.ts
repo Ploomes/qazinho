@@ -1,5 +1,6 @@
 import type { IPlanCaseProps } from '@/modules/Plan/screens/Plan/components/PlanCase/types';
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
+import type { KeyboardEvent } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { frameUrlOf } from '@/modules/Plan/library';
@@ -39,6 +40,14 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     canRemoveStep: testCase.steps.length > 1 && !isLocked,
     onHeadClick: () => {
       onToggle(caseId);
+    },
+    moveLabel: t('PLAN.MOVE_CASE'),
+    onHeadKeyDown: (event: KeyboardEvent<HTMLButtonElement>) => {
+      if (isLocked || !event.altKey) return;
+      if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+
+      event.preventDefault();
+      props.onMoveCase({ caseId, by: event.key === 'ArrowUp' ? -1 : 1 });
     },
     onFieldCommit: (fields: Partial<ITestCase>) => {
       props.onEditCase({ caseId, fields });

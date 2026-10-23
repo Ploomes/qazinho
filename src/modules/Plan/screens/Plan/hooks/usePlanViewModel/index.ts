@@ -11,6 +11,7 @@ import {
   caseIdsUsed,
   editCase,
   editStep,
+  moveCase,
   planDocOf,
   removeCase,
   removeStep,
@@ -375,6 +376,9 @@ export const usePlanViewModel = () => {
     },
     onUndoExpire: () => {
       setRemoval(null);
+    },
+    onMoveCase: (props: { caseId: string; by: -1 | 1 }) => {
+      write(moveCase({ plan, ...props }));
     },
     onEditCase: (props: { caseId: string; fields: Partial<ITestCase> }) => {
       write(editCase({ plan, ...props }));

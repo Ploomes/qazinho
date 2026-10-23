@@ -13,6 +13,7 @@ const PROPS = {
   onToggle: vi.fn(),
   onEditCase: vi.fn(),
   onRemoveCase: vi.fn(),
+  onMoveCase: vi.fn(),
   onAddStep: vi.fn(),
   onRemoveStep: vi.fn(),
   onEditStep: vi.fn(),
@@ -178,6 +179,42 @@ describe('usePlanCaseViewModel', () => {
       });
 
       expect(result.current.className).toBe('plan-case');
+    });
+  });
+
+  describe('onHeadKeyDown', () => {
+    const key = (props: { key: string; altKey: boolean }) =>
+      ({ ...props, preventDefault: vi.fn() }) as unknown as Parameters<
+        ReturnType<typeof usePlanCaseViewModel>['onHeadKeyDown']
+      >[0];
+
+    /** Dragging was the only way to move a case, which a keyboard cannot do. */
+    it('moves the case up or down with Alt and an arrow', () => {
+      const onMoveCase = vi.fn();
+      const { result } = renderHook(() => usePlanCaseViewModel({ ...PROPS, onMoveCase }));
+
+      result.current.onHeadKeyDown(key({ key: 'ArrowUp', altKey: true }));
+      result.current.onHeadKeyDown(key({ key: 'ArrowDown', altKey: true }));
+
+      expect(onMoveCase.mock.calls).toEqual([
+        [{ caseId: TEST_CASE.id, by: -1 }],
+        [{ caseId: TEST_CASE.id, by: 1 }],
+      ]);
+    });
+
+    it('does NOT move it on a bare arrow, nor while a run walks the plan', () => {
+      const onMoveCase = vi.fn();
+      const { result } = renderHook(() => usePlanCaseViewModel({ ...PROPS, onMoveCase }));
+
+      result.current.onHeadKeyDown(key({ key: 'ArrowUp', altKey: false }));
+
+      const locked = renderHook(() =>
+        usePlanCaseViewModel({ ...PROPS, isLocked: true, onMoveCase }),
+      );
+
+      locked.result.current.onHeadKeyDown(key({ key: 'ArrowUp', altKey: true }));
+
+      expect(onMoveCase).not.toHaveBeenCalled();
     });
   });
 });
