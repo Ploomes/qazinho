@@ -1,8 +1,8 @@
 import type { IBugReviewer } from './types';
-import type { Harness } from '@/harness';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { BugFiler } from '@/main/classes/integrations/BugFiler';
 import type { BugReview, IReviewBug } from '@/shared/types';
+import type { Harness } from '@salve-software/qazinho-harness';
 import { join } from 'node:path';
 import { isInside } from '@/main/classes/storage/Archive/library';
 import { BUG_REVIEW } from './constants';

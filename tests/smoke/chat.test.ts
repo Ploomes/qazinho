@@ -1,10 +1,10 @@
 import type { IChatAnswer } from '@/shared/types';
 import { tmpdir } from 'node:os';
 import { describe, expect, it } from 'vitest';
-import { Harness } from '@/harness';
 import { AgentDetector } from '@/main/classes/agents/AgentDetector';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
+import { Harness } from '@salve-software/qazinho-harness';
 
 /**
  * The chat the way main asks it: the harness prompt, the answer schema, no tool. What it guards

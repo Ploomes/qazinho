@@ -1,6 +1,6 @@
-import type { Harness } from '@/harness';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { BugFiler } from '@/main/classes/integrations/BugFiler';
+import type { Harness } from '@salve-software/qazinho-harness';
 
 export interface IBugReviewer {
   filer: Pick<BugFiler, 'read'>;

@@ -1,5 +1,5 @@
 import type { IAppPeek } from './types';
-import type { AppLook } from '@/harness';
+import type { AppLook } from '@salve-software/qazinho-harness';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { WebDriver } from '@/main/classes/devices/WebDriver';

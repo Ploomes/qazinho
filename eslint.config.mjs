@@ -36,15 +36,21 @@ const NO_FRAMER_MOTION = {
 };
 
 const NO_NODE_FOLDERS_IN_THE_PAGE = {
-  group: ['@/main/**', '@/harness/**', '**/electron/**'],
+  group: ['@/main/**', '**/electron/**'],
   message:
     'The page never imports src/main or electron/. Ask the main process through window.qazinho.',
 };
 
-const NO_MAIN_IN_THE_HARNESS = {
-  group: ['@/main/**', '**/electron/**'],
+const NO_HARNESS_IN_THE_PAGE = {
+  regex: '^@salve-software/qazinho-harness$',
   message:
-    'The harness never imports src/main. Declare what it needs as a port in its types, and let main fill it.',
+    'The harness runs in the main process. A type the page shares with it comes through @/shared/types.',
+};
+
+const NO_HARNESS_CONTRACT_OUTSIDE_SHARED = {
+  regex: '^@salve-software/qazinho-harness/contract$',
+  message:
+    'A type or constant shared with the harness comes through @/shared/types or @/shared/constants, one file each.',
 };
 
 export default config(
@@ -147,18 +153,8 @@ export default config(
   },
 
   {
-    files: ['src/harness/**/*.ts'],
-    rules: {
-      '@typescript-eslint/no-restricted-imports': [
-        'error',
-        { patterns: [NO_UPWARD_RELATIVE, NO_PAGE_IN_NODE, NO_MAIN_IN_THE_HARNESS] },
-      ],
-    },
-  },
-
-  {
     files: ['src/**/*.{ts,tsx}'],
-    ignores: ['src/main/**/*.ts', 'src/harness/**/*.ts'],
+    ignores: ['src/main/**/*.ts'],
     plugins: { 'react-hooks': reactHooks },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -168,19 +164,31 @@ export default config(
       ],
       '@typescript-eslint/no-restricted-imports': [
         'error',
-        { patterns: [NO_UPWARD_RELATIVE, NO_NODE_FOLDERS_IN_THE_PAGE] },
+        {
+          patterns: [
+            NO_UPWARD_RELATIVE,
+            NO_NODE_FOLDERS_IN_THE_PAGE,
+            NO_HARNESS_IN_THE_PAGE,
+            NO_HARNESS_CONTRACT_OUTSIDE_SHARED,
+          ],
+        },
       ],
     },
   },
 
   {
-    files: ['src/shared/types/**/*.ts'],
+    files: ['src/shared/types/**/*.ts', 'src/shared/constants/**/*.ts'],
     rules: {
       'no-restricted-imports': ['error', { patterns: [NO_NODE_IN_THE_PAGE] }],
       '@typescript-eslint/no-restricted-imports': [
         'error',
         {
-          patterns: [NO_UPWARD_RELATIVE, NO_NODE_FOLDERS_IN_THE_PAGE, NO_PAGE_IN_NODE],
+          patterns: [
+            NO_UPWARD_RELATIVE,
+            NO_NODE_FOLDERS_IN_THE_PAGE,
+            NO_PAGE_IN_NODE,
+            NO_HARNESS_IN_THE_PAGE,
+          ],
         },
       ],
     },

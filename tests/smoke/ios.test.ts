@@ -3,7 +3,6 @@ import { mkdtemp, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { Harness, McpHost } from '@/harness';
 import { AgentDetector } from '@/main/classes/agents/AgentDetector';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
@@ -12,6 +11,7 @@ import { listSimulators } from '@/main/classes/devices/IosDriver/library';
 import { LiveStream } from '@/main/classes/devices/LiveStream';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
+import { Harness, McpHost } from '@salve-software/qazinho-harness';
 import { buildFixtureApp } from './fixtures/buildFixtureApp';
 
 /**

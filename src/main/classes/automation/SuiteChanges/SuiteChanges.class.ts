@@ -5,7 +5,6 @@ import type {
   ICopiedSuite,
   ISuiteChanges,
 } from './types';
-import type { IBrokenTest, IChangeAnswer } from '@/harness';
 import type { IVariableValue } from '@/main/types';
 import type {
   IStartSuiteChange,
@@ -19,6 +18,7 @@ import type {
   SuiteShipOutcome,
   SuiteShipWay,
 } from '@/shared/types';
+import type { IBrokenTest, IChangeAnswer } from '@salve-software/qazinho-harness';
 import {
   copyFile,
   mkdir,

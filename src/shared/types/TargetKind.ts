@@ -1,1 +1,1 @@
-export type TargetKind = 'web' | 'android' | 'ios';
+export type { TargetKind } from '@salve-software/qazinho-harness/contract';

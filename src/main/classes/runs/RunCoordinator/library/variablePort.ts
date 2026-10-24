@@ -1,6 +1,6 @@
-import type { IDevicePort } from '@/harness';
 import type { IDeviceDriver } from '@/main/classes/devices/types';
 import type { IVariableValue } from '@/main/types';
+import type { IDevicePort } from '@salve-software/qazinho-harness';
 import { RUN_WALK } from '@/main/classes/runs/RunCoordinator/constants';
 import { callLineOf } from './callLineOf';
 import { hiddenValues } from './hiddenValues';

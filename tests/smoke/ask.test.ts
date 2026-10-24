@@ -5,11 +5,11 @@ import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { Harness, McpHost } from '@/harness';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { LiveStream } from '@/main/classes/devices/LiveStream';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
+import { Harness, McpHost } from '@salve-software/qazinho-harness';
 
 const PORT = 4362;
 const WAIT_MS = 1_500;

@@ -8,17 +8,6 @@ import type {
   IWalkRun,
   QaOutcome,
 } from './types';
-import type {
-  Harness,
-  IAttachDevice,
-  IDevicePort,
-  IExploredScreen,
-  IExploreFinish,
-  IQaQuestion,
-  IStepFinding,
-  IStepReport,
-  McpHost,
-} from '@/harness';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
 import type { IDeviceDriver } from '@/main/classes/devices/types';
@@ -41,13 +30,24 @@ import type {
   RunFailure,
   TargetKind,
 } from '@/shared/types';
+import type {
+  Harness,
+  IAttachDevice,
+  IDevicePort,
+  IExploredScreen,
+  IExploreFinish,
+  IQaQuestion,
+  IStepFinding,
+  IStepReport,
+  McpHost,
+} from '@salve-software/qazinho-harness';
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
-import { mcpConfigWith } from '@/harness';
 import { WEB_DRIVER } from '@/main/classes/devices/WebDriver/constants';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { agentFailure, writeAtomically } from '@/main/library';
 import { EXPLORATION } from '@/shared/constants';
+import { mcpConfigWith } from '@salve-software/qazinho-harness';
 import { RUN_WALK, UNWALKED } from './constants';
 import {
   answerWords,

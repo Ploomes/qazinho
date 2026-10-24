@@ -6,8 +6,8 @@ import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { Harness } from '@/harness';
 import { AppBuilder } from '@/main/classes/builds/AppBuilder';
+import { Harness } from '@salve-software/qazinho-harness';
 
 const COMMIT = 'c0ffee1234567890abcdef';
 

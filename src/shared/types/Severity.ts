@@ -1,1 +1,1 @@
-export type Severity = 'high' | 'medium' | 'low';
+export type { Severity } from '@salve-software/qazinho-harness/contract';

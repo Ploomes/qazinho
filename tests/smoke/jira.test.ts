@@ -2,8 +2,8 @@ import { mkdtemp, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { Harness } from '@/harness';
 import { JiraApi, JiraStories } from '@/main/classes/integrations';
+import { Harness } from '@salve-software/qazinho-harness';
 import { fakeJira, JIRA_EMAIL, JIRA_TOKEN } from './fixtures/fakeJira';
 
 const PORT = 4365;

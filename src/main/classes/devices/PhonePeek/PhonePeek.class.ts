@@ -1,5 +1,5 @@
 import type { IPhonePeek, IPhoneTarget } from './types';
-import type { AppLook } from '@/harness';
+import type { AppLook } from '@salve-software/qazinho-harness';
 import { basename } from 'node:path';
 import { stripAnsi } from '@/main/library';
 import { PHONE_PEEK } from './constants';

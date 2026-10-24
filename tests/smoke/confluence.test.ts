@@ -1,7 +1,7 @@
 import type { BugReportBlock } from '@/shared/types';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { Harness } from '@/harness';
 import { ConfluenceApi } from '@/main/classes/integrations';
+import { Harness } from '@salve-software/qazinho-harness';
 import { fakeConfluence } from './fixtures/fakeConfluence';
 import { JIRA_EMAIL, JIRA_TOKEN } from './fixtures/fakeJira';
 

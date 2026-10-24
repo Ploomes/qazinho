@@ -4,11 +4,11 @@ import { chmod, mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { Harness } from '@/harness';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { AppBuilder } from '@/main/classes/builds/AppBuilder';
 import { GithubCli } from '@/main/classes/integrations/GithubCli';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
+import { Harness } from '@salve-software/qazinho-harness';
 
 const COMMIT = 'c0ffee0000000000000000000000000000000002';
 

@@ -1,4 +1,3 @@
-import type { AppLook, IAttachSources, SourceCall } from '@/harness';
 import type {
   AgentSignInProgress,
   ConfluenceSwitch,
@@ -47,6 +46,11 @@ import type {
   SuiteShipWay,
   WindowFit,
 } from '@/shared/types';
+import type {
+  AppLook,
+  IAttachSources,
+  SourceCall,
+} from '@salve-software/qazinho-harness';
 import { copyFile, mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { homedir, release, tmpdir } from 'node:os';
 import { delimiter, extname, join } from 'node:path';
@@ -62,17 +66,6 @@ import {
   screen,
   shell,
 } from 'electron';
-import {
-  Harness,
-  MCP_HOST,
-  McpHost,
-  mcpConfigWith,
-  PERMISSION_TOOL,
-  pageAnswerOf,
-  pagesFoundOf,
-  sourceFailureOf,
-  storyAnswerOf,
-} from '@/harness';
 import {
   AgentDetector,
   AndroidDriver,
@@ -156,6 +149,17 @@ import {
   spawnCommand,
 } from '@/main/library';
 import { ASSISTANT_WAIT, CHANNELS } from '@/shared/constants';
+import {
+  Harness,
+  MCP_HOST,
+  McpHost,
+  mcpConfigWith,
+  PERMISSION_TOOL,
+  pageAnswerOf,
+  pagesFoundOf,
+  sourceFailureOf,
+  storyAnswerOf,
+} from '@salve-software/qazinho-harness';
 
 const agents = new AgentDetector();
 const owners = new ProcessOwners();

@@ -4,7 +4,6 @@ import { chmod, readFile, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { Harness, McpHost } from '@/harness';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { GitCli } from '@/main/classes/automation/GitCli';
 import { SuiteChanges } from '@/main/classes/automation/SuiteChanges';
@@ -13,6 +12,7 @@ import { SuiteRegistry } from '@/main/classes/automation/SuiteRegistry';
 import { SuiteRunner } from '@/main/classes/automation/SuiteRunner';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { findOnPath } from '@/main/library';
+import { Harness, McpHost } from '@salve-software/qazinho-harness';
 import { git, teamSuite } from './fixtures/teamSuite';
 
 const PORT = 4372;

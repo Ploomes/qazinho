@@ -1,4 +1,3 @@
-import type { IAttachSuite, ISuiteTestsCall } from '@/harness';
 import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 import type {
   IAgentTurn,
@@ -6,16 +5,17 @@ import type {
   ISuiteResult,
   SuiteChangeEvent,
 } from '@/shared/types';
+import type { IAttachSuite, ISuiteTestsCall } from '@salve-software/qazinho-harness';
 import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { mkdir, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { Harness } from '@/harness';
 import { GitCli } from '@/main/classes/automation/GitCli';
 import { SuiteChanges } from '@/main/classes/automation/SuiteChanges';
 import { SuiteRegistry } from '@/main/classes/automation/SuiteRegistry';
+import { Harness } from '@salve-software/qazinho-harness';
 
 const KEY = {
   name: 'USER_KEY',

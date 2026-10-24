@@ -1,2 +1,1 @@
-/** The issue trackers QAzinho can connect to. */
-export type IntegrationId = 'github' | 'jira';
+export type { IntegrationId } from '@salve-software/qazinho-harness/contract';

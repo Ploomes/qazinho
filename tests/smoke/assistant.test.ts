@@ -3,11 +3,11 @@ import { chmod, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { Harness, McpHost } from '@/harness';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { AppBridge } from '@/main/classes/assistant/AppBridge';
 import { AssistantAgent } from '@/main/classes/assistant/AssistantAgent';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
+import { Harness, McpHost } from '@salve-software/qazinho-harness';
 
 const SDK = join(
   process.cwd(),

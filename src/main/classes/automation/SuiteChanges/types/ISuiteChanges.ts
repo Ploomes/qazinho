@@ -1,4 +1,3 @@
-import type { Harness, McpHost } from '@/harness';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { GitCli } from '@/main/classes/automation/GitCli';
 import type { SuiteRegistry } from '@/main/classes/automation/SuiteRegistry';
@@ -6,6 +5,7 @@ import type { SuiteRunner } from '@/main/classes/automation/SuiteRunner';
 import type { GithubCli } from '@/main/classes/integrations/GithubCli';
 import type { IVariableValue } from '@/main/types';
 import type { SuiteChangeEvent } from '@/shared/types';
+import type { Harness, McpHost } from '@salve-software/qazinho-harness';
 
 /** What changing a suite needs: the suites and their runner, git and gh, the QA's agent and the harness, QAzinho's tools, the project's values, the QA's PATH, where to keep each change, and whom to tell. */
 export interface ISuiteChanges {

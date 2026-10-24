@@ -1,8 +1,8 @@
 import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 import type { IReviewBug, ITrackerIssue } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
-import { Harness } from '@/harness';
 import { BugReviewer } from '@/main/classes/integrations/BugReviewer';
+import { Harness } from '@salve-software/qazinho-harness';
 
 const ISSUE: ITrackerIssue = {
   key: 'SHOP-57',

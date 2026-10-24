@@ -1,8 +1,0 @@
-import type { IToolGrant } from '@/harness/tools/types';
-
-export const TOOL_GRANTS: readonly IToolGrant[] = [
-  { group: 'device', roles: ['runner', 'explorer'] },
-  { group: 'app', roles: ['assistant'] },
-  { group: 'suite', roles: ['automator'] },
-  { group: 'sources', roles: ['chat'] },
-];

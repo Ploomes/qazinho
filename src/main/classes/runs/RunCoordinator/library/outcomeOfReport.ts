@@ -1,6 +1,6 @@
-import type { IStepReport } from '@/harness';
 import type { IShot } from '@/main/classes/devices/types';
 import type { IFlatStep, IStepOutcome } from '@/shared/types';
+import type { IStepReport } from '@salve-software/qazinho-harness';
 
 /** A step as the run files it: the agent's report, the screenshot taken when it arrived, the time it took and when it came; a failure keeps the Figma frame it is off. */
 export function outcomeOfReport(props: {
