@@ -275,9 +275,9 @@ a fake gh handed over; React Native, Expo, Flutter and iOS have not been built b
 yet. QAzinho's calls run with the QA's own Claude Code hooks off: a hook that rewrites commands,
 such as rtk's, made every Gradle command fail the build's permissions.
 
-**QAzinho Pro is a card at the foot of the sidebar, and nothing else.** Signed out, the card
-signs this computer in by a code the QA confirms in the browser, its token sealed by the OS
-keychain. Signed in, every project goes to the org the account sends to, in the background: what
+**QAzinho Pro is a card at the foot of the sidebar, and nothing else.** The card speaks of the
+QA's account and never names a plan, since Pro will not be the only one. Signed out, it signs this
+computer in by a code the QA confirms in the browser, its token sealed by the OS keychain. Signed in, every project goes to the org the account sends to, in the background: what
 changed since the last time, the screens and videos of its runs, with no loading and nothing new
 on screen, so the app is the same as signed out. A plan the org moved too is joined case by case,
 unasked. The card names the account and its org, flags a blocked org or an account that only
