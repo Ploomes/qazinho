@@ -3,6 +3,7 @@ import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IProSyncBatch } from '@/shared/types';
 import { sharedValueOf } from './sharedValueOf';
 import { syncedBugOf } from './syncedBugOf';
+import { syncedCaseOf } from './syncedCaseOf';
 import { syncedRunOf } from './syncedRunOf';
 
 function sharedTargetOf(target: ITarget): ITarget {
@@ -45,18 +46,7 @@ export function proBatchOf(props: {
       targetKind: target.kind,
       issue: workspace.issue,
       design: workspace.design,
-      cases: workspace.plan.map(
-        ({ id, title, priority, goal, preconditions, steps }) => ({
-          id,
-          title,
-          priority,
-          goal,
-          preconditions,
-          steps: steps.map(({ action, expected, frame }) =>
-            frame === undefined ? { action, expected } : { action, expected, frame },
-          ),
-        }),
-      ),
+      cases: workspace.plan.map(syncedCaseOf),
     })),
     runs: kept.flatMap(({ workspace, target }) =>
       workspace.runs.flatMap((run) => {

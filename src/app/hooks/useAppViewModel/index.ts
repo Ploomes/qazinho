@@ -8,7 +8,7 @@ import {
 } from '@/modules/Assistant';
 import { useSuiteWatch } from '@/modules/Automation';
 import { useBuildEvents } from '@/modules/Build';
-import { useProSync } from '@/modules/Pro';
+import { useProConflicts, useProSync } from '@/modules/Pro';
 import { AppWindow, Platform } from '@/services';
 import { SHELL } from '@/shared/constants';
 import {
@@ -53,6 +53,7 @@ export const useAppViewModel = () => {
   useBuildEvents();
   useSuiteWatch();
   useProSync();
+  useProConflicts();
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
