@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
+import { ProAccountCard } from '@/modules/Pro';
 import { Icon, IconButton, PlatformIcon } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { STICKER } from '@/shared/constants';
@@ -283,6 +284,8 @@ export const Sidebar: React.FC = () => {
           <span className="sidebar__label">{t('SIDEBAR.NEW_PROJECT')}</span>
         </button>
       </Tooltip>
+
+      <ProAccountCard />
 
       <div className="sidebar__foot">
         <Tooltip side="right" isOff={!hasTips} content={t('COMMON.SETTINGS')}>

@@ -70,7 +70,7 @@ describe('useVariablesModalViewModel', () => {
       ]);
     });
 
-    it('says who asked: the agent, or the plan that types them', () => {
+    it('says who asked: the agent, the plan that types them, or the org the project came from', () => {
       expect(opened().current.asked).toBe('The agent asked for these to go on.');
 
       useVariablesStore.setState({
@@ -78,6 +78,14 @@ describe('useVariablesModalViewModel', () => {
       });
 
       expect(opened().current.asked).toBe('The plan types these: give each its value.');
+
+      useVariablesStore.setState({
+        request: { id: 'v-3', projectId: 'p1', drafts: DRAFTS, by: 'org' },
+      });
+
+      expect(opened().current.asked).toBe(
+        'This project came from your org with these: give each its value on this computer.',
+      );
     });
 
     it('says when a value replaces one the project keeps', () => {
