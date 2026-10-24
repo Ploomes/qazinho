@@ -129,14 +129,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     onProSignIn: () => () => undefined,
     signOutPro: () => Promise.resolve({ isSignedIn: false, canKeepToken: true }),
     proShares: () => Promise.resolve([]),
-    shareProject: ({ projectId, orgSlug }) =>
-      Promise.resolve({
-        projectId,
-        orgSlug,
-        state: orgSlug === null ? 'off' : 'waiting',
-        syncedAt: null,
-        conflicts: [],
-      }),
+    chooseProOrg: () => Promise.resolve({ isSignedIn: false, canKeepToken: true }),
     syncPro: ({ project }) =>
       Promise.resolve({
         projectId: project.projectId,
@@ -146,6 +139,17 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
         conflicts: [],
       }),
     onProSync: () => () => undefined,
+    resolveProConflict: ({ projectId }) =>
+      Promise.resolve({
+        projectId,
+        orgSlug: null,
+        state: 'off',
+        syncedAt: null,
+        conflicts: [],
+      }),
+    listOrgProjects: () => Promise.resolve({ isListed: true, projects: [] }),
+    downloadOrgProject: () => Promise.resolve({ isDownloaded: false, failure: 'gone' }),
+    openProPage: () => Promise.resolve(true),
     listRepositories: () => Promise.resolve({ isListed: false, failure: 'no-cli' }),
     listBranches: () => Promise.resolve({ isListed: false, failure: 'no-cli' }),
     searchJira: () => Promise.resolve({ isListed: false, failure: 'not-connected' }),

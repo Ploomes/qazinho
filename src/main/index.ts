@@ -100,6 +100,7 @@ import {
   ProAccount,
   ProApi,
   ProcessOwners,
+  ProDownloads,
   ProSync,
   ResourceCollector,
   RunCoordinator,
@@ -155,6 +156,7 @@ import {
   execCommand,
   diagnosticsOf,
   linuxTerminalOf,
+  proPageUrlOf,
   spawnCommand,
 } from '@/main/library';
 import { ASSISTANT_WAIT, CHANNELS } from '@/shared/constants';
@@ -355,7 +357,7 @@ const bugFiler = new BugFiler({
 const variables = new VariableVault({ file: PATHS.variables, cipher: keychain });
 const proSync = new ProSync({
   api: proApi,
-  token: () => proAccount.token(),
+  target: () => proAccount.target(),
   machineName: hostname(),
   file: PATHS.proSync,
   archiveRoot: PATHS.data,
@@ -375,6 +377,12 @@ const proSync = new ProSync({
   onShare: (share) => {
     broadcast({ channel: CHANNELS.proSyncEvent, event: share });
   },
+});
+const proDownloads = new ProDownloads({
+  api: proApi,
+  token: () => proAccount.token(),
+  archiveRoot: PATHS.data,
+  sync: proSync,
 });
 const git = new GitCli({ directories: commandDirectories });
 const suites = new SuiteRegistry({ root: PATHS.suites, git });
@@ -1450,12 +1458,32 @@ void app.whenReady().then(async () => {
   });
   ipcMain.handle(CHANNELS.signOutPro, () => proAccount.signOut());
   ipcMain.handle(CHANNELS.proShares, () => proSync.shares());
-  ipcMain.handle(
-    CHANNELS.shareProject,
-    (_event, props: { projectId: string; orgSlug: string | null }) =>
-      proSync.share(props),
+  ipcMain.handle(CHANNELS.chooseProOrg, (_event, orgSlug: string) =>
+    proAccount.chooseOrg(orgSlug),
   );
   ipcMain.handle(CHANNELS.syncPro, (_event, batch: IProSyncBatch) => proSync.push(batch));
+  ipcMain.handle(
+    CHANNELS.resolveProConflict,
+    (_event, props: { projectId: string; workspaceId: string; version: number }) =>
+      proSync.resolve(props),
+  );
+  ipcMain.handle(CHANNELS.listOrgProjects, (_event, orgSlug: string) =>
+    proDownloads.list(orgSlug),
+  );
+  ipcMain.handle(
+    CHANNELS.downloadOrgProject,
+    (_event, props: { orgSlug: string; projectId: string }) =>
+      proDownloads.download(props),
+  );
+  ipcMain.handle(CHANNELS.openProPage, async (_event, path: string) => {
+    const url = proPageUrlOf({ base: PRO_API.web, path });
+
+    if (url === null) return false;
+
+    await shell.openExternal(url);
+
+    return true;
+  });
   ipcMain.handle(CHANNELS.listRepositories, () => repos.repositories());
   ipcMain.handle(CHANNELS.searchJira, (_event, query: string) => jira.search(query));
   ipcMain.handle(CHANNELS.listJiraProjects, () => jira.projects());

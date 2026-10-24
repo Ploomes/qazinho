@@ -1,11 +1,16 @@
 import type { IProSync, IProSyncRecord, ProUploader } from './types';
-import type { IProShare, IProSyncBatch, ProSyncState } from '@/shared/types';
+import type {
+  IProShare,
+  IProSyncBatch,
+  IProSyncCase,
+  ProSyncState,
+} from '@/shared/types';
 import { mkdir, readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { isInside } from '@/main/classes/storage/Archive/library';
 import { writeAtomically } from '@/main/library';
-import { PRO_SYNC } from './constants';
+import { PLAN_CONFLICT_SCHEMA, PRO_SYNC, SYNC_RECORD_SCHEMA } from './constants';
 import {
   bugBodyOf,
   bugFilesOf,
@@ -20,10 +25,10 @@ import {
   stateOfRefusal,
 } from './library';
 
-/** Sends each shared project to its org of QAzinho Pro: what changed since the last time, with its screens and videos, waiting for the network and saying where each one stands. */
+/** Sends every project of this computer to the org it sends to in QAzinho Pro, out of the QA's way: what changed since the last time, with its screens and videos, waiting for the network and saying where each one stands. */
 export class ProSync {
   private readonly api: IProSync['api'];
-  private readonly token: () => Promise<string | null>;
+  private readonly target: IProSync['target'];
   private readonly machineName: string;
   private readonly file: string;
   private readonly archiveRoot: string;
@@ -38,7 +43,7 @@ export class ProSync {
 
   public constructor(props: IProSync) {
     this.api = props.api;
-    this.token = props.token;
+    this.target = props.target;
     this.machineName = props.machineName;
     this.file = props.file;
     this.archiveRoot = props.archiveRoot;
@@ -56,37 +61,128 @@ export class ProSync {
     );
   }
 
-  /** Shares a project with an org, or stops sharing it with null; a new org gets everything again on the next push. */
-  public async share(props: {
+  /** Sends what changed in a project, one push at a time per project; everything goes again to an org it never reached. */
+  public async push(batch: IProSyncBatch): Promise<IProShare> {
+    return this.inTurn({
+      projectId: batch.project.projectId,
+      run: () => this.send(batch),
+    });
+  }
+
+  /** Builds a workspace's plan on the version the org moved it to, once the QA merged the two; the merged plan goes out on the next push. */
+  public async resolve(props: {
     projectId: string;
-    orgSlug: string | null;
+    workspaceId: string;
+    version: number;
   }): Promise<IProShare> {
-    const { projectId, orgSlug } = props;
+    return this.inTurn({
+      projectId: props.projectId,
+      run: () => this.takeVersion(props),
+    });
+  }
+
+  /** Keeps a project downloaded from its org as shared with it, each plan at the version it came in. */
+  public async adopt(props: {
+    projectId: string;
+    orgSlug: string;
+    plans: {
+      workspaceId: string;
+      planId: string;
+      version: number;
+      cases: IProSyncCase[];
+    }[];
+  }): Promise<IProShare> {
+    const { projectId, orgSlug, plans } = props;
+
+    return this.inTurn({
+      projectId,
+      run: async () => {
+        const records = await this.read();
+
+        records[projectId] = {
+          orgSlug,
+          state: 'synced',
+          syncedAt: this.now().toISOString(),
+          conflicts: [],
+          project: null,
+          plans: Object.fromEntries(
+            plans.map(({ workspaceId, planId, version, cases }) => [
+              workspaceId,
+              { planId, version, hash: '', cases },
+            ]),
+          ),
+          runs: {},
+          bugs: {},
+          recordings: {},
+          evidence: {},
+        };
+        await this.write(records);
+
+        return this.announce(this.shareOf({ projectId, record: records[projectId] }));
+      },
+    });
+  }
+
+  private inTurn(props: {
+    projectId: string;
+    run: () => Promise<IProShare>;
+  }): Promise<IProShare> {
+    const before = this.turns.get(props.projectId) ?? Promise.resolve(null);
+    const turn = before.then(props.run, props.run);
+
+    this.turns.set(props.projectId, turn);
+
+    return turn;
+  }
+
+  private async takeVersion(props: {
+    projectId: string;
+    workspaceId: string;
+    version: number;
+  }): Promise<IProShare> {
+    const { projectId, workspaceId, version } = props;
     const records = await this.read();
-    const kept = records[projectId];
+    const record = records[projectId];
+    const conflict = record?.conflicts.find((one) => one.workspaceId === workspaceId);
 
-    this.retries.get(projectId)?.();
-    this.retries.delete(projectId);
+    if (record === undefined || conflict?.version !== version)
+      return this.shareOf({ projectId, record });
 
-    if (orgSlug === null) {
-      Reflect.deleteProperty(records, projectId);
-      await this.write(records);
+    const conflicts = record.conflicts.filter((one) => one !== conflict);
 
-      return this.announce({
-        projectId,
-        orgSlug: null,
-        state: 'off',
-        syncedAt: null,
-        conflicts: [],
-      });
-    }
+    records[projectId] = {
+      ...record,
+      state: conflicts.length > 0 ? 'conflict' : 'sending',
+      conflicts,
+      plans: {
+        ...record.plans,
+        [workspaceId]: {
+          planId: record.plans[workspaceId]?.planId ?? null,
+          version,
+          hash: '',
+          cases: conflict.cases,
+        },
+      },
+    };
+    await this.write(records);
 
-    records[projectId] =
-      kept?.orgSlug === orgSlug
+    return this.announce(this.shareOf({ projectId, record: records[projectId] }));
+  }
+
+  private async send(batch: IProSyncBatch): Promise<IProShare> {
+    const projectId = batch.project.projectId;
+    const target = await this.target();
+
+    if (target === null)
+      return { projectId, orgSlug: null, state: 'off', syncedAt: null, conflicts: [] };
+
+    const kept = (await this.read())[projectId];
+    const record: IProSyncRecord =
+      kept?.orgSlug === target.orgSlug
         ? kept
         : {
-            orgSlug,
-            state: 'waiting',
+            orgSlug: target.orgSlug,
+            state: 'sending',
             syncedAt: null,
             conflicts: [],
             project: null,
@@ -96,43 +192,12 @@ export class ProSync {
             recordings: {},
             evidence: {},
           };
-    await this.write(records);
-
-    return this.announce(this.shareOf({ projectId, record: records[projectId] }));
-  }
-
-  /** Sends what changed in a shared project, one push at a time per project; a project not shared is left alone. */
-  public async push(batch: IProSyncBatch): Promise<IProShare> {
-    const projectId = batch.project.projectId;
-    const before = this.turns.get(projectId) ?? Promise.resolve(null);
-    const turn = before.then(
-      () => this.send(batch),
-      () => this.send(batch),
-    );
-
-    this.turns.set(projectId, turn);
-
-    return turn;
-  }
-
-  private async send(batch: IProSyncBatch): Promise<IProShare> {
-    const projectId = batch.project.projectId;
-    const records = await this.read();
-    const record = records[projectId];
-
-    if (record === undefined)
-      return { projectId, orgSlug: null, state: 'off', syncedAt: null, conflicts: [] };
 
     this.retries.get(projectId)?.();
     this.retries.delete(projectId);
-
-    const token = await this.token();
-
-    if (token === null) return this.settle({ projectId, record, state: 'signed-out' });
-
     this.announce({ ...this.shareOf({ projectId, record }), state: 'sending' });
 
-    const refused = await this.sendAll({ batch, record, token });
+    const refused = await this.sendAll({ batch, record, token: target.token });
 
     if (refused !== null) {
       if (refused === 'waiting')
@@ -209,8 +274,11 @@ export class ProSync {
       const body = planBodyOf(plan);
       const hash = hashOf(body);
       const kept = record.plans[plan.workspaceId];
+      const isWaitingOnQa = record.conflicts.some(
+        ({ workspaceId }) => workspaceId === plan.workspaceId,
+      );
 
-      if (kept?.hash === hash) continue;
+      if (kept?.hash === hash || isWaitingOnQa) continue;
 
       const answer = await this.api.syncPlan({
         token,
@@ -220,7 +288,14 @@ export class ProSync {
       });
 
       if (!answer.isOk && answer.error === 'plan_conflict') {
-        record.conflicts = [...new Set([...record.conflicts, plan.workspaceId])];
+        const moved = PLAN_CONFLICT_SCHEMA.safeParse(answer.details);
+
+        if (!moved.success) return 'failed';
+
+        record.conflicts = [
+          ...record.conflicts,
+          { workspaceId: plan.workspaceId, base: kept?.cases ?? [], ...moved.data },
+        ];
         continue;
       }
 
@@ -230,8 +305,8 @@ export class ProSync {
         planId: answer.value.plan.id,
         version: answer.value.plan.version,
         hash,
+        cases: body.cases,
       };
-      record.conflicts = record.conflicts.filter((id) => id !== plan.workspaceId);
     }
 
     return null;
@@ -245,14 +320,15 @@ export class ProSync {
     const { batch, record, token } = props;
 
     for (const run of batch.runs) {
-      const planId = record.plans[run.workspaceId]?.planId;
+      const planId = record.plans[run.workspaceId]?.planId ?? null;
+      const key = `${run.workspaceId}/${run.runId}`;
       const videoFile = await this.videoOf({
         workspaceId: run.workspaceId,
         runId: run.runId,
       });
       const hash = hashOf({ run, hasVideo: videoFile !== null });
 
-      if (planId === undefined || record.runs[run.runId] === hash) continue;
+      if (planId === null || record.runs[key] === hash) continue;
 
       const files = [...runFilesOf(run), ...(videoFile === null ? [] : [videoFile])];
       const keys = await this.keysOf({ files, record, token });
@@ -268,7 +344,7 @@ export class ProSync {
 
       if (!answer.isOk) return stateOfRefusal(answer);
 
-      record.runs[run.runId] = hash;
+      record.runs[key] = hash;
     }
 
     return null;
@@ -282,10 +358,11 @@ export class ProSync {
     const { batch, record, token } = props;
 
     for (const bug of batch.bugs) {
-      const planId = record.plans[bug.workspaceId]?.planId;
+      const planId = record.plans[bug.workspaceId]?.planId ?? null;
+      const key = `${bug.workspaceId}/${bug.bugId}`;
       const hash = hashOf(bug);
 
-      if (planId === undefined || record.bugs[bug.bugId] === hash) continue;
+      if (planId === null || record.bugs[key] === hash) continue;
 
       const keys = await this.keysOf({ files: bugFilesOf(bug), record, token });
 
@@ -300,7 +377,7 @@ export class ProSync {
 
       if (!answer.isOk) return stateOfRefusal(answer);
 
-      record.bugs[bug.bugId] = hash;
+      record.bugs[key] = hash;
     }
 
     return null;
@@ -314,9 +391,9 @@ export class ProSync {
     const { batch, record, token } = props;
 
     for (const plan of batch.plans) {
-      const planId = record.plans[plan.workspaceId]?.planId;
+      const planId = record.plans[plan.workspaceId]?.planId ?? null;
 
-      if (planId === undefined) continue;
+      if (planId === null) continue;
 
       const body = recordingsBodyOf({
         text: await this.recipesOf(plan.workspaceId),
@@ -324,7 +401,8 @@ export class ProSync {
       });
       const hash = body === null ? null : hashOf(body);
 
-      if (body === null || record.recordings[plan.workspaceId] === hash) continue;
+      if (body === null || hash === null || record.recordings[plan.workspaceId] === hash)
+        continue;
 
       const answer = await this.api.syncRecordings({
         token,
@@ -335,7 +413,7 @@ export class ProSync {
 
       if (!answer.isOk) return stateOfRefusal(answer);
 
-      record.recordings[plan.workspaceId] = hash ?? '';
+      record.recordings[plan.workspaceId] = hash;
     }
 
     return null;
@@ -405,7 +483,7 @@ export class ProSync {
     const { projectId, record, state } = props;
     const records = await this.read();
 
-    if (records[projectId]?.orgSlug !== record.orgSlug)
+    if ((await this.target())?.orgSlug !== record.orgSlug)
       return this.shareOf({ projectId, record: records[projectId] });
 
     records[projectId] = { ...record, state };
@@ -440,10 +518,16 @@ export class ProSync {
   private async read(): Promise<Record<string, IProSyncRecord>> {
     try {
       const read = JSON.parse(await readFile(this.file, 'utf8')) as {
-        shares?: Record<string, IProSyncRecord>;
+        shares?: Record<string, unknown>;
       };
 
-      return read.shares ?? {};
+      return Object.fromEntries(
+        Object.entries(read.shares ?? {}).flatMap(([projectId, kept]) => {
+          const record = SYNC_RECORD_SCHEMA.safeParse(kept);
+
+          return record.success ? [[projectId, record.data]] : [];
+        }),
+      );
     } catch {
       return {};
     }

@@ -1,5 +1,7 @@
 import type {
   AgentSignInProgress,
+  ProDownload,
+  ProOrgProjects,
   ProSignInProgress,
   ProStatus,
   BugComment,
@@ -318,8 +320,8 @@ const api: IQazinhoApi = {
   },
   signOutPro: () => ipcRenderer.invoke(CHANNELS.signOutPro) as Promise<ProStatus>,
   proShares: () => ipcRenderer.invoke(CHANNELS.proShares) as Promise<IProShare[]>,
-  shareProject: (props: { projectId: string; orgSlug: string | null }) =>
-    ipcRenderer.invoke(CHANNELS.shareProject, props) as Promise<IProShare>,
+  chooseProOrg: (orgSlug: string) =>
+    ipcRenderer.invoke(CHANNELS.chooseProOrg, orgSlug) as Promise<ProStatus>,
   syncPro: (batch: IProSyncBatch) =>
     ipcRenderer.invoke(CHANNELS.syncPro, batch) as Promise<IProShare>,
   onProSync: (listener: (share: IProShare) => void) => {
@@ -333,6 +335,17 @@ const api: IQazinhoApi = {
       ipcRenderer.off(CHANNELS.proSyncEvent, forward);
     };
   },
+  resolveProConflict: (props: {
+    projectId: string;
+    workspaceId: string;
+    version: number;
+  }) => ipcRenderer.invoke(CHANNELS.resolveProConflict, props) as Promise<IProShare>,
+  listOrgProjects: (orgSlug: string) =>
+    ipcRenderer.invoke(CHANNELS.listOrgProjects, orgSlug) as Promise<ProOrgProjects>,
+  downloadOrgProject: (props: { orgSlug: string; projectId: string }) =>
+    ipcRenderer.invoke(CHANNELS.downloadOrgProject, props) as Promise<ProDownload>,
+  openProPage: (path: string) =>
+    ipcRenderer.invoke(CHANNELS.openProPage, path) as Promise<boolean>,
   listRepositories: () =>
     ipcRenderer.invoke(CHANNELS.listRepositories) as Promise<IRepositoryList>,
   listBranches: (repository: IRepositoryRef) =>

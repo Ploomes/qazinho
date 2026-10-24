@@ -216,6 +216,7 @@ describe('ProAccount', () => {
       account: { email: 'ana@loja.dev', name: 'Ana' },
       machine: { id: 'm1', name: 'MacBook-Ana' },
       orgs: [renamed],
+      orgSlug: 'loja',
       isReachable: true,
     });
   });
@@ -239,6 +240,36 @@ describe('ProAccount', () => {
 
     expect(await account.status()).toEqual({ isSignedIn: false, canKeepToken: true });
     expect(await account.token()).toBeNull();
+  });
+
+  it('sends to the org the person writes in from the first sign-in, and to another they choose', async () => {
+    const outra = { ...ORG, slug: 'outra', name: 'Outra' };
+    const leitura = { ...ORG, slug: 'leitura', role: 'reader' as const };
+    const { api } = fakeApi({
+      polls: [{ isOk: true, value: { ...CONFIRMED, orgs: [leitura, ORG, outra] } }],
+      me: { isOk: true, value: { user: CONFIRMED.user, orgs: [leitura, ORG, outra] } },
+    });
+    const { account } = await accountWith({ api });
+
+    await account.signIn();
+
+    expect(await account.target()).toEqual({ token: 'qzm_secret', orgSlug: 'loja' });
+    expect(await account.chooseOrg('outra')).toMatchObject({ orgSlug: 'outra' });
+    expect(await account.chooseOrg('leitura')).toMatchObject({ orgSlug: 'loja' });
+  });
+
+  it('sends nowhere from an account that only reads in its orgs', async () => {
+    const leitura = { ...ORG, role: 'reader' as const };
+    const { api } = fakeApi({
+      polls: [{ isOk: true, value: { ...CONFIRMED, orgs: [leitura] } }],
+      me: { isOk: true, value: { user: CONFIRMED.user, orgs: [leitura] } },
+    });
+    const { account } = await accountWith({ api });
+
+    await account.signIn();
+
+    expect(await account.target()).toBeNull();
+    expect(await account.status()).toMatchObject({ isSignedIn: true, orgSlug: null });
   });
 
   it('signs the machine out on the platform before forgetting its token', async () => {

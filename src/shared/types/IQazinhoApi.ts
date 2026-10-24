@@ -68,6 +68,8 @@ import type { McpSignInProgress } from './McpSignInProgress';
 import type { PickKind } from './PickKind';
 import type { PlanPublished } from './PlanPublished';
 import type { Platform } from './Platform';
+import type { ProDownload } from './ProDownload';
+import type { ProOrgProjects } from './ProOrgProjects';
 import type { ProSignInProgress } from './ProSignInProgress';
 import type { ProStatus } from './ProStatus';
 import type { QaReply } from './QaReply';
@@ -182,12 +184,20 @@ export interface IQazinhoApi {
   onProSignIn: (listener: (progress: ProSignInProgress) => void) => () => void;
   signOutPro: () => Promise<ProStatus>;
   proShares: () => Promise<IProShare[]>;
-  shareProject: (props: {
-    projectId: string;
-    orgSlug: string | null;
-  }) => Promise<IProShare>;
+  chooseProOrg: (orgSlug: string) => Promise<ProStatus>;
   syncPro: (batch: IProSyncBatch) => Promise<IProShare>;
   onProSync: (listener: (share: IProShare) => void) => () => void;
+  resolveProConflict: (props: {
+    projectId: string;
+    workspaceId: string;
+    version: number;
+  }) => Promise<IProShare>;
+  listOrgProjects: (orgSlug: string) => Promise<ProOrgProjects>;
+  downloadOrgProject: (props: {
+    orgSlug: string;
+    projectId: string;
+  }) => Promise<ProDownload>;
+  openProPage: (path: string) => Promise<boolean>;
   listRepositories: () => Promise<IRepositoryList>;
   listBranches: (repository: IRepositoryRef) => Promise<IBranchList>;
   searchJira: (query: string) => Promise<JiraIssueList>;

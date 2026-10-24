@@ -103,7 +103,11 @@ export const CHANNELS = {
   proSignInEvent: 'pro:sign-in-event',
   signOutPro: 'pro:sign-out',
   proShares: 'pro:shares',
-  shareProject: 'pro:share',
+  chooseProOrg: 'pro:choose-org',
   syncPro: 'pro:sync',
   proSyncEvent: 'pro:sync-event',
+  resolveProConflict: 'pro:resolve',
+  listOrgProjects: 'pro:org-projects',
+  downloadOrgProject: 'pro:download',
+  openProPage: 'pro:open-page',
 } as const;

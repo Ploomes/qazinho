@@ -87,11 +87,11 @@ describe('a page with no bridge', () => {
     expect(await Pro.signOut()).toEqual({ isSignedIn: false, canKeepToken: false });
   });
 
-  it('shares nothing with QAzinho Pro, and sends nothing', async () => {
+  it('sends nothing to QAzinho Pro, and chooses no org', async () => {
     expect(await Pro.shares()).toEqual([]);
-    expect(await Pro.share({ projectId: 'p1', orgSlug: 'loja' })).toMatchObject({
-      projectId: 'p1',
-      state: 'off',
+    expect(await Pro.chooseOrg('loja')).toEqual({
+      isSignedIn: false,
+      canKeepToken: false,
     });
     expect(
       await Pro.sync({
@@ -102,6 +102,15 @@ describe('a page with no bridge', () => {
       }),
     ).toMatchObject({ projectId: 'p1', state: 'off' });
     expect(Pro.onSync(() => undefined)).toBeTypeOf('function');
+    expect(
+      await Pro.resolve({ projectId: 'p1', workspaceId: 'w1', version: 2 }),
+    ).toMatchObject({ state: 'off' });
+    expect(await Pro.orgProjects('loja')).toEqual({ isListed: false, failure: 'failed' });
+    expect(await Pro.download({ orgSlug: 'loja', projectId: 'p1' })).toEqual({
+      isDownloaded: false,
+      failure: 'failed',
+    });
+    expect(await Pro.openPage('/loja')).toBe(false);
   });
 
   it('has no assistant to ask, and no tool call to carry out', async () => {

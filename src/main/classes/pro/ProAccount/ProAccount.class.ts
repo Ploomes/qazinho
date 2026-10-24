@@ -11,6 +11,7 @@ import { mkdir, readFile, rm } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { writeAtomically } from '@/main/library';
 import { PRO_SIGN_IN, STORED_PRO_SCHEMA } from './constants';
+import { sendingOrgOf } from './library';
 
 /** Signs this machine in to QAzinho Pro by a code the person confirms in the browser, keeps its token sealed by the OS keychain, and says where it stands. */
 export class ProAccount {
@@ -48,6 +49,7 @@ export class ProAccount {
         ...stored,
         account: { email: me.value.user.email, name: me.value.user.name },
         orgs: me.value.orgs,
+        orgSlug: sendingOrgOf({ orgs: me.value.orgs, chosen: stored.orgSlug }),
       };
 
       await this.write(fresh);
@@ -105,6 +107,7 @@ export class ProAccount {
       machine: confirmed.machine,
       account: { email: confirmed.user.email, name: confirmed.user.name },
       orgs: confirmed.orgs,
+      orgSlug: sendingOrgOf({ orgs: confirmed.orgs, chosen: null }),
     });
 
     return this.report({ phase: 'connected', account: confirmed.user.email });
@@ -126,9 +129,32 @@ export class ProAccount {
     return this.signedOut();
   }
 
+  /** Sends this computer's projects to another of the person's orgs, one they write in. */
+  public async chooseOrg(orgSlug: string): Promise<ProStatus> {
+    const stored = await this.read();
+
+    if (stored === null) return this.signedOut();
+
+    await this.write({
+      ...stored,
+      orgSlug: sendingOrgOf({ orgs: stored.orgs, chosen: orgSlug }),
+    });
+
+    return this.status();
+  }
+
   /** This machine's token, for the sync to call the platform with; null while signed out. */
   public async token(): Promise<string | null> {
     return (await this.read())?.token ?? null;
+  }
+
+  /** The token and the org this computer sends its projects to; null while signed out, or with no org to send to. */
+  public async target(): Promise<{ token: string; orgSlug: string } | null> {
+    const stored = await this.read();
+
+    return stored === null || stored.orgSlug === null
+      ? null
+      : { token: stored.token, orgSlug: stored.orgSlug };
   }
 
   private async poll(props: {
@@ -162,7 +188,12 @@ export class ProAccount {
   }
 
   private shown(stored: IStoredPro) {
-    return { account: stored.account, machine: stored.machine, orgs: stored.orgs };
+    return {
+      account: stored.account,
+      machine: stored.machine,
+      orgs: stored.orgs,
+      orgSlug: stored.orgSlug,
+    };
   }
 
   private report(phase: ProSignInPhase): ProSignInProgress {

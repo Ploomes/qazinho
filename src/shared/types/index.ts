@@ -99,6 +99,7 @@ export type * from './IProcessSample';
 export type * from './IProjectVariables';
 export type * from './IProOrg';
 export type * from './IProOrgProject';
+export type * from './IProPlanConflict';
 export type * from './IProShare';
 export type * from './IProSyncBatch';
 export type * from './IProSyncBug';

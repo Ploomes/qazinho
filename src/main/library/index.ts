@@ -31,6 +31,7 @@ export * from './parseProcessSweep';
 export * from './phoneGlance';
 export * from './phoneMeasureOf';
 export * from './pngSizeOf';
+export * from './proPageUrlOf';
 export * from './sampleFileOf';
 export * from './searchDirectories';
 export * from './spawnCommand';

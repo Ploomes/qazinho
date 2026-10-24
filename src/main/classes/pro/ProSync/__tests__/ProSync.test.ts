@@ -1,7 +1,7 @@
 import type { ProAnswer } from '@/main/classes/pro/ProApi';
 import type { IProSync } from '@/main/classes/pro/ProSync';
 import type { IProShare, IProSyncBatch } from '@/shared/types';
-import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
@@ -16,7 +16,24 @@ interface ISent {
   body: unknown;
 }
 
-type Refusal = { isOk: false; status: number; error: string };
+type Refusal = { isOk: false; status: number; error: string; details?: unknown };
+
+/** The org's plan as another QA left it: version 4, by Bruno. */
+const MOVED = {
+  version: 4,
+  cases: [
+    {
+      id: 'c1',
+      title: 'Pagar com Pix e cartão',
+      priority: 'P1' as const,
+      goal: 'Pagar',
+      preconditions: '',
+      steps: [{ action: 'Copiar o código Pix', expected: 'O código é copiado' }],
+    },
+  ],
+  editedBy: 'Bruno',
+  editedAt: '2026-10-24T11:30:00.000Z',
+};
 
 /** The platform as the sync calls it: every call is kept, and answered as `refuse` says or as the platform would. */
 function fakeApi(refuse: (sent: ISent) => Refusal | null = () => null) {
@@ -168,10 +185,11 @@ function batchOf(root: string): IProSyncBatch {
 
 async function syncWith(props: {
   api: IProSync['api'];
-  token?: string | null;
+  orgSlug?: string | null;
   videoOf?: (root: string) => IProSync['videoOf'];
 }) {
   const root = await mkdtemp(join(tmpdir(), 'qazinho-sync-'));
+  const target = { orgSlug: props.orgSlug === undefined ? 'loja' : props.orgSlug };
   const runFolder = join(root, 'runs', 'w1', 'r1');
   const uploaded: string[] = [];
   const upload = { isTaken: true };
@@ -200,7 +218,10 @@ async function syncWith(props: {
 
   const sync = new ProSync({
     api: props.api,
-    token: () => Promise.resolve(props.token === undefined ? 'qzm_secret' : props.token),
+    target: () =>
+      Promise.resolve(
+        target.orgSlug === null ? null : { token: 'qzm_secret', orgSlug: target.orgSlug },
+      ),
     machineName: 'MacBook-Ana',
     file: join(root, 'pro', 'sync.json'),
     archiveRoot: root,
@@ -232,26 +253,22 @@ async function syncWith(props: {
     },
   });
 
-  return { sync, root, uploaded, upload, retries, shares, batch: batchOf(root) };
+  return { sync, root, target, uploaded, upload, retries, shares, batch: batchOf(root) };
 }
 
 describe('ProSync', () => {
-  it('leaves a project alone until it is shared', async () => {
+  it('sends nothing while signed out, or with no org to send to', async () => {
     const { api, sent } = fakeApi();
-    const { sync, batch } = await syncWith({ api });
+    const { sync, batch } = await syncWith({ api, orgSlug: null });
 
     expect(await sync.push(batch)).toMatchObject({ projectId: 'p1', state: 'off' });
     expect(sent).toEqual([]);
+    expect(await sync.shares()).toEqual([]);
   });
 
-  it('sends a project shared for the first time whole, its screens before what names them', async () => {
+  it('sends a project the first time whole, its screens before what names them', async () => {
     const { api, sent, methods } = fakeApi();
     const { sync, batch, root, uploaded, shares } = await syncWith({ api });
-
-    expect(await sync.share({ projectId: 'p1', orgSlug: 'loja' })).toMatchObject({
-      orgSlug: 'loja',
-      state: 'waiting',
-    });
 
     const pushed = await sync.push(batch);
 
@@ -271,7 +288,7 @@ describe('ProSync', () => {
       syncedAt: '2026-10-24T12:00:00.000Z',
       conflicts: [],
     });
-    expect(shares.map(({ state }) => state)).toEqual(['waiting', 'sending', 'synced']);
+    expect(shares.map(({ state }) => state)).toEqual(['sending', 'synced']);
     expect(uploaded).toEqual([
       join(root, 'runs', 'w1', 'r1', '2.jpg'),
       join(root, 'runs', 'w1', 'r1', 'run.mp4'),
@@ -309,7 +326,6 @@ describe('ProSync', () => {
     const { api, methods } = fakeApi();
     const { sync, batch, uploaded } = await syncWith({ api });
 
-    await sync.share({ projectId: 'p1', orgSlug: 'loja' });
     await sync.push(batch);
     const before = methods().length;
 
@@ -322,7 +338,6 @@ describe('ProSync', () => {
     const { api, sent, methods } = fakeApi();
     const { sync, batch } = await syncWith({ api });
 
-    await sync.share({ projectId: 'p1', orgSlug: 'loja' });
     await sync.push(batch);
     const before = methods().length;
 
@@ -335,16 +350,15 @@ describe('ProSync', () => {
     expect(sent.at(-1)?.body).toMatchObject({ baseVersion: 1 });
   });
 
-  it('keeps a plan the org moved since as a conflict, and still sends the rest', async () => {
+  it('keeps a plan the org moved since as a conflict, with what both started from, and still sends the rest', async () => {
     let isMoved = false;
     const { api, methods } = fakeApi((sent) =>
       isMoved && sent.method === 'syncPlan'
-        ? { isOk: false, status: 409, error: 'plan_conflict' }
+        ? { isOk: false, status: 409, error: 'plan_conflict', details: MOVED }
         : null,
     );
     const { sync, batch } = await syncWith({ api });
 
-    await sync.share({ projectId: 'p1', orgSlug: 'loja' });
     await sync.push(batch);
     isMoved = true;
     const before = methods().length;
@@ -355,17 +369,122 @@ describe('ProSync', () => {
       runs: batch.runs.map((run) => ({ ...run, runId: 'r2' })),
     });
 
-    expect(pushed).toMatchObject({ state: 'conflict', conflicts: ['w1'] });
+    expect(pushed).toMatchObject({
+      state: 'conflict',
+      conflicts: [
+        {
+          workspaceId: 'w1',
+          base: batch.plans[0]?.cases,
+          version: 4,
+          cases: MOVED.cases,
+          editedBy: 'Bruno',
+        },
+      ],
+    });
     expect(methods().slice(before)).toEqual(['syncPlan', 'syncRun']);
+  });
 
-    isMoved = false;
+  it('calls a conflict it cannot read a failure, rather than guess the org’s plan', async () => {
+    let isMoved = false;
+    const { api } = fakeApi((sent) =>
+      isMoved && sent.method === 'syncPlan'
+        ? { isOk: false, status: 409, error: 'plan_conflict' }
+        : null,
+    );
+    const { sync, batch } = await syncWith({ api });
+
+    await sync.push(batch);
+    isMoved = true;
 
     expect(
       await sync.push({
         ...batch,
         plans: batch.plans.map((plan) => ({ ...plan, name: 'Checkout novo' })),
       }),
-    ).toMatchObject({ state: 'synced', conflicts: [] });
+    ).toMatchObject({ state: 'failed', conflicts: [] });
+  });
+
+  it('holds a plan waiting on the QA, and sends it from the org’s version once merged', async () => {
+    let isMoved = false;
+    const { api, sent, methods } = fakeApi((call) =>
+      isMoved && call.method === 'syncPlan'
+        ? { isOk: false, status: 409, error: 'plan_conflict', details: MOVED }
+        : null,
+    );
+    const { sync, batch } = await syncWith({ api });
+    const renamed = {
+      ...batch,
+      plans: batch.plans.map((plan) => ({ ...plan, name: 'Checkout novo' })),
+    };
+
+    await sync.push(batch);
+    isMoved = true;
+    await sync.push(renamed);
+    const before = methods().length;
+
+    await sync.push({
+      ...renamed,
+      plans: renamed.plans.map((plan) => ({ ...plan, name: 'Outro' })),
+    });
+
+    expect(methods().slice(before)).toEqual([]);
+
+    isMoved = false;
+
+    expect(
+      await sync.resolve({ projectId: 'p1', workspaceId: 'w1', version: 3 }),
+    ).toMatchObject({
+      state: 'conflict',
+    });
+    expect(
+      await sync.resolve({ projectId: 'p1', workspaceId: 'w1', version: 4 }),
+    ).toMatchObject({
+      state: 'sending',
+      conflicts: [],
+    });
+    expect(await sync.push(renamed)).toMatchObject({ state: 'synced', conflicts: [] });
+    expect(sent.at(-1)).toMatchObject({ method: 'syncPlan', body: { baseVersion: 4 } });
+  });
+
+  it('keeps a project downloaded from its org as shared, each plan at the version it came in', async () => {
+    const { api, sent } = fakeApi();
+    const { sync, batch, shares } = await syncWith({ api });
+
+    expect(
+      await sync.adopt({
+        projectId: 'p1',
+        orgSlug: 'loja',
+        plans: [
+          { workspaceId: 'w1', planId: 'plan-org', version: 7, cases: MOVED.cases },
+        ],
+      }),
+    ).toMatchObject({ orgSlug: 'loja', state: 'synced', conflicts: [] });
+    expect(shares.at(-1)).toMatchObject({ orgSlug: 'loja', state: 'synced' });
+
+    await sync.push(batch);
+
+    expect(sent.find(({ method }) => method === 'syncPlan')).toMatchObject({
+      body: { baseVersion: 7 },
+    });
+    expect(sent.find(({ method }) => method === 'syncRun')?.path).toBe(
+      'plans/plan-org/runs/r1',
+    );
+  });
+
+  it('sends two workspaces’ runs and bugs that share an id, each to its own plan', async () => {
+    const { api, sent } = fakeApi();
+    const { sync, batch } = await syncWith({ api });
+    const other = { ...batch.plans[0]!, workspaceId: 'w2' };
+
+    await sync.push({
+      ...batch,
+      plans: [...batch.plans, other],
+      runs: [...batch.runs, ...batch.runs.map((run) => ({ ...run, workspaceId: 'w2' }))],
+      bugs: [...batch.bugs, ...batch.bugs.map((bug) => ({ ...bug, workspaceId: 'w2' }))],
+    });
+
+    expect(sent.filter(({ method }) => method === 'syncRun')).toHaveLength(2);
+    expect(sent.filter(({ method }) => method === 'syncBug')).toHaveLength(2);
   });
 
   it('waits for the network, and tries again on its own a minute later', async () => {
@@ -374,8 +493,6 @@ describe('ProSync', () => {
       isDown ? { isOk: false, status: 0, error: 'unreachable' } : null,
     );
     const { sync, batch, retries, shares } = await syncWith({ api });
-
-    await sync.share({ projectId: 'p1', orgSlug: 'loja' });
 
     expect(await sync.push(batch)).toMatchObject({ state: 'waiting', syncedAt: null });
     expect(retries).toMatchObject([{ ms: 60_000, isCancelled: false }]);
@@ -388,7 +505,7 @@ describe('ProSync', () => {
     });
   });
 
-  it('drops a waiting retry once the project is pushed again, or no longer shared', async () => {
+  it('drops a waiting retry once the project is pushed again', async () => {
     const { api } = fakeApi(() => ({
       isOk: false,
       status: 503,
@@ -396,25 +513,10 @@ describe('ProSync', () => {
     }));
     const { sync, batch, retries } = await syncWith({ api });
 
-    await sync.share({ projectId: 'p1', orgSlug: 'loja' });
     await sync.push(batch);
     await sync.push(batch);
 
     expect(retries.map(({ isCancelled }) => isCancelled)).toEqual([true, false]);
-
-    await sync.share({ projectId: 'p1', orgSlug: null });
-
-    expect(retries.map(({ isCancelled }) => isCancelled)).toEqual([true, true]);
-  });
-
-  it('says the machine is signed out, and sends nothing, when it has no token', async () => {
-    const { api, sent } = fakeApi();
-    const { sync, batch } = await syncWith({ api, token: null });
-
-    await sync.share({ projectId: 'p1', orgSlug: 'loja' });
-
-    expect(await sync.push(batch)).toMatchObject({ state: 'signed-out' });
-    expect(sent).toEqual([]);
   });
 
   it('names a blocked org and a reader apart, and tries neither again on its own', async () => {
@@ -422,9 +524,6 @@ describe('ProSync', () => {
     const reader = fakeApi(() => ({ isOk: false, status: 403, error: 'forbidden' }));
     const first = await syncWith({ api: blocked.api });
     const second = await syncWith({ api: reader.api });
-
-    await first.sync.share({ projectId: 'p1', orgSlug: 'loja' });
-    await second.sync.share({ projectId: 'p1', orgSlug: 'loja' });
 
     expect(await first.sync.push(first.batch)).toMatchObject({ state: 'blocked' });
     expect(await second.sync.push(second.batch)).toMatchObject({ state: 'read-only' });
@@ -443,7 +542,6 @@ describe('ProSync', () => {
     });
 
     await writeFile(elsewhere, 'not evidence');
-    await sync.share({ projectId: 'p1', orgSlug: 'loja' });
     await sync.push({
       ...batch,
       runs: batch.runs.map((run) => ({
@@ -467,7 +565,6 @@ describe('ProSync', () => {
     const { api, methods } = fakeApi();
     const { sync, batch, upload } = await syncWith({ api });
 
-    await sync.share({ projectId: 'p1', orgSlug: 'loja' });
     upload.isTaken = false;
 
     expect(await sync.push(batch)).toMatchObject({ state: 'waiting' });
@@ -479,24 +576,19 @@ describe('ProSync', () => {
     expect(methods()).toContain('syncRun');
   });
 
-  it('sends everything again to a new org, and forgets the project once it stops sharing', async () => {
+  it('sends everything again once this computer sends to another org', async () => {
     const { api, sent } = fakeApi();
-    const { sync, batch } = await syncWith({ api });
+    const { sync, batch, target } = await syncWith({ api });
 
-    await sync.share({ projectId: 'p1', orgSlug: 'loja' });
     await sync.push(batch);
-    await sync.share({ projectId: 'p1', orgSlug: 'outra' });
+    target.orgSlug = 'outra';
     await sync.push(batch);
 
     expect(
       sent.filter(({ method }) => method === 'syncProject').map(({ org }) => org),
     ).toEqual(['loja', 'outra']);
-
-    expect(await sync.share({ projectId: 'p1', orgSlug: null })).toMatchObject({
-      orgSlug: null,
-      state: 'off',
-    });
-    expect(await sync.shares()).toEqual([]);
+    expect(sent.filter(({ method }) => method === 'syncRun')).toHaveLength(2);
+    expect(await sync.shares()).toMatchObject([{ projectId: 'p1', orgSlug: 'outra' }]);
   });
 
   it('sends a run again once its video is made, with the video this time', async () => {
@@ -507,7 +599,6 @@ describe('ProSync', () => {
       videoOf: () => () => Promise.resolve(video),
     });
 
-    await sync.share({ projectId: 'p1', orgSlug: 'loja' });
     await sync.push(batch);
     video = join(batch.runs[0]?.cases[0]?.steps[0]?.shotFile ?? '', '..', 'run.mp4');
     await sync.push(batch);
@@ -519,11 +610,37 @@ describe('ProSync', () => {
     ).toEqual([null, 'ev/2']);
   });
 
+  it('does NOT keep what a push sent to an org this computer stopped sending to midway', async () => {
+    let target: { orgSlug: string } = { orgSlug: 'loja' };
+    const { api } = fakeApi((call) => {
+      if (call.method === 'syncRecordings') target = { orgSlug: 'outra' };
+
+      return null;
+    });
+    const { sync, batch, root } = await syncWith({ api });
+    const moving = new ProSync({
+      api,
+      target: () => Promise.resolve({ token: 'qzm_secret', orgSlug: target.orgSlug }),
+      machineName: 'MacBook-Ana',
+      file: join(root, 'pro', 'sync.json'),
+      archiveRoot: root,
+      videoOf: () => Promise.resolve(null),
+      variablesOf: () => Promise.resolve([]),
+      upload: () => Promise.resolve(true),
+      now: () => new Date(),
+      schedule: () => () => undefined,
+      onShare: () => undefined,
+    });
+
+    await moving.push(batch);
+
+    expect(await sync.shares()).toEqual([]);
+  });
+
   it('sends one push at a time for a project, so two at once send it once', async () => {
     const { api, methods } = fakeApi();
     const { sync, batch } = await syncWith({ api });
 
-    await sync.share({ projectId: 'p1', orgSlug: 'loja' });
     await Promise.all([sync.push(batch), sync.push(batch)]);
 
     expect(methods().filter((method) => method === 'syncProject')).toHaveLength(1);
@@ -533,12 +650,11 @@ describe('ProSync', () => {
     const { api } = fakeApi();
     const { sync, batch, root } = await syncWith({ api });
 
-    await sync.share({ projectId: 'p1', orgSlug: 'loja' });
     await sync.push(batch);
 
     const again = new ProSync({
       api,
-      token: () => Promise.resolve('qzm_secret'),
+      target: () => Promise.resolve({ token: 'qzm_secret', orgSlug: 'loja' }),
       machineName: 'MacBook-Ana',
       file: join(root, 'pro', 'sync.json'),
       archiveRoot: root,
@@ -559,5 +675,26 @@ describe('ProSync', () => {
         conflicts: [],
       },
     ]);
+  });
+
+  it('forgets a project whose record no longer reads, and keeps the others', async () => {
+    const { api } = fakeApi();
+    const { sync, root, batch } = await syncWith({ api });
+
+    await sync.push(batch);
+
+    const file = join(root, 'pro', 'sync.json');
+    const kept = JSON.parse(await readFile(file, 'utf8')) as {
+      shares: Record<string, unknown>;
+    };
+
+    await writeFile(
+      file,
+      JSON.stringify({
+        shares: { ...kept.shares, p2: { orgSlug: 'loja', conflicts: ['w1'] } },
+      }),
+    );
+
+    expect((await sync.shares()).map(({ projectId }) => projectId)).toEqual(['p1']);
   });
 });
