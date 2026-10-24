@@ -69,6 +69,17 @@ export const Sidebar: React.FC = () => {
             return (
               <div key={row.id} className="sidebar__project">
                 <span className="sidebar__project-name">{row.name}</span>
+                {row.sync !== null && (
+                  <Tooltip side="right" content={row.sync.label}>
+                    <span
+                      className={row.sync.className}
+                      role="img"
+                      aria-label={row.sync.label}
+                    >
+                      <Icon name={row.sync.icon} size={12} />
+                    </span>
+                  </Tooltip>
+                )}
                 <button
                   type="button"
                   className="sidebar__project-settings"

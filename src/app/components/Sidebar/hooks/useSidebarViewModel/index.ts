@@ -2,10 +2,17 @@ import type { ISidebarSuiteRow, SidebarRow } from '@/app/components/Sidebar/type
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SIDEBAR_STATUS } from '@/app/components/Sidebar/constants';
+import { PRO_SYNC_STATES } from '@/modules/Pro';
 import { workspaceMeta } from '@/modules/Workspace';
 import { Agent, Archive, Run } from '@/services';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
-import { useAppStore, useSettingsStore, useSuiteStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useProStore,
+  useSettingsStore,
+  useSuiteStore,
+  useWorkspaceStore,
+} from '@/store';
 
 export const useSidebarViewModel = () => {
   const { t } = useTranslation();
@@ -31,6 +38,27 @@ export const useSidebarViewModel = () => {
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const isShut = useSettingsStore((state) => state.isSidebarShut);
   const toggleSidebar = useSettingsStore((state) => state.toggleSidebar);
+  const shares = useProStore((state) => state.shares);
+  const proStatus = useProStore((state) => state.status);
+
+  const syncOf = (projectId: string) => {
+    const share = shares.find((one) => one.projectId === projectId);
+
+    if (share === undefined || share.orgSlug === null) return null;
+
+    const shown = PRO_SYNC_STATES[share.state];
+    const org =
+      proStatus?.isSignedIn === true
+        ? (proStatus.orgs.find(({ slug }) => slug === share.orgSlug)?.name ??
+          share.orgSlug)
+        : share.orgSlug;
+
+    return {
+      icon: shown.icon,
+      label: t('SIDEBAR.PRO_SYNC', { org, state: t(shown.labelKey) }),
+      className: `sidebar__project-sync sidebar__project-sync--${shown.tone}`,
+    };
+  };
 
   const suiteRowsOf = (projectId: string): ISidebarSuiteRow[] => {
     const suite = suites[projectId];
@@ -80,6 +108,7 @@ export const useSidebarViewModel = () => {
       id: `header-${project.id}`,
       projectId: project.id,
       name: project.name,
+      sync: syncOf(project.id),
     },
     ...workspaces
       .filter((workspace) => workspace.projectId === project.id)

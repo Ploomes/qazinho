@@ -11,7 +11,13 @@ import {
   walkRun,
 } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useSettingsStore, useSuiteStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useProStore,
+  useSettingsStore,
+  useSuiteStore,
+  useWorkspaceStore,
+} from '@/store';
 
 const PROJECT = { id: 'p1', name: 'Shop · staging', targets: [], repositories: [] };
 
@@ -25,6 +31,7 @@ beforeEach(() => {
   });
   useWorkspaceStore.setState({ workspaces: [], removingWorkspaceId: null });
   useSuiteStore.setState({ suites: {}, lists: {}, runs: {}, live: {}, picked: {} });
+  useProStore.setState({ status: null, shares: [] });
 });
 
 const SUITE = {
@@ -40,6 +47,52 @@ const SUITE = {
 };
 
 describe('useSidebarViewModel', () => {
+  describe('the project header', () => {
+    it('shows nothing of QAzinho Pro for a project kept on this computer', () => {
+      const { rows } = renderHook(() => useSidebarViewModel()).result.current;
+
+      expect(rows[0]).toMatchObject({ kind: 'header', sync: null });
+    });
+
+    it('says where a shared project’s sending stands, by its org’s name, in words and a glyph', () => {
+      useProStore.setState({
+        status: {
+          isSignedIn: true,
+          account: { email: 'ana@loja.dev', name: 'Ana' },
+          machine: { id: 'm1', name: 'MacBook-Ana' },
+          orgs: [
+            {
+              slug: 'loja',
+              name: 'Loja Online',
+              role: 'editor',
+              billingStatus: 'active',
+            },
+          ],
+          isReachable: true,
+        },
+        shares: [
+          {
+            projectId: 'p1',
+            orgSlug: 'loja',
+            state: 'conflict',
+            syncedAt: null,
+            conflicts: ['w1'],
+          },
+        ],
+      });
+
+      const { rows } = renderHook(() => useSidebarViewModel()).result.current;
+
+      expect(rows[0]).toMatchObject({
+        sync: {
+          icon: 'attention',
+          label: 'QAzinho Pro · Loja Online: A plan changed in the org too',
+          className: 'sidebar__project-sync sidebar__project-sync--attn',
+        },
+      });
+    });
+  });
+
   describe('the suite row', () => {
     it("shows the suite a project runs under its workspaces, by the suite's name until it was read", () => {
       useSuiteStore.setState({ suites: { p1: SUITE } });
