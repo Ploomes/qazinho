@@ -129,11 +129,12 @@ afterAll(async () => {
 });
 
 describe('the device as MCP tools', () => {
-  it('lists the actions an agent can take on the device, and the tools it reports, files bugs and asks the QA with', async () => {
+  it('lists the actions an agent can take on the device, and the tools it reports, files bugs and asks the QA with, beside the permission tool every server answers', async () => {
     const client = await connect('w1');
     const listed = await client.listTools();
 
     expect(listed.tools.map(({ name }) => name)).toEqual([
+      'approve_permission',
       'look',
       'inspect',
       'network',
