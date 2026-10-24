@@ -5,6 +5,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 import { i18n } from '@/languages';
 import { useProCardViewModel } from '@/modules/Pro/components/ProCard/hooks/useProCardViewModel';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
+import { useProStore } from '@/store';
 
 const SIGNED_IN: ProStatus = {
   isSignedIn: true,
@@ -27,6 +28,7 @@ beforeAll(async () => {
 });
 
 beforeEach(() => {
+  useProStore.setState({ status: null, shares: [] });
   window.qazinho = fakeQazinhoApi('darwin');
 });
 

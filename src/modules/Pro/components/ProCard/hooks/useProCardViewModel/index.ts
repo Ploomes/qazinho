@@ -1,4 +1,4 @@
-import type { ProSignInProgress, ProStatus } from '@/shared/types';
+import type { ProSignInProgress } from '@/shared/types';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -7,16 +7,18 @@ import {
   PRO_SITE_URL,
 } from '@/modules/Pro/components/ProCard/constants';
 import { Pro } from '@/services';
+import { useProStore } from '@/store';
 
 export const useProCardViewModel = () => {
   const { t } = useTranslation();
-  const [status, setStatus] = useState<ProStatus | null>(null);
+  const status = useProStore((state) => state.status);
+  const setStatus = useProStore((state) => state.setStatus);
   const [signIn, setSignIn] = useState<ProSignInProgress | null>(null);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
   useEffect(() => {
     void Pro.status().then(setStatus);
-  }, []);
+  }, [setStatus]);
 
   useEffect(
     () =>

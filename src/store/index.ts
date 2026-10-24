@@ -2,6 +2,7 @@ export * from './AppStore';
 export * from './AssistantStore';
 export * from './BuildStore';
 export * from './MachineStore';
+export * from './ProStore';
 export * from './SettingsStore';
 export * from './SetupStore';
 export * from './SuiteStore';

@@ -43,6 +43,7 @@ export const pt: typeof en = {
     TIP_NOTE: 'Informado pelo {{agent}}. O QAzinho só lê.',
   },
   SIDEBAR: {
+    PRO_SYNC: 'QAzinho Pro · {{org}}: {{state}}',
     NEW_WORKSPACE: 'Novo workspace aqui',
     NEW_PROJECT: 'Novo projeto',
     ASKED_YOU: 'O agente te perguntou algo',
@@ -615,6 +616,7 @@ export const pt: typeof en = {
     SECTION_CODE: 'Código',
     SECTION_VARIABLES: 'Variáveis',
     SECTION_AUTOMATION: 'Automação',
+    SECTION_PRO: 'QAzinho Pro',
     SECTION_FLAGGED: 'precisa de atenção',
     NEEDS_NAME_EDIT: 'Um projeto precisa de nome',
     NEEDS_TARGET_EDIT: 'Mantenha um target: uma URL, um .apk ou um .app',
@@ -1528,5 +1530,27 @@ export const pt: typeof en = {
       'Este computador não tem um keychain para guardar o login com segurança.',
     FAIL_UNEXPECTED:
       'O QAzinho Pro respondeu algo inesperado. Tente de novo daqui a pouco.',
+    LOADING: 'Lendo como está este computador…',
+    SUBSCRIBE: 'Assinar para o seu time',
+    SHARE_INTRO:
+      'Compartilhe este projeto com uma org, e os planos, runs e bugs dele chegam para o time todo. O QAzinho envia o que mudou, sempre que muda.',
+    SHARE_WITH: 'Compartilhar com',
+    SHARE_NONE: 'Só neste computador',
+    SHARE_NONE_NOTE: 'não compartilhado',
+    SHARE_UNSAVED: 'Crie o projeto primeiro e compartilhe aqui depois.',
+    SHARE_SIGNED_OUT:
+      'Entre no QAzinho Pro para compartilhar este projeto com o seu time.',
+    SHARE_OPEN_PRO: 'Abrir o QAzinho Pro nas configurações',
+    SHARE_READER: 'aqui você só lê',
+    SHARE_ORG_BLOCKED: 'org bloqueada',
+    SYNC_OFF: 'Não compartilhado',
+    SYNC_SYNCED: 'Enviado para a org',
+    SYNC_SENDING: 'Enviando…',
+    SYNC_WAITING: 'Esperando a conexão para enviar',
+    SYNC_CONFLICT: 'Um plano mudou na org também',
+    SYNC_BLOCKED: 'A org está bloqueada até o pagamento ficar em dia',
+    SYNC_READ_ONLY: 'Nesta org você só lê, então nada é enviado',
+    SYNC_SIGNED_OUT: 'Entre de novo para continuar enviando',
+    SYNC_FAILED: 'A org recusou o que foi enviado',
   },
 };
