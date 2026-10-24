@@ -118,6 +118,16 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
       Promise.resolve({ steps: ['code', 'browser', 'account'], phase: 'cancelled' }),
     cancelGithubSignIn: () => Promise.resolve(),
     onGithubSignIn: () => () => undefined,
+    proStatus: () => Promise.resolve({ isSignedIn: false, canKeepToken: true }),
+    signInPro: () =>
+      Promise.resolve({
+        steps: ['code', 'browser', 'account'],
+        phase: 'connected',
+        account: 'ana@loja.dev',
+      }),
+    cancelProSignIn: () => Promise.resolve(),
+    onProSignIn: () => () => undefined,
+    signOutPro: () => Promise.resolve({ isSignedIn: false, canKeepToken: true }),
     listRepositories: () => Promise.resolve({ isListed: false, failure: 'no-cli' }),
     listBranches: () => Promise.resolve({ isListed: false, failure: 'no-cli' }),
     searchJira: () => Promise.resolve({ isListed: false, failure: 'not-connected' }),

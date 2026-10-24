@@ -5,6 +5,7 @@ export * from './CHAT_SOURCES';
 export * from './DIAGNOSTICS_LINES';
 export * from './FILE_FILTERS';
 export * from './PATHS';
+export * from './PRO_API';
 export * from './SAVED_VIDEO';
 export * from './WINDOW';
 export * from './WINDOW_CONTROLS';

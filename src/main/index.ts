@@ -38,6 +38,7 @@ import type {
   IWindowControls,
   McpSignInProgress,
   PickKind,
+  ProSignInProgress,
   QaReply,
   SaveOutcome,
   SuiteChangeEvent,
@@ -52,8 +53,9 @@ import type {
   SourceCall,
 } from '@salve-software/qazinho-harness';
 import { copyFile, mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
-import { homedir, release, tmpdir } from 'node:os';
+import { homedir, hostname, release, tmpdir } from 'node:os';
 import { delimiter, extname, join } from 'node:path';
+import { setTimeout as sleep } from 'node:timers/promises';
 import {
   app,
   BrowserWindow,
@@ -93,6 +95,8 @@ import {
   JiraStories,
   LiveStream,
   PhonePeek,
+  ProAccount,
+  ProApi,
   ProcessOwners,
   ResourceCollector,
   RunCoordinator,
@@ -122,6 +126,7 @@ import {
   FILE_FILTERS,
   CHAT_SOURCES,
   PATHS,
+  PRO_API,
   SAVED_VIDEO,
   APP_USER_MODEL_ID,
   APP_VERSION,
@@ -213,6 +218,7 @@ function broadcast(props: {
     | McpSignInProgress
     | AgentSignInProgress
     | GithubSignInProgress
+    | ProSignInProgress
     | IBuildEvent
     | SuiteEvent
     | SuiteChangeEvent
@@ -307,6 +313,21 @@ const vault = new IntegrationVault({
   cipher: keychain,
   fetcher: (url, init) => fetch(url, init),
   github: () => github.status(),
+});
+const proApi = new ProApi({
+  baseUrl: PRO_API.url,
+  fetcher: (url, init) => fetch(url, init),
+});
+const proAccount = new ProAccount({
+  api: proApi,
+  cipher: keychain,
+  file: PATHS.pro,
+  machineName: hostname(),
+  openUrl: (url) => shell.openExternal(url),
+  wait: (ms) => sleep(ms),
+  now: () => Date.now(),
+  onProgress: (progress) =>
+    broadcast({ channel: CHANNELS.proSignInEvent, event: progress }),
 });
 const jira = new JiraApi({
   credentials: () => vault.jira(),
@@ -1394,6 +1415,12 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.cancelGithubSignIn, () => {
     github.cancelSignIn();
   });
+  ipcMain.handle(CHANNELS.proStatus, () => proAccount.status());
+  ipcMain.handle(CHANNELS.signInPro, () => proAccount.signIn());
+  ipcMain.handle(CHANNELS.cancelProSignIn, () => {
+    proAccount.cancelSignIn();
+  });
+  ipcMain.handle(CHANNELS.signOutPro, () => proAccount.signOut());
   ipcMain.handle(CHANNELS.listRepositories, () => repos.repositories());
   ipcMain.handle(CHANNELS.searchJira, (_event, query: string) => jira.search(query));
   ipcMain.handle(CHANNELS.listJiraProjects, () => jira.projects());

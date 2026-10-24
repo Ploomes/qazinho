@@ -1,5 +1,7 @@
 import type {
   AgentSignInProgress,
+  ProSignInProgress,
+  ProStatus,
   BugComment,
   BugFiling,
   BugReview,
@@ -298,6 +300,21 @@ const api: IQazinhoApi = {
       ipcRenderer.off(CHANNELS.githubSignInEvent, forward);
     };
   },
+  proStatus: () => ipcRenderer.invoke(CHANNELS.proStatus) as Promise<ProStatus>,
+  signInPro: () => ipcRenderer.invoke(CHANNELS.signInPro) as Promise<ProSignInProgress>,
+  cancelProSignIn: () => ipcRenderer.invoke(CHANNELS.cancelProSignIn) as Promise<void>,
+  onProSignIn: (listener: (progress: ProSignInProgress) => void) => {
+    const forward = (_: unknown, progress: ProSignInProgress) => {
+      listener(progress);
+    };
+
+    ipcRenderer.on(CHANNELS.proSignInEvent, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.proSignInEvent, forward);
+    };
+  },
+  signOutPro: () => ipcRenderer.invoke(CHANNELS.signOutPro) as Promise<ProStatus>,
   listRepositories: () =>
     ipcRenderer.invoke(CHANNELS.listRepositories) as Promise<IRepositoryList>,
   listBranches: (repository: IRepositoryRef) =>

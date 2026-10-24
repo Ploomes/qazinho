@@ -11,6 +11,7 @@ import {
   Integrations,
   Jira,
   Mcp,
+  Pro,
   Run,
   Setup,
   Suites,
@@ -78,6 +79,12 @@ describe('a page with no bridge', () => {
       isListed: false,
       failure: 'no-cli',
     });
+  });
+
+  it('says this machine is signed out of QAzinho Pro, and that a sign-in did not start', async () => {
+    expect(await Pro.status()).toEqual({ isSignedIn: false, canKeepToken: false });
+    expect(await Pro.signIn()).toMatchObject({ phase: 'failed', failure: 'unexpected' });
+    expect(await Pro.signOut()).toEqual({ isSignedIn: false, canKeepToken: false });
   });
 
   it('has no assistant to ask, and no tool call to carry out', async () => {

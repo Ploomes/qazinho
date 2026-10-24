@@ -97,4 +97,9 @@ export const CHANNELS = {
   startBuild: 'build:start',
   stopBuild: 'build:stop',
   buildEvent: 'build:event',
+  proStatus: 'pro:status',
+  signInPro: 'pro:sign-in',
+  cancelProSignIn: 'pro:sign-in-cancel',
+  proSignInEvent: 'pro:sign-in-event',
+  signOutPro: 'pro:sign-out',
 } as const;

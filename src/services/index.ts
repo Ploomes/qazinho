@@ -13,6 +13,7 @@ export * from './Jira';
 export * from './Machine';
 export * from './Mcp';
 export * from './Platform';
+export * from './Pro';
 export * from './Run';
 export * from './Setup';
 export * from './Suites';
