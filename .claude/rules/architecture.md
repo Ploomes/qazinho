@@ -397,6 +397,30 @@ question per channel, for a target `{ role, platform }`:
   for each role and platform; changing what the agent is told is a diff of those files, in the
   harness's repository.
 
+## QAzinho Pro, out of the QA's way
+
+Signing in to QAzinho Pro changes nothing in how the app is used. The card at the foot of the
+sidebar (`ProAccountCard`) is the one place it shows; everything else happens out of sight.
+
+- **Signing in** is the platform's device flow (`ProAccount`): a code the QA confirms in the
+  browser, the token sealed with `safeStorage` in `pro.bin`, like Jira's. The account sends to
+  one org (`sendingOrgOf`): the one the QA chose while they still write there, else the first they
+  write in that is paid up. An account that only reads sends nothing.
+- **Every project goes**, with no choice per project. The page builds what a project holds
+  (`proBatchOf`: each workspace as a plan, its finished runs and its bugs) and hands it to main
+  once a burst settles (`useProSync`); a live run's clock is no change (`changedProjectsOf`).
+- **Main sends only what changed** (`ProSync`): each part keyed by a hash in `pro-sync.json`,
+  screens and videos streamed from inside the archive alone (`isInside`, `uploaderOf`), a minute's
+  wait when the network drops, and everything again to an org it never reached. A build goes by
+  its file name and a web address without a login in it (`sharedValueOf`); variables go by name.
+- **A plan the org moved too** (`plan_conflict`) is joined by the page, case by case from where
+  both started (`useProConflicts`, `mergeCases`): one side's change wins, a case both changed keeps
+  this computer's, as the org keeps every version, and one both added under an id keeps both.
+  Main then builds on the org's version (`ProSync.resolve`).
+- **The card** reads where things stand (`attentionOf`): a blocked org, a role that only reads, no
+  answer. It downloads the org's projects (`ProDownloads`), their recordings into each workspace's
+  `recipes.json`, and asks for their variables' values in `VariablesModal`.
+
 ## Heavy work stays off the main process
 
 Agents, Playwright and device drivers will run in child processes (`utilityProcess`), so a slow
@@ -542,6 +566,10 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `SuiteRegistry`                       | the suite folder each project connected, and what it holds, read afresh                  |
 | `SuiteRunner`                         | lists and runs a suite with its own Playwright, a project at a time, and keeps each run  |
 | `SuiteChanges`                        | lets the QA's agent fix a suite's test in a worktree, and sends it once the QA approves  |
+| `ProAccount`                          | signs this computer in to QAzinho Pro, keeps its token sealed, and the org it sends to   |
+| `ProApi`                              | talks to QAzinho Pro's API: the sign-in, the account, the sync, evidence, org projects   |
+| `ProSync`                             | sends every project to its org in the background, what changed, waiting for the network  |
+| `ProDownloads`                        | lists the org's projects and downloads one, its recordings included                      |
 
 ## Dependencies
 

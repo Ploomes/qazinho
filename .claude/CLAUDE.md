@@ -275,6 +275,15 @@ a fake gh handed over; React Native, Expo, Flutter and iOS have not been built b
 yet. QAzinho's calls run with the QA's own Claude Code hooks off: a hook that rewrites commands,
 such as rtk's, made every Gradle command fail the build's permissions.
 
+**QAzinho Pro is a card at the foot of the sidebar, and nothing else.** Signed out, the card
+signs this computer in by a code the QA confirms in the browser, its token sealed by the OS
+keychain. Signed in, every project goes to the org the account sends to, in the background: what
+changed since the last time, the screens and videos of its runs, with no loading and nothing new
+on screen, so the app is the same as signed out. A plan the org moved too is joined case by case,
+unasked. The card names the account and its org, flags a blocked org or an account that only
+reads, and downloads the org's projects with their recordings. Unit tests drive it against a fake
+platform; the platform's API (qazinho-server) is still being built, so no real round trip has run.
+
 **Codex is half verified.** QAzinho drives it through `codex exec --json` and its own MCP server,
 checked against a fake Codex built from the real one's events. The chat has answered through a
 real signed-in Codex (CLI 0.163.0), in the strict schema; a run, with the device tools over MCP,
