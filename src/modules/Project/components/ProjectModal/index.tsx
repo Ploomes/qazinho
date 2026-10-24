@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { ProShareField } from '@/modules/Pro';
 import { Button, Eyebrow, Input } from '@/shared/components/atoms';
 import { FileField } from '@/shared/components/molecules';
 import { ModalFrame } from '@/shared/components/templates';
@@ -15,7 +16,7 @@ import { PROJECT_MODAL } from './constants';
 import { useProjectModalViewModel } from './hooks';
 import './styles.css';
 
-/** A project's window, in sections down its side: its name and targets, the code it is made of, its variables, its automated suite, and deleting it. */
+/** A project's window, in sections down its side: its name and targets, the code it is made of, its variables, its automated suite, the org it is shared with, and deleting it. */
 export const ProjectModal: React.FC = () => {
   const {
     name,
@@ -174,6 +175,10 @@ export const ProjectModal: React.FC = () => {
 
         <ProjectPane label={t('PROJECT.SECTION_AUTOMATION')} isOpen={isOpen.automation}>
           <SuiteField projectId={projectId} variableNames={variableNames} />
+        </ProjectPane>
+
+        <ProjectPane label={t('PROJECT.SECTION_PRO')} isOpen={isOpen.pro}>
+          <ProShareField projectId={projectId} />
         </ProjectPane>
 
         {isEditing && (
