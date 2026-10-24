@@ -38,6 +38,8 @@ import type { INetworkEntry } from './INetworkEntry';
 import type { InstallableId } from './InstallableId';
 import type { IntegrationId } from './IntegrationId';
 import type { IProjectVariables } from './IProjectVariables';
+import type { IProShare } from './IProShare';
+import type { IProSyncBatch } from './IProSyncBatch';
 import type { IPublishPlan } from './IPublishPlan';
 import type { IRepositoryList } from './IRepositoryList';
 import type { IRepositoryRef } from './IRepositoryRef';
@@ -179,6 +181,13 @@ export interface IQazinhoApi {
   cancelProSignIn: () => Promise<void>;
   onProSignIn: (listener: (progress: ProSignInProgress) => void) => () => void;
   signOutPro: () => Promise<ProStatus>;
+  proShares: () => Promise<IProShare[]>;
+  shareProject: (props: {
+    projectId: string;
+    orgSlug: string | null;
+  }) => Promise<IProShare>;
+  syncPro: (batch: IProSyncBatch) => Promise<IProShare>;
+  onProSync: (listener: (share: IProShare) => void) => () => void;
   listRepositories: () => Promise<IRepositoryList>;
   listBranches: (repository: IRepositoryRef) => Promise<IBranchList>;
   searchJira: (query: string) => Promise<JiraIssueList>;

@@ -39,6 +39,8 @@ import type {
   IMcpSignIn,
   INetworkEntry,
   IProjectVariables,
+  IProShare,
+  IProSyncBatch,
   IPublishPlan,
   IQazinhoApi,
   IRepositoryList,
@@ -315,6 +317,22 @@ const api: IQazinhoApi = {
     };
   },
   signOutPro: () => ipcRenderer.invoke(CHANNELS.signOutPro) as Promise<ProStatus>,
+  proShares: () => ipcRenderer.invoke(CHANNELS.proShares) as Promise<IProShare[]>,
+  shareProject: (props: { projectId: string; orgSlug: string | null }) =>
+    ipcRenderer.invoke(CHANNELS.shareProject, props) as Promise<IProShare>,
+  syncPro: (batch: IProSyncBatch) =>
+    ipcRenderer.invoke(CHANNELS.syncPro, batch) as Promise<IProShare>,
+  onProSync: (listener: (share: IProShare) => void) => {
+    const forward = (_: unknown, share: IProShare) => {
+      listener(share);
+    };
+
+    ipcRenderer.on(CHANNELS.proSyncEvent, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.proSyncEvent, forward);
+    };
+  },
   listRepositories: () =>
     ipcRenderer.invoke(CHANNELS.listRepositories) as Promise<IRepositoryList>,
   listBranches: (repository: IRepositoryRef) =>

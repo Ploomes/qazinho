@@ -102,4 +102,8 @@ export const CHANNELS = {
   cancelProSignIn: 'pro:sign-in-cancel',
   proSignInEvent: 'pro:sign-in-event',
   signOutPro: 'pro:sign-out',
+  proShares: 'pro:shares',
+  shareProject: 'pro:share',
+  syncPro: 'pro:sync',
+  proSyncEvent: 'pro:sync-event',
 } as const;

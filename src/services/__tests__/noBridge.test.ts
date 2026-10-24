@@ -87,6 +87,23 @@ describe('a page with no bridge', () => {
     expect(await Pro.signOut()).toEqual({ isSignedIn: false, canKeepToken: false });
   });
 
+  it('shares nothing with QAzinho Pro, and sends nothing', async () => {
+    expect(await Pro.shares()).toEqual([]);
+    expect(await Pro.share({ projectId: 'p1', orgSlug: 'loja' })).toMatchObject({
+      projectId: 'p1',
+      state: 'off',
+    });
+    expect(
+      await Pro.sync({
+        project: { projectId: 'p1', name: 'Loja', targets: [], repositories: [] },
+        plans: [],
+        runs: [],
+        bugs: [],
+      }),
+    ).toMatchObject({ projectId: 'p1', state: 'off' });
+    expect(Pro.onSync(() => undefined)).toBeTypeOf('function');
+  });
+
   it('has no assistant to ask, and no tool call to carry out', async () => {
     expect(
       await Assistant.ask({

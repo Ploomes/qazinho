@@ -5,6 +5,8 @@ import type {
   ICommentBug,
   IFileBug,
   IFilingEvent,
+  IProShare,
+  IProSyncBatch,
   IPublishPlan,
   IReviewBug,
   IAgentEvent,
@@ -98,6 +100,7 @@ import {
   ProAccount,
   ProApi,
   ProcessOwners,
+  ProSync,
   ResourceCollector,
   RunCoordinator,
   ReplayServer,
@@ -120,6 +123,7 @@ import {
 } from '@/main/classes/devices/AndroidDriver/library';
 import { bundleOfPlist, listSimulators } from '@/main/classes/devices/IosDriver/library';
 import { BUG_REVIEW } from '@/main/classes/integrations/BugReviewer/constants';
+import { uploaderOf } from '@/main/classes/pro/ProSync/library';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import {
   ASSISTANT,
@@ -219,6 +223,7 @@ function broadcast(props: {
     | AgentSignInProgress
     | GithubSignInProgress
     | ProSignInProgress
+    | IProShare
     | IBuildEvent
     | SuiteEvent
     | SuiteChangeEvent
@@ -348,6 +353,29 @@ const bugFiler = new BugFiler({
   now: () => new Date(),
 });
 const variables = new VariableVault({ file: PATHS.variables, cipher: keychain });
+const proSync = new ProSync({
+  api: proApi,
+  token: () => proAccount.token(),
+  machineName: hostname(),
+  file: PATHS.proSync,
+  archiveRoot: PATHS.data,
+  videoOf: (run) => replays.fileOf(run),
+  variablesOf: async (projectId) =>
+    (await variables.list()).find((kept) => kept.projectId === projectId)?.variables ??
+    [],
+  upload: uploaderOf((url, init) => fetch(url, init)),
+  now: () => new Date(),
+  schedule: ({ ms, run }) => {
+    const timer = setTimeout(run, ms);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  },
+  onShare: (share) => {
+    broadcast({ channel: CHANNELS.proSyncEvent, event: share });
+  },
+});
 const git = new GitCli({ directories: commandDirectories });
 const suites = new SuiteRegistry({ root: PATHS.suites, git });
 const suiteRunner = new SuiteRunner({
@@ -1421,6 +1449,13 @@ void app.whenReady().then(async () => {
     proAccount.cancelSignIn();
   });
   ipcMain.handle(CHANNELS.signOutPro, () => proAccount.signOut());
+  ipcMain.handle(CHANNELS.proShares, () => proSync.shares());
+  ipcMain.handle(
+    CHANNELS.shareProject,
+    (_event, props: { projectId: string; orgSlug: string | null }) =>
+      proSync.share(props),
+  );
+  ipcMain.handle(CHANNELS.syncPro, (_event, batch: IProSyncBatch) => proSync.push(batch));
   ipcMain.handle(CHANNELS.listRepositories, () => repos.repositories());
   ipcMain.handle(CHANNELS.searchJira, (_event, query: string) => jira.search(query));
   ipcMain.handle(CHANNELS.listJiraProjects, () => jira.projects());

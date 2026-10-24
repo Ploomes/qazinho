@@ -128,6 +128,24 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     cancelProSignIn: () => Promise.resolve(),
     onProSignIn: () => () => undefined,
     signOutPro: () => Promise.resolve({ isSignedIn: false, canKeepToken: true }),
+    proShares: () => Promise.resolve([]),
+    shareProject: ({ projectId, orgSlug }) =>
+      Promise.resolve({
+        projectId,
+        orgSlug,
+        state: orgSlug === null ? 'off' : 'waiting',
+        syncedAt: null,
+        conflicts: [],
+      }),
+    syncPro: ({ project }) =>
+      Promise.resolve({
+        projectId: project.projectId,
+        orgSlug: null,
+        state: 'off',
+        syncedAt: null,
+        conflicts: [],
+      }),
+    onProSync: () => () => undefined,
     listRepositories: () => Promise.resolve({ isListed: false, failure: 'no-cli' }),
     listBranches: () => Promise.resolve({ isListed: false, failure: 'no-cli' }),
     searchJira: () => Promise.resolve({ isListed: false, failure: 'not-connected' }),
