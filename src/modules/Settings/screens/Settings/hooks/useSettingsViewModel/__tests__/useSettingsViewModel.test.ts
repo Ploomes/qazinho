@@ -38,7 +38,6 @@ describe('useSettingsViewModel', () => {
       'agents',
       'devices',
       'integrations',
-      'pro',
       'mcps',
       'appearance',
       'shortcuts',

@@ -17,12 +17,11 @@ import { VARIABLE_FAILURE_KEYS } from '@/modules/Project/constants';
 import { useVariableActions } from '@/modules/Project/hooks/useVariableActions';
 import { newProjectId, variableChangesOf, webAddressOf } from '@/modules/Project/library';
 import { SETUP_LINKS } from '@/modules/Setup/constants';
-import { Agent, Archive, Files, Platform, Pro, Run } from '@/services';
+import { Agent, Archive, Files, Platform, Run } from '@/services';
 import {
   useAppStore,
   useBuildStore,
   useMachineStore,
-  useProStore,
   useSetupStore,
   useVariablesStore,
   useWorkspaceStore,
@@ -45,7 +44,6 @@ export const useProjectModalViewModel = () => {
   const builds = useBuildStore((state) => state.builds);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const removeWorkspacesOf = useWorkspaceStore((state) => state.removeWorkspacesOf);
-  const landShare = useProStore((state) => state.landShare);
 
   const [editing] = useState(
     () => projects.find(({ id }) => id === editingProjectId) ?? null,
@@ -240,7 +238,6 @@ export const useProjectModalViewModel = () => {
     }
 
     removeWorkspacesOf(editing.id);
-    void Pro.share({ projectId: editing.id, orgSlug: null }).then(landShare);
     removeProject({
       projectId: editing.id,
       isOpen: own.some((workspace) => workspace.id === selectedWorkspaceId),
@@ -276,7 +273,6 @@ export const useProjectModalViewModel = () => {
       code: section === 'code',
       variables: section === 'variables',
       automation: section === 'automation',
-      pro: section === 'pro',
       delete: section === 'delete',
     },
     title: isEditing ? t('PROJECT.EDIT_TITLE') : t('PROJECT.NEW_TITLE'),

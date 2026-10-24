@@ -40,31 +40,6 @@
   white-space: nowrap;
 }
 
-.sidebar__project-sync {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  margin-right: var(--space-2);
-  color: var(--ink3);
-  transition: color var(--dur) var(--ease);
-}
-
-.sidebar__project-sync--pass {
-  color: var(--pass);
-}
-
-.sidebar__project-sync--live {
-  color: var(--lime-ink);
-}
-
-.sidebar__project-sync--attn {
-  color: var(--attn);
-}
-
-.sidebar__project-sync--fail {
-  color: var(--fail);
-}
-
 .sidebar__project-settings {
   display: inline-flex;
   flex: none;

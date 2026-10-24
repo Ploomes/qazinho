@@ -4,13 +4,12 @@ import { i18n } from '@/languages';
 import { PROJECT_SECTIONS } from '@/modules/Project/components/ProjectModal/constants';
 
 describe('PROJECT_SECTIONS', () => {
-  it('opens on what the project is, before its code, its variables, its suite and its org', () => {
+  it('opens on what the project is, before its code, its variables and its suite', () => {
     expect(PROJECT_SECTIONS.map(({ id }) => id)).toEqual([
       'general',
       'code',
       'variables',
       'automation',
-      'pro',
     ]);
   });
 
@@ -23,8 +22,8 @@ describe('PROJECT_SECTIONS', () => {
 
     expect(PROJECT_SECTIONS.map(({ labelKey }) => t(labelKey))).toEqual(
       language === 'en'
-        ? ['General', 'Code', 'Variables', 'Automation', 'QAzinho Pro']
-        : ['Geral', 'Código', 'Variáveis', 'Automação', 'QAzinho Pro'],
+        ? ['General', 'Code', 'Variables', 'Automation']
+        : ['Geral', 'Código', 'Variáveis', 'Automação'],
     );
   });
 });

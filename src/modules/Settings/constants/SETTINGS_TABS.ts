@@ -4,7 +4,6 @@ export const SETTINGS_TABS: SettingsTab[] = [
   'agents',
   'devices',
   'integrations',
-  'pro',
   'mcps',
   'appearance',
   'shortcuts',

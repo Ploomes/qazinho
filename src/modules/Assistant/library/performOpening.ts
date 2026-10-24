@@ -7,7 +7,6 @@ const SECTION_NAMES: Record<SettingsTab, string> = {
   agents: 'Agents',
   devices: 'Devices',
   integrations: 'Integrations',
-  pro: 'QAzinho Pro',
   mcps: 'MCPs',
   appearance: 'Appearance',
   shortcuts: 'Shortcuts',

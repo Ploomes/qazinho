@@ -120,7 +120,6 @@ describe('useProjectModalViewModel', () => {
         code: false,
         variables: false,
         automation: false,
-        pro: false,
         delete: false,
       });
     });
@@ -137,7 +136,6 @@ describe('useProjectModalViewModel', () => {
         code: false,
         variables: true,
         automation: false,
-        pro: false,
         delete: false,
       });
     });
@@ -150,7 +148,6 @@ describe('useProjectModalViewModel', () => {
         'code',
         'variables',
         'automation',
-        'pro',
       ]);
     });
 
@@ -158,7 +155,6 @@ describe('useProjectModalViewModel', () => {
       const { result } = renderHook(() => useProjectModalViewModel());
 
       expect(result.current.navItems.map(({ count }) => count)).toEqual([
-        null,
         null,
         null,
         null,
@@ -186,7 +182,6 @@ describe('useProjectModalViewModel', () => {
         2,
         1,
         null,
-        null,
       ]);
     });
 
@@ -195,7 +190,6 @@ describe('useProjectModalViewModel', () => {
 
       expect(result.current.navItems.map(({ isFlagged }) => isFlagged)).toEqual([
         true,
-        false,
         false,
         false,
         false,
