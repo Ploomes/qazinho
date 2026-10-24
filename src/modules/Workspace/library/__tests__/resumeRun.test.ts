@@ -120,6 +120,7 @@ describe('resumeRun', () => {
     const finished = endRun({ workspace: resumed(), at: '22:30', endedBy: 'finished' });
 
     expect(finished.runs[0]?.counts).toMatchObject({ passed: 1, failed: 1 });
+    expect(finished.runs[0]?.startedAtMs).toBe(STARTED);
   });
 
   it('files the bugs found on the side while the page was away, once', () => {

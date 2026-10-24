@@ -32,6 +32,7 @@ export function resumeRun(props: {
     isDone: false,
     elapsedSec: Math.max(0, Math.round((now - run.startedAtMs) / 1000)),
     startedAt,
+    startedAtMs: run.startedAtMs,
     outcomes: run.outcomes,
     shot:
       run.outcomes.findLast(({ screenshot }) => screenshot !== null)?.screenshot ?? null,

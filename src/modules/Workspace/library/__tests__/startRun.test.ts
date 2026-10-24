@@ -23,6 +23,21 @@ describe('startRun', () => {
     expect(workspace.live?.by).toEqual(WALKED_BY);
   });
 
+  it('keeps the moment it started, beside the clock the QA reads', () => {
+    const workspace = startRun({
+      workspace: makeWorkspace(),
+      startedAt: '09:41',
+      startedAtMs: 1_760_000_000_000,
+      runId: 'r-01',
+      by: WALKED_BY,
+    });
+
+    expect(workspace.live).toMatchObject({
+      startedAt: '09:41',
+      startedAtMs: 1_760_000_000_000,
+    });
+  });
+
   it('does NOT start a workspace whose plan has no cases', () => {
     const empty = makeWorkspace([]);
 

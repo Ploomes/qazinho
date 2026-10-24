@@ -318,6 +318,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
             runId,
             by,
             startedAt: formatClock(new Date()),
+            startedAtMs: Date.now(),
             ...(kind === undefined ? {} : { kind }),
           }),
       }),

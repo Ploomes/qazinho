@@ -119,6 +119,23 @@ describe('buildRun', () => {
     ).toBe('stopped');
   });
 
+  it('keeps the moment the run started, and leaves it out for a run that never knew it', () => {
+    const started = startRun({
+      workspace: walkRun({ verdicts: [] }),
+      startedAt: '09:41',
+      startedAtMs: 1_760_000_000_000,
+      runId: 'r-01',
+      by: WALKED_BY,
+    });
+
+    expect(buildRun({ workspace: started, endedBy: 'finished' }).startedAtMs).toBe(
+      1_760_000_000_000,
+    );
+    expect(
+      buildRun({ workspace: walkRun({ verdicts: ['passed'] }), endedBy: 'finished' }),
+    ).not.toHaveProperty('startedAtMs');
+  });
+
   it('carries the run id the device was told to use', () => {
     const run = buildRun({
       workspace: walkRun({ verdicts: VERDICTS }),

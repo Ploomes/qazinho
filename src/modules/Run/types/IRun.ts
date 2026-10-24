@@ -4,11 +4,12 @@ import type { IRunSuggestion } from './IRunSuggestion';
 import type { RunEnd } from './RunEnd';
 import type { IRunAsked, IRunVideo } from '@/shared/types';
 
-/** One execution of a selection of cases on one target, with a verdict per step, what the agent said it cost, and its recording once made; an exploration says so, its screens as its one case, with the plan it suggested. */
+/** One execution of a selection of cases on one target, with when it started, a verdict per step, what the agent said it cost, and its recording once made; an exploration says so, its screens as its one case, with the plan it suggested. */
 export interface IRun {
   id: string;
   meta: string;
   startedAt: string;
+  startedAtMs?: number;
   durationSec: number;
   costUsd: number | null;
   counts: IRunCounts;

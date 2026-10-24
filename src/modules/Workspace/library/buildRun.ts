@@ -105,6 +105,7 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
     id,
     meta: workspace.name,
     startedAt: live?.startedAt ?? '',
+    ...(live?.startedAtMs === undefined ? {} : { startedAtMs: live.startedAtMs }),
     durationSec: live?.elapsedSec ?? tookSec(outcomes),
     costUsd: live?.costUsd ?? null,
     counts: countVerdicts([

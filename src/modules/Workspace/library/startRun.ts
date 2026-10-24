@@ -4,11 +4,12 @@ import type { IWalkedBy, IWorkspace } from '@/modules/Workspace/types';
 export function startRun(props: {
   workspace: IWorkspace;
   startedAt: string;
+  startedAtMs?: number;
   runId: string;
   by: IWalkedBy;
   kind?: 'explore';
 }): IWorkspace {
-  const { workspace, startedAt, runId, by, kind } = props;
+  const { workspace, startedAt, startedAtMs, runId, by, kind } = props;
 
   if (workspace.plan.length === 0 && kind !== 'explore') return workspace;
 
@@ -23,6 +24,7 @@ export function startRun(props: {
       isDone: false,
       elapsedSec: 0,
       startedAt,
+      ...(startedAtMs === undefined ? {} : { startedAtMs }),
       outcomes: [],
       shot: null,
       streamUrl: null,
