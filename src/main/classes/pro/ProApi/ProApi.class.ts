@@ -37,7 +37,7 @@ export class ProApi {
   /** Asks the platform for a sign-in code for this machine. */
   public async deviceCode(machineName: string): Promise<ProAnswer<IProDeviceCode>> {
     return this.call({
-      request: { method: 'POST', path: '/device/codes', body: { machineName } },
+      request: { method: 'POST', path: '/api/device/codes', body: { machineName } },
       schema: DEVICE_CODE_SCHEMA,
     });
   }
@@ -45,7 +45,7 @@ export class ProApi {
   /** Trades a sign-in code for this machine's token once the person confirmed it; `authorization_pending` until then. */
   public async deviceToken(deviceCode: string): Promise<ProAnswer<IProDeviceToken>> {
     return this.call({
-      request: { method: 'POST', path: '/device/tokens', body: { deviceCode } },
+      request: { method: 'POST', path: '/api/device/tokens', body: { deviceCode } },
       schema: DEVICE_TOKEN_SCHEMA,
     });
   }
@@ -53,7 +53,7 @@ export class ProApi {
   /** The account a token belongs to, and its orgs. */
   public async me(token: string): Promise<ProAnswer<IProMe>> {
     return this.call({
-      request: { method: 'GET', path: '/me', token },
+      request: { method: 'GET', path: '/api/me', token },
       schema: ME_SCHEMA,
     });
   }
@@ -66,7 +66,7 @@ export class ProApi {
     return this.call({
       request: {
         method: 'DELETE',
-        path: `/me/machines/${encodeURIComponent(props.machineId)}`,
+        path: `/api/me/machines/${encodeURIComponent(props.machineId)}`,
         token: props.token,
       },
       schema: z.null(),
@@ -112,7 +112,7 @@ export class ProApi {
     return this.call({
       request: {
         method: 'GET',
-        path: `/orgs/${encodeURIComponent(props.org)}/sync/projects`,
+        path: `/api/orgs/${encodeURIComponent(props.org)}/projects`,
         token: props.token,
       },
       schema: SYNCED_PROJECTS_SCHEMA,
@@ -131,7 +131,7 @@ export class ProApi {
     return this.call({
       request: {
         method: 'GET',
-        path: `/orgs/${encodeURIComponent(org)}/sync/plans/${encodeURIComponent(planId)}/recordings?branch=${encodeURIComponent(branch)}`,
+        path: `/api/orgs/${encodeURIComponent(org)}/plans/${encodeURIComponent(planId)}/recordings?branch=${encodeURIComponent(branch)}`,
         token,
       },
       schema: RECORDINGS_SCHEMA,
@@ -145,7 +145,7 @@ export class ProApi {
     return this.call({
       request: {
         method: 'POST',
-        path: `/orgs/${encodeURIComponent(call.org)}/sync/${call.path}`,
+        path: `/api/orgs/${encodeURIComponent(call.org)}/${call.path}`,
         body: call.body,
         token: call.token,
       },
@@ -162,7 +162,7 @@ export class ProApi {
     return this.call({
       request: {
         method: 'PUT',
-        path: `/orgs/${encodeURIComponent(call.org)}/sync/${call.path}`,
+        path: `/api/orgs/${encodeURIComponent(call.org)}/${call.path}`,
         body: call.body,
         token: call.token,
       },

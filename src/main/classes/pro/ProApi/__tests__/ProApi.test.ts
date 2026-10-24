@@ -54,7 +54,7 @@ describe('ProApi', () => {
     expect(answer.isOk).toBe(true);
     expect(calls).toEqual([
       {
-        url: 'https://qazinho-api.salvesoftware.com/device/codes',
+        url: 'https://qazinho-api.salvesoftware.com/api/device/codes',
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: '{"machineName":"MacBook-Ana"}',
@@ -96,7 +96,9 @@ describe('ProApi', () => {
     const answer = await api.revokeMachine({ token: 'qzm_token', machineId: 'm/1' });
 
     expect(answer).toEqual({ isOk: true, value: null });
-    expect(calls[0]?.url).toBe('https://qazinho-api.salvesoftware.com/me/machines/m%2F1');
+    expect(calls[0]?.url).toBe(
+      'https://qazinho-api.salvesoftware.com/api/me/machines/m%2F1',
+    );
   });
 
   it('puts a shared plan under its org’s sync, with the token as a bearer', async () => {
@@ -116,7 +118,7 @@ describe('ProApi', () => {
     expect(answer).toEqual({ isOk: true, value: { plan: { id: 'plan-1', version: 2 } } });
     expect(calls).toEqual([
       {
-        url: 'https://qazinho-api.salvesoftware.com/orgs/loja%20online/sync/projects/p1/plans/w1',
+        url: 'https://qazinho-api.salvesoftware.com/api/orgs/loja%20online/projects/p1/plans/w1',
         method: 'PUT',
         headers: {
           'content-type': 'application/json',
@@ -147,7 +149,7 @@ describe('ProApi', () => {
 
     expect(answer).toMatchObject({ isOk: true, value: { key: 'ev/1' } });
     expect(calls[0]).toMatchObject({
-      url: 'https://qazinho-api.salvesoftware.com/orgs/loja/sync/evidence',
+      url: 'https://qazinho-api.salvesoftware.com/api/orgs/loja/evidence',
       method: 'POST',
     });
   });
@@ -207,7 +209,7 @@ describe('ProApi', () => {
       },
     });
     expect(calls[0]).toMatchObject({
-      url: 'https://qazinho-api.salvesoftware.com/orgs/loja/sync/projects',
+      url: 'https://qazinho-api.salvesoftware.com/api/orgs/loja/projects',
       method: 'GET',
       headers: { authorization: 'Bearer qzm_token' },
     });
@@ -229,7 +231,7 @@ describe('ProApi', () => {
 
     expect(answer).toEqual({ isOk: true, value: { branch: 'main', recordings: [] } });
     expect(calls[0]?.url).toBe(
-      'https://qazinho-api.salvesoftware.com/orgs/loja/sync/plans/plan%201/recordings?branch=main',
+      'https://qazinho-api.salvesoftware.com/api/orgs/loja/plans/plan%201/recordings?branch=main',
     );
   });
 
