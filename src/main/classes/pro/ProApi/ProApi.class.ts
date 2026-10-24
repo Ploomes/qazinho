@@ -15,10 +15,12 @@ import {
   DEVICE_TOKEN_SCHEMA,
   EVIDENCE_UPLOAD_SCHEMA,
   ME_SCHEMA,
+  RECORDINGS_SCHEMA,
   SYNC_BUG_SCHEMA,
   SYNC_PLAN_SCHEMA,
   SYNC_PROJECT_SCHEMA,
   SYNC_RUN_SCHEMA,
+  SYNCED_PROJECTS_SCHEMA,
 } from './constants';
 import { answerOf } from './library';
 
@@ -100,6 +102,40 @@ export class ProApi {
   /** Replaces a plan's recordings on a branch. */
   public async syncRecordings(call: IProSyncCall): Promise<ProAnswer<null>> {
     return this.put({ call, schema: z.null() });
+  }
+
+  /** The projects an org holds, each with its plans, for this machine to download. */
+  public async syncedProjects(props: {
+    token: string;
+    org: string;
+  }): Promise<ProAnswer<z.infer<typeof SYNCED_PROJECTS_SCHEMA>>> {
+    return this.call({
+      request: {
+        method: 'GET',
+        path: `/orgs/${encodeURIComponent(props.org)}/sync/projects`,
+        token: props.token,
+      },
+      schema: SYNCED_PROJECTS_SCHEMA,
+    });
+  }
+
+  /** A plan's recordings on a branch, to walk its cases again without the agent. */
+  public async recordings(props: {
+    token: string;
+    org: string;
+    planId: string;
+    branch: string;
+  }): Promise<ProAnswer<z.infer<typeof RECORDINGS_SCHEMA>>> {
+    const { token, org, planId, branch } = props;
+
+    return this.call({
+      request: {
+        method: 'GET',
+        path: `/orgs/${encodeURIComponent(org)}/sync/plans/${encodeURIComponent(planId)}/recordings?branch=${encodeURIComponent(branch)}`,
+        token,
+      },
+      schema: RECORDINGS_SCHEMA,
+    });
   }
 
   /** Asks where to put one screenshot or video, signed for this machine for a short while. */

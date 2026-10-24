@@ -164,6 +164,72 @@ describe('ProApi', () => {
     expect(calls[0]?.method).toBe('PUT');
   });
 
+  it('reads the projects an org holds for download, its plans with what they say', async () => {
+    const { calls, fetcher } = fakePlatform({
+      status: 200,
+      body: {
+        projects: [
+          {
+            id: 'pp1',
+            desktopId: 'p1',
+            key: 'LOJA',
+            name: 'Loja',
+            targets: [
+              { id: 't-web', kind: 'web', label: 'Web', value: 'https://loja.dev' },
+            ],
+            repositories: [],
+            variables: [{ name: 'LOGIN_PASSWORD', description: 'senha' }],
+            plans: [
+              {
+                id: 'plan-1',
+                desktopId: 'w-1',
+                name: 'Checkout',
+                version: 3,
+                targetKind: 'web',
+                cases: [],
+              },
+            ],
+          },
+        ],
+      },
+    });
+    const api = new ProApi({ baseUrl: 'https://api.qazinho.com', fetcher });
+
+    const answer = await api.syncedProjects({ token: 'qzm_token', org: 'loja' });
+
+    expect(answer).toMatchObject({
+      isOk: true,
+      value: {
+        projects: [{ desktopId: 'p1', plans: [{ desktopId: 'w-1', version: 3 }] }],
+      },
+    });
+    expect(calls[0]).toMatchObject({
+      url: 'https://api.qazinho.com/orgs/loja/sync/projects',
+      method: 'GET',
+      headers: { authorization: 'Bearer qzm_token' },
+    });
+  });
+
+  it('reads a plan’s recordings on a branch', async () => {
+    const { calls, fetcher } = fakePlatform({
+      status: 200,
+      body: { branch: 'main', recordings: [] },
+    });
+    const api = new ProApi({ baseUrl: 'https://api.qazinho.com', fetcher });
+
+    const answer = await api.recordings({
+      token: 'qzm_token',
+      org: 'loja',
+      planId: 'plan 1',
+      branch: 'main',
+    });
+
+    expect(answer).toEqual({ isOk: true, value: { branch: 'main', recordings: [] } });
+    expect(calls[0]?.url).toBe(
+      'https://api.qazinho.com/orgs/loja/sync/plans/plan%201/recordings?branch=main',
+    );
+  });
+
   it('says the platform is unreachable when the call never answers', async () => {
     const api = new ProApi({
       baseUrl: 'https://api.qazinho.com',
