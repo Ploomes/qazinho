@@ -713,6 +713,9 @@ export const pt: typeof en = {
     AGENTS: 'Agentes',
     DEVICES: 'Dispositivos',
     INTEGRATIONS: 'Integrações',
+    PRO: 'QAzinho Pro',
+    PRO_NOTE:
+      'Entrar não compartilha nada sozinho: você escolhe quais projetos vão para a org, e segredo nenhum sai deste computador.',
     MCPS: 'MCPs',
     APPEARANCE: 'Aparência',
     SHORTCUTS: 'Atalhos',
@@ -1478,5 +1481,52 @@ export const pt: typeof en = {
     STOPPED: 'parado',
     IDLE: 'ocioso',
     NOT_RUN: 'não rodou',
+  },
+  PRO: {
+    TAGLINE: 'O lugar do time no QAzinho',
+    INTRO:
+      'Os projetos, planos, runs e bugs de todo mundo num lugar só, e os planos rodando no CI em cada pull request. Para quem está numa org que assina.',
+    SIGN_IN: 'Entrar',
+    LEARN_MORE: 'O que é o QAzinho Pro',
+    NO_KEYCHAIN:
+      'Este computador não tem um keychain para guardar o login com segurança, então o QAzinho não entra por aqui.',
+    SIGNED_IN_AS: 'Conectado como {{account}}',
+    ACCOUNT: 'conta',
+    THIS_COMPUTER: 'este computador',
+    ORGS: 'Suas orgs',
+    NO_ORGS: 'Você não está em nenhuma org com o pagamento em dia agora.',
+    ROLE_OWNER: 'dono',
+    ROLE_ADMIN: 'admin',
+    ROLE_EDITOR: 'editor',
+    ROLE_READER: 'leitor',
+    BILLING_TRIALING: 'em trial',
+    BILLING_ACTIVE: 'ativa',
+    BILLING_PAST_DUE: 'pagamento atrasado',
+    BILLING_BLOCKED: 'bloqueada',
+    BILLING_CANCELED: 'cancelada',
+    UNREACHABLE:
+      'O QAzinho Pro não respondeu agora, então isto é o que ele disse por último.',
+    SIGN_OUT: 'Desconectar este computador',
+    LOGIN_TITLE: 'Entrando no QAzinho Pro',
+    LOGIN_SUBTITLE: 'Confirme este computador no navegador, com o código que ele mostra.',
+    LOGIN_DONE: 'Você entrou',
+    LOGIN_DONE_SUBTITLE: 'Conectado como {{account}}.',
+    LOGIN_FAILED: 'Não entrou',
+    LOGIN_HINT:
+      'A página abriu no seu navegador. Confira se ela mostra este mesmo código antes de confirmar.',
+    LOGIN_CODE: 'o código deste computador',
+    LOGIN_COPY: 'Copiar e abrir a página',
+    LOGIN_COPIED: 'Copiado · confira no navegador',
+    STEP_CODE: 'Pedir um código ao QAzinho Pro',
+    STEP_BROWSER: 'Confirmar o código no navegador',
+    STEP_ACCOUNT: 'Manter este computador conectado',
+    FAIL_UNREACHABLE: 'O QAzinho Pro não respondeu. Confira a conexão e tente de novo.',
+    FAIL_DENIED: 'O login foi recusado no navegador.',
+    FAIL_EXPIRED:
+      'O código expirou antes de ser confirmado. Tente de novo para ganhar outro.',
+    FAIL_NO_KEYCHAIN:
+      'Este computador não tem um keychain para guardar o login com segurança.',
+    FAIL_UNEXPECTED:
+      'O QAzinho Pro respondeu algo inesperado. Tente de novo daqui a pouco.',
   },
 };

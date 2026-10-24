@@ -1,6 +1,7 @@
 import { AnimatePresence } from 'motion/react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
+import { ProCard } from '@/modules/Pro';
 import { AgentSignIn, InstallProgress, IntegrationCard, McpCard } from '@/modules/Setup';
 import { Button, Icon, Logo, Tag, Wordmark } from '@/shared/components/atoms';
 import { useSettingsViewModel } from './hooks';
@@ -237,6 +238,13 @@ export const Settings: React.FC = () => {
                 <IntegrationCard key={item.id} integration={item} />
               ))}
               <p className="settings__note">{t('SETTINGS.INTEGRATIONS_NOTE')}</p>
+            </div>
+          )}
+
+          {tab === 'pro' && (
+            <div className="settings__stack">
+              <ProCard />
+              <p className="settings__note">{t('SETTINGS.PRO_NOTE')}</p>
             </div>
           )}
 

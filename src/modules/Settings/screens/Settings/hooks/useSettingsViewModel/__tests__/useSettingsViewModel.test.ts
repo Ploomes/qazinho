@@ -34,7 +34,16 @@ describe('useSettingsViewModel', () => {
     const { result } = renderHook(() => useSettingsViewModel());
 
     expect(result.current.tab).toBe('agents');
-    expect(result.current.tabs).toHaveLength(7);
+    expect(result.current.tabs.map(({ id }) => id)).toEqual([
+      'agents',
+      'devices',
+      'integrations',
+      'pro',
+      'mcps',
+      'appearance',
+      'shortcuts',
+      'about',
+    ]);
   });
 
   it('names the default agent and offers the other one', () => {
