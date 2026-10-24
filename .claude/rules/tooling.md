@@ -15,15 +15,26 @@
 | `npm run format` / `format:check` | Prettier                                               |
 | `npm test` / `test:watch`         | Vitest                                                 |
 | `npm run test:smoke`              | the real agent and a real browser — see `testing.md`   |
+| `npm run harness:build`           | installs and builds the harness submodule              |
+
+## The harness is a submodule
+
+- `packages/qazinho-harness` is a git submodule of the harness's own repository. Clone with
+  `--recurse-submodules`, or run `git submodule update --init --recursive` once.
+- `npm install` builds it: `postinstall` runs `npm run harness:build`, its own `npm ci` and
+  `npm run build` inside the submodule. The desktop imports its `dist/`, never its source.
+- ESLint and Prettier leave `packages/` alone: the harness lints, formats and tests itself.
+- CI checks the submodule out with a token that can read the harness's repository
+  (`GH_QAZINHO_TOKEN`).
 
 ## Two tsconfigs, and the second one is a guard
 
 `tsconfig.json` only references the other two, so the editor and ESLint see both.
 
-| Config               | Covers                                                                       | Types         |
-| -------------------- | ---------------------------------------------------------------------------- | ------------- |
-| `tsconfig.node.json` | `src/main`, `src/harness`, `src/shared/types`, `electron/`, `tests/`, config | `node`        |
-| `tsconfig.web.json`  | all of `src/` except `src/main` and `src/harness`                            | `vite/client` |
+| Config               | Covers                                                                                | Types         |
+| -------------------- | ------------------------------------------------------------------------------------- | ------------- |
+| `tsconfig.node.json` | `src/main`, `src/shared/types`, `src/shared/constants`, `electron/`, `tests/`, config | `node`        |
+| `tsconfig.web.json`  | all of `src/` except `src/main`                                                       | `vite/client` |
 
 **`tsconfig.web.json` has no Node types.** An `import 'node:fs'` in the page or in `src/shared/types`
 does not compile. `src/shared/types` sits in both on purpose: it has to compile in each world.

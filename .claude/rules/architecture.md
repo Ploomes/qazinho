@@ -6,7 +6,6 @@ worlds. **`src/` is the app**; the Electron plumbing stays out of the way.
 ```
 src/
 ├── main/            ← Node + Electron: the window, the filesystem, child processes
-├── harness/         ← the product harness: what the QA's agent is told, and QAzinho's MCP tools
 ├── shared/          ← what every part of the app reaches for
 │   ├── types/       ← contracts every side agrees on; imports none of them
 │   ├── constants/   ← values every side shares, the IPC channel names included
@@ -19,26 +18,28 @@ src/
 ├── app/  index.tsx  index.html  recorder.html
 electron/
 └── preload/     ← the bridge: exposes window.qazinho through contextBridge, nothing else
+packages/
+└── qazinho-harness/  ← the product harness, a git submodule of its own repository
 ```
 
-Everything under `src/` that is not `src/main/` or `src/harness/` is **the page**: React, no Node.
+Everything under `src/` that is not `src/main/` is **the page**: React, no Node.
 `src/recorder/` is a page too, a second one with no React, loaded by `recorder.html`.
 
-| Folder             | Runs in             | May import                                                        |
-| ------------------ | ------------------- | ----------------------------------------------------------------- |
-| `src/main`         | Node                | `electron`, Node builtins, `@/shared/types`, `@/shared/constants` |
-| `src/harness`      | Node, inside main   | Node builtins, `@/shared/types`, `@/shared/constants`             |
-| `electron/preload` | a sandboxed preload | `electron`, `@/shared/types`, `@/shared/constants`                |
-| the page           | the page            | `@/shared/types` and the rest of the page                         |
-| `src/shared/types` | all of the above    | nothing                                                           |
+| Folder             | Runs in                 | May import                                                                     |
+| ------------------ | ----------------------- | ------------------------------------------------------------------------------ |
+| `src/main`         | Node                    | `electron`, Node builtins, the harness, `@/shared/types`, `@/shared/constants` |
+| the harness        | Node, bundled into main | its own repository: nothing of the desktop                                     |
+| `electron/preload` | a sandboxed preload     | `electron`, `@/shared/types`, `@/shared/constants`                             |
+| the page           | the page                | `@/shared/types` and the rest of the page                                      |
+| `src/shared/types` | all of the above        | nothing but the harness's pure `/contract`                                     |
 
 ## The boundary is enforced, not agreed
 
-- `tsconfig.web.json` covers the page **without Node's types** and excludes `src/main` and
-  `src/harness`:
+- `tsconfig.web.json` covers the page **without Node's types** and excludes `src/main`:
   `import 'node:fs'` does not compile there.
 - ESLint `no-restricted-imports` bans Node builtins and `electron` in the page and in
-  `src/shared/types`, and bans the page importing `src/main` or `electron/`.
+  `src/shared/types`, and bans the page importing `src/main`, `electron/` or the harness. Only
+  `src/shared/types` and `src/shared/constants` import the harness's `/contract`.
 
 ## Security defaults
 
@@ -130,9 +131,10 @@ A workspace is three columns: the sidebar, the chat in the middle, and a panel b
 
 ## The harness
 
-**Everything the QA's agent is told lives in `src/harness/`**, a product harness that sits on top
-of the agent's own (Claude Code's). Main runs it, and the agent's CLI stays the engine: no SDK. It
-answers one question per channel, for a target `{ role, platform }`:
+**Everything the QA's agent is told lives in the harness**, a product harness that sits on top of
+the agent's own (Claude Code's), in a repository of its own that QAzinho Pro's API runs too
+(`qazinho-harness`). Main runs it, and the agent's CLI stays the engine: no SDK. It answers one
+question per channel, for a target `{ role, platform }`:
 
 | Channel | Where                    | Becomes                                                   |
 | ------- | ------------------------ | --------------------------------------------------------- |
@@ -140,6 +142,16 @@ answers one question per channel, for a target `{ role, platform }`:
 | tools   | `tools/`                 | QAzinho's MCP server and the `--allowedTools` a role gets |
 | schemas | `schemas/`               | the shape an answer must take, through `--json-schema`    |
 
+- **The desktop takes it as a package.** `packages/qazinho-harness` is a git submodule, depended
+  on with `file:` (`@salve-software/qazinho-harness`) and built by `npm run harness:build`, which
+  `postinstall` runs. electron-vite bundles its `dist/` into main, the corpus included, while zod,
+  yaml and the MCP SDK stay the app's own dependencies. Its own `.claude/rules/` describe it; what
+  follows is what the desktop relies on.
+  - **The types main shares with the page come from the harness's `/contract`**: each file in
+    `src/shared/types` that the harness also reads re-exports one type from it, so the zod
+    schemas, main and the page hold one definition. `VARIABLE_NAME` comes the same way.
+  - **Moving the harness** is a commit that moves the submodule and runs `npm run harness:build`;
+    a change to what the agent is told shows up first as a diff of the harness's pinned prompts.
 - **The corpus is prose in `.md`, one `## Title` section per file.** Where a file lives says who
   reads it: `universal/` every call, `role/<role>/` one role (`chat`, `runner`, `explorer`,
   `assistant`, `builder`, `automator`, `reporter`),
@@ -360,9 +372,9 @@ answers one question per channel, for a target `{ role, platform }`:
   - The card shows it (`BugUpdate`); the QA edits it and posts it, and `BugFiler.comment` writes
     it under the issue (`updateReportOf`): to Jira with the new screens and clip attached, to
     GitHub through gh.
-- **The harness never imports `src/main`.** What it needs from a device is a port in its types
-  (`IDevicePort`), and main hands it the driver. ESLint enforces it both ways: the page never
-  imports the harness, and the harness never imports main or the page.
+- **The harness never imports the desktop.** It lives in its own repository; what it needs from a
+  device is a port in its types (`IDevicePort`), and main hands it the driver. The page never
+  imports it either: what it shares with the page comes through `src/shared/types`.
 - **Every shape the agent fills is one zod schema**: the chat answer and each tool's arguments. It
   becomes the JSON Schema the agent reads (`--json-schema`, or the MCP tool list), and the same
   schema reads back what the agent sent, with the message the agent gets when it breaks a rule.
@@ -381,8 +393,9 @@ answers one question per channel, for a target `{ role, platform }`:
     variables kept, with the project's variables in a section of their own.
   - Confirm: the plan about to be written, with one option alone.
   - Write: `plan` is filled only once the QA picked that option.
-- **The prompts are pinned.** `src/harness/__tests__/__prompts__/` holds what the agent reads for each
-  role and platform; changing what the agent is told is a diff of those files.
+- **The prompts are pinned.** The harness's `src/__tests__/__prompts__/` holds what the agent reads
+  for each role and platform; changing what the agent is told is a diff of those files, in the
+  harness's repository.
 
 ## Heavy work stays off the main process
 

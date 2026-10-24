@@ -3,9 +3,14 @@
 ## Setup
 
 ```bash
+git clone --recurse-submodules https://github.com/Salve-Software/qazinho.git
 npm install
 npm run dev
 ```
+
+The harness lives in its own repository, checked out as a submodule in
+`packages/qazinho-harness`; `npm install` builds it. In a clone made without
+`--recurse-submodules`, run `git submodule update --init --recursive` first.
 
 ## Before opening a PR
 

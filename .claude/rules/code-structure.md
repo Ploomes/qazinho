@@ -104,11 +104,6 @@ function in disguise.
 src/main/
 ├── index.ts          ← app lifecycle and window creation
 └── classes/  library/  types/  constants/
-src/harness/          ← one folder per channel, not a classes/ tree (architecture.md)
-├── Harness.class.ts  ← the class every caller goes through, at the root
-├── context/          ← corpus/ of .md, and the library that reads and renders it
-├── tools/            ← McpHost.class.ts, servers/<group>/, the grants per role
-└── schemas/  library/  types/
 electron/preload/
 └── index.ts          ← the contextBridge call, nothing else
 src/
@@ -133,9 +128,8 @@ src/
 - A subcomponent of one screen → `components/` **inside** that screen's folder.
 - A class the page needs, with no React in it → `src/modules/<Domain>/classes/<category>/<Name>/`,
   as `ReplayComposer`.
-- **In `src/harness/`, a class sits at the root of the folder it serves** (`Harness.class.ts`,
-  `tools/McpHost.class.ts`), and shares that folder's `library/`, `types/` and `constants/`. A
-  class folder there would only repeat the name of the folder around it.
+- The harness keeps its own structure, in its own repository (`packages/qazinho-harness`), with
+  rules of its own.
 
 ## Every folder of things has an `index.ts`
 
