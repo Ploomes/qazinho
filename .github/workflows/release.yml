@@ -37,6 +37,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
+          submodules: recursive
+          token: ${{ secrets.GH_QAZINHO_TOKEN }}
           # semantic-release needs the full history to find the last tag.
           fetch-depth: 0
           persist-credentials: false
@@ -85,6 +87,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
+          submodules: recursive
+          token: ${{ secrets.GH_QAZINHO_TOKEN }}
           ref: ${{ env.TAG }}
           persist-credentials: false
 
