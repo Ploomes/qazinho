@@ -49,7 +49,8 @@ function fakeApi(props: {
               value: {
                 deviceCode: 'dc',
                 userCode: 'WDJB-MJHT',
-                verificationUrl: 'https://app.qazinho.com/device?code=WDJB-MJHT',
+                verificationUrl:
+                  'https://qazinho.salvesoftware.com/device?code=WDJB-MJHT',
                 expiresIn: 600,
                 interval: 5,
               },
@@ -123,7 +124,7 @@ describe('ProAccount', () => {
     const ended = await account.signIn();
 
     expect(ended).toMatchObject({ phase: 'connected', account: 'ana@loja.dev' });
-    expect(opened).toEqual(['https://app.qazinho.com/device?code=WDJB-MJHT']);
+    expect(opened).toEqual(['https://qazinho.salvesoftware.com/device?code=WDJB-MJHT']);
     expect(
       progress.map((moved) => (moved.phase === 'working' ? moved.at : moved.phase)),
     ).toEqual(['code', 'browser', 'account', 'connected']);

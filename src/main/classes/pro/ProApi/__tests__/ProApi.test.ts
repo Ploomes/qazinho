@@ -39,19 +39,22 @@ describe('ProApi', () => {
       body: {
         deviceCode: 'dc',
         userCode: 'WDJB-MJHT',
-        verificationUrl: 'https://app.qazinho.com/device?code=WDJB-MJHT',
+        verificationUrl: 'https://qazinho.salvesoftware.com/device?code=WDJB-MJHT',
         expiresIn: 600,
         interval: 5,
       },
     });
-    const api = new ProApi({ baseUrl: 'https://api.qazinho.com/', fetcher });
+    const api = new ProApi({
+      baseUrl: 'https://api.qazinho.salvesoftware.com/',
+      fetcher,
+    });
 
     const answer = await api.deviceCode('MacBook-Ana');
 
     expect(answer.isOk).toBe(true);
     expect(calls).toEqual([
       {
-        url: 'https://api.qazinho.com/device/codes',
+        url: 'https://api.qazinho.salvesoftware.com/device/codes',
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: '{"machineName":"MacBook-Ana"}',
@@ -64,7 +67,7 @@ describe('ProApi', () => {
       status: 200,
       body: { user: USER, orgs: [{ ...ORG, id: 'o1', trialEndsAt: null }] },
     });
-    const api = new ProApi({ baseUrl: 'https://api.qazinho.com', fetcher });
+    const api = new ProApi({ baseUrl: 'https://api.qazinho.salvesoftware.com', fetcher });
 
     const answer = await api.me('qzm_token');
 
@@ -77,7 +80,7 @@ describe('ProApi', () => {
       status: 400,
       body: { error: 'authorization_pending' },
     });
-    const api = new ProApi({ baseUrl: 'https://api.qazinho.com', fetcher });
+    const api = new ProApi({ baseUrl: 'https://api.qazinho.salvesoftware.com', fetcher });
 
     expect(await api.deviceToken('dc')).toEqual({
       isOk: false,
@@ -88,12 +91,12 @@ describe('ProApi', () => {
 
   it('signs a machine out with nothing to read back', async () => {
     const { calls, fetcher } = fakePlatform({ status: 204, body: null });
-    const api = new ProApi({ baseUrl: 'https://api.qazinho.com', fetcher });
+    const api = new ProApi({ baseUrl: 'https://api.qazinho.salvesoftware.com', fetcher });
 
     const answer = await api.revokeMachine({ token: 'qzm_token', machineId: 'm/1' });
 
     expect(answer).toEqual({ isOk: true, value: null });
-    expect(calls[0]?.url).toBe('https://api.qazinho.com/me/machines/m%2F1');
+    expect(calls[0]?.url).toBe('https://api.qazinho.salvesoftware.com/me/machines/m%2F1');
   });
 
   it('puts a shared plan under its org’s sync, with the token as a bearer', async () => {
@@ -101,7 +104,7 @@ describe('ProApi', () => {
       status: 200,
       body: { plan: { id: 'plan-1', version: 2 } },
     });
-    const api = new ProApi({ baseUrl: 'https://api.qazinho.com', fetcher });
+    const api = new ProApi({ baseUrl: 'https://api.qazinho.salvesoftware.com', fetcher });
 
     const answer = await api.syncPlan({
       token: 'qzm_token',
@@ -113,7 +116,7 @@ describe('ProApi', () => {
     expect(answer).toEqual({ isOk: true, value: { plan: { id: 'plan-1', version: 2 } } });
     expect(calls).toEqual([
       {
-        url: 'https://api.qazinho.com/orgs/loja%20online/sync/projects/p1/plans/w1',
+        url: 'https://api.qazinho.salvesoftware.com/orgs/loja%20online/sync/projects/p1/plans/w1',
         method: 'PUT',
         headers: {
           'content-type': 'application/json',
@@ -133,7 +136,7 @@ describe('ProApi', () => {
         headers: { 'content-type': 'image/jpeg' },
       },
     });
-    const api = new ProApi({ baseUrl: 'https://api.qazinho.com', fetcher });
+    const api = new ProApi({ baseUrl: 'https://api.qazinho.salvesoftware.com', fetcher });
 
     const answer = await api.evidenceUpload({
       token: 'qzm_token',
@@ -144,14 +147,14 @@ describe('ProApi', () => {
 
     expect(answer).toMatchObject({ isOk: true, value: { key: 'ev/1' } });
     expect(calls[0]).toMatchObject({
-      url: 'https://api.qazinho.com/orgs/loja/sync/evidence',
+      url: 'https://api.qazinho.salvesoftware.com/orgs/loja/sync/evidence',
       method: 'POST',
     });
   });
 
   it('replaces a plan’s recordings with nothing to read back', async () => {
     const { calls, fetcher } = fakePlatform({ status: 204, body: null });
-    const api = new ProApi({ baseUrl: 'https://api.qazinho.com', fetcher });
+    const api = new ProApi({ baseUrl: 'https://api.qazinho.salvesoftware.com', fetcher });
 
     const answer = await api.syncRecordings({
       token: 'qzm_token',
@@ -193,7 +196,7 @@ describe('ProApi', () => {
         ],
       },
     });
-    const api = new ProApi({ baseUrl: 'https://api.qazinho.com', fetcher });
+    const api = new ProApi({ baseUrl: 'https://api.qazinho.salvesoftware.com', fetcher });
 
     const answer = await api.syncedProjects({ token: 'qzm_token', org: 'loja' });
 
@@ -204,7 +207,7 @@ describe('ProApi', () => {
       },
     });
     expect(calls[0]).toMatchObject({
-      url: 'https://api.qazinho.com/orgs/loja/sync/projects',
+      url: 'https://api.qazinho.salvesoftware.com/orgs/loja/sync/projects',
       method: 'GET',
       headers: { authorization: 'Bearer qzm_token' },
     });
@@ -215,7 +218,7 @@ describe('ProApi', () => {
       status: 200,
       body: { branch: 'main', recordings: [] },
     });
-    const api = new ProApi({ baseUrl: 'https://api.qazinho.com', fetcher });
+    const api = new ProApi({ baseUrl: 'https://api.qazinho.salvesoftware.com', fetcher });
 
     const answer = await api.recordings({
       token: 'qzm_token',
@@ -226,13 +229,13 @@ describe('ProApi', () => {
 
     expect(answer).toEqual({ isOk: true, value: { branch: 'main', recordings: [] } });
     expect(calls[0]?.url).toBe(
-      'https://api.qazinho.com/orgs/loja/sync/plans/plan%201/recordings?branch=main',
+      'https://api.qazinho.salvesoftware.com/orgs/loja/sync/plans/plan%201/recordings?branch=main',
     );
   });
 
   it('says the platform is unreachable when the call never answers', async () => {
     const api = new ProApi({
-      baseUrl: 'https://api.qazinho.com',
+      baseUrl: 'https://api.qazinho.salvesoftware.com',
       fetcher: () => Promise.reject(new Error('offline')),
     });
 
