@@ -10,12 +10,13 @@ export async function answerOf<T>(props: {
   const body = bodyOf(await response.text());
 
   if (!response.ok) {
-    const error =
-      typeof body === 'object' && body !== null && 'error' in body
-        ? String(body.error)
-        : `http_${String(response.status)}`;
+    const isEnvelope = typeof body === 'object' && body !== null && 'error' in body;
+    const error = isEnvelope ? String(body.error) : `http_${String(response.status)}`;
+    const details = isEnvelope && 'details' in body ? body.details : undefined;
 
-    return { isOk: false, status: response.status, error };
+    return details === undefined
+      ? { isOk: false, status: response.status, error }
+      : { isOk: false, status: response.status, error, details };
   }
 
   const read = schema.safeParse(body);

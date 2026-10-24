@@ -1,8 +1,10 @@
 export type * from './IProApi';
 export type * from './IProDeviceCode';
 export type * from './IProDeviceToken';
+export type * from './IProEvidenceUpload';
 export type * from './IProMe';
 export type * from './IProRequest';
+export type * from './IProSyncCall';
 export type * from './IProUser';
 export type * from './ProAnswer';
 export type * from './ProFetcher';

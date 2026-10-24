@@ -96,6 +96,74 @@ describe('ProApi', () => {
     expect(calls[0]?.url).toBe('https://api.qazinho.com/me/machines/m%2F1');
   });
 
+  it('puts a shared plan under its org’s sync, with the token as a bearer', async () => {
+    const { calls, fetcher } = fakePlatform({
+      status: 200,
+      body: { plan: { id: 'plan-1', version: 2 } },
+    });
+    const api = new ProApi({ baseUrl: 'https://api.qazinho.com', fetcher });
+
+    const answer = await api.syncPlan({
+      token: 'qzm_token',
+      org: 'loja online',
+      path: 'projects/p1/plans/w1',
+      body: { name: 'Checkout', baseVersion: 1 },
+    });
+
+    expect(answer).toEqual({ isOk: true, value: { plan: { id: 'plan-1', version: 2 } } });
+    expect(calls).toEqual([
+      {
+        url: 'https://api.qazinho.com/orgs/loja%20online/sync/projects/p1/plans/w1',
+        method: 'PUT',
+        headers: {
+          'content-type': 'application/json',
+          authorization: 'Bearer qzm_token',
+        },
+        body: '{"name":"Checkout","baseVersion":1}',
+      },
+    ]);
+  });
+
+  it('asks where to put a screen, by posting what it is', async () => {
+    const { calls, fetcher } = fakePlatform({
+      status: 201,
+      body: {
+        key: 'ev/1',
+        uploadUrl: 'https://r2.test/ev/1',
+        headers: { 'content-type': 'image/jpeg' },
+      },
+    });
+    const api = new ProApi({ baseUrl: 'https://api.qazinho.com', fetcher });
+
+    const answer = await api.evidenceUpload({
+      token: 'qzm_token',
+      org: 'loja',
+      path: 'evidence',
+      body: { kind: 'screenshot', contentType: 'image/jpeg', size: 4, sha256: 'ab' },
+    });
+
+    expect(answer).toMatchObject({ isOk: true, value: { key: 'ev/1' } });
+    expect(calls[0]).toMatchObject({
+      url: 'https://api.qazinho.com/orgs/loja/sync/evidence',
+      method: 'POST',
+    });
+  });
+
+  it('replaces a plan’s recordings with nothing to read back', async () => {
+    const { calls, fetcher } = fakePlatform({ status: 204, body: null });
+    const api = new ProApi({ baseUrl: 'https://api.qazinho.com', fetcher });
+
+    const answer = await api.syncRecordings({
+      token: 'qzm_token',
+      org: 'loja',
+      path: 'plans/plan-1/recordings',
+      body: { branch: 'main', recordings: [] },
+    });
+
+    expect(answer).toEqual({ isOk: true, value: null });
+    expect(calls[0]?.method).toBe('PUT');
+  });
+
   it('says the platform is unreachable when the call never answers', async () => {
     const api = new ProApi({
       baseUrl: 'https://api.qazinho.com',

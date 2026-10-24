@@ -42,6 +42,24 @@ describe('answerOf', () => {
     expect(answer).toEqual({ isOk: false, status: 400, error: 'authorization_pending' });
   });
 
+  it('keeps the details a refusal carries, such as the version a plan moved to', async () => {
+    const answer = await answerOf({
+      response: responseOf({
+        ok: false,
+        status: 409,
+        text: '{"error":"plan_conflict","details":{"version":4}}',
+      }),
+      schema: SHAPE,
+    });
+
+    expect(answer).toEqual({
+      isOk: false,
+      status: 409,
+      error: 'plan_conflict',
+      details: { version: 4 },
+    });
+  });
+
   it('names a refusal with no body by its status', async () => {
     const answer = await answerOf({
       response: responseOf({ ok: false, status: 502, text: '<html>bad gateway</html>' }),

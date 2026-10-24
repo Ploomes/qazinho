@@ -2,16 +2,27 @@ import type {
   IProApi,
   IProDeviceCode,
   IProDeviceToken,
+  IProEvidenceUpload,
   IProMe,
   IProRequest,
+  IProSyncCall,
   ProAnswer,
   ProFetcher,
 } from './types';
 import { z } from 'zod';
-import { DEVICE_CODE_SCHEMA, DEVICE_TOKEN_SCHEMA, ME_SCHEMA } from './constants';
+import {
+  DEVICE_CODE_SCHEMA,
+  DEVICE_TOKEN_SCHEMA,
+  EVIDENCE_UPLOAD_SCHEMA,
+  ME_SCHEMA,
+  SYNC_BUG_SCHEMA,
+  SYNC_PLAN_SCHEMA,
+  SYNC_PROJECT_SCHEMA,
+  SYNC_RUN_SCHEMA,
+} from './constants';
 import { answerOf } from './library';
 
-/** Talks to QAzinho Pro's API for this machine: its sign-in by a code the person confirms in the browser, and the account it belongs to. */
+/** Talks to QAzinho Pro's API for this machine: its sign-in by a code the person confirms in the browser, the account it belongs to, and the sync of its shared projects. */
 export class ProApi {
   private readonly baseUrl: string;
   private readonly fetcher: ProFetcher;
@@ -57,6 +68,69 @@ export class ProApi {
         token: props.token,
       },
       schema: z.null(),
+    });
+  }
+
+  /** Sends a shared project: its name, targets, repositories and variable names. */
+  public async syncProject(
+    call: IProSyncCall,
+  ): Promise<ProAnswer<z.infer<typeof SYNC_PROJECT_SCHEMA>>> {
+    return this.put({ call, schema: SYNC_PROJECT_SCHEMA });
+  }
+
+  /** Sends a workspace's plan from the version it was based on; `plan_conflict` when the org moved it since. */
+  public async syncPlan(
+    call: IProSyncCall,
+  ): Promise<ProAnswer<z.infer<typeof SYNC_PLAN_SCHEMA>>> {
+    return this.put({ call, schema: SYNC_PLAN_SCHEMA });
+  }
+
+  public async syncRun(
+    call: IProSyncCall,
+  ): Promise<ProAnswer<z.infer<typeof SYNC_RUN_SCHEMA>>> {
+    return this.put({ call, schema: SYNC_RUN_SCHEMA });
+  }
+
+  public async syncBug(
+    call: IProSyncCall,
+  ): Promise<ProAnswer<z.infer<typeof SYNC_BUG_SCHEMA>>> {
+    return this.put({ call, schema: SYNC_BUG_SCHEMA });
+  }
+
+  /** Replaces a plan's recordings on a branch. */
+  public async syncRecordings(call: IProSyncCall): Promise<ProAnswer<null>> {
+    return this.put({ call, schema: z.null() });
+  }
+
+  /** Asks where to put one screenshot or video, signed for this machine for a short while. */
+  public async evidenceUpload(
+    call: IProSyncCall,
+  ): Promise<ProAnswer<IProEvidenceUpload>> {
+    return this.call({
+      request: {
+        method: 'POST',
+        path: `/orgs/${encodeURIComponent(call.org)}/sync/${call.path}`,
+        body: call.body,
+        token: call.token,
+      },
+      schema: EVIDENCE_UPLOAD_SCHEMA,
+    });
+  }
+
+  private async put<T>(props: {
+    call: IProSyncCall;
+    schema: z.ZodType<T>;
+  }): Promise<ProAnswer<T>> {
+    const { call, schema } = props;
+
+    return this.call({
+      request: {
+        method: 'PUT',
+        path: `/orgs/${encodeURIComponent(call.org)}/sync/${call.path}`,
+        body: call.body,
+        token: call.token,
+      },
+      schema,
     });
   }
 
