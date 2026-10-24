@@ -8,7 +8,7 @@ import { STICKER } from '@/shared/constants';
 import { useProAccountCardViewModel } from './hooks';
 import './styles.css';
 
-/** QAzinho Pro at the foot of the sidebar: a way in for a computer signed out, and for one signed in, the account, the org it sends to, the org's projects to download, and signing out. */
+/** The QA's account at the foot of the sidebar: a way in for a computer signed out, and for one signed in, the account, the org it sends to, the org's projects to download, and signing out. */
 export const ProAccountCard: React.FC = () => {
   const {
     ref,
@@ -19,6 +19,7 @@ export const ProAccountCard: React.FC = () => {
     isOpen,
     hasTip,
     title,
+    hasSubtitle,
     subtitle,
     toggleLabel,
     popup,
@@ -160,7 +161,7 @@ export const ProAccountCard: React.FC = () => {
           )}
           <span className="pro-account__text">
             <span className="pro-account__name">{title}</span>
-            <span className="pro-account__line">{subtitle}</span>
+            {hasSubtitle && <span className="pro-account__line">{subtitle}</span>}
           </span>
           {hasAttention && (
             <span className="pro-account__flag" role="img" aria-label={attention}>

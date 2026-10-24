@@ -138,9 +138,10 @@ export const useProAccountCardViewModel = () => {
     isOpen: isOpen && signedIn !== null && !isShut,
     hasTip: isShut,
     title,
+    hasSubtitle: signedIn !== null,
     subtitle:
       signedIn === null
-        ? t('PRO.CARD_SIGN_IN_NOTE')
+        ? ''
         : org === null
           ? t('PRO.CARD_NO_ORG')
           : t('PRO.CARD_ORG_LINE', { org: org.name, role: t(PRO_ROLES[org.role]) }),

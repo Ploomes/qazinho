@@ -117,15 +117,15 @@ describe('useProAccountCardViewModel', () => {
       );
     });
 
-    it('offers a way in while signed out', () => {
+    it('offers a way into the account while signed out, naming no plan', () => {
       useProStore.setState({ status: { isSignedIn: false, canKeepToken: true } });
 
       expect(renderHook(() => useProAccountCardViewModel()).result.current).toMatchObject(
         {
           isShown: true,
           isSignedIn: false,
-          title: 'Sign in to QAzinho Pro',
-          subtitle: 'Share with your team',
+          title: 'Sign in to your account',
+          hasSubtitle: false,
           popup: undefined,
         },
       );
