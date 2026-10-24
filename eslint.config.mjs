@@ -48,7 +48,9 @@ const NO_MAIN_IN_THE_HARNESS = {
 };
 
 export default config(
-  { ignores: ['out', 'dist', 'release', 'node_modules', 'coverage', 'assets'] },
+  {
+    ignores: ['out', 'dist', 'release', 'node_modules', 'coverage', 'assets', 'packages'],
+  },
 
   js.configs.recommended,
   ...configs.recommendedTypeChecked,

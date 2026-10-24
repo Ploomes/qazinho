@@ -35,6 +35,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "prepare": "husky || true",
+    "postinstall": "npm run harness:build",
+    "harness:build": "node scripts/build-harness.mjs",
     "test:smoke": "vitest run --config tests/vitest.smoke.ts"
   },
   "devDependencies": {
@@ -44,6 +46,7 @@
     "@fontsource/jetbrains-mono": "^5.3.0",
     "@phosphor-icons/react": "^2.1.10",
     "@playwright/test": "^1.63.0",
+    "@salve-software/qazinho-harness": "file:packages/qazinho-harness",
     "@semantic-release/changelog": "^7.0.0",
     "@semantic-release/git": "^11.0.1",
     "@testing-library/dom": "^10.4.2",
