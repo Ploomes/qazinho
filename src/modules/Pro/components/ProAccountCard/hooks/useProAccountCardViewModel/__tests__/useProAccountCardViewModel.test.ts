@@ -125,7 +125,7 @@ describe('useProAccountCardViewModel', () => {
           isShown: true,
           isSignedIn: false,
           title: 'Sign in to QAzinho Pro',
-          subtitle: 'Your team sees your plans, runs and bugs',
+          subtitle: 'Share with your team',
           popup: undefined,
         },
       );
