@@ -134,7 +134,6 @@
 .replay-log__now {
   position: absolute;
   inset: 0;
-  border-left: var(--edge-width) solid var(--lime);
   border-radius: var(--radius-sm);
   background: var(--lime-soft);
 }

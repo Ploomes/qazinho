@@ -4,8 +4,7 @@
   gap: var(--space-2);
   max-width: 100%;
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--line);
-  border-left: var(--edge-width) solid var(--attn);
+  border: var(--edge-width) solid color-mix(in srgb, var(--attn) 40%, transparent);
   border-radius: var(--radius-md);
   background: var(--raise);
 }

@@ -240,8 +240,9 @@
 
 .question-round__said {
   margin: 0;
-  padding-left: var(--space-4);
-  border-left: var(--edge-width) solid var(--lime);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--raise);
   color: var(--ink2);
   font: var(--font-ui-sm);
 }
