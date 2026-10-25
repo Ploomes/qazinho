@@ -209,7 +209,7 @@ describe('ProApi', () => {
       },
     });
     expect(calls[0]).toMatchObject({
-      url: 'https://qazinho-api.salvesoftware.com/api/orgs/loja/projects',
+      url: 'https://qazinho-api.salvesoftware.com/api/orgs/loja/projects?include=plans',
       method: 'GET',
       headers: { authorization: 'Bearer qzm_token' },
     });

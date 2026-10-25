@@ -112,7 +112,7 @@ export class ProApi {
     return this.call({
       request: {
         method: 'GET',
-        path: `/api/orgs/${encodeURIComponent(props.org)}/projects`,
+        path: `/api/orgs/${encodeURIComponent(props.org)}/projects?include=plans`,
         token: props.token,
       },
       schema: SYNCED_PROJECTS_SCHEMA,
