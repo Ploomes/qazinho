@@ -11,16 +11,16 @@ import type {
 import type { ChildProcess } from 'node:child_process';
 import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
-import { readFile, rm } from 'node:fs/promises';
+import { readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import {
   describeMeasure,
-  imageExtensionOf,
   mp4FactsOf,
   phoneGlance,
   phoneMeasureOf,
+  phoneShot,
   swipeOf,
 } from '@/main/library';
 import { IOS } from './constants';
@@ -209,13 +209,18 @@ export class IosDriver implements IDeviceDriver {
     return Promise.resolve();
   }
 
+  /** The simulator's screen kept in the run, as a JPEG at its full size. */
   public async shoot(file: string): Promise<IShot | null> {
     await this.simctl(['io', this.udid, 'screenshot', file]);
 
-    const image = await readFile(file);
-    const mime = imageExtensionOf(image) === 'png' ? 'image/png' : 'image/jpeg';
+    const shot = phoneShot({ image: await readFile(file), shrink: this.shrink });
 
-    return { file, dataUrl: `data:${mime};base64,${image.toString('base64')}` };
+    await writeFile(file, shot.bytes);
+
+    return {
+      file,
+      dataUrl: `data:${shot.mimeType};base64,${shot.bytes.toString('base64')}`,
+    };
   }
 
   /** QAzinho only shuts down what QAzinho started: a simulator the QA opened stays open. */

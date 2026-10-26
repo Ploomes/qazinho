@@ -30,6 +30,7 @@ export * from './parseCpuTime';
 export * from './parseProcessSweep';
 export * from './phoneGlance';
 export * from './phoneMeasureOf';
+export * from './phoneShot';
 export * from './pngSizeOf';
 export * from './proPageUrlOf';
 export * from './sampleFileOf';

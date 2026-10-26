@@ -15,6 +15,7 @@ import {
   describeMeasure,
   phoneGlance,
   phoneMeasureOf,
+  phoneShot,
   swipeOf,
   spawnCommand,
 } from '@/main/library';
@@ -208,14 +209,21 @@ export class AndroidDriver implements IDeviceDriver {
     return Promise.resolve();
   }
 
+  /** The emulator's screen kept in the run, as a JPEG at its full size. */
   public async shoot(file: string): Promise<IShot | null> {
     if (this.serial.length === 0) return null;
 
-    const image = await this.raw(['exec-out', 'screencap', '-p']);
+    const shot = phoneShot({
+      image: await this.raw(['exec-out', 'screencap', '-p']),
+      shrink: this.shrink,
+    });
 
-    await writeFile(file, image);
+    await writeFile(file, shot.bytes);
 
-    return { file, dataUrl: `data:image/png;base64,${image.toString('base64')}` };
+    return {
+      file,
+      dataUrl: `data:${shot.mimeType};base64,${shot.bytes.toString('base64')}`,
+    };
   }
 
   /** QAzinho only shuts down what QAzinho started: an emulator the QA opened stays open. */
