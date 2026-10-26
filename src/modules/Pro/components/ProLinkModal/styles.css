@@ -1,0 +1,11 @@
+.pro-link__names {
+  margin: 0;
+  color: var(--ink);
+  font: var(--font-ui-md);
+}
+
+.pro-link__failure {
+  margin: 0;
+  color: var(--fail);
+  font: var(--font-ui-sm);
+}

@@ -1552,5 +1552,17 @@ export const en = {
     FAIL_EXPIRED: 'The code expired before it was confirmed. Try again for a new one.',
     FAIL_NO_KEYCHAIN: 'This computer has no keychain to keep the sign-in safe.',
     FAIL_UNEXPECTED: 'QAzinho answered something unexpected. Try again in a moment.',
+    LINK_TITLE: 'Open a plan of your org',
+    LINK_SIGNED_OUT:
+      'This plan belongs to the org {{org}}. Sign in to your account from the card at the foot of the sidebar, and open the link again.',
+    LINK_NOT_MEMBER:
+      'This plan belongs to the org {{org}}, and your account is not in it.',
+    LINK_NOT_HERE:
+      'Its project is on this computer, but this plan is not yet: someone else in the org made it.',
+    LINK_DOWNLOAD_BODY:
+      'This plan is not on this computer. Download its project from {{org}}, with its plans and recordings, and it opens here.',
+    LINK_DOWNLOAD: 'Download and open',
+    LINK_DOWNLOADING: 'Downloading…',
+    LINK_OK: 'OK',
   },
 };

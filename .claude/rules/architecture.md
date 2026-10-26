@@ -420,6 +420,13 @@ sidebar (`ProAccountCard`) is the one place it shows; everything else happens ou
 - **The card** reads where things stand (`attentionOf`): a blocked org, a role that only reads, no
   answer. It downloads the org's projects (`ProDownloads`), their recordings into each workspace's
   `recipes.json`, and asks for their variables' values in `VariablesModal`.
+- **A plan's link on the web opens it here** (`qazinho://open?org=…&project=…&workspace=…`, by the
+  ids the desktop keeps them under). The installers register the scheme, and a packaged app again
+  at start. Main reads the link from `open-url` on a Mac, and from the arguments of the first or
+  second instance on Windows and Linux (`proLinkAddressIn`, `proLinkOf`, which takes only names as
+  ids), keeps the latest and tells the page, which takes it once its workspaces are read
+  (`useProLinks`): it opens the workspace on its plan, or `ProLinkModal` offers to download the
+  project from the org (`useOrgDownload`, which the card uses too), or says why it cannot.
 
 ## Heavy work stays off the main process
 

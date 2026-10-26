@@ -8,7 +8,7 @@ import {
 } from '@/modules/Assistant';
 import { useSuiteWatch } from '@/modules/Automation';
 import { useBuildEvents } from '@/modules/Build';
-import { useProConflicts, useProSync } from '@/modules/Pro';
+import { useProConflicts, useProLinks, useProSync } from '@/modules/Pro';
 import { AppWindow, Platform } from '@/services';
 import { SHELL } from '@/shared/constants';
 import {
@@ -24,6 +24,7 @@ import {
 } from '@/shared/hooks';
 import {
   useAppStore,
+  useProStore,
   useSettingsStore,
   useVariablesStore,
   useWorkspaceStore,
@@ -41,6 +42,7 @@ export const useAppViewModel = () => {
   const isPanelOpen = useWorkspaceStore((state) => state.isPanelOpen);
   const sidebarWidth = useSidebarWidth();
   const variablesKey = useVariablesStore((state) => state.request?.id ?? null);
+  const hasProLink = useProStore((state) => state.link !== null);
 
   useArchive();
   useVariables();
@@ -55,6 +57,7 @@ export const useAppViewModel = () => {
   useSuiteWatch();
   useProSync();
   useProConflicts();
+  useProLinks();
   useVideoSweep();
 
   useEffect(() => {
@@ -88,6 +91,7 @@ export const useAppViewModel = () => {
     hasRunNotice: runNotice !== null,
     runNoticeKey: runNotice?.key ?? 'run-notice',
     hasReplay: replay !== null,
+    hasProLink,
     replayKey:
       replay === null
         ? 'replay'

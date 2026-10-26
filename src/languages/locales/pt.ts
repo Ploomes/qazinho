@@ -1561,5 +1561,16 @@ export const pt: typeof en = {
     FAIL_NO_KEYCHAIN:
       'Este computador não tem um keychain para guardar o login com segurança.',
     FAIL_UNEXPECTED: 'O QAzinho respondeu algo inesperado. Tente de novo daqui a pouco.',
+    LINK_TITLE: 'Abrir um plano da sua org',
+    LINK_SIGNED_OUT:
+      'Este plano é da org {{org}}. Entre na sua conta pelo card no pé da barra lateral e abra o link de novo.',
+    LINK_NOT_MEMBER: 'Este plano é da org {{org}}, e a sua conta não está nela.',
+    LINK_NOT_HERE:
+      'O projeto está neste computador, mas este plano ainda não: outra pessoa da org o criou.',
+    LINK_DOWNLOAD_BODY:
+      'Este plano não está neste computador. Baixe o projeto da {{org}}, com os planos e as gravações, e ele abre aqui.',
+    LINK_DOWNLOAD: 'Baixar e abrir',
+    LINK_DOWNLOADING: 'Baixando…',
+    LINK_OK: 'OK',
   },
 };

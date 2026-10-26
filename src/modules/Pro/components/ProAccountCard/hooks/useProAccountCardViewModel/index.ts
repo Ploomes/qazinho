@@ -8,21 +8,11 @@ import {
   PRO_DOWNLOAD_FAILURES,
 } from '@/modules/Pro/components/ProAccountCard/constants';
 import { PRO_BILLING, PRO_ROLES } from '@/modules/Pro/constants';
-import {
-  attentionOf,
-  initialsOf,
-  projectOfDownload,
-  workspaceOfPlan,
-} from '@/modules/Pro/library';
+import { useOrgDownload } from '@/modules/Pro/hooks/useOrgDownload';
+import { attentionOf, initialsOf } from '@/modules/Pro/library';
 import { Pro } from '@/services';
 import { useDismiss } from '@/shared/hooks';
-import {
-  useAppStore,
-  useProStore,
-  useSettingsStore,
-  useVariablesStore,
-  useWorkspaceStore,
-} from '@/store';
+import { useAppStore, useProStore, useSettingsStore } from '@/store';
 
 export const useProAccountCardViewModel = () => {
   const { t } = useTranslation();
@@ -31,10 +21,8 @@ export const useProAccountCardViewModel = () => {
   const shares = useProStore((state) => state.shares);
   const orgProjects = useProStore((state) => state.orgProjects);
   const projects = useAppStore((state) => state.projects);
-  const putProject = useAppStore((state) => state.putProject);
   const selectWorkspace = useAppStore((state) => state.selectWorkspace);
-  const addWorkspace = useWorkspaceStore((state) => state.addWorkspace);
-  const askVariables = useVariablesStore((state) => state.ask);
+  const bringHere = useOrgDownload();
   const isShut = useSettingsStore((state) => state.isSidebarShut);
   const toggleSidebar = useSettingsStore((state) => state.toggleSidebar);
   const [isOpen, setOpen] = useState(false);
@@ -90,10 +78,7 @@ export const useProAccountCardViewModel = () => {
   const download = async (offer: IProOrgProject) => {
     setDownloads((current) => ({ ...current, [offer.projectId]: 'working' }));
 
-    const done = await Pro.download({
-      orgSlug: offer.orgSlug,
-      projectId: offer.projectId,
-    });
+    const done = await bringHere({ orgSlug: offer.orgSlug, projectId: offer.projectId });
 
     if (!done.isDownloaded) {
       setDownloads((current) => ({ ...current, [offer.projectId]: done.failure }));
@@ -101,23 +86,7 @@ export const useProAccountCardViewModel = () => {
       return;
     }
 
-    const workspaces = done.plans.map((plan) =>
-      workspaceOfPlan({ plan, projectId: done.project.projectId }),
-    );
-
-    putProject(projectOfDownload(done.project));
-
-    for (const workspace of workspaces) addWorkspace(workspace);
-
-    if (done.variables.length > 0)
-      askVariables({
-        id: `org-${done.project.projectId}`,
-        projectId: done.project.projectId,
-        drafts: done.variables,
-        by: 'org',
-      });
-
-    if (workspaces[0] !== undefined) selectWorkspace(workspaces[0].id);
+    if (done.workspaceIds[0] !== undefined) selectWorkspace(done.workspaceIds[0]);
 
     setDownloads((current) =>
       Object.fromEntries(

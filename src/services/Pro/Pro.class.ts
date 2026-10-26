@@ -1,4 +1,5 @@
 import type {
+  IProLink,
   IProShare,
   IProSyncBatch,
   ProDownload,
@@ -104,6 +105,14 @@ export class Pro {
         failure: 'failed',
       }
     );
+  }
+
+  public static onLink(listener: () => void): () => void {
+    return window.qazinho?.onProLink(listener) ?? (() => undefined);
+  }
+
+  public static async takeLink(): Promise<IProLink | null> {
+    return (await window.qazinho?.takeProLink()) ?? null;
   }
 
   public static async openPage(path: string): Promise<boolean> {

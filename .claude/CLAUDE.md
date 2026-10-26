@@ -285,8 +285,10 @@ computer in by a code the QA confirms in the browser, its token sealed by the OS
 changed since the last time, the screens and videos of its runs, with no loading and nothing new
 on screen, so the app is the same as signed out. A plan the org moved too is joined case by case,
 unasked. The card names the account and its org, flags a blocked org or an account that only
-reads, and downloads the org's projects with their recordings. Unit tests drive it against a fake
-platform; the platform's API (qazinho-server) is still being built, so no real round trip has run.
+reads, and downloads the org's projects with their recordings. A plan's "Open in the desktop" on
+the web (`qazinho://open`) opens its workspace here, or offers to download its project from the
+org first. Unit tests drive it against a fake platform; the platform's API (qazinho-server) is
+still being built, so no real round trip has run, and no installed app has opened a link yet.
 
 **Codex is half verified.** QAzinho drives it through `codex exec --json` and its own MCP server,
 checked against a fake Codex built from the real one's events. The chat has answered through a
