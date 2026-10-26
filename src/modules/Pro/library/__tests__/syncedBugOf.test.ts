@@ -24,7 +24,24 @@ describe('syncedBugOf', () => {
     expect(synced).not.toHaveProperty('review');
   });
 
-  it('dates each sighting by its run, and leaves the date out of a run it does not know', () => {
+  it('names the run that first caught it, at its moment on that run’s video', () => {
+    const synced = syncedBugOf({
+      workspaceId: 'w1',
+      bug: { ...BUG, at: RECORDING.startedAt + 12_340 },
+      runs: WORKSPACE.runs,
+    });
+
+    expect(synced?.caught).toEqual({
+      runId: BUG.runId,
+      runWhen: new Date(RECORDING.startedAt).toISOString(),
+      caseId: 'TC-01',
+      stepNumber: 2,
+      shotFile: BUG.shots.find(({ isBad }) => isBad)?.file ?? null,
+      at: 12.34,
+    });
+  });
+
+  it('dates each sighting by its run and places it on its video, and leaves out a run it does not know', () => {
     const bug: IBug = {
       ...BUG,
       sightings: [
@@ -33,7 +50,7 @@ describe('syncedBugOf', () => {
           runWhen: '09:41',
           caseId: 'TC-01',
           stepNumber: 2,
-          at: 1_200,
+          at: RECORDING.startedAt + 3_000,
           shot: { isBad: true, src: null, file: '/data/runs/w1/r-01/step-2.jpg' },
         },
         {
@@ -56,15 +73,7 @@ describe('syncedBugOf', () => {
         caseId: 'TC-01',
         stepNumber: 2,
         shotFile: '/data/runs/w1/r-01/step-2.jpg',
-        at: 1_200,
-      },
-      {
-        runId: 'r-09',
-        runWhen: null,
-        caseId: 'TC-01',
-        stepNumber: 2,
-        shotFile: null,
-        at: null,
+        at: 3,
       },
     ]);
   });

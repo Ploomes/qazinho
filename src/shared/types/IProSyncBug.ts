@@ -1,7 +1,8 @@
 import type { IFiledIssue } from './IFiledIssue';
+import type { IProSyncCatch } from './IProSyncCatch';
 import type { Severity } from './Severity';
 
-/** A bug as it goes to QAzinho Pro: its words, where it broke, its screens as files in the archive, each time it was seen, and its issue. */
+/** A bug as it goes to QAzinho Pro: its words, where it broke, its screens as files in the archive, the run that first caught it, each later sighting, and its issue. */
 export interface IProSyncBug {
   workspaceId: string;
   bugId: string;
@@ -19,13 +20,7 @@ export interface IProSyncBug {
   filed: IFiledIssue | null;
   repro: { action: string; isBad: boolean }[];
   shots: { file: string | null; isBad: boolean }[];
-  sightings: {
-    runId: string;
-    runWhen: string | null;
-    caseId: string;
-    stepNumber: number;
-    shotFile: string | null;
-    at: number | null;
-  }[];
+  caught: IProSyncCatch | null;
+  sightings: IProSyncCatch[];
   firstSeenAt: string;
 }

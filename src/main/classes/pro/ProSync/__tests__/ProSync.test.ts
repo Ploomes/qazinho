@@ -178,6 +178,7 @@ function batchOf(root: string): IProSyncBatch {
         filed: null,
         repro: [{ action: 'Copiar o código Pix', isBad: true }],
         shots: [{ file: shot, isBad: true }],
+        caught: null,
         sightings: [],
         firstSeenAt: '2026-10-24T10:00:30.000Z',
       },

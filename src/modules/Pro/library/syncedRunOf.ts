@@ -3,6 +3,7 @@ import type { IRun } from '@/modules/Run/types';
 import type { IProSyncRun } from '@/shared/types';
 import { finishedVerdictOf } from './finishedVerdictOf';
 import { startedIsoOf } from './startedIsoOf';
+import { videoSecondsOf } from './videoSecondsOf';
 
 /** A finished run as QAzinho Pro takes it, on the target its workspace runs on, each step placed on its video; null for a run that does not know when it started. */
 export function syncedRunOf(props: {
@@ -16,8 +17,6 @@ export function syncedRunOf(props: {
   if (startedAt === null) return null;
 
   const video = run.video;
-  const secondsOf = (at: number) =>
-    video === null ? 0 : Math.max(0, Math.round((at - video.startedAt) / 10) / 100);
 
   return {
     workspaceId,
@@ -45,7 +44,10 @@ export function syncedRunOf(props: {
         span:
           video === null || step.span === null
             ? null
-            : { from: secondsOf(step.span.from), to: secondsOf(step.span.to) },
+            : {
+                from: videoSecondsOf({ at: step.span.from, startedAt: video.startedAt }),
+                to: videoSecondsOf({ at: step.span.to, startedAt: video.startedAt }),
+              },
       })),
     })),
     videoStartedAt: video === null ? null : new Date(video.startedAt).toISOString(),

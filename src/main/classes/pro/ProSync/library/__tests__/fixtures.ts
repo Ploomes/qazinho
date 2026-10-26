@@ -75,6 +75,14 @@ export const BUG: IProSyncBug = {
     { file: '/data/runs/w1/r1/2.jpg', isBad: true },
     { file: null, isBad: false },
   ],
+  caught: {
+    runId: 'r1',
+    runWhen: '2026-10-24T10:00:00.000Z',
+    caseId: 'c1',
+    stepNumber: 2,
+    shotFile: '/data/runs/w1/r1/2.jpg',
+    at: 3.5,
+  },
   sightings: [
     {
       runId: 'r2',

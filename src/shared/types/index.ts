@@ -104,6 +104,7 @@ export type * from './IProShare';
 export type * from './IProSyncBatch';
 export type * from './IProSyncBug';
 export type * from './IProSyncCase';
+export type * from './IProSyncCatch';
 export type * from './IProSyncPlan';
 export type * from './IProSyncProject';
 export type * from './IProSyncRun';

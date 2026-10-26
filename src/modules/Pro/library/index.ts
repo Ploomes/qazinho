@@ -12,4 +12,5 @@ export * from './syncedBugOf';
 export * from './syncedCaseOf';
 export * from './syncedRunOf';
 export * from './testCasesOf';
+export * from './videoSecondsOf';
 export * from './workspaceOfPlan';

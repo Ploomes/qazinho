@@ -1,9 +1,13 @@
-import type { IProSyncBug } from '@/shared/types';
+import type { IProSyncBug, IProSyncCatch } from '@/shared/types';
 
-/** The bug as the platform takes it, each screen named by the key it was uploaded under; a screen that did not go up is left out. */
+/** The bug as the platform takes it, each screen, its first catch's and each sighting's named by the key it was uploaded under; a screen that did not go up is left out. */
 export function bugBodyOf(props: { bug: IProSyncBug; keys: Record<string, string> }) {
   const { bug, keys } = props;
   const keyOf = (file: string | null) => (file === null ? null : (keys[file] ?? null));
+  const catchOf = ({ shotFile, ...seen }: IProSyncCatch) => ({
+    ...seen,
+    shot: keyOf(shotFile),
+  });
 
   return {
     severity: bug.severity,
@@ -24,10 +28,8 @@ export function bugBodyOf(props: { bug: IProSyncBug; keys: Record<string, string
 
       return key === null ? [] : [{ key, isBad }];
     }),
-    sightings: bug.sightings.map(({ shotFile, ...sighting }) => ({
-      ...sighting,
-      shot: keyOf(shotFile),
-    })),
+    caught: bug.caught === null ? null : catchOf(bug.caught),
+    sightings: bug.sightings.map(catchOf),
     firstSeenAt: bug.firstSeenAt,
   };
 }
