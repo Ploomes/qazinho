@@ -151,10 +151,12 @@ function batchOf(root: string): IProSyncBatch {
                 shotFile: shot,
                 by: 'agent',
                 proof: null,
+                span: null,
               },
             ],
           },
         ],
+        videoStartedAt: null,
         costUsd: 0.02,
       },
     ],
@@ -633,6 +635,51 @@ describe('ProSync', () => {
         .filter(({ method }) => method === 'syncRun')
         .map(({ body }) => (body as { video: unknown }).video),
     ).toEqual(['ev/2']);
+  });
+
+  it('keeps the org’s video on a run sent again after this computer let it go', async () => {
+    let video: string | null = null;
+    let isRemoved = false;
+    const { api, sent } = fakeApi();
+    const { sync, batch } = await syncWith({
+      api,
+      videoOf: () => () => Promise.resolve(video),
+      isVideoRemoved: () => Promise.resolve(isRemoved),
+    });
+    video = join(batch.runs[0]?.cases[0]?.steps[0]?.shotFile ?? '', '..', 'run.mp4');
+
+    await sync.push(batch);
+    video = null;
+    isRemoved = true;
+    await sync.push({
+      ...batch,
+      runs: batch.runs.map((run) => ({ ...run, durationSec: 41 })),
+    });
+
+    expect(
+      sent
+        .filter(({ method }) => method === 'syncRun')
+        .map(({ body }) => (body as { video: unknown }).video),
+    ).toEqual(['ev/2', 'ev/2']);
+  });
+
+  it('sends the requests a web run kept beside it, named in the run', async () => {
+    const { api, sent } = fakeApi();
+    const { sync, batch, root, uploaded } = await syncWith({ api });
+    const network = join(root, 'runs', 'w1', 'r1', 'network.json');
+
+    await writeFile(network, '[]');
+    await sync.push(batch);
+
+    expect(uploaded).toContain(network);
+    expect(
+      sent
+        .filter(({ method }) => method === 'evidenceUpload')
+        .map(({ body }) => (body as { kind: string }).kind),
+    ).toEqual(['screenshot', 'video', 'network']);
+    expect(sent.find(({ method }) => method === 'syncRun')?.body).toMatchObject({
+      network: 'ev/3',
+    });
   });
 
   it('does NOT keep what a push sent to an org this computer stopped sending to midway', async () => {

@@ -13,7 +13,14 @@ describe('evidenceKindOf', () => {
     });
   });
 
+  it('reads the requests a run kept as its network', () => {
+    expect(evidenceKindOf('/data/runs/w1/r1/network.json')).toEqual({
+      kind: 'network',
+      contentType: 'application/json',
+    });
+  });
+
   it('refuses a file QAzinho never sends', () => {
-    expect(evidenceKindOf('/data/network.json')).toBeNull();
+    expect(evidenceKindOf('/data/notes.txt')).toBeNull();
   });
 });

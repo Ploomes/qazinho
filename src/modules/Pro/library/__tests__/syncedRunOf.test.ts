@@ -49,7 +49,18 @@ describe('syncedRunOf', () => {
       ],
     });
     expect(synced?.cases[0]?.steps[0]).not.toHaveProperty('shot');
-    expect(synced?.cases[0]?.steps[0]).not.toHaveProperty('span');
+  });
+
+  it("places each step on the run's video in seconds, never before the video began, and a step never walked nowhere", () => {
+    const run = recordedRun(['passed', 'failed']).runs[0]!;
+    const synced = syncedRunOf({ workspaceId: 'w1', run, target: TARGET });
+
+    expect(synced?.videoStartedAt).toBe(new Date(RECORDING.startedAt).toISOString());
+    expect(synced?.cases[0]?.steps.map((step) => step.span)).toEqual([
+      { from: 0, to: 1.5 },
+      { from: 1.5, to: 3.5 },
+      null,
+    ]);
   });
 
   it('calls a step a stop left waiting skipped', () => {

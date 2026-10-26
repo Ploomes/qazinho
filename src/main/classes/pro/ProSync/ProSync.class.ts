@@ -3,9 +3,10 @@ import type {
   IProShare,
   IProSyncBatch,
   IProSyncCase,
+  IProSyncRun,
   ProSyncState,
 } from '@/shared/types';
-import { mkdir, readFile } from 'node:fs/promises';
+import { mkdir, readFile, stat } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { isInside } from '@/main/classes/storage/Archive/library';
@@ -324,20 +325,25 @@ export class ProSync {
     for (const run of batch.runs) {
       const planId = record.plans[run.workspaceId]?.planId ?? null;
       const key = `${run.workspaceId}/${run.runId}`;
-      const videoFile = await this.videoOf({
-        workspaceId: run.workspaceId,
-        runId: run.runId,
-      });
+      const videoFile =
+        (await this.videoOf({ workspaceId: run.workspaceId, runId: run.runId })) ??
+        this.sentVideoOf({ run, record });
+      const networkFile = await this.networkOf(run);
       const hash = hashOf({
         run,
         hasVideo:
           videoFile !== null ||
           (await this.isVideoRemoved({ workspaceId: run.workspaceId, runId: run.runId })),
+        hasNetwork: networkFile !== null,
       });
 
       if (planId === null || record.runs[key] === hash) continue;
 
-      const files = [...runFilesOf(run), ...(videoFile === null ? [] : [videoFile])];
+      const files = [
+        ...runFilesOf(run),
+        ...(videoFile === null ? [] : [videoFile]),
+        ...(networkFile === null ? [] : [networkFile]),
+      ];
       const keys = await this.keysOf({ files, record, token });
 
       if (typeof keys === 'string') return keys;
@@ -346,7 +352,7 @@ export class ProSync {
         token,
         org: record.orgSlug,
         path: `plans/${encodeURIComponent(planId)}/runs/${encodeURIComponent(run.runId)}`,
-        body: runBodyOf({ run, videoFile, keys, machine: this.machineName }),
+        body: runBodyOf({ run, videoFile, networkFile, keys, machine: this.machineName }),
       });
 
       if (!answer.isOk) return stateOfRefusal(answer);
@@ -355,6 +361,29 @@ export class ProSync {
     }
 
     return null;
+  }
+
+  private async networkOf(run: IProSyncRun): Promise<string | null> {
+    const file = join(this.folderOf(run), ARCHIVE.network);
+
+    return (await stat(file).catch(() => null))?.isFile() === true ? file : null;
+  }
+
+  private sentVideoOf(props: {
+    run: IProSyncRun;
+    record: IProSyncRecord;
+  }): string | null {
+    const { run, record } = props;
+
+    return (
+      Object.values(ARCHIVE.videos)
+        .map((name) => join(this.folderOf(run), name))
+        .find((file) => record.evidence[file] !== undefined) ?? null
+    );
+  }
+
+  private folderOf(run: IProSyncRun): string {
+    return join(this.archiveRoot, ARCHIVE.runs, run.workspaceId, run.runId);
   }
 
   private async sendBugs(props: {

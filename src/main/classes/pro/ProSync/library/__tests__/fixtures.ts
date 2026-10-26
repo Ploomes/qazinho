@@ -26,6 +26,7 @@ export const RUN: IProSyncRun = {
           shotFile: null,
           by: 'replay',
           proof: 'Carrinho',
+          span: null,
         },
         {
           number: 2,
@@ -36,10 +37,12 @@ export const RUN: IProSyncRun = {
           shotFile: '/data/runs/w1/r1/2.jpg',
           by: 'agent',
           proof: null,
+          span: null,
         },
       ],
     },
   ],
+  videoStartedAt: null,
   costUsd: 0.04,
 };
 

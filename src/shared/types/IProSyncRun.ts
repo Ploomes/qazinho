@@ -24,7 +24,9 @@ export interface IProSyncRun {
       shotFile: string | null;
       by: 'agent' | 'replay' | 'healed';
       proof: string | null;
+      span: { from: number; to: number } | null;
     }[];
   }[];
+  videoStartedAt: string | null;
   costUsd: number | null;
 }

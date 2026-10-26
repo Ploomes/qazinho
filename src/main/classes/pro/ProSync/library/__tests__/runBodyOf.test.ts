@@ -7,6 +7,7 @@ describe('runBodyOf', () => {
     const body = runBodyOf({
       run: RUN,
       videoFile: '/data/runs/w1/r1/run.mp4',
+      networkFile: null,
       keys: {
         '/data/runs/w1/r1/2.jpg': 'ev/shot',
         '/data/runs/w1/r1/run.mp4': 'ev/video',
@@ -24,11 +25,25 @@ describe('runBodyOf', () => {
     const body = runBodyOf({
       run: RUN,
       videoFile: '/data/runs/w1/r1/run.mp4',
+      networkFile: null,
       keys: {},
       machine: 'MacBook-Ana',
     });
 
     expect(body.cases[0]?.steps[1]?.shot).toBeNull();
     expect(body.video).toBeNull();
+  });
+
+  it("names the run's requests by their key, and says when its video started", () => {
+    const body = runBodyOf({
+      run: { ...RUN, videoStartedAt: '2026-10-24T10:00:01.500Z' },
+      videoFile: null,
+      networkFile: '/data/runs/w1/r1/network.json',
+      keys: { '/data/runs/w1/r1/network.json': 'ev/network' },
+      machine: 'MacBook-Ana',
+    });
+
+    expect(body.network).toBe('ev/network');
+    expect(body.videoStartedAt).toBe('2026-10-24T10:00:01.500Z');
   });
 });
