@@ -33,6 +33,7 @@ export class ProSync {
   private readonly file: string;
   private readonly archiveRoot: string;
   private readonly videoOf: IProSync['videoOf'];
+  private readonly isVideoRemoved: IProSync['isVideoRemoved'];
   private readonly variablesOf: IProSync['variablesOf'];
   private readonly upload: ProUploader;
   private readonly now: () => Date;
@@ -48,6 +49,7 @@ export class ProSync {
     this.file = props.file;
     this.archiveRoot = props.archiveRoot;
     this.videoOf = props.videoOf;
+    this.isVideoRemoved = props.isVideoRemoved;
     this.variablesOf = props.variablesOf;
     this.upload = props.upload;
     this.now = props.now;
@@ -326,7 +328,12 @@ export class ProSync {
         workspaceId: run.workspaceId,
         runId: run.runId,
       });
-      const hash = hashOf({ run, hasVideo: videoFile !== null });
+      const hash = hashOf({
+        run,
+        hasVideo:
+          videoFile !== null ||
+          (await this.isVideoRemoved({ workspaceId: run.workspaceId, runId: run.runId })),
+      });
 
       if (planId === null || record.runs[key] === hash) continue;
 

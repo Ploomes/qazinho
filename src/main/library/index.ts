@@ -37,6 +37,7 @@ export * from './sampleFileOf';
 export * from './searchDirectories';
 export * from './spawnCommand';
 export * from './stripAnsi';
+export * from './sweepDaysOf';
 export * from './swipeOf';
 export * from './withoutRole';
 export * from './writeAtomically';

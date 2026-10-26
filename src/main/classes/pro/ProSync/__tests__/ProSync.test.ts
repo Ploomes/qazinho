@@ -187,6 +187,7 @@ async function syncWith(props: {
   api: IProSync['api'];
   orgSlug?: string | null;
   videoOf?: (root: string) => IProSync['videoOf'];
+  isVideoRemoved?: IProSync['isVideoRemoved'];
 }) {
   const root = await mkdtemp(join(tmpdir(), 'qazinho-sync-'));
   const target = { orgSlug: props.orgSlug === undefined ? 'loja' : props.orgSlug };
@@ -231,6 +232,7 @@ async function syncWith(props: {
         Promise.resolve(
           runId === 'r1' ? join(root, 'runs', 'w1', 'r1', 'run.mp4') : null,
         )),
+    isVideoRemoved: props.isVideoRemoved ?? (() => Promise.resolve(false)),
     variablesOf: () =>
       Promise.resolve([{ name: 'LOGIN_PASSWORD', description: 'senha do QA' }]),
     upload: ({ file }) => {
@@ -610,6 +612,29 @@ describe('ProSync', () => {
     ).toEqual([null, 'ev/2']);
   });
 
+  it('does NOT send a run again once this computer let its video go, which the org still keeps', async () => {
+    let video: string | null = null;
+    let isRemoved = false;
+    const { api, sent } = fakeApi();
+    const { sync, batch } = await syncWith({
+      api,
+      videoOf: () => () => Promise.resolve(video),
+      isVideoRemoved: () => Promise.resolve(isRemoved),
+    });
+    video = join(batch.runs[0]?.cases[0]?.steps[0]?.shotFile ?? '', '..', 'run.mp4');
+
+    await sync.push(batch);
+    video = null;
+    isRemoved = true;
+    await sync.push(batch);
+
+    expect(
+      sent
+        .filter(({ method }) => method === 'syncRun')
+        .map(({ body }) => (body as { video: unknown }).video),
+    ).toEqual(['ev/2']);
+  });
+
   it('does NOT keep what a push sent to an org this computer stopped sending to midway', async () => {
     let target: { orgSlug: string } = { orgSlug: 'loja' };
     const { api } = fakeApi((call) => {
@@ -625,6 +650,7 @@ describe('ProSync', () => {
       file: join(root, 'pro', 'sync.json'),
       archiveRoot: root,
       videoOf: () => Promise.resolve(null),
+      isVideoRemoved: () => Promise.resolve(false),
       variablesOf: () => Promise.resolve([]),
       upload: () => Promise.resolve(true),
       now: () => new Date(),
@@ -659,6 +685,7 @@ describe('ProSync', () => {
       file: join(root, 'pro', 'sync.json'),
       archiveRoot: root,
       videoOf: () => Promise.resolve(null),
+      isVideoRemoved: () => Promise.resolve(false),
       variablesOf: () => Promise.resolve([]),
       upload: () => Promise.resolve(true),
       now: () => new Date(),

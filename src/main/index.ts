@@ -105,6 +105,7 @@ import {
   ResourceCollector,
   RunCoordinator,
   ReplayServer,
+  StorageKeeper,
   RunAlerts,
   RunRecorder,
   SetupInstaller,
@@ -158,6 +159,7 @@ import {
   linuxTerminalOf,
   proPageUrlOf,
   spawnCommand,
+  sweepDaysOf,
 } from '@/main/library';
 import { ASSISTANT_WAIT, CHANNELS } from '@/shared/constants';
 import {
@@ -182,6 +184,11 @@ const deviceTools = new DeviceToolDetector();
 const archive = new Archive(PATHS.data);
 const live = new LiveStream();
 const replays = new ReplayServer({ dataRoot: PATHS.data, suitesRoot: PATHS.suites });
+const storage = new StorageKeeper({
+  dataRoot: PATHS.data,
+  buildsRoot: PATHS.builds,
+  now: () => new Date(),
+});
 const tools = new McpHost();
 const harness = new Harness();
 const peek = new AppPeek({ folder: tmpdir() });
@@ -362,6 +369,7 @@ const proSync = new ProSync({
   file: PATHS.proSync,
   archiveRoot: PATHS.data,
   videoOf: (run) => replays.fileOf(run),
+  isVideoRemoved: async (run) => (await storage.removedVideoOf(run)) !== null,
   variablesOf: async (projectId) =>
     (await variables.list()).find((kept) => kept.projectId === projectId)?.variables ??
     [],
@@ -1286,6 +1294,17 @@ void app.whenReady().then(async () => {
     saveReplay(props),
   );
   ipcMain.handle(CHANNELS.replayVideo, (_event, run: IRunRef) => replays.videoOf(run));
+  ipcMain.handle(CHANNELS.removedVideo, (_event, run: IRunRef) =>
+    storage.removedVideoOf(run),
+  );
+  ipcMain.handle(CHANNELS.storageUsage, () => storage.usage());
+  ipcMain.handle(CHANNELS.sweepVideos, (_event, olderThanDays: unknown) => {
+    const days = sweepDaysOf(olderThanDays);
+
+    return days === null
+      ? { removed: 0, freedBytes: 0 }
+      : storage.sweepVideos({ olderThanDays: days });
+  });
   ipcMain.handle(
     CHANNELS.saveVideo,
     (_event, props: { name: string; data: Uint8Array }) => saveVideo(props),
