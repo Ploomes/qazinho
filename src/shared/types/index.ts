@@ -97,6 +97,7 @@ export type * from './InstallFailure';
 export type * from './IntegrationId';
 export type * from './IProcessSample';
 export type * from './IProjectVariables';
+export type * from './IProLink';
 export type * from './IProOrg';
 export type * from './IProOrgProject';
 export type * from './IProPlanConflict';

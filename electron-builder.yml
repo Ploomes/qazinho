@@ -1,5 +1,9 @@
 appId: com.salvesoftware.qazinho
 productName: QAzinho
+protocols:
+  - name: QAzinho
+    schemes:
+      - qazinho
 directories:
   output: release
   buildResources: build

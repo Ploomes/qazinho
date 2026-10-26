@@ -32,6 +32,8 @@ export * from './phoneGlance';
 export * from './phoneMeasureOf';
 export * from './phoneShot';
 export * from './pngSizeOf';
+export * from './proLinkAddressIn';
+export * from './proLinkOf';
 export * from './proPageUrlOf';
 export * from './sampleFileOf';
 export * from './searchDirectories';

@@ -39,6 +39,7 @@ import type {
   InstallableId,
   IntegrationId,
   IProjectVariables,
+  IProLink,
   IProShare,
   IProSyncBatch,
   IPublishPlan,
@@ -352,6 +353,18 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.listOrgProjects, orgSlug) as Promise<ProOrgProjects>,
   downloadOrgProject: (props: { orgSlug: string; projectId: string }) =>
     ipcRenderer.invoke(CHANNELS.downloadOrgProject, props) as Promise<ProDownload>,
+  onProLink: (listener: () => void) => {
+    const forward = () => {
+      listener();
+    };
+
+    ipcRenderer.on(CHANNELS.proLinkArrived, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.proLinkArrived, forward);
+    };
+  },
+  takeProLink: () => ipcRenderer.invoke(CHANNELS.takeProLink) as Promise<IProLink | null>,
   openProPage: (path: string) =>
     ipcRenderer.invoke(CHANNELS.openProPage, path) as Promise<boolean>,
   listRepositories: () =>

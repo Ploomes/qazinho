@@ -154,6 +154,8 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     listOrgProjects: () => Promise.resolve({ isListed: true, projects: [] }),
     downloadOrgProject: () => Promise.resolve({ isDownloaded: false, failure: 'gone' }),
     openProPage: () => Promise.resolve(true),
+    onProLink: () => () => undefined,
+    takeProLink: () => Promise.resolve(null),
     listRepositories: () => Promise.resolve({ isListed: false, failure: 'no-cli' }),
     listBranches: () => Promise.resolve({ isListed: false, failure: 'no-cli' }),
     searchJira: () => Promise.resolve({ isListed: false, failure: 'not-connected' }),

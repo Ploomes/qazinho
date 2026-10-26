@@ -112,5 +112,7 @@ export const CHANNELS = {
   resolveProConflict: 'pro:resolve',
   listOrgProjects: 'pro:org-projects',
   downloadOrgProject: 'pro:download',
+  proLinkArrived: 'pro:link-arrived',
+  takeProLink: 'pro:take-link',
   openProPage: 'pro:open-page',
 } as const;

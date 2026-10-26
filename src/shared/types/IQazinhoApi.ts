@@ -38,6 +38,7 @@ import type { INetworkEntry } from './INetworkEntry';
 import type { InstallableId } from './InstallableId';
 import type { IntegrationId } from './IntegrationId';
 import type { IProjectVariables } from './IProjectVariables';
+import type { IProLink } from './IProLink';
 import type { IProShare } from './IProShare';
 import type { IProSyncBatch } from './IProSyncBatch';
 import type { IPublishPlan } from './IPublishPlan';
@@ -204,6 +205,8 @@ export interface IQazinhoApi {
     projectId: string;
   }) => Promise<ProDownload>;
   openProPage: (path: string) => Promise<boolean>;
+  onProLink: (listener: () => void) => () => void;
+  takeProLink: () => Promise<IProLink | null>;
   listRepositories: () => Promise<IRepositoryList>;
   listBranches: (repository: IRepositoryRef) => Promise<IBranchList>;
   searchJira: (query: string) => Promise<JiraIssueList>;

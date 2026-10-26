@@ -5,6 +5,7 @@ import type {
   ICommentBug,
   IFileBug,
   IFilingEvent,
+  IProLink,
   IProShare,
   IProSyncBatch,
   IPublishPlan,
@@ -132,6 +133,7 @@ import {
   FILE_FILTERS,
   CHAT_SOURCES,
   PATHS,
+  PRO_LINK,
   PRO_API,
   SAVED_VIDEO,
   APP_USER_MODEL_ID,
@@ -157,6 +159,8 @@ import {
   execCommand,
   diagnosticsOf,
   linuxTerminalOf,
+  proLinkAddressIn,
+  proLinkOf,
   proPageUrlOf,
   spawnCommand,
   sweepDaysOf,
@@ -220,6 +224,22 @@ function bringForward(): BrowserWindow | null {
 
 const alerts = new RunAlerts((run) => {
   bringForward()?.webContents.send(CHANNELS.openRun, run);
+});
+
+let waitingProLink: IProLink | null = null;
+
+function receiveProLink(address: string): void {
+  const link = proLinkOf(address);
+
+  if (link === null) return;
+
+  waitingProLink = link;
+  bringForward()?.webContents.send(CHANNELS.proLinkArrived);
+}
+
+app.on('open-url', (event, address) => {
+  event.preventDefault();
+  receiveProLink(address);
 });
 
 function broadcast(props: {
@@ -1226,8 +1246,12 @@ if (process.platform === 'win32') app.setAppUserModelId(APP_USER_MODEL_ID);
 
 if (!app.requestSingleInstanceLock()) app.exit(0);
 
-app.on('second-instance', () => {
+app.on('second-instance', (_event, argv) => {
   bringForward();
+
+  const address = proLinkAddressIn(argv);
+
+  if (address !== undefined) receiveProLink(address);
 });
 
 void app.whenReady().then(async () => {
@@ -1551,6 +1575,19 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.stopBuild, (_event, buildId: string) => {
     builder.stop(buildId);
   });
+  ipcMain.handle(CHANNELS.takeProLink, () => {
+    const link = waitingProLink;
+
+    waitingProLink = null;
+
+    return link;
+  });
+
+  if (app.isPackaged) app.setAsDefaultProtocolClient(PRO_LINK.scheme);
+
+  const launchLink = proLinkAddressIn(process.argv);
+
+  if (launchLink !== undefined) receiveProLink(launchLink);
 
   createWindow();
 
