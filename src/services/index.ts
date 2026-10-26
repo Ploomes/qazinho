@@ -1,9 +1,9 @@
 export * from './Agent';
 export * from './AppWindow';
+export * from './Archive';
 export * from './Assistant';
 export * from './Bugs';
 export * from './Builds';
-export * from './Archive';
 export * from './Confluence';
 export * from './Diagnostics';
 export * from './Files';
@@ -16,5 +16,6 @@ export * from './Platform';
 export * from './Pro';
 export * from './Run';
 export * from './Setup';
+export * from './Storage';
 export * from './Suites';
 export * from './Variables';

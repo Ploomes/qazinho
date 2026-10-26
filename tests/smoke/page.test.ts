@@ -233,6 +233,7 @@ describe('the built page, with no bridge behind it', () => {
       'integrations',
       'mcps',
       'appearance',
+      'storage',
       'shortcuts',
       'about',
     ]) {

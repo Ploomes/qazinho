@@ -108,6 +108,24 @@ describe('useRunReplayViewModel', () => {
     expect(result.current.canSave).toBe(false);
   });
 
+  it('says the video was let go of after so many days, rather than that it did not open', async () => {
+    window.qazinho = {
+      ...fakeQazinhoApi('darwin'),
+      replayUrl: () => Promise.resolve(null),
+      removedVideo: () =>
+        Promise.resolve({ removedAt: '2026-10-20T10:00:00.000Z', afterDays: 30 }),
+    };
+
+    const result = open();
+
+    await waitFor(() => {
+      expect(result.current.missingText).toBe(
+        'This run’s video was deleted after 30 days, to free space. Its report and screens stay.',
+      );
+    });
+    expect(result.current.hasFailed).toBe(true);
+  });
+
   it('stays shut for a run with no recording', () => {
     useWorkspaceStore.setState({
       workspaces: [walkRun({ verdicts: ['passed'], isFinished: true })],

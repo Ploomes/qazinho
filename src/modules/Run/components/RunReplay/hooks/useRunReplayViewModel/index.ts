@@ -1,5 +1,5 @@
 import type { IReplayRequest, ReplayFocus } from '@/modules/Run/types';
-import type { SaveOutcome } from '@/shared/types';
+import type { IRemovedVideo, SaveOutcome } from '@/shared/types';
 import type { CSSProperties, MouseEvent } from 'react';
 import { useAnimationFrame, useMotionValue } from 'motion/react';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
@@ -34,6 +34,7 @@ export const useRunReplayViewModel = () => {
   const [url, setUrl] = useState<string | null | undefined>(undefined);
   const [isReady, setReady] = useState(false);
   const [hasFailed, setFailed] = useState(false);
+  const [removed, setRemoved] = useState<IRemovedVideo | null>(null);
   const [isPlaying, setPlaying] = useState(false);
   const [rate, setRate] = useState<number>(REPLAY.rates[0]);
   const [currentMs, setCurrentMs] = useState(0);
@@ -89,8 +90,12 @@ export const useRunReplayViewModel = () => {
 
     let isCurrent = true;
 
-    void Run.replayUrl({ workspaceId, runId }).then((found) => {
-      if (isCurrent) setUrl(found);
+    void Run.replayUrl({ workspaceId, runId }).then(async (found) => {
+      if (!isCurrent) return;
+      setUrl(found);
+      if (found !== null) return;
+      const gone = await Run.removedVideo({ workspaceId, runId });
+      if (isCurrent) setRemoved(gone);
     });
 
     return () => {
@@ -323,7 +328,10 @@ export const useRunReplayViewModel = () => {
     isLoading: !hasFailed && (url === undefined || (url !== null && !isReady)),
     hasFailed: hasFailed || url === null,
     loadingText: t('RUN.REPLAY_LOADING'),
-    missingText: t('RUN.REPLAY_MISSING'),
+    missingText:
+      removed === null
+        ? t('RUN.REPLAY_MISSING')
+        : t('RUN.REPLAY_REMOVED', { days: removed.afterDays }),
     caption: {
       key: caption.key,
       kicker: caption.kicker,

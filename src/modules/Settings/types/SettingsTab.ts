@@ -1,2 +1,9 @@
 export type SettingsTab =
-  'agents' | 'devices' | 'integrations' | 'mcps' | 'appearance' | 'shortcuts' | 'about';
+  | 'agents'
+  | 'devices'
+  | 'integrations'
+  | 'mcps'
+  | 'appearance'
+  | 'storage'
+  | 'shortcuts'
+  | 'about';

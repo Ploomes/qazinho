@@ -12,4 +12,5 @@ export * from './useShot';
 export * from './useSidebarWidth';
 export * from './useToTop';
 export * from './useVariables';
+export * from './useVideoSweep';
 export * from './useWindowWidth';

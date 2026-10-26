@@ -117,7 +117,11 @@ in with the sealed values: 8 steps of 8, with no value in the plan or the report
 stream, a simulator by `simctl`, an emulator by its console. The run's video opens in a theater:
 a chapter per case in its verdict's colour, a pin per bug, a still of any moment under the
 cursor, and the steps beside it, kept in step. Each case offers its take in Runs, and each bug
-its moment in Bugs. `tests/smoke/record.test.ts` proves the browser's recording.
+its moment in Bugs. `tests/smoke/record.test.ts` proves the browser's recording. A video is kept
+30 days by default, then let go of on its own: the run keeps its report, screens and verdicts,
+and its theater says the video went and when. Settings › Storage says what QAzinho keeps on the
+computer and how long videos stay; a video already sent to the QA's account is never sent again
+without it. Every screen, a phone's too, is a JPEG at its full size.
 
 **A web run keeps its network beside its video.** Chrome notes each request the app makes, with
 its status, time and size, and the run keeps them with a variable's value written as its name and

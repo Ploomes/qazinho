@@ -19,6 +19,7 @@ export const useSettingsStore = create<ISettingsStore>()(
       runAlert: 'system',
       replayNetwork: false,
       isSidebarShut: false,
+      videoKeepDays: 30,
 
       selectTab: (tab) => set({ tab }),
 
@@ -44,6 +45,8 @@ export const useSettingsStore = create<ISettingsStore>()(
       showReplayNetwork: (replayNetwork) => set({ replayNetwork }),
 
       toggleSidebar: () => set((state) => ({ isSidebarShut: !state.isSidebarShut })),
+
+      keepVideosFor: (videoKeepDays) => set({ videoKeepDays }),
     }),
     {
       name: STORAGE.settings,
@@ -59,6 +62,7 @@ export const useSettingsStore = create<ISettingsStore>()(
           | 'runAlert'
           | 'replayNetwork'
           | 'isSidebarShut'
+          | 'videoKeepDays'
         >,
       merge: (persisted, current) => {
         const saved = (persisted ?? {}) as Partial<ISettingsStore>;
@@ -78,6 +82,7 @@ export const useSettingsStore = create<ISettingsStore>()(
         runAlert,
         replayNetwork,
         isSidebarShut,
+        videoKeepDays,
       }) => ({
         agent,
         model,
@@ -87,6 +92,7 @@ export const useSettingsStore = create<ISettingsStore>()(
         runAlert,
         replayNetwork,
         isSidebarShut,
+        videoKeepDays,
       }),
     },
   ),

@@ -20,6 +20,7 @@ import {
   useRunTicker,
   useSidebarWidth,
   useVariables,
+  useVideoSweep,
 } from '@/shared/hooks';
 import {
   useAppStore,
@@ -54,6 +55,7 @@ export const useAppViewModel = () => {
   useSuiteWatch();
   useProSync();
   useProConflicts();
+  useVideoSweep();
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;

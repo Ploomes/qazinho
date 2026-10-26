@@ -1,0 +1,48 @@
+.storage-settings__total {
+  margin: 0;
+  color: var(--ink);
+  font: var(--font-ui-md);
+}
+
+.storage-settings__rows {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.storage-settings__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--line);
+}
+
+.storage-settings__row:first-child {
+  border-top: 0;
+}
+
+.storage-settings__label {
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}
+
+.storage-settings__size {
+  color: var(--ink);
+  font: var(--font-mono-tag);
+}
+
+.storage-settings__sweep {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.storage-settings__swept {
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}

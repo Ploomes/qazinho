@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { AgentSignIn, InstallProgress, IntegrationCard, McpCard } from '@/modules/Setup';
 import { Button, Icon, Logo, Tag, Wordmark } from '@/shared/components/atoms';
+import { StorageSettings } from './components';
 import { useSettingsViewModel } from './hooks';
 import './styles.css';
 
@@ -345,6 +346,8 @@ export const Settings: React.FC = () => {
               <p className="settings__note">{shortcutsNote}</p>
             </div>
           )}
+
+          {tab === 'storage' && <StorageSettings />}
 
           {tab === 'about' && (
             <div className="settings__about">

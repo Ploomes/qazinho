@@ -2,6 +2,7 @@ import type {
   ExportOutcome,
   IExportCode,
   INetworkEntry,
+  IRemovedVideo,
   IRunAlert,
   IRunEvent,
   IRunInFlight,
@@ -62,6 +63,11 @@ export class Run {
 
   public static async network(run: IRunRef): Promise<INetworkEntry[] | null> {
     return (await window.qazinho?.runNetwork(run)) ?? null;
+  }
+
+  /** When, and after how many days, QAzinho let a run's video go; null for one it never did. */
+  public static async removedVideo(run: IRunRef): Promise<IRemovedVideo | null> {
+    return (await window.qazinho?.removedVideo(run)) ?? null;
   }
 
   public static async replayVideo(run: IRunRef): Promise<Uint8Array | null> {

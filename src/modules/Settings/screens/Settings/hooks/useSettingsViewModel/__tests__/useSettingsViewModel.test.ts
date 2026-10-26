@@ -40,6 +40,7 @@ describe('useSettingsViewModel', () => {
       'integrations',
       'mcps',
       'appearance',
+      'storage',
       'shortcuts',
       'about',
     ]);

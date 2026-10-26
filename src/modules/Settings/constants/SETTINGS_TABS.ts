@@ -6,6 +6,7 @@ export const SETTINGS_TABS: SettingsTab[] = [
   'integrations',
   'mcps',
   'appearance',
+  'storage',
   'shortcuts',
   'about',
 ];

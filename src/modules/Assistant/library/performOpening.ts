@@ -9,6 +9,7 @@ const SECTION_NAMES: Record<SettingsTab, string> = {
   integrations: 'Integrations',
   mcps: 'MCPs',
   appearance: 'Appearance',
+  storage: 'Storage',
   shortcuts: 'Shortcuts',
   about: 'About',
 };

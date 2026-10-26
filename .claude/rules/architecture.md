@@ -549,6 +549,7 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `LinkCatcher`                         | gives an agent a `$BROWSER` that writes down the pages it wants opened                   |
 | `RunRecorder`                         | records a run's live stream into an MP4, through the hidden recorder window              |
 | `ReplayServer`                        | serves a run's recording to the page's `<video>` on 127.0.0.1, with ranges               |
+| `StorageKeeper`                       | what QAzinho keeps on this computer, by kind, and the run videos it lets go of once old  |
 | `RunAlerts`                           | calls the QA back when a run ends or asks them something: a notification, a badge        |
 | `GithubCli`                           | talks to GitHub through the QA's own gh: status, device-flow sign-in, API, tar           |
 | `GithubRepos`                         | lists the QA's repositories and a repository's branches, kept for a little while         |

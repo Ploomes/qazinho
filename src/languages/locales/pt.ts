@@ -407,6 +407,8 @@ export const pt: typeof en = {
     FAILED_AGENT_SIGNED_OUT:
       'O {{agent}} está deslogado, então a run parou. Faça login nele em Configurações → Agentes e rode o plano de novo.',
     FAILED_OTHER: 'A run parou: {{said}}',
+    REPLAY_REMOVED:
+      'O vídeo desta run foi apagado depois de {{days}} dias, para liberar espaço. O relatório e as telas continuam.',
   },
   BUG: {
     WATCH_MOMENT: 'Ver o momento',
@@ -761,6 +763,25 @@ export const pt: typeof en = {
     LOGS_OPEN: 'Abrir a pasta do log',
     DIAGNOSTICS_COPY: 'Copiar diagnóstico',
     DIAGNOSTICS_COPIED: 'Copiado',
+    STORAGE: 'Armazenamento',
+    STORAGE_MEASURING: 'Medindo o que o QAzinho guarda…',
+    STORAGE_TOTAL: 'O QAzinho ocupa {{size}} neste computador.',
+    STORAGE_VIDEOS: 'Vídeos das runs',
+    STORAGE_SCREENS: 'Telas das runs',
+    STORAGE_BUILDS: 'Apps construídos do código',
+    STORAGE_OTHER: 'O resto: projetos, perfis do navegador e logs',
+    KEEP_VIDEOS: 'Guardar os vídeos das runs por',
+    KEEP_7: '7 dias',
+    KEEP_30: '30 dias',
+    KEEP_90: '90 dias',
+    KEEP_ALWAYS: 'Sempre',
+    KEEP_NOTE:
+      'Os vídeos mais antigos são apagados sozinhos; cada run guarda o relatório, as telas e os veredictos. Um vídeo que já subiu para a sua conta continua lá.',
+    SWEEP_NOW: 'Apagar os vídeos antigos agora',
+    SWEEPING: 'Apagando…',
+    SWEPT_NONE: 'Nenhum vídeo era antigo o bastante para apagar.',
+    SWEPT_ONE: '1 vídeo apagado, {{size}} liberados.',
+    SWEPT_OTHER: '{{count}} vídeos apagados, {{size}} liberados.',
   },
   MCP: {
     FIGMA_TEXT:

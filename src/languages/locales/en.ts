@@ -405,6 +405,8 @@ export const en = {
     FAILED_AGENT_SIGNED_OUT:
       '{{agent}} is signed out, so the run stopped. Sign it in from Settings → Agents, then run the plan again.',
     FAILED_OTHER: 'The run stopped: {{said}}',
+    REPLAY_REMOVED:
+      'This run’s video was deleted after {{days}} days, to free space. Its report and screens stay.',
   },
   BUG: {
     WATCH_MOMENT: 'Watch the moment',
@@ -757,6 +759,25 @@ export const en = {
     LOGS_OPEN: 'Open the log folder',
     DIAGNOSTICS_COPY: 'Copy diagnostics',
     DIAGNOSTICS_COPIED: 'Copied',
+    STORAGE: 'Storage',
+    STORAGE_MEASURING: 'Measuring what QAzinho keeps…',
+    STORAGE_TOTAL: 'QAzinho keeps {{size}} on this computer.',
+    STORAGE_VIDEOS: 'Run videos',
+    STORAGE_SCREENS: 'Run screens',
+    STORAGE_BUILDS: 'Apps built from code',
+    STORAGE_OTHER: 'The rest: projects, browser profiles and logs',
+    KEEP_VIDEOS: 'Keep run videos for',
+    KEEP_7: '7 days',
+    KEEP_30: '30 days',
+    KEEP_90: '90 days',
+    KEEP_ALWAYS: 'Always',
+    KEEP_NOTE:
+      'Older videos are deleted on their own; each run keeps its report, screens and verdicts. A video already sent to your account stays there.',
+    SWEEP_NOW: 'Delete old videos now',
+    SWEEPING: 'Deleting…',
+    SWEPT_NONE: 'No video was old enough to delete.',
+    SWEPT_ONE: '1 video deleted, {{size}} freed.',
+    SWEPT_OTHER: '{{count}} videos deleted, {{size}} freed.',
   },
   MCP: {
     FIGMA_TEXT:
