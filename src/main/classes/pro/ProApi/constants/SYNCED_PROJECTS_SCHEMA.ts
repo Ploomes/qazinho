@@ -45,6 +45,8 @@ export const SYNCED_PROJECTS_SCHEMA = z.object({
             })
             .nullish(),
           cases: z.array(SYNC_CASE_SCHEMA),
+          editedBy: z.string().nullish(),
+          editedAt: z.string().nullish(),
         }),
       ),
     }),

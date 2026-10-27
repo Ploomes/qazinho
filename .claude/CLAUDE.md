@@ -284,7 +284,8 @@ QA's account and never names a plan, since Pro will not be the only one. Signed 
 computer in by a code the QA confirms in the browser, its token sealed by the OS keychain. Signed in, every project goes to the org the account sends to, in the background: what
 changed since the last time, the screens and videos of its runs, with no loading and nothing new
 on screen, so the app is the same as signed out. A plan the org moved too is joined case by case,
-unasked. The card names the account and its org, flags a blocked org or an account that only
+unasked, and one the org moved while nothing changed here, as a merged pull request does, comes in
+every few minutes. The card names the account and its org, flags a blocked org or an account that only
 reads, and downloads the org's projects with their recordings. A plan's "Open in the desktop" on
 the web (`qazinho://open`) opens its workspace here, or offers to download its project from the
 org first. Unit tests drive it against a fake platform; the platform's API (qazinho-server) is

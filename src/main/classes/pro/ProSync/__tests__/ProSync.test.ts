@@ -38,6 +38,9 @@ const MOVED = {
 /** The platform as the sync calls it: every call is kept, and answered as `refuse` says or as the platform would. */
 function fakeApi(refuse: (sent: ISent) => Refusal | null = () => null) {
   const sent: ISent[] = [];
+  const org: { plans: { id: string; desktopId: string; version: number }[] } = {
+    plans: [],
+  };
   let versions = 0;
   let uploads = 0;
 
@@ -75,6 +78,34 @@ function fakeApi(refuse: (sent: ISent) => Refusal | null = () => null) {
       }),
     syncRecordings: ({ org, path, body }) =>
       answer({ call: { method: 'syncRecordings', org, path, body }, value: null }),
+    syncedProjects: ({ org: slug }) =>
+      answer({
+        call: { method: 'syncedProjects', org: slug, path: 'projects', body: null },
+        value: {
+          projects: [
+            {
+              id: 'project-org',
+              desktopId: 'p1',
+              key: 'LOJA',
+              name: 'Loja',
+              targets: [],
+              repositories: [],
+              variables: [],
+              plans: org.plans.map((plan) => ({
+                ...plan,
+                name: 'Checkout com Pix',
+                targetId: 't1',
+                targetKind: 'web' as const,
+                issue: null,
+                design: null,
+                cases: MOVED.cases,
+                editedBy: MOVED.editedBy,
+                editedAt: MOVED.editedAt,
+              })),
+            },
+          ],
+        },
+      }),
     evidenceUpload: ({ org, path, body }) => {
       uploads += 1;
 
@@ -89,7 +120,7 @@ function fakeApi(refuse: (sent: ISent) => Refusal | null = () => null) {
     },
   };
 
-  return { api, sent, methods: () => sent.map(({ method }) => method) };
+  return { api, sent, org, methods: () => sent.map(({ method }) => method) };
 }
 
 /** A shared project with one plan, a run that left a screen and a video, and the bug it found. */
@@ -449,6 +480,75 @@ describe('ProSync', () => {
     });
     expect(await sync.push(renamed)).toMatchObject({ state: 'synced', conflicts: [] });
     expect(sent.at(-1)).toMatchObject({ method: 'syncPlan', body: { baseVersion: 4 } });
+  });
+
+  it('pulls a plan the org moved since this computer sent it, as a merged pull request does, from the cases both started at', async () => {
+    const { api, org } = fakeApi();
+    const { sync, batch, shares } = await syncWith({ api });
+    await sync.push(batch);
+    org.plans = [{ id: 'plan-org', desktopId: 'w1', version: 3 }];
+
+    await sync.pull();
+
+    expect(shares.at(-1)).toMatchObject({
+      projectId: 'p1',
+      state: 'conflict',
+      conflicts: [
+        {
+          workspaceId: 'w1',
+          base: batch.plans[0]?.cases,
+          version: 3,
+          cases: MOVED.cases,
+          editedBy: 'Bruno',
+          editedAt: MOVED.editedAt,
+        },
+      ],
+    });
+  });
+
+  it('sends the plan from the version it pulled once the page joined it', async () => {
+    const { api, org, sent } = fakeApi();
+    const { sync, batch } = await syncWith({ api });
+    await sync.push(batch);
+    org.plans = [{ id: 'plan-org', desktopId: 'w1', version: 3 }];
+    await sync.pull();
+
+    await sync.resolve({ projectId: 'p1', workspaceId: 'w1', version: 3 });
+    await sync.push(batch);
+
+    expect(sent.filter(({ method }) => method === 'syncPlan').at(-1)).toMatchObject({
+      body: { baseVersion: 3 },
+    });
+  });
+
+  it('asks nothing while signed out, and leaves a plan at the version this computer sent', async () => {
+    const signedOut = fakeApi();
+    const out = await syncWith({ api: signedOut.api, orgSlug: null });
+    const { api, org } = fakeApi();
+    const { sync, batch, shares } = await syncWith({ api });
+    await sync.push(batch);
+    org.plans = [{ id: 'plan-org', desktopId: 'w1', version: 1 }];
+    const announced = shares.length;
+
+    await out.sync.pull();
+    await sync.pull();
+
+    expect(signedOut.sent).toEqual([]);
+    expect(shares).toHaveLength(announced);
+  });
+
+  it('pulls again every few minutes while the app is open', async () => {
+    const { api, methods } = fakeApi();
+    const { sync, retries } = await syncWith({ api });
+
+    sync.startPulling();
+    await vi.waitFor(() => {
+      expect(retries.map(({ ms }) => ms)).toEqual([300_000]);
+    });
+    retries[0]?.run();
+    await vi.waitFor(() => {
+      expect(methods().filter((method) => method === 'syncedProjects')).toHaveLength(2);
+    });
   });
 
   it('keeps a project downloaded from its org as shared, each plan at the version it came in', async () => {

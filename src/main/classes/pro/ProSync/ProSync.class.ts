@@ -18,6 +18,7 @@ import {
   evidenceKindOf,
   fileFactsOf,
   hashOf,
+  movedPlansOf,
   planBodyOf,
   projectBodyOf,
   recordingsBodyOf,
@@ -84,6 +85,46 @@ export class ProSync {
     });
   }
 
+  /** Asks the org for the plans it moved past what this computer last sent, as another computer or a merged pull request does, and hands each to the page to join with this computer's own changes. */
+  public async pull(): Promise<void> {
+    const target = await this.target();
+    if (target === null) return;
+
+    const answer = await this.api.syncedProjects({
+      token: target.token,
+      org: target.orgSlug,
+    });
+    if (!answer.isOk) return;
+
+    for (const [projectId, record] of Object.entries(await this.read())) {
+      const project = answer.value.projects.find((one) => one.desktopId === projectId);
+      if (
+        record.orgSlug !== target.orgSlug ||
+        !project ||
+        movedPlansOf({ record, plans: project.plans }).length === 0
+      )
+        continue;
+
+      await this.inTurn({
+        projectId,
+        run: () => this.takeMoved({ projectId, plans: project.plans }),
+      });
+    }
+  }
+
+  /** Pulls now, and again every few minutes while the app is open. */
+  public startPulling(): void {
+    const turn = () => {
+      void this.pull()
+        .catch(() => undefined)
+        .finally(() => {
+          this.schedule({ ms: PRO_SYNC.pullMs, run: turn });
+        });
+    };
+
+    turn();
+  }
+
   /** Keeps a project downloaded from its org as shared with it, each plan at the version it came in. */
   public async adopt(props: {
     projectId: string;
@@ -136,6 +177,33 @@ export class ProSync {
     this.turns.set(props.projectId, turn);
 
     return turn;
+  }
+
+  private async takeMoved(props: {
+    projectId: string;
+    plans: Parameters<typeof movedPlansOf>[0]['plans'];
+  }): Promise<IProShare> {
+    const { projectId, plans } = props;
+    const records = await this.read();
+    const record = records[projectId];
+    const moved = record === undefined ? [] : movedPlansOf({ record, plans });
+
+    if (record === undefined || moved.length === 0)
+      return this.shareOf({ projectId, record });
+
+    records[projectId] = {
+      ...record,
+      state: 'conflict',
+      conflicts: [
+        ...record.conflicts.filter(
+          (one) => !moved.some(({ workspaceId }) => workspaceId === one.workspaceId),
+        ),
+        ...moved,
+      ],
+    };
+    await this.write(records);
+
+    return this.announce(this.shareOf({ projectId, record: records[projectId] }));
   }
 
   private async takeVersion(props: {

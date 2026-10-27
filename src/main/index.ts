@@ -1276,6 +1276,7 @@ void app.whenReady().then(async () => {
   void codeCopies.sweep();
   void jiraStories.sweep();
   void builder.sweep();
+  proSync.startPulling();
 
   ipcMain.handle(CHANNELS.detectAgents, () => agents.detect());
   ipcMain.handle(CHANNELS.readResources, () => resources.snapshot());
@@ -1495,7 +1496,13 @@ void app.whenReady().then(async () => {
     github.cancelSignIn();
   });
   ipcMain.handle(CHANNELS.proStatus, () => proAccount.status());
-  ipcMain.handle(CHANNELS.signInPro, () => proAccount.signIn());
+  ipcMain.handle(CHANNELS.signInPro, async () => {
+    const signedIn = await proAccount.signIn();
+
+    void proSync.pull();
+
+    return signedIn;
+  });
   ipcMain.handle(CHANNELS.cancelProSignIn, () => {
     proAccount.cancelSignIn();
   });

@@ -417,6 +417,11 @@ sidebar (`ProAccountCard`) is the one place it shows; everything else happens ou
   both started (`useProConflicts`, `mergeCases`): one side's change wins, a case both changed keeps
   this computer's, as the org keeps every version, and one both added under an id keeps both.
   Main then builds on the org's version (`ProSync.resolve`).
+- **A plan the org moved with no change here comes in the same way.** Main asks the org for its
+  plans at start, after a sign-in and every five minutes (`ProSync.pull`), and hands each one the
+  org moved past what this computer sent as a conflict from the cases both started at
+  (`movedPlansOf`): another computer's edit, or a merged pull request's suggestions, reach the
+  workspace without the QA touching it.
 - **The card** reads where things stand (`attentionOf`): a blocked org, a role that only reads, no
   answer. It downloads the org's projects (`ProDownloads`), their recordings into each workspace's
   `recipes.json`, and asks for their variables' values in `VariablesModal`.
