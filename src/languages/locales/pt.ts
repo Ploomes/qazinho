@@ -1673,7 +1673,7 @@ export const pt: typeof en = {
       '{{who}} alterou “{{plan}}” na org. Atualize antes para rodar o que o time combinou.',
     RUN_WARNING_TEXT_ANON:
       '“{{plan}}” mudou na org. Atualize antes para rodar o que o time combinou.',
-    RUN_WARNING_UPDATE: 'Atualizar antes',
+    RUN_WARNING_UPDATE: 'Atualizar e rodar',
     RUN_WARNING_RUN: 'Rodar como está aqui',
   },
 };

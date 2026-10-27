@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProUpdate } from '@/modules/Pro/hooks/useProUpdate';
 import { planUpdatesOf } from '@/modules/Pro/library';
+import { useRunActions } from '@/modules/Run/hooks/useRunActions';
 import { useProStore, useWorkspaceStore } from '@/store';
 
 export const useProMergeModalViewModel = () => {
@@ -11,8 +12,10 @@ export const useProMergeModalViewModel = () => {
   const projectId = useProStore((state) => state.merging);
   const shares = useProStore((state) => state.shares);
   const openMerge = useProStore((state) => state.openMerge);
+  const holdRun = useProStore((state) => state.holdRun);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const { takeChosen } = useProUpdate();
+  const { runWorkspace } = useRunActions();
   const [choices, setChoices] = useState<Record<string, Record<string, CaseChoice>>>({});
   const [isTaking, setTaking] = useState(false);
   const share = shares.find((one) => one.projectId === projectId);
@@ -102,9 +105,20 @@ export const useProMergeModalViewModel = () => {
       if (projectId === null || isTaking) return;
 
       setTaking(true);
-      void takeChosen({ projectId, choices }).catch(() => {
-        setTaking(false);
-      });
+      void takeChosen({ projectId, choices }).then(
+        () => {
+          const { heldRun } = useProStore.getState();
+          const held = workspaces.find(({ id }) => id === heldRun?.workspaceId);
+
+          if (heldRun === null || held?.projectId !== projectId) return;
+
+          holdRun(null);
+          runWorkspace(heldRun.workspaceId, heldRun.mode);
+        },
+        () => {
+          setTaking(false);
+        },
+      );
     },
   };
 };

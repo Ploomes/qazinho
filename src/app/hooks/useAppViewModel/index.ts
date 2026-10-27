@@ -45,7 +45,9 @@ export const useAppViewModel = () => {
   const variablesKey = useVariablesStore((state) => state.request?.id ?? null);
   const hasProLink = useProStore((state) => state.link !== null);
   const hasProMerge = useProStore((state) => state.merging !== null);
-  const hasHeldRun = useProStore((state) => state.heldRun !== null);
+  const hasHeldRun = useProStore(
+    (state) => state.heldRun !== null && state.merging === null,
+  );
 
   useArchive();
   useVariables();

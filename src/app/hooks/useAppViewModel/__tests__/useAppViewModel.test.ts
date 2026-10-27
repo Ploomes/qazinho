@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAppViewModel } from '@/app/hooks/useAppViewModel';
 import { i18n } from '@/languages';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useProStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 describe('useAppViewModel', () => {
   beforeEach(() => {
@@ -266,5 +266,21 @@ describe('useAppViewModel', () => {
     useAppStore.setState({ runNotice: null });
 
     expect(renderHook(() => useAppViewModel()).result.current.hasRunNotice).toBe(false);
+  });
+
+  it('holds back the warning before a run while the merge it asked for is open', () => {
+    useProStore.setState({
+      heldRun: { workspaceId: 'w1', mode: 'agent' },
+      merging: 'p1',
+    });
+
+    expect(renderHook(() => useAppViewModel()).result.current.hasHeldRun).toBe(false);
+
+    act(() => {
+      useProStore.setState({ merging: null });
+    });
+
+    expect(renderHook(() => useAppViewModel()).result.current.hasHeldRun).toBe(true);
+    useProStore.setState({ heldRun: null });
   });
 });

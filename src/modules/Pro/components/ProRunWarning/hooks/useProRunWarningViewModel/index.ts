@@ -19,6 +19,12 @@ export const useProRunWarningViewModel = () => {
       .find(({ projectId }) => projectId === workspace?.projectId)
       ?.conflicts.find(({ workspaceId }) => workspaceId === workspace?.id) ?? null;
   const plan = workspace?.name ?? '';
+  const isMovedInOrg = (workspaceId: string) =>
+    useProStore
+      .getState()
+      .shares.some(({ conflicts }) =>
+        conflicts.some((one) => one.workspaceId === workspaceId),
+      );
 
   return {
     title: t('PRO.RUN_WARNING_TITLE'),
@@ -36,12 +42,20 @@ export const useProRunWarningViewModel = () => {
       if (workspace === null || isUpdating) return;
 
       setUpdating(true);
-      void update(workspace.projectId)
-        .catch(() => undefined)
-        .then(() => {
+      void update(workspace.projectId).then(
+        () => {
+          setUpdating(false);
+
+          if (heldRun === null || isMovedInOrg(heldRun.workspaceId)) return;
+
+          holdRun(null);
+          runWorkspace(heldRun.workspaceId, heldRun.mode);
+        },
+        () => {
           setUpdating(false);
           holdRun(null);
-        });
+        },
+      );
     },
     onRunAnyway: () => {
       holdRun(null);

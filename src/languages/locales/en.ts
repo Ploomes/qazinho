@@ -1665,7 +1665,7 @@ export const en = {
       '{{who}} changed “{{plan}}” in the org. Update first to run what the team agreed on.',
     RUN_WARNING_TEXT_ANON:
       '“{{plan}}” changed in the org. Update first to run what the team agreed on.',
-    RUN_WARNING_UPDATE: 'Update first',
+    RUN_WARNING_UPDATE: 'Update and run',
     RUN_WARNING_RUN: 'Run it as it is here',
   },
 };

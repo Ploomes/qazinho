@@ -80,17 +80,44 @@ describe('useProRunWarningViewModel', () => {
   });
 
   describe('onConfirm', () => {
-    it('updates the plan from the org first, and lets the run go', async () => {
+    it('updates the plan from the org, then runs it the way it was asked', async () => {
       const { result } = renderHook(() => useProRunWarningViewModel());
 
       await act(async () => {
         result.current.onConfirm();
-        await Promise.resolve();
-        await Promise.resolve();
+        await new Promise((done) => setTimeout(done, 0));
       });
 
       expect(resolved).toEqual([4]);
       expect(useProStore.getState().heldRun).toBeNull();
+      expect(startRun).toHaveBeenCalledWith(
+        expect.objectContaining({ workspaceId: 'w1', mode: 'agent' }),
+      );
+    });
+
+    it('waits on the merge when a case of the plan changed on both sides, running nothing yet', async () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...WORKSPACE,
+            plan: WORKSPACE.plan.map((one, index) =>
+              index === 0 ? { ...one, title: 'Here' } : one,
+            ),
+          },
+        ],
+      });
+      const { result } = renderHook(() => useProRunWarningViewModel());
+
+      await act(async () => {
+        result.current.onConfirm();
+        await new Promise((done) => setTimeout(done, 0));
+      });
+
+      expect(useProStore.getState().merging).toBe('p1');
+      expect(useProStore.getState().heldRun).toEqual({
+        workspaceId: 'w1',
+        mode: 'agent',
+      });
       expect(startRun).not.toHaveBeenCalled();
     });
   });

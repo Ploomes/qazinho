@@ -1,12 +1,12 @@
 // @vitest-environment jsdom
 import type { IProShare } from '@/shared/types';
 import { act, renderHook } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useProMergeModalViewModel } from '@/modules/Pro/components/ProMergeModal/hooks';
 import { syncedCaseOf } from '@/modules/Pro/library';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useProStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useProStore, useWorkspaceStore } from '@/store';
 
 const WORKSPACE = makeWorkspace();
 const BASE = WORKSPACE.plan.map(syncedCaseOf);
@@ -133,6 +133,38 @@ describe('useProMergeModalViewModel', () => {
       expect(resolved).toEqual([4]);
       expect(useWorkspaceStore.getState().workspaces[0]?.plan[0]?.title).toBe('Theirs');
       expect(useProStore.getState().merging).toBeNull();
+    });
+  });
+
+  describe('a run that waited on the merge', () => {
+    it('starts once the plans are taken in', async () => {
+      const startRun = vi.fn(() => Promise.resolve());
+      window.qazinho = { ...window.qazinho, startRun };
+      useAppStore.setState({
+        projects: [
+          {
+            id: 'p1',
+            name: 'Shop',
+            targets: [
+              { id: 't1', kind: 'web', label: 'Web', value: 'https://shop.test' },
+            ],
+            repositories: [],
+          },
+        ],
+        selectedWorkspaceId: 'w1',
+      });
+      useProStore.setState({ heldRun: { workspaceId: 'w1', mode: 'agent' } });
+      const { result } = renderHook(() => useProMergeModalViewModel());
+
+      await act(async () => {
+        result.current.onConfirm();
+        await new Promise((done) => setTimeout(done, 0));
+      });
+
+      expect(useProStore.getState().heldRun).toBeNull();
+      expect(startRun).toHaveBeenCalledWith(
+        expect.objectContaining({ workspaceId: 'w1', mode: 'agent' }),
+      );
     });
   });
 
