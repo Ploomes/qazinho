@@ -283,6 +283,28 @@ describe('useProCloneModalViewModel', () => {
     });
   });
 
+  describe('a call that fails', () => {
+    it('says the project did not come, and offers cloning it again', async () => {
+      bridgeWith({});
+      window.qazinho = {
+        ...window.qazinho,
+        downloadOrgProject: () => Promise.reject(new Error('main went away')),
+      };
+      const { result } = await mounted();
+
+      act(() => {
+        result.current.projects[0]?.onClone();
+      });
+
+      await waitFor(() => {
+        expect(result.current.projects[0]?.failure).toBe(
+          'The org did not hand it over. Try again later.',
+        );
+      });
+      expect(result.current.projects[0]?.isWorking).toBe(false);
+    });
+  });
+
   describe('onConfirm', () => {
     it('closes the window', async () => {
       const { result } = await mounted();

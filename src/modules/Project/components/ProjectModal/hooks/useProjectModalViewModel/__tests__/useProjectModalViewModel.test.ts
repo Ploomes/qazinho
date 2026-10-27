@@ -720,6 +720,31 @@ describe('useProjectModalViewModel', () => {
       expect(result.current.canDelete).toBe(true);
     });
 
+    it('deletes nothing and frees the button when the computer could not ask the org', async () => {
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        removeProProject: () => Promise.reject(new Error('main went away')),
+      };
+      useProStore.setState({ status: signedInAs('admin'), shares: [LINKED] });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onDeleteInOrgChange(true);
+      });
+      act(() => {
+        result.current.onDelete();
+      });
+
+      await waitFor(() => {
+        expect(result.current.deleteFailure).toBe(
+          'Loja Online refused to delete it, so nothing was deleted.',
+        );
+      });
+      expect(result.current.canDelete).toBe(true);
+      expect(useAppStore.getState().projects).toHaveLength(1);
+    });
+
     it('does NOT offer deleting in the org to an editor, nor speak of an org for a local project', () => {
       useProStore.setState({ status: signedInAs('editor'), shares: [] });
 

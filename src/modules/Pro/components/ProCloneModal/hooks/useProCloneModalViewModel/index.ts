@@ -1,5 +1,5 @@
 import type { IProCloneModalProps } from '@/modules/Pro/components/ProCloneModal/types';
-import type { ProDownloadState } from '@/modules/Pro/types';
+import type { OrgDownloadEnd, ProDownloadState } from '@/modules/Pro/types';
 import type { IProOrgProject, ProOrgProjects } from '@/shared/types';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -52,7 +52,10 @@ export const useProCloneModalViewModel = (props: IProCloneModalProps) => {
   const clone = async (offer: IProOrgProject) => {
     setDownloads((current) => ({ ...current, [offer.projectId]: 'working' }));
 
-    const done = await bringHere({ orgSlug: offer.orgSlug, projectId: offer.projectId });
+    const done = await bringHere({
+      orgSlug: offer.orgSlug,
+      projectId: offer.projectId,
+    }).catch((): OrgDownloadEnd => ({ isDownloaded: false, failure: 'failed' }));
 
     if (!done.isDownloaded) {
       setDownloads((current) => ({ ...current, [offer.projectId]: done.failure }));

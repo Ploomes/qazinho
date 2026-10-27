@@ -36,9 +36,12 @@ export const useProRunWarningViewModel = () => {
       if (workspace === null || isUpdating) return;
 
       setUpdating(true);
-      void update(workspace.projectId).then(() => {
-        holdRun(null);
-      });
+      void update(workspace.projectId)
+        .catch(() => undefined)
+        .then(() => {
+          setUpdating(false);
+          holdRun(null);
+        });
     },
     onRunAnyway: () => {
       holdRun(null);

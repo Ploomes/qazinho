@@ -76,7 +76,7 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
 
     setPaneWork(props.kind);
 
-    const share = await props.work();
+    const share = await props.work().catch(() => null);
 
     if (share !== null) landShare(share);
 
@@ -115,9 +115,12 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
 
     for (const workspace of copied.workspaces) addWorkspace(workspace);
 
-    const outcome = await Variables.copy({ from: project.id, to: copied.project.id });
+    const outcome = await Variables.copy({
+      from: project.id,
+      to: copied.project.id,
+    }).catch(() => null);
 
-    if (outcome.isSaved)
+    if (outcome?.isSaved === true)
       landVariables({ projectId: copied.project.id, variables: outcome.variables });
 
     setPaneWork(null);

@@ -160,6 +160,24 @@ describe('useProjectProPaneViewModel', () => {
     });
   });
 
+  describe('a call that fails', () => {
+    it('frees publishing again instead of saying it is publishing for good', async () => {
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        publishPro: () => Promise.reject(new Error('main went away')),
+      };
+      const { result } = pane();
+
+      await act(async () => {
+        result.current.onPublish();
+        await new Promise((done) => setTimeout(done, 0));
+      });
+
+      expect(result.current.local.canPublish).toBe(true);
+      expect(result.current.local.publishLabel).toBe('Publish to Loja Online');
+    });
+  });
+
   describe('once linked', () => {
     beforeEach(() => {
       useProStore.setState({ shares: [LINKED] });

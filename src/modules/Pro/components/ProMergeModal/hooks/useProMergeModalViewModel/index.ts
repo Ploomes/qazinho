@@ -102,7 +102,9 @@ export const useProMergeModalViewModel = () => {
       if (projectId === null || isTaking) return;
 
       setTaking(true);
-      void takeChosen({ projectId, choices });
+      void takeChosen({ projectId, choices }).catch(() => {
+        setTaking(false);
+      });
     },
   };
 };

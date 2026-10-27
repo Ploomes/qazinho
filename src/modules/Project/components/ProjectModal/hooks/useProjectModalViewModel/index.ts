@@ -6,11 +6,12 @@ import type {
   ITarget,
   IVariableDraft,
 } from '@/modules/Project/types';
-import type { BuildPlatform, TargetKind } from '@/shared/types';
+import type { BuildPlatform, ProRemoval, TargetKind } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DELETE_ORG_FAILURES,
+  FAILED_REMOVAL,
   PROJECT_SECTIONS,
   TARGET_NAME_KEYS,
 } from '@/modules/Project/components/ProjectModal/constants';
@@ -268,20 +269,25 @@ export const useProjectModalViewModel = () => {
     if (linkedOrg !== null) {
       setDeleting(true);
 
-      if (canDeleteInOrg && isDeletingInOrg) {
-        const removal = await Pro.remove(editing.id);
+      const removal: ProRemoval =
+        canDeleteInOrg && isDeletingInOrg
+          ? await Pro.remove(editing.id).catch(() => FAILED_REMOVAL)
+          : await Pro.unlink(editing.id).then(
+              (share): ProRemoval => {
+                landShare(share);
 
-        if (!removal.isRemoved) {
-          setDeleting(false);
-          setDeleteFailure(
-            t(DELETE_ORG_FAILURES[removal.failure], { org: linkedOrgName }),
-          );
-
-          return;
-        }
-      } else landShare(await Pro.unlink(editing.id));
+                return { isRemoved: true };
+              },
+              () => FAILED_REMOVAL,
+            );
 
       setDeleting(false);
+
+      if (!removal.isRemoved) {
+        setDeleteFailure(t(DELETE_ORG_FAILURES[removal.failure], { org: linkedOrgName }));
+
+        return;
+      }
     }
 
     for (const workspace of own) {

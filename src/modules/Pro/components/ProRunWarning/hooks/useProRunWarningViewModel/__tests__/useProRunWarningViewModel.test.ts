@@ -95,6 +95,25 @@ describe('useProRunWarningViewModel', () => {
     });
   });
 
+  describe('a call that fails', () => {
+    it('closes the warning instead of holding it busy, and runs nothing', async () => {
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        startRun,
+        resolveProConflict: () => Promise.reject(new Error('main went away')),
+      };
+      const { result } = renderHook(() => useProRunWarningViewModel());
+
+      await act(async () => {
+        result.current.onConfirm();
+        await new Promise((done) => setTimeout(done, 0));
+      });
+
+      expect(useProStore.getState().heldRun).toBeNull();
+      expect(startRun).not.toHaveBeenCalled();
+    });
+  });
+
   describe('onRunAnyway', () => {
     it('runs the plan as it stands here, the way it was asked', () => {
       const { result } = renderHook(() => useProRunWarningViewModel());

@@ -136,6 +136,24 @@ describe('useProMergeModalViewModel', () => {
     });
   });
 
+  describe('a call that fails', () => {
+    it('lets the QA take the plans in again, the window still open', async () => {
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        resolveProConflict: () => Promise.reject(new Error('main went away')),
+      };
+      const { result } = renderHook(() => useProMergeModalViewModel());
+
+      await act(async () => {
+        result.current.onConfirm();
+        await new Promise((done) => setTimeout(done, 0));
+      });
+
+      expect(result.current.canConfirm).toBe(true);
+      expect(useProStore.getState().merging).toBe('p1');
+    });
+  });
+
   describe('onCancel', () => {
     it('closes without taking anything in', () => {
       const { result } = renderHook(() => useProMergeModalViewModel());
