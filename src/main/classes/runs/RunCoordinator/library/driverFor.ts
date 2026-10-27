@@ -5,9 +5,10 @@ import {
   AndroidDriver,
   IosDriver,
   WebDriver,
+  webAccessOf,
 } from '@salve-software/qazinho-harness/engine';
 
-/** One plan, one port: the run does not care whether it is driving Chrome or a phone. */
+/** One plan, one port: the run does not care whether it is driving Chrome or a phone; Chrome gets into a protected environment with the project's variables. */
 export function driverFor(props: { run: IWalkRun; shrink?: ShrinkImage }): IDeviceDriver {
   const { run } = props;
 
@@ -32,6 +33,7 @@ export function driverFor(props: { run: IWalkRun; shrink?: ShrinkImage }): IDevi
     profileDir: run.profileDir,
     viewport: run.viewport,
     pixelRatio: run.pixelRatio,
+    access: webAccessOf(run.values),
     ...(props.shrink === undefined ? {} : { shrink: props.shrink }),
   });
 }

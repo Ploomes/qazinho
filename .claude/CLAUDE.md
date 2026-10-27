@@ -108,7 +108,9 @@ plan needs an account, the chat's agent offers the variables that fit and an opt
 what is missing. A step names one as `${NAME}`. The run types its value, reads any value the
 screen shows back as its name, and keeps the name in recipes and exported code. On Linux with no
 secret store QAzinho keeps none, and Android types every character but a double quote, which it
-refuses. A password written out in a plan by hand is offered as a variable from the Plan tab, and
+refuses. A preview Vercel protects, or a staging behind a browser sign-in, opens with the variables
+`VERCEL_AUTOMATION_BYPASS_SECRET`, or `BASIC_AUTH_USER` and `BASIC_AUTH_PASSWORD`, sent to the app's
+origin alone (`webAccessOf`), in a run here and in the CI. A password written out in a plan by hand is offered as a variable from the Plan tab, and
 the chat holds one back. `tests/smoke/variables.test.ts` proves the run on real Chrome with a fake agent, and a
 real Claude Code (Haiku) planned a login asking for the account through the window, then signed
 in with the sealed values: 8 steps of 8, with no value in the plan or the report.
