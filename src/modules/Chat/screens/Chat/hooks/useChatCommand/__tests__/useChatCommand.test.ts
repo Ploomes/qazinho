@@ -7,13 +7,13 @@ import { useChatCommand } from '@/modules/Chat/screens/Chat/hooks/useChatCommand
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 
 const WEB: IProjectRepository = {
-  id: null,
+  id: '101',
   owner: 'acme',
   name: 'loja-web',
   baseBranch: 'develop',
 };
 const API: IProjectRepository = {
-  id: null,
+  id: '103',
   owner: 'acme',
   name: 'loja-api',
   baseBranch: 'main',

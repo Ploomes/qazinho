@@ -46,8 +46,8 @@ describe('performBuild', () => {
             {
               ...PROJECT,
               repositories: [
-                { id: null, owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
-                { id: null, owner: 'acme', name: 'loja-app', baseBranch: 'main' },
+                { id: '101', owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
+                { id: '102', owner: 'acme', name: 'loja-app', baseBranch: 'main' },
               ],
             },
           ],
@@ -77,8 +77,8 @@ describe('performBuild', () => {
             {
               ...PROJECT,
               repositories: [
-                { id: null, owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
-                { id: null, owner: 'acme', name: 'loja-app', baseBranch: 'main' },
+                { id: '101', owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
+                { id: '102', owner: 'acme', name: 'loja-app', baseBranch: 'main' },
               ],
             },
           ],

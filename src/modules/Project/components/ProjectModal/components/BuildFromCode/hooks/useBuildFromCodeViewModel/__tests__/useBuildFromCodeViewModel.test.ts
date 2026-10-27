@@ -9,8 +9,8 @@ import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useBuildStore } from '@/store';
 
 const REPOSITORIES = [
-  { id: null, owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
-  { id: null, owner: 'acme', name: 'loja-app', baseBranch: 'main' },
+  { id: '101', owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
+  { id: '102', owner: 'acme', name: 'loja-app', baseBranch: 'main' },
 ];
 
 /** A bridge that lists two branches per repository and remembers each build asked for. */

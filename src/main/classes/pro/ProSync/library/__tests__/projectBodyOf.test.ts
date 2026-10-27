@@ -10,7 +10,9 @@ describe('projectBodyOf', () => {
         targets: [
           { id: 't1', kind: 'web', label: 'staging', value: 'https://staging.loja.dev' },
         ],
-        repositories: [{ id: null, owner: 'loja', name: 'loja-web', baseBranch: 'main' }],
+        repositories: [
+          { id: '4242', owner: 'loja', name: 'loja-web', baseBranch: 'main' },
+        ],
       },
       variables: [
         { name: 'LOGIN_PASSWORD', description: 'senha do QA', value: 'secret' } as never,
@@ -22,7 +24,7 @@ describe('projectBodyOf', () => {
       targets: [
         { id: 't1', kind: 'web', label: 'staging', value: 'https://staging.loja.dev' },
       ],
-      repositories: [{ id: null, owner: 'loja', name: 'loja-web', baseBranch: 'main' }],
+      repositories: [{ id: '4242', owner: 'loja', name: 'loja-web', baseBranch: 'main' }],
       variables: [{ name: 'LOGIN_PASSWORD', description: 'senha do QA' }],
     });
   });

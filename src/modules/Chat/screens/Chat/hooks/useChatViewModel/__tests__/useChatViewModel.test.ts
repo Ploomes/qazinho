@@ -1328,7 +1328,7 @@ describe('useChatViewModel', () => {
   });
 
   describe('a plan from the code', () => {
-    const LOJA = { id: null, owner: 'acme', name: 'loja-web', baseBranch: 'develop' };
+    const LOJA = { id: '101', owner: 'acme', name: 'loja-web', baseBranch: 'develop' };
 
     beforeEach(() => {
       useAppStore.setState({ projects: [{ ...PROJECT, repositories: [LOJA] }] });

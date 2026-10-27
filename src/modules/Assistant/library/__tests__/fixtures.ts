@@ -16,7 +16,7 @@ export const PROJECT: IProject = {
     { id: 't1', kind: 'web', label: 'Web', value: 'https://loja.test' },
     { id: 't-android', kind: 'android', label: 'Android', value: '/builds/loja.apk' },
   ],
-  repositories: [{ id: null, owner: 'acme', name: 'loja-web', baseBranch: 'develop' }],
+  repositories: [{ id: '101', owner: 'acme', name: 'loja-web', baseBranch: 'develop' }],
 };
 
 /** w1, "Checkout regression": a plan of two cases, run r-01 finished with one failed step, and BUG-01. */

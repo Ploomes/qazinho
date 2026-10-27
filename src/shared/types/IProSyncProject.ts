@@ -8,5 +8,5 @@ export interface IProSyncProject {
   projectId: string;
   name: string;
   targets: { id: string; kind: TargetKind; label: string; value: string }[];
-  repositories: { id: string | null; owner: string; name: string; baseBranch: string }[];
+  repositories: { id: string; owner: string; name: string; baseBranch: string }[];
 }

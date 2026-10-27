@@ -19,7 +19,7 @@ const PROJECT: IProject = {
   id: 'p1',
   name: 'Loja',
   targets: [{ id: 't1', kind: 'web', label: 'Web', value: 'https://shop.test/' }],
-  repositories: [{ id: null, owner: 'acme', name: 'shop', baseBranch: 'main' }],
+  repositories: [{ id: '201', owner: 'acme', name: 'shop', baseBranch: 'main' }],
 };
 const CONNECTED_AT = '2026-10-20T09:00:00.000Z';
 const BOTH = [

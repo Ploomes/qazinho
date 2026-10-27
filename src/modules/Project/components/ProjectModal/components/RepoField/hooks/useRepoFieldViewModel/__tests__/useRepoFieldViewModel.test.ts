@@ -85,7 +85,7 @@ describe('useRepoFieldViewModel', () => {
 
   it("offers the QA's repositories that are not in the project yet", async () => {
     const { result } = field([
-      { id: null, owner: 'acme', name: 'loja-api', baseBranch: 'main' },
+      { id: '105', owner: 'acme', name: 'loja-api', baseBranch: 'main' },
     ]);
 
     expect(result.current.search.note).toBe('Reading your repositories…');
@@ -121,7 +121,7 @@ describe('useRepoFieldViewModel', () => {
 
     it('does NOT add a repository twice, nor one GitHub did not list', async () => {
       const { result, onChange } = field([
-        { id: null, owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
+        { id: '104', owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
       ]);
 
       await waitFor(() => {
@@ -139,8 +139,8 @@ describe('useRepoFieldViewModel', () => {
   describe('onRemove', () => {
     it('takes a repository out of the project', () => {
       const { result, onChange } = field([
-        { id: null, owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
-        { id: null, owner: 'acme', name: 'loja-api', baseBranch: 'main' },
+        { id: '104', owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
+        { id: '105', owner: 'acme', name: 'loja-api', baseBranch: 'main' },
       ]);
 
       act(() => {
@@ -148,7 +148,7 @@ describe('useRepoFieldViewModel', () => {
       });
 
       expect(onChange).toHaveBeenCalledWith([
-        { id: null, owner: 'acme', name: 'loja-api', baseBranch: 'main' },
+        { id: '105', owner: 'acme', name: 'loja-api', baseBranch: 'main' },
       ]);
     });
   });
@@ -156,7 +156,7 @@ describe('useRepoFieldViewModel', () => {
   describe('onBase', () => {
     it("opens a repository's branches and sets the one picked as its base", async () => {
       const { result, onChange } = field([
-        { id: null, owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
+        { id: '104', owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
       ]);
 
       act(() => {
@@ -182,14 +182,14 @@ describe('useRepoFieldViewModel', () => {
       });
 
       expect(onChange).toHaveBeenCalledWith([
-        { id: null, owner: 'acme', name: 'loja-web', baseBranch: 'release/1.4' },
+        { id: '104', owner: 'acme', name: 'loja-web', baseBranch: 'release/1.4' },
       ]);
       expect(result.current.rows[0]?.isBasing).toBe(false);
     });
 
     it('closes the branches when the same repository is clicked again', () => {
       const { result } = field([
-        { id: null, owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
+        { id: '104', owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
       ]);
 
       act(() => {
