@@ -55,6 +55,12 @@ function asJson(projects) {}
 thing", so a file may keep a helper function, a lookup table or a non-exported type next to its
 single export. The moment a second thing is exported, it is two files.
 
+**A library file opens with its export.** The exported function comes first, after the imports
+and any private type or value it reads; the private helper functions it calls go after it, at the
+end of the file, so whoever opens the file reads what it does before how. A table that names a
+helper while the module loads keeps working when the helper is a `function`, which is hoisted.
+`no-restricted-syntax` over `library/` fails a helper declared before the export.
+
 `src/main/index.ts` is the composition root: it wires the classes and the IPC handlers, and its
 functions stay there because they touch `electron` and `library/` may not.
 
