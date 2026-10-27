@@ -1662,7 +1662,7 @@ export const pt: typeof en = {
     PANE_PUBLISH_AGAIN: 'Publicar de novo em {{org}}',
     MERGE_TITLE: 'Trazer os planos da org',
     MERGE_SUBTITLE:
-      'Estes casos mudaram aqui e na org. Escolha qual manter; todas as outras mudanças já foram juntadas.',
+      'Estes casos mudaram aqui e na org, com o que difere em destaque. Escolha qual manter; todas as outras mudanças já foram juntadas.',
     MERGE_PLAN: '{{plan}} · alterado por {{who}}',
     MERGE_PLAN_ANON: '{{plan}} · alterado na org',
     MERGE_MINE: 'Este computador',

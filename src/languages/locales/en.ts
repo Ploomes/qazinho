@@ -1653,7 +1653,7 @@ export const en = {
     PANE_PUBLISH_AGAIN: 'Publish again to {{org}}',
     MERGE_TITLE: 'Take in the org’s plans',
     MERGE_SUBTITLE:
-      'These cases changed here and in the org. Choose which to keep; every other change is joined already.',
+      'These cases changed here and in the org, what differs highlighted. Choose which to keep; every other change is joined already.',
     MERGE_PLAN: '{{plan}} · changed by {{who}}',
     MERGE_PLAN_ANON: '{{plan}} · changed in the org',
     MERGE_MINE: 'This computer',

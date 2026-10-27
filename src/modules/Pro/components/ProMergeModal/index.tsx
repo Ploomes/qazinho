@@ -35,16 +35,48 @@ export const ProMergeModal: React.FC = () => {
                       <p className="pro-merge__deleted">{side.deleted}</p>
                     ) : (
                       <div className="pro-merge__case">
-                        <span className="pro-merge__case-title">{side.title}</span>
-                        <p className="pro-merge__goal">{side.goal}</p>
+                        <span className="pro-merge__case-title">
+                          {side.isTitleChanged ? (
+                            <mark className="pro-merge__mark">{side.title}</mark>
+                          ) : (
+                            side.title
+                          )}
+                        </span>
+                        <p className="pro-merge__goal">
+                          {side.isGoalChanged ? (
+                            <mark className="pro-merge__mark">{side.goal}</mark>
+                          ) : (
+                            side.goal
+                          )}
+                        </p>
                         {side.hasPreconditions && (
-                          <p className="pro-merge__goal">{side.preconditions}</p>
+                          <p className="pro-merge__goal">
+                            {side.isPreconditionsChanged ? (
+                              <mark className="pro-merge__mark">
+                                {side.preconditions}
+                              </mark>
+                            ) : (
+                              side.preconditions
+                            )}
+                          </p>
                         )}
                         <ol className="pro-merge__steps">
                           {side.steps.map((step) => (
                             <li key={step.key} className="pro-merge__step">
-                              <span className="pro-merge__action">{step.action}</span>
-                              <span className="pro-merge__expected">{step.expected}</span>
+                              <span className="pro-merge__action">
+                                {step.isActionChanged ? (
+                                  <mark className="pro-merge__mark">{step.action}</mark>
+                                ) : (
+                                  step.action
+                                )}
+                              </span>
+                              <span className="pro-merge__expected">
+                                {step.isExpectedChanged ? (
+                                  <mark className="pro-merge__mark">{step.expected}</mark>
+                                ) : (
+                                  step.expected
+                                )}
+                              </span>
                             </li>
                           ))}
                         </ol>

@@ -75,6 +75,72 @@ describe('useProMergeModalViewModel', () => {
       ]);
     });
 
+    it('marks on each side only what differs from the other: here, the title', () => {
+      const { result } = renderHook(() => useProMergeModalViewModel());
+      const sides = result.current.plans[0]?.clashes[0]?.sides ?? [];
+
+      expect(sides.map(({ isTitleChanged }) => isTitleChanged)).toEqual([true, true]);
+      expect(sides.map(({ isGoalChanged }) => isGoalChanged)).toEqual([false, false]);
+      expect(
+        sides.flatMap(({ steps }) =>
+          steps.flatMap(({ isActionChanged, isExpectedChanged }) => [
+            isActionChanged,
+            isExpectedChanged,
+          ]),
+        ),
+      ).not.toContain(true);
+    });
+
+    it("marks a step's expected result that differs, and a step one side does not have", () => {
+      const step = { action: 'Pay', expected: 'Paid' };
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...HERE,
+            plan: HERE.plan.map((one, index) =>
+              index === 0 ? { ...one, steps: [{ ...one.steps[0]!, ...step }] } : one,
+            ),
+          },
+        ],
+      });
+      useProStore.setState({
+        shares: [
+          {
+            ...shareBy('Bruno'),
+            conflicts: [
+              {
+                ...shareBy('Bruno').conflicts[0]!,
+                cases: [
+                  {
+                    ...FIRST,
+                    title: 'Theirs',
+                    steps: [{ ...step, expected: 'Refused' }, step],
+                  },
+                  ...BASE.slice(1),
+                ],
+              },
+            ],
+          },
+        ],
+      });
+
+      const { result } = renderHook(() => useProMergeModalViewModel());
+      const [mine, theirs] = result.current.plans[0]?.clashes[0]?.sides ?? [];
+
+      expect(mine?.steps.map(({ isExpectedChanged }) => isExpectedChanged)).toEqual([
+        true,
+      ]);
+      expect(
+        theirs?.steps.map(({ isActionChanged, isExpectedChanged }) => [
+          isActionChanged,
+          isExpectedChanged,
+        ]),
+      ).toEqual([
+        [false, true],
+        [true, true],
+      ]);
+    });
+
     it('names no one when the org does not say who changed it', () => {
       useProStore.setState({ shares: [shareBy(null)] });
       const { result } = renderHook(() => useProMergeModalViewModel());

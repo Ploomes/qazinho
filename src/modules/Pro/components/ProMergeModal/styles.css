@@ -87,3 +87,10 @@
   display: flex;
   justify-content: flex-end;
 }
+
+.pro-merge__mark {
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-xs);
+  background: var(--attn-soft);
+  color: var(--ink);
+}

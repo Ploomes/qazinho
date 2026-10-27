@@ -38,10 +38,13 @@ export const useProMergeModalViewModel = () => {
     caseId: string;
     choice: CaseChoice;
     testCase: IProSyncCase | null;
+    other: IProSyncCase | null;
   }) => {
-    const { workspaceId, caseId, choice, testCase } = props;
+    const { workspaceId, caseId, choice, testCase, other } = props;
     const isChosen = (choices[workspaceId]?.[caseId] ?? 'mine') === choice;
     const preconditions = testCase?.preconditions ?? '';
+    const differs = (here: string | undefined, there: string | undefined) =>
+      testCase !== null && other !== null && here !== there;
 
     return {
       key: choice,
@@ -49,13 +52,18 @@ export const useProMergeModalViewModel = () => {
       isDeleted: testCase === null,
       deleted: t('PRO.MERGE_DELETED'),
       title: testCase?.title ?? '',
+      isTitleChanged: differs(testCase?.title, other?.title),
       goal: testCase?.goal ?? '',
+      isGoalChanged: differs(testCase?.goal, other?.goal),
       hasPreconditions: preconditions !== '',
       preconditions: t('PRO.MERGE_PRECONDITIONS', { text: preconditions }),
+      isPreconditionsChanged: differs(preconditions, other?.preconditions),
       steps: (testCase?.steps ?? []).map((step, index) => ({
         key: String(index),
         action: step.action,
+        isActionChanged: differs(step.action, other?.steps[index]?.action),
         expected: step.expected,
+        isExpectedChanged: differs(step.expected, other?.steps[index]?.expected),
       })),
       isChosen,
       className: isChosen ? 'pro-merge__side pro-merge__side--chosen' : 'pro-merge__side',
@@ -88,12 +96,14 @@ export const useProMergeModalViewModel = () => {
             caseId: clash.id,
             choice: 'mine',
             testCase: clash.mine,
+            other: clash.theirs,
           }),
           sideOf({
             workspaceId: update.workspace.id,
             caseId: clash.id,
             choice: 'theirs',
             testCase: clash.theirs,
+            other: clash.mine,
           }),
         ],
       })),
