@@ -5,7 +5,10 @@ import { ModalFrame } from '@/shared/components/templates';
 import { useSuiteWriteModalViewModel } from './hooks';
 import './styles.css';
 
-/** Asking the QA's agent for a new test of the team's suite: what it should check, the plan case it automates, and where it goes. */
+/**
+ * Asking the QA's agent for a new test of the team's suite: what it should check, the
+ * plan case it automates, and where it goes.
+ */
 export const SuiteWriteModal: React.FC<ISuiteWriteModalProps> = (props) => {
   const {
     title,

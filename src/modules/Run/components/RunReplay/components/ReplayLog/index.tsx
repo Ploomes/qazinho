@@ -4,7 +4,10 @@ import { Icon } from '@/shared/components/atoms';
 import { useReplayLogViewModel } from './hooks';
 import './styles.css';
 
-/** The run's cases beside its video, kept in step with it: the case playing opens, its step lights up, and a click jumps there. */
+/**
+ * The run's cases beside its video, kept in step with it: the case playing opens, its
+ * step lights up, and a click jumps there.
+ */
 export const ReplayLog: React.FC<IReplayLogProps> = (props) => {
   const { eyebrow, foldTransition, nowTransition, chapters, onUserScroll } =
     useReplayLogViewModel(props);

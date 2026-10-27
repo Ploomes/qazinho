@@ -27,7 +27,10 @@ const PAGE_REFUSALS: Record<JiraFailure, string> = {
   unexpected: 'Confluence answered in a way QAzinho did not expect.',
 };
 
-/** Hands the QA's request to a workspace's own chat, as if they typed it there, with the Jira story or the Confluence page it plans from and the Figma design it is checked against, and opens that chat. */
+/**
+ * Hands the QA's request to a workspace's own chat, as if typed there, with its sources,
+ * and opens it.
+ */
 export async function performChatAsk(props: {
   call: Extract<AppToolCall, { name: 'ask_workspace_chat' }>;
   port: IAppPort;

@@ -1,6 +1,9 @@
 import type { IChatReference } from '@/shared/types';
 
-/** `references` is what the active tab holds; each tab counts what it holds for the @ being typed. */
+/**
+ * `references` is what the active tab holds; each tab counts what it holds for the @
+ * being typed.
+ */
 export interface IMentionPickerProps {
   references: IChatReference[];
   tabs: { kind: IChatReference['kind']; count: number; isActive: boolean }[];

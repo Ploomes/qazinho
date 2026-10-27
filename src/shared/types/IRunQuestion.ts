@@ -1,6 +1,6 @@
 import type { IVariableBrief } from './IVariableBrief';
 
-/** A question a run's agent asked the QA and waits on: what it asked at which step, the answers it offers, whether it asked for a secret, the variable a secret answer is typed as, and until when it waits. */
+/** A question a run's agent asked the QA and waits on, with the answers it offers. */
 export interface IRunQuestion {
   id: string;
   question: string;

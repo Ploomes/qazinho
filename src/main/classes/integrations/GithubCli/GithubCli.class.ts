@@ -19,7 +19,10 @@ import {
   refusalOf,
 } from './library';
 
-/** Talks to GitHub as the QA through their own GitHub CLI: the login stays with gh, and QAzinho keeps no token. */
+/**
+ * Talks to GitHub as the QA through their own GitHub CLI: the login stays with gh, and
+ * QAzinho keeps no token.
+ */
 export class GithubCli {
   private readonly directories: () => Promise<string[]>;
   private readonly onProgress: (progress: GithubSignInProgress) => void;
@@ -36,7 +39,10 @@ export class GithubCli {
     return this.locate('gh');
   }
 
-  /** Whether gh is here, whom it is signed in as, and the access QAzinho needs that its login lacks. */
+  /**
+   * Whether gh is here, whom it is signed in as, and the access QAzinho needs that its
+   * login lacks.
+   */
   public async status(): Promise<IGithubStatus> {
     const path = await this.find();
     const cli = { isFound: path !== null, path };
@@ -66,7 +72,10 @@ export class GithubCli {
         };
   }
 
-  /** Signs the QA in through gh's own device flow, or asks GitHub again for the access QAzinho lacks; resolves when it ends. */
+  /**
+   * Signs the QA in through gh's own device flow, or asks GitHub again for the access
+   * QAzinho lacks; resolves when it ends.
+   */
   public async signIn(): Promise<GithubSignInProgress> {
     this.cancelSignIn();
 
@@ -86,7 +95,10 @@ export class GithubCli {
     this.signingIn?.abort();
   }
 
-  /** One request to GitHub's REST API as the QA, read or posted: what GitHub answered, or why it or gh refused. */
+  /**
+   * One request to GitHub's REST API as the QA, read or posted: what GitHub answered, or
+   * why it or gh refused.
+   */
   public async api(props: {
     path: string;
     method?: 'POST';
@@ -107,7 +119,10 @@ export class GithubCli {
     });
   }
 
-  /** Downloads an archive GitHub serves, such as a commit's tarball, and unpacks it into a folder without its top folder. */
+  /**
+   * Downloads an archive GitHub serves, such as a commit's tarball, and unpacks it into a
+   * folder without its top folder.
+   */
   public async extract(props: {
     path: string;
     dir: string;

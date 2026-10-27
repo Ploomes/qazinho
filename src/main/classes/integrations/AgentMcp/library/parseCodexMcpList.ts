@@ -7,7 +7,10 @@ type CodexServer = {
   auth_status?: unknown;
 };
 
-/** Reads `codex mcp list --json`: a server signed in, or one with no sign-in to do, is connected. */
+/**
+ * Reads `codex mcp list --json`: a server signed in, or one with no sign-in to do, is
+ * connected.
+ */
 export function parseCodexMcpList(printed: string): IListedMcpServer[] {
   let servers: CodexServer[];
 

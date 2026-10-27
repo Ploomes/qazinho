@@ -1,6 +1,9 @@
 const WEAK_STORES = ['basic_text', 'unknown'];
 
-/** Whether the OS can seal a secret: it has a keychain, and on Linux a real secret store rather than the fixed key Electron falls back to without one. */
+/**
+ * Whether the OS can seal a secret: it has a keychain, and on Linux a real secret store
+ * rather than the fixed key Electron falls back to without one.
+ */
 export function isSealable(props: {
   platform: string;
   isAvailable: boolean;

@@ -11,7 +11,10 @@ import { LinkCatcher } from '@/main/classes/agents/LinkCatcher';
 import { authorizeUrlIn, stripAnsi, spawnCommand } from '@/main/library';
 import { AGENT_LOGIN, LOGIN_RECIPES } from './constants';
 
-/** Signs the QA in to their own agent through the agent's own login: its page opens in the browser, and the agent keeps the result. */
+/**
+ * Signs the QA in to their own agent through the agent's own login: its page opens in the
+ * browser, and the agent keeps the result.
+ */
 export class AgentLogin {
   private readonly findAgent: (agentId: string) => Promise<string | null>;
   private readonly openUrl: (url: string) => Promise<void>;
@@ -29,7 +32,10 @@ export class AgentLogin {
     this.folder = props.folder;
   }
 
-  /** Runs the agent's sign-in, reporting each step; resolves once the agent is signed in, fails, or the QA cancels. */
+  /**
+   * Runs the agent's sign-in, reporting each step; resolves once the agent is signed in,
+   * fails, or the QA cancels.
+   */
   public async signIn(agentId: string): Promise<AgentSignInProgress> {
     const controller = new AbortController();
     const entry = { controller, child: null as ChildProcessWithoutNullStreams | null };
@@ -51,7 +57,9 @@ export class AgentLogin {
     if (code !== '') this.signIns.get(props.agentId)?.child?.stdin.write(`${code}\n`);
   }
 
-  /** Stops a sign-in under way: the agent's login closes, and the sign-in ends cancelled. */
+  /**
+   * Stops a sign-in under way: the agent's login closes, and the sign-in ends cancelled.
+   */
   public cancel(agentId: string): void {
     this.signIns.get(agentId)?.controller.abort();
   }

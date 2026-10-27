@@ -9,7 +9,10 @@ import { MOTION } from '@/shared/constants';
 import { useRepoFieldViewModel } from './hooks';
 import './styles.css';
 
-/** The GitHub repositories a project is made of, each with the branch its changes are measured against. */
+/**
+ * The GitHub repositories a project is made of, each with the branch its changes are
+ * measured against.
+ */
 export const RepoField: React.FC<IRepoFieldProps> = (props) => {
   const {
     lock,

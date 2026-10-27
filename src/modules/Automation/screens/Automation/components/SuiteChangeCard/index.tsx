@@ -4,7 +4,10 @@ import { Button, Icon, Intern } from '@/shared/components/atoms';
 import { useSuiteChangeCardViewModel } from './hooks';
 import './styles.css';
 
-/** The agent's fix of the test picked, as it stands: what it is doing, what it said, QAzinho's own run of the test, and what the QA can do with it. */
+/**
+ * The agent's fix of the test picked, as it stands: what it is doing, what it said,
+ * QAzinho's own run of the test, and what the QA can do with it.
+ */
 export const SuiteChangeCard: React.FC<ISuiteChangeCardProps> = (props) => {
   const {
     className,

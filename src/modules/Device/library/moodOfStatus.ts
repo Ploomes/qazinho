@@ -10,7 +10,10 @@ const MOODS: Record<WorkspaceStatus, InternMood> = {
   failed: 'bug',
 };
 
-/** How the Estagiário looks over the device: asleep with nothing to run, busy while it runs, and how it ended. */
+/**
+ * How the Estagiário looks over the device: asleep with nothing to run, busy while it
+ * runs, and how it ended.
+ */
 export function moodOfStatus(status: WorkspaceStatus | null): InternMood {
   return status === null ? 'sleeping' : MOODS[status];
 }

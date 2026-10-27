@@ -20,6 +20,44 @@ const KEYS: Record<string, string> = {
   search: 'Search',
 };
 
+/**
+ * A Maestro flow for one case a phone app's runs recorded: the app opened anew, each step
+ * done, and its proof asserted on screen; a variable is read from the environment.
+ */
+export function maestroOf(props: {
+  appId: string;
+  steps: IFlatStep[];
+  recipe: ICaseRecipe;
+}): string {
+  const [first] = props.steps;
+  const body = props.steps.flatMap((step) => {
+    const kept = props.recipe.steps.find(({ number }) => number === step.numberInCase);
+
+    return [
+      `# ${String(step.numberInCase)}. ${step.action} → ${step.expected}`,
+      ...(kept?.actions ?? []).flatMap(linesOf),
+      `- assertVisible: ${yamlText(`.*${pattern(kept?.proof ?? '')}.*`)}`,
+    ];
+  });
+
+  const variables = variablesIn([props.recipe]);
+
+  return [
+    ...(variables.length === 0
+      ? []
+      : [
+          `# Types the project's variables from the environment: maestro test ${variables.map((name) => `-e ${name}=…`).join(' ')}`,
+        ]),
+    `appId: ${props.appId}`,
+    `name: ${yamlText(`${first?.caseId ?? props.recipe.caseId} · ${first?.caseTitle ?? ''}`)}`,
+    '---',
+    '- launchApp:',
+    '    clearState: true',
+    ...body,
+    '',
+  ].join('\n');
+}
+
 function yamlText(text: string): string {
   return JSON.stringify(text);
 }
@@ -77,39 +115,4 @@ function linesOf(action: IStepAction): string[] {
         `# ${action.kind} ${yamlText(action.target)}: a phone has no ${action.kind}`,
       ];
   }
-}
-
-/** A Maestro flow for one case a phone app's runs recorded: the app opened anew, each step done, and its proof asserted on screen; a variable is read from the environment. */
-export function maestroOf(props: {
-  appId: string;
-  steps: IFlatStep[];
-  recipe: ICaseRecipe;
-}): string {
-  const [first] = props.steps;
-  const body = props.steps.flatMap((step) => {
-    const kept = props.recipe.steps.find(({ number }) => number === step.numberInCase);
-
-    return [
-      `# ${String(step.numberInCase)}. ${step.action} → ${step.expected}`,
-      ...(kept?.actions ?? []).flatMap(linesOf),
-      `- assertVisible: ${yamlText(`.*${pattern(kept?.proof ?? '')}.*`)}`,
-    ];
-  });
-
-  const variables = variablesIn([props.recipe]);
-
-  return [
-    ...(variables.length === 0
-      ? []
-      : [
-          `# Types the project's variables from the environment: maestro test ${variables.map((name) => `-e ${name}=…`).join(' ')}`,
-        ]),
-    `appId: ${props.appId}`,
-    `name: ${yamlText(`${first?.caseId ?? props.recipe.caseId} · ${first?.caseTitle ?? ''}`)}`,
-    '---',
-    '- launchApp:',
-    '    clearState: true',
-    ...body,
-    '',
-  ].join('\n');
 }

@@ -2,9 +2,12 @@ import type { IAgentLimits } from '@/shared/types';
 
 const SESSION =
   /Current session:\s*(\d+(?:\.\d+)?)%\s*used(?:\s*·\s*resets\s+([^\n(]+))?/i;
+
 const WEEK = /Current week \(all models\):\s*(\d+(?:\.\d+)?)%\s*used/i;
+
 const RESET =
   /^(?:([A-Za-z]{3})[a-z]*\s+(\d{1,2})\s+at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)$/i;
+
 const MONTHS = [
   'jan',
   'feb',
@@ -19,8 +22,29 @@ const MONTHS = [
   'nov',
   'dec',
 ];
+
 const HALF_YEAR_MS = 183 * 24 * 60 * 60 * 1000;
+
 const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Reads the limits Claude Code's /usage printed: session and week as fractions; null with
+ * no session.
+ */
+export function limitsOfReport(props: { text: string; now: Date }): IAgentLimits | null {
+  const session = SESSION.exec(props.text);
+
+  if (session === null) return null;
+
+  const week = WEEK.exec(props.text);
+
+  return {
+    fiveHourUsed: Number(session[1]) / 100,
+    sevenDayUsed: week === null ? null : Number(week[1]) / 100,
+    resetsAt:
+      session[2] === undefined ? 0 : resetOf({ said: session[2], now: props.now }),
+  };
+}
 
 function resetOf(props: { said: string; now: Date }): number {
   const found = RESET.exec(props.said.trim());
@@ -52,20 +76,4 @@ function resetOf(props: { said: string; now: Date }): number {
     at.setFullYear(at.getFullYear() + 1);
 
   return Math.floor(at.getTime() / 1_000);
-}
-
-/** Reads the limits Claude Code's own /usage printed: the session and the week as fractions, and when the session renews on the QA's clock; null when it printed no session. */
-export function limitsOfReport(props: { text: string; now: Date }): IAgentLimits | null {
-  const session = SESSION.exec(props.text);
-
-  if (session === null) return null;
-
-  const week = WEEK.exec(props.text);
-
-  return {
-    fiveHourUsed: Number(session[1]) / 100,
-    sevenDayUsed: week === null ? null : Number(week[1]) / 100,
-    resetsAt:
-      session[2] === undefined ? 0 : resetOf({ said: session[2], now: props.now }),
-  };
 }

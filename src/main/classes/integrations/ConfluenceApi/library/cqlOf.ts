@@ -1,4 +1,7 @@
-/** The CQL a page search asks: the pages whose title holds what the QA typed, or with nothing typed the pages they worked on last. */
+/**
+ * The CQL a page search asks: the pages whose title holds what the QA typed, or with
+ * nothing typed the pages they worked on last.
+ */
 export function cqlOf(query: string): string {
   const typed = query
     .trim()

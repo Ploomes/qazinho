@@ -1,11 +1,10 @@
 import type { IComposeLayout } from '@/modules/Run/classes/video/ReplayComposer/types';
 import { NETWORK_STRIP } from '@/modules/Run/classes/video/ReplayComposer/constants';
 
-function evenOf(value: number): number {
-  return Math.ceil(value / 2) * 2;
-}
-
-/** The composed frame for a video of this size: the video on top, centred on a frame wide enough for the strip to read, and the strip under it. */
+/**
+ * The composed frame for a video of this size: the video on top, centred on a frame wide
+ * enough for the strip to read, and the strip under it.
+ */
 export function composeLayoutOf(props: {
   width: number;
   height: number;
@@ -32,4 +31,8 @@ export function composeLayoutOf(props: {
     },
     strip: { x: 0, y: videoHeight, width, height: stripHeight },
   };
+}
+
+function evenOf(value: number): number {
+  return Math.ceil(value / 2) * 2;
 }

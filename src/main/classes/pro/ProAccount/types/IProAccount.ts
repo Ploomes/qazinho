@@ -2,7 +2,10 @@ import type { ProApi } from '@/main/classes/pro/ProApi';
 import type { IVaultCipher } from '@/main/types';
 import type { ProSignInProgress } from '@/shared/types';
 
-/** What signing this machine in needs: the platform, the keychain, where the sealed file goes, the browser, and a clock a test can drive. */
+/**
+ * What signing this machine in needs: the platform, the keychain, where the sealed file
+ * goes, the browser, and a clock a test can drive.
+ */
 export interface IProAccount {
   api: Pick<ProApi, 'deviceCode' | 'deviceToken' | 'me' | 'revokeMachine'>;
   cipher: IVaultCipher;

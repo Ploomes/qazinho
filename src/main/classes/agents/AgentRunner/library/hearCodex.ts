@@ -1,7 +1,10 @@
 import type { ICodexLine } from '@/main/types';
 import type { IAgentUsage } from '@/shared/types';
 
-/** What one Codex event says: the session, a message, a command it set out to run, the usage, or how the turn ended. */
+/**
+ * What one Codex event says: the session, a message, a command it set out to run, the
+ * usage, or how the turn ended.
+ */
 export function hearCodex(props: { line: ICodexLine; usage: IAgentUsage | null }): {
   sessionId?: string;
   message?: string;

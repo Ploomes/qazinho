@@ -1,4 +1,7 @@
-/** The only caller of the diagnostics side of the bridge: the app's own log, kept on this machine. */
+/**
+ * The only caller of the diagnostics side of the bridge: the app's own log, kept on this
+ * machine.
+ */
 export class Diagnostics {
   public static async openLogs(): Promise<void> {
     await window.qazinho?.openLogs();

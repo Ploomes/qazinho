@@ -1,4 +1,7 @@
-/** The org's recordings of a plan as a workspace's recipe book, so its cases walk again without the agent here too. */
+/**
+ * The org's recordings of a plan as a workspace's recipe book, so its cases walk again
+ * without the agent here too.
+ */
 export function recipeBookOf(
   recordings: {
     caseId: string;

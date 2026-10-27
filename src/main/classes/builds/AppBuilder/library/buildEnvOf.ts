@@ -1,7 +1,10 @@
 import type { IBuildMachineFacts } from '@/main/classes/builds/AppBuilder/types';
 import { join } from 'node:path';
 
-/** The environment a build runs in: the QA's PATH, the SDK and JDK it was told of, no prompts, and for Codex every cache kept inside the folder its sandbox may write. */
+/**
+ * The environment a build runs in: the QA's PATH, the SDK and JDK it was told of, no
+ * prompts, and for Codex every cache kept inside the folder its sandbox may write.
+ */
 export function buildEnvOf(props: {
   machine: IBuildMachineFacts;
   agentId: string;

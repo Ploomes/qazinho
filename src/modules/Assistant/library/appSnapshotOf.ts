@@ -15,45 +15,10 @@ import { openRoundOf } from './openRoundOf';
 
 const INTEGRATIONS: IntegrationId[] = ['github', 'jira'];
 
-function briefOf(props: {
-  workspace: IWorkspace;
-  projects: IProject[];
-  askingIds: string[];
-}): IAppWorkspaceBrief {
-  const { workspace } = props;
-  const target =
-    props.projects
-      .find(({ id }) => id === workspace.projectId)
-      ?.targets.find(({ id }) => id === workspace.targetId) ?? null;
-  const [latest] = workspace.runs;
-
-  return {
-    id: workspace.id,
-    name: workspace.name,
-    projectId: workspace.projectId,
-    target: target?.kind ?? null,
-    cases: workspace.plan.length,
-    steps: workspace.plan.reduce((total, testCase) => total + testCase.steps.length, 0),
-    runs: workspace.runs.length,
-    bugs: workspace.bugs.length,
-    design: workspace.design?.name ?? null,
-    latestRun:
-      latest === undefined
-        ? null
-        : {
-            id: latest.id,
-            startedOn: runDayOf(latest),
-            startedAt: latest.startedAt,
-            endedBy: latest.endedBy,
-            ...latest.counts,
-          },
-    isRunning: workspace.live !== null && !workspace.live.isDone,
-    isAnswering: props.askingIds.includes(workspace.id),
-    openQuestions: openRoundOf(workspace).length,
-  };
-}
-
-/** QAzinho as the assistant reads it with a message: what is on screen, how the QA set it up, and every project and workspace. */
+/**
+ * QAzinho as the assistant reads it with a message: what is on screen, how the QA set it
+ * up, and every project and workspace.
+ */
 export function appSnapshotOf(props: {
   screen: Screen;
   selectedWorkspaceId: string | null;
@@ -106,5 +71,43 @@ export function appSnapshotOf(props: {
     workspaces: props.workspaces.map((workspace) =>
       briefOf({ workspace, projects: props.projects, askingIds: props.askingIds }),
     ),
+  };
+}
+
+function briefOf(props: {
+  workspace: IWorkspace;
+  projects: IProject[];
+  askingIds: string[];
+}): IAppWorkspaceBrief {
+  const { workspace } = props;
+  const target =
+    props.projects
+      .find(({ id }) => id === workspace.projectId)
+      ?.targets.find(({ id }) => id === workspace.targetId) ?? null;
+  const [latest] = workspace.runs;
+
+  return {
+    id: workspace.id,
+    name: workspace.name,
+    projectId: workspace.projectId,
+    target: target?.kind ?? null,
+    cases: workspace.plan.length,
+    steps: workspace.plan.reduce((total, testCase) => total + testCase.steps.length, 0),
+    runs: workspace.runs.length,
+    bugs: workspace.bugs.length,
+    design: workspace.design?.name ?? null,
+    latestRun:
+      latest === undefined
+        ? null
+        : {
+            id: latest.id,
+            startedOn: runDayOf(latest),
+            startedAt: latest.startedAt,
+            endedBy: latest.endedBy,
+            ...latest.counts,
+          },
+    isRunning: workspace.live !== null && !workspace.live.isDone,
+    isAnswering: props.askingIds.includes(workspace.id),
+    openQuestions: openRoundOf(workspace).length,
   };
 }

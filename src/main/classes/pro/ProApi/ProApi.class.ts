@@ -24,7 +24,10 @@ import {
 } from './constants';
 import { answerOf } from './library';
 
-/** Talks to QAzinho Pro's API for this machine: its sign-in by a code the person confirms in the browser, the account it belongs to, and the sync of its shared projects. */
+/**
+ * Talks to QAzinho Pro's API for this machine: its sign-in by a code the person confirms
+ * in the browser, the account it belongs to, and the sync of its shared projects.
+ */
 export class ProApi {
   private readonly baseUrl: string;
   private readonly fetcher: ProFetcher;
@@ -42,7 +45,10 @@ export class ProApi {
     });
   }
 
-  /** Trades a sign-in code for this machine's token once the person confirmed it; `authorization_pending` until then. */
+  /**
+   * Trades a sign-in code for this machine's token once the person confirmed it;
+   * `authorization_pending` until then.
+   */
   public async deviceToken(deviceCode: string): Promise<ProAnswer<IProDeviceToken>> {
     return this.call({
       request: { method: 'POST', path: '/api/device/tokens', body: { deviceCode } },
@@ -80,7 +86,10 @@ export class ProApi {
     return this.put({ call, schema: SYNC_PROJECT_SCHEMA });
   }
 
-  /** Sends a workspace's plan from the version it was based on; `plan_conflict` when the org moved it since. */
+  /**
+   * Sends a workspace's plan from the version it was based on; `plan_conflict` when the
+   * org moved it since.
+   */
   public async syncPlan(
     call: IProSyncCall,
   ): Promise<ProAnswer<z.infer<typeof SYNC_PLAN_SCHEMA>>> {
@@ -138,7 +147,9 @@ export class ProApi {
     });
   }
 
-  /** Asks where to put one screenshot or video, signed for this machine for a short while. */
+  /**
+   * Asks where to put one screenshot or video, signed for this machine for a short while.
+   */
   public async evidenceUpload(
     call: IProSyncCall,
   ): Promise<ProAnswer<IProEvidenceUpload>> {

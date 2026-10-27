@@ -1,4 +1,7 @@
-/** A browser QAzinho started carries its workspace in its profile path, and nothing else does. */
+/**
+ * A browser QAzinho started carries its workspace in its profile path, and nothing else
+ * does.
+ */
 export function workspaceOfProfile(props: {
   command: string;
   profileRoot: string;

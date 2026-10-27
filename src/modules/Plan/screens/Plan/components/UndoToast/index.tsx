@@ -5,7 +5,10 @@ import { STICKER } from '@/shared/constants';
 import { useUndoToastViewModel } from './hooks';
 import './styles.css';
 
-/** A removal the QA can take back for a few seconds, with a line under it that drains meanwhile. */
+/**
+ * A removal the QA can take back for a few seconds, with a line under it that drains
+ * meanwhile.
+ */
 export const UndoToast: React.FC<IUndoToastProps> = (props) => {
   const { style, onUndoClick, onCountdownEnd } = useUndoToastViewModel(props);
 

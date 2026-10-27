@@ -1,6 +1,9 @@
 import type { IRepository } from '@/shared/types';
 
-/** A repository as gh printed it through the repository filter, or null when the line is not one. */
+/**
+ * A repository as gh printed it through the repository filter, or null when the line is
+ * not one.
+ */
 export function repositoryOf(value: unknown): IRepository | null {
   if (typeof value !== 'object' || value === null) return null;
 

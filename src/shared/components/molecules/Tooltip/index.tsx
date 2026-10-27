@@ -5,7 +5,10 @@ import { MOTION } from '@/shared/constants';
 import { useTooltipViewModel } from './hooks';
 import './styles.css';
 
-/** A few words about what the pointer or the focus rests on: under it, or beside it over everything, so no edge cuts it. */
+/**
+ * A few words about what the pointer or the focus rests on: under it, or beside it over
+ * everything, so no edge cuts it.
+ */
 export const Tooltip: React.FC<ITooltipProps> = (props) => {
   const {
     anchorRef,

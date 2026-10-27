@@ -6,11 +6,16 @@ import { findOnPath, machineDirectories } from '@/main/library';
 import { AGENT_PROBES } from './constants';
 import { defaultModelOf, isSignedInOf, statusOf } from './library';
 
-/** Finds the agents already on this machine with file probes, then asks each one found whether it is signed in. */
+/**
+ * Finds the agents already on this machine with file probes, then asks each one found
+ * whether it is signed in.
+ */
 export class AgentDetector {
   private detected: IDetectedAgent[] | null = null;
 
-  /** Cached for the session: a Settings panel that remounts must not re-probe the disk. */
+  /**
+   * Cached for the session: a Settings panel that remounts must not re-probe the disk.
+   */
   public async detect(): Promise<IDetectedAgent[]> {
     if (this.detected) return this.detected;
 

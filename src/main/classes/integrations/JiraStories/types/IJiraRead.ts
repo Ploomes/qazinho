@@ -1,6 +1,8 @@
 import type { IJiraStory, JiraFailure } from '@/shared/types';
 
-/** What JiraStories needs from Jira: a story read whole, and one of its files downloaded. */
+/**
+ * What JiraStories needs from Jira: a story read whole, and one of its files downloaded.
+ */
 export interface IJiraRead {
   story: (
     key: string,

@@ -2,12 +2,55 @@ import type { McpMove } from '@/main/classes/integrations/AgentMcp/types';
 import { TERMINAL_KEYS } from '@/main/classes/agents/AgentTerminal/constants';
 
 const SELECTED = '❯';
+
 const CONNECTED = '✔';
+
 const OPTION = /^\s*(?:❯\s*)?\d+\.\s/;
+
 const AUTHENTICATE = /\bauthenticate\b/i;
+
 const REFUSED =
   /failed to authenticate|authentication failed|rejected them|still unauthorized|connection failed/i;
+
 const REFUSED_ALONE = /reconnection failed after authentication/i;
+
+/**
+ * The next move on Claude Code's `/mcp` screens toward the server's sign-in, read off the
+ * rows the agent shows.
+ */
+export function nextMcpMove(props: {
+  rows: string[];
+  server: { name: string; url: string };
+}): McpMove {
+  const { rows, server } = props;
+  const refused = rows.find(
+    (row) =>
+      REFUSED_ALONE.test(row) ||
+      (REFUSED.test(row) && row.toLowerCase().includes(server.name.toLowerCase())),
+  );
+
+  if (refused !== undefined) return { kind: 'refused', said: refused.trim() };
+  if (rows.some((row) => row.includes('Authentication successful')))
+    return { kind: 'connected' };
+  if (rows.some((row) => row.includes('Authenticating with')))
+    return { kind: 'authorizing' };
+
+  const detail = rows.findIndex((row) => /MCP Server$/.test(row.trim()));
+
+  if (detail !== -1) return inServer({ rows: rows.slice(detail), url: server.url });
+
+  const menu = rows.findIndex((row) => row.includes('Manage MCP servers'));
+
+  if (menu !== -1) return inServers({ rows: rows.slice(menu), name: server.name });
+
+  const trust = rows.findIndex((row) => row.includes('Yes, I trust this folder'));
+  const selected = rows.findIndex((row) => row.includes(SELECTED));
+
+  if (trust !== -1 && selected !== -1)
+    return toward({ from: selected, to: trust, step: 'open' });
+
+  return { kind: 'wait' };
+}
 
 const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -58,38 +101,3 @@ const inServers = (props: { rows: string[]; name: string }): McpMove => {
 
   return toward({ from: selected, to: at, step: 'authorize' });
 };
-
-/** The next move on Claude Code's `/mcp` screens toward the server's sign-in, read off the rows the agent shows. */
-export function nextMcpMove(props: {
-  rows: string[];
-  server: { name: string; url: string };
-}): McpMove {
-  const { rows, server } = props;
-  const refused = rows.find(
-    (row) =>
-      REFUSED_ALONE.test(row) ||
-      (REFUSED.test(row) && row.toLowerCase().includes(server.name.toLowerCase())),
-  );
-
-  if (refused !== undefined) return { kind: 'refused', said: refused.trim() };
-  if (rows.some((row) => row.includes('Authentication successful')))
-    return { kind: 'connected' };
-  if (rows.some((row) => row.includes('Authenticating with')))
-    return { kind: 'authorizing' };
-
-  const detail = rows.findIndex((row) => /MCP Server$/.test(row.trim()));
-
-  if (detail !== -1) return inServer({ rows: rows.slice(detail), url: server.url });
-
-  const menu = rows.findIndex((row) => row.includes('Manage MCP servers'));
-
-  if (menu !== -1) return inServers({ rows: rows.slice(menu), name: server.name });
-
-  const trust = rows.findIndex((row) => row.includes('Yes, I trust this folder'));
-  const selected = rows.findIndex((row) => row.includes(SELECTED));
-
-  if (trust !== -1 && selected !== -1)
-    return toward({ from: selected, to: trust, step: 'open' });
-
-  return { kind: 'wait' };
-}

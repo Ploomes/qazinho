@@ -1,7 +1,10 @@
 import { lstat, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 
-/** Every file under a folder with its size, links left alone; nothing for a folder that is not there. */
+/**
+ * Every file under a folder with its size, links left alone; nothing for a folder that is
+ * not there.
+ */
 export async function filesUnder(
   root: string,
 ): Promise<{ path: string; size: number }[]> {

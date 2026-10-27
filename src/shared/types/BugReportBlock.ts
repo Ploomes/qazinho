@@ -1,4 +1,7 @@
-/** One piece of a bug's report or a published plan: a heading, a paragraph, a list, the steps with the one that broke, facts by label, requests that failed with the start of what each answered, or a table. */
+/**
+ * One piece of a bug's report or a published plan: a heading, text, list, steps, facts or
+ * a table.
+ */
 export type BugReportBlock =
   | { kind: 'heading'; text: string }
   | { kind: 'paragraph'; text: string }

@@ -3,7 +3,10 @@ import type { IStepOutcome } from '@/shared/types';
 import { catchBug } from '@/modules/Bug/library';
 import { appendRunMessages } from '@/modules/Chat/library';
 
-/** One step came back from the device: the chat follows it, and a failure lands on its bug, already open or new. */
+/**
+ * One step came back from the device: the chat follows it, and a failure lands on its
+ * bug, already open or new.
+ */
 export function landStep(props: {
   workspace: IWorkspace;
   outcome: IStepOutcome;

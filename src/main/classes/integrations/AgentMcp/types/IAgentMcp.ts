@@ -1,6 +1,9 @@
 import type { McpSignInProgress } from '@/shared/types';
 
-/** What AgentMcp needs: where each agent CLI is, how to open a URL and run a script in a terminal the QA sees (false when there is none), where to report a sign-in, and a folder. */
+/**
+ * What AgentMcp needs: the agent CLIs, how to open a URL or run a script, and where to
+ * report.
+ */
 export interface IAgentMcp {
   findAgent: (agentId: string) => Promise<string | null>;
   openUrl: (url: string) => Promise<void>;

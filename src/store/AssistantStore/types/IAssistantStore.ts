@@ -5,7 +5,10 @@ import type {
   IAssistantToolMessage,
 } from '@/modules/Assistant/types';
 
-/** The Estagiário in the corner: whether its chat is open, what was said in it, and what it is busy with. */
+/**
+ * The Estagiário in the corner: whether its chat is open, what was said in it, and what
+ * it is busy with.
+ */
 export interface IAssistantStore {
   isOpen: boolean;
   messages: AssistantMessage[];

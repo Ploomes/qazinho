@@ -3,7 +3,10 @@ import { ArrayBufferTarget, Muxer } from 'mp4-muxer';
 import { REPLAY_COMPOSER } from './constants';
 import { composeLayoutOf, drawNetworkStrip, fillersBetween, readMp4 } from './library';
 
-/** Draws a run's network under its video: decodes the recording frame by frame, adds the strip as the video stood at each moment, and encodes it all as one MP4. */
+/**
+ * Draws a run's network under its video: decodes the recording frame by frame, adds the
+ * strip as the video stood at each moment, and encodes it all as one MP4.
+ */
 export class ReplayComposer {
   private readonly props: IComposeReplay;
   private failure: DOMException | null = null;
@@ -15,7 +18,10 @@ export class ReplayComposer {
     this.props = props;
   }
 
-  /** The video with its network under it, as the bytes of an MP4; throws when the video cannot be read or coded here, or once the QA closed it. */
+  /**
+   * The video with its network under it, as the bytes of an MP4; throws when the video
+   * cannot be read or coded here, or once the QA closed it.
+   */
   public async compose(): Promise<Uint8Array> {
     const { video, signal } = this.props;
     const track = readMp4(video);

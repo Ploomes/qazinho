@@ -2,7 +2,10 @@ import type { ProUploader } from './ProUploader';
 import type { ProApi } from '@/main/classes/pro/ProApi';
 import type { IProShare } from '@/shared/types';
 
-/** What the sync needs: the platform, to send and to read the org's plans back, this machine's token and the org it sends to, its name, its own file, the archive it reads from, where a run's video lives and whether this computer let it go, the variables' names, the upload, a clock and a timer a test can drive. */
+/**
+ * What the sync needs: the platform, the token and org, the archive, the uploads, a clock
+ * and a timer.
+ */
 export interface IProSync {
   api: Pick<
     ProApi,

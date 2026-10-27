@@ -5,7 +5,10 @@ import { MOTION } from '@/shared/constants';
 import { useBugUpdateViewModel } from './hooks';
 import './styles.css';
 
-/** What the QA's agent made of a filed bug that came back: the update it suggests for the issue, to edit and post, or why there is none. */
+/**
+ * What the QA's agent made of a filed bug that came back: the update it suggests for the
+ * issue, to edit and post, or why there is none.
+ */
 export const BugUpdate: React.FC<IBugUpdateProps> = (props) => {
   const {
     isShown,

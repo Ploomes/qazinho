@@ -4,7 +4,10 @@ import { Icon } from '@/shared/components/atoms/Icon';
 import { useSwitchViewModel } from './hooks';
 import './styles.css';
 
-/** A labelled switch: its knob slides over and the track turns lime when what it names is on. */
+/**
+ * A labelled switch: its knob slides over and the track turns lime when what it names is
+ * on.
+ */
 export const Switch: React.FC<ISwitchProps> = (props) => {
   const { className, style, hasIcon, icon, knob, knobTransition, onSwitchClick } =
     useSwitchViewModel(props);

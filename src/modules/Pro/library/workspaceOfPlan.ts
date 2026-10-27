@@ -3,7 +3,10 @@ import type { IProSyncPlan } from '@/shared/types';
 import { toPlanKind } from '@/modules/Plan/library';
 import { testCasesOf } from './testCasesOf';
 
-/** A plan downloaded from the org as a workspace of this computer, with nothing walked here yet. */
+/**
+ * A plan downloaded from the org as a workspace of this computer, with nothing walked
+ * here yet.
+ */
 export function workspaceOfPlan(props: {
   plan: IProSyncPlan;
   projectId: string;

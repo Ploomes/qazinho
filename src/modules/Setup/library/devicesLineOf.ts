@@ -1,7 +1,10 @@
 import type { IDeviceTools } from '@/shared/types';
 import type { ParseKeys } from 'i18next';
 
-/** What the Estagiário says about the devices, sentence by sentence, from what this machine has. */
+/**
+ * What the Estagiário says about the devices, sentence by sentence, from what this
+ * machine has.
+ */
 export function devicesLineOf(props: {
   isMac: boolean;
   tools: IDeviceTools;

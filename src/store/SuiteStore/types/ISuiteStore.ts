@@ -9,7 +9,10 @@ import type {
   SuiteEvent,
 } from '@/shared/types';
 
-/** The suites connected to the QA's projects, by project: what each holds, its tests, its runs, the run going, the test or the request picked on screen, the changes the agent made to it, and what the agent does while it changes one. */
+/**
+ * The suites connected to the QA's projects, their tests and runs, and the agent's
+ * changes.
+ */
 export interface ISuiteStore {
   suites: Record<string, ISuite>;
   lists: Record<string, SuiteListState>;

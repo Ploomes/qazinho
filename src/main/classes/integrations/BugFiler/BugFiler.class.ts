@@ -26,7 +26,10 @@ import {
   markdownOfReport,
 } from './library';
 
-/** Files the QA's bug in their tracker, and adds to its issue later: a Jira issue with its screens and video attached and linked to its story, or a GitHub issue through the QA's gh. */
+/**
+ * Files the QA's bug in their tracker, and adds to its issue later: in Jira or through
+ * the QA's gh.
+ */
 export class BugFiler {
   private readonly jira: IJiraFiling;
   private readonly github: IGithubFiling;
@@ -44,7 +47,10 @@ export class BugFiler {
     this.now = props.now;
   }
 
-  /** Sends one bug, telling each step as it goes: the issue it became, or why there is none. */
+  /**
+   * Sends one bug, telling each step as it goes: the issue it became, or why there is
+   * none.
+   */
   public async file(request: IFileBug): Promise<BugFiling> {
     const { target } = request;
 
@@ -53,7 +59,10 @@ export class BugFiler {
       : this.toGithub({ request, repository: `${target.owner}/${target.name}` });
   }
 
-  /** A filed bug's issue as its tracker keeps it now, for the agent to weigh what came back against; or why it could not be read, in the tracker's words. */
+  /**
+   * A filed bug's issue as its tracker keeps it now, for the agent to weigh what came
+   * back against; or why it could not be read, in the tracker's words.
+   */
   public async read(
     issue: IFiledIssue,
   ): Promise<
@@ -84,7 +93,10 @@ export class BugFiler {
       : { isRead: true, issue: found };
   }
 
-  /** Posts an update under a bug's issue: a Jira comment with the new screens and video attached to the issue, or a GitHub comment through gh. */
+  /**
+   * Posts an update under a bug's issue: a Jira comment with the new screens and video
+   * attached to the issue, or a GitHub comment through gh.
+   */
   public async comment(request: ICommentBug): Promise<BugComment> {
     const { issue } = request;
 

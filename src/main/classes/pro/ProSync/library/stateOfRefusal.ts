@@ -1,6 +1,9 @@
 import type { ProSyncState } from '@/shared/types';
 
-/** Where a project's sync stands after the platform refused a call, by the status it answered. */
+/**
+ * Where a project's sync stands after the platform refused a call, by the status it
+ * answered.
+ */
 export function stateOfRefusal(answer: { status: number; error: string }): ProSyncState {
   if (answer.status === 0) return 'waiting';
   if (answer.status === 401) return 'signed-out';

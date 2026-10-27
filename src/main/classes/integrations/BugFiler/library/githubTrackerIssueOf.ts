@@ -3,25 +3,13 @@ import type { ITrackerIssue } from '@/shared/types';
 type Loose = Record<string, unknown>;
 
 const COMMENTS = 10;
+
 const COMMENT_LENGTH = 1_500;
 
-function record(value: unknown): Loose {
-  return typeof value === 'object' && value !== null ? (value as Loose) : {};
-}
-
-function text(value: unknown): string {
-  return typeof value === 'string' ? value.trim() : '';
-}
-
-function parsed(said: string): unknown {
-  try {
-    return JSON.parse(said);
-  } catch {
-    return null;
-  }
-}
-
-/** A GitHub issue as gh answered it, with the comments under it, the latest kept; null for an answer that is no issue. */
+/**
+ * A GitHub issue as gh answered it, with the comments under it, the latest kept; null for
+ * an answer that is no issue.
+ */
 export function githubTrackerIssueOf(props: {
   issue: string;
   comments: string;
@@ -48,4 +36,20 @@ export function githubTrackerIssueOf(props: {
       }))
       .filter((comment) => comment.text.length > 0),
   };
+}
+
+function record(value: unknown): Loose {
+  return typeof value === 'object' && value !== null ? (value as Loose) : {};
+}
+
+function text(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function parsed(said: string): unknown {
+  try {
+    return JSON.parse(said);
+  } catch {
+    return null;
+  }
 }

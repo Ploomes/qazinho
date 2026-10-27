@@ -1,4 +1,7 @@
-/** What a target is, as an org may read it: a web address without a login in it, or a build by its file name, never the folder it sits in on this machine. */
+/**
+ * What a target is, as an org may read it: a web address without a login in it, or a
+ * build by its file name, never the folder it sits in on this machine.
+ */
 export function sharedValueOf(value: string): string {
   if (!/^https?:\/\//i.test(value)) return value.split(/[\\/]/).pop() ?? value;
 

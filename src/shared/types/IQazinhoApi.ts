@@ -88,7 +88,10 @@ import type { UnreadPlanRead } from './UnreadPlanRead';
 import type { VariablesOutcome } from './VariablesOutcome';
 import type { WindowFit } from './WindowFit';
 
-/** What the preload exposes to the page as `window.qazinho`. Data and purposeful functions only. */
+/**
+ * What the preload exposes to the page as `window.qazinho`. Data and purposeful functions
+ * only.
+ */
 export interface IQazinhoApi {
   platform: Platform;
   detectAgents: () => Promise<IDetectedAgent[]>;

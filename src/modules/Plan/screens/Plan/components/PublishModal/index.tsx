@@ -7,7 +7,10 @@ import { MOTION } from '@/shared/constants';
 import { usePublishModalViewModel } from './hooks';
 import './styles.css';
 
-/** Publishing a plan in Confluence the first time: the space, the page it goes under if any, and its title. */
+/**
+ * Publishing a plan in Confluence the first time: the space, the page it goes under if
+ * any, and its title.
+ */
 export const PublishModal: React.FC<IPublishModalProps> = (props) => {
   const {
     title,

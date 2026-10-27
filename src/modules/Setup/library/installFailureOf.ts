@@ -8,7 +8,10 @@ const MISSING: Record<string, ParseKeys> = {
   python3: 'SETUP.INSTALL_MISSING_PYTHON',
 };
 
-/** What to tell the QA when an install did not finish: a key and the words that fill it in their language, or what the tool itself printed, as it printed it. */
+/**
+ * What to tell the QA when an install did not finish: a key and the words that fill it in
+ * their language, or what the tool itself printed, as it printed it.
+ */
 export function installFailureOf(
   failure: InstallFailure,
 ): { key: ParseKeys; values: { tool?: string; code?: string } } | { text: string } {

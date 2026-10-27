@@ -5,7 +5,10 @@ import { finishedVerdictOf } from './finishedVerdictOf';
 import { startedIsoOf } from './startedIsoOf';
 import { videoSecondsOf } from './videoSecondsOf';
 
-/** A finished run as QAzinho Pro takes it, on the target its workspace runs on, each step placed on its video; null for a run that does not know when it started. */
+/**
+ * A finished run as QAzinho Pro takes it, on the target its workspace runs on, each step
+ * placed on its video; null for a run that does not know when it started.
+ */
 export function syncedRunOf(props: {
   workspaceId: string;
   run: IRun;

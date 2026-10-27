@@ -4,7 +4,10 @@ import type { IGithubCode } from '@/main/classes/integrations/CodeCopies/types';
 import type { IBuildEvent } from '@/shared/types';
 import type { Harness } from '@salve-software/qazinho-harness';
 
-/** What a build needs: gh for the code, the QA's agent and the harness to build it, where to keep it, and a look at the machine. */
+/**
+ * What a build needs: gh for the code, the QA's agent and the harness to build it, where
+ * to keep it, and a look at the machine.
+ */
 export interface IAppBuilder {
   github: IGithubCode;
   runner: Pick<AgentRunner, 'ask' | 'cancel'>;

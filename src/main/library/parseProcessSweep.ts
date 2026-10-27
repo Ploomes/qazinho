@@ -1,13 +1,10 @@
 import type { IProcessRow } from '@/main/types';
 import { parseCpuTime } from './parseCpuTime';
 
-function nameOf(command: string): string {
-  const flag = command.search(/\s-{1,2}\w/);
-
-  return (flag === -1 ? command : command.slice(0, flag)).trim();
-}
-
-/** Reads `ps -axo pid=,ppid=,time=,rss=,args=`. The last field holds the whole command line. */
+/**
+ * Reads `ps -axo pid=,ppid=,time=,rss=,args=`. The last field holds the whole command
+ * line.
+ */
 export function parseProcessSweep(output: string): IProcessRow[] {
   return output
     .split('\n')
@@ -32,4 +29,10 @@ export function parseProcessSweep(output: string): IProcessRow[] {
       ];
     })
     .filter((row) => Number.isFinite(row.pid) && Number.isFinite(row.ramMb));
+}
+
+function nameOf(command: string): string {
+  const flag = command.search(/\s-{1,2}\w/);
+
+  return (flag === -1 ? command : command.slice(0, flag)).trim();
 }

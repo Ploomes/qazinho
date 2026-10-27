@@ -12,7 +12,10 @@ const NAMED: Record<string, string> = {
   ' ': '␣',
 };
 
-/** Control stands in for Command off macOS, so one written shortcut works on every machine. */
+/**
+ * Control stands in for Command off macOS, so one written shortcut works on every
+ * machine.
+ */
 export function comboOf(event: {
   key: string;
   metaKey: boolean;

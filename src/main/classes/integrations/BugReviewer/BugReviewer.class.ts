@@ -7,7 +7,10 @@ import { join } from 'node:path';
 import { isInside } from '@/main/classes/storage/Archive/library';
 import { BUG_REVIEW } from './constants';
 
-/** Weighs a bug that came back against the issue it became, with the QA's own agent: reads the issue as the team keeps it, lets the agent look at the new screens, and answers what it decided. */
+/**
+ * Weighs a bug that came back against its issue with the QA's own agent, and answers its
+ * verdict.
+ */
 export class BugReviewer {
   private readonly filer: Pick<BugFiler, 'read'>;
   private readonly runner: Pick<AgentRunner, 'ask'>;
@@ -23,7 +26,10 @@ export class BugReviewer {
     this.runsRoot = props.runsRoot;
   }
 
-  /** One review of a bug seen again: whether the issue needs an update and the update the agent wrote, a closed issue always read as a regression; or why there is none. */
+  /**
+   * One review of a bug seen again: whether the issue needs an update and the update the
+   * agent wrote, a closed issue always read as a regression; or why there is none.
+   */
   public async review(request: IReviewBug): Promise<BugReview> {
     if (!BUG_REVIEW.id.test(request.workspaceId) || !BUG_REVIEW.id.test(request.bugId))
       return { isReviewed: false, failure: 'agent', said: '' };

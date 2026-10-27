@@ -14,6 +14,31 @@ const POSIX_DIRS = [
   '.npm-global/bin',
 ];
 
+/**
+ * Every directory a command could be in: the app's PATH, the shell's, then where installs
+ * land on this platform.
+ */
+export function searchDirectories(props: {
+  appPath: string | undefined;
+  shellPath: string | undefined;
+  home: string;
+  platform: NodeJS.Platform;
+  env: Record<string, string | undefined>;
+}): string[] {
+  return mergePathSegments({
+    platform: props.platform,
+    segments: [
+      props.appPath,
+      props.shellPath,
+      ...(props.platform === 'win32'
+        ? windowsDirs(props)
+        : POSIX_DIRS.map((directory) =>
+            posix.isAbsolute(directory) ? directory : posix.join(props.home, directory),
+          )),
+    ],
+  });
+}
+
 function windowsDirs(props: {
   home: string;
   env: Record<string, string | undefined>;
@@ -35,26 +60,4 @@ function windowsDirs(props: {
     win32.join(programFiles, 'GitHub CLI'),
     win32.join(props.env.SystemRoot ?? 'C:\\Windows', 'System32'),
   ];
-}
-
-/** Every directory a command could be in: the app's PATH, the shell's, then where installs land on this platform. */
-export function searchDirectories(props: {
-  appPath: string | undefined;
-  shellPath: string | undefined;
-  home: string;
-  platform: NodeJS.Platform;
-  env: Record<string, string | undefined>;
-}): string[] {
-  return mergePathSegments({
-    platform: props.platform,
-    segments: [
-      props.appPath,
-      props.shellPath,
-      ...(props.platform === 'win32'
-        ? windowsDirs(props)
-        : POSIX_DIRS.map((directory) =>
-            posix.isAbsolute(directory) ? directory : posix.join(props.home, directory),
-          )),
-    ],
-  });
 }

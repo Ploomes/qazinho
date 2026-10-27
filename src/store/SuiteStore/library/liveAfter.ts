@@ -1,7 +1,10 @@
 import type { SuiteEvent } from '@/shared/types';
 import type { ISuiteLive } from '@/store/SuiteStore/types';
 
-/** The run going on a project once one of its events is heard: the tests running with the step each is on, until the run ends. */
+/**
+ * The run going on a project once one of its events is heard: the tests running with the
+ * step each is on, until the run ends.
+ */
 export function liveAfter(props: {
   live: ISuiteLive | null;
   event: SuiteEvent;

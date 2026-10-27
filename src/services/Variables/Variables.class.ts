@@ -4,7 +4,10 @@ import type {
   VariablesOutcome,
 } from '@/shared/types';
 
-/** The only caller of the variables side of the bridge. Values go in; only names and descriptions come back. */
+/**
+ * The only caller of the variables side of the bridge. Values go in; only names and
+ * descriptions come back.
+ */
 export class Variables {
   public static async list(): Promise<IProjectVariables[]> {
     return (await window.qazinho?.listVariables()) ?? [];

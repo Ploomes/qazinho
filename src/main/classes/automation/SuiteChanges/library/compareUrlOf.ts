@@ -1,4 +1,7 @@
-/** Where on GitHub the QA opens a pull request for a branch pushed from the one it came from; null away from GitHub or with no branch to compare with. */
+/**
+ * Where on GitHub the QA opens a pull request for a branch pushed from the one it came
+ * from; null away from GitHub or with no branch to compare with.
+ */
 export function compareUrlOf(props: {
   repository: string | null;
   base: string;

@@ -3,7 +3,10 @@ import { SuiteChangeCard } from '@/modules/Automation/screens/Automation/compone
 import { useSuiteRequestPaneViewModel } from './hooks';
 import './styles.css';
 
-/** A new test asked of the agent, picked: what the QA asked, the plan case it automates and where it goes, and the agent's work on it. */
+/**
+ * A new test asked of the agent, picked: what the QA asked, the plan case it automates
+ * and where it goes, and the agent's work on it.
+ */
 export const SuiteRequestPane: React.FC<ISuiteRequestPaneProps> = (props) => {
   const { eyebrow, title, text, from, where, card } = useSuiteRequestPaneViewModel(props);
 

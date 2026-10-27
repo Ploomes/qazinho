@@ -3,7 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { Icon, Input } from '@/shared/components/atoms';
 import './styles.css';
 
-/** One variable as the QA writes it: its name in capitals, what it holds, and its value, typed masked and never shown back. */
+/**
+ * One variable as the QA writes it: its name in capitals, what it holds, and its value,
+ * typed masked and never shown back.
+ */
 export const VariableForm: React.FC<IVariableFormProps> = (props) => {
   const { t } = useTranslation();
 

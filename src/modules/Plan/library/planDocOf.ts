@@ -3,7 +3,10 @@ import type { IRun } from '@/modules/Run/types';
 import type { BugReportBlock, IDesignLink } from '@/shared/types';
 import { frameUrlOf } from './frameUrlOf';
 
-/** A plan written out as a Confluence page: where it came from and its latest run, then each case with its facts and its steps as a table, the verdict each step got in that run when it walked it. */
+/**
+ * A plan as a Confluence page: where it came from, then each case with its steps and
+ * verdicts.
+ */
 export function planDocOf(props: {
   plan: ITestCase[];
   run: IRun | null;

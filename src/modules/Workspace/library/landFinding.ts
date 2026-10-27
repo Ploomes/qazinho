@@ -2,7 +2,10 @@ import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IRunFinding, IStepOutcome } from '@/shared/types';
 import { catchBug } from '@/modules/Bug/library';
 
-/** A bug the run's agent filed on the side of a step: it lands outside the plan, on the bug already open it is or as a new one, and the run's section says so once. */
+/**
+ * A bug the run's agent filed on the side of a step: it lands outside the plan, on the
+ * bug already open it is or as a new one, and the run's section says so once.
+ */
 export function landFinding(props: {
   workspace: IWorkspace;
   finding: IRunFinding;

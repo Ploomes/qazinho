@@ -4,7 +4,10 @@ import type { IssueTracker } from '@/shared/types';
 import { appearancesOf } from './appearancesOf';
 import { pasteShotOf } from './pasteShotOf';
 
-/** What sending a bug to a tracker takes: Jira gets its screens, a video of the latest run that recorded it and the link to the story; GitHub gets the words, and the screen that broke to paste. */
+/**
+ * What sending a bug to a tracker takes: Jira gets screens, video and story; GitHub gets
+ * the words.
+ */
 export function filingPlanOf(props: {
   workspace: IWorkspace;
   bug: IBug;

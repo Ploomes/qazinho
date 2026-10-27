@@ -1,7 +1,10 @@
 import type { IRunAlert, IRunRef } from '@/shared/types';
 import { app, Notification } from 'electron';
 
-/** Calls the QA back when a run ends, or its agent asks them something, while they are elsewhere: a notification with its sound, and a count on the app's icon until they return. */
+/**
+ * Calls the QA back when a run ends or asks them something: a notification, and a badge
+ * on the icon.
+ */
 export class RunAlerts {
   private readonly onOpen: (run: IRunRef) => void;
   private readonly shown = new Set<Notification>();
@@ -11,7 +14,9 @@ export class RunAlerts {
     this.onOpen = onOpen;
   }
 
-  /** Alerts what a run says, unless the QA is looking at the app, which tells them itself. */
+  /**
+   * Alerts what a run says, unless the QA is looking at the app, which tells them itself.
+   */
   public alert(props: { notice: IRunAlert; isAway: boolean }): void {
     const { notice, isAway } = props;
 

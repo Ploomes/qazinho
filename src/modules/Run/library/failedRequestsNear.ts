@@ -2,7 +2,7 @@ import type { INetworkEntry } from '@/shared/types';
 import { NETWORK } from '@/modules/Run/constants';
 import { requestOutcomeOf } from './requestOutcomeOf';
 
-/** The requests that failed around a moment of a run, in the order they were made: the ones started in the seconds before it or just after, that got an error or no answer, the closest kept. */
+/** The requests that failed around a moment of a run, in the order they were made. */
 export function failedRequestsNear(props: {
   entries: INetworkEntry[];
   at: number;

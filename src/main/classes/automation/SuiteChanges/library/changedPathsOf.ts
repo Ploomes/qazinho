@@ -1,16 +1,9 @@
 import type { IChangedPath } from '@/main/classes/automation/SuiteChanges/types';
 
-function statusOf(code: string): IChangedPath['status'] {
-  if (code === '??') return 'untracked';
-
-  if (code.includes('R')) return 'renamed';
-
-  if (code.includes('D')) return 'deleted';
-
-  return code.includes('A') ? 'added' : 'modified';
-}
-
-/** The paths a copy changed, out of `git status --porcelain=v1 -z`: a rename takes its new path, and what git ignores never shows. */
+/**
+ * The paths a copy changed, out of `git status --porcelain=v1 -z`: a rename takes its new
+ * path, and what git ignores never shows.
+ */
 export function changedPathsOf(text: string): IChangedPath[] {
   const fields = text.split('\0');
   const changed: IChangedPath[] = [];
@@ -28,4 +21,14 @@ export function changedPathsOf(text: string): IChangedPath[] {
   }
 
   return changed;
+}
+
+function statusOf(code: string): IChangedPath['status'] {
+  if (code === '??') return 'untracked';
+
+  if (code.includes('R')) return 'renamed';
+
+  if (code.includes('D')) return 'deleted';
+
+  return code.includes('A') ? 'added' : 'modified';
 }

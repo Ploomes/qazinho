@@ -5,7 +5,10 @@ const run = promisify(execFile);
 const TIMEOUT_MS = 2_000;
 const MARK = '__QAZINHO_PATH__';
 
-/** The PATH the QA's login shell sets, which an app opened from Finder or a desktop menu never inherits; none on Windows, where apps get the user's PATH. */
+/**
+ * The PATH the QA's login shell sets, which an app opened from Finder or a desktop menu
+ * never inherits; none on Windows, where apps get the user's PATH.
+ */
 export async function hydrateShellPath(): Promise<string | undefined> {
   if (process.platform === 'win32') return undefined;
 

@@ -1,16 +1,7 @@
-function segmentOf(part: string | undefined): string | null {
-  if (!part) return null;
-
-  try {
-    const segment = decodeURIComponent(part);
-
-    return segment === '.' || segment === '..' || /[\\/]/.test(segment) ? null : segment;
-  } catch {
-    return null;
-  }
-}
-
-/** A suite file's path is /<token>/suite/<project>/<run>/<file…>; one without this launch's token, or one that climbs out, gets nothing. */
+/**
+ * A suite file's path is /<token>/suite/<project>/<run>/<file…>; one without this
+ * launch's token, or one that climbs out, gets nothing.
+ */
 export function suiteFileOfPath(props: {
   path: string;
   token: string;
@@ -32,4 +23,16 @@ export function suiteFileOfPath(props: {
     return null;
 
   return { projectId, runId, file: file.filter((segment) => segment !== null) };
+}
+
+function segmentOf(part: string | undefined): string | null {
+  if (!part) return null;
+
+  try {
+    const segment = decodeURIComponent(part);
+
+    return segment === '.' || segment === '..' || /[\\/]/.test(segment) ? null : segment;
+  } catch {
+    return null;
+  }
 }

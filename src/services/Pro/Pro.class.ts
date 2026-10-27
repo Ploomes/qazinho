@@ -8,7 +8,10 @@ import type {
   ProStatus,
 } from '@/shared/types';
 
-/** The only caller of QAzinho Pro's side of the bridge: this machine's sign-in, where it stands, and its projects sent to its org in the background. */
+/**
+ * The only caller of QAzinho Pro's side of the bridge: this machine's sign-in, where it
+ * stands, and its projects sent to its org in the background.
+ */
 export class Pro {
   public static async status(): Promise<ProStatus> {
     return (

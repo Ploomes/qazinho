@@ -1,4 +1,7 @@
-/** Reads the cumulative cpu time `ps -o time=` prints, `[days-][hours:]minutes:seconds`, as seconds. */
+/**
+ * Reads the cumulative cpu time `ps -o time=` prints, `[days-][hours:]minutes:seconds`,
+ * as seconds.
+ */
 export function parseCpuTime(text: string): number {
   const [days, clock] = text.includes('-') ? text.split('-') : ['0', text];
   const parts = (clock ?? '').split(':').map(Number);

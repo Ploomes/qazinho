@@ -9,7 +9,10 @@ const FAILURES: Record<GithubFailure, FilingFailure> = {
   unexpected: 'unexpected',
 };
 
-/** Why GitHub did not take a bug, as a filing says it: gh gone or signed out, the repository refused or not there, out of reach, or what GitHub refused to take. */
+/**
+ * Why GitHub did not take a bug, as a filing says it: gh gone or signed out, the
+ * repository refused or not there, out of reach, or what GitHub refused to take.
+ */
 export function filingFailureOf(props: {
   failure: GithubFailure;
   httpStatus: number | null;

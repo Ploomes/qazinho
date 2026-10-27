@@ -5,21 +5,10 @@ import type { IWorkspace } from '@/modules/Workspace/types';
 import { isSeenIn } from '@/modules/Bug/library';
 import { buildRun } from './buildRun';
 
-function isSettled(props: {
-  walked: IRunCase;
-  testCase: ITestCase;
-  reached: number;
-}): boolean {
-  const { walked, testCase, reached } = props;
-
-  return (
-    walked.verdict === 'failed' ||
-    walked.verdict === 'blocked' ||
-    reached >= testCase.steps.length
-  );
-}
-
-/** Ends the run in flight however it ended: what it walked becomes a run the QA can open, an exploration's suggested plan waits in the chat, and a run that walked nothing is only stopped. */
+/**
+ * Ends the run in flight however it ended, keeping what it walked as a run the QA can
+ * open.
+ */
 export function endRun(props: {
   workspace: IWorkspace;
   at: string;
@@ -85,4 +74,18 @@ export function endRun(props: {
         : testCase;
     }),
   };
+}
+
+function isSettled(props: {
+  walked: IRunCase;
+  testCase: ITestCase;
+  reached: number;
+}): boolean {
+  const { walked, testCase, reached } = props;
+
+  return (
+    walked.verdict === 'failed' ||
+    walked.verdict === 'blocked' ||
+    reached >= testCase.steps.length
+  );
 }

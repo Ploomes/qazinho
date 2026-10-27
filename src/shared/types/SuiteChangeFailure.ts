@@ -1,6 +1,6 @@
 import type { RunFailure } from './RunFailure';
 
-/** Why a change left nothing to review: no suite, a folder git does not keep, no copy, no Playwright to run it, no agent, the agent failing, nothing changed, QAzinho closing while it worked, or something QAzinho did not expect. */
+/** Why a change left nothing to review. */
 export type SuiteChangeFailure =
   | { reason: 'no-suite' }
   | { reason: 'no-git'; said: string }

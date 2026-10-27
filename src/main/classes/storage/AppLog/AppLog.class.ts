@@ -4,7 +4,10 @@ import { join } from 'node:path';
 import { APP_LOG } from './constants';
 import { logLineOf } from './library';
 
-/** The app's own log, kept on this machine only: what went wrong and when, with no token, password or user name in it, in a file that rolls over before it grows big. */
+/**
+ * The app's own log, kept on this machine only: what went wrong and when, with no token,
+ * password or user name in it, in a file that rolls over before it grows big.
+ */
 export class AppLog {
   private readonly folder: string;
   private readonly home: string;

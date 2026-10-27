@@ -1,6 +1,9 @@
 import type { IWorkspace } from '@/modules/Workspace';
 
-/** The session the workspace's chat goes on in, only with the agent that started it: another agent starts its own. */
+/**
+ * The session the workspace's chat goes on in, only with the agent that started it:
+ * another agent starts its own.
+ */
 export function sessionFor(props: {
   workspace: Pick<IWorkspace, 'sessionId' | 'sessionAgentId'>;
   agentId: string;

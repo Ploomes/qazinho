@@ -1,4 +1,7 @@
-/** Where Tab goes from the last thing in a modal, or Shift+Tab from the first: round to the other end, so focus never leaves the modal for what sits behind it; null when the browser's own move stays inside. */
+/**
+ * Where Tab goes from a modal's last control, or Shift+Tab from its first: round to the
+ * other end.
+ */
 export function wrappedFocus<T>(props: {
   items: T[];
   current: T | null;

@@ -3,7 +3,10 @@ import type { AppToolCall, IAppToolAnswer } from '@/shared/types';
 import { randomUUID } from 'node:crypto';
 import { APP_BRIDGE } from './constants';
 
-/** Hands the assistant's app tool calls to the page, which carries them out through the same stores the QA uses, and waits for what it did. */
+/**
+ * Hands the assistant's app tool calls to the page, which carries them out through the
+ * same stores the QA uses, and waits for what it did.
+ */
 export class AppBridge {
   private readonly send: IAppBridge['send'];
   private readonly timeoutMs: number;
@@ -17,7 +20,10 @@ export class AppBridge {
     this.timeoutMs = props.timeoutMs;
   }
 
-  /** Asks the page to carry one call out, and answers what it did, or why nothing was done. */
+  /**
+   * Asks the page to carry one call out, and answers what it did, or why nothing was
+   * done.
+   */
   public act(call: AppToolCall): Promise<{ text: string; isError: boolean }> {
     const id = randomUUID();
 
@@ -37,7 +43,9 @@ export class AppBridge {
     });
   }
 
-  /** Settles the call the page answered; an answer nobody waits for any more is dropped. */
+  /**
+   * Settles the call the page answered; an answer nobody waits for any more is dropped.
+   */
   public answer(answer: IAppToolAnswer): void {
     const call = this.waiting.get(answer.id);
 
@@ -48,7 +56,9 @@ export class AppBridge {
     call.settle({ text: answer.text, isError: answer.isError });
   }
 
-  /** Lets every call still waiting go, once the page that would have answered it is gone. */
+  /**
+   * Lets every call still waiting go, once the page that would have answered it is gone.
+   */
   public dropAll(): void {
     for (const [id, call] of this.waiting) {
       clearTimeout(call.timer);

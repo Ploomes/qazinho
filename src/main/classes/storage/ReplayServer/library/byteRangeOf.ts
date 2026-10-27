@@ -1,6 +1,9 @@
 import type { ByteRange } from '@/main/classes/storage/ReplayServer/types';
 
-/** The bytes a Range header asks of a file of `size` bytes, the way a <video> asks for them to seek. */
+/**
+ * The bytes a Range header asks of a file of `size` bytes, the way a <video> asks for
+ * them to seek.
+ */
 export function byteRangeOf(props: {
   header: string | undefined;
   size: number;

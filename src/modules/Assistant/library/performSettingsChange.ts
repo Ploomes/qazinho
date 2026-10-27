@@ -3,32 +3,10 @@ import type { AppToolCall, IntegrationId } from '@/shared/types';
 
 const NAMES: Record<IntegrationId, string> = { github: 'GitHub', jira: 'Jira' };
 
-function settingsSaid(props: {
-  args: Extract<AppToolCall, { name: 'change_settings' }>['args'];
-  port: IAppPort;
-}): string {
-  const { args, port } = props;
-
-  return [
-    ...(args.theme === undefined
-      ? []
-      : [
-          `QAzinho is on the theme the QA sees as ${port.themeName(args.theme === 'night' ? 'dark' : 'light')}`,
-        ]),
-    ...(args.language === undefined
-      ? []
-      : [`it speaks ${args.language === 'pt' ? 'Brazilian Portuguese' : 'English'}`]),
-    ...(args.runAlert === undefined
-      ? []
-      : [
-          args.runAlert === 'system'
-            ? 'a run that ends calls the QA with a notification'
-            : 'a run that ends calls the QA only inside QAzinho',
-        ]),
-  ].join(', ');
-}
-
-/** Changes how QAzinho looks and calls the QA, and connects or disconnects a tracker, the disconnecting once the QA confirms. */
+/**
+ * Changes how QAzinho looks and calls the QA, and connects or disconnects a tracker, the
+ * disconnecting once the QA confirms.
+ */
 export async function performSettingsChange(props: {
   id: string;
   call: Extract<
@@ -101,4 +79,29 @@ export async function performSettingsChange(props: {
         : 'Disconnected Jira, and its token is gone from this machine.',
     isError: false,
   };
+}
+
+function settingsSaid(props: {
+  args: Extract<AppToolCall, { name: 'change_settings' }>['args'];
+  port: IAppPort;
+}): string {
+  const { args, port } = props;
+
+  return [
+    ...(args.theme === undefined
+      ? []
+      : [
+          `QAzinho is on the theme the QA sees as ${port.themeName(args.theme === 'night' ? 'dark' : 'light')}`,
+        ]),
+    ...(args.language === undefined
+      ? []
+      : [`it speaks ${args.language === 'pt' ? 'Brazilian Portuguese' : 'English'}`]),
+    ...(args.runAlert === undefined
+      ? []
+      : [
+          args.runAlert === 'system'
+            ? 'a run that ends calls the QA with a notification'
+            : 'a run that ends calls the QA only inside QAzinho',
+        ]),
+  ].join(', ');
 }

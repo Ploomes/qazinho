@@ -8,7 +8,10 @@ import { McpSignIn } from './components';
 import { useMcpCardViewModel } from './hooks';
 import './styles.css';
 
-/** An MCP server in the QA's own agent: where it stands there, and the one step it needs next. */
+/**
+ * An MCP server in the QA's own agent: where it stands there, and the one step it needs
+ * next.
+ */
 export const McpCard: React.FC<IMcpCardProps> = (props) => {
   const {
     isConnected,

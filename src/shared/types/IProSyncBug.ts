@@ -2,7 +2,10 @@ import type { IFiledIssue } from './IFiledIssue';
 import type { IProSyncCatch } from './IProSyncCatch';
 import type { Severity } from './Severity';
 
-/** A bug as it goes to QAzinho Pro: its words, where it broke, its screens as files in the archive, the run that first caught it, each later sighting, and its issue. */
+/**
+ * A bug as it goes to QAzinho Pro: its words, where it broke, its screens as files in the
+ * archive, the run that first caught it, each later sighting, and its issue.
+ */
 export interface IProSyncBug {
   workspaceId: string;
   bugId: string;

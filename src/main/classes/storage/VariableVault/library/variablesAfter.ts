@@ -2,7 +2,10 @@ import type { IStoredVariable } from '@/main/classes/storage/VariableVault/types
 import type { IApplyVariables, VariableFailure } from '@/shared/types';
 import { VARIABLE_NAME } from '@/shared/constants';
 
-/** Every variable once a project's changes are applied in order, or the first change that breaks a rule, with nothing applied. */
+/**
+ * Every variable once a project's changes are applied in order, or the first change that
+ * breaks a rule, with nothing applied.
+ */
 export function variablesAfter(props: {
   stored: IStoredVariable[];
   apply: IApplyVariables;

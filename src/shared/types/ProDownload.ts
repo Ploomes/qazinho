@@ -2,7 +2,10 @@ import type { IProSyncPlan } from './IProSyncPlan';
 import type { IProSyncProject } from './IProSyncProject';
 import type { IVariableBrief } from './IVariableBrief';
 
-/** A project downloaded from its org, with its plans and the variables it names, or why it was not: signed out, no answer, gone from the org, already on this computer, or a refusal. */
+/**
+ * A project downloaded from its org with its plans and variables' names, or why it was
+ * not.
+ */
 export type ProDownload =
   | {
       isDownloaded: true;

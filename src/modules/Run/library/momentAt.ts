@@ -1,6 +1,9 @@
 import type { IReplayMoment, IReplayTimeline } from '@/modules/Run/types';
 
-/** The case and step a moment of the video shows: the last of each begun by then, and whether that case already ended. */
+/**
+ * The case and step a moment of the video shows: the last of each begun by then, and
+ * whether that case already ended.
+ */
 export function momentAt(props: {
   timeline: IReplayTimeline;
   ms: number;

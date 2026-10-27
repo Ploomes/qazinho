@@ -5,7 +5,10 @@ import { BACKDROP, MOTION, STICKER } from '@/shared/constants';
 import { useStepsPopupViewModel } from './hooks';
 import './styles.css';
 
-/** A small popup listing the steps QAzinho takes out of sight as they happen; the QA's own step points at its page. */
+/**
+ * A small popup listing the steps QAzinho takes out of sight as they happen; the QA's own
+ * step points at its page.
+ */
 export const StepsPopup: React.FC<IStepsPopupProps> = (props) => {
   const {
     style,

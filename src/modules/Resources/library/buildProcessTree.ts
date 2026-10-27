@@ -6,43 +6,10 @@ import { rollUp } from './rollUp';
 
 type Named = (props: { name: string; count: number }) => string;
 
-function ranBy(props: {
-  workspace: IWorkspace;
-  samples: IProcessSample[];
-  named: Named;
-}): IProcessNode[] {
-  const { workspace, samples, named } = props;
-  const agent = samples.filter(({ kind }) => kind === 'agent');
-  const device = samples.filter(({ kind }) => kind === 'device');
-
-  return [
-    ...(agent.length === 0
-      ? []
-      : [
-          {
-            ...rollUp(agent),
-            id: `${workspace.id}-agent`,
-            level: 2 as const,
-            workspaceId: workspace.id,
-            canShutDown: false,
-          },
-        ]),
-    ...(device.length === 0
-      ? []
-      : [
-          {
-            ...rollUp(device),
-            id: `${workspace.id}-device`,
-            name: named({ name: device[0]?.name ?? '', count: device.length }),
-            level: 2 as const,
-            workspaceId: workspace.id,
-            canShutDown: true,
-          },
-        ]),
-  ];
-}
-
-/** A project only shows up once something under it is running; `named` words a line that adds several processes up. */
+/**
+ * A project only shows up once something under it is running; `named` words a line that
+ * adds several processes up.
+ */
 export function buildProcessTree(props: {
   projects: IProject[];
   workspaces: IWorkspace[];
@@ -93,4 +60,40 @@ export function buildProcessTree(props: {
       ...children,
     ];
   });
+}
+
+function ranBy(props: {
+  workspace: IWorkspace;
+  samples: IProcessSample[];
+  named: Named;
+}): IProcessNode[] {
+  const { workspace, samples, named } = props;
+  const agent = samples.filter(({ kind }) => kind === 'agent');
+  const device = samples.filter(({ kind }) => kind === 'device');
+
+  return [
+    ...(agent.length === 0
+      ? []
+      : [
+          {
+            ...rollUp(agent),
+            id: `${workspace.id}-agent`,
+            level: 2 as const,
+            workspaceId: workspace.id,
+            canShutDown: false,
+          },
+        ]),
+    ...(device.length === 0
+      ? []
+      : [
+          {
+            ...rollUp(device),
+            id: `${workspace.id}-device`,
+            name: named({ name: device[0]?.name ?? '', count: device.length }),
+            level: 2 as const,
+            workspaceId: workspace.id,
+            canShutDown: true,
+          },
+        ]),
+  ];
 }

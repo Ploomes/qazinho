@@ -22,7 +22,10 @@ import {
   pickedIssuesOf,
 } from './library';
 
-/** Talks to the QA's Jira Cloud with the credentials sealed for it: finds issues, reads a story with its files, and files a bug with its own. */
+/**
+ * Talks to the QA's Jira Cloud with the credentials sealed for it: finds issues, reads a
+ * story with its files, and files a bug with its own.
+ */
 export class JiraApi {
   private readonly credentials: () => Promise<IJiraCredentials | null>;
   private readonly fetcher: JiraFetcher;
@@ -32,7 +35,10 @@ export class JiraApi {
     this.fetcher = props.fetcher;
   }
 
-  /** The issues the picker offers: the one a typed key names first, then the ones the QA saw last or that match what they typed. */
+  /**
+   * The issues the picker offers: the one a typed key names first, then the ones the QA
+   * saw last or that match what they typed.
+   */
   public async search(query: string): Promise<JiraIssueList> {
     const signed = await this.credentials();
 
@@ -92,7 +98,10 @@ export class JiraApi {
       : { isRead: true, story };
   }
 
-  /** Downloads one file attached to an issue into a file on disk; false when Jira did not hand it over or it grew past `maxBytes`. */
+  /**
+   * Downloads one file attached to an issue into a file on disk; false when Jira did not
+   * hand it over or it grew past `maxBytes`.
+   */
   public async download(props: {
     id: string;
     file: string;
@@ -117,7 +126,10 @@ export class JiraApi {
     );
   }
 
-  /** The projects the QA can file in: the ones they opened last first, then the rest Jira lists. */
+  /**
+   * The projects the QA can file in: the ones they opened last first, then the rest Jira
+   * lists.
+   */
   public async projects(): Promise<JiraProjectList> {
     const signed = await this.credentials();
 
@@ -150,7 +162,10 @@ export class JiraApi {
     };
   }
 
-  /** Files a bug in a project as an issue of its Bug type, or the type closest to it: the new issue, or why Jira refused it. */
+  /**
+   * Files a bug in a project as an issue of its Bug type, or the type closest to it: the
+   * new issue, or why Jira refused it.
+   */
   public async fileBug(props: {
     project: string;
     report: IBugReport;
@@ -195,7 +210,10 @@ export class JiraApi {
       : { isFiled: false, failure: 'unexpected', said: '' };
   }
 
-  /** An issue as Jira keeps it now, with its status and the team's latest comments, or why Jira did not hand it over. */
+  /**
+   * An issue as Jira keeps it now, with its status and the team's latest comments, or why
+   * Jira did not hand it over.
+   */
   public async issue(
     key: string,
   ): Promise<
@@ -221,7 +239,10 @@ export class JiraApi {
       : { isRead: true, issue };
   }
 
-  /** Adds a comment under an issue, written from a report's blocks: where it sits, or why Jira refused it. */
+  /**
+   * Adds a comment under an issue, written from a report's blocks: where it sits, or why
+   * Jira refused it.
+   */
   public async comment(props: { key: string; report: IBugReport }): Promise<BugComment> {
     const signed = await this.credentials();
 
@@ -276,7 +297,10 @@ export class JiraApi {
     ).isOk;
   }
 
-  /** Links an issue to another as related, such as a bug to the story it was planned from; false when Jira refused it. */
+  /**
+   * Links an issue to another as related, such as a bug to the story it was planned from;
+   * false when Jira refused it.
+   */
   public async relate(props: { key: string; to: string }): Promise<boolean> {
     const signed = await this.credentials();
 

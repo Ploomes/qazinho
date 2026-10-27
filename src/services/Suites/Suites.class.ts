@@ -12,7 +12,10 @@ import type {
   SuiteShipWay,
 } from '@/shared/types';
 
-/** The only caller of the automation side of the bridge: the suite each project runs, kept by main. */
+/**
+ * The only caller of the automation side of the bridge: the suite each project runs, kept
+ * by main.
+ */
 export class Suites {
   public static async pick(projectId: string): Promise<SuitePick> {
     return (await window.qazinho?.pickSuite(projectId)) ?? { kind: 'cancelled' };

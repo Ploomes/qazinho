@@ -1,7 +1,10 @@
 import type { RequestOutcome } from '@/modules/Run/types';
 import { NETWORK } from '@/modules/Run/constants';
 
-/** How a request ended: by the class of its status, even when the browser stopped reading the answer after it came, or by its failure when none came. */
+/**
+ * How a request ended: by the class of its status, even when the browser stopped reading
+ * the answer after it came, or by its failure when none came.
+ */
 export function requestOutcomeOf(props: {
   status: number | null;
   failure: string | null;

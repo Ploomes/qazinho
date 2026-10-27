@@ -10,7 +10,10 @@ import { agentFailure, isLostSession } from '@/main/library';
 import { ASSISTANT_WAIT } from '@/shared/constants';
 import { checkBuildPaths } from './library';
 
-/** Asks the QA's own agent as the assistant, with QAzinho's app tools served for the turn and the app as it is now in its message. */
+/**
+ * Asks the QA's own agent as the assistant, with QAzinho's app tools served for the turn
+ * and the app as it is now in its message.
+ */
 export class AssistantAgent {
   private readonly runner: IAssistantAgent['runner'];
   private readonly tools: IAssistantAgent['tools'];
@@ -33,7 +36,10 @@ export class AssistantAgent {
     this.home = props.home;
   }
 
-  /** One message to the assistant, on the session it already has; a session the agent lost starts again. */
+  /**
+   * One message to the assistant, on the session it already has; a session the agent lost
+   * starts again.
+   */
   public async ask(ask: IAssistantAsk): Promise<IAssistantTurn> {
     const unanswered = {
       sessionId: ask.sessionId,
@@ -97,7 +103,10 @@ export class AssistantAgent {
     }
   }
 
-  /** Interrupts the assistant's turn, and lets go of any tool call still waiting on the page. */
+  /**
+   * Interrupts the assistant's turn, and lets go of any tool call still waiting on the
+   * page.
+   */
   public stop(): void {
     if (!this.isAsking) return;
 

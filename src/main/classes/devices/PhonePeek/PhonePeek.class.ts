@@ -4,7 +4,10 @@ import { basename } from 'node:path';
 import { stripAnsi } from '@/main/library';
 import { PHONE_PEEK } from './constants';
 
-/** Opens a phone app on the emulator or simulator before the chat plans, as on the day it was installed, and reads its first screen. */
+/**
+ * Opens a phone app on the emulator or simulator before the chat plans, as on the day it
+ * was installed, and reads its first screen.
+ */
 export class PhonePeek {
   private readonly openDevice: IPhonePeek['openDevice'];
   private readonly isBusy: IPhonePeek['isBusy'];
@@ -17,14 +20,19 @@ export class PhonePeek {
     this.now = props.now ?? Date.now;
   }
 
-  /** Whether a look at the app is kept from a moment ago, so asking again opens no device. */
+  /**
+   * Whether a look at the app is kept from a moment ago, so asking again opens no device.
+   */
   public isKept(target: IPhoneTarget): boolean {
     const kept = this.looks.get(`${target.kind}:${target.value}`);
 
     return kept !== undefined && this.now() - kept.at < PHONE_PEEK.keepMs;
   }
 
-  /** What the app's first screen reads, looked at once and kept for a while; an app that did not open is tried again next time. */
+  /**
+   * What the app's first screen reads, looked at once and kept for a while; an app that
+   * did not open is tried again next time.
+   */
   public async look(target: IPhoneTarget): Promise<AppLook> {
     const key = `${target.kind}:${target.value}`;
     const kept = this.looks.get(key);

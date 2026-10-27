@@ -1,6 +1,9 @@
 import type { IConnectIntegration, IntegrationId } from '@/shared/types';
 
-/** What connecting a tracker takes, from what the QA typed: nothing for GitHub; for Jira, null while a field is empty. */
+/**
+ * What connecting a tracker takes, from what the QA typed: nothing for GitHub; for Jira,
+ * null while a field is empty.
+ */
 export function connectionOf(props: {
   id: IntegrationId;
   values: Partial<Record<'site' | 'email' | 'token', string>>;

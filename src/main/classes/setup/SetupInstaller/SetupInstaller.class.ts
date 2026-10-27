@@ -12,7 +12,10 @@ import { findOnPath, spawnCommand } from '@/main/library';
 import { INSTALL } from './constants';
 import { commandLineOf, explainFailure, linesOf, recipeFor } from './library';
 
-/** Installs the light tools QAzinho drives, on the QA's say-so, and tells the page each line. */
+/**
+ * Installs the light tools QAzinho drives, on the QA's say-so, and tells the page each
+ * line.
+ */
 export class SetupInstaller {
   private readonly onEvent: (event: ISetupEvent) => void;
   private readonly directories: () => Promise<string[]>;
@@ -171,7 +174,10 @@ export class SetupInstaller {
       : findOnPath({ command: props.command, directories: props.directories });
   }
 
-  /** Whether a step's goal is already met, so it is skipped, or was met even though the step complained. */
+  /**
+   * Whether a step's goal is already met, so it is skipped, or was met even though the
+   * step complained.
+   */
   private async isDone(props: {
     step: IInstallStep;
     directories: string[];

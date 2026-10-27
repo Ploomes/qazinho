@@ -1,7 +1,10 @@
 import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
 
-/** A call that lets the QA's own MCP servers in, each permission answered by QAzinho's tool: on the server the call already names, or on the one for permissions alone, with the folders it reads kept readable. */
+/**
+ * A call that lets the QA's own MCP servers in, each permission answered by QAzinho's
+ * tool.
+ */
 export function withPermissions(props: {
   call: IRunAgent;
   permissions: { tool: string; mcpConfig: string | null };

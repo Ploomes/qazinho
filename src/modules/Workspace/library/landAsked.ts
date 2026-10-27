@@ -1,7 +1,10 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IRunQuestion } from '@/shared/types';
 
-/** The run's agent asks the QA something: the run holds on the question until it ends, answered or not, or the run does. */
+/**
+ * The run's agent asks the QA something: the run holds on the question until it ends,
+ * answered or not, or the run does.
+ */
 export function landAsked(props: {
   workspace: IWorkspace;
   question: IRunQuestion;

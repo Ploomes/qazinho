@@ -1,7 +1,10 @@
 import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
 
-/** The flags that make the CLI answer once, in JSON, on the session it already has, with only the tools, commands and folders it was granted, QAzinho's own tools beside them, none of the QA's own hooks, and the QA's own MCP servers only when a tool answers the permissions they ask for. */
+/**
+ * The flags for one CLI answer in JSON on its session, with only the tools and folders it
+ * was granted.
+ */
 export function buildAskArgs(
   props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command' | 'agentId'>,
 ): string[] {

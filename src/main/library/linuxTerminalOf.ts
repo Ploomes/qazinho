@@ -8,7 +8,10 @@ const TERMINALS = [
   'xterm',
 ];
 
-/** The first terminal this Linux desktop has, and how to make it run a shell script the QA watches; null with none. */
+/**
+ * The first terminal this Linux desktop has, and how to make it run a shell script the QA
+ * watches; null with none.
+ */
 export function linuxTerminalOf(props: {
   directories: string[];
   file: string;

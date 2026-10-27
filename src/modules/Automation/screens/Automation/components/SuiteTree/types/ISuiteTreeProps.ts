@@ -1,6 +1,9 @@
 import type { ILastResult, ISuiteFolder } from '@/modules/Automation/types';
 
-/** A suite's tests by folder and file: how each went last, which are running and the step each is on, the test picked, the folders the QA shut, and the runs it can start. */
+/**
+ * A suite's tests by folder and file: how each went last, which are running and the step
+ * each is on, the test picked, the folders the QA shut, and the runs it can start.
+ */
 export interface ISuiteTreeProps {
   folders: ISuiteFolder[];
   last: Record<string, ILastResult>;

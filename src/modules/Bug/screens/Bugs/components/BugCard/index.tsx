@@ -8,7 +8,10 @@ import { BugUpdate, MomentTile } from './components';
 import { useBugCardViewModel } from './hooks';
 import './styles.css';
 
-/** A bug, folded to its title, or open with where it was caught, the screen it broke on, what was expected and what came, the steps to it, and how it was found. */
+/**
+ * A bug, folded to its title, or open with where it was caught, the screen it broke on,
+ * what was expected and what came, the steps to it, and how it was found.
+ */
 export const BugCard: React.FC<IBugCardProps> = (props) => {
   const {
     hasBody,

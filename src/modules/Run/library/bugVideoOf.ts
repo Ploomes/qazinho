@@ -5,7 +5,10 @@ import { clipOfMp4 } from './clipOfMp4';
 import { replayTimelineOf } from './replayTimelineOf';
 import { takeOf } from './takeOf';
 
-/** The video that goes with a bug caught in a run, and where the bug sits in it: a clip of its moment cut from the run's MP4, else the run's whole recording; null for a run with no recording. */
+/**
+ * The video that goes with a bug caught in a run: a clip of its moment, else the whole
+ * recording.
+ */
 export function bugVideoOf(props: {
   workspaceId: string;
   run: IRun;

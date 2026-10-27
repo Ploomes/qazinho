@@ -4,7 +4,10 @@ import { JIRA_READ } from '@/main/classes/integrations/JiraApi/constants';
 import { jiraFailureOf } from './jiraFailureOf';
 import { jiraSaidOf } from './jiraSaidOf';
 
-/** One request to the QA's Atlassian site, Jira or Confluence, signed with their email and token: its JSON or its bytes, or why it failed, in the site's own words. */
+/**
+ * One request to the QA's Atlassian site, Jira or Confluence, signed with their email and
+ * token: its JSON or its bytes, or why it failed, in the site's own words.
+ */
 export function askAtlassian(props: {
   fetcher: JiraFetcher;
   signed: IJiraCredentials;

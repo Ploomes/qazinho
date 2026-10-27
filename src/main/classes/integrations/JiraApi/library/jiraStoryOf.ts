@@ -4,46 +4,10 @@ import { adfToMarkdown } from './adfToMarkdown';
 
 type Loose = Record<string, unknown>;
 
-function record(value: unknown): Loose {
-  return typeof value === 'object' && value !== null ? (value as Loose) : {};
-}
-
-function text(value: unknown): string {
-  return typeof value === 'string' ? value.trim() : '';
-}
-
-function list(value: unknown): unknown[] {
-  return Array.isArray(value) ? value : [];
-}
-
-function named(value: unknown): string {
-  return text(record(value).name);
-}
-
-function issueLine(value: unknown): string {
-  const issue = record(value);
-  const summary = text(record(issue.fields).summary);
-
-  return summary.length === 0 ? text(issue.key) : `${text(issue.key)} · ${summary}`;
-}
-
-function fieldText(value: unknown): string {
-  if (Array.isArray(value))
-    return value
-      .map((item) =>
-        typeof item === 'string' ? item : text(record(item).value) || named(item),
-      )
-      .filter((item) => item.length > 0)
-      .map((item) => `- ${item}`)
-      .join('\n');
-
-  if (typeof value === 'object' && value !== null && 'type' in value)
-    return adfToMarkdown(value);
-
-  return text(value) || text(record(value).value);
-}
-
-/** The story out of Jira's answer for one issue asked with every field and their names, or null when it is not an issue. */
+/**
+ * The story out of Jira's answer for one issue asked with every field and their names, or
+ * null when it is not an issue.
+ */
 export function jiraStoryOf(props: { issue: unknown; site: string }): IJiraStory | null {
   const issue = record(props.issue);
   const key = text(issue.key);
@@ -113,4 +77,43 @@ export function jiraStoryOf(props: { issue: unknown; site: string }): IJiraStory
           ];
     }),
   };
+}
+
+function record(value: unknown): Loose {
+  return typeof value === 'object' && value !== null ? (value as Loose) : {};
+}
+
+function text(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function list(value: unknown): unknown[] {
+  return Array.isArray(value) ? value : [];
+}
+
+function named(value: unknown): string {
+  return text(record(value).name);
+}
+
+function issueLine(value: unknown): string {
+  const issue = record(value);
+  const summary = text(record(issue.fields).summary);
+
+  return summary.length === 0 ? text(issue.key) : `${text(issue.key)} · ${summary}`;
+}
+
+function fieldText(value: unknown): string {
+  if (Array.isArray(value))
+    return value
+      .map((item) =>
+        typeof item === 'string' ? item : text(record(item).value) || named(item),
+      )
+      .filter((item) => item.length > 0)
+      .map((item) => `- ${item}`)
+      .join('\n');
+
+  if (typeof value === 'object' && value !== null && 'type' in value)
+    return adfToMarkdown(value);
+
+  return text(value) || text(record(value).value);
 }

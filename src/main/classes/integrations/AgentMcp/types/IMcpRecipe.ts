@@ -1,6 +1,9 @@
 import type { McpSignInRoute } from './McpSignInRoute';
 
-/** How one agent CLI keeps MCP servers: the commands to list, add, sign in and remove, how its list reads, and its sign-in route. */
+/**
+ * How one agent CLI keeps MCP servers: the commands to list, add, sign in and remove, how
+ * its list reads, and its sign-in route.
+ */
 export interface IMcpRecipe {
   list: string[];
   reads: 'claude' | 'codex';

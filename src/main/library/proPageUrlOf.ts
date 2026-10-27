@@ -1,4 +1,7 @@
-/** The address of a page of QAzinho Pro's site from a path the page asked for; null for one that would leave the site. */
+/**
+ * The address of a page of QAzinho Pro's site from a path the page asked for; null for
+ * one that would leave the site.
+ */
 export function proPageUrlOf(props: { base: string; path: string }): string | null {
   const { base, path } = props;
 

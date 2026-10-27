@@ -1,4 +1,7 @@
-/** Splits each PATH by the platform's own separator and keeps the first mention of each directory: a hydrated PATH may repeat what the app already had. */
+/**
+ * Splits each PATH by the platform's own separator and keeps the first mention of each
+ * directory: a hydrated PATH may repeat what the app already had.
+ */
 export function mergePathSegments(props: {
   segments: (string | undefined)[];
   platform: NodeJS.Platform;

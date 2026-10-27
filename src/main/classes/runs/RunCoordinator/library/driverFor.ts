@@ -8,7 +8,10 @@ import {
   webAccessOf,
 } from '@salve-software/qazinho-harness/engine';
 
-/** One plan, one port: the run does not care whether it is driving Chrome or a phone; Chrome gets into a protected environment with the project's variables. */
+/**
+ * One plan, one port: the run does not care whether it is driving Chrome or a phone;
+ * Chrome gets into a protected environment with the project's variables.
+ */
 export function driverFor(props: { run: IWalkRun; shrink?: ShrinkImage }): IDeviceDriver {
   const { run } = props;
 

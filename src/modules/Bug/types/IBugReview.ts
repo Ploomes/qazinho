@@ -1,7 +1,10 @@
 import type { BugReviewState } from './BugReviewState';
 import type { ReviewVerdict } from '@/shared/types';
 
-/** The latest look at a bug that came back after it was filed: the runs it covers, where it stands, what the agent made of it and why, the update it wrote, where that update was posted, and what went wrong posting it. */
+/**
+ * The latest look at a bug that came back after it was filed: its verdict, update and
+ * where it went.
+ */
 export interface IBugReview {
   runs: string[];
   state: BugReviewState;

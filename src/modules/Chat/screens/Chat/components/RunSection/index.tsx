@@ -4,7 +4,10 @@ import { Caret, Icon } from '@/shared/components/atoms';
 import { useRunSectionViewModel } from './hooks';
 import './styles.css';
 
-/** A run in the chat as one box: its line on top, and when opened, everything the run said inside it. */
+/**
+ * A run in the chat as one box: its line on top, and when opened, everything the run said
+ * inside it.
+ */
 export const RunSection: React.FC<IRunSectionProps> = (props) => {
   const { hasCaret, facts, isBodyShown, hasOpen, className, bodyTransition, onToggle } =
     useRunSectionViewModel(props);

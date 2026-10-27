@@ -1,6 +1,9 @@
 import type { IJiraIssueRef } from '@/shared/types';
 
-/** The issues of Jira's picker answer, each once, in the order it suggests them: the ones the QA saw last, then the ones that match. */
+/**
+ * The issues of Jira's picker answer, each once, in the order it suggests them: the ones
+ * the QA saw last, then the ones that match.
+ */
 export function pickedIssuesOf(props: {
   answer: unknown;
   site: string;

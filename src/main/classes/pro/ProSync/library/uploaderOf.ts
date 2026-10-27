@@ -13,7 +13,10 @@ type UploadFetcher = (
   },
 ) => Promise<{ ok: boolean }>;
 
-/** An upload that streams a file from disk to the address the platform signed, with its length, so a video never sits whole in memory. */
+/**
+ * An upload that streams a file from disk to the address the platform signed, with its
+ * length, so a video never sits whole in memory.
+ */
 export function uploaderOf(fetcher: UploadFetcher): ProUploader {
   return async ({ url, headers, file }) => {
     try {

@@ -1,7 +1,10 @@
 import type { IKeybind, RunAlert, SettingsTab } from '@/modules/Settings';
 import type { Language } from '@/shared/types';
 
-/** What the QA has set up on this machine: the agent, the devices, the shortcuts, whether a run's video shows its network, whether the sidebar is folded, and how long run videos are kept. */
+/**
+ * What the QA set up on this machine: the agent, devices, shortcuts and how long videos
+ * stay.
+ */
 export interface ISettingsStore {
   tab: SettingsTab;
   agent: string;
@@ -24,6 +27,5 @@ export interface ISettingsStore {
   selectRunAlert: (runAlert: RunAlert) => void;
   showReplayNetwork: (isOn: boolean) => void;
   toggleSidebar: () => void;
-  /** Keeps run videos for so many days, or for good with null. */
   keepVideosFor: (days: number | null) => void;
 }

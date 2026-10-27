@@ -1,6 +1,9 @@
 import type { IProSyncBug, IProSyncCatch } from '@/shared/types';
 
-/** The bug as the platform takes it, each screen, its first catch's and each sighting's named by the key it was uploaded under; a screen that did not go up is left out. */
+/**
+ * The bug as the platform takes it, each screen, its first catch's and each sighting's
+ * named by the key it was uploaded under; a screen that did not go up is left out.
+ */
 export function bugBodyOf(props: { bug: IProSyncBug; keys: Record<string, string> }) {
   const { bug, keys } = props;
   const keyOf = (file: string | null) => (file === null ? null : (keys[file] ?? null));

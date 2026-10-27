@@ -1,6 +1,14 @@
 import type { IAdfNode } from '@/main/classes/integrations/JiraApi/types';
 import type { BugReportBlock, IBugReport } from '@/shared/types';
 
+/**
+ * A bug's report or a plan as an Atlassian document: headings, paragraphs, steps, facts
+ * and tables.
+ */
+export function adfOfReport(report: IBugReport): IAdfNode {
+  return { type: 'doc', version: 1, content: report.blocks.flatMap(nodesOf) };
+}
+
 function text(props: { text: string; marks?: IAdfNode['marks'] }): IAdfNode[] {
   return props.text === ''
     ? []
@@ -114,9 +122,4 @@ function nodesOf(block: BugReportBlock): IAdfNode[] {
         ]),
       });
   }
-}
-
-/** A bug's report or a plan as an Atlassian document: headings, paragraphs, the steps in order with the one that broke in bold, facts by label, the failed requests as code, and tables. */
-export function adfOfReport(report: IBugReport): IAdfNode {
-  return { type: 'doc', version: 1, content: report.blocks.flatMap(nodesOf) };
 }

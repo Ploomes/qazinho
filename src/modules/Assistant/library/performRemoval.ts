@@ -3,7 +3,10 @@ import type { AppToolCall } from '@/shared/types';
 import { findByRef } from './findByRef';
 import { variableRefOf } from './variableRefOf';
 
-/** Deletes a workspace, a project with every workspace in it, or a project's variable, once the QA confirms it on screen. */
+/**
+ * Deletes a workspace, a project with every workspace in it, or a project's variable,
+ * once the QA confirms it on screen.
+ */
 export async function performRemoval(props: {
   id: string;
   call: Extract<

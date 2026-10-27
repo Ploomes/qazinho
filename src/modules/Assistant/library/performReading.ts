@@ -5,7 +5,10 @@ import { describeRun } from './describeRun';
 import { describeWorkspace } from './describeWorkspace';
 import { findByRef } from './findByRef';
 
-/** Reads a workspace, one of its runs or one of its bugs for the assistant, changing nothing. */
+/**
+ * Reads a workspace, one of its runs or one of its bugs for the assistant, changing
+ * nothing.
+ */
 export function performReading(props: {
   call: Extract<
     AppToolCall,

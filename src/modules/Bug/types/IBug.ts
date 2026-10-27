@@ -4,7 +4,10 @@ import type { IBugShot } from './IBugShot';
 import type { IBugSighting } from './IBugSighting';
 import type { IFiledIssue, Severity } from '@/shared/types';
 
-/** A failed step the agent could explain, or a bug it saw on the side of one, with all a developer needs to reproduce it, when it was caught, each time it was caught again, the issue it became in the QA's tracker, the runs already weighed against that issue, the latest look at it, the Figma frame the screen differs from when it is off the design, and whether the QA said it is no bug. */
+/**
+ * A bug the agent caught, with what a developer needs to reproduce it, its sightings and
+ * its issue.
+ */
 export interface IBug {
   id: string;
   severity: Severity;

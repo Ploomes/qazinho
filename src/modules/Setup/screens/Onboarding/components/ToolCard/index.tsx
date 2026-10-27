@@ -3,7 +3,10 @@ import { Icon } from '@/shared/components/atoms';
 import { useToolCardViewModel } from './hooks';
 import './styles.css';
 
-/** A tool found or missing on this machine; as an option, the card itself is what the QA picks. */
+/**
+ * A tool found or missing on this machine; as an option, the card itself is what the QA
+ * picks.
+ */
 export const ToolCard: React.FC<IToolCardProps> = (props) => {
   const { isOption, isSelected, className, onClick, onKeyDown } =
     useToolCardViewModel(props);

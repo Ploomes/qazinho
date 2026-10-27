@@ -17,65 +17,10 @@ import {
 
 const TONE_COLOURS = { pass: 'pass', quiet: 'ink3', attn: 'attn', fail: 'fail' } as const;
 
-function fitText(props: { context: StripCanvas; text: string; width: number }): string {
-  const { context, text, width } = props;
-
-  if (context.measureText(text).width <= width) return text;
-
-  let low = 0;
-  let high = text.length;
-
-  while (low < high) {
-    const middle = Math.ceil((low + high) / 2);
-
-    if (context.measureText(`${text.slice(0, middle)}…`).width <= width) low = middle;
-    else high = middle - 1;
-  }
-
-  return low === 0 ? '' : `${text.slice(0, low)}…`;
-}
-
-function drawArrows(props: {
-  context: StripCanvas;
-  x: number;
-  y: number;
-  size: number;
-  colour: string;
-}): void {
-  const { context, x, y, size, colour } = props;
-  const half = size / 2;
-  const head = size * 0.3;
-  const apart = size * 0.5;
-
-  context.strokeStyle = colour;
-  context.lineWidth = size * 0.16;
-  context.lineCap = 'round';
-  context.lineJoin = 'round';
-  context.beginPath();
-  context.moveTo(x, y + half);
-  context.lineTo(x, y - half);
-  context.moveTo(x - head, y - half + head);
-  context.lineTo(x, y - half);
-  context.lineTo(x + head, y - half + head);
-  context.moveTo(x + apart, y - half);
-  context.lineTo(x + apart, y + half);
-  context.moveTo(x + apart - head, y + half - head);
-  context.lineTo(x + apart, y + half);
-  context.lineTo(x + apart + head, y + half - head);
-  context.stroke();
-}
-
-function codeOf(props: { request: IReplayRequest; words: IStripWords }): string {
-  const { request, words } = props;
-
-  if (request.outcome === 'failed') return words.failed;
-
-  if (request.outcome === 'canceled') return words.canceled;
-
-  return request.status !== null && request.status >= 100 ? String(request.status) : '—';
-}
-
-/** Draws the strip as the video stood at one moment: its head with the count, the errors and the clock, and the latest requests, each ended or still waiting. */
+/**
+ * Draws the strip as the video stood at one moment: its head with the count, the errors
+ * and the clock, and the latest requests, each ended or still waiting.
+ */
 export function drawNetworkStrip(props: {
   context: StripCanvas;
   box: IRect;
@@ -311,4 +256,62 @@ export function drawNetworkStrip(props: {
 
   context.globalAlpha = 1;
   context.restore();
+}
+
+function fitText(props: { context: StripCanvas; text: string; width: number }): string {
+  const { context, text, width } = props;
+
+  if (context.measureText(text).width <= width) return text;
+
+  let low = 0;
+  let high = text.length;
+
+  while (low < high) {
+    const middle = Math.ceil((low + high) / 2);
+
+    if (context.measureText(`${text.slice(0, middle)}…`).width <= width) low = middle;
+    else high = middle - 1;
+  }
+
+  return low === 0 ? '' : `${text.slice(0, low)}…`;
+}
+
+function drawArrows(props: {
+  context: StripCanvas;
+  x: number;
+  y: number;
+  size: number;
+  colour: string;
+}): void {
+  const { context, x, y, size, colour } = props;
+  const half = size / 2;
+  const head = size * 0.3;
+  const apart = size * 0.5;
+
+  context.strokeStyle = colour;
+  context.lineWidth = size * 0.16;
+  context.lineCap = 'round';
+  context.lineJoin = 'round';
+  context.beginPath();
+  context.moveTo(x, y + half);
+  context.lineTo(x, y - half);
+  context.moveTo(x - head, y - half + head);
+  context.lineTo(x, y - half);
+  context.lineTo(x + head, y - half + head);
+  context.moveTo(x + apart, y - half);
+  context.lineTo(x + apart, y + half);
+  context.moveTo(x + apart - head, y + half - head);
+  context.lineTo(x + apart, y + half);
+  context.lineTo(x + apart + head, y + half - head);
+  context.stroke();
+}
+
+function codeOf(props: { request: IReplayRequest; words: IStripWords }): string {
+  const { request, words } = props;
+
+  if (request.outcome === 'failed') return words.failed;
+
+  if (request.outcome === 'canceled') return words.canceled;
+
+  return request.status !== null && request.status >= 100 ? String(request.status) : '—';
 }

@@ -4,7 +4,10 @@ import { appOriginOf } from './appOriginOf';
 import { requestOutcomeOf } from './requestOutcomeOf';
 import { urlPartsOf } from './urlPartsOf';
 
-/** A run's requests placed on its video, in the order they started; one made before the video began starts at its first frame. */
+/**
+ * A run's requests placed on its video, in the order they started; one made before the
+ * video began starts at its first frame.
+ */
 export function replayRequestsOf(props: {
   entries: INetworkEntry[];
   video: Pick<IRunVideo, 'startedAt' | 'durationMs'>;

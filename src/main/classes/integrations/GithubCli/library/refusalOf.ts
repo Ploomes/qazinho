@@ -5,7 +5,10 @@ const UNREACHABLE =
   /error connecting|dial tcp|no such host|i\/o timeout|network is unreachable|connection refused|tls handshake/i;
 const HTTP = /\(HTTP (\d{3})\)/;
 
-/** Why a gh command failed, from its exit code and what it said: signed out, refused, missing, offline, or something else. */
+/**
+ * Why a gh command failed, from its exit code and what it said: signed out, refused,
+ * missing, offline, or something else.
+ */
 export function refusalOf(props: { code: number | null; said: string }): IGhRefusal {
   const { code, said } = props;
   const httpStatus = Number(HTTP.exec(said)?.[1] ?? 0) || null;

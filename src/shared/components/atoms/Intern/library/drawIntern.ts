@@ -1,20 +1,30 @@
 import type { InternMood } from '@/shared/components/atoms/Intern/types';
 
 const TAU = Math.PI * 2;
+
 const LIME = '#c6f432';
+
 const INK = '#141414';
+
 const RED = '#ff4d2e';
+
 const WHITE = '#ffffff';
+
 const EDGE = 13;
+
 const TILT = (-6 * Math.PI) / 180;
+
 const FRAME = { stage: { span: 340, foot: 0.86 }, figure: { span: 300, foot: 0.893 } };
+
 const FOOT = { x: 120, y: 235 };
+
 const ANTENNA = {
   pivot: [150, 60],
   stalk: [150, 62, 152, 30, 172, 14],
   width: 10,
   tip: [176, 12, 15],
 } as const;
+
 const SWAY = 1.4;
 
 type Pose = {
@@ -27,132 +37,6 @@ type Pose = {
   eyes: (c: CanvasRenderingContext2D) => void;
   extra?: (c: CanvasRenderingContext2D, isSticker: boolean) => void;
 };
-
-function pill(c: CanvasRenderingContext2D, box: [number, number, number, number]): void {
-  const [x, y, w, h] = box;
-
-  c.beginPath();
-  c.roundRect(x, y, w, h, Math.min(w, h) / 2);
-  c.fill();
-}
-
-function traceBox(
-  c: CanvasRenderingContext2D,
-  shape: {
-    x: number;
-    y: number;
-    w: number;
-    h: number;
-    top: [number, number];
-    bottom: [number, number];
-  },
-): void {
-  const { x, y, w, h } = shape;
-  const [trx, tr] = shape.top;
-  const [brx, br] = shape.bottom;
-
-  c.moveTo(x + trx, y);
-  c.lineTo(x + w - trx, y);
-  c.ellipse(x + w - trx, y + tr, trx, tr, 0, -Math.PI / 2, 0);
-  c.lineTo(x + w, y + h - br);
-  c.ellipse(x + w - brx, y + h - br, brx, br, 0, 0, Math.PI / 2);
-  c.lineTo(x + brx, y + h);
-  c.ellipse(x + brx, y + h - br, brx, br, 0, Math.PI / 2, Math.PI);
-  c.lineTo(x, y + tr);
-  c.ellipse(x + trx, y + tr, trx, tr, 0, Math.PI, Math.PI * 1.5);
-  c.closePath();
-}
-
-function traceHead(c: CanvasRenderingContext2D): void {
-  traceBox(c, { x: 0, y: 44, w: 240, h: 191, top: [104, 83], bottom: [56, 45] });
-}
-
-function antenna(
-  c: CanvasRenderingContext2D,
-  pass: { sway: number; colour: string; spread: number },
-): void {
-  const [px, py] = ANTENNA.pivot;
-  const [x0, y0, cx, cy, x1, y1] = ANTENNA.stalk;
-  const [tx, ty, tr] = ANTENNA.tip;
-
-  c.save();
-  c.translate(px, py);
-  c.rotate(pass.sway);
-  c.translate(-px, -py);
-  c.strokeStyle = pass.colour;
-  c.fillStyle = pass.colour;
-  c.lineCap = 'round';
-  c.lineJoin = 'round';
-  c.lineWidth = ANTENNA.width + pass.spread;
-  c.beginPath();
-  c.moveTo(x0, y0);
-  c.quadraticCurveTo(cx, cy, x1, y1);
-  c.stroke();
-  c.beginPath();
-  c.arc(tx, ty, tr, 0, TAU);
-
-  if (pass.spread > 0) {
-    c.lineWidth = pass.spread;
-    c.stroke();
-  }
-
-  c.fill();
-  c.restore();
-}
-
-function stroke(
-  c: CanvasRenderingContext2D,
-  line: { points: number[][]; width: number; colour: string },
-): void {
-  c.strokeStyle = line.colour;
-  c.lineWidth = line.width;
-  c.lineCap = 'round';
-  c.lineJoin = 'round';
-  c.beginPath();
-  line.points.forEach(([x = 0, y = 0], index) => {
-    if (index === 0) c.moveTo(x, y);
-    else c.lineTo(x, y);
-  });
-  c.stroke();
-}
-
-function stickerLine(
-  c: CanvasRenderingContext2D,
-  line: { points: number[][]; width: number; colour: string; isSticker: boolean },
-): void {
-  if (line.isSticker) stroke(c, { ...line, width: line.width + 20, colour: WHITE });
-
-  stroke(c, line);
-}
-
-function dot(
-  c: CanvasRenderingContext2D,
-  circle: { x: number; y: number; r: number },
-): void {
-  c.beginPath();
-  c.arc(circle.x, circle.y, circle.r, 0, TAU);
-  c.fill();
-}
-
-function badge(
-  c: CanvasRenderingContext2D,
-  place: { pulse: number; turn: number },
-): void {
-  c.save();
-  c.translate(228, 64);
-  c.rotate(place.turn);
-  c.scale(place.pulse, place.pulse);
-  c.fillStyle = WHITE;
-  dot(c, { x: 0, y: 0, r: 41 });
-  c.fillStyle = RED;
-  dot(c, { x: 0, y: 0, r: 32 });
-  c.fillStyle = WHITE;
-  c.beginPath();
-  c.roundRect(-5.5, -20, 11, 25, 5.5);
-  c.fill();
-  dot(c, { x: 0, y: 14, r: 6 });
-  c.restore();
-}
 
 const POSES: Record<InternMood, (t: number) => Pose> = {
   neutral: (t) => {
@@ -367,7 +251,7 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
   },
 };
 
-/** Draws the Estagiário, his antenna swaying, in a mood at phase `t` (0 to 1) on `layer`, then lays him on `context`: flat and upright, or as the logo's sticker when `sticker` names its shadow. */
+/** Draws the Estagiário in a mood at phase `t` on `layer`, then lays him on `context`. */
 export function drawIntern(props: {
   context: CanvasRenderingContext2D;
   layer: CanvasRenderingContext2D;
@@ -471,5 +355,131 @@ export function drawIntern(props: {
   c.shadowBlur = 3 * unit;
   c.shadowOffsetY = 2 * unit;
   c.drawImage(l.canvas, 0, 0);
+  c.restore();
+}
+
+function pill(c: CanvasRenderingContext2D, box: [number, number, number, number]): void {
+  const [x, y, w, h] = box;
+
+  c.beginPath();
+  c.roundRect(x, y, w, h, Math.min(w, h) / 2);
+  c.fill();
+}
+
+function traceBox(
+  c: CanvasRenderingContext2D,
+  shape: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    top: [number, number];
+    bottom: [number, number];
+  },
+): void {
+  const { x, y, w, h } = shape;
+  const [trx, tr] = shape.top;
+  const [brx, br] = shape.bottom;
+
+  c.moveTo(x + trx, y);
+  c.lineTo(x + w - trx, y);
+  c.ellipse(x + w - trx, y + tr, trx, tr, 0, -Math.PI / 2, 0);
+  c.lineTo(x + w, y + h - br);
+  c.ellipse(x + w - brx, y + h - br, brx, br, 0, 0, Math.PI / 2);
+  c.lineTo(x + brx, y + h);
+  c.ellipse(x + brx, y + h - br, brx, br, 0, Math.PI / 2, Math.PI);
+  c.lineTo(x, y + tr);
+  c.ellipse(x + trx, y + tr, trx, tr, 0, Math.PI, Math.PI * 1.5);
+  c.closePath();
+}
+
+function traceHead(c: CanvasRenderingContext2D): void {
+  traceBox(c, { x: 0, y: 44, w: 240, h: 191, top: [104, 83], bottom: [56, 45] });
+}
+
+function antenna(
+  c: CanvasRenderingContext2D,
+  pass: { sway: number; colour: string; spread: number },
+): void {
+  const [px, py] = ANTENNA.pivot;
+  const [x0, y0, cx, cy, x1, y1] = ANTENNA.stalk;
+  const [tx, ty, tr] = ANTENNA.tip;
+
+  c.save();
+  c.translate(px, py);
+  c.rotate(pass.sway);
+  c.translate(-px, -py);
+  c.strokeStyle = pass.colour;
+  c.fillStyle = pass.colour;
+  c.lineCap = 'round';
+  c.lineJoin = 'round';
+  c.lineWidth = ANTENNA.width + pass.spread;
+  c.beginPath();
+  c.moveTo(x0, y0);
+  c.quadraticCurveTo(cx, cy, x1, y1);
+  c.stroke();
+  c.beginPath();
+  c.arc(tx, ty, tr, 0, TAU);
+
+  if (pass.spread > 0) {
+    c.lineWidth = pass.spread;
+    c.stroke();
+  }
+
+  c.fill();
+  c.restore();
+}
+
+function stroke(
+  c: CanvasRenderingContext2D,
+  line: { points: number[][]; width: number; colour: string },
+): void {
+  c.strokeStyle = line.colour;
+  c.lineWidth = line.width;
+  c.lineCap = 'round';
+  c.lineJoin = 'round';
+  c.beginPath();
+  line.points.forEach(([x = 0, y = 0], index) => {
+    if (index === 0) c.moveTo(x, y);
+    else c.lineTo(x, y);
+  });
+  c.stroke();
+}
+
+function stickerLine(
+  c: CanvasRenderingContext2D,
+  line: { points: number[][]; width: number; colour: string; isSticker: boolean },
+): void {
+  if (line.isSticker) stroke(c, { ...line, width: line.width + 20, colour: WHITE });
+
+  stroke(c, line);
+}
+
+function dot(
+  c: CanvasRenderingContext2D,
+  circle: { x: number; y: number; r: number },
+): void {
+  c.beginPath();
+  c.arc(circle.x, circle.y, circle.r, 0, TAU);
+  c.fill();
+}
+
+function badge(
+  c: CanvasRenderingContext2D,
+  place: { pulse: number; turn: number },
+): void {
+  c.save();
+  c.translate(228, 64);
+  c.rotate(place.turn);
+  c.scale(place.pulse, place.pulse);
+  c.fillStyle = WHITE;
+  dot(c, { x: 0, y: 0, r: 41 });
+  c.fillStyle = RED;
+  dot(c, { x: 0, y: 0, r: 32 });
+  c.fillStyle = WHITE;
+  c.beginPath();
+  c.roundRect(-5.5, -20, 11, 25, 5.5);
+  c.fill();
+  dot(c, { x: 0, y: 14, r: 6 });
   c.restore();
 }

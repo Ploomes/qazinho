@@ -5,7 +5,10 @@ const COVERS: Record<string, string[]> = {
   'read:org': ['read:org', 'write:org', 'admin:org'],
 };
 
-/** The scopes QAzinho needs that a token's X-OAuth-Scopes header lacks; none when GitHub sent no such header. */
+/**
+ * The scopes QAzinho needs that a token's X-OAuth-Scopes header lacks; none when GitHub
+ * sent no such header.
+ */
 export function missingScopesOf(header: string | undefined): string[] {
   if (header === undefined) return [];
 

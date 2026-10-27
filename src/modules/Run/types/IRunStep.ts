@@ -1,7 +1,9 @@
 import type { IRunSpan } from './IRunSpan';
 import type { StepVerdict } from '@/shared/types';
 
-/** How one step of a case went, with the note the agent left when it did not pass, when the device walked it, and whether it was walked again without the agent, with the words that proved it. */
+/**
+ * How one step went: the agent's note when it did not pass, when it was walked, and how.
+ */
 export interface IRunStep {
   number: number;
   action: string;

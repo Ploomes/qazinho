@@ -1,7 +1,10 @@
 const BUG = /^(bug|defect|defeito|erro)$/i;
 const TASK = /^(task|tarefa)$/i;
 
-/** The issue type a bug is filed as in a project, by its id: the project's Bug, else its Task, else its first type that is not a subtask; null when Jira listed none. */
+/**
+ * The issue type a bug is filed as in a project, by its id: the project's Bug, else its
+ * Task, else its first type that is not a subtask; null when Jira listed none.
+ */
 export function bugTypeOf(body: unknown): string | null {
   const answer = (body ?? {}) as { issueTypes?: unknown; values?: unknown };
   const listed = Array.isArray(answer.issueTypes)

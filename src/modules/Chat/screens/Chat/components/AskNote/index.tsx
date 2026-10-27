@@ -3,7 +3,10 @@ import { Icon } from '@/shared/components/atoms';
 import { useAskNoteViewModel } from './hooks';
 import './styles.css';
 
-/** A question the run's agent asked the QA, in the run's section once it ended: what it asked at which step, and the answer, or that none came. */
+/**
+ * A question the run's agent asked the QA, in the run's section once it ended: what it
+ * asked at which step, and the answer, or that none came.
+ */
 export const AskNote: React.FC<IAskNoteProps> = (props) => {
   const { label, where, question, isAnswered, isSecret, who, answer, className } =
     useAskNoteViewModel(props);

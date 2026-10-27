@@ -14,7 +14,10 @@ import {
   recipeBookOf,
 } from './library';
 
-/** Lists the projects an org holds and downloads one to this computer: its plans, with the recordings that walk them without the agent, shared with the org from then on. */
+/**
+ * Lists the projects an org holds and downloads one to this computer: its plans, with the
+ * recordings that walk them without the agent, shared with the org from then on.
+ */
 export class ProDownloads {
   private readonly api: IProDownloads['api'];
   private readonly token: () => Promise<string | null>;
@@ -28,7 +31,10 @@ export class ProDownloads {
     this.sync = props.sync;
   }
 
-  /** The projects an org holds, each plan by name and size; a project whose id would not be a name here is left out. */
+  /**
+   * The projects an org holds, each plan by name and size; a project whose id would not
+   * be a name here is left out.
+   */
   public async list(orgSlug: string): Promise<ProOrgProjects> {
     const read = await this.projectsOf(orgSlug);
 
@@ -52,7 +58,10 @@ export class ProDownloads {
     };
   }
 
-  /** Downloads a project the org holds and this computer does not: its plans, the recordings of each, and the names of its variables. */
+  /**
+   * Downloads a project the org holds and this computer does not: its plans, the
+   * recordings of each, and the names of its variables.
+   */
   public async download(props: {
     orgSlug: string;
     projectId: string;

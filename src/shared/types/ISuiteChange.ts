@@ -7,7 +7,10 @@ import type { SuiteChangeFailure } from './SuiteChangeFailure';
 import type { SuiteChangeStatus } from './SuiteChangeStatus';
 import type { SuiteChangeStep } from './SuiteChangeStep';
 
-/** A change the QA's agent makes to a project's suite on a branch of its own: what was asked, where it stands, the branch and the commit it came from, what the agent said and wrote, the files it changed, QAzinho's own run of the tests it is about, and where it went. */
+/**
+ * A change the QA's agent makes to a project's suite on a branch of its own, from ask to
+ * review.
+ */
 export interface ISuiteChange {
   id: string;
   projectId: string;

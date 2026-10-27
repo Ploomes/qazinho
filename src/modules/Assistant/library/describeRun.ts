@@ -2,7 +2,10 @@ import type { IWorkspace } from '@/modules/Workspace/types';
 import { isSeenIn } from '@/modules/Bug/library';
 import { runFactsOf } from '@/modules/Chat/library';
 
-/** One run of a workspace for the assistant, step by step with its notes and bugs, the latest when none is named, or why there is none. */
+/**
+ * One run of a workspace for the assistant, step by step with its notes and bugs, the
+ * latest when none is named, or why there is none.
+ */
 export function describeRun(props: { workspace: IWorkspace; runId: string | null }): {
   text: string;
   isError: boolean;

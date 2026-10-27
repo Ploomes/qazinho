@@ -205,7 +205,10 @@ export class RunCoordinator {
       this.inFlightRuns.set(props.workspaceId, { ...run, isPaused: props.isPaused });
   }
 
-  /** Hands the QA's reply to the question a run's agent waits on; a reply to a question no longer waiting, or one with nothing in it, changes nothing. */
+  /**
+   * Hands the QA's reply to the question a run's agent waits on; a reply to a question no
+   * longer waiting, or one with nothing in it, changes nothing.
+   */
   public answer(props: {
     workspaceId: string;
     questionId: string;
@@ -221,7 +224,10 @@ export class RunCoordinator {
     open.settle(reply);
   }
 
-  /** Resizes the device of a run under way, for the cases still to come too; the next run starts at the workspace's size. */
+  /**
+   * Resizes the device of a run under way, for the cases still to come too; the next run
+   * starts at the workspace's size.
+   */
   public async resize(props: {
     workspaceId: string;
     viewport: IViewport;
@@ -237,7 +243,10 @@ export class RunCoordinator {
     await this.drivers.get(props.workspaceId)?.focus(props.isFocused);
   }
 
-  /** The runs still walking, as they stand: a page that opened mid-run picks them up from here. */
+  /**
+   * The runs still walking, as they stand: a page that opened mid-run picks them up from
+   * here.
+   */
   public inFlight(): IRunInFlight[] {
     return [...this.inFlightRuns.values()];
   }
@@ -316,7 +325,10 @@ export class RunCoordinator {
     });
   }
 
-  /** Keeps the requests a browser saw beside the run's video, each address with its secrets left out; a phone keeps none. */
+  /**
+   * Keeps the requests a browser saw beside the run's video, each address with its
+   * secrets left out; a phone keeps none.
+   */
   private async keepNetwork(props: {
     run: IWalkRun;
     driver: IDeviceDriver | null;
@@ -345,7 +357,10 @@ export class RunCoordinator {
     ).catch(() => undefined);
   }
 
-  /** Says how the run ended, then hands over its recording: the phone's own, or the one made from the live stream once its file is whole. */
+  /**
+   * Says how the run ended, then hands over its recording: the phone's own, or the one
+   * made from the live stream once its file is whole.
+   */
   private async finish(props: {
     run: IWalkRun;
     ended: IRunEvent;
@@ -362,7 +377,10 @@ export class RunCoordinator {
       this.emit({ kind: 'video', workspaceId: run.workspaceId, runId: run.runId, video });
   }
 
-  /** Walks the cases in order, and ends once each case's agent said what it cost, or after a short wait. */
+  /**
+   * Walks the cases in order, and ends once each case's agent said what it cost, or after
+   * a short wait.
+   */
   private async walkSteps(props: {
     run: IWalkRun;
     driver: IDeviceDriver;
@@ -434,7 +452,10 @@ export class RunCoordinator {
     }
   }
 
-  /** One agent turn per case, in a session of its own, kept as a recipe once every step passed with its proof: true goes on, false stops, a failure stops and says why. */
+  /**
+   * One agent turn per case, in a session of its own, kept as a recipe once every step
+   * passed with its proof: true goes on, false stops, a failure stops and says why.
+   */
   private async walkCase(props: {
     run: IWalkRun;
     driver: IDeviceDriver;
@@ -734,7 +755,10 @@ export class RunCoordinator {
     return true;
   }
 
-  /** Explores the app with no plan, one agent alone until it finishes or its time runs out: each screen it notes is a step of one case, and each bug it files a finding. */
+  /**
+   * Explores the app with no plan, one agent alone until it finishes or its time runs
+   * out: each screen it notes is a step of one case, and each bug it files a finding.
+   */
   private async explore(props: {
     run: IWalkRun;
     driver: IDeviceDriver;
@@ -983,7 +1007,10 @@ export class RunCoordinator {
       .catch(() => undefined);
   }
 
-  /** Walks a case again without the agent, the way its recipe says, checking each step's proof; its steps are told only once the whole case held. */
+  /**
+   * Walks a case again without the agent, the way its recipe says, checking each step's
+   * proof; its steps are told only once the whole case held.
+   */
   private async replayCase(props: {
     run: IWalkRun;
     driver: IDeviceDriver;
@@ -1072,7 +1099,10 @@ export class RunCoordinator {
     await writeAtomically({ file, data: JSON.stringify(props.book, null, 2) });
   }
 
-  /** Shows the QA what the agent asked at the step it is on, and waits with the agent's clock held for their reply, the wait's end or a stop: the agent hears it in words, and a secret by its name alone. */
+  /**
+   * Shows the QA what the agent asked and waits, the agent's clock held, for a reply, a
+   * timeout or a stop.
+   */
   private async askQa(
     props: IAskQa,
   ): Promise<{ words: string; answer: RunAnswer | null }> {
@@ -1155,7 +1185,10 @@ export class RunCoordinator {
     return { words: answerWords({ ...props, answer }), answer };
   }
 
-  /** The QA's reply as the run keeps it: their words with any variable's value read back as its name, or a secret typed from now on as `variable`, and kept in the project when they asked and it could be. */
+  /**
+   * The QA's reply as the run keeps it: their words with values read back as names, or a
+   * secret.
+   */
   private async answerOf(props: {
     run: IWalkRun;
     outcome: QaOutcome;

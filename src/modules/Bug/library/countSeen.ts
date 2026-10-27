@@ -1,6 +1,9 @@
 import type { IWorkspace } from '@/modules/Workspace';
 
-/** How many runs in a row caught this step failing, this one included: a bug seen before carries more weight. */
+/**
+ * How many runs in a row caught this step failing, this one included: a bug seen before
+ * carries more weight.
+ */
 export function countSeen(props: {
   workspace: IWorkspace;
   caseId: string;

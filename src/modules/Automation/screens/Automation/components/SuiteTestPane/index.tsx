@@ -6,7 +6,10 @@ import { Tooltip } from '@/shared/components/molecules';
 import { useSuiteTestPaneViewModel } from './hooks';
 import './styles.css';
 
-/** The test the QA picked: where it is written, how it went in the run shown, with its error, screens, video and trace, and the runs before. */
+/**
+ * The test the QA picked: where it is written, how it went in the run shown, with its
+ * error, screens, video and trace, and the runs before.
+ */
 export const SuiteTestPane: React.FC<ISuiteTestPaneProps> = (props) => {
   const {
     style,

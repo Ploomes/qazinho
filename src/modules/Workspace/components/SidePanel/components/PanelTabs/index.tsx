@@ -2,7 +2,10 @@ import type { IPanelTabsProps } from './types';
 import { usePanelTabsViewModel } from './hooks';
 import './styles.css';
 
-/** The tabs of the panel beside the chat: the plan, the device, the runs and the bugs, each with what it holds. */
+/**
+ * The tabs of the panel beside the chat: the plan, the device, the runs and the bugs,
+ * each with what it holds.
+ */
 export const PanelTabs: React.FC<IPanelTabsProps> = (props) => {
   const { items, tabsLabel, onTabClick } = usePanelTabsViewModel(props);
 

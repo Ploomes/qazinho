@@ -1,7 +1,10 @@
 import type { ISuiteTest, SuiteScope } from '@/modules/Automation/types';
 import { folderOf } from './folderOf';
 
-/** The tests what the QA asked to run reaches: all of them, those in a file or held by a folder itself, or some by their id. */
+/**
+ * The tests what the QA asked to run reaches: all of them, those in a file or held by a
+ * folder itself, or some by their id.
+ */
 export function scopeTestsOf(props: {
   tests: ISuiteTest[];
   scope: SuiteScope;

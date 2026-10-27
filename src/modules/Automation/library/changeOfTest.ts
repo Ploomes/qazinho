@@ -1,6 +1,9 @@
 import type { ISuiteChange } from '@/modules/Automation/types';
 
-/** The latest change the agent made for a test that the QA has not thrown away; null when there is none. */
+/**
+ * The latest change the agent made for a test that the QA has not thrown away; null when
+ * there is none.
+ */
 export function changeOfTest(props: {
   changes: ISuiteChange[];
   testId: string;

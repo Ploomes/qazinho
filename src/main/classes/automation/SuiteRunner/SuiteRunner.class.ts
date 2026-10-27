@@ -19,7 +19,10 @@ import { hiddenValues } from '@salve-software/qazinho-harness/engine';
 import { SUITE_REPORTER, SUITE_RUNNER } from './constants';
 import { locationOf, suiteReportOf, suiteStatusOf, suiteTestsOf } from './library';
 
-/** Runs the QA's Playwright suites with their own Playwright and their own settings: lists their tests, and runs them a Playwright project at a time, telling the page as each test goes. */
+/**
+ * Runs the QA's Playwright suites with their own Playwright: lists the tests and runs
+ * them by project.
+ */
 export class SuiteRunner {
   private readonly registry: Pick<SuiteRegistry, 'pathOf' | 'runnerOf'>;
   private readonly node: () => Promise<string | null>;
@@ -43,7 +46,10 @@ export class SuiteRunner {
     this.now = props.now ?? Date.now;
   }
 
-  /** The tests a project's suite holds, as its own Playwright lists them, or why it could not. */
+  /**
+   * The tests a project's suite holds, as its own Playwright lists them, or why it could
+   * not.
+   */
   public async list(projectId: string): Promise<SuiteList> {
     const tools = await this.toolsOf(projectId);
 
@@ -73,7 +79,10 @@ export class SuiteRunner {
       : { kind: 'listed', ...listed };
   }
 
-  /** Runs a project's suite batch after batch, one Playwright project each, and answers with the run once it ends; a project already running answers with that run. */
+  /**
+   * Runs a project's suite batch after batch, one Playwright project each, and answers
+   * with the run once it ends; a project already running answers with that run.
+   */
   public async run(start: IStartSuiteRun): Promise<ISuiteRun> {
     const going = this.jobs.get(start.projectId);
 
@@ -148,7 +157,10 @@ export class SuiteRunner {
     return { ...job.run };
   }
 
-  /** How one test went in a project's run, with the folder its run keeps its files in; null when the run or the test is not there. */
+  /**
+   * How one test went in a project's run, with the folder its run keeps its files in;
+   * null when the run or the test is not there.
+   */
   public async resultOf(props: {
     projectId: string;
     runId: string;
@@ -166,7 +178,10 @@ export class SuiteRunner {
     return result === undefined ? null : { result, folder };
   }
 
-  /** Runs some tests of a project's suite from another copy of it, such as the one an agent changes, with the project's settings and outside its runs: how each went, its files kept in the folder given. */
+  /**
+   * Runs some tests of a suite from another copy of it, with the project's settings,
+   * outside its runs.
+   */
   public async check(props: {
     projectId: string;
     path: string;
@@ -242,7 +257,10 @@ export class SuiteRunner {
     if (job.child !== null) killTree(job.child, 'SIGTERM');
   }
 
-  /** Stops the run a project has going: Playwright is asked to stop, and made to after a grace. */
+  /**
+   * Stops the run a project has going: Playwright is asked to stop, and made to after a
+   * grace.
+   */
   public stop(projectId: string): void {
     const job = this.jobs.get(projectId);
 
@@ -261,7 +279,10 @@ export class SuiteRunner {
     }, SUITE_RUNNER.stopGraceMs);
   }
 
-  /** A project's runs, the latest first, each test's files with their address; a run left going when QAzinho closed reads as broken. */
+  /**
+   * A project's runs, the latest first, each test's files with their address; a run left
+   * going when QAzinho closed reads as broken.
+   */
   public async runs(projectId: string): Promise<ISuiteRun[]> {
     const folder = join(this.root, projectId, SUITE_RUNNER.runs);
     const ids = await readdir(folder).catch(() => []);
@@ -290,7 +311,9 @@ export class SuiteRunner {
       .sort((one, other) => other.startedAt - one.startedAt);
   }
 
-  /** Opens a trace a test left in Playwright's own trace viewer, from the suite's folder. */
+  /**
+   * Opens a trace a test left in Playwright's own trace viewer, from the suite's folder.
+   */
   public async openTrace(props: {
     projectId: string;
     runId: string;

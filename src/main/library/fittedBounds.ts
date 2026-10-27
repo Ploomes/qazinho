@@ -1,6 +1,9 @@
 import type { IBounds } from '@/main/types';
 
-/** Where a window goes for a size: centred on its display and never past it, and never smaller than the QA made it. */
+/**
+ * Where a window goes for a size: centred on its display and never past it, and never
+ * smaller than the QA made it.
+ */
 export function fittedBounds(props: {
   size: { width: number; height: number };
   area: IBounds;

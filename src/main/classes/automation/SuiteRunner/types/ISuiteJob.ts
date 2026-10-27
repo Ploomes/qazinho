@@ -2,7 +2,10 @@ import type { IVariableValue } from '@/main/types';
 import type { ISuiteRun } from '@/shared/types';
 import type { ChildProcess } from 'node:child_process';
 
-/** A run going: its record so far, the project's values to read back as names, how many tests the page expected and Playwright counted, the Playwright walking its batch, whether the QA stopped it or Playwright broke before saying it ended, and whether it is a check the page never hears of. */
+/**
+ * A suite run going: its record so far, its counts, its Playwright, and whether it
+ * stopped or broke.
+ */
 export interface ISuiteJob {
   run: ISuiteRun;
   values: IVariableValue[];

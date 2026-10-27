@@ -7,7 +7,10 @@ const TOKENS = [
   /\bAKIA[0-9A-Z]{16}\b/,
 ];
 
-/** The first thing in a message that looks like a token or an API key, such as a Jira or GitHub token; null when there is none. */
+/**
+ * The first thing in a message that looks like a token or an API key, such as a Jira or
+ * GitHub token; null when there is none.
+ */
 export function tokenIn(text: string): string | null {
   for (const pattern of TOKENS) {
     const found = pattern.exec(text);

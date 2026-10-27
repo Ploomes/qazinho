@@ -4,7 +4,10 @@ import { STICKER } from '@/shared/constants';
 import { useRunNoticeViewModel } from './hooks';
 import './styles.css';
 
-/** A run that just ended, said inside the app wherever the QA is: how it went, and the way to it, for a few seconds. */
+/**
+ * A run that just ended, said inside the app wherever the QA is: how it went, and the way
+ * to it, for a few seconds.
+ */
 export const RunNotice: React.FC = () => {
   const {
     isShown,

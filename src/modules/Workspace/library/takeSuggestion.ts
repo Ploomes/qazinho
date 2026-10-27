@@ -2,7 +2,10 @@ import type { IWorkspace } from '@/modules/Workspace/types';
 import { appendPlanCard } from '@/modules/Chat/library';
 import { caseIdsUsed, planOfDraft } from '@/modules/Plan/library';
 
-/** Takes the cases an exploration suggested into the plan, after the cases it already holds, and hands the plan to its tab; a suggestion is taken once. */
+/**
+ * Takes the cases an exploration suggested into the plan, after the cases it already
+ * holds, and hands the plan to its tab; a suggestion is taken once.
+ */
 export function takeSuggestion(props: {
   workspace: IWorkspace;
   messageId: string;

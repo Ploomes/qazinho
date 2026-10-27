@@ -1,4 +1,7 @@
-/** One JPEG as a part of a multipart/x-mixed-replace body, with when it was captured and the screen's shape; an <img> reads only the image. */
+/**
+ * One JPEG as a part of a multipart/x-mixed-replace body, with when it was captured and
+ * the screen's shape; an <img> reads only the image.
+ */
 export function mjpegPart(props: {
   boundary: string;
   jpeg: Buffer;

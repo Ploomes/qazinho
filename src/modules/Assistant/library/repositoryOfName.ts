@@ -1,4 +1,7 @@
-/** The owner and name a QA's words give for a GitHub repository, as owner/name or its github.com address; null for anything else. */
+/**
+ * The owner and name a QA's words give for a GitHub repository, as owner/name or its
+ * github.com address; null for anything else.
+ */
 export function repositoryOfName(text: string): { owner: string; name: string } | null {
   const path = text
     .trim()

@@ -2,7 +2,10 @@ import type { SuiteChangeAsk } from '@/modules/Automation/types';
 
 const LONGEST = 72;
 
-/** What a change is about in a line: the test that broke, or the test asked for, by its plan case or the QA's first words. */
+/**
+ * What a change is about in a line: the test that broke, or the test asked for, by its
+ * plan case or the QA's first words.
+ */
 export function requestTitleOf(ask: SuiteChangeAsk): string {
   if (ask.kind === 'fix') return ask.test.title;
 

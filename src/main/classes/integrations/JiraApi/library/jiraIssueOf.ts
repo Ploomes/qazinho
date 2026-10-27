@@ -4,15 +4,10 @@ import { adfToMarkdown } from './adfToMarkdown';
 
 type Loose = Record<string, unknown>;
 
-function record(value: unknown): Loose {
-  return typeof value === 'object' && value !== null ? (value as Loose) : {};
-}
-
-function text(value: unknown): string {
-  return typeof value === 'string' ? value.trim() : '';
-}
-
-/** A filed issue as Jira keeps it now: its summary and description, its status and whether it is done, and the team's latest comments; null for an answer that is no issue. */
+/**
+ * A filed issue as Jira keeps it now: its summary and description, its status and whether
+ * it is done, and the team's latest comments; null for an answer that is no issue.
+ */
 export function jiraIssueOf(props: {
   issue: unknown;
   site: string;
@@ -41,4 +36,12 @@ export function jiraIssueOf(props: {
       }))
       .filter((comment) => comment.text.length > 0),
   };
+}
+
+function record(value: unknown): Loose {
+  return typeof value === 'object' && value !== null ? (value as Loose) : {};
+}
+
+function text(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : '';
 }

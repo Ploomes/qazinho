@@ -10,7 +10,10 @@ import { findOnPath, machineDirectories } from '@/main/library';
 import { AGENT_TERMINAL, RELAY_SCRIPT } from './constants';
 import { blankScreen, paintScreen } from './library';
 
-/** An agent CLI's full-screen interface, run in a terminal nobody sees: QAzinho reads its screen and presses its keys. */
+/**
+ * An agent CLI's full-screen interface, run in a terminal nobody sees: QAzinho reads its
+ * screen and presses its keys.
+ */
 export class AgentTerminal {
   private readonly child: ChildProcessWithoutNullStreams;
   private readonly catcher: LinkCatcher;
@@ -42,12 +45,18 @@ export class AgentTerminal {
     });
   }
 
-  /** Whether this machine has the `expect` the hidden terminal runs on: every Mac does, a Linux that installed it does, Windows never. */
+  /**
+   * Whether this machine has the `expect` the hidden terminal runs on: every Mac does, a
+   * Linux that installed it does, Windows never.
+   */
   public static async isAvailable(): Promise<boolean> {
     return (await AgentTerminal.expect()) !== null;
   }
 
-  /** Starts the agent in a hidden terminal. A page it asks the browser to open is caught, not opened. */
+  /**
+   * Starts the agent in a hidden terminal. A page it asks the browser to open is caught,
+   * not opened.
+   */
   public static async open(props: IAgentTerminal): Promise<AgentTerminal> {
     const relay = join(tmpdir(), AGENT_TERMINAL.relayFile);
     const catcher = await LinkCatcher.create();
@@ -67,7 +76,10 @@ export class AgentTerminal {
     return new AgentTerminal({ child, catcher });
   }
 
-  /** What the agent shows now, the pages it asked a browser to open, and whether it has closed. */
+  /**
+   * What the agent shows now, the pages it asked a browser to open, and whether it has
+   * closed.
+   */
   public async view(): Promise<ITerminalView> {
     return {
       rows: this.screen.cells.map((cells) => cells.join('').trimEnd()),
@@ -95,7 +107,10 @@ export class AgentTerminal {
     }
   }
 
-  /** Reads the screen whenever it settles until `read` answers; null once the agent closes, `ms` runs out or `signal` aborts. */
+  /**
+   * Reads the screen whenever it settles until `read` answers; null once the agent
+   * closes, `ms` runs out or `signal` aborts.
+   */
   public async waitFor<T>(props: {
     read: (view: ITerminalView) => T | null;
     ms: number;

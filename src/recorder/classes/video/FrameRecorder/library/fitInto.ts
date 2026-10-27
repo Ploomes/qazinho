@@ -1,6 +1,8 @@
 import type { IRect, ISize } from '@/recorder/classes/video/FrameRecorder/types';
 
-/** Where a picture lands in a box it must not stretch in: as large as it fits, centred. */
+/**
+ * Where a picture lands in a box it must not stretch in: as large as it fits, centred.
+ */
 export function fitInto(props: { source: ISize; box: ISize }): IRect {
   const { source, box } = props;
   const scale = Math.min(box.width / source.width, box.height / source.height);

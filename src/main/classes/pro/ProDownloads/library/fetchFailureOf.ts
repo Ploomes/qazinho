@@ -1,4 +1,7 @@
-/** Why reading from the org did not work, as the QA reads it: signed out, no answer, or a refusal. */
+/**
+ * Why reading from the org did not work, as the QA reads it: signed out, no answer, or a
+ * refusal.
+ */
 export function fetchFailureOf(answer: {
   status: number;
 }): 'signed-out' | 'unreachable' | 'failed' {

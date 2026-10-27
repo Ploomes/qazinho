@@ -8,7 +8,10 @@ import { sampleFileOf } from '@/main/library';
 import { CODE_EXPORT } from './constants';
 import { maestroOf, playwrightOf } from './library';
 
-/** Writes the cases a workspace's runs recorded as code the QA keeps: a Playwright test file for a web app, a Maestro flow per case for a phone app. */
+/**
+ * Writes the cases a workspace's runs recorded as code the QA keeps: a Playwright test
+ * file for a web app, a Maestro flow per case for a phone app.
+ */
 export class CodeExport {
   private readonly dataRoot: string;
   private readonly chooseFolder: ICodeExport['chooseFolder'];
@@ -20,7 +23,10 @@ export class CodeExport {
     this.appIdOf = props.appIdOf;
   }
 
-  /** Exports every case whose recipe still matches what the case says, into a folder the QA picks, and says which cases have none yet. */
+  /**
+   * Exports every case whose recipe still matches what the case says, into a folder the
+   * QA picks, and says which cases have none yet.
+   */
   public async export(request: IExportCode): Promise<ExportOutcome> {
     const book = readBook(
       await readFile(

@@ -11,7 +11,9 @@ import { writeAtomically } from '@/main/library';
 import { ARCHIVE } from './constants';
 import { asideNameOf, isInside, networkOf, planFaultOf, readTextOr } from './library';
 
-/** Everything QAzinho keeps between sessions, as files the QA can open, diff and commit. */
+/**
+ * Everything QAzinho keeps between sessions, as files the QA can open, diff and commit.
+ */
 export class Archive {
   private readonly root: string;
   private readonly writing = new Set<Promise<void>>();
@@ -63,7 +65,10 @@ export class Archive {
     await rm(join(this.root, ARCHIVE.runs, id), { recursive: true, force: true });
   }
 
-  /** The requests a web run kept beside its video; null for a run that kept none, such as one on a phone. */
+  /**
+   * The requests a web run kept beside its video; null for a run that kept none, such as
+   * one on a phone.
+   */
   public async readNetwork(run: IRunRef): Promise<INetworkEntry[] | null> {
     const file = join(
       this.root,
@@ -80,7 +85,10 @@ export class Archive {
     return text === null ? null : networkOf(text);
   }
 
-  /** A plan set aside, read again once the QA fixed it; one that reads now leaves the folder, since the plan it holds is the workspace's again. */
+  /**
+   * A plan set aside, read again once the QA fixed it; one that reads now leaves the
+   * folder, since the plan it holds is the workspace's again.
+   */
   public async readUnreadPlan(props: {
     workspaceId: string;
     file: string;
@@ -99,7 +107,10 @@ export class Archive {
     return { status: 'read', yaml };
   }
 
-  /** Where a plan set aside sits, for the QA to open it; null for a name QAzinho never gave one. */
+  /**
+   * Where a plan set aside sits, for the QA to open it; null for a name QAzinho never
+   * gave one.
+   */
   public unreadPlanFile(props: { workspaceId: string; file: string }): string | null {
     if (
       !ARCHIVE.unreadPlan.test(props.file) ||

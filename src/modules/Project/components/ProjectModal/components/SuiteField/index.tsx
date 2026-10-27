@@ -7,7 +7,10 @@ import { MOTION } from '@/shared/constants';
 import { useSuiteFieldViewModel } from './hooks';
 import './styles.css';
 
-/** The Playwright suite a project runs, from the folder where the QA keeps it cloned, with the settings its tests read and where each comes from. */
+/**
+ * The Playwright suite a project runs, from the folder where the QA keeps it cloned, with
+ * the settings its tests read and where each comes from.
+ */
 export const SuiteField: React.FC<ISuiteFieldProps> = (props) => {
   const {
     canConnect,

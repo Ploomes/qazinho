@@ -3,23 +3,10 @@ import { join, relative, sep } from 'node:path';
 
 type Entry = Record<string, unknown>;
 
-function isEntry(value: unknown): value is Entry {
-  return typeof value === 'object' && value !== null;
-}
-
-function listOf(value: unknown): unknown[] {
-  return Array.isArray(value) ? value : [];
-}
-
-function textsOf(props: { values: unknown[]; key: string }): string[] {
-  return props.values.flatMap((value) => {
-    const text = isEntry(value) ? value[props.key] : value;
-
-    return typeof text === 'string' ? [text] : [];
-  });
-}
-
-/** The tests a Playwright JSON report lists, once for each project they run in, with their file from the suite's folder and the describes around them; null for text that is not such a report. */
+/**
+ * The tests a Playwright JSON report lists, once per project they run in; null for
+ * anything else.
+ */
 export function suiteTestsOf(props: {
   text: string;
   root: string;
@@ -74,4 +61,20 @@ export function suiteTestsOf(props: {
     tests,
     projects: textsOf({ values: listOf(report.config.projects), key: 'name' }),
   };
+}
+
+function isEntry(value: unknown): value is Entry {
+  return typeof value === 'object' && value !== null;
+}
+
+function listOf(value: unknown): unknown[] {
+  return Array.isArray(value) ? value : [];
+}
+
+function textsOf(props: { values: unknown[]; key: string }): string[] {
+  return props.values.flatMap((value) => {
+    const text = isEntry(value) ? value[props.key] : value;
+
+    return typeof text === 'string' ? [text] : [];
+  });
 }

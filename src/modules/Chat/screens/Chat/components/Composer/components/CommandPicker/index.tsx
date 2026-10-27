@@ -5,7 +5,10 @@ import { STICKER } from '@/shared/constants';
 import { useCommandPickerViewModel } from './hooks';
 import './styles.css';
 
-/** The commands a slash opens, then the repository and the branch the command needs, one step at a time. */
+/**
+ * The commands a slash opens, then the repository and the branch the command needs, one
+ * step at a time.
+ */
 export const CommandPicker: React.FC<ICommandPickerProps> = (props) => {
   const { listRef, listStyle, swap, rows, onPointerDown } =
     useCommandPickerViewModel(props);

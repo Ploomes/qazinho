@@ -1,8 +1,9 @@
 import type { IDetectedAgent, IDeviceTools } from '@/shared/types';
 
-const said = (isOn: boolean | null) => (isOn === null ? 'unknown' : isOn ? 'yes' : 'no');
-
-/** What a QA pastes when something went wrong: the version, the machine, the agents and device tools found, and the last lines of the log, with no path, account or project in it. */
+/**
+ * What a QA pastes when something went wrong: version, machine, tools found and the log's
+ * last lines.
+ */
 export function diagnosticsOf(props: {
   version: string;
   system: string;
@@ -31,3 +32,5 @@ export function diagnosticsOf(props: {
     ...props.log,
   ].join('\n');
 }
+
+const said = (isOn: boolean | null) => (isOn === null ? 'unknown' : isOn ? 'yes' : 'no');

@@ -15,7 +15,10 @@ import { PROJECT_MODAL } from './constants';
 import { useProjectModalViewModel } from './hooks';
 import './styles.css';
 
-/** A project's window, in sections down its side: its name and targets, the code it is made of, its variables, its automated suite, and deleting it. */
+/**
+ * A project's window, in sections down its side: its name and targets, the code it is
+ * made of, its variables, its automated suite, and deleting it.
+ */
 export const ProjectModal: React.FC = () => {
   const {
     name,

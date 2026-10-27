@@ -1,7 +1,10 @@
 import type { IProjectRepository } from '@/modules/Project/types';
 import type { IJiraProject, IssueTarget, IssueTracker } from '@/shared/types';
 
-/** Where a bug goes unless the QA says otherwise: where the project's last bug went, else the Jira project of the story the workspace works from, else the project's first repository, else the first Jira project listed; null when no tracker is connected. */
+/**
+ * Where a bug goes unless the QA says otherwise: where the last went, the story's
+ * project, or a repo.
+ */
 export function issueTargetOf(props: {
   kept: IssueTarget | null;
   trackers: IssueTracker[];

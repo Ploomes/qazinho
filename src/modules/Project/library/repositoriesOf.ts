@@ -1,6 +1,9 @@
 import type { IProjectRepository } from '@/modules/Project/types';
 
-/** The repositories a saved project names, each with its owner, name and base branch; anything else, or none, is no repository. */
+/**
+ * The repositories a saved project names, each with its owner, name and base branch;
+ * anything else, or none, is no repository.
+ */
 export function repositoriesOf(saved: unknown): IProjectRepository[] {
   if (!Array.isArray(saved)) return [];
 

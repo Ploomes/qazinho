@@ -1,7 +1,10 @@
 import type { UserCommand } from '@/modules/Chat/types';
 import type { IWorkspace } from '@/modules/Workspace';
 
-/** Puts what the QA sent at the end of the chat: their words, trimmed, with what they mentioned and the command they gave. */
+/**
+ * Puts what the QA sent at the end of the chat: their words, trimmed, with what they
+ * mentioned and the command they gave.
+ */
 export function appendUserMessage(props: {
   workspace: IWorkspace;
   text: string;

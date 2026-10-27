@@ -5,7 +5,10 @@ import { ModalFrame } from '@/shared/components/templates';
 import { useSuiteChangeReviewViewModel } from './hooks';
 import './styles.css';
 
-/** The agent's fix as the QA reviews it before it leaves their machine: what it said, QAzinho's own run of the test, the pull request it wrote and every file it changed. */
+/**
+ * The agent's fix as the QA reviews it before it leaves their machine: what it said,
+ * QAzinho's own run of the test, the pull request it wrote and every file it changed.
+ */
 export const SuiteChangeReview: React.FC<ISuiteChangeReviewProps> = (props) => {
   const {
     title,

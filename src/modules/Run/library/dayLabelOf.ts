@@ -1,12 +1,7 @@
-function keyOf(day: Date): string {
-  return [
-    String(day.getFullYear()),
-    String(day.getMonth() + 1).padStart(2, '0'),
-    String(day.getDate()).padStart(2, '0'),
-  ].join('-');
-}
-
-/** A day, YYYY-MM-DD, the way a list says when something happened: today, yesterday, or its date, with the year only when it is not this one; nothing for no day. */
+/**
+ * A day, YYYY-MM-DD, the way a list says when something happened: today, yesterday, or
+ * its date, with the year only when it is not this one; nothing for no day.
+ */
 export function dayLabelOf(props: {
   day: string | null;
   now: Date;
@@ -29,4 +24,12 @@ export function dayLabelOf(props: {
     month: '2-digit',
     ...(year === now.getFullYear() ? {} : { year: 'numeric' }),
   }).format(new Date(year, month - 1, date));
+}
+
+function keyOf(day: Date): string {
+  return [
+    String(day.getFullYear()),
+    String(day.getMonth() + 1).padStart(2, '0'),
+    String(day.getDate()).padStart(2, '0'),
+  ].join('-');
 }

@@ -1,4 +1,7 @@
-/** One page of a list, with the page clamped to one that exists, so a shrinking list never shows an empty page. */
+/**
+ * One page of a list, with the page clamped to one that exists, so a shrinking list never
+ * shows an empty page.
+ */
 export function pageOf<T>(props: { items: T[]; page: number; size: number }): {
   items: T[];
   page: number;

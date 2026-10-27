@@ -1,42 +1,9 @@
 import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 
-function qazinhoServerOf(mcpConfig: string | undefined): {
-  url: string;
-  timeoutMs: number | null;
-} | null {
-  if (mcpConfig === undefined) return null;
-
-  try {
-    const read = JSON.parse(mcpConfig) as {
-      mcpServers?: { qazinho?: { url?: unknown; timeout?: unknown } };
-    };
-    const server = read.mcpServers?.qazinho;
-
-    return typeof server?.url === 'string'
-      ? {
-          url: server.url,
-          timeoutMs: typeof server.timeout === 'number' ? server.timeout : null,
-        }
-      : null;
-  } catch {
-    return null;
-  }
-}
-
-function servedOf(mcpConfig: string | undefined): string[] {
-  if (mcpConfig === undefined) return [];
-
-  try {
-    return Object.keys(
-      (JSON.parse(mcpConfig) as { mcpServers?: Record<string, unknown> }).mcpServers ??
-        {},
-    );
-  } catch {
-    return [];
-  }
-}
-
-/** The flags that make Codex answer once, as JSON lines, never stopping to ask for approval: read-only, or writing in one folder with the network on; the QA's own MCP servers stay on only for a call that lets them in, the chat's, else only the ones QAzinho hands it. */
+/**
+ * The flags for one Codex answer in JSON lines with no approval asked: read-only, or one
+ * folder writable.
+ */
 export function buildCodexArgs(
   props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command' | 'agentId'> & {
     schemaFile: string | null;
@@ -83,4 +50,40 @@ export function buildCodexArgs(
         ]),
     '-',
   ];
+}
+
+function qazinhoServerOf(mcpConfig: string | undefined): {
+  url: string;
+  timeoutMs: number | null;
+} | null {
+  if (mcpConfig === undefined) return null;
+
+  try {
+    const read = JSON.parse(mcpConfig) as {
+      mcpServers?: { qazinho?: { url?: unknown; timeout?: unknown } };
+    };
+    const server = read.mcpServers?.qazinho;
+
+    return typeof server?.url === 'string'
+      ? {
+          url: server.url,
+          timeoutMs: typeof server.timeout === 'number' ? server.timeout : null,
+        }
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+function servedOf(mcpConfig: string | undefined): string[] {
+  if (mcpConfig === undefined) return [];
+
+  try {
+    return Object.keys(
+      (JSON.parse(mcpConfig) as { mcpServers?: Record<string, unknown> }).mcpServers ??
+        {},
+    );
+  } catch {
+    return [];
+  }
 }

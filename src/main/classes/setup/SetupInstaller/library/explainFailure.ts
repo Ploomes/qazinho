@@ -1,6 +1,9 @@
 import type { InstallFailure } from '@/shared/types';
 
-/** What a failed command said from its last error on, and the fix it suggested to run, when it suggested one. */
+/**
+ * What a failed command said from its last error on, and the fix it suggested to run,
+ * when it suggested one.
+ */
 export function explainFailure(lines: string[]): {
   failure: InstallFailure;
   fix: string | null;

@@ -5,7 +5,10 @@ import { PROJECT_NAV_MARK } from './constants';
 import { useProjectNavViewModel } from './hooks';
 import './styles.css';
 
-/** The project window's sections down its side: the open one marked, what each holds counted, and a dot on one that keeps the project from saving. */
+/**
+ * The project window's sections down its side: the open one marked, what each holds
+ * counted, and a dot on one that keeps the project from saving.
+ */
 export const ProjectNav: React.FC<IProjectNavProps> = (props) => {
   const { items } = useProjectNavViewModel(props);
 

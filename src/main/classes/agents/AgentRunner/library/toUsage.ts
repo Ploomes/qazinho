@@ -9,7 +9,10 @@ const EMPTY: IAgentUsage = {
   contextWindow: 0,
 };
 
-/** Reads the limits the account is against, and how much context the turn actually carried. */
+/**
+ * Reads the limits the account is against, and how much context the turn actually
+ * carried.
+ */
 export function toUsage(props: {
   previous: IAgentUsage | null;
   line: IAgentLine;

@@ -1,4 +1,4 @@
-/** Where a change to a suite stands: the agent working, ready for the QA to review, the app wrong and the test right, the agent giving up, broken, stopped, sent, or thrown away. */
+/** Where a change to a suite stands. */
 export type SuiteChangeStatus =
   | 'working'
   | 'ready'

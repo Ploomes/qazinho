@@ -3,7 +3,10 @@ import type { ISavedWorkspace } from '@/shared/types';
 import { stringify } from 'yaml';
 import { endRun } from './endRun';
 
-/** Text a QA can read, screenshots left as files; a run in flight is kept as one QAzinho interrupted, which it is if it closes now. */
+/**
+ * Text a QA can read, screenshots left as files; a run in flight is kept as one QAzinho
+ * interrupted, which it is if it closes now.
+ */
 export function toSaved(props: { workspace: IWorkspace; at: string }): ISavedWorkspace {
   const workspace = endRun({ ...props, endedBy: 'interrupted' });
   const { plan, ...rest } = workspace;

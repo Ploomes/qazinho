@@ -1,4 +1,4 @@
-/** Where a project's sync with its org stands: off, sent, sending, waiting for the network, a plan in conflict, the org blocked, read-only for this person, signed out, or refused. */
+/** Where a project's sync with its org stands. */
 export type ProSyncState =
   | 'off'
   | 'synced'

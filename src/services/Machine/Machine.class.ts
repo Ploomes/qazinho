@@ -6,7 +6,10 @@ import type {
 } from '@/shared/types';
 import { NO_RESOURCES, NO_TOOLS } from './constants';
 
-/** The only caller of the machine side of the bridge. Views ask this, never `window.qazinho`. */
+/**
+ * The only caller of the machine side of the bridge. Views ask this, never
+ * `window.qazinho`.
+ */
 export class Machine {
   public static async detectAgents(): Promise<IDetectedAgent[]> {
     return (await window.qazinho?.detectAgents()) ?? [];

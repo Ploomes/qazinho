@@ -1,7 +1,10 @@
 import type { ISuiteResult } from './ISuiteResult';
 import type { ISuiteRun } from './ISuiteRun';
 
-/** What main tells the page while a suite runs: the run starting, how many tests it holds, a test starting, the step it is on, a test ending, and the run ending. */
+/**
+ * What main tells the page while a suite runs: the run starting, how many tests it holds,
+ * a test starting, the step it is on, a test ending, and the run ending.
+ */
 export type SuiteEvent =
   | { kind: 'started'; run: ISuiteRun }
   | { kind: 'total'; projectId: string; runId: string; total: number }

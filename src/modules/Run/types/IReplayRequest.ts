@@ -1,6 +1,9 @@
 import type { RequestOutcome } from './RequestOutcome';
 
-/** A request placed on a run's video: where it starts and ends there, with its address split into another host and the path; `toMs` is null for one that never ended. */
+/**
+ * A request placed on a run's video: where it starts and ends there, with its address
+ * split into another host and the path; `toMs` is null for one that never ended.
+ */
 export interface IReplayRequest {
   id: number;
   method: string;

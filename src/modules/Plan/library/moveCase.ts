@@ -1,6 +1,9 @@
 import type { ITestCase } from '@/modules/Plan/types';
 
-/** The plan with one case moved one place up or down; as it was when the case is already at that end. */
+/**
+ * The plan with one case moved one place up or down; as it was when the case is already
+ * at that end.
+ */
 export function moveCase(props: {
   plan: ITestCase[];
   caseId: string;

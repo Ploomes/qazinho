@@ -1,7 +1,10 @@
 import type { InstallState, OnboardingStep } from '@/modules/Setup/types';
 import type { InternMood } from '@/shared/components/atoms/Intern/types';
 
-/** How the Estagiário looks on each step of the first run, and while it installs or checks the machine. */
+/**
+ * How the Estagiário looks on each step of the first run, and while it installs or checks
+ * the machine.
+ */
 export function moodOfSetup(props: {
   step: OnboardingStep;
   installs: (InstallState | undefined)[];

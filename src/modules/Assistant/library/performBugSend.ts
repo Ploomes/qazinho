@@ -21,7 +21,10 @@ const FAILURES: Record<FilingFailure, string> = {
   unexpected: 'it answered in a way QAzinho did not expect.',
 };
 
-/** Sends a bug to the QA's tracker once the QA confirms it on screen: to the place they named, else where the project's last bug went, the story's Jira project or the project's first repository. */
+/**
+ * Sends a bug to the QA's tracker once they confirm it: where they named, else the
+ * project's usual one.
+ */
 export async function performBugSend(props: {
   id: string;
   call: Extract<AppToolCall, { name: 'send_bug' }>;

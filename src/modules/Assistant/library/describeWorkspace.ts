@@ -10,7 +10,10 @@ const ENDINGS = {
   interrupted: 'cut short when QAzinho closed',
 } as const;
 
-/** A workspace in full for the assistant: where it tests, the Figma design it is checked against, its plan case by case with each step's frame, its runs, its bugs, a run going on, and the questions its chat waits on. */
+/**
+ * A workspace in full for the assistant: target, design, plan, runs, bugs and what it
+ * waits on.
+ */
 export function describeWorkspace(props: {
   workspace: IWorkspace;
   project: IProject | null;

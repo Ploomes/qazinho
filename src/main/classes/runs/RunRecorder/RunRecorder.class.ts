@@ -14,7 +14,10 @@ import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { CHANNELS, RECORDER_ARGUMENT } from '@/shared/constants';
 import { RUN_RECORDER } from './constants';
 
-/** Records each run's live stream into an MP4 beside its screenshots, through a hidden window that has the video encoder. */
+/**
+ * Records each run's live stream into an MP4 beside its screenshots, through a hidden
+ * window that has the video encoder.
+ */
 export class RunRecorder {
   private readonly dataRoot: string;
   private readonly preload: string;
@@ -87,7 +90,10 @@ export class RunRecorder {
     );
   }
 
-  /** Ends a run's recording now, and answers with its video once the file is whole, or null when there is none. */
+  /**
+   * Ends a run's recording now, and answers with its video once the file is whole, or
+   * null when there is none.
+   */
   public async stop(workspaceId: string): Promise<IRunVideo | null> {
     const recording = this.recordings.get(workspaceId);
 

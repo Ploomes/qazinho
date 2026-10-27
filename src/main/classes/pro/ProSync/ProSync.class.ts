@@ -27,7 +27,10 @@ import {
   stateOfRefusal,
 } from './library';
 
-/** Sends every project of this computer to the org it sends to in QAzinho Pro, out of the QA's way: what changed since the last time, with its screens and videos, waiting for the network and saying where each one stands. */
+/**
+ * Sends every project of this computer to its org in the background, what changed since
+ * the last time.
+ */
 export class ProSync {
   private readonly api: IProSync['api'];
   private readonly target: IProSync['target'];
@@ -65,7 +68,10 @@ export class ProSync {
     );
   }
 
-  /** Sends what changed in a project, one push at a time per project; everything goes again to an org it never reached. */
+  /**
+   * Sends what changed in a project, one push at a time per project; everything goes
+   * again to an org it never reached.
+   */
   public async push(batch: IProSyncBatch): Promise<IProShare> {
     return this.inTurn({
       projectId: batch.project.projectId,
@@ -73,7 +79,10 @@ export class ProSync {
     });
   }
 
-  /** Builds a workspace's plan on the version the org moved it to, once the QA merged the two; the merged plan goes out on the next push. */
+  /**
+   * Builds a workspace's plan on the version the org moved it to, once the QA merged the
+   * two; the merged plan goes out on the next push.
+   */
   public async resolve(props: {
     projectId: string;
     workspaceId: string;
@@ -85,7 +94,10 @@ export class ProSync {
     });
   }
 
-  /** Asks the org for the plans it moved past what this computer last sent, as another computer or a merged pull request does, and hands each to the page to join with this computer's own changes. */
+  /**
+   * Asks the org for the plans it moved past what this computer sent, and hands each to
+   * the page.
+   */
   public async pull(): Promise<void> {
     const target = await this.target();
     if (target === null) return;
@@ -125,7 +137,10 @@ export class ProSync {
     turn();
   }
 
-  /** Keeps a project downloaded from its org as shared with it, each plan at the version it came in. */
+  /**
+   * Keeps a project downloaded from its org as shared with it, each plan at the version
+   * it came in.
+   */
   public async adopt(props: {
     projectId: string;
     orgSlug: string;

@@ -6,7 +6,10 @@ import { createServer } from 'node:http';
 import { LIVE_STREAM } from './constants';
 import { mjpegPart, workspaceOfPath } from './library';
 
-/** Serves each workspace's device as MJPEG on loopback, so video never crosses IPC: to the page's <img>, and to the recorder window. */
+/**
+ * Serves each workspace's device as MJPEG on loopback, so video never crosses IPC: to the
+ * page's <img>, and to the recorder window.
+ */
 export class LiveStream {
   private readonly token = randomUUID();
   private readonly viewers = new Map<string, Set<ServerResponse>>();

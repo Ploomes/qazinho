@@ -4,7 +4,10 @@ import { Caret } from '@/shared/components/atoms';
 import { useSuiteDiffViewModel } from './hooks';
 import './styles.css';
 
-/** One file a change touched: its path, what was done to it, and its lines added and removed, folded open. */
+/**
+ * One file a change touched: its path, what was done to it, and its lines added and
+ * removed, folded open.
+ */
 export const SuiteDiff: React.FC<ISuiteDiffProps> = (props) => {
   const {
     style,

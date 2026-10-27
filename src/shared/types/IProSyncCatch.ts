@@ -1,4 +1,7 @@
-/** One time a bug was caught, as it goes to QAzinho Pro: the run and when it started, the step, its screen as a file in the archive, and its moment in seconds into that run's video. */
+/**
+ * One time a bug was caught, as it goes to the QA's account: the run, step, screen and
+ * moment.
+ */
 export interface IProSyncCatch {
   runId: string;
   runWhen: string;

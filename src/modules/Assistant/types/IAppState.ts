@@ -3,7 +3,10 @@ import type { IProject } from '@/modules/Project/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IIntegrationStatus, IVariableBrief } from '@/shared/types';
 
-/** QAzinho as the assistant's tools read it: the projects, the workspaces and whose chat is answering, the connected trackers, the builds, the toolchains a build needs, and each project's variables by name. */
+/**
+ * QAzinho as the assistant's tools read it: projects, workspaces, trackers, builds and
+ * variables.
+ */
 export interface IAppState {
   projects: IProject[];
   workspaces: IWorkspace[];

@@ -1,7 +1,10 @@
 import type { IWorkspace } from '@/modules/Workspace';
 import type { IChatQuestion } from '@/shared/types';
 
-/** Adds a round of the agent's questions to the chat, waiting for the QA; a round with none adds nothing. */
+/**
+ * Adds a round of the agent's questions to the chat, waiting for the QA; a round with
+ * none adds nothing.
+ */
 export function appendQuestions(props: {
   workspace: IWorkspace;
   questions: IChatQuestion[];

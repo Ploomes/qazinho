@@ -15,14 +15,7 @@ const ENDINGS = {
   interrupted: 'cut short when QAzinho closed',
 } as const;
 
-function tallyOf(verdicts: string[]): string {
-  const count = (wanted: string) =>
-    String(verdicts.filter((verdict) => verdict === wanted).length);
-
-  return `${count('passed')} passed, ${count('failed')} failed, ${count('blocked')} blocked, ${count('skipped')} skipped`;
-}
-
-/** What QAzinho knows of one run, as the lines its agent reads: every step, or only the ones that failed or were blocked; an exploration, by the screens it reached and the cases it suggested. */
+/** What QAzinho knows of one run, as the lines its agent reads. */
 export function runFactsOf(props: { run: IRun; isBrief: boolean }): string[] {
   const { run, isBrief } = props;
   const cost = run.costUsd === null ? '' : `, cost $${run.costUsd.toFixed(3)}`;
@@ -78,4 +71,11 @@ export function runFactsOf(props: { run: IRun; isBrief: boolean }): string[] {
       ];
     }),
   ];
+}
+
+function tallyOf(verdicts: string[]): string {
+  const count = (wanted: string) =>
+    String(verdicts.filter((verdict) => verdict === wanted).length);
+
+  return `${count('passed')} passed, ${count('failed')} failed, ${count('blocked')} blocked, ${count('skipped')} skipped`;
 }

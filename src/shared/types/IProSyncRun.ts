@@ -1,6 +1,9 @@
 import type { TargetKind } from './TargetKind';
 
-/** A finished run as it goes to QAzinho Pro: its cases and steps with the screens they left as files in the archive; main finds its video. */
+/**
+ * A finished run as it goes to QAzinho Pro: its cases and steps with the screens they
+ * left as files in the archive; main finds its video.
+ */
 export interface IProSyncRun {
   workspaceId: string;
   runId: string;

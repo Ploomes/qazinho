@@ -1,6 +1,9 @@
 import type { IProSyncRun } from '@/shared/types';
 
-/** The run as the platform takes it, each screen, the video and the requests named by the key they were uploaded under; one that did not go up is null. */
+/**
+ * The run as the platform takes it, each screen, the video and the requests named by the
+ * key they were uploaded under; one that did not go up is null.
+ */
 export function runBodyOf(props: {
   run: IProSyncRun;
   videoFile: string | null;

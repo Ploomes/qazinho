@@ -4,7 +4,10 @@ import {
   SUITE_REPORTER,
 } from '@/main/classes/automation/SuiteRunner/constants';
 
-/** A line QAzinho's reporter printed, read back; null for any other line a suite prints, or one that is not whole. */
+/**
+ * A line QAzinho's reporter printed, read back; null for any other line a suite prints,
+ * or one that is not whole.
+ */
 export function suiteReportOf(line: string): SuiteReport | null {
   if (!line.startsWith(SUITE_REPORTER.prefix)) return null;
 

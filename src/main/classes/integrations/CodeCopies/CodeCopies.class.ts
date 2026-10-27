@@ -5,7 +5,10 @@ import { join } from 'node:path';
 import { CODE_COPIES } from './constants';
 import { changesOf, filesInDiff, refPath } from './library';
 
-/** Copies a branch's code from GitHub for the agent to read while it plans, with what it changed; each copy is gone once its plan is. */
+/**
+ * Copies a branch's code from GitHub for the agent to read while it plans, with what it
+ * changed; each copy is gone once its plan is.
+ */
 export class CodeCopies {
   private readonly github: IGithubCode;
   private readonly root: string;
@@ -18,7 +21,10 @@ export class CodeCopies {
     this.now = props.now ?? Date.now;
   }
 
-  /** Copies a branch for a workspace and reads what it changed against the base, in place of any copy the workspace had. */
+  /**
+   * Copies a branch for a workspace and reads what it changed against the base, in place
+   * of any copy the workspace had.
+   */
   public async prepare(props: {
     workspaceId: string;
     code: ICodeAsk;
@@ -97,13 +103,19 @@ export class CodeCopies {
     return this.copies.get(workspaceId) ?? null;
   }
 
-  /** Deletes a workspace's copy from disk, once its plan is written or the workspace is gone. */
+  /**
+   * Deletes a workspace's copy from disk, once its plan is written or the workspace is
+   * gone.
+   */
   public async release(workspaceId: string): Promise<void> {
     this.copies.delete(workspaceId);
     await rm(join(this.root, workspaceId), { recursive: true, force: true });
   }
 
-  /** Deletes every copy left on disk, for when QAzinho opens after closing in the middle of a plan. */
+  /**
+   * Deletes every copy left on disk, for when QAzinho opens after closing in the middle
+   * of a plan.
+   */
   public async sweep(): Promise<void> {
     this.copies.clear();
     await rm(this.root, { recursive: true, force: true });

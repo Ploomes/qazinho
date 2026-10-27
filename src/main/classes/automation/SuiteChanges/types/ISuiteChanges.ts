@@ -7,7 +7,10 @@ import type { IVariableValue } from '@/main/types';
 import type { SuiteChangeEvent } from '@/shared/types';
 import type { Harness, McpHost } from '@salve-software/qazinho-harness';
 
-/** What changing a suite needs: the suites and their runner, git and gh, the QA's agent and the harness, QAzinho's tools, the project's values, the QA's PATH, where to keep each change, and whom to tell. */
+/**
+ * What changing a suite needs: the suites, git and gh, the agent and harness, tools,
+ * values and paths.
+ */
 export interface ISuiteChanges {
   registry: Pick<SuiteRegistry, 'pathOf' | 'runnerOf' | 'suiteOf'>;
   suites: Pick<SuiteRunner, 'check' | 'stopCheck' | 'resultOf'>;

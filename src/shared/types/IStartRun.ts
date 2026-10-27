@@ -6,7 +6,7 @@ import type { IViewport } from './IViewport';
 import type { Language } from './Language';
 import type { RunMode } from './RunMode';
 
-/** Everything the main process needs to walk a plan on a real device: `mode` "agent" walks every case with the agent, an exploration goes on for `minutes`, `bugs` are the ones already open, told to each agent so it counts one seen again instead of filing it twice, and `design` is the Figma design its steps' frames belong to. */
+/** Everything main needs to walk a plan on a real device, or explore with no plan. */
 export interface IStartRun {
   workspaceId: string;
   projectId?: string;

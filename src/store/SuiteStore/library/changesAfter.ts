@@ -1,6 +1,8 @@
 import type { ISuiteChange } from '@/shared/types';
 
-/** A project's changes once one of them changed: in its place, or new, the latest first. */
+/**
+ * A project's changes once one of them changed: in its place, or new, the latest first.
+ */
 export function changesAfter(props: {
   changes: ISuiteChange[];
   change: ISuiteChange;

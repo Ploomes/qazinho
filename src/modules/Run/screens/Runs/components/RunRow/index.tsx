@@ -2,7 +2,10 @@ import type { IRunRowProps } from './types';
 import { Icon } from '@/shared/components/atoms';
 import './styles.css';
 
-/** One run on a line: its id, what it walked, how it ended, its verdicts, how long and how much, and when. */
+/**
+ * One run on a line: its id, what it walked, how it ended, its verdicts, how long and how
+ * much, and when.
+ */
 export const RunRow: React.FC<IRunRowProps> = ({ row, factsNote }) => (
   <span className="run-row">
     <span className="run-row__id">{row.id}</span>

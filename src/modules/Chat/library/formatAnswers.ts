@@ -1,7 +1,10 @@
 import type { IQuestionAnswer } from '@/modules/Chat/types';
 import type { IChatQuestion } from '@/shared/types';
 
-/** The QA's answers as the message the agent reads: one line per question, what was picked, the variables it kept, then what was written. */
+/**
+ * The QA's answers as the message the agent reads: one line per question, what was
+ * picked, the variables it kept, then what was written.
+ */
 export function formatAnswers(props: {
   questions: IChatQuestion[];
   answers: IQuestionAnswer[];

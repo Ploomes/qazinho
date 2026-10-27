@@ -5,7 +5,10 @@ import type {
   IntegrationId,
 } from '@/shared/types';
 
-/** The only caller of the tracker side of the bridge. Tokens go in; only accounts come back. */
+/**
+ * The only caller of the tracker side of the bridge. Tokens go in; only accounts come
+ * back.
+ */
 export class Integrations {
   public static async list(): Promise<IIntegrationStatus[]> {
     return (await window.qazinho?.listIntegrations()) ?? [];

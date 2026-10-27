@@ -5,7 +5,10 @@ import { ReplayLog, ReplayNetwork, ReplayTimeline } from './components';
 import { useRunReplayViewModel } from './hooks';
 import './styles.css';
 
-/** A run's video with its timeline: a chapter per case, a pin per bug, the steps beside it and, when the QA asks, the requests under it, all kept in step. */
+/**
+ * A run's video with its timeline: a chapter per case, a pin per bug, the steps beside it
+ * and, when the QA asks, the requests under it, all kept in step.
+ */
 export const RunReplay: React.FC = () => {
   const {
     isOpen,

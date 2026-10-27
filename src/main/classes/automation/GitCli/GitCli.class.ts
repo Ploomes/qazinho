@@ -2,7 +2,10 @@ import type { GitAnswer, IGitCli } from './types';
 import { findOnPath, stripAnsi, spawnCommand } from '@/main/library';
 import { GIT_CLI } from './constants';
 
-/** Runs the QA's own git in a folder of theirs, never asking anything at a prompt; what it pushes goes with their own credentials. */
+/**
+ * Runs the QA's own git in a folder of theirs, never asking anything at a prompt; what it
+ * pushes goes with their own credentials.
+ */
 export class GitCli {
   private readonly directories: () => Promise<string[]>;
   private path: string | null = null;
@@ -11,7 +14,10 @@ export class GitCli {
     this.directories = props.directories;
   }
 
-  /** One git command in a folder, with what it printed, or what it said when it refused or was not there. */
+  /**
+   * One git command in a folder, with what it printed, or what it said when it refused or
+   * was not there.
+   */
   public async run(props: {
     cwd: string;
     args: string[];

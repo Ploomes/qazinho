@@ -3,7 +3,10 @@ import { Icon } from '@/shared/components/atoms';
 import { useMomentTileViewModel } from './hooks';
 import './styles.css';
 
-/** The run's video stopped at the moment a bug was caught, beside its screenshots; a click plays that take. */
+/**
+ * The run's video stopped at the moment a bug was caught, beside its screenshots; a click
+ * plays that take.
+ */
 export const MomentTile: React.FC<IMomentTileProps> = (props) => {
   const { label, hasVideo, src, videoRef, onLoadedMetadata, onOpen } =
     useMomentTileViewModel(props);

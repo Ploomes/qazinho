@@ -1,3 +1,6 @@
-/** What the QA should know about this computer's sending to its org: no answer, no org, an account that only reads, a blocked org, a role that only reads, a sign-in the org no longer takes, or a refusal. */
+/**
+ * What the QA should know about sending to the org: no answer, no org, read-only, blocked
+ * or refused.
+ */
 export type ProAttention =
   'unreachable' | 'no-org' | 'reader' | 'blocked' | 'read-only' | 'signed-out' | 'failed';

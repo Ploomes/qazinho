@@ -6,7 +6,10 @@ import { MOTION } from '@/shared/constants';
 import { useTargetCardViewModel } from './hooks';
 import './styles.css';
 
-/** A part of a project, a platform it targets or the code it is made of; one this machine cannot reach yet sits blurred behind how to set it up. */
+/**
+ * A part of a project, a platform it targets or the code it is made of; one this machine
+ * cannot reach yet sits blurred behind how to set it up.
+ */
 export const TargetCard: React.FC<ITargetCardProps> = (props) => {
   const {
     isLocked,

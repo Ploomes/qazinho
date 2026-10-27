@@ -1,7 +1,10 @@
 import type { SyncedProject } from '@/main/classes/pro/ProDownloads/types';
 import type { IProSyncPlan } from '@/shared/types';
 
-/** A plan of the org as a workspace of this computer: on the target it names, else one of its kind, else the project's first. */
+/**
+ * A plan of the org as a workspace of this computer: on the target it names, else one of
+ * its kind, else the project's first.
+ */
 export function downloadedPlanOf(props: {
   plan: SyncedProject['plans'][number];
   targets: SyncedProject['targets'];

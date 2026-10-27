@@ -8,7 +8,10 @@ import type { ITargetUnderTest } from './ITargetUnderTest';
 import type { IVariableBrief } from './IVariableBrief';
 import type { IViewport } from './IViewport';
 
-/** What the page asks in the chat: the QA's own words, the workspace they are about and its project, how its latest runs went, a branch, a Jira story or a Confluence page to plan from, the Figma design it is checked against, and the variables its project keeps. */
+/**
+ * What the page asks in the chat: the QA's words, the workspace, its runs and the sources
+ * to plan from.
+ */
 export interface IAskAgent {
   workspaceId: string;
   projectId: string;

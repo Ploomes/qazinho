@@ -2,7 +2,10 @@ import type { IWorkspace } from '@/modules/Workspace';
 import type { IChatReference } from '@/shared/types';
 import { runFactsOf } from './runFactsOf';
 
-/** Everything in a workspace the QA can point at with @, newest runs first, with the facts behind each; `wholePlan` and `exploration` name a run in the QA's language. */
+/**
+ * Everything in a workspace the QA can point at with @, newest runs first, with the facts
+ * behind each; `wholePlan` and `exploration` name a run in the QA's language.
+ */
 export function referencesOf(props: {
   workspace: Pick<IWorkspace, 'runs' | 'bugs' | 'plan'>;
   wholePlan: string;

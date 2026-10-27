@@ -10,17 +10,10 @@ type Page = {
   _links?: { webui?: unknown };
 };
 
-function documentOf(value: unknown): unknown {
-  if (typeof value !== 'string') return null;
-
-  try {
-    return JSON.parse(value);
-  } catch {
-    return null;
-  }
-}
-
-/** A Confluence page as its API answers it: where it opens, its version and space, and its body as Markdown; null for an answer that is not a page. */
+/**
+ * A Confluence page as its API answers it: where it opens, its version and space, and its
+ * body as Markdown; null for an answer that is not a page.
+ */
 export function confluencePageOf(props: { answer: unknown; site: string }): {
   page: IConfluencePageRef;
   version: number;
@@ -45,4 +38,14 @@ export function confluencePageOf(props: { answer: unknown; site: string }): {
     spaceId: typeof read.spaceId === 'string' ? read.spaceId : '',
     text: adfToMarkdown(documentOf(read.body?.atlas_doc_format?.value)),
   };
+}
+
+function documentOf(value: unknown): unknown {
+  if (typeof value !== 'string') return null;
+
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
 }

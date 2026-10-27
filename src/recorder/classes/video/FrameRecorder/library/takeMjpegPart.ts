@@ -2,14 +2,10 @@ import type { IMjpegPart } from '@/recorder/classes/video/FrameRecorder/types';
 
 const HEAD_END = [13, 10, 13, 10];
 
-function headEndOf(buffer: Uint8Array): number {
-  for (let index = 0; index + HEAD_END.length <= buffer.length; index += 1)
-    if (HEAD_END.every((byte, offset) => buffer[index + offset] === byte)) return index;
-
-  return -1;
-}
-
-/** Takes the first whole part off an MJPEG body: null while its bytes are still coming, a null part for a block it cannot read. */
+/**
+ * Takes the first whole part off an MJPEG body: null while its bytes are still coming, a
+ * null part for a block it cannot read.
+ */
 export function takeMjpegPart(
   buffer: Uint8Array,
 ): { part: IMjpegPart | null; rest: Uint8Array } | null {
@@ -49,4 +45,11 @@ export function takeMjpegPart(
       : null,
     rest: buffer.subarray(bodyStart + length),
   };
+}
+
+function headEndOf(buffer: Uint8Array): number {
+  for (let index = 0; index + HEAD_END.length <= buffer.length; index += 1)
+    if (HEAD_END.every((byte, offset) => buffer[index + offset] === byte)) return index;
+
+  return -1;
 }

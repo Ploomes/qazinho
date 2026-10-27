@@ -1,4 +1,7 @@
-/** A cost in US dollars, written the way the QA's language writes money: cents, or a tenth of a cent under a dime. */
+/**
+ * A cost in US dollars, written the way the QA's language writes money: cents, or a tenth
+ * of a cent under a dime.
+ */
 export function formatCost(props: { costUsd: number; language: string }): string {
   const { costUsd, language } = props;
 

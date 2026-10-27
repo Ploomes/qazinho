@@ -1,4 +1,7 @@
-/** The number and page of the issue GitHub answered with, once it made one; null for any other answer. */
+/**
+ * The number and page of the issue GitHub answered with, once it made one; null for any
+ * other answer.
+ */
 export function githubIssueOf(text: string): { number: number; url: string } | null {
   try {
     const { number, html_url: url } = JSON.parse(text) as {

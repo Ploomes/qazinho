@@ -3,7 +3,10 @@ import type { IProcessRow } from '@/main/types';
 const TICKS_PER_SECOND = 10_000_000;
 const BYTES_IN_MB = 1024 * 1024;
 
-/** Reads the sweep the PowerShell side writes, a tab between each field: pid, parent, cpu time in 100 ns ticks, working set in bytes, name and command line. */
+/**
+ * Reads the sweep the PowerShell side writes, a tab between each field: pid, parent, cpu
+ * time in 100 ns ticks, working set in bytes, name and command line.
+ */
 export function parseWindowsSweep(output: string): IProcessRow[] {
   return output.split(/\r?\n/).flatMap((line) => {
     const [pid, parentPid, ticks, bytes, name, ...command] = line.split('\t');

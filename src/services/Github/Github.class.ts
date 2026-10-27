@@ -6,7 +6,10 @@ import type {
   IRepositoryRef,
 } from '@/shared/types';
 
-/** The only caller of the GitHub side of the bridge: gh's status, its sign-in, and the repositories it reads. */
+/**
+ * The only caller of the GitHub side of the bridge: gh's status, its sign-in, and the
+ * repositories it reads.
+ */
 export class Github {
   public static async status(): Promise<IGithubStatus> {
     return (

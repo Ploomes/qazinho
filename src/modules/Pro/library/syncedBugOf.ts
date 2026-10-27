@@ -5,7 +5,10 @@ import { sharedValueOf } from './sharedValueOf';
 import { startedIsoOf } from './startedIsoOf';
 import { videoSecondsOf } from './videoSecondsOf';
 
-/** A bug as QAzinho Pro takes it, first seen when the run that caught it started, each catch placed on its run's video; null when that run does not know when it started. */
+/**
+ * A bug as QAzinho Pro takes it, first seen when the run that caught it started, each
+ * catch placed on its run's video; null when that run does not know when it started.
+ */
 export function syncedBugOf(props: {
   workspaceId: string;
   bug: IBug;

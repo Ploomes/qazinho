@@ -1,7 +1,10 @@
 import type { ITestCase, IWrittenSecret } from '@/modules/Plan/types';
 import { passwordsIn, tokenIn } from '@/modules/Project/library';
 
-/** The passwords and tokens a plan writes out in the clear, each once, in the order the plan writes them; a ${NAME} is never one. */
+/**
+ * The passwords and tokens a plan writes out in the clear, each once, in the order the
+ * plan writes them; a ${NAME} is never one.
+ */
 export function writtenSecretsOf(plan: ITestCase[]): IWrittenSecret[] {
   const found = plan.flatMap((testCase) =>
     [

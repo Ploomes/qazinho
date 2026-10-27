@@ -1,7 +1,10 @@
 import type { INetworkAt, IReplayRequest } from '@/modules/Run/types';
 import { NETWORK } from '@/modules/Run/constants';
 
-/** The network at one moment of the video: the latest requests that started by then, each ended or still waiting, with the files left out unless the QA shows them. */
+/**
+ * The network at one moment of the video: the latest requests that started by then, each
+ * ended or still waiting, with the files left out unless the QA shows them.
+ */
 export function networkAt(props: {
   requests: IReplayRequest[];
   atMs: number;

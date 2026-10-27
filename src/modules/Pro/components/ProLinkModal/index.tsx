@@ -2,7 +2,10 @@ import { ModalFrame } from '@/shared/components/templates';
 import { useProLinkModalViewModel } from './hooks';
 import './styles.css';
 
-/** Opens a plan a link from the web named that this computer does not hold: downloads its project from the org, or says why it cannot. */
+/**
+ * Opens a plan a link from the web named that this computer does not hold: downloads its
+ * project from the org, or says why it cannot.
+ */
 export const ProLinkModal: React.FC = () => {
   const view = useProLinkModalViewModel();
 

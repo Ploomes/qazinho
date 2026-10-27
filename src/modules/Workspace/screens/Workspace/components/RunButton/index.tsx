@@ -5,7 +5,10 @@ import { STICKER } from '@/shared/constants';
 import { useRunButtonViewModel } from './hooks';
 import './styles.css';
 
-/** A lime sticker cut in two: the plan runs from its face, and its caret opens the two ways to run it, each saying what it does. */
+/**
+ * A lime sticker cut in two: the plan runs from its face, and its caret opens the two
+ * ways to run it, each saying what it does.
+ */
 export const RunButton: React.FC<IRunButtonProps> = (props) => {
   const {
     ref,

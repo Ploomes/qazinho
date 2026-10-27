@@ -1,4 +1,6 @@
-/** The model an agent's own config file names as its default, or null when it names none. */
+/**
+ * The model an agent's own config file names as its default, or null when it names none.
+ */
 export function defaultModelOf(props: {
   format: 'json' | 'toml';
   text: string;

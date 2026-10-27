@@ -1,6 +1,8 @@
 import type { PickKind } from '@/shared/types';
 
-/** The only caller of the file-picking side of the bridge. A page cannot open a dialog. */
+/**
+ * The only caller of the file-picking side of the bridge. A page cannot open a dialog.
+ */
 export class Files {
   public static async pick(kind: PickKind): Promise<string | null> {
     return (await window.qazinho?.pickFile(kind)) ?? null;

@@ -5,7 +5,10 @@ import { MOTION } from '@/shared/constants';
 import { useQuestionRoundViewModel } from './hooks';
 import './styles.css';
 
-/** The agent's questions in the chat: the QA picks an option or writes an answer to each, and sends them together. */
+/**
+ * The agent's questions in the chat: the QA picks an option or writes an answer to each,
+ * and sends them together.
+ */
 export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
   const {
     style,

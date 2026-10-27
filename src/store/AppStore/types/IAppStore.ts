@@ -7,7 +7,9 @@ import type { IProject } from '@/modules/Project';
 import type { ProjectSection } from '@/modules/Project/components/ProjectModal/types';
 import type { IReplayOpen, IRunNotice } from '@/modules/Run';
 
-/** The shell: which screen is up, which project is selected, and what is floating over it. */
+/**
+ * The shell: which screen is up, which project is selected, and what is floating over it.
+ */
 export interface IAppStore {
   theme: Theme;
   screen: Screen;

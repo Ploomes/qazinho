@@ -2,26 +2,10 @@ import type { IBug, IBugReportWords } from '@/modules/Bug/types';
 import type { BugReportBlock, IBugReport, INetworkEntry } from '@/shared/types';
 import { BUG_REPORT } from '@/modules/Bug/constants';
 
-function cut(text: string): string {
-  return text.length > BUG_REPORT.urlLength
-    ? `${text.slice(0, BUG_REPORT.urlLength - 1)}…`
-    : text;
-}
-
-function answerOf(body: string | undefined): { answer?: string } {
-  const said = body?.replace(/\s+/g, ' ').trim() ?? '';
-
-  return said === ''
-    ? {}
-    : {
-        answer:
-          said.length > BUG_REPORT.answerLength
-            ? `${said.slice(0, BUG_REPORT.answerLength - 1)}…`
-            : said,
-      };
-}
-
-/** A bug written out for the QA's tracker: what the agent saw, how to get there, what was expected and what came, the requests that failed around it with what they answered, and where it was caught, the Figma frame it is off included. */
+/**
+ * A bug written out for the QA's tracker: what the agent saw, the steps, expected and
+ * actual, requests.
+ */
 export function bugReportOf(props: {
   bug: IBug;
   title: string;
@@ -125,4 +109,23 @@ export function bugReportOf(props: {
       { kind: 'paragraph', text: words.foundWith },
     ],
   };
+}
+
+function cut(text: string): string {
+  return text.length > BUG_REPORT.urlLength
+    ? `${text.slice(0, BUG_REPORT.urlLength - 1)}…`
+    : text;
+}
+
+function answerOf(body: string | undefined): { answer?: string } {
+  const said = body?.replace(/\s+/g, ' ').trim() ?? '';
+
+  return said === ''
+    ? {}
+    : {
+        answer:
+          said.length > BUG_REPORT.answerLength
+            ? `${said.slice(0, BUG_REPORT.answerLength - 1)}…`
+            : said,
+      };
 }

@@ -1,7 +1,10 @@
 import type { ITestCase } from '@/modules/Plan';
 import type { IFlatStep } from '@/modules/Run/types';
 
-/** Every step of the plan in walking order, numbered as its case shows it; a step with nothing to do yet is left out. */
+/**
+ * Every step of the plan in walking order, numbered as its case shows it; a step with
+ * nothing to do yet is left out.
+ */
 export function flattenPlanSteps(plan: ITestCase[]): IFlatStep[] {
   return plan.flatMap((testCase) =>
     testCase.steps

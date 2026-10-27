@@ -10,7 +10,10 @@ import { dirname } from 'node:path';
 import { writeAtomically } from '@/main/library';
 import { variablesAfter, variablesByProject } from './library';
 
-/** Keeps each project's variables sealed by the OS keychain: the page and the agents learn their names, and only a run reads a value, to type it. */
+/**
+ * Keeps each project's variables sealed by the OS keychain: the page and the agents learn
+ * their names, and only a run reads a value, to type it.
+ */
 export class VariableVault {
   private readonly file: string;
   private readonly cipher: IVaultCipher;
@@ -26,7 +29,9 @@ export class VariableVault {
     return variablesByProject((await this.read()) ?? []);
   }
 
-  /** Applies a project's changes together, or none of them, and says what it keeps now. */
+  /**
+   * Applies a project's changes together, or none of them, and says what it keeps now.
+   */
   public async apply(apply: IApplyVariables): Promise<VariablesOutcome> {
     if (!this.cipher.isAvailable())
       return { isSaved: false, failure: { reason: 'no-keychain' } };

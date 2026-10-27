@@ -1,4 +1,7 @@
-/** A Playwright suite the QA keeps in a git clone on this machine, connected to a project: its folder and config, the Playwright it runs on (null until its packages are installed), its branch and GitHub repository, and the settings its tests read. */
+/**
+ * A Playwright suite the QA keeps in a git clone, connected to a project: its folder,
+ * config and branch.
+ */
 export interface ISuite {
   projectId: string;
   path: string;

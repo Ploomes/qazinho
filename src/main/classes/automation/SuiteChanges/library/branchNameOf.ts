@@ -2,7 +2,7 @@ import type { SuiteChangeAsk } from '@/shared/types';
 import { SUITE_CHANGES } from '@/main/classes/automation/SuiteChanges/constants';
 import { askTitleOf } from './askTitleOf';
 
-/** The branch a change goes on, named after what it does to which test: qazinho/fix-ct-nav-002-abre-o-carrinho, or qazinho/test-cart-survives-a-reload for a new one. */
+/** The branch a change goes on, named after what it does to which test. */
 export function branchNameOf(ask: SuiteChangeAsk): string {
   const slug = askTitleOf(ask)
     .normalize('NFD')

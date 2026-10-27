@@ -7,13 +7,10 @@ import { EXPLORATION } from '@/shared/constants';
 
 const MS_IN_SECOND = 1_000;
 
-function tookSec(outcomes: IStepOutcome[]): number {
-  return Math.round(
-    outcomes.reduce((total, one) => total + one.tookMs, 0) / MS_IN_SECOND,
-  );
-}
-
-/** The run as it ended, read back from what the device actually did, with what its agent asked the QA; the steps it never reached in a case it began read as skipped, and an exploration's screens are its one case. */
+/**
+ * The run as it ended, read back from what the device did, with what its agent asked the
+ * QA.
+ */
 export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRun {
   const { workspace, endedBy } = props;
   const live = workspace.live;
@@ -123,4 +120,10 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
       ? {}
       : { asked: live.asked }),
   };
+}
+
+function tookSec(outcomes: IStepOutcome[]): number {
+  return Math.round(
+    outcomes.reduce((total, one) => total + one.tookMs, 0) / MS_IN_SECOND,
+  );
 }

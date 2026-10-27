@@ -1,4 +1,6 @@
-/** A message cut into plain text and the mentions in it, so the mentions can stand out. */
+/**
+ * A message cut into plain text and the mentions in it, so the mentions can stand out.
+ */
 export function splitMentions(props: {
   text: string;
   ids: string[];

@@ -1,7 +1,7 @@
-const quote = (text: string) => `'${text.replace(/'/g, `'\\''`)}'`;
-const quoteForCmd = (text: string) => `"${text.replace(/%/g, '%%').replace(/"/g, '""')}"`;
-
-/** The script a terminal runs to sign the QA in: the agent, opened straight on its MCP servers; a login shell on a Mac or Linux, a batch file on Windows. */
+/**
+ * The script a terminal runs to sign the QA in: the agent, opened straight on its MCP
+ * servers; a login shell on a Mac or Linux, a batch file on Windows.
+ */
 export function signInScript(props: {
   command: string;
   args: string[];
@@ -30,3 +30,7 @@ export function signInScript(props: {
     '',
   ].join('\n');
 }
+
+const quote = (text: string) => `'${text.replace(/'/g, `'\\''`)}'`;
+
+const quoteForCmd = (text: string) => `"${text.replace(/%/g, '%%').replace(/"/g, '""')}"`;

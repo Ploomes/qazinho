@@ -1,4 +1,7 @@
-/** The Jira site as an origin, from whatever the QA pasted: a bare host, a URL, or a page inside it. */
+/**
+ * The Jira site as an origin, from whatever the QA pasted: a bare host, a URL, or a page
+ * inside it.
+ */
 export function jiraSiteOf(typed: string): string | null {
   const trimmed = typed.trim();
 

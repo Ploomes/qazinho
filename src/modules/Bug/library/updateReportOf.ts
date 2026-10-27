@@ -2,7 +2,10 @@ import type { IBugSighting, IBugUpdateWords } from '@/modules/Bug/types';
 import type { IBugReport, ReviewVerdict } from '@/shared/types';
 import { blocksOfComment } from './blocksOfComment';
 
-/** The update posted under a bug's issue: that it came back after the issue was closed, the QA's comment, the runs that caught it again, and what goes attached. */
+/**
+ * The update posted under a bug's issue: that it came back after the issue was closed,
+ * the QA's comment, the runs that caught it again, and what goes attached.
+ */
 export function updateReportOf(props: {
   verdict: ReviewVerdict | null;
   comment: string;

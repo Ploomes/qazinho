@@ -3,7 +3,10 @@ import type { SuiteChangeEvent } from '@/shared/types';
 
 const KEPT = 40;
 
-/** What the agent did while it changes a suite, the newest last, once it says a line or runs tests; a blank line adds nothing, and only the latest few are kept. */
+/**
+ * What the agent did while it changes a suite, the newest last, once it says a line or
+ * runs tests; a blank line adds nothing, and only the latest few are kept.
+ */
 export function notesAfter(props: {
   notes: SuiteChangeNote[];
   event: Exclude<SuiteChangeEvent, { kind: 'changed' }>;

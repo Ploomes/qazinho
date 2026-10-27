@@ -5,7 +5,10 @@ import { FACE_SWAP } from './constants';
 import { useAssistantButtonViewModel } from './hooks';
 import './styles.css';
 
-/** The Estagiário's face on a sticker in the corner: it opens his chat, thinks while he works, and counts the answers that came while it was shut. */
+/**
+ * The Estagiário's face on a sticker in the corner: it opens his chat, thinks while he
+ * works, and counts the answers that came while it was shut.
+ */
 export const AssistantButton: React.FC = () => {
   const {
     isOpen,

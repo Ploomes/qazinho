@@ -4,7 +4,10 @@ import { Button } from '@/shared/components/atoms';
 import { useVariableEditorViewModel } from './hooks';
 import './styles.css';
 
-/** One variable opened in place: its form, what stops it from being kept, and the way out either way. */
+/**
+ * One variable opened in place: its form, what stops it from being kept, and the way out
+ * either way.
+ */
 export const VariableEditor: React.FC<IVariableEditorProps> = (props) => {
   const { ref } = useVariableEditorViewModel();
 

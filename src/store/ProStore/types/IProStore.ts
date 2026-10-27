@@ -1,6 +1,6 @@
 import type { IProLink, IProOrgProject, IProShare, ProStatus } from '@/shared/types';
 
-/** Where this machine stands with QAzinho Pro, null until it is read, where each project's sending stands, the projects of the org it sends to, and a link to a plan this computer does not hold yet. */
+/** Where this machine stands with the QA's account, and each project's sending. */
 export interface IProStore {
   status: ProStatus | null;
   shares: IProShare[];

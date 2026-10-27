@@ -1,7 +1,10 @@
 import type { IVariableDraft } from '@/modules/Project/types';
 import type { IVariableBrief, VariableChange } from '@/shared/types';
 
-/** What saving these drafts changes in the variables the project keeps: the removed ones first, then each one new or changed. */
+/**
+ * What saving these drafts changes in the variables the project keeps: the removed ones
+ * first, then each one new or changed.
+ */
 export function variableChangesOf(props: {
   saved: IVariableBrief[];
   drafts: IVariableDraft[];

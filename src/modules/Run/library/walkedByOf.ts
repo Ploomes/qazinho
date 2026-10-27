@@ -3,7 +3,10 @@ import type { IDetectedAgent, TargetKind } from '@/shared/types';
 import { MODELS } from '@/modules/Settings/constants';
 import { modelNameOf } from '@/modules/Settings/library';
 
-/** Who walks a run, in the names the QA reads: the agent, and its model by name, or the one its own config names. */
+/**
+ * Who walks a run, in the names the QA reads: the agent, and its model by name, or the
+ * one its own config names.
+ */
 export function walkedByOf(props: {
   agent: string;
   model: string;

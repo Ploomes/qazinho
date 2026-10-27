@@ -2,7 +2,10 @@ import { Button } from '@/shared/components/atoms';
 import { useStorageSettingsViewModel } from './hooks';
 import './styles.css';
 
-/** What QAzinho keeps on this computer, by kind, and how long it keeps run videos before it lets them go. */
+/**
+ * What QAzinho keeps on this computer, by kind, and how long it keeps run videos before
+ * it lets them go.
+ */
 export const StorageSettings: React.FC = () => {
   const view = useStorageSettingsViewModel();
 

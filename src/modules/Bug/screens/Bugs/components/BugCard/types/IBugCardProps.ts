@@ -1,6 +1,9 @@
 import type { IBug, IBugMoment } from '@/modules/Bug/types';
 
-/** A bug in the Bugs tab, open or folded, with the latest run that caught it, the moment it did, whether its case is in the plan, the way to send it to the QA's tracker, and the QA's word that it is no bug. */
+/**
+ * A bug in the Bugs tab, open or folded, with its latest catch, its moment and the ways
+ * to answer it.
+ */
 export interface IBugCardProps {
   workspaceId: string;
   bug: IBug;

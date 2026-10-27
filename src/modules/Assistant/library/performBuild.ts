@@ -9,38 +9,10 @@ const WHAT = {
   ios: 'an iOS .app for the simulator',
 } as const;
 
-function failureOf(failure: BuildFailure): string {
-  switch (failure.reason) {
-    case 'agent-missing':
-      return `the agent ${failure.agentId} is not on this machine`;
-    case 'code':
-      return `GitHub did not hand over the code (${failure.failure})`;
-    case 'agent':
-      return 'said' in failure.failure
-        ? `the agent stopped: ${failure.failure.said}`
-        : `the agent stopped (${failure.failure.reason})`;
-    case 'no-artifact':
-      return failure.said === ''
-        ? 'it made nothing QAzinho can run'
-        : `it made nothing QAzinho can run: ${failure.said}`;
-    case 'stopped':
-      return 'the QA stopped it';
-  }
-}
-
-function lineOf(build: IBuild): string {
-  const head = `- ${build.id}: ${WHAT[build.platform]} of ${build.repository} (${build.branch})${build.projectId === null ? '' : ` for ${build.projectId}`}`;
-  const result = build.result;
-
-  if (result === null)
-    return `${head}, going: ${build.step === 'code' ? 'getting the code' : build.step === 'agent' ? 'the agent is building it' : 'checking what it made'}${build.lines.length === 0 ? '' : `, last: ${build.lines.at(-1) ?? ''}`}`;
-
-  return result.isBuilt
-    ? `${head}, built: ${result.artifact.split('/').at(-1) ?? result.artifact}`
-    : `${head}, made nothing: ${failureOf(result.failure)}`;
-}
-
-/** Starts a build of a project's app from one of its repositories, or says how the builds went. */
+/**
+ * Starts a build of a project's app from one of its repositories, or says how the builds
+ * went.
+ */
 export function performBuild(props: {
   call: Extract<AppToolCall, { name: 'build_app' | 'build_status' }>;
   port: IAppPort;
@@ -159,4 +131,35 @@ export function performBuild(props: {
     isError: false,
     buildId,
   };
+}
+
+function failureOf(failure: BuildFailure): string {
+  switch (failure.reason) {
+    case 'agent-missing':
+      return `the agent ${failure.agentId} is not on this machine`;
+    case 'code':
+      return `GitHub did not hand over the code (${failure.failure})`;
+    case 'agent':
+      return 'said' in failure.failure
+        ? `the agent stopped: ${failure.failure.said}`
+        : `the agent stopped (${failure.failure.reason})`;
+    case 'no-artifact':
+      return failure.said === ''
+        ? 'it made nothing QAzinho can run'
+        : `it made nothing QAzinho can run: ${failure.said}`;
+    case 'stopped':
+      return 'the QA stopped it';
+  }
+}
+
+function lineOf(build: IBuild): string {
+  const head = `- ${build.id}: ${WHAT[build.platform]} of ${build.repository} (${build.branch})${build.projectId === null ? '' : ` for ${build.projectId}`}`;
+  const result = build.result;
+
+  if (result === null)
+    return `${head}, going: ${build.step === 'code' ? 'getting the code' : build.step === 'agent' ? 'the agent is building it' : 'checking what it made'}${build.lines.length === 0 ? '' : `, last: ${build.lines.at(-1) ?? ''}`}`;
+
+  return result.isBuilt
+    ? `${head}, built: ${result.artifact.split('/').at(-1) ?? result.artifact}`
+    : `${head}, made nothing: ${failureOf(result.failure)}`;
 }

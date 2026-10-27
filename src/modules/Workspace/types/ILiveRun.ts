@@ -3,7 +3,10 @@ import type { IWalkedBy } from './IWalkedBy';
 import type { IRunSuggestion } from '@/modules/Run/types';
 import type { IRunAsked, IStepOutcome } from '@/shared/types';
 
-/** The run in flight: the step it is on, when it started and how long it has been going, what it has decided, and the question its agent waits on and the ones it asked; an exploration says so, and keeps the plan it suggested once it finished. */
+/**
+ * The run in flight: its step, its time, what it decided, and the questions its agent
+ * asked.
+ */
 export interface ILiveRun {
   id: string;
   doingIndex: number;

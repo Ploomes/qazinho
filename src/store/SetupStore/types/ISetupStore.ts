@@ -9,7 +9,10 @@ import type {
   ISetupEvent,
 } from '@/shared/types';
 
-/** What setting the machine up is doing: the managers an install needs, installs under way, the trackers, and one asked to connect. */
+/**
+ * What setting the machine up is doing: the managers an install needs, installs under
+ * way, the trackers, and one asked to connect.
+ */
 export interface ISetupStore {
   managers: IMachineCheck['managers'] | null;
   isChecking: boolean;

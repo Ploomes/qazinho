@@ -2,7 +2,10 @@ import type { BugReportBlock } from '@/shared/types';
 
 const ITEM = /^\s*[-*•]\s+/;
 
-/** A comment as plain text read into a report's blocks: paragraphs split by a blank line, and a run of lines that start with a dash as a list. */
+/**
+ * A comment as plain text read into a report's blocks: paragraphs split by a blank line,
+ * and a run of lines that start with a dash as a list.
+ */
 export function blocksOfComment(text: string): BugReportBlock[] {
   return text
     .replace(/\r\n/g, '\n')

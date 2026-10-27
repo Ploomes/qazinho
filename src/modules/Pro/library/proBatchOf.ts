@@ -6,11 +6,10 @@ import { syncedBugOf } from './syncedBugOf';
 import { syncedCaseOf } from './syncedCaseOf';
 import { syncedRunOf } from './syncedRunOf';
 
-function sharedTargetOf(target: ITarget): ITarget {
-  return { ...target, value: sharedValueOf(target.value) };
-}
-
-/** Everything a shared project holds, as QAzinho Pro takes it: each workspace with a plan, a run or a bug as a plan, with its finished runs and its bugs. */
+/**
+ * Everything a shared project holds, as QAzinho Pro takes it: each workspace with a plan,
+ * a run or a bug as a plan, with its finished runs and its bugs.
+ */
 export function proBatchOf(props: {
   project: IProject;
   workspaces: IWorkspace[];
@@ -67,4 +66,8 @@ export function proBatchOf(props: {
       }),
     ),
   };
+}
+
+function sharedTargetOf(target: ITarget): ITarget {
+  return { ...target, value: sharedValueOf(target.value) };
 }

@@ -65,7 +65,10 @@ export class Run {
     return (await window.qazinho?.runNetwork(run)) ?? null;
   }
 
-  /** When, and after how many days, QAzinho let a run's video go; null for one it never did. */
+  /**
+   * When, and after how many days, QAzinho let a run's video go; null for one it never
+   * did.
+   */
   public static async removedVideo(run: IRunRef): Promise<IRemovedVideo | null> {
     return (await window.qazinho?.removedVideo(run)) ?? null;
   }

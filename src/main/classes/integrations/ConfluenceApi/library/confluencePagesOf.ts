@@ -10,7 +10,9 @@ type Found = {
   resultGlobalContainer?: { title?: unknown };
 };
 
-/** The pages a Confluence search answered with, each with its space and where it opens. */
+/**
+ * The pages a Confluence search answered with, each with its space and where it opens.
+ */
 export function confluencePagesOf(props: {
   answer: unknown;
   site: string;

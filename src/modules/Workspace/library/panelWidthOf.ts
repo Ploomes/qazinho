@@ -1,7 +1,7 @@
 import { PANEL } from '@/modules/Workspace/constants';
 import { SHELL } from '@/shared/constants';
 
-/** How wide the panel beside the chat stands: the width the QA gave it, narrowed so the chat still fits beside the sidebar; all the room while widened; only the rail while shut. */
+/** How wide the panel beside the chat stands, leaving the chat room to fit. */
 export function panelWidthOf(props: {
   width: number;
   windowWidth: number;

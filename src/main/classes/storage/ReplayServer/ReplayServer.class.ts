@@ -11,7 +11,10 @@ import { isInside } from '@/main/classes/storage/Archive/library';
 import { REPLAY_SERVER } from './constants';
 import { byteRangeOf, replayOfPath, suiteFileOfPath } from './library';
 
-/** Serves the runs' recordings, and what each test of a suite left behind, on loopback, in the byte ranges a <video> asks for, so nothing heavy crosses IPC. */
+/**
+ * Serves the runs' recordings, and what each test of a suite left behind, on loopback, in
+ * the byte ranges a <video> asks for, so nothing heavy crosses IPC.
+ */
 export class ReplayServer {
   private readonly token = randomUUID();
   private readonly dataRoot: string;
@@ -46,7 +49,10 @@ export class ReplayServer {
     return `http://${REPLAY_SERVER.host}:${String(this.port)}/${this.token}/${encodeURIComponent(ref.workspaceId)}/${encodeURIComponent(ref.runId)}`;
   }
 
-  /** The address of a file a suite's run left, from its run's folder; null before the server listens. */
+  /**
+   * The address of a file a suite's run left, from its run's folder; null before the
+   * server listens.
+   */
   public suiteFileUrl(props: {
     projectId: string;
     runId: string;
@@ -65,7 +71,10 @@ export class ReplayServer {
     return `http://${REPLAY_SERVER.host}:${String(this.port)}/${parts.map(encodeURIComponent).join('/')}`;
   }
 
-  /** The file on disk an address this server handed out for a suite leads to; null for any other address. */
+  /**
+   * The file on disk an address this server handed out for a suite leads to; null for any
+   * other address.
+   */
   public suiteFileOfUrl(url: string): string | null {
     const parsed = URL.canParse(url) ? new URL(url) : null;
 
@@ -81,7 +90,10 @@ export class ReplayServer {
     return this.suiteFileOf(parsed.pathname);
   }
 
-  /** Where a run's recording lives on disk: an MP4 from the recorder window or a simulator, a WebM from an emulator; never outside the runs. */
+  /**
+   * Where a run's recording lives on disk: an MP4 from the recorder window or a
+   * simulator, a WebM from an emulator; never outside the runs.
+   */
   public async fileOf(ref: IRunRef): Promise<string | null> {
     for (const name of Object.values(ARCHIVE.videos)) {
       const file = join(this.dataRoot, ARCHIVE.runs, ref.workspaceId, ref.runId, name);
@@ -96,7 +108,10 @@ export class ReplayServer {
     return null;
   }
 
-  /** The bytes of a run's MP4 recording, for the page to draw the network under; null for a run with none, or one a phone recorded in another format. */
+  /**
+   * The bytes of a run's MP4 recording, for the page to draw the network under; null for
+   * a run with none, or one a phone recorded in another format.
+   */
   public async videoOf(ref: IRunRef): Promise<Uint8Array | null> {
     const file = join(
       this.dataRoot,

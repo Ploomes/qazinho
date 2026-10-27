@@ -3,7 +3,10 @@ import type { IAgentLimits } from '@/shared/types';
 import { USAGE_READER } from './constants';
 import { limitsOfReport } from './library';
 
-/** Reads how far the QA's account is into its limits through Claude Code's own /usage, which spends nothing. */
+/**
+ * Reads how far the QA's account is into its limits through Claude Code's own /usage,
+ * which spends nothing.
+ */
 export class UsageReader {
   private readonly findAgent: IUsageReader['findAgent'];
   private readonly folder: string;
@@ -17,7 +20,10 @@ export class UsageReader {
     this.now = props.now ?? (() => new Date());
   }
 
-  /** The agent's limits as its /usage prints them now; null for an agent with no /usage, one not installed, or a report with no session in it. */
+  /**
+   * The agent's limits as its /usage prints them now; null for an agent with no /usage,
+   * one not installed, or a report with no session in it.
+   */
   public async read(agentId: string): Promise<IAgentLimits | null> {
     if (agentId !== USAGE_READER.agentId) return null;
 

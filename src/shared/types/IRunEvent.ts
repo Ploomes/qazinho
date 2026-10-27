@@ -6,7 +6,10 @@ import type { IRunVideo } from './IRunVideo';
 import type { IStepOutcome } from './IStepOutcome';
 import type { RunFailure } from './RunFailure';
 
-/** What the page hears while a real run walks the device, or an exploration goes through the app, its agent's questions to the QA included. */
+/**
+ * What the page hears while a real run walks the device, or an exploration goes through
+ * the app, its agent's questions to the QA included.
+ */
 export type IRunEvent =
   | { kind: 'step'; outcome: IStepOutcome }
   | { kind: 'doing'; workspaceId: string; index: number }

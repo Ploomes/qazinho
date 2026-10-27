@@ -2,7 +2,10 @@ import type { IProOrg } from '@/shared/types';
 
 const PAID_UP = new Set(['trialing', 'active', 'past_due']);
 
-/** The org this computer sends its projects to: the one the person chose while they can still write there, else the first they write in that is paid up, else the first they write in. */
+/**
+ * The org this computer sends its projects to: the chosen one while writable, else the
+ * first paid one.
+ */
 export function sendingOrgOf(props: {
   orgs: IProOrg[];
   chosen: string | null;

@@ -2,7 +2,10 @@ import type { ISuiteResult } from '@/modules/Automation/types';
 import type { IconName } from '@/shared/components/atoms/Icon/types';
 import type { ParseKeys } from 'i18next';
 
-/** How QAzinho's own run of the tests a change is about reads: they pass in the copy, some fail, or none could run, with how many there were and how many failed. */
+/**
+ * How QAzinho's own run of the tests a change is about reads: they pass in the copy, some
+ * fail, or none could run, with how many there were and how many failed.
+ */
 export function checkLookOf(checks: ISuiteResult[]): {
   icon: IconName;
   tone: 'pass' | 'fail' | 'attn';

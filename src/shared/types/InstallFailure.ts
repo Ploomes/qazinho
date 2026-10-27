@@ -1,4 +1,4 @@
-/** Why an install did not finish, for the page to say in the QA's language: it was already going, a tool it needs is missing, a step stopped with no word, or what the tool itself printed. */
+/** Why an install did not finish, for the page to say in the QA's language. */
 export type InstallFailure =
   | { reason: 'busy' }
   | { reason: 'missing'; tool: string }

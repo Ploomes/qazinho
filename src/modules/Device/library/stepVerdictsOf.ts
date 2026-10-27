@@ -2,7 +2,10 @@ import type { IRun } from '@/modules/Run/types';
 import type { ILiveRun } from '@/modules/Workspace/types';
 import type { IFlatStep, StepVerdict } from '@/shared/types';
 
-/** What each step of the plan holds: the run going, or else the last run that walked it; pending where none did. */
+/**
+ * What each step of the plan holds: the run going, or else the last run that walked it;
+ * pending where none did.
+ */
 export function stepVerdictsOf(props: {
   steps: IFlatStep[];
   live: ILiveRun | null;

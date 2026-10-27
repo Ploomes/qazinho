@@ -1,6 +1,9 @@
 import type { IProOrg } from './IProOrg';
 
-/** Where this machine stands with QAzinho Pro: signed out, or signed in with its account, its orgs and the one it sends its projects to, and whether the platform answered just now. */
+/**
+ * Where this machine stands with the QA's account: signed out, or signed in with its
+ * orgs.
+ */
 export type ProStatus =
   | { isSignedIn: false; canKeepToken: boolean }
   | {

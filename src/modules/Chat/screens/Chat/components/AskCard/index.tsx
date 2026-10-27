@@ -4,7 +4,10 @@ import { Button, Chip, Eyebrow, Icon, Input, Switch } from '@/shared/components/
 import { useAskCardViewModel } from './hooks';
 import './styles.css';
 
-/** The question a run's agent waits on, as a card the QA answers in the chat: one of its answers, their own words, or a secret the agent only learns the name of. */
+/**
+ * The question a run's agent waits on, as a card the QA answers in the chat: one of its
+ * answers, their own words, or a secret the agent only learns the name of.
+ */
 export const AskCard: React.FC<IAskCardProps> = (props) => {
   const {
     eyebrow,

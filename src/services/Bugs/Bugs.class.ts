@@ -8,7 +8,10 @@ import type {
   IReviewBug,
 } from '@/shared/types';
 
-/** The only caller of the bug side of the bridge: a bug sent to the QA's tracker, each step as main takes it, a screen copied for the QA to paste, and a bug that came back weighed against its issue and added to it. */
+/**
+ * The only caller of the bug side of the bridge: sending, copying screens and weighing a
+ * bug again.
+ */
 export class Bugs {
   public static async file(request: IFileBug): Promise<BugFiling> {
     return (

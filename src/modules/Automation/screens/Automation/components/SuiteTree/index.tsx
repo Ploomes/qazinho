@@ -4,7 +4,10 @@ import { Caret, Icon, IconButton } from '@/shared/components/atoms';
 import { useSuiteTreeViewModel } from './hooks';
 import './styles.css';
 
-/** A suite's tests by folder and file, each with how it went last or the step it is on, and a run at every level. */
+/**
+ * A suite's tests by folder and file, each with how it went last or the step it is on,
+ * and a run at every level.
+ */
 export const SuiteTree: React.FC<ISuiteTreeProps> = (props) => {
   const { foldTransition, stepTransition, folders } = useSuiteTreeViewModel(props);
 

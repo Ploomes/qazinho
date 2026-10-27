@@ -11,7 +11,10 @@ import {
 import { useAutomationViewModel } from './hooks';
 import './styles.css';
 
-/** A project's Playwright suite: its tests by folder, how each went, and a run of all, the failed, a folder or one test. */
+/**
+ * A project's Playwright suite: its tests by folder, how each went, and a run of all, the
+ * failed, a folder or one test.
+ */
 export const Automation: React.FC = () => {
   const {
     hasProject,

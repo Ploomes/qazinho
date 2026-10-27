@@ -7,7 +7,10 @@ import { MENTION_TAB_MARK } from './constants';
 import { useMentionPickerViewModel } from './hooks';
 import './styles.css';
 
-/** What the QA can point the agent at with @, a tab for the plan's cases, one for bugs and one for runs. */
+/**
+ * What the QA can point the agent at with @, a tab for the plan's cases, one for bugs and
+ * one for runs.
+ */
 export const MentionPicker: React.FC<IMentionPickerProps> = (props) => {
   const {
     listRef,

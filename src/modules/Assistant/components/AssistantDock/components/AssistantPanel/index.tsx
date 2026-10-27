@@ -13,7 +13,10 @@ import { ConfirmCard } from './components';
 import { useAssistantPanelViewModel } from './hooks';
 import './styles.css';
 
-/** The Estagiário's little chat: who he is and what he is up to, what was said and done, and the field to ask him. */
+/**
+ * The Estagiário's little chat: who he is and what he is up to, what was said and done,
+ * and the field to ask him.
+ */
 export const AssistantPanel: React.FC = () => {
   const {
     listRef,

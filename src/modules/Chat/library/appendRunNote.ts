@@ -1,7 +1,10 @@
 import type { IWorkspace } from '@/modules/Workspace';
 import { appendAgentMessage } from './appendAgentMessage';
 
-/** A note the agent left while it walked a step, kept with the run it walks and signed by the agent walking it. */
+/**
+ * A note the agent left while it walked a step, kept with the run it walks and signed by
+ * the agent walking it.
+ */
 export function appendRunNote(props: {
   workspace: IWorkspace;
   text: string;

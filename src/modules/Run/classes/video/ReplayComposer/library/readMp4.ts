@@ -8,69 +8,10 @@ interface IBox {
 
 const ENTRY_FIELDS = 78;
 
-function fourCcAt(props: { view: DataView; at: number }): string {
-  const { view, at } = props;
-
-  return String.fromCharCode(
-    view.getUint8(at),
-    view.getUint8(at + 1),
-    view.getUint8(at + 2),
-    view.getUint8(at + 3),
-  );
-}
-
-function boxesIn(props: { view: DataView; start: number; end: number }): IBox[] {
-  const { view, end } = props;
-  const boxes: IBox[] = [];
-  let at = props.start;
-
-  while (at + 8 <= end) {
-    const declared = view.getUint32(at);
-    const type = fourCcAt({ view, at: at + 4 });
-    const header = declared === 1 ? 16 : 8;
-    const size =
-      declared === 1
-        ? Number(view.getBigUint64(at + 8))
-        : declared === 0
-          ? end - at
-          : declared;
-
-    if (size < header || at + size > end) break;
-
-    boxes.push({ type, start: at + header, end: at + size });
-    at += size;
-  }
-
-  return boxes;
-}
-
-function childOf(props: { view: DataView; box: IBox | undefined; type: string }) {
-  const { view, box, type } = props;
-
-  return box === undefined
-    ? undefined
-    : boxesIn({ view, start: box.start, end: box.end }).find((one) => one.type === type);
-}
-
-function tableOf(props: { view: DataView; box: IBox | undefined; width: number }) {
-  const { view, box, width } = props;
-
-  if (box === undefined) return [];
-
-  const count = view.getUint32(box.start + 4);
-
-  return Array.from({ length: count }, (_, index) => {
-    const at = box.start + 8 + index * width * 4;
-
-    return Array.from({ length: width }, (__, field) => view.getUint32(at + field * 4));
-  });
-}
-
-function hexOf(byte: number | undefined): string {
-  return (byte ?? 0).toString(16).padStart(2, '0');
-}
-
-/** The H.264 video track of an MP4, with each frame's place in the file and its time; null for a file that holds none. */
+/**
+ * The H.264 video track of an MP4, with each frame's place in the file and its time; null
+ * for a file that holds none.
+ */
 export function readMp4(bytes: Uint8Array): IMp4Track | null {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
 
@@ -186,4 +127,66 @@ export function readMp4(bytes: Uint8Array): IMp4Track | null {
   } catch {
     return null;
   }
+}
+
+function fourCcAt(props: { view: DataView; at: number }): string {
+  const { view, at } = props;
+
+  return String.fromCharCode(
+    view.getUint8(at),
+    view.getUint8(at + 1),
+    view.getUint8(at + 2),
+    view.getUint8(at + 3),
+  );
+}
+
+function boxesIn(props: { view: DataView; start: number; end: number }): IBox[] {
+  const { view, end } = props;
+  const boxes: IBox[] = [];
+  let at = props.start;
+
+  while (at + 8 <= end) {
+    const declared = view.getUint32(at);
+    const type = fourCcAt({ view, at: at + 4 });
+    const header = declared === 1 ? 16 : 8;
+    const size =
+      declared === 1
+        ? Number(view.getBigUint64(at + 8))
+        : declared === 0
+          ? end - at
+          : declared;
+
+    if (size < header || at + size > end) break;
+
+    boxes.push({ type, start: at + header, end: at + size });
+    at += size;
+  }
+
+  return boxes;
+}
+
+function childOf(props: { view: DataView; box: IBox | undefined; type: string }) {
+  const { view, box, type } = props;
+
+  return box === undefined
+    ? undefined
+    : boxesIn({ view, start: box.start, end: box.end }).find((one) => one.type === type);
+}
+
+function tableOf(props: { view: DataView; box: IBox | undefined; width: number }) {
+  const { view, box, width } = props;
+
+  if (box === undefined) return [];
+
+  const count = view.getUint32(box.start + 4);
+
+  return Array.from({ length: count }, (_, index) => {
+    const at = box.start + 8 + index * width * 4;
+
+    return Array.from({ length: width }, (__, field) => view.getUint32(at + field * 4));
+  });
+}
+
+function hexOf(byte: number | undefined): string {
+  return (byte ?? 0).toString(16).padStart(2, '0');
 }

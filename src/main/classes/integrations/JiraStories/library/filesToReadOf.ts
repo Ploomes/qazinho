@@ -1,7 +1,10 @@
 import type { IJiraAttachment, IJiraFile } from '@/shared/types';
 import { JIRA_FILES } from '@/main/classes/integrations/JiraStories/constants';
 
-/** Which of a story's files QAzinho downloads for the agent: the kinds it can read, each and all of them under a size, up to a count; the rest say why not. */
+/**
+ * Which of a story's files QAzinho downloads for the agent: the kinds it can read, each
+ * and all of them under a size, up to a count; the rest say why not.
+ */
 export function filesToReadOf(attachments: IJiraAttachment[]): IJiraFile[] {
   let kept = 0;
   let bytes = 0;

@@ -1,13 +1,7 @@
 import type { IBug } from '@/modules/Bug';
 import type { SavedBug } from '@/modules/Workspace/types';
 
-function numberIn(text: string | undefined): number | null {
-  const found = /\d+/.exec(text ?? '');
-
-  return found === null ? null : Number(found[0]);
-}
-
-/** A saved bug read back, an older one included: "step 2" becomes 2, "once" becomes one run, none was seen again and none was filed; a filed one counts the runs before it as told, and a look cut short by a restart is gone. */
+/** A saved bug read back, an older one included, in today's shape. */
 export function bugOfSaved(saved: SavedBug): IBug {
   const { step, seen, ...bug } = saved;
 
@@ -43,4 +37,10 @@ export function bugOfSaved(saved: SavedBug): IBug {
       },
     })),
   };
+}
+
+function numberIn(text: string | undefined): number | null {
+  const found = /\d+/.exec(text ?? '');
+
+  return found === null ? null : Number(found[0]);
 }

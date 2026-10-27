@@ -1,4 +1,7 @@
-/** The moments between two frames, one a step, to hold the earlier picture at, so the strip keeps moving while the screen stands still. */
+/**
+ * The moments between two frames, one a step, to hold the earlier picture at, so the
+ * strip keeps moving while the screen stands still.
+ */
 export function fillersBetween(props: {
   fromUs: number;
   toUs: number;

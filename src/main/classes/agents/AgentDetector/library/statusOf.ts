@@ -2,7 +2,10 @@ import { execCommand } from '@/main/library';
 
 const TIMEOUT_MS = 15_000;
 
-/** Runs an agent's status command and hands back what it printed and how it exited; it never throws. */
+/**
+ * Runs an agent's status command and hands back what it printed and how it exited; it
+ * never throws.
+ */
 export async function statusOf(props: {
   command: string;
   args: readonly string[];

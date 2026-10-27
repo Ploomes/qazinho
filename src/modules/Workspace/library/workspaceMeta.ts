@@ -1,7 +1,10 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
 import { flattenPlanSteps } from '@/modules/Run/library';
 
-/** The key and the count the sidebar badge reads: progress beats bugs, bugs beat the plan; an exploration counts the screens it reached. */
+/**
+ * The key and the count the sidebar badge reads: progress beats bugs, bugs beat the plan;
+ * an exploration counts the screens it reached.
+ */
 export function workspaceMeta(workspace: IWorkspace): { key: string; count: number } {
   const steps = flattenPlanSteps(workspace.plan);
 

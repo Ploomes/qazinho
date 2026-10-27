@@ -1,7 +1,10 @@
 import type { IReplaySpan, IReplayTimeline, ReplayFocus } from '@/modules/Run/types';
 import { REPLAY } from '@/modules/Run/constants';
 
-/** The stretch of the video a focus plays: a case whole, or a bug from a little before it to a little after its step ended. */
+/**
+ * The stretch of the video a focus plays: a case whole, or a bug from a little before it
+ * to a little after its step ended.
+ */
 export function takeOf(props: {
   timeline: IReplayTimeline;
   focus: ReplayFocus;

@@ -11,13 +11,10 @@ const NONE_RAN: Record<SuiteFailure, string> = {
   unreadable: 'No test ran: Playwright could not read the suite.',
 };
 
-function endOf(result: ISuiteResult): string {
-  if (result.status === 'passed') return result.isFlaky ? 'passed on a retry' : 'passed';
-
-  return result.status === 'timedOut' ? 'timed out' : result.status;
-}
-
-/** What the agent reads after running tests: how many ran and how each ended, a failure's error, what Playwright noted and where its screenshots are, each secret read back as its name. */
+/**
+ * What the agent reads after running tests: how each ended, its error and where its
+ * screenshots are.
+ */
 export function checkReportOf(props: {
   tests: ICheckedTest[];
   failure: SuiteFailure | null;
@@ -51,4 +48,10 @@ export function checkReportOf(props: {
     0,
     SUITE_CHANGES.reportChars,
   );
+}
+
+function endOf(result: ISuiteResult): string {
+  if (result.status === 'passed') return result.isFlaky ? 'passed on a retry' : 'passed';
+
+  return result.status === 'timedOut' ? 'timed out' : result.status;
 }

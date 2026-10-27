@@ -4,7 +4,10 @@ import { Muxer, StreamTarget } from 'mp4-muxer';
 import { FRAME_RECORDER } from './constants';
 import { cropOf, encodedSizeOf, fitInto, joinBytes, takeMjpegPart } from './library';
 
-/** Records one run: reads its device's live stream, encodes each frame as H.264 at the moment it was captured, and hands the MP4 out in pieces. */
+/**
+ * Records one run: reads its device's live stream, encodes each frame as H.264 at the
+ * moment it was captured, and hands the MP4 out in pieces.
+ */
 export class FrameRecorder {
   private readonly id: string;
   private readonly url: string;
@@ -34,7 +37,10 @@ export class FrameRecorder {
     this.send = props.send;
   }
 
-  /** Reads the live stream until the run ends it, keeping at most a frame every `minGapMs` and always the latest. */
+  /**
+   * Reads the live stream until the run ends it, keeping at most a frame every `minGapMs`
+   * and always the latest.
+   */
   public async start(): Promise<void> {
     const response = await fetch(this.url, { signal: this.reading.signal }).catch(
       () => null,
@@ -64,7 +70,10 @@ export class FrameRecorder {
     }
   }
 
-  /** Ends the recording at `at`, holding the last picture until then, and answers with the video, or null when there is none. */
+  /**
+   * Ends the recording at `at`, holding the last picture until then, and answers with the
+   * video, or null when there is none.
+   */
   public async stop(at: number): Promise<IRunVideo | null> {
     this.reading.abort();
 

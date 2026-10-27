@@ -7,7 +7,9 @@ import type {
 } from '@/shared/types';
 import { i18n } from '@/languages';
 
-/** The only caller of the MCP side of the bridge: servers that live in the QA's own agent. */
+/**
+ * The only caller of the MCP side of the bridge: servers that live in the QA's own agent.
+ */
 export class Mcp {
   public static async list(agentId: string): Promise<IMcpServerStatus[]> {
     return (await window.qazinho?.listMcpServers(agentId).catch(() => [])) ?? [];

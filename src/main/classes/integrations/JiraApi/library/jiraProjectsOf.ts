@@ -1,6 +1,9 @@
 import type { IJiraProject } from '@/shared/types';
 
-/** The projects of a Jira answer, a plain list or a page of them, with their keys and names. */
+/**
+ * The projects of a Jira answer, a plain list or a page of them, with their keys and
+ * names.
+ */
 export function jiraProjectsOf(body: unknown): IJiraProject[] {
   const values = Array.isArray(body)
     ? body

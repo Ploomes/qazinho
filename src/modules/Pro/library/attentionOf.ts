@@ -8,7 +8,10 @@ const BY_STATE: Partial<Record<IProShare['state'], ProAttention>> = {
   failed: 'failed',
 };
 
-/** The one thing the QA should know about this computer's sending, the gravest first; null while all goes as it should. */
+/**
+ * The one thing the QA should know about this computer's sending, the gravest first; null
+ * while all goes as it should.
+ */
 export function attentionOf(props: {
   status: ProStatus | null;
   shares: IProShare[];

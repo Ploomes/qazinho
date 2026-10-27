@@ -1,7 +1,10 @@
 import type { ProAnswer } from '@/main/classes/pro/ProApi/types';
 import type { z } from 'zod';
 
-/** Reads the platform's answer against the shape it promised: its error code when it refused, `unexpected` when the shape is off. */
+/**
+ * Reads the platform's answer against the shape it promised: its error code when it
+ * refused, `unexpected` when the shape is off.
+ */
 export async function answerOf<T>(props: {
   response: { ok: boolean; status: number; text: () => Promise<string> };
   schema: z.ZodType<T>;

@@ -1,10 +1,9 @@
 import type { IBug } from '@/modules/Bug/types';
 
-function wordsOf(title: string): string {
-  return title.trim().toLowerCase().replace(/\s+/g, ' ');
-}
-
-/** The bug already open that a failure or a finding is: the one its agent named, the one its plan step failed for before, or one with the same title; null when it is new. */
+/**
+ * The bug already open that a failure or a finding is: the one its agent named, the one
+ * its plan step failed for before, or one with the same title; null when it is new.
+ */
 export function openBugFor(props: {
   bugs: IBug[];
   sameAs: string | undefined;
@@ -27,4 +26,8 @@ export function openBugFor(props: {
     (words.length === 0 ? undefined : bugs.find((bug) => wordsOf(bug.title) === words)) ??
     null
   );
+}
+
+function wordsOf(title: string): string {
+  return title.trim().toLowerCase().replace(/\s+/g, ' ');
 }

@@ -4,7 +4,10 @@ import { Icon } from '@/shared/components/atoms';
 import { useFindingNoteViewModel } from './hooks';
 import './styles.css';
 
-/** A bug the run's agent filed on the side of a step, in the run's section, one click from Bugs. */
+/**
+ * A bug the run's agent filed on the side of a step, in the run's section, one click from
+ * Bugs.
+ */
 export const FindingNote: React.FC<IFindingNoteProps> = (props) => {
   const { tag, onOpen } = useFindingNoteViewModel(props);
   const { t } = useTranslation();

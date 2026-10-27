@@ -2,19 +2,10 @@ import type { ITestCase } from '@/modules/Plan/types';
 import type { IDraftedCase } from '@/shared/types';
 import { nextCaseId } from './nextCaseId';
 
-function keptIdOf(props: {
-  drafted: IDraftedCase;
-  plan: ITestCase[];
-  taken: Set<string>;
-}): string | null {
-  const { drafted, plan, taken } = props;
-  const byId = plan.find(({ id }) => id === drafted.id && !taken.has(id));
-  const byTitle = plan.find(({ id, title }) => title === drafted.title && !taken.has(id));
-
-  return byId?.id ?? byTitle?.id ?? null;
-}
-
-/** The cases the agent drafted, as the plan: a case it kept holds on to its id, and a new one takes an id never used; null when none has a title and a step to run. */
+/**
+ * The cases the agent drafted, as the plan: a case it kept holds on to its id, and a new
+ * one takes an id never used; null when none has a title and a step to run.
+ */
 export function planOfDraft(props: {
   cases: IDraftedCase[];
   plan: ITestCase[];
@@ -61,4 +52,16 @@ export function planOfDraft(props: {
   });
 
   return plan.length === 0 ? null : plan;
+}
+
+function keptIdOf(props: {
+  drafted: IDraftedCase;
+  plan: ITestCase[];
+  taken: Set<string>;
+}): string | null {
+  const { drafted, plan, taken } = props;
+  const byId = plan.find(({ id }) => id === drafted.id && !taken.has(id));
+  const byTitle = plan.find(({ id, title }) => title === drafted.title && !taken.has(id));
+
+  return byId?.id ?? byTitle?.id ?? null;
 }

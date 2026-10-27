@@ -4,7 +4,10 @@ import { spawnCommand } from '@/main/library';
 import { WINDOWS_SWEEP } from './constants';
 import { parseWindowsSweep } from './library';
 
-/** Every process on a Windows machine, read by one PowerShell kept open: starting PowerShell for each look would cost more than what it measures. */
+/**
+ * Every process on a Windows machine, read by one PowerShell kept open: starting
+ * PowerShell for each look would cost more than what it measures.
+ */
 export class WindowsProcesses {
   private child: ChildProcessWithoutNullStreams | null = null;
   private heard = '';

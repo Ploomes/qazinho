@@ -1,7 +1,10 @@
 import type { IDeviceStep, IViewportChoice, ViewportId } from '@/modules/Device/types';
 import type { InternMood } from '@/shared/components/atoms/Intern/types';
 
-/** The device on its own, filling the app: the screen, what the agent is on, and the run's controls. */
+/**
+ * The device on its own, filling the app: the screen, what the agent is on, and the run's
+ * controls.
+ */
 export interface IDeviceFocusProps {
   isPhone: boolean;
   shot: string | null;

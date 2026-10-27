@@ -1,6 +1,9 @@
 import type { ConnectFailure } from '@/shared/types';
 
-/** Why a tracker's answer is not a yes, or null when it is one. No answer at all means it was unreachable. */
+/**
+ * Why a tracker's answer is not a yes, or null when it is one. No answer at all means it
+ * was unreachable.
+ */
 export function trackerRefusal(
   answer: { ok: boolean; status: number } | null,
 ): ConnectFailure | null {

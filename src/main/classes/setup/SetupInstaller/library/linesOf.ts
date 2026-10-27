@@ -1,6 +1,9 @@
 import { stripAnsi } from '@/main/library';
 
-/** Every line a command printed in this chunk, Windows line ends included, keeping only the last state of a line redrawn with a carriage return. */
+/**
+ * Every line a command printed in this chunk, Windows line ends included, keeping only
+ * the last state of a line redrawn with a carriage return.
+ */
 export function linesOf(chunk: string): string[] {
   return stripAnsi(chunk)
     .split(/\r?\n/)

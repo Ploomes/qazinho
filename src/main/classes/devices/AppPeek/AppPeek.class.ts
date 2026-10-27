@@ -7,7 +7,10 @@ import { stripAnsi } from '@/main/library';
 import { WebDriver } from '@salve-software/qazinho-harness/engine';
 import { APP_PEEK } from './constants';
 
-/** Opens the web app under test and the pages its menu leads to, before the chat, so the agent asks about what is there. */
+/**
+ * Opens the web app under test and the pages its menu leads to, before the chat, so the
+ * agent asks about what is there.
+ */
 export class AppPeek {
   private readonly folder: string;
   private readonly looks = new Map<string, { at: number; look: Promise<AppLook> }>();
@@ -16,7 +19,10 @@ export class AppPeek {
     this.folder = props.folder;
   }
 
-  /** What the app's page reads, looked at once and kept for a while, into a protected environment with the access given; a page that did not open is tried again next time. */
+  /**
+   * What the app's page reads, looked at once and kept for a while, into a protected
+   * environment with the access given; a page that did not open is tried again next time.
+   */
   public async look(url: string, access?: IWebAccess): Promise<AppLook> {
     const kept = this.looks.get(url);
 

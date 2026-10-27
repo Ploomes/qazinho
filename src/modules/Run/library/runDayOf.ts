@@ -1,6 +1,9 @@
 import type { IRun } from '@/modules/Run/types';
 
-/** The day a run started on the QA's clock, as YYYY-MM-DD, read from the first step it walked; null when none kept its time. */
+/**
+ * The day a run started on the QA's clock, as YYYY-MM-DD, read from the first step it
+ * walked; null when none kept its time.
+ */
 export function runDayOf(run: Pick<IRun, 'cases'>): string | null {
   const starts = run.cases
     .flatMap(({ steps }) => steps)

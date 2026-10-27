@@ -5,7 +5,10 @@ import { MOTION } from '@/shared/constants';
 import { useConfirmCardViewModel } from './hooks';
 import './styles.css';
 
-/** Something the assistant would remove or send out, held until the QA answers on this card, which then says what they chose. */
+/**
+ * Something the assistant would remove or send out, held until the QA answers on this
+ * card, which then says what they chose.
+ */
 export const ConfirmCard: React.FC<IConfirmCardProps> = (props) => {
   const {
     title,

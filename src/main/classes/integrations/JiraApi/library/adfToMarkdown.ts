@@ -1,5 +1,17 @@
 import type { IAdfNode } from '@/main/classes/integrations/JiraApi/types';
 
+/**
+ * A Jira document as markdown the agent reads: headings, lists and checklists, tables,
+ * code, quotes and links kept; a plain string as it is.
+ */
+export function adfToMarkdown(document: unknown): string {
+  if (typeof document === 'string') return document.trim();
+
+  if (typeof document !== 'object' || document === null) return '';
+
+  return block(document).trim();
+}
+
 function attr(props: { node: IAdfNode; name: string }): string {
   const value = props.node.attrs?.[props.name];
 
@@ -145,13 +157,4 @@ function blocks(props: { nodes: IAdfNode[] | undefined; gap?: string }): string 
     .map(block)
     .filter((text) => text.trim().length > 0)
     .join(props.gap ?? '\n\n');
-}
-
-/** A Jira document as markdown the agent reads: headings, lists and checklists, tables, code, quotes and links kept; a plain string as it is. */
-export function adfToMarkdown(document: unknown): string {
-  if (typeof document === 'string') return document.trim();
-
-  if (typeof document !== 'object' || document === null) return '';
-
-  return block(document).trim();
 }

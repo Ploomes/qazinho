@@ -5,36 +5,10 @@ import type { IStepOutcome, TargetKind } from '@/shared/types';
 import { viewportOf } from '@/modules/Device/library';
 import { countSeen } from './countSeen';
 
-function shotsFor(props: {
-  outcome: IStepOutcome;
-  outcomes: IStepOutcome[];
-}): IBugShot[] {
-  const before = props.outcomes
-    .filter((one) => one.index < props.outcome.index && one.screenshot !== null)
-    .at(-1);
-
-  const broke = {
-    isBad: true,
-    src: props.outcome.screenshot,
-    file: props.outcome.shotFile,
-  };
-
-  return before
-    ? [{ isBad: false, src: before.screenshot, file: before.shotFile }, broke]
-    : [broke];
-}
-
-function targetOf(props: { kind: TargetKind; viewportId: ViewportId }): string {
-  if (props.kind === 'ios') return 'iOS';
-
-  if (props.kind === 'android') return 'Android';
-
-  const viewport = viewportOf(props.viewportId);
-
-  return `Web · Chrome ${String(viewport.width)} × ${String(viewport.height)}`;
-}
-
-/** Turns the step that broke into something a developer can act on, with who caught it and on what. */
+/**
+ * Turns the step that broke into something a developer can act on, with who caught it and
+ * on what.
+ */
 export function makeBug(props: {
   workspace: IWorkspace;
   outcome: IStepOutcome;
@@ -81,4 +55,33 @@ export function makeBug(props: {
     review: null,
     frame: outcome.frame ?? null,
   };
+}
+
+function shotsFor(props: {
+  outcome: IStepOutcome;
+  outcomes: IStepOutcome[];
+}): IBugShot[] {
+  const before = props.outcomes
+    .filter((one) => one.index < props.outcome.index && one.screenshot !== null)
+    .at(-1);
+
+  const broke = {
+    isBad: true,
+    src: props.outcome.screenshot,
+    file: props.outcome.shotFile,
+  };
+
+  return before
+    ? [{ isBad: false, src: before.screenshot, file: before.shotFile }, broke]
+    : [broke];
+}
+
+function targetOf(props: { kind: TargetKind; viewportId: ViewportId }): string {
+  if (props.kind === 'ios') return 'iOS';
+
+  if (props.kind === 'android') return 'Android';
+
+  const viewport = viewportOf(props.viewportId);
+
+  return `Web · Chrome ${String(viewport.width)} × ${String(viewport.height)}`;
 }

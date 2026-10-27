@@ -7,7 +7,10 @@ import type {
 } from '@/shared/types';
 import { i18n } from '@/languages';
 
-/** The only caller of the assistant side of the bridge: its asks, its events, and the app tool calls the page carries out. */
+/**
+ * The only caller of the assistant side of the bridge: its asks, its events, and the app
+ * tool calls the page carries out.
+ */
 export class Assistant {
   public static async ask(ask: IAssistantAsk): Promise<IAssistantTurn> {
     return (

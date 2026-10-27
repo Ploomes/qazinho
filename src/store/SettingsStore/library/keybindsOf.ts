@@ -1,5 +1,19 @@
 import type { IKeybind } from '@/modules/Settings/types';
 
+/**
+ * The shortcuts as the table names them, each on the keys the QA picked for it: a saved
+ * label never comes back.
+ */
+export function keybindsOf(props: { saved: unknown; table: IKeybind[] }): IKeybind[] {
+  const saved = Array.isArray(props.saved) ? (props.saved as unknown[]) : [];
+
+  return props.table.map((keybind) => {
+    const combo = comboOf({ saved, id: keybind.id });
+
+    return combo === null ? keybind : { ...keybind, combo };
+  });
+}
+
 function comboOf(props: { saved: unknown[]; id: string }): string | null {
   for (const one of props.saved) {
     if (typeof one !== 'object' || one === null) continue;
@@ -10,15 +24,4 @@ function comboOf(props: { saved: unknown[]; id: string }): string | null {
   }
 
   return null;
-}
-
-/** The shortcuts as the table names them, each on the keys the QA picked for it: a saved label never comes back. */
-export function keybindsOf(props: { saved: unknown; table: IKeybind[] }): IKeybind[] {
-  const saved = Array.isArray(props.saved) ? (props.saved as unknown[]) : [];
-
-  return props.table.map((keybind) => {
-    const combo = comboOf({ saved, id: keybind.id });
-
-    return combo === null ? keybind : { ...keybind, combo };
-  });
 }

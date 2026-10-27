@@ -7,13 +7,10 @@ import { makeBug } from './makeBug';
 import { openBugFor } from './openBugFor';
 import { sightingOf } from './sightingOf';
 
-function plannedIf(props: { bug: IBug; isIncidental: boolean }): IBug {
-  return props.isIncidental || !props.bug.isIncidental
-    ? props.bug
-    : { ...props.bug, isIncidental: false };
-}
-
-/** A failed step or a finding as it lands among the bugs: on the bug already open it is, seen again, or as a new bug; once per run. A plan step failing for a bug filed on the side makes it the plan's. */
+/**
+ * A failed step or a finding as it lands among the bugs: on the open bug it is, or as a
+ * new one.
+ */
 export function catchBug(props: {
   workspace: IWorkspace;
   outcome: IStepOutcome;
@@ -59,4 +56,10 @@ export function catchBug(props: {
     bugId: open.id,
     how: 'again',
   };
+}
+
+function plannedIf(props: { bug: IBug; isIncidental: boolean }): IBug {
+  return props.isIncidental || !props.bug.isIncidental
+    ? props.bug
+    : { ...props.bug, isIncidental: false };
 }

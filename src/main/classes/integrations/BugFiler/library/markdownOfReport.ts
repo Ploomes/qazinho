@@ -1,5 +1,13 @@
 import type { BugReportBlock, IBugReport } from '@/shared/types';
 
+/**
+ * A bug's report as the Markdown a GitHub issue reads: headings, paragraphs, the steps in
+ * order with the one that broke in bold, facts by label and the failed requests as code.
+ */
+export function markdownOfReport(report: IBugReport): string {
+  return report.blocks.flatMap(markdownOf).join('\n\n');
+}
+
 function code(said: string): string {
   const longest = Math.max(0, ...(said.match(/`+/g) ?? []).map((run) => run.length));
   const fence = '`'.repeat(longest + 1);
@@ -66,9 +74,4 @@ function markdownOf(block: BugReportBlock): string[] {
               .join('\n'),
           ];
   }
-}
-
-/** A bug's report as the Markdown a GitHub issue reads: headings, paragraphs, the steps in order with the one that broke in bold, facts by label and the failed requests as code. */
-export function markdownOfReport(report: IBugReport): string {
-  return report.blocks.flatMap(markdownOf).join('\n\n');
 }

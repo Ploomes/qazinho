@@ -12,7 +12,10 @@ const FAILURES: Record<VariableFailure['reason'], string> = {
   missing: 'the project no longer keeps it',
 };
 
-/** Asks the QA for a project's variables in the window, or renames one or changes what it holds, never touching a value. */
+/**
+ * Asks the QA for a project's variables in the window, or renames one or changes what it
+ * holds, never touching a value.
+ */
 export async function performVariables(props: {
   call: Extract<AppToolCall, { name: 'ask_variables' | 'update_variable' }>;
   port: IAppPort;

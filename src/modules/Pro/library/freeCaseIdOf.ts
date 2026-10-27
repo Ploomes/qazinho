@@ -1,4 +1,7 @@
-/** An id for a case like another one that no case of the plan holds yet: the next number after it, or the id with a count. */
+/**
+ * An id for a case like another one that no case of the plan holds yet: the next number
+ * after it, or the id with a count.
+ */
 export function freeCaseIdOf(props: { id: string; taken: string[] }): string {
   const { id, taken } = props;
   const numbered = /^(.*?)(\d+)$/.exec(id);

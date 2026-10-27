@@ -1,20 +1,9 @@
 import type { ChatItem, ChatMessage } from '@/modules/Chat/types';
 
-function runIdOf(message: ChatMessage): string | null {
-  if (
-    message.kind === 'run' ||
-    message.kind === 'note' ||
-    message.kind === 'finding' ||
-    message.kind === 'ask'
-  )
-    return message.runId;
-
-  if (message.kind === 'verdict' || message.kind === 'error') return message.runId;
-
-  return null;
-}
-
-/** Keeps everything a kept or going run said in the chat together, where it began; what a run that never walked a step said stays loose. */
+/**
+ * Keeps everything a kept or going run said in the chat together, where it began; what a
+ * run that never walked a step said stays loose.
+ */
 export function groupRunMessages(props: {
   messages: { message: ChatMessage; isNew: boolean }[];
   runIds: string[];
@@ -55,4 +44,18 @@ export function groupRunMessages(props: {
   }
 
   return items;
+}
+
+function runIdOf(message: ChatMessage): string | null {
+  if (
+    message.kind === 'run' ||
+    message.kind === 'note' ||
+    message.kind === 'finding' ||
+    message.kind === 'ask'
+  )
+    return message.runId;
+
+  if (message.kind === 'verdict' || message.kind === 'error') return message.runId;
+
+  return null;
 }

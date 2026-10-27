@@ -18,7 +18,10 @@ import {
   pickArtifact,
 } from './library';
 
-/** Builds the app under test from a branch of its repository: gh brings the code, the QA's own agent builds it, and QAzinho keeps the .apk or .app it made. */
+/**
+ * Builds the app under test from a branch of its repository: gh brings the code, the QA's
+ * own agent builds it, and QAzinho keeps the .apk or .app it made.
+ */
 export class AppBuilder {
   private readonly github: IAppBuilder['github'];
   private readonly runner: IAppBuilder['runner'];
@@ -44,7 +47,10 @@ export class AppBuilder {
     this.now = props.now ?? Date.now;
   }
 
-  /** Builds one app, telling each step as it goes, and answers with the kept .apk or .app, or why there is none. */
+  /**
+   * Builds one app, telling each step as it goes, and answers with the kept .apk or .app,
+   * or why there is none.
+   */
   public async start(build: IStartBuild): Promise<IBuildResult> {
     const { buildId } = build;
     const work = join(this.root, 'work', buildId);
@@ -69,7 +75,10 @@ export class AppBuilder {
     this.runner.cancel(`${APP_BUILDER.scopePrefix}${buildId}`);
   }
 
-  /** Hands a line the building agent said or did to the page, as the build's own, with its folder said as `.`. */
+  /**
+   * Hands a line the building agent said or did to the page, as the build's own, with its
+   * folder said as `.`.
+   */
   public hear(props: { buildId: string; text: string }): void {
     const dir = this.building.get(props.buildId);
 
@@ -81,7 +90,10 @@ export class AppBuilder {
       });
   }
 
-  /** Deletes what builds left half done, for when QAzinho opens after closing in the middle of one. */
+  /**
+   * Deletes what builds left half done, for when QAzinho opens after closing in the
+   * middle of one.
+   */
   public async sweep(): Promise<void> {
     await rm(join(this.root, 'work'), { recursive: true, force: true });
   }

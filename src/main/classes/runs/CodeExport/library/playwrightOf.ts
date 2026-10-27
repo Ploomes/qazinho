@@ -53,6 +53,59 @@ const VARIABLE = `function variable(name: string): string {
 }
 `;
 
+/**
+ * A Playwright test file for the cases a web app's runs recorded, each case a test that
+ * starts anew and checks each step's proof; a variable is read from the environment.
+ */
+export function playwrightOf(props: {
+  url: string;
+  viewport: IViewport;
+  cases: { steps: IFlatStep[]; recipe: ICaseRecipe }[];
+}): string {
+  const tests = props.cases.map(({ steps, recipe }) => {
+    const [first] = steps;
+    const body = steps.flatMap((step) => {
+      const kept = recipe.steps.find(({ number }) => number === step.numberInCase);
+
+      return [
+        `  // ${String(step.numberInCase)}. ${step.action} → ${step.expected}`,
+        ...(kept?.actions ?? []).flatMap(lineOf).map((line) => `  ${line}`),
+        `  await expect(tab.getByText(${quoted(kept?.proof ?? '')}).first()).toBeVisible();`,
+      ];
+    });
+
+    return [
+      `test(${quoted(`${first?.caseId ?? recipe.caseId} · ${first?.caseTitle ?? ''}`)}, async ({ page }) => {`,
+      '  let tab = prepare(page);',
+      '',
+      '  await tab.goto(APP);',
+      ...body,
+      '});',
+    ].join('\n');
+  });
+
+  const variables = variablesIn(props.cases.map(({ recipe }) => recipe));
+
+  return [
+    "import { expect, test, type Page } from '@playwright/test';",
+    '',
+    ...(variables.length === 0
+      ? []
+      : [
+          `// Types the project's variables from the environment: ${variables.join(', ')}.`,
+          '',
+        ]),
+    `const APP = ${quoted(props.url)};`,
+    '',
+    HELPERS,
+    ...(variables.length === 0 ? [] : [VARIABLE]),
+    `test.use({ viewport: { width: ${String(props.viewport.width)}, height: ${String(props.viewport.height)} } });`,
+    '',
+    tests.join('\n\n'),
+    '',
+  ].join('\n');
+}
+
 function quoted(text: string): string {
   const parts = text.split(/(\$\{[A-Z][A-Z0-9_]*\})/);
 
@@ -144,54 +197,4 @@ function lineOf(action: IStepAction): string[] {
         ']);',
       ];
   }
-}
-
-/** A Playwright test file for the cases a web app's runs recorded, each case a test that starts anew and checks each step's proof; a variable is read from the environment. */
-export function playwrightOf(props: {
-  url: string;
-  viewport: IViewport;
-  cases: { steps: IFlatStep[]; recipe: ICaseRecipe }[];
-}): string {
-  const tests = props.cases.map(({ steps, recipe }) => {
-    const [first] = steps;
-    const body = steps.flatMap((step) => {
-      const kept = recipe.steps.find(({ number }) => number === step.numberInCase);
-
-      return [
-        `  // ${String(step.numberInCase)}. ${step.action} → ${step.expected}`,
-        ...(kept?.actions ?? []).flatMap(lineOf).map((line) => `  ${line}`),
-        `  await expect(tab.getByText(${quoted(kept?.proof ?? '')}).first()).toBeVisible();`,
-      ];
-    });
-
-    return [
-      `test(${quoted(`${first?.caseId ?? recipe.caseId} · ${first?.caseTitle ?? ''}`)}, async ({ page }) => {`,
-      '  let tab = prepare(page);',
-      '',
-      '  await tab.goto(APP);',
-      ...body,
-      '});',
-    ].join('\n');
-  });
-
-  const variables = variablesIn(props.cases.map(({ recipe }) => recipe));
-
-  return [
-    "import { expect, test, type Page } from '@playwright/test';",
-    '',
-    ...(variables.length === 0
-      ? []
-      : [
-          `// Types the project's variables from the environment: ${variables.join(', ')}.`,
-          '',
-        ]),
-    `const APP = ${quoted(props.url)};`,
-    '',
-    HELPERS,
-    ...(variables.length === 0 ? [] : [VARIABLE]),
-    `test.use({ viewport: { width: ${String(props.viewport.width)}, height: ${String(props.viewport.height)} } });`,
-    '',
-    tests.join('\n\n'),
-    '',
-  ].join('\n');
 }

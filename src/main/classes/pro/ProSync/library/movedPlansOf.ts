@@ -7,7 +7,10 @@ type SyncedPlan = z.infer<
   typeof SYNCED_PROJECTS_SCHEMA
 >['projects'][number]['plans'][number];
 
-/** The plans the org moved past what this computer last sent of them, as another computer or a merged pull request does: each a conflict for the page to join, from the cases both sides started at to the org's; one already waiting on the page follows the org's latest version. */
+/**
+ * The plans the org moved past what this computer last sent, each a conflict for the page
+ * to join.
+ */
 export function movedPlansOf(props: {
   record: IProSyncRecord;
   plans: SyncedPlan[];

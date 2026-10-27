@@ -1,6 +1,9 @@
 import type { ISuiteResult, SuiteRunStatus } from '@/shared/types';
 
-/** How a run ended: stopped by the QA, broken when Playwright could not see it through, failed when a test did not pass, passed otherwise. */
+/**
+ * How a run ended: stopped by the QA, broken when Playwright could not see it through,
+ * failed when a test did not pass, passed otherwise.
+ */
 export function suiteStatusOf(props: {
   results: ISuiteResult[];
   isStopped: boolean;

@@ -7,7 +7,10 @@ const AGENTS: Record<Exclude<InstallableId, 'idb' | 'gh'>, string> = {
   codex: '@openai/codex',
 };
 
-/** The commands that install a tool, in order: gh with winget on Windows and Homebrew elsewhere. idb's client gets a Python of its own, so Homebrew's Pythons are never touched. */
+/**
+ * The commands that install a tool, in order: gh with winget or Homebrew, idb in a Python
+ * of its own.
+ */
 export function recipeFor(props: {
   item: InstallableId;
   home: string;

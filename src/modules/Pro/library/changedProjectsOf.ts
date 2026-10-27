@@ -11,7 +11,10 @@ const SHARED_PARTS = [
   'bugs',
 ] as const satisfies readonly (keyof IWorkspace)[];
 
-/** The projects whose shared part changed between two moments: a workspace added, gone, or changed in what QAzinho Pro keeps; a live run's clock is no change. */
+/**
+ * The projects whose shared part changed between two moments: a workspace added, gone, or
+ * changed in what QAzinho Pro keeps; a live run's clock is no change.
+ */
 export function changedProjectsOf(props: {
   workspaces: IWorkspace[];
   before: IWorkspace[];

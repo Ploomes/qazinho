@@ -7,7 +7,10 @@ import { MOTION } from '@/shared/constants';
 import { useBugSendModalViewModel } from './hooks';
 import './styles.css';
 
-/** Sending a bug to the QA's tracker: Jira or GitHub, the project or repository it goes to, its title, and what goes along with it. */
+/**
+ * Sending a bug to the QA's tracker: Jira or GitHub, the project or repository it goes
+ * to, its title, and what goes along with it.
+ */
 export const BugSendModal: React.FC<IBugSendModalProps> = (props) => {
   const {
     title,

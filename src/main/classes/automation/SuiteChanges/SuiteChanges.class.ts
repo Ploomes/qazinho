@@ -46,7 +46,10 @@ import {
   titleGrepOf,
 } from './library';
 
-/** Changes a project's suite with the QA's own agent, in a git worktree of its repository on a branch of its own: the agent edits the copy and runs the tests through QAzinho, QAzinho runs the test again and keeps the diff, and only the QA sends it on. */
+/**
+ * Changes a project's suite with the QA's own agent, in a git worktree on a branch of its
+ * own.
+ */
 export class SuiteChanges {
   private readonly registry: ISuiteChanges['registry'];
   private readonly suites: ISuiteChanges['suites'];
@@ -83,7 +86,10 @@ export class SuiteChanges {
     this.now = props.now ?? Date.now;
   }
 
-  /** Asks the QA's agent for one change, telling each step as it goes, and answers with the change ready to review, or why it is not. */
+  /**
+   * Asks the QA's agent for one change, telling each step as it goes, and answers with
+   * the change ready to review, or why it is not.
+   */
   public async start(start: IStartSuiteChange): Promise<ISuiteChange> {
     const folder = this.folderOf(start);
     let change: ISuiteChange = {
@@ -139,7 +145,10 @@ export class SuiteChanges {
     return ended;
   }
 
-  /** Stops a change where it is: the agent is interrupted, a run of its tests ends, and what it changed so far stays to review or throw away. */
+  /**
+   * Stops a change where it is: the agent is interrupted, a run of its tests ends, and
+   * what it changed so far stays to review or throw away.
+   */
   public stop(changeId: string): void {
     const working = this.working.get(changeId);
 
@@ -151,7 +160,10 @@ export class SuiteChanges {
     if (working.checking !== null) this.suites.stopCheck(working.checking);
   }
 
-  /** Hands a line the agent said or did to the page, as the change's own, with its copy of the suite said as `.`. */
+  /**
+   * Hands a line the agent said or did to the page, as the change's own, with its copy of
+   * the suite said as `.`.
+   */
   public hear(props: { changeId: string; text: string }): void {
     const working = this.working.get(props.changeId);
 
@@ -165,7 +177,10 @@ export class SuiteChanges {
     });
   }
 
-  /** A project's changes, the latest first; one left working when QAzinho closed reads as broken. */
+  /**
+   * A project's changes, the latest first; one left working when QAzinho closed reads as
+   * broken.
+   */
   public async changes(projectId: string): Promise<ISuiteChange[]> {
     const folder = join(this.root, projectId, SUITE_CHANGES.changes);
 
@@ -189,7 +204,10 @@ export class SuiteChanges {
       .sort((one, other) => other.startedAt - one.startedAt);
   }
 
-  /** Sends a change the QA approved: commits it on its branch, pushes it with the QA's own git, and opens the pull request on GitHub when asked; the copy goes once it is pushed. */
+  /**
+   * Sends an approved change: commits it on its branch, pushes it with the QA's git, and
+   * opens the PR.
+   */
   public async ship(props: {
     projectId: string;
     changeId: string;

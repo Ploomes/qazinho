@@ -7,7 +7,10 @@ import { isInside } from '@/main/classes/storage/Archive/library';
 import { STORAGE_KEEPER } from './constants';
 import { filesUnder, runFileKindOf } from './library';
 
-/** What QAzinho keeps on this computer, by kind, and the runs' videos it lets go of once they are old; the reports and screens stay. */
+/**
+ * What QAzinho keeps on this computer, by kind, and the runs' videos it lets go of once
+ * they are old; the reports and screens stay.
+ */
 export class StorageKeeper {
   private readonly dataRoot: string;
   private readonly runsRoot: string;
@@ -21,7 +24,10 @@ export class StorageKeeper {
     this.now = props.now;
   }
 
-  /** The bytes QAzinho's folder holds: the runs' videos and screens, the apps it built, and the rest. */
+  /**
+   * The bytes QAzinho's folder holds: the runs' videos and screens, the apps it built,
+   * and the rest.
+   */
   public async usage(): Promise<IStorageUsage> {
     const usage = { videos: 0, screens: 0, builds: 0, total: 0 };
 
@@ -44,7 +50,9 @@ export class StorageKeeper {
     };
   }
 
-  /** Deletes each run's video recorded more than so many days ago, and notes where it was. */
+  /**
+   * Deletes each run's video recorded more than so many days ago, and notes where it was.
+   */
   public async sweepVideos(props: { olderThanDays: number }): Promise<IVideoSweep> {
     const now = this.now();
     const cutoff = now.getTime() - props.olderThanDays * STORAGE_KEEPER.dayMs;
@@ -72,7 +80,10 @@ export class StorageKeeper {
     return sweep;
   }
 
-  /** When, and after how many days, a run's video was let go of; null for one that never was. */
+  /**
+   * When, and after how many days, a run's video was let go of; null for one that never
+   * was.
+   */
   public async removedVideoOf(ref: IRunRef): Promise<IRemovedVideo | null> {
     const file = join(this.runsRoot, ref.workspaceId, ref.runId, ARCHIVE.videoRemoved);
     if (!isInside({ root: this.runsRoot, file })) return null;

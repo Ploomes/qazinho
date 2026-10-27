@@ -1,13 +1,9 @@
 import type { IConfluencePageRef } from '@/shared/types';
 
-const plain = (text: string) =>
-  text
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .toLowerCase()
-    .trim();
-
-/** The page a search found that the QA meant: the one with the id their link had, else the one titled as they wrote it, else the first found; null when none was. */
+/**
+ * The page a search found that the QA meant: the one with the id their link had, else the
+ * one titled as they wrote it, else the first found; null when none was.
+ */
 export function pickPage(props: {
   wanted: { id: string | null; title: string };
   pages: IConfluencePageRef[];
@@ -21,3 +17,10 @@ export function pickPage(props: {
     null
   );
 }
+
+const plain = (text: string) =>
+  text
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase()
+    .trim();

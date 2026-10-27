@@ -31,6 +31,27 @@ const GITHUB_SAYS: Record<GithubFailure, string> = {
 const NEEDS_TARGET =
   'A project needs at least one target: a web address, an Android .apk or an iOS simulator .app.';
 
+/**
+ * Creates or changes a project the way its settings would, and links or lists the QA's
+ * GitHub repositories.
+ */
+export async function performProjectChange(props: {
+  call: ProjectCall;
+  port: IAppPort;
+}): Promise<IToolDone> {
+  const { call, port } = props;
+
+  if (call.name === 'list_repositories') return listRepositories(port);
+
+  if (call.name === 'create_project') return createProject({ args: call.args, port });
+
+  if (call.name === 'update_project') return updateProject({ args: call.args, port });
+
+  if (call.name === 'link_repository') return linkRepository({ args: call.args, port });
+
+  return unlinkRepository({ args: call.args, port });
+}
+
 function failed(text: string): IToolDone {
   return { text, isError: true };
 }
@@ -352,22 +373,4 @@ function unlinkRepository(props: {
     text: `Unlinked ${linked.owner}/${linked.name} from ${project.id} "${project.name}".`,
     isError: false,
   };
-}
-
-/** Creates or changes a project the way its settings would, and links or lists the QA's GitHub repositories. */
-export async function performProjectChange(props: {
-  call: ProjectCall;
-  port: IAppPort;
-}): Promise<IToolDone> {
-  const { call, port } = props;
-
-  if (call.name === 'list_repositories') return listRepositories(port);
-
-  if (call.name === 'create_project') return createProject({ args: call.args, port });
-
-  if (call.name === 'update_project') return updateProject({ args: call.args, port });
-
-  if (call.name === 'link_repository') return linkRepository({ args: call.args, port });
-
-  return unlinkRepository({ args: call.args, port });
 }

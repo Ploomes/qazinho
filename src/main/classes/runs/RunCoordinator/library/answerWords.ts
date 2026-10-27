@@ -1,6 +1,9 @@
 import type { RunAnswer } from '@/shared/types';
 
-/** What the agent hears once its question to the QA ended: their words, a secret by its name alone, or that no answer came, then what to do next. */
+/**
+ * What the agent hears once its question to the QA ended: their words, a secret by its
+ * name alone, or that no answer came, then what to do next.
+ */
 export function answerWords(props: {
   answer: RunAnswer;
   carryOn: string;

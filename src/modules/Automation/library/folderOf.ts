@@ -1,4 +1,7 @@
-/** The folder a suite's file sits in, from the suite's own folder: '' for a file at its root. */
+/**
+ * The folder a suite's file sits in, from the suite's own folder: '' for a file at its
+ * root.
+ */
 export function folderOf(file: string): string {
   const at = file.lastIndexOf('/');
 

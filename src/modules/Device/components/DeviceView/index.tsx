@@ -7,7 +7,10 @@ import { DeviceFocus, DeviceScreen, LiveClock, ViewportPicker } from './componen
 import { useDeviceViewModel } from './hooks';
 import './styles.css';
 
-/** The device the run drives: how it stands, its live screen, its size, pause and stop, and the steps it walked. */
+/**
+ * The device the run drives: how it stands, its live screen, its size, pause and stop,
+ * and the steps it walked.
+ */
 export const DeviceView: React.FC = () => {
   const {
     isFocused,

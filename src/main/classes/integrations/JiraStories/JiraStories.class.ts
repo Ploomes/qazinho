@@ -5,7 +5,10 @@ import { join } from 'node:path';
 import { JIRA_FILES } from './constants';
 import { fileNameOf, filesToReadOf } from './library';
 
-/** Reads a Jira story for the agent to plan from, with the files it can read downloaded beside it; each story's files are gone once its plan is. */
+/**
+ * Reads a Jira story for the agent to plan from, with the files it can read downloaded
+ * beside it; each story's files are gone once its plan is.
+ */
 export class JiraStories {
   private readonly jira: IJiraRead;
   private readonly root: string;
@@ -16,7 +19,10 @@ export class JiraStories {
     this.root = props.root;
   }
 
-  /** Reads a story for a workspace and downloads the files it can, in place of any story the workspace had. */
+  /**
+   * Reads a story for a workspace and downloads the files it can, in place of any story
+   * the workspace had.
+   */
   public async prepare(props: {
     workspaceId: string;
     key: string;
@@ -81,7 +87,10 @@ export class JiraStories {
     await rm(join(this.root, workspaceId), { recursive: true, force: true });
   }
 
-  /** Deletes every story's files left from before, such as from a QAzinho that closed mid-plan. */
+  /**
+   * Deletes every story's files left from before, such as from a QAzinho that closed
+   * mid-plan.
+   */
   public async sweep(): Promise<void> {
     this.copies.clear();
     await rm(this.root, { recursive: true, force: true });

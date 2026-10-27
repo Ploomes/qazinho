@@ -5,7 +5,10 @@ import { MOTION } from '@/shared/constants';
 import { useSuggestionCardViewModel } from './hooks';
 import './styles.css';
 
-/** The plan an exploration suggests, in the chat: what the explorer saw, the cases it would test, and the way to take them into the plan. */
+/**
+ * The plan an exploration suggests, in the chat: what the explorer saw, the cases it
+ * would test, and the way to take them into the plan.
+ */
 export const SuggestionCard: React.FC<ISuggestionCardProps> = (props) => {
   const { eyebrow, summary, cases, isTaken, takeLabel, takenLabel, onTake } =
     useSuggestionCardViewModel(props);

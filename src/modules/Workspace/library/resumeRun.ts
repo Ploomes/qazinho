@@ -4,7 +4,7 @@ import { catchBug } from '@/modules/Bug/library';
 import { landAnswered } from './landAnswered';
 import { landFinding } from './landFinding';
 
-/** A run main kept walking while the page was away: the page follows it again, with the question its agent waits on, its failures and side findings land on their bugs once, what it asked the QA lands in its section once, and the record saved as interrupted goes. */
+/** Follows a run main kept walking while the page was away, landing its findings once. */
 export function resumeRun(props: {
   workspace: IWorkspace;
   run: IRunInFlight;

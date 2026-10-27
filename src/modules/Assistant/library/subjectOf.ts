@@ -3,11 +3,10 @@ import type { AppToolCall } from '@/shared/types';
 
 const INTEGRATION_NAMES = { github: 'GitHub', jira: 'Jira' } as const;
 
-function nameOf(props: { items: { id: string; name: string }[]; ref: string }): string {
-  return props.items.find(({ id }) => id === props.ref.trim())?.name ?? props.ref.trim();
-}
-
-/** What a tool call touches, in the words the QA reads on its line: a workspace or project by name, a run, a bug, a repository. */
+/**
+ * What a tool call touches, in the words the QA reads on its line: a workspace or project
+ * by name, a run, a bug, a repository.
+ */
 export function subjectOf(props: { call: AppToolCall; state: IAppState }): string {
   const { call, state } = props;
 
@@ -57,4 +56,8 @@ export function subjectOf(props: { call: AppToolCall; state: IAppState }): strin
     case 'change_settings':
       return '';
   }
+}
+
+function nameOf(props: { items: { id: string; name: string }[]; ref: string }): string {
+  return props.items.find(({ id }) => id === props.ref.trim())?.name ?? props.ref.trim();
 }

@@ -3,7 +3,10 @@ import type { IWorkspace } from '@/modules/Workspace/types';
 
 const WEIGHED = new Set(['suggested', 'nothing-new', 'posted', 'dismissed']);
 
-/** The latest look at a bug that came back: it lands on that bug, and once the agent weighed its runs they count as told, so they are never weighed again. */
+/**
+ * The latest look at a bug that came back: it lands on that bug, and once the agent
+ * weighed its runs they count as told, so they are never weighed again.
+ */
 export function landReview(props: {
   workspace: IWorkspace;
   bugId: string;

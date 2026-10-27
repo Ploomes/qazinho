@@ -4,7 +4,10 @@ import { stripAnsi } from './stripAnsi';
 const SIGNED_OUT =
   /not logged in|invalid api key|run \/login|\b401\b|unauthori[sz]ed|oauth token (has )?expired|authentication_error/i;
 
-/** What an agent's failed turn means: signed out, silent, or its own words; null when the turn did not fail. */
+/**
+ * What an agent's failed turn means: signed out, silent, or its own words; null when the
+ * turn did not fail.
+ */
 export function agentFailure(turn: {
   isError: boolean;
   text: string;

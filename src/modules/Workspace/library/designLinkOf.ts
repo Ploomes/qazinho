@@ -3,17 +3,10 @@ import type { IDesignLink } from '@/shared/types';
 const DESIGN_PATH =
   /^\/(?:design|file|proto)\/([\w-]+)(?:\/branch\/([\w-]+))?(?:\/([^/]+))?/;
 
-function nameOf(slug: string | undefined): string {
-  try {
-    return decodeURIComponent(slug ?? '')
-      .replace(/-/g, ' ')
-      .trim();
-  } catch {
-    return '';
-  }
-}
-
-/** The Figma design a link points at: its file, or the branch the link opens, and the frame or page its node-id names; null for anything that is not a Figma design. */
+/**
+ * The Figma design a link points at: its file, or the branch the link opens, and the
+ * frame or page its node-id names; null for anything that is not a Figma design.
+ */
 export function designLinkOf(text: string): IDesignLink | null {
   let url: URL;
 
@@ -39,4 +32,14 @@ export function designLinkOf(text: string): IDesignLink | null {
     nodeId: node === null || node === '' ? null : node.replace('-', ':'),
     name: nameOf(slug) || fileKey,
   };
+}
+
+function nameOf(slug: string | undefined): string {
+  try {
+    return decodeURIComponent(slug ?? '')
+      .replace(/-/g, ' ')
+      .trim();
+  } catch {
+    return '';
+  }
 }

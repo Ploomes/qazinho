@@ -4,33 +4,15 @@ import { parse } from 'yaml';
 import { nextCaseId } from './nextCaseId';
 
 const PRIORITIES: Priority[] = ['P1', 'P2', 'P3'];
+
 const VERDICTS: StepVerdict[] = ['passed', 'failed', 'blocked', 'skipped'];
 
 type Loose = Record<string, unknown>;
 
-function textOf(value: unknown): string {
-  return typeof value === 'string'
-    ? value
-    : typeof value === 'number'
-      ? String(value)
-      : '';
-}
-
-function isLoose(value: unknown): value is Loose {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-function stepOf(read: Loose): ITestStep {
-  const frame = textOf(read.frame);
-
-  return {
-    action: textOf(read.action),
-    expected: textOf(read.expected),
-    ...(frame === '' ? {} : { frame }),
-  };
-}
-
-/** The cases a plan.yaml holds, each made whole: a field a QA left out by hand reads as empty, and a case with no id gets a free one. */
+/**
+ * The cases a plan.yaml holds, each made whole: a field a QA left out by hand reads as
+ * empty, and a case with no id gets a free one.
+ */
 export function planOfYaml(yaml: string): ITestCase[] {
   let read: unknown;
 
@@ -64,4 +46,26 @@ export function planOfYaml(yaml: string): ITestCase[] {
       },
     ];
   }, []);
+}
+
+function textOf(value: unknown): string {
+  return typeof value === 'string'
+    ? value
+    : typeof value === 'number'
+      ? String(value)
+      : '';
+}
+
+function isLoose(value: unknown): value is Loose {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function stepOf(read: Loose): ITestStep {
+  const frame = textOf(read.frame);
+
+  return {
+    action: textOf(read.action),
+    expected: textOf(read.expected),
+    ...(frame === '' ? {} : { frame }),
+  };
 }

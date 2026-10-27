@@ -4,7 +4,10 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { CATCHER_FILES, LINK_CATCHER } from './constants';
 
-/** Catches the pages an agent CLI asks a browser to open: the agent gets a `$BROWSER` that writes them down instead. On Windows, where a CLI would run a .cmd `$BROWSER` through a shell or not at all, the agent opens its own browser and nothing is caught. */
+/**
+ * Catches the pages an agent CLI asks a browser to open, through a `$BROWSER` that writes
+ * them down.
+ */
 export class LinkCatcher {
   private readonly script: string | null;
   private readonly file: string;

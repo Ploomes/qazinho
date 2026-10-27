@@ -16,7 +16,10 @@ const SECRETS: [RegExp, string][] = [
   ],
 ];
 
-/** One line of the app's log: when, how much it matters, where it came from and what happened, on one line, the home folder as `~` and anything that looks like a token or password as dots. */
+/**
+ * One line of the app's log: when, how much it matters, where from and what, with secrets
+ * as dots.
+ */
 export function logLineOf(props: {
   at: Date;
   level: LogLevel;

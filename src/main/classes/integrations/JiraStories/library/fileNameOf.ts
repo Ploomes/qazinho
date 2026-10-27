@@ -1,4 +1,7 @@
-/** A file name safe to write in a folder of its own: the name Jira gave, with no folders and no odd characters, numbered when another took it. */
+/**
+ * A file name safe to write in a folder of its own: the name Jira gave, with no folders
+ * and no odd characters, numbered when another took it.
+ */
 export function fileNameOf(props: { filename: string; taken: string[] }): string {
   const plain =
     (props.filename.split(/[\\/]/).at(-1) ?? '')

@@ -4,7 +4,9 @@ import { MOTION } from '@/shared/constants';
 import { useSearchListViewModel } from './hooks';
 import './styles.css';
 
-/** A field that narrows a list as the QA types, and picks with a click or the keyboard. */
+/**
+ * A field that narrows a list as the QA types, and picks with a click or the keyboard.
+ */
 export const SearchList: React.FC<ISearchListProps> = (props) => {
   const {
     listId,

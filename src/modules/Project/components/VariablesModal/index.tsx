@@ -3,7 +3,10 @@ import { ModalFrame } from '@/shared/components/templates';
 import { useVariablesModalViewModel } from './hooks';
 import './styles.css';
 
-/** The window the agent asks the QA to type secrets in: one form per variable, sealed in main once saved, and never shown again. */
+/**
+ * The window the agent asks the QA to type secrets in: one form per variable, sealed in
+ * main once saved, and never shown again.
+ */
 export const VariablesModal: React.FC = () => {
   const {
     width,

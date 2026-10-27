@@ -7,7 +7,10 @@ import { MOTION } from '@/shared/constants';
 import { useBuildFromCodeViewModel } from './hooks';
 import './styles.css';
 
-/** A platform of a project built from one of its repositories by the QA's agent: pick a branch, then follow the build. */
+/**
+ * A platform of a project built from one of its repositories by the QA's agent: pick a
+ * branch, then follow the build.
+ */
 export const BuildFromCode: React.FC<IBuildFromCodeProps> = (props) => {
   const {
     isBuilding,

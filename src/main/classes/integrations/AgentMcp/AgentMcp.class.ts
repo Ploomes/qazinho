@@ -31,7 +31,10 @@ import {
   signInScript,
 } from './library';
 
-/** The MCP servers QAzinho sets up in the QA's own agent: added there, signed in there, read back from there. */
+/**
+ * The MCP servers QAzinho sets up in the QA's own agent: added there, signed in there,
+ * read back from there.
+ */
 export class AgentMcp {
   private readonly findAgent: (agentId: string) => Promise<string | null>;
   private readonly openUrl: (url: string) => Promise<void>;
@@ -48,7 +51,10 @@ export class AgentMcp {
     this.folder = props.folder;
   }
 
-  /** Where each server QAzinho knows stands in the agent, matched by address, whatever the QA named it. */
+  /**
+   * Where each server QAzinho knows stands in the agent, matched by address, whatever the
+   * QA named it.
+   */
   public async list(agentId: string): Promise<IMcpServerStatus[]> {
     const ids = Object.keys(MCP_CATALOG) as McpServerId[];
     const recipe = MCP_RECIPES[agentId];
@@ -62,7 +68,10 @@ export class AgentMcp {
     return ids.map((id) => ({ id, state: this.stateIn({ listed, id }) }));
   }
 
-  /** Adds the server when it is missing and signs the QA in through the agent, reporting each step; resolves with how it ended. */
+  /**
+   * Adds the server when it is missing and signs the QA in through the agent, reporting
+   * each step; resolves with how it ended.
+   */
   public async connect(signIn: IMcpSignIn): Promise<McpSignInProgress> {
     const key = `${signIn.target.agentId}:${signIn.target.id}`;
     const controller = new AbortController();
@@ -77,7 +86,10 @@ export class AgentMcp {
     }
   }
 
-  /** Stops a sign-in under way: the agent QAzinho drives for it closes, and the sign-in ends cancelled. */
+  /**
+   * Stops a sign-in under way: the agent QAzinho drives for it closes, and the sign-in
+   * ends cancelled.
+   */
   public cancel(target: IMcpServerTarget): void {
     this.signIns.get(`${target.agentId}:${target.id}`)?.abort();
   }

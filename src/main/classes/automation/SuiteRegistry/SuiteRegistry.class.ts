@@ -13,7 +13,10 @@ import {
   versionIn,
 } from './library';
 
-/** The suites connected to the QA's projects: main keeps the folder of each, and reads what it holds afresh each time it is asked. */
+/**
+ * The suites connected to the QA's projects: main keeps the folder of each, and reads
+ * what it holds afresh each time it is asked.
+ */
 export class SuiteRegistry {
   private readonly root: string;
   private readonly git: Pick<GitCli, 'run'>;
@@ -23,7 +26,10 @@ export class SuiteRegistry {
     this.git = props.git;
   }
 
-  /** Connects a folder to a project once it holds a Playwright suite, in place of any suite the project had; a link is kept as the folder it leads to, where Playwright reads the files. */
+  /**
+   * Connects a folder holding a Playwright suite to a project, in place of the suite it
+   * had.
+   */
   public async connect(props: { projectId: string; path: string }): Promise<SuitePick> {
     const path = await realpath(props.path).catch(() => props.path);
     const suite = await this.inspect({ projectId: props.projectId, path });
@@ -35,19 +41,27 @@ export class SuiteRegistry {
     return { kind: 'picked', suite };
   }
 
-  /** The suite a project is connected to, read again from its folder; null for none, or one whose folder no longer holds it. */
+  /**
+   * The suite a project is connected to, read again from its folder; null for none, or
+   * one whose folder no longer holds it.
+   */
   public async suiteOf(projectId: string): Promise<ISuite | null> {
     const path = (await this.read())[projectId];
 
     return path === undefined ? null : this.inspect({ projectId, path });
   }
 
-  /** The folder of the suite a project is connected to, as main keeps it; null for none. */
+  /**
+   * The folder of the suite a project is connected to, as main keeps it; null for none.
+   */
   public async pathOf(projectId: string): Promise<string | null> {
     return (await this.read())[projectId] ?? null;
   }
 
-  /** Where the Playwright Test a suite runs on is installed, in its folder or one above it, with its version; null until its packages are installed. */
+  /**
+   * Where the Playwright Test a suite runs on is installed, in its folder or one above
+   * it, with its version; null until its packages are installed.
+   */
   public async runnerOf(path: string): Promise<{ cli: string; version: string } | null> {
     for (const file of runnerPathsOf(path)) {
       const version = versionIn(await readFile(file, 'utf8').catch(() => ''));

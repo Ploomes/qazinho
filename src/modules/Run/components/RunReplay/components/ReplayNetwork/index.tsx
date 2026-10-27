@@ -4,7 +4,10 @@ import { Icon } from '@/shared/components/atoms';
 import { useReplayNetworkViewModel } from './hooks';
 import './styles.css';
 
-/** The requests the app made, under its video and kept in step with it: each lands as it starts, waits for its answer, and jumps the video there on a click. */
+/**
+ * The requests the app made, under its video and kept in step with it: each lands as it
+ * starts, waits for its answer, and jumps the video there on a click.
+ */
 export const ReplayNetwork: React.FC<IReplayNetworkProps> = (props) => {
   const {
     style,

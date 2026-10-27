@@ -2,7 +2,10 @@ import type { ISuiteTest, SuiteScope } from '@/modules/Automation/types';
 import type { ISuiteBatch } from '@/shared/types';
 import { scopeTestsOf } from './scopeTestsOf';
 
-/** The batches a run goes through for what the QA asked, a Playwright project at a time in the order the config declares them, each naming the files or the tests it runs; a folder runs the files it holds itself. */
+/**
+ * The batches a run goes through, a Playwright project at a time, each naming the tests
+ * it runs.
+ */
 export function batchesOf(props: {
   tests: ISuiteTest[];
   projects: string[];

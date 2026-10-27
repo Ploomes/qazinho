@@ -3,7 +3,10 @@ import type { IBranchList, IRepositoryList, IRepositoryRef } from '@/shared/type
 import { GITHUB_REPOS } from './constants';
 import { branchesOf, jsonLinesOf, repositoryOf } from './library';
 
-/** The QA's repositories and their branches, as GitHub lists them through gh; each list is kept for a little while. */
+/**
+ * The QA's repositories and their branches, as GitHub lists them through gh; each list is
+ * kept for a little while.
+ */
 export class GithubRepos {
   private readonly github: IGithubApi;
   private readonly now: () => number;
@@ -42,7 +45,10 @@ export class GithubRepos {
     return list;
   }
 
-  /** A repository's branches: its own first, then the ones that moved or head a pull request, then the rest. */
+  /**
+   * A repository's branches: its own first, then the ones that moved or head a pull
+   * request, then the rest.
+   */
   public async branches(repository: IRepositoryRef): Promise<IBranchList> {
     const key = `${repository.owner}/${repository.name}`;
     const kept = this.keptBranches.get(key);

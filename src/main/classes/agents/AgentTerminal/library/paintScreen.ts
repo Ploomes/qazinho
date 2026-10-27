@@ -2,24 +2,21 @@ import type { ITerminalScreen } from '@/main/classes/agents/AgentTerminal/types'
 import { AGENT_TERMINAL } from '@/main/classes/agents/AgentTerminal/constants';
 
 const ESC = '\x1b';
+
 const BEL = '\x07';
+
 const MARK = /^\p{M}$/u;
+
 const STRING_OPENERS = new Set([']', 'P', '_', '^', 'X']);
+
 const CHARSET_OPENERS = new Set(['(', ')', '*', '+', '-', '.', '/']);
+
 const ALTERNATE_SCREEN = /^\?(?:1049|1047|47)$/;
 
-const isZeroWidth = (char: string) => {
-  const point = char.codePointAt(0) ?? 0;
-
-  return (
-    MARK.test(char) ||
-    (point >= 0x200b && point <= 0x200f) ||
-    point === 0x2060 ||
-    (point >= 0xfe00 && point <= 0xfe0f)
-  );
-};
-
-/** The screen once a terminal draws `output` on it: text, cursor moves, erases and scrolls. Colours, titles and modes are dropped. */
+/**
+ * The screen once a terminal draws `output` on it: text, cursor moves, erases and
+ * scrolls. Colours, titles and modes are dropped.
+ */
 export function paintScreen(props: {
   screen: ITerminalScreen;
   output: string;
@@ -263,3 +260,14 @@ export function paintScreen(props: {
     pending: rest.length > AGENT_TERMINAL.maxPendingChars ? '' : rest,
   };
 }
+
+const isZeroWidth = (char: string) => {
+  const point = char.codePointAt(0) ?? 0;
+
+  return (
+    MARK.test(char) ||
+    (point >= 0x200b && point <= 0x200f) ||
+    point === 0x2060 ||
+    (point >= 0xfe00 && point <= 0xfe0f)
+  );
+};

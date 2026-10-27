@@ -8,7 +8,10 @@ import { STICKER } from '@/shared/constants';
 import { useProAccountCardViewModel } from './hooks';
 import './styles.css';
 
-/** The QA's account at the foot of the sidebar: a way in for a computer signed out, and for one signed in, the account, the org it sends to, the org's projects to download, and signing out. */
+/**
+ * The QA's account at the foot of the sidebar: a way in, or the account, its org and its
+ * projects.
+ */
 export const ProAccountCard: React.FC = () => {
   const {
     ref,

@@ -1,6 +1,9 @@
 import type { IProSyncProject } from '@/shared/types';
 
-/** The project as the platform takes it: its name, targets, repositories and its variables by name alone. */
+/**
+ * The project as the platform takes it: its name, targets, repositories and its variables
+ * by name alone.
+ */
 export function projectBodyOf(props: {
   project: IProSyncProject;
   variables: { name: string; description: string }[];

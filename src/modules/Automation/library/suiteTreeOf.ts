@@ -1,11 +1,10 @@
 import type { ISuiteFolder, ISuiteTest } from '@/modules/Automation/types';
 import { folderOf } from './folderOf';
 
-function nameOf(path: string): string {
-  return path.slice(path.lastIndexOf('/') + 1);
-}
-
-/** A suite's tests by folder and file, in path order and each file's tests in the order they are written; a query keeps the tests whose title, describes, file or tags hold it. */
+/**
+ * A suite's tests by folder and file, in path order and each file's tests in the order
+ * they are written; a query keeps the tests whose title, describes, file or tags hold it.
+ */
 export function suiteTreeOf(props: {
   tests: ISuiteTest[];
   query: string;
@@ -44,4 +43,8 @@ export function suiteTreeOf(props: {
           tests: [...tests].sort((one, other) => one.line - other.line),
         })),
     }));
+}
+
+function nameOf(path: string): string {
+  return path.slice(path.lastIndexOf('/') + 1);
 }

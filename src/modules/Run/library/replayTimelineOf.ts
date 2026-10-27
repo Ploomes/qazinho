@@ -2,7 +2,10 @@ import type { IBug } from '@/modules/Bug/types';
 import type { IReplayTimeline, IRun } from '@/modules/Run/types';
 import { appearancesOf } from '@/modules/Bug/library';
 
-/** A run's video laid out as chapters and marks, each placed by when it happened; null for a run with no recording. */
+/**
+ * A run's video laid out as chapters and marks, each placed by when it happened; null for
+ * a run with no recording.
+ */
 export function replayTimelineOf(props: {
   run: IRun;
   bugs: IBug[];

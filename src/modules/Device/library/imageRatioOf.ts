@@ -1,5 +1,33 @@
 const HEAD_CHARS = 87_384;
 
+/**
+ * Width over height of a screenshot, read from its own bytes, PNG or JPEG, whatever its
+ * data URL claims; null when it cannot tell.
+ */
+export function imageRatioOf(dataUrl: string): number | null {
+  const comma = dataUrl.indexOf(',');
+
+  if (!dataUrl.startsWith('data:image/') || comma < 0) return null;
+
+  let bytes: string;
+
+  try {
+    bytes = atob(dataUrl.slice(comma + 1, comma + 1 + HEAD_CHARS));
+  } catch {
+    return null;
+  }
+
+  const size = bytes.startsWith('\x89PNG\r\n\x1a\n')
+    ? sizeOfPng(bytes)
+    : bytes.startsWith('\xff\xd8')
+      ? sizeOfJpeg(bytes)
+      : null;
+
+  return size !== null && size.width > 0 && size.height > 0
+    ? size.width / size.height
+    : null;
+}
+
 function sizeOfPng(bytes: string): { width: number; height: number } | null {
   const word = (at: number) =>
     ((bytes.charCodeAt(at) << 24) |
@@ -30,29 +58,4 @@ function sizeOfJpeg(bytes: string): { width: number; height: number } | null {
   }
 
   return null;
-}
-
-/** Width over height of a screenshot, read from its own bytes, PNG or JPEG, whatever its data URL claims; null when it cannot tell. */
-export function imageRatioOf(dataUrl: string): number | null {
-  const comma = dataUrl.indexOf(',');
-
-  if (!dataUrl.startsWith('data:image/') || comma < 0) return null;
-
-  let bytes: string;
-
-  try {
-    bytes = atob(dataUrl.slice(comma + 1, comma + 1 + HEAD_CHARS));
-  } catch {
-    return null;
-  }
-
-  const size = bytes.startsWith('\x89PNG\r\n\x1a\n')
-    ? sizeOfPng(bytes)
-    : bytes.startsWith('\xff\xd8')
-      ? sizeOfJpeg(bytes)
-      : null;
-
-  return size !== null && size.width > 0 && size.height > 0
-    ? size.width / size.height
-    : null;
 }

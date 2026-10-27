@@ -18,7 +18,10 @@ import {
   cqlOf,
 } from './library';
 
-/** Talks to the QA's Confluence on their Jira site, with the same credentials: finds and reads a page of test cases, and publishes a plan as a page. */
+/**
+ * Talks to the QA's Confluence on their Jira site, with the same credentials: finds and
+ * reads a page of test cases, and publishes a plan as a page.
+ */
 export class ConfluenceApi {
   private readonly credentials: () => Promise<IJiraCredentials | null>;
   private readonly jira: () => Promise<IJiraCredentials | null>;
@@ -30,7 +33,10 @@ export class ConfluenceApi {
     this.fetcher = props.fetcher;
   }
 
-  /** Whether the QA's Jira account reaches Confluence on the same site, before it is turned on. */
+  /**
+   * Whether the QA's Jira account reaches Confluence on the same site, before it is
+   * turned on.
+   */
   public async check(): Promise<
     { isOk: true } | { isOk: false; failure: JiraFailure; said: string }
   > {
@@ -82,7 +88,9 @@ export class ConfluenceApi {
       : { isListed: false, failure: answer.failure };
   }
 
-  /** One page read whole, its body as Markdown, or why Confluence did not hand it over. */
+  /**
+   * One page read whole, its body as Markdown, or why Confluence did not hand it over.
+   */
   public async page(id: string): Promise<ConfluenceRead> {
     const signed = await this.credentials();
 
@@ -103,7 +111,10 @@ export class ConfluenceApi {
       : { isRead: true, page: read.page, text: read.text };
   }
 
-  /** Publishes a plan: a new page in the space, under the parent page when there is one, or the next version of the page it was published on before; one that is gone is made again. */
+  /**
+   * Publishes a plan: a new page in the space, or the next version of the page it went to
+   * before.
+   */
   public async publish(plan: IPublishPlan): Promise<PlanPublished> {
     const signed = await this.credentials();
 

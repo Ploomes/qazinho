@@ -1,7 +1,10 @@
 import type { ISuitePlanCase } from '@/modules/Automation/types';
 import type { ITestCase } from '@/modules/Plan/types';
 
-/** A case of a workspace's plan as the agent writing its test reads it: the workspace's name, and what the case says. */
+/**
+ * A case of a workspace's plan as the agent writing its test reads it: the workspace's
+ * name, and what the case says.
+ */
 export function planCaseOf(props: {
   workspace: string;
   testCase: ITestCase;

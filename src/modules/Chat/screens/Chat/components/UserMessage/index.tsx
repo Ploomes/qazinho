@@ -2,7 +2,10 @@ import type { IUserMessageProps } from './types';
 import { useUserMessageViewModel } from './hooks';
 import './styles.css';
 
-/** What the QA sent: the command they gave, if any, and their words with what they mentioned standing out. */
+/**
+ * What the QA sent: the command they gave, if any, and their words with what they
+ * mentioned standing out.
+ */
 export const UserMessage: React.FC<IUserMessageProps> = (props) => {
   const { hasText, command, parts } = useUserMessageViewModel(props);
 

@@ -10,7 +10,10 @@ import { MOTION } from '@/shared/constants';
 import { useDeviceFocusViewModel } from './hooks';
 import './styles.css';
 
-/** The device filling the app while the agent drives it, with the run beside it; Esc puts it back. */
+/**
+ * The device filling the app while the agent drives it, with the run beside it; Esc puts
+ * it back.
+ */
 export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
   const { style, nowEyebrow, now, nowNumber, rows, hasViewports } =
     useDeviceFocusViewModel(props);

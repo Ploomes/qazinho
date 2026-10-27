@@ -27,7 +27,10 @@ import {
   withPermissions,
 } from './library';
 
-/** Drives the QA's own agent CLI, Claude Code or Codex. QAzinho owns no model and holds no provider key. */
+/**
+ * Drives the QA's own agent CLI, Claude Code or Codex. QAzinho owns no model and holds no
+ * provider key.
+ */
 export class AgentRunner {
   private readonly onEvent: (event: IAgentEvent) => void;
   private readonly owners: IAgentRunner['owners'];
@@ -46,7 +49,10 @@ export class AgentRunner {
     this.permissions = props.permissions;
   }
 
-  /** Asks the agent once; every call lets the QA's own MCP servers in, each permission they need answered by QAzinho. */
+  /**
+   * Asks the agent once; every call lets the QA's own MCP servers in, each permission
+   * they need answered by QAzinho.
+   */
   public async ask(asked: IRunAgent): Promise<IAgentTurn> {
     const props =
       this.permissions === undefined
@@ -221,7 +227,10 @@ export class AgentRunner {
     };
   }
 
-  /** Interrupts the workspace's agent the way Ctrl+C does, so it still says what the turn cost, and ends it if it lingers. */
+  /**
+   * Interrupts the workspace's agent the way Ctrl+C does, so it still says what the turn
+   * cost, and ends it if it lingers.
+   */
   public cancel(workspaceId: string): void {
     for (const child of this.asking.get(workspaceId) ?? []) {
       killTree(child, 'SIGINT');
@@ -231,7 +240,10 @@ export class AgentRunner {
     }
   }
 
-  /** Stops the clock that ends the workspace's agent while it waits on the QA, until as many `release` calls: the wait is not its turn's time. */
+  /**
+   * Stops the clock that ends the workspace's agent while it waits on the QA, until as
+   * many `release` calls: the wait is not its turn's time.
+   */
   public hold(workspaceId: string): void {
     const holds = this.holds.get(workspaceId) ?? 0;
 

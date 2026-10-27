@@ -1,6 +1,9 @@
 const TYPED = ['text', 'email', 'url', 'search', 'password', 'number', 'tel', ''];
 
-/** Whether a key press confirms the modal: Enter, alone, in a field the QA types in, that nothing inside it handled already, such as a list picking what Enter chose. */
+/**
+ * Whether a key press confirms the modal: Enter, alone, in a field the QA types in, that
+ * nothing inside it handled already, such as a list picking what Enter chose.
+ */
 export function isConfirmKey(props: {
   key: string;
   isHandled: boolean;

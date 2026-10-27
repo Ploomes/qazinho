@@ -13,7 +13,10 @@ import { writeAtomically } from '@/main/library';
 import { PRO_SIGN_IN, STORED_PRO_SCHEMA } from './constants';
 import { sendingOrgOf } from './library';
 
-/** Signs this machine in to QAzinho Pro by a code the person confirms in the browser, keeps its token sealed by the OS keychain, and says where it stands. */
+/**
+ * Signs this machine in to QAzinho Pro by a code the person confirms in the browser,
+ * keeps its token sealed by the OS keychain, and says where it stands.
+ */
 export class ProAccount {
   private readonly api: IProAccount['api'];
   private readonly cipher: IVaultCipher;
@@ -36,7 +39,10 @@ export class ProAccount {
     this.onProgress = props.onProgress;
   }
 
-  /** Where this machine stands, asking the platform; a token it refuses is forgotten, and no answer keeps what was last known. */
+  /**
+   * Where this machine stands, asking the platform; a token it refuses is forgotten, and
+   * no answer keeps what was last known.
+   */
   public async status(): Promise<ProStatus> {
     const stored = await this.read();
 
@@ -66,7 +72,10 @@ export class ProAccount {
     return { isSignedIn: true, ...this.shown(stored), isReachable: false };
   }
 
-  /** Signs this machine in: a code from the platform, the browser to confirm it, then the token sealed by the keychain. */
+  /**
+   * Signs this machine in: a code from the platform, the browser to confirm it, then the
+   * token sealed by the keychain.
+   */
   public async signIn(): Promise<ProSignInProgress> {
     if (!this.cipher.isAvailable())
       return this.report({ phase: 'failed', at: 'code', failure: 'no-keychain' });
@@ -117,7 +126,10 @@ export class ProAccount {
     if (this.signing !== null) this.signing.isCancelled = true;
   }
 
-  /** Signs this machine out: the platform stops taking its token, and the sealed file goes. */
+  /**
+   * Signs this machine out: the platform stops taking its token, and the sealed file
+   * goes.
+   */
   public async signOut(): Promise<ProStatus> {
     const stored = await this.read();
 
@@ -129,7 +141,9 @@ export class ProAccount {
     return this.signedOut();
   }
 
-  /** Sends this computer's projects to another of the person's orgs, one they write in. */
+  /**
+   * Sends this computer's projects to another of the person's orgs, one they write in.
+   */
   public async chooseOrg(orgSlug: string): Promise<ProStatus> {
     const stored = await this.read();
 
@@ -143,12 +157,17 @@ export class ProAccount {
     return this.status();
   }
 
-  /** This machine's token, for the sync to call the platform with; null while signed out. */
+  /**
+   * This machine's token, for the sync to call the platform with; null while signed out.
+   */
   public async token(): Promise<string | null> {
     return (await this.read())?.token ?? null;
   }
 
-  /** The token and the org this computer sends its projects to; null while signed out, or with no org to send to. */
+  /**
+   * The token and the org this computer sends its projects to; null while signed out, or
+   * with no org to send to.
+   */
   public async target(): Promise<{ token: string; orgSlug: string } | null> {
     const stored = await this.read();
 

@@ -1,4 +1,7 @@
-/** Where a change works, as main keeps it beside the change: the QA's repository, the worktree, the suite's folder in it, and the paths QAzinho linked there, never part of the change. */
+/**
+ * Where a change works: the QA's repository, the worktree, the suite's folder and the
+ * paths linked in.
+ */
 export interface IChangeWork {
   repo: string;
   work: string;

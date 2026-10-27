@@ -1,30 +1,10 @@
 import type { IProSyncCase } from '@/shared/types';
 import { freeCaseIdOf } from './freeCaseIdOf';
 
-function sameCase(
-  one: IProSyncCase | undefined,
-  other: IProSyncCase | undefined,
-): boolean {
-  const said = (testCase: IProSyncCase | undefined) =>
-    testCase === undefined
-      ? null
-      : JSON.stringify([
-          testCase.id,
-          testCase.title,
-          testCase.priority,
-          testCase.goal,
-          testCase.preconditions,
-          testCase.steps.map(({ action, expected, frame }) => [
-            action,
-            expected,
-            frame ?? null,
-          ]),
-        ]);
-
-  return said(one) === said(other);
-}
-
-/** Joins this computer's plan and the org's, case by case, from the cases both last agreed on: a case only one side changed takes that change, one both changed keeps this computer's, and one both added under the same id keeps both. */
+/**
+ * Joins this computer's plan and the org's case by case, from the cases both last agreed
+ * on.
+ */
 export function mergeCases(props: {
   base: IProSyncCase[];
   mine: IProSyncCase[];
@@ -64,4 +44,27 @@ export function mergeCases(props: {
 
     return kept === undefined ? [] : [kept];
   });
+}
+
+function sameCase(
+  one: IProSyncCase | undefined,
+  other: IProSyncCase | undefined,
+): boolean {
+  const said = (testCase: IProSyncCase | undefined) =>
+    testCase === undefined
+      ? null
+      : JSON.stringify([
+          testCase.id,
+          testCase.title,
+          testCase.priority,
+          testCase.goal,
+          testCase.preconditions,
+          testCase.steps.map(({ action, expected, frame }) => [
+            action,
+            expected,
+            frame ?? null,
+          ]),
+        ]);
+
+  return said(one) === said(other);
 }

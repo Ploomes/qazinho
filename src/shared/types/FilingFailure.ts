@@ -1,4 +1,4 @@
-/** Why a bug did not become an issue: the tracker not connected, the access refused, the project or repository not there, out of reach, what was sent refused, or something else. */
+/** Why a bug did not become an issue. */
 export type FilingFailure =
   | 'not-connected'
   | 'unauthorized'

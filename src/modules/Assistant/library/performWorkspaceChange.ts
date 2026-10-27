@@ -21,75 +21,10 @@ type WorkspaceCall = Extract<
   }
 >;
 
-function failed(text: string): IToolDone {
-  return { text, isError: true };
-}
-
-function createWorkspace(props: {
-  args: Extract<WorkspaceCall, { name: 'create_workspace' }>['args'];
-  port: IAppPort;
-}): IToolDone {
-  const { args, port } = props;
-  const found = findByRef({
-    items: port.read().projects,
-    ref: args.project,
-    noun: 'project',
-  });
-
-  if (!found.isFound) return failed(found.text);
-
-  const project = found.item;
-  const kinds = project.targets.map(({ kind }) => kind).join(', ');
-  const [only] = project.targets;
-  const target =
-    args.target === undefined
-      ? project.targets.length === 1
-        ? only
-        : undefined
-      : project.targets.find(({ kind }) => kind === args.target);
-
-  if (target === undefined)
-    return failed(
-      args.target === undefined
-        ? `${project.id} tests on ${kinds}: say which target the workspace is for.`
-        : `${project.id} has no ${args.target} target. Its targets are ${kinds}.`,
-    );
-
-  const workspace: IWorkspace = {
-    id: `w-${String(port.now())}`,
-    projectId: project.id,
-    name: args.name,
-    targetId: target.id,
-    planKind: toPlanKind(target.kind),
-    sessionId: null,
-    sessionAgentId: null,
-    status: 'idle',
-    issue: null,
-    design: null,
-    chat: [],
-    plan: [],
-    runs: [],
-    bugs: [],
-    live: null,
-    hasBeenAsked: false,
-    planSource: null,
-    sourcePage: null,
-    unreadPlan: null,
-    plainValues: [],
-    published: null,
-    viewportId: 'desktop',
-    context: null,
-  };
-
-  port.addWorkspace(workspace);
-
-  return {
-    text: `Created workspace ${workspace.id} "${workspace.name}" in ${project.id} on ${target.kind}, and opened it on its chat, where its agent writes the plan with the QA.`,
-    isError: false,
-  };
-}
-
-/** Creates, renames, runs or stops a workspace, or links its Figma design, the way the QA's own clicks do. */
+/**
+ * Creates, renames, runs or stops a workspace, or links its Figma design, the way the
+ * QA's own clicks do.
+ */
 export function performWorkspaceChange(props: {
   call: WorkspaceCall;
   port: IAppPort;
@@ -207,6 +142,74 @@ export function performWorkspaceChange(props: {
 
   return {
     text: `Started ${runId} of ${workspace.id} "${workspace.name}": ${String(steps)} steps on ${target.kind}, on screen now. It goes on by itself, and the QA hears when it ends.`,
+    isError: false,
+  };
+}
+
+function failed(text: string): IToolDone {
+  return { text, isError: true };
+}
+
+function createWorkspace(props: {
+  args: Extract<WorkspaceCall, { name: 'create_workspace' }>['args'];
+  port: IAppPort;
+}): IToolDone {
+  const { args, port } = props;
+  const found = findByRef({
+    items: port.read().projects,
+    ref: args.project,
+    noun: 'project',
+  });
+
+  if (!found.isFound) return failed(found.text);
+
+  const project = found.item;
+  const kinds = project.targets.map(({ kind }) => kind).join(', ');
+  const [only] = project.targets;
+  const target =
+    args.target === undefined
+      ? project.targets.length === 1
+        ? only
+        : undefined
+      : project.targets.find(({ kind }) => kind === args.target);
+
+  if (target === undefined)
+    return failed(
+      args.target === undefined
+        ? `${project.id} tests on ${kinds}: say which target the workspace is for.`
+        : `${project.id} has no ${args.target} target. Its targets are ${kinds}.`,
+    );
+
+  const workspace: IWorkspace = {
+    id: `w-${String(port.now())}`,
+    projectId: project.id,
+    name: args.name,
+    targetId: target.id,
+    planKind: toPlanKind(target.kind),
+    sessionId: null,
+    sessionAgentId: null,
+    status: 'idle',
+    issue: null,
+    design: null,
+    chat: [],
+    plan: [],
+    runs: [],
+    bugs: [],
+    live: null,
+    hasBeenAsked: false,
+    planSource: null,
+    sourcePage: null,
+    unreadPlan: null,
+    plainValues: [],
+    published: null,
+    viewportId: 'desktop',
+    context: null,
+  };
+
+  port.addWorkspace(workspace);
+
+  return {
+    text: `Created workspace ${workspace.id} "${workspace.name}" in ${project.id} on ${target.kind}, and opened it on its chat, where its agent writes the plan with the QA.`,
     isError: false,
   };
 }

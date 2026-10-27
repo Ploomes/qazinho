@@ -5,7 +5,10 @@ import { MOTION } from '@/shared/constants';
 import { useBuildProgressViewModel } from './hooks';
 import './styles.css';
 
-/** A build as it goes: the code, the agent building it, the check of what it made, the agent's last lines, and how it ended. */
+/**
+ * A build as it goes: the code, the agent building it, the check of what it made, the
+ * agent's last lines, and how it ended.
+ */
 export const BuildProgress: React.FC<IBuildProgressProps> = (props) => {
   const view = useBuildProgressViewModel(props);
 
