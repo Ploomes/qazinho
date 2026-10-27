@@ -1,5 +1,5 @@
 import type { IProjectProPaneProps } from './types';
-import { Button, Switch } from '@/shared/components/atoms';
+import { Button, Icon, Switch } from '@/shared/components/atoms';
 import { useProjectProPaneViewModel } from './hooks';
 import './styles.css';
 
@@ -35,8 +35,13 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
                 className={org.className}
                 onClick={org.onClick}
               >
-                <span className="project-pro__org-name">{org.name}</span>
-                <span className="project-pro__org-note">{org.note}</span>
+                <span className="project-pro__org-mark">
+                  {org.isOn && <Icon name="check" />}
+                </span>
+                <span className="project-pro__org-text">
+                  <span className="project-pro__org-name">{org.name}</span>
+                  <span className="project-pro__org-note">{org.note}</span>
+                </span>
               </button>
             ))}
           </div>

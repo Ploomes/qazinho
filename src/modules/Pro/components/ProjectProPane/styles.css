@@ -53,10 +53,10 @@
 
 .project-pro__org {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-4);
+  align-items: center;
   padding: var(--space-3);
-  border: 0;
+  border: var(--edge-width) solid var(--edge);
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--ink2);
@@ -64,13 +64,48 @@
   cursor: pointer;
   transition:
     background-color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease),
     color var(--dur-fast) var(--ease);
 }
 
-.project-pro__org:hover,
-.project-pro__org--on {
+.project-pro__org:hover {
+  background: var(--raise);
+  color: var(--ink);
+}
+
+.project-pro__org--on,
+.project-pro__org--on:hover {
+  border-color: var(--lime);
   background: var(--sel);
   color: var(--ink);
+}
+
+.project-pro__org-mark {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--space-5) + var(--space-1));
+  height: calc(var(--space-5) + var(--space-1));
+  border: var(--edge-width) solid var(--line2);
+  border-radius: var(--radius-pill);
+  color: var(--on-lime);
+  font: var(--font-ui-xs);
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+
+.project-pro__org--on .project-pro__org-mark {
+  border-color: var(--lime);
+  background: var(--lime);
+}
+
+.project-pro__org-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
 }
 
 .project-pro__org:focus-visible {
