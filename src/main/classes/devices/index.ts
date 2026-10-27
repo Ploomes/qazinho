@@ -1,8 +1,10 @@
-export * from './AndroidDriver';
 export * from './AppPeek';
 export * from './DeviceToolDetector';
-export * from './IosDriver';
 export * from './LiveStream';
 export * from './PhonePeek';
-export * from './WebDriver';
-export type * from './types';
+export {
+  AndroidDriver,
+  IosDriver,
+  WebDriver,
+} from '@salve-software/qazinho-harness/engine';
+export type { IDeviceDriver, IShot } from '@salve-software/qazinho-harness/engine';

@@ -30,9 +30,9 @@ import {
   writeFile,
 } from 'node:fs/promises';
 import { dirname, isAbsolute, join, relative, sep } from 'node:path';
-import { hiddenValues } from '@/main/classes/runs/RunCoordinator/library/hiddenValues';
 import { isInside } from '@/main/classes/storage/Archive/library';
 import { agentFailure } from '@/main/library/agentFailure';
+import { hiddenValues } from '@salve-software/qazinho-harness/engine';
 import { SUITE_CHANGES } from './constants';
 import {
   askTitleOf,

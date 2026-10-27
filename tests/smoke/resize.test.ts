@@ -6,10 +6,10 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { LiveStream } from '@/main/classes/devices/LiveStream';
-import { WebDriver } from '@/main/classes/devices/WebDriver';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
 import { Harness, McpHost } from '@salve-software/qazinho-harness';
+import { WebDriver } from '@salve-software/qazinho-harness/engine';
 
 const PORT = 4346;
 const PHONE = { width: 390, height: 844 };

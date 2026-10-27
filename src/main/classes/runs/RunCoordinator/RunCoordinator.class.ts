@@ -10,7 +10,6 @@ import type {
 } from './types';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
-import type { IDeviceDriver } from '@/main/classes/devices/types';
 import type { IVariableValue, ShrinkImage } from '@/main/types';
 import type {
   IAndroidSetup,
@@ -41,13 +40,14 @@ import type {
   IStepReport,
   McpHost,
 } from '@salve-software/qazinho-harness';
+import type { IDeviceDriver } from '@salve-software/qazinho-harness/engine';
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
-import { WEB_DRIVER } from '@/main/classes/devices/WebDriver/constants';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { agentFailure, writeAtomically } from '@/main/library';
 import { EXPLORATION } from '@/shared/constants';
 import { mcpConfigWith } from '@salve-software/qazinho-harness';
+import { WEB_DRIVER } from '@salve-software/qazinho-harness/engine';
 import { RUN_WALK, UNWALKED } from './constants';
 import {
   answerWords,

@@ -1,6 +1,6 @@
-import type { IShot } from '@/main/classes/devices/types';
 import type { IStepOutcome } from '@/shared/types';
 import type { IExploredScreen } from '@salve-software/qazinho-harness';
+import type { IShot } from '@salve-software/qazinho-harness/engine';
 import { EXPLORATION } from '@/shared/constants';
 
 /** A screen the explorer reached, as a step of the exploration's one case: its name, what it is for, and its picture. */

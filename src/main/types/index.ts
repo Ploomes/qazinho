@@ -1,13 +1,15 @@
 export type * from './IAgentLine';
 export type * from './IBounds';
-export type * from './IBox';
 export type * from './ICodexLine';
-export type * from './IElementMeasure';
-export type * from './IElementStyle';
-export type * from './IGaps';
 export type * from './IJiraCredentials';
-export type * from './ILaunch';
 export type * from './IProcessRow';
-export type * from './IVariableValue';
 export type * from './IVaultCipher';
-export type * from './ShrinkImage';
+export type {
+  IBox,
+  IElementMeasure,
+  IElementStyle,
+  IGaps,
+  ILaunch,
+  IVariableValue,
+  ShrinkImage,
+} from '@salve-software/qazinho-harness/engine';

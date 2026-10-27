@@ -1,3 +1,5 @@
-export * from './RUN_WALK';
-export * from './SECRET_PARAMS';
-export * from './UNWALKED';
+export {
+  RUN_WALK,
+  SECRET_PARAMS,
+  UNWALKED,
+} from '@salve-software/qazinho-harness/engine';

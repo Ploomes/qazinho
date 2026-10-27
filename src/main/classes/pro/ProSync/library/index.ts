@@ -1,7 +1,6 @@
 export * from './bugBodyOf';
 export * from './bugFilesOf';
 export * from './evidenceKindOf';
-export * from './fileFactsOf';
 export * from './hashOf';
 export * from './movedPlansOf';
 export * from './planBodyOf';
@@ -11,3 +10,4 @@ export * from './runBodyOf';
 export * from './runFilesOf';
 export * from './stateOfRefusal';
 export * from './uploaderOf';
+export { fileFactsOf } from '@salve-software/qazinho-harness/engine';

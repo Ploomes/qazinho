@@ -3,7 +3,7 @@ import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { WebDriver } from '@/main/classes/devices/WebDriver';
+import { WebDriver } from '@salve-software/qazinho-harness/engine';
 
 /**
  * "Delete" asks first, with the browser's own confirm, and "Save" says so with an alert. Chrome

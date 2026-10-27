@@ -6,7 +6,8 @@ simulators exist only on a Mac, so the iOS target and idb live there alone.
 
 ## Starting a command
 
-- **Every child process starts through `spawnCommand` or `execCommand`** (`src/main/library`),
+- **Every child process starts through `spawnCommand` or `execCommand`** (the harness's engine,
+  re-exported by `src/main/library`),
   never through `spawn` or `execFile` directly. On Windows they do three things:
   - An npm `.cmd` shim runs as the script or `.exe` it points at (`launchOf`). Node refuses to
     start a `.cmd` without a shell, and cmd.exe mangles a JSON argument.

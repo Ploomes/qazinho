@@ -3,7 +3,7 @@ import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { WebDriver } from '@/main/classes/devices/WebDriver';
+import { WebDriver } from '@salve-software/qazinho-harness/engine';
 
 /**
  * A case that leaves something behind must not hand it to the next one: the shop's cart, a

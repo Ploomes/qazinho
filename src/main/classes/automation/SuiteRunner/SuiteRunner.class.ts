@@ -13,9 +13,9 @@ import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { isAbsolute, join, relative } from 'node:path';
 import { createInterface } from 'node:readline';
 import { killTree } from '@/main/classes/agents/AgentRunner/library';
-import { hiddenValues } from '@/main/classes/runs/RunCoordinator/library/hiddenValues';
 import { isInside } from '@/main/classes/storage/Archive/library';
 import { stripAnsi, spawnCommand } from '@/main/library';
+import { hiddenValues } from '@salve-software/qazinho-harness/engine';
 import { SUITE_REPORTER, SUITE_RUNNER } from './constants';
 import { locationOf, suiteReportOf, suiteStatusOf, suiteTestsOf } from './library';
 

@@ -119,12 +119,6 @@ import {
 import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
 import { changeIdOf } from '@/main/classes/automation/SuiteChanges/library';
 import { buildIdOf, javaHomesOf } from '@/main/classes/builds/AppBuilder/library';
-import {
-  listAvds,
-  newestBuildTools,
-  packageOfApk,
-} from '@/main/classes/devices/AndroidDriver/library';
-import { bundleOfPlist, listSimulators } from '@/main/classes/devices/IosDriver/library';
 import { BUG_REVIEW } from '@/main/classes/integrations/BugReviewer/constants';
 import { uploaderOf } from '@/main/classes/pro/ProSync/library';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
@@ -177,6 +171,13 @@ import {
   sourceFailureOf,
   storyAnswerOf,
 } from '@salve-software/qazinho-harness';
+import {
+  bundleOfPlist,
+  listSimulators,
+  listAvds,
+  newestBuildTools,
+  packageOfApk,
+} from '@salve-software/qazinho-harness/engine';
 
 const agents = new AgentDetector();
 const owners = new ProcessOwners();

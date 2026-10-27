@@ -5,9 +5,9 @@ import { join } from 'node:path';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { WebDriver } from '@/main/classes/devices/WebDriver';
 import { variablePort } from '@/main/classes/runs/RunCoordinator/library';
 import { McpHost } from '@salve-software/qazinho-harness';
+import { WebDriver } from '@salve-software/qazinho-harness/engine';
 
 const PORT = 4326;
 

@@ -372,6 +372,11 @@ question per channel, for a target `{ role, platform }`:
   - The card shows it (`BugUpdate`); the QA edits it and posts it, and `BugFiler.comment` writes
     it under the issue (`updateReportOf`): to Jira with the new screens and clip attached, to
     GitHub through gh.
+- **The devices and the walk's library are the harness's engine**, the same code the CI's runner
+  walks a job with: `WebDriver`, `AndroidDriver` and `IosDriver` with their libraries, the walk's
+  recipes, proofs and `variablePort`, and the process helpers (`spawnCommand`, `findOnPath`,
+  `killTree`). Main takes them from `@salve-software/qazinho-harness/engine` and its barrels
+  re-export them, so a fix to a driver lands once, for the desktop and the CI alike.
 - **The harness never imports the desktop.** It lives in its own repository; what it needs from a
   device is a port in its types (`IDevicePort`), and main hands it the driver. The page never
   imports it either: what it shares with the page comes through `src/shared/types`.

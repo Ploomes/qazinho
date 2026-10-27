@@ -5,13 +5,12 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { AgentDetector } from '@/main/classes/agents/AgentDetector';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
-import { AndroidDriver } from '@/main/classes/devices/AndroidDriver';
-import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
 import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
 import { LiveStream } from '@/main/classes/devices/LiveStream';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { RunCoordinator } from '@/main/classes/runs/RunCoordinator';
 import { Harness, McpHost } from '@salve-software/qazinho-harness';
+import { listAvds, AndroidDriver } from '@salve-software/qazinho-harness/engine';
 import { buildFixtureApk } from './fixtures/buildFixtureApk';
 
 /** The visit counter in fixtures/android, built from source: "Visits: N" and a "Save visit" button. */

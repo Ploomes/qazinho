@@ -2,8 +2,8 @@ import type { IAppPeek } from './types';
 import type { AppLook } from '@salve-software/qazinho-harness';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { join } from 'node:path';
-import { WebDriver } from '@/main/classes/devices/WebDriver';
 import { stripAnsi } from '@/main/library';
+import { WebDriver } from '@salve-software/qazinho-harness/engine';
 import { APP_PEEK } from './constants';
 
 /** Opens the web app under test and the pages its menu leads to, before the chat, so the agent asks about what is there. */

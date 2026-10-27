@@ -2,7 +2,7 @@ import type { ICheckedTest } from '@/main/classes/automation/SuiteChanges/types'
 import type { IVariableValue } from '@/main/types';
 import type { ISuiteResult, SuiteFailure } from '@/shared/types';
 import { SUITE_CHANGES } from '@/main/classes/automation/SuiteChanges/constants';
-import { hiddenValues } from '@/main/classes/runs/RunCoordinator/library/hiddenValues';
+import { hiddenValues } from '@salve-software/qazinho-harness/engine';
 
 const NONE_RAN: Record<SuiteFailure, string> = {
   'no-suite': 'No test ran: the suite is gone.',

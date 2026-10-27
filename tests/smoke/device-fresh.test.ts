@@ -1,11 +1,13 @@
 import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { AndroidDriver } from '@/main/classes/devices/AndroidDriver';
-import { listAvds } from '@/main/classes/devices/AndroidDriver/library';
 import { DeviceToolDetector } from '@/main/classes/devices/DeviceToolDetector';
-import { IosDriver } from '@/main/classes/devices/IosDriver';
-import { listSimulators } from '@/main/classes/devices/IosDriver/library';
+import {
+  AndroidDriver,
+  listAvds,
+  IosDriver,
+  listSimulators,
+} from '@salve-software/qazinho-harness/engine';
 import { buildFixtureApk } from './fixtures/buildFixtureApk';
 import { buildFixtureApp } from './fixtures/buildFixtureApp';
 
