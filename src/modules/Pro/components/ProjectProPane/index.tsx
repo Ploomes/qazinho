@@ -59,7 +59,11 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
           <p className="project-pro__note">{view.local.mediaNote}</p>
 
           <div className="project-pro__actions">
-            <Button disabled={!view.local.canPublish} onClick={view.onPublish}>
+            <Button
+              variant="primary"
+              disabled={!view.local.canPublish}
+              onClick={view.onPublish}
+            >
               {view.local.publishLabel}
             </Button>
           </div>
@@ -126,7 +130,11 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
           </p>
           {view.unlinked.canPublishAgain && (
             <div className="project-pro__actions">
-              <Button disabled={!view.canUnlink} onClick={view.onPublishAgain}>
+              <Button
+                variant="primary"
+                disabled={!view.canUnlink}
+                onClick={view.onPublishAgain}
+              >
                 {view.unlinked.publishAgainLabel}
               </Button>
             </div>
