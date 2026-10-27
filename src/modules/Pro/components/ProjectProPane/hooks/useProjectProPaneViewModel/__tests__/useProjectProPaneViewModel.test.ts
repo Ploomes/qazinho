@@ -122,7 +122,7 @@ describe('useProjectProPaneViewModel', () => {
       expect(result.current.local.mediaNote).toContain('1.4 GB');
     });
 
-    it('publishes to the org chosen, leaving the history’s media here when told', async () => {
+    it('publishes to the org chosen, leaving the history’s media here unless told', async () => {
       const published: {
         batch: IProSyncBatch;
         orgSlug: string;
@@ -140,9 +140,10 @@ describe('useProjectProPaneViewModel', () => {
 
       const { result } = pane();
 
+      expect(result.current.local.isMediaOn).toBe(false);
+
       act(() => {
         result.current.local.orgs[0]?.onClick();
-        result.current.onMediaChange(false);
       });
       act(() => {
         result.current.onPublish();
@@ -158,6 +159,32 @@ describe('useProjectProPaneViewModel', () => {
           batch: { project: { projectId: 'p1' } },
         },
       ]);
+    });
+
+    it('sends the history’s media too once the QA turns it on', async () => {
+      const published: boolean[] = [];
+
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        publishPro: (props) => {
+          published.push(props.hasHistoryMedia);
+
+          return Promise.resolve({ ...LINKED, orgSlug: props.orgSlug });
+        },
+      };
+
+      const { result } = pane();
+
+      act(() => {
+        result.current.onMediaChange(true);
+      });
+      act(() => {
+        result.current.onPublish();
+      });
+
+      await waitFor(() => {
+        expect(published).toEqual([true]);
+      });
     });
   });
 

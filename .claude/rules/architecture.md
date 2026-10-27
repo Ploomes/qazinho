@@ -418,8 +418,8 @@ The card at the foot of the sidebar (`ProAccountCard`), the project window's QAz
   orgs; no org is the machine's, each project names its own.
 - **A project is local or linked to one org.** Publishing (`ProSync.publish`) links it to an org
   the QA writes in and sends it whole, after the window says what goes (`ProSync.brief`): its
-  plans, runs and bugs, and what the media of its history weighs, which the QA may leave here
-  (`mediaFrom`: a run or bug before it goes without its screens and video). Cloning
+  plans, runs and bugs, and what the media of its history weighs, which stays here unless the
+  QA sends it too (`mediaFrom`: a run or bug before it goes without its screens and video). Cloning
   (`ProCloneModal`, `ProDownloads`) takes a project of an org here, linked to it. A project goes to
   a second org only as a copy (`copiedProjectOf`), a new project with its own ids.
 - **Facts go on their own, plans when told.** The page builds what a linked project holds

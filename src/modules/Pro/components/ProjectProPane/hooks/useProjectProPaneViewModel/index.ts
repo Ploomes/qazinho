@@ -39,7 +39,7 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
   const language = useSettingsStore((state) => state.language);
   const { update } = useProUpdate();
   const [chosen, setChosen] = useState<string | null>(null);
-  const [hasHistoryMedia, setHistoryMedia] = useState(true);
+  const [hasHistoryMedia, setHistoryMedia] = useState(false);
   const [brief, setBrief] = useState<IProPublishBrief | null>(null);
   const [working, setPaneWork] = useState<PaneWork | null>(null);
 
