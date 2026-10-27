@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { encodedSizeOf } from '@/recorder/classes/video/FrameRecorder/library';
+import { encodedSizeOf } from '@/services/Recorder/classes/video/FrameRecorder/library';
 
 describe('encodedSizeOf', () => {
   it('keeps a frame that fits as it is', () => {

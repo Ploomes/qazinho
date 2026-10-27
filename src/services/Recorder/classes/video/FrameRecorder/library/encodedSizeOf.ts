@@ -1,4 +1,4 @@
-import type { ISize } from '@/recorder/classes/video/FrameRecorder/types';
+import type { ISize } from '@/services/Recorder/classes/video/FrameRecorder/types';
 
 /**
  * The size a run is encoded at: its first frame's, shrunk to fit `maxSide` and made even,

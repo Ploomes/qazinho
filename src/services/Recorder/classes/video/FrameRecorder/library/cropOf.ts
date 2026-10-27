@@ -1,4 +1,4 @@
-import type { IRect, ISize } from '@/recorder/classes/video/FrameRecorder/types';
+import type { IRect, ISize } from '@/services/Recorder/classes/video/FrameRecorder/types';
 
 /**
  * The part of a frame the screen shows: Chrome keeps a window 500px wide, so a

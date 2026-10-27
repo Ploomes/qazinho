@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cropOf } from '@/recorder/classes/video/FrameRecorder/library';
+import { cropOf } from '@/services/Recorder/classes/video/FrameRecorder/library';
 
 describe('cropOf', () => {
   it('keeps a desktop frame whole', () => {

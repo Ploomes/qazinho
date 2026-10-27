@@ -1,4 +1,4 @@
-import type { IRect, ISize } from '@/recorder/classes/video/FrameRecorder/types';
+import type { IRect, ISize } from '@/services/Recorder/classes/video/FrameRecorder/types';
 
 /**
  * Where a picture lands in a box it must not stretch in: as large as it fits, centred.

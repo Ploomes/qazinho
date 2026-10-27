@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { joinBytes } from '@/recorder/classes/video/FrameRecorder/library';
+import { joinBytes } from '@/services/Recorder/classes/video/FrameRecorder/library';
 
 describe('joinBytes', () => {
   it('puts the second run of bytes after the first', () => {

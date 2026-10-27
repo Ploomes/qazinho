@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fitInto } from '@/recorder/classes/video/FrameRecorder/library';
+import { fitInto } from '@/services/Recorder/classes/video/FrameRecorder/library';
 
 describe('fitInto', () => {
   it('fills a box of the same shape', () => {

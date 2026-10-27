@@ -124,7 +124,7 @@ src/
 ├── modules/<Domain>/screens/<Screen>/
 ├── languages/        ← i18next, en and pt (i18n.md)
 ├── store/            ← zustand stores; each store keeps its own library/
-└── services/         ← the only callers of window.qazinho
+└── services/         ← the only callers of window.qazinho; Recorder/ the recorder window's
 ```
 
 - A screen → `src/modules/<Domain>/screens/<Screen>/`.

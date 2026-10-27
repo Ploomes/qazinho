@@ -1,4 +1,4 @@
-import type { IMjpegPart } from '@/recorder/classes/video/FrameRecorder/types';
+import type { IMjpegPart } from '@/services/Recorder/classes/video/FrameRecorder/types';
 
 const HEAD_END = [13, 10, 13, 10];
 

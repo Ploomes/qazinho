@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { joinBytes, takeMjpegPart } from '@/recorder/classes/video/FrameRecorder/library';
+import {
+  joinBytes,
+  takeMjpegPart,
+} from '@/services/Recorder/classes/video/FrameRecorder/library';
 
 const JPEG = new Uint8Array([0xff, 0xd8, 0x0d, 0x0a, 0x0d, 0x0a, 0xff, 0xd9]);
 

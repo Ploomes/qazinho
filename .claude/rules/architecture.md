@@ -13,17 +13,19 @@ src/
 │   ├── hooks/       ← hooks used across modules
 │   └── styles/      ← tokens.css, base.css, animations.css
 ├── modules/         ← screens, grouped by domain
-├── store/  services/  languages/
-├── recorder/        ← the recorder window: a second, hidden page that encodes a run's video
-├── app/  index.tsx  index.html  recorder.html
+├── store/  languages/
+├── services/        ← the only callers of the bridge; Recorder/ is the recorder window's
+├── app/  index.tsx  index.html  recorder.ts  recorder.html
 electron/
 └── preload/     ← the bridge: exposes window.qazinho through contextBridge, nothing else
 packages/
 └── qazinho-harness/  ← the product harness, a git submodule of its own repository
 ```
 
-Everything under `src/` that is not `src/main/` is **the page**: React, no Node.
-`src/recorder/` is a page too, a second one with no React, loaded by `recorder.html`.
+Everything under `src/` that is not `src/main/` is **the page**: React, no Node. The recorder
+window is a page too, a second one with no React: `recorder.html` loads `src/recorder.ts`, which
+starts `Recorder` (`src/services/Recorder/`), the service that encodes a run's video. The main
+page never imports it, so `src/services/index.ts` leaves it out.
 
 | Folder             | Runs in                 | May import                                                                     |
 | ------------------ | ----------------------- | ------------------------------------------------------------------------------ |
@@ -455,8 +457,8 @@ screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `
 
 **Every run is recorded, and its video never crosses IPC either.**
 
-- A browser is recorded from its live stream. `RunRecorder` opens a hidden window,
-  `src/recorder/`, that reads the same MJPEG over loopback, each frame stamped with when it was
+- A browser is recorded from its live stream. `RunRecorder` opens a hidden window, whose
+  `Recorder` service reads the same MJPEG over loopback, each frame stamped with when it was
   captured and the screen's shape. It crops a phone-sized page the way `DeviceScreen` does,
   encodes H.264 with WebCodecs, and hands the MP4 back in pieces main writes by position.
 - A phone records itself: a simulator with `simctl io recordVideo`, an emulator with its console's
