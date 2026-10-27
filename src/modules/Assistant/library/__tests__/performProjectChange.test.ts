@@ -30,7 +30,9 @@ describe('performProjectChange', () => {
           { id: 't-web', kind: 'web', label: 'label web', value: 'https://banco.com.br' },
           { id: 't-ios', kind: 'ios', label: 'label ios', value: '/builds/Banco.app' },
         ],
-        repositories: [{ owner: 'acme', name: 'loja-app', baseBranch: 'main' }],
+        repositories: [
+          { id: '102', owner: 'acme', name: 'loja-app', baseBranch: 'main' },
+        ],
       });
     });
 
@@ -196,6 +198,7 @@ describe('performProjectChange', () => {
         'Linked acme/loja-app to p1 "Lojinha", its changes measured against release. /code in a workspace\'s chat plans from it now.',
       );
       expect(state.projects[0]?.repositories.at(-1)).toEqual({
+        id: '102',
         owner: 'acme',
         name: 'loja-app',
         baseBranch: 'release',

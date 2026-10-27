@@ -1,8 +1,8 @@
 import type { IProjectRepository } from '@/modules/Project/types';
 
 /**
- * The repositories a saved project names, each with its owner, name and base branch;
- * anything else, or none, is no repository.
+ * The repositories a saved project names, each with its owner, name and base branch, and
+ * its GitHub id when kept; anything else is no repository.
  */
 export function repositoriesOf(saved: unknown): IProjectRepository[] {
   if (!Array.isArray(saved)) return [];
@@ -10,7 +10,7 @@ export function repositoriesOf(saved: unknown): IProjectRepository[] {
   return saved.flatMap((one: unknown) => {
     if (typeof one !== 'object' || one === null) return [];
 
-    const { owner, name, baseBranch } = one as Record<string, unknown>;
+    const { id, owner, name, baseBranch } = one as Record<string, unknown>;
 
     return typeof owner === 'string' &&
       typeof name === 'string' &&
@@ -18,7 +18,7 @@ export function repositoriesOf(saved: unknown): IProjectRepository[] {
       owner !== '' &&
       name !== '' &&
       baseBranch !== ''
-      ? [{ owner, name, baseBranch }]
+      ? [{ id: typeof id === 'string' && id !== '' ? id : null, owner, name, baseBranch }]
       : [];
   });
 }

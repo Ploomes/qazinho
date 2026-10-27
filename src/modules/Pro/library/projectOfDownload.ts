@@ -12,7 +12,8 @@ export function projectOfDownload(project: IProSyncProject): IProject {
       label,
       value,
     })),
-    repositories: project.repositories.map(({ owner, name, baseBranch }) => ({
+    repositories: project.repositories.map(({ id, owner, name, baseBranch }) => ({
+      id,
       owner,
       name,
       baseBranch,

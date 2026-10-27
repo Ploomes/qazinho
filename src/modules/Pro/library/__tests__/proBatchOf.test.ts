@@ -13,7 +13,7 @@ const PROJECT: IProject = {
     { id: 't1', kind: 'web', label: 'Web', value: 'https://loja.dev' },
     { id: 't2', kind: 'android', label: 'Android', value: '/Users/ana/builds/loja.apk' },
   ],
-  repositories: [{ owner: 'loja', name: 'loja-web', baseBranch: 'main' }],
+  repositories: [{ id: null, owner: 'loja', name: 'loja-web', baseBranch: 'main' }],
   issueTarget: { tracker: 'jira', project: 'LOJA' } as never,
 };
 
@@ -28,7 +28,7 @@ describe('proBatchOf', () => {
         { id: 't1', kind: 'web', label: 'Web', value: 'https://loja.dev' },
         { id: 't2', kind: 'android', label: 'Android', value: 'loja.apk' },
       ],
-      repositories: [{ owner: 'loja', name: 'loja-web', baseBranch: 'main' }],
+      repositories: [{ id: null, owner: 'loja', name: 'loja-web', baseBranch: 'main' }],
     });
   });
 

@@ -268,7 +268,8 @@ question per channel, for a target `{ role, platform }`:
   - Each step, the agent's words and commands (with the folder said as `.`), and how the build
     ended reach the page as `IBuildEvent`.
 - **The code plans; the QA says what the app should do** (`role/chat/code.md`). A project names
-  its GitHub repositories, each with a base branch. `/code` in the chat picks one of them and a
+  its GitHub repositories, each with a base branch and the GitHub id the listing read, which
+  QAzinho Pro knows it by once GitHub renames it. `/code` in the chat picks one of them and a
   branch, and the agent reads that branch while it plans:
   - Main's `CodeCopies` pins the branch and the base to commits, unpacks the branch's tarball
     into the workspace's own folder under `code/`, and keeps the diff against the base. The base

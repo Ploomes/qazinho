@@ -76,7 +76,7 @@ describe('useProjectModalViewModel', () => {
       result.current.onNameChange('Shop · staging');
       result.current.onUrlChange('https://staging.shop.test');
       result.current.onRepositoriesChange([
-        { owner: 'acme', name: 'shop-web', baseBranch: 'develop' },
+        { id: null, owner: 'acme', name: 'shop-web', baseBranch: 'develop' },
       ]);
     });
     act(() => {
@@ -84,7 +84,7 @@ describe('useProjectModalViewModel', () => {
     });
 
     expect(useAppStore.getState().projects[0]?.repositories).toEqual([
-      { owner: 'acme', name: 'shop-web', baseBranch: 'develop' },
+      { id: null, owner: 'acme', name: 'shop-web', baseBranch: 'develop' },
     ]);
     expect(
       renderHook(() => useProjectModalViewModel()).result.current.repositories,
@@ -163,8 +163,8 @@ describe('useProjectModalViewModel', () => {
 
       act(() => {
         result.current.onRepositoriesChange([
-          { owner: 'acme', name: 'shop-web', baseBranch: 'main' },
-          { owner: 'acme', name: 'shop-api', baseBranch: 'main' },
+          { id: null, owner: 'acme', name: 'shop-web', baseBranch: 'main' },
+          { id: null, owner: 'acme', name: 'shop-api', baseBranch: 'main' },
         ]);
         result.current.onVariablesChange([
           {
@@ -577,7 +577,7 @@ describe('useProjectModalViewModel', () => {
       targets: [
         { id: 't1', kind: 'web' as const, label: 'Web', value: 'https://loja.test' },
       ],
-      repositories: [{ owner: 'acme', name: 'loja-app', baseBranch: 'main' }],
+      repositories: [{ id: null, owner: 'acme', name: 'loja-app', baseBranch: 'main' }],
     };
     const BUILT = {
       id: 'b1',

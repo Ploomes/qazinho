@@ -36,7 +36,7 @@ if [ "$1" = "auth" ] && [ "$2" = "login" ]; then
 fi
 case "$LAST" in
   user/repos*)
-    echo '{"owner":"acme","name":"loja-web","isPrivate":true,"defaultBranch":"develop","pushedAt":"2026-10-20T10:00:00Z","description":"A loja na web"}'
+    echo '{"id":4242,"owner":"acme","name":"loja-web","isPrivate":true,"defaultBranch":"develop","pushedAt":"2026-10-20T10:00:00Z","description":"A loja na web"}'
     ;;
   repos/acme/loja-web)
     echo 'develop'

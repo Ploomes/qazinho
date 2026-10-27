@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { issueTargetOf } from '@/modules/Bug/library';
 
-const REPOSITORY = { owner: 'acme', name: 'shop', baseBranch: 'main' };
+const REPOSITORY = { id: null, owner: 'acme', name: 'shop', baseBranch: 'main' };
 const PROJECTS = [
   { key: 'OPS', name: 'Operações' },
   { key: 'SHOP', name: 'Loja' },

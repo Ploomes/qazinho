@@ -8,13 +8,13 @@ describe('projectOfDownload', () => {
         projectId: 'p-1760000000000',
         name: 'Loja',
         targets: [{ id: 't-web', kind: 'web', label: 'Web', value: 'https://loja.dev' }],
-        repositories: [{ owner: 'loja', name: 'loja-web', baseBranch: 'main' }],
+        repositories: [{ id: null, owner: 'loja', name: 'loja-web', baseBranch: 'main' }],
       }),
     ).toEqual({
       id: 'p-1760000000000',
       name: 'Loja',
       targets: [{ id: 't-web', kind: 'web', label: 'Web', value: 'https://loja.dev' }],
-      repositories: [{ owner: 'loja', name: 'loja-web', baseBranch: 'main' }],
+      repositories: [{ id: null, owner: 'loja', name: 'loja-web', baseBranch: 'main' }],
     });
   });
 });

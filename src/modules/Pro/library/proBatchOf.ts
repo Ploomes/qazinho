@@ -32,7 +32,8 @@ export function proBatchOf(props: {
       projectId: project.id,
       name: project.name,
       targets: project.targets.map(sharedTargetOf),
-      repositories: project.repositories.map(({ owner, name, baseBranch }) => ({
+      repositories: project.repositories.map(({ id, owner, name, baseBranch }) => ({
+        id,
         owner,
         name,
         baseBranch,

@@ -2,15 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { repositoriesOf } from '@/modules/Project/library';
 
 describe('repositoriesOf', () => {
-  it('reads each repository with its base branch', () => {
+  it('reads each repository with its base branch, and its GitHub id when it was kept', () => {
     expect(
       repositoriesOf([
-        { owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
+        { id: '4242', owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
         { owner: 'acme', name: 'loja-api', baseBranch: 'main' },
       ]),
     ).toEqual([
-      { owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
-      { owner: 'acme', name: 'loja-api', baseBranch: 'main' },
+      { id: '4242', owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
+      { id: null, owner: 'acme', name: 'loja-api', baseBranch: 'main' },
     ]);
   });
 
@@ -27,6 +27,6 @@ describe('repositoriesOf', () => {
         null,
         { owner: 'acme', name: 'loja-api', baseBranch: 'main', extra: true },
       ]),
-    ).toEqual([{ owner: 'acme', name: 'loja-api', baseBranch: 'main' }]);
+    ).toEqual([{ id: null, owner: 'acme', name: 'loja-api', baseBranch: 'main' }]);
   });
 });

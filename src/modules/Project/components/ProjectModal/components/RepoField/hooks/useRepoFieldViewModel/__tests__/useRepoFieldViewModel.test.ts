@@ -15,6 +15,7 @@ const GITHUB = {
 
 const REPOSITORIES = [
   {
+    id: '104',
     owner: 'acme',
     name: 'loja-web',
     isPrivate: true,
@@ -23,6 +24,7 @@ const REPOSITORIES = [
     description: 'A loja na web',
   },
   {
+    id: '105',
     owner: 'acme',
     name: 'loja-api',
     isPrivate: false,
@@ -82,7 +84,9 @@ describe('useRepoFieldViewModel', () => {
   });
 
   it("offers the QA's repositories that are not in the project yet", async () => {
-    const { result } = field([{ owner: 'acme', name: 'loja-api', baseBranch: 'main' }]);
+    const { result } = field([
+      { id: null, owner: 'acme', name: 'loja-api', baseBranch: 'main' },
+    ]);
 
     expect(result.current.search.note).toBe('Reading your repositories…');
 
@@ -100,7 +104,7 @@ describe('useRepoFieldViewModel', () => {
   });
 
   describe('onAdd', () => {
-    it('adds a repository with its own default branch as the base', async () => {
+    it('adds a repository with its GitHub id and its own default branch as the base', async () => {
       const { result, onChange } = field();
 
       await waitFor(() => {
@@ -111,13 +115,13 @@ describe('useRepoFieldViewModel', () => {
       });
 
       expect(onChange).toHaveBeenCalledWith([
-        { owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
+        { id: '104', owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
       ]);
     });
 
     it('does NOT add a repository twice, nor one GitHub did not list', async () => {
       const { result, onChange } = field([
-        { owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
+        { id: null, owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
       ]);
 
       await waitFor(() => {
@@ -135,8 +139,8 @@ describe('useRepoFieldViewModel', () => {
   describe('onRemove', () => {
     it('takes a repository out of the project', () => {
       const { result, onChange } = field([
-        { owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
-        { owner: 'acme', name: 'loja-api', baseBranch: 'main' },
+        { id: null, owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
+        { id: null, owner: 'acme', name: 'loja-api', baseBranch: 'main' },
       ]);
 
       act(() => {
@@ -144,7 +148,7 @@ describe('useRepoFieldViewModel', () => {
       });
 
       expect(onChange).toHaveBeenCalledWith([
-        { owner: 'acme', name: 'loja-api', baseBranch: 'main' },
+        { id: null, owner: 'acme', name: 'loja-api', baseBranch: 'main' },
       ]);
     });
   });
@@ -152,7 +156,7 @@ describe('useRepoFieldViewModel', () => {
   describe('onBase', () => {
     it("opens a repository's branches and sets the one picked as its base", async () => {
       const { result, onChange } = field([
-        { owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
+        { id: null, owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
       ]);
 
       act(() => {
@@ -178,14 +182,14 @@ describe('useRepoFieldViewModel', () => {
       });
 
       expect(onChange).toHaveBeenCalledWith([
-        { owner: 'acme', name: 'loja-web', baseBranch: 'release/1.4' },
+        { id: null, owner: 'acme', name: 'loja-web', baseBranch: 'release/1.4' },
       ]);
       expect(result.current.rows[0]?.isBasing).toBe(false);
     });
 
     it('closes the branches when the same repository is clicked again', () => {
       const { result } = field([
-        { owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
+        { id: null, owner: 'acme', name: 'loja-web', baseBranch: 'develop' },
       ]);
 
       act(() => {

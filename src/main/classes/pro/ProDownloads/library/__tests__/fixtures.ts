@@ -10,7 +10,7 @@ export const SYNCED: SyncedProject = {
     { id: 't-web', kind: 'web', label: 'Web', value: 'https://staging.loja.dev' },
     { id: 't-android', kind: 'android', label: 'Android', value: 'loja.apk' },
   ],
-  repositories: [{ owner: 'loja', name: 'loja-web', baseBranch: 'main' }],
+  repositories: [{ id: '4242', owner: 'loja', name: 'loja-web', baseBranch: 'main' }],
   variables: [{ name: 'LOGIN_PASSWORD', description: 'senha do QA' }],
   plans: [
     {

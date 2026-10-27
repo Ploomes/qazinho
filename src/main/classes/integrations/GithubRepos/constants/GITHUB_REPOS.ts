@@ -5,7 +5,7 @@ export const GITHUB_REPOS = {
   branchPages: 10,
   pullRequests: 50,
   repositoryJq:
-    '.[] | {owner: .owner.login, name: .name, isPrivate: .private, defaultBranch: .default_branch, pushedAt: .pushed_at, description: .description}',
+    '.[] | {id: .id, owner: .owner.login, name: .name, isPrivate: .private, defaultBranch: .default_branch, pushedAt: .pushed_at, description: .description}',
   pushJq: '.[] | {ref, timestamp}',
   pullJq:
     '.[] | {number, title, head: .head.ref, headRepo: .head.repo.full_name, updatedAt: .updated_at}',

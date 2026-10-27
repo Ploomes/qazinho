@@ -17,7 +17,12 @@ export const SYNCED_PROJECTS_SCHEMA = z.object({
         }),
       ),
       repositories: z.array(
-        z.object({ owner: z.string(), name: z.string(), baseBranch: z.string() }),
+        z.object({
+          id: z.string().nullable().default(null),
+          owner: z.string(),
+          name: z.string(),
+          baseBranch: z.string(),
+        }),
       ),
       variables: z.array(z.object({ name: z.string(), description: z.string() })),
       plans: z.array(

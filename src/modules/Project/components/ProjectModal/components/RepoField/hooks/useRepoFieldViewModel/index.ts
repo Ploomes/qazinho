@@ -117,6 +117,7 @@ export const useRepoFieldViewModel = (props: IRepoFieldProps) => {
       onChange([
         ...repositories,
         {
+          id: repository.id,
           owner: repository.owner,
           name: repository.name,
           baseBranch: repository.defaultBranch,

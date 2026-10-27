@@ -160,6 +160,7 @@ async function createProject(props: {
         return failed(`The QA cannot read ${text} on GitHub, or it does not exist.`);
 
       repositories.push({
+        id: repository.id,
         owner: repository.owner,
         name: repository.name,
         baseBranch: repository.defaultBranch,
@@ -325,7 +326,12 @@ async function linkRepository(props: {
     ...project,
     repositories: [
       ...project.repositories,
-      { owner: repository.owner, name: repository.name, baseBranch: base },
+      {
+        id: repository.id,
+        owner: repository.owner,
+        name: repository.name,
+        baseBranch: base,
+      },
     ],
   });
 

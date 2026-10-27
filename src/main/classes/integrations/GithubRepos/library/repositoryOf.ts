@@ -1,8 +1,8 @@
 import type { IRepository } from '@/shared/types';
 
 /**
- * A repository as gh printed it through the repository filter, or null when the line is
- * not one.
+ * A repository as gh printed it through the repository filter, its id as text, or null
+ * when the line is not one.
  */
 export function repositoryOf(value: unknown): IRepository | null {
   if (typeof value !== 'object' || value === null) return null;
@@ -10,6 +10,7 @@ export function repositoryOf(value: unknown): IRepository | null {
   const line = value as Record<string, unknown>;
 
   if (
+    typeof line.id !== 'number' ||
     typeof line.owner !== 'string' ||
     typeof line.name !== 'string' ||
     typeof line.defaultBranch !== 'string'
@@ -17,6 +18,7 @@ export function repositoryOf(value: unknown): IRepository | null {
     return null;
 
   return {
+    id: String(line.id),
     owner: line.owner,
     name: line.name,
     isPrivate: line.isPrivate === true,

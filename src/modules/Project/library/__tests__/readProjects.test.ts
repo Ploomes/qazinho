@@ -5,7 +5,7 @@ const PROJECT = {
   id: 'p1',
   name: 'Shop · staging',
   targets: [{ id: 't1', kind: 'web', label: 'Web', value: 'https://shop.test' }],
-  repositories: [{ owner: 'acme', name: 'shop-web', baseBranch: 'main' }],
+  repositories: [{ id: '4242', owner: 'acme', name: 'shop-web', baseBranch: 'main' }],
 };
 
 describe('readProjects', () => {

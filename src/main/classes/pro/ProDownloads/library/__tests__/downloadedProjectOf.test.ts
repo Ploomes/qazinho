@@ -3,7 +3,7 @@ import { downloadedProjectOf } from '@/main/classes/pro/ProDownloads/library';
 import { SYNCED } from './fixtures';
 
 describe('downloadedProjectOf', () => {
-  it('keeps the project under the id its first computer gave it, with its web address', () => {
+  it('keeps the project under the id its first computer gave it, with its web address and repositories', () => {
     expect(downloadedProjectOf(SYNCED)).toEqual({
       projectId: 'p-1760000000000',
       name: 'Loja — staging',
@@ -11,7 +11,7 @@ describe('downloadedProjectOf', () => {
         { id: 't-web', kind: 'web', label: 'Web', value: 'https://staging.loja.dev' },
         { id: 't-android', kind: 'android', label: 'Android', value: '' },
       ],
-      repositories: [{ owner: 'loja', name: 'loja-web', baseBranch: 'main' }],
+      repositories: [{ id: '4242', owner: 'loja', name: 'loja-web', baseBranch: 'main' }],
     });
   });
 

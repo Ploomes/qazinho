@@ -31,7 +31,7 @@ describe('GithubRepos', () => {
       let now = 0;
       const { github, asked } = fakeGithub({
         'user/repos': ok(
-          '{"owner":"acme","name":"loja-web","isPrivate":true,"defaultBranch":"main","pushedAt":"2026-10-19T10:00:00Z","description":null}\n',
+          '{"id":109,"owner":"acme","name":"loja-web","isPrivate":true,"defaultBranch":"main","pushedAt":"2026-10-19T10:00:00Z","description":null}\n',
         ),
       });
       const repos = new GithubRepos({ github, now: () => now });
@@ -40,6 +40,7 @@ describe('GithubRepos', () => {
         isListed: true,
         repositories: [
           {
+            id: '109',
             owner: 'acme',
             name: 'loja-web',
             isPrivate: true,

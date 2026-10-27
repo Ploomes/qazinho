@@ -7,11 +7,17 @@ import { useChatCommand } from '@/modules/Chat/screens/Chat/hooks/useChatCommand
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 
 const WEB: IProjectRepository = {
+  id: null,
   owner: 'acme',
   name: 'loja-web',
   baseBranch: 'develop',
 };
-const API: IProjectRepository = { owner: 'acme', name: 'loja-api', baseBranch: 'main' };
+const API: IProjectRepository = {
+  id: null,
+  owner: 'acme',
+  name: 'loja-api',
+  baseBranch: 'main',
+};
 
 beforeEach(async () => {
   await i18n.changeLanguage('en');
