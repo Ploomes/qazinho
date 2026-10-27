@@ -1,5 +1,6 @@
 import type { IBugSighting } from '@/modules/Bug/types';
 import { describe, expect, it } from 'vitest';
+import { SIGHTINGS_KEPT } from '@/modules/Bug/constants';
 import { bugSeenAgain } from '@/modules/Bug/library';
 import { secondRun } from './fixtures';
 
@@ -36,5 +37,21 @@ describe('bugSeenAgain', () => {
     });
 
     expect(bug.seenRuns).toBe(1);
+  });
+
+  it('keeps only its latest sightings, and still counts every run that caught it', () => {
+    const seen = Array.from({ length: SIGHTINGS_KEPT }, (_, index) => ({
+      ...SIGHTING,
+      runId: `r-old-${String(index)}`,
+    }));
+    const bug = bugSeenAgain({
+      bug: { ...firstBug(), sightings: seen, seenRuns: 140 },
+      sighting: SIGHTING,
+    });
+
+    expect(bug.sightings).toHaveLength(SIGHTINGS_KEPT);
+    expect(bug.sightings[0]?.runId).toBe('r-old-1');
+    expect(bug.sightings.at(-1)).toEqual(SIGHTING);
+    expect(bug.seenRuns).toBe(141);
   });
 });
