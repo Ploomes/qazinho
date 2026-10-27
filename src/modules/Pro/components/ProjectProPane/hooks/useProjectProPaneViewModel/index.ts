@@ -1,16 +1,23 @@
+import type { PaneRowTone } from '@/modules/Pro/components/ProjectProPane/components/PaneRow/types';
 import type {
   IProjectProPaneProps,
   PaneWork,
 } from '@/modules/Pro/components/ProjectProPane/types';
+import type { IconName } from '@/shared/components/atoms/Icon/types';
 import type { IProPublishBrief, IProShare } from '@/shared/types';
+import type { CSSProperties } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PANE_STATE_KEYS } from '@/modules/Pro/components/ProjectProPane/constants';
+import {
+  PANE_STATE_KEYS,
+  PROJECT_PRO_PANE,
+} from '@/modules/Pro/components/ProjectProPane/constants';
 import { PRO_BILLING, PRO_ROLES } from '@/modules/Pro/constants';
 import { useProUpdate } from '@/modules/Pro/hooks/useProUpdate';
 import {
   bytesLabelOf,
   copiedProjectOf,
+  initialsOf,
   planUpdatesOf,
   proBatchOf,
   publishingOrgOf,
@@ -140,6 +147,7 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
     .filter(({ isBusy }) => isBusy)
     .map(({ workspace }) => workspace.id);
   const stateKey = share === undefined ? undefined : PANE_STATE_KEYS[share.state];
+  const hasAlert = stateKey !== undefined && share?.state !== 'sending';
   const sentAt =
     share?.syncedAt === null || share?.syncedAt === undefined
       ? null
@@ -147,20 +155,32 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
           dateStyle: 'medium',
           timeStyle: 'short',
         }).format(new Date(share.syncedAt));
-  const countLabel = (props: { count: number; one: 'PLANS' | 'RUNS' | 'BUGS' }) =>
-    props.count === 1
-      ? t(`PRO.PANE_BRIEF_${props.one}_ONE`)
-      : t(`PRO.PANE_BRIEF_${props.one}_OTHER`, { count: props.count });
+  const statOf = (props: { count: number; one: 'PLANS' | 'RUNS' | 'BUGS' }) => ({
+    key: props.one,
+    value: brief === null ? '–' : new Intl.NumberFormat(language).format(props.count),
+    label:
+      props.count === 1
+        ? t(`PRO.PANE_STAT_${props.one}_ONE`)
+        : t(`PRO.PANE_STAT_${props.one}_OTHER`),
+  });
+  const hasPending = pending.length > 0;
+  const pendingIcon: IconName = hasPending ? 'up' : 'check';
+  const pendingTone: PaneRowTone = hasPending ? 'lit' : 'plain';
 
   return {
+    style: {
+      '--project-pro-tile': `${String(PROJECT_PRO_PANE.tilePx)}px`,
+      '--project-pro-head-tile': `${String(PROJECT_PRO_PANE.headTilePx)}px`,
+    } as CSSProperties,
+    headIconSize: PROJECT_PRO_PANE.headIconPx,
     isSignedOut: signedIn === null,
     isNoOrg: signedIn !== null && orgs.length === 0 && linkedOrg === null,
     isLocal: isLocal && orgs.length > 0,
     isLinked: linkedOrg !== null && !isUnlinked,
     isUnlinked: linkedOrg !== null && isUnlinked,
     hasUnlink: linkedOrg !== null,
-    signedOutText: t('PRO.PANE_SIGNED_OUT'),
-    noOrgText: t('PRO.PANE_NO_ORG'),
+    signedOut: { title: t('PRO.PANE_SIGNED_OUT_TITLE'), text: t('PRO.PANE_SIGNED_OUT') },
+    noOrg: { title: t('PRO.PANE_NO_ORG_TITLE'), text: t('PRO.PANE_NO_ORG') },
     local: {
       title: t('PRO.PANE_LOCAL_TITLE'),
       text: t('PRO.PANE_LOCAL_TEXT'),
@@ -171,6 +191,7 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
         return {
           slug: one.slug,
           name: one.name,
+          initials: initialsOf(one.name),
           note: t('PRO.CARD_ORG_NOTE', {
             role: t(PRO_ROLES[one.role]),
             billing: t(PRO_BILLING[one.billingStatus].labelKey),
@@ -182,27 +203,28 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
           },
         };
       }),
-      hasFacts: brief !== null,
-      facts:
-        brief === null
-          ? []
-          : [
-              countLabel({ count: brief.plans, one: 'PLANS' }),
-              countLabel({ count: brief.runs, one: 'RUNS' }),
-              countLabel({ count: brief.bugs, one: 'BUGS' }),
-            ],
-      mediaLabel: t('PRO.PANE_MEDIA'),
-      isMediaOn: hasHistoryMedia,
+      summaryLabel: t('PRO.PANE_SUMMARY'),
+      stats: [
+        statOf({ count: brief?.plans ?? 0, one: 'PLANS' }),
+        statOf({ count: brief?.runs ?? 0, one: 'RUNS' }),
+        statOf({ count: brief?.bugs ?? 0, one: 'BUGS' }),
+      ],
+      mediaTitle: t('PRO.PANE_MEDIA'),
+      hasMediaNote: brief !== null,
       mediaNote: t('PRO.PANE_MEDIA_NOTE', {
         size: bytesLabelOf({ bytes: brief?.mediaBytes ?? 0, language }),
       }),
+      mediaSwitch: t('PRO.PANE_MEDIA_SWITCH'),
+      isMediaOn: hasHistoryMedia,
+      publishNote: t('PRO.PANE_PUBLISH_NOTE'),
       publishLabel:
         working === 'publish'
           ? t('PRO.PANE_PUBLISHING')
           : t('PRO.PANE_PUBLISH', { org: orgNameOf(orgSlug) }),
       canPublish: working === null && orgSlug !== null && project !== null,
     },
-    linked: {
+    head: {
+      initials: initialsOf(org),
       title: t('PRO.PANE_LINKED_TITLE', { org }),
       stateLine:
         stateKey !== undefined
@@ -210,33 +232,37 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
           : sentAt === null
             ? t('PRO.PANE_NEVER_SENT')
             : t('PRO.PANE_SENT_AT', { when: sentAt }),
+      hasAlert,
+      stateClassName: hasAlert
+        ? 'project-pro__state project-pro__state--alert'
+        : 'project-pro__state',
+    },
+    linked: {
+      plansLabel: t('PRO.PANE_PLANS'),
       factsNote: t('PRO.PANE_FACTS_NOTE'),
-      pendingText:
-        pending.length === 0
-          ? t('PRO.PANE_PENDING_NONE')
-          : pending.length === 1
-            ? t('PRO.PANE_PENDING_ONE', { names: namesOf(pending) })
-            : t('PRO.PANE_PENDING_OTHER', {
-                count: pending.length,
-                names: namesOf(pending),
-              }),
+      hasPending,
+      pendingIcon,
+      pendingTone,
+      pendingTitle: !hasPending
+        ? t('PRO.PANE_PENDING_NONE')
+        : pending.length === 1
+          ? t('PRO.PANE_PENDING_ONE')
+          : t('PRO.PANE_PENDING_OTHER', { count: pending.length }),
+      pendingText: hasPending ? namesOf(pending) : t('PRO.PANE_PENDING_NONE_TEXT'),
       sendLabel: working === 'send' ? t('PRO.PANE_SENDING') : t('PRO.PANE_SEND'),
-      canSend: working === null && pending.length > 0,
+      canSend: working === null && hasPending,
       hasUpdates: updates.length > 0,
-      updatesText:
+      updatesTitle:
         updates.length === 1
-          ? t('PRO.PANE_UPDATES_ONE', {
-              names: namesOf(updates.map(({ workspaceId }) => workspaceId)),
-            })
-          : t('PRO.PANE_UPDATES_OTHER', {
-              count: updates.length,
-              names: namesOf(updates.map(({ workspaceId }) => workspaceId)),
-            }),
-      hasUpdatesRunning: running.length > 0,
-      updatesRunningText:
-        running.length === 1
-          ? t('PRO.PANE_UPDATES_RUNNING_ONE', { names: namesOf(running) })
-          : t('PRO.PANE_UPDATES_RUNNING_OTHER', { names: namesOf(running) }),
+          ? t('PRO.PANE_UPDATES_ONE')
+          : t('PRO.PANE_UPDATES_OTHER', { count: updates.length }),
+      updatesText: namesOf(updates.map(({ workspaceId }) => workspaceId)),
+      updatesNote:
+        running.length === 0
+          ? undefined
+          : running.length === 1
+            ? t('PRO.PANE_UPDATES_RUNNING_ONE', { names: namesOf(running) })
+            : t('PRO.PANE_UPDATES_RUNNING_OTHER', { names: namesOf(running) }),
       updateLabel: working === 'update' ? t('PRO.PANE_UPDATING') : t('PRO.PANE_UPDATE'),
       canUpdate: working === null && moved.some(({ isBusy }) => !isBusy),
       copyTitle: t('PRO.PANE_COPY_TITLE'),
@@ -245,16 +271,15 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
       canCopy: working === null,
     },
     unlinked: {
-      text: stateKey === undefined ? '' : t(stateKey, { org }),
       canPublishAgain: share?.state === 'gone',
-      publishAgainLabel:
-        working === 'publish'
-          ? t('PRO.PANE_PUBLISHING')
-          : t('PRO.PANE_PUBLISH_AGAIN', { org }),
+      title: t('PRO.PANE_REPUBLISH_TITLE', { org }),
+      text: t('PRO.PANE_REPUBLISH_TEXT'),
+      label: working === 'publish' ? t('PRO.PANE_PUBLISHING') : t('PRO.PANE_REPUBLISH'),
     },
-    unlinkTitle: t('PRO.PANE_UNLINK_TITLE'),
+    linkLabel: t('PRO.PANE_LINK'),
+    unlinkTitle: t('PRO.PANE_UNLINK_TITLE', { org }),
     unlinkText: t('PRO.PANE_UNLINK_TEXT', { org }),
-    unlinkLabel: t('PRO.PANE_UNLINK', { org }),
+    unlinkLabel: t('PRO.PANE_UNLINK'),
     canUnlink: working === null,
     onMediaChange: setHistoryMedia,
     onPublish: () => {

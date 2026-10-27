@@ -1,69 +1,95 @@
 import type { IProjectProPaneProps } from './types';
-import { Button, Icon, Switch } from '@/shared/components/atoms';
+import { Button, EmptyState, Eyebrow, Icon, Switch } from '@/shared/components/atoms';
+import { PaneRow } from './components';
 import { useProjectProPaneViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A project's link to QAzinho Pro: publishing it to an org, or what it sends and what
- * came from there.
+ * A project's link to an org: publishing it to one, or what it sends and what came from
+ * there.
  */
 export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
   const view = useProjectProPaneViewModel(props);
 
   return (
-    <div className="project-pro">
-      {view.isSignedOut && <p className="project-pro__text">{view.signedOutText}</p>}
-      {view.isNoOrg && <p className="project-pro__text">{view.noOrgText}</p>}
+    <div className="project-pro" style={view.style}>
+      {view.isSignedOut && (
+        <EmptyState title={view.signedOut.title} body={view.signedOut.text} />
+      )}
+      {view.isNoOrg && <EmptyState title={view.noOrg.title} body={view.noOrg.text} />}
 
       {view.isLocal && (
-        <section className="project-pro__card">
-          <span className="project-pro__title">{view.local.title}</span>
-          <p className="project-pro__text">{view.local.text}</p>
+        <>
+          <header className="project-pro__head">
+            <span className="project-pro__head-tile">
+              <Icon name="lock" size={view.headIconSize} />
+            </span>
+            <div className="project-pro__head-words">
+              <span className="project-pro__title">{view.local.title}</span>
+              <p className="project-pro__state">{view.local.text}</p>
+            </div>
+          </header>
 
-          <span className="project-pro__eyebrow">{view.local.orgsLabel}</span>
-          <div
-            className="project-pro__orgs"
-            role="radiogroup"
-            aria-label={view.local.orgsLabel}
-          >
-            {view.local.orgs.map((org) => (
-              <button
-                key={org.slug}
-                type="button"
-                role="radio"
-                aria-checked={org.isOn}
-                className={org.className}
-                onClick={org.onClick}
-              >
-                <span className="project-pro__org-mark">
-                  {org.isOn && <Icon name="check" />}
-                </span>
-                <span className="project-pro__org-text">
-                  <span className="project-pro__org-name">{org.name}</span>
-                  <span className="project-pro__org-note">{org.note}</span>
-                </span>
-              </button>
-            ))}
+          <div className="project-pro__group">
+            <Eyebrow>{view.local.orgsLabel}</Eyebrow>
+            <div
+              className="project-pro__orgs"
+              role="radiogroup"
+              aria-label={view.local.orgsLabel}
+            >
+              {view.local.orgs.map((org) => (
+                <button
+                  key={org.slug}
+                  type="button"
+                  role="radio"
+                  aria-checked={org.isOn}
+                  className={org.className}
+                  onClick={org.onClick}
+                >
+                  <span className="project-pro__org-tile">{org.initials}</span>
+                  <span className="project-pro__org-words">
+                    <span className="project-pro__org-name">{org.name}</span>
+                    <span className="project-pro__org-note">{org.note}</span>
+                  </span>
+                  <span className="project-pro__org-mark">
+                    {org.isOn && <Icon name="check" />}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
 
-          {view.local.hasFacts && (
-            <ul className="project-pro__facts">
-              {view.local.facts.map((fact) => (
-                <li key={fact} className="project-pro__fact">
-                  {fact}
-                </li>
-              ))}
-            </ul>
-          )}
+          <div className="project-pro__group">
+            <Eyebrow>{view.local.summaryLabel}</Eyebrow>
+            <div className="project-pro__box">
+              <ul className="project-pro__stats">
+                {view.local.stats.map((stat) => (
+                  <li key={stat.key} className="project-pro__stat">
+                    <span className="project-pro__stat-value">{stat.value}</span>
+                    <span className="project-pro__stat-label">{stat.label}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="project-pro__media">
+                <div className="project-pro__media-words">
+                  <span className="project-pro__media-title">
+                    {view.local.mediaTitle}
+                  </span>
+                  {view.local.hasMediaNote && (
+                    <p className="project-pro__media-note">{view.local.mediaNote}</p>
+                  )}
+                </div>
+                <Switch
+                  label={view.local.mediaSwitch}
+                  isOn={view.local.isMediaOn}
+                  onChange={view.onMediaChange}
+                />
+              </div>
+            </div>
+          </div>
 
-          <Switch
-            label={view.local.mediaLabel}
-            isOn={view.local.isMediaOn}
-            onChange={view.onMediaChange}
-          />
-          <p className="project-pro__note">{view.local.mediaNote}</p>
-
-          <div className="project-pro__actions">
+          <div className="project-pro__publish">
+            <p className="project-pro__note">{view.local.publishNote}</p>
             <Button
               variant="primary"
               disabled={!view.local.canPublish}
@@ -72,95 +98,112 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
               {view.local.publishLabel}
             </Button>
           </div>
-        </section>
-      )}
-
-      {view.isLinked && (
-        <>
-          <section className="project-pro__card">
-            <span className="project-pro__title">{view.linked.title}</span>
-            <p className="project-pro__state" role="status">
-              {view.linked.stateLine}
-            </p>
-            <p className="project-pro__note">{view.linked.factsNote}</p>
-
-            <p className="project-pro__text">{view.linked.pendingText}</p>
-            <div className="project-pro__actions">
-              <Button disabled={!view.linked.canSend} onClick={view.onSend}>
-                {view.linked.sendLabel}
-              </Button>
-            </div>
-
-            {view.linked.hasUpdates && (
-              <>
-                <p className="project-pro__text">{view.linked.updatesText}</p>
-                {view.linked.hasUpdatesRunning && (
-                  <p className="project-pro__note" role="status">
-                    {view.linked.updatesRunningText}
-                  </p>
-                )}
-                <div className="project-pro__actions">
-                  <Button
-                    variant="secondary"
-                    disabled={!view.linked.canUpdate}
-                    onClick={view.onUpdate}
-                  >
-                    {view.linked.updateLabel}
-                  </Button>
-                </div>
-              </>
-            )}
-          </section>
-
-          <section className="project-pro__card">
-            <span className="project-pro__title">{view.linked.copyTitle}</span>
-            <p className="project-pro__text">{view.linked.copyText}</p>
-            <div className="project-pro__actions">
-              <Button
-                variant="secondary"
-                disabled={!view.linked.canCopy}
-                onClick={view.onCopy}
-              >
-                {view.linked.copyLabel}
-              </Button>
-            </div>
-          </section>
         </>
       )}
 
-      {view.isUnlinked && (
-        <section className="project-pro__card">
-          <p className="project-pro__state" role="status">
-            {view.unlinked.text}
-          </p>
-          {view.unlinked.canPublishAgain && (
-            <div className="project-pro__actions">
-              <Button
-                variant="primary"
-                disabled={!view.canUnlink}
-                onClick={view.onPublishAgain}
+      {view.hasUnlink && (
+        <header className="project-pro__head">
+          <span className="project-pro__head-tile project-pro__head-tile--org">
+            {view.head.initials}
+          </span>
+          <div className="project-pro__head-words">
+            <span className="project-pro__title">{view.head.title}</span>
+            <p className={view.head.stateClassName} role="status">
+              {view.head.hasAlert && <Icon name="attention" />}
+              {view.head.stateLine}
+            </p>
+          </div>
+        </header>
+      )}
+
+      {view.isLinked && (
+        <div className="project-pro__group">
+          <Eyebrow>{view.linked.plansLabel}</Eyebrow>
+          <div className="project-pro__box">
+            <PaneRow
+              icon={view.linked.pendingIcon}
+              tone={view.linked.pendingTone}
+              title={view.linked.pendingTitle}
+              text={view.linked.pendingText}
+            >
+              {view.linked.hasPending && (
+                <Button size="sm" disabled={!view.linked.canSend} onClick={view.onSend}>
+                  {view.linked.sendLabel}
+                </Button>
+              )}
+            </PaneRow>
+            {view.linked.hasUpdates && (
+              <PaneRow
+                icon="download"
+                tone="lit"
+                title={view.linked.updatesTitle}
+                text={view.linked.updatesText}
+                note={view.linked.updatesNote}
               >
-                {view.unlinked.publishAgainLabel}
-              </Button>
-            </div>
-          )}
-        </section>
+                <Button
+                  size="sm"
+                  disabled={!view.linked.canUpdate}
+                  onClick={view.onUpdate}
+                >
+                  {view.linked.updateLabel}
+                </Button>
+              </PaneRow>
+            )}
+          </div>
+          <p className="project-pro__note">{view.linked.factsNote}</p>
+        </div>
       )}
 
       {view.hasUnlink && (
-        <section className="project-pro__card">
-          <span className="project-pro__title">{view.unlinkTitle}</span>
-          <p className="project-pro__text">{view.unlinkText}</p>
-          <div className="project-pro__actions">
-            <Button
-              variant="danger-quiet"
-              disabled={!view.canUnlink}
-              onClick={view.onUnlink}
+        <div className="project-pro__group">
+          <Eyebrow>{view.linkLabel}</Eyebrow>
+          <div className="project-pro__box">
+            {view.unlinked.canPublishAgain && (
+              <PaneRow
+                icon="up"
+                tone="lit"
+                title={view.unlinked.title}
+                text={view.unlinked.text}
+              >
+                <Button
+                  size="sm"
+                  variant="primary"
+                  disabled={!view.canUnlink}
+                  onClick={view.onPublishAgain}
+                >
+                  {view.unlinked.label}
+                </Button>
+              </PaneRow>
+            )}
+            {view.isLinked && (
+              <PaneRow
+                icon="copy"
+                tone="plain"
+                title={view.linked.copyTitle}
+                text={view.linked.copyText}
+              >
+                <Button size="sm" disabled={!view.linked.canCopy} onClick={view.onCopy}>
+                  {view.linked.copyLabel}
+                </Button>
+              </PaneRow>
+            )}
+            <PaneRow
+              icon="link"
+              tone="plain"
+              title={view.unlinkTitle}
+              text={view.unlinkText}
             >
-              {view.unlinkLabel}
-            </Button>
+              <Button
+                size="sm"
+                variant="danger-quiet"
+                disabled={!view.canUnlink}
+                onClick={view.onUnlink}
+              >
+                {view.unlinkLabel}
+              </Button>
+            </PaneRow>
           </div>
-        </section>
+        </div>
       )}
     </div>
   );

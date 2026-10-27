@@ -99,9 +99,11 @@ describe('useProjectProPaneViewModel', () => {
     it('offers the orgs the person writes in, on the first paid up', () => {
       const { local } = pane().result.current;
 
-      expect(local.orgs.map(({ slug, isOn }) => [slug, isOn])).toEqual([
-        ['late', false],
-        ['loja', true],
+      expect(
+        local.orgs.map(({ slug, isOn, initials }) => [slug, isOn, initials]),
+      ).toEqual([
+        ['late', false, 'A'],
+        ['loja', true, 'LO'],
       ]);
       expect(local.publishLabel).toBe('Publish to Loja Online');
     });
@@ -115,10 +117,19 @@ describe('useProjectProPaneViewModel', () => {
 
       const { result } = pane();
 
+      expect(result.current.local.hasMediaNote).toBe(false);
+      expect(result.current.local.stats.map(({ value }) => value)).toEqual([
+        '–',
+        '–',
+        '–',
+      ]);
+
       await waitFor(() => {
-        expect(result.current.local.hasFacts).toBe(true);
+        expect(result.current.local.hasMediaNote).toBe(true);
       });
-      expect(result.current.local.facts).toEqual(['1 plan', '3 runs', '0 bugs']);
+      expect(
+        result.current.local.stats.map(({ value, label }) => `${value} ${label}`),
+      ).toEqual(['1 plan', '3 runs', '0 bugs']);
       expect(result.current.local.mediaNote).toContain('1.4 GB');
     });
 
@@ -216,17 +227,28 @@ describe('useProjectProPaneViewModel', () => {
         isLinked: true,
         isLocal: false,
         hasUnlink: true,
-        linked: { title: 'Linked to Loja Online' },
+        head: { initials: 'LO', title: 'Linked to Loja Online', hasAlert: false },
       });
-      expect(pane().result.current.linked.stateLine).toMatch(/^Last sent Oct 24, 2026/);
+      expect(pane().result.current.head.stateLine).toMatch(/^Last sent Oct 24, 2026/);
     });
 
     it('says why nothing goes when the org refuses', () => {
       useProStore.setState({ shares: [{ ...LINKED, state: 'blocked' }] });
 
-      expect(pane().result.current.linked.stateLine).toBe(
-        'Loja Online is blocked until its payment is in order; nothing goes until then.',
-      );
+      expect(pane().result.current.head).toMatchObject({
+        hasAlert: true,
+        stateLine:
+          'Loja Online is blocked until its payment is in order; nothing goes until then.',
+      });
+    });
+
+    it('does NOT flag a project while it only sends what changed', () => {
+      useProStore.setState({ shares: [{ ...LINKED, state: 'sending' }] });
+
+      expect(pane().result.current.head).toMatchObject({
+        hasAlert: false,
+        stateLine: 'Sending…',
+      });
     });
 
     it('sends the plans edited here when asked, and does NOT offer it with none', async () => {
@@ -237,17 +259,23 @@ describe('useProjectProPaneViewModel', () => {
       window.qazinho = { ...fakeQazinhoApi('darwin'), sendProPlans };
 
       expect(pane().result.current.linked).toMatchObject({
+        hasPending: false,
         canSend: false,
-        pendingText: 'No plan edited here waits to be sent.',
+        pendingIcon: 'check',
+        pendingTitle: 'No plan edited here waits to be sent',
       });
 
       useProStore.setState({ shares: [{ ...LINKED, pending: ['w1'] }] });
 
       const { result } = pane();
 
-      expect(result.current.linked.pendingText).toBe(
-        '1 plan edited here waits to be sent: Checkout regression.',
-      );
+      expect(result.current.linked).toMatchObject({
+        hasPending: true,
+        pendingIcon: 'up',
+        pendingTone: 'lit',
+        pendingTitle: '1 plan edited here waits to be sent',
+        pendingText: 'Checkout regression',
+      });
 
       act(() => {
         result.current.onSend();
@@ -270,7 +298,9 @@ describe('useProjectProPaneViewModel', () => {
 
       expect(result.current.linked).toMatchObject({
         hasUpdates: true,
-        updatesText: '1 plan changed in the org: Checkout regression.',
+        updatesTitle: '1 plan changed in the org',
+        updatesText: 'Checkout regression',
+        updatesNote: undefined,
       });
 
       act(() => {
@@ -278,7 +308,7 @@ describe('useProjectProPaneViewModel', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.linked.updateLabel).toBe('Update from the org');
+        expect(result.current.linked.updateLabel).toBe('Update');
       });
     });
 
@@ -294,8 +324,7 @@ describe('useProjectProPaneViewModel', () => {
 
       const { linked } = pane().result.current;
 
-      expect(linked.hasUpdatesRunning).toBe(true);
-      expect(linked.updatesRunningText).toBe(
+      expect(linked.updatesNote).toBe(
         'Checkout regression is running: update it once its run ends.',
       );
       expect(linked.canUpdate).toBe(false);
@@ -367,9 +396,15 @@ describe('useProjectProPaneViewModel', () => {
       expect(result.current).toMatchObject({
         isUnlinked: true,
         isLinked: false,
+        head: {
+          hasAlert: true,
+          stateLine:
+            'This project is no longer in Loja Online. Publish it again, or unlink it.',
+        },
         unlinked: {
           canPublishAgain: true,
-          text: 'This project is no longer in Loja Online. Publish it again, or unlink it.',
+          title: 'Publish it again to Loja Online',
+          label: 'Publish',
         },
       });
 
