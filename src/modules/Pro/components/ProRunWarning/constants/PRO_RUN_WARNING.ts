@@ -1,1 +1,1 @@
-export const PRO_RUN_WARNING = { width: 480 } as const;
+export const PRO_RUN_WARNING = { width: 520 } as const;

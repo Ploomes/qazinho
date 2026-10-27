@@ -141,6 +141,35 @@ describe('useProRunWarningViewModel', () => {
     });
   });
 
+  describe('while the update is out', () => {
+    it('says so, and does NOT run the plan as it stands here meanwhile', async () => {
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        startRun,
+        resolveProConflict: () => new Promise(() => undefined),
+      };
+      const { result } = renderHook(() => useProRunWarningViewModel());
+
+      await act(async () => {
+        result.current.onConfirm();
+        await new Promise((done) => setTimeout(done, 0));
+      });
+
+      expect(result.current).toMatchObject({
+        confirmLabel: 'Updating…',
+        canConfirm: false,
+        canRunAnyway: false,
+      });
+
+      act(() => {
+        result.current.onRunAnyway();
+      });
+
+      expect(startRun).not.toHaveBeenCalled();
+      expect(useProStore.getState().heldRun).not.toBeNull();
+    });
+  });
+
   describe('onRunAnyway', () => {
     it('runs the plan as it stands here, the way it was asked', () => {
       const { result } = renderHook(() => useProRunWarningViewModel());

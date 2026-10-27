@@ -32,9 +32,10 @@ export const useProRunWarningViewModel = () => {
       conflict?.editedBy === null || conflict === null
         ? t('PRO.RUN_WARNING_TEXT_ANON', { plan })
         : t('PRO.RUN_WARNING_TEXT', { plan, who: conflict.editedBy }),
-    confirmLabel: t('PRO.RUN_WARNING_UPDATE'),
+    confirmLabel: isUpdating ? t('PRO.PANE_UPDATING') : t('PRO.RUN_WARNING_UPDATE'),
     canConfirm: workspace !== null && !isUpdating,
     runLabel: t('PRO.RUN_WARNING_RUN'),
+    canRunAnyway: workspace !== null && !isUpdating,
     onCancel: () => {
       holdRun(null);
     },
@@ -58,6 +59,8 @@ export const useProRunWarningViewModel = () => {
       );
     },
     onRunAnyway: () => {
+      if (isUpdating) return;
+
       holdRun(null);
 
       if (heldRun !== null) runWorkspace(heldRun.workspaceId, heldRun.mode);

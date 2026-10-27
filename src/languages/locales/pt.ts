@@ -1683,7 +1683,7 @@ export const pt: typeof en = {
     MERGE_PRECONDITIONS: 'Pré-condições',
     MERGE_EXPECT: 'Espera',
     MERGE_CONFIRM: 'Trazer',
-    RUN_WARNING_TITLE: 'A org tem uma versão mais nova deste plano',
+    RUN_WARNING_TITLE: 'Este plano mudou na org',
     RUN_WARNING_TEXT:
       '{{who}} alterou “{{plan}}” na org. Atualize antes para rodar o que o time combinou.',
     RUN_WARNING_TEXT_ANON:

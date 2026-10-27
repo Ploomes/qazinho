@@ -1674,7 +1674,7 @@ export const en = {
     MERGE_PRECONDITIONS: 'Preconditions',
     MERGE_EXPECT: 'Expect',
     MERGE_CONFIRM: 'Take in',
-    RUN_WARNING_TITLE: 'The org has a newer version of this plan',
+    RUN_WARNING_TITLE: 'This plan changed in the org',
     RUN_WARNING_TEXT:
       '{{who}} changed “{{plan}}” in the org. Update first to run what the team agreed on.',
     RUN_WARNING_TEXT_ANON:
