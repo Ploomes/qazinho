@@ -407,32 +407,49 @@ question per channel, for a target `{ role, platform }`:
 
 ## QAzinho Pro, out of the QA's way
 
-Signing in to QAzinho Pro changes nothing in how the app is used. The card at the foot of the
-sidebar (`ProAccountCard`) is the one place it shows; everything else happens out of sight.
+Signing in to QAzinho Pro changes nothing in how the app is used, and sends nothing: a project
+goes to an org only once the QA publishes it, the way GitHub Desktop publishes a repository
+([030](https://github.com/Salve-Software/qazinho-server/blob/main/docs/adrs/030-the-desktop-publishes-and-clones-projects.md)).
+The card at the foot of the sidebar (`ProAccountCard`), the project window's QAzinho Pro section
+(`ProjectProPane`) and a mark on each linked project in the sidebar are where it shows.
 
 - **Signing in** is the platform's device flow (`ProAccount`): a code the QA confirms in the
-  browser, the token sealed with `safeStorage` in `pro.bin`, like Jira's. The account sends to
-  one org (`sendingOrgOf`): the one the QA chose while they still write there, else the first they
-  write in that is paid up. An account that only reads sends nothing.
-- **Every project goes**, with no choice per project. The page builds what a project holds
-  (`proBatchOf`: each workspace as a plan, its finished runs and its bugs) and hands it to main
-  once a burst settles (`useProSync`); a live run's clock is no change (`changedProjectsOf`).
-- **Main sends only what changed** (`ProSync`): each part keyed by a hash in `pro-sync.json`,
-  screens and videos streamed from inside the archive alone (`isInside`, `uploaderOf`), a minute's
-  wait when the network drops, and everything again to an org it never reached. A build goes by
-  its file name and a web address without a login in it (`sharedValueOf`); variables go by name.
-- **A plan the org moved too** (`plan_conflict`) is joined by the page, case by case from where
-  both started (`useProConflicts`, `mergeCases`): one side's change wins, a case both changed keeps
-  this computer's, as the org keeps every version, and one both added under an id keeps both.
-  Main then builds on the org's version (`ProSync.resolve`).
-- **A plan the org moved with no change here comes in the same way.** Main asks the org for its
-  plans at start, after a sign-in and every five minutes (`ProSync.pull`), and hands each one the
-  org moved past what this computer sent as a conflict from the cases both started at
-  (`movedPlansOf`): another computer's edit, or a merged pull request's suggestions, reach the
-  workspace without the QA touching it.
-- **The card** reads where things stand (`attentionOf`): a blocked org, a role that only reads, no
-  answer. It downloads the org's projects (`ProDownloads`), their recordings into each workspace's
-  `recipes.json`, and asks for their variables' values in `VariablesModal`.
+  browser, the token sealed with `safeStorage` in `pro.bin`, like Jira's. The account knows its
+  orgs; no org is the machine's, each project names its own.
+- **A project is local or linked to one org.** Publishing (`ProSync.publish`) links it to an org
+  the QA writes in and sends it whole, after the window says what goes (`ProSync.brief`): its
+  plans, runs and bugs, and what the media of its history weighs, which the QA may leave here
+  (`mediaFrom`: a run or bug before it goes without its screens and video). Cloning
+  (`ProCloneModal`, `ProDownloads`) takes a project of an org here, linked to it. A project goes to
+  a second org only as a copy (`copiedProjectOf`), a new project with its own ids.
+- **Facts go on their own, plans when told.** The page builds what a linked project holds
+  (`proBatchOf`) and hands it to main once a burst settles (`useProSync`); main sends the project,
+  its runs, bugs and recordings (`ProSync.push`), and keeps each plan edited here as pending
+  (`pendingPlansOf`) until the QA sends them (`ProSync.sendPlans`), each the org's next version,
+  so a draft is never what the CI runs. A live run's clock is no change (`changedProjectsOf`).
+- **Main sends only what changed** (`ProSync`): each part keyed by a hash in `pro-sync.json`
+  (a plan taken from the org is fingerprinted at the next push while its cases are the ones it came
+  with, `healedPlansOf`), screens and videos streamed from inside the archive alone (`isInside`,
+  `uploaderOf`), a minute's wait when the network drops. A build goes by its file name and a web
+  address without a login in it (`sharedValueOf`); variables go by name. A write after the
+  project's first says it may not create it (`canCreate: false`), so a project deleted in the org
+  is told `gone` and never brought back.
+- **The org's changes are fetched, not applied.** Main asks each org of a linked project at start,
+  after a sign-in and every five minutes (`ProSync.pull`), and keeps each plan it moved past what
+  this computer took (`movedPlansOf`), or one a send found moved (`plan_conflict`), as an update
+  waiting. The QA takes them in with "Update from the org" (`useProUpdate`): joined case by case
+  from where both started (`planUpdatesOf`, `mergeCases`); only a case both sides changed opens
+  `ProMergeModal`, where the QA keeps one side. Main then builds on the org's version
+  (`ProSync.resolve`). Running a plan with an update waiting asks first (`ProRunWarning`).
+- **Leaving a link.** Unlinking (`ProSync.forget`) keeps the project here and what the org holds
+  there. Deleting a project here unlinks it, and an owner or admin may delete it in the org too
+  (`ProSync.remove`), refused while a CI job of it runs. A project the org no longer has is told
+  `gone`, an org the person no longer reaches `no-access`: the window offers to publish it again
+  or unlink it.
+- **The card** reads where things stand (`attentionOf`): a blocked org, a role that only reads, a
+  project gone, no answer. It lists the account's orgs and opens `ProCloneModal`, which searches an
+  org's projects and clones one (`useOrgDownload`): its recordings into each workspace's
+  `recipes.json`, and its variables' values asked in `VariablesModal`.
 - **A plan's link on the web opens it here** (`qazinho://open?org=…&project=…&workspace=…`, by the
   ids the desktop keeps them under). The installers register the scheme, and a packaged app again
   at start. Main reads the link from `open-url` on a Mac, and from the arguments of the first or
@@ -587,9 +604,9 @@ Besides the harness's `Harness` and `McpHost`, which main builds and wires:
 | `SuiteRegistry`                       | the suite folder each project connected, and what it holds, read afresh                  |
 | `SuiteRunner`                         | lists and runs a suite with its own Playwright, a project at a time, and keeps each run  |
 | `SuiteChanges`                        | lets the QA's agent fix a suite's test in a worktree, and sends it once the QA approves  |
-| `ProAccount`                          | signs this computer in to QAzinho Pro, keeps its token sealed, and the org it sends to   |
+| `ProAccount`                          | signs this computer in to QAzinho Pro, keeps its token sealed, and knows its orgs        |
 | `ProApi`                              | talks to QAzinho Pro's API: the sign-in, the account, the sync, evidence, org projects   |
-| `ProSync`                             | sends every project to its org in the background, what changed, waiting for the network  |
+| `ProSync`                             | publishes a project to an org, sends its facts as they happen and its plans when told    |
 | `ProDownloads`                        | lists the org's projects and downloads one, its recordings included                      |
 
 ## Dependencies

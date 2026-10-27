@@ -37,8 +37,8 @@ screen follows it.
    `codex login`): the page opens in the QA's browser, and the agent keeps what it gets.
 3. **A Salve Software product, closed source, in two plans.** Free is the whole desktop app, with
    no account and no artificial limit: download it and use it. Pro is a paid web platform for a
-   company: an account and an org, where the QA syncs the projects on their machine to share
-   projects, plans and runs. The desktop app never needs Pro and nothing local is shaped around
+   company: an account and an org, where the QA publishes the projects of their machine they
+   choose, one org each, to share projects, plans and runs. The desktop app never needs Pro and nothing local is shaped around
    it. Today the work is the desktop app; the platform comes later (`ROADMAP.md`).
 4. **The page is a web page and nothing more.** No Node, no Electron, no filesystem. It asks the
    main process through `window.qazinho`, whose contract lives in `src/shared/types/`.
