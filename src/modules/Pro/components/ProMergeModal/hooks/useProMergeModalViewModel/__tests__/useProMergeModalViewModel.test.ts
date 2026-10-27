@@ -6,7 +6,7 @@ import { useProMergeModalViewModel } from '@/modules/Pro/components/ProMergeModa
 import { syncedCaseOf } from '@/modules/Pro/library';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useProStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useProStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 const WORKSPACE = makeWorkspace();
 const BASE = WORKSPACE.plan.map(syncedCaseOf);
@@ -51,6 +51,7 @@ beforeEach(() => {
   };
   useProStore.setState({ shares: [shareBy('Bruno')], merging: 'p1' });
   useWorkspaceStore.setState({ workspaces: [HERE] });
+  useSettingsStore.setState({ language: 'en' });
 });
 
 afterEach(() => {
@@ -63,7 +64,8 @@ describe('useProMergeModalViewModel', () => {
       const { result } = renderHook(() => useProMergeModalViewModel());
       const [plan] = result.current.plans;
 
-      expect(plan?.title).toContain('Bruno');
+      expect(plan?.name).toBe(HERE.name);
+      expect(plan?.byline).toMatch(/^Changed by Bruno · Oct 24, 2026/);
       expect(plan?.clashes.map(({ key }) => key)).toEqual([FIRST.id]);
       expect(plan?.clashes[0]?.sides.map(({ title }) => title)).toEqual([
         'Here',
@@ -73,6 +75,9 @@ describe('useProMergeModalViewModel', () => {
         true,
         false,
       ]);
+      expect(plan?.clashes[0]?.sides[0]?.steps.map(({ number }) => number)).toEqual(
+        FIRST.steps.map((_, index) => String(index + 1)),
+      );
     });
 
     it('marks on each side only what differs from the other: here, the title', () => {
@@ -145,7 +150,7 @@ describe('useProMergeModalViewModel', () => {
       useProStore.setState({ shares: [shareBy(null)] });
       const { result } = renderHook(() => useProMergeModalViewModel());
 
-      expect(result.current.plans[0]?.title).not.toContain('Bruno');
+      expect(result.current.plans[0]?.byline).toMatch(/^Changed in the org · /);
     });
 
     it('does NOT list a plan whose changes join on their own', () => {

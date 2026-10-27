@@ -1675,14 +1675,14 @@ export const pt: typeof en = {
     MERGE_TITLE: 'Trazer os planos da org',
     MERGE_SUBTITLE:
       'Estes casos mudaram aqui e na org, com o que difere em destaque. Escolha qual manter; todas as outras mudanças já foram juntadas.',
-    MERGE_PLAN: '{{plan}} · alterado por {{who}}',
-    MERGE_PLAN_ANON: '{{plan}} · alterado na org',
+    MERGE_BY: 'Alterado por {{who}} · {{when}}',
+    MERGE_BY_ANON: 'Alterado na org · {{when}}',
     MERGE_MINE: 'Este computador',
     MERGE_THEIRS: 'A org',
-    MERGE_KEEP: 'Manter este',
     MERGE_DELETED: 'Excluído deste lado',
+    MERGE_PRECONDITIONS: 'Pré-condições',
+    MERGE_EXPECT: 'Espera',
     MERGE_CONFIRM: 'Trazer',
-    MERGE_PRECONDITIONS: 'Antes: {{text}}',
     RUN_WARNING_TITLE: 'A org tem uma versão mais nova deste plano',
     RUN_WARNING_TEXT:
       '{{who}} alterou “{{plan}}” na org. Atualize antes para rodar o que o time combinou.',

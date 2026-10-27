@@ -1666,14 +1666,14 @@ export const en = {
     MERGE_TITLE: 'Take in the org’s plans',
     MERGE_SUBTITLE:
       'These cases changed here and in the org, what differs highlighted. Choose which to keep; every other change is joined already.',
-    MERGE_PLAN: '{{plan}} · changed by {{who}}',
-    MERGE_PLAN_ANON: '{{plan}} · changed in the org',
+    MERGE_BY: 'Changed by {{who}} · {{when}}',
+    MERGE_BY_ANON: 'Changed in the org · {{when}}',
     MERGE_MINE: 'This computer',
     MERGE_THEIRS: 'The org',
-    MERGE_KEEP: 'Keep this one',
     MERGE_DELETED: 'Deleted on this side',
+    MERGE_PRECONDITIONS: 'Preconditions',
+    MERGE_EXPECT: 'Expect',
     MERGE_CONFIRM: 'Take in',
-    MERGE_PRECONDITIONS: 'Before: {{text}}',
     RUN_WARNING_TITLE: 'The org has a newer version of this plan',
     RUN_WARNING_TEXT:
       '{{who}} changed “{{plan}}” in the org. Update first to run what the team agreed on.',

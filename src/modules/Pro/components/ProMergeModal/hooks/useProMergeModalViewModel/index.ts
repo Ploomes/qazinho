@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useProUpdate } from '@/modules/Pro/hooks/useProUpdate';
 import { planUpdatesOf } from '@/modules/Pro/library';
 import { useRunActions } from '@/modules/Run/hooks/useRunActions';
-import { useProStore, useWorkspaceStore } from '@/store';
+import { useProStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 export const useProMergeModalViewModel = () => {
   const { t } = useTranslation();
@@ -14,6 +14,7 @@ export const useProMergeModalViewModel = () => {
   const openMerge = useProStore((state) => state.openMerge);
   const holdRun = useProStore((state) => state.holdRun);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
+  const language = useSettingsStore((state) => state.language);
   const { takeChosen } = useProUpdate();
   const { runWorkspace } = useRunActions();
   const [choices, setChoices] = useState<Record<string, Record<string, CaseChoice>>>({});
@@ -22,6 +23,10 @@ export const useProMergeModalViewModel = () => {
   const updates = planUpdatesOf({ share, workspaces, choices }).filter(
     ({ clashes, isBusy }) => clashes.length > 0 && !isBusy,
   );
+  const whenOf = (iso: string) =>
+    new Intl.DateTimeFormat(language, { dateStyle: 'medium', timeStyle: 'short' }).format(
+      new Date(iso),
+    );
 
   const choose = (props: { workspaceId: string; caseId: string; choice: CaseChoice }) => {
     setChoices((current) => ({
@@ -42,6 +47,7 @@ export const useProMergeModalViewModel = () => {
   }) => {
     const { workspaceId, caseId, choice, testCase, other } = props;
     const isChosen = (choices[workspaceId]?.[caseId] ?? 'mine') === choice;
+    const goal = testCase?.goal ?? '';
     const preconditions = testCase?.preconditions ?? '';
     const differs = (here: string | undefined, there: string | undefined) =>
       testCase !== null && other !== null && here !== there;
@@ -49,17 +55,22 @@ export const useProMergeModalViewModel = () => {
     return {
       key: choice,
       label: choice === 'mine' ? t('PRO.MERGE_MINE') : t('PRO.MERGE_THEIRS'),
+      caseId,
       isDeleted: testCase === null,
       deleted: t('PRO.MERGE_DELETED'),
       title: testCase?.title ?? '',
       isTitleChanged: differs(testCase?.title, other?.title),
-      goal: testCase?.goal ?? '',
-      isGoalChanged: differs(testCase?.goal, other?.goal),
+      hasGoal: goal !== '',
+      goal,
+      isGoalChanged: differs(goal, other?.goal),
       hasPreconditions: preconditions !== '',
-      preconditions: t('PRO.MERGE_PRECONDITIONS', { text: preconditions }),
+      preconditionsLabel: t('PRO.MERGE_PRECONDITIONS'),
+      preconditions,
       isPreconditionsChanged: differs(preconditions, other?.preconditions),
+      expectLabel: t('PRO.MERGE_EXPECT'),
       steps: (testCase?.steps ?? []).map((step, index) => ({
         key: String(index),
+        number: String(index + 1),
         action: step.action,
         isActionChanged: differs(step.action, other?.steps[index]?.action),
         expected: step.expected,
@@ -67,7 +78,6 @@ export const useProMergeModalViewModel = () => {
       })),
       isChosen,
       className: isChosen ? 'pro-merge__side pro-merge__side--chosen' : 'pro-merge__side',
-      keepLabel: t('PRO.MERGE_KEEP'),
       onKeep: () => {
         choose({ workspaceId, caseId, choice });
       },
@@ -81,12 +91,13 @@ export const useProMergeModalViewModel = () => {
     canConfirm: projectId !== null && !isTaking,
     plans: updates.map((update) => ({
       key: update.workspace.id,
-      title:
+      name: update.workspace.name,
+      byline:
         update.conflict.editedBy === null
-          ? t('PRO.MERGE_PLAN_ANON', { plan: update.workspace.name })
-          : t('PRO.MERGE_PLAN', {
-              plan: update.workspace.name,
+          ? t('PRO.MERGE_BY_ANON', { when: whenOf(update.conflict.editedAt) })
+          : t('PRO.MERGE_BY', {
               who: update.conflict.editedBy,
+              when: whenOf(update.conflict.editedAt),
             }),
       clashes: update.clashes.map((clash) => ({
         key: clash.id,
