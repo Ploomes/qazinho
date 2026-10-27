@@ -7,8 +7,15 @@ import { useModalFrameViewModel } from './hooks';
 import './styles.css';
 
 export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
-  const { panelRef, titleId, isBeside, panelStyle, onPanelKeyDown, onConfirmClick } =
-    useModalFrameViewModel(props);
+  const {
+    panelRef,
+    titleId,
+    isBeside,
+    hasBody,
+    panelStyle,
+    onPanelKeyDown,
+    onConfirmClick,
+  } = useModalFrameViewModel(props);
   const { t } = useTranslation();
 
   return (
@@ -43,16 +50,15 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
           <p className="modal-frame__subtitle">{props.subtitle}</p>
         </header>
 
-        {isBeside ? (
+        {isBeside && (
           <div className="modal-frame__split">
             <div className="modal-frame__nav">{props.nav}</div>
             <div className="modal-frame__beside">{props.children}</div>
           </div>
-        ) : (
-          <div className="modal-frame__body">{props.children}</div>
         )}
+        {hasBody && <div className="modal-frame__body">{props.children}</div>}
 
-        <footer className="modal-frame__foot">
+        <footer className="modal-frame__foot" data-modal-foot="true">
           <AnimatePresence mode="wait" initial={false}>
             {props.hint !== undefined && (
               <motion.span
@@ -67,6 +73,7 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
               </motion.span>
             )}
           </AnimatePresence>
+          {props.aside}
           <div className="modal-frame__actions">
             <Button onClick={props.onCancel}>{t('COMMON.CANCEL')}</Button>
             <Button

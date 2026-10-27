@@ -34,4 +34,19 @@ describe('firstFocusOf', () => {
 
     expect(firstFocusOf(empty)).toBe(empty);
   });
+
+  it('does NOT take an action of the footer, which Enter would press at once', () => {
+    const asking = panelOf(
+      '<p>The plan changed</p><footer data-modal-foot="true"><button>Run it here</button><button>Update and run</button></footer>',
+    );
+
+    expect(firstFocusOf(asking)).toBe(asking);
+    expect(
+      firstFocusOf(
+        panelOf(
+          '<button id="pick">Mine</button><footer data-modal-foot="true"><button>Take in</button></footer>',
+        ),
+      ).id,
+    ).toBe('pick');
+  });
 });

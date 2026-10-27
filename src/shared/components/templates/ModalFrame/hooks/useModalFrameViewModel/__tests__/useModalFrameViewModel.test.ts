@@ -43,7 +43,15 @@ describe('useModalFrameViewModel', () => {
     const { result } = renderHook(() => useModalFrameViewModel(PROPS));
 
     expect(result.current.isBeside).toBe(false);
+    expect(result.current.hasBody).toBe(true);
     expect(result.current.panelStyle).toMatchObject({ width: 740, height: undefined });
+  });
+
+  it('leaves the body out of a window that only asks, its words in the subtitle', () => {
+    const { children: _children, ...asking } = PROPS;
+    const { result } = renderHook(() => useModalFrameViewModel(asking));
+
+    expect(result.current.hasBody).toBe(false);
   });
 
   it('puts the body beside a nav, at the height asked for, so its sections do not jump', () => {
@@ -52,6 +60,7 @@ describe('useModalFrameViewModel', () => {
     );
 
     expect(result.current.isBeside).toBe(true);
+    expect(result.current.hasBody).toBe(false);
     expect(result.current.panelStyle).toMatchObject({
       width: 740,
       height: 640,
