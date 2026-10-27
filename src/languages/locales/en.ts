@@ -1527,7 +1527,8 @@ export const en = {
     OPEN_SITE: 'Open in the browser',
     SIGN_OUT: 'Sign this computer out',
     ATTENTION_UNREACHABLE: 'QAzinho did not answer; what changed goes once it does.',
-    ATTENTION_NO_ORG: 'You are in no org yet, so this computer sends nothing.',
+    ATTENTION_NO_ORG:
+      'Your account is in no org yet: open one in the browser, or ask for an invitation, and this computer starts sending.',
     ATTENTION_READER: 'You only read in your orgs, so this computer sends nothing.',
     ATTENTION_BLOCKED:
       'The org is blocked until its payment is in order; nothing goes until then.',

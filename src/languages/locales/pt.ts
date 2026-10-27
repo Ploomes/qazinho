@@ -1534,7 +1534,7 @@ export const pt: typeof en = {
     ATTENTION_UNREACHABLE:
       'O QAzinho não respondeu; o que mudou vai quando ele responder.',
     ATTENTION_NO_ORG:
-      'Você ainda não está em nenhuma org, então este computador não envia nada.',
+      'Sua conta ainda não está em nenhuma org: crie uma no navegador ou peça um convite, e este computador começa a enviar.',
     ATTENTION_READER: 'Você só lê nas suas orgs, então este computador não envia nada.',
     ATTENTION_BLOCKED:
       'A org está bloqueada até o pagamento ficar em dia; nada sobe até lá.',

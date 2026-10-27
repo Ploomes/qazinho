@@ -175,7 +175,8 @@ export const useProAccountCardViewModel = () => {
           },
         };
       }),
-    canOpenSite: signedIn?.orgSlug !== null && signedIn?.orgSlug !== undefined,
+    canOpenSite:
+      signedIn !== null && (signedIn.orgSlug !== null || signedIn.orgs.length === 0),
     signIn,
     isSigningOut,
     onToggle: () => {
@@ -207,6 +208,7 @@ export const useProAccountCardViewModel = () => {
     onOpenSite: () => {
       if (signedIn?.orgSlug)
         void Pro.openPage(`/${encodeURIComponent(signedIn.orgSlug)}`);
+      else if (signedIn?.orgs.length === 0) void Pro.openPage('/app/new');
 
       setOpen(false);
     },

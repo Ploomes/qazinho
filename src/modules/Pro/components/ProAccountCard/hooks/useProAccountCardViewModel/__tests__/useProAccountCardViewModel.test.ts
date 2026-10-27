@@ -321,5 +321,24 @@ describe('useProAccountCardViewModel', () => {
 
       expect(opened).toEqual(['/loja']);
     });
+
+    it('opens where an account in no org opens one', () => {
+      useProStore.setState({ status: { ...SIGNED_IN, orgs: [], orgSlug: null } });
+      const { result } = renderHook(() => useProAccountCardViewModel());
+
+      expect(result.current.canOpenSite).toBe(true);
+      act(() => {
+        result.current.onOpenSite();
+      });
+
+      expect(opened).toEqual(['/app/new']);
+    });
+
+    it('opens nothing for an account that only reads in its orgs', () => {
+      useProStore.setState({ status: { ...SIGNED_IN, orgSlug: null } });
+      const { result } = renderHook(() => useProAccountCardViewModel());
+
+      expect(result.current.canOpenSite).toBe(false);
+    });
   });
 });
