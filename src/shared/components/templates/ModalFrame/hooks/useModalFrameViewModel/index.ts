@@ -3,6 +3,7 @@ import type { CSSProperties, KeyboardEvent } from 'react';
 import { useEffect, useId, useRef } from 'react';
 import { MODAL_FRAME } from '@/shared/components/templates/ModalFrame/constants';
 import {
+  firstFocusOf,
   focusablesIn,
   isConfirmKey,
   wrappedFocus,
@@ -30,12 +31,8 @@ export const useModalFrameViewModel = (props: IModalFrameProps) => {
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const panel = panelRef.current;
 
-    if (panel !== null && !panel.contains(document.activeElement)) {
-      const items = focusablesIn(panel);
-      const field = items.find((item) => /^(INPUT|TEXTAREA|SELECT)$/.test(item.tagName));
-
-      (field ?? items[0] ?? panel).focus();
-    }
+    if (panel !== null && !panel.contains(document.activeElement))
+      firstFocusOf(panel).focus();
 
     return () => {
       const isInAnother =
