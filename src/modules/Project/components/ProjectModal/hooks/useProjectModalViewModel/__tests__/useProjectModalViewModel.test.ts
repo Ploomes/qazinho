@@ -574,7 +574,7 @@ describe('useProjectModalViewModel', () => {
       expect(stopAgent).toHaveBeenCalledWith('w1');
     });
   });
-  describe('QAzinho Pro', () => {
+  describe('the org section', () => {
     const SAVED = {
       id: 'p1',
       name: 'Shop · staging',
@@ -603,7 +603,7 @@ describe('useProjectModalViewModel', () => {
       useAppStore.setState({ projects: [SAVED], editingProjectId: 'p1' });
     });
 
-    it('offers the QAzinho Pro section once signed in, before deleting', () => {
+    it('offers the org section once signed in, before deleting', () => {
       const signedOut = renderHook(() => useProjectModalViewModel()).result.current;
 
       expect(signedOut.navItems.map(({ id }) => id)).not.toContain('pro');

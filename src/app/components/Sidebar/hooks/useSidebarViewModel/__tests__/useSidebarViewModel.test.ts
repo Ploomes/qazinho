@@ -47,7 +47,7 @@ const SUITE = {
 };
 
 describe('useSidebarViewModel', () => {
-  describe('the link to QAzinho Pro', () => {
+  describe('the link to an org', () => {
     const LINKED = {
       projectId: 'p1',
       orgSlug: 'loja',
@@ -87,7 +87,7 @@ describe('useSidebarViewModel', () => {
 
       expect(rows[0]).toMatchObject({
         pro: {
-          label: 'Shop · staging on QAzinho Pro',
+          label: 'Shop · staging, linked to an org',
           tip: '2 to send · 1 from the org',
           pending: 2,
           updates: 1,
@@ -107,7 +107,7 @@ describe('useSidebarViewModel', () => {
       });
     });
 
-    it('opens the project’s window on its QAzinho Pro section', () => {
+    it('opens the project’s window on its org section', () => {
       useProStore.setState({ shares: [LINKED] });
 
       const { result } = renderHook(() => useSidebarViewModel());
