@@ -12,7 +12,6 @@ const SIGNED_IN: ProStatus = {
   account: { email: 'ana@loja.dev', name: 'Ana Souza' },
   machine: { id: 'm1', name: 'MacBook-Ana' },
   orgs: [{ slug: 'loja', name: 'Loja Online', role: 'editor', billingStatus: 'active' }],
-  orgSlug: 'loja',
   isReachable: true,
 };
 const DOWNLOADED: ProDownload = {

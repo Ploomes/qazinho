@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import type { IApplyVariables } from '@/shared/types';
+import type { IApplyVariables, IProShare, ProStatus } from '@/shared/types';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useProjectModalViewModel } from '@/modules/Project/components/ProjectModal/hooks/useProjectModalViewModel';
@@ -9,6 +9,7 @@ import {
   useAppStore,
   useBuildStore,
   useMachineStore,
+  useProStore,
   useSetupStore,
   useVariablesStore,
   useWorkspaceStore,
@@ -28,6 +29,7 @@ beforeEach(() => {
   useSetupStore.setState({ integrations: [] });
   useBuildStore.setState({ builds: [] });
   useVariablesStore.setState({ byProject: {}, request: null, settled: null });
+  useProStore.setState({ status: null, shares: [] });
 });
 
 afterEach(() => {
@@ -120,6 +122,7 @@ describe('useProjectModalViewModel', () => {
         code: false,
         variables: false,
         automation: false,
+        pro: false,
         delete: false,
       });
     });
@@ -136,6 +139,7 @@ describe('useProjectModalViewModel', () => {
         code: false,
         variables: true,
         automation: false,
+        pro: false,
         delete: false,
       });
     });
@@ -570,6 +574,162 @@ describe('useProjectModalViewModel', () => {
       expect(stopAgent).toHaveBeenCalledWith('w1');
     });
   });
+  describe('QAzinho Pro', () => {
+    const SAVED = {
+      id: 'p1',
+      name: 'Shop · staging',
+      targets: [
+        { id: 't-web', kind: 'web' as const, label: 'Web', value: 'https://a.test' },
+      ],
+      repositories: [],
+    };
+    const signedInAs = (role: 'owner' | 'admin' | 'editor'): ProStatus => ({
+      isSignedIn: true,
+      account: { email: 'ana@loja.dev', name: 'Ana' },
+      machine: { id: 'm1', name: 'MacBook-Ana' },
+      orgs: [{ slug: 'loja', name: 'Loja Online', role, billingStatus: 'active' }],
+      isReachable: true,
+    });
+    const LINKED: IProShare = {
+      projectId: 'p1',
+      orgSlug: 'loja',
+      state: 'synced',
+      syncedAt: null,
+      pending: [],
+      conflicts: [],
+    };
+
+    beforeEach(() => {
+      useAppStore.setState({ projects: [SAVED], editingProjectId: 'p1' });
+    });
+
+    it('offers the QAzinho Pro section once signed in, before deleting', () => {
+      const signedOut = renderHook(() => useProjectModalViewModel()).result.current;
+
+      expect(signedOut.navItems.map(({ id }) => id)).not.toContain('pro');
+
+      useProStore.setState({ status: signedInAs('editor') });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.navItems.map(({ id }) => id).slice(-2)).toEqual([
+        'pro',
+        'delete',
+      ]);
+
+      act(() => {
+        result.current.onSelectSection('pro');
+      });
+
+      expect(result.current.isOpen.pro).toBe(true);
+    });
+
+    it('does NOT offer the section while making a project', () => {
+      useAppStore.setState({ editingProjectId: null });
+      useProStore.setState({ status: signedInAs('owner') });
+
+      expect(
+        renderHook(() => useProjectModalViewModel()).result.current.navItems.map(
+          ({ id }) => id,
+        ),
+      ).not.toContain('pro');
+    });
+
+    it('says a linked project stays in its org, and unlinks it before it goes from here', async () => {
+      const unlinkPro = vi.fn((projectId: string) =>
+        Promise.resolve({ ...LINKED, projectId, orgSlug: null, state: 'off' as const }),
+      );
+      const removeProProject = vi.fn(() => Promise.resolve({ isRemoved: true as const }));
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), unlinkPro, removeProProject };
+      useProStore.setState({ status: signedInAs('editor'), shares: [LINKED] });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current).toMatchObject({
+        hasDeleteInOrg: false,
+        hasDeleteOrgNote: true,
+        deleteOrgNote: 'It stays in Loja Online; only this computer’s copy goes.',
+      });
+
+      act(() => {
+        result.current.onDelete();
+      });
+
+      await waitFor(() => {
+        expect(useAppStore.getState().projects).toEqual([]);
+      });
+      expect(unlinkPro).toHaveBeenCalledWith('p1');
+      expect(removeProProject).not.toHaveBeenCalled();
+      expect(useProStore.getState().shares).toEqual([]);
+    });
+
+    it('lets an owner delete the project in the org too, which goes first', async () => {
+      const removeProProject = vi.fn(() => Promise.resolve({ isRemoved: true as const }));
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), removeProProject };
+      useProStore.setState({ status: signedInAs('owner'), shares: [LINKED] });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.hasDeleteInOrg).toBe(true);
+      expect(result.current.isDeleteInOrgOn).toBe(false);
+
+      act(() => {
+        result.current.onDeleteInOrgChange(true);
+      });
+
+      expect(result.current.deleteOrgNote).toBe(
+        'Its plans, runs and bugs go for everyone in Loja Online.',
+      );
+
+      act(() => {
+        result.current.onDelete();
+      });
+
+      await waitFor(() => {
+        expect(useAppStore.getState().projects).toEqual([]);
+      });
+      expect(removeProProject).toHaveBeenCalledWith('p1');
+    });
+
+    it('deletes nothing when the org refuses, and says why', async () => {
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        removeProProject: () =>
+          Promise.resolve({ isRemoved: false as const, failure: 'busy' as const }),
+      };
+      useProStore.setState({ status: signedInAs('admin'), shares: [LINKED] });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onDeleteInOrgChange(true);
+      });
+      act(() => {
+        result.current.onDelete();
+      });
+
+      await waitFor(() => {
+        expect(result.current.hasDeleteFailure).toBe(true);
+      });
+      expect(result.current.deleteFailure).toBe(
+        'A CI job of this project is still going in Loja Online. Try again once it ends.',
+      );
+      expect(useAppStore.getState().projects).toHaveLength(1);
+      expect(result.current.canDelete).toBe(true);
+    });
+
+    it('does NOT offer deleting in the org to an editor, nor speak of an org for a local project', () => {
+      useProStore.setState({ status: signedInAs('editor'), shares: [] });
+
+      expect(renderHook(() => useProjectModalViewModel()).result.current).toMatchObject({
+        hasDeleteInOrg: false,
+        hasDeleteOrgNote: false,
+      });
+    });
+  });
+
   describe('building from the code', () => {
     const SAVED = {
       id: 'p1',

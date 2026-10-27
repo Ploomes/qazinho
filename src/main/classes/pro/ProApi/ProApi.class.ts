@@ -128,6 +128,22 @@ export class ProApi {
     });
   }
 
+  /** Deletes a project in its org, by the id this computer keeps it under. */
+  public async deleteProject(props: {
+    token: string;
+    org: string;
+    projectId: string;
+  }): Promise<ProAnswer<null>> {
+    return this.call({
+      request: {
+        method: 'DELETE',
+        path: `/api/orgs/${encodeURIComponent(props.org)}/projects/${encodeURIComponent(props.projectId)}`,
+        token: props.token,
+      },
+      schema: z.null(),
+    });
+  }
+
   /** A plan's recordings on a branch, to walk its cases again without the agent. */
   public async recordings(props: {
     token: string;

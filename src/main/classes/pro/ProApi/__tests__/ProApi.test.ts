@@ -101,6 +101,24 @@ describe('ProApi', () => {
     );
   });
 
+  it('deletes a project in its org by the id this computer keeps it under', async () => {
+    const { calls, fetcher } = fakePlatform({ status: 204, body: null });
+    const api = new ProApi({ baseUrl: 'https://qazinho-api.salvesoftware.com', fetcher });
+
+    const answer = await api.deleteProject({
+      token: 'qzm_token',
+      org: 'loja',
+      projectId: 'p 1',
+    });
+
+    expect(answer).toEqual({ isOk: true, value: null });
+    expect(calls[0]).toMatchObject({
+      url: 'https://qazinho-api.salvesoftware.com/api/orgs/loja/projects/p%201',
+      method: 'DELETE',
+      headers: { authorization: 'Bearer qzm_token' },
+    });
+  });
+
   it('puts a shared plan under its org’s sync, with the token as a bearer', async () => {
     const { calls, fetcher } = fakePlatform({
       status: 200,

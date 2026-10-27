@@ -9,7 +9,7 @@ import {
   walkRun,
 } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useProStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 const PROJECT = {
   id: 'p1',
@@ -31,7 +31,26 @@ function bridge() {
   return { startRunCall, stopRunCall };
 }
 
+const MOVED = {
+  projectId: 'p1',
+  orgSlug: 'loja',
+  state: 'conflict' as const,
+  syncedAt: null,
+  pending: [],
+  conflicts: [
+    {
+      workspaceId: 'w1',
+      base: [],
+      version: 4,
+      cases: [],
+      editedBy: 'Bruno',
+      editedAt: '2026-10-24T11:30:00.000Z',
+    },
+  ],
+};
+
 beforeEach(() => {
+  useProStore.setState({ shares: [], heldRun: null });
   useAppStore.setState({ projects: [PROJECT], selectedWorkspaceId: 'w1' });
   useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
 });
@@ -41,6 +60,57 @@ afterEach(() => {
 });
 
 describe('useRunActions', () => {
+  describe('the person’s own start', () => {
+    it('holds a run of a plan the org moved since, asking the QA first', () => {
+      const { startRunCall } = bridge();
+      useProStore.setState({ shares: [MOVED] });
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.onRunWithAgent();
+      });
+
+      expect(startRunCall).not.toHaveBeenCalled();
+      expect(useProStore.getState().heldRun).toEqual({
+        workspaceId: 'w1',
+        mode: 'agent',
+      });
+    });
+
+    it('does NOT hold a run of a plan another workspace’s update names', () => {
+      const { startRunCall } = bridge();
+      useProStore.setState({
+        shares: [
+          {
+            ...MOVED,
+            conflicts: MOVED.conflicts.map((one) => ({ ...one, workspaceId: 'w9' })),
+          },
+        ],
+      });
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.onRun();
+      });
+
+      expect(startRunCall).toHaveBeenCalled();
+      expect(useProStore.getState().heldRun).toBeNull();
+    });
+
+    it('does NOT hold a run the assistant starts, which goes as it is', () => {
+      const { startRunCall } = bridge();
+      useProStore.setState({ shares: [MOVED] });
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.runWorkspace('w1');
+      });
+
+      expect(startRunCall).toHaveBeenCalled();
+      expect(useProStore.getState().heldRun).toBeNull();
+    });
+  });
+
   describe('onRun', () => {
     it('runs the plan of the workspace open when it is called', () => {
       const { startRunCall } = bridge();

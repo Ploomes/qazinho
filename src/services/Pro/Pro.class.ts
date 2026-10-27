@@ -1,16 +1,18 @@
 import type {
   IProLink,
+  IProPublishBrief,
   IProShare,
   IProSyncBatch,
   ProDownload,
   ProOrgProjects,
+  ProRemoval,
   ProSignInProgress,
   ProStatus,
 } from '@/shared/types';
 
 /**
  * The only caller of QAzinho Pro's side of the bridge: this machine's sign-in, where it
- * stands, and its projects sent to its org in the background.
+ * stands, and each project it links to an org.
  */
 export class Pro {
   public static async status(): Promise<ProStatus> {
@@ -48,15 +50,6 @@ export class Pro {
     return (await window.qazinho?.proShares()) ?? [];
   }
 
-  public static async chooseOrg(orgSlug: string): Promise<ProStatus> {
-    return (
-      (await window.qazinho?.chooseProOrg(orgSlug)) ?? {
-        isSignedIn: false,
-        canKeepToken: false,
-      }
-    );
-  }
-
   public static async sync(batch: IProSyncBatch): Promise<IProShare> {
     return (
       (await window.qazinho?.syncPro(batch)) ?? {
@@ -64,7 +57,49 @@ export class Pro {
         orgSlug: null,
         state: 'off',
         syncedAt: null,
+        pending: [],
         conflicts: [],
+      }
+    );
+  }
+
+  public static async publish(props: {
+    batch: IProSyncBatch;
+    orgSlug: string;
+    hasHistoryMedia: boolean;
+  }): Promise<IProShare> {
+    return (
+      (await window.qazinho?.publishPro(props)) ??
+      Pro.offOf(props.batch.project.projectId)
+    );
+  }
+
+  public static async sendPlans(batch: IProSyncBatch): Promise<IProShare> {
+    return (
+      (await window.qazinho?.sendProPlans(batch)) ?? Pro.offOf(batch.project.projectId)
+    );
+  }
+
+  public static async unlink(projectId: string): Promise<IProShare> {
+    return (await window.qazinho?.unlinkPro(projectId)) ?? Pro.offOf(projectId);
+  }
+
+  public static async remove(projectId: string): Promise<ProRemoval> {
+    return (
+      (await window.qazinho?.removeProProject(projectId)) ?? {
+        isRemoved: false,
+        failure: 'failed',
+      }
+    );
+  }
+
+  public static async brief(batch: IProSyncBatch): Promise<IProPublishBrief> {
+    return (
+      (await window.qazinho?.briefPro(batch)) ?? {
+        plans: batch.plans.length,
+        runs: batch.runs.length,
+        bugs: batch.bugs.length,
+        mediaBytes: 0,
       }
     );
   }
@@ -84,6 +119,7 @@ export class Pro {
         orgSlug: null,
         state: 'off',
         syncedAt: null,
+        pending: [],
         conflicts: [],
       }
     );
@@ -120,5 +156,16 @@ export class Pro {
 
   public static async openPage(path: string): Promise<boolean> {
     return (await window.qazinho?.openProPage(path)) ?? false;
+  }
+
+  private static offOf(projectId: string): IProShare {
+    return {
+      projectId,
+      orgSlug: null,
+      state: 'off',
+      syncedAt: null,
+      pending: [],
+      conflicts: [],
+    };
   }
 }

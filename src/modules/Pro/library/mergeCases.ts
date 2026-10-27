@@ -1,15 +1,17 @@
+import type { CaseChoice, ICaseClash } from '@/modules/Pro/types';
 import type { IProSyncCase } from '@/shared/types';
 import { freeCaseIdOf } from './freeCaseIdOf';
 
 /**
  * Joins this computer's plan and the org's case by case, from the cases both last agreed
- * on.
+ * on; a case both changed is a clash, kept as the QA chose or as this computer has it.
  */
 export function mergeCases(props: {
   base: IProSyncCase[];
   mine: IProSyncCase[];
   theirs: IProSyncCase[];
-}): IProSyncCase[] {
+  choices?: Record<string, CaseChoice>;
+}): { cases: IProSyncCase[]; clashes: ICaseClash[] } {
   const byId = (cases: IProSyncCase[]) => new Map(cases.map((one) => [one.id, one]));
   const base = byId(props.base);
   const mine = byId(props.mine);
@@ -21,8 +23,9 @@ export function mergeCases(props: {
     ]),
   ];
   const taken = [...ids];
+  const clashes: ICaseClash[] = [];
 
-  return ids.flatMap((id) => {
+  const cases = ids.flatMap((id) => {
     const was = base.get(id);
     const here = mine.get(id);
     const there = theirs.get(id);
@@ -40,10 +43,24 @@ export function mergeCases(props: {
       return [there, { ...here, id: free }];
     }
 
-    const kept = sameCase(here, was) && !sameCase(there, was) ? there : here;
+    const isBoth =
+      !sameCase(here, was) && !sameCase(there, was) && !sameCase(here, there);
+
+    if (isBoth) clashes.push({ id, mine: here ?? null, theirs: there ?? null });
+
+    const choice = props.choices?.[id];
+    const kept = isBoth
+      ? choice === 'theirs'
+        ? there
+        : here
+      : sameCase(here, was) && !sameCase(there, was)
+        ? there
+        : here;
 
     return kept === undefined ? [] : [kept];
   });
+
+  return { cases, clashes };
 }
 
 function sameCase(

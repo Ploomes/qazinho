@@ -1,7 +1,7 @@
 import type { ProStatus } from '@/shared/types';
 import { useEffect } from 'react';
-import { PRO_ORG_PROJECTS, PRO_PUSH } from '@/modules/Pro/constants';
-import { changedProjectsOf, proBatchOf } from '@/modules/Pro/library';
+import { PRO_PUSH } from '@/modules/Pro/constants';
+import { changedProjectsOf, isSendingShare, proBatchOf } from '@/modules/Pro/library';
 import { Pro } from '@/services';
 import { lastWritten, saveLater } from '@/shared/hooks/useArchive/library';
 import { useAppStore, useProStore, useWorkspaceStore } from '@/store';
@@ -10,10 +10,6 @@ export const useProSync = () => {
   const setStatus = useProStore((state) => state.setStatus);
   const setShares = useProStore((state) => state.setShares);
   const landShare = useProStore((state) => state.landShare);
-  const setOrgProjects = useProStore((state) => state.setOrgProjects);
-  const orgSlug = useProStore((state) =>
-    state.status?.isSignedIn === true ? state.status.orgSlug : null,
-  );
 
   useEffect(() => {
     void Pro.status().then(setStatus);
@@ -23,43 +19,25 @@ export const useProSync = () => {
   }, [setStatus, setShares, landShare]);
 
   useEffect(() => {
-    if (orgSlug === null) {
-      setOrgProjects([]);
-
-      return;
-    }
-
-    const read = () => {
-      void Pro.orgProjects(orgSlug).then((listed) => {
-        if (listed.isListed) setOrgProjects(listed.projects);
-      });
-    };
-    const timer = window.setInterval(read, PRO_ORG_PROJECTS.refreshMs);
-
-    read();
-
-    return () => {
-      window.clearInterval(timer);
-    };
-  }, [orgSlug, setOrgProjects]);
-
-  useEffect(() => {
     const sent = lastWritten();
     const later = saveLater(PRO_PUSH.settleMs);
 
     const push = (projectIds: string[]) => {
-      const { status } = useProStore.getState();
+      const { status, shares } = useProStore.getState();
       const { workspaces, isLoaded } = useWorkspaceStore.getState();
       const { projects } = useAppStore.getState();
 
-      if (status?.isSignedIn !== true || status.orgSlug === null || !isLoaded) return;
+      if (status?.isSignedIn !== true || !isLoaded) return;
 
       for (const project of projects) {
-        if (!projectIds.includes(project.id)) continue;
+        const share = shares.find(({ projectId }) => projectId === project.id);
+
+        if (!projectIds.includes(project.id) || share === undefined) continue;
+        if (!isSendingShare(share)) continue;
 
         const batch = proBatchOf({ project, workspaces });
         const json = JSON.stringify(batch);
-        const key = `${status.machine.id}/${status.orgSlug}/${project.id}`;
+        const key = `${status.machine.id}/${share.orgSlug ?? ''}/${project.id}`;
 
         if (!sent.isNew(key, json)) continue;
 
@@ -74,8 +52,11 @@ export const useProSync = () => {
       push(useAppStore.getState().projects.map(({ id }) => id));
     };
 
-    const targetOf = (status: ProStatus | null) =>
-      status?.isSignedIn === true ? `${status.machine.id}/${status.orgSlug ?? ''}` : '';
+    const machineOf = (status: ProStatus | null) =>
+      status?.isSignedIn === true ? status.machine.id : '';
+
+    const linkedOf = (shares: { projectId: string; orgSlug: string | null }[]) =>
+      shares.map(({ projectId, orgSlug }) => `${projectId}/${orgSlug ?? ''}`).join(',');
 
     const stops = [
       useWorkspaceStore.subscribe((state, before) => {
@@ -103,7 +84,11 @@ export const useProSync = () => {
         );
       }),
       useProStore.subscribe((state, before) => {
-        if (targetOf(state.status) !== targetOf(before.status)) pushEvery();
+        if (
+          machineOf(state.status) !== machineOf(before.status) ||
+          linkedOf(state.shares) !== linkedOf(before.shares)
+        )
+          pushEvery();
       }),
     ];
 

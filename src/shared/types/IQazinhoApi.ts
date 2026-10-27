@@ -39,6 +39,7 @@ import type { InstallableId } from './InstallableId';
 import type { IntegrationId } from './IntegrationId';
 import type { IProjectVariables } from './IProjectVariables';
 import type { IProLink } from './IProLink';
+import type { IProPublishBrief } from './IProPublishBrief';
 import type { IProShare } from './IProShare';
 import type { IProSyncBatch } from './IProSyncBatch';
 import type { IPublishPlan } from './IPublishPlan';
@@ -74,6 +75,7 @@ import type { PlanPublished } from './PlanPublished';
 import type { Platform } from './Platform';
 import type { ProDownload } from './ProDownload';
 import type { ProOrgProjects } from './ProOrgProjects';
+import type { ProRemoval } from './ProRemoval';
 import type { ProSignInProgress } from './ProSignInProgress';
 import type { ProStatus } from './ProStatus';
 import type { QaReply } from './QaReply';
@@ -184,6 +186,7 @@ export interface IQazinhoApi {
   listVariables: () => Promise<IProjectVariables[]>;
   applyVariables: (apply: IApplyVariables) => Promise<VariablesOutcome>;
   forgetVariables: (projectId: string) => Promise<void>;
+  copyVariables: (props: { from: string; to: string }) => Promise<VariablesOutcome>;
   githubStatus: () => Promise<IGithubStatus>;
   signInGithub: () => Promise<GithubSignInProgress>;
   cancelGithubSignIn: () => Promise<void>;
@@ -194,8 +197,16 @@ export interface IQazinhoApi {
   onProSignIn: (listener: (progress: ProSignInProgress) => void) => () => void;
   signOutPro: () => Promise<ProStatus>;
   proShares: () => Promise<IProShare[]>;
-  chooseProOrg: (orgSlug: string) => Promise<ProStatus>;
+  publishPro: (props: {
+    batch: IProSyncBatch;
+    orgSlug: string;
+    hasHistoryMedia: boolean;
+  }) => Promise<IProShare>;
   syncPro: (batch: IProSyncBatch) => Promise<IProShare>;
+  sendProPlans: (batch: IProSyncBatch) => Promise<IProShare>;
+  unlinkPro: (projectId: string) => Promise<IProShare>;
+  removeProProject: (projectId: string) => Promise<ProRemoval>;
+  briefPro: (batch: IProSyncBatch) => Promise<IProPublishBrief>;
   onProSync: (listener: (share: IProShare) => void) => () => void;
   resolveProConflict: (props: {
     projectId: string;

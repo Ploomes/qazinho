@@ -8,5 +8,7 @@ export const PRO_ATTENTION: Record<ProAttention, ParseKeys> = {
   blocked: 'PRO.ATTENTION_BLOCKED',
   'read-only': 'PRO.ATTENTION_READ_ONLY',
   'signed-out': 'PRO.ATTENTION_SIGNED_OUT',
+  gone: 'PRO.ATTENTION_GONE',
+  'no-access': 'PRO.ATTENTION_NO_ACCESS',
   failed: 'PRO.ATTENTION_FAILED',
 };

@@ -40,6 +40,7 @@ import type {
   IntegrationId,
   IProjectVariables,
   IProLink,
+  IProPublishBrief,
   IProShare,
   IProSyncBatch,
   IPublishPlan,
@@ -76,6 +77,7 @@ import type {
   Platform,
   ProDownload,
   ProOrgProjects,
+  ProRemoval,
   ProSignInProgress,
   ProStatus,
   QaReply,
@@ -297,6 +299,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.applyVariables, apply) as Promise<VariablesOutcome>,
   forgetVariables: (projectId: string) =>
     ipcRenderer.invoke(CHANNELS.forgetVariables, projectId) as Promise<void>,
+  copyVariables: (props: { from: string; to: string }) =>
+    ipcRenderer.invoke(CHANNELS.copyVariables, props) as Promise<VariablesOutcome>,
   githubStatus: () => ipcRenderer.invoke(CHANNELS.githubStatus) as Promise<IGithubStatus>,
   signInGithub: () =>
     ipcRenderer.invoke(CHANNELS.signInGithub) as Promise<GithubSignInProgress>,
@@ -329,10 +333,21 @@ const api: IQazinhoApi = {
   },
   signOutPro: () => ipcRenderer.invoke(CHANNELS.signOutPro) as Promise<ProStatus>,
   proShares: () => ipcRenderer.invoke(CHANNELS.proShares) as Promise<IProShare[]>,
-  chooseProOrg: (orgSlug: string) =>
-    ipcRenderer.invoke(CHANNELS.chooseProOrg, orgSlug) as Promise<ProStatus>,
+  publishPro: (props: {
+    batch: IProSyncBatch;
+    orgSlug: string;
+    hasHistoryMedia: boolean;
+  }) => ipcRenderer.invoke(CHANNELS.publishPro, props) as Promise<IProShare>,
   syncPro: (batch: IProSyncBatch) =>
     ipcRenderer.invoke(CHANNELS.syncPro, batch) as Promise<IProShare>,
+  sendProPlans: (batch: IProSyncBatch) =>
+    ipcRenderer.invoke(CHANNELS.sendProPlans, batch) as Promise<IProShare>,
+  unlinkPro: (projectId: string) =>
+    ipcRenderer.invoke(CHANNELS.unlinkPro, projectId) as Promise<IProShare>,
+  removeProProject: (projectId: string) =>
+    ipcRenderer.invoke(CHANNELS.removeProProject, projectId) as Promise<ProRemoval>,
+  briefPro: (batch: IProSyncBatch) =>
+    ipcRenderer.invoke(CHANNELS.briefPro, batch) as Promise<IProPublishBrief>,
   onProSync: (listener: (share: IProShare) => void) => {
     const forward = (_: unknown, share: IProShare) => {
       listener(share);

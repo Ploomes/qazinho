@@ -40,6 +40,42 @@
   white-space: nowrap;
 }
 
+.sidebar__pro {
+  display: inline-flex;
+  flex: none;
+  gap: var(--space-2);
+  align-items: center;
+  margin: calc(var(--space-2) * -1) var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border: none;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--ink3);
+  font: inherit;
+  letter-spacing: 0;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.sidebar__pro:hover,
+.sidebar__pro:focus-visible {
+  background: var(--sel);
+  color: var(--ink);
+}
+
+.sidebar__pro-count {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+  color: var(--ink2);
+}
+
+.sidebar__pro-count--in {
+  color: var(--lime-ink);
+}
+
 .sidebar__project-settings {
   display: inline-flex;
   flex: none;
@@ -366,6 +402,7 @@
 .sidebar--shut .sidebar__label,
 .sidebar--shut .sidebar__project-name,
 .sidebar--shut .sidebar__project-settings,
+.sidebar--shut .sidebar__pro,
 .sidebar--shut .sidebar__remove,
 .sidebar--shut .sidebar__confirm,
 .sidebar--shut .sidebar__banner-text,

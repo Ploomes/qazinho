@@ -23,6 +23,7 @@ export const Sidebar: React.FC = () => {
     onAskRemove,
     onRemoveWorkspace,
     onProjectSettings,
+    onProSettings,
     onOpenSuite,
   } = useSidebarViewModel();
   const { t } = useTranslation();
@@ -70,6 +71,31 @@ export const Sidebar: React.FC = () => {
             return (
               <div key={row.id} className="sidebar__project">
                 <span className="sidebar__project-name">{row.name}</span>
+                {row.pro !== null && (
+                  <button
+                    type="button"
+                    className="sidebar__pro"
+                    aria-label={row.pro.label}
+                    title={row.pro.tip}
+                    onClick={() => {
+                      onProSettings(row.projectId);
+                    }}
+                  >
+                    <Icon name="link" size={12} />
+                    {row.pro.hasPending && (
+                      <span className="sidebar__pro-count">
+                        <Icon name="up" size={12} />
+                        {row.pro.pending}
+                      </span>
+                    )}
+                    {row.pro.hasUpdates && (
+                      <span className="sidebar__pro-count sidebar__pro-count--in">
+                        <Icon name="download" size={12} />
+                        {row.pro.updates}
+                      </span>
+                    )}
+                  </button>
+                )}
                 <button
                   type="button"
                   className="sidebar__project-settings"

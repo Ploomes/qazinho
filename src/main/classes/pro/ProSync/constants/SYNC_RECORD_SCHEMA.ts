@@ -12,9 +12,13 @@ export const SYNC_RECORD_SCHEMA = z.object({
     'blocked',
     'read-only',
     'signed-out',
+    'gone',
+    'no-access',
     'failed',
   ]),
   syncedAt: z.string().nullable(),
+  mediaFrom: z.string().nullable().default(null),
+  pending: z.array(z.string()).default([]),
   conflicts: z.array(
     z.object({
       workspaceId: z.string(),

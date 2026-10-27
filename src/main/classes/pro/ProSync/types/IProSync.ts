@@ -2,10 +2,7 @@ import type { ProUploader } from './ProUploader';
 import type { ProApi } from '@/main/classes/pro/ProApi';
 import type { IProShare } from '@/shared/types';
 
-/**
- * What the sync needs: the platform, the token and org, the archive, the uploads, a clock
- * and a timer.
- */
+/** What the sync needs: the platform, the token, the archive, the uploads and a clock. */
 export interface IProSync {
   api: Pick<
     ProApi,
@@ -16,8 +13,9 @@ export interface IProSync {
     | 'syncRecordings'
     | 'evidenceUpload'
     | 'syncedProjects'
+    | 'deleteProject'
   >;
-  target: () => Promise<{ token: string; orgSlug: string } | null>;
+  token: () => Promise<string | null>;
   machineName: string;
   file: string;
   archiveRoot: string;

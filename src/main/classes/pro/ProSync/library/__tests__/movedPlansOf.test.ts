@@ -21,6 +21,8 @@ const recordOf = (change: Partial<IProSyncRecord> = {}): IProSyncRecord => ({
   orgSlug: 'loja',
   state: 'synced',
   syncedAt: '2026-10-26T10:00:00.000Z',
+  mediaFrom: null,
+  pending: [],
   conflicts: [],
   project: 'hash',
   plans: {

@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
+import { ProCloneModal } from '@/modules/Pro/components/ProCloneModal';
 import { ProSignIn } from '@/modules/Pro/components/ProSignIn';
 import { Caret, Icon, Intern } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
@@ -9,8 +10,8 @@ import { useProAccountCardViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The QA's account at the foot of the sidebar: a way in, or the account, its org and its
- * projects.
+ * The QA's account at the foot of the sidebar: a way in, or the account, its orgs and a
+ * way to clone their projects.
  */
 export const ProAccountCard: React.FC = () => {
   const {
@@ -33,11 +34,13 @@ export const ProAccountCard: React.FC = () => {
     email,
     machine,
     orgs,
-    offers,
-    canOpenSite,
+    hasOrgs,
+    isCloning,
     signIn,
     isSigningOut,
     onToggle,
+    onClone,
+    onCloseClone,
     onCancelSignIn,
     onCloseSignIn,
     onRetrySignIn,
@@ -66,73 +69,29 @@ export const ProAccountCard: React.FC = () => {
 
             {hasAttention && <p className="pro-account__attention">{attention}</p>}
 
-            {orgs.length > 0 && (
+            {hasOrgs && (
               <div className="pro-account__section">
-                <span className="pro-account__eyebrow">{t('PRO.SENDS_TO')}</span>
-                <div
-                  className="pro-account__orgs"
-                  role="radiogroup"
-                  aria-label={t('PRO.SENDS_TO')}
-                >
+                <span className="pro-account__eyebrow">{t('PRO.ORGS')}</span>
+                <ul className="pro-account__orgs">
                   {orgs.map((org) => (
-                    <button
-                      key={org.slug}
-                      type="button"
-                      role="radio"
-                      aria-checked={org.isOn}
-                      aria-disabled={org.isDisabled}
-                      className={org.className}
-                      onClick={org.onClick}
-                    >
+                    <li key={org.slug} className="pro-account__org">
                       <span className="pro-account__org-name">{org.name}</span>
                       <span className="pro-account__org-note">{org.note}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {offers.length > 0 && (
-              <div className="pro-account__section">
-                <span className="pro-account__eyebrow">{t('PRO.ORG_PROJECTS')}</span>
-                <ul className="pro-account__offers">
-                  {offers.map((offer) => (
-                    <li key={offer.key} className="pro-account__offer">
-                      <span className="pro-account__offer-text">
-                        <span className="pro-account__offer-name">{offer.name}</span>
-                        <span className="pro-account__offer-meta">{offer.meta}</span>
-                        {offer.failure !== null && (
-                          <span className="pro-account__offer-failure">
-                            {offer.failure}
-                          </span>
-                        )}
-                      </span>
-                      <button
-                        type="button"
-                        className="pro-account__download"
-                        disabled={offer.isWorking}
-                        onClick={offer.onDownload}
-                      >
-                        <Icon name="download" />
-                        {offer.label}
-                      </button>
                     </li>
                   ))}
                 </ul>
+                <button type="button" className="pro-account__clone" onClick={onClone}>
+                  <Icon name="download" />
+                  {t('PRO.CLONE_PROJECT')}
+                </button>
               </div>
             )}
 
             <div className="pro-account__actions">
-              {canOpenSite && (
-                <button
-                  type="button"
-                  className="pro-account__action"
-                  onClick={onOpenSite}
-                >
-                  {t('PRO.OPEN_SITE')}
-                  <Icon name="external" />
-                </button>
-              )}
+              <button type="button" className="pro-account__action" onClick={onOpenSite}>
+                {t('PRO.OPEN_SITE')}
+                <Icon name="external" />
+              </button>
               <button
                 type="button"
                 className="pro-account__action"
@@ -186,6 +145,7 @@ export const ProAccountCard: React.FC = () => {
               onRetry={onRetrySignIn}
             />
           )}
+          {isCloning && <ProCloneModal key="pro-clone" onClose={onCloseClone} />}
         </AnimatePresence>,
         document.body,
       )}

@@ -11,6 +11,5 @@ export type ProStatus =
       account: { email: string; name: string | null };
       machine: { id: string; name: string };
       orgs: IProOrg[];
-      orgSlug: string | null;
       isReachable: boolean;
     };

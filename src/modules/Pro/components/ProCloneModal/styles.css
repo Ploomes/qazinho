@@ -1,0 +1,115 @@
+.pro-clone {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.pro-clone__orgs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.pro-clone__org {
+  padding: var(--space-2) var(--space-3);
+  border: var(--edge-width) solid var(--edge);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.pro-clone__org:hover,
+.pro-clone__org--on {
+  background: var(--sel);
+  color: var(--ink);
+}
+
+.pro-clone__org:focus-visible,
+.pro-clone__action:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 2px;
+}
+
+.pro-clone__note {
+  margin: 0;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+}
+
+.pro-clone__projects {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pro-clone__project {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.pro-clone__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.pro-clone__name {
+  overflow: hidden;
+  color: var(--ink);
+  font: var(--font-ui-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pro-clone__meta,
+.pro-clone__here {
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+}
+
+.pro-clone__here {
+  flex: none;
+}
+
+.pro-clone__failure {
+  color: var(--fail);
+  font: var(--font-ui-xs);
+}
+
+.pro-clone__action {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: var(--edge-width) solid var(--edge);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.pro-clone__action:hover:not(:disabled) {
+  background: var(--sel);
+  color: var(--ink);
+}
+
+.pro-clone__action:disabled {
+  color: var(--ink3);
+  cursor: default;
+}

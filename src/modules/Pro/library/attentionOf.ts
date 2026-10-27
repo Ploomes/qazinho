@@ -5,12 +5,23 @@ const BY_STATE: Partial<Record<IProShare['state'], ProAttention>> = {
   blocked: 'blocked',
   'read-only': 'read-only',
   'signed-out': 'signed-out',
+  gone: 'gone',
+  'no-access': 'no-access',
   failed: 'failed',
 };
 
+const GRAVEST_FIRST = [
+  'blocked',
+  'read-only',
+  'signed-out',
+  'gone',
+  'no-access',
+  'failed',
+] as const satisfies readonly ProAttention[];
+
 /**
- * The one thing the QA should know about this computer's sending, the gravest first; null
- * while all goes as it should.
+ * The one thing the QA should know about this computer's linked projects, the gravest
+ * first; null while all goes as it should.
  */
 export function attentionOf(props: {
   status: ProStatus | null;
@@ -20,16 +31,14 @@ export function attentionOf(props: {
 
   if (status?.isSignedIn !== true) return null;
   if (status.orgs.length === 0) return 'no-org';
-  if (status.orgSlug === null) return 'reader';
+  if (status.orgs.every(({ role }) => role === 'reader')) return 'reader';
 
   const seen = new Set(
-    shares
-      .filter(({ orgSlug }) => orgSlug === status.orgSlug)
-      .flatMap(({ state }) => (BY_STATE[state] === undefined ? [] : [BY_STATE[state]])),
+    shares.flatMap(({ state }) =>
+      BY_STATE[state] === undefined ? [] : [BY_STATE[state]],
+    ),
   );
-  const gravest = (['blocked', 'read-only', 'signed-out', 'failed'] as const).find(
-    (one) => seen.has(one),
-  );
+  const gravest = GRAVEST_FIRST.find((one) => seen.has(one));
 
   return gravest ?? (status.isReachable ? null : 'unreachable');
 }

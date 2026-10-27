@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import type { IProject } from '@/modules/Project/types';
-import type { IProOrgProject, IProShare, IProSyncBatch, ProStatus } from '@/shared/types';
+import type { IProShare, IProSyncBatch, ProStatus } from '@/shared/types';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useProSync } from '@/modules/Pro/hooks';
@@ -13,7 +13,6 @@ const SIGNED_IN: ProStatus = {
   account: { email: 'ana@loja.dev', name: 'Ana' },
   machine: { id: 'm1', name: 'MacBook-Ana' },
   orgs: [{ slug: 'loja', name: 'Loja Online', role: 'editor', billingStatus: 'active' }],
-  orgSlug: 'loja',
   isReachable: true,
 };
 const SHARE: IProShare = {
@@ -21,6 +20,7 @@ const SHARE: IProShare = {
   orgSlug: 'loja',
   state: 'synced',
   syncedAt: null,
+  pending: [],
   conflicts: [],
 };
 const PROJECT: IProject = {
@@ -29,24 +29,19 @@ const PROJECT: IProject = {
   targets: [{ id: 't1', kind: 'web', label: 'Web', value: 'https://loja.dev' }],
   repositories: [],
 };
-const ORG_PROJECT: IProOrgProject = {
-  orgSlug: 'loja',
-  projectId: 'p-2',
-  key: 'APP',
-  name: 'App',
-  plans: [],
-};
+const LOCAL: IProject = { ...PROJECT, id: 'p2', name: 'Pessoal' };
 const WORKSPACE = recordedRun(['passed', 'failed']);
 
 let synced: IProSyncBatch[] = [];
 let listed: string[] = [];
 let announce: (share: IProShare) => void = () => undefined;
 
-function bridgeWith(status: ProStatus) {
+/** A bridge whose main holds the shares given, and keeps every batch the page hands it. */
+function bridgeWith(props: { status: ProStatus; shares?: IProShare[] }) {
   window.qazinho = {
     ...fakeQazinhoApi('darwin'),
-    proStatus: () => Promise.resolve(status),
-    proShares: () => Promise.resolve([]),
+    proStatus: () => Promise.resolve(props.status),
+    proShares: () => Promise.resolve(props.shares ?? [SHARE]),
     syncPro: (batch) => {
       synced.push(batch);
 
@@ -62,7 +57,7 @@ function bridgeWith(status: ProStatus) {
     listOrgProjects: (orgSlug) => {
       listed.push(orgSlug);
 
-      return Promise.resolve({ isListed: true, projects: [ORG_PROJECT] });
+      return Promise.resolve({ isListed: true, projects: [] });
     },
   };
 }
@@ -89,10 +84,10 @@ beforeEach(() => {
   vi.useFakeTimers();
   synced = [];
   listed = [];
-  useProStore.setState({ status: null, shares: [], orgProjects: [] });
-  useAppStore.setState({ projects: [PROJECT] });
+  useProStore.setState({ status: null, shares: [] });
+  useAppStore.setState({ projects: [PROJECT, LOCAL] });
   useWorkspaceStore.setState({ workspaces: [WORKSPACE], isLoaded: true });
-  bridgeWith(SIGNED_IN);
+  bridgeWith({ status: SIGNED_IN });
 });
 
 afterEach(() => {
@@ -102,7 +97,7 @@ afterEach(() => {
 });
 
 describe('useProSync', () => {
-  it('sends every project once the machine is signed in, after the burst settles', async () => {
+  it('sends a linked project once the machine is signed in, after the burst settles', async () => {
     await mounted();
 
     expect(synced).toEqual([]);
@@ -113,15 +108,24 @@ describe('useProSync', () => {
     expect(synced[0]?.runs.map(({ runId }) => runId)).toEqual(['r-01']);
   });
 
-  it('does NOT send while the machine is signed out, or has no org to send to', async () => {
-    bridgeWith({ isSignedIn: false, canKeepToken: true });
+  it('does NOT send a project never published, even signed in', async () => {
+    bridgeWith({ status: SIGNED_IN, shares: [] });
     await mounted();
     await settle();
 
     expect(synced).toEqual([]);
+  });
 
-    cleanup();
-    bridgeWith({ ...SIGNED_IN, orgSlug: null });
+  it('does NOT send while the machine is signed out', async () => {
+    bridgeWith({ status: { isSignedIn: false, canKeepToken: true } });
+    await mounted();
+    await settle();
+
+    expect(synced).toEqual([]);
+  });
+
+  it('does NOT send a project the org no longer has', async () => {
+    bridgeWith({ status: SIGNED_IN, shares: [{ ...SHARE, state: 'gone' }] });
     await mounted();
     await settle();
 
@@ -150,23 +154,33 @@ describe('useProSync', () => {
     expect(synced[1]?.plans[0]?.cases).toHaveLength(1);
   });
 
-  it('sends everything again once this computer sends to another org', async () => {
+  it('sends a project once it is linked to an org, and again once linked to another', async () => {
+    bridgeWith({ status: SIGNED_IN, shares: [] });
     await mounted();
     await settle();
 
+    expect(synced).toEqual([]);
+
     act(() => {
-      useProStore.getState().setStatus({ ...SIGNED_IN, orgSlug: 'outra' });
+      announce(SHARE);
+    });
+    await settle();
+
+    expect(synced).toHaveLength(1);
+
+    act(() => {
+      announce({ ...SHARE, orgSlug: 'outra' });
     });
     await settle();
 
     expect(synced).toHaveLength(2);
   });
 
-  it('reads the projects of the org it sends to', async () => {
+  it('reads no org’s projects on its own', async () => {
     await mounted();
+    await settle();
 
-    expect(listed).toEqual(['loja']);
-    expect(useProStore.getState().orgProjects).toEqual([ORG_PROJECT]);
+    expect(listed).toEqual([]);
   });
 
   it('lands each state main announces', async () => {

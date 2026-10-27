@@ -8,4 +8,6 @@ export type ProSyncState =
   | 'blocked'
   | 'read-only'
   | 'signed-out'
+  | 'gone'
+  | 'no-access'
   | 'failed';

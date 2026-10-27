@@ -22,6 +22,18 @@ export class Variables {
     );
   }
 
+  public static async copy(props: {
+    from: string;
+    to: string;
+  }): Promise<VariablesOutcome> {
+    return (
+      (await window.qazinho?.copyVariables(props)) ?? {
+        isSaved: false,
+        failure: { reason: 'no-bridge' },
+      }
+    );
+  }
+
   public static async forget(projectId: string): Promise<void> {
     await window.qazinho?.forgetVariables(projectId);
   }

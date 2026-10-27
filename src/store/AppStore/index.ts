@@ -51,6 +51,9 @@ export const useAppStore = create<IAppStore>()(
           projectSection: 'automation',
         }),
 
+      openProSettings: (projectId) =>
+        set({ modal: 'project', editingProjectId: projectId, projectSection: 'pro' }),
+
       openWorkspaceModal: (projectId) =>
         set({ modal: 'workspace', selectedProjectId: projectId }),
 

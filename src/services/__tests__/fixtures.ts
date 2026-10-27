@@ -111,6 +111,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     listVariables: () => Promise.resolve([]),
     applyVariables: () => Promise.resolve({ isSaved: true, variables: [] }),
     forgetVariables: () => Promise.resolve(),
+    copyVariables: () => Promise.resolve({ isSaved: true, variables: [] }),
     githubStatus: () =>
       Promise.resolve({
         cli: { isFound: false, path: null },
@@ -133,13 +134,48 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     onProSignIn: () => () => undefined,
     signOutPro: () => Promise.resolve({ isSignedIn: false, canKeepToken: true }),
     proShares: () => Promise.resolve([]),
-    chooseProOrg: () => Promise.resolve({ isSignedIn: false, canKeepToken: true }),
+    publishPro: ({ batch, orgSlug }) =>
+      Promise.resolve({
+        projectId: batch.project.projectId,
+        orgSlug,
+        state: 'synced',
+        syncedAt: null,
+        pending: [],
+        conflicts: [],
+      }),
+    sendProPlans: ({ project }) =>
+      Promise.resolve({
+        projectId: project.projectId,
+        orgSlug: null,
+        state: 'off',
+        syncedAt: null,
+        pending: [],
+        conflicts: [],
+      }),
+    unlinkPro: (projectId) =>
+      Promise.resolve({
+        projectId,
+        orgSlug: null,
+        state: 'off',
+        syncedAt: null,
+        pending: [],
+        conflicts: [],
+      }),
+    removeProProject: () => Promise.resolve({ isRemoved: true }),
+    briefPro: ({ plans, runs, bugs }) =>
+      Promise.resolve({
+        plans: plans.length,
+        runs: runs.length,
+        bugs: bugs.length,
+        mediaBytes: 0,
+      }),
     syncPro: ({ project }) =>
       Promise.resolve({
         projectId: project.projectId,
         orgSlug: null,
         state: 'off',
         syncedAt: null,
+        pending: [],
         conflicts: [],
       }),
     onProSync: () => () => undefined,
@@ -149,6 +185,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
         orgSlug: null,
         state: 'off',
         syncedAt: null,
+        pending: [],
         conflicts: [],
       }),
     listOrgProjects: () => Promise.resolve({ isListed: true, projects: [] }),

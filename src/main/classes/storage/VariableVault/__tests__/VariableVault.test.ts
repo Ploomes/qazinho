@@ -101,6 +101,23 @@ describe('VariableVault', () => {
     expect(await vault.list()).toEqual([]);
   });
 
+  it('gives a copied project the variables of the one it came from, their values too', async () => {
+    const { vault } = await vaultWith();
+
+    await vault.apply({ projectId: 'p-1', changes: [PASSWORD] });
+
+    expect(await vault.copy({ from: 'p-1', to: 'p-2' })).toMatchObject({ isSaved: true });
+    expect(await vault.valuesOf('p-2')).toEqual(await vault.valuesOf('p-1'));
+  });
+
+  it('does NOT copy to a project from one with no variables', async () => {
+    const { vault } = await vaultWith();
+
+    await vault.copy({ from: 'p-1', to: 'p-2' });
+
+    expect(await vault.valuesOf('p-2')).toEqual([]);
+  });
+
   it('forgets every variable of a project that is gone', async () => {
     const { vault } = await vaultWith();
 

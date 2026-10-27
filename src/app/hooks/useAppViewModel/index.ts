@@ -8,7 +8,7 @@ import {
 } from '@/modules/Assistant';
 import { useSuiteWatch } from '@/modules/Automation';
 import { useBuildEvents } from '@/modules/Build';
-import { useProConflicts, useProLinks, useProSync } from '@/modules/Pro';
+import { useProLinks, useProSync } from '@/modules/Pro';
 import { AppWindow, Platform } from '@/services';
 import { SHELL } from '@/shared/constants';
 import {
@@ -35,6 +35,7 @@ export const useAppViewModel = () => {
   const screen = useAppStore((state) => state.screen);
   const projects = useAppStore((state) => state.projects);
   const modal = useAppStore((state) => state.modal);
+  const editingProjectId = useAppStore((state) => state.editingProjectId);
   const media = useAppStore((state) => state.media);
   const replay = useAppStore((state) => state.replay);
   const runNotice = useAppStore((state) => state.runNotice);
@@ -43,6 +44,8 @@ export const useAppViewModel = () => {
   const sidebarWidth = useSidebarWidth();
   const variablesKey = useVariablesStore((state) => state.request?.id ?? null);
   const hasProLink = useProStore((state) => state.link !== null);
+  const hasProMerge = useProStore((state) => state.merging !== null);
+  const hasHeldRun = useProStore((state) => state.heldRun !== null);
 
   useArchive();
   useVariables();
@@ -56,7 +59,6 @@ export const useAppViewModel = () => {
   useBuildEvents();
   useSuiteWatch();
   useProSync();
-  useProConflicts();
   useProLinks();
   useVideoSweep();
 
@@ -86,12 +88,15 @@ export const useAppViewModel = () => {
     } as CSSProperties,
     screen,
     modal,
+    projectModalKey: `project-${editingProjectId ?? 'new'}`,
     variablesKey,
     hasMedia: media !== null,
     hasRunNotice: runNotice !== null,
     runNoticeKey: runNotice?.key ?? 'run-notice',
     hasReplay: replay !== null,
     hasProLink,
+    hasProMerge,
+    hasHeldRun,
     replayKey:
       replay === null
         ? 'replay'

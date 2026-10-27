@@ -88,20 +88,23 @@ describe('a page with no bridge', () => {
     expect(await Pro.signOut()).toEqual({ isSignedIn: false, canKeepToken: false });
   });
 
-  it('sends nothing to QAzinho Pro, and chooses no org', async () => {
+  it('sends nothing to QAzinho Pro, publishes nothing and deletes nothing', async () => {
+    const batch = {
+      project: { projectId: 'p1', name: 'Loja', targets: [], repositories: [] },
+      plans: [],
+      runs: [],
+      bugs: [],
+    };
+
     expect(await Pro.shares()).toEqual([]);
-    expect(await Pro.chooseOrg('loja')).toEqual({
-      isSignedIn: false,
-      canKeepToken: false,
-    });
+    expect(await Pro.sync(batch)).toMatchObject({ projectId: 'p1', state: 'off' });
     expect(
-      await Pro.sync({
-        project: { projectId: 'p1', name: 'Loja', targets: [], repositories: [] },
-        plans: [],
-        runs: [],
-        bugs: [],
-      }),
+      await Pro.publish({ batch, orgSlug: 'loja', hasHistoryMedia: true }),
     ).toMatchObject({ projectId: 'p1', state: 'off' });
+    expect(await Pro.sendPlans(batch)).toMatchObject({ state: 'off' });
+    expect(await Pro.unlink('p1')).toMatchObject({ orgSlug: null, state: 'off' });
+    expect(await Pro.remove('p1')).toEqual({ isRemoved: false, failure: 'failed' });
+    expect(await Pro.brief(batch)).toEqual({ plans: 0, runs: 0, bugs: 0, mediaBytes: 0 });
     expect(Pro.onSync(() => undefined)).toBeTypeOf('function');
     expect(
       await Pro.resolve({ projectId: 'p1', workspaceId: 'w1', version: 2 }),

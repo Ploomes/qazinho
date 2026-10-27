@@ -6,5 +6,4 @@ export const STORED_PRO_SCHEMA = z.object({
   machine: z.object({ id: z.string(), name: z.string() }),
   account: z.object({ email: z.string(), name: z.string().nullable() }),
   orgs: z.array(PRO_ORG_SCHEMA),
-  orgSlug: z.string().nullable().catch(null),
 });

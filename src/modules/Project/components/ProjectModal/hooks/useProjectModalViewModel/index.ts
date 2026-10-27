@@ -10,6 +10,7 @@ import type { BuildPlatform, TargetKind } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  DELETE_ORG_FAILURES,
   PROJECT_SECTIONS,
   TARGET_NAME_KEYS,
 } from '@/modules/Project/components/ProjectModal/constants';
@@ -17,11 +18,12 @@ import { VARIABLE_FAILURE_KEYS } from '@/modules/Project/constants';
 import { useVariableActions } from '@/modules/Project/hooks/useVariableActions';
 import { newProjectId, variableChangesOf, webAddressOf } from '@/modules/Project/library';
 import { SETUP_LINKS } from '@/modules/Setup/constants';
-import { Agent, Archive, Files, Platform, Run } from '@/services';
+import { Agent, Archive, Files, Platform, Pro, Run } from '@/services';
 import {
   useAppStore,
   useBuildStore,
   useMachineStore,
+  useProStore,
   useSetupStore,
   useVariablesStore,
   useWorkspaceStore,
@@ -44,6 +46,12 @@ export const useProjectModalViewModel = () => {
   const builds = useBuildStore((state) => state.builds);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const removeWorkspacesOf = useWorkspaceStore((state) => state.removeWorkspacesOf);
+  const proStatus = useProStore((state) => state.status);
+  const shares = useProStore((state) => state.shares);
+  const landShare = useProStore((state) => state.landShare);
+  const [isDeletingInOrg, setDeletingInOrg] = useState(false);
+  const [isDeleting, setDeleting] = useState(false);
+  const [deleteFailure, setDeleteFailure] = useState<string | null>(null);
 
   const [editing] = useState(
     () => projects.find(({ id }) => id === editingProjectId) ?? null,
@@ -99,6 +107,19 @@ export const useProjectModalViewModel = () => {
   const appValue = iosBuild.artifact ?? app;
 
   const isMac = Platform.isMac();
+  const isSignedInToPro = proStatus?.isSignedIn === true;
+  const share = shares.find(({ projectId }) => projectId === editing?.id);
+  const linkedOrg = share?.orgSlug ?? null;
+  const linkedRole =
+    proStatus?.isSignedIn === true
+      ? (proStatus.orgs.find(({ slug }) => slug === linkedOrg)?.role ?? null)
+      : null;
+  const linkedOrgName =
+    proStatus?.isSignedIn === true
+      ? (proStatus.orgs.find(({ slug }) => slug === linkedOrg)?.name ?? linkedOrg ?? '')
+      : (linkedOrg ?? '');
+  const canDeleteInOrg =
+    linkedOrg !== null && (linkedRole === 'owner' || linkedRole === 'admin');
   const isEditing = editing !== null;
   const own = workspaces.filter((workspace) => workspace.projectId === editing?.id);
   const address = webAddressOf(url);
@@ -198,6 +219,17 @@ export const useProjectModalViewModel = () => {
       isFlagged: flagged === id,
       isDanger: false,
     })),
+    ...(isEditing && isSignedInToPro
+      ? [
+          {
+            id: 'pro' as const,
+            label: t('PROJECT.SECTION_PRO'),
+            count: null,
+            isFlagged: false,
+            isDanger: false,
+          },
+        ]
+      : []),
     ...(isEditing
       ? [
           {
@@ -228,8 +260,29 @@ export const useProjectModalViewModel = () => {
         ]),
   ];
 
-  const onDelete = () => {
-    if (!editing) return;
+  const onDelete = async () => {
+    if (!editing || isDeleting) return;
+
+    setDeleteFailure(null);
+
+    if (linkedOrg !== null) {
+      setDeleting(true);
+
+      if (canDeleteInOrg && isDeletingInOrg) {
+        const removal = await Pro.remove(editing.id);
+
+        if (!removal.isRemoved) {
+          setDeleting(false);
+          setDeleteFailure(
+            t(DELETE_ORG_FAILURES[removal.failure], { org: linkedOrgName }),
+          );
+
+          return;
+        }
+      } else landShare(await Pro.unlink(editing.id));
+
+      setDeleting(false);
+    }
 
     for (const workspace of own) {
       Run.stop(workspace.id);
@@ -273,6 +326,7 @@ export const useProjectModalViewModel = () => {
       code: section === 'code',
       variables: section === 'variables',
       automation: section === 'automation',
+      pro: section === 'pro',
       delete: section === 'delete',
     },
     title: isEditing ? t('PROJECT.EDIT_TITLE') : t('PROJECT.NEW_TITLE'),
@@ -339,6 +393,20 @@ export const useProjectModalViewModel = () => {
     onCancel: closeModal,
     onConfirm,
     onSelectSection: setSection,
-    onDelete,
+    hasDeleteInOrg: canDeleteInOrg,
+    deleteInOrgLabel: t('PROJECT.DELETE_IN_ORG', { org: linkedOrgName }),
+    isDeleteInOrgOn: isDeletingInOrg,
+    onDeleteInOrgChange: setDeletingInOrg,
+    hasDeleteOrgNote: linkedOrg !== null,
+    deleteOrgNote:
+      canDeleteInOrg && isDeletingInOrg
+        ? t('PROJECT.DELETE_IN_ORG_NOTE', { org: linkedOrgName })
+        : t('PROJECT.DELETE_LINKED_NOTE', { org: linkedOrgName }),
+    hasDeleteFailure: deleteFailure !== null,
+    deleteFailure: deleteFailure ?? '',
+    canDelete: !isDeleting,
+    onDelete: () => {
+      void onDelete();
+    },
   };
 };

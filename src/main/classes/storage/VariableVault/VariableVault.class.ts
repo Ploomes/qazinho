@@ -57,6 +57,22 @@ export class VariableVault {
     });
   }
 
+  /** Gives a project a copy of another's variables, their values included. */
+  public async copy(props: { from: string; to: string }): Promise<VariablesOutcome> {
+    const values = await this.valuesOf(props.from);
+
+    return this.apply({
+      projectId: props.to,
+      changes: values.map(({ name, description, value }) => ({
+        kind: 'save',
+        name,
+        description,
+        value,
+        from: null,
+      })),
+    });
+  }
+
   /** Drops every variable of a project that is gone. */
   public async forget(projectId: string): Promise<void> {
     await this.serial(async () => {

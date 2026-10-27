@@ -11,7 +11,13 @@ import {
   walkRun,
 } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useSettingsStore, useSuiteStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useProStore,
+  useSettingsStore,
+  useSuiteStore,
+  useWorkspaceStore,
+} from '@/store';
 
 const PROJECT = { id: 'p1', name: 'Shop · staging', targets: [], repositories: [] };
 
@@ -25,6 +31,7 @@ beforeEach(() => {
   });
   useWorkspaceStore.setState({ workspaces: [], removingWorkspaceId: null });
   useSuiteStore.setState({ suites: {}, lists: {}, runs: {}, live: {}, picked: {} });
+  useProStore.setState({ shares: [] });
 });
 
 const SUITE = {
@@ -40,6 +47,83 @@ const SUITE = {
 };
 
 describe('useSidebarViewModel', () => {
+  describe('the link to QAzinho Pro', () => {
+    const LINKED = {
+      projectId: 'p1',
+      orgSlug: 'loja',
+      state: 'synced' as const,
+      syncedAt: null,
+      pending: [],
+      conflicts: [],
+    };
+
+    it('shows nothing on a project only on this computer', () => {
+      const { rows } = renderHook(() => useSidebarViewModel()).result.current;
+
+      expect(rows[0]).toMatchObject({ kind: 'header', pro: null });
+    });
+
+    it('marks a linked project, with what waits to be sent and what came from the org', () => {
+      useProStore.setState({
+        shares: [
+          {
+            ...LINKED,
+            pending: ['w1', 'w2'],
+            conflicts: [
+              {
+                workspaceId: 'w1',
+                base: [],
+                version: 4,
+                cases: [],
+                editedBy: null,
+                editedAt: '',
+              },
+            ],
+          },
+        ],
+      });
+
+      const { rows } = renderHook(() => useSidebarViewModel()).result.current;
+
+      expect(rows[0]).toMatchObject({
+        pro: {
+          label: 'Shop · staging on QAzinho Pro',
+          tip: '2 to send · 1 from the org',
+          pending: 2,
+          updates: 1,
+          hasPending: true,
+          hasUpdates: true,
+        },
+      });
+    });
+
+    it('says nothing waits on a linked project in step with its org', () => {
+      useProStore.setState({ shares: [LINKED] });
+
+      const { rows } = renderHook(() => useSidebarViewModel()).result.current;
+
+      expect(rows[0]).toMatchObject({
+        pro: { tip: '', hasPending: false, hasUpdates: false },
+      });
+    });
+
+    it('opens the project’s window on its QAzinho Pro section', () => {
+      useProStore.setState({ shares: [LINKED] });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onProSettings('p1');
+      });
+
+      expect(useAppStore.getState()).toMatchObject({
+        modal: 'project',
+        editingProjectId: 'p1',
+        projectSection: 'pro',
+      });
+    });
+  });
+
   describe('the suite row', () => {
     it("shows the suite a project runs under its workspaces, by the suite's name until it was read", () => {
       useSuiteStore.setState({ suites: { p1: SUITE } });

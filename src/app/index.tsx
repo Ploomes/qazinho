@@ -1,7 +1,7 @@
 import { AnimatePresence, MotionConfig } from 'motion/react';
 import { AssistantDock } from '@/modules/Assistant';
 import { Automation } from '@/modules/Automation';
-import { ProLinkModal } from '@/modules/Pro';
+import { ProLinkModal, ProMergeModal, ProRunWarning } from '@/modules/Pro';
 import { ProjectModal, VariablesModal, Welcome } from '@/modules/Project';
 import { RunNotice, RunReplay } from '@/modules/Run';
 import { Settings } from '@/modules/Settings';
@@ -22,6 +22,7 @@ export const App: React.FC = () => {
     isSettings,
     isAutomation,
     modal,
+    projectModalKey,
     variablesKey,
     hasMedia,
     hasRunNotice,
@@ -29,6 +30,8 @@ export const App: React.FC = () => {
     hasReplay,
     replayKey,
     hasProLink,
+    hasProMerge,
+    hasHeldRun,
   } = useAppViewModel();
 
   return (
@@ -49,10 +52,12 @@ export const App: React.FC = () => {
           {hasMedia && <Lightbox key="lightbox" />}
           {hasReplay && <RunReplay key={replayKey} />}
           {hasRunNotice && <RunNotice key={runNoticeKey} />}
-          {modal === 'project' && <ProjectModal key="project" />}
+          {modal === 'project' && <ProjectModal key={projectModalKey} />}
           {modal === 'workspace' && <NewWorkspaceModal key="workspace" />}
           {variablesKey !== null && <VariablesModal key={variablesKey} />}
           {hasProLink && <ProLinkModal key="pro-link" />}
+          {hasProMerge && <ProMergeModal key="pro-merge" />}
+          {hasHeldRun && <ProRunWarning key="pro-run-warning" />}
         </AnimatePresence>
 
         {!isOnboarding && <AssistantDock />}

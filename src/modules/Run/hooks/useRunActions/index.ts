@@ -8,6 +8,7 @@ import { EXPLORATION } from '@/shared/constants';
 import {
   useAppStore,
   useMachineStore,
+  useProStore,
   useSettingsStore,
   useWorkspaceStore,
 } from '@/store';
@@ -89,6 +90,30 @@ export const useRunActions = () => {
     return runId;
   };
 
+  const hasOrgUpdate = (workspaceId: string | null): boolean => {
+    const { workspace } = opened(workspaceId);
+
+    return useProStore
+      .getState()
+      .shares.some(
+        ({ projectId, conflicts }) =>
+          projectId === workspace?.projectId &&
+          conflicts.some((conflict) => conflict.workspaceId === workspace.id),
+      );
+  };
+
+  const runOwn = (mode: RunMode): void => {
+    const workspaceId = selectedId();
+
+    if (workspaceId !== null && hasOrgUpdate(workspaceId)) {
+      useProStore.getState().holdRun({ workspaceId, mode });
+
+      return;
+    }
+
+    runWorkspace(workspaceId, mode);
+  };
+
   const stopWorkspace = (workspaceId: string | null): void => {
     const { workspace } = opened(workspaceId);
 
@@ -102,13 +127,13 @@ export const useRunActions = () => {
     runWorkspace,
     stopWorkspace,
     onRun: () => {
-      runWorkspace(selectedId());
+      runOwn('replay');
     },
     onRunWithAgent: () => {
-      runWorkspace(selectedId(), 'agent');
+      runOwn('agent');
     },
     onExplore: () => {
-      runWorkspace(selectedId(), 'explore');
+      runOwn('explore');
     },
     onPause: () => {
       const { workspace } = opened(selectedId());

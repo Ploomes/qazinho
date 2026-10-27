@@ -68,6 +68,7 @@ async function downloadsWith(props: {
           orgSlug: adopt.orgSlug,
           state: 'synced',
           syncedAt: null,
+          pending: [],
           conflicts: [],
         });
       },

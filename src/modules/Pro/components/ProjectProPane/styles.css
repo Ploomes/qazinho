@@ -1,0 +1,110 @@
+.project-pro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.project-pro__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--raise);
+}
+
+.project-pro__title {
+  color: var(--ink);
+  font: var(--font-display-sm);
+}
+
+.project-pro__text,
+.project-pro__state {
+  margin: 0;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  text-wrap: pretty;
+}
+
+.project-pro__state {
+  color: var(--ink);
+}
+
+.project-pro__note {
+  margin: 0;
+  color: var(--ink3);
+  font: var(--font-ui-xs);
+  text-wrap: pretty;
+}
+
+.project-pro__eyebrow {
+  color: var(--ink3);
+  font: 500 var(--eyebrow-size) / 1.4 var(--font-mono);
+  letter-spacing: var(--eyebrow-tracking);
+  text-transform: uppercase;
+}
+
+.project-pro__orgs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.project-pro__org {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink2);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.project-pro__org:hover,
+.project-pro__org--on {
+  background: var(--sel);
+  color: var(--ink);
+}
+
+.project-pro__org:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 2px;
+}
+
+.project-pro__org-name {
+  font: var(--font-ui-sm);
+}
+
+.project-pro__org-note {
+  color: var(--ink3);
+  font: var(--font-mono-xs);
+}
+
+.project-pro__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project-pro__fact {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--ink2);
+  font: var(--font-mono-xs);
+}
+
+.project-pro__actions {
+  display: flex;
+  gap: var(--space-3);
+}

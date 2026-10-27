@@ -5,8 +5,9 @@ import { withShare } from './library';
 export const useProStore = create<IProStore>((set) => ({
   status: null,
   shares: [],
-  orgProjects: [],
   link: null,
+  merging: null,
+  heldRun: null,
 
   setStatus: (status) => set({ status }),
 
@@ -15,7 +16,9 @@ export const useProStore = create<IProStore>((set) => ({
   landShare: (share) =>
     set((state) => ({ shares: withShare({ shares: state.shares, share }) })),
 
-  setOrgProjects: (orgProjects) => set({ orgProjects }),
-
   setLink: (link) => set({ link }),
+
+  openMerge: (merging) => set({ merging }),
+
+  holdRun: (heldRun) => set({ heldRun }),
 }));

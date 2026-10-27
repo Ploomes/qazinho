@@ -135,76 +135,20 @@
 .pro-account__orgs {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
-}
-
-.pro-account__org {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-3);
-  border: 0;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--ink2);
-  text-align: left;
-  cursor: pointer;
-  transition:
-    background-color var(--dur-fast) var(--ease),
-    color var(--dur-fast) var(--ease);
-}
-
-.pro-account__org:hover,
-.pro-account__org--on {
-  background: var(--sel);
-  color: var(--ink);
-}
-
-.pro-account__org--off,
-.pro-account__org--off:hover {
-  background: transparent;
-  color: var(--ink3);
-  cursor: not-allowed;
-}
-
-.pro-account__org:focus-visible {
-  outline: 2px solid var(--lime);
-  outline-offset: 2px;
-}
-
-.pro-account__org-name {
-  font: var(--font-ui-sm);
-}
-
-.pro-account__org-note {
-  color: var(--ink3);
-  font: var(--font-mono-xs);
-}
-
-.pro-account__offers {
-  display: flex;
-  flex-direction: column;
   gap: var(--space-3);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.pro-account__offer {
+.pro-account__org {
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.pro-account__offer-text {
-  display: flex;
-  flex: 1;
   flex-direction: column;
   gap: var(--space-1);
   min-width: 0;
 }
 
-.pro-account__offer-name {
+.pro-account__org-name {
   overflow: hidden;
   color: var(--ink);
   font: var(--font-ui-sm);
@@ -212,21 +156,17 @@
   white-space: nowrap;
 }
 
-.pro-account__offer-meta {
+.pro-account__org-note {
   color: var(--ink3);
   font: var(--font-mono-xs);
 }
 
-.pro-account__offer-failure {
-  color: var(--fail);
-  font: var(--font-ui-xs);
-}
-
-.pro-account__download {
+.pro-account__clone {
   display: inline-flex;
-  flex: none;
   align-items: center;
+  align-self: flex-start;
   gap: var(--space-2);
+  margin-top: var(--space-1);
   padding: var(--space-2) var(--space-3);
   border: var(--edge-width) solid var(--edge);
   border-radius: var(--radius-sm);
@@ -239,14 +179,14 @@
     color var(--dur-fast) var(--ease);
 }
 
-.pro-account__download:hover:not(:disabled) {
+.pro-account__clone:hover {
   background: var(--sel);
   color: var(--ink);
 }
 
-.pro-account__download:disabled {
-  color: var(--ink3);
-  cursor: default;
+.pro-account__clone:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 2px;
 }
 
 .pro-account__actions {

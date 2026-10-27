@@ -1,11 +1,21 @@
-import type { ISidebarSuiteRow, SidebarRow } from '@/app/components/Sidebar/types';
+import type {
+  ISidebarProBadge,
+  ISidebarSuiteRow,
+  SidebarRow,
+} from '@/app/components/Sidebar/types';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SIDEBAR_STATUS } from '@/app/components/Sidebar/constants';
 import { workspaceMeta } from '@/modules/Workspace';
 import { Agent, Archive, Run } from '@/services';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
-import { useAppStore, useSettingsStore, useSuiteStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useProStore,
+  useSettingsStore,
+  useSuiteStore,
+  useWorkspaceStore,
+} from '@/store';
 
 export const useSidebarViewModel = () => {
   const { t } = useTranslation();
@@ -18,6 +28,8 @@ export const useSidebarViewModel = () => {
   const goHome = useAppStore((state) => state.goHome);
   const openProjectSettings = useAppStore((state) => state.openProjectSettings);
   const openAutomation = useAppStore((state) => state.openAutomation);
+  const openProSettings = useAppStore((state) => state.openProSettings);
+  const shares = useProStore((state) => state.shares);
   const screen = useAppStore((state) => state.screen);
   const automationProjectId = useAppStore((state) => state.automationProjectId);
   const suites = useSuiteStore((state) => state.suites);
@@ -74,12 +86,34 @@ export const useSidebarViewModel = () => {
     ];
   };
 
+  const proBadgeOf = (project: { id: string; name: string }): ISidebarProBadge | null => {
+    const share = shares.find(({ projectId }) => projectId === project.id);
+
+    if (share === undefined || share.orgSlug === null) return null;
+
+    const pending = share.pending.length;
+    const updates = share.conflicts.length;
+
+    return {
+      label: t('SIDEBAR.PRO_LINK', { name: project.name }),
+      tip: [
+        ...(pending > 0 ? [t('SIDEBAR.PRO_PENDING', { count: pending })] : []),
+        ...(updates > 0 ? [t('SIDEBAR.PRO_UPDATES', { count: updates })] : []),
+      ].join(' · '),
+      pending,
+      updates,
+      hasPending: pending > 0,
+      hasUpdates: updates > 0,
+    };
+  };
+
   const rows: SidebarRow[] = projects.flatMap((project) => [
     {
       kind: 'header' as const,
       id: `header-${project.id}`,
       projectId: project.id,
       name: project.name,
+      pro: proBadgeOf(project),
     },
     ...workspaces
       .filter((workspace) => workspace.projectId === project.id)
@@ -154,6 +188,7 @@ export const useSidebarViewModel = () => {
     onAskRemove: askRemoveWorkspace,
     onRemoveWorkspace,
     onProjectSettings: openProjectSettings,
+    onProSettings: openProSettings,
     onOpenSuite: openAutomation,
   };
 };

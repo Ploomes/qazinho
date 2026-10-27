@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { Button, Eyebrow, Input } from '@/shared/components/atoms';
+import { ProjectProPane } from '@/modules/Pro/components/ProjectProPane';
+import { Button, Eyebrow, Input, Switch } from '@/shared/components/atoms';
 import { FileField } from '@/shared/components/molecules';
 import { ModalFrame } from '@/shared/components/templates';
 import {
@@ -17,7 +18,7 @@ import './styles.css';
 
 /**
  * A project's window, in sections down its side: its name and targets, the code it is
- * made of, its variables, its automated suite, and deleting it.
+ * made of, its variables, its suite, its link to QAzinho Pro, and deleting it.
  */
 export const ProjectModal: React.FC = () => {
   const {
@@ -56,6 +57,15 @@ export const ProjectModal: React.FC = () => {
     onCancel,
     onConfirm,
     onSelectSection,
+    hasDeleteInOrg,
+    deleteInOrgLabel,
+    isDeleteInOrgOn,
+    onDeleteInOrgChange,
+    hasDeleteOrgNote,
+    deleteOrgNote,
+    hasDeleteFailure,
+    deleteFailure,
+    canDelete,
     onDelete,
   } = useProjectModalViewModel();
   const { t } = useTranslation();
@@ -179,6 +189,12 @@ export const ProjectModal: React.FC = () => {
           <SuiteField projectId={projectId} variableNames={variableNames} />
         </ProjectPane>
 
+        {isEditing && projectId !== null && (
+          <ProjectPane label={t('PROJECT.SECTION_PRO')} isOpen={isOpen.pro}>
+            <ProjectProPane projectId={projectId} />
+          </ProjectPane>
+        )}
+
         {isEditing && (
           <ProjectPane label={t('PROJECT.DELETE')} isOpen={isOpen.delete}>
             <div className="project-modal__danger">
@@ -193,9 +209,24 @@ export const ProjectModal: React.FC = () => {
                   ))}
                 </ul>
               )}
+              {hasDeleteInOrg && (
+                <Switch
+                  label={deleteInOrgLabel}
+                  isOn={isDeleteInOrgOn}
+                  onChange={onDeleteInOrgChange}
+                />
+              )}
+              {hasDeleteOrgNote && (
+                <p className="project-modal__danger-text">{deleteOrgNote}</p>
+              )}
               <p className="project-modal__danger-text">{t('PROJECT.DELETE_UNDO')}</p>
+              {hasDeleteFailure && (
+                <p className="project-modal__danger-failure" role="alert">
+                  {deleteFailure}
+                </p>
+              )}
               <div className="project-modal__danger-actions">
-                <Button variant="danger" onClick={onDelete}>
+                <Button variant="danger" disabled={!canDelete} onClick={onDelete}>
                   {t('PROJECT.DELETE')}
                 </Button>
               </div>

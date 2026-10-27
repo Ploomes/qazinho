@@ -1,9 +1,11 @@
 import type { IProSync, IProSyncRecord, ProUploader } from './types';
 import type {
+  IProPublishBrief,
   IProShare,
   IProSyncBatch,
   IProSyncCase,
   IProSyncRun,
+  ProRemoval,
   ProSyncState,
 } from '@/shared/types';
 import { mkdir, readFile, stat } from 'node:fs/promises';
@@ -18,22 +20,25 @@ import {
   evidenceKindOf,
   fileFactsOf,
   hashOf,
+  healedPlansOf,
   movedPlansOf,
+  pendingPlansOf,
   planBodyOf,
   projectBodyOf,
   recordingsBodyOf,
+  removalOf,
   runBodyOf,
   runFilesOf,
   stateOfRefusal,
 } from './library';
 
 /**
- * Sends every project of this computer to its org in the background, what changed since
- * the last time.
+ * Keeps each project this computer linked to an org in step with it: its runs and bugs as
+ * they happen, its plans when the QA sends them, and the plans the org moved since.
  */
 export class ProSync {
   private readonly api: IProSync['api'];
-  private readonly target: IProSync['target'];
+  private readonly token: IProSync['token'];
   private readonly machineName: string;
   private readonly file: string;
   private readonly archiveRoot: string;
@@ -49,7 +54,7 @@ export class ProSync {
 
   public constructor(props: IProSync) {
     this.api = props.api;
-    this.target = props.target;
+    this.token = props.token;
     this.machineName = props.machineName;
     this.file = props.file;
     this.archiveRoot = props.archiveRoot;
@@ -69,19 +74,59 @@ export class ProSync {
   }
 
   /**
-   * Sends what changed in a project, one push at a time per project; everything goes
-   * again to an org it never reached.
+   * Links a project to an org and sends it whole, its plans included; the media of runs
+   * before now stays here unless the QA sends the history's too.
    */
-  public async push(batch: IProSyncBatch): Promise<IProShare> {
+  public async publish(props: {
+    batch: IProSyncBatch;
+    orgSlug: string;
+    hasHistoryMedia: boolean;
+  }): Promise<IProShare> {
+    const { batch, orgSlug, hasHistoryMedia } = props;
+    const projectId = batch.project.projectId;
+
     return this.inTurn({
-      projectId: batch.project.projectId,
-      run: () => this.send(batch),
+      projectId,
+      run: async () => {
+        const records = await this.read();
+        const kept = records[projectId];
+
+        if (kept !== undefined && !this.isUnlinked(kept))
+          return this.shareOf({ projectId, record: kept });
+
+        records[projectId] = {
+          ...this.freshRecord(orgSlug),
+          mediaFrom: hasHistoryMedia ? null : this.now().toISOString(),
+        };
+        await this.write(records);
+
+        return this.send({ batch, withPlans: true });
+      },
     });
   }
 
   /**
-   * Builds a workspace's plan on the version the org moved it to, once the QA merged the
-   * two; the merged plan goes out on the next push.
+   * Sends what changed in a linked project but its plans: the project, its runs, bugs and
+   * recordings; each plan edited here is told as waiting to be sent.
+   */
+  public async push(batch: IProSyncBatch): Promise<IProShare> {
+    return this.inTurn({
+      projectId: batch.project.projectId,
+      run: () => this.send({ batch, withPlans: false }),
+    });
+  }
+
+  /** Sends a linked project's plans edited here, each as the org's next version. */
+  public async sendPlans(batch: IProSyncBatch): Promise<IProShare> {
+    return this.inTurn({
+      projectId: batch.project.projectId,
+      run: () => this.send({ batch, withPlans: true }),
+    });
+  }
+
+  /**
+   * Builds a workspace's plan on the version the org moved it to, once the QA took it in;
+   * what they kept of their own waits to be sent.
    */
   public async resolve(props: {
     projectId: string;
@@ -95,32 +140,41 @@ export class ProSync {
   }
 
   /**
-   * Asks the org for the plans it moved past what this computer sent, and hands each to
-   * the page.
+   * Asks each org for the plans it moved past what this computer took, and tells the page
+   * without changing them; a project the org no longer has is told gone.
    */
   public async pull(): Promise<void> {
-    const target = await this.target();
-    if (target === null) return;
+    const token = await this.token();
+    if (token === null) return;
 
-    const answer = await this.api.syncedProjects({
-      token: target.token,
-      org: target.orgSlug,
-    });
-    if (!answer.isOk) return;
+    const records = await this.read();
+    const orgs = [...new Set(Object.values(records).map(({ orgSlug }) => orgSlug))];
 
-    for (const [projectId, record] of Object.entries(await this.read())) {
-      const project = answer.value.projects.find((one) => one.desktopId === projectId);
-      if (
-        record.orgSlug !== target.orgSlug ||
-        !project ||
-        movedPlansOf({ record, plans: project.plans }).length === 0
-      )
-        continue;
+    for (const org of orgs) {
+      const answer = await this.api.syncedProjects({ token, org });
+      if (!answer.isOk) continue;
 
-      await this.inTurn({
-        projectId,
-        run: () => this.takeMoved({ projectId, plans: project.plans }),
-      });
+      for (const [projectId, record] of Object.entries(records)) {
+        if (record.orgSlug !== org || this.isUnlinked(record)) continue;
+
+        const project = answer.value.projects.find((one) => one.desktopId === projectId);
+
+        if (project === undefined && record.project !== null) {
+          await this.inTurn({
+            projectId,
+            run: () => this.markGone({ projectId, orgSlug: org }),
+          });
+          continue;
+        }
+
+        if (!project || movedPlansOf({ record, plans: project.plans }).length === 0)
+          continue;
+
+        await this.inTurn({
+          projectId,
+          run: () => this.takeMoved({ projectId, plans: project.plans }),
+        });
+      }
     }
   }
 
@@ -138,8 +192,8 @@ export class ProSync {
   }
 
   /**
-   * Keeps a project downloaded from its org as shared with it, each plan at the version
-   * it came in.
+   * Keeps a project downloaded from its org as linked to it, each plan at the version it
+   * came in.
    */
   public async adopt(props: {
     projectId: string;
@@ -159,27 +213,89 @@ export class ProSync {
         const records = await this.read();
 
         records[projectId] = {
-          orgSlug,
+          ...this.freshRecord(orgSlug),
           state: 'synced',
           syncedAt: this.now().toISOString(),
-          conflicts: [],
-          project: null,
+          project: '',
           plans: Object.fromEntries(
             plans.map(({ workspaceId, planId, version, cases }) => [
               workspaceId,
               { planId, version, hash: '', cases },
             ]),
           ),
-          runs: {},
-          bugs: {},
-          recordings: {},
-          evidence: {},
         };
         await this.write(records);
 
         return this.announce(this.shareOf({ projectId, record: records[projectId] }));
       },
     });
+  }
+
+  /** Unlinks a project: it stays here, and nothing of it goes to the org again. */
+  public async forget(projectId: string): Promise<IProShare> {
+    return this.inTurn({
+      projectId,
+      run: async () => {
+        const records = await this.read();
+
+        this.retries.get(projectId)?.();
+        this.retries.delete(projectId);
+        delete records[projectId];
+        await this.write(records);
+
+        return this.announce(this.shareOf({ projectId, record: undefined }));
+      },
+    });
+  }
+
+  /** Deletes a linked project in its org, then unlinks it; a refusal keeps both. */
+  public async remove(projectId: string): Promise<ProRemoval> {
+    const token = await this.token();
+    const record = (await this.read())[projectId];
+
+    if (record === undefined) return { isRemoved: true };
+    if (token === null) return { isRemoved: false, failure: 'signed-out' };
+
+    const removal = removalOf(
+      await this.api.deleteProject({ token, org: record.orgSlug, projectId }),
+    );
+
+    if (removal.isRemoved) await this.forget(projectId);
+
+    return removal;
+  }
+
+  /** What publishing a project sends, and what the media of its history weighs. */
+  public async brief(batch: IProSyncBatch): Promise<IProPublishBrief> {
+    const files = new Set<string>();
+
+    for (const run of batch.runs) {
+      const video = await this.videoOf({
+        workspaceId: run.workspaceId,
+        runId: run.runId,
+      });
+      const network = await this.networkOf(run);
+
+      for (const file of [...runFilesOf(run), video, network])
+        if (file !== null) files.add(file);
+    }
+
+    for (const bug of batch.bugs) for (const file of bugFilesOf(bug)) files.add(file);
+
+    let mediaBytes = 0;
+
+    for (const file of files) {
+      if (!isInside({ root: this.archiveRoot, file })) continue;
+
+      mediaBytes += (await stat(file).catch(() => null))?.size ?? 0;
+    }
+
+    return {
+      plans: batch.plans.length,
+      runs: batch.runs.length,
+      bugs: batch.bugs.length,
+      mediaBytes,
+    };
   }
 
   private inTurn(props: {
@@ -192,6 +308,43 @@ export class ProSync {
     this.turns.set(props.projectId, turn);
 
     return turn;
+  }
+
+  private freshRecord(orgSlug: string): IProSyncRecord {
+    return {
+      orgSlug,
+      state: 'sending',
+      syncedAt: null,
+      mediaFrom: null,
+      pending: [],
+      conflicts: [],
+      project: null,
+      plans: {},
+      runs: {},
+      bugs: {},
+      recordings: {},
+      evidence: {},
+    };
+  }
+
+  private isUnlinked(record: IProSyncRecord): boolean {
+    return record.state === 'gone' || record.state === 'no-access';
+  }
+
+  private async markGone(props: {
+    projectId: string;
+    orgSlug: string;
+  }): Promise<IProShare> {
+    const { projectId, orgSlug } = props;
+    const records = await this.read();
+    const record = records[projectId];
+
+    if (record?.orgSlug !== orgSlug) return this.shareOf({ projectId, record });
+
+    records[projectId] = { ...record, state: 'gone' };
+    await this.write(records);
+
+    return this.announce(this.shareOf({ projectId, record: records[projectId] }));
   }
 
   private async takeMoved(props: {
@@ -238,7 +391,7 @@ export class ProSync {
 
     records[projectId] = {
       ...record,
-      state: conflicts.length > 0 ? 'conflict' : 'sending',
+      state: conflicts.length > 0 ? 'conflict' : 'synced',
       conflicts,
       plans: {
         ...record.plans,
@@ -255,35 +408,30 @@ export class ProSync {
     return this.announce(this.shareOf({ projectId, record: records[projectId] }));
   }
 
-  private async send(batch: IProSyncBatch): Promise<IProShare> {
+  private async send(props: {
+    batch: IProSyncBatch;
+    withPlans: boolean;
+  }): Promise<IProShare> {
+    const { batch, withPlans } = props;
     const projectId = batch.project.projectId;
-    const target = await this.target();
-
-    if (target === null)
-      return { projectId, orgSlug: null, state: 'off', syncedAt: null, conflicts: [] };
-
+    const token = await this.token();
     const kept = (await this.read())[projectId];
-    const record: IProSyncRecord =
-      kept?.orgSlug === target.orgSlug
-        ? kept
-        : {
-            orgSlug: target.orgSlug,
-            state: 'sending',
-            syncedAt: null,
-            conflicts: [],
-            project: null,
-            plans: {},
-            runs: {},
-            bugs: {},
-            recordings: {},
-            evidence: {},
-          };
+
+    if (token === null || kept === undefined || this.isUnlinked(kept))
+      return this.shareOf({ projectId, record: kept });
+
+    const record: IProSyncRecord = {
+      ...kept,
+      plans: healedPlansOf({ record: kept, plans: batch.plans }),
+    };
 
     this.retries.get(projectId)?.();
     this.retries.delete(projectId);
     this.announce({ ...this.shareOf({ projectId, record }), state: 'sending' });
 
-    const refused = await this.sendAll({ batch, record, token: target.token });
+    const refused = await this.sendAll({ batch, record, token, withPlans });
+
+    record.pending = pendingPlansOf({ record, plans: batch.plans });
 
     if (refused !== null) {
       if (refused === 'waiting')
@@ -292,7 +440,10 @@ export class ProSync {
           this.schedule({
             ms: PRO_SYNC.retryMs,
             run: () => {
-              void this.push(batch);
+              void this.inTurn({
+                projectId,
+                run: () => this.send({ batch, withPlans }),
+              });
             },
           }),
         );
@@ -311,10 +462,11 @@ export class ProSync {
     batch: IProSyncBatch;
     record: IProSyncRecord;
     token: string;
+    withPlans: boolean;
   }): Promise<ProSyncState | null> {
     return (
       (await this.sendProject(props)) ??
-      (await this.sendPlans(props)) ??
+      (props.withPlans ? await this.sendEditedPlans(props) : null) ??
       (await this.sendRuns(props)) ??
       (await this.sendBugs(props)) ??
       (await this.sendRecordings(props))
@@ -339,7 +491,7 @@ export class ProSync {
       token,
       org: record.orgSlug,
       path: `projects/${encodeURIComponent(batch.project.projectId)}`,
-      body,
+      body: { ...body, canCreate: record.project === null },
     });
 
     if (!answer.isOk) return stateOfRefusal(answer);
@@ -349,22 +501,22 @@ export class ProSync {
     return null;
   }
 
-  private async sendPlans(props: {
+  private async sendEditedPlans(props: {
     batch: IProSyncBatch;
     record: IProSyncRecord;
     token: string;
   }): Promise<ProSyncState | null> {
     const { batch, record, token } = props;
+    const pending = pendingPlansOf({ record, plans: batch.plans });
 
     for (const plan of batch.plans) {
       const body = planBodyOf(plan);
-      const hash = hashOf(body);
       const kept = record.plans[plan.workspaceId];
       const isWaitingOnQa = record.conflicts.some(
         ({ workspaceId }) => workspaceId === plan.workspaceId,
       );
 
-      if (kept?.hash === hash || isWaitingOnQa) continue;
+      if (!pending.includes(plan.workspaceId) || isWaitingOnQa) continue;
 
       const answer = await this.api.syncPlan({
         token,
@@ -390,7 +542,7 @@ export class ProSync {
       record.plans[plan.workspaceId] = {
         planId: answer.value.plan.id,
         version: answer.value.plan.version,
-        hash,
+        hash: hashOf(body),
         cases: body.cases,
       };
     }
@@ -408,25 +560,33 @@ export class ProSync {
     for (const run of batch.runs) {
       const planId = record.plans[run.workspaceId]?.planId ?? null;
       const key = `${run.workspaceId}/${run.runId}`;
-      const videoFile =
-        (await this.videoOf({ workspaceId: run.workspaceId, runId: run.runId })) ??
-        this.sentVideoOf({ run, record });
-      const networkFile = await this.networkOf(run);
+      const hasMedia = this.hasMediaAt({ record, at: run.startedAt });
+      const videoFile = hasMedia
+        ? ((await this.videoOf({ workspaceId: run.workspaceId, runId: run.runId })) ??
+          this.sentVideoOf({ run, record }))
+        : null;
+      const networkFile = hasMedia ? await this.networkOf(run) : null;
       const hash = hashOf({
         run,
         hasVideo:
           videoFile !== null ||
-          (await this.isVideoRemoved({ workspaceId: run.workspaceId, runId: run.runId })),
+          (hasMedia &&
+            (await this.isVideoRemoved({
+              workspaceId: run.workspaceId,
+              runId: run.runId,
+            }))),
         hasNetwork: networkFile !== null,
       });
 
       if (planId === null || record.runs[key] === hash) continue;
 
-      const files = [
-        ...runFilesOf(run),
-        ...(videoFile === null ? [] : [videoFile]),
-        ...(networkFile === null ? [] : [networkFile]),
-      ];
+      const files = hasMedia
+        ? [
+            ...runFilesOf(run),
+            ...(videoFile === null ? [] : [videoFile]),
+            ...(networkFile === null ? [] : [networkFile]),
+          ]
+        : [];
       const keys = await this.keysOf({ files, record, token });
 
       if (typeof keys === 'string') return keys;
@@ -444,6 +604,10 @@ export class ProSync {
     }
 
     return null;
+  }
+
+  private hasMediaAt(props: { record: IProSyncRecord; at: string }): boolean {
+    return props.record.mediaFrom === null || props.at >= props.record.mediaFrom;
   }
 
   private async networkOf(run: IProSyncRun): Promise<string | null> {
@@ -483,7 +647,10 @@ export class ProSync {
 
       if (planId === null || record.bugs[key] === hash) continue;
 
-      const keys = await this.keysOf({ files: bugFilesOf(bug), record, token });
+      const files = this.hasMediaAt({ record, at: bug.firstSeenAt })
+        ? bugFilesOf(bug)
+        : [];
+      const keys = await this.keysOf({ files, record, token });
 
       if (typeof keys === 'string') return keys;
 
@@ -602,7 +769,7 @@ export class ProSync {
     const { projectId, record, state } = props;
     const records = await this.read();
 
-    if ((await this.target())?.orgSlug !== record.orgSlug)
+    if (records[projectId]?.orgSlug !== record.orgSlug)
       return this.shareOf({ projectId, record: records[projectId] });
 
     records[projectId] = { ...record, state };
@@ -618,12 +785,20 @@ export class ProSync {
     const { projectId, record } = props;
 
     return record === undefined
-      ? { projectId, orgSlug: null, state: 'off', syncedAt: null, conflicts: [] }
+      ? {
+          projectId,
+          orgSlug: null,
+          state: 'off',
+          syncedAt: null,
+          pending: [],
+          conflicts: [],
+        }
       : {
           projectId,
           orgSlug: record.orgSlug,
           state: record.state,
           syncedAt: record.syncedAt,
+          pending: record.pending,
           conflicts: record.conflicts,
         };
   }

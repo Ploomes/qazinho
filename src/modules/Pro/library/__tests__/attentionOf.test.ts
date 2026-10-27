@@ -7,12 +7,18 @@ const SIGNED_IN: ProStatus = {
   account: { email: 'ana@loja.dev', name: 'Ana' },
   machine: { id: 'm1', name: 'MacBook-Ana' },
   orgs: [{ slug: 'loja', name: 'Loja', role: 'editor', billingStatus: 'active' }],
-  orgSlug: 'loja',
   isReachable: true,
 };
 
 function shareOf(state: IProShare['state'], orgSlug = 'loja'): IProShare {
-  return { projectId: `p-${state}`, orgSlug, state, syncedAt: null, conflicts: [] };
+  return {
+    projectId: `p-${state}`,
+    orgSlug,
+    state,
+    syncedAt: null,
+    pending: [],
+    conflicts: [],
+  };
 }
 
 describe('attentionOf', () => {
@@ -26,28 +32,58 @@ describe('attentionOf', () => {
     expect(attentionOf({ status: null, shares: [] })).toBeNull();
   });
 
-  it('names an account with no org, and one that only reads', () => {
-    expect(
-      attentionOf({ status: { ...SIGNED_IN, orgs: [], orgSlug: null }, shares: [] }),
-    ).toBe('no-org');
-    expect(attentionOf({ status: { ...SIGNED_IN, orgSlug: null }, shares: [] })).toBe(
-      'reader',
+  it('names an account with no org, and one that only reads in every org', () => {
+    expect(attentionOf({ status: { ...SIGNED_IN, orgs: [] }, shares: [] })).toBe(
+      'no-org',
     );
+    expect(
+      attentionOf({
+        status: {
+          ...SIGNED_IN,
+          orgs: SIGNED_IN.orgs.map((org) => ({ ...org, role: 'reader' as const })),
+        },
+        shares: [],
+      }),
+    ).toBe('reader');
   });
 
-  it('names the gravest refusal of the org it sends to', () => {
+  it('does NOT call reader an account that writes in one of its orgs', () => {
     expect(
-      attentionOf({ status: SIGNED_IN, shares: [shareOf('failed'), shareOf('blocked')] }),
+      attentionOf({
+        status: {
+          ...SIGNED_IN,
+          orgs: [
+            ...SIGNED_IN.orgs,
+            { slug: 'outra', name: 'Outra', role: 'reader', billingStatus: 'active' },
+          ],
+        },
+        shares: [],
+      }),
+    ).toBeNull();
+  });
+
+  it('names the gravest refusal across every org a project is linked to', () => {
+    expect(
+      attentionOf({
+        status: SIGNED_IN,
+        shares: [shareOf('failed'), shareOf('blocked', 'outra')],
+      }),
     ).toBe('blocked');
     expect(attentionOf({ status: SIGNED_IN, shares: [shareOf('read-only')] })).toBe(
       'read-only',
     );
   });
 
-  it('does NOT count what another org refused before this computer moved', () => {
+  it('names a project the org deleted, and an org out of reach, above a failure', () => {
     expect(
-      attentionOf({ status: SIGNED_IN, shares: [shareOf('blocked', 'outra')] }),
-    ).toBeNull();
+      attentionOf({ status: SIGNED_IN, shares: [shareOf('failed'), shareOf('gone')] }),
+    ).toBe('gone');
+    expect(
+      attentionOf({
+        status: SIGNED_IN,
+        shares: [shareOf('failed'), shareOf('no-access')],
+      }),
+    ).toBe('no-access');
   });
 
   it('says the platform did not answer, below any refusal', () => {

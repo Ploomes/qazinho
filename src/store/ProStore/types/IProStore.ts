@@ -1,14 +1,19 @@
-import type { IProLink, IProOrgProject, IProShare, ProStatus } from '@/shared/types';
+import type { IProLink, IProShare, ProStatus, RunMode } from '@/shared/types';
 
-/** Where this machine stands with the QA's account, and each project's sending. */
+/**
+ * The QA's account, each project's link to its org, the plans being joined, and a run
+ * held until the QA updates its plan.
+ */
 export interface IProStore {
   status: ProStatus | null;
   shares: IProShare[];
-  orgProjects: IProOrgProject[];
   link: IProLink | null;
+  merging: string | null;
+  heldRun: { workspaceId: string; mode: RunMode } | null;
   setStatus: (status: ProStatus) => void;
   setShares: (shares: IProShare[]) => void;
   landShare: (share: IProShare) => void;
-  setOrgProjects: (projects: IProOrgProject[]) => void;
   setLink: (link: IProLink | null) => void;
+  openMerge: (projectId: string | null) => void;
+  holdRun: (held: { workspaceId: string; mode: RunMode } | null) => void;
 }

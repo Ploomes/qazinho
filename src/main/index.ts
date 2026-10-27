@@ -386,7 +386,7 @@ const bugFiler = new BugFiler({
 const variables = new VariableVault({ file: PATHS.variables, cipher: keychain });
 const proSync = new ProSync({
   api: proApi,
-  target: () => proAccount.target(),
+  token: () => proAccount.token(),
   machineName: hostname(),
   file: PATHS.proSync,
   archiveRoot: PATHS.data,
@@ -1495,6 +1495,9 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.forgetVariables, (_event, projectId: string) =>
     variables.forget(projectId),
   );
+  ipcMain.handle(CHANNELS.copyVariables, (_event, props: { from: string; to: string }) =>
+    variables.copy(props),
+  );
   ipcMain.handle(CHANNELS.githubStatus, () => github.status());
   ipcMain.handle(CHANNELS.signInGithub, () => github.signIn());
   ipcMain.handle(CHANNELS.cancelGithubSignIn, () => {
@@ -1513,10 +1516,26 @@ void app.whenReady().then(async () => {
   });
   ipcMain.handle(CHANNELS.signOutPro, () => proAccount.signOut());
   ipcMain.handle(CHANNELS.proShares, () => proSync.shares());
-  ipcMain.handle(CHANNELS.chooseProOrg, (_event, orgSlug: string) =>
-    proAccount.chooseOrg(orgSlug),
+  ipcMain.handle(
+    CHANNELS.publishPro,
+    (
+      _event,
+      props: { batch: IProSyncBatch; orgSlug: string; hasHistoryMedia: boolean },
+    ) => proSync.publish(props),
   );
   ipcMain.handle(CHANNELS.syncPro, (_event, batch: IProSyncBatch) => proSync.push(batch));
+  ipcMain.handle(CHANNELS.sendProPlans, (_event, batch: IProSyncBatch) =>
+    proSync.sendPlans(batch),
+  );
+  ipcMain.handle(CHANNELS.unlinkPro, (_event, projectId: string) =>
+    proSync.forget(projectId),
+  );
+  ipcMain.handle(CHANNELS.removeProProject, (_event, projectId: string) =>
+    proSync.remove(projectId),
+  );
+  ipcMain.handle(CHANNELS.briefPro, (_event, batch: IProSyncBatch) =>
+    proSync.brief(batch),
+  );
   ipcMain.handle(
     CHANNELS.resolveProConflict,
     (_event, props: { projectId: string; workspaceId: string; version: number }) =>
