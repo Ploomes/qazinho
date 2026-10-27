@@ -28,6 +28,7 @@ afterEach(async () => {
 
 const ASK = {
   workspaceId: 'w1',
+  projectId: 'p1',
   agentId: 'claude-code',
   model: '',
   sessionId: null,

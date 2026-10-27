@@ -1,5 +1,6 @@
 import type { IAppPeek } from './types';
 import type { AppLook } from '@salve-software/qazinho-harness';
+import type { IWebAccess } from '@salve-software/qazinho-harness/engine';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { stripAnsi } from '@/main/library';
@@ -15,13 +16,13 @@ export class AppPeek {
     this.folder = props.folder;
   }
 
-  /** What the app's page reads, looked at once and kept for a while; a page that did not open is tried again next time. */
-  public async look(url: string): Promise<AppLook> {
+  /** What the app's page reads, looked at once and kept for a while, into a protected environment with the access given; a page that did not open is tried again next time. */
+  public async look(url: string, access?: IWebAccess): Promise<AppLook> {
     const kept = this.looks.get(url);
 
     if (kept && Date.now() - kept.at < APP_PEEK.keepMs) return kept.look;
 
-    const look = this.open(url).then((seen) => {
+    const look = this.open(url, access).then((seen) => {
       if (!seen.isOpen) this.looks.delete(url);
 
       return seen;
@@ -32,9 +33,13 @@ export class AppPeek {
     return look;
   }
 
-  private async open(url: string): Promise<AppLook> {
+  private async open(url: string, access?: IWebAccess): Promise<AppLook> {
     const profileDir = await mkdtemp(join(this.folder, 'qazinho-look-'));
-    const driver = new WebDriver({ url, profileDir });
+    const driver = new WebDriver({
+      url,
+      profileDir,
+      ...(access === undefined ? {} : { access }),
+    });
 
     try {
       await driver.open();

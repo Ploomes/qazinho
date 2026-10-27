@@ -177,6 +177,7 @@ import {
   listAvds,
   newestBuildTools,
   packageOfApk,
+  webAccessOf,
 } from '@salve-software/qazinho-harness/engine';
 
 const agents = new AgentDetector();
@@ -857,7 +858,10 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
   try {
     const [look, prepared, read, opened] = await Promise.all([
       ask.target?.kind === 'web'
-        ? peek.look(ask.target.value)
+        ? peek.look(
+            ask.target.value,
+            webAccessOf(await variables.valuesOf(ask.projectId).catch(() => [])),
+          )
         : phone === null
           ? Promise.resolve(null)
           : phonePeek.look(phone),

@@ -52,6 +52,7 @@ export const useChatAgent = () => {
 
     void Agent.ask({
       workspaceId,
+      projectId: workspace.projectId,
       agentId,
       model,
       sessionId: sessionFor({ workspace, agentId }),
