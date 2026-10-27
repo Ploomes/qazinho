@@ -1645,6 +1645,9 @@ export const pt: typeof en = {
     PANE_SENDING: 'Enviando…',
     PANE_UPDATES_ONE: '1 plano mudou na org: {{names}}.',
     PANE_UPDATES_OTHER: '{{count}} planos mudaram na org: {{names}}.',
+    PANE_UPDATES_RUNNING_ONE: '{{names}} está rodando: atualize quando a run terminar.',
+    PANE_UPDATES_RUNNING_OTHER:
+      '{{names}} estão rodando: atualize quando as runs terminarem.',
     PANE_UPDATE: 'Atualizar da org',
     PANE_UPDATING: 'Atualizando…',
     PANE_COPY_TITLE: 'Levar para outra org',

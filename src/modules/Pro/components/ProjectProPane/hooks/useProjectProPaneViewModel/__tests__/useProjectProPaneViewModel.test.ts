@@ -7,6 +7,7 @@ import { useProjectProPaneViewModel } from '@/modules/Pro/components/ProjectProP
 import {
   makeWorkspace,
   recordedRun,
+  walkRun,
 } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import {
@@ -252,6 +253,25 @@ describe('useProjectProPaneViewModel', () => {
       await waitFor(() => {
         expect(result.current.linked.updateLabel).toBe('Update from the org');
       });
+    });
+
+    it('says which moved plans are running, and offers no update while every one is', () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          walkRun({ workspace: recordedRun(['passed']), verdicts: ['passed'] }),
+        ],
+      });
+      useProStore.setState({
+        shares: [{ ...LINKED, state: 'conflict', conflicts: [MOVED] }],
+      });
+
+      const { linked } = pane().result.current;
+
+      expect(linked.hasUpdatesRunning).toBe(true);
+      expect(linked.updatesRunningText).toBe(
+        'Checkout regression is running: update it once its run ends.',
+      );
+      expect(linked.canUpdate).toBe(false);
     });
 
     it('unlinks the project, which stays here', async () => {

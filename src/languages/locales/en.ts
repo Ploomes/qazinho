@@ -1637,6 +1637,8 @@ export const en = {
     PANE_SENDING: 'Sending…',
     PANE_UPDATES_ONE: '1 plan changed in the org: {{names}}.',
     PANE_UPDATES_OTHER: '{{count}} plans changed in the org: {{names}}.',
+    PANE_UPDATES_RUNNING_ONE: '{{names}} is running: update it once its run ends.',
+    PANE_UPDATES_RUNNING_OTHER: '{{names}} are running: update them once their runs end.',
     PANE_UPDATE: 'Update from the org',
     PANE_UPDATING: 'Updating…',
     PANE_COPY_TITLE: 'Take it to another org',

@@ -85,6 +85,11 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
             {view.linked.hasUpdates && (
               <>
                 <p className="project-pro__text">{view.linked.updatesText}</p>
+                {view.linked.hasUpdatesRunning && (
+                  <p className="project-pro__note" role="status">
+                    {view.linked.updatesRunningText}
+                  </p>
+                )}
                 <div className="project-pro__actions">
                   <Button
                     variant="secondary"

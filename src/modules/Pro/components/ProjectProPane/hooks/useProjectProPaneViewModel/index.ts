@@ -11,6 +11,7 @@ import { useProUpdate } from '@/modules/Pro/hooks/useProUpdate';
 import {
   bytesLabelOf,
   copiedProjectOf,
+  planUpdatesOf,
   proBatchOf,
   publishingOrgOf,
 } from '@/modules/Pro/library';
@@ -134,6 +135,10 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
 
   const pending = share?.pending ?? [];
   const updates = share?.conflicts ?? [];
+  const moved = planUpdatesOf({ share, workspaces });
+  const running = moved
+    .filter(({ isBusy }) => isBusy)
+    .map(({ workspace }) => workspace.id);
   const stateKey = share === undefined ? undefined : PANE_STATE_KEYS[share.state];
   const sentAt =
     share?.syncedAt === null || share?.syncedAt === undefined
@@ -227,8 +232,13 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
               count: updates.length,
               names: namesOf(updates.map(({ workspaceId }) => workspaceId)),
             }),
+      hasUpdatesRunning: running.length > 0,
+      updatesRunningText:
+        running.length === 1
+          ? t('PRO.PANE_UPDATES_RUNNING_ONE', { names: namesOf(running) })
+          : t('PRO.PANE_UPDATES_RUNNING_OTHER', { names: namesOf(running) }),
       updateLabel: working === 'update' ? t('PRO.PANE_UPDATING') : t('PRO.PANE_UPDATE'),
-      canUpdate: working === null,
+      canUpdate: working === null && moved.some(({ isBusy }) => !isBusy),
       copyTitle: t('PRO.PANE_COPY_TITLE'),
       copyText: t('PRO.PANE_COPY_TEXT'),
       copyLabel: t('PRO.PANE_COPY'),
