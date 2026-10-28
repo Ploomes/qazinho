@@ -32,8 +32,8 @@ const NEEDS_TARGET =
   'A project needs at least one target: a web address, an Android .apk or an iOS simulator .app.';
 
 /**
- * Creates or changes a project the way its settings would, and links or lists the QA's
- * GitHub repositories.
+ * Cria ou muda um projeto do jeito que as configurações dele fariam, e liga ou lista os
+ * repositórios do GitHub do QA.
  */
 export async function performProjectChange(props: {
   call: ProjectCall;

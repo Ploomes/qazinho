@@ -6,8 +6,7 @@ import { describeWorkspace } from './describeWorkspace';
 import { findByRef } from './findByRef';
 
 /**
- * Reads a workspace, one of its runs or one of its bugs for the assistant, changing
- * nothing.
+ * Lê um workspace, uma das runs ou um dos bugs dele para o assistente, sem mudar nada.
  */
 export function performReading(props: {
   call: Extract<

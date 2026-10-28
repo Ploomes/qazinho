@@ -2,8 +2,8 @@ import type { IWorkspace } from '@/modules/Workspace/types';
 import { appearancesOf } from '@/modules/Bug/library';
 
 /**
- * One bug of a workspace in full for the assistant: expected and actual, its frame, steps
- * and issue.
+ * Um bug de um workspace inteiro para o assistente: esperado e obtido, o frame, os passos
+ * e a issue.
  */
 export function describeBug(props: { workspace: IWorkspace; bugId: string }): {
   text: string;

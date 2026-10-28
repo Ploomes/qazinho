@@ -26,8 +26,8 @@ describe('useAssistantDockViewModel', () => {
   });
 
   /**
-   * The chat opened over the device, covering the live screen of a run and its controls:
-   * evidence is never under a sticker.
+   * O chat abria sobre o dispositivo, cobrindo a tela viva de uma run e os controles
+   * dela: a evidência nunca fica sob um sticker.
    */
   it('opens the chat beside the panel while it shows a run live, never over its screen', () => {
     Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true });
@@ -54,7 +54,10 @@ describe('useAssistantDockViewModel', () => {
     expect(result.current.style).toMatchObject({ '--assistant-panel-shift': '0px' });
   });
 
-  /** Once the panel held the plan and the bugs too, moving aside put the chat mid-screen. */
+  /**
+   * Quando o painel passou a guardar o plano e os bugs também, ir para o lado punha o
+   * chat no meio da tela.
+   */
   it('does NOT move aside for a device with no run going', () => {
     useAppStore.setState({
       screen: 'workspace',

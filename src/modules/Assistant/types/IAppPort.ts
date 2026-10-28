@@ -24,7 +24,10 @@ import type {
 } from '@/shared/types';
 import type { Theme } from '@/store/AppStore/types';
 
-/** Everything the assistant's tools do in QAzinho, the way the QA's own clicks do it. */
+/**
+ * Tudo o que as ferramentas do assistente fazem no QAzinho, do jeito que os próprios
+ * cliques do QA fazem.
+ */
 export interface IAppPort {
   read: () => IAppState;
   now: () => number;

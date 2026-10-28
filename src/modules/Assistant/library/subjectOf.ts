@@ -4,8 +4,8 @@ import type { AppToolCall } from '@/shared/types';
 const INTEGRATION_NAMES = { github: 'GitHub', jira: 'Jira' } as const;
 
 /**
- * What a tool call touches, in the words the QA reads on its line: a workspace or project
- * by name, a run, a bug, a repository.
+ * O que uma chamada de ferramenta toca, nas palavras que o QA lê na linha dela: um
+ * workspace ou projeto pelo nome, uma run, um bug, um repositório.
  */
 export function subjectOf(props: { call: AppToolCall; state: IAppState }): string {
   const { call, state } = props;

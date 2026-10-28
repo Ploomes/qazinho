@@ -10,8 +10,8 @@ const WHAT = {
 } as const;
 
 /**
- * Starts a build of a project's app from one of its repositories, or says how the builds
- * went.
+ * Inicia um build do app de um projeto a partir de um dos repositórios dele, ou diz como
+ * os builds foram.
  */
 export function performBuild(props: {
   call: Extract<AppToolCall, { name: 'build_app' | 'build_status' }>;

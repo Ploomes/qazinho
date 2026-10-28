@@ -11,8 +11,8 @@ const ENDINGS = {
 } as const;
 
 /**
- * A workspace in full for the assistant: target, design, plan, runs, bugs and what it
- * waits on.
+ * Um workspace inteiro para o assistente: alvo, design, plano, runs, bugs e o que ele
+ * espera.
  */
 export function describeWorkspace(props: {
   workspace: IWorkspace;

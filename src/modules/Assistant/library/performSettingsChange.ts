@@ -4,8 +4,8 @@ import type { AppToolCall, IntegrationId } from '@/shared/types';
 const NAMES: Record<IntegrationId, string> = { github: 'GitHub', jira: 'Jira' };
 
 /**
- * Changes how QAzinho looks and calls the QA, and connects or disconnects a tracker, the
- * disconnecting once the QA confirms.
+ * Muda como o QAzinho se parece e chama o QA, e conecta ou desconecta um tracker,
+ * desconectando só depois que o QA confirma.
  */
 export async function performSettingsChange(props: {
   id: string;

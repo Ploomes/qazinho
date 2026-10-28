@@ -4,8 +4,8 @@ import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IIntegrationStatus, IVariableBrief } from '@/shared/types';
 
 /**
- * QAzinho as the assistant's tools read it: projects, workspaces, trackers, builds and
- * variables.
+ * O QAzinho como as ferramentas do assistente o leem: projetos, workspaces, trackers,
+ * builds e variáveis.
  */
 export interface IAppState {
   projects: IProject[];

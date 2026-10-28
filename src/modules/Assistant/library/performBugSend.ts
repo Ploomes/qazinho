@@ -22,8 +22,8 @@ const FAILURES: Record<FilingFailure, string> = {
 };
 
 /**
- * Sends a bug to the QA's tracker once they confirm it: where they named, else the
- * project's usual one.
+ * Manda um bug ao tracker do QA assim que ele confirma: para onde ele nomeou, senão o de
+ * costume do projeto.
  */
 export async function performBugSend(props: {
   id: string;

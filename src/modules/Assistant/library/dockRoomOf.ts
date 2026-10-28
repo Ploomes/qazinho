@@ -2,8 +2,8 @@ import { ASSISTANT_DOCK } from '@/modules/Assistant/constants';
 import { PANEL } from '@/modules/Workspace/constants';
 
 /**
- * How far the Estagiário's button reaches past the panel's rail into the workspace's
- * column, gap included; nothing when the open panel takes the corner.
+ * Até onde o botão do Estagiário passa do trilho do painel para dentro da coluna do
+ * workspace, gap incluído; nada quando o painel aberto ocupa o canto.
  */
 export function dockRoomOf(props: {
   isWorkspace: boolean;

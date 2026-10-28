@@ -2,8 +2,8 @@ import type { ConfirmAction } from './ConfirmAction';
 import type { ConfirmDecision } from './ConfirmDecision';
 
 /**
- * Something the assistant would remove or send out, waiting for the QA on screen; `count`
- * is how many workspaces go with a project, `detail` where a bug would go.
+ * Algo que o assistente removeria ou mandaria para fora, esperando pelo QA na tela;
+ * `count` é quantos workspaces vão com um projeto, `detail` para onde um bug iria.
  */
 export interface IAssistantConfirmMessage {
   kind: 'confirm';

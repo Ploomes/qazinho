@@ -28,8 +28,8 @@ const PAGE_REFUSALS: Record<JiraFailure, string> = {
 };
 
 /**
- * Hands the QA's request to a workspace's own chat, as if typed there, with its sources,
- * and opens it.
+ * Entrega o pedido do QA ao chat próprio de um workspace, como se digitado lá, com as
+ * fontes dele, e o abre.
  */
 export async function performChatAsk(props: {
   call: Extract<AppToolCall, { name: 'ask_workspace_chat' }>;

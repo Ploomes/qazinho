@@ -35,7 +35,10 @@ describe('performSettingsChange', () => {
     expect(did).toEqual(['connect jira']);
   });
 
-  /** The Estagiário told the QA to authorize in a browser while a signed-in gh had connected at once. */
+  /**
+   * O Estagiário mandava o QA autorizar num navegador enquanto um gh logado já tinha
+   * conectado na hora.
+   */
   it("starts GitHub's connection and leaves its steps to the card", async () => {
     const { port, did } = fakePort({ state: { integrations: [] } });
     const done = await performSettingsChange({

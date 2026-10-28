@@ -4,8 +4,8 @@ import { useAssistantDockViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The Estagiário in QAzinho's corner: a sticker with his face, and his little chat rising
- * above it.
+ * O Estagiário no canto do QAzinho: um sticker com o rosto dele, e o chatzinho dele
+ * subindo acima.
  */
 export const AssistantDock: React.FC = () => {
   const { isOpen, style } = useAssistantDockViewModel();

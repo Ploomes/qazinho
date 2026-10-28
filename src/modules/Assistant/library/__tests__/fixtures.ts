@@ -19,13 +19,16 @@ export const PROJECT: IProject = {
   repositories: [{ id: '101', owner: 'acme', name: 'loja-web', baseBranch: 'develop' }],
 };
 
-/** w1, "Checkout regression": a plan of two cases, run r-01 finished with one failed step, and BUG-01. */
+/**
+ * w1, "Checkout regression": um plano de dois casos, a run r-01 terminada com um passo
+ * que falhou, e o BUG-01.
+ */
 export const CHECKOUT: IWorkspace = walkRun({
   verdicts: ['passed', 'failed', 'passed', 'passed', 'passed', 'passed'],
   isFinished: true,
 });
 
-/** w2, "Login": on the project's Android target, with nothing in it yet. */
+/** w2, "Login": no alvo Android do projeto, ainda sem nada. */
 export const LOGIN: IWorkspace = {
   ...makeWorkspace([]),
   id: 'w2',
@@ -58,7 +61,10 @@ export const REPOSITORIES: IRepositoryList = {
   ],
 };
 
-/** A QAzinho in memory behind the port: every change lands in its state, and every call is written down in `did`. */
+/**
+ * Um QAzinho em memória atrás da porta: toda mudança cai no estado dele, e toda chamada é
+ * anotada em `did`.
+ */
 export function fakePort(
   props: {
     state?: Partial<IAppState>;

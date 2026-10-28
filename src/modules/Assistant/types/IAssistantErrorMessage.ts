@@ -1,4 +1,4 @@
-/** Why the assistant could not answer, in the QA's language. */
+/** Por que o assistente não conseguiu responder, no idioma do QA. */
 export interface IAssistantErrorMessage {
   kind: 'error';
   id: string;

@@ -1,2 +1,2 @@
-/** How a tool the assistant used went: still going, done, or refused. */
+/** Como foi uma ferramenta que o assistente usou: ainda andando, feita, ou recusada. */
 export type ToolState = 'doing' | 'done' | 'failed';

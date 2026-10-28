@@ -6,7 +6,7 @@ import { useAssistantEvents } from '@/modules/Assistant/hooks/useAssistantEvents
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAssistantStore, useMachineStore } from '@/store';
 
-/** The assistant's agent events, as main sends them on their own channel. */
+/** Os eventos do agente do assistente, como a main os manda no canal próprio deles. */
 function bridge() {
   let hear: (event: IAgentEvent) => void = () => undefined;
 

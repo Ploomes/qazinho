@@ -1,8 +1,8 @@
 import type { IConfluencePageRef } from '@/shared/types';
 
 /**
- * The page a search found that the QA meant: the one with the id their link had, else the
- * one titled as they wrote it, else the first found; null when none was.
+ * A página que uma busca achou e que o QA quis dizer: a com o id que o link dele tinha,
+ * senão a com o título como ele escreveu, senão a primeira; null quando nenhuma.
  */
 export function pickPage(props: {
   wanted: { id: string | null; title: string };

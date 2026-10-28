@@ -15,7 +15,7 @@ const ASKED: IAssistantConfirmMessage = {
   decision: null,
 };
 
-/** The card reads its message from the store, the way the panel hands it the latest one. */
+/** O cartão lê a mensagem da store, do jeito que o painel lhe entrega a última. */
 function card(message: IAssistantConfirmMessage) {
   useAssistantStore.setState({ messages: [message] });
 

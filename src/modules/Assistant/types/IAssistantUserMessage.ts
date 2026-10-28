@@ -1,4 +1,4 @@
-/** What the QA wrote to the assistant. */
+/** O que o QA escreveu ao assistente. */
 export interface IAssistantUserMessage {
   kind: 'user';
   id: string;

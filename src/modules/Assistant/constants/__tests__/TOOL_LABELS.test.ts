@@ -8,8 +8,9 @@ import {
 } from '@/modules/Assistant/constants';
 
 /**
- * The table is typed over every AppToolCall but the confirmed ones, and the harness's compiler
- * holds AppToolCall to the tools' zod schemas, so a tool with no line here does not compile.
+ * A tabela é tipada sobre todo AppToolCall menos os confirmados, e o compilador do
+ * harness prende o AppToolCall aos schemas zod das ferramentas, então uma ferramenta sem
+ * linha aqui não compila.
  */
 describe('TOOL_LABELS', () => {
   it('gives no line to a tool the QA confirms on a card instead', () => {

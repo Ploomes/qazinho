@@ -1,4 +1,4 @@
-/** What the assistant asked to do that the QA confirms on screen first. */
+/** O que o assistente pediu para fazer e que o QA confirma na tela antes. */
 export type ConfirmAction =
   | 'delete_workspace'
   | 'delete_project'

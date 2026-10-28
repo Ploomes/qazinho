@@ -16,8 +16,8 @@ import { openRoundOf } from './openRoundOf';
 const INTEGRATIONS: IntegrationId[] = ['github', 'jira'];
 
 /**
- * QAzinho as the assistant reads it with a message: what is on screen, how the QA set it
- * up, and every project and workspace.
+ * O QAzinho como o assistente o lê com uma mensagem: o que está na tela, como o QA o
+ * configurou, e todo projeto e workspace.
  */
 export function appSnapshotOf(props: {
   screen: Screen;

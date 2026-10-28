@@ -1,6 +1,6 @@
 /**
- * What a tool did, in words for the agent, whether it failed, and the build it started
- * when it started one.
+ * O que uma ferramenta fez, em palavras para o agente, se falhou, e o build que iniciou
+ * quando iniciou um.
  */
 export interface IToolDone {
   text: string;

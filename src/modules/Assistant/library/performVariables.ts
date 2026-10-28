@@ -13,8 +13,8 @@ const FAILURES: Record<VariableFailure['reason'], string> = {
 };
 
 /**
- * Asks the QA for a project's variables in the window, or renames one or changes what it
- * holds, never touching a value.
+ * Pede ao QA as variáveis de um projeto na janela, ou renomeia uma ou muda o que ela
+ * guarda, nunca tocando num valor.
  */
 export async function performVariables(props: {
   call: Extract<AppToolCall, { name: 'ask_variables' | 'update_variable' }>;

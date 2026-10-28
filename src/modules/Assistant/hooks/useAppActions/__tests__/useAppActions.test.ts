@@ -19,7 +19,10 @@ import {
   useWorkspaceStore,
 } from '@/store';
 
-/** The bridge as main drives it: a call handed to the page, and the answers the page sends back. */
+/**
+ * A bridge como a main a dirige: uma chamada entregue à página, e as respostas que a
+ * página manda de volta.
+ */
 function bridge() {
   const answers: IAppToolAnswer[] = [];
   let hand: (request: IAppToolRequest) => void = () => undefined;

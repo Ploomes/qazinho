@@ -4,8 +4,8 @@ import { findByRef } from './findByRef';
 import { variableRefOf } from './variableRefOf';
 
 /**
- * Deletes a workspace, a project with every workspace in it, or a project's variable,
- * once the QA confirms it on screen.
+ * Apaga um workspace, um projeto com todo workspace nele, ou uma variável de um projeto,
+ * assim que o QA confirma na tela.
  */
 export async function performRemoval(props: {
   id: string;

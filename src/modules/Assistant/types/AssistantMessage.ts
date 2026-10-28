@@ -5,7 +5,7 @@ import type { IAssistantNoteMessage } from './IAssistantNoteMessage';
 import type { IAssistantToolMessage } from './IAssistantToolMessage';
 import type { IAssistantUserMessage } from './IAssistantUserMessage';
 
-/** One line of the assistant's chat. */
+/** Uma linha do chat do assistente. */
 export type AssistantMessage =
   | IAssistantUserMessage
   | IAssistantAgentMessage

@@ -1,8 +1,8 @@
 import type { AssistantSuggestion } from '@/modules/Assistant/types';
 
 /**
- * The first messages an empty chat offers: about the workspace on screen when there is
- * one, a first project when there is none.
+ * As primeiras mensagens que um chat vazio oferece: sobre o workspace na tela quando há
+ * um, um primeiro projeto quando não há.
  */
 export function suggestionsFor(props: {
   hasProjects: boolean;

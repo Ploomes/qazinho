@@ -14,8 +14,8 @@ import { useAssistantPanelViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The Estagiário's little chat: who he is and what he is up to, what was said and done,
- * and the field to ask him.
+ * O chatzinho do Estagiário: quem ele é e o que está fazendo, o que foi dito e feito, e o
+ * campo para perguntar a ele.
  */
 export const AssistantPanel: React.FC = () => {
   const {

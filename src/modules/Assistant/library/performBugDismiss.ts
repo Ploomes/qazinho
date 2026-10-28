@@ -2,7 +2,9 @@ import type { IAppPort, IToolDone } from '@/modules/Assistant/types';
 import type { AppToolCall } from '@/shared/types';
 import { findByRef } from './findByRef';
 
-/** Takes the QA's word that a bug is none, or opens one they had dismissed again. */
+/**
+ * Aceita a palavra do QA de que um bug não é bug, ou reabre um que ele tinha descartado.
+ */
 export function performBugDismiss(props: {
   call: Extract<AppToolCall, { name: 'dismiss_bug' }>;
   port: IAppPort;

@@ -1,6 +1,6 @@
 /**
- * The item a reference names, by its id or else by its name in any case; one naming none
- * or several says so, listing what there is.
+ * O item que uma referência nomeia, pelo id ou senão pelo nome sem caixa; uma que não
+ * nomeia nenhum ou vários diz isso, listando o que há.
  */
 export function findByRef<T extends { id: string; name: string }>(props: {
   items: T[];

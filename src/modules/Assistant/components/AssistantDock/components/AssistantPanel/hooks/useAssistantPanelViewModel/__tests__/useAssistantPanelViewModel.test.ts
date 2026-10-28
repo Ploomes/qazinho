@@ -24,7 +24,10 @@ const ANSWERED: IAssistantTurn = {
   failure: null,
 };
 
-/** A bridge whose assistant answers each ask with the next turn it is handed, and remembers every ask. */
+/**
+ * Uma bridge cujo assistente responde cada pedido com o próximo turno que recebe, e
+ * lembra todo pedido.
+ */
 function bridge(turns: IAssistantTurn[] = [ANSWERED]) {
   const asked: IAssistantAsk[] = [];
 

@@ -6,8 +6,8 @@ import { useAssistantButtonViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The Estagiário's face on a sticker in the corner: it opens his chat, thinks while he
- * works, and counts the answers that came while it was shut.
+ * O rosto do Estagiário num sticker no canto: abre o chat dele, pensa enquanto ele
+ * trabalha, e conta as respostas que chegaram com ele fechado.
  */
 export const AssistantButton: React.FC = () => {
   const {

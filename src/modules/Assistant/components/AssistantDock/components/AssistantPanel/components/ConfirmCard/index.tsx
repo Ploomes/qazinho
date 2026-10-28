@@ -6,8 +6,8 @@ import { useConfirmCardViewModel } from './hooks';
 import './styles.css';
 
 /**
- * Something the assistant would remove or send out, held until the QA answers on this
- * card, which then says what they chose.
+ * Algo que o assistente removeria ou mandaria para fora, segurado até o QA responder
+ * neste cartão, que depois diz o que ele escolheu.
  */
 export const ConfirmCard: React.FC<IConfirmCardProps> = (props) => {
   const {

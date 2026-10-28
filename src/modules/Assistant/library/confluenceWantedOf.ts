@@ -1,6 +1,6 @@
 /**
- * What the QA named a Confluence page by: its id and title out of a page's link, or the
- * title they typed.
+ * Pelo que o QA nomeou uma página do Confluence: o id e o título vindos do link de uma
+ * página, ou o título que digitou.
  */
 export function confluenceWantedOf(text: string): { id: string | null; title: string } {
   const link = /\/pages\/(\d+)(?:\/([^/?#]+))?/.exec(text);

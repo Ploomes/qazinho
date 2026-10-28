@@ -22,8 +22,8 @@ type WorkspaceCall = Extract<
 >;
 
 /**
- * Creates, renames, runs or stops a workspace, or links its Figma design, the way the
- * QA's own clicks do.
+ * Cria, renomeia, roda ou para um workspace, ou liga o design do Figma dele, do jeito que
+ * os próprios cliques do QA fazem.
  */
 export function performWorkspaceChange(props: {
   call: WorkspaceCall;

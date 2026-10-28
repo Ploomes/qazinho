@@ -1,6 +1,6 @@
 /**
- * The owner and name a QA's words give for a GitHub repository, as owner/name or its
- * github.com address; null for anything else.
+ * O dono e o nome que as palavras do QA dão para um repositório do GitHub, como
+ * owner/name ou o endereço github.com; null para qualquer outra coisa.
  */
 export function repositoryOfName(text: string): { owner: string; name: string } | null {
   const path = text

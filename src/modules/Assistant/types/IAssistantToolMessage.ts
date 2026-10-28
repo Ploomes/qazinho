@@ -3,8 +3,8 @@ import type { ToolState } from './ToolState';
 import type { AppToolCall } from '@/shared/types';
 
 /**
- * A tool the assistant used, as a line in its chat: the call, what it touched in words,
- * how it went, and the build it started.
+ * Uma ferramenta que o assistente usou, como uma linha no chat dele: a chamada, o que ela
+ * tocou em palavras, como foi, e o build que iniciou.
  */
 export interface IAssistantToolMessage {
   kind: 'tool';

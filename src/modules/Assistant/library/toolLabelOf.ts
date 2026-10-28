@@ -6,8 +6,8 @@ import { OPEN_LABELS } from '@/modules/Assistant/constants/OPEN_LABELS';
 import { TOOL_LABELS } from '@/modules/Assistant/constants/TOOL_LABELS';
 
 /**
- * The words a tool's line says while it goes and once done: a run read with none named is
- * the latest one, and opening a bug or a run says which.
+ * As palavras que a linha de uma ferramenta diz enquanto anda e depois de feita: uma run
+ * lida sem nenhuma nomeada é a última, e abrir um bug ou uma run diz qual.
  */
 export function toolLabelOf(call: Exclude<AppToolCall, { name: ConfirmAction }>): {
   doing: ParseKeys;

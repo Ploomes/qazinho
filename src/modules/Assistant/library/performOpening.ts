@@ -15,8 +15,8 @@ const SECTION_NAMES: Record<SettingsTab, string> = {
 };
 
 /**
- * Puts a screen in front of the QA: home, the settings, a project's settings, or a
- * workspace on one of its tabs.
+ * Põe uma tela na frente do QA: o início, as configurações, as configurações de um
+ * projeto, ou um workspace numa das abas dele.
  */
 export function performOpening(props: {
   call: Extract<

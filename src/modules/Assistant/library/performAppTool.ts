@@ -13,8 +13,8 @@ import { performVariables } from './performVariables';
 import { performWorkspaceChange } from './performWorkspaceChange';
 
 /**
- * Carries out one of the assistant's app tools through the port, and says what it did for
- * the agent to read.
+ * Executa uma das ferramentas do app do assistente pela porta, e diz o que fez para o
+ * agente ler.
  */
 export async function performAppTool(props: {
   id: string;
