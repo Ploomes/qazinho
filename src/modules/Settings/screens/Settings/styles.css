@@ -499,3 +499,22 @@ button.settings__card:hover:not(:disabled) {
   right: 18px;
   translate: 0 -50%;
 }
+
+.settings__get {
+  flex: none;
+  padding: var(--space-2) var(--space-4);
+  border: var(--edge-width) solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font: var(--font-ui-sm);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease);
+}
+
+.settings__get:hover {
+  border-color: var(--ink3);
+  background: var(--raise2);
+}

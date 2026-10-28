@@ -249,7 +249,7 @@ describe('useSettingsViewModel', () => {
       const idb = result.current.devices.find(({ name }) => name === 'idb');
 
       expect(idb?.canInstall).toBe(true);
-      expect(idb?.path).not.toContain('brew install');
+      expect(idb?.detail).not.toContain('brew install');
       expect(result.current.needsBrew).toBe(false);
     });
 

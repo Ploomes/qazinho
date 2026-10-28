@@ -1,7 +1,13 @@
 import { AnimatePresence } from 'motion/react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { AgentSignIn, InstallProgress, IntegrationCard, McpCard } from '@/modules/Setup';
+import {
+  AgentSignIn,
+  InstallProgress,
+  IntegrationCard,
+  McpCard,
+  ToolCard,
+} from '@/modules/Setup';
 import { Button, Icon, Logo, Tag, Wordmark } from '@/shared/components/atoms';
 import { StorageSettings } from './components';
 import { useSettingsViewModel } from './hooks';
@@ -167,53 +173,43 @@ export const Settings: React.FC = () => {
           {tab === 'devices' && (
             <div className="settings__stack">
               {devices.map((item) => (
-                <div
+                <ToolCard
                   key={item.name}
-                  className={
-                    item.isFound
-                      ? 'settings__card settings__card--top'
-                      : 'settings__card settings__card--top settings__card--missing'
+                  name={item.name}
+                  about={item.about}
+                  detail={item.detail}
+                  state={item.state}
+                  badge={item.badge}
+                  action={
+                    <>
+                      {item.hasLink && (
+                        <a
+                          className="settings__get"
+                          href={item.link}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {item.linkLabel} <Icon name="external" />
+                        </a>
+                      )}
+                      {item.canInstall && (
+                        <Button size="sm" variant="primary" onClick={onInstallIdb}>
+                          {t('SETUP.INSTALL')}
+                        </Button>
+                      )}
+                    </>
                   }
                 >
-                  <span
-                    className={
-                      item.isFound
-                        ? 'settings__mark settings__mark--found'
-                        : 'settings__mark'
-                    }
-                  >
-                    <Icon name={item.icon} />
-                  </span>
-                  <span className="settings__card-text settings__card-text--loose">
-                    <span className="settings__card-name">{item.name}</span>
-                    <span className="settings__card-path" title={item.path}>
-                      {item.path}
-                    </span>
-                    <span
-                      className={
-                        item.isFound
-                          ? 'settings__card-status settings__card-status--found'
-                          : 'settings__card-status'
-                      }
-                    >
-                      {item.status}
-                    </span>
-                    <AnimatePresence initial={false}>
-                      {item.install !== null && (
-                        <InstallProgress
-                          key="install"
-                          state={item.install}
-                          onRetry={onInstallIdb}
-                        />
-                      )}
-                    </AnimatePresence>
-                  </span>
-                  {item.canInstall && (
-                    <Button size="sm" variant="primary" onClick={onInstallIdb}>
-                      {t('SETUP.INSTALL')}
-                    </Button>
-                  )}
-                </div>
+                  <AnimatePresence initial={false}>
+                    {item.install !== null && (
+                      <InstallProgress
+                        key="install"
+                        state={item.install}
+                        onRetry={onInstallIdb}
+                      />
+                    )}
+                  </AnimatePresence>
+                </ToolCard>
               ))}
               {needsBrew && (
                 <p className="settings__note">

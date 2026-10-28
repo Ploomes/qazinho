@@ -63,28 +63,20 @@ export const useSettingsViewModel = () => {
       void check();
   }, [tab, managers, isChecking, check]);
 
-  const iosTool = (props: {
-    name: string;
-    isFound: boolean;
-    path: string;
-    found: string;
-    missing: string;
-  }) =>
-    isMac
-      ? {
-          name: props.name,
-          isFound: props.isFound,
-          icon: props.isFound ? ('passed' as const) : ('attention' as const),
-          path: props.path,
-          status: props.isFound ? props.found : props.missing,
-        }
-      : {
-          name: props.name,
-          isFound: false,
-          icon: 'attention' as const,
-          path: t('PROJECT.IOS_MAC_ONLY'),
-          status: t('SETTINGS.IOS_OFF'),
-        };
+  const toolState = (props: { isFound: boolean; isOn: boolean; path: string | null }) =>
+    !props.isOn
+      ? { state: 'off' as const, badge: t('SETUP.OFF'), detail: t('SETUP.MAC_ONLY') }
+      : props.isFound
+        ? {
+            state: 'found' as const,
+            badge: t('SETUP.FOUND'),
+            detail: props.path ?? t('SETUP.NOT_ON_MACHINE'),
+          }
+        : {
+            state: 'missing' as const,
+            badge: t('SETUP.MISSING'),
+            detail: t('SETUP.NOT_ON_MACHINE'),
+          };
 
   return {
     tab,
@@ -139,34 +131,39 @@ export const useSettingsViewModel = () => {
     devices: [
       {
         name: 'Android SDK',
-        isFound: tools.androidSdk.isFound,
-        icon: tools.androidSdk.isFound ? ('passed' as const) : ('attention' as const),
-        path: tools.androidSdk.path ?? t('TOOLS.NOT_FOUND_PATH'),
-        status: tools.androidSdk.isFound
-          ? t('TOOLS.ANDROID_FOUND')
-          : t('TOOLS.ANDROID_MISSING'),
+        about: t('SETUP.ANDROID_ABOUT'),
+        ...toolState({
+          isFound: tools.androidSdk.isFound,
+          isOn: true,
+          path: tools.androidSdk.path,
+        }),
+        hasLink: !tools.androidSdk.isFound,
+        link: SETUP_LINKS.androidStudio,
+        linkLabel: t('SETUP.GET_ANDROID_STUDIO'),
         canInstall: false,
         install: null,
       },
       {
-        ...iosTool({
-          name: 'Xcode',
+        name: 'Xcode',
+        about: t('SETUP.XCODE_ABOUT'),
+        ...toolState({
           isFound: tools.xcode.isFound,
-          path: tools.xcode.path ?? t('TOOLS.NOT_FOUND_PATH'),
-          found: t('TOOLS.XCODE_FOUND'),
-          missing: t('TOOLS.XCODE_MISSING'),
+          isOn: isMac,
+          path: tools.xcode.path,
         }),
+        hasLink: isMac && !tools.xcode.isFound,
+        link: SETUP_LINKS.xcode,
+        linkLabel: t('SETUP.GET_XCODE'),
         canInstall: false,
         install: null,
       },
       {
-        ...iosTool({
-          name: 'idb',
-          isFound: tools.idb.isFound,
-          path: tools.idb.path ?? t('TOOLS.NOT_FOUND_PATH'),
-          found: t('TOOLS.IDB_FOUND'),
-          missing: t('TOOLS.IDB_MISSING'),
-        }),
+        name: 'idb',
+        about: t('SETUP.IDB_ABOUT'),
+        ...toolState({ isFound: tools.idb.isFound, isOn: isMac, path: tools.idb.path }),
+        hasLink: false,
+        link: '',
+        linkLabel: '',
         canInstall:
           isMac && !tools.idb.isFound && hasBrew && idbInstall?.phase !== 'installing',
         install:
