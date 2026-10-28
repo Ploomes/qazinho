@@ -1,6 +1,6 @@
 import type { ICaseRecipe } from '@/main/classes/runs/RunCoordinator/types';
 import type { IFlatStep, IStepAction, IViewport } from '@/shared/types';
-import { ordinalOf, sampleFileOf, withoutRole } from '@/main/library';
+import { ordinalOf, proofLinesOf, sampleFileOf, withoutRole } from '@/main/library';
 import { variablesIn } from './variablesIn';
 
 const WHEEL: Record<string, string> = {
@@ -70,7 +70,10 @@ export function playwrightOf(props: {
       return [
         `  // ${String(step.numberInCase)}. ${step.action} → ${step.expected}`,
         ...(kept?.actions ?? []).flatMap(lineOf).map((line) => `  ${line}`),
-        `  await expect(tab.getByText(${quoted(kept?.proof ?? '')}).first()).toBeVisible();`,
+        ...shownOf(kept?.proof ?? '').map(
+          (shown) =>
+            `  await expect(tab.getByText(${quoted(shown)}).first()).toBeVisible();`,
+        ),
       ];
     });
 
@@ -197,4 +200,10 @@ function lineOf(action: IStepAction): string[] {
         ']);',
       ];
   }
+}
+
+function shownOf(proof: string): string[] {
+  const lines = proofLinesOf(proof);
+
+  return lines.length === 0 ? [proof] : lines;
 }

@@ -28,6 +28,30 @@ describe('playwrightOf', () => {
     );
   });
 
+  it('checks each line of a proof that holds several', () => {
+    const file = playwrightOf({
+      url: 'https://loja.test/',
+      viewport: { width: 1280, height: 800 },
+      cases: [
+        {
+          steps: STEPS,
+          recipe: {
+            ...RECIPE,
+            steps: RECIPE.steps.map((step) =>
+              step.number === 2
+                ? { ...step, proof: '1 item: Camiseta\nTotal: R$ 79,90' }
+                : step,
+            ),
+          },
+        },
+      ],
+    });
+
+    expect(file).toContain(
+      '  await expect(tab.getByText("1 item: Camiseta").first()).toBeVisible();\n  await expect(tab.getByText("Total: R$ 79,90").first()).toBeVisible();',
+    );
+  });
+
   it('finds a target with the very locator the run used, and picks the option a dropdown took', () => {
     const file = playwrightOf({
       url: 'https://loja.test/',

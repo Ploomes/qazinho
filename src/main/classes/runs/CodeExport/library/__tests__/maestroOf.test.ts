@@ -6,6 +6,22 @@ import { RECIPE, SIGN_IN, STEPS } from './fixtures';
 const FLOW = maestroOf({ appId: 'app.qazinho.loja', steps: STEPS, recipe: RECIPE });
 
 describe('maestroOf', () => {
+  it('asserts each line of a proof that holds several', () => {
+    const flow = maestroOf({
+      appId: 'app.qazinho.loja',
+      steps: STEPS,
+      recipe: {
+        ...RECIPE,
+        steps: RECIPE.steps.map((step) =>
+          step.number === 2 ? { ...step, proof: '1 item\nTotal: R$ 79,90' } : step,
+        ),
+      },
+    });
+
+    expect(flow).toContain('- assertVisible: ".*1 item.*"');
+    expect(flow).toContain('- assertVisible: ".*Total: R\\\\$ 79,90.*"');
+  });
+
   it('is a flow Maestro reads: its app and name, then the steps', () => {
     const [head, body] = parseAllDocuments(FLOW).map(
       (document) => document.toJS() as unknown,

@@ -1,6 +1,6 @@
 import type { ICaseRecipe } from '@/main/classes/runs/RunCoordinator/types';
 import type { IFlatStep, IStepAction } from '@/shared/types';
-import { ordinalOf, withoutRole } from '@/main/library';
+import { ordinalOf, proofLinesOf, withoutRole } from '@/main/library';
 import { variablesIn } from './variablesIn';
 
 const SWIPES: Record<string, string> = {
@@ -36,7 +36,9 @@ export function maestroOf(props: {
     return [
       `# ${String(step.numberInCase)}. ${step.action} → ${step.expected}`,
       ...(kept?.actions ?? []).flatMap(linesOf),
-      `- assertVisible: ${yamlText(`.*${pattern(kept?.proof ?? '')}.*`)}`,
+      ...shownOf(kept?.proof ?? '').map(
+        (shown) => `- assertVisible: ${yamlText(`.*${pattern(shown)}.*`)}`,
+      ),
     ];
   });
 
@@ -115,4 +117,10 @@ function linesOf(action: IStepAction): string[] {
         `# ${action.kind} ${yamlText(action.target)}: a phone has no ${action.kind}`,
       ];
   }
+}
+
+function shownOf(proof: string): string[] {
+  const lines = proofLinesOf(proof);
+
+  return lines.length === 0 ? [proof] : lines;
 }

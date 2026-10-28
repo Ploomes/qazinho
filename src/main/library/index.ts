@@ -40,6 +40,7 @@ export {
   phoneMeasureOf,
   phoneShot,
   pngSizeOf,
+  proofLinesOf,
   sampleFileOf,
   spawnCommand,
   swipeOf,
