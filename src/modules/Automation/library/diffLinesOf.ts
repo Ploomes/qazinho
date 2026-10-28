@@ -3,8 +3,8 @@ import type { IDiffLine } from '@/modules/Automation/types';
 const HUNK = /^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@/;
 
 /**
- * The lines of a file's unified diff as the review shows them, each numbered before and
- * after; git's own header lines are left out.
+ * As linhas do diff unificado de um arquivo como a revisão as mostra, cada uma numerada
+ * antes e depois; as linhas de cabeçalho do próprio git ficam de fora.
  */
 export function diffLinesOf(patch: string): IDiffLine[] {
   const lines: IDiffLine[] = [];

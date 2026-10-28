@@ -1,8 +1,8 @@
 import type { ISuiteChange } from '@/modules/Automation/types';
 
 /**
- * The latest change the agent made for a test that the QA has not thrown away; null when
- * there is none.
+ * A última mudança que o agente fez para um teste e que o QA não jogou fora; null quando
+ * não há.
  */
 export function changeOfTest(props: {
   changes: ISuiteChange[];

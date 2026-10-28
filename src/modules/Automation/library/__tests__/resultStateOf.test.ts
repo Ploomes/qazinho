@@ -12,7 +12,7 @@ describe('resultStateOf', () => {
     expect(resultStateOf({ status: 'passed', isFlaky: true })).toBe('flaky');
   });
 
-  /** Playwright marks flaky only what passed in the end; a failure stays a failure. */
+  /** O Playwright marca como flaky só o que passou no fim; uma falha continua falha. */
   it('keeps a failure a failure, whatever the retries did', () => {
     expect(resultStateOf({ status: 'failed', isFlaky: true })).toBe('failed');
   });

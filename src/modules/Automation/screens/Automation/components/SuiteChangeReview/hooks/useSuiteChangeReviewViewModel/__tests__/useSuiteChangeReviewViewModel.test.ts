@@ -149,7 +149,7 @@ describe('useSuiteChangeReviewViewModel', () => {
       expect(onClose).not.toHaveBeenCalled();
     });
 
-    /** The branch left the machine already: sending it again would fail, so only closing is left. */
+    /** A branch já saiu da máquina: mandá-la de novo falharia, então só resta fechar. */
     it('does NOT send again once the branch went and only the pull request failed', async () => {
       outcome = {
         isOk: false,

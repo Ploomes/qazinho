@@ -1,6 +1,9 @@
 import type { ISuiteResult, ISuiteRun, ISuiteTest } from '@/modules/Automation/types';
 
-/** A test of the suite, filed under a story's folder the way the QA team writes them. */
+/**
+ * Um teste da suíte, arquivado sob a pasta de uma história do jeito que o time de QA os
+ * escreve.
+ */
 export const suiteTest = (props: Partial<ISuiteTest>): ISuiteTest => ({
   id: 't-1',
   file: 'tests/hc-1139/ct-nav.spec.ts',
@@ -12,7 +15,7 @@ export const suiteTest = (props: Partial<ISuiteTest>): ISuiteTest => ({
   ...props,
 });
 
-/** How a test went in a run. */
+/** Como um teste foi numa run. */
 export const suiteResult = (props: Partial<ISuiteResult>): ISuiteResult => ({
   testId: 't-1',
   title: 'CT-NAV-001 · Abre a lista',
@@ -27,7 +30,7 @@ export const suiteResult = (props: Partial<ISuiteResult>): ISuiteResult => ({
   ...props,
 });
 
-/** A run of the suite. */
+/** Uma run da suíte. */
 export const suiteRun = (props: Partial<ISuiteRun>): ISuiteRun => ({
   id: 's-01',
   projectId: 'p-1',

@@ -1,8 +1,8 @@
 import type { ILastResult, ISuiteFolder } from '@/modules/Automation/types';
 
 /**
- * A suite's tests by folder and file: how each went last, which are running and the step
- * each is on, the test picked, the folders the QA shut, and the runs it can start.
+ * Os testes de uma suíte por pasta e arquivo: como cada um foi, quais rodam e em que
+ * passo, o escolhido, as pastas que o QA fechou, e as runs que ela pode iniciar.
  */
 export interface ISuiteTreeProps {
   folders: ISuiteFolder[];

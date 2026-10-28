@@ -1,8 +1,8 @@
 import type { ISuiteChange, SuiteChangeNote } from '@/modules/Automation/types';
 
 /**
- * A change the agent made for the test picked, as it stands, what the agent said
- * meanwhile and its name, and what the QA can do with it.
+ * Uma mudança que o agente fez para o teste escolhido, como está, o que o agente disse
+ * enquanto isso e o nome dele, e o que o QA pode fazer com ela.
  */
 export interface ISuiteChangeCardProps {
   change: ISuiteChange;

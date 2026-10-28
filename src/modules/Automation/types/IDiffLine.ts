@@ -1,6 +1,6 @@
 /**
- * One line of a file's diff as the review shows it: a hunk's head, a line added, a line
- * removed or one kept, with its number before and after.
+ * Uma linha do diff de um arquivo como a revisão a mostra: a cabeça de um hunk, uma linha
+ * adicionada, uma removida ou uma mantida, com o número antes e depois.
  */
 export interface IDiffLine {
   key: string;

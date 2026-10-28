@@ -6,8 +6,8 @@ import { useSuiteWriteModalViewModel } from './hooks';
 import './styles.css';
 
 /**
- * Asking the QA's agent for a new test of the team's suite: what it should check, the
- * plan case it automates, and where it goes.
+ * Pedindo ao agente do QA um teste novo da suíte do time: o que ele deve conferir, o caso
+ * do plano que automatiza, e onde vai.
  */
 export const SuiteWriteModal: React.FC<ISuiteWriteModalProps> = (props) => {
   const {

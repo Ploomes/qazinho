@@ -6,8 +6,8 @@ import { useSuiteChangeReviewViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The agent's fix as the QA reviews it before it leaves their machine: what it said,
- * QAzinho's own run of the test, the pull request it wrote and every file it changed.
+ * O conserto do agente como o QA o revisa antes de sair da máquina dele: o que disse, a
+ * run própria do QAzinho do teste, o pull request que escreveu e todo arquivo que mudou.
  */
 export const SuiteChangeReview: React.FC<ISuiteChangeReviewProps> = (props) => {
   const {

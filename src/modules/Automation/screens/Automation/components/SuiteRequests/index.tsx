@@ -3,7 +3,9 @@ import { Eyebrow, Icon } from '@/shared/components/atoms';
 import { useSuiteRequestsViewModel } from './hooks';
 import './styles.css';
 
-/** The new tests asked of the agent, above the suite's own, each with how it stands. */
+/**
+ * Os testes novos pedidos ao agente, acima dos da própria suíte, cada um com como está.
+ */
 export const SuiteRequests: React.FC<ISuiteRequestsProps> = (props) => {
   const { isShown, label, rows } = useSuiteRequestsViewModel(props);
 

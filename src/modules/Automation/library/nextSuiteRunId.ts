@@ -1,6 +1,8 @@
 import type { ISuiteRun } from '@/modules/Automation/types';
 
-/** The id of a project's next suite run, one past the highest it has: s-01, s-02… */
+/**
+ * O id da próxima run de suíte de um projeto, um acima do maior que ele tem: s-01, s-02…
+ */
 export function nextSuiteRunId(runs: ISuiteRun[]): string {
   const highest = Math.max(
     0,

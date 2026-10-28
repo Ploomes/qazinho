@@ -3,8 +3,8 @@ import type { SuiteChangeAsk } from '@/modules/Automation/types';
 const LONGEST = 72;
 
 /**
- * What a change is about in a line: the test that broke, or the test asked for, by its
- * plan case or the QA's first words.
+ * Sobre o que uma mudança trata em uma linha: o teste que quebrou, ou o teste pedido,
+ * pelo caso do plano dele ou pelas primeiras palavras do QA.
  */
 export function requestTitleOf(ask: SuiteChangeAsk): string {
   if (ask.kind === 'fix') return ask.test.title;

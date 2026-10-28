@@ -1,8 +1,8 @@
 import type { ISuiteResult, SuiteResultState } from '@/modules/Automation/types';
 
 /**
- * How a test went in one run as the QA reads it: a pass on a retry is flaky, anything
- * else what Playwright said.
+ * Como um teste foi numa run como o QA lê: um passe numa nova tentativa é flaky, qualquer
+ * outra coisa é o que o Playwright disse.
  */
 export function resultStateOf(
   result: Pick<ISuiteResult, 'status' | 'isFlaky'>,

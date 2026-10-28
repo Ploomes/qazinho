@@ -1,8 +1,8 @@
 import type { ISuiteChange, SuiteChangeNote } from '@/modules/Automation/types';
 
 /**
- * A new test asked of the agent, picked: the ask, what the agent did meanwhile and its
- * name, and what the QA can do with it.
+ * Um teste novo pedido ao agente, escolhido: o pedido, o que o agente fez enquanto isso e
+ * o nome dele, e o que o QA pode fazer com ele.
  */
 export interface ISuiteRequestPaneProps {
   change: ISuiteChange;

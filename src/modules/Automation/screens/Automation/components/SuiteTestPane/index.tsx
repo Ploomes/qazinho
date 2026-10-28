@@ -7,8 +7,8 @@ import { useSuiteTestPaneViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The test the QA picked: where it is written, how it went in the run shown, with its
- * error, screens, video and trace, and the runs before.
+ * O teste que o QA escolheu: onde está escrito, como foi na run mostrada, com o erro, as
+ * telas, o vídeo e o trace, e as runs anteriores.
  */
 export const SuiteTestPane: React.FC<ISuiteTestPaneProps> = (props) => {
   const {

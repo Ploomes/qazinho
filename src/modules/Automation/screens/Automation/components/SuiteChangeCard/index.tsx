@@ -5,8 +5,8 @@ import { useSuiteChangeCardViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The agent's fix of the test picked, as it stands: what it is doing, what it said,
- * QAzinho's own run of the test, and what the QA can do with it.
+ * O conserto do agente para o teste escolhido, como está: o que ele está fazendo, o que
+ * disse, a run própria do QAzinho do teste, e o que o QA pode fazer com ele.
  */
 export const SuiteChangeCard: React.FC<ISuiteChangeCardProps> = (props) => {
   const {

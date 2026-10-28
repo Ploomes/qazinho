@@ -1,7 +1,8 @@
 import type { ISuiteChange } from '@/modules/Automation/types';
 
 /**
- * The new tests the QA asked their agent for and did not throw away, the latest first.
+ * Os testes novos que o QA pediu ao agente dele e não jogou fora, os mais recentes
+ * primeiro.
  */
 export function requestsOf(changes: ISuiteChange[]): ISuiteChange[] {
   return changes

@@ -2,8 +2,8 @@ import type { ISuiteFolder, ISuiteTest } from '@/modules/Automation/types';
 import { folderOf } from './folderOf';
 
 /**
- * A suite's tests by folder and file, in path order and each file's tests in the order
- * they are written; a query keeps the tests whose title, describes, file or tags hold it.
+ * Os testes de uma suíte por pasta e arquivo, em ordem de caminho e de escrita; uma busca
+ * mantém os testes cujo título, describes, arquivo ou tags a contêm.
  */
 export function suiteTreeOf(props: {
   tests: ISuiteTest[];

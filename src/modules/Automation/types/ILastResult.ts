@@ -1,6 +1,6 @@
 import type { ISuiteResult } from '@/shared/types';
 
-/** How a test went the last time a run reached it, and in which run. */
+/** Como um teste foi na última vez que uma run o alcançou, e em qual run. */
 export interface ILastResult {
   result: ISuiteResult;
   runId: string;

@@ -302,7 +302,10 @@ describe('useAutomationViewModel', () => {
       ]);
     });
 
-    /** A search narrows the tree, and a run takes what the QA sees, never what the search hid. */
+    /**
+     * Uma busca estreita a árvore, e uma run pega o que o QA vê, nunca o que a busca
+     * escondeu.
+     */
     it('runs only the tests a search shows', async () => {
       const result = await listedView();
 

@@ -1,8 +1,8 @@
 import type { ISuiteFile } from './ISuiteFile';
 
 /**
- * A folder of a suite on screen, such as one story's tests: where it is, its name, and
- * its spec files.
+ * Uma pasta de uma suíte na tela, como os testes de uma história: onde está, o nome, e os
+ * arquivos de spec dela.
  */
 export interface ISuiteFolder {
   path: string;

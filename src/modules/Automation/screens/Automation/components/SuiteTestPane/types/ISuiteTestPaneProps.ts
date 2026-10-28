@@ -6,8 +6,8 @@ import type {
 } from '@/modules/Automation/types';
 
 /**
- * The picked test, its runs, the step it is on, and the agent's fix of it with what the
- * agent says.
+ * O teste escolhido, as runs dele, o passo em que está, e o conserto do agente para ele
+ * com o que o agente diz.
  */
 export interface ISuiteTestPaneProps {
   projectId: string;

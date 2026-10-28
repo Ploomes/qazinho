@@ -3,8 +3,8 @@ import type { IconName } from '@/shared/components/atoms/Icon/types';
 import type { ParseKeys } from 'i18next';
 
 /**
- * How QAzinho's own run of the tests a change is about reads: they pass in the copy, some
- * fail, or none could run, with how many there were and how many failed.
+ * Como se lê a run própria do QAzinho dos testes de que uma mudança trata: passam na
+ * cópia, alguns falham, ou nenhum pôde rodar, com quantos havia e quantos falharam.
  */
 export function checkLookOf(checks: ISuiteResult[]): {
   icon: IconName;

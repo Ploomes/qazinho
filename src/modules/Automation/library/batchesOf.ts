@@ -3,8 +3,8 @@ import type { ISuiteBatch } from '@/shared/types';
 import { scopeTestsOf } from './scopeTestsOf';
 
 /**
- * The batches a run goes through, a Playwright project at a time, each naming the tests
- * it runs.
+ * Os batches por que uma run passa, um projeto do Playwright por vez, cada um nomeando os
+ * testes que roda.
  */
 export function batchesOf(props: {
   tests: ISuiteTest[];

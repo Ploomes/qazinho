@@ -65,7 +65,10 @@ describe('useSuiteTreeViewModel', () => {
       expect(root).toMatchObject({ name: '/', count: '1 test' });
     });
 
-    /** A pass on a retry still passed, and the tally counts it there; the row itself says flaky. */
+    /**
+     * Um passe numa nova tentativa ainda passou, e a contagem o põe lá; a própria linha
+     * diz flaky.
+     */
     it('tallies how its tests went last, a flaky pass with the passes', () => {
       const [story] = render({
         last: {
@@ -165,7 +168,10 @@ describe('useSuiteTreeViewModel', () => {
       });
     });
 
-    /** A config that runs a spec in two browsers lists it twice; only then does the project tell the rows apart. */
+    /**
+     * Uma config que roda uma spec em dois navegadores a lista duas vezes; só então o
+     * projeto distingue as linhas.
+     */
     it('names the project only of a test the config runs in more than one', () => {
       const twice = suiteTest({ ...NAV, id: 'nav-1-firefox', project: 'firefox' });
       const tests = render({

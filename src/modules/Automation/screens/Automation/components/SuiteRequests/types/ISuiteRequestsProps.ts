@@ -1,8 +1,8 @@
 import type { ISuiteChange } from '@/modules/Automation/types';
 
 /**
- * The new tests asked of the agent, the latest first, the one picked, and how to pick
- * one.
+ * Os testes novos pedidos ao agente, os mais recentes primeiro, o escolhido, e como
+ * escolher um.
  */
 export interface ISuiteRequestsProps {
   requests: ISuiteChange[];

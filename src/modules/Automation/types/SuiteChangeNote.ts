@@ -1,6 +1,6 @@
 /**
- * Something the agent did while it changed a suite, as the page keeps it: a line it said
- * or did, or how the tests it ran went.
+ * Algo que o agente fez enquanto mudava uma suíte, como a página o guarda: uma linha que
+ * disse ou fez, ou como foram os testes que rodou.
  */
 export type SuiteChangeNote =
   | { id: number; kind: 'said'; text: string }

@@ -34,7 +34,10 @@ describe('SUITE_CHANGE_STATES', () => {
     },
   );
 
-  /** An app that is wrong is a bug for the QA to file, never a fix the agent got wrong. */
+  /**
+   * Um app que está errado é um bug para o QA registrar, nunca um conserto que o agente
+   * errou.
+   */
   it('paints an app that is wrong as a bug', () => {
     expect(SUITE_CHANGE_STATES['app-bug']).toMatchObject({ icon: 'bug', tone: 'fail' });
   });

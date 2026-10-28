@@ -4,8 +4,8 @@ import { useSuiteRequestPaneViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A new test asked of the agent, picked: what the QA asked, the plan case it automates
- * and where it goes, and the agent's work on it.
+ * Um teste novo pedido ao agente, escolhido: o que o QA pediu, o caso do plano que ele
+ * automatiza e onde ele vai, e o trabalho do agente nele.
  */
 export const SuiteRequestPane: React.FC<ISuiteRequestPaneProps> = (props) => {
   const { eyebrow, title, text, from, where, card } = useSuiteRequestPaneViewModel(props);

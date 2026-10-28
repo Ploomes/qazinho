@@ -5,8 +5,8 @@ import { useSuiteTreeViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A suite's tests by folder and file, each with how it went last or the step it is on,
- * and a run at every level.
+ * Os testes de uma suíte por pasta e arquivo, cada um com como foi por último ou o passo
+ * em que está, e uma run em todo nível.
  */
 export const SuiteTree: React.FC<ISuiteTreeProps> = (props) => {
   const { foldTransition, stepTransition, folders } = useSuiteTreeViewModel(props);

@@ -1,8 +1,8 @@
 import type { ISuiteFolder, ISuitePlanCase } from '@/modules/Automation/types';
 
 /**
- * Asking the agent for a new test: where it goes, the plan cases to start from, and what
- * to do.
+ * Pedindo ao agente um teste novo: onde vai, os casos do plano de onde partir, e o que
+ * fazer.
  */
 export interface ISuiteWriteModalProps {
   folders: ISuiteFolder[];

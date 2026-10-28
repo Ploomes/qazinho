@@ -1,6 +1,6 @@
 import type { ISuiteChange } from '@/modules/Automation/types';
 
-/** The id of a project's next change, one past the highest it has: c-01, c-02… */
+/** O id da próxima mudança de um projeto, um acima do maior que ele tem: c-01, c-02… */
 export function nextChangeId(changes: ISuiteChange[]): string {
   const highest = Math.max(
     0,

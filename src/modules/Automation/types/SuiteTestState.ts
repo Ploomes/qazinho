@@ -1,6 +1,6 @@
 /**
- * How a test stands on screen: running now, how it went the last time, or not run here
- * yet.
+ * Como um teste está na tela: rodando agora, como foi na última vez, ou ainda não rodado
+ * aqui.
  */
 export type SuiteTestState =
   'running' | 'passed' | 'failed' | 'flaky' | 'skipped' | 'pending';

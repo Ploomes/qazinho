@@ -1,8 +1,8 @@
 import type { ILastResult, SuiteTestState } from '@/modules/Automation/types';
 
 /**
- * How a test stands on screen: running now, how it went the last time a run reached it,
- * or not run yet; a pass on a retry reads as flaky.
+ * Como um teste está na tela: rodando agora, como foi na última vez que uma run o
+ * alcançou, ou ainda não rodado; um passe numa nova tentativa aparece como flaky.
  */
 export function testStateOf(props: {
   isGoing: boolean;

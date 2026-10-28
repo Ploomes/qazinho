@@ -25,7 +25,7 @@ const TESTS = [
 const PROJECTS = ['chromium', 'salva-versao'];
 
 describe('batchesOf', () => {
-  /** The QA team runs the project that changes data after the one that only reads, one at a time. */
+  /** O time de QA roda o projeto que muda dados depois do que só lê, um de cada vez. */
   it('runs the whole suite a project at a time, in the order the config declares them', () => {
     expect(
       batchesOf({ tests: TESTS, projects: PROJECTS, scope: { kind: 'all' } }),
@@ -51,7 +51,10 @@ describe('batchesOf', () => {
     ).toEqual([{ project: 'chromium', filters: ['tests/hc-1139/ct-nav.spec.ts'] }]);
   });
 
-  /** The tree shows each folder on a row of its own, so its run takes what the row shows: never a folder inside it, nor one whose name begins the same. */
+  /**
+   * A árvore mostra cada pasta numa linha própria, então a run dela pega o que a linha
+   * mostra: nunca uma pasta dentro dela, nem uma cujo nome começa igual.
+   */
   it('runs the files a folder holds itself, and no folder inside it or beside it', () => {
     const tests = [
       suiteTest({ id: 'a', file: 'tests/hc-1/a.spec.ts', line: 3 }),

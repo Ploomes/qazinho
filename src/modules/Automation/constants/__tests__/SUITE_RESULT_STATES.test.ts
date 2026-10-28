@@ -22,7 +22,7 @@ describe('SUITE_RESULT_STATES', () => {
     },
   );
 
-  /** A test that ran out of time failed, even though Playwright names it apart. */
+  /** Um teste que estourou o tempo falhou, mesmo que o Playwright o nomeie à parte. */
   it('paints a test that timed out as a failure', () => {
     expect(SUITE_RESULT_STATES.timedOut.tone).toBe('fail');
   });

@@ -135,7 +135,10 @@ describe('useSuiteChangeCardViewModel', () => {
   });
 
   describe('when it ends short', () => {
-    /** A change that ended with nothing in it leaves no branch behind: the card names none. */
+    /**
+     * Uma mudança que terminou sem nada nela não deixa branch: o cartão não nomeia
+     * nenhuma.
+     */
     it('names no branch once a change with nothing in it ended', () => {
       expect(render({ change: { status: 'app-bug', files: [] } }).view).toMatchObject({
         branch: '',
@@ -265,7 +268,9 @@ describe('useSuiteChangeCardViewModel', () => {
       ).toMatchObject({ icon: 'failed', text: '1 of 2 tests fail in the copy' });
     });
 
-    /** A new test the app fails is right, and catches a bug: it can still be sent. */
+    /**
+     * Um teste novo que o app falha está certo, e pega um bug: ainda pode ser enviado.
+     */
     it('lets the QA review a new test the app fails', () => {
       expect(
         render({

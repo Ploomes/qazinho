@@ -1,6 +1,6 @@
 import type { ISuiteChangeFile } from '@/shared/types';
 
-/** One file a change touched, shown open at first or folded. */
+/** Um arquivo que uma mudança tocou, mostrado aberto no começo ou dobrado. */
 export interface ISuiteDiffProps {
   file: ISuiteChangeFile;
   isOpenAtFirst: boolean;

@@ -206,7 +206,10 @@ describe('useSuiteTestPaneViewModel', () => {
       });
     });
 
-    /** The step it is on says more than "never run" while the first run reaches it. */
+    /**
+     * O passo em que ele está diz mais do que "nunca rodou" enquanto a primeira run o
+     * alcança.
+     */
     it('does NOT say never run while the test runs', () => {
       expect(
         render({ runs: [], isRunning: true, step: 'Abrir o menu' }).result.current,

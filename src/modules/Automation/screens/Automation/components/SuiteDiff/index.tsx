@@ -5,8 +5,8 @@ import { useSuiteDiffViewModel } from './hooks';
 import './styles.css';
 
 /**
- * One file a change touched: its path, what was done to it, and its lines added and
- * removed, folded open.
+ * Um arquivo que uma mudança tocou: o caminho, o que foi feito com ele, e as linhas
+ * adicionadas e removidas, aberto.
  */
 export const SuiteDiff: React.FC<ISuiteDiffProps> = (props) => {
   const {

@@ -1,4 +1,4 @@
-/** When a suite's run happened, as the QA's language writes a day and a time. */
+/** Quando a run de uma suíte aconteceu, como o idioma do QA escreve um dia e uma hora. */
 export function formatSuiteWhen(props: { at: number; language: string }): string {
   return new Intl.DateTimeFormat(props.language, {
     day: 'numeric',
