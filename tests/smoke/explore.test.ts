@@ -66,7 +66,7 @@ process.stdin.on('end', async () => {
     cases: [{ title: 'Cart total adds the items', priority: 'P1', goal: 'The total is the sum of the items.', preconditions: 'One shirt in the cart.', steps: [{ action: 'Open the cart', expected: 'Total R$ 79,90' }] }],
   };
   const said = await call('finish', finish);
-  if (said.includes('still left')) await call('finish', finish);
+  for (let told = said; told.includes('still left'); ) told = await call('finish', finish);
   await client.close();
   console.log(JSON.stringify({ type: 'result', result: '', is_error: false, session_id: 's1', total_cost_usd: 0.02 }));
 });

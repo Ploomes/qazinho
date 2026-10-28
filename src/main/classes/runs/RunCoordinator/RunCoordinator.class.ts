@@ -48,7 +48,7 @@ import { agentFailure, writeAtomically } from '@/main/library';
 import { EXPLORATION } from '@/shared/constants';
 import { mcpConfigWith } from '@salve-software/qazinho-harness';
 import { WEB_DRIVER } from '@salve-software/qazinho-harness/engine';
-import { RUN_WALK, UNWALKED } from './constants';
+import { EXPLORE_PUSHES, RUN_WALK, UNWALKED } from './constants';
 import {
   answerWords,
   bookWith,
@@ -789,7 +789,7 @@ export class RunCoordinator {
     let current = { number: 0, name: '' };
     let last = Date.now();
     let isOver = false;
-    let isPushed = false;
+    let pushes = 0;
     let over: () => void = () => undefined;
     const finished = new Promise<null>((resolve) => {
       over = () => {
@@ -870,12 +870,13 @@ export class RunCoordinator {
     const onFinish = (finish: IExploreFinish): Promise<string> => {
       if (isOver) return Promise.resolve('The exploration is over: end your turn now.');
 
-      const early = isPushed
-        ? null
-        : earlyFinish({ leftMs: endsAt - Date.now(), totalMs: minutes * 60_000 });
+      const early =
+        pushes >= EXPLORE_PUSHES
+          ? null
+          : earlyFinish({ leftMs: endsAt - Date.now(), totalMs: minutes * 60_000 });
 
       if (early !== null) {
-        isPushed = true;
+        pushes += 1;
 
         return Promise.resolve(early);
       }

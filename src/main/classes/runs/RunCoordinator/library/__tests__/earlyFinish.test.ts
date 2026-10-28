@@ -21,6 +21,13 @@ describe('earlyFinish', () => {
     );
   });
 
+  /** Haiku called a cart's R$ 180,00 right for a R$ 50,00 shirt and a R$ 120,00 headset. */
+  it('sends an explorer back to work out the sums the app showed', () => {
+    expect(earlyFinish({ leftMs: 9 * 60_000, totalMs: TEN_MINUTES })).toContain(
+      'each sum the app works out, done again by you',
+    );
+  });
+
   /** Haiku explored a bank's sign-in screen for 42 seconds and called it the whole app. */
   it('reminds an explorer stopped at a sign-in that the QA holds the way in', () => {
     expect(earlyFinish({ leftMs: 9 * 60_000, totalMs: TEN_MINUTES })).toContain(
