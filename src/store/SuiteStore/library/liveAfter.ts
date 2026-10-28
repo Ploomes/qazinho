@@ -2,8 +2,8 @@ import type { SuiteEvent } from '@/shared/types';
 import type { ISuiteLive } from '@/store/SuiteStore/types';
 
 /**
- * The run going on a project once one of its events is heard: the tests running with the
- * step each is on, until the run ends.
+ * A run em andamento num projeto quando um dos eventos dela é ouvido: os testes rodando
+ * com o passo em que cada um está, até a run terminar.
  */
 export function liveAfter(props: {
   live: ISuiteLive | null;

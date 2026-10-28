@@ -3,8 +3,8 @@ import type { ITargetUnderTest } from './ITargetUnderTest';
 import type { IViewport } from './IViewport';
 
 /**
- * What exporting a workspace's recorded cases as code needs: its plan as a run walks it,
- * the app, and the size the QA runs the web at.
+ * O que exportar os casos gravados de um workspace como código precisa: o plano como uma
+ * run o anda, o app, e o tamanho em que o QA roda a web.
  */
 export interface IExportCode {
   workspaceId: string;

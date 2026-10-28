@@ -8,8 +8,8 @@ import type { SuiteChangeStatus } from './SuiteChangeStatus';
 import type { SuiteChangeStep } from './SuiteChangeStep';
 
 /**
- * A change the QA's agent makes to a project's suite on a branch of its own, from ask to
- * review.
+ * Uma mudança que o agente do QA faz na suíte de um projeto numa branch própria, do
+ * pedido à revisão.
  */
 export interface ISuiteChange {
   id: string;

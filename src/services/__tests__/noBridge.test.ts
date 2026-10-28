@@ -19,8 +19,8 @@ import {
 } from '@/services';
 
 /**
- * The page opened with no bridge, in a plain browser, has nothing to ask. Each service says so
- * instead of crashing, and says it in the language the QA reads.
+ * A página aberta sem bridge, num navegador comum, não tem a quem perguntar. Cada service
+ * diz isso em vez de quebrar, e diz no idioma que o QA lê.
  */
 afterEach(async () => {
   await i18n.changeLanguage('en');

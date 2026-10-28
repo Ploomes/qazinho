@@ -1,5 +1,5 @@
 /**
- * One thing that happens while the QA signs the GitHub CLI in, as the sign-in popup lists
- * it.
+ * Uma coisa que acontece enquanto o QA faz o login da GitHub CLI, como o popup de login a
+ * lista.
  */
 export type GithubSignInStep = 'code' | 'browser' | 'account';

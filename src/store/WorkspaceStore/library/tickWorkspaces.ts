@@ -2,8 +2,8 @@ import type { IWorkspace } from '@/modules/Workspace';
 import { tickLive } from './tickLive';
 
 /**
- * Moves the clock of every run that is going; with none going it hands back the same
- * list, so nothing re-renders.
+ * Avança o relógio de toda run em andamento; sem nenhuma, devolve a mesma lista, para
+ * nada renderizar de novo.
  */
 export function tickWorkspaces(props: {
   workspaces: IWorkspace[];

@@ -4,8 +4,8 @@ import type { IProSyncProject } from './IProSyncProject';
 import type { IProSyncRun } from './IProSyncRun';
 
 /**
- * Everything a shared project holds, as the page hands it to main to send to its org;
- * main skips what did not change.
+ * Tudo o que um projeto compartilhado guarda, como a página o entrega à main para mandar
+ * à org dele; a main pula o que não mudou.
  */
 export interface IProSyncBatch {
   project: IProSyncProject;

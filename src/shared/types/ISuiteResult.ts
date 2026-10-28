@@ -2,8 +2,8 @@ import type { ISuiteAttachment } from './ISuiteAttachment';
 import type { SuiteTestStatus } from './SuiteTestStatus';
 
 /**
- * How one test went in a run: where it is written, how it ended, whether it passed only
- * on a retry, how long it took, the first error it threw, and what it left behind.
+ * Como um teste foi numa run: onde está escrito, como terminou, se passou só numa nova
+ * tentativa, quanto levou, o primeiro erro que lançou, e o que deixou.
  */
 export interface ISuiteResult {
   testId: string;

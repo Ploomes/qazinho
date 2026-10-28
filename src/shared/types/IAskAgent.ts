@@ -9,8 +9,8 @@ import type { IVariableBrief } from './IVariableBrief';
 import type { IViewport } from './IViewport';
 
 /**
- * What the page asks in the chat: the QA's words, the workspace, its runs and the sources
- * to plan from.
+ * O que a página pergunta no chat: as palavras do QA, o workspace, as runs dele e as
+ * fontes de onde planejar.
  */
 export interface IAskAgent {
   workspaceId: string;

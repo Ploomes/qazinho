@@ -1,7 +1,7 @@
 import type { McpServerId } from './McpServerId';
 import type { McpServerState } from './McpServerState';
 
-/** One MCP server QAzinho knows, as the QA's agent reports it now. */
+/** Um servidor MCP que o QAzinho conhece, como o agente do QA o relata agora. */
 export interface IMcpServerStatus {
   id: McpServerId;
   state: McpServerState;

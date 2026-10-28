@@ -6,8 +6,8 @@ import { useStepsPopupViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A small popup listing the steps QAzinho takes out of sight as they happen; the QA's own
- * step points at its page.
+ * Um popup pequeno listando os passos que o QAzinho dá fora de vista conforme acontecem;
+ * o passo do próprio QA aponta para a página dele.
  */
 export const StepsPopup: React.FC<IStepsPopupProps> = (props) => {
   const {

@@ -2,7 +2,7 @@ import type { IKbdProps } from './types';
 import { useKbdViewModel } from './hooks';
 import './styles.css';
 
-/** A keyboard shortcut, named the way this machine's keyboard names it. */
+/** Um atalho de teclado, nomeado do jeito que o teclado desta máquina o nomeia. */
 export const Kbd: React.FC<IKbdProps> = (props) => {
   const { label } = useKbdViewModel(props);
 

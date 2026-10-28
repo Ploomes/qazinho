@@ -22,7 +22,10 @@ const METHODS = [
   'fillRect',
 ];
 
-/** A 2D context that remembers every colour it painted with, every call it took, and the shadow of each image laid on it. */
+/**
+ * Um contexto 2D que lembra toda cor com que pintou, toda chamada que recebeu, e a sombra
+ * de cada imagem posta nele.
+ */
 function recorder(name: string) {
   const painted = new Set<string>();
   const calls: string[] = [];
@@ -112,7 +115,10 @@ describe('drawIntern', () => {
       }
   });
 
-  /** The sticker look was heavy to work in all day: the mascot is flat, with no cut edge and no gloss. */
+  /**
+   * O visual de sticker pesava para trabalhar o dia todo: o mascote é chapado, sem borda
+   * de recorte e sem brilho.
+   */
   it('draws him flat: no white edge, no gloss', () => {
     const { sheet } = draw({ mood: 'neutral', t: 0 });
 
@@ -155,7 +161,10 @@ describe('drawIntern', () => {
     expect(screen.shadows).toEqual(['rgba(0, 0, 0, 0.55)', 'rgba(0, 0, 0, 0.16)']);
   });
 
-  /** The designer swapped his stub for an antenna with a ball at its tip, which sways with him. */
+  /**
+   * A designer trocou o toco dele por uma antena com uma bolinha na ponta, que balança
+   * com ele.
+   */
   it('tops him with an antenna, its ball at the tip, swaying with him', () => {
     const still = draw({ mood: 'neutral', t: 0 });
     const swaying = draw({ mood: 'neutral', t: 0.25 });

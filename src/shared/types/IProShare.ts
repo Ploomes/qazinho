@@ -2,8 +2,8 @@ import type { IProPlanConflict } from './IProPlanConflict';
 import type { ProSyncState } from './ProSyncState';
 
 /**
- * Whether a project is linked to an org of QAzinho Pro, where its sync stands, the plans
- * edited here and not sent yet, and each plan the org moved since.
+ * Se um projeto está ligado a uma org do QAzinho Pro, em que pé está a sincronização, os
+ * planos editados aqui e ainda não mandados, e cada plano que a org mexeu desde então.
  */
 export interface IProShare {
   projectId: string;

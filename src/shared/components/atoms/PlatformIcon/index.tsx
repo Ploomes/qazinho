@@ -3,7 +3,8 @@ import { Icon } from '@/shared/components/atoms/Icon';
 import { usePlatformIconViewModel } from './hooks';
 
 /**
- * The logo of the platform a target runs on: a globe for the web, Android's, or Apple's.
+ * O logo da plataforma em que um alvo roda: um globo para a web, o do Android, ou o da
+ * Apple.
  */
 export const PlatformIcon: React.FC<IPlatformIconProps> = (props) => {
   const { size, icon } = usePlatformIconViewModel(props);

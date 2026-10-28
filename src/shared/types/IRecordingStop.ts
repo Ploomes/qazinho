@@ -1,6 +1,6 @@
 /**
- * The end of a recording: its last frame holds until `at`, the moment the run ended, in
- * epoch ms.
+ * O fim de uma gravação: o último frame dela segura até `at`, o momento em que a run
+ * terminou, em ms de epoch.
  */
 export interface IRecordingStop {
   id: string;

@@ -1,10 +1,13 @@
 import { FrameRecorder } from './classes';
 
-/** The recorder window's side of the bridge: one frame recorder per run main starts. */
+/**
+ * O lado da bridge da janela do gravador: um gravador de frames por run que a main
+ * inicia.
+ */
 export class Recorder {
   private static readonly recorders = new Map<string, FrameRecorder>();
 
-  /** Records each run main starts, and hands its video back once main stops it. */
+  /** Grava cada run que a main inicia, e devolve o vídeo dela quando a main a para. */
   public static listen(): void {
     const api = window.qazinhoRecorder;
 

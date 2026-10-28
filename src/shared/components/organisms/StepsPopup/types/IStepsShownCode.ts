@@ -1,6 +1,6 @@
 /**
- * A code the QA types at a page by hand, shown big, with the words of the button that
- * copies it and opens the page.
+ * Um código que o QA digita numa página à mão, mostrado grande, com as palavras do botão
+ * que o copia e abre a página.
  */
 export interface IStepsShownCode {
   code: string;

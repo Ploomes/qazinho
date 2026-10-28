@@ -1,8 +1,8 @@
 import { focusablesIn } from './focusablesIn';
 
 /**
- * What a modal focuses as it opens: its first field, else the open item of its nav, else
- * its first control above the footer, else itself.
+ * O que um modal foca ao abrir: o primeiro campo, senão o item aberto do nav, senão o
+ * primeiro controle acima do rodapé, senão ele mesmo.
  */
 export function firstFocusOf(panel: HTMLElement): HTMLElement {
   const items = focusablesIn(panel);

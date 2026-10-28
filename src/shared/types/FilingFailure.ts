@@ -1,4 +1,4 @@
-/** Why a bug did not become an issue. */
+/** Por que um bug não virou issue. */
 export type FilingFailure =
   | 'not-connected'
   | 'unauthorized'

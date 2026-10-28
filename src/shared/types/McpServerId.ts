@@ -1,2 +1,2 @@
-/** An MCP server QAzinho knows how to set up in the QA's own agent. */
+/** Um servidor MCP que o QAzinho sabe configurar no próprio agente do QA. */
 export type McpServerId = 'figma';

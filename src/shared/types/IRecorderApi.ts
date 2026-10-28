@@ -4,8 +4,8 @@ import type { IRecordingStart } from './IRecordingStart';
 import type { IRecordingStop } from './IRecordingStop';
 
 /**
- * What the preload gives the hidden recorder window as `window.qazinhoRecorder`: what to
- * record, and where its bytes go.
+ * O que o preload dá à janela escondida do gravador como `window.qazinhoRecorder`: o que
+ * gravar, e para onde vão os bytes.
  */
 export interface IRecorderApi {
   onStart: (listener: (start: IRecordingStart) => void) => () => void;

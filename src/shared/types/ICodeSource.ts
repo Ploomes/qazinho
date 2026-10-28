@@ -1,6 +1,6 @@
 /**
- * The code a plan was made from: the repository, the branch at its commit, and the base
- * it was measured against.
+ * O código de onde um plano foi feito: o repositório, a branch no commit dela, e a base
+ * contra a qual foi medida.
  */
 export interface ICodeSource {
   repository: string;

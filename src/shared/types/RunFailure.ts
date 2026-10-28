@@ -1,6 +1,6 @@
 /**
- * Why a run or a chat turn stopped short, for the page to say in the QA's language;
- * `said` keeps the machine's own words.
+ * Por que uma run ou um turno de chat parou no meio, para a página dizer no idioma do QA;
+ * `said` guarda as próprias palavras da máquina.
  */
 export type RunFailure =
   | { reason: 'agent-missing'; agentId: string }

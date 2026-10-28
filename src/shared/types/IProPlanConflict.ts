@@ -1,8 +1,8 @@
 import type { IProSyncCase } from './IProSyncCase';
 
 /**
- * A plan the org moved since this computer last sent it: the cases both sides started
- * from, and the org's version as it stands, with who moved it and when.
+ * Um plano que a org mexeu desde que este computador o mandou por último: os casos de
+ * onde os dois lados partiram, e a versão da org como está, com quem a mexeu e quando.
  */
 export interface IProPlanConflict {
   workspaceId: string;

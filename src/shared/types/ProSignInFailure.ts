@@ -1,6 +1,6 @@
 /**
- * Why signing in to QAzinho Pro stopped short: no answer, a no in the browser, an expired
- * code, no keychain for the token, or an answer QAzinho did not expect.
+ * Por que entrar no QAzinho Pro parou no meio: sem resposta, um não no navegador, código
+ * vencido, nenhum keychain para o token, ou uma resposta inesperada.
  */
 export type ProSignInFailure =
   'unreachable' | 'denied' | 'expired' | 'no-keychain' | 'unexpected';

@@ -3,8 +3,8 @@ import { useSpeechBubbleViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A line someone on screen says, typed out in place: the whole line holds its final shape
- * from the first frame.
+ * Uma fala de alguém na tela, digitada no lugar: a linha inteira guarda a forma final
+ * desde o primeiro frame.
  */
 export const SpeechBubble: React.FC<ISpeechBubbleProps> = (props) => {
   const { said, unsaid, isStreaming, textRef, style, onSkip } =

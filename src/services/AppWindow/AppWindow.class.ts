@@ -1,6 +1,6 @@
 import type { IWindowControls, WindowFit } from '@/shared/types';
 
-/** The only caller of the window side of the bridge. */
+/** O único que chama o lado da janela da bridge. */
 export class AppWindow {
   public static fit(fit: WindowFit): void {
     void window.qazinho?.fitWindow(fit);

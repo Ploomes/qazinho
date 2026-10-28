@@ -8,7 +8,7 @@ import type { ProjectSection } from '@/modules/Project/components/ProjectModal/t
 import type { IReplayOpen, IRunNotice } from '@/modules/Run';
 
 /**
- * The shell: which screen is up, which project is selected, and what is floating over it.
+ * O shell: qual tela está em cima, qual projeto está escolhido, e o que flutua sobre ela.
  */
 export interface IAppStore {
   theme: Theme;

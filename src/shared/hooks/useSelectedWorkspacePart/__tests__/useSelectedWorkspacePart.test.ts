@@ -43,8 +43,8 @@ describe('useSelectedWorkspacePart', () => {
   });
 
   /**
-   * A run's clock moves the open workspace every second. A view that does not show the clock
-   * reads only its own parts, and sits still while the run goes.
+   * O relógio de uma run mexe o workspace aberto a cada segundo. Uma view que não mostra
+   * o relógio lê só as partes dela, e fica parada enquanto a run anda.
    */
   it('does NOT render again when a part it does not read changes', () => {
     const { renders } = counted();

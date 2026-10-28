@@ -1,7 +1,7 @@
 import type { SuiteList } from '@/shared/types';
 
 /**
- * A suite's tests as the page has them: still being listed, listed, or why they could not
- * be.
+ * Os testes de uma suíte como a página os tem: ainda sendo listados, listados, ou por que
+ * não puderam ser.
  */
 export type SuiteListState = { kind: 'loading' } | SuiteList;

@@ -3,8 +3,8 @@ import type { IProSyncCatch } from './IProSyncCatch';
 import type { Severity } from './Severity';
 
 /**
- * A bug as it goes to QAzinho Pro: its words, where it broke, its screens as files in the
- * archive, the run that first caught it, each later sighting, and its issue.
+ * Um bug como vai ao QAzinho Pro: as palavras, onde quebrou, as telas como arquivos no
+ * archive, a run que o pegou primeiro, cada vista posterior, e a issue dele.
  */
 export interface IProSyncBug {
   workspaceId: string;

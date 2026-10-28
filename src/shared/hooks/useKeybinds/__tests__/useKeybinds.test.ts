@@ -35,7 +35,7 @@ describe('useKeybinds', () => {
     expect(useWorkspaceStore.getState().panelTab).toBe('plan');
   });
 
-  /** ⌘↵ in the chat sent the message and ran the whole plan too. */
+  /** O ⌘↵ no chat mandava a mensagem e rodava o plano inteiro também. */
   it('does NOT act on a key a field already took', () => {
     renderHook(() => {
       useKeybinds();

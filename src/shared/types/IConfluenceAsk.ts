@@ -1,4 +1,4 @@
-/** The Confluence page a chat message plans from. */
+/** A página do Confluence de onde uma mensagem de chat planeja. */
 export interface IConfluenceAsk {
   pageId: string;
 }

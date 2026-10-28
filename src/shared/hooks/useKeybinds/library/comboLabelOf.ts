@@ -1,8 +1,8 @@
 const OFF_MAC: Record<string, string> = { '⌘': 'Ctrl+', '⌥': 'Alt+', '⇧': 'Shift+' };
 
 /**
- * A shortcut as this machine's keyboard names it: ⌘ and ⌥ on a Mac, Ctrl and Alt
- * everywhere else.
+ * Um atalho como o teclado desta máquina o nomeia: ⌘ e ⌥ num Mac, Ctrl e Alt em todo o
+ * resto.
  */
 export function comboLabelOf(props: { combo: string; isMac: boolean }): string {
   return props.isMac

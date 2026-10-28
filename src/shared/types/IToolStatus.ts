@@ -1,6 +1,5 @@
 /**
- * A toolchain QAzinho needs but never installs: it says where it is, or that it is
- * missing.
+ * Uma toolchain de que o QAzinho precisa mas nunca instala: diz onde está, ou que falta.
  */
 export interface IToolStatus {
   isFound: boolean;

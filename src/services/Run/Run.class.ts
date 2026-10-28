@@ -13,7 +13,7 @@ import type {
   SaveOutcome,
 } from '@/shared/types';
 
-/** The only caller of the run side of the bridge. */
+/** O único que chama o lado das runs da bridge. */
 export class Run {
   public static start(run: IStartRun): void {
     void window.qazinho?.startRun(run);
@@ -66,8 +66,8 @@ export class Run {
   }
 
   /**
-   * When, and after how many days, QAzinho let a run's video go; null for one it never
-   * did.
+   * Quando, e depois de quantos dias, o QAzinho soltou o vídeo de uma run; null para um
+   * que ele nunca soltou.
    */
   public static async removedVideo(run: IRunRef): Promise<IRemovedVideo | null> {
     return (await window.qazinho?.removedVideo(run)) ?? null;

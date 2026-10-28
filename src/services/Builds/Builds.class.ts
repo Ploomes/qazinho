@@ -1,7 +1,7 @@
 import type { IBuildEvent, IBuildResult, IStartBuild } from '@/shared/types';
 import { i18n } from '@/languages';
 
-/** The only caller of the build side of the bridge. */
+/** O único que chama o lado dos builds da bridge. */
 export class Builds {
   public static async start(build: IStartBuild): Promise<IBuildResult> {
     return (

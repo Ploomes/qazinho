@@ -22,7 +22,7 @@ describe('MARKDOWN', () => {
     );
   });
 
-  /** The agent's text is not the app's: HTML in it is shown as text, never run. */
+  /** O texto do agente não é do app: HTML nele aparece como texto, nunca roda. */
   it('does NOT render HTML the agent wrote', () => {
     const html = render('<img src=x onerror="alert(1)"> hi');
 

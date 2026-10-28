@@ -7,7 +7,7 @@ import type {
 } from '@/shared/types';
 import { i18n } from '@/languages';
 
-/** The only caller of the agent side of the bridge. */
+/** O único que chama o lado do agente da bridge. */
 export class Agent {
   public static async ask(ask: IAskAgent): Promise<IChatTurn> {
     return (

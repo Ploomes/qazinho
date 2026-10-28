@@ -10,8 +10,8 @@ import type {
 } from '@/shared/types';
 
 /**
- * What setting the machine up is doing: the managers an install needs, installs under
- * way, the trackers, and one asked to connect.
+ * O que configurar a máquina está fazendo: os gerenciadores de que uma instalação
+ * precisa, instalações em andamento, os trackers, e um pedido para conectar.
  */
 export interface ISetupStore {
   managers: IMachineCheck['managers'] | null;

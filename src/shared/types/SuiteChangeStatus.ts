@@ -1,4 +1,4 @@
-/** Where a change to a suite stands. */
+/** Em que pé está uma mudança numa suíte. */
 export type SuiteChangeStatus =
   | 'working'
   | 'ready'

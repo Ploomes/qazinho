@@ -1,6 +1,6 @@
 /**
- * Part of a run that goes through one Playwright project, with the tests it runs; none
- * runs them all.
+ * Parte de uma run que passa por um projeto do Playwright, com os testes que roda; nenhum
+ * roda todos.
  */
 export interface ISuiteBatch {
   project: string;

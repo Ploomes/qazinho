@@ -1,2 +1,2 @@
-/** What a person may do in an org of QAzinho Pro. */
+/** O que uma pessoa pode fazer numa org do QAzinho Pro. */
 export type ProRole = 'owner' | 'admin' | 'editor' | 'reader';

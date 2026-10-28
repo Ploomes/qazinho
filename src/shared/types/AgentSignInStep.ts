@@ -1,5 +1,5 @@
 /**
- * One thing that happens while the QA's agent signs in to their account, as the sign-in
- * popup lists it.
+ * Uma coisa que acontece enquanto o agente do QA entra na conta dele, como o popup de
+ * login a lista.
  */
 export type AgentSignInStep = 'start' | 'browser';

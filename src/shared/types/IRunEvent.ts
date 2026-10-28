@@ -7,8 +7,8 @@ import type { IStepOutcome } from './IStepOutcome';
 import type { RunFailure } from './RunFailure';
 
 /**
- * What the page hears while a real run walks the device, or an exploration goes through
- * the app, its agent's questions to the QA included.
+ * O que a página ouve enquanto uma run real anda o dispositivo, ou uma exploração
+ * percorre o app, as perguntas do agente ao QA incluídas.
  */
 export type IRunEvent =
   | { kind: 'step'; outcome: IStepOutcome }

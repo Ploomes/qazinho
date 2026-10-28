@@ -1,6 +1,6 @@
 /**
- * Writes a key's last change once its burst settles; `drop` forgets a write still
- * waiting, for what is gone.
+ * Escreve a última mudança de uma chave assim que a rajada dela acalma; `drop` esquece
+ * uma escrita ainda esperando, para o que se foi.
  */
 export interface ISaveLater {
   save: (key: string, write: () => void) => void;

@@ -1,8 +1,8 @@
 import type { FilingFailure } from './FilingFailure';
 
 /**
- * How posting an update went: where the comment sits, with the files the tracker did not
- * take, or why it was not posted, in the tracker's words.
+ * Como foi postar uma atualização: onde o comentário fica, com os arquivos que o tracker
+ * não aceitou, ou por que não foi postado, nas palavras do tracker.
  */
 export type BugComment =
   | { isPosted: true; url: string; missed: string[] }

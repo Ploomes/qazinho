@@ -2,8 +2,8 @@ import type { GithubSignInFailure } from './GithubSignInFailure';
 import type { GithubSignInStep } from './GithubSignInStep';
 
 /**
- * Where signing the GitHub CLI in stands: on a step, with the code to type at GitHub;
- * signed in, stopped short, or cancelled.
+ * Em que pé está o login da GitHub CLI: num passo, com o código a digitar no GitHub;
+ * logado, parado no meio, ou cancelado.
  */
 export type GithubSignInPhase =
   | { phase: 'working'; at: GithubSignInStep; code: string | null; url: string | null }

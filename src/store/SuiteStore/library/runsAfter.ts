@@ -1,8 +1,8 @@
 import type { ISuiteRun, SuiteEvent } from '@/shared/types';
 
 /**
- * A project's runs once one event of a run is heard: a run that starts goes first, a test
- * that ends lands in its run, and a run that ends takes its final shape.
+ * As runs de um projeto depois de um evento: uma run que começa vai primeiro, um teste
+ * que termina cai na run dele, e uma run que termina toma a forma final.
  */
 export function runsAfter(props: { runs: ISuiteRun[]; event: SuiteEvent }): ISuiteRun[] {
   const { runs, event } = props;

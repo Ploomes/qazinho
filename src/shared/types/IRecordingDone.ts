@@ -1,7 +1,8 @@
 import type { IRunVideo } from './IRunVideo';
 
 /**
- * A recording written to its end, or `null` when no frame ever came or the encoder broke.
+ * Uma gravação escrita até o fim, ou `null` quando nenhum frame veio ou o codificador
+ * quebrou.
  */
 export interface IRecordingDone {
   id: string;

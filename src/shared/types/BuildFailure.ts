@@ -2,8 +2,8 @@ import type { GithubFailure } from './GithubFailure';
 import type { RunFailure } from './RunFailure';
 
 /**
- * Why a build made nothing: no agent to build with, no code from GitHub, the agent
- * failing, nothing it made that runs, or the QA stopping it.
+ * Por que um build não fez nada: nenhum agente para construir, nenhum código do GitHub, o
+ * agente falhando, nada feito que rode, ou o QA parando.
  */
 export type BuildFailure =
   | { reason: 'agent-missing'; agentId: string }

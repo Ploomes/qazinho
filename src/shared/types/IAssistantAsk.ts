@@ -1,8 +1,8 @@
 import type { IAppSnapshot } from './IAppSnapshot';
 
 /**
- * What the page asks the assistant: the QA's own words, on the session it already has,
- * with QAzinho as it is now.
+ * O que a página pergunta ao assistente: as próprias palavras do QA, na sessão que ele já
+ * tem, com o QAzinho como está agora.
  */
 export interface IAssistantAsk {
   agentId: string;

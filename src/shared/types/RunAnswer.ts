@@ -1,6 +1,6 @@
 /**
- * How a run's question ended, as the page may know it: the QA's words, a secret by its
- * name and whether the project keeps it, no answer in time, or the run stopped first.
+ * Como a pergunta de uma run terminou, como a página sabe: as palavras do QA, um segredo
+ * pelo nome e se o projeto o guarda, sem resposta a tempo, ou a run parada antes.
  */
 export type RunAnswer =
   | { kind: 'said'; text: string }

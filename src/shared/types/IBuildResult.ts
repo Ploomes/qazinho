@@ -1,8 +1,8 @@
 import type { BuildFailure } from './BuildFailure';
 
 /**
- * How a build ended: the .apk or .app QAzinho kept, with its size, commit and what the
- * agent said it built, or why there is none.
+ * Como um build terminou: o .apk ou .app que o QAzinho guardou, com o tamanho, o commit e
+ * o que o agente disse que construiu, ou por que não há.
  */
 export type IBuildResult =
   | { isBuilt: true; artifact: string; bytes: number; commit: string; summary: string }

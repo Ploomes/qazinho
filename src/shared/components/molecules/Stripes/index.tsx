@@ -3,8 +3,8 @@ import type { CSSProperties } from 'react';
 import './styles.css';
 
 /**
- * Stands in for a frame QAzinho has not captured yet: a screenshot, a clip, a live
- * stream.
+ * Ocupa o lugar de um frame que o QAzinho ainda não capturou: um screenshot, um clipe, um
+ * stream vivo.
  */
 export const Stripes: React.FC<IStripesProps> = ({ pitch = 8, className = '' }) => (
   <div

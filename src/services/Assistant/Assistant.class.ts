@@ -8,8 +8,8 @@ import type {
 import { i18n } from '@/languages';
 
 /**
- * The only caller of the assistant side of the bridge: its asks, its events, and the app
- * tool calls the page carries out.
+ * O único que chama o lado do assistente da bridge: os pedidos dele, os eventos, e as
+ * chamadas de ferramenta do app que a página executa.
  */
 export class Assistant {
   public static async ask(ask: IAssistantAsk): Promise<IAssistantTurn> {

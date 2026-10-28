@@ -1,8 +1,7 @@
 import type { IProOrg } from './IProOrg';
 
 /**
- * Where this machine stands with the QA's account: signed out, or signed in with its
- * orgs.
+ * Em que pé esta máquina está com a conta do QA: deslogada, ou logada com as orgs dela.
  */
 export type ProStatus =
   | { isSignedIn: false; canKeepToken: boolean }

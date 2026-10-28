@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 
 /**
- * A modal's title, body and the footer that confirms it, with one more action on its
- * left; a nav puts its sections beside the body, each scrolling on its own.
+ * O título, o corpo e o rodapé que confirma um modal, com mais uma ação à esquerda; um
+ * nav põe as seções dele ao lado do corpo, cada um rolando sozinho.
  */
 export interface IModalFrameProps {
   title: string;

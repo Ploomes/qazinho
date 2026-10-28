@@ -1,6 +1,6 @@
 /**
- * A plan set aside, read again once the QA fixed it: its YAML, where it still breaks, or
- * gone from the folder.
+ * Um plano posto de lado, lido de novo depois que o QA o consertou: o YAML dele, onde
+ * ainda quebra, ou sumido da pasta.
  */
 export type UnreadPlanRead =
   | { status: 'read'; yaml: string }

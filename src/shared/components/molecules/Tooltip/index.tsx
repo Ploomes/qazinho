@@ -6,8 +6,8 @@ import { useTooltipViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A few words about what the pointer or the focus rests on: under it, or beside it over
- * everything, so no edge cuts it.
+ * Algumas palavras sobre o que o ponteiro ou o foco toca: embaixo, ou ao lado por cima de
+ * tudo, para nenhuma borda cortá-la.
  */
 export const Tooltip: React.FC<ITooltipProps> = (props) => {
   const {

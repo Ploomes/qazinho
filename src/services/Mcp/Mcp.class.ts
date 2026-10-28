@@ -8,7 +8,8 @@ import type {
 import { i18n } from '@/languages';
 
 /**
- * The only caller of the MCP side of the bridge: servers that live in the QA's own agent.
+ * O único que chama o lado do MCP da bridge: servidores que vivem no próprio agente do
+ * QA.
  */
 export class Mcp {
   public static async list(agentId: string): Promise<IMcpServerStatus[]> {

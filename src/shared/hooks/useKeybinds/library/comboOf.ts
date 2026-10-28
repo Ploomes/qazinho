@@ -13,8 +13,8 @@ const NAMED: Record<string, string> = {
 };
 
 /**
- * Control stands in for Command off macOS, so one written shortcut works on every
- * machine.
+ * O Control faz as vezes do Command fora do macOS, para um atalho escrito funcionar em
+ * toda máquina.
  */
 export function comboOf(event: {
   key: string;

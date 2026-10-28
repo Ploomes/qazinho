@@ -1,6 +1,6 @@
 import type { IVariableBrief } from './IVariableBrief';
 
-/** The variables one project keeps, by name and description. */
+/** As variáveis que um projeto guarda, por nome e descrição. */
 export interface IProjectVariables {
   projectId: string;
   variables: IVariableBrief[];

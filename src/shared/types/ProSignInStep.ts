@@ -1,5 +1,5 @@
 /**
- * One thing that happens while the QA signs this machine in to QAzinho Pro, as the
- * sign-in popup lists it.
+ * Uma coisa que acontece enquanto o QA faz esta máquina entrar no QAzinho Pro, como o
+ * popup de login a lista.
  */
 export type ProSignInStep = 'code' | 'browser' | 'account';

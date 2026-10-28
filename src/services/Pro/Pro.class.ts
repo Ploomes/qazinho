@@ -11,8 +11,8 @@ import type {
 } from '@/shared/types';
 
 /**
- * The only caller of QAzinho Pro's side of the bridge: this machine's sign-in, where it
- * stands, and each project it links to an org.
+ * O único que chama o lado do QAzinho Pro da bridge: o login desta máquina, em que pé
+ * está, e cada projeto que ela liga a uma org.
  */
 export class Pro {
   public static async status(): Promise<ProStatus> {

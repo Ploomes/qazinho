@@ -5,8 +5,8 @@ import type {
 } from '@/shared/types';
 
 /**
- * The only caller of the variables side of the bridge. Values go in; only names and
- * descriptions come back.
+ * O único que chama o lado das variáveis da bridge. Valores entram; só nomes e descrições
+ * voltam.
  */
 export class Variables {
   public static async list(): Promise<IProjectVariables[]> {

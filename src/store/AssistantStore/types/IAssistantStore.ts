@@ -6,8 +6,8 @@ import type {
 } from '@/modules/Assistant/types';
 
 /**
- * The Estagiário in the corner: whether its chat is open, what was said in it, and what
- * it is busy with.
+ * O Estagiário no canto: se o chat dele está aberto, o que foi dito nele, e com o que ele
+ * está ocupado.
  */
 export interface IAssistantStore {
   isOpen: boolean;

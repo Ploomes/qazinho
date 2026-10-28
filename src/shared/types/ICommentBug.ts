@@ -4,8 +4,8 @@ import type { IEvidenceShot } from './IEvidenceShot';
 import type { IFiledIssue } from './IFiledIssue';
 
 /**
- * An update the QA posts under a bug's issue: the comment, and the screens and video that
- * go with it.
+ * Uma atualização que o QA posta sob a issue de um bug: o comentário, e as telas e o
+ * vídeo que vão com ele.
  */
 export interface ICommentBug {
   issue: IFiledIssue;

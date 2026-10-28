@@ -1,6 +1,6 @@
 /**
- * A Playwright suite the QA keeps in a git clone, connected to a project: its folder,
- * config and branch.
+ * Uma suíte de Playwright que o QA mantém num clone git, conectada a um projeto: a pasta,
+ * a config e a branch.
  */
 export interface ISuite {
   projectId: string;

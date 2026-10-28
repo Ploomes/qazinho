@@ -3,8 +3,8 @@ import type { IMjpegPart } from '@/services/Recorder/classes/video/FrameRecorder
 const HEAD_END = [13, 10, 13, 10];
 
 /**
- * Takes the first whole part off an MJPEG body: null while its bytes are still coming, a
- * null part for a block it cannot read.
+ * Tira a primeira parte inteira de um corpo MJPEG: null enquanto os bytes dela ainda
+ * chegam, uma parte null para um bloco que não consegue ler.
  */
 export function takeMjpegPart(
   buffer: Uint8Array,

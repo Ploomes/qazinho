@@ -1,4 +1,4 @@
-/** Words to show as they were said: an agent's error, or a command to run. */
+/** Palavras a mostrar como foram ditas: o erro de um agente, ou um comando a rodar. */
 export interface IStepsDetail {
   text: string;
   isCommand: boolean;

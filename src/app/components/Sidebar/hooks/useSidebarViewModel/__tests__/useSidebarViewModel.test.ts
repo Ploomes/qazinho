@@ -226,7 +226,7 @@ describe('useSidebarViewModel', () => {
       expect(result.current.rows.map(({ kind }) => kind)).toEqual(['header', 'add']);
     });
 
-    /** A paused run read "running" in the sidebar while it waited for the QA. */
+    /** Uma run pausada aparecia como "running" na sidebar enquanto esperava pelo QA. */
     it('marks a paused run as paused, not running', () => {
       const started = startRun({
         workspace: makeWorkspace(),

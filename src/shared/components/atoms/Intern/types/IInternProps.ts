@@ -1,8 +1,8 @@
 import type { InternMood } from './InternMood';
 
 /**
- * `isStill` holds his still pose; `isFigure` crops him tight, for a logo; `isSticker`
- * draws him as the logo's sticker, cut, glossed and tilted.
+ * `isStill` segura a pose parada; `isFigure` o corta justo, para um logo; `isSticker` o
+ * desenha como o sticker do logo, recortado, com brilho e inclinado.
  */
 export interface IInternProps {
   mood: InternMood;

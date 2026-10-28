@@ -3,8 +3,8 @@ import { KEYBINDS } from '@/modules/Settings/constants';
 import { keybindsOf } from '@/store/SettingsStore/library';
 
 /**
- * Settings used to save each shortcut with its English label, so a Portuguese QA read
- * "Run the plan" under Atalhos forever after. The label now always comes from the table.
+ * As Configurações salvavam cada atalho com o rótulo em inglês, então um QA em português
+ * lia "Run the plan" em Atalhos para sempre. O rótulo agora sempre vem da tabela.
  */
 describe('keybindsOf', () => {
   it('keeps the keys the QA picked, and takes the name from the table', () => {

@@ -1,8 +1,8 @@
 import type { ILastWritten } from '@/shared/hooks/useArchive/types';
 
 /**
- * What disk already holds. A load that lands twice must not write itself back over the
- * QA.
+ * O que o disco já guarda. Uma carga que chega duas vezes não pode se escrever de volta
+ * por cima do QA.
  */
 export function lastWritten(): ILastWritten {
   const held = new Map<string, string>();

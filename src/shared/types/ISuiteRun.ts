@@ -3,8 +3,8 @@ import type { SuiteFailure } from './SuiteFailure';
 import type { SuiteRunStatus } from './SuiteRunStatus';
 
 /**
- * A run of a project's suite: when it started and ended (epoch ms), how it stands, how
- * many tests it holds, how each went, and why it broke, with what Playwright said.
+ * Uma run da suíte de um projeto: quando começou e terminou (ms de epoch), como está,
+ * quantos testes tem, como cada um foi, e por que quebrou, com o que o Playwright disse.
  */
 export interface ISuiteRun {
   id: string;

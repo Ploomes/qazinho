@@ -1,6 +1,6 @@
 /**
- * How exporting the recorded cases as code ended: saved where the QA picked, nothing
- * recorded yet, called off, or failed with why.
+ * Como terminou exportar os casos gravados como código: salvo onde o QA escolheu, nada
+ * gravado ainda, cancelado, ou falhou com o porquê.
  */
 export type ExportOutcome =
   | {

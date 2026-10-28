@@ -6,7 +6,7 @@ import type {
 } from '@/shared/types';
 import { NOTHING_SAVED } from './constants';
 
-/** The only caller of the disk side of the bridge. */
+/** O único que chama o lado do disco da bridge. */
 export class Archive {
   public static async read(): Promise<ISavedState> {
     return (await window.qazinho?.readState()) ?? NOTHING_SAVED;

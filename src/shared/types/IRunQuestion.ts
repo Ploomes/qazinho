@@ -1,6 +1,9 @@
 import type { IVariableBrief } from './IVariableBrief';
 
-/** A question a run's agent asked the QA and waits on, with the answers it offers. */
+/**
+ * Uma pergunta que o agente de uma run fez ao QA e espera, com as respostas que ela
+ * oferece.
+ */
 export interface IRunQuestion {
   id: string;
   question: string;

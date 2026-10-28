@@ -1,6 +1,8 @@
 import type { IVariableBrief } from '@/shared/types';
 
-/** Variables someone asked the QA to type in the window, for which project and why. */
+/**
+ * Variáveis que alguém pediu ao QA para digitar na janela, para qual projeto e por quê.
+ */
 export interface IVariablesRequest {
   id: string;
   projectId: string;

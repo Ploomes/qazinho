@@ -42,7 +42,10 @@ describe('useTooltipViewModel', () => {
     expect(result.current.isOpen).toBe(false);
   });
 
-  /** In the folded sidebar a tip under its row was cut by the rail's own edge. */
+  /**
+   * Na sidebar dobrada, uma dica sob a linha dela era cortada pela própria borda do
+   * trilho.
+   */
   it('opens beside what it names, centred on it, a little gap away', () => {
     const { result } = renderHook(() => useTooltipViewModel({ side: 'right' }));
 
@@ -63,7 +66,10 @@ describe('useTooltipViewModel', () => {
     });
   });
 
-  /** The fold button sits at the window's foot, and its tip, centred on it, hung half past the edge. */
+  /**
+   * O botão de dobrar fica no pé da janela, e a dica dele, centrada nele, ficava metade
+   * para fora da borda.
+   */
   it('keeps a tip beside something at the window foot inside the window', () => {
     Object.defineProperty(window, 'innerHeight', { configurable: true, value: 900 });
 

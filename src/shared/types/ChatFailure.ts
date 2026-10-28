@@ -3,8 +3,8 @@ import type { JiraFailure } from './JiraFailure';
 import type { RunFailure } from './RunFailure';
 
 /**
- * Why a chat turn stopped short: what stops a run too, the QA stopping the answer
- * themselves, GitHub not handing over the code, Jira the story, or Confluence the page.
+ * Por que um turno de chat parou no meio: o que para uma run, o QA parando a resposta, ou
+ * o GitHub, o Jira ou o Confluence não entregando o código, a história ou a página.
  */
 export type ChatFailure =
   | RunFailure

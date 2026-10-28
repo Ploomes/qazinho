@@ -1,6 +1,6 @@
 /**
- * Where Tab goes from a modal's last control, or Shift+Tab from its first: round to the
- * other end.
+ * Para onde o Tab vai a partir do último controle de um modal, ou o Shift+Tab a partir do
+ * primeiro: dá a volta até a outra ponta.
  */
 export function wrappedFocus<T>(props: {
   items: T[];

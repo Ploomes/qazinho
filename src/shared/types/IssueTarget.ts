@@ -1,5 +1,6 @@
 /**
- * Where the QA files a project's bugs: a Jira project by its key, or a GitHub repository.
+ * Onde o QA registra os bugs de um projeto: um projeto do Jira pela chave, ou um
+ * repositório do GitHub.
  */
 export type IssueTarget =
   | { tracker: 'jira'; project: string }

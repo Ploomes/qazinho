@@ -1,4 +1,4 @@
-/** A GitHub repository by its owner and its name, as in owner/name. */
+/** Um repositório do GitHub pelo dono e pelo nome, como em owner/name. */
 export interface IRepositoryRef {
   owner: string;
   name: string;

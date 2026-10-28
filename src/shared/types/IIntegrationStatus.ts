@@ -1,8 +1,8 @@
 import type { IntegrationId } from './IntegrationId';
 
 /**
- * A connected tracker as the page may see it: who it is signed in as, never the token;
- * Jira also says whether Confluence is used beside it.
+ * Um tracker conectado como a página pode vê-lo: como quem está logado, nunca o token; o
+ * Jira também diz se o Confluence é usado ao lado dele.
  */
 export interface IIntegrationStatus {
   id: IntegrationId;

@@ -1,6 +1,6 @@
 import type { IProcessSample } from './IProcessSample';
 
-/** What the machine is paying for QAzinho right now, app included. */
+/** O que a máquina está pagando pelo QAzinho agora, o app incluído. */
 export interface IResourceSnapshot {
   cpu: number;
   ramMb: number;

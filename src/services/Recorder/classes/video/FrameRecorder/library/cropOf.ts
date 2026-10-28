@@ -1,8 +1,8 @@
 import type { IRect, ISize } from '@/services/Recorder/classes/video/FrameRecorder/types';
 
 /**
- * The part of a frame the screen shows: Chrome keeps a window 500px wide, so a
- * phone-sized page is the left of a wider frame.
+ * A parte de um frame que a tela mostra: o Chrome mantém a janela com 500px de largura,
+ * então uma página do tamanho de um celular é a esquerda de um frame mais largo.
  */
 export function cropOf(props: ISize & { ratio: number }): IRect {
   const width =

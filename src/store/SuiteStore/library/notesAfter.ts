@@ -4,8 +4,8 @@ import type { SuiteChangeEvent } from '@/shared/types';
 const KEPT = 40;
 
 /**
- * What the agent did while it changes a suite, the newest last, once it says a line or
- * runs tests; a blank line adds nothing, and only the latest few are kept.
+ * O que o agente fez enquanto muda uma suíte, o mais novo por último, quando diz uma
+ * linha ou roda testes; uma linha em branco não soma, e só as últimas ficam.
  */
 export function notesAfter(props: {
   notes: SuiteChangeNote[];

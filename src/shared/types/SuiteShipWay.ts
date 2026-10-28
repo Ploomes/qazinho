@@ -1,5 +1,5 @@
 /**
- * How a change leaves the QA's machine: as a pull request opened on GitHub, or as a
- * branch pushed for the QA to open one.
+ * Como uma mudança sai da máquina do QA: como um pull request aberto no GitHub, ou como
+ * uma branch enviada para o QA abrir um.
  */
 export type SuiteShipWay = 'pull-request' | 'branch';

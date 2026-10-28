@@ -14,7 +14,7 @@ describe('wrappedFocus', () => {
     expect(wrappedFocus({ items: ITEMS, current: 'url', isBack: true })).toBeNull();
   });
 
-  /** Focus left behind on the button that opened the modal must come into it. */
+  /** O foco deixado no botão que abriu o modal precisa entrar nele. */
   it('brings focus in from outside the modal', () => {
     expect(wrappedFocus({ items: ITEMS, current: 'behind', isBack: false })).toBe('name');
     expect(wrappedFocus({ items: ITEMS, current: null, isBack: true })).toBe('create');

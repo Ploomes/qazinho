@@ -1,4 +1,4 @@
-/** The page a step sent the QA to, so the popup can open it again. */
+/** A página para a qual um passo mandou o QA, para o popup poder abri-la de novo. */
 export interface IStepsPage {
   url: string;
   label: string;

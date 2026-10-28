@@ -1,5 +1,5 @@
 /**
- * Where a build is: getting the code from GitHub, the agent building it, or QAzinho
- * checking what it made.
+ * Onde um build está: pegando o código do GitHub, o agente o construindo, ou o QAzinho
+ * conferindo o que ele fez.
  */
 export type BuildStep = 'code' | 'agent' | 'artifact';

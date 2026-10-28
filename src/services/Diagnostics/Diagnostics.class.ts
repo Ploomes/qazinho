@@ -1,6 +1,6 @@
 /**
- * The only caller of the diagnostics side of the bridge: the app's own log, kept on this
- * machine.
+ * O único que chama o lado do diagnóstico da bridge: o log do próprio app, guardado nesta
+ * máquina.
  */
 export class Diagnostics {
   public static async openLogs(): Promise<void> {

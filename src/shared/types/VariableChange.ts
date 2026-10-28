@@ -1,6 +1,6 @@
 /**
- * One change to a project's variables: saved under a name, renamed when `from` names
- * another, its value kept when `value` is null; or removed.
+ * Uma mudança nas variáveis de um projeto: salva sob um nome, renomeada quando `from`
+ * nomeia outra, com o valor mantido quando `value` é null; ou removida.
  */
 export type VariableChange =
   | {

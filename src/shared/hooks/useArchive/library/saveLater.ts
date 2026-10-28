@@ -1,7 +1,7 @@
 import type { ISaveLater } from '@/shared/hooks/useArchive/types';
 
 /**
- * A run writes a workspace on every step; the disk only needs the last one of a burst.
+ * Uma run escreve um workspace a cada passo; o disco só precisa do último de uma rajada.
  */
 export function saveLater(settleMs: number): ISaveLater {
   const timers = new Map<string, number>();

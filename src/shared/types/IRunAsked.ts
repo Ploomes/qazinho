@@ -1,6 +1,9 @@
 import type { RunAnswer } from './RunAnswer';
 
-/** A question a run's agent asked the QA, at the step it was on, and how it ended. */
+/**
+ * Uma pergunta que o agente de uma run fez ao QA, no passo em que estava, e como
+ * terminou.
+ */
 export interface IRunAsked {
   id: string;
   question: string;

@@ -1,6 +1,6 @@
 /**
- * A branch of a repository to plan from, and the base branch its changes are measured
- * against.
+ * Uma branch de um repositório de onde planejar, e a branch base contra a qual as
+ * mudanças dela são medidas.
  */
 export interface ICodeAsk {
   owner: string;

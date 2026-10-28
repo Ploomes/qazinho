@@ -1,8 +1,8 @@
 import type { IProShare } from '@/shared/types';
 
 /**
- * The shares with one project's changed: replaced in place, added at the end, or taken
- * out once it is no longer shared.
+ * Os compartilhamentos com os de um projeto mudados: substituídos no lugar, acrescentados
+ * no fim, ou tirados quando ele não é mais compartilhado.
  */
 export function withShare(props: { shares: IProShare[]; share: IProShare }): IProShare[] {
   const { shares, share } = props;

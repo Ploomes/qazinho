@@ -1,7 +1,9 @@
 import type { IBuild } from '@/modules/Build/types';
 import type { IBuildEvent } from '@/shared/types';
 
-/** The builds of this session, newest first, each followed through its events. */
+/**
+ * Os builds desta sessão, os mais novos primeiro, cada um acompanhado pelos eventos dele.
+ */
 export interface IBuildStore {
   builds: IBuild[];
   startBuild: (build: IBuild) => void;

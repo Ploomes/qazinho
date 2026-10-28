@@ -88,7 +88,10 @@ describe('useModalFrameViewModel', () => {
   });
 
   describe('onPanelKeyDown', () => {
-    /** A panel with a field and two buttons, and the key event React would hand the view model. */
+    /**
+     * Um painel com um campo e dois botões, e o evento de tecla que o React entregaria ao
+     * view model.
+     */
     function panelWith() {
       const panel = document.createElement('div');
 
@@ -147,7 +150,7 @@ describe('useModalFrameViewModel', () => {
       panel.remove();
     });
 
-    /** Tab used to walk out of the modal into the sidebar and the titlebar behind it. */
+    /** O Tab saía do modal para a sidebar e a barra de título atrás dele. */
     it('keeps Tab inside the modal, round from the last control to the first', () => {
       const { result } = renderHook(() => useModalFrameViewModel(PROPS));
       const { key, panel } = panelWith();

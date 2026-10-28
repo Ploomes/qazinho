@@ -7,7 +7,7 @@ import type {
 import { NO_RESOURCES, NO_TOOLS } from './constants';
 
 /**
- * The only caller of the machine side of the bridge. Views ask this, never
+ * O único que chama o lado da máquina da bridge. As views perguntam a ele, nunca ao
  * `window.qazinho`.
  */
 export class Machine {
@@ -19,7 +19,7 @@ export class Machine {
     return (await window.qazinho?.readResources()) ?? NO_RESOURCES;
   }
 
-  /** Looks again from scratch, for after the QA installed something. */
+  /** Olha de novo do zero, para depois que o QA instalou algo. */
   public static async check(): Promise<IMachineCheck> {
     return (
       (await window.qazinho?.checkMachine()) ?? {

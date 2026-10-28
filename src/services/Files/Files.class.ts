@@ -1,7 +1,8 @@
 import type { PickKind } from '@/shared/types';
 
 /**
- * The only caller of the file-picking side of the bridge. A page cannot open a dialog.
+ * O único que chama o lado de escolher arquivos da bridge. Uma página não consegue abrir
+ * um diálogo.
  */
 export class Files {
   public static async pick(kind: PickKind): Promise<string | null> {

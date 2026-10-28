@@ -251,7 +251,7 @@ const POSES: Record<InternMood, (t: number) => Pose> = {
   },
 };
 
-/** Draws the Estagiário in a mood at phase `t` on `layer`, then lays him on `context`. */
+/** Desenha o Estagiário num humor na fase `t` em `layer`, depois o põe em `context`. */
 export function drawIntern(props: {
   context: CanvasRenderingContext2D;
   layer: CanvasRenderingContext2D;

@@ -22,7 +22,7 @@ import type {
   JiraStep,
 } from '@/shared/types';
 
-/** The workspaces and everything the QA can poke inside one of them. */
+/** Os workspaces e tudo o que o QA pode mexer dentro de um deles. */
 export interface IWorkspaceStore {
   workspaces: IWorkspace[];
   isLoaded: boolean;

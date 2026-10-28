@@ -11,7 +11,10 @@ describe('cropOf', () => {
     });
   });
 
-  /** Chrome keeps its window 500px wide, so a 390px page arrives framed in 500px. */
+  /**
+   * O Chrome mantém a janela com 500px de largura, então uma página de 390px chega
+   * enquadrada em 500px.
+   */
   it('cuts a phone-sized page out of the left of the wider frame Chrome sends', () => {
     expect(cropOf({ width: 500, height: 844, ratio: 390 / 844 })).toEqual({
       x: 0,

@@ -1,6 +1,6 @@
 /**
- * A run to record: the loopback stream of its device, and the id its bytes and its end go
- * back under.
+ * Uma run a gravar: o stream em loopback do dispositivo dela, e o id com que os bytes e o
+ * fim dela voltam.
  */
 export interface IRecordingStart {
   id: string;

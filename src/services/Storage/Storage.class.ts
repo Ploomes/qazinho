@@ -1,8 +1,8 @@
 import type { IStorageUsage, IVideoSweep } from '@/shared/types';
 
 /**
- * The only caller of the storage side of the bridge: what QAzinho keeps on this computer,
- * and letting old run videos go.
+ * O único que chama o lado do armazenamento da bridge: o que o QAzinho guarda neste
+ * computador, e soltar os vídeos de runs antigas.
  */
 export class Storage {
   public static async usage(): Promise<IStorageUsage | null> {
@@ -10,8 +10,8 @@ export class Storage {
   }
 
   /**
-   * Deletes the videos of runs recorded more than so many days ago; their reports and
-   * screens stay.
+   * Apaga os vídeos das runs gravadas há mais de tantos dias; os relatórios e as telas
+   * delas ficam.
    */
   public static async sweepVideos(olderThanDays: number): Promise<IVideoSweep> {
     return (

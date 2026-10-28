@@ -1,6 +1,6 @@
 /**
- * A plan.yaml QAzinho could not read, set aside under `file` in the workspace's folder so
- * nothing writes over it; `line` is where it broke, when the YAML itself did.
+ * Um plan.yaml que o QAzinho não conseguiu ler, posto de lado sob `file` na pasta do
+ * workspace para nada o sobrescrever; `line` é onde quebrou, quando foi o próprio YAML.
  */
 export interface IUnreadPlan {
   file: string;

@@ -1,8 +1,8 @@
 import type { IProOrgProject } from './IProOrgProject';
 
 /**
- * The projects an org holds, or why they could not be read: signed out, no answer, or a
- * refusal.
+ * Os projetos que uma org guarda, ou por que não puderam ser lidos: deslogado, nenhuma
+ * resposta, ou uma recusa.
  */
 export type ProOrgProjects =
   | { isListed: true; projects: IProOrgProject[] }

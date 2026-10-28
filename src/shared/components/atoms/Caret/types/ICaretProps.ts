@@ -1,4 +1,7 @@
-/** A caret that points at what it opens: right while shut, down once open. */
+/**
+ * Um caret que aponta para o que abre: para a direita enquanto fechado, para baixo quando
+ * aberto.
+ */
 export interface ICaretProps {
   isOpen: boolean;
 }

@@ -31,7 +31,10 @@ describe('takeMjpegPart', () => {
     expect([...(taken?.rest ?? [])]).toEqual([13, 10]);
   });
 
-  /** A JPEG may hold the very bytes that end a header; the length, not a search, says where it stops. */
+  /**
+   * Um JPEG pode conter os próprios bytes que terminam um cabeçalho; o tamanho, não uma
+   * busca, diz onde ele para.
+   */
   it('reads a body that carries a blank line inside it by its length', () => {
     expect(takeMjpegPart(part({ at: '1', ratio: '1' }))?.part?.jpeg).toEqual(JPEG);
   });

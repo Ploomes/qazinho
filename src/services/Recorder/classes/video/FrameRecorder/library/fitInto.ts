@@ -1,7 +1,8 @@
 import type { IRect, ISize } from '@/services/Recorder/classes/video/FrameRecorder/types';
 
 /**
- * Where a picture lands in a box it must not stretch in: as large as it fits, centred.
+ * Onde uma imagem cai numa caixa em que não pode esticar: tão grande quanto cabe,
+ * centrada.
  */
 export function fitInto(props: { source: ISize; box: ISize }): IRect {
   const { source, box } = props;

@@ -1,8 +1,8 @@
 import type { IRunRef } from './IRunRef';
 
 /**
- * The video that goes with a bug: a clip the page cut out of the run's MP4, or the run's
- * whole recording when none could be cut.
+ * O vídeo que vai com um bug: um clipe que a página cortou do MP4 da run, ou a gravação
+ * inteira da run quando nenhum pôde ser cortado.
  */
 export type BugVideo =
   | { kind: 'clip'; name: string; data: Uint8Array }

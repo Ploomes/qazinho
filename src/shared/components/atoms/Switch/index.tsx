@@ -5,8 +5,8 @@ import { useSwitchViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A labelled switch: its knob slides over and the track turns lime when what it names is
- * on.
+ * Um switch com rótulo: o botão desliza e o trilho fica lima quando o que ele nomeia está
+ * ligado.
  */
 export const Switch: React.FC<ISwitchProps> = (props) => {
   const { className, style, hasIcon, icon, knob, knobTransition, onSwitchClick } =

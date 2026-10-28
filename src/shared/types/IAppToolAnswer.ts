@@ -1,6 +1,6 @@
 /**
- * What the page did with one app tool call, in words for the agent, and whether it
- * failed.
+ * O que a página fez com uma chamada de ferramenta do app, em palavras para o agente, e
+ * se falhou.
  */
 export interface IAppToolAnswer {
   id: string;

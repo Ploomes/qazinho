@@ -1,4 +1,4 @@
-/** A Jira issue by its key, what it is called, and where it opens. */
+/** Uma issue do Jira pela chave, como se chama, e onde abre. */
 export interface IJiraIssueRef {
   key: string;
   summary: string;

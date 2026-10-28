@@ -1,8 +1,8 @@
 import type { IconName } from './IconName';
 
 /**
- * An icon by its name, as tall as the text around it unless sized, solid when it marks
- * what is on, and read aloud only with a label.
+ * Um ícone pelo nome, da altura do texto em volta a menos que dimensionado, sólido quando
+ * marca o que está ligado, e lido em voz alta só com um rótulo.
  */
 export interface IIconProps {
   name: IconName;

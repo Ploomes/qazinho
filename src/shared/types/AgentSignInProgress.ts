@@ -2,8 +2,8 @@ import type { AgentSignInPhase } from './AgentSignInPhase';
 import type { AgentSignInStep } from './AgentSignInStep';
 
 /**
- * An agent's sign-in as main reports it each time it moves: which agent, its steps,
- * whether it takes a code, and where it stands.
+ * O login de um agente como a main o relata a cada mudança: qual agente, os passos, se
+ * ele pede um código, e em que pé está.
  */
 export type AgentSignInProgress = {
   agentId: string;

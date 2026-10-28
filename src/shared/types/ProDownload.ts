@@ -3,8 +3,7 @@ import type { IProSyncProject } from './IProSyncProject';
 import type { IVariableBrief } from './IVariableBrief';
 
 /**
- * A project downloaded from its org with its plans and variables' names, or why it was
- * not.
+ * Um projeto baixado da org com os planos e os nomes das variáveis, ou por que não foi.
  */
 export type ProDownload =
   | {

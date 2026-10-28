@@ -1,8 +1,8 @@
 import type { TargetKind } from './TargetKind';
 
 /**
- * A project as it goes to QAzinho Pro: its name, its targets and its repositories; its
- * variables go by name from main.
+ * Um projeto como vai ao QAzinho Pro: o nome, os alvos e os repositórios; as variáveis
+ * vão pelo nome a partir da main.
  */
 export interface IProSyncProject {
   projectId: string;

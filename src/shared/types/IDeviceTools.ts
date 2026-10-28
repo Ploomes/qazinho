@@ -1,7 +1,8 @@
 import type { IToolStatus } from './IToolStatus';
 
 /**
- * What a device target needs on this machine. QAzinho finds them; it never installs them.
+ * O que um alvo de dispositivo precisa nesta máquina. O QAzinho os acha; nunca os
+ * instala.
  */
 export interface IDeviceTools {
   androidSdk: IToolStatus;

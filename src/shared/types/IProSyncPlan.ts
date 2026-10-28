@@ -3,8 +3,8 @@ import type { IProSyncCase } from './IProSyncCase';
 import type { TargetKind } from './TargetKind';
 
 /**
- * A workspace's plan as it goes to QAzinho Pro: its name, the target it runs on, where it
- * came from, and its cases.
+ * O plano de um workspace como vai ao QAzinho Pro: o nome, o alvo em que roda, de onde
+ * veio, e os casos.
  */
 export interface IProSyncPlan {
   workspaceId: string;

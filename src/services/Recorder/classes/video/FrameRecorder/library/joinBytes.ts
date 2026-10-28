@@ -1,4 +1,4 @@
-/** Two runs of bytes as one, the way a stream's chunks add up. */
+/** Duas sequências de bytes como uma, do jeito que os chunks de um stream se somam. */
 export function joinBytes(head: Uint8Array, tail: Uint8Array): Uint8Array {
   if (head.length === 0) return tail;
 

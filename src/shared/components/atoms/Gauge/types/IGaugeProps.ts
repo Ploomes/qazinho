@@ -1,6 +1,6 @@
 /**
- * `value` is a share from 0 to 1; `fills` says whether the ring shows what is left or
- * what is used.
+ * `value` é uma fração de 0 a 1; `fills` diz se o anel mostra o que resta ou o que foi
+ * usado.
  */
 export interface IGaugeProps {
   value: number;

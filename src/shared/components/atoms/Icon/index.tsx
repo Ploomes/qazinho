@@ -3,8 +3,8 @@ import { useIconViewModel } from './hooks';
 import './styles.css';
 
 /**
- * One of Phosphor's icons by its name in the app: bold by default, solid where it marks
- * what is on or how something stands, never smaller than reads as an icon.
+ * Um dos ícones do Phosphor pelo nome no app: bold por padrão, sólido onde marca o que
+ * está ligado ou como algo está, nunca menor do que se lê como ícone.
  */
 export const Icon: React.FC<IIconProps> = (props) => {
   const { Glyph, className, size, weight, isHidden, role } = useIconViewModel(props);

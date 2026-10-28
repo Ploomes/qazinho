@@ -10,8 +10,8 @@ import type {
 } from '@/shared/types';
 
 /**
- * The suites connected to the QA's projects, their tests and runs, and the agent's
- * changes.
+ * As suítes conectadas aos projetos do QA, os testes e runs delas, e as mudanças do
+ * agente.
  */
 export interface ISuiteStore {
   suites: Record<string, ISuite>;

@@ -1,6 +1,6 @@
 import type { ProcessKind } from './ProcessKind';
 
-/** One process QAzinho is responsible for, as the host reported it. */
+/** Um processo pelo qual o QAzinho responde, como o host o relatou. */
 export interface IProcessSample {
   pid: number;
   name: string;

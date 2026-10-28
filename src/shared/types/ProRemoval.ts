@@ -1,6 +1,6 @@
 /**
- * A project deleted in its org and unlinked here, or why the org kept it: a CI job still
- * going, a role that may not, no answer, a signed-out machine or a refusal.
+ * Um projeto apagado na org e desligado aqui, ou por que a org o manteve: um job de CI
+ * rodando, um papel que não pode, sem resposta, máquina deslogada ou recusa.
  */
 export type ProRemoval =
   | { isRemoved: true }

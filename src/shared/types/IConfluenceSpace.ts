@@ -1,4 +1,4 @@
-/** A Confluence space a plan can be published in: its id, its key and its name. */
+/** Um espaço do Confluence em que um plano pode ser publicado: o id, a chave e o nome. */
 export interface IConfluenceSpace {
   id: string;
   key: string;

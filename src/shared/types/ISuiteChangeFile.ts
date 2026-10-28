@@ -1,8 +1,8 @@
 import type { SuiteFileStatus } from './SuiteFileStatus';
 
 /**
- * One file a change touched: its path from the repository, what was done to it, the lines
- * it gained and lost, and its unified diff.
+ * Um arquivo que uma mudança tocou: o caminho a partir do repositório, o que foi feito
+ * com ele, as linhas que ganhou e perdeu, e o diff unificado.
  */
 export interface ISuiteChangeFile {
   path: string;

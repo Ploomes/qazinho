@@ -2,8 +2,8 @@ import type { ISuiteResult } from './ISuiteResult';
 import type { ISuiteRun } from './ISuiteRun';
 
 /**
- * What main tells the page while a suite runs: the run starting, how many tests it holds,
- * a test starting, the step it is on, a test ending, and the run ending.
+ * O que a main conta à página enquanto uma suíte roda: a run começando, quantos testes
+ * tem, um teste começando, o passo em que está, um teste terminando, e a run terminando.
  */
 export type SuiteEvent =
   | { kind: 'started'; run: ISuiteRun }

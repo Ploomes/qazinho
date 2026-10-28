@@ -1,8 +1,8 @@
 import type { IKeybind } from '@/modules/Settings/types';
 
 /**
- * Gives an action a new combo; the action that had it takes the old one, so no combo
- * fires two actions.
+ * Dá a uma ação uma combinação nova; a ação que a tinha fica com a antiga, para nenhuma
+ * combinação disparar duas ações.
  */
 export function rebind(props: {
   keybinds: IKeybind[];

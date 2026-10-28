@@ -1,8 +1,8 @@
 import type { IAgentUsage } from './IAgentUsage';
 
 /**
- * One turn of the conversation, as the agent's own CLI reported it; `costUsd` is null
- * when the agent did not say.
+ * Um turno da conversa, como a própria CLI do agente o relatou; `costUsd` é null quando o
+ * agente não disse.
  */
 export interface IAgentTurn {
   sessionId: string | null;

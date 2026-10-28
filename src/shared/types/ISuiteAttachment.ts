@@ -1,6 +1,6 @@
 /**
- * Something a test left behind, such as a screenshot or trace: its type, file and address
- * on loopback.
+ * Algo que um teste deixou, como um screenshot ou trace: o tipo, o arquivo e o endereço
+ * em loopback.
  */
 export interface ISuiteAttachment {
   name: string;

@@ -7,8 +7,8 @@ import type {
 } from '@/shared/types';
 
 /**
- * The only caller of the GitHub side of the bridge: gh's status, its sign-in, and the
- * repositories it reads.
+ * O único que chama o lado do GitHub da bridge: o status do gh, o login dele, e os
+ * repositórios que ele lê.
  */
 export class Github {
   public static async status(): Promise<IGithubStatus> {

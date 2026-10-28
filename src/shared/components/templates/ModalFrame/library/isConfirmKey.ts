@@ -1,8 +1,8 @@
 const TYPED = ['text', 'email', 'url', 'search', 'password', 'number', 'tel', ''];
 
 /**
- * Whether a key press confirms the modal: Enter, alone, in a field the QA types in, that
- * nothing inside it handled already, such as a list picking what Enter chose.
+ * Se uma tecla confirma o modal: Enter, sozinho, num campo em que o QA digita, que nada
+ * dentro dele já tratou, como uma lista escolhendo o que o Enter escolheu.
  */
 export function isConfirmKey(props: {
   key: string;

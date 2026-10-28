@@ -1,7 +1,7 @@
 import type { ConnectFailure } from './ConnectFailure';
 import type { IIntegrationStatus } from './IIntegrationStatus';
 
-/** Whether the tracker took the credentials, and why not when it did not. */
+/** Se o tracker aceitou as credenciais, e por que não quando não aceitou. */
 export type IConnectResult =
   | { isConnected: true; status: IIntegrationStatus }
   | { isConnected: false; failure: ConnectFailure };

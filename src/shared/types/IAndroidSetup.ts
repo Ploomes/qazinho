@@ -1,4 +1,4 @@
-/** Where the Android toolchain is, and which emulator a run should open. */
+/** Onde está a toolchain do Android, e qual emulador uma run deve abrir. */
 export interface IAndroidSetup {
   sdkRoot: string;
   avd: string;

@@ -2,8 +2,8 @@ import type { IKeybind, RunAlert, SettingsTab } from '@/modules/Settings';
 import type { Language } from '@/shared/types';
 
 /**
- * What the QA set up on this machine: the agent, devices, shortcuts and how long videos
- * stay.
+ * O que o QA configurou nesta máquina: o agente, os dispositivos, os atalhos e por quanto
+ * tempo os vídeos ficam.
  */
 export interface ISettingsStore {
   tab: SettingsTab;

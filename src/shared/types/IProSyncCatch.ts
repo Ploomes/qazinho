@@ -1,6 +1,6 @@
 /**
- * One time a bug was caught, as it goes to the QA's account: the run, step, screen and
- * moment.
+ * Uma vez em que um bug foi pego, como vai à conta do QA: a run, o passo, a tela e o
+ * momento.
  */
 export interface IProSyncCatch {
   runId: string;

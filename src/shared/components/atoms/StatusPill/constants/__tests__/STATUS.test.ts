@@ -5,8 +5,8 @@ import { ICONS } from '@/shared/components/atoms/Icon/constants';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 
 /**
- * A new workspace read "parado" in Portuguese, the word for one the QA stopped: two states
- * shared a word, and nothing on screen told them apart.
+ * Um workspace novo aparecia como "parado" em português, a palavra para um que o QA
+ * parou: dois estados dividiam uma palavra, e nada na tela os distinguia.
  */
 describe('STATUS', () => {
   it.each(['en', 'pt'] as const)(
@@ -25,7 +25,10 @@ describe('STATUS', () => {
     expect(new Set(icons).size).toBe(icons.length);
   });
 
-  /** At the size of the small text beside it, a bare check read as a typed ✓: a status wears a solid circle. */
+  /**
+   * No tamanho do texto pequeno ao lado, um check solto parecia um ✓ digitado: um status
+   * veste um círculo sólido.
+   */
   it('draws a status that happened in a solid circle, and one that has not yet as an outline', () => {
     const weights = Object.fromEntries(
       Object.entries(STATUS).map(([status, { icon }]) => [status, ICONS[icon].weight]),

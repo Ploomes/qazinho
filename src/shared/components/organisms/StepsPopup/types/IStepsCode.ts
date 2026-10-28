@@ -1,4 +1,4 @@
-/** A field for a code the QA copies from a page back into the flow. */
+/** Um campo para um código que o QA copia de uma página de volta para o fluxo. */
 export interface IStepsCode {
   label: string;
   placeholder: string;

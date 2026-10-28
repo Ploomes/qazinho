@@ -20,7 +20,7 @@ describe('isConfirmKey', () => {
     expect(isConfirmKey({ ...FIELD, tag: 'TEXTAREA', type: '' })).toBe(false);
   });
 
-  /** A search list picks its highlighted row on Enter; the modal must not also go. */
+  /** Uma lista de busca escolhe a linha destacada no Enter; o modal não pode ir junto. */
   it('does NOT confirm what a list inside already handled, nor in a search box', () => {
     expect(isConfirmKey({ ...FIELD, isHandled: true })).toBe(false);
     expect(isConfirmKey({ ...FIELD, role: 'combobox' })).toBe(false);

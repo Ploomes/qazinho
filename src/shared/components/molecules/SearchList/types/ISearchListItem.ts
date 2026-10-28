@@ -1,6 +1,6 @@
 /**
- * One thing a search list offers: what it is called, a word beside it, and a line under
- * it.
+ * Uma coisa que uma lista de busca oferece: como se chama, uma palavra ao lado, e uma
+ * linha embaixo.
  */
 export interface ISearchListItem {
   id: string;

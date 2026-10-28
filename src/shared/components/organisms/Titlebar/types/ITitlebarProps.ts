@@ -1,4 +1,7 @@
-/** `isBare` keeps only the strip the window is dragged by, for the first-run setup. */
+/**
+ * `isBare` mantém só a faixa pela qual a janela é arrastada, para a configuração da
+ * primeira execução.
+ */
 export interface ITitlebarProps {
   isBare?: boolean;
 }

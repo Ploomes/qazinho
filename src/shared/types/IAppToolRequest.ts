@@ -1,8 +1,8 @@
 import type { AppToolCall } from './AppToolCall';
 
 /**
- * An app tool call main hands the page to carry out, and the id its answer comes back
- * with.
+ * Uma chamada de ferramenta do app que a main entrega à página para executar, e o id com
+ * que a resposta volta.
  */
 export interface IAppToolRequest {
   id: string;

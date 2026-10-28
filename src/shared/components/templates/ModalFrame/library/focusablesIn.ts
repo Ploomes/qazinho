@@ -7,7 +7,7 @@ const FOCUSABLE = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(',');
 
-/** What Tab can reach inside a modal, in the order it reaches them. */
+/** O que o Tab alcança dentro de um modal, na ordem em que alcança. */
 export function focusablesIn(root: HTMLElement): HTMLElement[] {
   return [...root.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
     (element) => !element.closest('[aria-hidden="true"], [inert]'),

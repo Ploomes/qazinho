@@ -1,5 +1,5 @@
 /**
- * A step of sending a bug: writing the issue, attaching its screens, attaching its video,
- * and linking it to its story.
+ * Um passo de mandar um bug: escrever a issue, anexar as telas, anexar o vídeo, e ligá-la
+ * à história.
  */
 export type FilingStep = 'issue' | 'screens' | 'video' | 'link';

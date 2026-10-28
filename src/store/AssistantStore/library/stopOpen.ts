@@ -1,8 +1,8 @@
 import type { AssistantMessage } from '@/modules/Assistant/types';
 
 /**
- * The chat once its turn was stopped: a tool still going did not finish, and a
- * confirmation nobody answered ran out.
+ * O chat depois que o turno foi parado: uma ferramenta ainda andando não terminou, e uma
+ * confirmação que ninguém respondeu venceu.
  */
 export function stopOpen(messages: AssistantMessage[]): AssistantMessage[] {
   return messages.map((message) =>

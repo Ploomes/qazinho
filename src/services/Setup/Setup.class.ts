@@ -1,6 +1,6 @@
 import type { IInstallResult, InstallableId, ISetupEvent } from '@/shared/types';
 
-/** The only caller of the install side of the bridge. */
+/** O único que chama o lado das instalações da bridge. */
 export class Setup {
   public static async install(item: InstallableId): Promise<IInstallResult> {
     return (

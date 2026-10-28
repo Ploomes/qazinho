@@ -1,9 +1,6 @@
 import type { IMcpServerTarget } from './IMcpServerTarget';
 
-/**
- * Which server to connect in which agent, and whether in Terminal rather than out of
- * sight.
- */
+/** Qual servidor conectar em qual agente, e se no Terminal em vez de fora de vista. */
 export interface IMcpSignIn {
   target: IMcpServerTarget;
   inTerminal: boolean;

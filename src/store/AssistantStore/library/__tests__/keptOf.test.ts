@@ -12,7 +12,10 @@ describe('keptOf', () => {
     ).toEqual({ messages: [ASKED], sessionId: 's-1', sessionAgentId: 'claude-code' });
   });
 
-  /** QAzinho closing in the middle of a turn would bring back a card nobody can answer. */
+  /**
+   * O QAzinho fechando no meio de um turno traria de volta um cartão que ninguém pode
+   * responder.
+   */
   it('does NOT keep anything going: a tool reads failed, and an open card ran out', () => {
     const { messages } = keptOf({
       messages: [

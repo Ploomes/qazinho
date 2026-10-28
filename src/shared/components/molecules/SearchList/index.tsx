@@ -5,7 +5,8 @@ import { useSearchListViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A field that narrows a list as the QA types, and picks with a click or the keyboard.
+ * Um campo que estreita uma lista enquanto o QA digita, e escolhe com um clique ou o
+ * teclado.
  */
 export const SearchList: React.FC<ISearchListProps> = (props) => {
   const {

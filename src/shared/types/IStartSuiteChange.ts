@@ -2,8 +2,8 @@ import type { Language } from './Language';
 import type { SuiteChangeAsk } from './SuiteChangeAsk';
 
 /**
- * A change the QA asks of their agent in a project's suite: who answers, in what
- * language, and what.
+ * Uma mudança que o QA pede ao agente dele na suíte de um projeto: quem responde, em que
+ * idioma, e o quê.
  */
 export interface IStartSuiteChange {
   projectId: string;

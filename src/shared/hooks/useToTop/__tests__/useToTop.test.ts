@@ -3,7 +3,10 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { useToTop } from '@/shared/hooks';
 
-/** A stand-in for the browser's observer, which jsdom lacks: the test says when the top shows. */
+/**
+ * Um substituto do observer do navegador, que o jsdom não tem: o teste diz quando o topo
+ * aparece.
+ */
 class FakeObserver {
   static last: FakeObserver | null = null;
   public isDisconnected = false;

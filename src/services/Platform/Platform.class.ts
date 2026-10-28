@@ -1,6 +1,8 @@
 import type { Platform as PlatformName } from '@/shared/types';
 
-/** The only reader of `window.qazinho.platform`. Views ask this, never the bridge. */
+/**
+ * O único que lê o `window.qazinho.platform`. As views perguntam a ele, nunca à bridge.
+ */
 export class Platform {
   public static current(): PlatformName | null {
     return window.qazinho?.platform ?? null;

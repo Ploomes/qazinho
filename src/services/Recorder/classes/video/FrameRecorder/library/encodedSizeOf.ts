@@ -1,8 +1,8 @@
 import type { ISize } from '@/services/Recorder/classes/video/FrameRecorder/types';
 
 /**
- * The size a run is encoded at: its first frame's, shrunk to fit `maxSide` and made even,
- * as H.264 asks.
+ * O tamanho em que uma run é codificada: o do primeiro frame, reduzido para caber em
+ * `maxSide` e tornado par, como o H.264 pede.
  */
 export function encodedSizeOf(props: ISize & { maxSide: number }): ISize {
   const scale = Math.min(1, props.maxSide / Math.max(props.width, props.height));

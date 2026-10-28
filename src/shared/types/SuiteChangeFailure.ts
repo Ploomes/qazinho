@@ -1,6 +1,6 @@
 import type { RunFailure } from './RunFailure';
 
-/** Why a change left nothing to review. */
+/** Por que uma mudança não deixou nada para revisar. */
 export type SuiteChangeFailure =
   | { reason: 'no-suite' }
   | { reason: 'no-git'; said: string }

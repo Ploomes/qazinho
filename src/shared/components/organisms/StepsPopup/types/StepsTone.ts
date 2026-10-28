@@ -1,4 +1,5 @@
 /**
- * How a run of steps feels at the top of its popup: still going, done, or stopped short.
+ * Como uma sequência de passos se sente no topo do popup dela: ainda andando, feita, ou
+ * parada no meio.
  */
 export type StepsTone = 'working' | 'connected' | 'failed';

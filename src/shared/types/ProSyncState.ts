@@ -1,4 +1,4 @@
-/** Where a project's sync with its org stands. */
+/** Em que pé está a sincronização de um projeto com a org dele. */
 export type ProSyncState =
   | 'off'
   | 'synced'

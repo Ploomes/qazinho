@@ -1,8 +1,8 @@
 import type { InstallableId } from './InstallableId';
 
 /**
- * One line of an install as it happens: which command of how many, and what it last
- * printed.
+ * Uma linha de uma instalação enquanto acontece: qual comando de quantos, e o que
+ * imprimiu por último.
  */
 export interface ISetupEvent {
   item: InstallableId;

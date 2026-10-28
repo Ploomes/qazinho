@@ -13,8 +13,8 @@ import type {
 } from '@/shared/types';
 
 /**
- * The only caller of the automation side of the bridge: the suite each project runs, kept
- * by main.
+ * O único que chama o lado da automação da bridge: a suíte que cada projeto roda,
+ * guardada pela main.
  */
 export class Suites {
   public static async pick(projectId: string): Promise<SuitePick> {

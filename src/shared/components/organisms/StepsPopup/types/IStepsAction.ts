@@ -1,6 +1,6 @@
 import type { ButtonVariant } from '@/shared/components/atoms/Button/types';
 
-/** A button at the foot of the popup. */
+/** Um botão no pé do popup. */
 export interface IStepsAction {
   key: string;
   label: string;

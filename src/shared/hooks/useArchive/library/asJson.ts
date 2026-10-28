@@ -1,6 +1,9 @@
 import type { IProject } from '@/modules/Project';
 
-/** The projects file is read by people too, so it is written the way an editor would. */
+/**
+ * O arquivo de projetos é lido por pessoas também, então é escrito do jeito que um editor
+ * escreveria.
+ */
 export function asJson(projects: IProject[]): string {
   return JSON.stringify(projects, null, 2);
 }

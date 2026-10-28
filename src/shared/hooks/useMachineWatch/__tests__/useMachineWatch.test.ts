@@ -111,8 +111,8 @@ describe('useMachineWatch', () => {
   });
 
   /**
-   * The titlebar kept "71% of the session · resets 08:00" long after eight: the limits came
-   * only with an agent's answer, so they froze while nothing ran.
+   * A barra de título mantinha "71% da sessão · reseta 08:00" muito depois das oito: os
+   * limites só vinham com a resposta de um agente, então congelavam enquanto nada rodava.
    */
   it("reads the agent's limits once it is known, then every five minutes, keeping the context", async () => {
     vi.useFakeTimers();

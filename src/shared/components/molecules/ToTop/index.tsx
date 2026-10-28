@@ -5,7 +5,7 @@ import { Icon } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import './styles.css';
 
-/** A quiet pill at the foot of a long screen that scrolls it back to the top. */
+/** Uma pílula discreta no pé de uma tela longa que a rola de volta ao topo. */
 export const ToTop: React.FC<IToTopProps> = ({ isShown, onClick }) => {
   const { t } = useTranslation();
 

@@ -9,8 +9,8 @@ import type {
 } from '@/shared/types';
 
 /**
- * The only caller of the bug side of the bridge: sending, copying screens and weighing a
- * bug again.
+ * O único que chama o lado dos bugs da bridge: mandar, copiar telas e pesar um bug de
+ * novo.
  */
 export class Bugs {
   public static async file(request: IFileBug): Promise<BugFiling> {

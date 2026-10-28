@@ -6,7 +6,7 @@ import type {
   PlanPublished,
 } from '@/shared/types';
 
-/** The only caller of the Confluence side of the bridge. */
+/** O único que chama o lado do Confluence da bridge. */
 export class Confluence {
   public static async turn(isOn: boolean): Promise<ConfluenceSwitch> {
     return (

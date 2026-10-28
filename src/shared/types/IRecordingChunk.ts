@@ -1,6 +1,6 @@
 /**
- * A piece of a recording's file, written at `position`, because the MP4 index goes back
- * to patch its start.
+ * Um pedaço do arquivo de uma gravação, escrito em `position`, porque o índice do MP4
+ * volta para remendar o começo.
  */
 export interface IRecordingChunk {
   id: string;

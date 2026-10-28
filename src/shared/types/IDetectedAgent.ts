@@ -1,6 +1,6 @@
 /**
- * An agent QAzinho found on this machine, and whether it is signed in; null when the
- * agent would not say.
+ * Um agente que o QAzinho achou nesta máquina, e se está logado; null quando o agente não
+ * quis dizer.
  */
 export interface IDetectedAgent {
   id: string;

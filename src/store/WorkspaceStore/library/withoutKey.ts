@@ -1,4 +1,4 @@
-/** A record without one key, the same record when it never had it. */
+/** Um registro sem uma chave, o mesmo registro quando ele nunca a teve. */
 export function withoutKey<T>(props: {
   record: Record<string, T>;
   key: string;

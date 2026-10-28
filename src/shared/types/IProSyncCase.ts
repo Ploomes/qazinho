@@ -1,4 +1,4 @@
-/** A case of a plan as it goes to QAzinho Pro: what it covers, and its steps. */
+/** Um caso de um plano como vai ao QAzinho Pro: o que cobre, e os passos. */
 export interface IProSyncCase {
   id: string;
   title: string;

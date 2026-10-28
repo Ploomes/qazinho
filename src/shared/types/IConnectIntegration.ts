@@ -1,6 +1,6 @@
 /**
- * What connecting a tracker takes: nothing for GitHub, which goes through the QA's own
- * gh; for Jira, what the QA typed.
+ * O que conectar um tracker leva: nada para o GitHub, que passa pelo gh do próprio QA;
+ * para o Jira, o que o QA digitou.
  */
 export type IConnectIntegration =
   { id: 'github' } | { id: 'jira'; site: string; email: string; token: string };

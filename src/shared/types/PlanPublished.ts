@@ -2,8 +2,8 @@ import type { IConfluencePageRef } from './IConfluencePageRef';
 import type { JiraFailure } from './JiraFailure';
 
 /**
- * The Confluence page a plan was published on, or why Confluence refused it, in its own
- * words.
+ * A página do Confluence em que um plano foi publicado, ou por que o Confluence o
+ * recusou, nas palavras dele.
  */
 export type PlanPublished =
   | { isPublished: true; page: IConfluencePageRef }

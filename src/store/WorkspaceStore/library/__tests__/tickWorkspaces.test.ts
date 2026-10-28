@@ -24,8 +24,8 @@ describe('tickWorkspaces', () => {
   });
 
   /**
-   * The clock ticks every second whether a run is going or not. A new list on every tick made
-   * every screen that reads the workspaces render again, every second, with nothing running.
+   * O relógio tica a cada segundo haja run ou não. Uma lista nova a cada tique fazia toda
+   * tela que lê os workspaces renderizar de novo, todo segundo, sem nada rodando.
    */
   it('hands back the very same list while no run is going', () => {
     const workspaces = [IDLE, { ...makeWorkspace(), id: 'w3' }];
@@ -33,7 +33,10 @@ describe('tickWorkspaces', () => {
     expect(tickWorkspaces({ workspaces, seconds: 1 })).toBe(workspaces);
   });
 
-  /** The run's clock says how long the device was worked; the QA's minutes go to the question. */
+  /**
+   * O relógio da run diz quanto tempo o dispositivo foi trabalhado; os minutos do QA vão
+   * para a pergunta.
+   */
   it('counts how long a question waits, and stops the run clock meanwhile', () => {
     const asking = landAsked({ workspace: RUNNING, question: QUESTION });
     const ticked = tickWorkspaces({ workspaces: [asking], seconds: 1 })[0];

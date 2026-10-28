@@ -1,8 +1,8 @@
 import type { IconName } from '@/shared/components/atoms/Icon/types';
 
 /**
- * A switch that turns one thing on or off, named by its label and, when given, an icon
- * before it.
+ * Um switch que liga ou desliga uma coisa, nomeada pelo rótulo e, quando dado, por um
+ * ícone antes dele.
  */
 export interface ISwitchProps {
   label: string;

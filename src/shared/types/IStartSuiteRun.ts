@@ -1,8 +1,8 @@
 import type { ISuiteBatch } from './ISuiteBatch';
 
 /**
- * A run of a project's suite: its id, the batches it goes through, one Playwright project
- * after the other, and how many tests the page expects them to reach.
+ * Uma run da suíte de um projeto: o id, os batches por que passa, um projeto do
+ * Playwright depois do outro, e quantos testes a página espera que eles alcancem.
  */
 export interface IStartSuiteRun {
   projectId: string;

@@ -1,6 +1,6 @@
 /**
- * A line someone on screen says, typed out as it streams; `onSaid` fires once it is all
- * there.
+ * Uma fala de alguém na tela, digitada enquanto chega; `onSaid` dispara quando ela está
+ * toda lá.
  */
 export interface ISpeechBubbleProps {
   text: string;

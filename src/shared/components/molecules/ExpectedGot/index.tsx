@@ -2,7 +2,7 @@ import type { IExpectedGotProps } from './types';
 import { useTranslation } from 'react-i18next';
 import './styles.css';
 
-/** What the step expected and what came, a row each, label beside the words. */
+/** O que o passo esperava e o que veio, uma linha cada, rótulo ao lado das palavras. */
 export const ExpectedGot: React.FC<IExpectedGotProps> = ({
   expected,
   got,

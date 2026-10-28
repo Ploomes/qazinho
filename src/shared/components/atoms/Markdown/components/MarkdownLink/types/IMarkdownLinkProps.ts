@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-/** A link inside rendered markdown. */
+/** Um link dentro de markdown renderizado. */
 export interface IMarkdownLinkProps {
   href?: string;
   children?: ReactNode;

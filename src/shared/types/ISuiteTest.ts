@@ -1,4 +1,7 @@
-/** One test of a suite as Playwright lists it, once per Playwright project it runs in. */
+/**
+ * Um teste de uma suíte como o Playwright o lista, uma vez por projeto do Playwright em
+ * que roda.
+ */
 export interface ISuiteTest {
   id: string;
   file: string;

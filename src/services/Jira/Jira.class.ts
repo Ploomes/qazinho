@@ -1,6 +1,6 @@
 import type { JiraIssueList, JiraProjectList } from '@/shared/types';
 
-/** The only caller of the Jira side of the bridge. */
+/** O único que chama o lado do Jira da bridge. */
 export class Jira {
   public static async search(query: string): Promise<JiraIssueList> {
     return (

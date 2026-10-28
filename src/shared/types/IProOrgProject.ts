@@ -1,6 +1,6 @@
 /**
- * A project an org of QAzinho Pro holds, as this computer may download it: its name, and
- * each plan by name and size.
+ * Um projeto que uma org do QAzinho Pro guarda, como este computador pode baixá-lo: o
+ * nome, e cada plano por nome e tamanho.
  */
 export interface IProOrgProject {
   orgSlug: string;

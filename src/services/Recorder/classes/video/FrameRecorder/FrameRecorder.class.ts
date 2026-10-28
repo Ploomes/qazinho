@@ -5,8 +5,8 @@ import { FRAME_RECORDER } from './constants';
 import { cropOf, encodedSizeOf, fitInto, joinBytes, takeMjpegPart } from './library';
 
 /**
- * Records one run: reads its device's live stream, encodes each frame as H.264 at the
- * moment it was captured, and hands the MP4 out in pieces.
+ * Grava uma run: lê o stream vivo do dispositivo, codifica cada frame como H.264 no
+ * momento em que foi capturado, e entrega o MP4 em pedaços.
  */
 export class FrameRecorder {
   private readonly id: string;
@@ -38,8 +38,8 @@ export class FrameRecorder {
   }
 
   /**
-   * Reads the live stream until the run ends it, keeping at most a frame every `minGapMs`
-   * and always the latest.
+   * Lê o stream vivo até a run terminá-lo, mantendo no máximo um frame a cada `minGapMs`
+   * e sempre o mais recente.
    */
   public async start(): Promise<void> {
     const response = await fetch(this.url, { signal: this.reading.signal }).catch(
@@ -71,8 +71,8 @@ export class FrameRecorder {
   }
 
   /**
-   * Ends the recording at `at`, holding the last picture until then, and answers with the
-   * video, or null when there is none.
+   * Termina a gravação em `at`, segurando a última imagem até lá, e responde com o vídeo,
+   * ou null quando não há.
    */
   public async stop(at: number): Promise<IRunVideo | null> {
     this.reading.abort();

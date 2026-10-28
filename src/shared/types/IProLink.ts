@@ -1,6 +1,6 @@
 /**
- * A link from QAzinho Pro that opens a plan here: its org, and the ids its project and
- * workspace are kept under.
+ * Um link do QAzinho Pro que abre um plano aqui: a org dele, e os ids com que o projeto e
+ * o workspace dele são guardados.
  */
 export interface IProLink {
   orgSlug: string;

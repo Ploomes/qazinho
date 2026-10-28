@@ -1,8 +1,8 @@
 import type { IconName } from '@/shared/components/atoms/Icon/types';
 
 /**
- * A project's automated suite in the sidebar: how its last run went, or how far the run
- * going is.
+ * A suíte automatizada de um projeto na sidebar: como foi a última run dela, ou até onde
+ * vai a run em andamento.
  */
 export interface ISidebarSuiteRow {
   kind: 'suite';

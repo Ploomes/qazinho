@@ -1,6 +1,6 @@
 /**
- * A project's link to its org on its header: what it says, and how many plans wait to
- * be sent or came from the org.
+ * O vínculo de um projeto com a org dele no cabeçalho: o que ele diz, e quantos planos
+ * esperam para ser enviados ou vieram da org.
  */
 export interface ISidebarProBadge {
   label: string;

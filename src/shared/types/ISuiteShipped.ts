@@ -1,8 +1,8 @@
 import type { SuiteShipWay } from './SuiteShipWay';
 
 /**
- * Where a change went once the QA approved it: the way it left, and the page that shows
- * it, the pull request or where to open one, when there is one.
+ * Para onde uma mudança foi depois que o QA a aprovou: o jeito como saiu, e a página que
+ * a mostra, o pull request ou onde abrir um, quando há.
  */
 export interface ISuiteShipped {
   way: SuiteShipWay;

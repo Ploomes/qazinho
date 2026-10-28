@@ -1,8 +1,8 @@
 import type { BugReportBlock } from './BugReportBlock';
 
 /**
- * A bug written out for a tracker in the QA's language: its title, and its body as blocks
- * each tracker draws its own way.
+ * Um bug escrito para um tracker no idioma do QA: o título, e o corpo como blocos que
+ * cada tracker desenha do seu jeito.
  */
 export interface IBugReport {
   title: string;

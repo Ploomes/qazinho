@@ -1,8 +1,8 @@
 import type { ISuiteChange } from './ISuiteChange';
 
 /**
- * What reaches the page while the agent changes a suite: the change as it now stands, a
- * line of what the agent says and does, or how the tests it ran went.
+ * O que chega à página enquanto o agente muda uma suíte: a mudança como está agora, uma
+ * linha do que o agente diz e faz, ou como foram os testes que ele rodou.
  */
 export type SuiteChangeEvent =
   | { kind: 'changed'; change: ISuiteChange }

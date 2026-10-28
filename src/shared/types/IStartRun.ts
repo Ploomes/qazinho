@@ -6,7 +6,10 @@ import type { IViewport } from './IViewport';
 import type { Language } from './Language';
 import type { RunMode } from './RunMode';
 
-/** Everything main needs to walk a plan on a real device, or explore with no plan. */
+/**
+ * Tudo o que a main precisa para andar um plano num dispositivo real, ou explorar sem
+ * plano.
+ */
 export interface IStartRun {
   workspaceId: string;
   projectId?: string;

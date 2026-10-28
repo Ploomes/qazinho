@@ -1,6 +1,6 @@
 /**
- * The agent reports the reset as a unix second; a clock time in the QA's language never
- * goes stale on screen.
+ * O agente relata o reset como um segundo unix; um horário no idioma do QA nunca fica
+ * velho na tela.
  */
 export function formatResetsAt(props: { resetsAt: number; language: string }): string {
   if (props.resetsAt <= 0) return '';

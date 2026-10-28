@@ -1,8 +1,8 @@
 import type { BugReportBlock } from './BugReportBlock';
 
 /**
- * A plan to publish in Confluence: the page it updates, or the space and parent page a
- * new one goes under, its title and its content.
+ * Um plano a publicar no Confluence: a página que ele atualiza, ou o espaço e a página
+ * pai sob a qual vai uma nova, o título e o conteúdo.
  */
 export interface IPublishPlan {
   pageId: string | null;

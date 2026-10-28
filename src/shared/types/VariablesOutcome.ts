@@ -2,8 +2,8 @@ import type { IVariableBrief } from './IVariableBrief';
 import type { VariableFailure } from './VariableFailure';
 
 /**
- * How a change to a project's variables ended: the variables it keeps now, or why nothing
- * changed.
+ * Como terminou uma mudança nas variáveis de um projeto: as variáveis que ele guarda
+ * agora, ou por que nada mudou.
  */
 export type VariablesOutcome =
   | { isSaved: true; variables: IVariableBrief[] }

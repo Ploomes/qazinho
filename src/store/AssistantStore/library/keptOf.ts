@@ -3,8 +3,8 @@ import { ASSISTANT_KEPT } from '@/modules/Assistant/constants';
 import { stopOpen } from './stopOpen';
 
 /**
- * What of the Estagiário's chat outlives QAzinho closing: its latest messages, with
- * nothing left going, and the session to go on in.
+ * O que do chat do Estagiário sobrevive ao QAzinho fechar: as últimas mensagens, sem nada
+ * em andamento, e a sessão em que continuar.
  */
 export function keptOf(
   state: Pick<IAssistantStore, 'messages' | 'sessionId' | 'sessionAgentId'>,

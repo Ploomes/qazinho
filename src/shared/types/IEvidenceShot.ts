@@ -1,6 +1,6 @@
 /**
- * A screen that goes with a bug, by the name it takes in the tracker: the file the run
- * kept, or the picture still in hand.
+ * Uma tela que vai com um bug, pelo nome que ela leva no tracker: o arquivo que a run
+ * guardou, ou a imagem ainda em mãos.
  */
 export interface IEvidenceShot {
   name: string;

@@ -2,8 +2,8 @@ import type { ISuiteTest } from './ISuiteTest';
 import type { SuiteFailure } from './SuiteFailure';
 
 /**
- * A suite's tests as Playwright lists them, with its projects in the order its config
- * declares them; or why they could not be listed, with what Playwright said.
+ * Os testes de uma suíte como o Playwright os lista, com os projetos na ordem em que a
+ * config os declara; ou por que não puderam ser listados, com o que o Playwright disse.
  */
 export type SuiteList =
   | { kind: 'listed'; tests: ISuiteTest[]; projects: string[] }

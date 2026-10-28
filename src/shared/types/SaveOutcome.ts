@@ -1,5 +1,5 @@
 /**
- * How saving a file where the QA picked ended: saved, called off in the dialog, or
- * failed.
+ * Como terminou salvar um arquivo onde o QA escolheu: salvo, cancelado no diálogo, ou
+ * falhou.
  */
 export type SaveOutcome = 'saved' | 'cancelled' | 'failed';

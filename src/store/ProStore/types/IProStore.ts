@@ -1,8 +1,8 @@
 import type { IProLink, IProShare, ProStatus, RunMode } from '@/shared/types';
 
 /**
- * The QA's account, each project's link to its org, the plans being joined, and a run
- * held until the QA updates its plan.
+ * A conta do QA, o vínculo de cada projeto com a org dele, os planos sendo juntados, e
+ * uma run segurada até o QA atualizar o plano dela.
  */
 export interface IProStore {
   status: ProStatus | null;

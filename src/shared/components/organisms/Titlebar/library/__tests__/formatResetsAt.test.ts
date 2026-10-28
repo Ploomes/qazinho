@@ -8,7 +8,10 @@ describe('formatResetsAt', () => {
     expect(formatResetsAt({ resetsAt: AT, language: 'en' })).toMatch(/^\d{1,2}:\d{2}/);
   });
 
-  /** The titlebar read "reseta 04:00 PM" in Portuguese: the time took the machine's language. */
+  /**
+   * A barra de título dizia "reseta 04:00 PM" em português: o horário pegava o idioma da
+   * máquina.
+   */
   it("tells the time the way the QA's language does, not the machine's", () => {
     expect(formatResetsAt({ resetsAt: AT, language: 'pt' })).not.toMatch(/AM|PM/);
     expect(formatResetsAt({ resetsAt: AT + 12 * 3_600, language: 'en' })).toMatch(

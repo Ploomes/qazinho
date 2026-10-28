@@ -1,6 +1,6 @@
 import type { FilingStep } from './FilingStep';
 
-/** One step of sending a bug as main takes it, for the filing it belongs to. */
+/** Um passo de mandar um bug como a main o dá, para o registro a que pertence. */
 export interface IFilingEvent {
   filingId: string;
   step: FilingStep;

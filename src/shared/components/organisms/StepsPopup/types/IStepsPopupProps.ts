@@ -8,8 +8,8 @@ import type { StepsTone } from './StepsTone';
 import type { ReactNode } from 'react';
 
 /**
- * A popup of steps taken out of sight; one that ended well closes itself a moment later
- * unless `isKept`, when it still asks something of the QA.
+ * Um popup de passos dados fora de vista; um que terminou bem se fecha um momento depois,
+ * a menos que `isKept`, quando ainda pede algo ao QA.
  */
 export interface IStepsPopupProps {
   badge: ReactNode;

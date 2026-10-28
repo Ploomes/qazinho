@@ -1,6 +1,6 @@
 /**
- * One piece of a bug's report or a published plan: a heading, text, list, steps, facts or
- * a table.
+ * Um pedaço do relatório de um bug ou de um plano publicado: um título, texto, lista,
+ * passos, fatos ou uma tabela.
  */
 export type BugReportBlock =
   | { kind: 'heading'; text: string }

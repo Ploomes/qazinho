@@ -3,8 +3,8 @@ import type { IRepositoryRef } from './IRepositoryRef';
 import type { Language } from './Language';
 
 /**
- * A build the page asks for: what to build from which branch, the project it is for when
- * there is one, and the agent that builds it.
+ * Um build que a página pede: o que construir de qual branch, o projeto para o qual é
+ * quando há um, e o agente que o constrói.
  */
 export interface IStartBuild {
   buildId: string;

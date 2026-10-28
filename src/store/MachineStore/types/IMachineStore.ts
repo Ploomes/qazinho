@@ -6,7 +6,7 @@ import type {
   IResourceSnapshot,
 } from '@/shared/types';
 
-/** What this machine actually has, and what QAzinho is costing it right now. */
+/** O que esta máquina de fato tem, e quanto o QAzinho está custando a ela agora. */
 export interface IMachineStore {
   agents: IDetectedAgent[];
   resources: IResourceSnapshot;

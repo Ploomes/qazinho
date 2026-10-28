@@ -111,7 +111,10 @@ describe('useAppViewModel', () => {
     expect(result.current.isWelcome).toBe(true);
   });
 
-  /** With no project, the welcome screen covered Settings, and nothing else led there. */
+  /**
+   * Sem projeto, a tela de boas-vindas cobria as Configurações, e nada mais levava até
+   * elas.
+   */
   it('opens Settings even before the first project', () => {
     useAppStore.setState({ screen: 'settings', projects: [] });
 
@@ -122,8 +125,8 @@ describe('useAppViewModel', () => {
   });
 
   /**
-   * With the device panel shut, the Estagiário's button sat a pixel from the chat's composer,
-   * where a click meant for one could land on the other.
+   * Com o painel do dispositivo fechado, o botão do Estagiário ficava a um pixel do
+   * composer do chat, onde um clique pensado para um podia cair no outro.
    */
   it("makes room beside the Estagiário's button while the device panel is shut, and none once it opens", () => {
     useAppStore.setState({
@@ -146,7 +149,10 @@ describe('useAppViewModel', () => {
     expect(result.current.shellStyle).toMatchObject({ '--dock-room': '0px' });
   });
 
-  /** Settings drew its menu as wide as the sidebar, and a folded sidebar squeezed it a word a line. */
+  /**
+   * As Configurações desenhavam o menu tão largo quanto a sidebar, e uma sidebar dobrada
+   * o espremia a uma palavra por linha.
+   */
   it('folds only the sidebar: what is drawn as wide as an open one keeps its width', () => {
     useSettingsStore.setState({ isSidebarShut: true });
 
@@ -205,7 +211,10 @@ describe('useAppViewModel', () => {
     expect(renderHook(() => useAppViewModel()).result.current.hasMedia).toBe(true);
   });
 
-  /** A new key per opening replays the theater from its start: a take never inherits another's place. */
+  /**
+   * Uma key nova a cada abertura refaz o teatro desde o começo: uma gravação nunca herda
+   * o ponto de outra.
+   */
   it('mounts the replay only while one is open, under a key of its own per opening', () => {
     useAppStore.setState({ replay: null });
 

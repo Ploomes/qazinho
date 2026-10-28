@@ -1,6 +1,6 @@
 /**
- * A run going on a project's suite: its id, and the tests running right now, each with
- * the step it is on.
+ * Uma run em andamento na suíte de um projeto: o id, e os testes rodando agora, cada um
+ * com o passo em que está.
  */
 export interface ISuiteLive {
   runId: string;

@@ -1,5 +1,5 @@
 /**
- * The size the window is fitted to: small while the QA is welcomed, full once they are
- * in.
+ * O tamanho a que a janela é ajustada: pequena enquanto o QA é recebido, cheia quando ele
+ * está dentro.
  */
 export type WindowFit = 'onboarding' | 'app';

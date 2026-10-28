@@ -1,6 +1,6 @@
 import type { GithubFailure } from './GithubFailure';
 
-/** Why a tracker was not connected, for the page to say in the QA's language. */
+/** Por que um tracker não foi conectado, para a página dizer no idioma do QA. */
 export type ConnectFailure =
   | { reason: 'unauthorized' }
   | { reason: 'unreachable' }

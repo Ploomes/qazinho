@@ -31,7 +31,10 @@ describe('useIconViewModel', () => {
     ).toBe(14);
   });
 
-  /** A 10px check beside 10px text read as a typed ✓, so an icon sized by its text never draws smaller than reads as one. */
+  /**
+   * Um check de 10px ao lado de texto de 10px parecia um ✓ digitado, então um ícone
+   * dimensionado pelo texto nunca desenha menor do que se lê como ícone.
+   */
   it('keeps an icon sized by its text from drawing smaller than an icon reads', () => {
     expect(
       renderHook(() => useIconViewModel({ name: 'check' })).result.current.className,

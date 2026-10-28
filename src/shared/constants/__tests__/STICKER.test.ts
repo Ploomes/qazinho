@@ -16,7 +16,10 @@ describe('STICKER', () => {
     }
   });
 
-  /** The sticker look was heavy to work in all day: nothing turns, and nothing grows from far. */
+  /**
+   * O visual de sticker pesava para trabalhar o dia todo: nada gira, e nada cresce de
+   * longe.
+   */
   it('comes in without turning, and from barely smaller than it lands', () => {
     for (const move of MOVES) {
       expect(move.initial).not.toHaveProperty('rotate');

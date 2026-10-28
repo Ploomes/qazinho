@@ -2,8 +2,8 @@ import type { IVariablesRequest } from './IVariablesRequest';
 import type { IProjectVariables, IVariableBrief } from '@/shared/types';
 
 /**
- * Each project's variables by name and description, and the window asking the QA for
- * values: what it asked, and how the last one ended, null when closed without saving.
+ * As variáveis de cada projeto por nome e descrição, e a janela pedindo valores ao QA: o
+ * que pediu, e como terminou a última, null quando fechada sem salvar.
  */
 export interface IVariablesStore {
   byProject: Record<string, IVariableBrief[]>;

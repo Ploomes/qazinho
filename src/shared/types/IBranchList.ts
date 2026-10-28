@@ -1,6 +1,6 @@
 import type { GithubFailure } from './GithubFailure';
 import type { IBranch } from './IBranch';
 
-/** A repository's branches, or why GitHub would not list them. */
+/** As branches de um repositório, ou por que o GitHub não as listou. */
 export type IBranchList =
   { isListed: true; branches: IBranch[] } | { isListed: false; failure: GithubFailure };

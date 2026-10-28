@@ -1,6 +1,6 @@
 /**
- * Where an MCP server stands in the QA's agent: no agent, an agent QAzinho cannot set up
- * yet, not added, signed out, working, or broken.
+ * Em que pé está um servidor MCP no agente do QA: nenhum agente, um agente que o QAzinho
+ * ainda não sabe configurar, não adicionado, deslogado, funcionando, ou quebrado.
  */
 export type McpServerState =
   'no-agent' | 'unsupported' | 'missing' | 'needs-auth' | 'connected' | 'failed';

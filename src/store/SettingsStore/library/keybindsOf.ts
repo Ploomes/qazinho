@@ -1,8 +1,8 @@
 import type { IKeybind } from '@/modules/Settings/types';
 
 /**
- * The shortcuts as the table names them, each on the keys the QA picked for it: a saved
- * label never comes back.
+ * Os atalhos como a tabela os nomeia, cada um nas teclas que o QA escolheu para ele: um
+ * rótulo salvo nunca volta.
  */
 export function keybindsOf(props: { saved: unknown; table: IKeybind[] }): IKeybind[] {
   const saved = Array.isArray(props.saved) ? (props.saved as unknown[]) : [];

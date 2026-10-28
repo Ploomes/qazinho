@@ -2,7 +2,7 @@ import type { ProSignInPhase } from './ProSignInPhase';
 import type { ProSignInStep } from './ProSignInStep';
 
 /**
- * Signing this machine in to QAzinho Pro, as main reports it each time it moves: its
- * steps, and where it stands.
+ * Esta máquina entrando no QAzinho Pro, como a main relata a cada mudança: os passos, e
+ * em que pé está.
  */
 export type ProSignInProgress = { steps: ProSignInStep[] } & ProSignInPhase;

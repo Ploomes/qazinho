@@ -5,8 +5,8 @@ import type { IStepOutcome } from './IStepOutcome';
 import type { TargetKind } from './TargetKind';
 
 /**
- * A run main is still walking, or an exploration it is still on, as it stands now, with
- * the question its agent waits on: what a page that just opened needs to pick it up.
+ * Uma run ou exploração que a main ainda anda, como está agora, com a pergunta que o
+ * agente espera: o que uma página recém-aberta precisa para retomá-la.
  */
 export interface IRunInFlight {
   workspaceId: string;

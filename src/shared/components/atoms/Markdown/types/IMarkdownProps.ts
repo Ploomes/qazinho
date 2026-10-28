@@ -1,6 +1,6 @@
 /**
- * Markdown an agent wrote, as text: it is rendered, never run as HTML. `isRevealing` lets
- * its blocks rise in one after another.
+ * Markdown que um agente escreveu, como texto: é renderizado, nunca roda como HTML.
+ * `isRevealing` deixa os blocos subirem um depois do outro.
  */
 export interface IMarkdownProps {
   children: string;

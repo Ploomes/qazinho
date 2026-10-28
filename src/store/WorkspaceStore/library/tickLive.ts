@@ -1,8 +1,8 @@
 import type { IWorkspace } from '@/modules/Workspace';
 
 /**
- * A held run stops counting: the clock says how long the device has been worked, not
- * waited, and a question counts how long the QA has let it wait.
+ * Uma run segurada para de contar: o relógio diz quanto tempo o dispositivo foi
+ * trabalhado, não esperado, e uma pergunta conta quanto tempo o QA a deixou esperando.
  */
 export function tickLive(props: { workspace: IWorkspace; seconds: number }): IWorkspace {
   const { workspace, seconds } = props;

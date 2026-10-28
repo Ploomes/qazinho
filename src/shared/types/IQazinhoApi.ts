@@ -91,8 +91,7 @@ import type { VariablesOutcome } from './VariablesOutcome';
 import type { WindowFit } from './WindowFit';
 
 /**
- * What the preload exposes to the page as `window.qazinho`. Data and purposeful functions
- * only.
+ * O que o preload expõe à página como `window.qazinho`. Só dados e funções com propósito.
  */
 export interface IQazinhoApi {
   platform: Platform;

@@ -46,7 +46,7 @@ const JIRA = {
   connectedAt: '',
 };
 
-/** A page that opened while main was still walking a run: the bridge says so. */
+/** Uma página que abriu enquanto a main ainda andava uma run: a bridge diz isso. */
 function bridgeWithRunInFlight() {
   const runsInFlight = vi.fn(() => Promise.resolve([RUN]));
 
@@ -115,8 +115,9 @@ describe('useRunEvents', () => {
   });
 
   /**
-   * A run that could not open the app used to land Playwright's own words in the chat:
-   * "page.goto: net::ERR_UNSAFE_PORT … Call log: …", in English whatever the QA reads.
+   * Uma run que não conseguia abrir o app punha no chat as próprias palavras do
+   * Playwright: "page.goto: net::ERR_UNSAFE_PORT … Call log: …", em inglês seja qual for
+   * o idioma do QA.
    */
   it("says why a run stopped in the QA's language, with the address it could not open", async () => {
     let send: (event: IRunEvent) => void = () => undefined;
@@ -165,7 +166,10 @@ describe('useRunEvents', () => {
   });
 
   describe('a run that ends', () => {
-    /** A bridge that hands the test main's run events and its notification clicks. */
+    /**
+     * Uma bridge que entrega ao teste os eventos de run da main e os cliques nas
+     * notificações dela.
+     */
     function listening() {
       let send: (event: IRunEvent) => void = () => undefined;
       let open: (run: IRunRef) => void = () => undefined;
@@ -509,7 +513,10 @@ describe('useRunEvents', () => {
       });
     });
 
-    /** The plan said LOGIN_PASSWORD was missing right after the QA kept it in an answer. */
+    /**
+     * O plano dizia que LOGIN_PASSWORD faltava logo depois de o QA guardá-la numa
+     * resposta.
+     */
     it("reads the project's variables again once an answer was kept in it", async () => {
       useVariablesStore.setState({ byProject: {} });
 

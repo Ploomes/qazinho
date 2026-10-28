@@ -2,8 +2,8 @@ import type { GaugeTone } from '@/shared/components/atoms/Gauge/types';
 import { GAUGE } from '@/shared/components/atoms/Gauge/constants';
 
 /**
- * The tone of a share left, from 0 to 1: easy while there is room, tight near the end,
- * empty at it.
+ * O tom de uma fração restante, de 0 a 1: tranquilo enquanto há espaço, apertado perto do
+ * fim, vazio no fim.
  */
 export function gaugeTone(left: number): GaugeTone {
   if (left <= GAUGE.emptyUnder) return 'empty';

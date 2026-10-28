@@ -2,8 +2,8 @@ import type { IJiraProject } from './IJiraProject';
 import type { JiraFailure } from './JiraFailure';
 
 /**
- * The Jira projects the QA can see, the ones they opened last first, or why Jira did not
- * answer.
+ * Os projetos do Jira que o QA pode ver, os abertos por último primeiro, ou por que o
+ * Jira não respondeu.
  */
 export type JiraProjectList =
   | { isListed: true; projects: IJiraProject[] }
