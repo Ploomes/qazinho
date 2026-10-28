@@ -1,8 +1,8 @@
 import type { IReplayRequest } from '@/modules/Run/types';
 
 /**
- * The run's requests under its video, at the moment it is at, with the files shown or
- * kept out.
+ * Os pedidos da run sob o vídeo, no momento em que ele está, com os arquivos mostrados ou
+ * deixados de fora.
  */
 export interface IReplayNetworkProps {
   requests: IReplayRequest[];

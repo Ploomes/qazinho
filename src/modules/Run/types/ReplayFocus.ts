@@ -1,6 +1,3 @@
-/**
- * What the replay opens on: the whole run, the take of one case, or the moment of one
- * bug.
- */
+/** Em que o replay abre: a run inteira, a gravação de um caso, ou o momento de um bug. */
 export type ReplayFocus =
   { kind: 'run' } | { kind: 'case'; caseId: string } | { kind: 'bug'; bugId: string };

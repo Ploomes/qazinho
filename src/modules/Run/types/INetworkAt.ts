@@ -1,8 +1,8 @@
 import type { IRequestAt } from './IRequestAt';
 
 /**
- * The network as one moment of the video shows it: the latest requests, how many started
- * of how many the run made, the errors so far, and the files kept out.
+ * A rede como um momento do vídeo a mostra: os últimos pedidos, quantos começaram de
+ * quantos a run fez, os erros até ali, e os arquivos de fora.
  */
 export interface INetworkAt {
   rows: IRequestAt[];

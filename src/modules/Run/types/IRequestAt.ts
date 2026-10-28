@@ -1,8 +1,8 @@
 import type { IReplayRequest } from './IReplayRequest';
 
 /**
- * A request as one moment of the video shows it: ended or still waiting, and for how long
- * so far.
+ * Um pedido como um momento do vídeo o mostra: terminado ou ainda esperando, e por quanto
+ * tempo até ali.
  */
 export interface IRequestAt {
   request: IReplayRequest;

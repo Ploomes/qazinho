@@ -69,7 +69,10 @@ describe('flattenPlanSteps', () => {
     expect(flattenPlanSteps([])).toEqual([]);
   });
 
-  /** A case added by hand starts with a blank step; a run sent it to the agent as "1. ". */
+  /**
+   * Um caso acrescentado à mão começa com um passo em branco; uma run o mandava ao agente
+   * como "1. ".
+   */
   it('skips a step with nothing to do yet, and keeps the number the plan shows', () => {
     const steps = flattenPlanSteps([
       {

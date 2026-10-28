@@ -1,8 +1,8 @@
 import type { IRunStep } from '@/modules/Run/types';
 
 /**
- * How a case was walked: again without the agent when every step was, healed when the
- * agent had to take over, or null for an agent's own walk.
+ * Como um caso foi andado: de novo sem o agente quando todo passo foi, curado quando o
+ * agente precisou assumir, ou null para um passeio do próprio agente.
  */
 export function caseWalkOf(steps: Pick<IRunStep, 'by'>[]): 'replay' | 'healed' | null {
   if (steps.some(({ by }) => by === 'healed')) return 'healed';

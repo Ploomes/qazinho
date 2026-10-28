@@ -9,7 +9,10 @@ describe('answerLineOf', () => {
     });
   });
 
-  /** The page never has a secret's value: all it can say is the name it went as. */
+  /**
+   * A página nunca tem o valor de um segredo: tudo o que ela pode dizer é o nome com que
+   * ele foi.
+   */
   it('names a secret by its variable, kept in the project or not', () => {
     expect(answerLineOf({ kind: 'secret', name: 'OTP_CODE', isKept: false })).toEqual({
       kind: 'sentence',

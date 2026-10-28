@@ -6,8 +6,8 @@ import { useRunReplayViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A run's video with its timeline: a chapter per case, a pin per bug, the steps beside it
- * and, when the QA asks, the requests under it, all kept in step.
+ * O vídeo de uma run com a linha do tempo: um capítulo por caso, um pino por bug, os
+ * passos ao lado e, quando o QA pede, os pedidos embaixo, tudo em sincronia.
  */
 export const RunReplay: React.FC = () => {
   const {

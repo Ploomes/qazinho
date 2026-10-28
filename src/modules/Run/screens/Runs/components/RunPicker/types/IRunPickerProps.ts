@@ -1,6 +1,6 @@
 import type { IRunRowSummary } from '@/modules/Run/screens/Runs/components/RunRow/types';
 
-/** The run on show, and the runs the QA can switch to, a page at a time. */
+/** A run em exibição, e as runs para as quais o QA pode trocar, uma página por vez. */
 export interface IRunPickerProps {
   current: IRunRowSummary;
   runs: IRunRowSummary[];

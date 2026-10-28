@@ -1,6 +1,6 @@
 /**
- * One page of a list, with the page clamped to one that exists, so a shrinking list never
- * shows an empty page.
+ * Uma página de uma lista, com a página limitada a uma que existe, para uma lista que
+ * encolhe nunca mostrar uma página vazia.
  */
 export function pageOf<T>(props: { items: T[]; page: number; size: number }): {
   items: T[];

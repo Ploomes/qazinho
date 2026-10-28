@@ -2,8 +2,8 @@ import type { IRun } from '@/modules/Run/types';
 import { EXPLORATION } from '@/shared/constants';
 
 /**
- * The run as the QA reads it: an exploration's one case, its screens, takes the name the
- * QA reads for an exploration.
+ * A run como o QA a lê: o caso único de uma exploração, as telas dela, leva o nome que o
+ * QA lê para uma exploração.
  */
 export function withExplorationTitle(props: { run: IRun; title: string }): IRun {
   const { run, title } = props;

@@ -2,8 +2,8 @@ import type { INetworkAt, IReplayRequest } from '@/modules/Run/types';
 import { NETWORK } from '@/modules/Run/constants';
 
 /**
- * The network at one moment of the video: the latest requests that started by then, each
- * ended or still waiting, with the files left out unless the QA shows them.
+ * A rede num momento do vídeo: os últimos pedidos que começaram até ali, cada um
+ * terminado ou ainda esperando, com os arquivos de fora a menos que o QA os mostre.
  */
 export function networkAt(props: {
   requests: IReplayRequest[];

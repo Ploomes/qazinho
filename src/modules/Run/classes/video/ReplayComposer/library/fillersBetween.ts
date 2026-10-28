@@ -1,6 +1,6 @@
 /**
- * The moments between two frames, one a step, to hold the earlier picture at, so the
- * strip keeps moving while the screen stands still.
+ * Os momentos entre dois frames, um por passo, em que segurar a imagem anterior, para a
+ * faixa continuar andando enquanto a tela fica parada.
  */
 export function fillersBetween(props: {
   fromUs: number;

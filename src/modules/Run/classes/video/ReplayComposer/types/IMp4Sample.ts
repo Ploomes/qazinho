@@ -1,6 +1,6 @@
 /**
- * One frame of an MP4's video, where its bytes sit in the file and when it shows, in
- * microseconds.
+ * Um frame do vídeo de um MP4, onde os bytes dele ficam no arquivo e quando ele aparece,
+ * em microssegundos.
  */
 export interface IMp4Sample {
   offset: number;

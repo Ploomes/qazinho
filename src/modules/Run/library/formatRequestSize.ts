@@ -2,8 +2,8 @@ const KILOBYTE = 1_024;
 const MEGABYTE = KILOBYTE * KILOBYTE;
 
 /**
- * How much a request brought back: bytes under a kilobyte, kilobytes with a decimal under
- * ten, megabytes with one above a megabyte.
+ * Quanto um pedido trouxe: bytes abaixo de um kilobyte, kilobytes com uma decimal abaixo
+ * de dez, megabytes com uma acima de um megabyte.
  */
 export function formatRequestSize(props: { bytes: number; language: string }): string {
   const { bytes, language } = props;

@@ -1,6 +1,6 @@
 /**
- * How a request ended: an answer by its class of status, a failure on the way, one the
- * app gave up on, or no answer heard.
+ * Como um pedido terminou: uma resposta pela classe do status, uma falha no caminho, uma
+ * que o app abandonou, ou nenhuma resposta ouvida.
  */
 export type RequestOutcome =
   'ok' | 'redirect' | 'client' | 'server' | 'failed' | 'canceled' | 'unknown';

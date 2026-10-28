@@ -16,7 +16,9 @@ interface IWritten {
   align: string;
 }
 
-/** A canvas that only writes down what was written on it, each glyph six pixels wide. */
+/**
+ * Um canvas que só anota o que foi escrito nele, cada glifo com seis pixels de largura.
+ */
 function fakeCanvas() {
   const written: IWritten[] = [];
   const canvas = {

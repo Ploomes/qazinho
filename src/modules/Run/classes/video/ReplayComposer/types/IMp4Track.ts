@@ -1,8 +1,8 @@
 import type { IMp4Sample } from './IMp4Sample';
 
 /**
- * An MP4's H.264 video as a decoder takes it: the codec, its configuration record, its
- * size, and its frames in decoding order.
+ * O vídeo H.264 de um MP4 como um decodificador o recebe: o codec, o registro de
+ * configuração, o tamanho, e os frames em ordem de decodificação.
  */
 export interface IMp4Track {
   codec: string;

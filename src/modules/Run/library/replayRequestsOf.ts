@@ -5,8 +5,8 @@ import { requestOutcomeOf } from './requestOutcomeOf';
 import { urlPartsOf } from './urlPartsOf';
 
 /**
- * A run's requests placed on its video, in the order they started; one made before the
- * video began starts at its first frame.
+ * Os pedidos de uma run postos no vídeo dela, na ordem em que começaram; um feito antes
+ * de o vídeo começar começa no primeiro frame.
  */
 export function replayRequestsOf(props: {
   entries: INetworkEntry[];

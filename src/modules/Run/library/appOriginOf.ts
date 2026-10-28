@@ -2,8 +2,8 @@ import type { INetworkEntry } from '@/modules/Run/types';
 import { urlPartsOf } from './urlPartsOf';
 
 /**
- * The origin of the app under test: where its first page came from, or its first request
- * when it loaded none.
+ * A origem do app sob teste: de onde veio a primeira página dele, ou o primeiro pedido
+ * quando não carregou nenhuma.
  */
 export function appOriginOf(entries: INetworkEntry[]): string | null {
   const byStart = [...entries].sort((one, other) => one.startedAt - other.startedAt);

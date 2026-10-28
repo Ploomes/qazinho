@@ -1,6 +1,6 @@
 /**
- * Where a moment of the video falls: the case and step it shows, or the gap after a case
- * while the app opens anew.
+ * Onde um momento do vídeo cai: o caso e o passo que mostra, ou o intervalo depois de um
+ * caso enquanto o app abre de novo.
  */
 export interface IReplayMoment {
   chapterIndex: number;

@@ -1,5 +1,5 @@
 /**
- * How a run ended: it walked the whole plan, the QA stopped it, it broke on the way, or
- * QAzinho closed under it.
+ * Como uma run terminou: andou o plano inteiro, o QA a parou, quebrou no caminho, ou o
+ * QAzinho fechou debaixo dela.
  */
 export type RunEnd = 'finished' | 'stopped' | 'broke' | 'interrupted';

@@ -23,7 +23,10 @@ describe('requestOutcomeOf', () => {
     expect(requestOutcomeOf({ status: 200, failure: 'net::ERR_FAILED' })).toBe('failed');
   });
 
-  /** A no-cors call answered 204 came back from Chrome as aborted: the app got its answer, so the QA reads the status. */
+  /**
+   * Uma chamada no-cors respondida com 204 voltava do Chrome como abortada: o app recebeu
+   * a resposta, então o QA lê o status.
+   */
   it('reads the answer the server gave when the browser only stopped reading it', () => {
     expect(requestOutcomeOf({ status: 204, failure: 'net::ERR_ABORTED' })).toBe('ok');
     expect(requestOutcomeOf({ status: 404, failure: 'net::ERR_ABORTED' })).toBe('client');

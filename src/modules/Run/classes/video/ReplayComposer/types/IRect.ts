@@ -1,4 +1,4 @@
-/** A rectangle on the composed frame, in pixels. */
+/** Um retângulo no frame composto, em pixels. */
 export interface IRect {
   x: number;
   y: number;

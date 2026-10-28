@@ -2,8 +2,8 @@ import { ArrayBufferTarget, Muxer } from 'mp4-muxer';
 import { readMp4 } from '@/modules/Run/classes/video/ReplayComposer/library';
 
 /**
- * A stretch of an MP4's video as an MP4 of its own, its frames copied as they are from
- * the key frame before it starts; null when the file holds no H.264 video to cut.
+ * Um trecho do vídeo de um MP4 como um MP4 próprio, com os frames copiados desde o key
+ * frame anterior; null quando o arquivo não tem vídeo H.264 para cortar.
  */
 export function clipOfMp4(props: {
   video: Uint8Array;

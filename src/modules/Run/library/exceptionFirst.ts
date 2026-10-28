@@ -10,8 +10,8 @@ const RANK: Record<StepVerdict, number> = {
 };
 
 /**
- * Cases with what went wrong first, failed before blocked before skipped, then the ones
- * that passed, each kind in the plan's order.
+ * Casos com o que deu errado primeiro, falhos antes de bloqueados antes de pulados,
+ * depois os que passaram, cada tipo na ordem do plano.
  */
 export function exceptionFirst<T extends { verdict: StepVerdict }>(cases: T[]): T[] {
   return cases

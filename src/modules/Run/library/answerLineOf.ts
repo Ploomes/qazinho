@@ -1,8 +1,8 @@
 import type { RunAnswer } from '@/shared/types';
 
 /**
- * How to say the way a question to the QA ended: in the QA's own words, or as a sentence
- * that names the variable a secret went as.
+ * Como dizer o jeito que uma pergunta ao QA terminou: nas próprias palavras do QA, ou
+ * como uma frase que nomeia a variável com que um segredo foi.
  */
 export function answerLineOf(
   answer: RunAnswer,

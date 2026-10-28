@@ -3,8 +3,8 @@ import { Icon } from '@/shared/components/atoms';
 import './styles.css';
 
 /**
- * One run on a line: its id, what it walked, how it ended, its verdicts, how long and how
- * much, and when.
+ * Uma run numa linha: o id, o que andou, como terminou, os vereditos, quanto tempo e
+ * quanto custou, e quando.
  */
 export const RunRow: React.FC<IRunRowProps> = ({ row, factsNote }) => (
   <span className="run-row">

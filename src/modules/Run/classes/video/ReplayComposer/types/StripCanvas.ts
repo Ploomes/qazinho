@@ -1,4 +1,6 @@
-/** The part of a 2D canvas the strip draws with, so a test can hand a fake one. */
+/**
+ * A parte de um canvas 2D com que a faixa desenha, para um teste poder entregar um fake.
+ */
 export type StripCanvas = Pick<
   OffscreenCanvasRenderingContext2D,
   | 'fillStyle'

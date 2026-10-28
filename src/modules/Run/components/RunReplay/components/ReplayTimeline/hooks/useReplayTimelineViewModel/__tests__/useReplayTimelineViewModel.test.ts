@@ -32,7 +32,7 @@ function render(props: Partial<IReplayTimelineProps> = {}) {
   return { onSeek, onScrub, result: view.result };
 }
 
-/** A pointer over a 1000px-wide rail, `x` pixels in from its left. */
+/** Um ponteiro sobre um trilho de 1000px de largura, `x` pixels a partir da esquerda. */
 function pointer(x: number) {
   return {
     clientX: x,
@@ -99,7 +99,9 @@ describe('useReplayTimelineViewModel', () => {
     expect(render().result.current.pins[0]?.isFlashing).toBe(false);
   });
 
-  /** A call centred on a pin near an end of the rail would be cut off by the panel. */
+  /**
+   * Um balão centrado num pino perto de uma ponta do trilho seria cortado pelo painel.
+   */
   it('keeps the call inside the rail for a bug near either end', () => {
     const [mark] = TIMELINE.marks;
     const atEdges = {

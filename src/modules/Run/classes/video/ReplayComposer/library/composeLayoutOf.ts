@@ -2,8 +2,8 @@ import type { IComposeLayout } from '@/modules/Run/classes/video/ReplayComposer/
 import { NETWORK_STRIP } from '@/modules/Run/classes/video/ReplayComposer/constants';
 
 /**
- * The composed frame for a video of this size: the video on top, centred on a frame wide
- * enough for the strip to read, and the strip under it.
+ * O frame composto para um vídeo deste tamanho: o vídeo em cima, centrado num frame largo
+ * o bastante para a faixa ser lida, e a faixa embaixo.
  */
 export function composeLayoutOf(props: {
   width: number;

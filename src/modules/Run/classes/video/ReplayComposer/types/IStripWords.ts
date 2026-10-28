@@ -1,4 +1,4 @@
-/** The words the strip writes, in the language the QA reads. */
+/** As palavras que a faixa escreve, no idioma que o QA lê. */
 export interface IStripWords {
   title: string;
   count: (props: { shown: number; total: number }) => string;

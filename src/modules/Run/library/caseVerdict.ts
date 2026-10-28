@@ -1,8 +1,8 @@
 import type { IRunStep, StepVerdict } from '@/modules/Run/types';
 
 /**
- * A case reads as the worst thing that happened to it, so it never says failed with
- * nothing failed.
+ * Um caso aparece como a pior coisa que lhe aconteceu, para nunca dizer que falhou sem
+ * nada ter falhado.
  */
 export function caseVerdict(steps: Pick<IRunStep, 'verdict'>[]): StepVerdict {
   const verdicts = steps.map(({ verdict }) => verdict);

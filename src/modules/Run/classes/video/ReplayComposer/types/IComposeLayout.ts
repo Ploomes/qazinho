@@ -1,8 +1,8 @@
 import type { IRect } from './IRect';
 
 /**
- * Where everything sits on a composed frame: its size, the video on top, the strip under
- * it, and how much the strip is scaled.
+ * Onde tudo fica num frame composto: o tamanho, o vídeo em cima, a faixa embaixo, e
+ * quanto a faixa é escalada.
  */
 export interface IComposeLayout {
   width: number;

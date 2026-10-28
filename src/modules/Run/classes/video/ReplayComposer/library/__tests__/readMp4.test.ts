@@ -2,7 +2,10 @@ import { ArrayBufferTarget, Muxer } from 'mp4-muxer';
 import { describe, expect, it } from 'vitest';
 import { readMp4 } from '@/modules/Run/classes/video/ReplayComposer/library';
 
-/** An AVCDecoderConfigurationRecord for High profile, level 4.0, as the recorder's encoder hands one over. */
+/**
+ * Um AVCDecoderConfigurationRecord para o perfil High, nível 4.0, como o codificador do
+ * gravador entrega um.
+ */
 const AVCC = new Uint8Array([
   1, 0x64, 0x00, 0x28, 0xff, 0xe1, 0x00, 0x04, 0x67, 0x64, 0x00, 0x28, 0x01, 0x00, 0x02,
   0x68, 0xee,
@@ -14,7 +17,10 @@ interface IFrame {
   bytes: number[];
 }
 
-/** An MP4 written the way the recorder writes one: H.264 frames at the moments they were captured. */
+/**
+ * Um MP4 escrito do jeito que o gravador escreve: frames H.264 nos momentos em que foram
+ * capturados.
+ */
 function mp4(props: { frames: IFrame[]; fastStart: false | 'in-memory' }): Uint8Array {
   const target = new ArrayBufferTarget();
   const muxer = new Muxer({

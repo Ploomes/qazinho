@@ -4,8 +4,8 @@ import { REPLAY_COMPOSER } from './constants';
 import { composeLayoutOf, drawNetworkStrip, fillersBetween, readMp4 } from './library';
 
 /**
- * Draws a run's network under its video: decodes the recording frame by frame, adds the
- * strip as the video stood at each moment, and encodes it all as one MP4.
+ * Desenha a rede de uma run sob o vídeo dela: decodifica a gravação frame a frame,
+ * acrescenta a faixa como o vídeo estava em cada momento, e codifica tudo num MP4.
  */
 export class ReplayComposer {
   private readonly props: IComposeReplay;
@@ -19,8 +19,8 @@ export class ReplayComposer {
   }
 
   /**
-   * The video with its network under it, as the bytes of an MP4; throws when the video
-   * cannot be read or coded here, or once the QA closed it.
+   * O vídeo com a rede embaixo, como os bytes de um MP4; lança erro quando o vídeo não
+   * pode ser lido ou codificado aqui, ou quando o QA o fechou.
    */
   public async compose(): Promise<Uint8Array> {
     const { video, signal } = this.props;

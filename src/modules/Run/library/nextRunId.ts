@@ -1,8 +1,8 @@
 import type { IWorkspace } from '@/modules/Workspace';
 
 /**
- * The id of the workspace's next run: one past every run its history or its chat named,
- * so a run that never walked a step is not named twice.
+ * O id da próxima run do workspace: um acima de toda run que o histórico ou o chat dele
+ * nomeou, para uma run que nunca andou um passo não ser nomeada duas vezes.
  */
 export function nextRunId(workspace: Pick<IWorkspace, 'runs' | 'chat'>): string {
   const highest = Math.max(

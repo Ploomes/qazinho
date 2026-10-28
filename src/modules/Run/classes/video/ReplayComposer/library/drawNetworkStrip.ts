@@ -18,8 +18,8 @@ import {
 const TONE_COLOURS = { pass: 'pass', quiet: 'ink3', attn: 'attn', fail: 'fail' } as const;
 
 /**
- * Draws the strip as the video stood at one moment: its head with the count, the errors
- * and the clock, and the latest requests, each ended or still waiting.
+ * Desenha a faixa como o vídeo estava num momento: a cabeça com a contagem, os erros e o
+ * relógio, e os últimos pedidos, cada um terminado ou ainda esperando.
  */
 export function drawNetworkStrip(props: {
   context: StripCanvas;

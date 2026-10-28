@@ -1,4 +1,4 @@
-/** The colours the strip is drawn in, read off the theme the QA is on. */
+/** As cores em que a faixa é desenhada, lidas do tema em que o QA está. */
 export interface IStripLook {
   screen: string;
   panel: string;

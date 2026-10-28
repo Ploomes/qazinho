@@ -1,7 +1,7 @@
 import type { IReplayChapter } from './IReplayChapter';
 import type { IReplayMark } from './IReplayMark';
 
-/** A run's video laid out: its length, a chapter per case, and a mark per bug. */
+/** O vídeo de uma run disposto: a duração, um capítulo por caso, e uma marca por bug. */
 export interface IReplayTimeline {
   durationMs: number;
   chapters: IReplayChapter[];

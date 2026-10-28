@@ -7,7 +7,7 @@ import { STICKER } from '@/shared/constants';
 import { useRunPickerViewModel } from './hooks';
 import './styles.css';
 
-/** The run on show at the top of Runs, opening onto every run to switch to. */
+/** A run em exibição no topo de Runs, abrindo para toda run para a qual trocar. */
 export const RunPicker: React.FC<IRunPickerProps> = (props) => {
   const { ref, isOpen, triggerClassName, label, count, rows, onToggle, onPick } =
     useRunPickerViewModel(props);

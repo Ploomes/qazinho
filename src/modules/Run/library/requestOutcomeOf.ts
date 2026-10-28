@@ -2,8 +2,8 @@ import type { RequestOutcome } from '@/modules/Run/types';
 import { NETWORK } from '@/modules/Run/constants';
 
 /**
- * How a request ended: by the class of its status, even when the browser stopped reading
- * the answer after it came, or by its failure when none came.
+ * Como um pedido terminou: pela classe do status, mesmo quando o navegador parou de ler a
+ * resposta depois que ela veio, ou pela falha quando nenhuma veio.
  */
 export function requestOutcomeOf(props: {
   status: number | null;

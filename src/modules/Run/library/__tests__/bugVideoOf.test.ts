@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { bugVideoOf } from '@/modules/Run/library';
 import { recordedRun, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 
-/** A recording of twelve seconds, a frame a second and a key frame every fourth. */
+/** Uma gravação de doze segundos, um frame por segundo e um key frame a cada quatro. */
 function recording(): Uint8Array {
   const target = new ArrayBufferTarget();
   const muxer = new Muxer({

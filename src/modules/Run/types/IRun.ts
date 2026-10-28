@@ -5,8 +5,7 @@ import type { RunEnd } from './RunEnd';
 import type { IRunAsked, IRunVideo } from '@/shared/types';
 
 /**
- * One run of some cases on one target: when, a verdict per step, its cost and its
- * recording.
+ * Uma run de alguns casos num alvo: quando, um veredito por passo, o custo e a gravação.
  */
 export interface IRun {
   id: string;

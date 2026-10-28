@@ -1,8 +1,8 @@
 import type { IComposeLayout } from './IComposeLayout';
 
 /**
- * One composition under way: the frame drawn whole, the video's last picture kept under
- * it, where each sits, and the encoder taking the frames.
+ * Uma composição em andamento: o frame desenhado inteiro, a última imagem do vídeo
+ * guardada embaixo, onde cada um fica, e o codificador recebendo os frames.
  */
 export interface IComposeJob {
   canvas: OffscreenCanvas;

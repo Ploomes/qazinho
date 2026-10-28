@@ -1,8 +1,8 @@
 const ADDRESS = /^([a-z][a-z\d+.-]*:\/\/)([^/?#]*)([^#]*)/i;
 
 /**
- * An address split as a QA reads it: its origin, the host without any login, and the path
- * with its query; a variable's name or a hidden value stays as written.
+ * Um endereço dividido como um QA o lê: a origem, o host sem login, e o caminho com a
+ * query; o nome de uma variável ou um valor escondido fica como escrito.
  */
 export function urlPartsOf(url: string): {
   origin: string | null;

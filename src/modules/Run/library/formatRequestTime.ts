@@ -1,6 +1,6 @@
 /**
- * How long a request took, in milliseconds under a second, then seconds with a decimal
- * under ten.
+ * Quanto tempo um pedido levou, em milissegundos abaixo de um segundo, depois segundos
+ * com uma decimal abaixo de dez.
  */
 export function formatRequestTime(props: { ms: number; language: string }): string {
   const ms = Math.max(0, props.ms);

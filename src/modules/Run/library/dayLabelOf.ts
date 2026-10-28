@@ -1,6 +1,6 @@
 /**
- * A day, YYYY-MM-DD, the way a list says when something happened: today, yesterday, or
- * its date, with the year only when it is not this one; nothing for no day.
+ * Um dia, YYYY-MM-DD, do jeito que uma lista diz quando algo aconteceu: hoje, ontem, ou a
+ * data, com o ano só quando não é este; nada para nenhum dia.
  */
 export function dayLabelOf(props: {
   day: string | null;

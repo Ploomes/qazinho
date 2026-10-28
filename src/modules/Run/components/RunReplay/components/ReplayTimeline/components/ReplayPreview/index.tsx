@@ -2,8 +2,8 @@ import type { IReplayPreviewProps } from './types';
 import { useReplayPreviewViewModel } from './hooks';
 
 /**
- * A still of the run's video at the moment under the cursor, from a second, silent copy
- * of it.
+ * Um still do vídeo da run no momento sob o cursor, a partir de uma segunda cópia muda
+ * dele.
  */
 export const ReplayPreview: React.FC<IReplayPreviewProps> = (props) => {
   const { hasVideo, src, videoRef, onSeeked, onLoadedMetadata } =

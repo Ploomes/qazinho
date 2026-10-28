@@ -1,6 +1,6 @@
 import type { ReplayFocus } from './ReplayFocus';
 
-/** The run whose recording is playing, and what it opened on. */
+/** A run cuja gravação está tocando, e em que ela abriu. */
 export interface IReplayOpen {
   workspaceId: string;
   runId: string;

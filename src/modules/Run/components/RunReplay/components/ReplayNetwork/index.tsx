@@ -5,8 +5,8 @@ import { useReplayNetworkViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The requests the app made, under its video and kept in step with it: each lands as it
- * starts, waits for its answer, and jumps the video there on a click.
+ * Os pedidos que o app fez, sob o vídeo e em sincronia com ele: cada um cai quando
+ * começa, espera a resposta, e leva o vídeo até lá num clique.
  */
 export const ReplayNetwork: React.FC<IReplayNetworkProps> = (props) => {
   const {

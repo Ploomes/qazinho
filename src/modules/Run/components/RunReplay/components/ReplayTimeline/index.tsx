@@ -7,8 +7,8 @@ import { useReplayTimelineViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The run's video as chapters, one per case in its verdict's colour, with a tick per
- * step, a pin per bug, a mark per failed request and a still under the cursor.
+ * O vídeo da run como capítulos, um por caso na cor do veredito, com um tique por passo,
+ * um pino por bug, uma marca por pedido que falhou e um still sob o cursor.
  */
 export const ReplayTimeline: React.FC<IReplayTimelineProps> = (props) => {
   const {

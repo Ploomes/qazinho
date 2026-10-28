@@ -3,8 +3,8 @@ import type { IReplayTimeline, IRun } from '@/modules/Run/types';
 import { appearancesOf } from '@/modules/Bug/library';
 
 /**
- * A run's video laid out as chapters and marks, each placed by when it happened; null for
- * a run with no recording.
+ * O vídeo de uma run disposto em capítulos e marcas, cada um posto por quando aconteceu;
+ * null para uma run sem gravação.
  */
 export function replayTimelineOf(props: {
   run: IRun;

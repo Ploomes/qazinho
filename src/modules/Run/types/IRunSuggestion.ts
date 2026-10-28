@@ -1,8 +1,8 @@
 import type { IDraftedCase } from '@/shared/types';
 
 /**
- * The plan an exploration suggested: what the explorer said of the app, and the cases it
- * would test.
+ * O plano que uma exploração sugeriu: o que o explorador disse do app, e os casos que
+ * testaria.
  */
 export interface IRunSuggestion {
   summary: string;

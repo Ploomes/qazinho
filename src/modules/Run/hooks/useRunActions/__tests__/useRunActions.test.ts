@@ -131,7 +131,10 @@ describe('useRunActions', () => {
       expect(useWorkspaceStore.getState().workspaces[0]?.live?.isDone).toBe(false);
     });
 
-    /** The run used to start blank, and its agents filed again the bugs the Bugs tab already had. */
+    /**
+     * A run começava em branco, e os agentes dela registravam de novo os bugs que a aba
+     * Bugs já tinha.
+     */
     it('tells the run the bugs already open, so its agents count one seen again', () => {
       const { startRunCall } = bridge();
       const walked = walkRun({
@@ -330,8 +333,8 @@ describe('useRunActions', () => {
   });
 
   /**
-   * The keybinds hold these actions at the root of the app. They read the workspace when they
-   * are used, so a run's clock never renders the whole app again.
+   * Os atalhos guardam estas ações na raiz do app. Elas leem o workspace quando são
+   * usadas, para o relógio de uma run nunca renderizar o app inteiro de novo.
    */
   it('does NOT render again when a workspace changes', () => {
     const renders = { count: 0 };

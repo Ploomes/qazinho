@@ -5,8 +5,8 @@ import { useRunNoticeViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A run that just ended, said inside the app wherever the QA is: how it went, and the way
- * to it, for a few seconds.
+ * Uma run que acabou de terminar, dita dentro do app onde quer que o QA esteja: como foi,
+ * e o caminho até ela, por alguns segundos.
  */
 export const RunNotice: React.FC = () => {
   const {

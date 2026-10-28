@@ -3,8 +3,8 @@ import type { IStripWords } from './IStripWords';
 import type { IReplayRequest } from '@/modules/Run/types';
 
 /**
- * What a composition needs: the run's MP4, its requests on the video, how long the video
- * runs, and how the strip looks and reads.
+ * O que uma composição precisa: o MP4 da run, os pedidos dela no vídeo, quanto o vídeo
+ * dura, e como a faixa se parece e se lê.
  */
 export interface IComposeReplay {
   video: Uint8Array;

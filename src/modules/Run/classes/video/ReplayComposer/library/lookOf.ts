@@ -17,7 +17,7 @@ const TOKENS: Record<keyof IStripLook, string> = {
   limeSoft: '--lime-soft',
 };
 
-/** The strip's colours out of the theme's tokens, as a computed style reads them. */
+/** As cores da faixa a partir dos tokens do tema, como um estilo computado os lê. */
 export function lookOf(style: {
   getPropertyValue: (name: string) => string;
 }): IStripLook {

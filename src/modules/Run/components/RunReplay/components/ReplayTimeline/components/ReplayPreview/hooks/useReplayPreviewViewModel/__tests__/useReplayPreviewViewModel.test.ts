@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { useReplayPreviewViewModel } from '@/modules/Run/components/RunReplay/components/ReplayTimeline/components/ReplayPreview/hooks/useReplayPreviewViewModel';
 
-/** A <video> that already read its metadata, so it can seek. */
+/** Um <video> que já leu os metadados, então pode buscar. */
 function video() {
   return {
     readyState: HTMLMediaElement.HAVE_METADATA,
@@ -32,7 +32,10 @@ describe('useReplayPreviewViewModel', () => {
     expect(element.currentTime).toBe(4.2);
   });
 
-  /** Seeking a video takes a moment; asking again meanwhile would pile seeks up behind a fast cursor. */
+  /**
+   * Buscar num vídeo leva um momento; pedir de novo enquanto isso empilharia buscas atrás
+   * de um cursor rápido.
+   */
   it('holds a moment asked mid-seek, and goes there once the seek lands', () => {
     const view = renderHook((props) => useReplayPreviewViewModel(props), {
       initialProps: { url: 'http://127.0.0.1:4000/t/w1/r-01', ms: null as number | null },

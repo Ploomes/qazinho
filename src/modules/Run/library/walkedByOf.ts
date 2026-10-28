@@ -4,8 +4,8 @@ import { MODELS } from '@/modules/Settings/constants';
 import { modelNameOf } from '@/modules/Settings/library';
 
 /**
- * Who walks a run, in the names the QA reads: the agent, and its model by name, or the
- * one its own config names.
+ * Quem anda uma run, nos nomes que o QA lê: o agente, e o modelo dele pelo nome, ou o que
+ * a própria config dele nomeia.
  */
 export function walkedByOf(props: {
   agent: string;

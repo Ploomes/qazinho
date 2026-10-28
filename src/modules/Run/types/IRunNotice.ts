@@ -1,6 +1,6 @@
 /**
- * A run that just ended, said inside the app; `key` is new each time, so a second notice
- * replaces the first.
+ * Uma run que acabou de terminar, dita dentro do app; `key` é nova a cada vez, então um
+ * segundo aviso substitui o primeiro.
  */
 export interface IRunNotice {
   key: string;

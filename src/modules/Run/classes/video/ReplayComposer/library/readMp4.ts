@@ -9,8 +9,8 @@ interface IBox {
 const ENTRY_FIELDS = 78;
 
 /**
- * The H.264 video track of an MP4, with each frame's place in the file and its time; null
- * for a file that holds none.
+ * A trilha de vídeo H.264 de um MP4, com o lugar de cada frame no arquivo e o tempo dele;
+ * null para um arquivo que não tem nenhuma.
  */
 export function readMp4(bytes: Uint8Array): IMp4Track | null {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);

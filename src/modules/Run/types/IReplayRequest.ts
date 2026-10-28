@@ -1,8 +1,8 @@
 import type { RequestOutcome } from './RequestOutcome';
 
 /**
- * A request placed on a run's video: where it starts and ends there, with its address
- * split into another host and the path; `toMs` is null for one that never ended.
+ * Um pedido posto no vídeo de uma run: onde começa e termina lá, com o endereço dividido
+ * em outro host e o caminho; `toMs` é null para um que nunca terminou.
  */
 export interface IReplayRequest {
   id: number;

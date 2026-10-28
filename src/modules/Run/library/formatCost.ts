@@ -1,6 +1,6 @@
 /**
- * A cost in US dollars, written the way the QA's language writes money: cents, or a tenth
- * of a cent under a dime.
+ * Um custo em dólares, escrito do jeito que o idioma do QA escreve dinheiro: centavos, ou
+ * um décimo de centavo abaixo de dez centavos.
  */
 export function formatCost(props: { costUsd: number; language: string }): string {
   const { costUsd, language } = props;

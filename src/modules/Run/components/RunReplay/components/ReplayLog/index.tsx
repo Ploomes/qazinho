@@ -5,8 +5,8 @@ import { useReplayLogViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The run's cases beside its video, kept in step with it: the case playing opens, its
- * step lights up, and a click jumps there.
+ * Os casos da run ao lado do vídeo, em sincronia com ele: o caso tocando abre, o passo
+ * dele acende, e um clique pula para lá.
  */
 export const ReplayLog: React.FC<IReplayLogProps> = (props) => {
   const { eyebrow, foldTransition, nowTransition, chapters, onUserScroll } =

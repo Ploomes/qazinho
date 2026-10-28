@@ -3,13 +3,19 @@ import { describe, expect, it } from 'vitest';
 import { readMp4 } from '@/modules/Run/classes/video/ReplayComposer/library';
 import { clipOfMp4 } from '@/modules/Run/library';
 
-/** An AVCDecoderConfigurationRecord for High profile, level 4.0, as the recorder's encoder hands one over. */
+/**
+ * Um AVCDecoderConfigurationRecord para o perfil High, nível 4.0, como o codificador do
+ * gravador entrega um.
+ */
 const AVCC = new Uint8Array([
   1, 0x64, 0x00, 0x28, 0xff, 0xe1, 0x00, 0x04, 0x67, 0x64, 0x00, 0x28, 0x01, 0x00, 0x02,
   0x68, 0xee,
 ]);
 
-/** A recording as the recorder writes one: a frame a second, a key frame every fourth, each frame's bytes its own number. */
+/**
+ * Uma gravação como o gravador a escreve: um frame por segundo, um key frame a cada
+ * quatro, os bytes de cada frame sendo o próprio número.
+ */
 function recording(seconds: number): Uint8Array {
   const target = new ArrayBufferTarget();
   const muxer = new Muxer({

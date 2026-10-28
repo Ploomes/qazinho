@@ -1,6 +1,6 @@
 import type { Severity } from '@/shared/types';
 
-/** A bug pinned to the moment of the video it was caught. */
+/** Um bug preso ao momento do vídeo em que foi pego. */
 export interface IReplayMark {
   bugId: string;
   title: string;

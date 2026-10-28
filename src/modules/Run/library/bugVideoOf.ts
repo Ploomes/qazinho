@@ -6,8 +6,8 @@ import { replayTimelineOf } from './replayTimelineOf';
 import { takeOf } from './takeOf';
 
 /**
- * The video that goes with a bug caught in a run: a clip of its moment, else the whole
- * recording.
+ * O vídeo que vai com um bug pego numa run: um clipe do momento dele, senão a gravação
+ * inteira.
  */
 export function bugVideoOf(props: {
   workspaceId: string;
