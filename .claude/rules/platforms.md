@@ -1,67 +1,69 @@
-# Platforms
+# Plataformas
 
-QAzinho runs on **Windows, Linux and macOS**, and every change keeps it running on all three. A QA
-on Windows gets the same app as one on a Mac. Only what the OS itself forbids differs: iOS
-simulators exist only on a Mac, so the iOS target and idb live there alone.
+O QAzinho roda no **Windows, no Linux e no macOS**, e toda mudança o mantém rodando nos três. Um
+QA no Windows recebe o mesmo app que um num Mac. Só o que o próprio SO proíbe é diferente: os
+simuladores de iOS só existem num Mac, então o alvo iOS e o idb vivem só lá.
 
-## Starting a command
+## Iniciando um comando
 
-- **Every child process starts through `spawnCommand` or `execCommand`** (the harness's engine,
-  re-exported by `src/main/library`),
-  never through `spawn` or `execFile` directly. On Windows they do three things:
-  - An npm `.cmd` shim runs as the script or `.exe` it points at (`launchOf`). Node refuses to
-    start a `.cmd` without a shell, and cmd.exe mangles a JSON argument.
-  - No console window flashes up (`windowsHide`).
-  - The child gets one PATH (`envWithOnePath`). Windows names its own `Path`, and a `PATH` set
-    beside it must be the one read.
-- **A command is found with `findOnPath` over `machineDirectories()`**, the one place main looks
-  commands up:
-  - PATH splits by the platform's own separator.
-  - On Windows a command is found by its `.exe` before its `.cmd`, and never as the
-    extensionless sh script npm writes beside them.
-  - `searchDirectories` adds where each platform installs things: Homebrew and `~/.local/bin`;
-    `/snap/bin`; `%APPDATA%\npm`, `Program Files\nodejs`, `Git\cmd`, `GitHub CLI` and winget's
-    links.
-- **A process tree ends through `killTree`.** On a Mac or Linux it signals the process group. On
-  Windows, which has no signals, `taskkill /T /F` ends the tree, so a gentle `SIGINT` is a hard
-  stop there.
-- **Nothing that runs everywhere names a POSIX tool**: no `/bin/sh`, `/usr/bin/…`, `ps`, `which`
-  or `brew` by itself. A tool one platform lacks is gated by `process.platform`, with what the
-  others do instead:
+- **Todo processo filho começa por `spawnCommand` ou `execCommand`** (o engine do harness,
+  reexportado por `src/main/library`), nunca por `spawn` ou `execFile` direto. No Windows eles
+  fazem três coisas:
+  - Um shim `.cmd` do npm roda como o script ou o `.exe` para o qual aponta (`launchOf`). O Node
+    se recusa a iniciar um `.cmd` sem um shell, e o cmd.exe estraga um argumento JSON.
+  - Nenhuma janela de console pisca na tela (`windowsHide`).
+  - O filho recebe um PATH só (`envWithOnePath`). O Windows chama o dele de `Path`, e um `PATH`
+    definido ao lado dele precisa ser o lido.
+- **Um comando é achado com `findOnPath` sobre `machineDirectories()`**, o único lugar onde a main
+  procura comandos:
+  - O PATH é dividido pelo separador da própria plataforma.
+  - No Windows um comando é achado pelo `.exe` antes do `.cmd`, e nunca como o script sh sem
+    extensão que o npm escreve ao lado deles.
+  - `searchDirectories` soma onde cada plataforma instala as coisas: Homebrew e `~/.local/bin`;
+    `/snap/bin`; `%APPDATA%\npm`, `Program Files\nodejs`, `Git\cmd`, `GitHub CLI` e os links do
+    winget.
+- **Uma árvore de processos termina por `killTree`.** No Mac ou no Linux ele sinaliza o grupo do
+  processo. No Windows, que não tem sinais, `taskkill /T /F` termina a árvore, então um `SIGINT`
+  gentil é uma parada dura lá.
+- **Nada que roda em todo lugar nomeia uma ferramenta POSIX**: nada de `/bin/sh`, `/usr/bin/…`,
+  `ps`, `which` ou `brew` sozinhos. Uma ferramenta que uma plataforma não tem é protegida por
+  `process.platform`, com o que as outras fazem no lugar:
 
-  | Need                         | Mac               | Linux                                      | Windows                                       |
-  | ---------------------------- | ----------------- | ------------------------------------------ | --------------------------------------------- |
-  | every process, for Resources | `ps`              | `ps`                                       | one PowerShell kept open (`WindowsProcesses`) |
-  | install gh                   | Homebrew          | Homebrew                                   | winget                                        |
-  | a terminal the QA sees       | a `.command` file | the desktop's terminal (`linuxTerminalOf`) | a `.cmd` file                                 |
-  | the hidden terminal (`/mcp`) | `expect`          | `expect`, when installed                   | none: the visible terminal                    |
-  | catch the agent's browser    | a sh `$BROWSER`   | a sh `$BROWSER`                            | none: the agent opens its page                |
-  | Android Studio's JDK         | inside the .app   | `/opt`, `~`, snap                          | `Program Files\Android`                       |
+  | Necessidade                   | Mac                   | Linux                                     | Windows                                           |
+  | ----------------------------- | --------------------- | ----------------------------------------- | ------------------------------------------------- |
+  | todo processo, para Recursos  | `ps`                  | `ps`                                      | um PowerShell mantido aberto (`WindowsProcesses`) |
+  | instalar o gh                 | Homebrew              | Homebrew                                  | winget                                            |
+  | um terminal que o QA vê       | um arquivo `.command` | o terminal do desktop (`linuxTerminalOf`) | um arquivo `.cmd`                                 |
+  | o terminal escondido (`/mcp`) | `expect`              | `expect`, quando instalado                | nenhum: o terminal visível                        |
+  | pegar o navegador do agente   | um `$BROWSER` sh      | um `$BROWSER` sh                          | nenhum: o agente abre a página dele               |
+  | o JDK do Android Studio       | dentro do .app        | `/opt`, `~`, snap                         | `Program Files\Android`                           |
 
-## Paths
+## Caminhos
 
-- Build a path with `path.join`. A path that came from git, Playwright or a tool compares with
-  either slash (`[\\/]`), and a path the page keeps (a test's file) is written with `/`.
-- A symlink needs an administrator on Windows: a folder links as a junction, a file is copied.
-- An SDK binary (`adb`, `emulator`, `aapt2`) is started by its path with no extension, which
-  Windows completes with `.exe`. A check that the file exists must not forget the extension.
+- Monte um caminho com `path.join`. Um caminho que veio do git, do Playwright ou de uma ferramenta
+  se compara com qualquer das barras (`[\\/]`), e um caminho que a página guarda (o arquivo de um
+  teste) é escrito com `/`.
+- Um symlink exige um administrador no Windows: uma pasta é ligada como junction, um arquivo é
+  copiado.
+- Um binário do SDK (`adb`, `emulator`, `aapt2`) é iniciado pelo caminho dele sem extensão, que o
+  Windows completa com `.exe`. Uma checagem de que o arquivo existe não pode esquecer a extensão.
 
-## Window and keyboard
+## Janela e teclado
 
-- The Mac keeps its traffic lights (`hiddenInset`). Windows and Linux get their own controls over
-  the titlebar (`titleBarOverlay`), painted from the theme on screen (`paintWindowControls`), and
-  the titlebar leaves room for them (`titlebar--overlay`).
-- A shortcut is kept with ⌘ and ⌥, and Ctrl presses what ⌘ does. The page shows it the way the
-  keyboard names it (`comboLabelOf`): Ctrl and Alt off the Mac.
-- Windows shows notifications under the app's own name (`setAppUserModelId`).
-- One QAzinho runs per data folder (`requestSingleInstanceLock`). The Dock keeps a Mac to one,
-  but Windows and Linux start a second app on each launch; it leaves and brings the open window
-  forward.
+- O Mac mantém os semáforos dele (`hiddenInset`). O Windows e o Linux ganham controles próprios
+  sobre a barra de título (`titleBarOverlay`), pintados a partir do tema na tela
+  (`paintWindowControls`), e a barra de título deixa espaço para eles (`titlebar--overlay`).
+- Um atalho é guardado com ⌘ e ⌥, e o Ctrl aperta o que o ⌘ faz. A página o mostra do jeito que o
+  teclado o nomeia (`comboLabelOf`): Ctrl e Alt fora do Mac.
+- O Windows mostra as notificações sob o nome do próprio app (`setAppUserModelId`).
+- Um QAzinho roda por pasta de dados (`requestSingleInstanceLock`). O Dock mantém um Mac em um
+  só, mas o Windows e o Linux iniciam um segundo app a cada abertura; ele sai e traz a janela
+  aberta para a frente.
 
-## Proving it
+## Provando
 
-- A library that differs by platform takes `platform` as a parameter, and its test covers
-  `win32`, `linux` and `darwin`. Windows' paths are tested as strings: `C:\Users\…`.
-- CI runs on Linux alone, and no Windows machine has walked the app yet. Until one does, a
-  Windows path is proven by its unit test, and a change that touches processes or paths says
-  which platforms it reasoned about.
+- Uma library que difere por plataforma recebe `platform` como parâmetro, e o teste dela cobre
+  `win32`, `linux` e `darwin`. Os caminhos do Windows são testados como strings: `C:\Users\…`.
+- O CI roda só no Linux, e nenhuma máquina Windows andou pelo app ainda. Até que uma ande, um
+  caminho do Windows é provado pelo teste unitário dele, e uma mudança que toca processos ou
+  caminhos diz em quais plataformas raciocinou.

@@ -1,153 +1,158 @@
-# Code structure
+# Estrutura do código
 
-The layered architecture comes from Rotuz. Components have their own rules in `components.md`.
+A arquitetura em camadas vem do Rotuz. Os componentes têm regras próprias em `components.md`.
 
-## A class is a folder
+## Uma classe é uma pasta
 
-Every class gets its own folder, inside a category folder under its process's `classes/`.
+Toda classe ganha a própria pasta, dentro de uma pasta de categoria sob o `classes/` do processo
+dela.
 
 ```
 src/main/classes/devices/AndroidEmulator/
-├── index.ts                  ← exports only what is public
-├── AndroidEmulator.class.ts  ← the class
-├── library/                  ← the class's functions, one per file
-├── types/                    ← the class's types, one per file
-└── constants/                ← the class's constants, one per file
+├── index.ts                  ← exporta só o que é público
+├── AndroidEmulator.class.ts  ← a classe
+├── library/                  ← as funções da classe, uma por arquivo
+├── types/                    ← os tipos da classe, um por arquivo
+└── constants/                ← as constantes da classe, uma por arquivo
 ```
 
-`library/`, `types/` and `constants/` are optional. When they exist, each one has an `index.ts`
-that re-exports. A class folder **never** sits loose in `classes/`: it always goes in a category.
+`library/`, `types/` e `constants/` são opcionais. Quando existem, cada uma tem um `index.ts` que
+reexporta. Uma pasta de classe **nunca** fica solta em `classes/`: ela sempre vai numa categoria.
 
-## File names
+## Nomes de arquivo
 
-| File        | Pattern                      | Example                                   |
-| ----------- | ---------------------------- | ----------------------------------------- |
-| Root folder | `lowercase`                  | `src/shared/`, `src/modules/`, `src/app/` |
-| Folder      | `PascalCase`                 | `classes/devices/AndroidEmulator/`        |
-| Class       | `<PascalCase>.class.ts`      | `AndroidEmulator.class.ts`                |
-| Library     | `camelCase.ts`, one function | `library/isInternalNavigation.ts`         |
-| Constant    | `SCREAMING_SNAKE.ts`, one    | `constants/DEFAULT_WINDOW_SIZE.ts`        |
-| Type        | `<TypeName>.ts`, one type    | `types/IQazinhoApi.ts`                    |
-| Test        | `__tests__/<name>.test.ts`   | `__tests__/isInternalNavigation.test.ts`  |
+| Arquivo    | Padrão                     | Exemplo                                   |
+| ---------- | -------------------------- | ----------------------------------------- |
+| Pasta raiz | `lowercase`                | `src/shared/`, `src/modules/`, `src/app/` |
+| Pasta      | `PascalCase`               | `classes/devices/AndroidEmulator/`        |
+| Classe     | `<PascalCase>.class.ts`    | `AndroidEmulator.class.ts`                |
+| Library    | `camelCase.ts`, uma função | `library/isInternalNavigation.ts`         |
+| Constante  | `SCREAMING_SNAKE.ts`, uma  | `constants/DEFAULT_WINDOW_SIZE.ts`        |
+| Tipo       | `<TypeName>.ts`, um tipo   | `types/IQazinhoApi.ts`                    |
+| Teste      | `__tests__/<name>.test.ts` | `__tests__/isInternalNavigation.test.ts`  |
 
-The file is named after the thing it exports, and it exports one thing. A file that holds two
-functions, two types or two constants grows without anyone noticing.
+O arquivo leva o nome da coisa que exporta, e exporta uma coisa só. Um arquivo que guarda duas
+funções, dois tipos ou duas constantes cresce sem ninguém perceber.
 
-## One file holds one thing
+## Um arquivo guarda uma coisa
 
-A class file holds the class. A view holds the JSX. A view model holds the state. **No loose
-`function`, no loose `const`, no `type` beside it.** A function goes to `library/`, where it gets
-its own file and its own test, or becomes a private method. A value goes to `constants/`, named,
-one per file. A type goes to `types/`.
+Um arquivo de classe guarda a classe. Uma view guarda o JSX. Um view model guarda o estado.
+**Nenhuma `function` solta, nenhuma `const` solta, nenhum `type` ao lado.** Uma função vai para
+`library/`, onde ganha o próprio arquivo e o próprio teste, ou vira um método privado. Um valor
+vai para `constants/`, nomeado, um por arquivo. Um tipo vai para `types/`.
 
 ```ts
-// ❌ in use<Name>ViewModel/index.ts
+// ❌ em use<Name>ViewModel/index.ts
 const FILTERS = ['all', 'passed'];
 function asJson(projects) {}
 
-// ✅ constants/RUN_FILTERS.ts and library/asJson.ts, imported
+// ✅ constants/RUN_FILTERS.ts e library/asJson.ts, importados
 ```
 
-**Enforced** by `no-restricted-syntax` over `**/*.class.ts`, `src/**/hooks/**/index.ts` and
+**Imposto** pelo `no-restricted-syntax` sobre `**/*.class.ts`, `src/**/hooks/**/index.ts` e
 `src/**/*.tsx`.
 
-**`library/` is the exception, and only for what stays private.** The rule is "exports one
-thing", so a file may keep a helper function, a lookup table or a non-exported type next to its
-single export. The moment a second thing is exported, it is two files.
+**`library/` é a exceção, e só para o que continua privado.** A regra é "exporta uma coisa", então
+um arquivo pode manter uma função auxiliar, uma tabela de consulta ou um tipo não exportado ao
+lado da única exportação. No momento em que uma segunda coisa é exportada, são dois arquivos.
 
-**A library file opens with its export.** The exported function comes first, after the imports
-and any private type or value it reads; the private helper functions it calls go after it, at the
-end of the file, so whoever opens the file reads what it does before how. A table that names a
-helper while the module loads keeps working when the helper is a `function`, which is hoisted.
-`no-restricted-syntax` over `library/` fails a helper declared before the export.
+**Um arquivo de library abre com a sua exportação.** A função exportada vem primeiro, depois dos
+imports e de qualquer tipo ou valor privado que ela lê; as funções auxiliares privadas que ela
+chama vêm depois, no fim do arquivo, para quem abre o arquivo ler o que ele faz antes do como. Uma
+tabela que nomeia um auxiliar enquanto o módulo carrega continua funcionando quando o auxiliar é
+uma `function`, que sofre hoisting. O `no-restricted-syntax` sobre `library/` reprova um auxiliar
+declarado antes da exportação.
 
-`src/main/index.ts` is the composition root: it wires the classes and the IPC handlers, and its
-functions stay there because they touch `electron` and `library/` may not.
+O `src/main/index.ts` é a raiz de composição: ele liga as classes e os handlers de IPC, e as
+funções dele ficam lá porque tocam o `electron`, que a `library/` não pode tocar.
 
-## Types
+## Tipos
 
-- **One type per file, and the file is named after the type.** `IQazinhoApi` lives in
-  `types/IQazinhoApi.ts`, never in a `types/Api.ts` that holds nine.
-- An `interface` carries the `I` prefix: `IWorkspace`, `ISidebarProps`. A `type` or an `enum`
-  does not: `RunVerdict`, `WorkspaceStatus`.
-- Applies to siblings too: the `RunVerdict` that only exists for `IRunStep` still gets its file.
-- A helper type that is not exported (`type Values<T> = T[keyof T]`) stays with its user, and
-  enters no barrel.
-- **A domain's types live with the domain**, in `src/modules/<Domain>/types/`. A module may
-  import another module's types: `ITestCase` reads `StepVerdict` from `@/modules/Run/types`.
-- `src/shared/types/` is **only what is global to every side**: today `IQazinhoApi` and `Platform`, the
-  contract the preload publishes and the page consumes. Nothing domain-shaped goes there.
-- A `types/` barrel re-exports with `export type *`, never `export *`.
-- A result with more than one shape is a **discriminated union**, not an optional flag.
+- **Um tipo por arquivo, e o arquivo leva o nome do tipo.** O `IQazinhoApi` vive em
+  `types/IQazinhoApi.ts`, nunca num `types/Api.ts` que guarda nove.
+- Uma `interface` leva o prefixo `I`: `IWorkspace`, `ISidebarProps`. Um `type` ou um `enum` não
+  leva: `RunVerdict`, `WorkspaceStatus`.
+- Vale para os irmãos também: o `RunVerdict` que só existe para o `IRunStep` ainda ganha o arquivo
+  dele.
+- Um tipo auxiliar que não é exportado (`type Values<T> = T[keyof T]`) fica com quem o usa, e não
+  entra em nenhum barrel.
+- **Os tipos de um domínio vivem com o domínio**, em `src/modules/<Domain>/types/`. Um módulo pode
+  importar os tipos de outro: o `ITestCase` lê o `StepVerdict` de `@/modules/Run/types`.
+- `src/shared/types/` é **só o que é global a todos os lados**: hoje o `IQazinhoApi` e o
+  `Platform`, o contrato que o preload publica e a página consome. Nada com forma de domínio vai
+  lá.
+- Um barrel de `types/` reexporta com `export type *`, nunca `export *`.
+- Um resultado com mais de uma forma é uma **união discriminada**, não uma flag opcional.
 
-## Constants
+## Constantes
 
-A magic number does not live in a stylesheet or in a view. It goes to `constants/`, named, one
-per file. Design tokens have precedence — see `design-tokens.md`.
+Um número mágico não vive numa folha de estilo nem numa view. Ele vai para `constants/`, nomeado,
+um por arquivo. Os tokens de design têm precedência — veja `design-tokens.md`.
 
-## At most 2 parameters
+## No máximo 2 parâmetros
 
-A function, method or constructor with more than 2 parameters takes **an object**. Enforced by
-`max-params`. A React component takes one props object, so it is always within it.
+Uma função, um método ou um construtor com mais de 2 parâmetros recebe **um objeto**. Imposto
+pelo `max-params`. Um componente React recebe um objeto de props só, então sempre está dentro da
+regra.
 
 ```ts
 isInternalNavigation(appUrl, url);
 startEmulator({ avd, headless, port });
 ```
 
-## Order inside a class
+## Ordem dentro de uma classe
 
 ```
-fields → constructor → public methods → private methods
+campos → construtor → métodos públicos → métodos privados
 ```
 
-Enforced by `@typescript-eslint/member-ordering`. A private method that grows is a `library/`
-function in disguise.
+Imposta pelo `@typescript-eslint/member-ordering`. Um método privado que cresce é uma função de
+`library/` disfarçada.
 
-## Where each thing lives
+## Onde cada coisa mora
 
 ```
 src/main/
-├── index.ts          ← app lifecycle and window creation
+├── index.ts          ← ciclo de vida do app e criação da janela
 └── classes/  library/  types/  constants/
 electron/preload/
-└── index.ts          ← the contextBridge call, nothing else
+└── index.ts          ← a chamada do contextBridge, nada mais
 src/
 ├── index.html  index.tsx  global.d.ts
-├── app/              ← the shell, with the anatomy of any component
+├── app/              ← o shell, com a anatomia de qualquer componente
 ├── shared/
 │   ├── components/   ← atoms, molecules, organisms, templates (components.md)
-│   ├── constants/    ← values every side shares
-│   ├── hooks/        ← hooks used across modules
+│   ├── constants/    ← valores que todo lado compartilha
+│   ├── hooks/        ← hooks usados entre módulos
 │   ├── styles/       ← tokens.css, base.css, animations.css
-│   └── types/        ← contracts, imported by every side
+│   └── types/        ← contratos, importados por todo lado
 ├── modules/<Domain>/screens/<Screen>/
-├── languages/        ← i18next, en and pt (i18n.md)
-├── store/            ← zustand stores; each store keeps its own library/
-└── services/         ← the only callers of window.qazinho; Recorder/ the recorder window's
+├── languages/        ← i18next, en e pt (i18n.md)
+├── store/            ← stores do zustand; cada store guarda a própria library/
+└── services/         ← os únicos que chamam window.qazinho; Recorder/ é o da janela do gravador
 ```
 
-- A screen → `src/modules/<Domain>/screens/<Screen>/`.
-- A component or hook owned by a domain but used by another module →
-  `src/modules/<Domain>/components/` or `hooks/`.
-- A component with no domain, reused across modules → `src/shared/components/`.
-- A subcomponent of one screen → `components/` **inside** that screen's folder.
-- A class the page needs, with no React in it → `src/modules/<Domain>/classes/<category>/<Name>/`,
-  as `ReplayComposer`.
-- The harness keeps its own structure, in its own repository (`packages/qazinho-harness`), with
-  rules of its own.
+- Uma tela → `src/modules/<Domain>/screens/<Screen>/`.
+- Um componente ou hook que é de um domínio mas usado por outro módulo →
+  `src/modules/<Domain>/components/` ou `hooks/`.
+- Um componente sem domínio, reusado entre módulos → `src/shared/components/`.
+- Um subcomponente de uma tela só → `components/` **dentro** da pasta dessa tela.
+- Uma classe de que a página precisa, sem React nela →
+  `src/modules/<Domain>/classes/<category>/<Name>/`, como o `ReplayComposer`.
+- O harness mantém a própria estrutura, no próprio repositório (`packages/qazinho-harness`), com
+  regras próprias.
 
-## Every folder of things has an `index.ts`
+## Toda pasta de coisas tem um `index.ts`
 
-A folder that holds several things (`components/`, `screens/`, `library/`, `hooks/`,
-`constants/`, `types/`) re-exports them from an `index.ts`, and a caller imports the folder, never
-one file inside it.
+Uma pasta que guarda várias coisas (`components/`, `screens/`, `library/`, `hooks/`,
+`constants/`, `types/`) as reexporta de um `index.ts`, e quem chama importa a pasta, nunca um
+arquivo dentro dela.
 
-**Each module has an `index.ts` at its root**, re-exporting its `components`, `constants`, `hooks`,
-`library` and `screens`, and its `types` with `export type *`. Another module imports it whole:
+**Cada módulo tem um `index.ts` na raiz**, reexportando os `components`, `constants`, `hooks`,
+`library` e `screens` dele, e os `types` com `export type *`. Outro módulo o importa inteiro:
 
 ```ts
-// ❌ from another module
+// ❌ a partir de outro módulo
 import { flattenPlanSteps } from '@/modules/Run/library';
 import { Chat } from '@/modules/Chat/screens/Chat';
 
@@ -156,31 +161,32 @@ import { flattenPlanSteps } from '@/modules/Run';
 import { Chat } from '@/modules/Chat';
 ```
 
-- **Inside a module, files import their own module by path** (`@/modules/Run/library`), never
-  through its own `index.ts`, which would import the file back.
-- **The bottom layers import a module's pure folder, not its `index.ts`:** `src/store/`, and a
-  module's `library/` and `constants/`, write `@/modules/Chat/library`. A module's `index.ts`
-  carries its screens, the screens import the store, and the store imports those libraries: going
-  through the whole `index.ts` from below closes that loop, and a Vitest run sees half-loaded
-  modules. A type-only import (`import type`) may use the `index.ts` anywhere, since it is erased.
-- `src/shared/components/` has an `index.ts` for atoms, molecules, organisms and templates together.
-- `src/main/classes/` and each category in it (`agents/`, `devices/`…) have an `index.ts`; the
-  composition root imports `@/main/classes`. A class imports another class by its own path.
+- **Dentro de um módulo, os arquivos importam o próprio módulo pelo caminho**
+  (`@/modules/Run/library`), nunca pelo `index.ts` dele, que importaria o arquivo de volta.
+- **As camadas de baixo importam a pasta pura de um módulo, não o `index.ts` dele:** o
+  `src/store/`, e a `library/` e as `constants/` de um módulo, escrevem `@/modules/Chat/library`.
+  O `index.ts` de um módulo carrega as telas dele, as telas importam a store, e a store importa
+  essas libraries: passar pelo `index.ts` inteiro de baixo fecha esse laço, e uma execução do
+  Vitest vê módulos pela metade. Um import só de tipo (`import type`) pode usar o `index.ts` em
+  qualquer lugar, já que é apagado.
+- `src/shared/components/` tem um `index.ts` para atoms, molecules, organisms e templates juntos.
+- `src/main/classes/` e cada categoria dentro dele (`agents/`, `devices/`…) têm um `index.ts`; a
+  raiz de composição importa `@/main/classes`. Uma classe importa outra classe pelo caminho dela.
 
-## Language
+## Idioma
 
-**All code is in English**: names, every string the code emits, error messages, UI copy,
-comments, test descriptions and documentation. There is no Portuguese anywhere in this
-repository.
+**O código é em inglês**: nomes, strings, nomes de testes e commits. A prosa, os `.md`, o JSDoc e
+os comentários dos testes, é em português do Brasil.
 
 ## Imports
 
-`@/*` points at `./src/*`. **Upward relative paths are forbidden**: `../` is a lint error. `./`
-within the same directory is still right for `./library/`, `./constants/` and `./types/`.
+`@/*` aponta para `./src/*`. **Caminhos relativos para cima são proibidos**: `../` é um erro de
+lint. `./` dentro do mesmo diretório continua certo para `./library/`, `./constants/` e
+`./types/`.
 
 ```ts
 import type { IQazinhoApi } from '@/shared/types';
 import { isInternalNavigation } from '@/main/library';
 ```
 
-`import type` always at the top, in a separate declaration, with no inline `type` specifier.
+`import type` sempre no topo, numa declaração separada, sem especificador `type` inline.

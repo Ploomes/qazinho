@@ -1,618 +1,641 @@
-# Architecture
+# Arquitetura
 
-Electron, built by electron-vite. Electron needs three processes, and they run in different
-worlds. **`src/` is the app**; the Electron plumbing stays out of the way.
+Electron, construído pelo electron-vite. O Electron precisa de três processos, e eles rodam em
+mundos diferentes. **O `src/` é o app**; o encanamento do Electron fica fora do caminho.
 
 ```
 src/
-├── main/            ← Node + Electron: the window, the filesystem, child processes
-├── shared/          ← what every part of the app reaches for
-│   ├── types/       ← contracts every side agrees on; imports none of them
-│   ├── constants/   ← values every side shares, the IPC channel names included
+├── main/            ← Node + Electron: a janela, o sistema de arquivos, processos filhos
+├── shared/          ← o que toda parte do app alcança
+│   ├── types/       ← contratos com que todo lado concorda; não importa nenhum deles
+│   ├── constants/   ← valores que todo lado compartilha, os nomes dos canais de IPC incluídos
 │   ├── components/  ← atoms, molecules, organisms, templates (components.md)
-│   ├── hooks/       ← hooks used across modules
+│   ├── hooks/       ← hooks usados entre módulos
 │   └── styles/      ← tokens.css, base.css, animations.css
-├── modules/         ← screens, grouped by domain
+├── modules/         ← telas, agrupadas por domínio
 ├── store/  languages/
-├── services/        ← the only callers of the bridge; Recorder/ is the recorder window's
+├── services/        ← os únicos que chamam a bridge; Recorder/ é o da janela do gravador
 ├── app/  index.tsx  index.html  recorder.ts  recorder.html
 electron/
-└── preload/     ← the bridge: exposes window.qazinho through contextBridge, nothing else
+└── preload/     ← a bridge: expõe window.qazinho pelo contextBridge, nada mais
 packages/
-└── qazinho-harness/  ← the product harness, a git submodule of its own repository
+└── qazinho-harness/  ← o harness do produto, um submódulo git de um repositório próprio
 ```
 
-Everything under `src/` that is not `src/main/` is **the page**: React, no Node. The recorder
-window is a page too, a second one with no React: `recorder.html` loads `src/recorder.ts`, which
-starts `Recorder` (`src/services/Recorder/`), the service that encodes a run's video. The main
-page never imports it, so `src/services/index.ts` leaves it out.
+Tudo sob `src/` que não é `src/main/` é **a página**: React, sem Node. A janela do gravador também
+é uma página, uma segunda, sem React: o `recorder.html` carrega o `src/recorder.ts`, que inicia o
+`Recorder` (`src/services/Recorder/`), o serviço que codifica o vídeo de uma run. A página
+principal nunca o importa, então o `src/services/index.ts` o deixa de fora.
 
-| Folder             | Runs in                 | May import                                                                     |
-| ------------------ | ----------------------- | ------------------------------------------------------------------------------ |
-| `src/main`         | Node                    | `electron`, Node builtins, the harness, `@/shared/types`, `@/shared/constants` |
-| the harness        | Node, bundled into main | its own repository: nothing of the desktop                                     |
-| `electron/preload` | a sandboxed preload     | `electron`, `@/shared/types`, `@/shared/constants`                             |
-| the page           | the page                | `@/shared/types` and the rest of the page                                      |
-| `src/shared/types` | all of the above        | nothing but the harness's pure `/contract`                                     |
+| Pasta              | Roda em                  | Pode importar                                                                   |
+| ------------------ | ------------------------ | ------------------------------------------------------------------------------- |
+| `src/main`         | Node                     | `electron`, builtins do Node, o harness, `@/shared/types`, `@/shared/constants` |
+| o harness          | Node, empacotado na main | o próprio repositório: nada do desktop                                          |
+| `electron/preload` | um preload em sandbox    | `electron`, `@/shared/types`, `@/shared/constants`                              |
+| a página           | a página                 | `@/shared/types` e o resto da página                                            |
+| `src/shared/types` | todos os acima           | nada além do `/contract` puro do harness                                        |
 
-## The boundary is enforced, not agreed
+## A fronteira é imposta, não combinada
 
-- `tsconfig.web.json` covers the page **without Node's types** and excludes `src/main`:
-  `import 'node:fs'` does not compile there.
-- ESLint `no-restricted-imports` bans Node builtins and `electron` in the page and in
-  `src/shared/types`, and bans the page importing `src/main`, `electron/` or the harness. Only
-  `src/shared/types` and `src/shared/constants` import the harness's `/contract`.
+- O `tsconfig.web.json` cobre a página **sem os tipos do Node** e exclui o `src/main`:
+  `import 'node:fs'` não compila lá.
+- O `no-restricted-imports` do ESLint bane os builtins do Node e o `electron` na página e em
+  `src/shared/types`, e bane a página de importar `src/main`, `electron/` ou o harness. Só o
+  `src/shared/types` e o `src/shared/constants` importam o `/contract` do harness.
 
-## Security defaults
+## Padrões de segurança
 
-Every `BrowserWindow` gets `contextIsolation: true`, `sandbox: true` and `nodeIntegration: false`.
+Toda `BrowserWindow` recebe `contextIsolation: true`, `sandbox: true` e `nodeIntegration: false`.
 
-- A sandboxed preload can require only `electron` and a few polyfills. That is why it stays thin,
-  and why there is one: a second entry would share a chunk it cannot require. The recorder window
-  opens with `RECORDER_ARGUMENT`, and the same preload hands it `window.qazinhoRecorder` instead
-  of `window.qazinho`.
-- `will-navigate` is cancelled unless `isInternalNavigation` says the target is the app itself.
-- `window.open` never opens a window: `https:` links go to the system browser, everything else is
-  denied.
-- **An MCP sign-in never passes through QAzinho.** Figma's MCP lives in the QA's own agent,
-  Claude Code or Codex: QAzinho adds it there and runs the agent's own sign-in, and the token
-  stays with the agent. Each agent's commands are a recipe in `MCP_RECIPES`.
-  - Claude Code signs in only from its `/mcp` screens. `AgentTerminal` opens them in a terminal
-    nobody sees (`/usr/bin/expect`, on every Mac) and `nextMcpMove` presses the keys a QA would.
-    It answers yes to the folder trust question only for QAzinho's own agent folder.
-  - The page Claude Code asks `$BROWSER` to open is caught and opened by QAzinho, so the popup
-    can open it again. Codex prints its page (`codex mcp login`).
-  - Each step reaches the page as `McpSignInProgress`. Terminal (`claude "/mcp"`) stays as the
-    way round when the hidden screens are not what `nextMcpMove` knows.
-- **An agent's sign-in never passes through QAzinho either.** `AgentLogin` runs the agent's own
-  login (`claude auth login`, `codex login`) out of sight and reports each step.
-  - `LinkCatcher` hands the agent a `$BROWSER` that writes the page down, and QAzinho opens it
-    in the QA's browser. Codex opens its own, and QAzinho only points at it.
-  - A code the page shows goes to the agent's stdin. What the agent gets stays with the agent.
-- **Nothing asks the QA to type a command.** A flow that runs a CLI runs it out of sight and shows
-  its steps in `StepsPopup`. Terminal is only a way round after a failure.
-- **A tracker token never reaches the page.** It crosses to main once, is checked, and is sealed
-  with `safeStorage`; the page only ever sees the account it belongs to. Main unseals Jira's to
-  call Jira (`IntegrationVault.jira`).
-- **A variable's value never leaves main once sealed.** `VariableVault` keeps each project's
-  variables in one file sealed with `safeStorage`, and no channel hands a value back: the page
-  and the agents know a name and what it holds.
-  - The page sends a value only to save it, from the project's window or the window an agent
-    asks for (`VariablesModal`), or as the secret answer to a run's question, which only that
-    run types unless the QA keeps it. No app tool carries one, and the Estagiário hears only
-    names.
-  - A run reaches the device through `variablePort`: a `${NAME}` is typed as its value, every
-    value that shows is read back as its name, in the screen and in why an action failed, and
-    a recipe keeps the name, never a locator that holds a value.
-  - A team's suite reads a variable from the environment of the Playwright QAzinho starts; it
-    is never written to the suite's `.env`, or anywhere else.
-  - On Linux, Electron seals with a fixed key when there is no GNOME Keyring or KWallet, and
-    still says it can encrypt: `isSealable` refuses that, for variables and Jira's token.
-  - A password or a token written out in a plan is a variable waiting to be kept: the Plan tab
-    names the case that writes it and seals it in one click, writing `${NAME}` in its place
-    (`writtenSecretsOf`), or takes the QA's word that it is no secret (`plainValues`). Both
-    chats hold back a message that carries one (`secretIn`).
-- **GitHub's login never passes through QAzinho either.** QAzinho talks to GitHub through the
-  QA's own GitHub CLI (`GithubCli`), the way it drives the QA's agent, and keeps no token.
-  - Connecting runs gh's device flow out of sight; the popup shows the one-time code and opens
-    GitHub. A gh already signed in connects at once, and one missing `repo` or `read:org` is asked
-    for again with `gh auth refresh`.
-  - gh is light, so QAzinho installs it through Homebrew when the QA asks.
-  - Disconnecting only makes QAzinho stop using it: gh stays signed in for the QA's other tools.
-- **The agent runs in QAzinho's own agent folder** (`PATHS.agentHome`), chat and runs alike, so
-  no project's `.claude` settings reach the QA's agent. Claude Code also runs with the QA's own
-  hooks off (`AGENT_RUN.settings`): a hook that rewrites commands, such as rtk's, broke every
-  build's permissions. A company's managed hooks still run.
-- `index.html` carries a CSP. Loosen one directive with a reason, never the whole policy.
+- Um preload em sandbox só pode dar `require` no `electron` e em alguns polyfills. É por isso que
+  ele fica fino, e por isso há um só: uma segunda entrada dividiria um chunk que ele não pode
+  requerer. A janela do gravador abre com `RECORDER_ARGUMENT`, e o mesmo preload lhe entrega
+  `window.qazinhoRecorder` no lugar de `window.qazinho`.
+- O `will-navigate` é cancelado a menos que o `isInternalNavigation` diga que o destino é o
+  próprio app.
+- O `window.open` nunca abre uma janela: links `https:` vão para o navegador do sistema, todo o
+  resto é negado.
+- **O login de um MCP nunca passa pelo QAzinho.** O MCP do Figma vive no agente do próprio QA,
+  Claude Code ou Codex: o QAzinho o adiciona lá e roda o login do próprio agente, e o token fica
+  com o agente. Os comandos de cada agente são uma receita em `MCP_RECIPES`.
+  - O Claude Code só faz login a partir das telas do `/mcp`. O `AgentTerminal` as abre num terminal
+    que ninguém vê (`/usr/bin/expect`, em todo Mac) e o `nextMcpMove` aperta as teclas que um QA
+    apertaria. Ele responde sim à pergunta de confiar na pasta só para a pasta do próprio agente do
+    QAzinho.
+  - A página que o Claude Code pede ao `$BROWSER` para abrir é pega e aberta pelo QAzinho, para o
+    popup poder abri-la de novo. O Codex imprime a página dele (`codex mcp login`).
+  - Cada passo chega à página como `McpSignInProgress`. O Terminal (`claude "/mcp"`) continua
+    como o caminho de volta quando as telas escondidas não são as que o `nextMcpMove` conhece.
+- **O login de um agente também nunca passa pelo QAzinho.** O `AgentLogin` roda o login do próprio
+  agente (`claude auth login`, `codex login`) fora de vista e relata cada passo.
+  - O `LinkCatcher` entrega ao agente um `$BROWSER` que anota a página, e o QAzinho a abre no
+    navegador do QA. O Codex abre o dele, e o QAzinho só aponta.
+  - Um código que a página mostra vai para o stdin do agente. O que o agente recebe fica com o
+    agente.
+- **Nada pede ao QA que digite um comando.** Um fluxo que roda uma CLI a roda fora de vista e
+  mostra os passos dele no `StepsPopup`. O Terminal é só um caminho de volta depois de uma falha.
+- **O token de um tracker nunca chega à página.** Ele cruza para a main uma vez, é conferido e é
+  lacrado com o `safeStorage`; a página só vê a conta a que ele pertence. A main abre o do Jira
+  para chamar o Jira (`IntegrationVault.jira`).
+- **O valor de uma variável nunca sai da main depois de lacrado.** O `VariableVault` guarda as
+  variáveis de cada projeto num arquivo lacrado com o `safeStorage`, e nenhum canal devolve um
+  valor: a página e os agentes conhecem um nome e o que ele guarda.
+  - A página manda um valor só para salvá-lo, pela janela do projeto ou pela janela que um agente
+    pede (`VariablesModal`), ou como a resposta secreta à pergunta de uma run, que só aquela run
+    digita, a menos que o QA a guarde. Nenhuma ferramenta do app carrega um, e o Estagiário só
+    ouve nomes.
+  - Uma run alcança o dispositivo pela `variablePort`: um `${NAME}` é digitado como o valor dele,
+    todo valor que aparece é lido de volta como o nome dele, na tela e no porquê de uma ação
+    falhar, e uma receita guarda o nome, nunca um locator que contenha um valor.
+  - A suíte de um time lê uma variável do ambiente do Playwright que o QAzinho inicia; ela nunca
+    é escrita no `.env` da suíte, nem em outro lugar.
+  - No Linux, o Electron lacra com uma chave fixa quando não há GNOME Keyring nem KWallet, e ainda
+    diz que consegue criptografar: o `isSealable` recusa isso, para as variáveis e para o token do
+    Jira.
+  - Uma senha ou um token escrito num plano é uma variável esperando para ser guardada: a aba
+    Plano nomeia o caso que o escreve e o lacra em um clique, escrevendo `${NAME}` no lugar dele
+    (`writtenSecretsOf`), ou aceita a palavra do QA de que não é segredo (`plainValues`). Os dois
+    chats seguram uma mensagem que carrega um (`secretIn`).
+- **O login do GitHub também nunca passa pelo QAzinho.** O QAzinho fala com o GitHub pela GitHub
+  CLI do próprio QA (`GithubCli`), do mesmo jeito que dirige o agente do QA, e não guarda token.
+  - Conectar roda o device flow do gh fora de vista; o popup mostra o código de uso único e abre o
+    GitHub. Um gh já logado conecta na hora, e um que falta `repo` ou `read:org` é pedido de novo
+    com `gh auth refresh`.
+  - O gh é leve, então o QAzinho o instala pelo Homebrew quando o QA pede.
+  - Desconectar só faz o QAzinho parar de usá-lo: o gh continua logado para as outras ferramentas
+    do QA.
+- **O agente roda na pasta própria de agente do QAzinho** (`PATHS.agentHome`), chat e runs
+  igualmente, então nenhuma configuração `.claude` de projeto alcança o agente do QA. O Claude
+  Code também roda com os hooks do próprio QA desligados (`AGENT_RUN.settings`): um hook que
+  reescreve comandos, como o do rtk, quebrava as permissões de todo build. Os hooks gerenciados
+  de uma empresa ainda rodam.
+- O `index.html` carrega uma CSP. Afrouxe uma diretiva com um motivo, nunca a política inteira.
 
-## The workspace
+## O workspace
 
-A workspace is three columns: the sidebar, the chat in the middle, and a panel beside it
-(`SidePanel`) whose tabs are the plan, the device (`DeviceView`), the runs and the bugs.
+Um workspace são três colunas: a sidebar, o chat no meio, e um painel ao lado (`SidePanel`) cujas
+abas são o plano, o dispositivo (`DeviceView`), as runs e os bugs.
 
-- The chat is always there; the QA picks the panel's tab (`panelTab`), and a run that starts is
-  the one thing that turns it, to the device. `selectTab('chat')` only brings the chat back.
-- The panel keeps the width the QA drags it to, narrowed so the chat keeps `SHELL.centerMinWidth`
-  (`panelWidthOf`). It folds to a rail named after its tab, or widens over the chat, which stays
-  mounted, hidden and inert, so a draft is never lost.
-- The Estagiário hears the tab beside the chat, or that the panel is hidden (`describeScreen`).
-- The sidebar folds to a rail of each workspace's platform and state (⌘B), kept in the settings
-  across a restart; the chat and the panel measure their room from its width (`useSidebarWidth`).
+- O chat está sempre lá; o QA escolhe a aba do painel (`panelTab`), e uma run que começa é a única
+  coisa que a vira, para o dispositivo. O `selectTab('chat')` só traz o chat de volta.
+- O painel mantém a largura a que o QA o arrasta, estreitada para o chat manter o
+  `SHELL.centerMinWidth` (`panelWidthOf`). Ele se dobra num trilho com o nome da aba dele, ou se
+  alarga sobre o chat, que continua montado, escondido e inerte, então um rascunho nunca se perde.
+- O Estagiário ouve a aba ao lado do chat, ou que o painel está escondido (`describeScreen`).
+- A sidebar se dobra num trilho com a plataforma e o estado de cada workspace (⌘B), guardado nas
+  configurações entre reinícios; o chat e o painel medem o espaço deles pela largura dela
+  (`useSidebarWidth`).
 
 ## IPC
 
-- The contract is `IQazinhoApi` in `src/shared/types/`. The preload implements it, and the page reads it
-  from `window.qazinho`, typed in `src/global.d.ts`.
-- **The channel names live in `src/shared/constants/CHANNELS.ts`**, and only main and the preload read them. A string
-  written twice is a call that never answers and never errors. The page never sees a channel: it
-  goes through `src/services/`.
-- **Expose functions with a purpose, never `ipcRenderer` itself.** A page that can send any
-  channel is a page with Node.
-- Structured clone carries no functions and no class instances. What crosses is data.
-- The page never calls `window.qazinho` from a view. It goes through `src/services/`.
+- O contrato é o `IQazinhoApi` em `src/shared/types/`. O preload o implementa, e a página o lê de
+  `window.qazinho`, tipado em `src/global.d.ts`.
+- **Os nomes dos canais vivem em `src/shared/constants/CHANNELS.ts`**, e só a main e o preload os
+  leem. Uma string escrita duas vezes é uma chamada que nunca responde e nunca dá erro. A página
+  nunca vê um canal: ela passa por `src/services/`.
+- **Exponha funções com um propósito, nunca o `ipcRenderer` em si.** Uma página que pode mandar
+  qualquer canal é uma página com Node.
+- O structured clone não carrega funções nem instâncias de classe. O que cruza é dado.
+- A página nunca chama `window.qazinho` de uma view. Ela passa por `src/services/`.
 
-## The harness
+## O harness
 
-**Everything the QA's agent is told lives in the harness**, a product harness that sits on top of
-the agent's own (Claude Code's), in a repository of its own that QAzinho Pro's API runs too
-(`qazinho-harness`). Main runs it, and the agent's CLI stays the engine: no SDK. It answers one
-question per channel, for a target `{ role, platform }`:
+**Tudo o que o agente do QA ouve vive no harness**, um harness de produto que fica sobre o do
+próprio agente (o do Claude Code), num repositório próprio que a API do QAzinho Pro também roda
+(`qazinho-harness`). A main o roda, e a CLI do agente continua sendo o motor: nada de SDK. Ele
+responde a uma pergunta por canal, para um alvo `{ role, platform }`:
 
-| Channel | Where                    | Becomes                                                   |
-| ------- | ------------------------ | --------------------------------------------------------- |
-| context | `context/corpus/**/*.md` | the system prompt, through `--append-system-prompt`       |
-| tools   | `tools/`                 | QAzinho's MCP server and the `--allowedTools` a role gets |
-| schemas | `schemas/`               | the shape an answer must take, through `--json-schema`    |
+| Canal   | Onde                     | Vira                                                               |
+| ------- | ------------------------ | ------------------------------------------------------------------ |
+| context | `context/corpus/**/*.md` | o prompt de sistema, pelo `--append-system-prompt`                 |
+| tools   | `tools/`                 | o servidor MCP do QAzinho e o `--allowedTools` que um papel recebe |
+| schemas | `schemas/`               | o formato que uma resposta precisa ter, pelo `--json-schema`       |
 
-- **The desktop takes it as a package.** `packages/qazinho-harness` is a git submodule, depended
-  on with `file:` (`@salve-software/qazinho-harness`) and built by `npm run harness:build`, which
-  `postinstall` runs. electron-vite bundles its `dist/` into main, the corpus included, while zod,
-  yaml and the MCP SDK stay the app's own dependencies. Its own `.claude/rules/` describe it; what
-  follows is what the desktop relies on.
-  - **The types main shares with the page come from the harness's `/contract`**: each file in
-    `src/shared/types` that the harness also reads re-exports one type from it, so the zod
-    schemas, main and the page hold one definition. `VARIABLE_NAME` comes the same way.
-  - **Moving the harness** is a commit that moves the submodule and runs `npm run harness:build`;
-    a change to what the agent is told shows up first as a diff of the harness's pinned prompts.
-- **The corpus is prose in `.md`, one `## Title` section per file.** Where a file lives says who
-  reads it: `universal/` every call, `role/<role>/` one role (`chat`, `runner`, `explorer`,
-  `assistant`, `builder`, `automator`, `reporter`),
-  `platform/<x>.md` one device. The frontmatter's `order` sorts a layer. Layers go from the most stable to the least.
-  `{{app}}` is filled per call; a placeholder nothing fills throws.
-- **A chat's system prompt is the corpus alone.** Claude Code keeps the system prompt a session
-  started with and ignores a new `--append-system-prompt` on `--resume`. What a message adds (the
-  workspace, its latest runs, what `AppPeek` saw, the @ references) opens the message inside
-  `<qazinho>`, and only what changed since that session last read it (`changedSections`).
-- **A run is walked by agents of its own.** Each case gets a fresh agent with the runner's
-  prompt and the device tools, and nothing of the chat.
-- **A bug seen again lands on the one open.** Each run carries the workspace's bugs
-  (`IStartRun.bugs`), and every case's agent and the explorer hear the latest of them
-  (`describeKnownBugs`). `bug` and `report` take `sameAs` with one of their ids, kept only when
-  the run was told of it (`keptBugId`).
-  - The page lands a failure or a finding with `catchBug`: on the bug named, else the bug its
-    plan step failed for, else one with the same title, else as a new bug.
-  - The bug keeps each sighting, with its run, step, moment and screen; a run that already caught
-    it changes nothing.
-- **A case that passed is walked again without the agent.** Its run records each step's
-  actions, and the agent reports with each pass a `proof`: words on screen that would not be
-  there had it failed.
-  - A case whose every step passed with a proof becomes a recipe, kept in the workspace's
-    folder (`recipes.json`), keyed to what the case says and the kind of target
-    (`fingerprintOf`). A web step also keeps the Playwright locator it used, and a drag the
-    one it dropped on.
-  - The next run walks a case with a recipe on the device with no agent and checks each proof
-    (`replayCase`): it costs nothing and takes seconds. When a proof does not show, the case
-    starts over with the agent, which records it again, and its steps read as healed.
-  - "Run everything with the agent", in the run button's menu (`RunButton`), walks every case
-    with the agent; each way says in the menu what it does. The report says "no AI" or
-    "healed" on each case, and `CodeExport` turns the recipes into a Playwright file or a
-    Maestro flow per case. The chat's agent learns how the runs
-    went from the history the next message carries (`runHistoryOf`): the latest run step by
-    step, the ones before by what broke.
-- **An exploration is walked by one agent with no plan** (`role/explorer/`). It gets the device
-  for a set time with `screen`, `bug` and `finish` in place of `report` (`TOOLS_LEFT_OUT`):
-  - Each action answers with the time left, and none is carried out once it is up; a finish
-    with more than a third of it left is sent back once (`earlyFinish`).
-  - Each screen it notes is a step of one case (`EXPLORATION.caseId`), each bug a finding on
-    the screen noted last, and its finish the plan it suggests, which the chat keeps on a card
-    until the QA takes it into the plan (`takeSuggestion`). The chat's agent hears it in the
-    run history.
-- **The agent asks the QA mid-run** (`ask_qa`, `asking-the-qa.md` in `role/runner/` and
-  `role/explorer/`). The call holds until the QA answers:
-  - `RunCoordinator` keeps the question (`IOpenQuestion`) and tells the page (`asked`). The
-    page answers through `answerRun`, and how it ended comes back as `answered`: the QA's words,
-    a secret by its name, no answer once `RUN_WALK.askWaitMs` (15 minutes) passed, or a stop.
-  - The agent's turn clock stops while it waits (`AgentRunner.hold`), the explorer's clock
-    moves on by the wait, and the MCP config tells the agent a call may take that long: Claude
-    Code held one for 16 minutes.
-  - A secret crosses to main once and becomes a variable of the run, typed by `variablePort`:
-    the agent reads `${NAME}`, and the page only ever the name. The project keeps it when the
-    QA says so (`keepVariable`), and a case that typed one given for that run alone keeps no
-    recipe.
-  - The QA's words reach the agent with any variable's value read back as its name.
-  - The page holds the question on the live run, draws it as `AskCard` at the end of the chat,
-    and keeps how it ended in the run's section (`AskNote`) and on its step in Runs.
-- **The tools are granted per role** (`TOOL_GRANTS`). The runner and the explorer get the
-  device, the assistant gets the app, and the chat gets its sources: `read_jira_story`,
-  `search_confluence` and `read_confluence_page` (`servers/sources/`), plus the reading tools
-  of the QA's Figma on a workspace with a design, and no other tool. `McpHost` serves the tools on loopback, one address per workspace for the length of a
-  run, and one under the `~assistant` scope while the assistant answers.
-  - Every agent call may use the QA's own MCP servers, such as their company's: they are the
-    QA's to answer for. `AgentRunner` hands each Claude Code call `--permission-prompt-tool` on
-    QAzinho's `approve_permission` (`withPermissions`), served beside every group's tools and,
-    for a call with none (a build, a review), alone under `~permissions`. It allows any MCP tool
-    and nothing else (`permissionOf`): a file outside a call's folders stays shut. Codex leaves
-    the QA's servers on. QAzinho's server wins a name it shares with one of the QA's, and the
-    corpus (`universal/own-tools.md`) has the agent do with QAzinho's tools whatever they do.
-  - A call made without the permissions (a test's own runner) keeps them out: Claude Code runs
-    with `--strict-mcp-config`, and Codex with each server of the QA's `config.toml` turned off
-    (`codexServersOf`), but the ones QAzinho hands the call. Without a tool to answer it, an
-    Atlassian server of the QA's once left the chat asking her for a permission nobody could
-    grant.
-- **The Estagiário in the corner is an agent of its own** (`role/assistant/`). It does in QAzinho
-  what the QA does by hand, through the app tools (`servers/app/`), and talks about any project,
-  workspace, run or bug:
-  - Each message opens with what is on screen and how QAzinho is now (`describeScreen`,
-    `describeApp`), sent again only when it changed. The page builds that snapshot.
-  - A tool call is read against its zod schema into an `AppToolCall`, which the page carries out
-    through the same stores and services the QA's clicks use (`performAppTool`), and the answer
-    goes back in words. Main's `AppBridge` hands the call over and waits for the answer.
-  - The compiler holds the zod schemas and the `AppToolCall` type to each other: a tool whose
-    schema and type drift apart does not build.
-  - Deleting and disconnecting wait on a card the QA answers in the chat, for up to five minutes
-    (`ASSISTANT_WAIT`). The MCP config tells the agent a call may take that long: Claude Code
-    reads the server's `timeout`, and Codex `tool_timeout_sec`.
-  - A build path is made whole and checked on disk in main before the page hears of it. A
-    tracker's token is still typed by the QA in Settings, never in the chat, and the composer
-    holds back a message that carries one (`secretIn`) until the QA takes it out or insists.
-  - A plan is written in the workspace's own chat, never in the Estagiário's:
-    `ask_workspace_chat` sends the QA's request there in their name and opens it. It refuses
-    while that chat answers, while a run walks, or while its questions wait on the QA, which
-    `workspace_details` reads back so the Estagiário helps answer them.
-  - The chat and its session outlive a restart (`keptOf`): the latest messages, with nothing
-    left going.
-  - It never covers the device. Its chat opens in its corner, and beside the panel only while
-    the panel shows a run's live device; the composer leaves room for its button when the panel
-    is shut (`dockRoomOf`), and the steps scroll past it.
-- **The app builds from its own code, by the QA's agent** (`role/builder/`). A project's Android
-  or iOS card, or the assistant's `build_app`, builds the app from a branch of one of the
-  project's repositories, with no terminal:
-  - Main's `AppBuilder` pins the branch to a commit and unpacks it into `builds/work/<build>`.
-  - The agent gets Bash, Read, Grep, Glob, Edit and Write, and the build commands it may run
-    unasked, on that folder alone; never rm, git or curl. Codex works in a workspace-write
-    sandbox with the network on, its caches kept inside the folder.
-  - Its environment carries the QA's PATH, the Android SDK, Android Studio's JDK and `CI=1`.
-  - QAzinho checks what it made: an .apk that is a zip, or an .app the simulator runs and not
-    one for a device. It is found where the agent said, or in the usual output folders. It is
-    kept under `builds/apps/<project>`, the copy is deleted, and it becomes the project's target.
-  - Each step, the agent's words and commands (with the folder said as `.`), and how the build
-    ended reach the page as `IBuildEvent`.
-- **The code plans; the QA says what the app should do** (`role/chat/code.md`). A project names
-  its GitHub repositories, each with a base branch and the GitHub id the listing read, which
-  QAzinho Pro knows it by once GitHub renames it. `/code` in the chat picks one of them and a
-  branch, and the agent reads that branch while it plans:
-  - Main's `CodeCopies` pins the branch and the base to commits, unpacks the branch's tarball
-    into the workspace's own folder under `code/`, and keeps the diff against the base. The base
-    branch itself means the whole app, with nothing to compare.
-  - The message opens with a section on the copy: where it sits, the commits, the files changed
-    and where the diff is (`describeCode`).
-  - Claude Code gets `Read`, `Grep` and `Glob` on that folder alone (`--tools`, `--add-dir`);
-    anything outside it is refused. Codex reads with its own read-only sandbox.
-  - The copy is deleted once a plan comes back, when the workspace goes, and on the next start.
-    The plan keeps where it came from (`planSource`), and the agent hears once that the copy is
-    gone.
-- **The chat reads what the QA names.** A story's key or link, a page's link or title is enough:
-  the agent reads it through the source tools, served under the chat's scope (`chat~<workspace>`)
-  for the turn, and main fetches it with the QA's own Jira, the way the commands do
-  (`fetchSource`). The story's files land in the workspace's `jira/` folder, which the chat may
-  read; the turn hands back what was read, so the workspace keeps it as the plan's source, and
-  the next message does not repeat it (`toldAfterReading`). A source not connected, or turned
-  off, answers with what the QA does about it.
-- **A Jira story is the requirement** (`role/chat/jira.md`). `/jira` in the chat picks one of the
-  QA's stories, and the agent plans from it:
-  - Main's `JiraApi` talks to Jira Cloud as the QA: the picker's search, with the issue a typed
-    key names first, an issue read with every field and their names, and its files.
-  - `JiraStories` reads the story for a workspace (`jiraStoryOf`): the description and comments
-    out of Atlassian's document format as markdown (`adfToMarkdown`), and the acceptance criteria
-    from any field named for them. It downloads the pictures, PDFs and text it can read into the
-    workspace's own folder under `jira/` (`filesToReadOf`, `fileNameOf`).
-  - The message opens with the story (`describeStory`), its text indented so it can neither
-    start a section nor close `<qazinho>`. Claude Code reads the files with `Read`, `Grep` and
-    `Glob` on that folder alone.
-  - The files are deleted once a plan comes back, when the workspace goes, and on the next
-    start. The workspace keeps the story (`issue`), which its header and its plan open in Jira.
-- **A Confluence page is a requirement too, and where a plan is published**
-  (`role/chat/confluence.md`). Confluence is turned on beside Jira (`setConfluence`), once
-  `ConfluenceApi.check` reaches it with Jira's account:
-  - Main's `ConfluenceApi` talks to Confluence Cloud on Jira's site with Jira's sealed token
-    (`askAtlassian`): the spaces, a title search in CQL (`cqlOf`), a page read in Atlassian's
-    document format as markdown, and a plan published.
-  - `/confluence` in the chat picks a page. Main reads it for the message (`describePage`), its
-    text indented like a story's, and keeps it for the workspace until a plan comes back. The
-    workspace keeps the page (`sourcePage`), which the plan opens.
-  - The Plan tab writes the plan as blocks (`planDocOf`): where it came from, each case's facts,
-    and its steps as a table with the verdict of the latest run; `adfOfReport` turns them into
-    Atlassian's format. The first publish asks for the space, a parent page if any and a title
-    (`PublishModal`); the workspace keeps the page (`published`), and the next publish writes its
-    next version, or makes it again when it is gone.
-- **A Figma design is held to the screen through the QA's own Figma** (`role/chat/design.md`,
-  `role/runner/design.md`). `/figma` in the chat takes the link to a frame or page
-  (`designLinkOf`), and the workspace keeps it (`design`), which its header opens in Figma:
-  - A call on a workspace with a design lists the Figma server beside QAzinho's, under the name
-    and address the agent signed in with (`FIGMA_MCP`, `mcpConfigWith`), so Claude Code reuses
-    its own sign-in under `--strict-mcp-config`. It is granted only the tools that read, and the
-    session Figma asks for first (`DESIGN_TOOLS`, `designAccessOf`): denied it, Haiku read
-    nothing. Codex reads its own MCP config, where QAzinho added it.
-  - The chat names the file and the node (`describeDesign`), and the agent reads the frames as it
-    plans. Each step that lands on a designed screen names its frame (`frame`), and the plan
-    opens it in Figma (`frameUrlOf`).
-  - A case whose steps name frames gets the Figma server too, and its message names the file and
-    each step's frame (`describeCase`). The agent reads the frame, measures the screen with
-    `inspect`, and files each difference with `bug` and the frame's id: a bug off the design,
-    whose card opens the frame and whose issue links it. A step that fails on what it expects
-    names the frame in its `report` instead, so its bug is the one off the design, filed once.
-  - `inspect` answers in the unit a design uses (`describeMeasure`): in a browser the box where
-    the page sits, the space to its neighbours (`gapsOf`) and the computed type, colours as hex
-    (`hexOfColor`), spacing, border and corners (`measureLocator`); on Android the box in dp at
-    the screen's density (`densityOf`), on iOS in points (`phoneMeasureOf`), with no style.
-  - An exploration gets the Figma server whenever the workspace has a design, and its message
-    names it (`describeExploration`): the explorer reads the frames once, holds each screen a
-    frame draws to it, and suggests cases that name their frames (`role/explorer/design.md`).
-  - The Estagiário links or unlinks a design (`link_design`, `unlink_design`) and hands a chat a
-    plan against one (`ask_workspace_chat`'s `figma`). It reads which workspace has a design, the
-    frame of each step and the bugs off it, and never reads Figma itself.
-  - Figma counts every read, and some seats get only a few a month: the run reads a frame only on
-    the cases that name one, and a case walked again from its recipe checks no design.
-- **A bug goes to the QA's tracker as an issue**, and the QA does nothing by hand but paste a
-  screen into GitHub:
-  - The page writes the report in the QA's language (`bugReportOf`): the agent's words, the steps
-    with the one that broke, expected and what came, the requests that failed around it
-    (`failedRequestsNear`) and where it was caught. Its blocks become Atlassian's document format
-    for Jira (`adfOfReport`) and Markdown for GitHub (`markdownOfReport`).
-  - The page cuts a clip of the bug's moment out of the run's MP4 (`clipOfMp4`), copying its
-    frames from the key frame before it with no encoding, and hands it to main whole, once. A
-    phone's WebM goes whole from main, under 25 MB. A screen crosses as the file the run kept,
-    read only inside the archive.
-  - Main's `BugFiler` files it and tells each step (`IFilingEvent`). Jira's `fileBug` takes the
-    project's Bug type, else its Task (`bugTypeOf`), then each file is attached and the issue
-    related to the story. GitHub's goes through `gh api`, labelled bug where the label exists.
-  - GitHub's API takes no picture, so the popup and the bug's card copy the screen to the
-    clipboard as PNG (`copyShot`) for the QA to paste.
-  - The bug keeps its issue (`filed`), and the project where its last bug went (`issueTarget`),
-    which the next one is offered (`issueTargetOf`). The Estagiário's `send_bug` waits on a
-    confirmation card first.
-- **A filed bug seen again reaches its issue as a comment** (`role/reporter/`), weighed by the
-  QA's agent and posted only by the QA:
-  - When a run ends, on start and when a tracker connects, `useBugReviews` takes each filed bug
-    with sightings from runs not yet weighed (`unreviewedOf`), one at a time, and only while its
-    tracker is connected.
-  - Main's `BugReviewer` reads the issue as it stands through `BugFiler.read` (status, text,
-    comments) and asks the agent with the bug and each sighting (`describeReview`), its screens
-    readable in the run's folder. A closed issue is always a regression, and is never reopened.
-  - The agent answers `news`, `regression` or `nothing-new` (`REVIEW_ANSWER`), with a comment
-    in the QA's language for the first two. The bug keeps the review (`IBugReview`), and its
-    runs count as weighed (`reviewedRuns`) once it came back, was posted or put aside.
-  - The card shows it (`BugUpdate`); the QA edits it and posts it, and `BugFiler.comment` writes
-    it under the issue (`updateReportOf`): to Jira with the new screens and clip attached, to
-    GitHub through gh.
-- **The devices and the walk's library are the harness's engine**, the same code the CI's runner
-  walks a job with: `WebDriver`, `AndroidDriver` and `IosDriver` with their libraries, the walk's
-  recipes, proofs and `variablePort`, and the process helpers (`spawnCommand`, `findOnPath`,
-  `killTree`). Main takes them from `@salve-software/qazinho-harness/engine` and its barrels
-  re-export them, so a fix to a driver lands once, for the desktop and the CI alike.
-- **The harness never imports the desktop.** It lives in its own repository; what it needs from a
-  device is a port in its types (`IDevicePort`), and main hands it the driver. The page never
-  imports it either: what it shares with the page comes through `src/shared/types`.
-- **Every shape the agent fills is one zod schema**: the chat answer and each tool's arguments. It
-  becomes the JSON Schema the agent reads (`--json-schema`, or the MCP tool list), and the same
-  schema reads back what the agent sent, with the message the agent gets when it breaks a rule.
-  `jsonSchemaOf` drops the `$schema` key, which makes Claude Code ignore a schema in silence.
-- **A plan comes out of a conversation, never out of a guess** (`role/chat/planning.md`), the way
-  the Ploomes harness builds a screen:
-  - Look: before a chat message on a web target, `AppPeek` opens the app and the agent reads
-    what its page showed. On an Android or iOS target with no plan yet, `PhonePeek` opens the
-    app on the emulator or simulator, with no window, and the agent reads its first screen; the
-    chat says so while it waits.
-  - Ask: one round of closed questions in the answer's `questions`, each with two to four
-    options and the QA's own words always open. The page draws it as `QuestionRound` and sends
-    the answers back as the next message.
-  - A secret is never asked in words (`role/chat/variables.md`): an option whose `variables`
-    lists what is missing opens the window for the values, and the next message names the
-    variables kept, with the project's variables in a section of their own.
-  - Confirm: the plan about to be written, with one option alone.
-  - Write: `plan` is filled only once the QA picked that option.
-- **The prompts are pinned.** The harness's `src/__tests__/__prompts__/` holds what the agent reads
-  for each role and platform; changing what the agent is told is a diff of those files, in the
-  harness's repository.
+- **O desktop o recebe como pacote.** O `packages/qazinho-harness` é um submódulo git, dependência
+  por `file:` (`@salve-software/qazinho-harness`) e construído pelo `npm run harness:build`, que o
+  `postinstall` roda. O electron-vite empacota o `dist/` dele na main, o corpus incluído, enquanto
+  zod, yaml e o SDK do MCP continuam dependências do próprio app. As `.claude/rules/` dele
+  descrevem o que é dele; o que segue é o que o desktop usa.
+  - **Os tipos que a main divide com a página vêm do `/contract` do harness**: cada arquivo de
+    `src/shared/types` que o harness também lê reexporta um tipo de lá, então os schemas zod, a
+    main e a página guardam uma definição só. O `VARIABLE_NAME` vem do mesmo jeito.
+  - **Mover o harness** é um commit que move o submódulo e roda o `npm run harness:build`; uma
+    mudança no que o agente ouve aparece primeiro como um diff dos prompts fixados do harness.
+- **O corpus é prosa em `.md`, uma seção `## Título` por arquivo.** Onde um arquivo vive diz quem
+  o lê: `universal/` toda chamada, `role/<role>/` um papel (`chat`, `runner`, `explorer`,
+  `assistant`, `builder`, `automator`, `reporter`), `platform/<x>.md` um dispositivo. O `order` do
+  frontmatter ordena uma camada. As camadas vão da mais estável à menos estável. O `{{app}}` é
+  preenchido por chamada; um placeholder que nada preenche lança erro.
+- **O prompt de sistema de um chat é só o corpus.** O Claude Code mantém o prompt de sistema com
+  que uma sessão começou e ignora um `--append-system-prompt` novo no `--resume`. O que uma
+  mensagem acrescenta (o workspace, as últimas runs dele, o que o `AppPeek` viu, as referências
+  @) abre a mensagem dentro de `<qazinho>`, e só o que mudou desde que a sessão leu pela última
+  vez (`changedSections`).
+- **Uma run é andada por agentes próprios.** Cada caso recebe um agente novo com o prompt do
+  runner e as ferramentas do dispositivo, e nada do chat.
+- **Um bug visto de novo cai no que está aberto.** Cada run carrega os bugs do workspace
+  (`IStartRun.bugs`), e o agente de cada caso e o explorador ouvem os mais recentes deles
+  (`describeKnownBugs`). O `bug` e o `report` recebem `sameAs` com um dos ids deles, mantido só
+  quando a run foi avisada dele (`keptBugId`).
+  - A página registra uma falha ou um achado com `catchBug`: no bug nomeado, senão no bug em que o
+    passo do plano falhou, senão num com o mesmo título, senão como um bug novo.
+  - O bug guarda cada vez em que foi visto, com a run, o passo, o momento e a tela; uma run que já
+    o pegou não muda nada.
+- **Um caso que passou é andado de novo sem o agente.** A run dele grava as ações de cada passo, e
+  o agente relata, a cada passagem, uma `proof`: palavras na tela que não estariam lá se tivesse
+  falhado.
+  - Um caso cujos passos todos passaram com uma prova vira uma receita, guardada na pasta do
+    workspace (`recipes.json`), com a chave do que o caso diz e do tipo de alvo
+    (`fingerprintOf`). Um passo web também guarda o locator do Playwright que usou, e um arrasto,
+    o alvo em que soltou.
+  - A próxima run anda um caso com receita no dispositivo sem o agente e confere cada prova
+    (`replayCase`): custa nada e leva segundos. Quando uma prova não aparece, o caso recomeça com
+    o agente, que o grava de novo, e os passos dele aparecem como curados.
+  - "Rodar tudo com o agente", no menu do botão de rodar (`RunButton`), anda todo caso com o
+    agente; cada jeito diz no menu o que faz. O relatório diz "sem IA" ou "curado" em cada caso, e
+    o `CodeExport` transforma as receitas num arquivo de Playwright ou num fluxo de Maestro por
+    caso. O agente do chat fica sabendo como as runs foram pelo histórico que a mensagem seguinte
+    carrega (`runHistoryOf`): a última run passo a passo, as anteriores pelo que quebrou.
+- **Uma exploração é andada por um agente só, sem plano** (`role/explorer/`). Ele recebe o
+  dispositivo por um tempo definido com `screen`, `bug` e `finish` no lugar do `report`
+  (`TOOLS_LEFT_OUT`):
+  - Cada ação responde com o tempo que resta, e nenhuma é executada depois que ele acaba; um
+    finish com mais de um terço dele sobrando é devolvido uma vez (`earlyFinish`).
+  - Cada tela que ele anota é um passo de um caso só (`EXPLORATION.caseId`), cada bug um achado
+    na tela anotada por último, e o finish o plano que ele sugere, que o chat guarda num cartão
+    até o QA levá-lo ao plano (`takeSuggestion`). O agente do chat o ouve no histórico de runs.
+- **O agente pergunta ao QA no meio da run** (`ask_qa`, `asking-the-qa.md` em `role/runner/` e
+  `role/explorer/`). A chamada segura até o QA responder:
+  - O `RunCoordinator` guarda a pergunta (`IOpenQuestion`) e avisa a página (`asked`). A página
+    responde por `answerRun`, e como terminou volta como `answered`: as palavras do QA, um
+    segredo pelo nome, nenhuma resposta depois de `RUN_WALK.askWaitMs` (15 minutos), ou um stop.
+  - O relógio de turno do agente para enquanto ele espera (`AgentRunner.hold`), o relógio do
+    explorador avança pela espera, e a config do MCP diz ao agente que uma chamada pode levar
+    isso: o Claude Code segurou uma por 16 minutos.
+  - Um segredo cruza para a main uma vez e vira uma variável da run, digitada pela
+    `variablePort`: o agente lê `${NAME}`, e a página só vê o nome. O projeto a guarda quando o QA
+    diz (`keepVariable`), e um caso que digitou uma dada só para aquela run não guarda receita.
+  - As palavras do QA chegam ao agente com o valor de qualquer variável lido de volta como o nome
+    dela.
+  - A página segura a pergunta na run viva, a desenha como `AskCard` no fim do chat, e guarda como
+    terminou na seção da run (`AskNote`) e no passo dela em Runs.
+- **As ferramentas são concedidas por papel** (`TOOL_GRANTS`). O runner e o explorador recebem o
+  dispositivo, o assistente recebe o app, e o chat recebe as fontes dele: `read_jira_story`,
+  `search_confluence` e `read_confluence_page` (`servers/sources/`), mais as ferramentas de leitura
+  do Figma do QA num workspace com design, e nenhuma outra ferramenta. O `McpHost` serve as
+  ferramentas em loopback, um endereço por workspace pelo tempo de uma run, e um sob o escopo
+  `~assistant` enquanto o assistente responde.
+  - Toda chamada do agente pode usar os servidores MCP do próprio QA, como o da empresa dele: eles
+    são do QA e ele responde por eles. O `AgentRunner` entrega a cada chamada do Claude Code o
+    `--permission-prompt-tool` no `approve_permission` do QAzinho (`withPermissions`), servido ao
+    lado das ferramentas de cada grupo e, para uma chamada sem nenhuma (um build, uma revisão),
+    sozinho sob `~permissions`. Ele permite qualquer ferramenta MCP e nada mais (`permissionOf`):
+    um arquivo fora das pastas de uma chamada continua fechado. O Codex deixa os servidores do QA
+    ligados. O servidor do QAzinho ganha um nome que divide com um do QA, e o corpus
+    (`universal/own-tools.md`) faz o agente fazer com as ferramentas do QAzinho o que elas fazem.
+  - Uma chamada feita sem as permissões (o runner de um teste) as deixa de fora: o Claude Code
+    roda com `--strict-mcp-config`, e o Codex com cada servidor do `config.toml` do QA desligado
+    (`codexServersOf`), menos os que o QAzinho entrega à chamada. Sem uma ferramenta para
+    respondê-lo, um servidor da Atlassian do QA uma vez deixou o chat pedindo a ela uma permissão
+    que ninguém podia dar.
+- **O Estagiário no canto é um agente próprio** (`role/assistant/`). Ele faz no QAzinho o que o QA
+  faz à mão, pelas ferramentas do app (`servers/app/`), e fala de qualquer projeto, workspace, run
+  ou bug:
+  - Cada mensagem abre com o que está na tela e como o QAzinho está agora (`describeScreen`,
+    `describeApp`), mandado de novo só quando mudou. A página monta esse retrato.
+  - Uma chamada de ferramenta é lida contra o schema zod dela num `AppToolCall`, que a página
+    executa pelas mesmas stores e services que os cliques do QA usam (`performAppTool`), e a
+    resposta volta em palavras. O `AppBridge` da main entrega a chamada e espera a resposta.
+  - O compilador mantém os schemas zod e o tipo `AppToolCall` presos um ao outro: uma ferramenta
+    cujo schema e tipo se afastam não compila.
+  - Apagar e desconectar esperam um cartão que o QA responde no chat, por até cinco minutos
+    (`ASSISTANT_WAIT`). A config do MCP diz ao agente que uma chamada pode levar isso: o Claude
+    Code lê o `timeout` do servidor, e o Codex o `tool_timeout_sec`.
+  - Um caminho de build é feito inteiro e conferido no disco na main antes de a página saber dele.
+    O token de um tracker continua sendo digitado pelo QA nas Configurações, nunca no chat, e o
+    composer segura uma mensagem que carrega um (`secretIn`) até o QA tirá-lo ou insistir.
+  - Um plano é escrito no chat do próprio workspace, nunca no do Estagiário:
+    `ask_workspace_chat` manda o pedido do QA para lá em nome dele e o abre. Ele se recusa
+    enquanto aquele chat responde, enquanto uma run anda, ou enquanto as perguntas dela esperam o
+    QA, o que o `workspace_details` lê de volta para o Estagiário ajudar a respondê-las.
+  - O chat e a sessão dele sobrevivem a um reinício (`keptOf`): as últimas mensagens, sem nada
+    em andamento.
+  - Ele nunca cobre o dispositivo. O chat dele abre no canto dele, e ao lado do painel só enquanto
+    o painel mostra o dispositivo vivo de uma run; o composer deixa espaço para o botão dele
+    quando o painel está fechado (`dockRoomOf`), e os passos rolam por trás dele.
+- **O app é construído a partir do próprio código, pelo agente do QA** (`role/builder/`). O cartão
+  Android ou iOS de um projeto, ou o `build_app` do assistente, constrói o app a partir de uma
+  branch de um dos repositórios do projeto, sem terminal:
+  - O `AppBuilder` da main fixa a branch num commit e a desempacota em `builds/work/<build>`.
+  - O agente recebe Bash, Read, Grep, Glob, Edit e Write, e os comandos de build que pode rodar
+    sem pedir, só nessa pasta; nunca rm, git ou curl. O Codex trabalha num sandbox workspace-write
+    com a rede ligada, com os caches dele guardados dentro da pasta.
+  - O ambiente dele carrega o PATH do QA, o SDK do Android, o JDK do Android Studio e `CI=1`.
+  - O QAzinho confere o que ele fez: um .apk que é um zip, ou um .app que o simulador roda e não
+    um para um dispositivo. É achado onde o agente disse, ou nas pastas de saída de costume. É
+    guardado em `builds/apps/<project>`, a cópia é apagada, e ele vira o alvo do projeto.
+  - Cada passo, as palavras e os comandos do agente (com a pasta dita como `.`), e como o build
+    terminou chegam à página como `IBuildEvent`.
+- **O código planeja; o QA diz o que o app deve fazer** (`role/chat/code.md`). Um projeto nomeia
+  os repositórios do GitHub dele, cada um com uma branch base e o id do GitHub que a listagem
+  leu, pelo qual o QAzinho Pro o conhece depois que o GitHub o renomeia. O `/code` no chat escolhe
+  um deles e uma branch, e o agente lê essa branch enquanto planeja:
+  - O `CodeCopies` da main fixa a branch e a base em commits, desempacota o tarball da branch na
+    pasta própria do workspace sob `code/`, e guarda o diff contra a base. A própria branch base
+    significa o app inteiro, sem nada a comparar.
+  - A mensagem abre com uma seção sobre a cópia: onde ela está, os commits, os arquivos mudados e
+    onde está o diff (`describeCode`).
+  - O Claude Code recebe `Read`, `Grep` e `Glob` só nessa pasta (`--tools`, `--add-dir`); qualquer
+    coisa fora dela é recusada. O Codex lê com o próprio sandbox somente leitura.
+  - A cópia é apagada assim que um plano volta, quando o workspace vai embora, e na próxima
+    inicialização. O plano guarda de onde veio (`planSource`), e o agente fica sabendo uma vez
+    que a cópia se foi.
+- **O chat lê o que o QA nomeia.** A chave ou o link de uma história, o link ou o título de uma
+  página basta: o agente lê pelas ferramentas de fonte, servidas sob o escopo do chat
+  (`chat~<workspace>`) pelo turno, e a main busca com o Jira do próprio QA, do jeito que os
+  comandos fazem (`fetchSource`). Os arquivos da história caem na pasta `jira/` do workspace, que
+  o chat pode ler; o turno devolve o que leu, então o workspace o guarda como a fonte do plano, e
+  a mensagem seguinte não o repete (`toldAfterReading`). Uma fonte não conectada, ou desligada,
+  responde com o que o QA faz a respeito.
+- **Uma história do Jira é o requisito** (`role/chat/jira.md`). O `/jira` no chat escolhe uma das
+  histórias do QA, e o agente planeja a partir dela:
+  - O `JiraApi` da main fala com o Jira Cloud como o QA: a busca do seletor, com a issue que uma
+    chave digitada nomeia primeiro, uma issue lida com todo campo e os nomes deles, e os arquivos
+    dela.
+  - O `JiraStories` lê a história para um workspace (`jiraStoryOf`): a descrição e os comentários,
+    do formato de documento da Atlassian para markdown (`adfToMarkdown`), e os critérios de
+    aceitação de qualquer campo com nome para eles. Ele baixa as imagens, PDFs e textos que
+    consegue ler para a pasta própria do workspace sob `jira/` (`filesToReadOf`, `fileNameOf`).
+  - A mensagem abre com a história (`describeStory`), com o texto dela indentado para não poder
+    nem abrir uma seção nem fechar o `<qazinho>`. O Claude Code lê os arquivos com `Read`, `Grep` e
+    `Glob` só nessa pasta.
+  - Os arquivos são apagados assim que um plano volta, quando o workspace vai embora, e na próxima
+    inicialização. O workspace guarda a história (`issue`), que o cabeçalho e o plano dele abrem
+    no Jira.
+- **Uma página do Confluence também é um requisito, e o lugar onde um plano é publicado**
+  (`role/chat/confluence.md`). O Confluence é ligado ao lado do Jira (`setConfluence`), assim que o
+  `ConfluenceApi.check` o alcança com a conta do Jira:
+  - O `ConfluenceApi` da main fala com o Confluence Cloud no site do Jira com o token lacrado do
+    Jira (`askAtlassian`): os espaços, uma busca por título em CQL (`cqlOf`), uma página lida no
+    formato de documento da Atlassian como markdown, e um plano publicado.
+  - O `/confluence` no chat escolhe uma página. A main a lê para a mensagem (`describePage`), com o
+    texto indentado como o de uma história, e a guarda para o workspace até um plano voltar. O
+    workspace guarda a página (`sourcePage`), que o plano abre.
+  - A aba Plano escreve o plano como blocos (`planDocOf`): de onde veio, os fatos de cada caso, e
+    os passos como uma tabela com o veredito da última run; o `adfOfReport` os transforma no
+    formato da Atlassian. A primeira publicação pergunta o espaço, uma página pai se houver e um
+    título (`PublishModal`); o workspace guarda a página (`published`), e a publicação seguinte
+    escreve a próxima versão dela, ou a faz de novo quando ela sumiu.
+- **Um design do Figma é conferido contra a tela pelo Figma do próprio QA** (`role/chat/design.md`,
+  `role/runner/design.md`). O `/figma` no chat recebe o link de um frame ou página
+  (`designLinkOf`), e o workspace o guarda (`design`), que o cabeçalho dele abre no Figma:
+  - Uma chamada num workspace com design lista o servidor do Figma ao lado do do QAzinho, sob o
+    nome e o endereço com que o agente fez login (`FIGMA_MCP`, `mcpConfigWith`), então o Claude
+    Code reusa o próprio login sob `--strict-mcp-config`. Ela recebe só as ferramentas que leem, e
+    a sessão que o Figma pede primeiro (`DESIGN_TOOLS`, `designAccessOf`): sem ela, o Haiku não
+    leu nada. O Codex lê a própria config de MCP, onde o QAzinho o adicionou.
+  - O chat nomeia o arquivo e o nó (`describeDesign`), e o agente lê os frames enquanto planeja.
+    Cada passo que cai numa tela desenhada nomeia o frame dela (`frame`), e o plano o abre no
+    Figma (`frameUrlOf`).
+  - Um caso cujos passos nomeiam frames recebe o servidor do Figma também, e a mensagem dele
+    nomeia o arquivo e o frame de cada passo (`describeCase`). O agente lê o frame, mede a tela com
+    `inspect`, e registra cada diferença com `bug` e o id do frame: um bug contra o design, cujo
+    cartão abre o frame e cuja issue o linka. Um passo que falha no que espera nomeia o frame no
+    `report` dele no lugar, então o bug dele é o do design, registrado uma vez.
+  - O `inspect` responde na unidade que um design usa (`describeMeasure`): num navegador, a caixa
+    onde a página fica, o espaço até os vizinhos (`gapsOf`) e a tipografia computada, as cores em
+    hex (`hexOfColor`), o espaçamento, a borda e os cantos (`measureLocator`); no Android, a caixa
+    em dp na densidade da tela (`densityOf`), no iOS em pontos (`phoneMeasureOf`), sem estilo.
+  - Uma exploração recebe o servidor do Figma sempre que o workspace tem design, e a mensagem dela
+    o nomeia (`describeExploration`): o explorador lê os frames uma vez, prende a cada tela o
+    frame que a desenha, e sugere casos que nomeiam os frames dele (`role/explorer/design.md`).
+  - O Estagiário liga ou desliga um design (`link_design`, `unlink_design`) e entrega a um chat um
+    plano contra um (`figma` do `ask_workspace_chat`). Ele lê qual workspace tem design, o frame
+    de cada passo e os bugs contra ele, e nunca lê o Figma em si.
+  - O Figma conta cada leitura, e alguns assentos recebem só algumas por mês: a run lê um frame
+    só nos casos que nomeiam um, e um caso andado de novo a partir da receita não confere design
+    nenhum.
+- **Um bug vai ao tracker do QA como uma issue**, e o QA não faz nada à mão além de colar uma tela
+  no GitHub:
+  - A página escreve o relatório no idioma do QA (`bugReportOf`): as palavras do agente, os
+    passos com o que quebrou, o esperado e o que veio, os pedidos que falharam em volta
+    (`failedRequestsNear`) e onde foi pego. Os blocos dele viram o formato de documento da
+    Atlassian para o Jira (`adfOfReport`) e Markdown para o GitHub (`markdownOfReport`).
+  - A página corta um clipe do momento do bug do MP4 da run (`clipOfMp4`), copiando os frames a
+    partir do key frame anterior sem codificar, e o entrega à main inteiro, uma vez. O WebM de um
+    celular vai inteiro pela main, abaixo de 25 MB. Uma tela cruza como o arquivo que a run
+    guardou, lido só de dentro do arquivo.
+  - O `BugFiler` da main o registra e conta cada passo (`IFilingEvent`). O `fileBug` do Jira usa o
+    tipo Bug do projeto, senão o Task (`bugTypeOf`), depois cada arquivo é anexado e a issue
+    relacionada à história. O do GitHub vai pelo `gh api`, com o rótulo bug onde ele existe.
+  - A API do GitHub não aceita imagem, então o popup e o cartão do bug copiam a tela para a
+    área de transferência como PNG (`copyShot`) para o QA colar.
+  - O bug guarda a issue dele (`filed`), e o projeto guarda para onde foi o último bug dele
+    (`issueTarget`), que é oferecido ao próximo (`issueTargetOf`). O `send_bug` do Estagiário
+    espera antes um cartão de confirmação.
+- **Um bug registrado e visto de novo chega à issue dele como um comentário** (`role/reporter/`),
+  pesado pelo agente do QA e postado só pelo QA:
+  - Quando uma run termina, na inicialização e quando um tracker conecta, o `useBugReviews` pega
+    cada bug registrado com vistas de runs ainda não pesadas (`unreviewedOf`), um por vez, e só
+    enquanto o tracker dele está conectado.
+  - O `BugReviewer` da main lê a issue como está pelo `BugFiler.read` (status, texto,
+    comentários) e pergunta ao agente com o bug e cada vista (`describeReview`), com as telas
+    legíveis na pasta da run. Uma issue fechada é sempre uma regressão, e nunca é reaberta.
+  - O agente responde `news`, `regression` ou `nothing-new` (`REVIEW_ANSWER`), com um comentário
+    no idioma do QA para os dois primeiros. O bug guarda a revisão (`IBugReview`), e as runs dele
+    contam como pesadas (`reviewedRuns`) assim que ele voltou, foi postado ou posto de lado.
+  - O cartão a mostra (`BugUpdate`); o QA a edita e a posta, e o `BugFiler.comment` a escreve sob
+    a issue (`updateReportOf`): no Jira com as telas novas e o clipe anexados, no GitHub pelo gh.
+- **Os dispositivos e a biblioteca do passeio são o engine do harness**, o mesmo código com que o
+  runner do CI anda um job: `WebDriver`, `AndroidDriver` e `IosDriver` com as bibliotecas deles, as
+  receitas, provas e `variablePort` do passeio, e os auxiliares de processo (`spawnCommand`,
+  `findOnPath`, `killTree`). A main os pega de `@salve-software/qazinho-harness/engine` e os
+  barrels dela os reexportam, então uma correção num driver cai uma vez, para o desktop e o CI.
+- **O harness nunca importa o desktop.** Ele vive no próprio repositório; o que ele precisa de um
+  dispositivo é uma porta nos tipos dele (`IDevicePort`), e a main lhe entrega o driver. A página
+  também nunca o importa: o que ele divide com a página vem por `src/shared/types`.
+- **Todo formato que o agente preenche é um schema zod**: a resposta do chat e os argumentos de
+  cada ferramenta. Ele vira o JSON Schema que o agente lê (`--json-schema`, ou a lista de
+  ferramentas do MCP), e o mesmo schema lê de volta o que o agente mandou, com a mensagem que o
+  agente recebe quando quebra uma regra. O `jsonSchemaOf` tira a chave `$schema`, que faz o Claude
+  Code ignorar um schema em silêncio.
+- **Um plano sai de uma conversa, nunca de um palpite** (`role/chat/planning.md`), do jeito que o
+  harness da Ploomes constrói uma tela:
+  - Olhar: antes de uma mensagem de chat num alvo web, o `AppPeek` abre o app e o agente lê o que
+    a página dele mostrou. Num alvo Android ou iOS sem plano ainda, o `PhonePeek` abre o app no
+    emulador ou simulador, sem janela, e o agente lê a primeira tela; o chat diz isso enquanto
+    espera.
+  - Perguntar: uma rodada de perguntas fechadas nas `questions` da resposta, cada uma com duas a
+    quatro opções e as palavras do próprio QA sempre abertas. A página a desenha como
+    `QuestionRound` e manda as respostas de volta como a mensagem seguinte.
+  - Um segredo nunca é perguntado em palavras (`role/chat/variables.md`): uma opção cujas
+    `variables` listam o que falta abre a janela dos valores, e a mensagem seguinte nomeia as
+    variáveis guardadas, com as variáveis do projeto numa seção própria.
+  - Confirmar: o plano prestes a ser escrito, com uma opção só.
+  - Escrever: o `plan` só é preenchido depois que o QA escolheu essa opção.
+- **Os prompts são fixados.** O `src/__tests__/__prompts__/` do harness guarda o que o agente lê
+  para cada papel e plataforma; mudar o que o agente ouve é um diff desses arquivos, no
+  repositório do harness.
 
-## QAzinho Pro, out of the QA's way
+## QAzinho Pro, fora do caminho do QA
 
-Signing in to QAzinho Pro changes nothing in how the app is used, and sends nothing: a project
-goes to an org only once the QA publishes it, the way GitHub Desktop publishes a repository
+Entrar no QAzinho Pro não muda nada em como o app é usado, e não manda nada: um projeto só vai a
+uma org quando o QA o publica, do jeito que o GitHub Desktop publica um repositório
 ([030](https://github.com/Salve-Software/qazinho-server/blob/main/docs/adrs/030-the-desktop-publishes-and-clones-projects.md)).
-The card at the foot of the sidebar (`ProAccountCard`), the project window's Org section
-(`ProjectProPane`) and a mark on each linked project in the sidebar are where it shows.
+O cartão no pé da sidebar (`ProAccountCard`), a seção Org da janela do projeto (`ProjectProPane`)
+e uma marca em cada projeto ligado na sidebar são onde ele aparece.
 
-- **Signing in** is the platform's device flow (`ProAccount`): a code the QA confirms in the
-  browser, the token sealed with `safeStorage` in `pro.bin`, like Jira's. The account knows its
-  orgs; no org is the machine's, each project names its own.
-- **A project is local or linked to one org.** Publishing (`ProSync.publish`) links it to an org
-  the QA writes in and sends it whole, after the window says what goes (`ProSync.brief`): its
-  plans, runs and bugs, and what the media of its history weighs, which stays here unless the
-  QA sends it too (`mediaFrom`: a run or bug before it goes without its screens and video). Cloning
-  (`ProCloneModal`, `ProDownloads`) takes a project of an org here, linked to it. A project goes to
-  a second org only as a copy (`copiedProjectOf`), a new project with its own ids.
-- **Facts go on their own, plans when told.** The page builds what a linked project holds
-  (`proBatchOf`) and hands it to main once a burst settles (`useProSync`); main sends the project,
-  its runs, bugs and recordings (`ProSync.push`), and keeps each plan edited here as pending
-  (`pendingPlansOf`) until the QA sends them (`ProSync.sendPlans`), each the org's next version,
-  so a draft is never what the CI runs. A live run's clock is no change (`changedProjectsOf`).
-- **Main sends only what changed** (`ProSync`): each part keyed by a hash in `pro-sync.json`
-  (a plan taken from the org is fingerprinted at the next push while its cases are the ones it came
-  with, `healedPlansOf`), screens and videos streamed from inside the archive alone (`isInside`,
-  `uploaderOf`), a minute's wait when the network drops. A build goes by its file name and a web
-  address without a login in it (`sharedValueOf`); variables go by name. A write after the
-  project's first says it may not create it (`canCreate: false`), so a project deleted in the org
-  is told `gone` and never brought back.
-- **The org's changes are fetched, not applied.** Main asks each org of a linked project at start,
-  after a sign-in and every five minutes (`ProSync.pull`), and keeps each plan it moved past what
-  this computer took (`movedPlansOf`), or one a send found moved (`plan_conflict`), as an update
-  waiting. The QA takes them in with "Update from the org" (`useProUpdate`): joined case by case
-  from where both started (`planUpdatesOf`, `mergeCases`); only a case both sides changed opens
-  `ProMergeModal`, where the QA keeps one side. Main then builds on the org's version
-  (`ProSync.resolve`). Running a plan with an update waiting asks first (`ProRunWarning`).
-- **Leaving a link.** Unlinking (`ProSync.forget`) keeps the project here and what the org holds
-  there. Deleting a project here unlinks it, and an owner or admin may delete it in the org too
-  (`ProSync.remove`), refused while a CI job of it runs. A project the org no longer has is told
-  `gone`, an org the person no longer reaches `no-access`: the window offers to publish it again
-  or unlink it.
-- **The card** reads where things stand (`attentionOf`): a blocked org, a role that only reads, a
-  project gone, no answer. It lists the account's orgs and opens `ProCloneModal`, which searches an
-  org's projects and clones one (`useOrgDownload`): its recordings into each workspace's
-  `recipes.json`, and its variables' values asked in `VariablesModal`.
-- **A plan's link on the web opens it here** (`qazinho://open?org=…&project=…&workspace=…`, by the
-  ids the desktop keeps them under). The installers register the scheme, and a packaged app again
-  at start. Main reads the link from `open-url` on a Mac, and from the arguments of the first or
-  second instance on Windows and Linux (`proLinkAddressIn`, `proLinkOf`, which takes only names as
-  ids), keeps the latest and tells the page, which takes it once its workspaces are read
-  (`useProLinks`): it opens the workspace on its plan, or `ProLinkModal` offers to download the
-  project from the org (`useOrgDownload`, which the card uses too), or says why it cannot.
+- **Entrar** é o device flow da plataforma (`ProAccount`): um código que o QA confirma no
+  navegador, o token lacrado com o `safeStorage` em `pro.bin`, como o do Jira. A conta conhece as
+  orgs dela; nenhuma org é da máquina, cada projeto nomeia a sua.
+- **Um projeto é local ou ligado a uma org.** Publicar (`ProSync.publish`) o liga a uma org que o
+  QA escreve e o manda inteiro, depois de a janela dizer o que vai (`ProSync.brief`): os planos,
+  runs e bugs dele, e quanto pesa a mídia do histórico dele, que fica aqui a menos que o QA a
+  mande também (`mediaFrom`: uma run ou um bug anterior vai sem as telas e o vídeo). Clonar
+  (`ProCloneModal`, `ProDownloads`) traz um projeto de uma org para cá, ligado a ela. Um projeto
+  vai a uma segunda org só como cópia (`copiedProjectOf`), um projeto novo com ids próprios.
+- **Os fatos vão sozinhos, os planos quando mandados.** A página monta o que um projeto ligado
+  guarda (`proBatchOf`) e o entrega à main quando uma rajada acalma (`useProSync`); a main manda o
+  projeto, as runs, os bugs e as gravações dele (`ProSync.push`), e guarda cada plano editado aqui
+  como pendente (`pendingPlansOf`) até o QA mandá-los (`ProSync.sendPlans`), cada um a próxima
+  versão da org, então um rascunho nunca é o que o CI roda. O relógio de uma run viva não é
+  mudança (`changedProjectsOf`).
+- **A main manda só o que mudou** (`ProSync`): cada parte com a chave de um hash em
+  `pro-sync.json` (um plano tirado da org é identificado no push seguinte enquanto os casos dele
+  são os que veio com, `healedPlansOf`), telas e vídeos transmitidos só de dentro do arquivo
+  (`isInside`, `uploaderOf`), um minuto de espera quando a rede cai. Um build vai pelo nome do
+  arquivo e um endereço web sem login dentro (`sharedValueOf`); as variáveis vão pelo nome. Uma
+  escrita depois da primeira do projeto diz que não pode criá-lo (`canCreate: false`), então um
+  projeto apagado na org recebe `gone` e nunca é trazido de volta.
+- **As mudanças da org são buscadas, não aplicadas.** A main pergunta a cada org de um projeto
+  ligado na inicialização, depois de um login e a cada cinco minutos (`ProSync.pull`), e guarda
+  cada plano que a org mexeu além do que este computador pegou (`movedPlansOf`), ou um que um
+  envio achou mexido (`plan_conflict`), como uma atualização esperando. O QA as toma com
+  "Atualizar da org" (`useProUpdate`): juntadas caso a caso a partir de onde os dois começaram
+  (`planUpdatesOf`, `mergeCases`); só um caso que os dois lados mudaram abre o `ProMergeModal`,
+  onde o QA mantém um lado. A main então constrói sobre a versão da org (`ProSync.resolve`).
+  Rodar um plano com uma atualização esperando pergunta antes (`ProRunWarning`).
+- **Deixando um vínculo.** Desligar (`ProSync.forget`) mantém o projeto aqui e o que a org guarda
+  lá. Apagar um projeto aqui o desliga, e um dono ou admin pode apagá-lo na org também
+  (`ProSync.remove`), recusado enquanto um job de CI dele roda. Um projeto que a org não tem mais
+  recebe `gone`, uma org que a pessoa não alcança mais `no-access`: a janela oferece publicá-lo de
+  novo ou desligá-lo.
+- **O cartão** lê em que pé as coisas estão (`attentionOf`): uma org bloqueada, um papel que só
+  lê, um projeto sumido, nenhuma resposta. Ele lista as orgs da conta e abre o `ProCloneModal`,
+  que busca os projetos de uma org e clona um (`useOrgDownload`): as gravações dele no
+  `recipes.json` de cada workspace, e os valores das variáveis dele pedidos no `VariablesModal`.
+- **O link de um plano na web o abre aqui** (`qazinho://open?org=…&project=…&workspace=…`, pelos
+  ids com que o desktop os guarda). Os instaladores registram o esquema, e um app empacotado de
+  novo na inicialização. A main lê o link do `open-url` num Mac, e dos argumentos da primeira ou
+  segunda instância no Windows e no Linux (`proLinkAddressIn`, `proLinkOf`, que toma só nomes como
+  ids), guarda o último e avisa a página, que o pega assim que os workspaces dela são lidos
+  (`useProLinks`): ela abre o workspace no plano dele, ou o `ProLinkModal` oferece baixar o
+  projeto da org (`useOrgDownload`, que o cartão também usa), ou diz por que não pode.
 
-## Heavy work stays off the main process
+## O trabalho pesado fica fora do processo main
 
-Agents, Playwright and device drivers will run in child processes (`utilityProcess`), so a slow
-emulator never freezes a window. **Video frames never cross IPC**: Chrome runs with no window, and its CDP
-screencast reaches the page as MJPEG over loopback (`LiveStream`), drawn by an `<img>`.
+Agentes, o Playwright e os drivers de dispositivo vão rodar em processos filhos
+(`utilityProcess`), para um emulador lento nunca congelar uma janela. **Os frames de vídeo nunca
+cruzam o IPC**: o Chrome roda sem janela, e o screencast do CDP dele chega à página como MJPEG em
+loopback (`LiveStream`), desenhado por um `<img>`.
 
-- Chrome renders at the QA's pixel ratio, capped at 2, and its window is sized around the
-  viewport (`Browser.setContentsSize`), or a frame cuts the foot of the page off.
-- The stream runs at 1x in the panel, and at the pixel ratio only while the device is in focus
-  (`focusDevice`): a 2x frame costs about three times the CPU on a page that animates.
-- Chrome keeps a window at least 500px wide, so a phone-sized page streams framed wider, and
-  `DeviceScreen` cuts the stream to the viewport's shape.
-- A phone has no window either: the emulator boots with `-no-window` (`bootArgs`) and a
-  simulator through `simctl`, without Simulator.app. The QA sees it only in the panel's Device tab.
+- O Chrome renderiza na razão de pixels do QA, limitada a 2, e a janela dele é dimensionada em
+  volta do viewport (`Browser.setContentsSize`), ou um frame corta o pé da página.
+- O stream roda a 1x no painel, e na razão de pixels só enquanto o dispositivo está em foco
+  (`focusDevice`): um frame 2x custa cerca de três vezes a CPU numa página que anima.
+- O Chrome mantém uma janela com pelo menos 500px de largura, então uma página do tamanho de um
+  celular transmite enquadrada mais larga, e o `DeviceScreen` corta o stream no formato do
+  viewport.
+- Um celular também não tem janela: o emulador sobe com `-no-window` (`bootArgs`) e um simulador
+  pelo `simctl`, sem o Simulator.app. O QA o vê só na aba Dispositivo do painel.
 
-**Every run is recorded, and its video never crosses IPC either.**
+**Toda run é gravada, e o vídeo dela também nunca cruza o IPC.**
 
-- A browser is recorded from its live stream. `RunRecorder` opens a hidden window, whose
-  `Recorder` service reads the same MJPEG over loopback, each frame stamped with when it was
-  captured and the screen's shape. It crops a phone-sized page the way `DeviceScreen` does,
-  encodes H.264 with WebCodecs, and hands the MP4 back in pieces main writes by position.
-- A phone records itself: a simulator with `simctl io recordVideo`, an emulator with its console's
-  `screenrecord`, as WebM, for up to the half hour it allows. It stops before the device closes.
-- `ReplayServer` serves the file to the page's `<video>` on loopback, in the byte ranges a video
-  asks for to seek. The CSP lets media in from loopback, and nothing else.
-- Main stamps each step and finding with when it heard it, so the run's timeline places every
-  case, step and bug in the video (`replayTimelineOf`).
-- **The app's own windows leave the recorder out** (`appWindows`): a broadcast, a dialog or the
-  dock click never lands on it.
-- **A browser's requests are kept beside its video** (`network.json`). `WebDriver` notes each one
-  Chrome makes, and `privateUrlOf` writes a variable's value in its address as its name and a
-  secret-looking query value as dots before it is kept. A phone keeps none yet.
-- **The agent reads the API calls** (fetch and XHR). `WebDriver` keeps the latest answers
-  (`apiCalls`, `responseBody`) and the start of what a failed call answered (`body`). The run's
-  port (`variablePort`) tells the calls that failed during each action (`failedCalls`) and answers
-  `network` (`calls`): `callLineOf` writes a call, and `maskedBody` puts secret-looking keys and
-  tokens as dots before `hiddenValues` names each variable. The kept `body` is masked the same
-  way, and a bug's report carries it under its request (`answer`).
-- The page draws them under the video (`ReplayNetwork`), and makes the video again to download
-  them drawn in: `ReplayComposer` reads the run's MP4 (`readMp4`), decodes it with WebCodecs,
-  draws the strip on each frame (`drawNetworkStrip`), holds the picture while the screen stood
-  still, and encodes one MP4. The file crosses IPC whole, once each way (`replayVideo`,
-  `saveVideo`); its frames never do.
+- Um navegador é gravado a partir do stream vivo dele. O `RunRecorder` abre uma janela escondida,
+  cujo serviço `Recorder` lê o mesmo MJPEG em loopback, cada frame carimbado com quando foi
+  capturado e o formato da tela. Ele corta uma página do tamanho de um celular do jeito que o
+  `DeviceScreen` faz, codifica H.264 com WebCodecs, e devolve o MP4 em pedaços que a main escreve
+  por posição.
+- Um celular se grava sozinho: um simulador com `simctl io recordVideo`, um emulador com o
+  `screenrecord` do console dele, como WebM, por até a meia hora que ele permite. Ele para antes
+  de o dispositivo fechar.
+- O `ReplayServer` serve o arquivo ao `<video>` da página em loopback, nos intervalos de bytes que
+  um vídeo pede para buscar. A CSP deixa entrar mídia de loopback, e nada mais.
+- A main carimba cada passo e achado com o momento em que o ouviu, então a linha do tempo da run
+  põe cada caso, passo e bug no vídeo (`replayTimelineOf`).
+- **As janelas do próprio app deixam o gravador de fora** (`appWindows`): um broadcast, um diálogo
+  ou o clique no dock nunca cai nele.
+- **Os pedidos de um navegador são guardados ao lado do vídeo dele** (`network.json`). O
+  `WebDriver` anota cada um que o Chrome faz, e o `privateUrlOf` escreve o valor de uma variável no
+  endereço dele como o nome dela e um valor de query com cara de segredo como pontos antes de ser
+  guardado. Um celular ainda não guarda nenhum.
+- **O agente lê as chamadas de API** (fetch e XHR). O `WebDriver` guarda as últimas respostas
+  (`apiCalls`, `responseBody`) e o começo do que uma chamada que falhou respondeu (`body`). A porta
+  da run (`variablePort`) conta as chamadas que falharam durante cada ação (`failedCalls`) e
+  responde `network` (`calls`): o `callLineOf` escreve uma chamada, e o `maskedBody` põe chaves e
+  tokens com cara de segredo como pontos antes de o `hiddenValues` nomear cada variável. O `body`
+  guardado é mascarado do mesmo jeito, e o relatório de um bug o carrega sob o pedido dele
+  (`answer`).
+- A página os desenha sob o vídeo (`ReplayNetwork`), e refaz o vídeo para baixar com eles
+  desenhados: o `ReplayComposer` lê o MP4 da run (`readMp4`), o decodifica com WebCodecs, desenha a
+  faixa em cada frame (`drawNetworkStrip`), segura a imagem enquanto a tela ficou parada, e
+  codifica um MP4. O arquivo cruza o IPC inteiro, uma vez para cada lado (`replayVideo`,
+  `saveVideo`); os frames dele nunca.
 
-## A team's own suite runs as it is
+## A suíte própria de um time roda como está
 
-A project may connect the Playwright suite the QA's team keeps, from the folder it is cloned in.
-QAzinho runs it with the suite's own Playwright and changes nothing in it:
+Um projeto pode conectar a suíte de Playwright que o time do QA mantém, a partir da pasta em que
+está clonada. O QAzinho a roda com o Playwright próprio da suíte e não muda nada nela:
 
-- `SuiteRegistry` keeps the folder each project connected (`suites/registry.json`), as the folder
-  a link leads to, and reads the rest afresh each time: the config, the Playwright installed in
-  its `node_modules` or in one above it, its branch and remote through `GitCli`, and the keys its
-  `.env.example` and `.env` name.
-- `SuiteRunner` lists the tests with `test --list` and runs them with the QA's node and the
-  suite's own `cli.js`, one Playwright project at a time (`ISuiteBatch`), the way the team runs
-  the project that changes data after the one that only reads.
-  - A reporter QAzinho writes beside its data (`SUITE_REPORTER`) prints a `QAZINHO-SUITE` line
-    per event, read back against a zod schema: a test's start, its `test.step` and `expect`
-    steps, its end with its error and files, and what Playwright says outside any test.
-  - Playwright reads a location as a regular expression tried on the absolute path:
-    `locationOf` anchors each file at a folder boundary and at its end, so `a.spec.ts` never
-    runs `data.spec.ts`.
-  - Each batch writes to a folder of its own (`output/<n>`), since Playwright empties its output
-    folder whenever it starts, and keeps a trace of each failure.
-  - The environment is the QA's PATH and the project's variables over what QAzinho runs with.
-    dotenv never overrides what is set, so a variable wins over the suite's `.env`.
-  - A run is kept as `run.json` under `suites/<project>/runs/<run>`. `ReplayServer` serves its
-    screens and videos to the page on loopback, and a trace opens in Playwright's `show-trace`.
-- The page (`src/modules/Automation/`) groups the tests by folder and file, runs what the QA
-  picks as batches with the total it expects (`batchesOf`, `scopeTestsOf`), and follows the
-  run's `SuiteEvent`s in `SuiteStore`.
-- A value of a project's variable that shows in what a test says, its error or what Playwright
-  printed, is read back as its name before it is kept or reaches the page (`hiddenValues`).
+- O `SuiteRegistry` guarda a pasta que cada projeto conectou (`suites/registry.json`), como a
+  pasta a que um link leva, e lê o resto de novo a cada vez: a config, o Playwright instalado no
+  `node_modules` dela ou num acima, a branch e o remoto dela pelo `GitCli`, e as chaves que o
+  `.env.example` e o `.env` dela nomeiam.
+- O `SuiteRunner` lista os testes com `test --list` e os roda com o node do QA e o `cli.js` da
+  própria suíte, um projeto do Playwright por vez (`ISuiteBatch`), do jeito que o time roda o
+  projeto que muda dados depois do que só lê.
+  - Um reporter que o QAzinho escreve ao lado dos dados dele (`SUITE_REPORTER`) imprime uma linha
+    `QAZINHO-SUITE` por evento, lida de volta contra um schema zod: o início de um teste, os
+    passos `test.step` e `expect` dele, o fim dele com o erro e os arquivos, e o que o Playwright
+    diz fora de qualquer teste.
+  - O Playwright lê um local como uma expressão regular testada no caminho absoluto: o
+    `locationOf` ancora cada arquivo num limite de pasta e no fim dele, então `a.spec.ts` nunca
+    roda `data.spec.ts`.
+  - Cada batch escreve numa pasta própria (`output/<n>`), já que o Playwright esvazia a pasta de
+    saída sempre que começa, e guarda um trace de cada falha.
+  - O ambiente é o PATH do QA e as variáveis do projeto sobre o com que o QAzinho roda. O dotenv
+    nunca sobrescreve o que está definido, então uma variável vence o `.env` da suíte.
+  - Uma run é guardada como `run.json` sob `suites/<project>/runs/<run>`. O `ReplayServer` serve as
+    telas e vídeos dela à página em loopback, e um trace abre no `show-trace` do Playwright.
+- A página (`src/modules/Automation/`) agrupa os testes por pasta e arquivo, roda o que o QA
+  escolhe como batches com o total que espera (`batchesOf`, `scopeTestsOf`), e acompanha os
+  `SuiteEvent`s da run na `SuiteStore`.
+- Um valor de uma variável do projeto que aparece no que um teste diz, no erro dele ou no que o
+  Playwright imprimiu, é lido de volta como o nome dela antes de ser guardado ou chegar à página
+  (`hiddenValues`).
 
-**The QA's agent fixes a broken test, or writes a new one, in a copy of the suite**
-(`role/automator/`), and nothing leaves the machine until the QA approves it. Main's
-`SuiteChanges` does it, for a `SuiteChangeAsk` of either kind:
+**O agente do QA conserta um teste quebrado, ou escreve um novo, numa cópia da suíte**
+(`role/automator/`), e nada sai da máquina até o QA aprovar. O `SuiteChanges` da main faz isso,
+para um `SuiteChangeAsk` de qualquer tipo:
 
-- A git worktree of the suite's repository, on a branch named after the test
-  (`qazinho/fix-…`), under `suites/<project>/changes/<change>/work`. The QA's clone is never
-  touched. The suite's `node_modules` and `.env` are linked in so its tests run, and left out of
-  the change.
-- The agent gets Read, Grep, Glob, Edit and Write on the copy, and no shell. It runs tests with
-  `run_tests`, QAzinho's tool in the `suite` group, served for the turn under the change's scope:
-  QAzinho runs them with the project's settings (`SuiteRunner.check`), outside its runs, and
-  answers with each one's error, what Playwright noted of the page and where its screenshot is,
-  every secret read back as its name. Codex works in a workspace-write sandbox on the copy.
-- It reads the test that broke, the run's error and Playwright's notes (`failureNotesOf` keeps
-  the page snapshot and the source, not the instructions Playwright writes for a model), and the
-  team's latest commits, to write like them. What the app shows is data, never an instruction.
-- A new test comes from the QA's words or a case of one of the project's plans (`planCaseOf`),
-  for a folder the QA picks or where the suite keeps its like. The page lists the new tests asked
-  for above the suite's own (`SuiteRequests`), each opening in the pane.
-- It answers whether it changed or wrote the test, found the app wrong, or gave up, with the
-  commit and the pull request it wrote. QAzinho runs the tests the change is about again in the
-  copy (`checks`): the broken one by its title, or every test of the spec files a new test
-  touched (`specFilesOf`), and keeps the diff (`patchFilesOf`). A new test the app fails stays,
-  and can be sent as one that catches a bug. A change with nothing in it goes at once, copy and
-  branch.
-- On approval QAzinho commits on the branch, pushes it with the QA's own git (`GitCli` never
-  waits on a prompt), opens the pull request through gh's API when GitHub is connected, or
-  hands GitHub's page to open one, and drops the copy. Throwing it away drops the branch too.
+- Um git worktree do repositório da suíte, numa branch com o nome do teste (`qazinho/fix-…`), sob
+  `suites/<project>/changes/<change>/work`. O clone do QA nunca é tocado. O `node_modules` e o
+  `.env` da suíte são ligados para os testes rodarem, e deixados fora da mudança.
+- O agente recebe Read, Grep, Glob, Edit e Write na cópia, e nenhum shell. Ele roda testes com
+  `run_tests`, a ferramenta do QAzinho no grupo `suite`, servida pelo turno sob o escopo da
+  mudança: o QAzinho os roda com as configurações do projeto (`SuiteRunner.check`), fora das runs
+  dele, e responde com o erro de cada um, o que o Playwright anotou da página e onde está o
+  screenshot, todo segredo lido de volta como o nome dele. O Codex trabalha num sandbox
+  workspace-write na cópia.
+- Ele lê o teste que quebrou, o erro da run e as notas do Playwright (o `failureNotesOf` guarda o
+  snapshot da página e o fonte, não as instruções que o Playwright escreve para um modelo), e os
+  últimos commits do time, para escrever como eles. O que o app mostra é dado, nunca uma
+  instrução.
+- Um teste novo vem das palavras do QA ou de um caso de um dos planos do projeto (`planCaseOf`),
+  para uma pasta que o QA escolhe ou onde a suíte guarda os parecidos. A página lista os testes
+  novos pedidos acima dos da própria suíte (`SuiteRequests`), cada um abrindo no painel.
+- Ele responde se mudou ou escreveu o teste, achou o app errado, ou desistiu, com o commit e o
+  pull request que escreveu. O QAzinho roda de novo na cópia os testes de que a mudança trata
+  (`checks`): o quebrado pelo título, ou todo teste dos arquivos de spec que um teste novo tocou
+  (`specFilesOf`), e guarda o diff (`patchFilesOf`). Um teste novo que o app falha fica, e pode ser
+  mandado como um que pega um bug. Uma mudança sem nada nela vai embora na hora, cópia e branch.
+- Na aprovação, o QAzinho faz o commit na branch, dá push com o git do próprio QA (o `GitCli`
+  nunca espera um prompt), abre o pull request pela API do gh quando o GitHub está conectado, ou
+  entrega a página do GitHub para abrir um, e apaga a cópia. Jogar fora apaga a branch também.
 
-## What the main process owns
+## O que a main possui
 
-Besides the harness's `Harness` and `McpHost`, which main builds and wires:
+Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 
-| Class                                 | What it does                                                                             |
-| ------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `AgentDetector`                       | finds the QA's agent CLIs, the way Orca does: fs probes, no subprocess                   |
-| `AgentRunner`                         | spawns Claude Code or Codex, each in its own dialect, and reads the answer back          |
-| `WebDriver`                           | drives Chrome over playwright-core, one profile per workspace                            |
-| `LiveStream`                          | serves the device's frames as MJPEG on 127.0.0.1, for the Device tab                     |
-| `AppPeek`                             | opens a web target for a moment before the chat, and reads what its page shows           |
-| `PhonePeek`                           | opens a phone app on the emulator or simulator before a plan, and reads its first screen |
-| `RunCoordinator`                      | walks a plan a case per agent turn, each on the app opened anew, or from its recipe      |
-| `CodeExport`                          | writes the recorded cases as Playwright or Maestro code, in a folder the QA picks        |
-| `ResourceCollector` / `ProcessOwners` | one process sweep (`ps`, or `WindowsProcesses`), charged to whoever started it           |
-| `Archive`                             | the QA's projects, workspaces and plans on disk, each written whole; a broken plan aside |
-| `SetupInstaller`                      | installs an agent CLI, idb or gh on request, streaming each line it prints               |
-| `IntegrationVault`                    | connects the trackers: GitHub as gh's account, Jira's token sealed by `safeStorage`      |
-| `ConfluenceApi`                       | reads and publishes Confluence pages on Jira's site, with Jira's token                   |
-| `AgentTerminal`                       | runs an agent's full-screen interface out of sight: reads it, presses its keys           |
-| `AgentMcp`                            | adds an MCP server to the QA's agent and signs it in there, step by step                 |
-| `AgentLogin`                          | signs the QA's agent in through its own login, step by step                              |
-| `LinkCatcher`                         | gives an agent a `$BROWSER` that writes down the pages it wants opened                   |
-| `RunRecorder`                         | records a run's live stream into an MP4, through the hidden recorder window              |
-| `ReplayServer`                        | serves a run's recording to the page's `<video>` on 127.0.0.1, with ranges               |
-| `StorageKeeper`                       | what QAzinho keeps on this computer, by kind, and the run videos it lets go of once old  |
-| `RunAlerts`                           | calls the QA back when a run ends or asks them something: a notification, a badge        |
-| `GithubCli`                           | talks to GitHub through the QA's own gh: status, device-flow sign-in, API, tar           |
-| `GithubRepos`                         | lists the QA's repositories and a repository's branches, kept for a little while         |
-| `CodeCopies`                          | copies a branch for the agent to read while it plans, with its diff, then drops it       |
-| `JiraApi`                             | talks to the QA's Jira Cloud with the token sealed for it: search, story, files, bugs    |
-| `BugFiler`                            | files a bug in the QA's tracker: a Jira issue with its files, or a GitHub issue via gh   |
-| `BugReviewer`                         | asks the QA's agent whether a filed bug seen again adds to its issue, as it stands now   |
-| `JiraStories`                         | reads a Jira story for the agent to plan from, with the files it can read, then drops it |
-| `AssistantAgent`                      | asks the QA's agent as the Estagiário, with the app tools served for the turn            |
-| `AppBridge`                           | hands each app tool call to the page and waits for what it did                           |
-| `AppBuilder`                          | builds an .apk or .app from a branch with the QA's agent, and keeps what it made         |
-| `UsageReader`                         | reads the account's limits through Claude Code's own `/usage`, which spends nothing      |
-| `VariableVault`                       | keeps each project's variables sealed by the keychain; only a run reads a value          |
-| `GitCli`                              | runs the QA's own git in a folder, and never waits on a password                         |
-| `SuiteRegistry`                       | the suite folder each project connected, and what it holds, read afresh                  |
-| `SuiteRunner`                         | lists and runs a suite with its own Playwright, a project at a time, and keeps each run  |
-| `SuiteChanges`                        | lets the QA's agent fix a suite's test in a worktree, and sends it once the QA approves  |
-| `ProAccount`                          | signs this computer in to QAzinho Pro, keeps its token sealed, and knows its orgs        |
-| `ProApi`                              | talks to QAzinho Pro's API: the sign-in, the account, the sync, evidence, org projects   |
-| `ProSync`                             | publishes a project to an org, sends its facts as they happen and its plans when told    |
-| `ProDownloads`                        | lists the org's projects and downloads one, its recordings included                      |
+| Classe                                | O que faz                                                                                                   |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `AgentDetector`                       | acha as CLIs de agente do QA, do jeito do Orca: sondas no fs, sem subprocesso                               |
+| `AgentRunner`                         | inicia o Claude Code ou o Codex, cada um no dialeto dele, e lê a resposta de volta                          |
+| `WebDriver`                           | dirige o Chrome pelo playwright-core, um perfil por workspace                                               |
+| `LiveStream`                          | serve os frames do dispositivo como MJPEG em 127.0.0.1, para a aba Dispositivo                              |
+| `AppPeek`                             | abre um alvo web por um instante antes do chat, e lê o que a página dele mostra                             |
+| `PhonePeek`                           | abre um app de celular no emulador ou simulador antes de um plano, e lê a primeira tela                     |
+| `RunCoordinator`                      | anda um plano um caso por turno de agente, cada um com o app aberto de novo, ou pela receita                |
+| `CodeExport`                          | escreve os casos gravados como código Playwright ou Maestro, numa pasta que o QA escolhe                    |
+| `ResourceCollector` / `ProcessOwners` | uma varredura de processos (`ps`, ou `WindowsProcesses`), cobrada de quem a iniciou                         |
+| `Archive`                             | os projetos, workspaces e planos do QA em disco, cada um escrito inteiro; um plano quebrado de lado         |
+| `SetupInstaller`                      | instala uma CLI de agente, o idb ou o gh a pedido, transmitindo cada linha que imprime                      |
+| `IntegrationVault`                    | conecta os trackers: o GitHub como a conta do gh, o token do Jira lacrado pelo `safeStorage`                |
+| `ConfluenceApi`                       | lê e publica páginas do Confluence no site do Jira, com o token do Jira                                     |
+| `AgentTerminal`                       | roda a interface de tela cheia de um agente fora de vista: a lê, aperta as teclas dela                      |
+| `AgentMcp`                            | adiciona um servidor MCP ao agente do QA e faz o login nele, passo a passo                                  |
+| `AgentLogin`                          | faz o login do agente do QA pelo login próprio dele, passo a passo                                          |
+| `LinkCatcher`                         | entrega a um agente um `$BROWSER` que anota as páginas que ele quer abertas                                 |
+| `RunRecorder`                         | grava o stream vivo de uma run num MP4, pela janela escondida do gravador                                   |
+| `ReplayServer`                        | serve a gravação de uma run ao `<video>` da página em 127.0.0.1, com intervalos de bytes                    |
+| `StorageKeeper`                       | o que o QAzinho guarda neste computador, por tipo, e os vídeos de run que ele solta depois de velhos        |
+| `RunAlerts`                           | chama o QA de volta quando uma run termina ou lhe pergunta algo: uma notificação, um badge                  |
+| `GithubCli`                           | fala com o GitHub pelo gh do próprio QA: status, login por device flow, API, tar                            |
+| `GithubRepos`                         | lista os repositórios do QA e as branches de um repositório, guardados por um tempo                         |
+| `CodeCopies`                          | copia uma branch para o agente ler enquanto planeja, com o diff, e depois a apaga                           |
+| `JiraApi`                             | fala com o Jira Cloud do QA com o token lacrado para ele: busca, história, arquivos, bugs                   |
+| `BugFiler`                            | registra um bug no tracker do QA: uma issue do Jira com os arquivos, ou uma do GitHub pelo gh               |
+| `BugReviewer`                         | pergunta ao agente do QA se um bug registrado e visto de novo acrescenta algo à issue dele, como está agora |
+| `JiraStories`                         | lê uma história do Jira para o agente planejar, com os arquivos que ele consegue ler, e depois a apaga      |
+| `AssistantAgent`                      | pergunta ao agente do QA como o Estagiário, com as ferramentas do app servidas pelo turno                   |
+| `AppBridge`                           | entrega cada chamada de ferramenta do app à página e espera o que ela fez                                   |
+| `AppBuilder`                          | constrói um .apk ou .app a partir de uma branch com o agente do QA, e guarda o que fez                      |
+| `UsageReader`                         | lê os limites da conta pelo `/usage` do próprio Claude Code, que não gasta nada                             |
+| `VariableVault`                       | guarda as variáveis de cada projeto lacradas pelo keychain; só uma run lê um valor                          |
+| `GitCli`                              | roda o git do próprio QA numa pasta, e nunca espera uma senha                                               |
+| `SuiteRegistry`                       | a pasta de suíte que cada projeto conectou, e o que ela guarda, lido de novo                                |
+| `SuiteRunner`                         | lista e roda uma suíte com o Playwright próprio dela, um projeto por vez, e guarda cada run                 |
+| `SuiteChanges`                        | deixa o agente do QA consertar um teste de uma suíte num worktree, e o manda quando o QA aprova             |
+| `ProAccount`                          | faz este computador entrar no QAzinho Pro, guarda o token lacrado dele, e conhece as orgs                   |
+| `ProApi`                              | fala com a API do QAzinho Pro: o login, a conta, a sincronização, as evidências, projetos de org            |
+| `ProSync`                             | publica um projeto numa org, manda os fatos dele quando acontecem e os planos quando mandado                |
+| `ProDownloads`                        | lista os projetos da org e baixa um, as gravações incluídas                                                 |
 
-## Dependencies
+## Dependências
 
-- `dependencies` ship inside the app and `devDependencies` do not. Everything the page uses,
-  React included, is bundled by Vite, so it is a devDependency.
-- A runtime dependency in `src/main` ships to every user: today `playwright-core` drives the web
-  target, `yaml` writes the plans, `@modelcontextprotocol/sdk` serves the device tools, and `zod`
-  shapes the answers (the MCP SDK ships it anyway). Think twice before a fifth.
+- As `dependencies` vão dentro do app e as `devDependencies` não. Tudo o que a página usa, o React
+  incluído, é empacotado pelo Vite, então é uma devDependency.
+- Uma dependência de runtime em `src/main` vai para todo usuário: hoje o `playwright-core` dirige o
+  alvo web, o `yaml` escreve os planos, o `@modelcontextprotocol/sdk` serve as ferramentas do
+  dispositivo, e o `zod` dá formato às respostas (o SDK do MCP o traz de qualquer jeito). Pense
+  duas vezes antes de uma quinta.

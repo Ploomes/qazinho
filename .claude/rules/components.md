@@ -1,7 +1,7 @@
-# Components — the layered anatomy
+# Componentes — a anatomia em camadas
 
-QAzinho has no design system package. Every shared visual component lives in
-`src/shared/components/`, split by **atomic design**:
+O QAzinho não tem pacote de design system. Todo componente visual compartilhado mora em
+`src/shared/components/`, dividido por **atomic design**:
 
 ```
 src/shared/components/
@@ -12,65 +12,67 @@ src/shared/components/
 └── templates/    AppShell, ModalFrame
 ```
 
-- **Atom**: cannot be split without stopping being a thing of its own.
-- **Molecule**: a handful of atoms with one job.
-- **Organism**: a whole region of the screen.
-- **Template**: the arrangement of regions, with no content of its own.
-- A component used by **one screen only** lives in that screen's `components/`, not here.
-- A component owned by a domain lives in `src/modules/<Domain>/components/`.
+- **Átomo**: não dá para dividir sem deixar de ser uma coisa própria.
+- **Molécula**: um punhado de átomos com uma função.
+- **Organismo**: uma região inteira da tela.
+- **Template**: o arranjo das regiões, sem conteúdo próprio.
+- Um componente usado por **uma tela só** mora no `components/` dessa tela, não aqui.
+- Um componente que pertence a um domínio mora em `src/modules/<Domain>/components/`.
 
-## Icons
+## Ícones
 
-- **Every icon is Phosphor's**, drawn by the `Icon` atom by its name in `ICONS`. A name says what
-  the icon means (`close`, `external`, `attention`), and a caret where it points (`caretDown`).
-- Bold by default, solid (`fill`) for what is on: media controls, logos, the open marker.
-- **A status wears its glyph in a solid circle**: `passed`, `failed`, `blocked`, `skipped`,
-  `attention`, `running`, `paused`, `stopped`, and `idle` and `pending` as an outline. The bare
-  glyph (`check`, `close`, `play`) is a control, or a mark inside a shape of its own.
-- An icon sized by its text never draws under `--icon-min`: at the size of small text, a bare
-  check read as a typed ✓.
-- A character is never an icon: no ✓, ✕, ↗ or ▸ in a view, a constant or a string. A key in a
-  shortcut (⌘, ↵) is text, and stays one; so is an arrow inside a sentence.
-- Something that folds open wears the `Caret` atom, which turns as it opens.
-- A link that leaves the app ends in `external`, and one that moves within it in `arrow`.
+- **Todo ícone é do Phosphor**, desenhado pelo átomo `Icon` pelo nome em `ICONS`. Um nome diz o que
+  o ícone significa (`close`, `external`, `attention`), e um caret, para onde aponta
+  (`caretDown`).
+- Bold por padrão, sólido (`fill`) para o que está ligado: controles de mídia, logos, o marcador
+  aberto.
+- **Um status veste o glifo dentro de um círculo sólido**: `passed`, `failed`, `blocked`,
+  `skipped`, `attention`, `running`, `paused`, `stopped`, e `idle` e `pending` como contorno. O
+  glifo solto (`check`, `close`, `play`) é um controle, ou uma marca dentro de uma forma própria.
+- Um ícone dimensionado pelo texto nunca desenha abaixo de `--icon-min`: no tamanho de texto
+  pequeno, um check solto parecia um ✓ digitado.
+- Um caractere nunca é um ícone: nada de ✓, ✕, ↗ ou ▸ numa view, numa constante ou numa string.
+  Uma tecla num atalho (⌘, ↵) é texto, e continua sendo; uma seta dentro de uma frase também.
+- O que se abre dobrando veste o átomo `Caret`, que gira ao abrir.
+- Um link que sai do app termina em `external`, e um que anda dentro dele, em `arrow`.
 
-## The anatomy
+## A anatomia
 
-Every component and every page, without exception:
+Todo componente e toda página, sem exceção:
 
 ```
 <Name>/
-├── index.tsx                     view — composition and JSX, nothing else
-├── styles.css                    the component's stylesheet
-├── constants/                    one value per file, named
-├── types/                        one type per file, named after the type
+├── index.tsx                     view — composição e JSX, nada mais
+├── styles.css                    a folha de estilo do componente
+├── constants/                    um valor por arquivo, com nome
+├── types/                        um tipo por arquivo, com o nome do tipo
 ├── hooks/
 │   └── use<Name>ViewModel/
-│       ├── index.ts              state, handlers, derivations
-│       └── __tests__/            the view model's test
-└── components/                   local subcomponents, same anatomy
+│       ├── index.ts              estado, handlers, derivações
+│       └── __tests__/            o teste do view model
+└── components/                   subcomponentes locais, mesma anatomia
 ```
 
-## The view has no logic
+## A view não tem lógica
 
-`index.tsx` does **composition and JSX**, and nothing else. It declares no function, derives no
-value, holds no state, and computes no condition beyond rendering what the view model resolved.
+O `index.tsx` faz **composição e JSX**, e nada mais. Ele não declara função, não deriva valor, não
+guarda estado, e não calcula condição além de renderizar o que o view model resolveu.
 
 ```tsx
-// ❌ logic in the view
+// ❌ lógica na view
 const isActive = tab === current;
 function onTabClick(name: string) {}
 
-// ✅ the view model resolves, the view consumes
+// ✅ o view model resolve, a view consome
 const { tabs, isActive, onTabClick } = useTabBarViewModel(props);
 ```
 
-## Every component has a view model
+## Todo componente tem um view model
 
-Even when it looks like too little. That is where the rule ("does not call `onClick` when
-disabled") becomes testable without mounting a tree.
+Mesmo quando parece pouco demais. É ali que a regra ("não chama `onClick` quando desabilitado")
+fica testável sem montar uma árvore.
 
-The view model takes the component's props and returns only what the view consumes.
+O view model recebe as props do componente e devolve só o que a view consome.
 
 ```ts
 export const useTabBarViewModel = (props: ITabBarProps) => {
@@ -79,33 +81,35 @@ export const useTabBarViewModel = (props: ITabBarProps) => {
 };
 ```
 
-**Exception: a purely declarative component.** No `useState`, no `useEffect`, no `useRef`, no
-handler and no derivation — only JSX built from constants. An empty view model with an empty
-test is worse than no view model. The moment any of those appears, the view model is mandatory.
+**Exceção: um componente puramente declarativo.** Nada de `useState`, `useEffect`, `useRef`,
+handler ou derivação — só JSX feito de constantes. Um view model vazio com um teste vazio é pior
+que nenhum view model. No momento em que qualquer um deles aparece, o view model passa a ser
+obrigatório.
 
-## Do not hand-memoize
+## Não memoize à mão
 
-The React Compiler memoizes for you. A `useCallback` or `useMemo` whose dependency comes out of a
-store selector makes it **skip the whole component** (`react-hooks/preserve-manual-memoization`
-fires). Write the plain function and let the compiler work.
+O React Compiler memoiza por você. Um `useCallback` ou `useMemo` cuja dependência sai de um
+seletor de store faz ele **pular o componente inteiro** (o
+`react-hooks/preserve-manual-memoization` dispara). Escreva a função simples e deixe o compilador
+trabalhar.
 
-## Every view model has a test
+## Todo view model tem um teste
 
-`hooks/use<Name>ViewModel/__tests__/use<Name>ViewModel.test.ts`. One `describe` per exposed
-function, and the cases that matter: the happy path, the path that must **not** happen, and the
-edge. See `testing.md`.
+`hooks/use<Name>ViewModel/__tests__/use<Name>ViewModel.test.ts`. Um `describe` por função
+exposta, e os casos que importam: o caminho feliz, o caminho que **não** pode acontecer, e a
+borda. Veja `testing.md`.
 
-## Styles
+## Estilos
 
-- One `styles.css` per component, imported by its `index.tsx`.
-- Class names are BEM over the component's kebab name: `.status-pill`,
+- Um `styles.css` por componente, importado pelo `index.tsx` dele.
+- Os nomes de classe são BEM sobre o nome kebab do componente: `.status-pill`,
   `.status-pill__icon`, `.status-pill--failed`.
-- **No inline `style`**, except a value the view model computed and CSS cannot know (a dragged
-  card's offset, the side panel's width). It goes in as a custom property:
-  `style={{ '--device-width': widthPx }}`.
-- Colour, spacing, radius, font and duration come from tokens — see `design-tokens.md`.
+- **Nada de `style` inline**, a não ser um valor que o view model calculou e o CSS não tem como
+  saber (o deslocamento de um card arrastado, a largura do painel lateral). Ele entra como custom
+  property: `style={{ '--device-width': widthPx }}`.
+- Cor, espaçamento, raio, fonte e duração vêm de tokens — veja `design-tokens.md`.
 
 ## Props
 
-- One props object, typed `I<Name>Props`, in `types/I<Name>Props.ts`.
-- A component that takes a callback names it `onSomething`, and the view model wraps it.
+- Um objeto de props, tipado `I<Name>Props`, em `types/I<Name>Props.ts`.
+- Um componente que recebe um callback o chama de `onSomething`, e o view model o envolve.

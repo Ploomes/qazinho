@@ -1,134 +1,139 @@
-# Tooling
+# Ferramentas
 
-## Commands
+## Comandos
 
-| Command                           | What it does                                           |
-| --------------------------------- | ------------------------------------------------------ |
-| `npm run dev`                     | opens the app with the renderer on Vite's dev server   |
-| `npm run dev:reset`               | the same on an empty data folder: a first run, again   |
-| `npm run build`                   | builds main, preload and renderer into `out/`          |
-| `npm run preview`                 | opens the app from `out/`                              |
-| `npm run package`                 | builds an installer for the current OS into `release/` |
-| `npm run typecheck`               | `tsc` over both tsconfigs                              |
-| `npm run typecheck:fast`          | the same through `tsgo`, a local accelerator           |
-| `npm run lint` / `lint:fix`       | ESLint                                                 |
-| `npm run format` / `format:check` | Prettier                                               |
-| `npm test` / `test:watch`         | Vitest                                                 |
-| `npm run test:smoke`              | the real agent and a real browser — see `testing.md`   |
-| `npm run harness:build`           | installs and builds the harness submodule              |
+| Comando                           | O que faz                                                         |
+| --------------------------------- | ----------------------------------------------------------------- |
+| `npm run dev`                     | abre o app com o renderer no servidor de dev do Vite              |
+| `npm run dev:reset`               | o mesmo numa pasta de dados vazia: uma primeira execução, de novo |
+| `npm run build`                   | constrói a main, o preload e o renderer em `out/`                 |
+| `npm run preview`                 | abre o app a partir de `out/`                                     |
+| `npm run package`                 | constrói um instalador para o SO atual em `release/`              |
+| `npm run typecheck`               | `tsc` sobre os dois tsconfigs                                     |
+| `npm run typecheck:fast`          | o mesmo pelo `tsgo`, um acelerador local                          |
+| `npm run lint` / `lint:fix`       | ESLint                                                            |
+| `npm run format` / `format:check` | Prettier                                                          |
+| `npm test` / `test:watch`         | Vitest                                                            |
+| `npm run test:smoke`              | o agente real e um navegador real — veja `testing.md`             |
+| `npm run harness:build`           | instala e constrói o submódulo do harness                         |
 
-## The harness is a submodule
+## O harness é um submódulo
 
-- `packages/qazinho-harness` is a git submodule of the harness's own repository. Clone with
-  `--recurse-submodules`, or run `git submodule update --init --recursive` once.
-- `npm install` builds it: `postinstall` runs `npm run harness:build`, its own `npm ci` and
-  `npm run build` inside the submodule. The desktop imports its `dist/`, never its source.
-- ESLint and Prettier leave `packages/` alone: the harness lints, formats and tests itself.
-- CI checks the submodule out with a token that can read the harness's repository
+- `packages/qazinho-harness` é um submódulo git do repositório próprio do harness. Clone com
+  `--recurse-submodules`, ou rode `git submodule update --init --recursive` uma vez.
+- O `npm install` o constrói: o `postinstall` roda o `npm run harness:build`, o `npm ci` próprio
+  dele e o `npm run build` dentro do submódulo. O desktop importa o `dist/` dele, nunca o fonte.
+- O ESLint e o Prettier deixam `packages/` em paz: o harness faz o lint, o formato e os testes
+  dele mesmo.
+- O CI faz o checkout do submódulo com um token que lê o repositório do harness
   (`GH_QAZINHO_TOKEN`).
 
-## Two tsconfigs, and the second one is a guard
+## Dois tsconfigs, e o segundo é uma guarda
 
-`tsconfig.json` only references the other two, so the editor and ESLint see both.
+O `tsconfig.json` só referencia os outros dois, então o editor e o ESLint veem os dois.
 
-| Config               | Covers                                                                                | Types         |
-| -------------------- | ------------------------------------------------------------------------------------- | ------------- |
-| `tsconfig.node.json` | `src/main`, `src/shared/types`, `src/shared/constants`, `electron/`, `tests/`, config | `node`        |
-| `tsconfig.web.json`  | all of `src/` except `src/main`                                                       | `vite/client` |
+| Config               | Cobre                                                                                  | Tipos         |
+| -------------------- | -------------------------------------------------------------------------------------- | ------------- |
+| `tsconfig.node.json` | `src/main`, `src/shared/types`, `src/shared/constants`, `electron/`, `tests/`, configs | `node`        |
+| `tsconfig.web.json`  | todo `src/` menos `src/main`                                                           | `vite/client` |
 
-**`tsconfig.web.json` has no Node types.** An `import 'node:fs'` in the page or in `src/shared/types`
-does not compile. `src/shared/types` sits in both on purpose: it has to compile in each world.
+**O `tsconfig.web.json` não tem tipos do Node.** Um `import 'node:fs'` na página ou em
+`src/shared/types` não compila. O `src/shared/types` está nos dois de propósito: ele precisa
+compilar em cada mundo.
 
-Both are `composite` so they can be referenced. `typecheck` passes `--composite false` with
-`--noEmit`, because a composite project wants to emit declarations.
+Os dois são `composite` para poderem ser referenciados. O `typecheck` passa `--composite false`
+com `--noEmit`, porque um projeto composite quer emitir declarações.
 
-`noUncheckedIndexedAccess` is on: `table[i]` is `T | undefined`. Prefer `for...of`, `find` and
-`??` over raw indexing.
+O `noUncheckedIndexedAccess` está ligado: `table[i]` é `T | undefined`. Prefira `for...of`,
+`find` e `??` ao índice cru.
 
-## Versions held back on purpose
+## Versões seguradas de propósito
 
-| Held           | Because                                           |
-| -------------- | ------------------------------------------------- |
-| Vite 7         | electron-vite 5 accepts Vite `^5 \|\| ^6 \|\| ^7` |
-| plugin-react 5 | 6 requires Vite 8                                 |
-| TypeScript 5.9 | typescript-eslint accepts TypeScript `<6.1`       |
+| Segurada       | Porque                                               |
+| -------------- | ---------------------------------------------------- |
+| Vite 7         | o electron-vite 5 aceita o Vite `^5 \|\| ^6 \|\| ^7` |
+| plugin-react 5 | o 6 exige o Vite 8                                   |
+| TypeScript 5.9 | o typescript-eslint aceita o TypeScript `<6.1`       |
 
-Dependabot ignores those majors. Lift them together once electron-vite 6 and typescript-eslint
-support the newer versions.
+O Dependabot ignora essas majors. Levante-as juntas quando o electron-vite 6 e o typescript-eslint
+suportarem as versões novas.
 
-## Two compilers
+## Dois compiladores
 
-| Package                      | Role                                                   |
-| ---------------------------- | ------------------------------------------------------ |
-| `typescript` 5.9             | **source of truth**: `typecheck` and under ESLint      |
-| `@typescript/native-preview` | TypeScript 7 as `tsgo`, only a `typecheck:fast` helper |
+| Pacote                       | Papel                                                        |
+| ---------------------------- | ------------------------------------------------------------ |
+| `typescript` 5.9             | **fonte da verdade**: `typecheck` e por baixo do ESLint      |
+| `@typescript/native-preview` | TypeScript 7 como `tsgo`, só um auxiliar do `typecheck:fast` |
 
-`tsgo` does not expose the JS API that typescript-eslint's type-aware rules need. When the two
-disagree, `tsc` wins.
+O `tsgo` não expõe a API JS de que as regras com tipos do typescript-eslint precisam. Quando os
+dois discordam, o `tsc` vence.
 
-## Absolute imports
+## Imports absolutos
 
-`@/*` → `./src/*`. Four places know about the alias:
+`@/*` → `./src/*`. Quatro lugares conhecem o alias:
 
-| Where           | How                                               |
-| --------------- | ------------------------------------------------- |
-| `tsc`           | `paths` in both tsconfigs                         |
-| `electron-vite` | `resolve.alias` for main, preload and renderer    |
-| `vitest`        | `resolve.alias` in `vitest.config.ts`             |
-| `eslint`        | `eslint-import-resolver-typescript` reads `paths` |
+| Onde            | Como                                                |
+| --------------- | --------------------------------------------------- |
+| `tsc`           | `paths` nos dois tsconfigs                          |
+| `electron-vite` | `resolve.alias` para a main, o preload e o renderer |
+| `vitest`        | `resolve.alias` no `vitest.config.ts`               |
+| `eslint`        | o `eslint-import-resolver-typescript` lê o `paths`  |
 
-## Prettier and ESLint
+## Prettier e ESLint
 
-Prettier is the single source of formatting; ESLint does not format.
+O Prettier é a única fonte de formatação; o ESLint não formata.
 
-The rules backing the structure: `max-params: 2`, `member-ordering`, `consistent-type-imports`,
-`import-x/order` with the `type` group on top, `../` banned by regex, the process boundaries in
-`no-restricted-imports`, `react-hooks` in the page, and `no-restricted-syntax` over
-`**/*.class.ts`.
+As regras que sustentam a estrutura: `max-params: 2`, `member-ordering`,
+`consistent-type-imports`, `import-x/order` com o grupo `type` no topo, `../` banido por regex, os
+limites de processo no `no-restricted-imports`, `react-hooks` na página, e `no-restricted-syntax`
+sobre `**/*.class.ts`.
 
-The ESLint config is `eslint.config.mjs` because the package is not `"type": "module"`: Electron's
-sandboxed preload has to be CommonJS, and electron-vite picks the output format from that field.
+A config do ESLint é `eslint.config.mjs` porque o pacote não é `"type": "module"`: o preload em
+sandbox do Electron precisa ser CommonJS, e o electron-vite escolhe o formato de saída a partir
+desse campo.
 
 ## Husky
 
-`pre-commit` runs `lint-staged`, which applies `prettier --write` to what is staged. ESLint does
-not run in the hook; CI covers it.
+O `pre-commit` roda o `lint-staged`, que aplica `prettier --write` no que está staged. O ESLint
+não roda no hook; o CI cobre.
 
 ## CI
 
-`.github/workflows/ci.yml`, on every PR and every push to `main`: lint, typecheck, format, test,
-build. It skips the Electron binary download, because nothing in CI launches the app.
+`.github/workflows/ci.yml`, em todo PR e todo push na `main`: lint, typecheck, format, test,
+build. Ele pula o download do binário do Electron, porque nada no CI abre o app.
 
-## Releasing
+## Lançando versões
 
-`.github/workflows/release.yml`, **`workflow_dispatch` only**, with a `dry_run` input. It
-re-verifies, then semantic-release tags, writes `CHANGELOG.md`, bumps `package.json` and creates a
-GitHub release. **Nothing is published to npm**: the package is private.
+`.github/workflows/release.yml`, **só `workflow_dispatch`**, com um input `dry_run`. Ele reverifica,
+depois o semantic-release cria a tag, escreve o `CHANGELOG.md`, sobe a versão do `package.json` e
+cria uma release no GitHub. **Nada é publicado no npm**: o pacote é privado.
 
-The first release, 0.1.0, counts from `v0.0.0`, a tag on the repository's first commit. Its notes
-pass what a GitHub release body takes, so a release whose notes are that long points to its
-`CHANGELOG.md` instead (`releaseBodyTemplate`).
+A primeira release, a 0.1.0, conta a partir de `v0.0.0`, uma tag no primeiro commit do
+repositório. As notas dela passam o que o corpo de uma release do GitHub aceita, então uma
+release cujas notas são longas assim aponta para o `CHANGELOG.md` dela (`releaseBodyTemplate`).
 
-**The Windows installer is built by the release.** Once semantic-release tags, a Windows runner
-checks the tag out, packs `QAzinho-Setup-<version>.exe` with electron-builder and attaches it to
-the release. It goes out unsigned until there is a certificate, so SmartScreen asks once. The
-`tag` input builds the installer of a release that already exists, and releases nothing.
-**The macOS installers are a workflow of their own**, `macos-installer.yml`, since a Mac runner is
-billed at ten times a Linux one and runs only for them. The release calls it once it tags, unless
-its `mac` input is off, and dispatching it with a tag builds the installers of a release that
-exists. It packs `QAzinho-<version>-arm64.dmg` and `-x64.dmg`, signed with the Developer ID
-certificate and notarized with an App Store Connect API key, from five secrets:
-`APPLE_CERTIFICATE_P12` (the `.p12`, as base64), `APPLE_CERTIFICATE_PASSWORD`, `APPLE_API_KEY_P8`
-(the `.p8` file's text), `APPLE_API_KEY_ID` and `APPLE_API_ISSUER`. With any missing it builds
-nothing: an unsigned `.dmg` reads as damaged on a Mac. The Linux AppImage is still to do.
+**O instalador do Windows é construído pela release.** Assim que o semantic-release cria a tag,
+um runner Windows faz o checkout dela, empacota o `QAzinho-Setup-<version>.exe` com o
+electron-builder e o anexa à release. Ele sai sem assinatura até haver um certificado, então o
+SmartScreen pergunta uma vez. O input `tag` constrói o instalador de uma release que já existe, e
+não lança nada.
+**Os instaladores do macOS são um workflow à parte**, o `macos-installer.yml`, já que um runner
+Mac é cobrado a dez vezes um Linux e roda só para eles. A release o chama assim que cria a tag, a
+menos que o input `mac` esteja desligado, e disparar o workflow com uma tag constrói os
+instaladores de uma release que existe. Ele empacota o `QAzinho-<version>-arm64.dmg` e o `-x64.dmg`,
+assinados com o certificado Developer ID e notarizados com uma chave de API do App Store Connect,
+a partir de cinco secrets: `APPLE_CERTIFICATE_P12` (o `.p12`, em base64),
+`APPLE_CERTIFICATE_PASSWORD`, `APPLE_API_KEY_P8` (o texto do arquivo `.p8`), `APPLE_API_KEY_ID` e
+`APPLE_API_ISSUER`. Faltando qualquer um, ele não constrói nada: um `.dmg` sem assinatura aparece
+como danificado num Mac. O AppImage do Linux ainda está por fazer.
 
-| Commit                               | Effect |
+| Commit                               | Efeito |
 | ------------------------------------ | ------ |
 | `feat: ...`                          | minor  |
 | `fix: ...`                           | patch  |
-| `BREAKING CHANGE: ...` footer        | major  |
-| `docs:`, `test:`, `chore:`, `build:` | none   |
+| rodapé `BREAKING CHANGE: ...`        | major  |
+| `docs:`, `test:`, `chore:`, `build:` | nenhum |
 
 ## Dependabot
 
-Weekly, npm and github-actions. DevDependencies come grouped with the `chore` prefix.
+Semanal, npm e github-actions. As devDependencies vêm agrupadas com o prefixo `chore`.

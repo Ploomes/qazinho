@@ -1,14 +1,14 @@
-# Tests
+# Testes
 
-Vitest. `node` for `src/main` and `src/shared/types`, `jsdom` for anything in the page.
+Vitest. `node` para `src/main` e `src/shared/types`, `jsdom` para qualquer coisa da página.
 
-| Command              | What                                             |
-| -------------------- | ------------------------------------------------ |
-| `npm test`           | every unit test                                  |
-| `npm run test:watch` | the same, watching                               |
-| `npm run test:smoke` | `tests/smoke/`: the real agent, the real browser |
+| Comando              | O quê                                           |
+| -------------------- | ----------------------------------------------- |
+| `npm test`           | todo teste unitário                             |
+| `npm run test:watch` | o mesmo, observando                             |
+| `npm run test:smoke` | `tests/smoke/`: o agente real, o navegador real |
 
-## `__tests__/` next to the code
+## `__tests__/` ao lado do código
 
 ```
 src/main/library/
@@ -20,90 +20,91 @@ src/shared/components/atoms/Button/hooks/useButtonViewModel/
 └── __tests__/useButtonViewModel.test.ts
 ```
 
-A test lives next to what it tests, not next to the folder that contains it. Vitest picks up
-`src/**/__tests__/**/*.test.{ts,tsx}`, and electron-vite never bundles them because nothing
-imports them.
+Um teste vive ao lado do que testa, não ao lado da pasta que o contém. O Vitest pega
+`src/**/__tests__/**/*.test.{ts,tsx}`, e o electron-vite nunca os empacota porque nada os
+importa.
 
-## What must have a test
+## O que precisa ter um teste
 
-- **Every view model.** One `describe` per exposed function, and the cases that matter: the
-  happy path, the path that must **not** happen, and the edge.
-- **Every function exported from `library/`.** The caller exercises one path; the function has
-  several.
-- **Every constant table**, at its edges.
-- **The navigation guard**: same origin, another port, a hash on the packaged page, another file
-  on disk, `javascript:` and a string that is not a URL.
+- **Todo view model.** Um `describe` por função exposta, e os casos que importam: o caminho feliz,
+  o caminho que **não** pode acontecer e a borda.
+- **Toda função exportada de `library/`.** Quem chama exercita um caminho; a função tem vários.
+- **Toda tabela de constantes**, nas bordas dela.
+- **O guarda de navegação**: mesma origem, outra porta, um hash na página empacotada, outro
+  arquivo no disco, `javascript:` e uma string que não é uma URL.
 
-A view is not tested. It holds no logic, so there is nothing to assert that the view model does
-not already cover.
+Uma view não é testada. Ela não tem lógica, então não há nada a afirmar que o view model já não
+cubra.
 
-## Rules
+## Regras
 
-- **No module mocking.** Hand-written fakes over a port. If a test needs `vi.mock`, a dependency
-  has leaked. A collaborator arrives through props or through the view model's arguments.
-- **Keep `electron` out of `library/`.** A function that takes plain values is tested with plain
-  values; the Electron call stays in the class or in `index.ts`. That is why
-  `isInternalNavigation` takes two strings and not a `WebContents`.
-- **Test names describe behaviour, not methods.** `'another port on localhost is another
-origin'`, never `'isInternalNavigation() returns false'`.
-- **Tests do not use the network**, and do not boot an emulator, a simulator or a browser.
-- A page test file declares its environment at the top: `// @vitest-environment jsdom`.
+- **Nada de mock de módulo.** Fakes escritos à mão sobre uma porta. Se um teste precisa de
+  `vi.mock`, uma dependência vazou. Um colaborador chega por props ou pelos argumentos do view
+  model.
+- **Mantenha o `electron` fora da `library/`.** Uma função que recebe valores simples é testada
+  com valores simples; a chamada do Electron fica na classe ou no `index.ts`. É por isso que o
+  `isInternalNavigation` recebe duas strings e não um `WebContents`.
+- **Os nomes dos testes descrevem comportamento, não métodos.** `'another port on localhost is
+another origin'`, nunca `'isInternalNavigation() returns false'`.
+- **Os testes não usam a rede**, e não sobem um emulador, um simulador nem um navegador.
+- Um arquivo de teste da página declara o ambiente dele no topo: `// @vitest-environment jsdom`.
 
-## `tests/smoke/`, and why it is not in `npm test`
+## `tests/smoke/`, e por que ele não está no `npm test`
 
-Three suites that need something real behind them. They have their own config
-(`tests/vitest.smoke.ts`), their own command, and CI never runs them.
+Suítes que precisam de algo real por trás. Elas têm a própria config (`tests/vitest.smoke.ts`), o
+próprio comando, e o CI nunca as roda.
 
-| File                   | What it drives                                                               |
-| ---------------------- | ---------------------------------------------------------------------------- |
-| `run.test.ts`          | the product: real Chrome, the QA's own agent, a plan walked and judged       |
-| `chat.test.ts`         | the QA's own agent plans in the schema, and hears of a run once resumed      |
-| `visual.test.ts`       | the QA's own agent fails a page whose text is right and whose screen is not  |
-| `page.test.ts`         | `out/renderer` in plain Chrome, with no bridge: the page must not crash      |
-| `electron.test.ts`     | the packaged window, where `window.qazinho` is the real preload              |
-| `stream.test.ts`       | windowless Chrome as MJPEG over loopback, framed to the page, sharp in focus |
-| `stop.test.ts`         | Stop ends a run while a fake agent is still thinking                         |
-| `resize.test.ts`       | the device resized mid-run: the cases still to come are told the new size    |
-| `cost.test.ts`         | each case's agent, ended with Ctrl+C, says what it cost before the run ends  |
-| `finding.test.ts`      | a bug filed on the side of a step: its screen, and the next case told of it  |
-| `agent.test.ts`        | a fake agent retries a failed action, leaves a note, or errors out           |
-| `codex.test.ts`        | a fake Codex chats in the strict schema, resumes, runs a case, signs out     |
-| `tools.test.ts`        | an MCP client calls every device tool on real Chrome, API calls included     |
-| `design.test.ts`       | a fake agent and explorer get Figma, measure the screen, file off-design     |
-| `locate.test.ts`       | alike controls numbered, labelled fields, a dropdown, a date, a component    |
-| `dialog.test.ts`       | a confirm answered OK or Cancel, a prompt typed into, and look telling it    |
-| `tabs.test.ts`         | a link's new tab and a sign-in window: the device turns to them and back     |
-| `peek.test.ts`         | a windowless Chrome reads a page for the chat, or says why it did not open   |
-| `fresh.test.ts`        | a case starts on a browser with nothing saved, and the stream follows it     |
-| `device-fresh.test.ts` | fixture apps on a real AVD and simulator: cleared, reopened, held, typed     |
-| `save.test.ts`         | the lightbox downloads a screenshot through main, to where the dialog says   |
-| `setup.test.ts`        | the installer runs a fake npm, streams its lines, and fails honestly         |
-| `terminal.test.ts`     | a full-screen program out of sight: its screen read, its keys, its page      |
-| `mcp.test.ts`          | a fake `/mcp` and Codex: Figma's MCP added, signed in, refused, cancelled    |
-| `login.test.ts`        | a fake `claude auth login` and `codex login`: page, code, refusal, cancel    |
-| `record.test.ts`       | the built app records a web run as an H.264 MP4 through its hidden window    |
-| `github.test.ts`       | a fake gh: device-code sign-in and cancel, repositories, branches, a copy    |
-| `jira.test.ts`         | a fake Jira site: stories searched and read, their files downloaded          |
-| `confluence.test.ts`   | a fake Confluence site: a page searched and read, a plan published twice     |
-| `filing.test.ts`       | a fake Jira and gh: a bug filed with its files and story, refusals in words  |
-| `review.test.ts`       | a fake agent weighs a bug seen again against its issue in a fake Jira        |
-| `assistant.test.ts`    | a fake agent acts through the app tools: a page that answers, waits, or not  |
-| `build.test.ts`        | a fake gh hands over a branch and a fake agent builds it: an APK kept        |
-| `replay.test.ts`       | a case recorded, walked again with no agent asked, healed when the app moves |
-| `explore.test.ts`      | a fake explorer on real Chrome: screens, a bug, a plan, and the clock        |
-| `variables.test.ts`    | a fake agent signs in with `${NAME}`: the page gets the value, the agent not |
-| `ask.test.ts`          | a fake agent asks the QA mid-run: a choice, a secret code, silence, a stop   |
-| `network.test.ts`      | real Chrome: each request kept with its status, time and size, secrets out   |
-| `strip.test.ts`        | the built app: a run's requests under its video, and downloaded drawn in     |
-| `suite.test.ts`        | a fixture suite on real Chrome: listed, run by project, one test, stopped    |
-| `fix.test.ts`          | a fake agent fixes a fixture test through run_tests; QAzinho checks, pushes  |
-| `write.test.ts`        | a fake agent writes a new fixture test; QAzinho runs its file and pushes it  |
+| Arquivo                | O que ele dirige                                                                        |
+| ---------------------- | --------------------------------------------------------------------------------------- |
+| `run.test.ts`          | o produto: Chrome real, o agente do próprio QA, um plano andado e julgado               |
+| `chat.test.ts`         | o agente do próprio QA planeja no schema, e fica sabendo de uma run ao retomar          |
+| `visual.test.ts`       | o agente do próprio QA reprova uma página cujo texto está certo e a tela não            |
+| `page.test.ts`         | `out/renderer` num Chrome comum, sem bridge: a página não pode quebrar                  |
+| `electron.test.ts`     | a janela empacotada, onde `window.qazinho` é o preload real                             |
+| `stream.test.ts`       | Chrome sem janela como MJPEG em loopback, enquadrado na página, nítido em foco          |
+| `stop.test.ts`         | Stop termina uma run enquanto um agente fake ainda está pensando                        |
+| `resize.test.ts`       | o dispositivo redimensionado no meio da run: os casos que vêm recebem o tamanho         |
+| `cost.test.ts`         | o agente de cada caso, terminado com Ctrl+C, diz quanto custou antes da run             |
+| `finding.test.ts`      | um bug registrado ao lado de um passo: a tela dele, e o caso seguinte avisado           |
+| `agent.test.ts`        | um agente fake tenta de novo uma ação que falhou, deixa uma nota, ou dá erro            |
+| `codex.test.ts`        | um Codex fake conversa no schema estrito, retoma, roda um caso, sai da conta            |
+| `tools.test.ts`        | um cliente MCP chama toda ferramenta do dispositivo no Chrome real, as APIs             |
+| `design.test.ts`       | um agente e um explorador fakes recebem o Figma, medem a tela, registram                |
+| `locate.test.ts`       | controles parecidos numerados, campos com rótulo, um dropdown, uma data                 |
+| `dialog.test.ts`       | um confirm respondido OK ou Cancelar, um prompt digitado, e o look avisando             |
+| `tabs.test.ts`         | a nova aba de um link e uma janela de login: o dispositivo vai a elas e volta           |
+| `peek.test.ts`         | um Chrome sem janela lê uma página para o chat, ou diz por que não abriu                |
+| `fresh.test.ts`        | um caso começa num navegador sem nada salvo, e o stream o acompanha                     |
+| `device-fresh.test.ts` | apps de fixture num AVD e num simulador reais: limpos, reabertos, segurados             |
+| `save.test.ts`         | o lightbox baixa um screenshot pela main, para onde o diálogo diz                       |
+| `setup.test.ts`        | o instalador roda um npm fake, transmite as linhas e falha com honestidade              |
+| `terminal.test.ts`     | um programa de tela cheia fora de vista: a tela lida, as teclas, a página               |
+| `mcp.test.ts`          | um `/mcp` e um Codex fakes: o MCP do Figma adicionado, logado, recusado, cancelado      |
+| `login.test.ts`        | um `claude auth login` e um `codex login` fakes: página, código, recusa, cancela        |
+| `record.test.ts`       | o app construído grava uma run web como um MP4 H.264 pela janela escondida              |
+| `github.test.ts`       | um gh fake: login por código de dispositivo e cancelar, repositórios, branches          |
+| `jira.test.ts`         | um site do Jira fake: histórias buscadas e lidas, os arquivos delas baixados            |
+| `confluence.test.ts`   | um site do Confluence fake: uma página buscada e lida, um plano publicado duas vezes    |
+| `filing.test.ts`       | um Jira e um gh fakes: um bug registrado com arquivos e história, recusas em palavras   |
+| `review.test.ts`       | um agente fake pesa um bug visto de novo contra a issue num Jira fake                   |
+| `assistant.test.ts`    | um agente fake age pelas ferramentas do app: uma página que responde, espera, ou não    |
+| `build.test.ts`        | um gh fake entrega uma branch e um agente fake a constrói: um APK guardado              |
+| `replay.test.ts`       | um caso gravado, andado de novo sem agente, consertado quando o app muda                |
+| `explore.test.ts`      | um explorador fake no Chrome real: telas, um bug, um plano e o relógio                  |
+| `variables.test.ts`    | um agente fake entra com `${NAME}`: a página recebe o valor, o agente não               |
+| `ask.test.ts`          | um agente fake pergunta ao QA no meio da run: uma escolha, um código, silêncio, um stop |
+| `network.test.ts`      | Chrome real: cada pedido guardado com status, tempo e tamanho, segredos fora            |
+| `strip.test.ts`        | o app construído: os pedidos de uma run sob o vídeo, e baixados desenhados nele         |
+| `suite.test.ts`        | uma suíte de fixture no Chrome real: listada, rodada por projeto, um teste, parada      |
+| `fix.test.ts`          | um agente fake conserta um teste de fixture por run_tests; o QAzinho confere e dá push  |
+| `write.test.ts`        | um agente fake escreve um teste novo de fixture; o QAzinho roda o arquivo e dá push     |
 
-`run.test.ts`, `chat.test.ts` and `visual.test.ts` spend the QA's tokens and need an agent installed. Run them by
-hand after touching the run pipeline or an answer schema.
+O `run.test.ts`, o `chat.test.ts` e o `visual.test.ts` gastam os tokens do QA e precisam de um
+agente instalado. Rode-os à mão depois de mexer no pipeline da run ou no schema de uma resposta.
 
-**A synthetic click is not a click.** Playwright drives the page over CDP, which skips the hit
-test the window manager does — so `-webkit-app-region: drag` swallowing a real click is
-**invisible to every suite here, Electron included**. What catches it is reading the computed
-property off each control, which `page.test.ts` does for the titlebar. Any rule the OS enforces
-rather than the page needs the same treatment: assert the declaration, not the behaviour.
+**Um clique sintético não é um clique.** O Playwright dirige a página pelo CDP, que pula o hit
+test que o gerenciador de janelas faz — então um `-webkit-app-region: drag` engolindo um clique
+de verdade é **invisível a toda suíte daqui, a do Electron incluída**. O que o pega é ler a
+propriedade computada de cada controle, o que o `page.test.ts` faz para a barra de título. Toda
+regra que o SO impõe em vez da página precisa do mesmo tratamento: afirme a declaração, não o
+comportamento.

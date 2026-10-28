@@ -1,49 +1,49 @@
-# Animation
+# Animação
 
-Motion (`motion/react`) animates the interface. CSS keeps only what never unmounts.
+O Motion (`motion/react`) anima a interface. O CSS guarda só o que nunca desmonta.
 
-## Which one, and when
+## Qual dos dois, e quando
 
-| Use Motion for                                   | Keep in CSS                              |
-| ------------------------------------------------ | ---------------------------------------- |
-| Anything entering or leaving (`AnimatePresence`) | Ambient loops: a pulsing dot, a shimmer  |
-| A list that reorders (`Reorder`, `layout`)       | The comet stroke on a running case       |
-| Popovers, modals, the lightbox                   | The recording sweep over the device      |
-| Drag: the plan's cases, the side panel's handle  | `:hover` and `:active` on a button       |
-| A value the view model computes over time        | Anything that would fight the compositor |
+| Use o Motion para                                     | Mantenha no CSS                                 |
+| ----------------------------------------------------- | ----------------------------------------------- |
+| Tudo o que entra ou sai (`AnimatePresence`)           | Loops de ambiente: um ponto pulsando, um brilho |
+| Uma lista que se reordena (`Reorder`, `layout`)       | O traço de cometa num caso rodando              |
+| Popovers, modais, o lightbox                          | A varredura de gravação sobre o dispositivo     |
+| Arrastar: os casos do plano, a alça do painel lateral | `:hover` e `:active` num botão                  |
+| Um valor que o view model calcula ao longo do tempo   | O que brigaria com o compositor                 |
 
-A loop that runs forever on a mounted element is cheaper as a keyframe. A transition that has a
-beginning and an end belongs to Motion, because React knows when it starts.
+Um loop que roda para sempre num elemento montado sai mais barato como keyframe. Uma transição
+com começo e fim é do Motion, porque o React sabe quando ela começa.
 
-## The rules
+## As regras
 
-- **Import `motion` from `motion/react`.** Never from `framer-motion`.
-- **Durations and easings come from `MOTION`** in `src/shared/constants/MOTION.ts`, which mirrors the CSS
-  tokens. A raw `0.28` in a component is the same bug as a raw `#c6f432`.
-- **The view holds the markup, the view model holds the state.** `animate={...}` may read a value
-  the view model returned; it may not decide it.
-- **Exit needs `AnimatePresence`**, and the element needs a stable `key`.
-- **A fold animates `height` on an element with no padding, margin or border**, and
-  `overflow: hidden`. Height 0 cannot squeeze padding, so the fold stops short and snaps shut.
-  Its spacing goes on an element inside it. In a column with a `gap`, the fold cancels the gap
-  with a negative margin of the same token and carries it inside (`.chat__retry`).
-- **Respect the system.** Wrap the app in `MotionConfig reducedMotion="user"`, once, in the shell.
-  Nothing else checks the media query.
-- A component that only fades in on mount does not need Motion. `animation: gc-in` is enough.
+- **Importe `motion` de `motion/react`.** Nunca de `framer-motion`.
+- **Durações e easings vêm do `MOTION`** em `src/shared/constants/MOTION.ts`, que espelha os
+  tokens de CSS. Um `0.28` cru num componente é o mesmo bug que um `#c6f432` cru.
+- **A view guarda o markup, o view model guarda o estado.** O `animate={...}` pode ler um valor que
+  o view model devolveu; não pode decidi-lo.
+- **A saída precisa de `AnimatePresence`**, e o elemento precisa de uma `key` estável.
+- **Uma dobra anima `height` num elemento sem padding, margin nem borda**, e com
+  `overflow: hidden`. Altura 0 não consegue espremer o padding, então a dobra para antes e fecha
+  num estalo. O espaçamento dela vai num elemento de dentro. Numa coluna com `gap`, a dobra anula o
+  gap com uma margem negativa do mesmo token e o leva para dentro (`.chat__retry`).
+- **Respeite o sistema.** Envolva o app em `MotionConfig reducedMotion="user"`, uma vez, no shell.
+  Nada mais confere a media query.
+- Um componente que só aparece com fade ao montar não precisa do Motion. `animation: gc-in` basta.
 
-## Entrances and exits
+## Entradas e saídas
 
-Things fade in and out gently (`sticker-design.md`), and nothing turns.
+As coisas entram e saem com um fade suave (`sticker-design.md`), e nada gira.
 
-- **Entrances and exits come from `STICKER`** in `src/shared/constants/STICKER.ts`:
-  - `slap` for small things, `panel` for modals, `pop` for a popover under its anchor,
-    `rise` for one above it, `hero` for the Estagiário.
-  - `drag` picks a dragged thing up, and `wobble` marks an event once with a small pulse.
-  - Spread the move: `initial={STICKER.panel.initial} animate={STICKER.panel.animate}
+- **Entradas e saídas vêm do `STICKER`** em `src/shared/constants/STICKER.ts`:
+  - `slap` para coisas pequenas, `panel` para modais, `pop` para um popover abaixo da âncora,
+    `rise` para um acima dela, `hero` para o Estagiário.
+  - `drag` pega uma coisa arrastada, e `wobble` marca um evento uma vez com um pulso pequeno.
+  - Espalhe o movimento: `initial={STICKER.panel.initial} animate={STICKER.panel.animate}
 exit={STICKER.panel.exit}`.
-- **A thing that only lands on mount** uses a keyframe instead: `gc-slap` for a small one,
-  `gc-stick` for a panel. Put it inside `@media (prefers-reduced-motion: no-preference)`, with
-  `gc-in` outside it.
-- **Hover and press stay in CSS** and move the individual `translate` and `scale` properties,
-  never `transform`, through `--lift` and `--press`. Motion owns `transform`.
-- **Evidence never moves**: the lightbox and the device enter straight.
+- **Uma coisa que só pousa ao montar** usa um keyframe no lugar: `gc-slap` para uma pequena,
+  `gc-stick` para um painel. Ponha-o dentro de `@media (prefers-reduced-motion: no-preference)`,
+  com `gc-in` fora dele.
+- **Hover e press ficam no CSS** e mexem as propriedades separadas `translate` e `scale`, nunca o
+  `transform`, por `--lift` e `--press`. O `transform` é do Motion.
+- **A evidência nunca se mexe**: o lightbox e o dispositivo entram direto.

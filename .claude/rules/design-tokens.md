@@ -1,15 +1,15 @@
-# Design tokens
+# Tokens de design
 
-QAzinho has no design system package. The scale is a set of CSS custom properties in
-`src/shared/styles/tokens.css`, declared on `[data-theme]`. The layout comes from `assets/prototype.html`;
-the colours come from the QAzinho brand: Lima Estagiário `#C6F432` (`--lime`), Tinta `#141414`
-(`--brand-ink`), Bug `#FF4D2E` (`--fail`), Papel `#F4F2EA` (`--brand-paper`) and the indigo of
-the sticker sheet (`--indigo`). How they are used is `sticker-design.md`.
+O QAzinho não tem pacote de design system. A escala é um conjunto de custom properties de CSS em
+`src/shared/styles/tokens.css`, declaradas em `[data-theme]`. O layout vem do
+`assets/prototype.html`; as cores vêm da marca QAzinho: Lima Estagiário `#C6F432` (`--lime`), Tinta
+`#141414` (`--brand-ink`), Bug `#FF4D2E` (`--fail`), Papel `#F4F2EA` (`--brand-paper`) e o índigo
+da folha de adesivos (`--indigo`). Como elas são usadas está no `sticker-design.md`.
 
-## Never hardcode what the scale defines
+## Nunca escreva à mão o que a escala define
 
-Colour, spacing, radius, font and duration come from a token. A raw value in a stylesheet is a
-bug unless it is component geometry (see below).
+Cor, espaçamento, raio, fonte e duração vêm de um token. Um valor cru numa folha de estilo é um bug
+a menos que seja geometria de componente (veja abaixo).
 
 ```css
 /* ❌ */
@@ -27,58 +27,58 @@ color: var(--lime);
 font: var(--font-ui-md);
 ```
 
-## The scales
+## As escalas
 
-| Group     | Tokens                                                                                        |
-| --------- | --------------------------------------------------------------------------------------------- |
-| Surfaces  | `--bg --win --panel --center --raise --raise2 --screen`                                       |
-| Lines     | `--line --line2 --sel --stripe`                                                               |
-| Ink       | `--ink --ink2 --ink3`                                                                         |
-| Accent    | `--lime --lime-ink --lime-soft --on-lime`                                                     |
-| Verdicts  | `--pass --fail --block --skip --attn`, each with a `-soft` pair                               |
-| Space     | `--space-1 2px` · `2 4` · `3 8` · `4 12` · `5 16` · `6 20` · `7 24` · `8 30`                  |
-| Icon      | `--icon-min` 12px, the smallest an icon sized by its text draws                               |
-| Radius    | `--radius-xs 6` · `sm 8` · `md 12` · `lg 14` · `xl 18` · `2xl 22` · `pill 999`                |
-| Font      | `--font-display --font-ui --font-mono`, `--font-ui-*`, `--font-display-sm/md/lg/xl`           |
-| Type      | `--display-tracking` for display at 800, `--font-mono-tag --tag-tracking` for tags            |
-| Motion    | `--ease --ease-in --dur-press --dur-fast --dur --dur-slow`                                    |
-| Line      | `--edge` (the theme's `--line`), `--edge-width` · `-lg` · `-xl`, all 1px                      |
-| Logo      | `--sticker-edge --sticker-edge-width --sticker-shadow --sticker-tilt`, for the logo's sticker |
-| Elevation | `--sticker-rest` none · `--sticker-lift` hairline · `--sticker-press` none · `--sticker-hero` |
-| Hover     | `--lift` 0px, `--press` 1px: how far a control moves under the cursor and the click           |
-| Tilt      | `--tilt-xs` · `--tilt-sm` · `--tilt-md`, all 0°: nothing turns                                |
-| Brand     | `--brand-ink --brand-paper --indigo --indigo-deep --indigo-dusk --on-indigo`                  |
+| Grupo       | Tokens                                                                                          |
+| ----------- | ----------------------------------------------------------------------------------------------- |
+| Superfícies | `--bg --win --panel --center --raise --raise2 --screen`                                         |
+| Linhas      | `--line --line2 --sel --stripe`                                                                 |
+| Tinta       | `--ink --ink2 --ink3`                                                                           |
+| Destaque    | `--lime --lime-ink --lime-soft --on-lime`                                                       |
+| Vereditos   | `--pass --fail --block --skip --attn`, cada um com um par `-soft`                               |
+| Espaço      | `--space-1 2px` · `2 4` · `3 8` · `4 12` · `5 16` · `6 20` · `7 24` · `8 30`                    |
+| Ícone       | `--icon-min` 12px, o menor que um ícone dimensionado pelo texto desenha                         |
+| Raio        | `--radius-xs 6` · `sm 8` · `md 12` · `lg 14` · `xl 18` · `2xl 22` · `pill 999`                  |
+| Fonte       | `--font-display --font-ui --font-mono`, `--font-ui-*`, `--font-display-sm/md/lg/xl`             |
+| Tipo        | `--display-tracking` para display em 800, `--font-mono-tag --tag-tracking` para tags            |
+| Movimento   | `--ease --ease-in --dur-press --dur-fast --dur --dur-slow`                                      |
+| Linha       | `--edge` (o `--line` do tema), `--edge-width` · `-lg` · `-xl`, todos 1px                        |
+| Logo        | `--sticker-edge --sticker-edge-width --sticker-shadow --sticker-tilt`, para o adesivo do logo   |
+| Elevação    | `--sticker-rest` nenhuma · `--sticker-lift` fina · `--sticker-press` nenhuma · `--sticker-hero` |
+| Hover       | `--lift` 0px, `--press` 1px: quanto um controle se move sob o cursor e o clique                 |
+| Inclinação  | `--tilt-xs` · `--tilt-sm` · `--tilt-md`, todos 0°: nada gira                                    |
+| Marca       | `--brand-ink --brand-paper --indigo --indigo-deep --indigo-dusk --on-indigo`                    |
 
-A mono field, the URL input or a file field beside it, reads `--font-mono-field`, so two fields
-in a row stand as tall as each other.
+Um campo mono, o input de URL ou um campo de arquivo ao lado dele, lê `--font-mono-field`, para
+dois campos numa linha ficarem da mesma altura.
 
-Both themes declare the same names: `[data-theme='dark']` is Night and `[data-theme='light']`
-is Paper, the two surfaces of the app icon.
+Os dois temas declaram os mesmos nomes: `[data-theme='dark']` é o Night e `[data-theme='light']` é
+o Paper, as duas superfícies do ícone do app.
 
-`[data-theme='indigo']` is not a theme the QA picks. A brand moment (the onboarding, the welcome
-board) sets it on its own root, so the text on the indigo table reads and the cards on it turn
-into charcoal stickers. It declares the same names too. A token that exists in one scope and not
-the others is a bug.
+O `[data-theme='indigo']` não é um tema que o QA escolhe. Um momento da marca (o onboarding, o
+quadro de boas-vindas) o põe na própria raiz, para o texto sobre a mesa índigo ficar legível e os
+cards sobre ela virarem adesivos grafite. Ele também declara os mesmos nomes. Um token que existe
+num escopo e não nos outros é um bug.
 
-## The three families
+## As três famílias
 
-`Bricolage Grotesque` for display only: titles and counters at 800 with `--display-tracking`,
-like the wordmark. `IBM Plex Sans` for every piece of body and UI text. `JetBrains Mono` for
-anything technical: ids, timestamps, paths, counters, uppercase eyebrows, tags, badges, keycaps
-and status glyphs.
+`Bricolage Grotesque` só para display: títulos e contadores em 800 com `--display-tracking`, como
+o wordmark. `IBM Plex Sans` para todo texto de corpo e de interface. `JetBrains Mono` para tudo o
+que é técnico: ids, horários, caminhos, contadores, eyebrows em maiúsculas, tags, badges, teclas e
+glifos de status.
 
-## When a value is not on the scale
+## Quando um valor não está na escala
 
-- **Component geometry** — one component's intrinsic dimension (the 268px sidebar, the 46px
-  titlebar, the 9/19.5 phone aspect). It goes in that component's `constants/`, named, never
-  inlined in the stylesheet.
-- **A gap in the scale** — the prototype keeps asking for a step that does not exist. Do not
-  snap it silently and do not hardcode it: add the step, and say so.
+- **Geometria de componente** — uma dimensão intrínseca de um componente (a sidebar de 268px, a
+  titlebar de 46px, a proporção 9/19.5 do celular). Ela vai no `constants/` desse componente, com
+  nome, nunca escrita direto na folha de estilo.
+- **Um buraco na escala** — o protótipo continua pedindo um degrau que não existe. Não o arredonde
+  em silêncio e não o escreva à mão: acrescente o degrau, e diga isso.
 
-Snapping a value to the nearest token changes the design. When you do it, say which values moved
-and by how much.
+Arredondar um valor para o token mais próximo muda o design. Quando fizer isso, diga quais valores
+mudaram e em quanto.
 
-## Colour is never the only clue
+## A cor nunca é a única pista
 
-Every status carries an icon and a word next to the colour. This is in the prototype's own
-Appearance copy, and it is a rule, not a preference.
+Todo status leva um ícone e uma palavra ao lado da cor. Isso está no próprio texto de Aparência do
+protótipo, e é uma regra, não uma preferência.
