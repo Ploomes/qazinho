@@ -3,8 +3,8 @@ import type { IProSyncCase } from '@/shared/types';
 import { freeCaseIdOf } from './freeCaseIdOf';
 
 /**
- * Joins this computer's plan and the org's case by case, from the cases both last agreed
- * on; a case both changed is a clash, kept as the QA chose or as this computer has it.
+ * Junta o plano daqui e o da org caso a caso, a partir do último acordo; um caso que os
+ * dois mudaram é um choque, mantido como o QA escolheu ou como está aqui.
  */
 export function mergeCases(props: {
   base: IProSyncCase[];

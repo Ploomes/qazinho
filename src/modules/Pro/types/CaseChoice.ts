@@ -1,2 +1,4 @@
-/** Which side of a case both changed the QA kept: this computer's, or the org's. */
+/**
+ * Qual lado de um caso que os dois mudaram o QA manteve: o deste computador, ou o da org.
+ */
 export type CaseChoice = 'mine' | 'theirs';

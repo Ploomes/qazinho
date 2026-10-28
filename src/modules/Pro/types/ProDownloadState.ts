@@ -1,5 +1,5 @@
 import type { ProDownload } from '@/shared/types';
 
-/** Where downloading one of the org's projects stands: going, or why it did not. */
+/** Em que pé está o download de um dos projetos da org: andando, ou por que não. */
 export type ProDownloadState =
   'working' | Extract<ProDownload, { isDownloaded: false }>['failure'];

@@ -3,8 +3,8 @@ import { useProLinkModalViewModel } from './hooks';
 import './styles.css';
 
 /**
- * Opens a plan a link from the web named that this computer does not hold: downloads its
- * project from the org, or says why it cannot.
+ * Abre um plano que um link da web nomeou e que este computador não tem: baixa o projeto
+ * dele da org, ou diz por que não pode.
  */
 export const ProLinkModal: React.FC = () => {
   const view = useProLinkModalViewModel();

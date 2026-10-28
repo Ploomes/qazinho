@@ -1,6 +1,6 @@
 const UNITS = ['B', 'KB', 'MB', 'GB'] as const;
 
-/** A size in bytes as a person reads it, in the largest unit under a thousand of it. */
+/** Um tamanho em bytes como uma pessoa lê, na maior unidade abaixo de mil dela. */
 export function bytesLabelOf(props: { bytes: number; language: string }): string {
   const { bytes, language } = props;
   let value = Math.max(0, bytes);

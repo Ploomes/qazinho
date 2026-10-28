@@ -10,8 +10,8 @@ import { useProAccountCardViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The QA's account at the foot of the sidebar: a way in, or the account, its orgs and a
- * way to clone their projects.
+ * A conta do QA no pé da sidebar: um jeito de entrar, ou a conta, as orgs dela e um jeito
+ * de clonar os projetos delas.
  */
 export const ProAccountCard: React.FC = () => {
   const {

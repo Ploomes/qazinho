@@ -5,8 +5,8 @@ import { useProMergeModalViewModel } from './hooks';
 import './styles.css';
 
 /**
- * Joins the org's plans with this computer's: each case both changed side by side, the
- * QA keeping one of the two.
+ * Junta os planos da org com os deste computador: cada caso que os dois mudaram lado a
+ * lado, o QA mantendo um dos dois.
  */
 export const ProMergeModal: React.FC = () => {
   const view = useProMergeModalViewModel();

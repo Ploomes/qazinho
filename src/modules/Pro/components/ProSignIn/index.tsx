@@ -4,8 +4,8 @@ import { StepsPopup } from '@/shared/components/organisms';
 import { useProSignInViewModel } from './hooks';
 
 /**
- * This computer signing in to QAzinho Pro, step by step, with the code to confirm in the
- * browser.
+ * Este computador entrando no QAzinho Pro, passo a passo, com o código a confirmar no
+ * navegador.
  */
 export const ProSignIn: React.FC<IProSignInProps> = (props) => {
   const popup = useProSignInViewModel(props);

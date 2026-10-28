@@ -3,8 +3,8 @@ import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IProPlanConflict, IProSyncCase } from '@/shared/types';
 
 /**
- * A plan the org moved, as taking it in here would leave it: the workspace it lands on,
- * the cases joined, the cases both sides changed, and whether a run holds it now.
+ * Um plano que a org mexeu, como aceitá-lo aqui o deixaria: o workspace em que cai, os
+ * casos juntados, os casos que os dois lados mudaram, e se uma run o segura agora.
  */
 export interface IPlanUpdate {
   conflict: IProPlanConflict;

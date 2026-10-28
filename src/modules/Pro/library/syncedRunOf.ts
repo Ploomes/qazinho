@@ -6,8 +6,8 @@ import { startedIsoOf } from './startedIsoOf';
 import { videoSecondsOf } from './videoSecondsOf';
 
 /**
- * A finished run as QAzinho Pro takes it, on the target its workspace runs on, each step
- * placed on its video; null for a run that does not know when it started.
+ * Uma run terminada como o QAzinho Pro a aceita, no alvo em que o workspace dela roda,
+ * cada passo posto no vídeo dela; null para uma run que não sabe quando começou.
  */
 export function syncedRunOf(props: {
   workspaceId: string;

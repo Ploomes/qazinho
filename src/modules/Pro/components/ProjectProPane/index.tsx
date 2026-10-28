@@ -5,8 +5,8 @@ import { useProjectProPaneViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A project's link to an org: publishing it to one, or what it sends and what came from
- * there.
+ * O vínculo de um projeto com uma org: publicá-lo numa, ou o que ele manda e o que veio
+ * de lá.
  */
 export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
   const view = useProjectProPaneViewModel(props);

@@ -1,8 +1,8 @@
 import type { IProSyncCase } from '@/shared/types';
 
 /**
- * A case this computer and the org both changed since they last agreed, each side as it
- * stands; null for the side that deleted it.
+ * Um caso que este computador e a org mudaram desde que concordaram por último, cada lado
+ * como está; null para o lado que o apagou.
  */
 export interface ICaseClash {
   id: string;

@@ -20,8 +20,8 @@ const GRAVEST_FIRST = [
 ] as const satisfies readonly ProAttention[];
 
 /**
- * The one thing the QA should know about this computer's linked projects, the gravest
- * first; null while all goes as it should.
+ * A única coisa que o QA deve saber dos projetos ligados deste computador, a mais grave
+ * primeiro; null enquanto tudo vai como deve.
  */
 export function attentionOf(props: {
   status: ProStatus | null;

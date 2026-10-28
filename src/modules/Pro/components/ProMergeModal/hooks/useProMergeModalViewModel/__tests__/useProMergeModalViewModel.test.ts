@@ -18,7 +18,7 @@ const HERE = {
   ),
 };
 
-/** Bruno retitled the first case in the org, and this computer retitled it too. */
+/** O Bruno renomeou o primeiro caso na org, e este computador o renomeou também. */
 const shareBy = (editedBy: string | null): IProShare => ({
   projectId: 'p1',
   orgSlug: 'loja',

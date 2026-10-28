@@ -1,7 +1,4 @@
-/**
- * Up to two letters for a person, from their name, or from their e-mail when it is all
- * there is.
- */
+/** Até duas letras para uma pessoa, do nome dela, ou do e-mail quando é tudo o que há. */
 export function initialsOf(name: string): string {
   const words =
     name

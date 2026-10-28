@@ -5,8 +5,8 @@ import { mergeCases } from './mergeCases';
 import { syncedCaseOf } from './syncedCaseOf';
 
 /**
- * Each plan the org moved in a project, joined with this computer's as the QA chose; a
- * workspace no longer here is left out.
+ * Cada plano que a org mexeu num projeto, juntado com o deste computador como o QA
+ * escolheu; um workspace que não está mais aqui fica de fora.
  */
 export function planUpdatesOf(props: {
   share: IProShare | undefined;

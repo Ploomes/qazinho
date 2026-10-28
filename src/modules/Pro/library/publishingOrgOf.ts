@@ -3,8 +3,8 @@ import type { IProOrg } from '@/shared/types';
 const PAID_UP = new Set(['trialing', 'active', 'past_due']);
 
 /**
- * The org a project is published to: the chosen one while the person writes there, else
- * the first they write in that is paid up.
+ * A org em que um projeto é publicado: a escolhida enquanto a pessoa escreve lá, senão a
+ * primeira em que ela escreve e que está em dia.
  */
 export function publishingOrgOf(props: {
   orgs: IProOrg[];

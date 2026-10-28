@@ -1,6 +1,6 @@
 /**
- * What a target is, as an org may read it: a web address without a login in it, or a
- * build by its file name, never the folder it sits in on this machine.
+ * O que um alvo é, como uma org pode lê-lo: um endereço web sem login dentro, ou um build
+ * pelo nome do arquivo, nunca a pasta em que fica nesta máquina.
  */
 export function sharedValueOf(value: string): string {
   if (!/^https?:\/\//i.test(value)) return value.split(/[\\/]/).pop() ?? value;

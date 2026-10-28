@@ -1,6 +1,6 @@
 /**
- * What the QA should know about their linked projects: no answer, no org, read-only,
- * blocked, refused, deleted in the org, or an org out of reach.
+ * O que o QA deve saber dos projetos ligados dele: nenhuma resposta, nenhuma org, só
+ * leitura, bloqueada, recusada, apagado na org, ou uma org fora de alcance.
  */
 export type ProAttention =
   | 'unreachable'

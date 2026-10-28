@@ -1,8 +1,8 @@
 import type { ProDownloadState } from './ProDownloadState';
 
 /**
- * How bringing one of the org's projects here ended: the workspaces it brought, or why it
- * did not.
+ * Como trazer para cá um dos projetos da org terminou: os workspaces que trouxe, ou por
+ * que não.
  */
 export type OrgDownloadEnd =
   | { isDownloaded: true; workspaceIds: string[] }

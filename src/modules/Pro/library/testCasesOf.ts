@@ -2,8 +2,8 @@ import type { ITestCase } from '@/modules/Plan/types';
 import type { IProSyncCase } from '@/shared/types';
 
 /**
- * Cases from the org as the workspace's plan, each keeping how its last run went here
- * when this computer has it.
+ * Casos da org como o plano do workspace, cada um mantendo como foi a última run dele
+ * aqui quando este computador a tem.
  */
 export function testCasesOf(props: {
   cases: IProSyncCase[];

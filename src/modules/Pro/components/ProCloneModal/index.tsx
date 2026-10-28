@@ -5,8 +5,8 @@ import { useProCloneModalViewModel } from './hooks';
 import './styles.css';
 
 /**
- * Finds a project of one of the person's orgs and clones it to this computer, linked to
- * that org.
+ * Acha um projeto de uma das orgs da pessoa e o clona para este computador, ligado a essa
+ * org.
  */
 export const ProCloneModal: React.FC<IProCloneModalProps> = (props) => {
   const view = useProCloneModalViewModel(props);

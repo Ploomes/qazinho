@@ -2,8 +2,8 @@ import type { ITestCase } from '@/modules/Plan/types';
 import type { IProSyncCase } from '@/shared/types';
 
 /**
- * A case of the plan as QAzinho Pro keeps it: what it covers and its steps, without how
- * the last run went.
+ * Um caso do plano como o QAzinho Pro o guarda: o que cobre e os passos, sem como a
+ * última run foi.
  */
 export function syncedCaseOf(testCase: ITestCase): IProSyncCase {
   const { id, title, priority, goal, preconditions, steps } = testCase;

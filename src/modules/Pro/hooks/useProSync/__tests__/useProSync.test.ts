@@ -36,7 +36,10 @@ let synced: IProSyncBatch[] = [];
 let listed: string[] = [];
 let announce: (share: IProShare) => void = () => undefined;
 
-/** A bridge whose main holds the shares given, and keeps every batch the page hands it. */
+/**
+ * Uma bridge cuja main guarda os compartilhamentos dados, e guarda todo batch que a
+ * página lhe entrega.
+ */
 function bridgeWith(props: { status: ProStatus; shares?: IProShare[] }) {
   window.qazinho = {
     ...fakeQazinhoApi('darwin'),

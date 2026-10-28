@@ -3,7 +3,7 @@ import { PROJECT_PRO_PANE } from '@/modules/Pro/components/ProjectProPane/consta
 import { Icon } from '@/shared/components/atoms';
 import './styles.css';
 
-/** One thing the project's link holds: what it says, and its action on the right. */
+/** Uma coisa que o vínculo do projeto guarda: o que diz, e a ação dela à direita. */
 export const PaneRow: React.FC<IPaneRowProps> = (props) => (
   <div className={`pane-row pane-row--${props.tone}`}>
     <span className="pane-row__tile">

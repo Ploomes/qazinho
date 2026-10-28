@@ -1,7 +1,7 @@
 import type { IProject } from '@/modules/Project/types';
 import type { IProSyncProject } from '@/shared/types';
 
-/** A project downloaded from the org as this computer keeps it. */
+/** Um projeto baixado da org como este computador o guarda. */
 export function projectOfDownload(project: IProSyncProject): IProject {
   return {
     id: project.projectId,

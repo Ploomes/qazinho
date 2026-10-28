@@ -7,8 +7,8 @@ import { syncedCaseOf } from './syncedCaseOf';
 import { syncedRunOf } from './syncedRunOf';
 
 /**
- * Everything a shared project holds, as QAzinho Pro takes it: each workspace with a plan,
- * a run or a bug as a plan, with its finished runs and its bugs.
+ * Tudo o que um projeto compartilhado guarda, como o QAzinho Pro o aceita: cada workspace
+ * com um plano, uma run ou um bug como um plano, com as runs terminadas e os bugs dele.
  */
 export function proBatchOf(props: {
   project: IProject;

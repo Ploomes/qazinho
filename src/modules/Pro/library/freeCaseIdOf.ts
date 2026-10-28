@@ -1,6 +1,6 @@
 /**
- * An id for a case like another one that no case of the plan holds yet: the next number
- * after it, or the id with a count.
+ * Um id para um caso parecido com outro que nenhum caso do plano tem ainda: o número
+ * seguinte, ou o id com uma contagem.
  */
 export function freeCaseIdOf(props: { id: string; taken: string[] }): string {
   const { id, taken } = props;

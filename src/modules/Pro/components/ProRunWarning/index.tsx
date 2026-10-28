@@ -4,8 +4,8 @@ import { PRO_RUN_WARNING } from './constants';
 import { useProRunWarningViewModel } from './hooks';
 
 /**
- * Holds a run of a plan the org moved since: update it first, or run it as it stands
- * here.
+ * Segura uma run de um plano que a org mexeu desde então: atualize-o primeiro, ou rode-o
+ * como está aqui.
  */
 export const ProRunWarning: React.FC = () => {
   const view = useProRunWarningViewModel();

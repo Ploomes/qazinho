@@ -1,8 +1,8 @@
 import type { IRun } from '@/modules/Run/types';
 
 /**
- * When a run started, as an ISO moment: the moment it kept, else when its recording
- * began; null for a run that knows neither.
+ * Quando uma run começou, como um momento ISO: o momento que ela guardou, senão quando a
+ * gravação dela começou; null para uma run que não sabe nenhum.
  */
 export function startedIsoOf(run: Pick<IRun, 'startedAtMs' | 'video'>): string | null {
   const ms = run.startedAtMs ?? run.video?.startedAt ?? null;

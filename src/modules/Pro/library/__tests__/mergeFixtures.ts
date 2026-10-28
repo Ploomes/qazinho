@@ -1,6 +1,9 @@
 import type { IProSyncCase } from '@/shared/types';
 
-/** A case of the checkout plan, with its title and its one step's expected result made to order. */
+/**
+ * Um caso do plano de checkout, com o título e o resultado esperado do único passo feitos
+ * sob medida.
+ */
 export function caseOf(props: {
   id: string;
   title?: string;

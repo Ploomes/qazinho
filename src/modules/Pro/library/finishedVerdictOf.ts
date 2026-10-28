@@ -1,8 +1,8 @@
 import type { StepVerdict } from '@/shared/types';
 
 /**
- * A verdict as a finished run keeps it: what never got past pending or running was
- * skipped.
+ * Um veredito como uma run terminada o guarda: o que nunca passou de pendente ou rodando
+ * foi pulado.
  */
 export function finishedVerdictOf(
   verdict: StepVerdict,

@@ -6,8 +6,8 @@ import { startedIsoOf } from './startedIsoOf';
 import { videoSecondsOf } from './videoSecondsOf';
 
 /**
- * A bug as QAzinho Pro takes it, first seen when the run that caught it started, each
- * catch placed on its run's video; null when that run does not know when it started.
+ * Um bug como o QAzinho Pro o aceita, visto primeiro quando a run que o pegou começou,
+ * cada vez posta no vídeo da run dela; null quando essa run não sabe quando começou.
  */
 export function syncedBugOf(props: {
   workspaceId: string;

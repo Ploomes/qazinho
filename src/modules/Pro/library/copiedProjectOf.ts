@@ -2,8 +2,8 @@ import type { IProject } from '@/modules/Project/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
 
 /**
- * A copy of a project as a new one of this computer: the same targets and code, and each
- * workspace with a plan, carrying the plan alone.
+ * Uma cópia de um projeto como um novo deste computador: os mesmos alvos e código, e cada
+ * workspace com um plano, levando só o plano.
  */
 export function copiedProjectOf(props: {
   project: IProject;

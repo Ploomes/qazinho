@@ -1,2 +1,5 @@
-/** How loud a row of the pane reads: lit while it waits on the QA, plain otherwise. */
+/**
+ * Quão alto uma linha do painel se lê: acesa enquanto espera pelo QA, simples nos outros
+ * casos.
+ */
 export type PaneRowTone = 'plain' | 'lit';
