@@ -1,305 +1,316 @@
 # QAzinho
 
-A local-first desktop QA assistant. A QA professional plans tests, runs them on web and mobile
-apps, and keeps their test work organised, with their own AI agent alongside: the agent drafts the
-plan with them, walks the flows on a real device and reports what it saw against what the QA
-expected. The QA stays in charge; the agent is the assistant.
+Um assistente de QA desktop, local-first. Um profissional de QA planeja testes, os roda em apps
+web e mobile, e mantém o trabalho de teste dele organizado, com o próprio agente de IA ao lado: o
+agente rascunha o plano com ele, anda os fluxos num dispositivo real e relata o que viu contra o
+que o QA esperava. O QA continua no comando; o agente é o assistente.
 
-| Target  | Input                                   | Driven by                                         | Verified   |
-| ------- | --------------------------------------- | ------------------------------------------------- | ---------- |
-| web     | the environment's URL                   | Playwright over the QA's own Chrome               | end to end |
-| Android | an `.apk`                               | the QA's own AVD, through `adb` and `uiautomator` | end to end |
-| iOS     | a simulator `.app` build, not an `.ipa` | `simctl` boots and shoots; `idb` reads and taps   | end to end |
+| Alvo    | Entrada                                     | Dirigido por                                      | Verificado       |
+| ------- | ------------------------------------------- | ------------------------------------------------- | ---------------- |
+| web     | a URL do ambiente                           | Playwright sobre o próprio Chrome do QA           | de ponta a ponta |
+| Android | um `.apk`                                   | o próprio AVD do QA, pelo `adb` e o `uiautomator` | de ponta a ponta |
+| iOS     | um build `.app` de simulador, não um `.ipa` | `simctl` sobe e fotografa; `idb` lê e toca        | de ponta a ponta |
 
-QAzinho finds the SDK, the emulator and idb where they already are, and names what is missing
-where the QA reads it. **It installs only what is light, and only when the QA asks**: the agent
-CLIs over npm, and idb as Homebrew's companion plus its Python client in a virtualenv of its own
-(simctl has no command that touches the screen).
-The Android SDK and Xcode are too big: the first-run setup links to them and checks again.
+O QAzinho acha o SDK, o emulador e o idb onde eles já estão, e nomeia o que falta onde o QA lê.
+**Ele instala só o que é leve, e só quando o QA pede**: as CLIs de agente pelo npm, e o idb como o
+companheiro do Homebrew mais o cliente Python dele num virtualenv próprio (o simctl não tem
+comando que toque a tela). O SDK do Android e o Xcode são grandes demais: a configuração da
+primeira execução os linka e confere de novo.
 
-Built for technical QA teams, and for QA moving from manual to technical. A project is an
-environment with one or more targets. Workspaces hold a test plan, and several run in parallel.
+Feito para times técnicos de QA, e para QAs que estão indo do manual ao técnico. Um projeto é um
+ambiente com um ou mais alvos. Os workspaces guardam um plano de testes, e vários rodam em
+paralelo.
 
-**It is calm and flat to work in all day** (`rules/sticker-design.md`): the work sits on a Night
-or Paper surface, cards and popups are raised only by a 1px line and, when they float, a soft
-shadow, and nothing tilts or slaps on. The brand lives in a few touches: the lime accent, the
-Estagiário drawn flat, Bricolage on titles, and the logo, which alone stays a sticker. Every
-screen follows it.
+**É calmo e plano para trabalhar o dia todo** (`rules/sticker-design.md`): o trabalho fica numa
+superfície Night ou Paper, cartões e popups são elevados só por uma linha de 1px e, quando
+flutuam, uma sombra suave, e nada se inclina nem se cola na tela. A marca vive em poucos toques: o
+acento lima, o Estagiário desenhado plano, o Bricolage nos títulos, e o logo, que sozinho continua
+um sticker. Toda tela o segue.
 
-## The rules that are not up for negotiation
+## As regras que não estão em negociação
 
-1. **Everything runs on the user's machine.** Emulators, simulators, browsers and runs. The free
-   app never needs a QAzinho backend; only Pro's team hosting uses one.
-2. **The agent is the user's.** Claude Code or Codex for now, driven through their own CLIs; more
-   agents come later, one at a time, each checked against the real CLI before it is offered.
-   QAzinho builds the QA harness around it and never holds a provider key or a login of its own.
-   When the agent is signed out, QAzinho starts the agent's own sign-in (`claude auth login`,
-   `codex login`): the page opens in the QA's browser, and the agent keeps what it gets.
-3. **A Salve Software product, closed source, in two plans.** Free is the whole desktop app, with
-   no account and no artificial limit: download it and use it. Pro is a paid web platform for a
-   company: an account and an org, where the QA publishes the projects of their machine they
-   choose, one org each, to share projects, plans and runs. The desktop app never needs Pro and nothing local is shaped around
-   it. Today the work is the desktop app; the platform comes later (`ROADMAP.md`).
-4. **The page is a web page and nothing more.** No Node, no Electron, no filesystem. It asks the
-   main process through `window.qazinho`, whose contract lives in `src/shared/types/`.
-5. **Nothing in the interface is a mock.** Every number, screenshot and verdict on screen came
-   back from the machine. When something is not built yet, it says so where a QA can read it.
-6. **It runs on Windows, Linux and macOS.** Every feature works on all three, the iOS target
-   aside, which only a Mac can run (`rules/platforms.md`). A command, a path, a window or a
-   shortcut that assumes one OS is a bug.
+1. **Tudo roda na máquina do usuário.** Emuladores, simuladores, navegadores e runs. O app grátis
+   nunca precisa de um backend do QAzinho; só a hospedagem de times do Pro usa um.
+2. **O agente é do usuário.** Claude Code ou Codex por enquanto, dirigidos pelas CLIs deles; mais
+   agentes virão, um de cada vez, cada um conferido contra a CLI real antes de ser oferecido. O
+   QAzinho constrói o harness de QA em volta dele e nunca guarda uma chave de provedor nem um
+   login próprio. Quando o agente está sem login, o QAzinho inicia o login do próprio agente
+   (`claude auth login`, `codex login`): a página abre no navegador do QA, e o agente guarda o que
+   recebe.
+3. **Um produto da Salve Software, código fechado, em dois planos.** O Free é o app desktop
+   inteiro, sem conta e sem limite artificial: baixe e use. O Pro é uma plataforma web paga para
+   uma empresa: uma conta e uma org, onde o QA publica os projetos da máquina dele que escolhe,
+   uma org cada, para compartilhar projetos, planos e runs. O app desktop nunca precisa do Pro e
+   nada local é moldado em torno dele. Hoje o trabalho é o app desktop; a plataforma vem depois
+   (`ROADMAP.md`).
+4. **A página é uma página web e nada mais.** Sem Node, sem Electron, sem sistema de arquivos. Ela
+   pergunta ao processo main por `window.qazinho`, cujo contrato vive em `src/shared/types/`.
+5. **Nada na interface é um mock.** Todo número, screenshot e veredito na tela voltou da máquina.
+   Quando algo ainda não foi construído, ele diz isso onde um QA pode ler.
+6. **Roda no Windows, no Linux e no macOS.** Toda funcionalidade funciona nos três, fora o alvo
+   iOS, que só um Mac roda (`rules/platforms.md`). Um comando, caminho, janela ou atalho que
+   presume um SO é um bug.
+7. **O código é em inglês, a prosa em português.** Nomes, strings, nomes de testes e commits ficam
+   em inglês. Os `.md` (o corpus do harness incluído), o JSDoc e os comentários dos testes são em
+   português do Brasil.
 
-## State
+## Estado
 
-**The web target works end to end.** A QA makes a project and a workspace, talks to their own
-agent, gets a plan, runs it, and watches real Chrome be driven step by step. The plan comes out
-of a conversation: the agent looks at the app, asks one round of questions in the chat, and
-confirms what it will write before it writes it. In the run, the agent reads the
-page, acts, the run screenshots it, and the agent judges what it sees against what the QA
-expected. A failed step becomes a bug with its evidence. A bug that comes back is not filed
-twice: each run's agents hear the bugs open and name one seen again, a plan step that fails again
-lands on its bug, and the Bugs tab counts the runs that saw it, with each screen; a fake agent
-walking a plan twice left one bug per problem, each seen in two runs. Everything is kept on disk,
-one folder per workspace, with the plan beside it in YAML, each file written whole. A plan.yaml
-broken by hand is set aside, never written over: the Plan tab says at which line, shows the file
-and reads it again once fixed.
+**O alvo web funciona de ponta a ponta.** Um QA faz um projeto e um workspace, conversa com o
+próprio agente, recebe um plano, o roda e vê o Chrome real ser dirigido passo a passo. O plano sai
+de uma conversa: o agente olha o app, faz uma rodada de perguntas no chat, e confirma o que vai
+escrever antes de escrever. Na run, o agente lê a página, age, a run tira um screenshot, e o
+agente julga o que vê contra o que o QA esperava. Um passo que falha vira um bug com a evidência
+dele. Um bug que volta não é registrado duas vezes: os agentes de cada run ouvem os bugs abertos e
+nomeiam um visto de novo, um passo de plano que falha de novo cai no bug dele, e a aba Bugs conta
+as runs que o viram, com cada tela; um agente fake andando um plano duas vezes deixou um bug por
+problema, cada um visto em duas runs. Tudo é guardado em disco, uma pasta por workspace, com o
+plano ao lado em YAML, cada arquivo escrito inteiro. Um plan.yaml quebrado à mão é posto de lado,
+nunca sobrescrito: a aba Plano diz em qual linha, mostra o arquivo e o lê de novo depois de
+consertado.
 
-`npm run test:smoke` proves it: it drives the real browser with the real agent.
+O `npm run test:smoke` prova isso: ele dirige o navegador real com o agente real.
 
-**Android works the same way**, proven by `tests/smoke/android.test.ts`: it installs a visit
-counter built from source on the QA's own AVD, reads the screen out of `uiautomator`, taps what
-the agent named, and judges what it sees.
+**O Android funciona do mesmo jeito**, provado pelo `tests/smoke/android.test.ts`: ele instala um
+contador de visitas construído do fonte no AVD do próprio QA, lê a tela do `uiautomator`, toca o
+que o agente nomeou, e julga o que vê.
 
-**iOS works the same way**, proven by `tests/smoke/ios.test.ts`: a visit counter built from
-source for the simulator (`tests/smoke/fixtures/`), read and tapped through idb, and a plan walked
-and judged by the QA's own agent. Every case starts on the app opened anew: Android clears its
-data, iOS reinstalls it, the web clears the browser (`device-fresh.test.ts`, `fresh.test.ts`).
-A step that closes the app and opens it again does it for real with `reopen`, its data kept:
-Android stops the app, iOS terminates it, the web opens its address in a new tab. The runner
-also scrolls until words show, holds a finger down and drags one thing onto another, and on the
-web it hovers and uploads a sample file QAzinho made. On a phone it scrolls before it calls
-something missing. The browser and both fixture apps prove the scroll and the long press
-(`tools.test.ts`, `device-fresh.test.ts`); a drag on a phone has not met a real app. Before a plan
-on a phone, the chat opens the app on the emulator or simulator and reads its first screen. An
-iOS app that does not adopt UIScene does not launch on iOS 27, and QAzinho says it closed at once.
+**O iOS funciona do mesmo jeito**, provado pelo `tests/smoke/ios.test.ts`: um contador de visitas
+construído do fonte para o simulador (`tests/smoke/fixtures/`), lido e tocado pelo idb, e um plano
+andado e julgado pelo agente do próprio QA. Todo caso começa com o app aberto de novo: o Android
+limpa os dados dele, o iOS o reinstala, a web limpa o navegador (`device-fresh.test.ts`,
+`fresh.test.ts`). Um passo que fecha o app e o abre de novo faz isso de verdade com `reopen`, com
+os dados mantidos: o Android para o app, o iOS o termina, a web abre o endereço dele numa aba nova.
+O runner também rola até palavras aparecerem, segura um dedo e arrasta uma coisa sobre outra, e na
+web passa o mouse e envia um arquivo de exemplo que o QAzinho fez. Num celular ele rola antes de
+dizer que algo falta. O navegador e os dois apps de fixture provam a rolagem e o toque longo
+(`tools.test.ts`, `device-fresh.test.ts`); um arrasto num celular ainda não encontrou um app real.
+Antes de um plano num celular, o chat abre o app no emulador ou simulador e lê a primeira tela
+dele. Um app iOS que não adota o UIScene não abre no iOS 27, e o QAzinho diz que ele fechou na
+hora.
 
-**A case that passed is walked again without the agent.** Each step's actions are recorded with
-the words on screen that proved it, and the next run repeats them on the device and checks the
-words: seconds and no cost, against tens of seconds and a few cents with the agent. When the
-app changed and a word does not show, the agent walks the case again and records it anew
-("healed"). The recorded cases export as a Playwright test file or Maestro flows, gestures
-included. A real Claude
-Code has recorded a web and an Android plan this way, both walked again with no agent, and the
-exported Playwright file passed in Chrome; the Maestro flows have not run in Maestro yet.
-`tests/smoke/replay.test.ts` proves it with a fake agent.
+**Um caso que passou é andado de novo sem o agente.** As ações de cada passo são gravadas com as
+palavras na tela que o provaram, e a próxima run as repete no dispositivo e confere as palavras:
+segundos e nenhum custo, contra dezenas de segundos e alguns centavos com o agente. Quando o app
+mudou e uma palavra não aparece, o agente anda o caso de novo e o grava outra vez ("curado"). Os
+casos gravados exportam como um arquivo de teste do Playwright ou fluxos do Maestro, gestos
+incluídos. Um Claude Code real gravou um plano web e um Android assim, os dois andados de novo
+sem agente, e o arquivo de Playwright exportado passou no Chrome; os fluxos do Maestro ainda não
+rodaram no Maestro. O `tests/smoke/replay.test.ts` prova isso com um agente fake.
 
-**An exploration needs no plan.** From the empty chat, the workspace's Explore button or the
-Estagiário, the QA's agent goes through the app on its own for ten minutes: it notes each screen
-it reaches, files what is broken as bugs, and finishes with a suggested plan that waits on a
-card in the chat until the QA takes it into the plan. It is a run of its own, recorded like one,
-its screens the steps of one case; a finish with more than a third of the time left is sent back
-once. A real Claude Code (Haiku) explored a booking app with six planted bugs and found four in
-about a minute, logging in with the project's variables; `tests/smoke/explore.test.ts` drives a
-fake agent on real Chrome, and through the app only a fake explorer has gone yet.
+**Uma exploração não precisa de plano.** Do chat vazio, do botão Explorar do workspace ou do
+Estagiário, o agente do QA percorre o app sozinho por dez minutos: anota cada tela que alcança,
+registra o que está quebrado como bugs, e termina com um plano sugerido que espera num cartão no
+chat até o QA levá-lo ao plano. É uma run própria, gravada como uma, com as telas dela como os
+passos de um caso só; um fim com mais de um terço do tempo sobrando é devolvido uma vez. Um Claude
+Code real (Haiku) explorou um app de reservas com seis bugs plantados e achou quatro em cerca de
+um minuto, entrando com as variáveis do projeto; o `tests/smoke/explore.test.ts` dirige um agente
+fake no Chrome real, e pelo app só um explorador fake foi até agora.
 
-**A project keeps its logins and secrets as variables**: a name, what it holds, and a value
-sealed by the OS keychain in main, which never reaches the page or an agent again. The QA adds
-them in the project's window, or types them in a window the chat or the Estagiário opens: when a
-plan needs an account, the chat's agent offers the variables that fit and an option that creates
-what is missing. A step names one as `${NAME}`. The run types its value, reads any value the
-screen shows back as its name, and keeps the name in recipes and exported code. On Linux with no
-secret store QAzinho keeps none, and Android types every character but a double quote, which it
-refuses. A preview Vercel protects, or a staging behind a browser sign-in, opens with the variables
-`VERCEL_AUTOMATION_BYPASS_SECRET`, or `BASIC_AUTH_USER` and `BASIC_AUTH_PASSWORD`, sent to the app's
-origin alone (`webAccessOf`), in a run here and in the CI. A password written out in a plan by hand is offered as a variable from the Plan tab, and
-the chat holds one back. `tests/smoke/variables.test.ts` proves the run on real Chrome with a fake agent, and a
-real Claude Code (Haiku) planned a login asking for the account through the window, then signed
-in with the sealed values: 8 steps of 8, with no value in the plan or the report.
+**Um projeto guarda os logins e segredos dele como variáveis**: um nome, o que ele guarda, e um
+valor lacrado pelo keychain do SO na main, que nunca chega à página nem a um agente de novo. O QA
+as adiciona na janela do projeto, ou as digita numa janela que o chat ou o Estagiário abre:
+quando um plano precisa de uma conta, o agente do chat oferece as variáveis que servem e uma opção
+que cria o que falta. Um passo nomeia uma como `${NAME}`. A run digita o valor dela, lê de volta
+como o nome dela qualquer valor que a tela mostre, e guarda o nome nas receitas e no código
+exportado. No Linux sem armazenamento de segredos o QAzinho não guarda nenhuma, e o Android digita
+todo caractere menos aspas duplas, que ele recusa. Um preview que a Vercel protege, ou um staging
+atrás de um login do navegador, abre com as variáveis `VERCEL_AUTOMATION_BYPASS_SECRET`, ou
+`BASIC_AUTH_USER` e `BASIC_AUTH_PASSWORD`, mandadas só para a origem do app (`webAccessOf`), numa
+run aqui e no CI. Uma senha escrita à mão num plano é oferecida como variável pela aba Plano, e o
+chat segura uma. O `tests/smoke/variables.test.ts` prova a run no Chrome real com um agente fake, e
+um Claude Code real (Haiku) planejou um login pedindo a conta pela janela, depois entrou com os
+valores lacrados: 8 passos de 8, sem valor no plano nem no relatório.
 
-**Every run is recorded and plays back with its timeline.** A browser is recorded from its live
-stream, a simulator by `simctl`, an emulator by its console. The run's video opens in a theater:
-a chapter per case in its verdict's colour, a pin per bug, a still of any moment under the
-cursor, and the steps beside it, kept in step. Each case offers its take in Runs, and each bug
-its moment in Bugs. `tests/smoke/record.test.ts` proves the browser's recording. A video is kept
-30 days by default, then let go of on its own: the run keeps its report, screens and verdicts,
-and its theater says the video went and when. Settings › Storage says what QAzinho keeps on the
-computer and how long videos stay; a video already sent to the QA's account is never sent again
-without it. Every screen, a phone's too, is a JPEG at its full size.
+**Toda run é gravada e toca de volta com a linha do tempo dela.** Um navegador é gravado a partir
+do stream vivo, um simulador pelo `simctl`, um emulador pelo console dele. O vídeo da run abre num
+teatro: um capítulo por caso na cor do veredito dele, um pino por bug, um still de qualquer
+momento sob o cursor, e os passos ao lado, mantidos em sincronia. Cada caso oferece a sua gravação
+em Runs, e cada bug o seu momento em Bugs. O `tests/smoke/record.test.ts` prova a gravação do
+navegador. Um vídeo é guardado por 30 dias por padrão, depois solto sozinho: a run mantém o
+relatório, as telas e os vereditos, e o teatro dela diz que o vídeo se foi e quando. Configurações
+› Armazenamento diz o que o QAzinho guarda no computador e por quanto tempo os vídeos ficam; um
+vídeo já mandado para a conta do QA nunca é mandado de novo sem ela. Toda tela, a de um celular
+também, é um JPEG no tamanho cheio.
 
-**A web run keeps its network beside its video.** Chrome notes each request the app makes, with
-its status, time and size, and the run keeps them with a variable's value written as its name and
-a token as dots. In the theater, the Network switch folds a strip open under the video: each
-request lands as the video reaches it, waits for its answer and jumps the video there on a click,
-and a failed one leaves a mark on the timeline. With the strip shown, Download makes the video
-again with the strip drawn under it. `tests/smoke/network.test.ts` proves the capture on real
-Chrome, and `strip.test.ts` the strip and the download in the built app. A phone run keeps no
-network yet.
+**Uma run web guarda a rede ao lado do vídeo.** O Chrome anota cada pedido que o app faz, com o
+status, o tempo e o tamanho, e a run os guarda com o valor de uma variável escrito como o nome
+dela e um token como pontos. No teatro, o botão Rede dobra uma faixa aberta sob o vídeo: cada
+pedido cai quando o vídeo o alcança, espera a resposta dele e leva o vídeo até lá num clique, e um
+que falhou deixa uma marca na linha do tempo. Com a faixa à mostra, Baixar refaz o vídeo com a
+faixa desenhada sob ele. O `tests/smoke/network.test.ts` prova a captura no Chrome real, e o
+`strip.test.ts` a faixa e o download no app construído. Uma run de celular ainda não guarda rede.
 
-**The agent reads the API calls too.** Each action it takes on the web says which API calls failed
-while it ran and what they answered, and `network` lists the latest calls or reads what one
-answered, a 200 whose data looks wrong included: the agent weighs them in its verdict and names
-the call that failed in the bug, as the likely cause. A failed call's answer is kept beside the
-run, and a bug sent to Jira or GitHub carries it under the request. Secrets read as dots and a
-variable's value as its name, everywhere. `tools.test.ts` and `network.test.ts` prove it on real
-Chrome; a real agent has not used it yet.
+**O agente lê as chamadas de API também.** Cada ação dele na web diz quais chamadas de API falharam
+enquanto ela rodou e o que responderam, e o `network` lista as últimas chamadas ou lê o que uma
+respondeu, um 200 com dados de cara errada incluído: o agente as pesa no veredito e nomeia a
+chamada que falhou no bug, como a causa provável. A resposta de uma chamada que falhou é guardada
+ao lado da run, e um bug mandado ao Jira ou ao GitHub a carrega sob o pedido. Segredos aparecem
+como pontos e o valor de uma variável como o nome dela, em todo lugar. O `tools.test.ts` e o
+`network.test.ts` provam isso no Chrome real; um agente real ainda não o usou.
 
-**A team's own Playwright suite runs in QAzinho.** A project connects the folder where the
-team keeps its suite cloned, and QAzinho reads it there and changes nothing in it: the tests by
-folder and file, listed and run by the suite's own Playwright on the QA's node, one Playwright
-project at a time, with the project's variables reaching the tests from the environment, never
-written to a file. The suite's screen runs everything, the failed, a folder, a file or one test,
-follows each step as it goes, and keeps each run with each test's error, the screen it left and
-its trace, which opens in Playwright's own viewer. `tests/smoke/suite.test.ts` lists and runs a
-fixture suite on real Chrome.
+**A suíte de Playwright própria de um time roda no QAzinho.** Um projeto conecta a pasta onde o
+time guarda a suíte clonada, e o QAzinho a lê lá e não muda nada nela: os testes por pasta e
+arquivo, listados e rodados pelo Playwright próprio da suíte no node do QA, um projeto do
+Playwright por vez, com as variáveis do projeto chegando aos testes pelo ambiente, nunca escritas
+num arquivo. A tela da suíte roda tudo, os que falharam, uma pasta, um arquivo ou um teste,
+acompanha cada passo enquanto anda, e guarda cada run com o erro de cada teste, a tela que ele
+deixou e o trace dele, que abre no visualizador próprio do Playwright. O
+`tests/smoke/suite.test.ts` lista e roda uma suíte de fixture no Chrome real.
 
-**The QA's agent fixes a broken test of the team's suite**, on a branch of its own in a git
-worktree QAzinho keeps, never in the QA's clone. It reads and edits the copy with no shell, and
-runs the tests through QAzinho's own tool, which knows the project's secrets and hands the agent
-their names. When the test is right and the app is wrong, it changes nothing and says so. QAzinho
-runs the test again in the copy and shows the diff; only once the QA approves does it commit,
-push with the QA's own git and open the pull request through gh. A real Claude Code (Haiku) fixed
-a renamed link in 34 seconds and told a planted search bug apart from a broken test;
-`tests/smoke/fix.test.ts` drives a fake agent over the real tool on real Chrome.
+**O agente do QA conserta um teste quebrado da suíte do time**, numa branch própria num git
+worktree que o QAzinho mantém, nunca no clone do QA. Ele lê e edita a cópia sem shell, e roda os
+testes pela ferramenta própria do QAzinho, que conhece os segredos do projeto e entrega ao agente
+os nomes deles. Quando o teste está certo e o app errado, ele não muda nada e diz isso. O QAzinho
+roda o teste de novo na cópia e mostra o diff; só quando o QA aprova ele faz o commit, dá push com
+o git do próprio QA e abre o pull request pelo gh. Um Claude Code real (Haiku) consertou um link
+renomeado em 34 segundos e distinguiu um bug plantado na busca de um teste quebrado; o
+`tests/smoke/fix.test.ts` dirige um agente fake sobre a ferramenta real no Chrome real.
 
-**The QA's agent also writes a new test** the same way, from the QA's words or a case of one of
-the project's plans, in the folder the QA picks or where the suite keeps its like, with the
-team's fixtures, IDs and tags. QAzinho runs every test of the spec files it touched, and a new
-test the app fails stays, as one that catches a bug. A real Claude Code (Haiku) wrote one from a
-sentence in about a minute and one from a plan case in a minute and a half, each passing in the
-copy; `tests/smoke/write.test.ts` drives a fake agent on real Chrome.
+**O agente do QA também escreve um teste novo** do mesmo jeito, a partir das palavras do QA ou de
+um caso de um dos planos do projeto, na pasta que o QA escolhe ou onde a suíte guarda os
+parecidos, com as fixtures, IDs e tags do time. O QAzinho roda todo teste dos arquivos de spec que
+ele tocou, e um teste novo que o app falha fica, como um que pega um bug. Um Claude Code real
+(Haiku) escreveu um a partir de uma frase em cerca de um minuto e um a partir de um caso de plano
+em um minuto e meio, cada um passando na cópia; o `tests/smoke/write.test.ts` dirige um agente
+fake no Chrome real.
 
-**The agent asks the QA mid-run.** A case's agent, or the explorer, that cannot go on without
-the QA calls `ask_qa`: a code texted to their phone, a choice the case leaves open, a screen only
-they can judge. The run holds and the chat shows the question on a card, with the answers it
-offers; the sidebar, the header and the device say the run waits on the QA. A secret is
-typed in a hidden field and goes as a variable: the agent types `${NAME}` and never sees it, and
-the project keeps it when the QA says so. With no answer in 15 minutes the agent goes on without
-one, and Stop ends the wait. The answers stay in the run's section and in Runs, on the step they
-were asked at. `tests/smoke/ask.test.ts` proves it with a fake agent on real Chrome. A real Claude
-Code (Haiku) asked in Portuguese which plan to pick and, as a secret, for the code texted to the
-phone, then passed the case, the code in no event; it held one call for 16 minutes. Through Codex
-it has not been tried.
+**O agente pergunta ao QA no meio da run.** O agente de um caso, ou o explorador, que não pode
+seguir sem o QA chama `ask_qa`: um código mandado por texto ao celular dele, uma escolha que o caso
+deixa aberta, uma tela que só ele pode julgar. A run segura e o chat mostra a pergunta num cartão,
+com as respostas que ela oferece; a sidebar, o cabeçalho e o dispositivo dizem que a run espera o
+QA. Um segredo é digitado num campo escondido e vai como uma variável: o agente digita `${NAME}` e
+nunca o vê, e o projeto o guarda quando o QA diz. Sem resposta em 15 minutos o agente segue sem
+uma, e o Stop termina a espera. As respostas ficam na seção da run e em Runs, no passo em que
+foram perguntadas. O `tests/smoke/ask.test.ts` prova isso com um agente fake no Chrome real. Um
+Claude Code real (Haiku) perguntou em português qual plano escolher e, como segredo, o código
+mandado ao celular, depois passou o caso, o código em nenhum evento; ele segurou uma chamada por 16
+minutos. Pelo Codex isso não foi tentado.
 
-**A run that ends calls the QA back** while they are away: a notification with its sound and a
-count on the app's icon, unless they asked to hear only inside the app, where a notice says it.
-A question from a run calls them back the same way.
+**Uma run que termina chama o QA de volta** enquanto ele está longe: uma notificação com o som dela
+e uma contagem no ícone do app, a menos que ele tenha pedido para ouvir só dentro do app, onde um
+aviso diz isso. Uma pergunta de uma run o chama de volta do mesmo jeito.
 
-**A first run walks the machine** (`Onboarding`): language, the agent, the device tools, the
-trackers. GitHub and Jira connect for real. Jira's token is checked with Jira and sealed by the
-OS keychain.
+**Uma primeira execução anda pela máquina** (`Onboarding`): idioma, o agente, as ferramentas de
+dispositivo, os trackers. O GitHub e o Jira conectam de verdade. O token do Jira é conferido com o
+Jira e lacrado pelo keychain do SO.
 
-**GitHub goes through the QA's own GitHub CLI**, and QAzinho keeps no token. Connecting runs gh's
-device flow out of sight, or takes a gh already signed in, and installs gh when it is missing. A
-project then picks its repositories, and `/code` in the chat plans from one of their branches:
-the base branch for the whole app, any other for what it changed. The agent reads a copy of the
-branch, read only, and the copy is gone once the plan is written; the plan keeps the commit it
-came from. A real Claude Code has planned from a public branch this way; through Codex it has not
-been tried. `tests/smoke/github.test.ts` drives a fake gh.
+**O GitHub passa pela GitHub CLI do próprio QA**, e o QAzinho não guarda token. Conectar roda o
+device flow do gh fora de vista, ou pega um gh já logado, e instala o gh quando falta. Um projeto
+então escolhe os repositórios dele, e o `/code` no chat planeja a partir de uma branch deles: a
+branch base para o app inteiro, qualquer outra para o que ela mudou. O agente lê uma cópia da
+branch, somente leitura, e a cópia some assim que o plano é escrito; o plano guarda o commit de
+onde veio. Um Claude Code real planejou a partir de uma branch pública assim; pelo Codex isso não
+foi tentado. O `tests/smoke/github.test.ts` dirige um gh fake.
 
-**A Figma design is held to the screen.** `/figma` in the chat takes the link to a frame or
-page, and the QA's own agent reads it through the Figma MCP it signed in to in Settings: the
-sizes, spacing, colours, type, texts, states and the designers' annotations. It plans with the
-QA, and each step that lands on a designed screen names its frame, which the plan opens in Figma.
-A run hands those cases the same Figma: the agent reads the frame, measures the screen with
-`inspect` (CSS px, type and colours on the web; dp on Android, points on iOS) and files each
-difference as a bug off the design, whose card and issue link the frame. An exploration does
-the same on the screens the design draws, and suggests cases that name their frames. The
-Estagiário links or unlinks a design, hands a workspace's chat a plan against one, and reads
-which steps and bugs belong to a frame. A strict MCP config
-under the same name and address reuses Claude Code's sign-in, checked against the real CLI;
-`tests/smoke/design.test.ts` drives a fake agent on real Chrome, and `tools.test.ts` measures a
-control there. A real Claude Code (Haiku) planned from a real frame, captured into Figma from a
-checkout page, and walked a copy with four planted differences: it filed the title, the total's
-size and the button's colour and corners, each on its frame, for about a cent. Figma counts every
-read, a few a month on some seats, so a case walked again from its recipe checks no design.
+**Um design do Figma é conferido contra a tela.** O `/figma` no chat recebe o link de um frame ou
+página, e o agente do próprio QA o lê pelo MCP do Figma em que fez login nas Configurações: os
+tamanhos, espaçamentos, cores, tipografia, textos, estados e as anotações dos designers. Ele planeja
+com o QA, e cada passo que cai numa tela desenhada nomeia o frame dela, que o plano abre no Figma.
+Uma run entrega a esses casos o mesmo Figma: o agente lê o frame, mede a tela com `inspect` (px de
+CSS, tipografia e cores na web; dp no Android, pontos no iOS) e registra cada diferença como um bug
+contra o design, cujo cartão e issue linkam o frame. Uma exploração faz o mesmo nas telas que o
+design desenha, e sugere casos que nomeiam os frames deles. O Estagiário liga ou desliga um
+design, entrega ao chat de um workspace um plano contra um, e lê quais passos e bugs pertencem a um
+frame. Uma config de MCP estrita sob o mesmo nome e endereço reusa o login do Claude Code,
+conferida contra a CLI real; o `tests/smoke/design.test.ts` dirige um agente fake no Chrome real, e
+o `tools.test.ts` mede um controle lá. Um Claude Code real (Haiku) planejou a partir de um frame
+real, capturado no Figma de uma página de checkout, e andou uma cópia com quatro diferenças
+plantadas: registrou o título, o tamanho do total e a cor e os cantos do botão, cada um no frame
+dele, por cerca de um centavo. O Figma conta cada leitura, algumas por mês em alguns assentos,
+então um caso andado de novo a partir da receita não confere design nenhum.
 
-**A Jira story becomes the plan's requirement.** With Jira connected, `/jira` in the chat picks a
-story: the ones the QA opened last, or one found by its key or its words. QAzinho reads it whole
-with the QA's own token: the description, the acceptance criteria from whatever field the team
-keeps them in, the comments, the linked issues and subtasks, and the pictures, PDFs and text
-attached, downloaded for the agent to read. The agent plans from it: each criterion gets a case
-that names it, what the story leaves open is a question, and the story's text is never an
-instruction. The files are gone once the plan is written; the workspace keeps the story, which
-its header and its plan open in Jira. The Estagiário hands a workspace's chat a story by its key.
-The QA needs no command for it either: a story's key or link, or a Confluence page's link or
-title, in her own words is enough, and the chat's agent reads it through QAzinho, with her Jira.
-A real Claude Code (Haiku) found a page by its title alone and a story by its key, against a fake
-Jira and Confluence, and planned from each.
-`tests/smoke/jira.test.ts` reads one from a fake Jira site, and a real Claude Code (Haiku)
-planned from one with a screen attached: it read the screen, asked about what the story left
-open, and named the criterion each case covers. A real Jira site has not been tried.
+**Uma história do Jira vira o requisito do plano.** Com o Jira conectado, o `/jira` no chat escolhe
+uma história: as que o QA abriu por último, ou uma achada pela chave ou pelas palavras. O QAzinho a
+lê inteira com o token do próprio QA: a descrição, os critérios de aceitação do campo que o time
+usar, os comentários, as issues ligadas e subtarefas, e as imagens, PDFs e textos anexados,
+baixados para o agente ler. O agente planeja a partir dela: cada critério ganha um caso que o
+nomeia, o que a história deixa em aberto é uma pergunta, e o texto da história nunca é uma
+instrução. Os arquivos somem assim que o plano é escrito; o workspace guarda a história, que o
+cabeçalho e o plano dele abrem no Jira. O Estagiário entrega ao chat de um workspace uma história
+pela chave. O QA também não precisa de comando para isso: a chave ou o link de uma história, ou o
+link ou título de uma página do Confluence, nas palavras dele basta, e o agente do chat a lê pelo
+QAzinho, com o Jira dela. Um Claude Code real (Haiku) achou uma página só pelo título e uma
+história pela chave, contra um Jira e um Confluence fakes, e planejou a partir de cada uma. O
+`tests/smoke/jira.test.ts` lê uma de um site do Jira fake, e um Claude Code real (Haiku) planejou a
+partir de uma com uma tela anexada: leu a tela, perguntou sobre o que a história deixava em aberto,
+e nomeou o critério que cada caso cobre. Um site real do Jira não foi tentado.
 
-**A Confluence page becomes the plan, and the plan a Confluence page.** With Jira connected, the
-QA turns Confluence on in Jira's card: the same account on the same site, checked with Confluence
-first. `/confluence` in the chat picks a page, the ones the QA worked on last or one found by its
-title, and the agent plans from its text: it keeps the cases the team wrote there, their steps
-and expected results, asks about what the page leaves open, and takes nothing in it as an
-instruction. The Plan tab publishes the plan as a page: the first time in the space and under the
-page the QA picks, each case with its facts and its steps in a table with how the last run went;
-afterwards the same button writes the page's next version. `tests/smoke/confluence.test.ts` reads
-and publishes on a fake Confluence site, and the built app walked it all against one. A real
-Claude Code (Haiku) planned from a page of three cases for about four cents: it kept their steps,
-asked what the page left open, and named a note telling it to answer in prose as the page's text,
-not an order. A real Confluence site has not been tried.
+**Uma página do Confluence vira o plano, e o plano uma página do Confluence.** Com o Jira
+conectado, o QA liga o Confluence no cartão do Jira: a mesma conta no mesmo site, conferida antes
+com o Confluence. O `/confluence` no chat escolhe uma página, as que o QA trabalhou por último ou
+uma achada pelo título, e o agente planeja a partir do texto dela: mantém os casos que o time
+escreveu ali, os passos e resultados esperados deles, pergunta sobre o que a página deixa em
+aberto, e não toma nada nela como instrução. A aba Plano publica o plano como uma página: a
+primeira vez no espaço e sob a página que o QA escolhe, cada caso com os fatos e os passos dele
+numa tabela com como a última run foi; depois o mesmo botão escreve a versão seguinte da página.
+O `tests/smoke/confluence.test.ts` lê e publica num site do Confluence fake, e o app construído
+andou tudo contra um. Um Claude Code real (Haiku) planejou a partir de uma página de três casos
+por cerca de quatro centavos: manteve os passos deles, perguntou o que a página deixava em aberto,
+e nomeou uma nota que mandava responder em prosa como o texto da página, não uma ordem. Um site
+real do Confluence não foi tentado.
 
-**A bug goes to the QA's tracker as an issue.** An open bug sends itself from its card, or the
-Estagiário sends it once the QA confirms on a card. To Jira it goes as a Bug of the project the QA
-picks: its steps with the one that broke, what was expected and what came, the requests that
-failed around it and where it was caught, with its screens and a clip of the moment cut from the
-run's video attached (a phone's whole recording, when it is under 25 MB), and a link to the story
-the plan came from. To GitHub it goes through the QA's own gh, as a Markdown issue labelled bug;
-GitHub takes pictures only on its own page, so QAzinho copies the screen for the QA to paste. The
-bug keeps its issue's key, and the project keeps where its last bug went.
-`tests/smoke/filing.test.ts` files bugs in a fake Jira and through a fake gh, and the built app
-sent one to each; a real Jira site or repository has not been tried.
+**Um bug vai ao tracker do QA como uma issue.** Um bug aberto se manda do cartão dele, ou o
+Estagiário o manda quando o QA confirma num cartão. Ao Jira ele vai como um Bug do projeto que o QA
+escolhe: os passos dele com o que quebrou, o que se esperava e o que veio, os pedidos que falharam
+em volta e onde foi pego, com as telas e um clipe do momento cortado do vídeo da run anexados (a
+gravação inteira de um celular, quando tem menos de 25 MB), e um link para a história de onde o
+plano veio. Ao GitHub ele vai pelo gh do próprio QA, como uma issue em Markdown com o rótulo bug;
+o GitHub aceita imagens só na página dele, então o QAzinho copia a tela para o QA colar. O bug guarda
+a chave da issue dele, e o projeto guarda para onde foi o último bug dele.
+O `tests/smoke/filing.test.ts` registra bugs num Jira fake e por um gh fake, e o app construído
+mandou um para cada; um site real do Jira ou um repositório real não foi tentado.
 
-**A bug seen again after it was filed reaches its issue as a comment**, never by rewriting it.
-When a run ends, the QA's agent reads the issue as it stands, its status and comments, beside
-the runs that caught the bug again, and says whether they add something the issue lacks, whether
-the bug came back after the issue was closed, or nothing. What it suggests waits on the bug's
-card, where the QA edits it and posts it with one click, or puts it aside; Jira gets the new
-screens and clip with it. A closed issue is called a regression and never reopened.
-`tests/smoke/review.test.ts` weighs one through a fake agent and a fake Jira, and the built app
-posted one; a real agent has not weighed one yet.
+**Um bug visto de novo depois de registrado chega à issue dele como um comentário**, nunca
+reescrevendo-a. Quando uma run termina, o agente do QA lê a issue como está, o status e os
+comentários, ao lado das runs que pegaram o bug de novo, e diz se elas acrescentam algo que a issue
+não tem, se o bug voltou depois de a issue ser fechada, ou nada. O que ele sugere espera no cartão
+do bug, onde o QA o edita e o posta com um clique, ou o põe de lado; o Jira recebe as telas e o
+clipe novos com ele. Uma issue fechada é chamada de regressão e nunca reaberta. O
+`tests/smoke/review.test.ts` pesa uma por um agente fake e um Jira fake, e o app construído postou
+uma; um agente real ainda não pesou uma.
 
-**The Estagiário answers from the corner.** A sticker in the bottom-right corner opens a little
-chat where the QA's own agent talks about any project, workspace, run or bug. It also does what
-the QA could do by hand: open a screen, create or change a project, link a repository, create,
-rename, run or stop a workspace, change the settings, connect a tracker, and delete, disconnect or
-send a bug to a tracker once the QA confirms on a card. A plan it hands to the workspace's own
-chat, which writes it with the QA, and it helps answer that chat's questions. Its chat outlives a
-restart. `tests/smoke/assistant.test.ts` drives it with a fake agent over the real MCP server,
-and a real Claude Code (Haiku) has driven it through a QA's day in both languages; through Codex
-it has not.
+**O Estagiário responde do canto.** Um sticker no canto inferior direito abre um chatzinho onde o
+agente do próprio QA fala de qualquer projeto, workspace, run ou bug. Ele também faz o que o QA
+poderia fazer à mão: abrir uma tela, criar ou mudar um projeto, ligar um repositório, criar,
+renomear, rodar ou parar um workspace, mudar as configurações, conectar um tracker, e apagar,
+desconectar ou mandar um bug a um tracker quando o QA confirma num cartão. Um plano ele entrega ao
+chat próprio do workspace, que o escreve com o QA, e ajuda a responder as perguntas desse chat. O
+chat dele sobrevive a um reinício. O `tests/smoke/assistant.test.ts` o dirige com um agente fake
+sobre o servidor MCP real, e um Claude Code real (Haiku) o dirigiu por um dia de um QA nos dois
+idiomas; pelo Codex não.
 
-**The app builds from its own code.** A project that names its repositories builds its .apk or
-simulator .app from any branch, from the project's card or by asking the Estagiário. The QA's own
-agent builds it in a copy of the branch: React Native, Expo, Flutter or a native app, a build that
-runs alone on the emulator or simulator. What it made is checked, kept, and becomes the project's
-target. `tests/smoke/build.test.ts` drives it with a fake gh and a fake agent. A real Claude Code
-(Haiku), asked through the Estagiário, has built a native Android app with Gradle from a branch
-a fake gh handed over; React Native, Expo, Flutter and iOS have not been built by a real agent
-yet. QAzinho's calls run with the QA's own Claude Code hooks off: a hook that rewrites commands,
-such as rtk's, made every Gradle command fail the build's permissions.
+**O app é construído a partir do próprio código.** Um projeto que nomeia os repositórios dele
+constrói o .apk ou o .app de simulador a partir de qualquer branch, do cartão do projeto ou
+pedindo ao Estagiário. O agente do próprio QA o constrói numa cópia da branch: React Native, Expo,
+Flutter ou um app nativo, um build que roda sozinho no emulador ou simulador. O que ele fez é
+conferido, guardado, e vira o alvo do projeto. O `tests/smoke/build.test.ts` o dirige com um gh
+fake e um agente fake. Um Claude Code real (Haiku), pedido pelo Estagiário, construiu um app nativo
+de Android com o Gradle a partir de uma branch que um gh fake entregou; React Native, Expo, Flutter
+e iOS ainda não foram construídos por um agente real. As chamadas do QAzinho rodam com os hooks do
+próprio Claude Code do QA desligados: um hook que reescreve comandos, como o do rtk, fazia todo
+comando do Gradle falhar nas permissões do build.
 
-**QAzinho Pro is a card at the foot of the sidebar, and nothing else.** The card speaks of the
-QA's account and never names a plan, since Pro will not be the only one. Signed out, it signs this
-computer in by a code the QA confirms in the browser, its token sealed by the OS keychain. Signed in, every project goes to the org the account sends to, in the background: what
-changed since the last time, the screens and videos of its runs, with no loading and nothing new
-on screen, so the app is the same as signed out. A plan the org moved too is joined case by case,
-unasked, and one the org moved while nothing changed here, as a merged pull request does, comes in
-every few minutes. The card names the account and its org, flags a blocked org or an account that only
-reads, and downloads the org's projects with their recordings. A plan's "Open in the desktop" on
-the web (`qazinho://open`) opens its workspace here, or offers to download its project from the
-org first. Unit tests drive it against a fake platform; the platform's API (qazinho-server) is
-still being built, so no real round trip has run, and no installed app has opened a link yet.
+**O QAzinho Pro é um cartão no pé da sidebar, e nada mais.** O cartão fala da conta do QA e nunca
+nomeia um plano, já que o Pro não será o único. Sem login, ele faz este computador entrar por um
+código que o QA confirma no navegador, o token lacrado pelo keychain do SO. Com login, todo projeto
+vai à org para a qual a conta aponta, em segundo plano: o que mudou desde a última vez, as telas e
+vídeos das runs dele, sem carregamento e nada novo na tela, então o app é o mesmo que sem login.
+Um plano que a org também mexeu é juntado caso a caso, sem pedir, e um que a org mexeu enquanto
+nada mudou aqui, como um pull request mergeado, entra a cada poucos minutos. O cartão nomeia a
+conta e a org dela, sinaliza uma org bloqueada ou uma conta que só lê, e baixa os projetos da org
+com as gravações deles. O "Abrir no desktop" de um plano na web (`qazinho://open`) abre o
+workspace dele aqui, ou oferece baixar o projeto dele da org primeiro. Testes unitários o dirigem
+contra uma plataforma fake; a API da plataforma (qazinho-server) ainda está sendo construída,
+então nenhuma ida e volta real rodou, e nenhum app instalado abriu um link ainda.
 
-**Codex is half verified.** QAzinho drives it through `codex exec --json` and its own MCP server,
-checked against a fake Codex built from the real one's events. The chat has answered through a
-real signed-in Codex (CLI 0.163.0), in the strict schema; a run, with the device tools over MCP,
-has not. That is ours to know, not the QA's: no caveat about QAzinho's own testing goes in the
-interface.
+**O Codex está meio verificado.** O QAzinho o dirige por `codex exec --json` e o servidor MCP
+próprio dele, conferido contra um Codex fake construído a partir dos eventos do real. O chat
+respondeu por um Codex real logado (CLI 0.163.0), no schema estrito; uma run, com as ferramentas de
+dispositivo por MCP, não. Isso é para nós sabermos, não para o QA: nenhuma ressalva sobre os testes
+do próprio QAzinho vai para a interface.
 
-## Mandatory rules
+## Regras obrigatórias
 
 @rules/architecture.md
 @rules/code-structure.md
