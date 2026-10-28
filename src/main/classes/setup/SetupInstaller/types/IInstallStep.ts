@@ -1,6 +1,6 @@
 /**
- * One command of an install, by name on this machine's path or by absolute path; `doneIf`
- * succeeds once its goal is met.
+ * Um comando de uma instalação, pelo nome no path desta máquina ou por caminho absoluto;
+ * o `doneIf` dá certo assim que o objetivo dele é cumprido.
  */
 export interface IInstallStep {
   command: string;

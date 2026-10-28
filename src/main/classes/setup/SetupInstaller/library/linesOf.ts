@@ -1,8 +1,8 @@
 import { stripAnsi } from '@/main/library';
 
 /**
- * Every line a command printed in this chunk, Windows line ends included, keeping only
- * the last state of a line redrawn with a carriage return.
+ * Toda linha que um comando imprimiu neste pedaço, finais de linha do Windows incluídos,
+ * mantendo só o último estado de uma linha redesenhada com carriage return.
  */
 export function linesOf(chunk: string): string[] {
   return stripAnsi(chunk)

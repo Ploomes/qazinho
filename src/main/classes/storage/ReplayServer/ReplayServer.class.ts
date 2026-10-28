@@ -12,8 +12,8 @@ import { REPLAY_SERVER } from './constants';
 import { byteRangeOf, replayOfPath, suiteFileOfPath } from './library';
 
 /**
- * Serves the runs' recordings, and what each test of a suite left behind, on loopback, in
- * the byte ranges a <video> asks for, so nothing heavy crosses IPC.
+ * Serve em loopback as gravações das runs, e o que cada teste de uma suíte deixou, nos
+ * intervalos de bytes que um <video> pede, para nada pesado cruzar o IPC.
  */
 export class ReplayServer {
   private readonly token = randomUUID();
@@ -42,7 +42,7 @@ export class ReplayServer {
     this.port = (server.address() as AddressInfo).port;
   }
 
-  /** The address of a run's recording, or null when the run has none on disk. */
+  /** O endereço da gravação de uma run, ou null quando a run não tem nenhuma no disco. */
   public async urlFor(ref: IRunRef): Promise<string | null> {
     if (!this.server || (await this.fileOf(ref)) === null) return null;
 
@@ -50,8 +50,8 @@ export class ReplayServer {
   }
 
   /**
-   * The address of a file a suite's run left, from its run's folder; null before the
-   * server listens.
+   * O endereço de um arquivo que a run de uma suíte deixou, a partir da pasta da run;
+   * null antes de o servidor escutar.
    */
   public suiteFileUrl(props: {
     projectId: string;
@@ -72,8 +72,8 @@ export class ReplayServer {
   }
 
   /**
-   * The file on disk an address this server handed out for a suite leads to; null for any
-   * other address.
+   * O arquivo em disco a que leva um endereço que este servidor deu para uma suíte; null
+   * para qualquer outro endereço.
    */
   public suiteFileOfUrl(url: string): string | null {
     const parsed = URL.canParse(url) ? new URL(url) : null;
@@ -91,8 +91,8 @@ export class ReplayServer {
   }
 
   /**
-   * Where a run's recording lives on disk: an MP4 from the recorder window or a
-   * simulator, a WebM from an emulator; never outside the runs.
+   * Onde a gravação de uma run vive no disco: um MP4 da janela do gravador ou de um
+   * simulador, um WebM de um emulador; nunca fora das runs.
    */
   public async fileOf(ref: IRunRef): Promise<string | null> {
     for (const name of Object.values(ARCHIVE.videos)) {
@@ -109,8 +109,8 @@ export class ReplayServer {
   }
 
   /**
-   * The bytes of a run's MP4 recording, for the page to draw the network under; null for
-   * a run with none, or one a phone recorded in another format.
+   * Os bytes da gravação MP4 de uma run, para a página desenhar a rede embaixo; null para
+   * uma run sem nenhuma, ou uma que um celular gravou em outro formato.
    */
   public async videoOf(ref: IRunRef): Promise<Uint8Array | null> {
     const file = join(

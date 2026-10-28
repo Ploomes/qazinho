@@ -22,7 +22,7 @@ describe('agentFailure', () => {
     expect(agentFailure({ isError: true, text: '' })).toEqual({ reason: 'agent-silent' });
   });
 
-  /** A signed-out agent used to answer the QA with "Run codex login in a terminal". */
+  /** Um agente deslogado respondia ao QA com "Run codex login in a terminal". */
   it.each([
     'Invalid API key · Please run /login',
     'unexpected status 401 Unauthorized: Missing bearer or basic authentication in header',

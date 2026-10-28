@@ -20,7 +20,10 @@ const step = (caseId: string, number: number): IFlatStep => ({
 const RECORDED = [step('TC-01', 1)];
 const UNRECORDED = [step('TC-02', 1)];
 
-/** A data folder whose workspace kept a recipe for TC-01 only, and a folder for the QA to pick. */
+/**
+ * Uma pasta de dados cujo workspace guardou uma receita só para o TC-01, e uma pasta para
+ * o QA escolher.
+ */
 async function world(kind: 'web' | 'android') {
   const root = await mkdtemp(join(tmpdir(), 'qazinho-export-'));
   const picked = join(root, 'picked');

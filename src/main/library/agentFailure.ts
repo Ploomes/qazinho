@@ -5,8 +5,8 @@ const SIGNED_OUT =
   /not logged in|invalid api key|run \/login|\b401\b|unauthori[sz]ed|oauth token (has )?expired|authentication_error/i;
 
 /**
- * What an agent's failed turn means: signed out, silent, or its own words; null when the
- * turn did not fail.
+ * O que significa o turno de um agente que falhou: deslogado, calado, ou as próprias
+ * palavras dele; null quando o turno não falhou.
  */
 export function agentFailure(turn: {
   isError: boolean;

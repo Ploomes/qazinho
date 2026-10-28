@@ -2,8 +2,8 @@ import type { IRunAlert, IRunRef } from '@/shared/types';
 import { app, Notification } from 'electron';
 
 /**
- * Calls the QA back when a run ends or asks them something: a notification, and a badge
- * on the icon.
+ * Chama o QA de volta quando uma run termina ou lhe pergunta algo: uma notificação, e um
+ * badge no ícone.
  */
 export class RunAlerts {
   private readonly onOpen: (run: IRunRef) => void;
@@ -15,7 +15,8 @@ export class RunAlerts {
   }
 
   /**
-   * Alerts what a run says, unless the QA is looking at the app, which tells them itself.
+   * Alerta o que uma run diz, a menos que o QA esteja olhando o app, que lhe diz por si
+   * mesmo.
    */
   public alert(props: { notice: IRunAlert; isAway: boolean }): void {
     const { notice, isAway } = props;
@@ -46,7 +47,7 @@ export class RunAlerts {
     notification.show();
   }
 
-  /** The QA came back to the app: the count on its icon goes. */
+  /** O QA voltou ao app: a contagem no ícone dele some. */
   public seen(): void {
     if (this.unseen === 0) return;
 

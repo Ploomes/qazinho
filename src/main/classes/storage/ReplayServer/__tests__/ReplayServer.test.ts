@@ -24,7 +24,10 @@ describe('ReplayServer', () => {
       expect(await replays.fileOf({ workspaceId: 'w-1', runId: 'r-02' })).toBeNull();
     });
 
-    /** The page names the run; a name that climbs out of the runs folder must not reach a file there. */
+    /**
+     * A página nomeia a run; um nome que sobe para fora da pasta das runs não pode chegar
+     * a um arquivo lá.
+     */
     it('does NOT find a file outside the runs, whatever the run is called', async () => {
       const root = await mkdtemp(join(tmpdir(), 'qazinho-replays-'));
 

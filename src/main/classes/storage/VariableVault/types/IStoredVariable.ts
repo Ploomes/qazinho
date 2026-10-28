@@ -1,8 +1,8 @@
 import type { IVariableValue } from '@/main/types';
 
 /**
- * A variable as it sits on disk, sealed: the project it belongs to, its name, what it
- * holds and its value.
+ * Uma variável como fica no disco, lacrada: o projeto a que pertence, o nome, o que
+ * guarda e o valor.
  */
 export interface IStoredVariable extends IVariableValue {
   projectId: string;

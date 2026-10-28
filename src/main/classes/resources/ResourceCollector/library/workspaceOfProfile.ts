@@ -1,6 +1,6 @@
 /**
- * A browser QAzinho started carries its workspace in its profile path, and nothing else
- * does.
+ * Um navegador que o QAzinho iniciou carrega o workspace dele no caminho do perfil, e
+ * nada mais o faz.
  */
 export function workspaceOfProfile(props: {
   command: string;

@@ -2,8 +2,8 @@ import { lstat, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 
 /**
- * Every file under a folder with its size, links left alone; nothing for a folder that is
- * not there.
+ * Todo arquivo sob uma pasta com o tamanho dele, links deixados em paz; nada para uma
+ * pasta que não existe.
  */
 export async function filesUnder(
   root: string,

@@ -22,7 +22,10 @@ describe('suiteFileOfPath', () => {
     expect(suiteFileOfPath({ path: '/t0k/w1/r-01', token: 't0k' })).toBeNull();
   });
 
-  /** Every part becomes a folder under the suites: an escaped slash or a dot would climb out of them. */
+  /**
+   * Toda parte vira uma pasta sob as suítes: uma barra escapada ou um ponto subiria para
+   * fora delas.
+   */
   it('refuses a path that would climb out of its run', () => {
     expect(
       suiteFileOfPath({ path: '/t0k/suite/p-1/s-01/../../x', token: 't0k' }),

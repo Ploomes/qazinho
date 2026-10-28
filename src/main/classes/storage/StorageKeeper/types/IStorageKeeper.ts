@@ -1,6 +1,6 @@
 /**
- * QAzinho's data folder, where it keeps the apps it built, and the clock it ages videos
- * by.
+ * A pasta de dados do QAzinho, onde ele guarda os apps que construiu, e o relógio com que
+ * envelhece os vídeos.
  */
 export interface IStorageKeeper {
   dataRoot: string;

@@ -1,6 +1,6 @@
 /**
- * Splits each PATH by the platform's own separator and keeps the first mention of each
- * directory: a hydrated PATH may repeat what the app already had.
+ * Divide cada PATH pelo separador da própria plataforma e mantém a primeira menção de
+ * cada diretório: um PATH hidratado pode repetir o que o app já tinha.
  */
 export function mergePathSegments(props: {
   segments: (string | undefined)[];

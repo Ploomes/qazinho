@@ -15,8 +15,8 @@ import { CHANNELS, RECORDER_ARGUMENT } from '@/shared/constants';
 import { RUN_RECORDER } from './constants';
 
 /**
- * Records each run's live stream into an MP4 beside its screenshots, through a hidden
- * window that has the video encoder.
+ * Grava o stream vivo de cada run num MP4 ao lado dos screenshots, por uma janela
+ * escondida que tem o codificador de vídeo.
  */
 export class RunRecorder {
   private readonly dataRoot: string;
@@ -39,12 +39,17 @@ export class RunRecorder {
     });
   }
 
-  /** Whether a window is the hidden recorder, which the app's own windows leave out. */
+  /**
+   * Se uma janela é o gravador escondido, que as janelas do próprio app deixam de fora.
+   */
   public owns(window: BrowserWindow): boolean {
     return window === this.window;
   }
 
-  /** Starts recording a run's device from its live stream, into the run's own folder. */
+  /**
+   * Começa a gravar o dispositivo de uma run a partir do stream vivo, na pasta da própria
+   * run.
+   */
   public async start(props: {
     workspaceId: string;
     runId: string;
@@ -91,8 +96,8 @@ export class RunRecorder {
   }
 
   /**
-   * Ends a run's recording now, and answers with its video once the file is whole, or
-   * null when there is none.
+   * Termina a gravação de uma run agora, e responde com o vídeo dela assim que o arquivo
+   * está inteiro, ou null quando não há.
    */
   public async stop(workspaceId: string): Promise<IRunVideo | null> {
     const recording = this.recordings.get(workspaceId);

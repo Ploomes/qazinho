@@ -4,8 +4,8 @@ import type { IShot } from '@salve-software/qazinho-harness/engine';
 import { EXPLORATION } from '@/shared/constants';
 
 /**
- * A screen the explorer reached, as a step of the exploration's one case: its name, what
- * it is for, and its picture.
+ * Uma tela que o explorador alcançou, como um passo do caso único da exploração: o nome,
+ * para que serve, e a imagem.
  */
 export function exploredOutcome(props: {
   workspaceId: string;

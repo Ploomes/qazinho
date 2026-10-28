@@ -9,8 +9,8 @@ import { CODE_EXPORT } from './constants';
 import { maestroOf, playwrightOf } from './library';
 
 /**
- * Writes the cases a workspace's runs recorded as code the QA keeps: a Playwright test
- * file for a web app, a Maestro flow per case for a phone app.
+ * Escreve os casos que as runs de um workspace gravaram como código que o QA guarda: um
+ * teste Playwright para um app web, um fluxo Maestro por caso para um app de celular.
  */
 export class CodeExport {
   private readonly dataRoot: string;
@@ -24,8 +24,8 @@ export class CodeExport {
   }
 
   /**
-   * Exports every case whose recipe still matches what the case says, into a folder the
-   * QA picks, and says which cases have none yet.
+   * Exporta todo caso cuja receita ainda casa com o que o caso diz, numa pasta que o QA
+   * escolhe, e diz quais casos ainda não têm nenhuma.
    */
   public async export(request: IExportCode): Promise<ExportOutcome> {
     const book = readBook(

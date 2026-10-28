@@ -4,8 +4,8 @@ const TICKS_PER_SECOND = 10_000_000;
 const BYTES_IN_MB = 1024 * 1024;
 
 /**
- * Reads the sweep the PowerShell side writes, a tab between each field: pid, parent, cpu
- * time in 100 ns ticks, working set in bytes, name and command line.
+ * Lê a varredura que o lado do PowerShell escreve, um tab entre cada campo: pid, pai,
+ * tempo de cpu em ticks de 100 ns, working set em bytes, nome e linha de comando.
  */
 export function parseWindowsSweep(output: string): IProcessRow[] {
   return output.split(/\r?\n/).flatMap((line) => {

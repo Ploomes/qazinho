@@ -5,8 +5,8 @@ import { APP_LOG } from './constants';
 import { logLineOf } from './library';
 
 /**
- * The app's own log, kept on this machine only: what went wrong and when, with no token,
- * password or user name in it, in a file that rolls over before it grows big.
+ * O log do próprio app, guardado só nesta máquina: o que deu errado e quando, sem token,
+ * senha ou nome de usuário, num arquivo que gira antes de ficar grande.
  */
 export class AppLog {
   private readonly folder: string;
@@ -18,19 +18,19 @@ export class AppLog {
     this.home = props.home;
   }
 
-  /** The folder the log lives in, for the QA to open. */
+  /** A pasta onde o log vive, para o QA abrir. */
   public get where(): string {
     return this.folder;
   }
 
-  /** Writes one line, after the ones before it; never throws. */
+  /** Escreve uma linha, depois das anteriores; nunca lança erro. */
   public write(entry: { level: LogLevel; scope: string; message: string }): void {
     const line = logLineOf({ ...entry, at: new Date(), home: this.home });
 
     this.writing = this.writing.then(() => this.append(line)).catch(() => undefined);
   }
 
-  /** The last lines written, the rolled-over file included, oldest first. */
+  /** As últimas linhas escritas, o arquivo girado incluído, as mais antigas primeiro. */
   public async tail(lines: number): Promise<string[]> {
     await this.writing;
 

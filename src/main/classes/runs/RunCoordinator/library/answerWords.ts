@@ -1,8 +1,8 @@
 import type { RunAnswer } from '@/shared/types';
 
 /**
- * What the agent hears once its question to the QA ended: their words, a secret by its
- * name alone, or that no answer came, then what to do next.
+ * O que o agente ouve quando a pergunta dele ao QA terminou: as palavras dele, um segredo
+ * só pelo nome, ou que nenhuma resposta veio, depois o que fazer em seguida.
  */
 export function answerWords(props: {
   answer: RunAnswer;

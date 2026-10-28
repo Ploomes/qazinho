@@ -1,8 +1,8 @@
 import type { IProcessRow } from '@/main/types';
 
 /**
- * Every descendant of a root, so an agent's shell and its children are charged to the
- * agent.
+ * Todo descendente de uma raiz, para o shell de um agente e os filhos dele serem cobrados
+ * do agente.
  */
 export function collectSubtree(props: {
   rows: IProcessRow[];

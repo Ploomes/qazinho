@@ -4,8 +4,8 @@ import { stripAnsi } from '@/main/library';
 const UNREACHABLE = /net::(ERR_[A-Z_]+) at (\S+)/;
 
 /**
- * What stopped a run, out of the error it threw: a page Chrome could not reach, or the
- * first line of the machine's words.
+ * O que parou uma run, a partir do erro que ela lançou: uma página que o Chrome não
+ * alcançou, ou a primeira linha das palavras da máquina.
  */
 export function failureOf(reason: unknown): RunFailure {
   const said = stripAnsi(

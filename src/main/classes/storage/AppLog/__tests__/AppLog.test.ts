@@ -19,7 +19,10 @@ describe('AppLog', () => {
     expect(lines[1]).toContain('ERROR [page] Boom at ~/x');
   });
 
-  /** A QA who keeps the app open for weeks must not end with a log the size of a video. */
+  /**
+   * Um QA que deixa o app aberto por semanas não pode acabar com um log do tamanho de um
+   * vídeo.
+   */
   it('rolls the file over once it grows past its size, keeping the lines before it', async () => {
     const folder = await mkdtemp(join(tmpdir(), 'qazinho-log-'));
 

@@ -6,8 +6,8 @@ const RENAME_TRIES = 5;
 const RENAME_WAIT_MS = 40;
 
 /**
- * Writes a file whole or not at all: a copy beside it, renamed over it, so a crash never
- * leaves it cut in half.
+ * Escreve um arquivo inteiro ou nada: uma cópia ao lado, renomeada por cima, para um
+ * crash nunca deixá-lo cortado ao meio.
  */
 export async function writeAtomically(props: {
   file: string;

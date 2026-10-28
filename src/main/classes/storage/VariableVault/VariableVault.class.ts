@@ -11,8 +11,8 @@ import { writeAtomically } from '@/main/library';
 import { variablesAfter, variablesByProject } from './library';
 
 /**
- * Keeps each project's variables sealed by the OS keychain: the page and the agents learn
- * their names, and only a run reads a value, to type it.
+ * Guarda as variáveis de cada projeto lacradas pelo keychain do SO: a página e os agentes
+ * ficam sabendo os nomes, e só uma run lê um valor, para digitá-lo.
  */
 export class VariableVault {
   private readonly file: string;
@@ -24,14 +24,12 @@ export class VariableVault {
     this.cipher = props.cipher;
   }
 
-  /** Every project's variables, by name and description. */
+  /** As variáveis de todo projeto, por nome e descrição. */
   public async list(): Promise<IProjectVariables[]> {
     return variablesByProject((await this.read()) ?? []);
   }
 
-  /**
-   * Applies a project's changes together, or none of them, and says what it keeps now.
-   */
+  /** Aplica as mudanças de um projeto juntas, ou nenhuma, e diz o que guarda agora. */
   public async apply(apply: IApplyVariables): Promise<VariablesOutcome> {
     if (!this.cipher.isAvailable())
       return { isSaved: false, failure: { reason: 'no-keychain' } };
@@ -57,7 +55,7 @@ export class VariableVault {
     });
   }
 
-  /** Gives a project a copy of another's variables, their values included. */
+  /** Dá a um projeto uma cópia das variáveis de outro, os valores incluídos. */
   public async copy(props: { from: string; to: string }): Promise<VariablesOutcome> {
     const values = await this.valuesOf(props.from);
 
@@ -73,7 +71,7 @@ export class VariableVault {
     });
   }
 
-  /** Drops every variable of a project that is gone. */
+  /** Descarta toda variável de um projeto que se foi. */
   public async forget(projectId: string): Promise<void> {
     await this.serial(async () => {
       const stored = await this.read();
@@ -84,7 +82,9 @@ export class VariableVault {
     });
   }
 
-  /** A project's variables with their values, for a run to type; never for the page. */
+  /**
+   * As variáveis de um projeto com os valores, para uma run digitar; nunca para a página.
+   */
   public async valuesOf(projectId: string): Promise<IVariableValue[]> {
     return ((await this.read()) ?? [])
       .filter((one) => one.projectId === projectId)

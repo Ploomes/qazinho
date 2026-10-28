@@ -31,7 +31,10 @@ describe('parseWindowsSweep', () => {
     ]);
   });
 
-  /** The System Idle Process and protected ones give no command line, and no cpu time to a user who may not read it. */
+  /**
+   * O System Idle Process e os protegidos não dão linha de comando, nem tempo de cpu a um
+   * usuário que não pode lê-lo.
+   */
   it('names a process with no command line by its own name, and counts no time it did not give', () => {
     expect(parseWindowsSweep('4\t0\t\t1048576\tSystem\t')).toEqual([
       {

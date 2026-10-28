@@ -8,8 +8,8 @@ const AGENTS: Record<Exclude<InstallableId, 'idb' | 'gh'>, string> = {
 };
 
 /**
- * The commands that install a tool, in order: gh with winget or Homebrew, idb in a Python
- * of its own.
+ * Os comandos que instalam uma ferramenta, em ordem: o gh com winget ou Homebrew, o idb
+ * num Python próprio.
  */
 export function recipeFor(props: {
   item: InstallableId;

@@ -16,7 +16,7 @@ const step = (props: {
   expected: props.expected,
 });
 
-/** A three-step case and the recipe a passing run recorded for it. */
+/** Um caso de três passos e a receita que uma run que passou gravou para ele. */
 export const STEPS: IFlatStep[] = [
   step({ number: 1, action: 'Sign in', expected: 'The header says Sign out' }),
   step({
@@ -64,7 +64,10 @@ export const RECIPE: ICaseRecipe = {
   ],
 };
 
-/** A sign in recorded with the project's variables: the recipe keeps their names, never their values. */
+/**
+ * Um login gravado com as variáveis do projeto: a receita guarda os nomes delas, nunca os
+ * valores.
+ */
 export const SIGN_IN: ICaseRecipe = {
   ...RECIPE,
   steps: [

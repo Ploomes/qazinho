@@ -2,8 +2,8 @@ import type { IRunVideo } from '@/shared/types';
 import type { FileHandle } from 'node:fs/promises';
 
 /**
- * A recording under way: the file its bytes go to, the writes still landing, and how it
- * ends.
+ * Uma gravação em andamento: o arquivo para onde vão os bytes, as escritas ainda
+ * chegando, e como ela termina.
  */
 export interface IOpenRecording {
   id: string;

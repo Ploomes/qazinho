@@ -19,7 +19,10 @@ describe('replayOfPath', () => {
     expect(replayOfPath({ path: '/guess/w1/r-01', token: 't0k' })).toBeNull();
   });
 
-  /** The two names become folders under the archive: an escaped slash or a dot would climb out of it. */
+  /**
+   * Os dois nomes viram pastas sob o arquivo: uma barra escapada ou um ponto subiria para
+   * fora dele.
+   */
   it('refuses a name that would climb out of the run folders', () => {
     expect(replayOfPath({ path: '/t0k/..%2F..%2Fetc/r-01', token: 't0k' })).toBeNull();
     expect(replayOfPath({ path: '/t0k/w1/..', token: 't0k' })).toBeNull();

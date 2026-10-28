@@ -2,8 +2,8 @@ import type { IProLink } from '@/shared/types';
 import { PRO_LINK } from '@/main/constants/PRO_LINK';
 
 /**
- * The plan a `qazinho://open` link from QAzinho Pro names, or null for any other address
- * or one whose org or ids are not names.
+ * O plano que um link `qazinho://open` do QAzinho Pro nomeia, ou null para qualquer outro
+ * endereço ou um cuja org ou ids não são nomes.
  */
 export function proLinkOf(address: string): IProLink | null {
   let url: URL;

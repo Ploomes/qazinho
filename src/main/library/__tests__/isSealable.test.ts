@@ -12,7 +12,10 @@ describe('isSealable', () => {
       expect(isSealable({ platform: 'linux', isAvailable: true, store })).toBe(true);
   });
 
-  /** With no secret store, Electron still says yes and seals with a key written in Electron itself. */
+  /**
+   * Sem armazenamento de segredos, o Electron ainda diz sim e lacra com uma chave escrita
+   * no próprio Electron.
+   */
   it('does NOT seal on Linux when Electron would fall back to its fixed key', () => {
     for (const store of ['basic_text', 'unknown', null])
       expect(isSealable({ platform: 'linux', isAvailable: true, store })).toBe(false);

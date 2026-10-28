@@ -1,8 +1,8 @@
 import type { IRunVideo } from '@/shared/types';
 
 /**
- * What a run needs from whoever records its device: start from the live stream, and stop
- * with the video written, or none.
+ * O que uma run precisa de quem grava o dispositivo dela: começar a partir do stream
+ * vivo, e parar com o vídeo escrito, ou nenhum.
  */
 export interface IVideoRecorder {
   start: (props: { workspaceId: string; runId: string; url: string }) => Promise<void>;

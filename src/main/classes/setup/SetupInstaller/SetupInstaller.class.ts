@@ -13,8 +13,8 @@ import { INSTALL } from './constants';
 import { commandLineOf, explainFailure, linesOf, recipeFor } from './library';
 
 /**
- * Installs the light tools QAzinho drives, on the QA's say-so, and tells the page each
- * line.
+ * Instala as ferramentas leves que o QAzinho dirige, quando o QA manda, e conta cada
+ * linha à página.
  */
 export class SetupInstaller {
   private readonly onEvent: (event: ISetupEvent) => void;
@@ -175,8 +175,8 @@ export class SetupInstaller {
   }
 
   /**
-   * Whether a step's goal is already met, so it is skipped, or was met even though the
-   * step complained.
+   * Se o objetivo de um passo já foi cumprido, então ele é pulado, ou foi cumprido mesmo
+   * com o passo reclamando.
    */
   private async isDone(props: {
     step: IInstallStep;

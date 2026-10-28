@@ -1,6 +1,6 @@
 import type { IInstallStep } from '@/main/classes/setup/SetupInstaller/types';
 
-/** The install as one line the QA can paste in a terminal. */
+/** A instalação como uma linha que o QA pode colar num terminal. */
 export function commandLineOf(steps: IInstallStep[]): string {
   return steps.map((step) => [step.command, ...step.args].join(' ')).join(' && ');
 }

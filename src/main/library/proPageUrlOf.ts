@@ -1,6 +1,6 @@
 /**
- * The address of a page of QAzinho Pro's site from a path the page asked for; null for
- * one that would leave the site.
+ * O endereço de uma página do site do QAzinho Pro a partir de um caminho que a página
+ * pediu; null para um que sairia do site.
  */
 export function proPageUrlOf(props: { base: string; path: string }): string | null {
   const { base, path } = props;

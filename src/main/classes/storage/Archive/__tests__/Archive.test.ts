@@ -101,8 +101,9 @@ describe('Archive', () => {
   });
 
   /**
-   * Quitting mid-run used to lose the step that landed last: its save was still on its way when
-   * the app went, and the run the QA had watched never reached the disk.
+   * Fechar o app no meio de uma run perdia o último passo que chegou: o salvamento dele
+   * ainda estava a caminho quando o app saiu, e a run que o QA tinha visto nunca chegava
+   * ao disco.
    */
   it('says a save is on its way, and waits for it before the app may quit', async () => {
     const saving = archive.saveWorkspace(SAVED);
@@ -126,7 +127,10 @@ describe('Archive', () => {
     const BROKEN =
       'cases:\n  - id: TC-01\n    steps:\n      - action: Open\n        expected: "opens\n';
 
-    /** Saving the empty plan the page would show used to write over the QA's own file. */
+    /**
+     * Salvar o plano vazio que a página mostraria escrevia por cima do arquivo do próprio
+     * QA.
+     */
     it('sets it aside, so nothing writes over it, and says where and at which line', async () => {
       await archive.saveWorkspace({ ...SAVED, planYaml: BROKEN });
 
@@ -177,7 +181,10 @@ describe('Archive', () => {
       ).toEqual({ status: 'gone' });
     });
 
-    /** The window reloaded before the page saved that it knew: the next read must still say so. */
+    /**
+     * A janela recarregou antes de a página salvar o que sabia: a próxima leitura ainda
+     * precisa dizer isso.
+     */
     it('says so again on every read until a plan is saved', async () => {
       await archive.saveWorkspace({ ...SAVED, planYaml: BROKEN });
 

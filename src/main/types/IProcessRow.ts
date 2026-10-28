@@ -1,4 +1,6 @@
-/** One row of the host-wide process sweep, before it is charged to anything. */
+/**
+ * Uma linha da varredura de processos do host inteiro, antes de ser cobrada de alguém.
+ */
 export interface IProcessRow {
   pid: number;
   parentPid: number;

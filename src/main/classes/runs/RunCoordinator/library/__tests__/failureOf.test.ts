@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { failureOf } from '@/main/classes/runs/RunCoordinator/library';
 
 describe('failureOf', () => {
-  /** The chat used to show Playwright's own words: "page.goto: net::ERR_UNSAFE_PORT … Call log: …". */
+  /**
+   * O chat mostrava as próprias palavras do Playwright: "page.goto: net::ERR_UNSAFE_PORT
+   * … Call log: …".
+   */
   it('names the page Chrome could not reach and how it failed', () => {
     expect(
       failureOf(

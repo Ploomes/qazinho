@@ -1,2 +1,2 @@
-/** How much a log line matters. */
+/** Quanto uma linha de log importa. */
 export type LogLevel = 'info' | 'warn' | 'error';

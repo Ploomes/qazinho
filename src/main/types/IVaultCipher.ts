@@ -1,6 +1,6 @@
 /**
- * What a vault needs from the OS keychain: Electron's safeStorage in the app, a fake in a
- * test.
+ * O que um cofre precisa do keychain do SO: o safeStorage do Electron no app, um fake num
+ * teste.
  */
 export interface IVaultCipher {
   isAvailable: () => boolean;

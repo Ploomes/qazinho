@@ -16,7 +16,7 @@ describe('planFaultOf', () => {
     expect(planFaultOf('# nothing yet\n')).toBeNull();
   });
 
-  /** A quote left open by hand swallows everything after it. */
+  /** Uma aspa deixada aberta à mão engole tudo depois dela. */
   it('names the line where the YAML broke', () => {
     expect(
       planFaultOf(

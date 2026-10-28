@@ -77,7 +77,7 @@ import {
   variablePort,
 } from './library';
 
-/** Walks a plan on a real device: the agent drives, the requirement judges. */
+/** Anda um plano num dispositivo real: o agente dirige, o requisito julga. */
 export class RunCoordinator {
   private readonly runner: AgentRunner;
   private readonly findCommand: (agentId: string) => Promise<string | null>;
@@ -209,8 +209,8 @@ export class RunCoordinator {
   }
 
   /**
-   * Hands the QA's reply to the question a run's agent waits on; a reply to a question no
-   * longer waiting, or one with nothing in it, changes nothing.
+   * Entrega a resposta do QA à pergunta que o agente de uma run espera; uma resposta a
+   * uma pergunta que não espera mais, ou sem nada nela, não muda nada.
    */
   public answer(props: {
     workspaceId: string;
@@ -228,8 +228,8 @@ export class RunCoordinator {
   }
 
   /**
-   * Resizes the device of a run under way, for the cases still to come too; the next run
-   * starts at the workspace's size.
+   * Redimensiona o dispositivo de uma run em andamento, para os casos que vêm também; a
+   * próxima run começa no tamanho do workspace.
    */
   public async resize(props: {
     workspaceId: string;
@@ -241,14 +241,14 @@ export class RunCoordinator {
     await this.drivers.get(props.workspaceId)?.resize(props.viewport);
   }
 
-  /** Streams a run's device at full detail while the QA watches it up close. */
+  /** Transmite o dispositivo de uma run em detalhe cheio enquanto o QA o vê de perto. */
   public async focus(props: { workspaceId: string; isFocused: boolean }): Promise<void> {
     await this.drivers.get(props.workspaceId)?.focus(props.isFocused);
   }
 
   /**
-   * The runs still walking, as they stand: a page that opened mid-run picks them up from
-   * here.
+   * As runs ainda andando, como estão: uma página que abriu no meio de uma run as pega
+   * daqui.
    */
   public inFlight(): IRunInFlight[] {
     return [...this.inFlightRuns.values()];
@@ -329,8 +329,8 @@ export class RunCoordinator {
   }
 
   /**
-   * Keeps the requests a browser saw beside the run's video, each address with its
-   * secrets left out; a phone keeps none.
+   * Guarda os pedidos que um navegador viu ao lado do vídeo da run, cada endereço com os
+   * segredos de fora; um celular não guarda nenhum.
    */
   private async keepNetwork(props: {
     run: IWalkRun;
@@ -361,8 +361,8 @@ export class RunCoordinator {
   }
 
   /**
-   * Says how the run ended, then hands over its recording: the phone's own, or the one
-   * made from the live stream once its file is whole.
+   * Diz como a run terminou, depois entrega a gravação dela: a do próprio celular, ou a
+   * feita do stream vivo assim que o arquivo está inteiro.
    */
   private async finish(props: {
     run: IWalkRun;
@@ -381,8 +381,8 @@ export class RunCoordinator {
   }
 
   /**
-   * Walks the cases in order, and ends once each case's agent said what it cost, or after
-   * a short wait.
+   * Anda os casos em ordem, e termina quando o agente de cada caso disse quanto custou,
+   * ou depois de uma espera curta.
    */
   private async walkSteps(props: {
     run: IWalkRun;
@@ -456,8 +456,8 @@ export class RunCoordinator {
   }
 
   /**
-   * One agent turn per case, in a session of its own, kept as a recipe once every step
-   * passed with its proof: true goes on, false stops, a failure stops and says why.
+   * Um turno de agente por caso, numa sessão própria, guardado como receita quando todo
+   * passo passou com a prova: true segue, false para, uma falha para e diz por quê.
    */
   private async walkCase(props: {
     run: IWalkRun;
@@ -771,8 +771,8 @@ export class RunCoordinator {
   }
 
   /**
-   * Explores the app with no plan, one agent alone until it finishes or its time runs
-   * out: each screen it notes is a step of one case, and each bug it files a finding.
+   * Explora o app sem plano, um agente sozinho até terminar ou o tempo dele acabar: cada
+   * tela que anota é um passo de um caso só, e cada bug que registra um achado.
    */
   private async explore(props: {
     run: IWalkRun;
@@ -1024,8 +1024,8 @@ export class RunCoordinator {
   }
 
   /**
-   * Walks a case again without the agent, the way its recipe says, checking each step's
-   * proof; its steps are told only once the whole case held.
+   * Anda um caso de novo sem o agente, como a receita dele diz, conferindo a prova de
+   * cada passo; os passos dele só são contados quando o caso inteiro se sustentou.
    */
   private async replayCase(props: {
     run: IWalkRun;
@@ -1116,8 +1116,8 @@ export class RunCoordinator {
   }
 
   /**
-   * Shows the QA what the agent asked and waits, the agent's clock held, for a reply, a
-   * timeout or a stop.
+   * Mostra ao QA o que o agente perguntou e espera, com o relógio do agente parado, uma
+   * resposta, um timeout ou um stop.
    */
   private async askQa(
     props: IAskQa,
@@ -1202,8 +1202,8 @@ export class RunCoordinator {
   }
 
   /**
-   * The QA's reply as the run keeps it: their words with values read back as names, or a
-   * secret.
+   * A resposta do QA como a run a guarda: as palavras dele com valores lidos de volta
+   * como nomes, ou um segredo.
    */
   private async answerOf(props: {
     run: IWalkRun;

@@ -8,7 +8,7 @@ import { collectSubtree } from '@/main/library';
 import { BYTES_IN_GB } from './constants';
 import { cpuPercent, sweepProcesses, toSample, workspaceOfProfile } from './library';
 
-/** What QAzinho costs this machine: the app itself, plus everything it started. */
+/** O que o QAzinho custa a esta máquina: o próprio app, mais tudo o que ele iniciou. */
 export class ResourceCollector {
   private readonly owners: ProcessOwners;
   private readonly profileRoot: string;
@@ -22,7 +22,10 @@ export class ResourceCollector {
     this.profileRoot = props.profileRoot;
   }
 
-  /** Concurrent callers share one sweep: a burst of polls must not fork a `ps` each. */
+  /**
+   * Chamadores concorrentes dividem uma varredura: uma rajada de polls não deve fazer
+   * fork de um `ps` cada.
+   */
   public async snapshot(): Promise<IResourceSnapshot> {
     this.inflight ??= this.collect().finally(() => {
       this.inflight = null;

@@ -1,8 +1,8 @@
 import type { ITargetUnderTest } from '@/shared/types';
 
 /**
- * What CodeExport needs: where the workspaces keep their recipes, a folder the QA picks,
- * and the id of a phone app read from its file.
+ * O que o CodeExport precisa: onde os workspaces guardam as receitas, uma pasta que o QA
+ * escolhe, e o id de um app de celular lido do arquivo dele.
  */
 export interface ICodeExport {
   dataRoot: string;

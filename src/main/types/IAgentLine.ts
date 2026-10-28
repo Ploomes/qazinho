@@ -1,4 +1,4 @@
-/** One line of the agent CLI's stream-json output, narrowed to what QAzinho reads. */
+/** Uma linha da saída stream-json da CLI do agente, restrita ao que o QAzinho lê. */
 export interface IAgentLine {
   type: string;
   subtype?: string;

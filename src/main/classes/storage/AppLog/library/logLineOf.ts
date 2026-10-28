@@ -17,8 +17,8 @@ const SECRETS: [RegExp, string][] = [
 ];
 
 /**
- * One line of the app's log: when, how much it matters, where from and what, with secrets
- * as dots.
+ * Uma linha do log do app: quando, quanto importa, de onde e o quê, com os segredos como
+ * pontos.
  */
 export function logLineOf(props: {
   at: Date;

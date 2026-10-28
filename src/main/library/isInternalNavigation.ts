@@ -1,4 +1,7 @@
-/** A hash change on the packaged page is still the app; any other file on disk is not. */
+/**
+ * Uma mudança de hash na página empacotada ainda é o app; qualquer outro arquivo no disco
+ * não é.
+ */
 export function isInternalNavigation(appUrl: string, target: string): boolean {
   let app: URL;
   let url: URL;

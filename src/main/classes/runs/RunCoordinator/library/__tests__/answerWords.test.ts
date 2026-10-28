@@ -13,7 +13,10 @@ describe('answerWords', () => {
     ).toBe('The QA answered:\nPremium+\nthe yearly one\n\nCarry on with step 2.');
   });
 
-  /** The agent must type the name and never learn the value: the words carry nothing else. */
+  /**
+   * O agente precisa digitar o nome e nunca saber o valor: as palavras não carregam mais
+   * nada.
+   */
   it('names a secret by its variable alone', () => {
     const said = answerWords({
       answer: { kind: 'secret', name: 'OTP_CODE', isKept: false },

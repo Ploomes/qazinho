@@ -12,7 +12,8 @@ import { ARCHIVE } from './constants';
 import { asideNameOf, isInside, networkOf, planFaultOf, readTextOr } from './library';
 
 /**
- * Everything QAzinho keeps between sessions, as files the QA can open, diff and commit.
+ * Tudo o que o QAzinho guarda entre sessões, como arquivos que o QA pode abrir, comparar
+ * e commitar.
  */
 export class Archive {
   private readonly root: string;
@@ -49,25 +50,27 @@ export class Archive {
     });
   }
 
-  /** Whether a save is still on its way to disk. */
+  /** Se um salvamento ainda está a caminho do disco. */
   public isWriting(): boolean {
     return this.writing.size > 0;
   }
 
-  /** Waits for every save on its way to disk, so quitting never cuts one in half. */
+  /**
+   * Espera todo salvamento a caminho do disco, para fechar o app nunca cortar um ao meio.
+   */
   public async settle(): Promise<void> {
     await Promise.allSettled([...this.writing]);
   }
 
-  /** Takes a workspace off the disk with the screenshots of its runs. */
+  /** Tira um workspace do disco com os screenshots das runs dele. */
   public async removeWorkspace(id: string): Promise<void> {
     await rm(this.folderOf(id), { recursive: true, force: true });
     await rm(join(this.root, ARCHIVE.runs, id), { recursive: true, force: true });
   }
 
   /**
-   * The requests a web run kept beside its video; null for a run that kept none, such as
-   * one on a phone.
+   * Os pedidos que uma run web guardou ao lado do vídeo; null para uma run que não
+   * guardou nenhum, como uma num celular.
    */
   public async readNetwork(run: IRunRef): Promise<INetworkEntry[] | null> {
     const file = join(
@@ -86,8 +89,8 @@ export class Archive {
   }
 
   /**
-   * A plan set aside, read again once the QA fixed it; one that reads now leaves the
-   * folder, since the plan it holds is the workspace's again.
+   * Um plano posto de lado, lido de novo depois que o QA o consertou; um que agora lê sai
+   * da pasta, já que o plano dele é do workspace de novo.
    */
   public async readUnreadPlan(props: {
     workspaceId: string;
@@ -108,8 +111,8 @@ export class Archive {
   }
 
   /**
-   * Where a plan set aside sits, for the QA to open it; null for a name QAzinho never
-   * gave one.
+   * Onde está um plano posto de lado, para o QA abri-lo; null para um nome que o QAzinho
+   * nunca deu.
    */
   public unreadPlanFile(props: { workspaceId: string; file: string }): string | null {
     if (
@@ -123,14 +126,16 @@ export class Archive {
     return isInside({ root: this.root, file }) ? file : null;
   }
 
-  /** The page cannot read disk, so a screenshot it no longer holds comes back inline. */
+  /**
+   * A página não lê disco, então um screenshot que ela não guarda mais volta embutido.
+   */
   public async readShot(file: string): Promise<string | null> {
     const image = await this.readShotBytes(file);
 
     return image === null ? null : `data:image/jpeg;base64,${image.toString('base64')}`;
   }
 
-  /** A screenshot's own bytes, read only from inside the archive. */
+  /** Os bytes de um screenshot, lidos só de dentro do arquivo. */
   public async readShotBytes(file: string): Promise<Buffer | null> {
     if (!isInside({ root: this.root, file })) return null;
 

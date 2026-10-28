@@ -1,4 +1,4 @@
-/** A window's place and size on the screen, in points. */
+/** O lugar e o tamanho de uma janela na tela, em pontos. */
 export interface IBounds {
   x: number;
   y: number;

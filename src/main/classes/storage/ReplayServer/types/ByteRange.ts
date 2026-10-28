@@ -1,6 +1,6 @@
 /**
- * The bytes a request asked for: the whole file, a slice of it, or a slice that is not in
- * it.
+ * Os bytes que um pedido pediu: o arquivo inteiro, uma fatia dele, ou uma fatia que não
+ * está nele.
  */
 export type ByteRange =
   { kind: 'whole' } | { kind: 'slice'; start: number; end: number } | { kind: 'outside' };

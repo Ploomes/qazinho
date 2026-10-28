@@ -3,7 +3,8 @@ const FIRST_PRINTABLE = 32;
 const LONGEST = 120;
 
 /**
- * A file name the QA can read, from a label: what no file system takes becomes a space.
+ * Um nome de arquivo que o QA consegue ler, a partir de um rótulo: o que nenhum sistema
+ * de arquivos aceita vira espaço.
  */
 export function fileNameOf(label: string): string {
   const name = [...label]

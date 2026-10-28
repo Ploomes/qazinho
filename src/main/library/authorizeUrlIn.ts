@@ -1,8 +1,8 @@
 const URL_IN_TEXT = /https:\/\/\S+/g;
 
 /**
- * The address an agent CLI printed for the QA to sign in at, or null while it has not
- * printed one.
+ * O endereço que uma CLI de agente imprimiu para o QA entrar, ou null enquanto ela não
+ * imprimiu nenhum.
  */
 export function authorizeUrlIn(printed: string): string | null {
   return (

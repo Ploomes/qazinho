@@ -1,8 +1,8 @@
 const MOST_DAYS = 3650;
 
 /**
- * How many days the page asked videos to be kept: a whole number from one to ten years;
- * null for anything else.
+ * Por quantos dias a página pediu para guardar os vídeos: um número inteiro de um a dez
+ * anos; null para qualquer outra coisa.
  */
 export function sweepDaysOf(value: unknown): number | null {
   return typeof value === 'number' &&

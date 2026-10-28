@@ -3,8 +3,8 @@ import type { IApplyVariables, VariableFailure } from '@/shared/types';
 import { VARIABLE_NAME } from '@/shared/constants';
 
 /**
- * Every variable once a project's changes are applied in order, or the first change that
- * breaks a rule, with nothing applied.
+ * Toda variável depois de as mudanças de um projeto serem aplicadas em ordem, ou a
+ * primeira mudança que quebra uma regra, sem nada aplicado.
  */
 export function variablesAfter(props: {
   stored: IStoredVariable[];

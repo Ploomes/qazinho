@@ -8,8 +8,8 @@ import { STORAGE_KEEPER } from './constants';
 import { filesUnder, runFileKindOf } from './library';
 
 /**
- * What QAzinho keeps on this computer, by kind, and the runs' videos it lets go of once
- * they are old; the reports and screens stay.
+ * O que o QAzinho guarda neste computador, por tipo, e os vídeos das runs que ele solta
+ * depois de velhos; os relatórios e as telas ficam.
  */
 export class StorageKeeper {
   private readonly dataRoot: string;
@@ -25,8 +25,8 @@ export class StorageKeeper {
   }
 
   /**
-   * The bytes QAzinho's folder holds: the runs' videos and screens, the apps it built,
-   * and the rest.
+   * Os bytes que a pasta do QAzinho guarda: os vídeos e telas das runs, os apps que
+   * construiu, e o resto.
    */
   public async usage(): Promise<IStorageUsage> {
     const usage = { videos: 0, screens: 0, builds: 0, total: 0 };
@@ -51,7 +51,7 @@ export class StorageKeeper {
   }
 
   /**
-   * Deletes each run's video recorded more than so many days ago, and notes where it was.
+   * Apaga o vídeo de cada run gravado há mais de tantos dias, e anota onde ele estava.
    */
   public async sweepVideos(props: { olderThanDays: number }): Promise<IVideoSweep> {
     const now = this.now();
@@ -81,8 +81,8 @@ export class StorageKeeper {
   }
 
   /**
-   * When, and after how many days, a run's video was let go of; null for one that never
-   * was.
+   * Quando, e depois de quantos dias, o vídeo de uma run foi solto; null para um que
+   * nunca foi.
    */
   public async removedVideoOf(ref: IRunRef): Promise<IRemovedVideo | null> {
     const file = join(this.runsRoot, ref.workspaceId, ref.runId, ARCHIVE.videoRemoved);

@@ -9,8 +9,8 @@ const TERMINALS = [
 ];
 
 /**
- * The first terminal this Linux desktop has, and how to make it run a shell script the QA
- * watches; null with none.
+ * O primeiro terminal que este desktop Linux tem, e como fazê-lo rodar um script de shell
+ * que o QA acompanha; null sem nenhum.
  */
 export function linuxTerminalOf(props: {
   directories: string[];

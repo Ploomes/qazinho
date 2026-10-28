@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { VariableVault } from '@/main/classes/storage/VariableVault';
 
-/** Reverses the text, so a test can tell a sealed file from a plain one. */
+/** Inverte o texto, para um teste distinguir um arquivo lacrado de um simples. */
 function fakeCipher(isAvailable = true): IVaultCipher {
   return {
     isAvailable: () => isAvailable,

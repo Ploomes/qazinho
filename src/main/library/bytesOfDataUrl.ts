@@ -1,4 +1,4 @@
-/** The bytes a base64 data URL carries, or nothing for any other string. */
+/** Os bytes que uma data URL em base64 carrega, ou nada para qualquer outra string. */
 export function bytesOfDataUrl(dataUrl: string): Buffer | null {
   const payload = /^data:[\w.+-]+\/[\w.+-]+;base64,([A-Za-z0-9+/=]+)$/.exec(dataUrl)?.[1];
 

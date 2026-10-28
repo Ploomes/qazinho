@@ -2,8 +2,8 @@ import type { IWalkRun } from './IWalkRun';
 import type { IQaQuestion } from '@salve-software/qazinho-harness';
 
 /**
- * A question the agent asks the QA at the step it is on, and what it hears next once
- * answered, or once no answer came.
+ * Uma pergunta que o agente faz ao QA no passo em que está, e o que ele ouve depois
+ * quando respondida, ou quando nenhuma resposta veio.
  */
 export interface IAskQa {
   run: IWalkRun;

@@ -1,5 +1,5 @@
 /**
- * Where the recorder window's page lives: Vite's dev server while developing, the built
- * file otherwise.
+ * Onde a página da janela do gravador vive: o servidor de dev do Vite enquanto se
+ * desenvolve, o arquivo construído nos outros casos.
  */
 export type RecorderPage = { url: string } | { file: string };

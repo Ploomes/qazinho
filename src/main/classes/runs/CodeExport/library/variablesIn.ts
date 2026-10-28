@@ -3,8 +3,8 @@ import type { ICaseRecipe } from '@/main/classes/runs/RunCoordinator/types';
 const PLACEHOLDER = /\$\{([A-Z][A-Z0-9_]*)\}/g;
 
 /**
- * The variables recorded cases type or check, by name, each once, in the order they first
- * come.
+ * As variáveis que os casos gravados digitam ou conferem, pelo nome, cada uma uma vez, na
+ * ordem em que aparecem primeiro.
  */
 export function variablesIn(recipes: ICaseRecipe[]): string[] {
   const texts = recipes.flatMap((recipe) =>

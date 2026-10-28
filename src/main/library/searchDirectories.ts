@@ -15,8 +15,8 @@ const POSIX_DIRS = [
 ];
 
 /**
- * Every directory a command could be in: the app's PATH, the shell's, then where installs
- * land on this platform.
+ * Todo diretório em que um comando poderia estar: o PATH do app, o do shell, depois onde
+ * as instalações caem nesta plataforma.
  */
 export function searchDirectories(props: {
   appPath: string | undefined;

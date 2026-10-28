@@ -1,8 +1,8 @@
 import { parseDocument } from 'yaml';
 
 /**
- * Why a plan.yaml does not read as a plan, with the line the YAML broke at; null when it
- * reads, empty included.
+ * Por que um plan.yaml não lê como plano, com a linha em que o YAML quebrou; null quando
+ * lê, vazio incluído.
  */
 export function planFaultOf(yaml: string): { line: number | null } | null {
   const document = parseDocument(yaml);

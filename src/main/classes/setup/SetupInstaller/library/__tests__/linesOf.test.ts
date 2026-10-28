@@ -31,7 +31,10 @@ describe('linesOf', () => {
     expect(linesOf('\n  \n')).toEqual([]);
   });
 
-  /** winget and cmd end their lines with a carriage return and a line feed; the line is not a redraw. */
+  /**
+   * O winget e o cmd terminam as linhas com carriage return e line feed; a linha não é um
+   * redesenho.
+   */
   it('keeps every line a Windows tool printed', () => {
     expect(linesOf('Found GitHub CLI\r\nSuccessfully installed\r\n')).toEqual([
       'Found GitHub CLI',

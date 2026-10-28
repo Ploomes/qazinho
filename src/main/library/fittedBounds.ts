@@ -1,8 +1,8 @@
 import type { IBounds } from '@/main/types';
 
 /**
- * Where a window goes for a size: centred on its display and never past it, and never
- * smaller than the QA made it.
+ * Onde uma janela vai para um tamanho: centrada no display e nunca além dele, e nunca
+ * menor do que o QA a deixou.
  */
 export function fittedBounds(props: {
   size: { width: number; height: number };

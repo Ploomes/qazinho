@@ -2,8 +2,8 @@ import type { IStoredVariable } from '@/main/classes/storage/VariableVault/types
 import type { IProjectVariables } from '@/shared/types';
 
 /**
- * The stored variables grouped by project, by name and description only, in the order
- * they were made.
+ * As variáveis guardadas agrupadas por projeto, só por nome e descrição, na ordem em que
+ * foram feitas.
  */
 export function variablesByProject(stored: IStoredVariable[]): IProjectVariables[] {
   const projects: IProjectVariables[] = [];

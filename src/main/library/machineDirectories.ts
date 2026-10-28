@@ -3,8 +3,8 @@ import { hydrateShellPath } from './hydrateShellPath';
 import { searchDirectories } from './searchDirectories';
 
 /**
- * Every directory a command could be in on this machine, the one place main looks
- * commands up.
+ * Todo diretório em que um comando poderia estar nesta máquina, o único lugar onde a main
+ * procura comandos.
  */
 export async function machineDirectories(): Promise<string[]> {
   return searchDirectories({

@@ -1,8 +1,8 @@
 import type { INetworkEntry } from '@/shared/types';
 
 /**
- * The requests a run's file keeps, read back; a file that is not a list of them reads as
- * none.
+ * Os pedidos que o arquivo de uma run guarda, lidos de volta; um arquivo que não é uma
+ * lista deles lê como nenhum.
  */
 export function networkOf(text: string): INetworkEntry[] {
   try {

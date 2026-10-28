@@ -2,8 +2,8 @@ import type { IProcessRow } from '@/main/types';
 import { parseCpuTime } from './parseCpuTime';
 
 /**
- * Reads `ps -axo pid=,ppid=,time=,rss=,args=`. The last field holds the whole command
- * line.
+ * Lê `ps -axo pid=,ppid=,time=,rss=,args=`. O último campo guarda a linha de comando
+ * inteira.
  */
 export function parseProcessSweep(output: string): IProcessRow[] {
   return output

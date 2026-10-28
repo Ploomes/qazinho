@@ -21,8 +21,8 @@ const KEYS: Record<string, string> = {
 };
 
 /**
- * A Maestro flow for one case a phone app's runs recorded: the app opened anew, each step
- * done, and its proof asserted on screen; a variable is read from the environment.
+ * Um fluxo Maestro para um caso que as runs de um app de celular gravaram: o app aberto
+ * de novo, cada passo feito, e a prova afirmada na tela; uma variável vem do ambiente.
  */
 export function maestroOf(props: {
   appId: string;

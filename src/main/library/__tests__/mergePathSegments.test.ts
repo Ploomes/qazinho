@@ -25,7 +25,10 @@ describe('mergePathSegments', () => {
     expect(posixOf(['/usr/bin::/bin:'])).toEqual(['/usr/bin', '/bin']);
   });
 
-  /** A colon split cut `C:\Windows` into `C` and `\Windows`, and nothing was ever found on Windows. */
+  /**
+   * Uma divisão por dois-pontos cortava `C:\Windows` em `C` e `\Windows`, e nada era
+   * achado no Windows.
+   */
   it('splits a Windows PATH by semicolons, keeping the drive letters whole', () => {
     expect(
       mergePathSegments({

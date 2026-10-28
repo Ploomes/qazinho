@@ -2,8 +2,8 @@ const MINUTE_MS = 60_000;
 const EARLY_SHARE = 1 / 3;
 
 /**
- * What to tell an explorer that wants to finish while more than a third of its time is
- * left, or null when it may finish.
+ * O que dizer a um explorador que quer terminar com mais de um terço do tempo sobrando,
+ * ou null quando ele pode terminar.
  */
 export function earlyFinish(props: { leftMs: number; totalMs: number }): string | null {
   const { leftMs, totalMs } = props;

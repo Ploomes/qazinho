@@ -1,4 +1,4 @@
-/** One line of `codex exec --json`, narrowed to what QAzinho reads. */
+/** Uma linha de `codex exec --json`, restrita ao que o QAzinho lê. */
 export interface ICodexLine {
   type: string;
   thread_id?: string;

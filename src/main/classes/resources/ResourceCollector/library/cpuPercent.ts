@@ -1,6 +1,6 @@
 /**
- * Share of the whole machine a process used between two sweeps; ps's own %cpu is a
- * decaying per-core average.
+ * A fatia da máquina inteira que um processo usou entre duas varreduras; o %cpu do
+ * próprio ps é uma média por núcleo que decai.
  */
 export function cpuPercent(props: {
   before: number | undefined;

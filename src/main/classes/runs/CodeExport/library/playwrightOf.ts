@@ -54,8 +54,8 @@ const VARIABLE = `function variable(name: string): string {
 `;
 
 /**
- * A Playwright test file for the cases a web app's runs recorded, each case a test that
- * starts anew and checks each step's proof; a variable is read from the environment.
+ * Um arquivo de teste Playwright para os casos que as runs de um app web gravaram, cada
+ * um um teste que começa de novo e confere as provas; variável vem do ambiente.
  */
 export function playwrightOf(props: {
   url: string;

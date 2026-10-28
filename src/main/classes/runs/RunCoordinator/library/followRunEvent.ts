@@ -1,8 +1,8 @@
 import type { IRunEvent, IRunInFlight } from '@/shared/types';
 
 /**
- * A run in flight after one more event: the step it is on, the stream, what it has
- * judged, and the question it waits on.
+ * Uma run em andamento depois de mais um evento: o passo em que está, o stream, o que
+ * julgou, e a pergunta que espera.
  */
 export function followRunEvent(props: {
   run: IRunInFlight;

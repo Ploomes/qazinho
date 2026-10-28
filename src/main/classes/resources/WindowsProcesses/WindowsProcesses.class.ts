@@ -5,20 +5,22 @@ import { WINDOWS_SWEEP } from './constants';
 import { parseWindowsSweep } from './library';
 
 /**
- * Every process on a Windows machine, read by one PowerShell kept open: starting
- * PowerShell for each look would cost more than what it measures.
+ * Todo processo numa máquina Windows, lido por um PowerShell mantido aberto: iniciar um
+ * PowerShell para cada olhada custaria mais do que ela mede.
  */
 export class WindowsProcesses {
   private child: ChildProcessWithoutNullStreams | null = null;
   private heard = '';
   private answer: ((text: string | null) => void) | null = null;
 
-  /** The pid of the PowerShell doing the looking, so it is not charged to the app. */
+  /** O pid do PowerShell que faz a olhada, para não ser cobrado do app. */
   public get pid(): number | null {
     return this.child?.pid ?? null;
   }
 
-  /** One look at every process, or none when PowerShell did not answer in time. */
+  /**
+   * Uma olhada em todo processo, ou nenhuma quando o PowerShell não respondeu a tempo.
+   */
   public async sweep(): Promise<IProcessRow[]> {
     const child = this.child ?? this.start();
     const text = await new Promise<string | null>((settle) => {
@@ -37,7 +39,7 @@ export class WindowsProcesses {
     return text === null ? [] : parseWindowsSweep(text);
   }
 
-  /** Closes the PowerShell; the next look starts another. */
+  /** Fecha o PowerShell; a próxima olhada inicia outro. */
   public stop(): void {
     this.child?.kill();
     this.child = null;

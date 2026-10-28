@@ -1,8 +1,6 @@
 import { readFile } from 'node:fs/promises';
 
-/**
- * A file that is not there yet is not an error: it is a QAzinho that has never been used.
- */
+/** Um arquivo que ainda não existe não é um erro: é um QAzinho que nunca foi usado. */
 export async function readTextOr(props: {
   file: string;
   fallback: string;

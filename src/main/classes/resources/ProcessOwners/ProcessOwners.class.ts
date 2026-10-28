@@ -1,6 +1,6 @@
 import type { IProcessClaim } from './types';
 
-/** Who a process belongs to. Only the main process knows, because only it starts them. */
+/** De quem um processo é. Só o processo main sabe, porque só ele os inicia. */
 export class ProcessOwners {
   private readonly claims = new Map<number, IProcessClaim>();
 

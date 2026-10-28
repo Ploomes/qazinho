@@ -1,6 +1,6 @@
 /**
- * A suite file's path is /<token>/suite/<project>/<run>/<file…>; one without this
- * launch's token, or one that climbs out, gets nothing.
+ * O caminho de um arquivo de suíte é /<token>/suite/<project>/<run>/<file…>; um sem o
+ * token desta execução, ou um que sobe para fora, não recebe nada.
  */
 export function suiteFileOfPath(props: {
   path: string;

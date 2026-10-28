@@ -31,7 +31,10 @@ describe('writeAtomically', () => {
     expect(await readdir(folder)).toEqual(['plan.yaml']);
   });
 
-  /** A folder where the file should be cannot be replaced: the save fails and the copy goes. */
+  /**
+   * Uma pasta onde deveria estar o arquivo não pode ser substituída: o salvamento falha e
+   * a cópia vai embora.
+   */
   it('fails without leaving its copy when the file cannot be replaced', async () => {
     const folder = await mkdtemp(join(tmpdir(), 'qazinho-atomic-'));
     const file = join(folder, 'taken');

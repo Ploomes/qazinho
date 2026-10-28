@@ -1,8 +1,8 @@
 import type { IDetectedAgent, IDeviceTools } from '@/shared/types';
 
 /**
- * What a QA pastes when something went wrong: version, machine, tools found and the log's
- * last lines.
+ * O que um QA cola quando algo deu errado: versão, máquina, ferramentas achadas e as
+ * últimas linhas do log.
  */
 export function diagnosticsOf(props: {
   version: string;
