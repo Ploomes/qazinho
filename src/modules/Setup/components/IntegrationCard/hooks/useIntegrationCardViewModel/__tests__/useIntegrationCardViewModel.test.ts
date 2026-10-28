@@ -132,6 +132,20 @@ describe('useIntegrationCardViewModel', () => {
       expect(window.qazinho.signInGithub).toHaveBeenCalledTimes(1);
     });
 
+    it('offers to connect as the account gh already signed in, not as not connected', async () => {
+      ghIs({ isFound: true, account: 'octoqa' });
+      const { result } = renderHook(() =>
+        useIntegrationCardViewModel({ integration: GITHUB }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.cliLine).toBe(
+          'gh is already signed in as octoqa: connecting uses that login.',
+        );
+      });
+      expect(result.current.action).toBe('Connect as octoqa');
+    });
+
     it('names whom gh is signed in as, and shows gh as the way GitHub connected', async () => {
       ghIs({ isFound: true, account: 'octoqa' });
       useSetupStore.setState({ integrations: [CONNECTED] });

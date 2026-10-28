@@ -85,7 +85,9 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
             })
           : cli.status.account === null
             ? t('SETUP.GITHUB_CLI_SIGNED_OUT')
-            : t('SETUP.GITHUB_CLI_AS', { account: cli.status.account }),
+            : isConnected
+              ? t('SETUP.GITHUB_CLI_AS', { account: cli.status.account })
+              : t('SETUP.GITHUB_CLI_READY', { account: cli.status.account }),
     pill: isConnected ? ('passed' as const) : ('idle' as const),
     statusLabel: isConnected ? t('SETUP.CONNECTED') : t('SETUP.NOT_CONNECTED'),
     action: isConnected
@@ -94,7 +96,9 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
         ? t('SETUP.GITHUB_INSTALLING')
         : isCliMissing
           ? t('SETUP.GITHUB_INSTALL')
-          : t('COMMON.CONNECT'),
+          : isCli && cli.status?.account != null
+            ? t('SETUP.GITHUB_CONNECT_AS', { account: cli.status.account })
+            : t('COMMON.CONNECT'),
     connectLabel: isConnecting ? t('SETUP.CHECKING_TOKEN') : t('COMMON.CONNECT'),
     canConnect: connection !== null && !isConnecting,
     tokenUrl: integration.tokenUrl ?? '',

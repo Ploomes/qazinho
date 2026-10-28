@@ -874,6 +874,8 @@ export const pt: typeof en = {
       'O gh ainda não está nesta máquina. O QAzinho instala com o {{installer}}.',
     GITHUB_CLI_SIGNED_OUT: 'O gh está aqui, mas ainda não entrou no GitHub.',
     GITHUB_CLI_AS: 'O gh está conectado como {{account}}.',
+    GITHUB_CLI_READY: 'O gh já entrou como {{account}}: conectar usa esse login.',
+    GITHUB_CONNECT_AS: 'Conectar como {{account}}',
     GITHUB_INSTALL: 'Instalar o gh',
     GITHUB_INSTALLING: 'Instalando o gh…',
     GITHUB_CONNECTED_NOTE:

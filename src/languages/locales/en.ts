@@ -869,6 +869,9 @@ export const en = {
       'gh is not on this machine yet. QAzinho installs it with {{installer}}.',
     GITHUB_CLI_SIGNED_OUT: 'gh is here, not signed in to GitHub yet.',
     GITHUB_CLI_AS: 'gh is signed in as {{account}}.',
+    GITHUB_CLI_READY:
+      'gh is already signed in as {{account}}: connecting uses that login.',
+    GITHUB_CONNECT_AS: 'Connect as {{account}}',
     GITHUB_INSTALL: 'Install gh',
     GITHUB_INSTALLING: 'Installing gh…',
     GITHUB_CONNECTED_NOTE:
