@@ -27,7 +27,10 @@ describe('isSignedInOf', () => {
     ).toBe(true);
   });
 
-  /** An agent that answered something else must not be called signed out: it may be fine. */
+  /**
+   * Um agente que respondeu outra coisa não deve ser dado como deslogado: ele pode estar
+   * bem.
+   */
   it('says it cannot tell when the answer is not one it knows', () => {
     expect(
       isSignedInOf({ reads: 'claude', code: 1, printed: 'error: unknown command auth' }),

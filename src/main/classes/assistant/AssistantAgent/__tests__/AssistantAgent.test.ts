@@ -29,9 +29,10 @@ const ANSWERED: IAgentTurn = {
 };
 
 /**
- * Every collaborator as a fake: an agent that plays each turn it is handed, which may call the app tools
- * served to it the way a real agent does over MCP, a host that serves them, a harness that writes down
- * what it was told, and a page that does what it is asked.
+ * Todo colaborador como um fake: um agente que joga cada turno que recebe, que pode
+ * chamar as ferramentas do app servidas a ele como um agente real faz por MCP, um host
+ * que as serve, um harness que anota o que lhe disseram, e uma página que faz o que lhe
+ * pedem.
  */
 function desk(props: {
   turns: ((app: IAttachApp | null) => Promise<IAgentTurn>)[];

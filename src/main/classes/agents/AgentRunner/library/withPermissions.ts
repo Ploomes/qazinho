@@ -2,8 +2,8 @@ import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
 
 /**
- * A call that lets the QA's own MCP servers in, each permission answered by QAzinho's
- * tool.
+ * Uma chamada que deixa entrar os servidores MCP do próprio QA, cada permissão respondida
+ * pela ferramenta do QAzinho.
  */
 export function withPermissions(props: {
   call: IRunAgent;

@@ -2,8 +2,8 @@ import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
 
 /**
- * The flags for one CLI answer in JSON on its session, with only the tools and folders it
- * was granted.
+ * As flags de uma resposta da CLI em JSON na sessão dela, só com as ferramentas e pastas
+ * que recebeu.
  */
 export function buildAskArgs(
   props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command' | 'agentId'>,

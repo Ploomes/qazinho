@@ -1,6 +1,6 @@
 import type { IAgentLine } from '@/main/types';
 
-/** An assistant turn is a list of blocks; only the text ones are for the QA to read. */
+/** Um turno do assistente é uma lista de blocos; só os de texto são para o QA ler. */
 export function toText(line: IAgentLine): string {
   if (line.type !== 'assistant') return '';
 

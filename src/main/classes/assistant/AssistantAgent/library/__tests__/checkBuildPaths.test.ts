@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { checkBuildPaths } from '@/main/classes/assistant/AssistantAgent/library';
 
-/** A disk that holds one .apk and one simulator .app, and nothing else. */
+/** Um disco que guarda um .apk e um .app de simulador, e nada mais. */
 const DISK: Record<string, 'file' | 'directory'> = {
   '/Users/qa/Downloads/loja.apk': 'file',
   '/Users/qa/Builds/Loja.app': 'directory',

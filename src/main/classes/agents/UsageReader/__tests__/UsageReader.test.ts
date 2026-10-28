@@ -9,7 +9,7 @@ const PRINTED = JSON.stringify({
     'Current session: 71% used · resets Oct 21 at 8am (America/Sao_Paulo)\nCurrent week (all models): 24% used',
 });
 
-/** A reader over a fake CLI that prints what it is handed, and remembers how it was called. */
+/** Um leitor sobre uma CLI fake que imprime o que recebe, e lembra como foi chamada. */
 function reader(props: { printed?: string | Error; path?: string | null } = {}) {
   const calls: { command: string; args: readonly string[]; cwd: string }[] = [];
   const usage = new UsageReader({

@@ -28,8 +28,8 @@ import {
 } from './library';
 
 /**
- * Drives the QA's own agent CLI, Claude Code or Codex. QAzinho owns no model and holds no
- * provider key.
+ * Dirige a CLI do próprio agente do QA, Claude Code ou Codex. O QAzinho não tem modelo e
+ * não guarda chave de provedor.
  */
 export class AgentRunner {
   private readonly onEvent: (event: IAgentEvent) => void;
@@ -50,8 +50,8 @@ export class AgentRunner {
   }
 
   /**
-   * Asks the agent once; every call lets the QA's own MCP servers in, each permission
-   * they need answered by QAzinho.
+   * Pergunta ao agente uma vez; toda chamada deixa entrar os servidores MCP do próprio
+   * QA, cada permissão de que precisam respondida pelo QAzinho.
    */
   public async ask(asked: IRunAgent): Promise<IAgentTurn> {
     const props =
@@ -228,8 +228,8 @@ export class AgentRunner {
   }
 
   /**
-   * Interrupts the workspace's agent the way Ctrl+C does, so it still says what the turn
-   * cost, and ends it if it lingers.
+   * Interrompe o agente do workspace como o Ctrl+C faz, para ele ainda dizer quanto o
+   * turno custou, e o termina se ele demorar.
    */
   public cancel(workspaceId: string): void {
     for (const child of this.asking.get(workspaceId) ?? []) {
@@ -241,8 +241,8 @@ export class AgentRunner {
   }
 
   /**
-   * Stops the clock that ends the workspace's agent while it waits on the QA, until as
-   * many `release` calls: the wait is not its turn's time.
+   * Para o relógio que termina o agente do workspace enquanto ele espera pelo QA, até
+   * haver tantas chamadas de `release`: a espera não é tempo do turno dele.
    */
   public hold(workspaceId: string): void {
     const holds = this.holds.get(workspaceId) ?? 0;
@@ -254,7 +254,9 @@ export class AgentRunner {
     for (const child of this.asking.get(workspaceId) ?? []) this.stopClock(child);
   }
 
-  /** Starts the clock again once nothing holds it, with the time the agent had left. */
+  /**
+   * Liga o relógio de novo assim que nada o segura, com o tempo que sobrava ao agente.
+   */
   public release(workspaceId: string): void {
     const holds = (this.holds.get(workspaceId) ?? 0) - 1;
 

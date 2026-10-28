@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { limitsOfReport } from '@/main/classes/agents/UsageReader/library';
 
-/** What Claude Code 2.1.302 printed for `claude -p /usage`, spending nothing. */
+/** O que o Claude Code 2.1.302 imprimiu para `claude -p /usage`, sem gastar nada. */
 const REPORT = `You are currently using your subscription to power your Claude Code usage
 
 Current session: 3% used · resets Oct 21 at 12:59pm (America/Sao_Paulo)

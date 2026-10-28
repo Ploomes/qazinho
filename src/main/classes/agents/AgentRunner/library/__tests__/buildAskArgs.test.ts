@@ -19,9 +19,9 @@ describe('buildAskArgs', () => {
   });
 
   /**
-   * Without it the chat met the QA's own MCP servers: an Atlassian one offered Confluence, the
-   * call was refused for lack of a permission nobody could grant, and the agent asked the QA to
-   * grant it.
+   * Sem isso o chat encontrava os servidores MCP do próprio QA: um da Atlassian oferecia
+   * o Confluence, a chamada era recusada por falta de uma permissão que ninguém podia
+   * dar, e o agente pedia ao QA que a desse.
    */
   it("keeps the QA's own MCP servers out of a call that names none of QAzinho's", () => {
     expect(buildAskArgs({ model: '', sessionId: null, allowedTools: [] })).toContain(
@@ -33,8 +33,9 @@ describe('buildAskArgs', () => {
   });
 
   /**
-   * A hook of the QA's own rewrote every command a build ran (rtk turns `./gradlew` into
-   * `rtk gradlew`), so none matched the commands the build may run, and Gradle was refused.
+   * Um hook do próprio QA reescrevia todo comando que um build rodava (o rtk transforma
+   * `./gradlew` em `rtk gradlew`), então nenhum batia com os comandos que o build pode
+   * rodar, e o Gradle era recusado.
    */
   it("keeps the QA's own hooks out of every call QAzinho makes", () => {
     const args = buildAskArgs({ model: '', sessionId: null, tools: ['Bash'] });
@@ -95,7 +96,10 @@ describe('buildAskArgs', () => {
     ]);
   });
 
-  /** The agent changing a team's suite edits files in its copy, and runs the tests only through QAzinho, which holds the secrets. */
+  /**
+   * O agente que muda a suíte de um time edita arquivos na cópia dele, e roda os testes
+   * só pelo QAzinho, que guarda os segredos.
+   */
   it('gives an agent its file tools on its folders and QAzinho own tools together', () => {
     expect(
       buildAskArgs({
@@ -175,7 +179,10 @@ describe('buildAskArgs', () => {
     expect(args).not.toContain('Read,Grep,Glob');
   });
 
-  /** The QA's company MCP is hers to answer for: the chat uses it, and QAzinho grants each call. */
+  /**
+   * O MCP da empresa do QA é dele para responder: o chat o usa, e o QAzinho concede cada
+   * chamada.
+   */
   it("lets the QA's own MCP servers into the chat, each call granted by QAzinho's tool", () => {
     const args = buildAskArgs({
       model: '',

@@ -1,8 +1,8 @@
 import type { AgentSignInProgress } from '@/shared/types';
 
 /**
- * What AgentLogin needs: where each agent CLI is, how to open a page, where to report a
- * sign-in, and a folder to run in.
+ * O que o AgentLogin precisa: onde está cada CLI de agente, como abrir uma página, onde
+ * relatar um login, e uma pasta onde rodar.
  */
 export interface IAgentLogin {
   findAgent: (agentId: string) => Promise<string | null>;

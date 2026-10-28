@@ -3,8 +3,8 @@ import type { AppToolCall } from '@/shared/types';
 type PathKind = 'file' | 'directory' | null;
 
 /**
- * A project call's builds as whole paths, each checked on disk: an Android target is an
- * .apk file, an iOS one an .app folder; otherwise why not.
+ * Os builds de uma chamada de projeto como caminhos inteiros, cada um conferido no disco:
+ * um alvo Android é um arquivo .apk, um iOS uma pasta .app; senão, por quê não.
  */
 export async function checkBuildPaths(props: {
   call: AppToolCall;

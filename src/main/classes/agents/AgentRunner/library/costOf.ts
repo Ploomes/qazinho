@@ -1,8 +1,8 @@
 import type { IAgentLine } from '@/main/types';
 
 /**
- * What the agent says a turn cost, in US dollars, from its closing line; null on any
- * other line.
+ * O que o agente diz que um turno custou, em dólares, pela linha final dele; null em
+ * qualquer outra linha.
  */
 export function costOf(line: IAgentLine): number | null {
   if (line.type !== 'result') return null;

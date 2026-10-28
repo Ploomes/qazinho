@@ -40,7 +40,7 @@ describe('hearCodex', () => {
     ).toMatchObject({ usage: { contextTokens: 1200 }, ended: { isError: false } });
   });
 
-  /** These four lines are what a signed-out Codex printed on a real machine. */
+  /** Estas quatro linhas são o que um Codex deslogado imprimiu numa máquina real. */
   it('reads a signed-out Codex as an error the QA can fix, and the retries in between as nothing', () => {
     expect(
       hear({

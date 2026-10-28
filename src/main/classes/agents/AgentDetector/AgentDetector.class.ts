@@ -7,14 +7,15 @@ import { AGENT_PROBES } from './constants';
 import { defaultModelOf, isSignedInOf, statusOf } from './library';
 
 /**
- * Finds the agents already on this machine with file probes, then asks each one found
- * whether it is signed in.
+ * Acha os agentes que já estão nesta máquina por sondas de arquivo, depois pergunta a
+ * cada um achado se está logado.
  */
 export class AgentDetector {
   private detected: IDetectedAgent[] | null = null;
 
   /**
-   * Cached for the session: a Settings panel that remounts must not re-probe the disk.
+   * Em cache pela sessão: um painel de Configurações que remonta não deve sondar o disco
+   * de novo.
    */
   public async detect(): Promise<IDetectedAgent[]> {
     if (this.detected) return this.detected;
@@ -50,7 +51,10 @@ export class AgentDetector {
     return this.detected;
   }
 
-  /** Drops the cache, so the next look sees what an install just put on disk. */
+  /**
+   * Descarta o cache, para a próxima olhada ver o que uma instalação acabou de pôr no
+   * disco.
+   */
   public forget(): void {
     this.detected = null;
   }

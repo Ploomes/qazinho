@@ -1,6 +1,6 @@
 /**
- * What a hidden agent shows: its screen row by row, the pages it asked a browser to open,
- * and whether it has closed.
+ * O que um agente escondido mostra: a tela dele linha a linha, as páginas que pediu a um
+ * navegador para abrir, e se ele fechou.
  */
 export interface ITerminalView {
   rows: string[];

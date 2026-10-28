@@ -15,7 +15,7 @@ const CALL: IRunAgent = {
 };
 
 describe('withPermissions', () => {
-  /** The QA's company MCP is hers to answer for, in a run as much as in the chat. */
+  /** O MCP da empresa do QA é dele para responder, numa run tanto quanto no chat. */
   it("grants a call that names QAzinho's server through that same server", () => {
     const run = {
       ...CALL,

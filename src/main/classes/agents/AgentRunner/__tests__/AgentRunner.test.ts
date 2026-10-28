@@ -5,7 +5,10 @@ import { describe, expect, it } from 'vitest';
 import { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 
-/** An agent whose turn takes `seconds`, then answers the way Claude Code ends one. */
+/**
+ * Um agente cujo turno leva `seconds`, depois responde do jeito que o Claude Code termina
+ * um.
+ */
 function slowAgent(seconds: number): string {
   const folder = mkdtempSync(join(tmpdir(), 'qazinho-runner-'));
   const command = join(folder, 'agent');
@@ -49,7 +52,10 @@ describe.skipIf(process.platform === 'win32')('AgentRunner', () => {
       expect(turn.isError).toBe(true);
     });
 
-    /** A run's agent waits on the QA inside a tool call: their minutes are not the turn's. */
+    /**
+     * O agente de uma run espera pelo QA dentro de uma chamada de ferramenta: os minutos
+     * dele não são do turno.
+     */
     it('does NOT end a turn while the workspace is held for the QA', async () => {
       const runner = runnerEndingTurnsAfter(300);
 

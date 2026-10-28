@@ -1,6 +1,6 @@
 /**
- * The clock that ends an agent turn that runs too long: armed while it ticks, with the
- * time it has left from when it last started.
+ * O relógio que termina um turno de agente que demora demais: armado enquanto roda, com o
+ * tempo que lhe resta desde a última vez que começou.
  */
 export interface IAgentClock {
   timer: NodeJS.Timeout | null;

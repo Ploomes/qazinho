@@ -1,6 +1,6 @@
 /**
- * One call to the agent's CLI with the harness around it: its prompt, tools, folders and
- * environment.
+ * Uma chamada à CLI do agente com o harness em volta: o prompt, as ferramentas, as pastas
+ * e o ambiente dela.
  */
 export interface IRunAgent {
   workspaceId: string;

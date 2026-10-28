@@ -11,8 +11,8 @@ import { ASSISTANT_WAIT } from '@/shared/constants';
 import { checkBuildPaths } from './library';
 
 /**
- * Asks the QA's own agent as the assistant, with QAzinho's app tools served for the turn
- * and the app as it is now in its message.
+ * Pergunta ao agente do próprio QA como o assistente, com as ferramentas do app do
+ * QAzinho servidas pelo turno e o app como está agora na mensagem dele.
  */
 export class AssistantAgent {
   private readonly runner: IAssistantAgent['runner'];
@@ -37,8 +37,8 @@ export class AssistantAgent {
   }
 
   /**
-   * One message to the assistant, on the session it already has; a session the agent lost
-   * starts again.
+   * Uma mensagem ao assistente, na sessão que ele já tem; uma sessão que o agente perdeu
+   * começa de novo.
    */
   public async ask(ask: IAssistantAsk): Promise<IAssistantTurn> {
     const unanswered = {
@@ -104,8 +104,8 @@ export class AssistantAgent {
   }
 
   /**
-   * Interrupts the assistant's turn, and lets go of any tool call still waiting on the
-   * page.
+   * Interrompe o turno do assistente, e solta qualquer chamada de ferramenta ainda
+   * esperando pela página.
    */
   public stop(): void {
     if (!this.isAsking) return;

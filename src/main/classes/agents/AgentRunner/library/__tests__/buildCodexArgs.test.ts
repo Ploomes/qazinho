@@ -30,7 +30,10 @@ describe('buildCodexArgs', () => {
     expect(args[args.indexOf('--output-schema') + 1]).toBe('/tmp/s.json');
   });
 
-  /** The harness text has quotes and line breaks; as a TOML string it must arrive whole. */
+  /**
+   * O texto do harness tem aspas e quebras de linha; como string TOML ele precisa chegar
+   * inteiro.
+   */
   it('hands the harness over as developer instructions, quoted for TOML', () => {
     const args = buildCodexArgs({ ...BASE, systemPrompt: 'Say "hi".\nThen stop.' });
 
@@ -59,7 +62,10 @@ describe('buildCodexArgs', () => {
     expect(args).not.toContain('sandbox_mode="read-only"');
   });
 
-  /** Codex gives a tool sixty seconds unless told otherwise; the assistant's waits on the QA for longer. */
+  /**
+   * O Codex dá a uma ferramenta sessenta segundos a menos que se diga o contrário; as
+   * esperas do assistente pelo QA são mais longas.
+   */
   it('lets a tool call take as long as the MCP config says, in whole seconds', () => {
     const mcpConfig = JSON.stringify({
       mcpServers: {
@@ -73,8 +79,8 @@ describe('buildCodexArgs', () => {
   });
 
   /**
-   * Codex reads the MCP servers of the QA's own config.toml: an Atlassian one would hand the chat
-   * a way to Confluence QAzinho never granted.
+   * O Codex lê os servidores MCP do config.toml do próprio QA: um da Atlassian daria ao
+   * chat um caminho para o Confluence que o QAzinho nunca concedeu.
    */
   it("turns off the QA's own MCP servers, but the ones QAzinho hands the call", () => {
     const args = buildCodexArgs({

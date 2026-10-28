@@ -1,8 +1,8 @@
 import type { IAgentLine } from '@/main/types';
 
 /**
- * The CLI writes one JSON object per line; a half-written line is not an error, just not
- * ours.
+ * A CLI escreve um objeto JSON por linha; uma linha escrita pela metade não é um erro, só
+ * não é nossa.
  */
 export function readAgentLine(line: string): IAgentLine | null {
   const trimmed = line.trim();

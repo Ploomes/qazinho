@@ -26,7 +26,10 @@ describe('codexServersOf', () => {
     ]);
   });
 
-  /** A flag splits its key on every dot, so such a name cannot be turned off from the command line. */
+  /**
+   * Uma flag divide a chave dela em cada ponto, então um nome assim não pode ser
+   * desligado pela linha de comando.
+   */
   it('does NOT name one a flag cannot address', () => {
     expect(codexServersOf('[mcp_servers."my.server"]\nurl = "x"\n')).toEqual([]);
   });

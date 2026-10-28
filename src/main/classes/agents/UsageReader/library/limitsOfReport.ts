@@ -28,8 +28,8 @@ const HALF_YEAR_MS = 183 * 24 * 60 * 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
- * Reads the limits Claude Code's /usage printed: session and week as fractions; null with
- * no session.
+ * Lê os limites que o /usage do Claude Code imprimiu: sessão e semana como frações; null
+ * sem sessão.
  */
 export function limitsOfReport(props: { text: string; now: Date }): IAgentLimits | null {
   const session = SESSION.exec(props.text);

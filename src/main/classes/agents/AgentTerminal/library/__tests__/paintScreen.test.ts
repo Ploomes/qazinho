@@ -28,8 +28,9 @@ describe('paintScreen', () => {
   });
 
   /**
-   * Claude Code redraws only the cells that change: moving the selection down writes a space over
-   * the old ❯ and a ❯ three rows below, with cursor moves in between. These are its exact bytes.
+   * O Claude Code redesenha só as células que mudam: mover a seleção para baixo escreve
+   * um espaço sobre o ❯ antigo e um ❯ três linhas abaixo, com movimentos de cursor no
+   * meio. Estes são os bytes exatos dele.
    */
   it("keeps up with Claude Code's partial redraws", () => {
     const menu = [

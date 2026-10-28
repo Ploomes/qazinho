@@ -1,7 +1,8 @@
 import type { ITerminalScreen } from '@/main/classes/agents/AgentTerminal/types';
 
 /**
- * An empty screen of `height` rows by `width` columns, with the cursor at the top left.
+ * Uma tela vazia de `height` linhas por `width` colunas, com o cursor no canto superior
+ * esquerdo.
  */
 export function blankScreen(props: { height: number; width: number }): ITerminalScreen {
   return {

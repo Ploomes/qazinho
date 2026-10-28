@@ -3,8 +3,8 @@ import type { IAgentLine } from '@/main/types';
 const LONGEST = 160;
 
 /**
- * What an assistant turn sets out to do, as a line each: a command it runs, a file it
- * writes; reading leaves no line.
+ * O que um turno do assistente pretende fazer, uma linha cada: um comando que roda, um
+ * arquivo que escreve; ler não deixa linha.
  */
 export function toActions(line: IAgentLine): string[] {
   if (line.type !== 'assistant') return [];

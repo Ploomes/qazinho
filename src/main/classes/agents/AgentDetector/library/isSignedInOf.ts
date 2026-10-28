@@ -1,6 +1,6 @@
 /**
- * Reads an agent's own sign-in status: Claude Code answers JSON, Codex answers a line and
- * its exit code.
+ * Lê o status de login do próprio agente: o Claude Code responde JSON, o Codex responde
+ * uma linha e o código de saída.
  */
 export function isSignedInOf(props: {
   reads: 'claude' | 'codex';

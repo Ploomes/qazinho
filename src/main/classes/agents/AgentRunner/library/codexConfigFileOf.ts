@@ -1,8 +1,8 @@
 import { join } from 'node:path';
 
 /**
- * Where the QA's Codex keeps its config.toml: in CODEX_HOME when it is set, else in
- * .codex under their home.
+ * Onde o Codex do QA guarda o config.toml: em CODEX_HOME quando definido, senão em .codex
+ * na home dele.
  */
 export function codexConfigFileOf(props: {
   env: Record<string, string | undefined>;

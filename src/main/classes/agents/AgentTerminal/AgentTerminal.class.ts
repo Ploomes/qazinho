@@ -11,8 +11,8 @@ import { AGENT_TERMINAL, RELAY_SCRIPT } from './constants';
 import { blankScreen, paintScreen } from './library';
 
 /**
- * An agent CLI's full-screen interface, run in a terminal nobody sees: QAzinho reads its
- * screen and presses its keys.
+ * A interface de tela cheia de uma CLI de agente, rodada num terminal que ninguém vê: o
+ * QAzinho lê a tela dela e aperta as teclas.
  */
 export class AgentTerminal {
   private readonly child: ChildProcessWithoutNullStreams;
@@ -46,16 +46,16 @@ export class AgentTerminal {
   }
 
   /**
-   * Whether this machine has the `expect` the hidden terminal runs on: every Mac does, a
-   * Linux that installed it does, Windows never.
+   * Se esta máquina tem o `expect` em que o terminal escondido roda: todo Mac tem, um
+   * Linux que o instalou tem, o Windows nunca.
    */
   public static async isAvailable(): Promise<boolean> {
     return (await AgentTerminal.expect()) !== null;
   }
 
   /**
-   * Starts the agent in a hidden terminal. A page it asks the browser to open is caught,
-   * not opened.
+   * Inicia o agente num terminal escondido. Uma página que ele pede ao navegador para
+   * abrir é pega, não aberta.
    */
   public static async open(props: IAgentTerminal): Promise<AgentTerminal> {
     const relay = join(tmpdir(), AGENT_TERMINAL.relayFile);
@@ -77,8 +77,8 @@ export class AgentTerminal {
   }
 
   /**
-   * What the agent shows now, the pages it asked a browser to open, and whether it has
-   * closed.
+   * O que o agente mostra agora, as páginas que pediu a um navegador para abrir, e se ele
+   * fechou.
    */
   public async view(): Promise<ITerminalView> {
     return {
@@ -88,7 +88,7 @@ export class AgentTerminal {
     };
   }
 
-  /** Types keys into the agent, then waits for its screen to answer them and settle. */
+  /** Digita teclas no agente, depois espera a tela dele responder a elas e assentar. */
   public async press(keys: string): Promise<void> {
     if (this.hasExited) return;
 
@@ -108,8 +108,8 @@ export class AgentTerminal {
   }
 
   /**
-   * Reads the screen whenever it settles until `read` answers; null once the agent
-   * closes, `ms` runs out or `signal` aborts.
+   * Lê a tela sempre que ela assenta até o `read` responder; null quando o agente fecha,
+   * o `ms` acaba ou o `signal` aborta.
    */
   public async waitFor<T>(props: {
     read: (view: ITerminalView) => T | null;
@@ -139,7 +139,7 @@ export class AgentTerminal {
     return null;
   }
 
-  /** Ends the agent and the terminal around it. */
+  /** Termina o agente e o terminal em volta dele. */
   public close(): void {
     this.child.kill();
     this.catcher.dispose();

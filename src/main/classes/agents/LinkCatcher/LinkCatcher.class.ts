@@ -5,8 +5,8 @@ import { join } from 'node:path';
 import { CATCHER_FILES, LINK_CATCHER } from './constants';
 
 /**
- * Catches the pages an agent CLI asks a browser to open, through a `$BROWSER` that writes
- * them down.
+ * Pega as páginas que uma CLI de agente pede a um navegador para abrir, por um `$BROWSER`
+ * que as anota.
  */
 export class LinkCatcher {
   private readonly script: string | null;
@@ -17,7 +17,7 @@ export class LinkCatcher {
     this.file = props.file;
   }
 
-  /** Writes the catcher and starts a fresh list, for one agent run. */
+  /** Escreve o pegador e começa uma lista nova, para uma run de agente. */
   public static async create(): Promise<LinkCatcher> {
     const script =
       process.platform === 'win32' ? null : join(tmpdir(), CATCHER_FILES.script);
@@ -33,12 +33,12 @@ export class LinkCatcher {
     });
   }
 
-  /** The environment that sends the agent's browser requests to the catcher. */
+  /** O ambiente que manda os pedidos de navegador do agente ao pegador. */
   public env(): NodeJS.ProcessEnv {
     return this.script === null ? {} : { BROWSER: this.script, QAZINHO_LINKS: this.file };
   }
 
-  /** The pages the agent asked to open so far, oldest first. */
+  /** As páginas que o agente pediu para abrir até agora, as mais antigas primeiro. */
   public async links(): Promise<string[]> {
     const said = await readFile(this.file, 'utf8').catch(() => '');
 
@@ -48,7 +48,7 @@ export class LinkCatcher {
       .filter((link) => link !== '');
   }
 
-  /** Throws the list away. */
+  /** Joga a lista fora. */
   public dispose(): void {
     void rm(this.file, { force: true });
   }

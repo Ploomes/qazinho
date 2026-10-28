@@ -4,8 +4,8 @@ import { USAGE_READER } from './constants';
 import { limitsOfReport } from './library';
 
 /**
- * Reads how far the QA's account is into its limits through Claude Code's own /usage,
- * which spends nothing.
+ * Lê até onde a conta do QA está dos limites dela pelo /usage do próprio Claude Code, que
+ * não gasta nada.
  */
 export class UsageReader {
   private readonly findAgent: IUsageReader['findAgent'];
@@ -21,8 +21,8 @@ export class UsageReader {
   }
 
   /**
-   * The agent's limits as its /usage prints them now; null for an agent with no /usage,
-   * one not installed, or a report with no session in it.
+   * Os limites do agente como o /usage dele os imprime agora; null para um agente sem
+   * /usage, um não instalado, ou um relatório sem sessão.
    */
   public async read(agentId: string): Promise<IAgentLimits | null> {
     if (agentId !== USAGE_READER.agentId) return null;

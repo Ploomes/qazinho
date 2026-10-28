@@ -1,8 +1,8 @@
 import type { IAppToolRequest } from '@/shared/types';
 
 /**
- * Where the bridge sends a call, false when no window can take it, and how long it waits
- * for the answer.
+ * Para onde a bridge manda uma chamada, false quando nenhuma janela a pode receber, e
+ * quanto tempo ela espera pela resposta.
  */
 export interface IAppBridge {
   send: (request: IAppToolRequest) => boolean;

@@ -38,9 +38,10 @@ describe('strictSchemaOf', () => {
   });
 
   /**
-   * OpenAI's strict mode refused minItems and maxItems when it launched, and whether it takes
-   * them now is not settled. A refused keyword fails the whole call, so the bounds stay with
-   * Claude Code's schema and the corpus, and Codex gets the array without them.
+   * O strict mode da OpenAI recusou minItems e maxItems quando foi lançado, e se ele os
+   * aceita agora não está resolvido. Uma keyword recusada falha a chamada inteira, então
+   * os limites ficam com o schema do Claude Code e o corpus, e o Codex recebe o array sem
+   * eles.
    */
   it('drops the bounds of an array, which strict mode may refuse', () => {
     const strict = strictSchemaOf({

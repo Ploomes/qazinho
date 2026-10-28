@@ -3,8 +3,8 @@ type Schema = { [key: string]: unknown };
 const UNSURE_KEYWORDS = new Set(['minItems', 'maxItems']);
 
 /**
- * A JSON Schema the way OpenAI's strict mode takes it: every field required, the optional
- * ones nullable, no array bounds.
+ * Um JSON Schema como o strict mode da OpenAI o aceita: todo campo obrigatório, os
+ * opcionais anuláveis, sem limites de array.
  */
 export function strictSchemaOf(given: Schema): Schema {
   const schema = Object.fromEntries(

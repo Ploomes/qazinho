@@ -1,8 +1,8 @@
 import type { IAgentLine } from '@/main/types';
 
 /**
- * The try an agent is on when it could not reach its own service and waits to try again;
- * null for any other line.
+ * A tentativa em que um agente está quando não alcançou o próprio serviço e espera para
+ * tentar de novo; null para qualquer outra linha.
  */
 export function retryOf(
   line: IAgentLine,

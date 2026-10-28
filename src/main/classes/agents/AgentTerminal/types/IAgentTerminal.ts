@@ -1,6 +1,5 @@
 /**
- * The agent CLI to run out of sight: its command, where it runs, and the environment it
- * gets.
+ * A CLI de agente a rodar fora de vista: o comando, onde roda e o ambiente que recebe.
  */
 export interface IAgentTerminal {
   command: string;

@@ -1,6 +1,6 @@
 /**
- * What UsageReader needs: where each agent CLI is, a folder to run it in, and a way to
- * run a command and read what it printed.
+ * O que o UsageReader precisa: onde está cada CLI de agente, uma pasta onde rodá-la, e um
+ * jeito de rodar um comando e ler o que ele imprimiu.
  */
 export interface IUsageReader {
   findAgent: (agentId: string) => Promise<string | null>;

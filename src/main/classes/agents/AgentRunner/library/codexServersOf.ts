@@ -2,8 +2,8 @@ const SECTION = /^[ \t]*\[\[?[ \t]*mcp_servers\.([A-Za-z0-9_-]+)\b/gm;
 const DOTTED = /^[ \t]*mcp_servers\.([A-Za-z0-9_-]+)\./gm;
 
 /**
- * The names of the MCP servers a Codex config.toml declares, each once; a name a flag
- * cannot address, quoted with a dot in it, is left out.
+ * Os nomes dos servidores MCP que um config.toml do Codex declara, cada um uma vez; um
+ * nome que uma flag não consegue endereçar, entre aspas e com ponto, fica de fora.
  */
 export function codexServersOf(toml: string): string[] {
   const names = [...toml.matchAll(SECTION), ...toml.matchAll(DOTTED)].map(

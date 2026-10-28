@@ -1,6 +1,6 @@
 /**
- * A terminal screen as text: a character per cell, the cursor, the spot ESC 7 saved, and
- * an escape the last output cut short.
+ * Uma tela de terminal como texto: um caractere por célula, o cursor, o ponto que o ESC 7
+ * salvou, e um escape que a última saída cortou.
  */
 export interface ITerminalScreen {
   cells: string[][];

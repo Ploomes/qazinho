@@ -3,8 +3,8 @@ import type { AppBridge } from '@/main/classes/assistant/AppBridge';
 import type { Harness, McpHost } from '@salve-software/qazinho-harness';
 
 /**
- * What the assistant needs: the QA's agent, QAzinho's MCP host and harness, the bridge to
- * the page, and a look at the disk.
+ * O que o assistente precisa: o agente do QA, o host MCP e o harness do QAzinho, a bridge
+ * até a página, e um olhar para o disco.
  */
 export interface IAssistantAgent {
   runner: Pick<AgentRunner, 'ask' | 'cancel'>;

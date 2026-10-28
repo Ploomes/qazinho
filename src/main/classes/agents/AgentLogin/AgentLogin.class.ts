@@ -12,8 +12,8 @@ import { authorizeUrlIn, stripAnsi, spawnCommand } from '@/main/library';
 import { AGENT_LOGIN, LOGIN_RECIPES } from './constants';
 
 /**
- * Signs the QA in to their own agent through the agent's own login: its page opens in the
- * browser, and the agent keeps the result.
+ * Faz o QA entrar no próprio agente pelo login do próprio agente: a página dele abre no
+ * navegador, e o agente guarda o resultado.
  */
 export class AgentLogin {
   private readonly findAgent: (agentId: string) => Promise<string | null>;
@@ -33,8 +33,8 @@ export class AgentLogin {
   }
 
   /**
-   * Runs the agent's sign-in, reporting each step; resolves once the agent is signed in,
-   * fails, or the QA cancels.
+   * Roda o login do agente, relatando cada passo; resolve assim que o agente está logado,
+   * falha, ou o QA cancela.
    */
   public async signIn(agentId: string): Promise<AgentSignInProgress> {
     const controller = new AbortController();
@@ -50,21 +50,21 @@ export class AgentLogin {
     }
   }
 
-  /** Hands the agent the code its page showed, for a sign-in that falls back to one. */
+  /**
+   * Entrega ao agente o código que a página dele mostrou, para um login que recorre a um.
+   */
   public sendCode(props: { agentId: string; code: string }): void {
     const code = props.code.trim();
 
     if (code !== '') this.signIns.get(props.agentId)?.child?.stdin.write(`${code}\n`);
   }
 
-  /**
-   * Stops a sign-in under way: the agent's login closes, and the sign-in ends cancelled.
-   */
+  /** Para um login em andamento: o login do agente fecha, e o login termina cancelado. */
   public cancel(agentId: string): void {
     this.signIns.get(agentId)?.controller.abort();
   }
 
-  /** Stops every sign-in under way, for when QAzinho quits. */
+  /** Para todo login em andamento, para quando o QAzinho fecha. */
   public close(): void {
     for (const { controller } of this.signIns.values()) controller.abort();
   }

@@ -10,8 +10,7 @@ const EMPTY: IAgentUsage = {
 };
 
 /**
- * Reads the limits the account is against, and how much context the turn actually
- * carried.
+ * Lê os limites contra os quais a conta está, e quanto contexto o turno de fato carregou.
  */
 export function toUsage(props: {
   previous: IAgentUsage | null;

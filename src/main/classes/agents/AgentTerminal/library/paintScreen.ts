@@ -14,8 +14,8 @@ const CHARSET_OPENERS = new Set(['(', ')', '*', '+', '-', '.', '/']);
 const ALTERNATE_SCREEN = /^\?(?:1049|1047|47)$/;
 
 /**
- * The screen once a terminal draws `output` on it: text, cursor moves, erases and
- * scrolls. Colours, titles and modes are dropped.
+ * A tela depois de um terminal desenhar `output` nela: texto, movimentos de cursor,
+ * apagamentos e rolagens. Cores, títulos e modos são descartados.
  */
 export function paintScreen(props: {
   screen: ITerminalScreen;

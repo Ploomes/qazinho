@@ -2,7 +2,7 @@ import type { IAppToolRequest } from '@/shared/types';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AppBridge } from '@/main/classes/assistant/AppBridge';
 
-/** A page that only remembers what reached it, answering when the test says so. */
+/** Uma página que só lembra o que chegou a ela, respondendo quando o teste manda. */
 function bridgeTo(props: { isOpen: boolean }) {
   const sent: IAppToolRequest[] = [];
   const bridge = new AppBridge({

@@ -1,8 +1,8 @@
 import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
 
 /**
- * The flags for one Codex answer in JSON lines with no approval asked: read-only, or one
- * folder writable.
+ * As flags de uma resposta do Codex em linhas JSON sem pedir aprovação: somente leitura,
+ * ou uma pasta gravável.
  */
 export function buildCodexArgs(
   props: Omit<IRunAgent, 'workspaceId' | 'prompt' | 'command' | 'agentId'> & {

@@ -17,7 +17,7 @@ const RESULT = {
   modelUsage: { 'claude-opus-5': { contextWindow: 1000000 } },
 };
 
-/** Claude Code before 2.1.273 reported the limit with no utilization in it. */
+/** O Claude Code antes da 2.1.273 relatava o limite sem utilização nele. */
 const OLD_LIMITS = {
   type: 'rate_limit_event',
   rate_limit_info: {
