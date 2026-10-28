@@ -9,8 +9,10 @@ import './styles.css';
 
 export const StepDevices: React.FC = () => {
   const {
-    isMac,
     isChecking,
+    hasNote,
+    note,
+    canCheckAgain,
     needsBrew,
     brewUrl,
     android,
@@ -108,15 +110,15 @@ export const StepDevices: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <p className="step-devices__note">
-        {isMac ? t('SETUP.DEVICES_NOTE') : t('SETUP.IOS_OFF_NOTE')}
-      </p>
+      {hasNote && <p className="step-devices__note">{note}</p>}
 
-      <div className="step-devices__recheck">
-        <Button size="sm" variant="ghost" disabled={isChecking} onClick={onCheckAgain}>
-          {isChecking ? t('SETUP.CHECKING') : t('SETUP.CHECK_AGAIN')}
-        </Button>
-      </div>
+      {canCheckAgain && (
+        <div className="step-devices__recheck">
+          <Button size="sm" variant="ghost" disabled={isChecking} onClick={onCheckAgain}>
+            {isChecking ? t('SETUP.CHECKING') : t('SETUP.CHECK_AGAIN')}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

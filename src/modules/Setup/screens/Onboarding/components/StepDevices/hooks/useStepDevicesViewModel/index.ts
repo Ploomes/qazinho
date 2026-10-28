@@ -13,6 +13,8 @@ export const useStepDevicesViewModel = () => {
   const isMac = Platform.isMac();
   const hasBrew = managers?.brew.isFound ?? false;
   const idbInstall = installs.idb;
+  const hasMissing =
+    !tools.androidSdk.isFound || (isMac && (!tools.xcode.isFound || !tools.idb.isFound));
 
   const stateOf = (isFound: boolean) =>
     !isMac ? ('off' as const) : isFound ? ('found' as const) : ('missing' as const);
@@ -20,8 +22,10 @@ export const useStepDevicesViewModel = () => {
     !isMac ? t('SETUP.OFF') : isFound ? t('SETUP.FOUND') : t('SETUP.MISSING');
 
   return {
-    isMac,
     isChecking,
+    hasNote: !isMac || hasMissing,
+    note: isMac ? t('SETUP.DEVICES_NOTE') : t('SETUP.IOS_OFF_NOTE'),
+    canCheckAgain: hasMissing,
     needsBrew: isMac && managers !== null && !hasBrew && !tools.idb.isFound,
     brewUrl: SETUP_LINKS.brew,
     android: {

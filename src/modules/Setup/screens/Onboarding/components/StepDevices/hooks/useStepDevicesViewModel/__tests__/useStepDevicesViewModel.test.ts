@@ -47,6 +47,23 @@ describe('useStepDevicesViewModel', () => {
     });
   });
 
+  it('asks to check again while a tool is missing, and NOT once every tool is found', () => {
+    const missing = renderHook(() => useStepDevicesViewModel());
+
+    expect(missing.result.current).toMatchObject({ hasNote: true, canCheckAgain: true });
+
+    useMachineStore.setState({
+      tools: {
+        androidSdk: { isFound: true, path: '/Users/qa/Library/Android/sdk' },
+        xcode: { isFound: true, path: '/Applications/Xcode.app' },
+        idb: { isFound: true, path: '/opt/homebrew/bin/idb' },
+      },
+    });
+    const ready = renderHook(() => useStepDevicesViewModel());
+
+    expect(ready.result.current).toMatchObject({ hasNote: false, canCheckAgain: false });
+  });
+
   it('offers to install idb with Homebrew', () => {
     const { result } = renderHook(() => useStepDevicesViewModel());
 
