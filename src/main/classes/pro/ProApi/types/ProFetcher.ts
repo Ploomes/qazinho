@@ -1,6 +1,6 @@
 /**
- * `fetch`, narrowed to what the platform's client calls, so a test hands in a fake
- * platform.
+ * O `fetch`, restrito ao que o cliente da plataforma chama, para um teste entregar uma
+ * plataforma fake.
  */
 export type ProFetcher = (
   url: string,

@@ -1,6 +1,6 @@
 import type { ProFetcher } from './ProFetcher';
 
-/** Where QAzinho Pro's API lives, and how to reach it. */
+/** Onde a API do QAzinho Pro vive, e como alcançá-la. */
 export interface IProApi {
   baseUrl: string;
   fetcher: ProFetcher;

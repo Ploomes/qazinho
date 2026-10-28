@@ -1,8 +1,8 @@
 import type { IProSyncBug } from '@/shared/types';
 
 /**
- * The screens a bug keeps in the archive: its own, then its first catch's and each
- * sighting's.
+ * As telas que um bug guarda no arquivo: a dele, depois a da primeira vez em que foi pego
+ * e a de cada vista.
  */
 export function bugFilesOf(bug: IProSyncBug): string[] {
   const own = bug.shots.flatMap(({ file }) => (file === null ? [] : [file]));

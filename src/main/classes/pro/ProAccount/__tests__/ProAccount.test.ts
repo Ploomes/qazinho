@@ -8,7 +8,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { ProAccount } from '@/main/classes/pro/ProAccount';
 
-/** Reverses the text, so a test can tell a sealed file from a plain one. */
+/** Inverte o texto, para um teste distinguir um arquivo lacrado de um simples. */
 function fakeCipher(isAvailable = true): IVaultCipher {
   return {
     isAvailable: () => isAvailable,
@@ -31,7 +31,10 @@ const CONFIRMED: IProDeviceToken = {
   orgs: [ORG],
 };
 
-/** The platform as the account calls it: each poll answers the next of `polls`, and `me` answers `me`. */
+/**
+ * A plataforma como a conta a chama: cada polling responde o próximo de `polls`, e `me`
+ * responde `me`.
+ */
 function fakeApi(props: {
   polls?: ProAnswer<IProDeviceToken>[];
   me?: ProAnswer<{ user: IProDeviceToken['user']; orgs: IProOrg[] }>;

@@ -13,8 +13,8 @@ const KINDS: Record<
 };
 
 /**
- * Whether a file of a run is a screenshot, its video or its requests, and its content
- * type; null for one QAzinho never sends.
+ * Se um arquivo de uma run é um screenshot, o vídeo dela ou os pedidos dela, e o content
+ * type; null para um que o QAzinho nunca manda.
  */
 export function evidenceKindOf(
   file: string,

@@ -1,6 +1,6 @@
 /**
- * Where the platform lets this machine put one file: the key it will be known by, the
- * address, and the headers the upload must carry.
+ * Onde a plataforma deixa esta máquina pôr um arquivo: a chave pela qual será conhecido,
+ * o endereço, e os cabeçalhos que o upload precisa levar.
  */
 export interface IProEvidenceUpload {
   key: string;

@@ -1,8 +1,8 @@
 import type { IProSyncBug, IProSyncCatch } from '@/shared/types';
 
 /**
- * The bug as the platform takes it, each screen, its first catch's and each sighting's
- * named by the key it was uploaded under; a screen that did not go up is left out.
+ * O bug como a plataforma o aceita, cada tela (a da primeira vez em que foi pego e a de
+ * cada vista) nomeada pela chave do upload; uma tela que não subiu fica de fora.
  */
 export function bugBodyOf(props: { bug: IProSyncBug; keys: Record<string, string> }) {
   const { bug, keys } = props;

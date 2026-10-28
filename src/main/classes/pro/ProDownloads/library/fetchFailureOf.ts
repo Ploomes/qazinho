@@ -1,6 +1,6 @@
 /**
- * Why reading from the org did not work, as the QA reads it: signed out, no answer, or a
- * refusal.
+ * Por que ler da org não funcionou, como o QA lê: deslogado, nenhuma resposta, ou uma
+ * recusa.
  */
 export function fetchFailureOf(answer: {
   status: number;

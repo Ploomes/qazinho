@@ -1,6 +1,9 @@
 import type { SyncedProject } from '@/main/classes/pro/ProDownloads/types';
 
-/** A project as the org answers it: a web and an Android target, one plan on each, and a variable. */
+/**
+ * Um projeto como a org o responde: um alvo web e um Android, um plano em cada, e uma
+ * variável.
+ */
 export const SYNCED: SyncedProject = {
   id: 'pp1',
   desktopId: 'p-1760000000000',

@@ -1,8 +1,8 @@
 import type { IProOrg } from '@/shared/types';
 
 /**
- * What this machine keeps sealed about its sign-in: the token, the machine, the account,
- * and its orgs as of the last answer.
+ * O que esta máquina guarda lacrado do login: o token, a máquina, a conta, e as orgs dela
+ * como da última resposta.
  */
 export interface IStoredPro {
   token: string;

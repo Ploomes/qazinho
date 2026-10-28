@@ -2,8 +2,8 @@ import type { ProAnswer } from '@/main/classes/pro/ProApi/types';
 import type { z } from 'zod';
 
 /**
- * Reads the platform's answer against the shape it promised: its error code when it
- * refused, `unexpected` when the shape is off.
+ * Lê a resposta da plataforma contra o formato que ela prometeu: o código de erro dela
+ * quando recusou, `unexpected` quando o formato está errado.
  */
 export async function answerOf<T>(props: {
   response: { ok: boolean; status: number; text: () => Promise<string> };

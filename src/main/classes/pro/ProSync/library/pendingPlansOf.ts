@@ -3,7 +3,7 @@ import type { IProSyncPlan } from '@/shared/types';
 import { hashOf } from './hashOf';
 import { planBodyOf } from './planBodyOf';
 
-/** The workspaces whose plan changed here since the org last took it. */
+/** Os workspaces cujo plano mudou aqui desde que a org o pegou por último. */
 export function pendingPlansOf(props: {
   record: IProSyncRecord;
   plans: IProSyncPlan[];

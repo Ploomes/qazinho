@@ -1,6 +1,6 @@
 import type { IProSyncRun } from '@/shared/types';
 
-/** The screens a run's steps left in the archive, once each. */
+/** As telas que os passos de uma run deixaram no arquivo, uma vez cada. */
 export function runFilesOf(run: IProSyncRun): string[] {
   return [
     ...new Set(

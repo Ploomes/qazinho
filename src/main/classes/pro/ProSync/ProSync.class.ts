@@ -33,8 +33,8 @@ import {
 } from './library';
 
 /**
- * Keeps each project this computer linked to an org in step with it: its runs and bugs as
- * they happen, its plans when the QA sends them, and the plans the org moved since.
+ * Mantém cada projeto ligado a uma org em dia com ela: runs e bugs como acontecem, planos
+ * quando o QA os manda, e os planos que a org mexeu desde então.
  */
 export class ProSync {
   private readonly api: IProSync['api'];
@@ -74,8 +74,8 @@ export class ProSync {
   }
 
   /**
-   * Links a project to an org and sends it whole, its plans included; the media of runs
-   * before now stays here unless the QA sends the history's too.
+   * Liga um projeto a uma org e o manda inteiro, os planos incluídos; a mídia das runs
+   * anteriores fica aqui a menos que o QA mande a do histórico também.
    */
   public async publish(props: {
     batch: IProSyncBatch;
@@ -106,8 +106,8 @@ export class ProSync {
   }
 
   /**
-   * Sends what changed in a linked project but its plans: the project, its runs, bugs and
-   * recordings; each plan edited here is told as waiting to be sent.
+   * Manda o que mudou num projeto ligado menos os planos: o projeto, as runs, bugs e
+   * gravações; cada plano editado aqui é dito como esperando para ser enviado.
    */
   public async push(batch: IProSyncBatch): Promise<IProShare> {
     return this.inTurn({
@@ -116,7 +116,10 @@ export class ProSync {
     });
   }
 
-  /** Sends a linked project's plans edited here, each as the org's next version. */
+  /**
+   * Manda os planos editados aqui de um projeto ligado, cada um como a próxima versão da
+   * org.
+   */
   public async sendPlans(batch: IProSyncBatch): Promise<IProShare> {
     return this.inTurn({
       projectId: batch.project.projectId,
@@ -125,8 +128,8 @@ export class ProSync {
   }
 
   /**
-   * Builds a workspace's plan on the version the org moved it to, once the QA took it in;
-   * what they kept of their own waits to be sent.
+   * Constrói o plano de um workspace sobre a versão para a qual a org o moveu, depois que
+   * o QA o aceitou; o que ele manteve do próprio espera para ser enviado.
    */
   public async resolve(props: {
     projectId: string;
@@ -140,8 +143,8 @@ export class ProSync {
   }
 
   /**
-   * Asks each org for the plans it moved past what this computer took, and tells the page
-   * without changing them; a project the org no longer has is told gone.
+   * Pergunta a cada org os planos que ela mexeu além do que este computador pegou, e
+   * avisa a página sem mudá-los; um projeto que a org não tem mais recebe gone.
    */
   public async pull(): Promise<void> {
     const token = await this.token();
@@ -178,7 +181,7 @@ export class ProSync {
     }
   }
 
-  /** Pulls now, and again every few minutes while the app is open. */
+  /** Busca agora, e de novo a cada poucos minutos enquanto o app está aberto. */
   public startPulling(): void {
     const turn = () => {
       void this.pull()
@@ -192,8 +195,8 @@ export class ProSync {
   }
 
   /**
-   * Keeps a project downloaded from its org as linked to it, each plan at the version it
-   * came in.
+   * Mantém um projeto baixado da org dele como ligado a ela, cada plano na versão em que
+   * veio.
    */
   public async adopt(props: {
     projectId: string;
@@ -231,7 +234,7 @@ export class ProSync {
     });
   }
 
-  /** Unlinks a project: it stays here, and nothing of it goes to the org again. */
+  /** Desliga um projeto: ele fica aqui, e nada dele vai à org de novo. */
   public async forget(projectId: string): Promise<IProShare> {
     return this.inTurn({
       projectId,
@@ -248,7 +251,7 @@ export class ProSync {
     });
   }
 
-  /** Deletes a linked project in its org, then unlinks it; a refusal keeps both. */
+  /** Apaga um projeto ligado na org dele, depois o desliga; uma recusa mantém os dois. */
   public async remove(projectId: string): Promise<ProRemoval> {
     const token = await this.token();
     const record = (await this.read())[projectId];
@@ -265,7 +268,7 @@ export class ProSync {
     return removal;
   }
 
-  /** What publishing a project sends, and what the media of its history weighs. */
+  /** O que publicar um projeto manda, e quanto pesa a mídia do histórico dele. */
   public async brief(batch: IProSyncBatch): Promise<IProPublishBrief> {
     const files = new Set<string>();
 

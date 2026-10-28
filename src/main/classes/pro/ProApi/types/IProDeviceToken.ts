@@ -2,8 +2,8 @@ import type { IProUser } from './IProUser';
 import type { IProOrg } from '@/shared/types';
 
 /**
- * What a confirmed sign-in code trades for: this machine's token, the machine, the person
- * and their orgs.
+ * Pelo que um código de login confirmado se troca: o token desta máquina, a máquina, a
+ * pessoa e as orgs dela.
  */
 export interface IProDeviceToken {
   token: string;

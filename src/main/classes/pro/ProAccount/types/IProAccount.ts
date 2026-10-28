@@ -3,8 +3,8 @@ import type { IVaultCipher } from '@/main/types';
 import type { ProSignInProgress } from '@/shared/types';
 
 /**
- * What signing this machine in needs: the platform, the keychain, where the sealed file
- * goes, the browser, and a clock a test can drive.
+ * O que fazer esta máquina entrar precisa: a plataforma, o keychain, onde vai o arquivo
+ * lacrado, o navegador, e um relógio que um teste pode conduzir.
  */
 export interface IProAccount {
   api: Pick<ProApi, 'deviceCode' | 'deviceToken' | 'me' | 'revokeMachine'>;

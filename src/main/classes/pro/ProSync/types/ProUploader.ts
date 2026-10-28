@@ -1,6 +1,6 @@
 /**
- * Puts one file's bytes at an address the platform signed, streaming it from disk; false
- * when it did not take them.
+ * Põe os bytes de um arquivo num endereço que a plataforma assinou, transmitindo-o do
+ * disco; false quando ela não os aceitou.
  */
 export type ProUploader = (props: {
   url: string;

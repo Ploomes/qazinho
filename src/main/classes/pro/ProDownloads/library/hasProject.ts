@@ -1,4 +1,4 @@
-/** Whether this computer's projects file already holds a project by that id. */
+/** Se o arquivo de projetos deste computador já guarda um projeto com esse id. */
 export function hasProject(props: { text: string | null; projectId: string }): boolean {
   if (props.text === null) return false;
 

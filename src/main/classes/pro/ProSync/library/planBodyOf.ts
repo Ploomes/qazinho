@@ -1,8 +1,8 @@
 import type { IProSyncPlan } from '@/shared/types';
 
 /**
- * The plan as the platform takes it, before the version it was based on and the machine
- * are added.
+ * O plano como a plataforma o aceita, antes de a versão em que foi baseado e a máquina
+ * serem acrescentadas.
  */
 export function planBodyOf(plan: IProSyncPlan) {
   return {

@@ -4,8 +4,8 @@ import { hashOf } from './hashOf';
 import { planBodyOf } from './planBodyOf';
 
 /**
- * The record's plans with each one taken from the org fingerprinted as it stands here,
- * while its cases are still the ones it came with.
+ * Os planos do registro com cada um tirado da org identificado como está aqui, enquanto
+ * os casos dele ainda são os que veio com.
  */
 export function healedPlansOf(props: {
   record: IProSyncRecord;

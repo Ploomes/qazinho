@@ -1,8 +1,8 @@
 import type { IProPlanConflict, IProSyncCase, ProSyncState } from '@/shared/types';
 
 /**
- * What this machine remembers of one linked project: its org, where it stands, and what
- * already reached the org, so nothing goes twice.
+ * O que esta máquina lembra de um projeto ligado: a org dele, em que pé está, e o que já
+ * chegou à org, para nada ir duas vezes.
  */
 export interface IProSyncRecord {
   orgSlug: string;

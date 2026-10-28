@@ -9,7 +9,9 @@ import { SYNCED } from '@/main/classes/pro/ProDownloads/library/__tests__/fixtur
 
 type Adopted = Parameters<ProSync['adopt']>[0];
 
-/** The org as the downloads read it: its projects, and each plan's recordings on main. */
+/**
+ * A org como os downloads a leem: os projetos dela, e as gravações de cada plano na main.
+ */
 function fakeApi(props: { status?: number; projects?: (typeof SYNCED)[] } = {}) {
   const asked: string[] = [];
   const api: IProDownloads['api'] = {

@@ -19,7 +19,7 @@ interface ISent {
 
 type Refusal = { isOk: false; status: number; error: string; details?: unknown };
 
-/** The org's plan as another QA left it: version 4, by Bruno. */
+/** O plano da org como outro QA o deixou: versão 4, do Bruno. */
 const MOVED = {
   version: 4,
   cases: [
@@ -36,7 +36,10 @@ const MOVED = {
   editedAt: '2026-10-24T11:30:00.000Z',
 };
 
-/** The platform as the sync calls it: every call is kept, and answered as `refuse` says or as the platform would. */
+/**
+ * A plataforma como a sincronização a chama: toda chamada é guardada, e respondida como
+ * `refuse` diz ou como a plataforma faria.
+ */
 function fakeApi(refuse: (sent: ISent) => Refusal | null = () => null) {
   const sent: ISent[] = [];
   const org: {
@@ -128,7 +131,10 @@ function fakeApi(refuse: (sent: ISent) => Refusal | null = () => null) {
   return { api, sent, org, methods: () => sent.map(({ method }) => method) };
 }
 
-/** A shared project with one plan, a run that left a screen and a video, and the bug it found. */
+/**
+ * Um projeto compartilhado com um plano, uma run que deixou uma tela e um vídeo, e o bug
+ * que ela achou.
+ */
 function batchOf(root: string): IProSyncBatch {
   const shot = join(root, 'runs', 'w1', 'r1', '2.jpg');
 
@@ -292,7 +298,7 @@ async function syncWith(props: {
   });
   const batch = batchOf(root);
 
-  /** Publishes the batch to the org `loja`, with the media of its history. */
+  /** Publica o batch na org `loja`, com a mídia do histórico dele. */
   const publish = (props?: { batch?: IProSyncBatch; hasHistoryMedia?: boolean }) =>
     sync.publish({
       batch: props?.batch ?? batch,
@@ -303,7 +309,7 @@ async function syncWith(props: {
   return { sync, root, account, uploaded, upload, retries, shares, batch, publish };
 }
 
-/** The batch with its plan renamed, an edit the QA has not sent yet. */
+/** O batch com o plano renomeado, uma edição que o QA ainda não mandou. */
 function renamed(batch: IProSyncBatch, name = 'Checkout com Pix e cartão') {
   return { ...batch, plans: batch.plans.map((plan) => ({ ...plan, name })) };
 }

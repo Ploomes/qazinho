@@ -1,4 +1,4 @@
-/** The person an account of QAzinho Pro belongs to. */
+/** A pessoa a quem uma conta do QAzinho Pro pertence. */
 export interface IProUser {
   id: string;
   email: string;

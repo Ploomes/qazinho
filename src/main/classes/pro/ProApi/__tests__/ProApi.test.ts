@@ -2,7 +2,10 @@ import type { ProFetcher } from '@/main/classes/pro/ProApi';
 import { describe, expect, it } from 'vitest';
 import { ProApi } from '@/main/classes/pro/ProApi';
 
-/** A platform that answers every call with one status and body, and remembers what it was asked. */
+/**
+ * Uma plataforma que responde toda chamada com um status e corpo só, e lembra o que lhe
+ * perguntaram.
+ */
 function fakePlatform(answer: { status: number; body: unknown }) {
   const calls: {
     url: string;

@@ -2,7 +2,10 @@ import type { ProUploader } from './ProUploader';
 import type { ProApi } from '@/main/classes/pro/ProApi';
 import type { IProShare } from '@/shared/types';
 
-/** What the sync needs: the platform, the token, the archive, the uploads and a clock. */
+/**
+ * O que a sincronização precisa: a plataforma, o token, o arquivo, os uploads e um
+ * relógio.
+ */
 export interface IProSync {
   api: Pick<
     ProApi,

@@ -2,8 +2,8 @@ import type { SyncedProject } from '@/main/classes/pro/ProDownloads/types';
 import type { IProSyncProject } from '@/shared/types';
 
 /**
- * The project as this computer keeps it: a web address only when it is one, and no build,
- * which each computer picks for itself.
+ * O projeto como este computador o guarda: um endereço web só quando é um, e nenhum
+ * build, que cada computador escolhe para si.
  */
 export function downloadedProjectOf(project: SyncedProject): IProSyncProject {
   return {

@@ -25,8 +25,8 @@ import {
 import { answerOf } from './library';
 
 /**
- * Talks to QAzinho Pro's API for this machine: its sign-in by a code the person confirms
- * in the browser, the account it belongs to, and the sync of its shared projects.
+ * Fala com a API do QAzinho Pro por esta máquina: o login por um código que a pessoa
+ * confirma no navegador, a conta dela e a sincronização dos projetos compartilhados.
  */
 export class ProApi {
   private readonly baseUrl: string;
@@ -37,7 +37,7 @@ export class ProApi {
     this.fetcher = props.fetcher;
   }
 
-  /** Asks the platform for a sign-in code for this machine. */
+  /** Pede à plataforma um código de login para esta máquina. */
   public async deviceCode(machineName: string): Promise<ProAnswer<IProDeviceCode>> {
     return this.call({
       request: { method: 'POST', path: '/api/device/codes', body: { machineName } },
@@ -46,8 +46,8 @@ export class ProApi {
   }
 
   /**
-   * Trades a sign-in code for this machine's token once the person confirmed it;
-   * `authorization_pending` until then.
+   * Troca um código de login pelo token desta máquina depois que a pessoa o confirmou;
+   * `authorization_pending` até lá.
    */
   public async deviceToken(deviceCode: string): Promise<ProAnswer<IProDeviceToken>> {
     return this.call({
@@ -56,7 +56,7 @@ export class ProApi {
     });
   }
 
-  /** The account a token belongs to, and its orgs. */
+  /** A conta a que um token pertence, e as orgs dela. */
   public async me(token: string): Promise<ProAnswer<IProMe>> {
     return this.call({
       request: { method: 'GET', path: '/api/me', token },
@@ -64,7 +64,7 @@ export class ProApi {
     });
   }
 
-  /** Signs a machine out: its token stops working. */
+  /** Faz uma máquina sair: o token dela para de funcionar. */
   public async revokeMachine(props: {
     token: string;
     machineId: string;
@@ -79,7 +79,10 @@ export class ProApi {
     });
   }
 
-  /** Sends a shared project: its name, targets, repositories and variable names. */
+  /**
+   * Manda um projeto compartilhado: o nome, os alvos, os repositórios e os nomes das
+   * variáveis.
+   */
   public async syncProject(
     call: IProSyncCall,
   ): Promise<ProAnswer<z.infer<typeof SYNC_PROJECT_SCHEMA>>> {
@@ -87,8 +90,8 @@ export class ProApi {
   }
 
   /**
-   * Sends a workspace's plan from the version it was based on; `plan_conflict` when the
-   * org moved it since.
+   * Manda o plano de um workspace a partir da versão em que foi baseado; `plan_conflict`
+   * quando a org o mexeu desde então.
    */
   public async syncPlan(
     call: IProSyncCall,
@@ -108,12 +111,14 @@ export class ProApi {
     return this.put({ call, schema: SYNC_BUG_SCHEMA });
   }
 
-  /** Replaces a plan's recordings on a branch. */
+  /** Substitui as gravações de um plano numa branch. */
   public async syncRecordings(call: IProSyncCall): Promise<ProAnswer<null>> {
     return this.put({ call, schema: z.null() });
   }
 
-  /** The projects an org holds, each with its plans, for this machine to download. */
+  /**
+   * Os projetos que uma org guarda, cada um com os planos dele, para esta máquina baixar.
+   */
   public async syncedProjects(props: {
     token: string;
     org: string;
@@ -128,7 +133,7 @@ export class ProApi {
     });
   }
 
-  /** Deletes a project in its org, by the id this computer keeps it under. */
+  /** Apaga um projeto na org dele, pelo id com que este computador o guarda. */
   public async deleteProject(props: {
     token: string;
     org: string;
@@ -144,7 +149,9 @@ export class ProApi {
     });
   }
 
-  /** A plan's recordings on a branch, to walk its cases again without the agent. */
+  /**
+   * As gravações de um plano numa branch, para andar os casos dele de novo sem o agente.
+   */
   public async recordings(props: {
     token: string;
     org: string;
@@ -164,7 +171,7 @@ export class ProApi {
   }
 
   /**
-   * Asks where to put one screenshot or video, signed for this machine for a short while.
+   * Pergunta onde pôr um screenshot ou vídeo, assinado para esta máquina por pouco tempo.
    */
   public async evidenceUpload(
     call: IProSyncCall,

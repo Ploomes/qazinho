@@ -1,6 +1,8 @@
 import type { IProSyncBug, IProSyncRun } from '@/shared/types';
 
-/** A run of two steps: the first passed on its recording, the second failed with a screen. */
+/**
+ * Uma run de dois passos: o primeiro passou pela gravação, o segundo falhou com uma tela.
+ */
 export const RUN: IProSyncRun = {
   workspaceId: 'w1',
   runId: 'r1',
@@ -46,7 +48,7 @@ export const RUN: IProSyncRun = {
   costUsd: 0.04,
 };
 
-/** A bug seen in that run and once more, filed in Jira. */
+/** Um bug visto nessa run e mais uma vez, registrado no Jira. */
 export const BUG: IProSyncBug = {
   workspaceId: 'w1',
   bugId: 'b1',

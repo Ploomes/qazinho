@@ -8,8 +8,8 @@ type SyncedPlan = z.infer<
 >['projects'][number]['plans'][number];
 
 /**
- * The plans the org moved past what this computer last sent, each a conflict for the page
- * to join.
+ * Os planos que a org mexeu além do que este computador mandou por último, cada um um
+ * conflito para a página juntar.
  */
 export function movedPlansOf(props: {
   record: IProSyncRecord;

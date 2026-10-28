@@ -1,5 +1,5 @@
 import type { SYNCED_PROJECTS_SCHEMA } from '@/main/classes/pro/ProApi/constants';
 import type { z } from 'zod';
 
-/** One project as the org answers it, with its plans, for this machine to download. */
+/** Um projeto como a org o responde, com os planos dele, para esta máquina baixar. */
 export type SyncedProject = z.infer<typeof SYNCED_PROJECTS_SCHEMA>['projects'][number];

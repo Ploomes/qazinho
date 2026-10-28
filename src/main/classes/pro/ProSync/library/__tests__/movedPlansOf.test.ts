@@ -16,7 +16,10 @@ const MERGED: IProSyncCase = {
   steps: [{ action: 'Clicar em "Copiar Pix"', expected: 'Copiado' }],
 };
 
-/** This computer sent the Pix plan at version 2, and a second plan that never reached the org. */
+/**
+ * Este computador mandou o plano Pix na versão 2, e um segundo plano que nunca chegou à
+ * org.
+ */
 const recordOf = (change: Partial<IProSyncRecord> = {}): IProSyncRecord => ({
   orgSlug: 'loja',
   state: 'synced',

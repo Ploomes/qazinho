@@ -1,7 +1,7 @@
 import type { IProUser } from './IProUser';
 import type { IProOrg } from '@/shared/types';
 
-/** The account a token belongs to, and the orgs it is a member of. */
+/** A conta a que um token pertence, e as orgs de que ela é membro. */
 export interface IProMe {
   user: IProUser;
   orgs: IProOrg[];

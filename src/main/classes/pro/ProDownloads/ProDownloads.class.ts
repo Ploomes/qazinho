@@ -15,8 +15,8 @@ import {
 } from './library';
 
 /**
- * Lists the projects an org holds and downloads one to this computer: its plans, with the
- * recordings that walk them without the agent, shared with the org from then on.
+ * Lista os projetos que uma org guarda e baixa um para este computador: os planos dele,
+ * com as gravações que os andam sem o agente, compartilhado com a org dali em diante.
  */
 export class ProDownloads {
   private readonly api: IProDownloads['api'];
@@ -32,8 +32,8 @@ export class ProDownloads {
   }
 
   /**
-   * The projects an org holds, each plan by name and size; a project whose id would not
-   * be a name here is left out.
+   * Os projetos que uma org guarda, cada plano por nome e tamanho; um projeto cujo id não
+   * seria um nome aqui fica de fora.
    */
   public async list(orgSlug: string): Promise<ProOrgProjects> {
     const read = await this.projectsOf(orgSlug);
@@ -59,8 +59,8 @@ export class ProDownloads {
   }
 
   /**
-   * Downloads a project the org holds and this computer does not: its plans, the
-   * recordings of each, and the names of its variables.
+   * Baixa um projeto que a org guarda e este computador não: os planos dele, as gravações
+   * de cada um, e os nomes das variáveis dele.
    */
   public async download(props: {
     orgSlug: string;

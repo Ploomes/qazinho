@@ -1,6 +1,6 @@
 /**
- * What the platform answered: the value, or the status, error code and details it refused
- * with; `unreachable` with status 0 when it did not answer.
+ * O que a plataforma respondeu: o valor, ou o status, o código de erro e os detalhes com
+ * que recusou; `unreachable` com status 0 quando não respondeu.
  */
 export type ProAnswer<T> =
   | { isOk: true; value: T }

@@ -1,6 +1,6 @@
 /**
- * A sign-in code the platform handed this machine: the code to poll with, the one the
- * person confirms, where, and for how long.
+ * Um código de login que a plataforma entregou a esta máquina: o código para fazer
+ * polling, o que a pessoa confirma, onde, e por quanto tempo.
  */
 export interface IProDeviceCode {
   deviceCode: string;

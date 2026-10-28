@@ -1,6 +1,6 @@
 /**
- * A workspace's recipes, as kept in its recipes.json, turned into the recordings the
- * platform keeps for a branch; null when there are none to read.
+ * As receitas de um workspace, como guardadas no recipes.json dele, viradas nas gravações
+ * que a plataforma guarda para uma branch; null quando não há nenhuma para ler.
  */
 export function recordingsBodyOf(props: { text: string | null; branch: string }) {
   const { text, branch } = props;

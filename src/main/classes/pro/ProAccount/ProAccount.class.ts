@@ -13,8 +13,8 @@ import { writeAtomically } from '@/main/library';
 import { PRO_SIGN_IN, STORED_PRO_SCHEMA } from './constants';
 
 /**
- * Signs this machine in to QAzinho Pro by a code the person confirms in the browser,
- * keeps its token sealed by the OS keychain, and says where it stands.
+ * Faz esta máquina entrar no QAzinho Pro por um código que a pessoa confirma no
+ * navegador, guarda o token lacrado pelo keychain do SO, e diz em que pé está.
  */
 export class ProAccount {
   private readonly api: IProAccount['api'];
@@ -39,8 +39,8 @@ export class ProAccount {
   }
 
   /**
-   * Where this machine stands, asking the platform; a token it refuses is forgotten, and
-   * no answer keeps what was last known.
+   * Em que pé esta máquina está, perguntando à plataforma; um token que ela recusa é
+   * esquecido, e nenhuma resposta mantém o que se sabia por último.
    */
   public async status(): Promise<ProStatus> {
     const stored = await this.read();
@@ -71,8 +71,8 @@ export class ProAccount {
   }
 
   /**
-   * Signs this machine in: a code from the platform, the browser to confirm it, then the
-   * token sealed by the keychain.
+   * Faz esta máquina entrar: um código da plataforma, o navegador para confirmá-lo,
+   * depois o token lacrado pelo keychain.
    */
   public async signIn(): Promise<ProSignInProgress> {
     if (!this.cipher.isAvailable())
@@ -124,8 +124,8 @@ export class ProAccount {
   }
 
   /**
-   * Signs this machine out: the platform stops taking its token, and the sealed file
-   * goes.
+   * Faz esta máquina sair: a plataforma para de aceitar o token dela, e o arquivo lacrado
+   * vai embora.
    */
   public async signOut(): Promise<ProStatus> {
     const stored = await this.read();
@@ -139,7 +139,8 @@ export class ProAccount {
   }
 
   /**
-   * This machine's token, for the sync to call the platform with; null while signed out.
+   * O token desta máquina, para a sincronização chamar a plataforma; null enquanto
+   * deslogada.
    */
   public async token(): Promise<string | null> {
     return (await this.read())?.token ?? null;

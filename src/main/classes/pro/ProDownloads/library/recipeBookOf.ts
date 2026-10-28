@@ -1,6 +1,6 @@
 /**
- * The org's recordings of a plan as a workspace's recipe book, so its cases walk again
- * without the agent here too.
+ * As gravações da org de um plano como o livro de receitas de um workspace, para os casos
+ * dele andarem sem o agente aqui também.
  */
 export function recipeBookOf(
   recordings: {

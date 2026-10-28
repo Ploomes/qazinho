@@ -2,8 +2,8 @@ import type { ProApi } from '@/main/classes/pro/ProApi';
 import type { ProSync } from '@/main/classes/pro/ProSync';
 
 /**
- * What downloading from an org needs: the platform, this machine's token, the archive the
- * recordings go to, and the sync that keeps the project shared.
+ * O que baixar de uma org precisa: a plataforma, o token desta máquina, o arquivo onde
+ * vão as gravações, e a sincronização que mantém o projeto compartilhado.
  */
 export interface IProDownloads {
   api: Pick<ProApi, 'syncedProjects' | 'recordings'>;

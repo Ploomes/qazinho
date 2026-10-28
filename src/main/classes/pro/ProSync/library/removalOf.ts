@@ -1,8 +1,8 @@
 import type { ProRemoval } from '@/shared/types';
 
 /**
- * What the platform's answer to deleting a project means here: a project it no longer
- * has counts as deleted.
+ * O que a resposta da plataforma a apagar um projeto significa aqui: um projeto que ela
+ * não tem mais conta como apagado.
  */
 export function removalOf(
   answer: { isOk: true } | { isOk: false; status: number; error: string },
