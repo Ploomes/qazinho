@@ -3,7 +3,10 @@ import { catchBug } from '@/modules/Bug/library';
 import { failedAgain, secondRun } from './fixtures';
 
 describe('catchBug', () => {
-  /** r-02 filed the same broken submit as BUG-03, next to the BUG-01 r-01 had filed. */
+  /**
+   * A r-02 registrou o mesmo envio quebrado como BUG-03, ao lado do BUG-01 que a r-01
+   * tinha registrado.
+   */
   it('lands a step that fails again on its bug, seen in two runs, instead of a new one', () => {
     const workspace = secondRun();
     const caught = catchBug({
@@ -50,7 +53,10 @@ describe('catchBug', () => {
     expect(twice.bugs).toBe(once.bugs);
   });
 
-  /** The agent filed the coupon with bug, then failed the very step for it: one bug, the plan's. */
+  /**
+   * O agente registrou o cupom com bug, depois falhou o próprio passo por ele: um bug só,
+   * o do plano.
+   */
   it("makes a bug filed on the side the plan's once a plan step fails for it", () => {
     const workspace = secondRun();
     const aside = catchBug({

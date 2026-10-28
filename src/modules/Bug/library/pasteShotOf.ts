@@ -1,8 +1,8 @@
 import type { IBug, IBugShot } from '@/modules/Bug/types';
 
 /**
- * The screen a QA pastes into an issue by hand: the one the latest run caught, else the
- * one that broke, as long as it can still be read.
+ * A tela que um QA cola numa issue à mão: a que a última run pegou, senão a que quebrou,
+ * contanto que ainda possa ser lida.
  */
 export function pasteShotOf(bug: IBug): IBugShot | null {
   const shot =

@@ -1,6 +1,5 @@
 /**
- * Where a bug sits in its run's video: the run, and how far into the video it was caught,
- * in ms.
+ * Onde um bug fica no vídeo da run dele: a run, e a quanto do vídeo ele foi pego, em ms.
  */
 export interface IBugMoment {
   workspaceId: string;

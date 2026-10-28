@@ -1,4 +1,4 @@
-/** The words a bug's report is written in, in the language the QA reads. */
+/** As palavras em que o relatório de um bug é escrito, no idioma que o QA lê. */
 export interface IBugReportWords {
   steps: string;
   expected: string;

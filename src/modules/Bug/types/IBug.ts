@@ -5,8 +5,8 @@ import type { IBugSighting } from './IBugSighting';
 import type { IFiledIssue, Severity } from '@/shared/types';
 
 /**
- * A bug the agent caught, with what a developer needs to reproduce it, its sightings and
- * its issue.
+ * Um bug que o agente pegou, com o que um desenvolvedor precisa para reproduzi-lo, as
+ * vistas e a issue dele.
  */
 export interface IBug {
   id: string;

@@ -1,6 +1,6 @@
 /**
- * `src` is the screenshot in hand; `file` is where it stays once the app is closed.
- * `isBad` marks the step that broke.
+ * O `src` é o screenshot em mãos; o `file` é onde ele fica quando o app fecha. O `isBad`
+ * marca o passo que quebrou.
  */
 export interface IBugShot {
   isBad: boolean;

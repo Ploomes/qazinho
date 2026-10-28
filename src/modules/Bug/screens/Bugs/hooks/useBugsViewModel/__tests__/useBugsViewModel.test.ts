@@ -140,8 +140,8 @@ describe('useBugsViewModel', () => {
     });
 
     /**
-     * Before runs that ended early were kept, a stopped run left its bugs pointing at nothing,
-     * and those bugs are still on disk.
+     * Antes de as runs que terminaram cedo serem guardadas, uma run parada deixava os
+     * bugs dela apontando para nada, e esses bugs ainda estão no disco.
      */
     it('does NOT offer a run that is not there', () => {
       useWorkspaceStore.setState({

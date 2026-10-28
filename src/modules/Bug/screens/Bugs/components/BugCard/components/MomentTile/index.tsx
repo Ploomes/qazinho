@@ -4,8 +4,8 @@ import { useMomentTileViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The run's video stopped at the moment a bug was caught, beside its screenshots; a click
- * plays that take.
+ * O vídeo da run parado no momento em que um bug foi pego, ao lado dos screenshots; um
+ * clique toca essa gravação.
  */
 export const MomentTile: React.FC<IMomentTileProps> = (props) => {
   const { label, hasVideo, src, videoRef, onLoadedMetadata, onOpen } =

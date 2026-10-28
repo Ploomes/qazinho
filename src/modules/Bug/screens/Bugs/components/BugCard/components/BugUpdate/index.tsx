@@ -6,8 +6,8 @@ import { useBugUpdateViewModel } from './hooks';
 import './styles.css';
 
 /**
- * What the QA's agent made of a filed bug that came back: the update it suggests for the
- * issue, to edit and post, or why there is none.
+ * O que o agente do QA achou de um bug registrado que voltou: a atualização que sugere
+ * para a issue, para editar e postar, ou por que não há.
  */
 export const BugUpdate: React.FC<IBugUpdateProps> = (props) => {
   const {

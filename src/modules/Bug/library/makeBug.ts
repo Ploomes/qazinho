@@ -6,8 +6,8 @@ import { viewportOf } from '@/modules/Device/library';
 import { countSeen } from './countSeen';
 
 /**
- * Turns the step that broke into something a developer can act on, with who caught it and
- * on what.
+ * Transforma o passo que quebrou em algo com que um desenvolvedor pode agir, com quem o
+ * pegou e em quê.
  */
 export function makeBug(props: {
   workspace: IWorkspace;

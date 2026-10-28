@@ -5,8 +5,8 @@ import { appearancesOf } from './appearancesOf';
 import { pasteShotOf } from './pasteShotOf';
 
 /**
- * What sending a bug to a tracker takes: Jira gets screens, video and story; GitHub gets
- * the words.
+ * O que mandar um bug a um tracker leva: o Jira recebe telas, vídeo e história; o GitHub
+ * recebe as palavras.
  */
 export function filingPlanOf(props: {
   workspace: IWorkspace;

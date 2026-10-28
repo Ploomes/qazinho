@@ -1,6 +1,6 @@
 /**
- * A screen that goes with a bug: the one before, the one that broke, or the one a later
- * run caught, with the run it came from.
+ * Uma tela que vai com um bug: a de antes, a que quebrou, ou a que uma run posterior
+ * pegou, com a run de onde veio.
  */
 export interface IFilingShot {
   kind: 'before' | 'broke' | 'again';

@@ -9,7 +9,9 @@ import { recordedRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
-/** The run's recording: a frame a second for twelve seconds, a key frame every fourth. */
+/**
+ * A gravação da run: um frame por segundo por doze segundos, um key frame a cada quatro.
+ */
 function recording(): Uint8Array {
   const target = new ArrayBufferTarget();
   const muxer = new Muxer({
@@ -42,7 +44,10 @@ function recording(): Uint8Array {
   return new Uint8Array(target.buffer);
 }
 
-/** The bug is caught at 1_760_000_010_000: a coupon request failed a second before it, and an old one long before. */
+/**
+ * O bug é pego em 1_760_000_010_000: um pedido de cupom falhou um segundo antes, e um
+ * antigo muito antes.
+ */
 const NETWORK: INetworkEntry[] = [
   {
     id: 1,

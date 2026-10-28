@@ -2,8 +2,8 @@ import type { IBug } from '@/modules/Bug/types';
 import type { IKnownBug } from '@/shared/types';
 
 /**
- * The bugs open in a workspace as a run's agents hear of them: by id, title and where
- * they were first caught; one the QA said is no bug is not told.
+ * Os bugs abertos num workspace como os agentes de uma run ficam sabendo deles: por id,
+ * título e onde foram pegos primeiro; um que o QA disse não ser bug não é contado.
  */
 export function knownBugsOf(bugs: IBug[]): IKnownBug[] {
   return bugs

@@ -2,7 +2,7 @@ import type { IBugFilingPopupProps } from './types';
 import { StepsPopup } from '@/shared/components/organisms';
 import { useBugFilingPopupViewModel } from './hooks';
 
-/** A bug on its way to the QA's tracker, step by step, and the issue it became. */
+/** Um bug a caminho do tracker do QA, passo a passo, e a issue em que virou. */
 export const BugFilingPopup: React.FC<IBugFilingPopupProps> = (props) => {
   const { logo, name, ...popup } = useBugFilingPopupViewModel(props);
 

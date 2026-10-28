@@ -3,8 +3,8 @@ import type { BugReportBlock } from '@/shared/types';
 const ITEM = /^\s*[-*•]\s+/;
 
 /**
- * A comment as plain text read into a report's blocks: paragraphs split by a blank line,
- * and a run of lines that start with a dash as a list.
+ * Um comentário em texto simples lido nos blocos de um relatório: parágrafos separados
+ * por uma linha em branco, e uma sequência de linhas que começam com hífen como lista.
  */
 export function blocksOfComment(text: string): BugReportBlock[] {
   return text

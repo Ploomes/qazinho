@@ -1,8 +1,6 @@
 import type { IBug, IBugAppearance } from '@/modules/Bug/types';
 
-/**
- * Every time a bug was caught, the first time and each one after, in the order they came.
- */
+/** Toda vez que um bug foi pego, a primeira e cada uma depois, na ordem em que vieram. */
 export function appearancesOf(bug: IBug): IBugAppearance[] {
   return [
     {

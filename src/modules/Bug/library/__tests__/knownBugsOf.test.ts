@@ -19,7 +19,7 @@ describe('knownBugsOf', () => {
     expect(knownBugsOf([])).toEqual([]);
   });
 
-  /** Told of a false positive, every run's agent named it seen again. */
+  /** Avisado de um falso positivo, o agente de toda run o nomeava como visto de novo. */
   it('does NOT tell a run of a bug the QA said is none', () => {
     expect(
       knownBugsOf(secondRun().bugs.map((bug) => ({ ...bug, isDismissed: true }))),

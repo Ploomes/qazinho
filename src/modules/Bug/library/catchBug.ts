@@ -8,8 +8,8 @@ import { openBugFor } from './openBugFor';
 import { sightingOf } from './sightingOf';
 
 /**
- * A failed step or a finding as it lands among the bugs: on the open bug it is, or as a
- * new one.
+ * Um passo que falhou ou um achado como cai entre os bugs: no bug aberto que ele é, ou
+ * como um novo.
  */
 export function catchBug(props: {
   workspace: IWorkspace;

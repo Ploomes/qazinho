@@ -2,8 +2,8 @@ import type { IProjectRepository } from '@/modules/Project/types';
 import type { IJiraProject, IssueTarget, IssueTracker } from '@/shared/types';
 
 /**
- * Where a bug goes unless the QA says otherwise: where the last went, the story's
- * project, or a repo.
+ * Para onde um bug vai a menos que o QA diga outra coisa: para onde foi o último, o
+ * projeto da história, ou um repositório.
  */
 export function issueTargetOf(props: {
   kept: IssueTarget | null;

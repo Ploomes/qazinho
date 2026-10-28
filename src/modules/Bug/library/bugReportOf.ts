@@ -3,8 +3,8 @@ import type { BugReportBlock, IBugReport, INetworkEntry } from '@/shared/types';
 import { BUG_REPORT } from '@/modules/Bug/constants';
 
 /**
- * A bug written out for the QA's tracker: what the agent saw, the steps, expected and
- * actual, requests.
+ * Um bug escrito para o tracker do QA: o que o agente viu, os passos, esperado e obtido,
+ * os pedidos.
  */
 export function bugReportOf(props: {
   bug: IBug;

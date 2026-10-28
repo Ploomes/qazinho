@@ -5,8 +5,8 @@ import type { IFilingShot } from './IFilingShot';
 import type { IRun } from '@/modules/Run/types';
 
 /**
- * What sending a bug takes, read off its workspace: its screens, video, moment, story and
- * steps.
+ * O que mandar um bug leva, lido do workspace dele: as telas, o vídeo, o momento, a
+ * história e os passos.
  */
 export interface IFilingPlan {
   shots: IFilingShot[];

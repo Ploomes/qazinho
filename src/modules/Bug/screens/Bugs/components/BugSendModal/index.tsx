@@ -8,8 +8,8 @@ import { useBugSendModalViewModel } from './hooks';
 import './styles.css';
 
 /**
- * Sending a bug to the QA's tracker: Jira or GitHub, the project or repository it goes
- * to, its title, and what goes along with it.
+ * Mandando um bug ao tracker do QA: Jira ou GitHub, o projeto ou repositório para onde
+ * vai, o título, e o que vai junto.
  */
 export const BugSendModal: React.FC<IBugSendModalProps> = (props) => {
   const {

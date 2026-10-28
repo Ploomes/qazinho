@@ -380,7 +380,7 @@ describe('useBugCardViewModel', () => {
   });
 
   describe('onDismissClick', () => {
-    /** A false positive used to stay among the open bugs for good. */
+    /** Um falso positivo ficava entre os bugs abertos para sempre. */
     it('lets the QA say it is no bug, and hides the way to send it', () => {
       const onDismiss = vi.fn();
       const { result } = renderHook(() => useBugCardViewModel({ ...PROPS, onDismiss }));
@@ -428,7 +428,10 @@ describe('useBugCardViewModel', () => {
       ],
     };
 
-    /** The run, the case id, the viewport and the model headed the card; the QA read them before the bug. */
+    /**
+     * A run, o id do caso, o viewport e o modelo encabeçavam o cartão; o QA os lia antes
+     * do bug.
+     */
     it('says where it was caught in one line, the case by its title', () => {
       const { result } = renderHook(() =>
         useBugCardViewModel({ ...PROPS, bug: { ...LONG, seenRuns: 2 } }),
@@ -475,7 +478,7 @@ describe('useBugCardViewModel', () => {
       expect(result.current.stepsToggle).toBeNull();
     });
 
-    /** Showing the steps around the failure read as starting from the middle. */
+    /** Mostrar os passos em volta da falha parecia começar pelo meio. */
     it('shows the first steps of a long bug, and the rest on asking', () => {
       const { result } = renderHook(() =>
         useBugCardViewModel({

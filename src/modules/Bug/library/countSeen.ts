@@ -1,8 +1,8 @@
 import type { IWorkspace } from '@/modules/Workspace';
 
 /**
- * How many runs in a row caught this step failing, this one included: a bug seen before
- * carries more weight.
+ * Quantas runs seguidas pegaram este passo falhando, esta incluída: um bug visto antes
+ * pesa mais.
  */
 export function countSeen(props: {
   workspace: IWorkspace;

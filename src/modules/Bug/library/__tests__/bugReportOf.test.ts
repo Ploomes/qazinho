@@ -34,7 +34,7 @@ const BUG: IBug = {
   frame: null,
 };
 
-/** Words that show where each one lands, the way i18n hands them over. */
+/** Palavras que mostram onde cada uma cai, do jeito que o i18n as entrega. */
 const WORDS: IBugReportWords = {
   steps: 'Steps',
   expected: 'Expected',

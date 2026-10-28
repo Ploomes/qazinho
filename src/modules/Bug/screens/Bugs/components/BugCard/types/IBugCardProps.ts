@@ -1,8 +1,8 @@
 import type { IBug, IBugMoment } from '@/modules/Bug/types';
 
 /**
- * A bug in the Bugs tab, open or folded, with its latest catch, its moment and the ways
- * to answer it.
+ * Um bug na aba Bugs, aberto ou dobrado, com a última vez em que foi pego, o momento dele
+ * e os jeitos de respondê-lo.
  */
 export interface IBugCardProps {
   workspaceId: string;

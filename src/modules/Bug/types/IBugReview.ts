@@ -2,8 +2,8 @@ import type { BugReviewState } from './BugReviewState';
 import type { ReviewVerdict } from '@/shared/types';
 
 /**
- * The latest look at a bug that came back after it was filed: its verdict, update and
- * where it went.
+ * A última olhada num bug que voltou depois de registrado: o veredito, a atualização e
+ * para onde foi.
  */
 export interface IBugReview {
   runs: string[];

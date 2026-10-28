@@ -7,7 +7,9 @@ import {
 } from '@/modules/Workspace/library/__tests__/fixtures';
 import { startRun } from '@/modules/Workspace/library/startRun';
 
-/** r-01 failed TC-02's second step, which became BUG-01, and r-02 has just started. */
+/**
+ * A r-01 falhou o segundo passo do TC-02, que virou o BUG-01, e a r-02 acabou de começar.
+ */
 export function secondRun(): IWorkspace {
   return startRun({
     workspace: walkRun({
@@ -20,7 +22,10 @@ export function secondRun(): IWorkspace {
   });
 }
 
-/** TC-02's second step failing again in the run walking now, at a later moment than r-01's. */
+/**
+ * O segundo passo do TC-02 falhando de novo na run que anda agora, num momento posterior
+ * ao da r-01.
+ */
 export function failedAgain(workspace: IWorkspace): IStepOutcome {
   return {
     ...makeOutcome({ workspace, index: 4, verdict: 'failed' }),

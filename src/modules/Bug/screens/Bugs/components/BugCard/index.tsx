@@ -9,8 +9,8 @@ import { useBugCardViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A bug, folded to its title, or open with where it was caught, the screen it broke on,
- * what was expected and what came, the steps to it, and how it was found.
+ * Um bug, dobrado no título, ou aberto com onde foi pego, a tela em que quebrou, o que se
+ * esperava e o que veio, os passos até ele, e como foi achado.
  */
 export const BugCard: React.FC<IBugCardProps> = (props) => {
   const {

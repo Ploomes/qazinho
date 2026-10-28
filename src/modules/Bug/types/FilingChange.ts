@@ -1,8 +1,8 @@
 import type { BugFiling, IFilingEvent } from '@/shared/types';
 
 /**
- * What moves a bug's sending along: its evidence got ready, main took a step, or it
- * ended.
+ * O que faz o envio de um bug andar: a evidência ficou pronta, a main deu um passo, ou
+ * terminou.
  */
 export type FilingChange =
   | { kind: 'ready' }

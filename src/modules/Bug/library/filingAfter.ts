@@ -1,8 +1,8 @@
 import type { FilingChange, FilingRowState, IBugFiling } from '@/modules/Bug/types';
 
 /**
- * A bug's sending after one change: the evidence ready, a step main told of, or how it
- * ended, the step still going marked failed when it ended badly.
+ * O envio de um bug depois de uma mudança: a evidência pronta, um passo de que a main
+ * avisou, ou como terminou, o passo ainda andando marcado como falho quando terminou mal.
  */
 export function filingAfter(props: {
   filing: IBugFiling;

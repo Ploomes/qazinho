@@ -3,8 +3,8 @@ import type { IBugReport, ReviewVerdict } from '@/shared/types';
 import { blocksOfComment } from './blocksOfComment';
 
 /**
- * The update posted under a bug's issue: that it came back after the issue was closed,
- * the QA's comment, the runs that caught it again, and what goes attached.
+ * A atualização postada sob a issue de um bug: que ele voltou depois de a issue ser
+ * fechada, o comentário do QA, as runs que o pegaram de novo, e o que vai anexado.
  */
 export function updateReportOf(props: {
   verdict: ReviewVerdict | null;

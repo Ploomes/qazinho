@@ -3,8 +3,8 @@ import { SIGHTINGS_KEPT } from '@/modules/Bug/constants';
 import { isSeenIn } from './isSeenIn';
 
 /**
- * A bug caught again: the sighting joins its latest, a run that had not caught it counts
- * once more, and it reads as just caught.
+ * Um bug pego de novo: a vista entra nas últimas dele, uma run que não o tinha pego conta
+ * mais uma vez, e ele aparece como recém-pego.
  */
 export function bugSeenAgain(props: { bug: IBug; sighting: IBugSighting }): IBug {
   const { bug, sighting } = props;

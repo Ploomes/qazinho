@@ -1,4 +1,7 @@
-/** The words QAzinho adds around the agent's update, in the language the QA reads. */
+/**
+ * As palavras que o QAzinho acrescenta em volta da atualização do agente, no idioma que o
+ * QA lê.
+ */
 export interface IBugUpdateWords {
   regression: string;
   seenAgain: string;

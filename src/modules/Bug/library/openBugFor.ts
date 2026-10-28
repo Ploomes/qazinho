@@ -1,8 +1,8 @@
 import type { IBug } from '@/modules/Bug/types';
 
 /**
- * The bug already open that a failure or a finding is: the one its agent named, the one
- * its plan step failed for before, or one with the same title; null when it is new.
+ * O bug já aberto que uma falha ou um achado é: o que o agente dele nomeou, o em que o
+ * passo do plano falhou antes, ou um com o mesmo título; null quando é novo.
  */
 export function openBugFor(props: {
   bugs: IBug[];

@@ -4,8 +4,8 @@ import type { INetworkEntry, IReviewSighting } from '@/shared/types';
 import { BUG_REPORT } from '@/modules/Bug/constants';
 
 /**
- * Each time a filed bug came back, as the reviewing agent reads it: run, step, note,
- * screen, requests.
+ * Cada vez que um bug registrado voltou, como o agente revisor a lê: run, passo, nota,
+ * tela, pedidos.
  */
 export function reviewSightingsOf(props: {
   workspace: IWorkspace;

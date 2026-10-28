@@ -145,7 +145,10 @@ describe('useBugFiling', () => {
       expect(result.current.filing).toBeNull();
     });
 
-    /** A main process started before the filer existed has no channel for it: the popup must end, not wait forever. */
+    /**
+     * Um processo main iniciado antes de o registrador existir não tem canal para ele: o
+     * popup precisa terminar, não esperar para sempre.
+     */
     it('ends in a failure, with what went wrong, when the bridge throws', async () => {
       window.qazinho.fileBug = () =>
         Promise.reject(new Error("No handler registered for 'bug:file'"));

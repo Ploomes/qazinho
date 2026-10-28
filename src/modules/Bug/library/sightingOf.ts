@@ -3,8 +3,8 @@ import type { IWorkspace } from '@/modules/Workspace';
 import type { IStepOutcome } from '@/shared/types';
 
 /**
- * The step that caught a bug again, as a sighting of the run walking now, with the screen
- * that showed it.
+ * O passo que pegou um bug de novo, como uma vista da run que anda agora, com a tela que
+ * o mostrou.
  */
 export function sightingOf(props: {
   workspace: IWorkspace;
