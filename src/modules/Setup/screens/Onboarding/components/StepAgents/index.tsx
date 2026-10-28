@@ -1,8 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { AgentSignIn, InstallProgress } from '@/modules/Setup/components';
-import { ToolCard } from '@/modules/Setup/screens/Onboarding/components/ToolCard';
+import { AgentSignIn, InstallProgress, ToolCard } from '@/modules/Setup/components';
 import { Button, Icon } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { useStepAgentsViewModel } from './hooks';

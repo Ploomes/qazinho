@@ -2,7 +2,7 @@
 import type { KeyboardEvent } from 'react';
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { useToolCardViewModel } from '@/modules/Setup/screens/Onboarding/components/ToolCard/hooks/useToolCardViewModel';
+import { useToolCardViewModel } from '@/modules/Setup/components/ToolCard/hooks/useToolCardViewModel';
 
 const CARD = { name: 'Codex', about: '', detail: '', state: 'found' as const, badge: '' };
 

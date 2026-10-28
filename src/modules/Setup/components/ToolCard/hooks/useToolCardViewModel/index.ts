@@ -1,4 +1,4 @@
-import type { IToolCardProps } from '@/modules/Setup/screens/Onboarding/components/ToolCard/types';
+import type { IToolCardProps } from '@/modules/Setup/components/ToolCard/types';
 import type { KeyboardEvent } from 'react';
 
 export const useToolCardViewModel = (props: IToolCardProps) => {

@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { InstallProgress } from '@/modules/Setup/components';
-import { ToolCard } from '@/modules/Setup/screens/Onboarding/components/ToolCard';
+import { InstallProgress, ToolCard } from '@/modules/Setup/components';
 import { Button, Icon } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { useStepDevicesViewModel } from './hooks';
