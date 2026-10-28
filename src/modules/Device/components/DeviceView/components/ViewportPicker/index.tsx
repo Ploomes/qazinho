@@ -6,7 +6,10 @@ import { MOTION } from '@/shared/constants';
 import { useViewportPickerViewModel } from './hooks';
 import './styles.css';
 
-/** The window size the browser opens at, picked before a run or changed during one. */
+/**
+ * O tamanho de janela em que o navegador abre, escolhido antes de uma run ou mudado
+ * durante uma.
+ */
 export const ViewportPicker: React.FC<IViewportPickerProps> = (props) => {
   const { options, hasNote } = useViewportPickerViewModel(props);
   const { t } = useTranslation();

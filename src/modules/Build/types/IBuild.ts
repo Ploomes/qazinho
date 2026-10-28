@@ -2,8 +2,8 @@ import type { BuildPhase } from './BuildPhase';
 import type { BuildPlatform, BuildStep, IBuildResult } from '@/shared/types';
 
 /**
- * A build as the page follows it: what it builds from where and for which project, how
- * far it got, the last things its agent did, and how it ended.
+ * Um build como a página o acompanha: o que constrói, de onde e para qual projeto, até
+ * onde chegou, as últimas coisas que o agente fez, e como terminou.
  */
 export interface IBuild {
   id: string;

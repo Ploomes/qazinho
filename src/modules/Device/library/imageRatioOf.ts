@@ -1,8 +1,8 @@
 const HEAD_CHARS = 87_384;
 
 /**
- * Width over height of a screenshot, read from its own bytes, PNG or JPEG, whatever its
- * data URL claims; null when it cannot tell.
+ * Largura sobre altura de um screenshot, lida dos próprios bytes, PNG ou JPEG, seja o que
+ * for que a data URL diga; null quando não dá para saber.
  */
 export function imageRatioOf(dataUrl: string): number | null {
   const comma = dataUrl.indexOf(',');

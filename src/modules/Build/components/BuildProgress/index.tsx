@@ -6,8 +6,8 @@ import { useBuildProgressViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A build as it goes: the code, the agent building it, the check of what it made, the
- * agent's last lines, and how it ended.
+ * Um build enquanto anda: o código, o agente que o constrói, a conferência do que ele
+ * fez, as últimas linhas do agente, e como terminou.
  */
 export const BuildProgress: React.FC<IBuildProgressProps> = (props) => {
   const view = useBuildProgressViewModel(props);

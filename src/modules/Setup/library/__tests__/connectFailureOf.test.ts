@@ -9,7 +9,10 @@ const said = (props: Parameters<typeof connectFailureOf>[0]) => {
 };
 
 describe('connectFailureOf', () => {
-  /** Main used to write these in English, and a QA reading QAzinho in Portuguese got them so. */
+  /**
+   * A main escrevia isto em inglês, e um QA lendo o QAzinho em português os recebia
+   * assim.
+   */
   it('says why Jira refused, in the language the QA reads', async () => {
     await i18n.changeLanguage('pt');
 

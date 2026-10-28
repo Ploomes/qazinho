@@ -11,8 +11,8 @@ import { useDeviceFocusViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The device filling the app while the agent drives it, with the run beside it; Esc puts
- * it back.
+ * O dispositivo enchendo o app enquanto o agente o dirige, com a run ao lado; o Esc o
+ * devolve.
  */
 export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
   const { style, nowEyebrow, now, nowNumber, rows, hasViewports } =

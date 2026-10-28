@@ -1,6 +1,4 @@
-/**
- * One line of the resource tree: a project, a workspace, or something actually running.
- */
+/** Uma linha da árvore de recursos: um projeto, um workspace, ou algo de fato rodando. */
 export interface IProcessNode {
   id: string;
   name: string;

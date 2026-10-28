@@ -4,8 +4,8 @@ import { StepsPopup } from '@/shared/components/organisms';
 import { useGithubSignInViewModel } from './hooks';
 
 /**
- * GitHub connecting through the QA's own GitHub CLI: gh's device flow, step by step, with
- * the code to type at GitHub.
+ * O GitHub conectando pela GitHub CLI do próprio QA: o device flow do gh, passo a passo,
+ * com o código a digitar no GitHub.
  */
 export const GithubSignIn: React.FC<IGithubSignInProps> = (props) => {
   const popup = useGithubSignInViewModel(props);

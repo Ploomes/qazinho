@@ -1,6 +1,6 @@
 import type { InstallFailure } from '@/shared/types';
 
-/** Where one install is. A tool with no state was never asked for. */
+/** Em que pé está uma instalação. Uma ferramenta sem estado nunca foi pedida. */
 export type InstallState =
   | { phase: 'installing'; stage: number; stages: number; line: string }
   | { phase: 'installed' }

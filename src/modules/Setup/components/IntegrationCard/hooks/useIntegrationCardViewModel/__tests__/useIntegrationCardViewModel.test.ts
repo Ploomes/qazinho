@@ -32,7 +32,10 @@ beforeEach(() => {
   window.qazinho = fakeQazinhoApi('darwin');
 });
 
-/** A card from an earlier test would still answer a connection the assistant asks for, so each test unmounts its own. */
+/**
+ * Um cartão de um teste anterior ainda responderia a uma conexão que o assistente pede,
+ * então cada teste desmonta o seu.
+ */
 afterEach(() => {
   cleanup();
   Reflect.deleteProperty(window, 'qazinho');

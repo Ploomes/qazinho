@@ -1,8 +1,8 @@
 import type { IModelOption } from '@/modules/Settings/types';
 
 /**
- * What to call the model in use: the one picked, or the one the agent's own config names;
- * null when neither is known.
+ * Como chamar o modelo em uso: o escolhido, ou o que a própria config do agente nomeia;
+ * null quando nenhum é conhecido.
  */
 export function modelNameOf(props: {
   model: string;

@@ -9,8 +9,8 @@ import { useMcpCardViewModel } from './hooks';
 import './styles.css';
 
 /**
- * An MCP server in the QA's own agent: where it stands there, and the one step it needs
- * next.
+ * Um servidor MCP no próprio agente do QA: em que pé está lá, e o único passo de que
+ * precisa em seguida.
  */
 export const McpCard: React.FC<IMcpCardProps> = (props) => {
   const {

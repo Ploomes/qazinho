@@ -4,8 +4,8 @@ import { useToolCardViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A tool found or missing on this machine; as an option, the card itself is what the QA
- * picks.
+ * Uma ferramenta achada ou faltando nesta máquina; como opção, o próprio cartão é o que o
+ * QA escolhe.
  */
 export const ToolCard: React.FC<IToolCardProps> = (props) => {
   const { isOption, isSelected, className, onClick, onKeyDown } =

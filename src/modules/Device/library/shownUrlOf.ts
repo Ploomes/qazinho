@@ -1,5 +1,6 @@
 /**
- * A URL as the QA's screen shows it: a password typed into it for basic auth is left out.
+ * Uma URL como a tela do QA a mostra: uma senha digitada nela para basic auth fica de
+ * fora.
  */
 export function shownUrlOf(url: string): string {
   try {

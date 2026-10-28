@@ -11,8 +11,8 @@ const MOODS: Record<WorkspaceStatus, InternMood> = {
 };
 
 /**
- * How the Estagiário looks over the device: asleep with nothing to run, busy while it
- * runs, and how it ended.
+ * Como o Estagiário aparece sobre o dispositivo: dormindo sem nada para rodar, ocupado
+ * enquanto roda, e como terminou.
  */
 export function moodOfStatus(status: WorkspaceStatus | null): InternMood {
   return status === null ? 'sleeping' : MOODS[status];

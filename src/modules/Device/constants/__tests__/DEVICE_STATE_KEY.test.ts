@@ -3,7 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { i18n } from '@/languages';
 import { DEVICE_STATE_KEY } from '@/modules/Device/constants';
 
-/** An idle device read "parado" in Portuguese, the word for one whose run was stopped. */
+/**
+ * Um dispositivo ocioso aparecia como "parado" em português, a palavra para um cuja run
+ * foi parada.
+ */
 describe('DEVICE_STATE_KEY', () => {
   it.each(['en', 'pt'] as const)(
     'gives every device state a word of its own, in %s',

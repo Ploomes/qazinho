@@ -1,8 +1,8 @@
 import type { IConnectIntegration, IntegrationId } from '@/shared/types';
 
 /**
- * What connecting a tracker takes, from what the QA typed: nothing for GitHub; for Jira,
- * null while a field is empty.
+ * O que conectar um tracker leva, a partir do que o QA digitou: nada para o GitHub; para
+ * o Jira, null enquanto um campo está vazio.
  */
 export function connectionOf(props: {
   id: IntegrationId;

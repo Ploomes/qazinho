@@ -3,8 +3,8 @@ import type { IBuildEvent } from '@/shared/types';
 import { BUILD_LINES } from '@/modules/Build/constants/BUILD_LINES';
 
 /**
- * A build after one of its events: the step it reached, the agent's latest lines, or how
- * it ended.
+ * Um build depois de um dos eventos dele: o passo a que chegou, as últimas linhas do
+ * agente, ou como terminou.
  */
 export function followBuild(props: { build: IBuild; event: IBuildEvent }): IBuild {
   const { build, event } = props;

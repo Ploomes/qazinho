@@ -19,8 +19,9 @@ const IN_CODEX = { id: 'figma' as const, agentId: 'codex' };
 const STEPS = ['check', 'add', 'browser'] as const;
 
 /**
- * An agent whose Figma server moves through `states`, one per list call, the last one staying.
- * A sign-in stays open until the test reports its steps and ends it, the way main does.
+ * Um agente cujo servidor do Figma passa por `states`, um por chamada de lista, o último
+ * ficando. Um login fica aberto até o teste relatar os passos dele e terminá-lo, do jeito
+ * que a main faz.
  */
 function agentWith(props: { states: McpServerState[] }) {
   const queue = [...props.states];

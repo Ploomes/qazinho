@@ -6,7 +6,9 @@ import { useBuildActions } from '@/modules/Build/hooks/useBuildActions';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useBuildStore, useMachineStore, useSettingsStore } from '@/store';
 
-/** A bridge whose builds end as the test says, remembering what was asked and stopped. */
+/**
+ * Uma bridge cujos builds terminam como o teste diz, lembrando o que foi pedido e parado.
+ */
 function bridge(result: IBuildResult) {
   const started: IStartBuild[] = [];
   const stopBuild = vi.fn(() => Promise.resolve());

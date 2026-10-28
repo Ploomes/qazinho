@@ -16,8 +16,9 @@ const screen = (props: Partial<IDeviceScreenProps>) =>
 
 describe('useDeviceScreenViewModel', () => {
   /**
-   * Chrome keeps a window at least 500 pixels wide, so a 390-pixel page streams framed 500 wide:
-   * the stream is cut to the page's shape, from its top left corner.
+   * O Chrome mantém uma janela com pelo menos 500 pixels de largura, então uma página de
+   * 390 pixels transmite enquadrada em 500: o stream é cortado no formato da página, a
+   * partir do canto superior esquerdo.
    */
   it('shapes the live stream like the page, so a frame wider than the page is cut to it', () => {
     const streaming = screen({

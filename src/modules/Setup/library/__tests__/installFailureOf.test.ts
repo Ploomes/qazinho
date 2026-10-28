@@ -9,7 +9,7 @@ const said = (failure: Parameters<typeof installFailureOf>[0]) => {
 };
 
 describe('installFailureOf', () => {
-  /** A QA on Windows with no Node.js, reading QAzinho in Portuguese, read this in English. */
+  /** Um QA no Windows sem Node.js, lendo o QAzinho em português, lia isto em inglês. */
   it('says what is missing in the language the QA reads', async () => {
     await i18n.changeLanguage('pt');
 

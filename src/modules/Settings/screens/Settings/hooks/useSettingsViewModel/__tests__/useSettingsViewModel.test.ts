@@ -17,7 +17,7 @@ beforeEach(() => {
   });
 });
 
-/** An agent found on the machine, the way AgentDetector reports it. */
+/** Um agente achado na máquina, do jeito que o AgentDetector o relata. */
 function agent(props: { id: string; name: string }) {
   return {
     ...props,
@@ -106,7 +106,7 @@ describe('useSettingsViewModel', () => {
     expect(result.current.integrations.map(({ id }) => id)).toEqual(['github', 'jira']);
   });
 
-  /** About used to say 0.1.0 whatever build it was. */
+  /** O Sobre dizia 0.1.0 fosse qual fosse o build. */
   it('shows the version the app was built as', () => {
     const { result } = renderHook(() => useSettingsViewModel());
 
@@ -114,7 +114,10 @@ describe('useSettingsViewModel', () => {
     expect(result.current.version).toMatch(/^version \d+\.\d+\.\d+/);
   });
 
-  /** QAzinho is closed source: About once said MIT, and linked into a repository users cannot open. */
+  /**
+   * O QAzinho é de código fechado: o Sobre já disse MIT, e linkava para um repositório
+   * que os usuários não conseguem abrir.
+   */
   it('says whose app it is, all rights reserved, and nothing of an open licence', () => {
     const { result } = renderHook(() => useSettingsViewModel());
 
@@ -148,7 +151,10 @@ describe('useSettingsViewModel', () => {
     );
   });
 
-  /** The first run promises an agent can be installed later in Settings, and Settings could not. */
+  /**
+   * A primeira execução promete que um agente pode ser instalado depois nas
+   * Configurações, e as Configurações não conseguiam.
+   */
   describe('installing an agent', () => {
     afterEach(() => {
       Reflect.deleteProperty(window, 'qazinho');
@@ -212,7 +218,7 @@ describe('useSettingsViewModel', () => {
     });
   });
 
-  /** The devices tab told a QA missing idb to type "brew install idb-companion". */
+  /** A aba de dispositivos mandava um QA sem idb digitar "brew install idb-companion". */
   describe('installing idb', () => {
     afterEach(() => {
       Reflect.deleteProperty(window, 'qazinho');
@@ -222,7 +228,8 @@ describe('useSettingsViewModel', () => {
     it('checks the machine when the devices tab opens, so it knows whether brew is there', async () => {
       const checkMachine = vi.fn(fakeQazinhoApi('darwin').checkMachine);
 
-      // A check an earlier test started may still land; let it, then start from nothing.
+      // Uma checagem que um teste anterior iniciou ainda pode chegar; deixe-a chegar,
+      // depois comece do zero.
       await new Promise((later) => setTimeout(later, 0));
       useSetupStore.setState({ managers: null, isChecking: false });
 

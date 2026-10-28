@@ -4,8 +4,8 @@ import { StepsPopup } from '@/shared/components/organisms';
 import { useAgentSignInViewModel } from './hooks';
 
 /**
- * The QA's agent signing in to their account through its own page, step by step; the
- * sign-in itself is the QA's.
+ * O agente do QA entrando na conta dele pela própria página, passo a passo; o login em si
+ * é do QA.
  */
 export const AgentSignIn: React.FC<IAgentSignInProps> = (props) => {
   const popup = useAgentSignInViewModel(props);

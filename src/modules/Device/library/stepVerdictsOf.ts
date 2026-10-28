@@ -3,8 +3,8 @@ import type { ILiveRun } from '@/modules/Workspace/types';
 import type { IFlatStep, StepVerdict } from '@/shared/types';
 
 /**
- * What each step of the plan holds: the run going, or else the last run that walked it;
- * pending where none did.
+ * O que cada passo do plano guarda: a run em andamento, ou senão a última run que o
+ * andou; pendente onde nenhuma andou.
  */
 export function stepVerdictsOf(props: {
   steps: IFlatStep[];

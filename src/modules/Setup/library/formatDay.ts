@@ -1,4 +1,4 @@
-/** A day as the QA's language writes it, from a stored ISO timestamp. */
+/** Um dia como o idioma do QA o escreve, a partir de um timestamp ISO guardado. */
 export function formatDay(props: { iso: string; language: string }): string {
   const day = new Date(props.iso);
 

@@ -2,8 +2,8 @@ import type { IDeviceTools } from '@/shared/types';
 import type { ParseKeys } from 'i18next';
 
 /**
- * What the Estagiário says about the devices, sentence by sentence, from what this
- * machine has.
+ * O que o Estagiário diz dos dispositivos, frase por frase, a partir do que esta máquina
+ * tem.
  */
 export function devicesLineOf(props: {
   isMac: boolean;

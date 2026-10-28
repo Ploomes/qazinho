@@ -64,7 +64,10 @@ describe('buildProcessTree', () => {
     expect(tree[0]?.ramGb).toBeCloseTo(1.91);
   });
 
-  /** The row once read "Emulator · Pixel 7 · API 34" for any phone, a device nobody had. */
+  /**
+   * A linha dizia "Emulator · Pixel 7 · API 34" para qualquer celular, um dispositivo que
+   * ninguém tinha.
+   */
   it('names the device after the process the machine reports, never a made-up phone', () => {
     const tree = buildProcessTree({
       projects: [PROJECT],

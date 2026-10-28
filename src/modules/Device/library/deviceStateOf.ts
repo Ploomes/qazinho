@@ -2,8 +2,8 @@ import type { DeviceState } from '@/modules/Device/types';
 import type { IWorkspace } from '@/modules/Workspace';
 
 /**
- * The device is only up while a run is: nothing boots for a plan nobody asked to run, and
- * it holds while paused or while its agent waits on the QA.
+ * O dispositivo só está de pé enquanto uma run está: nada sobe para um plano que ninguém
+ * pediu para rodar, e ele segura enquanto pausado ou enquanto o agente espera pelo QA.
  */
 export function deviceStateOf(workspace: IWorkspace | null): DeviceState {
   if (!workspace?.live) return 'off';

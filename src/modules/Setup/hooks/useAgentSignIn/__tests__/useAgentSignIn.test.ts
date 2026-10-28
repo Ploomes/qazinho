@@ -6,7 +6,10 @@ import { useAgentSignIn } from '@/modules/Setup/hooks/useAgentSignIn';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useMachineStore } from '@/store';
 
-/** A bridge whose sign-ins stay open until the test reports their steps and ends them, the way main does. */
+/**
+ * Uma bridge cujos logins ficam abertos até o teste relatar os passos deles e
+ * terminá-los, do jeito que a main faz.
+ */
 function bridge() {
   const listeners = new Set<(progress: AgentSignInProgress) => void>();
   const endings: ((progress: AgentSignInProgress) => void)[] = [];

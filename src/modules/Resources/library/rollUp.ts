@@ -2,7 +2,10 @@ import type { IProcessSample } from '@/shared/types';
 
 const MB_IN_GB = 1024;
 
-/** A browser is a dozen processes. The QA reads one line, so they are added up first. */
+/**
+ * Um navegador são uma dúzia de processos. O QA lê uma linha, então eles são somados
+ * antes.
+ */
 export function rollUp(samples: IProcessSample[]): {
   name: string;
   cpu: number;

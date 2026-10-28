@@ -22,7 +22,7 @@ const BUILD: IBuild = {
   result: null,
 };
 
-/** The build events as main sends them. */
+/** Os eventos de build como a main os manda. */
 function bridge() {
   let hear: (event: IBuildEvent) => void = () => undefined;
 

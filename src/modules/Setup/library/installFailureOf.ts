@@ -9,8 +9,8 @@ const MISSING: Record<string, ParseKeys> = {
 };
 
 /**
- * What to tell the QA when an install did not finish: a key and the words that fill it in
- * their language, or what the tool itself printed, as it printed it.
+ * O que dizer ao QA quando uma instalação não terminou: uma chave e as palavras que a
+ * preenchem no idioma dele, ou o que a própria ferramenta imprimiu, como imprimiu.
  */
 export function installFailureOf(
   failure: InstallFailure,

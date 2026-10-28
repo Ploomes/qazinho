@@ -3,8 +3,8 @@ import type { ParseKeys } from 'i18next';
 import { GITHUB_FAILURE_KEYS } from '@/modules/Setup/constants';
 
 /**
- * What to tell the QA when a tracker did not connect, as a key and the words that fill
- * it, in the language they read.
+ * O que dizer ao QA quando um tracker não conectou, como uma chave e as palavras que a
+ * preenchem, no idioma que ele lê.
  */
 export function connectFailureOf(props: { failure: ConnectFailure; tracker: string }): {
   key: ParseKeys;

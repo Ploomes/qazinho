@@ -207,7 +207,10 @@ describe('useDeviceViewModel', () => {
       expect(result.current.doingLabel).toBe('3 of 6');
     });
 
-    /** An exploration has no plan: the panel read "steps 1 of 0" and told the QA to hit Run plan. */
+    /**
+     * Uma exploração não tem plano: o painel dizia "passos 1 de 0" e mandava o QA apertar
+     * Rodar plano.
+     */
     it('lists the screens an exploration reached, with no plan count', () => {
       const walked = walkRun({ verdicts: ['passed'] });
 

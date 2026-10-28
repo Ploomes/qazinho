@@ -1,2 +1,4 @@
-/** Where a build stands as a whole: going, built, failed, or stopped by the QA. */
+/**
+ * Em que pé um build está como um todo: andando, construído, falhou, ou parado pelo QA.
+ */
 export type BuildPhase = 'working' | 'built' | 'failed' | 'stopped';

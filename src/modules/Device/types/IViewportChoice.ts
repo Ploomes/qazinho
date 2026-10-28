@@ -1,8 +1,8 @@
 import type { ViewportId } from './ViewportId';
 
 /**
- * A window size as the device panel offers it: its name, its size in pixels, and whether
- * it is the one kept.
+ * Um tamanho de janela como o painel do dispositivo o oferece: o nome, o tamanho em
+ * pixels, e se é o guardado.
  */
 export interface IViewportChoice {
   id: ViewportId;

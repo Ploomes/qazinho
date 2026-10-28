@@ -3,8 +3,8 @@ import { StepsPopup } from '@/shared/components/organisms';
 import { useMcpSignInViewModel } from './hooks';
 
 /**
- * The steps QAzinho takes to sign the QA's agent in to an MCP server, as they happen;
- * only the last one is the QA's.
+ * Os passos que o QAzinho dá para fazer o agente do QA entrar num servidor MCP, conforme
+ * acontecem; só o último é do QA.
  */
 export const McpSignIn: React.FC<IMcpSignInProps> = (props) => {
   const popup = useMcpSignInViewModel(props);

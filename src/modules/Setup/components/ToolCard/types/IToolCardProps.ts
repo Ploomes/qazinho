@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 
 /**
- * A tool on this machine: found, missing, or off. With `onSelect` it is an option to
- * pick, `isSelected` the one picked.
+ * Uma ferramenta nesta máquina: achada, faltando, ou desligada. Com `onSelect` é uma
+ * opção a escolher, `isSelected` a escolhida.
  */
 export interface IToolCardProps {
   name: string;

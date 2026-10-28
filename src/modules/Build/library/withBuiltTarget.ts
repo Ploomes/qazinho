@@ -2,8 +2,8 @@ import type { IProject } from '@/modules/Project/types';
 import type { BuildPlatform } from '@/shared/types';
 
 /**
- * A project with a build as its target on that platform, in the place of the one it had,
- * or added after the others.
+ * Um projeto com um build como alvo naquela plataforma, no lugar do que tinha, ou
+ * acrescentado depois dos outros.
  */
 export function withBuiltTarget(props: {
   project: IProject;

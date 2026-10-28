@@ -8,8 +8,8 @@ import { useDeviceViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The device the run drives: how it stands, its live screen, its size, pause and stop,
- * and the steps it walked.
+ * O dispositivo que a run dirige: como está, a tela viva, o tamanho, pausar e parar, e os
+ * passos que andou.
  */
 export const DeviceView: React.FC = () => {
   const {

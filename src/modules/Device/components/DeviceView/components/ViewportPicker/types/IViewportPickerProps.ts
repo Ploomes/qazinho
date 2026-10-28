@@ -1,7 +1,8 @@
 import type { IViewportChoice, ViewportId } from '@/modules/Device/types';
 
 /**
- * The window sizes a web run can take, the one kept marked, and what picking one does.
+ * Os tamanhos de janela que uma run web pode ter, o guardado marcado, e o que escolher um
+ * faz.
  */
 export interface IViewportPickerProps {
   viewports: IViewportChoice[];

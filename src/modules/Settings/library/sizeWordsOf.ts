@@ -1,8 +1,8 @@
 const UNITS = ['kilobyte', 'megabyte', 'gigabyte'] as const;
 
 /**
- * A number of bytes as a person reads it on a disk: kilobytes, megabytes or gigabytes,
- * with one decimal past a megabyte.
+ * Um número de bytes como uma pessoa lê num disco: kilobytes, megabytes ou gigabytes, com
+ * uma decimal depois de um megabyte.
  */
 export function sizeWordsOf(props: { bytes: number; language: string }): string {
   const steps = Math.min(

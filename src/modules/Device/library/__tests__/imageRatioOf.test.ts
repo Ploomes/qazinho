@@ -4,7 +4,10 @@ import { imageRatioOf } from '@/modules/Device/library';
 const toUrl = (mime: string, bytes: number[]) =>
   `data:${mime};base64,${btoa(String.fromCharCode(...bytes))}`;
 
-/** A PNG's signature and IHDR, saying width × height; the pixels after it do not matter here. */
+/**
+ * A assinatura e o IHDR de um PNG, dizendo largura × altura; os pixels depois não
+ * importam aqui.
+ */
 function png(width: number, height: number): number[] {
   const bytes = new Uint8Array(33);
 
@@ -17,7 +20,9 @@ function png(width: number, height: number): number[] {
   return [...bytes];
 }
 
-/** A JPEG the way simctl writes one: an Exif segment first, then the frame with the size. */
+/**
+ * Um JPEG como o simctl escreve: um segmento Exif primeiro, depois o frame com o tamanho.
+ */
 function jpeg(width: number, height: number): number[] {
   const exif = [0xff, 0xe1, 0x00, 0x08, 0x45, 0x78, 0x69, 0x66, 0x00, 0x00];
   const frame = [

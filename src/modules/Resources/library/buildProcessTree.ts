@@ -7,8 +7,8 @@ import { rollUp } from './rollUp';
 type Named = (props: { name: string; count: number }) => string;
 
 /**
- * A project only shows up once something under it is running; `named` words a line that
- * adds several processes up.
+ * Um projeto só aparece quando algo sob ele está rodando; `named` dá palavras a uma linha
+ * que soma vários processos.
  */
 export function buildProcessTree(props: {
   projects: IProject[];
