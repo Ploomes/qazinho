@@ -12,7 +12,7 @@ const DRAFTS = [
   { name: 'LOGIN_PASSWORD', description: 'Its password' },
 ];
 
-/** A bridge whose vault keeps what it was asked and answers with `outcome`. */
+/** Uma bridge cujo cofre guarda o que lhe pediram e responde com `outcome`. */
 function vault(outcome?: VariablesOutcome) {
   const applied: IApplyVariables[] = [];
 

@@ -9,7 +9,10 @@ import { useVariablesStore, useWorkspaceStore } from '@/store';
 
 const SAVED = [{ name: 'ADMIN_EMAIL', description: 'The admin' }];
 
-/** A bridge whose vault answers every save with the outcome handed to it, and keeps what it was asked. */
+/**
+ * Uma bridge cujo cofre responde todo salvamento com o resultado que recebe, e guarda o
+ * que lhe pediram.
+ */
 function vault(outcome: VariablesOutcome = { isSaved: true, variables: SAVED }) {
   const applied: IApplyVariables[] = [];
 

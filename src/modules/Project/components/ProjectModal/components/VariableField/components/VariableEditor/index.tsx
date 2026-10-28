@@ -5,8 +5,8 @@ import { useVariableEditorViewModel } from './hooks';
 import './styles.css';
 
 /**
- * One variable opened in place: its form, what stops it from being kept, and the way out
- * either way.
+ * Uma variável aberta no lugar: o formulário, o que impede que seja guardada, e a saída
+ * nos dois casos.
  */
 export const VariableEditor: React.FC<IVariableEditorProps> = (props) => {
   const { ref } = useVariableEditorViewModel();

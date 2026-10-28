@@ -4,8 +4,8 @@ import { Icon, Input } from '@/shared/components/atoms';
 import './styles.css';
 
 /**
- * One variable as the QA writes it: its name in capitals, what it holds, and its value,
- * typed masked and never shown back.
+ * Uma variável como o QA a escreve: o nome em maiúsculas, o que guarda, e o valor,
+ * digitado mascarado e nunca mostrado de volta.
  */
 export const VariableForm: React.FC<IVariableFormProps> = (props) => {
   const { t } = useTranslation();

@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { webAddressOf } from '@/modules/Project/library';
 
 /**
- * A QA types "staging.shop.com" the way they would in a browser. The run used to hand that to
- * Chrome as it was, and Chrome cannot open an address with no scheme, so the run broke.
+ * Um QA digita "staging.shop.com" do jeito que faria num navegador. A run entregava isso
+ * ao Chrome como estava, e o Chrome não abre um endereço sem esquema, então a run
+ * quebrava.
  */
 describe('webAddressOf', () => {
   it('keeps an address that says how to reach it', () => {

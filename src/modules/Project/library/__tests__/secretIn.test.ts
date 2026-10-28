@@ -8,7 +8,7 @@ describe('secretIn', () => {
     );
   });
 
-  /** A QA planning a login told the chat the account's password in words. */
+  /** Um QA planejando um login contou ao chat a senha da conta em palavras. */
   it('holds back a password written out after the word', () => {
     expect(secretIn('a conta é qa@loja.test e a senha é Teste-1234')).toBe('Teste-1234');
   });

@@ -9,8 +9,8 @@ import { useVariableFieldViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The project's logins and secrets: each by its name and what it holds, its value sealed
- * and never shown, edited in place and saved with the project.
+ * Os logins e segredos do projeto: cada um pelo nome e pelo que guarda, o valor lacrado e
+ * nunca mostrado, editado no lugar e salvo com o projeto.
  */
 export const VariableField: React.FC<IVariableFieldProps> = (props) => {
   const {

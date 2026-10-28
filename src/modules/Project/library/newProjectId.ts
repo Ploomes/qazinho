@@ -1,5 +1,6 @@
 /**
- * A project id from the moment it was made, so two projects made apart never share one.
+ * Um id de projeto a partir do momento em que foi feito, para dois projetos feitos
+ * separados nunca dividirem um.
  */
 export function newProjectId(now: number = Date.now()): string {
   return `p-${String(now)}`;

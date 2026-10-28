@@ -10,8 +10,8 @@ import { useRepoFieldViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The GitHub repositories a project is made of, each with the branch its changes are
- * measured against.
+ * Os repositórios do GitHub de que um projeto é feito, cada um com a branch contra a qual
+ * as mudanças dele são medidas.
  */
 export const RepoField: React.FC<IRepoFieldProps> = (props) => {
   const {

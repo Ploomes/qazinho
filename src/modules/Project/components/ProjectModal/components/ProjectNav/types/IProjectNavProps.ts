@@ -2,8 +2,8 @@ import type { IProjectNavItem } from './IProjectNavItem';
 import type { ProjectSection } from '@/modules/Project/components/ProjectModal/types';
 
 /**
- * The project window's sections, the one open, and the words a screen reader says for a
- * section that needs a look.
+ * As seções da janela do projeto, a aberta, e as palavras que um leitor de tela diz para
+ * uma seção que precisa de atenção.
  */
 export interface IProjectNavProps {
   label: string;

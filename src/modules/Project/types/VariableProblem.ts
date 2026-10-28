@@ -1,7 +1,7 @@
 import type { ParseKeys } from 'i18next';
 
 /**
- * What stops a set of variables from being saved, as the words the QA reads and the name
- * they are about.
+ * O que impede um conjunto de variáveis de ser salvo, como as palavras que o QA lê e o
+ * nome de que tratam.
  */
 export type VariableProblem = { key: ParseKeys; name: string } | null;

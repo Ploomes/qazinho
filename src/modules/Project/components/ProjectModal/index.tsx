@@ -17,8 +17,8 @@ import { useProjectModalViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A project's window, in sections down its side: its name and targets, the code it is
- * made of, its variables, its suite, its link to QAzinho Pro, and deleting it.
+ * A janela de um projeto, em seções ao lado: o nome e os alvos, o código de que é feito,
+ * as variáveis, a suíte, o vínculo com o QAzinho Pro, e apagá-lo.
  */
 export const ProjectModal: React.FC = () => {
   const {

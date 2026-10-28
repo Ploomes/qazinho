@@ -1,8 +1,8 @@
 import { VARIABLE_NAME } from '@/shared/constants';
 
 /**
- * A name as the QA types it, made a variable's name: capital letters without accents,
- * digits, and _ for anything else.
+ * Um nome como o QA o digita, feito nome de variável: letras maiúsculas sem acento,
+ * dígitos, e _ para qualquer outra coisa.
  */
 export function variableNameOf(typed: string): string {
   return typed

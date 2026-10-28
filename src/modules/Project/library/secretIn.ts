@@ -2,8 +2,8 @@ import { passwordsIn } from './passwordsIn';
 import { tokenIn } from './tokenIn';
 
 /**
- * The first token or written-out password in a message, which the agent would read; null
- * when there is none.
+ * O primeiro token ou senha escrita numa mensagem, que o agente leria; null quando não há
+ * nenhum.
  */
 export function secretIn(text: string): string | null {
   return tokenIn(text) ?? passwordsIn(text)[0] ?? null;

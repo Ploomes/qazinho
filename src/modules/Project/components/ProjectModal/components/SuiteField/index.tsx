@@ -8,8 +8,8 @@ import { useSuiteFieldViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The Playwright suite a project runs, from the folder where the QA keeps it cloned, with
- * the settings its tests read and where each comes from.
+ * A suíte de Playwright que um projeto roda, a partir da pasta onde o QA a mantém
+ * clonada, com as configurações que os testes leem e de onde cada uma vem.
  */
 export const SuiteField: React.FC<ISuiteFieldProps> = (props) => {
   const {

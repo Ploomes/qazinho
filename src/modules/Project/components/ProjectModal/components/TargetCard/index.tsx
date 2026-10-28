@@ -7,8 +7,8 @@ import { useTargetCardViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A part of a project, a platform it targets or the code it is made of; one this machine
- * cannot reach yet sits blurred behind how to set it up.
+ * Uma parte de um projeto, uma plataforma que ele mira ou o código de que é feito; uma
+ * que esta máquina ainda não alcança fica borrada atrás de como configurá-la.
  */
 export const TargetCard: React.FC<ITargetCardProps> = (props) => {
   const {

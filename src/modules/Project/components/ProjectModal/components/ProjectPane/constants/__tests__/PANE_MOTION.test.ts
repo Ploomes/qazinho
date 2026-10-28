@@ -3,7 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { PANE_MOTION } from '@/modules/Project/components/ProjectModal/components/ProjectPane/constants';
 
 describe('PANE_MOTION', () => {
-  /** A pane that only faded out would still take clicks and the find bar; Motion sets hidden once the fade ends. */
+  /**
+   * Um painel que só sumisse com fade ainda receberia cliques e a barra de busca; o
+   * Motion o esconde quando o fade termina.
+   */
   it('ends a shut pane out of sight, not only see-through', () => {
     expect(PANE_MOTION.shut).toMatchObject({ opacity: 0, visibility: 'hidden' });
   });

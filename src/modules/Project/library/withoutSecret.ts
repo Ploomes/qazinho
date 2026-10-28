@@ -1,4 +1,4 @@
-/** The message with a token taken out of it, its spaces closed up where the token was. */
+/** A mensagem com um token tirado dela, os espaços fechados onde o token estava. */
 export function withoutSecret(props: { text: string; secret: string }): string {
   return props.text
     .split(props.secret)

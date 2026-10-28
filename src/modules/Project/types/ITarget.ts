@@ -1,6 +1,6 @@
 import type { TargetKind } from '@/shared/types';
 
-/** Where a run happens: a URL for web, a build on disk for Android and iOS. */
+/** Onde uma run acontece: uma URL para a web, um build em disco para Android e iOS. */
 export interface ITarget {
   id: string;
   kind: TargetKind;

@@ -1,6 +1,6 @@
 /**
- * Why a part of a project cannot be used on this machine yet, and how to fix it: a guide
- * to follow, or one thing QAzinho does.
+ * Por que uma parte de um projeto ainda não pode ser usada nesta máquina, e como
+ * consertar: um guia a seguir, ou uma coisa que o QAzinho faz.
  */
 export interface ITargetLock {
   reason: string;

@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 
-/** A section of the project window, open or kept shut with what was typed in it. */
+/**
+ * Uma seção da janela do projeto, aberta ou mantida fechada com o que foi digitado nela.
+ */
 export interface IProjectPaneProps {
   label: string;
   isOpen: boolean;

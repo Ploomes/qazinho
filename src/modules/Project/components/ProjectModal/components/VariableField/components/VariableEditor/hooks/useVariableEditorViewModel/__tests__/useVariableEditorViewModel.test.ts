@@ -10,7 +10,10 @@ afterEach(() => {
 
 describe('useVariableEditorViewModel', () => {
   describe('ref', () => {
-    /** The editor opens at the foot of a long window: it scrolls itself whole into view once its fold opened. */
+    /**
+     * O editor abre no pé de uma janela longa: ele se rola inteiro para a vista quando a
+     * dobra dele abriu.
+     */
     it('brings the editor into view once it opened, and not before', () => {
       vi.useFakeTimers();
 

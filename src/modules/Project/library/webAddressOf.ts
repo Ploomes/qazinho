@@ -4,8 +4,8 @@ const LOCAL_HOST =
   /^(localhost|0\.0\.0\.0|\[::1\]|(127|10)(\.\d+){3}|192\.168(\.\d+){2}|172\.(1[6-9]|2\d|3[01])(\.\d+){2}|.+\.(localhost|local|test))$/i;
 
 /**
- * The address a browser opens for what the QA typed: http for this machine and its
- * network, https elsewhere; null when it is no web address.
+ * O endereço que um navegador abre para o que o QA digitou: http para esta máquina e a
+ * rede dela, https nos outros lugares; null quando não é endereço web.
  */
 export function webAddressOf(typed: string): string | null {
   const text = typed.trim();

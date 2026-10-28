@@ -5,8 +5,8 @@ import { useProjectPaneViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A section of the project window: it fades in when its nav item opens, and stays mounted
- * while shut, so nothing typed in it is lost.
+ * Uma seção da janela do projeto: aparece com fade quando o item do nav abre, e fica
+ * montada enquanto fechada, para nada digitado nela se perder.
  */
 export const ProjectPane: React.FC<IProjectPaneProps> = (props) => {
   const { animate, isShut } = useProjectPaneViewModel(props);

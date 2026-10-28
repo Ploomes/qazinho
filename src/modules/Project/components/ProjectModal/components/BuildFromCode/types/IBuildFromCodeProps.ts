@@ -2,8 +2,8 @@ import type { IProjectRepository } from '@/modules/Project/types';
 import type { BuildPlatform } from '@/shared/types';
 
 /**
- * Building one platform of a project from its code: the repositories to pick from, the
- * build on show, and what the modal keeps of it.
+ * Construindo uma plataforma de um projeto a partir do código: os repositórios a
+ * escolher, o build em exibição, e o que o modal guarda dele.
  */
 export interface IBuildFromCodeProps {
   platform: BuildPlatform;

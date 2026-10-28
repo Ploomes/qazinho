@@ -1,6 +1,6 @@
 /**
- * The Playwright suite a project runs: the project, none until it is created, and the
- * names of its variables, which reach the tests as settings.
+ * A suíte de Playwright que um projeto roda: o projeto, nenhum até ser criado, e os nomes
+ * das variáveis dele, que chegam aos testes como configurações.
  */
 export interface ISuiteFieldProps {
   projectId: string | null;

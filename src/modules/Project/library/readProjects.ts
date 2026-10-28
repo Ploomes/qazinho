@@ -4,8 +4,8 @@ import { repositoriesOf } from './repositoriesOf';
 import { webAddressOf } from './webAddressOf';
 
 /**
- * The file on disk belongs to the QA, so anything unreadable in it is skipped, not fatal;
- * a web address saved with no scheme reads as a browser opens it.
+ * O arquivo no disco é do QA, então qualquer coisa ilegível nele é pulada, não fatal; um
+ * endereço web salvo sem esquema lê como um navegador o abre.
  */
 export function readProjects(json: string): IProject[] {
   let read: unknown;

@@ -30,7 +30,10 @@ describe('useWelcomeViewModel', () => {
   });
 
   describe('onSettings', () => {
-    /** There is no sidebar before the first project, so Settings had no way in. */
+    /**
+     * Não há sidebar antes do primeiro projeto, então as Configurações não tinham
+     * entrada.
+     */
     it('leads to Settings while there is no project', () => {
       const { result } = renderHook(() => useWelcomeViewModel());
 

@@ -4,8 +4,8 @@ import { useVariablesModalViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The window the agent asks the QA to type secrets in: one form per variable, sealed in
- * main once saved, and never shown again.
+ * A janela em que o agente pede ao QA que digite segredos: um formulário por variável,
+ * lacrado na main depois de salvo, e nunca mostrado de novo.
  */
 export const VariablesModal: React.FC = () => {
   const {

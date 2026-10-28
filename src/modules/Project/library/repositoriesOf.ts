@@ -1,8 +1,8 @@
 import type { IProjectRepository } from '@/modules/Project/types';
 
 /**
- * The repositories a saved project names, each with its GitHub id, owner, name and base
- * branch; anything else, or none, is no repository.
+ * Os repositórios que um projeto salvo nomeia, cada um com o id do GitHub, o dono, o nome
+ * e a branch base; qualquer outra coisa, ou nenhum, não é repositório.
  */
 export function repositoriesOf(saved: unknown): IProjectRepository[] {
   if (!Array.isArray(saved)) return [];

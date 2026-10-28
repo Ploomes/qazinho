@@ -404,7 +404,10 @@ describe('useProjectModalViewModel', () => {
       ]);
     });
 
-    /** Targets used to be saved as "Android · Pixel 7" and "iOS · iPhone 16", phones nobody picked. */
+    /**
+     * Os alvos eram salvos como "Android · Pixel 7" e "iOS · iPhone 16", celulares que
+     * ninguém escolheu.
+     */
     it('names a target in use by its platform, whatever an older project saved', () => {
       useAppStore.setState({
         projects: [
@@ -853,7 +856,7 @@ describe('useProjectModalViewModel', () => {
       repositories: [],
     };
 
-    /** A vault that keeps what it was asked, and answers `isSaved` as told. */
+    /** Um cofre que guarda o que lhe pediram, e responde `isSaved` como mandado. */
     function vault(isSaved = true) {
       const applied: IApplyVariables[] = [];
 

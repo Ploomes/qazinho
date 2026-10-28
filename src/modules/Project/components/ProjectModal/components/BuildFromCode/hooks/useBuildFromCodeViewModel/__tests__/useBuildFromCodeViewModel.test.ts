@@ -13,7 +13,7 @@ const REPOSITORIES = [
   { id: '102', owner: 'acme', name: 'loja-app', baseBranch: 'main' },
 ];
 
-/** A bridge that lists two branches per repository and remembers each build asked for. */
+/** Uma bridge que lista duas branches por repositório e lembra cada build pedido. */
 function bridge() {
   const started: IStartBuild[] = [];
 

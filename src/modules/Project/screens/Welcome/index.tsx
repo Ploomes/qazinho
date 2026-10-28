@@ -3,8 +3,8 @@ import { useWelcomeViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The empty middle of the app: the way to a first project, or to a workspace once a
- * project exists.
+ * O meio vazio do app: o caminho para um primeiro projeto, ou para um workspace depois
+ * que um projeto existe.
  */
 export const Welcome: React.FC = () => {
   const { mood, title, body, action, settings, onAction, onSettings } =

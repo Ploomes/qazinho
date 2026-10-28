@@ -8,8 +8,8 @@ const TOKENS = [
 ];
 
 /**
- * The first thing in a message that looks like a token or an API key, such as a Jira or
- * GitHub token; null when there is none.
+ * A primeira coisa numa mensagem que parece um token ou uma chave de API, como um token
+ * do Jira ou do GitHub; null quando não há nenhuma.
  */
 export function tokenIn(text: string): string | null {
   for (const pattern of TOKENS) {

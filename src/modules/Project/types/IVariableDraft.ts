@@ -1,6 +1,6 @@
 /**
- * A variable as the QA edits it before saving: `from` is the saved name it stands for,
- * null when new, and an empty `value` keeps the saved one.
+ * Uma variável como o QA a edita antes de salvar: `from` é o nome salvo que ela
+ * representa, null quando nova, e um `value` vazio mantém o salvo.
  */
 export interface IVariableDraft {
   key: string;
