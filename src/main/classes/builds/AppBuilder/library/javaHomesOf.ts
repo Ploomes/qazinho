@@ -1,8 +1,8 @@
 import { posix, win32 } from 'node:path';
 
 /**
- * Where Android Studio keeps the JDK it builds with, on this platform: the folders to try
- * when JAVA_HOME is not set.
+ * Onde o Android Studio guarda o JDK com que constrói, nesta plataforma: as pastas a
+ * tentar quando o JAVA_HOME não está definido.
  */
 export function javaHomesOf(props: {
   platform: NodeJS.Platform;

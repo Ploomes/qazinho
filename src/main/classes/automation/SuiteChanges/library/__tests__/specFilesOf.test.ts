@@ -47,7 +47,10 @@ describe('specFilesOf', () => {
     ]);
   });
 
-  /** On Windows the suite's folder comes from path.relative, with backslashes, while git writes slashes. */
+  /**
+   * No Windows a pasta da suíte vem do path.relative, com barras invertidas, enquanto o
+   * git escreve barras.
+   */
   it("reads a suite's folder written with Windows backslashes", () => {
     expect(
       specFilesOf({ files: [file('e2e/tests/a.spec.ts')], prefix: 'e2e\\' }),

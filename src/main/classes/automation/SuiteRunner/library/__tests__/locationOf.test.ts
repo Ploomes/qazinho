@@ -2,14 +2,21 @@ import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 import { locationOf } from '@/main/classes/automation/SuiteRunner/library';
 
-/** Playwright's own reading of a filter on its command line: the path part becomes a regular expression tried on each test file's absolute path, and the line is kept apart. */
+/**
+ * A leitura do próprio Playwright de um filtro na linha de comando dele: a parte do
+ * caminho vira uma expressão regular testada no caminho absoluto de cada arquivo de
+ * teste, e a linha fica à parte.
+ */
 const playwright = createRequire(import.meta.url)('playwright/lib/util') as {
   parseLocationArg: (arg: string) => { file: string; line: number | null };
   forceRegExp: (pattern: string) => RegExp;
   createFileMatcher: (pattern: RegExp) => (file: string) => boolean;
 };
 
-/** Whether Playwright, handed what locationOf made, runs a test written in this file at this line. */
+/**
+ * Se o Playwright, recebendo o que o locationOf fez, roda um teste escrito neste arquivo
+ * nesta linha.
+ */
 function runs(props: { filter: string; file: string; line: number }): boolean {
   const location = playwright.parseLocationArg(locationOf(props.filter));
   const isFile = playwright.createFileMatcher(playwright.forceRegExp(location.file));
@@ -48,7 +55,10 @@ describe('locationOf', () => {
     ).toBe(true);
   });
 
-  /** A file's name inside another's: a.spec.ts is in data.spec.ts, and tests/a.spec.ts in old-tests/a.spec.ts. */
+  /**
+   * O nome de um arquivo dentro de outro: a.spec.ts está em data.spec.ts, e
+   * tests/a.spec.ts em old-tests/a.spec.ts.
+   */
   it('never runs a file whose path only holds the one asked for', () => {
     expect(
       runs({ filter: 'a.spec.ts', file: '/Users/qa/e2e/data.spec.ts', line: 1 }),
@@ -69,7 +79,10 @@ describe('locationOf', () => {
     ).toBe(false);
   });
 
-  /** Playwright reads each filter as a regular expression: a bracket or a plus in a folder's name must stay a character. */
+  /**
+   * O Playwright lê cada filtro como uma expressão regular: um colchete ou um mais no
+   * nome de uma pasta precisa continuar um caractere.
+   */
   it('escapes what a regular expression would read otherwise', () => {
     expect(locationOf('tests/(old)/a+b.spec.ts:7')).toBe(
       '(^|[\\\\/])tests[\\\\/]\\(old\\)[\\\\/]a\\+b\\.spec\\.ts$:7',
@@ -83,7 +96,10 @@ describe('locationOf', () => {
     ).toBe(true);
   });
 
-  /** Playwright tries the filter on the absolute path, which on Windows is written with backslashes. */
+  /**
+   * O Playwright testa o filtro no caminho absoluto, que no Windows é escrito com barras
+   * invertidas.
+   */
   it('runs the file on Windows, where its path has backslashes', () => {
     expect(
       runs({

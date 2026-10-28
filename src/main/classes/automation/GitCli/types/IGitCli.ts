@@ -1,4 +1,7 @@
-/** What the git runner needs: where to look for git, the way the QA's own shell would. */
+/**
+ * O que o runner de git precisa: onde procurar o git, do jeito que o shell do próprio QA
+ * procuraria.
+ */
 export interface IGitCli {
   directories: () => Promise<string[]>;
 }

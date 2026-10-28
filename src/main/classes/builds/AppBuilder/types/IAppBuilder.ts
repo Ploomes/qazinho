@@ -5,8 +5,8 @@ import type { IBuildEvent } from '@/shared/types';
 import type { Harness } from '@salve-software/qazinho-harness';
 
 /**
- * What a build needs: gh for the code, the QA's agent and the harness to build it, where
- * to keep it, and a look at the machine.
+ * O que um build precisa: o gh para o código, o agente do QA e o harness para
+ * construí-lo, onde guardá-lo, e um olhar para a máquina.
  */
 export interface IAppBuilder {
   github: IGithubCode;

@@ -1,4 +1,4 @@
-/** The version a package.json says it is; null for text that is not one. */
+/** A versão que um package.json diz ter; null para um texto que não é um. */
 export function versionIn(text: string): string | null {
   try {
     const read: unknown = JSON.parse(text);

@@ -2,8 +2,8 @@ const PLACE = /^(.*?)(:\d+)?$/;
 const SPECIAL = /[.*+?^${}()|[\]\\]/g;
 
 /**
- * A file or file:line as Playwright takes it: a regular expression that matches that file
- * alone.
+ * Um arquivo ou arquivo:linha como o Playwright o toma: uma expressão regular que casa só
+ * esse arquivo.
  */
 export function locationOf(filter: string): string {
   const match = PLACE.exec(filter);

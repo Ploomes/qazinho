@@ -3,8 +3,8 @@ import { findOnPath, stripAnsi, spawnCommand } from '@/main/library';
 import { GIT_CLI } from './constants';
 
 /**
- * Runs the QA's own git in a folder of theirs, never asking anything at a prompt; what it
- * pushes goes with their own credentials.
+ * Roda o git do próprio QA numa pasta dele, nunca perguntando nada num prompt; o que ele
+ * envia vai com as credenciais dele.
  */
 export class GitCli {
   private readonly directories: () => Promise<string[]>;
@@ -15,8 +15,8 @@ export class GitCli {
   }
 
   /**
-   * One git command in a folder, with what it printed, or what it said when it refused or
-   * was not there.
+   * Um comando git numa pasta, com o que imprimiu, ou o que disse quando recusou ou não
+   * estava lá.
    */
   public async run(props: {
     cwd: string;

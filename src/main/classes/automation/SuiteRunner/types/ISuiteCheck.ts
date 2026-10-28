@@ -1,8 +1,8 @@
 import type { ISuiteResult, SuiteFailure } from '@/shared/types';
 
 /**
- * Some tests run from another copy of a suite, outside the project's runs: how each went,
- * or why none ran, with what Playwright said.
+ * Alguns testes rodados de outra cópia de uma suíte, fora das runs do projeto: como cada
+ * um foi, ou por que nenhum rodou, com o que o Playwright disse.
  */
 export interface ISuiteCheck {
   results: ISuiteResult[];

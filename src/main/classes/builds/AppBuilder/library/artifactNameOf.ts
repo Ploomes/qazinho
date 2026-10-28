@@ -1,7 +1,8 @@
 import type { BuildPlatform } from '@/shared/types';
 
 /**
- * The name a kept build goes by: the repository, the branch and the commit it came from.
+ * O nome pelo qual um build guardado é conhecido: o repositório, a branch e o commit de
+ * onde veio.
  */
 export function artifactNameOf(props: {
   repository: string;

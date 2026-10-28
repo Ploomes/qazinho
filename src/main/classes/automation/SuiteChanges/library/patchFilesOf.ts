@@ -3,8 +3,8 @@ import type { ISuiteChangeFile, SuiteFileStatus } from '@/shared/types';
 const PATCH_CHARS = 100_000;
 
 /**
- * Each file of a unified diff from git, with what was done to it and the lines it gained
- * and lost, in the order git wrote them.
+ * Cada arquivo de um diff unificado do git, com o que foi feito a ele e as linhas que
+ * ganhou e perdeu, na ordem em que o git as escreveu.
  */
 export function patchFilesOf(diff: string): ISuiteChangeFile[] {
   return diff

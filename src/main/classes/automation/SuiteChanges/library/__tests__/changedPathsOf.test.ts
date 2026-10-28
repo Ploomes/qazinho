@@ -15,7 +15,7 @@ describe('changedPathsOf', () => {
     ]);
   });
 
-  /** With -z, a rename is its new path, then its old one in a field of its own. */
+  /** Com -z, um rename é o caminho novo, depois o antigo num campo próprio. */
   it('takes a rename by its new path and skips the old one', () => {
     expect(
       changedPathsOf('R  tests/cart.spec.ts\0tests/carrinho.spec.ts\0 M a.ts\0'),

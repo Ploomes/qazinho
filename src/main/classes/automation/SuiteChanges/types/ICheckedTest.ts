@@ -1,8 +1,8 @@
 import type { ISuiteResult } from '@/shared/types';
 
 /**
- * How one test went in a run the agent asked for, with what Playwright noted of its
- * failure and where its screenshots are.
+ * Como um teste foi numa run que o agente pediu, com o que o Playwright anotou da falha
+ * dele e onde estão os screenshots.
  */
 export interface ICheckedTest {
   result: ISuiteResult;

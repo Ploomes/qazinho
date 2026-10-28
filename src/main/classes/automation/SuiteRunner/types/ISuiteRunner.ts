@@ -3,8 +3,8 @@ import type { IVariableValue } from '@/main/types';
 import type { SuiteEvent } from '@/shared/types';
 
 /**
- * What the runner needs: the suites, the QA's node, the project's settings and where runs
- * go.
+ * O que o runner precisa: as suítes, o node do QA, as configurações do projeto e para
+ * onde as runs vão.
  */
 export interface ISuiteRunner {
   registry: Pick<SuiteRegistry, 'pathOf' | 'runnerOf'>;

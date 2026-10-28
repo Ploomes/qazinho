@@ -14,8 +14,8 @@ import {
 } from './library';
 
 /**
- * The suites connected to the QA's projects: main keeps the folder of each, and reads
- * what it holds afresh each time it is asked.
+ * As suítes conectadas aos projetos do QA: a main guarda a pasta de cada uma, e lê o que
+ * ela guarda de novo a cada vez que é perguntada.
  */
 export class SuiteRegistry {
   private readonly root: string;
@@ -27,8 +27,8 @@ export class SuiteRegistry {
   }
 
   /**
-   * Connects a folder holding a Playwright suite to a project, in place of the suite it
-   * had.
+   * Conecta uma pasta com uma suíte de Playwright a um projeto, no lugar da suíte que ele
+   * tinha.
    */
   public async connect(props: { projectId: string; path: string }): Promise<SuitePick> {
     const path = await realpath(props.path).catch(() => props.path);
@@ -42,8 +42,8 @@ export class SuiteRegistry {
   }
 
   /**
-   * The suite a project is connected to, read again from its folder; null for none, or
-   * one whose folder no longer holds it.
+   * A suíte a que um projeto está conectado, lida de novo da pasta dela; null para
+   * nenhuma, ou uma cuja pasta não a guarda mais.
    */
   public async suiteOf(projectId: string): Promise<ISuite | null> {
     const path = (await this.read())[projectId];
@@ -52,15 +52,16 @@ export class SuiteRegistry {
   }
 
   /**
-   * The folder of the suite a project is connected to, as main keeps it; null for none.
+   * A pasta da suíte a que um projeto está conectado, como a main a guarda; null para
+   * nenhuma.
    */
   public async pathOf(projectId: string): Promise<string | null> {
     return (await this.read())[projectId] ?? null;
   }
 
   /**
-   * Where the Playwright Test a suite runs on is installed, in its folder or one above
-   * it, with its version; null until its packages are installed.
+   * Onde o Playwright Test em que uma suíte roda está instalado, na pasta dela ou numa
+   * acima, com a versão; null até os pacotes dela serem instalados.
    */
   public async runnerOf(path: string): Promise<{ cli: string; version: string } | null> {
     for (const file of runnerPathsOf(path)) {
@@ -73,7 +74,7 @@ export class SuiteRegistry {
     return null;
   }
 
-  /** Forgets the suite of a project; its folder stays as the QA left it. */
+  /** Esquece a suíte de um projeto; a pasta dela fica como o QA a deixou. */
   public async forget(projectId: string): Promise<void> {
     const kept = Object.entries(await this.read()).filter(([id]) => id !== projectId);
 

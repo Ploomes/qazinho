@@ -3,8 +3,8 @@ import type { SuiteChangeAsk } from '@/shared/types';
 const LONGEST = 72;
 
 /**
- * What a change is about in a line: the test that broke, or the test to write, by its
- * plan case or the QA's first words.
+ * Sobre o que uma mudança trata em uma linha: o teste que quebrou, ou o teste a escrever,
+ * pelo caso do plano dele ou pelas primeiras palavras do QA.
  */
 export function askTitleOf(ask: SuiteChangeAsk): string {
   if (ask.kind === 'fix') return ask.test.title;

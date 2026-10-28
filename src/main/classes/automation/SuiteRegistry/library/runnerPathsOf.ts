@@ -2,8 +2,8 @@ import { dirname, join, parse } from 'node:path';
 import { SUITE_REGISTRY } from '@/main/classes/automation/SuiteRegistry/constants';
 
 /**
- * Where a suite's Playwright Test could be installed, from its own folder up to the root,
- * the way Node looks for a package.
+ * Onde o Playwright Test de uma suíte poderia estar instalado, da própria pasta dela até
+ * a raiz, do jeito que o Node procura um pacote.
  */
 export function runnerPathsOf(path: string): string[] {
   const { root } = parse(path);

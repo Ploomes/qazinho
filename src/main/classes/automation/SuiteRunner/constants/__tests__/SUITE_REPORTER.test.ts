@@ -18,7 +18,10 @@ interface IReporter {
   onEnd: (result: { status: string }) => void;
 }
 
-/** The reporter as Playwright loads it: written to a file of its own and required, printing through the `out` a test hands it. */
+/**
+ * O reporter como o Playwright o carrega: escrito num arquivo próprio e requerido,
+ * imprimindo pelo `out` que um teste lhe entrega.
+ */
 function reporter() {
   const folder = mkdtempSync(join(tmpdir(), 'qz-reporter-'));
   const file = join(folder, SUITE_REPORTER.file);

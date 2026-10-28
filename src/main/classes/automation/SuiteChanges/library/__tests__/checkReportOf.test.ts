@@ -75,7 +75,10 @@ describe('checkReportOf', () => {
     expect(text).toContain('Screenshot: /data/checks/1/output/a/test-failed-1.png');
   });
 
-  /** The tests read the variables from the environment, and an error can print one: the agent reads its name. */
+  /**
+   * Os testes leem as variáveis do ambiente, e um erro pode imprimir uma: o agente lê o
+   * nome dela.
+   */
   it("reads a variable's value back as its name, wherever it shows", () => {
     const text = checkReportOf({
       tests: [

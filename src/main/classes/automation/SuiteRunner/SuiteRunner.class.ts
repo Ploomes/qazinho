@@ -20,8 +20,8 @@ import { SUITE_REPORTER, SUITE_RUNNER } from './constants';
 import { locationOf, suiteReportOf, suiteStatusOf, suiteTestsOf } from './library';
 
 /**
- * Runs the QA's Playwright suites with their own Playwright: lists the tests and runs
- * them by project.
+ * Roda as suítes de Playwright do QA com o Playwright próprio delas: lista os testes e os
+ * roda por projeto.
  */
 export class SuiteRunner {
   private readonly registry: Pick<SuiteRegistry, 'pathOf' | 'runnerOf'>;
@@ -47,8 +47,8 @@ export class SuiteRunner {
   }
 
   /**
-   * The tests a project's suite holds, as its own Playwright lists them, or why it could
-   * not.
+   * Os testes que a suíte de um projeto guarda, como o Playwright próprio dela os lista,
+   * ou por que não conseguiu.
    */
   public async list(projectId: string): Promise<SuiteList> {
     const tools = await this.toolsOf(projectId);
@@ -80,8 +80,8 @@ export class SuiteRunner {
   }
 
   /**
-   * Runs a project's suite batch after batch, one Playwright project each, and answers
-   * with the run once it ends; a project already running answers with that run.
+   * Roda a suíte de um projeto batch após batch, um projeto do Playwright cada, e
+   * responde com a run quando termina; um projeto já rodando responde com essa run.
    */
   public async run(start: IStartSuiteRun): Promise<ISuiteRun> {
     const going = this.jobs.get(start.projectId);
@@ -158,8 +158,8 @@ export class SuiteRunner {
   }
 
   /**
-   * How one test went in a project's run, with the folder its run keeps its files in;
-   * null when the run or the test is not there.
+   * Como um teste foi na run de um projeto, com a pasta em que a run guarda os arquivos
+   * dela; null quando a run ou o teste não está lá.
    */
   public async resultOf(props: {
     projectId: string;
@@ -179,8 +179,8 @@ export class SuiteRunner {
   }
 
   /**
-   * Runs some tests of a suite from another copy of it, with the project's settings,
-   * outside its runs.
+   * Roda alguns testes de uma suíte a partir de outra cópia dela, com as configurações do
+   * projeto, fora das runs dele.
    */
   public async check(props: {
     projectId: string;
@@ -246,7 +246,7 @@ export class SuiteRunner {
     return { results: job.run.results, failure: job.run.failure, said: job.run.said };
   }
 
-  /** Stops a check going in a folder, when the agent that asked for it is stopped. */
+  /** Para uma checagem em andamento numa pasta, quando o agente que a pediu é parado. */
   public stopCheck(folder: string): void {
     const job = this.checks.get(folder);
 
@@ -258,8 +258,8 @@ export class SuiteRunner {
   }
 
   /**
-   * Stops the run a project has going: Playwright is asked to stop, and made to after a
-   * grace.
+   * Para a run que um projeto tem em andamento: o Playwright é mandado parar, e forçado
+   * depois de uma carência.
    */
   public stop(projectId: string): void {
     const job = this.jobs.get(projectId);
@@ -280,8 +280,8 @@ export class SuiteRunner {
   }
 
   /**
-   * A project's runs, the latest first, each test's files with their address; a run left
-   * going when QAzinho closed reads as broken.
+   * As runs de um projeto, as mais recentes primeiro, os arquivos de cada teste com o
+   * endereço; uma run deixada rodando quando o QAzinho fechou aparece quebrada.
    */
   public async runs(projectId: string): Promise<ISuiteRun[]> {
     const folder = join(this.root, projectId, SUITE_RUNNER.runs);
@@ -312,7 +312,8 @@ export class SuiteRunner {
   }
 
   /**
-   * Opens a trace a test left in Playwright's own trace viewer, from the suite's folder.
+   * Abre um trace que um teste deixou no visualizador de trace próprio do Playwright, a
+   * partir da pasta da suíte.
    */
   public async openTrace(props: {
     projectId: string;

@@ -1,6 +1,6 @@
 /**
- * Whether an app's Info.plist, as JSON, says it was built for a device, which no
- * simulator runs; one that does not say passes.
+ * Se o Info.plist de um app, como JSON, diz que ele foi construído para um dispositivo,
+ * que nenhum simulador roda; um que não diz passa.
  */
 export function isDevicePlist(json: string): boolean {
   try {

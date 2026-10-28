@@ -1,6 +1,6 @@
 /**
- * A path git says changed in a copy: where it is, and whether it was changed, added,
- * deleted, renamed or is new to git.
+ * Um caminho que o git diz que mudou numa cópia: onde está, e se foi mudado, adicionado,
+ * apagado, renomeado ou é novo para o git.
  */
 export interface IChangedPath {
   path: string;

@@ -2,8 +2,8 @@ import type { IChangeWork } from './IChangeWork';
 import type { ISuiteChange } from '@/shared/types';
 
 /**
- * A change once its copy was made, or not: the change as it stands, where it works, null
- * when no copy could be made, and the team's latest commit messages.
+ * Uma mudança depois que a cópia dela foi feita, ou não: a mudança, onde trabalha, e as
+ * últimas mensagens de commit do time.
  */
 export interface ICopiedSuite {
   change: ISuiteChange;

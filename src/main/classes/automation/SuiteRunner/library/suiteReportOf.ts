@@ -5,8 +5,8 @@ import {
 } from '@/main/classes/automation/SuiteRunner/constants';
 
 /**
- * A line QAzinho's reporter printed, read back; null for any other line a suite prints,
- * or one that is not whole.
+ * Uma linha que o reporter do QAzinho imprimiu, lida de volta; null para qualquer outra
+ * linha que uma suíte imprime, ou uma que não está inteira.
  */
 export function suiteReportOf(line: string): SuiteReport | null {
   if (!line.startsWith(SUITE_REPORTER.prefix)) return null;

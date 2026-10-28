@@ -8,8 +8,8 @@ import type { SuiteChangeEvent } from '@/shared/types';
 import type { Harness, McpHost } from '@salve-software/qazinho-harness';
 
 /**
- * What changing a suite needs: the suites, git and gh, the agent and harness, tools,
- * values and paths.
+ * O que mudar uma suíte precisa: as suítes, o git e o gh, o agente e o harness, as
+ * ferramentas, os valores e os caminhos.
  */
 export interface ISuiteChanges {
   registry: Pick<SuiteRegistry, 'pathOf' | 'runnerOf' | 'suiteOf'>;

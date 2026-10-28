@@ -7,8 +7,8 @@ const RELEASE = /[\\/]outputs[\\/]apk[\\/]release[\\/]|Release-iphonesimulator[\
 const OUTPUT = /[\\/]outputs[\\/](apk|flutter-apk)[\\/]|-iphonesimulator[\\/]/;
 
 /**
- * The .apk or simulator .app a build most likely meant, out of what it left: a known
- * output folder first, then the newest.
+ * O .apk ou .app de simulador que um build provavelmente quis dizer, dentre o que deixou:
+ * uma pasta de saída conhecida primeiro, depois o mais novo.
  */
 export function pickArtifact(props: {
   found: { path: string; modifiedMs: number }[];

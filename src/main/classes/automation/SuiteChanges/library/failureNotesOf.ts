@@ -1,8 +1,8 @@
 const KEPT = ['page snapshot', 'test source'];
 
 /**
- * What Playwright noted when a test failed that helps fix it: the page as it was and the
- * test's source, without the instructions it writes for a model.
+ * O que o Playwright anotou quando um teste falhou que ajuda a consertá-lo: a página como
+ * estava e o fonte do teste, sem as instruções que ele escreve para um modelo.
  */
 export function failureNotesOf(markdown: string): string {
   const sections = markdown.split(/^(?=# )/m);

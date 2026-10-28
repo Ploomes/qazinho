@@ -4,8 +4,8 @@ import { join, relative, sep } from 'node:path';
 type Entry = Record<string, unknown>;
 
 /**
- * The tests a Playwright JSON report lists, once per project they run in; null for
- * anything else.
+ * Os testes que um relatório JSON do Playwright lista, uma vez por projeto em que rodam;
+ * null para qualquer outra coisa.
  */
 export function suiteTestsOf(props: {
   text: string;

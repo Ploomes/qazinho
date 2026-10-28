@@ -1,8 +1,8 @@
 import type { IChangedPath } from '@/main/classes/automation/SuiteChanges/types';
 
 /**
- * The paths a copy changed, out of `git status --porcelain=v1 -z`: a rename takes its new
- * path, and what git ignores never shows.
+ * Os caminhos que uma cópia mudou, de `git status --porcelain=v1 -z`: um rename pega o
+ * caminho novo, e o que o git ignora nunca aparece.
  */
 export function changedPathsOf(text: string): IChangedPath[] {
   const fields = text.split('\0');

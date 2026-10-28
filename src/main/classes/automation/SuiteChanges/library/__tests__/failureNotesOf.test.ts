@@ -50,7 +50,10 @@ describe('failureNotesOf', () => {
     );
   });
 
-  /** Playwright writes those for a model of its own; the agent gets QAzinho's brief instead, and the error apart. */
+  /**
+   * O Playwright escreve isso para um modelo próprio; o agente recebe o brief do QAzinho
+   * no lugar, e o erro à parte.
+   */
   it('drops the instructions Playwright writes for a model, and what QAzinho tells apart', () => {
     const notes = failureNotesOf(CONTEXT);
 

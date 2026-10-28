@@ -1,8 +1,8 @@
 import { APP_BUILDER } from '@/main/classes/builds/AppBuilder/constants/APP_BUILDER';
 
 /**
- * The build an agent's events belong to, read off the scope it ran under; null for an
- * agent that is not building.
+ * O build a que os eventos de um agente pertencem, lido do escopo sob o qual ele rodou;
+ * null para um agente que não está construindo.
  */
 export function buildIdOf(scope: string): string | null {
   return scope.startsWith(APP_BUILDER.scopePrefix) &&

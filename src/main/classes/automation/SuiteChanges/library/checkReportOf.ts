@@ -12,8 +12,8 @@ const NONE_RAN: Record<SuiteFailure, string> = {
 };
 
 /**
- * What the agent reads after running tests: how each ended, its error and where its
- * screenshots are.
+ * O que o agente lê depois de rodar testes: como cada um terminou, o erro dele e onde
+ * estão os screenshots.
  */
 export function checkReportOf(props: {
   tests: ICheckedTest[];

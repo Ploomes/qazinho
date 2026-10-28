@@ -3,8 +3,8 @@ import type { ISuiteChangeFile } from '@/shared/types';
 const SPEC = /\.(spec|test)\.[cm]?[jt]sx?$/;
 
 /**
- * The spec files a change added or touched, from the suite's folder, for QAzinho to run
- * again.
+ * Os arquivos de spec que uma mudança adicionou ou tocou, a partir da pasta da suíte,
+ * para o QAzinho rodar de novo.
  */
 export function specFilesOf(props: {
   files: ISuiteChangeFile[];

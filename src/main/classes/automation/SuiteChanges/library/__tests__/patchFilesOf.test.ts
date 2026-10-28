@@ -60,7 +60,10 @@ describe('patchFilesOf', () => {
     ]);
   });
 
-  /** A moved file with nothing changed has no --- and +++ lines: only git's rename lines name it. */
+  /**
+   * Um arquivo movido sem nada mudado não tem linhas --- e +++: só as linhas de rename do
+   * git o nomeiam.
+   */
   it('names a file moved as it is now', () => {
     expect(
       patchFilesOf(

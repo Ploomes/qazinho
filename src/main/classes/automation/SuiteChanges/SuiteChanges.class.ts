@@ -47,8 +47,8 @@ import {
 } from './library';
 
 /**
- * Changes a project's suite with the QA's own agent, in a git worktree on a branch of its
- * own.
+ * Muda a suíte de um projeto com o agente do próprio QA, num git worktree numa branch
+ * própria.
  */
 export class SuiteChanges {
   private readonly registry: ISuiteChanges['registry'];
@@ -87,8 +87,8 @@ export class SuiteChanges {
   }
 
   /**
-   * Asks the QA's agent for one change, telling each step as it goes, and answers with
-   * the change ready to review, or why it is not.
+   * Pede ao agente do QA uma mudança, contando cada passo enquanto anda, e responde com a
+   * mudança pronta para revisar, ou por que não está.
    */
   public async start(start: IStartSuiteChange): Promise<ISuiteChange> {
     const folder = this.folderOf(start);
@@ -146,8 +146,8 @@ export class SuiteChanges {
   }
 
   /**
-   * Stops a change where it is: the agent is interrupted, a run of its tests ends, and
-   * what it changed so far stays to review or throw away.
+   * Para uma mudança onde está: o agente é interrompido, uma run dos testes dele termina,
+   * e o que ele mudou até ali fica para revisar ou jogar fora.
    */
   public stop(changeId: string): void {
     const working = this.working.get(changeId);
@@ -161,8 +161,8 @@ export class SuiteChanges {
   }
 
   /**
-   * Hands a line the agent said or did to the page, as the change's own, with its copy of
-   * the suite said as `.`.
+   * Entrega à página uma linha que o agente disse ou fez, como da própria mudança, com a
+   * cópia dele da suíte dita como `.`.
    */
   public hear(props: { changeId: string; text: string }): void {
     const working = this.working.get(props.changeId);
@@ -178,8 +178,8 @@ export class SuiteChanges {
   }
 
   /**
-   * A project's changes, the latest first; one left working when QAzinho closed reads as
-   * broken.
+   * As mudanças de um projeto, as mais recentes primeiro; uma deixada trabalhando quando
+   * o QAzinho fechou aparece como quebrada.
    */
   public async changes(projectId: string): Promise<ISuiteChange[]> {
     const folder = join(this.root, projectId, SUITE_CHANGES.changes);
@@ -205,8 +205,8 @@ export class SuiteChanges {
   }
 
   /**
-   * Sends an approved change: commits it on its branch, pushes it with the QA's git, and
-   * opens the PR.
+   * Manda uma mudança aprovada: faz o commit na branch, dá push com o git do QA e abre o
+   * PR.
    */
   public async ship(props: {
     projectId: string;
@@ -299,7 +299,10 @@ export class SuiteChanges {
       : { isOk: false, step: 'pull-request', said: refused, change: sent };
   }
 
-  /** Throws a change away: its copy goes, and its branch too unless it was pushed. */
+  /**
+   * Joga uma mudança fora: a cópia vai embora, e a branch também a menos que tenha sido
+   * enviada.
+   */
   public async discard(props: {
     projectId: string;
     changeId: string;

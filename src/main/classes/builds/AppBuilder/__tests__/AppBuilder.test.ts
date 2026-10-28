@@ -35,9 +35,9 @@ const answered = (answer: {
 });
 
 /**
- * A builder over a temporary folder. gh pins the branch and unpacks a small app into the copy,
- * and the agent is a function of the copy's folder: it writes what a real build would leave
- * behind, then answers.
+ * Um construtor sobre uma pasta temporária. O gh fixa a branch e desempacota um app
+ * pequeno na cópia, e o agente é uma função da pasta da cópia: escreve o que um build
+ * real deixaria, depois responde.
  */
 async function builderWith(props: {
   build: (dir: string) => Promise<IAgentTurn>;

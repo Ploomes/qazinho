@@ -2,8 +2,8 @@ import type { IBuildMachineFacts } from '@/main/classes/builds/AppBuilder/types'
 import { join } from 'node:path';
 
 /**
- * The environment a build runs in: the QA's PATH, the SDK and JDK it was told of, no
- * prompts, and for Codex every cache kept inside the folder its sandbox may write.
+ * O ambiente em que um build roda: o PATH do QA, o SDK e o JDK avisados, sem prompts, e
+ * para o Codex todo cache dentro da pasta onde o sandbox dele pode escrever.
  */
 export function buildEnvOf(props: {
   machine: IBuildMachineFacts;

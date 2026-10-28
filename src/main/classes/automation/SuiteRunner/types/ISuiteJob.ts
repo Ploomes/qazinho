@@ -3,8 +3,8 @@ import type { ISuiteRun } from '@/shared/types';
 import type { ChildProcess } from 'node:child_process';
 
 /**
- * A suite run going: its record so far, its counts, its Playwright, and whether it
- * stopped or broke.
+ * Uma run de suíte em andamento: o registro dela até agora, as contagens, o Playwright
+ * dela, e se parou ou quebrou.
  */
 export interface ISuiteJob {
   run: ISuiteRun;

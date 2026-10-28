@@ -1,8 +1,8 @@
 import type { GitCli } from '@/main/classes/automation/GitCli';
 
 /**
- * What the registry needs: the folder it keeps its list in, and the QA's git to read each
- * suite's branch and remote.
+ * O que o registro precisa: a pasta onde guarda a lista dele, e o git do QA para ler a
+ * branch e o remoto de cada suíte.
  */
 export interface ISuiteRegistry {
   root: string;

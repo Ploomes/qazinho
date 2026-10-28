@@ -22,7 +22,10 @@ const spec = (props: {
   })),
 });
 
-/** The shape Playwright 1.63 prints for `test --list --reporter=json`, trimmed to what is read. */
+/**
+ * O formato que o Playwright 1.63 imprime para `test --list --reporter=json`, reduzido ao
+ * que é lido.
+ */
 const REPORT = {
   config: {
     rootDir: '/qa/e2e/tests',
@@ -101,7 +104,10 @@ describe('suiteTestsOf', () => {
     });
   });
 
-  /** Playwright lists a test once per project it runs in, each with an id of its own: the one its reporter hears. */
+  /**
+   * O Playwright lista um teste uma vez por projeto em que roda, cada um com um id
+   * próprio: o que o reporter dele ouve.
+   */
   it('lists a test running in two projects twice, once in each', () => {
     const both = {
       ...REPORT,

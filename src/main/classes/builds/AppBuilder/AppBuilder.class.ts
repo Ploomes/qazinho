@@ -19,8 +19,8 @@ import {
 } from './library';
 
 /**
- * Builds the app under test from a branch of its repository: gh brings the code, the QA's
- * own agent builds it, and QAzinho keeps the .apk or .app it made.
+ * Constrói o app sob teste a partir de uma branch do repositório: o gh traz o código, o
+ * agente do QA o constrói, e o QAzinho guarda o .apk ou .app que ele fez.
  */
 export class AppBuilder {
   private readonly github: IAppBuilder['github'];
@@ -48,8 +48,8 @@ export class AppBuilder {
   }
 
   /**
-   * Builds one app, telling each step as it goes, and answers with the kept .apk or .app,
-   * or why there is none.
+   * Constrói um app, contando cada passo enquanto anda, e responde com o .apk ou .app
+   * guardado, ou por que não há.
    */
   public async start(build: IStartBuild): Promise<IBuildResult> {
     const { buildId } = build;
@@ -67,7 +67,9 @@ export class AppBuilder {
     }
   }
 
-  /** Stops a build where it is: the agent is interrupted, and nothing it made is kept. */
+  /**
+   * Para um build onde está: o agente é interrompido, e nada do que ele fez é guardado.
+   */
   public stop(buildId: string): void {
     if (!this.building.has(buildId)) return;
 
@@ -76,8 +78,8 @@ export class AppBuilder {
   }
 
   /**
-   * Hands a line the building agent said or did to the page, as the build's own, with its
-   * folder said as `.`.
+   * Entrega à página uma linha que o agente construtor disse ou fez, como do próprio
+   * build, com a pasta dele dita como `.`.
    */
   public hear(props: { buildId: string; text: string }): void {
     const dir = this.building.get(props.buildId);
@@ -91,8 +93,8 @@ export class AppBuilder {
   }
 
   /**
-   * Deletes what builds left half done, for when QAzinho opens after closing in the
-   * middle of one.
+   * Apaga o que builds deixaram pela metade, para quando o QAzinho abre depois de fechar
+   * no meio de um.
    */
   public async sweep(): Promise<void> {
     await rm(join(this.root, 'work'), { recursive: true, force: true });

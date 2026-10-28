@@ -47,7 +47,10 @@ const result = (props: Partial<ISuiteResult>): ISuiteResult => ({
   ...props,
 });
 
-/** The team's suite as a git repository of its own, with its Playwright installed and a bare remote to push to. */
+/**
+ * A suíte do time como um repositório git próprio, com o Playwright instalado e um remoto
+ * bare para dar push.
+ */
 async function teamSuite() {
   const folder = await realpath(await mkdtemp(join(tmpdir(), 'qazinho-changes-')));
   const repo = join(folder, 'e2e');
@@ -75,9 +78,9 @@ async function teamSuite() {
 }
 
 /**
- * Changes over the team's suite. git is the real one, on folders of the test's own; the agent
- * is a function of its copy of the suite, the tests it runs answer what the test says, and gh
- * only remembers what it was asked to open.
+ * Mudanças sobre a suíte do time. O git é o real, em pastas do próprio teste; o agente é
+ * uma função da cópia dele da suíte, os testes que ele roda respondem o que o teste diz,
+ * e o gh só lembra o que lhe pediram para abrir.
  */
 async function changesWith(props: {
   agent: (call: { run: IRunAgent; suite: IAttachSuite | null }) => Promise<IAgentTurn>;
@@ -173,7 +176,10 @@ const answered = (answer: {
   costUsd: 0.1,
 });
 
-/** The agent fixes the test in its copy, the way a real one would with Edit, then answers. */
+/**
+ * O agente conserta o teste na cópia dele, do jeito que um real faria com o Edit, depois
+ * responde.
+ */
 const fixes = async ({ run }: { run: IRunAgent }) => {
   await writeFile(join(run.writeDir ?? '', 'tests', 'hc-1', 'ct-nav.spec.ts'), FIXED);
 
@@ -242,7 +248,10 @@ describe('SuiteChanges', () => {
       ).toBe(BROKEN);
     });
 
-    /** The tests run through QAzinho, which knows the secrets; the agent edits and reads files, and has no shell. */
+    /**
+     * Os testes rodam pelo QAzinho, que conhece os segredos; o agente edita e lê
+     * arquivos, e não tem shell.
+     */
     it('hands the agent its copy, file tools and the test that broke, and no shell', async () => {
       const asked: IRunAgent[] = [];
       const { changes } = await changesWith({
@@ -304,7 +313,10 @@ describe('SuiteChanges', () => {
       expect(answer).not.toContain(KEY.value);
     });
 
-    /** The copy holds links to the suite's packages and its .env, so its tests run; they are never part of the change. */
+    /**
+     * A cópia guarda links para os pacotes da suíte e o .env dela, para os testes
+     * rodarem; eles nunca fazem parte da mudança.
+     */
     it('links what the copy needs to run, and leaves the links out of the change', async () => {
       const { changes } = await changesWith({ agent: fixes });
       const change = await changes.start(START);
@@ -312,7 +324,9 @@ describe('SuiteChanges', () => {
       expect(change.files.map(({ path }) => path)).toEqual(['tests/hc-1/ct-nav.spec.ts']);
     });
 
-    /** Nothing changed, so nothing is left to review: the copy and its branch go at once. */
+    /**
+     * Nada mudou, então nada sobra para revisar: a cópia e a branch vão embora na hora.
+     */
     it('says the app is wrong, changes nothing, and leaves no copy or branch behind', async () => {
       const { team, changes, checks } = await changesWith({
         agent: async () =>
@@ -519,7 +533,10 @@ test('CT-NAV-009 · The cart keeps its items after a reload', async ({ page }) =
 });
 `;
 
-    /** The agent writes a spec file of its own, the way it would with Write, then answers. */
+    /**
+     * O agente escreve um arquivo de spec próprio, do jeito que faria com o Write, depois
+     * responde.
+     */
     const writes =
       (outcome: 'changed' | 'app-bug') =>
       async ({ run }: { run: IRunAgent }) => {
@@ -565,7 +582,9 @@ test('CT-NAV-009 · The cart keeps its items after a reload', async ({ page }) =
       expect(asked[0]?.prompt).toContain('Put it in tests/hc-1.');
     });
 
-    /** A new test the app fails is right, and catches a bug: it can still be sent. */
+    /**
+     * Um teste novo que o app falha está certo, e pega um bug: ainda pode ser enviado.
+     */
     it('keeps a new test the app fails, and sends it as one that catches a bug', async () => {
       const { team, changes } = await changesWith({
         agent: writes('app-bug'),

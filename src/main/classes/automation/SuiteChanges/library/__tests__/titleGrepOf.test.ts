@@ -15,7 +15,10 @@ describe('titleGrepOf', () => {
     ).toBe(true);
   });
 
-  /** A test moved down the file after a fix has a new line, so the check finds it by its title. */
+  /**
+   * Um teste que desceu no arquivo depois de um conserto tem uma linha nova, então a
+   * checagem o acha pelo título.
+   */
   it('never matches a test whose title only looks alike', () => {
     expect(new RegExp(titleGrepOf('Saves 1+1 items'), 'gi').test('Saves 11 items')).toBe(
       false,

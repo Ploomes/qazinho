@@ -1,5 +1,5 @@
 import type { SUITE_REPORT } from '@/main/classes/automation/SuiteRunner/constants';
 import type { z } from 'zod';
 
-/** One line QAzinho's reporter prints while a suite runs, read back. */
+/** Uma linha que o reporter do QAzinho imprime enquanto uma suíte roda, lida de volta. */
 export type SuiteReport = z.infer<typeof SUITE_REPORT>;
