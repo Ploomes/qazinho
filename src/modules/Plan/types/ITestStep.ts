@@ -1,6 +1,6 @@
 /**
- * One action on the device, the result the QA expects from it, and the Figma node its
- * screen should match, when the workspace has a design.
+ * Uma ação no dispositivo, o resultado que o QA espera dela, e o nó do Figma com que a
+ * tela dela deve bater, quando o workspace tem design.
  */
 export interface ITestStep {
   action: string;

@@ -14,7 +14,10 @@ const testCase = (props: Partial<ITestCase>): ITestCase => ({
 });
 
 describe('missingVariablesOf', () => {
-  /** An exploration's suggested plan named ${LOGIN_EMAIL}, which no one ever kept, and each run asked for it. */
+  /**
+   * O plano sugerido de uma exploração nomeava ${LOGIN_EMAIL}, que ninguém nunca guardou,
+   * e cada run o pedia.
+   */
   it('names what the plan types that the project does not keep, once each', () => {
     expect(
       missingVariablesOf({

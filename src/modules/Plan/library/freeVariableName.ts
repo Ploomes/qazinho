@@ -1,6 +1,6 @@
 /**
- * A variable name no variable of the project has: the base itself, or the base numbered
- * from 2.
+ * Um nome de variável que nenhuma variável do projeto tem: a própria base, ou a base
+ * numerada a partir de 2.
  */
 export function freeVariableName(props: { base: string; taken: string[] }): string {
   if (!props.taken.includes(props.base)) return props.base;

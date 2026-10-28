@@ -15,7 +15,7 @@ function caseWith(id: string, action: string): ITestCase {
 }
 
 describe('writtenSecretsOf', () => {
-  /** What a QA moving from manual testing writes in a step. */
+  /** O que um QA vindo do teste manual escreve num passo. */
   it('finds a password written after the word, in Portuguese or English', () => {
     expect(
       writtenSecretsOf([

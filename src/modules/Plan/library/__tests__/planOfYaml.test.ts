@@ -20,7 +20,7 @@ describe('planOfYaml', () => {
     ]);
   });
 
-  /** A step with no action used to crash the plan the moment it was walked. */
+  /** Um passo sem ação quebrava o plano no momento em que era andado. */
   it('reads a field left out by hand as empty instead of breaking the plan', () => {
     expect(
       planOfYaml('cases:\n  - id: TC-01\n    steps:\n      - expected: Opens\n'),

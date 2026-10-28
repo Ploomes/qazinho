@@ -21,8 +21,8 @@ const SIGN_IN: ITestCase = {
 };
 
 /**
- * A change to the plan through the chat writes the whole plan anew, every verdict at null, so
- * the cases the change never touched lost what the last run said about them.
+ * Uma mudança no plano pelo chat escreve o plano inteiro de novo, todo veredito em null,
+ * então os casos que a mudança nunca tocou perdiam o que a última run disse deles.
  */
 describe('keepVerdicts', () => {
   it('keeps the verdict of a case the new plan kept word for word, whatever its new id', () => {

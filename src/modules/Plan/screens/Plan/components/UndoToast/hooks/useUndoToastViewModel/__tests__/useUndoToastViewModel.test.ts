@@ -48,8 +48,8 @@ describe('useUndoToastViewModel', () => {
   });
 
   /**
-   * The countdown is a CSS animation, so hovering the toast pauses it for free; its length
-   * reaches the stylesheet as a custom property.
+   * A contagem regressiva é uma animação CSS, então passar o mouse no toast a pausa de
+   * graça; a duração chega à folha de estilo como custom property.
    */
   it('drains the line for as long as UNDO_TOAST says', () => {
     const { result } = render();

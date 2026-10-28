@@ -34,7 +34,7 @@ const PROJECT = {
   repositories: [],
 };
 
-/** A bridge whose export answers with what it is handed, and remembers what it was asked. */
+/** Uma bridge cuja exportação responde com o que recebe, e lembra o que lhe pediram. */
 function exporting(outcome: ExportOutcome) {
   const asked: IExportCode[] = [];
 
@@ -64,7 +64,9 @@ beforeEach(() => {
   });
 });
 
-/** A bridge whose Confluence takes the plan with the answer given, and remembers what it was handed. */
+/**
+ * Uma bridge cujo Confluence aceita o plano com a resposta dada, e lembra o que recebeu.
+ */
 function publishing(outcome: PlanPublished) {
   const asked: IPublishPlan[] = [];
 
@@ -118,7 +120,10 @@ describe('usePlanViewModel', () => {
       useVariablesStore.setState({ byProject: {}, request: null });
     });
 
-    /** An exploration's plan named variables no one kept, and each run asked the QA for them. */
+    /**
+     * O plano de uma exploração nomeava variáveis que ninguém guardou, e cada run as
+     * pedia ao QA.
+     */
     it('says which ones the project does not keep, and offers to add them', () => {
       typing();
       useVariablesStore.setState({
@@ -605,8 +610,8 @@ describe('usePlanViewModel', () => {
     });
 
     /**
-     * Undo puts back the whole plan from before the removal, so it would also wipe whatever
-     * changed since: the offer goes the moment the plan moves on.
+     * Desfazer devolve o plano inteiro de antes da remoção, então também apagaria o que
+     * mudou desde então: a oferta some no momento em que o plano segue.
      */
     it('does NOT bring the case back once the plan changed after the removal', () => {
       const { result } = renderHook(() => usePlanViewModel());
@@ -691,7 +696,10 @@ describe('usePlanViewModel', () => {
   });
 
   describe('a secret written out in the plan', () => {
-    /** A bridge whose keychain answers as told, and remembers what it was asked to keep. */
+    /**
+     * Uma bridge cujo keychain responde como mandado, e lembra o que lhe pediram para
+     * guardar.
+     */
     function sealing(outcome: VariablesOutcome) {
       const asked: IApplyVariables[] = [];
 
@@ -732,7 +740,7 @@ describe('usePlanViewModel', () => {
       useVariablesStore.setState({ byProject: {}, request: null });
     });
 
-    /** A QA moving from manual testing wrote the password in the step, and it rode into every run. */
+    /** Um QA vindo do teste manual escreveu a senha no passo, e ela ia em toda run. */
     it('names the case that writes it and offers to keep it as a variable', () => {
       writing();
 
@@ -774,7 +782,7 @@ describe('usePlanViewModel', () => {
       expect(result.current.secretNotice).toBeNull();
     });
 
-    /** A case that tries a wrong password on purpose writes one that is no secret. */
+    /** Um caso que tenta uma senha errada de propósito escreve uma que não é segredo. */
     it('stops naming a value the QA said is no secret, and remembers it', () => {
       writing();
 
@@ -812,7 +820,9 @@ describe('usePlanViewModel', () => {
   describe('a plan.yaml that did not open', () => {
     const UNREAD = { file: 'plan.unread-20261023-052607.yaml', line: 7 };
 
-    /** A bridge whose plan set aside reads as told, and remembers each file asked for. */
+    /**
+     * Uma bridge cujo plano posto de lado lê como mandado, e lembra cada arquivo pedido.
+     */
     function rereading(read: UnreadPlanRead) {
       const asked: string[] = [];
 
@@ -927,7 +937,7 @@ describe('usePlanViewModel', () => {
   });
 
   describe('onAddCase', () => {
-    /** Typing right after the click used to land on nothing, and its spaces pressed buttons. */
+    /** Digitar logo depois do clique não caía em nada, e os espaços apertavam botões. */
     it('opens the new case and puts the cursor in its title', () => {
       const { result } = renderHook(() => usePlanViewModel());
 
@@ -978,8 +988,9 @@ describe('usePlanViewModel', () => {
     });
 
     /**
-     * A paused run unlocked the plan, but main walks the steps it started with: a case changed
-     * or removed while paused came back from the run under the wrong title, or not at all.
+     * Uma run pausada destravava o plano, mas a main anda os passos com que começou: um
+     * caso mudado ou removido durante a pausa voltava da run sob o título errado, ou nem
+     * voltava.
      */
     it('does NOT let the plan change while the run is paused either', () => {
       const started = startRun({

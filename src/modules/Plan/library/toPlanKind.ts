@@ -1,6 +1,9 @@
 import type { TargetKind } from '@/modules/Project';
 
-/** A plan is drafted for a screen size, not for an OS: Android and iOS read the same. */
+/**
+ * Um plano é rascunhado para um tamanho de tela, não para um SO: Android e iOS leem
+ * igual.
+ */
 export function toPlanKind(kind: TargetKind): 'web' | 'mobile' {
   return kind === 'web' ? 'web' : 'mobile';
 }

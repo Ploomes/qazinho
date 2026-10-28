@@ -1,8 +1,8 @@
 import type { IWorkspace } from '@/modules/Workspace';
 
 /**
- * Every case id the workspace ever used, in its plan, its runs and its bugs: a new case
- * never takes one of them.
+ * Todo id de caso que o workspace já usou, no plano, nas runs e nos bugs: um caso novo
+ * nunca pega um deles.
  */
 export function caseIdsUsed(
   workspace: Pick<IWorkspace, 'plan' | 'runs' | 'bugs'>,

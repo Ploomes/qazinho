@@ -1,6 +1,6 @@
 import type { StepVerdict } from '@/shared/types';
 
-/** The words a published plan is written in, in the language the QA reads. */
+/** As palavras em que um plano publicado é escrito, no idioma que o QA lê. */
 export interface IPlanDocWords {
   intro: (props: { cases: number; steps: number }) => string;
   story: string;

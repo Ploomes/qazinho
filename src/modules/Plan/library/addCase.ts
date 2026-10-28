@@ -2,8 +2,8 @@ import type { ITestCase } from '@/modules/Plan/types';
 import { nextCaseId } from './nextCaseId';
 
 /**
- * A case the QA writes themselves, empty and waiting, at the end of the plan, with an id
- * no run or bug used.
+ * Um caso que o próprio QA escreve, vazio e esperando, no fim do plano, com um id que
+ * nenhuma run ou bug usou.
  */
 export function addCase(props: { plan: ITestCase[]; used: string[] }): ITestCase[] {
   return [

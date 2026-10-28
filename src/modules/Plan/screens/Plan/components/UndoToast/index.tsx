@@ -6,8 +6,8 @@ import { useUndoToastViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A removal the QA can take back for a few seconds, with a line under it that drains
- * meanwhile.
+ * Uma remoção que o QA pode desfazer por alguns segundos, com uma linha embaixo que
+ * esvazia enquanto isso.
  */
 export const UndoToast: React.FC<IUndoToastProps> = (props) => {
   const { style, onUndoClick, onCountdownEnd } = useUndoToastViewModel(props);

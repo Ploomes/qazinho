@@ -3,8 +3,8 @@ import type { ITestCase } from '@/modules/Plan/types';
 const NAMED = /\$\{([A-Z][A-Z0-9_]*)\}/g;
 
 /**
- * The variables a plan types as ${NAME} that the project does not keep, each once, in the
- * order the plan names them.
+ * As variáveis que um plano digita como ${NAME} e que o projeto não guarda, cada uma uma
+ * vez, na ordem em que o plano as nomeia.
  */
 export function missingVariablesOf(props: {
   plan: ITestCase[];

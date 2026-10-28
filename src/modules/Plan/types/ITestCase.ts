@@ -2,7 +2,7 @@ import type { ITestStep } from './ITestStep';
 import type { Priority } from './Priority';
 import type { StepVerdict } from '@/shared/types';
 
-/** A case in the workspace's plan: what it covers, and the steps that cover it. */
+/** Um caso no plano do workspace: o que ele cobre, e os passos que o cobrem. */
 export interface ITestCase {
   id: string;
   title: string;

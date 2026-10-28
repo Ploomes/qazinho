@@ -8,8 +8,8 @@ import { usePublishModalViewModel } from './hooks';
 import './styles.css';
 
 /**
- * Publishing a plan in Confluence the first time: the space, the page it goes under if
- * any, and its title.
+ * Publicando um plano no Confluence pela primeira vez: o espaço, a página sob a qual vai
+ * se houver, e o título.
  */
 export const PublishModal: React.FC<IPublishModalProps> = (props) => {
   const {

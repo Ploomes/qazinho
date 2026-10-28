@@ -4,8 +4,8 @@ import type { BugReportBlock, IDesignLink } from '@/shared/types';
 import { frameUrlOf } from './frameUrlOf';
 
 /**
- * A plan as a Confluence page: where it came from, then each case with its steps and
- * verdicts.
+ * Um plano como uma página do Confluence: de onde veio, depois cada caso com os passos e
+ * os vereditos.
  */
 export function planDocOf(props: {
   plan: ITestCase[];

@@ -10,8 +10,8 @@ const VERDICTS: StepVerdict[] = ['passed', 'failed', 'blocked', 'skipped'];
 type Loose = Record<string, unknown>;
 
 /**
- * The cases a plan.yaml holds, each made whole: a field a QA left out by hand reads as
- * empty, and a case with no id gets a free one.
+ * Os casos que um plan.yaml guarda, cada um feito inteiro: um campo que um QA deixou de
+ * fora à mão lê como vazio, e um caso sem id ganha um livre.
  */
 export function planOfYaml(yaml: string): ITestCase[] {
   let read: unknown;

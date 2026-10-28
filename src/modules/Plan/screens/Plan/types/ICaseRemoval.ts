@@ -1,8 +1,8 @@
 import type { ITestCase } from '@/modules/Plan/types';
 
 /**
- * A case the QA just removed, with the plan before and after it, so it can come back
- * while nothing else changed.
+ * Um caso que o QA acabou de remover, com o plano antes e depois dele, para poder voltar
+ * enquanto nada mais mudou.
  */
 export interface ICaseRemoval {
   key: string;

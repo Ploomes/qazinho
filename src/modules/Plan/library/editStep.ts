@@ -1,9 +1,7 @@
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
 import { mapCase } from './mapCase';
 
-/**
- * The QA fixes what the agent got wrong; a step is the smallest thing they can change.
- */
+/** O QA conserta o que o agente errou; um passo é a menor coisa que ele pode mudar. */
 export function editStep(props: {
   plan: ITestCase[];
   caseId: string;

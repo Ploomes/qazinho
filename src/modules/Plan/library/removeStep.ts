@@ -1,7 +1,7 @@
 import type { ITestCase } from '@/modules/Plan/types';
 import { mapCase } from './mapCase';
 
-/** A case with no steps is not a case, so the last one stays. */
+/** Um caso sem passos não é um caso, então o último fica. */
 export function removeStep(props: {
   plan: ITestCase[];
   caseId: string;

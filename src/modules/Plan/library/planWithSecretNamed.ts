@@ -1,8 +1,8 @@
 import type { ITestCase } from '@/modules/Plan/types';
 
 /**
- * The plan with a secret written out replaced by the variable that now keeps it, in every
- * field a case and its steps hold.
+ * O plano com um segredo escrito substituído pela variável que agora o guarda, em todo
+ * campo que um caso e os passos dele guardam.
  */
 export function planWithSecretNamed(props: {
   plan: ITestCase[];

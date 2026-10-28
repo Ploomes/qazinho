@@ -1,8 +1,8 @@
 import type { IDesignLink } from '@/shared/types';
 
 /**
- * Where a frame of the design opens in Figma: the design's own link, with its node-id
- * swapped for the frame's.
+ * Onde um frame do design abre no Figma: o próprio link do design, com o node-id trocado
+ * pelo do frame.
  */
 export function frameUrlOf(props: { design: IDesignLink; frame: string }): string {
   const url = new URL(props.design.url);

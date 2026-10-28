@@ -21,7 +21,7 @@ describe('planWithRestored', () => {
     expect(planWithRestored({ plan: [], restored })).toEqual(restored);
   });
 
-  /** The QA started a plan while the file waited: neither is lost. */
+  /** O QA começou um plano enquanto o arquivo esperava: nenhum dos dois se perde. */
   it('adds it after the cases written since, renumbering the ones whose id is taken', () => {
     const plan = planWithRestored({
       plan: [testCase('TC-01', 'Written since')],

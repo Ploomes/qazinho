@@ -1,8 +1,8 @@
 import type { ITestCase } from '@/modules/Plan/types';
 
 /**
- * A new plan, with the last verdict of every case it kept word for word: a case that
- * changed has not run yet.
+ * Um plano novo, com o último veredito de todo caso que ele manteve palavra por palavra:
+ * um caso que mudou ainda não rodou.
  */
 export function keepVerdicts(props: {
   before: ITestCase[];

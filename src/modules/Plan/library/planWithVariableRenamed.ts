@@ -1,8 +1,8 @@
 import type { ITestCase } from '@/modules/Plan/types';
 
 /**
- * The plan with every ${NAME} of a renamed variable written with its new name, in every
- * field a case and its steps hold.
+ * O plano com todo ${NAME} de uma variável renomeada escrito com o nome novo, em todo
+ * campo que um caso e os passos dele guardam.
  */
 export function planWithVariableRenamed(props: {
   plan: ITestCase[];

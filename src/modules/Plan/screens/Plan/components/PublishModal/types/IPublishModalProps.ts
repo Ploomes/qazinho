@@ -1,6 +1,6 @@
 /**
- * Where a plan is published the first time: the title it starts with, and what the QA
- * picked once they confirm.
+ * Onde um plano é publicado pela primeira vez: o título com que começa, e o que o QA
+ * escolheu quando confirma.
  */
 export interface IPublishModalProps {
   title: string;

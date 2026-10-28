@@ -1,8 +1,8 @@
 import type { IConfluencePageRef } from '@/shared/types';
 
 /**
- * The Confluence page a plan was published on, the space it sits in and its parent page,
- * so the next publish updates it.
+ * A página do Confluence em que um plano foi publicado, o espaço em que fica e a página
+ * pai, para a próxima publicação atualizá-la.
  */
 export interface IPublishedPlan {
   page: IConfluencePageRef;

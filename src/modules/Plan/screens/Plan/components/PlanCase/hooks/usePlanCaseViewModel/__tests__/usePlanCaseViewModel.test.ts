@@ -211,7 +211,9 @@ describe('usePlanCaseViewModel', () => {
         ReturnType<typeof usePlanCaseViewModel>['onHeadKeyDown']
       >[0];
 
-    /** Dragging was the only way to move a case, which a keyboard cannot do. */
+    /**
+     * Arrastar era o único jeito de mover um caso, o que um teclado não consegue fazer.
+     */
     it('moves the case up or down with Alt and an arrow', () => {
       const onMoveCase = vi.fn();
       const { result } = renderHook(() => usePlanCaseViewModel({ ...PROPS, onMoveCase }));

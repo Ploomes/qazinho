@@ -1,6 +1,6 @@
 /**
- * A password or a token written out in the plan, as it reads there, and the first case
- * that writes it.
+ * Uma senha ou um token escrito no plano, como aparece lá, e o primeiro caso que o
+ * escreve.
  */
 export interface IWrittenSecret {
   value: string;

@@ -3,8 +3,8 @@ import type { IDraftedCase } from '@/shared/types';
 import { nextCaseId } from './nextCaseId';
 
 /**
- * The cases the agent drafted, as the plan: a case it kept holds on to its id, and a new
- * one takes an id never used; null when none has a title and a step to run.
+ * Os casos que o agente rascunhou, como o plano: um caso que ele manteve conserva o id, e
+ * um novo pega um id nunca usado; null quando nenhum tem título e um passo a rodar.
  */
 export function planOfDraft(props: {
   cases: IDraftedCase[];
