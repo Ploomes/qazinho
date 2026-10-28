@@ -1,6 +1,6 @@
 import type { Fetcher } from '@/main/classes/integrations/IntegrationVault/types';
 
-/** A tracker that answers every request the same way, and remembers what it was asked. */
+/** Um tracker que responde todo pedido do mesmo jeito, e lembra o que lhe perguntaram. */
 export function fakeTracker(answer: { status: number; body: unknown } | 'offline') {
   const asked: { url: string; headers: Record<string, string> }[] = [];
   const fetcher: Fetcher = (url, init) => {

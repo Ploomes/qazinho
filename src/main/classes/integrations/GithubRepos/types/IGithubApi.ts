@@ -1,6 +1,9 @@
 import type { GhAnswer } from '@/main/classes/integrations/GithubCli/types';
 
-/** The one thing GithubRepos needs from gh: a request to GitHub's REST API as the QA. */
+/**
+ * A única coisa que o GithubRepos precisa do gh: um pedido à API REST do GitHub como o
+ * QA.
+ */
 export interface IGithubApi {
   api: (props: {
     path: string;

@@ -1,8 +1,8 @@
 import type { JiraFailure } from '@/shared/types';
 
 /**
- * Why an answer from Jira is not a yes, by its status; no answer at all means it was out
- * of reach.
+ * Por que uma resposta do Jira não é um sim, pelo status; nenhuma resposta quer dizer que
+ * estava fora de alcance.
  */
 export function jiraFailureOf(answer: { status: number } | null): JiraFailure {
   if (answer === null) return 'unreachable';

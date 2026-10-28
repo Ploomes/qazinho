@@ -2,8 +2,8 @@ import type { IJiraAttachment, IJiraFile } from '@/shared/types';
 import { JIRA_FILES } from '@/main/classes/integrations/JiraStories/constants';
 
 /**
- * Which of a story's files QAzinho downloads for the agent: the kinds it can read, each
- * and all of them under a size, up to a count; the rest say why not.
+ * Quais arquivos de uma história o QAzinho baixa para o agente: os tipos que ele consegue
+ * ler, cada um e todos sob um tamanho, até uma contagem; o resto diz por quê não.
  */
 export function filesToReadOf(attachments: IJiraAttachment[]): IJiraFile[] {
   let kept = 0;

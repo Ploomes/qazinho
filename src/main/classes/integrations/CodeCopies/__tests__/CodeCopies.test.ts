@@ -10,7 +10,10 @@ import { CodeCopies } from '@/main/classes/integrations/CodeCopies';
 const DIFF =
   'diff --git a/src/Coupon.tsx b/src/Coupon.tsx\n--- a/src/Coupon.tsx\n+++ b/src/Coupon.tsx\n@@ -1 +1 @@\n-old\n+new\n';
 
-/** A GitHub that answers from a table by path prefix, and unpacks a tarball as one README file. */
+/**
+ * Um GitHub que responde de uma tabela por prefixo de caminho, e desempacota um tarball
+ * como um arquivo README só.
+ */
 function fakeGithub(table: Record<string, GhAnswer>, extract?: GhAnswer) {
   const asked: { path: string; accept?: string }[] = [];
   const github: IGithubCode = {

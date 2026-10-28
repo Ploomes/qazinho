@@ -8,7 +8,9 @@ describe('fileNameOf', () => {
     );
   });
 
-  /** A name is written into a folder of QAzinho's own: it must not climb out of it. */
+  /**
+   * Um nome é escrito numa pasta do próprio QAzinho: ele não pode subir para fora dela.
+   */
   it('does NOT let a name reach another folder, nor hide itself', () => {
     expect(fileNameOf({ filename: '../../.ssh/id_rsa', taken: [] })).toBe('id_rsa');
     expect(fileNameOf({ filename: '..\\..\\boot.ini', taken: [] })).toBe('boot.ini');

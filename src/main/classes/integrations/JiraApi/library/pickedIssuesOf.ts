@@ -1,8 +1,8 @@
 import type { IJiraIssueRef } from '@/shared/types';
 
 /**
- * The issues of Jira's picker answer, each once, in the order it suggests them: the ones
- * the QA saw last, then the ones that match.
+ * As issues da resposta do seletor do Jira, cada uma uma vez, na ordem em que ele as
+ * sugere: as que o QA viu por último, depois as que casam.
  */
 export function pickedIssuesOf(props: {
   answer: unknown;

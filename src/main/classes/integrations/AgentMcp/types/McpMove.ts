@@ -1,6 +1,6 @@
 /**
- * The next thing to do on the agent's MCP screens: press keys, wait, or what the screen
- * says happened.
+ * A próxima coisa a fazer nas telas MCP do agente: apertar teclas, esperar, ou o que a
+ * tela diz que aconteceu.
  */
 export type McpMove =
   | { kind: 'press'; keys: string; step: 'open' | 'authorize' }

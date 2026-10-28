@@ -1,6 +1,6 @@
 /**
- * A response gh printed with --include: its HTTP status, its headers in lower case, and
- * its body.
+ * Uma resposta que o gh imprimiu com --include: o status HTTP, os cabeçalhos em
+ * minúsculas e o corpo.
  */
 export interface IIncluded {
   status: number;

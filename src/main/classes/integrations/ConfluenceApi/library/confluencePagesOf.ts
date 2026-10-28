@@ -11,7 +11,8 @@ type Found = {
 };
 
 /**
- * The pages a Confluence search answered with, each with its space and where it opens.
+ * As páginas com que uma busca do Confluence respondeu, cada uma com o espaço e onde
+ * abre.
  */
 export function confluencePagesOf(props: {
   answer: unknown;

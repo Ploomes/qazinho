@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { parseCodexMcpList } from '@/main/classes/integrations/AgentMcp/library';
 
-/** The shape `codex mcp list --json` printed for a server added and not signed in yet. */
+/**
+ * O formato que `codex mcp list --json` imprimiu para um servidor adicionado e ainda sem
+ * login.
+ */
 const server = (patch: object) =>
   JSON.stringify([
     {

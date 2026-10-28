@@ -1,6 +1,6 @@
 /**
- * The script a terminal runs to sign the QA in: the agent, opened straight on its MCP
- * servers; a login shell on a Mac or Linux, a batch file on Windows.
+ * O script que um terminal roda para fazer o QA entrar: o agente, aberto direto nos
+ * servidores MCP dele; um login shell no Mac ou Linux, um arquivo batch no Windows.
  */
 export function signInScript(props: {
   command: string;

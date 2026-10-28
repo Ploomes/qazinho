@@ -2,8 +2,8 @@ import type { IAdfNode } from '@/main/classes/integrations/JiraApi/types';
 import type { BugReportBlock, IBugReport } from '@/shared/types';
 
 /**
- * A bug's report or a plan as an Atlassian document: headings, paragraphs, steps, facts
- * and tables.
+ * O relatório de um bug ou um plano como documento da Atlassian: títulos, parágrafos,
+ * passos, fatos e tabelas.
  */
 export function adfOfReport(report: IBugReport): IAdfNode {
   return { type: 'doc', version: 1, content: report.blocks.flatMap(nodesOf) };

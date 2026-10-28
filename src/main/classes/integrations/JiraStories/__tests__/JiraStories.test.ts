@@ -29,7 +29,7 @@ const STORY: IJiraStory = {
   ],
 };
 
-/** A Jira that hands over SHOP-12, writes what each file holds, and fails one of them. */
+/** Um Jira que entrega o SHOP-12, escreve o que cada arquivo guarda, e falha um deles. */
 function fakeJira(): IJiraRead & { asked: string[] } {
   const asked: string[] = [];
 

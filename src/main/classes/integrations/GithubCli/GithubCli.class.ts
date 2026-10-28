@@ -20,8 +20,8 @@ import {
 } from './library';
 
 /**
- * Talks to GitHub as the QA through their own GitHub CLI: the login stays with gh, and
- * QAzinho keeps no token.
+ * Fala com o GitHub como o QA pela GitHub CLI dele: o login fica com o gh, e o QAzinho
+ * não guarda token.
  */
 export class GithubCli {
   private readonly directories: () => Promise<string[]>;
@@ -34,14 +34,14 @@ export class GithubCli {
     this.onProgress = props.onProgress;
   }
 
-  /** Where the GitHub CLI is on this machine, or null when it is not here. */
+  /** Onde a GitHub CLI está nesta máquina, ou null quando não está aqui. */
   public async find(): Promise<string | null> {
     return this.locate('gh');
   }
 
   /**
-   * Whether gh is here, whom it is signed in as, and the access QAzinho needs that its
-   * login lacks.
+   * Se o gh está aqui, como quem está logado, e o acesso de que o QAzinho precisa e o
+   * login dele não tem.
    */
   public async status(): Promise<IGithubStatus> {
     const path = await this.find();
@@ -73,8 +73,8 @@ export class GithubCli {
   }
 
   /**
-   * Signs the QA in through gh's own device flow, or asks GitHub again for the access
-   * QAzinho lacks; resolves when it ends.
+   * Faz o QA entrar pelo device flow do próprio gh, ou pede ao GitHub de novo o acesso
+   * que falta ao QAzinho; resolve quando termina.
    */
   public async signIn(): Promise<GithubSignInProgress> {
     this.cancelSignIn();
@@ -90,14 +90,14 @@ export class GithubCli {
     }
   }
 
-  /** Stops a sign-in under way: gh closes, and the sign-in ends cancelled. */
+  /** Para um login em andamento: o gh fecha, e o login termina cancelado. */
   public cancelSignIn(): void {
     this.signingIn?.abort();
   }
 
   /**
-   * One request to GitHub's REST API as the QA, read or posted: what GitHub answered, or
-   * why it or gh refused.
+   * Um pedido à API REST do GitHub como o QA, lido ou postado: o que o GitHub respondeu,
+   * ou por que ele ou o gh recusou.
    */
   public async api(props: {
     path: string;
@@ -120,8 +120,8 @@ export class GithubCli {
   }
 
   /**
-   * Downloads an archive GitHub serves, such as a commit's tarball, and unpacks it into a
-   * folder without its top folder.
+   * Baixa um arquivo que o GitHub serve, como o tarball de um commit, e o desempacota
+   * numa pasta sem a pasta de topo dele.
    */
   public async extract(props: {
     path: string;

@@ -25,7 +25,10 @@ describe('apiArgsOf', () => {
     ]);
   });
 
-  /** A pull request's body runs over many lines and may hold an = of its own: each field goes whole, as text. */
+  /**
+   * O corpo de um pull request passa de muitas linhas e pode ter um = próprio: cada campo
+   * vai inteiro, como texto.
+   */
   it('posts text fields as they are, whatever they hold', () => {
     expect(
       apiArgsOf({

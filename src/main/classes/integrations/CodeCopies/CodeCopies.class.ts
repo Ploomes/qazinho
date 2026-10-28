@@ -6,8 +6,8 @@ import { CODE_COPIES } from './constants';
 import { changesOf, filesInDiff, refPath } from './library';
 
 /**
- * Copies a branch's code from GitHub for the agent to read while it plans, with what it
- * changed; each copy is gone once its plan is.
+ * Copia o código de uma branch do GitHub para o agente ler enquanto planeja, com o que
+ * ela mudou; cada cópia some assim que o plano dela some.
  */
 export class CodeCopies {
   private readonly github: IGithubCode;
@@ -22,8 +22,8 @@ export class CodeCopies {
   }
 
   /**
-   * Copies a branch for a workspace and reads what it changed against the base, in place
-   * of any copy the workspace had.
+   * Copia uma branch para um workspace e lê o que ela mudou contra a base, no lugar de
+   * qualquer cópia que o workspace tinha.
    */
   public async prepare(props: {
     workspaceId: string;
@@ -98,14 +98,14 @@ export class CodeCopies {
     return { isReady: true, copy };
   }
 
-  /** The copy a workspace is planning with, or null when it has none. */
+  /** A cópia com que um workspace está planejando, ou null quando ele não tem nenhuma. */
   public copyOf(workspaceId: string): ICodeCopy | null {
     return this.copies.get(workspaceId) ?? null;
   }
 
   /**
-   * Deletes a workspace's copy from disk, once its plan is written or the workspace is
-   * gone.
+   * Apaga do disco a cópia de um workspace, assim que o plano dele é escrito ou o
+   * workspace se vai.
    */
   public async release(workspaceId: string): Promise<void> {
     this.copies.delete(workspaceId);
@@ -113,8 +113,8 @@ export class CodeCopies {
   }
 
   /**
-   * Deletes every copy left on disk, for when QAzinho opens after closing in the middle
-   * of a plan.
+   * Apaga do disco toda cópia que sobrou, para quando o QAzinho abre depois de fechar no
+   * meio de um plano.
    */
   public async sweep(): Promise<void> {
     this.copies.clear();

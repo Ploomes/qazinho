@@ -2,8 +2,8 @@ import type { IMcpRecipe } from './IMcpRecipe';
 import type { IMcpServerTarget, McpSignInPhase, McpSignInProgress } from '@/shared/types';
 
 /**
- * A sign-in under way: the server, the agent's command and the name the server has there,
- * how to stop, and how to report.
+ * Um login em andamento: o servidor, o comando do agente e o nome que o servidor tem lá,
+ * como parar, e como relatar.
  */
 export interface IMcpSignInRun {
   target: IMcpServerTarget;

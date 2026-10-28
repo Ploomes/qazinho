@@ -2,7 +2,7 @@ import type { IIncluded } from '@/main/classes/integrations/GithubCli/types';
 
 const STATUS = /^HTTP\/[\d.]+\s+(\d{3})/;
 
-/** Splits what gh api --include printed into its status, its headers and its body. */
+/** Divide o que o gh api --include imprimiu em status, cabeçalhos e corpo. */
 export function includedOf(text: string): IIncluded {
   const normalized = text.replace(/\r\n/g, '\n');
   const split = normalized.indexOf('\n\n');

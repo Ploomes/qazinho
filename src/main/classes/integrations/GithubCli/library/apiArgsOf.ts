@@ -1,6 +1,6 @@
 /**
- * The gh api arguments for one request: the path, with its method and text fields, an
- * Accept header, every page, and a jq filter when asked.
+ * Os argumentos do gh api para um pedido: o caminho, com o método e os campos de texto,
+ * um cabeçalho Accept, toda página, e um filtro jq quando pedido.
  */
 export function apiArgsOf(props: {
   path: string;

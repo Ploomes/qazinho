@@ -1,6 +1,6 @@
 /**
- * The number and page of the issue GitHub answered with, once it made one; null for any
- * other answer.
+ * O número e a página da issue com que o GitHub respondeu, quando criou uma; null para
+ * qualquer outra resposta.
  */
 export function githubIssueOf(text: string): { number: number; url: string } | null {
   try {

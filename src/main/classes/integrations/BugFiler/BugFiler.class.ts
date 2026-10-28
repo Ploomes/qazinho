@@ -27,8 +27,8 @@ import {
 } from './library';
 
 /**
- * Files the QA's bug in their tracker, and adds to its issue later: in Jira or through
- * the QA's gh.
+ * Registra o bug do QA no tracker dele, e acrescenta à issue depois: no Jira ou pelo gh
+ * do QA.
  */
 export class BugFiler {
   private readonly jira: IJiraFiling;
@@ -48,8 +48,8 @@ export class BugFiler {
   }
 
   /**
-   * Sends one bug, telling each step as it goes: the issue it became, or why there is
-   * none.
+   * Manda um bug, contando cada passo enquanto anda: a issue em que virou, ou por que não
+   * há.
    */
   public async file(request: IFileBug): Promise<BugFiling> {
     const { target } = request;
@@ -60,8 +60,8 @@ export class BugFiler {
   }
 
   /**
-   * A filed bug's issue as its tracker keeps it now, for the agent to weigh what came
-   * back against; or why it could not be read, in the tracker's words.
+   * A issue de um bug registrado como o tracker dela a guarda agora, para o agente pesar
+   * o que voltou contra ela; ou por que não pôde ser lida, nas palavras do tracker.
    */
   public async read(
     issue: IFiledIssue,
@@ -94,8 +94,8 @@ export class BugFiler {
   }
 
   /**
-   * Posts an update under a bug's issue: a Jira comment with the new screens and video
-   * attached to the issue, or a GitHub comment through gh.
+   * Posta uma atualização sob a issue de um bug: um comentário do Jira com as telas e o
+   * vídeo novos anexados à issue, ou um comentário do GitHub pelo gh.
    */
   public async comment(request: ICommentBug): Promise<BugComment> {
     const { issue } = request;

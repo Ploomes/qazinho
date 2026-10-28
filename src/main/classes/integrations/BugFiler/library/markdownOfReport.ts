@@ -1,8 +1,8 @@
 import type { BugReportBlock, IBugReport } from '@/shared/types';
 
 /**
- * A bug's report as the Markdown a GitHub issue reads: headings, paragraphs, the steps in
- * order with the one that broke in bold, facts by label and the failed requests as code.
+ * O relatório de um bug como Markdown de issue do GitHub: títulos, parágrafos, os passos
+ * com o que quebrou em negrito, fatos por rótulo e pedidos que falharam como código.
  */
 export function markdownOfReport(report: IBugReport): string {
   return report.blocks.flatMap(markdownOf).join('\n\n');

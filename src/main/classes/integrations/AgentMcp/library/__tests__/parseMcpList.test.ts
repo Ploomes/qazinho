@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { parseMcpList } from '@/main/classes/integrations/AgentMcp/library';
 
-/** What `claude mcp list` printed on a real machine, health check line included. */
+/**
+ * O que `claude mcp list` imprimiu numa máquina real, linha de checagem de saúde
+ * incluída.
+ */
 const PRINTED = `Checking MCP server health…
 
 claude.ai Claude Docs: https://api.anthropic.com/v1/pages/mcp - ✓ Connected

@@ -1,6 +1,6 @@
 /**
- * The page GitHub answered with, such as a new comment's, out of what gh printed; null
- * when it named none.
+ * A página com que o GitHub respondeu, como a de um comentário novo, a partir do que o gh
+ * imprimiu; null quando não nomeou nenhuma.
  */
 export function htmlUrlOf(text: string): string | null {
   try {

@@ -8,7 +8,7 @@ const SIGNED = {
   token: 't0k',
 };
 
-/** A site that answers every request the same, and remembers what it was asked. */
+/** Um site que responde todo pedido do mesmo jeito, e lembra o que lhe perguntaram. */
 function answering(answer: { ok: boolean; status: number; body?: unknown } | 'offline') {
   const asked: { url: string; init: Parameters<JiraFetcher>[1] }[] = [];
   const fetcher: JiraFetcher = (url, init) => {

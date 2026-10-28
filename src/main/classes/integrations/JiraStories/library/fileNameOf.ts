@@ -1,6 +1,6 @@
 /**
- * A file name safe to write in a folder of its own: the name Jira gave, with no folders
- * and no odd characters, numbered when another took it.
+ * Um nome de arquivo seguro de escrever numa pasta própria: o nome que o Jira deu, sem
+ * pastas e sem caracteres estranhos, numerado quando outro o tomou.
  */
 export function fileNameOf(props: { filename: string; taken: string[] }): string {
   const plain =

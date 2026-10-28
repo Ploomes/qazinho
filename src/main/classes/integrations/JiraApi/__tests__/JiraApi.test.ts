@@ -10,7 +10,10 @@ const SIGNED = { site: SITE, email: 'ana@acme.test', token: 'jira_secret' };
 
 type Route = { status: number; body?: unknown; bytes?: string } | 'offline';
 
-/** A Jira site that answers by path, and remembers what it was asked, how, with which headers and what was sent. */
+/**
+ * Um site do Jira que responde por caminho, e lembra o que lhe perguntaram, como, com
+ * quais cabeçalhos e o que foi mandado.
+ */
 function fakeSite(routes: Record<string, Route>) {
   const asked: {
     url: string;
@@ -85,7 +88,10 @@ describe('JiraApi', () => {
       );
     });
 
-    /** The picker matches words; a key typed whole must come first even when it finds it later. */
+    /**
+     * O seletor casa palavras; uma chave digitada inteira precisa vir primeiro mesmo
+     * quando ele a acha depois.
+     */
     it('puts the issue a typed key names first, once', async () => {
       const { jira } = api({
         '/rest/api/3/issue/SHOP-12?fields=summary': {

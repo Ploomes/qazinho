@@ -1,8 +1,8 @@
 import type { IAdfNode } from '@/main/classes/integrations/JiraApi/types';
 
 /**
- * A Jira document as markdown the agent reads: headings, lists and checklists, tables,
- * code, quotes and links kept; a plain string as it is.
+ * Um documento do Jira como markdown que o agente lê: títulos, listas e checklists,
+ * tabelas, código, citações e links mantidos; uma string simples como está.
  */
 export function adfToMarkdown(document: unknown): string {
   if (typeof document === 'string') return document.trim();

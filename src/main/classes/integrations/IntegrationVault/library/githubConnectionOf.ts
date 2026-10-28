@@ -1,8 +1,8 @@
 import type { IConnectResult, IGithubStatus } from '@/shared/types';
 
 /**
- * Whether the GitHub CLI's login connects GitHub: the account it is signed in as, or why
- * it cannot.
+ * Se o login da GitHub CLI conecta o GitHub: a conta com que ela está logada, ou por que
+ * não pode.
  */
 export function githubConnectionOf(props: {
   status: IGithubStatus;

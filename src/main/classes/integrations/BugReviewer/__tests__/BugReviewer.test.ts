@@ -59,7 +59,10 @@ const REQUEST: IReviewBug = {
   ],
 };
 
-/** The QA's agent as the reviewer sees it: it answers with what it is told, and remembers how it was asked. */
+/**
+ * O agente do QA como o revisor o vê: responde o que lhe dizem, e lembra como foi
+ * perguntado.
+ */
 function reviewer(
   props: { issue?: ITrackerIssue | null; answer?: string; isError?: boolean } = {},
 ) {

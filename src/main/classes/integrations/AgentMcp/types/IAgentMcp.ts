@@ -1,8 +1,8 @@
 import type { McpSignInProgress } from '@/shared/types';
 
 /**
- * What AgentMcp needs: the agent CLIs, how to open a URL or run a script, and where to
- * report.
+ * O que o AgentMcp precisa: as CLIs de agente, como abrir uma URL ou rodar um script, e
+ * onde relatar.
  */
 export interface IAgentMcp {
   findAgent: (agentId: string) => Promise<string | null>;

@@ -1,8 +1,8 @@
 import type { GhAnswer } from '@/main/classes/integrations/GithubCli/types';
 
 /**
- * What CodeCopies needs from gh: requests to GitHub's REST API, and an archive unpacked
- * into a folder.
+ * O que o CodeCopies precisa do gh: pedidos à API REST do GitHub, e um arquivo
+ * desempacotado numa pasta.
  */
 export interface IGithubCode {
   api: (props: { path: string; accept?: string; jq?: string }) => Promise<GhAnswer>;

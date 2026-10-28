@@ -2,8 +2,8 @@ const BUG = /^(bug|defect|defeito|erro)$/i;
 const TASK = /^(task|tarefa)$/i;
 
 /**
- * The issue type a bug is filed as in a project, by its id: the project's Bug, else its
- * Task, else its first type that is not a subtask; null when Jira listed none.
+ * O tipo de issue de um bug num projeto, pelo id: o Bug do projeto, senão a Task, senão o
+ * primeiro tipo que não é subtarefa; null quando o Jira não listou nenhum.
  */
 export function bugTypeOf(body: unknown): string | null {
   const answer = (body ?? {}) as { issueTypes?: unknown; values?: unknown };

@@ -1,4 +1,4 @@
-/** `fetch`, narrowed to what the vault calls, so a test hands in a fake tracker. */
+/** O `fetch`, restrito ao que o cofre chama, para um teste entregar um tracker fake. */
 export type Fetcher = (
   url: string,
   init: { headers: Record<string, string> },

@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { IntegrationVault } from '@/main/classes/integrations/IntegrationVault';
 import { fakeTracker } from '@/main/classes/integrations/IntegrationVault/library/__tests__/fixtures';
 
-/** Reverses the text, so a test can tell a sealed file from a plain one. */
+/** Inverte o texto, para um teste distinguir um arquivo lacrado de um simples. */
 function fakeCipher(isAvailable = true): IVaultCipher {
   return {
     isAvailable: () => isAvailable,
@@ -16,7 +16,10 @@ function fakeCipher(isAvailable = true): IVaultCipher {
   };
 }
 
-/** The GitHub CLI as the vault asks after it: signed in as octoqa unless told otherwise. */
+/**
+ * A GitHub CLI como o cofre pergunta por ela: logada como octoqa a menos que se diga o
+ * contrário.
+ */
 function fakeGithub(status: Partial<IGithubStatus> = {}): () => Promise<IGithubStatus> {
   return () =>
     Promise.resolve({

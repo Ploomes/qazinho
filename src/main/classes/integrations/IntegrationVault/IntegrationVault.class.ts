@@ -13,8 +13,8 @@ import { writeAtomically } from '@/main/library';
 import { githubConnectionOf, isCurrentIntegration, verifyJira } from './library';
 
 /**
- * Connects the QA's trackers: GitHub through the QA's own gh, Jira with a token sealed by
- * the OS keychain, and Confluence beside Jira when the QA turns it on.
+ * Conecta os trackers do QA: o GitHub pelo próprio gh do QA, o Jira com um token lacrado
+ * pelo keychain do SO, e o Confluence ao lado do Jira quando o QA o liga.
  */
 export class IntegrationVault {
   private readonly file: string;
@@ -65,8 +65,8 @@ export class IntegrationVault {
   }
 
   /**
-   * Turns Confluence on or off beside Jira, on the same site and credentials, and says
-   * Jira's status now; null while Jira is not connected.
+   * Liga ou desliga o Confluence ao lado do Jira, no mesmo site e credenciais, e diz o
+   * status do Jira agora; null enquanto o Jira não está conectado.
    */
   public async setConfluence(isOn: boolean): Promise<IIntegrationStatus | null> {
     const stored = await this.read();
@@ -82,8 +82,8 @@ export class IntegrationVault {
   }
 
   /**
-   * Jira's credentials for Confluence, on the same site; null while Jira is not connected
-   * or Confluence is off.
+   * As credenciais do Jira para o Confluence, no mesmo site; null enquanto o Jira não
+   * está conectado ou o Confluence está desligado.
    */
   public async confluence(): Promise<IJiraCredentials | null> {
     const jira = (await this.read()).find(({ status }) => status.id === 'jira');
@@ -92,8 +92,8 @@ export class IntegrationVault {
   }
 
   /**
-   * The Jira site and the credentials sealed for it, for main to call Jira with; null
-   * while Jira is not connected.
+   * O site do Jira e as credenciais lacradas para ele, para a main chamar o Jira; null
+   * enquanto o Jira não está conectado.
    */
   public async jira(): Promise<IJiraCredentials | null> {
     const stored = (await this.read()).find(({ status }) => status.id === 'jira');

@@ -19,7 +19,9 @@ const DOC = {
 
 type Route = { status: number; body?: unknown } | 'offline';
 
-/** A Confluence site that answers by method and path, and remembers what it was sent. */
+/**
+ * Um site do Confluence que responde por método e caminho, e lembra o que lhe mandaram.
+ */
 function fakeSite(routes: Record<string, Route>) {
   const asked: { method: string; path: string; body: unknown }[] = [];
   const fetcher: JiraFetcher = (url, init) => {

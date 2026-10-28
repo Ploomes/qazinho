@@ -5,8 +5,8 @@ import { adfToMarkdown } from './adfToMarkdown';
 type Loose = Record<string, unknown>;
 
 /**
- * A filed issue as Jira keeps it now: its summary and description, its status and whether
- * it is done, and the team's latest comments; null for an answer that is no issue.
+ * Uma issue registrada como o Jira a guarda agora: o resumo e a descrição, o status e se
+ * está feita, e os últimos comentários do time; null para uma resposta que não é issue.
  */
 export function jiraIssueOf(props: {
   issue: unknown;

@@ -2,8 +2,8 @@ import { AGENT_MCP } from '@/main/classes/integrations/AgentMcp/constants';
 import { execCommand } from '@/main/library';
 
 /**
- * Runs one command to its end; a failure throws what it printed on stderr, which is what
- * the QA needs to read.
+ * Roda um comando até o fim; uma falha lança o que ele imprimiu no stderr, que é o que o
+ * QA precisa ler.
  */
 export async function runCommand(props: {
   command: string;

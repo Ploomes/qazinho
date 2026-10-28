@@ -6,8 +6,8 @@ const UNREACHABLE =
 const HTTP = /\(HTTP (\d{3})\)/;
 
 /**
- * Why a gh command failed, from its exit code and what it said: signed out, refused,
- * missing, offline, or something else.
+ * Por que um comando do gh falhou, pelo código de saída e pelo que disse: deslogado,
+ * recusado, ausente, offline, ou outra coisa.
  */
 export function refusalOf(props: { code: number | null; said: string }): IGhRefusal {
   const { code, said } = props;

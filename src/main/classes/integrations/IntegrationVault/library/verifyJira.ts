@@ -3,7 +3,10 @@ import type { IConnectResult } from '@/shared/types';
 import { jiraSiteOf } from './jiraSiteOf';
 import { trackerRefusal } from './trackerRefusal';
 
-/** Asks Jira Cloud who an email and API token belong to, on the site the QA named. */
+/**
+ * Pergunta ao Jira Cloud de quem são um e-mail e um token de API, no site que o QA
+ * nomeou.
+ */
 export async function verifyJira(props: {
   credentials: { site: string; email: string; token: string };
   fetcher: Fetcher;

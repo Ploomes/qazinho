@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { TERMINAL_KEYS } from '@/main/classes/agents/AgentTerminal/constants';
 import { nextMcpMove } from '@/main/classes/integrations/AgentMcp/library';
 
-/** Rows as Claude Code 2.1 draws them, read back off a real session; only the home folder is changed. */
+/**
+ * Linhas como o Claude Code 2.1 as desenha, lidas de volta de uma sessão real; só a pasta
+ * home foi mudada.
+ */
 const FIGMA = { name: 'figma', url: 'https://mcp.figma.com/mcp' };
 
 const HEADER = [

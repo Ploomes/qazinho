@@ -16,7 +16,9 @@ describe('signInScript', () => {
     expect(script).toContain("exec '/opt/bin/claude' '/mcp'");
   });
 
-  /** A path with a quote in it must not end the string and run the rest as a command. */
+  /**
+   * Um caminho com aspas nele não pode terminar a string e rodar o resto como comando.
+   */
   it('quotes a path with a quote in it', () => {
     expect(
       signInScript({
@@ -41,7 +43,10 @@ describe('signInScript', () => {
     ).toBe('#!/bin/sh');
   });
 
-  /** cmd.exe would expand a percent sign in a path, and an npm shim must be called to come back. */
+  /**
+   * O cmd.exe expandiria um sinal de porcentagem num caminho, e um shim do npm precisa
+   * ser chamado para voltar.
+   */
   it('writes a batch file on Windows, its paths quoted and its percent signs doubled', () => {
     const script = signInScript({
       command: 'C:\\Users\\Ana\\AppData\\Roaming\\npm\\claude.cmd',

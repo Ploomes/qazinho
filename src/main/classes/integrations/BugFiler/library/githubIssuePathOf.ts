@@ -1,6 +1,6 @@
 /**
- * The API path of a GitHub issue, out of its page's address; null for an address that is
- * no GitHub issue.
+ * O caminho de API de uma issue do GitHub, a partir do endereço da página dela; null para
+ * um endereço que não é de issue do GitHub.
  */
 export function githubIssuePathOf(url: string): string | null {
   const found = /^https:\/\/github\.com\/([\w.-]+)\/([\w.-]+)\/issues\/(\d+)\/?$/.exec(

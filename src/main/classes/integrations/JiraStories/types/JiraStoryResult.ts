@@ -1,5 +1,5 @@
 import type { IJiraStoryCopy, JiraFailure } from '@/shared/types';
 
-/** A Jira story read with its files, or why Jira did not hand it over. */
+/** Uma história do Jira lida com os arquivos dela, ou por que o Jira não a entregou. */
 export type JiraStoryResult =
   { isReady: true; copy: IJiraStoryCopy } | { isReady: false; failure: JiraFailure };

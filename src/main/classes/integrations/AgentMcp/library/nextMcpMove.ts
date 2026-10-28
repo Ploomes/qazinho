@@ -15,8 +15,8 @@ const REFUSED =
 const REFUSED_ALONE = /reconnection failed after authentication/i;
 
 /**
- * The next move on Claude Code's `/mcp` screens toward the server's sign-in, read off the
- * rows the agent shows.
+ * O próximo movimento nas telas `/mcp` do Claude Code em direção ao login do servidor,
+ * lido das linhas que o agente mostra.
  */
 export function nextMcpMove(props: {
   rows: string[];

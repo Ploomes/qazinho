@@ -1,8 +1,8 @@
 import type { McpServerState } from '@/shared/types';
 
 /**
- * One line of `claude mcp list`: the name the QA gave the server, where it points, and
- * its health.
+ * Uma linha de `claude mcp list`: o nome que o QA deu ao servidor, para onde ele aponta,
+ * e a saúde dele.
  */
 export interface IListedMcpServer {
   name: string;

@@ -1,6 +1,8 @@
 import type { JiraFailure } from '@/shared/types';
 
-/** The issue a bug became in Jira, or why Jira refused it, in its own words. */
+/**
+ * A issue em que um bug virou no Jira, ou por que o Jira a recusou, nas palavras dele.
+ */
 export type JiraFiled =
   | { isFiled: true; key: string; url: string }
   | { isFiled: false; failure: JiraFailure; said: string };

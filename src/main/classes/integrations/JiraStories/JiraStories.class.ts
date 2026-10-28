@@ -6,8 +6,8 @@ import { JIRA_FILES } from './constants';
 import { fileNameOf, filesToReadOf } from './library';
 
 /**
- * Reads a Jira story for the agent to plan from, with the files it can read downloaded
- * beside it; each story's files are gone once its plan is.
+ * Lê uma história do Jira para o agente planejar, com os arquivos que ele consegue ler
+ * baixados ao lado; os arquivos de cada história somem assim que o plano dela some.
  */
 export class JiraStories {
   private readonly jira: IJiraRead;
@@ -20,8 +20,8 @@ export class JiraStories {
   }
 
   /**
-   * Reads a story for a workspace and downloads the files it can, in place of any story
-   * the workspace had.
+   * Lê uma história para um workspace e baixa os arquivos que consegue, no lugar de
+   * qualquer história que o workspace tinha.
    */
   public async prepare(props: {
     workspaceId: string;
@@ -81,15 +81,15 @@ export class JiraStories {
     return this.copies.get(workspaceId) ?? null;
   }
 
-  /** Lets a workspace's story go, and deletes the files downloaded for it. */
+  /** Solta a história de um workspace, e apaga os arquivos baixados para ela. */
   public async release(workspaceId: string): Promise<void> {
     this.copies.delete(workspaceId);
     await rm(join(this.root, workspaceId), { recursive: true, force: true });
   }
 
   /**
-   * Deletes every story's files left from before, such as from a QAzinho that closed
-   * mid-plan.
+   * Apaga os arquivos de toda história que sobraram de antes, como de um QAzinho que
+   * fechou no meio de um plano.
    */
   public async sweep(): Promise<void> {
     this.copies.clear();

@@ -23,8 +23,8 @@ import {
 } from './library';
 
 /**
- * Talks to the QA's Jira Cloud with the credentials sealed for it: finds issues, reads a
- * story with its files, and files a bug with its own.
+ * Fala com o Jira Cloud do QA com as credenciais lacradas para ele: acha issues, lê uma
+ * história com os arquivos dela, e registra um bug com os dele.
  */
 export class JiraApi {
   private readonly credentials: () => Promise<IJiraCredentials | null>;
@@ -36,8 +36,8 @@ export class JiraApi {
   }
 
   /**
-   * The issues the picker offers: the one a typed key names first, then the ones the QA
-   * saw last or that match what they typed.
+   * As issues que o seletor oferece: a que uma chave digitada nomeia primeiro, depois as
+   * que o QA viu por último ou que casam com o que digitou.
    */
   public async search(query: string): Promise<JiraIssueList> {
     const signed = await this.credentials();
@@ -74,7 +74,7 @@ export class JiraApi {
     };
   }
 
-  /** One issue read whole as a story, or why Jira did not hand it over. */
+  /** Uma issue lida inteira como história, ou por que o Jira não a entregou. */
   public async story(
     key: string,
   ): Promise<
@@ -99,8 +99,8 @@ export class JiraApi {
   }
 
   /**
-   * Downloads one file attached to an issue into a file on disk; false when Jira did not
-   * hand it over or it grew past `maxBytes`.
+   * Baixa um arquivo anexado a uma issue para um arquivo em disco; false quando o Jira
+   * não o entregou ou ele passou de `maxBytes`.
    */
   public async download(props: {
     id: string;
@@ -127,8 +127,8 @@ export class JiraApi {
   }
 
   /**
-   * The projects the QA can file in: the ones they opened last first, then the rest Jira
-   * lists.
+   * Os projetos em que o QA pode registrar: os que abriu por último primeiro, depois o
+   * resto que o Jira lista.
    */
   public async projects(): Promise<JiraProjectList> {
     const signed = await this.credentials();
@@ -163,8 +163,8 @@ export class JiraApi {
   }
 
   /**
-   * Files a bug in a project as an issue of its Bug type, or the type closest to it: the
-   * new issue, or why Jira refused it.
+   * Registra um bug num projeto como uma issue do tipo Bug, ou o tipo mais próximo: a
+   * issue nova, ou por que o Jira a recusou.
    */
   public async fileBug(props: {
     project: string;
@@ -211,8 +211,8 @@ export class JiraApi {
   }
 
   /**
-   * An issue as Jira keeps it now, with its status and the team's latest comments, or why
-   * Jira did not hand it over.
+   * Uma issue como o Jira a guarda agora, com o status e os últimos comentários do time,
+   * ou por que o Jira não a entregou.
    */
   public async issue(
     key: string,
@@ -240,8 +240,8 @@ export class JiraApi {
   }
 
   /**
-   * Adds a comment under an issue, written from a report's blocks: where it sits, or why
-   * Jira refused it.
+   * Soma um comentário sob uma issue, escrito a partir dos blocos de um relatório: onde
+   * ele fica, ou por que o Jira o recusou.
    */
   public async comment(props: { key: string; report: IBugReport }): Promise<BugComment> {
     const signed = await this.credentials();
@@ -267,7 +267,7 @@ export class JiraApi {
     };
   }
 
-  /** Attaches one file to an issue; false when Jira did not take it. */
+  /** Anexa um arquivo a uma issue; false quando o Jira não o aceitou. */
   public async attach(props: {
     key: string;
     name: string;
@@ -298,8 +298,8 @@ export class JiraApi {
   }
 
   /**
-   * Links an issue to another as related, such as a bug to the story it was planned from;
-   * false when Jira refused it.
+   * Liga uma issue a outra como relacionada, como um bug à história de onde foi
+   * planejado; false quando o Jira recusou.
    */
   public async relate(props: { key: string; to: string }): Promise<boolean> {
     const signed = await this.credentials();

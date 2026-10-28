@@ -1,8 +1,8 @@
 import type { ICodeChange } from '@/shared/types';
 
 /**
- * The files a comparison changed and how many commits it holds, as gh printed them
- * through the compare filter; null when it did not.
+ * Os arquivos que uma comparação mudou e quantos commits ela guarda, como o gh os
+ * imprimiu pelo filtro de comparação; null quando não imprimiu.
  */
 export function changesOf(
   text: string,

@@ -19,7 +19,10 @@ describe('filingFailureOf', () => {
     );
   });
 
-  /** A repository with its issues turned off answers 410, and a title GitHub will not take 422. */
+  /**
+   * Um repositório com as issues desligadas responde 410, e um título que o GitHub não
+   * aceita 422.
+   */
   it('reads an issue GitHub would not take as refused', () => {
     expect(filingFailureOf({ failure: 'unexpected', httpStatus: 422 })).toBe('rejected');
     expect(filingFailureOf({ failure: 'unexpected', httpStatus: 410 })).toBe('rejected');

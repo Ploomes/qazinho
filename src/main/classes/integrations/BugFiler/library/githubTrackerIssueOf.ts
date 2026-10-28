@@ -7,8 +7,8 @@ const COMMENTS = 10;
 const COMMENT_LENGTH = 1_500;
 
 /**
- * A GitHub issue as gh answered it, with the comments under it, the latest kept; null for
- * an answer that is no issue.
+ * Uma issue do GitHub como o gh a respondeu, com os comentários sob ela, os últimos
+ * mantidos; null para uma resposta que não é uma issue.
  */
 export function githubTrackerIssueOf(props: {
   issue: string;

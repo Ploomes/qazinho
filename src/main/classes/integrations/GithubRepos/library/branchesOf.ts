@@ -3,8 +3,8 @@ import type { IBranch } from '@/shared/types';
 const HEADS = 'refs/heads/';
 
 /**
- * A repository's branches for the QA to pick from: its own first, then the ones that
- * moved or head a pull request, newest first, then the rest by name.
+ * As branches de um repositório para o QA escolher: a própria dele primeiro, depois as
+ * que se moveram ou encabeçam um pull request, as mais novas, depois o resto por nome.
  */
 export function branchesOf(props: {
   names: string[];

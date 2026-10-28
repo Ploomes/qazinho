@@ -9,7 +9,10 @@ const MISSING: GhAnswer = {
   said: '',
 };
 
-/** A GitHub that answers each path from a table, by the first prefix it starts with, and remembers every path it was asked. */
+/**
+ * Um GitHub que responde cada caminho de uma tabela, pelo primeiro prefixo com que
+ * começa, e lembra todo caminho que lhe perguntaram.
+ */
 function fakeGithub(table: Record<string, GhAnswer>) {
   const asked: string[] = [];
   const api = vi.fn((props: { path: string }): Promise<GhAnswer> => {

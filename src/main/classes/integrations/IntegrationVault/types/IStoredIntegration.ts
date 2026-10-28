@@ -1,8 +1,8 @@
 import type { IConnectIntegration, IIntegrationStatus } from '@/shared/types';
 
 /**
- * A connected tracker as it sits on disk, sealed: what the page sees, plus what was typed
- * to get it.
+ * Um tracker conectado como está no disco, lacrado: o que a página vê, mais o que foi
+ * digitado para obtê-lo.
  */
 export interface IStoredIntegration {
   status: IIntegrationStatus;

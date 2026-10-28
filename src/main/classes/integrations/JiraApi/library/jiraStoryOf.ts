@@ -5,8 +5,8 @@ import { adfToMarkdown } from './adfToMarkdown';
 type Loose = Record<string, unknown>;
 
 /**
- * The story out of Jira's answer for one issue asked with every field and their names, or
- * null when it is not an issue.
+ * A história a partir da resposta do Jira para uma issue pedida com todo campo e os nomes
+ * deles, ou null quando não é uma issue.
  */
 export function jiraStoryOf(props: { issue: unknown; site: string }): IJiraStory | null {
   const issue = record(props.issue);

@@ -5,8 +5,8 @@ import { jiraFailureOf } from './jiraFailureOf';
 import { jiraSaidOf } from './jiraSaidOf';
 
 /**
- * One request to the QA's Atlassian site, Jira or Confluence, signed with their email and
- * token: its JSON or its bytes, or why it failed, in the site's own words.
+ * Um pedido ao site Atlassian do QA, Jira ou Confluence, assinado com o e-mail e o token
+ * dele: o JSON ou os bytes, ou por que falhou, nas palavras do próprio site.
  */
 export function askAtlassian(props: {
   fetcher: JiraFetcher;

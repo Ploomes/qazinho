@@ -1,6 +1,6 @@
 import type { GithubFailure, ICodeCopy } from '@/shared/types';
 
-/** A branch's code copied and read, or why GitHub would not hand it over. */
+/** O código de uma branch copiado e lido, ou por que o GitHub não o entregou. */
 export type CodeCopyResult =
   | { isReady: true; copy: ICodeCopy }
   | { isReady: false; failure: GithubFailure; said: string };

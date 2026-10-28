@@ -1,6 +1,6 @@
 /**
- * The CQL a page search asks: the pages whose title holds what the QA typed, or with
- * nothing typed the pages they worked on last.
+ * O CQL que uma busca de página pergunta: as páginas cujo título contém o que o QA
+ * digitou, ou, sem nada digitado, as que ele trabalhou por último.
  */
 export function cqlOf(query: string): string {
   const typed = query

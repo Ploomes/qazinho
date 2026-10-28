@@ -1,6 +1,6 @@
 /**
- * What Jira or Confluence said when it refused a request, in one line: its messages, then
- * what was wrong with each field or each error it listed.
+ * O que o Jira ou o Confluence disseram ao recusar um pedido, numa linha: as mensagens,
+ * depois o que havia de errado com cada campo ou cada erro que listou.
  */
 export function jiraSaidOf(body: unknown): string {
   const { errorMessages, errors, message } = (body ?? {}) as {

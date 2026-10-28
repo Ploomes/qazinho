@@ -1,6 +1,6 @@
 import type { IConfluenceSpace } from '@/shared/types';
 
-/** The spaces Confluence listed, each with its id, key and name, by name. */
+/** Os espaços que o Confluence listou, cada um com o id, a chave e o nome, pelo nome. */
 export function confluenceSpacesOf(answer: unknown): IConfluenceSpace[] {
   const results = (answer as { results?: unknown } | null)?.results;
 

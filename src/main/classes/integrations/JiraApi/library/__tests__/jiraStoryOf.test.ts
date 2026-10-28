@@ -8,7 +8,10 @@ const paragraph = (value: string) => ({
   content: [{ type: 'text', text: value }],
 });
 
-/** Jira's answer for GET /rest/api/3/issue/SHOP-12?fields=*all&expand=names, cut to what matters. */
+/**
+ * A resposta do Jira para GET /rest/api/3/issue/SHOP-12?fields=*all&expand=names, cortada
+ * no que importa.
+ */
 const ISSUE = {
   id: '10012',
   key: 'SHOP-12',
@@ -89,7 +92,10 @@ describe('jiraStoryOf', () => {
     });
   });
 
-  /** Teams keep acceptance criteria in a field of their own, named in their language. */
+  /**
+   * Os times guardam os critérios de aceitação num campo próprio, nomeado na língua
+   * deles.
+   */
   it('finds the acceptance criteria in a field named for them, and skips one left empty', () => {
     expect(jiraStoryOf({ issue: ISSUE, site: SITE })?.acceptance).toEqual([
       { field: 'Critérios de aceite', text: '- SAVE10 dá 10%\n- Expirado é recusado' },

@@ -1,6 +1,6 @@
 /**
- * A node of a Jira document (Atlassian Document Format), loose enough to read what Jira
- * sends and to write a bug.
+ * Um nó de um documento do Jira (Atlassian Document Format), solto o bastante para ler o
+ * que o Jira manda e escrever um bug.
  */
 export interface IAdfNode {
   type?: string;

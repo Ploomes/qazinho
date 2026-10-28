@@ -2,7 +2,7 @@ import type { IListedMcpServer } from '@/main/classes/integrations/AgentMcp/type
 
 const LINE = /^(.+?): (.+?)(?: \((?:HTTP|SSE|stdio)\))? - (.+)$/i;
 
-/** Reads `claude mcp list`: one server per line, as name, target and health. */
+/** Lê `claude mcp list`: um servidor por linha, como nome, alvo e saúde. */
 export function parseMcpList(printed: string): IListedMcpServer[] {
   return printed.split('\n').flatMap((line) => {
     const match = LINE.exec(line.trim());

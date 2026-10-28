@@ -10,8 +10,8 @@ const FAILURES: Record<GithubFailure, FilingFailure> = {
 };
 
 /**
- * Why GitHub did not take a bug, as a filing says it: gh gone or signed out, the
- * repository refused or not there, out of reach, or what GitHub refused to take.
+ * Por que o GitHub não aceitou um bug: gh sumido ou deslogado, repositório recusado ou
+ * ausente, fora de alcance, ou o que o GitHub se recusou a aceitar.
  */
 export function filingFailureOf(props: {
   failure: GithubFailure;

@@ -1,4 +1,6 @@
-/** `fetch`, narrowed to what QAzinho asks of Jira, so a test hands in a fake site. */
+/**
+ * O `fetch`, restrito ao que o QAzinho pede ao Jira, para um teste entregar um site fake.
+ */
 export type JiraFetcher = (
   url: string,
   init: {

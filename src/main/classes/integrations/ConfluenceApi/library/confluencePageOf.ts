@@ -11,8 +11,8 @@ type Page = {
 };
 
 /**
- * A Confluence page as its API answers it: where it opens, its version and space, and its
- * body as Markdown; null for an answer that is not a page.
+ * Uma página do Confluence como a API dela a responde: onde abre, a versão e o espaço
+ * dela, e o corpo como Markdown; null para uma resposta que não é uma página.
  */
 export function confluencePageOf(props: { answer: unknown; site: string }): {
   page: IConfluencePageRef;

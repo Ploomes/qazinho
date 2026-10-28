@@ -1,5 +1,5 @@
 /**
- * How a sign-in reaches the agent: its own screens driven out of sight, its browser flow,
- * or Terminal for the QA to finish.
+ * Como um login chega ao agente: as telas dele dirigidas fora de vista, o fluxo de
+ * navegador dele, ou o Terminal para o QA terminar.
  */
 export type McpSignInRoute = 'hidden' | 'browser' | 'terminal';

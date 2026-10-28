@@ -32,8 +32,8 @@ import {
 } from './library';
 
 /**
- * The MCP servers QAzinho sets up in the QA's own agent: added there, signed in there,
- * read back from there.
+ * Os servidores MCP que o QAzinho configura no próprio agente do QA: adicionados lá, com
+ * login lá, lidos de volta de lá.
  */
 export class AgentMcp {
   private readonly findAgent: (agentId: string) => Promise<string | null>;
@@ -52,8 +52,8 @@ export class AgentMcp {
   }
 
   /**
-   * Where each server QAzinho knows stands in the agent, matched by address, whatever the
-   * QA named it.
+   * Em que pé está no agente cada servidor que o QAzinho conhece, casado pelo endereço,
+   * seja qual for o nome que o QA lhe deu.
    */
   public async list(agentId: string): Promise<IMcpServerStatus[]> {
     const ids = Object.keys(MCP_CATALOG) as McpServerId[];
@@ -69,8 +69,8 @@ export class AgentMcp {
   }
 
   /**
-   * Adds the server when it is missing and signs the QA in through the agent, reporting
-   * each step; resolves with how it ended.
+   * Adiciona o servidor quando falta e faz o QA entrar pelo agente, relatando cada passo;
+   * resolve com como terminou.
    */
   public async connect(signIn: IMcpSignIn): Promise<McpSignInProgress> {
     const key = `${signIn.target.agentId}:${signIn.target.id}`;
@@ -87,19 +87,19 @@ export class AgentMcp {
   }
 
   /**
-   * Stops a sign-in under way: the agent QAzinho drives for it closes, and the sign-in
-   * ends cancelled.
+   * Para um login em andamento: o agente que o QAzinho dirige para ele fecha, e o login
+   * termina cancelado.
    */
   public cancel(target: IMcpServerTarget): void {
     this.signIns.get(`${target.agentId}:${target.id}`)?.abort();
   }
 
-  /** Stops every sign-in under way, for when QAzinho quits. */
+  /** Para todo login em andamento, para quando o QAzinho fecha. */
   public close(): void {
     for (const controller of this.signIns.values()) controller.abort();
   }
 
-  /** Takes the server back out of the agent; one already gone counts as removed. */
+  /** Tira o servidor de volta do agente; um que já se foi conta como removido. */
   public async remove(target: IMcpServerTarget): Promise<McpActionResult> {
     const recipe = MCP_RECIPES[target.agentId];
     const command = await this.findAgent(target.agentId);

@@ -28,7 +28,10 @@ describe('adfToMarkdown', () => {
     );
   });
 
-  /** Acceptance criteria often come as a checklist or a numbered list, nested at times. */
+  /**
+   * Os critérios de aceitação costumam vir como checklist ou lista numerada, às vezes
+   * aninhadas.
+   */
   it('keeps lists, numbered lists and checklists, nested ones under their item', () => {
     expect(
       adfToMarkdown(

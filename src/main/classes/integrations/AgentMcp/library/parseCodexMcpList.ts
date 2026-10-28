@@ -8,8 +8,8 @@ type CodexServer = {
 };
 
 /**
- * Reads `codex mcp list --json`: a server signed in, or one with no sign-in to do, is
- * connected.
+ * Lê `codex mcp list --json`: um servidor com login, ou um sem login a fazer, está
+ * conectado.
  */
 export function parseCodexMcpList(printed: string): IListedMcpServer[] {
   let servers: CodexServer[];

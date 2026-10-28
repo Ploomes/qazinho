@@ -8,8 +8,8 @@ import { isInside } from '@/main/classes/storage/Archive/library';
 import { BUG_REVIEW } from './constants';
 
 /**
- * Weighs a bug that came back against its issue with the QA's own agent, and answers its
- * verdict.
+ * Pesa um bug que voltou contra a issue dele com o agente do próprio QA, e responde o
+ * veredito dele.
  */
 export class BugReviewer {
   private readonly filer: Pick<BugFiler, 'read'>;
@@ -27,8 +27,8 @@ export class BugReviewer {
   }
 
   /**
-   * One review of a bug seen again: whether the issue needs an update and the update the
-   * agent wrote, a closed issue always read as a regression; or why there is none.
+   * Uma revisão de um bug visto de novo: se a issue precisa de atualização e a que o
+   * agente escreveu, uma issue fechada sempre lida como regressão; ou por que não há.
    */
   public async review(request: IReviewBug): Promise<BugReview> {
     if (!BUG_REVIEW.id.test(request.workspaceId) || !BUG_REVIEW.id.test(request.bugId))

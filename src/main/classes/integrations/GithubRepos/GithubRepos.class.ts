@@ -4,8 +4,8 @@ import { GITHUB_REPOS } from './constants';
 import { branchesOf, jsonLinesOf, repositoryOf } from './library';
 
 /**
- * The QA's repositories and their branches, as GitHub lists them through gh; each list is
- * kept for a little while.
+ * Os repositórios do QA e as branches deles, como o GitHub os lista pelo gh; cada lista é
+ * guardada por um tempinho.
  */
 export class GithubRepos {
   private readonly github: IGithubApi;
@@ -18,7 +18,7 @@ export class GithubRepos {
     this.now = props.now ?? Date.now;
   }
 
-  /** Every repository the QA can read, most recently pushed first. */
+  /** Todo repositório que o QA pode ler, o enviado por último primeiro. */
   public async repositories(): Promise<IRepositoryList> {
     if (this.kept !== null && this.now() - this.kept.at < GITHUB_REPOS.repositoriesMs)
       return this.kept.list;
@@ -46,8 +46,8 @@ export class GithubRepos {
   }
 
   /**
-   * A repository's branches: its own first, then the ones that moved or head a pull
-   * request, then the rest.
+   * As branches de um repositório: a própria dele primeiro, depois as que se moveram ou
+   * encabeçam um pull request, depois o resto.
    */
   public async branches(repository: IRepositoryRef): Promise<IBranchList> {
     const key = `${repository.owner}/${repository.name}`;
@@ -89,7 +89,7 @@ export class GithubRepos {
     return list;
   }
 
-  /** Drops every list kept, so the next ask reads GitHub again. */
+  /** Descarta toda lista guardada, para o próximo pedido ler o GitHub de novo. */
   public forget(): void {
     this.kept = null;
     this.keptBranches.clear();

@@ -1,8 +1,8 @@
 import type { IRepository } from '@/shared/types';
 
 /**
- * A repository as gh printed it through the repository filter, its id as text, or null
- * when the line is not one.
+ * Um repositório como o gh o imprimiu pelo filtro de repositório, o id dele como texto,
+ * ou null quando a linha não é um.
  */
 export function repositoryOf(value: unknown): IRepository | null {
   if (typeof value !== 'object' || value === null) return null;

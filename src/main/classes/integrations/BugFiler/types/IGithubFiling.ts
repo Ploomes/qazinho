@@ -1,4 +1,4 @@
 import type { GithubCli } from '@/main/classes/integrations/GithubCli';
 
-/** What filing a bug asks of GitHub, through the QA's gh. */
+/** O que registrar um bug pede ao GitHub, pelo gh do QA. */
 export type IGithubFiling = Pick<GithubCli, 'api'>;

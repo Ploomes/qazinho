@@ -1,6 +1,6 @@
 /**
- * Each line gh printed through a jq filter, read as JSON; lines that are not JSON are
- * left out.
+ * Cada linha que o gh imprimiu por um filtro jq, lida como JSON; linhas que não são JSON
+ * ficam de fora.
  */
 export function jsonLinesOf(text: string): unknown[] {
   return text.split('\n').flatMap((line) => {

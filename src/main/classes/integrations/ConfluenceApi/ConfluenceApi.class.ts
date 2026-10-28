@@ -19,8 +19,8 @@ import {
 } from './library';
 
 /**
- * Talks to the QA's Confluence on their Jira site, with the same credentials: finds and
- * reads a page of test cases, and publishes a plan as a page.
+ * Fala com o Confluence do QA no site do Jira dele, com as mesmas credenciais: acha e lê
+ * uma página de casos de teste, e publica um plano como uma página.
  */
 export class ConfluenceApi {
   private readonly credentials: () => Promise<IJiraCredentials | null>;
@@ -34,8 +34,7 @@ export class ConfluenceApi {
   }
 
   /**
-   * Whether the QA's Jira account reaches Confluence on the same site, before it is
-   * turned on.
+   * Se a conta do Jira do QA alcança o Confluence no mesmo site, antes de ele ser ligado.
    */
   public async check(): Promise<
     { isOk: true } | { isOk: false; failure: JiraFailure; said: string }
@@ -49,7 +48,7 @@ export class ConfluenceApi {
     return answer.isOk ? { isOk: true } : answer;
   }
 
-  /** The spaces a plan can be published in, by name. */
+  /** Os espaços em que um plano pode ser publicado, pelo nome. */
   public async spaces(): Promise<ConfluenceSpaceList> {
     const signed = await this.credentials();
 
@@ -65,7 +64,9 @@ export class ConfluenceApi {
       : { isListed: false, failure: answer.failure };
   }
 
-  /** The pages whose title holds what the QA typed, or the ones they worked on last. */
+  /**
+   * As páginas cujo título contém o que o QA digitou, ou as que ele trabalhou por último.
+   */
   public async search(query: string): Promise<ConfluencePageList> {
     const signed = await this.credentials();
 
@@ -89,7 +90,8 @@ export class ConfluenceApi {
   }
 
   /**
-   * One page read whole, its body as Markdown, or why Confluence did not hand it over.
+   * Uma página lida inteira, o corpo dela como Markdown, ou por que o Confluence não a
+   * entregou.
    */
   public async page(id: string): Promise<ConfluenceRead> {
     const signed = await this.credentials();
@@ -112,8 +114,8 @@ export class ConfluenceApi {
   }
 
   /**
-   * Publishes a plan: a new page in the space, or the next version of the page it went to
-   * before.
+   * Publica um plano: uma página nova no espaço, ou a próxima versão da página em que ele
+   * foi antes.
    */
   public async publish(plan: IPublishPlan): Promise<PlanPublished> {
     const signed = await this.credentials();

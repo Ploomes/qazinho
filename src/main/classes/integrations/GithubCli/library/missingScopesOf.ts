@@ -6,8 +6,8 @@ const COVERS: Record<string, string[]> = {
 };
 
 /**
- * The scopes QAzinho needs that a token's X-OAuth-Scopes header lacks; none when GitHub
- * sent no such header.
+ * Os escopos de que o QAzinho precisa e que o cabeçalho X-OAuth-Scopes de um token não
+ * tem; nenhum quando o GitHub não mandou esse cabeçalho.
  */
 export function missingScopesOf(header: string | undefined): string[] {
   if (header === undefined) return [];

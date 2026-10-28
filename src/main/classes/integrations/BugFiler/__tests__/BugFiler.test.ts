@@ -16,7 +16,7 @@ const REPORT = {
   blocks: [{ kind: 'paragraph' as const, text: 'SAVE10 is refused.' }],
 };
 
-/** A Jira that files as told, and remembers every file it was handed and every link. */
+/** Um Jira que registra como mandado, e lembra cada arquivo que recebeu e cada link. */
 function fakeJira(
   props: { filed?: JiraFiled; refuses?: string[]; links?: boolean } = {},
 ) {
@@ -80,7 +80,7 @@ function fakeJira(
   };
 }
 
-/** A gh that answers each path as told, and remembers what it was asked. */
+/** Um gh que responde cada caminho como mandado, e lembra o que lhe pediram. */
 function fakeGh(answers: Record<string, GhAnswer>) {
   const asked: { path: string; method?: string; fields?: Record<string, string> }[] = [];
 
