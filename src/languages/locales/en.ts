@@ -512,13 +512,7 @@ export const en = {
     NOTE_FABLE: 'not on your key',
   },
   TOOLS: {
-    ANDROID_FOUND: 'Android SDK found',
-    ANDROID_MISSING: 'Android SDK not found',
-    XCODE_FOUND: 'Xcode found',
-    XCODE_MISSING: 'Xcode not found',
     NOT_FOUND_PATH: 'not found',
-    IDB_FOUND: 'idb found',
-    IDB_MISSING: 'idb not found',
   },
   COMMANDS: {
     HEADING: 'commands',
@@ -602,7 +596,6 @@ export const en = {
     IOS: 'iOS',
     IOS_TEXT: 'A simulator .app that runs on its own, not an .ipa',
     IOS_PLACEHOLDER: 'pick your .app',
-    IOS_MAC_ONLY: 'macOS only',
     CREATE: 'Create project',
     NEEDS_NAME: 'Name the project to create it',
     NEEDS_TARGET: 'Add one target: a URL, an .apk or a .app',
@@ -735,7 +728,6 @@ export const en = {
       'QAzinho has no model of its own. It drives whichever agent you already have installed.',
     DEVICES_NOTE:
       'QAzinho never downloads an SDK, an emulator or Xcode. It finds what is already here and says what is missing.',
-    IOS_OFF: 'iOS targets are off',
     MCPS_NOTE:
       'These live in your own agent, not in QAzinho: you sign in there, and QAzinho never sees the sign-in.',
     INTEGRATIONS_NOTE:

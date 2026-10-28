@@ -514,13 +514,7 @@ export const pt: typeof en = {
     NOTE_FABLE: 'fora da sua chave',
   },
   TOOLS: {
-    ANDROID_FOUND: 'Android SDK encontrado',
-    ANDROID_MISSING: 'Android SDK não encontrado',
-    XCODE_FOUND: 'Xcode encontrado',
-    XCODE_MISSING: 'Xcode não encontrado',
     NOT_FOUND_PATH: 'não encontrado',
-    IDB_FOUND: 'idb encontrado',
-    IDB_MISSING: 'idb não encontrado',
   },
   COMMANDS: {
     HEADING: 'comandos',
@@ -607,7 +601,6 @@ export const pt: typeof en = {
     IOS: 'iOS',
     IOS_TEXT: 'Um .app de simulador que roda sozinho, não .ipa',
     IOS_PLACEHOLDER: 'escolha seu .app',
-    IOS_MAC_ONLY: 'só no macOS',
     CREATE: 'Criar projeto',
     NEEDS_NAME: 'Dê um nome ao projeto para criá-lo',
     NEEDS_TARGET: 'Adicione um target: uma URL, um .apk ou um .app',
@@ -741,7 +734,6 @@ export const pt: typeof en = {
       'O QAzinho não tem modelo próprio. Ele dirige o agente que você já tem instalado.',
     DEVICES_NOTE:
       'O QAzinho nunca baixa SDK, emulador ou Xcode. Ele encontra o que já está aqui e diz o que falta.',
-    IOS_OFF: 'targets de iOS estão desligados',
     MCPS_NOTE:
       'Eles ficam no seu próprio agente, não no QAzinho: você faz o login lá, e o QAzinho nunca vê esse login.',
     INTEGRATIONS_NOTE: 'Nada é enviado sozinho. Você escolhe a run, o bug e o momento.',
