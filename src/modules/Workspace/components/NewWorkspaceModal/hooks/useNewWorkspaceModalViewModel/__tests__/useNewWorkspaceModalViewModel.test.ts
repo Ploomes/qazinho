@@ -42,6 +42,15 @@ describe('useNewWorkspaceModalViewModel', () => {
     );
   });
 
+  it('asks for no platform when the project has only one', () => {
+    useAppStore.setState({ projects: [{ ...PROJECT, targets: [PROJECT.targets[0]!] }] });
+
+    const { result } = renderHook(() => useNewWorkspaceModalViewModel());
+
+    expect(result.current.hasPlatforms).toBe(false);
+    expect(result.current.chosenTargetId).toBe('t1');
+  });
+
   it('cannot create a workspace with no name', () => {
     const { result } = renderHook(() => useNewWorkspaceModalViewModel());
 
@@ -53,7 +62,7 @@ describe('useNewWorkspaceModalViewModel', () => {
 
     act(() => {
       result.current.onNameChange('Checkout regression');
-      result.current.onTargetChange('t2');
+      result.current.platforms[1]?.onClick();
     });
     act(() => {
       result.current.onCreate();
@@ -72,7 +81,7 @@ describe('useNewWorkspaceModalViewModel', () => {
 
     act(() => {
       result.current.onNameChange('Sign up');
-      result.current.onTargetChange('t2');
+      result.current.platforms[1]?.onClick();
     });
     act(() => {
       result.current.onCreate();
@@ -110,7 +119,7 @@ describe('useNewWorkspaceModalViewModel', () => {
       const { result } = renderHook(() => useNewWorkspaceModalViewModel());
 
       expect(result.current.canConnect).toBe(false);
-      expect(result.current.issueText).toContain('name a story in the chat');
+      expect(result.current.issueText).toContain('Name a Jira story in the chat');
     });
   });
 });

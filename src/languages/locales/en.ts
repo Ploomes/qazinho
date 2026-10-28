@@ -704,14 +704,12 @@ export const en = {
     NAME: 'what are you testing',
     NAME_PLACEHOLDER: 'Checkout regression',
     PLATFORM: 'platform',
-    ISSUE: 'linked issue · optional',
-    ISSUE_EMPTY:
-      "Connect Jira and the agent plans from your team's stories. Without it, you and the agent write the plan together.",
+    ISSUE_EMPTY: "With Jira connected, the agent plans from your team's stories.",
     ISSUE_READY:
-      'Jira is connected: name a story in the chat, by its key such as PROJ-123 or its link, and the agent plans from it.',
+      'Name a Jira story in the chat, by its key (PROJ-123) or its link, and the agent plans from it.',
     ISSUE_CONNECT: 'Connect Jira',
     CREATE: 'Create workspace',
-    NEEDS_NAME: 'Say what you are testing to create it',
+    NEEDS_NAME: 'Say what you are testing',
     NEEDS_TARGET: 'This project has no platform to run on',
   },
   SETTINGS: {

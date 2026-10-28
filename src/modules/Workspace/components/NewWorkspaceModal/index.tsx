@@ -8,6 +8,7 @@ export const NewWorkspaceModal: React.FC = () => {
   const {
     name,
     footerHint,
+    hasPlatforms,
     platforms,
     projectName,
     canCreate,
@@ -16,7 +17,6 @@ export const NewWorkspaceModal: React.FC = () => {
     connectLabel,
     onConnect,
     onNameChange,
-    onTargetChange,
     onCancel,
     onCreate,
   } = useNewWorkspaceModalViewModel();
@@ -43,40 +43,33 @@ export const NewWorkspaceModal: React.FC = () => {
         />
       </div>
 
-      <div>
-        <Eyebrow>{t('NEW_WORKSPACE.PLATFORM')}</Eyebrow>
-        <div className="new-workspace__platforms">
-          {platforms.map((platform) => (
-            <button
-              key={platform.id}
-              type="button"
-              className={
-                platform.isChosen
-                  ? 'new-workspace__platform new-workspace__platform--chosen'
-                  : 'new-workspace__platform'
-              }
-              aria-pressed={platform.isChosen}
-              onClick={() => {
-                onTargetChange(platform.id);
-              }}
-            >
-              <PlatformIcon kind={platform.kind} size={16} />
-              {platform.label}
-            </button>
-          ))}
+      {hasPlatforms && (
+        <div>
+          <Eyebrow>{t('NEW_WORKSPACE.PLATFORM')}</Eyebrow>
+          <div className="new-workspace__platforms">
+            {platforms.map((platform) => (
+              <button
+                key={platform.id}
+                type="button"
+                className={platform.className}
+                aria-pressed={platform.isChosen}
+                onClick={platform.onClick}
+              >
+                <PlatformIcon kind={platform.kind} size={16} />
+                {platform.label}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      <div>
-        <Eyebrow>{t('NEW_WORKSPACE.ISSUE')}</Eyebrow>
-        <div className="new-workspace__issue">
-          <p className="new-workspace__issue-text">{issueText}</p>
-          {canConnect && (
-            <Button size="sm" onClick={onConnect}>
-              {connectLabel}
-            </Button>
-          )}
-        </div>
+      <div className="new-workspace__issue">
+        <p className="new-workspace__issue-text">{issueText}</p>
+        {canConnect && (
+          <Button size="sm" variant="ghost" onClick={onConnect}>
+            {connectLabel}
+          </Button>
+        )}
       </div>
     </ModalFrame>
   );

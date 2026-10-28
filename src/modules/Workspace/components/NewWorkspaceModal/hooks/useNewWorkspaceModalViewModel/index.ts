@@ -70,11 +70,19 @@ export const useNewWorkspaceModalViewModel = () => {
   return {
     name,
     targets,
+    hasPlatforms: targets.length > 1,
     platforms: targets.map((target) => ({
       id: target.id,
       kind: target.kind,
       label: t(PLATFORM_LABEL[target.kind]),
       isChosen: target.id === chosen?.id,
+      className:
+        target.id === chosen?.id
+          ? 'new-workspace__platform new-workspace__platform--chosen'
+          : 'new-workspace__platform',
+      onClick: () => {
+        setTargetId(target.id);
+      },
     })),
     footerHint: blocking,
     chosenTargetId: chosen?.id ?? null,
@@ -91,7 +99,6 @@ export const useNewWorkspaceModalViewModel = () => {
       openSettings();
     },
     onNameChange: setName,
-    onTargetChange: setTargetId,
     onCancel: closeModal,
     onCreate,
   };

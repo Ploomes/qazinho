@@ -710,14 +710,12 @@ export const pt: typeof en = {
     NAME: 'o que você vai testar',
     NAME_PLACEHOLDER: 'Regressão do checkout',
     PLATFORM: 'plataforma',
-    ISSUE: 'issue vinculada · opcional',
-    ISSUE_EMPTY:
-      'Conecte o Jira e o agente planeja a partir das histórias do time. Sem ele, você e o agente escrevem o plano juntos.',
+    ISSUE_EMPTY: 'Com o Jira conectado, o agente planeja a partir das histórias do time.',
     ISSUE_READY:
-      'O Jira está conectado: cite uma história no chat, pela chave (como PROJ-123) ou pelo link, e o agente planeja a partir dela.',
+      'Cite uma história do Jira no chat, pela chave (PROJ-123) ou pelo link, e o agente planeja a partir dela.',
     ISSUE_CONNECT: 'Conectar o Jira',
     CREATE: 'Criar workspace',
-    NEEDS_NAME: 'Diga o que você vai testar para criá-lo',
+    NEEDS_NAME: 'Diga o que vai testar',
     NEEDS_TARGET: 'Este projeto não tem plataforma para rodar',
   },
   SETTINGS: {
