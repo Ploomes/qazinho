@@ -27,8 +27,8 @@ const SDK = join(
   'client',
 );
 
-// Works the way Claude Code does with --mcp-config: it calls the device tools, sees each result,
-// and reports the step through the report tool.
+// Funciona do jeito que o Claude Code faz com --mcp-config: chama as ferramentas do
+// dispositivo, vê cada resultado, e relata o passo pela ferramenta report.
 const RESOURCEFUL = `#!/usr/bin/env node
 const { Client } = require(${JSON.stringify(join(SDK, 'index.js'))});
 const { StreamableHTTPClientTransport } = require(${JSON.stringify(join(SDK, 'streamableHttp.js'))});
@@ -67,7 +67,10 @@ const server = createServer((_request, response) => {
   response.end(PAGE);
 });
 
-/** Walks one step with a fake agent; `inFlight` is what main held when the step landed, and after. */
+/**
+ * Anda um passo com um agente fake; `inFlight` é o que a main segurava quando o passo
+ * chegou, e depois.
+ */
 async function walkWith(
   script: string,
   url = `http://127.0.0.1:${String(PORT)}/`,

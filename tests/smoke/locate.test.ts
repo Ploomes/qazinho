@@ -6,9 +6,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { WebDriver } from '@salve-software/qazinho-harness/engine';
 
 /**
- * A sign-in page, like the shop's: an "Entrar" link in the menu and an "Entrar" button in the
- * form, with the page's heading saying "Entrar" too. The agent called the button "Entrar #2",
- * and the click used to land on the heading.
+ * Uma página de login, como a da loja: um link "Entrar" no menu e um botão "Entrar" no
+ * formulário, com o título da página dizendo "Entrar" também. O agente chamou o botão de
+ * "Entrar #2", e o clique caía no título.
  */
 const PAGE = `<!doctype html><html><head><meta charset="utf-8"></head><body>
   <header><a href="#menu">Entrar</a></header>
@@ -77,8 +77,8 @@ describe('controls that read alike in different roles', () => {
 });
 
 /**
- * A form labelled the plain way, with <label>: look listed its fields with no name at all, and
- * a fill on the state dropdown failed, since a dropdown is not typed in.
+ * Um formulário rotulado do jeito simples, com <label>: o look listava os campos dele sem
+ * nome nenhum, e um fill no dropdown de estado falhava, já que um dropdown não se digita.
  */
 describe('a form labelled with <label>', () => {
   it('lists each field by its label', async () => {
@@ -102,8 +102,9 @@ describe('a form labelled with <label>', () => {
 });
 
 /**
- * Chrome keeps a date field as YYYY-MM-DD whatever it shows, and Playwright fills it only that
- * way: "10/05/1990", the way a Brazilian plan writes it, failed with a bare "Malformed value".
+ * O Chrome guarda um campo de data como YYYY-MM-DD seja o que for que mostre, e o
+ * Playwright só o preenche desse jeito: "10/05/1990", como um plano brasileiro a escreve,
+ * falhava com um seco "Malformed value".
  */
 describe('a date field', () => {
   it('takes a date written the way the browser keeps it', async () => {
@@ -122,8 +123,9 @@ describe('a date field', () => {
 });
 
 /**
- * A design system's button: the <button> lives in a shadow root, and its words are the host's,
- * slotted in. Its innerText is empty, so look left it out of the controls the agent reads.
+ * O botão de um design system: o <button> vive numa shadow root, e as palavras dele são
+ * do host, por slot. O innerText dele é vazio, então o look o deixava fora dos controles
+ * que o agente lê.
  */
 describe('a button inside a web component', () => {
   it('is listed by the words slotted into it', async () => {
@@ -132,8 +134,9 @@ describe('a button inside a web component', () => {
 });
 
 /**
- * Tabs and switches built from divs with an ARIA role, as most component libraries draw them:
- * a click on one worked, but look listed none, so the agent did not know they were controls.
+ * Abas e switches feitos de divs com um papel ARIA, como a maioria das bibliotecas de
+ * componentes os desenha: um clique num funcionava, mas o look não listava nenhum, então
+ * o agente não sabia que eram controles.
  */
 describe('controls drawn as divs with an ARIA role', () => {
   it('are listed by their role and their words', async () => {

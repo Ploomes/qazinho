@@ -9,7 +9,7 @@ const paragraph = (text: string) => ({
   content: [{ type: 'text', text }],
 });
 
-/** A story as Jira Cloud answers it with every field and their names. */
+/** Uma história como o Jira Cloud a responde com todo campo e os nomes deles. */
 export function storyOf(props: {
   key: string;
   attachments: { id: string; filename: string; mimeType: string; size: number }[];
@@ -66,10 +66,11 @@ export function storyOf(props: {
 }
 
 /**
- * A Jira Cloud site on loopback, for QAzinho's Jira client to talk to: it searches, hands over a
- * story and its files, files a bug with its attachments and links, hands a filed one back with
- * the comments under it and takes more, and remembers what it was asked. Only the email and token it knows are let in, and the project LOCKED asks for a field
- * QAzinho never fills, the way a team's required component does.
+ * Um site do Jira Cloud em loopback, para o cliente de Jira do QAzinho falar com ele:
+ * busca, entrega uma história e os arquivos dela, registra um bug com anexos e links,
+ * devolve um registrado com os comentários sob ele e aceita mais, e lembra o que lhe
+ * pediram. Só o e-mail e o token que ele conhece entram, e o projeto LOCKED pede um campo
+ * que o QAzinho nunca preenche, do jeito que o componente obrigatório de um time faz.
  */
 export function fakeJira(props: {
   files: Record<string, { name: string; mimeType: string; bytes: Buffer }>;

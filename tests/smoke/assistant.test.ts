@@ -20,9 +20,9 @@ const SDK = join(
 );
 
 /**
- * Claude Code as the assistant: it reads QAzinho's tools from --mcp-config, renames a workspace,
- * then deletes one, whose answer waits on the QA, and says what each call came back with. It
- * writes down the flags it got and the MCP config, timeout included.
+ * O Claude Code como o assistente: lê as ferramentas do QAzinho do --mcp-config, renomeia
+ * um workspace, depois apaga um, cuja resposta espera pelo QA, e diz com o que cada
+ * chamada voltou. Ele anota as flags que recebeu e a config de MCP, timeout incluído.
  */
 const ASSISTANT = (root: string) => `#!/usr/bin/env node
 const fs = require('node:fs');
@@ -64,8 +64,9 @@ const APP: IAppSnapshot = {
 };
 
 /**
- * The page as the bridge reaches it: it renames on the spot, and holds a delete until the QA
- * confirms, here a little later. One that never answers stands for a window that went quiet.
+ * A página como a bridge a alcança: renomeia na hora, e segura um apagar até o QA
+ * confirmar, aqui um pouco depois. Uma que nunca responde representa uma janela que ficou
+ * calada.
  */
 function fakePage(props: { isQuiet: boolean }) {
   const heard: AppToolCall[] = [];

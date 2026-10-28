@@ -10,7 +10,10 @@ const SITE = `http://127.0.0.1:${String(PORT)}`;
 
 const confluence = fakeConfluence();
 
-/** Confluence on beside Jira, or off: `credentials` answers only when it is on, `jira` always. */
+/**
+ * O Confluence ligado ao lado do Jira, ou desligado: `credentials` só responde quando
+ * está ligado, `jira` sempre.
+ */
 const apiOf = (props: { isOn: boolean; token?: string }) => {
   const signed = { site: SITE, email: JIRA_EMAIL, token: props.token ?? JIRA_TOKEN };
 
@@ -23,7 +26,7 @@ const apiOf = (props: { isOn: boolean; token?: string }) => {
 
 const api = apiOf({ isOn: true });
 
-/** A plan as the Plan tab writes it out, its steps in a table. */
+/** Um plano como a aba Plano o escreve, com os passos numa tabela. */
 const planBlocks = (title: string): BugReportBlock[] => [
   { kind: 'paragraph', text: '1 case, 2 steps.' },
   { kind: 'heading', text: `TC-01 · ${title}` },

@@ -14,7 +14,10 @@ const PORT = 4371;
 const SHOP_KEY = 's3cret-shop-key-42';
 const SUITE = join(process.cwd(), 'tests', 'smoke', 'fixtures', 'suite');
 
-/** A shop with a home that links to its products, and no cart link: CT-NAV-002 fails on it. */
+/**
+ * Uma loja com uma home que linka para os produtos, e sem link de carrinho: o CT-NAV-002
+ * falha nela.
+ */
 const server = createServer((request, response) => {
   const isProducts = (request.url ?? '/').startsWith('/products');
 
@@ -142,7 +145,10 @@ describe("a team's own Playwright suite", () => {
     expect(failed?.attachments.some(({ name }) => name === 'trace')).toBe(true);
   }, 180_000);
 
-  /** The variable reaches the test from the environment, and its value never reaches the page or a run's file. */
+  /**
+   * A variável chega ao teste pelo ambiente, e o valor dela nunca chega à página nem ao
+   * arquivo de uma run.
+   */
   it("reads a variable's value back as its name in what a test says", async () => {
     const run = (await runner.runs('p')).find(({ id }) => id === 's-01');
     const error =

@@ -13,7 +13,9 @@ const sizes: { welcome: number[] | null; app: number[] | null } = {
   app: null,
 };
 
-/** The window's size once it is on screen, or nothing while it is still hidden. */
+/**
+ * O tamanho da janela depois que ela está na tela, ou nada enquanto ainda está escondida.
+ */
 async function shownSize(): Promise<number[] | null> {
   return app.evaluate(({ BrowserWindow }) => {
     const [open] = BrowserWindow.getAllWindows();
@@ -22,7 +24,10 @@ async function shownSize(): Promise<number[] | null> {
   });
 }
 
-/** Polls the window until its size is what `isDone` waits for; a resize animates on macOS. */
+/**
+ * Faz polling na janela até o tamanho dela ser o que `isDone` espera; um resize anima no
+ * macOS.
+ */
 async function sizeOnce(isDone: (size: number[] | null) => boolean) {
   for (let look = 0; look < 40; look += 1) {
     const size = await shownSize();
@@ -35,7 +40,10 @@ async function sizeOnce(isDone: (size: number[] | null) => boolean) {
   return shownSize();
 }
 
-/** The resources popover redraws on every sweep, so its X moves until the list settles. */
+/**
+ * O popover de recursos redesenha a cada varredura, então o X dele se move até a lista
+ * assentar.
+ */
 async function waitUntilStill(selector: string) {
   let before = '';
 
@@ -53,7 +61,8 @@ beforeAll(async () => {
   app = await electron.launch({
     args: [
       join(process.cwd(), 'out', 'main', 'index.js'),
-      // Electron: its own data directory, so a run here never touches the QA's real projects.
+      // Electron: uma pasta de dados própria, para uma run aqui nunca tocar os projetos
+      // reais do QA.
       `--user-data-dir=${await mkdtemp(join(tmpdir(), 'qazinho-e2e-'))}`,
     ],
   });
@@ -67,7 +76,8 @@ beforeAll(async () => {
 
   await page.waitForSelector('.titlebar');
   sizes.welcome = await sizeOnce((size) => size !== null);
-  // A fresh data directory is a first run: past the setup is the app these tests look at.
+  // Uma pasta de dados nova é uma primeira execução: depois da configuração está o app
+  // que estes testes olham.
   await page.locator('.onboarding__skip').click();
   sizes.app = await sizeOnce((size) => size?.[0] !== sizes.welcome?.[0]);
 }, 120_000);
@@ -77,7 +87,7 @@ afterAll(async () => {
 });
 
 describe('the real window', () => {
-  /** The window opens hidden, and the page says which size it wants before it shows. */
+  /** A janela abre escondida, e a página diz que tamanho quer antes de ela aparecer. */
   it('opens small for the welcome, and grows to full once the QA is in', () => {
     expect(sizes.welcome).toEqual([1120, 740]);
     expect(sizes.app).toEqual([1440, 900]);
@@ -86,7 +96,7 @@ describe('the real window', () => {
   it('opens, and the bridge answers', async () => {
     expect(await page.locator('.titlebar').count()).toBe(1);
     const bridge = await page.evaluate(() => {
-      // The callback runs in the page, where `window` is not in this project's lib.
+      // O callback roda na página, onde `window` não está na lib deste projeto.
       const web = globalThis as unknown as { qazinho?: unknown };
 
       return typeof web.qazinho;
@@ -118,7 +128,7 @@ describe('the real window', () => {
   });
 
   it('opens the OS file picker from the android field', async () => {
-    // The dialog is modal and blocks the main process, so it is watched, not clicked through.
+    // O diálogo é modal e bloqueia o processo main, então ele é observado, não clicado.
     const opened = app.evaluate(({ dialog }) => {
       return new Promise<string>((named) => {
         const real = dialog.showOpenDialog.bind(dialog);

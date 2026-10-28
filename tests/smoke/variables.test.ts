@@ -13,10 +13,16 @@ import { Harness, McpHost } from '@salve-software/qazinho-harness';
 const PORT = 4353;
 const EMAIL = 'buyer@shop.test';
 
-/** `$&` and `$1` mean something to a string replace, and a space to a shell: the field must get them as typed. */
+/**
+ * `$&` e `$1` significam algo para um replace de string, e um espaço para um shell: o
+ * campo precisa recebê-los como digitados.
+ */
 const PASSWORD = 'Sup3r $& $1 s3cret';
 
-/** The shop lets the buyer in only with the password typed exactly, and greets them by their email. */
+/**
+ * A loja só deixa o comprador entrar com a senha digitada exatamente, e o cumprimenta
+ * pelo e-mail.
+ */
 const server = createServer((_request, response) => {
   response.writeHead(200, { 'content-type': 'text/html' });
   response.end(`<!doctype html><html><body>
@@ -42,8 +48,9 @@ const SDK = join(
 );
 
 /**
- * Signs in the way Claude Code would, typing the variables as the step names them, and writes
- * down everything QAzinho told it: the case it was given and each tool's answer.
+ * Entra do jeito que o Claude Code entraria, digitando as variáveis como o passo as
+ * nomeia, e anota tudo o que o QAzinho lhe disse: o caso que recebeu e a resposta de cada
+ * ferramenta.
  */
 const agentScript = (heard: string) => `#!/usr/bin/env node
 const fs = require('fs');

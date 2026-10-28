@@ -17,8 +17,9 @@ const DESKTOP = { width: 1280, height: 800 };
 
 describe('resizing the device mid-run', () => {
   /**
-   * The QA switched the device to Phone while the first case walked: the browser shrank, and
-   * the next case's agent was still told it drove a 1280 × 800 window.
+   * O QA trocou o dispositivo para Celular enquanto o primeiro caso andava: o navegador
+   * encolheu, e o agente do caso seguinte ainda ouvia que dirigia uma janela de 1280 ×
+   * 800.
    */
   it('tells the next case the size the QA picked, not the one the run began with', async () => {
     const site = createServer((_request, response) => {
@@ -33,7 +34,7 @@ describe('resizing the device mid-run', () => {
     const agent = join(root, 'agent');
 
     await mkdir(prompts);
-    // Writes down the system prompt of each turn, and answers nothing.
+    // Anota o prompt de sistema de cada turno, e não responde nada.
     await writeFile(
       agent,
       `#!/bin/sh
@@ -102,9 +103,9 @@ done
   });
 
   /**
-   * The QA switched a phone run to Desktop: the window grew, but every case after the first
-   * opened its fresh tab at the size the run began with, and so did a run resized while Chrome
-   * was still starting.
+   * O QA trocou uma run de celular para Desktop: a janela cresceu, mas todo caso depois
+   * do primeiro abria a aba nova no tamanho com que a run começou, e também uma run
+   * redimensionada enquanto o Chrome ainda iniciava.
    */
   it('keeps the size picked mid-run through a fresh start, and through a switch made while Chrome starts', async () => {
     const site = createServer((_request, response) => {

@@ -9,10 +9,11 @@ const run = promisify(execFile);
 const SOURCE = fileURLToPath(new URL('./ios', import.meta.url));
 
 /**
- * Builds the visit counter app in fixtures/ios into a simulator `.app`, from source, with the
- * Xcode the QA already has: clang for the simulator, then an ad-hoc signature, which a simulator
- * on Apple silicon asks for. It shows "Visits: N" and a "Save visit" button, like the Android
- * one. Returns null when Xcode is missing, so the suite can say so instead of failing.
+ * Constrói o app contador de visitas de fixtures/ios num `.app` de simulador, do fonte,
+ * com o Xcode que o QA já tem: clang para o simulador, depois uma assinatura ad-hoc, que
+ * um simulador em Apple silicon pede. Ele mostra "Visits: N" e um botão "Save visit",
+ * como o do Android. Devolve null quando o Xcode falta, para a suíte dizer isso em vez de
+ * falhar.
  */
 export async function buildFixtureApp(): Promise<string | null> {
   const app = join(await mkdtemp(join(tmpdir(), 'qazinho-app-')), 'Fixture.app');

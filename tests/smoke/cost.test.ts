@@ -22,9 +22,9 @@ const SDK = join(
   'client',
 );
 
-// Reports its one step and waits, the way Claude Code does once the tool answers. The QAzinho
-// interrupt is Ctrl+C, and Claude Code answers it with a closing line that says what the turn
-// cost: so does this one.
+// Relata o único passo dele e espera, do jeito que o Claude Code faz quando a ferramenta
+// responde. A interrupção do QAzinho é Ctrl+C, e o Claude Code a responde com uma linha
+// final que diz quanto o turno custou: este também.
 const PAYING = `#!/usr/bin/env node
 const { Client } = require(${JSON.stringify(join(SDK, 'index.js'))});
 const { StreamableHTTPClientTransport } = require(${JSON.stringify(join(SDK, 'streamableHttp.js'))});
@@ -45,8 +45,9 @@ process.stdin.on('end', async () => {
 
 describe('what a run cost', () => {
   /**
-   * The agent was ended with SIGTERM the moment its case was over, and SIGTERM leaves no closing
-   * line: no case ever said what it cost. Ctrl+C does, and the run waits for it before it ends.
+   * O agente era terminado com SIGTERM no momento em que o caso dele acabava, e o SIGTERM
+   * não deixa linha final: nenhum caso dizia quanto custou. O Ctrl+C deixa, e a run
+   * espera por ela antes de terminar.
    */
   it('hears what each case cost from its agent, all of it before the run ends', async () => {
     const site = createServer((_request, response) => {

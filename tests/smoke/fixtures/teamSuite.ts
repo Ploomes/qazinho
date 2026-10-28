@@ -6,15 +6,16 @@ import { fileURLToPath } from 'node:url';
 
 const SOURCE = fileURLToPath(new URL('./suite', import.meta.url));
 
-/** Runs git in a folder, with what it printed. */
+/** Roda o git numa pasta, com o que ele imprimiu. */
 export function git(props: { cwd: string; args: string[] }): string {
   return execFileSync('git', props.args, { cwd: props.cwd, encoding: 'utf8' }).trim();
 }
 
 /**
- * The fixture suite as a team keeps it: a git repository of its own in a temporary folder, one
- * commit on main, its Playwright reached through a link to this repository's packages, and a
- * bare remote beside it to push to. QAzinho's own repository is never touched.
+ * A suíte de fixture como um time a mantém: um repositório git próprio numa pasta
+ * temporária, um commit na main, o Playwright dela alcançado por um link para os pacotes
+ * deste repositório, e um remoto bare ao lado para dar push. O repositório do próprio
+ * QAzinho nunca é tocado.
  */
 export async function teamSuite(): Promise<{
   folder: string;

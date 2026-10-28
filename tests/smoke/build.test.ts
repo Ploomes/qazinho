@@ -12,7 +12,10 @@ import { Harness } from '@salve-software/qazinho-harness';
 
 const COMMIT = 'c0ffee0000000000000000000000000000000002';
 
-/** gh as QAzinho calls it for a build: the branch pinned to a commit, then the commit as a tarball. */
+/**
+ * O gh como o QAzinho o chama para um build: a branch fixada num commit, depois o commit
+ * como tarball.
+ */
 const FAKE_GH = String.raw`#!/bin/bash
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 LAST="$${'{@: -1}'}"
@@ -24,9 +27,9 @@ esac
 `;
 
 /**
- * Claude Code as the builder: it says what it runs on the stream, writes the release APK where a
- * React Native build leaves it, and answers in the schema, after checking it got the folder, the
- * SDK and the JDK it was handed.
+ * O Claude Code como o construtor: diz o que roda no stream, escreve o APK de release
+ * onde um build de React Native o deixa, e responde no schema, depois de conferir que
+ * recebeu a pasta, o SDK e o JDK entregues.
  */
 const FAKE_AGENT = String.raw`#!/usr/bin/env node
 const fs = require('node:fs');

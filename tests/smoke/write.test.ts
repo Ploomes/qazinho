@@ -25,7 +25,7 @@ const SDK = join(
   'client',
 );
 
-/** A shop whose menu opens the cart, which no test of the suite checks yet. */
+/** Uma loja cujo menu abre o carrinho, que nenhum teste da suíte confere ainda. */
 const server = createServer((request, response) => {
   const path = (request.url ?? '/').split('?')[0] ?? '/';
 
@@ -38,8 +38,9 @@ const server = createServer((request, response) => {
 });
 
 /**
- * Plays the automator asked for a new test: it checks it got the test to write, writes the spec
- * the way it would with Write, runs it through QAzinho's run_tests, and answers in the schema.
+ * Faz o papel do automator pedido para um teste novo: confere que recebeu o teste a
+ * escrever, escreve a spec do jeito que faria com o Write, a roda pelo run_tests do
+ * QAzinho, e responde no schema.
  */
 const AGENT = (heard: string) => String.raw`#!/usr/bin/env node
 const fs = require('node:fs');

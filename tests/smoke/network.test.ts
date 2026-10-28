@@ -16,12 +16,16 @@ const PORT = 4357;
 const EMAIL = 'buyer@shop.test';
 const TOKEN = 'abc12345';
 
-/** A request the shop never answers, like a long poll still open when the run ends. */
+/**
+ * Um pedido que a loja nunca responde, como um long poll ainda aberto quando a run
+ * termina.
+ */
 const waiting: ServerResponse[] = [];
 
 /**
- * The shop loads a profile by the buyer's email with a token in its address, fails a payment,
- * misses an image and keeps one call open: every way a request can end, on real Chrome.
+ * A loja carrega um perfil pelo e-mail do comprador com um token no endereço, falha um
+ * pagamento, perde uma imagem e mantém uma chamada aberta: todo jeito como um pedido pode
+ * terminar, no Chrome real.
  */
 const server = createServer((request, response) => {
   const path = (request.url ?? '/').split('?')[0];
@@ -80,7 +84,10 @@ const SDK = join(
   'client',
 );
 
-/** Types the buyer's email as the variable it is, loads the profile, and passes once it shows. */
+/**
+ * Digita o e-mail do comprador como a variável que ele é, carrega o perfil, e passa
+ * quando ele aparece.
+ */
 const AGENT = `#!/usr/bin/env node
 const { Client } = require(${JSON.stringify(join(SDK, 'index.js'))});
 const { StreamableHTTPClientTransport } = require(${JSON.stringify(join(SDK, 'streamableHttp.js'))});
@@ -185,7 +192,10 @@ describe("a web run's network", () => {
     expect(find({ path: '/missing.png' })).toMatchObject({ type: 'image', status: 404 });
   });
 
-  /** The size is the body as it crossed the wire: this one came chunked, so it weighs a little more. */
+  /**
+   * O tamanho é o corpo como cruzou a rede: este veio em chunks, então pesa um pouco
+   * mais.
+   */
   it('times each call, and sizes the answer of a call or a page', () => {
     const profile = find({ path: '/api/profile' });
 

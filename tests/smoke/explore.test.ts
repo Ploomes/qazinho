@@ -12,7 +12,10 @@ import { Harness, McpHost } from '@salve-software/qazinho-harness';
 
 const PORT = 4354;
 
-/** A shop of two pages: the cart's total disagrees with its one item, for the explorer to find. */
+/**
+ * Uma loja de duas páginas: o total do carrinho discorda do único item dele, para o
+ * explorador achar.
+ */
 const server = createServer((request, response) => {
   response.writeHead(200, { 'content-type': 'text/html' });
   response.end(
@@ -33,9 +36,10 @@ const SDK = join(
 );
 
 /**
- * Explores the shop the way Claude Code would: notes the home, opens the cart, notes it, files
- * the wrong total and finishes with a case. `pause` makes it dawdle before the cart, so a short
- * exploration runs out of time under it. It writes down every tool's answer, and the tools it saw.
+ * Explora a loja do jeito que o Claude Code faria: anota a home, abre o carrinho, o
+ * anota, registra o total errado e termina com um caso. `pause` o faz enrolar antes do
+ * carrinho, para uma exploração curta estourar o tempo sob ele. Anota a resposta de toda
+ * ferramenta, e as ferramentas que viu.
  */
 const agentScript = (heard: string) => `#!/usr/bin/env node
 const fs = require('fs');

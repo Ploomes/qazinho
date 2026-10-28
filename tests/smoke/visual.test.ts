@@ -14,9 +14,10 @@ import { Harness, McpHost } from '@salve-software/qazinho-harness';
 const PORT = 4340;
 
 /**
- * A product page whose text is all there and whose screen is not: a button covers the price, the
- * photo is broken and the shipping note is white on white. Only an agent that sees the picture
- * fails the first three cases; the fourth works, so a blind "fail everything" does not pass either.
+ * Uma página de produto cujo texto está todo lá e a tela não: um botão cobre o preço, a
+ * foto está quebrada e a nota de frete é branca sobre branco. Só um agente que vê a
+ * imagem reprova os três primeiros casos; o quarto funciona, então um "reprovar tudo"
+ * cego também não passa.
  */
 const STEPS = [
   {

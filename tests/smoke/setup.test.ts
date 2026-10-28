@@ -5,7 +5,8 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { SetupInstaller } from '@/main/classes/setup/SetupInstaller';
 
-// Prints the way npm does, with a line redrawn by a carriage return, and fails on demand.
+// Imprime do jeito que o npm faz, com uma linha redesenhada por um carriage return, e
+// falha quando pedido.
 function fakeNpm(exitCode: number) {
   return `#!/bin/sh
 printf 'idealTree: timing\\rreify: fetching @anthropic-ai/claude-code\\n'

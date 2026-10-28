@@ -12,9 +12,10 @@ import { agentFailure } from '@/main/library';
 import { Harness, McpHost } from '@salve-software/qazinho-harness';
 
 /**
- * A Codex that speaks `codex exec --json` the way the real one does: thread.started, items, and
- * turn.completed or turn.failed. The signed-out lines are the ones a real signed-out Codex
- * printed; the rest follows Codex's documented events, since no signed-in Codex was at hand.
+ * Um Codex que fala `codex exec --json` do jeito que o real fala: thread.started, items,
+ * e turn.completed ou turn.failed. As linhas de deslogado são as que um Codex real
+ * deslogado imprimiu; o resto segue os eventos documentados do Codex, já que nenhum Codex
+ * logado estava à mão.
  */
 const PORT = 4327;
 const SDK = join(

@@ -6,10 +6,11 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { WebDriver } from '@salve-software/qazinho-harness/engine';
 
 /**
- * "Delete" asks first, with the browser's own confirm, and "Save" says so with an alert. Chrome
- * driven by Playwright closed both in silence, as Cancel: the item was never deleted, and the agent
- * never knew a dialog had been there. Then every dialog was answered OK, and a step that cancels
- * a deletion could only be blocked: a click now says how to answer what it opens.
+ * "Delete" pergunta antes, com o confirm do próprio navegador, e "Save" avisa com um
+ * alert. O Chrome dirigido pelo Playwright fechava os dois em silêncio, como Cancelar: o
+ * item nunca era apagado, e o agente nunca sabia que um diálogo tinha estado lá. Depois
+ * todo diálogo era respondido com OK, e um passo que cancela uma exclusão só podia ser
+ * bloqueado: um clique agora diz como responder ao que abre.
  */
 const PAGE = `<!doctype html><html><body>
   <button onclick="document.getElementById('out').textContent = confirm('Delete the item?') ? 'Deleted' : 'Kept'">Delete</button>

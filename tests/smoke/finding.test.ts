@@ -22,8 +22,8 @@ const SDK = join(
   'client',
 );
 
-// Writes down the message each case opens with, files a bug on the side of the first case's
-// step, then reports the step passed, the way the runner is told to.
+// Anota a mensagem com que cada caso abre, registra um bug ao lado do passo do primeiro
+// caso, depois relata o passo como passou, do jeito que mandam o runner fazer.
 const NOTICING = (prompts: string) => `#!/usr/bin/env node
 const { Client } = require(${JSON.stringify(join(SDK, 'index.js'))});
 const { StreamableHTTPClientTransport } = require(${JSON.stringify(join(SDK, 'streamableHttp.js'))});
@@ -50,8 +50,9 @@ process.stdin.on('end', async () => {
 
 describe('a bug on the side of a step', () => {
   /**
-   * The runner saw a wrong price that its step did not ask about and could only leave a note: the
-   * bug never reached Bugs. It now files it, with the screen it saw, and later cases are told.
+   * O runner viu um preço errado que o passo dele não perguntava e só podia deixar uma
+   * nota: o bug nunca chegava a Bugs. Agora ele o registra, com a tela que viu, e os
+   * casos seguintes são avisados.
    */
   it('files it with its screen, keeps the step passed, and tells the next case it is filed', async () => {
     const site = createServer((_request, response) => {

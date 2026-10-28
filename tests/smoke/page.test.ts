@@ -21,7 +21,7 @@ const TYPES: Record<string, string> = {
 const server = createServer((request, response) => {
   const asked = (request.url ?? '/').split('?')[0] ?? '/';
 
-  // Chrome asks for a favicon on its own; an Electron window never does.
+  // O Chrome pede um favicon sozinho; uma janela do Electron nunca pede.
   if (asked === '/favicon.ico') {
     response.writeHead(204).end();
 
@@ -45,7 +45,10 @@ const server = createServer((request, response) => {
 let page: Page;
 const said: string[] = [];
 
-/** Both popovers hang off one toggle each, so a test that wants one open says so itself. */
+/**
+ * Os dois popovers dependem de um toggle cada, então um teste que quer um aberto diz isso
+ * ele mesmo.
+ */
 async function openModelMenu() {
   if ((await page.locator('.model-popover').count()) === 0)
     await page.locator('.titlebar__meter-button').last().click();
@@ -78,10 +81,11 @@ describe('the built page, with no bridge behind it', () => {
   it('opens on the first-run setup, and walks it without a bridge', async () => {
     expect(await page.locator('.titlebar').count()).toBe(1);
     expect(await page.locator('.speech-bubble').innerText()).toContain("I'm the Intern");
-    // Electron swallows a click in the drag strip, and Skip setup sits inside it.
+    // O Electron engole um clique na faixa de arrasto, e o Pular configuração fica dentro
+    // dela.
     expect(
       await page.locator('.onboarding__skip').evaluate((skip: object) => {
-        // The callback runs in the page, where DOM types are not in this project's lib.
+        // O callback roda na página, onde os tipos do DOM não estão na lib deste projeto.
         const web = globalThis as unknown as {
           getComputedStyle: (one: object) => {
             getPropertyValue: (name: string) => string;
@@ -186,11 +190,12 @@ describe('the built page, with no bridge behind it', () => {
     expect(await page.locator('.titlebar').innerText()).toContain('· Opus');
   });
 
-  // Electron swallows a click in a drag region; plain Chrome does not, so only this can catch it.
+  // O Electron engole um clique numa região de arrasto; o Chrome comum não, então só isto
+  // pode pegá-lo.
   it('nothing clickable in the titlebar sits in the window drag region', async () => {
     const dragging = async () =>
       page.evaluate(() => {
-        // The callback runs in the page, where DOM types are not in this project's lib.
+        // O callback roda na página, onde os tipos do DOM não estão na lib deste projeto.
         const web = globalThis as unknown as {
           document: {
             querySelectorAll: (

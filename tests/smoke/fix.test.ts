@@ -27,7 +27,10 @@ const SDK = join(
   'client',
 );
 
-/** The shop renamed its cart link to "Cart 2", which breaks CT-NAV-002's "My cart". */
+/**
+ * A loja renomeou o link do carrinho para "Cart 2", o que quebra o "My cart" do
+ * CT-NAV-002.
+ */
 const server = createServer((request, response) => {
   const path = (request.url ?? '/').split('?')[0] ?? '/';
 
@@ -40,9 +43,10 @@ const server = createServer((request, response) => {
 });
 
 /**
- * Plays the QA's agent the way the automator works: it runs the broken test through QAzinho's
- * run_tests, fixes the locator in its copy with a plain file write, runs it again and the secret
- * test besides, then answers in the schema. It writes down what it heard and what it could see.
+ * Faz o papel do agente do QA do jeito que o automator trabalha: roda o teste quebrado
+ * pelo run_tests do QAzinho, conserta o locator na cópia com uma escrita de arquivo
+ * simples, roda de novo e o teste secreto também, depois responde no schema. Anota o que
+ * ouviu e o que pôde ver.
  */
 const AGENT = (heard: string) => String.raw`#!/usr/bin/env node
 const fs = require('node:fs');

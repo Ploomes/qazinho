@@ -9,16 +9,17 @@ import { fakeJira, JIRA_EMAIL, JIRA_TOKEN } from './fixtures/fakeJira';
 const PORT = 4371;
 const SITE = `http://127.0.0.1:${String(PORT)}`;
 
-/** A 1×1 PNG, the smallest screen a bug can carry. */
+/** Um PNG de 1×1, a menor tela que um bug pode levar. */
 const PNG = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
   'base64',
 );
 
 /**
- * gh as it answers an issue being opened: the bug label a repository has, the issue it made, and
- * a repository with its issues turned off, which GitHub answers with a 410. Every call is written
- * down with its arguments, each ended by a record separator, since a body spans lines.
+ * O gh como responde a uma issue sendo aberta: o rótulo bug que um repositório tem, a
+ * issue que ele fez, e um repositório com as issues desligadas, que o GitHub responde com
+ * 410. Toda chamada é anotada com os argumentos, cada um terminado por um separador de
+ * registro, já que um corpo passa de uma linha.
  */
 const FAKE_GH = String.raw`#!/bin/bash
 ROOT="$(cd "$(dirname "$0")" && pwd)"

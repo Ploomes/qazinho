@@ -7,8 +7,9 @@ import { AgentTerminal } from '@/main/classes/agents/AgentTerminal';
 import { TERMINAL_KEYS } from '@/main/classes/agents/AgentTerminal/constants';
 
 /**
- * A full-screen program in raw mode, the way an agent's interface runs: it draws a two-line menu,
- * moves the ❯ on the arrow keys, and on Enter asks $BROWSER to open a page, as Claude Code does.
+ * Um programa de tela cheia em modo raw, do jeito que a interface de um agente roda:
+ * desenha um menu de duas linhas, move o ❯ com as setas, e no Enter pede ao $BROWSER para
+ * abrir uma página, como o Claude Code faz.
  */
 const PICKER = `
 import { spawnSync } from 'node:child_process';

@@ -13,7 +13,10 @@ import { Harness, McpHost } from '@salve-software/qazinho-harness';
 import { listAvds, AndroidDriver } from '@salve-software/qazinho-harness/engine';
 import { buildFixtureApk } from './fixtures/buildFixtureApk';
 
-/** The visit counter in fixtures/android, built from source: "Visits: N" and a "Save visit" button. */
+/**
+ * O contador de visitas em fixtures/android, construído do fonte: "Visits: N" e um botão
+ * "Save visit".
+ */
 const sdkRoot = new DeviceToolDetector().detect().androidSdk.path ?? '';
 
 let apk = '';

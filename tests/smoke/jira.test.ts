@@ -9,7 +9,7 @@ import { fakeJira, JIRA_EMAIL, JIRA_TOKEN } from './fixtures/fakeJira';
 const PORT = 4365;
 const SITE = `http://127.0.0.1:${String(PORT)}`;
 
-/** A 1×1 PNG, the smallest picture a story can carry. */
+/** Um PNG de 1×1, a menor imagem que uma história pode levar. */
 const PNG = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
   'base64',

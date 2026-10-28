@@ -4,14 +4,15 @@ import { join } from 'node:path';
 import { _electron as electron } from 'playwright-core';
 import { describe, expect, it } from 'vitest';
 
-/** A PNG's signature and a few bytes: what a phone's screenshot starts with. */
+/** A assinatura de um PNG e alguns bytes: como começa o screenshot de um celular. */
 const SHOT = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 13]);
 
 /**
- * The lightbox's Download, in the packaged window: main reads the screenshot out of the archive
- * and writes it where the save dialog says. The dialog is the OS's, so main's is answered for
- * it, and the test reads back what landed on disk. The data folder is its real path: on macOS
- * Electron sees /var as /private/var, and the archive reads nothing outside its own folder.
+ * O Baixar do lightbox, na janela empacotada: a main lê o screenshot do archive e o
+ * escreve onde o diálogo de salvar diz. O diálogo é do SO, então o da main é respondido
+ * por ele, e o teste lê de volta o que caiu no disco. A pasta de dados é o caminho real
+ * dela: no macOS o Electron vê /var como /private/var, e o archive não lê nada fora da
+ * própria pasta.
  */
 describe('saving a screenshot', () => {
   it('writes the screenshot where the QA picked, named for what it shows', async () => {

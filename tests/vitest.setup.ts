@@ -1,2 +1,3 @@
-// A view model reads its copy through i18next, so every suite needs the instance up.
+// Um view model lê o texto dele pelo i18next, então toda suíte precisa da instância de
+// pé.
 import '@/languages';

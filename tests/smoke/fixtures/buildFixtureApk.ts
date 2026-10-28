@@ -8,7 +8,7 @@ import { promisify } from 'node:util';
 const run = promisify(execFile);
 const SOURCE = fileURLToPath(new URL('./android', import.meta.url));
 
-/** The newest folder of an SDK directory: build-tools/36.0.0, platforms/android-36. */
+/** A pasta mais nova de um diretório do SDK: build-tools/36.0.0, platforms/android-36. */
 async function newest(folder: string): Promise<string | null> {
   const names = await readdir(folder).catch(() => []);
   const sorted = names
@@ -18,7 +18,7 @@ async function newest(folder: string): Promise<string | null> {
   return sorted.length === 0 ? null : join(folder, sorted.at(-1) ?? '');
 }
 
-/** The JDK Android Studio ships, else whatever javac is on the PATH. */
+/** O JDK que o Android Studio traz, senão o javac que estiver no PATH. */
 async function jdkBin(): Promise<string> {
   const studio = '/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin';
 
@@ -29,10 +29,11 @@ async function jdkBin(): Promise<string> {
 }
 
 /**
- * Builds the visit counter app in fixtures/android into a signed apk, from source, with the
- * SDK the QA already has: javac, d8, aapt2, zipalign and apksigner. It shows "Visits: N" and a
- * "Save visit" button that adds one and keeps it, so a test can see whether the app's data
- * survived. Returns null when a tool is missing, so the suite can say so instead of failing.
+ * Constrói o app contador de visitas de fixtures/android num apk assinado, do fonte, com
+ * o SDK que o QA já tem: javac, d8, aapt2, zipalign e apksigner. Ele mostra "Visits: N" e
+ * um botão "Save visit" que soma um e o guarda, para um teste ver se os dados do app
+ * sobreviveram. Devolve null quando falta uma ferramenta, para a suíte dizer isso em vez
+ * de falhar.
  */
 export async function buildFixtureApk(sdkRoot: string): Promise<string | null> {
   const tools = await newest(join(sdkRoot, 'build-tools'));

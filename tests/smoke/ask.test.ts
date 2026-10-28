@@ -14,10 +14,13 @@ import { Harness, McpHost } from '@salve-software/qazinho-harness';
 const PORT = 4362;
 const WAIT_MS = 1_500;
 
-/** A code texted to the QA's phone: it reaches the page, and never the agent. */
+/** Um código mandado por texto ao celular do QA: chega à página, e nunca ao agente. */
 const CODE = '48 21-zz';
 
-/** The app lets a buyer pick a plan, then verifies their phone with the code it texted them. */
+/**
+ * O app deixa um comprador escolher um plano, depois verifica o celular dele com o código
+ * que mandou por texto.
+ */
 const server = createServer((_request, response) => {
   response.writeHead(200, { 'content-type': 'text/html' });
   response.end(`<!doctype html><html><body>
@@ -45,9 +48,9 @@ const SDK = join(
 );
 
 /**
- * Walks the case the way Claude Code would, asking the QA what the case does not say, and writes
- * down everything QAzinho told it. `QZ_SCENARIO` picks how far it gets: the QA answers, the QA
- * never does, or the QA stops the run while it waits.
+ * Anda o caso do jeito que o Claude Code andaria, perguntando ao QA o que o caso não diz,
+ * e anota tudo o que o QAzinho lhe disse. `QZ_SCENARIO` escolhe até onde ele vai: o QA
+ * responde, o QA nunca responde, ou o QA para a run enquanto ela espera.
  */
 const agentScript = (heard: string) => `#!/usr/bin/env node
 const fs = require('fs');
@@ -237,7 +240,9 @@ describe('the agent asking the QA mid-run', () => {
     expect(JSON.stringify(events)).not.toContain(CODE);
   }, 120_000);
 
-  /** The QA gave the code for this run only: a walk with no agent would have nobody to ask. */
+  /**
+   * O QA deu o código só para esta run: um passeio sem agente não teria a quem perguntar.
+   */
   it('keeps no recipe of a case that typed a secret given for this run only', async () => {
     await expect(
       access(join(root, 'workspaces', 'w-ask', 'recipes.json')),

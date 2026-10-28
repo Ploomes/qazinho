@@ -13,10 +13,11 @@ const CODEX_PAGE =
   'https://auth.openai.com/oauth/authorize?response_type=code&client_id=abc';
 
 /**
- * `claude auth login` and `codex login` as the real ones behave (read off both CLIs): Claude Code
- * hands the page that calls back to localhost to $BROWSER, prints a second page that shows a code,
- * and waits for that code on stdin; Codex opens its page itself and only prints it. Each one waits
- * for the browser: a file named `allowed` or `denied` stands in for the QA's answer.
+ * `claude auth login` e `codex login` como os reais se comportam (lido das duas CLIs): o
+ * Claude Code entrega ao $BROWSER a página que chama de volta o localhost, imprime uma
+ * segunda página que mostra um código, e espera esse código no stdin; o Codex abre a
+ * página dele sozinho e só a imprime. Cada um espera o navegador: um arquivo chamado
+ * `allowed` ou `denied` representa a resposta do QA.
  */
 const FAKE_LOGIN = String.raw`
 import { spawnSync } from 'node:child_process';

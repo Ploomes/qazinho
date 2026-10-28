@@ -12,8 +12,9 @@ import { buildFixtureApk } from './fixtures/buildFixtureApk';
 import { buildFixtureApp } from './fixtures/buildFixtureApp';
 
 /**
- * Every case starts on the app as it was the day it was installed. The fixture apps count the
- * visits they saved, so a case that saved one must hand the next case a counter at zero.
+ * Todo caso começa com o app como estava no dia em que foi instalado. Os apps de fixture
+ * contam as visitas que salvaram, então um caso que salvou uma precisa entregar ao
+ * próximo um contador em zero.
  */
 const tools = new DeviceToolDetector().detect();
 const sdkRoot = tools.androidSdk.path ?? '';
@@ -35,10 +36,13 @@ beforeAll(async () => {
   }
 }, 300_000);
 
-/** A password with every character a shell or a keyboard could get wrong. */
+/** Uma senha com todo caractere que um shell ou um teclado poderia errar. */
 const TYPED = 'P@ss $& (x) "q" \'a\' ;b|c<d>e*f?g[h]{i}~#!';
 
-/** The same for Android, whose adb types no double quote, with a %s that input text would read as a space. */
+/**
+ * O mesmo para o Android, cujo adb não digita aspas duplas, com um %s que o input text
+ * leria como espaço.
+ */
 const ANDROID_TYPED = "P@ss $& (x) 'a' ;b|c<d>e*f?g[h]{i}~#! 50%s off";
 
 async function visits(driver: AndroidDriver | IosDriver): Promise<string> {
@@ -132,7 +136,10 @@ describe('a fresh start on a real Android emulator', () => {
     expect(await driver.describe()).toContain('edittext: Note');
   }, 600_000);
 
-  /** goto brought the app back as it was and back left it running: neither closed it for real. */
+  /**
+   * O goto trazia o app de volta como estava e o back o deixava rodando: nenhum dos dois
+   * o fechava de verdade.
+   */
   it('reopens the app for real: a new process, with what it saved kept', async (context) => {
     if (apk === null || avd === undefined || driver === null) {
       context.skip();

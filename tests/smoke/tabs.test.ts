@@ -6,9 +6,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { WebDriver } from '@salve-software/qazinho-harness/engine';
 
 /**
- * A shop whose terms open in a new tab, and a sign-in that opens a window and closes it when it
- * is done, the way an OAuth popup does. The agent kept reading the first tab, as if nothing had
- * opened, and could never read the terms.
+ * Uma loja cujos termos abrem numa aba nova, e um login que abre uma janela e a fecha
+ * quando termina, do jeito que um popup OAuth faz. O agente continuava lendo a primeira
+ * aba, como se nada tivesse aberto, e nunca conseguia ler os termos.
  */
 const PAGES: Record<string, string> = {
   '/': `<a href="/terms" target="_blank">Terms</a>

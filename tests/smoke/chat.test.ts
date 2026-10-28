@@ -7,13 +7,14 @@ import { ProcessOwners } from '@/main/classes/resources/ProcessOwners';
 import { Harness } from '@salve-software/qazinho-harness';
 
 /**
- * The chat the way main asks it: the harness prompt, the answer schema, no tool. What it guards
- * is the schema reaching the CLI at all: a --json-schema the CLI does not take is ignored in
- * silence, and the agent answers in prose that still reads as a reply, with the plan lost.
- * It also walks the planning protocol the corpus sets: questions first, a confirmation of one
- * option alone, and the plan only once that option is picked. Each round is answered with its
- * first option, in the lines the chat's formatAnswers writes, and with the account a QA would
- * type: an option that says to write a value, picked with nothing written, is asked again.
+ * O chat do jeito que a main pergunta: o prompt do harness, o schema da resposta, nenhuma
+ * ferramenta. O que ele guarda é o schema chegar à CLI: um --json-schema que a CLI não
+ * aceita é ignorado em silêncio, e o agente responde em prosa que ainda parece uma
+ * resposta, com o plano perdido. Ele também anda o protocolo de planejamento que o corpus
+ * define: perguntas primeiro, uma confirmação com uma única opção, e o plano só depois de
+ * essa opção ser escolhida. Cada rodada é respondida com a primeira opção, nas linhas que
+ * o formatAnswers do chat escreve, e com a conta que um QA digitaria: uma opção que diz
+ * para escrever um valor, escolhida sem nada escrito, é perguntada de novo.
  */
 const ACCOUNT =
   'where an account is needed, use qa@shop.test with the password Test-1234';
@@ -100,9 +101,10 @@ describe('a real chat', () => {
   }, 600_000);
 
   /**
-   * Claude Code keeps the system prompt a session started with: a new --append-system-prompt on
-   * --resume is ignored in silence. A run that happened after the first message reached the
-   * agent only in the system prompt, so the chat said it had no run in sight.
+   * O Claude Code mantém o prompt de sistema com que uma sessão começou: um
+   * --append-system-prompt novo no --resume é ignorado em silêncio. Uma run que aconteceu
+   * depois da primeira mensagem só chegava ao agente no prompt de sistema, então o chat
+   * dizia que não via run nenhuma.
    */
   it('answers about a run it heard of after its first message, on the same session', async () => {
     const command = (await new AgentDetector().detect()).find(

@@ -84,8 +84,9 @@ describe('stopping a run', () => {
   });
 
   /**
-   * Stop pressed as one case ended and the next began: the next agent was asked all the same,
-   * with the browser already closing under it, and the run went on for a minute.
+   * O Stop apertado quando um caso terminava e o próximo começava: o próximo agente era
+   * perguntado mesmo assim, com o navegador já fechando debaixo dele, e a run seguia por
+   * um minuto.
    */
   it('does NOT ask the agent for the next case once the QA stopped between cases', async () => {
     const site = createServer((_request, response) => {
@@ -99,7 +100,8 @@ describe('stopping a run', () => {
     const agent = join(root, 'agent');
     const asked = join(root, 'asked');
 
-    // The first case's agent answers at once without reporting; any later one would think for long.
+    // O agente do primeiro caso responde na hora sem relatar; qualquer um depois pensaria
+    // por muito tempo.
     await writeFile(
       agent,
       `#!/bin/sh\necho asked >> ${asked}\nif [ $(wc -l < ${asked}) -gt 1 ]; then sleep ${String(THINKING_SEC)}; fi\n`,

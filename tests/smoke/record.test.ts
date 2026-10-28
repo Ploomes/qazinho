@@ -7,7 +7,9 @@ import { _electron as electron } from 'playwright-core';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { mp4FactsOf } from '@/main/library';
 
-/** An agent that answers the app's checks, then thinks for as long as the run lets it. */
+/**
+ * Um agente que responde as checagens do app, depois pensa pelo tempo que a run deixar.
+ */
 const THINKING_AGENT = `#!/usr/bin/env node
 const argv = process.argv.slice(2);
 if (argv[0] === '--version') { console.log('2.1.302 (Claude Code)'); process.exit(0); }
@@ -15,7 +17,10 @@ if (argv[0] === 'auth') { console.log(JSON.stringify({ loggedIn: true })); proce
 setInterval(() => undefined, 1000);
 `;
 
-/** A page that never stands still, so Chrome's screencast keeps sending frames to record. */
+/**
+ * Uma página que nunca fica parada, para o screencast do Chrome continuar mandando frames
+ * a gravar.
+ */
 const MOVING_PAGE = `<!doctype html><html><body style="margin:0;font:24px sans-serif">
 <h1>Shop</h1><div id="box" style="width:120px;height:120px;background:#c6f432;animation:slide 1.5s linear infinite alternate"></div>
 <style>@keyframes slide { from { margin-left: 0 } to { margin-left: 600px } }</style></body></html>`;
@@ -25,7 +30,10 @@ let page: Page;
 let dataDir = '';
 const said: string[] = [];
 
-/** Waits for the run's MP4 to be whole: its index is written last, so the facts read only then. */
+/**
+ * Espera o MP4 da run ficar inteiro: o índice dele é escrito por último, então os fatos
+ * só se leem aí.
+ */
 async function recorded(file: string) {
   for (let look = 0; look < 60; look += 1) {
     const facts = mp4FactsOf(await readFile(file).catch(() => null));
@@ -111,8 +119,9 @@ afterAll(async () => {
 
 describe('recording a run', () => {
   /**
-   * The recorder is a hidden window that encodes the live stream with WebCodecs: nothing in the
-   * unit tests runs it, so this is where a broken encoder, muxer or write shows.
+   * O gravador é uma janela escondida que codifica o stream vivo com WebCodecs: nada nos
+   * testes unitários o roda, então é aqui que um codificador, muxer ou escrita quebrado
+   * aparece.
    */
   it('writes an H.264 MP4 of the browser as it ran, and closes its hidden window after', async () => {
     await page.getByText('Shop regression').first().click();

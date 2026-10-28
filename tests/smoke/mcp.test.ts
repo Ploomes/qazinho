@@ -7,9 +7,10 @@ import { describe, expect, it } from 'vitest';
 import { AgentMcp } from '@/main/classes/integrations/AgentMcp';
 
 /**
- * A Claude Code and a Codex that keep their MCP servers in a file next to them, and print what the
- * real ones print (checked against both CLIs in a throwaway config folder). Every call is written
- * down, so the test reads the exact command lines QAzinho sent. The real agents are never touched.
+ * Um Claude Code e um Codex que guardam os servidores MCP deles num arquivo ao lado, e
+ * imprimem o que os reais imprimem (conferido contra as duas CLIs numa pasta de config
+ * descartável). Toda chamada é anotada, para o teste ler as linhas de comando exatas que
+ * o QAzinho mandou. Os agentes reais nunca são tocados.
  */
 function fakeClaude(root: string) {
   return `#!/bin/sh
@@ -33,10 +34,11 @@ exit 2
 }
 
 /**
- * Claude Code's \`/mcp\` as a QA sees it, in the rows the real one draws (read off a real session):
- * the folder trust question when \`untrusted\` exists, the servers with GitHub above Figma, Figma's
- * own screen, and the sign-in, which asks $BROWSER to open the page and waits for \`allowed\` or
- * \`denied\`. Like the real one, it ignores keys for a moment after the trust question opens.
+ * O \`/mcp\` do Claude Code como um QA o vê, nas linhas que o real desenha (lido de uma
+ * sessão real): a pergunta de confiar na pasta quando \`untrusted\` existe, os servidores
+ * com o GitHub acima do Figma, a tela própria do Figma, e o login, que pede ao $BROWSER
+ * para abrir a página e espera \`allowed\` ou \`denied\`. Como o real, ignora teclas por
+ * um momento depois de a pergunta de confiança abrir.
  */
 const FAKE_MCP_SCREENS = String.raw`
 import { spawnSync } from 'node:child_process';
@@ -170,7 +172,10 @@ setTimeout(() => {
 draw();
 `;
 
-/** Codex starts the OAuth flow on add and on login: it prints the address, then waits for the browser. */
+/**
+ * O Codex inicia o fluxo OAuth no add e no login: imprime o endereço, depois espera o
+ * navegador.
+ */
 function fakeCodex(root: string) {
   return `#!/bin/sh
 echo "$@" >> "${root}/calls"
@@ -229,7 +234,7 @@ async function agentsWithFakes() {
       folder: join(root, 'agent'),
     }),
     calls: async () => (await readFile(join(root, 'calls'), 'utf8')).trim().split('\n'),
-    /** The QA's answer in the browser, given once the agent sent them there. */
+    /** A resposta do QA no navegador, dada depois que o agente o mandou para lá. */
     answer: async (said: 'allowed' | 'denied') => {
       while (opened.urls.length === 0)
         await new Promise((later) => setTimeout(later, 100));
@@ -245,7 +250,7 @@ const OUT_OF_SIGHT = (agentId: string) => ({
   inTerminal: false,
 });
 
-/** The steps a sign-in went through, each once, in the order it reached them. */
+/** Os passos por que um login passou, cada um uma vez, na ordem em que os alcançou. */
 const walked = (reported: McpSignInProgress[]): McpSignInStep[] => [
   ...new Set(
     reported.flatMap((progress) => (progress.phase === 'working' ? [progress.at] : [])),

@@ -19,7 +19,7 @@ const SDK = join(
   'client',
 );
 
-/** An agent that answers the app's checks, then pays on the page and passes the step. */
+/** Um agente que responde as checagens do app, depois paga na página e passa o passo. */
 const PAYING_AGENT = `#!/usr/bin/env node
 const argv = process.argv.slice(2);
 if (argv[0] === '--version') { console.log('2.1.302 (Claude Code)'); process.exit(0); }
@@ -43,7 +43,10 @@ process.stdin.on('end', async () => {
 });
 `;
 
-/** A page that never stands still, loads the cart on its own and pays on a click, which fails. */
+/**
+ * Uma página que nunca fica parada, carrega o carrinho sozinha e paga num clique, que
+ * falha.
+ */
 const SHOP = `<!doctype html><html><body style="margin:0;font:24px sans-serif">
 <h1>Shop</h1><div style="width:120px;height:120px;background:#c6f432;animation:slide 1.5s linear infinite alternate"></div>
 <button onclick="fetch('/api/pay', { method: 'POST' }).then(() => { document.getElementById('out').textContent = 'Payment refused'; })">Pay</button>
@@ -149,8 +152,9 @@ afterAll(async () => {
 
 describe("a run's video with its network", () => {
   /**
-   * The strip is drawn by the page and the download is re-encoded there with WebCodecs: nothing
-   * in the unit tests decodes or encodes, so this is where a broken composer shows.
+   * A faixa é desenhada pela página e o download é recodificado lá com WebCodecs: nada
+   * nos testes unitários decodifica ou codifica, então é aqui que um compositor quebrado
+   * aparece.
    */
   it('shows the requests under the video, and downloads the video with them drawn in', async () => {
     const target = join(dataDir, 'with-network.mp4');

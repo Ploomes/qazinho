@@ -18,7 +18,7 @@ const COUNTER = `<!doctype html><html><body style="margin:0">
   <button onclick="count.textContent = String(Number(count.textContent) + 1)">Change</button>
 </body></html>`;
 
-/** Reads a JPEG's size off its start-of-frame marker. */
+/** Lê o tamanho de um JPEG do marcador start-of-frame dele. */
 function sizeOf(jpeg: Buffer): { width: number; height: number } {
   for (let at = 2; at + 9 < jpeg.length; at += 2 + jpeg.readUInt16BE(at + 2)) {
     const marker = jpeg[at + 1] ?? 0;
@@ -30,7 +30,9 @@ function sizeOf(jpeg: Buffer): { width: number; height: number } {
   return { width: 0, height: 0 };
 }
 
-/** Changes the page and waits for the frame that shows it, since a page standing still sends none. */
+/**
+ * Muda a página e espera o frame que a mostra, já que uma página parada não manda nenhum.
+ */
 async function frameAfterChange(props: { driver: WebDriver; frames: Buffer[] }) {
   await new Promise((later) => setTimeout(later, 300));
 
@@ -101,9 +103,10 @@ describe('the live device stream', () => {
   });
 
   /**
-   * Left alone, the windowless Chrome is 1280×720 with the page emulated inside it, so a frame
-   * showed 713 pixels of an 800-pixel page and cut its foot off. A page narrower than 500 pixels
-   * still comes framed 500 wide: that is Chrome's own floor for a window, and the panel crops it.
+   * Deixado sozinho, o Chrome sem janela tem 1280×720 com a página emulada dentro, então
+   * um frame mostrava 713 pixels de uma página de 800 e cortava o pé dela. Uma página
+   * mais estreita que 500 pixels ainda vem enquadrada em 500: é o piso do próprio Chrome
+   * para uma janela, e o painel a corta.
    */
   it('frames the whole page at each window size', async () => {
     const site = createServer((_request, response) => {
@@ -148,8 +151,9 @@ describe('the live device stream', () => {
   });
 
   /**
-   * The window renders at the QA's pixel ratio, so the page and its evidence are sharp on a Retina
-   * screen. The agent's glance is scaled back down: at 2x it would read four times the pixels.
+   * A janela renderiza na razão de pixels do QA, para a página e a evidência ficarem
+   * nítidas numa tela Retina. A olhada do agente é reduzida de volta: a 2x ele leria
+   * quatro vezes os pixels.
    */
   it("renders at the display's pixel ratio, and the agent still reads the page at its size", async () => {
     const site = createServer((_request, response) => {
@@ -185,9 +189,9 @@ describe('the live device stream', () => {
   });
 
   /**
-   * A frame at 2x costs about three times the CPU of one at 1x on a page that animates, so the
-   * panel streams at 1x and only focus asks for the display's detail. A page standing still sends
-   * no frame when the stream restarts, so focus hands over a still at once.
+   * Um frame a 2x custa cerca de três vezes a CPU de um a 1x numa página que anima, então
+   * o painel transmite a 1x e só o foco pede o detalhe do display. Uma página parada não
+   * manda frame quando o stream reinicia, então o foco entrega um still na hora.
    */
   it('streams at full detail only while the QA watches up close', async () => {
     const site = createServer((_request, response) => {

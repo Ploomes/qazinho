@@ -14,8 +14,8 @@ import { listSimulators, IosDriver } from '@salve-software/qazinho-harness/engin
 import { buildFixtureApp } from './fixtures/buildFixtureApp';
 
 /**
- * The visit counter in fixtures/ios, built for the simulator: "Visits: N" and a "Save visit"
- * button. A simulator build is the `.app` folder, never an `.ipa`.
+ * O contador de visitas de fixtures/ios, construído para o simulador: "Visits: N" e um
+ * botão "Save visit". Um build de simulador é a pasta `.app`, nunca um `.ipa`.
  */
 const tools = new DeviceToolDetector().detect();
 const idb = tools.idb.path ?? '';

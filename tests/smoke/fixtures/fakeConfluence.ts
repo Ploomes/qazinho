@@ -16,7 +16,7 @@ const cell = (kind: 'tableHeader' | 'tableCell', text: string) => ({
   content: [{ type: 'paragraph', content: [{ type: 'text', text }] }],
 });
 
-/** The cases a team wrote in Confluence, as a heading and a table of steps. */
+/** Os casos que um time escreveu no Confluence, como um título e uma tabela de passos. */
 const CASES = {
   type: 'doc',
   version: 1,
@@ -42,7 +42,10 @@ const CASES = {
   ],
 };
 
-/** A Confluence Cloud site on loopback, signed in with the same account as the fake Jira: spaces, a search, pages read, made and versioned. */
+/**
+ * Um site do Confluence Cloud em loopback, logado com a mesma conta do Jira fake:
+ * espaços, uma busca, páginas lidas, feitas e versionadas.
+ */
 export function fakeConfluence() {
   const basic = `Basic ${Buffer.from(`${JIRA_EMAIL}:${JIRA_TOKEN}`).toString('base64')}`;
   const asked: string[] = [];

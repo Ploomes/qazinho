@@ -9,10 +9,11 @@ import { GithubCli } from '@/main/classes/integrations/GithubCli';
 import { GithubRepos } from '@/main/classes/integrations/GithubRepos';
 
 /**
- * gh as the real one behaves when it is not in a terminal (read off gh 2.20): `auth login --web`
- * prints a one-time code and the device page, then waits for the QA to authorize in the browser,
- * which the file `authorized` stands in for. `api` answers the paths QAzinho asks, through the jq
- * filters it passes, a 404 the way gh says one, and a tarball of a small app with its top folder.
+ * O gh como o real se comporta quando não está num terminal (lido do gh 2.20): `auth
+ * login --web` imprime um código de uso único e a página do dispositivo, depois espera o
+ * QA autorizar no navegador, que o arquivo `authorized` representa. O `api` responde os
+ * caminhos que o QAzinho pede, pelos filtros jq que ele passa, um 404 do jeito que o gh
+ * diz um, e um tarball de um app pequeno com a pasta de topo.
  */
 const FAKE_GH = String.raw`#!/bin/bash
 ROOT="$(cd "$(dirname "$0")" && pwd)"

@@ -13,8 +13,9 @@ const PORT = 4374;
 const SITE = `http://127.0.0.1:${String(PORT)}`;
 
 /**
- * Claude Code as the reporter meets it: it writes down how it was called and what it read, and
- * answers in the schema. A message that names a new screen is news, anything else nothing new.
+ * O Claude Code como o reporter o encontra: anota como foi chamado e o que leu, e
+ * responde no schema. Uma mensagem que nomeia uma tela nova é novidade, qualquer outra
+ * coisa nada novo.
  */
 const REPORTER = `#!/usr/bin/env node
 const { appendFileSync } = require('node:fs');

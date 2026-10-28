@@ -29,9 +29,9 @@ const DESIGN = {
   name: 'Shop',
 };
 
-// Writes down how it was called and the message each case opens with. On a case that names a
-// frame it measures the button, files the difference on that frame, and passes the step; it never
-// reaches Figma, which only a real agent signed in to it can.
+// Anota como foi chamado e a mensagem com que cada caso abre. Num caso que nomeia um
+// frame, mede o botão, registra a diferença nesse frame, e passa o passo; nunca alcança o
+// Figma, que só um agente real logado nele alcança.
 const DESIGNER = (folder: string) => `#!/usr/bin/env node
 const { Client } = require(${JSON.stringify(join(SDK, 'index.js'))});
 const { StreamableHTTPClientTransport } = require(${JSON.stringify(join(SDK, 'streamableHttp.js'))});

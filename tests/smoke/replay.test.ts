@@ -12,7 +12,10 @@ import { Harness, McpHost } from '@salve-software/qazinho-harness';
 
 const PORT = 4352;
 
-/** The page a button signs in on; `greeting` changes what it says, the way a new build would. */
+/**
+ * A página em que um botão faz login; `greeting` muda o que ela diz, do jeito que um
+ * build novo faria.
+ */
 let greeting = 'Signed in';
 
 const server = createServer((_request, response) => {
@@ -34,8 +37,9 @@ const SDK = join(
 );
 
 /**
- * Walks the case the way Claude Code does, and writes down each time it is asked: a run that
- * walks a recipe again must not ask it at all. It proves the step with what the page then says.
+ * Anda o caso do jeito que o Claude Code anda, e anota cada vez que é perguntado: uma run
+ * que anda uma receita de novo não pode perguntar nada. Ele prova o passo com o que a
+ * página diz depois.
  */
 const agentScript = (calls: string) => `#!/usr/bin/env node
 const fs = require('fs');
@@ -64,7 +68,10 @@ let calls = '';
 let coordinator: RunCoordinator;
 let events: IRunEvent[] = [];
 
-/** One run of a one-step plan; what it reported, and how many times the agent was asked so far. */
+/**
+ * Uma run de um plano de um passo; o que ela relatou, e quantas vezes o agente foi
+ * perguntado até agora.
+ */
 async function run(props: { runId: string; mode?: 'replay' | 'agent' }) {
   events = [];
 

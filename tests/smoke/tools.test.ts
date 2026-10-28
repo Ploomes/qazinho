@@ -12,8 +12,9 @@ import { WebDriver } from '@salve-software/qazinho-harness/engine';
 const PORT = 4326;
 
 /**
- * "Load more" answers late on purpose: its text lands 300 ms after the click, and a banner pushes
- * the page down as it does. Reading the page as soon as the network was idle used to miss both.
+ * "Load more" responde atrasado de propósito: o texto dele chega 300 ms depois do clique,
+ * e um banner empurra a página para baixo enquanto isso. Ler a página assim que a rede
+ * ficava ociosa perdia os dois.
  */
 const PAGE = `<!doctype html><html><body style="margin:0;font:16px sans-serif">
   <div id="slot"></div>
@@ -71,7 +72,10 @@ const site = createServer((request, response) => {
 const tools = new McpHost();
 let driver: WebDriver;
 
-/** Reads a JPEG's size from its start-of-frame marker, so a test can check a picture without decoding it. */
+/**
+ * Lê o tamanho de um JPEG pelo marcador start-of-frame, para um teste conferir uma imagem
+ * sem decodificá-la.
+ */
 function jpegSize(jpeg: Buffer): { width: number; height: number } | null {
   let at = 2;
 
@@ -156,7 +160,10 @@ describe('the device as MCP tools', () => {
     await client.close();
   });
 
-  /** A design names its sizes, colours and spacing; the agent holds the screen to them with what Chrome computed. */
+  /**
+   * Um design nomeia os tamanhos, as cores e o espaçamento; o agente prende a tela a eles
+   * com o que o Chrome calculou.
+   */
   it('measures a control the way a design states it, and says when nothing reads that', async () => {
     const client = await connect('w1');
     const measured = textOf(
@@ -181,7 +188,10 @@ describe('the device as MCP tools', () => {
     await client.close();
   });
 
-  /** An API call that failed while the agent acted is told with the action, and any call's answer can be read, secrets as dots. */
+  /**
+   * Uma chamada de API que falhou enquanto o agente agia é contada com a ação, e a
+   * resposta de qualquer chamada pode ser lida, com segredos como pontos.
+   */
   it('tells the API calls that failed during an action, and reads what a call answered', async () => {
     const client = await connect('w1');
     const clicked = textOf(
@@ -204,7 +214,7 @@ describe('the device as MCP tools', () => {
     await client.close();
   });
 
-  /** A step that closes the app and opens it again keeps what the site saved, and only that. */
+  /** Um passo que fecha o app e o abre de novo mantém o que o site salvou, e só isso. */
   it("reopens the app in a new tab: what the site saved stays, the old tab's session goes", async () => {
     const client = await connect('w1');
 

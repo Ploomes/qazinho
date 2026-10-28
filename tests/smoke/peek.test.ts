@@ -13,8 +13,8 @@ const PAGE = `<!doctype html><html><head><title>Rotuz</title></head><body>
 </body></html>`;
 
 /**
- * The chat's first look at a web app: a real Chrome opens the page for a moment, so the agent
- * asks about what the app shows instead of asking what it is.
+ * A primeira olhada do chat num app web: um Chrome real abre a página por um momento,
+ * para o agente perguntar sobre o que o app mostra em vez de perguntar o que ele é.
  */
 describe('a look at the app before the chat', () => {
   it('reads what the page shows, and keeps it for the next message', async () => {
@@ -40,8 +40,9 @@ describe('a look at the app before the chat', () => {
   });
 
   /**
-   * The home page alone left the agent guessing at the rest: it planned clicks on a product page
-   * the shop did not have. The pages the menu leads to are read too, and never one that signs out.
+   * A home sozinha deixava o agente adivinhando o resto: ele planejava cliques numa
+   * página de produto que a loja não tinha. As páginas a que o menu leva são lidas
+   * também, e nunca uma que faz logout.
    */
   it('reads the pages the menu leads to, and never one that signs out', async () => {
     const visited: string[] = [];

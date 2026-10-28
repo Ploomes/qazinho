@@ -6,9 +6,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { WebDriver } from '@salve-software/qazinho-harness/engine';
 
 /**
- * A case that leaves something behind must not hand it to the next one: the shop's cart, a
- * login, a half-filled form. The page below stores a visit in each place a site can keep one,
- * and says what it found when it loads.
+ * Um caso que deixa algo para trás não pode entregá-lo ao próximo: o carrinho da loja, um
+ * login, um formulário pela metade. A página abaixo guarda uma visita em cada lugar onde
+ * um site pode guardar uma, e diz o que achou quando carrega.
  */
 const PAGE = `<!doctype html><html><body>
   <p id="seen"></p>
