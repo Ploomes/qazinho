@@ -1,6 +1,6 @@
 name: Release
 
-# Manual only. Releasing is a decision, not a side effect of merging.
+# Só manual. Lançar uma versão é uma decisão, não um efeito colateral do merge.
 on:
   workflow_dispatch:
     inputs:
@@ -39,7 +39,7 @@ jobs:
         with:
           submodules: recursive
           token: ${{ secrets.GH_QAZINHO_TOKEN }}
-          # semantic-release needs the full history to find the last tag.
+          # O semantic-release precisa do histórico inteiro para achar a última tag.
           fetch-depth: 0
           persist-credentials: false
 
@@ -50,7 +50,7 @@ jobs:
 
       - run: npm ci
 
-      # A dispatch can target any ref, so CI having run on the commit is not enough.
+      # Um dispatch pode mirar qualquer ref, então o CI ter rodado no commit não basta.
       - name: Verify
         run: |
           npm run lint
@@ -64,7 +64,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release ${{ inputs.dry_run && '--dry-run' || '' }}
 
-      # semantic-release tags the release commit it makes; a dry run, or nothing to release, tags none.
+      # O semantic-release cria a tag no commit de release que faz; um dry run, ou nada a lançar, não cria nenhuma.
       - name: Released tag
         id: released
         run: echo "tag=$(git tag --points-at HEAD --list 'v*' | head -n 1)" >> "$GITHUB_OUTPUT"
@@ -72,14 +72,14 @@ jobs:
   windows:
     name: Windows installer
     needs: release
-    # A release created with GITHUB_TOKEN starts no other workflow, so the installer is built here.
+    # Uma release criada com o GITHUB_TOKEN não inicia outro workflow, então o instalador é construído aqui.
     if: ${{ !cancelled() && !failure() && (inputs.tag != '' || needs.release.outputs.tag != '') }}
     runs-on: windows-latest
     permissions:
       contents: write
     env:
       TAG: ${{ inputs.tag != '' && inputs.tag || needs.release.outputs.tag }}
-      # electron-builder fetches the Windows Electron it packs; npm's own would go unused.
+      # O electron-builder baixa o Electron de Windows que empacota; o do próprio npm ficaria sem uso.
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
     defaults:
       run:
@@ -101,7 +101,7 @@ jobs:
 
       - run: npm run build
 
-      # No certificate yet: the installer goes out unsigned, and SmartScreen asks once.
+      # Ainda sem certificado: o instalador sai sem assinatura, e o SmartScreen pergunta uma vez.
       - name: Package
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'

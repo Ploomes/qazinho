@@ -20,8 +20,8 @@ updates:
           - minor
           - patch
 
-    # These majors are held back on purpose, see .claude/rules/tooling.md: electron-vite 5
-    # accepts Vite up to 7, and typescript-eslint accepts TypeScript below 6.1.
+    # Estas majors são seguradas de propósito, veja .claude/rules/tooling.md: o electron-vite 5
+    # aceita o Vite até o 7, e o typescript-eslint aceita o TypeScript abaixo do 6.1.
     ignore:
       - dependency-name: vite
         update-types: ['version-update:semver-major']

@@ -14,7 +14,7 @@ jobs:
     name: Verify
     runs-on: ubuntu-latest
     env:
-      # Nothing here launches the app, so the Electron binary is dead weight.
+      # Nada aqui abre o app, então o binário do Electron é peso morto.
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
     steps:
       - uses: actions/checkout@v5
@@ -32,8 +32,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      # `tsconfig.web.json` has no Node types. This is the step that breaks if the renderer
-      # or src/shared/ starts depending on Node.
+      # O `tsconfig.web.json` não tem tipos do Node. Este é o passo que quebra se o renderer
+      # ou o src/shared/ passar a depender do Node.
       - name: Typecheck
         run: npm run typecheck
 

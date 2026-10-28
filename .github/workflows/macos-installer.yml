@@ -1,7 +1,7 @@
 name: macOS installer
 
-# Its own workflow, so a Mac runner, billed at ten times a Linux one, runs only for the .dmg.
-# The release calls it once it tags; dispatching it builds the installers of a release that exists.
+# Um workflow próprio, para um runner Mac, cobrado a dez vezes um Linux, rodar só para o .dmg.
+# A release o chama assim que cria a tag; dispará-lo constrói os instaladores de uma release que existe.
 on:
   workflow_dispatch:
     inputs:
@@ -23,7 +23,7 @@ jobs:
       contents: write
     env:
       TAG: ${{ inputs.tag }}
-      # electron-builder fetches the Electron it packs for each architecture.
+      # O electron-builder baixa o Electron que empacota para cada arquitetura.
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
     steps:
       - name: Check the Apple credentials
@@ -59,8 +59,8 @@ jobs:
 
       - run: npm run build
 
-      # electron-builder signs with the Developer ID certificate (CSC_LINK takes it as base64) and
-      # notarizes with the App Store Connect API key, which it reads from a file.
+      # O electron-builder assina com o certificado Developer ID (o CSC_LINK o recebe em base64) e
+      # notariza com a chave de API do App Store Connect, que ele lê de um arquivo.
       - name: Package, sign and notarize
         env:
           CSC_LINK: ${{ secrets.APPLE_CERTIFICATE_P12 }}
