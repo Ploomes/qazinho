@@ -55,6 +55,7 @@ import {
   casesOf,
   driverFor,
   earlyFinish,
+  expectedValuesOf,
   exploredOutcome,
   failureOf,
   findingAnswer,
@@ -65,6 +66,7 @@ import {
   outcomeOfReport,
   privateUrlOf,
   proofHolds,
+  proofWithValues,
   readBook,
   recipeFor,
   recipeOf,
@@ -471,6 +473,7 @@ export class RunCoordinator {
     const pending = [...props.steps];
     const actions = new Map<number, IStepAction[]>();
     const proofs = new Map<number, string>();
+    const device = variablePort({ device: driver, values: run.values });
     let began = Date.now();
     let isOver = false;
     let isAnsweredForThisRun = false;
@@ -552,8 +555,20 @@ export class RunCoordinator {
         outcome: props.isHealing ? { ...outcome, by: 'healed' } : outcome,
       });
 
-      if (report.verdict === 'passed')
-        proofs.set(walking.step.numberInCase, report.proof);
+      if (report.verdict === 'passed') {
+        const values = expectedValuesOf(walking.step.expected);
+
+        proofs.set(
+          walking.step.numberInCase,
+          values.length === 0
+            ? report.proof
+            : proofWithValues({
+                proof: report.proof,
+                values,
+                screen: await device.describe().catch(() => ''),
+              }),
+        );
+      }
 
       if (report.verdict === 'failed' && report.title.length > 0)
         props.filed.push(report.title);
@@ -669,7 +684,6 @@ export class RunCoordinator {
     if (first !== undefined)
       this.emit({ kind: 'doing', workspaceId, index: first.index });
 
-    const device = variablePort({ device: driver, values: run.values });
     const port: IDevicePort = {
       describe: () => device.describe(),
       inspect: (target) => device.inspect(target),
