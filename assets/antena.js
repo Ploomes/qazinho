@@ -1,4 +1,5 @@
-// Estagiário — ADESIVO (sticker) renderer: moods, icon, wordmark. Base figure 240x235.
+// Estagiário — renderizador do ADESIVO (sticker): humores, ícone, wordmark. Figura base
+// 240x235.
 const TAU = Math.PI * 2,
   sin = Math.sin;
 const LIME = '#C6F432',
@@ -380,7 +381,7 @@ function scratch(size) {
   return o;
 }
 
-// Sticker character on transparent square canvas (figure fits in 340 units)
+// Personagem sticker num canvas quadrado transparente (a figura cabe em 340 unidades)
 function drawSticker(c, size, mood, t, opt = {}) {
   const base = opt.rot ?? -6,
     p = MOODS[mood].f(t),
@@ -552,7 +553,7 @@ function downscale(src, size) {
   return cur;
 }
 
-// Wordmark sticker: QAzinho with white die-cut border
+// Wordmark sticker: QAzinho com borda branca de corte
 function drawWord(c, x, y, fs, rot = 0, opt = {}) {
   c.save();
   c.translate(x, y);
