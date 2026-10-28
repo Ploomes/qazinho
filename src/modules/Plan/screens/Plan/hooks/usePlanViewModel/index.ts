@@ -66,6 +66,7 @@ export const usePlanViewModel = () => {
         ?.targets.find(({ id }) => id === workspace?.targetId) ?? null,
   );
   const openCaseId = useWorkspaceStore((state) => state.openCaseId);
+  const isPanelWide = useWorkspaceStore((state) => state.isPanelWide);
   const toggleCase = useWorkspaceStore((state) => state.toggleCase);
   const setPlan = useWorkspaceStore((state) => state.setPlan);
   const agent = useSettingsStore((state) => state.agent);
@@ -353,6 +354,7 @@ export const usePlanViewModel = () => {
     design: workspace?.design ?? null,
     openCaseId,
     isLocked,
+    hasRunAll: isPanelWide,
     lockedLabel: t('PLAN.LOCKED', { agent }),
     isEmpty: plan.length === 0,
     source:
