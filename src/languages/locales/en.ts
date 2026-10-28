@@ -113,8 +113,7 @@ export const en = {
     EMPTY_TITLE: 'What are we testing today?',
     EMPTY_BODY:
       'Ask about the app, a run or a bug, or say what to cover and the agent drafts the cases. Type @ to point at something, and / for a command.',
-    PLACEHOLDER:
-      'Ask the agent anything · @ points at a run, bug or case · / for commands',
+    PLACEHOLDER: 'Ask the agent · @ to cite · / for commands',
     SEND: 'Send',
     STOP_ANSWER: 'Stop the answer',
     RETRYING:
@@ -462,7 +461,7 @@ export const en = {
     DRIVING: 'the agent is driving',
     HOLDING: 'holding for you',
     STOPPED: 'stopped',
-    NO_DEVICE: 'no device yet',
+    NO_DEVICE: 'No device yet.',
     NO_DEVICE_BODY: 'Hit Run plan and the device opens right here.',
     STEPS: 'steps',
     STEPS_PROGRESS: '{{done}} of {{total}}',

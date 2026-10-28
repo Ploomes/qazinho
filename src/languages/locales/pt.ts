@@ -115,8 +115,7 @@ export const pt: typeof en = {
     EMPTY_TITLE: 'O que vamos testar hoje?',
     EMPTY_BODY:
       'Pergunte sobre o app, uma run ou um bug, ou diga o que cobrir e o agente escreve os casos. Digite @ para apontar algo e / para um comando.',
-    PLACEHOLDER:
-      'Pergunte qualquer coisa ao agente · @ aponta uma run, bug ou caso · / abre os comandos',
+    PLACEHOLDER: 'Pergunte ao agente · @ para citar · / para comandos',
     SEND: 'Enviar',
     STOP_ANSWER: 'Parar a resposta',
     RETRYING:
@@ -464,7 +463,7 @@ export const pt: typeof en = {
     DRIVING: 'o agente está dirigindo',
     HOLDING: 'esperando por você',
     STOPPED: 'parado',
-    NO_DEVICE: 'nenhum device ainda',
+    NO_DEVICE: 'Nenhum device ainda.',
     NO_DEVICE_BODY: 'Aperte Rodar plano e o device abre aqui.',
     STEPS: 'passos',
     STEPS_PROGRESS: '{{done}} de {{total}}',

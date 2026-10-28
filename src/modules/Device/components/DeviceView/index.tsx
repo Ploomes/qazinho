@@ -81,8 +81,8 @@ export const DeviceView: React.FC = () => {
         {!hasScreen && (
           <div className="device-view__off">
             <Intern mood="sleeping" size={72} />
-            <span>{t('DEVICE.NO_DEVICE')}</span>
-            <span>{t('DEVICE.NO_DEVICE_BODY')}</span>
+            <span className="device-view__off-title">{t('DEVICE.NO_DEVICE')}</span>
+            <span className="device-view__off-body">{t('DEVICE.NO_DEVICE_BODY')}</span>
           </div>
         )}
 
