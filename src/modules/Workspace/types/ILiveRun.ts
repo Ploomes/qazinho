@@ -4,8 +4,8 @@ import type { IRunSuggestion } from '@/modules/Run/types';
 import type { IRunAsked, IStepOutcome } from '@/shared/types';
 
 /**
- * The run in flight: its step, its time, what it decided, and the questions its agent
- * asked.
+ * A run em andamento: o passo, o tempo, o que ela decidiu, e as perguntas que o agente
+ * dela fez.
  */
 export interface ILiveRun {
   id: string;

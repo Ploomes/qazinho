@@ -6,8 +6,9 @@ import { walkRun } from './fixtures';
 const BUG = walkRun({ verdicts: ['passed', 'failed'] }).bugs[0]!;
 
 /**
- * Bugs used to keep their step and how often they were seen as English words ("step 2",
- * "2 runs in a row"), and a Portuguese QA read them that way. A file saved then still opens.
+ * Os bugs guardavam o passo e quantas vezes foram vistos como palavras em inglês ("step
+ * 2", "2 runs in a row"), e um QA em português as lia assim. Um arquivo salvo naquela
+ * época ainda abre.
  */
 describe('bugOfSaved', () => {
   it('reads a bug saved today as it was', () => {

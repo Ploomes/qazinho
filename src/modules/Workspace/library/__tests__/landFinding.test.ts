@@ -86,7 +86,10 @@ describe('landFinding', () => {
     expect(workspace.bugs.at(-1)?.at).toBe(1_760_000_003_000);
   });
 
-  /** The agent heard BUG-01 was open and said this was it, so the Bugs tab keeps one bug. */
+  /**
+   * O agente ouviu que o BUG-01 estava aberto e disse que era ele, então a aba Bugs
+   * mantém um bug só.
+   */
   it('lands a finding the agent named on the bug already open, and says it was seen again', () => {
     const workspace = startRun({
       workspace: landFinding({

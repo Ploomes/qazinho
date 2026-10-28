@@ -67,7 +67,10 @@ describe('landStep', () => {
     expect(workspace.live?.doingIndex).toBe(-1);
   });
 
-  /** r-02 failed the same step as r-01 and the Bugs tab read BUG-01 and BUG-02, almost alike. */
+  /**
+   * A r-02 falhou o mesmo passo que a r-01 e a aba Bugs mostrava BUG-01 e BUG-02, quase
+   * iguais.
+   */
   it('lands a step that fails again on the bug it failed for before, seen in two runs', () => {
     const second = startRun({
       workspace: walkRun({

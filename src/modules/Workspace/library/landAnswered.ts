@@ -2,8 +2,8 @@ import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IRunAsked } from '@/shared/types';
 
 /**
- * A question to the QA ended, answered or not: the run goes on, keeps how it ended for
- * the step it was asked at, and its section in the chat says so once.
+ * Uma pergunta ao QA terminou, respondida ou não: a run segue, guarda como terminou para
+ * o passo em que foi feita, e a seção dela no chat diz isso uma vez.
  */
 export function landAnswered(props: {
   workspace: IWorkspace;

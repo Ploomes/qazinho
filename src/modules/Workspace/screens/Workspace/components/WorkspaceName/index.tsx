@@ -6,8 +6,8 @@ import { useWorkspaceNameViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The workspace's name in its header: a click turns it into a field in place, Enter saves
- * and Esc lets go.
+ * O nome do workspace no cabeçalho: um clique o transforma num campo no lugar, Enter
+ * salva e Esc desiste.
  */
 export const WorkspaceName: React.FC<IWorkspaceNameProps> = (props) => {
   const { isEditing, draft, inputRef, onStart, onChange, onCommit, onKeyDown } =

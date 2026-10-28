@@ -92,8 +92,8 @@ describe('buildRun', () => {
   });
 
   /**
-   * A stop in the middle of a case left it reading "passed" in the run's report, with only the
-   * first of its steps walked.
+   * Um stop no meio de um caso o deixava como "passou" no relatório da run, com só o
+   * primeiro dos passos dele andado.
    */
   it('skips the steps a stop left unwalked, so a case cut short never reads passed', () => {
     const run = buildRun({

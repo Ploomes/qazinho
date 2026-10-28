@@ -1,7 +1,7 @@
 import type { IBug } from '@/modules/Bug';
 import type { SavedBug } from '@/modules/Workspace/types';
 
-/** A saved bug read back, an older one included, in today's shape. */
+/** Um bug salvo lido de volta, um antigo incluído, no formato de hoje. */
 export function bugOfSaved(saved: SavedBug): IBug {
   const { step, seen, ...bug } = saved;
 

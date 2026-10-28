@@ -47,7 +47,10 @@ describe('useWorkspaceViewModel', () => {
       expect(result.current.className).toBe('workspace workspace--hidden');
     });
 
-    /** Squeezed with its column as the panel widened, the chat broke a letter a line while it faded. */
+    /**
+     * Espremido com a coluna enquanto o painel alargava, o chat quebrava uma letra por
+     * linha enquanto sumia.
+     */
     it('keeps the chat as wide as it stood beside the panel, so it never squeezes as it fades', () => {
       Object.defineProperty(window, 'innerWidth', { configurable: true, value: 1440 });
       useWorkspaceStore.setState({
@@ -237,7 +240,7 @@ describe('useWorkspaceViewModel', () => {
     );
   });
 
-  /** The header read "step 0 of 1" while the first step ran. */
+  /** O cabeçalho dizia "passo 0 de 1" enquanto o primeiro passo rodava. */
   it('names the step being walked, and never one past the last', () => {
     useWorkspaceStore.setState({
       workspaces: [
@@ -285,7 +288,10 @@ describe('useWorkspaceViewModel', () => {
       expect(useWorkspaceStore.getState().workspaces[0]?.status).toBe('running');
     });
 
-    /** iOS runs were refused here while idb had never tapped a real simulator; it has now. */
+    /**
+     * As runs de iOS eram recusadas aqui enquanto o idb nunca tinha tocado um simulador
+     * real; agora tocou.
+     */
     it('runs an iOS build on the simulator, the way it runs the rest', () => {
       useAppStore.setState({
         projects: [

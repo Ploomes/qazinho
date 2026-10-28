@@ -3,8 +3,8 @@ import type { IFiledIssue } from '@/shared/types';
 import { appearancesOf } from '@/modules/Bug/library';
 
 /**
- * The issue a bug became in the QA's tracker: it lands on that bug, and nothing else; the
- * runs that caught it so far count as told.
+ * A issue em que um bug virou no tracker do QA: cai nesse bug, e em nada mais; as runs
+ * que o pegaram até ali contam como avisadas.
  */
 export function landFiled(props: {
   workspace: IWorkspace;

@@ -6,8 +6,8 @@ import { isSeenIn } from '@/modules/Bug/library';
 import { buildRun } from './buildRun';
 
 /**
- * Ends the run in flight however it ended, keeping what it walked as a run the QA can
- * open.
+ * Termina a run em andamento seja como for que terminou, guardando o que ela andou como
+ * uma run que o QA pode abrir.
  */
 export function endRun(props: {
   workspace: IWorkspace;

@@ -1,5 +1,5 @@
 /**
- * What the QA can bring into view in a workspace: the chat, always in the middle, or one
- * of the panel's tabs beside it.
+ * O que o QA pode trazer à vista num workspace: o chat, sempre no meio, ou uma das abas
+ * do painel ao lado.
  */
 export type WorkspaceTab = 'chat' | 'plan' | 'device' | 'runs' | 'bugs';

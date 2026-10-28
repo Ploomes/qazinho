@@ -1,8 +1,8 @@
 import type { IRunQuestion } from '@/shared/types';
 
 /**
- * The question a run's agent waits on, as the page follows it: what main said, and how
- * long the QA has let it wait.
+ * A pergunta que o agente de uma run espera, como a página a acompanha: o que a main
+ * disse, e há quanto tempo o QA a deixou esperando.
  */
 export interface ILiveQuestion extends IRunQuestion {
   waitedSec: number;

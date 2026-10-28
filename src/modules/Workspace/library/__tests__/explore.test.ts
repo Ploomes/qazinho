@@ -46,7 +46,10 @@ function screen(props: {
   };
 }
 
-/** An exploration of a workspace with no plan: two screens, a bug on the second, then its finish. */
+/**
+ * Uma exploração de um workspace sem plano: duas telas, um bug na segunda, depois o fim
+ * dela.
+ */
 function explored(props: { plan?: IWorkspace['plan']; cases?: IDraftedCase[] } = {}) {
   let workspace = startRun({
     workspace: makeWorkspace(props.plan ?? []),

@@ -1,6 +1,6 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
 
-/** One case's agent said what it cost: the run in flight adds it up. */
+/** O agente de um caso disse quanto custou: a run em andamento soma. */
 export function landCost(props: { workspace: IWorkspace; costUsd: number }): IWorkspace {
   const { workspace, costUsd } = props;
   const { live } = workspace;

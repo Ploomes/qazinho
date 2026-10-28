@@ -13,7 +13,10 @@ type SavedRun = Omit<IRun, 'endedBy' | 'costUsd' | 'video'> &
     what?: string;
   };
 
-/** A file somebody edited by hand may be nonsense, so what cannot be read is left out. */
+/**
+ * Um arquivo que alguém editou à mão pode ser bobagem, então o que não pode ser lido fica
+ * de fora.
+ */
 export function fromSaved(saved: ISavedWorkspace): IWorkspace | null {
   let read: Partial<Omit<IWorkspace, 'chat' | 'bugs'>> & {
     chat?: SavedMessage[];

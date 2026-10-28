@@ -2,8 +2,8 @@ import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IRunVideo } from '@/shared/types';
 
 /**
- * A run's recording, which lands once the run is over: it joins the run it belongs to,
- * and nothing else.
+ * A gravação de uma run, que chega depois que a run acaba: entra na run a que pertence, e
+ * em nada mais.
  */
 export function landVideo(props: {
   workspace: IWorkspace;

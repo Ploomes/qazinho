@@ -4,7 +4,10 @@ import { catchBug } from '@/modules/Bug/library';
 import { landAnswered } from './landAnswered';
 import { landFinding } from './landFinding';
 
-/** Follows a run main kept walking while the page was away, landing its findings once. */
+/**
+ * Acompanha uma run que a main continuou andando enquanto a página estava fora,
+ * registrando os achados dela uma vez.
+ */
 export function resumeRun(props: {
   workspace: IWorkspace;
   run: IRunInFlight;

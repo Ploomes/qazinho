@@ -91,7 +91,10 @@ describe('useNewWorkspaceModalViewModel', () => {
   });
 
   describe('the linked issue', () => {
-    /** A new QA read "no tracker connected" and had no way to the place that connects one. */
+    /**
+     * Um QA novo lia "nenhum tracker conectado" e não tinha caminho até o lugar que
+     * conecta um.
+     */
     it('takes a QA with no Jira to Settings, Integrations, closing itself', () => {
       const { result } = renderHook(() => useNewWorkspaceModalViewModel());
 
@@ -108,7 +111,7 @@ describe('useNewWorkspaceModalViewModel', () => {
       expect(useAppStore.getState().modal).not.toBe('workspace');
     });
 
-    /** It said no tracker was connected even with Jira connected. */
+    /** Dizia que nenhum tracker estava conectado mesmo com o Jira conectado. */
     it('says how to plan from a story once Jira is connected, and offers no connecting', () => {
       useSetupStore.setState({
         integrations: [

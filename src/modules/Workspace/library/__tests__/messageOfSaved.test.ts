@@ -26,7 +26,7 @@ describe('messageOfSaved', () => {
     ).toMatchObject({ runId: null });
   });
 
-  /** A verdict used to be one English line; the chat now writes it in the QA's language. */
+  /** Um veredito era uma linha em inglês; o chat agora o escreve no idioma do QA. */
   it('reads the step and the action out of the line an older verdict kept', () => {
     expect(
       messageOfSaved({ ...VERDICT, text: 'Step 3 failed · Apply EXPIRED10 · then pay' }),

@@ -28,9 +28,9 @@ describe('toSaved', () => {
   });
 
   /**
-   * The saved file is what comes back if QAzinho closes now, and a run cannot outlive the app:
-   * kept as live it would come back running with nothing driving it, and dropped it would leave
-   * the bugs it found pointing at a run that is not there.
+   * O arquivo salvo é o que volta se o QAzinho fechar agora, e uma run não sobrevive ao
+   * app: guardada como viva, voltaria rodando sem nada a dirigindo, e descartada deixaria
+   * os bugs que achou apontando para uma run que não existe.
    */
   it('keeps a run in flight as one QAzinho interrupted, with what it walked so far', () => {
     const saved = JSON.parse(

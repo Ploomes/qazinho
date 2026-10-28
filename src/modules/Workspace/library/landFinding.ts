@@ -3,8 +3,8 @@ import type { IRunFinding, IStepOutcome } from '@/shared/types';
 import { catchBug } from '@/modules/Bug/library';
 
 /**
- * A bug the run's agent filed on the side of a step: it lands outside the plan, on the
- * bug already open it is or as a new one, and the run's section says so once.
+ * Um bug que o agente da run registrou ao lado de um passo: cai fora do plano, no bug já
+ * aberto que ele é ou como um novo, e a seção da run diz isso uma vez.
  */
 export function landFinding(props: {
   workspace: IWorkspace;

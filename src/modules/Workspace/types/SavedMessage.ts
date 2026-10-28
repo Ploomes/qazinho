@@ -6,8 +6,8 @@ import type {
 } from '@/modules/Chat';
 
 /**
- * A chat message as its file keeps it, older shapes included: a log of actions, a run
- * with no ending, a verdict in words.
+ * Uma mensagem de chat como o arquivo dela a guarda, formatos antigos incluídos: um log
+ * de ações, uma run sem fim, um veredito em palavras.
  */
 export type SavedMessage =
   | Exclude<ChatMessage, IRunMessage | IVerdictMessage | IErrorMessage>

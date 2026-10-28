@@ -1,8 +1,8 @@
 import type { IssueSource } from './IssueSource';
 
 /**
- * The ticket a workspace works from, and where it opens. It is where the expected result
- * comes from.
+ * O ticket a partir do qual um workspace trabalha, e onde ele abre. É de onde vem o
+ * resultado esperado.
  */
 export interface IIssue {
   key: string;

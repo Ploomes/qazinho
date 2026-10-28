@@ -6,8 +6,8 @@ import { useRunButtonViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A lime sticker cut in two: the plan runs from its face, and its caret opens the two
- * ways to run it, each saying what it does.
+ * Um sticker lima cortado em dois: o plano roda pela face dele, e o caret abre os dois
+ * jeitos de rodá-lo, cada um dizendo o que faz.
  */
 export const RunButton: React.FC<IRunButtonProps> = (props) => {
   const {

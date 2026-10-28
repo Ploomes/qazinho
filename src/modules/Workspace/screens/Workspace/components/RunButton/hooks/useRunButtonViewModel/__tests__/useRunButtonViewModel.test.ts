@@ -78,7 +78,10 @@ describe('useRunButtonViewModel', () => {
       expect(result.current.isOpen).toBe(false);
     });
 
-    /** Before any case passed there is nothing to walk again without the agent: both ways are the same. */
+    /**
+     * Antes de qualquer caso passar não há nada a andar de novo sem o agente: os dois
+     * jeitos são o mesmo.
+     */
     it('offers no choice before a case passed', () => {
       const { result } = render({ canChoose: false });
 

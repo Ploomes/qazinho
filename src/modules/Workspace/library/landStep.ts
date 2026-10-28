@@ -4,8 +4,8 @@ import { catchBug } from '@/modules/Bug/library';
 import { appendRunMessages } from '@/modules/Chat/library';
 
 /**
- * One step came back from the device: the chat follows it, and a failure lands on its
- * bug, already open or new.
+ * Um passo voltou do dispositivo: o chat o acompanha, e uma falha cai no bug dela, já
+ * aberto ou novo.
  */
 export function landStep(props: {
   workspace: IWorkspace;

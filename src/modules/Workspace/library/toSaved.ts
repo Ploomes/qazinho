@@ -4,8 +4,8 @@ import { stringify } from 'yaml';
 import { endRun } from './endRun';
 
 /**
- * Text a QA can read, screenshots left as files; a run in flight is kept as one QAzinho
- * interrupted, which it is if it closes now.
+ * Texto que um QA consegue ler, screenshots deixados como arquivos; uma run em andamento
+ * é guardada como uma que o QAzinho interrompeu, o que ela é se ele fechar agora.
  */
 export function toSaved(props: { workspace: IWorkspace; at: string }): ISavedWorkspace {
   const workspace = endRun({ ...props, endedBy: 'interrupted' });

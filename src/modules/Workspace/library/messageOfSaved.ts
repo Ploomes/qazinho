@@ -4,8 +4,8 @@ import type { SavedMessage } from '@/modules/Workspace/types';
 const VERDICT_TEXT = /^Step (\d+) \S+ · ([\s\S]*)$/;
 
 /**
- * A saved chat message read back in today's shape, or null for a kind the chat no longer
- * shows.
+ * Uma mensagem de chat salva lida de volta no formato de hoje, ou null para um tipo que o
+ * chat não mostra mais.
  */
 export function messageOfSaved(saved: SavedMessage): ChatMessage | null {
   if (saved.kind === 'action') return null;

@@ -80,8 +80,8 @@ describe('endRun', () => {
     });
 
     /**
-     * A stopped run used to be thrown away while the bugs its failures became stayed, each one
-     * pointing at a run the list did not have.
+     * Uma run parada era jogada fora enquanto os bugs em que as falhas dela viraram
+     * ficavam, cada um apontando para uma run que a lista não tinha.
      */
     it('is filed with what it walked before the stop, so its bugs have a run to point at', () => {
       const stopped = endRun({

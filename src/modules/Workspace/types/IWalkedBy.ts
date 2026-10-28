@@ -1,8 +1,8 @@
 import type { TargetKind } from '@/shared/types';
 
 /**
- * Who walks a run and on what: the agent, the model it was told to use (null for its own
- * default), and the kind of target.
+ * Quem anda uma run e em quê: o agente, o modelo que lhe mandaram usar (null para o
+ * padrão dele), e o tipo de alvo.
  */
 export interface IWalkedBy {
   agent: string;

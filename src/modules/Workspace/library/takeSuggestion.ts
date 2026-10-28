@@ -3,8 +3,8 @@ import { appendPlanCard } from '@/modules/Chat/library';
 import { caseIdsUsed, planOfDraft } from '@/modules/Plan/library';
 
 /**
- * Takes the cases an exploration suggested into the plan, after the cases it already
- * holds, and hands the plan to its tab; a suggestion is taken once.
+ * Leva os casos que uma exploração sugeriu ao plano, depois dos casos que ele já guarda,
+ * e entrega o plano à aba dele; uma sugestão é levada uma vez.
  */
 export function takeSuggestion(props: {
   workspace: IWorkspace;

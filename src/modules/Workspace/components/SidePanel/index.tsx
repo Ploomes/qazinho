@@ -11,8 +11,8 @@ import { useSidePanelViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The panel beside the chat: the plan, the device, the runs or the bugs, on the tab the
- * QA picked, as wide as they dragged it, or widened over the chat.
+ * O painel ao lado do chat: o plano, o dispositivo, as runs ou os bugs, na aba que o QA
+ * escolheu, tão largo quanto ele o arrastou, ou alargado sobre o chat.
  */
 export const SidePanel: React.FC = () => {
   const {

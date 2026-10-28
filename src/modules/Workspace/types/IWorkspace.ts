@@ -15,8 +15,8 @@ import type {
 } from '@/shared/types';
 
 /**
- * One front of testing in a project: its chat, device, plan, runs and where its plan came
- * from.
+ * Uma frente de teste num projeto: o chat, o dispositivo, o plano, as runs e de onde veio
+ * o plano dela.
  */
 export interface IWorkspace {
   id: string;

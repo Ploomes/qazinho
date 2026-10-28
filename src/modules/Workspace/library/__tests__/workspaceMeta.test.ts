@@ -48,7 +48,7 @@ describe('workspaceMeta', () => {
     expect(workspaceMeta(one)).toEqual({ key: 'SIDEBAR.META_BUG_ONE', count: 1 });
   });
 
-  /** An exploration has no plan steps: the sidebar read "1/0". */
+  /** Uma exploração não tem passos de plano: a sidebar mostrava "1/0". */
   it('counts the screens an exploration reached, not the plan', () => {
     const exploring = startRun({
       workspace: makeWorkspace([]),

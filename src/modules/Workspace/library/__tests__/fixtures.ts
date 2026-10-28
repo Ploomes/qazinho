@@ -39,7 +39,7 @@ export const CASES: ITestCase[] = [
   },
 ];
 
-/** What a run's agent asks the QA on the second step of TC-01. */
+/** O que o agente de uma run pergunta ao QA no segundo passo do TC-01. */
 export const QUESTION: IRunQuestion = {
   id: 'q-1',
   question: 'Which plan should I pick?',
@@ -115,7 +115,7 @@ export function makeOutcome(props: {
   };
 }
 
-/** A run that already happened: one outcome per verdict, in plan order. */
+/** Uma run que já aconteceu: um resultado por veredito, na ordem do plano. */
 export function walkRun(props: {
   workspace?: IWorkspace;
   verdicts: StepVerdict[];
@@ -143,7 +143,10 @@ export function walkRun(props: {
     : walked;
 }
 
-/** The recording of `recordedRun`: its first frame comes 500ms after the first step began, and it lasts 12s. */
+/**
+ * A gravação da `recordedRun`: o primeiro frame dela vem 500ms depois de o primeiro passo
+ * começar, e ela dura 12s.
+ */
 export const RECORDING: IRunVideo = {
   startedAt: 1_760_000_000_500,
   durationMs: 12_000,
@@ -152,8 +155,9 @@ export const RECORDING: IRunVideo = {
 };
 
 /**
- * A finished run with its recording. Each step takes 2s, so in the video TC-01 runs from 0 to
- * 5.5s and TC-02 from 5.5s to 11.5s, and the bug its second step became is caught at 9.5s.
+ * Uma run terminada com a gravação. Cada passo leva 2s, então no vídeo o TC-01 vai de 0 a
+ * 5,5s e o TC-02 de 5,5s a 11,5s, e o bug em que o segundo passo dele virou é pego aos
+ * 9,5s.
  */
 export function recordedRun(
   verdicts: StepVerdict[] = ['passed', 'passed', 'passed', 'passed', 'failed', 'skipped'],

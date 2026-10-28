@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { PANEL } from '@/modules/Workspace/constants';
 import { SHELL } from '@/shared/constants';
 
-/** The smallest window main allows, from WINDOW in src/main, which the page may not import. */
+/**
+ * A menor janela que a main permite, a partir do WINDOW em src/main, que a página não
+ * pode importar.
+ */
 const SMALLEST_WINDOW = 1024;
 
 describe('PANEL', () => {

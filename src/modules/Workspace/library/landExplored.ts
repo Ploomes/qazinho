@@ -2,8 +2,8 @@ import type { IWorkspace } from '@/modules/Workspace/types';
 import type { IDraftedCase } from '@/shared/types';
 
 /**
- * The exploration in flight finished: it keeps what the explorer said of the app and the
- * plan it suggests, for when it ends.
+ * A exploração em andamento terminou: guarda o que o explorador disse do app e o plano
+ * que ele sugere, para quando ela terminar.
  */
 export function landExplored(props: {
   workspace: IWorkspace;

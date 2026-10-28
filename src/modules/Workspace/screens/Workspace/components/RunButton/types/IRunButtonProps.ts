@@ -1,6 +1,6 @@
 /**
- * The button that runs a workspace's plan, opening onto the other way to run it once a
- * case passed.
+ * O botão que roda o plano de um workspace, abrindo para o outro jeito de rodá-lo quando
+ * um caso passou.
  */
 export interface IRunButtonProps {
   canRun: boolean;

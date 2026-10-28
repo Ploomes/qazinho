@@ -1,6 +1,6 @@
 import type { IBug } from '@/modules/Bug';
 
-/** A bug as its file keeps it, an older one included. */
+/** Um bug como o arquivo dele o guarda, um antigo incluído. */
 export type SavedBug = Omit<
   IBug,
   | 'stepNumber'

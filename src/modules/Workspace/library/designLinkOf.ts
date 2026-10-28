@@ -4,8 +4,8 @@ const DESIGN_PATH =
   /^\/(?:design|file|proto)\/([\w-]+)(?:\/branch\/([\w-]+))?(?:\/([^/]+))?/;
 
 /**
- * The Figma design a link points at: its file, or the branch the link opens, and the
- * frame or page its node-id names; null for anything that is not a Figma design.
+ * O design do Figma para o qual um link aponta: o arquivo, ou a branch que o link abre, e
+ * o frame ou a página que o node-id dele nomeia; null para o que não é design do Figma.
  */
 export function designLinkOf(text: string): IDesignLink | null {
   let url: URL;

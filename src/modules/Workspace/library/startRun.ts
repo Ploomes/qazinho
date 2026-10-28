@@ -1,6 +1,6 @@
 import type { IWalkedBy, IWorkspace } from '@/modules/Workspace/types';
 
-/** Starts a run of the plan, or an exploration, which needs no plan to go. */
+/** Inicia uma run do plano, ou uma exploração, que não precisa de plano para ir. */
 export function startRun(props: {
   workspace: IWorkspace;
   startedAt: string;

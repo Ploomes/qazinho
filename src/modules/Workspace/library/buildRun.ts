@@ -8,8 +8,8 @@ import { EXPLORATION } from '@/shared/constants';
 const MS_IN_SECOND = 1_000;
 
 /**
- * The run as it ended, read back from what the device did, with what its agent asked the
- * QA.
+ * A run como terminou, lida de volta do que o dispositivo fez, com o que o agente dela
+ * perguntou ao QA.
  */
 export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRun {
   const { workspace, endedBy } = props;

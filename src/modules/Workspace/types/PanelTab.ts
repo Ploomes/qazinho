@@ -1,4 +1,4 @@
 import type { WorkspaceTab } from './WorkspaceTab';
 
-/** A tab of the panel beside the chat. */
+/** Uma aba do painel ao lado do chat. */
 export type PanelTab = Exclude<WorkspaceTab, 'chat'>;

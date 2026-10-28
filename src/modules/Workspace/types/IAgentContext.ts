@@ -1,6 +1,6 @@
 /**
- * How full the agent's context window is in one workspace's conversation, as the agent
- * reported it.
+ * Quão cheia está a janela de contexto do agente na conversa de um workspace, como o
+ * agente relatou.
  */
 export interface IAgentContext {
   tokens: number;
