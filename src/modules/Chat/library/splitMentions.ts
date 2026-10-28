@@ -1,5 +1,6 @@
 /**
- * A message cut into plain text and the mentions in it, so the mentions can stand out.
+ * Uma mensagem cortada em texto simples e nas menções dela, para as menções se
+ * destacarem.
  */
 export function splitMentions(props: {
   text: string;

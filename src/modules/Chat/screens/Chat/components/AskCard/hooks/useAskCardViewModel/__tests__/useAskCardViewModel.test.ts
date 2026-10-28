@@ -64,7 +64,10 @@ describe('useAskCardViewModel', () => {
       expect(card({ ...exploring, action: '' }).result.current.where).toBe('Exploring');
     });
 
-    /** A secret is typed, never picked: an answer on a button would be a value on screen. */
+    /**
+     * Um segredo é digitado, nunca escolhido: uma resposta num botão seria um valor na
+     * tela.
+     */
     it('asks a secret in a hidden field, with no answers to pick and the name it goes as', () => {
       const { result } = card(SECRET);
 
@@ -155,7 +158,7 @@ describe('useAskCardViewModel', () => {
   });
 
   describe('onSecret', () => {
-    /** The agent forgot to ask for a secret: the QA still keeps a password away from it. */
+    /** O agente esqueceu de pedir um segredo: o QA ainda mantém uma senha longe dele. */
     it('lets the QA send any answer as a secret, under the name main gave it', () => {
       const { result, onAnswer } = card();
 

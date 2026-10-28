@@ -1,8 +1,8 @@
 import type { IChatReference } from '@/shared/types';
 
 /**
- * What the @ picker offers for the word being typed: every id or title that holds it, for
- * the tabs to sort.
+ * O que o seletor de @ oferece para a palavra sendo digitada: todo id ou título que a
+ * contém, para as abas ordenarem.
  */
 export function mentionCandidates(props: {
   references: IChatReference[];

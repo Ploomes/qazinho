@@ -132,8 +132,8 @@ describe('useChatViewModel', () => {
   });
 
   /**
-   * The suggestion only opens the conversation: a long ask for flows and edge cases read as an
-   * order to write the plan at once, and the agent guessed instead of asking.
+   * A sugestão só abre a conversa: um pedido longo por fluxos e casos de borda soava como
+   * uma ordem para escrever o plano na hora, e o agente adivinhava em vez de perguntar.
    */
   it('starts the suggestions with a test plan, and only opens the conversation about it', async () => {
     const ask = answering({ answer: DRAFTED });
@@ -326,7 +326,10 @@ describe('useChatViewModel', () => {
       });
     });
 
-    /** A token pasted into the chat would reach the agent; the Intern's chat held one back first. */
+    /**
+     * Um token colado no chat chegaria ao agente; o chat do Estagiário já segurava um
+     * antes.
+     */
     it('holds back a message with a token until the QA takes it out or insists', async () => {
       const ask = answering({ answer: DRAFTED });
       const { result } = renderHook(() => useChatViewModel());
@@ -544,7 +547,10 @@ describe('useChatViewModel', () => {
       });
     });
 
-    /** A plan the chat wrote mid-run replaced the one main was walking: the run's report came back under the wrong cases. */
+    /**
+     * Um plano que o chat escreveu no meio de uma run substituía o que a main estava
+     * andando: o relatório da run voltava sob os casos errados.
+     */
     it('does NOT change the plan when a run began while the agent was writing it, and says so', async () => {
       answering({ answer: DRAFTED });
       useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
@@ -591,7 +597,7 @@ describe('useChatViewModel', () => {
       expect(useWorkspaceStore.getState().workspaces[0]?.plan).toHaveLength(0);
     });
 
-    /** A signed-out Codex used to tell the QA to run codex login in a terminal, in English. */
+    /** Um Codex deslogado mandava o QA rodar codex login num terminal, em inglês. */
     it('tells the QA where to sign a signed-out agent in, in their language', async () => {
       await i18n.changeLanguage('pt');
       answering({ isError: true, failure: { reason: 'agent-signed-out' } });
@@ -1079,7 +1085,10 @@ describe('useChatViewModel', () => {
       });
     });
 
-    /** A first run in a new workspace walked behind the empty chat's welcome, its question unseen. */
+    /**
+     * Uma primeira run num workspace novo andava por trás das boas-vindas do chat vazio,
+     * com a pergunta dela invisível.
+     */
     it('shows the run and its question in a chat that has said nothing yet', () => {
       answering({});
       useWorkspaceStore.setState({
@@ -1469,7 +1478,10 @@ describe('useChatViewModel', () => {
     });
   });
 
-  /** Opening a phone app to look at it can take most of a minute: the QA sees why the chat waits. */
+  /**
+   * Abrir um app de celular para olhá-lo pode levar quase um minuto: o QA vê por que o
+   * chat espera.
+   */
   describe('a look at a phone app', () => {
     it('says the app is being opened on the emulator while the agent waits on it', () => {
       useWorkspaceStore.setState({

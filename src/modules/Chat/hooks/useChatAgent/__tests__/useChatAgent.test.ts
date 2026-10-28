@@ -37,7 +37,7 @@ const DRAFTED: IChatAnswer = {
   },
 };
 
-/** A bridge whose agent answers every ask with the turn handed to it. */
+/** Uma bridge cujo agente responde todo pedido com o turno que recebe. */
 function answering(turn: Partial<IChatTurn>) {
   const ask = vi.fn((_: IAskAgent): Promise<IChatTurn> =>
     Promise.resolve({

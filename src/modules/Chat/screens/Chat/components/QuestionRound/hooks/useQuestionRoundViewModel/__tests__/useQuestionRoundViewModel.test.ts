@@ -108,8 +108,9 @@ describe('useQuestionRoundViewModel', () => {
     });
 
     /**
-     * The confirmation used to answer on the click of its lone option, while the card still showed
-     * Answer and a field: the QA had no chance to add a word, nor to look before it went.
+     * A confirmação respondia no clique da opção única, enquanto o cartão ainda mostrava
+     * Responder e um campo: o QA não tinha chance de acrescentar uma palavra, nem de
+     * olhar antes de ir.
      */
     it('waits for Answer on the confirmation too, so the QA can add words after picking', () => {
       const { onAnswer, view } = render({ message: round({ questions: [GATE] }) });
@@ -135,8 +136,8 @@ describe('useQuestionRoundViewModel', () => {
     });
 
     /**
-     * A round asking for an account offered "Write it in the field below": one click sent it with
-     * the field still empty, and the agent asked for the account again.
+     * Uma rodada pedindo uma conta oferecia "Escreva no campo abaixo": um clique a
+     * mandava com o campo ainda vazio, e o agente pedia a conta de novo.
      */
     it('waits for Answer on a lone question with several options, so the QA can write below', () => {
       const VALUES: IChatQuestion = {

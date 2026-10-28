@@ -1,8 +1,8 @@
 import type { IChatReference } from '@/shared/types';
 
 /**
- * `references` is what the active tab holds; each tab counts what it holds for the @
- * being typed.
+ * `references` é o que a aba ativa guarda; cada aba conta o que guarda para o @ sendo
+ * digitado.
  */
 export interface IMentionPickerProps {
   references: IChatReference[];

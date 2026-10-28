@@ -3,7 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { Eyebrow, Intern } from '@/shared/components/atoms';
 import './styles.css';
 
-/** A broken tool is never a test result: this block can never look like a verdict. */
+/**
+ * Uma ferramenta quebrada nunca é resultado de teste: este bloco nunca pode parecer um
+ * veredito.
+ */
 export const ErrorBlock: React.FC<IErrorBlockProps> = ({ message }) => {
   const { t } = useTranslation();
 

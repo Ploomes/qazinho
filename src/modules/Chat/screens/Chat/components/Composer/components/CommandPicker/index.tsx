@@ -6,8 +6,8 @@ import { useCommandPickerViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The commands a slash opens, then the repository and the branch the command needs, one
- * step at a time.
+ * Os comandos que uma barra abre, depois o repositório e a branch de que o comando
+ * precisa, um passo por vez.
  */
 export const CommandPicker: React.FC<ICommandPickerProps> = (props) => {
   const { listRef, listStyle, swap, rows, onPointerDown } =

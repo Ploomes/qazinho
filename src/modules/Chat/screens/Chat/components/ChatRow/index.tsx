@@ -13,7 +13,7 @@ import { VerdictNote } from '@/modules/Chat/screens/Chat/components/VerdictNote'
 import { useChatRowViewModel } from './hooks';
 import './styles.css';
 
-/** One message in the chat: who said it and when in the gutter, the message beside it. */
+/** Uma mensagem no chat: quem a disse e quando na margem, a mensagem ao lado. */
 export const ChatRow: React.FC<IChatRowProps> = (props) => {
   const { planTitle, className, who, whoClassName, initial, transition } =
     useChatRowViewModel(props);

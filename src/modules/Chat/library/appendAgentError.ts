@@ -1,8 +1,8 @@
 import type { IWorkspace } from '@/modules/Workspace';
 
 /**
- * A broken agent is a QAzinho error, never a test result: it gets its own block, kept
- * with the run it stopped.
+ * Um agente quebrado é um erro do QAzinho, nunca um resultado de teste: ganha um bloco
+ * próprio, guardado com a run que ele parou.
  */
 export function appendAgentError(props: {
   workspace: IWorkspace;

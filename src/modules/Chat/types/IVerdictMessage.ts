@@ -1,8 +1,8 @@
 import type { StepVerdict } from '@/modules/Run';
 
 /**
- * A step of a run that did not hold up; `runId` is null for one saved before the chat
- * kept runs together.
+ * Um passo de uma run que não se sustentou; `runId` é null para um salvo antes de o chat
+ * manter as runs juntas.
  */
 export interface IVerdictMessage {
   id: string;

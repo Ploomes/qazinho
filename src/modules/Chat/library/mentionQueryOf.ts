@@ -1,6 +1,6 @@
 /**
- * The word being typed after an @ at the end of the draft, or null when the QA is not
- * mentioning.
+ * A palavra sendo digitada depois de um @ no fim do rascunho, ou null quando o QA não
+ * está mencionando.
  */
 export function mentionQueryOf(draft: string): string | null {
   const match = /(?:^|\s)@([\w-]*)$/.exec(draft);

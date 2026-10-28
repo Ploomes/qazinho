@@ -38,7 +38,7 @@ describe('useAskNoteViewModel', () => {
     });
   });
 
-  /** The page never had the value back: the note can only name the variable. */
+  /** A página nunca recebeu o valor de volta: a nota só pode nomear a variável. */
   it('names a secret by its variable, and says when the project keeps it', () => {
     expect(
       note({ answer: { kind: 'secret', name: 'OTP_CODE', isKept: false } }),

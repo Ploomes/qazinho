@@ -1,7 +1,10 @@
 import type { IQuestionAnswer } from './IQuestionAnswer';
 import type { IChatQuestion } from '@/shared/types';
 
-/** A round of questions the agent asked the QA, and their answers once they sent them. */
+/**
+ * Uma rodada de perguntas que o agente fez ao QA, e as respostas dele depois que as
+ * mandou.
+ */
 export interface IQuestionsMessage {
   id: string;
   kind: 'questions';

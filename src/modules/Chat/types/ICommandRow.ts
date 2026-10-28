@@ -1,6 +1,6 @@
 /**
- * One choice the command picker offers: what it is called, a word beside it, a line under
- * it, and whether it can be picked.
+ * Uma escolha que o seletor de comandos oferece: como se chama, uma palavra ao lado, uma
+ * linha embaixo, e se pode ser escolhida.
  */
 export interface ICommandRow {
   id: string;

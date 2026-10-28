@@ -1,6 +1,6 @@
 /**
- * A reader this close to the end is following the conversation, so new messages keep it
- * in view.
+ * Um leitor tão perto do fim está acompanhando a conversa, então as mensagens novas o
+ * mantêm à vista.
  */
 export function isNearBottom(props: {
   scrollTop: number;

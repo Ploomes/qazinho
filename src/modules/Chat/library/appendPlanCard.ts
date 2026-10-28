@@ -4,8 +4,8 @@ import { keepVerdicts } from '@/modules/Plan/library';
 import { flattenPlanSteps } from '@/modules/Run/library';
 
 /**
- * The plan never lands in the chat as text: the card hands it to the Plan tab, keeping
- * the verdicts of cases it kept.
+ * O plano nunca cai no chat como texto: o cartão o entrega à aba Plano, mantendo os
+ * vereditos dos casos que manteve.
  */
 export function appendPlanCard(props: {
   workspace: IWorkspace;

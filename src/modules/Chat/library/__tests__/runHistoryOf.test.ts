@@ -46,7 +46,10 @@ describe('runHistoryOf', () => {
     expect(latest?.facts).not.toContain('note: Another run.');
   });
 
-  /** The QA's answers are requirements the plan may not hold yet: the chat's agent should know them. */
+  /**
+   * As respostas do QA são requisitos que o plano pode ainda não ter: o agente do chat
+   * deve conhecê-las.
+   */
   it('tells what the latest run asked the QA and how it ended, a secret by its name alone', () => {
     const [latest] = runHistoryOf({
       workspace: {

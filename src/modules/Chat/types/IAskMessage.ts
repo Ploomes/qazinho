@@ -1,8 +1,8 @@
 import type { RunAnswer } from '@/shared/types';
 
 /**
- * A question the run's agent asked the QA, kept in the run's section once it ended: what
- * it asked, at which step, and how it was answered.
+ * Uma pergunta que o agente da run fez ao QA, guardada na seção da run depois que
+ * terminou: o que perguntou, em qual passo, e como foi respondida.
  */
 export interface IAskMessage {
   id: string;

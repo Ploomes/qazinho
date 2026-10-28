@@ -5,8 +5,8 @@ import { useAskCardViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The question a run's agent waits on, as a card the QA answers in the chat: one of its
- * answers, their own words, or a secret the agent only learns the name of.
+ * A pergunta que o agente de uma run espera, como cartão que o QA responde no chat: uma
+ * das respostas, as próprias palavras, ou um segredo de que o agente só vê o nome.
  */
 export const AskCard: React.FC<IAskCardProps> = (props) => {
   const {

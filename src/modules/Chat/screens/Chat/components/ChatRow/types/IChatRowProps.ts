@@ -2,8 +2,8 @@ import type { ChatMessage, IQuestionAnswer } from '@/modules/Chat/types';
 import type { IVariableBrief } from '@/shared/types';
 
 /**
- * One message in the chat, with who said it and when, and what the QA can do with it;
- * `isNested` lays it out inside a run's box.
+ * Uma mensagem no chat, com quem a disse e quando, e o que o QA pode fazer com ela;
+ * `isNested` a dispõe dentro da caixa de uma run.
  */
 export interface IChatRowProps {
   message: ChatMessage;

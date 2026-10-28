@@ -1,7 +1,8 @@
 import type { IChatReference } from '@/shared/types';
 
 /**
- * The references a message still points at: a mention deleted from the text is dropped.
+ * As referências para as quais uma mensagem ainda aponta: uma menção apagada do texto é
+ * descartada.
  */
 export function mentionsIn(props: {
   text: string;

@@ -2,8 +2,8 @@ import type { ChatMessage } from './ChatMessage';
 import type { IRunMessage } from './IRunMessage';
 
 /**
- * One line of the chat as drawn: a message on its own, or a run with everything it said
- * kept together.
+ * Uma linha do chat como desenhada: uma mensagem sozinha, ou uma run com tudo o que disse
+ * mantido junto.
  */
 export type ChatItem =
   | { kind: 'message'; message: ChatMessage; isNew: boolean }

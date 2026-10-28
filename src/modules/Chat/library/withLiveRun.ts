@@ -1,8 +1,8 @@
 import type { ChatItem } from '@/modules/Chat/types';
 
 /**
- * Gives the run going its line at the end of the chat before it has said anything, so the
- * QA sees it walk from the start.
+ * Dá à run em andamento a linha dela no fim do chat antes de ela dizer qualquer coisa,
+ * para o QA a ver andar desde o começo.
  */
 export function withLiveRun(props: {
   items: ChatItem[];

@@ -1,4 +1,4 @@
-/** What the agent said about a step while it walked a run, kept with that run. */
+/** O que o agente disse sobre um passo enquanto andava uma run, guardado com essa run. */
 export interface INoteMessage {
   id: string;
   kind: 'note';

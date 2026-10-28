@@ -6,8 +6,8 @@ import { runFactsOf } from './runFactsOf';
 const DEPTH = 5;
 
 /**
- * The workspace's latest runs for its chat agent, newest first: the last one whole with
- * the notes its agent left and what it asked the QA, the ones before by what broke.
+ * As últimas runs do workspace para o agente do chat, as mais novas primeiro: a última
+ * inteira com as notas e o que perguntou ao QA, as anteriores pelo que quebrou.
  */
 export function runHistoryOf(props: {
   workspace: Pick<IWorkspace, 'runs' | 'chat'>;

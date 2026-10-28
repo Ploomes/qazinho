@@ -93,7 +93,9 @@ describe('useChatScroll', () => {
     });
   });
 
-  /** The run holds until the QA answers: the card must not wait below where they scrolled to. */
+  /**
+   * A run segura até o QA responder: o cartão não pode esperar abaixo de onde ele rolou.
+   */
   it('brings a question the agent asks into view, even when the reader scrolled up', () => {
     const { result, rerender } = renderHook(
       (questionId: string | null) =>

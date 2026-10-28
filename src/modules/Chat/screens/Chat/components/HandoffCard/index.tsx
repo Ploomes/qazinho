@@ -2,7 +2,7 @@ import type { IHandoffCardProps } from './types';
 import { Icon } from '@/shared/components/atoms';
 import './styles.css';
 
-/** The chat never holds the plan or the report: it hands them to their tab. */
+/** O chat nunca guarda o plano nem o relatório: ele os entrega à aba deles. */
 export const HandoffCard: React.FC<IHandoffCardProps> = (props) => (
   <button type="button" className="handoff-card" onClick={props.onOpen}>
     <span

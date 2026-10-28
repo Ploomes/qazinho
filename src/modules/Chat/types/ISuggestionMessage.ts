@@ -1,9 +1,6 @@
 import type { IDraftedCase } from '@/shared/types';
 
-/**
- * The plan an exploration suggested, waiting in the chat for the QA to take it into the
- * plan.
- */
+/** O plano que uma exploração sugeriu, esperando no chat o QA levá-lo ao plano. */
 export interface ISuggestionMessage {
   id: string;
   kind: 'suggestion';

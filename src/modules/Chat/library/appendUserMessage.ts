@@ -2,8 +2,8 @@ import type { UserCommand } from '@/modules/Chat/types';
 import type { IWorkspace } from '@/modules/Workspace';
 
 /**
- * Puts what the QA sent at the end of the chat: their words, trimmed, with what they
- * mentioned and the command they gave.
+ * Põe o que o QA mandou no fim do chat: as palavras dele, sem espaços nas pontas, com o
+ * que mencionou e o comando que deu.
  */
 export function appendUserMessage(props: {
   workspace: IWorkspace;

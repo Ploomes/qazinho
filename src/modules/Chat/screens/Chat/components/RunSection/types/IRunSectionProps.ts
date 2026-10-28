@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 
 /**
- * A run in the chat, folded into one line: the day and time it started, how it stands,
- * and everything it said underneath.
+ * Uma run no chat, dobrada numa linha: o dia e a hora em que começou, como está, e tudo o
+ * que disse embaixo.
  */
 export interface IRunSectionProps {
   at: string;

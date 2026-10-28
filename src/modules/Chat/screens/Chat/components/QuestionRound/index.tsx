@@ -6,8 +6,8 @@ import { useQuestionRoundViewModel } from './hooks';
 import './styles.css';
 
 /**
- * The agent's questions in the chat: the QA picks an option or writes an answer to each,
- * and sends them together.
+ * As perguntas do agente no chat: o QA escolhe uma opção ou escreve uma resposta para
+ * cada uma, e as manda juntas.
  */
 export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
   const {

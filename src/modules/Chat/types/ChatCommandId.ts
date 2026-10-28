@@ -1,5 +1,5 @@
 /**
- * The commands the composer offers after a slash: a plan from the code, from a Jira story
- * or a Confluence page, or against a Figma design.
+ * Os comandos que o composer oferece depois de uma barra: um plano a partir do código, de
+ * uma história do Jira ou de uma página do Confluence, ou contra um design do Figma.
  */
 export type ChatCommandId = 'code-plan' | 'jira-plan' | 'confluence-plan' | 'figma-plan';

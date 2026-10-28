@@ -2,7 +2,8 @@ import type { IQuestionAnswer } from '@/modules/Chat/types';
 import type { IWorkspace } from '@/modules/Workspace';
 
 /**
- * Keeps the QA's answers on the round they answer, so the chat shows what they picked.
+ * Guarda as respostas do QA na rodada que elas respondem, para o chat mostrar o que ele
+ * escolheu.
  */
 export function answerRound(props: {
   workspace: IWorkspace;

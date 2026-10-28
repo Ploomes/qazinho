@@ -5,8 +5,8 @@ import { useRunSectionViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A run in the chat as one box: its line on top, and when opened, everything the run said
- * inside it.
+ * Uma run no chat como uma caixa: a linha dela em cima, e quando aberta, tudo o que a run
+ * disse dentro.
  */
 export const RunSection: React.FC<IRunSectionProps> = (props) => {
   const { hasCaret, facts, isBodyShown, hasOpen, className, bodyTransition, onToggle } =

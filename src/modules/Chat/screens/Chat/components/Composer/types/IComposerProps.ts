@@ -2,8 +2,8 @@ import type { ICommandPicker, IComposerCommand } from '@/modules/Chat/types';
 import type { IChatReference } from '@/shared/types';
 
 /**
- * The composer's state: the @ being typed, why nothing can be sent, and the command being
- * built.
+ * O estado do composer: o @ sendo digitado, por que nada pode ser mandado, e o comando
+ * sendo montado.
  */
 export interface IComposerProps {
   value: string;

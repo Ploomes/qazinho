@@ -19,7 +19,10 @@ const STEP: IRunStep = {
   span: null,
 };
 
-/** The fixture's first step began at 1_760_000_000_000, read on the clock the tests run under. */
+/**
+ * O primeiro passo da fixture começou em 1_760_000_000_000, lido no relógio em que os
+ * testes rodam.
+ */
 const DAY = new Date(1_760_000_000_000).toLocaleDateString('sv-SE');
 
 describe('runFactsOf', () => {

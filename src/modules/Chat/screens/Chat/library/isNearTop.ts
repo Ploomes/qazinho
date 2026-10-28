@@ -1,4 +1,4 @@
-/** A reader this close to the start is asking for older messages. */
+/** Um leitor tão perto do começo está pedindo mensagens mais antigas. */
 export function isNearTop(props: { scrollTop: number; edgePx: number }): boolean {
   return props.scrollTop <= props.edgePx;
 }

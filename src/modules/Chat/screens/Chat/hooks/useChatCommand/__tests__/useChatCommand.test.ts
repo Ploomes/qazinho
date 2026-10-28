@@ -216,7 +216,10 @@ describe('useChatCommand', () => {
     ).toBe("Add this project's repositories in its settings first.");
   });
 
-  /** Each command needs its own tracker: Jira missing must not lock the plan from the code. */
+  /**
+   * Cada comando precisa do próprio tracker: o Jira faltando não pode travar o plano a
+   * partir do código.
+   */
   it('locks only the command whose tracker is missing', () => {
     const rows = command({ draft: '/', isJiraConnected: false, isConfluenceOn: false })
       .result.current.picker?.rows;

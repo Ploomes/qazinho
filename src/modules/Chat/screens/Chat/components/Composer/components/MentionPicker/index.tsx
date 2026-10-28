@@ -8,8 +8,8 @@ import { useMentionPickerViewModel } from './hooks';
 import './styles.css';
 
 /**
- * What the QA can point the agent at with @, a tab for the plan's cases, one for bugs and
- * one for runs.
+ * Para o que o QA pode apontar o agente com @: uma aba para os casos do plano, uma para
+ * os bugs e uma para as runs.
  */
 export const MentionPicker: React.FC<IMentionPickerProps> = (props) => {
   const {

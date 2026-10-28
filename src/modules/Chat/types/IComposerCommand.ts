@@ -1,8 +1,8 @@
 import type { ICommandPart } from './ICommandPart';
 
 /**
- * The command chip in the composer: the command, what it names so far, and what the field
- * asks for next.
+ * O chip de comando no composer: o comando, o que nomeia até agora, e o que o campo pede
+ * em seguida.
  */
 export interface IComposerCommand {
   name: string;

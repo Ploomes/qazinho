@@ -3,8 +3,7 @@ import type { IWorkspace } from '@/modules/Workspace';
 import type { IStepOutcome } from '@/shared/types';
 
 /**
- * A step that did not hold up gets a verdict in the chat; the rest of the run is read in
- * Runs.
+ * Um passo que não se sustentou ganha um veredito no chat; o resto da run se lê em Runs.
  */
 export function appendRunMessages(props: {
   workspace: IWorkspace;

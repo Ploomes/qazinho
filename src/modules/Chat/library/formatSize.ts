@@ -1,6 +1,6 @@
 /**
- * A number of bytes as the QA reads a download: kilobytes under one megabyte, megabytes
- * with one decimal above it.
+ * Um número de bytes como o QA lê um download: kilobytes abaixo de um megabyte, megabytes
+ * com uma casa decimal acima.
  */
 export function formatSize(props: { bytes: number; language: string }): string {
   const isSmall = props.bytes < 1024 * 1024;

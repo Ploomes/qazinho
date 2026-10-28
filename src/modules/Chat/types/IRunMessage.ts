@@ -1,8 +1,8 @@
 import type { RunEnd } from '@/modules/Run/types';
 
 /**
- * A run's line in the chat, with how its steps went; an exploration also says how many
- * screens it reached and bugs it filed.
+ * A linha de uma run no chat, com como os passos dela foram; uma exploração também diz
+ * quantas telas alcançou e bugs registrou.
  */
 export interface IRunMessage {
   id: string;

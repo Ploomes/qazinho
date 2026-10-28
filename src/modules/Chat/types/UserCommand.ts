@@ -4,8 +4,8 @@ import type { IFigmaCommand } from './IFigmaCommand';
 import type { IJiraCommand } from './IJiraCommand';
 
 /**
- * A command the QA sent: a plan from the code, from a Jira story or a Confluence page, or
- * against a Figma design.
+ * Um comando que o QA mandou: um plano a partir do código, de uma história do Jira ou de
+ * uma página do Confluence, ou contra um design do Figma.
  */
 export type UserCommand =
   ICodeCommand | IJiraCommand | IConfluenceCommand | IFigmaCommand;

@@ -15,7 +15,7 @@ const ENDINGS = {
   interrupted: 'cut short when QAzinho closed',
 } as const;
 
-/** What QAzinho knows of one run, as the lines its agent reads. */
+/** O que o QAzinho sabe de uma run, como as linhas que o agente dele lê. */
 export function runFactsOf(props: { run: IRun; isBrief: boolean }): string[] {
   const { run, isBrief } = props;
   const cost = run.costUsd === null ? '' : `, cost $${run.costUsd.toFixed(3)}`;

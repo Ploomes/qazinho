@@ -1,6 +1,6 @@
 /**
- * A plan the QA asked for from a Confluence page: its id, its title, its space, and where
- * it opens.
+ * Um plano que o QA pediu a partir de uma página do Confluence: o id, o título, o espaço,
+ * e onde ela abre.
  */
 export interface IConfluenceCommand {
   id: 'confluence-plan';

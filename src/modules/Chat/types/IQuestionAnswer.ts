@@ -1,6 +1,6 @@
 /**
- * How the QA answered one of the agent's questions: the options they picked, what they
- * wrote, and the variables an option made them keep.
+ * Como o QA respondeu uma das perguntas do agente: as opções que escolheu, o que
+ * escreveu, e as variáveis que uma opção o fez guardar.
  */
 export interface IQuestionAnswer {
   picked: string[];

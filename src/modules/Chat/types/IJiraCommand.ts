@@ -1,6 +1,6 @@
 /**
- * A plan the QA asked for from a Jira story: its key, what it is called, and where it
- * opens.
+ * Um plano que o QA pediu a partir de uma história do Jira: a chave, como se chama, e
+ * onde ela abre.
  */
 export interface IJiraCommand {
   id: 'jira-plan';

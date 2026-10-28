@@ -1,6 +1,6 @@
 import type { IAskMessage } from '@/modules/Chat/types';
 
-/** A question the run's agent asked the QA, once it ended. */
+/** Uma pergunta que o agente da run fez ao QA, depois que terminou. */
 export interface IAskNoteProps {
   message: IAskMessage;
 }

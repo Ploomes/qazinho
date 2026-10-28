@@ -1,8 +1,8 @@
 import type { ChatItem, ChatMessage } from '@/modules/Chat/types';
 
 /**
- * Keeps everything a kept or going run said in the chat together, where it began; what a
- * run that never walked a step said stays loose.
+ * Mantém junto tudo o que uma run guardada ou em andamento disse no chat, onde ela
+ * começou; o que disse uma run que nunca andou um passo fica solto.
  */
 export function groupRunMessages(props: {
   messages: { message: ChatMessage; isNew: boolean }[];

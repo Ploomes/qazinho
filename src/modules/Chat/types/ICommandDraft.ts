@@ -3,8 +3,8 @@ import type { IProjectRepository } from '@/modules/Project/types';
 import type { IConfluencePageRef, IDesignLink, IJiraIssueRef } from '@/shared/types';
 
 /**
- * A command the QA is putting together in the composer: which, and the repository and
- * branch, the Jira story, the Confluence page, or the Figma design, picked so far.
+ * Um comando que o QA está montando no composer: qual, e o repositório e a branch, a
+ * história do Jira, a página do Confluence, ou o design do Figma, escolhidos até agora.
  */
 export interface ICommandDraft {
   id: ChatCommandId;

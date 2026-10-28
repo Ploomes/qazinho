@@ -1,8 +1,8 @@
 import type { ICommandRow } from './ICommandRow';
 
 /**
- * What the command picker shows for the step the QA is on: its heading, its choices, a
- * note, and the keys.
+ * O que o seletor de comandos mostra para o passo em que o QA está: o título, as
+ * escolhas, uma nota, e as teclas.
  */
 export interface ICommandPicker {
   heading: string;

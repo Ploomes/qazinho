@@ -1,6 +1,6 @@
 /**
- * Whether a text holds every word of a query, with no care for accents or case; an empty
- * query matches anything.
+ * Se um texto contém toda palavra de uma busca, sem ligar para acentos ou caixa; uma
+ * busca vazia casa com qualquer coisa.
  */
 export function matchesQuery(props: { text: string; query: string }): boolean {
   const text = plain(props.text);

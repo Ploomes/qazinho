@@ -1,6 +1,6 @@
 /**
- * A plan the QA asked for from a branch of a repository, measured against its base
- * branch.
+ * Um plano que o QA pediu a partir de uma branch de um repositório, medido contra a
+ * branch base dela.
  */
 export interface ICodeCommand {
   id: 'code-plan';

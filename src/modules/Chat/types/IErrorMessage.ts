@@ -1,6 +1,6 @@
 /**
- * QAzinho itself broke: the agent died, the device never came up. Never a test result;
- * `runId` is the run it stopped.
+ * O próprio QAzinho quebrou: o agente morreu, o dispositivo nunca subiu. Nunca um
+ * resultado de teste; `runId` é a run que ele parou.
  */
 export interface IErrorMessage {
   id: string;

@@ -1,6 +1,6 @@
 /**
- * A bug the run's agent filed on the side of a step, as the run's section in the chat
- * shows it; `isSeenAgain` when it was a bug already open.
+ * Um bug que o agente da run registrou ao lado de um passo, como a seção da run no chat o
+ * mostra; `isSeenAgain` quando era um bug já aberto.
  */
 export interface IFindingMessage {
   id: string;

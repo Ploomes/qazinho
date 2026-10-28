@@ -3,8 +3,8 @@ import type { IChatReference } from '@/shared/types';
 import { runFactsOf } from './runFactsOf';
 
 /**
- * Everything in a workspace the QA can point at with @, newest runs first, with the facts
- * behind each; `wholePlan` and `exploration` name a run in the QA's language.
+ * Tudo num workspace que o QA pode apontar com @, as runs mais novas primeiro, com os
+ * fatos de cada uma; `wholePlan` e `exploration` nomeiam uma run no idioma do QA.
  */
 export function referencesOf(props: {
   workspace: Pick<IWorkspace, 'runs' | 'bugs' | 'plan'>;

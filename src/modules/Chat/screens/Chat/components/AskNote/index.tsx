@@ -4,8 +4,8 @@ import { useAskNoteViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A question the run's agent asked the QA, in the run's section once it ended: what it
- * asked at which step, and the answer, or that none came.
+ * Uma pergunta que o agente da run fez ao QA, na seção da run depois que terminou: o que
+ * perguntou em qual passo, e a resposta, ou que nenhuma veio.
  */
 export const AskNote: React.FC<IAskNoteProps> = (props) => {
   const { label, where, question, isAnswered, isSecret, who, answer, className } =
