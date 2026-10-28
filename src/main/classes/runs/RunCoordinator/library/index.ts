@@ -22,6 +22,7 @@ export {
   recordedAction,
   replayedOutcome,
   resolvedAction,
+  stepCarryOn,
   unwalkedOutcome,
   variablePort,
 } from '@salve-software/qazinho-harness/engine';

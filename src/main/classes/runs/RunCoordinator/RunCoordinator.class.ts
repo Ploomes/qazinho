@@ -70,6 +70,7 @@ import {
   recipeOf,
   recordedAction,
   replayedOutcome,
+  stepCarryOn,
   unwalkedOutcome,
   variablePort,
 } from './library';
@@ -625,7 +626,7 @@ export class RunCoordinator {
       return findingAnswer({
         asked: finding.sameAs,
         kept,
-        carryOn: `Carry on with step ${String(walking.step.numberInCase)}.`,
+        carryOn: stepCarryOn(walking.step.numberInCase),
       });
     };
 
