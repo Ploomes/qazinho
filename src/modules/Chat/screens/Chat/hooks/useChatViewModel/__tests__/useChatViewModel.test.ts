@@ -790,7 +790,7 @@ describe('useChatViewModel', () => {
       });
 
       expect(sectionOf(renderHook(() => useChatViewModel()).result.current)?.title).toBe(
-        'Run r-01 · stopped · 1 passed · 1 failed',
+        'Run r-01 · stopped · 1 step passed · 1 failed',
       );
     });
 
@@ -831,7 +831,7 @@ describe('useChatViewModel', () => {
       });
 
       expect(sectionOf(renderHook(() => useChatViewModel()).result.current)?.title).toBe(
-        'Run r-01 · 1 passed · 0 failed',
+        'Run r-01 · 1 step passed · 0 failed',
       );
     });
 
@@ -845,7 +845,7 @@ describe('useChatViewModel', () => {
       const title = sectionOf(renderHook(() => useChatViewModel()).result.current)?.title;
 
       await i18n.changeLanguage('en');
-      expect(title).toBe('Run r-01 · 1 passou · 0 falharam');
+      expect(title).toBe('Run r-01 · 1 passo passou · 0 falharam');
     });
 
     it('leaves loose the error of a run that broke before its first step', () => {

@@ -232,7 +232,7 @@ describe('useRunEvents', () => {
         workspaceId: 'w1',
         runId: 'r-01',
         title: 'Run r-01 finished',
-        body: 'Checkout regression · 4 passed · 1 failed · 1 bug',
+        body: 'Checkout regression · 4 steps passed · 1 failed · 1 bug',
       });
     });
 
