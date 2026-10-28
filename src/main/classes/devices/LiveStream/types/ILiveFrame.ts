@@ -1,6 +1,6 @@
 /**
- * A frame of a device as it was captured: the image, when, in epoch ms, and the
- * width-to-height shape of the screen it shows.
+ * Um frame de um dispositivo como foi capturado: a imagem, quando, em ms de epoch, e o
+ * formato largura-altura da tela que ele mostra.
  */
 export interface ILiveFrame {
   jpeg: Buffer;

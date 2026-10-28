@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { findExistingPath, findOnPath } from '@/main/library';
 import { TOOL_PATHS } from './constants';
 
-/** Looks for what a device target needs, and reports what is here. */
+/** Procura o que um alvo de dispositivo precisa, e relata o que está aqui. */
 export class DeviceToolDetector {
   private detected: IDeviceTools | null = null;
 
@@ -42,7 +42,10 @@ export class DeviceToolDetector {
     return this.detected;
   }
 
-  /** Drops the cache, so the next look sees what an install just put on disk. */
+  /**
+   * Descarta o cache, para a próxima olhada ver o que uma instalação acabou de pôr no
+   * disco.
+   */
   public forget(): void {
     this.detected = null;
   }

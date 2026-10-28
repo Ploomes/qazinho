@@ -13,8 +13,9 @@ describe('mjpegPart', () => {
   });
 
   /**
-   * The recorder window places each frame in the run's video by when it was captured, and
-   * crops a phone-sized page out of the wider window Chrome keeps; an <img> skips both lines.
+   * A janela do gravador põe cada frame no vídeo da run pelo momento em que foi
+   * capturado, e corta uma página do tamanho de um celular da janela mais larga que o
+   * Chrome mantém; um <img> pula as duas linhas.
    */
   it('says when the frame was captured and the shape of the screen it shows', () => {
     const part = mjpegPart({

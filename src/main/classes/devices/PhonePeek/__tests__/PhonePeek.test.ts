@@ -4,7 +4,7 @@ import { PhonePeek } from '@/main/classes/devices/PhonePeek';
 
 const TARGET = { kind: 'android' as const, value: '/builds/apps/p-3/visitas.apk' };
 
-/** A phone that opens, reads its screen and closes, writing each move down. */
+/** Um celular que abre, lê a tela e fecha, anotando cada movimento. */
 function phone(props: { fails?: string } = {}) {
   const did: string[] = [];
   const driver: IDeviceDriver = {

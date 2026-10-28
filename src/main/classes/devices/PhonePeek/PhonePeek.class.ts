@@ -5,8 +5,8 @@ import { stripAnsi } from '@/main/library';
 import { PHONE_PEEK } from './constants';
 
 /**
- * Opens a phone app on the emulator or simulator before the chat plans, as on the day it
- * was installed, and reads its first screen.
+ * Abre um app de celular no emulador ou simulador antes de o chat planejar, como no dia
+ * em que foi instalado, e lê a primeira tela dele.
  */
 export class PhonePeek {
   private readonly openDevice: IPhonePeek['openDevice'];
@@ -21,7 +21,8 @@ export class PhonePeek {
   }
 
   /**
-   * Whether a look at the app is kept from a moment ago, so asking again opens no device.
+   * Se uma olhada no app está guardada de um momento atrás, para perguntar de novo não
+   * abrir dispositivo nenhum.
    */
   public isKept(target: IPhoneTarget): boolean {
     const kept = this.looks.get(`${target.kind}:${target.value}`);
@@ -30,8 +31,8 @@ export class PhonePeek {
   }
 
   /**
-   * What the app's first screen reads, looked at once and kept for a while; an app that
-   * did not open is tried again next time.
+   * O que a primeira tela do app lê, olhado uma vez e guardado por um tempo; um app que
+   * não abriu é tentado de novo na próxima vez.
    */
   public async look(target: IPhoneTarget): Promise<AppLook> {
     const key = `${target.kind}:${target.value}`;

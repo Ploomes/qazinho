@@ -2,8 +2,8 @@ import type { IPhoneTarget } from './IPhoneTarget';
 import type { IDeviceDriver } from '@salve-software/qazinho-harness/engine';
 
 /**
- * What PhonePeek needs: a driver for the app on this machine's emulator or simulator,
- * whether a run holds that device now, and a clock.
+ * O que o PhonePeek precisa: um driver para o app no emulador ou simulador desta máquina,
+ * se uma run segura esse dispositivo agora, e um relógio.
  */
 export interface IPhonePeek {
   openDevice: (target: IPhoneTarget) => Promise<IDeviceDriver | null>;

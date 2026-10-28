@@ -8,8 +8,8 @@ import { WebDriver } from '@salve-software/qazinho-harness/engine';
 import { APP_PEEK } from './constants';
 
 /**
- * Opens the web app under test and the pages its menu leads to, before the chat, so the
- * agent asks about what is there.
+ * Abre o app web sob teste e as páginas a que o menu dele leva, antes do chat, para o
+ * agente perguntar sobre o que está lá.
  */
 export class AppPeek {
   private readonly folder: string;
@@ -20,8 +20,8 @@ export class AppPeek {
   }
 
   /**
-   * What the app's page reads, looked at once and kept for a while, into a protected
-   * environment with the access given; a page that did not open is tried again next time.
+   * O que a página do app lê, olhado uma vez e guardado por um tempo, num ambiente
+   * protegido com o acesso dado; uma página que não abriu é tentada de novo depois.
    */
   public async look(url: string, access?: IWebAccess): Promise<AppLook> {
     const kept = this.looks.get(url);

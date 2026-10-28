@@ -1,4 +1,7 @@
-/** A phone app to look at: an Android .apk or an iOS simulator .app, by its path. */
+/**
+ * Um app de celular para olhar: um .apk de Android ou um .app de simulador de iOS, pelo
+ * caminho dele.
+ */
 export interface IPhoneTarget {
   kind: 'android' | 'ios';
   value: string;

@@ -7,8 +7,8 @@ import { LIVE_STREAM } from './constants';
 import { mjpegPart, workspaceOfPath } from './library';
 
 /**
- * Serves each workspace's device as MJPEG on loopback, so video never crosses IPC: to the
- * page's <img>, and to the recorder window.
+ * Serve o dispositivo de cada workspace como MJPEG em loopback, para o vídeo nunca cruzar
+ * o IPC: ao <img> da página, e à janela do gravador.
  */
 export class LiveStream {
   private readonly token = randomUUID();
