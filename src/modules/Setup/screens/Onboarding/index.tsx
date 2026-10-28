@@ -127,9 +127,9 @@ export const Onboarding: React.FC = () => {
         <div className="onboarding__next">
           {isLast ? (
             <>
-              <Button onClick={onCreateProject}>{t('SETUP.CREATE_PROJECT')}</Button>
-              <Button variant="primary" onClick={onFinish}>
-                {t('SETUP.OPEN_APP')}
+              <Button onClick={onFinish}>{t('SETUP.OPEN_APP')}</Button>
+              <Button variant="primary" onClick={onCreateProject}>
+                {t('SETUP.CREATE_PROJECT')}
               </Button>
             </>
           ) : (
