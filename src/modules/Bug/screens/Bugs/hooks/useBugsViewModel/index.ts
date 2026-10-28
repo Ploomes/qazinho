@@ -34,7 +34,15 @@ export const useBugsViewModel = () => {
   const plan = workspace?.plan ?? [];
   const open = bugs.filter(({ isDismissed }) => !isDismissed);
   const dismissed = bugs.filter(({ isDismissed }) => isDismissed);
-  const filter = bugFilter === 'dismissed' && dismissed.length === 0 ? 'all' : bugFilter;
+  const severities = BUG_FILTERS.filter((id) =>
+    open.some(({ severity }) => severity === id),
+  );
+  const offered = [
+    ...(severities.length > 1 ? severities : []),
+    ...(dismissed.length > 0 ? (['dismissed'] as const) : []),
+  ];
+  const offeredFilters = offered.length === 0 ? [] : (['all', ...offered] as const);
+  const filter = offeredFilters.some((id) => id === bugFilter) ? bugFilter : 'all';
   const shown =
     filter === 'dismissed'
       ? dismissed
@@ -85,13 +93,16 @@ export const useBugsViewModel = () => {
     }),
     workspaceId: workspace?.id ?? '',
     openBugId,
-    filters: BUG_FILTERS.filter((id) => id !== 'dismissed' || dismissed.length > 0).map(
-      (id) => ({
-        id,
-        label: t(BUG_FILTER_KEYS[id]),
-        isActive: id === filter,
-      }),
-    ),
+    filters: offeredFilters.map((id) => ({
+      id,
+      label: t(BUG_FILTER_KEYS[id]),
+      isActive: id === filter,
+      className: id === filter ? 'bugs__filter bugs__filter--active' : 'bugs__filter',
+      onClick: () => {
+        setBugFilter(id);
+      },
+    })),
+    hasFilters: offeredFilters.length > 0,
     isEmpty: bugs.length === 0,
     summary:
       open.length === 0
@@ -103,7 +114,6 @@ export const useBugsViewModel = () => {
       if (workspace !== null) dismissBug({ workspaceId: workspace.id, ...props });
     },
     onToggleBug: toggleBug,
-    onFilter: setBugFilter,
     onOpenRun,
     onOpenCase,
     sending:

@@ -15,10 +15,10 @@ export const Bugs: React.FC = () => {
     workspaceId,
     openBugId,
     filters,
+    hasFilters,
     isEmpty,
     summary,
     onToggleBug,
-    onFilter,
     onOpenRun,
     onOpenCase,
     onDismiss,
@@ -42,22 +42,21 @@ export const Bugs: React.FC = () => {
     <div className="bugs">
       <div ref={topRef} className="bugs__head">
         <span className="bugs__summary">{summary}</span>
-        <div className="bugs__filters">
-          {filters.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={
-                item.isActive ? 'bugs__filter bugs__filter--active' : 'bugs__filter'
-              }
-              onClick={() => {
-                onFilter(item.id);
-              }}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
+        {hasFilters && (
+          <div className="bugs__filters">
+            {filters.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className={item.className}
+                aria-pressed={item.isActive}
+                onClick={item.onClick}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="bugs__list">

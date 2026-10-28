@@ -44,37 +44,45 @@ describe('useBugsViewModel', () => {
   });
 
   describe('onFilter', () => {
-    it('offers every severity by name, with the one in use marked', async () => {
+    const LOW = { ...BUG, id: 'b-low', severity: 'low' as const };
+
+    it('offers no filter while every open bug has the same severity', () => {
+      const { result } = renderHook(() => useBugsViewModel());
+
+      expect(result.current.hasFilters).toBe(false);
+      expect(result.current.filters).toEqual([]);
+    });
+
+    it('offers the severities the open bugs carry, by name, with the one in use marked', async () => {
       await i18n.changeLanguage('pt');
+      useWorkspaceStore.setState({ workspaces: [{ ...WORKSPACE, bugs: [BUG, LOW] }] });
 
       const { result } = renderHook(() => useBugsViewModel());
 
-      expect(result.current.filters).toEqual([
+      expect(result.current.filters).toMatchObject([
         { id: 'all', label: 'todos', isActive: true },
         { id: 'high', label: 'alta', isActive: false },
-        { id: 'medium', label: 'média', isActive: false },
         { id: 'low', label: 'baixa', isActive: false },
       ]);
     });
 
     it('keeps the bugs of that severity', () => {
+      useWorkspaceStore.setState({ workspaces: [{ ...WORKSPACE, bugs: [BUG, LOW] }] });
       const { result } = renderHook(() => useBugsViewModel());
 
       act(() => {
-        result.current.onFilter('high');
+        result.current.filters.find(({ id }) => id === 'high')?.onClick();
       });
 
-      expect(result.current.bugs).toHaveLength(1);
+      expect(result.current.bugs.map(({ bug }) => bug.id)).toEqual([BUG.id]);
     });
 
-    it('shows none when no bug carries that severity', () => {
+    it('shows every open bug once the severity picked has none left', () => {
+      useWorkspaceStore.setState({ bugFilter: 'low' });
+
       const { result } = renderHook(() => useBugsViewModel());
 
-      act(() => {
-        result.current.onFilter('low');
-      });
-
-      expect(result.current.bugs).toEqual([]);
+      expect(result.current.bugs.map(({ bug }) => bug.id)).toEqual([BUG.id]);
     });
   });
 
@@ -94,7 +102,7 @@ describe('useBugsViewModel', () => {
       expect(result.current.filters.map(({ id }) => id)).toContain('dismissed');
 
       act(() => {
-        result.current.onFilter('dismissed');
+        result.current.filters.find(({ id }) => id === 'dismissed')?.onClick();
       });
 
       expect(result.current.bugs.map(({ bug }) => bug.id)).toEqual([BUG.id]);
@@ -113,7 +121,7 @@ describe('useBugsViewModel', () => {
       });
 
       expect(result.current.bugs.map(({ bug }) => bug.id)).toEqual([BUG.id]);
-      expect(result.current.filters.find(({ isActive }) => isActive)?.id).toBe('all');
+      expect(result.current.hasFilters).toBe(false);
     });
   });
 
