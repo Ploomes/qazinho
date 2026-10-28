@@ -410,7 +410,7 @@ question per channel, for a target `{ role, platform }`:
 Signing in to QAzinho Pro changes nothing in how the app is used, and sends nothing: a project
 goes to an org only once the QA publishes it, the way GitHub Desktop publishes a repository
 ([030](https://github.com/Salve-Software/qazinho-server/blob/main/docs/adrs/030-the-desktop-publishes-and-clones-projects.md)).
-The card at the foot of the sidebar (`ProAccountCard`), the project window's QAzinho Pro section
+The card at the foot of the sidebar (`ProAccountCard`), the project window's Org section
 (`ProjectProPane`) and a mark on each linked project in the sidebar are where it shows.
 
 - **Signing in** is the platform's device flow (`ProAccount`): a code the QA confirms in the
