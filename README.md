@@ -1,31 +1,31 @@
 # QAzinho
 
-Your QA assistant, on your desktop.
+Seu assistente de QA, no seu desktop.
 
-Plan tests with your own AI agent, run them on web, Android and iOS, and keep your test work
-organised. You stay in charge: the agent drafts the plan with you, walks the flows on a real
-device and tells you what it saw.
+Planeje testes com o seu próprio agente de IA, rode-os em web, Android e iOS, e mantenha o seu
+trabalho de teste organizado. Você continua no comando: o agente rascunha o plano com você, anda
+os fluxos num dispositivo real e conta o que viu.
 
-- **Web, Android and iOS.** A URL, an `.apk`, or a simulator `.app` build.
-- **Your agent.** Claude Code or Codex, the one already on your machine. More agents later.
-- **Your machine.** Emulators, simulators, browsers and runs stay local. Nothing goes to a QAzinho
-  server.
-- **Free for one user.** The whole desktop app, with no account and no limit. A Pro plan will
-  host plans and runs for teams.
+- **Web, Android e iOS.** Uma URL, um `.apk`, ou um build `.app` de simulador.
+- **O seu agente.** Claude Code ou Codex, o que já está na sua máquina. Mais agentes depois.
+- **A sua máquina.** Emuladores, simuladores, navegadores e runs ficam locais. Nada vai para um
+  servidor do QAzinho.
+- **Grátis para um usuário.** O app desktop inteiro, sem conta e sem limite. Um plano Pro vai
+  hospedar planos e runs para times.
 
-> **Status:** early scaffold. Nothing above works yet.
+> **Status:** esqueleto inicial. Nada acima funciona ainda.
 
-## Development
+## Desenvolvimento
 
-Requires Node 22.12 or newer.
+Exige o Node 22.12 ou mais novo.
 
 ```bash
 npm install
 npm run dev
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) before opening a PR.
+Veja o [CONTRIBUTING.md](CONTRIBUTING.md) antes de abrir um PR.
 
-## License
+## Licença
 
-Proprietary. © 2026 Salve Software. All rights reserved. See [LICENSE](LICENSE).
+Proprietária. © 2026 Salve Software. Todos os direitos reservados. Veja o [LICENSE](LICENSE).

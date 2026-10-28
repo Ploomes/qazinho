@@ -1,6 +1,6 @@
-# Contributing
+# Contribuindo
 
-## Setup
+## Configuração
 
 ```bash
 git clone --recurse-submodules https://github.com/Salve-Software/qazinho.git
@@ -8,11 +8,11 @@ npm install
 npm run dev
 ```
 
-The harness lives in its own repository, checked out as a submodule in
-`packages/qazinho-harness`; `npm install` builds it. In a clone made without
-`--recurse-submodules`, run `git submodule update --init --recursive` first.
+O harness vive no próprio repositório, com checkout como submódulo em
+`packages/qazinho-harness`; o `npm install` o constrói. Num clone feito sem
+`--recurse-submodules`, rode `git submodule update --init --recursive` antes.
 
-## Before opening a PR
+## Antes de abrir um PR
 
 ```bash
 npm run lint
@@ -22,37 +22,42 @@ npm test
 npm run build
 ```
 
-CI runs all of those.
+O CI roda todos eles.
 
-## Branches and commits
+## Branches e commits
 
-Branches are `feat/<description>` or `fix/<description>`. Commits are
-[conventional](https://www.conventionalcommits.org/): `feat`, `fix`, `docs`, `test`, `refactor`,
-`style`, `chore`, `ci`, `build`.
+As branches são `feat/<description>` ou `fix/<description>`. Os commits são
+[convencionais](https://www.conventionalcommits.org/): `feat`, `fix`, `docs`, `test`, `refactor`,
+`style`, `chore`, `ci`, `build`. Commits e as descrições deles ficam em inglês.
 
-The version is computed from those commits, so the type is not cosmetic: `feat` cuts a minor,
-`fix` cuts a patch, a `BREAKING CHANGE:` footer cuts a major, and everything else cuts nothing.
+A versão é calculada a partir desses commits, então o tipo não é cosmético: `feat` gera uma minor,
+`fix` gera uma patch, um rodapé `BREAKING CHANGE:` gera uma major, e todo o resto não gera nada.
 
-Keep commits small and single-purpose. Never mix unrelated changes.
+Mantenha os commits pequenos e com um propósito só. Nunca misture mudanças não relacionadas.
 
-## How the code is expected to look
+## Como o código deve parecer
 
-`.claude/rules/` is the real style guide, and it is short:
+As `.claude/rules/` são o guia de estilo de verdade, e ele é curto:
 
-| Rule                                            | Where                     |
-| ----------------------------------------------- | ------------------------- |
-| processes, IPC, security defaults               | `rules/architecture.md`   |
-| one class per folder, one type per file, naming | `rules/code-structure.md` |
-| comments: one line or none                      | `rules/comments.md`       |
-| what a test has to cover                        | `rules/testing.md`        |
-| the two tsconfigs, CI, releasing                | `rules/tooling.md`        |
+| Regra                                            | Onde                      |
+| ------------------------------------------------ | ------------------------- |
+| processos, IPC, padrões de segurança             | `rules/architecture.md`   |
+| uma classe por pasta, um tipo por arquivo, nomes | `rules/code-structure.md` |
+| comentários: uma linha ou nenhum                 | `rules/comments.md`       |
+| o que um teste precisa cobrir                    | `rules/testing.md`        |
+| os dois tsconfigs, CI, releases                  | `rules/tooling.md`        |
 
-Two that catch people out:
+Duas que pegam as pessoas de surpresa:
 
-- **The renderer cannot import Node or Electron.** It is a web page. `tsconfig.web.json` has no
-  Node types, so a slip fails the typecheck instead of someone's runtime.
-- **Every function exported from a `library/` folder has a test.**
+- **O renderer não pode importar Node nem Electron.** Ele é uma página web. O `tsconfig.web.json`
+  não tem tipos do Node, então um deslize falha o typecheck em vez do runtime de alguém.
+- **Toda função exportada de uma pasta `library/` tem um teste.**
 
-## Releasing
+## Idioma
 
-Manual, through `workflow_dispatch` on the `Release` workflow. Merging to `main` releases nothing.
+O código é em inglês: nomes, strings, nomes de testes e commits. A prosa, os `.md`, o JSDoc e os
+comentários dos testes, é em português do Brasil.
+
+## Lançando versões
+
+Manual, por `workflow_dispatch` no workflow `Release`. Fazer merge na `main` não lança nada.
