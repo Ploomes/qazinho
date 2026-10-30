@@ -198,6 +198,7 @@ export type * from './RunMode';
 export type * from './SaveOutcome';
 export type * from './Severity';
 export type * from './StepVerdict';
+export type * from './UnwalkedReason';
 export type * from './SuiteChangeAsk';
 export type * from './SuiteChangeEvent';
 export type * from './SuiteChangeFailure';

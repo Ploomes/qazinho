@@ -1,7 +1,7 @@
 import type { IRunSpan } from './IRunSpan';
-import type { StepVerdict } from '@/shared/types';
+import type { StepVerdict, UnwalkedReason } from '@/shared/types';
 
-/** Como um passo foi: a nota do agente quando não passou, quando foi andado, e como. */
+/** Como um passo foi: a nota do agente, quando e como foi andado, e por que não rodou. */
 export interface IRunStep {
   number: number;
   action: string;
@@ -13,4 +13,5 @@ export interface IRunStep {
   span: IRunSpan | null;
   by?: 'replay' | 'healed';
   proof?: string;
+  unwalked?: UnwalkedReason;
 }

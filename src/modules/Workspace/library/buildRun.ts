@@ -46,6 +46,7 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
 
       const walked: IRunStep[] = mine.map((outcome) => ({
         ...(outcome.by === undefined ? {} : { by: outcome.by }),
+        ...(outcome.unwalked === undefined ? {} : { unwalked: outcome.unwalked }),
         ...(outcome.by === 'replay' ? { proof: outcome.got } : {}),
         number: outcome.stepNumber,
         action: outcome.action,

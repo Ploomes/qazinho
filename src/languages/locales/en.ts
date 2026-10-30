@@ -343,6 +343,12 @@ export const en = {
     BY_HEALED_TIP:
       'The app changed, so the agent walked this case again and recorded it anew.',
     PROOF: 'checked on screen: “{{proof}}”',
+    UNWALKED_SKIPPED: 'Skipped because the step before it did not hold up.',
+    UNWALKED_UNREPORTED: 'The agent ended its turn without reporting this step.',
+    UNWALKED_NO_AGENT:
+      'Skipped: this run walks recordings alone, and this case has none that still holds.',
+    UNWALKED_CAPPED: 'Skipped: the run spent all it may on the AI.',
+    UNWALKED_ASKED: 'Skipped: the agent needed the QA, and no one answered in this run.',
     REPLAY_RUN: 'Run {{id}} · the whole plan',
     REPLAY_CASE: 'Take · {{id}}',
     REPLAY_BUG: 'The moment of {{id}}',

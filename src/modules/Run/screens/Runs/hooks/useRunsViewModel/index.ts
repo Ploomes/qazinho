@@ -7,6 +7,7 @@ import {
   RUN_PAGE_SIZE,
   RUN_TALLY_KEYS,
   RUN_VERDICTS,
+  UNWALKED_KEYS,
 } from '@/modules/Run/constants';
 import {
   answerLineOf,
@@ -238,7 +239,9 @@ export const useRunsViewModel = () => {
           note:
             step.by === 'replay' && step.proof !== undefined
               ? t('RUN.PROOF', { proof: step.proof })
-              : step.why,
+              : step.unwalked === undefined
+                ? step.why
+                : t(UNWALKED_KEYS[step.unwalked]),
           hasNote: (step.why !== null || step.by === 'replay') && bug === null,
           asked: (run?.asked ?? [])
             .filter(

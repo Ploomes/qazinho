@@ -345,6 +345,12 @@ export const pt: typeof en = {
     BY_HEALED: 'curado',
     BY_HEALED_TIP: 'O app mudou, então o agente refez este caso e gravou de novo.',
     PROOF: 'conferido na tela: “{{proof}}”',
+    UNWALKED_SKIPPED: 'Pulado porque o passo anterior não se sustentou.',
+    UNWALKED_UNREPORTED: 'O agente terminou o turno sem relatar este passo.',
+    UNWALKED_NO_AGENT:
+      'Pulado: esta run anda só gravações, e este caso não tem uma que ainda se sustente.',
+    UNWALKED_CAPPED: 'Pulado: a run gastou tudo o que podia com a IA.',
+    UNWALKED_ASKED: 'Pulado: o agente precisava do QA, e ninguém respondeu nesta run.',
     REPLAY_RUN: 'Run {{id}} · o plano inteiro',
     REPLAY_CASE: 'Take · {{id}}',
     REPLAY_BUG: 'O momento do {{id}}',
