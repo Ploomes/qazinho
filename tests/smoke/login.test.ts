@@ -143,29 +143,6 @@ describe("signing in to the QA's Claude Code", () => {
     ).toMatchObject({ url: AUTOMATIC });
   });
 
-  it('takes the code the page showed, when the browser could not call back', async () => {
-    const { login, reach } = await agentsWithFakes();
-    const signingIn = login.signIn('claude-code');
-
-    await reach('browser');
-    login.sendCode({ agentId: 'claude-code', code: '  good-code  ' });
-
-    expect(await signingIn).toMatchObject({ phase: 'connected' });
-  });
-
-  it("stops with the agent's words when the code is wrong", async () => {
-    const { login, reach } = await agentsWithFakes();
-    const signingIn = login.signIn('claude-code');
-
-    await reach('browser');
-    login.sendCode({ agentId: 'claude-code', code: 'bad-code' });
-
-    const ended = await signingIn;
-
-    expect(ended).toMatchObject({ phase: 'failed', at: 'browser', failure: 'refused' });
-    expect(ended.phase === 'failed' && ended.said).toContain('Invalid code');
-  });
-
   it('cancels while the QA is in the browser, and leaves nothing running', async () => {
     const { login, reach, root } = await agentsWithFakes();
     const signingIn = login.signIn('claude-code');

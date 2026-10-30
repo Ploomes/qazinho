@@ -233,7 +233,6 @@ export const useSettingsViewModel = () => {
     onCancelSignIn: signIn.onCancelSignIn,
     onCloseSignIn: signIn.onCloseSignIn,
     onRetrySignIn: signIn.onRetrySignIn,
-    onSignInCode: signIn.onSignInCode,
     onBack: closeSettings,
     onSelectTab: selectTab,
     onSelectAgent: selectAgent,

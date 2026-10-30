@@ -20,7 +20,6 @@ export const StepAgents: React.FC = () => {
     onCancelSignIn,
     onCloseSignIn,
     onRetrySignIn,
-    onSignInCode,
   } = useStepAgentsViewModel();
   const { t } = useTranslation();
 
@@ -123,7 +122,6 @@ export const StepAgents: React.FC = () => {
               onCancel={onCancelSignIn}
               onClose={onCloseSignIn}
               onRetry={onRetrySignIn}
-              onCode={onSignInCode}
             />
           )}
         </AnimatePresence>,

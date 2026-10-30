@@ -5,19 +5,17 @@ import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { useAgentSignInViewModel } from '@/modules/Setup/components/AgentSignIn/hooks/useAgentSignInViewModel';
 
-function signingIn(phase: AgentSignInPhase, takesCode = true) {
+function signingIn(phase: AgentSignInPhase) {
   const props: IAgentSignInProps = {
     agent: 'Claude Code',
     progress: {
       agentId: 'claude-code',
       steps: ['start', 'browser'],
-      takesCode,
       ...phase,
     },
     onCancel: vi.fn(),
     onClose: vi.fn(),
     onRetry: vi.fn(),
-    onCode: vi.fn(),
   };
 
   return { props, ...renderHook(() => useAgentSignInViewModel(props)) };
@@ -39,7 +37,6 @@ describe('useAgentSignInViewModel', () => {
       title: 'Signing in to Claude Code',
       hint: null,
       page: null,
-      code: null,
     });
     expect(result.current.rows).toEqual([
       { key: 'start', label: 'Open the Claude Code sign-in', state: 'active' },
@@ -59,11 +56,11 @@ describe('useAgentSignInViewModel', () => {
     expect(result.current.hint).toBe(
       'The Claude Code sign-in page opens in your browser in 3s.',
     );
-    expect(result.current).toMatchObject({ page: null, code: null });
+    expect(result.current.page).toBeNull();
   });
 
-  it('points at the page in the browser, with a field for the code it may show', () => {
-    const { result, props } = signingIn({
+  it('points at the page in the browser, and never asks for a code to paste', () => {
+    const { result } = signingIn({
       phase: 'working',
       at: 'browser',
       url: 'https://claude.com/cai/oauth/authorize',
@@ -76,23 +73,7 @@ describe('useAgentSignInViewModel', () => {
       label: 'Open the page again',
     });
 
-    result.current.code?.onSubmit('abc-123');
-
-    expect(props.onCode).toHaveBeenCalledWith('abc-123');
-  });
-
-  it('does NOT ask for a code an agent never takes', () => {
-    expect(
-      signingIn(
-        {
-          phase: 'working',
-          at: 'browser',
-          url: 'https://auth.openai.com/oauth',
-          opensAt: null,
-        },
-        false,
-      ).result.current.code,
-    ).toBeNull();
+    expect(result.current).not.toHaveProperty('code');
   });
 
   it('says the agent is signed in, with every step checked', () => {

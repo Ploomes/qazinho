@@ -125,8 +125,6 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.signInAgent, agentId) as Promise<AgentSignInProgress>,
   cancelAgentSignIn: (agentId: string) =>
     ipcRenderer.invoke(CHANNELS.cancelAgentSignIn, agentId) as Promise<void>,
-  sendAgentSignInCode: (props: { agentId: string; code: string }) =>
-    ipcRenderer.invoke(CHANNELS.sendAgentSignInCode, props) as Promise<void>,
   onAgentSignIn: (listener: (progress: AgentSignInProgress) => void) => {
     const forward = (_: unknown, progress: AgentSignInProgress) => {
       listener(progress);

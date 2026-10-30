@@ -44,7 +44,6 @@ export const Settings: React.FC = () => {
     onCancelSignIn,
     onCloseSignIn,
     onRetrySignIn,
-    onSignInCode,
     onBack,
     onSelectTab,
     onSelectAgent,
@@ -390,7 +389,6 @@ export const Settings: React.FC = () => {
               onCancel={onCancelSignIn}
               onClose={onCloseSignIn}
               onRetry={onRetrySignIn}
-              onCode={onSignInCode}
             />
           )}
         </AnimatePresence>,

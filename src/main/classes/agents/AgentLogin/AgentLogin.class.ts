@@ -50,15 +50,6 @@ export class AgentLogin {
     }
   }
 
-  /**
-   * Entrega ao agente o código que a página dele mostrou, para um login que recorre a um.
-   */
-  public sendCode(props: { agentId: string; code: string }): void {
-    const code = props.code.trim();
-
-    if (code !== '') this.signIns.get(props.agentId)?.child?.stdin.write(`${code}\n`);
-  }
-
   /** Para um login em andamento: o login do agente fecha, e o login termina cancelado. */
   public cancel(agentId: string): void {
     this.signIns.get(agentId)?.controller.abort();
@@ -76,9 +67,8 @@ export class AgentLogin {
     const { agentId, entry } = props;
     const { signal } = entry.controller;
     const steps: AgentSignInStep[] = ['start', 'browser'];
-    let takesCode = false;
     const report = (phase: AgentSignInPhase): AgentSignInProgress => {
-      const progress = { agentId, steps, takesCode, ...phase };
+      const progress = { agentId, steps, ...phase };
 
       this.onProgress(progress);
 
@@ -94,7 +84,6 @@ export class AgentLogin {
       return report({ phase: 'failed', at: 'start', failure: 'unsupported', said: '' });
     if (signal.aborted) return report({ phase: 'cancelled' });
 
-    takesCode = recipe.takesCode;
     report({
       phase: 'working',
       at: 'start',

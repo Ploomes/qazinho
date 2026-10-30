@@ -89,7 +89,6 @@ export const useGithubSignInViewModel = (props: IGithubSignInProps) => {
       failure !== null && failure.said !== ''
         ? { text: failure.said, isCommand: false }
         : null,
-    code: null,
     shownCode:
       shown === null
         ? null

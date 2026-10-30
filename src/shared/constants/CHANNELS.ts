@@ -8,7 +8,6 @@ export const CHANNELS = {
   agentEvent: 'agent:event',
   signInAgent: 'agent:sign-in',
   cancelAgentSignIn: 'agent:sign-in-cancel',
-  sendAgentSignInCode: 'agent:sign-in-code',
   agentSignInEvent: 'agent:sign-in-event',
   startRun: 'run:start',
   exportCode: 'run:export-code',

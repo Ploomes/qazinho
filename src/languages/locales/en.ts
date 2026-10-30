@@ -855,9 +855,6 @@ export const en = {
     LOGIN_SOON: 'The {{agent}} sign-in page opens in your browser in {{seconds}}s.',
     LOGIN_HINT:
       'The {{agent}} sign-in page opened in your browser. Sign in there; this window closes on its own.',
-    LOGIN_CODE: 'Did the page show a code? Paste it here.',
-    LOGIN_CODE_PLACEHOLDER: 'code',
-    LOGIN_CODE_SEND: 'Send',
     LOGIN_FAIL_UNSUPPORTED: 'QAzinho does not know how to sign {{agent}} in.',
     LOGIN_FAIL_REFUSED: 'The sign-in did not go through.',
     LOGIN_FAIL_TIMEOUT: 'The sign-in took too long, so QAzinho stopped waiting.',

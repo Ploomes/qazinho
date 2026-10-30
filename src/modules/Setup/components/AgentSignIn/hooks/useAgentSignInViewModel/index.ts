@@ -12,7 +12,7 @@ import {
 import { useCountdown } from '@/shared/hooks';
 
 export const useAgentSignInViewModel = (props: IAgentSignInProps) => {
-  const { progress, onCancel, onClose, onRetry, onCode } = props;
+  const { progress, onCancel, onClose, onRetry } = props;
   const { t } = useTranslation();
   const names = { agent: props.agent };
   const failure = progress.phase === 'failed' ? progress : null;
@@ -95,15 +95,6 @@ export const useAgentSignInViewModel = (props: IAgentSignInProps) => {
     detail:
       failure !== null && failure.said !== ''
         ? { text: failure.said, isCommand: false }
-        : null,
-    code:
-      isInBrowser && progress.takesCode
-        ? {
-            label: t('SETUP.LOGIN_CODE'),
-            placeholder: t('SETUP.LOGIN_CODE_PLACEHOLDER'),
-            submit: t('SETUP.LOGIN_CODE_SEND'),
-            onSubmit: onCode,
-          }
         : null,
     shownCode: null,
     actions,

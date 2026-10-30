@@ -9,7 +9,6 @@ import { MOTION } from '@/shared/constants';
 
 export const useStepsPopupViewModel = (props: IStepsPopupProps) => {
   const { tone, onCancel, onClose } = props;
-  const [code, setCode] = useState('');
   const [copied, setCopied] = useState<string | null>(null);
   const { shownCode, page } = props;
   const isShownCopied = shownCode !== null && copied === shownCode.code;
@@ -65,17 +64,6 @@ export const useStepsPopupViewModel = (props: IStepsPopupProps) => {
     detailClass: props.detail?.isCommand
       ? 'steps-popup__detail steps-popup__detail--command'
       : 'steps-popup__detail',
-    code,
-    canSendCode: code.trim() !== '',
-    onCodeChange: (value: string) => {
-      setCode(value);
-    },
-    onCodeSubmit: () => {
-      if (props.code === null || code.trim() === '') return;
-
-      props.code.onSubmit(code.trim());
-      setCode('');
-    },
     shownCopyLabel: isShownCopied ? shownCode.copied : (shownCode?.copy ?? ''),
     onCopyShown: () => {
       if (shownCode === null) return;

@@ -70,8 +70,9 @@ Toda `BrowserWindow` recebe `contextIsolation: true`, `sandbox: true` e `nodeInt
   agente (`claude auth login`, `codex login`) fora de vista e relata cada passo.
   - O `LinkCatcher` entrega ao agente um `$BROWSER` que anota a página, e o QAzinho a abre no
     navegador do QA. O Codex abre o dele, e o QAzinho só aponta.
-  - Um código que a página mostra vai para o stdin do agente. O que o agente recebe fica com o
-    agente.
+  - O QAzinho nunca recebe nem repassa um código ou token: o login termina na página do
+    próprio agente, que devolve o resultado a ele por um callback local. O que o agente recebe
+    fica com o agente.
 - **Nada pede ao QA que digite um comando.** Um fluxo que roda uma CLI a roda fora de vista e
   mostra os passos dele no `StepsPopup`. O Terminal é só um caminho de volta depois de uma falha.
 - **O token de um tracker nunca chega à página.** Ele cruza para a main uma vez, é conferido e é

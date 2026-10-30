@@ -21,9 +21,6 @@ function bridge() {
         }),
     ),
     cancelAgentSignIn: vi.fn((_: string) => Promise.resolve()),
-    sendAgentSignInCode: vi.fn((_: { agentId: string; code: string }) =>
-      Promise.resolve(),
-    ),
     onAgentSignIn: vi.fn((listener: (progress: AgentSignInProgress) => void) => {
       listeners.add(listener);
 
@@ -45,7 +42,6 @@ function bridge() {
       endings.shift()?.({
         agentId,
         steps: ['start', 'browser'],
-        takesCode: true,
         ...phase,
       });
     },
@@ -55,7 +51,6 @@ function bridge() {
 const IN_BROWSER: AgentSignInProgress = {
   agentId: 'claude-code',
   steps: ['start', 'browser'],
-  takesCode: true,
   phase: 'working',
   at: 'browser',
   url: 'https://claude.com/cai/oauth/authorize',
@@ -109,23 +104,6 @@ describe('useAgentSignIn', () => {
     });
 
     expect(result.current.signIn).toMatchObject({ at: 'browser', url: IN_BROWSER.url });
-  });
-
-  it('hands the code the QA pasted to the agent', async () => {
-    const agent = bridge();
-    const { result } = renderHook(() => useAgentSignIn());
-
-    await act(async () => {
-      result.current.onSignIn('claude-code');
-    });
-    act(() => {
-      result.current.onSignInCode('abc-123');
-    });
-
-    expect(agent.sendAgentSignInCode).toHaveBeenCalledWith({
-      agentId: 'claude-code',
-      code: 'abc-123',
-    });
   });
 
   it('checks the machine again once the agent is signed in', async () => {

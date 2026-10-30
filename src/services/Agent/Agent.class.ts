@@ -43,7 +43,6 @@ export class Agent {
       (await window.qazinho?.signInAgent(agentId)) ?? {
         agentId,
         steps: ['start', 'browser'],
-        takesCode: false,
         phase: 'failed',
         at: 'start',
         failure: 'unsupported',
@@ -54,13 +53,6 @@ export class Agent {
 
   public static async cancelSignIn(agentId: string): Promise<void> {
     await window.qazinho?.cancelAgentSignIn(agentId);
-  }
-
-  public static async sendSignInCode(props: {
-    agentId: string;
-    code: string;
-  }): Promise<void> {
-    await window.qazinho?.sendAgentSignInCode(props);
   }
 
   public static onSignIn(listener: (progress: AgentSignInProgress) => void): () => void {

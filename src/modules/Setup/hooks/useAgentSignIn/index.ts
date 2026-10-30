@@ -29,7 +29,6 @@ export const useAgentSignIn = () => {
       progress: {
         agentId,
         steps: ['start', 'browser'],
-        takesCode: false,
         phase: 'working',
         at: 'start',
         url: null,
@@ -64,10 +63,6 @@ export const useAgentSignIn = () => {
     },
     onRetrySignIn: () => {
       if (shown !== null) void begin(shown.progress.agentId);
-    },
-    onSignInCode: (code: string) => {
-      if (shown !== null)
-        void Agent.sendSignInCode({ agentId: shown.progress.agentId, code });
     },
   };
 };

@@ -1301,12 +1301,6 @@ void app.whenReady().then(async () => {
     stoppedChats.add(workspaceId);
     agentRunner.cancel(workspaceId);
   });
-  ipcMain.handle(
-    CHANNELS.sendAgentSignInCode,
-    (_event, props: { agentId: string; code: string }) => {
-      login.sendCode(props);
-    },
-  );
   ipcMain.handle(CHANNELS.askAgent, (_event, ask: IAskAgent) => askAgent(ask));
   ipcMain.handle(CHANNELS.startRun, (_event, run: IStartRun) => runs.start(run));
   ipcMain.handle(CHANNELS.exportCode, (_event, request: IExportCode) =>

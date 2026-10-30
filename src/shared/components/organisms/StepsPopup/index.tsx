@@ -16,10 +16,6 @@ export const StepsPopup: React.FC<IStepsPopupProps> = (props) => {
     badgeMark,
     rows,
     detailClass,
-    code,
-    canSendCode,
-    onCodeChange,
-    onCodeSubmit,
     shownCopyLabel,
     onCopyShown,
     onBackdrop,
@@ -178,35 +174,6 @@ export const StepsPopup: React.FC<IStepsPopupProps> = (props) => {
                   >
                     {props.page.label} <Icon name="external" />
                   </a>
-                )}
-                {props.code !== null && (
-                  <form
-                    className="steps-popup__code"
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      onCodeSubmit();
-                    }}
-                  >
-                    <label className="steps-popup__code-label" htmlFor="steps-popup-code">
-                      {props.code.label}
-                    </label>
-                    <span className="steps-popup__code-row">
-                      <input
-                        id="steps-popup-code"
-                        className="steps-popup__code-input"
-                        value={code}
-                        placeholder={props.code.placeholder}
-                        autoComplete="off"
-                        spellCheck={false}
-                        onChange={(event) => {
-                          onCodeChange(event.target.value);
-                        }}
-                      />
-                      <Button size="sm" disabled={!canSendCode} onClick={onCodeSubmit}>
-                        {props.code.submit}
-                      </Button>
-                    </span>
-                  </form>
                 )}
               </div>
             </motion.div>

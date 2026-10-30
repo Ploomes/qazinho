@@ -1,5 +1,4 @@
 export type * from './IStepsAction';
-export type * from './IStepsCode';
 export type * from './IStepsDetail';
 export type * from './IStepsPage';
 export type * from './IStepsPopupProps';

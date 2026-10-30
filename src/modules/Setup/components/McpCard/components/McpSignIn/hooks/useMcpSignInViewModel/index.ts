@@ -108,7 +108,6 @@ export const useMcpSignInViewModel = (props: IMcpSignInProps) => {
       failure !== null && failure.said !== ''
         ? { text: failure.said, isCommand: failure.failure === 'manual' }
         : null,
-    code: null,
     shownCode: null,
     actions,
     onCancel,

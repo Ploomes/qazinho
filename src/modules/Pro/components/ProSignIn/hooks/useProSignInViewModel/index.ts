@@ -87,7 +87,6 @@ export const useProSignInViewModel = (props: IProSignInProps) => {
         ? null
         : { url: shown.url, label: t('COMMON.OPEN_PAGE_AGAIN') },
     detail: null,
-    code: null,
     shownCode:
       shown === null
         ? null

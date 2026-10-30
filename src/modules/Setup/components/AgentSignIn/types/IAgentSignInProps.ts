@@ -6,5 +6,4 @@ export interface IAgentSignInProps {
   onCancel: () => void;
   onClose: () => void;
   onRetry: () => void;
-  onCode: (code: string) => void;
 }

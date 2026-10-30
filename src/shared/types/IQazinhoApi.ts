@@ -104,7 +104,6 @@ export interface IQazinhoApi {
   onAgentEvent: (listener: (event: IAgentEvent) => void) => () => void;
   signInAgent: (agentId: string) => Promise<AgentSignInProgress>;
   cancelAgentSignIn: (agentId: string) => Promise<void>;
-  sendAgentSignInCode: (props: { agentId: string; code: string }) => Promise<void>;
   onAgentSignIn: (listener: (progress: AgentSignInProgress) => void) => () => void;
   startRun: (run: IStartRun) => Promise<void>;
   exportCode: (request: IExportCode) => Promise<ExportOutcome>;

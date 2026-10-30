@@ -22,7 +22,6 @@ function popup(tone: StepsTone, extra: Partial<IStepsPopupProps> = {}) {
     hint: null,
     page: null,
     detail: null,
-    code: null,
     shownCode: null,
     actions: [],
     onCancel: vi.fn(),
@@ -74,43 +73,6 @@ describe('useStepsPopupViewModel', () => {
         popup('failed', { detail: { text: 'claude /mcp', isCommand: true } }).result
           .current.detailClass,
       ).toBe('steps-popup__detail steps-popup__detail--command');
-    });
-  });
-
-  describe('the code', () => {
-    it('hands over the code typed, trimmed, and clears the field', () => {
-      const onSubmit = vi.fn();
-      const { result } = popup('working', {
-        code: { label: 'Code', placeholder: 'code', submit: 'Send', onSubmit },
-      });
-
-      act(() => {
-        result.current.onCodeChange('  abc-123  ');
-      });
-
-      expect(result.current.canSendCode).toBe(true);
-
-      act(() => {
-        result.current.onCodeSubmit();
-      });
-
-      expect(onSubmit).toHaveBeenCalledWith('abc-123');
-      expect(result.current.code).toBe('');
-    });
-
-    it('does NOT send an empty code', () => {
-      const onSubmit = vi.fn();
-      const { result } = popup('working', {
-        code: { label: 'Code', placeholder: 'code', submit: 'Send', onSubmit },
-      });
-
-      act(() => {
-        result.current.onCodeChange('   ');
-        result.current.onCodeSubmit();
-      });
-
-      expect(result.current.canSendCode).toBe(false);
-      expect(onSubmit).not.toHaveBeenCalled();
     });
   });
 

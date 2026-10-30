@@ -26,11 +26,9 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
       Promise.resolve({
         agentId,
         steps: ['start', 'browser'],
-        takesCode: false,
         phase: 'connected',
       }),
     cancelAgentSignIn: () => Promise.resolve(),
-    sendAgentSignInCode: () => Promise.resolve(),
     onAgentSignIn: () => () => undefined,
     detectDeviceTools: () =>
       Promise.resolve({
