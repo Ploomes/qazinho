@@ -109,11 +109,29 @@ describe('useProAccountCardViewModel', () => {
       expect(view().result.current).toMatchObject({ subtitle: 'no org', hasOrgs: false });
     });
 
-    it('lists every org with the role and payment there, choosing none', () => {
+    it('lists every org with its payment status and the role there, choosing none', () => {
       expect(view().result.current.orgs).toEqual([
-        { slug: 'loja', name: 'Loja Online', note: 'editor · active' },
-        { slug: 'leitura', name: 'Conecta', note: 'reader · active' },
-        { slug: 'outra', name: 'Outra', note: 'admin · in trial' },
+        {
+          slug: 'loja',
+          name: 'Loja Online',
+          status: 'active',
+          tone: 'pass',
+          role: 'editor',
+        },
+        {
+          slug: 'leitura',
+          name: 'Conecta',
+          status: 'active',
+          tone: 'pass',
+          role: 'reader',
+        },
+        {
+          slug: 'outra',
+          name: 'Outra',
+          status: 'in trial',
+          tone: 'pass',
+          role: 'admin',
+        },
       ]);
     });
 

@@ -88,39 +88,55 @@
   flex-direction: column;
   max-height: 70vh;
   overflow-y: auto;
-  border: var(--edge-width-lg) solid var(--edge);
+  border: var(--edge-width) solid var(--edge);
   border-radius: var(--radius-xl);
   background: var(--win);
   box-shadow: var(--sticker-hero);
   -webkit-app-region: no-drag;
 }
 
+.pro-account__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-bottom: 1px solid var(--line2);
+}
+
+.pro-account__who {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
 .pro-account__section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-3);
   padding: var(--space-4) var(--space-5);
   border-bottom: 1px solid var(--line2);
 }
 
 .pro-account__email {
-  overflow: hidden;
   color: var(--ink);
   font: var(--font-ui-sm);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.pro-account__fact {
+  overflow: hidden;
+  color: var(--ink3);
+  font: var(--font-ui-xs);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.pro-account__fact {
-  color: var(--ink3);
-  font: var(--font-mono-xs);
-}
-
 .pro-account__eyebrow {
   color: var(--ink3);
-  font: var(--font-mono-tag);
-  letter-spacing: var(--tag-tracking);
-  text-transform: uppercase;
+  font: var(--font-ui-xs);
 }
 
 .pro-account__attention {
@@ -143,68 +159,56 @@
 
 .pro-account__org {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
+  align-items: center;
+  gap: var(--space-3);
   min-width: 0;
 }
 
 .pro-account__org-name {
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   color: var(--ink);
-  font: var(--font-ui-sm);
+  font: var(--font-ui-md);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.pro-account__org-note {
-  color: var(--ink3);
-  font: var(--font-mono-xs);
-}
-
-.pro-account__clone {
-  display: inline-flex;
-  align-items: center;
-  align-self: flex-start;
-  gap: var(--space-2);
-  margin-top: var(--space-1);
-  padding: var(--space-2) var(--space-3);
-  border: var(--edge-width) solid var(--edge);
-  border-radius: var(--radius-sm);
-  background: transparent;
+.pro-account__org-status {
+  flex: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--raise);
   color: var(--ink2);
-  font: var(--font-ui-sm);
-  cursor: pointer;
-  transition:
-    background-color var(--dur-fast) var(--ease),
-    color var(--dur-fast) var(--ease);
+  font: var(--font-ui-xs);
 }
 
-.pro-account__clone:hover {
-  background: var(--sel);
-  color: var(--ink);
+.pro-account__org-status--attn {
+  background: var(--attn-soft);
+  color: var(--attn);
 }
 
-.pro-account__clone:focus-visible {
-  outline: 2px solid var(--lime);
-  outline-offset: 2px;
+.pro-account__org-status--fail {
+  background: var(--fail-soft);
+  color: var(--fail);
 }
 
 .pro-account__actions {
   display: flex;
   flex-direction: column;
-  padding: var(--space-2);
+  padding: var(--space-3);
 }
 
 .pro-account__action {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3);
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
   border: 0;
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--ink2);
-  font: var(--font-ui-sm);
+  font: var(--font-ui-md);
   text-align: left;
   cursor: pointer;
   transition:
@@ -215,6 +219,16 @@
 .pro-account__action:hover:not(:disabled) {
   background: var(--sel);
   color: var(--ink);
+}
+
+.pro-account__action--leave:hover:not(:disabled) {
+  background: var(--fail-soft);
+  color: var(--fail);
+}
+
+.pro-account__action:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: -2px;
 }
 
 .pro-account__action:disabled {

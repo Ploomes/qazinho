@@ -96,13 +96,13 @@ export const useProAccountCardViewModel = () => {
     attention: attention === null ? '' : t(PRO_ATTENTION[attention]),
     email: signedIn?.account.email ?? '',
     machine: t('PRO.CARD_MACHINE', { machine: signedIn?.machine.name ?? '' }),
+    machineName: signedIn?.machine.name ?? '',
     orgs: orgs.map((one) => ({
       slug: one.slug,
       name: one.name,
-      note: t('PRO.CARD_ORG_NOTE', {
-        role: t(PRO_ROLES[one.role]),
-        billing: t(PRO_BILLING[one.billingStatus].labelKey),
-      }),
+      status: t(PRO_BILLING[one.billingStatus].labelKey),
+      tone: PRO_BILLING[one.billingStatus].tone,
+      role: t(PRO_ROLES[one.role]),
     })),
     hasOrgs: orgs.length > 0,
     isCloning,

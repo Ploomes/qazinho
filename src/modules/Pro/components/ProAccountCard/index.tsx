@@ -33,6 +33,7 @@ export const ProAccountCard: React.FC = () => {
     attention,
     email,
     machine,
+    machineName,
     orgs,
     hasOrgs,
     isCloning,
@@ -62,9 +63,16 @@ export const ProAccountCard: React.FC = () => {
             animate={STICKER.rise.animate}
             exit={STICKER.rise.exit}
           >
-            <div className="pro-account__section">
-              <span className="pro-account__email">{email}</span>
-              <span className="pro-account__fact">{machine}</span>
+            <div className="pro-account__head">
+              <span className="pro-account__avatar">{initials}</span>
+              <span className="pro-account__who">
+                <span className="pro-account__email" title={email}>
+                  {email}
+                </span>
+                <span className="pro-account__fact" title={machineName}>
+                  {machine}
+                </span>
+              </span>
             </div>
 
             {hasAttention && <p className="pro-account__attention">{attention}</p>}
@@ -74,30 +82,37 @@ export const ProAccountCard: React.FC = () => {
                 <span className="pro-account__eyebrow">{t('PRO.ORGS')}</span>
                 <ul className="pro-account__orgs">
                   {orgs.map((org) => (
-                    <li key={org.slug} className="pro-account__org">
+                    <li key={org.slug} className="pro-account__org" title={org.role}>
                       <span className="pro-account__org-name">{org.name}</span>
-                      <span className="pro-account__org-note">{org.note}</span>
+                      <span
+                        className={`pro-account__org-status pro-account__org-status--${org.tone}`}
+                      >
+                        {org.status}
+                      </span>
                     </li>
                   ))}
                 </ul>
-                <button type="button" className="pro-account__clone" onClick={onClone}>
-                  <Icon name="download" />
-                  {t('PRO.CLONE_PROJECT')}
-                </button>
               </div>
             )}
 
             <div className="pro-account__actions">
+              {hasOrgs && (
+                <button type="button" className="pro-account__action" onClick={onClone}>
+                  <Icon name="download" />
+                  {t('PRO.CLONE_PROJECT')}
+                </button>
+              )}
               <button type="button" className="pro-account__action" onClick={onOpenSite}>
-                {t('PRO.OPEN_SITE')}
                 <Icon name="external" />
+                {t('PRO.OPEN_SITE')}
               </button>
               <button
                 type="button"
-                className="pro-account__action"
+                className="pro-account__action pro-account__action--leave"
                 disabled={isSigningOut}
                 onClick={onSignOut}
               >
+                <Icon name="back" />
                 {t('PRO.SIGN_OUT')}
               </button>
             </div>
