@@ -1,11 +1,12 @@
 /**
- * Os argumentos do gh api para um pedido: o caminho, com o método e os campos de texto,
- * um cabeçalho Accept, toda página, e um filtro jq quando pedido.
+ * Os argumentos do gh api para um pedido: o caminho, o método, os campos de texto ou um
+ * corpo JSON pela entrada, um cabeçalho Accept, toda página e um filtro jq.
  */
 export function apiArgsOf(props: {
   path: string;
   method?: 'POST';
   fields?: Record<string, string>;
+  json?: unknown;
   accept?: string;
   paginate?: boolean;
   jq?: string;
@@ -13,6 +14,7 @@ export function apiArgsOf(props: {
   return [
     'api',
     ...(props.method === undefined ? [] : ['--method', props.method]),
+    ...(props.json === undefined ? [] : ['--input', '-']),
     ...Object.entries(props.fields ?? {}).flatMap(([key, value]) => [
       '--raw-field',
       `${key}=${value}`,

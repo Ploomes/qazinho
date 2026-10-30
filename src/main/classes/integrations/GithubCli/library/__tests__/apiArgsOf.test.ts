@@ -50,4 +50,17 @@ describe('apiArgsOf', () => {
       'repos/acme/e2e/pulls',
     ]);
   });
+
+  /**
+   * O gh 2.20 ignora `labels[]` num campo: um corpo JSON pela entrada serve a todo gh.
+   */
+  it('sends a JSON body on the input, which every gh version reads', () => {
+    expect(
+      apiArgsOf({
+        path: 'repos/acme/shop/issues',
+        method: 'POST',
+        json: { title: 'x', labels: ['bug'] },
+      }),
+    ).toEqual(['api', '--method', 'POST', '--input', '-', 'repos/acme/shop/issues']);
+  });
 });

@@ -236,10 +236,10 @@ export class BugFiler {
     const created = await this.github.api({
       path: `repos/${repository}/issues`,
       method: 'POST',
-      fields: {
+      json: {
         title: request.report.title.trim(),
         body: markdownOfReport(request.report),
-        ...(label.isOk ? { 'labels[]': BUG_FILING.label } : {}),
+        ...(label.isOk ? { labels: [BUG_FILING.label] } : {}),
       },
     });
 

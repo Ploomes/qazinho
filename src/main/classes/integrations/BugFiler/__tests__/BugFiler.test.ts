@@ -82,7 +82,12 @@ function fakeJira(
 
 /** Um gh que responde cada caminho como mandado, e lembra o que lhe pediram. */
 function fakeGh(answers: Record<string, GhAnswer>) {
-  const asked: { path: string; method?: string; fields?: Record<string, string> }[] = [];
+  const asked: {
+    path: string;
+    method?: string;
+    fields?: Record<string, string>;
+    json?: unknown;
+  }[] = [];
 
   return {
     asked,
@@ -91,6 +96,7 @@ function fakeGh(answers: Record<string, GhAnswer>) {
         path: string;
         method?: 'POST';
         fields?: Record<string, string>;
+        json?: unknown;
       }) => {
         asked.push(request);
 
@@ -289,10 +295,10 @@ describe('BugFiler', () => {
       expect(gh.asked.at(-1)).toEqual({
         path: 'repos/acme/shop/issues',
         method: 'POST',
-        fields: {
+        json: {
           title: 'Coupon refused',
           body: 'SAVE10 is refused.',
-          'labels[]': 'bug',
+          labels: ['bug'],
         },
       });
     });
@@ -302,7 +308,7 @@ describe('BugFiler', () => {
 
       await filer({ github: gh.github }).filer.file(TO_GITHUB);
 
-      expect(gh.asked.at(-1)?.fields).toEqual({
+      expect(gh.asked.at(-1)?.json).toEqual({
         title: 'Coupon refused',
         body: 'SAVE10 is refused.',
       });

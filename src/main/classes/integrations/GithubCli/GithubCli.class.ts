@@ -103,6 +103,7 @@ export class GithubCli {
     path: string;
     method?: 'POST';
     fields?: Record<string, string>;
+    json?: unknown;
     accept?: string;
     paginate?: boolean;
     jq?: string;
@@ -115,6 +116,7 @@ export class GithubCli {
     return this.call({
       path,
       args: apiArgsOf(props),
+      input: props.json === undefined ? undefined : JSON.stringify(props.json),
       timeoutMs: GITHUB_CLI.apiTimeoutMs,
     });
   }
@@ -375,6 +377,7 @@ export class GithubCli {
   private call(props: {
     path: string;
     args: string[];
+    input?: string;
     timeoutMs: number;
   }): Promise<GhAnswer> {
     return new Promise<GhAnswer>((done) => {
@@ -383,9 +386,12 @@ export class GithubCli {
         args: props.args,
         options: {
           env: { ...process.env, ...GITHUB_CLI.env },
-          stdio: ['ignore', 'pipe', 'pipe'],
+          stdio: [props.input === undefined ? 'ignore' : 'pipe', 'pipe', 'pipe'],
         },
       });
+
+      if (props.input !== undefined) child.stdin?.end(props.input);
+
       const out: Buffer[] = [];
       let said = '';
       let isDone = false;
