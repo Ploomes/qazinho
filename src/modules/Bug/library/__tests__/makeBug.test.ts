@@ -60,13 +60,19 @@ describe('makeBug', () => {
     expect(bug.severity).toBe('high');
   });
 
-  it('reproduces from the top of its own case, not from the top of the plan', () => {
+  /**
+   * A issue dizia só "1. Abrir o Carrinho": sem o estado de que o caso parte, quem a lia
+   * não sabia como chegar ao bug.
+   */
+  it('reproduces from the state its own case starts in, then its steps, not the plan top', () => {
     const bug = bugFrom();
 
     expect(bug.repro.map(({ action }) => action)).toEqual([
+      'One product in the cart.',
       'Add the product to the cart',
       'Leave the house number empty',
     ]);
+    expect(bug.repro[0]?.isBad).toBe(false);
     expect(bug.repro.at(-1)?.isBad).toBe(true);
   });
 

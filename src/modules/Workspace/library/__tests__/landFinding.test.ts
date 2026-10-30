@@ -39,6 +39,7 @@ describe('landFinding', () => {
       isNew: true,
     });
     expect(bug?.repro.map(({ action }) => action)).toEqual([
+      'The URL answers.',
       'Open the target URL',
       'Search for a product',
     ]);

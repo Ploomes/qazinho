@@ -6,8 +6,8 @@ import { viewportOf } from '@/modules/Device/library';
 import { countSeen } from './countSeen';
 
 /**
- * Transforma o passo que quebrou em algo com que um desenvolvedor pode agir, com quem o
- * pegou e em quê.
+ * Transforma o passo que quebrou num bug de que um desenvolvedor age: o estado de que o
+ * caso parte, os passos até ele, e quem o pegou.
  */
 export function makeBug(props: {
   workspace: IWorkspace;
@@ -41,9 +41,14 @@ export function makeBug(props: {
       caseId: outcome.caseId,
       stepNumber: outcome.stepNumber,
     }),
-    repro: outcomes
-      .filter((one) => one.caseId === outcome.caseId && one.index <= outcome.index)
-      .map((one) => ({ action: one.action, isBad: one.index === outcome.index })),
+    repro: [
+      ...(testCase?.preconditions.trim()
+        ? [{ action: testCase.preconditions.trim(), isBad: false }]
+        : []),
+      ...outcomes
+        .filter((one) => one.caseId === outcome.caseId && one.index <= outcome.index)
+        .map((one) => ({ action: one.action, isBad: one.index === outcome.index })),
+    ],
     shots: shotsFor({ outcome, outcomes }),
     sightings: [],
     isNew: true,
