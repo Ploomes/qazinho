@@ -475,6 +475,7 @@ export class RunCoordinator {
     const proofs = new Map<number, string>();
     const device = variablePort({ device: driver, values: run.values });
     let began = Date.now();
+    let hasFailed = false;
     let isOver = false;
     let isAnsweredForThisRun = false;
     let over: () => void = () => undefined;
@@ -574,13 +575,21 @@ export class RunCoordinator {
       if (report.verdict === 'failed' && report.title.length > 0)
         props.filed.push(report.title);
 
-      if (report.verdict !== 'passed') {
+      if (report.verdict !== 'passed') hasFailed = true;
+
+      if (
+        report.verdict === 'blocked' ||
+        (report.verdict === 'failed' && !report.goesOn)
+      ) {
         unwalked('skipped');
 
         return endCase('Filed. The case stops here because this step did not hold up.');
       }
 
       const next = pending[0];
+
+      if (next === undefined && hasFailed)
+        return endCase('Filed. That was the last step of this case.');
 
       if (next === undefined) {
         const recipe = recipeOf({
@@ -605,7 +614,9 @@ export class RunCoordinator {
       began = Date.now();
       this.emit({ kind: 'doing', workspaceId, index: next.index });
 
-      return `Filed. Next is step ${String(next.step.numberInCase)}: ${next.step.action}`;
+      return report.verdict === 'failed'
+        ? `Filed as a bug. The action went through, so the case goes on. Next is step ${String(next.step.numberInCase)}: ${next.step.action}`
+        : `Filed. Next is step ${String(next.step.numberInCase)}: ${next.step.action}`;
     };
 
     let findings = 0;
