@@ -19,10 +19,22 @@ describe('knownBugsOf', () => {
     expect(knownBugsOf([])).toEqual([]);
   });
 
-  /** Avisado de um falso positivo, o agente de toda run o nomeava como visto de novo. */
-  it('does NOT tell a run of a bug the QA said is none', () => {
+  /**
+   * O explorador perguntou de novo se o cartão sem campos era bug, minutos depois de o QA
+   * dizer que não: o agente fica sabendo, marcado, para não abrir nem perguntar.
+   */
+  it('tells a run of a bug the QA said is none, marked as set aside', () => {
     expect(
       knownBugsOf(secondRun().bugs.map((bug) => ({ ...bug, isDismissed: true }))),
-    ).toEqual([]);
+    ).toEqual([
+      {
+        id: 'BUG-01',
+        title: 'Nothing happens on submit',
+        caseId: 'TC-02',
+        stepNumber: 2,
+        isIncidental: false,
+        isDismissed: true,
+      },
+    ]);
   });
 });

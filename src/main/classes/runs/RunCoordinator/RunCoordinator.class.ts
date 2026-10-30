@@ -51,6 +51,7 @@ import { WEB_DRIVER } from '@salve-software/qazinho-harness/engine';
 import { EXPLORE_PUSHES, RUN_WALK, UNWALKED } from './constants';
 import {
   answerWords,
+  askedAtOf,
   bookWith,
   casesOf,
   driverFor,
@@ -926,11 +927,15 @@ export class RunCoordinator {
       const { words } = await this.askQa({
         run,
         asked: question,
-        at: {
-          caseId: EXPLORATION.caseId,
-          stepNumber: current.number,
-          action: current.name,
-        },
+        at: askedAtOf({
+          at: {
+            caseId: EXPLORATION.caseId,
+            stepNumber: current.number,
+            action: current.name,
+          },
+          screen: question.screen,
+          isExploring: true,
+        }),
         carryOn: 'Carry on exploring.',
         noAnswer: 'Explore what you can reach without it.',
       });
@@ -995,6 +1000,7 @@ export class RunCoordinator {
         variables: run.values.map(({ name, description }) => ({ name, description })),
         known: run.bugs ?? [],
         design: run.design ?? null,
+        plan: run.plan ?? [],
       }),
     });
     const cost = asking.then(

@@ -83,6 +83,7 @@ export const useRunActions = () => {
       runId,
       steps,
       ...(scoped === undefined ? {} : { caseIds: scoped }),
+      ...(isExploring ? { plan: flattenPlanSteps(workspace.plan) } : {}),
       language: useSettingsStore.getState().language,
       viewport: { width: viewport.width, height: viewport.height },
       pixelRatio: window.devicePixelRatio,

@@ -19,6 +19,7 @@ export interface IStartRun {
   runId: string;
   steps: IFlatStep[];
   caseIds?: string[];
+  plan?: IFlatStep[];
   language: Language;
   viewport?: IViewport;
   pixelRatio?: number;
