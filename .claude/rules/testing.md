@@ -80,7 +80,7 @@ próprio comando, e o CI nunca as roda.
 | `setup.test.ts`        | o instalador roda um npm fake, transmite as linhas e falha com honestidade              |
 | `terminal.test.ts`     | um programa de tela cheia fora de vista: a tela lida, as teclas, a página               |
 | `mcp.test.ts`          | um `/mcp` e um Codex fakes: o MCP do Figma adicionado, logado, recusado, cancelado      |
-| `login.test.ts`        | um `claude auth login` e um `codex login` fakes: página, código, recusa, cancela        |
+| `login.test.ts`        | um `claude` e um `codex` fakes: login num terminal, status lido, sem terminal, cancela  |
 | `record.test.ts`       | o app construído grava uma run web como um MP4 H.264 pela janela escondida              |
 | `github.test.ts`       | um gh fake: login por código de dispositivo e cancelar, repositórios, branches          |
 | `jira.test.ts`         | um site do Jira fake: histórias buscadas e lidas, os arquivos delas baixados            |

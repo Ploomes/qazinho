@@ -66,15 +66,16 @@ Toda `BrowserWindow` recebe `contextIsolation: true`, `sandbox: true` e `nodeInt
     popup poder abri-la de novo. O Codex imprime a página dele (`codex mcp login`).
   - Cada passo chega à página como `McpSignInProgress`. O Terminal (`claude "/mcp"`) continua
     como o caminho de volta quando as telas escondidas não são as que o `nextMcpMove` conhece.
-- **O login de um agente também nunca passa pelo QAzinho.** O `AgentLogin` roda o login do próprio
-  agente (`claude auth login`, `codex login`) fora de vista e relata cada passo.
-  - O `LinkCatcher` entrega ao agente um `$BROWSER` que anota a página, e o QAzinho a abre no
-    navegador do QA. O Codex abre o dele, e o QAzinho só aponta.
-  - O QAzinho nunca recebe nem repassa um código ou token: o login termina na página do
-    próprio agente, que devolve o resultado a ele por um callback local. O que o agente recebe
-    fica com o agente.
+- **O login de um agente também nunca passa pelo QAzinho.** O `AgentLogin` abre o login do próprio
+  agente (`claude auth login`, `codex login`) num terminal que o QA vê, como o Zed faz
+  (`terminalScriptOf`), e confere o status do agente (`claude auth status`, `codex login status`)
+  até ele entrar, relatando cada passo no `StepsPopup`.
+  - O próprio agente abre a página dele no navegador do QA. O QAzinho nunca vê o terminal, nem
+    recebe ou repassa um código ou token: o que o agente recebe fica com o agente.
+  - Sem um terminal para abrir, o popup mostra o comando a rodar.
 - **Nada pede ao QA que digite um comando.** Um fluxo que roda uma CLI a roda fora de vista e
-  mostra os passos dele no `StepsPopup`. O Terminal é só um caminho de volta depois de uma falha.
+  mostra os passos dele no `StepsPopup`, menos o login de um agente, que abre sozinho num terminal
+  visível. O Terminal é só um caminho de volta depois de uma falha.
 - **O token de um tracker nunca chega à página.** Ele cruza para a main uma vez, é conferido e é
   lacrado com o `safeStorage`; a página só vê a conta a que ele pertence. A main abre o do Jira
   para chamar o Jira (`IntegrationVault.jira`).
@@ -605,7 +606,7 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | `ConfluenceApi`                       | lê e publica páginas do Confluence no site do Jira, com o token do Jira                                     |
 | `AgentTerminal`                       | roda a interface de tela cheia de um agente fora de vista: a lê, aperta as teclas dela                      |
 | `AgentMcp`                            | adiciona um servidor MCP ao agente do QA e faz o login nele, passo a passo                                  |
-| `AgentLogin`                          | faz o login do agente do QA pelo login próprio dele, passo a passo                                          |
+| `AgentLogin`                          | abre o login próprio do agente do QA num terminal visível e espera o status dele dizer que entrou           |
 | `LinkCatcher`                         | entrega a um agente um `$BROWSER` que anota as páginas que ele quer abertas                                 |
 | `RunRecorder`                         | grava o stream vivo de uma run num MP4, pela janela escondida do gravador                                   |
 | `ReplayServer`                        | serve a gravação de uma run ao `<video>` da página em 127.0.0.1, com intervalos de bytes                    |

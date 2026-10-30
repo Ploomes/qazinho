@@ -34,9 +34,9 @@ um sticker. Toda tela o segue.
 2. **O agente é do usuário.** Claude Code ou Codex por enquanto, dirigidos pelas CLIs deles; mais
    agentes virão, um de cada vez, cada um conferido contra a CLI real antes de ser oferecido. O
    QAzinho constrói o harness de QA em volta dele e nunca guarda uma chave de provedor nem um
-   login próprio. Quando o agente está sem login, o QAzinho inicia o login do próprio agente
-   (`claude auth login`, `codex login`): a página abre no navegador do QA, e o agente guarda o que
-   recebe.
+   login próprio. Quando o agente está sem login, o QAzinho abre o login do próprio agente
+   (`claude auth login`, `codex login`) num terminal que o QA vê, como o Zed faz: a página abre
+   no navegador do QA, o agente guarda o que recebe, e o QAzinho só lê o status dele.
 3. **Um produto da Salve Software, código fechado, em dois planos.** O Free é o app desktop
    inteiro, sem conta e sem limite artificial: baixe e use. O Pro é uma plataforma web paga para
    uma empresa: uma conta e uma org, onde o QA publica os projetos da máquina dele que escolhe,
