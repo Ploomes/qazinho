@@ -510,6 +510,7 @@ export class RunCoordinator {
               position === 0 && verdict === 'blocked'
                 ? UNWALKED.unreported
                 : UNWALKED.skipped,
+            reason: position === 0 && verdict === 'blocked' ? 'unreported' : 'skipped',
             at,
           }),
         });
