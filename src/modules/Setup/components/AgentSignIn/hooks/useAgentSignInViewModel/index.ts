@@ -23,8 +23,7 @@ export const useAgentSignInViewModel = (props: IAgentSignInProps) => {
   const reached = at === null ? progress.steps.length : progress.steps.indexOf(at);
   const tone: StepsTone =
     progress.phase === 'connected' ? 'connected' : failure ? 'failed' : 'working';
-  const isInBrowser =
-    seconds === null && working?.at === 'browser' && working.url !== null;
+  const isInTerminal = seconds === null && working?.at === 'browser';
   const actions: IStepsAction[] =
     tone === 'working'
       ? [
@@ -85,16 +84,13 @@ export const useAgentSignInViewModel = (props: IAgentSignInProps) => {
     hint:
       seconds !== null
         ? t('SETUP.LOGIN_SOON', { ...names, seconds })
-        : isInBrowser
+        : isInTerminal
           ? t('SETUP.LOGIN_HINT', names)
           : null,
-    page:
-      isInBrowser && working.url !== null
-        ? { url: working.url, label: t('COMMON.OPEN_PAGE_AGAIN') }
-        : null,
+    page: null,
     detail:
       failure !== null && failure.said !== ''
-        ? { text: failure.said, isCommand: false }
+        ? { text: failure.said, isCommand: failure.failure === 'terminal' }
         : null,
     shownCode: null,
     actions,

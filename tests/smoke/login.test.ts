@@ -1,130 +1,110 @@
 import type { AgentSignInProgress } from '@/shared/types';
+import type { ChildProcess } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { chmod, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { AgentLogin } from '@/main/classes/agents/AgentLogin';
 
-const AUTOMATIC =
-  'https://claude.com/cai/oauth/authorize?code=true&redirect_uri=http%3A%2F%2Flocalhost%3A61350%2Fcallback';
-const MANUAL =
-  'https://claude.com/cai/oauth/authorize?code=true&redirect_uri=https%3A%2F%2Fplatform.claude.com%2Foauth%2Fcode%2Fcallback';
-const CODEX_PAGE =
-  'https://auth.openai.com/oauth/authorize?response_type=code&client_id=abc';
-
 /**
- * `claude auth login` e `codex login` como os reais se comportam (lido das duas CLIs): o
- * Claude Code entrega ao $BROWSER a página que chama de volta o localhost, imprime uma
- * segunda página que mostra um código, e espera esse código no stdin; o Codex abre a
- * página dele sozinho e só a imprime. Cada um espera o navegador: um arquivo chamado
- * `allowed` ou `denied` representa a resposta do QA.
+ * `claude` e `codex` falsos. O login espera o navegador, representado por um arquivo
+ * `allowed` que o teste escreve, e deixa uma marca de que entrou; o status lê essa marca
+ * do jeito que cada CLI real responde: o Claude Code em JSON, o Codex numa linha.
  */
-const FAKE_LOGIN = String.raw`
-import { spawnSync } from 'node:child_process';
+const FAKE_AGENT = String.raw`
 import { existsSync, writeFileSync } from 'node:fs';
 
-const [root, agent] = process.argv.slice(2);
-writeFileSync(root + '/pid', String(process.pid));
+const [root, agent, ...args] = process.argv.slice(2);
+const isStatus = args.includes('status');
+const isIn = existsSync(root + '/signed-in');
 
-if (agent === 'claude') {
-  console.log('Opening browser to sign in…');
-  spawnSync(process.env.BROWSER, ['${AUTOMATIC}']);
-  console.log("If the browser didn't open, visit: ${MANUAL}");
-  process.stdout.write('Paste code here if prompted > ');
-  process.stdin.setEncoding('utf8');
-  process.stdin.on('data', (code) => {
-    if (code.trim() === 'good-code') {
-      console.log('Login successful.');
-      process.exit(0);
-    }
-    console.log('Invalid code');
-    process.exit(1);
-  });
-} else {
-  console.log('Starting local login server on http://localhost:1455.');
-  console.log('If your browser did not open, navigate to this URL to authenticate:');
-  console.log('');
-  console.log('${CODEX_PAGE}');
+if (isStatus) {
+  if (agent === 'claude') console.log(JSON.stringify({ loggedIn: isIn }));
+  else console.log(isIn ? 'Logged in using ChatGPT' : 'Not logged in');
+  process.exit(agent === 'codex' && !isIn ? 1 : 0);
 }
 
+writeFileSync(root + '/pid', String(process.pid));
 setInterval(() => {
-  if (existsSync(root + '/allowed')) {
-    console.log('Successfully logged in');
-    process.exit(0);
-  }
-  if (existsSync(root + '/denied')) {
-    console.error('Error logging in: access_denied');
-    process.exit(1);
-  }
+  if (!existsSync(root + '/allowed')) return;
+  writeFileSync(root + '/signed-in', '');
+  console.log('Login successful.');
+  process.exit(0);
 }, 50);
 `;
 
-async function agentsWithFakes() {
+const terminals: ChildProcess[] = [];
+
+afterEach(() => {
+  for (const terminal of terminals.splice(0)) terminal.kill();
+});
+
+async function agentsWithFakes(props: { canOpen?: boolean } = {}) {
   const root = await mkdtemp(join(tmpdir(), 'qazinho-login-'));
-  const opened: string[] = [];
   const reported: AgentSignInProgress[] = [];
+  const scripts: string[] = [];
   const bins = { 'claude-code': join(root, 'claude'), codex: join(root, 'codex') };
 
-  await writeFile(join(root, 'login.mjs'), FAKE_LOGIN);
+  await writeFile(join(root, 'agent.mjs'), FAKE_AGENT);
 
   for (const [agentId, bin] of Object.entries(bins)) {
     await writeFile(
       bin,
-      `#!/bin/sh\necho "$@" >> "${root}/calls"\nexec "${process.execPath}" "${root}/login.mjs" "${root}" "${agentId === 'codex' ? 'codex' : 'claude'}"\n`,
+      `#!/bin/sh\necho "$@" >> "${root}/calls"\nexec "${process.execPath}" "${root}/agent.mjs" "${root}" "${agentId === 'codex' ? 'codex' : 'claude'}" "$@"\n`,
     );
     await chmod(bin, 0o755);
   }
 
   return {
     root,
-    opened,
     reported,
+    scripts,
     login: new AgentLogin({
       findAgent: (agentId) =>
         Promise.resolve(agentId in bins ? bins[agentId as keyof typeof bins] : null),
-      openUrl: async (url) => {
-        opened.push(url);
+      openScript: async (file) => {
+        scripts.push(await readFile(file, 'utf8'));
+        if (props.canOpen === false) return false;
+
+        terminals.push(spawn('/bin/sh', [file], { stdio: 'ignore' }));
+
+        return true;
       },
       onProgress: (progress) => {
         reported.push(progress);
       },
       folder: join(root, 'agent'),
+      platform: 'linux',
     }),
-    calls: async () => (await readFile(join(root, 'calls'), 'utf8')).trim(),
+    calls: async () =>
+      (await readFile(join(root, 'calls'), 'utf8').catch(() => '')).trim().split('\n'),
     reach: async (step: 'browser') => {
       while (
         !reported.some((progress) => progress.phase === 'working' && progress.at === step)
       )
         await new Promise((later) => setTimeout(later, 50));
     },
-    answer: (said: 'allowed' | 'denied') => writeFile(join(root, said), ''),
+    allow: () => writeFile(join(root, 'allowed'), ''),
   };
 }
 
-const isGone = async (root: string) => {
-  try {
-    process.kill(Number(await readFile(join(root, 'pid'), 'utf8')), 0);
-
-    return false;
-  } catch {
-    return true;
-  }
-};
-
 describe("signing in to the QA's Claude Code", () => {
-  it('opens the page the agent asked the browser for, and ends signed in once allowed', async () => {
-    const { login, opened, reported, calls, reach, answer } = await agentsWithFakes();
+  it("opens the agent's own login in a terminal, and ends signed in once the agent says so", async () => {
+    const { login, reported, scripts, calls, reach, allow } = await agentsWithFakes();
     const signingIn = login.signIn('claude-code');
 
     await reach('browser');
-    await answer('allowed');
+    await allow();
 
     expect(await signingIn).toMatchObject({
       phase: 'connected',
       steps: ['start', 'browser'],
     });
-    expect(await calls()).toBe('auth login --claudeai');
-    expect(opened).toEqual([AUTOMATIC]);
+    expect(scripts[0]).toContain("'auth' 'login' '--claudeai'");
+    expect(scripts[0]).toContain('QAzinho notices once you are in');
+    expect(await calls()).toContain('auth login --claudeai');
+    expect(await calls()).toContain('auth status');
 
     const headsUp = reported.find(
       (progress) => progress.phase === 'working' && progress.opensAt !== null,
@@ -136,68 +116,53 @@ describe("signing in to the QA's Claude Code", () => {
         (progress) => progress.phase === 'working' && progress.at === 'browser',
       ),
     );
-    expect(
-      reported.find(
-        (progress) => progress.phase === 'working' && progress.at === 'browser',
-      ),
-    ).toMatchObject({ url: AUTOMATIC });
   });
 
-  it('cancels while the QA is in the browser, and leaves nothing running', async () => {
-    const { login, reach, root } = await agentsWithFakes();
+  it('stops waiting when the QA cancels, without claiming a sign-in', async () => {
+    const { login, reach } = await agentsWithFakes();
     const signingIn = login.signIn('claude-code');
 
     await reach('browser');
     login.cancel('claude-code');
 
     expect(await signingIn).toMatchObject({ phase: 'cancelled' });
+  });
 
-    await new Promise((later) => setTimeout(later, 300));
+  it('says it could not open a terminal, with the command to run', async () => {
+    const { login, calls } = await agentsWithFakes({ canOpen: false });
+    const ended = await login.signIn('claude-code');
 
-    expect(await isGone(root)).toBe(true);
+    expect(ended).toMatchObject({ phase: 'failed', at: 'start', failure: 'terminal' });
+    expect(ended.phase === 'failed' && ended.said).toMatch(
+      /claude auth login --claudeai$/,
+    );
+    expect(await calls()).toEqual(['']);
   });
 });
 
 describe("signing in to the QA's Codex", () => {
-  it('points at the page Codex opened itself, without opening it twice', async () => {
-    const { login, opened, reported, calls, reach, answer } = await agentsWithFakes();
+  it("opens Codex's own login in a terminal, and reads its status line", async () => {
+    const { login, calls, reach, allow } = await agentsWithFakes();
     const signingIn = login.signIn('codex');
 
     await reach('browser');
-    await answer('allowed');
+    await allow();
 
     expect(await signingIn).toMatchObject({ phase: 'connected' });
-    expect(await calls()).toBe('login');
-    expect(opened).toEqual([]);
-    expect(
-      reported.find(
-        (progress) => progress.phase === 'working' && progress.at === 'browser',
-      ),
-    ).toMatchObject({ url: CODEX_PAGE });
-  });
-
-  it('stops with what Codex said when the QA did not allow it', async () => {
-    const { login, reach, answer } = await agentsWithFakes();
-    const signingIn = login.signIn('codex');
-
-    await reach('browser');
-    await answer('denied');
-
-    const ended = await signingIn;
-
-    expect(ended).toMatchObject({ phase: 'failed', failure: 'refused' });
-    expect(ended.phase === 'failed' && ended.said).toContain('access_denied');
+    expect(await calls()).toContain('login');
+    expect(await calls()).toContain('login status');
   });
 });
 
 describe('an agent QAzinho cannot sign in', () => {
-  it('says so, before running anything', async () => {
-    const { login } = await agentsWithFakes();
+  it('says so, before opening anything', async () => {
+    const { login, scripts } = await agentsWithFakes();
 
     expect(await login.signIn('future-cli')).toMatchObject({
       phase: 'failed',
       at: 'start',
       failure: 'unsupported',
     });
+    expect(scripts).toEqual([]);
   });
 });

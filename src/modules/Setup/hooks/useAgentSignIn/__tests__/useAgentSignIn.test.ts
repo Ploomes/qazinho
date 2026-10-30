@@ -53,7 +53,6 @@ const IN_BROWSER: AgentSignInProgress = {
   steps: ['start', 'browser'],
   phase: 'working',
   at: 'browser',
-  url: 'https://claude.com/cai/oauth/authorize',
   opensAt: null,
 };
 
@@ -100,10 +99,13 @@ describe('useAgentSignIn', () => {
     });
     act(() => {
       agent.report(IN_BROWSER);
-      agent.report({ ...IN_BROWSER, agentId: 'codex', at: 'start', url: null });
+      agent.report({ ...IN_BROWSER, agentId: 'codex', at: 'start' });
     });
 
-    expect(result.current.signIn).toMatchObject({ at: 'browser', url: IN_BROWSER.url });
+    expect(result.current.signIn).toMatchObject({
+      agentId: 'claude-code',
+      at: 'browser',
+    });
   });
 
   it('checks the machine again once the agent is signed in', async () => {
@@ -156,8 +158,8 @@ describe('useAgentSignIn', () => {
       agent.end('claude-code', {
         phase: 'failed',
         at: 'browser',
-        failure: 'refused',
-        said: 'Invalid code',
+        failure: 'timeout',
+        said: '',
       });
     });
     await act(async () => {

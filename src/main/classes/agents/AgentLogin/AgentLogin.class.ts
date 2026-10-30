@@ -1,71 +1,69 @@
-import type { IAgentLogin } from './types';
+import type { IAgentLogin, ILoginRecipe } from './types';
 import type {
   AgentSignInPhase,
   AgentSignInProgress,
   AgentSignInStep,
 } from '@/shared/types';
-import type { ChildProcessWithoutNullStreams } from 'node:child_process';
-import { mkdir } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { LinkCatcher } from '@/main/classes/agents/LinkCatcher';
-import { authorizeUrlIn, stripAnsi, spawnCommand } from '@/main/library';
+import { isSignedInOf, statusOf } from '@/main/classes/agents/AgentDetector/library';
+import { terminalScriptOf } from '@/main/library';
 import { AGENT_LOGIN, LOGIN_RECIPES } from './constants';
 
 /**
- * Faz o QA entrar no próprio agente pelo login do próprio agente: a página dele abre no
- * navegador, e o agente guarda o resultado.
+ * Faz o QA entrar no próprio agente num terminal que ele vê, com o login do próprio
+ * agente, e confere o status do agente até ele entrar.
  */
 export class AgentLogin {
-  private readonly findAgent: (agentId: string) => Promise<string | null>;
-  private readonly openUrl: (url: string) => Promise<void>;
-  private readonly onProgress: (progress: AgentSignInProgress) => void;
+  private readonly findAgent: IAgentLogin['findAgent'];
+  private readonly openScript: IAgentLogin['openScript'];
+  private readonly onProgress: IAgentLogin['onProgress'];
   private readonly folder: string;
-  private readonly signIns = new Map<
-    string,
-    { controller: AbortController; child: ChildProcessWithoutNullStreams | null }
-  >();
+  private readonly platform: NodeJS.Platform;
+  private readonly signIns = new Map<string, AbortController>();
 
   public constructor(props: IAgentLogin) {
     this.findAgent = props.findAgent;
-    this.openUrl = props.openUrl;
+    this.openScript = props.openScript;
     this.onProgress = props.onProgress;
     this.folder = props.folder;
+    this.platform = props.platform ?? process.platform;
   }
 
   /**
-   * Roda o login do agente, relatando cada passo; resolve assim que o agente está logado,
-   * falha, ou o QA cancela.
+   * Abre o login do agente num terminal e relata cada passo; resolve assim que o agente
+   * diz que entrou, o tempo acaba, ou o QA cancela.
    */
   public async signIn(agentId: string): Promise<AgentSignInProgress> {
     const controller = new AbortController();
-    const entry = { controller, child: null as ChildProcessWithoutNullStreams | null };
 
     this.cancel(agentId);
-    this.signIns.set(agentId, entry);
+    this.signIns.set(agentId, controller);
 
     try {
-      return await this.run({ agentId, entry });
+      return await this.run({ agentId, signal: controller.signal });
     } finally {
-      if (this.signIns.get(agentId) === entry) this.signIns.delete(agentId);
+      if (this.signIns.get(agentId) === controller) this.signIns.delete(agentId);
     }
   }
 
-  /** Para um login em andamento: o login do agente fecha, e o login termina cancelado. */
+  /** Para de esperar um login: o terminal fica com o QA, e o login termina cancelado. */
   public cancel(agentId: string): void {
-    this.signIns.get(agentId)?.controller.abort();
+    this.signIns.get(agentId)?.abort();
   }
 
-  /** Para todo login em andamento, para quando o QAzinho fecha. */
+  /** Para de esperar todo login, para quando o QAzinho fecha. */
   public close(): void {
-    for (const { controller } of this.signIns.values()) controller.abort();
+    for (const controller of this.signIns.values()) controller.abort();
   }
 
   private async run(props: {
     agentId: string;
-    entry: { controller: AbortController; child: ChildProcessWithoutNullStreams | null };
+    signal: AbortSignal;
   }): Promise<AgentSignInProgress> {
-    const { agentId, entry } = props;
-    const { signal } = entry.controller;
+    const { agentId, signal } = props;
     const steps: AgentSignInStep[] = ['start', 'browser'];
     const report = (phase: AgentSignInPhase): AgentSignInProgress => {
       const progress = { agentId, steps, ...phase };
@@ -75,106 +73,76 @@ export class AgentLogin {
       return progress;
     };
 
-    report({ phase: 'working', at: 'start', url: null, opensAt: null });
+    report({ phase: 'working', at: 'start', opensAt: null });
 
     const recipe = LOGIN_RECIPES[agentId];
     const command = await this.findAgent(agentId);
 
     if (!recipe || command === null)
       return report({ phase: 'failed', at: 'start', failure: 'unsupported', said: '' });
-    if (signal.aborted) return report({ phase: 'cancelled' });
 
     report({
       phase: 'working',
       at: 'start',
-      url: null,
       opensAt: Date.now() + AGENT_LOGIN.headsUpMs,
     });
     await sleep(AGENT_LOGIN.headsUpMs, undefined, { signal }).catch(() => undefined);
 
     if (signal.aborted) return report({ phase: 'cancelled' });
+    if (!(await this.openScript(await this.scriptOf({ command, recipe }))))
+      return report({
+        phase: 'failed',
+        at: 'start',
+        failure: 'terminal',
+        said: [command, ...recipe.login].join(' '),
+      });
 
-    const catcher = await LinkCatcher.create();
+    report({ phase: 'working', at: 'browser', opensAt: null });
+
+    const deadline = Date.now() + AGENT_LOGIN.signInMs;
+
+    while (!signal.aborted && Date.now() < deadline) {
+      await sleep(AGENT_LOGIN.pollMs, undefined, { signal }).catch(() => undefined);
+
+      if (signal.aborted) break;
+
+      const status = await statusOf({ command, args: recipe.status.args });
+
+      if (isSignedInOf({ reads: recipe.status.reads, ...status }) === true)
+        return report({ phase: 'connected' });
+    }
+
+    return signal.aborted
+      ? report({ phase: 'cancelled' })
+      : report({ phase: 'failed', at: 'browser', failure: 'timeout', said: '' });
+  }
+
+  private async scriptOf(props: {
+    command: string;
+    recipe: ILoginRecipe;
+  }): Promise<string> {
+    const { scriptExtensions } = AGENT_LOGIN;
+    const extension =
+      this.platform === 'darwin'
+        ? scriptExtensions.darwin
+        : this.platform === 'win32'
+          ? scriptExtensions.win32
+          : scriptExtensions.other;
+    const script = join(tmpdir(), `${AGENT_LOGIN.scriptName}${extension}`);
 
     await mkdir(this.folder, { recursive: true });
+    await writeFile(
+      script,
+      terminalScriptOf({
+        command: props.command,
+        args: props.recipe.login,
+        folder: this.folder,
+        say: AGENT_LOGIN.say,
+        platform: this.platform,
+      }),
+      { mode: 0o755 },
+    );
 
-    const child = spawnCommand({
-      command: command,
-      args: recipe.args,
-      options: {
-        cwd: this.folder,
-        env: { ...process.env, ...catcher.env() },
-      },
-    });
-
-    entry.child = child;
-    child.stdin.on('error', () => undefined);
-
-    return new Promise<AgentSignInProgress>((done) => {
-      let printed = '';
-      let url: string | null = null;
-      let isDone = false;
-      let printedPage: NodeJS.Timeout | null = null;
-      const at = (): AgentSignInStep => (url === null ? 'start' : 'browser');
-      const said = () => stripAnsi(printed).trim().slice(-AGENT_LOGIN.saidChars);
-      const finish = (phase: AgentSignInPhase) => {
-        if (isDone) return;
-
-        isDone = true;
-        clearInterval(look);
-        clearTimeout(giveUp);
-        if (printedPage !== null) clearTimeout(printedPage);
-        signal.removeEventListener('abort', stop);
-        child.kill();
-        catcher.dispose();
-        done(report(phase));
-      };
-      const stop = () => {
-        finish({ phase: 'cancelled' });
-      };
-      const show = (link: string) => {
-        url = link;
-        report({ phase: 'working', at: 'browser', url: link, opensAt: null });
-      };
-      const look = setInterval(() => {
-        void catcher.links().then((links) => {
-          const link = links.at(-1);
-
-          if (isDone || link === undefined || link === url) return;
-
-          void this.openUrl(link);
-          show(link);
-        });
-      }, AGENT_LOGIN.lookMs);
-      const giveUp = setTimeout(() => {
-        finish({ phase: 'failed', at: at(), failure: 'timeout', said: '' });
-      }, AGENT_LOGIN.signInMs);
-      const hear = (chunk: Buffer) => {
-        printed += chunk.toString();
-
-        const found = authorizeUrlIn(stripAnsi(printed));
-
-        if (found === null || printedPage !== null) return;
-
-        printedPage = setTimeout(() => {
-          if (!isDone && url === null) show(found);
-        }, AGENT_LOGIN.printedPageMs);
-      };
-
-      signal.addEventListener('abort', stop, { once: true });
-      if (signal.aborted) stop();
-      child.stdout.on('data', hear);
-      child.stderr.on('data', hear);
-      child.on('error', (error) => {
-        finish({ phase: 'failed', at: at(), failure: 'closed', said: error.message });
-      });
-      child.on('close', (code) => {
-        finish(
-          code === 0
-            ? { phase: 'connected' }
-            : { phase: 'failed', at: at(), failure: 'refused', said: said() },
-        );
-      });
-    });
+    return script;
   }
 }

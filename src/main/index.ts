@@ -313,7 +313,7 @@ const mcp = new AgentMcp({
 });
 const login = new AgentLogin({
   findAgent: (agentId) => findCommand(agentId),
-  openUrl: (url) => shell.openExternal(url),
+  openScript: (file) => openInTerminal(file),
   onProgress: (progress) =>
     broadcast({ channel: CHANNELS.agentSignInEvent, event: progress }),
   folder: PATHS.agentHome,

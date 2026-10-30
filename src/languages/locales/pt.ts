@@ -851,19 +851,20 @@ export const pt: typeof en = {
       'Sem login, o chat e as runs falhariam. Faça login e ele fica pronto.',
     LOGIN_TITLE: 'Fazendo login no {{agent}}',
     LOGIN_SUBTITLE:
-      'O {{agent}} faz o login na página dele. O QAzinho nunca vê a sua senha.',
+      'O {{agent}} faz o login num terminal, pelo login dele. O QAzinho nunca vê o que você digita.',
     LOGIN_DONE: 'Login feito no {{agent}}',
     LOGIN_DONE_SUBTITLE: 'O chat e as runs já usam a sua conta.',
     LOGIN_FAILED: 'O {{agent}} continua sem login',
-    LOGIN_STEP_START: 'Abrir o login do {{agent}}',
-    LOGIN_STEP_BROWSER: 'Entrar na página aberta no navegador',
-    LOGIN_SOON: 'A página de login do {{agent}} abre no seu navegador em {{seconds}} s.',
+    LOGIN_STEP_START: 'Abrir o login do {{agent}} num terminal',
+    LOGIN_STEP_BROWSER: 'Entrar pelo terminal e pela página no navegador',
+    LOGIN_SOON: 'O login do {{agent}} abre num terminal em {{seconds}} s.',
     LOGIN_HINT:
-      'A página de login do {{agent}} abriu no seu navegador. Entre por lá; esta janela fecha sozinha.',
+      'Siga o terminal: ele abre a página de login do {{agent}} no navegador. O QAzinho percebe sozinho quando você entrar.',
     LOGIN_FAIL_UNSUPPORTED: 'O QAzinho não sabe fazer o login do {{agent}}.',
-    LOGIN_FAIL_REFUSED: 'O login não foi concluído.',
-    LOGIN_FAIL_TIMEOUT: 'O login demorou demais, e o QAzinho parou de esperar.',
-    LOGIN_FAIL_CLOSED: 'O {{agent}} fechou antes de terminar o login.',
+    LOGIN_FAIL_TERMINAL:
+      'O QAzinho não conseguiu abrir um terminal nesta máquina. Rode o login do {{agent}} num terminal:',
+    LOGIN_FAIL_TIMEOUT:
+      'O login não terminou em 5 minutos, e o QAzinho parou de esperar.',
     CONNECTED: 'conectado',
     NOT_CONNECTED: 'não conectado',
     WHAT_IT_NEEDS: 'o que precisa',

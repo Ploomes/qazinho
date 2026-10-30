@@ -28,7 +28,6 @@ describe('useAgentSignInViewModel', () => {
     const { result } = signingIn({
       phase: 'working',
       at: 'start',
-      url: null,
       opensAt: null,
     });
 
@@ -39,40 +38,38 @@ describe('useAgentSignInViewModel', () => {
       page: null,
     });
     expect(result.current.rows).toEqual([
-      { key: 'start', label: 'Open the Claude Code sign-in', state: 'active' },
-      { key: 'browser', label: 'Sign in on the page in your browser', state: 'pending' },
+      {
+        key: 'start',
+        label: 'Open the Claude Code sign-in in a terminal',
+        state: 'active',
+      },
+      {
+        key: 'browser',
+        label: 'Sign in through the terminal and the page in your browser',
+        state: 'pending',
+      },
     ]);
     expect(keysOf(result.current.actions)).toEqual(['cancel']);
   });
 
-  it('says the page opens in a few seconds, before the agent opens it', () => {
+  it('says the terminal opens in a few seconds, before it does', () => {
     const { result } = signingIn({
       phase: 'working',
       at: 'start',
-      url: null,
       opensAt: Date.now() + 3_000,
     });
 
     expect(result.current.hint).toBe(
-      'The Claude Code sign-in page opens in your browser in 3s.',
+      'The Claude Code sign-in opens in a terminal in 3s.',
     );
     expect(result.current.page).toBeNull();
   });
 
-  it('points at the page in the browser, and never asks for a code to paste', () => {
-    const { result } = signingIn({
-      phase: 'working',
-      at: 'browser',
-      url: 'https://claude.com/cai/oauth/authorize',
-      opensAt: null,
-    });
+  it('sends the QA to the terminal, with no page or code of its own', () => {
+    const { result } = signingIn({ phase: 'working', at: 'browser', opensAt: null });
 
-    expect(result.current.hint).toContain('The Claude Code sign-in page opened');
-    expect(result.current.page).toEqual({
-      url: 'https://claude.com/cai/oauth/authorize',
-      label: 'Open the page again',
-    });
-
+    expect(result.current.hint).toContain('Follow the terminal');
+    expect(result.current.page).toBeNull();
     expect(result.current).not.toHaveProperty('code');
   });
 
@@ -87,21 +84,35 @@ describe('useAgentSignInViewModel', () => {
     expect(keysOf(result.current.actions)).toEqual(['done']);
   });
 
-  it("stops with the agent's words, and offers another try", () => {
+  it('stops when it waited too long, and offers another try', () => {
     const { result } = signingIn({
       phase: 'failed',
       at: 'browser',
-      failure: 'refused',
-      said: 'Invalid code',
+      failure: 'timeout',
+      said: '',
     });
 
     expect(result.current).toMatchObject({
       tone: 'failed',
-      subtitle: 'The sign-in did not go through.',
-      detail: { text: 'Invalid code', isCommand: false },
+      subtitle: 'The sign-in did not finish in 5 minutes, so QAzinho stopped waiting.',
+      detail: null,
     });
     expect(result.current.rows.map(({ state }) => state)).toEqual(['done', 'failed']);
     expect(keysOf(result.current.actions)).toEqual(['close', 'retry']);
+  });
+
+  it('shows the command to run when no terminal opened', () => {
+    const { result } = signingIn({
+      phase: 'failed',
+      at: 'start',
+      failure: 'terminal',
+      said: '/usr/local/bin/claude auth login --claudeai',
+    });
+
+    expect(result.current.detail).toEqual({
+      text: '/usr/local/bin/claude auth login --claudeai',
+      isCommand: true,
+    });
   });
 
   it('does NOT offer another try to an agent QAzinho cannot sign in', () => {
