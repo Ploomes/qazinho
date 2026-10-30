@@ -45,8 +45,11 @@
   flex: none;
   gap: var(--space-2);
   align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
   margin: calc(var(--space-2) * -1) var(--space-2);
-  padding: var(--space-1) var(--space-2);
+  padding: 0 var(--space-2);
   border: none;
   border-radius: var(--radius-xs);
   background: transparent;
