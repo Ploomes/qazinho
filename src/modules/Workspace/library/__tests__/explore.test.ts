@@ -171,6 +171,14 @@ describe('an exploration', () => {
     expect(takeSuggestion({ workspace: taken, messageId, at: '10:04' })).toBe(taken);
   });
 
+  it('takes only the suggested cases that were chosen', () => {
+    const workspace = explored({ plan: makeWorkspace().plan });
+    const messageId = workspace.chat.at(-1)?.id ?? '';
+    const taken = takeSuggestion({ workspace, messageId, at: '10:03', only: [] });
+
+    expect(taken.plan).toEqual(workspace.plan);
+  });
+
   it('does NOT keep a finish that came for a run of the plan', () => {
     const walking = startRun({
       workspace: makeWorkspace(),

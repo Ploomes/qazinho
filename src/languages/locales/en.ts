@@ -160,6 +160,7 @@ export const en = {
     EXPLORE_BUGS_OTHER: '{{count}} bugs',
     SUGGESTED_EYEBROW: 'Suggested plan · {{id}}',
     SUGGESTED_TAKE: 'Take into the plan',
+    SUGGESTED_TAKE_SOME: 'Take {{count}} to the plan',
     SUGGESTED_TAKEN: 'In the plan',
     RUN_MESSAGES_ONE: '1 message',
     RUN_MESSAGES_OTHER: '{{count}} messages',

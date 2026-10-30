@@ -10,7 +10,7 @@ import './styles.css';
  * testaria, e o jeito de levá-los ao plano.
  */
 export const SuggestionCard: React.FC<ISuggestionCardProps> = (props) => {
-  const { eyebrow, summary, cases, isTaken, takeLabel, takenLabel, onTake } =
+  const { eyebrow, summary, cases, isTaken, canTake, takeLabel, takenLabel, onTake } =
     useSuggestionCardViewModel(props);
 
   return (
@@ -22,9 +22,20 @@ export const SuggestionCard: React.FC<ISuggestionCardProps> = (props) => {
 
       <ol className="suggestion-card__cases">
         {cases.map((one) => (
-          <li key={one.key} className="suggestion-card__case">
-            <span className="suggestion-card__priority">{one.priority}</span>
-            <span className="suggestion-card__title">{one.title}</span>
+          <li key={one.key}>
+            <button
+              type="button"
+              className={one.className}
+              aria-pressed={one.isChosen}
+              disabled={!one.canChoose}
+              onClick={one.onChoose}
+            >
+              <span className="suggestion-card__check">
+                {one.isChosen && <Icon name="check" />}
+              </span>
+              <span className="suggestion-card__priority">{one.priority}</span>
+              <span className="suggestion-card__title">{one.title}</span>
+            </button>
           </li>
         ))}
       </ol>
@@ -50,7 +61,7 @@ export const SuggestionCard: React.FC<ISuggestionCardProps> = (props) => {
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
             >
-              <Button variant="primary" size="sm" onClick={onTake}>
+              <Button variant="primary" size="sm" disabled={!canTake} onClick={onTake}>
                 {takeLabel}
               </Button>
             </motion.span>

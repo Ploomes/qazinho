@@ -533,8 +533,8 @@ export const useChatViewModel = () => {
       workspace === null
         ? Promise.resolve(null)
         : askVariables({ projectId: workspace.projectId, drafts }),
-    onTakeSuggestion: (messageId: string) => {
-      if (workspace !== null) takeSuggestion({ workspaceId: workspace.id, messageId });
+    onTakeSuggestion: (props: { messageId: string; only: number[] }) => {
+      if (workspace !== null) takeSuggestion({ workspaceId: workspace.id, ...props });
     },
   };
 };

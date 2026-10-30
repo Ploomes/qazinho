@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import type { ISuggestionMessage } from '@/modules/Chat/types';
-import { cleanup, renderHook } from '@testing-library/react';
+import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { useSuggestionCardViewModel } from '@/modules/Chat/screens/Chat/components/SuggestionCard/hooks/useSuggestionCardViewModel';
 
@@ -57,7 +57,52 @@ describe('useSuggestionCardViewModel', () => {
 
       result.current.onTake();
 
-      expect(onTake).toHaveBeenCalledWith('m-7');
+      expect(onTake).toHaveBeenCalledWith({ messageId: 'm-7', only: [0, 1] });
+    });
+
+    /**
+     * "Levar para o plano" levava os onze casos de uma vez, entre eles o do preço e o do
+     * cupom que o plano já tinha.
+     */
+    it('takes only the cases the QA left on, and says how many', () => {
+      const onTake = vi.fn();
+      const { result, rerender } = renderHook(() =>
+        useSuggestionCardViewModel({ message: MESSAGE, onTake }),
+      );
+
+      act(() => {
+        result.current.cases[0]?.onChoose();
+      });
+      rerender();
+
+      expect(result.current.takeLabel).toBe('Take 1 to the plan');
+
+      act(() => {
+        result.current.onTake();
+      });
+
+      expect(onTake).toHaveBeenCalledWith({ messageId: 'm-7', only: [1] });
+    });
+
+    it('does NOT take anything once every case was left out', () => {
+      const onTake = vi.fn();
+      const { result, rerender } = renderHook(() =>
+        useSuggestionCardViewModel({ message: MESSAGE, onTake }),
+      );
+
+      act(() => {
+        result.current.cases[0]?.onChoose();
+        result.current.cases[1]?.onChoose();
+      });
+      rerender();
+
+      expect(result.current.canTake).toBe(false);
+
+      act(() => {
+        result.current.onTake();
+      });
+
+      expect(onTake).not.toHaveBeenCalled();
     });
 
     it('does NOT take a suggestion twice', () => {

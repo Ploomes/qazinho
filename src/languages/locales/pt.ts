@@ -163,6 +163,7 @@ export const pt: typeof en = {
     EXPLORE_BUGS_OTHER: '{{count}} bugs',
     SUGGESTED_EYEBROW: 'Plano sugerido · {{id}}',
     SUGGESTED_TAKE: 'Levar para o plano',
+    SUGGESTED_TAKE_SOME: 'Levar {{count}} para o plano',
     SUGGESTED_TAKEN: 'No plano',
     RUN_MESSAGES_ONE: '1 mensagem',
     RUN_MESSAGES_OTHER: '{{count}} mensagens',

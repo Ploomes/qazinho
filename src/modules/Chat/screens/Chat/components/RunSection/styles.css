@@ -92,7 +92,7 @@
 .run-section__facts {
   color: var(--ink3);
   font: var(--font-mono-xs);
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .run-section__open {
@@ -141,5 +141,11 @@
     width: auto;
     padding-top: 0;
     text-align: left;
+  }
+}
+
+@container workspace (width < 760px) {
+  .run-section__open-label {
+    display: none;
   }
 }

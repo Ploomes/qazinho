@@ -36,8 +36,13 @@ export const RunSection: React.FC<IRunSectionProps> = (props) => {
             </span>
           </button>
           {hasOpen && (
-            <button type="button" className="run-section__open" onClick={props.onOpen}>
-              {props.openLabel}
+            <button
+              type="button"
+              className="run-section__open"
+              aria-label={props.openLabel ?? undefined}
+              onClick={props.onOpen}
+            >
+              <span className="run-section__open-label">{props.openLabel}</span>
               <Icon name="arrow" />
             </button>
           )}

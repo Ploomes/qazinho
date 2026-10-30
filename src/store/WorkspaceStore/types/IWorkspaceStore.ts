@@ -113,7 +113,11 @@ export interface IWorkspaceStore {
     summary: string;
     cases: IDraftedCase[];
   }) => void;
-  takeSuggestion: (props: { workspaceId: string; messageId: string }) => void;
+  takeSuggestion: (props: {
+    workspaceId: string;
+    messageId: string;
+    only?: number[];
+  }) => void;
   resumeRun: (props: { run: IRunInFlight; by: IWalkedBy }) => void;
   pauseRun: (workspaceId: string) => void;
   stopRun: (workspaceId: string) => void;

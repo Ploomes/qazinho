@@ -334,13 +334,18 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
-  takeSuggestion: ({ workspaceId, messageId }) =>
+  takeSuggestion: ({ workspaceId, messageId, only }) =>
     set((state) => ({
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
         change: (workspace) =>
-          takeSuggestion({ workspace, messageId, at: formatClock(new Date()) }),
+          takeSuggestion({
+            workspace,
+            messageId,
+            at: formatClock(new Date()),
+            ...(only === undefined ? {} : { only }),
+          }),
       }),
     })),
 

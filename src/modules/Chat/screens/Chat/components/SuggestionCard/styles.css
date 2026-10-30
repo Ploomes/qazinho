@@ -32,12 +32,38 @@
 
 .suggestion-card__case {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--space-3);
+  width: 100%;
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--panel);
+  color: var(--ink);
+  text-align: left;
+  transition:
+    opacity var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+
+.suggestion-card__case:not(:disabled):hover {
+  border-color: var(--line2);
+}
+
+.suggestion-card__case--left {
+  opacity: 0.5;
+}
+
+.suggestion-card__check {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--line2);
+  border-radius: var(--radius-xs);
+  color: var(--lime-ink);
 }
 
 .suggestion-card__priority {
