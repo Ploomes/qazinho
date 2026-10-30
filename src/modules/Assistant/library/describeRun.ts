@@ -16,7 +16,7 @@ export function describeRun(props: { workspace: IWorkspace; runId: string | null
 
   if (live !== null && !live.isDone && (wanted === null || wanted === live.id))
     return {
-      text: `${live.id} of ${workspace.id} is still ${live.isRunning ? 'going on' : 'paused'}: ${String(live.outcomes.length)} steps walked so far, ${String(live.outcomes.filter(({ verdict }) => verdict === 'passed').length)} passed, ${String(live.outcomes.filter(({ verdict }) => verdict === 'failed').length)} failed.`,
+      text: `${live.id} of ${workspace.id} is still ${live.isRunning ? 'going on' : 'paused'}: ${String(live.outcomes.length)} ${live.kind === 'explore' ? 'screens noted' : 'steps walked'} so far, ${String(live.outcomes.filter(({ verdict }) => verdict === 'passed').length)} passed, ${String(live.outcomes.filter(({ verdict }) => verdict === 'failed').length)} failed.`,
       isError: false,
     };
 

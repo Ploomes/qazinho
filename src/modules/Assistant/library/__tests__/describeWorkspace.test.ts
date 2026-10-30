@@ -136,4 +136,50 @@ describe('describeWorkspace', () => {
       }),
     ).toContain('A run is going on now: r-02, 6 of 6 steps walked.');
   });
+
+  /**
+   * O Estagiário contou uma exploração como "andou 2 de 33 passos", mas ela não tem os
+   * passos do plano: conta as telas que anotou.
+   */
+  it('counts the screens of an exploration going on, not the steps of the plan', () => {
+    const live = CHECKOUT.live;
+    const text = describeWorkspace({
+      workspace: {
+        ...CHECKOUT,
+        live: live && {
+          ...live,
+          id: 'r-04',
+          kind: 'explore',
+          isDone: false,
+          isRunning: true,
+        },
+      },
+      project: PROJECT,
+    });
+
+    expect(text).toContain('An exploration is going on now: r-04');
+    expect(text).toContain('screens noted so far');
+    expect(text).not.toContain('steps walked');
+  });
+
+  it('counts only the steps of the cases a run was told to walk', () => {
+    const live = CHECKOUT.live;
+    const first = CHECKOUT.plan[0];
+    const text = describeWorkspace({
+      workspace: {
+        ...CHECKOUT,
+        live: live && {
+          ...live,
+          id: 'r-05',
+          isDone: false,
+          isRunning: true,
+          outcomes: [],
+          ...(first === undefined ? {} : { caseIds: [first.id] }),
+        },
+      },
+      project: PROJECT,
+    });
+
+    expect(text).toContain(`0 of ${String(first?.steps.length)} steps walked.`);
+  });
 });

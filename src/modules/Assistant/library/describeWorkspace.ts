@@ -1,6 +1,6 @@
 import type { IProject } from '@/modules/Project/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
-import { runDayOf } from '@/modules/Run/library';
+import { runDayOf, walkedStepsOf } from '@/modules/Run/library';
 import { openRoundOf } from './openRoundOf';
 
 const ENDINGS = {
@@ -72,7 +72,9 @@ export function describeWorkspace(props: {
     ...(live === null || live.isDone
       ? []
       : [
-          `A run is ${live.isRunning ? 'going on' : 'paused'} now: ${live.id}, ${String(live.outcomes.length)} of ${String(steps)} steps walked.`,
+          live.kind === 'explore'
+            ? `An exploration is ${live.isRunning ? 'going on' : 'paused'} now: ${live.id}, ${String(live.outcomes.length)} screens noted so far. It has no plan steps to count.`
+            : `A run is ${live.isRunning ? 'going on' : 'paused'} now: ${live.id}, ${String(live.outcomes.length)} of ${String(walkedStepsOf({ plan: workspace.plan, caseIds: live.caseIds }).length)} steps walked.`,
         ]),
     ...(round.length === 0
       ? []
