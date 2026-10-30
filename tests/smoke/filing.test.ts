@@ -26,6 +26,7 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 LAST="$${'{@: -1}'}"
 printf '%s\0' "$@" >> "$ROOT/asked"
 printf '\036' >> "$ROOT/asked"
+case " $* " in *" --input "*) cat > "$ROOT/body" ;; esac
 case "$LAST" in
   repos/acme/shop/labels/bug)
     echo '{"name":"bug"}'
@@ -198,14 +199,15 @@ describe('a bug sent to the QA’s tracker', () => {
       'api',
       '--method',
       'POST',
-      '--raw-field',
-      'title=An expired coupon is taken',
-      '--raw-field',
-      'body=The checkout took EXPIRED.\n\n1. Open the cart\n2. **Apply EXPIRED**',
-      '--raw-field',
-      'labels[]=bug',
+      '--input',
+      '-',
       'repos/acme/shop/issues',
     ]);
+    expect(JSON.parse(await readFile(join(gh, 'body'), 'utf8'))).toEqual({
+      title: 'An expired coupon is taken',
+      body: 'The checkout took EXPIRED.\n\n1. Open the cart\n2. **Apply EXPIRED**',
+      labels: ['bug'],
+    });
   });
 
   it('says why GitHub would not take it, in gh’s words', async () => {

@@ -390,6 +390,7 @@ export class GithubCli {
         },
       });
 
+      child.stdin?.on('error', () => undefined);
       if (props.input !== undefined) child.stdin?.end(props.input);
 
       const out: Buffer[] = [];
