@@ -14,8 +14,9 @@ describe('describeBug', () => {
       'Got: Nothing moved.',
       'The page did not do it.',
       'To reproduce:',
-      '1. Open the target URL',
-      '2. Search for a product ← it breaks here',
+      '1. The URL answers.',
+      '2. Open the target URL',
+      '3. Search for a product ← it breaks here',
       'Not sent to a tracker yet.',
       'Seen in 1 run, with 2 screenshots in Bugs.',
     ]);
