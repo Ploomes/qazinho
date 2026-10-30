@@ -5,6 +5,7 @@ import {
   dockRoomOf,
   useAppActions,
   useAssistantEvents,
+  useQuestionRoom,
 } from '@/modules/Assistant';
 import { useSuiteWatch } from '@/modules/Automation';
 import { useBuildEvents } from '@/modules/Build';
@@ -58,6 +59,7 @@ export const useAppViewModel = () => {
   useMachineWatch();
   useAppActions();
   useAssistantEvents();
+  useQuestionRoom();
   useBuildEvents();
   useSuiteWatch();
   useProSync();
