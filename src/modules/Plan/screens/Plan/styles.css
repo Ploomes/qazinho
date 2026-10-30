@@ -95,6 +95,11 @@
   background: var(--attn-soft);
 }
 
+.plan__export-body--org {
+  border-color: var(--lime-soft);
+  background: var(--lime-soft);
+}
+
 .plan__export-body--failed {
   border-color: var(--fail-soft);
   background: var(--fail-soft);

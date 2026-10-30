@@ -23,6 +23,7 @@ import {
   writtenSecretsOf,
 } from '@/modules/Plan/library';
 import { DOC_VERDICT_KEYS, PLAN_SOURCE } from '@/modules/Plan/screens/Plan/constants';
+import { useProUpdate } from '@/modules/Pro';
 import { useVariableActions, VARIABLE_FAILURE_KEYS } from '@/modules/Project';
 import { flattenPlanSteps, useRunActions } from '@/modules/Run';
 import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
@@ -31,6 +32,7 @@ import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePar
 import { useToTop } from '@/shared/hooks/useToTop';
 import {
   useAppStore,
+  useProStore,
   useSettingsStore,
   useSetupStore,
   useVariablesStore,
@@ -72,6 +74,7 @@ export const usePlanViewModel = () => {
   const agent = useSettingsStore((state) => state.agent);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const { onRun, onRunCase, onStop } = useRunActions();
+  const { update: updateFromOrg } = useProUpdate();
   const [removal, setRemoval] = useState<ICaseRemoval | null>(null);
   const [freshCaseId, setFreshCaseId] = useState<string | null>(null);
   const [exported, setExported] = useState<ExportOutcome | null>(null);
@@ -102,6 +105,12 @@ export const usePlanViewModel = () => {
   const workspaceId = workspace?.id ?? null;
   const plan = workspace?.plan ?? [];
   const isLocked = workspace?.isLocked === true;
+  const orgMove = useProStore(
+    (state) =>
+      state.shares
+        .find(({ projectId }) => projectId === workspace?.projectId)
+        ?.conflicts.find(({ workspaceId: id }) => id === workspace?.id) ?? null,
+  );
 
   const write = (cases: ITestCase[]) => {
     if (workspaceId === null || isLocked) return;
@@ -404,6 +413,14 @@ export const usePlanViewModel = () => {
         : t(missing.length === 1 ? 'PLAN.MISSING_ONE' : 'PLAN.MISSING_OTHER', {
             names: missing.map((name) => `\${${name}}`).join(', '),
           }),
+    orgNotice:
+      orgMove === null || isLocked
+        ? null
+        : t('PLAN.ORG_MOVED', { who: orgMove.editedBy ?? t('PLAN.ORG_SOMEONE') }),
+    orgUpdateLabel: t('PLAN.ORG_UPDATE'),
+    onOrgUpdate: () => {
+      if (workspace !== null) void updateFromOrg(workspace.projectId);
+    },
     addMissingLabel: t('PLAN.MISSING_ADD'),
     onAddMissing: () => {
       if (workspace === null) return;

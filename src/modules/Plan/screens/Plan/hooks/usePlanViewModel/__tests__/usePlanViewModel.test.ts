@@ -21,6 +21,7 @@ import {
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import {
   useAppStore,
+  useProStore,
   useSettingsStore,
   useSetupStore,
   useVariablesStore,
@@ -57,6 +58,7 @@ afterEach(() => {
 
 beforeEach(() => {
   useAppStore.setState({ selectedWorkspaceId: 'w1' });
+  useProStore.setState({ shares: [] });
   useWorkspaceStore.setState({
     workspaces: [makeWorkspace()],
     openCaseId: null,
@@ -1026,6 +1028,52 @@ describe('usePlanViewModel', () => {
         'Codex is running this plan. Stop the run if you want to change it.',
       );
       useSettingsStore.setState({ agent: 'Claude Code' });
+    });
+  });
+
+  describe('org changes', () => {
+    const MOVED = {
+      projectId: 'p1',
+      orgSlug: 'loja',
+      state: 'conflict' as const,
+      syncedAt: null,
+      pending: [],
+      conflicts: [
+        {
+          workspaceId: 'w1',
+          base: [],
+          version: 4,
+          cases: [],
+          editedBy: 'Bruno',
+          editedAt: '2026-10-24T11:30:00.000Z',
+        },
+      ],
+    };
+
+    /**
+     * A atualização da org era só um ícone pequeno na sidebar: quem abria o plano não
+     * sabia que a org tinha mexido nele.
+     */
+    it('says in the plan itself that the org changed it, and by whom', () => {
+      useProStore.setState({ shares: [MOVED] });
+
+      const { result } = renderHook(() => usePlanViewModel());
+
+      expect(result.current.orgNotice).toBe('Bruno changed this plan in the org.');
+      expect(result.current.orgUpdateLabel).toBe('Update');
+    });
+
+    it('says nothing when the org moved another workspace’s plan', () => {
+      useProStore.setState({
+        shares: [
+          {
+            ...MOVED,
+            conflicts: MOVED.conflicts.map((one) => ({ ...one, workspaceId: 'w9' })),
+          },
+        ],
+      });
+
+      expect(renderHook(() => usePlanViewModel()).result.current.orgNotice).toBeNull();
     });
   });
 });

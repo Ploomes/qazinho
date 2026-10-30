@@ -36,6 +36,9 @@ export const Plan: React.FC = () => {
     onReorder,
     onRunAll,
     onRunCase,
+    orgNotice,
+    orgUpdateLabel,
+    onOrgUpdate,
     onStop,
     missingNotice,
     addMissingLabel,
@@ -247,6 +250,27 @@ export const Plan: React.FC = () => {
                   </Button>
                   <Button size="sm" onClick={onKeepSecret}>
                     {secretNotice.keepLabel}
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence initial={false}>
+            {orgNotice !== null && (
+              <motion.div
+                key="org"
+                className="plan__export"
+                role="status"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+              >
+                <div className="plan__export-body plan__export-body--org">
+                  <span className="plan__export-text">{orgNotice}</span>
+                  <Button size="sm" onClick={onOrgUpdate}>
+                    {orgUpdateLabel}
                   </Button>
                 </div>
               </motion.div>
