@@ -53,6 +53,42 @@ describe('useProjectModalViewModel', () => {
     expect(result.current.canConfirm).toBe(false);
   });
 
+  /**
+   * O Esc na lista de repositórios fechava a janela inteira e jogava fora o nome, o
+   * endereço e o repositório, sem perguntar.
+   */
+  it('asks before throwing away what was filled in, and leaves on the second ask', () => {
+    const { result } = renderHook(() => useProjectModalViewModel());
+
+    act(() => {
+      result.current.onNameChange('Loja Salve');
+    });
+    act(() => {
+      result.current.onCancel();
+    });
+
+    expect(useAppStore.getState().modal).toBe('project');
+    expect(result.current.footerHint).toBe(
+      'This throws away what you filled in. Cancel again to leave.',
+    );
+
+    act(() => {
+      result.current.onCancel();
+    });
+
+    expect(useAppStore.getState().modal).not.toBe('project');
+  });
+
+  it('leaves at once when nothing was filled in', () => {
+    const { result } = renderHook(() => useProjectModalViewModel());
+
+    act(() => {
+      result.current.onCancel();
+    });
+
+    expect(useAppStore.getState().modal).not.toBe('project');
+  });
+
   it('creates the project with the targets that were filled in', () => {
     const { result } = renderHook(() => useProjectModalViewModel());
 

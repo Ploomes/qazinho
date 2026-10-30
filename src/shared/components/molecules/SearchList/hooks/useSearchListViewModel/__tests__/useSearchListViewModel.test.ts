@@ -126,6 +126,27 @@ describe('useSearchListViewModel', () => {
 
       expect(free.stopPropagation).not.toHaveBeenCalled();
     });
+
+    /**
+     * Depois de pôr um repositório a lista seguia aberta, e o Esc para fechá-la fechava a
+     * janela do projeto inteira, com o que o QA tinha digitado.
+     */
+    it('closes an open list on Escape without closing the window around it', () => {
+      const escape = key('Escape');
+      const blur = vi.fn();
+      const open = list({ query: 'loja' });
+
+      act(() => {
+        open.result.current.onKeyDown({
+          ...escape,
+          currentTarget: { blur },
+        } as unknown as KeyboardEvent<HTMLInputElement>);
+      });
+
+      expect(escape.stopPropagation).toHaveBeenCalled();
+      expect(open.props.onQuery).toHaveBeenCalledWith('');
+      expect(blur).toHaveBeenCalled();
+    });
   });
 
   it('opens while focused or searching, or when told to stay open', () => {

@@ -82,10 +82,15 @@ export const useSearchListViewModel = (props: ISearchListProps) => {
 
         event.preventDefault();
         pick(row.id);
-      } else if (event.key === 'Escape' && onEscape !== undefined) {
+      } else if (event.key === 'Escape' && (onEscape !== undefined || isOpen)) {
         event.preventDefault();
         event.stopPropagation();
-        onEscape();
+
+        if (onEscape !== undefined) onEscape();
+        else {
+          onQuery('');
+          event.currentTarget.blur();
+        }
       }
     },
     onHighlight: (index: number) => {

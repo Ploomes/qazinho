@@ -71,6 +71,7 @@ export const useProjectModalViewModel = () => {
   );
   const [variableFailure, setVariableFailure] = useState<string | null>(null);
   const [isSaving, setSaving] = useState(false);
+  const [isConfirmingDiscard, setConfirmingDiscard] = useState(false);
   const saved = (kind: TargetKind) =>
     editing?.targets.find((target) => target.kind === kind) ?? null;
 
@@ -369,7 +370,9 @@ export const useProjectModalViewModel = () => {
               link: { label: t('PROJECT.IOS_LINK'), url: SETUP_LINKS.xcode },
             },
           } satisfies ITargetLock),
-    footerHint: blocking ?? variableFailure ?? undefined,
+    footerHint: isConfirmingDiscard
+      ? t('PROJECT.DISCARD_HINT')
+      : (blocking ?? variableFailure ?? undefined),
     onNameChange: setName,
     onRepositoriesChange: setRepositories,
     variables,
@@ -396,7 +399,18 @@ export const useProjectModalViewModel = () => {
         setApp(picked);
       });
     },
-    onCancel: closeModal,
+    onCancel: () => {
+      const isFilled =
+        !isEditing &&
+        (name.trim() !== '' ||
+          url.trim() !== '' ||
+          apk !== '' ||
+          app !== '' ||
+          repositories.length > 0);
+
+      if (isFilled && !isConfirmingDiscard) setConfirmingDiscard(true);
+      else closeModal();
+    },
     onConfirm,
     onSelectSection: setSection,
     hasDeleteInOrg: canDeleteInOrg,

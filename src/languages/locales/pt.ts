@@ -608,6 +608,7 @@ export const pt: typeof en = {
     IOS_TEXT: 'Um .app de simulador que roda sozinho, não .ipa',
     IOS_PLACEHOLDER: 'escolha seu .app',
     CREATE: 'Criar projeto',
+    DISCARD_HINT: 'Isto descarta o que você preencheu. Cancele de novo para sair.',
     NEEDS_NAME: 'Dê um nome ao projeto para criá-lo',
     NEEDS_TARGET: 'Adicione um target: uma URL, um .apk ou um .app',
     SAVE: 'Salvar alterações',

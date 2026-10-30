@@ -603,6 +603,7 @@ export const en = {
     IOS_TEXT: 'A simulator .app that runs on its own, not an .ipa',
     IOS_PLACEHOLDER: 'pick your .app',
     CREATE: 'Create project',
+    DISCARD_HINT: 'This throws away what you filled in. Cancel again to leave.',
     NEEDS_NAME: 'Name the project to create it',
     NEEDS_TARGET: 'Add one target: a URL, an .apk or a .app',
     SAVE: 'Save changes',
