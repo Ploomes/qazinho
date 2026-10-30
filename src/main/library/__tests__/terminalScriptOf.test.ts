@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { signInScript } from '@/main/classes/integrations/AgentMcp/library';
+import { terminalScriptOf } from '@/main/library';
 
-describe('signInScript', () => {
-  it('opens the agent on its MCP list, from QAzinho own folder, in a login shell', () => {
-    const script = signInScript({
+describe('terminalScriptOf', () => {
+  it('says what to do, then runs the command from QAzinho own folder, in a login shell', () => {
+    const script = terminalScriptOf({
       command: '/opt/bin/claude',
       args: ['/mcp'],
       folder: '/data/agent',
-      server: 'figma',
+      say: 'QAzinho: sign in.',
       platform: 'darwin',
     });
 
@@ -21,11 +21,11 @@ describe('signInScript', () => {
    */
   it('quotes a path with a quote in it', () => {
     expect(
-      signInScript({
+      terminalScriptOf({
         command: "/Users/o'brien/claude",
         args: ['/mcp'],
         folder: '/x',
-        server: 'figma',
+        say: 'QAzinho: sign in.',
         platform: 'darwin',
       }),
     ).toContain(`exec '/Users/o'\\''brien/claude' '/mcp'`);
@@ -33,11 +33,11 @@ describe('signInScript', () => {
 
   it('runs in the plain shell on Linux, where zsh may not be', () => {
     expect(
-      signInScript({
+      terminalScriptOf({
         command: '/usr/bin/claude',
         args: ['/mcp'],
         folder: '/data',
-        server: 'figma',
+        say: 'QAzinho: sign in.',
         platform: 'linux',
       }).split('\n')[0],
     ).toBe('#!/bin/sh');
@@ -48,11 +48,11 @@ describe('signInScript', () => {
    * ser chamado para voltar.
    */
   it('writes a batch file on Windows, its paths quoted and its percent signs doubled', () => {
-    const script = signInScript({
+    const script = terminalScriptOf({
       command: 'C:\\Users\\Ana\\AppData\\Roaming\\npm\\claude.cmd',
       args: ['/mcp'],
       folder: 'C:\\Users\\Ana\\100% QA',
-      server: 'figma',
+      say: 'QAzinho: sign in.',
       platform: 'win32',
     });
 
@@ -60,7 +60,7 @@ describe('signInScript', () => {
       '@echo off',
       'cd /d "C:\\Users\\Ana\\100%% QA"',
       'cls',
-      'echo QAzinho: pick "figma" below, choose Authenticate and finish in the browser. Then close this window.',
+      'echo QAzinho: sign in.',
       'call "C:\\Users\\Ana\\AppData\\Roaming\\npm\\claude.cmd" "/mcp"',
       '',
     ]);

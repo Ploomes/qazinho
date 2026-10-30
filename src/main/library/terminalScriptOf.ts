@@ -1,15 +1,15 @@
 /**
- * O script que um terminal roda para fazer o QA entrar: o agente, aberto direto nos
- * servidores MCP dele; um login shell no Mac ou Linux, um arquivo batch no Windows.
+ * O script que um terminal visível roda: o que o QAzinho diz ao QA, depois o comando, na
+ * pasta dada; um login shell no Mac ou Linux, um arquivo batch no Windows.
  */
-export function signInScript(props: {
+export function terminalScriptOf(props: {
   command: string;
   args: string[];
   folder: string;
-  server: string;
+  say: string;
   platform: NodeJS.Platform;
 }): string {
-  const say = `QAzinho: pick "${props.server}" below, choose Authenticate and finish in the browser. Then close this window.`;
+  const { say } = props;
 
   if (props.platform === 'win32')
     return [

@@ -22,6 +22,7 @@ export * from './proPageUrlOf';
 export * from './searchDirectories';
 export * from './stripAnsi';
 export * from './sweepDaysOf';
+export * from './terminalScriptOf';
 export * from './writeAtomically';
 export {
   describeMeasure,

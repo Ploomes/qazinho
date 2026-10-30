@@ -21,15 +21,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { AgentTerminal } from '@/main/classes/agents/AgentTerminal';
-import { authorizeUrlIn, spawnCommand } from '@/main/library';
+import { authorizeUrlIn, spawnCommand, terminalScriptOf } from '@/main/library';
 import { AGENT_MCP, MCP_CATALOG, MCP_RECIPES, MCP_ROUTE_STEPS } from './constants';
-import {
-  nextMcpMove,
-  parseCodexMcpList,
-  parseMcpList,
-  runCommand,
-  signInScript,
-} from './library';
+import { nextMcpMove, parseCodexMcpList, parseMcpList, runCommand } from './library';
 
 /**
  * Os servidores MCP que o QAzinho configura no próprio agente do QA: adicionados lá, com
@@ -412,11 +406,11 @@ export class AgentMcp {
     await mkdir(this.folder, { recursive: true });
     await writeFile(
       script,
-      signInScript({
+      terminalScriptOf({
         command: run.command,
         args,
         folder: this.folder,
-        server: run.name,
+        say: `QAzinho: pick "${run.name}" below, choose Authenticate and finish in the browser. Then close this window.`,
         platform,
       }),
       { mode: 0o755 },
