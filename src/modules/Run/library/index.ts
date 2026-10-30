@@ -26,3 +26,4 @@ export * from './takeOf';
 export * from './urlPartsOf';
 export * from './walkedByOf';
 export * from './withExplorationTitle';
+export * from './walkedStepsOf';

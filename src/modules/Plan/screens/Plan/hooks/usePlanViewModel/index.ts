@@ -71,7 +71,7 @@ export const usePlanViewModel = () => {
   const setPlan = useWorkspaceStore((state) => state.setPlan);
   const agent = useSettingsStore((state) => state.agent);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
-  const { onRun, onStop } = useRunActions();
+  const { onRun, onRunCase, onStop } = useRunActions();
   const [removal, setRemoval] = useState<ICaseRemoval | null>(null);
   const [freshCaseId, setFreshCaseId] = useState<string | null>(null);
   const [exported, setExported] = useState<ExportOutcome | null>(null);
@@ -396,6 +396,7 @@ export const usePlanViewModel = () => {
     onToggleCase: toggleCase,
     onReorder: write,
     onRunAll: onRun,
+    onRunCase,
     onStop,
     missingNotice:
       missing.length === 0 || isLocked

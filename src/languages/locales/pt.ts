@@ -265,6 +265,7 @@ export const pt: typeof en = {
     ACTION_PLACEHOLDER: 'o que o agente faz',
     EXPECTED_PLACEHOLDER: 'o que você espera ver',
     RUN_ALL: 'Rodar tudo',
+    RUN_CASE: 'Rodar só este caso',
     EXPORT: 'Exportar código',
     PUBLISH: 'Publicar no Confluence',
     PUBLISH_AGAIN: 'Atualizar no Confluence',

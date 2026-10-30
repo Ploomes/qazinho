@@ -8,8 +8,9 @@ export function startRun(props: {
   runId: string;
   by: IWalkedBy;
   kind?: 'explore';
+  caseIds?: string[];
 }): IWorkspace {
-  const { workspace, startedAt, startedAtMs, runId, by, kind } = props;
+  const { workspace, startedAt, startedAtMs, runId, by, kind, caseIds } = props;
 
   if (workspace.plan.length === 0 && kind !== 'explore') return workspace;
 
@@ -31,6 +32,7 @@ export function startRun(props: {
       costUsd: null,
       by,
       ...(kind === undefined ? {} : { kind }),
+      ...(caseIds === undefined ? {} : { caseIds }),
     },
   };
 }

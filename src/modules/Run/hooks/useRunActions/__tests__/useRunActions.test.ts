@@ -77,6 +77,42 @@ describe('useRunActions', () => {
       });
     });
 
+    /**
+     * Para acertar o TC-12, o QA rodava o plano inteiro de novo, e os casos que falhavam
+     * pelo bug do preço gastavam o agente outra vez.
+     */
+    it('runs only the case the QA chose, and says so to the main and the page', () => {
+      const { startRunCall } = bridge();
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.onRunCase('TC-02');
+      });
+
+      expect(startRunCall).toHaveBeenCalledWith(
+        expect.objectContaining({ caseIds: ['TC-02'], mode: 'replay' }),
+      );
+      expect(useWorkspaceStore.getState().workspaces[0]?.live?.caseIds).toEqual([
+        'TC-02',
+      ]);
+    });
+
+    it('holds a single case for an org update, and keeps which case it was', () => {
+      bridge();
+      useProStore.setState({ shares: [MOVED] });
+      const { result } = renderHook(() => useRunActions());
+
+      act(() => {
+        result.current.onRunCase('TC-02');
+      });
+
+      expect(useProStore.getState().heldRun).toEqual({
+        workspaceId: 'w1',
+        mode: 'replay',
+        caseIds: ['TC-02'],
+      });
+    });
+
     it('does NOT hold a run of a plan another workspace’s update names', () => {
       const { startRunCall } = bridge();
       useProStore.setState({

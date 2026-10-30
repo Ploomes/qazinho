@@ -12,6 +12,7 @@ export interface IPlanCaseProps {
   isFresh?: boolean;
   isLocked: boolean;
   onToggle: (caseId: string) => void;
+  onRunCase?: (caseId: string) => void;
   onEditCase: (props: { caseId: string; fields: Partial<ITestCase> }) => void;
   onRemoveCase: (caseId: string) => void;
   onMoveCase: (props: { caseId: string; by: -1 | 1 }) => void;

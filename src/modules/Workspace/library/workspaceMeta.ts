@@ -1,5 +1,5 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
-import { flattenPlanSteps } from '@/modules/Run/library';
+import { flattenPlanSteps, walkedStepsOf } from '@/modules/Run/library';
 
 /**
  * A chave e a contagem que o badge da sidebar lê: progresso ganha de bugs, bugs ganham do
@@ -17,7 +17,11 @@ export function workspaceMeta(workspace: IWorkspace): { key: string; count: numb
     };
   }
   if (workspace.live?.isRunning)
-    return { key: 'SIDEBAR.META_PROGRESS', count: steps.length };
+    return {
+      key: 'SIDEBAR.META_PROGRESS',
+      count: walkedStepsOf({ plan: workspace.plan, caseIds: workspace.live.caseIds })
+        .length,
+    };
   const bugs = workspace.bugs.filter(({ isDismissed }) => !isDismissed).length;
 
   if (bugs === 1) return { key: 'SIDEBAR.META_BUG_ONE', count: 1 };

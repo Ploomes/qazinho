@@ -395,7 +395,13 @@ export class RunCoordinator {
     const recorded: ICaseRecipe[] = [];
 
     try {
-      for (const [position, steps] of casesOf(run.steps).entries()) {
+      const wanted = run.caseIds === undefined ? null : new Set(run.caseIds);
+      const toWalk = casesOf(run.steps).filter(
+        ([first]) =>
+          wanted === null || (first !== undefined && wanted.has(first.step.caseId)),
+      );
+
+      for (const [position, steps] of toWalk.entries()) {
         await this.holdWhilePaused(run.workspaceId);
 
         if (this.stopping.has(run.workspaceId)) break;

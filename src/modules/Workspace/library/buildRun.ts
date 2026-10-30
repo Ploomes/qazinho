@@ -18,7 +18,12 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
   const id = live?.id ?? 'r-01';
 
   const explored = outcomes.filter(({ caseId }) => caseId === EXPLORATION.caseId);
-  const walkedCases = live?.kind === 'explore' ? [] : workspace.plan;
+  const walkedCases =
+    live?.kind === 'explore'
+      ? []
+      : workspace.plan.filter(
+          ({ id }) => live?.caseIds === undefined || live.caseIds.includes(id),
+        );
   const screens: IRunCase[] =
     live?.kind === 'explore' && explored.length > 0
       ? [

@@ -9,11 +9,13 @@ export interface IProStore {
   shares: IProShare[];
   link: IProLink | null;
   merging: string | null;
-  heldRun: { workspaceId: string; mode: RunMode } | null;
+  heldRun: { workspaceId: string; mode: RunMode; caseIds?: string[] } | null;
   setStatus: (status: ProStatus) => void;
   setShares: (shares: IProShare[]) => void;
   landShare: (share: IProShare) => void;
   setLink: (link: IProLink | null) => void;
   openMerge: (projectId: string | null) => void;
-  holdRun: (held: { workspaceId: string; mode: RunMode } | null) => void;
+  holdRun: (
+    held: { workspaceId: string; mode: RunMode; caseIds?: string[] } | null,
+  ) => void;
 }

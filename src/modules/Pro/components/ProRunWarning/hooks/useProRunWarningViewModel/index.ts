@@ -11,7 +11,7 @@ export const useProRunWarningViewModel = () => {
   const holdRun = useProStore((state) => state.holdRun);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const { update } = useProUpdate();
-  const { runWorkspace } = useRunActions();
+  const { runWorkspace, runCases } = useRunActions();
   const [isUpdating, setUpdating] = useState(false);
   const workspace = workspaces.find(({ id }) => id === heldRun?.workspaceId) ?? null;
   const conflict =
@@ -50,7 +50,9 @@ export const useProRunWarningViewModel = () => {
           if (heldRun === null || isMovedInOrg(heldRun.workspaceId)) return;
 
           holdRun(null);
-          runWorkspace(heldRun.workspaceId, heldRun.mode);
+          if (heldRun.caseIds === undefined)
+            runWorkspace(heldRun.workspaceId, heldRun.mode);
+          else runCases({ workspaceId: heldRun.workspaceId, caseIds: heldRun.caseIds });
         },
         () => {
           setUpdating(false);

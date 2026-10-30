@@ -18,6 +18,7 @@ export interface IStartRun {
   target: ITargetUnderTest;
   runId: string;
   steps: IFlatStep[];
+  caseIds?: string[];
   language: Language;
   viewport?: IViewport;
   pixelRatio?: number;

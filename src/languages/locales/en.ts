@@ -262,6 +262,7 @@ export const en = {
     ACTION_PLACEHOLDER: 'what the agent does',
     EXPECTED_PLACEHOLDER: 'what you expect to see',
     RUN_ALL: 'Run all',
+    RUN_CASE: 'Run only this case',
     EXPORT: 'Export code',
     PUBLISH: 'Publish in Confluence',
     PUBLISH_AGAIN: 'Update in Confluence',

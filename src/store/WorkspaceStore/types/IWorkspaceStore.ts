@@ -106,6 +106,7 @@ export interface IWorkspaceStore {
     runId: string;
     by: IWalkedBy;
     kind?: 'explore';
+    caseIds?: string[];
   }) => void;
   landExplored: (props: {
     workspaceId: string;

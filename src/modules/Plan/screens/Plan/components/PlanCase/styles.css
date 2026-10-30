@@ -264,6 +264,31 @@
   opacity: 0;
 }
 
+.plan-case__run {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--ink3);
+  opacity: 0;
+}
+
+.plan-case:hover .plan-case__head .plan-case__run,
+.plan-case__run:focus-visible {
+  opacity: 1;
+}
+
+.plan-case__run:hover {
+  background: var(--lime-soft);
+  color: var(--lime-ink);
+}
+
 .plan-case__remove--step {
   position: absolute;
   top: 50%;

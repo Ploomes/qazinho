@@ -88,6 +88,20 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
         {priority !== null && <span className="plan-case__priority">{priority}</span>}
         <StatusPill status={verdict} />
 
+        {!props.isLocked && props.onRunCase !== undefined && (
+          <button
+            type="button"
+            className="plan-case__run"
+            aria-label={t('PLAN.RUN_CASE')}
+            title={t('PLAN.RUN_CASE')}
+            onClick={() => {
+              props.onRunCase?.(props.testCase.id);
+            }}
+          >
+            <Icon name="play" />
+          </button>
+        )}
+
         {!props.isLocked && (
           <button
             type="button"

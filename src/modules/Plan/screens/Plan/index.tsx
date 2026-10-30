@@ -35,6 +35,7 @@ export const Plan: React.FC = () => {
     onToggleCase,
     onReorder,
     onRunAll,
+    onRunCase,
     onStop,
     missingNotice,
     addMissingLabel,
@@ -343,6 +344,7 @@ export const Plan: React.FC = () => {
                   isFresh={freshCaseId === testCase.id}
                   isLocked={isLocked}
                   onToggle={onToggleCase}
+                  onRunCase={onRunCase}
                   onEditCase={onEditCase}
                   onRemoveCase={onRemoveCase}
                   onMoveCase={onMoveCase}

@@ -35,13 +35,16 @@ export const useRunActions = () => {
 
   const selectedId = () => useAppStore.getState().selectedWorkspaceId;
 
-  const runWorkspace = (
-    workspaceId: string | null,
-    mode: RunMode = 'replay',
-  ): string | null => {
+  const begin = (props: {
+    workspaceId: string | null;
+    mode: RunMode;
+    caseIds?: string[];
+  }): string | null => {
+    const { workspaceId, mode, caseIds } = props;
     const { workspace, target } = opened(workspaceId);
     const isExploring = mode === 'explore';
     const steps = isExploring ? [] : flattenPlanSteps(workspace?.plan ?? []);
+    const scoped = caseIds === undefined || caseIds.length === 0 ? undefined : caseIds;
     const live = workspace?.live ?? null;
 
     if (
@@ -60,6 +63,7 @@ export const useRunActions = () => {
       runId,
       by: walkedByOf({ agent, model, targetKind: target?.kind ?? 'web', agents }),
       ...(isExploring ? { kind: 'explore' as const } : {}),
+      ...(scoped === undefined ? {} : { caseIds: scoped }),
     });
 
     if (target === null) {
@@ -78,6 +82,7 @@ export const useRunActions = () => {
       target: { kind: target.kind, value: target.value },
       runId,
       steps,
+      ...(scoped === undefined ? {} : { caseIds: scoped }),
       language: useSettingsStore.getState().language,
       viewport: { width: viewport.width, height: viewport.height },
       pixelRatio: window.devicePixelRatio,
@@ -89,6 +94,9 @@ export const useRunActions = () => {
 
     return runId;
   };
+
+  const runWorkspace = (workspaceId: string | null, mode: RunMode = 'replay') =>
+    begin({ workspaceId, mode });
 
   const hasOrgUpdate = (workspaceId: string | null): boolean => {
     const { workspace } = opened(workspaceId);
@@ -102,16 +110,18 @@ export const useRunActions = () => {
       );
   };
 
-  const runOwn = (mode: RunMode): void => {
+  const runOwn = (mode: RunMode, caseIds?: string[]): void => {
     const workspaceId = selectedId();
 
     if (workspaceId !== null && hasOrgUpdate(workspaceId)) {
-      useProStore.getState().holdRun({ workspaceId, mode });
+      useProStore
+        .getState()
+        .holdRun({ workspaceId, mode, ...(caseIds === undefined ? {} : { caseIds }) });
 
       return;
     }
 
-    runWorkspace(workspaceId, mode);
+    begin({ workspaceId, mode, ...(caseIds === undefined ? {} : { caseIds }) });
   };
 
   const stopWorkspace = (workspaceId: string | null): void => {
@@ -125,6 +135,8 @@ export const useRunActions = () => {
 
   return {
     runWorkspace,
+    runCases: (props: { workspaceId: string | null; caseIds: string[] }) =>
+      begin({ ...props, mode: 'replay' }),
     stopWorkspace,
     onRun: () => {
       runOwn('replay');
@@ -134,6 +146,9 @@ export const useRunActions = () => {
     },
     onExplore: () => {
       runOwn('explore');
+    },
+    onRunCase: (caseId: string) => {
+      runOwn('replay', [caseId]);
     },
     onPause: () => {
       const { workspace } = opened(selectedId());

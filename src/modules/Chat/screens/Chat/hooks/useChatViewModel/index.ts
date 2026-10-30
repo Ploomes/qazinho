@@ -29,7 +29,7 @@ import { formatElapsed } from '@/modules/Device';
 import { secretIn, useVariableActions, withoutSecret } from '@/modules/Project';
 import {
   dayLabelOf,
-  flattenPlanSteps,
+  walkedStepsOf,
   formatCost,
   RUN_ENDS,
   runDayOf,
@@ -61,6 +61,7 @@ export const useChatViewModel = () => {
     bugs: opened.bugs,
     liveId: opened.live?.id ?? null,
     liveStartedAt: opened.live?.startedAt ?? '',
+    liveCaseIds: opened.live?.caseIds,
     isWalking: opened.live !== null && !opened.live.isDone,
     isPaused: opened.live !== null && !opened.live.isRunning && !opened.live.isDone,
     walked: opened.live?.outcomes.length ?? 0,
@@ -274,7 +275,10 @@ export const useChatViewModel = () => {
   const sectionOf = (item: Extract<ChatItem, { kind: 'run' }>) => {
     const isLive = item.runId === workspace?.liveId && isWalking;
     const saved = workspace?.runs.find(({ id }) => id === item.runId) ?? null;
-    const stepCount = flattenPlanSteps(workspace?.plan ?? []).length;
+    const stepCount = walkedStepsOf({
+      plan: workspace?.plan ?? [],
+      caseIds: isLive ? workspace?.liveCaseIds : undefined,
+    }).length;
     const progress = {
       id: item.runId,
       current: Math.min((workspace?.walked ?? 0) + 1, stepCount),

@@ -21,6 +21,7 @@ export interface ILiveRun {
   costUsd: number | null;
   by: IWalkedBy;
   kind?: 'explore';
+  caseIds?: string[];
   suggestion?: IRunSuggestion;
   question?: ILiveQuestion;
   asked?: IRunAsked[];
