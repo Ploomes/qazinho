@@ -105,7 +105,7 @@ export const Sidebar: React.FC = () => {
                   }}
                 >
                   <span className="sidebar__project-settings-icon">
-                    <Icon name="settings" size={14} />
+                    <Icon name="settings" size={12} />
                   </span>
                 </button>
               </div>

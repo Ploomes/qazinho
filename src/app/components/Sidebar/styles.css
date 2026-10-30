@@ -91,9 +91,7 @@
   color: var(--ink3);
   font: 400 13px/1 var(--font-ui);
   letter-spacing: 0;
-  opacity: 0;
   transition:
-    opacity var(--dur-fast) var(--ease),
     background-color var(--dur-fast) var(--ease),
     color var(--dur-fast) var(--ease);
 }
@@ -103,12 +101,8 @@
   transition: rotate var(--dur) var(--ease);
 }
 
-.sidebar__project:hover .sidebar__project-settings,
+.sidebar__project-settings:hover,
 .sidebar__project-settings:focus-visible {
-  opacity: 1;
-}
-
-.sidebar__project-settings:hover {
   background: var(--sel);
   color: var(--ink);
 }
