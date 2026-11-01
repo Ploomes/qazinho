@@ -52,6 +52,8 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
       onDragEnd={onPutDown}
     >
       <div className="plan-case__head">
+        <StatusPill status={verdict} />
+
         <button
           type="button"
           className="plan-case__open"
@@ -86,7 +88,6 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
         />
 
         {priority !== null && <span className="plan-case__priority">{priority}</span>}
-        <StatusPill status={verdict} />
 
         {!props.isLocked && props.onRunCase !== undefined && (
           <button

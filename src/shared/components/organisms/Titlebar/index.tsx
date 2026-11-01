@@ -17,7 +17,6 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
     cpuLabel,
     cpuShare,
     ramLabel,
-    processLabel,
     agentLabel,
     betaLabel,
     sessionUsed,
@@ -53,10 +52,6 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
             <span>{cpuLabel}</span>
             <span aria-hidden="true">·</span>
             <span>{ramLabel}</span>
-            <span className="titlebar__extra" aria-hidden="true">
-              ·
-            </span>
-            <span className="titlebar__extra">{processLabel}</span>
           </button>
 
           {sessionUsed !== null && (

@@ -1,5 +1,5 @@
 export const PANEL = {
-  defaultWidth: 560,
+  defaultWidth: 400,
   minWidth: 320,
   maxWidth: 1100,
   railWidth: 46,

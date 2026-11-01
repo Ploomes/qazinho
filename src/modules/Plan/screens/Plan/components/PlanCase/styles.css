@@ -1,8 +1,6 @@
 .plan-case {
   overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  background: var(--raise);
+  border-bottom: 1px solid var(--line2);
   list-style: none;
 }
 
@@ -10,17 +8,28 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   width: 100%;
-  padding: 15px 17px;
+  padding: 10px var(--space-3);
   border: none;
   background: transparent;
   text-align: left;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.plan-case:hover > .plan-case__head {
+  background: var(--raise);
 }
 
 .plan-case__handle {
   color: var(--ink3);
   cursor: grab;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.plan-case:hover .plan-case__handle {
+  opacity: 1;
 }
 
 .plan-case__handle--locked {

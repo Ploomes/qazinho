@@ -19,7 +19,6 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
 
   const cpu = Math.round(resources.cpu);
   const ramGb = resources.ramMb / 1024;
-  const processCount = resources.processes.length;
 
   const sessionUsed = usage?.fiveHourUsed ?? null;
   const sessionPercent = Math.round((sessionUsed ?? 0) * 100);
@@ -42,10 +41,6 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
       used: ramGb.toFixed(1),
       ceiling: resources.ramCeilingGb,
     }),
-    processLabel:
-      processCount === 1
-        ? t('TITLEBAR.PROCESSES_ONE')
-        : t('TITLEBAR.PROCESSES_OTHER', { count: processCount }),
     agentLabel: t('TITLEBAR.AGENT', { agent, model: modelName }),
     betaLabel: t('TITLEBAR.BETA'),
     sessionUsed,
