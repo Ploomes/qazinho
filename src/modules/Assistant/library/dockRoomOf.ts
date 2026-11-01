@@ -1,20 +1,14 @@
 import { ASSISTANT_DOCK } from '@/modules/Assistant/constants';
-import { PANEL } from '@/modules/Workspace/constants';
 
 /**
- * Até onde o botão do Estagiário passa do trilho do painel para dentro da coluna do
- * workspace, gap incluído; nada quando o painel aberto ocupa o canto.
+ * Quanto o composer do chat recua à direita para o botão do Estagiário não cobri-lo: o
+ * chat vive no painel Agente, então só há espaço a abrir quando esse painel está aberto.
  */
 export function dockRoomOf(props: {
   isWorkspace: boolean;
   isPanelOpen: boolean;
 }): number {
-  if (!props.isWorkspace || props.isPanelOpen) return 0;
+  if (!props.isWorkspace || !props.isPanelOpen) return 0;
 
-  return (
-    ASSISTANT_DOCK.inset +
-    ASSISTANT_DOCK.buttonSize +
-    ASSISTANT_DOCK.rise -
-    PANEL.railWidth
-  );
+  return ASSISTANT_DOCK.inset + ASSISTANT_DOCK.buttonSize + ASSISTANT_DOCK.rise;
 }

@@ -867,6 +867,7 @@ describe('useChatViewModel', () => {
                 runId: 'r-01',
                 at: '09:41',
                 text: 'Chrome could not open http://127.0.0.1:4999/.',
+                detail: null,
                 fix: null,
               },
             ],
@@ -981,7 +982,7 @@ describe('useChatViewModel', () => {
   describe('onOpenBug', () => {
     it('opens the bug a run filed on the side of a step, in Bugs', () => {
       answering({});
-      useWorkspaceStore.setState({ openBugId: null, isPanelWide: true });
+      useWorkspaceStore.setState({ openBugId: null });
 
       const { result } = renderHook(() => useChatViewModel());
 
@@ -997,7 +998,7 @@ describe('useChatViewModel', () => {
 
     it('does NOT fold the bug when it was already open', () => {
       answering({});
-      useWorkspaceStore.setState({ openBugId: 'BUG-09', isPanelWide: true });
+      useWorkspaceStore.setState({ openBugId: 'BUG-09' });
 
       const { result } = renderHook(() => useChatViewModel());
 

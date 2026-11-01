@@ -57,7 +57,7 @@
   animation: gc-blink 2.4s ease-in-out infinite;
 }
 
-@container side-panel (width < 420px) {
+@container workspace (width < 420px) {
   .panel-tabs {
     gap: var(--space-4);
   }

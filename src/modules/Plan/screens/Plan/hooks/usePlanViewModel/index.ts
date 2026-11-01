@@ -68,12 +68,11 @@ export const usePlanViewModel = () => {
         ?.targets.find(({ id }) => id === workspace?.targetId) ?? null,
   );
   const openCaseId = useWorkspaceStore((state) => state.openCaseId);
-  const isPanelWide = useWorkspaceStore((state) => state.isPanelWide);
   const toggleCase = useWorkspaceStore((state) => state.toggleCase);
   const setPlan = useWorkspaceStore((state) => state.setPlan);
   const agent = useSettingsStore((state) => state.agent);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
-  const { onRun, onRunCase, onStop } = useRunActions();
+  const { onRunCase, onStop } = useRunActions();
   const { update: updateFromOrg } = useProUpdate();
   const [removal, setRemoval] = useState<ICaseRemoval | null>(null);
   const [freshCaseId, setFreshCaseId] = useState<string | null>(null);
@@ -363,7 +362,6 @@ export const usePlanViewModel = () => {
     design: workspace?.design ?? null,
     openCaseId,
     isLocked,
-    hasRunAll: isPanelWide,
     lockedLabel: t('PLAN.LOCKED', { agent }),
     isEmpty: plan.length === 0,
     source:
@@ -404,7 +402,6 @@ export const usePlanViewModel = () => {
     }),
     onToggleCase: toggleCase,
     onReorder: write,
-    onRunAll: onRun,
     onRunCase,
     onStop,
     missingNotice:

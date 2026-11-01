@@ -1,4 +1,4 @@
-import type { IPanelTabsProps } from '@/modules/Workspace/components/SidePanel/components/PanelTabs/types';
+import type { IPanelTabsProps } from '@/modules/Workspace/screens/Workspace/components/PanelTabs/types';
 import { useTranslation } from 'react-i18next';
 
 export const usePanelTabsViewModel = (props: IPanelTabsProps) => {
@@ -12,7 +12,12 @@ export const usePanelTabsViewModel = (props: IPanelTabsProps) => {
       badge: String(planCount),
       isLive: false,
     },
-    { id: 'device' as const, label: t('WORKSPACE.TAB_DEVICE'), badge: '', isLive },
+    {
+      id: 'device' as const,
+      label: isLive ? t('WORKSPACE.TAB_LIVE') : t('WORKSPACE.TAB_DEVICE'),
+      badge: '',
+      isLive,
+    },
     {
       id: 'runs' as const,
       label: t('WORKSPACE.TAB_RUNS'),

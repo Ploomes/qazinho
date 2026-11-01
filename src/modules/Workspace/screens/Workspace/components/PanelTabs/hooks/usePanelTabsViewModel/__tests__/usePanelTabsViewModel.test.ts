@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { usePanelTabsViewModel } from '@/modules/Workspace/components/SidePanel/components/PanelTabs/hooks/usePanelTabsViewModel';
+import { usePanelTabsViewModel } from '@/modules/Workspace/screens/Workspace/components/PanelTabs/hooks/usePanelTabsViewModel';
 
 const PROPS = {
   current: 'plan' as const,

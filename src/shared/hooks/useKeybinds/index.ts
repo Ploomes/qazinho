@@ -31,11 +31,11 @@ export const useKeybinds = () => {
       },
       run: onRun,
       stop: onStop,
-      device: togglePanel,
-      sidebar: toggleSidebar,
-      chat: () => {
-        selectTab('chat');
+      device: () => {
+        selectTab('device');
       },
+      sidebar: toggleSidebar,
+      chat: togglePanel,
       plan: () => {
         selectTab('plan');
       },

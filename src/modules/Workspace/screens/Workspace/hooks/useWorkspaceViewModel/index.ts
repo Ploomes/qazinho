@@ -1,22 +1,26 @@
 import type { CSSProperties } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { caseVerdict, flattenPlanSteps, useRunActions } from '@/modules/Run';
-import { panelWidthOf } from '@/modules/Workspace/library';
+import { formatElapsed } from '@/modules/Device';
+import { caseVerdict, flattenPlanSteps, formatCost, useRunActions } from '@/modules/Run';
+import { WORKSPACE_TABS } from '@/modules/Workspace/screens/Workspace/constants';
 import { EXPLORATION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
-import { useSidebarWidth } from '@/shared/hooks/useSidebarWidth';
-import { useWindowWidth } from '@/shared/hooks/useWindowWidth';
 import { useWorkspaceStore } from '@/store';
 
 export const useWorkspaceViewModel = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const workspace = useSelectedWorkspacePart((opened) => ({
     id: opened.id,
+    latestRun: opened.runs[0] ?? null,
     name: opened.name,
     issue: opened.issue,
     design: opened.design,
     status: opened.status,
     stepCount: flattenPlanSteps(opened.plan).length,
+    planCount: opened.plan.length,
+    runCount: opened.runs.length,
+    bugCount: opened.bugs.filter(({ isDismissed }) => !isDismissed).length,
     walked: opened.live?.outcomes.length ?? 0,
     isExploring: opened.live?.kind === 'explore',
     isLive: opened.live !== null && !opened.live.isDone,
@@ -26,18 +30,8 @@ export const useWorkspaceViewModel = () => {
       run.cases.some(({ steps }) => caseVerdict(steps) === 'passed'),
     ),
   }));
-  const isHidden = useWorkspaceStore((state) => state.isPanelWide);
-  const isPanelOpen = useWorkspaceStore((state) => state.isPanelOpen);
-  const panelWidth = useWorkspaceStore((state) => state.panelWidth);
-  const windowWidth = useWindowWidth();
-  const sidebarWidth = useSidebarWidth();
-  const panel = panelWidthOf({
-    width: panelWidth,
-    windowWidth,
-    isOpen: isPanelOpen,
-    isWide: false,
-    sidebarWidth,
-  });
+  const tab = useWorkspaceStore((state) => state.panelTab);
+  const selectTab = useWorkspaceStore((state) => state.selectTab);
   const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
   const setDesign = useWorkspaceStore((state) => state.setDesign);
   const { onRun, onRunWithAgent, onExplore, onPause, onStop } = useRunActions();
@@ -46,13 +40,29 @@ export const useWorkspaceViewModel = () => {
   const isPaused = workspace?.isPaused === true;
   const isAsking = workspace?.isAsking === true;
 
+  const workspaceId = workspace?.id ?? null;
+
+  useEffect(() => {
+    if (isLive) selectTab('device');
+  }, [workspaceId, isLive, selectTab]);
+
   return {
     hasWorkspace: workspace !== null,
-    isHidden,
-    className: isHidden ? 'workspace workspace--hidden' : 'workspace',
     style: {
-      '--chat-rest': `${String(windowWidth - sidebarWidth - panel.outer)}px`,
+      '--workspace-tabs': `${String(WORKSPACE_TABS.height)}px`,
     } as CSSProperties,
+    tab,
+    planCount: workspace?.planCount ?? 0,
+    runCount: workspace?.runCount ?? 0,
+    bugCount: workspace?.bugCount ?? 0,
+    runMeta:
+      workspace?.latestRun == null
+        ? null
+        : `${workspace.latestRun.id} · ${formatElapsed(workspace.latestRun.durationSec)}${
+            workspace.latestRun.costUsd === null
+              ? ''
+              : ` · ${formatCost({ costUsd: workspace.latestRun.costUsd, language: i18n.language })}`
+          }`,
     name: workspace?.name ?? '',
     issue:
       workspace?.issue === null || workspace?.issue === undefined
@@ -112,6 +122,7 @@ export const useWorkspaceViewModel = () => {
     isLive,
     isPaused,
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
+    onSelectTab: selectTab,
     onRename: (name: string) => {
       if (workspace) renameWorkspace({ workspaceId: workspace.id, name });
     },

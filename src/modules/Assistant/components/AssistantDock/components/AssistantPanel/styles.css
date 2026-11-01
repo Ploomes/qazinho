@@ -13,13 +13,6 @@
   background: var(--win);
   box-shadow: var(--sticker-hero);
   transform-origin: bottom right;
-  translate: calc(var(--assistant-panel-shift) * -1) 0;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .assistant-panel {
-    transition: translate var(--dur-slow) var(--ease);
-  }
 }
 
 .assistant-panel__header {

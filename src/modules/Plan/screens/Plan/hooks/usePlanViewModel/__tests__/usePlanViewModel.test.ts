@@ -62,7 +62,6 @@ beforeEach(() => {
   useWorkspaceStore.setState({
     workspaces: [makeWorkspace()],
     openCaseId: null,
-    isPanelWide: false,
   });
 });
 
@@ -923,18 +922,6 @@ describe('usePlanViewModel', () => {
 
       expect(result.current.unread).toBeNull();
       expect(asked).toEqual([]);
-    });
-  });
-
-  describe('running the plan from the tab', () => {
-    it('leaves it to the workspace header while the chat is beside the panel', () => {
-      expect(renderHook(() => usePlanViewModel()).result.current.hasRunAll).toBe(false);
-    });
-
-    it('offers it once the panel covers the chat, and the header with it', () => {
-      useWorkspaceStore.setState({ isPanelWide: true });
-
-      expect(renderHook(() => usePlanViewModel()).result.current.hasRunAll).toBe(true);
     });
   });
 

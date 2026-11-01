@@ -38,7 +38,6 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   selectedRunId: null,
   bugFilter: 'all',
   isPanelOpen: true,
-  isPanelWide: false,
   panelWidth: PANEL.defaultWidth,
   askingIds: [],
   liveTexts: {},
@@ -48,10 +47,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   removingWorkspaceId: null,
 
   addWorkspace: (workspace) =>
-    set((state) => ({
-      workspaces: [...state.workspaces, workspace],
-      isPanelWide: false,
-    })),
+    set((state) => ({ workspaces: [...state.workspaces, workspace] })),
 
   loadWorkspaces: (workspaces) => set({ workspaces, isLoaded: true }),
 
@@ -134,6 +130,15 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
+  setTarget: ({ workspaceId, targetId, planKind }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => ({ ...workspace, targetId, planKind }),
+      }),
+    })),
+
   removeWorkspacesOf: (projectId) =>
     set((state) => ({
       workspaces: state.workspaces.filter(
@@ -141,8 +146,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       ),
     })),
 
-  selectTab: (tab) =>
-    set(tab === 'chat' ? { isPanelWide: false } : { panelTab: tab, isPanelOpen: true }),
+  selectTab: (tab) => set(tab === 'chat' ? { isPanelOpen: true } : { panelTab: tab }),
 
   setLiveText: ({ workspaceId, text }) =>
     set((state) => ({
@@ -503,7 +507,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
-  landRunFailed: ({ workspaceId, text }) =>
+  landRunFailed: ({ workspaceId, text, detail }) =>
     set((state) => ({
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
@@ -515,6 +519,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
               workspace,
               text,
               at,
+              detail: detail ?? null,
               runId: workspace.live?.isDone === false ? workspace.live.id : null,
             }),
             at,
@@ -564,11 +569,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   setBugFilter: (bugFilter) => set({ bugFilter }),
 
-  togglePanel: () =>
-    set((state) => ({ isPanelOpen: !state.isPanelOpen, isPanelWide: false })),
-
-  togglePanelWide: () =>
-    set((state) => ({ isPanelWide: !state.isPanelWide, isPanelOpen: true })),
+  togglePanel: () => set((state) => ({ isPanelOpen: !state.isPanelOpen })),
 
   setPanelWidth: (width) =>
     set({ panelWidth: Math.min(Math.max(width, PANEL.minWidth), PANEL.maxWidth) }),

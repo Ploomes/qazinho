@@ -125,25 +125,25 @@ describe('useAppViewModel', () => {
   });
 
   /**
-   * Com o painel do dispositivo fechado, o botão do Estagiário ficava a um pixel do
-   * composer do chat, onde um clique pensado para um podia cair no outro.
+   * O botão do Estagiário no canto ficava sobre o composer do chat, que agora vive no
+   * painel Agente: só há espaço a abrir enquanto esse painel está aberto.
    */
-  it("makes room beside the Estagiário's button while the device panel is shut, and none once it opens", () => {
+  it("makes room beside the Estagiário's button while the agent panel is open, and none once it collapses", () => {
     useAppStore.setState({
       screen: 'workspace',
       projects: [{ id: 'p1', name: 'Shop', targets: [], repositories: [] }],
     });
-    useWorkspaceStore.setState({ isPanelOpen: false });
+    useWorkspaceStore.setState({ isPanelOpen: true });
 
     const { result } = renderHook(() => useAppViewModel());
 
     expect(result.current.shellStyle).toMatchObject({
-      '--dock-room': '42px',
+      '--dock-room': '88px',
       '--dock-lift': '76px',
     });
 
     act(() => {
-      useWorkspaceStore.setState({ isPanelOpen: true });
+      useWorkspaceStore.setState({ isPanelOpen: false });
     });
 
     expect(result.current.shellStyle).toMatchObject({ '--dock-room': '0px' });

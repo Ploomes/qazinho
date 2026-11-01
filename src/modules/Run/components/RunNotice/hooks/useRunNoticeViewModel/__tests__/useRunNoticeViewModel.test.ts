@@ -15,7 +15,6 @@ import { useAppStore, useWorkspaceStore } from '@/store';
 function noticing(workspace: IWorkspace, runId = 'r-01') {
   useWorkspaceStore.setState({
     workspaces: [workspace],
-    isPanelWide: true,
     selectedRunId: null,
   });
   useAppStore.setState({
