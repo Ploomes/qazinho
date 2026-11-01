@@ -58,9 +58,9 @@ describe('useSidebarViewModel', () => {
     };
 
     it('shows nothing on a project only on this computer', () => {
-      const { rows } = renderHook(() => useSidebarViewModel()).result.current;
+      const { groups } = renderHook(() => useSidebarViewModel()).result.current;
 
-      expect(rows[0]).toMatchObject({ kind: 'header', pro: null });
+      expect(groups[0]).toMatchObject({ pro: null });
     });
 
     it('marks a linked project, with what waits to be sent and what came from the org', () => {
@@ -83,9 +83,9 @@ describe('useSidebarViewModel', () => {
         ],
       });
 
-      const { rows } = renderHook(() => useSidebarViewModel()).result.current;
+      const { groups } = renderHook(() => useSidebarViewModel()).result.current;
 
-      expect(rows[0]).toMatchObject({
+      expect(groups[0]).toMatchObject({
         pro: {
           label: 'Shop · staging, linked to an org',
           tip: '2 to send · 1 from the org',
@@ -100,9 +100,9 @@ describe('useSidebarViewModel', () => {
     it('says nothing waits on a linked project in step with its org', () => {
       useProStore.setState({ shares: [LINKED] });
 
-      const { rows } = renderHook(() => useSidebarViewModel()).result.current;
+      const { groups } = renderHook(() => useSidebarViewModel()).result.current;
 
-      expect(rows[0]).toMatchObject({
+      expect(groups[0]).toMatchObject({
         pro: { tip: '', hasPending: false, hasUpdates: false },
       });
     });
@@ -128,10 +128,10 @@ describe('useSidebarViewModel', () => {
     it("shows the suite a project runs under its workspaces, by the suite's name until it was read", () => {
       useSuiteStore.setState({ suites: { p1: SUITE } });
 
-      const { rows } = renderHook(() => useSidebarViewModel()).result.current;
+      const { groups } = renderHook(() => useSidebarViewModel()).result.current;
 
-      expect(rows.map(({ kind }) => kind)).toEqual(['header', 'suite', 'add']);
-      expect(rows[1]).toMatchObject({
+      expect(groups[0]!.rows.map(({ kind }) => kind)).toEqual(['suite', 'add']);
+      expect(groups[0]!.rows[0]).toMatchObject({
         name: 'Automation',
         meta: 'chat-e2e',
         statusLabel: 'idle',
@@ -152,7 +152,7 @@ describe('useSidebarViewModel', () => {
       });
 
       expect(
-        renderHook(() => useSidebarViewModel()).result.current.rows[1],
+        renderHook(() => useSidebarViewModel()).result.current.groups[0]!.rows[0],
       ).toMatchObject({
         meta: '2 tests',
       });
@@ -165,7 +165,7 @@ describe('useSidebarViewModel', () => {
       });
 
       expect(
-        renderHook(() => useSidebarViewModel()).result.current.rows[1],
+        renderHook(() => useSidebarViewModel()).result.current.groups[0]!.rows[0],
       ).toMatchObject({
         meta: '0/40',
         statusLabel: 'running',
@@ -179,7 +179,7 @@ describe('useSidebarViewModel', () => {
       });
 
       expect(
-        renderHook(() => useSidebarViewModel()).result.current.rows[1],
+        renderHook(() => useSidebarViewModel()).result.current.groups[0]!.rows[0],
       ).toMatchObject({
         icon: 'attention',
       });
@@ -187,7 +187,7 @@ describe('useSidebarViewModel', () => {
       useSuiteStore.setState({ runs: { p1: [suiteRun({ status: 'failed' })] } });
 
       expect(
-        renderHook(() => useSidebarViewModel()).result.current.rows[1],
+        renderHook(() => useSidebarViewModel()).result.current.groups[0]!.rows[0],
       ).toMatchObject({
         icon: 'failed',
         statusLabel: 'failed',
@@ -207,23 +207,23 @@ describe('useSidebarViewModel', () => {
         screen: 'automation',
         automationProjectId: 'p1',
       });
-      expect(result.current.rows[1]).toMatchObject({ isSelected: true });
+      expect(result.current.groups[0]!.rows[0]).toMatchObject({ isSelected: true });
     });
 
     it('shows no suite row for a project with none', () => {
       expect(
-        renderHook(() => useSidebarViewModel()).result.current.rows.map(
+        renderHook(() => useSidebarViewModel()).result.current.groups[0]!.rows.map(
           ({ kind }) => kind,
         ),
-      ).toEqual(['header', 'add']);
+      ).toEqual(['add']);
     });
   });
 
   describe('rows', () => {
-    it('opens a project with its header and closes it with the add row', () => {
+    it('lists just the add row for a project with no workspace', () => {
       const { result } = renderHook(() => useSidebarViewModel());
 
-      expect(result.current.rows.map(({ kind }) => kind)).toEqual(['header', 'add']);
+      expect(result.current.groups[0]!.rows.map(({ kind }) => kind)).toEqual(['add']);
     });
 
     /** Uma run pausada aparecia como "running" na sidebar enquanto esperava pelo QA. */
@@ -240,7 +240,7 @@ describe('useSidebarViewModel', () => {
       });
 
       expect(
-        renderHook(() => useSidebarViewModel()).result.current.rows[1],
+        renderHook(() => useSidebarViewModel()).result.current.groups[0]!.rows[0],
       ).toMatchObject({
         statusLabel: 'paused',
         icon: 'paused',
@@ -252,7 +252,7 @@ describe('useSidebarViewModel', () => {
 
       const { result } = renderHook(() => useSidebarViewModel());
 
-      expect(result.current.rows[1]).toMatchObject({
+      expect(result.current.groups[0]!.rows[0]).toMatchObject({
         kind: 'workspace',
         name: 'Checkout regression',
         meta: '6 steps',
@@ -280,9 +280,9 @@ describe('useSidebarViewModel', () => {
       const { result } = renderHook(() => useSidebarViewModel());
 
       expect(
-        result.current.rows
-          .filter((row) => row.kind === 'workspace')
-          .map((row) => row.kind === 'workspace' && row.platform),
+        result.current.groups[0]!.rows.filter((row) => row.kind === 'workspace').map(
+          (row) => row.kind === 'workspace' && row.platform,
+        ),
       ).toEqual(['android', null]);
     });
 
@@ -293,7 +293,7 @@ describe('useSidebarViewModel', () => {
 
       const { result } = renderHook(() => useSidebarViewModel());
 
-      expect(result.current.rows.map(({ kind }) => kind)).toEqual(['header', 'add']);
+      expect(result.current.groups[0]!.rows.map(({ kind }) => kind)).toEqual(['add']);
     });
   });
 
@@ -324,7 +324,9 @@ describe('useSidebarViewModel', () => {
       });
 
       const { result } = renderHook(() => useSidebarViewModel());
-      const row = result.current.rows.find(({ kind }) => kind === 'workspace');
+      const row = result.current.groups
+        .flatMap((group) => group.rows)
+        .find(({ kind }) => kind === 'workspace');
 
       expect(row).toMatchObject({
         icon: 'attention',
@@ -345,14 +347,14 @@ describe('useSidebarViewModel', () => {
       const { result } = renderHook(() => useSidebarViewModel());
 
       expect(
-        result.current.rows.flatMap((row) =>
+        result.current.groups[0]!.rows.flatMap((row) =>
           row.kind === 'workspace' ? [row.name] : [],
         ),
       ).toEqual(['Onboarding', 'Checkout', 'Search']);
     });
 
     it('opens the chat of the workspace that waits, where the question is', () => {
-      useWorkspaceStore.setState({ workspaces: [asking()], isPanelWide: true });
+      useWorkspaceStore.setState({ workspaces: [asking()] });
 
       const { result } = renderHook(() => useSidebarViewModel());
 
@@ -361,7 +363,7 @@ describe('useSidebarViewModel', () => {
       });
 
       expect(useAppStore.getState().selectedWorkspaceId).toBe('w1');
-      expect(useWorkspaceStore.getState().isPanelWide).toBe(false);
+      expect(useWorkspaceStore.getState().isPanelOpen).toBe(true);
     });
 
     it('names nobody while no agent is waiting', () => {
@@ -408,7 +410,7 @@ describe('useSidebarViewModel', () => {
         result.current.onAskRemove('w1');
       });
 
-      expect(result.current.rows[1]).toMatchObject({ isRemoving: true });
+      expect(result.current.groups[0]!.rows[0]).toMatchObject({ isRemoving: true });
       expect(useWorkspaceStore.getState().workspaces).toHaveLength(1);
     });
 
@@ -503,6 +505,204 @@ describe('useSidebarViewModel', () => {
       const { result } = renderHook(() => useSidebarViewModel());
 
       expect(result.current.hasTips).toBe(false);
+    });
+  });
+
+  describe('projectAvatars', () => {
+    it('lists one avatar per project, the uppercased initial of its name', () => {
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.projectAvatars).toEqual([
+        {
+          id: 'avatar-p1',
+          projectId: 'p1',
+          initial: 'S',
+          name: 'Shop · staging',
+          isSelected: false,
+        },
+      ]);
+    });
+
+    it('marks the project of the selected workspace, and no other', () => {
+      useAppStore.setState({
+        projects: [PROJECT, { id: 'p2', name: 'Loja', targets: [], repositories: [] }],
+        selectedWorkspaceId: 'w1',
+      });
+      useWorkspaceStore.setState({
+        workspaces: [{ ...makeWorkspace(), projectId: 'p1' }],
+      });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.projectAvatars.map((avatar) => avatar.isSelected)).toEqual([
+        true,
+        false,
+      ]);
+    });
+
+    it('selects the first workspace of the project its avatar opens', () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          { ...makeWorkspace(), id: 'w1' },
+          { ...makeWorkspace(), id: 'w2' },
+        ],
+      });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onSelectProject('p1');
+      });
+
+      expect(useAppStore.getState().selectedWorkspaceId).toBe('w1');
+    });
+
+    it('opens the new-workspace modal for a project with no workspace yet', () => {
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onSelectProject('p1');
+      });
+
+      expect(useAppStore.getState().selectedWorkspaceId).toBeNull();
+      expect(useAppStore.getState()).toMatchObject({
+        modal: 'workspace',
+        selectedProjectId: 'p1',
+      });
+    });
+  });
+
+  describe('onToggleProject', () => {
+    it('starts the project of the selected workspace open, and the others closed', () => {
+      useAppStore.setState({
+        projects: [PROJECT, { id: 'p2', name: 'Loja', targets: [], repositories: [] }],
+        selectedWorkspaceId: 'w1',
+      });
+      useWorkspaceStore.setState({
+        workspaces: [{ ...makeWorkspace(), projectId: 'p1' }],
+      });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.groups.map((group) => group.isExpanded)).toEqual([
+        true,
+        false,
+      ]);
+    });
+
+    it('opens and closes a project on toggle, independently of the others', () => {
+      useAppStore.setState({
+        projects: [PROJECT, { id: 'p2', name: 'Loja', targets: [], repositories: [] }],
+      });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.groups.map((group) => group.isExpanded)).toEqual([
+        false,
+        false,
+      ]);
+
+      act(() => {
+        result.current.onToggleProject('p2');
+      });
+
+      expect(result.current.groups.map((group) => group.isExpanded)).toEqual([
+        false,
+        true,
+      ]);
+
+      act(() => {
+        result.current.onToggleProject('p2');
+      });
+
+      expect(result.current.groups.map((group) => group.isExpanded)).toEqual([
+        false,
+        false,
+      ]);
+    });
+
+    it('follows the selection: the newly selected project opens, without a manual toggle', () => {
+      useAppStore.setState({
+        projects: [PROJECT, { id: 'p2', name: 'Loja', targets: [], repositories: [] }],
+        selectedWorkspaceId: 'w1',
+      });
+      useWorkspaceStore.setState({
+        workspaces: [
+          { ...makeWorkspace(), id: 'w1', projectId: 'p1' },
+          { ...makeWorkspace(), id: 'w2', projectId: 'p2' },
+        ],
+      });
+
+      const { result, rerender } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.groups.map((group) => group.isExpanded)).toEqual([
+        true,
+        false,
+      ]);
+
+      act(() => {
+        useAppStore.setState({ selectedWorkspaceId: 'w2' });
+      });
+      rerender();
+
+      expect(result.current.groups.map((group) => group.isExpanded)).toEqual([
+        false,
+        true,
+      ]);
+    });
+  });
+
+  describe('filter', () => {
+    it('hides a project whose name and workspaces do not match it', () => {
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onFilterChange('zzz');
+      });
+
+      expect(result.current.groups).toEqual([]);
+    });
+
+    it('keeps a project whose name matches, with every workspace listed', () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          { ...makeWorkspace(), id: 'w1', name: 'Checkout' },
+          { ...makeWorkspace(), id: 'w2', name: 'Search' },
+        ],
+      });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onFilterChange('shop');
+      });
+
+      expect(result.current.groups[0]!.rows.map(({ kind }) => kind)).toEqual([
+        'workspace',
+        'workspace',
+        'add',
+      ]);
+    });
+
+    it('keeps a project hidden by name but matched by one of its workspaces, listing just that one', () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          { ...makeWorkspace(), id: 'w1', name: 'Checkout' },
+          { ...makeWorkspace(), id: 'w2', name: 'Search' },
+        ],
+      });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onFilterChange('check');
+      });
+
+      expect(
+        result.current.groups[0]!.rows.flatMap((row) =>
+          row.kind === 'workspace' ? [row.name] : [],
+        ),
+      ).toEqual(['Checkout']);
     });
   });
 });

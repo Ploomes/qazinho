@@ -1,9 +1,11 @@
 import type {
   ISidebarProBadge,
+  ISidebarProjectAvatar,
+  ISidebarProjectGroup,
   ISidebarSuiteRow,
-  SidebarRow,
+  SidebarGroupRow,
 } from '@/app/components/Sidebar/types';
-import { useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SIDEBAR_STATUS } from '@/app/components/Sidebar/constants';
 import { workspaceMeta } from '@/modules/Workspace';
@@ -43,6 +45,42 @@ export const useSidebarViewModel = () => {
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const isShut = useSettingsStore((state) => state.isSidebarShut);
   const toggleSidebar = useSettingsStore((state) => state.toggleSidebar);
+
+  const selectedProjectId =
+    workspaces.find((workspace) => workspace.id === selectedWorkspaceId)?.projectId ??
+    null;
+
+  const [filter, setFilter] = useState('');
+  const [expansions, setExpansions] = useState<Record<string, boolean>>({});
+  const filterRef = useRef<HTMLInputElement>(null);
+
+  const isProjectExpanded = (projectId: string) =>
+    expansions[projectId] ?? projectId === selectedProjectId;
+
+  useEffect(() => {
+    if (isShut) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target;
+      const editing =
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target instanceof HTMLInputElement ||
+          target instanceof HTMLTextAreaElement);
+
+      if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey || editing)
+        return;
+
+      event.preventDefault();
+      filterRef.current?.focus();
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [isShut]);
 
   const suiteRowsOf = (projectId: string): ISidebarSuiteRow[] => {
     const suite = suites[projectId];
@@ -107,16 +145,22 @@ export const useSidebarViewModel = () => {
     };
   };
 
-  const rows: SidebarRow[] = projects.flatMap((project) => [
-    {
-      kind: 'header' as const,
-      id: `header-${project.id}`,
-      projectId: project.id,
-      name: project.name,
-      pro: proBadgeOf(project),
-    },
-    ...workspaces
-      .filter((workspace) => workspace.projectId === project.id)
+  const query = filter.trim().toLowerCase();
+
+  const groups: ISidebarProjectGroup[] = projects.flatMap((project) => {
+    const projectWorkspaces = workspaces.filter(
+      (workspace) => workspace.projectId === project.id,
+    );
+    const projectMatches = query === '' || project.name.toLowerCase().includes(query);
+    const matchingWorkspaces = projectWorkspaces.filter((workspace) =>
+      workspace.name.toLowerCase().includes(query),
+    );
+
+    if (query !== '' && !projectMatches && matchingWorkspaces.length === 0) return [];
+
+    const shownWorkspaces = projectMatches ? projectWorkspaces : matchingWorkspaces;
+
+    const workspaceRows: SidebarGroupRow[] = shownWorkspaces
       .map((workspace) => ({
         workspace,
         shown:
@@ -146,17 +190,55 @@ export const useSidebarViewModel = () => {
         isSelected: workspace.id === selectedWorkspaceId,
         isWaiting: shown === 'attention',
         isRemoving: workspace.id === removingWorkspaceId,
-      })),
-    ...suiteRowsOf(project.id),
-    { kind: 'add' as const, id: `add-${project.id}`, projectId: project.id },
-  ]);
+      }));
+
+    return [
+      {
+        id: `group-${project.id}`,
+        projectId: project.id,
+        name: project.name,
+        initial: project.name.charAt(0).toUpperCase(),
+        isSelected: project.id === selectedProjectId,
+        isExpanded: isProjectExpanded(project.id),
+        meta: String(projectWorkspaces.length),
+        pro: proBadgeOf(project),
+        rows: [
+          ...workspaceRows,
+          ...suiteRowsOf(project.id),
+          { kind: 'add' as const, id: `add-${project.id}`, projectId: project.id },
+        ],
+      },
+    ];
+  });
+
+  const projectAvatars: ISidebarProjectAvatar[] = projects.map((project) => ({
+    id: `avatar-${project.id}`,
+    projectId: project.id,
+    initial: project.name.charAt(0).toUpperCase(),
+    name: project.name,
+    isSelected: project.id === selectedProjectId,
+  }));
 
   const waiting =
     workspaces.find(
       ({ live }) => live !== null && !live.isDone && live.question !== undefined,
     ) ?? null;
 
-  const onNewProject = useCallback(() => openModal('project'), [openModal]);
+  const onNewProject = () => openModal('project');
+
+  const onSelectProject = (projectId: string) => {
+    const first = workspaces.find((workspace) => workspace.projectId === projectId);
+
+    if (first !== undefined) selectWorkspace(first.id);
+    else openWorkspaceModal(projectId);
+  };
+
+  const onToggleProject = (projectId: string) => {
+    setExpansions((current) => ({
+      ...current,
+      [projectId]: !isProjectExpanded(projectId),
+    }));
+  };
 
   const onRemoveWorkspace = (workspaceId: string) => {
     Run.stop(workspaceId);
@@ -173,7 +255,13 @@ export const useSidebarViewModel = () => {
     toggleLabel: t(isShut ? 'SIDEBAR.OPEN' : 'SIDEBAR.SHUT'),
     onToggle: toggleSidebar,
     hasTips: isShut,
-    rows,
+    projectAvatars,
+    onSelectProject,
+    filter,
+    filterRef,
+    onFilterChange: setFilter,
+    groups,
+    onToggleProject,
     waitingName: waiting?.name ?? null,
     onOpenWaiting: () => {
       if (waiting === null) return;
