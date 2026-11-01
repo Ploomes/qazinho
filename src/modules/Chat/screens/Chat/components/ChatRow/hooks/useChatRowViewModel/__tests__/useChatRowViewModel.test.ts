@@ -46,8 +46,15 @@ describe('useChatRowViewModel', () => {
 
   it('does NOT put a name on what QAzinho itself wrote', () => {
     expect(
-      row({ id: 'm-3', kind: 'error', at: '09:41', runId: null, text: 'x', fix: null })
-        .who,
+      row({
+        id: 'm-3',
+        kind: 'error',
+        at: '09:41',
+        runId: null,
+        text: 'x',
+        detail: null,
+        fix: null,
+      }).who,
     ).toBe('');
   });
 

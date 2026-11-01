@@ -9,6 +9,7 @@ export function appendAgentError(props: {
   text: string;
   at: string;
   runId?: string | null;
+  detail?: string | null;
 }): IWorkspace {
   const { workspace, text, at } = props;
 
@@ -22,6 +23,7 @@ export function appendAgentError(props: {
         runId: props.runId ?? null,
         at,
         text: text.trim(),
+        detail: props.detail ?? null,
         fix: null,
       },
     ],

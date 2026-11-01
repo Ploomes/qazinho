@@ -16,5 +16,6 @@ export type SavedMessage =
       Partial<Pick<IVerdictMessage, 'stepNumber' | 'action' | 'runId'>> & {
         text?: string;
       })
-  | (Omit<IErrorMessage, 'runId'> & Partial<Pick<IErrorMessage, 'runId'>>)
+  | (Omit<IErrorMessage, 'runId' | 'detail'> &
+      Partial<Pick<IErrorMessage, 'runId' | 'detail'>>)
   | { kind: 'action'; id: string; at: string };

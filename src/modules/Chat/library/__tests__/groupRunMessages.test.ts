@@ -121,6 +121,7 @@ describe('groupRunMessages', () => {
       runId: 'r-02',
       at: '09:50',
       text: 'Chrome could not open http://127.0.0.1:4999/.',
+      detail: null,
       fix: null,
     };
 

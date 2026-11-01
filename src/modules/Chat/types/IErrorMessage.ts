@@ -8,5 +8,6 @@ export interface IErrorMessage {
   runId: string | null;
   at: string;
   text: string;
+  detail: string | null;
   fix: string | null;
 }

@@ -12,7 +12,8 @@ export function messageOfSaved(saved: SavedMessage): ChatMessage | null {
 
   if (saved.kind === 'run') return { ...saved, endedBy: saved.endedBy ?? 'finished' };
 
-  if (saved.kind === 'error') return { ...saved, runId: saved.runId ?? null };
+  if (saved.kind === 'error')
+    return { ...saved, runId: saved.runId ?? null, detail: saved.detail ?? null };
 
   if (saved.kind !== 'verdict') return saved;
 

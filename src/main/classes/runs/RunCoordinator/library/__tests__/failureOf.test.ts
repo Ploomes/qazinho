@@ -20,7 +20,7 @@ describe('failureOf', () => {
     });
   });
 
-  it('keeps the first line of anything else, without its colours', () => {
+  it('keeps the first line as the summary and the whole thing as the detail', () => {
     expect(
       failureOf(
         new Error('\u001b[31mbrowserType.launch: Chrome is gone\u001b[39m\nmore'),
@@ -28,13 +28,29 @@ describe('failureOf', () => {
     ).toEqual({
       reason: 'other',
       said: 'browserType.launch: Chrome is gone',
+      detail: 'browserType.launch: Chrome is gone\nmore',
     });
   });
 
-  it('reads a thrown value that is not an Error', () => {
+  /** O stderr de um comando quebrado traz o porquê real, não só a linha "Command failed". */
+  it("folds a command's stderr into the detail, under its summary", () => {
+    const error = Object.assign(new Error('Command failed: idb ui describe-all'), {
+      stderr: 'idb: no running simulator with that udid',
+    });
+
+    expect(failureOf(error)).toEqual({
+      reason: 'other',
+      said: 'Command failed: idb ui describe-all',
+      detail:
+        'Command failed: idb ui describe-all\nidb: no running simulator with that udid',
+    });
+  });
+
+  it('reads a thrown value that is not an Error, with no detail beyond it', () => {
     expect(failureOf('the emulator went away')).toEqual({
       reason: 'other',
       said: 'the emulator went away',
+      detail: null,
     });
   });
 });
