@@ -1,8 +1,12 @@
+import type { IStorageRow } from '@/modules/Settings/screens/Settings/components/StorageSettings/types';
+import type { StorageKind } from '@/modules/Settings/types';
 import type { IStorageUsage, IVideoSweep } from '@/shared/types';
+import { useReducedMotion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { VIDEO_KEEPING } from '@/modules/Settings/constants';
-import { sizeWordsOf } from '@/modules/Settings/library';
+import { STORAGE_KINDS, VIDEO_KEEPING } from '@/modules/Settings/constants';
+import { percentLabelOf, sizePartsOf, sizeWordsOf } from '@/modules/Settings/library';
+import { STORAGE_MOTION } from '@/modules/Settings/screens/Settings/components/StorageSettings/constants';
 import { Storage } from '@/services';
 import { useSettingsStore } from '@/store';
 
@@ -11,59 +15,94 @@ export const useStorageSettingsViewModel = () => {
   const language = useSettingsStore((state) => state.language);
   const days = useSettingsStore((state) => state.videoKeepDays);
   const keepVideosFor = useSettingsStore((state) => state.keepVideosFor);
-  const [usage, setUsage] = useState<IStorageUsage | null>(null);
+  const isCalm = useReducedMotion() ?? false;
+  const [measured, setMeasured] = useState<{
+    usage: IStorageUsage | null;
+    read: number;
+  } | null>(null);
   const [reads, setReads] = useState(0);
   const [isSweeping, setSweeping] = useState(false);
   const [swept, setSwept] = useState<IVideoSweep | null>(null);
+  const [activeId, setActiveId] = useState<StorageKind | null>(null);
 
   useEffect(() => {
-    void Storage.usage().then(setUsage);
+    void Storage.usage().then((usage) => {
+      setMeasured({ usage, read: reads });
+    });
   }, [reads]);
+
+  const usage = measured?.usage ?? null;
   const sizeOf = (bytes: number) => sizeWordsOf({ bytes, language });
 
+  const rows: IStorageRow[] = STORAGE_KINDS.map(({ id, labelKey }) => {
+    const bytes = usage?.[id] ?? 0;
+    const isActive = activeId === id;
+    const isDim = activeId !== null && !isActive;
+
+    return {
+      id,
+      label: t(labelKey),
+      size: usage === null ? '' : sizeOf(bytes),
+      share:
+        usage === null
+          ? ''
+          : percentLabelOf({ part: bytes, total: usage.total, language }),
+      bytes,
+      isPending: usage === null,
+      className: [
+        'usage-bar__row',
+        isActive ? 'usage-bar__row--active' : '',
+        isDim ? 'usage-bar__row--dim' : '',
+        usage === null ? 'usage-bar__row--pending' : '',
+        usage !== null && bytes === 0 ? 'usage-bar__row--empty' : '',
+      ]
+        .filter((part) => part !== '')
+        .join(' '),
+      swatchClassName: `usage-bar__swatch usage-bar__tone--${id}`,
+      segmentClassName: [
+        'usage-bar__segment',
+        `usage-bar__tone--${id}`,
+        isDim ? 'usage-bar__segment--dim' : '',
+      ]
+        .filter((part) => part !== '')
+        .join(' '),
+    };
+  });
+
   return {
-    total:
-      usage === null
-        ? t('SETTINGS.STORAGE_MEASURING')
-        : t('SETTINGS.STORAGE_TOTAL', { size: sizeOf(usage.total) }),
-    rows:
-      usage === null
-        ? []
-        : [
-            {
-              id: 'videos',
-              label: t('SETTINGS.STORAGE_VIDEOS'),
-              size: sizeOf(usage.videos),
-            },
-            {
-              id: 'screens',
-              label: t('SETTINGS.STORAGE_SCREENS'),
-              size: sizeOf(usage.screens),
-            },
-            {
-              id: 'builds',
-              label: t('SETTINGS.STORAGE_BUILDS'),
-              size: sizeOf(usage.builds),
-            },
-            {
-              id: 'other',
-              label: t('SETTINGS.STORAGE_OTHER'),
-              size: sizeOf(usage.other),
-            },
-          ],
+    isLoading: usage === null,
+    isRefreshing: measured !== null && measured.read !== reads,
+    measuringLabel: t('SETTINGS.STORAGE_MEASURING'),
+    hero: usage === null ? null : sizePartsOf({ bytes: usage.total, language }),
+    caption: t('SETTINGS.STORAGE_CAPTION'),
+    isEmpty: usage !== null && usage.total === 0,
+    rows,
+    segments: rows.filter(({ bytes }) => bytes > 0),
+    stackMotion: STORAGE_MOTION.stack,
+    itemMotion: STORAGE_MOTION.item,
+    barMotion: isCalm ? STORAGE_MOTION.calmBar : STORAGE_MOTION.bar,
+    growth: isCalm ? STORAGE_MOTION.still : STORAGE_MOTION.grow,
+    onActivate: setActiveId,
+    onDeactivate: () => {
+      setActiveId(null);
+    },
     keepLabel: t('SETTINGS.KEEP_VIDEOS'),
-    keeping: VIDEO_KEEPING.map((one) => ({
-      id: one.id,
-      label: t(one.labelKey),
-      className:
-        one.days === days ? 'settings__choice settings__choice--on' : 'settings__choice',
-      onPick: () => {
-        keepVideosFor(one.days);
-        setSwept(null);
-      },
-    })),
+    keepOptions: VIDEO_KEEPING.map(({ id, labelKey }) => ({ id, label: t(labelKey) })),
+    keepValue: VIDEO_KEEPING.find((one) => one.days === days)?.id ?? '',
+    onKeepChange: (id: string) => {
+      const one = VIDEO_KEEPING.find((item) => item.id === id);
+
+      if (one === undefined) return;
+
+      keepVideosFor(one.days);
+      setSwept(null);
+    },
+    rule:
+      days === null ? t('SETTINGS.KEEP_RULE_ALWAYS') : t('SETTINGS.KEEP_RULE', { days }),
+    ruleKey: days === null ? 'always' : String(days),
     keepNote: t('SETTINGS.KEEP_NOTE'),
     canSweep: days !== null && !isSweeping,
+    isSweeping,
     sweepLabel: isSweeping ? t('SETTINGS.SWEEPING') : t('SETTINGS.SWEEP_NOW'),
     onSweep: () => {
       if (days === null || isSweeping) return;
@@ -74,6 +113,14 @@ export const useStorageSettingsViewModel = () => {
         setReads((count) => count + 1);
       });
     },
+    sweptTone:
+      swept === null ? null : swept.removed === 0 ? ('none' as const) : ('done' as const),
+    sweptIcon:
+      swept === null
+        ? null
+        : swept.removed === 0
+          ? ('skipped' as const)
+          : ('passed' as const),
     sweptLine:
       swept === null
         ? null

@@ -5,5 +5,6 @@ export * from './LANGUAGES';
 export * from './MODELS';
 export * from './RUN_ALERTS';
 export * from './SETTINGS_TABS';
+export * from './STORAGE_KINDS';
 export * from './THEMES';
 export * from './VIDEO_KEEPING';
