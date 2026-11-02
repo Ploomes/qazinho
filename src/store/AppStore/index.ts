@@ -15,7 +15,6 @@ export const useAppStore = create<IAppStore>()(
       projectSection: null,
       selectedWorkspaceId: null,
       selectedProjectId: null,
-      automationProjectId: null,
       pendingCommand: null,
       isResourcesOpen: false,
       modelMenuAt: null,
@@ -32,12 +31,7 @@ export const useAppStore = create<IAppStore>()(
 
       closeSettings: () =>
         set((state) => ({
-          screen:
-            state.automationProjectId !== null
-              ? 'automation'
-              : state.selectedWorkspaceId === null
-                ? 'welcome'
-                : 'workspace',
+          screen: state.selectedWorkspaceId === null ? 'welcome' : 'workspace',
         })),
 
       openModal: (modal) => set({ modal, editingProjectId: null, projectSection: null }),
@@ -58,17 +52,9 @@ export const useAppStore = create<IAppStore>()(
         set({ modal: null, editingProjectId: null, projectSection: null }),
 
       selectWorkspace: (workspaceId) =>
-        set({
-          screen: 'workspace',
-          selectedWorkspaceId: workspaceId,
-          automationProjectId: null,
-        }),
+        set({ screen: 'workspace', selectedWorkspaceId: workspaceId }),
 
-      openAutomation: (projectId) =>
-        set({ screen: 'automation', automationProjectId: projectId }),
-
-      goHome: () =>
-        set({ screen: 'welcome', selectedWorkspaceId: null, automationProjectId: null }),
+      goHome: () => set({ screen: 'welcome', selectedWorkspaceId: null }),
 
       addProject: (project) =>
         set((state) => ({
@@ -98,19 +84,11 @@ export const useAppStore = create<IAppStore>()(
       removeProject: ({ projectId, isOpen }) =>
         set((state) => {
           const projects = state.projects.filter(({ id }) => id !== projectId);
-          const isShown = isOpen || state.automationProjectId === projectId;
-
           return {
             projects,
             modal: null,
             editingProjectId: null,
-            ...(isShown
-              ? {
-                  screen: 'welcome' as const,
-                  selectedWorkspaceId: null,
-                  automationProjectId: null,
-                }
-              : {}),
+            ...(isOpen ? { screen: 'welcome' as const, selectedWorkspaceId: null } : {}),
             selectedProjectId:
               state.selectedProjectId === projectId
                 ? (projects[0]?.id ?? null)

@@ -14,7 +14,6 @@ import {
   Pro,
   Run,
   Setup,
-  Suites,
   Variables,
 } from '@/services';
 
@@ -201,38 +200,6 @@ describe('a page with no bridge', () => {
     expect(await Run.saveReplay({ workspaceId: 'w1', runId: 'r-01', name: 'r-01' })).toBe(
       'failed',
     );
-  });
-
-  it('connects no suite, and knows of none', async () => {
-    expect(await Suites.pick('p-1')).toEqual({ kind: 'cancelled' });
-    expect(await Suites.of('p-1')).toBeNull();
-    expect(await Suites.list('p-1')).toEqual({
-      kind: 'failed',
-      reason: 'no-suite',
-      said: '',
-    });
-    expect(await Suites.runs('p-1')).toEqual([]);
-    expect(
-      await Suites.openTrace({ projectId: 'p-1', runId: 's-01', file: 'trace.zip' }),
-    ).toBe(false);
-    expect(() => {
-      Suites.run({ projectId: 'p-1', runId: 's-01', batches: [], expected: 0 });
-      Suites.stop('p-1');
-      Suites.onEvent(() => undefined)();
-    }).not.toThrow();
-    await expect(Suites.forget('p-1')).resolves.toBeUndefined();
-  });
-
-  it('starts no change in a suite, and knows of none', async () => {
-    expect(await Suites.changes('p-1')).toEqual([]);
-    expect(await Suites.discard({ projectId: 'p-1', changeId: 'c-01' })).toBeNull();
-    expect(
-      await Suites.ship({ projectId: 'p-1', changeId: 'c-01', way: 'branch' }),
-    ).toBeNull();
-    expect(() => {
-      Suites.stopChange('c-01');
-      Suites.onChangeEvent(() => undefined)();
-    }).not.toThrow();
   });
 
   it('sends no bug to a tracker, and copies no screen', async () => {

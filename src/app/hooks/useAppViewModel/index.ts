@@ -1,7 +1,6 @@
 import type { CSSProperties } from 'react';
 import { useEffect } from 'react';
 import { useAppActions, useAssistantEvents, useQuestionRoom } from '@/modules/Assistant';
-import { useSuiteWatch } from '@/modules/Automation';
 import { useBuildEvents } from '@/modules/Build';
 import { useProLinks, useProSync } from '@/modules/Pro';
 import { AppWindow, Platform } from '@/services';
@@ -48,7 +47,6 @@ export const useAppViewModel = () => {
   useAssistantEvents();
   useQuestionRoom();
   useBuildEvents();
-  useSuiteWatch();
   useProSync();
   useProLinks();
   useVideoSweep();
@@ -101,6 +99,5 @@ export const useAppViewModel = () => {
     isWelcome: screen !== 'settings' && (screen === 'welcome' || projects.length === 0),
     isWorkspace: screen === 'workspace',
     isSettings: screen === 'settings',
-    isAutomation: screen === 'automation',
   };
 };

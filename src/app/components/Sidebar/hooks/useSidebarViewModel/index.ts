@@ -1,7 +1,6 @@
 import type {
   ISidebarProBadge,
   ISidebarProjectGroup,
-  ISidebarSuiteRow,
   SidebarGroupRow,
 } from '@/app/components/Sidebar/types';
 import type { CSSProperties } from 'react';
@@ -11,13 +10,7 @@ import { SIDEBAR_SIZE, SIDEBAR_STATUS } from '@/app/components/Sidebar/constants
 import { workspaceMeta } from '@/modules/Workspace';
 import { Agent, Archive, Run } from '@/services';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
-import {
-  useAppStore,
-  useProStore,
-  useSettingsStore,
-  useSuiteStore,
-  useWorkspaceStore,
-} from '@/store';
+import { useAppStore, useProStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 export const useSidebarViewModel = () => {
   const { t } = useTranslation();
@@ -29,15 +22,8 @@ export const useSidebarViewModel = () => {
   const openSettings = useAppStore((state) => state.openSettings);
   const goHome = useAppStore((state) => state.goHome);
   const openProjectSettings = useAppStore((state) => state.openProjectSettings);
-  const openAutomation = useAppStore((state) => state.openAutomation);
   const openProSettings = useAppStore((state) => state.openProSettings);
   const shares = useProStore((state) => state.shares);
-  const screen = useAppStore((state) => state.screen);
-  const automationProjectId = useAppStore((state) => state.automationProjectId);
-  const suites = useSuiteStore((state) => state.suites);
-  const suiteLists = useSuiteStore((state) => state.lists);
-  const suiteRuns = useSuiteStore((state) => state.runs);
-  const suiteLive = useSuiteStore((state) => state.live);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const removingWorkspaceId = useWorkspaceStore((state) => state.removingWorkspaceId);
   const askRemoveWorkspace = useWorkspaceStore((state) => state.askRemoveWorkspace);
@@ -91,48 +77,6 @@ export const useSidebarViewModel = () => {
       window.removeEventListener('keydown', onKeyDown);
     };
   }, [isShut]);
-
-  const suiteRowsOf = (projectId: string): ISidebarSuiteRow[] => {
-    const suite = suites[projectId];
-
-    if (suite === undefined) return [];
-
-    const latest = suiteRuns[projectId]?.[0];
-    const list = suiteLists[projectId];
-    const isGoing = suiteLive[projectId] !== undefined;
-    const shown = isGoing
-      ? ('running' as const)
-      : latest === undefined
-        ? ('idle' as const)
-        : latest.status === 'broke'
-          ? ('attention' as const)
-          : latest.status;
-
-    return [
-      {
-        kind: 'suite',
-        id: `suite-${projectId}`,
-        projectId,
-        name: t('SIDEBAR.SUITE'),
-        meta:
-          isGoing && latest !== undefined
-            ? t('SIDEBAR.SUITE_RUNNING', {
-                done: latest.results.length,
-                total: latest.total,
-              })
-            : list?.kind !== 'listed'
-              ? suite.name
-              : list.tests.length === 1
-                ? t('SIDEBAR.SUITE_TESTS_ONE')
-                : t('SIDEBAR.SUITE_TESTS_OTHER', { count: list.tests.length }),
-        icon: SIDEBAR_STATUS[shown].icon,
-        statusLabel: t(STATUS[shown].labelKey),
-        tone: SIDEBAR_STATUS[shown].tone,
-        animation: SIDEBAR_STATUS[shown].animation,
-        isSelected: screen === 'automation' && automationProjectId === projectId,
-      },
-    ];
-  };
 
   const proBadgeOf = (project: { id: string; name: string }): ISidebarProBadge | null => {
     const share = shares.find(({ projectId }) => projectId === project.id);
@@ -212,7 +156,6 @@ export const useSidebarViewModel = () => {
         pro: proBadgeOf(project),
         rows: [
           ...workspaceRows,
-          ...suiteRowsOf(project.id),
           { kind: 'add' as const, id: `add-${project.id}`, projectId: project.id },
         ],
       },
@@ -286,6 +229,5 @@ export const useSidebarViewModel = () => {
     onRemoveWorkspace,
     onProjectSettings: openProjectSettings,
     onProSettings: openProSettings,
-    onOpenSuite: openAutomation,
   };
 };

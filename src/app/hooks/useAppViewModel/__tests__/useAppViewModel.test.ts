@@ -157,23 +157,6 @@ describe('useAppViewModel', () => {
     expect(result.current.hasSidebar).toBe(false);
   });
 
-  it("shows a project's suite beside the sidebar, and no workspace with it", () => {
-    useAppStore.setState({
-      screen: 'automation',
-      automationProjectId: 'p1',
-      projects: [{ id: 'p1', name: 'Shop · staging', targets: [], repositories: [] }],
-    });
-
-    const { result } = renderHook(() => useAppViewModel());
-
-    expect(result.current).toMatchObject({
-      isAutomation: true,
-      hasSidebar: true,
-      isWorkspace: false,
-      isWelcome: false,
-    });
-  });
-
   it('mounts the lightbox only while there is media, so its exit can play', () => {
     useAppStore.setState({ media: null });
 

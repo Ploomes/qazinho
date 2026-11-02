@@ -399,7 +399,7 @@ describe('useProjectModalViewModel', () => {
       expect(result.current.confirmLabel).toBe('Save changes');
     });
 
-    it("opens on its suite when asked from the suite's screen", () => {
+    it('opens on the import section when asked for it', () => {
       useAppStore.getState().openImportSettings('p1');
 
       const { result } = renderHook(() => useProjectModalViewModel());

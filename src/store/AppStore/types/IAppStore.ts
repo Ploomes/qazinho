@@ -21,7 +21,6 @@ export interface IAppStore {
   projectSection: ProjectSection | null;
   selectedWorkspaceId: string | null;
   selectedProjectId: string | null;
-  automationProjectId: string | null;
   pendingCommand: ChatCommandId | null;
   isResourcesOpen: boolean;
   modelMenuAt: ModelMenuAt | null;
@@ -39,7 +38,6 @@ export interface IAppStore {
   openWorkspaceModal: (projectId: string) => void;
   closeModal: () => void;
   selectWorkspace: (workspaceId: string) => void;
-  openAutomation: (projectId: string) => void;
   goHome: () => void;
   addProject: (project: IProject) => void;
   loadProjects: (projects: IProject[]) => void;
