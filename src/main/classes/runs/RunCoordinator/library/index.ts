@@ -19,6 +19,7 @@ export {
   privateUrlOf,
   proofHolds,
   proofWithValues,
+  provableProof,
   readBook,
   recipeFor,
   recipeOf,

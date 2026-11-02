@@ -68,6 +68,7 @@ import {
   privateUrlOf,
   proofHolds,
   proofWithValues,
+  provableProof,
   readBook,
   recipeFor,
   recipeOf,
@@ -565,17 +566,19 @@ export class RunCoordinator {
       });
 
       if (report.verdict === 'passed') {
-        const values = expectedValuesOf(walking.step.expected);
+        const screen = await device.describe().catch(() => '');
 
         proofs.set(
           walking.step.numberInCase,
-          values.length === 0
-            ? report.proof
-            : proofWithValues({
-                proof: report.proof,
-                values,
-                screen: await device.describe().catch(() => ''),
-              }),
+          provableProof({
+            proof: proofWithValues({
+              proof: report.proof,
+              values: expectedValuesOf(walking.step.expected),
+              screen,
+            }),
+            screen,
+            values: run.values,
+          }),
         );
       }
 
