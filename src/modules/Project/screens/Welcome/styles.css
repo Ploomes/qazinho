@@ -12,6 +12,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-5);
+  position: relative;
   width: 100%;
   max-width: 600px;
   padding: 48px var(--space-8) 52px;
@@ -35,6 +36,12 @@
   }
 }
 
+.welcome__settings {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+}
+
 .welcome__title {
   margin: var(--space-3) 0 0;
   color: var(--ink);
@@ -42,13 +49,4 @@
   letter-spacing: var(--display-tracking);
   text-align: center;
   text-wrap: balance;
-}
-
-.welcome__body {
-  max-width: 420px;
-  margin: 0 0 var(--space-3);
-  color: var(--ink2);
-  font: var(--font-ui-lg);
-  text-align: center;
-  text-wrap: pretty;
 }

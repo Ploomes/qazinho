@@ -51,7 +51,6 @@ export const TargetCard: React.FC<ITargetCardProps> = (props) => {
           )}
           <div className="target-card__words">
             <span className="target-card__name">{props.name}</span>
-            <p className="target-card__text">{props.text}</p>
           </div>
         </div>
         <div className="target-card__field">{props.children}</div>

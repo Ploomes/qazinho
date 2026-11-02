@@ -148,9 +148,7 @@ export const useProjectModalViewModel = () => {
 
   const blocking =
     name.trim().length === 0
-      ? isEditing
-        ? t('PROJECT.NEEDS_NAME_EDIT')
-        : t('PROJECT.NEEDS_NAME')
+      ? t('PROJECT.NEEDS_NAME_EDIT')
       : url.trim().length > 0 && address === null
         ? t('PROJECT.WEB_INVALID')
         : !hasTarget
@@ -217,8 +215,15 @@ export const useProjectModalViewModel = () => {
   };
 
   const countOf = (count: number) => (count > 0 ? count : null);
+  const isFirstName = !isEditing && name.trim().length === 0;
+  const isFillingIn =
+    isFirstName || (!isEditing && !hasTarget && url.trim().length === 0);
   const flagged: ProjectSection | null =
-    blocking !== undefined ? 'general' : variableFailure !== null ? 'variables' : null;
+    blocking !== undefined && !isFillingIn
+      ? 'general'
+      : variableFailure !== null
+        ? 'variables'
+        : null;
   const navItems: IProjectNavItem[] = [
     ...PROJECT_SECTIONS.filter(({ id }) => id !== 'import' || !isEditing).map(
       ({ id, labelKey }) => ({
@@ -354,9 +359,6 @@ export const useProjectModalViewModel = () => {
       delete: section === 'delete',
     },
     title: isEditing ? t('PROJECT.EDIT_TITLE') : t('PROJECT.NEW_TITLE'),
-    subtitle: isEditing
-      ? t('PROJECT.EDIT_SUBTITLE', { name: editing.name })
-      : t('PROJECT.NEW_SUBTITLE'),
     confirmLabel: isEditing ? t('PROJECT.SAVE') : t('PROJECT.CREATE'),
     canConfirm: blocking === undefined && !isSaving,
     deleteTitle: isEditing ? t('PROJECT.DELETE_TITLE', { name: editing.name }) : '',
@@ -389,7 +391,7 @@ export const useProjectModalViewModel = () => {
           } satisfies ITargetLock),
     footerHint: isConfirmingDiscard
       ? t('PROJECT.DISCARD_HINT')
-      : (blocking ?? variableFailure ?? undefined),
+      : ((isFirstName ? undefined : blocking) ?? variableFailure ?? undefined),
     onNameChange: setName,
     onRepositoriesChange: setRepositories,
     variables,

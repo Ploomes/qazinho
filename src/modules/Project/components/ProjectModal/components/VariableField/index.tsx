@@ -33,12 +33,7 @@ export const VariableField: React.FC<IVariableFieldProps> = (props) => {
   const { t } = useTranslation();
 
   return (
-    <TargetCard
-      name={t('PROJECT.VARIABLES_NAME')}
-      text={t('PROJECT.VARIABLES_TEXT')}
-      lock={null}
-      isStacked
-    >
+    <TargetCard name={t('PROJECT.VARIABLES_NAME')} lock={null} isStacked>
       <div className="variable-field">
         <AnimatePresence initial={false}>
           {rows.map((row) => (

@@ -1,4 +1,5 @@
-import { Button, Intern } from '@/shared/components/atoms';
+import { Button, IconButton, Intern } from '@/shared/components/atoms';
+import { Tooltip } from '@/shared/components/molecules';
 import { useWelcomeViewModel } from './hooks';
 import './styles.css';
 
@@ -7,23 +8,23 @@ import './styles.css';
  * que um projeto existe.
  */
 export const Welcome: React.FC = () => {
-  const { mood, title, body, action, settings, onAction, onSettings } =
-    useWelcomeViewModel();
+  const { mood, title, action, settings, onAction, onSettings } = useWelcomeViewModel();
 
   return (
     <section className="welcome">
       <div className="welcome__board" data-theme="indigo">
+        {settings !== null && (
+          <span className="welcome__settings">
+            <Tooltip content={settings}>
+              <IconButton icon="settings" label={settings} onClick={onSettings} />
+            </Tooltip>
+          </span>
+        )}
         <Intern mood={mood} size={136} />
         <h1 className="welcome__title">{title}</h1>
-        <p className="welcome__body">{body}</p>
         <Button variant="primary" onClick={onAction}>
           {action}
         </Button>
-        {settings !== null && (
-          <Button variant="ghost" size="sm" onClick={onSettings}>
-            {settings}
-          </Button>
-        )}
       </div>
     </section>
   );

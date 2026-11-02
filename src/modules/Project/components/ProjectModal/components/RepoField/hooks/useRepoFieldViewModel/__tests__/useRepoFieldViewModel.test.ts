@@ -77,7 +77,7 @@ describe('useRepoFieldViewModel', () => {
     const { result } = field();
 
     expect(result.current.lock).toMatchObject({
-      reason: 'Connect GitHub to pick the repositories this project is made of',
+      reason: 'Needs GitHub',
       setUp: { label: 'Connect GitHub' },
     });
     expect(window.qazinho.listRepositories).not.toHaveBeenCalled();

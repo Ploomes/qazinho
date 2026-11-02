@@ -6,7 +6,7 @@ import type { ReactNode } from 'react';
  */
 export interface IModalFrameProps {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   width: number;
   height?: number;
   confirmLabel: string;

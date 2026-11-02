@@ -47,7 +47,9 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
           <h2 id={titleId} className="modal-frame__title">
             {props.title}
           </h2>
-          <p className="modal-frame__subtitle">{props.subtitle}</p>
+          {props.subtitle !== undefined && (
+            <p className="modal-frame__subtitle">{props.subtitle}</p>
+          )}
         </header>
 
         {isBeside && (

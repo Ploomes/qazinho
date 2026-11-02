@@ -37,25 +37,18 @@ export const useVariablesModalViewModel = () => {
 
   return {
     width: VARIABLES_MODAL.width,
-    title: t('VARIABLES.TITLE'),
-    subtitle: t('VARIABLES.SUBTITLE'),
-    asked:
-      request?.by === 'plan'
-        ? t('VARIABLES.PLAN_NAMES')
-        : request?.by === 'org'
-          ? t('VARIABLES.ORG_NAMES')
-          : t('VARIABLES.ASKED'),
-    project: projects.find(({ id }) => id === request?.projectId)?.name ?? '',
+    title: t('VARIABLES.TITLE', {
+      project: projects.find(({ id }) => id === request?.projectId)?.name ?? '',
+    }),
     valuePlaceholder: t('VARIABLES.VALUE_PLACEHOLDER'),
     rows: rows.map((row, index) => ({
       key: row.key,
       isValueFocused: index === 0,
+      isValueOnly: (request?.drafts[index]?.name ?? '') !== '',
       name: row.name,
       description: row.description,
       value: row.value,
-      note: kept.some(({ name }) => name === row.name)
-        ? t('VARIABLES.REPLACES', { name: row.name })
-        : '',
+      note: kept.some(({ name }) => name === row.name) ? t('VARIABLES.REPLACES') : '',
       onName: (typed: string) => {
         change({ key: row.key, draft: { name: variableNameOf(typed) } });
       },
@@ -67,7 +60,10 @@ export const useVariablesModalViewModel = () => {
       },
     })),
     hint:
-      failure ?? (problem === null ? undefined : t(problem.key, { name: problem.name })),
+      failure ??
+      (problem === null || problem.key === 'VARIABLES.NEEDS_VALUE'
+        ? undefined
+        : t(problem.key, { name: problem.name })),
     confirmLabel: isSaving ? t('VARIABLES.SAVING') : t('VARIABLES.SAVE'),
     canConfirm: problem === null && !isSaving,
     onCancel: () => {

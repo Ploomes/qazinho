@@ -14,6 +14,7 @@ export const VariableEditor: React.FC<IVariableEditorProps> = (props) => {
   return (
     <div ref={ref} className="variable-editor">
       <VariableForm
+        isValueOnly={false}
         name={props.name}
         description={props.description}
         value={props.value}

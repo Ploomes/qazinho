@@ -39,7 +39,6 @@ export const ProjectModal: React.FC = () => {
     navItems,
     isOpen,
     title,
-    subtitle,
     confirmLabel,
     canConfirm,
     deleteTitle,
@@ -74,7 +73,6 @@ export const ProjectModal: React.FC = () => {
   return (
     <ModalFrame
       title={title}
-      subtitle={subtitle}
       width={PROJECT_MODAL.width}
       height={PROJECT_MODAL.height}
       confirmLabel={confirmLabel}
@@ -107,12 +105,7 @@ export const ProjectModal: React.FC = () => {
           <div className="project-modal__group">
             <Eyebrow>{t('PROJECT.TARGETS')}</Eyebrow>
             <div className="project-modal__targets">
-              <TargetCard
-                platform="web"
-                name={t('PROJECT.WEB')}
-                text={t('PROJECT.WEB_TEXT')}
-                lock={null}
-              >
+              <TargetCard platform="web" name={t('PROJECT.WEB')} lock={null}>
                 <Input
                   isMono
                   isCompact
@@ -126,7 +119,6 @@ export const ProjectModal: React.FC = () => {
               <TargetCard
                 platform="android"
                 name={t('PROJECT.ANDROID')}
-                text={t('PROJECT.ANDROID_TEXT')}
                 lock={androidLock}
               >
                 <FileField
@@ -147,12 +139,7 @@ export const ProjectModal: React.FC = () => {
                 )}
               </TargetCard>
 
-              <TargetCard
-                platform="ios"
-                name={t('PROJECT.IOS')}
-                text={t('PROJECT.IOS_TEXT')}
-                lock={iosLock}
-              >
+              <TargetCard platform="ios" name={t('PROJECT.IOS')} lock={iosLock}>
                 <FileField
                   value={app}
                   label={t('PROJECT.IOS')}

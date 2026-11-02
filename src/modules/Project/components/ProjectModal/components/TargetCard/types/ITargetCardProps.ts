@@ -8,7 +8,6 @@ import type { ReactNode } from 'react';
  */
 export interface ITargetCardProps {
   name: string;
-  text: string;
   lock: ITargetLock | null;
   platform?: TargetKind;
   isStacked?: boolean;

@@ -2,13 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toPlanKind } from '@/modules/Plan';
 import { PLATFORM_LABEL } from '@/modules/Workspace/constants';
-import {
-  useAppStore,
-  useAssistantStore,
-  useSettingsStore,
-  useSetupStore,
-  useWorkspaceStore,
-} from '@/store';
+import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useNewWorkspaceModalViewModel = () => {
   const { t } = useTranslation();
@@ -20,13 +14,6 @@ export const useNewWorkspaceModalViewModel = () => {
   const closeModal = useAppStore((state) => state.closeModal);
   const selectWorkspace = useAppStore((state) => state.selectWorkspace);
   const addWorkspace = useWorkspaceStore((state) => state.addWorkspace);
-  const openSettings = useAppStore((state) => state.openSettings);
-  const say = useAssistantStore((state) => state.say);
-  const closeAssistant = useAssistantStore((state) => state.close);
-  const selectSettingsTab = useSettingsStore((state) => state.selectTab);
-  const isJiraConnected = useSetupStore((state) =>
-    state.integrations.some(({ id }) => id === 'jira'),
-  );
 
   const project =
     projects.find(({ id }) => id === selectedProjectId) ?? projects[0] ?? null;
@@ -68,13 +55,6 @@ export const useNewWorkspaceModalViewModel = () => {
     closeModal();
   };
 
-  const blocking =
-    chosen === null
-      ? t('NEW_WORKSPACE.NEEDS_TARGET')
-      : name.trim().length === 0
-        ? t('NEW_WORKSPACE.NEEDS_NAME')
-        : undefined;
-
   return {
     name,
     targets,
@@ -92,22 +72,9 @@ export const useNewWorkspaceModalViewModel = () => {
         setTargetId(target.id);
       },
     })),
-    footerHint: blocking,
+    footerHint: chosen === null ? t('NEW_WORKSPACE.NEEDS_TARGET') : undefined,
     chosenTargetId: chosen?.id ?? null,
-    projectName: project?.name ?? '',
     canCreate: name.trim().length > 0 && chosen !== null,
-    issueText: t(
-      isJiraConnected ? 'NEW_WORKSPACE.ISSUE_READY' : 'NEW_WORKSPACE.ISSUE_EMPTY',
-    ),
-    canConnect: !isJiraConnected,
-    connectLabel: t('NEW_WORKSPACE.ISSUE_CONNECT'),
-    onConnect: () => {
-      say(t('NEW_WORKSPACE.TIP_CONNECT'));
-      closeAssistant();
-      selectSettingsTab('integrations');
-      closeModal();
-      openSettings();
-    },
     onNameChange: setName,
     onCancel: closeModal,
     onCreate,

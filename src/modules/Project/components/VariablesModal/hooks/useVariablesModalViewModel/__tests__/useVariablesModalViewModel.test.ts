@@ -63,43 +63,33 @@ describe('useVariablesModalViewModel', () => {
     it("opens on the agent's drafts, each name made a variable's, and every value empty", () => {
       const result = opened();
 
-      expect(result.current.project).toBe('Shop');
+      expect(result.current.title).toBe('Values for Shop');
       expect(result.current.rows.map(({ name, value }) => [name, value])).toEqual([
         ['LOGIN_EMAIL', ''],
         ['LOGIN_PASSWORD', ''],
       ]);
     });
 
-    it('says who asked: the agent, the plan that types them, or the org the project came from', () => {
-      expect(opened().current.asked).toBe('The agent asked for these to go on.');
+    it('asks only for the value of a variable the agent already named', () => {
+      expect(opened().current.rows.map(({ isValueOnly }) => isValueOnly)).toEqual([
+        true,
+        true,
+      ]);
+    });
 
-      useVariablesStore.setState({
-        request: { id: 'v-2', projectId: 'p1', drafts: DRAFTS, by: 'plan' },
-      });
-
-      expect(opened().current.asked).toBe('The plan types these: give each its value.');
-
-      useVariablesStore.setState({
-        request: { id: 'v-3', projectId: 'p1', drafts: DRAFTS, by: 'org' },
-      });
-
-      expect(opened().current.asked).toBe(
-        'This project came from your org with these: give each its value on this computer.',
-      );
+    it('does NOT repeat in the footer that a value is missing: the button says it', () => {
+      expect(opened().current.hint).toBeUndefined();
     });
 
     it('says when a value replaces one the project keeps', () => {
       expect(opened().current.rows.map(({ note }) => note)).toEqual([
         '',
-        'Replaces the value LOGIN_PASSWORD keeps',
+        'Replaces the current value',
       ]);
     });
 
-    it('does NOT save until every value is typed, and says which one is missing', () => {
-      const result = opened();
-
-      expect(result.current.canConfirm).toBe(false);
-      expect(result.current.hint).toBe('Type the value of LOGIN_EMAIL.');
+    it('does NOT save until every value is typed', () => {
+      expect(opened().current.canConfirm).toBe(false);
     });
   });
 

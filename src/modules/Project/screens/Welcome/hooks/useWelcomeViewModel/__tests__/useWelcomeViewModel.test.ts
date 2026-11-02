@@ -25,7 +25,6 @@ describe('useWelcomeViewModel', () => {
     const { result } = renderHook(() => useWelcomeViewModel());
 
     expect(result.current.title).toBe('Pick a workspace, or start a new one.');
-    expect(result.current.body).toContain('Shop · staging');
     expect(result.current.action).toBe('New workspace');
   });
 

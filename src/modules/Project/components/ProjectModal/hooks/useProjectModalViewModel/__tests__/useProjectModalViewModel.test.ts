@@ -225,8 +225,26 @@ describe('useProjectModalViewModel', () => {
       ]);
     });
 
-    it('flags the general section while it keeps the project from being made', () => {
+    /** Trocar de aba num projeto novo não pode marcar nada: o QA só não terminou ainda. */
+    it('does NOT flag a new project that is still being filled in', () => {
       const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.navItems.some(({ isFlagged }) => isFlagged)).toBe(false);
+
+      act(() => {
+        result.current.onNameChange('Shop · staging');
+      });
+
+      expect(result.current.navItems.some(({ isFlagged }) => isFlagged)).toBe(false);
+    });
+
+    it('flags the general section when something written keeps the project from being made', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      act(() => {
+        result.current.onNameChange('Shop · staging');
+        result.current.onUrlChange('not an address');
+      });
 
       expect(result.current.navItems.map(({ isFlagged }) => isFlagged)).toEqual([
         true,
@@ -236,7 +254,6 @@ describe('useProjectModalViewModel', () => {
       ]);
 
       act(() => {
-        result.current.onNameChange('Shop · staging');
         result.current.onUrlChange('https://staging.shop.test');
       });
 
@@ -389,10 +406,10 @@ describe('useProjectModalViewModel', () => {
   });
 
   describe('footerHint', () => {
-    it('says what is missing first, which is the name', () => {
+    it('says nothing before a name: the disabled button already does', () => {
       const { result } = renderHook(() => useProjectModalViewModel());
 
-      expect(result.current.footerHint).toBe('Name the project to create it');
+      expect(result.current.footerHint).toBeUndefined();
     });
 
     it('asks for a target once the project has a name', () => {
@@ -402,7 +419,9 @@ describe('useProjectModalViewModel', () => {
         result.current.onNameChange('Shop · staging');
       });
 
-      expect(result.current.footerHint).toBe('Add one target: a URL, an .apk or a .app');
+      expect(result.current.footerHint).toBe(
+        'Add where to test: a URL, an .apk or a .app',
+      );
     });
 
     it('says when the web address is not one a browser could open', () => {

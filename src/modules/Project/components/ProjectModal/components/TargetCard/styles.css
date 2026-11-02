@@ -53,17 +53,6 @@
   font: var(--font-ui-strong);
 }
 
-.target-card__text {
-  margin: 0;
-  color: var(--ink3);
-  font: var(--font-ui-sm);
-  text-wrap: pretty;
-}
-
-.target-card__body--stacked .target-card__text {
-  color: var(--ink2);
-}
-
 .target-card__field {
   display: flex;
   flex-direction: column;

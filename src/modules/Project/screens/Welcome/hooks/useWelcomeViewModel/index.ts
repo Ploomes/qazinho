@@ -15,7 +15,6 @@ export const useWelcomeViewModel = () => {
     return {
       mood: 'sleeping' as const,
       title: t('WELCOME.TITLE'),
-      body: t('WELCOME.BODY'),
       action: t('WELCOME.ACTION'),
       settings: t('COMMON.SETTINGS'),
       onAction: () => {
@@ -27,7 +26,6 @@ export const useWelcomeViewModel = () => {
   return {
     mood: 'neutral' as const,
     title: t('WELCOME.PICK_TITLE'),
-    body: t('WELCOME.PICK_BODY', { project: project.name }),
     action: t('WELCOME.PICK_ACTION'),
     settings: null,
     onAction: () => {

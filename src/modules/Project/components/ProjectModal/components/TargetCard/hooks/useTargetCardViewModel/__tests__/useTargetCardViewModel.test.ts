@@ -35,7 +35,6 @@ describe('useTargetCardViewModel', () => {
     const { result } = renderHook(() =>
       useTargetCardViewModel({
         name: 'Repositories',
-        text: '',
         lock: null,
         isStacked: true,
         children: null,

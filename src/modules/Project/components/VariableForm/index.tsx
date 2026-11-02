@@ -12,35 +12,40 @@ export const VariableForm: React.FC<IVariableFormProps> = (props) => {
 
   return (
     <div className="variable-form">
-      <div className="variable-form__row">
-        <label className="variable-form__field">
-          <span className="variable-form__label">{t('VARIABLES.NAME')}</span>
-          <Input
-            isMono
-            isAutoFocused={props.isNameFocused}
-            value={props.name}
-            label={t('VARIABLES.NAME')}
-            placeholder={t('VARIABLES.NAME_PLACEHOLDER')}
-            onChange={props.onName}
-          />
-        </label>
-        <label className="variable-form__field">
-          <span className="variable-form__label">{t('VARIABLES.DESCRIPTION')}</span>
-          <Input
-            value={props.description}
-            label={t('VARIABLES.DESCRIPTION')}
-            placeholder={t('VARIABLES.DESCRIPTION_PLACEHOLDER')}
-            onChange={props.onDescription}
-          />
-        </label>
-      </div>
+      {!props.isValueOnly && (
+        <div className="variable-form__row">
+          <label className="variable-form__field">
+            <span className="variable-form__label">{t('VARIABLES.NAME')}</span>
+            <Input
+              isMono
+              isAutoFocused={props.isNameFocused}
+              value={props.name}
+              label={t('VARIABLES.NAME')}
+              placeholder={t('VARIABLES.NAME_PLACEHOLDER')}
+              onChange={props.onName}
+            />
+          </label>
+          <label className="variable-form__field">
+            <span className="variable-form__label">{t('VARIABLES.DESCRIPTION')}</span>
+            <Input
+              value={props.description}
+              label={t('VARIABLES.DESCRIPTION')}
+              placeholder={t('VARIABLES.DESCRIPTION_PLACEHOLDER')}
+              onChange={props.onDescription}
+            />
+          </label>
+        </div>
+      )}
 
       <label className="variable-form__field">
-        <span className="variable-form__label">
+        <span
+          className="variable-form__label"
+          title={props.isValueOnly ? props.description : undefined}
+        >
           <span className="variable-form__lock">
             <Icon name="lock" size={11} />
           </span>
-          {t('VARIABLES.VALUE')}
+          {props.isValueOnly ? props.name : t('VARIABLES.VALUE')}
         </span>
         <Input
           isMono

@@ -27,12 +27,7 @@ export const ImportField: React.FC<IImportFieldProps> = (props) => {
   const { t } = useTranslation();
 
   return (
-    <TargetCard
-      name={t('PROJECT.IMPORT_TITLE')}
-      text={t('PROJECT.IMPORT_TEXT')}
-      lock={null}
-      isStacked
-    >
+    <TargetCard name={t('PROJECT.IMPORT_TITLE')} lock={null} isStacked>
       <div className="import-field">
         {hasFolder ? (
           <>

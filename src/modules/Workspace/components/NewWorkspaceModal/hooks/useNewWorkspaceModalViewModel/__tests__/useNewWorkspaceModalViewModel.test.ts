@@ -2,13 +2,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useNewWorkspaceModalViewModel } from '@/modules/Workspace/components/NewWorkspaceModal/hooks/useNewWorkspaceModalViewModel';
-import {
-  useAppStore,
-  useAssistantStore,
-  useSettingsStore,
-  useSetupStore,
-  useWorkspaceStore,
-} from '@/store';
+import { useAppStore, useSetupStore, useWorkspaceStore } from '@/store';
 
 const PROJECT = {
   id: 'p1',
@@ -35,7 +29,6 @@ describe('useNewWorkspaceModalViewModel', () => {
   it('offers the targets of the project it was opened under', () => {
     const { result } = renderHook(() => useNewWorkspaceModalViewModel());
 
-    expect(result.current.projectName).toBe('Shop · staging');
     expect(result.current.targets).toHaveLength(2);
     expect(result.current.chosenTargetId).toBe('t1');
     expect(
@@ -94,44 +87,5 @@ describe('useNewWorkspaceModalViewModel', () => {
     });
 
     expect(useWorkspaceStore.getState().workspaces[0]?.planKind).toBe('mobile');
-  });
-
-  describe('the linked issue', () => {
-    /**
-     * Um QA novo lia "nenhum tracker conectado" e não tinha caminho até o lugar que
-     * conecta um.
-     */
-    it('takes a QA with no Jira to Settings, Integrations, closing itself', () => {
-      const { result } = renderHook(() => useNewWorkspaceModalViewModel());
-
-      expect(result.current).toMatchObject({
-        canConnect: true,
-        connectLabel: 'Connect Jira',
-      });
-
-      act(() => {
-        result.current.onConnect();
-      });
-
-      expect(useSettingsStore.getState().tab).toBe('integrations');
-      expect(useAppStore.getState().modal).not.toBe('workspace');
-      expect(useAssistantStore.getState().tip?.text).toBe(
-        'Connect Jira here, then come back to create the workspace.',
-      );
-    });
-
-    /** Dizia que nenhum tracker estava conectado mesmo com o Jira conectado. */
-    it('says how to plan from a story once Jira is connected, and offers no connecting', () => {
-      useSetupStore.setState({
-        integrations: [
-          { id: 'jira', account: 'Ana QA', site: 'acme.atlassian.net', connectedAt: '' },
-        ],
-      });
-
-      const { result } = renderHook(() => useNewWorkspaceModalViewModel());
-
-      expect(result.current.canConnect).toBe(false);
-      expect(result.current.issueText).toContain('Name a Jira story in the chat');
-    });
   });
 });

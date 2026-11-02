@@ -37,12 +37,7 @@ export const RepoField: React.FC<IRepoFieldProps> = (props) => {
 
   return (
     <>
-      <TargetCard
-        name={t('PROJECT.CODE_NAME')}
-        text={t('PROJECT.CODE_TEXT')}
-        lock={lock}
-        isStacked
-      >
+      <TargetCard name={t('PROJECT.CODE_NAME')} lock={lock} isStacked>
         <div className="repo-field">
           <AnimatePresence initial={false}>
             {rows.map((row) => (
