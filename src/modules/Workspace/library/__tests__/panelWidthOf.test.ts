@@ -16,6 +16,12 @@ describe('panelWidthOf', () => {
     expect(panelWidthOf({ ...OPEN, width: 900, windowWidth: 900 }).inner).toBe(320);
   });
 
+  it('takes all the room when the chat is alone', () => {
+    expect(
+      panelWidthOf({ ...OPEN, width: 560, windowWidth: 1600, isAlone: true }),
+    ).toEqual({ inner: 1327, outer: 1332 });
+  });
+
   it('stands as the rail alone while shut', () => {
     expect(
       panelWidthOf({

@@ -119,8 +119,6 @@ export const pt: typeof en = {
     SECRET_SEND: 'Enviar assim mesmo',
     YOU: 'Você',
     EMPTY_TITLE: 'O que vamos testar hoje?',
-    EMPTY_BODY:
-      'Pergunte sobre o app, uma run ou um bug, ou diga o que cobrir e o agente escreve os casos. Digite @ para apontar algo e / para um comando.',
     PLACEHOLDER: 'Pergunte ao agente · @ para citar · / para comandos',
     SEND: 'Enviar',
     STOP_ANSWER: 'Parar a resposta',
@@ -216,6 +214,7 @@ export const pt: typeof en = {
     QUESTIONS_BACK: 'Voltar',
     QUESTIONS_NEXT: 'Próxima',
     ASK_MAKE_SECRET_TIP: 'Enviar como segredo',
+    SUGGESTION_WRITE: 'Escrever os casos eu mesmo',
   },
   PLAN: {
     FRAME_OPEN: 'Abrir este frame no Figma',

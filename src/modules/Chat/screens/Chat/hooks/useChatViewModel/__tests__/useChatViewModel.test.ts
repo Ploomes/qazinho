@@ -176,6 +176,7 @@ describe('useChatViewModel', () => {
     expect(result.current.suggestions.map(({ label, text }) => [label, text])).toEqual([
       ['Create a test plan', "Let's create a test plan."],
       ['Test a feature', 'I want to test a specific feature.'],
+      ['Write the cases myself', ''],
       ['Explore the app for 10 min', ''],
       ['Check against a Figma design', ''],
       ['Import tests I already have', ''],

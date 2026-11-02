@@ -54,15 +54,6 @@
   letter-spacing: var(--display-tracking);
 }
 
-.chat__empty-body {
-  max-width: 380px;
-  margin: 0;
-  color: var(--ink2);
-  font: var(--font-ui-lg);
-  text-align: center;
-  text-wrap: pretty;
-}
-
 .chat__suggestions {
   display: flex;
   flex-wrap: wrap;

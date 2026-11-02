@@ -23,6 +23,7 @@ export const Workspace: React.FC = () => {
     dropDesignLabel,
     status,
     statusLabel,
+    hasStatus,
     liveStatus,
     canRun,
     canRunWithAgent,
@@ -78,11 +79,12 @@ export const Workspace: React.FC = () => {
         </div>
 
         <div className="workspace__context">
-          {statusLabel === null ? (
-            <StatusPill status={status} shape="round" />
-          ) : (
-            <StatusPill status={liveStatus} shape="round" label={statusLabel} />
-          )}
+          {hasStatus &&
+            (statusLabel === null ? (
+              <StatusPill status={status} shape="round" />
+            ) : (
+              <StatusPill status={liveStatus} shape="round" label={statusLabel} />
+            ))}
 
           <TargetChip />
 

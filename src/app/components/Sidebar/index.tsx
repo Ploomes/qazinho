@@ -330,36 +330,38 @@ export const Sidebar: React.FC = () => {
                                     </span>
                                     <span className="sidebar__text">
                                       <span className="sidebar__name">{row.name}</span>
-                                      <span
-                                        className={
-                                          row.isRemoving
-                                            ? 'sidebar__detail sidebar__detail--hidden'
-                                            : 'sidebar__detail'
-                                        }
-                                      >
-                                        <span
-                                          className="sidebar__icon"
-                                          style={{
-                                            color: row.tone,
-                                            animation: row.animation,
-                                          }}
-                                        >
-                                          <Icon name={row.icon} />
-                                        </span>
-                                        <span style={{ color: row.tone }}>
-                                          {row.statusLabel}
-                                        </span>
-                                        <span aria-hidden="true">·</span>
+                                      {row.hasDetail && (
                                         <span
                                           className={
-                                            row.isWaiting
-                                              ? 'sidebar__meta sidebar__meta--waiting'
-                                              : 'sidebar__meta'
+                                            row.isRemoving
+                                              ? 'sidebar__detail sidebar__detail--hidden'
+                                              : 'sidebar__detail'
                                           }
                                         >
-                                          {row.meta}
+                                          <span
+                                            className="sidebar__icon"
+                                            style={{
+                                              color: row.tone,
+                                              animation: row.animation,
+                                            }}
+                                          >
+                                            <Icon name={row.icon} />
+                                          </span>
+                                          <span style={{ color: row.tone }}>
+                                            {row.statusLabel}
+                                          </span>
+                                          <span aria-hidden="true">·</span>
+                                          <span
+                                            className={
+                                              row.isWaiting
+                                                ? 'sidebar__meta sidebar__meta--waiting'
+                                                : 'sidebar__meta'
+                                            }
+                                          >
+                                            {row.meta}
+                                          </span>
                                         </span>
-                                      </span>
+                                      )}
                                     </span>
                                   </button>
 

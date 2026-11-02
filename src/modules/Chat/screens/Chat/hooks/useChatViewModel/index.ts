@@ -27,6 +27,7 @@ import { CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { useChatCommand } from '@/modules/Chat/screens/Chat/hooks/useChatCommand';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { formatElapsed } from '@/modules/Device';
+import { addCase } from '@/modules/Plan/library';
 import { secretIn, useVariableActions, withoutSecret } from '@/modules/Project';
 import {
   dayLabelOf,
@@ -96,6 +97,7 @@ export const useChatViewModel = () => {
   const setDesign = useWorkspaceStore((state) => state.setDesign);
   const answerQuestions = useWorkspaceStore((state) => state.answerQuestions);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
+  const setPlan = useWorkspaceStore((state) => state.setPlan);
   const selectRun = useWorkspaceStore((state) => state.selectRun);
   const openBugId = useWorkspaceStore((state) => state.openBugId);
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
@@ -484,6 +486,22 @@ export const useChatViewModel = () => {
           send(t(textKey));
         },
       })),
+      ...(workspace !== null && workspace.plan.length === 0
+        ? [
+            {
+              id: 'CHAT.SUGGESTION_WRITE',
+              label: t('CHAT.SUGGESTION_WRITE'),
+              text: '',
+              onClick: () => {
+                setPlan({
+                  workspaceId: workspace.id,
+                  plan: addCase({ plan: [], used: [] }),
+                });
+                selectTab('plan');
+              },
+            },
+          ]
+        : []),
       {
         id: 'CHAT.SUGGESTION_EXPLORE',
         label: t('CHAT.SUGGESTION_EXPLORE', { minutes: EXPLORATION.minutes }),

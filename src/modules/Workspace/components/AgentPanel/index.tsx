@@ -1,5 +1,9 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { Chat } from '@/modules/Chat';
+import {
+  TargetChip,
+  WorkspaceName,
+} from '@/modules/Workspace/screens/Workspace/components';
 import { Icon, Kbd } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { useAgentPanelViewModel } from './hooks';
@@ -9,6 +13,9 @@ import './styles.css';
 export const AgentPanel: React.FC = () => {
   const {
     hasWorkspace,
+    isChatOnly,
+    name,
+    onRename,
     isOpen,
     title,
     railLabel,
@@ -85,16 +92,25 @@ export const AgentPanel: React.FC = () => {
 
             <div className="agent-panel__inner">
               <header className="agent-panel__header">
-                <span className="agent-panel__title">{title}</span>
-                <button
-                  type="button"
-                  className="agent-panel__collapse"
-                  aria-label={hideLabel}
-                  onClick={onToggle}
-                >
-                  {collapseLabel}
-                  {collapseCombo !== '' && <Kbd combo={collapseCombo} />}
-                </button>
+                {isChatOnly ? (
+                  <>
+                    <WorkspaceName name={name} onRename={onRename} />
+                    <TargetChip />
+                  </>
+                ) : (
+                  <>
+                    <span className="agent-panel__title">{title}</span>
+                    <button
+                      type="button"
+                      className="agent-panel__collapse"
+                      aria-label={hideLabel}
+                      onClick={onToggle}
+                    >
+                      {collapseLabel}
+                      {collapseCombo !== '' && <Kbd combo={collapseCombo} />}
+                    </button>
+                  </>
+                )}
               </header>
 
               <Chat />

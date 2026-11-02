@@ -117,8 +117,6 @@ export const en = {
     SECRET_SEND: 'Send anyway',
     YOU: 'You',
     EMPTY_TITLE: 'What are we testing today?',
-    EMPTY_BODY:
-      'Ask about the app, a run or a bug, or say what to cover and the agent drafts the cases. Type @ to point at something, and / for a command.',
     PLACEHOLDER: 'Ask the agent · @ to cite · / for commands',
     SEND: 'Send',
     STOP_ANSWER: 'Stop the answer',
@@ -213,6 +211,7 @@ export const en = {
     QUESTIONS_BACK: 'Back',
     QUESTIONS_NEXT: 'Next',
     ASK_MAKE_SECRET_TIP: 'Send as a secret',
+    SUGGESTION_WRITE: 'Write the cases myself',
   },
   PLAN: {
     FRAME_OPEN: 'Open this frame in Figma',

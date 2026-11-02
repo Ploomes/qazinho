@@ -5,6 +5,7 @@ import { useBuildEvents } from '@/modules/Build';
 import { useIslandSync } from '@/modules/Island';
 import { useOutsideCalls } from '@/modules/Outside';
 import { useProLinks, useProSync } from '@/modules/Pro';
+import { useChatOnly } from '@/modules/Workspace';
 import { AppWindow, Platform } from '@/services';
 import { SHELL } from '@/shared/constants';
 import {
@@ -21,6 +22,7 @@ import {
 import { useAppStore, useProStore, useSettingsStore, useVariablesStore } from '@/store';
 
 export const useAppViewModel = () => {
+  const isChatOnly = useChatOnly();
   const theme = useAppStore((state) => state.theme);
   const screen = useAppStore((state) => state.screen);
   const projects = useAppStore((state) => state.projects);
@@ -102,6 +104,7 @@ export const useAppViewModel = () => {
     hasSidebar: projects.length > 0 && screen !== 'settings',
     isWelcome: screen !== 'settings' && (screen === 'welcome' || projects.length === 0),
     isWorkspace: screen === 'workspace',
+    isChatOnly,
     isSettings: screen === 'settings',
   };
 };

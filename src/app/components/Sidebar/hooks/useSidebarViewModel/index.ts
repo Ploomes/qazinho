@@ -137,6 +137,7 @@ export const useSidebarViewModel = () => {
         }),
         icon: SIDEBAR_STATUS[shown].icon,
         statusLabel: t(STATUS[shown].labelKey),
+        hasDetail: shown !== 'idle' || workspace.runs.length > 0,
         tone: SIDEBAR_STATUS[shown].tone,
         animation: SIDEBAR_STATUS[shown].animation,
         isSelected: workspace.id === selectedWorkspaceId,

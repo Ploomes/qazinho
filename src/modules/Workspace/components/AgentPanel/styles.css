@@ -116,3 +116,20 @@
     padding-left: var(--space-5);
   }
 }
+
+.agent-panel--alone .agent-panel__handle {
+  pointer-events: none;
+}
+
+.agent-panel--alone .agent-panel__header {
+  justify-content: flex-start;
+  gap: var(--space-5);
+}
+
+.agent-panel--alone .chat__messages,
+.agent-panel--alone .chat__empty,
+.agent-panel--alone .composer {
+  align-self: center;
+  width: 100%;
+  max-width: 760px;
+}

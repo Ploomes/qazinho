@@ -84,6 +84,7 @@ export const useWorkspaceViewModel = () => {
       : isPaused
         ? ('paused' as const)
         : ('running' as const),
+    hasStatus: isLive || (workspace?.status ?? 'idle') !== 'idle',
     statusLabel: !isLive
       ? null
       : workspace?.isExploring === true

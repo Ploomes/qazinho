@@ -17,6 +17,7 @@ export const App: React.FC = () => {
     isOnboarding,
     hasSidebar,
     isWelcome,
+    isChatOnly,
     isWorkspace,
     isSettings,
     modal,
@@ -40,7 +41,7 @@ export const App: React.FC = () => {
           {isOnboarding && <Onboarding />}
           {!isOnboarding && hasSidebar && <Sidebar />}
           {!isOnboarding && isWelcome && <Welcome />}
-          {!isOnboarding && !isWelcome && isWorkspace && <Workspace />}
+          {!isOnboarding && !isWelcome && isWorkspace && !isChatOnly && <Workspace />}
           {!isOnboarding && !isWelcome && isWorkspace && <AgentPanel />}
           {!isOnboarding && !isWelcome && isSettings && <Settings />}
         </div>

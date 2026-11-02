@@ -9,6 +9,7 @@ export interface ISidebarWorkspaceRow {
   meta: string;
   icon: IconName;
   statusLabel: string;
+  hasDetail: boolean;
   tone: string;
   animation: string;
   isSelected: boolean;
