@@ -10,6 +10,8 @@ export const useIslandViewModel = () => {
   const { t, i18n } = useTranslation();
   const [frame, setFrame] = useState<IIslandFrame | null>(null);
   const [isHovering, setHovering] = useState(false);
+  const [calling, setCalling] = useState<string | null>(null);
+  const [flash, setFlash] = useState(0);
   const pill = useRef<HTMLDivElement>(null);
   const isOver = useRef(false);
 
@@ -118,11 +120,19 @@ export const useIslandViewModel = () => {
             }
           : null;
   const workspaceId = state.kind === 'idle' ? '' : state.workspaceId;
+  const call = state.kind === 'asking' ? `${state.workspaceId}/${state.question}` : null;
+
+  if (call !== calling) {
+    setCalling(call);
+
+    if (call !== null) setFlash((count) => count + 1);
+  }
 
   return {
     shown,
     isOpen,
     pill,
+    flash,
     style: {
       '--island-bar': `${String(bar)}px`,
       '--island-notch': `${String(notch)}px`,

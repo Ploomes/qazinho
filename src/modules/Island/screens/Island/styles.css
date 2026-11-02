@@ -148,6 +148,32 @@
   gap: var(--space-3);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .island__flash {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--attn);
+    opacity: 0;
+    pointer-events: none;
+    animation: island-flash 0.9s var(--ease) 1;
+  }
+}
+
+@keyframes island-flash {
+  0% {
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 0.35;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
 @keyframes island-pulse {
   0%,
   100% {

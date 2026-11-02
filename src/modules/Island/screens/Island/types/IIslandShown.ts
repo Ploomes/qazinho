@@ -2,8 +2,8 @@ import type { IconName } from '@/shared/components/atoms/Icon/types';
 import type { InternMood } from '@/shared/components/atoms/Intern/types';
 
 /**
- * O que a ilha mostra de uma vez: o Estagiário e o contador nas orelhas do notch e, aberta, o título, a
- * linha de estado, o detalhe, o progresso e os botões.
+ * O que a ilha mostra: o Estagiário e o contador nas orelhas e, aberta, o título, o
+ * estado, o detalhe, o progresso e os botões.
  */
 export interface IIslandShown {
   count: string;

@@ -129,6 +129,38 @@ describe('useIslandViewModel', () => {
     });
   });
 
+  it('flashes once when the agent starts waiting, and again for a new question only', () => {
+    const { result } = renderHook(() => useIslandViewModel());
+    const asking = (question: string): IIslandFrame => ({
+      ...NOTCHED,
+      island: {
+        language: 'en',
+        state: { kind: 'asking', workspaceId: 'w1', name: 'Checkout', question },
+      },
+    });
+
+    act(() => {
+      pushFrame(running);
+    });
+
+    expect(result.current.flash).toBe(0);
+
+    act(() => {
+      pushFrame(asking('Which plan?'));
+    });
+    act(() => {
+      pushFrame(asking('Which plan?'));
+    });
+
+    expect(result.current.flash).toBe(1);
+
+    act(() => {
+      pushFrame(asking('Which size?'));
+    });
+
+    expect(result.current.flash).toBe(2);
+  });
+
   it('says how a run ended, with the failures first', () => {
     const { result } = renderHook(() => useIslandViewModel());
 

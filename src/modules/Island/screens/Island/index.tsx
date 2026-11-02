@@ -9,7 +9,7 @@ import './styles.css';
  * orelhas ao lado do notch, e abre abaixo dele quando o mouse chega.
  */
 export const Island: React.FC = () => {
-  const { shown, isOpen, pill, style, size, internSize, onOpen, onStop } =
+  const { shown, isOpen, pill, flash, style, size, internSize, onOpen, onStop } =
     useIslandViewModel();
 
   return (
@@ -23,6 +23,7 @@ export const Island: React.FC = () => {
             animate={size}
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
+            {flash > 0 && <span key={flash} className="island__flash" />}
             <div className="island__bar">
               <span className="island__left">
                 <Intern mood={shown.mood} size={internSize} isFigure />
