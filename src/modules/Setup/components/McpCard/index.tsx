@@ -1,10 +1,8 @@
 import type { IMcpCardProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
-import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { StatusPill } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
-import { McpSignIn } from './components';
+import { McpControl } from './components';
 import { useMcpCardViewModel } from './hooks';
 import './styles.css';
 
@@ -13,25 +11,8 @@ import './styles.css';
  * precisa em seguida.
  */
 export const McpCard: React.FC<IMcpCardProps> = (props) => {
-  const {
-    isConnected,
-    text,
-    needs,
-    pill,
-    statusLabel,
-    action,
-    isQuiet,
-    isBusy,
-    error,
-    note,
-    agent,
-    signIn,
-    onAction,
-    onCancelSignIn,
-    onCloseSignIn,
-    onRetrySignIn,
-    onSignInInTerminal,
-  } = useMcpCardViewModel(props);
+  const view = useMcpCardViewModel(props);
+  const { isConnected, text, needs, error, note } = view;
   const { t } = useTranslation();
 
   return (
@@ -44,42 +25,7 @@ export const McpCard: React.FC<IMcpCardProps> = (props) => {
           <span className="mcp-card__name">{props.server.name}</span>
           <span className="mcp-card__about">{text}</span>
         </span>
-        <AnimatePresence initial={false} mode="popLayout">
-          <motion.span
-            key={pill}
-            className="mcp-card__pill"
-            layout="position"
-            initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.94 }}
-            transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
-          >
-            <StatusPill status={pill} label={statusLabel} />
-          </motion.span>
-        </AnimatePresence>
-        <AnimatePresence initial={false}>
-          {action !== null && (
-            <motion.button
-              key="action"
-              type="button"
-              className={
-                isQuiet ? 'mcp-card__action mcp-card__action--quiet' : 'mcp-card__action'
-              }
-              disabled={isBusy}
-              layout="position"
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
-              transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
-              onClick={() => {
-                void onAction();
-              }}
-            >
-              {isBusy && <span className="mcp-card__spinner" aria-hidden="true" />}
-              {action}
-            </motion.button>
-          )}
-        </AnimatePresence>
+        <McpControl server={props.server} view={view} />
       </div>
 
       <div className="mcp-card__body">
@@ -113,24 +59,6 @@ export const McpCard: React.FC<IMcpCardProps> = (props) => {
           )}
         </AnimatePresence>
       </div>
-
-      {createPortal(
-        <AnimatePresence>
-          {signIn !== null && (
-            <McpSignIn
-              key="sign-in"
-              server={props.server}
-              agent={agent}
-              progress={signIn}
-              onCancel={onCancelSignIn}
-              onClose={onCloseSignIn}
-              onRetry={onRetrySignIn}
-              onUseTerminal={onSignInInTerminal}
-            />
-          )}
-        </AnimatePresence>,
-        document.body,
-      )}
     </div>
   );
 };

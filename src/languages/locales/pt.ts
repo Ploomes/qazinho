@@ -785,7 +785,7 @@ export const pt: typeof en = {
     DEVICES_NOTE:
       'O QAzinho nunca baixa SDK, emulador ou Xcode. Ele encontra o que já está aqui e diz o que falta.',
     MCPS_NOTE:
-      'Eles ficam no seu próprio agente, não no QAzinho: você faz o login lá, e o QAzinho nunca vê esse login.',
+      'Os servidores MCP ficam no seu próprio agente, não no QAzinho: você faz o login lá, e o QAzinho nunca vê esse login.',
     INTEGRATIONS_NOTE: 'Nada é enviado sozinho. Você escolhe a run, o bug e o momento.',
     THEME_LIGHT: 'Papel',
     THEME_DARK: 'Noite',
@@ -844,9 +844,8 @@ export const pt: typeof en = {
     FIGMA_NEEDS:
       'O MCP do Figma no {{agent}}, o seu agente, com login na sua conta do Figma. O QAzinho adiciona ele lá; você faz o login uma vez.',
     ORG_TEXT:
-      'Deixa o seu agente de código ler os planos, as runs, os bugs e o CI das suas orgs, e rodá-los quando você pedir, com o seu papel em cada org.',
-    ORG_NEEDS:
-      'O servidor do QAzinho no {{agent}}, o seu agente, com login na sua conta. O QAzinho adiciona ele lá; você diz sim uma vez no navegador.',
+      'Lê os planos, as runs, os bugs e o CI das suas orgs, e os roda quando você pedir, com o seu papel em cada org. Funciona com o QAzinho fechado.',
+    ORG_NEEDS: 'O QAzinho o adiciona ao {{agent}}, e você diz sim uma vez no navegador.',
     CHECKING: 'verificando',
     CONNECTED: 'conectado',
     NEEDS_SIGN_IN: 'falta o login',
@@ -1398,7 +1397,11 @@ export const pt: typeof en = {
     EYEBROW: 'Servidor MCP do QAzinho',
     NAME: 'QAzinho no seu agente de código',
     ABOUT:
-      'Deixe o agente de código com que você trabalha rodar seus planos, ler os resultados e os bugs, e sugerir casos. Só neste computador, enquanto o QAzinho está aberto.',
+      'Deixe o agente de código com que você trabalha rodar seus testes e ler o que eles acharam, do seu próprio editor.',
+    HERE_TITLE: 'Neste computador',
+    HERE_ABOUT:
+      'Roda seus planos aqui, lê os resultados e os bugs, e sugere casos. Só enquanto o QAzinho está aberto.',
+    ORG_TITLE: 'Nas suas orgs',
     SWITCH: 'Ligar',
     CHECKING: 'Procurando seus agentes…',
     NO_AGENTS:

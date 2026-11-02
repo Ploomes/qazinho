@@ -39,6 +39,26 @@
   min-width: 0;
 }
 
+.outside-card__reach {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--line2);
+}
+
+.outside-card__reach-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.outside-card__reach-name {
+  color: var(--ink);
+  font: var(--font-ui-sm);
+  font-weight: 600;
+}
+
 .outside-card__name {
   color: var(--ink);
   font: var(--font-ui-md);

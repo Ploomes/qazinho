@@ -779,7 +779,7 @@ export const en = {
     DEVICES_NOTE:
       'QAzinho never downloads an SDK, an emulator or Xcode. It finds what is already here and says what is missing.',
     MCPS_NOTE:
-      'These live in your own agent, not in QAzinho: you sign in there, and QAzinho never sees the sign-in.',
+      'MCP servers live in your own agent, not in QAzinho: you sign in there, and QAzinho never sees the sign-in.',
     INTEGRATIONS_NOTE:
       'Nothing is sent anywhere on its own. You pick the run, the bug and the moment.',
     THEME_LIGHT: 'Paper',
@@ -839,9 +839,8 @@ export const en = {
     FIGMA_NEEDS:
       "Figma's MCP server in {{agent}}, your agent, signed in to your Figma account. QAzinho adds it there; you sign in once.",
     ORG_TEXT:
-      'Lets your coding agent read the plans, runs, bugs and CI of your orgs, and start them when you ask, with your role in each org.',
-    ORG_NEEDS:
-      'The QAzinho server in {{agent}}, your agent, signed in to your account. QAzinho adds it there; you say yes once in the browser.',
+      'Reads the plans, runs, bugs and CI of your orgs, and starts them when you ask, with your role in each org. Works with QAzinho closed.',
+    ORG_NEEDS: 'QAzinho adds it to {{agent}}, and you say yes once in the browser.',
     CHECKING: 'checking',
     CONNECTED: 'connected',
     NEEDS_SIGN_IN: 'needs sign-in',
@@ -1393,7 +1392,11 @@ export const en = {
     EYEBROW: "QAzinho's MCP server",
     NAME: 'QAzinho in your coding agent',
     ABOUT:
-      'Let the coding agent you work with run your plans, read the results and the bugs, and suggest cases. Only on this computer, while QAzinho is open.',
+      'Let the coding agent you work with run your tests and read what they found, right from your editor.',
+    HERE_TITLE: 'On this computer',
+    HERE_ABOUT:
+      'Runs your plans here, reads the results and the bugs, and suggests cases. Only while QAzinho is open.',
+    ORG_TITLE: 'In your orgs',
     SWITCH: 'Turn on',
     CHECKING: 'Looking for your agents…',
     NO_AGENTS:

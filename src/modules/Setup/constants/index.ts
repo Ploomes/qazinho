@@ -3,5 +3,6 @@ export * from './GITHUB_FAILURE_KEYS';
 export * from './INTEGRATIONS';
 export * from './JIRA_FAILURE_KEYS';
 export * from './MCP_SERVERS';
+export * from './ORG_MCP_SERVER';
 export * from './ONBOARDING_STEPS';
 export * from './SETUP_LINKS';

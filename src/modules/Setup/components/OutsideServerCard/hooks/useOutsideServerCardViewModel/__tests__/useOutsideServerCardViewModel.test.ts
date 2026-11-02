@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
 import { useOutsideServerCardViewModel } from '@/modules/Setup/components/OutsideServerCard/hooks/useOutsideServerCardViewModel';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
+import { useProStore, useSetupStore } from '@/store';
 
 const CLAUDE: IOutsideAgent = { id: 'claude-code', name: 'Claude Code', isAdded: false };
 
@@ -50,6 +51,66 @@ afterEach(() => {
 });
 
 describe('useOutsideServerCardViewModel', () => {
+  describe('the two reaches', () => {
+    const SIGNED_IN = {
+      isSignedIn: true as const,
+      account: { email: 'ana@loja.test', name: 'Ana' },
+      machine: { id: 'm1', name: 'Mac' },
+      orgs: [],
+      isReachable: true,
+    };
+
+    afterEach(() => {
+      useProStore.setState({ status: null });
+      useSetupStore.setState({ mcpServers: null });
+    });
+
+    /** O app grátis nunca fala de uma org: quem não tem conta não vê o servidor dela. */
+    it('offers the orgs only to who signed in to an account', async () => {
+      mainWith({ server: { isOn: false, isBusy: false } });
+      useProStore.setState({ status: { isSignedIn: false, canKeepToken: true } });
+
+      const { result } = renderHook(() => useOutsideServerCardViewModel());
+
+      expect(result.current.hasOrg).toBe(false);
+
+      act(() => {
+        useProStore.setState({ status: SIGNED_IN });
+      });
+
+      await waitFor(() => {
+        expect(result.current.hasOrg).toBe(true);
+      });
+    });
+
+    it('lights up for either reach', async () => {
+      mainWith({ server: { isOn: false, isBusy: false } });
+      useProStore.setState({ status: SIGNED_IN });
+
+      const { result } = renderHook(() => useOutsideServerCardViewModel());
+
+      expect(result.current.isLit).toBe(false);
+
+      act(() => {
+        useSetupStore.setState({ mcpServers: [{ id: 'org', state: 'connected' }] });
+      });
+
+      await waitFor(() => {
+        expect(result.current.isLit).toBe(true);
+      });
+    });
+
+    it('stays dark for an org left behind by signing out', () => {
+      mainWith({ server: { isOn: false, isBusy: false } });
+      useProStore.setState({ status: { isSignedIn: false, canKeepToken: true } });
+      useSetupStore.setState({ mcpServers: [{ id: 'org', state: 'connected' }] });
+
+      const { result } = renderHook(() => useOutsideServerCardViewModel());
+
+      expect(result.current.isLit).toBe(false);
+    });
+  });
+
   it('does NOT ask the agents while the server is off', async () => {
     mainWith({ server: { isOn: false, isBusy: false } });
 
