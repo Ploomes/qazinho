@@ -254,7 +254,7 @@ export default config(
 
   {
     files: ['**/*.class.ts', 'src/**/hooks/**/index.ts', 'src/**/*.tsx'],
-    ignores: ['src/index.tsx', 'src/**/__tests__/**'],
+    ignores: ['src/index.tsx', 'src/island.tsx', 'src/**/__tests__/**'],
     rules: {
       'no-restricted-syntax': [
         'error',

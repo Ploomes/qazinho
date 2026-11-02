@@ -754,6 +754,9 @@ export const en = {
     RUN_ALERT: 'When a run ends',
     RUN_ALERT_SYSTEM: 'Notify me, with sound',
     RUN_ALERT_APP: 'Only inside QAzinho',
+    ISLAND: 'Show the island at the top of the screen',
+    ISLAND_NOTE:
+      'While a run goes, or the agent waits for you, a small island by the notch shows it. On a screen with no notch it hangs from the top edge.',
     RUN_ALERT_NOTE:
       'Away from QAzinho, a notification with its sound calls you back, and the app’s icon counts the runs you have not seen yet.',
     BACK: 'Back to app',
@@ -1379,6 +1382,18 @@ export const en = {
     MOOD_THINKING: 'thinking',
     MOOD_BROKEN: 'something broke',
     MOOD_SLEEPING: 'nothing to do',
+  },
+  ISLAND: {
+    RUNNING: 'Running',
+    PAUSED: 'Paused',
+    EXPLORING: 'Exploring the app',
+    ASKING: 'The agent is waiting for you',
+    ENDED_PASSED_ONE: '1 step passed',
+    ENDED_PASSED: '{{passed}} steps passed',
+    ENDED_FAILED: '{{passed}} passed · {{failed}} failed',
+    OPEN: 'Open',
+    ANSWER: 'Answer',
+    STOP: 'Stop',
   },
   STATUS: {
     RUNNING: 'running',

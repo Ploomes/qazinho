@@ -15,6 +15,7 @@ export interface ISettingsStore {
   hasOnboarded: boolean;
   runAlert: RunAlert;
   replayNetwork: boolean;
+  isIslandOn: boolean;
   isSidebarShut: boolean;
   videoKeepDays: number | null;
   selectTab: (tab: SettingsTab) => void;
@@ -26,6 +27,7 @@ export interface ISettingsStore {
   finishOnboarding: () => void;
   selectRunAlert: (runAlert: RunAlert) => void;
   showReplayNetwork: (isOn: boolean) => void;
+  showIsland: (isOn: boolean) => void;
   toggleSidebar: () => void;
   keepVideosFor: (days: number | null) => void;
 }

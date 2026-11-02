@@ -18,6 +18,7 @@ export const useSettingsStore = create<ISettingsStore>()(
       hasOnboarded: false,
       runAlert: 'system',
       replayNetwork: false,
+      isIslandOn: true,
       isSidebarShut: false,
       videoKeepDays: 30,
 
@@ -44,6 +45,8 @@ export const useSettingsStore = create<ISettingsStore>()(
 
       showReplayNetwork: (replayNetwork) => set({ replayNetwork }),
 
+      showIsland: (isIslandOn) => set({ isIslandOn }),
+
       toggleSidebar: () => set((state) => ({ isSidebarShut: !state.isSidebarShut })),
 
       keepVideosFor: (videoKeepDays) => set({ videoKeepDays }),
@@ -61,6 +64,7 @@ export const useSettingsStore = create<ISettingsStore>()(
           | 'hasOnboarded'
           | 'runAlert'
           | 'replayNetwork'
+          | 'isIslandOn'
           | 'isSidebarShut'
           | 'videoKeepDays'
         >,
@@ -81,6 +85,7 @@ export const useSettingsStore = create<ISettingsStore>()(
         hasOnboarded,
         runAlert,
         replayNetwork,
+        isIslandOn,
         isSidebarShut,
         videoKeepDays,
       }) => ({
@@ -91,6 +96,7 @@ export const useSettingsStore = create<ISettingsStore>()(
         hasOnboarded,
         runAlert,
         replayNetwork,
+        isIslandOn,
         isSidebarShut,
         videoKeepDays,
       }),

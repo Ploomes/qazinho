@@ -8,7 +8,7 @@ import {
   McpCard,
   ToolCard,
 } from '@/modules/Setup';
-import { Button, Icon, Logo, Tag, Wordmark } from '@/shared/components/atoms';
+import { Button, Icon, Logo, Switch, Tag, Wordmark } from '@/shared/components/atoms';
 import { StorageSettings } from './components';
 import { useSettingsViewModel } from './hooks';
 import './styles.css';
@@ -50,6 +50,9 @@ export const Settings: React.FC = () => {
     onSelectTheme,
     onSelectLanguage,
     onSelectRunAlert,
+    islandLabel,
+    isIslandOn,
+    onIslandChange,
     onEditKeybind,
   } = useSettingsViewModel();
   const { t } = useTranslation();
@@ -313,6 +316,11 @@ export const Settings: React.FC = () => {
                   ))}
                 </div>
                 <p className="settings__note">{t('SETTINGS.RUN_ALERT_NOTE')}</p>
+              </div>
+
+              <div className="settings__section">
+                <Switch label={islandLabel} isOn={isIslandOn} onChange={onIslandChange} />
+                <p className="settings__note">{t('SETTINGS.ISLAND_NOTE')}</p>
               </div>
             </div>
           )}

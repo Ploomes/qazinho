@@ -1,0 +1,150 @@
+.island {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: hidden;
+  color: var(--ink);
+  font: var(--font-ui-md);
+  user-select: none;
+}
+
+.island__pill {
+  position: relative;
+  overflow: hidden;
+  background: var(--notch-black);
+  border-radius: 0;
+}
+
+.island__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--island-bar);
+  padding: 0 var(--space-4);
+}
+
+.island__left {
+  min-width: var(--island-ear);
+  color: var(--ink2);
+  font: var(--font-mono-xs);
+}
+
+.island__notch {
+  flex: 1;
+  min-width: var(--island-notch);
+}
+
+.island__icon {
+  display: inline-flex;
+}
+
+.island__icon--running {
+  color: var(--lime);
+  animation: island-pulse 1.4s ease-in-out infinite;
+}
+
+.island__icon--asking {
+  color: var(--attn);
+  animation: island-pulse 1s ease-in-out infinite;
+}
+
+.island__icon--paused {
+  color: var(--ink3);
+}
+
+.island__icon--passed {
+  color: var(--pass);
+}
+
+.island__icon--failed {
+  color: var(--fail);
+}
+
+.island__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-6) var(--space-5);
+}
+
+.island__title {
+  overflow: hidden;
+  color: var(--ink);
+  font: var(--font-ui-md);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.island__line {
+  font: var(--font-mono-xs);
+}
+
+.island__line--running {
+  color: var(--lime);
+}
+
+.island__line--asking {
+  color: var(--attn);
+}
+
+.island__line--paused {
+  color: var(--ink3);
+}
+
+.island__line--passed {
+  color: var(--pass);
+}
+
+.island__line--failed {
+  color: var(--fail);
+}
+
+.island__detail {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.island__track {
+  height: var(--space-2);
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--raise2);
+}
+
+.island__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--lime);
+  transition: width var(--dur) var(--ease);
+}
+
+.island__actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+@keyframes island-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .island__icon--running,
+  .island__icon--asking {
+    animation: none;
+  }
+}

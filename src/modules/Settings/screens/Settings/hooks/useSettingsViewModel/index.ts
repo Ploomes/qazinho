@@ -42,6 +42,8 @@ export const useSettingsViewModel = () => {
   const selectLanguage = useSettingsStore((state) => state.selectLanguage);
   const runAlert = useSettingsStore((state) => state.runAlert);
   const selectRunAlert = useSettingsStore((state) => state.selectRunAlert);
+  const isIslandOn = useSettingsStore((state) => state.isIslandOn);
+  const showIsland = useSettingsStore((state) => state.showIsland);
   const landMcpServers = useSetupStore((state) => state.landMcpServers);
   const managers = useSetupStore((state) => state.managers);
   const isMac = Platform.isMac();
@@ -239,6 +241,9 @@ export const useSettingsViewModel = () => {
     onSelectTheme: setTheme,
     onSelectLanguage: selectLanguage,
     onSelectRunAlert: selectRunAlert,
+    islandLabel: t('SETTINGS.ISLAND'),
+    isIslandOn,
+    onIslandChange: showIsland,
     onEditKeybind: (keybindId: string) => {
       editKeybind(editingKeybindId === keybindId ? null : keybindId);
     },

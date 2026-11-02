@@ -760,6 +760,9 @@ export const pt: typeof en = {
     RUN_ALERT: 'Quando uma run terminar',
     RUN_ALERT_SYSTEM: 'Notificar, com som',
     RUN_ALERT_APP: 'Só dentro do QAzinho',
+    ISLAND: 'Mostrar a ilha no topo da tela',
+    ISLAND_NOTE:
+      'Enquanto uma run anda, ou o agente espera por você, uma ilhazinha junto ao notch mostra isso. Numa tela sem notch ela fica pendurada na borda de cima.',
     RUN_ALERT_NOTE:
       'Longe do QAzinho, uma notificação com som te chama de volta, e o ícone do app conta as runs que você ainda não viu.',
     BACK: 'Voltar ao app',
@@ -1384,6 +1387,18 @@ export const pt: typeof en = {
     MOOD_THINKING: 'pensando',
     MOOD_BROKEN: 'algo quebrou',
     MOOD_SLEEPING: 'nada para fazer',
+  },
+  ISLAND: {
+    RUNNING: 'Rodando',
+    PAUSED: 'Pausada',
+    EXPLORING: 'Explorando o app',
+    ASKING: 'O agente espera por você',
+    ENDED_PASSED_ONE: '1 passo passou',
+    ENDED_PASSED: '{{passed}} passos passaram',
+    ENDED_FAILED: '{{passed}} passaram · {{failed}} falharam',
+    OPEN: 'Abrir',
+    ANSWER: 'Responder',
+    STOP: 'Parar',
   },
   STATUS: {
     RUNNING: 'rodando',

@@ -33,6 +33,7 @@ export default defineConfig({
         input: {
           index: fileURLToPath(new URL('./src/index.html', import.meta.url)),
           recorder: fileURLToPath(new URL('./src/recorder.html', import.meta.url)),
+          island: fileURLToPath(new URL('./src/island.html', import.meta.url)),
         },
       },
     },
