@@ -85,6 +85,8 @@
 .island__body {
   position: relative;
   display: flex;
+  width: var(--island-open);
+  margin-left: calc((100% - var(--island-open)) / 2);
   flex-direction: column;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-6) var(--space-5);

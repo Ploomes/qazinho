@@ -15,6 +15,8 @@ export const useIslandViewModel = () => {
   const [seen, setSeen] = useState<string[]>([]);
   const [flash, setFlash] = useState(0);
   const pill = useRef<HTMLDivElement>(null);
+  const body = useRef<HTMLDivElement>(null);
+  const [bodyHeight, setBodyHeight] = useState(0);
   const isOver = useRef(false);
 
   useEffect(
@@ -124,6 +126,24 @@ export const useIslandViewModel = () => {
     ISLAND_SHAPE.minFlatWidthPx,
     notch + earWidthOf(shown?.count ?? '') * 2,
   );
+  const hasBody = isOpen && shown !== null;
+
+  useEffect(() => {
+    const open = body.current;
+
+    if (!hasBody || open === null) return;
+
+    const watch = new ResizeObserver(() => {
+      setBodyHeight(open.offsetHeight);
+    });
+
+    watch.observe(open);
+
+    return () => {
+      watch.disconnect();
+    };
+  }, [hasBody]);
+
   const workspaceId =
     state.kind === 'running' || state.kind === 'ended' ? state.workspaceId : '';
   const keys = questions.map(questionKeyOf);
@@ -139,18 +159,20 @@ export const useIslandViewModel = () => {
     ask: ask.view,
     isOpen,
     pill,
+    body,
     pillClassName: isOpen ? 'island__pill island__pill--open' : 'island__pill',
     flash,
     style: {
       '--island-bar': `${String(bar)}px`,
       '--island-notch': `${String(notch)}px`,
       '--island-pad': `${String(ISLAND_SHAPE.padPx)}px`,
+      '--island-open': `${String(ISLAND_SHAPE.openWidthPx)}px`,
       '--island-options': `${String(ISLAND_SHAPE.optionsMaxPx)}px`,
     } as CSSProperties,
     internSize: ISLAND_SHAPE.internPx,
     size: {
       width: isOpen ? ISLAND_SHAPE.openWidthPx : closedWidth,
-      height: isOpen ? 'auto' : bar,
+      height: isOpen ? bar + bodyHeight : bar,
       borderBottomLeftRadius: isOpen
         ? ISLAND_SHAPE.openRadiusPx
         : ISLAND_SHAPE.closedRadiusPx,

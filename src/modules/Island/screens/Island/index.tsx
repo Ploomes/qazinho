@@ -15,6 +15,7 @@ export const Island: React.FC = () => {
     ask,
     isOpen,
     pill,
+    body,
     pillClassName,
     flash,
     style,
@@ -52,6 +53,7 @@ export const Island: React.FC = () => {
               {isOpen && (
                 <motion.div
                   key="body"
+                  ref={body}
                   className="island__body"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}

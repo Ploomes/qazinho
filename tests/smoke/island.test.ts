@@ -41,6 +41,45 @@ async function hover(isOver: boolean) {
   await later(600);
 }
 
+/** A altura do pill a cada quadro enquanto algo acontece com ele. */
+async function heightsDuring(action: () => Promise<void>): Promise<number[]> {
+  await island.evaluate(() => {
+    const web = globalThis as unknown as {
+      document: {
+        querySelector: (selector: string) => {
+          getBoundingClientRect: () => { height: number };
+        } | null;
+      };
+      requestAnimationFrame: (next: () => void) => void;
+      heights: number[];
+      isWatching: boolean;
+    };
+
+    web.heights = [];
+    web.isWatching = true;
+
+    const look = () => {
+      if (!web.isWatching) return;
+
+      const box = web.document.querySelector('.island__pill')?.getBoundingClientRect();
+
+      web.heights.push(Math.round(box?.height ?? 0));
+      web.requestAnimationFrame(look);
+    };
+
+    web.requestAnimationFrame(look);
+  });
+  await action();
+
+  return island.evaluate(() => {
+    const web = globalThis as unknown as { heights: number[]; isWatching: boolean };
+
+    web.isWatching = false;
+
+    return web.heights;
+  });
+}
+
 async function windowFacts() {
   return app.evaluate(({ BrowserWindow }) => {
     const open = BrowserWindow.getAllWindows().find((one) =>
@@ -154,6 +193,54 @@ describe('the island', () => {
 
     expect((field?.y ?? Infinity) + (field?.height ?? 0)).toBeLessThan(pillBottom);
     expect(pillBottom).toBeLessThanOrEqual(bounds?.height ?? 0);
+    await hover(false);
+  });
+
+  /**
+   * Medindo o conteúdo com o pill ainda estreito, o texto quebrava em mais linhas: a altura
+   * passava da final e voltava, um flick, e ao fechar pulava de novo.
+   */
+  it('opens and closes without passing its final height', async () => {
+    await show({
+      kind: 'asking',
+      questions: [
+        question('flick', {
+          question: 'Qual tamanho devo escolher para esta camiseta azul da loja? '.repeat(
+            3,
+          ),
+        }),
+      ],
+    });
+
+    const opening = await heightsDuring(() => hover(true));
+    const closing = await heightsDuring(() => hover(false));
+    const closed = opening[0] ?? 0;
+    const open = opening.at(-1) ?? 0;
+
+    expect(open).toBeGreaterThan(closed);
+    expect(Math.max(...opening)).toBeLessThanOrEqual(open + 1);
+    expect(closing.at(-1)).toBe(closed);
+    expect(Math.min(...closing)).toBeGreaterThanOrEqual(closed);
+  });
+
+  it('animates its height when the arrows land on a question of another size', async () => {
+    await show({
+      kind: 'asking',
+      questions: [
+        question('short', { question: 'Qual tamanho?' }),
+        question('tall', {
+          question: 'Qual endereço usar neste pedido da loja de camisetas? '.repeat(4),
+        }),
+      ],
+    });
+    await hover(true);
+
+    const moving = await heightsDuring(async () => {
+      await island.getByRole('button', { name: 'Próxima pergunta' }).click();
+      await later(600);
+    });
+
+    expect(new Set(moving).size).toBeGreaterThan(3);
     await hover(false);
   });
 

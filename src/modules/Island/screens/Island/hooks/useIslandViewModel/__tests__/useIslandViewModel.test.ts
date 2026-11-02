@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import type { IslandAction, IIslandFrame, IslandState } from '@/shared/types';
 import { act, cleanup, renderHook } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
 import { useIslandViewModel } from '@/modules/Island/screens/Island/hooks/useIslandViewModel';
 
@@ -212,10 +212,24 @@ describe('useIslandViewModel', () => {
   });
 
   /**
-   * A altura aberta era um número fixo por estado, e cortava os botões: um passo com o
-   * progresso não cabia. Aberta, a ilha tem a altura do que ela guarda.
+   * Medida pelo `height: auto` do Motion, com o pill ainda estreito, a altura passava da
+   * final e voltava, um flick. Aberta, ela é a barra mais o conteúdo medido na largura dele.
    */
-  it('opens as tall as what it holds while the mouse is over the pill, and closes after', () => {
+  it('opens as tall as the bar and what the body measures, and closes after', () => {
+    let measure = () => undefined as void;
+
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        public constructor(listener: () => void) {
+          measure = listener;
+        }
+
+        public observe = () => undefined;
+        public disconnect = () => undefined;
+      },
+    );
+
     const { result } = renderHook(() => useIslandViewModel());
 
     act(() => {
@@ -225,13 +239,17 @@ describe('useIslandViewModel', () => {
     result.current.pill.current = {
       getBoundingClientRect: () => ({ left: 90, right: 370, bottom: 33 }),
     } as HTMLDivElement;
+    result.current.body.current = { offsetHeight: 150 } as HTMLDivElement;
 
     act(() => {
       document.dispatchEvent(new MouseEvent('mousemove', { clientX: 200, clientY: 10 }));
     });
+    act(() => {
+      measure();
+    });
 
     expect(result.current.isOpen).toBe(true);
-    expect(result.current.size).toMatchObject({ width: 400, height: 'auto' });
+    expect(result.current.size).toMatchObject({ width: 400, height: 33 + 150 });
     expect(result.current.pillClassName).toContain('island__pill--open');
     expect(hovered).toEqual([true]);
 
@@ -242,6 +260,7 @@ describe('useIslandViewModel', () => {
     expect(result.current.isOpen).toBe(false);
     expect(result.current.size).toMatchObject({ height: 33 });
     expect(hovered).toEqual([true, false]);
+    vi.unstubAllGlobals();
   });
 
   it('says how a run ended, with the failures first', () => {
