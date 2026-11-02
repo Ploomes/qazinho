@@ -47,74 +47,80 @@ export const Workspace: React.FC = () => {
   return (
     <section className="workspace" style={style}>
       <header className="workspace__header">
-        <WorkspaceName name={name} onRename={onRename} />
-        {issue !== null && (
-          <a
-            className="workspace__issue"
-            href={issue.url}
-            target="_blank"
-            rel="noreferrer"
-            title={issue.title}
-          >
-            {issue.key}
-            <Icon name="external" />
-          </a>
-        )}
-        {design !== null && (
-          <span className="workspace__design">
+        <div className="workspace__title">
+          <WorkspaceName name={name} onRename={onRename} />
+
+          <div className="workspace__actions">
+            {isLive ? (
+              <>
+                <Button onClick={onPause}>{pauseLabel}</Button>
+                <Button variant="danger" onClick={onStop}>
+                  {t('COMMON.STOP')}
+                </Button>
+              </>
+            ) : (
+              <>
+                {canExplore && (
+                  <Tooltip content={exploreTip}>
+                    <Button variant="ghost" onClick={onExplore}>
+                      {t('WORKSPACE.EXPLORE')}
+                    </Button>
+                  </Tooltip>
+                )}
+                <RunButton
+                  canRun={canRun}
+                  canChoose={canRunWithAgent}
+                  onRun={onRun}
+                  onRunWithAgent={onRunWithAgent}
+                />
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="workspace__context">
+          {statusLabel === null ? (
+            <StatusPill status={status} shape="round" />
+          ) : (
+            <StatusPill status={liveStatus} shape="round" label={statusLabel} />
+          )}
+
+          <TargetChip />
+
+          {issue !== null && (
             <a
-              className="workspace__design-link"
-              href={design.url}
+              className="workspace__issue"
+              href={issue.url}
               target="_blank"
               rel="noreferrer"
-              title={design.title}
+              title={issue.title}
             >
-              <Icon name="figma" />
-              {design.name}
+              {issue.key}
               <Icon name="external" />
             </a>
-            <Tooltip content={dropDesignLabel}>
-              <IconButton
-                icon="close"
-                size="sm"
-                label={dropDesignLabel}
-                onClick={onDropDesign}
-              />
-            </Tooltip>
-          </span>
-        )}
-        {statusLabel === null ? (
-          <StatusPill status={status} shape="round" />
-        ) : (
-          <StatusPill status={liveStatus} shape="round" label={statusLabel} />
-        )}
-
-        <TargetChip />
-
-        <div className="workspace__actions">
-          {isLive ? (
-            <>
-              <Button onClick={onPause}>{pauseLabel}</Button>
-              <Button variant="danger" onClick={onStop}>
-                {t('COMMON.STOP')}
-              </Button>
-            </>
-          ) : (
-            <>
-              {canExplore && (
-                <Tooltip content={exploreTip}>
-                  <Button variant="ghost" onClick={onExplore}>
-                    {t('WORKSPACE.EXPLORE')}
-                  </Button>
-                </Tooltip>
-              )}
-              <RunButton
-                canRun={canRun}
-                canChoose={canRunWithAgent}
-                onRun={onRun}
-                onRunWithAgent={onRunWithAgent}
-              />
-            </>
+          )}
+          {design !== null && (
+            <span className="workspace__design">
+              <a
+                className="workspace__design-link"
+                href={design.url}
+                target="_blank"
+                rel="noreferrer"
+                title={design.title}
+              >
+                <Icon name="figma" />
+                {design.name}
+                <Icon name="external" />
+              </a>
+              <Tooltip content={dropDesignLabel}>
+                <IconButton
+                  icon="close"
+                  size="sm"
+                  label={dropDesignLabel}
+                  onClick={onDropDesign}
+                />
+              </Tooltip>
+            </span>
           )}
         </div>
       </header>
