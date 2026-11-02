@@ -8,18 +8,25 @@ import './styles.css';
 
 export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
   const {
-    summary,
+    outcome,
     priority,
     expectLabel,
     className,
     steps,
     verdict,
+    isGoalShown,
+    isBeforeShown,
+    isGoalFocused,
+    isBeforeFocused,
+    canAddGoal,
+    canAddBefore,
     isTitleFocused,
     canRemoveStep,
     onHeadClick,
     moveLabel,
     onHeadKeyDown,
     onFieldCommit,
+    onFactAdd,
     onStepCommit,
     onStepAdd,
     onStepRemove,
@@ -87,32 +94,35 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
           }}
         />
 
-        {priority !== null && <span className="plan-case__priority">{priority}</span>}
+        <span className="plan-case__aside">
+          {priority !== null && <span className="plan-case__priority">{priority}</span>}
 
-        {!props.isLocked && props.onRunCase !== undefined && (
-          <button
-            type="button"
-            className="plan-case__run"
-            aria-label={t('PLAN.RUN_CASE')}
-            title={t('PLAN.RUN_CASE')}
-            onClick={() => {
-              props.onRunCase?.(props.testCase.id);
-            }}
-          >
-            <Icon name="play" />
-          </button>
-        )}
-
-        {!props.isLocked && (
-          <button
-            type="button"
-            className="plan-case__remove"
-            aria-label={t('PLAN.REMOVE_CASE')}
-            onClick={onCaseRemove}
-          >
-            <Icon name="close" />
-          </button>
-        )}
+          {!props.isLocked && (
+            <span className="plan-case__actions">
+              {props.onRunCase !== undefined && (
+                <button
+                  type="button"
+                  className="plan-case__run"
+                  aria-label={t('PLAN.RUN_CASE')}
+                  title={t('PLAN.RUN_CASE')}
+                  onClick={() => {
+                    props.onRunCase?.(props.testCase.id);
+                  }}
+                >
+                  <Icon name="play" />
+                </button>
+              )}
+              <button
+                type="button"
+                className="plan-case__remove"
+                aria-label={t('PLAN.REMOVE_CASE')}
+                onClick={onCaseRemove}
+              >
+                <Icon name="close" />
+              </button>
+            </span>
+          )}
+        </span>
       </div>
 
       <AnimatePresence initial={false}>
@@ -126,47 +136,114 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
             <div className="plan-case__body">
-              {summary !== null && (
-                <p className={`plan-case__summary plan-case__summary--${summary.tone}`}>
-                  <Icon name={summary.tone} />
-                  <span className="plan-case__summary-text">{summary.text}</span>
-                  {summary.note !== null && (
-                    <span className="plan-case__summary-note">{summary.note}</span>
+              {(isGoalShown || isBeforeShown) && (
+                <dl className="plan-case__facts">
+                  {isGoalShown && (
+                    <div className="plan-case__fact">
+                      <dt className="plan-case__label">{t('PLAN.GOAL')}</dt>
+                      <dd className="plan-case__field">
+                        <EditableText
+                          value={props.testCase.goal}
+                          placeholder={t('PLAN.GOAL_PLACEHOLDER')}
+                          isLocked={props.isLocked}
+                          isAutoFocused={isGoalFocused}
+                          onCommit={(goal) => {
+                            onFieldCommit({ goal });
+                          }}
+                        />
+                      </dd>
+                    </div>
                   )}
-                </p>
+                  {isBeforeShown && (
+                    <div className="plan-case__fact">
+                      <dt className="plan-case__label">{t('PLAN.BEFORE')}</dt>
+                      <dd className="plan-case__field">
+                        <EditableText
+                          value={props.testCase.preconditions}
+                          placeholder={t('PLAN.BEFORE_PLACEHOLDER')}
+                          isLocked={props.isLocked}
+                          isAutoFocused={isBeforeFocused}
+                          onCommit={(preconditions) => {
+                            onFieldCommit({ preconditions });
+                          }}
+                        />
+                      </dd>
+                    </div>
+                  )}
+                </dl>
               )}
 
-              <dl className="plan-case__meta">
-                <dt className="plan-case__label">{t('PLAN.GOAL')}</dt>
-                <dd className="plan-case__field">
-                  <EditableText
-                    value={props.testCase.goal}
-                    placeholder={t('PLAN.GOAL_PLACEHOLDER')}
-                    isLocked={props.isLocked}
-                    onCommit={(goal) => {
-                      onFieldCommit({ goal });
-                    }}
-                  />
-                </dd>
-                <dt className="plan-case__label">{t('PLAN.BEFORE')}</dt>
-                <dd className="plan-case__field">
-                  <EditableText
-                    value={props.testCase.preconditions}
-                    placeholder={t('PLAN.BEFORE_PLACEHOLDER')}
-                    isLocked={props.isLocked}
-                    onCommit={(preconditions) => {
-                      onFieldCommit({ preconditions });
-                    }}
-                  />
-                </dd>
-              </dl>
+              {(canAddGoal || canAddBefore) && (
+                <div className="plan-case__ghosts">
+                  {canAddGoal && (
+                    <button
+                      type="button"
+                      className="plan-case__ghost"
+                      onClick={() => {
+                        onFactAdd('goal');
+                      }}
+                    >
+                      <Icon name="plus" />
+                      {t('PLAN.ADD_GOAL')}
+                    </button>
+                  )}
+                  {canAddBefore && (
+                    <button
+                      type="button"
+                      className="plan-case__ghost"
+                      onClick={() => {
+                        onFactAdd('before');
+                      }}
+                    >
+                      <Icon name="plus" />
+                      {t('PLAN.ADD_BEFORE')}
+                    </button>
+                  )}
+                </div>
+              )}
 
-              <ol className="plan-case__steps">
-                {steps.map((step) => (
-                  <li key={step.number} className="plan-case__step">
-                    <span className="plan-case__step-number">{step.number}</span>
-                    <div className="plan-case__step-body">
-                      <span className="plan-case__action">
+              <div className="plan-case__steps-block">
+                <div className="plan-case__steps-head">
+                  <span className="plan-case__label plan-case__title">
+                    {t('PLAN.STEPS_LABEL')}
+                    <span className="plan-case__count">{steps.length}</span>
+                  </span>
+                  <span className="plan-case__label plan-case__column plan-case__column--action">
+                    {t('PLAN.COLUMN_ACTION')}
+                  </span>
+                  <span className="plan-case__label plan-case__column plan-case__column--expected">
+                    {expectLabel}
+                  </span>
+                  {outcome !== null && (
+                    <span
+                      className={`plan-case__outcome plan-case__outcome--${outcome.tone}`}
+                    >
+                      {outcome.text !== null && (
+                        <>
+                          <Icon name={outcome.tone} />
+                          {outcome.text}
+                        </>
+                      )}
+                      {outcome.note !== null && (
+                        <span
+                          className="plan-case__note"
+                          title={outcome.noteTip ?? undefined}
+                        >
+                          {outcome.note}
+                        </span>
+                      )}
+                    </span>
+                  )}
+                </div>
+
+                <ol className="plan-case__steps">
+                  {steps.map((step) => (
+                    <li
+                      key={step.number}
+                      className={`plan-case__step plan-case__step--${step.verdict}`}
+                    >
+                      <span className="plan-case__step-number">{step.number}</span>
+                      <div className="plan-case__action">
                         <EditableText
                           value={step.action}
                           placeholder={t('PLAN.ACTION_PLACEHOLDER')}
@@ -176,60 +253,76 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                             onStepCommit({ index: step.number - 1, step: { action } });
                           }}
                         />
-                      </span>
-                      <span className="plan-case__expected">
-                        <span className="plan-case__expect-label">{expectLabel}</span>
-                        <EditableText
-                          value={step.expected}
-                          placeholder={t('PLAN.EXPECTED_PLACEHOLDER')}
-                          isLocked={props.isLocked}
-                          onCommit={(expected) => {
-                            onStepCommit({ index: step.number - 1, step: { expected } });
+                      </div>
+                      <div className="plan-case__expected">
+                        <span className="plan-case__expect-icon" title={expectLabel}>
+                          <Icon name="eye" />
+                        </span>
+                        <div className="plan-case__expected-body">
+                          <EditableText
+                            value={step.expected}
+                            placeholder={t('PLAN.EXPECTED_PLACEHOLDER')}
+                            isLocked={props.isLocked}
+                            onCommit={(expected) => {
+                              onStepCommit({
+                                index: step.number - 1,
+                                step: { expected },
+                              });
+                            }}
+                          />
+                          {(step.isVerdictShown || step.frame !== null) && (
+                            <div className="plan-case__marks">
+                              {step.isVerdictShown && (
+                                <span
+                                  className={`plan-case__verdict plan-case__verdict--${step.verdict}`}
+                                >
+                                  <Icon name={step.verdictIcon} /> {step.verdictLabel}
+                                </span>
+                              )}
+                              {step.frame !== null && (
+                                <a
+                                  className="plan-case__frame"
+                                  href={step.frame.url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  title={step.frame.title}
+                                >
+                                  <Icon name="figma" />
+                                  {step.frame.label}
+                                  <Icon name="external" />
+                                </a>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      {canRemoveStep && (
+                        <button
+                          type="button"
+                          className="plan-case__remove plan-case__remove--step"
+                          aria-label={t('PLAN.REMOVE_STEP', { number: step.number })}
+                          onClick={() => {
+                            onStepRemove(step.number - 1);
                           }}
-                        />
-                      </span>
-                      {step.frame !== null && (
-                        <a
-                          className="plan-case__frame"
-                          href={step.frame.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          title={step.frame.title}
                         >
-                          <Icon name="figma" />
-                          {step.frame.label}
-                          <Icon name="external" />
-                        </a>
+                          <Icon name="close" />
+                        </button>
                       )}
-                    </div>
-                    {step.isVerdictShown && (
-                      <span
-                        className={`plan-case__verdict plan-case__verdict--${step.verdict}`}
-                      >
-                        <Icon name={step.verdictIcon} /> {step.verdictLabel}
-                      </span>
-                    )}
-                    {canRemoveStep && (
-                      <button
-                        type="button"
-                        className="plan-case__remove plan-case__remove--step"
-                        aria-label={t('PLAN.REMOVE_STEP', { number: step.number })}
-                        onClick={() => {
-                          onStepRemove(step.number - 1);
-                        }}
-                      >
-                        <Icon name="close" />
-                      </button>
-                    )}
-                  </li>
-                ))}
-              </ol>
+                    </li>
+                  ))}
+                </ol>
 
-              {!props.isLocked && (
-                <button type="button" className="plan-case__add" onClick={onStepAdd}>
-                  {t('PLAN.ADD_STEP')}
-                </button>
-              )}
+                {!props.isLocked && (
+                  <button
+                    type="button"
+                    className="plan-case__ghost plan-case__add"
+                    onClick={onStepAdd}
+                  >
+                    <Icon name="plus" />
+                    {t('PLAN.ADD_STEP')}
+                  </button>
+                )}
+              </div>
             </div>
           </motion.div>
         )}

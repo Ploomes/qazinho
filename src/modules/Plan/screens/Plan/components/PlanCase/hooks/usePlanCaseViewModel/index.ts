@@ -13,50 +13,59 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
   const caseId = testCase.id;
   const [isPickedUp, setIsPickedUp] = useState(false);
   const [freshStep, setFreshStep] = useState<number | null>(null);
+  const [openFacts, setOpenFacts] = useState({ goal: false, before: false });
 
   const ran = props.lastRun?.steps ?? [];
   const stopped = ran.find(
     ({ verdict }) => verdict === 'failed' || verdict === 'blocked',
   );
   const isAllPassed = ran.length > 0 && ran.every(({ verdict }) => verdict === 'passed');
+  const hasGoal = testCase.goal !== '';
+  const hasBefore = testCase.preconditions !== '';
+  const how = ran.some(({ by }) => by === 'healed')
+    ? ('healed' as const)
+    : ran.every(({ by }) => by === 'replay')
+      ? ('replay' as const)
+      : null;
 
   return {
-    summary:
+    outcome:
       stopped !== undefined
         ? {
             tone:
               stopped.verdict === 'failed' ? ('failed' as const) : ('blocked' as const),
             text: t(
               stopped.verdict === 'failed'
-                ? 'PLAN.CASE_FAILED_AT'
-                : 'PLAN.CASE_BLOCKED_AT',
-              {
-                number: stopped.number,
-                total: testCase.steps.length,
-                action: stopped.action,
-              },
+                ? 'PLAN.STEP_FAILED_AT'
+                : 'PLAN.STEP_BLOCKED_AT',
+              { number: stopped.number },
             ),
             note: null,
+            noteTip: null,
           }
-        : isAllPassed
+        : isAllPassed && how !== null
           ? {
               tone: 'passed' as const,
-              text: t(
-                ran.length === 1 ? 'PLAN.CASE_PASSED_ONE' : 'PLAN.CASE_PASSED_OTHER',
-                {
-                  count: ran.length,
-                },
-              ),
-              note: ran.some(({ by }) => by === 'healed')
-                ? t('RUN.BY_HEALED')
-                : ran.every(({ by }) => by === 'replay')
-                  ? t('RUN.BY_REPLAY')
-                  : null,
+              text: null,
+              note: t(how === 'healed' ? 'RUN.BY_HEALED' : 'RUN.BY_REPLAY'),
+              noteTip: t(how === 'healed' ? 'RUN.BY_HEALED_TIP' : 'RUN.BY_REPLAY_TIP'),
             }
           : null,
     priority: testCase.priority === 'P1' ? testCase.priority : null,
     expectLabel: t('PLAN.EXPECT'),
-    className: isPickedUp ? 'plan-case plan-case--picked' : 'plan-case',
+    className: [
+      'plan-case',
+      isPickedUp ? 'plan-case--picked' : '',
+      props.isOpen ? 'plan-case--open' : '',
+    ]
+      .filter((part) => part !== '')
+      .join(' '),
+    isGoalShown: hasGoal || openFacts.goal,
+    isBeforeShown: hasBefore || openFacts.before,
+    isGoalFocused: openFacts.goal && !hasGoal,
+    isBeforeFocused: openFacts.before && !hasBefore,
+    canAddGoal: !isLocked && !hasGoal && !openFacts.goal,
+    canAddBefore: !isLocked && !hasBefore && !openFacts.before,
     steps: testCase.steps.map((step, index) => {
       const verdict =
         props.lastRun?.steps.find(({ number }) => number === index + 1)?.verdict ??
@@ -85,7 +94,11 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     isTitleFocused: props.isFresh === true,
     canRemoveStep: testCase.steps.length > 1 && !isLocked,
     onHeadClick: () => {
+      setOpenFacts({ goal: false, before: false });
       onToggle(caseId);
+    },
+    onFactAdd: (fact: 'goal' | 'before') => {
+      setOpenFacts((current) => ({ ...current, [fact]: true }));
     },
     moveLabel: t('PLAN.MOVE_CASE'),
     onHeadKeyDown: (event: KeyboardEvent<HTMLButtonElement>) => {
