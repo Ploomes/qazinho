@@ -10,7 +10,6 @@ export const AgentPanel: React.FC = () => {
   const {
     hasWorkspace,
     isOpen,
-    subtitle,
     title,
     railLabel,
     width,
@@ -86,12 +85,7 @@ export const AgentPanel: React.FC = () => {
 
             <div className="agent-panel__inner">
               <header className="agent-panel__header">
-                <span className="agent-panel__title">
-                  {title}
-                  {subtitle !== '' && (
-                    <span className="agent-panel__subtitle">{subtitle}</span>
-                  )}
-                </span>
+                <span className="agent-panel__title">{title}</span>
                 <button
                   type="button"
                   className="agent-panel__collapse"

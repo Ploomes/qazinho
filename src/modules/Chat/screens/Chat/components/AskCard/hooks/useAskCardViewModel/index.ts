@@ -54,7 +54,6 @@ export const useAskCardViewModel = (props: IAskCardProps) => {
         : t('CHAT.ASK_ANSWER'),
     isSecret,
     canMakeSecret: !question.isSecret,
-    secretLabel: t('CHAT.ASK_MAKE_SECRET'),
     secretTip: t('CHAT.ASK_MAKE_SECRET_TIP'),
     isKept,
     keepLabel: t('CHAT.ASK_KEEP'),
@@ -65,10 +64,8 @@ export const useAskCardViewModel = (props: IAskCardProps) => {
     onText: (typed: string) => {
       if (!isSent) setText(typed);
     },
-    onSecret: (isOn: boolean) => {
-      if (isSent || question.isSecret) return;
-
-      setMadeSecret(isOn);
+    onSecret: () => {
+      if (!isSent && !question.isSecret) setMadeSecret(!isMadeSecret);
     },
     onKeep: (isOn: boolean) => {
       if (!isSent && isSecret) setKept(isOn);

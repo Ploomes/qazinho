@@ -1,6 +1,7 @@
 import type { IAskCardProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
-import { Button, Chip, Eyebrow, Icon, Input, Switch } from '@/shared/components/atoms';
+import { Button, Icon, IconButton, Input, Switch } from '@/shared/components/atoms';
+import { Tooltip } from '@/shared/components/molecules';
 import { useAskCardViewModel } from './hooks';
 import './styles.css';
 
@@ -19,7 +20,6 @@ export const AskCard: React.FC<IAskCardProps> = (props) => {
     fieldLabel,
     isSecret,
     canMakeSecret,
-    secretLabel,
     secretTip,
     isKept,
     keepLabel,
@@ -40,7 +40,6 @@ export const AskCard: React.FC<IAskCardProps> = (props) => {
         <span className="ask-card__mark">
           <Icon name="ask" />
         </span>
-        <Eyebrow>{eyebrow}</Eyebrow>
         <span className="ask-card__where">{where}</span>
       </header>
 
@@ -49,9 +48,14 @@ export const AskCard: React.FC<IAskCardProps> = (props) => {
       {hasOptions && (
         <div className="ask-card__options" role="group" aria-label={question}>
           {options.map((option) => (
-            <Chip key={option.label} onClick={option.onPick}>
+            <button
+              key={option.label}
+              type="button"
+              className="ask-card__option"
+              onClick={option.onPick}
+            >
               {option.label}
-            </Chip>
+            </button>
           ))}
         </div>
       )}
@@ -68,36 +72,35 @@ export const AskCard: React.FC<IAskCardProps> = (props) => {
               onChange={onText}
             />
           </div>
+          {canMakeSecret && (
+            <Tooltip content={secretTip}>
+              <IconButton
+                icon="lock"
+                label={secretTip}
+                isActive={isSecret}
+                onClick={onSecret}
+              />
+            </Tooltip>
+          )}
           <Button variant="primary" disabled={!canSend} onClick={onSend}>
             {sendLabel}
           </Button>
         </div>
 
-        <div className="ask-card__switches">
-          {canMakeSecret && (
-            <Switch
-              label={secretLabel}
-              title={secretTip}
-              icon="lock"
-              isOn={isSecret}
-              onChange={onSecret}
-            />
+        <AnimatePresence initial={false}>
+          {isSecret && (
+            <motion.div
+              key="keep"
+              className="ask-card__keep"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={foldTransition}
+            >
+              <Switch label={keepLabel} isOn={isKept} onChange={onKeep} />
+            </motion.div>
           )}
-          <AnimatePresence initial={false}>
-            {isSecret && (
-              <motion.span
-                key="keep"
-                className="ask-card__keep"
-                initial={{ opacity: 0, x: -6 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -6 }}
-                transition={foldTransition}
-              >
-                <Switch label={keepLabel} isOn={isKept} onChange={onKeep} />
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </div>
+        </AnimatePresence>
       </form>
     </section>
   );

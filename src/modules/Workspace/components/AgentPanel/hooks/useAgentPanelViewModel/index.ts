@@ -13,7 +13,6 @@ export const useAgentPanelViewModel = () => {
   const { t } = useTranslation();
   const workspace = useSelectedWorkspacePart((opened) => ({
     id: opened.id,
-    isLive: opened.live !== null && !opened.live.isDone,
   }));
   const isOpen = useWorkspaceStore((state) => state.isPanelOpen);
   const width = useWorkspaceStore((state) => state.panelWidth);
@@ -32,13 +31,11 @@ export const useAgentPanelViewModel = () => {
     isOpen,
     sidebarWidth,
   });
-  const isLive = workspace?.isLive === true;
 
   return {
     hasWorkspace: workspace !== null,
     isOpen,
     title: t('AGENT.TITLE'),
-    subtitle: isLive ? t('AGENT.LIVE') : '',
     railLabel: t('AGENT.TITLE'),
     width: inner,
     outerWidth: outer,

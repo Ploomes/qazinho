@@ -159,7 +159,7 @@ describe('useAskCardViewModel', () => {
       const { result, onAnswer } = card();
 
       act(() => {
-        result.current.onSecret(true);
+        result.current.onSecret();
       });
       act(() => {
         result.current.onText('hunter2');
@@ -180,7 +180,7 @@ describe('useAskCardViewModel', () => {
       const { result } = card(SECRET);
 
       act(() => {
-        result.current.onSecret(false);
+        result.current.onSecret();
       });
 
       expect(result.current.isSecret).toBe(true);

@@ -69,168 +69,147 @@ function render(props: Partial<IQuestionRoundProps> & { message: IQuestionsMessa
 }
 
 describe('useQuestionRoundViewModel', () => {
-  describe('onPick', () => {
-    it('picks one option of a question that takes one, and waits for the rest', () => {
+  describe('one question at a time', () => {
+    /** Cinco perguntas de uma vez viravam um formulário numa coluna estreita. */
+    it('shows only the question it is on, and how far along it is', () => {
+      const { view } = render({ message: round({ questions: [SCOPE, FLOWS] }) });
+
+      expect(view.result.current.questions.map(({ index }) => index)).toEqual([0]);
+      expect(view.result.current).toMatchObject({
+        hasPosition: true,
+        position: '1 of 2',
+      });
+    });
+
+    it('says nothing about position on a lone question', () => {
+      const { view } = render({ message: round({ questions: [SCOPE] }) });
+
+      expect(view.result.current.hasPosition).toBe(false);
+    });
+
+    it('goes on with one click on an option of a question that takes one', () => {
       const { onAnswer, view } = render({
         message: round({ questions: [SCOPE, FLOWS] }),
       });
 
       act(() => {
-        view.result.current.onPick({ index: 0, label: 'The landing page' });
-      });
-      act(() => {
         view.result.current.onPick({ index: 0, label: 'The app' });
       });
 
-      expect(
-        view.result.current.questions[0]?.options.map(({ isPicked }) => isPicked),
-      ).toEqual([false, true]);
-      expect(view.result.current.canSend).toBe(false);
+      expect(view.result.current.questions.map(({ index }) => index)).toEqual([1]);
       expect(onAnswer).not.toHaveBeenCalled();
     });
 
-    it('marks and unmarks the options of a question that takes several', () => {
-      const { view } = render({ message: round({ questions: [SCOPE, FLOWS] }) });
-
-      act(() => {
-        view.result.current.onPick({ index: 1, label: 'Scanning a label' });
-      });
-      act(() => {
-        view.result.current.onPick({ index: 1, label: 'Premium' });
-      });
-      act(() => {
-        view.result.current.onPick({ index: 1, label: 'Scanning a label' });
-      });
-
-      expect(
-        view.result.current.questions[1]?.options.map(({ isPicked }) => isPicked),
-      ).toEqual([false, true]);
-    });
-
-    /**
-     * A confirmação respondia no clique da opção única, enquanto o cartão ainda mostrava
-     * Responder e um campo: o QA não tinha chance de acrescentar uma palavra, nem de
-     * olhar antes de ir.
-     */
-    it('waits for Answer on the confirmation too, so the QA can add words after picking', () => {
+    /** Confirmar o plano pedia dois cliques: escolher a única opção, depois Responder. */
+    it('sends the moment the last question takes its one click', () => {
       const { onAnswer, view } = render({ message: round({ questions: [GATE] }) });
 
       act(() => {
         view.result.current.onPick({ index: 0, label: 'Write the plan' });
       });
 
-      expect(onAnswer).not.toHaveBeenCalled();
-      expect(view.result.current.canSend).toBe(true);
-
-      act(() => {
-        view.result.current.onText({ index: 0, text: 'and keep it short' });
-      });
-      act(() => {
-        view.result.current.onSend();
-      });
-
       expect(onAnswer).toHaveBeenCalledWith({
         messageId: 'm-3',
-        answers: [{ picked: ['Write the plan'], text: 'and keep it short' }],
+        answers: [{ picked: ['Write the plan'], text: '' }],
       });
     });
 
-    /**
-     * Uma rodada pedindo uma conta oferecia "Escreva no campo abaixo": um clique a
-     * mandava com o campo ainda vazio, e o agente pedia a conta de novo.
-     */
-    it('waits for Answer on a lone question with several options, so the QA can write below', () => {
-      const VALUES: IChatQuestion = {
-        header: 'Account',
-        question: 'Which account should the cases sign in with?',
-        options: [
-          { label: 'Write it in the field below', description: 'The cases use it.' },
-          { label: 'Plan without signing in', description: 'Only what a visitor sees.' },
-        ],
-        isMultiSelect: false,
-      };
-      const { onAnswer, view } = render({ message: round({ questions: [VALUES] }) });
+    it('marks and unmarks the options of a question that takes several, and waits', () => {
+      const { onAnswer, view } = render({ message: round({ questions: [FLOWS] }) });
+      const picked = () =>
+        view.result.current.questions[0]?.options
+          .filter(({ isPicked }) => isPicked)
+          .map(({ label }) => label);
 
       act(() => {
-        view.result.current.onPick({ index: 0, label: 'Write it in the field below' });
+        view.result.current.onPick({ index: 0, label: 'Premium' });
       });
 
+      expect(picked()).toEqual(['Premium']);
       expect(onAnswer).not.toHaveBeenCalled();
+      expect(view.result.current).toMatchObject({ hasNext: true, canNext: true });
 
       act(() => {
-        view.result.current.onText({ index: 0, text: 'qa@shop.test / Test-1234' });
-      });
-      act(() => {
-        view.result.current.onSend();
+        view.result.current.onPick({ index: 0, label: 'Premium' });
       });
 
-      expect(onAnswer).toHaveBeenCalledWith({
-        messageId: 'm-3',
-        answers: [
-          { picked: ['Write it in the field below'], text: 'qa@shop.test / Test-1234' },
-        ],
+      expect(picked()).toEqual([]);
+      expect(view.result.current.canNext).toBe(false);
+    });
+
+    it('goes back to change an answer', () => {
+      const { view } = render({ message: round({ questions: [SCOPE, FLOWS] }) });
+
+      expect(view.result.current.canBack).toBe(false);
+
+      act(() => {
+        view.result.current.onPick({ index: 0, label: 'The app' });
       });
+
+      expect(view.result.current.canBack).toBe(true);
+
+      act(() => {
+        view.result.current.onBack();
+      });
+
+      expect(view.result.current.questions[0]?.options[1]?.isPicked).toBe(true);
     });
 
     it('does NOT change a round the QA can no longer answer', () => {
       const { onAnswer, view } = render({
-        message: round({ questions: [GATE] }),
+        message: round({ questions: [SCOPE] }),
         isAnswerable: false,
       });
 
       act(() => {
-        view.result.current.onPick({ index: 0, label: 'Write the plan' });
+        view.result.current.onPick({ index: 0, label: 'The app' });
       });
 
       expect(onAnswer).not.toHaveBeenCalled();
-      expect(view.result.current.isOpen).toBe(false);
+      expect(view.result.current.hasNext).toBe(false);
     });
   });
 
-  describe('onSend', () => {
-    it('sends every answer together once each question has one', () => {
-      const { onAnswer, view } = render({
-        message: round({ questions: [SCOPE, FLOWS] }),
-      });
+  describe('the QA’s own words', () => {
+    it('opens the field only when asked, and sends what was typed', () => {
+      const { onAnswer, view } = render({ message: round({ questions: [SCOPE] }) });
+
+      expect(view.result.current.questions[0]?.isOwnOpen).toBe(false);
 
       act(() => {
-        view.result.current.onPick({ index: 0, label: 'The app' });
-      });
-      act(() => {
-        view.result.current.onText({ index: 1, text: 'only the scanner' });
+        view.result.current.onOwn(0);
       });
 
-      expect(view.result.current.canSend).toBe(true);
+      expect(view.result.current.questions[0]?.isOwnOpen).toBe(true);
+      expect(view.result.current.canNext).toBe(false);
 
       act(() => {
-        view.result.current.onSend();
+        view.result.current.onText({ index: 0, text: 'The scanner first' });
+      });
+      act(() => {
+        view.result.current.onNext();
       });
 
       expect(onAnswer).toHaveBeenCalledWith({
         messageId: 'm-3',
-        answers: [
-          { picked: ['The app'], text: '' },
-          { picked: [], text: 'only the scanner' },
-        ],
+        answers: [{ picked: [], text: 'The scanner first' }],
       });
     });
 
-    it('does NOT send while a question has neither a pick nor words', () => {
-      const { onAnswer, view } = render({
-        message: round({ questions: [SCOPE, FLOWS] }),
-      });
+    it('drops what was typed when the field closes', () => {
+      const { view } = render({ message: round({ questions: [SCOPE] }) });
 
       act(() => {
-        view.result.current.onPick({ index: 0, label: 'The app' });
+        view.result.current.onOwn(0);
       });
       act(() => {
-        view.result.current.onText({ index: 1, text: '   ' });
+        view.result.current.onText({ index: 0, text: 'words' });
       });
       act(() => {
-        view.result.current.onSend();
+        view.result.current.onOwn(0);
       });
 
-      expect(onAnswer).not.toHaveBeenCalled();
+      expect(view.result.current.questions[0]?.text).toBe('');
     });
   });
 
@@ -247,7 +226,7 @@ describe('useQuestionRoundViewModel', () => {
       expect(view.result.current).toMatchObject({
         isAnswered: true,
         isOpen: false,
-        canSend: false,
+        hasNext: false,
       });
       expect(view.result.current.questions[0]).toMatchObject({
         hint: '',
@@ -309,27 +288,19 @@ describe('useQuestionRoundViewModel', () => {
   });
 
   it('tells the QA when a question takes several options', () => {
-    const { view } = render({ message: round({ questions: [SCOPE, FLOWS] }) });
+    const { view } = render({ message: round({ questions: [FLOWS] }) });
 
-    expect(view.result.current.questions.map(({ hint }) => hint)).toEqual([
-      '',
-      'Pick all that apply',
-    ]);
+    expect(view.result.current.questions[0]?.hint).toBe('Pick all that apply');
   });
-  describe('an option that creates variables', () => {
-    it('says it opens a window for the variables, and which ones', () => {
-      const { view } = render({ message: round({ questions: [ACCOUNT] }) });
 
-      expect(
-        view.result.current.questions[0]?.options.map(({ secrets }) => secrets),
-      ).toEqual([
-        null,
-        {
-          label: 'Opens a window to type',
-          names: ['SELLER_EMAIL', 'SELLER_PASSWORD'],
-          className: 'question-round__secrets',
-        },
-      ]);
+  describe('an option that creates variables', () => {
+    it('marks it with a lock, and names the variables on hover', () => {
+      const { view } = render({ message: round({ questions: [ACCOUNT] }) });
+      const [first, second] = view.result.current.questions[0]?.options ?? [];
+
+      expect(first?.hasLock).toBe(false);
+      expect(second?.hasLock).toBe(true);
+      expect(second?.tip).toContain('SELLER_EMAIL, SELLER_PASSWORD');
     });
 
     it('opens the window, and picks the option with the names the QA kept', async () => {
@@ -348,18 +319,7 @@ describe('useQuestionRoundViewModel', () => {
       expect(onVariables).toHaveBeenCalledWith(ACCOUNT.options[1]?.variables);
 
       await waitFor(() => {
-        expect(view.result.current.questions[0]?.options[1]).toMatchObject({
-          isPicked: true,
-          secrets: {
-            label: 'Kept, sealed',
-            names: ['SELLER_EMAIL', 'SELLER_PASSWORD'],
-            className: 'question-round__secrets question-round__secrets--kept',
-          },
-        });
-      });
-
-      act(() => {
-        view.result.current.onSend();
+        expect(onAnswer).toHaveBeenCalled();
       });
 
       expect(onAnswer).toHaveBeenCalledWith({
@@ -386,7 +346,7 @@ describe('useQuestionRoundViewModel', () => {
         expect(onVariables).toHaveBeenCalled();
       });
       expect(view.result.current.questions[0]?.options[1]?.isPicked).toBe(false);
-      expect(view.result.current.canSend).toBe(false);
+      expect(view.result.current.canNext).toBe(false);
     });
   });
 });

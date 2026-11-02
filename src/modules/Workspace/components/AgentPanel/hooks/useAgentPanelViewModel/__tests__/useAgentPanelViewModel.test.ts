@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useAgentPanelViewModel } from '@/modules/Workspace/components/AgentPanel/hooks/useAgentPanelViewModel';
 import { PANEL } from '@/modules/Workspace/constants';
-import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
+import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 function windowOf(width: number) {
@@ -75,15 +75,5 @@ describe('useAgentPanelViewModel', () => {
     });
 
     expect(result.current.widthTransition.duration).toBe(0);
-  });
-
-  it('says it watches the run while one is live, and nothing otherwise', () => {
-    const idle = renderHook(() => useAgentPanelViewModel());
-    expect(idle.result.current.subtitle).toBe('');
-
-    useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: [] })] });
-
-    const live = renderHook(() => useAgentPanelViewModel());
-    expect(live.result.current.subtitle).toBe('watches the run live');
   });
 });

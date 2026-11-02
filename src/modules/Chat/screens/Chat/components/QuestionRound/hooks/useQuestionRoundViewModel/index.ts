@@ -1,9 +1,8 @@
 import type { IQuestionRoundProps } from '@/modules/Chat/screens/Chat/components/QuestionRound/types';
 import type { IQuestionAnswer } from '@/modules/Chat/types';
-import type { CSSProperties } from 'react';
+import type { KeyboardEvent } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { QUESTION_ROUND } from '@/modules/Chat/screens/Chat/components/QuestionRound/constants';
 import { MOTION } from '@/shared/constants';
 
 export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
@@ -12,23 +11,59 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
   const [drafts, setDrafts] = useState<IQuestionAnswer[]>(() =>
     message.questions.map(() => ({ picked: [], text: '' })),
   );
+  const [at, setAt] = useState(0);
+  const [openOwn, setOpenOwn] = useState<number[]>([]);
   const [isExpanded, setExpanded] = useState(false);
 
   const isAnswered = message.answers !== null;
   const isOpen = isAnswerable && !isAnswered;
   const shown = message.answers ?? drafts;
-  const isComplete = drafts.every(
-    ({ picked, text }) => picked.length > 0 || text.trim().length > 0,
-  );
+  const lastIndex = message.questions.length - 1;
+  const current = message.questions[at];
+  const draftNow = drafts[at];
+  const isAnsweredDraft = ({ picked, text }: IQuestionAnswer) =>
+    picked.length > 0 || text.trim().length > 0;
+  const isComplete = drafts.every(isAnsweredDraft);
+  const isOwnOpenNow = openOwn.includes(at);
+  const canNext =
+    isOpen &&
+    draftNow !== undefined &&
+    isAnsweredDraft(draftNow) &&
+    (at < lastIndex || isComplete);
+
+  const advance = (answers: IQuestionAnswer[]) => {
+    if (at < lastIndex) {
+      setAt(at + 1);
+
+      return;
+    }
+
+    if (answers.every(isAnsweredDraft)) onAnswer({ messageId: message.id, answers });
+  };
 
   const draftsWith = (change: { index: number; draft: IQuestionAnswer }) =>
     drafts.map((draft, index) => (index === change.index ? change.draft : draft));
 
+  const pickAndGo = (change: { index: number; draft: IQuestionAnswer }) => {
+    const next = draftsWith(change);
+
+    setDrafts(next);
+    setOpenOwn(openOwn.filter((index) => index !== change.index));
+    advance(next);
+  };
+
+  const shownQuestions = message.questions
+    .map((question, index) => ({ question, index }))
+    .filter(({ index }) => !isOpen || index === at);
+
   return {
-    style: {
-      '--option-min-width': `${String(QUESTION_ROUND.optionMinWidth)}px`,
-    } as CSSProperties,
-    eyebrow: t('CHAT.QUESTIONS'),
+    showingKey: isOpen ? String(at) : 'all',
+    swapTransition: { duration: MOTION.durationFast, ease: MOTION.ease },
+    position: t('CHAT.QUESTIONS_POSITION', {
+      at: at + 1,
+      total: message.questions.length,
+    }),
+    hasPosition: isOpen && message.questions.length > 1,
     summary:
       message.questions.length === 1
         ? t('CHAT.QUESTIONS_ANSWERED_ONE')
@@ -38,45 +73,41 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
     isBodyShown: !isAnswered || isExpanded,
     bodyTransition: { duration: MOTION.duration, ease: MOTION.ease },
     isOpen,
-    canSend: isOpen && isComplete,
-    sendLabel: t('CHAT.QUESTIONS_SEND'),
+    ownLabel: t('CHAT.QUESTIONS_OTHER'),
     textLabel: t('CHAT.QUESTIONS_OWN'),
-    questions: message.questions.map((question, index) => {
+    hasFooter: isOpen,
+    canBack: isOpen && at > 0,
+    backLabel: t('CHAT.QUESTIONS_BACK'),
+    hasNext:
+      isOpen &&
+      (current?.isMultiSelect === true ||
+        isOwnOpenNow ||
+        (draftNow !== undefined && isAnsweredDraft(draftNow))),
+    canNext,
+    nextLabel: at < lastIndex ? t('CHAT.QUESTIONS_NEXT') : t('CHAT.QUESTIONS_SEND'),
+    questions: shownQuestions.map(({ question, index }) => {
       const answer = shown[index] ?? { picked: [], text: '' };
 
       return {
         key: `${String(index)}-${question.header}`,
         index,
-        header: question.header,
         question: question.question,
         isMultiSelect: question.isMultiSelect,
         hint: question.isMultiSelect && !isAnswered ? t('CHAT.QUESTIONS_PICK_ANY') : '',
         text: answer.text,
+        isOwnOpen: openOwn.includes(index),
         said: isAnswered ? answer.text.trim() : '',
         options: question.options
           .map((option) => {
-            const isPicked = answer.picked.includes(option.label);
-            const kept = answer.kept ?? [];
-
-            const asked = (option.variables ?? []).map(({ name }) => name);
-            const isKept = isPicked && asked.length > 0 && kept.length > 0;
+            const names = (option.variables ?? []).map(({ name }) => name);
 
             return {
               label: option.label,
-              description: option.description,
-              isPicked,
-              secrets:
-                asked.length === 0
-                  ? null
-                  : {
-                      label: isKept
-                        ? t('CHAT.QUESTIONS_KEPT')
-                        : t('CHAT.QUESTIONS_VARIABLES'),
-                      names: isKept ? kept : asked,
-                      className: isKept
-                        ? 'question-round__secrets question-round__secrets--kept'
-                        : 'question-round__secrets',
-                    },
+              tip: [option.description, names.join(', ')]
+                .filter((part) => part !== '')
+                .join(' · '),
+              isPicked: answer.picked.includes(option.label),
+              hasLock: names.length > 0,
             };
           })
           .filter(({ isPicked }) => isPicked || !isAnswered),
@@ -93,39 +124,62 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
 
       if (variables.length > 0) {
         void onVariables(variables).then((kept) => {
-          if (kept === null) return;
-
-          setDrafts((current) =>
-            current.map((one, index) =>
-              index === picking.index
-                ? {
-                    ...one,
-                    picked: question.isMultiSelect
-                      ? [
-                          ...one.picked.filter((label) => label !== picking.label),
-                          picking.label,
-                        ]
-                      : [picking.label],
-                    kept,
-                  }
-                : one,
-            ),
-          );
+          if (kept !== null)
+            pickAndGo({
+              index: picking.index,
+              draft: {
+                picked: question.isMultiSelect
+                  ? [
+                      ...draft.picked.filter((label) => label !== picking.label),
+                      picking.label,
+                    ]
+                  : [picking.label],
+                text: question.isMultiSelect ? draft.text : '',
+                kept,
+              },
+            });
         });
 
         return;
       }
 
-      const toggled = draft.picked.includes(picking.label)
-        ? draft.picked.filter((label) => label !== picking.label)
-        : [...draft.picked, picking.label];
+      if (question.isMultiSelect) {
+        setDrafts(
+          draftsWith({
+            index: picking.index,
+            draft: {
+              ...draft,
+              picked: draft.picked.includes(picking.label)
+                ? draft.picked.filter((label) => label !== picking.label)
+                : [...draft.picked, picking.label],
+            },
+          }),
+        );
 
-      setDrafts(
-        draftsWith({
-          index: picking.index,
-          draft: { ...draft, picked: question.isMultiSelect ? toggled : [picking.label] },
-        }),
-      );
+        return;
+      }
+
+      pickAndGo({
+        index: picking.index,
+        draft: { ...draft, picked: [picking.label], text: '' },
+      });
+    },
+    onOwn: (index: number) => {
+      const draft = drafts[index];
+
+      if (!isOpen || !draft) return;
+
+      if (openOwn.includes(index)) {
+        setOpenOwn(openOwn.filter((one) => one !== index));
+        setDrafts(draftsWith({ index, draft: { ...draft, text: '' } }));
+
+        return;
+      }
+
+      setOpenOwn([...openOwn, index]);
+
+      if (message.questions[index]?.isMultiSelect !== true)
+        setDrafts(draftsWith({ index, draft: { ...draft, picked: [] } }));
     },
     onText: (typing: { index: number; text: string }) => {
       const draft = drafts[typing.index];
@@ -136,8 +190,18 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
         draftsWith({ index: typing.index, draft: { ...draft, text: typing.text } }),
       );
     },
-    onSend: () => {
-      if (isOpen && isComplete) onAnswer({ messageId: message.id, answers: drafts });
+    onOwnKey: (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.key !== 'Enter') return;
+
+      event.preventDefault();
+
+      if (canNext) advance(drafts);
+    },
+    onBack: () => {
+      if (at > 0) setAt(at - 1);
+    },
+    onNext: () => {
+      if (canNext) advance(drafts);
     },
     onToggle: () => {
       if (isAnswered) setExpanded(!isExpanded);

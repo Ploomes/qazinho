@@ -53,11 +53,6 @@
   color: var(--ink);
 }
 
-.agent-panel__subtitle {
-  color: var(--ink3);
-  font: var(--font-mono-sm);
-}
-
 .agent-panel__collapse {
   display: inline-flex;
   align-items: center;
