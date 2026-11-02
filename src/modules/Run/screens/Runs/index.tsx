@@ -146,7 +146,7 @@ export const Runs: React.FC = () => {
                     </span>
                   )}
                   <span className="runs__case-duration">{runCase.duration}</span>
-                  <StatusPill status={runCase.verdict} />
+                  <StatusPill status={runCase.verdict} label="" />
                 </div>
 
                 <AnimatePresence initial={false}>

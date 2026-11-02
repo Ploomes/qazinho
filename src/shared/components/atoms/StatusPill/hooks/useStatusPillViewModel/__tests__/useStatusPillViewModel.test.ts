@@ -35,6 +35,15 @@ describe('useStatusPillViewModel', () => {
     expect(result.current.hasLabel).toBe(false);
   });
 
+  /** Sem palavra na linha, a cor não pode ser a única pista: o passar do mouse e o leitor de tela a dizem. */
+  it('still names the status on hover when the glyph stands alone', () => {
+    const { result } = renderHook(() =>
+      useStatusPillViewModel({ status: 'failed', label: '' }),
+    );
+
+    expect(result.current.tip).toBe('failed');
+  });
+
   it('holds its word by default', () => {
     const { result } = renderHook(() => useStatusPillViewModel({ status: 'passed' }));
 

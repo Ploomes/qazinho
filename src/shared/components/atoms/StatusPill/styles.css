@@ -2,53 +2,39 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  padding: 4px 9px;
   font: 500 11px/1 var(--font-mono);
   white-space: nowrap;
 }
 
-.status-pill--square {
-  border-radius: var(--radius-xs);
-}
-
 .status-pill--round {
   gap: 7px;
-  padding: 5px var(--space-3);
-  border-radius: var(--radius-pill);
   font-size: 12px;
 }
 
 .status-pill--lime {
-  background: var(--lime-soft);
   color: var(--lime-ink);
 }
 
 .status-pill--attn {
-  background: var(--attn-soft);
   color: var(--attn);
 }
 
 .status-pill--fail {
-  background: var(--fail-soft);
   color: var(--fail);
 }
 
 .status-pill--pass {
-  background: var(--pass-soft);
   color: var(--pass);
 }
 
 .status-pill--block {
-  background: var(--block-soft);
   color: var(--block);
 }
 
 .status-pill--skip {
-  background: var(--skip-soft);
   color: var(--skip);
 }
 
 .status-pill--quiet {
-  background: transparent;
   color: var(--ink3);
 }

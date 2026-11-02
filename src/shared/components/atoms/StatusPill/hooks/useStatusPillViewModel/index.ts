@@ -7,12 +7,14 @@ export const useStatusPillViewModel = (props: IStatusPillProps) => {
   const { t } = useTranslation();
   const { icon, labelKey, tone } = STATUS[status];
 
-  const word = label ?? t(labelKey);
+  const named = t(labelKey);
+  const word = label ?? named;
 
   return {
     icon,
     label: word,
     hasLabel: word !== '',
+    tip: word === '' ? named : word,
     className: ['status-pill', `status-pill--${tone}`, `status-pill--${shape}`].join(' '),
   };
 };

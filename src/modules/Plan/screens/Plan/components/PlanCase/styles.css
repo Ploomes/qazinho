@@ -17,12 +17,12 @@
 
 .plan-case__head {
   display: grid;
-  grid-template-areas: 'pill open title aside';
-  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  grid-template-areas: 'handle pill open title aside';
+  grid-template-columns: auto auto auto minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--space-3);
   width: 100%;
-  padding: 10px var(--space-3);
+  padding: 10px var(--space-3) 10px var(--space-2);
   border: none;
   background: transparent;
   text-align: left;
@@ -34,6 +34,8 @@
 }
 
 .plan-case__handle {
+  grid-area: handle;
+  display: inline-flex;
   color: var(--ink3);
   cursor: grab;
   opacity: 0;
@@ -56,10 +58,6 @@
 
 .plan-case__head .status-pill {
   grid-area: pill;
-}
-
-.plan-case__head .status-pill__label {
-  min-width: 9ch;
 }
 
 .plan-case__head .editable-text {
@@ -440,9 +438,9 @@
 @container workspace (width < 640px) {
   .plan-case__head {
     grid-template-areas:
-      'pill open . aside'
-      'title title title title';
-    grid-template-columns: auto auto minmax(0, 1fr) auto;
+      'handle pill open . aside'
+      'title title title title title';
+    grid-template-columns: auto auto auto minmax(0, 1fr) auto;
     row-gap: var(--space-2);
   }
 

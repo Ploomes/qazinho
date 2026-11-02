@@ -59,7 +59,18 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
       onDragEnd={onPutDown}
     >
       <div className="plan-case__head">
-        <StatusPill status={verdict} />
+        <span
+          className={
+            props.isLocked
+              ? 'plan-case__handle plan-case__handle--locked'
+              : 'plan-case__handle'
+          }
+          aria-hidden="true"
+        >
+          <Icon name="drag" />
+        </span>
+
+        <StatusPill status={verdict} label="" />
 
         <button
           type="button"
@@ -69,16 +80,6 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
           onClick={onHeadClick}
           onKeyDown={onHeadKeyDown}
         >
-          <span
-            className={
-              props.isLocked
-                ? 'plan-case__handle plan-case__handle--locked'
-                : 'plan-case__handle'
-            }
-            aria-hidden="true"
-          >
-            <Icon name="drag" />
-          </span>
           <Caret isOpen={props.isOpen} />
           <span className="plan-case__id">{props.testCase.id}</span>
         </button>

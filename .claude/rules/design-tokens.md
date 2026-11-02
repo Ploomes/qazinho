@@ -80,5 +80,6 @@ mudaram e em quanto.
 
 ## A cor nunca é a única pista
 
-Todo status leva um ícone e uma palavra ao lado da cor. Isso está no próprio texto de Aparência do
-protótipo, e é uma regra, não uma preferência.
+Todo status leva um ícone e uma palavra ao lado da cor. Numa lista que repete o status linha a
+linha, o ícone fica sozinho, cada um com a forma dele, e a palavra vai no `title` e no `aria-label`
+(`StatusPill` com `label=""`). O status não veste fundo: nada de pílula em volta de ícone e texto.
