@@ -60,12 +60,7 @@ import type {
   ISetupEvent,
   IStartBuild,
   IStartRun,
-  IStartSuiteChange,
-  IStartSuiteRun,
   IStorageUsage,
-  ISuite,
-  ISuiteChange,
-  ISuiteRun,
   IVideoSweep,
   IViewport,
   IWindowControls,
@@ -83,12 +78,6 @@ import type {
   ProStatus,
   QaReply,
   SaveOutcome,
-  SuiteChangeEvent,
-  SuiteEvent,
-  SuiteList,
-  SuitePick,
-  SuiteShipOutcome,
-  SuiteShipWay,
   UnreadPlanRead,
   VariablesOutcome,
   WindowFit,
@@ -180,57 +169,6 @@ const api: IQazinhoApi = {
   saveVideo: (props: { name: string; data: Uint8Array }) =>
     ipcRenderer.invoke(CHANNELS.saveVideo, props) as Promise<SaveOutcome>,
   pickImport: () => ipcRenderer.invoke(CHANNELS.pickImport) as Promise<ImportPick>,
-  pickSuite: (projectId: string) =>
-    ipcRenderer.invoke(CHANNELS.pickSuite, projectId) as Promise<SuitePick>,
-  suiteOf: (projectId: string) =>
-    ipcRenderer.invoke(CHANNELS.suiteOf, projectId) as Promise<ISuite | null>,
-  forgetSuite: (projectId: string) =>
-    ipcRenderer.invoke(CHANNELS.forgetSuite, projectId) as Promise<void>,
-  listSuite: (projectId: string) =>
-    ipcRenderer.invoke(CHANNELS.listSuite, projectId) as Promise<SuiteList>,
-  runSuite: (start: IStartSuiteRun) =>
-    ipcRenderer.invoke(CHANNELS.runSuite, start) as Promise<void>,
-  stopSuite: (projectId: string) =>
-    ipcRenderer.invoke(CHANNELS.stopSuite, projectId) as Promise<void>,
-  suiteRuns: (projectId: string) =>
-    ipcRenderer.invoke(CHANNELS.suiteRuns, projectId) as Promise<ISuiteRun[]>,
-  openSuiteTrace: (trace: { projectId: string; runId: string; file: string }) =>
-    ipcRenderer.invoke(CHANNELS.openSuiteTrace, trace) as Promise<boolean>,
-  onSuiteEvent: (listener: (event: SuiteEvent) => void) => {
-    const forward = (_: unknown, event: SuiteEvent) => {
-      listener(event);
-    };
-
-    ipcRenderer.on(CHANNELS.suiteEvent, forward);
-
-    return () => {
-      ipcRenderer.off(CHANNELS.suiteEvent, forward);
-    };
-  },
-  startSuiteChange: (start: IStartSuiteChange) =>
-    ipcRenderer.invoke(CHANNELS.startSuiteChange, start) as Promise<ISuiteChange>,
-  stopSuiteChange: (changeId: string) =>
-    ipcRenderer.invoke(CHANNELS.stopSuiteChange, changeId) as Promise<void>,
-  suiteChanges: (projectId: string) =>
-    ipcRenderer.invoke(CHANNELS.suiteChanges, projectId) as Promise<ISuiteChange[]>,
-  shipSuiteChange: (props: { projectId: string; changeId: string; way: SuiteShipWay }) =>
-    ipcRenderer.invoke(CHANNELS.shipSuiteChange, props) as Promise<SuiteShipOutcome>,
-  discardSuiteChange: (props: { projectId: string; changeId: string }) =>
-    ipcRenderer.invoke(
-      CHANNELS.discardSuiteChange,
-      props,
-    ) as Promise<ISuiteChange | null>,
-  onSuiteChangeEvent: (listener: (event: SuiteChangeEvent) => void) => {
-    const forward = (_: unknown, event: SuiteChangeEvent) => {
-      listener(event);
-    };
-
-    ipcRenderer.on(CHANNELS.suiteChangeEvent, forward);
-
-    return () => {
-      ipcRenderer.off(CHANNELS.suiteChangeEvent, forward);
-    };
-  },
   alertRun: (notice: IRunAlert) => {
     ipcRenderer.send(CHANNELS.alertRun, notice);
   },
