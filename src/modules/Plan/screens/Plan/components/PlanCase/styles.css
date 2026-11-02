@@ -288,6 +288,10 @@
   color: var(--ink);
 }
 
+.plan-case__step .editable-text:placeholder-shown:not(:read-only) {
+  border-color: var(--line);
+}
+
 .plan-case__expected {
   display: flex;
   gap: var(--space-3);
