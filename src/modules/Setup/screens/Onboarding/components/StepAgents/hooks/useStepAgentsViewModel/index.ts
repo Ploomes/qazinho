@@ -32,7 +32,7 @@ export const useStepAgentsViewModel = () => {
         name: agent.name,
         state: agent.isFound && !isSignedOut ? ('found' as const) : ('missing' as const),
         badge: isSignedOut
-          ? t('SETUP.SIGNED_OUT')
+          ? ''
           : isInUse
             ? t('SETUP.AGENT_IN_USE')
             : agent.isFound

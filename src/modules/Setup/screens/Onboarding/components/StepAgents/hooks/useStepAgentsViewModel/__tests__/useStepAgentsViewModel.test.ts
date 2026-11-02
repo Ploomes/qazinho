@@ -65,7 +65,7 @@ describe('useStepAgentsViewModel', () => {
 
       expect(codex).toMatchObject({
         state: 'missing',
-        badge: 'signed out',
+        badge: '',
         canInstall: false,
         canSignIn: true,
       });

@@ -486,8 +486,8 @@ button.settings__card:hover:not(:disabled) {
   padding-right: 148px;
 }
 
-.settings__card--signed-out .settings__card-note {
-  color: var(--attn);
+.settings__card-note:empty {
+  display: none;
 }
 
 .settings__agent-sign-in {

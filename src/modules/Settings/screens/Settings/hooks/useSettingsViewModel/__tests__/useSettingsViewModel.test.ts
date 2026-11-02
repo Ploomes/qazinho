@@ -73,7 +73,7 @@ describe('useSettingsViewModel', () => {
     const { result } = renderHook(() => useSettingsViewModel());
 
     expect(result.current.agents[1]).toMatchObject({
-      note: 'Not signed in',
+      note: '',
       canSignIn: true,
       className: 'settings__card settings__card--signed-out',
     });

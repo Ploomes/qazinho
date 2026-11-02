@@ -93,7 +93,7 @@ export const useSettingsViewModel = () => {
       const note = !item.isFound
         ? t('SETTINGS.NOT_ON_PATH')
         : item.isSignedIn === false
-          ? t('SETTINGS.NOT_SIGNED_IN')
+          ? ''
           : isDefault
             ? t('SETTINGS.DEFAULT_AGENT')
             : t('SETTINGS.MAKE_DEFAULT');
