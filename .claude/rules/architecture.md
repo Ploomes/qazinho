@@ -262,6 +262,10 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     QA, o que o `workspace_details` lê de volta para o Estagiário ajudar a respondê-las.
   - O chat e a sessão dele sobrevivem a um reinício (`keptOf`): as últimas mensagens, sem nada
     em andamento.
+  - Ele também fala sozinho, num balão sob o rosto (`AssistantTip`, `say`), quando o QAzinho leva
+    o QA a outro lugar ou precisa dizer algo que nenhuma tela diz: uma frase do que fazer ali. O
+    balão não pede resposta, não toma o foco, flutua sobre um modal e sai em alguns segundos pelo
+    tamanho do texto (`holdMsOf`), menos com o mouse em cima.
   - O botão dele mora na barra de título (`AssistantButton`), então nenhuma tela guarda espaço
     para ele: o composer do chat e o fim das listas ficam inteiros. O chat dele abre logo abaixo
     do botão, no canto direito (`AssistantDock`): sobre o painel Agente enquanto ele está aberto,

@@ -304,7 +304,8 @@ poderia fazer à mão: abrir uma tela, criar ou mudar um projeto, ligar um repos
 renomear, rodar ou parar um workspace, mudar as configurações, conectar um tracker, e apagar,
 desconectar ou mandar um bug a um tracker quando o QA confirma num cartão. Um plano ele entrega ao
 chat próprio do workspace, que o escreve com o QA, e ajuda a responder as perguntas desse chat. O
-chat dele sobrevive a um reinício. O `tests/smoke/assistant.test.ts` o dirige com um agente fake
+chat dele sobrevive a um reinício. Ele também fala sozinho, num balão sob o rosto que sai em alguns
+segundos: um comando sem a integração dele leva o QA até ela, e o balão diz o que fazer lá. O `tests/smoke/assistant.test.ts` o dirige com um agente fake
 sobre o servidor MCP real, e um Claude Code real (Haiku) o dirigiu por um dia de um QA nos dois
 idiomas; pelo Codex não.
 
