@@ -100,7 +100,6 @@ export const useStorageSettingsViewModel = () => {
     rule:
       days === null ? t('SETTINGS.KEEP_RULE_ALWAYS') : t('SETTINGS.KEEP_RULE', { days }),
     ruleKey: days === null ? 'always' : String(days),
-    keepNote: t('SETTINGS.KEEP_NOTE'),
     canSweep: days !== null && !isSweeping,
     isSweeping,
     sweepLabel: isSweeping ? t('SETTINGS.SWEEPING') : t('SETTINGS.SWEEP_NOW'),

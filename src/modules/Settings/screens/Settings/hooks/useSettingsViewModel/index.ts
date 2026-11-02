@@ -133,7 +133,6 @@ export const useSettingsViewModel = () => {
     devices: [
       {
         name: 'Android SDK',
-        about: t('SETUP.ANDROID_ABOUT'),
         ...toolState({
           isFound: tools.androidSdk.isFound,
           isOn: true,
@@ -147,7 +146,6 @@ export const useSettingsViewModel = () => {
       },
       {
         name: 'Xcode',
-        about: t('SETUP.XCODE_ABOUT'),
         ...toolState({
           isFound: tools.xcode.isFound,
           isOn: isMac,
@@ -161,7 +159,6 @@ export const useSettingsViewModel = () => {
       },
       {
         name: 'idb',
-        about: t('SETUP.IDB_ABOUT'),
         ...toolState({ isFound: tools.idb.isFound, isOn: isMac, path: tools.idb.path }),
         hasLink: false,
         link: '',
@@ -208,11 +205,6 @@ export const useSettingsViewModel = () => {
           : comboLabelOf({ combo: item.combo, isMac: Platform.isMac() }),
       };
     }),
-    shortcutsNote: t('SETTINGS.SHORTCUTS_NOTE', {
-      command: Platform.isMac() ? '⌘' : 'Ctrl',
-      option: Platform.isMac() ? '⌥' : 'Alt',
-    }),
-    logsNote: t('SETTINGS.LOGS_NOTE'),
     openLogsLabel: t('SETTINGS.LOGS_OPEN'),
     copyDiagnosticsLabel: isCopied
       ? t('SETTINGS.DIAGNOSTICS_COPIED')

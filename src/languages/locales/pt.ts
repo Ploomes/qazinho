@@ -757,10 +757,6 @@ export const pt: typeof en = {
     RUN_ALERT_APP: 'Só dentro do QAzinho',
     ISLAND_TITLE: 'Ilha no topo da tela',
     ISLAND: 'Mostrar a ilha',
-    ISLAND_NOTE:
-      'Enquanto uma run anda, ou o agente espera por você, uma ilhazinha junto ao notch mostra isso. Numa tela sem notch ela fica pendurada na borda de cima.',
-    RUN_ALERT_NOTE:
-      'Longe do QAzinho, uma notificação com som te chama de volta, e o ícone do app conta as runs que você ainda não viu.',
     BACK: 'Voltar ao app',
     AGENTS: 'Agentes',
     DEVICES: 'Dispositivos',
@@ -774,19 +770,9 @@ export const pt: typeof en = {
     MAKE_DEFAULT: 'Tornar padrão',
     NOT_ON_PATH: 'Fora do PATH',
     NOT_SIGNED_IN: 'Sem login',
-    AGENTS_NOTE:
-      'O QAzinho não tem modelo próprio. Ele dirige o agente que você já tem instalado.',
-    DEVICES_NOTE:
-      'O QAzinho nunca baixa SDK, emulador ou Xcode. Ele encontra o que já está aqui e diz o que falta.',
-    MCPS_NOTE:
-      'Os servidores MCP ficam no seu próprio agente, não no QAzinho: você faz o login lá, e o QAzinho nunca vê esse login.',
-    INTEGRATIONS_NOTE: 'Nada é enviado sozinho. Você escolhe a run, o bug e o momento.',
     THEME_LIGHT: 'Papel',
     THEME_DARK: 'Noite',
-    APPEARANCE_NOTE:
-      'Todo status tem ícone e palavra, então a cor nunca é a única pista.',
     LANGUAGE: 'idioma da interface',
-    LANGUAGE_NOTE: 'Planos de teste mantêm o idioma em que você os escreveu.',
     KEYBIND_WORKSPACE: 'Novo workspace',
     KEYBIND_RUN: 'Rodar o plano',
     KEYBIND_STOP: 'Parar a run',
@@ -799,14 +785,8 @@ export const pt: typeof en = {
     KEYBIND_RESOURCES: 'Abrir Recursos',
     KEYBIND_ASSISTANT: 'Falar com o Estagiário',
     KEYBIND_SETTINGS: 'Abrir Configurações',
-    SHORTCUTS_NOTE:
-      'Clique num atalho e aperte as teclas que quiser, segurando {{command}} ou {{option}}. Esc deixa como estava.',
     ABOUT_VERSION: 'versão {{version}}',
-    ABOUT_NOTE:
-      'Seu assistente de QA: planeje testes, execute e organize seu trabalho com o seu próprio agente de IA. Nada sai desta máquina.',
     ABOUT_RIGHTS: '© {{year}} Salve Software. Todos os direitos reservados.',
-    LOGS_NOTE:
-      'Quando algo dá errado, o log diz o que o QAzinho estava fazendo. Ele fica nesta máquina, sem senha, token ou projeto; envie só se quiser.',
     LOGS_OPEN: 'Abrir a pasta do log',
     DIAGNOSTICS_COPY: 'Copiar diagnóstico',
     DIAGNOSTICS_COPIED: 'Copiado',
@@ -824,8 +804,6 @@ export const pt: typeof en = {
     KEEP_ALWAYS: 'Sempre',
     KEEP_RULE: 'Vídeos com mais de {{days}} dias são apagados sozinhos.',
     KEEP_RULE_ALWAYS: 'Nenhum vídeo é apagado sozinho: eles ficam até você apagar.',
-    KEEP_NOTE:
-      'Cada run guarda o relatório, as telas e os veredictos. Um vídeo que já subiu para a sua conta continua lá.',
     SWEEP_NOW: 'Apagar os vídeos antigos agora',
     SWEEPING: 'Apagando…',
     SWEPT_NONE: 'Nenhum vídeo era antigo o bastante para apagar.',
@@ -879,8 +857,6 @@ export const pt: typeof en = {
   },
   SETUP: {
     SIGN_IN: 'Fazer login',
-    AGENT_SIGNED_OUT:
-      'Sem login, o chat e as runs falhariam. Faça login e ele fica pronto.',
     LOGIN_TITLE: 'Fazendo login no {{agent}}',
     LOGIN_SUBTITLE:
       'O {{agent}} faz o login num terminal, pelo login dele. O QAzinho nunca vê o que você digita.',
@@ -899,11 +875,7 @@ export const pt: typeof en = {
       'O login não terminou em 5 minutos, e o QAzinho parou de esperar.',
     CONNECTED: 'conectado',
     NOT_CONNECTED: 'não conectado',
-    WHAT_IT_NEEDS: 'o que precisa',
-    GITHUB_TEXT:
-      'Deixe o agente ler o código dos seus repositórios para planejar os testes, e envie como issues os bugs que uma run encontra.',
-    GITHUB_NEEDS:
-      'O GitHub CLI (gh) conectado à sua conta. O QAzinho usa esse login e não guarda token nenhum.',
+    GITHUB_TEXT: 'Código para planejar, issues para os bugs.',
     GITHUB_CLI_MISSING:
       'O gh ainda não está nesta máquina. O QAzinho instala com o {{installer}}.',
     GITHUB_CLI_SIGNED_OUT: 'O gh está aqui, mas ainda não entrou no GitHub.',
@@ -934,15 +906,8 @@ export const pt: typeof en = {
     GITHUB_FAIL_TIMEOUT:
       'O código expirou antes de ser usado. Tente de novo para receber outro.',
     GITHUB_FAIL_CLOSED: 'O gh fechou antes de terminar a conexão.',
-    JIRA_TEXT:
-      'Planeje a partir de uma história e dos critérios de aceite, e envie como issues os bugs que uma run encontra.',
-    JIRA_NEEDS:
-      'Seu site do Jira Cloud, seu email e um API token. O QAzinho confere com o Jira e guarda o token selado no chaveiro desta máquina.',
-    JIRA_CONNECTED_NOTE:
-      'Digite /jira no chat de um workspace para planejar a partir de uma história, e envie um bug pela aba Bugs.',
+    JIRA_TEXT: 'Histórias para planejar, issues para os bugs.',
     CONFLUENCE_SWITCH: 'Usar também o Confluence',
-    CONFLUENCE_NOTE:
-      'Com a mesma conta: digite /confluence no chat para planejar a partir de uma página, e publique um plano pela aba Plano.',
     CONFLUENCE_CHECKING: 'Conferindo o Confluence…',
     FIELD_TOKEN: 'token',
     INSTALL_BUSY: 'Já está instalando.',
@@ -987,38 +952,27 @@ export const pt: typeof en = {
     STEP_DEVICES: 'Dispositivos',
     STEP_INTEGRATIONS: 'Trackers',
     STEP_DONE: 'Pronto',
-    WELCOME_SAY:
-      'Oi! Eu sou o Estagiário, seu assistente de QA: te ajudo a planejar testes, executar e manter tudo organizado. Primeiro vamos preparar esta máquina. Em que língua a gente conversa?',
-    AGENTS_SAY:
-      'Primeiro: quem testa comigo? Eu uso um agente de IA que você já tem, logado na sua própria conta. Olha o que eu achei nesta máquina.',
-    AGENTS_SAY_NONE:
-      'Hmm, não achei nenhum agente nesta máquina. Instale um aqui embaixo que eu procuro de novo. Sem um agente eu não escrevo nem rodo um plano.',
-    DEVICES_SAY_INTRO: 'Agora os dispositivos. A web não precisa de mais nada.',
-    DEVICES_SAY_ANDROID_READY: 'O Android está pronto: achei o SDK.',
-    DEVICES_SAY_ANDROID_MISSING:
-      'O Android precisa do Android SDK, que é grande demais para eu instalar, então eu mostro onde baixar.',
-    DEVICES_SAY_IOS_READY: 'O iOS também está pronto, com o Xcode e o idb.',
-    DEVICES_SAY_IOS_NEEDS_IDB:
-      'Para o iOS, o Xcode já está aqui; só falta o idb, e esse eu mesmo instalo.',
-    DEVICES_SAY_IOS_NEEDS_XCODE: 'Para o iOS ainda falta o Xcode, que vem da App Store.',
-    DEVICES_SAY_IOS_NEEDS_BOTH:
-      'Para o iOS preciso do Xcode, da App Store, e do idb, que eu mesmo instalo.',
-    DEVICES_SAY_IOS_NO_MAC:
-      'O iOS precisa de um Mac, então nesta máquina não dá para testar no iOS.',
-    INTEGRATIONS_SAY:
-      'Quer que eu leia o código dos seus projetos? Conecte o GitHub, e o Jira para os bugs, ou pule e faça isso depois nas Configurações.',
-    DONE_SAY:
-      'Prontinho! Isso é o que eu achei nesta máquina. Bora planejar seus primeiros testes?',
+    WELCOME_SAY: 'Oi! Eu sou o Estagiário. Que idioma falamos?',
+    AGENTS_SAY: 'Qual agente testa comigo?',
+    AGENTS_SAY_NONE: 'Não achei nenhum agente nesta máquina. Instale um aqui embaixo.',
+    DEVICES_SAY_INTRO: 'A web não precisa de mais nada.',
+    DEVICES_SAY_ANDROID_READY: 'O Android está pronto.',
+    DEVICES_SAY_ANDROID_MISSING: 'O Android precisa do Android SDK.',
+    DEVICES_SAY_IOS_READY: 'O iOS também.',
+    DEVICES_SAY_IOS_NEEDS_IDB: 'O iOS só precisa do idb.',
+    DEVICES_SAY_IOS_NEEDS_XCODE: 'O iOS precisa do Xcode.',
+    DEVICES_SAY_IOS_NEEDS_BOTH: 'O iOS precisa do Xcode e do idb.',
+    DEVICES_SAY_IOS_NO_MAC: 'O iOS só roda num Mac.',
+    INTEGRATIONS_SAY: 'Conectar o GitHub e o Jira? Dá para fazer depois.',
+    DONE_SAY: 'Prontinho! Bora planejar seus primeiros testes?',
     SKIP_SETUP: 'Pular configuração',
     BACK: 'Voltar',
     START: 'Vamos começar',
     CONTINUE: 'Continuar',
     CONTINUE_WITHOUT_AGENT: 'Continuar sem agente',
-    SKIP_FOR_NOW: 'Pular por agora',
     OPEN_APP: 'Abrir o QAzinho',
     CREATE_PROJECT: 'Criar meu primeiro projeto',
     LANGUAGE: 'idioma',
-    AGENT_ABOUT: 'roda como {{command}}',
     AGENT_IN_USE: 'em uso',
     FOUND: 'encontrado',
     SIGNED_OUT: 'sem login',
@@ -1031,11 +985,8 @@ export const pt: typeof en = {
       'Sem um agente o QAzinho não escreve nem roda um plano. Dá para instalar um depois nas Configurações.',
     CHECK_AGAIN: 'Verificar de novo',
     CHECKING: 'verificando…',
-    ANDROID_ABOUT: 'Roda seus próprios emuladores pelo adb.',
     GET_ANDROID_STUDIO: 'Baixar Android Studio',
-    XCODE_ABOUT: 'Liga o simulador de iOS e instala seu build nele.',
     GET_XCODE: 'Baixar Xcode',
-    IDB_ABOUT: 'Lê e toca na tela do simulador de iOS.',
     NEEDS_BREW:
       'Instalar o idb precisa do Homebrew, e esta máquina não tem. Instale e verifique de novo.',
     DEVICES_NOTE:
@@ -1050,7 +1001,6 @@ export const pt: typeof en = {
     DONE_NEEDS_SDK: 'precisa do Android SDK',
     DONE_NEEDS_IOS: 'precisa do Xcode e do idb',
     DONE_NO_TRACKERS: 'nenhum conectado',
-    DONE_NOTE: 'O que faltar dá para configurar depois nas Configurações.',
   },
   GITHUB: {
     FAILURE_NO_CLI:

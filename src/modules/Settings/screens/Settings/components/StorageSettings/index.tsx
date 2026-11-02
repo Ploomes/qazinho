@@ -96,7 +96,6 @@ export const StorageSettings: React.FC = () => {
               {view.rule}
             </motion.p>
           </AnimatePresence>
-          <p className="settings__note">{view.keepNote}</p>
         </div>
 
         <div className="storage-settings__sweep">

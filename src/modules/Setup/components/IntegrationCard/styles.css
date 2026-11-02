@@ -61,8 +61,8 @@
   padding: 7px 14px;
   border: var(--edge-width) solid var(--edge);
   border-radius: var(--radius-pill);
-  background: var(--lime);
-  color: var(--on-lime);
+  background: transparent;
+  color: var(--ink);
   font: 600 12px/1 var(--font-ui);
   box-shadow: var(--sticker-rest);
   transition:

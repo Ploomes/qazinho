@@ -38,14 +38,12 @@ export const useStepAgentsViewModel = () => {
             : agent.isFound
               ? t('SETUP.FOUND')
               : t('SETUP.MISSING'),
-        about: t('SETUP.AGENT_ABOUT', { command: agent.command }),
-        detail: agent.path ?? t('SETUP.NOT_ON_MACHINE'),
+        detail: agent.isFound ? undefined : t('SETUP.NOT_ON_MACHINE'),
         isInUse,
         canInstall:
           !agent.isFound && item !== null && hasNpm && state?.phase !== 'installing',
         install: state ?? null,
         canSignIn: isSignedOut,
-        signIn: isSignedOut ? t('SETUP.AGENT_SIGNED_OUT') : '',
         onUse: () => {
           selectAgent(agent.name);
         },

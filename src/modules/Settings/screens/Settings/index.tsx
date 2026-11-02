@@ -32,8 +32,6 @@ export const Settings: React.FC = () => {
     languages,
     runAlerts,
     keybinds,
-    shortcutsNote,
-    logsNote,
     openLogsLabel,
     copyDiagnosticsLabel,
     onOpenLogs,
@@ -169,7 +167,6 @@ export const Settings: React.FC = () => {
                   </a>
                 </p>
               )}
-              <p className="settings__note">{t('SETTINGS.AGENTS_NOTE')}</p>
             </div>
           )}
 
@@ -179,7 +176,6 @@ export const Settings: React.FC = () => {
                 <ToolCard
                   key={item.name}
                   name={item.name}
-                  about={item.about}
                   detail={item.detail}
                   state={item.state}
                   badge={item.badge}
@@ -227,7 +223,6 @@ export const Settings: React.FC = () => {
                   </a>
                 </p>
               )}
-              <p className="settings__note">{t('SETTINGS.DEVICES_NOTE')}</p>
             </div>
           )}
 
@@ -236,7 +231,6 @@ export const Settings: React.FC = () => {
               {integrations.map((item) => (
                 <IntegrationCard key={item.id} integration={item} />
               ))}
-              <p className="settings__note">{t('SETTINGS.INTEGRATIONS_NOTE')}</p>
             </div>
           )}
 
@@ -245,7 +239,6 @@ export const Settings: React.FC = () => {
               {mcpServers.map((item) => (
                 <McpCard key={item.id} server={item} />
               ))}
-              <p className="settings__note">{t('SETTINGS.MCPS_NOTE')}</p>
               <div className="settings__section">
                 <span className="settings__eyebrow">{t('OUTSIDE.EYEBROW')}</span>
                 <OutsideServerCard />
@@ -278,7 +271,6 @@ export const Settings: React.FC = () => {
                   </button>
                 ))}
               </div>
-              <p className="settings__note">{t('SETTINGS.APPEARANCE_NOTE')}</p>
 
               <div className="settings__section">
                 <span className="settings__eyebrow">{t('SETTINGS.LANGUAGE')}</span>
@@ -301,7 +293,6 @@ export const Settings: React.FC = () => {
                     </button>
                   ))}
                 </div>
-                <p className="settings__note">{t('SETTINGS.LANGUAGE_NOTE')}</p>
               </div>
 
               <div className="settings__section">
@@ -320,7 +311,6 @@ export const Settings: React.FC = () => {
                     </button>
                   ))}
                 </div>
-                <p className="settings__note">{t('SETTINGS.RUN_ALERT_NOTE')}</p>
               </div>
 
               <div className="settings__section">
@@ -332,7 +322,6 @@ export const Settings: React.FC = () => {
                     onChange={onIslandChange}
                   />
                 </div>
-                <p className="settings__note">{t('SETTINGS.ISLAND_NOTE')}</p>
               </div>
             </div>
           )}
@@ -358,7 +347,6 @@ export const Settings: React.FC = () => {
                   </button>
                 ))}
               </div>
-              <p className="settings__note">{shortcutsNote}</p>
             </div>
           )}
 
@@ -376,9 +364,7 @@ export const Settings: React.FC = () => {
                   <Tag>{t('COMMON.BY_SALVE')}</Tag>
                 </div>
               </div>
-              <p className="settings__about-note">{t('SETTINGS.ABOUT_NOTE')}</p>
               <div className="settings__about-logs">
-                <p className="settings__note">{logsNote}</p>
                 <div className="settings__about-actions">
                   <Button size="sm" onClick={onOpenLogs}>
                     {openLogsLabel}

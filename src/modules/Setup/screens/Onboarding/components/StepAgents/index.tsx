@@ -34,7 +34,6 @@ export const StepAgents: React.FC = () => {
           <ToolCard
             key={row.id}
             name={row.name}
-            about={row.about}
             detail={row.detail}
             state={row.state}
             badge={row.badge}
@@ -59,18 +58,6 @@ export const StepAgents: React.FC = () => {
                   state={row.install}
                   onRetry={row.onInstall}
                 />
-              )}
-              {row.signIn !== '' && (
-                <motion.div
-                  key="sign-in"
-                  className="step-agents__sign-in"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: MOTION.duration, ease: MOTION.ease }}
-                >
-                  <p className="step-agents__sign-in-text">{row.signIn}</p>
-                </motion.div>
               )}
             </AnimatePresence>
           </ToolCard>

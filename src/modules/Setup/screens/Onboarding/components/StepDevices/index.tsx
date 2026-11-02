@@ -27,7 +27,6 @@ export const StepDevices: React.FC = () => {
       <span className="step-devices__group">Android</span>
       <ToolCard
         name="Android SDK"
-        about={t('SETUP.ANDROID_ABOUT')}
         detail={android.detail}
         state={android.state}
         badge={android.badge}
@@ -48,7 +47,6 @@ export const StepDevices: React.FC = () => {
       <span className="step-devices__group">iOS</span>
       <ToolCard
         name="Xcode"
-        about={t('SETUP.XCODE_ABOUT')}
         detail={xcode.detail}
         state={xcode.state}
         badge={xcode.badge}
@@ -67,7 +65,6 @@ export const StepDevices: React.FC = () => {
       />
       <ToolCard
         name="idb"
-        about={t('SETUP.IDB_ABOUT')}
         detail={idb.detail}
         state={idb.state}
         badge={idb.badge}

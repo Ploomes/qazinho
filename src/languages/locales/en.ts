@@ -751,10 +751,6 @@ export const en = {
     RUN_ALERT_APP: 'Only inside QAzinho',
     ISLAND_TITLE: 'Island at the top of the screen',
     ISLAND: 'Show the island',
-    ISLAND_NOTE:
-      'While a run goes, or the agent waits for you, a small island by the notch shows it. On a screen with no notch it hangs from the top edge.',
-    RUN_ALERT_NOTE:
-      'Away from QAzinho, a notification with its sound calls you back, and the app’s icon counts the runs you have not seen yet.',
     BACK: 'Back to app',
     AGENTS: 'Agents',
     DEVICES: 'Devices',
@@ -768,20 +764,9 @@ export const en = {
     MAKE_DEFAULT: 'Make default',
     NOT_ON_PATH: 'Not on PATH',
     NOT_SIGNED_IN: 'Not signed in',
-    AGENTS_NOTE:
-      'QAzinho has no model of its own. It drives whichever agent you already have installed.',
-    DEVICES_NOTE:
-      'QAzinho never downloads an SDK, an emulator or Xcode. It finds what is already here and says what is missing.',
-    MCPS_NOTE:
-      'MCP servers live in your own agent, not in QAzinho: you sign in there, and QAzinho never sees the sign-in.',
-    INTEGRATIONS_NOTE:
-      'Nothing is sent anywhere on its own. You pick the run, the bug and the moment.',
     THEME_LIGHT: 'Paper',
     THEME_DARK: 'Night',
-    APPEARANCE_NOTE:
-      'Every status carries an icon and a word, so colour is never the only clue.',
     LANGUAGE: 'interface language',
-    LANGUAGE_NOTE: 'Test plans keep the language you wrote them in.',
     KEYBIND_WORKSPACE: 'New workspace',
     KEYBIND_RUN: 'Run the plan',
     KEYBIND_STOP: 'Stop the run',
@@ -794,14 +779,8 @@ export const en = {
     KEYBIND_RESOURCES: 'Open Resources',
     KEYBIND_ASSISTANT: 'Talk to the Intern',
     KEYBIND_SETTINGS: 'Open Settings',
-    SHORTCUTS_NOTE:
-      'Click a shortcut and press the keys you want, holding {{command}} or {{option}}. Esc leaves it as it was.',
     ABOUT_VERSION: 'version {{version}}',
-    ABOUT_NOTE:
-      'Your QA assistant: plan tests, run them and keep your work organised, with your own AI agent. Nothing leaves this machine.',
     ABOUT_RIGHTS: '© {{year}} Salve Software. All rights reserved.',
-    LOGS_NOTE:
-      'When something goes wrong, the log says what QAzinho was doing. It stays on this machine, with no password, token or project in it; send it only if you want to.',
     LOGS_OPEN: 'Open the log folder',
     DIAGNOSTICS_COPY: 'Copy diagnostics',
     DIAGNOSTICS_COPIED: 'Copied',
@@ -819,8 +798,6 @@ export const en = {
     KEEP_ALWAYS: 'Always',
     KEEP_RULE: 'Videos older than {{days}} days are deleted on their own.',
     KEEP_RULE_ALWAYS: 'No video is deleted on its own: they stay until you delete them.',
-    KEEP_NOTE:
-      'Each run keeps its report, screens and verdicts. A video already sent to your account stays there.',
     SWEEP_NOW: 'Delete old videos now',
     SWEEPING: 'Deleting…',
     SWEPT_NONE: 'No video was old enough to delete.',
@@ -874,8 +851,6 @@ export const en = {
   },
   SETUP: {
     SIGN_IN: 'Sign in',
-    AGENT_SIGNED_OUT:
-      'Not signed in, so chat and runs would fail. Sign in and it is ready.',
     LOGIN_TITLE: 'Signing in to {{agent}}',
     LOGIN_SUBTITLE:
       '{{agent}} signs you in in a terminal, with its own login. QAzinho never sees what you type.',
@@ -894,11 +869,7 @@ export const en = {
       'The sign-in did not finish in 5 minutes, so QAzinho stopped waiting.',
     CONNECTED: 'connected',
     NOT_CONNECTED: 'not connected',
-    WHAT_IT_NEEDS: 'what it needs',
-    GITHUB_TEXT:
-      'Let the agent read the code of your repositories to plan tests, and send the bugs a run finds as issues.',
-    GITHUB_NEEDS:
-      'The GitHub CLI (gh), signed in to your account. QAzinho uses its login and keeps no token of its own.',
+    GITHUB_TEXT: 'Code to plan from, issues for the bugs.',
     GITHUB_CLI_MISSING:
       'gh is not on this machine yet. QAzinho installs it with {{installer}}.',
     GITHUB_CLI_SIGNED_OUT: 'gh is here, not signed in to GitHub yet.',
@@ -930,15 +901,8 @@ export const en = {
     GITHUB_FAIL_REFUSED: 'GitHub did not authorize the sign-in.',
     GITHUB_FAIL_TIMEOUT: 'The code expired before it was used. Try again for a new one.',
     GITHUB_FAIL_CLOSED: 'gh closed before the sign-in finished.',
-    JIRA_TEXT:
-      'Plan from a story and its acceptance criteria, and send the bugs a run finds as issues.',
-    JIRA_NEEDS:
-      "Your Jira Cloud site, your email and an API token. QAzinho checks them with Jira, then seals the token in this machine's keychain.",
-    JIRA_CONNECTED_NOTE:
-      'Type /jira in a workspace’s chat to plan from a story, and send a bug from the Bugs tab.',
+    JIRA_TEXT: 'Stories to plan from, issues for the bugs.',
     CONFLUENCE_SWITCH: 'Use Confluence too',
-    CONFLUENCE_NOTE:
-      'With the same account: type /confluence in the chat to plan from a page, and publish a plan from the Plan tab.',
     CONFLUENCE_CHECKING: 'Checking Confluence…',
     FIELD_TOKEN: 'token',
     INSTALL_BUSY: 'It is installing already.',
@@ -983,38 +947,27 @@ export const en = {
     STEP_DEVICES: 'Devices',
     STEP_INTEGRATIONS: 'Trackers',
     STEP_DONE: 'Ready',
-    WELCOME_SAY:
-      "Hi! I'm the Intern, your QA assistant: I help you plan tests, run them and keep it all organised. Let's set this machine up first. Which language do we speak?",
-    AGENTS_SAY:
-      'First, who tests with me? I drive an AI agent you already have, signed in to your own account. Here is what I found on this machine.',
-    AGENTS_SAY_NONE:
-      "Hmm, I couldn't find an agent on this machine. Install one below and I'll look again. Without one I can't write or run a plan.",
-    DEVICES_SAY_INTRO: 'Now the devices. The web needs nothing else.',
-    DEVICES_SAY_ANDROID_READY: 'Android is ready: I found the SDK.',
-    DEVICES_SAY_ANDROID_MISSING:
-      "Android needs the Android SDK, which is too big for me to install, so I'll point you to it.",
-    DEVICES_SAY_IOS_READY: 'iOS is ready too, with Xcode and idb.',
-    DEVICES_SAY_IOS_NEEDS_IDB:
-      'For iOS, Xcode is here; I only need idb, and that one I can install.',
-    DEVICES_SAY_IOS_NEEDS_XCODE:
-      'For iOS I still need Xcode, which comes from the App Store.',
-    DEVICES_SAY_IOS_NEEDS_BOTH:
-      'For iOS I need Xcode, from the App Store, and idb, which I can install myself.',
-    DEVICES_SAY_IOS_NO_MAC: "iOS needs a Mac, so on this machine I can't test on iOS.",
-    INTEGRATIONS_SAY:
-      'Want me to read the code of your projects? Connect GitHub, and Jira for the bugs, or skip it and do it later in Settings.',
-    DONE_SAY:
-      'All set! Here is what I found on this machine. Shall we plan your first tests?',
+    WELCOME_SAY: "Hi! I'm the Intern. Which language do we speak?",
+    AGENTS_SAY: 'Which agent tests with me?',
+    AGENTS_SAY_NONE: 'I found no agent on this machine. Install one below.',
+    DEVICES_SAY_INTRO: 'The web needs nothing else.',
+    DEVICES_SAY_ANDROID_READY: 'Android is ready.',
+    DEVICES_SAY_ANDROID_MISSING: 'Android needs the Android SDK.',
+    DEVICES_SAY_IOS_READY: 'So is iOS.',
+    DEVICES_SAY_IOS_NEEDS_IDB: 'iOS only needs idb.',
+    DEVICES_SAY_IOS_NEEDS_XCODE: 'iOS needs Xcode.',
+    DEVICES_SAY_IOS_NEEDS_BOTH: 'iOS needs Xcode and idb.',
+    DEVICES_SAY_IOS_NO_MAC: 'iOS only runs on a Mac.',
+    INTEGRATIONS_SAY: 'Connect GitHub and Jira? You can do it later.',
+    DONE_SAY: 'All set! Shall we plan your first tests?',
     SKIP_SETUP: 'Skip setup',
     BACK: 'Back',
     START: 'Let’s start',
     CONTINUE: 'Continue',
     CONTINUE_WITHOUT_AGENT: 'Continue without an agent',
-    SKIP_FOR_NOW: 'Skip for now',
     OPEN_APP: 'Open QAzinho',
     CREATE_PROJECT: 'Create my first project',
     LANGUAGE: 'language',
-    AGENT_ABOUT: 'runs as {{command}}',
     AGENT_IN_USE: 'in use',
     FOUND: 'found',
     SIGNED_OUT: 'signed out',
@@ -1027,11 +980,8 @@ export const en = {
       'Without an agent QAzinho cannot write a plan or run one. You can install one later in Settings.',
     CHECK_AGAIN: 'Check again',
     CHECKING: 'checking…',
-    ANDROID_ABOUT: 'Runs your own emulators through adb.',
     GET_ANDROID_STUDIO: 'Get Android Studio',
-    XCODE_ABOUT: 'Boots the iOS simulator and installs your build on it.',
     GET_XCODE: 'Get Xcode',
-    IDB_ABOUT: 'Reads and taps the iOS simulator screen.',
     NEEDS_BREW:
       'Installing idb needs Homebrew, and this machine has none. Install it, then check again.',
     DEVICES_NOTE:
@@ -1045,7 +995,6 @@ export const en = {
     DONE_NEEDS_SDK: 'needs the Android SDK',
     DONE_NEEDS_IOS: 'needs Xcode and idb',
     DONE_NO_TRACKERS: 'none connected',
-    DONE_NOTE: 'Anything missing can be set up later in Settings.',
   },
   GITHUB: {
     FAILURE_NO_CLI:

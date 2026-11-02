@@ -17,7 +17,8 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
     isConnecting,
     error,
     text,
-    needs,
+    hasPill,
+    hasCliNote,
     cliLine,
     pill,
     statusLabel,
@@ -25,11 +26,9 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
     connectLabel,
     canConnect,
     tokenUrl,
-    connectedNote,
     hasConfluence,
     isConfluenceOn,
     confluenceLabel,
-    confluenceNote,
     confluenceError,
     onConfluence,
     install,
@@ -61,17 +60,19 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
           <span className="integration-card__about">{text}</span>
         </span>
         <AnimatePresence initial={false} mode="popLayout">
-          <motion.span
-            key={pill}
-            className="integration-card__pill"
-            layout="position"
-            initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.94 }}
-            transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
-          >
-            <StatusPill status={pill} label={statusLabel} />
-          </motion.span>
+          {hasPill && (
+            <motion.span
+              key={pill}
+              className="integration-card__pill"
+              layout="position"
+              initial={{ opacity: 0, scale: 0.94 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.94 }}
+              transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+            >
+              <StatusPill status={pill} label={statusLabel} />
+            </motion.span>
+          )}
         </AnimatePresence>
         <AnimatePresence initial={false}>
           {hasAction && (
@@ -120,7 +121,6 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
                 </div>
               ))}
             </div>
-            <p className="integration-card__hint">{connectedNote}</p>
             {hasConfluence && (
               <div className="integration-card__extra">
                 <Switch
@@ -130,7 +130,6 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
                     void onConfluence(isOn);
                   }}
                 />
-                <p className="integration-card__hint">{confluenceNote}</p>
                 <AnimatePresence initial={false}>
                   {confluenceError !== '' && (
                     <motion.div
@@ -160,8 +159,6 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
             <div className="integration-card__fields">
-              <p className="integration-card__about">{needs}</p>
-
               {fields.map((field) => (
                 <label key={field.id} className="integration-card__field">
                   <span className="integration-card__key">{field.label}</span>
@@ -221,7 +218,7 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
           </motion.div>
         )}
 
-        {!isConnected && !isOpen && (
+        {hasCliNote && (
           <motion.div
             key="needs"
             className="integration-card__needs"
@@ -231,10 +228,6 @@ export const IntegrationCard: React.FC<IIntegrationCardProps> = (props) => {
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
             <div className="integration-card__needs-body">
-              <span className="integration-card__eyebrow">
-                {t('SETUP.WHAT_IT_NEEDS')}
-              </span>
-              <p className="integration-card__about">{needs}</p>
               <AnimatePresence initial={false}>
                 {cliLine !== null && (
                   <motion.div

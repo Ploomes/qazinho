@@ -15,7 +15,6 @@ export const useOnboardingViewModel = () => {
   const hasChecked = useRef(false);
   const agents = useMachineStore((state) => state.agents);
   const tools = useMachineStore((state) => state.tools);
-  const integrations = useSetupStore((state) => state.integrations);
   const installs = useSetupStore((state) => state.installs);
   const agentInUse = useSettingsStore((state) => state.agent);
   const selectAgent = useSettingsStore((state) => state.selectAgent);
@@ -67,9 +66,7 @@ export const useOnboardingViewModel = () => {
         ? t('SETUP.START')
         : step === 'agents' && !hasAgent
           ? t('SETUP.CONTINUE_WITHOUT_AGENT')
-          : step === 'integrations' && integrations.length === 0
-            ? t('SETUP.SKIP_FOR_NOW')
-            : t('SETUP.CONTINUE'),
+          : t('SETUP.CONTINUE'),
     dots: ONBOARDING_STEPS.map((item, position) => ({
       id: item.id,
       label: t(item.labelKey),

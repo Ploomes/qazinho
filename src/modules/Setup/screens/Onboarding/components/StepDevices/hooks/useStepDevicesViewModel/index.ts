@@ -31,21 +31,27 @@ export const useStepDevicesViewModel = () => {
     android: {
       state: tools.androidSdk.isFound ? ('found' as const) : ('missing' as const),
       badge: tools.androidSdk.isFound ? t('SETUP.FOUND') : t('SETUP.MISSING'),
-      detail: tools.androidSdk.path ?? t('SETUP.NOT_ON_MACHINE'),
+      detail: tools.androidSdk.isFound ? undefined : t('SETUP.NOT_ON_MACHINE'),
       link: tools.androidSdk.isFound ? null : SETUP_LINKS.androidStudio,
     },
     xcode: {
       state: stateOf(tools.xcode.isFound),
       badge: badgeOf(tools.xcode.isFound),
-      detail: isMac
-        ? (tools.xcode.path ?? t('SETUP.NOT_ON_MACHINE'))
-        : t('SETUP.MAC_ONLY'),
+      detail: !isMac
+        ? t('SETUP.MAC_ONLY')
+        : tools.xcode.isFound
+          ? undefined
+          : t('SETUP.NOT_ON_MACHINE'),
       link: isMac && !tools.xcode.isFound ? SETUP_LINKS.xcode : null,
     },
     idb: {
       state: stateOf(tools.idb.isFound),
       badge: badgeOf(tools.idb.isFound),
-      detail: isMac ? (tools.idb.path ?? t('SETUP.NOT_ON_MACHINE')) : t('SETUP.MAC_ONLY'),
+      detail: !isMac
+        ? t('SETUP.MAC_ONLY')
+        : tools.idb.isFound
+          ? undefined
+          : t('SETUP.NOT_ON_MACHINE'),
       canInstall:
         isMac && !tools.idb.isFound && hasBrew && idbInstall?.phase !== 'installing',
       install:

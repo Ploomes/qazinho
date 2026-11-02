@@ -66,6 +66,17 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
     startSignIn,
   ]);
 
+  const cliLine =
+    !isCli || cli.status === null
+      ? null
+      : isCliMissing
+        ? t('SETUP.GITHUB_CLI_MISSING', {
+            installer: Platform.isWindows() ? 'winget' : 'Homebrew',
+          })
+        : cli.status.account === null
+          ? t('SETUP.GITHUB_CLI_SIGNED_OUT')
+          : null;
+
   return {
     isConnected,
     isOpen: (isOpen || isAsked) && !isConnected && !isCli,
@@ -74,21 +85,10 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
     isConnecting,
     error: isCli ? cli.error : error,
     text: t(integration.textKey),
-    needs: t(integration.needsKey),
-    cliLine: !isCli
-      ? null
-      : cli.status === null
-        ? null
-        : isCliMissing
-          ? t('SETUP.GITHUB_CLI_MISSING', {
-              installer: Platform.isWindows() ? 'winget' : 'Homebrew',
-            })
-          : cli.status.account === null
-            ? t('SETUP.GITHUB_CLI_SIGNED_OUT')
-            : isConnected
-              ? t('SETUP.GITHUB_CLI_AS', { account: cli.status.account })
-              : t('SETUP.GITHUB_CLI_READY', { account: cli.status.account }),
-    pill: isConnected ? ('passed' as const) : ('idle' as const),
+    cliLine,
+    hasPill: isConnected,
+    hasCliNote: !isConnected && !isOpen && (cliLine !== null || error !== ''),
+    pill: 'passed' as const,
     statusLabel: isConnected ? t('SETUP.CONNECTED') : t('SETUP.NOT_CONNECTED'),
     action: isConnected
       ? t('COMMON.DISCONNECT')
@@ -102,15 +102,11 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
     connectLabel: isConnecting ? t('SETUP.CHECKING_TOKEN') : t('COMMON.CONNECT'),
     canConnect: connection !== null && !isConnecting,
     tokenUrl: integration.tokenUrl ?? '',
-    connectedNote: isCli
-      ? t('SETUP.GITHUB_CONNECTED_NOTE')
-      : t('SETUP.JIRA_CONNECTED_NOTE'),
     hasConfluence: integration.id === 'jira' && isConnected,
     isConfluenceOn: status?.confluence === true,
     confluenceLabel: isSwitching
       ? t('SETUP.CONFLUENCE_CHECKING')
       : t('SETUP.CONFLUENCE_SWITCH'),
-    confluenceNote: t('SETUP.CONFLUENCE_NOTE'),
     confluenceError,
     onConfluence: async (isOn: boolean) => {
       if (isSwitching) return;

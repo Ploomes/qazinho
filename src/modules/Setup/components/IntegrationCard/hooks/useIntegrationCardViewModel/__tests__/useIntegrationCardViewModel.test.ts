@@ -142,14 +142,12 @@ describe('useIntegrationCardViewModel', () => {
       );
 
       await waitFor(() => {
-        expect(result.current.cliLine).toBe(
-          'gh is already signed in as octoqa: connecting uses that login.',
-        );
+        expect(result.current.action).toBe('Connect as octoqa');
       });
-      expect(result.current.action).toBe('Connect as octoqa');
+      expect(result.current.cliLine).toBeNull();
     });
 
-    it('names whom gh is signed in as, and shows gh as the way GitHub connected', async () => {
+    it('shows gh as the way GitHub connected, with no line to read about it', async () => {
       ghIs({ isFound: true, account: 'octoqa' });
       useSetupStore.setState({ integrations: [CONNECTED] });
       const { result } = renderHook(() =>
@@ -157,13 +155,13 @@ describe('useIntegrationCardViewModel', () => {
       );
 
       await waitFor(() => {
-        expect(result.current.cliLine).toBe('gh is signed in as octoqa.');
+        expect(result.current.rows).toEqual([
+          { label: 'account', value: 'octoqa' },
+          { label: 'through', value: 'GitHub CLI' },
+          { label: 'connected on', value: 'Sep 16, 2026' },
+        ]);
       });
-      expect(result.current.rows).toEqual([
-        { label: 'account', value: 'octoqa' },
-        { label: 'through', value: 'GitHub CLI' },
-        { label: 'connected on', value: 'Sep 16, 2026' },
-      ]);
+      expect(result.current.cliLine).toBeNull();
     });
   });
 

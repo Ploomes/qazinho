@@ -1,11 +1,9 @@
-import { useTranslation } from 'react-i18next';
 import { Icon } from '@/shared/components/atoms';
 import { useStepDoneViewModel } from './hooks';
 import './styles.css';
 
 export const StepDone: React.FC = () => {
   const { rows } = useStepDoneViewModel();
-  const { t } = useTranslation();
 
   return (
     <div className="step-done">
@@ -23,7 +21,6 @@ export const StepDone: React.FC = () => {
           <span className="step-done__value">{row.value}</span>
         </div>
       ))}
-      <p className="step-done__note">{t('SETUP.DONE_NOTE')}</p>
     </div>
   );
 };

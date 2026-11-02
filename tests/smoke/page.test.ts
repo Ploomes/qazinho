@@ -100,7 +100,7 @@ describe('the built page, with no bridge behind it', () => {
       'Let’s start',
       'Continue without an agent',
       'Continue',
-      'Skip for now',
+      'Continue',
     ])
       await page.getByRole('button', { name, exact: true }).click();
 

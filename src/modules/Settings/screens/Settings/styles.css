@@ -446,14 +446,6 @@ button.settings__card:hover:not(:disabled) {
   font: 400 12px/1 var(--font-mono);
 }
 
-.settings__about-note {
-  max-width: 440px;
-  margin: 0;
-  color: var(--ink2);
-  font: 400 14px/1.6 var(--font-ui);
-  text-wrap: pretty;
-}
-
 .settings__about-logs {
   display: flex;
   flex-direction: column;

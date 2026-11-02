@@ -8,7 +8,6 @@ export const INTEGRATIONS: IIntegration[] = [
     name: 'GitHub',
     logo: github,
     textKey: 'SETUP.GITHUB_TEXT',
-    needsKey: 'SETUP.GITHUB_NEEDS',
     via: 'cli',
     tokenUrl: null,
     fields: [],
@@ -18,7 +17,6 @@ export const INTEGRATIONS: IIntegration[] = [
     name: 'Jira',
     logo: jira,
     textKey: 'SETUP.JIRA_TEXT',
-    needsKey: 'SETUP.JIRA_NEEDS',
     via: 'form',
     tokenUrl: 'https://id.atlassian.com/manage-profile/security/api-tokens',
     fields: [

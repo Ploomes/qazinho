@@ -116,9 +116,7 @@ describe('useOnboardingViewModel', () => {
 
       walkTo(result, 2);
 
-      expect(result.current.say).toContain(
-        "iOS needs a Mac, so on this machine I can't test on iOS.",
-      );
+      expect(result.current.say).toContain('iOS only runs on a Mac.');
     });
 
     it('tells a Mac with every tool that iOS is ready', async () => {
@@ -148,7 +146,7 @@ describe('useOnboardingViewModel', () => {
       walkTo(result, 2);
 
       expect(result.current.say).toBe(
-        'Now the devices. The web needs nothing else. Android is ready: I found the SDK. iOS is ready too, with Xcode and idb.',
+        'The web needs nothing else. Android is ready. So is iOS.',
       );
     });
 
@@ -158,7 +156,7 @@ describe('useOnboardingViewModel', () => {
       walkTo(result, 1);
 
       await waitFor(() => {
-        expect(result.current.say).toContain("couldn't find an agent");
+        expect(result.current.say).toContain('I found no agent');
       });
       expect(result.current.mood).toBe('flaky');
     });
@@ -173,12 +171,12 @@ describe('useOnboardingViewModel', () => {
       expect(result.current.nextLabel).toBe('Continue without an agent');
     });
 
-    it('offers to skip the trackers while none is connected', () => {
+    it('just goes on past the trackers, connected or not', () => {
       const { result } = renderHook(() => useOnboardingViewModel());
 
       walkTo(result, 3);
 
-      expect(result.current.nextLabel).toBe('Skip for now');
+      expect(result.current.nextLabel).toBe('Continue');
     });
   });
 

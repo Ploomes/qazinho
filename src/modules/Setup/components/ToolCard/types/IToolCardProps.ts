@@ -6,8 +6,8 @@ import type { ReactNode } from 'react';
  */
 export interface IToolCardProps {
   name: string;
-  about: string;
-  detail: string;
+  about?: string;
+  detail?: string;
   state: 'found' | 'missing' | 'off';
   badge: string;
   action?: ReactNode;

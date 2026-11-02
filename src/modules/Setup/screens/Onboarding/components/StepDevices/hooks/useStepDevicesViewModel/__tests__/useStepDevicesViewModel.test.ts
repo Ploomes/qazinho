@@ -28,12 +28,12 @@ afterEach(() => {
 });
 
 describe('useStepDevicesViewModel', () => {
-  it('shows a found SDK where it is, with no link to get it', () => {
+  it('shows a found SDK with no path and no link to get it', () => {
     const { result } = renderHook(() => useStepDevicesViewModel());
 
     expect(result.current.android).toMatchObject({
       state: 'found',
-      detail: '/Users/qa/Library/Android/sdk',
+      detail: undefined,
       link: null,
     });
   });

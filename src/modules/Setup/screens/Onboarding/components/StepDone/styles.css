@@ -41,9 +41,3 @@
 .step-done__row--ready .step-done__value {
   color: var(--ink);
 }
-
-.step-done__note {
-  margin: var(--space-4) 0 0;
-  color: var(--ink3);
-  font: 400 12px/1.6 var(--font-ui);
-}

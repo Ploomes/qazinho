@@ -27,8 +27,12 @@ export const ToolCard: React.FC<IToolCardProps> = (props) => {
             {props.name}
             <span className="tool-card__badge">{props.badge}</span>
           </span>
-          <span className="tool-card__about">{props.about}</span>
-          <span className="tool-card__detail">{props.detail}</span>
+          {props.about !== undefined && (
+            <span className="tool-card__about">{props.about}</span>
+          )}
+          {props.detail !== undefined && (
+            <span className="tool-card__detail">{props.detail}</span>
+          )}
         </span>
         {props.action}
       </div>

@@ -11,7 +11,6 @@ export interface IIntegration {
   name: string;
   logo: string;
   textKey: ParseKeys;
-  needsKey: ParseKeys;
   via: 'form' | 'cli';
   tokenUrl: string | null;
   fields: IIntegrationField[];

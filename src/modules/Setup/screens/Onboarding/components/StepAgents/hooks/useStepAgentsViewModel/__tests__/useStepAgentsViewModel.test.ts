@@ -69,8 +69,6 @@ describe('useStepAgentsViewModel', () => {
         canInstall: false,
         canSignIn: true,
       });
-      expect(codex?.signIn).toContain('Sign in and it is ready');
-      expect(codex?.signIn).not.toContain('terminal');
     });
 
     it('does NOT count a signed-out agent as one QAzinho can work with', () => {
@@ -125,7 +123,7 @@ describe('useStepAgentsViewModel', () => {
     it('does NOT offer a sign-in to an agent that is signed in', () => {
       const { result } = renderHook(() => useStepAgentsViewModel());
 
-      expect(result.current.rows[0]).toMatchObject({ canSignIn: false, signIn: '' });
+      expect(result.current.rows[0]).toMatchObject({ canSignIn: false });
     });
   });
 
