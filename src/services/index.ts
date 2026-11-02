@@ -8,6 +8,7 @@ export * from './Confluence';
 export * from './Diagnostics';
 export * from './Files';
 export * from './Github';
+export * from './Imports';
 export * from './Integrations';
 export * from './Jira';
 export * from './Machine';

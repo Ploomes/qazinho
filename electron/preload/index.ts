@@ -35,6 +35,7 @@ import type {
   IMcpServerStatus,
   IMcpServerTarget,
   IMcpSignIn,
+  ImportPick,
   INetworkEntry,
   InstallableId,
   IntegrationId,
@@ -178,6 +179,7 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.sweepVideos, olderThanDays) as Promise<IVideoSweep>,
   saveVideo: (props: { name: string; data: Uint8Array }) =>
     ipcRenderer.invoke(CHANNELS.saveVideo, props) as Promise<SaveOutcome>,
+  pickImport: () => ipcRenderer.invoke(CHANNELS.pickImport) as Promise<ImportPick>,
   pickSuite: (projectId: string) =>
     ipcRenderer.invoke(CHANNELS.pickSuite, projectId) as Promise<SuitePick>,
   suiteOf: (projectId: string) =>

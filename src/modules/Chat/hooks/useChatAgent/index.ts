@@ -1,4 +1,10 @@
-import type { IChatReference, ICodeAsk, IConfluenceAsk, IJiraAsk } from '@/shared/types';
+import type {
+  IChatReference,
+  ICodeAsk,
+  IConfluenceAsk,
+  IImportAsk,
+  IJiraAsk,
+} from '@/shared/types';
 import { useTranslation } from 'react-i18next';
 import { runHistoryOf, sessionFor } from '@/modules/Chat/library';
 import { CHAT_FAILURE_KEYS } from '@/modules/Chat/screens/Chat/constants';
@@ -29,6 +35,7 @@ export const useChatAgent = () => {
     code: ICodeAsk | null;
     jira: IJiraAsk | null;
     confluence: IConfluenceAsk | null;
+    source?: IImportAsk | null;
   }) => {
     const { workspaceId } = props;
     const workspace = useWorkspaceStore
@@ -68,6 +75,7 @@ export const useChatAgent = () => {
         exploration: t('RUN.EXPLORATION'),
       }),
       code: props.code,
+      source: props.source ?? null,
       jira: props.jira,
       confluence: props.confluence,
       design: workspace.design,
@@ -98,10 +106,12 @@ export const useChatAgent = () => {
                     ? t('CHAT.FAILED_CONFLUENCE', {
                         reason: t(CONFLUENCE_FAILURE_KEYS[turn.failure.failure]),
                       })
-                    : t(CHAT_FAILURE_KEYS[turn.failure.reason], {
-                        ...turn.failure,
-                        agent: agentName,
-                      }),
+                    : turn.failure.reason === 'import'
+                      ? t('CHAT.FAILED_IMPORT')
+                      : t(CHAT_FAILURE_KEYS[turn.failure.reason], {
+                          ...turn.failure,
+                          agent: agentName,
+                        }),
         });
 
         return;

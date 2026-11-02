@@ -20,6 +20,7 @@ import type {
   IChatTurn,
   ICodeCopy,
   IConfluencePage,
+  IImportSource,
   IJiraStoryCopy,
   IConnectIntegration,
   IExportCode,
@@ -46,6 +47,7 @@ import type {
   SaveOutcome,
   SuiteChangeEvent,
   SuiteEvent,
+  ImportPick,
   SuitePick,
   SuiteShipWay,
   WindowFit,
@@ -92,6 +94,7 @@ import {
   GitCli,
   GithubCli,
   GithubRepos,
+  ImportScanner,
   IntegrationVault,
   IosDriver,
   JiraApi,
@@ -415,6 +418,7 @@ const proDownloads = new ProDownloads({
   sync: proSync,
 });
 const git = new GitCli({ directories: commandDirectories });
+const importScanner = new ImportScanner({ git });
 const suites = new SuiteRegistry({ root: PATHS.suites, git });
 const suiteRunner = new SuiteRunner({
   registry: suites,
@@ -680,6 +684,7 @@ const assistant = new AssistantAgent({
 
 const toldChats = new Map<string, Record<string, string>>();
 const confluencePages = new Map<string, IConfluencePage>();
+const importSources = new Map<string, IImportSource>();
 const askingChats = new Set<string>();
 const stoppedChats = new Set<string>();
 
@@ -770,10 +775,11 @@ async function askOnce(props: {
   sessionId: string | null;
   look: AppLook | null;
   code: ICodeCopy | null;
+  source: IImportSource | null;
   story: IJiraStoryCopy | null;
   page: IConfluencePage | null;
 }): Promise<{ turn: IAgentTurn; told: Record<string, string> }> {
-  const { ask, command, sessionId, look, code, story, page } = props;
+  const { ask, command, sessionId, look, code, source, story, page } = props;
   const chat = harness.chat({
     text: ask.text,
     told: (sessionId === null ? undefined : toldChats.get(sessionId)) ?? {},
@@ -784,6 +790,7 @@ async function askOnce(props: {
     runs: ask.runs,
     look,
     code,
+    source,
     story,
     page,
     design: ask.design,
@@ -856,7 +863,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     });
 
   try {
-    const [look, prepared, read, opened] = await Promise.all([
+    const [look, prepared, read, opened, imported] = await Promise.all([
       ask.target?.kind === 'web'
         ? peek.look(
             ask.target.value,
@@ -892,6 +899,9 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
       ask.confluence === null
         ? Promise.resolve(null)
         : confluence.page(ask.confluence.pageId),
+      ask.source === null
+        ? Promise.resolve(null)
+        : importScanner.sourceOf(ask.source.dir),
     ]);
 
     if (stoppedChats.has(ask.workspaceId)) {
@@ -919,18 +929,25 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
         failure: { reason: 'confluence', failure: opened.failure, said: opened.said },
       };
 
+    if (ask.source !== null && imported === null)
+      return { ...unanswered, failure: { reason: 'import' } };
+
     if (opened !== null)
       confluencePages.set(ask.workspaceId, { page: opened.page, text: opened.text });
+
+    if (imported !== null) importSources.set(ask.workspaceId, imported);
 
     const code = codeCopies.copyOf(ask.workspaceId);
     const story = jiraStories.storyOf(ask.workspaceId);
     const page = confluencePages.get(ask.workspaceId) ?? null;
+    const source = importSources.get(ask.workspaceId) ?? null;
     const first = await askOnce({
       ask,
       command,
       sessionId: ask.sessionId,
       look,
       code,
+      source,
       story,
       page,
     });
@@ -940,7 +957,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
       !stoppedChats.has(ask.workspaceId) &&
       isLostSession(first.turn.text);
     const { turn, told } = isLost
-      ? await askOnce({ ask, command, sessionId: null, look, code, story, page })
+      ? await askOnce({ ask, command, sessionId: null, look, code, source, story, page })
       : first;
 
     if (stoppedChats.has(ask.workspaceId))
@@ -972,6 +989,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     if (answer?.plan && code !== null) await codeCopies.release(ask.workspaceId);
     if (answer?.plan && storyRead !== null) await jiraStories.release(ask.workspaceId);
     if (answer?.plan) confluencePages.delete(ask.workspaceId);
+    if (answer?.plan) importSources.delete(ask.workspaceId);
 
     return {
       ...turn,
@@ -1157,6 +1175,18 @@ async function suiteEnvOf(projectId: string): Promise<Record<string, string>> {
     PATH: (await commandDirectories()).join(delimiter),
     ...Object.fromEntries(values.map(({ name, value }) => [name, value])),
   };
+}
+
+async function pickImport(): Promise<ImportPick> {
+  const [open] = appWindows();
+  const picked = open
+    ? await dialog.showOpenDialog(open, { properties: ['openDirectory'] })
+    : await dialog.showOpenDialog({ properties: ['openDirectory'] });
+  const [path] = picked.filePaths;
+
+  if (picked.canceled || path === undefined) return { kind: 'cancelled' };
+
+  return importScanner.pick(path);
 }
 
 async function pickSuite(projectId: string): Promise<SuitePick> {
@@ -1368,6 +1398,7 @@ void app.whenReady().then(async () => {
     await codeCopies.release(workspaceId);
     await jiraStories.release(workspaceId);
     confluencePages.delete(workspaceId);
+    importSources.delete(workspaceId);
     await archive.removeWorkspace(workspaceId);
   });
   ipcMain.handle(
@@ -1394,6 +1425,7 @@ void app.whenReady().then(async () => {
     (_event, shot: { file: string | null; src: string | null }) => copyShot(shot),
   );
   ipcMain.handle(CHANNELS.pickFile, (_event, kind: PickKind) => pickFile(kind));
+  ipcMain.handle(CHANNELS.pickImport, () => pickImport());
   ipcMain.handle(CHANNELS.pickSuite, (_event, projectId: string) => pickSuite(projectId));
   ipcMain.handle(CHANNELS.suiteOf, (_event, projectId: string) =>
     suites.suiteOf(projectId),

@@ -26,6 +26,7 @@ export const CHANNELS = {
   storageUsage: 'storage:usage',
   sweepVideos: 'storage:sweep-videos',
   saveVideo: 'run:save-video',
+  pickImport: 'import:pick',
   pickSuite: 'suite:pick',
   suiteOf: 'suite:of',
   forgetSuite: 'suite:forget',

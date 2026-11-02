@@ -3,6 +3,7 @@ import type { ICodeAsk } from './ICodeAsk';
 import type { IConfluenceAsk } from './IConfluenceAsk';
 import type { IDesignLink } from './IDesignLink';
 import type { IFlatStep } from './IFlatStep';
+import type { IImportAsk } from './IImportAsk';
 import type { IJiraAsk } from './IJiraAsk';
 import type { ITargetUnderTest } from './ITargetUnderTest';
 import type { IVariableBrief } from './IVariableBrief';
@@ -25,6 +26,7 @@ export interface IAskAgent {
   references: IChatReference[];
   runs: IChatReference[];
   code: ICodeAsk | null;
+  source: IImportAsk | null;
   jira: IJiraAsk | null;
   confluence: IConfluenceAsk | null;
   design: IDesignLink | null;

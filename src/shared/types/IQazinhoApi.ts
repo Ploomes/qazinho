@@ -34,6 +34,7 @@ import type { IMachineCheck } from './IMachineCheck';
 import type { IMcpServerStatus } from './IMcpServerStatus';
 import type { IMcpServerTarget } from './IMcpServerTarget';
 import type { IMcpSignIn } from './IMcpSignIn';
+import type { ImportPick } from './ImportPick';
 import type { INetworkEntry } from './INetworkEntry';
 import type { InstallableId } from './InstallableId';
 import type { IntegrationId } from './IntegrationId';
@@ -126,6 +127,7 @@ export interface IQazinhoApi {
   storageUsage: () => Promise<IStorageUsage>;
   sweepVideos: (olderThanDays: number) => Promise<IVideoSweep>;
   saveVideo: (props: { name: string; data: Uint8Array }) => Promise<SaveOutcome>;
+  pickImport: () => Promise<ImportPick>;
   pickSuite: (projectId: string) => Promise<SuitePick>;
   suiteOf: (projectId: string) => Promise<ISuite | null>;
   forgetSuite: (projectId: string) => Promise<void>;

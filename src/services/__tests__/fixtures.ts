@@ -55,6 +55,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
       Promise.resolve({ videos: 0, screens: 0, builds: 0, other: 0, total: 0 }),
     sweepVideos: () => Promise.resolve({ removed: 0, freedBytes: 0 }),
     saveVideo: () => Promise.resolve('cancelled' as const),
+    pickImport: () => Promise.resolve({ kind: 'cancelled' as const }),
     pickSuite: () => Promise.resolve({ kind: 'cancelled' as const }),
     suiteOf: () => Promise.resolve(null),
     forgetSuite: () => Promise.resolve(),
