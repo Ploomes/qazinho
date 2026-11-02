@@ -22,7 +22,7 @@ export const useSuggestionCardViewModel = (props: ISuggestionCardProps) => {
       canChoose: !message.isTaken,
       className: left.includes(index)
         ? 'suggestion-card__case suggestion-card__case--left'
-        : 'suggestion-card__case',
+        : 'suggestion-card__case suggestion-card__case--chosen',
       onChoose: () => {
         if (message.isTaken) return;
         setLeft((now) =>

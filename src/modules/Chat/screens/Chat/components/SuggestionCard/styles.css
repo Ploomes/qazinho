@@ -35,19 +35,19 @@
   align-items: center;
   gap: var(--space-3);
   width: 100%;
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: var(--panel);
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
   color: var(--ink);
   text-align: left;
   transition:
     opacity var(--dur-fast) var(--ease),
-    border-color var(--dur-fast) var(--ease);
+    background-color var(--dur-fast) var(--ease);
 }
 
 .suggestion-card__case:not(:disabled):hover {
-  border-color: var(--line2);
+  background: var(--sel);
 }
 
 .suggestion-card__case--left {
@@ -63,7 +63,16 @@
   height: 16px;
   border: 1px solid var(--line2);
   border-radius: var(--radius-xs);
-  color: var(--lime-ink);
+  color: var(--on-lime);
+  font-size: var(--icon-min);
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+
+.suggestion-card__case--chosen .suggestion-card__check {
+  border-color: var(--lime);
+  background: var(--lime);
 }
 
 .suggestion-card__priority {
@@ -88,6 +97,6 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  color: var(--pass);
-  font: var(--font-ui-md);
+  color: var(--ink3);
+  font: var(--font-ui-sm);
 }
