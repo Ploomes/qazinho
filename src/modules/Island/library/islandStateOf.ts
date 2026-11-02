@@ -1,21 +1,43 @@
+import type { IProject } from '@/modules/Project';
 import type { IWorkspace } from '@/modules/Workspace';
 import type { IslandState } from '@/shared/types';
 import { flattenPlanSteps } from '@/modules/Run/library';
 
 /**
- * O que a ilha mostra do que anda agora: o agente esperando o QA vem antes de uma run
- * andando, e sem nenhum dos dois não há nada a mostrar.
+ * O que a ilha mostra agora: as perguntas esperando o QA, da mais antiga à mais nova, e
+ * sem nenhuma, a run que anda.
  */
-export function islandStateOf(workspaces: IWorkspace[]): IslandState {
-  const live = workspaces.filter(({ live }) => live !== null && !live.isDone);
-  const asking = live.find(({ live }) => live?.question !== undefined);
+export function islandStateOf(props: {
+  workspaces: IWorkspace[];
+  projects: IProject[];
+}): IslandState {
+  const live = props.workspaces.filter(({ live }) => live !== null && !live.isDone);
+  const questions = live.flatMap((workspace) => {
+    const question = workspace.live?.question;
 
-  if (asking?.live?.question !== undefined)
+    return question === undefined
+      ? []
+      : [
+          {
+            askedAtMs: question.askedAtMs,
+            workspaceId: workspace.id,
+            questionId: question.id,
+            project:
+              props.projects.find(({ id }) => id === workspace.projectId)?.name ?? '',
+            workspace: workspace.name,
+            question: question.question,
+            options: question.options,
+            isSecret: question.isSecret,
+          },
+        ];
+  });
+
+  if (questions.length > 0)
     return {
       kind: 'asking',
-      workspaceId: asking.id,
-      name: asking.name,
-      question: asking.live.question.question,
+      questions: questions
+        .sort((one, other) => one.askedAtMs - other.askedAtMs)
+        .map(({ askedAtMs: _askedAtMs, ...question }) => question),
     };
 
   const [going] = live;

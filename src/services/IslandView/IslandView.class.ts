@@ -1,6 +1,6 @@
-import type { IIslandAction, IIslandFrame } from '@/shared/types';
+import type { IslandAction, IIslandFrame } from '@/shared/types';
 
-/** O lado da bridge da janela da ilha: o que mostrar, o mouse e o que o QA pede. */
+/** A bridge da janela da ilha: o que mostrar, o mouse, o teclado e o pedido do QA. */
 export class IslandView {
   public static onFrame(listener: (frame: IIslandFrame) => void): () => void {
     return window.qazinhoIsland.onFrame(listener);
@@ -10,7 +10,11 @@ export class IslandView {
     window.qazinhoIsland.hover(isOver);
   }
 
-  public static act(action: IIslandAction): void {
+  public static keyboard(isWanted: boolean): void {
+    window.qazinhoIsland.keyboard(isWanted);
+  }
+
+  public static act(action: IslandAction): void {
     window.qazinhoIsland.act(action);
   }
 }

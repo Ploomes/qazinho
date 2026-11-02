@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import type { IIsland, IIslandAction } from '@/shared/types';
+import type { IIsland, IslandAction } from '@/shared/types';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ISLAND } from '@/modules/Island/constants';
@@ -15,7 +15,7 @@ import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 let sent: IIsland[] = [];
-let heard: ((action: IIslandAction) => void) | null = null;
+let heard: ((action: IslandAction) => void) | null = null;
 
 beforeEach(() => {
   vi.useFakeTimers();

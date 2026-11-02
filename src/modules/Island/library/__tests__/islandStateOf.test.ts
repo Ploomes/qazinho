@@ -24,8 +24,10 @@ const running = (props: { id?: string; caseIds?: string[]; kind?: 'explore' }) =
 
 describe('islandStateOf', () => {
   it('has nothing to show while no run goes', () => {
-    expect(islandStateOf([makeWorkspace()])).toEqual({ kind: 'idle' });
-    expect(islandStateOf([])).toEqual({ kind: 'idle' });
+    expect(islandStateOf({ workspaces: [makeWorkspace()], projects: [] })).toEqual({
+      kind: 'idle',
+    });
+    expect(islandStateOf({ workspaces: [], projects: [] })).toEqual({ kind: 'idle' });
   });
 
   it('shows the step a run is on, out of every step of the plan', () => {
@@ -36,7 +38,7 @@ describe('islandStateOf', () => {
       at: '10:01',
     });
 
-    expect(islandStateOf([walked])).toEqual({
+    expect(islandStateOf({ workspaces: [walked], projects: [] })).toEqual({
       kind: 'running',
       workspaceId: 'w1',
       name: 'Checkout regression',
@@ -49,14 +51,18 @@ describe('islandStateOf', () => {
   });
 
   it('counts only the steps of the cases a run was asked for', () => {
-    expect(islandStateOf([running({ caseIds: ['TC-02'] })])).toMatchObject({
+    expect(
+      islandStateOf({ workspaces: [running({ caseIds: ['TC-02'] })], projects: [] }),
+    ).toMatchObject({
       total: 3,
       detail: 'Add the product to the cart',
     });
   });
 
   it('has no total for an exploration, which has no plan to count', () => {
-    expect(islandStateOf([running({ kind: 'explore' })])).toMatchObject({
+    expect(
+      islandStateOf({ workspaces: [running({ kind: 'explore' })], projects: [] }),
+    ).toMatchObject({
       kind: 'running',
       isExploring: true,
       total: 0,
@@ -64,18 +70,50 @@ describe('islandStateOf', () => {
     });
   });
 
-  it('puts the agent waiting for the QA before a run that goes', () => {
-    const asking = landAsked({
-      workspace: running({ id: 'w2' }),
-      question: QUESTION,
+  it('puts every question waiting for the QA before a run that goes, with where it came from', () => {
+    const asking = landAsked({ workspace: running({ id: 'w2' }), question: QUESTION });
+
+    expect(
+      islandStateOf({
+        workspaces: [running({ id: 'w1' }), asking],
+        projects: [{ id: 'p1', name: 'Loja', targets: [], repositories: [] }],
+      }),
+    ).toEqual({
+      kind: 'asking',
+      questions: [
+        {
+          workspaceId: 'w2',
+          questionId: 'q-1',
+          project: 'Loja',
+          workspace: 'Checkout regression',
+          question: 'Which plan should I pick?',
+          options: ['Premium', 'Premium+'],
+          isSecret: false,
+        },
+      ],
+    });
+  });
+
+  it('lists the questions from the oldest, whatever the order of the workspaces', () => {
+    const newer = landAsked({
+      workspace: running({ id: 'w1' }),
+      question: { ...QUESTION, id: 'q-new', askedAtMs: QUESTION.askedAtMs + 5_000 },
+    });
+    const older = landAsked({ workspace: running({ id: 'w2' }), question: QUESTION });
+    const state = islandStateOf({ workspaces: [newer, older], projects: [] });
+
+    expect(
+      state.kind === 'asking' && state.questions.map(({ questionId }) => questionId),
+    ).toEqual(['q-1', 'q-new']);
+  });
+
+  it('leaves the project out when the workspace has none anymore', () => {
+    const state = islandStateOf({
+      workspaces: [landAsked({ workspace: running({}), question: QUESTION })],
+      projects: [],
     });
 
-    expect(islandStateOf([running({ id: 'w1' }), asking])).toEqual({
-      kind: 'asking',
-      workspaceId: 'w2',
-      name: 'Checkout regression',
-      question: 'Which plan should I pick?',
-    });
+    expect(state.kind === 'asking' && state.questions[0]?.project).toBe('');
   });
 
   it('does NOT show a run that is over', () => {
@@ -85,6 +123,8 @@ describe('islandStateOf', () => {
       endedBy: 'finished',
     });
 
-    expect(islandStateOf([ended])).toEqual({ kind: 'idle' });
+    expect(islandStateOf({ workspaces: [ended], projects: [] })).toEqual({
+      kind: 'idle',
+    });
   });
 });

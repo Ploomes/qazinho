@@ -1,5 +1,5 @@
 import type { IIslandWindow } from './types';
-import type { IIsland, IIslandAction, IIslandFrame } from '@/shared/types';
+import type { IIsland, IslandAction, IIslandFrame } from '@/shared/types';
 import { BrowserWindow, ipcMain, screen } from 'electron';
 import { CHANNELS, ISLAND_ARGUMENT } from '@/shared/constants';
 import { ISLAND_WINDOW } from './constants';
@@ -17,6 +17,8 @@ export class Island {
   private isLoaded = false;
   private frame: IIslandFrame | null = null;
   private readonly behavior = islandBehaviorOf(process.platform);
+  private hasKeyboard = false;
+  private release: ReturnType<typeof setTimeout> | null = null;
 
   public constructor(props: IIslandWindow) {
     this.preload = props.preload;
@@ -29,7 +31,10 @@ export class Island {
     ipcMain.on(CHANNELS.islandHover, (_event, isOver: boolean) => {
       this.window?.setIgnoreMouseEvents(!isOver, { forward: true });
     });
-    ipcMain.on(CHANNELS.islandAct, (_event, action: IIslandAction) => {
+    ipcMain.on(CHANNELS.islandKeyboard, (_event, isWanted: boolean) => {
+      this.askKeyboard(isWanted);
+    });
+    ipcMain.on(CHANNELS.islandAct, (_event, action: IslandAction) => {
       this.onAction(action);
     });
   }
@@ -44,6 +49,7 @@ export class Island {
     if (island.state.kind === 'idle') {
       this.frame = { island, barHeight: 0, notchWidth: 0 };
       this.send();
+      this.giveKeyboardBack();
       this.window?.hide();
 
       return;
@@ -78,6 +84,41 @@ export class Island {
     if (this.window && !this.window.isDestroyed()) this.window.destroy();
 
     this.window = null;
+  }
+
+  private askKeyboard(isWanted: boolean): void {
+    if (this.release !== null) clearTimeout(this.release);
+
+    this.release = null;
+
+    if (!isWanted) {
+      this.release = setTimeout(() => {
+        this.giveKeyboardBack();
+      }, ISLAND_WINDOW.keyboardReleaseMs);
+
+      return;
+    }
+
+    if (this.window === null || this.window.isDestroyed()) return;
+
+    if (this.behavior.togglesFocus) this.window.setFocusable(true);
+
+    this.window.focus();
+    this.window.webContents.focus();
+    this.hasKeyboard = true;
+  }
+
+  private giveKeyboardBack(): void {
+    if (this.release !== null) clearTimeout(this.release);
+
+    this.release = null;
+
+    if (!this.hasKeyboard || this.window === null || this.window.isDestroyed()) return;
+
+    this.hasKeyboard = false;
+    this.window.blur();
+
+    if (this.behavior.togglesFocus) this.window.setFocusable(false);
   }
 
   private send(): void {
@@ -131,6 +172,7 @@ export class Island {
     window.on('closed', () => {
       this.window = null;
       this.isLoaded = false;
+      this.hasKeyboard = false;
     });
 
     this.window = window;

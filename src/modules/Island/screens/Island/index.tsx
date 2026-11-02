@@ -1,6 +1,7 @@
 import { AnimatePresence, motion, MotionConfig } from 'motion/react';
 import { Button, Icon, Intern } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
+import { IslandAsk } from './components';
 import { useIslandViewModel } from './hooks';
 import './styles.css';
 
@@ -11,6 +12,7 @@ import './styles.css';
 export const Island: React.FC = () => {
   const {
     shown,
+    ask,
     isOpen,
     pill,
     pillClassName,
@@ -56,31 +58,37 @@ export const Island: React.FC = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
                 >
-                  <span className="island__title">{shown.title}</span>
-                  <span className={`island__line island__line--${shown.tone}`}>
-                    {shown.line}
-                  </span>
-                  {shown.detail !== '' && (
-                    <span className="island__detail">{shown.detail}</span>
+                  {ask !== null ? (
+                    <IslandAsk {...ask} />
+                  ) : (
+                    <>
+                      <span className="island__title">{shown.title}</span>
+                      <span className={`island__line island__line--${shown.tone}`}>
+                        {shown.line}
+                      </span>
+                      {shown.detail !== '' && (
+                        <span className="island__detail">{shown.detail}</span>
+                      )}
+                      {shown.progress !== null && (
+                        <span className="island__track">
+                          <span
+                            className="island__fill"
+                            style={{ width: `${String(shown.progress * 100)}%` }}
+                          />
+                        </span>
+                      )}
+                      <div className="island__actions">
+                        <Button size="sm" variant="primary" onClick={onOpen}>
+                          {shown.openLabel}
+                        </Button>
+                        {shown.canStop && (
+                          <Button size="sm" variant="danger-quiet" onClick={onStop}>
+                            <Icon name="stop" /> {shown.stopLabel}
+                          </Button>
+                        )}
+                      </div>
+                    </>
                   )}
-                  {shown.progress !== null && (
-                    <span className="island__track">
-                      <span
-                        className="island__fill"
-                        style={{ width: `${String(shown.progress * 100)}%` }}
-                      />
-                    </span>
-                  )}
-                  <div className="island__actions">
-                    <Button size="sm" variant="primary" onClick={onOpen}>
-                      {shown.openLabel}
-                    </Button>
-                    {shown.canStop && (
-                      <Button size="sm" variant="danger-quiet" onClick={onStop}>
-                        <Icon name="stop" /> {shown.stopLabel}
-                      </Button>
-                    )}
-                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

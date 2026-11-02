@@ -32,7 +32,7 @@ import type {
   IInstallResult,
   IIntegrationStatus,
   IIsland,
-  IIslandAction,
+  IslandAction,
   IIslandApi,
   IIslandFrame,
   IMachineCheck,
@@ -176,8 +176,8 @@ const api: IQazinhoApi = {
   setIsland: (island: IIsland) => {
     ipcRenderer.send(CHANNELS.islandSet, island);
   },
-  onIslandAction: (listener: (action: IIslandAction) => void) => {
-    const forward = (_: unknown, action: IIslandAction) => {
+  onIslandAction: (listener: (action: IslandAction) => void) => {
+    const forward = (_: unknown, action: IslandAction) => {
       listener(action);
     };
 
@@ -450,7 +450,10 @@ const islandApi: IIslandApi = {
   hover: (isOver: boolean) => {
     ipcRenderer.send(CHANNELS.islandHover, isOver);
   },
-  act: (action: IIslandAction) => {
+  keyboard: (isWanted: boolean) => {
+    ipcRenderer.send(CHANNELS.islandKeyboard, isWanted);
+  },
+  act: (action: IslandAction) => {
     ipcRenderer.send(CHANNELS.islandAct, action);
   },
 };

@@ -8,14 +8,20 @@ import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 export const useIslandSync = () => {
   const workspaces = useWorkspaceStore((state) => state.workspaces);
+  const projects = useAppStore((state) => state.projects);
   const language = useSettingsStore((state) => state.language);
   const isIslandOn = useSettingsStore((state) => state.isIslandOn);
   const { stopWorkspace } = useRunActions();
   const [ended, setEnded] = useState<IslandState | null>(null);
   const [lastGoingId, setLastGoingId] = useState<string | null>(null);
   const sent = useRef('');
-  const going = islandStateOf(workspaces);
-  const goingId = going.kind === 'idle' ? null : going.workspaceId;
+  const going = islandStateOf({ workspaces, projects });
+  const goingId =
+    going.kind === 'running'
+      ? going.workspaceId
+      : going.kind === 'asking'
+        ? (going.questions[0]?.workspaceId ?? null)
+        : null;
   const state: IslandState = !isIslandOn
     ? { kind: 'idle' }
     : going.kind !== 'idle'
@@ -55,14 +61,12 @@ export const useIslandSync = () => {
   useEffect(
     () =>
       Island.onAction((action) => {
-        if (action.kind === 'stop') {
-          stopWorkspace(action.workspaceId);
+        if (action.kind === 'stop') stopWorkspace(action.workspaceId);
 
-          return;
+        if (action.kind === 'open') {
+          useAppStore.getState().selectWorkspace(action.workspaceId);
+          useWorkspaceStore.getState().selectTab('chat');
         }
-
-        useAppStore.getState().selectWorkspace(action.workspaceId);
-        useWorkspaceStore.getState().selectTab('chat');
       }),
     [stopWorkspace],
   );

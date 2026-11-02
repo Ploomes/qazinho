@@ -206,6 +206,16 @@ const island = new Island({
     ? { url: `${PATHS.devServer}/island.html` }
     : { file: PATHS.island },
   onAction: (action) => {
+    if (action.kind === 'answer') {
+      runs.answer({
+        workspaceId: action.workspaceId,
+        questionId: action.questionId,
+        reply: { kind: 'said', text: action.text },
+      });
+
+      return;
+    }
+
     const [open] = appWindows();
 
     if (action.kind === 'open') bringForward();

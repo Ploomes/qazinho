@@ -1,12 +1,32 @@
 // @vitest-environment jsdom
-import type { IIslandAction, IIslandFrame, IslandState } from '@/shared/types';
+import type { IslandAction, IIslandFrame, IslandState } from '@/shared/types';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { i18n } from '@/languages';
 import { useIslandViewModel } from '@/modules/Island/screens/Island/hooks/useIslandViewModel';
 
+/** Um quadro com uma pergunta esperando, ou uma para cada texto dado. */
+const asking = (...said: string[]): IIslandFrame => ({
+  ...NOTCHED,
+  island: {
+    language: 'en',
+    state: {
+      kind: 'asking',
+      questions: said.map((question) => ({
+        workspaceId: 'w1',
+        questionId: question,
+        project: 'Loja',
+        workspace: 'Checkout',
+        question,
+        options: [],
+        isSecret: false,
+      })),
+    },
+  },
+});
+
 let pushFrame: (frame: IIslandFrame) => void = () => undefined;
-let acted: IIslandAction[] = [];
+let acted: IslandAction[] = [];
 let hovered: boolean[] = [];
 
 beforeEach(async () => {
@@ -22,6 +42,7 @@ beforeEach(async () => {
     hover: (isOver) => {
       hovered.push(isOver);
     },
+    keyboard: () => undefined,
     act: (action) => {
       acted.push(action);
     },
@@ -93,18 +114,7 @@ describe('useIslandViewModel', () => {
     const { result } = renderHook(() => useIslandViewModel());
 
     act(() => {
-      pushFrame({
-        ...NOTCHED,
-        island: {
-          language: 'en',
-          state: {
-            kind: 'asking',
-            workspaceId: 'w1',
-            name: 'Checkout',
-            question: 'Which?',
-          },
-        },
-      });
+      pushFrame(asking('Which plan should I pick?'));
     });
 
     const small = result.current.size.width;
@@ -130,18 +140,7 @@ describe('useIslandViewModel', () => {
     const { result } = renderHook(() => useIslandViewModel());
 
     act(() => {
-      pushFrame({
-        ...NOTCHED,
-        island: {
-          language: 'en',
-          state: {
-            kind: 'asking',
-            workspaceId: 'w1',
-            name: 'Checkout',
-            question: 'Which plan should I pick?',
-          },
-        },
-      });
+      pushFrame(asking('Which plan should I pick?'));
     });
 
     expect(result.current.isOpen).toBe(false);
@@ -150,22 +149,46 @@ describe('useIslandViewModel', () => {
       tone: 'asking',
       mood: 'thinking',
       icon: 'attention',
-      detail: 'Which plan should I pick?',
-      canStop: false,
-      openLabel: 'Answer',
+      count: '',
     });
+    expect(result.current.ask).toMatchObject({ question: 'Which plan should I pick?' });
+  });
+
+  it('counts the questions on the ear when more than one waits, and widens for it', () => {
+    const { result } = renderHook(() => useIslandViewModel());
+
+    act(() => {
+      pushFrame(asking('Which plan?'));
+    });
+
+    const one = result.current.size.width;
+
+    act(() => {
+      pushFrame(asking('Which plan?', 'Which size?', 'Which color?'));
+    });
+
+    expect(result.current.shown?.count).toBe('3');
+    expect(result.current.size.width).toBeGreaterThan(one);
+  });
+
+  it('flashes for a question that arrived, and not for one that was answered', () => {
+    const { result } = renderHook(() => useIslandViewModel());
+
+    act(() => {
+      pushFrame(asking('Which plan?', 'Which size?'));
+    });
+
+    expect(result.current.flash).toBe(1);
+
+    act(() => {
+      pushFrame(asking('Which size?'));
+    });
+
+    expect(result.current.flash).toBe(1);
   });
 
   it('flashes once when the agent starts waiting, and again for a new question only', () => {
     const { result } = renderHook(() => useIslandViewModel());
-    const asking = (question: string): IIslandFrame => ({
-      ...NOTCHED,
-      island: {
-        language: 'en',
-        state: { kind: 'asking', workspaceId: 'w1', name: 'Checkout', question },
-      },
-    });
-
     act(() => {
       pushFrame(running);
     });

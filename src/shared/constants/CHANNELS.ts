@@ -33,6 +33,7 @@ export const CHANNELS = {
   islandFrame: 'island:frame',
   islandHover: 'island:hover',
   islandAct: 'island:act',
+  islandKeyboard: 'island:keyboard',
   islandAction: 'island:action',
   recorderStart: 'recorder:start',
   recorderStop: 'recorder:stop',

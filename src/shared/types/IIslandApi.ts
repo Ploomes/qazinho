@@ -1,5 +1,5 @@
-import type { IIslandAction } from './IIslandAction';
 import type { IIslandFrame } from './IIslandFrame';
+import type { IslandAction } from './IslandAction';
 
 /**
  * O que o preload dá à janela da ilha como `window.qazinhoIsland`: o que mostrar, e o
@@ -8,5 +8,6 @@ import type { IIslandFrame } from './IIslandFrame';
 export interface IIslandApi {
   onFrame: (listener: (frame: IIslandFrame) => void) => () => void;
   hover: (isOver: boolean) => void;
-  act: (action: IIslandAction) => void;
+  keyboard: (isWanted: boolean) => void;
+  act: (action: IslandAction) => void;
 }

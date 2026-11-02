@@ -1,4 +1,4 @@
-import type { IIsland, IIslandAction } from '@/shared/types';
+import type { IIsland, IslandAction } from '@/shared/types';
 
 /**
  * O único que chama o lado da ilha da bridge da página principal: o que a ilha mostra, e
@@ -9,7 +9,7 @@ export class Island {
     window.qazinho?.setIsland(island);
   }
 
-  public static onAction(listener: (action: IIslandAction) => void): () => void {
+  public static onAction(listener: (action: IslandAction) => void): () => void {
     return window.qazinho?.onIslandAction(listener) ?? (() => undefined);
   }
 }

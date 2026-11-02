@@ -4,14 +4,15 @@ import type { CSSProperties } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ISLAND_IDLE, ISLAND_SHAPE } from '@/modules/Island/screens/Island/constants';
-import { earWidthOf } from '@/modules/Island/screens/Island/library';
+import { useIslandAsk } from '@/modules/Island/screens/Island/hooks/useIslandAsk';
+import { earWidthOf, questionKeyOf } from '@/modules/Island/screens/Island/library';
 import { IslandView } from '@/services/IslandView';
 
 export const useIslandViewModel = () => {
   const { t, i18n } = useTranslation();
   const [frame, setFrame] = useState<IIslandFrame | null>(null);
   const [isHovering, setHovering] = useState(false);
-  const [calling, setCalling] = useState<string | null>(null);
+  const [seen, setSeen] = useState<string[]>([]);
   const [flash, setFlash] = useState(0);
   const pill = useRef<HTMLDivElement>(null);
   const isOver = useRef(false);
@@ -60,7 +61,9 @@ export const useIslandViewModel = () => {
   const state = frame?.island.state ?? ISLAND_IDLE;
   const bar = frame?.barHeight ?? 0;
   const notch = frame?.notchWidth ?? 0;
-  const isOpen = isHovering;
+  const questions = state.kind === 'asking' ? state.questions : [];
+  const ask = useIslandAsk(questions);
+  const isOpen = isHovering || ask.isHeld;
   const shown: IIslandShown | null =
     state.kind === 'running'
       ? {
@@ -82,16 +85,16 @@ export const useIslandViewModel = () => {
         }
       : state.kind === 'asking'
         ? {
-            count: '',
+            count: questions.length > 1 ? String(questions.length) : '',
             mood: 'thinking',
             icon: 'attention',
             tone: 'asking',
-            title: state.name,
-            line: t('ISLAND.ASKING'),
-            detail: state.question,
+            title: '',
+            line: '',
+            detail: '',
             progress: null,
             canStop: false,
-            openLabel: t('ISLAND.ANSWER'),
+            openLabel: t('ISLAND.OPEN'),
             stopLabel: t('ISLAND.STOP'),
           }
         : state.kind === 'ended'
@@ -121,17 +124,19 @@ export const useIslandViewModel = () => {
     ISLAND_SHAPE.minFlatWidthPx,
     notch + earWidthOf(shown?.count ?? '') * 2,
   );
-  const workspaceId = state.kind === 'idle' ? '' : state.workspaceId;
-  const call = state.kind === 'asking' ? `${state.workspaceId}/${state.question}` : null;
+  const workspaceId =
+    state.kind === 'running' || state.kind === 'ended' ? state.workspaceId : '';
+  const keys = questions.map(questionKeyOf);
 
-  if (call !== calling) {
-    setCalling(call);
+  if (keys.join('\n') !== seen.join('\n')) {
+    setSeen(keys);
 
-    if (call !== null) setFlash((count) => count + 1);
+    if (keys.some((key) => !seen.includes(key))) setFlash((count) => count + 1);
   }
 
   return {
     shown,
+    ask: ask.view,
     isOpen,
     pill,
     pillClassName: isOpen ? 'island__pill island__pill--open' : 'island__pill',
@@ -140,6 +145,7 @@ export const useIslandViewModel = () => {
       '--island-bar': `${String(bar)}px`,
       '--island-notch': `${String(notch)}px`,
       '--island-pad': `${String(ISLAND_SHAPE.padPx)}px`,
+      '--island-options': `${String(ISLAND_SHAPE.optionsMaxPx)}px`,
     } as CSSProperties,
     internSize: ISLAND_SHAPE.internPx,
     size: {

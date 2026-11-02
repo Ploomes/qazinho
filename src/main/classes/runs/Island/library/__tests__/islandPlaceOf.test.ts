@@ -12,7 +12,7 @@ describe('islandPlaceOf', () => {
       x: 526,
       y: 0,
       width: 460,
-      height: 230,
+      height: 380,
       barHeight: 33,
       notchWidth: 185,
     });

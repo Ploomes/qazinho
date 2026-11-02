@@ -5,6 +5,7 @@ export const ISLAND_SHAPE = {
   gapPx: 4,
   countCharPx: 7,
   minFlatWidthPx: 72,
+  optionsMaxPx: 64,
   openWidthPx: 400,
   closedRadiusPx: 14,
   openRadiusPx: 26,
