@@ -20,12 +20,19 @@ import {
 } from '@/modules/Setup';
 import { Diagnostics, Mcp, Platform } from '@/services';
 import { comboLabelOf } from '@/shared/hooks/useKeybinds/library';
-import { useAppStore, useMachineStore, useSettingsStore, useSetupStore } from '@/store';
+import {
+  useAppStore,
+  useMachineStore,
+  useProStore,
+  useSettingsStore,
+  useSetupStore,
+} from '@/store';
 
 export const useSettingsViewModel = () => {
   const [isCopied, setIsCopied] = useState(false);
 
   const { t } = useTranslation();
+  const isSignedIn = useProStore((state) => state.status?.isSignedIn === true);
   const theme = useAppStore((state) => state.theme);
   const setTheme = useAppStore((state) => state.setTheme);
   const closeSettings = useAppStore((state) => state.closeSettings);
@@ -180,7 +187,7 @@ export const useSettingsViewModel = () => {
       void install('idb');
     },
     integrations: INTEGRATIONS,
-    mcpServers: MCP_SERVERS,
+    mcpServers: MCP_SERVERS.filter((server) => !server.needsAccount || isSignedIn),
     themes: THEMES.map((item) => ({
       id: item.id,
       label: t(item.labelKey),

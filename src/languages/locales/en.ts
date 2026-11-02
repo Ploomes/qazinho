@@ -838,6 +838,10 @@ export const en = {
       'Lets the agent open your Figma prototypes and check the app against them.',
     FIGMA_NEEDS:
       "Figma's MCP server in {{agent}}, your agent, signed in to your Figma account. QAzinho adds it there; you sign in once.",
+    ORG_TEXT:
+      'Lets your coding agent read the plans, runs, bugs and CI of your orgs, and start them when you ask, with your role in each org.',
+    ORG_NEEDS:
+      'The QAzinho server in {{agent}}, your agent, signed in to your account. QAzinho adds it there; you say yes once in the browser.',
     CHECKING: 'checking',
     CONNECTED: 'connected',
     NEEDS_SIGN_IN: 'needs sign-in',

@@ -843,6 +843,10 @@ export const pt: typeof en = {
       'Deixa o agente abrir seus protótipos do Figma e conferir o app contra eles.',
     FIGMA_NEEDS:
       'O MCP do Figma no {{agent}}, o seu agente, com login na sua conta do Figma. O QAzinho adiciona ele lá; você faz o login uma vez.',
+    ORG_TEXT:
+      'Deixa o seu agente de código ler os planos, as runs, os bugs e o CI das suas orgs, e rodá-los quando você pedir, com o seu papel em cada org.',
+    ORG_NEEDS:
+      'O servidor do QAzinho no {{agent}}, o seu agente, com login na sua conta. O QAzinho adiciona ele lá; você diz sim uma vez no navegador.',
     CHECKING: 'verificando',
     CONNECTED: 'conectado',
     NEEDS_SIGN_IN: 'falta o login',

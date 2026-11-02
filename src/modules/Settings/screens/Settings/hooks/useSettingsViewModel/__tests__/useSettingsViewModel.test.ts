@@ -4,7 +4,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
 import { useSettingsViewModel } from '@/modules/Settings/screens/Settings/hooks/useSettingsViewModel';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useMachineStore, useSettingsStore, useSetupStore } from '@/store';
+import {
+  useAppStore,
+  useMachineStore,
+  useProStore,
+  useSettingsStore,
+  useSetupStore,
+} from '@/store';
 
 beforeEach(() => {
   useSetupStore.setState({ managers: null, isChecking: false, installs: {} });
@@ -44,6 +50,33 @@ describe('useSettingsViewModel', () => {
       'shortcuts',
       'about',
     ]);
+  });
+
+  /** O app grátis nunca fala de uma org: quem não tem conta não vê o servidor dela. */
+  it('offers the org server only to who signed in to an account', () => {
+    useProStore.setState({ status: { isSignedIn: false, canKeepToken: true } });
+
+    expect(
+      renderHook(() => useSettingsViewModel()).result.current.mcpServers.map(
+        ({ id }) => id,
+      ),
+    ).toEqual(['figma']);
+
+    useProStore.setState({
+      status: {
+        isSignedIn: true,
+        account: { email: 'ana@loja.test', name: 'Ana' },
+        machine: { id: 'm1', name: 'Mac' },
+        orgs: [],
+        isReachable: true,
+      },
+    });
+
+    expect(
+      renderHook(() => useSettingsViewModel()).result.current.mcpServers.map(
+        ({ id }) => id,
+      ),
+    ).toEqual(['figma', 'org']);
   });
 
   it('names the default agent and offers the other one', () => {
