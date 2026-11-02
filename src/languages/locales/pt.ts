@@ -180,8 +180,7 @@ export const pt: typeof en = {
     SUGGESTED_TAKEN: 'No plano',
     RUN_MESSAGES_ONE: '1 mensagem',
     RUN_MESSAGES_OTHER: '{{count}} mensagens',
-    LOCKED_RUNNING:
-      'Uma run está rodando: pare a run, ou espere ela terminar, para falar com o agente.',
+    LOCKED_RUNNING: 'Run rodando: pare ou espere para falar',
     LOCKED_ASKED: 'O agente espera sua resposta, logo acima.',
     QUESTIONS_ANSWERED_ONE: 'Você respondeu 1 pergunta',
     QUESTIONS_ANSWERED_OTHER: 'Você respondeu {{count}} perguntas',
@@ -602,7 +601,7 @@ export const pt: typeof en = {
     DESIGN_NODE: 'frame {{node}}',
     DESIGN_WHOLE_FILE: 'o arquivo inteiro',
     FIGMA_PLAN_SAY: 'Planeje os testes conferindo com o design {{name}} do Figma.',
-    IMPORT_PLAN: 'Importar testes que eu já tenho',
+    IMPORT_PLAN: 'Importar testes',
     IMPORT_PLAN_TEXT:
       'Escolha uma pasta com testes de Playwright, Maestro ou outro. O agente entende o que eles cobrem e os transforma num plano.',
     IMPORT_HEADING: 'pasta de testes',

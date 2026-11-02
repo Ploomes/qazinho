@@ -177,8 +177,7 @@ export const en = {
     SUGGESTED_TAKEN: 'In the plan',
     RUN_MESSAGES_ONE: '1 message',
     RUN_MESSAGES_OTHER: '{{count}} messages',
-    LOCKED_RUNNING:
-      'A run is going: stop it, or wait for it to end, to talk to the agent.',
+    LOCKED_RUNNING: 'A run is going: stop or wait to talk',
     LOCKED_ASKED: 'The agent waits on your answer, just above.',
     QUESTIONS_ANSWERED_ONE: 'You answered 1 question',
     QUESTIONS_ANSWERED_OTHER: 'You answered {{count}} questions',
@@ -597,7 +596,7 @@ export const en = {
     DESIGN_NODE: 'frame {{node}}',
     DESIGN_WHOLE_FILE: 'the whole file',
     FIGMA_PLAN_SAY: 'Plan the tests against the Figma design {{name}}.',
-    IMPORT_PLAN: 'Import tests I already have',
+    IMPORT_PLAN: 'Import tests',
     IMPORT_PLAN_TEXT:
       'Pick a folder with Playwright, Maestro or other tests. The agent works out what they cover and turns them into a plan.',
     IMPORT_HEADING: 'Folder of tests',

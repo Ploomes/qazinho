@@ -57,26 +57,11 @@
   background: var(--sel);
 }
 
-.project-nav__mark::before {
-  position: absolute;
-  top: var(--space-3);
-  bottom: var(--space-3);
-  left: var(--space-2);
-  width: 3px;
-  border-radius: var(--radius-pill);
-  background: var(--lime);
-  content: '';
-}
-
 .project-nav__item--danger .project-nav__mark {
   background: var(--fail-soft);
 }
 
-.project-nav__item--danger .project-nav__mark::before {
-  background: var(--fail);
-}
-
-.project-nav__label,
+.project-nav__item--danger .project-nav__label,
 .project-nav__end {
   position: relative;
 }
