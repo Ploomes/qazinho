@@ -13,6 +13,7 @@ export const useIconButtonViewModel = (props: IIconButtonProps) => {
       .filter((part) => part.length > 0)
       .join(' '),
     iconSize: ICON_BUTTON.iconSize[size],
+    popup: props.popup,
     onIconClick: props.onClick,
   };
 };

@@ -63,6 +63,7 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
               icon="resources"
               label={resourcesLabel}
               isActive={isResourcesOpen}
+              popup="dialog"
               onClick={onToggleResources}
             />
           </Tooltip>

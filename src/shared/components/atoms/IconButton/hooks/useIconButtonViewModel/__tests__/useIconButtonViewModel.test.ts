@@ -19,6 +19,16 @@ describe('useIconButtonViewModel', () => {
     expect(result.current.iconSize).toBe(14);
   });
 
+  it('says it opens a popup only when asked, so a click on it is not a click outside it', () => {
+    const plain = renderHook(() => useIconButtonViewModel(PROPS));
+    const trigger = renderHook(() =>
+      useIconButtonViewModel({ ...PROPS, popup: 'dialog' }),
+    );
+
+    expect(plain.result.current.popup).toBeUndefined();
+    expect(trigger.result.current.popup).toBe('dialog');
+  });
+
   it('marks itself active, because a popover trigger stays lit while it is open', () => {
     const { result } = renderHook(() =>
       useIconButtonViewModel({ ...PROPS, isActive: true, size: 'sm' }),

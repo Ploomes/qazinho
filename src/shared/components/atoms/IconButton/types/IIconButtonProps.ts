@@ -6,4 +6,5 @@ export interface IIconButtonProps {
   onClick: () => void;
   size?: 'sm' | 'md';
   isActive?: boolean;
+  popup?: 'menu' | 'dialog';
 }
