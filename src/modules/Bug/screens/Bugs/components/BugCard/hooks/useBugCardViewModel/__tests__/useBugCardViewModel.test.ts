@@ -5,7 +5,7 @@ import { i18n } from '@/languages';
 import { useBugCardViewModel } from '@/modules/Bug/screens/Bugs/components/BugCard/hooks/useBugCardViewModel';
 import { walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useSettingsStore, useWorkspaceStore } from '@/store';
+import { useWorkspaceStore } from '@/store';
 
 const WORKSPACE = walkRun({
   verdicts: ['passed', 'passed', 'passed', 'passed', 'failed'],
@@ -35,39 +35,7 @@ describe('useBugCardViewModel', () => {
   it('says where the bug came from, so a developer can find it again', () => {
     const { result } = renderHook(() => useBugCardViewModel(PROPS));
 
-    expect(result.current.meta.map(({ key }) => key)).toEqual([
-      'run',
-      'case',
-      'target',
-      'seen',
-      'agent',
-    ]);
-    expect(result.current.meta[1]?.value).toBe('TC-02 · step 2');
-  });
-
-  it('names the agent and the model that caught it, not the ones picked now', () => {
-    useSettingsStore.setState({ agent: 'Codex', model: '' });
-
-    const { result } = renderHook(() =>
-      useBugCardViewModel({
-        ...PROPS,
-        bug: { ...BUG, agent: 'Claude Code', modelName: 'Opus' },
-      }),
-    );
-
-    expect(result.current.meta.find(({ key }) => key === 'agent')?.value).toBe(
-      'Claude Code · Opus',
-    );
-  });
-
-  it("says the agent's own default when it named no model", () => {
-    const { result } = renderHook(() =>
-      useBugCardViewModel({ ...PROPS, bug: { ...BUG, modelName: null } }),
-    );
-
-    expect(result.current.meta.find(({ key }) => key === 'agent')?.value).toBe(
-      'Claude Code · Agent default',
-    );
+    expect(result.current.provenance.place).toBe('TC-02 · step 2');
   });
 
   it('shows how bad a bug is in bars, one for low, two for medium and three for high', () => {
@@ -81,28 +49,12 @@ describe('useBugCardViewModel', () => {
     expect(barsOf('medium').cardClass).toBe('bug-card bug-card--medium');
   });
 
-  it('does NOT make up who caught an older bug that never said', () => {
-    const { result } = renderHook(() =>
-      useBugCardViewModel({ ...PROPS, bug: { ...BUG, agent: '', modelName: null } }),
-    );
-
-    expect(result.current.meta.map(({ key }) => key)).not.toContain('agent');
-  });
-
   it('writes every label and word on the card in the language the QA reads', async () => {
     await i18n.changeLanguage('pt');
 
     const { result } = renderHook(() => useBugCardViewModel(PROPS));
 
-    expect(result.current.meta.map(({ label }) => label)).toEqual([
-      'run',
-      'caso',
-      'alvo',
-      'visto',
-      'agente',
-    ]);
-    expect(result.current.meta[1]?.value).toBe('TC-02 · passo 2');
-    expect(result.current.meta[3]?.value).toBe('uma vez');
+    expect(result.current.provenance.place).toBe('TC-02 · passo 2');
     expect(result.current.severity).toBe('alta');
     expect(result.current.cardClass).toBe('bug-card bug-card--high');
     expect(result.current.levelBars.filter(({ isOn }) => isOn)).toHaveLength(3);
@@ -119,7 +71,7 @@ describe('useBugCardViewModel', () => {
       useBugCardViewModel({ ...PROPS, bug: { ...BUG, seenRuns: 3 } }),
     );
 
-    expect(result.current.meta[3]?.value).toBe('in 3 runs');
+    expect(result.current.provenance.seen).toBe('seen in 3 runs');
   });
 
   it('goes to the run the bug was caught in, named as a run', () => {
@@ -218,21 +170,12 @@ describe('useBugCardViewModel', () => {
       ],
     };
 
-    it('says when it was last seen, after how many runs saw it', () => {
+    it('says after how many runs saw it', () => {
       const { result } = renderHook(() =>
         useBugCardViewModel({ ...PROPS, bug: AGAIN, lastRunId: 'r-02' }),
       );
 
-      expect(result.current.meta.map(({ key }) => key)).toEqual([
-        'run',
-        'case',
-        'target',
-        'seen',
-        'last',
-        'agent',
-      ]);
-      expect(result.current.meta[3]?.value).toBe('in 2 runs');
-      expect(result.current.meta[4]?.value).toBe('r-02 · 10:05');
+      expect(result.current.provenance.seen).toBe('seen in 2 runs');
     });
 
     it('shows the screen of each time it came back, after the first ones', () => {
@@ -530,18 +473,6 @@ describe('useBugCardViewModel', () => {
       );
 
       expect(result.current.stepsToggle).toBeNull();
-    });
-
-    it('keeps how it was found folded until the QA opens it', () => {
-      const { result } = renderHook(() => useBugCardViewModel({ ...PROPS, bug: LONG }));
-
-      expect(result.current.isDetailsOpen).toBe(false);
-
-      act(() => {
-        result.current.onDetailsToggle();
-      });
-
-      expect(result.current.isDetailsOpen).toBe(true);
     });
   });
 });

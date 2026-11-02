@@ -24,12 +24,10 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
       : frameUrlOf({ design, frame: bug.frame });
   const [isCopied, setIsCopied] = useState(false);
   const [isAllSteps, setIsAllSteps] = useState(false);
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const { filed } = bug;
   const screen = filed?.tracker === 'github' ? pasteShotOf(bug) : null;
 
   const step = t('BUG.STEP', { number: bug.stepNumber });
-  const last = bug.sightings.at(-1) ?? null;
   const shots = [
     ...bug.shots.map((shot) => ({
       ...shot,
@@ -70,44 +68,9 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
       setIsAllSteps(!isAllSteps);
     },
     failedHere: t('BUG.FAILED_HERE'),
-    isDetailsOpen,
-    onDetailsToggle: () => {
-      setIsDetailsOpen(!isDetailsOpen);
-    },
     severity: t(SEVERITY_KEYS[bug.severity]),
     cardClass: `bug-card bug-card--${bug.severity}`,
     levelBars: SEVERITY_BARS[bug.severity],
-    meta: [
-      { key: 'run', label: t('BUG.META_RUN'), value: `${bug.runId} · ${bug.runWhen}` },
-      { key: 'case', label: t('BUG.META_CASE'), value: `${bug.caseId} · ${step}` },
-      { key: 'target', label: t('BUG.META_TARGET'), value: bug.target },
-      {
-        key: 'seen',
-        label: t('BUG.META_SEEN'),
-        value:
-          bug.seenRuns > 1
-            ? t('BUG.SEEN_RUNS', { count: bug.seenRuns })
-            : t('BUG.SEEN_ONCE'),
-      },
-      ...(last === null
-        ? []
-        : [
-            {
-              key: 'last',
-              label: t('BUG.META_LAST'),
-              value: `${last.runId} · ${last.runWhen}`,
-            },
-          ]),
-      ...(bug.agent === ''
-        ? []
-        : [
-            {
-              key: 'agent',
-              label: t('BUG.META_AGENT'),
-              value: `${bug.agent} · ${bug.modelName ?? t('MODEL.AGENT_DEFAULT')}`,
-            },
-          ]),
-    ],
     shots,
     moment: props.moment,
     shotsStyle: {

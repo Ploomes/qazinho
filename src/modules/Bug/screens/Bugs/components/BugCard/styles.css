@@ -254,38 +254,6 @@
   color: var(--ink);
 }
 
-.bug-card__details {
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid var(--line2);
-}
-
-.bug-card__details-toggle {
-  display: inline-flex;
-  gap: var(--space-3);
-  align-items: center;
-  align-self: flex-start;
-  padding: var(--space-4) 0 0;
-  border: none;
-  background: transparent;
-  color: var(--ink3);
-  font: var(--font-ui-xs);
-  font-weight: 600;
-  transition: color var(--dur-fast) var(--ease);
-}
-
-.bug-card__details-toggle:hover {
-  color: var(--ink);
-}
-
-.bug-card__details-fold {
-  overflow: hidden;
-}
-
-.bug-card__details-body {
-  padding-top: var(--space-4);
-}
-
 .bug-card__actions {
   display: flex;
   flex-wrap: wrap;

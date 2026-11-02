@@ -2,7 +2,7 @@ import type { IBugCardProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Button, Caret, Icon } from '@/shared/components/atoms';
-import { ExpectedGot, MetaGrid, Screenshot } from '@/shared/components/molecules';
+import { ExpectedGot, Screenshot } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
 import { BugUpdate, MomentTile } from './components';
 import { useBugCardViewModel } from './hooks';
@@ -17,7 +17,6 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
     severity,
     cardClass,
     levelBars,
-    meta,
     provenance,
     hero,
     thumbs,
@@ -25,8 +24,6 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
     stepsToggle,
     onStepsToggle,
     failedHere,
-    isDetailsOpen,
-    onDetailsToggle,
     moment,
     shotsStyle,
     newLabel,
@@ -250,34 +247,6 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
                     {stepsToggle}
                   </button>
                 )}
-              </div>
-
-              <div className="bug-card__details">
-                <button
-                  type="button"
-                  className="bug-card__details-toggle"
-                  aria-expanded={isDetailsOpen}
-                  onClick={onDetailsToggle}
-                >
-                  <Caret isOpen={isDetailsOpen} />
-                  {t('BUG.WHERE')}
-                </button>
-                <AnimatePresence initial={false}>
-                  {isDetailsOpen && (
-                    <motion.div
-                      key="details"
-                      className="bug-card__details-fold"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: MOTION.duration, ease: MOTION.ease }}
-                    >
-                      <div className="bug-card__details-body">
-                        <MetaGrid rows={meta} />
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
             </div>
           </motion.div>
