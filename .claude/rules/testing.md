@@ -95,6 +95,7 @@ próprio comando, e o CI nunca as roda.
 | `ask.test.ts`          | um agente fake pergunta ao QA no meio da run: uma escolha, um código, silêncio, um stop |
 | `network.test.ts`      | Chrome real: cada pedido guardado com status, tempo e tamanho, segredos fora            |
 | `strip.test.ts`        | o app construído: os pedidos de uma run sob o vídeo, e baixados desenhados nele         |
+| `island.test.ts`       | o app construído: a janela da ilha transparente, no Dock, sem corte, setas e teclado    |
 
 O `run.test.ts`, o `chat.test.ts` e o `visual.test.ts` gastam os tokens do QA e precisam de um
 agente instalado. Rode-os à mão depois de mexer no pipeline da run ou no schema de uma resposta.

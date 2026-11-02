@@ -480,18 +480,28 @@ e uma marca em cada projeto ligado na sidebar são onde ele aparece.
 Uma terceira página, a `island.html`, é a janela da ilha: transparente, sem moldura, sempre por
 cima e visível em todos os espaços (`ISLAND_ARGUMENT` no mesmo preload entrega `window.qazinhoIsland`).
 
-- A página principal diz o que mostrar (`useIslandSync`, `islandStateOf`): o agente esperando o QA
-  vem antes de uma run andando, e o fim de uma run fica oito segundos (`ISLAND.endedHoldMs`). Ela
-  manda o estado só quando muda, com o idioma do QA, pelo `Island` de `src/services/`.
+- A página principal diz o que mostrar (`useIslandSync`, `islandStateOf`): toda pergunta esperando
+  o QA, da mais antiga à mais nova, vem antes de uma run andando, e o fim de uma run fica oito
+  segundos (`ISLAND.endedHoldMs`). Ela manda o estado só quando muda, com o idioma do QA, pelo
+  `Island` de `src/services/`.
 - A `Island` da main põe a janela no centro do topo da tela primária (`islandPlaceOf`): a altura
   da barra de menus é a do notch num Mac que tem um (30 pt ou mais), com a largura fixa dele
   (`ISLAND_WINDOW.notchWidth`), e uma barra de 28 pt sem largura em qualquer outra tela.
+- Num Mac a janela é um painel (`islandBehaviorOf`), que flutua sobre um app em tela cheia e recebe
+  teclado sem ativar o app. O `setVisibleOnAllWorkspaces` vai com `skipTransformProcessType`: sem
+  ele, o Electron esconde o app do Dock, e a contagem de runs no ícone com ele.
 - A janela deixa o clique passar. A página mede o mouse contra o pill e só então pede à main que
-  a deixe receber cliques (`hover`). A ilha só abre com o mouse em cima, nem por uma pergunta
-  do agente: ela chama sem se impor.
-- Um pedido do QA na ilha (`IIslandAction`: parar ou abrir) volta pela main à página principal,
-  que o executa pelas mesmas actions de uma run (`stopWorkspace`) ou abrindo o workspace; a main
-  traz a janela do app à frente só para abrir.
+  a deixe receber cliques (`hover`). A ilha só abre com o mouse em cima, ou enquanto o QA digita,
+  nem por uma pergunta do agente: ela chama sem se impor, e a altura aberta é a do conteúdo.
+- O QA responde na própria ilha (`useIslandAsk`, `IslandAsk`). A resposta (`IslandAction`) vai da
+  janela à main e dali direto a `RunCoordinator.answer`, como a do cartão do chat, e volta à página
+  como `answered`. As palavras são sempre `said`: uma pergunta secreta não tem campo na ilha, e o
+  botão dela abre o app, o único lugar que digita um segredo.
+- A janela só pega o teclado quando o QA aperta o campo (`keyboard`), e o devolve ao sair dele, com
+  Esc ou ao responder, um instante depois para não engolir o clique que tirou o foco
+  (`ISLAND_WINDOW.keyboardReleaseMs`). O rascunho de cada pergunta fica até ela ser respondida.
+- Parar ou abrir volta pela main à página principal, que executa pelas mesmas actions de uma run
+  (`stopWorkspace`) ou abrindo o workspace; a main traz a janela do app à frente só para abrir.
 - A ilha não é uma janela do app (`appWindows` a deixa de fora), e o preto dela é o do notch
   (`--notch-black`): nada é desenhado sobre o recorte, só em volta e abaixo dele.
 

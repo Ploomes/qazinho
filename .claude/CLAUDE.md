@@ -182,10 +182,17 @@ quando o agente pergunta, dormindo numa run pausada, feliz ou com um bug no fim)
 cresce com animação quando aparece o passo de N; com o mouse em cima, ele abre
 abaixo do notch com o workspace, o passo, o progresso e os botões Abrir e Parar. Uma pergunta do
 agente a deixa chamando (o Estagiário pensa, o ícone pulsa em âmbar e o pill dá uma pulsada só), mas ela só abre com
-o mouse em cima, para nunca atrapalhar quem trabalha em outra coisa. Numa tela sem notch ela fica pendurada na borda de cima, um pill
-menor, e o QA a desliga em Configurações. O app construído abriu a janela no notch de um Mac de
-14 polegadas e a mostrou, abriu e escondeu pela bridge; nenhuma run de verdade a dirigiu ainda,
-nem se viu com um app em tela cheia ou um monitor externo.
+o mouse em cima, para nunca atrapalhar quem trabalha em outra coisa. Aberta, ela responde ali
+mesmo: um clique numa das opções do agente, ou as palavras do QA num campo que pega o teclado só
+enquanto ele digita, sem tirar da frente o app em que ele está. Um segredo continua sendo digitado
+no app. Quando agentes de vários projetos esperam, a orelha conta as perguntas e a ilha aberta anda
+entre elas com setas, da mais antiga à mais nova, nomeando o projeto e o workspace de cada uma. Numa
+tela sem notch ela fica pendurada na borda de cima, um pill menor, e o QA a desliga em Configurações
+› Aparência. Dois Claude Code reais (Haiku), em dois projetos, perguntaram ao mesmo tempo no app
+construído e foram respondidos pela ilha, um pelo campo e outro por uma opção, até as runs passarem;
+o `tests/smoke/island.test.ts` prova a janela e o teclado. Os cliques e teclas desses testes são
+sintéticos, nenhum atravessou o macOS; ainda não se viu a ilha com um app em tela cheia ou um
+monitor externo, nem no Windows ou no Linux.
 
 **Uma primeira execução anda pela máquina** (`Onboarding`): idioma, o agente, as ferramentas de
 dispositivo, os trackers. O GitHub e o Jira conectam de verdade. O token do Jira é conferido com o
