@@ -41,7 +41,7 @@ export const pt: typeof en = {
     TIP_NOTE: 'Informado pelo {{agent}}. O QAzinho só lê.',
   },
   SIDEBAR: {
-    NEW_WORKSPACE: 'Novo workspace aqui',
+    NEW_WORKSPACE: 'Novo workspace',
     NEW_PROJECT: 'Novo projeto',
     ASKED_YOU: 'O agente te perguntou algo',
     PROJECT_SETTINGS: 'Configurações de {{name}}',
@@ -63,9 +63,11 @@ export const pt: typeof en = {
     SUITE_RUNNING: '{{done}}/{{total}}',
     SHUT: 'Recolher a barra lateral',
     OPEN: 'Abrir a barra lateral',
-    WORKSPACES: 'Workspaces',
-    FILTER_PLACEHOLDER: 'Filtrar…',
-    FILTER_LABEL: 'Filtrar workspaces',
+    PROJECTS: 'Projetos',
+    FILTER_PLACEHOLDER: 'Filtrar projetos e workspaces…',
+    FILTER_EMPTY: 'Nenhum projeto ou workspace com “{{query}}”.',
+    FILTER_LABEL: 'Filtrar projetos e workspaces',
+    ROW_LABEL: '{{name}}, {{status}}',
     PROJECT_SELECT: 'Abrir {{name}}',
   },
   WELCOME: {

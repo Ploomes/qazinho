@@ -1,13 +1,13 @@
 import type {
   ISidebarProBadge,
-  ISidebarProjectAvatar,
   ISidebarProjectGroup,
   ISidebarSuiteRow,
   SidebarGroupRow,
 } from '@/app/components/Sidebar/types';
+import type { CSSProperties } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SIDEBAR_STATUS } from '@/app/components/Sidebar/constants';
+import { SIDEBAR_SIZE, SIDEBAR_STATUS } from '@/app/components/Sidebar/constants';
 import { workspaceMeta } from '@/modules/Workspace';
 import { Agent, Archive, Run } from '@/services';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
@@ -54,8 +54,18 @@ export const useSidebarViewModel = () => {
   const [expansions, setExpansions] = useState<Record<string, boolean>>({});
   const filterRef = useRef<HTMLInputElement>(null);
 
+  const query = isShut ? '' : filter.trim().toLowerCase();
+
+  const isRevealedByFilter = (projectId: string) =>
+    query !== '' &&
+    workspaces.some(
+      (workspace) =>
+        workspace.projectId === projectId && workspace.name.toLowerCase().includes(query),
+    );
+
   const isProjectExpanded = (projectId: string) =>
-    expansions[projectId] ?? projectId === selectedProjectId;
+    expansions[projectId] ??
+    (projectId === selectedProjectId || isRevealedByFilter(projectId));
 
   useEffect(() => {
     if (isShut) return;
@@ -145,8 +155,6 @@ export const useSidebarViewModel = () => {
     };
   };
 
-  const query = filter.trim().toLowerCase();
-
   const groups: ISidebarProjectGroup[] = projects.flatMap((project) => {
     const projectWorkspaces = workspaces.filter(
       (workspace) => workspace.projectId === project.id,
@@ -211,14 +219,6 @@ export const useSidebarViewModel = () => {
     ];
   });
 
-  const projectAvatars: ISidebarProjectAvatar[] = projects.map((project) => ({
-    id: `avatar-${project.id}`,
-    projectId: project.id,
-    initial: project.name.charAt(0).toUpperCase(),
-    name: project.name,
-    isSelected: project.id === selectedProjectId,
-  }));
-
   const waiting =
     workspaces.find(
       ({ live }) => live !== null && !live.isDone && live.question !== undefined,
@@ -251,16 +251,25 @@ export const useSidebarViewModel = () => {
 
   return {
     className: isShut ? 'sidebar sidebar--shut' : 'sidebar',
+    style: {
+      '--sidebar-tile': `${String(SIDEBAR_SIZE.tile)}px`,
+      '--sidebar-field': `${String(SIDEBAR_SIZE.field)}px`,
+      '--sidebar-avatar': `${String(SIDEBAR_SIZE.avatar)}px`,
+      '--sidebar-lead': `${String(SIDEBAR_SIZE.lead)}px`,
+    } as CSSProperties,
     isShut,
     toggleLabel: t(isShut ? 'SIDEBAR.OPEN' : 'SIDEBAR.SHUT'),
     onToggle: toggleSidebar,
     hasTips: isShut,
-    projectAvatars,
     onSelectProject,
     filter,
     filterRef,
     onFilterChange: setFilter,
     groups,
+    emptyLabel:
+      groups.length === 0 && query !== ''
+        ? t('SIDEBAR.FILTER_EMPTY', { query: filter.trim() })
+        : null,
     onToggleProject,
     waitingName: waiting?.name ?? null,
     onOpenWaiting: () => {

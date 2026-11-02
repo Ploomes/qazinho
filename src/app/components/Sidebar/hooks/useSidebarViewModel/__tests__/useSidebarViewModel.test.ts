@@ -32,6 +32,7 @@ beforeEach(() => {
   useWorkspaceStore.setState({ workspaces: [], removingWorkspaceId: null });
   useSuiteStore.setState({ suites: {}, lists: {}, runs: {}, live: {}, picked: {} });
   useProStore.setState({ shares: [] });
+  useSettingsStore.setState({ isSidebarShut: false });
 });
 
 const SUITE = {
@@ -475,6 +476,19 @@ describe('useSidebarViewModel', () => {
     });
   });
 
+  describe('style', () => {
+    it('hands the stylesheet the sizes of the rail tile, the filter field and the avatar', () => {
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.style).toEqual({
+        '--sidebar-tile': '36px',
+        '--sidebar-field': '34px',
+        '--sidebar-avatar': '22px',
+        '--sidebar-lead': '16px',
+      });
+    });
+  });
+
   describe('onToggle', () => {
     it('folds the sidebar to its rail, with a tip naming each row, and opens it back', () => {
       useSettingsStore.setState({ isSidebarShut: false });
@@ -508,19 +522,17 @@ describe('useSidebarViewModel', () => {
     });
   });
 
-  describe('projectAvatars', () => {
-    it('lists one avatar per project, the uppercased initial of its name', () => {
+  describe('the project avatars of the folded sidebar', () => {
+    it('lists one group per project, with the uppercased initial of its name', () => {
       const { result } = renderHook(() => useSidebarViewModel());
 
-      expect(result.current.projectAvatars).toEqual([
-        {
-          id: 'avatar-p1',
-          projectId: 'p1',
-          initial: 'S',
-          name: 'Shop · staging',
-          isSelected: false,
-        },
-      ]);
+      expect(
+        result.current.groups.map(({ projectId, initial, name }) => ({
+          projectId,
+          initial,
+          name,
+        })),
+      ).toEqual([{ projectId: 'p1', initial: 'S', name: 'Shop · staging' }]);
     });
 
     it('marks the project of the selected workspace, and no other', () => {
@@ -534,9 +546,31 @@ describe('useSidebarViewModel', () => {
 
       const { result } = renderHook(() => useSidebarViewModel());
 
-      expect(result.current.projectAvatars.map((avatar) => avatar.isSelected)).toEqual([
+      expect(result.current.groups.map((group) => group.isSelected)).toEqual([
         true,
         false,
+      ]);
+    });
+
+    it('lists the workspaces of the open project only, so the rail stays short', () => {
+      useAppStore.setState({
+        projects: [PROJECT, { id: 'p2', name: 'Loja', targets: [], repositories: [] }],
+        selectedWorkspaceId: 'w1',
+      });
+      useWorkspaceStore.setState({
+        workspaces: [
+          { ...makeWorkspace(), id: 'w1', projectId: 'p1' },
+          { ...makeWorkspace(), id: 'w2', projectId: 'p2' },
+        ],
+      });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(
+        result.current.groups.map(({ isExpanded, rows }) => [isExpanded, rows.length]),
+      ).toEqual([
+        [true, 2],
+        [false, 2],
       ]);
     });
 
@@ -663,6 +697,22 @@ describe('useSidebarViewModel', () => {
       expect(result.current.groups).toEqual([]);
     });
 
+    it('does NOT apply a leftover filter to the folded sidebar, which has no field to clear it', () => {
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onFilterChange('zzz');
+      });
+
+      expect(result.current.groups).toEqual([]);
+
+      act(() => {
+        result.current.onToggle();
+      });
+
+      expect(result.current.groups).toHaveLength(1);
+    });
+
     it('keeps a project whose name matches, with every workspace listed', () => {
       useWorkspaceStore.setState({
         workspaces: [
@@ -703,6 +753,112 @@ describe('useSidebarViewModel', () => {
           row.kind === 'workspace' ? [row.name] : [],
         ),
       ).toEqual(['Checkout']);
+    });
+  });
+  describe('the filter and the open projects', () => {
+    const LOJA = { id: 'p2', name: 'Loja', targets: [], repositories: [] };
+
+    beforeEach(() => {
+      useAppStore.setState({ projects: [PROJECT, LOJA], selectedWorkspaceId: null });
+      useWorkspaceStore.setState({
+        workspaces: [
+          { ...makeWorkspace(), id: 'w1', projectId: 'p1', name: 'Search' },
+          { ...makeWorkspace(), id: 'w2', projectId: 'p2', name: 'Checkout' },
+        ],
+      });
+    });
+
+    const isOpen = (groups: { projectId: string; isExpanded: boolean }[], id: string) =>
+      groups.find(({ projectId }) => projectId === id)?.isExpanded;
+
+    it('opens a closed project while one of its workspaces matches, and closes it once the filter is gone', () => {
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(isOpen(result.current.groups, 'p2')).toBe(false);
+
+      act(() => {
+        result.current.onFilterChange('check');
+      });
+
+      expect(isOpen(result.current.groups, 'p2')).toBe(true);
+
+      act(() => {
+        result.current.onFilterChange('');
+      });
+
+      expect(isOpen(result.current.groups, 'p2')).toBe(false);
+    });
+
+    it('does NOT open a project the filter reached only by its own name', () => {
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onFilterChange('loja');
+      });
+
+      expect(isOpen(result.current.groups, 'p2')).toBe(false);
+    });
+
+    it('lets the QA close a project the filter opened', () => {
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onFilterChange('check');
+      });
+      act(() => {
+        result.current.onToggleProject('p2');
+      });
+
+      expect(isOpen(result.current.groups, 'p2')).toBe(false);
+    });
+
+    it('does NOT open a project in the folded sidebar, where the filter is not applied', () => {
+      useSettingsStore.setState({ isSidebarShut: true });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(isOpen(result.current.groups, 'p2')).toBe(false);
+    });
+  });
+
+  describe('emptyLabel', () => {
+    it('names what the QA typed when the filter hides every project', () => {
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onFilterChange('  zzz ');
+      });
+
+      expect(result.current.emptyLabel).toBe('No project or workspace matches “zzz”.');
+    });
+
+    it('says nothing while the list is not filtered', () => {
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.emptyLabel).toBeNull();
+    });
+
+    it('says nothing while a project still matches', () => {
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onFilterChange('shop');
+      });
+
+      expect(result.current.emptyLabel).toBeNull();
+    });
+
+    it('says nothing in the folded sidebar, which lists every project', () => {
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onFilterChange('zzz');
+      });
+      act(() => {
+        result.current.onToggle();
+      });
+
+      expect(result.current.emptyLabel).toBeNull();
     });
   });
 });

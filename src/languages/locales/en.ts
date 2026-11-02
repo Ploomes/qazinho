@@ -39,7 +39,7 @@ export const en = {
     TIP_NOTE: 'Reported by {{agent}}. QAzinho only reads it.',
   },
   SIDEBAR: {
-    NEW_WORKSPACE: 'New workspace here',
+    NEW_WORKSPACE: 'New workspace',
     NEW_PROJECT: 'New project',
     ASKED_YOU: 'The agent asked you something',
     REMOVE: 'Remove {{name}}',
@@ -61,9 +61,11 @@ export const en = {
     SUITE_RUNNING: '{{done}}/{{total}}',
     SHUT: 'Fold the sidebar',
     OPEN: 'Unfold the sidebar',
-    WORKSPACES: 'Workspaces',
-    FILTER_PLACEHOLDER: 'Filter…',
-    FILTER_LABEL: 'Filter workspaces',
+    PROJECTS: 'Projects',
+    FILTER_PLACEHOLDER: 'Filter projects, workspaces…',
+    FILTER_EMPTY: 'No project or workspace matches “{{query}}”.',
+    FILTER_LABEL: 'Filter projects and workspaces',
+    ROW_LABEL: '{{name}}, {{status}}',
     PROJECT_SELECT: 'Open {{name}}',
   },
   WELCOME: {
