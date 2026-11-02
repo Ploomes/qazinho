@@ -9,7 +9,7 @@ import type {
   QaReply,
 } from '@/shared/types';
 import type { CSSProperties } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useChatAgent } from '@/modules/Chat/hooks/useChatAgent';
 import {
@@ -109,6 +109,17 @@ export const useChatViewModel = () => {
     isConfluenceOn,
     onDraft: setDraft,
   });
+  const pendingImport = useAppStore((state) => state.pendingImport);
+  const clearImport = useAppStore((state) => state.clearImport);
+  const startImport = chatCommand.startWith;
+  const openProjectId = workspace?.projectId ?? null;
+
+  useEffect(() => {
+    if (pendingImport === null || pendingImport.projectId !== openProjectId) return;
+
+    startImport(pendingImport.source);
+    clearImport();
+  }, [pendingImport, openProjectId, startImport, clearImport]);
 
   const readStep = workspace === null ? undefined : readSteps[workspace.id];
   const sentCommand = (workspace?.chat ?? [])

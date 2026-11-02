@@ -149,8 +149,8 @@ ao lado da run, e um bug mandado ao Jira ou ao GitHub a carrega sob o pedido. Se
 como pontos e o valor de uma variável como o nome dela, em todo lugar. O `tools.test.ts` e o
 `network.test.ts` provam isso no Chrome real; um agente real ainda não o usou.
 
-**Os testes que o time já tem viram um plano.** O `/import` no chat, também oferecido no chat vazio,
-escolhe uma pasta do computador do QA: o QAzinho a lê sem mudar nada e reconhece o que
+**Os testes que o time já tem viram um plano.** O `/import` no chat, também oferecido no chat vazio e na criação do
+projeto, escolhe uma pasta do computador do QA: o QAzinho a lê sem mudar nada e reconhece o que
 dirige os testes (Playwright, Cypress, Maestro, Detox, WebdriverIO, Appium, Selenium) pela config,
 pelos pacotes e pelos arquivos de teste, e o agente do próprio QA lê a pasta de volta, confirma o
 framework pelos arquivos e escreve o plano: um caso por teste, os passos nas palavras do QA e nunca

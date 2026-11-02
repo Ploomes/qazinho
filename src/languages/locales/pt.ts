@@ -650,6 +650,13 @@ export const pt: typeof en = {
     SECTION_GENERAL: 'Geral',
     SECTION_CODE: 'Código',
     SECTION_VARIABLES: 'Variáveis',
+    SECTION_IMPORT: 'Importar',
+    IMPORT_TITLE: 'Importar testes',
+    IMPORT_TEXT:
+      'Traga os testes que o time já tem, de Playwright, Maestro ou outros. Com o projeto criado, o agente lê a pasta no primeiro chat e a transforma num plano.',
+    IMPORT_PICK: 'Escolher a pasta dos testes',
+    IMPORT_CHANGE: 'Escolher outra',
+    IMPORT_REMOVE: 'Tirar',
     SECTION_FLAGGED: 'precisa de atenção',
     NEEDS_NAME_EDIT: 'Um projeto precisa de nome',
     NEEDS_TARGET_EDIT: 'Mantenha um target: uma URL, um .apk ou um .app',

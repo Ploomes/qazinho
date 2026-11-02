@@ -205,6 +205,20 @@ export const useChatCommand = (props: {
     onDraft('');
   };
 
+  const startWith = (source: IImportSource) => {
+    setCommand({
+      id: 'import-plan',
+      repository: null,
+      branch: null,
+      issue: null,
+      page: null,
+      design: null,
+      folder: source,
+    });
+    setFolderFailure(null);
+    onDraft('');
+  };
+
   const commandRows: ICommandRow[] = CHAT_COMMANDS.filter((one) =>
     matchesQuery({
       text: `${one.slug} ${t(one.labelKey)} ${one.aliases}`,
@@ -442,6 +456,7 @@ export const useChatCommand = (props: {
             hint: t('COMMANDS.HINT'),
           } satisfies ICommandPicker),
     start,
+    startWith,
     onPick: (id: string) => {
       if (step === 'command') {
         const row = commandRows.find((one) => one.id === id);

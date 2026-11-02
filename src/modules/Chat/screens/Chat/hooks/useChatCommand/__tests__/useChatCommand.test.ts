@@ -822,6 +822,22 @@ describe('useChatCommand', () => {
       expect(result.current.ask('')).toBeNull();
     });
 
+    it('opens ready on a folder the project asked to import, with no dialog', () => {
+      const pickImport = vi.fn();
+
+      window.qazinho = { ...window.qazinho, pickImport };
+
+      const { result } = command({ draft: '' });
+
+      act(() => {
+        result.current.startWith(FOLDER);
+      });
+
+      expect(result.current.command?.isReady).toBe(true);
+      expect(pickImport).not.toHaveBeenCalled();
+      expect(result.current.ask('')).toMatchObject({ source: { dir: FOLDER.dir } });
+    });
+
     it('steps back from a picked folder to the picker', async () => {
       window.qazinho = {
         ...window.qazinho,

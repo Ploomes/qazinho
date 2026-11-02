@@ -541,6 +541,9 @@ pasta de testes do QA. O QAzinho a lê e não muda nada nela:
 - A mensagem abre com a pasta (`describeImport`): onde está, o que o QAzinho reconheceu e os
   arquivos que parecem testes. O Claude Code recebe `Read`, `Grep` e `Glob` só nessa pasta, e o
   Codex a lê com o próprio sandbox somente leitura. Nada é copiado, então nada é apagado.
+- A janela de um projeto novo também oferece a pasta (`ImportField`): ela é guardada ao criar o
+  projeto (`pendingImport`) e o primeiro chat desse projeto abre o `/import` já nela, uma vez
+  (`startWith`), sem abrir o seletor de novo. Um projeto que já existe importa pelo chat.
 - A pasta fica aberta ao chat do workspace até um plano voltar, nas perguntas que vêm entre uma
   mensagem e outra (`importSources`), e é solta com o plano ou com o workspace.
 - O plano sai de uma conversa, como em qualquer outra fonte: o agente confirma o framework,

@@ -6,6 +6,7 @@ import type { Theme } from './Theme';
 import type { IProject } from '@/modules/Project';
 import type { ProjectSection } from '@/modules/Project/components/ProjectModal/types';
 import type { IReplayOpen, IRunNotice } from '@/modules/Run';
+import type { IImportSource } from '@/shared/types';
 
 /**
  * O shell: qual tela está em cima, qual projeto está escolhido, e o que flutua sobre ela.
@@ -20,6 +21,7 @@ export interface IAppStore {
   projectSection: ProjectSection | null;
   selectedWorkspaceId: string | null;
   selectedProjectId: string | null;
+  pendingImport: { projectId: string; source: IImportSource } | null;
   isResourcesOpen: boolean;
   modelMenuAt: ModelMenuAt | null;
   media: IMedia | null;
@@ -44,6 +46,8 @@ export interface IAppStore {
   toggleResources: () => void;
   toggleModelMenu: (at: ModelMenuAt) => void;
   closeModelMenu: () => void;
+  requestImport: (props: { projectId: string; source: IImportSource }) => void;
+  clearImport: () => void;
   openMedia: (media: IMedia) => void;
   closeMedia: () => void;
   openReplay: (replay: IReplayOpen) => void;

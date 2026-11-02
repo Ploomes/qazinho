@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import type { IAskAgent, IChatAnswer, IChatQuestion, IChatTurn } from '@/shared/types';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
 import { useChatViewModel } from '@/modules/Chat/screens/Chat/hooks/useChatViewModel';
@@ -92,6 +92,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  cleanup();
   Reflect.deleteProperty(window, 'qazinho');
 });
 
@@ -1181,6 +1182,38 @@ describe('useChatViewModel', () => {
       });
 
       expect(result.current.draft).toBe('explain @TC-02 ');
+    });
+  });
+
+  describe('tests imported while the project was made', () => {
+    const SOURCE = {
+      name: 'loja-e2e',
+      dir: '/Users/qa/loja-e2e',
+      frameworks: [{ id: 'playwright', files: 2 }],
+      files: ['a.spec.ts'],
+      branch: null,
+      commit: null,
+    };
+
+    it('opens the import on the folder picked, once, in the chat of that project', () => {
+      useAppStore.setState({ pendingImport: { projectId: PROJECT.id, source: SOURCE } });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      expect(result.current.command).toMatchObject({
+        name: 'Import tests I already have',
+        isReady: true,
+      });
+      expect(useAppStore.getState().pendingImport).toBeNull();
+    });
+
+    it('waits for a workspace of the project it was asked for', () => {
+      useAppStore.setState({ pendingImport: { projectId: 'another', source: SOURCE } });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      expect(result.current.command).toBeNull();
+      expect(useAppStore.getState().pendingImport).not.toBeNull();
     });
   });
 

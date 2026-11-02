@@ -15,6 +15,7 @@ export const useAppStore = create<IAppStore>()(
       projectSection: null,
       selectedWorkspaceId: null,
       selectedProjectId: null,
+      pendingImport: null,
       isResourcesOpen: false,
       modelMenuAt: null,
       media: null,
@@ -105,6 +106,10 @@ export const useAppStore = create<IAppStore>()(
         })),
 
       closeModelMenu: () => set({ modelMenuAt: null }),
+
+      requestImport: (pendingImport) => set({ pendingImport }),
+
+      clearImport: () => set({ pendingImport: null }),
 
       openMedia: (media) => set({ media }),
 

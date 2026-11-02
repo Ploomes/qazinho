@@ -645,6 +645,13 @@ export const en = {
     SECTION_GENERAL: 'General',
     SECTION_CODE: 'Code',
     SECTION_VARIABLES: 'Variables',
+    SECTION_IMPORT: 'Import',
+    IMPORT_TITLE: 'Import tests',
+    IMPORT_TEXT:
+      'Bring in the tests your team already has, Playwright, Maestro or others. Once the project exists, the agent reads the folder in its first chat and turns it into a plan.',
+    IMPORT_PICK: 'Choose a folder of tests',
+    IMPORT_CHANGE: 'Choose another',
+    IMPORT_REMOVE: 'Remove',
     SECTION_FLAGGED: 'needs a look',
     NEEDS_NAME_EDIT: 'A project needs a name',
     NEEDS_TARGET_EDIT: 'Keep one target: a URL, an .apk or a .app',

@@ -6,7 +6,12 @@ import type {
   ITarget,
   IVariableDraft,
 } from '@/modules/Project/types';
-import type { BuildPlatform, ProRemoval, TargetKind } from '@/shared/types';
+import type {
+  BuildPlatform,
+  IImportSource,
+  ProRemoval,
+  TargetKind,
+} from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -37,6 +42,7 @@ export const useProjectModalViewModel = () => {
   const projectSection = useAppStore((state) => state.projectSection);
   const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
   const addProject = useAppStore((state) => state.addProject);
+  const requestImport = useAppStore((state) => state.requestImport);
   const updateProject = useAppStore((state) => state.updateProject);
   const removeProject = useAppStore((state) => state.removeProject);
   const closeModal = useAppStore((state) => state.closeModal);
@@ -69,6 +75,7 @@ export const useProjectModalViewModel = () => {
       from: name,
     })),
   );
+  const [folder, setFolder] = useState<IImportSource | null>(null);
   const [variableFailure, setVariableFailure] = useState<string | null>(null);
   const [isSaving, setSaving] = useState(false);
   const [isConfirmingDiscard, setConfirmingDiscard] = useState(false);
@@ -176,7 +183,11 @@ export const useProjectModalViewModel = () => {
     const save = () => {
       if (editing)
         updateProject({ ...editing, name: name.trim(), targets, repositories });
-      else addProject({ id: projectId, name: name.trim(), targets, repositories });
+      else {
+        addProject({ id: projectId, name: name.trim(), targets, repositories });
+
+        if (folder !== null) requestImport({ projectId, source: folder });
+      }
     };
 
     if (changes.length === 0) {
@@ -209,18 +220,22 @@ export const useProjectModalViewModel = () => {
   const flagged: ProjectSection | null =
     blocking !== undefined ? 'general' : variableFailure !== null ? 'variables' : null;
   const navItems: IProjectNavItem[] = [
-    ...PROJECT_SECTIONS.map(({ id, labelKey }) => ({
-      id,
-      label: t(labelKey),
-      count:
-        id === 'code'
-          ? countOf(repositories.length)
-          : id === 'variables'
-            ? countOf(variables.length)
-            : null,
-      isFlagged: flagged === id,
-      isDanger: false,
-    })),
+    ...PROJECT_SECTIONS.filter(({ id }) => id !== 'import' || !isEditing).map(
+      ({ id, labelKey }) => ({
+        id,
+        label: t(labelKey),
+        count:
+          id === 'code'
+            ? countOf(repositories.length)
+            : id === 'variables'
+              ? countOf(variables.length)
+              : id === 'import'
+                ? countOf(folder === null ? 0 : 1)
+                : null,
+        isFlagged: flagged === id,
+        isDanger: false,
+      }),
+    ),
     ...(isEditing && isSignedInToPro
       ? [
           {
@@ -321,6 +336,8 @@ export const useProjectModalViewModel = () => {
     apk: apkValue,
     app: appValue,
     repositories,
+    folder,
+    onFolderChange: setFolder,
     projectId: editing?.id ?? null,
     androidBuilder: builderOf({ platform: 'android', buildId: androidBuild.buildId }),
     iosBuilder: builderOf({ platform: 'ios', buildId: iosBuild.buildId }),
@@ -332,6 +349,7 @@ export const useProjectModalViewModel = () => {
       general: section === 'general',
       code: section === 'code',
       variables: section === 'variables',
+      import: section === 'import',
       pro: section === 'pro',
       delete: section === 'delete',
     },
