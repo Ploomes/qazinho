@@ -8,11 +8,13 @@ import {
   isConfirmKey,
   wrappedFocus,
 } from '@/shared/components/templates/ModalFrame/library';
+import { useBackdrop } from '@/shared/hooks/useBackdrop';
 
 export const useModalFrameViewModel = (props: IModalFrameProps) => {
   const { onCancel, onConfirm, canConfirm } = props;
   const panelRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
+  const backdrop = useBackdrop(onCancel);
 
   useEffect(() => {
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
@@ -47,6 +49,7 @@ export const useModalFrameViewModel = (props: IModalFrameProps) => {
   return {
     panelRef,
     titleId,
+    backdrop,
     isBeside: props.nav !== undefined,
     hasBody: props.nav === undefined && props.children !== undefined,
     panelStyle: {

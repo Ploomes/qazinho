@@ -16,6 +16,7 @@ export const Lightbox: React.FC = () => {
     saveIcon,
     saveLabel,
     onSave,
+    backdrop,
     onClose,
   } = useLightboxViewModel();
   const { t } = useTranslation();
@@ -29,7 +30,8 @@ export const Lightbox: React.FC = () => {
       animate={{ opacity: 1, backdropFilter: BACKDROP.blur }}
       exit={{ opacity: 0, backdropFilter: BACKDROP.clear }}
       transition={{ duration: MOTION.duration, ease: MOTION.ease }}
-      onClick={onClose}
+      onPointerDown={backdrop.onPointerDown}
+      onClick={backdrop.onClick}
     >
       <motion.div
         className="lightbox__panel"

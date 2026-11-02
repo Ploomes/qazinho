@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import type { PointerEvent } from 'react';
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { useModalFrameViewModel } from '@/shared/components/templates/ModalFrame/hooks/useModalFrameViewModel';
@@ -13,6 +14,13 @@ const PROPS = {
   onCancel: vi.fn(),
   onConfirm: vi.fn(),
 };
+
+const backdropEl = document.createElement('div');
+const panelEl = document.createElement('div');
+
+function pressedOn(target: HTMLElement) {
+  return { target, currentTarget: backdropEl } as unknown as PointerEvent<HTMLElement>;
+}
 
 function pressEscape() {
   window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
@@ -66,6 +74,21 @@ describe('useModalFrameViewModel', () => {
       height: 640,
       '--modal-nav-width': '184px',
     });
+  });
+
+  it('closes on a click on the backdrop, but not on a drag that began inside the panel', () => {
+    const onCancel = vi.fn();
+    const { result } = renderHook(() => useModalFrameViewModel({ ...PROPS, onCancel }));
+
+    result.current.backdrop.onPointerDown(pressedOn(panelEl));
+    result.current.backdrop.onClick();
+
+    expect(onCancel).not.toHaveBeenCalled();
+
+    result.current.backdrop.onPointerDown(pressedOn(backdropEl));
+    result.current.backdrop.onClick();
+
+    expect(onCancel).toHaveBeenCalledOnce();
   });
 
   it('closes on Escape, the way every modal in the app does', () => {

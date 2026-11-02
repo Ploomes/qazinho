@@ -5,12 +5,13 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Archive } from '@/services';
 import { LIGHTBOX, SAVE_BUTTON } from '@/shared/components/organisms/Lightbox/constants';
-import { useShot } from '@/shared/hooks';
+import { useBackdrop, useShot } from '@/shared/hooks';
 import { useAppStore } from '@/store';
 
 export const useLightboxViewModel = () => {
   const media = useAppStore((state) => state.media);
   const closeMedia = useAppStore((state) => state.closeMedia);
+  const backdrop = useBackdrop(closeMedia);
   const shot = useShot({ src: media?.src ?? null, file: media?.file ?? null });
   const { t } = useTranslation();
   const [saving, setSaving] = useState<{
@@ -66,6 +67,7 @@ export const useLightboxViewModel = () => {
         setSaving({ media, state: outcome });
       });
     },
+    backdrop,
     onClose: closeMedia,
   };
 };

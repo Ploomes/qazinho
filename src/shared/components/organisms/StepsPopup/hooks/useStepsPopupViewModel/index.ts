@@ -6,6 +6,7 @@ import {
   STEPS_POPUP,
 } from '@/shared/components/organisms/StepsPopup/constants';
 import { MOTION } from '@/shared/constants';
+import { useBackdrop } from '@/shared/hooks/useBackdrop';
 
 export const useStepsPopupViewModel = (props: IStepsPopupProps) => {
   const { tone, onCancel, onClose } = props;
@@ -15,6 +16,9 @@ export const useStepsPopupViewModel = (props: IStepsPopupProps) => {
   const isWorking = tone === 'working';
   const isConnected = tone === 'connected';
   const isKept = props.isKept === true;
+  const backdrop = useBackdrop(() => {
+    if (!isWorking) onClose();
+  });
 
   useEffect(() => {
     const leave = (event: KeyboardEvent) => {
@@ -73,8 +77,6 @@ export const useStepsPopupViewModel = (props: IStepsPopupProps) => {
 
       if (page !== null) window.open(page.url, '_blank', 'noreferrer');
     },
-    onBackdrop: () => {
-      if (!isWorking) onClose();
-    },
+    backdrop,
   };
 };

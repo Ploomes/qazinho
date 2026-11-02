@@ -3,10 +3,24 @@ import type {
   IStepsPopupProps,
   StepsTone,
 } from '@/shared/components/organisms/StepsPopup/types';
+import type { PointerEvent } from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { STEPS_POPUP } from '@/shared/components/organisms/StepsPopup/constants';
 import { useStepsPopupViewModel } from '@/shared/components/organisms/StepsPopup/hooks/useStepsPopupViewModel';
+
+function clickBackdrop(backdrop: {
+  onPointerDown: (event: PointerEvent<HTMLElement>) => void;
+  onClick: () => void;
+}) {
+  const el = document.createElement('div');
+
+  backdrop.onPointerDown({
+    target: el,
+    currentTarget: el,
+  } as unknown as PointerEvent<HTMLElement>);
+  backdrop.onClick();
+}
 
 function popup(tone: StepsTone, extra: Partial<IStepsPopupProps> = {}) {
   const props: IStepsPopupProps = {
@@ -146,7 +160,7 @@ describe('useStepsPopupViewModel', () => {
     it('does NOT close on a click outside while working', () => {
       const { result, props } = popup('working');
 
-      result.current.onBackdrop();
+      clickBackdrop(result.current.backdrop);
 
       expect(props.onClose).not.toHaveBeenCalled();
     });
@@ -154,7 +168,7 @@ describe('useStepsPopupViewModel', () => {
     it('closes on a click outside once it ended', () => {
       const { result, props } = popup('connected');
 
-      result.current.onBackdrop();
+      clickBackdrop(result.current.backdrop);
 
       expect(props.onClose).toHaveBeenCalledTimes(1);
     });

@@ -18,7 +18,7 @@ export const StepsPopup: React.FC<IStepsPopupProps> = (props) => {
     detailClass,
     shownCopyLabel,
     onCopyShown,
-    onBackdrop,
+    backdrop,
   } = useStepsPopupViewModel(props);
 
   return (
@@ -29,7 +29,8 @@ export const StepsPopup: React.FC<IStepsPopupProps> = (props) => {
       animate={{ opacity: 1, backdropFilter: BACKDROP.blur }}
       exit={{ opacity: 0, backdropFilter: BACKDROP.clear }}
       transition={{ duration: MOTION.duration, ease: MOTION.ease }}
-      onClick={onBackdrop}
+      onPointerDown={backdrop.onPointerDown}
+      onClick={backdrop.onClick}
     >
       <motion.div
         className="steps-popup__panel"

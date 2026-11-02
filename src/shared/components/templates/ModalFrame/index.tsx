@@ -10,6 +10,7 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
   const {
     panelRef,
     titleId,
+    backdrop,
     isBeside,
     hasBody,
     panelStyle,
@@ -25,7 +26,8 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
       animate={{ opacity: 1, backdropFilter: BACKDROP.blur }}
       exit={{ opacity: 0, backdropFilter: BACKDROP.clear }}
       transition={{ duration: MOTION.duration, ease: MOTION.ease }}
-      onClick={props.onCancel}
+      onPointerDown={backdrop.onPointerDown}
+      onClick={backdrop.onClick}
     >
       <motion.div
         ref={panelRef}
