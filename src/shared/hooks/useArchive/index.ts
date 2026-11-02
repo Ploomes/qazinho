@@ -32,6 +32,14 @@ export const useArchive = () => {
 
       loadProjects(projects);
       loadWorkspaces(workspaces);
+
+      const { selectedWorkspaceId, selectWorkspace, goHome } = useAppStore.getState();
+
+      if (selectedWorkspaceId === null) return;
+
+      if (workspaces.some(({ id }) => id === selectedWorkspaceId))
+        selectWorkspace(selectedWorkspaceId);
+      else goHome();
     });
   }, [loadProjects, loadWorkspaces]);
 

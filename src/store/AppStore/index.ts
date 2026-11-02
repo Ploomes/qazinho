@@ -125,7 +125,7 @@ export const useAppStore = create<IAppStore>()(
     }),
     {
       name: STORAGE.appearance,
-      partialize: ({ theme }) => ({ theme }),
+      partialize: ({ theme, selectedWorkspaceId }) => ({ theme, selectedWorkspaceId }),
     },
   ),
 );
