@@ -264,9 +264,11 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     em andamento.
   - Ele também fala sozinho, num balão sob o rosto (`AssistantTip`, `say`), quando o QAzinho leva
     o QA a outro lugar ou precisa dizer algo que nenhuma tela diz: uma frase do que fazer ali. O
-    rosto pula e acende, o balão nasce dele (`STICKER.speak`), digita a frase e volta para ele. Ele
-    não pede resposta, não toma o foco, flutua sobre um modal e sai em alguns segundos pelo tamanho
-    do texto (`holdMsOf`), menos com o mouse em cima.
+    rosto e o balão ficam numa camada acima de tudo: um rosto aceso em cima do botão, então um modal
+    não o apaga e o X do chat aberto não aparece, e o balão que nasce dele (`STICKER.speak`) e digita
+    a frase. Ele não pede resposta, não toma o foco e sai em alguns segundos pelo tamanho do texto
+    (`holdMsOf`), menos com o mouse em cima. Um salto para consertar algo fecha o chat dele, que
+    cobriria o botão apontado.
   - O botão dele mora na barra de título (`AssistantButton`), então nenhuma tela guarda espaço
     para ele: o composer do chat e o fim das listas ficam inteiros. O chat dele abre logo abaixo
     do botão, no canto direito (`AssistantDock`): sobre o painel Agente enquanto ele está aberto,

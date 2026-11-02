@@ -1,16 +1,18 @@
 import type { IAssistantTipProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { createPortal } from 'react-dom';
-import { STICKER } from '@/shared/constants';
+import { Intern } from '@/shared/components/atoms';
+import { MOTION, STICKER } from '@/shared/constants';
+import { FACE_HOP } from './constants';
 import { useAssistantTipViewModel } from './hooks';
 import './styles.css';
 
 /**
- * O Estagiário falando sozinho: um balão que nasce do rosto dele e digita a frase, não
- * pede resposta nem toma o foco, e volta para ele em alguns segundos.
+ * O Estagiário falando por cima de tudo: o rosto dele aceso e um balão que nasce dele e
+ * digita a frase, sem pedir resposta nem tomar o foco, até sair em alguns segundos.
  */
 export const AssistantTip: React.FC<IAssistantTipProps> = (props) => {
-  const { tip, said, unsaid, style, onClick, onPointerEnter, onPointerLeave } =
+  const { tip, said, unsaid, faceSize, style, onClick, onPointerEnter, onPointerLeave } =
     useAssistantTipViewModel(props);
 
   return createPortal(
@@ -18,6 +20,21 @@ export const AssistantTip: React.FC<IAssistantTipProps> = (props) => {
       <span className="assistant-tip__spoken" role="status" aria-live="polite">
         {tip?.text}
       </span>
+      <AnimatePresence>
+        {tip !== null && (
+          <motion.span
+            key="face"
+            className="assistant-tip__face"
+            style={style}
+            aria-hidden="true"
+            initial={{ opacity: 0 }}
+            animate={FACE_HOP}
+            exit={{ opacity: 0, transition: { duration: MOTION.durationFast } }}
+          >
+            <Intern mood="neutral" size={faceSize} isFigure />
+          </motion.span>
+        )}
+      </AnimatePresence>
       <AnimatePresence mode="wait">
         {tip !== null && (
           <motion.div

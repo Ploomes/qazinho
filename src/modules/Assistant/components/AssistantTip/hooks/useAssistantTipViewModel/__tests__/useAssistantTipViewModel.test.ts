@@ -13,7 +13,7 @@ const LINE = 'Connect Jira here, then come back to /jira.';
 /** O rosto do Estagiário numa janela de 1000px: termina 16px antes da borda. */
 const ANCHOR = {
   current: {
-    getBoundingClientRect: () => ({ bottom: 46, right: 984 }) as DOMRect,
+    getBoundingClientRect: () => ({ top: 14, bottom: 46, right: 984 }) as DOMRect,
   } as HTMLElement,
 };
 
@@ -93,6 +93,8 @@ describe('useAssistantTipViewModel', () => {
     expect(result.current.style).toMatchObject({
       '--assistant-tip-top': '46px',
       '--assistant-tip-right': `${String(16 - ASSISTANT_TIP.overhang)}px`,
+      '--assistant-tip-face-top': '14px',
+      '--assistant-tip-face-right': '16px',
       '--assistant-tip-tail-right': `${String(ASSISTANT_TIP.overhang + (ASSISTANT_DOCK.buttonSize - ASSISTANT_TIP.tail) / 2)}px`,
     });
   });

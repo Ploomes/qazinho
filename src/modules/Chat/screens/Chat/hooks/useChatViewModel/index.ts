@@ -108,6 +108,7 @@ export const useChatViewModel = () => {
   const retry = workspace === null ? undefined : retries[workspace.id];
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
   const say = useAssistantStore((state) => state.say);
+  const closeAssistant = useAssistantStore((state) => state.close);
   const selectSettingsTab = useSettingsStore((state) => state.selectTab);
   const openSettings = useAppStore((state) => state.openSettings);
   const openProjectSection = useAppStore((state) => state.openProjectSection);
@@ -120,6 +121,7 @@ export const useChatViewModel = () => {
     onDraft: setDraft,
     onBlocked: (blocker) => {
       say(t(blocker.tipKey));
+      closeAssistant();
 
       if (blocker.place === 'integrations') {
         selectSettingsTab('integrations');

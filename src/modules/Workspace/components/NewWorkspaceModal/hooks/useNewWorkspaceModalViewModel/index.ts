@@ -22,6 +22,7 @@ export const useNewWorkspaceModalViewModel = () => {
   const addWorkspace = useWorkspaceStore((state) => state.addWorkspace);
   const openSettings = useAppStore((state) => state.openSettings);
   const say = useAssistantStore((state) => state.say);
+  const closeAssistant = useAssistantStore((state) => state.close);
   const selectSettingsTab = useSettingsStore((state) => state.selectTab);
   const isJiraConnected = useSetupStore((state) =>
     state.integrations.some(({ id }) => id === 'jira'),
@@ -102,6 +103,7 @@ export const useNewWorkspaceModalViewModel = () => {
     connectLabel: t('NEW_WORKSPACE.ISSUE_CONNECT'),
     onConnect: () => {
       say(t('NEW_WORKSPACE.TIP_CONNECT'));
+      closeAssistant();
       selectSettingsTab('integrations');
       closeModal();
       openSettings();

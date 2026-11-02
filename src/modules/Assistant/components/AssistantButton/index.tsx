@@ -8,7 +8,7 @@ import './styles.css';
 
 /**
  * O rosto do Estagiário na barra de título: abre o chat dele, pensa enquanto ele
- * trabalha, conta as respostas que chegaram com ele fechado, e fala num balão.
+ * trabalha, conta as respostas que chegaram com ele fechado, e ancora o balão dele.
  */
 export const AssistantButton: React.FC = () => {
   const {
@@ -16,7 +16,6 @@ export const AssistantButton: React.FC = () => {
     isOpen,
     isBusy,
     className,
-    faceMotion,
     style,
     label,
     tip,
@@ -58,7 +57,7 @@ export const AssistantButton: React.FC = () => {
               key="face"
               className="assistant-button__face"
               initial={FACE_SWAP.initial}
-              animate={faceMotion}
+              animate={FACE_SWAP.animate}
               exit={FACE_SWAP.exit}
             >
               <Intern mood={mood} size={faceSize} isStill={isStill} isFigure />

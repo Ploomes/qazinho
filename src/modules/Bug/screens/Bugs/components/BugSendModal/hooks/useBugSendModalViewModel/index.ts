@@ -37,6 +37,7 @@ export const useBugSendModalViewModel = (props: IBugSendModalProps) => {
   );
   const openSettings = useAppStore((state) => state.openSettings);
   const say = useAssistantStore((state) => state.say);
+  const closeAssistant = useAssistantStore((state) => state.close);
   const selectTab = useSettingsStore((state) => state.selectTab);
   const [chosen, setChosen] = useState<IssueTracker | null>(null);
   const [picked, setPicked] = useState<IssueTarget | null>(null);
@@ -162,6 +163,7 @@ export const useBugSendModalViewModel = (props: IBugSendModalProps) => {
     onConfirm: () => {
       if (trackers.length === 0) {
         say(t('FILING.TIP_CONNECT'));
+        closeAssistant();
         selectTab('integrations');
         openSettings();
         onCancel();

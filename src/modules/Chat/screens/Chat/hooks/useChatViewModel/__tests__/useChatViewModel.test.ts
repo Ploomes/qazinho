@@ -115,7 +115,16 @@ describe('useChatViewModel', () => {
     beforeEach(() => {
       useAppStore.setState({ screen: 'workspace', modal: null, editingProjectId: null });
       useSettingsStore.setState({ tab: 'agents' });
-      useAssistantStore.setState({ tip: null });
+      useAssistantStore.setState({ tip: null, isOpen: false });
+    });
+
+    /** O chat do Estagiário aberto cobriria o botão que ele acabou de mandar apertar. */
+    it('shuts the chat of the Intern, which would cover what he points at', () => {
+      useAssistantStore.setState({ isOpen: true });
+
+      picking('jira-plan');
+
+      expect(useAssistantStore.getState().isOpen).toBe(false);
     });
 
     it('takes the QA to the integrations, and the Intern says what to do there', () => {

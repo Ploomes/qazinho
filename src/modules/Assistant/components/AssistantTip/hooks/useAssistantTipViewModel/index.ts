@@ -12,7 +12,7 @@ export const useAssistantTipViewModel = (props: IAssistantTipProps) => {
   const tip = useAssistantStore((state) => state.tip);
   const hush = useAssistantStore((state) => state.hush);
   const [heldId, setHeldId] = useState<string | null>(null);
-  const [place, setPlace] = useState({ top: 0, right: 0 });
+  const [place, setPlace] = useState({ top: 0, bottom: 0, right: 0 });
 
   const isHeld = tip !== null && heldId === tip.id;
   const { said, unsaid } = useSpeechBubbleViewModel({
@@ -37,7 +37,11 @@ export const useAssistantTipViewModel = (props: IAssistantTipProps) => {
       const box = anchorRef.current?.getBoundingClientRect();
 
       if (box !== undefined)
-        setPlace({ top: box.bottom, right: window.innerWidth - box.right });
+        setPlace({
+          top: box.top,
+          bottom: box.bottom,
+          right: window.innerWidth - box.right,
+        });
     };
 
     measure();
@@ -56,8 +60,13 @@ export const useAssistantTipViewModel = (props: IAssistantTipProps) => {
     tip,
     said,
     unsaid,
+    faceSize: ASSISTANT_DOCK.faceSize,
     style: {
-      '--assistant-tip-top': `${String(place.top)}px`,
+      '--assistant-tip-top': `${String(place.bottom)}px`,
+      '--assistant-tip-face-top': `${String(place.top)}px`,
+      '--assistant-tip-face-right': `${String(place.right)}px`,
+      '--assistant-tip-face': `${String(ASSISTANT_DOCK.buttonSize)}px`,
+      '--assistant-tip-ring': `${String(ASSISTANT_DOCK.speakingRing)}px`,
       '--assistant-tip-right': `${String(right)}px`,
       '--assistant-tip-width': `${String(ASSISTANT_TIP.width)}px`,
       '--assistant-tip-tail': `${String(ASSISTANT_TIP.tail)}px`,

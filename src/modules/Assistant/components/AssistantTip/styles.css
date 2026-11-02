@@ -33,6 +33,22 @@
   content: '';
 }
 
+.assistant-tip__face {
+  position: fixed;
+  z-index: 40;
+  top: var(--assistant-tip-face-top);
+  right: var(--assistant-tip-face-right);
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: var(--assistant-tip-face);
+  height: var(--assistant-tip-face);
+  border-radius: var(--radius-pill);
+  background: var(--brand-ink);
+  box-shadow: 0 0 0 var(--assistant-tip-ring) var(--lime);
+  pointer-events: none;
+}
+
 .assistant-tip__unsaid {
   visibility: hidden;
 }
