@@ -21,13 +21,11 @@ export const AskCard: React.FC<IAskCardProps> = (props) => {
     canMakeSecret,
     secretLabel,
     secretTip,
-    secretNote,
     isKept,
     keepLabel,
     className,
     canSend,
     sendLabel,
-    waiting,
     foldTransition,
     onText,
     onSecret,
@@ -100,29 +98,7 @@ export const AskCard: React.FC<IAskCardProps> = (props) => {
             )}
           </AnimatePresence>
         </div>
-
-        <AnimatePresence initial={false}>
-          {isSecret && (
-            <motion.div
-              key="secret"
-              className="ask-card__fold"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={foldTransition}
-            >
-              <p className="ask-card__secret">
-                <span className="ask-card__lock">
-                  <Icon name="lock" />
-                </span>
-                {secretNote}
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </form>
-
-      <span className="ask-card__waiting">{waiting}</span>
     </section>
   );
 };

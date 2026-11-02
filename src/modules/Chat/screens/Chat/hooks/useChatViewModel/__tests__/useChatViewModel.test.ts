@@ -909,7 +909,7 @@ describe('useChatViewModel', () => {
       });
 
       expect(sectionOf(renderHook(() => useChatViewModel()).result.current)?.title).toBe(
-        'Run r-01 · 1 step passed · 0 failed',
+        'Run r-01 · 1 step passed',
       );
     });
 
@@ -923,7 +923,7 @@ describe('useChatViewModel', () => {
       const title = sectionOf(renderHook(() => useChatViewModel()).result.current)?.title;
 
       await i18n.changeLanguage('en');
-      expect(title).toBe('Run r-01 · 1 passo passou · 0 falharam');
+      expect(title).toBe('Run r-01 · 1 passo passou');
     });
 
     it('leaves loose the error of a run that broke before its first step', () => {
@@ -975,7 +975,6 @@ describe('useChatViewModel', () => {
         isLive: true,
         isExpanded: false,
         isExpandable: true,
-        countLabel: '2 messages',
         openLabel: null,
       });
       expect(section?.rows.map(({ message }) => message.kind)).toEqual([

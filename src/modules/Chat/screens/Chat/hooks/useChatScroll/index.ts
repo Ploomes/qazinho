@@ -1,17 +1,19 @@
 import type { ChatMessage } from '@/modules/Chat/types';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { CHAT_SCROLL } from '@/modules/Chat/screens/Chat/constants';
-import { isNearBottom, isNearTop } from '@/modules/Chat/screens/Chat/library';
+import { isNearTop } from '@/modules/Chat/screens/Chat/library';
+import { useFollowEnd } from '@/shared/hooks/useFollowEnd';
 
 export const useChatScroll = (props: {
   workspaceId: string | null;
   messages: ChatMessage[];
-  isAgentTyping: boolean;
   questionId?: string | null;
 }) => {
-  const { workspaceId, messages, isAgentTyping, questionId = null } = props;
-  const listRef = useRef<HTMLDivElement>(null);
-  const followsEnd = useRef(true);
+  const { workspaceId, messages, questionId = null } = props;
+  const { listRef, onFollowScroll } = useFollowEnd<HTMLDivElement>({
+    resetKey: workspaceId,
+    callKey: questionId,
+  });
   const fromBottom = useRef<number | null>(null);
   const [shown, setShown] = useState<{ workspaceId: string | null; count: number }>({
     workspaceId,
@@ -31,35 +33,11 @@ export const useChatScroll = (props: {
   useLayoutEffect(() => {
     const list = listRef.current;
 
-    followsEnd.current = true;
-
-    if (list) list.scrollTop = list.scrollHeight;
-  }, [workspaceId]);
-
-  useLayoutEffect(() => {
-    const list = listRef.current;
-
-    if (list && followsEnd.current)
-      list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
-  }, [messages.length, isAgentTyping]);
-
-  useLayoutEffect(() => {
-    const list = listRef.current;
-
-    if (!list || questionId === null) return;
-
-    followsEnd.current = true;
-    list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
-  }, [questionId]);
-
-  useLayoutEffect(() => {
-    const list = listRef.current;
-
     if (list && fromBottom.current !== null) {
       list.scrollTop = list.scrollHeight - fromBottom.current;
       fromBottom.current = null;
     }
-  }, [count]);
+  }, [count, listRef]);
 
   return {
     listRef,
@@ -72,12 +50,7 @@ export const useChatScroll = (props: {
 
       if (!list) return;
 
-      followsEnd.current = isNearBottom({
-        scrollTop: list.scrollTop,
-        clientHeight: list.clientHeight,
-        scrollHeight: list.scrollHeight,
-        edgePx: CHAT_SCROLL.edgePx,
-      });
+      onFollowScroll();
 
       if (start === 0 || fromBottom.current !== null) return;
       if (!isNearTop({ scrollTop: list.scrollTop, edgePx: CHAT_SCROLL.edgePx })) return;

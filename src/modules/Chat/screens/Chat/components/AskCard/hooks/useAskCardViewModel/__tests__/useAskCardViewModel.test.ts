@@ -43,13 +43,12 @@ afterEach(() => {
 
 describe('useAskCardViewModel', () => {
   describe('what it shows', () => {
-    it('says where the run is, what the agent asks, and how long the run has waited', () => {
+    it('says where the run is and what the agent asks, and nothing else', () => {
       const { result } = card();
 
       expect(result.current.eyebrow).toBe('The agent needs you');
-      expect(result.current.where).toBe('TC-02 · step 3 · Pick a plan');
+      expect(result.current.where).toBe('TC-02 · step 3');
       expect(result.current.question).toBe('Which plan should I pick?');
-      expect(result.current.waiting).toBe('The run waits for you · 1:23 of 15:00');
       expect(result.current.options.map(({ label }) => label)).toEqual([
         'Premium',
         'Premium+',
@@ -68,16 +67,13 @@ describe('useAskCardViewModel', () => {
      * Um segredo é digitado, nunca escolhido: uma resposta num botão seria um valor na
      * tela.
      */
-    it('asks a secret in a hidden field, with no answers to pick and the name it goes as', () => {
+    it('asks a secret in a hidden field, with no answers to pick', () => {
       const { result } = card(SECRET);
 
       expect(result.current.isSecret).toBe(true);
       expect(result.current.hasOptions).toBe(false);
       expect(result.current.canMakeSecret).toBe(false);
-      expect(result.current.fieldLabel).toBe('Type it here: the agent never sees it');
-      expect(result.current.secretNote).toBe(
-        'Typed as ${OTP_CODE}: the agent writes the name, QAzinho types the value.',
-      );
+      expect(result.current.fieldLabel).toBe('Type it: it becomes a secret');
     });
   });
 
@@ -173,7 +169,6 @@ describe('useAskCardViewModel', () => {
       });
 
       expect(result.current.hasOptions).toBe(false);
-      expect(result.current.secretNote).toContain('${QA_ANSWER_1}');
       expect(onAnswer).toHaveBeenCalledWith({
         kind: 'secret',
         value: 'hunter2',

@@ -76,7 +76,10 @@ export const usePlanViewModel = () => {
   const { update: updateFromOrg } = useProUpdate();
   const [removal, setRemoval] = useState<ICaseRemoval | null>(null);
   const [freshCaseId, setFreshCaseId] = useState<string | null>(null);
-  const [exported, setExported] = useState<ExportOutcome | null>(null);
+  const [exportedIn, setExportedIn] = useState<{
+    workspaceId: string;
+    outcome: ExportOutcome;
+  } | null>(null);
   const [isPublishOpen, setIsPublishOpen] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishing, setPublishing] = useState<{
@@ -102,6 +105,7 @@ export const usePlanViewModel = () => {
   const language = useSettingsStore((state) => state.language);
 
   const workspaceId = workspace?.id ?? null;
+  const exported = exportedIn?.workspaceId === workspaceId ? exportedIn.outcome : null;
   const plan = workspace?.plan ?? [];
   const isLocked = workspace?.isLocked === true;
   const orgMove = useProStore(
@@ -498,15 +502,7 @@ export const usePlanViewModel = () => {
       exported === null || exported.kind === 'cancelled'
         ? null
         : exported.kind === 'saved'
-          ? [
-              t('PLAN.EXPORTED', {
-                files: exported.files.join(', '),
-                folder: exported.folder,
-              }),
-              ...(exported.missing.length === 0
-                ? []
-                : [t('PLAN.EXPORT_MISSING', { cases: exported.missing.join(', ') })]),
-            ].join(' ')
+          ? t('PLAN.EXPORTED', { folder: exported.folder.split(/[\\/]/).at(-1) ?? '' })
           : exported.kind === 'nothing'
             ? t('PLAN.EXPORT_NOTHING')
             : t(
@@ -525,10 +521,12 @@ export const usePlanViewModel = () => {
         target: { kind: target.kind, value: target.value },
         viewport: { width: viewport.width, height: viewport.height },
         steps: flattenPlanSteps(plan),
-      }).then(setExported);
+      }).then((outcome) => {
+        setExportedIn({ workspaceId, outcome });
+      });
     },
     onDismissExport: () => {
-      setExported(null);
+      setExportedIn(null);
     },
     onDraftInChat: () => {
       selectTab('chat');

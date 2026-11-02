@@ -11,7 +11,6 @@ const section = (props: Partial<IRunSectionProps> = {}) =>
       day: 'today',
       title: 'Run r-01',
       facts: '3:45',
-      countLabel: '2 messages',
       isLive: false,
       isExpanded: false,
       isExpandable: true,
@@ -49,9 +48,9 @@ describe('useRunSectionViewModel', () => {
     });
   });
 
-  it('writes how long, how much and how many under the title, leaving out what is not known', () => {
-    expect(section().facts).toBe('3:45 · 2 messages');
-    expect(section({ facts: '', countLabel: '' }).facts).toBe('');
+  it('writes how long and how much under the title', () => {
+    expect(section().facts).toBe('3:45');
+    expect(section({ facts: '' }).facts).toBe('');
   });
 
   it('offers the report only once the run has one', () => {

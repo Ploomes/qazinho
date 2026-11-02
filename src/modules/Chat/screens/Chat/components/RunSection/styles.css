@@ -58,7 +58,10 @@
 }
 
 .run-section__caret {
+  display: inline-flex;
   flex: none;
+  align-items: center;
+  justify-content: center;
   width: var(--space-4);
   color: var(--ink3);
 }
@@ -87,7 +90,6 @@
 .run-section__title {
   font: var(--font-ui-strong);
   overflow-wrap: anywhere;
-  text-wrap: balance;
 }
 
 .run-section__facts {

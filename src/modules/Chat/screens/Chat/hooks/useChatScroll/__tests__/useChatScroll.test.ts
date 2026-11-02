@@ -27,7 +27,7 @@ function scrolledTo(scrollTop: number) {
 describe('useChatScroll', () => {
   it('opens on the latest messages, without replaying them as new', () => {
     const { result } = renderHook(() =>
-      useChatScroll({ workspaceId: 'w1', messages: chat(70), isAgentTyping: false }),
+      useChatScroll({ workspaceId: 'w1', messages: chat(70) }),
     );
 
     expect(result.current.visible).toHaveLength(30);
@@ -37,8 +37,7 @@ describe('useChatScroll', () => {
 
   it('marks a message that arrives after the chat opened as new', () => {
     const { result, rerender } = renderHook(
-      (messages: ChatMessage[]) =>
-        useChatScroll({ workspaceId: 'w1', messages, isAgentTyping: false }),
+      (messages: ChatMessage[]) => useChatScroll({ workspaceId: 'w1', messages }),
       { initialProps: chat(3) },
     );
 
@@ -51,7 +50,7 @@ describe('useChatScroll', () => {
   describe('onScroll', () => {
     it('pulls in older messages when the reader reaches the top', () => {
       const { result } = renderHook(() =>
-        useChatScroll({ workspaceId: 'w1', messages: chat(70), isAgentTyping: false }),
+        useChatScroll({ workspaceId: 'w1', messages: chat(70) }),
       );
 
       act(() => {
@@ -65,7 +64,7 @@ describe('useChatScroll', () => {
 
     it('does NOT load anything while the reader is away from the top', () => {
       const { result } = renderHook(() =>
-        useChatScroll({ workspaceId: 'w1', messages: chat(70), isAgentTyping: false }),
+        useChatScroll({ workspaceId: 'w1', messages: chat(70) }),
       );
 
       act(() => {
@@ -78,8 +77,7 @@ describe('useChatScroll', () => {
 
     it('starts the next workspace back on its latest messages', () => {
       const { result, rerender } = renderHook(
-        (workspaceId: string) =>
-          useChatScroll({ workspaceId, messages: chat(70), isAgentTyping: false }),
+        (workspaceId: string) => useChatScroll({ workspaceId, messages: chat(70) }),
         { initialProps: 'w1' },
       );
 
@@ -102,7 +100,6 @@ describe('useChatScroll', () => {
         useChatScroll({
           workspaceId: 'w1',
           messages: chat(3),
-          isAgentTyping: false,
           questionId,
         }),
       { initialProps: null as string | null },

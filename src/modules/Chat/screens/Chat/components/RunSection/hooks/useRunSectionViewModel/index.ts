@@ -6,7 +6,7 @@ export const useRunSectionViewModel = (props: IRunSectionProps) => {
 
   return {
     hasCaret: props.isExpandable,
-    facts: [props.facts, props.countLabel].filter((part) => part !== '').join(' · '),
+    facts: props.facts,
     isBodyShown,
     hasOpen: props.openLabel !== null,
     className: props.isLive ? 'run-section run-section--live' : 'run-section',

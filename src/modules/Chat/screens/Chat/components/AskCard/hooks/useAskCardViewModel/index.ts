@@ -2,7 +2,6 @@ import type { IAskCardProps } from '@/modules/Chat/screens/Chat/components/AskCa
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatElapsed } from '@/modules/Device';
 import { EXPLORATION, MOTION } from '@/shared/constants';
 
 export const useAskCardViewModel = (props: IAskCardProps) => {
@@ -30,10 +29,9 @@ export const useAskCardViewModel = (props: IAskCardProps) => {
       ? question.action.length > 0
         ? t('CHAT.ASK_AT_SCREEN', { screen: question.action })
         : t('CHAT.ASK_EXPLORING')
-      : t('CHAT.ASK_AT_STEP', {
+      : t('CHAT.ASKED_AT_STEP', {
           caseId: question.caseId,
           step: question.stepNumber,
-          action: question.action,
         }),
     question: question.question,
     hasOptions: !isSecret && question.options.length > 0,
@@ -58,16 +56,11 @@ export const useAskCardViewModel = (props: IAskCardProps) => {
     canMakeSecret: !question.isSecret,
     secretLabel: t('CHAT.ASK_MAKE_SECRET'),
     secretTip: t('CHAT.ASK_MAKE_SECRET_TIP'),
-    secretNote: t('CHAT.ASK_SECRET_AS', { name: `\${${question.secret.name}}` }),
     isKept,
     keepLabel: t('CHAT.ASK_KEEP'),
     className: isSent ? 'ask-card ask-card--sent' : 'ask-card',
     canSend,
     sendLabel: t('CHAT.ASK_SEND'),
-    waiting: t('CHAT.ASK_WAITING', {
-      waited: formatElapsed(question.waitedSec),
-      limit: formatElapsed((question.waitsUntilMs - question.askedAtMs) / 1_000),
-    }),
     foldTransition: { duration: MOTION.duration, ease: MOTION.ease },
     onText: (typed: string) => {
       if (!isSent) setText(typed);

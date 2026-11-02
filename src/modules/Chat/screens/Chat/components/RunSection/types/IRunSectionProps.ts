@@ -9,7 +9,6 @@ export interface IRunSectionProps {
   day: string;
   title: string;
   facts: string;
-  countLabel: string;
   isLive: boolean;
   isExpanded: boolean;
   isExpandable: boolean;

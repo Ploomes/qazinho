@@ -159,7 +159,6 @@ export const useChatViewModel = () => {
   const { listRef, visible, onScroll } = useChatScroll({
     workspaceId: workspace?.id ?? null,
     messages: workspace?.chat ?? [],
-    isAgentTyping,
     questionId: question === null ? null : `${workspace?.liveId ?? ''}/${question.id}`,
   });
   const lastAgentId =
@@ -253,9 +252,12 @@ export const useChatViewModel = () => {
           : t('CHAT.RUN_FAILED_OTHER', { count: message.failed }),
     };
 
-    return end === null
-      ? t('CHAT.RUN_CARD_TITLE', tally)
-      : t('CHAT.RUN_CARD_TITLE_ENDED', { ...tally, ended: t(end.labelKey) });
+    if (end !== null)
+      return t('CHAT.RUN_CARD_TITLE_ENDED', { ...tally, ended: t(end.labelKey) });
+
+    return message.failed === 0
+      ? t('CHAT.RUN_CARD_TITLE_CLEAN', tally)
+      : t('CHAT.RUN_CARD_TITLE', tally);
   };
 
   const answer = (props: { messageId: string; answers: IQuestionAnswer[] }) => {
@@ -374,12 +376,6 @@ export const useChatViewModel = () => {
         : saved === null
           ? ''
           : factsOf({ seconds: saved.durationSec, costUsd: saved.costUsd }),
-      countLabel:
-        count === 0
-          ? ''
-          : count === 1
-            ? t('CHAT.RUN_MESSAGES_ONE')
-            : t('CHAT.RUN_MESSAGES_OTHER', { count }),
       isLive,
       isExpanded: expandedRuns.includes(item.runId),
       isExpandable: count > 0,

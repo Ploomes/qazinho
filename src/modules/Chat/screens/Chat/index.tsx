@@ -89,7 +89,6 @@ export const Chat: React.FC = () => {
                 day={item.day}
                 title={item.title}
                 facts={item.facts}
-                countLabel={item.countLabel}
                 isLive={item.isLive}
                 isExpanded={item.isExpanded}
                 isExpandable={item.isExpandable}

@@ -35,6 +35,7 @@
 
 .ask-card__where {
   min-width: 0;
+  margin-left: auto;
   color: var(--ink3);
   font: var(--font-mono-sm);
   overflow-wrap: anywhere;
@@ -80,29 +81,4 @@
 
 .ask-card__keep {
   display: inline-flex;
-}
-
-.ask-card__fold {
-  margin-top: calc(var(--space-4) * -1);
-  overflow: hidden;
-}
-
-.ask-card__secret {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-2);
-  margin: var(--space-4) 0 0;
-  color: var(--lime-ink);
-  font: var(--font-ui-sm);
-}
-
-.ask-card__lock {
-  display: inline-flex;
-  flex: none;
-  padding-top: var(--space-1);
-}
-
-.ask-card__waiting {
-  color: var(--ink3);
-  font: var(--font-mono-sm);
 }

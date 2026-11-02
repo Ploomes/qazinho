@@ -312,9 +312,7 @@ describe('usePlanViewModel', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.exportNotice).toBe(
-          'Exported qazinho.spec.ts to /Users/qa/Downloads. Not recorded yet: TC-02. Each case that passes a run becomes code.',
-        );
+        expect(result.current.exportNotice).toBe('Exported to Downloads.');
       });
       expect(asked[0]).toMatchObject({
         workspaceId: 'w1',
@@ -340,9 +338,7 @@ describe('usePlanViewModel', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.exportNotice).toBe(
-          'No case is recorded yet. Run the plan: each case that passes becomes code.',
-        );
+        expect(result.current.exportNotice).toBe('No case recorded yet.');
       });
 
       exporting({ kind: 'cancelled' });
