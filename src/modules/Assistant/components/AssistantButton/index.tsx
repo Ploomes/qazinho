@@ -6,7 +6,7 @@ import { useAssistantButtonViewModel } from './hooks';
 import './styles.css';
 
 /**
- * O rosto do Estagiário num sticker no canto: abre o chat dele, pensa enquanto ele
+ * O rosto do Estagiário na barra de título: abre o chat dele, pensa enquanto ele
  * trabalha, e conta as respostas que chegaram com ele fechado.
  */
 export const AssistantButton: React.FC = () => {
@@ -14,6 +14,7 @@ export const AssistantButton: React.FC = () => {
     isOpen,
     isBusy,
     className,
+    style,
     label,
     tip,
     mood,
@@ -28,6 +29,7 @@ export const AssistantButton: React.FC = () => {
     <button
       type="button"
       className={className}
+      style={style}
       aria-label={label}
       aria-expanded={isOpen}
       aria-busy={isBusy}

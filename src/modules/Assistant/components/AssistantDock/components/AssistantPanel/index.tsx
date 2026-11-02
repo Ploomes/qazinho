@@ -62,9 +62,9 @@ export const AssistantPanel: React.FC = () => {
       className="assistant-panel"
       role="dialog"
       aria-label={title}
-      initial={STICKER.rise.initial}
-      animate={STICKER.rise.animate}
-      exit={STICKER.rise.exit}
+      initial={STICKER.pop.initial}
+      animate={STICKER.pop.animate}
+      exit={STICKER.pop.exit}
       onKeyDown={onPanelKeyDown}
     >
       <header className="assistant-panel__header">

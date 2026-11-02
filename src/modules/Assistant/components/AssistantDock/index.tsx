@@ -1,11 +1,11 @@
 import { AnimatePresence } from 'motion/react';
-import { AssistantButton, AssistantPanel } from './components';
+import { AssistantPanel } from './components';
 import { useAssistantDockViewModel } from './hooks';
 import './styles.css';
 
 /**
- * O Estagiário no canto do QAzinho: um sticker com o rosto dele, e o chatzinho dele
- * subindo acima.
+ * O chatzinho do Estagiário, aberto logo abaixo do botão dele na barra de título, à
+ * direita da janela.
  */
 export const AssistantDock: React.FC = () => {
   const { isOpen, style } = useAssistantDockViewModel();
@@ -13,7 +13,6 @@ export const AssistantDock: React.FC = () => {
   return (
     <div className="assistant-dock" style={style}>
       <AnimatePresence>{isOpen && <AssistantPanel key="panel" />}</AnimatePresence>
-      <AssistantButton />
     </div>
   );
 };

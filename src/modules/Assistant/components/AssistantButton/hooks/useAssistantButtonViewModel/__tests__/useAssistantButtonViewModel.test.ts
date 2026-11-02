@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { useAssistantButtonViewModel } from '@/modules/Assistant/components/AssistantDock/components/AssistantButton/hooks/useAssistantButtonViewModel';
+import { useAssistantButtonViewModel } from '@/modules/Assistant/components/AssistantButton/hooks/useAssistantButtonViewModel';
 import { KEYBINDS } from '@/modules/Settings/constants';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useAssistantStore, useSettingsStore } from '@/store';

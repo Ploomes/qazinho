@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAppViewModel } from '@/app/hooks/useAppViewModel';
 import { i18n } from '@/languages';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useProStore, useSettingsStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useProStore, useSettingsStore } from '@/store';
 
 describe('useAppViewModel', () => {
   beforeEach(() => {
@@ -122,31 +122,6 @@ describe('useAppViewModel', () => {
 
     expect(result.current.isSettings).toBe(true);
     expect(result.current.isWelcome).toBe(false);
-  });
-
-  /**
-   * O botão do Estagiário no canto ficava sobre o composer do chat, que agora vive no
-   * painel Agente: só há espaço a abrir enquanto esse painel está aberto.
-   */
-  it("makes room beside the Estagiário's button while the agent panel is open, and none once it collapses", () => {
-    useAppStore.setState({
-      screen: 'workspace',
-      projects: [{ id: 'p1', name: 'Shop', targets: [], repositories: [] }],
-    });
-    useWorkspaceStore.setState({ isPanelOpen: true });
-
-    const { result } = renderHook(() => useAppViewModel());
-
-    expect(result.current.shellStyle).toMatchObject({
-      '--dock-room': '88px',
-      '--dock-lift': '76px',
-    });
-
-    act(() => {
-      useWorkspaceStore.setState({ isPanelOpen: false });
-    });
-
-    expect(result.current.shellStyle).toMatchObject({ '--dock-room': '0px' });
   });
 
   /**

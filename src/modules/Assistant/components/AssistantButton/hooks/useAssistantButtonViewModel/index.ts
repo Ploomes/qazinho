@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ASSISTANT_DOCK } from '@/modules/Assistant/constants';
 import { Platform } from '@/services';
@@ -19,6 +20,11 @@ export const useAssistantButtonViewModel = () => {
     isOpen,
     isBusy: isAsking,
     className: isOpen ? 'assistant-button assistant-button--open' : 'assistant-button',
+    style: {
+      '--assistant-button': `${String(ASSISTANT_DOCK.buttonSize)}px`,
+      '--assistant-badge': `${String(ASSISTANT_DOCK.badgeSize)}px`,
+      '--assistant-badge-offset': `${String(ASSISTANT_DOCK.badgeOffset)}px`,
+    } as CSSProperties,
     label,
     tip:
       combo === null

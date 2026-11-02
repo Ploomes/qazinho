@@ -193,8 +193,7 @@
 .device-view__steps {
   flex: 1 1 0;
   min-height: var(--device-steps-min);
-  padding: var(--space-4) var(--device-gutter)
-    calc(var(--space-4) + var(--dock-lift, 0px));
+  padding: var(--space-4) var(--device-gutter);
   border-top: 1px solid var(--line2);
   overflow-y: auto;
   scrollbar-gutter: stable;

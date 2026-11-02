@@ -1,5 +1,6 @@
 import type { ITitlebarProps } from './types';
 import { AnimatePresence } from 'motion/react';
+import { AssistantButton } from '@/modules/Assistant';
 import { Gauge, Icon, Logo, Meter, Tag, Wordmark } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { ModelPopover } from '@/shared/components/organisms/ModelPopover';
@@ -80,6 +81,10 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
             <span>{agentLabel}</span>
             <Icon name="caretDown" />
           </button>
+
+          <span className="titlebar__assistant">
+            <AssistantButton />
+          </span>
         </div>
       )}
 

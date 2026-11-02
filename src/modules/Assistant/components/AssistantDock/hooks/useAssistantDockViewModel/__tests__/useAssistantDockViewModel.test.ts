@@ -26,9 +26,11 @@ describe('useAssistantDockViewModel', () => {
   it('hands the stylesheet its geometry, in pixels', () => {
     const { result } = renderHook(() => useAssistantDockViewModel());
 
-    expect(result.current.style).toMatchObject({
-      '--assistant-button': '56px',
+    expect(result.current.style).toEqual({
       '--assistant-panel-width': '384px',
+      '--assistant-panel-height': '600px',
+      '--assistant-top': '54px',
+      '--assistant-inset': '20px',
     });
   });
 });
