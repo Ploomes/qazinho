@@ -332,7 +332,6 @@ export const useProjectModalViewModel = () => {
       general: section === 'general',
       code: section === 'code',
       variables: section === 'variables',
-      import: section === 'import',
       pro: section === 'pro',
       delete: section === 'delete',
     },

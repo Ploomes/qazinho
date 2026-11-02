@@ -527,7 +527,7 @@ loopback (`LiveStream`), desenhado por um `<img>`.
 
 ## Os testes que o time já tem viram um plano
 
-O `/import` do chat (e a aba Importar do projeto, que abre o chat com ele pronto) escolhe uma
+O `/import` do chat, que o chat vazio também oferece, escolhe uma
 pasta de testes do QA. O QAzinho a lê e não muda nada nela:
 
 - A main abre o seletor de pasta (`pickImport`) e o `ImportScanner` lista os arquivos sem as

@@ -225,6 +225,7 @@ export const pt: typeof en = {
       'O QAzinho não conseguiu mais abrir a pasta de testes. Escolha de novo com /import.',
     SUGGESTION_JIRA: 'Planejar a partir de uma história do Jira',
     SUGGESTION_CONFLUENCE: 'Planejar a partir de uma página do Confluence',
+    SUGGESTION_IMPORT: 'Importar testes que eu já tenho',
     SUGGESTION_FIGMA: 'Conferir com um design do Figma',
     PLAN_WHILE_RUNNING:
       'O plano ficou como estava: uma run está rodando nele. Peça de novo quando a run terminar.',
@@ -649,14 +650,6 @@ export const pt: typeof en = {
     SECTION_GENERAL: 'Geral',
     SECTION_CODE: 'Código',
     SECTION_VARIABLES: 'Variáveis',
-    SECTION_IMPORT: 'Importar',
-    IMPORT_TITLE: 'Importar testes',
-    IMPORT_TEXT:
-      'Traga os testes que o time já tem, de Playwright, Maestro ou outros. O agente lê a pasta e os transforma num plano.',
-    IMPORT_BUTTON: 'Escolher a pasta dos testes',
-    IMPORT_LATER: 'Salve o projeto primeiro, depois importe por aqui.',
-    IMPORT_NEEDS_WORKSPACE:
-      'Crie um workspace neste projeto primeiro. A importação roda no chat dele.',
     SECTION_FLAGGED: 'precisa de atenção',
     NEEDS_NAME_EDIT: 'Um projeto precisa de nome',
     NEEDS_TARGET_EDIT: 'Mantenha um target: uma URL, um .apk ou um .app',

@@ -107,6 +107,7 @@ describe('useChatViewModel', () => {
       ['Test a feature', 'I want to test a specific feature.'],
       ['Explore the app for 10 min', ''],
       ['Check against a Figma design', ''],
+      ['Import tests I already have', ''],
     ]);
   });
 

@@ -9,7 +9,7 @@ import type {
   QaReply,
 } from '@/shared/types';
 import type { CSSProperties } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useChatAgent } from '@/modules/Chat/hooks/useChatAgent';
 import {
@@ -109,17 +109,7 @@ export const useChatViewModel = () => {
     isConfluenceOn,
     onDraft: setDraft,
   });
-  const pendingCommand = useAppStore((state) => state.pendingCommand);
-  const clearCommand = useAppStore((state) => state.clearCommand);
-  const startCommand = chatCommand.start;
-  const hasWorkspace = workspace !== null;
 
-  useEffect(() => {
-    if (pendingCommand === null || !hasWorkspace) return;
-
-    startCommand(pendingCommand);
-    clearCommand();
-  }, [pendingCommand, hasWorkspace, startCommand, clearCommand]);
   const readStep = workspace === null ? undefined : readSteps[workspace.id];
   const sentCommand = (workspace?.chat ?? [])
     .flatMap((message) =>
@@ -484,6 +474,14 @@ export const useChatViewModel = () => {
         text: '',
         onClick: () => {
           chatCommand.start('figma-plan');
+        },
+      },
+      {
+        id: 'CHAT.SUGGESTION_IMPORT',
+        label: t('CHAT.SUGGESTION_IMPORT'),
+        text: '',
+        onClick: () => {
+          chatCommand.start('import-plan');
         },
       },
       ...(isJiraConnected

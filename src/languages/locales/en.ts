@@ -222,6 +222,7 @@ export const en = {
       'QAzinho could not open the folder of tests anymore. Pick it again with /import.',
     SUGGESTION_JIRA: 'Plan from a Jira story',
     SUGGESTION_CONFLUENCE: 'Plan from a Confluence page',
+    SUGGESTION_IMPORT: 'Import tests I already have',
     SUGGESTION_FIGMA: 'Check against a Figma design',
     PLAN_WHILE_RUNNING:
       'The plan stays as it was: a run is walking it. Ask again once the run ends.',
@@ -644,14 +645,6 @@ export const en = {
     SECTION_GENERAL: 'General',
     SECTION_CODE: 'Code',
     SECTION_VARIABLES: 'Variables',
-    SECTION_IMPORT: 'Import',
-    IMPORT_TITLE: 'Import tests',
-    IMPORT_TEXT:
-      'Bring in the tests your team already has, Playwright, Maestro or others. The agent reads the folder and turns them into a plan.',
-    IMPORT_BUTTON: 'Choose a folder of tests',
-    IMPORT_LATER: 'Save the project first, then import from here.',
-    IMPORT_NEEDS_WORKSPACE:
-      'Create a workspace in this project first. The import runs in its chat.',
     SECTION_FLAGGED: 'needs a look',
     NEEDS_NAME_EDIT: 'A project needs a name',
     NEEDS_TARGET_EDIT: 'Keep one target: a URL, an .apk or a .app',

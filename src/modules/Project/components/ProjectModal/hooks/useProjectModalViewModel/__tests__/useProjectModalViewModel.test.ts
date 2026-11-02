@@ -157,7 +157,6 @@ describe('useProjectModalViewModel', () => {
         general: true,
         code: false,
         variables: false,
-        import: false,
         pro: false,
         delete: false,
       });
@@ -174,7 +173,6 @@ describe('useProjectModalViewModel', () => {
         general: false,
         code: false,
         variables: true,
-        import: false,
         pro: false,
         delete: false,
       });
@@ -187,7 +185,6 @@ describe('useProjectModalViewModel', () => {
         'general',
         'code',
         'variables',
-        'import',
       ]);
     });
 
@@ -195,7 +192,6 @@ describe('useProjectModalViewModel', () => {
       const { result } = renderHook(() => useProjectModalViewModel());
 
       expect(result.current.navItems.map(({ count }) => count)).toEqual([
-        null,
         null,
         null,
         null,
@@ -217,12 +213,7 @@ describe('useProjectModalViewModel', () => {
         ]);
       });
 
-      expect(result.current.navItems.map(({ count }) => count)).toEqual([
-        null,
-        2,
-        1,
-        null,
-      ]);
+      expect(result.current.navItems.map(({ count }) => count)).toEqual([null, 2, 1]);
     });
 
     it('flags the general section while it keeps the project from being made', () => {
@@ -230,7 +221,6 @@ describe('useProjectModalViewModel', () => {
 
       expect(result.current.navItems.map(({ isFlagged }) => isFlagged)).toEqual([
         true,
-        false,
         false,
         false,
       ]);
@@ -397,14 +387,6 @@ describe('useProjectModalViewModel', () => {
       expect(result.current.name).toBe('Shop · staging');
       expect(result.current.url).toBe('https://a.test');
       expect(result.current.confirmLabel).toBe('Save changes');
-    });
-
-    it('opens on the import section when asked for it', () => {
-      useAppStore.getState().openImportSettings('p1');
-
-      const { result } = renderHook(() => useProjectModalViewModel());
-
-      expect(result.current.section).toBe('import');
     });
 
     it('stays on the project while it animates out, after the store has let go', () => {

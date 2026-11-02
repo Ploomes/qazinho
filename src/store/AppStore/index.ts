@@ -15,7 +15,6 @@ export const useAppStore = create<IAppStore>()(
       projectSection: null,
       selectedWorkspaceId: null,
       selectedProjectId: null,
-      pendingCommand: null,
       isResourcesOpen: false,
       modelMenuAt: null,
       media: null,
@@ -38,9 +37,6 @@ export const useAppStore = create<IAppStore>()(
 
       openProjectSettings: (projectId) =>
         set({ modal: 'project', editingProjectId: projectId, projectSection: null }),
-
-      openImportSettings: (projectId) =>
-        set({ modal: 'project', editingProjectId: projectId, projectSection: 'import' }),
 
       openProSettings: (projectId) =>
         set({ modal: 'project', editingProjectId: projectId, projectSection: 'pro' }),
@@ -109,10 +105,6 @@ export const useAppStore = create<IAppStore>()(
         })),
 
       closeModelMenu: () => set({ modelMenuAt: null }),
-
-      requestCommand: (pendingCommand) => set({ pendingCommand }),
-
-      clearCommand: () => set({ pendingCommand: null }),
 
       openMedia: (media) => set({ media }),
 
