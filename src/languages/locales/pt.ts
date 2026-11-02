@@ -484,7 +484,7 @@ export const pt: typeof en = {
   },
   DEVICE: {
     IDLE: 'ocioso',
-    DRIVING: 'o agente está dirigindo',
+    DRIVING: 'rodando',
     HOLDING: 'esperando por você',
     STOPPED: 'parado',
     NO_DEVICE: 'Nenhum device ainda.',

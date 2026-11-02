@@ -2,7 +2,7 @@ import type { ILiveClockProps } from './types';
 import './styles.css';
 
 /**
- * Há quanto tempo o agente está dirigindo, ao lado do dispositivo e nunca sobre a tela
+ * Há quanto tempo a run está rodando, ao lado do dispositivo e nunca sobre a tela
  * dele.
  */
 export const LiveClock: React.FC<ILiveClockProps> = ({ label }) => (

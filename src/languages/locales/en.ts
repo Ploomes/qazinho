@@ -482,7 +482,7 @@ export const en = {
   },
   DEVICE: {
     IDLE: 'idle',
-    DRIVING: 'the agent is driving',
+    DRIVING: 'running',
     HOLDING: 'holding for you',
     STOPPED: 'stopped',
     NO_DEVICE: 'No device yet.',
