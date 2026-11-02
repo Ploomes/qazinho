@@ -127,16 +127,18 @@ export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
                             exit={{ height: 0, opacity: 0 }}
                             transition={view.bodyTransition}
                           >
-                            <Input
-                              isAutoFocused
-                              value={question.text}
-                              label={view.textLabel}
-                              placeholder={view.textLabel}
-                              onChange={(text) => {
-                                view.onText({ index: question.index, text });
-                              }}
-                              onKeyDown={view.onOwnKey}
-                            />
+                            <div className="question-round__own-body">
+                              <Input
+                                isAutoFocused
+                                value={question.text}
+                                label={view.textLabel}
+                                placeholder={view.textLabel}
+                                onChange={(text) => {
+                                  view.onText({ index: question.index, text });
+                                }}
+                                onKeyDown={view.onOwnKey}
+                              />
+                            </div>
                           </motion.div>
                         )}
                       </AnimatePresence>

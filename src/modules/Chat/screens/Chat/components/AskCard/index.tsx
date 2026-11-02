@@ -97,7 +97,9 @@ export const AskCard: React.FC<IAskCardProps> = (props) => {
               exit={{ opacity: 0, height: 0 }}
               transition={foldTransition}
             >
-              <Switch label={keepLabel} isOn={isKept} onChange={onKeep} />
+              <div className="ask-card__keep-body">
+                <Switch label={keepLabel} isOn={isKept} onChange={onKeep} />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

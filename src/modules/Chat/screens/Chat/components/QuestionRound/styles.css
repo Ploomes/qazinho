@@ -189,5 +189,10 @@
 }
 
 .question-round__own {
+  margin: calc(var(--space-3) * -1) calc(var(--space-2) * -1) 0;
   overflow: hidden;
+}
+
+.question-round__own-body {
+  padding: var(--space-3) var(--space-2) var(--space-2);
 }

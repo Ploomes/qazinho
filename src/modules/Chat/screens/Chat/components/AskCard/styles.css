@@ -99,5 +99,10 @@
 }
 
 .ask-card__keep {
+  margin-top: calc(var(--space-4) * -1);
   overflow: hidden;
+}
+
+.ask-card__keep-body {
+  padding-top: var(--space-4);
 }
