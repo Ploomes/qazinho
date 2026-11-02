@@ -36,8 +36,6 @@ import type {
   ISetupEvent,
   IStartBuild,
   IStartRun,
-  IStartSuiteChange,
-  IStartSuiteRun,
   IViewport,
   IWindowControls,
   McpSignInProgress,
@@ -45,11 +43,7 @@ import type {
   ProSignInProgress,
   QaReply,
   SaveOutcome,
-  SuiteChangeEvent,
-  SuiteEvent,
   ImportPick,
-  SuitePick,
-  SuiteShipWay,
   WindowFit,
 } from '@/shared/types';
 import type {
@@ -57,7 +51,7 @@ import type {
   IAttachSources,
   SourceCall,
 } from '@salve-software/qazinho-harness';
-import { copyFile, mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readdir, stat, writeFile } from 'node:fs/promises';
 import { homedir, hostname, release, tmpdir } from 'node:os';
 import { delimiter, extname, join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
@@ -113,14 +107,10 @@ import {
   RunAlerts,
   RunRecorder,
   SetupInstaller,
-  SuiteChanges,
-  SuiteRegistry,
-  SuiteRunner,
   UsageReader,
   VariableVault,
 } from '@/main/classes';
 import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
-import { changeIdOf } from '@/main/classes/automation/SuiteChanges/library';
 import { buildIdOf, javaHomesOf } from '@/main/classes/builds/AppBuilder/library';
 import { BUG_REVIEW } from '@/main/classes/integrations/BugReviewer/constants';
 import { uploaderOf } from '@/main/classes/pro/ProSync/library';
@@ -146,7 +136,6 @@ import {
   bytesOfDataUrl,
   fileNameOf,
   findExistingPath,
-  findOnPath,
   fittedBounds,
   imageExtensionOf,
   isInternalNavigation,
@@ -192,7 +181,7 @@ const resources = new ResourceCollector({
 const deviceTools = new DeviceToolDetector();
 const archive = new Archive(PATHS.data);
 const live = new LiveStream();
-const replays = new ReplayServer({ dataRoot: PATHS.data, suitesRoot: PATHS.suites });
+const replays = new ReplayServer({ dataRoot: PATHS.data });
 const storage = new StorageKeeper({
   dataRoot: PATHS.data,
   buildsRoot: PATHS.builds,
@@ -259,8 +248,6 @@ function broadcast(props: {
     | ProSignInProgress
     | IProShare
     | IBuildEvent
-    | SuiteEvent
-    | SuiteChangeEvent
     | IFilingEvent;
 }): void {
   for (const open of appWindows()) open.webContents.send(props.channel, props.event);
@@ -419,18 +406,6 @@ const proDownloads = new ProDownloads({
 });
 const git = new GitCli({ directories: commandDirectories });
 const importScanner = new ImportScanner({ git });
-const suites = new SuiteRegistry({ root: PATHS.suites, git });
-const suiteRunner = new SuiteRunner({
-  registry: suites,
-  node: async () =>
-    findOnPath({ command: 'node', directories: await commandDirectories() }),
-  env: suiteEnvOf,
-  values: (projectId) => variables.valuesOf(projectId).catch(() => []),
-  root: PATHS.suites,
-  urlOf: (file) => replays.suiteFileUrl(file),
-  onEvent: (event) => broadcast({ channel: CHANNELS.suiteEvent, event }),
-});
-
 const agentRunner = new AgentRunner({
   owners,
   folder: PATHS.agentHome,
@@ -449,15 +424,6 @@ const agentRunner = new AgentRunner({
     }
 
     if (event.workspaceId.startsWith(BUG_REVIEW.scopePrefix)) return;
-
-    const changeId = changeIdOf(event.workspaceId);
-
-    if (changeId !== null) {
-      if (event.kind === 'text' || event.kind === 'action')
-        suiteChanges.hear({ changeId, text: event.text });
-
-      return;
-    }
 
     broadcast({
       channel:
@@ -512,23 +478,6 @@ const builder = new AppBuilder({
     }),
   onEvent: (event) => {
     broadcast({ channel: CHANNELS.buildEvent, event });
-  },
-});
-
-const suiteChanges = new SuiteChanges({
-  registry: suites,
-  suites: suiteRunner,
-  git,
-  github,
-  runner: agentRunner,
-  harness,
-  tools,
-  findCommand,
-  values: (projectId) => variables.valuesOf(projectId).catch(() => []),
-  path: async () => (await commandDirectories()).join(delimiter),
-  root: PATHS.suites,
-  onEvent: (event) => {
-    broadcast({ channel: CHANNELS.suiteChangeEvent, event });
   },
 });
 
@@ -1054,9 +1003,7 @@ async function shotBytes(props: {
 
   if (props.src === null) return null;
 
-  const served = replays.suiteFileOfUrl(props.src);
-
-  return served === null ? bytesOfDataUrl(props.src) : readFile(served).catch(() => null);
+  return bytesOfDataUrl(props.src);
 }
 
 async function copyShot(props: {
@@ -1168,15 +1115,6 @@ function fitWindow(props: { window: BrowserWindow; fit: WindowFit }): void {
   if (!isVisible) window.show();
 }
 
-async function suiteEnvOf(projectId: string): Promise<Record<string, string>> {
-  const values = await variables.valuesOf(projectId).catch(() => []);
-
-  return {
-    PATH: (await commandDirectories()).join(delimiter),
-    ...Object.fromEntries(values.map(({ name, value }) => [name, value])),
-  };
-}
-
 async function pickImport(): Promise<ImportPick> {
   const [open] = appWindows();
   const picked = open
@@ -1187,18 +1125,6 @@ async function pickImport(): Promise<ImportPick> {
   if (picked.canceled || path === undefined) return { kind: 'cancelled' };
 
   return importScanner.pick(path);
-}
-
-async function pickSuite(projectId: string): Promise<SuitePick> {
-  const [open] = appWindows();
-  const picked = open
-    ? await dialog.showOpenDialog(open, { properties: ['openDirectory'] })
-    : await dialog.showOpenDialog({ properties: ['openDirectory'] });
-  const [path] = picked.filePaths;
-
-  if (picked.canceled || path === undefined) return { kind: 'cancelled' };
-
-  return suites.connect({ projectId, path });
 }
 
 async function pickFile(kind: PickKind) {
@@ -1426,49 +1352,6 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.pickFile, (_event, kind: PickKind) => pickFile(kind));
   ipcMain.handle(CHANNELS.pickImport, () => pickImport());
-  ipcMain.handle(CHANNELS.pickSuite, (_event, projectId: string) => pickSuite(projectId));
-  ipcMain.handle(CHANNELS.suiteOf, (_event, projectId: string) =>
-    suites.suiteOf(projectId),
-  );
-  ipcMain.handle(CHANNELS.forgetSuite, (_event, projectId: string) =>
-    suites.forget(projectId),
-  );
-  ipcMain.handle(CHANNELS.listSuite, (_event, projectId: string) =>
-    suiteRunner.list(projectId),
-  );
-  ipcMain.handle(CHANNELS.runSuite, (_event, start: IStartSuiteRun) => {
-    void suiteRunner.run(start);
-  });
-  ipcMain.handle(CHANNELS.stopSuite, (_event, projectId: string) => {
-    suiteRunner.stop(projectId);
-  });
-  ipcMain.handle(CHANNELS.suiteRuns, (_event, projectId: string) =>
-    suiteRunner.runs(projectId),
-  );
-  ipcMain.handle(
-    CHANNELS.openSuiteTrace,
-    (_event, trace: { projectId: string; runId: string; file: string }) =>
-      suiteRunner.openTrace(trace),
-  );
-  ipcMain.handle(CHANNELS.startSuiteChange, (_event, start: IStartSuiteChange) =>
-    suiteChanges.start(start),
-  );
-  ipcMain.handle(CHANNELS.stopSuiteChange, (_event, changeId: string) => {
-    suiteChanges.stop(changeId);
-  });
-  ipcMain.handle(CHANNELS.suiteChanges, (_event, projectId: string) =>
-    suiteChanges.changes(projectId),
-  );
-  ipcMain.handle(
-    CHANNELS.shipSuiteChange,
-    (_event, props: { projectId: string; changeId: string; way: SuiteShipWay }) =>
-      suiteChanges.ship(props),
-  );
-  ipcMain.handle(
-    CHANNELS.discardSuiteChange,
-    (_event, props: { projectId: string; changeId: string }) =>
-      suiteChanges.discard(props),
-  );
   ipcMain.handle(CHANNELS.openLogs, async () => {
     await mkdir(appLog.where, { recursive: true });
     await shell.openPath(appLog.where);

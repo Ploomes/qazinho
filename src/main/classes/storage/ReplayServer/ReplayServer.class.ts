@@ -5,26 +5,24 @@ import { randomUUID } from 'node:crypto';
 import { createReadStream } from 'node:fs';
 import { readFile, stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
-import { extname, join, sep } from 'node:path';
+import { extname, join } from 'node:path';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { isInside } from '@/main/classes/storage/Archive/library';
 import { REPLAY_SERVER } from './constants';
-import { byteRangeOf, replayOfPath, suiteFileOfPath } from './library';
+import { byteRangeOf, replayOfPath } from './library';
 
 /**
- * Serve em loopback as gravações das runs, e o que cada teste de uma suíte deixou, nos
- * intervalos de bytes que um <video> pede, para nada pesado cruzar o IPC.
+ * Serve em loopback as gravações das runs nos intervalos de bytes que um <video> pede,
+ * para nada pesado cruzar o IPC.
  */
 export class ReplayServer {
   private readonly token = randomUUID();
   private readonly dataRoot: string;
-  private readonly suitesRoot: string;
   private server: Server | null = null;
   private port = 0;
 
-  public constructor(props: { dataRoot: string; suitesRoot: string }) {
+  public constructor(props: { dataRoot: string }) {
     this.dataRoot = props.dataRoot;
-    this.suitesRoot = props.suitesRoot;
   }
 
   public async start(): Promise<void> {
@@ -47,47 +45,6 @@ export class ReplayServer {
     if (!this.server || (await this.fileOf(ref)) === null) return null;
 
     return `http://${REPLAY_SERVER.host}:${String(this.port)}/${this.token}/${encodeURIComponent(ref.workspaceId)}/${encodeURIComponent(ref.runId)}`;
-  }
-
-  /**
-   * O endereço de um arquivo que a run de uma suíte deixou, a partir da pasta da run;
-   * null antes de o servidor escutar.
-   */
-  public suiteFileUrl(props: {
-    projectId: string;
-    runId: string;
-    file: string;
-  }): string | null {
-    if (!this.server) return null;
-
-    const parts = [
-      this.token,
-      REPLAY_SERVER.suiteRoute,
-      props.projectId,
-      props.runId,
-      ...props.file.split(sep),
-    ];
-
-    return `http://${REPLAY_SERVER.host}:${String(this.port)}/${parts.map(encodeURIComponent).join('/')}`;
-  }
-
-  /**
-   * O arquivo em disco a que leva um endereço que este servidor deu para uma suíte; null
-   * para qualquer outro endereço.
-   */
-  public suiteFileOfUrl(url: string): string | null {
-    const parsed = URL.canParse(url) ? new URL(url) : null;
-
-    if (
-      !this.server ||
-      parsed === null ||
-      parsed.protocol !== 'http:' ||
-      parsed.hostname !== REPLAY_SERVER.host ||
-      parsed.port !== String(this.port)
-    )
-      return null;
-
-    return this.suiteFileOf(parsed.pathname);
   }
 
   /**
@@ -131,30 +88,13 @@ export class ReplayServer {
     this.server = null;
   }
 
-  private suiteFileOf(path: string): string | null {
-    const asked = suiteFileOfPath({ path, token: this.token });
-
-    if (asked === null) return null;
-
-    const file = join(
-      this.suitesRoot,
-      asked.projectId,
-      REPLAY_SERVER.suiteRuns,
-      asked.runId,
-      ...asked.file,
-    );
-
-    return isInside({ root: this.suitesRoot, file }) ? file : null;
-  }
-
   private async serve(props: {
     request: IncomingMessage;
     response: ServerResponse;
   }): Promise<void> {
     const { request, response } = props;
     const ref = replayOfPath({ path: request.url ?? '', token: this.token });
-    const file =
-      ref === null ? this.suiteFileOf(request.url ?? '') : await this.fileOf(ref);
+    const file = ref === null ? null : await this.fileOf(ref);
     const found = file === null ? null : await stat(file).catch(() => null);
 
     if (request.method !== 'GET' || file === null || found === null) {

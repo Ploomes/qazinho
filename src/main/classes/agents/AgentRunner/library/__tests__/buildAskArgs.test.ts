@@ -108,7 +108,7 @@ describe('buildAskArgs', () => {
         mcpConfig: '{"mcpServers":{}}',
         tools: ['Read', 'Edit'],
         allowedTools: ['Read', 'Edit', 'mcp__qazinho'],
-        readDirs: ['/data/suites/p-1/changes/c-01/work'],
+        readDirs: ['/data/code/w-1/work'],
       }).slice(-11),
     ).toEqual([
       '--mcp-config',
@@ -121,7 +121,7 @@ describe('buildAskArgs', () => {
       'Edit',
       'mcp__qazinho',
       '--add-dir',
-      '/data/suites/p-1/changes/c-01/work',
+      '/data/code/w-1/work',
     ]);
   });
 

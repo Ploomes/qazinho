@@ -15,7 +15,6 @@ describe('ReplayServer', () => {
 
       const replays = new ReplayServer({
         dataRoot: join(root, 'data'),
-        suitesRoot: root,
       });
 
       expect(await replays.fileOf({ workspaceId: 'w-1', runId: 'r-01' })).toBe(
@@ -36,7 +35,6 @@ describe('ReplayServer', () => {
 
       const replays = new ReplayServer({
         dataRoot: join(root, 'data'),
-        suitesRoot: root,
       });
 
       expect(await replays.fileOf({ workspaceId: '..', runId: '..' })).toBeNull();

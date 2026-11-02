@@ -10,6 +10,4 @@ export const REPLAY_SERVER = {
     '.md': 'text/markdown; charset=utf-8',
     '.txt': 'text/plain; charset=utf-8',
   } as Record<string, string>,
-  suiteRoute: 'suite',
-  suiteRuns: 'runs',
 } as const;
