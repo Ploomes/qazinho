@@ -93,6 +93,14 @@
   text-align: left;
 }
 
+.runs__case-open:hover:not(:disabled) {
+  filter: none;
+}
+
+.runs__case-open:active:not(:disabled) {
+  transform: none;
+}
+
 .runs__case-open > .caret {
   position: absolute;
   top: 50%;
