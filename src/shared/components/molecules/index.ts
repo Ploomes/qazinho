@@ -4,6 +4,7 @@ export * from './FileField';
 export * from './Fold';
 export * from './MetaGrid';
 export * from './Screenshot';
+export * from './SegmentedControl';
 export * from './SearchList';
 export * from './SpeechBubble';
 export * from './Stripes';
