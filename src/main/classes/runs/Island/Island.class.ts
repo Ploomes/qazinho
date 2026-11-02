@@ -3,7 +3,7 @@ import type { IIsland, IIslandAction, IIslandFrame } from '@/shared/types';
 import { BrowserWindow, ipcMain, screen } from 'electron';
 import { CHANNELS, ISLAND_ARGUMENT } from '@/shared/constants';
 import { ISLAND_WINDOW } from './constants';
-import { islandPlaceOf } from './library';
+import { islandBehaviorOf, islandPlaceOf } from './library';
 
 /**
  * A ilha que fica no topo da tela, onde o notch está: uma janela transparente que mostra
@@ -16,6 +16,7 @@ export class Island {
   private window: BrowserWindow | null = null;
   private isLoaded = false;
   private frame: IIslandFrame | null = null;
+  private readonly behavior = islandBehaviorOf(process.platform);
 
   public constructor(props: IIslandWindow) {
     this.preload = props.preload;
@@ -96,10 +97,10 @@ export class Island {
       hasShadow: false,
       resizable: false,
       movable: false,
-      focusable: false,
       skipTaskbar: true,
       show: false,
       roundedCorners: false,
+      ...this.behavior.options,
       webPreferences: {
         preload: this.preload,
         contextIsolation: true,
@@ -112,8 +113,11 @@ export class Island {
 
     window.setAlwaysOnTop(true, ISLAND_WINDOW.level);
 
-    if (process.platform !== 'win32')
-      window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+    if (this.behavior.joinsSpaces)
+      window.setVisibleOnAllWorkspaces(true, {
+        visibleOnFullScreen: true,
+        skipTransformProcessType: true,
+      });
 
     window.setIgnoreMouseEvents(true, { forward: true });
     window.webContents.on('will-navigate', (event) => {
