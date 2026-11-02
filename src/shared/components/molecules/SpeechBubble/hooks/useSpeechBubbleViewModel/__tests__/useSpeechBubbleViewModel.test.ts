@@ -48,6 +48,23 @@ describe('useSpeechBubbleViewModel', () => {
     expect(onSaid).toHaveBeenCalledOnce();
   });
 
+  it('waits before typing when asked, with the whole line already holding its shape', () => {
+    const { result } = renderHook(() =>
+      useSpeechBubbleViewModel({ text: LINE, waitMs: 100 }),
+    );
+
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+
+    expect(result.current.said).toBe('');
+    expect(result.current.unsaid).toBe(LINE);
+
+    beats(1);
+
+    expect(result.current.said).toBe(LINE.slice(0, SPEECH.charsPerBeat));
+  });
+
   it('starts over from the first character when the line changes', () => {
     const { result, rerender } = renderHook(
       (props: { text: string }) => useSpeechBubbleViewModel(props),

@@ -5,4 +5,5 @@
 export interface ISpeechBubbleProps {
   text: string;
   onSaid?: () => void;
+  waitMs?: number;
 }

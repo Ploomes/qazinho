@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { SPEECH } from '@/shared/components/molecules/SpeechBubble/constants';
 
 export const useSpeechBubbleViewModel = (props: ISpeechBubbleProps) => {
-  const { text, onSaid } = props;
+  const { text, onSaid, waitMs = 0 } = props;
   const isStill = useReducedMotion() ?? false;
   const [shown, setShown] = useState({ text, count: 0 });
   const saidFor = useRef<string | null>(null);
@@ -20,18 +20,22 @@ export const useSpeechBubbleViewModel = (props: ISpeechBubbleProps) => {
   useEffect(() => {
     if (isDone) return;
 
-    const id = window.setInterval(() => {
-      setShown((now) =>
-        now.text === text
-          ? { text, count: Math.min(text.length, now.count + SPEECH.charsPerBeat) }
-          : now,
-      );
-    }, SPEECH.beatMs);
+    let id = 0;
+    const start = window.setTimeout(() => {
+      id = window.setInterval(() => {
+        setShown((now) =>
+          now.text === text
+            ? { text, count: Math.min(text.length, now.count + SPEECH.charsPerBeat) }
+            : now,
+        );
+      }, SPEECH.beatMs);
+    }, waitMs);
 
     return () => {
+      window.clearTimeout(start);
       window.clearInterval(id);
     };
-  }, [isDone, text]);
+  }, [isDone, text, waitMs]);
 
   useEffect(() => {
     const line = textRef.current;
