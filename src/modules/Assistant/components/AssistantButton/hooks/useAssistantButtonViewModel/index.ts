@@ -1,6 +1,10 @@
 import type { CSSProperties } from 'react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  FACE_HOP,
+  FACE_SWAP,
+} from '@/modules/Assistant/components/AssistantButton/constants';
 import { ASSISTANT_DOCK } from '@/modules/Assistant/constants';
 import { Platform } from '@/services';
 import { comboLabelOf } from '@/shared/hooks/useKeybinds/library';
@@ -23,11 +27,17 @@ export const useAssistantButtonViewModel = () => {
     buttonRef,
     isOpen,
     isBusy: isAsking,
-    className: isOpen ? 'assistant-button assistant-button--open' : 'assistant-button',
+    className: [
+      'assistant-button',
+      ...(isOpen ? ['assistant-button--open'] : []),
+      ...(isSpeaking ? ['assistant-button--speaking'] : []),
+    ].join(' '),
+    faceMotion: isSpeaking ? FACE_HOP : FACE_SWAP.animate,
     style: {
       '--assistant-button': `${String(ASSISTANT_DOCK.buttonSize)}px`,
       '--assistant-badge': `${String(ASSISTANT_DOCK.badgeSize)}px`,
       '--assistant-badge-offset': `${String(ASSISTANT_DOCK.badgeOffset)}px`,
+      '--assistant-ring': `${String(ASSISTANT_DOCK.speakingRing)}px`,
     } as CSSProperties,
     label,
     tip:

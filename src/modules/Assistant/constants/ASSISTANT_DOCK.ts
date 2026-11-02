@@ -3,6 +3,7 @@ export const ASSISTANT_DOCK = {
   faceSize: 26,
   badgeSize: 18,
   badgeOffset: 4,
+  speakingRing: 2,
   panelWidth: 384,
   panelHeight: 600,
   top: 54,

@@ -21,6 +21,11 @@
   box-shadow: var(--sticker-lift);
 }
 
+.assistant-button--speaking,
+.assistant-button--speaking:hover {
+  box-shadow: 0 0 0 var(--assistant-ring) var(--lime);
+}
+
 .assistant-button:active {
   box-shadow: var(--sticker-press);
 }

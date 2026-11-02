@@ -37,7 +37,8 @@ As coisas entram e saem com um fade suave (`sticker-design.md`), e nada gira.
 
 - **Entradas e saídas vêm do `STICKER`** em `src/shared/constants/STICKER.ts`:
   - `slap` para coisas pequenas, `panel` para modais, `pop` para um popover abaixo da âncora,
-    `rise` para um acima dela, `hero` para o Estagiário.
+    `rise` para um acima dela, `hero` para o Estagiário, `speak` para o balão dele, que nasce do
+    rosto dele depois de a tela trocar.
   - `drag` pega uma coisa arrastada, e `wobble` marca um evento uma vez com um pulso pequeno.
   - Espalhe o movimento: `initial={STICKER.panel.initial} animate={STICKER.panel.animate}
 exit={STICKER.panel.exit}`.

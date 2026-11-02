@@ -6,33 +6,38 @@ import { useAssistantTipViewModel } from './hooks';
 import './styles.css';
 
 /**
- * O Estagiário falando sozinho: um balão curto sob o rosto dele, que nunca pede resposta,
- * não toma o foco e sai depois de alguns segundos.
+ * O Estagiário falando sozinho: um balão que nasce do rosto dele e digita a frase, não
+ * pede resposta nem toma o foco, e volta para ele em alguns segundos.
  */
 export const AssistantTip: React.FC<IAssistantTipProps> = (props) => {
-  const { tip, style, onClick, onPointerEnter, onPointerLeave } =
+  const { tip, said, unsaid, style, onClick, onPointerEnter, onPointerLeave } =
     useAssistantTipViewModel(props);
 
   return createPortal(
-    <div role="status" aria-live="polite">
+    <>
+      <span className="assistant-tip__spoken" role="status" aria-live="polite">
+        {tip?.text}
+      </span>
       <AnimatePresence mode="wait">
         {tip !== null && (
           <motion.div
             key={tip.id}
             className="assistant-tip"
             style={style}
-            initial={STICKER.pop.initial}
-            animate={STICKER.pop.animate}
-            exit={STICKER.pop.exit}
+            aria-hidden="true"
+            initial={STICKER.speak.initial}
+            animate={STICKER.speak.animate}
+            exit={STICKER.speak.exit}
             onClick={onClick}
             onPointerEnter={onPointerEnter}
             onPointerLeave={onPointerLeave}
           >
-            {tip.text}
+            {said}
+            <span className="assistant-tip__unsaid">{unsaid}</span>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>,
+    </>,
     document.body,
   );
 };

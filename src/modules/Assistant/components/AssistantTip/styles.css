@@ -1,33 +1,47 @@
 .assistant-tip {
   position: fixed;
   z-index: 40;
-  top: calc(var(--assistant-tip-top) + var(--space-3));
+  top: calc(var(--assistant-tip-top) + var(--space-4));
   right: var(--assistant-tip-right);
   box-sizing: border-box;
   width: max-content;
   max-width: var(--assistant-tip-width);
-  padding: var(--space-3) var(--space-4);
-  border: var(--edge-width) solid var(--edge);
-  border-radius: var(--radius-md);
-  background: var(--raise);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--lime);
   box-shadow: var(--sticker-hero);
-  color: var(--ink);
-  font: var(--font-ui-sm);
+  color: var(--on-lime);
+  font: var(--font-ui-md);
   text-wrap: pretty;
   cursor: pointer;
-  transform-origin: top right;
+  transform-origin: calc(
+      100% - var(--assistant-tip-tail-right) - var(--assistant-tip-tail) / 2
+    )
+    0;
   -webkit-app-region: no-drag;
 }
 
 .assistant-tip::before {
   position: absolute;
-  top: calc(var(--assistant-tip-tail) / -2 - var(--edge-width) / 2);
+  top: calc(var(--assistant-tip-tail) / -2);
   right: var(--assistant-tip-tail-right);
   width: var(--assistant-tip-tail);
   height: var(--assistant-tip-tail);
-  border-top: var(--edge-width) solid var(--edge);
-  border-left: var(--edge-width) solid var(--edge);
-  background: var(--raise);
+  border-radius: 2px 0 0;
+  background: var(--lime);
   transform: rotate(45deg);
   content: '';
+}
+
+.assistant-tip__unsaid {
+  visibility: hidden;
+}
+
+.assistant-tip__spoken {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

@@ -51,10 +51,10 @@ Todo valor vem de um token em `tokens.css` (`design-tokens.md`).
 - **Tipografia**: títulos em Bricolage Grotesque 800 com `--display-tracking`, corpo em IBM Plex
   Sans, rótulos, ids e números em JetBrains Mono. O wordmark mantém a borda de recorte de papel; um
   título da marca, como o das boas-vindas, é tinta simples.
-- **Cor**: o lima é o destaque, o botão primário e o Estagiário. Um status veste a cor de leve
-  (`--fail-soft` atrás de texto `--fail`), nunca num bloco sólido dela. O índigo aparece só em
-  momentos da marca (o onboarding, o quadro de boas-vindas), com `data-theme="indigo"` na raiz
-  deles.
+- **Cor**: o lima é o destaque, o botão primário, o Estagiário e o balão com que ele fala. Um
+  status veste a cor de leve (`--fail-soft` atrás de texto `--fail`), nunca num bloco sólido dela.
+  O índigo aparece só em momentos da marca (o onboarding, o quadro de boas-vindas), com
+  `data-theme="indigo"` na raiz deles.
 - **Temas**: Night (escuro) e Paper (claro). Os dois declaram todos os tokens.
 - **O Estagiário** é desenhado chapado e de pé: lima, olhos escuros, sem borda branca, sem brilho,
   sem sombra. Ele ainda muda de humor. Só o logo o desenha como adesivo.

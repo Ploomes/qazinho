@@ -30,6 +30,20 @@ export const STICKER = {
     animate: { ...LAND, transition: { ...SPRING, opacity: { duration: 0.12 } } },
     exit: { opacity: 0, scale: 0.96, transition: OUT },
   },
+  speak: {
+    initial: { opacity: 0, scale: 0.5, y: -12 },
+    animate: {
+      ...LAND,
+      transition: {
+        type: 'spring',
+        stiffness: 380,
+        damping: 28,
+        delay: 0.16,
+        opacity: { duration: 0.1, delay: 0.16 },
+      },
+    },
+    exit: { opacity: 0, scale: 0.8, y: -6, transition: OUT },
+  },
   drag: { scale: 1.02, zIndex: 6 },
   wobble: {
     scale: [1, 1.05, 1],

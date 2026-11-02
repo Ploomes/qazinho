@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 import { ASSISTANT_TIP } from '@/modules/Assistant/components/AssistantTip/constants';
 import { holdMsOf } from '@/modules/Assistant/components/AssistantTip/library';
 import { ASSISTANT_DOCK } from '@/modules/Assistant/constants';
+import { useSpeechBubbleViewModel } from '@/shared/components/molecules/SpeechBubble/hooks';
 import { useAssistantStore } from '@/store';
 
 export const useAssistantTipViewModel = (props: IAssistantTipProps) => {
@@ -14,6 +15,10 @@ export const useAssistantTipViewModel = (props: IAssistantTipProps) => {
   const [place, setPlace] = useState({ top: 0, right: 0 });
 
   const isHeld = tip !== null && heldId === tip.id;
+  const { said, unsaid } = useSpeechBubbleViewModel({
+    text: tip?.text ?? '',
+    waitMs: ASSISTANT_TIP.speakAfterMs,
+  });
 
   useEffect(() => {
     if (tip === null || isHeld) return;
@@ -43,14 +48,20 @@ export const useAssistantTipViewModel = (props: IAssistantTipProps) => {
     };
   }, [tip, anchorRef]);
 
+  const right = Math.max(0, place.right - ASSISTANT_TIP.overhang);
+  const tailRight =
+    place.right - right + (ASSISTANT_DOCK.buttonSize - ASSISTANT_TIP.tail) / 2;
+
   return {
     tip,
+    said,
+    unsaid,
     style: {
       '--assistant-tip-top': `${String(place.top)}px`,
-      '--assistant-tip-right': `${String(place.right)}px`,
+      '--assistant-tip-right': `${String(right)}px`,
       '--assistant-tip-width': `${String(ASSISTANT_TIP.width)}px`,
       '--assistant-tip-tail': `${String(ASSISTANT_TIP.tail)}px`,
-      '--assistant-tip-tail-right': `${String((ASSISTANT_DOCK.buttonSize - ASSISTANT_TIP.tail) / 2)}px`,
+      '--assistant-tip-tail-right': `${String(tailRight)}px`,
     } as CSSProperties,
     onClick: hush,
     onPointerEnter: () => {

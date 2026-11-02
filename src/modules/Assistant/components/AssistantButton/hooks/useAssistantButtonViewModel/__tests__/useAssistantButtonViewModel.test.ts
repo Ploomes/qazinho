@@ -1,6 +1,10 @@
 // @vitest-environment jsdom
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import {
+  FACE_HOP,
+  FACE_SWAP,
+} from '@/modules/Assistant/components/AssistantButton/constants';
 import { useAssistantButtonViewModel } from '@/modules/Assistant/components/AssistantButton/hooks/useAssistantButtonViewModel';
 import { KEYBINDS } from '@/modules/Settings/constants';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
@@ -18,22 +22,34 @@ afterEach(() => {
 
 describe('useAssistantButtonViewModel', () => {
   describe('while he speaks', () => {
-    it('moves while a tip is up, and stands still again after it', () => {
+    it('hops, moves and lights up while a tip is up, and rests again after it', () => {
       const { result } = renderHook(() => useAssistantButtonViewModel());
 
-      expect(result.current.isStill).toBe(true);
+      expect(result.current).toMatchObject({
+        isStill: true,
+        faceMotion: FACE_SWAP.animate,
+        className: 'assistant-button',
+      });
 
       act(() => {
         useAssistantStore.getState().say('Connect Jira here.');
       });
 
-      expect(result.current.isStill).toBe(false);
+      expect(result.current).toMatchObject({
+        isStill: false,
+        faceMotion: FACE_HOP,
+        className: 'assistant-button assistant-button--speaking',
+      });
 
       act(() => {
         useAssistantStore.getState().hush();
       });
 
-      expect(result.current.isStill).toBe(true);
+      expect(result.current).toMatchObject({
+        isStill: true,
+        faceMotion: FACE_SWAP.animate,
+        className: 'assistant-button',
+      });
     });
   });
 

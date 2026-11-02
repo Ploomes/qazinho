@@ -16,6 +16,7 @@ export const AssistantButton: React.FC = () => {
     isOpen,
     isBusy,
     className,
+    faceMotion,
     style,
     label,
     tip,
@@ -57,7 +58,7 @@ export const AssistantButton: React.FC = () => {
               key="face"
               className="assistant-button__face"
               initial={FACE_SWAP.initial}
-              animate={FACE_SWAP.animate}
+              animate={faceMotion}
               exit={FACE_SWAP.exit}
             >
               <Intern mood={mood} size={faceSize} isStill={isStill} isFigure />
