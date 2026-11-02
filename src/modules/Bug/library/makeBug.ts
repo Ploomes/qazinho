@@ -3,7 +3,6 @@ import type { ViewportId } from '@/modules/Device/types';
 import type { IWorkspace } from '@/modules/Workspace';
 import type { IStepOutcome, TargetKind } from '@/shared/types';
 import { viewportOf } from '@/modules/Device/library';
-import { countSeen } from './countSeen';
 
 /**
  * Transforma o passo que quebrou num bug de que um desenvolvedor age: o estado de que o
@@ -36,11 +35,7 @@ export function makeBug(props: {
     }),
     agent: by?.agent ?? '',
     modelName: by?.modelName ?? null,
-    seenRuns: countSeen({
-      workspace,
-      caseId: outcome.caseId,
-      stepNumber: outcome.stepNumber,
-    }),
+    seenRuns: 1,
     repro: [
       ...(testCase?.preconditions.trim()
         ? [{ action: testCase.preconditions.trim(), isBad: false }]

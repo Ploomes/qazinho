@@ -3,7 +3,6 @@ export * from './blocksOfComment';
 export * from './bugReportOf';
 export * from './bugSeenAgain';
 export * from './catchBug';
-export * from './countSeen';
 export * from './filingAfter';
 export * from './filingPlanOf';
 export * from './isSeenIn';
