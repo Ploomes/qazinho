@@ -202,6 +202,13 @@ describe('useRunsViewModel', () => {
     expect(failed?.hasNote).toBe(false);
   });
 
+  it('flags on the case row the bug its step caught, and leaves a clean case plain', () => {
+    const { result } = renderHook(() => useRunsViewModel());
+
+    expect(result.current.cases[0]?.bug).toEqual({ title: '1 bug' });
+    expect(result.current.cases[1]?.bug).toBeNull();
+  });
+
   it('marks a case walked again without the agent, and says what it checked on screen', () => {
     const replayed = finishedWorkspace();
     const [run] = replayed.runs;

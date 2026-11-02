@@ -104,6 +104,15 @@ export const Runs: React.FC = () => {
                   </span>
                   <Caret isOpen={runCase.isOpen} />
                 </button>
+                {runCase.bug !== null && (
+                  <span
+                    className="runs__case-bug"
+                    title={runCase.bug.title}
+                    aria-label={runCase.bug.title}
+                  >
+                    <Icon name="bug" />
+                  </span>
+                )}
                 {runCase.take !== null && (
                   <button
                     type="button"

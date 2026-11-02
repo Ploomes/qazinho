@@ -222,6 +222,15 @@ export const useRunsViewModel = () => {
               className: `runs__walk runs__walk--${walk}`,
             };
       })(),
+      bug: (() => {
+        const count = new Set(
+          runCase.steps.flatMap(({ bugId }) => (bugId === null ? [] : [bugId])),
+        ).size;
+
+        return count === 0
+          ? null
+          : { title: t(count === 1 ? 'RUN.BUGS_ONE' : 'RUN.BUGS_OTHER', { count }) };
+      })(),
       take:
         canWatch && runCase.steps.some(({ span }) => span !== null)
           ? {
