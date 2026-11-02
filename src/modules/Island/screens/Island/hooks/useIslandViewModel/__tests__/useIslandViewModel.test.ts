@@ -188,6 +188,39 @@ describe('useIslandViewModel', () => {
     expect(result.current.flash).toBe(2);
   });
 
+  /**
+   * A altura aberta era um número fixo por estado, e cortava os botões: um passo com o
+   * progresso não cabia. Aberta, a ilha tem a altura do que ela guarda.
+   */
+  it('opens as tall as what it holds while the mouse is over the pill, and closes after', () => {
+    const { result } = renderHook(() => useIslandViewModel());
+
+    act(() => {
+      pushFrame(running);
+    });
+
+    result.current.pill.current = {
+      getBoundingClientRect: () => ({ left: 90, right: 370, bottom: 33 }),
+    } as HTMLDivElement;
+
+    act(() => {
+      document.dispatchEvent(new MouseEvent('mousemove', { clientX: 200, clientY: 10 }));
+    });
+
+    expect(result.current.isOpen).toBe(true);
+    expect(result.current.size).toMatchObject({ width: 400, height: 'auto' });
+    expect(result.current.pillClassName).toContain('island__pill--open');
+    expect(hovered).toEqual([true]);
+
+    act(() => {
+      document.dispatchEvent(new MouseEvent('mousemove', { clientX: 20, clientY: 10 }));
+    });
+
+    expect(result.current.isOpen).toBe(false);
+    expect(result.current.size).toMatchObject({ height: 33 });
+    expect(hovered).toEqual([true, false]);
+  });
+
   it('says how a run ended, with the failures first', () => {
     const { result } = renderHook(() => useIslandViewModel());
 

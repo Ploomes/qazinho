@@ -9,8 +9,18 @@ import './styles.css';
  * orelhas ao lado do notch, e abre abaixo dele quando o mouse chega.
  */
 export const Island: React.FC = () => {
-  const { shown, isOpen, pill, flash, style, size, internSize, onOpen, onStop } =
-    useIslandViewModel();
+  const {
+    shown,
+    isOpen,
+    pill,
+    pillClassName,
+    flash,
+    style,
+    size,
+    internSize,
+    onOpen,
+    onStop,
+  } = useIslandViewModel();
 
   return (
     <MotionConfig reducedMotion="user">
@@ -18,7 +28,7 @@ export const Island: React.FC = () => {
         {shown !== null && (
           <motion.div
             ref={pill}
-            className="island__pill"
+            className={pillClassName}
             initial={false}
             animate={size}
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}

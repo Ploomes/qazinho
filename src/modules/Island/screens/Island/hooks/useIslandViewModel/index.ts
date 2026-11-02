@@ -61,7 +61,6 @@ export const useIslandViewModel = () => {
   const bar = frame?.barHeight ?? 0;
   const notch = frame?.notchWidth ?? 0;
   const isOpen = isHovering;
-  const openHeight = state.kind === 'idle' ? bar : ISLAND_SHAPE.openHeightPx[state.kind];
   const shown: IIslandShown | null =
     state.kind === 'running'
       ? {
@@ -135,6 +134,7 @@ export const useIslandViewModel = () => {
     shown,
     isOpen,
     pill,
+    pillClassName: isOpen ? 'island__pill island__pill--open' : 'island__pill',
     flash,
     style: {
       '--island-bar': `${String(bar)}px`,
@@ -144,7 +144,7 @@ export const useIslandViewModel = () => {
     internSize: ISLAND_SHAPE.internPx,
     size: {
       width: isOpen ? ISLAND_SHAPE.openWidthPx : closedWidth,
-      height: isOpen ? openHeight : bar,
+      height: isOpen ? 'auto' : bar,
       borderBottomLeftRadius: isOpen
         ? ISLAND_SHAPE.openRadiusPx
         : ISLAND_SHAPE.closedRadiusPx,
