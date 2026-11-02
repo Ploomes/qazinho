@@ -47,7 +47,7 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
           ? {
               tone: 'passed' as const,
               text: null,
-              note: t(how === 'healed' ? 'RUN.BY_HEALED' : 'RUN.BY_REPLAY'),
+              note: how === 'healed' ? ('heal' as const) : ('recorded' as const),
               noteTip: t(how === 'healed' ? 'RUN.BY_HEALED_TIP' : 'RUN.BY_REPLAY_TIP'),
             }
           : null,

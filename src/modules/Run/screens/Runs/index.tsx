@@ -141,8 +141,12 @@ export const Runs: React.FC = () => {
                     </button>
                   )}
                   {runCase.walk !== null && (
-                    <span className={runCase.walk.className} title={runCase.walk.title}>
-                      {runCase.walk.label}
+                    <span
+                      className={runCase.walk.className}
+                      title={runCase.walk.title}
+                      aria-label={runCase.walk.title}
+                    >
+                      <Icon name={runCase.walk.icon} />
                     </span>
                   )}
                   <span className="runs__case-duration">{runCase.duration}</span>

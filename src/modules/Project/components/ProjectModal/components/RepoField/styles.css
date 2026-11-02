@@ -29,9 +29,6 @@
 
 .repo-field__tag {
   flex: none;
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--raise2);
   color: var(--ink3);
   font: var(--font-mono-xs);
 }

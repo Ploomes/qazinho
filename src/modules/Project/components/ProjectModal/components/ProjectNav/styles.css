@@ -82,9 +82,6 @@
 }
 
 .project-nav__count {
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--raise2);
   color: var(--ink3);
   font: var(--font-mono-xs);
   transition:
@@ -93,7 +90,6 @@
 }
 
 .project-nav__item--active .project-nav__count {
-  background: var(--raise);
   color: var(--lime-ink);
 }
 

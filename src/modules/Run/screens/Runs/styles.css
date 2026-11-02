@@ -100,9 +100,6 @@
   align-items: center;
   gap: var(--space-2);
   margin-left: var(--space-3);
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--attn-soft);
   color: var(--attn);
   font: var(--font-mono-xs);
 }
@@ -182,19 +179,16 @@
 }
 
 .runs__walk {
+  display: inline-flex;
   flex: none;
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-pill);
   font: var(--font-mono-sm);
 }
 
 .runs__walk--replay {
-  background: var(--lime-soft);
-  color: var(--lime-ink);
+  color: var(--ink3);
 }
 
 .runs__walk--healed {
-  background: var(--attn-soft);
   color: var(--attn);
 }
 

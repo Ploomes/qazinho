@@ -302,9 +302,8 @@ describe('usePlanCaseViewModel', () => {
       expect(result.current.outcome).toEqual({
         tone: 'passed',
         text: null,
-        note: 'no AI',
-        noteTip:
-          'Walked again without the agent: the steps and the proof of a run that passed.',
+        note: 'recorded',
+        noteTip: 'No AI: walked from the recording',
       });
     });
 
@@ -315,7 +314,7 @@ describe('usePlanCaseViewModel', () => {
       ]);
       const { result } = renderHook(() => usePlanCaseViewModel({ ...PROPS, lastRun }));
 
-      expect(result.current.outcome?.note).toBe('healed');
+      expect(result.current.outcome?.note).toBe('heal');
     });
 
     it('names the step it failed at, and nothing else the step list already shows', () => {

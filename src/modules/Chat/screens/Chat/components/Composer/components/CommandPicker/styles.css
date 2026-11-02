@@ -69,9 +69,6 @@
 
 .command-picker__tag {
   flex: none;
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--lime-soft);
   color: var(--lime-ink);
   font: var(--font-mono-xs);
 }

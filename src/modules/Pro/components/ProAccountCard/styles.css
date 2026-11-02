@@ -176,20 +176,15 @@
 
 .pro-account__org-status {
   flex: none;
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--raise);
   color: var(--ink2);
   font: var(--font-ui-xs);
 }
 
 .pro-account__org-status--attn {
-  background: var(--attn-soft);
   color: var(--attn);
 }
 
 .pro-account__org-status--fail {
-  background: var(--fail-soft);
   color: var(--fail);
 }
 

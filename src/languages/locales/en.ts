@@ -353,12 +353,8 @@ export const en = {
     NOTICE_WATCH: 'Watch',
     WATCH_CASE: 'Watch the take of {{id}}',
     TAKE: 'Watch',
-    BY_REPLAY: 'no AI',
-    BY_REPLAY_TIP:
-      'Walked again without the agent: the steps and the proof of a run that passed.',
-    BY_HEALED: 'healed',
-    BY_HEALED_TIP:
-      'The app changed, so the agent walked this case again and recorded it anew.',
+    BY_REPLAY_TIP: 'No AI: walked from the recording',
+    BY_HEALED_TIP: 'Healed: the agent recorded it again',
     PROOF: 'checked on screen: “{{proof}}”',
     UNWALKED_SKIPPED: 'Skipped because the step before it did not hold up.',
     UNWALKED_UNREPORTED: 'The agent ended its turn without reporting this step.',

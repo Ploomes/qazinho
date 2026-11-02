@@ -229,8 +229,9 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                         <span
                           className="plan-case__note"
                           title={outcome.noteTip ?? undefined}
+                          aria-label={outcome.noteTip ?? undefined}
                         >
-                          {outcome.note}
+                          <Icon name={outcome.note} />
                         </span>
                       )}
                     </span>

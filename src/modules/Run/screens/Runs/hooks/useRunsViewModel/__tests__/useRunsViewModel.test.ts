@@ -254,14 +254,15 @@ describe('useRunsViewModel', () => {
     const [second, first] = result.current.cases;
 
     expect(first?.walk).toMatchObject({
-      label: 'no AI',
+      icon: 'recorded',
+      title: 'No AI: walked from the recording',
       className: 'runs__walk runs__walk--replay',
     });
     expect(first?.steps[0]).toMatchObject({
       hasNote: true,
       note: 'checked on screen: “Visits: 1”',
     });
-    expect(second?.walk).toMatchObject({ label: 'healed' });
+    expect(second?.walk).toMatchObject({ icon: 'heal' });
   });
 
   it('does NOT mark a case the agent walked on its own', () => {

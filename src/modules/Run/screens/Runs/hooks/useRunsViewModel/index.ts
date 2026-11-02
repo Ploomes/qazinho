@@ -217,7 +217,7 @@ export const useRunsViewModel = () => {
         return walk === null
           ? null
           : {
-              label: t(walk === 'replay' ? 'RUN.BY_REPLAY' : 'RUN.BY_HEALED'),
+              icon: walk === 'replay' ? ('recorded' as const) : ('heal' as const),
               title: t(walk === 'replay' ? 'RUN.BY_REPLAY_TIP' : 'RUN.BY_HEALED_TIP'),
               className: `runs__walk runs__walk--${walk}`,
             };
