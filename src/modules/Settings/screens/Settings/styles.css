@@ -285,6 +285,11 @@ button.settings__card:hover:not(:disabled) {
   font: 500 13px/1 var(--font-ui);
 }
 
+.settings__island {
+  align-self: flex-start;
+  margin-left: calc((var(--space-4) + var(--edge-width)) * -1);
+}
+
 .settings__section {
   display: flex;
   flex-direction: column;

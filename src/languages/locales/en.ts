@@ -754,7 +754,8 @@ export const en = {
     RUN_ALERT: 'When a run ends',
     RUN_ALERT_SYSTEM: 'Notify me, with sound',
     RUN_ALERT_APP: 'Only inside QAzinho',
-    ISLAND: 'Show the island at the top of the screen',
+    ISLAND_TITLE: 'Island at the top of the screen',
+    ISLAND: 'Show the island',
     ISLAND_NOTE:
       'While a run goes, or the agent waits for you, a small island by the notch shows it. On a screen with no notch it hangs from the top edge.',
     RUN_ALERT_NOTE:

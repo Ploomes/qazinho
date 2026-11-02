@@ -319,7 +319,14 @@ export const Settings: React.FC = () => {
               </div>
 
               <div className="settings__section">
-                <Switch label={islandLabel} isOn={isIslandOn} onChange={onIslandChange} />
+                <span className="settings__eyebrow">{t('SETTINGS.ISLAND_TITLE')}</span>
+                <div className="settings__island">
+                  <Switch
+                    label={islandLabel}
+                    isOn={isIslandOn}
+                    onChange={onIslandChange}
+                  />
+                </div>
                 <p className="settings__note">{t('SETTINGS.ISLAND_NOTE')}</p>
               </div>
             </div>

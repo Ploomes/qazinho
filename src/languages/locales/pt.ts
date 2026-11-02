@@ -760,7 +760,8 @@ export const pt: typeof en = {
     RUN_ALERT: 'Quando uma run terminar',
     RUN_ALERT_SYSTEM: 'Notificar, com som',
     RUN_ALERT_APP: 'Só dentro do QAzinho',
-    ISLAND: 'Mostrar a ilha no topo da tela',
+    ISLAND_TITLE: 'Ilha no topo da tela',
+    ISLAND: 'Mostrar a ilha',
     ISLAND_NOTE:
       'Enquanto uma run anda, ou o agente espera por você, uma ilhazinha junto ao notch mostra isso. Numa tela sem notch ela fica pendurada na borda de cima.',
     RUN_ALERT_NOTE:

@@ -387,6 +387,29 @@ describe('useSettingsViewModel', () => {
     });
   });
 
+  describe('onIslandChange', () => {
+    it('keeps the island on until the QA turns it off, and back on', () => {
+      useSettingsStore.setState({ isIslandOn: true });
+
+      const { result } = renderHook(() => useSettingsViewModel());
+
+      expect(result.current.isIslandOn).toBe(true);
+
+      act(() => {
+        result.current.onIslandChange(false);
+      });
+
+      expect(result.current.isIslandOn).toBe(false);
+      expect(useSettingsStore.getState().isIslandOn).toBe(false);
+
+      act(() => {
+        result.current.onIslandChange(true);
+      });
+
+      expect(useSettingsStore.getState().isIslandOn).toBe(true);
+    });
+  });
+
   describe('the log', () => {
     afterEach(() => {
       Reflect.deleteProperty(window, 'qazinho');
