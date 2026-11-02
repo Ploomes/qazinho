@@ -96,7 +96,7 @@ describe('useChatCommand', () => {
         },
         {
           id: 'import-plan',
-          label: 'Import tests I already have',
+          label: 'Import tests',
           tag: '/import',
           isDisabled: false,
         },

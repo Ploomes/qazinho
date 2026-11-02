@@ -1020,9 +1020,7 @@ describe('useChatViewModel', () => {
 
       const { result } = renderHook(() => useChatViewModel());
 
-      expect(result.current.lockedText).toBe(
-        'A run is going: stop it, or wait for it to end, to talk to the agent.',
-      );
+      expect(result.current.lockedText).toBe('A run is going: stop or wait to talk');
 
       act(() => {
         result.current.onDraftChange('What is it doing?');
@@ -1201,7 +1199,7 @@ describe('useChatViewModel', () => {
       const { result } = renderHook(() => useChatViewModel());
 
       expect(result.current.command).toMatchObject({
-        name: 'Import tests I already have',
+        name: 'Import tests',
         isReady: true,
       });
       expect(useAppStore.getState().pendingImport).toBeNull();
