@@ -328,7 +328,10 @@ export const useChatViewModel = () => {
       current: Math.min((workspace?.walked ?? 0) + 1, stepCount),
       total: stepCount,
     };
-    const count = item.messages.length;
+    const shownMessages = item.messages.filter(
+      ({ message }) => message.kind !== 'finding',
+    );
+    const bugCount = item.messages.length - shownMessages.length;
 
     return {
       kind: 'run' as const,
@@ -378,9 +381,15 @@ export const useChatViewModel = () => {
           : factsOf({ seconds: saved.durationSec, costUsd: saved.costUsd }),
       isLive,
       isExpanded: expandedRuns.includes(item.runId),
-      isExpandable: count > 0,
+      isExpandable: item.messages.length > 0,
+      bugs:
+        bugCount === 0
+          ? null
+          : t(bugCount === 1 ? 'CHAT.EXPLORE_BUGS_ONE' : 'CHAT.EXPLORE_BUGS_OTHER', {
+              count: bugCount,
+            }),
       openLabel: saved === null ? null : t('CHAT.RUN_CARD_ACTION'),
-      rows: item.messages.map(({ message, isNew }) => ({
+      rows: shownMessages.map(({ message, isNew }) => ({
         key: message.id,
         message,
         isNew,
@@ -438,6 +447,9 @@ export const useChatViewModel = () => {
     onOpenRun: (runId: string) => {
       selectRun(runId);
       selectTab('runs');
+    },
+    onOpenBugs: () => {
+      selectTab('bugs');
     },
     onOpenBug: (bugId: string) => {
       if (openBugId !== bugId) toggleBug(bugId);

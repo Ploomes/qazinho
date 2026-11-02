@@ -50,15 +50,10 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
 
   return {
     provenance: {
-      lead: t(bug.isIncidental ? 'BUG.BESIDE_STEP' : 'BUG.AT_STEP', {
-        number: bug.stepNumber,
-      }),
+      place: `${bug.caseId} · ${step}`,
       caseTitle: bug.caseTitle,
       run: props.hasRun ? t('BUG.RUN_AT', { when: runWhen }) : null,
-      facts: [
-        bug.target,
-        ...(bug.seenRuns > 1 ? [t('BUG.SEEN_IN', { count: bug.seenRuns })] : []),
-      ].join(' · '),
+      seen: bug.seenRuns > 1 ? t('BUG.SEEN_IN', { count: bug.seenRuns }) : null,
     },
     hero,
     thumbs: shots.filter((shot) => shot !== hero),
@@ -79,7 +74,6 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
     onDetailsToggle: () => {
       setIsDetailsOpen(!isDetailsOpen);
     },
-    hasBody: bug.body.length > 0,
     severity: t(SEVERITY_KEYS[bug.severity]),
     meta: [
       { key: 'run', label: t('BUG.META_RUN'), value: `${bug.runId} · ${bug.runWhen}` },

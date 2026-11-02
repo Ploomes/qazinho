@@ -9,12 +9,11 @@ import { useBugCardViewModel } from './hooks';
 import './styles.css';
 
 /**
- * Um bug, dobrado no título, ou aberto com onde foi pego, a tela em que quebrou, o que se
- * esperava e o que veio, os passos até ele, e como foi achado.
+ * Um bug, dobrado no título, ou aberto com onde foi pego e as ações, o que se esperava e
+ * o que veio, a tela, os passos até ele, e como foi achado.
  */
 export const BugCard: React.FC<IBugCardProps> = (props) => {
   const {
-    hasBody,
     severity,
     meta,
     provenance,
@@ -90,46 +89,90 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
             <div className="bug-card__body">
               <BugUpdate workspaceId={props.workspaceId} bug={bug} />
 
-              <p className="bug-card__where">
-                {provenance.lead}{' '}
-                {props.hasCase ? (
-                  <button type="button" className="bug-card__link" onClick={onCaseClick}>
-                    {provenance.caseTitle}
-                  </button>
-                ) : (
-                  <span className="bug-card__case">{provenance.caseTitle}</span>
-                )}
-                {provenance.run !== null && (
-                  <>
-                    {' · '}
-                    <button type="button" className="bug-card__link" onClick={onRunClick}>
-                      {provenance.run}
-                    </button>
-                  </>
-                )}
-                {' · '}
-                {provenance.facts}
-                {frameLabel !== null && (
-                  <>
-                    {' · '}
+              <div className="bug-card__top">
+                <p className="bug-card__where">
+                  {props.hasCase ? (
                     <button
                       type="button"
                       className="bug-card__link"
-                      onClick={onFrameClick}
+                      title={provenance.caseTitle}
+                      onClick={onCaseClick}
                     >
-                      <Icon name="figma" />
-                      {frameLabel}
-                      <Icon name="external" />
+                      {provenance.place}
                     </button>
-                  </>
-                )}
-              </p>
+                  ) : (
+                    <span className="bug-card__case" title={provenance.caseTitle}>
+                      {provenance.place}
+                    </span>
+                  )}
+                  {provenance.run !== null && (
+                    <>
+                      {' · '}
+                      <button
+                        type="button"
+                        className="bug-card__link"
+                        onClick={onRunClick}
+                      >
+                        {provenance.run}
+                      </button>
+                    </>
+                  )}
+                  {provenance.seen !== null && (
+                    <>
+                      {' · '}
+                      {provenance.seen}
+                    </>
+                  )}
+                  {frameLabel !== null && (
+                    <>
+                      {' · '}
+                      <button
+                        type="button"
+                        className="bug-card__link"
+                        onClick={onFrameClick}
+                      >
+                        <Icon name="figma" />
+                        {frameLabel}
+                        <Icon name="external" />
+                      </button>
+                    </>
+                  )}
+                </p>
+                <div className="bug-card__actions">
+                  <Button size="sm" variant="ghost" onClick={onDismissClick}>
+                    {dismissLabel}
+                  </Button>
+                  {isTrackerShown && (
+                    <>
+                      {filedKey === null ? (
+                        <Button size="sm" variant="primary" onClick={onSendClick}>
+                          <Icon name="send" />
+                          {sendLabel}
+                        </Button>
+                      ) : (
+                        <>
+                          {canCopyScreen && (
+                            <Button size="sm" onClick={onCopyScreen}>
+                              <Icon name="copy" />
+                              {copyLabel}
+                            </Button>
+                          )}
+                          <Button size="sm" onClick={onIssueClick}>
+                            {issueLabel}
+                            <Icon name="external" />
+                          </Button>
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
 
-              {hasBody && <p className="bug-card__text">{bug.body}</p>}
+              <ExpectedGot isBug expected={bug.expected} got={bug.got} />
 
-              <div className="bug-card__main">
-                {hero !== null && (
-                  <div className="bug-card__evidence">
+              {hero !== null && (
+                <div className="bug-card__evidence">
+                  <span className="bug-card__hero">
                     <Screenshot
                       label={hero.label}
                       src={hero.src}
@@ -140,66 +183,59 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
                         onOpenShot(hero);
                       }}
                     />
-                    <div className="bug-card__thumbs" style={shotsStyle}>
-                      {thumbs.map((shot) => (
-                        <Screenshot
-                          key={shot.label}
-                          label={shot.label}
-                          src={shot.src}
-                          file={shot.file}
-                          isBad={shot.isBad}
-                          size="shot"
-                          onOpen={() => {
-                            onOpenShot(shot);
-                          }}
-                        />
-                      ))}
-                      {moment !== null && <MomentTile bugId={bug.id} moment={moment} />}
-                    </div>
-                  </div>
-                )}
-
-                <div className="bug-card__story">
-                  <ExpectedGot isBug expected={bug.expected} got={bug.got} />
-
-                  <div className="bug-card__steps-block">
-                    <span className="bug-card__label">{t('BUG.HOW_TO')}</span>
-                    <ol className="bug-card__steps">
-                      {steps.map((step) => (
-                        <li
-                          key={step.number}
-                          className={
-                            step.isBad
-                              ? 'bug-card__step bug-card__step--bad'
-                              : 'bug-card__step'
-                          }
-                        >
-                          <span className="bug-card__step-number">
-                            {step.isBad ? <Icon name="failed" /> : step.number}
-                          </span>
-                          <span>
-                            {step.action}
-                            {step.isBad && (
-                              <span className="bug-card__failed-here">
-                                {' '}
-                                · {failedHere}
-                              </span>
-                            )}
-                          </span>
-                        </li>
-                      ))}
-                    </ol>
-                    {stepsToggle !== null && (
-                      <button
-                        type="button"
-                        className="bug-card__more"
-                        onClick={onStepsToggle}
-                      >
-                        {stepsToggle}
-                      </button>
-                    )}
+                  </span>
+                  <div className="bug-card__thumbs" style={shotsStyle}>
+                    {thumbs.map((shot) => (
+                      <Screenshot
+                        key={shot.label}
+                        label={shot.label}
+                        src={shot.src}
+                        file={shot.file}
+                        isBad={shot.isBad}
+                        size="shot"
+                        onOpen={() => {
+                          onOpenShot(shot);
+                        }}
+                      />
+                    ))}
+                    {moment !== null && <MomentTile bugId={bug.id} moment={moment} />}
                   </div>
                 </div>
+              )}
+
+              <div className="bug-card__steps-block">
+                <span className="bug-card__label">{t('BUG.HOW_TO')}</span>
+                <ol className="bug-card__steps">
+                  {steps.map((step) => (
+                    <li
+                      key={step.number}
+                      className={
+                        step.isBad
+                          ? 'bug-card__step bug-card__step--bad'
+                          : 'bug-card__step'
+                      }
+                    >
+                      <span className="bug-card__step-number">
+                        {step.isBad ? <Icon name="failed" /> : step.number}
+                      </span>
+                      <span>
+                        {step.action}
+                        {step.isBad && (
+                          <span className="bug-card__failed-here"> · {failedHere}</span>
+                        )}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+                {stepsToggle !== null && (
+                  <button
+                    type="button"
+                    className="bug-card__more"
+                    onClick={onStepsToggle}
+                  >
+                    {stepsToggle}
+                  </button>
+                )}
               </div>
 
               <div className="bug-card__details">
@@ -228,35 +264,6 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
-
-              <div className="bug-card__actions">
-                <Button size="sm" variant="ghost" onClick={onDismissClick}>
-                  {dismissLabel}
-                </Button>
-                {isTrackerShown && (
-                  <>
-                    {filedKey === null ? (
-                      <Button size="sm" variant="primary" onClick={onSendClick}>
-                        <Icon name="send" />
-                        {sendLabel}
-                      </Button>
-                    ) : (
-                      <>
-                        {canCopyScreen && (
-                          <Button size="sm" onClick={onCopyScreen}>
-                            <Icon name="copy" />
-                            {copyLabel}
-                          </Button>
-                        )}
-                        <Button size="sm" onClick={onIssueClick}>
-                          {issueLabel}
-                          <Icon name="external" />
-                        </Button>
-                      </>
-                    )}
-                  </>
-                )}
               </div>
             </div>
           </motion.div>

@@ -49,6 +49,7 @@ export const Chat: React.FC = () => {
     onToggleRun,
     onOpenRun,
     onOpenBug,
+    onOpenBugs,
   } = useChatViewModel();
   const { t } = useTranslation();
 
@@ -100,6 +101,12 @@ export const Chat: React.FC = () => {
                   onOpenRun(item.runId);
                 }}
               >
+                {item.bugs !== null && (
+                  <button type="button" className="chat__run-bugs" onClick={onOpenBugs}>
+                    {item.bugs}
+                    <Icon name="arrow" />
+                  </button>
+                )}
                 {item.rows.map((row) => (
                   <ChatRow
                     key={row.key}

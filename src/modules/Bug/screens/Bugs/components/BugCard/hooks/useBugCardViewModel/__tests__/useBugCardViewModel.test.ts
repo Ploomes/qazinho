@@ -257,16 +257,6 @@ describe('useBugCardViewModel', () => {
     expect(onToggle).toHaveBeenCalledWith('BUG-01');
   });
 
-  it('leaves out the explanation a bug found on the side of a step never had', () => {
-    expect(renderHook(() => useBugCardViewModel(PROPS)).result.current.hasBody).toBe(
-      true,
-    );
-    expect(
-      renderHook(() => useBugCardViewModel({ ...PROPS, bug: { ...BUG, body: '' } }))
-        .result.current.hasBody,
-    ).toBe(false);
-  });
-
   it('hands the card the moment of the run video it was caught in, to show beside its screenshots', () => {
     const moment = { workspaceId: 'w1', runId: 'r-01', atMs: 9_500 };
     const { result } = renderHook(() => useBugCardViewModel({ ...PROPS, moment }));
@@ -438,23 +428,18 @@ describe('useBugCardViewModel', () => {
       );
 
       expect(result.current.provenance).toEqual({
-        lead: `At step ${String(LONG.stepNumber)} of`,
+        place: `${LONG.caseId} · step ${String(LONG.stepNumber)}`,
         caseTitle: LONG.caseTitle,
         run: `the ${LONG.runWhen} run`,
-        facts: `${LONG.target} · seen in 2 runs`,
+        seen: 'seen in 2 runs',
       });
     });
 
-    it('says a bug found beside a step was found beside it, and offers no run that is gone', () => {
+    it('offers no run that is gone', () => {
       const { result } = renderHook(() =>
-        useBugCardViewModel({
-          ...PROPS,
-          hasRun: false,
-          bug: { ...LONG, isIncidental: true },
-        }),
+        useBugCardViewModel({ ...PROPS, hasRun: false, bug: LONG }),
       );
 
-      expect(result.current.provenance.lead).toMatch(/^Beside step/);
       expect(result.current.provenance.run).toBeNull();
     });
 
