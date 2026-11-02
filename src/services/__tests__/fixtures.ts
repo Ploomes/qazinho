@@ -56,6 +56,8 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     sweepVideos: () => Promise.resolve({ removed: 0, freedBytes: 0 }),
     saveVideo: () => Promise.resolve('cancelled' as const),
     pickImport: () => Promise.resolve({ kind: 'cancelled' as const }),
+    setIsland: () => undefined,
+    onIslandAction: () => () => undefined,
     alertRun: () => undefined,
     onOpenRun: () => () => undefined,
     readState: () => Promise.resolve({ projects: '[]', workspaces: [] }),

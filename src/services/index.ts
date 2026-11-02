@@ -10,6 +10,7 @@ export * from './Files';
 export * from './Github';
 export * from './Imports';
 export * from './Integrations';
+export * from './Island';
 export * from './Jira';
 export * from './Machine';
 export * from './Mcp';

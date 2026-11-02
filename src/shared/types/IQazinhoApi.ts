@@ -30,6 +30,8 @@ import type { IFilingEvent } from './IFilingEvent';
 import type { IGithubStatus } from './IGithubStatus';
 import type { IInstallResult } from './IInstallResult';
 import type { IIntegrationStatus } from './IIntegrationStatus';
+import type { IIsland } from './IIsland';
+import type { IIslandAction } from './IIslandAction';
 import type { IMachineCheck } from './IMachineCheck';
 import type { IMcpServerStatus } from './IMcpServerStatus';
 import type { IMcpServerTarget } from './IMcpServerTarget';
@@ -117,6 +119,8 @@ export interface IQazinhoApi {
   sweepVideos: (olderThanDays: number) => Promise<IVideoSweep>;
   saveVideo: (props: { name: string; data: Uint8Array }) => Promise<SaveOutcome>;
   pickImport: () => Promise<ImportPick>;
+  setIsland: (island: IIsland) => void;
+  onIslandAction: (listener: (action: IIslandAction) => void) => () => void;
   alertRun: (notice: IRunAlert) => void;
   onOpenRun: (listener: (run: IRunRef) => void) => () => void;
   readState: () => Promise<ISavedState>;

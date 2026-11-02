@@ -31,6 +31,10 @@ import type {
   IGithubStatus,
   IInstallResult,
   IIntegrationStatus,
+  IIsland,
+  IIslandAction,
+  IIslandApi,
+  IIslandFrame,
   IMachineCheck,
   IMcpServerStatus,
   IMcpServerTarget,
@@ -83,7 +87,7 @@ import type {
   WindowFit,
 } from '@/shared/types';
 import { contextBridge, ipcRenderer } from 'electron';
-import { CHANNELS, RECORDER_ARGUMENT } from '@/shared/constants';
+import { CHANNELS, ISLAND_ARGUMENT, RECORDER_ARGUMENT } from '@/shared/constants';
 import { recorderApi } from './recorderApi';
 
 const api: IQazinhoApi = {
@@ -169,6 +173,20 @@ const api: IQazinhoApi = {
   saveVideo: (props: { name: string; data: Uint8Array }) =>
     ipcRenderer.invoke(CHANNELS.saveVideo, props) as Promise<SaveOutcome>,
   pickImport: () => ipcRenderer.invoke(CHANNELS.pickImport) as Promise<ImportPick>,
+  setIsland: (island: IIsland) => {
+    ipcRenderer.send(CHANNELS.islandSet, island);
+  },
+  onIslandAction: (listener: (action: IIslandAction) => void) => {
+    const forward = (_: unknown, action: IIslandAction) => {
+      listener(action);
+    };
+
+    ipcRenderer.on(CHANNELS.islandAction, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.islandAction, forward);
+    };
+  },
   alertRun: (notice: IRunAlert) => {
     ipcRenderer.send(CHANNELS.alertRun, notice);
   },
@@ -417,6 +435,28 @@ const api: IQazinhoApi = {
   },
 };
 
+const islandApi: IIslandApi = {
+  onFrame: (listener: (frame: IIslandFrame) => void) => {
+    const forward = (_: unknown, frame: IIslandFrame) => {
+      listener(frame);
+    };
+
+    ipcRenderer.on(CHANNELS.islandFrame, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.islandFrame, forward);
+    };
+  },
+  hover: (isOver: boolean) => {
+    ipcRenderer.send(CHANNELS.islandHover, isOver);
+  },
+  act: (action: IIslandAction) => {
+    ipcRenderer.send(CHANNELS.islandAct, action);
+  },
+};
+
 if (process.argv.includes(RECORDER_ARGUMENT))
   contextBridge.exposeInMainWorld('qazinhoRecorder', recorderApi);
+else if (process.argv.includes(ISLAND_ARGUMENT))
+  contextBridge.exposeInMainWorld('qazinhoIsland', islandApi);
 else contextBridge.exposeInMainWorld('qazinho', api);
