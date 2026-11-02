@@ -151,7 +151,7 @@ export const useDeviceViewModel = () => {
           },
     mood: moodOfStatus(workspace?.status ?? null),
     viewports,
-    hasViewportPicker: viewports.length > 0 && !isFocused,
+    hasViewportPicker: viewports.length > 0 && hasScreen && !isFocused,
     screenRatio,
     onSelectViewport: (viewportId: ViewportId) => {
       if (!workspace || viewportId === viewport.id) return;

@@ -54,10 +54,19 @@ describe('useDeviceViewModel', () => {
       expect(renderHook(() => useDeviceViewModel()).result.current.viewports).toEqual([]);
     });
 
-    it('lets the size be picked before the first run, not only up close', () => {
+    it('offers no size while nothing is running, because there is no screen to size', () => {
       const { result } = renderHook(() => useDeviceViewModel());
 
       expect(result.current.hasScreen).toBe(false);
+      expect(result.current.hasViewportPicker).toBe(false);
+    });
+
+    it('offers the size beside a live screen', () => {
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: [] })] });
+
+      const { result } = renderHook(() => useDeviceViewModel());
+
+      expect(result.current.hasScreen).toBe(true);
       expect(result.current.hasViewportPicker).toBe(true);
     });
 
