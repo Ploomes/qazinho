@@ -1,3 +1,15 @@
+.bug-card--low {
+  --level-color: var(--block);
+}
+
+.bug-card--medium {
+  --level-color: var(--warn);
+}
+
+.bug-card--high {
+  --level-color: var(--fail);
+}
+
 .bug-card {
   overflow: hidden;
   border: 1px solid var(--line);
@@ -22,7 +34,7 @@
   width: 9px;
   height: 9px;
   border-radius: 2px;
-  background: var(--fail);
+  background: var(--level-color);
 }
 
 .bug-card__severity--new {
@@ -36,9 +48,33 @@
 }
 
 .bug-card__level {
+  display: inline-flex;
   flex: none;
-  color: var(--ink3);
-  font: var(--font-ui-sm);
+  align-items: flex-end;
+  gap: var(--space-1);
+  height: 14px;
+}
+
+.bug-card__bar {
+  width: 4px;
+  border-radius: 1px;
+  background: var(--line);
+}
+
+.bug-card__bar:nth-child(1) {
+  height: 6px;
+}
+
+.bug-card__bar:nth-child(2) {
+  height: 10px;
+}
+
+.bug-card__bar:nth-child(3) {
+  height: 14px;
+}
+
+.bug-card__bar--on {
+  background: var(--level-color);
 }
 
 .bug-card__title {

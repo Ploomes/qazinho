@@ -15,6 +15,8 @@ import './styles.css';
 export const BugCard: React.FC<IBugCardProps> = (props) => {
   const {
     severity,
+    cardClass,
+    levelBars,
     meta,
     provenance,
     hero,
@@ -51,7 +53,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
   const { t } = useTranslation();
 
   return (
-    <article className="bug-card">
+    <article className={cardClass}>
       <button type="button" className="bug-card__head" onClick={onHeadClick}>
         <span
           className={
@@ -72,7 +74,19 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
             {filedKey}
           </span>
         )}
-        <span className="bug-card__level">{severity}</span>
+        <span
+          className="bug-card__level"
+          role="img"
+          title={severity}
+          aria-label={severity}
+        >
+          {levelBars.map((bar) => (
+            <span
+              key={bar.id}
+              className={bar.isOn ? 'bug-card__bar bug-card__bar--on' : 'bug-card__bar'}
+            />
+          ))}
+        </span>
         <Caret isOpen={props.isOpen} />
       </button>
 

@@ -2,7 +2,7 @@ import type { IBugCardProps } from '@/modules/Bug/screens/Bugs/components/BugCar
 import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SEVERITY_KEYS } from '@/modules/Bug/constants';
+import { SEVERITY_BARS, SEVERITY_KEYS } from '@/modules/Bug/constants';
 import { pasteShotOf } from '@/modules/Bug/library';
 import { BUG_CARD } from '@/modules/Bug/screens/Bugs/components/BugCard/constants';
 import { frameUrlOf } from '@/modules/Plan/library';
@@ -75,6 +75,8 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
       setIsDetailsOpen(!isDetailsOpen);
     },
     severity: t(SEVERITY_KEYS[bug.severity]),
+    cardClass: `bug-card bug-card--${bug.severity}`,
+    levelBars: SEVERITY_BARS[bug.severity],
     meta: [
       { key: 'run', label: t('BUG.META_RUN'), value: `${bug.runId} · ${bug.runWhen}` },
       { key: 'case', label: t('BUG.META_CASE'), value: `${bug.caseId} · ${step}` },

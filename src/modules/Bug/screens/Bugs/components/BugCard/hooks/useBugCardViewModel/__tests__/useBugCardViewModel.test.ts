@@ -70,6 +70,17 @@ describe('useBugCardViewModel', () => {
     );
   });
 
+  it('shows how bad a bug is in bars, one for low, two for medium and three for high', () => {
+    const barsOf = (severity: 'low' | 'medium' | 'high') =>
+      renderHook(() => useBugCardViewModel({ ...PROPS, bug: { ...BUG, severity } }))
+        .result.current;
+
+    expect(barsOf('low').levelBars.filter(({ isOn }) => isOn)).toHaveLength(1);
+    expect(barsOf('medium').levelBars.filter(({ isOn }) => isOn)).toHaveLength(2);
+    expect(barsOf('high').levelBars.filter(({ isOn }) => isOn)).toHaveLength(3);
+    expect(barsOf('medium').cardClass).toBe('bug-card bug-card--medium');
+  });
+
   it('does NOT make up who caught an older bug that never said', () => {
     const { result } = renderHook(() =>
       useBugCardViewModel({ ...PROPS, bug: { ...BUG, agent: '', modelName: null } }),
@@ -93,6 +104,8 @@ describe('useBugCardViewModel', () => {
     expect(result.current.meta[1]?.value).toBe('TC-02 · passo 2');
     expect(result.current.meta[3]?.value).toBe('uma vez');
     expect(result.current.severity).toBe('alta');
+    expect(result.current.cardClass).toBe('bug-card bug-card--high');
+    expect(result.current.levelBars.filter(({ isOn }) => isOn)).toHaveLength(3);
     expect(result.current.shots.map(({ label }) => label)).toEqual([
       'antes',
       'o passo que quebrou',
