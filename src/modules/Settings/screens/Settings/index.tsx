@@ -6,6 +6,7 @@ import {
   InstallProgress,
   IntegrationCard,
   McpCard,
+  OutsideServerCard,
   ToolCard,
 } from '@/modules/Setup';
 import { Button, Icon, Logo, Switch, Tag, Wordmark } from '@/shared/components/atoms';
@@ -245,6 +246,10 @@ export const Settings: React.FC = () => {
                 <McpCard key={item.id} server={item} />
               ))}
               <p className="settings__note">{t('SETTINGS.MCPS_NOTE')}</p>
+              <div className="settings__section">
+                <span className="settings__eyebrow">{t('OUTSIDE.EYEBROW')}</span>
+                <OutsideServerCard />
+              </div>
             </div>
           )}
 
