@@ -5,7 +5,7 @@ O QAzinho não tem pacote de design system. Todo componente visual compartilhado
 
 ```
 src/shared/components/
-├── atoms/        Button, Chip, StatusPill, Input, Icon, IconButton, Caret, Meter, Kbd, Logo,
+├── atoms/        Button, Chip, StatusPill, Input, Icon, IconButton, Caret, Kbd, Logo,
 │                 Intern, Markdown, Wordmark, Tag
 ├── molecules/    TabBar, SidebarRow, CountTile, TargetCard, MetaGrid
 ├── organisms/    Titlebar, Sidebar, Composer, PlanCase, ResourcePopover, StepsPopup

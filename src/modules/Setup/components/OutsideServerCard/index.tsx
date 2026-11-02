@@ -17,9 +17,7 @@ export const OutsideServerCard: React.FC = () => {
     isBusy,
     internSize,
     name,
-    about,
     hereTitle,
-    hereAbout,
     switchLabel,
     isChecking,
     checkingText,
@@ -47,7 +45,6 @@ export const OutsideServerCard: React.FC = () => {
         </span>
         <span className="outside-card__text">
           <span className="outside-card__name">{name}</span>
-          <span className="outside-card__about">{about}</span>
         </span>
       </div>
 
@@ -55,7 +52,6 @@ export const OutsideServerCard: React.FC = () => {
         <div className="outside-card__reach-head">
           <span className="outside-card__text">
             <span className="outside-card__reach-name">{hereTitle}</span>
-            <span className="outside-card__about">{hereAbout}</span>
           </span>
           <Switch label={switchLabel} isOn={isOn} onChange={onToggle} />
         </div>

@@ -27,7 +27,7 @@ describe('useResourcePopoverViewModel', () => {
   it('counts what the machine is really running', () => {
     const { result } = renderHook(() => useResourcePopoverViewModel());
 
-    expect(result.current.header).toBe('3 running · 2.2 GB');
+    expect(result.current.header).toBe('CPU 16% · RAM 2.2 / 32 GB');
   });
 
   it('shows QAzinho itself above the projects it is running', () => {
@@ -84,7 +84,6 @@ describe('useResourcePopoverViewModel', () => {
 
     const { result } = renderHook(() => useResourcePopoverViewModel());
 
-    expect(result.current.header).toBe('nothing running');
     expect(result.current.nodes).toEqual([]);
   });
 });

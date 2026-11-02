@@ -198,12 +198,6 @@
   letter-spacing: var(--display-tracking);
 }
 
-.assistant-panel__empty-body {
-  color: var(--ink2);
-  font: var(--font-ui-sm);
-  text-wrap: pretty;
-}
-
 .assistant-panel__suggestions {
   display: flex;
   flex-wrap: wrap;

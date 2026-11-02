@@ -1,7 +1,6 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { sample } from '@/modules/Resources/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useTitlebarViewModel } from '@/shared/components/organisms/Titlebar/hooks/useTitlebarViewModel';
 import { useAppStore, useMachineStore } from '@/store';
@@ -17,12 +16,6 @@ beforeEach(() => {
 });
 
 describe('useTitlebarViewModel', () => {
-  it('reads an idle machine as costing nothing', () => {
-    const { result } = renderHook(() => useTitlebarViewModel());
-
-    expect(result.current.cpuLabel).toBe('CPU 0%');
-  });
-
   it('marks the app as a beta beside its name', () => {
     expect(renderHook(() => useTitlebarViewModel()).result.current.betaLabel).toBe(
       'Beta',
@@ -66,23 +59,20 @@ describe('useTitlebarViewModel', () => {
     expect(result.current.className).not.toContain('titlebar--bare');
   });
 
-  it('reads what the machine reported, not a guess', () => {
-    useMachineStore.setState({
-      resources: {
-        cpu: 16,
-        ramMb: 2230,
-        ramCeilingGb: 64,
-        processes: [
-          sample({ name: 'qazinho', kind: 'app', ramMb: 1800 }),
-          sample({ name: 'claude', kind: 'agent', workspaceId: 'w1', ramMb: 430 }),
-        ],
-      },
+  describe('the session ring', () => {
+    const usedBy = (fiveHourUsed: number) => {
+      useMachineStore.setState({
+        usage: { fiveHourUsed, sevenDayUsed: null, resetsAt: 0 },
+      } as never);
+
+      return renderHook(() => useTitlebarViewModel()).result.current.sessionUsed;
+    };
+
+    /** Um anel sempre ligado é mais uma coisa para ler; ele só importa perto do limite. */
+    it('stays out of the bar until the session nears its limit', () => {
+      expect(usedBy(0.79)).toBeNull();
+      expect(usedBy(0.8)).toBe(0.8);
     });
-
-    const { result } = renderHook(() => useTitlebarViewModel());
-
-    expect(result.current.ramLabel).toBe('RAM 2.2 / 64 GB');
-    expect(result.current.cpuLabel).toBe('CPU 16%');
   });
 
   describe('onToggleResources', () => {

@@ -41,13 +41,11 @@ export const useResourcePopoverViewModel = () => {
     ref,
     isOpen,
     nodes: app.length === 0 ? running : [itself, ...running],
-    header:
-      resources.processes.length === 0
-        ? t('RESOURCES.NOTHING_RUNNING')
-        : t('RESOURCES.RUNNING', {
-            count: resources.processes.length,
-            ram: (resources.ramMb / MB_IN_GB).toFixed(1),
-          }),
+    header: t('RESOURCES.MACHINE', {
+      cpu: Math.round(resources.cpu),
+      used: (resources.ramMb / MB_IN_GB).toFixed(1),
+      ceiling: resources.ramCeilingGb,
+    }),
     onClose: toggleResources,
     onShutDown: (workspaceId: string) => {
       stopRun(workspaceId);

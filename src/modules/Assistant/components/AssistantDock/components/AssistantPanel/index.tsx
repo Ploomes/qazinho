@@ -32,7 +32,6 @@ export const AssistantPanel: React.FC = () => {
     canStartOver,
     isEmpty,
     emptyTitle,
-    emptyBody,
     suggestions,
     rows,
     isTyping,
@@ -121,7 +120,6 @@ export const AssistantPanel: React.FC = () => {
             >
               <Intern mood="neutral" size={emptyIntern} />
               <span className="assistant-panel__empty-title">{emptyTitle}</span>
-              <span className="assistant-panel__empty-body">{emptyBody}</span>
               <span className="assistant-panel__suggestions">
                 {suggestions.map((suggestion) => (
                   <Chip key={suggestion.id} onClick={suggestion.onClick}>

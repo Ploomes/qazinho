@@ -240,7 +240,6 @@ export const Settings: React.FC = () => {
                 <McpCard key={item.id} server={item} />
               ))}
               <div className="settings__section">
-                <span className="settings__eyebrow">{t('OUTSIDE.EYEBROW')}</span>
                 <OutsideServerCard />
               </div>
             </div>

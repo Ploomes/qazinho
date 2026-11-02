@@ -1,7 +1,7 @@
 import type { ITitlebarProps } from './types';
 import { AnimatePresence } from 'motion/react';
 import { AssistantButton } from '@/modules/Assistant';
-import { Gauge, Icon, Logo, Meter, Tag, Wordmark } from '@/shared/components/atoms';
+import { Gauge, Icon, IconButton, Logo, Tag, Wordmark } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { ModelPopover } from '@/shared/components/organisms/ModelPopover';
 import { ResourcePopover } from '@/shared/components/organisms/ResourcePopover';
@@ -15,9 +15,7 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
     className,
     isResourcesOpen,
     isModelMenuOpen,
-    cpuLabel,
-    cpuShare,
-    ramLabel,
+    resourcesLabel,
     agentLabel,
     betaLabel,
     sessionUsed,
@@ -43,18 +41,6 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
 
       {!isBare && (
         <div className="titlebar__meters">
-          <button
-            type="button"
-            className="titlebar__meter-button"
-            aria-haspopup="dialog"
-            onClick={onToggleResources}
-          >
-            <Meter value={cpuShare} label="CPU" />
-            <span>{cpuLabel}</span>
-            <span aria-hidden="true">·</span>
-            <span>{ramLabel}</span>
-          </button>
-
           {sessionUsed !== null && (
             <Tooltip
               content={
@@ -71,6 +57,15 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
               </span>
             </Tooltip>
           )}
+
+          <Tooltip content={resourcesLabel}>
+            <IconButton
+              icon="resources"
+              label={resourcesLabel}
+              isActive={isResourcesOpen}
+              onClick={onToggleResources}
+            />
+          </Tooltip>
 
           <button
             type="button"

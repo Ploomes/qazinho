@@ -83,10 +83,3 @@
   color: var(--fail);
   font: var(--font-mono-xs);
 }
-
-.resource-popover__foot {
-  padding: var(--space-4) var(--space-5);
-  border-top: 1px solid var(--line2);
-  color: var(--ink3);
-  font: var(--font-ui-xs);
-}

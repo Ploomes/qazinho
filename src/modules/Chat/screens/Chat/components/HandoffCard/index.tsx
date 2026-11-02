@@ -17,7 +17,9 @@ export const HandoffCard: React.FC<IHandoffCardProps> = (props) => (
     </span>
     <span>
       <span className="handoff-card__title">{props.title}</span>
-      <p className="handoff-card__subtitle">{props.subtitle}</p>
+      {props.subtitle !== undefined && (
+        <p className="handoff-card__subtitle">{props.subtitle}</p>
+      )}
     </span>
     <span className="handoff-card__action">
       {props.action}

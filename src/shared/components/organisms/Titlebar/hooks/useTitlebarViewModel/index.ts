@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useModelInUse } from '@/modules/Settings';
 import { Platform } from '@/services';
 import { gaugeTone } from '@/shared/components/atoms/Gauge/library';
+import { TITLEBAR } from '@/shared/components/organisms/Titlebar/constants';
 import { formatResetsAt } from '@/shared/components/organisms/Titlebar/library';
 import { useAppStore, useMachineStore } from '@/store';
 
@@ -13,12 +14,8 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
   const modelMenuAt = useAppStore((state) => state.modelMenuAt);
   const toggleResources = useAppStore((state) => state.toggleResources);
   const toggleModelMenu = useAppStore((state) => state.toggleModelMenu);
-  const resources = useMachineStore((state) => state.resources);
   const usage = useMachineStore((state) => state.usage);
   const { agent, modelName } = useModelInUse();
-
-  const cpu = Math.round(resources.cpu);
-  const ramGb = resources.ramMb / 1024;
 
   const sessionUsed = usage?.fiveHourUsed ?? null;
   const sessionPercent = Math.round((sessionUsed ?? 0) * 100);
@@ -35,15 +32,13 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
       .join(' '),
     isResourcesOpen,
     isModelMenuOpen: modelMenuAt === 'titlebar',
-    cpuLabel: t('TITLEBAR.CPU', { percent: cpu }),
-    cpuShare: cpu / 100,
-    ramLabel: t('TITLEBAR.RAM', {
-      used: ramGb.toFixed(1),
-      ceiling: resources.ramCeilingGb,
-    }),
+    resourcesLabel: t('RESOURCES.TITLE'),
     agentLabel: t('TITLEBAR.AGENT', { agent, model: modelName }),
     betaLabel: t('TITLEBAR.BETA'),
-    sessionUsed,
+    sessionUsed:
+      sessionUsed !== null && sessionUsed >= TITLEBAR.sessionShownFrom
+        ? sessionUsed
+        : null,
     sessionLabel:
       sessionUsed === null
         ? null

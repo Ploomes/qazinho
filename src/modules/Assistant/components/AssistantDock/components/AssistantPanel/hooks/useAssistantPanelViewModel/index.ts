@@ -161,7 +161,7 @@ export const useAssistantPanelViewModel = () => {
           : t('ASSISTANT.STATUS_THINKING')
         : last?.kind === 'error'
           ? t('ASSISTANT.STATUS_TROUBLE')
-          : t('ASSISTANT.STATUS_IDLE'),
+          : '',
     mood: isAsking
       ? ('thinking' as const)
       : last?.kind === 'error'
@@ -175,7 +175,6 @@ export const useAssistantPanelViewModel = () => {
     canStartOver: messages.length > 0 && !isAsking,
     isEmpty: messages.length === 0 && !isAsking,
     emptyTitle: t('ASSISTANT.EMPTY_TITLE'),
-    emptyBody: t('ASSISTANT.EMPTY_BODY'),
     suggestions: suggestionsFor({ hasProjects, openRuns }).map((id) => ({
       id,
       label: t(ASSISTANT_SUGGESTIONS[id]),

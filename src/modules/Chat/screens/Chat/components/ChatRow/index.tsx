@@ -59,7 +59,6 @@ export const ChatRow: React.FC<IChatRowProps> = (props) => {
             isAccent
             icon="plan"
             title={planTitle}
-            subtitle={t('CHAT.PLAN_CARD_SUBTITLE')}
             action={t('CHAT.PLAN_CARD_ACTION')}
             onOpen={props.onOpenPlan}
           />

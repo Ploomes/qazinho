@@ -56,8 +56,6 @@ export const ResourcePopover: React.FC = () => {
           </div>
         ))}
       </div>
-
-      <footer className="resource-popover__foot">{t('RESOURCES.NOTE')}</footer>
     </motion.div>
   );
 };

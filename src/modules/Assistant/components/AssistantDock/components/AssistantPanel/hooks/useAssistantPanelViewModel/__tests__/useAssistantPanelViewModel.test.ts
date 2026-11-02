@@ -405,7 +405,7 @@ describe('useAssistantPanelViewModel', () => {
         text: 'Reading the latest run of Checkout regression',
         failed: "didn't work",
       });
-      expect(result.current.status).toBe('here to help');
+      expect(result.current.status).toBe('');
     });
   });
 
