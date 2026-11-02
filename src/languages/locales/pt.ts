@@ -372,6 +372,7 @@ export const pt: typeof en = {
       'Pulado: esta run anda só gravações, e este caso não tem uma que ainda se sustente.',
     UNWALKED_CAPPED: 'Pulado: a run gastou tudo o que podia com a IA.',
     UNWALKED_ASKED: 'Pulado: o agente precisava do QA, e ninguém respondeu nesta run.',
+    UNWALKED_NO_VALUE: 'Pulado: este caso digita uma variável sem valor nesta run.',
     REPLAY_RUN: 'Run {{id}} · o plano inteiro',
     REPLAY_CASE: 'Take · {{id}}',
     REPLAY_BUG: 'O momento do {{id}}',

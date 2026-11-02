@@ -370,6 +370,7 @@ export const en = {
       'Skipped: this run walks recordings alone, and this case has none that still holds.',
     UNWALKED_CAPPED: 'Skipped: the run spent all it may on the AI.',
     UNWALKED_ASKED: 'Skipped: the agent needed the QA, and no one answered in this run.',
+    UNWALKED_NO_VALUE: 'Skipped: this case types a variable this run has no value for.',
     REPLAY_RUN: 'Run {{id}} · the whole plan',
     REPLAY_CASE: 'Take · {{id}}',
     REPLAY_BUG: 'The moment of {{id}}',
