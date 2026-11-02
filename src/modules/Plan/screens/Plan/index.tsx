@@ -348,7 +348,7 @@ export const Plan: React.FC = () => {
             onReorder={onReorder}
             className="plan__cases"
           >
-            <AnimatePresence initial={false} mode="popLayout">
+            <AnimatePresence initial={false}>
               {plan.map((testCase) => (
                 <PlanCase
                   key={testCase.id}

@@ -50,8 +50,8 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
       }}
       exit={{
         opacity: 0,
-        scale: 0.98,
-        transition: { duration: MOTION.durationFast, ease: MOTION.easeIn },
+        height: 0,
+        transition: { duration: MOTION.durationSlow, ease: MOTION.ease },
       }}
       dragListener={!props.isLocked}
       whileDrag={STICKER.drag}
