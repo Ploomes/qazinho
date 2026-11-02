@@ -1,10 +1,11 @@
 import type { IProject } from '@/modules/Project/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
 import { runDayOf, walkedStepsOf } from '@/modules/Run/library';
+import { countOf } from './countOf';
 import { openRoundOf } from './openRoundOf';
 
 const ENDINGS = {
-  finished: 'walked the whole plan',
+  finished: 'walked to the end',
   stopped: 'stopped by the QA',
   broke: 'broke before the end',
   interrupted: 'cut short when QAzinho closed',
@@ -37,7 +38,7 @@ export function describeWorkspace(props: {
     ...(workspace.plan.length === 0
       ? ['It has no plan yet: its chat writes one with the QA.']
       : [
-          `Its plan has ${String(workspace.plan.length)} cases and ${String(steps)} steps:`,
+          `Its plan has ${countOf({ amount: workspace.plan.length, noun: 'case' })} and ${countOf({ amount: steps, noun: 'step' })}:`,
           ...workspace.plan.flatMap((testCase) => [
             `- ${testCase.id} "${testCase.title}" · ${testCase.priority} · last run ${testCase.lastVerdict ?? 'never'}`,
             ...(testCase.goal.trim() === '' ? [] : [`  goal: ${testCase.goal}`]),

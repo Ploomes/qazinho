@@ -13,7 +13,7 @@ describe('describeWorkspace', () => {
     expect(text).toContain('- TC-01 "Open the store and find a product" · P1 · last run');
     expect(text).toContain('  2. Search for a product → At least one result comes back');
     expect(text).toContain(
-      `- r-01 on ${new Date(1_760_000_000_000).toLocaleDateString('sv-SE')} at 09:41, walked the whole plan: 5 passed, 1 failed, 0 blocked, 0 skipped`,
+      `- r-01 on ${new Date(1_760_000_000_000).toLocaleDateString('sv-SE')} at 09:41, walked to the end: 5 passed, 1 failed, 0 blocked, 0 skipped`,
     );
     expect(text).toContain(
       '- BUG-01 · high · "Nothing happens on submit" · TC-01 step 2 · r-01',

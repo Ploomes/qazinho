@@ -37,7 +37,7 @@ export function describeRun(props: { workspace: IWorkspace; runId: string | null
 
   return {
     text: [
-      `Run ${run.id} of ${workspace.id} "${workspace.name}", ${run.meta}:`,
+      `Run ${run.id} of ${workspace.id} "${workspace.name}"${run.meta === workspace.name ? '' : `, ${run.meta}`}:`,
       ...runFactsOf({ run, isBrief: false }),
       ...workspace.chat.flatMap((message) =>
         message.kind === 'note' && message.runId === run.id

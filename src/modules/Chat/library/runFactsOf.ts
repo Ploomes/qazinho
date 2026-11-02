@@ -9,7 +9,7 @@ const EXPLORATION_ENDINGS = {
 } as const;
 
 const ENDINGS = {
-  finished: 'walked the whole plan',
+  finished: 'walked to the end',
   stopped: 'stopped by the QA before the end',
   broke: 'broke before the end',
   interrupted: 'cut short when QAzinho closed',

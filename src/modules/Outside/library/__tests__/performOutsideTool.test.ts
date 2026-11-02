@@ -270,6 +270,14 @@ describe('performOutsideTool', () => {
       expect(app.stopped).toEqual(['w1']);
     });
 
+    /** O `endRun` não guarda uma run sem passo: o agente leria "no runs yet" sem entender. */
+    it('says a run stopped before its first step leaves nothing behind', async () => {
+      const app = appWith({ workspaces: [going()] });
+      const done = await call({ name: 'stop_run', args: { workspace: 'w1' } }, app);
+
+      expect(done.text).toContain('leaves no run behind');
+    });
+
     it('has nothing to stop in a workspace at rest', async () => {
       const app = appWith({});
       const done = await call({ name: 'stop_run', args: { workspace: 'w1' } }, app);

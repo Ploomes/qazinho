@@ -2,7 +2,12 @@ import type { IToolDone } from '@/modules/Assistant/types';
 import type { IOutsidePort } from '@/modules/Outside/types';
 import type { IWorkspace } from '@/modules/Workspace';
 import type { OutsideToolCall } from '@/shared/types';
-import { describeBug, describeWorkspace, findByRef } from '@/modules/Assistant/library';
+import {
+  countOf,
+  describeBug,
+  describeWorkspace,
+  findByRef,
+} from '@/modules/Assistant/library';
 import { flattenPlanSteps } from '@/modules/Run/library';
 import { describeRunStatus } from './describeRunStatus';
 import { describeWorkspaces } from './describeWorkspaces';
@@ -105,7 +110,10 @@ function stopOf(props: { workspace: IWorkspace; port: IOutsidePort }): IToolDone
   port.stopWorkspace(workspace.id);
 
   return {
-    text: `Stopped ${live.id} of ${workspace.id} "${workspace.name}".`,
+    text:
+      live.outcomes.length === 0
+        ? `Stopped ${live.id} of ${workspace.id} "${workspace.name}" before its first step, so it leaves no run behind.`
+        : `Stopped ${live.id} of ${workspace.id} "${workspace.name}".`,
     isError: false,
   };
 }
@@ -186,8 +194,4 @@ async function statusOf(props: {
     isGoing || runId === null ? null : await port.networkOf({ workspaceId, runId });
 
   return describeRunStatus({ workspace, runId: wanted, network, now: port.now() });
-}
-
-function countOf(props: { amount: number; noun: string }): string {
-  return `${String(props.amount)} ${props.noun}${props.amount === 1 ? '' : 's'}`;
 }

@@ -1,5 +1,6 @@
 import type { IProject } from '@/modules/Project';
 import type { IWorkspace } from '@/modules/Workspace';
+import { countOf } from '@/modules/Assistant/library';
 
 /**
  * Todo projeto e workspace do QA para um agente de fora achar o que rodar: o que cada um
@@ -42,7 +43,7 @@ function lineOf(props: { project: IProject; workspace: IWorkspace }): string {
       : `${countOf({ amount: workspace.plan.length, noun: 'case' })} and ${countOf({ amount: steps, noun: 'step' })}`,
     last === undefined
       ? 'never run'
-      : `last run ${last.id}: ${String(last.counts.passed)} steps passed, ${String(last.counts.failed)} failed`,
+      : `last run ${last.id}: ${countOf({ amount: last.counts.passed, noun: 'step' })} passed, ${String(last.counts.failed)} failed`,
     countOf({ amount: openBugs, noun: 'open bug' }),
     ...(live !== null && !live.isDone
       ? [
@@ -52,8 +53,4 @@ function lineOf(props: { project: IProject; workspace: IWorkspace }): string {
         ]
       : []),
   ].join(' · ');
-}
-
-function countOf(props: { amount: number; noun: string }): string {
-  return `${String(props.amount)} ${props.noun}${props.amount === 1 ? '' : 's'}`;
 }

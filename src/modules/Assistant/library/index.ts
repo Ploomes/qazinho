@@ -1,5 +1,6 @@
 export * from './appSnapshotOf';
 export * from './confluenceWantedOf';
+export * from './countOf';
 export * from './describeBug';
 export * from './describeRun';
 export * from './describeWorkspace';

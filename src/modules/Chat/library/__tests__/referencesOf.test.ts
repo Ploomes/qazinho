@@ -48,7 +48,7 @@ describe('referencesOf', () => {
         wholePlan: 'The whole plan',
         exploration: 'Exploration',
       })[0]?.facts[0],
-    ).toMatch(/walked the whole plan$/);
+    ).toMatch(/walked to the end$/);
     expect(
       referencesOf({
         workspace: stopped,
