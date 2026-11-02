@@ -2,6 +2,7 @@ export * from './AgentMcp';
 export * from './BugFiler';
 export * from './BugReviewer';
 export * from './CodeCopies';
+export * from './ImportScanner';
 export * from './ConfluenceApi';
 export * from './GithubCli';
 export * from './GithubRepos';
