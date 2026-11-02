@@ -3,8 +3,8 @@ import { usePanelTabsViewModel } from './hooks';
 import './styles.css';
 
 /**
- * As abas do painel ao lado do chat: o plano, o dispositivo, as runs e os bugs, cada uma
- * com o que guarda.
+ * As abas do workspace: o dispositivo, o plano, as runs e os bugs, cada uma com o que
+ * guarda.
  */
 export const PanelTabs: React.FC<IPanelTabsProps> = (props) => {
   const { items, tabsLabel, onTabClick } = usePanelTabsViewModel(props);

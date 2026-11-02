@@ -7,16 +7,16 @@ export const usePanelTabsViewModel = (props: IPanelTabsProps) => {
 
   const items = [
     {
-      id: 'plan' as const,
-      label: t('WORKSPACE.TAB_PLAN'),
-      badge: String(planCount),
-      isLive: false,
-    },
-    {
       id: 'device' as const,
       label: isLive ? t('WORKSPACE.TAB_LIVE') : t('WORKSPACE.TAB_DEVICE'),
       badge: '',
       isLive,
+    },
+    {
+      id: 'plan' as const,
+      label: t('WORKSPACE.TAB_PLAN'),
+      badge: String(planCount),
+      isLive: false,
     },
     {
       id: 'runs' as const,

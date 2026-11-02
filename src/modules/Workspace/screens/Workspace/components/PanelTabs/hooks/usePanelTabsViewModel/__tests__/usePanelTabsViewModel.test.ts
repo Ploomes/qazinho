@@ -21,12 +21,12 @@ describe('usePanelTabsViewModel', () => {
       expect(result.current.items.find(({ isActive }) => isActive)?.id).toBe('plan');
     });
 
-    it('lists the plan, the device, the runs and the bugs, counting what each holds', () => {
+    it('lists the device, the plan, the runs and the bugs, counting what each holds', () => {
       const { result } = renderHook(() => usePanelTabsViewModel(PROPS));
 
       expect(result.current.items.map(({ id, badge }) => [id, badge])).toEqual([
-        ['plan', '4'],
         ['device', ''],
+        ['plan', '4'],
         ['runs', '1'],
         ['bugs', '0'],
       ]);
