@@ -1,6 +1,7 @@
 export * from './useArchive';
 export * from './useCountdown';
 export * from './useDismiss';
+export * from './useFollowEnd';
 export * from './useKeybinds';
 export * from './useLanguage';
 export * from './useMachineWatch';
