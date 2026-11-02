@@ -64,6 +64,21 @@ describe('useRunNoticeViewModel', () => {
     ).toBe(false);
   });
 
+  /** A store limpa o aviso ao fechar, e a saída ainda desenha a partir deste view model. */
+  it('keeps saying what it said while it leaves', () => {
+    const result = noticing(recordedRun(['passed', 'failed']));
+
+    act(() => {
+      useAppStore.setState({ runNotice: null });
+    });
+
+    expect(result.current).toMatchObject({
+      isShown: true,
+      kicker: 'Run r-01 finished',
+      title: 'Checkout regression',
+    });
+  });
+
   it('shows nothing for a run that is gone', () => {
     expect(noticing(recordedRun(), 'r-09').current.isShown).toBe(false);
   });

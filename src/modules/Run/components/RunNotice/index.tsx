@@ -35,9 +35,9 @@ export const RunNotice: React.FC = () => {
       className="run-notice"
       role="status"
       style={style}
-      initial={STICKER.slap.initial}
-      animate={STICKER.slap.animate}
-      exit={STICKER.slap.exit}
+      initial={STICKER.panel.initial}
+      animate={STICKER.panel.animate}
+      exit={STICKER.panel.exit}
     >
       <Intern mood={mood} size={internSize} isStill />
 

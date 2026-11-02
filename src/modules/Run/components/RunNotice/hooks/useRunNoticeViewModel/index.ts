@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isSeenIn } from '@/modules/Bug/library';
 import { RUN_NOTICE } from '@/modules/Run/components/RunNotice/constants';
@@ -8,7 +9,8 @@ import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useRunNoticeViewModel = () => {
   const { t } = useTranslation();
-  const notice = useAppStore((state) => state.runNotice);
+  const live = useAppStore((state) => state.runNotice);
+  const [notice] = useState(live);
   const closeRunNotice = useAppStore((state) => state.closeRunNotice);
   const openReplay = useAppStore((state) => state.openReplay);
   const workspace = useWorkspaceStore(
