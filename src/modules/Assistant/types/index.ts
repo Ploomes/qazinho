@@ -8,6 +8,7 @@ export type * from './IAssistantAgentMessage';
 export type * from './IAssistantConfirmMessage';
 export type * from './IAssistantErrorMessage';
 export type * from './IAssistantNoteMessage';
+export type * from './IAssistantTip';
 export type * from './IAssistantToolMessage';
 export type * from './IAssistantUserMessage';
 export type * from './IToolDone';

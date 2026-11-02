@@ -2,6 +2,7 @@ import type {
   AssistantMessage,
   ConfirmDecision,
   IAssistantConfirmMessage,
+  IAssistantTip,
   IAssistantToolMessage,
 } from '@/modules/Assistant/types';
 
@@ -17,6 +18,7 @@ export interface IAssistantStore {
   isAsking: boolean;
   liveText: string;
   unread: number;
+  tip: IAssistantTip | null;
   open: () => void;
   close: () => void;
   toggle: () => void;
@@ -35,4 +37,6 @@ export interface IAssistantStore {
   askConfirm: (message: IAssistantConfirmMessage) => void;
   settleConfirm: (props: { id: string; decision: ConfirmDecision }) => void;
   startOver: () => void;
+  say: (text: string) => void;
+  hush: () => void;
 }

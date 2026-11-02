@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ASSISTANT_DOCK } from '@/modules/Assistant/constants';
 import { Platform } from '@/services';
@@ -10,6 +11,8 @@ export const useAssistantButtonViewModel = () => {
   const isOpen = useAssistantStore((state) => state.isOpen);
   const isAsking = useAssistantStore((state) => state.isAsking);
   const unread = useAssistantStore((state) => state.unread);
+  const isSpeaking = useAssistantStore((state) => state.tip !== null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const toggle = useAssistantStore((state) => state.toggle);
   const combo = useSettingsStore(
     (state) => state.keybinds.find(({ id }) => id === 'assistant')?.combo ?? null,
@@ -17,6 +20,7 @@ export const useAssistantButtonViewModel = () => {
   const label = isOpen ? t('ASSISTANT.CLOSE') : t('ASSISTANT.OPEN');
 
   return {
+    buttonRef,
     isOpen,
     isBusy: isAsking,
     className: isOpen ? 'assistant-button assistant-button--open' : 'assistant-button',
@@ -35,7 +39,7 @@ export const useAssistantButtonViewModel = () => {
       : unread > 0
         ? ('passed' as const)
         : ('neutral' as const),
-    isStill: !isAsking,
+    isStill: !isAsking && !isSpeaking,
     faceSize: ASSISTANT_DOCK.faceSize,
     badge: unread === 0 || isOpen ? null : String(unread),
     badgeLabel:

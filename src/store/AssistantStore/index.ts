@@ -14,6 +14,11 @@ export const useAssistantStore = create<IAssistantStore>()(
       isAsking: false,
       liveText: '',
       unread: 0,
+      tip: null,
+
+      say: (text) => set({ tip: { id: crypto.randomUUID(), text } }),
+
+      hush: () => set({ tip: null }),
 
       open: () => set({ isOpen: true, unread: 0 }),
 

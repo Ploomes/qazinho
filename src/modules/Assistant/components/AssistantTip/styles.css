@@ -1,0 +1,33 @@
+.assistant-tip {
+  position: fixed;
+  z-index: 40;
+  top: calc(var(--assistant-tip-top) + var(--space-3));
+  right: var(--assistant-tip-right);
+  box-sizing: border-box;
+  width: max-content;
+  max-width: var(--assistant-tip-width);
+  padding: var(--space-3) var(--space-4);
+  border: var(--edge-width) solid var(--edge);
+  border-radius: var(--radius-md);
+  background: var(--raise);
+  box-shadow: var(--sticker-hero);
+  color: var(--ink);
+  font: var(--font-ui-sm);
+  text-wrap: pretty;
+  cursor: pointer;
+  transform-origin: top right;
+  -webkit-app-region: no-drag;
+}
+
+.assistant-tip::before {
+  position: absolute;
+  top: calc(var(--assistant-tip-tail) / -2 - var(--edge-width) / 2);
+  right: var(--assistant-tip-tail-right);
+  width: var(--assistant-tip-tail);
+  height: var(--assistant-tip-tail);
+  border-top: var(--edge-width) solid var(--edge);
+  border-left: var(--edge-width) solid var(--edge);
+  background: var(--raise);
+  transform: rotate(45deg);
+  content: '';
+}

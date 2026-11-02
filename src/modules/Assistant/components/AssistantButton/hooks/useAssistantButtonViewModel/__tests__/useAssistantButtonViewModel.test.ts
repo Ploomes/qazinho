@@ -8,7 +8,7 @@ import { useAssistantStore, useSettingsStore } from '@/store';
 
 beforeEach(() => {
   useSettingsStore.setState({ language: 'en', keybinds: KEYBINDS });
-  useAssistantStore.setState({ isOpen: false, isAsking: false, unread: 0 });
+  useAssistantStore.setState({ isOpen: false, isAsking: false, unread: 0, tip: null });
 });
 
 afterEach(() => {
@@ -17,6 +17,26 @@ afterEach(() => {
 });
 
 describe('useAssistantButtonViewModel', () => {
+  describe('while he speaks', () => {
+    it('moves while a tip is up, and stands still again after it', () => {
+      const { result } = renderHook(() => useAssistantButtonViewModel());
+
+      expect(result.current.isStill).toBe(true);
+
+      act(() => {
+        useAssistantStore.getState().say('Connect Jira here.');
+      });
+
+      expect(result.current.isStill).toBe(false);
+
+      act(() => {
+        useAssistantStore.getState().hush();
+      });
+
+      expect(result.current.isStill).toBe(true);
+    });
+  });
+
   describe('onClick', () => {
     it('opens the chat, and shuts it again', () => {
       const { result } = renderHook(() => useAssistantButtonViewModel());
