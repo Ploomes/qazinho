@@ -96,7 +96,7 @@ describe('useBuildProgressViewModel', () => {
 
     expect(result.current).toMatchObject({
       built: 'Built: acme-loja-app-main-c0ffee1.apk · 2 MB',
-      builtNote: 'It is the target of this project now.',
+      builtNote: 'The project tests it now.',
       lines: [],
       hasActions: false,
       mood: 'passed',

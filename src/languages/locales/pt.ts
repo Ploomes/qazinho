@@ -90,7 +90,7 @@ export const pt: typeof en = {
     TAB_PLAN: 'Plano',
     TAB_RUNS: 'Runs',
     TAB_BUGS: 'Bugs',
-    TAB_DEVICE: 'Device',
+    TAB_DEVICE: 'Dispositivo',
     TAB_LIVE: 'Ao vivo',
     LIVE_STEP: 'rodando · passo {{current}} de {{total}}',
     PAUSED_STEP: 'pausado · passo {{current}} de {{total}}',
@@ -103,7 +103,7 @@ export const pt: typeof en = {
     TARGET_PICK_ANDROID: 'Escolher .apk…',
     TARGET_PICK_WEB: 'Editar URL…',
     TARGET_NONE: 'nenhum ainda',
-    TARGETS_OF: 'Targets do projeto {{project}}',
+    TARGETS_OF: 'Onde testar em {{project}}',
     TARGETS_MORE: 'Mais configurações',
   },
   AGENT: {
@@ -241,9 +241,9 @@ export const pt: typeof en = {
       'O plano digita {{names}}, que o projeto ainda não guarda: adicione, ou cada run pergunta a você.',
     MISSING_ADD: 'Adicionar as variáveis',
     SECRET_PASSWORD:
-      'O {{caseId}} escreve uma senha no plano, e toda run, teste exportado e página publicada a levaria junto. Guardada como variável, ela fica selada pelo chaveiro e o plano só a nomeia.',
+      'O {{caseId}} escreve uma senha no plano, e toda run, teste exportado e página publicada a levaria junto. Guardada como variável, ela fica guardada pelo chaveiro e o plano só a nomeia.',
     SECRET_TOKEN:
-      'O {{caseId}} escreve um token no plano, e toda run, teste exportado e página publicada o levaria junto. Guardado como variável, ele fica selado pelo chaveiro e o plano só o nomeia.',
+      'O {{caseId}} escreve um token no plano, e toda run, teste exportado e página publicada o levaria junto. Guardado como variável, ele fica guardado pelo chaveiro e o plano só o nomeia.',
     SECRET_KEEP: 'Guardar como variável',
     SECRET_PLAIN: 'Não é segredo',
     SECRET_PASSWORD_HOLDS: 'A senha com que o {{caseId}} entra',
@@ -403,7 +403,7 @@ export const pt: typeof en = {
     TALLY_SKIPPED_OTHER: '{{count}} não rodaram',
     NO_SHOT: 'Este passo não tem screenshot.',
     NO_TARGET:
-      'O target em que este workspace roda saiu do projeto. Adicione de volta nas configurações do projeto e rode de novo.',
+      'O alvo deste workspace saiu do projeto. Adicione de volta nas configurações do projeto e rode de novo.',
     FAILED_AGENT_MISSING:
       'O QAzinho não encontra o {{agent}} nesta máquina. Instale, ou escolha outro agente em Configurações.',
     FAILED_NO_EMULATOR:
@@ -472,13 +472,13 @@ export const pt: typeof en = {
     STEPS: 'passos',
     STEPS_PROGRESS: '{{done}} de {{total}}',
     SCREENS: 'telas',
-    SHOT_ALT: 'o device depois do último passo',
+    SHOT_ALT: 'o dispositivo depois do último passo',
     FOCUS: 'Ampliar',
     FOCUS_LEAVE: 'Voltar',
     FOCUS_NOW: 'agora',
     FOCUS_NEXT: 'próximo',
     FOCUS_ALL_DONE: 'Todos os passos terminaram.',
-    FOCUSED: 'O device está em foco. Esc traz ele de volta para cá.',
+    FOCUSED: 'O dispositivo está em foco. Esc traz ele de volta.',
     VIEWPORT: 'tela',
     VIEWPORT_DESKTOP: 'Desktop',
     VIEWPORT_TABLET: 'Tablet',
@@ -860,7 +860,7 @@ export const pt: typeof en = {
     CONNECT_BAD_SITE:
       'Isso não parece um site do Jira. Use o endereço em que você abre o Jira, como acme.atlassian.net.',
     CONNECT_NO_KEYCHAIN:
-      'Esta máquina não tem um chaveiro em que o QAzinho possa selar um token, então ele não guarda nenhum. No Linux, abra o GNOME Keyring ou o KWallet primeiro.',
+      'Esta máquina não tem um chaveiro em que o QAzinho possa guardar um token, então ele não guarda nenhum. No Linux, abra o GNOME Keyring ou o KWallet primeiro.',
     CONNECT_SCOPES: 'O GitHub CLI está conectado sem acesso a {{scopes}}.',
     FIELD_SITE: 'site',
     FIELD_EMAIL: 'email',
@@ -1235,7 +1235,7 @@ export const pt: typeof en = {
     STEP_AGENT: 'O {{agent}} está montando o build',
     STEP_ARTIFACT: 'Conferindo o que saiu',
     BUILT: 'Pronto: {{name}} · {{size}}',
-    BUILT_LINKED: 'Já é o alvo deste projeto.',
+    BUILT_LINKED: 'O projeto testa este agora.',
     STOP: 'Parar',
     RETRY: 'Tentar de novo',
     STOPPED: 'Você parou o build.',
@@ -1251,7 +1251,7 @@ export const pt: typeof en = {
   MASCOT: {
     NAME: 'Estagiário',
     ALT: '{{name}}, {{mood}}',
-    MOOD_NEUTRAL: 'parado',
+    MOOD_NEUTRAL: 'tranquilo',
     MOOD_RUNNING: 'rodando os testes',
     MOOD_PASSED: 'todos os testes passaram',
     MOOD_BUG: 'achou um bug',
@@ -1304,8 +1304,8 @@ export const pt: typeof en = {
     PASSED: 'passou',
     BLOCKED: 'bloqueado',
     SKIPPED: 'pulado',
-    STOPPED: 'parado',
-    IDLE: 'ocioso',
+    STOPPED: 'parou',
+    IDLE: 'sem run',
     NOT_RUN: 'não rodou',
   },
   PRO: {

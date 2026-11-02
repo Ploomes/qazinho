@@ -101,7 +101,7 @@ export const en = {
     TARGET_PICK_ANDROID: 'Choose .apk…',
     TARGET_PICK_WEB: 'Edit URL…',
     TARGET_NONE: 'none yet',
-    TARGETS_OF: 'Targets of {{project}}',
+    TARGETS_OF: 'Where to test in {{project}}',
     TARGETS_MORE: 'More settings',
   },
   AGENT: {
@@ -238,9 +238,9 @@ export const en = {
       'The plan types {{names}}, which the project does not keep yet: add them, or a run asks you for them each time.',
     MISSING_ADD: 'Add the variables',
     SECRET_PASSWORD:
-      '{{caseId}} writes a password out in the plan, where every run, exported test and published page would carry it. Kept as a variable, it is sealed by the keychain and the plan names it.',
+      '{{caseId}} writes a password out in the plan, where every run, exported test and published page would carry it. Kept as a variable, it is kept by the keychain and the plan names it.',
     SECRET_TOKEN:
-      '{{caseId}} writes a token out in the plan, where every run, exported test and published page would carry it. Kept as a variable, it is sealed by the keychain and the plan names it.',
+      '{{caseId}} writes a token out in the plan, where every run, exported test and published page would carry it. Kept as a variable, it is kept by the keychain and the plan names it.',
     SECRET_KEEP: 'Keep it as a variable',
     SECRET_PLAIN: 'Not a secret',
     SECRET_PASSWORD_HOLDS: 'The password {{caseId}} signs in with',
@@ -399,7 +399,7 @@ export const en = {
     TALLY_SKIPPED_OTHER: '{{count}} did not run',
     NO_SHOT: 'This step has no screenshot.',
     NO_TARGET:
-      'The target this workspace runs on is gone from its project. Add it back in the project settings, then run again.',
+      'What this workspace runs on is gone from its project. Add it back in the project settings, then run again.',
     FAILED_AGENT_MISSING:
       'QAzinho cannot find {{agent}} on this machine. Install it, or pick another agent in Settings.',
     FAILED_NO_EMULATOR:
@@ -474,7 +474,7 @@ export const en = {
     FOCUS_NOW: 'now',
     FOCUS_NEXT: 'next',
     FOCUS_ALL_DONE: 'Every step is done.',
-    FOCUSED: 'The device is in focus. Esc brings it back here.',
+    FOCUSED: 'The device is in focus. Esc brings it back.',
     VIEWPORT: 'screen',
     VIEWPORT_DESKTOP: 'Desktop',
     VIEWPORT_TABLET: 'Tablet',
@@ -855,7 +855,7 @@ export const en = {
     CONNECT_BAD_SITE:
       'That does not look like a Jira site. Use the address you open Jira at, like acme.atlassian.net.',
     CONNECT_NO_KEYCHAIN:
-      'This machine has no keychain QAzinho can seal a token with, so it will not store one. On Linux, open GNOME Keyring or KWallet first.',
+      'This machine has no keychain QAzinho can keep a token in, so it will not store one. On Linux, open GNOME Keyring or KWallet first.',
     CONNECT_SCOPES: 'The GitHub CLI is signed in without access to {{scopes}}.',
     FIELD_SITE: 'site',
     FIELD_EMAIL: 'email',
@@ -1229,7 +1229,7 @@ export const en = {
     STEP_AGENT: '{{agent}} builds it',
     STEP_ARTIFACT: 'Checking what it made',
     BUILT: 'Built: {{name}} · {{size}}',
-    BUILT_LINKED: 'It is the target of this project now.',
+    BUILT_LINKED: 'The project tests it now.',
     STOP: 'Stop',
     RETRY: 'Try again',
     STOPPED: 'You stopped the build.',
