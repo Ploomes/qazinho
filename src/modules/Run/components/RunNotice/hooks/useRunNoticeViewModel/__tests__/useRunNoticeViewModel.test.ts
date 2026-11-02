@@ -44,7 +44,7 @@ describe('useRunNoticeViewModel', () => {
       mood: 'bug',
     });
     expect(result.current.tally.map(({ key, count }) => [key, count])).toEqual([
-      ['passed', 4],
+      ['passed', 1],
       ['failed', 1],
     ]);
   });
@@ -59,7 +59,10 @@ describe('useRunNoticeViewModel', () => {
 
   it('counts only the verdicts the run has', () => {
     const result = noticing(
-      walkRun({ verdicts: ['passed', 'passed'], isFinished: true }),
+      walkRun({
+        verdicts: ['passed', 'passed', 'passed', 'passed', 'passed', 'passed'],
+        isFinished: true,
+      }),
     );
 
     expect(result.current.tally.map(({ key }) => key)).toEqual(['passed']);

@@ -5,7 +5,7 @@ import { useBugReviews } from '@/modules/Bug/hooks/useBugReviews';
 import { isSeenIn } from '@/modules/Bug/library';
 import { RUN_FAILURE_KEYS } from '@/modules/Run/constants';
 import { useOpenRun } from '@/modules/Run/hooks/useOpenRun';
-import { walkedByOf } from '@/modules/Run/library';
+import { caseVerdict, countVerdicts, walkedByOf } from '@/modules/Run/library';
 import { Run, Variables } from '@/services';
 import {
   useAppStore,
@@ -65,6 +65,7 @@ export const useRunEvents = () => {
 
     const bugs = workspace.bugs.filter((bug) => isSeenIn({ bug, runId: run.id })).length;
     const isExploration = run.kind === 'explore';
+    const cases = countVerdicts(run.cases.map(({ steps }) => caseVerdict(steps)));
     const tally = [
       ...(isExploration
         ? [
@@ -76,12 +77,26 @@ export const useRunEvents = () => {
             ),
           ]
         : [
-            t(run.counts.passed === 1 ? 'CHAT.RUN_PASSED_ONE' : 'CHAT.RUN_PASSED_OTHER', {
-              count: run.counts.passed,
-            }),
-            t(run.counts.failed === 1 ? 'CHAT.RUN_FAILED_ONE' : 'CHAT.RUN_FAILED_OTHER', {
-              count: run.counts.failed,
-            }),
+            ...(cases.failed === 0
+              ? []
+              : [
+                  t(
+                    cases.failed === 1 ? 'CHAT.RUN_FAILED_ONE' : 'CHAT.RUN_FAILED_OTHER',
+                    {
+                      count: cases.failed,
+                    },
+                  ),
+                ]),
+            ...(cases.passed === 0
+              ? []
+              : [
+                  t(
+                    cases.passed === 1 ? 'CHAT.RUN_PASSED_ONE' : 'CHAT.RUN_PASSED_OTHER',
+                    {
+                      count: cases.passed,
+                    },
+                  ),
+                ]),
           ]),
       ...(bugs === 0
         ? []
