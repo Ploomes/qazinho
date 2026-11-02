@@ -23,9 +23,7 @@ describe('playwrightOf', () => {
     expect(FILE).toContain('  await control(tab, "Comprar", 1).click();');
     expect(FILE).toContain('  await tab.waitForTimeout(500);');
     expect(FILE).toContain('  tab = await reopen(tab);');
-    expect(FILE).toContain(
-      '  await expect(tab.getByText("Carrinho 1 (R$ 79,90)").first()).toBeVisible();',
-    );
+    expect(FILE).toContain('  await shows(tab, "Carrinho 1 (R$ 79,90)");');
   });
 
   it('checks each line of a proof that holds several', () => {
@@ -48,7 +46,7 @@ describe('playwrightOf', () => {
     });
 
     expect(file).toContain(
-      '  await expect(tab.getByText("1 item: Camiseta").first()).toBeVisible();\n  await expect(tab.getByText("Total: R$ 79,90").first()).toBeVisible();',
+      '  await shows(tab, "1 item: Camiseta");\n  await shows(tab, "Total: R$ 79,90");',
     );
   });
 
@@ -169,9 +167,7 @@ describe('playwrightOf', () => {
     expect(file).toContain(
       '  await field(tab, "Senha").fill(`pre\\`fix ${variable("SHOP_PASSWORD")}`);',
     );
-    expect(file).toContain(
-      '  await expect(tab.getByText(`Welcome, ${variable("SHOP_EMAIL")}.`).first()).toBeVisible();',
-    );
+    expect(file).toContain('  await shows(tab, `Welcome, ${variable("SHOP_EMAIL")}.`);');
   });
 
   it('does NOT add the environment helper to a file with no variable', () => {

@@ -34,6 +34,31 @@ function field(page: Page, name: string, nth = 0) {
     .nth(nth);
 }
 
+async function screenOf(page: Page): Promise<string> {
+  const text = await page.locator('body').innerText();
+  const fields = await page
+    .locator('input, textarea, select, [aria-label]')
+    .evaluateAll((all) =>
+      all.flatMap((one) => [
+        (one as HTMLInputElement).value ?? '',
+        (one as HTMLInputElement).placeholder ?? '',
+        one.getAttribute('aria-label') ?? '',
+      ]),
+    );
+
+  return plain([text, ...fields].join('\\n'));
+}
+
+function plain(text: string): string {
+  return text.toLowerCase().replace(/\\s+/g, ' ').trim();
+}
+
+async function shows(page: Page, words: string): Promise<void> {
+  await expect
+    .poll(() => screenOf(page), { message: \`The screen should show: \${words}\` })
+    .toContain(plain(words));
+}
+
 async function reopen(page: Page): Promise<Page> {
   const next = prepare(await page.context().newPage());
 
@@ -71,8 +96,7 @@ export function playwrightOf(props: {
         `  // ${String(step.numberInCase)}. ${step.action} → ${step.expected}`,
         ...(kept?.actions ?? []).flatMap(lineOf).map((line) => `  ${line}`),
         ...shownOf(kept?.proof ?? '').map(
-          (shown) =>
-            `  await expect(tab.getByText(${quoted(shown)}).first()).toBeVisible();`,
+          (shown) => `  await shows(tab, ${quoted(shown)});`,
         ),
       ];
     });
