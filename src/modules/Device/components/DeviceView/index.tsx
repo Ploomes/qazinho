@@ -53,36 +53,38 @@ export const DeviceView: React.FC = () => {
 
   return (
     <div className="device-view" style={style}>
-      <header className="device-view__header">
-        {hasState && (
-          <span className="device-view__state">
-            <Intern mood={mood} size={22} isStill />
-            <span className="device-view__state-text">{stateText}</span>
-            {isLive && <LiveClock label={elapsedLabel} />}
-          </span>
-        )}
-        <span className="device-view__collapse">
-          {hasViewportPicker && (
-            <ViewportPicker viewports={viewports} onSelect={onSelectViewport} />
+      {hasScreen && (
+        <header className="device-view__header">
+          {hasState && (
+            <span className="device-view__state">
+              <Intern mood={mood} size={22} isStill />
+              <span className="device-view__state-text">{stateText}</span>
+              {isLive && <LiveClock label={elapsedLabel} />}
+            </span>
           )}
-          <AnimatePresence initial={false}>
-            {canFocus && (
-              <motion.span
-                key="focus"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
-              >
-                <Button size="sm" variant="secondary" onClick={onFocus}>
-                  <Icon name="focus" />
-                  <span className="device-view__focus-label">{focusLabel}</span>
-                </Button>
-              </motion.span>
+          <span className="device-view__collapse">
+            {hasViewportPicker && (
+              <ViewportPicker viewports={viewports} onSelect={onSelectViewport} />
             )}
-          </AnimatePresence>
-        </span>
-      </header>
+            <AnimatePresence initial={false}>
+              {canFocus && (
+                <motion.span
+                  key="focus"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+                >
+                  <Button size="sm" variant="secondary" onClick={onFocus}>
+                    <Icon name="focus" />
+                    <span className="device-view__focus-label">{focusLabel}</span>
+                  </Button>
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </span>
+        </header>
+      )}
 
       <div className={viewportClassName}>
         {!hasScreen && (

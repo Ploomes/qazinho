@@ -17,6 +17,7 @@
   height: var(--device-header);
   padding: 0 var(--device-gutter);
   border-bottom: 1px solid var(--line2);
+  animation: gc-in var(--dur) var(--ease) both;
 }
 
 .device-view__state {
