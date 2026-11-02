@@ -146,6 +146,17 @@
   font: 400 13px/1.5 var(--font-ui);
 }
 
+.plan-case__field .editable-text {
+  width: calc(100% + 2 * (var(--space-4) + 1px));
+  margin: -3px calc(-1 * (var(--space-4) + 1px));
+  padding: var(--space-1) var(--space-4);
+  border-radius: var(--radius-sm);
+}
+
+.plan-case__field .editable-text:focus {
+  background: var(--raise);
+}
+
 .plan-case__ghosts {
   display: flex;
   flex-wrap: wrap;
