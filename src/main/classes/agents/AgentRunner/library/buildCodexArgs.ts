@@ -1,4 +1,5 @@
 import type { IRunAgent } from '@/main/classes/agents/AgentRunner/types';
+import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
 
 /**
  * As flags de uma resposta do Codex em linhas JSON sem pedir aprovação: somente leitura,
@@ -36,7 +37,10 @@ export function buildCodexArgs(
     ...(systemPrompt === undefined
       ? []
       : ['-c', `developer_instructions=${JSON.stringify(systemPrompt)}`]),
-    ...(props.permissionTool === undefined ? props.ownServers : [])
+    ...props.ownServers
+      .filter(
+        (name) => props.permissionTool === undefined || name === AGENT_RUN.orgServer,
+      )
       .filter((name) => !served.includes(name))
       .flatMap((name) => ['-c', `mcp_servers.${name}.enabled=false`]),
     ...(server === null

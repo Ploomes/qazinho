@@ -198,6 +198,22 @@ describe('buildAskArgs', () => {
     );
   });
 
+  /**
+   * O MCP da plataforma gasta os créditos da org: uma página sob teste nunca pode pedir ao
+   * agente da run que rode o CI.
+   */
+  it("keeps the QA's org server away from the agents of QAzinho", () => {
+    const args = buildAskArgs({
+      model: 'haiku',
+      sessionId: null,
+      mcpConfig: '{}',
+      allowedTools: ['mcp__qazinho'],
+      permissionTool: 'mcp__qazinho__approve_permission',
+    });
+
+    expect(args[args.indexOf('--disallowedTools') + 1]).toBe('mcp__qazinho-org');
+  });
+
   it('does NOT let them into a call with no tool to grant them', () => {
     const args = buildAskArgs({
       model: '',

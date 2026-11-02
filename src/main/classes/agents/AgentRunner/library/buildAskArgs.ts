@@ -27,7 +27,14 @@ export function buildAskArgs(
     ...(sessionId === null ? [] : ['--resume', sessionId]),
     ...(schema === undefined ? [] : ['--json-schema', schema]),
     ...(systemPrompt === undefined ? [] : ['--append-system-prompt', systemPrompt]),
-    ...(isOwnServers ? ['--permission-prompt-tool', props.permissionTool ?? ''] : []),
+    ...(isOwnServers
+      ? [
+          '--permission-prompt-tool',
+          props.permissionTool ?? '',
+          '--disallowedTools',
+          `mcp__${AGENT_RUN.orgServer}`,
+        ]
+      : []),
     ...(mcpConfig === undefined
       ? isOwnServers
         ? []

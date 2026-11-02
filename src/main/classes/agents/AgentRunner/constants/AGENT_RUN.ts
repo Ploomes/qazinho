@@ -4,4 +4,5 @@ export const AGENT_RUN = {
   structuredTool: 'StructuredOutput',
   readTools: 'Read,Grep,Glob',
   settings: '{"disableAllHooks":true}',
+  orgServer: 'qazinho-org',
 } as const;

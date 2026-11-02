@@ -117,4 +117,17 @@ describe('buildCodexArgs', () => {
 
     expect(args.join(' ')).not.toContain('enabled=false');
   });
+
+  it("keeps the QA's org server off even when their own servers stay on", () => {
+    const args = buildCodexArgs({
+      model: '',
+      sessionId: null,
+      schemaFile: null,
+      ownServers: ['atlassian', 'qazinho-org'],
+      permissionTool: 'mcp__qazinho__approve_permission',
+    });
+
+    expect(args).toContain('mcp_servers.qazinho-org.enabled=false');
+    expect(args).not.toContain('mcp_servers.atlassian.enabled=false');
+  });
 });
