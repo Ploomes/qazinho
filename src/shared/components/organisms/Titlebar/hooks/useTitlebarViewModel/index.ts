@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useModelInUse } from '@/modules/Settings';
 import { Platform } from '@/services';
 import { gaugeTone } from '@/shared/components/atoms/Gauge/library';
-import { TITLEBAR } from '@/shared/components/organisms/Titlebar/constants';
 import { formatResetsAt } from '@/shared/components/organisms/Titlebar/library';
 import { useAppStore, useMachineStore } from '@/store';
 
@@ -35,10 +34,7 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
     resourcesLabel: t('RESOURCES.TITLE'),
     agentLabel: t('TITLEBAR.AGENT', { agent, model: modelName }),
     betaLabel: t('TITLEBAR.BETA'),
-    sessionUsed:
-      sessionUsed !== null && sessionUsed >= TITLEBAR.sessionShownFrom
-        ? sessionUsed
-        : null,
+    sessionUsed,
     sessionLabel:
       sessionUsed === null
         ? null

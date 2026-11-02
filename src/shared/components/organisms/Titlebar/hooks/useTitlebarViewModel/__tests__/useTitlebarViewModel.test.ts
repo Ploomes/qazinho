@@ -68,10 +68,17 @@ describe('useTitlebarViewModel', () => {
       return renderHook(() => useTitlebarViewModel()).result.current.sessionUsed;
     };
 
-    /** Um anel sempre ligado é mais uma coisa para ler; ele só importa perto do limite. */
-    it('stays out of the bar until the session nears its limit', () => {
-      expect(usedBy(0.79)).toBeNull();
+    it('is always in the bar, with what is left of the session', () => {
+      expect(usedBy(0.05)).toBe(0.05);
       expect(usedBy(0.8)).toBe(0.8);
+    });
+
+    it('is out of the bar while the usage is unknown', () => {
+      useMachineStore.setState({ usage: null } as never);
+
+      expect(
+        renderHook(() => useTitlebarViewModel()).result.current.sessionUsed,
+      ).toBeNull();
     });
   });
 
