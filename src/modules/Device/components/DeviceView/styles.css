@@ -1,4 +1,6 @@
 .device-view {
+  --device-gutter: var(--space-8);
+
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -13,7 +15,7 @@
   align-items: center;
   gap: var(--space-3);
   height: var(--device-header);
-  padding: 0 var(--space-4);
+  padding: 0 var(--device-gutter);
   border-bottom: 1px solid var(--line2);
 }
 
@@ -178,20 +180,21 @@
 
 .device-view__size {
   flex: none;
-  padding: 0 var(--space-4) var(--space-4);
+  padding: 0 var(--device-gutter) var(--space-4);
 }
 
 .device-view__controls {
   display: flex;
   flex: none;
   gap: var(--space-3);
-  padding: 0 var(--space-4) var(--space-4);
+  padding: 0 var(--device-gutter) var(--space-4);
 }
 
 .device-view__steps {
   flex: 1 1 0;
   min-height: var(--device-steps-min);
-  padding: var(--space-4) var(--space-4) calc(var(--space-4) + var(--dock-lift, 0px));
+  padding: var(--space-4) var(--device-gutter)
+    calc(var(--space-4) + var(--dock-lift, 0px));
   border-top: 1px solid var(--line2);
   overflow-y: auto;
   scrollbar-gutter: stable;
@@ -204,4 +207,10 @@
   padding: var(--space-2) 0;
   color: var(--ink2);
   font: var(--font-ui-xs);
+}
+
+@container workspace (width < 560px) {
+  .device-view {
+    --device-gutter: var(--space-6);
+  }
 }
