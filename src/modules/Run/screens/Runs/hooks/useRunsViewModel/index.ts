@@ -30,6 +30,7 @@ export const useRunsViewModel = () => {
   const { t, i18n } = useTranslation();
   const workspace = useSelectedWorkspacePart((opened) => ({
     id: opened.id,
+    planSize: opened.plan.length,
     runs: opened.runs,
     bugs: opened.bugs,
   }));
@@ -94,7 +95,12 @@ export const useRunsViewModel = () => {
 
   const summaryOf = (item: IRun) => ({
     id: item.id,
-    what: item.kind === 'explore' ? t('RUN.EXPLORATION') : t('RUN.WHOLE_PLAN'),
+    what:
+      item.kind === 'explore'
+        ? t('RUN.EXPLORATION')
+        : item.cases.length < (workspace?.planSize ?? 0)
+          ? t('RUN.SOME_CASES', { count: item.cases.length })
+          : t('RUN.WHOLE_PLAN'),
     isSelected: item.id === run?.id,
     ended: endOf(item.endedBy),
     tallies: RUN_VERDICTS.filter((status) => item.counts[status] > 0).map((status) => ({
@@ -142,9 +148,11 @@ export const useRunsViewModel = () => {
     title:
       run === null
         ? ''
-        : t(run.kind === 'explore' ? 'RUN.EXPLORATION_TITLE' : 'RUN.TITLE', {
-            id: run.id,
-          }),
+        : run.kind !== 'explore' && run.cases.length < (workspace?.planSize ?? 0)
+          ? t('RUN.TITLE_SOME', { id: run.id, count: run.cases.length })
+          : t(run.kind === 'explore' ? 'RUN.EXPLORATION_TITLE' : 'RUN.TITLE', {
+              id: run.id,
+            }),
     canWatch,
     watchLabel: t('RUN.WATCH'),
     onWatch: () => {

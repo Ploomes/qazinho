@@ -44,6 +44,25 @@ describe('useRunsViewModel', () => {
     await i18n.changeLanguage('en');
   });
 
+  /** O agente do dev roda um caso só pelo MCP: chamá-la de plano inteiro era mentira. */
+  it('says how many cases a run walked when it was not the whole plan', async () => {
+    await i18n.changeLanguage('en');
+    const workspace = finishedWorkspace();
+    const [first] = workspace.plan;
+
+    useWorkspaceStore.setState({
+      workspaces: [
+        { ...workspace, plan: [...workspace.plan, { ...first!, id: 'TC-99' }] },
+      ],
+    });
+    useAppStore.setState({ selectedWorkspaceId: workspace.id });
+
+    const { result } = renderHook(() => useRunsViewModel());
+
+    expect(result.current.runs[0]?.what).toMatch(/cases?$/);
+    expect(result.current.title).toMatch(/cases?$/);
+  });
+
   it('marks a run that ended before the end, and leaves a finished one plain', () => {
     const stopped = endRun({
       workspace: walkRun({ verdicts: ['passed', 'failed'] }),
