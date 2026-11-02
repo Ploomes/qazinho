@@ -1,0 +1,39 @@
+.import-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.import-field__pick {
+  animation: gc-in var(--dur-fast) var(--ease);
+}
+
+.import-field__picked {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  color: var(--ink2);
+  animation: gc-in var(--dur-fast) var(--ease);
+}
+
+.import-field__name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  font: var(--font-ui-md);
+}
+
+.import-field__kinds {
+  flex: 1;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
+
+.import-field__note {
+  margin: 0;
+  color: var(--fail);
+  font: var(--font-ui-sm);
+  animation: gc-in var(--dur-fast) var(--ease);
+}

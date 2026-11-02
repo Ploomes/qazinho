@@ -2,7 +2,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
-import { useImportFieldViewModel } from '@/modules/Project/components/ProjectModal/components/ImportField/hooks/useImportFieldViewModel';
+import { useImportFieldViewModel } from '@/modules/Workspace/components/NewWorkspaceModal/components/ImportField/hooks/useImportFieldViewModel';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 
 const FOLDER = {
@@ -26,7 +26,7 @@ afterEach(() => {
 });
 
 describe('useImportFieldViewModel', () => {
-  it('hands the folder the QA picked to the project', async () => {
+  it('hands the folder the QA picked to the workspace', async () => {
     window.qazinho = {
       ...fakeQazinhoApi('darwin'),
       pickImport: vi.fn().mockResolvedValue({ kind: 'picked', source: FOLDER }),
@@ -78,7 +78,7 @@ describe('useImportFieldViewModel', () => {
       hasFolder: true,
       name: 'loja-e2e',
       kinds: 'playwright · maestro',
-      branch: 'main',
+      path: '/Users/qa/loja-e2e',
     });
 
     act(() => {

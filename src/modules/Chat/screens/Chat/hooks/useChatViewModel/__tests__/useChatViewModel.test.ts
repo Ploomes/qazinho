@@ -1277,8 +1277,13 @@ describe('useChatViewModel', () => {
       commit: null,
     };
 
-    it('opens the import on the folder picked, once, in the chat of that project', () => {
-      useAppStore.setState({ pendingImport: { projectId: PROJECT.id, source: SOURCE } });
+    it('opens the import on the folder picked, once, in the chat of that workspace', () => {
+      useAppStore.setState({
+        pendingImport: {
+          workspaceId: useAppStore.getState().selectedWorkspaceId ?? '',
+          source: SOURCE,
+        },
+      });
 
       const { result } = renderHook(() => useChatViewModel());
 
@@ -1289,8 +1294,8 @@ describe('useChatViewModel', () => {
       expect(useAppStore.getState().pendingImport).toBeNull();
     });
 
-    it('waits for a workspace of the project it was asked for', () => {
-      useAppStore.setState({ pendingImport: { projectId: 'another', source: SOURCE } });
+    it('waits for the workspace it was asked for', () => {
+      useAppStore.setState({ pendingImport: { workspaceId: 'another', source: SOURCE } });
 
       const { result } = renderHook(() => useChatViewModel());
 

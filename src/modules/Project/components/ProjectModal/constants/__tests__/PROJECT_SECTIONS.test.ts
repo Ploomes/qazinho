@@ -4,12 +4,11 @@ import { i18n } from '@/languages';
 import { PROJECT_SECTIONS } from '@/modules/Project/components/ProjectModal/constants';
 
 describe('PROJECT_SECTIONS', () => {
-  it('opens on what the project is, before its code, its variables and the tests it imports', () => {
+  it('opens on what the project is, before its code and its variables', () => {
     expect(PROJECT_SECTIONS.map(({ id }) => id)).toEqual([
       'general',
       'code',
       'variables',
-      'import',
     ]);
   });
 
@@ -22,8 +21,8 @@ describe('PROJECT_SECTIONS', () => {
 
     expect(PROJECT_SECTIONS.map(({ labelKey }) => t(labelKey))).toEqual(
       language === 'en'
-        ? ['General', 'Code', 'Variables', 'Import']
-        : ['Geral', 'Código', 'Variáveis', 'Importar'],
+        ? ['General', 'Code', 'Variables']
+        : ['Geral', 'Código', 'Variáveis'],
     );
   });
 });

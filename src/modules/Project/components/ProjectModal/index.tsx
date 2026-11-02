@@ -5,7 +5,6 @@ import { FileField } from '@/shared/components/molecules';
 import { ModalFrame } from '@/shared/components/templates';
 import {
   BuildFromCode,
-  ImportField,
   ProjectNav,
   ProjectPane,
   RepoField,
@@ -27,8 +26,6 @@ export const ProjectModal: React.FC = () => {
     apk,
     app,
     repositories,
-    folder,
-    onFolderChange,
     variables,
     savedVariables,
     projectId,
@@ -174,12 +171,6 @@ export const ProjectModal: React.FC = () => {
             onChange={onVariablesChange}
           />
         </ProjectPane>
-
-        {!isEditing && (
-          <ProjectPane label={t('PROJECT.SECTION_IMPORT')} isOpen={isOpen.import}>
-            <ImportField folder={folder} onChange={onFolderChange} />
-          </ProjectPane>
-        )}
 
         {isEditing && projectId !== null && (
           <ProjectPane label={t('PROJECT.SECTION_PRO')} isOpen={isOpen.pro}>

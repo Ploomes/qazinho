@@ -1,12 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import { Eyebrow, Input, PlatformIcon } from '@/shared/components/atoms';
 import { ModalFrame } from '@/shared/components/templates';
+import { ImportField } from './components';
 import { useNewWorkspaceModalViewModel } from './hooks';
 import './styles.css';
 
 export const NewWorkspaceModal: React.FC = () => {
   const {
     name,
+    folder,
+    onFolderChange,
     footerHint,
     hasPlatforms,
     platforms,
@@ -56,6 +59,8 @@ export const NewWorkspaceModal: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ImportField folder={folder} onChange={onFolderChange} />
     </ModalFrame>
   );
 };

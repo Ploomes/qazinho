@@ -139,14 +139,14 @@ export const useChatViewModel = () => {
   const pendingImport = useAppStore((state) => state.pendingImport);
   const clearImport = useAppStore((state) => state.clearImport);
   const startImport = chatCommand.startWith;
-  const openProjectId = workspace?.projectId ?? null;
+  const openWorkspaceId = workspace?.id ?? null;
 
   useEffect(() => {
-    if (pendingImport === null || pendingImport.projectId !== openProjectId) return;
+    if (pendingImport === null || pendingImport.workspaceId !== openWorkspaceId) return;
 
     startImport(pendingImport.source);
     clearImport();
-  }, [pendingImport, openProjectId, startImport, clearImport]);
+  }, [pendingImport, openWorkspaceId, startImport, clearImport]);
 
   const readStep = workspace === null ? undefined : readSteps[workspace.id];
   const sentCommand = (workspace?.chat ?? [])

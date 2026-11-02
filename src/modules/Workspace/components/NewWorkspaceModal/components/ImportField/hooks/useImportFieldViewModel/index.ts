@@ -1,7 +1,7 @@
-import type { IImportFieldProps } from '@/modules/Project/components/ProjectModal/components/ImportField/types';
+import type { IImportFieldProps } from '@/modules/Workspace/components/NewWorkspaceModal/components/ImportField/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IMPORT_FIELD_FAILURE_KEYS } from '@/modules/Project/components/ProjectModal/constants';
+import { IMPORT_FIELD_FAILURE_KEYS } from '@/modules/Workspace/components/NewWorkspaceModal/components/ImportField/constants';
 import { Imports } from '@/services';
 
 export const useImportFieldViewModel = (props: IImportFieldProps) => {
@@ -20,11 +20,9 @@ export const useImportFieldViewModel = (props: IImportFieldProps) => {
         : folder.frameworks.length === 0
           ? t('COMMANDS.IMPORT_UNKNOWN')
           : folder.frameworks.map(({ id }) => id).join(' · '),
-    branch: folder?.branch ?? null,
     path: folder?.dir ?? '',
-    pickLabel: t('PROJECT.IMPORT_PICK'),
-    changeLabel: t('PROJECT.IMPORT_CHANGE'),
-    removeLabel: t('PROJECT.IMPORT_REMOVE'),
+    pickLabel: t('NEW_WORKSPACE.IMPORT_PICK'),
+    removeLabel: t('NEW_WORKSPACE.IMPORT_REMOVE'),
     failureText: failure === null ? null : t(IMPORT_FIELD_FAILURE_KEYS[failure]),
     onPick: () => {
       setPicking(true);

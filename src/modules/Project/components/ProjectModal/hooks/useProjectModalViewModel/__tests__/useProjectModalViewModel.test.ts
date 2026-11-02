@@ -157,7 +157,6 @@ describe('useProjectModalViewModel', () => {
         general: true,
         code: false,
         variables: false,
-        import: false,
         pro: false,
         delete: false,
       });
@@ -174,7 +173,6 @@ describe('useProjectModalViewModel', () => {
         general: false,
         code: false,
         variables: true,
-        import: false,
         pro: false,
         delete: false,
       });
@@ -187,7 +185,6 @@ describe('useProjectModalViewModel', () => {
         'general',
         'code',
         'variables',
-        'import',
       ]);
     });
 
@@ -195,7 +192,6 @@ describe('useProjectModalViewModel', () => {
       const { result } = renderHook(() => useProjectModalViewModel());
 
       expect(result.current.navItems.map(({ count }) => count)).toEqual([
-        null,
         null,
         null,
         null,
@@ -217,12 +213,7 @@ describe('useProjectModalViewModel', () => {
         ]);
       });
 
-      expect(result.current.navItems.map(({ count }) => count)).toEqual([
-        null,
-        2,
-        1,
-        null,
-      ]);
+      expect(result.current.navItems.map(({ count }) => count)).toEqual([null, 2, 1]);
     });
 
     /** Trocar de aba num projeto novo não pode marcar nada: o QA só não terminou ainda. */
@@ -250,7 +241,6 @@ describe('useProjectModalViewModel', () => {
         true,
         false,
         false,
-        false,
       ]);
 
       act(() => {
@@ -258,78 +248,6 @@ describe('useProjectModalViewModel', () => {
       });
 
       expect(result.current.navItems.some(({ isFlagged }) => isFlagged)).toBe(false);
-    });
-  });
-
-  describe('importing tests while the project is made', () => {
-    const FOLDER = {
-      name: 'loja-e2e',
-      dir: '/Users/qa/loja-e2e',
-      frameworks: [{ id: 'playwright', files: 3 }],
-      files: ['a.spec.ts'],
-      branch: 'main',
-      commit: 'abc123',
-    };
-
-    it('asks for the import to open in the first chat once the project is made', () => {
-      useAppStore.setState({ pendingImport: null });
-
-      const { result } = renderHook(() => useProjectModalViewModel());
-
-      act(() => {
-        result.current.onNameChange('Shop · staging');
-        result.current.onUrlChange('https://staging.shop.test');
-        result.current.onFolderChange(FOLDER);
-      });
-
-      expect(result.current.navItems.find(({ id }) => id === 'import')?.count).toBe(1);
-
-      act(() => {
-        result.current.onConfirm();
-      });
-
-      const [project] = useAppStore.getState().projects;
-
-      expect(useAppStore.getState().pendingImport).toEqual({
-        projectId: project?.id,
-        source: FOLDER,
-      });
-    });
-
-    it('asks for nothing when no folder was picked', () => {
-      useAppStore.setState({ pendingImport: null });
-
-      const { result } = renderHook(() => useProjectModalViewModel());
-
-      act(() => {
-        result.current.onNameChange('Shop · staging');
-        result.current.onUrlChange('https://staging.shop.test');
-      });
-      act(() => {
-        result.current.onConfirm();
-      });
-
-      expect(useAppStore.getState().pendingImport).toBeNull();
-    });
-
-    it('offers no import on a project that already exists', () => {
-      useAppStore.setState({
-        projects: [
-          {
-            id: 'p1',
-            name: 'Shop',
-            targets: [
-              { id: 't-web', kind: 'web', label: 'Web', value: 'https://shop.test' },
-            ],
-            repositories: [],
-          },
-        ],
-        editingProjectId: 'p1',
-      });
-
-      const { result } = renderHook(() => useProjectModalViewModel());
-
-      expect(result.current.navItems.map(({ id }) => id)).not.toContain('import');
     });
   });
 

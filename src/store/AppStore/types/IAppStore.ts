@@ -21,7 +21,7 @@ export interface IAppStore {
   projectSection: ProjectSection | null;
   selectedWorkspaceId: string | null;
   selectedProjectId: string | null;
-  pendingImport: { projectId: string; source: IImportSource } | null;
+  pendingImport: { workspaceId: string; source: IImportSource } | null;
   isResourcesOpen: boolean;
   modelMenuAt: ModelMenuAt | null;
   media: IMedia | null;
@@ -47,7 +47,7 @@ export interface IAppStore {
   toggleResources: () => void;
   toggleModelMenu: (at: ModelMenuAt) => void;
   closeModelMenu: () => void;
-  requestImport: (props: { projectId: string; source: IImportSource }) => void;
+  requestImport: (props: { workspaceId: string; source: IImportSource }) => void;
   clearImport: () => void;
   openMedia: (media: IMedia) => void;
   closeMedia: () => void;

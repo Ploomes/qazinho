@@ -88,4 +88,71 @@ describe('useNewWorkspaceModalViewModel', () => {
 
     expect(useWorkspaceStore.getState().workspaces[0]?.planKind).toBe('mobile');
   });
+
+  describe('importing tests', () => {
+    const FOLDER = {
+      name: 'loja-e2e',
+      dir: '/Users/qa/loja-e2e',
+      frameworks: [{ id: 'playwright', files: 3 }],
+      files: ['a.spec.ts'],
+      branch: 'main',
+      commit: 'abc123',
+    };
+
+    it('opens the import in the chat of the workspace it makes', () => {
+      useAppStore.setState({ pendingImport: null });
+
+      const { result } = renderHook(() => useNewWorkspaceModalViewModel());
+
+      act(() => {
+        result.current.onFolderChange(FOLDER);
+      });
+      act(() => {
+        result.current.onCreate();
+      });
+
+      expect(useAppStore.getState().pendingImport).toEqual({
+        workspaceId: useAppStore.getState().selectedWorkspaceId,
+        source: FOLDER,
+      });
+    });
+
+    it('asks for nothing when no folder was picked', () => {
+      useAppStore.setState({ pendingImport: null });
+
+      const { result } = renderHook(() => useNewWorkspaceModalViewModel());
+
+      act(() => {
+        result.current.onNameChange('Checkout');
+      });
+      act(() => {
+        result.current.onCreate();
+      });
+
+      expect(useAppStore.getState().pendingImport).toBeNull();
+    });
+
+    /** Quem escolhe a pasta já disse o que vai testar: pedir um nome seria mais um passo. */
+    it('names the workspace after the folder, and never over what the QA typed', () => {
+      const { result } = renderHook(() => useNewWorkspaceModalViewModel());
+
+      act(() => {
+        result.current.onFolderChange(FOLDER);
+      });
+
+      expect(result.current.name).toBe('loja-e2e');
+
+      act(() => {
+        result.current.onNameChange('Checkout');
+      });
+      act(() => {
+        result.current.onFolderChange(null);
+      });
+      act(() => {
+        result.current.onFolderChange(FOLDER);
+      });
+
+      expect(result.current.name).toBe('Checkout');
+    });
+  });
 });

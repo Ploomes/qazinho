@@ -1,3 +1,4 @@
+import type { IImportSource } from '@/shared/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toPlanKind } from '@/modules/Plan';
@@ -8,10 +9,12 @@ export const useNewWorkspaceModalViewModel = () => {
   const { t } = useTranslation();
   const [name, setName] = useState('');
   const [targetId, setTargetId] = useState<string | null>(null);
+  const [folder, setFolder] = useState<IImportSource | null>(null);
 
   const projects = useAppStore((state) => state.projects);
   const selectedProjectId = useAppStore((state) => state.selectedProjectId);
   const closeModal = useAppStore((state) => state.closeModal);
+  const requestImport = useAppStore((state) => state.requestImport);
   const selectWorkspace = useAppStore((state) => state.selectWorkspace);
   const addWorkspace = useWorkspaceStore((state) => state.addWorkspace);
 
@@ -52,11 +55,17 @@ export const useNewWorkspaceModalViewModel = () => {
     });
 
     selectWorkspace(id);
+    if (folder !== null) requestImport({ workspaceId: id, source: folder });
     closeModal();
   };
 
   return {
     name,
+    folder,
+    onFolderChange: (picked: IImportSource | null) => {
+      setFolder(picked);
+      if (picked !== null && name.trim().length === 0) setName(picked.name);
+    },
     targets,
     hasPlatforms: targets.length > 1,
     platforms: targets.map((target) => ({
