@@ -60,9 +60,6 @@ export const useRunsViewModel = () => {
   }));
   const isExploration = run?.kind === 'explore';
   const ordered = exceptionFirst(judged);
-  const firstPassed = ordered.some(({ verdict }) => verdict !== 'passed')
-    ? ordered.findIndex(({ verdict }) => verdict === 'passed')
-    : -1;
   const caseCounts = countVerdicts(judged.map(({ verdict }) => verdict));
   const screenCount = judged.reduce((total, { steps }) => total + steps.length, 0);
   const bugCount = new Set(
@@ -85,6 +82,18 @@ export const useRunsViewModel = () => {
           cost: formatCost({ costUsd: item.costUsd, language: i18n.language }),
         });
 
+  const tallyOf = (item: IRun) => {
+    const counts = countVerdicts(item.cases.map(({ steps }) => caseVerdict(steps)));
+
+    return item.kind === 'explore'
+      ? []
+      : RUN_VERDICTS.filter((status) => counts[status] > 0).map((status) => ({
+          status,
+          icon: STATUS[status].icon,
+          count: counts[status],
+        }));
+  };
+
   const canWatch = run?.video !== null && run?.video !== undefined;
 
   const watch = (focus: ReplayFocus) => {
@@ -103,11 +112,7 @@ export const useRunsViewModel = () => {
           : t('RUN.WHOLE_PLAN'),
     isSelected: item.id === run?.id,
     ended: endOf(item.endedBy),
-    tallies: RUN_VERDICTS.filter((status) => item.counts[status] > 0).map((status) => ({
-      status,
-      icon: STATUS[status].icon,
-      count: item.counts[status],
-    })),
+    tallies: tallyOf(item),
     facts: factsOf(item),
     startedAt: [
       dayLabelOf({
@@ -159,7 +164,7 @@ export const useRunsViewModel = () => {
       watch({ kind: 'run' });
     },
     runEnded: run === null ? null : endOf(run.endedBy),
-    runFacts: run === null ? '' : factsOf(run),
+    runDuration: run === null ? '' : formatElapsed(run.durationSec),
     factsNote: t('RUN.COST_NOTE'),
     topRef,
     isToTopShown,
@@ -175,14 +180,11 @@ export const useRunsViewModel = () => {
         ? t(screenCount === 1 ? 'RUN.SCREENS_ONE' : 'RUN.SCREENS_OTHER', {
             count: screenCount,
           })
-        : t(judged.length === 1 ? 'RUN.CASES_ONE' : 'RUN.CASES_OTHER', {
-            count: judged.length,
-          }),
+        : null,
       tallies: isExploration
         ? []
         : RUN_VERDICTS.filter((status) => caseCounts[status] > 0).map((status) => ({
             status,
-            icon: STATUS[status].icon,
             label: t(
               caseCounts[status] === 1
                 ? RUN_TALLY_KEYS[status].one
@@ -195,10 +197,8 @@ export const useRunsViewModel = () => {
           ? null
           : t(bugCount === 1 ? 'RUN.BUGS_ONE' : 'RUN.BUGS_OTHER', { count: bugCount }),
     },
-    passedLabel: t('RUN.PASSED_CASES'),
-    cases: ordered.map((runCase, index) => ({
+    cases: ordered.map((runCase) => ({
       ...runCase,
-      isFirstPassed: index === firstPassed,
       isOpen:
         toggled[`${run?.id ?? ''}/${runCase.id}`] ??
         (isExploration || runCase.verdict !== 'passed'),
@@ -234,6 +234,13 @@ export const useRunsViewModel = () => {
           : null,
       steps: runCase.steps.map((step) => {
         const bug = bugs.find(({ id }) => id === step.bugId) ?? null;
+        const isOneLine = !isExploration && step.verdict === 'passed';
+        const note =
+          step.by === 'replay' && step.proof !== undefined
+            ? t('RUN.PROOF', { proof: step.proof })
+            : step.unwalked === undefined
+              ? step.why
+              : t(UNWALKED_KEYS[step.unwalked]);
 
         return {
           ...step,
@@ -244,13 +251,11 @@ export const useRunsViewModel = () => {
             bug === null
               ? null
               : { id: bug.id, title: bug.title, isHigh: bug.severity === 'high' },
-          note:
-            step.by === 'replay' && step.proof !== undefined
-              ? t('RUN.PROOF', { proof: step.proof })
-              : step.unwalked === undefined
-                ? step.why
-                : t(UNWALKED_KEYS[step.unwalked]),
-          hasNote: (step.why !== null || step.by === 'replay') && bug === null,
+          note,
+          noteTip: isOneLine ? (note ?? undefined) : undefined,
+          hasNote:
+            !isOneLine && (step.why !== null || step.by === 'replay') && bug === null,
+          hasThumb: !isOneLine,
           asked: (run?.asked ?? [])
             .filter(
               ({ caseId, stepNumber }) =>

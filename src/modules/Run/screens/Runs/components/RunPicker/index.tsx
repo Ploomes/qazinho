@@ -7,9 +7,9 @@ import { STICKER } from '@/shared/constants';
 import { useRunPickerViewModel } from './hooks';
 import './styles.css';
 
-/** A run em exibição no topo de Runs, abrindo para toda run para a qual trocar. */
+/** O nome da run em exibição, abrindo para toda run para a qual trocar. */
 export const RunPicker: React.FC<IRunPickerProps> = (props) => {
-  const { ref, isOpen, triggerClassName, label, count, rows, onToggle, onPick } =
+  const { ref, isOpen, canPick, triggerClassName, rows, onToggle, onPick } =
     useRunPickerViewModel(props);
   const { t } = useTranslation();
 
@@ -20,14 +20,11 @@ export const RunPicker: React.FC<IRunPickerProps> = (props) => {
         className={triggerClassName}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
+        disabled={!canPick}
         onClick={onToggle}
       >
-        <span className="run-picker__label">{label}</span>
-        <RunRow row={props.current} factsNote={props.factsNote} />
-        <span className="run-picker__handle">
-          <span className="run-picker__count">{count}</span>
-          <span className="run-picker__chevron" aria-hidden="true" />
-        </span>
+        <span className="run-picker__title">{props.title}</span>
+        {canPick && <span className="run-picker__chevron" aria-hidden="true" />}
       </button>
 
       <AnimatePresence>

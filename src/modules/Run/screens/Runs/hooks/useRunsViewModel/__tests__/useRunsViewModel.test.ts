@@ -39,7 +39,7 @@ describe('useRunsViewModel', () => {
 
     const { result } = renderHook(() => useRunsViewModel());
 
-    expect(result.current.title).toBe('Run r-01 · o plano inteiro');
+    expect(result.current.title).toBe('Run r-01');
     expect(result.current.runs[0]?.what).toBe('O plano inteiro');
     await i18n.changeLanguage('en');
   });
@@ -94,10 +94,10 @@ describe('useRunsViewModel', () => {
       const { result } = renderHook(() => useRunsViewModel());
 
       expect(result.current.summary).toEqual({
-        lead: '2 cases',
+        lead: null,
         tallies: [
-          { status: 'passed', icon: 'passed', label: '1 passed' },
-          { status: 'failed', icon: 'failed', label: '1 failed' },
+          { status: 'passed', label: '1 passed' },
+          { status: 'failed', label: '1 failed' },
         ],
         bugs: '1 bug',
       });
@@ -134,13 +134,13 @@ describe('useRunsViewModel', () => {
     });
   });
 
-  it('lists in the picker only the verdicts a run had, steps counted', () => {
+  /** O seletor contava passos e o resumo casos: 6/3/1 ao lado de "2 passaram, 3 falharam". */
+  it('counts cases in the picker too, never steps', () => {
     const { result } = renderHook(() => useRunsViewModel());
 
     expect(result.current.runs[0]?.tallies).toEqual([
-      { status: 'passed', icon: 'passed', count: 4 },
+      { status: 'passed', icon: 'passed', count: 1 },
       { status: 'failed', icon: 'failed', count: 1 },
-      { status: 'skipped', icon: 'skipped', count: 1 },
     ]);
   });
 
@@ -148,15 +148,9 @@ describe('useRunsViewModel', () => {
     it('puts the case that failed first and open, the one that passed after it and folded', () => {
       const { result } = renderHook(() => useRunsViewModel());
 
-      expect(
-        result.current.cases.map(({ id, isOpen, isFirstPassed }) => [
-          id,
-          isOpen,
-          isFirstPassed,
-        ]),
-      ).toEqual([
-        ['TC-02', true, false],
-        ['TC-01', false, true],
+      expect(result.current.cases.map(({ id, isOpen }) => [id, isOpen])).toEqual([
+        ['TC-02', true],
+        ['TC-01', false],
       ]);
     });
 
@@ -171,21 +165,6 @@ describe('useRunsViewModel', () => {
       });
 
       expect(result.current.cases.map(({ isOpen }) => isOpen)).toEqual([false, true]);
-    });
-
-    it('does NOT head the passed cases apart when every case passed', () => {
-      useWorkspaceStore.setState({
-        workspaces: [
-          walkRun({
-            verdicts: ['passed', 'passed', 'passed', 'passed', 'passed', 'passed'],
-            isFinished: true,
-          }),
-        ],
-      });
-
-      const { result } = renderHook(() => useRunsViewModel());
-
-      expect(result.current.cases.some(({ isFirstPassed }) => isFirstPassed)).toBe(false);
     });
 
     it('keeps the screens of an exploration open', () => {
@@ -259,8 +238,8 @@ describe('useRunsViewModel', () => {
       className: 'runs__walk runs__walk--replay',
     });
     expect(first?.steps[0]).toMatchObject({
-      hasNote: true,
-      note: 'checked on screen: “Visits: 1”',
+      hasNote: false,
+      noteTip: 'checked on screen: “Visits: 1”',
     });
     expect(second?.walk).toMatchObject({ icon: 'heal' });
   });

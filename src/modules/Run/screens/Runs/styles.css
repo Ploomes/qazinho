@@ -7,126 +7,63 @@
 .runs__report {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
-  padding: 22px var(--space-7);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-xl);
-  background: var(--raise);
   container: runs-report / inline-size;
 }
 
 .runs__head {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 18px;
-}
-
-.runs__heading {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 7px;
-  min-width: 220px;
-}
-
-.runs__title-row {
-  display: flex;
   align-items: center;
-  gap: var(--space-5);
-}
-
-.runs__title {
-  margin: 0;
-  color: var(--ink);
-  font: var(--font-display-md);
-  letter-spacing: var(--display-tracking);
-}
-
-.runs__meta {
-  color: var(--ink3);
-  font: 400 11px/1.6 var(--font-mono);
-}
-
-.runs__facts {
-  margin-left: var(--space-3);
-  white-space: nowrap;
+  gap: var(--space-3) var(--space-4);
+  scroll-margin-top: var(--space-7);
 }
 
 .runs__summary {
   display: flex;
+  flex: 1 1 12em;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2) var(--space-5);
+  gap: var(--space-2) var(--space-4);
+  min-width: 0;
   margin: 0;
-  color: var(--ink);
-  font: var(--font-ui-md);
-}
-
-.runs__tally {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
   color: var(--ink2);
+  font: var(--font-ui-sm);
 }
 
-.runs__tally .icon {
+.runs__facts {
   color: var(--ink3);
+  font: var(--font-mono-sm);
+  white-space: nowrap;
 }
 
-.runs__tally--passed .icon {
+.runs__tally--passed {
   color: var(--pass);
 }
 
-.runs__tally--failed .icon {
+.runs__tally--failed {
   color: var(--fail);
 }
 
-.runs__tally--blocked .icon {
+.runs__tally--blocked {
   color: var(--block);
 }
 
-.runs__tally--skipped .icon {
+.runs__tally--skipped {
   color: var(--skip);
 }
 
-.runs__tally--bugs .icon {
-  color: var(--attn);
-}
-
 .runs__ended {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  gap: var(--space-2);
-  margin-left: var(--space-3);
   color: var(--attn);
-  font: var(--font-mono-xs);
 }
 
 .runs__cases {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-}
-
-.runs__case-slot {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.runs__group {
-  padding-top: var(--space-3);
-  color: var(--ink3);
-  font: var(--font-ui-xs);
-  font-weight: 600;
 }
 
 .runs__case {
-  overflow: hidden;
-  border: 1px solid var(--line2);
-  border-radius: var(--radius-lg);
+  border-bottom: 1px solid var(--line2);
 }
 
 .runs__case-head {
@@ -134,15 +71,20 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-4);
-  padding: 13px 15px;
-  background: var(--raise2);
+  padding: var(--space-3) var(--space-3);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.runs__case-head:hover {
+  background: var(--sel);
 }
 
 .runs__case-open {
   display: flex;
   flex: 1 1 14em;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   min-width: 0;
   padding: 0;
   border: none;
@@ -193,6 +135,7 @@
 }
 
 .runs__take {
+  opacity: 0;
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -204,9 +147,15 @@
   font: var(--font-ui-xs);
   cursor: pointer;
   transition:
+    opacity var(--dur-fast) var(--ease),
     border-color var(--dur-fast) var(--ease),
     background-color var(--dur-fast) var(--ease),
     color var(--dur-fast) var(--ease);
+}
+
+.runs__case-head:hover .runs__take,
+.runs__take:focus-visible {
+  opacity: 1;
 }
 
 .runs__take:hover {
@@ -218,7 +167,7 @@
 .runs__steps {
   display: flex;
   flex-direction: column;
-  padding: 6px 15px 14px;
+  padding: 0 var(--space-3) var(--space-4);
 }
 
 .runs__step {
@@ -226,8 +175,18 @@
   flex-wrap: wrap;
   align-items: flex-start;
   gap: var(--space-4);
-  padding: 10px 0;
-  border-top: 1px solid var(--line2);
+  padding: var(--space-2) 0;
+}
+
+.runs__step-shot {
+  flex: none;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.runs__step:hover .runs__step-shot,
+.runs__step-shot:focus-within {
+  opacity: 1;
 }
 
 .runs__step-number {
@@ -346,79 +305,41 @@
 }
 
 .runs__bug {
-  --bug-tone: var(--attn);
-
   display: flex;
   flex-wrap: wrap;
   align-self: flex-start;
   align-items: center;
-  gap: 11px;
+  gap: var(--space-3);
   max-width: 100%;
-  padding: 9px 13px;
-  border: var(--edge-width) solid var(--edge);
-  border-radius: var(--radius-lg);
-  background: color-mix(in srgb, var(--bug-tone) 16%, var(--raise));
-  box-shadow: var(--sticker-rest);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ink2);
   text-align: left;
-  transition:
-    translate var(--dur-fast) var(--ease),
-    box-shadow var(--dur-fast) var(--ease);
+  transition: color var(--dur-fast) var(--ease);
 }
 
 .runs__bug:hover {
-  box-shadow: var(--sticker-lift);
+  color: var(--ink);
   filter: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .runs__bug:hover {
-    translate: 0 var(--lift);
-  }
-}
-
-.runs__bug--high {
-  --bug-tone: var(--fail);
-}
-
-.runs__bug-mark {
-  flex: none;
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
-  background: var(--bug-tone);
-}
-
 .runs__bug-id {
-  color: var(--bug-tone);
-  font: 500 11px/1 var(--font-mono);
+  color: var(--attn);
+  font: var(--font-mono-sm);
+}
+
+.runs__bug--high .runs__bug-id {
+  color: var(--fail);
 }
 
 .runs__bug-title {
   flex: 1 1 10em;
   min-width: 0;
-  color: var(--ink);
-  font: 400 13px/1.4 var(--font-ui);
-}
-
-.runs__bug-open {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--lime-ink);
-  font: 500 12px/1 var(--font-ui);
-  white-space: nowrap;
-}
-
-.runs__top {
-  scroll-margin-top: var(--space-7);
+  font: var(--font-ui-sm);
 }
 
 @container workspace (width < 480px) {
-  .runs__report {
-    padding: var(--space-5) var(--space-4);
-  }
-
   .runs__case-head {
     gap: var(--space-3);
     padding: var(--space-3) var(--space-4);
@@ -437,6 +358,7 @@
 
   .runs__take {
     padding: var(--space-2);
+    opacity: 1;
   }
 
   .runs__take-label {

@@ -18,6 +18,7 @@ const run = (id: string, isSelected = false): IRunRowSummary => ({
 function picker(props: Partial<IRunPickerProps> = {}) {
   return renderHook(() =>
     useRunPickerViewModel({
+      title: 'Run r-01',
       current: run('r-02', true),
       runs: [run('r-02', true), run('r-01')],
       total: 2,
@@ -87,18 +88,8 @@ describe('useRunPickerViewModel', () => {
     ]);
   });
 
-  it('counts every run, not only the page of them in the list', () => {
-    expect(picker({ total: 14 }).result.current.count).toBe('14 runs');
-  });
-
-  it('counts a lone run in the singular', () => {
-    expect(
-      picker({ runs: [run('r-01', true)], current: run('r-01', true), total: 1 }).result
-        .current.count,
-    ).toBe('1 run');
-  });
-
-  it('names what the picker picks', () => {
-    expect(picker().result.current.label).toBe('Run');
+  it('opens only when there is another run to pick', () => {
+    expect(picker({ total: 14 }).result.current.canPick).toBe(true);
+    expect(picker({ total: 1 }).result.current.canPick).toBe(false);
   });
 });

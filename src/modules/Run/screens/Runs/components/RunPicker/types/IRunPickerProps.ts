@@ -2,6 +2,7 @@ import type { IRunRowSummary } from '@/modules/Run/screens/Runs/components/RunRo
 
 /** A run em exibição, e as runs para as quais o QA pode trocar, uma página por vez. */
 export interface IRunPickerProps {
+  title: string;
   current: IRunRowSummary;
   runs: IRunRowSummary[];
   total: number;
