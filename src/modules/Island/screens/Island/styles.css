@@ -1,3 +1,9 @@
+.island-page,
+.island-page body,
+.island-page #root {
+  background: transparent;
+}
+
 .island {
   position: fixed;
   inset: 0;

@@ -92,6 +92,7 @@ export class Island {
       height: ISLAND_WINDOW.height,
       frame: false,
       transparent: true,
+      backgroundColor: '#00000000',
       hasShadow: false,
       resizable: false,
       movable: false,
