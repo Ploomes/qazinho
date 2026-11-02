@@ -44,16 +44,6 @@
   font: var(--font-mono-sm);
 }
 
-.model-popover__note--locked {
-  color: var(--fail);
-}
-
-.model-popover__foot {
-  padding: var(--space-4) var(--space-5);
-  color: var(--ink3);
-  font: var(--font-ui-xs);
-}
-
 .model-popover--titlebar {
   top: 54px;
   right: 14px;

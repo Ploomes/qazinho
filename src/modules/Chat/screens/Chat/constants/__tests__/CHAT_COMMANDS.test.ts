@@ -6,7 +6,7 @@ import { CHAT_COMMANDS } from '@/modules/Chat/screens/Chat/constants';
 describe('CHAT_COMMANDS', () => {
   it('names every command and what it does, in both languages', () => {
     for (const command of CHAT_COMMANDS)
-      for (const key of [command.labelKey, command.textKey]) {
+      for (const key of [command.labelKey]) {
         const name = key.replace('COMMANDS.', '') as keyof typeof en.COMMANDS;
 
         expect(en.COMMANDS[name]).toBeTruthy();

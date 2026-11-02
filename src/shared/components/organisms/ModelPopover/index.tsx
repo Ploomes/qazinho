@@ -45,7 +45,6 @@ export const ModelPopover: React.FC<IModelPopoverProps> = (props) => {
             }}
           >
             {item.name}
-            <span className="model-popover__note">{item.note}</span>
           </button>
         ))}
       </div>
@@ -67,20 +66,12 @@ export const ModelPopover: React.FC<IModelPopoverProps> = (props) => {
             }}
           >
             {item.name}
-            <span
-              className={
-                item.isLocked
-                  ? 'model-popover__note model-popover__note--locked'
-                  : 'model-popover__note'
-              }
-            >
-              {item.note}
-            </span>
+            {item.note !== null && (
+              <span className="model-popover__note">{item.note}</span>
+            )}
           </button>
         ))}
       </div>
-
-      <footer className="model-popover__foot">{t('MODEL.FOOTER')}</footer>
     </motion.div>
   );
 };

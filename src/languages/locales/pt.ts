@@ -515,19 +515,10 @@ export const pt: typeof en = {
     AGENT_ON_MACHINE: 'agente nesta máquina',
     MODEL: 'modelo',
     NO_MODELS: 'nenhum modelo para escolher',
-    DEFAULT: 'padrão',
     AGENT_DEFAULT: 'Padrão do agente',
     AGENT_DEFAULT_NOTE: 'da config do seu agente',
-    AGENT_DEFAULT_UNKNOWN: 'o que seu agente estiver usando',
-    FOUND: 'encontrado',
-    NOT_FOUND: 'não encontrado',
     IN_USE: 'em uso',
     USE_IT: 'usar',
-    FOOTER: 'o modelo roda pelo seu próprio agente, na sua própria chave',
-    NOTE_HAIKU: 'o mais rápido',
-    NOTE_SONNET: 'o do dia a dia',
-    NOTE_OPUS: 'mais lento, mais teimoso',
-    NOTE_FABLE: 'fora da sua chave',
   },
   TOOLS: {
     NOT_FOUND_PATH: 'não encontrado',
@@ -535,11 +526,7 @@ export const pt: typeof en = {
   COMMANDS: {
     HEADING: 'comandos',
     CODE_PLAN: 'Plano a partir do código',
-    CODE_PLAN_TEXT:
-      'O agente lê uma branch de um repositório e planeja os testes com você.',
-    NEEDS_GITHUB: 'Falta conectar o GitHub.',
     TIP_GITHUB: 'Conecte o GitHub aqui e volte para o /code.',
-    NEEDS_REPOSITORIES: 'Falta adicionar os repositórios deste projeto.',
     TIP_REPOSITORIES: 'Adicione os repositórios aqui e volte para o /code.',
     REPOSITORY_HEADING: 'repositório',
     BRANCH_HEADING: 'branch de {{repository}}',
@@ -560,9 +547,6 @@ export const pt: typeof en = {
     STEP_DOWNLOAD_SIZE: 'Baixando o código de {{repository}} · {{size}}',
     STEP_DIFF: 'Lendo o que mudou desde a {{base}}…',
     JIRA_PLAN: 'Plano a partir de uma história do Jira',
-    JIRA_PLAN_TEXT:
-      'O agente lê uma história, os critérios de aceite e os anexos, e planeja os testes com você.',
-    NEEDS_JIRA: 'Falta conectar o Jira.',
     TIP_JIRA: 'Conecte o Jira aqui e volte para o /jira.',
     STORY_HEADING: 'história do Jira',
     STORY_RECENT: 'as histórias que você abriu por último',
@@ -573,9 +557,6 @@ export const pt: typeof en = {
     STEP_FILES: 'Baixando os anexos da {{key}}…',
     STEP_FILES_SIZE: 'Baixando os anexos da {{key}} · {{size}}',
     CONFLUENCE_PLAN: 'Plano a partir de uma página do Confluence',
-    CONFLUENCE_PLAN_TEXT:
-      'O agente lê uma página, como os cenários que seu time escreveu, e planeja os testes com você.',
-    NEEDS_CONFLUENCE: 'Falta ligar o Confluence.',
     TIP_CONFLUENCE: 'Ligue o Confluence no cartão do Jira e volte para o /confluence.',
     PAGE_HEADING: 'Página do Confluence',
     PAGE_RECENT: 'as páginas em que você mexeu por último',
@@ -584,8 +565,6 @@ export const pt: typeof en = {
     CONFLUENCE_PLAN_SAY:
       'Planeje os testes a partir da página do Confluence “{{title}}”.',
     FIGMA_PLAN: 'Conferir com um design do Figma',
-    FIGMA_PLAN_TEXT:
-      'O agente lê o design pelo seu Figma, planeja com você, e cada run confere as telas com ele.',
     DESIGN_HEADING: 'design do Figma',
     PICK_DESIGN: 'Cole o link de um frame ou página do Figma',
     DESIGN_NOT_LINK: 'Isso não é um link de um design do Figma.',
@@ -593,8 +572,6 @@ export const pt: typeof en = {
     DESIGN_WHOLE_FILE: 'o arquivo inteiro',
     FIGMA_PLAN_SAY: 'Planeje os testes conferindo com o design {{name}} do Figma.',
     IMPORT_PLAN: 'Importar testes',
-    IMPORT_PLAN_TEXT:
-      'Escolha uma pasta com testes de Playwright, Maestro ou outro. O agente entende o que eles cobrem e os transforma num plano.',
     IMPORT_HEADING: 'pasta de testes',
     PICK_FOLDER: 'Escolha a pasta com os testes',
     IMPORT_PICK: 'Escolher uma pasta…',

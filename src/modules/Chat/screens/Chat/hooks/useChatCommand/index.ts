@@ -220,17 +220,15 @@ export const useChatCommand = (props: {
       text: `${one.slug} ${t(one.labelKey)} ${one.aliases}`,
       query: slash ?? '',
     }),
-  ).map((one) => {
-    const blocker = blockerOf(one.id);
-
-    return {
+  )
+    .map((one) => ({
       id: one.id,
       label: t(one.labelKey),
       tag: one.slug,
-      detail: t(blocker?.detailKey ?? one.textKey),
-      isBlocked: blocker !== null,
-    };
-  });
+      detail: null,
+      isBlocked: blockerOf(one.id) !== null,
+    }))
+    .sort((one, other) => Number(one.isBlocked) - Number(other.isBlocked));
 
   const repositoryRows: ICommandRow[] = repositories
     .filter((one) => matchesQuery({ text: keyOf(one), query: draft }))

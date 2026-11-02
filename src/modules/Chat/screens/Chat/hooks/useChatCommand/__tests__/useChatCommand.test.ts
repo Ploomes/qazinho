@@ -212,10 +212,9 @@ describe('useChatCommand', () => {
   it('takes the QA to what a command is missing instead of starting it', () => {
     const offline = command({ draft: '/', isGithubConnected: false });
 
-    expect(offline.result.current.picker?.rows[0]).toMatchObject({
-      isBlocked: true,
-      detail: 'GitHub is not connected yet.',
-    });
+    expect(
+      offline.result.current.picker?.rows.find(({ id }) => id === 'code-plan'),
+    ).toMatchObject({ isBlocked: true, detail: null });
 
     act(() => {
       offline.result.current.onPick('code-plan');
@@ -225,8 +224,10 @@ describe('useChatCommand', () => {
     expect(offline.onDraft).toHaveBeenCalledWith('');
     expect(offline.onBlocked).toHaveBeenCalledWith(COMMAND_BLOCKERS.github);
     expect(
-      command({ draft: '/', repositories: [] }).result.current.picker?.rows[0]?.detail,
-    ).toBe('This project has no repositories yet.');
+      command({ draft: '/', repositories: [] }).result.current.picker?.rows.find(
+        ({ id }) => id === 'code-plan',
+      )?.isBlocked,
+    ).toBe(true);
   });
 
   it('does NOT send a command that has what it needs anywhere else', () => {
@@ -244,28 +245,16 @@ describe('useChatCommand', () => {
    * Cada comando precisa do próprio tracker: o Jira faltando não pode travar o plano a
    * partir do código.
    */
-  it('blocks only the command whose tracker is missing', () => {
+  it('blocks only the command whose tracker is missing, and lists it last', () => {
     const rows = command({ draft: '/', isJiraConnected: false, isConfluenceOn: false })
       .result.current.picker?.rows;
 
-    expect(rows?.map(({ id, isBlocked, detail }) => [id, isBlocked, detail])).toEqual([
-      [
-        'code-plan',
-        false,
-        'The agent reads a branch of a repository and plans its tests with you.',
-      ],
-      ['jira-plan', true, 'Jira is not connected yet.'],
-      ['confluence-plan', true, 'Confluence is not on yet.'],
-      [
-        'figma-plan',
-        false,
-        'The agent reads the design through your Figma, plans with you, and each run holds the screens to it.',
-      ],
-      [
-        'import-plan',
-        false,
-        'Pick a folder with Playwright, Maestro or other tests. The agent works out what they cover and turns them into a plan.',
-      ],
+    expect(rows?.map(({ id, isBlocked }) => [id, isBlocked])).toEqual([
+      ['code-plan', false],
+      ['figma-plan', false],
+      ['import-plan', false],
+      ['jira-plan', true],
+      ['confluence-plan', true],
     ]);
   });
 

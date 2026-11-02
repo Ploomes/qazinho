@@ -19,24 +19,15 @@ export const useModelPopoverViewModel = () => {
     {
       id: '',
       name: t('MODEL.AGENT_DEFAULT'),
-      note: defaultModel ?? t('MODEL.AGENT_DEFAULT_UNKNOWN'),
+      note: defaultModel,
       isLocked: false,
     },
-    ...(MODELS[agent] ?? []).map(({ noteKey, ...one }) => ({ ...one, note: t(noteKey) })),
+    ...(MODELS[agent] ?? []).map((one) => ({ ...one, note: null })),
   ];
-
-  const agents = detected.map((one) => ({
-    ...one,
-    note: one.isFound
-      ? one.name === agent
-        ? t('MODEL.DEFAULT')
-        : t('MODEL.FOUND')
-      : t('MODEL.NOT_FOUND'),
-  }));
 
   return {
     ref,
-    agents,
+    agents: detected,
     agent,
     models,
     model,

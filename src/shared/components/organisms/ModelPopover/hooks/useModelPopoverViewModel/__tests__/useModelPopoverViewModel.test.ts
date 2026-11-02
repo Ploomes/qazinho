@@ -1,7 +1,6 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { i18n } from '@/languages';
 import { useModelPopoverViewModel } from '@/shared/components/organisms/ModelPopover/hooks/useModelPopoverViewModel';
 import { useAppStore, useSettingsStore } from '@/store';
 
@@ -23,15 +22,10 @@ describe('useModelPopoverViewModel', () => {
     ]);
   });
 
-  it('says what each model is good for in the language the QA reads', async () => {
-    await i18n.changeLanguage('pt');
-
+  it('names each model with nothing to read beside it', () => {
     const { result } = renderHook(() => useModelPopoverViewModel());
 
-    expect(result.current.models.find(({ id }) => id === 'haiku')?.note).toBe(
-      'o mais rápido',
-    );
-    await i18n.changeLanguage('en');
+    expect(result.current.models.find(({ id }) => id === 'haiku')?.note).toBeNull();
   });
 
   it('still offers the agent default for an agent that lists no models', () => {
