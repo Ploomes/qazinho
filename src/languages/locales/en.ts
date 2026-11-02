@@ -171,6 +171,7 @@ export const en = {
     EXPLORE_BUGS_ONE: '1 bug',
     EXPLORE_BUGS_OTHER: '{{count}} bugs',
     SUGGESTED_EYEBROW: 'Suggested plan · {{id}}',
+    SUGGESTED_OUTSIDE_EYEBROW: 'Suggested by your coding agent',
     SUGGESTED_TAKE: 'Take into the plan',
     SUGGESTED_TAKE_SOME: 'Take {{count}} to the plan',
     SUGGESTED_TAKEN: 'In the plan',
@@ -1383,6 +1384,26 @@ export const en = {
     MOOD_THINKING: 'thinking',
     MOOD_BROKEN: 'something broke',
     MOOD_SLEEPING: 'nothing to do',
+  },
+  OUTSIDE: {
+    EYEBROW: "QAzinho's MCP server",
+    NAME: 'QAzinho in your coding agent',
+    ABOUT:
+      'Let the coding agent you work with run your plans, read the results and the bugs, and suggest cases. Only on this computer, while QAzinho is open.',
+    SWITCH: 'Turn on',
+    CHECKING: 'Looking for your agents…',
+    NO_AGENTS:
+      'No coding agent QAzinho can set up was found here. You can still copy the address below.',
+    ADD: 'Add',
+    ADDED: 'added',
+    REMOVE: 'Remove',
+    NEW_SESSION: 'A new session of your agent finds QAzinho on its own.',
+    COPY: 'Copy the address',
+    COPIED: 'Copied',
+    COPY_NOTE:
+      'Using another agent? Add this address as an HTTP MCP server. It gives access to your QAzinho, so keep it like a password.',
+    BUSY: 'Another program is on the port QAzinho uses. Change the port and QAzinho updates your agents.',
+    RENEW: 'Change the port',
   },
   ISLAND: {
     RUNNING: 'Running',

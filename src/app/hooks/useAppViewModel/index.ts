@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useAppActions, useAssistantEvents, useQuestionRoom } from '@/modules/Assistant';
 import { useBuildEvents } from '@/modules/Build';
 import { useIslandSync } from '@/modules/Island';
+import { useOutsideCalls } from '@/modules/Outside';
 import { useProLinks, useProSync } from '@/modules/Pro';
 import { AppWindow, Platform } from '@/services';
 import { SHELL } from '@/shared/constants';
@@ -52,6 +53,7 @@ export const useAppViewModel = () => {
   useProLinks();
   useVideoSweep();
   useIslandSync();
+  useOutsideCalls();
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;

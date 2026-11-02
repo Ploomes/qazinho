@@ -9,7 +9,10 @@ export const useSuggestionCardViewModel = (props: ISuggestionCardProps) => {
   const chosen = message.cases.map((_, index) => index).filter((i) => !left.includes(i));
 
   return {
-    eyebrow: t('CHAT.SUGGESTED_EYEBROW', { id: message.runId }),
+    eyebrow:
+      message.from === 'outside'
+        ? t('CHAT.SUGGESTED_OUTSIDE_EYEBROW')
+        : t('CHAT.SUGGESTED_EYEBROW', { id: message.runId }),
     summary: message.summary,
     cases: message.cases.map((one, index) => ({
       key: `${String(index)}-${one.title}`,

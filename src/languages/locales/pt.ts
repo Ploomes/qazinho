@@ -174,6 +174,7 @@ export const pt: typeof en = {
     EXPLORE_BUGS_ONE: '1 bug',
     EXPLORE_BUGS_OTHER: '{{count}} bugs',
     SUGGESTED_EYEBROW: 'Plano sugerido · {{id}}',
+    SUGGESTED_OUTSIDE_EYEBROW: 'Sugerido pelo seu agente de código',
     SUGGESTED_TAKE: 'Levar para o plano',
     SUGGESTED_TAKE_SOME: 'Levar {{count}} para o plano',
     SUGGESTED_TAKEN: 'No plano',
@@ -1388,6 +1389,26 @@ export const pt: typeof en = {
     MOOD_THINKING: 'pensando',
     MOOD_BROKEN: 'algo quebrou',
     MOOD_SLEEPING: 'nada para fazer',
+  },
+  OUTSIDE: {
+    EYEBROW: 'Servidor MCP do QAzinho',
+    NAME: 'QAzinho no seu agente de código',
+    ABOUT:
+      'Deixe o agente de código com que você trabalha rodar seus planos, ler os resultados e os bugs, e sugerir casos. Só neste computador, enquanto o QAzinho está aberto.',
+    SWITCH: 'Ligar',
+    CHECKING: 'Procurando seus agentes…',
+    NO_AGENTS:
+      'Nenhum agente de código que o QAzinho sabe configurar foi achado aqui. Você ainda pode copiar o endereço abaixo.',
+    ADD: 'Adicionar',
+    ADDED: 'adicionado',
+    REMOVE: 'Tirar',
+    NEW_SESSION: 'Uma sessão nova do seu agente já encontra o QAzinho.',
+    COPY: 'Copiar o endereço',
+    COPIED: 'Copiado',
+    COPY_NOTE:
+      'Usa outro agente? Adicione este endereço como um servidor MCP HTTP. Ele dá acesso ao seu QAzinho, então guarde como uma senha.',
+    BUSY: 'Outro programa está na porta que o QAzinho usa. Troque a porta e o QAzinho atualiza seus agentes.',
+    RENEW: 'Trocar a porta',
   },
   ISLAND: {
     RUNNING: 'Rodando',

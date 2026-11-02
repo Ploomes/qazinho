@@ -117,4 +117,24 @@ describe('useSuggestionCardViewModel', () => {
       expect(result.current.isTaken).toBe(true);
     });
   });
+
+  it('says it came from the coding agent, with no run to name', () => {
+    const { result } = renderHook(() =>
+      useSuggestionCardViewModel({
+        message: {
+          id: 'm-1',
+          kind: 'suggestion',
+          at: '10:00',
+          runId: '',
+          summary: 'New coupon',
+          cases: [],
+          isTaken: false,
+          from: 'outside',
+        },
+        onTake: () => undefined,
+      }),
+    );
+
+    expect(result.current.eyebrow).toBe('Suggested by your coding agent');
+  });
 });

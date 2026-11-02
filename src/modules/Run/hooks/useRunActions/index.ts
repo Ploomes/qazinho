@@ -136,6 +136,7 @@ export const useRunActions = () => {
 
   return {
     runWorkspace,
+    beginRun: begin,
     runCases: (props: { workspaceId: string | null; caseIds: string[] }) =>
       begin({ ...props, mode: 'replay' }),
     stopWorkspace,

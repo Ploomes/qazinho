@@ -117,6 +117,11 @@ export interface IWorkspaceStore {
     summary: string;
     cases: IDraftedCase[];
   }) => void;
+  suggestCases: (props: {
+    workspaceId: string;
+    summary: string;
+    cases: IDraftedCase[];
+  }) => void;
   takeSuggestion: (props: {
     workspaceId: string;
     messageId: string;
