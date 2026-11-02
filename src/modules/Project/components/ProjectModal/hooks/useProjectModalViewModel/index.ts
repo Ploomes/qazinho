@@ -332,7 +332,7 @@ export const useProjectModalViewModel = () => {
       general: section === 'general',
       code: section === 'code',
       variables: section === 'variables',
-      automation: section === 'automation',
+      import: section === 'import',
       pro: section === 'pro',
       delete: section === 'delete',
     },
@@ -376,7 +376,6 @@ export const useProjectModalViewModel = () => {
     onNameChange: setName,
     onRepositoriesChange: setRepositories,
     variables,
-    variableNames: variables.map((variable) => variable.name),
     savedVariables,
     onVariablesChange: (changed: IVariableDraft[]) => {
       setVariableFailure(null);

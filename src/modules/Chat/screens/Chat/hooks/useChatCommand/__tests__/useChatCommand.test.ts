@@ -94,6 +94,12 @@ describe('useChatCommand', () => {
           tag: '/figma',
           isDisabled: false,
         },
+        {
+          id: 'import-plan',
+          label: 'Import tests I already have',
+          tag: '/import',
+          isDisabled: false,
+        },
       ],
     });
     expect(command({ draft: '/code and more' }).result.current.picker).toBeNull();
@@ -146,6 +152,7 @@ describe('useChatCommand', () => {
           nodeId: '12:345',
           name: 'Shop Checkout',
         },
+        source: null,
         command: { id: 'figma-plan', name: 'Shop Checkout', nodeId: '12:345', url: LINK },
       });
     });
@@ -240,6 +247,11 @@ describe('useChatCommand', () => {
         'figma-plan',
         false,
         'The agent reads the design through your Figma, plans with you, and each run holds the screens to it.',
+      ],
+      [
+        'import-plan',
+        false,
+        'Pick a folder with Playwright, Maestro or other tests. The agent works out what they cover and turns them into a plan.',
       ],
     ]);
   });
@@ -343,6 +355,7 @@ describe('useChatCommand', () => {
         jira: null,
         confluence: null,
         design: null,
+        source: null,
         command: {
           id: 'code-plan',
           repository: 'acme/loja-web',
@@ -532,6 +545,7 @@ describe('useChatCommand', () => {
         jira: { key: 'SHOP-12' },
         confluence: null,
         design: null,
+        source: null,
         command: {
           id: 'jira-plan',
           key: 'SHOP-12',
@@ -669,6 +683,7 @@ describe('useChatCommand', () => {
         jira: null,
         confluence: { pageId: '98304' },
         design: null,
+        source: null,
         command: {
           id: 'confluence-plan',
           pageId: '98304',
@@ -705,6 +720,128 @@ describe('useChatCommand', () => {
           'Confluence is off. Turn it on beside Jira in Settings → Integrations.',
         );
       });
+    });
+  });
+
+  describe('a plan from tests the QA already has', () => {
+    const FOLDER = {
+      name: 'loja-e2e',
+      dir: '/Users/qa/loja-e2e',
+      frameworks: [
+        { id: 'playwright', files: 2 },
+        { id: 'maestro', files: 1 },
+      ],
+      files: ['a.spec.ts', 'b.spec.ts', '.maestro/login.yaml'],
+      branch: 'main',
+      commit: 'abc123',
+    };
+
+    it('opens the folder picker at once, and plans from the folder it reads', async () => {
+      const pickImport = vi.fn().mockResolvedValue({ kind: 'picked', source: FOLDER });
+
+      window.qazinho = { ...window.qazinho, pickImport };
+
+      const { result } = command({ draft: '/' });
+
+      act(() => {
+        result.current.onPick('import-plan');
+      });
+
+      await waitFor(() => {
+        expect(result.current.command?.isReady).toBe(true);
+      });
+
+      expect(pickImport).toHaveBeenCalledTimes(1);
+      expect(result.current.command?.parts.map(({ text }) => text)).toEqual([
+        'loja-e2e',
+        'playwright · maestro',
+      ]);
+      expect(result.current.ask('Keep the P1 ones.')).toEqual({
+        text: 'Plan the tests from the tests I already have in the folder loja-e2e.\n\nKeep the P1 ones.',
+        code: null,
+        jira: null,
+        confluence: null,
+        design: null,
+        source: { dir: '/Users/qa/loja-e2e' },
+        command: {
+          id: 'import-plan',
+          name: 'loja-e2e',
+          frameworks: ['playwright', 'maestro'],
+          tests: 3,
+        },
+      });
+    });
+
+    it('waits for a folder when the QA closes the dialog, and picks again on a click', async () => {
+      const pickImport = vi
+        .fn()
+        .mockResolvedValueOnce({ kind: 'cancelled' })
+        .mockResolvedValueOnce({ kind: 'picked', source: FOLDER });
+
+      window.qazinho = { ...window.qazinho, pickImport };
+
+      const { result } = command({ draft: '/' });
+
+      act(() => {
+        result.current.onPick('import-plan');
+      });
+
+      await waitFor(() => {
+        expect(pickImport).toHaveBeenCalledTimes(1);
+      });
+
+      expect(result.current.command?.isReady).toBe(false);
+      expect(result.current.ask('')).toBeNull();
+      expect(result.current.picker?.rows).toMatchObject([{ label: 'Choose a folder…' }]);
+
+      act(() => {
+        result.current.onPick('pick-folder');
+      });
+
+      await waitFor(() => {
+        expect(result.current.command?.isReady).toBe(true);
+      });
+    });
+
+    it('says why a folder was refused, and does not plan from it', async () => {
+      window.qazinho = {
+        ...window.qazinho,
+        pickImport: vi.fn().mockResolvedValue({ kind: 'failed', reason: 'empty' }),
+      };
+
+      const { result } = command({ draft: '/' });
+
+      act(() => {
+        result.current.onPick('import-plan');
+      });
+
+      await waitFor(() => {
+        expect(result.current.picker?.note).toBe('That folder has no files to read.');
+      });
+
+      expect(result.current.ask('')).toBeNull();
+    });
+
+    it('steps back from a picked folder to the picker', async () => {
+      window.qazinho = {
+        ...window.qazinho,
+        pickImport: vi.fn().mockResolvedValue({ kind: 'picked', source: FOLDER }),
+      };
+
+      const { result } = command({ draft: '/' });
+
+      act(() => {
+        result.current.onPick('import-plan');
+      });
+      await waitFor(() => {
+        expect(result.current.command?.isReady).toBe(true);
+      });
+      act(() => {
+        result.current.onBack();
+      });
+
+      expect(result.current.command?.isReady).toBe(false);
+      expect(result.current.picker?.heading).toBe('Folder of tests');
     });
   });
 });

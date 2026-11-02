@@ -36,4 +36,12 @@ export const CHAT_COMMANDS: {
     textKey: 'COMMANDS.FIGMA_PLAN_TEXT',
     aliases: 'figma design prototipo prototype layout frame tela screen ux ui',
   },
+  {
+    id: 'import-plan',
+    slug: '/import',
+    labelKey: 'COMMANDS.IMPORT_PLAN',
+    textKey: 'COMMANDS.IMPORT_PLAN_TEXT',
+    aliases:
+      'import importar testes tests playwright maestro cypress detox appium selenium pasta folder suite',
+  },
 ];

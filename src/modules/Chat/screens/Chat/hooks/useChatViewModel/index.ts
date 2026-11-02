@@ -3,12 +3,13 @@ import type {
   IChatReference,
   ICodeAsk,
   IConfluenceAsk,
+  IImportAsk,
   IJiraAsk,
   IVariableBrief,
   QaReply,
 } from '@/shared/types';
 import type { CSSProperties } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useChatAgent } from '@/modules/Chat/hooks/useChatAgent';
 import {
@@ -108,6 +109,17 @@ export const useChatViewModel = () => {
     isConfluenceOn,
     onDraft: setDraft,
   });
+  const pendingCommand = useAppStore((state) => state.pendingCommand);
+  const clearCommand = useAppStore((state) => state.clearCommand);
+  const startCommand = chatCommand.start;
+  const hasWorkspace = workspace !== null;
+
+  useEffect(() => {
+    if (pendingCommand === null || !hasWorkspace) return;
+
+    startCommand(pendingCommand);
+    clearCommand();
+  }, [pendingCommand, hasWorkspace, startCommand, clearCommand]);
   const readStep = workspace === null ? undefined : readSteps[workspace.id];
   const sentCommand = (workspace?.chat ?? [])
     .flatMap((message) =>
@@ -138,6 +150,7 @@ export const useChatViewModel = () => {
     code: ICodeAsk | null;
     jira: IJiraAsk | null;
     confluence: IConfluenceAsk | null;
+    source: IImportAsk | null;
   }) => {
     if (workspace !== null) chatAgent.askAgent({ workspaceId: workspace.id, ...props });
   };
@@ -178,6 +191,7 @@ export const useChatViewModel = () => {
       code: asked?.code ?? null,
       jira: asked?.jira ?? null,
       confluence: asked?.confluence ?? null,
+      source: asked?.source ?? null,
     });
   };
 
@@ -234,6 +248,7 @@ export const useChatViewModel = () => {
       code: null,
       jira: null,
       confluence: null,
+      source: null,
     });
   };
 
@@ -249,7 +264,11 @@ export const useChatViewModel = () => {
           ? t('COMMANDS.STEP_FILES', { key: sentCommand.key })
           : t('COMMANDS.STEP_FILES_SIZE', { key: sentCommand.key, size });
 
-    if (sentCommand.id === 'figma-plan' || sentCommand.id === 'confluence-plan')
+    if (
+      sentCommand.id === 'figma-plan' ||
+      sentCommand.id === 'confluence-plan' ||
+      sentCommand.id === 'import-plan'
+    )
       return '';
 
     return readStep.step === 'commit'

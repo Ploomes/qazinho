@@ -3,4 +3,4 @@
  * automatizada, o vínculo com o QAzinho Pro, ou apagá-lo.
  */
 export type ProjectSection =
-  'general' | 'code' | 'variables' | 'automation' | 'pro' | 'delete';
+  'general' | 'code' | 'variables' | 'import' | 'pro' | 'delete';

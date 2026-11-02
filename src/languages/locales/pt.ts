@@ -225,6 +225,8 @@ export const pt: typeof en = {
     FAILED_CODE: 'O QAzinho não conseguiu pegar o código no GitHub. {{reason}}',
     FAILED_JIRA: 'O QAzinho não conseguiu ler a {{key}} no Jira. {{reason}}',
     FAILED_CONFLUENCE: 'O QAzinho não conseguiu ler a página no Confluence. {{reason}}',
+    FAILED_IMPORT:
+      'O QAzinho não conseguiu mais abrir a pasta de testes. Escolha de novo com /import.',
     SUGGESTION_JIRA: 'Planejar a partir de uma história do Jira',
     SUGGESTION_CONFLUENCE: 'Planejar a partir de uma página do Confluence',
     SUGGESTION_FIGMA: 'Conferir com um design do Figma',
@@ -602,6 +604,17 @@ export const pt: typeof en = {
     DESIGN_NODE: 'frame {{node}}',
     DESIGN_WHOLE_FILE: 'o arquivo inteiro',
     FIGMA_PLAN_SAY: 'Planeje os testes conferindo com o design {{name}} do Figma.',
+    IMPORT_PLAN: 'Importar testes que eu já tenho',
+    IMPORT_PLAN_TEXT:
+      'Escolha uma pasta com testes de Playwright, Maestro ou outro. O agente entende o que eles cobrem e os transforma num plano.',
+    IMPORT_HEADING: 'pasta de testes',
+    PICK_FOLDER: 'Escolha a pasta com os testes',
+    IMPORT_PICK: 'Escolher uma pasta…',
+    IMPORT_UNKNOWN: 'framework não reconhecido',
+    IMPORT_EMPTY: 'Essa pasta não tem arquivos para ler.',
+    IMPORT_UNREADABLE: 'O QAzinho não conseguiu ler essa pasta.',
+    IMPORT_PLAN_SAY:
+      'Planeje os testes a partir dos testes que eu já tenho na pasta {{name}}.',
   },
   PROJECT: {
     ANDROID_LOCKED: 'Precisa do Android SDK nesta máquina',
@@ -640,7 +653,14 @@ export const pt: typeof en = {
     SECTION_GENERAL: 'Geral',
     SECTION_CODE: 'Código',
     SECTION_VARIABLES: 'Variáveis',
-    SECTION_AUTOMATION: 'Automação',
+    SECTION_IMPORT: 'Importar',
+    IMPORT_TITLE: 'Importar testes',
+    IMPORT_TEXT:
+      'Traga os testes que o time já tem, de Playwright, Maestro ou outros. O agente lê a pasta e os transforma num plano.',
+    IMPORT_BUTTON: 'Escolher a pasta dos testes',
+    IMPORT_LATER: 'Salve o projeto primeiro, depois importe por aqui.',
+    IMPORT_NEEDS_WORKSPACE:
+      'Crie um workspace neste projeto primeiro. A importação roda no chat dele.',
     SECTION_FLAGGED: 'precisa de atenção',
     NEEDS_NAME_EDIT: 'Um projeto precisa de nome',
     NEEDS_TARGET_EDIT: 'Mantenha um target: uma URL, um .apk ou um .app',

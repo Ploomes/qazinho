@@ -13,6 +13,7 @@ export type * from './IComposerCommand';
 export type * from './IErrorMessage';
 export type * from './IFigmaCommand';
 export type * from './IFindingMessage';
+export type * from './IImportCommand';
 export type * from './IJiraCommand';
 export type * from './INoteMessage';
 export type * from './IPlanMessage';

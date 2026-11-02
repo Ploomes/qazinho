@@ -1,10 +1,15 @@
 import type { ChatCommandId } from './ChatCommandId';
 import type { IProjectRepository } from '@/modules/Project/types';
-import type { IConfluencePageRef, IDesignLink, IJiraIssueRef } from '@/shared/types';
+import type {
+  IConfluencePageRef,
+  IDesignLink,
+  IImportSource,
+  IJiraIssueRef,
+} from '@/shared/types';
 
 /**
- * Um comando que o QA está montando no composer: qual, e o repositório e a branch, a
- * história do Jira, a página do Confluence, ou o design do Figma, escolhidos até agora.
+ * Um comando que o QA está montando no composer: qual, e o que escolheu até agora, do
+ * repositório e da branch à pasta de testes.
  */
 export interface ICommandDraft {
   id: ChatCommandId;
@@ -13,4 +18,5 @@ export interface ICommandDraft {
   issue: IJiraIssueRef | null;
   page: IConfluencePageRef | null;
   design: IDesignLink | null;
+  folder: IImportSource | null;
 }

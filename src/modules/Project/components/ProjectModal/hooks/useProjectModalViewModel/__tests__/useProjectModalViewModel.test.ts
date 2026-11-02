@@ -157,7 +157,7 @@ describe('useProjectModalViewModel', () => {
         general: true,
         code: false,
         variables: false,
-        automation: false,
+        import: false,
         pro: false,
         delete: false,
       });
@@ -174,7 +174,7 @@ describe('useProjectModalViewModel', () => {
         general: false,
         code: false,
         variables: true,
-        automation: false,
+        import: false,
         pro: false,
         delete: false,
       });
@@ -187,7 +187,7 @@ describe('useProjectModalViewModel', () => {
         'general',
         'code',
         'variables',
-        'automation',
+        'import',
       ]);
     });
 
@@ -400,11 +400,11 @@ describe('useProjectModalViewModel', () => {
     });
 
     it("opens on its suite when asked from the suite's screen", () => {
-      useAppStore.getState().openSuiteSettings('p1');
+      useAppStore.getState().openImportSettings('p1');
 
       const { result } = renderHook(() => useProjectModalViewModel());
 
-      expect(result.current.section).toBe('automation');
+      expect(result.current.section).toBe('import');
     });
 
     it('stays on the project while it animates out, after the store has let go', () => {

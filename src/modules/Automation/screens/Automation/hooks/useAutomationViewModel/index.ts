@@ -46,7 +46,7 @@ export const useAutomationViewModel = () => {
   const hasProject = useAppStore((state) =>
     state.projects.some(({ id }) => id === projectId),
   );
-  const openSuiteSettings = useAppStore((state) => state.openSuiteSettings);
+  const openImportSettings = useAppStore((state) => state.openImportSettings);
   const suite = useSuiteStore((state) => state.suites[projectId] ?? null);
   const list = useSuiteStore((state) => state.lists[projectId] ?? null);
   const runs = useSuiteStore((state) => state.runs[projectId] ?? EMPTY_SUITE_RUNS);
@@ -237,7 +237,7 @@ export const useAutomationViewModel = () => {
     },
     settingsLabel: t('AUTOMATION.SUITE_SETTINGS'),
     onSettings: () => {
-      openSuiteSettings(projectId);
+      openImportSettings(projectId);
     },
     isRunning,
     stopLabel: t('COMMON.STOP'),

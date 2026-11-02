@@ -222,6 +222,8 @@ export const en = {
     FAILED_CODE: 'QAzinho could not get the code from GitHub. {{reason}}',
     FAILED_JIRA: 'QAzinho could not read {{key}} from Jira. {{reason}}',
     FAILED_CONFLUENCE: 'QAzinho could not read the page from Confluence. {{reason}}',
+    FAILED_IMPORT:
+      'QAzinho could not open the folder of tests anymore. Pick it again with /import.',
     SUGGESTION_JIRA: 'Plan from a Jira story',
     SUGGESTION_CONFLUENCE: 'Plan from a Confluence page',
     SUGGESTION_FIGMA: 'Check against a Figma design',
@@ -597,6 +599,17 @@ export const en = {
     DESIGN_NODE: 'frame {{node}}',
     DESIGN_WHOLE_FILE: 'the whole file',
     FIGMA_PLAN_SAY: 'Plan the tests against the Figma design {{name}}.',
+    IMPORT_PLAN: 'Import tests I already have',
+    IMPORT_PLAN_TEXT:
+      'Pick a folder with Playwright, Maestro or other tests. The agent works out what they cover and turns them into a plan.',
+    IMPORT_HEADING: 'Folder of tests',
+    PICK_FOLDER: 'Choose the folder with the tests',
+    IMPORT_PICK: 'Choose a folder…',
+    IMPORT_UNKNOWN: 'framework not recognized',
+    IMPORT_EMPTY: 'That folder has no files to read.',
+    IMPORT_UNREADABLE: 'QAzinho could not read that folder.',
+    IMPORT_PLAN_SAY:
+      'Plan the tests from the tests I already have in the folder {{name}}.',
   },
   PROJECT: {
     ANDROID_LOCKED: 'Needs the Android SDK on this machine',
@@ -635,7 +648,14 @@ export const en = {
     SECTION_GENERAL: 'General',
     SECTION_CODE: 'Code',
     SECTION_VARIABLES: 'Variables',
-    SECTION_AUTOMATION: 'Automation',
+    SECTION_IMPORT: 'Import',
+    IMPORT_TITLE: 'Import tests',
+    IMPORT_TEXT:
+      'Bring in the tests your team already has, Playwright, Maestro or others. The agent reads the folder and turns them into a plan.',
+    IMPORT_BUTTON: 'Choose a folder of tests',
+    IMPORT_LATER: 'Save the project first, then import from here.',
+    IMPORT_NEEDS_WORKSPACE:
+      'Create a workspace in this project first. The import runs in its chat.',
     SECTION_FLAGGED: 'needs a look',
     NEEDS_NAME_EDIT: 'A project needs a name',
     NEEDS_TARGET_EDIT: 'Keep one target: a URL, an .apk or a .app',

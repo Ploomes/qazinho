@@ -3,6 +3,7 @@ import type { Modal } from './Modal';
 import type { ModelMenuAt } from './ModelMenuAt';
 import type { Screen } from './Screen';
 import type { Theme } from './Theme';
+import type { ChatCommandId } from '@/modules/Chat/types';
 import type { IProject } from '@/modules/Project';
 import type { ProjectSection } from '@/modules/Project/components/ProjectModal/types';
 import type { IReplayOpen, IRunNotice } from '@/modules/Run';
@@ -21,6 +22,7 @@ export interface IAppStore {
   selectedWorkspaceId: string | null;
   selectedProjectId: string | null;
   automationProjectId: string | null;
+  pendingCommand: ChatCommandId | null;
   isResourcesOpen: boolean;
   modelMenuAt: ModelMenuAt | null;
   media: IMedia | null;
@@ -32,7 +34,7 @@ export interface IAppStore {
   closeSettings: () => void;
   openModal: (modal: Modal) => void;
   openProjectSettings: (projectId: string) => void;
-  openSuiteSettings: (projectId: string) => void;
+  openImportSettings: (projectId: string) => void;
   openProSettings: (projectId: string) => void;
   openWorkspaceModal: (projectId: string) => void;
   closeModal: () => void;
@@ -47,6 +49,8 @@ export interface IAppStore {
   toggleResources: () => void;
   toggleModelMenu: (at: ModelMenuAt) => void;
   closeModelMenu: () => void;
+  requestCommand: (command: ChatCommandId) => void;
+  clearCommand: () => void;
   openMedia: (media: IMedia) => void;
   closeMedia: () => void;
   openReplay: (replay: IReplayOpen) => void;

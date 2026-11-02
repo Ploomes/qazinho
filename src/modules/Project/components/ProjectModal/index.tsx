@@ -5,10 +5,10 @@ import { FileField } from '@/shared/components/molecules';
 import { ModalFrame } from '@/shared/components/templates';
 import {
   BuildFromCode,
+  ImportField,
   ProjectNav,
   ProjectPane,
   RepoField,
-  SuiteField,
   TargetCard,
   VariableField,
 } from './components';
@@ -18,7 +18,7 @@ import './styles.css';
 
 /**
  * A janela de um projeto, em seções ao lado: o nome e os alvos, o código de que é feito,
- * as variáveis, a suíte, o vínculo com o QAzinho Pro, e apagá-lo.
+ * as variáveis, a importação de testes, o vínculo com o QAzinho Pro, e apagá-lo.
  */
 export const ProjectModal: React.FC = () => {
   const {
@@ -28,7 +28,6 @@ export const ProjectModal: React.FC = () => {
     app,
     repositories,
     variables,
-    variableNames,
     savedVariables,
     projectId,
     androidBuilder,
@@ -185,8 +184,8 @@ export const ProjectModal: React.FC = () => {
           />
         </ProjectPane>
 
-        <ProjectPane label={t('PROJECT.SECTION_AUTOMATION')} isOpen={isOpen.automation}>
-          <SuiteField projectId={projectId} variableNames={variableNames} />
+        <ProjectPane label={t('PROJECT.SECTION_IMPORT')} isOpen={isOpen.import}>
+          <ImportField projectId={projectId} />
         </ProjectPane>
 
         {isEditing && projectId !== null && (
