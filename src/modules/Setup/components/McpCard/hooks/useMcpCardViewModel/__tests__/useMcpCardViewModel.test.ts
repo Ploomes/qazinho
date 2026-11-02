@@ -103,7 +103,7 @@ describe('useMcpCardViewModel', () => {
   describe('what the card says', () => {
     it.each([
       { state: null, pill: 'running', label: 'checking', action: null },
-      { state: 'missing', pill: 'idle', label: 'not added', action: 'Add and sign in' },
+      { state: 'missing', pill: null, label: '', action: 'Add and sign in' },
       {
         state: 'needs-auth',
         pill: 'attention',
@@ -127,12 +127,6 @@ describe('useMcpCardViewModel', () => {
         statusLabel: label,
         action,
       });
-    });
-
-    it('names the agent the MCP goes into, the one the QA picked', () => {
-      agentWith({ states: ['missing'] });
-
-      expect(showing('missing').result.current.needs).toContain('in Codex, your agent');
     });
 
     it('says which agents it works with, for an agent QAzinho has no recipe for yet', () => {
@@ -190,7 +184,7 @@ describe('useMcpCardViewModel', () => {
       await act(() => result.current.onAction());
 
       expect(agent.removeMcpServer).toHaveBeenCalledWith(IN_CODEX);
-      expect(result.current.statusLabel).toBe('not added');
+      expect(result.current).toMatchObject({ pill: null, action: 'Add and sign in' });
     });
 
     it('does nothing for an agent it cannot set up', async () => {

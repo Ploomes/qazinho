@@ -840,15 +840,10 @@ export const en = {
   MCP: {
     FIGMA_TEXT:
       'Lets the agent open your Figma prototypes and check the app against them.',
-    FIGMA_NEEDS:
-      "Figma's MCP server in {{agent}}, your agent, signed in to your Figma account. QAzinho adds it there; you sign in once.",
-    ORG_TEXT:
-      'Reads the plans, runs, bugs and CI of your orgs, and starts them when you ask, with your role in each org. Works with QAzinho closed.',
-    ORG_NEEDS: 'QAzinho adds it to {{agent}}, and you say yes once in the browser.',
+    ORG_TEXT: 'Reads runs and bugs and starts CI, even with QAzinho closed.',
     CHECKING: 'checking',
     CONNECTED: 'connected',
     NEEDS_SIGN_IN: 'needs sign-in',
-    NOT_ADDED: 'not added',
     FAILED: 'not answering',
     NO_AGENT: 'agent not found',
     UNSUPPORTED: 'not for this agent yet',
@@ -1395,11 +1390,9 @@ export const en = {
   OUTSIDE: {
     EYEBROW: "QAzinho's MCP server",
     NAME: 'QAzinho in your coding agent',
-    ABOUT:
-      'Let the coding agent you work with run your tests and read what they found, right from your editor.',
+    ABOUT: 'Your coding agent runs your tests and reads what they found.',
     HERE_TITLE: 'On this computer',
-    HERE_ABOUT:
-      'Runs your plans here, reads the results and the bugs, and suggests cases. Only while QAzinho is open.',
+    HERE_ABOUT: 'Runs your plans and reads the bugs, with QAzinho open.',
     ORG_TITLE: 'In your orgs',
     SWITCH: 'Turn on',
     CHECKING: 'Looking for your agents…',

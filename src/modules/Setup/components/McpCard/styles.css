@@ -1,6 +1,7 @@
 .mcp-card {
   display: flex;
   flex-direction: column;
+  gap: var(--space-4);
   padding: 18px var(--space-6);
   border: var(--edge-width-lg) solid var(--edge);
   border-radius: var(--radius-xl);
@@ -51,22 +52,6 @@
   color: var(--ink2);
   font: 400 12px/1.5 var(--font-ui);
   text-wrap: pretty;
-}
-
-.mcp-card__body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line2);
-}
-
-.mcp-card__eyebrow {
-  color: var(--ink3);
-  font: 500 var(--eyebrow-size) / 1 var(--font-mono);
-  letter-spacing: var(--eyebrow-tracking);
-  text-transform: uppercase;
 }
 
 .mcp-card__error {

@@ -6,5 +6,4 @@ export const ORG_MCP_SERVER: IMcpServer = {
   name: 'QAzinho',
   logo: qazinho,
   textKey: 'MCP.ORG_TEXT',
-  needsKey: 'MCP.ORG_NEEDS',
 };

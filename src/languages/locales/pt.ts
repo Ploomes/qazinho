@@ -845,15 +845,10 @@ export const pt: typeof en = {
   MCP: {
     FIGMA_TEXT:
       'Deixa o agente abrir seus protótipos do Figma e conferir o app contra eles.',
-    FIGMA_NEEDS:
-      'O MCP do Figma no {{agent}}, o seu agente, com login na sua conta do Figma. O QAzinho adiciona ele lá; você faz o login uma vez.',
-    ORG_TEXT:
-      'Lê os planos, as runs, os bugs e o CI das suas orgs, e os roda quando você pedir, com o seu papel em cada org. Funciona com o QAzinho fechado.',
-    ORG_NEEDS: 'O QAzinho o adiciona ao {{agent}}, e você diz sim uma vez no navegador.',
+    ORG_TEXT: 'Lê as runs e os bugs e roda o CI, mesmo com o QAzinho fechado.',
     CHECKING: 'verificando',
     CONNECTED: 'conectado',
     NEEDS_SIGN_IN: 'falta o login',
-    NOT_ADDED: 'não adicionado',
     FAILED: 'sem resposta',
     NO_AGENT: 'agente não encontrado',
     UNSUPPORTED: 'ainda não para este agente',
@@ -1400,11 +1395,9 @@ export const pt: typeof en = {
   OUTSIDE: {
     EYEBROW: 'Servidor MCP do QAzinho',
     NAME: 'QAzinho no seu agente de código',
-    ABOUT:
-      'Deixe o agente de código com que você trabalha rodar seus testes e ler o que eles acharam, do seu próprio editor.',
+    ABOUT: 'Seu agente de código roda seus testes e lê o que eles acharam.',
     HERE_TITLE: 'Neste computador',
-    HERE_ABOUT:
-      'Roda seus planos aqui, lê os resultados e os bugs, e sugere casos. Só enquanto o QAzinho está aberto.',
+    HERE_ABOUT: 'Roda seus planos e lê os bugs, com o QAzinho aberto.',
     ORG_TITLE: 'Nas suas orgs',
     SWITCH: 'Ligar',
     CHECKING: 'Procurando seus agentes…',
@@ -1412,7 +1405,7 @@ export const pt: typeof en = {
       'Nenhum agente de código que o QAzinho sabe configurar foi achado aqui. Você ainda pode copiar o endereço abaixo.',
     ADD: 'Adicionar',
     ADDED: 'adicionado',
-    REMOVE: 'Tirar',
+    REMOVE: 'Remover',
     NEW_SESSION: 'Uma sessão nova do seu agente já encontra o QAzinho.',
     COPY: 'Copiar o endereço',
     COPIED: 'Copiado',

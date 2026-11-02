@@ -7,6 +7,5 @@ export const MCP_SERVERS: IMcpServer[] = [
     name: 'Figma',
     logo: figma,
     textKey: 'MCP.FIGMA_TEXT',
-    needsKey: 'MCP.FIGMA_NEEDS',
   },
 ];

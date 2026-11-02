@@ -21,18 +21,6 @@ export const OrgServerRow: React.FC = () => {
         <McpControl server={ORG_MCP_SERVER} view={view} />
       </div>
       <AnimatePresence initial={false}>
-        {!view.isConnected && (
-          <motion.p
-            key="needs"
-            className="org-server-row__about"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
-          >
-            {view.needs}
-          </motion.p>
-        )}
         {view.error !== '' && (
           <motion.p
             key="error"

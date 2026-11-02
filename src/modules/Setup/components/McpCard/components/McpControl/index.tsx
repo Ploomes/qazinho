@@ -10,17 +10,19 @@ import './styles.css';
 export const McpControl: React.FC<IMcpControlProps> = ({ server, view }) => (
   <>
     <AnimatePresence initial={false} mode="popLayout">
-      <motion.span
-        key={view.pill}
-        className="mcp-control__pill"
-        layout="position"
-        initial={{ opacity: 0, scale: 0.94 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.94 }}
-        transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
-      >
-        <StatusPill status={view.pill} label={view.statusLabel} />
-      </motion.span>
+      {view.pill !== null && (
+        <motion.span
+          key={view.pill}
+          className="mcp-control__pill"
+          layout="position"
+          initial={{ opacity: 0, scale: 0.94 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.94 }}
+          transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+        >
+          <StatusPill status={view.pill} label={view.statusLabel} />
+        </motion.span>
+      )}
     </AnimatePresence>
     <AnimatePresence initial={false}>
       {view.action !== null && (

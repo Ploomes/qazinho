@@ -72,9 +72,8 @@ export const useMcpCardViewModel = (props: IMcpCardProps) => {
   return {
     isConnected: state === 'connected',
     text: t(server.textKey),
-    needs: t(server.needsKey, { agent }),
-    pill: look.pill,
-    statusLabel: t(look.labelKey),
+    pill: look === null ? null : look.pill,
+    statusLabel: look === null ? '' : t(look.labelKey),
     action: isWorking ? t('MCP.WORKING') : action,
     isQuiet: state === 'connected',
     isBusy: isWorking,

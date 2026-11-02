@@ -1,6 +1,5 @@
 import type { IMcpCardProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
-import { useTranslation } from 'react-i18next';
 import { MOTION } from '@/shared/constants';
 import { McpControl } from './components';
 import { useMcpCardViewModel } from './hooks';
@@ -12,8 +11,7 @@ import './styles.css';
  */
 export const McpCard: React.FC<IMcpCardProps> = (props) => {
   const view = useMcpCardViewModel(props);
-  const { isConnected, text, needs, error, note } = view;
-  const { t } = useTranslation();
+  const { isConnected, text, error, note } = view;
 
   return (
     <div className={isConnected ? 'mcp-card mcp-card--on' : 'mcp-card'}>
@@ -28,37 +26,32 @@ export const McpCard: React.FC<IMcpCardProps> = (props) => {
         <McpControl server={props.server} view={view} />
       </div>
 
-      <div className="mcp-card__body">
-        <span className="mcp-card__eyebrow">{t('SETUP.WHAT_IT_NEEDS')}</span>
-        <p className="mcp-card__about">{needs}</p>
-
-        <AnimatePresence initial={false}>
-          {error !== '' && (
-            <motion.p
-              key="error"
-              className="mcp-card__error"
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
-            >
-              {error}
-            </motion.p>
-          )}
-          {note !== null && (
-            <motion.p
-              key="note"
-              className="mcp-card__note"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
-            >
-              {note}
-            </motion.p>
-          )}
-        </AnimatePresence>
-      </div>
+      <AnimatePresence initial={false}>
+        {error !== '' && (
+          <motion.p
+            key="error"
+            className="mcp-card__error"
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+          >
+            {error}
+          </motion.p>
+        )}
+        {note !== null && (
+          <motion.p
+            key="note"
+            className="mcp-card__note"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+          >
+            {note}
+          </motion.p>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

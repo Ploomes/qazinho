@@ -10,5 +10,4 @@ export interface IMcpServer {
   name: string;
   logo: string;
   textKey: ParseKeys;
-  needsKey: ParseKeys;
 }
