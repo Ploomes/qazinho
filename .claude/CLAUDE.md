@@ -175,6 +175,15 @@ minutos. Pelo Codex isso não foi tentado.
 e uma contagem no ícone do app, a menos que ele tenha pedido para ouvir só dentro do app, onde um
 aviso diz isso. Uma pergunta de uma run o chama de volta do mesmo jeito.
 
+**Uma ilha no topo da tela mostra a run, onde o notch está.** Enquanto uma run anda, o agente
+espera o QA ou uma run acabou de terminar, um pill preto colado ao centro do topo da tela veste o
+notch: nas orelhas dos lados, o passo de N e um ícone de estado; com o mouse em cima, ele abre
+abaixo do notch com o workspace, o passo, o progresso e os botões Abrir e Parar. Uma pergunta do
+agente abre a ilha sozinha. Numa tela sem notch ela fica pendurada na borda de cima, um pill
+menor, e o QA a desliga em Configurações. O app construído abriu a janela no notch de um Mac de
+14 polegadas e a mostrou, abriu e escondeu pela bridge; nenhuma run de verdade a dirigiu ainda,
+nem se viu com um app em tela cheia ou um monitor externo.
+
 **Uma primeira execução anda pela máquina** (`Onboarding`): idioma, o agente, as ferramentas de
 dispositivo, os trackers. O GitHub e o Jira conectam de verdade. O token do Jira é conferido com o
 Jira e lacrado pelo keychain do SO.

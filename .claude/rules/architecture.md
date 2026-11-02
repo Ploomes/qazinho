@@ -15,7 +15,7 @@ src/
 ├── modules/         ← telas, agrupadas por domínio
 ├── store/  languages/
 ├── services/        ← os únicos que chamam a bridge; Recorder/ é o da janela do gravador
-├── app/  index.tsx  index.html  recorder.ts  recorder.html
+├── app/  index.tsx  index.html  recorder.ts  recorder.html  island.tsx  island.html
 electron/
 └── preload/     ← a bridge: expõe window.qazinho pelo contextBridge, nada mais
 packages/
@@ -475,6 +475,25 @@ e uma marca em cada projeto ligado na sidebar são onde ele aparece.
   (`useProLinks`): ela abre o workspace no plano dele, ou o `ProLinkModal` oferece baixar o
   projeto da org (`useOrgDownload`, que o cartão também usa), ou diz por que não pode.
 
+## A ilha do notch
+
+Uma terceira página, a `island.html`, é a janela da ilha: transparente, sem moldura, sempre por
+cima e visível em todos os espaços (`ISLAND_ARGUMENT` no mesmo preload entrega `window.qazinhoIsland`).
+
+- A página principal diz o que mostrar (`useIslandSync`, `islandStateOf`): o agente esperando o QA
+  vem antes de uma run andando, e o fim de uma run fica oito segundos (`ISLAND.endedHoldMs`). Ela
+  manda o estado só quando muda, com o idioma do QA, pelo `Island` de `src/services/`.
+- A `Island` da main põe a janela no centro do topo da tela primária (`islandPlaceOf`): a altura
+  da barra de menus é a do notch num Mac que tem um (30 pt ou mais), com a largura fixa dele
+  (`ISLAND_WINDOW.notchWidth`), e uma barra de 28 pt sem largura em qualquer outra tela.
+- A janela deixa o clique passar. A página mede o mouse contra o pill e só então pede à main que
+  a deixe receber cliques (`hover`); abrir a ilha por uma pergunta não captura o mouse.
+- Um pedido do QA na ilha (`IIslandAction`: parar ou abrir) volta pela main à página principal,
+  que o executa pelas mesmas actions de uma run (`stopWorkspace`) ou abrindo o workspace; a main
+  traz a janela do app à frente só para abrir.
+- A ilha não é uma janela do app (`appWindows` a deixa de fora), e o preto dela é o do notch
+  (`--notch-black`): nada é desenhado sobre o recorte, só em volta e abaixo dele.
+
 ## O trabalho pesado fica fora do processo main
 
 Agentes, o Playwright e os drivers de dispositivo vão rodar em processos filhos
@@ -576,6 +595,7 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | `ReplayServer`                        | serve a gravação de uma run ao `<video>` da página em 127.0.0.1, com intervalos de bytes                    |
 | `StorageKeeper`                       | o que o QAzinho guarda neste computador, por tipo, e os vídeos de run que ele solta depois de velhos        |
 | `RunAlerts`                           | chama o QA de volta quando uma run termina ou lhe pergunta algo: uma notificação, um badge                  |
+| `Island`                              | a janela transparente do topo da tela que veste o notch e mostra a run, pelo `IIslandFrame`                 |
 | `GithubCli`                           | fala com o GitHub pelo gh do próprio QA: status, login por device flow, API, tar                            |
 | `GithubRepos`                         | lista os repositórios do QA e as branches de um repositório, guardados por um tempo                         |
 | `CodeCopies`                          | copia uma branch para o agente ler enquanto planeja, com o diff, e depois a apaga                           |
