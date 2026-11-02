@@ -48,6 +48,7 @@ export const ProjectModal: React.FC = () => {
     androidLock,
     iosLock,
     footerHint,
+    isConfirmQuiet,
     onNameChange,
     onRepositoriesChange,
     onVariablesChange,
@@ -78,6 +79,7 @@ export const ProjectModal: React.FC = () => {
       confirmLabel={confirmLabel}
       canConfirm={canConfirm}
       hint={footerHint}
+      isConfirmQuiet={isConfirmQuiet}
       nav={
         <ProjectNav
           label={t('PROJECT.SECTIONS')}

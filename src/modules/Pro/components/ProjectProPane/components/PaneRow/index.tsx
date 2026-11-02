@@ -11,7 +11,7 @@ export const PaneRow: React.FC<IPaneRowProps> = (props) => (
     </span>
     <div className="pane-row__words">
       <span className="pane-row__title">{props.title}</span>
-      <p className="pane-row__text">{props.text}</p>
+      {props.text !== undefined && <p className="pane-row__text">{props.text}</p>}
       {props.note !== undefined && (
         <p className="pane-row__note" role="status">
           <Icon name="running" />

@@ -155,14 +155,10 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
           dateStyle: 'medium',
           timeStyle: 'short',
         }).format(new Date(share.syncedAt));
-  const statOf = (props: { count: number; one: 'PLANS' | 'RUNS' | 'BUGS' }) => ({
-    key: props.one,
-    value: brief === null ? '–' : new Intl.NumberFormat(language).format(props.count),
-    label:
-      props.count === 1
-        ? t(`PRO.PANE_STAT_${props.one}_ONE`)
-        : t(`PRO.PANE_STAT_${props.one}_OTHER`),
-  });
+  const statOf = (props: { count: number; one: 'PLANS' | 'RUNS' | 'BUGS' }) =>
+    props.count === 1
+      ? t(`PRO.PANE_STAT_${props.one}_ONE`, { count: props.count })
+      : t(`PRO.PANE_STAT_${props.one}_OTHER`, { count: props.count });
   const hasPending = pending.length > 0;
   const pendingIcon: IconName = hasPending ? 'up' : 'check';
   const pendingTone: PaneRowTone = hasPending ? 'lit' : 'plain';
@@ -172,7 +168,6 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
       '--project-pro-tile': `${String(PROJECT_PRO_PANE.tilePx)}px`,
       '--project-pro-head-tile': `${String(PROJECT_PRO_PANE.headTilePx)}px`,
     } as CSSProperties,
-    headIconSize: PROJECT_PRO_PANE.headIconPx,
     isSignedOut: signedIn === null,
     isNoOrg: signedIn !== null && orgs.length === 0 && linkedOrg === null,
     isLocal: isLocal && orgs.length > 0,
@@ -182,8 +177,6 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
     signedOut: { title: t('PRO.PANE_SIGNED_OUT_TITLE'), text: t('PRO.PANE_SIGNED_OUT') },
     noOrg: { title: t('PRO.PANE_NO_ORG_TITLE'), text: t('PRO.PANE_NO_ORG') },
     local: {
-      title: t('PRO.PANE_LOCAL_TITLE'),
-      text: t('PRO.PANE_LOCAL_TEXT'),
       orgsLabel: t('PRO.PANE_PUBLISH_TO'),
       orgs: orgs.map((one) => {
         const isOn = one.slug === orgSlug;
@@ -203,20 +196,21 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
           },
         };
       }),
-      summaryLabel: t('PRO.PANE_SUMMARY'),
-      stats: [
-        statOf({ count: brief?.plans ?? 0, one: 'PLANS' }),
-        statOf({ count: brief?.runs ?? 0, one: 'RUNS' }),
-        statOf({ count: brief?.bugs ?? 0, one: 'BUGS' }),
-      ],
-      mediaTitle: t('PRO.PANE_MEDIA'),
-      hasMediaNote: brief !== null,
-      mediaNote: t('PRO.PANE_MEDIA_NOTE', {
-        size: bytesLabelOf({ bytes: brief?.mediaBytes ?? 0, language }),
-      }),
-      mediaSwitch: t('PRO.PANE_MEDIA_SWITCH'),
+      brief:
+        brief === null
+          ? ''
+          : t('PRO.PANE_BRIEF', {
+              plans: statOf({ count: brief.plans, one: 'PLANS' }),
+              runs: statOf({ count: brief.runs, one: 'RUNS' }),
+              bugs: statOf({ count: brief.bugs, one: 'BUGS' }),
+            }),
+      mediaSwitch:
+        brief === null
+          ? t('PRO.PANE_MEDIA_SWITCH')
+          : t('PRO.PANE_MEDIA_SWITCH_SIZE', {
+              size: bytesLabelOf({ bytes: brief.mediaBytes, language }),
+            }),
       isMediaOn: hasHistoryMedia,
-      publishNote: t('PRO.PANE_PUBLISH_NOTE'),
       publishLabel:
         working === 'publish'
           ? t('PRO.PANE_PUBLISHING')
@@ -239,7 +233,6 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
     },
     linked: {
       plansLabel: t('PRO.PANE_PLANS'),
-      factsNote: t('PRO.PANE_FACTS_NOTE'),
       hasPending,
       pendingIcon,
       pendingTone,
@@ -248,7 +241,7 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
         : pending.length === 1
           ? t('PRO.PANE_PENDING_ONE')
           : t('PRO.PANE_PENDING_OTHER', { count: pending.length }),
-      pendingText: hasPending ? namesOf(pending) : t('PRO.PANE_PENDING_NONE_TEXT'),
+      pendingText: hasPending ? namesOf(pending) : undefined,
       sendLabel: working === 'send' ? t('PRO.PANE_SENDING') : t('PRO.PANE_SEND'),
       canSend: working === null && hasPending,
       hasUpdates: updates.length > 0,
@@ -266,14 +259,12 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
       updateLabel: working === 'update' ? t('PRO.PANE_UPDATING') : t('PRO.PANE_UPDATE'),
       canUpdate: working === null && moved.some(({ isBusy }) => !isBusy),
       copyTitle: t('PRO.PANE_COPY_TITLE'),
-      copyText: t('PRO.PANE_COPY_TEXT'),
       copyLabel: t('PRO.PANE_COPY'),
       canCopy: working === null,
     },
     unlinked: {
       canPublishAgain: share?.state === 'gone',
       title: t('PRO.PANE_REPUBLISH_TITLE', { org }),
-      text: t('PRO.PANE_REPUBLISH_TEXT'),
       label: working === 'publish' ? t('PRO.PANE_PUBLISHING') : t('PRO.PANE_REPUBLISH'),
     },
     linkLabel: t('PRO.PANE_LINK'),

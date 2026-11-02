@@ -405,6 +405,20 @@ describe('useProjectModalViewModel', () => {
     });
   });
 
+  describe('isConfirmQuiet', () => {
+    it('keeps the lime for saving, except on a section with its own action', () => {
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.isConfirmQuiet).toBe(false);
+
+      act(() => {
+        result.current.onSelectSection('delete');
+      });
+
+      expect(result.current.isConfirmQuiet).toBe(true);
+    });
+  });
+
   describe('footerHint', () => {
     it('says nothing before a name: the disabled button already does', () => {
       const { result } = renderHook(() => useProjectModalViewModel());

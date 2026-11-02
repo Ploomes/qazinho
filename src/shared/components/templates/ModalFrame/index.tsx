@@ -79,7 +79,7 @@ export const ModalFrame: React.FC<IModalFrameProps> = (props) => {
           <div className="modal-frame__actions">
             <Button onClick={props.onCancel}>{t('COMMON.CANCEL')}</Button>
             <Button
-              variant="primary"
+              variant={props.isConfirmQuiet === true ? 'secondary' : 'primary'}
               disabled={!props.canConfirm}
               onClick={onConfirmClick}
             >

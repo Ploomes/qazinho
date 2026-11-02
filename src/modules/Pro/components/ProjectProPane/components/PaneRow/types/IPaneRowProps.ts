@@ -7,7 +7,7 @@ export interface IPaneRowProps {
   icon: IconName;
   tone: PaneRowTone;
   title: string;
-  text: string;
+  text?: string;
   note?: string;
   children?: ReactNode;
 }

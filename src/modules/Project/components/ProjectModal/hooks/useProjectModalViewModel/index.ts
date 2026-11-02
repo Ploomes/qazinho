@@ -389,6 +389,7 @@ export const useProjectModalViewModel = () => {
               link: { label: t('PROJECT.IOS_LINK'), url: SETUP_LINKS.xcode },
             },
           } satisfies ITargetLock),
+    isConfirmQuiet: section === 'pro' || section === 'delete',
     footerHint: isConfirmingDiscard
       ? t('PROJECT.DISCARD_HINT')
       : ((isFirstName ? undefined : blocking) ?? variableFailure ?? undefined),

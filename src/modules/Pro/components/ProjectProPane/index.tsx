@@ -20,16 +20,6 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
 
       {view.isLocal && (
         <>
-          <header className="project-pro__head">
-            <span className="project-pro__head-tile">
-              <Icon name="lock" size={view.headIconSize} />
-            </span>
-            <div className="project-pro__head-words">
-              <span className="project-pro__title">{view.local.title}</span>
-              <p className="project-pro__state">{view.local.text}</p>
-            </div>
-          </header>
-
           <div className="project-pro__group">
             <Eyebrow>{view.local.orgsLabel}</Eyebrow>
             <div
@@ -59,37 +49,15 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
             </div>
           </div>
 
-          <div className="project-pro__group">
-            <Eyebrow>{view.local.summaryLabel}</Eyebrow>
-            <div className="project-pro__box">
-              <ul className="project-pro__stats">
-                {view.local.stats.map((stat) => (
-                  <li key={stat.key} className="project-pro__stat">
-                    <span className="project-pro__stat-value">{stat.value}</span>
-                    <span className="project-pro__stat-label">{stat.label}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="project-pro__media">
-                <div className="project-pro__media-words">
-                  <span className="project-pro__media-title">
-                    {view.local.mediaTitle}
-                  </span>
-                  {view.local.hasMediaNote && (
-                    <p className="project-pro__media-note">{view.local.mediaNote}</p>
-                  )}
-                </div>
-                <Switch
-                  label={view.local.mediaSwitch}
-                  isOn={view.local.isMediaOn}
-                  onChange={view.onMediaChange}
-                />
-              </div>
-            </div>
-          </div>
-
           <div className="project-pro__publish">
-            <p className="project-pro__note">{view.local.publishNote}</p>
+            <div className="project-pro__brief">
+              <span className="project-pro__brief-line">{view.local.brief}</span>
+              <Switch
+                label={view.local.mediaSwitch}
+                isOn={view.local.isMediaOn}
+                onChange={view.onMediaChange}
+              />
+            </div>
             <Button
               variant="primary"
               disabled={!view.local.canPublish}
@@ -150,7 +118,6 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
               </PaneRow>
             )}
           </div>
-          <p className="project-pro__note">{view.linked.factsNote}</p>
         </div>
       )}
 
@@ -159,12 +126,7 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
           <Eyebrow>{view.linkLabel}</Eyebrow>
           <div className="project-pro__box">
             {view.unlinked.canPublishAgain && (
-              <PaneRow
-                icon="up"
-                tone="lit"
-                title={view.unlinked.title}
-                text={view.unlinked.text}
-              >
+              <PaneRow icon="up" tone="lit" title={view.unlinked.title}>
                 <Button
                   size="sm"
                   variant="primary"
@@ -176,12 +138,7 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
               </PaneRow>
             )}
             {view.isLinked && (
-              <PaneRow
-                icon="copy"
-                tone="plain"
-                title={view.linked.copyTitle}
-                text={view.linked.copyText}
-              >
+              <PaneRow icon="copy" tone="plain" title={view.linked.copyTitle}>
                 <Button size="sm" disabled={!view.linked.canCopy} onClick={view.onCopy}>
                   {view.linked.copyLabel}
                 </Button>

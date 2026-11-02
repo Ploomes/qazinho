@@ -117,20 +117,12 @@ describe('useProjectProPaneViewModel', () => {
 
       const { result } = pane();
 
-      expect(result.current.local.hasMediaNote).toBe(false);
-      expect(result.current.local.stats.map(({ value }) => value)).toEqual([
-        '–',
-        '–',
-        '–',
-      ]);
+      expect(result.current.local.brief).toBe('');
 
       await waitFor(() => {
-        expect(result.current.local.hasMediaNote).toBe(true);
+        expect(result.current.local.brief).toBe('1 plan · 3 runs · 0 bugs');
       });
-      expect(
-        result.current.local.stats.map(({ value, label }) => `${value} ${label}`),
-      ).toEqual(['1 plan', '3 runs', '0 bugs']);
-      expect(result.current.local.mediaNote).toContain('1.4 GB');
+      expect(result.current.local.mediaSwitch).toContain('1.4 GB');
     });
 
     it('publishes to the org chosen, leaving the history’s media here unless told', async () => {
@@ -262,7 +254,7 @@ describe('useProjectProPaneViewModel', () => {
         hasPending: false,
         canSend: false,
         pendingIcon: 'check',
-        pendingTitle: 'No plan edited here waits to be sent',
+        pendingTitle: 'No plan waiting to be sent',
       });
 
       useProStore.setState({ shares: [{ ...LINKED, pending: ['w1'] }] });

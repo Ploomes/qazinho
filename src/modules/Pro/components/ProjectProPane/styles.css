@@ -39,36 +39,10 @@
   font: var(--font-display-sm);
 }
 
-.project-pro__state {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin: 0;
-  color: var(--ink2);
-  font: var(--font-ui-sm);
-  text-wrap: pretty;
-}
-
-.project-pro__state--alert {
-  color: var(--ink);
-}
-
-.project-pro__state--alert .icon {
-  flex: none;
-  color: var(--attn);
-}
-
 .project-pro__group {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-}
-
-.project-pro__note {
-  margin: 0;
-  color: var(--ink3);
-  font: var(--font-ui-xs);
-  text-wrap: pretty;
 }
 
 .project-pro__orgs {
@@ -175,76 +149,21 @@
   background: var(--raise);
 }
 
-.project-pro__stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.project-pro__stat {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-5);
-}
-
-.project-pro__stat + .project-pro__stat {
-  border-left: 1px solid var(--line);
-}
-
-.project-pro__stat-value {
-  color: var(--ink);
-  font: var(--font-display-md);
-  letter-spacing: var(--display-tracking);
-  font-variant-numeric: tabular-nums;
-}
-
-.project-pro__stat-label {
-  color: var(--ink3);
-  font: 500 var(--eyebrow-size) / 1 var(--font-mono);
-  letter-spacing: var(--eyebrow-tracking);
-  text-transform: uppercase;
-}
-
-.project-pro__media {
-  display: flex;
-  align-items: center;
-  gap: var(--space-5);
-  padding: var(--space-4) var(--space-5);
-  border-top: 1px solid var(--line);
-}
-
-.project-pro__media-words {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--space-2);
-  min-width: 0;
-}
-
-.project-pro__media-title {
-  color: var(--ink);
-  font: var(--font-ui-strong);
-}
-
-.project-pro__media-note {
-  margin: 0;
-  color: var(--ink3);
-  font: var(--font-ui-sm);
-  text-wrap: pretty;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .project-pro__media-note {
-    animation: gc-in var(--dur) var(--ease);
-  }
-}
-
 .project-pro__publish {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-5);
+}
+
+.project-pro__brief {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.project-pro__brief-line {
+  color: var(--ink2);
+  font: var(--font-ui-sm);
 }
