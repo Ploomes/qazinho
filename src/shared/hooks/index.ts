@@ -1,4 +1,5 @@
 export * from './useArchive';
+export * from './useBackdrop';
 export * from './useCountdown';
 export * from './useDismiss';
 export * from './useFollowEnd';
