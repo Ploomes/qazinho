@@ -41,8 +41,9 @@ export class Island {
   /** Mostra o que a página mandou, ou esconde a ilha quando não há nada a dizer. */
   public set(island: IIsland): void {
     if (island.state.kind === 'idle') {
+      this.frame = { island, barHeight: 0, notchWidth: 0 };
+      this.send();
       this.window?.hide();
-      this.frame = null;
 
       return;
     }
