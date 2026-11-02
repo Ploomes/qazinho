@@ -194,17 +194,6 @@
   padding: var(--space-2) 0;
 }
 
-.runs__step-shot {
-  flex: none;
-  opacity: 0;
-  transition: opacity var(--dur-fast) var(--ease);
-}
-
-.runs__step:hover .runs__step-shot,
-.runs__step-shot:focus-within {
-  opacity: 1;
-}
-
 .runs__step-number {
   flex: none;
   width: 22px;

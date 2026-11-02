@@ -1,13 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import {
-  Button,
-  Caret,
-  EmptyState,
-  Icon,
-  IconButton,
-  StatusPill,
-} from '@/shared/components/atoms';
+import { Button, Caret, EmptyState, Icon, StatusPill } from '@/shared/components/atoms';
 import { Screenshot, ToTop } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
 import { RunPicker } from './components';
@@ -225,35 +218,18 @@ export const Runs: React.FC = () => {
                             ))}
                           </div>
 
-                          {step.hasThumb ? (
-                            <Screenshot
-                              label={step.shotLabel}
-                              src={step.shot}
-                              file={step.shotFile}
-                              onOpen={() => {
-                                onOpenShot({
-                                  label: step.shotLabel,
-                                  src: step.shot,
-                                  file: step.shotFile,
-                                });
-                              }}
-                            />
-                          ) : (
-                            <span className="runs__step-shot">
-                              <IconButton
-                                icon="image"
-                                size="sm"
-                                label={step.shotLabel}
-                                onClick={() => {
-                                  onOpenShot({
-                                    label: step.shotLabel,
-                                    src: step.shot,
-                                    file: step.shotFile,
-                                  });
-                                }}
-                              />
-                            </span>
-                          )}
+                          <Screenshot
+                            label={step.shotLabel}
+                            src={step.shot}
+                            file={step.shotFile}
+                            onOpen={() => {
+                              onOpenShot({
+                                label: step.shotLabel,
+                                src: step.shot,
+                                file: step.shotFile,
+                              });
+                            }}
+                          />
                         </div>
                       ))}
                     </div>

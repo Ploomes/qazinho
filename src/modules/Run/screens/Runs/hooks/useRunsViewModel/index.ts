@@ -255,7 +255,6 @@ export const useRunsViewModel = () => {
           noteTip: isOneLine ? (note ?? undefined) : undefined,
           hasNote:
             !isOneLine && (step.why !== null || step.by === 'replay') && bug === null,
-          hasThumb: !isOneLine,
           asked: (run?.asked ?? [])
             .filter(
               ({ caseId, stepNumber }) =>
