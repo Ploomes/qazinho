@@ -11,7 +11,6 @@ const picker = (props: Partial<IViewportPickerProps>) =>
         { id: 'desktop', label: 'Desktop', size: '1280 × 800', isActive: true },
         { id: 'phone', label: 'Phone', size: '390 × 844', isActive: false },
       ],
-      note: '',
       layoutId: 'picker',
       onSelect: vi.fn(),
       ...props,
@@ -37,16 +36,6 @@ describe('useViewportPickerViewModel', () => {
 
     it('offers nothing when the target has no window to size', () => {
       expect(picker({ viewports: [] }).options).toEqual([]);
-    });
-  });
-
-  describe('hasNote', () => {
-    it('says what a pick does when there is something to say', () => {
-      expect(picker({ note: 'The next run opens at this size.' }).hasNote).toBe(true);
-    });
-
-    it('stays quiet while the pick takes effect at once', () => {
-      expect(picker({ note: '' }).hasNote).toBe(false);
     });
   });
 });

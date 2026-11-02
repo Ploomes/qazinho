@@ -4,10 +4,13 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DEVICE } from '@/modules/Device/constants';
 import { TITLEBAR } from '@/shared/components/organisms/Titlebar/constants';
+import { useFollowEnd } from '@/shared/hooks/useFollowEnd';
 
 export const useDeviceFocusViewModel = (props: IDeviceFocusProps) => {
   const { steps, onClose } = props;
   const { t } = useTranslation();
+  const { listRef: stepsRef, onFollowScroll: onStepsScroll } =
+    useFollowEnd<HTMLDivElement>({ resetKey: null, isOn: props.isLive });
 
   useEffect(() => {
     const leave = (event: KeyboardEvent) => {
@@ -37,7 +40,11 @@ export const useDeviceFocusViewModel = (props: IDeviceFocusProps) => {
       current?.verdict === 'running' ? t('DEVICE.FOCUS_NOW') : t('DEVICE.FOCUS_NEXT'),
     now: current === null ? t('DEVICE.FOCUS_ALL_DONE') : current.action,
     nowNumber: current === null ? null : current.number,
-    rows: steps.map((step) => ({ ...step, isCurrent: step.number === current?.number })),
+    rows: steps
+      .filter(({ verdict }) => verdict !== 'pending')
+      .map((step) => ({ ...step, isCurrent: step.number === current?.number })),
+    stepsRef,
+    onStepsScroll,
     hasViewports: props.viewports.length > 0,
   };
 };

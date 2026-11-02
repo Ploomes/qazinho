@@ -233,6 +233,18 @@ describe('useWorkspaceViewModel', () => {
     );
   });
 
+  it('counts the steps of the cases the run walks, not the whole plan', () => {
+    const walked = walkRun({ verdicts: ['passed'] });
+
+    useWorkspaceStore.setState({
+      workspaces: [{ ...walked, live: { ...walked.live!, caseIds: ['TC-02'] } }],
+    });
+
+    expect(renderHook(() => useWorkspaceViewModel()).result.current.statusLabel).toBe(
+      'running · step 2 of 3',
+    );
+  });
+
   /** O cabeçalho dizia "passo 0 de 1" enquanto o primeiro passo rodava. */
   it('names the step being walked, and never one past the last', () => {
     useWorkspaceStore.setState({

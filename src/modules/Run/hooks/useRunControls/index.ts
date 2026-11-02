@@ -1,5 +1,5 @@
 import { useRunActions } from '@/modules/Run/hooks/useRunActions';
-import { flattenPlanSteps } from '@/modules/Run/library';
+import { flattenPlanSteps, walkedStepsOf } from '@/modules/Run/library';
 import { useSelectedWorkspace } from '@/shared/hooks/useSelectedWorkspace';
 
 export const useRunControls = () => {
@@ -12,6 +12,7 @@ export const useRunControls = () => {
 
   return {
     steps,
+    runSteps: walkedStepsOf({ plan: workspace?.plan ?? [], caseIds: live?.caseIds }),
     live,
     isLive,
     isPaused: live !== null && !live.isRunning && !live.isDone,

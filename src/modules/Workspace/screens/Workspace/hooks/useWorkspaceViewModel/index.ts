@@ -2,7 +2,13 @@ import type { CSSProperties } from 'react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatElapsed } from '@/modules/Device';
-import { caseVerdict, flattenPlanSteps, formatCost, useRunActions } from '@/modules/Run';
+import {
+  caseVerdict,
+  flattenPlanSteps,
+  formatCost,
+  useRunActions,
+  walkedStepsOf,
+} from '@/modules/Run';
 import { WORKSPACE_TABS } from '@/modules/Workspace/screens/Workspace/constants';
 import { EXPLORATION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
@@ -18,6 +24,8 @@ export const useWorkspaceViewModel = () => {
     design: opened.design,
     status: opened.status,
     stepCount: flattenPlanSteps(opened.plan).length,
+    runStepCount: walkedStepsOf({ plan: opened.plan, caseIds: opened.live?.caseIds })
+      .length,
     planCount: opened.plan.length,
     runCount: opened.runs.length,
     bugCount: opened.bugs.filter(({ isDismissed }) => !isDismissed).length,
@@ -56,7 +64,7 @@ export const useWorkspaceViewModel = () => {
     runCount: workspace?.runCount ?? 0,
     bugCount: workspace?.bugCount ?? 0,
     runMeta:
-      workspace?.latestRun == null
+      isLive || workspace?.latestRun == null
         ? null
         : `${workspace.latestRun.id} · ${formatElapsed(workspace.latestRun.durationSec)}${
             workspace.latestRun.costUsd === null
@@ -110,8 +118,11 @@ export const useWorkspaceViewModel = () => {
                 ? 'WORKSPACE.PAUSED_STEP'
                 : 'WORKSPACE.LIVE_STEP',
             {
-              current: Math.min((workspace?.walked ?? 0) + 1, workspace?.stepCount ?? 0),
-              total: workspace?.stepCount ?? 0,
+              current: Math.min(
+                (workspace?.walked ?? 0) + 1,
+                workspace?.runStepCount ?? 0,
+              ),
+              total: workspace?.runStepCount ?? 0,
             },
           ),
     canRun: (workspace?.stepCount ?? 0) > 0 && !isLive,

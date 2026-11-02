@@ -32,7 +32,6 @@ export const DeviceView: React.FC = () => {
     viewports,
     hasViewportPicker,
     viewportLayoutId,
-    viewportNote,
     screenRatio,
     onSelectViewport,
     shot,
@@ -41,9 +40,13 @@ export const DeviceView: React.FC = () => {
     elapsedLabel,
     isLive,
     steps,
+    listedSteps,
+    hasNoSteps,
     doingLabel,
     stepsWord,
     emptyStepsText,
+    stepsRef,
+    onStepsScroll,
     onPause,
     onStop,
   } = useDeviceViewModel();
@@ -119,38 +122,23 @@ export const DeviceView: React.FC = () => {
         <div className="device-view__size">
           <ViewportPicker
             viewports={viewports}
-            note={viewportNote}
             layoutId={viewportLayoutId}
             onSelect={onSelectViewport}
           />
         </div>
       )}
 
-      {hasControls && (
-        <div className="device-view__controls">
-          <Button size="sm" onClick={onPause}>
-            {pauseLabel}
-          </Button>
-          <Button size="sm" variant="danger" onClick={onStop}>
-            {t('COMMON.STOP')}
-          </Button>
-        </div>
-      )}
-
-      <div className="device-view__steps">
+      <div ref={stepsRef} className="device-view__steps" onScroll={onStepsScroll}>
         <Eyebrow>
           {stepsWord} {doingLabel}
         </Eyebrow>
-        {steps.length === 0 ? (
-          <p className="device-view__step">{emptyStepsText}</p>
-        ) : (
-          steps.map((step) => (
-            <div key={step.number} className="device-view__step">
-              <StatusPill status={step.verdict} label="" />
-              <span>{step.action}</span>
-            </div>
-          ))
-        )}
+        {hasNoSteps && <p className="device-view__step">{emptyStepsText}</p>}
+        {listedSteps.map((step) => (
+          <div key={step.number} className="device-view__step">
+            <StatusPill status={step.verdict} label="" />
+            <span>{step.action}</span>
+          </div>
+        ))}
       </div>
       {createPortal(
         <AnimatePresence>
@@ -171,7 +159,6 @@ export const DeviceView: React.FC = () => {
               hasControls={hasControls}
               pauseLabel={pauseLabel}
               viewports={viewports}
-              viewportNote={viewportNote}
               ratio={screenRatio}
               onSelectViewport={onSelectViewport}
               onPause={onPause}

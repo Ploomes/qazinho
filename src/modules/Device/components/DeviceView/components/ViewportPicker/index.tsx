@@ -1,5 +1,5 @@
 import type { IViewportPickerProps } from './types';
-import { AnimatePresence, motion } from 'motion/react';
+import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Eyebrow } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
@@ -11,7 +11,7 @@ import './styles.css';
  * durante uma.
  */
 export const ViewportPicker: React.FC<IViewportPickerProps> = (props) => {
-  const { options, hasNote } = useViewportPickerViewModel(props);
+  const { options } = useViewportPickerViewModel(props);
   const { t } = useTranslation();
 
   return (
@@ -39,20 +39,6 @@ export const ViewportPicker: React.FC<IViewportPickerProps> = (props) => {
           </button>
         ))}
       </div>
-      <AnimatePresence initial={false}>
-        {hasNote && (
-          <motion.div
-            key="next"
-            className="viewport-picker__note"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: MOTION.duration, ease: MOTION.ease }}
-          >
-            <p className="viewport-picker__note-text">{props.note}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };

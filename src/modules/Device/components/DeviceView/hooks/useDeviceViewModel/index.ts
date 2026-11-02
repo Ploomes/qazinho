@@ -12,19 +12,20 @@ import {
   stepVerdictsOf,
   viewportOf,
 } from '@/modules/Device/library';
-import { formatCost, useRunControls } from '@/modules/Run';
+import { useRunControls } from '@/modules/Run';
 import { Run } from '@/services';
 import { MOTION } from '@/shared/constants';
+import { useFollowEnd } from '@/shared/hooks/useFollowEnd';
 import { useSelectedWorkspace } from '@/shared/hooks/useSelectedWorkspace';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useDeviceViewModel = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const projects = useAppStore((state) => state.projects);
   const workspace = useSelectedWorkspace();
   const setViewport = useWorkspaceStore((state) => state.setViewport);
   const {
-    steps: planSteps,
+    runSteps,
     live,
     isLive: isRunLive,
     isPaused,
@@ -44,7 +45,7 @@ export const useDeviceViewModel = () => {
     : viewport.width / viewport.height;
 
   const lastRun = workspace?.runs[0] ?? null;
-  const verdicts = stepVerdictsOf({ steps: planSteps, live, lastRun });
+  const verdicts = stepVerdictsOf({ steps: runSteps, live, lastRun });
   const isExploring = live?.kind === 'explore';
   const steps: IDeviceStep[] = isExploring
     ? live.outcomes.map((outcome, index) => ({
@@ -52,11 +53,13 @@ export const useDeviceViewModel = () => {
         action: outcome.action,
         verdict: outcome.verdict,
       }))
-    : planSteps.map((step, index) => ({
+    : runSteps.map((step, index) => ({
         number: index + 1,
         action: step.action,
         verdict: verdicts[index] ?? 'pending',
       }));
+  const listedSteps =
+    live === null ? steps : steps.filter(({ verdict }) => verdict !== 'pending');
   const walked =
     live?.outcomes.length ??
     lastRun?.cases.reduce((total, runCase) => total + runCase.steps.length, 0) ??
@@ -74,6 +77,11 @@ export const useDeviceViewModel = () => {
         isActive: option.id === viewport.id,
       }));
   const workspaceId = workspace?.id ?? null;
+  const { listRef: stepsRef, onFollowScroll: onStepsScroll } =
+    useFollowEnd<HTMLDivElement>({
+      resetKey: workspaceId,
+      isOn: isRunLive,
+    });
 
   useEffect(() => {
     if (workspaceId === null || stream === null || !isFocused) return;
@@ -119,7 +127,6 @@ export const useDeviceViewModel = () => {
     viewports,
     hasViewportPicker: viewports.length > 0 && !isFocused,
     viewportLayoutId: DEVICE.panelViewportLayoutId,
-    viewportNote: isRunLive ? '' : t('DEVICE.VIEWPORT_NEXT'),
     screenRatio,
     onSelectViewport: (viewportId: ViewportId) => {
       if (!workspace || viewportId === viewport.id) return;
@@ -138,15 +145,13 @@ export const useDeviceViewModel = () => {
     shot,
     stream,
     urlText: shownUrlOf(target?.value ?? ''),
-    elapsedLabel:
-      live?.costUsd == null
-        ? t('DEVICE.LIVE', { elapsed: formatElapsed(live?.elapsedSec ?? 0) })
-        : t('DEVICE.LIVE_COST', {
-            elapsed: formatElapsed(live.elapsedSec),
-            cost: formatCost({ costUsd: live.costUsd, language: i18n.language }),
-          }),
+    elapsedLabel: formatElapsed(live?.elapsedSec ?? 0),
+    stepsRef,
+    onStepsScroll,
     isLive: state === 'driving',
     steps,
+    listedSteps,
+    hasNoSteps: listedSteps.length === 0 && (!isRunLive || isExploring),
     stepsWord: t(isExploring ? 'DEVICE.SCREENS' : 'DEVICE.STEPS'),
     emptyStepsText: t(isExploring ? 'DEVICE.SCREENS_EMPTY' : 'DEVICE.STEPS_EMPTY'),
     doingLabel:

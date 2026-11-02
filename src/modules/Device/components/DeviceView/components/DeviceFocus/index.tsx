@@ -15,8 +15,16 @@ import './styles.css';
  * devolve.
  */
 export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
-  const { style, nowEyebrow, now, nowNumber, rows, hasViewports } =
-    useDeviceFocusViewModel(props);
+  const {
+    style,
+    nowEyebrow,
+    now,
+    nowNumber,
+    rows,
+    stepsRef,
+    onStepsScroll,
+    hasViewports,
+  } = useDeviceFocusViewModel(props);
   const { t } = useTranslation();
 
   return (
@@ -80,7 +88,6 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
         {hasViewports && (
           <ViewportPicker
             viewports={props.viewports}
-            note={props.viewportNote}
             layoutId={DEVICE.viewportLayoutId}
             onSelect={props.onSelectViewport}
           />
@@ -97,7 +104,7 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
           </div>
         )}
 
-        <div className="device-focus__steps">
+        <div ref={stepsRef} className="device-focus__steps" onScroll={onStepsScroll}>
           <Eyebrow>
             {props.stepsWord} {props.doingLabel}
           </Eyebrow>

@@ -20,7 +20,6 @@ export interface IDeviceFocusProps {
   hasControls: boolean;
   pauseLabel: string;
   viewports: IViewportChoice[];
-  viewportNote: string;
   ratio: number;
   onSelectViewport: (viewportId: ViewportId) => void;
   onPause: () => void;

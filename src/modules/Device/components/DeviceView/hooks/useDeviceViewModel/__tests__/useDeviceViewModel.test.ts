@@ -59,7 +59,6 @@ describe('useDeviceViewModel', () => {
 
       expect(result.current.hasScreen).toBe(false);
       expect(result.current.hasViewportPicker).toBe(true);
-      expect(result.current.viewportNote).toBe('The next run opens at this size.');
     });
 
     it('does NOT offer a size for a phone app, nor beside the device while it is up close', () => {
@@ -84,7 +83,7 @@ describe('useDeviceViewModel', () => {
       unmount();
     });
 
-    it('keeps the size picked between runs, and says the next run opens at it', () => {
+    it('keeps the size picked between runs', () => {
       const resizeDevice = vi.fn(() => Promise.resolve());
 
       window.qazinho = { ...fakeQazinhoApi('darwin'), resizeDevice };
@@ -97,7 +96,6 @@ describe('useDeviceViewModel', () => {
 
       expect(useWorkspaceStore.getState().workspaces[0]?.viewportId).toBe('phone');
       expect(result.current.screenRatio).toBe(390 / 844);
-      expect(result.current.viewportNote).toBe('The next run opens at this size.');
       expect(resizeDevice).not.toHaveBeenCalled();
     });
 
@@ -117,7 +115,6 @@ describe('useDeviceViewModel', () => {
         workspaceId: 'w1',
         viewport: { width: 820, height: 1180 },
       });
-      expect(result.current.viewportNote).toBe('');
     });
   });
 
@@ -205,6 +202,62 @@ describe('useDeviceViewModel', () => {
         'pending',
       ]);
       expect(result.current.doingLabel).toBe('3 of 6');
+    });
+
+    it('lists the whole plan while no run has gone', () => {
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+
+      const { result } = renderHook(() => useDeviceViewModel());
+
+      expect(result.current.listedSteps).toHaveLength(6);
+    });
+
+    /** O fim da lista é o que importa numa run: passos pendentes empurravam o atual para fora. */
+    it('lists only what a run reached, so the end of the list is the step it is on', () => {
+      const walked = walkRun({ verdicts: ['passed'] });
+
+      useWorkspaceStore.setState({
+        workspaces: [{ ...walked, live: { ...walked.live!, doingIndex: 1 } }],
+      });
+
+      const { result } = renderHook(() => useDeviceViewModel());
+
+      expect(result.current.listedSteps.map(({ verdict }) => verdict)).toEqual([
+        'passed',
+        'running',
+      ]);
+      expect(result.current.steps).toHaveLength(6);
+    });
+
+    /** Uma run numera os passos dela: lidos contra o plano, o veredito caía na linha errada. */
+    it('reads a run of one case against that case, not the whole plan', () => {
+      const walked = walkRun({ verdicts: ['failed'] });
+
+      useWorkspaceStore.setState({
+        workspaces: [{ ...walked, live: { ...walked.live!, caseIds: ['TC-02'] } }],
+      });
+
+      const { result } = renderHook(() => useDeviceViewModel());
+
+      expect(result.current.steps.map(({ action }) => action)).toEqual([
+        'Add the product to the cart',
+        'Leave the house number empty',
+        'Pay with the test card',
+      ]);
+      expect(result.current.listedSteps).toMatchObject([
+        { number: 1, action: 'Add the product to the cart', verdict: 'failed' },
+      ]);
+      expect(result.current.doingLabel).toBe('1 of 3');
+    });
+
+    /** A run acabou de começar: "aperte Rodar plano" seria mentira. */
+    it('does NOT tell the QA to press run while a run is starting', () => {
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: [] })] });
+
+      const { result } = renderHook(() => useDeviceViewModel());
+
+      expect(result.current.listedSteps).toEqual([]);
+      expect(result.current.hasNoSteps).toBe(false);
     });
 
     /**
@@ -329,7 +382,7 @@ describe('useDeviceViewModel', () => {
       useWorkspaceStore.setState({ workspaces: [walked] });
 
       expect(renderHook(() => useDeviceViewModel()).result.current.elapsedLabel).toBe(
-        'live · 0:00',
+        '0:00',
       );
 
       useWorkspaceStore.setState({
@@ -339,7 +392,7 @@ describe('useDeviceViewModel', () => {
       });
 
       expect(renderHook(() => useDeviceViewModel()).result.current.elapsedLabel).toBe(
-        'live · 1:15 · $0.042',
+        '1:15',
       );
     });
   });

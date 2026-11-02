@@ -65,14 +65,3 @@
 .viewport-picker__option--on .viewport-picker__size {
   color: var(--lime-ink);
 }
-
-.viewport-picker__note {
-  margin-top: calc(var(--space-3) * -1);
-  overflow: hidden;
-}
-
-.viewport-picker__note-text {
-  margin: var(--space-3) 0 0;
-  color: var(--ink3);
-  font: var(--font-ui-xs);
-}

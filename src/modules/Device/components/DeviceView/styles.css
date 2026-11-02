@@ -183,13 +183,6 @@
   padding: 0 var(--device-gutter) var(--space-4);
 }
 
-.device-view__controls {
-  display: flex;
-  flex: none;
-  gap: var(--space-3);
-  padding: 0 var(--device-gutter) var(--space-4);
-}
-
 .device-view__steps {
   flex: 1 1 0;
   min-height: var(--device-steps-min);

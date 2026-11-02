@@ -10,5 +10,4 @@ export const useViewportPickerViewModel = (props: IViewportPickerProps) => ({
       props.onSelect(option.id);
     },
   })),
-  hasNote: props.note !== '',
 });

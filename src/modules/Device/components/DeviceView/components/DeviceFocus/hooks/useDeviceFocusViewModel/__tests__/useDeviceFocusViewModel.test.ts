@@ -28,7 +28,6 @@ const focus = (props: Partial<IDeviceFocusProps>) =>
       hasControls: true,
       pauseLabel: 'Pause',
       viewports: [],
-      viewportNote: '',
       ratio: 1.6,
       onSelectViewport: vi.fn(),
       onPause: vi.fn(),
@@ -39,13 +38,16 @@ const focus = (props: Partial<IDeviceFocusProps>) =>
   ).result.current;
 
 describe('useDeviceFocusViewModel', () => {
-  it('puts the step the agent is on up front, and marks it in the list', () => {
+  it('puts the step the agent is on up front, and lists only what it reached', () => {
     const view = focus({
       steps: [step(1, 'passed'), step(2, 'running'), step(3, 'pending')],
     });
 
     expect(view).toMatchObject({ nowEyebrow: 'now', now: 'Step 2', nowNumber: 2 });
-    expect(view.rows.map(({ isCurrent }) => isCurrent)).toEqual([false, true, false]);
+    expect(view.rows.map(({ number, isCurrent }) => [number, isCurrent])).toEqual([
+      [1, false],
+      [2, true],
+    ]);
   });
 
   it('shows the next step between two, while nothing is running', () => {
