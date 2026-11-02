@@ -586,7 +586,7 @@ export const pt: typeof en = {
     STEP_STORY: 'Lendo a {{key}} no Jira…',
     STEP_FILES: 'Baixando os anexos da {{key}}…',
     STEP_FILES_SIZE: 'Baixando os anexos da {{key}} · {{size}}',
-    CONFLUENCE_PLAN: 'Planejar a partir de uma página do Confluence',
+    CONFLUENCE_PLAN: 'Plano a partir de uma página do Confluence',
     CONFLUENCE_PLAN_TEXT:
       'O agente lê uma página, como os cenários que seu time escreveu, e planeja os testes com você.',
     NEEDS_CONFLUENCE:
