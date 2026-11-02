@@ -203,7 +203,21 @@ um clique, ou copia o endereço para outro agente. São sete ferramentas e nenhu
 configurações ou lê um segredo; o app não vem à frente. Um Claude Code real (Haiku), de fora, achou um
 500 plantado numa loja em 20 segundos e menos de dois centavos: rodou o plano, leu o bug, abriu a tela
 e nomeou a chamada que falhou. O `tests/smoke/outside.test.ts` dirige o servidor real com um cliente
-MCP no app construído. Pelo Codex isso não foi tentado, e o da plataforma ainda não existe.
+MCP no app construído. Dez sessões reais do Claude Code (Haiku), como dev e como QA, acharam o que
+quebrou, recusaram apagar um workspace, não seguiram uma instrução plantada numa página e disseram
+quando a run esperava o QA. Pelo Codex isso não foi tentado.
+
+**O mesmo agente alcança as orgs do QA, pela plataforma.** Com a conta logada, a mesma seção das
+Configurações (`OutsideServerCard`, um cartão com os dois alcances) adiciona ao agente o servidor da
+plataforma (`qazinho-org`), que funciona com o app fechado: ele entra pelo OAuth, com a pessoa dizendo
+sim na `/connect` da web, e lê planos, runs, telas, bugs e o CI com o papel dela em cada org, além de
+rodar uma regra, rodar uma run de novo, parar um job e comentar num bug. As chamadas do próprio QAzinho
+ficam sem esse servidor (`AGENT_RUN.orgServer`), porque ele gasta os créditos da org e uma página sob
+teste fala com o agente de uma run. O qazinho-server prova o fluxo com o cliente MCP real sobre a API
+(`test/flow/mcp.test.ts`). Treze sessões reais do Claude Code (Haiku), com um token do login e numa
+cópia do banco, responderam se um PR passou, acharam o plano de um fluxo e recusaram o que o papel não
+deixa, por cerca de seis centavos. Ainda não rodou: o `/mcp` da CLI real com a `/connect` num navegador
+de verdade, e o `get_screenshot` com uma tela de verdade; essa rota também não foi publicada ainda.
 
 **Uma primeira execução anda pela máquina** (`Onboarding`): idioma, o agente, as ferramentas de
 dispositivo, os trackers. O GitHub e o Jira conectam de verdade. O token do Jira é conferido com o

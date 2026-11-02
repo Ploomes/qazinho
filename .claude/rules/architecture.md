@@ -507,8 +507,14 @@ cima e visível em todos os espaços (`ISLAND_ARGUMENT` no mesmo preload entrega
 
 ## Um agente de fora
 
-O agente que o QA usa no próprio editor alcança o QAzinho por um servidor MCP local, desligado até o
-QA ligá-lo (`OutsideServerCard`). É o caminho inverso do resto do app: aqui quem inicia é o agente.
+O agente que o QA usa no próprio editor alcança o QAzinho por dois servidores, num cartão só
+(`OutsideServerCard`): o local, descrito aqui, e o da plataforma (`OrgServerRow`), que só aparece com a
+conta logada e entra pelo fluxo de MCP de sempre (`MCP_CATALOG.org`, `useMcpCardViewModel`). Eles
+continuam dois porque o da plataforma precisa funcionar com o app fechado, e o local só existe nesta
+máquina. O da plataforma gasta os créditos da org, então toda chamada do QAzinho o deixa de fora:
+`--disallowedTools` no Claude Code, `enabled=false` no Codex (`AGENT_RUN.orgServer`).
+
+O local é desligado até o QA ligá-lo. É o caminho inverso do resto do app: aqui quem inicia é o agente.
 
 - O `OutsideServer` da main guarda a porta e o token em `outside-server.json` (0600) e sempre volta ao
   mesmo endereço, que o agente do QA guarda. Uma porta ocupada não derruba o app: o cartão oferece
