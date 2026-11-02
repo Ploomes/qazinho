@@ -194,6 +194,17 @@ o `tests/smoke/island.test.ts` prova a janela e o teclado. Os cliques e teclas d
 sintéticos, nenhum atravessou o macOS; ainda não se viu a ilha com um app em tela cheia ou um
 monitor externo, nem no Windows ou no Linux.
 
+**O agente de código do QA usa o QAzinho de fora.** Ligado em Configurações › MCPs, o QAzinho vira
+um servidor MCP neste computador: o agente com que o QA ou o dev trabalha no próprio editor acha um
+workspace, roda o plano, espera o resultado, lê o que quebrou (as telas como arquivos, as chamadas de
+API que falharam e o que responderam) e sugere casos para o que acabou de fazer, que esperam num
+cartão no chat até o QA levá-los ao plano. O QAzinho adiciona o servidor ao Claude Code ou ao Codex em
+um clique, ou copia o endereço para outro agente. São sete ferramentas e nenhuma apaga, muda
+configurações ou lê um segredo; o app não vem à frente. Um Claude Code real (Haiku), de fora, achou um
+500 plantado numa loja em 20 segundos e menos de dois centavos: rodou o plano, leu o bug, abriu a tela
+e nomeou a chamada que falhou. O `tests/smoke/outside.test.ts` dirige o servidor real com um cliente
+MCP no app construído. Pelo Codex isso não foi tentado, e o da plataforma ainda não existe.
+
 **Uma primeira execução anda pela máquina** (`Onboarding`): idioma, o agente, as ferramentas de
 dispositivo, os trackers. O GitHub e o Jira conectam de verdade. O token do Jira é conferido com o
 Jira e lacrado pelo keychain do SO.

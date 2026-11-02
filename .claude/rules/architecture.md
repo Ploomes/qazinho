@@ -505,6 +505,33 @@ cima e visível em todos os espaços (`ISLAND_ARGUMENT` no mesmo preload entrega
 - A ilha não é uma janela do app (`appWindows` a deixa de fora), e o preto dela é o do notch
   (`--notch-black`): nada é desenhado sobre o recorte, só em volta e abaixo dele.
 
+## Um agente de fora
+
+O agente que o QA usa no próprio editor alcança o QAzinho por um servidor MCP local, desligado até o
+QA ligá-lo (`OutsideServerCard`). É o caminho inverso do resto do app: aqui quem inicia é o agente.
+
+- O `OutsideServer` da main guarda a porta e o token em `outside-server.json` (0600) e sempre volta ao
+  mesmo endereço, que o agente do QA guarda. Uma porta ocupada não derruba o app: o cartão oferece
+  outra, e o `renew` leva o endereço novo aos agentes que guardavam o anterior.
+- **O endereço nunca chega à página.** Ela pede à main para adicioná-lo a um agente (`AgentMcp.addAddress`)
+  ou copiá-lo; só a main o lê. Um `Origin` ou um `Host` de fora da máquina é recusado (`isLocalRequest`).
+- As sete ferramentas vivem no harness (`servers/outside/`, `OutsideHost`), e a resposta a uma chamada
+  (`OutsideToolCall`) vem da página, pelas mesmas stores e actions dos cliques do QA
+  (`performOutsideTool`), numa ponte só dela: a do Estagiário solta o que espera a cada turno dele. Com
+  a janela fechada, a main a abre e pede ao agente que chame de novo.
+- **Uma run não inicia outra.** O servidor é adicionado sob o nome `qazinho`, o mesmo do servidor
+  interno, então toda chamada que o QAzinho faz ao agente o sobrepõe, com ou sem `--strict-mcp-config`
+  (conferido contra o Claude Code real). O `start_run` anda pelas gravações por padrão, sem IA; o agente
+  só entra com `withAgent`, ou num caso sem gravação, e a descrição da ferramenta diz o custo.
+- Um `run_status` com `waitSeconds` segura na página até a run acabar ou o agente da run precisar do QA,
+  por no máximo 50 segundos, abaixo do tempo limite dos clientes de MCP. As chamadas não entram em fila:
+  um `stop_run` passa enquanto outra espera.
+- Tudo o que uma ferramenta responde veio do app testado, e o agente de fora tem shell e o código do
+  QA. A descrição de cada uma diz que é dado, e um valor de variável nunca passa: as runs já os guardam
+  como `${NAME}`, e nenhuma ferramenta lê o `VariableVault`.
+- Um caso sugerido (`suggest_cases`) fica num cartão no chat (`ISuggestionMessage.from`), e só o QA o
+  leva ao plano (`takeSuggestion`).
+
 ## O trabalho pesado fica fora do processo main
 
 Agentes, o Playwright e os drivers de dispositivo vão rodar em processos filhos
@@ -606,6 +633,7 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | `ReplayServer`                        | serve a gravação de uma run ao `<video>` da página em 127.0.0.1, com intervalos de bytes                    |
 | `StorageKeeper`                       | o que o QAzinho guarda neste computador, por tipo, e os vídeos de run que ele solta depois de velhos        |
 | `RunAlerts`                           | chama o QA de volta quando uma run termina ou lhe pergunta algo: uma notificação, um badge                  |
+| `OutsideServer`                       | abre a porta do QAzinho ao agente que o QA usa no editor, num endereço estável                              |
 | `Island`                              | a janela transparente do topo da tela que veste o notch e mostra a run, pelo `IIslandFrame`                 |
 | `GithubCli`                           | fala com o GitHub pelo gh do próprio QA: status, login por device flow, API, tar                            |
 | `GithubRepos`                         | lista os repositórios do QA e as branches de um repositório, guardados por um tempo                         |

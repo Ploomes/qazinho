@@ -96,6 +96,7 @@ próprio comando, e o CI nunca as roda.
 | `network.test.ts`      | Chrome real: cada pedido guardado com status, tempo e tamanho, segredos fora            |
 | `strip.test.ts`        | o app construído: os pedidos de uma run sob o vídeo, e baixados desenhados nele         |
 | `island.test.ts`       | o app construído: a janela da ilha transparente, no Dock, sem corte, setas e teclado    |
+| `outside.test.ts`      | um cliente MCP real no app construído: token, navegador, rodar, esperar, parar, sugerir |
 
 O `run.test.ts`, o `chat.test.ts` e o `visual.test.ts` gastam os tokens do QA e precisam de um
 agente instalado. Rode-os à mão depois de mexer no pipeline da run ou no schema de uma resposta.

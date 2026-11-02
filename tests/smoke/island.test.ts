@@ -279,6 +279,10 @@ describe('the island', () => {
     await hover(false);
   });
 
+  /**
+   * Precisa da tela desbloqueada: com ela bloqueada o app da frente é o loginwindow, e
+   * nenhuma janela recebe o teclado, por melhor que o código esteja.
+   */
   it('takes the keyboard while the QA types, stays open, and gives it back on Esc', async () => {
     await show({ kind: 'asking', questions: [question('3', { options: [] })] });
     await hover(true);
