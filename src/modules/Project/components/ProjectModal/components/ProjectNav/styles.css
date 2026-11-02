@@ -61,7 +61,7 @@
   background: var(--fail-soft);
 }
 
-.project-nav__item--danger .project-nav__label,
+.project-nav__label,
 .project-nav__end {
   position: relative;
 }
