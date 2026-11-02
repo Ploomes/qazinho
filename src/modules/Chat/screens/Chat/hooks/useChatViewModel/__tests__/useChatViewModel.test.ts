@@ -869,7 +869,7 @@ describe('useChatViewModel', () => {
       });
 
       expect(sectionOf(renderHook(() => useChatViewModel()).result.current)?.title).toBe(
-        'Run r-01 · stopped · 1 step passed · 1 failed',
+        'Run r-01 · stopped · 1 failed',
       );
     });
 
@@ -906,25 +906,41 @@ describe('useChatViewModel', () => {
     it('keeps the plain title for a run that walked it all', () => {
       answering({});
       useWorkspaceStore.setState({
-        workspaces: [walkRun({ verdicts: ['passed'], isFinished: true })],
+        workspaces: [
+          walkRun({
+            verdicts: ['passed', 'passed', 'passed', 'passed', 'passed', 'passed'],
+            isFinished: true,
+          }),
+        ],
       });
 
+      /* O título contava passos e a aba Runs contava casos: agora os dois contam casos. */
       expect(sectionOf(renderHook(() => useChatViewModel()).result.current)?.title).toBe(
-        'Run r-01 · 1 step passed',
+        'Run r-01 · 2 passed',
       );
     });
 
     it('counts one case in the singular, in Portuguese too', async () => {
       answering({});
+      const walked = walkRun({
+        verdicts: ['passed', 'passed', 'passed', 'passed', 'passed', 'passed'],
+        isFinished: true,
+      });
+
       useWorkspaceStore.setState({
-        workspaces: [walkRun({ verdicts: ['passed'], isFinished: true })],
+        workspaces: [
+          {
+            ...walked,
+            runs: walked.runs.map((run) => ({ ...run, cases: run.cases.slice(0, 1) })),
+          },
+        ],
       });
       await i18n.changeLanguage('pt');
 
       const title = sectionOf(renderHook(() => useChatViewModel()).result.current)?.title;
 
       await i18n.changeLanguage('en');
-      expect(title).toBe('Run r-01 · 1 passo passou');
+      expect(title).toBe('Run r-01 · 1 passou');
     });
 
     it('leaves loose the error of a run that broke before its first step', () => {

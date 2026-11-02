@@ -58,7 +58,7 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
             </Tooltip>
           )}
 
-          <Tooltip content={resourcesLabel}>
+          <Tooltip content={resourcesLabel} isOff={isResourcesOpen}>
             <IconButton
               icon="resources"
               label={resourcesLabel}

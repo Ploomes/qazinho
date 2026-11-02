@@ -1,6 +1,6 @@
 import type { IViewportPickerProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
-import { Caret, Icon } from '@/shared/components/atoms';
+import { Icon } from '@/shared/components/atoms';
 import { STICKER } from '@/shared/constants';
 import { useViewportPickerViewModel } from './hooks';
 import './styles.css';
@@ -24,7 +24,7 @@ export const ViewportPicker: React.FC<IViewportPickerProps> = (props) => {
         onClick={onToggle}
       >
         {current}
-        <Caret isOpen={isOpen} />
+        <Icon name="caretDown" />
       </button>
 
       <AnimatePresence>

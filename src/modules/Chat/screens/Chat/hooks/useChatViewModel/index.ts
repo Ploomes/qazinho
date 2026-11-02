@@ -1,4 +1,5 @@
 import type { ChatItem, IQuestionAnswer, IRunMessage } from '@/modules/Chat/types';
+import type { IRun } from '@/modules/Run/types';
 import type {
   IChatReference,
   ICodeAsk,
@@ -30,9 +31,10 @@ import { formatElapsed } from '@/modules/Device';
 import { addCase } from '@/modules/Plan/library';
 import { secretIn, useVariableActions, withoutSecret } from '@/modules/Project';
 import {
+  caseVerdict,
+  countVerdicts,
   dayLabelOf,
   walkedStepsOf,
-  formatCost,
   RUN_ENDS,
   runDayOf,
   useRunActions,
@@ -224,7 +226,7 @@ export const useChatViewModel = () => {
       ? t('CHAT.EXPLORE_SCREENS_ONE')
       : t('CHAT.EXPLORE_SCREENS_OTHER', { count });
 
-  const runTitleOf = (message: IRunMessage) => {
+  const runTitleOf = (message: IRunMessage, saved: IRun | null) => {
     const end = RUN_ENDS[message.endedBy];
 
     if (message.explored !== undefined) {
@@ -242,24 +244,38 @@ export const useChatViewModel = () => {
         : t('CHAT.EXPLORE_CARD_TITLE_ENDED', { ...explored, ended: t(end.labelKey) });
     }
 
-    const tally = {
-      id: message.runId,
-      passed:
-        message.passed === 1
-          ? t('CHAT.RUN_PASSED_ONE')
-          : t('CHAT.RUN_PASSED_OTHER', { count: message.passed }),
-      failed:
-        message.failed === 1
-          ? t('CHAT.RUN_FAILED_ONE')
-          : t('CHAT.RUN_FAILED_OTHER', { count: message.failed }),
-    };
+    const counts =
+      saved === null
+        ? null
+        : countVerdicts(saved.cases.map(({ steps }) => caseVerdict(steps)));
+    const passed = counts?.passed ?? message.passed;
+    const failed = counts?.failed ?? message.failed;
+    const told = [
+      ...(failed === 0
+        ? []
+        : [
+            failed === 1
+              ? t('CHAT.RUN_FAILED_ONE')
+              : t('CHAT.RUN_FAILED_OTHER', { count: failed }),
+          ]),
+      ...(passed === 0
+        ? []
+        : [
+            passed === 1
+              ? t('CHAT.RUN_PASSED_ONE')
+              : t('CHAT.RUN_PASSED_OTHER', { count: passed }),
+          ]),
+    ].join(' · ');
 
-    if (end !== null)
-      return t('CHAT.RUN_CARD_TITLE_ENDED', { ...tally, ended: t(end.labelKey) });
+    if (told === '') return t('CHAT.RUN_SECTION', { id: message.runId });
 
-    return message.failed === 0
-      ? t('CHAT.RUN_CARD_TITLE_CLEAN', tally)
-      : t('CHAT.RUN_CARD_TITLE', tally);
+    return end === null
+      ? t('CHAT.RUN_CARD_TITLE', { id: message.runId, told })
+      : t('CHAT.RUN_CARD_TITLE_ENDED', {
+          id: message.runId,
+          told,
+          ended: t(end.labelKey),
+        });
   };
 
   const answer = (props: { messageId: string; answers: IQuestionAnswer[] }) => {
@@ -310,14 +326,6 @@ export const useChatViewModel = () => {
             });
   };
 
-  const factsOf = (props: { seconds: number; costUsd: number | null }) =>
-    props.costUsd === null
-      ? formatElapsed(props.seconds)
-      : t('RUN.FACTS', {
-          duration: formatElapsed(props.seconds),
-          cost: formatCost({ costUsd: props.costUsd, language: i18n.language }),
-        });
-
   const sectionOf = (item: Extract<ChatItem, { kind: 'run' }>) => {
     const isLive = item.runId === workspace?.liveId && isWalking;
     const saved = workspace?.runs.find(({ id }) => id === item.runId) ?? null;
@@ -353,7 +361,7 @@ export const useChatViewModel = () => {
             : '',
       title:
         item.card !== null
-          ? runTitleOf(item.card)
+          ? runTitleOf(item.card, saved)
           : isLive && workspace?.isExploring === true
             ? t(
                 question !== null
@@ -374,13 +382,10 @@ export const useChatViewModel = () => {
                 )
               : t('CHAT.RUN_SECTION', { id: item.runId }),
       facts: isLive
-        ? factsOf({
-            seconds: workspace?.elapsedSec ?? 0,
-            costUsd: workspace?.liveCostUsd ?? null,
-          })
+        ? formatElapsed(workspace?.elapsedSec ?? 0)
         : saved === null
           ? ''
-          : factsOf({ seconds: saved.durationSec, costUsd: saved.costUsd }),
+          : formatElapsed(saved.durationSec),
       isLive,
       isExpanded: expandedRuns.includes(item.runId),
       isExpandable: item.messages.length > 0,
