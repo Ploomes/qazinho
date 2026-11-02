@@ -270,8 +270,8 @@ clipe novos com ele. Uma issue fechada é chamada de regressão e nunca reaberta
 `tests/smoke/review.test.ts` pesa uma por um agente fake e um Jira fake, e o app construído postou
 uma; um agente real ainda não pesou uma.
 
-**O Estagiário responde do canto.** Um sticker no canto inferior direito abre um chatzinho onde o
-agente do próprio QA fala de qualquer projeto, workspace, run ou bug. Ele também faz o que o QA
+**O Estagiário responde da barra de título.** O rosto dele, no fim dela, abre um chatzinho logo
+abaixo, onde o agente do próprio QA fala de qualquer projeto, workspace, run ou bug. Ele também faz o que o QA
 poderia fazer à mão: abrir uma tela, criar ou mudar um projeto, ligar um repositório, criar,
 renomear, rodar ou parar um workspace, mudar as configurações, conectar um tracker, e apagar,
 desconectar ou mandar um bug a um tracker quando o QA confirma num cartão. Um plano ele entrega ao

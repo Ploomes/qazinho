@@ -240,7 +240,7 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     (`codexServersOf`), menos os que o QAzinho entrega à chamada. Sem uma ferramenta para
     respondê-lo, um servidor da Atlassian do QA uma vez deixou o chat pedindo a ela uma permissão
     que ninguém podia dar.
-- **O Estagiário no canto é um agente próprio** (`role/assistant/`). Ele faz no QAzinho o que o QA
+- **O Estagiário da barra de título é um agente próprio** (`role/assistant/`). Ele faz no QAzinho o que o QA
   faz à mão, pelas ferramentas do app (`servers/app/`), e fala de qualquer projeto, workspace, run
   ou bug:
   - Cada mensagem abre com o que está na tela e como o QAzinho está agora (`describeScreen`,
@@ -262,9 +262,10 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     QA, o que o `workspace_details` lê de volta para o Estagiário ajudar a respondê-las.
   - O chat e a sessão dele sobrevivem a um reinício (`keptOf`): as últimas mensagens, sem nada
     em andamento.
-  - Ele nunca cobre o dispositivo. O chat dele abre no canto dele, e ao lado do painel só enquanto
-    o painel mostra o dispositivo vivo de uma run; o composer deixa espaço para o botão dele
-    quando o painel está fechado (`dockRoomOf`), e os passos rolam por trás dele.
+  - O botão dele mora na barra de título (`AssistantButton`), então nenhuma tela guarda espaço
+    para ele: o composer do chat e o fim das listas ficam inteiros. O chat dele abre logo abaixo
+    do botão, no canto direito (`AssistantDock`): sobre o painel Agente enquanto ele está aberto,
+    e só com o painel recolhido sobre a ponta direita da coluna do meio, onde o dispositivo vive.
 - **O app é construído a partir do próprio código, pelo agente do QA** (`role/builder/`). O cartão
   Android ou iOS de um projeto, ou o `build_app` do assistente, constrói o app a partir de uma
   branch de um dos repositórios do projeto, sem terminal:
