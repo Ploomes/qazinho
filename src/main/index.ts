@@ -90,6 +90,7 @@ import {
   GithubRepos,
   ImportScanner,
   IntegrationVault,
+  Island,
   IosDriver,
   JiraApi,
   JiraStories,
@@ -199,8 +200,24 @@ const recorder = new RunRecorder({
     : { file: PATHS.recorder },
 });
 
+const island = new Island({
+  preload: PATHS.preload,
+  page: PATHS.devServer
+    ? { url: `${PATHS.devServer}/island.html` }
+    : { file: PATHS.island },
+  onAction: (action) => {
+    const [open] = appWindows();
+
+    if (action.kind === 'open') bringForward();
+
+    open?.webContents.send(CHANNELS.islandAction, action);
+  },
+});
+
 function appWindows(): BrowserWindow[] {
-  return BrowserWindow.getAllWindows().filter((open) => !recorder.owns(open));
+  return BrowserWindow.getAllWindows().filter(
+    (open) => !recorder.owns(open) && !island.owns(open),
+  );
 }
 
 function bringForward(): BrowserWindow | null {
@@ -1548,6 +1565,7 @@ app.on('will-quit', (event) => {
 
   live.close();
   replays.close();
+  island.close();
   tools.close();
   mcp.close();
   login.close();

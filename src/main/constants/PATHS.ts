@@ -6,6 +6,7 @@ export const PATHS = {
   renderer: join(__dirname, '../renderer/index.html'),
   preload: join(__dirname, '../preload/index.js'),
   recorder: join(__dirname, '../renderer/recorder.html'),
+  island: join(__dirname, '../renderer/island.html'),
   icon: join(__dirname, '../../build/icon.png'),
   data: app.getPath('userData'),
   profiles: join(app.getPath('userData'), 'profiles'),
