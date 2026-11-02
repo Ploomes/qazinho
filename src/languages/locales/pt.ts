@@ -113,8 +113,6 @@ export const pt: typeof en = {
     TARGET_PICK_WEB: 'Editar URL…',
     TARGET_NONE: 'nenhum ainda',
     TARGETS_OF: 'Targets do projeto {{project}}',
-    TARGETS_SHARED_ONE: 'vale para 1 workspace',
-    TARGETS_SHARED_OTHER: 'vale para os {{count}} workspaces',
     TARGETS_MORE: 'Mais configurações',
   },
   AGENT: {

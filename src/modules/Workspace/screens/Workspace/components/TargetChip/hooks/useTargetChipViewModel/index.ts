@@ -79,7 +79,6 @@ export const useTargetChipViewModel = () => {
   });
 
   const current = project.targets.find(({ id }) => id === workspace.targetId) ?? null;
-  const owned = workspaces.filter(({ projectId }) => projectId === project.id).length;
 
   return {
     hasWorkspace: true as const,
@@ -96,10 +95,6 @@ export const useTargetChipViewModel = () => {
           },
     pickLabel: t('WORKSPACE.TARGET_PICK'),
     title: t('WORKSPACE.TARGETS_OF', { project: project.name }),
-    sharedLabel:
-      owned === 1
-        ? t('WORKSPACE.TARGETS_SHARED_ONE')
-        : t('WORKSPACE.TARGETS_SHARED_OTHER', { count: owned }),
     options,
     noneLabel: t('WORKSPACE.TARGET_NONE'),
     moreLabel: t('WORKSPACE.TARGETS_MORE'),

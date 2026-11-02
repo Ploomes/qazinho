@@ -111,8 +111,6 @@ export const en = {
     TARGET_PICK_WEB: 'Edit URL…',
     TARGET_NONE: 'none yet',
     TARGETS_OF: 'Targets of {{project}}',
-    TARGETS_SHARED_ONE: 'shared with 1 workspace',
-    TARGETS_SHARED_OTHER: 'shared with {{count}} workspaces',
     TARGETS_MORE: 'More settings',
   },
   AGENT: {

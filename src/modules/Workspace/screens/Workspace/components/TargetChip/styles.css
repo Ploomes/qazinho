@@ -72,11 +72,6 @@
   font-weight: 600;
 }
 
-.target-chip__shared {
-  color: var(--ink3);
-  font: var(--font-mono-sm);
-}
-
 .target-chip__options {
   display: flex;
   flex-direction: column;

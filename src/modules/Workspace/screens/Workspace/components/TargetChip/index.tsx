@@ -16,7 +16,6 @@ export const TargetChip: React.FC = () => {
     current,
     pickLabel,
     title,
-    sharedLabel,
     options,
     noneLabel,
     moreLabel,
@@ -59,7 +58,6 @@ export const TargetChip: React.FC = () => {
           >
             <header className="target-chip__head">
               <span className="target-chip__title">{title}</span>
-              <span className="target-chip__shared">{sharedLabel}</span>
             </header>
 
             <ul className="target-chip__options">
