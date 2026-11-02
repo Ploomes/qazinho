@@ -5,7 +5,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useBugSendModalViewModel } from '@/modules/Bug/screens/Bugs/components/BugSendModal/hooks';
 import { recordedRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useSettingsStore, useSetupStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useAssistantStore,
+  useSettingsStore,
+  useSetupStore,
+  useWorkspaceStore,
+} from '@/store';
 
 const STORY = {
   key: 'SHOP-12',
@@ -215,6 +221,9 @@ describe('useBugSendModalViewModel', () => {
       expect(useSettingsStore.getState().tab).toBe('integrations');
       expect(useAppStore.getState().screen).toBe('settings');
       expect(onCancel).toHaveBeenCalledTimes(1);
+      expect(useAssistantStore.getState().tip?.text).toBe(
+        'Connect Jira or GitHub here, then send the bug again.',
+      );
     });
   });
 

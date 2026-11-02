@@ -2,7 +2,13 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toPlanKind } from '@/modules/Plan';
 import { PLATFORM_LABEL } from '@/modules/Workspace/constants';
-import { useAppStore, useSettingsStore, useSetupStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useAssistantStore,
+  useSettingsStore,
+  useSetupStore,
+  useWorkspaceStore,
+} from '@/store';
 
 export const useNewWorkspaceModalViewModel = () => {
   const { t } = useTranslation();
@@ -15,6 +21,7 @@ export const useNewWorkspaceModalViewModel = () => {
   const selectWorkspace = useAppStore((state) => state.selectWorkspace);
   const addWorkspace = useWorkspaceStore((state) => state.addWorkspace);
   const openSettings = useAppStore((state) => state.openSettings);
+  const say = useAssistantStore((state) => state.say);
   const selectSettingsTab = useSettingsStore((state) => state.selectTab);
   const isJiraConnected = useSetupStore((state) =>
     state.integrations.some(({ id }) => id === 'jira'),
@@ -94,6 +101,7 @@ export const useNewWorkspaceModalViewModel = () => {
     canConnect: !isJiraConnected,
     connectLabel: t('NEW_WORKSPACE.ISSUE_CONNECT'),
     onConnect: () => {
+      say(t('NEW_WORKSPACE.TIP_CONNECT'));
       selectSettingsTab('integrations');
       closeModal();
       openSettings();

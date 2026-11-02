@@ -759,6 +759,7 @@ export const pt: typeof en = {
     ISSUE_READY:
       'Cite uma história do Jira no chat, pela chave (PROJ-123) ou pelo link, e o agente planeja a partir dela.',
     ISSUE_CONNECT: 'Conectar o Jira',
+    TIP_CONNECT: 'Conecte o Jira aqui e volte para criar o workspace.',
     CREATE: 'Criar workspace',
     NEEDS_NAME: 'Diga o que vai testar',
     NEEDS_TARGET: 'Este projeto não tem plataforma para rodar',
@@ -1157,6 +1158,7 @@ export const pt: typeof en = {
       'O GitHub só aceita imagens pela página dele. Com a issue aberta, o QAzinho copia a tela para você colar lá.',
     SEND_JIRA: 'Enviar ao Jira',
     SEND_GITHUB: 'Enviar ao GitHub',
+    TIP_CONNECT: 'Conecte o Jira ou o GitHub aqui e mande o bug de novo.',
     NO_TRACKER:
       'Conecte o Jira ou o GitHub em Configurações → Integrações, e cada bug vai para lá com um clique.',
     OPEN_INTEGRATIONS: 'Abrir integrações',

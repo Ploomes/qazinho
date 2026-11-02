@@ -17,7 +17,13 @@ import {
   JIRA_FAILURE_KEYS,
 } from '@/modules/Setup/constants';
 import { Github, Jira } from '@/services';
-import { useAppStore, useSettingsStore, useSetupStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useAssistantStore,
+  useSettingsStore,
+  useSetupStore,
+  useWorkspaceStore,
+} from '@/store';
 
 export const useBugSendModalViewModel = (props: IBugSendModalProps) => {
   const { bug, onCancel, onSend } = props;
@@ -30,6 +36,7 @@ export const useBugSendModalViewModel = (props: IBugSendModalProps) => {
     (state) => state.projects.find(({ id }) => id === workspace?.projectId) ?? null,
   );
   const openSettings = useAppStore((state) => state.openSettings);
+  const say = useAssistantStore((state) => state.say);
   const selectTab = useSettingsStore((state) => state.selectTab);
   const [chosen, setChosen] = useState<IssueTracker | null>(null);
   const [picked, setPicked] = useState<IssueTarget | null>(null);
@@ -154,6 +161,7 @@ export const useBugSendModalViewModel = (props: IBugSendModalProps) => {
     canConfirm: trackers.length === 0 || canSend,
     onConfirm: () => {
       if (trackers.length === 0) {
+        say(t('FILING.TIP_CONNECT'));
         selectTab('integrations');
         openSettings();
         onCancel();

@@ -755,6 +755,7 @@ export const en = {
     ISSUE_READY:
       'Name a Jira story in the chat, by its key (PROJ-123) or its link, and the agent plans from it.',
     ISSUE_CONNECT: 'Connect Jira',
+    TIP_CONNECT: 'Connect Jira here, then come back to create the workspace.',
     CREATE: 'Create workspace',
     NEEDS_NAME: 'Say what you are testing',
     NEEDS_TARGET: 'This project has no platform to run on',
@@ -1153,6 +1154,7 @@ export const en = {
     GOES_GITHUB:
       'GitHub takes pictures only on its own page. Once the issue is open, QAzinho copies the screen for you to paste there.',
     SEND_JIRA: 'Send to Jira',
+    TIP_CONNECT: 'Connect Jira or GitHub here, then send the bug again.',
     SEND_GITHUB: 'Send to GitHub',
     NO_TRACKER:
       'Connect Jira or GitHub in Settings → Integrations, and each bug goes there in one click.',

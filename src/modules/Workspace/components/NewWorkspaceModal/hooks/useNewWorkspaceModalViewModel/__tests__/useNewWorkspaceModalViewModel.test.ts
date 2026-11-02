@@ -2,7 +2,13 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useNewWorkspaceModalViewModel } from '@/modules/Workspace/components/NewWorkspaceModal/hooks/useNewWorkspaceModalViewModel';
-import { useAppStore, useSettingsStore, useSetupStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useAssistantStore,
+  useSettingsStore,
+  useSetupStore,
+  useWorkspaceStore,
+} from '@/store';
 
 const PROJECT = {
   id: 'p1',
@@ -109,6 +115,9 @@ describe('useNewWorkspaceModalViewModel', () => {
 
       expect(useSettingsStore.getState().tab).toBe('integrations');
       expect(useAppStore.getState().modal).not.toBe('workspace');
+      expect(useAssistantStore.getState().tip?.text).toBe(
+        'Connect Jira here, then come back to create the workspace.',
+      );
     });
 
     /** Dizia que nenhum tracker estava conectado mesmo com o Jira conectado. */
