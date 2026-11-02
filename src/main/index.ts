@@ -39,6 +39,7 @@ import type {
   IViewport,
   IWindowControls,
   McpSignInProgress,
+  OutsideToolCall,
   PickKind,
   ProSignInProgress,
   QaReply,
@@ -79,6 +80,7 @@ import {
   AppPeek,
   Archive,
   AssistantAgent,
+  OutsideServer,
   BugFiler,
   BugReviewer,
   CodeCopies,
@@ -120,6 +122,7 @@ import {
   ASSISTANT,
   FILE_FILTERS,
   CHAT_SOURCES,
+  OUTSIDE_WAIT,
   PATHS,
   PRO_LINK,
   PRO_API,
@@ -157,6 +160,7 @@ import {
   Harness,
   MCP_HOST,
   McpHost,
+  OutsideHost,
   mcpConfigWith,
   PERMISSION_TOOL,
   pageAnswerOf,
@@ -642,6 +646,27 @@ const bridge = new AppBridge({
 
     return true;
   },
+});
+
+const outsideBridge = new AppBridge<OutsideToolCall>({
+  timeoutMs: OUTSIDE_WAIT.toolMs,
+  send: (request) => {
+    const [open] = appWindows();
+
+    if (!open) return false;
+
+    open.webContents.send(CHANNELS.outsideToolCall, request);
+
+    return true;
+  },
+});
+
+const outside = new OutsideServer({
+  file: PATHS.outside,
+  host: new OutsideHost(),
+  mcp,
+  agents: () => agents.detect(),
+  perform: performOutside,
 });
 
 const assistant = new AssistantAgent({
@@ -1142,6 +1167,19 @@ function fitWindow(props: { window: BrowserWindow; fit: WindowFit }): void {
   if (!isVisible) window.show();
 }
 
+async function performOutside(
+  call: OutsideToolCall,
+): Promise<{ text: string; isError: boolean }> {
+  const [open] = appWindows();
+
+  if (!open) createWindow();
+
+  if (!open || open.webContents.isLoading())
+    return { text: OUTSIDE_WAIT.opening, isError: true };
+
+  return outsideBridge.act(call);
+}
+
 async function pickImport(): Promise<ImportPick> {
   const [open] = appWindows();
   const picked = open
@@ -1204,10 +1242,12 @@ function createWindow(): void {
 
   window.webContents.on('did-finish-load', () => {
     bridge.dropAll();
+    outsideBridge.dropAll();
   });
 
   window.on('closed', () => {
     bridge.dropAll();
+    outsideBridge.dropAll();
   });
 
   window.once('ready-to-show', () => {
@@ -1261,6 +1301,7 @@ void app.whenReady().then(async () => {
   await live.start();
   await replays.start();
   await tools.start();
+  await outside.start();
   void codeCopies.sweep();
   void jiraStories.sweep();
   void builder.sweep();
@@ -1379,6 +1420,27 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.pickFile, (_event, kind: PickKind) => pickFile(kind));
   ipcMain.handle(CHANNELS.pickImport, () => pickImport());
+  ipcMain.handle(CHANNELS.outsideServer, () => outside.status());
+  ipcMain.handle(CHANNELS.outsideAgents, () => outside.agentsHere());
+  ipcMain.handle(CHANNELS.turnOutsideServer, (_event, isOn: boolean) =>
+    outside.turn(isOn),
+  );
+  ipcMain.handle(CHANNELS.renewOutsideServer, () => outside.renew());
+  ipcMain.handle(CHANNELS.addOutsideAgent, (_event, agentId: string) =>
+    outside.addTo(agentId),
+  );
+  ipcMain.handle(CHANNELS.removeOutsideAgent, (_event, agentId: string) =>
+    outside.removeFrom(agentId),
+  );
+  ipcMain.handle(CHANNELS.copyOutsideAddress, async () => {
+    const address = outside.savedAddress();
+
+    if (address === null) return false;
+
+    await clipboard.writeText(address);
+
+    return true;
+  });
   ipcMain.handle(CHANNELS.openLogs, async () => {
     await mkdir(appLog.where, { recursive: true });
     await shell.openPath(appLog.where);
@@ -1535,6 +1597,7 @@ void app.whenReady().then(async () => {
   });
   ipcMain.on(CHANNELS.appToolAnswer, (_event, answer: IAppToolAnswer) => {
     bridge.answer(answer);
+    outsideBridge.answer(answer);
   });
   ipcMain.handle(CHANNELS.startBuild, (_event, build: IStartBuild) =>
     builder.start(build),
@@ -1576,6 +1639,7 @@ app.on('will-quit', (event) => {
   live.close();
   replays.close();
   island.close();
+  void outside.close();
   tools.close();
   mcp.close();
   login.close();

@@ -7,15 +7,15 @@ import { APP_BRIDGE } from './constants';
  * Entrega à página as chamadas de ferramenta do app do assistente, que as executa pelas
  * mesmas stores que o QA usa, e espera o que ela fez.
  */
-export class AppBridge {
-  private readonly send: IAppBridge['send'];
+export class AppBridge<Call = AppToolCall> {
+  private readonly send: IAppBridge<Call>['send'];
   private readonly timeoutMs: number;
   private readonly waiting = new Map<
     string,
     { settle: (done: { text: string; isError: boolean }) => void; timer: NodeJS.Timeout }
   >();
 
-  public constructor(props: IAppBridge) {
+  public constructor(props: IAppBridge<Call>) {
     this.send = props.send;
     this.timeoutMs = props.timeoutMs;
   }
@@ -24,7 +24,7 @@ export class AppBridge {
    * Pede à página que execute uma chamada, e responde o que ela fez, ou por que nada foi
    * feito.
    */
-  public act(call: AppToolCall): Promise<{ text: string; isError: boolean }> {
+  public act(call: Call): Promise<{ text: string; isError: boolean }> {
     const id = randomUUID();
 
     return new Promise((settle) => {

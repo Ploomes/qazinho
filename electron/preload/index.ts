@@ -43,6 +43,9 @@ import type {
   INetworkEntry,
   InstallableId,
   IntegrationId,
+  IOutsideAgent,
+  IOutsideServer,
+  IOutsideToolRequest,
   IProjectVariables,
   IProLink,
   IProPublishBrief,
@@ -415,6 +418,31 @@ const api: IQazinhoApi = {
       ipcRenderer.off(CHANNELS.appToolCall, forward);
     };
   },
+  onOutsideToolCall: (listener: (request: IOutsideToolRequest) => void) => {
+    const forward = (_: unknown, request: IOutsideToolRequest) => {
+      listener(request);
+    };
+
+    ipcRenderer.on(CHANNELS.outsideToolCall, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.outsideToolCall, forward);
+    };
+  },
+  outsideServer: () =>
+    ipcRenderer.invoke(CHANNELS.outsideServer) as Promise<IOutsideServer>,
+  outsideAgents: () =>
+    ipcRenderer.invoke(CHANNELS.outsideAgents) as Promise<IOutsideAgent[]>,
+  turnOutsideServer: (isOn: boolean) =>
+    ipcRenderer.invoke(CHANNELS.turnOutsideServer, isOn) as Promise<IOutsideServer>,
+  renewOutsideServer: () =>
+    ipcRenderer.invoke(CHANNELS.renewOutsideServer) as Promise<IOutsideServer>,
+  addOutsideAgent: (agentId: string) =>
+    ipcRenderer.invoke(CHANNELS.addOutsideAgent, agentId) as Promise<McpActionResult>,
+  removeOutsideAgent: (agentId: string) =>
+    ipcRenderer.invoke(CHANNELS.removeOutsideAgent, agentId) as Promise<McpActionResult>,
+  copyOutsideAddress: () =>
+    ipcRenderer.invoke(CHANNELS.copyOutsideAddress) as Promise<boolean>,
   answerAppTool: (answer: IAppToolAnswer) => {
     ipcRenderer.send(CHANNELS.appToolAnswer, answer);
   },

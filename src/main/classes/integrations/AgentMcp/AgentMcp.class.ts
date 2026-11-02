@@ -45,6 +45,57 @@ export class AgentMcp {
     this.folder = props.folder;
   }
 
+  /** Se um agente guarda um endereço, seja qual for o nome que o QA lhe deu. */
+  public async holds(props: { agentId: string; url: string }): Promise<boolean> {
+    const recipe = MCP_RECIPES[props.agentId];
+    const command = await this.findAgent(props.agentId);
+
+    if (!recipe || command === null) return false;
+
+    const listed = await this.listed({ recipe, command });
+
+    return listed.some(({ target }) => target === props.url);
+  }
+
+  /** Guarda um endereço num agente sob um nome, no lugar do que o nome apontava antes. */
+  public async addAddress(props: {
+    agentId: string;
+    name: string;
+    url: string;
+  }): Promise<McpActionResult> {
+    const recipe = MCP_RECIPES[props.agentId];
+    const command = await this.findAgent(props.agentId);
+
+    if (!recipe || command === null)
+      return { ok: false, error: 'QAzinho cannot set up MCP servers in this agent yet.' };
+
+    await this.removeName(props);
+
+    return this.attempt({
+      command,
+      args: recipe.add({ name: props.name, url: props.url }),
+      isDone: () => false,
+    });
+  }
+
+  /** Tira de um agente o servidor com um nome; um que já não está lá conta como feito. */
+  public async removeName(props: {
+    agentId: string;
+    name: string;
+  }): Promise<McpActionResult> {
+    const recipe = MCP_RECIPES[props.agentId];
+    const command = await this.findAgent(props.agentId);
+
+    if (!recipe || command === null)
+      return { ok: false, error: 'QAzinho cannot set up MCP servers in this agent yet.' };
+
+    return this.attempt({
+      command,
+      args: recipe.remove(props.name),
+      isDone: (said) => /no mcp server named|not found/i.test(said),
+    });
+  }
+
   /**
    * Em que pé está no agente cada servidor que o QAzinho conhece, casado pelo endereço,
    * seja qual for o nome que o QA lhe deu.

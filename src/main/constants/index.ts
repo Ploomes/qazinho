@@ -4,6 +4,7 @@ export * from './ASSISTANT';
 export * from './CHAT_SOURCES';
 export * from './DIAGNOSTICS_LINES';
 export * from './FILE_FILTERS';
+export * from './OUTSIDE_WAIT';
 export * from './PATHS';
 export * from './PRO_API';
 export * from './PRO_LINK';
