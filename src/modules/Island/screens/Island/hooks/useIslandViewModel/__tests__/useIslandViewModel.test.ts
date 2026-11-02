@@ -99,7 +99,7 @@ describe('useIslandViewModel', () => {
     expect(result.current.size).toMatchObject({ width: 108, height: 28 });
   });
 
-  it('opens by itself when the agent waits for the QA, and offers no stop', () => {
+  it('signals that the agent waits for the QA without opening by itself', () => {
     const { result } = renderHook(() => useIslandViewModel());
 
     act(() => {
@@ -117,10 +117,12 @@ describe('useIslandViewModel', () => {
       });
     });
 
-    expect(result.current.isOpen).toBe(true);
+    expect(result.current.isOpen).toBe(false);
+    expect(result.current.size).toMatchObject({ width: 185 + 120, height: 33 });
     expect(result.current.shown).toMatchObject({
       tone: 'asking',
       mood: 'thinking',
+      icon: 'attention',
       detail: 'Which plan should I pick?',
       canStop: false,
       openLabel: 'Answer',

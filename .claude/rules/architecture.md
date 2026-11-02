@@ -487,7 +487,8 @@ cima e visível em todos os espaços (`ISLAND_ARGUMENT` no mesmo preload entrega
   da barra de menus é a do notch num Mac que tem um (30 pt ou mais), com a largura fixa dele
   (`ISLAND_WINDOW.notchWidth`), e uma barra de 28 pt sem largura em qualquer outra tela.
 - A janela deixa o clique passar. A página mede o mouse contra o pill e só então pede à main que
-  a deixe receber cliques (`hover`); abrir a ilha por uma pergunta não captura o mouse.
+  a deixe receber cliques (`hover`). A ilha só abre com o mouse em cima, nem por uma pergunta
+  do agente: ela chama sem se impor.
 - Um pedido do QA na ilha (`IIslandAction`: parar ou abrir) volta pela main à página principal,
   que o executa pelas mesmas actions de uma run (`stopWorkspace`) ou abrindo o workspace; a main
   traz a janela do app à frente só para abrir.

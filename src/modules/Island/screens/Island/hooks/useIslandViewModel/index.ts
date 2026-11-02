@@ -57,7 +57,7 @@ export const useIslandViewModel = () => {
   const state = frame?.island.state ?? ISLAND_IDLE;
   const bar = frame?.barHeight ?? 0;
   const notch = frame?.notchWidth ?? 0;
-  const isOpen = isHovering || state.kind === 'asking';
+  const isOpen = isHovering;
   const closedWidth =
     notch === 0 ? ISLAND_SHAPE.flatWidthPx : notch + ISLAND_SHAPE.earPx * 2;
   const openHeight = state.kind === 'idle' ? bar : ISLAND_SHAPE.openHeightPx[state.kind];
