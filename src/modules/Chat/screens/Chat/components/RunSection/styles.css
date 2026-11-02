@@ -87,6 +87,7 @@
 .run-section__title {
   font: var(--font-ui-strong);
   overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 
 .run-section__facts {
@@ -128,7 +129,7 @@
   background: var(--panel);
 }
 
-@container workspace (width < 560px) {
+@container agent-panel (width < 560px) {
   .run-section {
     flex-direction: column;
     align-items: stretch;
@@ -144,7 +145,7 @@
   }
 }
 
-@container workspace (width < 760px) {
+@container agent-panel (width < 420px) {
   .run-section__open-label {
     display: none;
   }
