@@ -89,8 +89,8 @@ Toda `BrowserWindow` recebe `contextIsolation: true`, `sandbox: true` e `nodeInt
   - Uma run alcança o dispositivo pela `variablePort`: um `${NAME}` é digitado como o valor dele,
     todo valor que aparece é lido de volta como o nome dele, na tela e no porquê de uma ação
     falhar, e uma receita guarda o nome, nunca um locator que contenha um valor.
-  - A suíte de um time lê uma variável do ambiente do Playwright que o QAzinho inicia; ela nunca
-    é escrita no `.env` da suíte, nem em outro lugar.
+  - Um teste importado que lê uma credencial do ambiente ou do `.env` vira uma variável do
+    projeto no plano (`role/chat/import.md`): o agente copia o nome, nunca um valor.
   - No Linux, o Electron lacra com uma chave fixa quando não há GNOME Keyring nem KWallet, e ainda
     diz que consegue criptografar: o `isSealable` recusa isso, para as variáveis e para o token do
     Jira.
@@ -165,7 +165,7 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     mudança no que o agente ouve aparece primeiro como um diff dos prompts fixados do harness.
 - **O corpus é prosa em `.md`, uma seção `## Título` por arquivo.** Onde um arquivo vive diz quem
   o lê: `universal/` toda chamada, `role/<role>/` um papel (`chat`, `runner`, `explorer`,
-  `assistant`, `builder`, `automator`, `reporter`), `platform/<x>.md` um dispositivo. O `order` do
+  `assistant`, `builder`, `reporter`), `platform/<x>.md` um dispositivo. O `order` do
   frontmatter ordena uma camada. As camadas vão da mais estável à menos estável. O `{{app}}` é
   preenchido por chamada; um placeholder que nada preenche lança erro.
 - **O prompt de sistema de um chat é só o corpus.** O Claude Code mantém o prompt de sistema com
@@ -525,66 +525,26 @@ loopback (`LiveStream`), desenhado por um `<img>`.
   codifica um MP4. O arquivo cruza o IPC inteiro, uma vez para cada lado (`replayVideo`,
   `saveVideo`); os frames dele nunca.
 
-## A suíte própria de um time roda como está
+## Os testes que o time já tem viram um plano
 
-Um projeto pode conectar a suíte de Playwright que o time do QA mantém, a partir da pasta em que
-está clonada. O QAzinho a roda com o Playwright próprio da suíte e não muda nada nela:
+O `/import` do chat (e a aba Importar do projeto, que abre o chat com ele pronto) escolhe uma
+pasta de testes do QA. O QAzinho a lê e não muda nada nela:
 
-- O `SuiteRegistry` guarda a pasta que cada projeto conectou (`suites/registry.json`), como a
-  pasta a que um link leva, e lê o resto de novo a cada vez: a config, o Playwright instalado no
-  `node_modules` dela ou num acima, a branch e o remoto dela pelo `GitCli`, e as chaves que o
-  `.env.example` e o `.env` dela nomeiam.
-- O `SuiteRunner` lista os testes com `test --list` e os roda com o node do QA e o `cli.js` da
-  própria suíte, um projeto do Playwright por vez (`ISuiteBatch`), do jeito que o time roda o
-  projeto que muda dados depois do que só lê.
-  - Um reporter que o QAzinho escreve ao lado dos dados dele (`SUITE_REPORTER`) imprime uma linha
-    `QAZINHO-SUITE` por evento, lida de volta contra um schema zod: o início de um teste, os
-    passos `test.step` e `expect` dele, o fim dele com o erro e os arquivos, e o que o Playwright
-    diz fora de qualquer teste.
-  - O Playwright lê um local como uma expressão regular testada no caminho absoluto: o
-    `locationOf` ancora cada arquivo num limite de pasta e no fim dele, então `a.spec.ts` nunca
-    roda `data.spec.ts`.
-  - Cada batch escreve numa pasta própria (`output/<n>`), já que o Playwright esvazia a pasta de
-    saída sempre que começa, e guarda um trace de cada falha.
-  - O ambiente é o PATH do QA e as variáveis do projeto sobre o com que o QAzinho roda. O dotenv
-    nunca sobrescreve o que está definido, então uma variável vence o `.env` da suíte.
-  - Uma run é guardada como `run.json` sob `suites/<project>/runs/<run>`. O `ReplayServer` serve as
-    telas e vídeos dela à página em loopback, e um trace abre no `show-trace` do Playwright.
-- A página (`src/modules/Automation/`) agrupa os testes por pasta e arquivo, roda o que o QA
-  escolhe como batches com o total que espera (`batchesOf`, `scopeTestsOf`), e acompanha os
-  `SuiteEvent`s da run na `SuiteStore`.
-- Um valor de uma variável do projeto que aparece no que um teste diz, no erro dele ou no que o
-  Playwright imprimiu, é lido de volta como o nome dela antes de ser guardado ou chegar à página
-  (`hiddenValues`).
-
-**O agente do QA conserta um teste quebrado, ou escreve um novo, numa cópia da suíte**
-(`role/automator/`), e nada sai da máquina até o QA aprovar. O `SuiteChanges` da main faz isso,
-para um `SuiteChangeAsk` de qualquer tipo:
-
-- Um git worktree do repositório da suíte, numa branch com o nome do teste (`qazinho/fix-…`), sob
-  `suites/<project>/changes/<change>/work`. O clone do QA nunca é tocado. O `node_modules` e o
-  `.env` da suíte são ligados para os testes rodarem, e deixados fora da mudança.
-- O agente recebe Read, Grep, Glob, Edit e Write na cópia, e nenhum shell. Ele roda testes com
-  `run_tests`, a ferramenta do QAzinho no grupo `suite`, servida pelo turno sob o escopo da
-  mudança: o QAzinho os roda com as configurações do projeto (`SuiteRunner.check`), fora das runs
-  dele, e responde com o erro de cada um, o que o Playwright anotou da página e onde está o
-  screenshot, todo segredo lido de volta como o nome dele. O Codex trabalha num sandbox
-  workspace-write na cópia.
-- Ele lê o teste que quebrou, o erro da run e as notas do Playwright (o `failureNotesOf` guarda o
-  snapshot da página e o fonte, não as instruções que o Playwright escreve para um modelo), e os
-  últimos commits do time, para escrever como eles. O que o app mostra é dado, nunca uma
-  instrução.
-- Um teste novo vem das palavras do QA ou de um caso de um dos planos do projeto (`planCaseOf`),
-  para uma pasta que o QA escolhe ou onde a suíte guarda os parecidos. A página lista os testes
-  novos pedidos acima dos da própria suíte (`SuiteRequests`), cada um abrindo no painel.
-- Ele responde se mudou ou escreveu o teste, achou o app errado, ou desistiu, com o commit e o
-  pull request que escreveu. O QAzinho roda de novo na cópia os testes de que a mudança trata
-  (`checks`): o quebrado pelo título, ou todo teste dos arquivos de spec que um teste novo tocou
-  (`specFilesOf`), e guarda o diff (`patchFilesOf`). Um teste novo que o app falha fica, e pode ser
-  mandado como um que pega um bug. Uma mudança sem nada nela vai embora na hora, cópia e branch.
-- Na aprovação, o QAzinho faz o commit na branch, dá push com o git do próprio QA (o `GitCli`
-  nunca espera um prompt), abre o pull request pela API do gh quando o GitHub está conectado, ou
-  entrega a página do GitHub para abrir um, e apaga a cópia. Jogar fora apaga a branch também.
+- A main abre o seletor de pasta (`pickImport`) e o `ImportScanner` lista os arquivos sem as
+  pastas de dependência e de build (`listFolder`), e reconhece o que dirige os testes
+  (`recognizeTests`): a config, os pacotes dos manifestos (`readManifests`) e os arquivos de teste
+  de cada framework (`IMPORT_FRAMEWORKS`), com os fluxos do Maestro achados pelo `appId:` do começo
+  de cada YAML (`flowsIn`). Cada arquivo de teste é de um framework só. A branch e o commit vêm do
+  `GitCli`, quando a pasta é um repositório.
+- Só uma pasta que o QA escolheu por ali pode ser lida de novo (`sourceOf`): o `IAskAgent.source`
+  carrega só o caminho, e a main recusa um que ninguém escolheu (`ChatFailure` `import`).
+- A mensagem abre com a pasta (`describeImport`): onde está, o que o QAzinho reconheceu e os
+  arquivos que parecem testes. O Claude Code recebe `Read`, `Grep` e `Glob` só nessa pasta, e o
+  Codex a lê com o próprio sandbox somente leitura. Nada é copiado, então nada é apagado.
+- A pasta fica aberta ao chat do workspace até um plano voltar, nas perguntas que vêm entre uma
+  mensagem e outra (`importSources`), e é solta com o plano ou com o workspace.
+- O plano sai de uma conversa, como em qualquer outra fonte: o agente confirma o framework,
+  pergunta o que o teste deixa em aberto, e escreve os casos (`role/chat/import.md`).
 
 ## O que a main possui
 
@@ -626,9 +586,7 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | `UsageReader`                         | lê os limites da conta pelo `/usage` do próprio Claude Code, que não gasta nada                             |
 | `VariableVault`                       | guarda as variáveis de cada projeto lacradas pelo keychain; só uma run lê um valor                          |
 | `GitCli`                              | roda o git do próprio QA numa pasta, e nunca espera uma senha                                               |
-| `SuiteRegistry`                       | a pasta de suíte que cada projeto conectou, e o que ela guarda, lido de novo                                |
-| `SuiteRunner`                         | lista e roda uma suíte com o Playwright próprio dela, um projeto por vez, e guarda cada run                 |
-| `SuiteChanges`                        | deixa o agente do QA consertar um teste de uma suíte num worktree, e o manda quando o QA aprova             |
+| `ImportScanner`                       | lê uma pasta de testes que o QA escolheu e reconhece o framework de cada um                                 |
 | `ProAccount`                          | faz este computador entrar no QAzinho Pro, guarda o token lacrado dele, e conhece as orgs                   |
 | `ProApi`                              | fala com a API do QAzinho Pro: o login, a conta, a sincronização, as evidências, projetos de org            |
 | `ProSync`                             | publica um projeto numa org, manda os fatos dele quando acontecem e os planos quando mandado                |

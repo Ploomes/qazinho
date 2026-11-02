@@ -95,9 +95,6 @@ próprio comando, e o CI nunca as roda.
 | `ask.test.ts`          | um agente fake pergunta ao QA no meio da run: uma escolha, um código, silêncio, um stop |
 | `network.test.ts`      | Chrome real: cada pedido guardado com status, tempo e tamanho, segredos fora            |
 | `strip.test.ts`        | o app construído: os pedidos de uma run sob o vídeo, e baixados desenhados nele         |
-| `suite.test.ts`        | uma suíte de fixture no Chrome real: listada, rodada por projeto, um teste, parada      |
-| `fix.test.ts`          | um agente fake conserta um teste de fixture por run_tests; o QAzinho confere e dá push  |
-| `write.test.ts`        | um agente fake escreve um teste novo de fixture; o QAzinho roda o arquivo e dá push     |
 
 O `run.test.ts`, o `chat.test.ts` e o `visual.test.ts` gastam os tokens do QA e precisam de um
 agente instalado. Rode-os à mão depois de mexer no pipeline da run ou no schema de uma resposta.

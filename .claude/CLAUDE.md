@@ -149,31 +149,15 @@ ao lado da run, e um bug mandado ao Jira ou ao GitHub a carrega sob o pedido. Se
 como pontos e o valor de uma variável como o nome dela, em todo lugar. O `tools.test.ts` e o
 `network.test.ts` provam isso no Chrome real; um agente real ainda não o usou.
 
-**A suíte de Playwright própria de um time roda no QAzinho.** Um projeto conecta a pasta onde o
-time guarda a suíte clonada, e o QAzinho a lê lá e não muda nada nela: os testes por pasta e
-arquivo, listados e rodados pelo Playwright próprio da suíte no node do QA, um projeto do
-Playwright por vez, com as variáveis do projeto chegando aos testes pelo ambiente, nunca escritas
-num arquivo. A tela da suíte roda tudo, os que falharam, uma pasta, um arquivo ou um teste,
-acompanha cada passo enquanto anda, e guarda cada run com o erro de cada teste, a tela que ele
-deixou e o trace dele, que abre no visualizador próprio do Playwright. O
-`tests/smoke/suite.test.ts` lista e roda uma suíte de fixture no Chrome real.
-
-**O agente do QA conserta um teste quebrado da suíte do time**, numa branch própria num git
-worktree que o QAzinho mantém, nunca no clone do QA. Ele lê e edita a cópia sem shell, e roda os
-testes pela ferramenta própria do QAzinho, que conhece os segredos do projeto e entrega ao agente
-os nomes deles. Quando o teste está certo e o app errado, ele não muda nada e diz isso. O QAzinho
-roda o teste de novo na cópia e mostra o diff; só quando o QA aprova ele faz o commit, dá push com
-o git do próprio QA e abre o pull request pelo gh. Um Claude Code real (Haiku) consertou um link
-renomeado em 34 segundos e distinguiu um bug plantado na busca de um teste quebrado; o
-`tests/smoke/fix.test.ts` dirige um agente fake sobre a ferramenta real no Chrome real.
-
-**O agente do QA também escreve um teste novo** do mesmo jeito, a partir das palavras do QA ou de
-um caso de um dos planos do projeto, na pasta que o QA escolhe ou onde a suíte guarda os
-parecidos, com as fixtures, IDs e tags do time. O QAzinho roda todo teste dos arquivos de spec que
-ele tocou, e um teste novo que o app falha fica, como um que pega um bug. Um Claude Code real
-(Haiku) escreveu um a partir de uma frase em cerca de um minuto e um a partir de um caso de plano
-em um minuto e meio, cada um passando na cópia; o `tests/smoke/write.test.ts` dirige um agente
-fake no Chrome real.
+**Os testes que o time já tem viram um plano.** O `/import` no chat, ou a aba Importar da janela do
+projeto, escolhe uma pasta do computador do QA: o QAzinho a lê sem mudar nada e reconhece o que
+dirige os testes (Playwright, Cypress, Maestro, Detox, WebdriverIO, Appium, Selenium) pela config,
+pelos pacotes e pelos arquivos de teste, e o agente do próprio QA lê a pasta de volta, confirma o
+framework pelos arquivos e escreve o plano: um caso por teste, os passos nas palavras do QA e nunca
+nomeando seletor ou arquivo, o que o teste afirma como resultado esperado, o que ele monta antes
+como pré-condição, e logins e chaves como variáveis do projeto. O que não dá para traduzir ele diz
+em vez de inventar. Testes unitários e o prompt fixado do harness provam isso; nenhum agente real
+importou uma pasta ainda.
 
 **O agente pergunta ao QA no meio da run.** O agente de um caso, ou o explorador, que não pode
 seguir sem o QA chama `ask_qa`: um código mandado por texto ao celular dele, uma escolha que o caso
