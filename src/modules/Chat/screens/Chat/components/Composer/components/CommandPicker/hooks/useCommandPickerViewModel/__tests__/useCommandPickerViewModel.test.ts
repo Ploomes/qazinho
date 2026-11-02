@@ -14,9 +14,9 @@ function picker(props: Partial<ICommandPickerProps> = {}) {
           label: 'Plan from the code',
           tag: '/code',
           detail: null,
-          isDisabled: false,
+          isBlocked: false,
         },
-        { id: 'later', label: 'Later', tag: null, detail: 'Not yet', isDisabled: true },
+        { id: 'later', label: 'Later', tag: null, detail: 'Not yet', isBlocked: true },
       ],
       note: null,
       hint: '↑↓ to choose',
@@ -31,12 +31,12 @@ function picker(props: Partial<ICommandPickerProps> = {}) {
 }
 
 describe('useCommandPickerViewModel', () => {
-  it('marks the highlighted row, and a row that cannot be picked', () => {
+  it('marks the highlighted row, and a row that still needs something', () => {
     expect(
       picker({ highlighted: 1 }).result.current.rows.map(({ className }) => className),
     ).toEqual([
       'command-picker__row',
-      'command-picker__row command-picker__row--highlighted command-picker__row--disabled',
+      'command-picker__row command-picker__row--highlighted command-picker__row--blocked',
     ]);
   });
 
@@ -49,12 +49,12 @@ describe('useCommandPickerViewModel', () => {
       expect(props.onPick).toHaveBeenCalledWith('code-plan');
     });
 
-    it('does NOT pick a row that cannot be picked', () => {
+    it('picks a row that still needs something, so the QA is taken to it', () => {
       const { result, props } = picker();
 
       result.current.rows[1]?.onClick();
 
-      expect(props.onPick).not.toHaveBeenCalled();
+      expect(props.onPick).toHaveBeenCalledWith('later');
     });
   });
 

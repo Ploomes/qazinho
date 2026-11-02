@@ -14,6 +14,7 @@ import {
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import {
   useAppStore,
+  useAssistantStore,
   useMachineStore,
   useSettingsStore,
   useSetupStore,
@@ -97,6 +98,66 @@ afterEach(() => {
 });
 
 describe('useChatViewModel', () => {
+  describe('a command that is missing something', () => {
+    const picking = (id: string) => {
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onDraftChange('/');
+      });
+      act(() => {
+        result.current.onPickCommand(id);
+      });
+
+      return result;
+    };
+
+    beforeEach(() => {
+      useAppStore.setState({ screen: 'workspace', modal: null, editingProjectId: null });
+      useSettingsStore.setState({ tab: 'agents' });
+      useAssistantStore.setState({ tip: null });
+    });
+
+    it('takes the QA to the integrations, and the Intern says what to do there', () => {
+      const result = picking('jira-plan');
+
+      expect(useAppStore.getState().screen).toBe('settings');
+      expect(useSettingsStore.getState().tab).toBe('integrations');
+      expect(useAssistantStore.getState().tip?.text).toBe(
+        'Connect Jira here, then come back to /jira.',
+      );
+      expect(result.current.command).toBeNull();
+      expect(result.current.draft).toBe('');
+    });
+
+    it('opens the code of the project when GitHub is there but no repository is', () => {
+      useSetupStore.setState({
+        integrations: [
+          { id: 'github', account: 'qa', site: null, connectedAt: '2026-10-20' },
+        ],
+      });
+
+      picking('code-plan');
+
+      expect(useAppStore.getState()).toMatchObject({
+        screen: 'workspace',
+        modal: 'project',
+        editingProjectId: PROJECT.id,
+        projectSection: 'code',
+      });
+      expect(useAssistantStore.getState().tip?.text).toBe(
+        'Add the repositories here, then come back to /code.',
+      );
+    });
+
+    it('does NOT take the QA anywhere for a command that needs nothing', () => {
+      picking('figma-plan');
+
+      expect(useAppStore.getState()).toMatchObject({ screen: 'workspace', modal: null });
+      expect(useAssistantStore.getState().tip).toBeNull();
+    });
+  });
+
   it('opens empty, with the suggestions the QA can start from', () => {
     answering({});
 

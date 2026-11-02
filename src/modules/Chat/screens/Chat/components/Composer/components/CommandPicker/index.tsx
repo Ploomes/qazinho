@@ -42,7 +42,6 @@ export const CommandPicker: React.FC<ICommandPickerProps> = (props) => {
                   type="button"
                   role="option"
                   aria-selected={row.isHighlighted}
-                  aria-disabled={row.isDisabled}
                   tabIndex={-1}
                   className={row.className}
                   onClick={row.onClick}

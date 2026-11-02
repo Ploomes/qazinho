@@ -3,6 +3,7 @@ import type { IProjectRepository } from '@/modules/Project/types';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
+import { COMMAND_BLOCKERS } from '@/modules/Chat/screens/Chat/constants';
 import { useChatCommand } from '@/modules/Chat/screens/Chat/hooks/useChatCommand';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 
@@ -51,9 +52,11 @@ function command(props: {
   isConfluenceOn?: boolean;
 }) {
   const onDraft = vi.fn();
+  const onBlocked = vi.fn();
 
   return {
     onDraft,
+    onBlocked,
     ...renderHook(
       (draft: string) =>
         useChatCommand({
@@ -63,6 +66,7 @@ function command(props: {
           isJiraConnected: props.isJiraConnected ?? true,
           isConfluenceOn: props.isConfluenceOn ?? true,
           onDraft,
+          onBlocked,
         }),
       { initialProps: props.draft ?? '' },
     ),
@@ -75,30 +79,30 @@ describe('useChatCommand', () => {
     expect(command({ draft: '/' }).result.current.picker).toMatchObject({
       heading: 'commands',
       rows: [
-        { id: 'code-plan', label: 'Plan from the code', tag: '/code', isDisabled: false },
+        { id: 'code-plan', label: 'Plan from the code', tag: '/code', isBlocked: false },
         {
           id: 'jira-plan',
           label: 'Plan from a Jira story',
           tag: '/jira',
-          isDisabled: false,
+          isBlocked: false,
         },
         {
           id: 'confluence-plan',
           label: 'Plan from a Confluence page',
           tag: '/confluence',
-          isDisabled: false,
+          isBlocked: false,
         },
         {
           id: 'figma-plan',
           label: 'Check against a Figma design',
           tag: '/figma',
-          isDisabled: false,
+          isBlocked: false,
         },
         {
           id: 'import-plan',
           label: 'Import tests',
           tag: '/import',
-          isDisabled: false,
+          isBlocked: false,
         },
       ],
     });
@@ -205,12 +209,12 @@ describe('useChatCommand', () => {
     });
   });
 
-  it('does NOT let the QA pick the command before GitHub and the repositories are there', () => {
+  it('takes the QA to what a command is missing instead of starting it', () => {
     const offline = command({ draft: '/', isGithubConnected: false });
 
     expect(offline.result.current.picker?.rows[0]).toMatchObject({
-      isDisabled: true,
-      detail: 'Connect GitHub in Settings → Integrations first.',
+      isBlocked: true,
+      detail: 'GitHub is not connected yet.',
     });
 
     act(() => {
@@ -218,31 +222,40 @@ describe('useChatCommand', () => {
     });
 
     expect(offline.result.current.command).toBeNull();
+    expect(offline.onDraft).toHaveBeenCalledWith('');
+    expect(offline.onBlocked).toHaveBeenCalledWith(COMMAND_BLOCKERS.github);
     expect(
       command({ draft: '/', repositories: [] }).result.current.picker?.rows[0]?.detail,
-    ).toBe("Add this project's repositories in its settings first.");
+    ).toBe('This project has no repositories yet.');
+  });
+
+  it('does NOT send a command that has what it needs anywhere else', () => {
+    const ready = command({ draft: '/' });
+
+    act(() => {
+      ready.result.current.onPick('jira-plan');
+    });
+
+    expect(ready.onBlocked).not.toHaveBeenCalled();
+    expect(ready.result.current.command).not.toBeNull();
   });
 
   /**
    * Cada comando precisa do próprio tracker: o Jira faltando não pode travar o plano a
    * partir do código.
    */
-  it('locks only the command whose tracker is missing', () => {
+  it('blocks only the command whose tracker is missing', () => {
     const rows = command({ draft: '/', isJiraConnected: false, isConfluenceOn: false })
       .result.current.picker?.rows;
 
-    expect(rows?.map(({ id, isDisabled, detail }) => [id, isDisabled, detail])).toEqual([
+    expect(rows?.map(({ id, isBlocked, detail }) => [id, isBlocked, detail])).toEqual([
       [
         'code-plan',
         false,
         'The agent reads a branch of a repository and plans its tests with you.',
       ],
-      ['jira-plan', true, 'Connect Jira in Settings → Integrations first.'],
-      [
-        'confluence-plan',
-        true,
-        'Turn Confluence on beside Jira in Settings → Integrations first.',
-      ],
+      ['jira-plan', true, 'Jira is not connected yet.'],
+      ['confluence-plan', true, 'Confluence is not on yet.'],
       [
         'figma-plan',
         false,

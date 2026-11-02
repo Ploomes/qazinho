@@ -551,8 +551,10 @@ export const en = {
     CODE_PLAN: 'Plan from the code',
     CODE_PLAN_TEXT:
       'The agent reads a branch of a repository and plans its tests with you.',
-    NEEDS_GITHUB: 'Connect GitHub in Settings → Integrations first.',
-    NEEDS_REPOSITORIES: "Add this project's repositories in its settings first.",
+    NEEDS_GITHUB: 'GitHub is not connected yet.',
+    TIP_GITHUB: 'Connect GitHub here, then come back to /code.',
+    NEEDS_REPOSITORIES: 'This project has no repositories yet.',
+    TIP_REPOSITORIES: 'Add the repositories here, then come back to /code.',
     REPOSITORY_HEADING: 'repository',
     BRANCH_HEADING: 'branch of {{repository}}',
     BASE: 'base {{branch}}',
@@ -574,7 +576,8 @@ export const en = {
     JIRA_PLAN: 'Plan from a Jira story',
     JIRA_PLAN_TEXT:
       'The agent reads a story, its acceptance criteria and its files, and plans its tests with you.',
-    NEEDS_JIRA: 'Connect Jira in Settings → Integrations first.',
+    NEEDS_JIRA: 'Jira is not connected yet.',
+    TIP_JIRA: 'Connect Jira here, then come back to /jira.',
     STORY_HEADING: 'Jira story',
     STORY_RECENT: 'the stories you opened last',
     PICK_STORY: 'Which story? Type its key or words from it',
@@ -586,7 +589,8 @@ export const en = {
     CONFLUENCE_PLAN: 'Plan from a Confluence page',
     CONFLUENCE_PLAN_TEXT:
       'The agent reads a page, such as the cases your team wrote, and plans its tests with you.',
-    NEEDS_CONFLUENCE: 'Turn Confluence on beside Jira in Settings → Integrations first.',
+    NEEDS_CONFLUENCE: 'Confluence is not on yet.',
+    TIP_CONFLUENCE: 'Turn Confluence on in the Jira card, then come back to /confluence.',
     PAGE_HEADING: 'Confluence page',
     PAGE_RECENT: 'the pages you worked on last',
     PICK_PAGE: 'Which page? Type words from its title',

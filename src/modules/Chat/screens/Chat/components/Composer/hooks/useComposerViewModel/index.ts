@@ -85,7 +85,7 @@ export const useComposerViewModel = (props: IComposerProps) => {
     else if (event.key === 'ArrowUp')
       setCommandHighlight((commandActive - 1 + commandRows.length) % commandRows.length);
     else if (event.key === 'Enter' || event.key === 'Tab') {
-      if (picked !== undefined && !picked.isDisabled) pickCommand(picked.id);
+      if (picked !== undefined) pickCommand(picked.id);
     } else return false;
 
     return true;

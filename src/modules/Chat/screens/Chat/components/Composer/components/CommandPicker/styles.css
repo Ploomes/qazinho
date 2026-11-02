@@ -50,8 +50,7 @@
   color: var(--ink);
 }
 
-.command-picker__row--disabled {
-  cursor: not-allowed;
+.command-picker__row--blocked:not(.command-picker__row--highlighted) {
   opacity: 0.6;
 }
 

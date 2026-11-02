@@ -32,7 +32,7 @@ const PICKER = {
       label: 'Plan from the code',
       tag: '/code',
       detail: null,
-      isDisabled: false,
+      isBlocked: false,
     },
   ],
   note: null,
@@ -494,7 +494,7 @@ describe('useComposerViewModel', () => {
       expect(enter.preventDefault).toHaveBeenCalled();
     });
 
-    it('does NOT pick a command that cannot be picked yet', () => {
+    it('picks a command that still needs something, so the QA is taken to it', () => {
       const onPickCommand = vi.fn();
       const { result } = renderHook(() =>
         useComposerViewModel({
@@ -502,7 +502,7 @@ describe('useComposerViewModel', () => {
           value: '/',
           commandPicker: {
             ...PICKER,
-            rows: PICKER.rows.map((row) => ({ ...row, isDisabled: true })),
+            rows: PICKER.rows.map((row) => ({ ...row, isBlocked: true })),
           },
           onPickCommand,
         }),
@@ -512,7 +512,7 @@ describe('useComposerViewModel', () => {
         result.current.onKeyDown(pressed('Enter'));
       });
 
-      expect(onPickCommand).not.toHaveBeenCalled();
+      expect(onPickCommand).toHaveBeenCalledWith('code-plan');
     });
 
     it('shuts the slash picker on Escape until the QA types again', () => {

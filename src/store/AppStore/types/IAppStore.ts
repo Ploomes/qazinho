@@ -34,6 +34,7 @@ export interface IAppStore {
   openModal: (modal: Modal) => void;
   openProjectSettings: (projectId: string) => void;
   openProSettings: (projectId: string) => void;
+  openProjectSection: (props: { projectId: string; section: ProjectSection }) => void;
   openWorkspaceModal: (projectId: string) => void;
   closeModal: () => void;
   selectWorkspace: (workspaceId: string) => void;

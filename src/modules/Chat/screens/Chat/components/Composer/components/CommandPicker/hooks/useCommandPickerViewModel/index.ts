@@ -32,10 +32,10 @@ export const useCommandPickerViewModel = (props: ICommandPickerProps) => {
       className: [
         'command-picker__row',
         ...(index === highlighted ? ['command-picker__row--highlighted'] : []),
-        ...(row.isDisabled ? ['command-picker__row--disabled'] : []),
+        ...(row.isBlocked ? ['command-picker__row--blocked'] : []),
       ].join(' '),
       onClick: () => {
-        if (!row.isDisabled) onPick(row.id);
+        onPick(row.id);
       },
       onPointerEnter: () => {
         onHighlight(index);

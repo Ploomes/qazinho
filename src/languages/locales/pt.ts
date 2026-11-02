@@ -553,9 +553,10 @@ export const pt: typeof en = {
     CODE_PLAN: 'Plano a partir do código',
     CODE_PLAN_TEXT:
       'O agente lê uma branch de um repositório e planeja os testes com você.',
-    NEEDS_GITHUB: 'Conecte o GitHub em Configurações → Integrações antes.',
-    NEEDS_REPOSITORIES:
-      'Adicione os repositórios deste projeto nas configurações dele antes.',
+    NEEDS_GITHUB: 'Falta conectar o GitHub.',
+    TIP_GITHUB: 'Conecte o GitHub aqui e volte para o /code.',
+    NEEDS_REPOSITORIES: 'Falta adicionar os repositórios deste projeto.',
+    TIP_REPOSITORIES: 'Adicione os repositórios aqui e volte para o /code.',
     REPOSITORY_HEADING: 'repositório',
     BRANCH_HEADING: 'branch de {{repository}}',
     BASE: 'base {{branch}}',
@@ -577,7 +578,8 @@ export const pt: typeof en = {
     JIRA_PLAN: 'Plano a partir de uma história do Jira',
     JIRA_PLAN_TEXT:
       'O agente lê uma história, os critérios de aceite e os anexos, e planeja os testes com você.',
-    NEEDS_JIRA: 'Conecte o Jira em Configurações → Integrações antes.',
+    NEEDS_JIRA: 'Falta conectar o Jira.',
+    TIP_JIRA: 'Conecte o Jira aqui e volte para o /jira.',
     STORY_HEADING: 'história do Jira',
     STORY_RECENT: 'as histórias que você abriu por último',
     PICK_STORY: 'Qual história? Digite a chave ou palavras dela',
@@ -589,8 +591,8 @@ export const pt: typeof en = {
     CONFLUENCE_PLAN: 'Plano a partir de uma página do Confluence',
     CONFLUENCE_PLAN_TEXT:
       'O agente lê uma página, como os cenários que seu time escreveu, e planeja os testes com você.',
-    NEEDS_CONFLUENCE:
-      'Ligue o Confluence junto do Jira em Configurações → Integrações primeiro.',
+    NEEDS_CONFLUENCE: 'Falta ligar o Confluence.',
+    TIP_CONFLUENCE: 'Ligue o Confluence no cartão do Jira e volte para o /confluence.',
     PAGE_HEADING: 'Página do Confluence',
     PAGE_RECENT: 'as páginas em que você mexeu por último',
     PICK_PAGE: 'Qual página? Digite palavras do título',

@@ -39,7 +39,13 @@ import {
 import { Agent, Run } from '@/services';
 import { EXPLORATION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
-import { useAppStore, useSetupStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useAssistantStore,
+  useSettingsStore,
+  useSetupStore,
+  useWorkspaceStore,
+} from '@/store';
 
 export const useChatViewModel = () => {
   const [draft, setDraft] = useState('');
@@ -101,6 +107,10 @@ export const useChatViewModel = () => {
   const liveText = workspace === null ? '' : (liveTexts[workspace.id] ?? '');
   const retry = workspace === null ? undefined : retries[workspace.id];
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
+  const say = useAssistantStore((state) => state.say);
+  const selectSettingsTab = useSettingsStore((state) => state.selectTab);
+  const openSettings = useAppStore((state) => state.openSettings);
+  const openProjectSection = useAppStore((state) => state.openProjectSection);
   const chatCommand = useChatCommand({
     draft,
     repositories: project?.repositories ?? [],
@@ -108,6 +118,16 @@ export const useChatViewModel = () => {
     isJiraConnected,
     isConfluenceOn,
     onDraft: setDraft,
+    onBlocked: (blocker) => {
+      say(t(blocker.tipKey));
+
+      if (blocker.place === 'integrations') {
+        selectSettingsTab('integrations');
+        openSettings();
+      } else if (project !== null) {
+        openProjectSection({ projectId: project.id, section: 'code' });
+      }
+    },
   });
   const pendingImport = useAppStore((state) => state.pendingImport);
   const clearImport = useAppStore((state) => state.clearImport);

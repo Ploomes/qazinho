@@ -1,5 +1,6 @@
 import type {
   ChatCommandId,
+  ICommandBlocker,
   ICommandDraft,
   ICommandPart,
   ICommandPicker,
@@ -28,6 +29,7 @@ import {
   COMMAND_SEARCH,
   IMPORT_FAILURE_KEYS,
 } from '@/modules/Chat/screens/Chat/constants';
+import { commandBlockerOf } from '@/modules/Chat/screens/Chat/library';
 import {
   CONFLUENCE_FAILURE_KEYS,
   GITHUB_FAILURE_KEYS,
@@ -43,6 +45,7 @@ export const useChatCommand = (props: {
   isJiraConnected: boolean;
   isConfluenceOn: boolean;
   onDraft: (draft: string) => void;
+  onBlocked: (blocker: ICommandBlocker) => void;
 }) => {
   const {
     draft,
@@ -51,6 +54,7 @@ export const useChatCommand = (props: {
     isJiraConnected,
     isConfluenceOn,
     onDraft,
+    onBlocked,
   } = props;
   const { t } = useTranslation();
   const [command, setCommand] = useState<ICommandDraft | null>(null);
@@ -97,21 +101,13 @@ export const useChatCommand = (props: {
                   ? 'branch'
                   : 'ready';
   const blockerOf = (id: ChatCommandId) =>
-    id === 'figma-plan' || id === 'import-plan'
-      ? null
-      : id === 'jira-plan'
-        ? isJiraConnected
-          ? null
-          : t('COMMANDS.NEEDS_JIRA')
-        : id === 'confluence-plan'
-          ? isConfluenceOn
-            ? null
-            : t('COMMANDS.NEEDS_CONFLUENCE')
-          : !isGithubConnected
-            ? t('COMMANDS.NEEDS_GITHUB')
-            : repositories.length === 0
-              ? t('COMMANDS.NEEDS_REPOSITORIES')
-              : null;
+    commandBlockerOf({
+      id,
+      isGithubConnected,
+      isJiraConnected,
+      isConfluenceOn,
+      repositoryCount: repositories.length,
+    });
   const repository = command?.repository ?? null;
   const base = repository?.baseBranch ?? '';
   const branchList =
@@ -231,8 +227,8 @@ export const useChatCommand = (props: {
       id: one.id,
       label: t(one.labelKey),
       tag: one.slug,
-      detail: blocker ?? t(one.textKey),
-      isDisabled: blocker !== null,
+      detail: t(blocker?.detailKey ?? one.textKey),
+      isBlocked: blocker !== null,
     };
   });
 
@@ -243,7 +239,7 @@ export const useChatCommand = (props: {
       label: keyOf(one),
       tag: null,
       detail: t('COMMANDS.BASE', { branch: one.baseBranch }),
-      isDisabled: false,
+      isBlocked: false,
     }));
 
   const listed: IBranch[] = branchList?.isListed === true ? branchList.branches : [];
@@ -271,7 +267,7 @@ export const useChatCommand = (props: {
               branch.pullRequest === null
                 ? null
                 : `#${String(branch.pullRequest.number)} ${branch.pullRequest.title}`,
-            isDisabled: false,
+            isBlocked: false,
           }))
       : [];
 
@@ -281,7 +277,7 @@ export const useChatCommand = (props: {
     label: issue.key,
     tag: null,
     detail: issue.summary,
-    isDisabled: false,
+    isBlocked: false,
   }));
 
   const pages = foundPages?.list.isListed === true ? foundPages.list.pages : [];
@@ -290,7 +286,7 @@ export const useChatCommand = (props: {
     label: page.title,
     tag: page.space === '' ? null : page.space,
     detail: null,
-    isDisabled: false,
+    isBlocked: false,
   }));
 
   const pasted = step === 'design' ? designLinkOf(typed) : null;
@@ -307,7 +303,7 @@ export const useChatCommand = (props: {
             label: pasted.name,
             tag: null,
             detail: nodeOf(pasted),
-            isDisabled: false,
+            isBlocked: false,
           },
         ];
 
@@ -317,7 +313,7 @@ export const useChatCommand = (props: {
       label: t('COMMANDS.IMPORT_PICK'),
       tag: null,
       detail: null,
-      isDisabled: false,
+      isBlocked: false,
     },
   ];
 
@@ -459,11 +455,20 @@ export const useChatCommand = (props: {
     startWith,
     onPick: (id: string) => {
       if (step === 'command') {
-        const row = commandRows.find((one) => one.id === id);
         const picked = CHAT_COMMANDS.find((one) => one.id === id);
 
-        if (row !== undefined && !row.isDisabled && picked !== undefined)
+        if (picked === undefined) return;
+
+        const blocker = blockerOf(picked.id);
+
+        if (blocker === null) {
           start(picked.id);
+
+          return;
+        }
+
+        onDraft('');
+        onBlocked(blocker);
 
         return;
       }
