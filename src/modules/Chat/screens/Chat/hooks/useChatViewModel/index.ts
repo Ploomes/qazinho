@@ -100,6 +100,7 @@ export const useChatViewModel = () => {
   const answerQuestions = useWorkspaceStore((state) => state.answerQuestions);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const setPlan = useWorkspaceStore((state) => state.setPlan);
+  const toggleCase = useWorkspaceStore((state) => state.toggleCase);
   const selectRun = useWorkspaceStore((state) => state.selectRun);
   const openBugId = useWorkspaceStore((state) => state.openBugId);
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
@@ -498,11 +499,11 @@ export const useChatViewModel = () => {
               label: t('CHAT.SUGGESTION_WRITE'),
               text: '',
               onClick: () => {
-                setPlan({
-                  workspaceId: workspace.id,
-                  plan: addCase({ plan: [], used: [] }),
-                });
+                const plan = addCase({ plan: [], used: [] });
+
+                setPlan({ workspaceId: workspace.id, plan });
                 selectTab('plan');
+                toggleCase(plan[0]?.id ?? '');
               },
             },
           ]

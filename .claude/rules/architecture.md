@@ -121,6 +121,8 @@ Toda `BrowserWindow` recebe `contextIsolation: true`, `sandbox: true` e `nodeInt
 Um workspace são três colunas: a sidebar, o chat no meio, e um painel ao lado (`SidePanel`) cujas
 abas são o plano, o dispositivo (`DeviceView`), as runs e os bugs.
 
+- Sem plano e sem run (`useChatOnly`), o chat é a tela: o painel Agente toma o espaço do centro,
+  e o centro volta com um plano ou uma run.
 - O chat está sempre lá; o QA escolhe a aba do painel (`panelTab`), e uma run que começa é a única
   coisa que a vira, para o dispositivo. O `selectTab('chat')` só traz o chat de volta.
 - O painel mantém a largura a que o QA o arrasta, estreitada para o chat manter o
@@ -418,7 +420,8 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     a página dele mostrou. Num alvo Android ou iOS sem plano ainda, o `PhonePeek` abre o app no
     emulador ou simulador, sem janela, e o agente lê a primeira tela; o chat diz isso enquanto
     espera.
-  - Perguntar: uma rodada de perguntas fechadas nas `questions` da resposta, cada uma com duas a
+  - Perguntar (uma pergunta por vez na tela: uma opção responde e segue, "Outra" abre o campo):
+    uma rodada de perguntas fechadas nas `questions` da resposta, cada uma com duas a
     quatro opções e as palavras do próprio QA sempre abertas. A página a desenha como
     `QuestionRound` e manda as respostas de volta como a mensagem seguinte.
   - Um segredo nunca é perguntado em palavras (`role/chat/variables.md`): uma opção cujas
