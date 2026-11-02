@@ -28,6 +28,7 @@
   align-items: center;
   justify-content: space-between;
   height: var(--island-bar);
+  padding: 0 var(--island-pad);
 }
 
 .island__left,
@@ -36,21 +37,12 @@
   flex: none;
   align-items: center;
   gap: var(--space-2);
-  width: var(--island-ear);
-}
-
-.island__left {
-  padding-left: var(--space-4);
-}
-
-.island__right {
-  justify-content: flex-end;
-  padding-right: var(--space-4);
 }
 
 .island__count {
   color: var(--ink2);
   font: var(--font-mono-xs);
+  white-space: nowrap;
 }
 
 .island__notch {

@@ -86,7 +86,34 @@ describe('useIslandViewModel', () => {
     });
 
     expect(result.current.isOpen).toBe(false);
-    expect(result.current.size).toMatchObject({ width: 185 + 120, height: 33 });
+    expect(result.current.size).toMatchObject({ width: 185 + 2 * 51, height: 33 });
+  });
+
+  it('stays small with just the Estagiário and the icon, and widens when a counter shows', () => {
+    const { result } = renderHook(() => useIslandViewModel());
+
+    act(() => {
+      pushFrame({
+        ...NOTCHED,
+        island: {
+          language: 'en',
+          state: {
+            kind: 'asking',
+            workspaceId: 'w1',
+            name: 'Checkout',
+            question: 'Which?',
+          },
+        },
+      });
+    });
+
+    const small = result.current.size.width;
+
+    act(() => {
+      pushFrame(running);
+    });
+
+    expect(result.current.size.width).toBeGreaterThan(small);
   });
 
   it('hangs as a small pill on a screen with no notch', () => {
@@ -96,7 +123,7 @@ describe('useIslandViewModel', () => {
       pushFrame({ ...running, barHeight: 28, notchWidth: 0 });
     });
 
-    expect(result.current.size).toMatchObject({ width: 108, height: 28 });
+    expect(result.current.size).toMatchObject({ width: 102, height: 28 });
   });
 
   it('signals that the agent waits for the QA without opening by itself', () => {
@@ -118,7 +145,7 @@ describe('useIslandViewModel', () => {
     });
 
     expect(result.current.isOpen).toBe(false);
-    expect(result.current.size).toMatchObject({ width: 185 + 120, height: 33 });
+    expect(result.current.size).toMatchObject({ width: 185 + 2 * 34, height: 33 });
     expect(result.current.shown).toMatchObject({
       tone: 'asking',
       mood: 'thinking',

@@ -4,6 +4,7 @@ import type { CSSProperties } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ISLAND_IDLE, ISLAND_SHAPE } from '@/modules/Island/screens/Island/constants';
+import { earWidthOf } from '@/modules/Island/screens/Island/library';
 import { IslandView } from '@/services/IslandView';
 
 export const useIslandViewModel = () => {
@@ -60,8 +61,6 @@ export const useIslandViewModel = () => {
   const bar = frame?.barHeight ?? 0;
   const notch = frame?.notchWidth ?? 0;
   const isOpen = isHovering;
-  const closedWidth =
-    notch === 0 ? ISLAND_SHAPE.flatWidthPx : notch + ISLAND_SHAPE.earPx * 2;
   const openHeight = state.kind === 'idle' ? bar : ISLAND_SHAPE.openHeightPx[state.kind];
   const shown: IIslandShown | null =
     state.kind === 'running'
@@ -119,6 +118,10 @@ export const useIslandViewModel = () => {
               stopLabel: t('ISLAND.STOP'),
             }
           : null;
+  const closedWidth = Math.max(
+    ISLAND_SHAPE.minFlatWidthPx,
+    notch + earWidthOf(shown?.count ?? '') * 2,
+  );
   const workspaceId = state.kind === 'idle' ? '' : state.workspaceId;
   const call = state.kind === 'asking' ? `${state.workspaceId}/${state.question}` : null;
 
@@ -136,7 +139,7 @@ export const useIslandViewModel = () => {
     style: {
       '--island-bar': `${String(bar)}px`,
       '--island-notch': `${String(notch)}px`,
-      '--island-ear': `${String(ISLAND_SHAPE.earPx)}px`,
+      '--island-pad': `${String(ISLAND_SHAPE.padPx)}px`,
     } as CSSProperties,
     internSize: ISLAND_SHAPE.internPx,
     size: {
