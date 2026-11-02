@@ -1,3 +1,5 @@
+import type { KeyboardEvent, Ref } from 'react';
+
 export interface IInputProps {
   value: string;
   onChange: (value: string) => void;
@@ -8,4 +10,8 @@ export interface IInputProps {
   isBare?: boolean;
   isSecret?: boolean;
   isAutoFocused?: boolean;
+  inputRef?: Ref<HTMLInputElement>;
+  onPointerDown?: () => void;
+  onBlur?: () => void;
+  onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
