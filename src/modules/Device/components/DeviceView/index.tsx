@@ -1,6 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { createPortal } from 'react-dom';
-import { useTranslation } from 'react-i18next';
 import { Button, Eyebrow, Icon, Intern, StatusPill } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { DeviceFocus, DeviceScreen, LiveClock, ViewportPicker } from './components';
@@ -31,7 +30,6 @@ export const DeviceView: React.FC = () => {
     mood,
     viewports,
     hasViewportPicker,
-    viewportLayoutId,
     screenRatio,
     onSelectViewport,
     shot,
@@ -40,27 +38,33 @@ export const DeviceView: React.FC = () => {
     elapsedLabel,
     isLive,
     steps,
-    listedSteps,
-    hasNoSteps,
+    sections,
+    hasSteps,
+    hasState,
+    offTitle,
+    ended,
     doingLabel,
     stepsWord,
-    emptyStepsText,
     stepsRef,
     onStepsScroll,
     onPause,
     onStop,
   } = useDeviceViewModel();
-  const { t } = useTranslation();
 
   return (
     <div className="device-view" style={style}>
       <header className="device-view__header">
-        <span className="device-view__state">
-          <Intern mood={mood} size={22} isStill />
-          <span className="device-view__state-text">{stateText}</span>
-          {isLive && <LiveClock label={elapsedLabel} />}
-        </span>
+        {hasState && (
+          <span className="device-view__state">
+            <Intern mood={mood} size={22} isStill />
+            <span className="device-view__state-text">{stateText}</span>
+            {isLive && <LiveClock label={elapsedLabel} />}
+          </span>
+        )}
         <span className="device-view__collapse">
+          {hasViewportPicker && (
+            <ViewportPicker viewports={viewports} onSelect={onSelectViewport} />
+          )}
           <AnimatePresence initial={false}>
             {canFocus && (
               <motion.span
@@ -84,8 +88,19 @@ export const DeviceView: React.FC = () => {
         {!hasScreen && (
           <div className="device-view__off">
             <Intern mood="sleeping" size={72} />
-            <span className="device-view__off-title">{t('DEVICE.NO_DEVICE')}</span>
-            <span className="device-view__off-body">{t('DEVICE.NO_DEVICE_BODY')}</span>
+            <span className="device-view__off-title">{offTitle}</span>
+            {ended !== null && (
+              <div className="device-view__off-actions">
+                {ended.canWatch && (
+                  <Button onClick={ended.onWatch}>
+                    <Icon name="play" /> {ended.watchLabel}
+                  </Button>
+                )}
+                <Button variant="ghost" onClick={ended.onOpenRuns}>
+                  {ended.runsLabel}
+                </Button>
+              </div>
+            )}
           </div>
         )}
 
@@ -118,28 +133,26 @@ export const DeviceView: React.FC = () => {
         )}
       </div>
 
-      {hasViewportPicker && (
-        <div className="device-view__size">
-          <ViewportPicker
-            viewports={viewports}
-            layoutId={viewportLayoutId}
-            onSelect={onSelectViewport}
-          />
+      {hasSteps && (
+        <div ref={stepsRef} className="device-view__steps" onScroll={onStepsScroll}>
+          <Eyebrow>
+            {stepsWord} {doingLabel}
+          </Eyebrow>
+          {sections.map((section) => (
+            <div key={section.key} className="device-view__section">
+              {section.title !== '' && (
+                <span className="device-view__case">{section.title}</span>
+              )}
+              {section.rows.map((step) => (
+                <div key={step.number} className="device-view__step">
+                  <StatusPill status={step.verdict} label="" />
+                  <span>{step.action}</span>
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       )}
-
-      <div ref={stepsRef} className="device-view__steps" onScroll={onStepsScroll}>
-        <Eyebrow>
-          {stepsWord} {doingLabel}
-        </Eyebrow>
-        {hasNoSteps && <p className="device-view__step">{emptyStepsText}</p>}
-        {listedSteps.map((step) => (
-          <div key={step.number} className="device-view__step">
-            <StatusPill status={step.verdict} label="" />
-            <span>{step.action}</span>
-          </div>
-        ))}
-      </div>
       {createPortal(
         <AnimatePresence>
           {isFocused && (

@@ -19,7 +19,7 @@ describe('useDeviceViewModel', () => {
 
     expect(result.current.hasScreen).toBe(false);
     expect(result.current.hasControls).toBe(false);
-    expect(result.current.stateText).toBe('idle');
+    expect(result.current.hasState).toBe(false);
   });
 
   it('puts the Estagiário in the mood of the workspace: asleep before a run, alarmed at a failure', () => {
@@ -188,28 +188,35 @@ describe('useDeviceViewModel', () => {
   });
 
   describe('steps', () => {
-    it('shows how the last run went when none is going, the app reopened included', () => {
+    /** Uma foto velha e "parado" diziam menos que a run que já está em Runs. */
+    it('leaves a run that ended to Runs, and offers to watch it', () => {
       const finished = walkRun({ verdicts: ['passed', 'failed'], isFinished: true });
 
       useWorkspaceStore.setState({ workspaces: [{ ...finished, live: null }] });
 
       const { result } = renderHook(() => useDeviceViewModel());
 
-      expect(result.current.steps.map(({ verdict }) => verdict).slice(0, 4)).toEqual([
-        'passed',
-        'failed',
-        'skipped',
-        'pending',
-      ]);
-      expect(result.current.doingLabel).toBe('3 of 6');
+      expect(result.current).toMatchObject({
+        hasScreen: false,
+        hasSteps: false,
+        hasState: false,
+      });
+      expect(result.current.ended?.runsLabel).toBe('See in Runs');
+
+      act(() => {
+        result.current.ended?.onOpenRuns();
+      });
+
+      expect(useWorkspaceStore.getState().panelTab).toBe('runs');
     });
 
-    it('lists the whole plan while no run has gone', () => {
+    it('offers nothing to go back to before the first run', () => {
       useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
 
       const { result } = renderHook(() => useDeviceViewModel());
 
-      expect(result.current.listedSteps).toHaveLength(6);
+      expect(result.current.ended).toBeNull();
+      expect(result.current.hasSteps).toBe(false);
     });
 
     /** O fim da lista é o que importa numa run: passos pendentes empurravam o atual para fora. */
@@ -222,10 +229,9 @@ describe('useDeviceViewModel', () => {
 
       const { result } = renderHook(() => useDeviceViewModel());
 
-      expect(result.current.listedSteps.map(({ verdict }) => verdict)).toEqual([
-        'passed',
-        'running',
-      ]);
+      expect(
+        result.current.sections.flatMap(({ rows }) => rows.map(({ verdict }) => verdict)),
+      ).toEqual(['passed', 'running']);
       expect(result.current.steps).toHaveLength(6);
     });
 
@@ -244,7 +250,7 @@ describe('useDeviceViewModel', () => {
         'Leave the house number empty',
         'Pay with the test card',
       ]);
-      expect(result.current.listedSteps).toMatchObject([
+      expect(result.current.sections[0]?.rows).toMatchObject([
         { number: 1, action: 'Add the product to the cart', verdict: 'failed' },
       ]);
       expect(result.current.doingLabel).toBe('1 of 3');
@@ -256,8 +262,8 @@ describe('useDeviceViewModel', () => {
 
       const { result } = renderHook(() => useDeviceViewModel());
 
-      expect(result.current.listedSteps).toEqual([]);
-      expect(result.current.hasNoSteps).toBe(false);
+      expect(result.current.sections).toEqual([]);
+      expect(result.current.hasSteps).toBe(false);
     });
 
     /**
@@ -289,10 +295,10 @@ describe('useDeviceViewModel', () => {
       expect(result.current.steps).toEqual([
         { number: 1, action: 'Home', verdict: 'passed' },
       ]);
+      expect(result.current.sections.map(({ title }) => title)).toEqual(['']);
       expect(result.current).toMatchObject({
         stepsWord: 'screens',
         doingLabel: '',
-        emptyStepsText: 'Each screen the agent reaches shows up here.',
       });
     });
 

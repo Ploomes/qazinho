@@ -1,67 +1,76 @@
 .viewport-picker {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.viewport-picker__list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-2);
-  padding: var(--space-2);
-  border: 1px solid var(--line2);
-  border-radius: var(--radius-md);
-  background: var(--raise);
-}
-
-.viewport-picker__option {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-1);
-  min-width: 0;
-  padding: var(--space-3) var(--space-4);
+}
+
+.viewport-picker__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--ink3);
-  text-align: left;
-  cursor: pointer;
-  transition: color var(--dur-fast) var(--ease);
+  color: var(--ink2);
+  font: var(--font-mono-sm);
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
 }
 
-.viewport-picker__option:hover,
-.viewport-picker__option--on {
+.viewport-picker__trigger:hover:not(:disabled) {
+  background: var(--sel);
   color: var(--ink);
+  filter: none;
+}
+
+.viewport-picker__menu {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--win);
+  box-shadow: var(--sticker-hero);
+  transform-origin: top right;
+}
+
+.viewport-picker__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  white-space: nowrap;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.viewport-picker__option:hover:not(:disabled) {
+  background: var(--sel);
+  filter: none;
 }
 
 .viewport-picker__mark {
-  position: absolute;
-  inset: 0;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: var(--raise2);
-}
-
-.viewport-picker__label,
-.viewport-picker__size {
-  position: relative;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: inline-flex;
+  width: var(--space-5);
+  color: var(--lime-ink);
 }
 
 .viewport-picker__label {
-  font: var(--font-ui-md);
+  flex: 1;
+  font: var(--font-ui-sm);
 }
 
 .viewport-picker__size {
   color: var(--ink3);
   font: var(--font-mono-xs);
-}
-
-.viewport-picker__option--on .viewport-picker__size {
-  color: var(--lime-ink);
 }

@@ -1,11 +1,9 @@
 import type { CSSProperties } from 'react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatElapsed } from '@/modules/Device';
 import {
   caseVerdict,
   flattenPlanSteps,
-  formatCost,
   useRunActions,
   walkedStepsOf,
 } from '@/modules/Run';
@@ -15,10 +13,9 @@ import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePar
 import { useWorkspaceStore } from '@/store';
 
 export const useWorkspaceViewModel = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const workspace = useSelectedWorkspacePart((opened) => ({
     id: opened.id,
-    latestRun: opened.runs[0] ?? null,
     name: opened.name,
     issue: opened.issue,
     design: opened.design,
@@ -63,14 +60,6 @@ export const useWorkspaceViewModel = () => {
     planCount: workspace?.planCount ?? 0,
     runCount: workspace?.runCount ?? 0,
     bugCount: workspace?.bugCount ?? 0,
-    runMeta:
-      isLive || workspace?.latestRun == null
-        ? null
-        : `${workspace.latestRun.id} · ${formatElapsed(workspace.latestRun.durationSec)}${
-            workspace.latestRun.costUsd === null
-              ? ''
-              : ` · ${formatCost({ costUsd: workspace.latestRun.costUsd, language: i18n.language })}`
-          }`,
     name: workspace?.name ?? '',
     issue:
       workspace?.issue === null || workspace?.issue === undefined

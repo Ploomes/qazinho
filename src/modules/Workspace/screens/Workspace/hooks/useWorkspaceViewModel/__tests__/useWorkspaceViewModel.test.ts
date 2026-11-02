@@ -209,7 +209,7 @@ describe('useWorkspaceViewModel', () => {
     const { result } = renderHook(() => useWorkspaceViewModel());
 
     expect(result.current.liveStatus).toBe('attention');
-    expect(result.current.statusLabel).toBe('waiting for you · step 1 of 6');
+    expect(result.current.statusLabel).toBe('step 1 of 6');
   });
 
   it('says an exploration waits on the QA while its agent asks something', () => {
@@ -229,7 +229,7 @@ describe('useWorkspaceViewModel', () => {
     });
 
     expect(renderHook(() => useWorkspaceViewModel()).result.current.statusLabel).toBe(
-      'waiting for you · 0 screens',
+      '0 screens',
     );
   });
 

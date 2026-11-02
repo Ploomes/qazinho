@@ -100,15 +100,6 @@
   border-bottom: 1px solid var(--line2);
 }
 
-.workspace__run-meta {
-  display: inline-flex;
-  align-items: center;
-  margin-left: auto;
-  color: var(--ink3);
-  font: var(--font-mono-sm);
-  white-space: nowrap;
-}
-
 .workspace__scroll {
   display: flex;
   flex: 1;
@@ -141,7 +132,4 @@
 }
 
 @container workspace (width < 640px) {
-  .workspace__run-meta {
-    display: none;
-  }
 }

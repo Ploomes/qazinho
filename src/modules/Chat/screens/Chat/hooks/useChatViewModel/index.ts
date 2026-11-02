@@ -416,12 +416,7 @@ export const useChatViewModel = () => {
               !isWalking,
           },
     ),
-    lockedText:
-      question !== null
-        ? t('CHAT.LOCKED_ASKED')
-        : isWalking
-          ? t('CHAT.LOCKED_RUNNING')
-          : null,
+    lockedText: question !== null ? '' : isWalking ? t('CHAT.LOCKED_RUNNING') : null,
     question:
       question === null
         ? null

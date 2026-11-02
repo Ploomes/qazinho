@@ -6,6 +6,5 @@ import type { IViewportChoice, ViewportId } from '@/modules/Device/types';
  */
 export interface IViewportPickerProps {
   viewports: IViewportChoice[];
-  layoutId: string;
   onSelect: (viewportId: ViewportId) => void;
 }

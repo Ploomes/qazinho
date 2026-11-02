@@ -1,13 +1,29 @@
 import type { IViewportPickerProps } from '@/modules/Device/components/DeviceView/components/ViewportPicker/types';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDismiss } from '@/shared/hooks';
 
-export const useViewportPickerViewModel = (props: IViewportPickerProps) => ({
-  options: props.viewports.map((option) => ({
-    ...option,
-    className: option.isActive
-      ? 'viewport-picker__option viewport-picker__option--on'
-      : 'viewport-picker__option',
-    onSelect: () => {
-      props.onSelect(option.id);
+export const useViewportPickerViewModel = (props: IViewportPickerProps) => {
+  const { t } = useTranslation();
+  const [isOpen, setOpen] = useState(false);
+  const ref = useDismiss<HTMLDivElement>(() => {
+    setOpen(false);
+  });
+
+  return {
+    ref,
+    isOpen,
+    label: t('DEVICE.VIEWPORT'),
+    current: props.viewports.find(({ isActive }) => isActive)?.size ?? '',
+    onToggle: () => {
+      setOpen(!isOpen);
     },
-  })),
-});
+    options: props.viewports.map((option) => ({
+      ...option,
+      onSelect: () => {
+        setOpen(false);
+        props.onSelect(option.id);
+      },
+    })),
+  };
+};

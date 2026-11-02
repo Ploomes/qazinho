@@ -158,14 +158,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-4);
   width: 100%;
   padding: var(--space-8) var(--space-6);
-  border: 1.5px dashed var(--line);
-  border-radius: var(--radius-xl);
-  color: var(--ink3);
-  font: var(--font-ui-sm);
-  text-align: center;
 }
 
 .device-view__off-title {
@@ -174,13 +169,11 @@
   letter-spacing: var(--display-tracking);
 }
 
-.device-view__off-body {
-  color: var(--ink2);
-}
-
-.device-view__size {
-  flex: none;
-  padding: 0 var(--device-gutter) var(--space-4);
+.device-view__off-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
 }
 
 .device-view__steps {
@@ -190,6 +183,18 @@
   border-top: 1px solid var(--line2);
   overflow-y: auto;
   scrollbar-gutter: stable;
+}
+
+.device-view__section {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--space-3);
+}
+
+.device-view__case {
+  padding: var(--space-2) 0;
+  color: var(--ink);
+  font: var(--font-ui-sm);
 }
 
 .device-view__step {

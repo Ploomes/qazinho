@@ -1126,12 +1126,10 @@ describe('useChatViewModel', () => {
         key: 'r-01/q-1',
         live: { ...QUESTION, waitedSec: 0 },
       });
-      expect(result.current.lockedText).toBe(
-        'The agent waits on your answer, just above.',
-      );
+      expect(result.current.lockedText).toBe('');
       expect(
         result.current.items.find((item) => item.kind === 'run') as { title?: string },
-      ).toMatchObject({ title: 'Run r-01 · waiting for you · step 2 of 6' });
+      ).toMatchObject({ title: 'Run r-01 · step 2 of 6' });
     });
 
     it("hands the QA's answer to main, for the question it waits on", () => {

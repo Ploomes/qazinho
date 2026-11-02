@@ -193,11 +193,22 @@ describe('useSidebarViewModel', () => {
     });
 
     it('names the workspace whose agent waits on a question', () => {
+      useAppStore.setState({ selectedWorkspaceId: 'another' });
       useWorkspaceStore.setState({ workspaces: [asking()] });
 
       const { result } = renderHook(() => useSidebarViewModel());
 
       expect(result.current.waitingName).toBe('Onboarding');
+    });
+
+    /** Quem já está no workspace vê o cartão da pergunta no chat: o aviso só repetia. */
+    it('does NOT warn about the workspace on screen', () => {
+      useAppStore.setState({ selectedWorkspaceId: 'w1' });
+      useWorkspaceStore.setState({ workspaces: [asking()] });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.waitingName).toBeNull();
     });
 
     it('marks its row as needing the QA, over a run that goes or is paused', () => {
@@ -240,6 +251,7 @@ describe('useSidebarViewModel', () => {
     });
 
     it('opens the chat of the workspace that waits, where the question is', () => {
+      useAppStore.setState({ selectedWorkspaceId: 'another' });
       useWorkspaceStore.setState({ workspaces: [asking()] });
 
       const { result } = renderHook(() => useSidebarViewModel());

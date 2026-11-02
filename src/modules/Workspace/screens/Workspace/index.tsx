@@ -17,7 +17,6 @@ export const Workspace: React.FC = () => {
     planCount,
     runCount,
     bugCount,
-    runMeta,
     name,
     issue,
     design,
@@ -134,7 +133,6 @@ export const Workspace: React.FC = () => {
           isLive={isLive}
           onSelect={onSelectTab}
         />
-        {runMeta !== null && <span className="workspace__run-meta">{runMeta}</span>}
       </div>
 
       {tab === 'device' ? (

@@ -86,11 +86,7 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
         </div>
 
         {hasViewports && (
-          <ViewportPicker
-            viewports={props.viewports}
-            layoutId={DEVICE.viewportLayoutId}
-            onSelect={props.onSelectViewport}
-          />
+          <ViewportPicker viewports={props.viewports} onSelect={props.onSelectViewport} />
         )}
 
         {props.hasControls && (

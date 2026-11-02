@@ -164,7 +164,11 @@ export const useSidebarViewModel = () => {
 
   const waiting =
     workspaces.find(
-      ({ live }) => live !== null && !live.isDone && live.question !== undefined,
+      ({ id, live }) =>
+        id !== selectedWorkspaceId &&
+        live !== null &&
+        !live.isDone &&
+        live.question !== undefined,
     ) ?? null;
 
   const onNewProject = () => openModal('project');

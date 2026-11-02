@@ -2,13 +2,14 @@ import type { IDeviceStep, IViewportChoice, ViewportId } from '@/modules/Device/
 import type { CSSProperties } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DEVICE, DEVICE_STATE_KEY, VIEWPORTS } from '@/modules/Device/constants';
+import { DEVICE, VIEWPORTS } from '@/modules/Device/constants';
 import {
   deviceStateOf,
   formatElapsed,
   moodOfStatus,
   imageRatioOf,
   shownUrlOf,
+  stepSectionsOf,
   stepVerdictsOf,
   viewportOf,
 } from '@/modules/Device/library';
@@ -24,6 +25,9 @@ export const useDeviceViewModel = () => {
   const projects = useAppStore((state) => state.projects);
   const workspace = useSelectedWorkspace();
   const setViewport = useWorkspaceStore((state) => state.setViewport);
+  const selectRun = useWorkspaceStore((state) => state.selectRun);
+  const selectTab = useWorkspaceStore((state) => state.selectTab);
+  const openReplay = useAppStore((state) => state.openReplay);
   const {
     runSteps,
     live,
@@ -57,15 +61,16 @@ export const useDeviceViewModel = () => {
         number: index + 1,
         action: step.action,
         verdict: verdicts[index] ?? 'pending',
+        caseId: step.caseId,
+        caseTitle: step.caseTitle,
       }));
-  const listedSteps =
-    live === null ? steps : steps.filter(({ verdict }) => verdict !== 'pending');
+  const reached = steps.filter(({ verdict }) => verdict !== 'pending');
   const walked =
     live?.outcomes.length ??
     lastRun?.cases.reduce((total, runCase) => total + runCase.steps.length, 0) ??
     null;
 
-  const hasScreen = isRunLive || (live?.shot ?? null) !== null;
+  const hasScreen = isRunLive || (isFocusedNow && shot !== null);
   const isFocused = isFocusedNow && hasScreen;
   const stream = live?.isDone === false ? live.streamUrl : null;
   const viewports: IViewportChoice[] = isPhone
@@ -122,11 +127,31 @@ export const useDeviceViewModel = () => {
           : 'device-view__viewport device-view__viewport--browser',
     hasControls: isRunLive,
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
-    stateText: t(DEVICE_STATE_KEY[state] as never),
+    hasState: isRunLive,
+    stateText: isRunLive ? t('DEVICE.DRIVING') : '',
+    offTitle: t('DEVICE.NO_DEVICE'),
+    ended:
+      lastRun === null || workspace === null
+        ? null
+        : {
+            canWatch: lastRun.video !== null && lastRun.video !== undefined,
+            watchLabel: t('DEVICE.WATCH_LAST'),
+            runsLabel: t('DEVICE.OPEN_RUNS'),
+            onWatch: () => {
+              openReplay({
+                workspaceId: workspace.id,
+                runId: lastRun.id,
+                focus: { kind: 'run' },
+              });
+            },
+            onOpenRuns: () => {
+              selectRun(lastRun.id);
+              selectTab('runs');
+            },
+          },
     mood: moodOfStatus(workspace?.status ?? null),
     viewports,
     hasViewportPicker: viewports.length > 0 && !isFocused,
-    viewportLayoutId: DEVICE.panelViewportLayoutId,
     screenRatio,
     onSelectViewport: (viewportId: ViewportId) => {
       if (!workspace || viewportId === viewport.id) return;
@@ -150,10 +175,9 @@ export const useDeviceViewModel = () => {
     onStepsScroll,
     isLive: state === 'driving',
     steps,
-    listedSteps,
-    hasNoSteps: listedSteps.length === 0 && (!isRunLive || isExploring),
+    sections: stepSectionsOf(reached),
+    hasSteps: isRunLive && reached.length > 0,
     stepsWord: t(isExploring ? 'DEVICE.SCREENS' : 'DEVICE.STEPS'),
-    emptyStepsText: t(isExploring ? 'DEVICE.SCREENS_EMPTY' : 'DEVICE.STEPS_EMPTY'),
     doingLabel:
       isExploring || walked === null
         ? ''

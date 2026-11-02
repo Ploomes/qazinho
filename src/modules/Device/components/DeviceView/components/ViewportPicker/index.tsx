@@ -1,44 +1,62 @@
 import type { IViewportPickerProps } from './types';
-import { motion } from 'motion/react';
-import { useTranslation } from 'react-i18next';
-import { Eyebrow } from '@/shared/components/atoms';
-import { MOTION } from '@/shared/constants';
+import { AnimatePresence, motion } from 'motion/react';
+import { Caret, Icon } from '@/shared/components/atoms';
+import { STICKER } from '@/shared/constants';
 import { useViewportPickerViewModel } from './hooks';
 import './styles.css';
 
 /**
- * O tamanho de janela em que o navegador abre, escolhido antes de uma run ou mudado
- * durante uma.
+ * O tamanho de janela em que o navegador abre, num menu pequeno, escolhido antes de uma
+ * run ou mudado durante uma.
  */
 export const ViewportPicker: React.FC<IViewportPickerProps> = (props) => {
-  const { options } = useViewportPickerViewModel(props);
-  const { t } = useTranslation();
+  const { ref, isOpen, current, label, options, onToggle } =
+    useViewportPickerViewModel(props);
 
   return (
-    <div className="viewport-picker">
-      <Eyebrow>{t('DEVICE.VIEWPORT')}</Eyebrow>
-      <div className="viewport-picker__list" role="radiogroup">
-        {options.map((option) => (
-          <button
-            key={option.id}
-            type="button"
-            role="radio"
-            aria-checked={option.isActive}
-            className={option.className}
-            onClick={option.onSelect}
+    <div ref={ref} className="viewport-picker">
+      <button
+        type="button"
+        className="viewport-picker__trigger"
+        aria-label={label}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        onClick={onToggle}
+      >
+        {current}
+        <Caret isOpen={isOpen} />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            key="menu"
+            className="viewport-picker__menu"
+            role="listbox"
+            aria-label={label}
+            initial={STICKER.pop.initial}
+            animate={STICKER.pop.animate}
+            exit={STICKER.pop.exit}
           >
-            {option.isActive && (
-              <motion.span
-                layoutId={props.layoutId}
-                className="viewport-picker__mark"
-                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
-              />
-            )}
-            <span className="viewport-picker__label">{option.label}</span>
-            <span className="viewport-picker__size">{option.size}</span>
-          </button>
-        ))}
-      </div>
+            {options.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                role="option"
+                aria-selected={option.isActive}
+                className="viewport-picker__option"
+                onClick={option.onSelect}
+              >
+                <span className="viewport-picker__mark">
+                  {option.isActive && <Icon name="check" />}
+                </span>
+                <span className="viewport-picker__label">{option.label}</span>
+                <span className="viewport-picker__size">{option.size}</span>
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
