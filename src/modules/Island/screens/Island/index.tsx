@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, MotionConfig } from 'motion/react';
-import { Button, Icon } from '@/shared/components/atoms';
+import { Button, Icon, Intern } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { useIslandViewModel } from './hooks';
 import './styles.css';
@@ -9,7 +9,8 @@ import './styles.css';
  * orelhas ao lado do notch, e abre abaixo dele quando o mouse chega.
  */
 export const Island: React.FC = () => {
-  const { shown, isOpen, pill, style, size, onOpen, onStop } = useIslandViewModel();
+  const { shown, isOpen, pill, style, size, internSize, onOpen, onStop } =
+    useIslandViewModel();
 
   return (
     <MotionConfig reducedMotion="user">
@@ -23,10 +24,15 @@ export const Island: React.FC = () => {
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
             <div className="island__bar">
-              <span className="island__left">{shown.left}</span>
+              <span className="island__left">
+                <Intern mood={shown.mood} size={internSize} isFigure />
+              </span>
               <span className="island__notch" />
-              <span className={`island__icon island__icon--${shown.tone}`}>
-                <Icon name={shown.icon} size={14} />
+              <span className="island__right">
+                <span className="island__count">{shown.count}</span>
+                <span className={`island__icon island__icon--${shown.tone}`}>
+                  <Icon name={shown.icon} size={14} />
+                </span>
               </span>
             </div>
             <AnimatePresence initial={false}>

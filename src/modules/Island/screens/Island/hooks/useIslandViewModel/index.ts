@@ -64,7 +64,8 @@ export const useIslandViewModel = () => {
   const shown: IIslandShown | null =
     state.kind === 'running'
       ? {
-          left: state.total > 0 ? `${String(state.done)}/${String(state.total)}` : '',
+          count: state.total > 0 ? `${String(state.done)}/${String(state.total)}` : '',
+          mood: state.isPaused ? 'sleeping' : 'running',
           icon: state.isPaused ? 'paused' : 'running',
           tone: state.isPaused ? 'paused' : 'running',
           title: state.name,
@@ -81,7 +82,8 @@ export const useIslandViewModel = () => {
         }
       : state.kind === 'asking'
         ? {
-            left: '',
+            count: '',
+            mood: 'thinking',
             icon: 'attention',
             tone: 'asking',
             title: state.name,
@@ -94,7 +96,8 @@ export const useIslandViewModel = () => {
           }
         : state.kind === 'ended'
           ? {
-              left: state.failed > 0 ? String(state.failed) : String(state.passed),
+              count: state.failed > 0 ? String(state.failed) : String(state.passed),
+              mood: state.failed > 0 ? 'bug' : 'passed',
               icon: state.failed > 0 ? 'failed' : 'passed',
               tone: state.failed > 0 ? 'failed' : 'passed',
               title: state.name,
@@ -125,6 +128,7 @@ export const useIslandViewModel = () => {
       '--island-notch': `${String(notch)}px`,
       '--island-ear': `${String(ISLAND_SHAPE.earPx)}px`,
     } as CSSProperties,
+    internSize: ISLAND_SHAPE.internPx,
     size: {
       width: isOpen ? ISLAND_SHAPE.openWidthPx : closedWidth,
       height: isOpen ? openHeight : bar,

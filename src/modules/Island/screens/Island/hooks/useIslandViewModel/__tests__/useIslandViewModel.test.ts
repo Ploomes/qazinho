@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import type { IIslandAction, IIslandFrame } from '@/shared/types';
+import type { IIslandAction, IIslandFrame, IslandState } from '@/shared/types';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { i18n } from '@/languages';
@@ -67,7 +67,8 @@ describe('useIslandViewModel', () => {
     });
 
     expect(result.current.shown).toMatchObject({
-      left: '2/8',
+      count: '2/8',
+      mood: 'running',
       icon: 'running',
       title: 'Checkout',
       line: 'Running',
@@ -85,7 +86,7 @@ describe('useIslandViewModel', () => {
     });
 
     expect(result.current.isOpen).toBe(false);
-    expect(result.current.size).toMatchObject({ width: 185 + 88, height: 33 });
+    expect(result.current.size).toMatchObject({ width: 185 + 120, height: 33 });
   });
 
   it('hangs as a small pill on a screen with no notch', () => {
@@ -119,6 +120,7 @@ describe('useIslandViewModel', () => {
     expect(result.current.isOpen).toBe(true);
     expect(result.current.shown).toMatchObject({
       tone: 'asking',
+      mood: 'thinking',
       detail: 'Which plan should I pick?',
       canStop: false,
       openLabel: 'Answer',
@@ -146,9 +148,47 @@ describe('useIslandViewModel', () => {
 
     expect(result.current.shown).toMatchObject({
       icon: 'failed',
-      left: '2',
+      mood: 'bug',
+      count: '2',
       line: '5 passed · 2 failed',
     });
+  });
+
+  it('lets the Estagiário sleep while a run is paused, and cheer when everything passed', () => {
+    const { result } = renderHook(() => useIslandViewModel());
+
+    act(() => {
+      pushFrame({
+        ...running,
+        island: {
+          language: 'en',
+          state: {
+            ...(running.island.state as Extract<IslandState, { kind: 'running' }>),
+            isPaused: true,
+          },
+        },
+      });
+    });
+
+    expect(result.current.shown).toMatchObject({ mood: 'sleeping', icon: 'paused' });
+
+    act(() => {
+      pushFrame({
+        ...NOTCHED,
+        island: {
+          language: 'en',
+          state: {
+            kind: 'ended',
+            workspaceId: 'w1',
+            name: 'Checkout',
+            passed: 4,
+            failed: 0,
+          },
+        },
+      });
+    });
+
+    expect(result.current.shown).toMatchObject({ mood: 'passed', count: '4' });
   });
 
   it('speaks the language of the QA that the frame carries', async () => {

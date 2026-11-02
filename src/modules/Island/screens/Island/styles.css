@@ -31,8 +31,19 @@
   padding: 0 var(--space-4);
 }
 
-.island__left {
+.island__left,
+.island__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   min-width: var(--island-ear);
+}
+
+.island__right {
+  justify-content: flex-end;
+}
+
+.island__count {
   color: var(--ink2);
   font: var(--font-mono-xs);
 }
