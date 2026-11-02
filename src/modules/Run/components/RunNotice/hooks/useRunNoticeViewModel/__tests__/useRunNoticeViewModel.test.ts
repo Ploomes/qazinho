@@ -57,6 +57,14 @@ describe('useRunNoticeViewModel', () => {
     expect(result.current).toMatchObject({ mood: 'passed', bugs: '' });
   });
 
+  it('counts only the verdicts the run has', () => {
+    const result = noticing(
+      walkRun({ verdicts: ['passed', 'passed'], isFinished: true }),
+    );
+
+    expect(result.current.tally.map(({ key }) => key)).toEqual(['passed']);
+  });
+
   it('offers to watch the run once its video is in, and not before', () => {
     expect(noticing(recordedRun()).current.canWatch).toBe(true);
     expect(

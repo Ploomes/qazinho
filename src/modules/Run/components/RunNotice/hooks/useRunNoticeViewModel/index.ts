@@ -59,7 +59,7 @@ export const useRunNoticeViewModel = () => {
     ),
     title: workspace?.name ?? '',
     tally: (isExploration ? [] : (['passed', 'failed', 'blocked'] as const))
-      .filter((verdict) => verdict !== 'blocked' || (run?.counts.blocked ?? 0) > 0)
+      .filter((verdict) => (run?.counts[verdict] ?? 0) > 0)
       .map((verdict) => ({
         key: verdict,
         icon: STATUS[verdict].icon,
