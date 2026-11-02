@@ -3,6 +3,43 @@ import { endRun, landStep, startRun } from '@/modules/Workspace/library';
 import { makeOutcome, makeWorkspace, WALKED_BY, walkRun } from './fixtures';
 
 describe('endRun', () => {
+  /** Rodar um caso de 22 passos deixava o workspace dizendo "passou", com os outros sem rodar. */
+  describe('a run of some of the cases', () => {
+    const walked = (lastVerdicts: Partial<Record<string, 'passed' | 'failed'>>) => {
+      const workspace = makeWorkspace();
+      const started = startRun({
+        workspace: {
+          ...workspace,
+          plan: workspace.plan.map((one) => ({
+            ...one,
+            ...(lastVerdicts[one.id] === undefined
+              ? {}
+              : { lastVerdict: lastVerdicts[one.id] }),
+          })),
+        },
+        startedAt: '09:41',
+        runId: 'r-01',
+        by: WALKED_BY,
+        caseIds: ['TC-01'],
+      });
+      const landed = landStep({
+        workspace: started,
+        outcome: makeOutcome({ workspace: started, index: 0, verdict: 'passed' }),
+        at: '09:41',
+      });
+
+      return endRun({ workspace: landed, at: '09:42', endedBy: 'finished' });
+    };
+
+    it('does NOT call the plan passed while another case has not run', () => {
+      expect(walked({}).status).toBe('idle');
+    });
+
+    it('keeps it failed while another case failed', () => {
+      expect(walked({ 'TC-02': 'failed' }).status).toBe('failed');
+    });
+  });
+
   describe('a run that walked the whole plan', () => {
     it('files the run and tells the chat how it went', () => {
       const workspace = walkRun({ verdicts: ['passed', 'passed'], isFinished: true });

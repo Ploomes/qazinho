@@ -58,22 +58,38 @@ export function endRun(props: {
 
   const held =
     run.counts.failed + run.counts.blocked + (run.kind === 'explore' ? filed : 0);
+  const plan = workspace.plan.map((testCase) => {
+    const walked = run.cases.find(({ id }) => id === testCase.id);
+    const reached = live.outcomes.filter(({ caseId }) => caseId === testCase.id).length;
+
+    return walked && isSettled({ walked, testCase, reached })
+      ? { ...testCase, lastVerdict: walked.verdict }
+      : testCase;
+  });
 
   return {
     ...settled,
     chat: [...settled.chat, card, ...suggested],
     runs: [run, ...workspace.runs.filter(({ id }) => id !== run.id)],
-    status: held > 0 ? 'failed' : endedBy === 'finished' ? 'passed' : 'stopped',
-    plan: workspace.plan.map((testCase) => {
-      const walked = run.cases.find(({ id }) => id === testCase.id);
-
-      const reached = live.outcomes.filter(({ caseId }) => caseId === testCase.id).length;
-
-      return walked && isSettled({ walked, testCase, reached })
-        ? { ...testCase, lastVerdict: walked.verdict }
-        : testCase;
-    }),
+    status:
+      held > 0
+        ? 'failed'
+        : endedBy !== 'finished'
+          ? 'stopped'
+          : live.caseIds === undefined
+            ? 'passed'
+            : statusOfPlan(plan),
+    plan,
   };
+}
+
+function statusOfPlan(plan: ITestCase[]): IWorkspace['status'] {
+  if (
+    plan.some(({ lastVerdict }) => lastVerdict === 'failed' || lastVerdict === 'blocked')
+  )
+    return 'failed';
+
+  return plan.every(({ lastVerdict }) => lastVerdict === 'passed') ? 'passed' : 'idle';
 }
 
 function isSettled(props: {
