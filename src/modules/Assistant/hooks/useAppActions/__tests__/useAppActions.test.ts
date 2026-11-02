@@ -49,7 +49,7 @@ beforeEach(() => {
     selectedWorkspaceId: null,
     modal: null,
   });
-  useWorkspaceStore.setState({ workspaces: [CHECKOUT, LOGIN], isPanelWide: true });
+  useWorkspaceStore.setState({ workspaces: [CHECKOUT, LOGIN], isPanelOpen: false });
   useSetupStore.setState({ integrations: [], connectingId: null });
   useAssistantStore.setState({ messages: [], isAsking: true });
 });
@@ -267,7 +267,7 @@ describe('useAppActions', () => {
       selectedWorkspaceId: 'w2',
     });
     expect(useWorkspaceStore.getState()).toMatchObject({
-      isPanelWide: false,
+      isPanelOpen: true,
       askingIds: ['w2'],
     });
     expect(

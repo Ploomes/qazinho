@@ -25,7 +25,6 @@ export const Plan: React.FC = () => {
     openCaseId,
     freshCaseId,
     isLocked,
-    hasRunAll,
     lockedLabel,
     isEmpty,
     summary,
@@ -34,7 +33,6 @@ export const Plan: React.FC = () => {
     page,
     onToggleCase,
     onReorder,
-    onRunAll,
     onRunCase,
     orgNotice,
     orgUpdateLabel,
@@ -153,13 +151,6 @@ export const Plan: React.FC = () => {
                   {canExport && (
                     <Tooltip content={t('PLAN.EXPORT_TIP')}>
                       <Button onClick={onExport}>{exportLabel}</Button>
-                    </Tooltip>
-                  )}
-                  {hasRunAll && (
-                    <Tooltip content={t('PLAN.RUN_ALL_TIP')}>
-                      <Button variant="primary" onClick={onRunAll}>
-                        {t('PLAN.RUN_ALL')}
-                      </Button>
                     </Tooltip>
                   )}
                 </>

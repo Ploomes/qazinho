@@ -10,4 +10,4 @@ export type RunFailure =
   | { reason: 'agent-signed-out' }
   | { reason: 'agent-error'; said: string }
   | { reason: 'agent-silent' }
-  | { reason: 'other'; said: string };
+  | { reason: 'other'; said: string; detail?: string | null };

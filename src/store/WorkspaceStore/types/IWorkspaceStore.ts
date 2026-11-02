@@ -32,7 +32,6 @@ export interface IWorkspaceStore {
   selectedRunId: string | null;
   bugFilter: BugFilter;
   isPanelOpen: boolean;
-  isPanelWide: boolean;
   panelWidth: number;
   askingIds: string[];
   liveTexts: Record<string, string>;
@@ -58,6 +57,11 @@ export interface IWorkspaceStore {
     published: IPublishedPlan | null;
   }) => void;
   setViewport: (props: { workspaceId: string; viewportId: ViewportId }) => void;
+  setTarget: (props: {
+    workspaceId: string;
+    targetId: string;
+    planKind: 'web' | 'mobile';
+  }) => void;
   removeWorkspacesOf: (projectId: string) => void;
   selectTab: (tab: WorkspaceTab) => void;
   sendMessage: (props: {
@@ -132,7 +136,11 @@ export interface IWorkspaceStore {
   landStep: (outcome: IStepOutcome) => void;
   landRunDone: (workspaceId: string) => void;
   landVideo: (props: { workspaceId: string; runId: string; video: IRunVideo }) => void;
-  landRunFailed: (props: { workspaceId: string; text: string }) => void;
+  landRunFailed: (props: {
+    workspaceId: string;
+    text: string;
+    detail?: string | null;
+  }) => void;
   tickClock: () => void;
   toggleCase: (caseId: string) => void;
   toggleBug: (bugId: string) => void;
@@ -141,6 +149,5 @@ export interface IWorkspaceStore {
   selectRun: (runId: string | null) => void;
   setBugFilter: (filter: BugFilter) => void;
   togglePanel: () => void;
-  togglePanelWide: () => void;
   setPanelWidth: (width: number) => void;
 }

@@ -170,6 +170,7 @@ export const useRunEvents = () => {
       landRunFailed({
         workspaceId: event.workspaceId,
         text: t(RUN_FAILURE_KEYS[event.failure.reason], { ...event.failure, agent }),
+        detail: event.failure.reason === 'other' ? (event.failure.detail ?? null) : null,
       });
       announce({ workspaceId: event.workspaceId, runId });
       reviewWorkspace(event.workspaceId);

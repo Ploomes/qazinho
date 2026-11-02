@@ -21,7 +21,6 @@ describe('useTitlebarViewModel', () => {
     const { result } = renderHook(() => useTitlebarViewModel());
 
     expect(result.current.cpuLabel).toBe('CPU 0%');
-    expect(result.current.processLabel).toBe('0 processes');
   });
 
   it('marks the app as a beta beside its name', () => {
@@ -82,7 +81,6 @@ describe('useTitlebarViewModel', () => {
 
     const { result } = renderHook(() => useTitlebarViewModel());
 
-    expect(result.current.processLabel).toBe('2 processes');
     expect(result.current.ramLabel).toBe('RAM 2.2 / 64 GB');
     expect(result.current.cpuLabel).toBe('CPU 16%');
   });

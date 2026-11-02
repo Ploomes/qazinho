@@ -1,4 +1,8 @@
-import { Button } from '@/shared/components/atoms';
+import { AnimatePresence, motion } from 'motion/react';
+import { Button, Icon } from '@/shared/components/atoms';
+import { SegmentedControl } from '@/shared/components/molecules';
+import { STICKER } from '@/shared/constants';
+import { UsageBar } from './components';
 import { useStorageSettingsViewModel } from './hooks';
 import './styles.css';
 
@@ -10,45 +14,117 @@ export const StorageSettings: React.FC = () => {
   const view = useStorageSettingsViewModel();
 
   return (
-    <>
-      <div className="settings__section">
-        <p className="storage-settings__total">{view.total}</p>
-        <ul className="storage-settings__rows">
-          {view.rows.map((row) => (
-            <li key={row.id} className="storage-settings__row">
-              <span className="storage-settings__label">{row.label}</span>
-              <span className="storage-settings__size">{row.size}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="settings__section">
-        <span className="settings__eyebrow">{view.keepLabel}</span>
-        <div className="settings__choices">
-          {view.keeping.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={item.className}
-              onClick={item.onPick}
+    <div className="storage-settings">
+      <section className="settings__section" aria-busy={view.isLoading}>
+        <motion.div
+          className={
+            view.isRefreshing
+              ? 'storage-settings__usage storage-settings__usage--busy'
+              : 'storage-settings__usage'
+          }
+          variants={view.stackMotion}
+          initial="hidden"
+          animate="shown"
+        >
+          {view.hero === null ? (
+            <div
+              className="storage-settings__hero"
+              role="status"
+              aria-label={view.measuringLabel}
             >
-              {item.label}
-            </button>
-          ))}
+              <span className="storage-settings__bone storage-settings__bone--value" />
+              <span className="storage-settings__bone storage-settings__bone--caption" />
+            </div>
+          ) : (
+            <motion.figure
+              key="hero"
+              className="storage-settings__hero"
+              variants={view.itemMotion}
+              initial="hidden"
+              animate="shown"
+            >
+              <AnimatePresence initial={false} mode="wait">
+                <motion.span
+                  key={`${view.hero.value}${view.hero.unit}`}
+                  className="storage-settings__figure"
+                  initial={STICKER.rise.initial}
+                  animate={STICKER.rise.animate}
+                  exit={STICKER.rise.exit}
+                >
+                  <span className="storage-settings__value">{view.hero.value}</span>
+                  <span className="storage-settings__unit">{view.hero.unit}</span>
+                </motion.span>
+              </AnimatePresence>
+              <figcaption className="storage-settings__caption">
+                {view.caption}
+              </figcaption>
+            </motion.figure>
+          )}
+
+          <UsageBar
+            rows={view.rows}
+            segments={view.segments}
+            isPending={view.isLoading}
+            isEmpty={view.isEmpty}
+            barMotion={view.barMotion}
+            itemMotion={view.itemMotion}
+            growth={view.growth}
+            onActivate={view.onActivate}
+            onDeactivate={view.onDeactivate}
+          />
+        </motion.div>
+      </section>
+
+      <section className="settings__section">
+        <span className="settings__eyebrow">{view.keepLabel}</span>
+        <SegmentedControl
+          label={view.keepLabel}
+          options={view.keepOptions}
+          value={view.keepValue}
+          onChange={view.onKeepChange}
+        />
+
+        <div className="storage-settings__rule">
+          <AnimatePresence initial={false} mode="wait">
+            <motion.p
+              key={view.ruleKey}
+              className="storage-settings__rule-text"
+              initial={STICKER.rise.initial}
+              animate={STICKER.rise.animate}
+              exit={STICKER.rise.exit}
+            >
+              {view.rule}
+            </motion.p>
+          </AnimatePresence>
+          <p className="settings__note">{view.keepNote}</p>
         </div>
-        <p className="settings__note">{view.keepNote}</p>
+
         <div className="storage-settings__sweep">
           <Button size="sm" onClick={view.onSweep} disabled={!view.canSweep}>
+            {view.isSweeping && (
+              <span className="storage-settings__spin">
+                <Icon name="reload" />
+              </span>
+            )}
             {view.sweepLabel}
           </Button>
-          {view.sweptLine !== null && (
-            <span className="storage-settings__swept" role="status">
-              {view.sweptLine}
-            </span>
-          )}
+          <AnimatePresence initial={false}>
+            {view.sweptLine !== null && view.sweptIcon !== null && (
+              <motion.span
+                key="swept"
+                className={`storage-settings__swept storage-settings__swept--${String(view.sweptTone)}`}
+                role="status"
+                initial={STICKER.slap.initial}
+                animate={STICKER.slap.animate}
+                exit={STICKER.slap.exit}
+              >
+                <Icon name={view.sweptIcon} />
+                {view.sweptLine}
+              </motion.span>
+            )}
+          </AnimatePresence>
         </div>
-      </div>
-    </>
+      </section>
+    </div>
   );
 };

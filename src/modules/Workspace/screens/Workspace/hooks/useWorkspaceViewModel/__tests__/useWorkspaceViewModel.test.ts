@@ -20,7 +20,7 @@ const PROJECT = {
 
 beforeEach(() => {
   useAppStore.setState({ selectedWorkspaceId: 'w1', projects: [PROJECT] });
-  useWorkspaceStore.setState({ workspaces: [makeWorkspace()], isPanelWide: false });
+  useWorkspaceStore.setState({ workspaces: [makeWorkspace()], panelTab: 'plan' });
 });
 
 describe('useWorkspaceViewModel', () => {
@@ -30,40 +30,33 @@ describe('useWorkspaceViewModel', () => {
     expect(result.current.name).toBe('Checkout regression');
   });
 
-  describe('isHidden', () => {
-    it('shows the chat beside the panel', () => {
+  describe('the center tabs', () => {
+    it('reads the tab the QA left it on, with what each tab holds', () => {
       const { result } = renderHook(() => useWorkspaceViewModel());
 
-      expect(result.current.isHidden).toBe(false);
-      expect(result.current.className).toBe('workspace');
+      expect(result.current.tab).toBe('plan');
+      expect(result.current.planCount).toBe(2);
     });
 
-    it('hides the chat, and keeps it out of reach, while the panel is widened over it', () => {
-      useWorkspaceStore.setState({ isPanelWide: true });
-
+    it('turns to the tab the QA picked', () => {
       const { result } = renderHook(() => useWorkspaceViewModel());
 
-      expect(result.current.isHidden).toBe(true);
-      expect(result.current.className).toBe('workspace workspace--hidden');
+      act(() => {
+        result.current.onSelectTab('bugs');
+      });
+
+      expect(useWorkspaceStore.getState().panelTab).toBe('bugs');
     });
 
-    /**
-     * Espremido com a coluna enquanto o painel alargava, o chat quebrava uma letra por
-     * linha enquanto sumia.
-     */
-    it('keeps the chat as wide as it stood beside the panel, so it never squeezes as it fades', () => {
-      Object.defineProperty(window, 'innerWidth', { configurable: true, value: 1440 });
-      useWorkspaceStore.setState({
-        isPanelWide: true,
-        isPanelOpen: true,
-        panelWidth: 560,
-      });
+    it('turns to the device on its own when a run starts', () => {
+      const { rerender } = renderHook(() => useWorkspaceViewModel());
 
-      const { result } = renderHook(() => useWorkspaceViewModel());
-
-      expect(result.current.style).toMatchObject({
-        '--chat-rest': `${String(1440 - 268 - 565)}px`,
+      act(() => {
+        useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: [] })] });
       });
+      rerender();
+
+      expect(useWorkspaceStore.getState().panelTab).toBe('device');
     });
   });
 

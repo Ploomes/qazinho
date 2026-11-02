@@ -7,7 +7,7 @@ import { useAppStore, useWorkspaceStore } from '@/store';
 describe('useOpenRun', () => {
   it("opens the run's workspace on Runs, on that run, from wherever the QA was", () => {
     useAppStore.setState({ screen: 'settings', selectedWorkspaceId: 'w9' });
-    useWorkspaceStore.setState({ isPanelWide: true, selectedRunId: null });
+    useWorkspaceStore.setState({ selectedRunId: null });
 
     renderHook(() => useOpenRun()).result.current({ workspaceId: 'w1', runId: 'r-03' });
 

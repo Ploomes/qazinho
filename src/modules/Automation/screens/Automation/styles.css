@@ -297,10 +297,6 @@
   scrollbar-gutter: stable;
 }
 
-.automation__pane {
-  padding-bottom: calc(var(--dock-lift) + var(--space-4));
-}
-
 .automation__listing {
   display: flex;
   align-items: center;

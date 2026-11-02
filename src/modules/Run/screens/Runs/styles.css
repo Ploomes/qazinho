@@ -420,7 +420,7 @@
   scroll-margin-top: var(--space-7);
 }
 
-@container side-panel (width < 480px) {
+@container workspace (width < 480px) {
   .runs__report {
     padding: var(--space-5) var(--space-4);
   }

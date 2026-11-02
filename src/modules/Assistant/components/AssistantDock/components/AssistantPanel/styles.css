@@ -4,22 +4,14 @@
   width: var(--assistant-panel-width);
   height: min(
     var(--assistant-panel-height),
-    100vh - var(--assistant-top-clear) - var(--assistant-inset) -
-      var(--assistant-button) - var(--assistant-rise)
+    100vh - var(--assistant-top) - var(--assistant-inset)
   );
   overflow: hidden;
   border: var(--edge-width-lg) solid var(--edge);
   border-radius: var(--radius-2xl);
   background: var(--win);
   box-shadow: var(--sticker-hero);
-  transform-origin: bottom right;
-  translate: calc(var(--assistant-panel-shift) * -1) 0;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .assistant-panel {
-    transition: translate var(--dur-slow) var(--ease);
-  }
+  transform-origin: top right;
 }
 
 .assistant-panel__header {

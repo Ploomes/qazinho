@@ -1,0 +1,150 @@
+.target-chip {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+}
+
+.target-chip__button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--raise);
+  color: var(--ink);
+  font: var(--font-ui-sm);
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+
+.target-chip__button:hover {
+  background: var(--raise2);
+}
+
+.target-chip__kind,
+.target-chip__build,
+.target-chip__empty {
+  text-box: trim-both cap alphabetic;
+}
+
+.target-chip__kind {
+  color: var(--ink2);
+}
+
+.target-chip__build {
+  color: var(--ink);
+  font: var(--font-mono-sm);
+}
+
+.target-chip__empty {
+  color: var(--ink3);
+}
+
+.target-chip__popover {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 360px;
+  max-width: 90vw;
+  padding: var(--space-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--raise);
+  box-shadow: var(--sticker-hero);
+  transform-origin: top left;
+}
+
+.target-chip__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.target-chip__title {
+  color: var(--ink);
+  font: var(--font-ui-md);
+  font-weight: 600;
+}
+
+.target-chip__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.target-chip__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.target-chip__pick {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  text-align: left;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+
+.target-chip__pick:not(:disabled):hover {
+  background: var(--raise2);
+}
+
+.target-chip__pick--active {
+  border-color: var(--lime);
+  background: var(--lime-soft);
+}
+
+.target-chip__pick:disabled {
+  cursor: default;
+}
+
+.target-chip__option-kind {
+  flex: none;
+  color: var(--ink);
+  font: var(--font-ui-sm);
+}
+
+.target-chip__option-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.target-chip__pick--active .target-chip__option-value {
+  color: var(--lime-ink);
+}
+
+.target-chip__pick .icon {
+  flex: none;
+  color: var(--lime-ink);
+}
+
+.target-chip__option .button {
+  flex: none;
+}
+
+.target-chip__foot {
+  display: flex;
+}

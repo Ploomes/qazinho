@@ -283,17 +283,28 @@ describe('usePlanCaseViewModel', () => {
       ]);
     });
   });
-  describe('the last run, in a sentence', () => {
-    it('says every step passed, and that it ran with no AI', () => {
+  describe('what the last run says about the case', () => {
+    it('says nothing when every step passed the usual way: the pill already says so', () => {
+      const lastRun = lastRunOf(
+        [1, 2, 3].map((number) => ranStep({ number, verdict: 'passed' })),
+      );
+      const { result } = renderHook(() => usePlanCaseViewModel({ ...PROPS, lastRun }));
+
+      expect(result.current.outcome).toBeNull();
+    });
+
+    it('says only how it passed when it ran with no AI', () => {
       const lastRun = lastRunOf(
         [1, 2, 3].map((number) => ranStep({ number, verdict: 'passed', by: 'replay' })),
       );
       const { result } = renderHook(() => usePlanCaseViewModel({ ...PROPS, lastRun }));
 
-      expect(result.current.summary).toEqual({
+      expect(result.current.outcome).toEqual({
         tone: 'passed',
-        text: 'All 3 steps passed in the last run',
+        text: null,
         note: 'no AI',
+        noteTip:
+          'Walked again without the agent: the steps and the proof of a run that passed.',
       });
     });
 
@@ -304,10 +315,10 @@ describe('usePlanCaseViewModel', () => {
       ]);
       const { result } = renderHook(() => usePlanCaseViewModel({ ...PROPS, lastRun }));
 
-      expect(result.current.summary?.note).toBe('healed');
+      expect(result.current.outcome?.note).toBe('healed');
     });
 
-    it('names the step it failed at, of how many, and what it did there', () => {
+    it('names the step it failed at, and nothing else the step list already shows', () => {
       const lastRun = lastRunOf([
         ranStep({ number: 1, verdict: 'passed' }),
         ranStep({ number: 2, verdict: 'failed' }),
@@ -315,17 +326,134 @@ describe('usePlanCaseViewModel', () => {
       ]);
       const { result } = renderHook(() => usePlanCaseViewModel({ ...PROPS, lastRun }));
 
-      expect(result.current.summary).toEqual({
+      expect(result.current.outcome).toEqual({
         tone: 'failed',
-        text: 'Failed at step 2 of 3: Step 2',
+        text: 'Failed at step 2',
         note: null,
+        noteTip: null,
+      });
+    });
+
+    it('names the step it was blocked at', () => {
+      const lastRun = lastRunOf([ranStep({ number: 1, verdict: 'blocked' })]);
+      const { result } = renderHook(() => usePlanCaseViewModel({ ...PROPS, lastRun }));
+
+      expect(result.current.outcome).toMatchObject({
+        tone: 'blocked',
+        text: 'Blocked at step 1',
       });
     });
 
     it('does NOT sum up a case that never ran', () => {
       expect(
-        renderHook(() => usePlanCaseViewModel(PROPS)).result.current.summary,
+        renderHook(() => usePlanCaseViewModel(PROPS)).result.current.outcome,
       ).toBeNull();
+    });
+  });
+
+  describe('the goal and the precondition', () => {
+    const EMPTY = { ...TEST_CASE, goal: '', preconditions: '' };
+
+    it('shows the ones the case has, and offers to add the others', () => {
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({
+          ...PROPS,
+          testCase: { ...EMPTY, goal: 'Prove the cart totals' },
+        }),
+      );
+
+      expect(result.current).toMatchObject({
+        isGoalShown: true,
+        isBeforeShown: false,
+        canAddGoal: false,
+        canAddBefore: true,
+      });
+    });
+
+    it('does NOT show an empty field: it offers to add it instead', () => {
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({ ...PROPS, testCase: EMPTY }),
+      );
+
+      expect(result.current).toMatchObject({
+        isGoalShown: false,
+        isBeforeShown: false,
+        canAddGoal: true,
+        canAddBefore: true,
+      });
+    });
+
+    it('opens the field the QA adds, with the cursor in it, and stops offering it', () => {
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({ ...PROPS, testCase: EMPTY }),
+      );
+
+      act(() => {
+        result.current.onFactAdd('before');
+      });
+
+      expect(result.current).toMatchObject({
+        isBeforeShown: true,
+        isBeforeFocused: true,
+        canAddBefore: false,
+        isGoalShown: false,
+        canAddGoal: true,
+      });
+    });
+
+    it('does NOT put the cursor in a field that already has text', () => {
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({
+          ...PROPS,
+          testCase: { ...EMPTY, goal: 'Prove the cart totals' },
+        }),
+      );
+
+      act(() => {
+        result.current.onFactAdd('goal');
+      });
+
+      expect(result.current.isGoalFocused).toBe(false);
+    });
+
+    it('forgets an empty field the QA opened once the case is folded', () => {
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({ ...PROPS, testCase: EMPTY }),
+      );
+
+      act(() => {
+        result.current.onFactAdd('goal');
+      });
+      act(() => {
+        result.current.onHeadClick();
+      });
+
+      expect(result.current).toMatchObject({ isGoalShown: false, canAddGoal: true });
+    });
+
+    it('does NOT offer to add a field while the agent runs the plan, nor show an empty one', () => {
+      const { result } = renderHook(() =>
+        usePlanCaseViewModel({ ...PROPS, testCase: EMPTY, isLocked: true }),
+      );
+
+      expect(result.current).toMatchObject({
+        isGoalShown: false,
+        isBeforeShown: false,
+        canAddGoal: false,
+        canAddBefore: false,
+      });
+    });
+  });
+
+  describe('the open case', () => {
+    it('is marked open while it shows its steps, and plain once folded', () => {
+      expect(
+        renderHook(() => usePlanCaseViewModel({ ...PROPS, isOpen: true })).result.current
+          .className,
+      ).toBe('plan-case plan-case--open');
+      expect(renderHook(() => usePlanCaseViewModel(PROPS)).result.current.className).toBe(
+        'plan-case',
+      );
     });
   });
 

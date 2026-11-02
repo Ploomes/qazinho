@@ -1,12 +1,6 @@
 import type { CSSProperties } from 'react';
 import { useEffect } from 'react';
-import {
-  ASSISTANT_DOCK,
-  dockRoomOf,
-  useAppActions,
-  useAssistantEvents,
-  useQuestionRoom,
-} from '@/modules/Assistant';
+import { useAppActions, useAssistantEvents, useQuestionRoom } from '@/modules/Assistant';
 import { useSuiteWatch } from '@/modules/Automation';
 import { useBuildEvents } from '@/modules/Build';
 import { useProLinks, useProSync } from '@/modules/Pro';
@@ -23,13 +17,7 @@ import {
   useVariables,
   useVideoSweep,
 } from '@/shared/hooks';
-import {
-  useAppStore,
-  useProStore,
-  useSettingsStore,
-  useVariablesStore,
-  useWorkspaceStore,
-} from '@/store';
+import { useAppStore, useProStore, useSettingsStore, useVariablesStore } from '@/store';
 
 export const useAppViewModel = () => {
   const theme = useAppStore((state) => state.theme);
@@ -41,7 +29,6 @@ export const useAppViewModel = () => {
   const replay = useAppStore((state) => state.replay);
   const runNotice = useAppStore((state) => state.runNotice);
   const hasOnboarded = useSettingsStore((state) => state.hasOnboarded);
-  const isPanelOpen = useWorkspaceStore((state) => state.isPanelOpen);
   const sidebarWidth = useSidebarWidth();
   const variablesKey = useVariablesStore((state) => state.request?.id ?? null);
   const hasProLink = useProStore((state) => state.link !== null);
@@ -87,8 +74,6 @@ export const useAppViewModel = () => {
     shellStyle: {
       '--sidebar-width': `${String(SHELL.sidebarWidth)}px`,
       '--sidebar-shown': `${String(sidebarWidth)}px`,
-      '--dock-room': `${String(dockRoomOf({ isWorkspace: screen === 'workspace' && projects.length > 0, isPanelOpen }))}px`,
-      '--dock-lift': `${String(ASSISTANT_DOCK.inset + ASSISTANT_DOCK.buttonSize)}px`,
     } as CSSProperties,
     screen,
     modal,

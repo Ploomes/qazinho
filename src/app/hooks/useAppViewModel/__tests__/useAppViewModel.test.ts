@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAppViewModel } from '@/app/hooks/useAppViewModel';
 import { i18n } from '@/languages';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useProStore, useSettingsStore, useWorkspaceStore } from '@/store';
+import { useAppStore, useProStore, useSettingsStore } from '@/store';
 
 describe('useAppViewModel', () => {
   beforeEach(() => {
@@ -122,31 +122,6 @@ describe('useAppViewModel', () => {
 
     expect(result.current.isSettings).toBe(true);
     expect(result.current.isWelcome).toBe(false);
-  });
-
-  /**
-   * Com o painel do dispositivo fechado, o botão do Estagiário ficava a um pixel do
-   * composer do chat, onde um clique pensado para um podia cair no outro.
-   */
-  it("makes room beside the Estagiário's button while the device panel is shut, and none once it opens", () => {
-    useAppStore.setState({
-      screen: 'workspace',
-      projects: [{ id: 'p1', name: 'Shop', targets: [], repositories: [] }],
-    });
-    useWorkspaceStore.setState({ isPanelOpen: false });
-
-    const { result } = renderHook(() => useAppViewModel());
-
-    expect(result.current.shellStyle).toMatchObject({
-      '--dock-room': '42px',
-      '--dock-lift': '76px',
-    });
-
-    act(() => {
-      useWorkspaceStore.setState({ isPanelOpen: true });
-    });
-
-    expect(result.current.shellStyle).toMatchObject({ '--dock-room': '0px' });
   });
 
   /**

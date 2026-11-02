@@ -67,16 +67,15 @@
   container: titlebar / inline-size;
 }
 
+.titlebar__assistant {
+  display: inline-flex;
+  margin-left: var(--space-2);
+}
+
 .titlebar__meters,
 .titlebar__meter-button,
 .titlebar__session {
   white-space: nowrap;
-}
-
-@container titlebar (width < 1010px) {
-  .titlebar__extra {
-    display: none;
-  }
 }
 
 @container titlebar (width < 920px) {

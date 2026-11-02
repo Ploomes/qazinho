@@ -1,5 +1,6 @@
 import type { ITitlebarProps } from './types';
 import { AnimatePresence } from 'motion/react';
+import { AssistantButton } from '@/modules/Assistant';
 import { Gauge, Icon, Logo, Meter, Tag, Wordmark } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { ModelPopover } from '@/shared/components/organisms/ModelPopover';
@@ -17,7 +18,6 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
     cpuLabel,
     cpuShare,
     ramLabel,
-    processLabel,
     agentLabel,
     betaLabel,
     sessionUsed,
@@ -53,10 +53,6 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
             <span>{cpuLabel}</span>
             <span aria-hidden="true">·</span>
             <span>{ramLabel}</span>
-            <span className="titlebar__extra" aria-hidden="true">
-              ·
-            </span>
-            <span className="titlebar__extra">{processLabel}</span>
           </button>
 
           {sessionUsed !== null && (
@@ -85,6 +81,10 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
             <span>{agentLabel}</span>
             <Icon name="caretDown" />
           </button>
+
+          <span className="titlebar__assistant">
+            <AssistantButton />
+          </span>
         </div>
       )}
 

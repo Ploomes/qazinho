@@ -26,3 +26,35 @@
   gap: var(--space-3);
   min-width: 0;
 }
+
+.error-block__toggle {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--fail);
+  font: var(--font-mono-sm);
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.error-block__toggle:hover {
+  color: var(--ink);
+}
+
+.error-block__detail {
+  max-height: 240px;
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--win);
+  color: var(--ink2);
+  font: var(--font-mono-sm);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-y: auto;
+  user-select: text;
+  animation: gc-in var(--dur) var(--ease);
+}

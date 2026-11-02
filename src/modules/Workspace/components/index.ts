@@ -1,2 +1,2 @@
 export * from './NewWorkspaceModal';
-export * from './SidePanel';
+export * from './AgentPanel';

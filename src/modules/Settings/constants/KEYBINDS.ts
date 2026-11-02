@@ -6,7 +6,7 @@ export const KEYBINDS: IKeybind[] = [
   { id: 'stop', labelKey: 'SETTINGS.KEYBIND_STOP', combo: '⌘.' },
   { id: 'device', labelKey: 'SETTINGS.KEYBIND_DEVICE', combo: '⌘\\' },
   { id: 'sidebar', labelKey: 'SETTINGS.KEYBIND_SIDEBAR', combo: '⌘B' },
-  { id: 'chat', labelKey: 'SETTINGS.KEYBIND_CHAT', combo: '⌘1' },
+  { id: 'chat', labelKey: 'SETTINGS.KEYBIND_AGENT', combo: '⌘1' },
   { id: 'plan', labelKey: 'SETTINGS.KEYBIND_PLAN', combo: '⌘2' },
   { id: 'runs', labelKey: 'SETTINGS.KEYBIND_RUNS', combo: '⌘3' },
   { id: 'bugs', labelKey: 'SETTINGS.KEYBIND_BUGS', combo: '⌘4' },

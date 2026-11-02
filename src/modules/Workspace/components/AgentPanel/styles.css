@@ -1,0 +1,123 @@
+.agent-panel {
+  position: relative;
+  display: flex;
+  flex: none;
+  overflow: hidden;
+}
+
+.agent-panel__open {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+.agent-panel__handle {
+  flex: none;
+  width: var(--panel-handle);
+  background: var(--line2);
+  cursor: col-resize;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.agent-panel__handle:hover,
+.agent-panel--resizing .agent-panel__handle {
+  background: var(--line);
+}
+
+.agent-panel__inner {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  width: var(--panel-width);
+  min-width: var(--panel-width);
+  border-left: 1px solid var(--line2);
+  background: var(--panel);
+  container: agent-panel / inline-size;
+}
+
+.agent-panel__header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-4);
+  height: var(--panel-header);
+  padding: 0 var(--space-4) 0 var(--space-6);
+  border-bottom: 1px solid var(--line2);
+}
+
+.agent-panel__title {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  font: var(--font-display-sm);
+  color: var(--ink);
+}
+
+.agent-panel__subtitle {
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
+
+.agent-panel__collapse {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+  padding: var(--space-1) var(--space-2);
+  border: none;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.agent-panel__collapse:hover {
+  color: var(--ink);
+}
+
+.agent-panel .chat {
+  flex: 1;
+  min-height: 0;
+  padding: var(--space-6) var(--space-6) var(--space-7);
+}
+
+.agent-panel__rail {
+  position: absolute;
+  inset: 0 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  width: var(--panel-rail);
+  border: none;
+  border-left: 1px solid var(--line2);
+  background: var(--panel);
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+  writing-mode: vertical-rl;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.agent-panel__mirror {
+  display: inline-flex;
+}
+
+.agent-panel__mirror svg {
+  scale: -1 1;
+}
+
+.agent-panel__rail:hover {
+  color: var(--ink);
+}
+
+.agent-panel--resizing * {
+  transition: none;
+}
+
+@container agent-panel (width < 420px) {
+  .agent-panel__header {
+    gap: var(--space-3);
+    padding-left: var(--space-5);
+  }
+}

@@ -11,6 +11,7 @@ const broke = (runId: string): IWorkspace['chat'][number] => ({
   runId,
   at: '10:00',
   text: 'Chrome could not open the app.',
+  detail: null,
   fix: null,
 });
 
