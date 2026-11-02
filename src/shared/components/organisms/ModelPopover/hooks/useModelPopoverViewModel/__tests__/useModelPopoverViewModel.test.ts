@@ -42,6 +42,25 @@ describe('useModelPopoverViewModel', () => {
     expect(result.current.models.map(({ id }) => id)).toEqual(['']);
   });
 
+  /** Escolher o modelo deixava o menu aberto, e ele só fechava com Esc. */
+  it('closes the menu once a model is picked, and not when the agent changes', () => {
+    useAppStore.setState({ modelMenuAt: 'composer' });
+
+    const { result } = renderHook(() => useModelPopoverViewModel());
+
+    act(() => {
+      result.current.onSelectAgent('Claude Code');
+    });
+
+    expect(useAppStore.getState().modelMenuAt).toBe('composer');
+
+    act(() => {
+      result.current.onSelectModel('');
+    });
+
+    expect(useAppStore.getState().modelMenuAt).toBeNull();
+  });
+
   it('moves to the agent own default model when the agent changes', () => {
     const { result } = renderHook(() => useModelPopoverViewModel());
 

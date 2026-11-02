@@ -42,6 +42,9 @@ export const useModelPopoverViewModel = () => {
     model,
     modelHeading: t('MODEL.MODEL'),
     onSelectAgent: selectAgent,
-    onSelectModel: selectModel,
+    onSelectModel: (id: string) => {
+      selectModel(id);
+      closeModelMenu();
+    },
   };
 };
