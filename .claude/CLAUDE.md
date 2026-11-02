@@ -108,7 +108,8 @@ um minuto, entrando com as variáveis do projeto; o `tests/smoke/explore.test.ts
 fake no Chrome real, e pelo app só um explorador fake foi até agora.
 
 **Um projeto guarda os logins e segredos dele como variáveis**: um nome, o que ele guarda, e um
-valor lacrado pelo keychain do SO na main, que nunca chega à página nem a um agente de novo. O QA
+valor lacrado pelo keychain do SO na main, que nunca chega à página, e que o agente lê pelo nome. Um
+campo que mostra o que foi digitado ainda o mostra na foto da tela que o agente recebe. O QA
 as adiciona na janela do projeto, ou as digita numa janela que o chat ou o Estagiário abre:
 quando um plano precisa de uma conta, o agente do chat oferece as variáveis que servem e uma opção
 que cria o que falta. Um passo nomeia uma como `${NAME}`. A run digita o valor dela, lê de volta
@@ -164,7 +165,7 @@ seguir sem o QA chama `ask_qa`: um código mandado por texto ao celular dele, um
 deixa aberta, uma tela que só ele pode julgar. A run segura e o chat mostra a pergunta num cartão,
 com as respostas que ela oferece; a sidebar, o cabeçalho e o dispositivo dizem que a run espera o
 QA. Um segredo é digitado num campo escondido e vai como uma variável: o agente digita `${NAME}` e
-nunca o vê, e o projeto o guarda quando o QA diz. Sem resposta em 15 minutos o agente segue sem
+lê o nome, e o projeto o guarda quando o QA diz. Sem resposta em 15 minutos o agente segue sem
 uma, e o Stop termina a espera. As respostas ficam na seção da run e em Runs, no passo em que
 foram perguntadas. O `tests/smoke/ask.test.ts` prova isso com um agente fake no Chrome real. Um
 Claude Code real (Haiku) perguntou em português qual plano escolher e, como segredo, o código

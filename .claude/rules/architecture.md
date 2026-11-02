@@ -81,14 +81,17 @@ Toda `BrowserWindow` recebe `contextIsolation: true`, `sandbox: true` e `nodeInt
   para chamar o Jira (`IntegrationVault.jira`).
 - **O valor de uma variável nunca sai da main depois de lacrado.** O `VariableVault` guarda as
   variáveis de cada projeto num arquivo lacrado com o `safeStorage`, e nenhum canal devolve um
-  valor: a página e os agentes conhecem um nome e o que ele guarda.
+  valor: a página e os agentes conhecem um nome e o que ele guarda. Um campo que mostra o que foi
+  digitado ainda o mostra na foto da tela que o agente recebe.
   - A página manda um valor só para salvá-lo, pela janela do projeto ou pela janela que um agente
     pede (`VariablesModal`), ou como a resposta secreta à pergunta de uma run, que só aquela run
     digita, a menos que o QA a guarde. Nenhuma ferramenta do app carrega um, e o Estagiário só
     ouve nomes.
   - Uma run alcança o dispositivo pela `variablePort`: um `${NAME}` é digitado como o valor dele,
     todo valor que aparece é lido de volta como o nome dele, na tela e no porquê de uma ação
-    falhar, e uma receita guarda o nome, nunca um locator que contenha um valor.
+    falhar, e uma receita guarda o nome, nunca um locator que contenha um valor. Uma prova é
+    gravada com a variável pelo nome dela, e só com o que o texto da tela mostra (`provableProof`):
+    o agente também copia da foto, e uma prova assim nunca seria achada numa run sem ele.
   - Um teste importado que lê uma credencial do ambiente ou do `.env` vira uma variável do
     projeto no plano (`role/chat/import.md`): o agente copia o nome, nunca um valor.
   - No Linux, o Electron lacra com uma chave fixa quando não há GNOME Keyring nem KWallet, e ainda
