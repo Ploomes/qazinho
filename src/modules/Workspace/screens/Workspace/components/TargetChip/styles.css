@@ -23,6 +23,12 @@
   background: var(--raise2);
 }
 
+.target-chip__kind,
+.target-chip__build,
+.target-chip__empty {
+  text-box: trim-both cap alphabetic;
+}
+
 .target-chip__kind {
   color: var(--ink2);
 }
