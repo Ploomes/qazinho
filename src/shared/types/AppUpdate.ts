@@ -6,5 +6,6 @@ export type AppUpdate = { isRequired: boolean } & (
   | { phase: 'idle' }
   | { phase: 'downloading'; version: string; percent: number }
   | { phase: 'ready'; version: string }
+  | { phase: 'installing' }
   | { phase: 'failed' }
 );

@@ -318,7 +318,9 @@ function updaterPort(): IUpdaterPort {
       });
     },
     check: async () => {
-      await autoUpdater.checkForUpdates();
+      const found = await autoUpdater.checkForUpdates();
+
+      void found?.downloadPromise?.catch(() => undefined);
     },
     install: () => {
       autoUpdater.quitAndInstall(true, true);
@@ -1348,6 +1350,7 @@ app.on('second-instance', (_event, argv) => {
 });
 
 void app.whenReady().then(async () => {
+  appUpdater.start();
   appLog.write({
     level: 'info',
     scope: 'app',

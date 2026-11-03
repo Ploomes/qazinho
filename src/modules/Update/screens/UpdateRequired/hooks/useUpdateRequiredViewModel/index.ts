@@ -7,7 +7,12 @@ import { useUpdateStore } from '@/store';
 export const useUpdateRequiredViewModel = () => {
   const { t } = useTranslation();
   const update = useUpdateStore((state) => state.update);
-  const percent = update.phase === 'downloading' ? update.percent : 0;
+  const isInstalling = update.phase === 'installing';
+  const percent = isInstalling
+    ? 100
+    : update.phase === 'downloading'
+      ? update.percent
+      : 0;
   const isReady = update.phase === 'ready';
   const isFailed = update.phase === 'failed';
   const mood: InternMood = isReady ? 'passed' : isFailed ? 'flaky' : 'running';
@@ -16,10 +21,11 @@ export const useUpdateRequiredViewModel = () => {
     mood,
     title: t('UPDATE.REQUIRED_TITLE'),
     body: t('UPDATE.REQUIRED_BODY'),
-    phaseKey: update.phase,
+    stateKey: isReady ? 'ready' : isFailed ? 'failed' : 'working',
     isWorking: !isReady && !isFailed,
-    workingLabel:
-      update.phase === 'downloading'
+    workingLabel: isInstalling
+      ? t('UPDATE.RESTARTING')
+      : update.phase === 'downloading'
         ? t('UPDATE.DOWNLOADING', { percent })
         : t('UPDATE.CHECKING'),
     percent,

@@ -33,6 +33,16 @@ describe('useUpdateRequiredViewModel', () => {
     expect(view.barStyle).toEqual({ '--update-progress': '0.4' });
   });
 
+  it('says it is restarting after the click, with the bar full', () => {
+    useUpdateStore.setState({ update: { phase: 'installing', isRequired: true } });
+
+    const view = mount();
+
+    expect(view.isWorking).toBe(true);
+    expect(view.isReady).toBe(false);
+    expect(view.barStyle).toEqual({ '--update-progress': '1' });
+  });
+
   it('restarts into the new version once it is ready', () => {
     const installUpdate = vi.fn(() => Promise.resolve());
 

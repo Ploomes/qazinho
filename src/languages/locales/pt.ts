@@ -47,6 +47,7 @@ export const pt: typeof en = {
     CHECKING: 'Procurando a versão nova…',
     DOWNLOADING: 'Baixando… {{percent}}%',
     RESTART: 'Reiniciar e atualizar',
+    RESTARTING: 'Reiniciando…',
     FAILED: 'Não deu para atualizar daqui.',
     DOWNLOAD: 'Baixar do site',
   },

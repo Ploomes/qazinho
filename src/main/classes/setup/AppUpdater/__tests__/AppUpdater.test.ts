@@ -162,15 +162,89 @@ describe('AppUpdater', () => {
       updater.stop();
     });
 
-    it('keeps a downloaded version when a later look fails', () => {
+    // O Mac só confere a assinatura e o zip depois de avisar que baixou. Sem isto, o botão
+    // continuaria na tela sem fazer nada.
+    it('takes back a version the system refuses after downloading it', () => {
       const { updater, say } = setUp();
 
       updater.start();
       say().available('0.2.0');
       say().downloaded('0.2.0');
-      say().failed('no network');
+      say().failed('the signature does not match');
 
-      expect(updater.state().phase).toBe('ready');
+      expect(updater.state()).toEqual({ phase: 'idle', isRequired: false });
+      updater.stop();
+    });
+
+    // Baixar de novo daria no mesmo, e a tela piscaria a cada tentativa.
+    it('does NOT try again after the system refused the version', async () => {
+      const { updater, port, say } = setUp();
+
+      updater.start();
+      await vi.advanceTimersByTimeAsync(APP_UPDATE.firstCheckMs);
+      say().available('0.2.0');
+      say().downloaded('0.2.0');
+      say().failed('the signature does not match');
+      await vi.advanceTimersByTimeAsync(APP_UPDATE.everyMs);
+
+      expect(port.checks).toBe(1);
+      updater.stop();
+    });
+
+    it('offers the site right away once the install is known to be broken', () => {
+      const { updater, say } = setUp();
+
+      updater.start();
+      say().available('0.2.0');
+      say().downloaded('0.2.0');
+      say().failed('the signature does not match');
+      updater.require();
+
+      expect(updater.state()).toEqual({ phase: 'failed', isRequired: true });
+      updater.stop();
+    });
+  });
+
+  describe('installing', () => {
+    const ready = () => {
+      const world = setUp();
+
+      world.updater.start();
+      world.say().available('0.2.0');
+      world.say().downloaded('0.2.0');
+
+      return world;
+    };
+
+    it('says it is installing as soon as it is asked', () => {
+      const { updater } = ready();
+
+      updater.install();
+
+      expect(updater.state()).toEqual({ phase: 'installing', isRequired: false });
+      updater.stop();
+    });
+
+    // Instalar fecha o app. Se ele seguiu aberto, algo falhou, e a tela não pode ficar esperando.
+    it('gives up when the app stays open, and says why in the log', () => {
+      const { updater, logged } = ready();
+
+      updater.require();
+      updater.install();
+      vi.advanceTimersByTime(APP_UPDATE.installWaitMs);
+
+      expect(updater.state()).toEqual({ phase: 'failed', isRequired: true });
+      expect(logged).toHaveLength(1);
+      updater.stop();
+    });
+
+    it('does NOT install twice', () => {
+      const { updater, port } = ready();
+
+      updater.install();
+      updater.install();
+
+      expect(port.installs).toBe(1);
       updater.stop();
     });
   });

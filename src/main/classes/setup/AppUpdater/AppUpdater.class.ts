@@ -13,6 +13,7 @@ export class AppUpdater {
   private readonly log: (message: string) => void;
   private update: AppUpdate = { phase: 'idle', isRequired: false };
   private isListening = false;
+  private isInstallBroken = false;
   private timers: ReturnType<typeof setTimeout>[] = [];
 
   public constructor(props: IAppUpdater) {
@@ -42,7 +43,7 @@ export class AppUpdater {
   public require(): void {
     if (this.update.isRequired) return;
 
-    if (!this.isAvailable) {
+    if (!this.isAvailable || this.isInstallBroken) {
       this.change({ phase: 'failed', isRequired: true });
 
       return;
@@ -54,9 +55,18 @@ export class AppUpdater {
     void this.check();
   }
 
-  /** Fecha o app e instala a versão baixada, e não faz nada enquanto não há uma. */
+  /** Fecha o app e instala a versão baixada; seguir aberto quer dizer que falhou. */
   public install(): void {
-    if (this.update.phase === 'ready') this.port.install();
+    if (this.update.phase !== 'ready') return;
+
+    this.change({ phase: 'installing', isRequired: this.update.isRequired });
+    this.port.install();
+    this.timers.push(
+      setTimeout(() => {
+        this.log('The app stayed open after asking to install the update');
+        this.settle();
+      }, APP_UPDATE.installWaitMs),
+    );
   }
 
   /** Para de procurar. */
@@ -99,7 +109,8 @@ export class AppUpdater {
   }
 
   private settle(): void {
-    if (this.update.phase === 'ready') return;
+    if (this.update.phase === 'ready' || this.update.phase === 'installing')
+      this.isInstallBroken = true;
 
     this.change(
       this.update.isRequired
@@ -109,7 +120,8 @@ export class AppUpdater {
   }
 
   private async check(): Promise<void> {
-    if (this.update.phase === 'downloading' || this.update.phase === 'ready') return;
+    if (this.update.phase !== 'idle' && this.update.phase !== 'failed') return;
+    if (this.isInstallBroken) return;
 
     await this.port.check().catch((reason: unknown) => {
       this.log(String(reason));

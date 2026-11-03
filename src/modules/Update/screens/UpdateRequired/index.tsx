@@ -15,7 +15,7 @@ export const UpdateRequired: React.FC = () => {
       <p className="update-required__body">{view.body}</p>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
-          key={view.phaseKey === 'idle' ? 'downloading' : view.phaseKey}
+          key={view.stateKey}
           className="update-required__state"
           initial={STICKER.slap.initial}
           animate={STICKER.slap.animate}

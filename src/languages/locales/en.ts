@@ -45,6 +45,7 @@ export const en = {
     CHECKING: 'Looking for the new version…',
     DOWNLOADING: 'Downloading… {{percent}}%',
     RESTART: 'Restart and update',
+    RESTARTING: 'Restarting…',
     FAILED: 'It could not update from here.',
     DOWNLOAD: 'Download from the site',
   },
