@@ -119,12 +119,11 @@ export const useDeviceViewModel = () => {
     } as CSSProperties,
     isPhone,
     hasScreen,
-    viewportClassName:
-      !hasScreen || isFocused
-        ? 'device-view__viewport'
-        : isPhone
-          ? 'device-view__viewport device-view__viewport--fill'
-          : 'device-view__viewport device-view__viewport--browser',
+    viewportClassName: isFocused
+      ? 'device-view__viewport'
+      : isPhone
+        ? 'device-view__viewport device-view__viewport--fill'
+        : 'device-view__viewport device-view__viewport--browser',
     hasControls: isRunLive,
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
     hasState: isRunLive,

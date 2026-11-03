@@ -321,10 +321,10 @@ describe('useDeviceViewModel', () => {
   });
 
   describe('viewportClassName', () => {
-    it('hugs the screen of a browser, fills the height for a phone, and leaves the empty device alone', () => {
+    it('hugs the screen of a browser and fills the height for a phone, empty or not', () => {
       expect(
         renderHook(() => useDeviceViewModel()).result.current.viewportClassName,
-      ).toBe('device-view__viewport');
+      ).toBe('device-view__viewport device-view__viewport--browser');
 
       useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: [] })] });
 
@@ -334,6 +334,14 @@ describe('useDeviceViewModel', () => {
 
       useWorkspaceStore.setState({
         workspaces: [{ ...walkRun({ verdicts: [] }), planKind: 'mobile' }],
+      });
+
+      expect(
+        renderHook(() => useDeviceViewModel()).result.current.viewportClassName,
+      ).toBe('device-view__viewport device-view__viewport--fill');
+
+      useWorkspaceStore.setState({
+        workspaces: [{ ...makeWorkspace(), planKind: 'mobile' }],
       });
 
       expect(

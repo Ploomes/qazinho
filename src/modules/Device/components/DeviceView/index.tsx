@@ -2,7 +2,13 @@ import { AnimatePresence, motion } from 'motion/react';
 import { createPortal } from 'react-dom';
 import { Button, Eyebrow, Icon, Intern, StatusPill } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
-import { DeviceFocus, DeviceScreen, LiveClock, ViewportPicker } from './components';
+import {
+  DeviceFocus,
+  DeviceOff,
+  DeviceScreen,
+  LiveClock,
+  ViewportPicker,
+} from './components';
 import { useDeviceViewModel } from './hooks';
 import './styles.css';
 
@@ -87,22 +93,21 @@ export const DeviceView: React.FC = () => {
       )}
 
       <div className={viewportClassName}>
-        {!hasScreen && (
-          <div className="device-view__off">
-            <Intern mood="sleeping" size={72} />
-            <span className="device-view__off-title">{offTitle}</span>
-            {ended !== null && (
-              <div className="device-view__off-actions">
-                {ended.canWatch && (
-                  <Button onClick={ended.onWatch}>
-                    <Icon name="play" /> {ended.watchLabel}
-                  </Button>
-                )}
-                <Button variant="ghost" onClick={ended.onOpenRuns}>
-                  {ended.runsLabel}
-                </Button>
-              </div>
-            )}
+        {!hasScreen && isPhone && (
+          <div className="device-view__phone">
+            <DeviceOff title={offTitle} ended={ended} />
+          </div>
+        )}
+
+        {!hasScreen && !isPhone && (
+          <div className="device-view__browser">
+            <div className="device-view__chrome">
+              <span className="device-view__dot" />
+              <span className="device-view__dot" />
+              <span className="device-view__dot" />
+              <span className="device-view__url">{urlText}</span>
+            </div>
+            <DeviceOff title={offTitle} ended={ended} />
           </div>
         )}
 
