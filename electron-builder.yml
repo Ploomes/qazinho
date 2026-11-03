@@ -7,11 +7,18 @@ protocols:
 directories:
   output: release
   buildResources: build
+publish:
+  provider: github
+  owner: Salve-Software
+  repo: qazinho-releases
+  releaseType: release
 files:
   - out/**/*
   - package.json
 mac:
-  target: dmg
+  target:
+    - dmg
+    - zip
   category: public.app-category.developer-tools
   hardenedRuntime: true
 dmg:

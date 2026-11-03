@@ -76,15 +76,25 @@ jobs:
     if: ${{ !cancelled() && !failure() && (inputs.tag != '' || needs.release.outputs.tag != '') }}
     runs-on: windows-latest
     permissions:
-      contents: write
+      contents: read
     env:
       TAG: ${{ inputs.tag != '' && inputs.tag || needs.release.outputs.tag }}
+      RELEASES_REPO: Salve-Software/qazinho-releases
       # O electron-builder baixa o Electron de Windows que empacota; o do próprio npm ficaria sem uso.
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
     defaults:
       run:
         shell: bash
     steps:
+      - name: Check the releases token
+        env:
+          RELEASES_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+        run: |
+          if [ -z "$RELEASES_TOKEN" ]; then
+            echo "::error::Missing the RELEASES_TOKEN secret, which writes to $RELEASES_REPO."
+            exit 1
+          fi
+
       - uses: actions/checkout@v5
         with:
           submodules: recursive
@@ -107,17 +117,72 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: npx electron-builder --win --x64 --publish never
 
-      - name: Attach to the release
+      # O código é privado, então o que instala e atualiza o app mora em outro repositório. Cada
+      # job cria a release se ainda não existe; dois ao mesmo tempo não atrapalham o upload.
+      - name: Publish
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload "$TAG" release/*.exe --clobber --repo "$GITHUB_REPOSITORY"
+          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+        run: |
+          gh release view "$TAG" --repo "$RELEASES_REPO" > /dev/null 2>&1 ||
+            gh release create "$TAG" --repo "$RELEASES_REPO" --title "$TAG" --notes "QAzinho $TAG" ||
+            true
+          gh release upload "$TAG" release/*.exe release/*.exe.blockmap release/latest.yml --clobber --repo "$RELEASES_REPO"
+
+  linux:
+    name: Linux installer
+    needs: release
+    if: ${{ !cancelled() && !failure() && (inputs.tag != '' || needs.release.outputs.tag != '') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      TAG: ${{ inputs.tag != '' && inputs.tag || needs.release.outputs.tag }}
+      RELEASES_REPO: Salve-Software/qazinho-releases
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+    steps:
+      - name: Check the releases token
+        env:
+          RELEASES_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+        run: |
+          if [ -z "$RELEASES_TOKEN" ]; then
+            echo "::error::Missing the RELEASES_TOKEN secret, which writes to $RELEASES_REPO."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+          token: ${{ secrets.GH_QAZINHO_TOKEN }}
+          ref: ${{ env.TAG }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Package
+        run: npx electron-builder --linux AppImage --x64 --publish never
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+        run: |
+          gh release view "$TAG" --repo "$RELEASES_REPO" > /dev/null 2>&1 ||
+            gh release create "$TAG" --repo "$RELEASES_REPO" --title "$TAG" --notes "QAzinho $TAG" ||
+            true
+          gh release upload "$TAG" release/*.AppImage release/latest-linux.yml --clobber --repo "$RELEASES_REPO"
 
   mac:
     name: macOS installer
     needs: release
     if: ${{ !cancelled() && !failure() && inputs.mac && (inputs.tag != '' || needs.release.outputs.tag != '') }}
     permissions:
-      contents: write
+      contents: read
     uses: ./.github/workflows/macos-installer.yml
     with:
       tag: ${{ inputs.tag != '' && inputs.tag || needs.release.outputs.tag }}
