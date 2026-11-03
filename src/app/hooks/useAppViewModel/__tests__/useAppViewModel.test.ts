@@ -3,13 +3,72 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAppViewModel } from '@/app/hooks/useAppViewModel';
 import { i18n } from '@/languages';
+import { startRun } from '@/modules/Workspace/library';
+import { makeWorkspace, WALKED_BY } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useProStore, useSettingsStore } from '@/store';
+import { NO_UPDATE } from '@/services/Updates';
+import {
+  useAppStore,
+  useProStore,
+  useSettingsStore,
+  useUpdateStore,
+  useWorkspaceStore,
+} from '@/store';
 
 describe('useAppViewModel', () => {
   beforeEach(() => {
     useAppStore.setState({ theme: 'dark', screen: 'welcome', projects: [] });
     useSettingsStore.setState({ hasOnboarded: true });
+  });
+
+  describe('when this version must be updated', () => {
+    const required = () => {
+      useUpdateStore.setState({ update: { phase: 'idle', isRequired: true } });
+    };
+
+    afterEach(() => {
+      useUpdateStore.setState({ update: NO_UPDATE });
+      useWorkspaceStore.setState({ workspaces: [] });
+    });
+
+    it('takes over the window, with a bare title bar', () => {
+      required();
+
+      const { result } = renderHook(() => useAppViewModel());
+
+      expect(result.current.isUpdateBlocked).toBe(true);
+      expect(result.current.isTitlebarBare).toBe(true);
+    });
+
+    // A trava chega no meio do trabalho: a run termina antes, e a evidência dela fica.
+    it('waits for a run that is going', () => {
+      required();
+      useWorkspaceStore.setState({
+        workspaces: [
+          startRun({
+            workspace: makeWorkspace(),
+            startedAt: '10:00',
+            runId: 'r-01',
+            by: WALKED_BY,
+          }),
+        ],
+      });
+
+      const { result } = renderHook(() => useAppViewModel());
+
+      expect(result.current.isUpdateBlocked).toBe(false);
+    });
+
+    it('stays out of the way while an update is only optional', () => {
+      useUpdateStore.setState({
+        update: { phase: 'ready', version: '0.2.0', isRequired: false },
+      });
+
+      const { result } = renderHook(() => useAppViewModel());
+
+      expect(result.current.isUpdateBlocked).toBe(false);
+      expect(result.current.isTitlebarBare).toBe(false);
+    });
   });
 
   it('opens on the first-run setup until the QA finished or skipped it', () => {

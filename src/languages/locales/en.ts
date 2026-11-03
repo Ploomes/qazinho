@@ -36,6 +36,18 @@ export const en = {
     TIP_RESETS: 'resets at {{resets}}',
     TIP_NOTE: 'Reported by {{agent}}. QAzinho only reads it.',
   },
+  UPDATE: {
+    ACTION: 'Update',
+    READY_TIP: 'Version {{version}} is ready. The app restarts.',
+    AFTER_RUN: 'After the run ends',
+    REQUIRED_TITLE: 'Update QAzinho to continue',
+    REQUIRED_BODY: 'This version no longer works with your account.',
+    CHECKING: 'Looking for the new version…',
+    DOWNLOADING: 'Downloading… {{percent}}%',
+    RESTART: 'Restart and update',
+    FAILED: 'It could not update from here.',
+    DOWNLOAD: 'Download from the site',
+  },
   SIDEBAR: {
     NEW_WORKSPACE: 'New workspace',
     NEW_PROJECT: 'New project',

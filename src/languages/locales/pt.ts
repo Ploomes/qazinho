@@ -38,6 +38,18 @@ export const pt: typeof en = {
     TIP_RESETS: 'reseta às {{resets}}',
     TIP_NOTE: 'Informado pelo {{agent}}. O QAzinho só lê.',
   },
+  UPDATE: {
+    ACTION: 'Atualizar',
+    READY_TIP: 'A versão {{version}} está pronta. O app reinicia.',
+    AFTER_RUN: 'Depois que a run terminar',
+    REQUIRED_TITLE: 'Atualize o QAzinho para continuar',
+    REQUIRED_BODY: 'Esta versão não funciona mais com a sua conta.',
+    CHECKING: 'Procurando a versão nova…',
+    DOWNLOADING: 'Baixando… {{percent}}%',
+    RESTART: 'Reiniciar e atualizar',
+    FAILED: 'Não deu para atualizar daqui.',
+    DOWNLOAD: 'Baixar do site',
+  },
   SIDEBAR: {
     NEW_WORKSPACE: 'Novo workspace',
     NEW_PROJECT: 'Novo projeto',

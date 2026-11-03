@@ -14,6 +14,7 @@ import {
   Pro,
   Run,
   Setup,
+  Updates,
   Variables,
 } from '@/services';
 
@@ -250,5 +251,13 @@ describe('a page with no bridge', () => {
     expect(() => {
       Bugs.onFiling(() => undefined)();
     }).not.toThrow();
+  });
+
+  it('has no update to offer, and nothing to install', async () => {
+    expect(await Updates.state()).toEqual({ phase: 'idle', isRequired: false });
+    expect(() => {
+      Updates.install();
+    }).not.toThrow();
+    expect(Updates.onChange(() => undefined)).toBeTypeOf('function');
   });
 });

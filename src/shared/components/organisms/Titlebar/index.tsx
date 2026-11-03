@@ -1,6 +1,7 @@
 import type { ITitlebarProps } from './types';
 import { AnimatePresence } from 'motion/react';
 import { AssistantButton } from '@/modules/Assistant';
+import { UpdateButton } from '@/modules/Update';
 import { Gauge, Icon, IconButton, Logo, Tag, Wordmark } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { ModelPopover } from '@/shared/components/organisms/ModelPopover';
@@ -41,6 +42,7 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
 
       {!isBare && (
         <div className="titlebar__meters">
+          <UpdateButton />
           {sessionUsed !== null && (
             <Tooltip
               content={

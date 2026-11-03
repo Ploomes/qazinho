@@ -3,6 +3,7 @@ import {
   AndroidLogoIcon,
   AppleLogoIcon,
   ArrowCircleRightIcon,
+  ArrowCircleUpIcon,
   ArrowClockwiseIcon,
   ArrowCounterClockwiseIcon,
   ArrowLeftIcon,
@@ -123,6 +124,7 @@ export const ICONS = {
   timedOut: { glyph: TimerIcon, weight: 'fill' },
   undo: { glyph: ArrowUUpLeftIcon, weight: 'bold' },
   up: { glyph: ArrowUpIcon, weight: 'bold' },
+  update: { glyph: ArrowCircleUpIcon, weight: 'bold' },
   web: { glyph: GlobeIcon, weight: 'bold' },
   widen: { glyph: ArrowsOutLineHorizontalIcon, weight: 'bold' },
 } as const satisfies Record<string, { glyph: Icon; weight: IconWeight }>;

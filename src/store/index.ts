@@ -5,5 +5,6 @@ export * from './MachineStore';
 export * from './ProStore';
 export * from './SettingsStore';
 export * from './SetupStore';
+export * from './UpdateStore';
 export * from './VariablesStore';
 export * from './WorkspaceStore';

@@ -5,6 +5,7 @@ import { ProjectModal, VariablesModal, Welcome } from '@/modules/Project';
 import { RunNotice, RunReplay } from '@/modules/Run';
 import { Settings } from '@/modules/Settings';
 import { Onboarding } from '@/modules/Setup';
+import { UpdateRequired } from '@/modules/Update';
 import { AgentPanel, NewWorkspaceModal, Workspace } from '@/modules/Workspace';
 import { Lightbox, Titlebar } from '@/shared/components/organisms';
 import { Sidebar } from './components/Sidebar';
@@ -14,6 +15,8 @@ import './styles.css';
 export const App: React.FC = () => {
   const {
     shellStyle,
+    isUpdateBlocked,
+    isTitlebarBare,
     isOnboarding,
     hasSidebar,
     isWelcome,
@@ -36,29 +39,37 @@ export const App: React.FC = () => {
   return (
     <MotionConfig reducedMotion="user">
       <div className="app" style={shellStyle}>
-        <Titlebar isBare={isOnboarding} />
-        <div className="app__body">
-          {isOnboarding && <Onboarding />}
-          {!isOnboarding && hasSidebar && <Sidebar />}
-          {!isOnboarding && isWelcome && <Welcome />}
-          {!isOnboarding && !isWelcome && isWorkspace && !isChatOnly && <Workspace />}
-          {!isOnboarding && !isWelcome && isWorkspace && <AgentPanel />}
-          {!isOnboarding && !isWelcome && isSettings && <Settings />}
-        </div>
+        <Titlebar isBare={isTitlebarBare} />
+        {isUpdateBlocked ? (
+          <div className="app__body">
+            <UpdateRequired />
+          </div>
+        ) : (
+          <>
+            <div className="app__body">
+              {isOnboarding && <Onboarding />}
+              {!isOnboarding && hasSidebar && <Sidebar />}
+              {!isOnboarding && isWelcome && <Welcome />}
+              {!isOnboarding && !isWelcome && isWorkspace && !isChatOnly && <Workspace />}
+              {!isOnboarding && !isWelcome && isWorkspace && <AgentPanel />}
+              {!isOnboarding && !isWelcome && isSettings && <Settings />}
+            </div>
 
-        <AnimatePresence>
-          {hasMedia && <Lightbox key="lightbox" />}
-          {hasReplay && <RunReplay key={replayKey} />}
-          {hasRunNotice && <RunNotice key={runNoticeKey} />}
-          {modal === 'project' && <ProjectModal key={projectModalKey} />}
-          {modal === 'workspace' && <NewWorkspaceModal key="workspace" />}
-          {variablesKey !== null && <VariablesModal key={variablesKey} />}
-          {hasProLink && <ProLinkModal key="pro-link" />}
-          {hasProMerge && <ProMergeModal key="pro-merge" />}
-          {hasHeldRun && <ProRunWarning key="pro-run-warning" />}
-        </AnimatePresence>
+            <AnimatePresence>
+              {hasMedia && <Lightbox key="lightbox" />}
+              {hasReplay && <RunReplay key={replayKey} />}
+              {hasRunNotice && <RunNotice key={runNoticeKey} />}
+              {modal === 'project' && <ProjectModal key={projectModalKey} />}
+              {modal === 'workspace' && <NewWorkspaceModal key="workspace" />}
+              {variablesKey !== null && <VariablesModal key={variablesKey} />}
+              {hasProLink && <ProLinkModal key="pro-link" />}
+              {hasProMerge && <ProMergeModal key="pro-merge" />}
+              {hasHeldRun && <ProRunWarning key="pro-run-warning" />}
+            </AnimatePresence>
 
-        {!isOnboarding && <AssistantDock />}
+            {!isOnboarding && <AssistantDock />}
+          </>
+        )}
       </div>
     </MotionConfig>
   );

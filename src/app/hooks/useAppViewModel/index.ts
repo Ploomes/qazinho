@@ -5,6 +5,7 @@ import { useBuildEvents } from '@/modules/Build';
 import { useIslandSync } from '@/modules/Island';
 import { useOutsideCalls } from '@/modules/Outside';
 import { useProLinks, useProSync } from '@/modules/Pro';
+import { isRunGoing, useUpdateWatch } from '@/modules/Update';
 import { useChatOnly } from '@/modules/Workspace';
 import { AppWindow, Platform } from '@/services';
 import { SHELL } from '@/shared/constants';
@@ -19,7 +20,14 @@ import {
   useVariables,
   useVideoSweep,
 } from '@/shared/hooks';
-import { useAppStore, useProStore, useSettingsStore, useVariablesStore } from '@/store';
+import {
+  useAppStore,
+  useProStore,
+  useSettingsStore,
+  useUpdateStore,
+  useVariablesStore,
+  useWorkspaceStore,
+} from '@/store';
 
 export const useAppViewModel = () => {
   const isChatOnly = useChatOnly();
@@ -32,6 +40,9 @@ export const useAppViewModel = () => {
   const replay = useAppStore((state) => state.replay);
   const runNotice = useAppStore((state) => state.runNotice);
   const hasOnboarded = useSettingsStore((state) => state.hasOnboarded);
+  const isUpdateRequired = useUpdateStore((state) => state.update.isRequired);
+  const workspaces = useWorkspaceStore((state) => state.workspaces);
+  const isUpdateBlocked = isUpdateRequired && !isRunGoing(workspaces);
   const sidebarWidth = useSidebarWidth();
   const variablesKey = useVariablesStore((state) => state.request?.id ?? null);
   const hasProLink = useProStore((state) => state.link !== null);
@@ -56,6 +67,7 @@ export const useAppViewModel = () => {
   useVideoSweep();
   useIslandSync();
   useOutsideCalls();
+  useUpdateWatch();
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -100,6 +112,8 @@ export const useAppViewModel = () => {
                 ? replay.focus.bugId
                 : 'run'
           }`,
+    isUpdateBlocked,
+    isTitlebarBare: isUpdateBlocked || !hasOnboarded,
     isOnboarding: !hasOnboarded,
     hasSidebar: projects.length > 0 && screen !== 'settings',
     isWelcome: screen !== 'settings' && (screen === 'welcome' || projects.length === 0),

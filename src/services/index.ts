@@ -20,4 +20,5 @@ export * from './Pro';
 export * from './Run';
 export * from './Setup';
 export * from './Storage';
+export * from './Updates';
 export * from './Variables';
