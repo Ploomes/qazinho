@@ -30,3 +30,5 @@ nsis:
 linux:
   target: AppImage
   category: Development
+  executableName: qazinho
+  syncDesktopName: true
