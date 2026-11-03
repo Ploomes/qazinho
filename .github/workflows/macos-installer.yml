@@ -76,6 +76,7 @@ jobs:
           npx electron-builder --mac --arm64 --x64 --publish never
 
       # O zip e o latest-mac.yml são o que atualiza um app instalado; o dmg é só a primeira instalação.
+      # O feed sobe por último: um app nunca lê uma versão cujos arquivos ainda não chegaram.
       - name: Publish
         env:
           GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
@@ -83,4 +84,5 @@ jobs:
           gh release view "$TAG" --repo "$RELEASES_REPO" > /dev/null 2>&1 ||
             gh release create "$TAG" --repo "$RELEASES_REPO" --title "$TAG" --notes "QAzinho $TAG" ||
             true
-          gh release upload "$TAG" release/*.dmg release/*.zip release/*.blockmap release/latest-mac.yml --clobber --repo "$RELEASES_REPO"
+          gh release upload "$TAG" release/*.dmg release/*.zip release/*.blockmap --clobber --repo "$RELEASES_REPO"
+          gh release upload "$TAG" release/latest-mac.yml --clobber --repo "$RELEASES_REPO"

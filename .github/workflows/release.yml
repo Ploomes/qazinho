@@ -118,7 +118,8 @@ jobs:
         run: npx electron-builder --win --x64 --publish never
 
       # O código é privado, então o que instala e atualiza o app mora em outro repositório. Cada
-      # job cria a release se ainda não existe; dois ao mesmo tempo não atrapalham o upload.
+      # job cria a release se ainda não existe; dois ao mesmo tempo não atrapalham o upload. O
+      # feed sobe por último: um app nunca lê uma versão cujos arquivos ainda não chegaram.
       - name: Publish
         env:
           GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
@@ -126,7 +127,8 @@ jobs:
           gh release view "$TAG" --repo "$RELEASES_REPO" > /dev/null 2>&1 ||
             gh release create "$TAG" --repo "$RELEASES_REPO" --title "$TAG" --notes "QAzinho $TAG" ||
             true
-          gh release upload "$TAG" release/*.exe release/*.exe.blockmap release/latest.yml --clobber --repo "$RELEASES_REPO"
+          gh release upload "$TAG" release/*.exe release/*.exe.blockmap --clobber --repo "$RELEASES_REPO"
+          gh release upload "$TAG" release/latest.yml --clobber --repo "$RELEASES_REPO"
 
   linux:
     name: Linux installer
@@ -175,7 +177,8 @@ jobs:
           gh release view "$TAG" --repo "$RELEASES_REPO" > /dev/null 2>&1 ||
             gh release create "$TAG" --repo "$RELEASES_REPO" --title "$TAG" --notes "QAzinho $TAG" ||
             true
-          gh release upload "$TAG" release/*.AppImage release/latest-linux.yml --clobber --repo "$RELEASES_REPO"
+          gh release upload "$TAG" release/*.AppImage --clobber --repo "$RELEASES_REPO"
+          gh release upload "$TAG" release/latest-linux.yml --clobber --repo "$RELEASES_REPO"
 
   mac:
     name: macOS installer
