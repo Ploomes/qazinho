@@ -7,6 +7,11 @@ describe('stateOfRefusal', () => {
     expect(stateOfRefusal({ status: 503, error: 'internal_error' })).toBe('waiting');
   });
 
+  // A tela de atualizar já cobre o app: o que ficou para mandar segue guardado até lá.
+  it('waits when the platform refuses this version of the app', () => {
+    expect(stateOfRefusal({ status: 426, error: 'update_required' })).toBe('waiting');
+  });
+
   it('names a signed-out machine, a blocked org and a reader apart', () => {
     expect(stateOfRefusal({ status: 401, error: 'unauthorized' })).toBe('signed-out');
     expect(stateOfRefusal({ status: 402, error: 'org_blocked' })).toBe('blocked');

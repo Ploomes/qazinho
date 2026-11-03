@@ -1,4 +1,5 @@
 import type { AgentSignInProgress } from './AgentSignInProgress';
+import type { AppUpdate } from './AppUpdate';
 import type { BugComment } from './BugComment';
 import type { BugFiling } from './BugFiling';
 import type { BugReview } from './BugReview';
@@ -150,6 +151,9 @@ export interface IQazinhoApi {
   checkMachine: () => Promise<IMachineCheck>;
   installTool: (item: InstallableId) => Promise<IInstallResult>;
   onSetupEvent: (listener: (event: ISetupEvent) => void) => () => void;
+  appUpdate: () => Promise<AppUpdate>;
+  installUpdate: () => Promise<void>;
+  onAppUpdate: (listener: (update: AppUpdate) => void) => () => void;
   listIntegrations: () => Promise<IIntegrationStatus[]>;
   connectIntegration: (connecting: IConnectIntegration) => Promise<IConnectResult>;
   disconnectIntegration: (id: IntegrationId) => Promise<void>;

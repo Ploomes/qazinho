@@ -11,6 +11,7 @@ export type * from './BugVideo';
 export type * from './BuildFailure';
 export type * from './BuildPlatform';
 export type * from './BuildStep';
+export type * from './AppUpdate';
 export type * from './ChatFailure';
 export type * from './CodeStep';
 export type * from './ConfluencePageList';

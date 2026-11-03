@@ -1,0 +1,1 @@
+export const UPDATE_REQUIRED_STATUS = 426;

@@ -7,7 +7,7 @@ const GONE = new Set(['project_not_found', 'plan_not_found']);
  * chamada, pelo status que respondeu e o código.
  */
 export function stateOfRefusal(answer: { status: number; error: string }): ProSyncState {
-  if (answer.status === 0) return 'waiting';
+  if (answer.status === 0 || answer.status === 426) return 'waiting';
   if (answer.status === 401) return 'signed-out';
   if (answer.status === 402) return 'blocked';
   if (answer.status === 403) return 'read-only';

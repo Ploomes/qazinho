@@ -1,3 +1,4 @@
+export * from './DESKTOP_VERSION_HEADER';
 export * from './DEVICE_CODE_SCHEMA';
 export * from './DEVICE_TOKEN_SCHEMA';
 export * from './EVIDENCE_UPLOAD_SCHEMA';
@@ -11,3 +12,4 @@ export * from './SYNC_PLAN_SCHEMA';
 export * from './SYNC_PROJECT_SCHEMA';
 export * from './SYNC_RUN_SCHEMA';
 export * from './SYNCED_PROJECTS_SCHEMA';
+export * from './UPDATE_REQUIRED_STATUS';

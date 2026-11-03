@@ -65,6 +65,7 @@ import type {
   ISavedState,
   ISavedWorkspace,
   ISetupEvent,
+  AppUpdate,
   IStartBuild,
   IStartRun,
   IStorageUsage,
@@ -232,6 +233,19 @@ const api: IQazinhoApi = {
   checkMachine: () => ipcRenderer.invoke(CHANNELS.checkMachine) as Promise<IMachineCheck>,
   installTool: (item: InstallableId) =>
     ipcRenderer.invoke(CHANNELS.installTool, item) as Promise<IInstallResult>,
+  appUpdate: () => ipcRenderer.invoke(CHANNELS.appUpdate) as Promise<AppUpdate>,
+  installUpdate: () => ipcRenderer.invoke(CHANNELS.installUpdate) as Promise<void>,
+  onAppUpdate: (listener: (update: AppUpdate) => void) => {
+    const forward = (_: unknown, update: AppUpdate) => {
+      listener(update);
+    };
+
+    ipcRenderer.on(CHANNELS.appUpdateEvent, forward);
+
+    return () => {
+      ipcRenderer.off(CHANNELS.appUpdateEvent, forward);
+    };
+  },
   onSetupEvent: (listener: (event: ISetupEvent) => void) => {
     const forward = (_: unknown, event: ISetupEvent) => {
       listener(event);

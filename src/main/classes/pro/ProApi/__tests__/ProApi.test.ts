@@ -36,6 +36,55 @@ const ORG = {
 const USER = { id: 'u1', email: 'ana@loja.dev', name: 'Ana' };
 
 describe('ProApi', () => {
+  describe('the version of this app', () => {
+    const asked = (answer: { status: number; body: unknown }) => {
+      const { calls, fetcher } = fakePlatform(answer);
+      let refusals = 0;
+      const api = new ProApi({
+        baseUrl: 'https://qazinho-api.salvesoftware.com',
+        fetcher,
+        version: '0.4.0',
+        onUpdateRequired: () => {
+          refusals += 1;
+        },
+      });
+
+      return { api, calls, refusals: () => refusals };
+    };
+
+    it('goes with every call, so the platform can refuse an old one', async () => {
+      const { api, calls } = asked({ status: 200, body: { user: USER, orgs: [ORG] } });
+
+      await api.me('qzm_token');
+
+      expect(calls[0]?.headers['x-qazinho-version']).toBe('0.4.0');
+    });
+
+    it('asks for the update when the platform refuses it', async () => {
+      const { api, refusals } = asked({
+        status: 426,
+        body: { error: 'update_required', details: { minVersion: '0.5.0' } },
+      });
+
+      const answer = await api.me('qzm_token');
+
+      expect(answer).toMatchObject({
+        isOk: false,
+        status: 426,
+        error: 'update_required',
+      });
+      expect(refusals()).toBe(1);
+    });
+
+    it('does NOT ask for it on any other refusal', async () => {
+      const { api, refusals } = asked({ status: 401, body: { error: 'unauthorized' } });
+
+      await api.me('qzm_token');
+
+      expect(refusals()).toBe(0);
+    });
+  });
+
   it('asks for a sign-in code with the machine’s name', async () => {
     const { calls, fetcher } = fakePlatform({
       status: 201,
@@ -50,6 +99,8 @@ describe('ProApi', () => {
     const api = new ProApi({
       baseUrl: 'https://qazinho-api.salvesoftware.com/',
       fetcher,
+      version: '0.1.0',
+      onUpdateRequired: () => undefined,
     });
 
     const answer = await api.deviceCode('MacBook-Ana');
@@ -59,7 +110,7 @@ describe('ProApi', () => {
       {
         url: 'https://qazinho-api.salvesoftware.com/api/device/codes',
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        headers: { 'x-qazinho-version': '0.1.0', 'content-type': 'application/json' },
         body: '{"machineName":"MacBook-Ana"}',
       },
     ]);
@@ -70,12 +121,20 @@ describe('ProApi', () => {
       status: 200,
       body: { user: USER, orgs: [{ ...ORG, id: 'o1', trialEndsAt: null }] },
     });
-    const api = new ProApi({ baseUrl: 'https://qazinho-api.salvesoftware.com', fetcher });
+    const api = new ProApi({
+      baseUrl: 'https://qazinho-api.salvesoftware.com',
+      fetcher,
+      version: '0.1.0',
+      onUpdateRequired: () => undefined,
+    });
 
     const answer = await api.me('qzm_token');
 
     expect(answer).toEqual({ isOk: true, value: { user: USER, orgs: [ORG] } });
-    expect(calls[0]?.headers).toEqual({ authorization: 'Bearer qzm_token' });
+    expect(calls[0]?.headers).toEqual({
+      'x-qazinho-version': '0.1.0',
+      authorization: 'Bearer qzm_token',
+    });
   });
 
   it('passes on the platform’s refusal while the person has not confirmed yet', async () => {
@@ -83,7 +142,12 @@ describe('ProApi', () => {
       status: 400,
       body: { error: 'authorization_pending' },
     });
-    const api = new ProApi({ baseUrl: 'https://qazinho-api.salvesoftware.com', fetcher });
+    const api = new ProApi({
+      baseUrl: 'https://qazinho-api.salvesoftware.com',
+      fetcher,
+      version: '0.1.0',
+      onUpdateRequired: () => undefined,
+    });
 
     expect(await api.deviceToken('dc')).toEqual({
       isOk: false,
@@ -94,7 +158,12 @@ describe('ProApi', () => {
 
   it('signs a machine out with nothing to read back', async () => {
     const { calls, fetcher } = fakePlatform({ status: 204, body: null });
-    const api = new ProApi({ baseUrl: 'https://qazinho-api.salvesoftware.com', fetcher });
+    const api = new ProApi({
+      baseUrl: 'https://qazinho-api.salvesoftware.com',
+      fetcher,
+      version: '0.1.0',
+      onUpdateRequired: () => undefined,
+    });
 
     const answer = await api.revokeMachine({ token: 'qzm_token', machineId: 'm/1' });
 
@@ -106,7 +175,12 @@ describe('ProApi', () => {
 
   it('deletes a project in its org by the id this computer keeps it under', async () => {
     const { calls, fetcher } = fakePlatform({ status: 204, body: null });
-    const api = new ProApi({ baseUrl: 'https://qazinho-api.salvesoftware.com', fetcher });
+    const api = new ProApi({
+      baseUrl: 'https://qazinho-api.salvesoftware.com',
+      fetcher,
+      version: '0.1.0',
+      onUpdateRequired: () => undefined,
+    });
 
     const answer = await api.deleteProject({
       token: 'qzm_token',
@@ -118,7 +192,7 @@ describe('ProApi', () => {
     expect(calls[0]).toMatchObject({
       url: 'https://qazinho-api.salvesoftware.com/api/orgs/loja/projects/p%201',
       method: 'DELETE',
-      headers: { authorization: 'Bearer qzm_token' },
+      headers: { 'x-qazinho-version': '0.1.0', authorization: 'Bearer qzm_token' },
     });
   });
 
@@ -127,7 +201,12 @@ describe('ProApi', () => {
       status: 200,
       body: { plan: { id: 'plan-1', version: 2 } },
     });
-    const api = new ProApi({ baseUrl: 'https://qazinho-api.salvesoftware.com', fetcher });
+    const api = new ProApi({
+      baseUrl: 'https://qazinho-api.salvesoftware.com',
+      fetcher,
+      version: '0.1.0',
+      onUpdateRequired: () => undefined,
+    });
 
     const answer = await api.syncPlan({
       token: 'qzm_token',
@@ -142,6 +221,7 @@ describe('ProApi', () => {
         url: 'https://qazinho-api.salvesoftware.com/api/orgs/loja%20online/projects/p1/plans/w1',
         method: 'PUT',
         headers: {
+          'x-qazinho-version': '0.1.0',
           'content-type': 'application/json',
           authorization: 'Bearer qzm_token',
         },
@@ -159,7 +239,12 @@ describe('ProApi', () => {
         headers: { 'content-type': 'image/jpeg' },
       },
     });
-    const api = new ProApi({ baseUrl: 'https://qazinho-api.salvesoftware.com', fetcher });
+    const api = new ProApi({
+      baseUrl: 'https://qazinho-api.salvesoftware.com',
+      fetcher,
+      version: '0.1.0',
+      onUpdateRequired: () => undefined,
+    });
 
     const answer = await api.evidenceUpload({
       token: 'qzm_token',
@@ -177,7 +262,12 @@ describe('ProApi', () => {
 
   it('replaces a plan’s recordings with nothing to read back', async () => {
     const { calls, fetcher } = fakePlatform({ status: 204, body: null });
-    const api = new ProApi({ baseUrl: 'https://qazinho-api.salvesoftware.com', fetcher });
+    const api = new ProApi({
+      baseUrl: 'https://qazinho-api.salvesoftware.com',
+      fetcher,
+      version: '0.1.0',
+      onUpdateRequired: () => undefined,
+    });
 
     const answer = await api.syncRecordings({
       token: 'qzm_token',
@@ -219,7 +309,12 @@ describe('ProApi', () => {
         ],
       },
     });
-    const api = new ProApi({ baseUrl: 'https://qazinho-api.salvesoftware.com', fetcher });
+    const api = new ProApi({
+      baseUrl: 'https://qazinho-api.salvesoftware.com',
+      fetcher,
+      version: '0.1.0',
+      onUpdateRequired: () => undefined,
+    });
 
     const answer = await api.syncedProjects({ token: 'qzm_token', org: 'loja' });
 
@@ -232,7 +327,7 @@ describe('ProApi', () => {
     expect(calls[0]).toMatchObject({
       url: 'https://qazinho-api.salvesoftware.com/api/orgs/loja/projects?include=plans',
       method: 'GET',
-      headers: { authorization: 'Bearer qzm_token' },
+      headers: { 'x-qazinho-version': '0.1.0', authorization: 'Bearer qzm_token' },
     });
   });
 
@@ -241,7 +336,12 @@ describe('ProApi', () => {
       status: 200,
       body: { branch: 'main', recordings: [] },
     });
-    const api = new ProApi({ baseUrl: 'https://qazinho-api.salvesoftware.com', fetcher });
+    const api = new ProApi({
+      baseUrl: 'https://qazinho-api.salvesoftware.com',
+      fetcher,
+      version: '0.1.0',
+      onUpdateRequired: () => undefined,
+    });
 
     const answer = await api.recordings({
       token: 'qzm_token',
@@ -260,6 +360,8 @@ describe('ProApi', () => {
     const api = new ProApi({
       baseUrl: 'https://qazinho-api.salvesoftware.com',
       fetcher: () => Promise.reject(new Error('offline')),
+      version: '0.1.0',
+      onUpdateRequired: () => undefined,
     });
 
     expect(await api.me('qzm_token')).toEqual({

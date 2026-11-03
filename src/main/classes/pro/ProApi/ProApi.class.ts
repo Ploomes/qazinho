@@ -11,6 +11,7 @@ import type {
 } from './types';
 import { z } from 'zod';
 import {
+  DESKTOP_VERSION_HEADER,
   DEVICE_CODE_SCHEMA,
   DEVICE_TOKEN_SCHEMA,
   EVIDENCE_UPLOAD_SCHEMA,
@@ -21,6 +22,7 @@ import {
   SYNC_PROJECT_SCHEMA,
   SYNC_RUN_SCHEMA,
   SYNCED_PROJECTS_SCHEMA,
+  UPDATE_REQUIRED_STATUS,
 } from './constants';
 import { answerOf } from './library';
 
@@ -31,10 +33,14 @@ import { answerOf } from './library';
 export class ProApi {
   private readonly baseUrl: string;
   private readonly fetcher: ProFetcher;
+  private readonly version: string;
+  private readonly onUpdateRequired: () => void;
 
   public constructor(props: IProApi) {
     this.baseUrl = props.baseUrl.replace(/\/+$/, '');
     this.fetcher = props.fetcher;
+    this.version = props.version;
+    this.onUpdateRequired = props.onUpdateRequired;
   }
 
   /** Pede à plataforma um código de login para esta máquina. */
@@ -209,7 +215,7 @@ export class ProApi {
     schema: z.ZodType<T>;
   }): Promise<ProAnswer<T>> {
     const { request, schema } = props;
-    const headers: Record<string, string> = {};
+    const headers: Record<string, string> = { [DESKTOP_VERSION_HEADER]: this.version };
 
     if (request.body !== undefined) headers['content-type'] = 'application/json';
     if (request.token !== undefined) headers.authorization = `Bearer ${request.token}`;
@@ -221,7 +227,12 @@ export class ProApi {
         ...(request.body === undefined ? {} : { body: JSON.stringify(request.body) }),
       });
 
-      return await answerOf({ response, schema });
+      const answer = await answerOf({ response, schema });
+
+      if (!answer.isOk && answer.status === UPDATE_REQUIRED_STATUS)
+        this.onUpdateRequired();
+
+      return answer;
     } catch {
       return { isOk: false, status: 0, error: 'unreachable' };
     }

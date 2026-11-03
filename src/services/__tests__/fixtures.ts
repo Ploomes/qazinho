@@ -96,6 +96,9 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
         },
       }),
     installTool: () => Promise.resolve({ isInstalled: true }),
+    appUpdate: () => Promise.resolve({ phase: 'idle', isRequired: false }),
+    installUpdate: () => Promise.resolve(),
+    onAppUpdate: () => () => undefined,
     onSetupEvent: () => () => undefined,
     listIntegrations: () => Promise.resolve([]),
     connectIntegration: () =>

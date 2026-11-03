@@ -1,3 +1,4 @@
+import type { IUpdaterPort } from '@/main/classes';
 import type {
   AgentSignInProgress,
   ConfluenceSwitch,
@@ -34,6 +35,7 @@ import type {
   IMcpSignIn,
   ISavedWorkspace,
   ISetupEvent,
+  AppUpdate,
   IStartBuild,
   IStartRun,
   IViewport,
@@ -68,6 +70,7 @@ import {
   screen,
   shell,
 } from 'electron';
+import { autoUpdater } from 'electron-updater';
 import {
   AgentDetector,
   AndroidDriver,
@@ -100,6 +103,9 @@ import {
   PhonePeek,
   ProAccount,
   ProApi,
+  AppUpdater,
+  canUpdateOf,
+  updateFeedOf,
   ProcessOwners,
   ProDownloads,
   ProSync,
@@ -279,9 +285,45 @@ function broadcast(props: {
     | ProSignInProgress
     | IProShare
     | IBuildEvent
-    | IFilingEvent;
+    | IFilingEvent
+    | AppUpdate;
 }): void {
   for (const open of appWindows()) open.webContents.send(props.channel, props.event);
+}
+
+function updaterPort(): IUpdaterPort {
+  return {
+    listen: (listener) => {
+      autoUpdater.logger = null;
+      autoUpdater.autoDownload = true;
+      autoUpdater.autoInstallOnAppQuit = true;
+      autoUpdater.forceDevUpdateConfig = !app.isPackaged;
+
+      if (updateFeed !== null) autoUpdater.setFeedURL(updateFeed);
+
+      autoUpdater.on('update-available', ({ version }) => {
+        listener.available(version);
+      });
+      autoUpdater.on('download-progress', ({ percent }) => {
+        listener.progress(percent);
+      });
+      autoUpdater.on('update-downloaded', ({ version }) => {
+        listener.downloaded(version);
+      });
+      autoUpdater.on('update-not-available', () => {
+        listener.nothing();
+      });
+      autoUpdater.on('error', (error) => {
+        listener.failed(error.message);
+      });
+    },
+    check: async () => {
+      await autoUpdater.checkForUpdates();
+    },
+    install: () => {
+      autoUpdater.quitAndInstall(true, true);
+    },
+  };
 }
 
 async function commandDirectories(): Promise<string[]> {
@@ -371,9 +413,32 @@ const vault = new IntegrationVault({
   fetcher: (url, init) => fetch(url, init),
   github: () => github.status(),
 });
+const updateFeed = updateFeedOf({
+  feedUrl: process.env.QAZINHO_UPDATE_FEED,
+  token: process.env.QAZINHO_UPDATE_TOKEN,
+});
+const appUpdater = new AppUpdater({
+  port: updaterPort(),
+  isAvailable: canUpdateOf({
+    platform: process.platform,
+    isPackaged: app.isPackaged,
+    hasFeed: updateFeed !== null,
+    appImage: process.env.APPIMAGE,
+  }),
+  onChange: (update) => {
+    broadcast({ channel: CHANNELS.appUpdateEvent, event: update });
+  },
+  log: (message) => {
+    appLog.write({ level: 'warn', scope: 'update', message });
+  },
+});
 const proApi = new ProApi({
   baseUrl: PRO_API.url,
   fetcher: (url, init) => fetch(url, init),
+  version: APP_VERSION,
+  onUpdateRequired: () => {
+    appUpdater.require();
+  },
 });
 const proAccount = new ProAccount({
   api: proApi,
@@ -1547,6 +1612,10 @@ void app.whenReady().then(async () => {
     (_event, props: { orgSlug: string; projectId: string }) =>
       proDownloads.download(props),
   );
+  ipcMain.handle(CHANNELS.appUpdate, () => appUpdater.state());
+  ipcMain.handle(CHANNELS.installUpdate, () => {
+    appUpdater.install();
+  });
   ipcMain.handle(CHANNELS.openProPage, async (_event, path: string) => {
     const url = proPageUrlOf({ base: PRO_API.web, path });
 
@@ -1636,6 +1705,7 @@ app.on('will-quit', (event) => {
     return;
   }
 
+  appUpdater.stop();
   live.close();
   replays.close();
   island.close();
