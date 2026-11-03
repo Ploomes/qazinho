@@ -92,7 +92,7 @@ hora.
 **Um caso que passou é andado de novo sem o agente.** As ações de cada passo são gravadas com as
 palavras na tela que o provaram, e a próxima run as repete no dispositivo e confere as palavras:
 segundos e nenhum custo, contra dezenas de segundos e alguns centavos com o agente. Quando o app
-mudou e uma palavra não aparece, o agente anda o caso de novo e o grava outra vez ("curado"). Os
+mudou e uma palavra não aparece, o agente anda o caso de novo e o grava outra vez ("ajustado"). Os
 casos gravados exportam como um arquivo de teste do Playwright ou fluxos do Maestro, gestos
 incluídos. Um Claude Code real gravou um plano web e um Android assim, os dois andados de novo
 sem agente, e o arquivo de Playwright exportado passou no Chrome; os fluxos do Maestro ainda não

@@ -341,7 +341,7 @@ export const en = {
     WATCH_CASE: 'Watch the take of {{id}}',
     TAKE: 'Watch',
     BY_REPLAY_TIP: 'No AI: walked from the recording',
-    BY_HEALED_TIP: 'Healed: the agent recorded it again',
+    BY_HEALED_TIP: 'Adjusted: the agent recorded it again',
     PROOF: 'checked on screen: “{{proof}}”',
     UNWALKED_SKIPPED: 'The step before failed.',
     UNWALKED_UNREPORTED: 'The agent did not report this step.',

@@ -345,7 +345,7 @@ export const pt: typeof en = {
     WATCH_CASE: 'Assistir ao take do {{id}}',
     TAKE: 'Assistir',
     BY_REPLAY_TIP: 'Sem IA: andou pela gravação',
-    BY_HEALED_TIP: 'Curado: o agente gravou de novo',
+    BY_HEALED_TIP: 'Ajustado: o agente gravou de novo',
     PROOF: 'conferido na tela: “{{proof}}”',
     UNWALKED_SKIPPED: 'O passo anterior falhou.',
     UNWALKED_UNREPORTED: 'O agente não relatou este passo.',
