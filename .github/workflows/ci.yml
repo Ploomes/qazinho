@@ -17,7 +17,7 @@ jobs:
       # Nada aqui abre o app, então o binário do Electron é peso morto.
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
           token: ${{ secrets.GH_QAZINHO_TOKEN }}
