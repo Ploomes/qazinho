@@ -625,6 +625,34 @@ pasta de testes do QA. O QAzinho a lê e não muda nada nela:
 - O plano sai de uma conversa, como em qualquer outra fonte: o agente confirma o framework,
   pergunta o que o teste deixa em aberto, e escreve os casos (`role/chat/import.md`).
 
+## A atualização do app
+
+O app instalado se atualiza pelo `electron-updater`, a partir do `Salve-Software/qazinho-releases`,
+sem parar o QA.
+
+- O `AppUpdater` da main procura ao abrir e a cada 4 horas (`APP_UPDATE`), baixa em segundo plano e
+  instala ao fechar. Ele fala com o `electron-updater` por uma porta (`IUpdaterPort`), que a raiz de
+  composição liga, e só anda onde dá para atualizar (`canUpdateOf`): um app instalado e, no Linux,
+  só um AppImage.
+- O endereço vem do `app-update.yml`, que o build grava a partir do `publish` do
+  `electron-builder.yml`; o `UPDATE_REPO` repete o repositório, e um teste os mantém iguais. O
+  `updateFeedOf` só o troca por um feed de teste (`QAZINHO_UPDATE_FEED`) ou por um token enquanto o
+  repositório é privado (`QAZINHO_UPDATE_TOKEN`), então torná-lo público não pede uma versão nova.
+- A página lê o estado pelo `Updates` de `src/services/` (`useUpdateWatch`, `AppUpdate`). Com a
+  versão pronta, o `UpdateButton` aparece na barra de título, desligado enquanto uma run anda.
+- **Não há rollback.** Uma versão ruim se desfaz publicando uma maior.
+- **Uma atualização obrigatória só trava quem tem conta logada.** O `ProApi` manda a versão em todo
+  pedido (`x-qazinho-version`), e a API recusa com 426 uma abaixo do `MIN_DESKTOP_VERSION` dela
+  ([034](https://github.com/Salve-Software/qazinho-server/blob/main/docs/adrs/034-the-api-refuses-a-desktop-too-old.md)).
+  - O `AppUpdater.require` então procura a cada minuto, e a tela vira o `UpdateRequired`, menos com
+    uma run andando, que termina antes.
+  - O app sem conta nunca fala com a API, então nunca trava, nem sem rede. Publique a versão antes,
+    suba o mínimo depois.
+- **Uma instalação pode falhar depois de pronta.** No Mac, o Squirrel só confere a assinatura depois
+  de o `update-downloaded` disparar, e um app que continua aberto depois de pedir a instalação
+  também falhou (`APP_UPDATE.installWaitMs`). O `settle` tira o botão e marca a instalação como
+  quebrada (`isInstallBroken`): o app para de procurar, e o `UpdateRequired` oferece baixar do site.
+
 ## O que a main possui
 
 Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
@@ -642,6 +670,7 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | `ResourceCollector` / `ProcessOwners` | uma varredura de processos (`ps`, ou `WindowsProcesses`), cobrada de quem a iniciou                         |
 | `Archive`                             | os projetos, workspaces e planos do QA em disco, cada um escrito inteiro; um plano quebrado de lado         |
 | `SetupInstaller`                      | instala uma CLI de agente, o idb ou o gh a pedido, transmitindo cada linha que imprime                      |
+| `AppUpdater`                          | procura e baixa uma versão nova em segundo plano, e a instala ao fechar ou quando o QA pede                 |
 | `IntegrationVault`                    | conecta os trackers: o GitHub como a conta do gh, o token do Jira lacrado pelo `safeStorage`                |
 | `ConfluenceApi`                       | lê e publica páginas do Confluence no site do Jira, com o token do Jira                                     |
 | `AgentTerminal`                       | roda a interface de tela cheia de um agente fora de vista: a lê, aperta as teclas dela                      |
@@ -679,5 +708,5 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
   incluído, é empacotado pelo Vite, então é uma devDependency.
 - Uma dependência de runtime em `src/main` vai para todo usuário: hoje o `playwright-core` dirige o
   alvo web, o `yaml` escreve os planos, o `@modelcontextprotocol/sdk` serve as ferramentas do
-  dispositivo, e o `zod` dá formato às respostas (o SDK do MCP o traz de qualquer jeito). Pense
-  duas vezes antes de uma quinta.
+  dispositivo, o `zod` dá formato às respostas (o SDK do MCP o traz de qualquer jeito), e o
+  `electron-updater` atualiza o app. Pense duas vezes antes de uma sexta.

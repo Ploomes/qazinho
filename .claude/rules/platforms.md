@@ -60,6 +60,20 @@ simuladores de iOS só existem num Mac, então o alvo iOS e o idb vivem só lá.
   só, mas o Windows e o Linux iniciam um segundo app a cada abertura; ele sai e traz a janela
   aberta para a frente.
 
+## Atualizando o app
+
+O `electron-updater` atualiza os três, cada um do jeito dele:
+
+| Sistema | O que baixa       | Só o que mudou      | Assinatura                                                |
+| ------- | ----------------- | ------------------- | --------------------------------------------------------- |
+| Mac     | um `.zip`         | a partir da segunda | obrigatória: o Squirrel recusa um app sem assinatura      |
+| Windows | o instalador NSIS | desde a primeira    | ainda nenhuma: sem `publisherName`, vale o sha512 do feed |
+| Linux   | o AppImage        | desde a primeira    | nenhuma; só atualiza quem roda o AppImage (`canUpdateOf`) |
+
+No Mac a primeira atualização vem inteira, porque o `update.zip` de que o download parcial parte só
+existe depois dela. O Windows ganha um `publisherName` assim que houver um certificado, e uma versão
+sem assinatura ainda instala a primeira com assinatura.
+
 ## Provando
 
 - Uma library que difere por plataforma recebe `platform` como parâmetro, e o teste dela cobre

@@ -334,6 +334,18 @@ workspace dele aqui, ou oferece baixar o projeto dele da org primeiro. Testes un
 contra uma plataforma fake; a API da plataforma (qazinho-server) ainda está sendo construída,
 então nenhuma ida e volta real rodou, e nenhum app instalado abriu um link ainda.
 
+**O app se atualiza sozinho, sem parar o QA.** Instalado, ele procura uma versão nova ao abrir e a
+cada 4 horas, baixa em segundo plano e instala ao fechar; quando ela está pronta, um "Atualizar"
+discreto aparece na barra de título. Não há rollback: uma versão ruim se desfaz publicando uma maior.
+Só uma conta logada pode ser obrigada a atualizar: a API recusa uma versão abaixo do mínimo dela, e o
+app vira uma tela que atualiza, menos com uma run andando; sem login nada trava. O
+`tests/smoke/update.test.ts` anda isso no app construído contra um feed e uma API fakes. Um Mac
+instalou de verdade com um certificado descartável: a 0.0.1 achou a 0.0.2 num feed local, baixou,
+mostrou o botão, e o app no disco virou a 0.0.2; uma assinatura recusada tirou o botão. O build real
+gerou neste Mac os feeds dos três sistemas. Ainda não rodou: uma release pelo CI, um Mac notarizado,
+uma instalação no Windows ou no Linux, e a recusa do servidor real com um app logado. O
+`qazinho-releases` nasceu privado e precisa ficar público antes de o primeiro QA instalar.
+
 **O Codex está meio verificado.** O QAzinho o dirige por `codex exec --json` e o servidor MCP
 próprio dele, conferido contra um Codex fake construído a partir dos eventos do real. O chat
 respondeu por um Codex real logado (CLI 0.163.0), no schema estrito; uma run, com as ferramentas de
