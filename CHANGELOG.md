@@ -1,3 +1,10 @@
+## [0.2.1](https://github.com/Salve-Software/qazinho/compare/v0.2.0...v0.2.1) (2026-11-05)
+
+
+### Bug Fixes
+
+* **release:** sign the macOS app ([8e10721](https://github.com/Salve-Software/qazinho/commit/8e1072189b59bcc70d04a15d574fc1109e0fafde))
+
 # [0.2.0](https://github.com/Salve-Software/qazinho/compare/v0.1.0...v0.2.0) (2026-11-05)
 
 
