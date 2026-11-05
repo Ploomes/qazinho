@@ -149,6 +149,7 @@ import {
   fittedBounds,
   imageExtensionOf,
   isInternalNavigation,
+  isOpenableUrl,
   isLostSession,
   isSealable,
   machineDirectories,
@@ -346,6 +347,12 @@ async function openInTerminal(file: string): Promise<boolean> {
 
 const appLog = new AppLog({ folder: PATHS.logs, home: homedir() });
 
+async function openOutside(url: string): Promise<void> {
+  if (isOpenableUrl(url)) return shell.openExternal(url);
+
+  appLog.write({ level: 'warn', scope: 'main', message: `Refused to open ${url}` });
+}
+
 process.on('uncaughtException', (error) => {
   appLog.write({ level: 'error', scope: 'main', message: error.stack ?? error.message });
 });
@@ -370,7 +377,7 @@ const repos = new GithubRepos({ github });
 const codeCopies = new CodeCopies({ github, root: PATHS.code });
 const mcp = new AgentMcp({
   findAgent: (agentId) => findCommand(agentId),
-  openUrl: (url) => shell.openExternal(url),
+  openUrl: (url) => openOutside(url),
   openScript: (file) => openInTerminal(file),
   onProgress: (progress) =>
     broadcast({ channel: CHANNELS.mcpSignInEvent, event: progress }),
@@ -447,7 +454,7 @@ const proAccount = new ProAccount({
   cipher: keychain,
   file: PATHS.pro,
   machineName: hostname(),
-  openUrl: (url) => shell.openExternal(url),
+  openUrl: (url) => openOutside(url),
   wait: (ms) => sleep(ms),
   now: () => Date.now(),
   onProgress: (progress) =>
@@ -1329,7 +1336,7 @@ function createWindow(): void {
   });
 
   window.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith('https:')) void shell.openExternal(url);
+    void openOutside(url);
     return { action: 'deny' };
   });
 
@@ -1624,7 +1631,7 @@ void app.whenReady().then(async () => {
 
     if (url === null) return false;
 
-    await shell.openExternal(url);
+    await openOutside(url);
 
     return true;
   });

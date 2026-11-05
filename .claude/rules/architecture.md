@@ -53,8 +53,10 @@ Toda `BrowserWindow` recebe `contextIsolation: true`, `sandbox: true` e `nodeInt
   `window.qazinhoRecorder` no lugar de `window.qazinho`.
 - O `will-navigate` é cancelado a menos que o `isInternalNavigation` diga que o destino é o
   próprio app.
-- O `window.open` nunca abre uma janela: links `https:` vão para o navegador do sistema, todo o
-  resto é negado.
+- O `window.open` nunca abre uma janela: um link vai para o navegador do sistema, todo o resto é
+  negado. Tudo o que o app abre fora dele, o que um agente pede ao `$BROWSER` e a página que a API
+  manda abrir incluídos, passa pelo `isOpenableUrl`: https, ou http só nesta máquina. Um outro
+  esquema entregaria o endereço a um programa qualquer do SO, como o `ms-msdt:` no Windows.
 - **O login de um MCP nunca passa pelo QAzinho.** O MCP do Figma vive no agente do próprio QA,
   Claude Code ou Codex: o QAzinho o adiciona lá e roda o login do próprio agente, e o token fica
   com o agente. Os comandos de cada agente são uma receita em `MCP_RECIPES`.

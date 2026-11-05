@@ -10,6 +10,7 @@ export * from './hydrateShellPath';
 export * from './imageExtensionOf';
 export * from './isInternalNavigation';
 export * from './isLostSession';
+export * from './isOpenableUrl';
 export * from './isSealable';
 export * from './linuxTerminalOf';
 export * from './machineDirectories';
