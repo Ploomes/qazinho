@@ -29,6 +29,7 @@ import {
   removalOf,
   runBodyOf,
   runFilesOf,
+  isSkippedEvidence,
   stateOfRefusal,
 } from './library';
 
@@ -739,7 +740,11 @@ export class ProSync {
         body: { ...kind, size: facts.size, sha256: facts.sha256 },
       });
 
-      if (!answer.isOk) return stateOfRefusal(answer);
+      if (!answer.isOk) {
+        if (isSkippedEvidence(answer.error)) continue;
+
+        return stateOfRefusal(answer);
+      }
 
       const isUploaded = await this.upload({
         url: answer.value.uploadUrl,

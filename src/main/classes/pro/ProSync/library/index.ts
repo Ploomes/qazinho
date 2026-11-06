@@ -3,6 +3,7 @@ export * from './bugFilesOf';
 export * from './evidenceKindOf';
 export * from './hashOf';
 export * from './healedPlansOf';
+export * from './isSkippedEvidence';
 export * from './movedPlansOf';
 export * from './pendingPlansOf';
 export * from './planBodyOf';

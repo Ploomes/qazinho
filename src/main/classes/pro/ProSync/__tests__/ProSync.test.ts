@@ -315,6 +315,25 @@ function renamed(batch: IProSyncBatch, name = 'Checkout com Pix e cartão') {
 }
 
 describe('ProSync', () => {
+  // Uma org sem espaço, ou um vídeo grande demais, não pode travar o resto: as runs e os
+  // bugs continuam chegando, só sem aquele arquivo.
+  it('goes on without a file the org has no room for, and still sends the runs and bugs', async () => {
+    const { api, methods } = fakeApi((call) =>
+      call.method === 'evidenceUpload'
+        ? { isOk: false, status: 409, error: 'evidence_full' }
+        : null,
+    );
+    const { uploaded, publish } = await syncWith({ api });
+
+    const published = await publish();
+
+    expect(published).toMatchObject({ state: 'synced' });
+    expect(uploaded).toEqual([]);
+    expect(methods()).toEqual(
+      expect.arrayContaining(['syncRun', 'syncBug', 'syncRecordings']),
+    );
+  });
+
   it('sends nothing on its own: a project never published stays here, signed in or not', async () => {
     const { api, sent } = fakeApi();
     const signedIn = await syncWith({ api });
