@@ -158,6 +158,52 @@ export const Plan: React.FC = () => {
             </div>
           </div>
 
+          {source !== null && (
+            <div className="plan__source">
+              <span className="plan__source-mark" aria-hidden="true" />
+              {source}
+            </div>
+          )}
+
+          {publishedOn !== null && (
+            <a
+              className="plan__source plan__source--link"
+              href={publishedOn.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span className="plan__source-mark" aria-hidden="true" />
+              {publishedOn.text}
+              <Icon name="external" />
+            </a>
+          )}
+
+          {story !== null && (
+            <a
+              className="plan__source plan__source--link"
+              href={story.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span className="plan__source-mark" aria-hidden="true" />
+              {story.text}
+              <Icon name="external" />
+            </a>
+          )}
+
+          {page !== null && (
+            <a
+              className="plan__source plan__source--link"
+              href={page.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span className="plan__source-mark" aria-hidden="true" />
+              {page.text}
+              <Icon name="external" />
+            </a>
+          )}
+
           <AnimatePresence initial={false}>
             {exportNotice !== null && (
               <motion.div
@@ -288,52 +334,6 @@ export const Plan: React.FC = () => {
               </motion.div>
             )}
           </AnimatePresence>
-
-          {publishedOn !== null && (
-            <a
-              className="plan__source plan__source--link"
-              href={publishedOn.url}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <span className="plan__source-mark" aria-hidden="true" />
-              {publishedOn.text}
-              <Icon name="external" />
-            </a>
-          )}
-
-          {story !== null && (
-            <a
-              className="plan__source plan__source--link"
-              href={story.url}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <span className="plan__source-mark" aria-hidden="true" />
-              {story.text}
-              <Icon name="external" />
-            </a>
-          )}
-
-          {page !== null && (
-            <a
-              className="plan__source plan__source--link"
-              href={page.url}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <span className="plan__source-mark" aria-hidden="true" />
-              {page.text}
-              <Icon name="external" />
-            </a>
-          )}
-
-          {source !== null && (
-            <div className="plan__source">
-              <span className="plan__source-mark" aria-hidden="true" />
-              {source}
-            </div>
-          )}
 
           {isLocked && (
             <div className="plan__locked">

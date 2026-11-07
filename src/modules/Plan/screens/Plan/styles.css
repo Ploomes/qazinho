@@ -80,6 +80,11 @@
 
 .plan__export {
   overflow: hidden;
+  margin-top: calc(var(--space-5) * -1);
+}
+
+.plan__export > .plan__export-body {
+  margin-top: var(--space-5);
 }
 
 .plan__export-body {
