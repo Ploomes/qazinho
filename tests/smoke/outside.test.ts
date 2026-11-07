@@ -288,15 +288,16 @@ describe('an outside agent', () => {
     expect(said.isError).toBe(true);
   });
 
-  // Apagar espera o QA num cartão; sem resposta, a ferramenta responde antes do limite de 60
-  // segundos de um cliente de MCP, e nada some.
-  it('asks the QA before deleting, and deletes nothing while they have not answered', async () => {
-    const said = await tool('delete_project', { project: 'p-1' });
+  // O agente de fora pergunta ao usuário no chat dele antes; aqui a mudança cai no app.
+  it('renames a workspace the agent was told to, in the app itself', async () => {
+    const said = await tool('rename_workspace', {
+      workspace: 'w-1',
+      name: 'Compra nova',
+    });
 
     expect(said.isError).toBe(false);
-    expect(said.text).toContain('has not answered the card');
-    expect((await tool('list_workspaces')).text).toContain('Loja');
-  }, 90_000);
+    expect((await tool('list_workspaces')).text).toContain('Compra nova');
+  });
 
   it('comes back on the same address after being turned off and on', async () => {
     await client.close();

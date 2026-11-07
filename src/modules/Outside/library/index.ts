@@ -5,4 +5,3 @@ export * from './failedCallsOf';
 export * from './performOutsideTool';
 export * from './isOutsideChange';
 export * from './performOutsideChange';
-export * from './withinWait';

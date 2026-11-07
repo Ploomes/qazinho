@@ -550,14 +550,10 @@ O local é desligado até o QA ligá-lo. É o caminho inverso do resto do app: a
 - Tudo o que uma ferramenta responde veio do app testado, e o agente de fora tem shell e o código do
   QA. A descrição de cada uma diz que é dado, e um valor de variável nunca passa: as runs já os guardam
   como `${NAME}`, e nenhuma ferramenta lê o `VariableVault`.
-- **O que muda ou apaga espera o QA** (`OUTSIDE_CHANGES`, `performOutsideChange`). O plano muda pelo
-  `changePlan`, com o cartão de plano no chat; o resto vai pelas ferramentas do Estagiário, que ele
-  empresta pela `useAppToolStore` (`perform`, `confirm`). Alterar um projeto, renomear um workspace,
-  fechar um bug e alterar ou apagar casos pedem um cartão antes; apagar e mandar um bug já pedem dentro
-  do Estagiário. O cartão sai no painel do Estagiário marcado `from: 'outside'`, e o `stopOpen` não o
-  vence quando o turno do Estagiário para. A resposta vem em até 45 segundos (`withinWait`,
-  `OUTSIDE_WAIT`), abaixo do limite dos clientes de MCP; sem ela, a mudança segue e acontece só quando
-  o QA confirma.
+- **O agente de fora pergunta ao usuário antes de mudar ou apagar**, no chat dele, com a ferramenta de
+  perguntar que ele já tem: a descrição de cada ferramenta que muda (`OUTSIDE_CHANGES`) diz isso, e o
+  QAzinho não abre cartão. O plano muda pelo `changePlan`, com o cartão de plano no chat; o resto vai
+  pelas ferramentas do Estagiário, que ele empresta pela `useAppToolStore` já confirmadas.
 - O `ask_workspace_chat` escreve no chat de um workspace como o QA, e o `read_workspace_chat` lê o que o
   agente respondeu, segurando como o `run_status`. A mensagem guarda `from: 'agent'`, a linha dela mostra
   as estrelinhas e "Seu agente", e o agente do chat a lê com a seção `Who wrote this message`

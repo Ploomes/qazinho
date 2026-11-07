@@ -2,12 +2,8 @@ import type { IOutsidePort } from '@/modules/Outside/types';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useChatAgent } from '@/modules/Chat';
-import { OUTSIDE_SAYS, OUTSIDE_WAIT } from '@/modules/Outside/constants';
-import {
-  isOutsideChange,
-  performOutsideTool,
-  withinWait,
-} from '@/modules/Outside/library';
+import { OUTSIDE_SAYS } from '@/modules/Outside/constants';
+import { performOutsideTool } from '@/modules/Outside/library';
 import { useRunActions } from '@/modules/Run';
 import { PLATFORM_LABEL } from '@/modules/Workspace';
 import { Outside, Run } from '@/services';
@@ -116,13 +112,6 @@ export const useOutsideCalls = () => {
           ? Promise.resolve({ text: OUTSIDE_SAYS.opening, isError: true })
           : perform({ id: `outside-${crypto.randomUUID()}`, call });
       },
-      confirm: (ask) => {
-        const { confirm } = useAppToolStore.getState();
-
-        return confirm === null
-          ? Promise.resolve('expired' as const)
-          : confirm({ id: `outside-${crypto.randomUUID()}`, ...ask });
-      },
       changePlan: (change) => {
         useWorkspaceStore.getState().changePlan(change);
       },
@@ -132,17 +121,7 @@ export const useOutsideCalls = () => {
     };
 
     return Outside.onCall(({ id, call }) => {
-      const work = performOutsideTool({ call, port });
-
-      void (
-        isOutsideChange(call)
-          ? withinWait({
-              work,
-              ms: OUTSIDE_WAIT.confirmAnswerMs,
-              pending: OUTSIDE_SAYS.pending,
-            })
-          : work
-      )
+      void performOutsideTool({ call, port })
         .catch((reason: unknown) => ({
           text: `QAzinho could not do it: ${reason instanceof Error ? reason.message : String(reason)}`,
           isError: true,

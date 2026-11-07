@@ -1,4 +1,4 @@
-import type { ConfirmDecision, IToolDone } from '@/modules/Assistant/types';
+import type { IToolDone } from '@/modules/Assistant/types';
 import type { IOutsidePort } from '@/modules/Outside/types';
 import type { IWorkspace } from '@/modules/Workspace';
 import type { OutsideToolCall } from '@/shared/types';
@@ -22,14 +22,9 @@ type ChangeCall = Extract<
   }
 >;
 
-const REFUSED: Record<Exclude<ConfirmDecision, 'confirmed'>, string> = {
-  kept: 'The QA said no on the card in QAzinho, so nothing changed.',
-  expired: 'The QA did not answer the card in QAzinho in time, so nothing changed.',
-};
-
 /**
- * Muda o que o QA tem a pedido de um agente de fora; o que muda ou apaga espera o QA
- * confirmar num cartão.
+ * Muda o que o QA tem a pedido de um agente de fora, que já perguntou ao usuário no chat
+ * dele antes de mudar ou apagar.
  */
 export async function performOutsideChange(props: {
   call: ChangeCall;
@@ -55,19 +50,9 @@ export async function performOutsideChange(props: {
     case 'delete_workspace':
     case 'explore_app':
     case 'send_bug':
-      return port.perform(call);
     case 'rename_workspace':
-      return afterConfirm({
-        port,
-        ask: {
-          action: 'rename_workspace',
-          subject: workspace.name,
-          detail: call.args.name,
-        },
-        then: () => port.perform(call),
-      });
     case 'dismiss_bug':
-      return dismissBug({ workspace, call, port });
+      return port.perform(call);
     case 'add_cases':
       return addCases({ workspace, call, port });
     case 'update_cases':
@@ -75,24 +60,6 @@ export async function performOutsideChange(props: {
     case 'delete_cases':
       return deleteCases({ workspace, call, port });
   }
-}
-
-async function afterConfirm(props: {
-  port: IOutsidePort;
-  ask: {
-    action: Parameters<IOutsidePort['confirm']>[0]['action'];
-    subject: string;
-    detail?: string;
-    count?: number;
-  };
-  then: () => Promise<IToolDone> | IToolDone;
-}): Promise<IToolDone> {
-  const { port, ask } = props;
-  const decision = await port.confirm({ ...ask, count: ask.count ?? 0 });
-
-  if (decision !== 'confirmed') return { text: REFUSED[decision], isError: false };
-
-  return props.then();
 }
 
 function updateProject(props: {
@@ -108,45 +75,14 @@ function updateProject(props: {
 
   if (!found.isFound) return { text: found.text, isError: true };
 
-  const changes = (['name', 'web', 'android', 'ios'] as const).flatMap((field) => {
-    const value = call.args[field];
-
-    return value === undefined
-      ? []
-      : [value === '' ? `${field}: removed` : `${field}: ${value}`];
-  });
-
-  if (changes.length === 0)
+  if (
+    [call.args.name, call.args.web, call.args.android, call.args.ios].every(
+      (value) => value === undefined,
+    )
+  )
     return { text: 'Name what changes: name, web, android or ios.', isError: true };
 
-  return afterConfirm({
-    port,
-    ask: {
-      action: 'update_project',
-      subject: found.item.name,
-      detail: changes.join(' · '),
-    },
-    then: () => port.perform(call),
-  });
-}
-
-function dismissBug(props: {
-  workspace: IWorkspace;
-  call: Extract<ChangeCall, { name: 'dismiss_bug' }>;
-  port: IOutsidePort;
-}): Promise<IToolDone> | IToolDone {
-  const { workspace, call, port } = props;
-  const bug = workspace.bugs.find(
-    ({ id }) => id.toLowerCase() === call.args.bug.trim().toLowerCase(),
-  );
-
-  if (bug === undefined || call.args.reopen === true) return port.perform(call);
-
-  return afterConfirm({
-    port,
-    ask: { action: 'dismiss_bug', subject: `${bug.id} “${bug.title}”` },
-    then: () => port.perform(call),
-  });
+  return port.perform(call);
 }
 
 function addCases(props: {
@@ -177,11 +113,11 @@ function addCases(props: {
   });
 }
 
-async function updateCases(props: {
+function updateCases(props: {
   workspace: IWorkspace;
   call: Extract<ChangeCall, { name: 'update_cases' }>;
   port: IOutsidePort;
-}): Promise<IToolDone> {
+}): IToolDone {
   const { workspace, call, port } = props;
   const busy = busyOf(workspace);
 
@@ -196,27 +132,14 @@ async function updateCases(props: {
       isError: true,
     };
 
-  return afterConfirm({
-    port,
-    ask: {
-      action: 'update_cases',
-      subject: workspace.name,
-      detail: ids.join(', '),
-      count: ids.length,
-    },
-    then: () => {
-      const now = currentOf({ workspace, port });
-
-      return landPlan({ workspace: now, cases: call.args.cases, port, said: 'Changed' });
-    },
-  });
+  return landPlan({ workspace, cases: call.args.cases, port, said: 'Changed' });
 }
 
-async function deleteCases(props: {
+function deleteCases(props: {
   workspace: IWorkspace;
   call: Extract<ChangeCall, { name: 'delete_cases' }>;
   port: IOutsidePort;
-}): Promise<IToolDone> {
+}): IToolDone {
   const { workspace, call, port } = props;
   const busy = busyOf(workspace);
 
@@ -231,26 +154,14 @@ async function deleteCases(props: {
       isError: true,
     };
 
-  return afterConfirm({
-    port,
-    ask: {
-      action: 'delete_cases',
-      subject: workspace.name,
-      detail: ids.join(', '),
-      count: ids.length,
-    },
-    then: () => {
-      const now = currentOf({ workspace, port });
-      const plan = now.plan.filter(({ id }) => !ids.includes(id));
+  const plan = workspace.plan.filter(({ id }) => !ids.includes(id));
 
-      port.changePlan({ workspaceId: now.id, plan });
+  port.changePlan({ workspaceId: workspace.id, plan });
 
-      return {
-        text: `Deleted ${ids.join(', ')} from ${now.id} "${now.name}". Its plan has ${countOf({ amount: plan.length, noun: 'case' })}.`,
-        isError: false,
-      };
-    },
-  });
+  return {
+    text: `Deleted ${ids.join(', ')} from ${workspace.id} "${workspace.name}". Its plan has ${countOf({ amount: plan.length, noun: 'case' })}.`,
+    isError: false,
+  };
 }
 
 function landPlan(props: {
@@ -291,13 +202,6 @@ function busyOf(workspace: IWorkspace): IToolDone | null {
         isError: true,
       }
     : null;
-}
-
-function currentOf(props: { workspace: IWorkspace; port: IOutsidePort }): IWorkspace {
-  return (
-    props.port.read().workspaces.find(({ id }) => id === props.workspace.id) ??
-    props.workspace
-  );
 }
 
 function planIds(workspace: IWorkspace): string {

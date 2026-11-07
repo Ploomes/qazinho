@@ -202,9 +202,7 @@ altera e apaga casos do plano, troca o alvo de um projeto, roda o plano ou uma e
 resultado, lê o que quebrou (as telas como arquivos, as chamadas de API que falharam e o que
 responderam), fecha ou manda um bug ao tracker, e conversa com o chat do workspace como o QA. A
 mensagem dele aparece no chat marcada com as estrelinhas, "Seu agente", e o agente do QAzinho sabe
-que não foi o QA quem escreveu. O que muda ou apaga espera o QA num cartão do Estagiário, marcado
-como pedido pelo agente de código; a ferramenta responde em até 45 segundos e, sem resposta, a
-mudança acontece só quando o QA confirmar. Nenhuma ferramenta mexe em variáveis, configurações ou
+que não foi o QA quem escreveu. Antes de mudar ou apagar, a descrição da ferramenta manda o agente perguntar ao usuário no chat dele, com a ferramenta de perguntar que ele já tem, e só chamar depois do sim; o QAzinho não abre cartão. Nenhuma ferramenta mexe em variáveis, configurações ou
 integrações, nem lê um segredo, e o app não vem à frente. O QAzinho adiciona o servidor ao Claude
 Code ou ao Codex em um clique, ou copia o endereço para outro agente. Um Claude Code real (Haiku),
 de fora, achou um 500 plantado numa loja em 20 segundos e menos de dois centavos: rodou o plano,

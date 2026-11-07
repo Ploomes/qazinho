@@ -1,4 +1,3 @@
-import type { ConfirmDecision } from '@/modules/Assistant/types';
 import type { IOutsidePort } from '@/modules/Outside/types';
 import type { ITestCase } from '@/modules/Plan';
 import type { IProject } from '@/modules/Project';
@@ -34,7 +33,6 @@ function appWith(props: {
   startedId?: string | null;
   onWait?: () => IWorkspace[];
   askingIds?: string[];
-  decision?: ConfirmDecision;
   onChat?: () => { workspaces: IWorkspace[]; askingIds: string[] };
 }) {
   let workspaces = props.workspaces ?? [makeWorkspace()];
@@ -46,7 +44,6 @@ function appWith(props: {
   const added: IWorkspace[] = [];
   const chatted: unknown[] = [];
   const performed: AppToolCall[] = [];
-  const asked: unknown[] = [];
   const plans: { workspaceId: string; plan: ITestCase[] }[] = [];
   let askingIds = props.askingIds ?? [];
   const port: IOutsidePort = {
@@ -94,11 +91,6 @@ function appWith(props: {
 
       return Promise.resolve({ text: `did ${one.name}`, isError: false });
     },
-    confirm: (ask) => {
-      asked.push(ask);
-
-      return Promise.resolve(props.decision ?? 'confirmed');
-    },
     changePlan: (change) => {
       plans.push(change);
       workspaces = workspaces.map((one) =>
@@ -120,7 +112,6 @@ function appWith(props: {
     added,
     chatted,
     performed,
-    asked,
     plans,
   };
 }
@@ -557,6 +548,7 @@ describe('performOutsideTool', () => {
     });
   });
 
+  // O agente de fora pergunta ao usuário no chat dele antes de chamar: aqui a mudança é feita.
   describe('changing what the QA keeps', () => {
     const CASE = {
       title: 'Coupon',
@@ -568,7 +560,7 @@ describe('performOutsideTool', () => {
       ],
     };
 
-    it('adds new cases to the plan at once, after the ones it has', async () => {
+    it('adds new cases to the plan, after the ones it has', async () => {
       const app = appWith({});
 
       const done = await call(
@@ -577,7 +569,6 @@ describe('performOutsideTool', () => {
       );
 
       expect(done.isError).toBe(false);
-      expect(app.asked).toEqual([]);
       expect(app.plans[0]?.plan.map(({ id }) => id)).toEqual(['TC-01', 'TC-02', 'TC-03']);
       expect(done.text).toContain('Added TC-03 "Coupon"');
     });
@@ -598,7 +589,7 @@ describe('performOutsideTool', () => {
       expect(app.plans).toEqual([]);
     });
 
-    it('changes a case only after the QA confirms it, in its place', async () => {
+    it('rewrites a case in its place', async () => {
       const app = appWith({});
 
       const done = await call(
@@ -609,9 +600,6 @@ describe('performOutsideTool', () => {
         app,
       );
 
-      expect(app.asked).toEqual([
-        expect.objectContaining({ action: 'update_cases', detail: 'TC-02', count: 1 }),
-      ]);
       expect(app.plans[0]?.plan.map(({ id, title }) => `${id} ${title}`)).toEqual([
         'TC-01 Open the store and find a product',
         'TC-02 Coupon',
@@ -619,23 +607,37 @@ describe('performOutsideTool', () => {
       expect(done.text).toContain('Changed TC-02 "Coupon"');
     });
 
-    it('leaves the plan as it was when the QA keeps it', async () => {
-      const app = appWith({ decision: 'kept' });
+    it('refuses to rewrite a case the plan lacks, or one with no id', async () => {
+      const app = appWith({});
 
-      const done = await call(
-        { name: 'delete_cases', args: { workspace: 'w1', cases: ['tc-01'] } },
+      const unknown = await call(
+        {
+          name: 'update_cases',
+          args: { workspace: 'w1', cases: [{ ...CASE, id: 'TC-09' }] },
+        },
+        app,
+      );
+      const bare = await call(
+        { name: 'update_cases', args: { workspace: 'w1', cases: [CASE] } },
         app,
       );
 
+      expect(unknown).toMatchObject({
+        isError: true,
+        text: expect.stringContaining('TC-09') as string,
+      });
+      expect(bare).toMatchObject({
+        isError: true,
+        text: expect.stringContaining('has no id') as string,
+      });
       expect(app.plans).toEqual([]);
-      expect(done.text).toContain('said no');
     });
 
-    it('deletes cases once confirmed, and refuses one the plan lacks before asking', async () => {
+    it('deletes cases, and refuses one the plan lacks', async () => {
       const app = appWith({});
 
       const gone = await call(
-        { name: 'delete_cases', args: { workspace: 'w1', cases: ['TC-01'] } },
+        { name: 'delete_cases', args: { workspace: 'w1', cases: ['tc-01'] } },
         app,
       );
       const unknown = await call(
@@ -646,7 +648,7 @@ describe('performOutsideTool', () => {
       expect(app.plans[0]?.plan.map(({ id }) => id)).toEqual(['TC-02']);
       expect(gone.text).toContain('Deleted TC-01');
       expect(unknown.isError).toBe(true);
-      expect(app.asked).toHaveLength(1);
+      expect(app.plans).toHaveLength(1);
     });
 
     it('does NOT change the plan while a run walks it', async () => {
@@ -661,89 +663,33 @@ describe('performOutsideTool', () => {
       expect(app.plans).toEqual([]);
     });
 
-    it('changes a project through the assistant only after the QA confirms what changes', async () => {
+    it('asks for something to change in a project before touching it', async () => {
       const app = appWith({});
-      const change: OutsideToolCall = {
-        name: 'update_project',
-        args: { project: 'Loja', web: 'https://staging.shop.test' },
-      };
 
-      await call(change, app);
+      const done = await call({ name: 'update_project', args: { project: 'Loja' } }, app);
 
-      expect(app.asked).toEqual([
-        expect.objectContaining({
-          action: 'update_project',
-          subject: 'Loja',
-          detail: 'web: https://staging.shop.test',
-        }),
-      ]);
-      expect(app.performed).toEqual([change]);
-    });
-
-    it('does NOT touch the project when the QA lets the card go unanswered', async () => {
-      const app = appWith({ decision: 'expired' });
-
-      const done = await call(
-        { name: 'update_project', args: { project: 'Loja', name: 'Shop' } },
-        app,
-      );
-
+      expect(done.isError).toBe(true);
       expect(app.performed).toEqual([]);
-      expect(done.text).toContain('did not answer');
     });
 
-    it('asks before renaming a workspace, naming the new name', async () => {
+    it('hands project, workspace, exploring and bug changes to the same paths as the Intern', async () => {
       const app = appWith({});
-
-      await call(
+      const changes: OutsideToolCall[] = [
+        {
+          name: 'update_project',
+          args: { project: 'Loja', web: 'https://staging.shop.test' },
+        },
         { name: 'rename_workspace', args: { workspace: 'w1', name: 'Payments' } },
-        app,
-      );
+        { name: 'explore_app', args: { workspace: 'w1' } },
+        { name: 'dismiss_bug', args: { workspace: 'w1', bug: 'BUG-01' } },
+        { name: 'send_bug', args: { workspace: 'w1', bug: 'BUG-01' } },
+        { name: 'delete_workspace', args: { workspace: 'w1' } },
+        { name: 'delete_project', args: { project: 'Loja' } },
+      ];
 
-      expect(app.asked).toEqual([
-        expect.objectContaining({
-          action: 'rename_workspace',
-          subject: 'Checkout regression',
-          detail: 'Payments',
-        }),
-      ]);
-      expect(app.performed).toHaveLength(1);
-    });
+      for (const change of changes) await call(change, app);
 
-    // O assistente já pede ao QA antes de apagar ou mandar: um segundo cartão seria demais.
-    it('hands deleting, sending and exploring to the assistant, which asks the QA itself', async () => {
-      const app = appWith({});
-
-      await call({ name: 'delete_workspace', args: { workspace: 'w1' } }, app);
-      await call({ name: 'explore_app', args: { workspace: 'w1' } }, app);
-      await call({ name: 'delete_project', args: { project: 'Loja' } }, app);
-
-      expect(app.asked).toEqual([]);
-      expect(app.performed.map(({ name }) => name)).toEqual([
-        'delete_workspace',
-        'explore_app',
-        'delete_project',
-      ]);
-    });
-
-    it('closes a bug only after the QA confirms, and opens one again without asking', async () => {
-      const bugs = walkRun({ verdicts: ['failed'], isFinished: true }).bugs;
-      const app = appWith({ workspaces: [{ ...makeWorkspace(), bugs }] });
-      const bugId = bugs[0]?.id ?? '';
-
-      await call({ name: 'dismiss_bug', args: { workspace: 'w1', bug: bugId } }, app);
-      await call(
-        { name: 'dismiss_bug', args: { workspace: 'w1', bug: bugId, reopen: true } },
-        app,
-      );
-
-      expect(app.asked).toEqual([
-        expect.objectContaining({
-          action: 'dismiss_bug',
-          subject: expect.stringContaining(bugId) as string,
-        }),
-      ]);
-      expect(app.performed).toHaveLength(2);
+      expect(app.performed).toEqual(changes);
     });
   });
 });
