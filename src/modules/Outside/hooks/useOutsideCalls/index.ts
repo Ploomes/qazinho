@@ -1,11 +1,14 @@
 import type { IOutsidePort } from '@/modules/Outside/types';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { performOutsideTool } from '@/modules/Outside/library';
 import { useRunActions } from '@/modules/Run';
+import { PLATFORM_LABEL } from '@/modules/Workspace';
 import { Outside, Run } from '@/services';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useOutsideCalls = () => {
+  const { t } = useTranslation();
   const { beginRun, stopWorkspace } = useRunActions();
 
   useEffect(() => {
@@ -16,6 +19,13 @@ export const useOutsideCalls = () => {
         workspaces: useWorkspaceStore.getState().workspaces,
       }),
       now: () => Date.now(),
+      targetLabel: (kind) => t(PLATFORM_LABEL[kind]),
+      putProject: (project) => {
+        useAppStore.getState().putProject(project);
+      },
+      addWorkspace: (workspace) => {
+        useWorkspaceStore.getState().addWorkspace(workspace);
+      },
       startRun: beginRun,
       stopWorkspace,
       waitForRun: ({ workspaceId, ms }) =>
@@ -60,5 +70,5 @@ export const useOutsideCalls = () => {
           Outside.answer({ id, text, isError });
         });
     });
-  }, [beginRun, stopWorkspace]);
+  }, [beginRun, stopWorkspace, t]);
 };

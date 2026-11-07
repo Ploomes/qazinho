@@ -162,6 +162,8 @@ describe('an outside agent', () => {
     expect(tools.map(({ name }) => name)).toEqual([
       'list_workspaces',
       'workspace_details',
+      'create_project',
+      'create_workspace',
       'start_run',
       'run_status',
       'stop_run',

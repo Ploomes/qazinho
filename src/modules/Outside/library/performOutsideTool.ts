@@ -1,5 +1,6 @@
 import type { IToolDone } from '@/modules/Assistant/types';
 import type { IOutsidePort } from '@/modules/Outside/types';
+import type { IProject } from '@/modules/Project';
 import type { IWorkspace } from '@/modules/Workspace';
 import type { OutsideToolCall } from '@/shared/types';
 import {
@@ -7,7 +8,10 @@ import {
   describeBug,
   describeWorkspace,
   findByRef,
+  newWorkspaceIn,
+  projectTargetsOf,
 } from '@/modules/Assistant/library';
+import { newProjectId } from '@/modules/Project/library';
 import { flattenPlanSteps } from '@/modules/Run/library';
 import { describeRunStatus } from './describeRunStatus';
 import { describeWorkspaces } from './describeWorkspaces';
@@ -31,6 +35,10 @@ export async function performOutsideTool(props: {
 
   if (call.name === 'list_workspaces')
     return { text: describeWorkspaces(state), isError: false };
+
+  if (call.name === 'create_project') return createProject({ args: call.args, port });
+
+  if (call.name === 'create_workspace') return createWorkspace({ args: call.args, port });
 
   const found = findByRef({
     items: state.workspaces,
@@ -194,4 +202,58 @@ async function statusOf(props: {
     isGoing || runId === null ? null : await port.networkOf({ workspaceId, runId });
 
   return describeRunStatus({ workspace, runId: wanted, network, now: port.now() });
+}
+
+function createProject(props: {
+  args: Extract<OutsideToolCall, { name: 'create_project' }>['args'];
+  port: IOutsidePort;
+}): IToolDone {
+  const { args, port } = props;
+  const read = projectTargetsOf({ values: args, labelOf: port.targetLabel });
+
+  if (!read.isOk) return { text: read.text, isError: true };
+
+  const project: IProject = {
+    id: newProjectId(port.now()),
+    name: args.name,
+    targets: read.targets,
+    repositories: [],
+  };
+
+  port.putProject(project);
+
+  return {
+    text: `Created project ${project.id} "${project.name}" on ${read.targets.map(({ kind, value }) => `${kind} ${value}`).join(', ')}. Create a workspace in it with create_workspace.`,
+    isError: false,
+  };
+}
+
+function createWorkspace(props: {
+  args: Extract<OutsideToolCall, { name: 'create_workspace' }>['args'];
+  port: IOutsidePort;
+}): IToolDone {
+  const { args, port } = props;
+  const found = findByRef({
+    items: port.read().projects,
+    ref: args.project,
+    noun: 'project',
+  });
+
+  if (!found.isFound) return { text: found.text, isError: true };
+
+  const made = newWorkspaceIn({
+    project: found.item,
+    name: args.name,
+    kind: args.target,
+    now: port.now(),
+  });
+
+  if (!made.isOk) return { text: made.text, isError: true };
+
+  port.addWorkspace(made.workspace);
+
+  return {
+    text: `Created workspace ${made.workspace.id} "${made.workspace.name}" in ${found.item.id} on ${made.target.kind}. Its plan is empty: suggest its first cases with suggest_cases, and tell the QA to take them to the plan in QAzinho before you run it.`,
+    isError: false,
+  };
 }

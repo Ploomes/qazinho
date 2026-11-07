@@ -1,4 +1,5 @@
 import type { IOutsidePort } from '@/modules/Outside/types';
+import type { IProject } from '@/modules/Project';
 import type { IWorkspace } from '@/modules/Workspace';
 import type { INetworkEntry, OutsideToolCall } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
@@ -36,6 +37,8 @@ function appWith(props: {
   const stopped: string[] = [];
   const suggested: unknown[] = [];
   const waited: number[] = [];
+  const projects: IProject[] = [];
+  const added: IWorkspace[] = [];
   const port: IOutsidePort = {
     read: () => ({
       isLoaded: props.isLoaded ?? true,
@@ -43,6 +46,13 @@ function appWith(props: {
       workspaces,
     }),
     now: () => NOW,
+    targetLabel: (kind) => kind,
+    putProject: (project) => {
+      projects.push(project);
+    },
+    addWorkspace: (workspace) => {
+      added.push(workspace);
+    },
     startRun: (run) => {
       started.push(run);
 
@@ -64,7 +74,7 @@ function appWith(props: {
     },
   };
 
-  return { port, started, stopped, suggested, waited };
+  return { port, started, stopped, suggested, waited, projects, added };
 }
 
 const call = (one: OutsideToolCall, app: ReturnType<typeof appWith>) =>
@@ -331,5 +341,92 @@ describe('performOutsideTool', () => {
 
     expect(app.suggested).toEqual([{ workspaceId: 'w1', summary: 'New coupon', cases }]);
     expect(done.text).toContain('They reach the plan only when the QA takes them');
+  });
+
+  describe('creating what an app QAzinho does not know yet needs', () => {
+    // Um agente num app sem projeto não tinha o que rodar nem como criar; agora ele cria.
+    it('creates a project on a web address, and says to make a workspace next', async () => {
+      const app = appWith({});
+
+      const done = await call(
+        {
+          name: 'create_project',
+          args: { name: 'Painel', web: 'http://localhost:3000' },
+        },
+        app,
+      );
+
+      expect(done.isError).toBe(false);
+      expect(done.text).toContain('create_workspace');
+      expect(app.projects).toEqual([
+        expect.objectContaining({
+          name: 'Painel',
+          targets: [
+            {
+              id: 't-web',
+              kind: 'web',
+              label: 'web',
+              value: 'http://localhost:3000',
+            },
+          ],
+          repositories: [],
+        }),
+      ]);
+    });
+
+    it('does NOT create a project with no target, or with an address that is not one', async () => {
+      const app = appWith({});
+
+      expect(
+        (await call({ name: 'create_project', args: { name: 'Painel' } }, app)).isError,
+      ).toBe(true);
+      expect(
+        (
+          await call(
+            { name: 'create_project', args: { name: 'Painel', web: 'not a url' } },
+            app,
+          )
+        ).isError,
+      ).toBe(true);
+      expect(app.projects).toEqual([]);
+    });
+
+    it('creates a workspace with an empty plan, and says how its first cases come', async () => {
+      const app = appWith({});
+
+      const done = await call(
+        { name: 'create_workspace', args: { project: 'Loja', name: 'Checkout' } },
+        app,
+      );
+
+      expect(done.isError).toBe(false);
+      expect(done.text).toContain('suggest_cases');
+      expect(app.added).toEqual([
+        expect.objectContaining({
+          projectId: 'p1',
+          name: 'Checkout',
+          targetId: 't1',
+          plan: [],
+        }),
+      ]);
+    });
+
+    it('refuses a workspace on a target the project does not have', async () => {
+      const app = appWith({});
+
+      const done = await call(
+        {
+          name: 'create_workspace',
+          args: { project: 'Loja', name: 'Checkout', target: 'android' },
+        },
+        app,
+      );
+
+      expect(done).toEqual({
+        text: 'p1 has no android target. Its targets are web.',
+        isError: true,
+      });
+      expect(app.added).toEqual([]);
+    });
   });
 });

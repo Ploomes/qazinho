@@ -197,10 +197,10 @@ monitor externo, nem no Windows ou no Linux.
 
 **O agente de código do QA usa o QAzinho de fora.** Ligado em Configurações › MCPs, o QAzinho vira
 um servidor MCP neste computador: o agente com que o QA ou o dev trabalha no próprio editor acha um
-workspace, roda o plano, espera o resultado, lê o que quebrou (as telas como arquivos, as chamadas de
+workspace (ou cria o projeto e o workspace de um app que o QAzinho ainda não conhece), roda o plano, espera o resultado, lê o que quebrou (as telas como arquivos, as chamadas de
 API que falharam e o que responderam) e sugere casos para o que acabou de fazer, que esperam num
 cartão no chat até o QA levá-los ao plano. O QAzinho adiciona o servidor ao Claude Code ou ao Codex em
-um clique, ou copia o endereço para outro agente. São sete ferramentas e nenhuma apaga, muda
+um clique, ou copia o endereço para outro agente. São nove ferramentas e nenhuma apaga, muda
 configurações ou lê um segredo; o app não vem à frente. Um Claude Code real (Haiku), de fora, achou um
 500 plantado numa loja em 20 segundos e menos de dois centavos: rodou o plano, leu o bug, abriu a tela
 e nomeou a chamada que falhou. O `tests/smoke/outside.test.ts` dirige o servidor real com um cliente
