@@ -1,5 +1,6 @@
 export type * from './AssistantSuggestion';
 export type * from './AssistantMessage';
+export type * from './AssistantConfirmAction';
 export type * from './ConfirmAction';
 export type * from './ConfirmDecision';
 export type * from './IAppPort';

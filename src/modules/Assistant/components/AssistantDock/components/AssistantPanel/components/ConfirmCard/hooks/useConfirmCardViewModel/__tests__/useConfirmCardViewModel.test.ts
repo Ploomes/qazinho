@@ -157,4 +157,43 @@ describe('useConfirmCardViewModel', () => {
       className: 'confirm-card confirm-card--expired',
     });
   });
+
+  it("says the coding agent in the QA's editor asked, and what changes in its plan", () => {
+    const { result } = card({
+      ...ASKED,
+      action: 'delete_cases',
+      subject: 'Checkout',
+      detail: 'TC-02, TC-03',
+      count: 2,
+      from: 'outside',
+    });
+
+    expect(result.current).toMatchObject({
+      isFromAgent: true,
+      fromAgent: 'Asked by the coding agent in your editor',
+      title: 'Delete TC-02, TC-03 from “Checkout”?',
+      body: 'They leave the plan.',
+      goVariant: 'danger',
+    });
+  });
+
+  it('shows a project change as the changes, and a rename with no body', () => {
+    expect(
+      card({
+        ...ASKED,
+        action: 'update_project',
+        subject: 'Loja',
+        detail: 'web: https://staging.shop.test',
+        from: 'outside',
+      }).result.current.body,
+    ).toBe('web: https://staging.shop.test');
+    expect(
+      card({ ...ASKED, action: 'rename_workspace', subject: 'Login', detail: 'Sign in' })
+        .result.current,
+    ).toMatchObject({ hasBody: false, title: 'Rename “Login” to “Sign in”?' });
+  });
+
+  it("does NOT mark the Intern's own card as the agent's", () => {
+    expect(card(ASKED).result.current.isFromAgent).toBe(false);
+  });
 });

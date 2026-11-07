@@ -51,4 +51,38 @@ describe('stopOpen', () => {
     expect(stopped[1]).toBe(MESSAGES[1]);
     expect(stopped[4]).toBe(MESSAGES[4]);
   });
+
+  // O agente de código do QA espera a resposta dele fora do turno do Estagiário.
+  it("keeps the coding agent's card open when the Intern's turn stops", () => {
+    const outside: AssistantMessage = {
+      kind: 'confirm',
+      id: 'c-5',
+      action: 'delete_cases',
+      subject: 'Login',
+      count: 1,
+      decision: null,
+      from: 'outside',
+    };
+
+    expect(stopOpen([outside])).toEqual([outside]);
+  });
+
+  it('runs out every open card when QAzinho closes', () => {
+    const [closed] = stopOpen(
+      [
+        {
+          kind: 'confirm',
+          id: 'c-5',
+          action: 'delete_cases',
+          subject: 'Login',
+          count: 1,
+          decision: null,
+          from: 'outside',
+        },
+      ],
+      true,
+    );
+
+    expect(closed).toMatchObject({ decision: 'expired' });
+  });
 });

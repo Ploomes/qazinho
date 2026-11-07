@@ -99,5 +99,6 @@ export interface IAppPort {
     subject: string;
     count: number;
     detail?: string;
+    from?: 'outside';
   }) => Promise<ConfirmDecision>;
 }

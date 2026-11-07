@@ -13,6 +13,9 @@ export const ConfirmCard: React.FC<IConfirmCardProps> = (props) => {
   const {
     title,
     body,
+    hasBody,
+    fromAgent,
+    isFromAgent,
     goLabel,
     goVariant,
     keepLabel,
@@ -26,8 +29,13 @@ export const ConfirmCard: React.FC<IConfirmCardProps> = (props) => {
 
   return (
     <div className={className} role="group" aria-label={title}>
+      {isFromAgent && (
+        <span className="confirm-card__from">
+          <Icon name="sparkle" /> {fromAgent}
+        </span>
+      )}
       <span className="confirm-card__title">{title}</span>
-      <span className="confirm-card__body">{body}</span>
+      {hasBody && <span className="confirm-card__body">{body}</span>}
 
       <AnimatePresence initial={false} mode="wait">
         {isOpen ? (

@@ -36,4 +36,34 @@ export const CONFIRM_TEXTS: Record<
     gone: 'ASSISTANT.SENT',
     variant: 'primary',
   },
+  update_project: {
+    title: 'ASSISTANT.CONFIRM_UPDATE_PROJECT',
+    go: 'ASSISTANT.CHANGE',
+    gone: 'ASSISTANT.CHANGED',
+    variant: 'primary',
+  },
+  rename_workspace: {
+    title: 'ASSISTANT.CONFIRM_RENAME_WORKSPACE',
+    go: 'ASSISTANT.RENAME',
+    gone: 'ASSISTANT.RENAMED',
+    variant: 'primary',
+  },
+  dismiss_bug: {
+    title: 'ASSISTANT.CONFIRM_DISMISS_BUG',
+    go: 'ASSISTANT.CLOSE_BUG',
+    gone: 'ASSISTANT.CLOSED_BUG',
+    variant: 'primary',
+  },
+  update_cases: {
+    title: 'ASSISTANT.CONFIRM_UPDATE_CASES',
+    go: 'ASSISTANT.CHANGE',
+    gone: 'ASSISTANT.CHANGED',
+    variant: 'primary',
+  },
+  delete_cases: {
+    title: 'ASSISTANT.CONFIRM_DELETE_CASES',
+    go: 'ASSISTANT.DELETE',
+    gone: 'ASSISTANT.DELETED',
+    variant: 'danger',
+  },
 };

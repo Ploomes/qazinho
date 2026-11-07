@@ -13,6 +13,7 @@ import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { ASSISTANT_WAIT } from '@/shared/constants';
 import {
   useAppStore,
+  useAppToolStore,
   useAssistantStore,
   useSettingsStore,
   useSetupStore,
@@ -300,5 +301,63 @@ describe('useAppActions', () => {
     expect(useSettingsStore.getState().tab).toBe('integrations');
     expect(useSetupStore.getState().connectingId).toBe('github');
     expect(useAssistantStore.getState().isOpen).toBe(false);
+  });
+
+  describe("lending its tools to the coding agent in the QA's editor", () => {
+    it('does a call through the same stores, without a line in the Intern chat', async () => {
+      bridge();
+      renderHook(() => {
+        useAppActions();
+      });
+
+      const done = await useAppToolStore.getState().perform?.({
+        id: 'outside-1',
+        call: { name: 'rename_workspace', args: { workspace: 'w2', name: 'Pix' } },
+      });
+
+      expect(done).toEqual({ text: 'Renamed w2 from "Login" to "Pix".', isError: false });
+      expect(useWorkspaceStore.getState().workspaces[1]?.name).toBe('Pix');
+      expect(useAssistantStore.getState().messages).toEqual([]);
+    });
+
+    it("marks the card it asks the QA as the coding agent's", async () => {
+      bridge();
+      renderHook(() => {
+        useAppActions();
+      });
+
+      const decision = useAppToolStore.getState().confirm?.({
+        id: 'outside-2',
+        action: 'delete_cases',
+        subject: 'Checkout',
+        count: 1,
+        detail: 'TC-01',
+      });
+
+      await waitFor(() => {
+        expect(useAssistantStore.getState().messages).toEqual([
+          expect.objectContaining({ id: 'outside-2', from: 'outside', decision: null }),
+        ]);
+      });
+
+      act(() => {
+        useAssistantStore
+          .getState()
+          .settleConfirm({ id: 'outside-2', decision: 'confirmed' });
+      });
+
+      await expect(decision).resolves.toBe('confirmed');
+    });
+
+    it('takes its tools back when it goes away', () => {
+      bridge();
+      const { unmount } = renderHook(() => {
+        useAppActions();
+      });
+
+      unmount();
+
+      expect(useAppToolStore.getState().perform).toBeNull();
+    });
   });
 });

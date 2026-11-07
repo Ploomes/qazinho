@@ -1,6 +1,6 @@
-import type { ConfirmAction } from '@/modules/Assistant/types';
+import type { AssistantConfirmAction } from '@/modules/Assistant/types';
 
-export const CONFIRM_TOOLS: readonly ConfirmAction[] = [
+export const CONFIRM_TOOLS: readonly AssistantConfirmAction[] = [
   'delete_workspace',
   'delete_project',
   'delete_variable',

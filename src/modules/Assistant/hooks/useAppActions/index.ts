@@ -27,6 +27,7 @@ import {
 import { ASSISTANT_WAIT } from '@/shared/constants';
 import {
   useAppStore,
+  useAppToolStore,
   useAssistantStore,
   useBuildStore,
   useMachineStore,
@@ -280,7 +281,7 @@ export const useAppActions = () => {
       askVariables: ({ projectId, drafts }) =>
         askVariables({ projectId, drafts, waitMs: ASSISTANT_WAIT.confirmMs }),
       applyVariables,
-      confirm: ({ id, action, subject, count, detail }) =>
+      confirm: ({ id, action, subject, count, detail, from }) =>
         new Promise<ConfirmDecision>((settle) => {
           waiting.current.set(id, settle);
           useAssistantStore.getState().open();
@@ -291,6 +292,7 @@ export const useAppActions = () => {
             subject,
             count,
             ...(detail === undefined ? {} : { detail }),
+            ...(from === undefined ? {} : { from }),
             decision: null,
           });
           window.setTimeout(() => {
@@ -299,7 +301,17 @@ export const useAppActions = () => {
         }),
     };
 
-    return Assistant.onToolCall(({ id, call }) => {
+    const outsidePort: IAppPort = {
+      ...port,
+      confirm: (ask) => port.confirm({ ...ask, from: 'outside' }),
+    };
+
+    useAppToolStore.getState().lend({
+      perform: ({ id, call }) => performAppTool({ id, call, port: outsidePort }),
+      confirm: (ask) => outsidePort.confirm(ask),
+    });
+
+    const stopListening = Assistant.onToolCall(({ id, call }) => {
       useAssistantStore.getState().keepLiveText();
 
       if (!isConfirmCall(call))
@@ -325,6 +337,11 @@ export const useAppActions = () => {
           Assistant.answer({ id, text: done.text, isError: done.isError });
         });
     });
+
+    return () => {
+      stopListening();
+      useAppToolStore.getState().lend({ perform: null, confirm: null });
+    };
   }, [
     t,
     runWorkspace,
