@@ -2,8 +2,8 @@ import type { UserCommand } from '@/modules/Chat/types';
 import type { IWorkspace } from '@/modules/Workspace';
 
 /**
- * Põe o que o QA mandou no fim do chat: as palavras dele, sem espaços nas pontas, com o
- * que mencionou e o comando que deu.
+ * Põe o que o QA, ou o agente de código dele, mandou no fim do chat: as palavras sem
+ * espaços nas pontas, o que mencionou e o comando que deu.
  */
 export function appendUserMessage(props: {
   workspace: IWorkspace;
@@ -11,8 +11,9 @@ export function appendUserMessage(props: {
   at: string;
   mentions?: string[];
   command?: UserCommand;
+  from?: 'agent';
 }): IWorkspace {
-  const { workspace, text, at, mentions = [], command } = props;
+  const { workspace, text, at, mentions = [], command, from } = props;
   const trimmed = text.trim();
 
   if (trimmed.length === 0 && command === undefined) return workspace;
@@ -28,6 +29,7 @@ export function appendUserMessage(props: {
         text: trimmed,
         ...(mentions.length > 0 ? { mentions } : {}),
         ...(command === undefined ? {} : { command }),
+        ...(from === undefined ? {} : { from }),
       },
     ],
   };

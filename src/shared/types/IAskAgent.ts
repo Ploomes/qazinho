@@ -10,8 +10,8 @@ import type { IVariableBrief } from './IVariableBrief';
 import type { IViewport } from './IViewport';
 
 /**
- * O que a página pergunta no chat: as palavras do QA, o workspace, as runs dele e as
- * fontes de onde planejar.
+ * O que a página pergunta no chat: as palavras do QA ou do agente de código dele, o
+ * workspace, as runs e as fontes de onde planejar.
  */
 export interface IAskAgent {
   workspaceId: string;
@@ -31,4 +31,5 @@ export interface IAskAgent {
   confluence: IConfluenceAsk | null;
   design: IDesignLink | null;
   variables: IVariableBrief[];
+  isFromAgent?: boolean;
 }

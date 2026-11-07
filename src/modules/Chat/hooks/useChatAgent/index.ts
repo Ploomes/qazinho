@@ -36,6 +36,7 @@ export const useChatAgent = () => {
     jira: IJiraAsk | null;
     confluence: IConfluenceAsk | null;
     source?: IImportAsk | null;
+    isFromAgent?: boolean;
   }) => {
     const { workspaceId } = props;
     const workspace = useWorkspaceStore
@@ -80,6 +81,7 @@ export const useChatAgent = () => {
       confluence: props.confluence,
       design: workspace.design,
       variables: useVariablesStore.getState().byProject[workspace.projectId] ?? [],
+      ...(props.isFromAgent === true ? { isFromAgent: true } : {}),
     }).then((turn) => {
       if (turn.failure?.reason === 'stopped') {
         landAgentStopped(workspaceId);

@@ -10,13 +10,22 @@ import { QuestionRound } from '@/modules/Chat/screens/Chat/components/QuestionRo
 import { SuggestionCard } from '@/modules/Chat/screens/Chat/components/SuggestionCard';
 import { UserMessage } from '@/modules/Chat/screens/Chat/components/UserMessage';
 import { VerdictNote } from '@/modules/Chat/screens/Chat/components/VerdictNote';
+import { Icon } from '@/shared/components/atoms';
 import { useChatRowViewModel } from './hooks';
 import './styles.css';
 
 /** Uma mensagem no chat: quem a disse e quando na margem, a mensagem ao lado. */
 export const ChatRow: React.FC<IChatRowProps> = (props) => {
-  const { planTitle, className, who, whoClassName, initial, transition } =
-    useChatRowViewModel(props);
+  const {
+    planTitle,
+    className,
+    who,
+    whoClassName,
+    isFromAgent,
+    fromAgentTitle,
+    initial,
+    transition,
+  } = useChatRowViewModel(props);
   const { message } = props;
   const { t } = useTranslation();
 
@@ -28,7 +37,14 @@ export const ChatRow: React.FC<IChatRowProps> = (props) => {
       transition={transition}
     >
       <div className="chat-row__gutter">
-        <span className={whoClassName}>{who}</span>
+        <span className={whoClassName} title={fromAgentTitle}>
+          {isFromAgent && (
+            <span className="chat-row__from-agent" aria-label={fromAgentTitle}>
+              <Icon name="sparkle" />
+            </span>
+          )}
+          {who}
+        </span>
         <span className="chat-row__at">{message.at}</span>
       </div>
 

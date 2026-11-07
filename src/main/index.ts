@@ -870,6 +870,7 @@ async function askOnce(props: {
     page,
     design: ask.design,
     variables: ask.variables,
+    isFromAgent: ask.isFromAgent === true,
   });
   const sources = sourcesFor(ask.workspaceId);
   const storyFolder = join(PATHS.jira, ask.workspaceId);

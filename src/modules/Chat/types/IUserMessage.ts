@@ -7,4 +7,5 @@ export interface IUserMessage {
   text: string;
   mentions?: string[];
   command?: UserCommand;
+  from?: 'agent';
 }

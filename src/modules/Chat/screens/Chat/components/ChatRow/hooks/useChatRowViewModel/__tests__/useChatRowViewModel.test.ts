@@ -35,6 +35,19 @@ describe('useChatRowViewModel', () => {
     ).toMatchObject({ who: 'Codex', whoClassName: 'chat-row__who chat-row__who--agent' });
   });
 
+  it('marks what the coding agent in the QA editor wrote, with a word on where it came from', () => {
+    expect(
+      row({ id: 'm-1', kind: 'user', at: '09:41', text: 'Plan it', from: 'agent' }),
+    ).toMatchObject({
+      who: 'Your agent',
+      isFromAgent: true,
+      fromAgentTitle: 'Sent by the coding agent in your editor',
+    });
+    expect(row({ id: 'm-1', kind: 'user', at: '09:41', text: 'hi' }).isFromAgent).toBe(
+      false,
+    );
+  });
+
   it('titles a plan card by its cases and steps, one of each in the singular', () => {
     expect(
       row({ id: 'm-4', kind: 'plan', at: '09:41', caseCount: 1, stepCount: 1 }).planTitle,

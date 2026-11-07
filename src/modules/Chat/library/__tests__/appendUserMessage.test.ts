@@ -18,6 +18,23 @@ describe('appendUserMessage', () => {
     });
   });
 
+  it('keeps that the coding agent wrote it, and leaves the mark off what the QA typed', () => {
+    const [byAgent] = appendUserMessage({
+      workspace: makeWorkspace(),
+      text: 'Plan it',
+      at: '19:54',
+      from: 'agent',
+    }).chat;
+    const [byQa] = appendUserMessage({
+      workspace: makeWorkspace(),
+      text: 'Plan it',
+      at: '19:54',
+    }).chat;
+
+    expect(byAgent).toMatchObject({ from: 'agent' });
+    expect(byQa).not.toHaveProperty('from');
+  });
+
   it('does NOT send an empty message', () => {
     const workspace = makeWorkspace();
 

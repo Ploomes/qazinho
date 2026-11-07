@@ -7,6 +7,7 @@ export const useChatRowViewModel = (props: IChatRowProps) => {
   const { t } = useTranslation();
 
   const isAgent = message.kind === 'agent' || message.kind === 'note';
+  const isFromAgent = message.kind === 'user' && message.from === 'agent';
 
   return {
     planTitle:
@@ -25,11 +26,13 @@ export const useChatRowViewModel = (props: IChatRowProps) => {
     className: props.isNested === true ? 'chat-row chat-row--nested' : 'chat-row',
     who:
       message.kind === 'user'
-        ? t('CHAT.YOU')
+        ? t(isFromAgent ? 'CHAT.YOUR_AGENT' : 'CHAT.YOU')
         : message.kind === 'agent' || message.kind === 'note'
           ? message.who
           : '',
     whoClassName: isAgent ? 'chat-row__who chat-row__who--agent' : 'chat-row__who',
+    isFromAgent,
+    fromAgentTitle: isFromAgent ? t('CHAT.FROM_AGENT') : undefined,
     initial: props.isNew ? { opacity: 0, y: 10 } : false,
     transition: { duration: MOTION.durationSlow, ease: MOTION.ease },
   };

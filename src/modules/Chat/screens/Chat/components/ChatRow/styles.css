@@ -15,6 +15,13 @@
   font: var(--font-mono-sm);
 }
 
+.chat-row__from-agent {
+  display: inline-flex;
+  margin-right: var(--space-2);
+  color: var(--lime-ink);
+  vertical-align: -1px;
+}
+
 .chat-row__who--agent {
   color: var(--lime-ink);
 }

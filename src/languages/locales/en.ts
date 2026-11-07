@@ -129,6 +129,8 @@ export const en = {
     SECRET_REMOVE: 'Take it out',
     SECRET_SEND: 'Send anyway',
     YOU: 'You',
+    YOUR_AGENT: 'Your agent',
+    FROM_AGENT: 'Sent by the coding agent in your editor',
     EMPTY_TITLE: 'What are we testing today?',
     PLACEHOLDER: 'Ask the agent · @ to cite · / for commands',
     SEND: 'Send',

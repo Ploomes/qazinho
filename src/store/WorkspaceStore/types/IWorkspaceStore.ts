@@ -69,6 +69,7 @@ export interface IWorkspaceStore {
     text: string;
     mentions: string[];
     command?: UserCommand;
+    from?: 'agent';
   }) => void;
   landAgentText: (props: {
     workspaceId: string;

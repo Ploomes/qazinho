@@ -131,6 +131,8 @@ export const pt: typeof en = {
     SECRET_REMOVE: 'Tirar do texto',
     SECRET_SEND: 'Enviar assim mesmo',
     YOU: 'Você',
+    YOUR_AGENT: 'Seu agente',
+    FROM_AGENT: 'Enviado pelo agente de código do seu editor',
     EMPTY_TITLE: 'O que vamos testar hoje?',
     PLACEHOLDER: 'Pergunte ao agente · @ para citar · / para comandos',
     SEND: 'Enviar',
