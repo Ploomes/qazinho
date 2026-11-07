@@ -1,6 +1,13 @@
+import type {
+  ConfirmAction,
+  ConfirmDecision,
+  IToolDone,
+} from '@/modules/Assistant/types';
+import type { ITestCase } from '@/modules/Plan';
 import type { IProject } from '@/modules/Project';
 import type { IWorkspace } from '@/modules/Workspace';
 import type {
+  AppToolCall,
   IDraftedCase,
   INetworkEntry,
   IRunRef,
@@ -30,6 +37,14 @@ export interface IOutsidePort {
   networkOf: (run: IRunRef) => Promise<INetworkEntry[] | null>;
   askChat: (props: { workspaceId: string; text: string }) => void;
   waitForChat: (props: { workspaceId: string; ms: number }) => Promise<void>;
+  perform: (call: AppToolCall) => Promise<IToolDone>;
+  confirm: (props: {
+    action: ConfirmAction;
+    subject: string;
+    count: number;
+    detail?: string;
+  }) => Promise<ConfirmDecision>;
+  changePlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
   suggestCases: (props: {
     workspaceId: string;
     summary: string;

@@ -536,7 +536,7 @@ O local é desligado até o QA ligá-lo. É o caminho inverso do resto do app: a
   outra, e o `renew` leva o endereço novo aos agentes que guardavam o anterior.
 - **O endereço nunca chega à página.** Ela pede à main para adicioná-lo a um agente (`AgentMcp.addAddress`)
   ou copiá-lo; só a main o lê. Um `Origin` ou um `Host` de fora da máquina é recusado (`isLocalRequest`).
-- As onze ferramentas vivem no harness (`servers/outside/`, `OutsideHost`), e a resposta a uma chamada
+- As 21 ferramentas vivem no harness (`servers/outside/`, `OutsideHost`), e a resposta a uma chamada
   (`OutsideToolCall`) vem da página, pelas mesmas stores e actions dos cliques do QA
   (`performOutsideTool`), numa ponte só dela: a do Estagiário solta o que espera a cada turno dele. Com
   a janela fechada, a main a abre e pede ao agente que chame de novo.
@@ -550,6 +550,14 @@ O local é desligado até o QA ligá-lo. É o caminho inverso do resto do app: a
 - Tudo o que uma ferramenta responde veio do app testado, e o agente de fora tem shell e o código do
   QA. A descrição de cada uma diz que é dado, e um valor de variável nunca passa: as runs já os guardam
   como `${NAME}`, e nenhuma ferramenta lê o `VariableVault`.
+- **O que muda ou apaga espera o QA** (`OUTSIDE_CHANGES`, `performOutsideChange`). O plano muda pelo
+  `changePlan`, com o cartão de plano no chat; o resto vai pelas ferramentas do Estagiário, que ele
+  empresta pela `useAppToolStore` (`perform`, `confirm`). Alterar um projeto, renomear um workspace,
+  fechar um bug e alterar ou apagar casos pedem um cartão antes; apagar e mandar um bug já pedem dentro
+  do Estagiário. O cartão sai no painel do Estagiário marcado `from: 'outside'`, e o `stopOpen` não o
+  vence quando o turno do Estagiário para. A resposta vem em até 45 segundos (`withinWait`,
+  `OUTSIDE_WAIT`), abaixo do limite dos clientes de MCP; sem ela, a mudança segue e acontece só quando
+  o QA confirma.
 - O `ask_workspace_chat` escreve no chat de um workspace como o QA, e o `read_workspace_chat` lê o que o
   agente respondeu, segurando como o `run_status`. A mensagem guarda `from: 'agent'`, a linha dela mostra
   as estrelinhas e "Seu agente", e o agente do chat a lê com a seção `Who wrote this message`

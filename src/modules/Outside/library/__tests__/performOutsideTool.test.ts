@@ -1,7 +1,9 @@
+import type { ConfirmDecision } from '@/modules/Assistant/types';
 import type { IOutsidePort } from '@/modules/Outside/types';
+import type { ITestCase } from '@/modules/Plan';
 import type { IProject } from '@/modules/Project';
 import type { IWorkspace } from '@/modules/Workspace';
-import type { INetworkEntry, OutsideToolCall } from '@/shared/types';
+import type { AppToolCall, INetworkEntry, OutsideToolCall } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
 import { performOutsideTool } from '@/modules/Outside/library';
 import { startRun } from '@/modules/Workspace/library';
@@ -32,6 +34,7 @@ function appWith(props: {
   startedId?: string | null;
   onWait?: () => IWorkspace[];
   askingIds?: string[];
+  decision?: ConfirmDecision;
   onChat?: () => { workspaces: IWorkspace[]; askingIds: string[] };
 }) {
   let workspaces = props.workspaces ?? [makeWorkspace()];
@@ -42,6 +45,9 @@ function appWith(props: {
   const projects: IProject[] = [];
   const added: IWorkspace[] = [];
   const chatted: unknown[] = [];
+  const performed: AppToolCall[] = [];
+  const asked: unknown[] = [];
+  const plans: { workspaceId: string; plan: ITestCase[] }[] = [];
   let askingIds = props.askingIds ?? [];
   const port: IOutsidePort = {
     read: () => ({
@@ -83,12 +89,40 @@ function appWith(props: {
 
       return Promise.resolve();
     },
+    perform: (one) => {
+      performed.push(one);
+
+      return Promise.resolve({ text: `did ${one.name}`, isError: false });
+    },
+    confirm: (ask) => {
+      asked.push(ask);
+
+      return Promise.resolve(props.decision ?? 'confirmed');
+    },
+    changePlan: (change) => {
+      plans.push(change);
+      workspaces = workspaces.map((one) =>
+        one.id === change.workspaceId ? { ...one, plan: change.plan } : one,
+      );
+    },
     suggestCases: (suggestion) => {
       suggested.push(suggestion);
     },
   };
 
-  return { port, started, stopped, suggested, waited, projects, added, chatted };
+  return {
+    port,
+    started,
+    stopped,
+    suggested,
+    waited,
+    projects,
+    added,
+    chatted,
+    performed,
+    asked,
+    plans,
+  };
 }
 
 const call = (one: OutsideToolCall, app: ReturnType<typeof appWith>) =>
@@ -520,6 +554,196 @@ describe('performOutsideTool', () => {
 
       expect(done.isError).toBe(true);
       expect(app.chatted).toEqual([]);
+    });
+  });
+
+  describe('changing what the QA keeps', () => {
+    const CASE = {
+      title: 'Coupon',
+      priority: 'P1' as const,
+      goal: 'A coupon takes 10% off.',
+      preconditions: 'One product in the cart.',
+      steps: [
+        { action: 'Type SAVE10 in the coupon field', expected: 'The total drops 10%' },
+      ],
+    };
+
+    it('adds new cases to the plan at once, after the ones it has', async () => {
+      const app = appWith({});
+
+      const done = await call(
+        { name: 'add_cases', args: { workspace: 'w1', cases: [CASE] } },
+        app,
+      );
+
+      expect(done.isError).toBe(false);
+      expect(app.asked).toEqual([]);
+      expect(app.plans[0]?.plan.map(({ id }) => id)).toEqual(['TC-01', 'TC-02', 'TC-03']);
+      expect(done.text).toContain('Added TC-03 "Coupon"');
+    });
+
+    it('does NOT add a case under the id of one the plan has', async () => {
+      const app = appWith({});
+
+      const done = await call(
+        {
+          name: 'add_cases',
+          args: { workspace: 'w1', cases: [{ ...CASE, id: 'TC-01' }] },
+        },
+        app,
+      );
+
+      expect(done.isError).toBe(true);
+      expect(done.text).toContain('update_cases');
+      expect(app.plans).toEqual([]);
+    });
+
+    it('changes a case only after the QA confirms it, in its place', async () => {
+      const app = appWith({});
+
+      const done = await call(
+        {
+          name: 'update_cases',
+          args: { workspace: 'w1', cases: [{ ...CASE, id: 'TC-02' }] },
+        },
+        app,
+      );
+
+      expect(app.asked).toEqual([
+        expect.objectContaining({ action: 'update_cases', detail: 'TC-02', count: 1 }),
+      ]);
+      expect(app.plans[0]?.plan.map(({ id, title }) => `${id} ${title}`)).toEqual([
+        'TC-01 Open the store and find a product',
+        'TC-02 Coupon',
+      ]);
+      expect(done.text).toContain('Changed TC-02 "Coupon"');
+    });
+
+    it('leaves the plan as it was when the QA keeps it', async () => {
+      const app = appWith({ decision: 'kept' });
+
+      const done = await call(
+        { name: 'delete_cases', args: { workspace: 'w1', cases: ['tc-01'] } },
+        app,
+      );
+
+      expect(app.plans).toEqual([]);
+      expect(done.text).toContain('said no');
+    });
+
+    it('deletes cases once confirmed, and refuses one the plan lacks before asking', async () => {
+      const app = appWith({});
+
+      const gone = await call(
+        { name: 'delete_cases', args: { workspace: 'w1', cases: ['TC-01'] } },
+        app,
+      );
+      const unknown = await call(
+        { name: 'delete_cases', args: { workspace: 'w1', cases: ['TC-09'] } },
+        app,
+      );
+
+      expect(app.plans[0]?.plan.map(({ id }) => id)).toEqual(['TC-02']);
+      expect(gone.text).toContain('Deleted TC-01');
+      expect(unknown.isError).toBe(true);
+      expect(app.asked).toHaveLength(1);
+    });
+
+    it('does NOT change the plan while a run walks it', async () => {
+      const app = appWith({ workspaces: [going()] });
+
+      const done = await call(
+        { name: 'add_cases', args: { workspace: 'w1', cases: [CASE] } },
+        app,
+      );
+
+      expect(done.isError).toBe(true);
+      expect(app.plans).toEqual([]);
+    });
+
+    it('changes a project through the assistant only after the QA confirms what changes', async () => {
+      const app = appWith({});
+      const change: OutsideToolCall = {
+        name: 'update_project',
+        args: { project: 'Loja', web: 'https://staging.shop.test' },
+      };
+
+      await call(change, app);
+
+      expect(app.asked).toEqual([
+        expect.objectContaining({
+          action: 'update_project',
+          subject: 'Loja',
+          detail: 'web: https://staging.shop.test',
+        }),
+      ]);
+      expect(app.performed).toEqual([change]);
+    });
+
+    it('does NOT touch the project when the QA lets the card go unanswered', async () => {
+      const app = appWith({ decision: 'expired' });
+
+      const done = await call(
+        { name: 'update_project', args: { project: 'Loja', name: 'Shop' } },
+        app,
+      );
+
+      expect(app.performed).toEqual([]);
+      expect(done.text).toContain('did not answer');
+    });
+
+    it('asks before renaming a workspace, naming the new name', async () => {
+      const app = appWith({});
+
+      await call(
+        { name: 'rename_workspace', args: { workspace: 'w1', name: 'Payments' } },
+        app,
+      );
+
+      expect(app.asked).toEqual([
+        expect.objectContaining({
+          action: 'rename_workspace',
+          subject: 'Checkout regression',
+          detail: 'Payments',
+        }),
+      ]);
+      expect(app.performed).toHaveLength(1);
+    });
+
+    // O assistente já pede ao QA antes de apagar ou mandar: um segundo cartão seria demais.
+    it('hands deleting, sending and exploring to the assistant, which asks the QA itself', async () => {
+      const app = appWith({});
+
+      await call({ name: 'delete_workspace', args: { workspace: 'w1' } }, app);
+      await call({ name: 'explore_app', args: { workspace: 'w1' } }, app);
+      await call({ name: 'delete_project', args: { project: 'Loja' } }, app);
+
+      expect(app.asked).toEqual([]);
+      expect(app.performed.map(({ name }) => name)).toEqual([
+        'delete_workspace',
+        'explore_app',
+        'delete_project',
+      ]);
+    });
+
+    it('closes a bug only after the QA confirms, and opens one again without asking', async () => {
+      const bugs = walkRun({ verdicts: ['failed'], isFinished: true }).bugs;
+      const app = appWith({ workspaces: [{ ...makeWorkspace(), bugs }] });
+      const bugId = bugs[0]?.id ?? '';
+
+      await call({ name: 'dismiss_bug', args: { workspace: 'w1', bug: bugId } }, app);
+      await call(
+        { name: 'dismiss_bug', args: { workspace: 'w1', bug: bugId, reopen: true } },
+        app,
+      );
+
+      expect(app.asked).toEqual([
+        expect.objectContaining({
+          action: 'dismiss_bug',
+          subject: expect.stringContaining(bugId) as string,
+        }),
+      ]);
+      expect(app.performed).toHaveLength(2);
     });
   });
 });

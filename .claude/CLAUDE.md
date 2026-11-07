@@ -196,17 +196,23 @@ sintéticos, nenhum atravessou o macOS; ainda não se viu a ilha com um app em t
 monitor externo, nem no Windows ou no Linux.
 
 **O agente de código do QA usa o QAzinho de fora.** Ligado em Configurações › MCPs, o QAzinho vira
-um servidor MCP neste computador: o agente com que o QA ou o dev trabalha no próprio editor acha um
-workspace (ou cria o projeto e o workspace de um app que o QAzinho ainda não conhece), roda o plano, espera o resultado, lê o que quebrou (as telas como arquivos, as chamadas de
-API que falharam e o que responderam) e sugere casos para o que acabou de fazer, que esperam num
-cartão no chat até o QA levá-los ao plano. O QAzinho adiciona o servidor ao Claude Code ou ao Codex em
-um clique, ou copia o endereço para outro agente. Ele também escreve no chat de um workspace, como o QA, e lê o que o agente do QAzinho respondeu; a mensagem aparece marcada com as estrelinhas como do agente de código, e o agente do QAzinho sabe disso. São onze ferramentas e nenhuma apaga, muda
-configurações ou lê um segredo; o app não vem à frente. Um Claude Code real (Haiku), de fora, achou um
-500 plantado numa loja em 20 segundos e menos de dois centavos: rodou o plano, leu o bug, abriu a tela
-e nomeou a chamada que falhou. O `tests/smoke/outside.test.ts` dirige o servidor real com um cliente
-MCP no app construído. Dez sessões reais do Claude Code (Haiku), como dev e como QA, acharam o que
-quebrou, recusaram apagar um workspace, não seguiram uma instrução plantada numa página e disseram
-quando a run esperava o QA. Pelo Codex isso não foi tentado.
+um servidor MCP neste computador, com 21 ferramentas: o agente com que o QA ou o dev trabalha no
+próprio editor cria o projeto e o workspace de um app que o QAzinho ainda não conhece, escreve,
+altera e apaga casos do plano, troca o alvo de um projeto, roda o plano ou uma exploração, espera o
+resultado, lê o que quebrou (as telas como arquivos, as chamadas de API que falharam e o que
+responderam), fecha ou manda um bug ao tracker, e conversa com o chat do workspace como o QA. A
+mensagem dele aparece no chat marcada com as estrelinhas, "Seu agente", e o agente do QAzinho sabe
+que não foi o QA quem escreveu. O que muda ou apaga espera o QA num cartão do Estagiário, marcado
+como pedido pelo agente de código; a ferramenta responde em até 45 segundos e, sem resposta, a
+mudança acontece só quando o QA confirmar. Nenhuma ferramenta mexe em variáveis, configurações ou
+integrações, nem lê um segredo, e o app não vem à frente. O QAzinho adiciona o servidor ao Claude
+Code ou ao Codex em um clique, ou copia o endereço para outro agente. Um Claude Code real (Haiku),
+de fora, achou um 500 plantado numa loja em 20 segundos e menos de dois centavos: rodou o plano,
+leu o bug, abriu a tela e nomeou a chamada que falhou. O `tests/smoke/outside.test.ts` dirige o
+servidor real com um cliente MCP no app construído. Dez sessões reais do Claude Code (Haiku), com as
+sete ferramentas de antes, acharam o que quebrou, não seguiram uma instrução plantada numa página e
+disseram quando a run esperava o QA; as de criar, mudar, apagar e conversar com o chat ainda não
+foram usadas por um agente real. Pelo Codex isso não foi tentado.
 
 **O mesmo agente alcança as orgs do QA, pela plataforma.** Com a conta logada, a mesma seção das
 Configurações (`OutsideServerCard`, um cartão com os dois alcances) adiciona ao agente o servidor da

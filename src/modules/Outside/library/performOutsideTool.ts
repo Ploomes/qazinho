@@ -16,6 +16,8 @@ import { flattenPlanSteps } from '@/modules/Run/library';
 import { describeChatTurn } from './describeChatTurn';
 import { describeRunStatus } from './describeRunStatus';
 import { describeWorkspaces } from './describeWorkspaces';
+import { isOutsideChange } from './isOutsideChange';
+import { performOutsideChange } from './performOutsideChange';
 
 /**
  * Executa a chamada de um agente de fora pelos mesmos caminhos dos cliques do QA, sem
@@ -40,6 +42,8 @@ export async function performOutsideTool(props: {
   if (call.name === 'create_project') return createProject({ args: call.args, port });
 
   if (call.name === 'create_workspace') return createWorkspace({ args: call.args, port });
+
+  if (isOutsideChange(call)) return performOutsideChange({ call, port });
 
   const found = findByRef({
     items: state.workspaces,

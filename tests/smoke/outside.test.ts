@@ -164,10 +164,20 @@ describe('an outside agent', () => {
       'workspace_details',
       'create_project',
       'create_workspace',
+      'update_project',
+      'rename_workspace',
+      'delete_workspace',
+      'delete_project',
+      'add_cases',
+      'update_cases',
+      'delete_cases',
+      'explore_app',
       'start_run',
       'run_status',
       'stop_run',
       'bug_details',
+      'dismiss_bug',
+      'send_bug',
       'ask_workspace_chat',
       'read_workspace_chat',
       'suggest_cases',
@@ -273,10 +283,20 @@ describe('an outside agent', () => {
   });
 
   it('never reaches a tool that was not offered', async () => {
-    const said = await tool('delete_project', { project: 'p-1' });
+    const said = await tool('delete_variable', { project: 'p-1', variable: 'PASSWORD' });
 
     expect(said.isError).toBe(true);
   });
+
+  // Apagar espera o QA num cartão; sem resposta, a ferramenta responde antes do limite de 60
+  // segundos de um cliente de MCP, e nada some.
+  it('asks the QA before deleting, and deletes nothing while they have not answered', async () => {
+    const said = await tool('delete_project', { project: 'p-1' });
+
+    expect(said.isError).toBe(false);
+    expect(said.text).toContain('has not answered the card');
+    expect((await tool('list_workspaces')).text).toContain('Loja');
+  }, 90_000);
 
   it('comes back on the same address after being turned off and on', async () => {
     await client.close();
