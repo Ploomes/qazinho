@@ -13,6 +13,7 @@ import {
 } from '@/modules/Assistant/library';
 import { newProjectId } from '@/modules/Project/library';
 import { flattenPlanSteps } from '@/modules/Run/library';
+import { describeChatTurn } from './describeChatTurn';
 import { describeRunStatus } from './describeRunStatus';
 import { describeWorkspaces } from './describeWorkspaces';
 
@@ -78,6 +79,14 @@ export async function performOutsideTool(props: {
       };
     case 'run_status':
       return statusOf({ workspaceId: workspace.id, call, port });
+    case 'ask_workspace_chat':
+      return askChatOf({ workspace, call, port });
+    case 'read_workspace_chat':
+      return chatTurnOf({
+        workspaceId: workspace.id,
+        waitSeconds: call.args.waitSeconds ?? 0,
+        port,
+      });
   }
 }
 
@@ -256,4 +265,54 @@ function createWorkspace(props: {
     text: `Created workspace ${made.workspace.id} "${made.workspace.name}" in ${found.item.id} on ${made.target.kind}. Its plan is empty: suggest its first cases with suggest_cases, and tell the QA to take them to the plan in QAzinho before you run it.`,
     isError: false,
   };
+}
+
+async function askChatOf(props: {
+  workspace: IWorkspace;
+  call: Extract<OutsideToolCall, { name: 'ask_workspace_chat' }>;
+  port: IOutsidePort;
+}): Promise<IToolDone> {
+  const { workspace, call, port } = props;
+  const named = `${workspace.id} "${workspace.name}"`;
+
+  if (workspace.live !== null && !workspace.live.isDone)
+    return {
+      text: `${named} is running ${workspace.live.id}; its chat takes messages again once the run ends. Wait for it with run_status.`,
+      isError: true,
+    };
+
+  if (port.read().askingIds.includes(workspace.id))
+    return {
+      text: `QAzinho's agent in the chat of ${named} is still answering. Read it with read_workspace_chat and waitSeconds, then write again.`,
+      isError: true,
+    };
+
+  port.askChat({ workspaceId: workspace.id, text: call.args.text });
+
+  return chatTurnOf({
+    workspaceId: workspace.id,
+    waitSeconds: call.args.waitSeconds ?? 0,
+    port,
+  });
+}
+
+async function chatTurnOf(props: {
+  workspaceId: string;
+  waitSeconds: number;
+  port: IOutsidePort;
+}): Promise<IToolDone> {
+  const { workspaceId, waitSeconds, port } = props;
+
+  if (waitSeconds > 0) await port.waitForChat({ workspaceId, ms: waitSeconds * 1_000 });
+
+  const state = port.read();
+  const workspace = state.workspaces.find(({ id }) => id === workspaceId);
+
+  if (workspace === undefined)
+    return { text: `The workspace ${workspaceId} is gone.`, isError: true };
+
+  return describeChatTurn({
+    workspace,
+    isAnswering: state.askingIds.includes(workspaceId),
+  });
 }

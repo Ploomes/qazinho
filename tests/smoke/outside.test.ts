@@ -168,6 +168,8 @@ describe('an outside agent', () => {
       'run_status',
       'stop_run',
       'bug_details',
+      'ask_workspace_chat',
+      'read_workspace_chat',
       'suggest_cases',
     ]);
     expect(client.getInstructions()).toContain('start_run');

@@ -536,7 +536,7 @@ O local é desligado até o QA ligá-lo. É o caminho inverso do resto do app: a
   outra, e o `renew` leva o endereço novo aos agentes que guardavam o anterior.
 - **O endereço nunca chega à página.** Ela pede à main para adicioná-lo a um agente (`AgentMcp.addAddress`)
   ou copiá-lo; só a main o lê. Um `Origin` ou um `Host` de fora da máquina é recusado (`isLocalRequest`).
-- As nove ferramentas vivem no harness (`servers/outside/`, `OutsideHost`), e a resposta a uma chamada
+- As onze ferramentas vivem no harness (`servers/outside/`, `OutsideHost`), e a resposta a uma chamada
   (`OutsideToolCall`) vem da página, pelas mesmas stores e actions dos cliques do QA
   (`performOutsideTool`), numa ponte só dela: a do Estagiário solta o que espera a cada turno dele. Com
   a janela fechada, a main a abre e pede ao agente que chame de novo.
@@ -550,6 +550,11 @@ O local é desligado até o QA ligá-lo. É o caminho inverso do resto do app: a
 - Tudo o que uma ferramenta responde veio do app testado, e o agente de fora tem shell e o código do
   QA. A descrição de cada uma diz que é dado, e um valor de variável nunca passa: as runs já os guardam
   como `${NAME}`, e nenhuma ferramenta lê o `VariableVault`.
+- O `ask_workspace_chat` escreve no chat de um workspace como o QA, e o `read_workspace_chat` lê o que o
+  agente respondeu, segurando como o `run_status`. A mensagem guarda `from: 'agent'`, a linha dela mostra
+  as estrelinhas e "Seu agente", e o agente do chat a lê com a seção `Who wrote this message`
+  (`describeSender`). Uma rodada de perguntas aberta é fechada sem resposta antes, como uma mensagem do
+  QA faria.
 - Um caso sugerido (`suggest_cases`) fica num cartão no chat (`ISuggestionMessage.from`), e só o QA o
   leva ao plano (`takeSuggestion`).
 

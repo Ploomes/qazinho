@@ -31,6 +31,8 @@ function appWith(props: {
   network?: INetworkEntry[];
   startedId?: string | null;
   onWait?: () => IWorkspace[];
+  askingIds?: string[];
+  onChat?: () => { workspaces: IWorkspace[]; askingIds: string[] };
 }) {
   let workspaces = props.workspaces ?? [makeWorkspace()];
   const started: unknown[] = [];
@@ -39,11 +41,14 @@ function appWith(props: {
   const waited: number[] = [];
   const projects: IProject[] = [];
   const added: IWorkspace[] = [];
+  const chatted: unknown[] = [];
+  let askingIds = props.askingIds ?? [];
   const port: IOutsidePort = {
     read: () => ({
       isLoaded: props.isLoaded ?? true,
       projects: [PROJECT],
       workspaces,
+      askingIds,
     }),
     now: () => NOW,
     targetLabel: (kind) => kind,
@@ -69,12 +74,21 @@ function appWith(props: {
       return Promise.resolve();
     },
     networkOf: () => Promise.resolve(props.network ?? null),
+    askChat: (message) => {
+      chatted.push(message);
+      askingIds = [...askingIds, message.workspaceId];
+    },
+    waitForChat: () => {
+      if (props.onChat !== undefined) ({ workspaces, askingIds } = props.onChat());
+
+      return Promise.resolve();
+    },
     suggestCases: (suggestion) => {
       suggested.push(suggestion);
     },
   };
 
-  return { port, started, stopped, suggested, waited, projects, added };
+  return { port, started, stopped, suggested, waited, projects, added, chatted };
 }
 
 const call = (one: OutsideToolCall, app: ReturnType<typeof appWith>) =>
@@ -427,6 +441,85 @@ describe('performOutsideTool', () => {
         isError: true,
       });
       expect(app.added).toEqual([]);
+    });
+  });
+
+  describe("talking with a workspace's own agent", () => {
+    it('writes in the chat, and reads back what the agent answered and asks', async () => {
+      const answered: IWorkspace = {
+        ...makeWorkspace(),
+        chat: [
+          {
+            id: 'm-1',
+            kind: 'user',
+            at: '10:00',
+            text: 'Plan the checkout',
+            from: 'agent',
+          },
+          {
+            id: 'm-2',
+            kind: 'agent',
+            at: '10:01',
+            who: 'Claude Code',
+            text: 'Which cards?',
+          },
+          {
+            id: 'm-3',
+            kind: 'questions',
+            at: '10:01',
+            answers: null,
+            questions: [
+              {
+                header: 'Cards',
+                question: 'Which cards does it take?',
+                options: [
+                  { label: 'Visa', description: '' },
+                  { label: 'All', description: '' },
+                ],
+                isMultiSelect: false,
+              },
+            ],
+          },
+        ],
+      };
+      const app = appWith({
+        onChat: () => ({ workspaces: [answered], askingIds: [] }),
+      });
+
+      const done = await call(
+        {
+          name: 'ask_workspace_chat',
+          args: { workspace: 'w1', text: 'Plan the checkout', waitSeconds: 30 },
+        },
+        app,
+      );
+
+      expect(app.chatted).toEqual([{ workspaceId: 'w1', text: 'Plan the checkout' }]);
+      expect(done.text).toContain('It answered: Which cards?');
+      expect(done.text).toContain('1. Which cards does it take? Options: Visa · All.');
+    });
+
+    it('says the agent still works when the wait ends first', async () => {
+      const app = appWith({});
+
+      const done = await call(
+        { name: 'ask_workspace_chat', args: { workspace: 'w1', text: 'Plan it' } },
+        app,
+      );
+
+      expect(done.text).toContain('still working on it');
+    });
+
+    it('does NOT write while the agent is still answering', async () => {
+      const app = appWith({ askingIds: ['w1'] });
+
+      const done = await call(
+        { name: 'ask_workspace_chat', args: { workspace: 'w1', text: 'More' } },
+        app,
+      );
+
+      expect(done.isError).toBe(true);
+      expect(app.chatted).toEqual([]);
     });
   });
 });

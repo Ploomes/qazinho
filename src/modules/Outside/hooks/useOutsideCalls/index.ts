@@ -1,6 +1,7 @@
 import type { IOutsidePort } from '@/modules/Outside/types';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useChatAgent } from '@/modules/Chat';
 import { performOutsideTool } from '@/modules/Outside/library';
 import { useRunActions } from '@/modules/Run';
 import { PLATFORM_LABEL } from '@/modules/Workspace';
@@ -10,6 +11,7 @@ import { useAppStore, useWorkspaceStore } from '@/store';
 export const useOutsideCalls = () => {
   const { t } = useTranslation();
   const { beginRun, stopWorkspace } = useRunActions();
+  const { askAgent } = useChatAgent();
 
   useEffect(() => {
     const port: IOutsidePort = {
@@ -17,6 +19,7 @@ export const useOutsideCalls = () => {
         isLoaded: useAppStore.getState().isLoaded,
         projects: useAppStore.getState().projects,
         workspaces: useWorkspaceStore.getState().workspaces,
+        askingIds: useWorkspaceStore.getState().askingIds,
       }),
       now: () => Date.now(),
       targetLabel: (kind) => t(PLATFORM_LABEL[kind]),
@@ -55,6 +58,52 @@ export const useOutsideCalls = () => {
           });
         }),
       networkOf: (run) => Run.network(run),
+      askChat: ({ workspaceId, text }) => {
+        const store = useWorkspaceStore.getState();
+        const workspace = store.workspaces.find(({ id }) => id === workspaceId);
+
+        for (const message of workspace?.chat ?? []) {
+          if (message.kind !== 'questions' || message.answers !== null) continue;
+
+          store.answerQuestions({
+            workspaceId,
+            messageId: message.id,
+            answers: message.questions.map(() => ({ picked: [], text: '' })),
+          });
+        }
+
+        store.sendMessage({ workspaceId, text, mentions: [], from: 'agent' });
+        askAgent({
+          workspaceId,
+          text,
+          references: [],
+          code: null,
+          jira: null,
+          confluence: null,
+          isFromAgent: true,
+        });
+      },
+      waitForChat: ({ workspaceId, ms }) =>
+        new Promise((done) => {
+          const isAnswered = () =>
+            !useWorkspaceStore.getState().askingIds.includes(workspaceId);
+
+          if (isAnswered()) {
+            done();
+
+            return;
+          }
+
+          const finish = () => {
+            clearTimeout(timer);
+            stopWatching();
+            done();
+          };
+          const timer = setTimeout(finish, ms);
+          const stopWatching = useWorkspaceStore.subscribe(() => {
+            if (isAnswered()) finish();
+          });
+        }),
       suggestCases: (suggestion) => {
         useWorkspaceStore.getState().suggestCases(suggestion);
       },
@@ -70,5 +119,5 @@ export const useOutsideCalls = () => {
           Outside.answer({ id, text, isError });
         });
     });
-  }, [beginRun, stopWorkspace, t]);
+  }, [askAgent, beginRun, stopWorkspace, t]);
 };
