@@ -4,6 +4,8 @@ import type { IProject } from '@/modules/Project';
 import type { IWorkspace } from '@/modules/Workspace';
 import type {
   AppToolCall,
+  IIntegrationStatus,
+  IVariableBrief,
   IDraftedCase,
   INetworkEntry,
   IRunRef,
@@ -18,6 +20,14 @@ export interface IOutsidePort {
     projects: IProject[];
     workspaces: IWorkspace[];
     askingIds: string[];
+    variables: Record<string, IVariableBrief[]>;
+    settings: {
+      theme: 'dark' | 'light';
+      language: string;
+      runAlert: 'system' | 'app';
+      agent: string;
+      integrations: IIntegrationStatus[];
+    };
   };
   now: () => number;
   targetLabel: (kind: TargetKind) => string;

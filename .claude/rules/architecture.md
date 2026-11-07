@@ -536,7 +536,7 @@ O local é desligado até o QA ligá-lo. É o caminho inverso do resto do app: a
   outra, e o `renew` leva o endereço novo aos agentes que guardavam o anterior.
 - **O endereço nunca chega à página.** Ela pede à main para adicioná-lo a um agente (`AgentMcp.addAddress`)
   ou copiá-lo; só a main o lê. Um `Origin` ou um `Host` de fora da máquina é recusado (`isLocalRequest`).
-- As 21 ferramentas vivem no harness (`servers/outside/`, `OutsideHost`), e a resposta a uma chamada
+- As 29 ferramentas vivem no harness (`servers/outside/`, `OutsideHost`), e a resposta a uma chamada
   (`OutsideToolCall`) vem da página, pelas mesmas stores e actions dos cliques do QA
   (`performOutsideTool`), numa ponte só dela: a do Estagiário solta o que espera a cada turno dele. Com
   a janela fechada, a main a abre e pede ao agente que chame de novo.
@@ -554,6 +554,11 @@ O local é desligado até o QA ligá-lo. É o caminho inverso do resto do app: a
   perguntar que ele já tem: a descrição de cada ferramenta que muda (`OUTSIDE_CHANGES`) diz isso, e o
   QAzinho não abre cartão. O plano muda pelo `changePlan`, com o cartão de plano no chat; o resto vai
   pelas ferramentas do Estagiário, que ele empresta pela `useAppToolStore` já confirmadas.
+- **Variáveis, configurações e integrações** vão pelas ferramentas do Estagiário também. O
+  `list_variables` lê nome e descrição (`describeVariables`), e o `ask_variables` abre a janela onde o QA
+  digita os valores, respondendo em até 45 segundos (`withinWait`, `OUTSIDE_WAIT`), abaixo do limite dos
+  clientes de MCP; a janela segue aberta depois disso. O `read_settings` lê o tema, o idioma, o aviso de
+  run e as integrações (`describeSettings`), sem token.
 - O `ask_workspace_chat` escreve no chat de um workspace como o QA, e o `read_workspace_chat` lê o que o
   agente respondeu, segurando como o `run_status`. A mensagem guarda `from: 'agent'`, a linha dela mostra
   as estrelinhas e "Seu agente", e o agente do chat a lê com a seção `Who wrote this message`

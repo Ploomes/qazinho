@@ -3,7 +3,7 @@ import type { ITestCase } from '@/modules/Plan';
 import type { IProject } from '@/modules/Project';
 import type { IWorkspace } from '@/modules/Workspace';
 import type { AppToolCall, INetworkEntry, OutsideToolCall } from '@/shared/types';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { performOutsideTool } from '@/modules/Outside/library';
 import { startRun } from '@/modules/Workspace/library';
 import {
@@ -32,6 +32,7 @@ function appWith(props: {
   network?: INetworkEntry[];
   startedId?: string | null;
   onWait?: () => IWorkspace[];
+  slowPerform?: boolean;
   askingIds?: string[];
   onChat?: () => { workspaces: IWorkspace[]; askingIds: string[] };
 }) {
@@ -52,6 +53,24 @@ function appWith(props: {
       projects: [PROJECT],
       workspaces,
       askingIds,
+      variables: {
+        p1: [{ name: 'ADMIN_PASSWORD', description: 'The admin password' }],
+      },
+      settings: {
+        theme: 'dark',
+        language: 'pt',
+        runAlert: 'system',
+        agent: 'Claude Code',
+        integrations: [
+          {
+            id: 'jira',
+            account: 'ana@shop.test',
+            site: 'https://shop.atlassian.net',
+            connectedAt: '2026-11-01',
+            confluence: true,
+          },
+        ],
+      },
     }),
     now: () => NOW,
     targetLabel: (kind) => kind,
@@ -89,7 +108,9 @@ function appWith(props: {
     perform: (one) => {
       performed.push(one);
 
-      return Promise.resolve({ text: `did ${one.name}`, isError: false });
+      return props.slowPerform === true
+        ? new Promise(() => undefined)
+        : Promise.resolve({ text: `did ${one.name}`, isError: false });
     },
     changePlan: (change) => {
       plans.push(change);
@@ -690,6 +711,76 @@ describe('performOutsideTool', () => {
       for (const change of changes) await call(change, app);
 
       expect(app.performed).toEqual(changes);
+    });
+  });
+
+  describe('variables, settings and integrations', () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it("lists a project's variables by name and description, never a value", async () => {
+      const done = await call(
+        { name: 'list_variables', args: { project: 'Loja' } },
+        appWith({}),
+      );
+
+      expect(done.text).toContain('${ADMIN_PASSWORD} · The admin password');
+    });
+
+    it('reads the settings and who each integration is connected as', async () => {
+      const done = await call({ name: 'read_settings', args: {} }, appWith({}));
+
+      expect(done.text).toContain('Theme: night (dark).');
+      expect(done.text).toContain('Language: Brazilian Portuguese.');
+      expect(done.text).toContain('GitHub: not connected.');
+      expect(done.text).toContain(
+        'Jira: connected as ana@shop.test on https://shop.atlassian.net, Confluence on.',
+      );
+    });
+
+    it('hands variable, settings and integration changes to the same paths as the Intern', async () => {
+      const app = appWith({});
+      const changes: OutsideToolCall[] = [
+        {
+          name: 'update_variable',
+          args: { project: 'Loja', variable: 'ADMIN_PASSWORD', description: 'Admin' },
+        },
+        {
+          name: 'delete_variable',
+          args: { project: 'Loja', variable: 'ADMIN_PASSWORD' },
+        },
+        { name: 'change_settings', args: { theme: 'paper', language: 'en' } },
+        { name: 'connect_integration', args: { integration: 'github' } },
+        { name: 'disconnect_integration', args: { integration: 'jira' } },
+      ];
+
+      for (const change of changes) await call(change, app);
+
+      expect(app.performed).toEqual(changes);
+    });
+
+    // A janela de valores espera o usuário por minutos; um cliente de MCP desiste em 60 s.
+    it('says the window of values still waits when the user has not saved it in time', async () => {
+      vi.useFakeTimers();
+      const app = appWith({ slowPerform: true });
+
+      const answer = call(
+        {
+          name: 'ask_variables',
+          args: {
+            project: 'Loja',
+            variables: [{ name: 'TOKEN', description: 'API token' }],
+          },
+        },
+        app,
+      );
+
+      await vi.advanceTimersByTimeAsync(45_000);
+
+      await expect(answer).resolves.toMatchObject({
+        text: expect.stringContaining('still waits on them') as string,
+      });
     });
   });
 });

@@ -178,6 +178,14 @@ describe('an outside agent', () => {
       'bug_details',
       'dismiss_bug',
       'send_bug',
+      'list_variables',
+      'ask_variables',
+      'update_variable',
+      'delete_variable',
+      'read_settings',
+      'change_settings',
+      'connect_integration',
+      'disconnect_integration',
       'ask_workspace_chat',
       'read_workspace_chat',
       'suggest_cases',
@@ -286,6 +294,11 @@ describe('an outside agent', () => {
     const said = await tool('delete_variable', { project: 'p-1', variable: 'PASSWORD' });
 
     expect(said.isError).toBe(true);
+  });
+
+  it("reads the settings and a project's variables without a value", async () => {
+    expect((await tool('read_settings')).text).toContain('Theme:');
+    expect((await tool('list_variables', { project: 'p-1' })).isError).toBe(false);
   });
 
   // O agente de fora pergunta ao usuário no chat dele antes; aqui a mudança cai no app.

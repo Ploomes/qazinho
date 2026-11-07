@@ -7,7 +7,14 @@ import { performOutsideTool } from '@/modules/Outside/library';
 import { useRunActions } from '@/modules/Run';
 import { PLATFORM_LABEL } from '@/modules/Workspace';
 import { Outside, Run } from '@/services';
-import { useAppStore, useAppToolStore, useWorkspaceStore } from '@/store';
+import {
+  useAppStore,
+  useAppToolStore,
+  useSettingsStore,
+  useSetupStore,
+  useVariablesStore,
+  useWorkspaceStore,
+} from '@/store';
 
 export const useOutsideCalls = () => {
   const { t } = useTranslation();
@@ -21,6 +28,14 @@ export const useOutsideCalls = () => {
         projects: useAppStore.getState().projects,
         workspaces: useWorkspaceStore.getState().workspaces,
         askingIds: useWorkspaceStore.getState().askingIds,
+        variables: useVariablesStore.getState().byProject,
+        settings: {
+          theme: useAppStore.getState().theme,
+          language: useSettingsStore.getState().language,
+          runAlert: useSettingsStore.getState().runAlert,
+          agent: useSettingsStore.getState().agent,
+          integrations: useSetupStore.getState().integrations,
+        },
       }),
       now: () => Date.now(),
       targetLabel: (kind) => t(PLATFORM_LABEL[kind]),

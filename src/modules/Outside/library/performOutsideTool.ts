@@ -11,13 +11,17 @@ import {
   newWorkspaceIn,
   projectTargetsOf,
 } from '@/modules/Assistant/library';
+import { OUTSIDE_SAYS, OUTSIDE_WAIT } from '@/modules/Outside/constants';
 import { newProjectId } from '@/modules/Project/library';
 import { flattenPlanSteps } from '@/modules/Run/library';
 import { describeChatTurn } from './describeChatTurn';
 import { describeRunStatus } from './describeRunStatus';
+import { describeSettings } from './describeSettings';
+import { describeVariables } from './describeVariables';
 import { describeWorkspaces } from './describeWorkspaces';
 import { isOutsideChange } from './isOutsideChange';
 import { performOutsideChange } from './performOutsideChange';
+import { withinWait } from './withinWait';
 
 /**
  * Executa a chamada de um agente de fora pelos mesmos caminhos dos cliques do QA, sem
@@ -44,6 +48,43 @@ export async function performOutsideTool(props: {
   if (call.name === 'create_workspace') return createWorkspace({ args: call.args, port });
 
   if (isOutsideChange(call)) return performOutsideChange({ call, port });
+
+  if (call.name === 'read_settings')
+    return { text: describeSettings(state.settings), isError: false };
+
+  if (call.name === 'list_variables') {
+    const project = findByRef({
+      items: state.projects,
+      ref: call.args.project,
+      noun: 'project',
+    });
+
+    return project.isFound
+      ? {
+          text: describeVariables({
+            project: project.item,
+            variables: state.variables[project.item.id] ?? [],
+          }),
+          isError: false,
+        }
+      : { text: project.text, isError: true };
+  }
+
+  if (call.name === 'ask_variables')
+    return withinWait({
+      work: port.perform(call),
+      ms: OUTSIDE_WAIT.variablesMs,
+      pending: OUTSIDE_SAYS.variablesOpen,
+    });
+
+  if (
+    call.name === 'update_variable' ||
+    call.name === 'delete_variable' ||
+    call.name === 'change_settings' ||
+    call.name === 'connect_integration' ||
+    call.name === 'disconnect_integration'
+  )
+    return port.perform(call);
 
   const found = findByRef({
     items: state.workspaces,
