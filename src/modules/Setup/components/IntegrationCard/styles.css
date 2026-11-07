@@ -155,7 +155,14 @@
 }
 
 .integration-card__extra > .switch {
-  margin-left: calc(var(--space-4) * -1);
+  align-self: stretch;
+  justify-content: space-between;
+  padding: 0;
+  border-radius: 0;
+}
+
+.integration-card__extra > .switch:hover {
+  background: transparent;
 }
 
 .integration-card__extra .integration-card__cli-fold {
