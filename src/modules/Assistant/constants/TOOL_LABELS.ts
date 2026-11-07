@@ -1,9 +1,9 @@
-import type { AssistantConfirmAction } from '@/modules/Assistant/types';
+import type { ConfirmAction } from '@/modules/Assistant/types';
 import type { AppToolCall } from '@/shared/types';
 import type { ParseKeys } from 'i18next';
 
 export const TOOL_LABELS: Record<
-  Exclude<AppToolCall['name'], AssistantConfirmAction>,
+  Exclude<AppToolCall['name'], ConfirmAction>,
   { doing: ParseKeys; done: ParseKeys }
 > = {
   workspace_details: {

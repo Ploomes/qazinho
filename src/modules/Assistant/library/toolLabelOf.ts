@@ -1,4 +1,4 @@
-import type { AssistantConfirmAction } from '@/modules/Assistant/types';
+import type { ConfirmAction } from '@/modules/Assistant/types';
 import type { AppToolCall } from '@/shared/types';
 import type { ParseKeys } from 'i18next';
 import { LATEST_RUN_LABEL } from '@/modules/Assistant/constants/LATEST_RUN_LABEL';
@@ -9,9 +9,7 @@ import { TOOL_LABELS } from '@/modules/Assistant/constants/TOOL_LABELS';
  * As palavras que a linha de uma ferramenta diz enquanto anda e depois de feita: uma run
  * lida sem nenhuma nomeada é a última, e abrir um bug ou uma run diz qual.
  */
-export function toolLabelOf(
-  call: Exclude<AppToolCall, { name: AssistantConfirmAction }>,
-): {
+export function toolLabelOf(call: Exclude<AppToolCall, { name: ConfirmAction }>): {
   doing: ParseKeys;
   done: ParseKeys;
 } {

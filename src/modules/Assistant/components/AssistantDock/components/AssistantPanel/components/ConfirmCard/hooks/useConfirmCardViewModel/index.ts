@@ -13,40 +13,27 @@ export const useConfirmCardViewModel = (props: IConfirmCardProps) => {
   return {
     title: t(texts.title, { subject: message.subject, detail: message.detail ?? '' }),
     body:
-      message.action === 'update_project'
-        ? (message.detail ?? '')
-        : message.action === 'rename_workspace'
-          ? ''
-          : message.action === 'dismiss_bug'
-            ? t('ASSISTANT.CONFIRM_DISMISS_BUG_BODY')
-            : message.action === 'update_cases'
-              ? t('ASSISTANT.CONFIRM_UPDATE_CASES_BODY')
-              : message.action === 'delete_cases'
-                ? t('ASSISTANT.CONFIRM_DELETE_CASES_BODY')
-                : message.action === 'send_bug'
-                  ? t('ASSISTANT.CONFIRM_SEND_BUG_BODY')
-                  : message.action === 'delete_workspace'
-                    ? t('ASSISTANT.CONFIRM_DELETE_WORKSPACE_BODY')
-                    : message.action === 'disconnect_integration'
-                      ? t('ASSISTANT.CONFIRM_DISCONNECT_BODY')
-                      : message.action === 'delete_variable'
-                        ? message.count === 0
-                          ? t('ASSISTANT.CONFIRM_DELETE_VARIABLE_BODY_NONE')
-                          : message.count === 1
-                            ? t('ASSISTANT.CONFIRM_DELETE_VARIABLE_BODY_ONE')
-                            : t('ASSISTANT.CONFIRM_DELETE_VARIABLE_BODY_OTHER', {
-                                count: message.count,
-                              })
-                        : message.count === 0
-                          ? t('ASSISTANT.CONFIRM_DELETE_PROJECT_BODY_NONE')
-                          : message.count === 1
-                            ? t('ASSISTANT.CONFIRM_DELETE_PROJECT_BODY_ONE')
-                            : t('ASSISTANT.CONFIRM_DELETE_PROJECT_BODY_OTHER', {
-                                count: message.count,
-                              }),
-    hasBody: message.action !== 'rename_workspace',
-    fromAgent: message.from === 'outside' ? t('ASSISTANT.FROM_AGENT') : '',
-    isFromAgent: message.from === 'outside',
+      message.action === 'send_bug'
+        ? t('ASSISTANT.CONFIRM_SEND_BUG_BODY')
+        : message.action === 'delete_workspace'
+          ? t('ASSISTANT.CONFIRM_DELETE_WORKSPACE_BODY')
+          : message.action === 'disconnect_integration'
+            ? t('ASSISTANT.CONFIRM_DISCONNECT_BODY')
+            : message.action === 'delete_variable'
+              ? message.count === 0
+                ? t('ASSISTANT.CONFIRM_DELETE_VARIABLE_BODY_NONE')
+                : message.count === 1
+                  ? t('ASSISTANT.CONFIRM_DELETE_VARIABLE_BODY_ONE')
+                  : t('ASSISTANT.CONFIRM_DELETE_VARIABLE_BODY_OTHER', {
+                      count: message.count,
+                    })
+              : message.count === 0
+                ? t('ASSISTANT.CONFIRM_DELETE_PROJECT_BODY_NONE')
+                : message.count === 1
+                  ? t('ASSISTANT.CONFIRM_DELETE_PROJECT_BODY_ONE')
+                  : t('ASSISTANT.CONFIRM_DELETE_PROJECT_BODY_OTHER', {
+                      count: message.count,
+                    }),
     goLabel: t(texts.go),
     goVariant: texts.variant,
     keepLabel: t('ASSISTANT.KEEP'),

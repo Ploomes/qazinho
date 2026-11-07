@@ -1,10 +1,7 @@
-import type { AssistantConfirmAction } from './AssistantConfirmAction';
-
-/** O que o assistente ou o agente de código do QA pediu e que o QA confirma na tela. */
+/** O que o assistente pediu para fazer e que o QA confirma na tela antes. */
 export type ConfirmAction =
-  | AssistantConfirmAction
-  | 'update_project'
-  | 'rename_workspace'
-  | 'dismiss_bug'
-  | 'update_cases'
-  | 'delete_cases';
+  | 'delete_workspace'
+  | 'delete_project'
+  | 'delete_variable'
+  | 'disconnect_integration'
+  | 'send_bug';

@@ -10,7 +10,7 @@ export function keptOf(
   state: Pick<IAssistantStore, 'messages' | 'sessionId' | 'sessionAgentId'>,
 ): Pick<IAssistantStore, 'messages' | 'sessionId' | 'sessionAgentId'> {
   return {
-    messages: stopOpen(state.messages, true).slice(-ASSISTANT_KEPT),
+    messages: stopOpen(state.messages).slice(-ASSISTANT_KEPT),
     sessionId: state.sessionId,
     sessionAgentId: state.sessionAgentId,
   };

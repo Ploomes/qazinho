@@ -1,4 +1,4 @@
-import type { AssistantConfirmAction } from './AssistantConfirmAction';
+import type { ConfirmAction } from './ConfirmAction';
 import type { ToolState } from './ToolState';
 import type { AppToolCall } from '@/shared/types';
 
@@ -9,7 +9,7 @@ import type { AppToolCall } from '@/shared/types';
 export interface IAssistantToolMessage {
   kind: 'tool';
   id: string;
-  call: Exclude<AppToolCall, { name: AssistantConfirmAction }>;
+  call: Exclude<AppToolCall, { name: ConfirmAction }>;
   subject: string;
   state: ToolState;
   buildId?: string;

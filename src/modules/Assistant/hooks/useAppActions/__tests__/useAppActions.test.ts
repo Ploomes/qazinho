@@ -303,6 +303,7 @@ describe('useAppActions', () => {
     expect(useAssistantStore.getState().isOpen).toBe(false);
   });
 
+  // O agente de fora já perguntou ao usuário no chat dele: nada pergunta de novo no QAzinho.
   describe("lending its tools to the coding agent in the QA's editor", () => {
     it('does a call through the same stores, without a line in the Intern chat', async () => {
       bridge();
@@ -316,37 +317,25 @@ describe('useAppActions', () => {
       });
 
       expect(done).toEqual({ text: 'Renamed w2 from "Login" to "Pix".', isError: false });
-      expect(useWorkspaceStore.getState().workspaces[1]?.name).toBe('Pix');
       expect(useAssistantStore.getState().messages).toEqual([]);
     });
 
-    it("marks the card it asks the QA as the coding agent's", async () => {
+    it('deletes without a card of its own', async () => {
       bridge();
       renderHook(() => {
         useAppActions();
       });
 
-      const decision = useAppToolStore.getState().confirm?.({
+      const done = await useAppToolStore.getState().perform?.({
         id: 'outside-2',
-        action: 'delete_cases',
-        subject: 'Checkout',
-        count: 1,
-        detail: 'TC-01',
+        call: { name: 'delete_workspace', args: { workspace: 'w2' } },
       });
 
-      await waitFor(() => {
-        expect(useAssistantStore.getState().messages).toEqual([
-          expect.objectContaining({ id: 'outside-2', from: 'outside', decision: null }),
-        ]);
-      });
-
-      act(() => {
-        useAssistantStore
-          .getState()
-          .settleConfirm({ id: 'outside-2', decision: 'confirmed' });
-      });
-
-      await expect(decision).resolves.toBe('confirmed');
+      expect(done?.isError).toBe(false);
+      expect(useWorkspaceStore.getState().workspaces.map(({ id }) => id)).not.toContain(
+        'w2',
+      );
+      expect(useAssistantStore.getState().messages).toEqual([]);
     });
 
     it('takes its tools back when it goes away', () => {

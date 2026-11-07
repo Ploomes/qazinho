@@ -23,14 +23,6 @@
   background: var(--raise);
 }
 
-.confirm-card__from {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--lime-ink);
-  font: var(--font-mono-sm);
-}
-
 .confirm-card__title {
   color: var(--ink);
   font: var(--font-ui-strong);
