@@ -3,6 +3,7 @@ import type { IProject, IProjectRepository, ITarget } from '@/modules/Project/ty
 import type { AppToolCall, GithubFailure, IRepository, TargetKind } from '@/shared/types';
 import { newProjectId, webAddressOf } from '@/modules/Project/library';
 import { findByRef } from './findByRef';
+import { projectTargetsOf } from './projectTargetsOf';
 import { repositoryOfName } from './repositoryOfName';
 
 type ProjectCall = Extract<
@@ -119,25 +120,11 @@ async function createProject(props: {
   port: IAppPort;
 }): Promise<IToolDone> {
   const { args, port } = props;
-  const web = args.web === undefined || args.web === '' ? null : webAddressOf(args.web);
+  const read = projectTargetsOf({ values: args, labelOf: port.targetLabel });
 
-  if (args.web !== undefined && args.web !== '' && web === null)
-    return failed(`"${args.web}" is not a web address.`);
+  if (!read.isOk) return failed(read.text);
 
-  const values: Record<TargetKind, string | null> = {
-    web,
-    android: args.android === undefined || args.android === '' ? null : args.android,
-    ios: args.ios === undefined || args.ios === '' ? null : args.ios,
-  };
-  const targets = KINDS.flatMap((kind): ITarget[] => {
-    const value = values[kind];
-
-    return value === null
-      ? []
-      : [{ id: `t-${kind}`, kind, label: port.targetLabel(kind), value }];
-  });
-
-  if (targets.length === 0) return failed(NEEDS_TARGET);
+  const { targets } = read;
 
   const named = args.repositories ?? [];
   const repositories: IProjectRepository[] = [];

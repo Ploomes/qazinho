@@ -1,11 +1,10 @@
 import type { IAppPort, IToolDone } from '@/modules/Assistant/types';
-import type { IWorkspace } from '@/modules/Workspace/types';
 import type { AppToolCall } from '@/shared/types';
-import { toPlanKind } from '@/modules/Plan/library';
 import { flattenPlanSteps } from '@/modules/Run/library';
 import { designLinkOf } from '@/modules/Workspace/library';
 import { EXPLORATION } from '@/shared/constants';
 import { findByRef } from './findByRef';
+import { newWorkspaceIn } from './newWorkspaceIn';
 
 type WorkspaceCall = Extract<
   AppToolCall,
@@ -163,48 +162,17 @@ function createWorkspace(props: {
 
   if (!found.isFound) return failed(found.text);
 
-  const project = found.item;
-  const kinds = project.targets.map(({ kind }) => kind).join(', ');
-  const [only] = project.targets;
-  const target =
-    args.target === undefined
-      ? project.targets.length === 1
-        ? only
-        : undefined
-      : project.targets.find(({ kind }) => kind === args.target);
-
-  if (target === undefined)
-    return failed(
-      args.target === undefined
-        ? `${project.id} tests on ${kinds}: say which target the workspace is for.`
-        : `${project.id} has no ${args.target} target. Its targets are ${kinds}.`,
-    );
-
-  const workspace: IWorkspace = {
-    id: `w-${String(port.now())}`,
-    projectId: project.id,
+  const made = newWorkspaceIn({
+    project: found.item,
     name: args.name,
-    targetId: target.id,
-    planKind: toPlanKind(target.kind),
-    sessionId: null,
-    sessionAgentId: null,
-    status: 'idle',
-    issue: null,
-    design: null,
-    chat: [],
-    plan: [],
-    runs: [],
-    bugs: [],
-    live: null,
-    hasBeenAsked: false,
-    planSource: null,
-    sourcePage: null,
-    unreadPlan: null,
-    plainValues: [],
-    published: null,
-    viewportId: 'desktop',
-    context: null,
-  };
+    kind: args.target,
+    now: port.now(),
+  });
+
+  if (!made.isOk) return failed(made.text);
+
+  const { workspace, target } = made;
+  const project = found.item;
 
   port.addWorkspace(workspace);
 
