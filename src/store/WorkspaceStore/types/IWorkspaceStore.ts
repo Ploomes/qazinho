@@ -106,6 +106,7 @@ export interface IWorkspaceStore {
   }) => void;
   setLooking: (props: { workspaceId: string; device: 'android' | 'ios' }) => void;
   setPlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
+  changePlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
   startRun: (props: {
     workspaceId: string;
     runId: string;

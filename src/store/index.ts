@@ -1,4 +1,5 @@
 export * from './AppStore';
+export * from './AppToolStore';
 export * from './AssistantStore';
 export * from './BuildStore';
 export * from './MachineStore';

@@ -304,6 +304,16 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       liveTexts: { ...state.liveTexts, [workspaceId]: '' },
     })),
 
+  changePlan: ({ workspaceId, plan }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          appendPlanCard({ workspace, plan, at: formatClock(new Date()) }),
+      }),
+    })),
+
   setPlan: ({ workspaceId, plan }) =>
     set((state) => ({
       workspaces: mapWorkspace({
