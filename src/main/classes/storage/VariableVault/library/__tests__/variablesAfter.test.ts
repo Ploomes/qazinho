@@ -44,15 +44,24 @@ describe('variablesAfter', () => {
           name: 'LOGIN_PASSWORD',
           description: 'The admin password',
           value: 's3cret!',
+          isSecret: true,
         },
       ],
     });
   });
 
+  it('keeps a variable the QA said is no secret as one', () => {
+    expect(
+      after([save({ name: 'ADMIN_EMAIL', value: 'qa@shop.test', isSecret: false })]),
+    ).toMatchObject({ stored: [OTHER, EMAIL, { name: 'ADMIN_EMAIL', isSecret: false }] });
+  });
+
   it('keeps the value it had when a change leaves the value out', () => {
     expect(
       after([save({ name: 'LOGIN_EMAIL', description: 'The owner', value: null })]),
-    ).toEqual({ stored: [OTHER, { ...EMAIL, description: 'The owner' }] });
+    ).toEqual({
+      stored: [OTHER, { ...EMAIL, description: 'The owner', isSecret: true }],
+    });
   });
 
   it('renames a variable and keeps its value and its place', () => {
@@ -61,9 +70,28 @@ describe('variablesAfter', () => {
     ).toEqual({
       stored: [
         OTHER,
-        { ...EMAIL, name: 'ADMIN_EMAIL', description: 'The admin password' },
+        {
+          ...EMAIL,
+          name: 'ADMIN_EMAIL',
+          description: 'The admin password',
+          isSecret: true,
+        },
       ],
     });
+  });
+
+  it('keeps whether it is a secret when a change leaves that out', () => {
+    const plain = after([save({ name: 'LOGIN_EMAIL', value: null, isSecret: false })]);
+
+    expect(
+      variablesAfter({
+        stored: 'stored' in plain ? plain.stored : [],
+        apply: {
+          projectId: 'p-1',
+          changes: [save({ name: 'ADMIN_EMAIL', from: 'LOGIN_EMAIL', value: null })],
+        },
+      }),
+    ).toMatchObject({ stored: [OTHER, { name: 'ADMIN_EMAIL', isSecret: false }] });
   });
 
   it('removes a variable of this project only', () => {

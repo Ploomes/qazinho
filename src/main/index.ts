@@ -1572,6 +1572,13 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.copyVariables, (_event, props: { from: string; to: string }) =>
     variables.copy(props),
   );
+  ipcMain.handle(
+    CHANNELS.revealVariable,
+    (_event, props: { projectId: unknown; name: unknown }) =>
+      typeof props.projectId === 'string' && typeof props.name === 'string'
+        ? variables.reveal({ projectId: props.projectId, name: props.name })
+        : null,
+  );
   ipcMain.handle(CHANNELS.githubStatus, () => github.status());
   ipcMain.handle(CHANNELS.signInGithub, () => github.signIn());
   ipcMain.handle(CHANNELS.cancelGithubSignIn, () => {

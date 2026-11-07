@@ -1,3 +1,4 @@
+export * from './isSecretName';
 export * from './issueTargetIn';
 export * from './newProjectId';
 export * from './passwordsIn';

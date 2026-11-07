@@ -8,6 +8,7 @@ const draft = (change: Partial<IVariableDraft>): IVariableDraft => ({
   description: '',
   value: 'qa@shop.test',
   from: null,
+  isSecret: null,
   ...change,
 });
 

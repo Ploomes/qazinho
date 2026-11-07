@@ -209,6 +209,7 @@ describe('useProjectModalViewModel', () => {
             description: '',
             value: 'a@b.test',
             from: null,
+            isSecret: null,
           },
         ]);
       });
@@ -942,6 +943,7 @@ describe('useProjectModalViewModel', () => {
           description: 'The admin',
           value: '',
           from: 'LOGIN_EMAIL',
+          isSecret: true,
         },
       ]);
     });
@@ -955,7 +957,14 @@ describe('useProjectModalViewModel', () => {
 
       act(() => {
         result.current.onVariablesChange([
-          { key: 'new-0', name: 'TOKEN', description: 'API', value: 'abc', from: null },
+          {
+            key: 'new-0',
+            name: 'TOKEN',
+            description: 'API',
+            value: 'abc',
+            from: null,
+            isSecret: null,
+          },
         ]);
       });
       act(() => {
@@ -969,7 +978,14 @@ describe('useProjectModalViewModel', () => {
         {
           projectId: 'p1',
           changes: [
-            { kind: 'save', name: 'TOKEN', description: 'API', value: 'abc', from: null },
+            {
+              kind: 'save',
+              name: 'TOKEN',
+              description: 'API',
+              value: 'abc',
+              from: null,
+              isSecret: true,
+            },
           ],
         },
       ]);
@@ -983,7 +999,14 @@ describe('useProjectModalViewModel', () => {
         result.current.onNameChange('Shop');
         result.current.onUrlChange('https://shop.test');
         result.current.onVariablesChange([
-          { key: 'new-0', name: 'TOKEN', description: '', value: 'abc', from: null },
+          {
+            key: 'new-0',
+            name: 'TOKEN',
+            description: '',
+            value: 'abc',
+            from: null,
+            isSecret: null,
+          },
         ]);
       });
       act(() => {
@@ -1004,7 +1027,14 @@ describe('useProjectModalViewModel', () => {
 
       act(() => {
         result.current.onVariablesChange([
-          { key: 'new-0', name: 'TOKEN', description: '', value: 'abc', from: null },
+          {
+            key: 'new-0',
+            name: 'TOKEN',
+            description: '',
+            value: 'abc',
+            from: null,
+            isSecret: null,
+          },
         ]);
       });
       act(() => {

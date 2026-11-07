@@ -13,6 +13,7 @@ const kept = (name: string, change: Partial<IVariableDraft> = {}): IVariableDraf
   description: SAVED.find((one) => one.name === name)?.description ?? '',
   value: '',
   from: name,
+  isSecret: true,
   ...change,
 });
 
@@ -32,12 +33,26 @@ describe('variableChangesOf', () => {
         saved: SAVED,
         drafts: [
           kept('LOGIN_EMAIL'),
-          { key: 'n', name: 'TOKEN', description: ' API ', value: 'abc', from: null },
+          {
+            key: 'n',
+            name: 'TOKEN',
+            description: ' API ',
+            value: 'abc',
+            from: null,
+            isSecret: null,
+          },
         ],
       }),
     ).toEqual([
       { kind: 'remove', name: 'LOGIN_PASSWORD' },
-      { kind: 'save', name: 'TOKEN', description: 'API', value: 'abc', from: null },
+      {
+        kind: 'save',
+        name: 'TOKEN',
+        description: 'API',
+        value: 'abc',
+        from: null,
+        isSecret: true,
+      },
     ]);
   });
 
@@ -57,6 +72,7 @@ describe('variableChangesOf', () => {
         description: 'The owner',
         value: null,
         from: 'LOGIN_EMAIL',
+        isSecret: true,
       },
     ]);
   });
@@ -74,7 +90,44 @@ describe('variableChangesOf', () => {
         description: 'Its password',
         value: 'new one',
         from: 'LOGIN_PASSWORD',
+        isSecret: true,
       },
     ]);
+  });
+
+  it('saves a variable the QA said is no secret, its value kept', () => {
+    expect(
+      variableChangesOf({
+        saved: SAVED,
+        drafts: [kept('LOGIN_EMAIL', { isSecret: false }), kept('LOGIN_PASSWORD')],
+      }),
+    ).toEqual([
+      {
+        kind: 'save',
+        name: 'LOGIN_EMAIL',
+        description: 'The admin',
+        value: null,
+        from: 'LOGIN_EMAIL',
+        isSecret: false,
+      },
+    ]);
+  });
+
+  it('follows the name of a new variable the QA did not mark either way', () => {
+    expect(
+      variableChangesOf({
+        saved: [],
+        drafts: [
+          {
+            key: 'n',
+            name: 'CRM_EMAIL',
+            description: '',
+            value: 'qa@crm.test',
+            from: null,
+            isSecret: null,
+          },
+        ],
+      }),
+    ).toMatchObject([{ name: 'CRM_EMAIL', isSecret: false }]);
   });
 });

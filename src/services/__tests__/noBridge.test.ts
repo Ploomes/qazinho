@@ -191,6 +191,7 @@ describe('a page with no bridge', () => {
       }),
     ).toEqual({ isSaved: false, failure: { reason: 'no-bridge' } });
     await expect(Variables.forget('p-1')).resolves.toBeUndefined();
+    expect(await Variables.reveal({ projectId: 'p-1', name: 'LOGIN_EMAIL' })).toBeNull();
   });
 
   it('has no recording to play or to save', async () => {

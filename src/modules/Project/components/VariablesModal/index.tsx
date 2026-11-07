@@ -40,11 +40,13 @@ export const VariablesModal: React.FC = () => {
             valuePlaceholder={valuePlaceholder}
             note={row.note}
             isValueOnly={row.isValueOnly}
+            isSecret={row.isSecret}
             isNameFocused={false}
             isValueFocused={row.isValueFocused}
             onName={row.onName}
             onDescription={row.onDescription}
             onValue={row.onValue}
+            onSecret={row.onSecret}
           />
         ))}
       </div>

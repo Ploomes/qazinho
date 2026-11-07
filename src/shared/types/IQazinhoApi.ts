@@ -161,6 +161,7 @@ export interface IQazinhoApi {
   applyVariables: (apply: IApplyVariables) => Promise<VariablesOutcome>;
   forgetVariables: (projectId: string) => Promise<void>;
   copyVariables: (props: { from: string; to: string }) => Promise<VariablesOutcome>;
+  revealVariable: (props: { projectId: string; name: string }) => Promise<string | null>;
   githubStatus: () => Promise<IGithubStatus>;
   signInGithub: () => Promise<GithubSignInProgress>;
   cancelGithubSignIn: () => Promise<void>;

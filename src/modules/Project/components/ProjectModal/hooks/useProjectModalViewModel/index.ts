@@ -61,12 +61,13 @@ export const useProjectModalViewModel = () => {
   const savedVariables = editing === null ? [] : (byProject[editing.id] ?? []);
   const { applyVariables } = useVariableActions();
   const [variables, setVariables] = useState<IVariableDraft[]>(() =>
-    savedVariables.map(({ name, description }) => ({
+    savedVariables.map(({ name, description, isSecret }) => ({
       key: `saved-${name}`,
       name,
       description,
       value: '',
       from: name,
+      isSecret: isSecret ?? true,
     })),
   );
   const [variableFailure, setVariableFailure] = useState<string | null>(null);

@@ -656,6 +656,11 @@ export const en = {
     VALUE_PLACEHOLDER: 'Type the value',
     VALUE_KEEP: 'Keep the value it has',
     SEALED: 'Value saved',
+    SECRET: 'Secret',
+    SECRET_TIP:
+      'A secret stays hidden and is never shown again. A value that is no secret, such as an email, can be seen later.',
+    SHOW_VALUE: 'Show the value',
+    HIDE_VALUE: 'Hide the value',
     TITLE: 'Values for {{project}}',
     SAVE: 'Save',
     SAVING: 'Saving…',

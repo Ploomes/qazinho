@@ -131,6 +131,7 @@ describe('useVariablesModalViewModel', () => {
           description: 'The admin on staging',
           value: 'qa@shop.test',
           from: null,
+          isSecret: false,
         },
         {
           kind: 'save',
@@ -138,9 +139,32 @@ describe('useVariablesModalViewModel', () => {
           description: 'Its password',
           value: 'Sup3r $& s3cret',
           from: null,
+          isSecret: true,
         },
       ]);
       expect(useVariablesStore.getState().request).toBeNull();
+    });
+
+    it('starts an email as no secret and a password as one, and lets the QA change it', async () => {
+      const applied = vault();
+      const result = opened();
+
+      expect(result.current.rows.map(({ isSecret }) => isSecret)).toEqual([false, true]);
+
+      act(() => {
+        result.current.rows[0]?.onSecret(true);
+        result.current.rows[0]?.onValue('qa@shop.test');
+        result.current.rows[1]?.onValue('Sup3r');
+      });
+      act(() => {
+        result.current.onConfirm();
+      });
+
+      await waitFor(() => {
+        expect(
+          applied[0]?.changes.map((change) => 'isSecret' in change && change.isSecret),
+        ).toEqual([true, true]);
+      });
     });
 
     it('does NOT close when the machine has no keychain, and says why', async () => {

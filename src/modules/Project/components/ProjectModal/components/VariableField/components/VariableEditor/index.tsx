@@ -20,11 +20,13 @@ export const VariableEditor: React.FC<IVariableEditorProps> = (props) => {
         value={props.value}
         valuePlaceholder={props.valuePlaceholder}
         note=""
+        isSecret={props.isSecret}
         isNameFocused
         isValueFocused={false}
         onName={props.onName}
         onDescription={props.onDescription}
         onValue={props.onValue}
+        onSecret={props.onSecret}
       />
       <div className="variable-editor__foot">
         <span className="variable-editor__problem">{props.problem}</span>

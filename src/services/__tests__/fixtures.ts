@@ -108,6 +108,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     applyVariables: () => Promise.resolve({ isSaved: true, variables: [] }),
     forgetVariables: () => Promise.resolve(),
     copyVariables: () => Promise.resolve({ isSaved: true, variables: [] }),
+    revealVariable: () => Promise.resolve(null),
     githubStatus: () =>
       Promise.resolve({
         cli: { isFound: false, path: null },

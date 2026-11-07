@@ -5,9 +5,11 @@ export interface IVariableFormProps {
   valuePlaceholder: string;
   note: string;
   isValueOnly: boolean;
+  isSecret: boolean;
   isNameFocused: boolean;
   isValueFocused: boolean;
   onName: (name: string) => void;
   onDescription: (description: string) => void;
   onValue: (value: string) => void;
+  onSecret: (isSecret: boolean) => void;
 }

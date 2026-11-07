@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
 import type { IVariableDraft } from '@/modules/Project/types';
-import { act, cleanup, renderHook } from '@testing-library/react';
+import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
 import { useVariableFieldViewModel } from '@/modules/Project/components/ProjectModal/components/VariableField/hooks/useVariableFieldViewModel';
+import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 
 const SAVED = [{ name: 'LOGIN_EMAIL', description: 'The admin' }];
 const KEPT: IVariableDraft = {
@@ -12,13 +13,19 @@ const KEPT: IVariableDraft = {
   description: 'The admin',
   value: '',
   from: 'LOGIN_EMAIL',
+  isSecret: true,
 };
 
 function field(variables: IVariableDraft[] = [KEPT]) {
   const onChange = vi.fn();
   const { result, rerender } = renderHook(
     (props: { variables: IVariableDraft[] }) =>
-      useVariableFieldViewModel({ variables: props.variables, saved: SAVED, onChange }),
+      useVariableFieldViewModel({
+        projectId: 'p1',
+        variables: props.variables,
+        saved: SAVED,
+        onChange,
+      }),
     { initialProps: { variables } },
   );
 
@@ -47,13 +54,20 @@ describe('useVariableFieldViewModel', () => {
           isEditing: false,
         }),
       ]);
-      expect(JSON.stringify(result.current.rows)).not.toContain('value');
+      expect(result.current.rows[0]).toMatchObject({ isSecret: true, shownValue: null });
     });
 
     it('tags a variable not saved yet as new, and one edited since as changed', () => {
       const { result } = field([
         { ...KEPT, value: 'new password' },
-        { key: 'new-0', name: 'TOKEN', description: '', value: 'abc', from: null },
+        {
+          key: 'new-0',
+          name: 'TOKEN',
+          description: '',
+          value: 'abc',
+          from: null,
+          isSecret: null,
+        },
       ]);
 
       expect(result.current.rows.map(({ tag }) => tag)).toEqual(['changed', 'new']);
@@ -86,7 +100,14 @@ describe('useVariableFieldViewModel', () => {
 
       expect(onChange).toHaveBeenCalledWith([
         KEPT,
-        { key: 'new-0', name: 'API_TOKEN', description: '', value: 's3cret', from: null },
+        {
+          key: 'new-0',
+          name: 'API_TOKEN',
+          description: '',
+          value: 's3cret',
+          from: null,
+          isSecret: null,
+        },
       ]);
       expect(result.current.editor).toBeNull();
     });
@@ -160,5 +181,83 @@ describe('useVariableFieldViewModel', () => {
 
       expect(onChange).toHaveBeenCalledWith([]);
     });
+  });
+});
+
+describe('useVariableFieldViewModel, a value that is no secret', () => {
+  const PLAIN: IVariableDraft = { ...KEPT, isSecret: false };
+
+  it('shows the value of a saved one only when the QA asks, from the vault', async () => {
+    const reveal = vi.fn(() => Promise.resolve('qa@shop.test'));
+
+    window.qazinho = { ...fakeQazinhoApi('darwin'), revealVariable: reveal };
+
+    const { result } = field([PLAIN]);
+
+    expect(result.current.rows[0]).toMatchObject({ isSecret: false, shownValue: null });
+
+    act(() => {
+      result.current.onReveal(PLAIN.key);
+    });
+
+    await waitFor(() => {
+      expect(result.current.rows[0]?.shownValue).toBe('qa@shop.test');
+    });
+    expect(reveal).toHaveBeenCalledWith({ projectId: 'p1', name: 'LOGIN_EMAIL' });
+
+    act(() => {
+      result.current.onReveal(PLAIN.key);
+    });
+
+    expect(result.current.rows[0]?.shownValue).toBeNull();
+  });
+
+  it('shows a value typed but not saved yet without asking the vault', () => {
+    const reveal = vi.fn(() => Promise.resolve(null));
+
+    window.qazinho = { ...fakeQazinhoApi('darwin'), revealVariable: reveal };
+
+    const { result } = field([{ ...PLAIN, value: 'new@shop.test' }]);
+
+    act(() => {
+      result.current.onReveal(PLAIN.key);
+    });
+
+    expect(result.current.rows[0]?.shownValue).toBe('new@shop.test');
+    expect(reveal).not.toHaveBeenCalled();
+  });
+
+  it('never shows a secret, even when asked', () => {
+    const reveal = vi.fn(() => Promise.resolve('Sup3r!'));
+
+    window.qazinho = { ...fakeQazinhoApi('darwin'), revealVariable: reveal };
+
+    const { result } = field([{ ...KEPT, value: 'Sup3r!' }]);
+
+    act(() => {
+      result.current.onReveal(KEPT.key);
+    });
+
+    expect(result.current.rows[0]?.shownValue).toBeNull();
+    expect(reveal).not.toHaveBeenCalled();
+  });
+
+  it('makes a new variable named like an email no secret, until the QA says it is one', () => {
+    const { result } = field([]);
+
+    act(() => {
+      result.current.onAdd();
+    });
+    act(() => {
+      result.current.editor?.onName('crm_email');
+    });
+
+    expect(result.current.editor?.isSecret).toBe(false);
+
+    act(() => {
+      result.current.editor?.onSecret(true);
+    });
+
+    expect(result.current.editor?.isSecret).toBe(true);
   });
 });

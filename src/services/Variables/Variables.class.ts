@@ -6,7 +6,7 @@ import type {
 
 /**
  * O único que chama o lado das variáveis da bridge. Valores entram; só nomes e descrições
- * voltam.
+ * voltam, e o valor do que o QA disse não ser segredo, quando ele pede.
  */
 export class Variables {
   public static async list(): Promise<IProjectVariables[]> {
@@ -32,6 +32,13 @@ export class Variables {
         failure: { reason: 'no-bridge' },
       }
     );
+  }
+
+  public static async reveal(props: {
+    projectId: string;
+    name: string;
+  }): Promise<string | null> {
+    return (await window.qazinho?.revealVariable(props)) ?? null;
   }
 
   public static async forget(projectId: string): Promise<void> {

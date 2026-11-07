@@ -166,6 +166,7 @@ export const ProjectModal: React.FC = () => {
 
         <ProjectPane label={t('PROJECT.SECTION_VARIABLES')} isOpen={isOpen.variables}>
           <VariableField
+            projectId={projectId}
             variables={variables}
             saved={savedVariables}
             onChange={onVariablesChange}

@@ -662,6 +662,11 @@ export const pt: typeof en = {
     VALUE_PLACEHOLDER: 'Digite o valor',
     VALUE_KEEP: 'Mantém o valor que já tem',
     SEALED: 'Valor salvo',
+    SECRET: 'Segredo',
+    SECRET_TIP:
+      'Um segredo fica escondido e nunca é mostrado de novo. Um valor que não é segredo, como um e-mail, pode ser visto depois.',
+    SHOW_VALUE: 'Mostrar o valor',
+    HIDE_VALUE: 'Esconder o valor',
     TITLE: 'Valores de {{project}}',
     SAVE: 'Salvar',
     SAVING: 'Salvando…',

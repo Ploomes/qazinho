@@ -54,6 +54,16 @@
   letter-spacing: var(--tag-tracking);
 }
 
+.variable-field__plain {
+  flex: none;
+  max-width: 30%;
+  overflow: hidden;
+  color: var(--ink2);
+  font: var(--font-mono-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .variable-field__lock {
   display: inline-flex;
   color: var(--lime-ink);

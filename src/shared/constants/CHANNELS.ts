@@ -70,6 +70,7 @@ export const CHANNELS = {
   applyVariables: 'variables:apply',
   forgetVariables: 'variables:forget',
   copyVariables: 'variables:copy',
+  revealVariable: 'variables:reveal',
   githubStatus: 'github:status',
   signInGithub: 'github:sign-in',
   cancelGithubSignIn: 'github:sign-in-cancel',

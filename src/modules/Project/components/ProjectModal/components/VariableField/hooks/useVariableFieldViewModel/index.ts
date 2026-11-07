@@ -2,12 +2,18 @@ import type { IVariableFieldProps } from '@/modules/Project/components/ProjectMo
 import type { IVariableDraft } from '@/modules/Project/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { variableNameOf, variableProblemOf } from '@/modules/Project/library';
+import {
+  isSecretName,
+  variableNameOf,
+  variableProblemOf,
+} from '@/modules/Project/library';
+import { Variables } from '@/services';
 
 export const useVariableFieldViewModel = (props: IVariableFieldProps) => {
-  const { variables, saved, onChange } = props;
+  const { projectId, variables, saved, onChange } = props;
   const { t } = useTranslation();
   const [editing, setEditing] = useState<IVariableDraft | null>(null);
+  const [revealed, setRevealed] = useState<Record<string, string>>({});
   const [isAdding, setAdding] = useState(false);
   const [count, setCount] = useState(0);
 
@@ -29,11 +35,24 @@ export const useVariableFieldViewModel = (props: IVariableFieldProps) => {
       : '';
   };
 
+  const secretOf = (draft: IVariableDraft) => draft.isSecret ?? isSecretName(draft.name);
+  const reveal = (props: { key: string; value: string }) => {
+    setRevealed((current) => ({ ...current, [props.key]: props.value }));
+  };
+
   return {
     rows: variables.map((row) => ({
       key: row.key,
       name: row.name,
       description: row.description,
+      isSecret: secretOf(row),
+      shownValue: revealed[row.key] ?? null,
+      revealIcon:
+        revealed[row.key] === undefined ? ('eye' as const) : ('eyeSlash' as const),
+      revealLabel:
+        revealed[row.key] === undefined
+          ? t('VARIABLES.SHOW_VALUE')
+          : t('VARIABLES.HIDE_VALUE'),
       tag: tagOf(row),
       isEditing: !isAdding && editing?.key === row.key,
       editLabel: t('PROJECT.VARIABLE_EDIT', { name: row.name }),
@@ -58,6 +77,7 @@ export const useVariableFieldViewModel = (props: IVariableFieldProps) => {
               editing.from === null
                 ? t('VARIABLES.VALUE_PLACEHOLDER')
                 : t('VARIABLES.VALUE_KEEP'),
+            isSecret: secretOf(editing),
             problem: problem === null ? '' : t(problem.key, { name: problem.name }),
             canFinish: problem === null,
             onName: (typed: string) => {
@@ -69,6 +89,9 @@ export const useVariableFieldViewModel = (props: IVariableFieldProps) => {
             onValue: (value: string) => {
               change({ value });
             },
+            onSecret: (isSecret: boolean) => {
+              change({ isSecret });
+            },
           },
     onAdd: () => {
       if (editing !== null) return;
@@ -79,6 +102,7 @@ export const useVariableFieldViewModel = (props: IVariableFieldProps) => {
         description: '',
         value: '',
         from: null,
+        isSecret: null,
       });
       setCount(count + 1);
       setAdding(true);
@@ -90,6 +114,31 @@ export const useVariableFieldViewModel = (props: IVariableFieldProps) => {
 
       setEditing(row);
       setAdding(false);
+    },
+    onReveal: (key: string) => {
+      const row = variables.find((one) => one.key === key);
+
+      if (row === undefined || secretOf(row)) return;
+
+      if (revealed[key] !== undefined) {
+        setRevealed((current) =>
+          Object.fromEntries(Object.entries(current).filter(([one]) => one !== key)),
+        );
+
+        return;
+      }
+
+      if (row.value.length > 0) {
+        reveal({ key, value: row.value });
+
+        return;
+      }
+
+      if (projectId === null || row.from === null) return;
+
+      void Variables.reveal({ projectId, name: row.from }).then((value) => {
+        if (value !== null) reveal({ key, value });
+      });
     },
     onRemove: (key: string) => {
       onChange(variables.filter((one) => one.key !== key));

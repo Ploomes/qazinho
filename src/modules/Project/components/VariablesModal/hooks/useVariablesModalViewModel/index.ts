@@ -4,7 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { VARIABLES_MODAL } from '@/modules/Project/components/VariablesModal/constants';
 import { VARIABLE_FAILURE_KEYS } from '@/modules/Project/constants';
 import { useVariableActions } from '@/modules/Project/hooks/useVariableActions';
-import { variableNameOf, variableProblemOf } from '@/modules/Project/library';
+import {
+  isSecretName,
+  variableNameOf,
+  variableProblemOf,
+} from '@/modules/Project/library';
 import { useAppStore, useVariablesStore } from '@/store';
 
 export const useVariablesModalViewModel = () => {
@@ -21,6 +25,7 @@ export const useVariablesModalViewModel = () => {
       description: draft.description,
       value: '',
       from: null,
+      isSecret: null,
     })),
   );
   const [failure, setFailure] = useState<string | null>(null);
@@ -28,6 +33,7 @@ export const useVariablesModalViewModel = () => {
 
   const kept = request === null ? [] : (byProject[request.projectId] ?? []);
   const problem = variableProblemOf(rows);
+  const secretOf = (row: IVariableDraft) => row.isSecret ?? isSecretName(row.name);
   const change = (props: { key: string; draft: Partial<IVariableDraft> }) => {
     setFailure(null);
     setRows((current) =>
@@ -48,6 +54,7 @@ export const useVariablesModalViewModel = () => {
       name: row.name,
       description: row.description,
       value: row.value,
+      isSecret: secretOf(row),
       note: kept.some(({ name }) => name === row.name) ? t('VARIABLES.REPLACES') : '',
       onName: (typed: string) => {
         change({ key: row.key, draft: { name: variableNameOf(typed) } });
@@ -57,6 +64,9 @@ export const useVariablesModalViewModel = () => {
       },
       onValue: (value: string) => {
         change({ key: row.key, draft: { value } });
+      },
+      onSecret: (isSecret: boolean) => {
+        change({ key: row.key, draft: { isSecret } });
       },
     })),
     hint:
@@ -81,6 +91,7 @@ export const useVariablesModalViewModel = () => {
           description: row.description,
           value: row.value,
           from: null,
+          isSecret: secretOf(row),
         })),
       }).then((outcome) => {
         if (outcome.isSaved) {

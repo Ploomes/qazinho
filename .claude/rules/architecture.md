@@ -89,6 +89,10 @@ Toda `BrowserWindow` recebe `contextIsolation: true`, `sandbox: true` e `nodeInt
     pede (`VariablesModal`), ou como a resposta secreta à pergunta de uma run, que só aquela run
     digita, a menos que o QA a guarde. Nenhuma ferramenta do app carrega um, e o Estagiário só
     ouve nomes.
+  - O QA diz se cada variável é segredo, e o nome dá o padrão (`isSecretName`): um e-mail ou um
+    usuário não é, uma senha, um token ou um nome desconhecido é. O valor do que não é segredo
+    volta à janela do projeto quando o QA pede (`reveal`), e só para ela: um segredo nunca volta,
+    e nenhum agente recebe um valor. Todo campo de valor tem o olho para mostrar o que se digita.
   - Uma run alcança o dispositivo pela `variablePort`: um `${NAME}` é digitado como o valor dele,
     todo valor que aparece é lido de volta como o nome dele, na tela e no porquê de uma ação
     falhar, e uma receita guarda o nome, nunca um locator que contenha um valor. Uma prova é

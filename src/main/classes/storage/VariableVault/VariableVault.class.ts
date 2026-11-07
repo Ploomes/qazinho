@@ -57,18 +57,33 @@ export class VariableVault {
 
   /** Dá a um projeto uma cópia das variáveis de outro, os valores incluídos. */
   public async copy(props: { from: string; to: string }): Promise<VariablesOutcome> {
-    const values = await this.valuesOf(props.from);
+    const stored = ((await this.read()) ?? []).filter(
+      ({ projectId }) => projectId === props.from,
+    );
 
     return this.apply({
       projectId: props.to,
-      changes: values.map(({ name, description, value }) => ({
+      changes: stored.map(({ name, description, value, isSecret }) => ({
         kind: 'save',
         name,
         description,
         value,
         from: null,
+        isSecret: isSecret ?? true,
       })),
     });
+  }
+
+  /** O valor de uma variável que o QA disse não ser segredo; de um segredo, nunca. */
+  public async reveal(props: {
+    projectId: string;
+    name: string;
+  }): Promise<string | null> {
+    const found = ((await this.read()) ?? []).find(
+      (one) => one.projectId === props.projectId && one.name === props.name,
+    );
+
+    return found?.isSecret === false ? found.value : null;
   }
 
   /** Descarta toda variável de um projeto que se foi. */

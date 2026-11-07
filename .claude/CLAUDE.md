@@ -108,7 +108,9 @@ um minuto, entrando com as variáveis do projeto; o `tests/smoke/explore.test.ts
 fake no Chrome real, e pelo app só um explorador fake foi até agora.
 
 **Um projeto guarda os logins e segredos dele como variáveis**: um nome, o que ele guarda, e um
-valor lacrado pelo keychain do SO na main, que nunca chega à página, e que o agente lê pelo nome. Um
+valor lacrado pelo keychain do SO na main, que o agente lê pelo nome. O QA diz se cada uma é
+segredo: um segredo nunca volta à página, e o valor de um e-mail ou de um usuário aparece na janela
+do projeto quando ele pede. Um
 campo que mostra o que foi digitado ainda o mostra na foto da tela que o agente recebe. O QA
 as adiciona na janela do projeto, ou as digita numa janela que o chat ou o Estagiário abre:
 quando um plano precisa de uma conta, o agente do chat oferece as variáveis que servem e uma opção

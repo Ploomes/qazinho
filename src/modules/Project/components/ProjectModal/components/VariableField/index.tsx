@@ -9,8 +9,8 @@ import { useVariableFieldViewModel } from './hooks';
 import './styles.css';
 
 /**
- * Os logins e segredos do projeto: cada um pelo nome e pelo que guarda, o valor lacrado e
- * nunca mostrado, editado no lugar e salvo com o projeto.
+ * Os logins e segredos do projeto: cada um pelo nome e pelo que guarda, um segredo nunca
+ * mostrado, o resto quando o QA pede, editado no lugar e salvo com o projeto.
  */
 export const VariableField: React.FC<IVariableFieldProps> = (props) => {
   const {
@@ -26,6 +26,7 @@ export const VariableField: React.FC<IVariableFieldProps> = (props) => {
     editor,
     onAdd,
     onEdit,
+    onReveal,
     onRemove,
     onDone,
     onCancelEdit,
@@ -59,6 +60,7 @@ export const VariableField: React.FC<IVariableFieldProps> = (props) => {
                       description={editor.description}
                       value={editor.value}
                       valuePlaceholder={editor.valuePlaceholder}
+                      isSecret={editor.isSecret}
                       problem={editor.problem}
                       canFinish={editor.canFinish}
                       doneLabel={doneLabel}
@@ -66,6 +68,7 @@ export const VariableField: React.FC<IVariableFieldProps> = (props) => {
                       onName={editor.onName}
                       onDescription={editor.onDescription}
                       onValue={editor.onValue}
+                      onSecret={editor.onSecret}
                       onDone={onDone}
                       onCancel={onCancelEdit}
                     />
@@ -84,12 +87,28 @@ export const VariableField: React.FC<IVariableFieldProps> = (props) => {
                       <span className="variable-field__tag">{row.tag}</span>
                     )}
                     <span className="variable-field__description">{row.description}</span>
-                    <span className="variable-field__sealed" title={sealedLabel}>
-                      <span className="variable-field__lock">
-                        <Icon name="lock" size={12} />
+                    {row.isSecret ? (
+                      <span className="variable-field__sealed" title={sealedLabel}>
+                        <span className="variable-field__lock">
+                          <Icon name="lock" size={12} />
+                        </span>
+                        <span aria-label={sealedLabel}>••••••</span>
                       </span>
-                      <span aria-label={sealedLabel}>••••••</span>
-                    </span>
+                    ) : (
+                      <>
+                        <span className="variable-field__plain">
+                          {row.shownValue ?? '••••••'}
+                        </span>
+                        <IconButton
+                          icon={row.revealIcon}
+                          size="sm"
+                          label={row.revealLabel}
+                          onClick={() => {
+                            onReveal(row.key);
+                          }}
+                        />
+                      </>
+                    )}
                     <IconButton
                       icon="edit"
                       size="sm"
@@ -126,6 +145,7 @@ export const VariableField: React.FC<IVariableFieldProps> = (props) => {
                 description={editor.description}
                 value={editor.value}
                 valuePlaceholder={editor.valuePlaceholder}
+                isSecret={editor.isSecret}
                 problem={editor.problem}
                 canFinish={editor.canFinish}
                 doneLabel={doneLabel}
@@ -133,6 +153,7 @@ export const VariableField: React.FC<IVariableFieldProps> = (props) => {
                 onName={editor.onName}
                 onDescription={editor.onDescription}
                 onValue={editor.onValue}
+                onSecret={editor.onSecret}
                 onDone={onDone}
                 onCancel={onCancelEdit}
               />

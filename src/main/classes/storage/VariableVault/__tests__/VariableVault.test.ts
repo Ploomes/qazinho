@@ -35,7 +35,11 @@ describe('VariableVault', () => {
     expect(await vault.apply({ projectId: 'p-1', changes: [PASSWORD] })).toEqual({
       isSaved: true,
       variables: [
-        { name: 'LOGIN_PASSWORD', description: 'The admin password on staging' },
+        {
+          name: 'LOGIN_PASSWORD',
+          description: 'The admin password on staging',
+          isSecret: true,
+        },
       ],
     });
     expect(await readFile(file, 'utf8')).not.toContain('Sup3r-s3cret!');
@@ -140,10 +144,53 @@ describe('VariableVault', () => {
       {
         projectId: 'p-1',
         variables: [
-          { name: 'LOGIN_PASSWORD', description: 'The admin password on staging' },
-          { name: 'LOGIN_EMAIL', description: 'The admin password on staging' },
+          {
+            name: 'LOGIN_PASSWORD',
+            description: 'The admin password on staging',
+            isSecret: true,
+          },
+          {
+            name: 'LOGIN_EMAIL',
+            description: 'The admin password on staging',
+            isSecret: true,
+          },
         ],
       },
     ]);
+  });
+
+  it('shows the value of a variable the QA said is no secret, and never a secret', async () => {
+    const { vault } = await vaultWith();
+
+    await vault.apply({
+      projectId: 'p-1',
+      changes: [
+        PASSWORD,
+        { ...PASSWORD, name: 'LOGIN_EMAIL', value: 'qa@shop.test', isSecret: false },
+      ],
+    });
+
+    expect(await vault.reveal({ projectId: 'p-1', name: 'LOGIN_EMAIL' })).toBe(
+      'qa@shop.test',
+    );
+    expect(await vault.reveal({ projectId: 'p-1', name: 'LOGIN_PASSWORD' })).toBeNull();
+    expect(await vault.reveal({ projectId: 'p-2', name: 'LOGIN_EMAIL' })).toBeNull();
+    expect(await vault.reveal({ projectId: 'p-1', name: 'GONE' })).toBeNull();
+  });
+
+  it('copies whether each variable is a secret along with it', async () => {
+    const { vault } = await vaultWith();
+
+    await vault.apply({
+      projectId: 'p-1',
+      changes: [
+        { ...PASSWORD, name: 'LOGIN_EMAIL', value: 'qa@shop.test', isSecret: false },
+      ],
+    });
+    await vault.copy({ from: 'p-1', to: 'p-2' });
+
+    expect(await vault.reveal({ projectId: 'p-2', name: 'LOGIN_EMAIL' })).toBe(
+      'qa@shop.test',
+    );
   });
 });

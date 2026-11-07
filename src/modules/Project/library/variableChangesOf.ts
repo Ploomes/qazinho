@@ -1,5 +1,6 @@
 import type { IVariableDraft } from '@/modules/Project/types';
 import type { IVariableBrief, VariableChange } from '@/shared/types';
+import { isSecretName } from './isSecretName';
 
 /**
  * O que salvar estes rascunhos muda nas variáveis que o projeto guarda: as removidas
@@ -15,10 +16,12 @@ export function variableChangesOf(props: {
     .map(({ name }): VariableChange => ({ kind: 'remove', name }));
   const kept = drafts.flatMap((draft): VariableChange[] => {
     const before = saved.find(({ name }) => name === draft.from);
+    const isSecret = draft.isSecret ?? isSecretName(draft.name);
     const isSame =
       before !== undefined &&
       draft.name === before.name &&
       draft.description.trim() === before.description &&
+      isSecret === (before.isSecret ?? true) &&
       draft.value.length === 0;
 
     return isSame
@@ -30,6 +33,7 @@ export function variableChangesOf(props: {
             description: draft.description.trim(),
             value: draft.value.length === 0 ? null : draft.value,
             from: before === undefined ? null : before.name,
+            isSecret,
           },
         ];
   });

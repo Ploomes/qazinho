@@ -7,17 +7,26 @@ describe('variablesByProject', () => {
       variablesByProject([
         { projectId: 'p-1', name: 'A', description: 'first', value: 'one' },
         { projectId: 'p-2', name: 'B', description: 'second', value: 'two' },
-        { projectId: 'p-1', name: 'C', description: 'third', value: 'three' },
+        {
+          projectId: 'p-1',
+          name: 'C',
+          description: 'third',
+          value: 'three',
+          isSecret: false,
+        },
       ]),
     ).toEqual([
       {
         projectId: 'p-1',
         variables: [
-          { name: 'A', description: 'first' },
-          { name: 'C', description: 'third' },
+          { name: 'A', description: 'first', isSecret: true },
+          { name: 'C', description: 'third', isSecret: false },
         ],
       },
-      { projectId: 'p-2', variables: [{ name: 'B', description: 'second' }] },
+      {
+        projectId: 'p-2',
+        variables: [{ name: 'B', description: 'second', isSecret: true }],
+      },
     ]);
   });
 

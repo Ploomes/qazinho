@@ -274,6 +274,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.forgetVariables, projectId) as Promise<void>,
   copyVariables: (props: { from: string; to: string }) =>
     ipcRenderer.invoke(CHANNELS.copyVariables, props) as Promise<VariablesOutcome>,
+  revealVariable: (props: { projectId: string; name: string }) =>
+    ipcRenderer.invoke(CHANNELS.revealVariable, props) as Promise<string | null>,
   githubStatus: () => ipcRenderer.invoke(CHANNELS.githubStatus) as Promise<IGithubStatus>,
   signInGithub: () =>
     ipcRenderer.invoke(CHANNELS.signInGithub) as Promise<GithubSignInProgress>,

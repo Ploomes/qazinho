@@ -1,6 +1,6 @@
 /**
- * Uma variável como o QA a edita antes de salvar: `from` é o nome salvo que ela
- * representa, null quando nova, e um `value` vazio mantém o salvo.
+ * Uma variável editada antes de salvar: `from` é o nome salvo, null quando nova; um
+ * `value` vazio mantém o salvo, e um `isSecret` null segue o nome.
  */
 export interface IVariableDraft {
   key: string;
@@ -8,4 +8,5 @@ export interface IVariableDraft {
   description: string;
   value: string;
   from: string | null;
+  isSecret: boolean | null;
 }

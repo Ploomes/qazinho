@@ -38,7 +38,13 @@ export function variablesAfter(props: {
 
     if (value.length === 0) return { failure: { reason: 'no-value', name } };
 
-    const saved = { projectId, name, description: change.description.trim(), value };
+    const saved = {
+      projectId,
+      name,
+      description: change.description.trim(),
+      value,
+      isSecret: change.isSecret ?? before?.isSecret ?? true,
+    };
 
     own =
       before === undefined
