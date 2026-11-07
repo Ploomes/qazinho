@@ -1,3 +1,26 @@
+# [0.3.0](https://github.com/Salve-Software/qazinho/compare/v0.2.1...v0.3.0) (2026-11-07)
+
+
+### Bug Fixes
+
+* **mcp:** show the QAzinho server card working ([9c903fc](https://github.com/Salve-Software/qazinho/commit/9c903fc98b9f674eee3a9d3a60cbc565b9cd2b09))
+* **pro:** ask to type the sign-in code in the browser ([51363cd](https://github.com/Salve-Software/qazinho/commit/51363cd8f753214c549f71c9bcfb0acfd6d32831))
+* **pro:** sync a project without a file the org refuses ([c74d29a](https://github.com/Salve-Software/qazinho/commit/c74d29a7bb0d0a050f7d70722f877f6eb974dcc6))
+* **security:** open only web pages outside the app ([0f5357e](https://github.com/Salve-Software/qazinho/commit/0f5357ef9677845fcd22cd081974b45df4e26ecb))
+* **settings:** lay the Confluence switch out as a row ([009fb7b](https://github.com/Salve-Software/qazinho/commit/009fb7b1669f8894a78861f9a622901c8123231e))
+
+
+### Features
+
+* **assistant:** confirm what the coding agent asks ([5dcd45d](https://github.com/Salve-Software/qazinho/commit/5dcd45d6361fee92456e492ad1f15011f53e77d9))
+* **chat:** mark a message the coding agent wrote ([8f8f249](https://github.com/Salve-Software/qazinho/commit/8f8f249d9bb308c94ad1da1e014a94281e78c3bc))
+* **outside:** change at once after the agent asks ([d07788f](https://github.com/Salve-Software/qazinho/commit/d07788fb1d268de185ae4cbfbb8c9618b079dce8))
+* **outside:** create a project and a workspace ([277cf08](https://github.com/Salve-Software/qazinho/commit/277cf0853177642ba296eb3b8fa0ff6f3ef7bbf6))
+* **outside:** edit plans, projects and bugs ([c272bfc](https://github.com/Salve-Software/qazinho/commit/c272bfce64da7f6ad8269a6182185ccd56cac82c))
+* **outside:** talk with a workspace's chat ([2e9218d](https://github.com/Salve-Software/qazinho/commit/2e9218d200218a2eed6d6322b782abd7bccae106))
+* **outside:** variables, settings and integrations ([7c0f29e](https://github.com/Salve-Software/qazinho/commit/7c0f29ea7082e775f80584fa045383214b6ed4c9))
+* **store:** change a plan with its card, lend tools ([d1704c5](https://github.com/Salve-Software/qazinho/commit/d1704c5a1d1b69d5ef55364805c9477023bcc0fc))
+
 ## [0.2.1](https://github.com/Salve-Software/qazinho/compare/v0.2.0...v0.2.1) (2026-11-05)
 
 
