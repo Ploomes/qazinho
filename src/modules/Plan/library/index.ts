@@ -12,6 +12,7 @@ export * from './moveCase';
 export * from './nextCaseId';
 export * from './planDocOf';
 export * from './planOfDraft';
+export * from './planWithCases';
 export * from './planOfYaml';
 export * from './planWithRestored';
 export * from './planWithSecretNamed';

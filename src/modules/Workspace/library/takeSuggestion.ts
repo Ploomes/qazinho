@@ -1,6 +1,6 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
 import { appendPlanCard } from '@/modules/Chat/library';
-import { caseIdsUsed, planOfDraft } from '@/modules/Plan/library';
+import { caseIdsUsed, planWithCases } from '@/modules/Plan/library';
 
 /**
  * Leva os casos sugeridos, ou só os que o QA escolheu, ao plano: um que nomeia um caso do
@@ -20,14 +20,9 @@ export function takeSuggestion(props: {
   const chosen = message.cases.filter(
     (_, index) => only === undefined || only.includes(index),
   );
-  const plan = planOfDraft({
-    cases: [
-      ...workspace.plan.map(
-        (testCase) => chosen.find(({ id }) => id === testCase.id) ?? testCase,
-      ),
-      ...chosen.filter(({ id }) => !workspace.plan.some((one) => one.id === id)),
-    ],
+  const plan = planWithCases({
     plan: workspace.plan,
+    cases: chosen,
     used: caseIdsUsed(workspace),
   });
 
