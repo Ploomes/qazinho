@@ -1,4 +1,5 @@
 import type { IUserMessageProps } from './types';
+import { Markdown } from '@/shared/components/atoms';
 import { useUserMessageViewModel } from './hooks';
 import './styles.css';
 
@@ -7,7 +8,7 @@ import './styles.css';
  * em destaque.
  */
 export const UserMessage: React.FC<IUserMessageProps> = (props) => {
-  const { hasText, command, parts } = useUserMessageViewModel(props);
+  const { hasText, markdown, command, parts } = useUserMessageViewModel(props);
 
   return (
     <div className="user-message">
@@ -20,6 +21,11 @@ export const UserMessage: React.FC<IUserMessageProps> = (props) => {
             </span>
           ))}
         </span>
+      )}
+      {markdown !== null && (
+        <div className="user-message__markdown">
+          <Markdown>{markdown}</Markdown>
+        </div>
       )}
       {hasText && (
         <p className="user-message__text">

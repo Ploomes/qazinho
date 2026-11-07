@@ -4,12 +4,13 @@ import { splitMentions } from '@/modules/Chat/library';
 import { CHAT_COMMANDS } from '@/modules/Chat/screens/Chat/constants';
 
 export const useUserMessageViewModel = (props: IUserMessageProps) => {
-  const { text, mentions = [], command } = props.message;
+  const { text, mentions = [], command, from } = props.message;
   const { t } = useTranslation();
   const labelKey = CHAT_COMMANDS.find(({ id }) => id === command?.id)?.labelKey;
 
   return {
-    hasText: text !== '',
+    hasText: text !== '' && from !== 'agent',
+    markdown: text !== '' && from === 'agent' ? text : null,
     command:
       command === undefined || labelKey === undefined
         ? null

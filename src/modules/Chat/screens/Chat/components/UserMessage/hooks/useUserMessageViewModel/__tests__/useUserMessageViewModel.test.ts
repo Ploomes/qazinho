@@ -156,6 +156,31 @@ describe('useUserMessageViewModel', () => {
     expect(
       renderHook(() => useUserMessageViewModel({ message: message('hi') })).result
         .current,
-    ).toMatchObject({ hasText: true, command: null });
+    ).toMatchObject({ hasText: true, markdown: null, command: null });
+  });
+
+  it("renders the coding agent's message as Markdown, since it writes lists and bold", () => {
+    const text = '**Sources:**\n- Jira story HC-1682\n- Figma prototype';
+    const { result } = renderHook(() =>
+      useUserMessageViewModel({ message: { ...message(text), from: 'agent' } }),
+    );
+
+    expect(result.current).toMatchObject({ hasText: false, markdown: text });
+  });
+
+  it("does NOT read the QA's own words as Markdown", () => {
+    const { result } = renderHook(() =>
+      useUserMessageViewModel({ message: message('2 * 3 = 6') }),
+    );
+
+    expect(result.current).toMatchObject({ hasText: true, markdown: null });
+  });
+
+  it('shows no empty Markdown block when the agent sent only a command', () => {
+    const { result } = renderHook(() =>
+      useUserMessageViewModel({ message: { ...message(''), from: 'agent' } }),
+    );
+
+    expect(result.current.markdown).toBeNull();
   });
 });

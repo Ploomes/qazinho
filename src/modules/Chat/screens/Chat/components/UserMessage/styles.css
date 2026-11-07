@@ -10,6 +10,12 @@
   color: var(--ink);
   font: 400 14px/1.6 var(--font-ui);
   text-wrap: pretty;
+  white-space: pre-wrap;
+}
+
+.user-message__markdown {
+  align-self: stretch;
+  min-width: 0;
 }
 
 .user-message__mention {
