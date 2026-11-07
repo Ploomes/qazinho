@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { Button, Icon, Intern, Switch } from '@/shared/components/atoms';
+import { Button, Icon, Intern, StatusPill, Switch } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { OrgServerRow } from './components';
 import { useOutsideServerCardViewModel } from './hooks';
@@ -12,11 +12,12 @@ import './styles.css';
 export const OutsideServerCard: React.FC = () => {
   const {
     isOn,
-    isLit,
+    isReady,
     hasOrg,
     isBusy,
     internSize,
     name,
+    about,
     hereTitle,
     switchLabel,
     isChecking,
@@ -38,13 +39,14 @@ export const OutsideServerCard: React.FC = () => {
   } = useOutsideServerCardViewModel();
 
   return (
-    <div className={isLit ? 'outside-card outside-card--on' : 'outside-card'}>
+    <div className="outside-card">
       <div className="outside-card__head">
         <span className="outside-card__logo">
           <Intern mood="neutral" size={internSize} isStill isFigure />
         </span>
         <span className="outside-card__text">
           <span className="outside-card__name">{name}</span>
+          <span className="outside-card__about">{about}</span>
         </span>
       </div>
 
@@ -53,7 +55,7 @@ export const OutsideServerCard: React.FC = () => {
           <span className="outside-card__text">
             <span className="outside-card__reach-name">{hereTitle}</span>
           </span>
-          <Switch label={switchLabel} isOn={isOn} onChange={onToggle} />
+          {isReady && <Switch label={switchLabel} isOn={isOn} onChange={onToggle} />}
         </div>
 
         <AnimatePresence initial={false}>
@@ -78,23 +80,29 @@ export const OutsideServerCard: React.FC = () => {
                   </div>
                 )}
 
-                {isChecking && <p className="outside-card__note">{checkingText}</p>}
+                {isChecking && (
+                  <p className="outside-card__checking">
+                    <span className="outside-card__spinner" aria-hidden="true" />
+                    {checkingText}
+                  </p>
+                )}
                 {hasNoAgents && <p className="outside-card__note">{noAgentsText}</p>}
 
                 {agents.map((agent) => (
                   <div key={agent.id} className="outside-card__agent">
                     <span className="outside-card__agent-name">{agent.name}</span>
                     {agent.isAdded && (
-                      <span className="outside-card__added">
-                        <Icon name="passed" /> {agent.addedText}
-                      </span>
+                      <StatusPill status="passed" label={agent.addedText} />
                     )}
                     <Button
                       size="sm"
-                      variant={agent.isAdded ? 'ghost' : 'primary'}
+                      variant={agent.actionVariant}
                       disabled={agent.isDoing}
                       onClick={agent.onAction}
                     >
+                      {agent.isDoing && (
+                        <span className="outside-card__spinner" aria-hidden="true" />
+                      )}
                       {agent.actionLabel}
                     </Button>
                   </div>

@@ -1262,6 +1262,7 @@ export const pt: typeof en = {
   },
   OUTSIDE: {
     NAME: 'Servidor MCP do QAzinho',
+    ABOUT: 'Deixa o agente de código do seu editor usar o QAzinho.',
     HERE_TITLE: 'Neste computador',
     ORG_TITLE: 'Nas suas orgs',
     SWITCH: 'Ligar',
@@ -1270,6 +1271,8 @@ export const pt: typeof en = {
     ADD: 'Adicionar',
     ADDED: 'adicionado',
     REMOVE: 'Remover',
+    ADDING: 'Adicionando…',
+    REMOVING: 'Removendo…',
     NEW_SESSION: 'Aparece numa sessão nova do agente.',
     COPY: 'Copiar o endereço',
     COPIED: 'Copiado',

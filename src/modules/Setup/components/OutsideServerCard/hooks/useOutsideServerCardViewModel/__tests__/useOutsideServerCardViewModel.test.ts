@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/languages';
 import { useOutsideServerCardViewModel } from '@/modules/Setup/components/OutsideServerCard/hooks/useOutsideServerCardViewModel';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useProStore, useSetupStore } from '@/store';
+import { useProStore } from '@/store';
 
 const CLAUDE: IOutsideAgent = { id: 'claude-code', name: 'Claude Code', isAdded: false };
 
@@ -62,7 +62,6 @@ describe('useOutsideServerCardViewModel', () => {
 
     afterEach(() => {
       useProStore.setState({ status: null });
-      useSetupStore.setState({ mcpServers: null });
     });
 
     /** O app grátis nunca fala de uma org: quem não tem conta não vê o servidor dela. */
@@ -81,33 +80,6 @@ describe('useOutsideServerCardViewModel', () => {
       await waitFor(() => {
         expect(result.current.hasOrg).toBe(true);
       });
-    });
-
-    it('lights up for either reach', async () => {
-      mainWith({ server: { isOn: false, isBusy: false } });
-      useProStore.setState({ status: SIGNED_IN });
-
-      const { result } = renderHook(() => useOutsideServerCardViewModel());
-
-      expect(result.current.isLit).toBe(false);
-
-      act(() => {
-        useSetupStore.setState({ mcpServers: [{ id: 'org', state: 'connected' }] });
-      });
-
-      await waitFor(() => {
-        expect(result.current.isLit).toBe(true);
-      });
-    });
-
-    it('stays dark for an org left behind by signing out', () => {
-      mainWith({ server: { isOn: false, isBusy: false } });
-      useProStore.setState({ status: { isSignedIn: false, canKeepToken: true } });
-      useSetupStore.setState({ mcpServers: [{ id: 'org', state: 'connected' }] });
-
-      const { result } = renderHook(() => useOutsideServerCardViewModel());
-
-      expect(result.current.isLit).toBe(false);
     });
   });
 
@@ -155,6 +127,52 @@ describe('useOutsideServerCardViewModel', () => {
     });
     expect(add).toHaveBeenCalledWith('claude-code');
     expect(result.current.hasAdded).toBe(true);
+  });
+
+  it('says it is adding while the agent takes its time', async () => {
+    // Adicionar ao Claude Code leva segundos; sem dizer nada, o QA achava que tinha travado.
+    mainWith();
+    let finish = (_done: { ok: true }) => {};
+    window.qazinho = {
+      ...window.qazinho,
+      addOutsideAgent: () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    };
+
+    const { result } = renderHook(() => useOutsideServerCardViewModel());
+
+    await waitFor(() => {
+      expect(result.current.agents[0]?.actionVariant).toBe('primary');
+    });
+
+    act(() => {
+      result.current.agents[0]?.onAction();
+    });
+
+    expect(result.current.agents[0]?.actionLabel).toBe('Adding…');
+    expect(result.current.agents[0]?.isDoing).toBe(true);
+
+    act(() => {
+      finish({ ok: true });
+    });
+
+    await waitFor(() => {
+      expect(result.current.agents[0]?.isDoing).toBe(false);
+    });
+  });
+
+  it('waits for the server before offering the switch', async () => {
+    mainWith({ server: { isOn: false, isBusy: false } });
+
+    const { result } = renderHook(() => useOutsideServerCardViewModel());
+
+    expect(result.current.isReady).toBe(false);
+
+    await waitFor(() => {
+      expect(result.current.isReady).toBe(true);
+    });
   });
 
   it('says why an agent refused', async () => {

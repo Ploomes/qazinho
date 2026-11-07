@@ -239,9 +239,7 @@ export const Settings: React.FC = () => {
               {mcpServers.map((item) => (
                 <McpCard key={item.id} server={item} />
               ))}
-              <div className="settings__section">
-                <OutsideServerCard />
-              </div>
+              <OutsideServerCard />
             </div>
           )}
 

@@ -9,14 +9,10 @@
   transition: border-color var(--dur) var(--ease);
 }
 
-.outside-card--on {
-  border-color: var(--lime-ink);
-}
-
 .outside-card__head {
   display: flex;
   align-items: center;
-  gap: var(--space-5);
+  gap: 14px;
 }
 
 .outside-card__logo {
@@ -35,7 +31,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-2);
   min-width: 0;
 }
 
@@ -53,6 +49,15 @@
   gap: var(--space-5);
 }
 
+.outside-card__reach-head > .switch {
+  padding: 0;
+  border-radius: 0;
+}
+
+.outside-card__reach-head > .switch:hover {
+  background: transparent;
+}
+
 .outside-card__reach-name {
   color: var(--ink);
   font: var(--font-ui-sm);
@@ -61,11 +66,35 @@
 
 .outside-card__name {
   color: var(--ink);
-  font: var(--font-ui-md);
-  font-weight: 600;
+  font: 600 14px/1.2 var(--font-ui);
 }
 
-.outside-card__about,
+.outside-card__about {
+  margin: 0;
+  color: var(--ink2);
+  font: 400 12px/1.5 var(--font-ui);
+  text-wrap: pretty;
+}
+
+.outside-card__checking {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}
+
+.outside-card__spinner {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid currentcolor;
+  border-right-color: transparent;
+  border-radius: var(--radius-pill);
+  animation: gc-spin 0.8s linear infinite;
+}
+
 .outside-card__note {
   margin: 0;
   color: var(--ink3);
@@ -113,14 +142,6 @@
   min-width: 0;
   color: var(--ink);
   font: var(--font-ui-sm);
-}
-
-.outside-card__added {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--pass);
-  font: var(--font-mono-xs);
 }
 
 .outside-card__failure {

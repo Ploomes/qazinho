@@ -1256,6 +1256,7 @@ export const en = {
   },
   OUTSIDE: {
     NAME: 'QAzinho MCP server',
+    ABOUT: 'Lets the coding agent in your editor use QAzinho.',
     HERE_TITLE: 'On this computer',
     ORG_TITLE: 'In your orgs',
     SWITCH: 'Turn on',
@@ -1264,6 +1265,8 @@ export const en = {
     ADD: 'Add',
     ADDED: 'added',
     REMOVE: 'Remove',
+    ADDING: 'Adding…',
+    REMOVING: 'Removing…',
     NEW_SESSION: 'It shows up in a new agent session.',
     COPY: 'Copy the address',
     COPIED: 'Copied',

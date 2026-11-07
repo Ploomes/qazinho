@@ -2,9 +2,8 @@ import type { IOutsideAgent, IOutsideServer } from '@/shared/types';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { OUTSIDE_CARD } from '@/modules/Setup/components/OutsideServerCard/constants';
-import { isConnectedOrg } from '@/modules/Setup/components/OutsideServerCard/library';
 import { Outside } from '@/services';
-import { useProStore, useSetupStore } from '@/store';
+import { useProStore } from '@/store';
 
 export const useOutsideServerCardViewModel = () => {
   const { t } = useTranslation();
@@ -14,9 +13,6 @@ export const useOutsideServerCardViewModel = () => {
   const [failure, setFailure] = useState<string | null>(null);
   const [isCopied, setCopied] = useState(false);
   const hasOrg = useProStore((state) => state.status?.isSignedIn === true);
-  const isOrgOn = useSetupStore(
-    (state) => state.mcpServers?.some(isConnectedOrg) === true,
-  );
   const isOn = server?.isOn === true;
 
   useEffect(() => {
@@ -63,11 +59,12 @@ export const useOutsideServerCardViewModel = () => {
 
   return {
     isOn,
-    isLit: isOn || (hasOrg && isOrgOn),
+    isReady: server !== null,
     hasOrg,
     isBusy: server?.isBusy === true,
     internSize: OUTSIDE_CARD.internPx,
     name: t('OUTSIDE.NAME'),
+    about: t('OUTSIDE.ABOUT'),
     hereTitle: t('OUTSIDE.HERE_TITLE'),
     switchLabel: t('OUTSIDE.SWITCH'),
     isChecking: agents === null,
@@ -79,7 +76,11 @@ export const useOutsideServerCardViewModel = () => {
       name: agent.name,
       isAdded: agent.isAdded,
       addedText: t('OUTSIDE.ADDED'),
-      actionLabel: agent.isAdded ? t('OUTSIDE.REMOVE') : t('OUTSIDE.ADD'),
+      actionLabel:
+        doingId === agent.id
+          ? t(agent.isAdded ? 'OUTSIDE.REMOVING' : 'OUTSIDE.ADDING')
+          : t(agent.isAdded ? 'OUTSIDE.REMOVE' : 'OUTSIDE.ADD'),
+      actionVariant: agent.isAdded ? ('secondary' as const) : ('primary' as const),
       isDoing: doingId === agent.id,
       onAction: () => {
         void change(agent);
