@@ -92,4 +92,27 @@ describe('useTooltipViewModel', () => {
     expect(result.current.isBeside).toBe(false);
     expect(result.current.panelClassName).toBe('tooltip__panel');
   });
+
+  /**
+   * Uma dica sob o X de um aviso que abre e fecha era cortada pela caixa dele, que esconde
+   * o que passa da borda enquanto anima: a dica agora fica fixa na janela, fora da caixa.
+   */
+  it('pins a tip under what it names to the window, right edges lined up', () => {
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 1200 });
+
+    const { result } = renderHook(() => useTooltipViewModel({}));
+
+    (result.current.anchorRef as { current: unknown }).current = {
+      getBoundingClientRect: () => ({ top: 300, bottom: 328, height: 28, right: 1150 }),
+    };
+
+    act(() => {
+      result.current.onOpen();
+    });
+
+    expect(result.current.style).toMatchObject({
+      '--tooltip-top': '336px',
+      '--tooltip-right': '50px',
+    });
+  });
 });

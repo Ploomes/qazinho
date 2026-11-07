@@ -6,21 +6,12 @@ import { useTooltipViewModel } from './hooks';
 import './styles.css';
 
 /**
- * Algumas palavras sobre o que o ponteiro ou o foco toca: embaixo, ou ao lado por cima de
+ * Algumas palavras sobre o que o ponteiro ou o foco toca, embaixo ou ao lado, por cima de
  * tudo, para nenhuma borda cortá-la.
  */
 export const Tooltip: React.FC<ITooltipProps> = (props) => {
-  const {
-    anchorRef,
-    isOpen,
-    isBeside,
-    panelClassName,
-    hidden,
-    shown,
-    style,
-    onOpen,
-    onClose,
-  } = useTooltipViewModel(props);
+  const { anchorRef, isOpen, panelClassName, hidden, shown, style, onOpen, onClose } =
+    useTooltipViewModel(props);
 
   const panel = (
     <AnimatePresence>
@@ -51,7 +42,7 @@ export const Tooltip: React.FC<ITooltipProps> = (props) => {
       onBlur={onClose}
     >
       {props.children}
-      {isBeside ? createPortal(panel, document.body) : panel}
+      {createPortal(panel, document.body)}
     </span>
   );
 };

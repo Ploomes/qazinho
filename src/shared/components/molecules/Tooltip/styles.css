@@ -4,10 +4,10 @@
 }
 
 .tooltip__panel {
-  position: absolute;
-  top: calc(100% + var(--space-3));
-  right: 0;
-  z-index: 35;
+  position: fixed;
+  top: var(--tooltip-top);
+  right: var(--tooltip-right);
+  z-index: 50;
   display: block;
   padding: var(--space-4) 14px;
   border: var(--edge-width) solid var(--edge);
