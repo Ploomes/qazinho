@@ -152,6 +152,11 @@ ao lado da run, e um bug mandado ao Jira ou ao GitHub a carrega sob o pedido. Se
 como pontos e o valor de uma variável como o nome dela, em todo lugar. O `tools.test.ts` e o
 `network.test.ts` provam isso no Chrome real; um agente real ainda não o usou.
 
+**O QA anexa imagens e arquivos no chat.** O clipe do composer, ou colar e arrastar, guarda cada
+arquivo na pasta do workspace, e o agente do QA o lê com a mensagem: uma tela com um erro, o PDF de
+uma proposta, a planilha de um caso. Um Claude Code real (Haiku) leu o código escrito numa imagem
+anexada; um PDF e o Codex ainda não foram tentados.
+
 **Os testes que o time já tem viram um plano.** O `/import` no chat, também oferecido no chat vazio e na criação do
 workspace, escolhe uma pasta do computador do QA: o QAzinho a lê sem mudar nada e reconhece o que
 dirige os testes (Playwright, Cypress, Maestro, Detox, WebdriverIO, Appium, Selenium) pela config,

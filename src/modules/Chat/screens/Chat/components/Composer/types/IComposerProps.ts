@@ -1,3 +1,4 @@
+import type { IComposerAttachment } from './IComposerAttachment';
 import type { ICommandPicker, IComposerCommand } from '@/modules/Chat/types';
 import type { IChatReference } from '@/shared/types';
 
@@ -16,7 +17,15 @@ export interface IComposerProps {
   hasReferences: boolean;
   command: IComposerCommand | null;
   commandPicker: ICommandPicker | null;
+  attachments: IComposerAttachment[];
+  attachLabel: string;
+  dropLabel: string;
+  attachNotice: string;
+  isAttaching: boolean;
   onChange: (value: string) => void;
+  onAttach: () => void;
+  onFiles: (files: File[]) => void;
+  onRemoveAttachment: (id: string) => void;
   onSend: () => void;
   onStop: () => void;
   onPickMention: (id: string) => void;

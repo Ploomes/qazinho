@@ -39,6 +39,28 @@ describe('appendUserMessage', () => {
     const workspace = makeWorkspace();
 
     expect(appendUserMessage({ workspace, text: '   ', at: '19:54' })).toBe(workspace);
+    expect(appendUserMessage({ workspace, text: '', at: '19:54', attachments: [] })).toBe(
+      workspace,
+    );
+  });
+
+  it('sends the files the QA attached, even with no words of theirs', () => {
+    const shot = {
+      id: 'a1',
+      name: 'erro.png',
+      file: 'a1-erro.png',
+      kind: 'image' as const,
+      size: 3,
+      preview: null,
+    };
+    const [sent] = appendUserMessage({
+      workspace: makeWorkspace(),
+      text: '',
+      at: '19:54',
+      attachments: [shot],
+    }).chat;
+
+    expect(sent).toMatchObject({ kind: 'user', text: '', attachments: [shot] });
   });
 
   it('trims what was typed, so the bubble does not carry stray spaces', () => {

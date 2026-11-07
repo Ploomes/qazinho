@@ -183,4 +183,37 @@ describe('useUserMessageViewModel', () => {
 
     expect(result.current.markdown).toBeNull();
   });
+
+  it('shows an image the QA attached by its preview, and a file by its name', () => {
+    const { result } = renderHook(() =>
+      useUserMessageViewModel({
+        message: {
+          ...message('look at this'),
+          attachments: [
+            {
+              id: 'a1',
+              name: 'erro.png',
+              file: 'a1-erro.png',
+              kind: 'image',
+              size: 3,
+              preview: 'data:image/jpeg;base64,x',
+            },
+            {
+              id: 'a2',
+              name: 'proposta.pdf',
+              file: 'a2-proposta.pdf',
+              kind: 'file',
+              size: 4,
+              preview: null,
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(result.current.attachments).toEqual([
+      { key: 'a1', name: 'erro.png', preview: 'data:image/jpeg;base64,x' },
+      { key: 'a2', name: 'proposta.pdf', preview: null },
+    ]);
+  });
 });

@@ -1,5 +1,5 @@
 import type { IUserMessageProps } from './types';
-import { Markdown } from '@/shared/components/atoms';
+import { Icon, Markdown } from '@/shared/components/atoms';
 import { useUserMessageViewModel } from './hooks';
 import './styles.css';
 
@@ -8,7 +8,8 @@ import './styles.css';
  * em destaque.
  */
 export const UserMessage: React.FC<IUserMessageProps> = (props) => {
-  const { hasText, markdown, command, parts } = useUserMessageViewModel(props);
+  const { hasText, markdown, attachments, command, parts } =
+    useUserMessageViewModel(props);
 
   return (
     <div className="user-message">
@@ -21,6 +22,26 @@ export const UserMessage: React.FC<IUserMessageProps> = (props) => {
             </span>
           ))}
         </span>
+      )}
+      {attachments.length > 0 && (
+        <div className="user-message__attachments">
+          {attachments.map((one) =>
+            one.preview === null ? (
+              <span key={one.key} className="user-message__file" title={one.name}>
+                <Icon name="file" />
+                <span className="user-message__file-name">{one.name}</span>
+              </span>
+            ) : (
+              <img
+                key={one.key}
+                className="user-message__image"
+                src={one.preview}
+                alt={one.name}
+                title={one.name}
+              />
+            ),
+          )}
+        </div>
       )}
       {markdown !== null && (
         <div className="user-message__markdown">

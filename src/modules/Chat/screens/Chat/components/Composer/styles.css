@@ -29,6 +29,91 @@
   box-shadow: var(--sticker-lift);
 }
 
+.composer__field--dropping {
+  border-color: var(--lime);
+  background: var(--lime-soft);
+}
+
+.composer__attach {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-left: var(--space-3);
+  border: none;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--ink3);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.composer__attach:hover:not(:disabled) {
+  background: var(--sel);
+  color: var(--ink);
+}
+
+.composer__attach:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.composer__attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.composer__attachment {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: 260px;
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-2);
+  border: var(--edge-width) solid var(--edge);
+  border-radius: var(--radius-md);
+  background: var(--raise);
+}
+
+.composer__attachment-image {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-xs);
+  object-fit: cover;
+}
+
+.composer__attachment-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-xs);
+  background: var(--raise2);
+  color: var(--ink2);
+}
+
+.composer__attachment-name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.composer__notice {
+  margin: 0;
+  color: var(--fail);
+  font: var(--font-ui-sm);
+}
+
 .composer__field--locked {
   cursor: not-allowed;
   opacity: 0.6;
@@ -48,7 +133,7 @@
 
 .composer__mirror,
 .composer__field .composer__input {
-  padding: 0 0 0 var(--space-5);
+  padding: 0;
   font: 400 14px/1.4 var(--font-ui);
   letter-spacing: normal;
 }

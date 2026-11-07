@@ -311,6 +311,12 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
   - A cópia é apagada assim que um plano volta, quando o workspace vai embora, e na próxima
     inicialização. O plano guarda de onde veio (`planSource`), e o agente fica sabendo uma vez
     que a cópia se foi.
+- **O QA anexa imagens e arquivos a uma mensagem do chat**, pelo clipe do composer, colando ou
+  arrastando. O `ChatAttachments` da main os guarda numa pasta do workspace
+  (`PATHS.attachments`), com uma miniatura de cada imagem (`previewOf`), até 10 por mensagem e 20
+  MB cada (`CHAT_ATTACHMENTS`), e os apaga com o workspace. A mensagem os nomeia com o caminho
+  (`describeAttachments`), o agente lê a pasta, e o que um arquivo diz é material do QA, nunca
+  instrução. Os pendentes ficam presos ao workspace em que foram anexados.
 - **O chat lê o que o QA nomeia.** A chave ou o link de uma história, o link ou o título de uma
   página basta: o agente lê pelas ferramentas de fonte, servidas sob o escopo do chat
   (`chat~<workspace>`) pelo turno, e a main busca com o Jira do próprio QA, do jeito que os
@@ -719,6 +725,7 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | `VariableVault`                       | guarda as variáveis de cada projeto lacradas pelo keychain; só uma run lê um valor                          |
 | `GitCli`                              | roda o git do próprio QA numa pasta, e nunca espera uma senha                                               |
 | `ImportScanner`                       | lê uma pasta de testes que o QA escolheu e reconhece o framework de cada um                                 |
+| `ChatAttachments`                     | guarda as imagens e arquivos que o QA anexa ao chat, numa pasta do workspace que o agente lê                |
 | `ProAccount`                          | faz este computador entrar no QAzinho Pro, guarda o token lacrado dele, e conhece as orgs                   |
 | `ProApi`                              | fala com a API do QAzinho Pro: o login, a conta, a sincronização, as evidências, projetos de org            |
 | `ProSync`                             | publica um projeto numa org, manda os fatos dele quando acontecem e os planos quando mandado                |

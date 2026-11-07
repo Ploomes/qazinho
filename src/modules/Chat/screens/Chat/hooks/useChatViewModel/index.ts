@@ -1,6 +1,9 @@
 import type { ChatItem, IQuestionAnswer, IRunMessage } from '@/modules/Chat/types';
 import type { IRun } from '@/modules/Run/types';
 import type {
+  AttachFailure,
+  AttachOutcome,
+  IChatAttachment,
   IChatReference,
   ICodeAsk,
   IConfluenceAsk,
@@ -24,7 +27,7 @@ import {
   mentionsIn,
   referencesOf,
 } from '@/modules/Chat/library';
-import { CHAT } from '@/modules/Chat/screens/Chat/constants';
+import { ATTACH_FAILURE_KEYS, CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { useChatCommand } from '@/modules/Chat/screens/Chat/hooks/useChatCommand';
 import { useChatScroll } from '@/modules/Chat/screens/Chat/hooks/useChatScroll';
 import { formatElapsed } from '@/modules/Device';
@@ -39,8 +42,8 @@ import {
   runDayOf,
   useRunActions,
 } from '@/modules/Run';
-import { Agent, Run } from '@/services';
-import { EXPLORATION } from '@/shared/constants';
+import { Agent, Attachments, Run } from '@/services';
+import { CHAT_ATTACHMENTS, EXPLORATION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import {
   useAppStore,
@@ -52,6 +55,12 @@ import {
 
 export const useChatViewModel = () => {
   const [draft, setDraft] = useState('');
+  const [attached, setAttached] = useState<{
+    workspaceId: string;
+    items: IChatAttachment[];
+  }>({ workspaceId: '', items: [] });
+  const [attachFailure, setAttachFailure] = useState<AttachFailure | null>(null);
+  const [isAttaching, setAttaching] = useState(false);
   const [isSecretSent, setSecretSent] = useState(false);
   const [expandedRuns, setExpandedRuns] = useState<string[]>([]);
   const { t, i18n } = useTranslation();
@@ -171,6 +180,26 @@ export const useChatViewModel = () => {
   const hasPreview = !isAgentTyping && liveText !== '';
   const lastId = (workspace?.chat ?? []).at(-1)?.id ?? null;
 
+  const pending = attached.workspaceId === workspace?.id ? attached.items : [];
+  const keep = (props: { workspaceId: string; outcome: AttachOutcome }) => {
+    const { workspaceId, outcome } = props;
+
+    if (!outcome.isAttached) {
+      setAttachFailure(outcome.failure);
+
+      return;
+    }
+
+    setAttachFailure(null);
+    setAttached((current) => ({
+      workspaceId,
+      items: [
+        ...(current.workspaceId === workspaceId ? current.items : []),
+        ...outcome.attachments,
+      ].slice(0, CHAT_ATTACHMENTS.maxCount),
+    }));
+  };
+
   const askAgent = (props: {
     text: string;
     references: IChatReference[];
@@ -178,6 +207,7 @@ export const useChatViewModel = () => {
     jira: IJiraAsk | null;
     confluence: IConfluenceAsk | null;
     source: IImportAsk | null;
+    attachments?: IChatAttachment[];
   }) => {
     if (workspace !== null) chatAgent.askAgent({ workspaceId: workspace.id, ...props });
   };
@@ -193,7 +223,10 @@ export const useChatViewModel = () => {
 
     const asked = chatCommand.ask(text);
 
-    if (asked === null && (chatCommand.command !== null || text.trim().length === 0))
+    if (
+      asked === null &&
+      (chatCommand.command !== null || (text.trim().length === 0 && pending.length === 0))
+    )
       return;
 
     const references = mentionsIn({
@@ -209,8 +242,11 @@ export const useChatViewModel = () => {
       text,
       mentions: references.map(({ id }) => id),
       ...(asked === null ? {} : { command: asked.command }),
+      ...(pending.length === 0 ? {} : { attachments: pending }),
     });
     setDraft('');
+    setAttached({ workspaceId: workspace.id, items: [] });
+    setAttachFailure(null);
     chatCommand.clear();
     askAgent({
       text: asked?.text ?? text,
@@ -219,6 +255,7 @@ export const useChatViewModel = () => {
       jira: asked?.jira ?? null,
       confluence: asked?.confluence ?? null,
       source: asked?.source ?? null,
+      attachments: pending,
     });
   };
 
@@ -597,6 +634,75 @@ export const useChatViewModel = () => {
     },
     onPickMention: (id: string) => {
       setDraft(insertMention({ draft, id }));
+    },
+    attachments: pending.map((one) => ({
+      key: one.id,
+      name: one.name,
+      preview: one.kind === 'image' ? one.preview : null,
+      removeLabel: t('CHAT.ATTACH_REMOVE', { name: one.name }),
+    })),
+    attachLabel: t('CHAT.ATTACH'),
+    dropLabel: t('CHAT.ATTACH_DROP'),
+    isAttaching,
+    attachNotice:
+      attachFailure === null
+        ? ''
+        : t(ATTACH_FAILURE_KEYS[attachFailure.reason], {
+            name: 'name' in attachFailure ? attachFailure.name : '',
+            count: CHAT_ATTACHMENTS.maxCount,
+            size: CHAT_ATTACHMENTS.maxBytes / 1024 / 1024,
+          }),
+    onAttach: () => {
+      if (workspace === null || isAttaching) return;
+
+      const workspaceId = workspace.id;
+
+      setAttaching(true);
+      void Attachments.pick(workspaceId).then((outcome) => {
+        keep({ workspaceId, outcome });
+        setAttaching(false);
+      });
+    },
+    onFiles: (files: File[]) => {
+      if (workspace === null || isAttaching || files.length === 0) return;
+
+      const workspaceId = workspace.id;
+      const tooBig = files.find(({ size }) => size > CHAT_ATTACHMENTS.maxBytes);
+
+      if (pending.length + files.length > CHAT_ATTACHMENTS.maxCount) {
+        setAttachFailure({ reason: 'too-many' });
+
+        return;
+      }
+
+      if (tooBig !== undefined) {
+        setAttachFailure({ reason: 'too-big', name: tooBig.name });
+
+        return;
+      }
+
+      setAttaching(true);
+      void (async () => {
+        for (const file of files) {
+          const outcome = await Attachments.add({
+            workspaceId,
+            name: file.name === '' ? 'pasted.png' : file.name,
+            data: new Uint8Array(await file.arrayBuffer()),
+          });
+
+          keep({ workspaceId, outcome });
+
+          if (!outcome.isAttached) break;
+        }
+
+        setAttaching(false);
+      })();
+    },
+    onRemoveAttachment: (id: string) => {
+      setAttached((current) => ({
+        ...current,
+        items: current.items.filter((one) => one.id !== id),
+      }));
     },
     onSend: () => {
       send(draft);

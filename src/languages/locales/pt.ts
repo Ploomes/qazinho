@@ -136,6 +136,13 @@ export const pt: typeof en = {
     EMPTY_TITLE: 'O que vamos testar hoje?',
     PLACEHOLDER: 'Pergunte ao agente · @ para citar · / para comandos',
     SEND: 'Enviar',
+    ATTACH: 'Anexar imagem ou arquivo',
+    ATTACH_REMOVE: 'Tirar {{name}}',
+    ATTACH_DROP: 'Solte para anexar',
+    ATTACH_TOO_MANY: 'Uma mensagem leva até {{count}} arquivos.',
+    ATTACH_TOO_BIG: '{{name}} passa de {{size}} MB.',
+    ATTACH_UNREADABLE: 'O QAzinho não conseguiu ler {{name}}.',
+    ATTACH_NO_BRIDGE: 'Anexar funciona no app.',
     STOP_ANSWER: 'Parar a resposta',
     RETRYING:
       'O agente não está conseguindo falar com o serviço dele e vai tentar de novo ({{attempt}} de {{max}}).',

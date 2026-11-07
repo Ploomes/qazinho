@@ -1635,3 +1635,117 @@ describe('useChatViewModel', () => {
     });
   });
 });
+
+describe('useChatViewModel, files the QA attaches', () => {
+  const SHOT = {
+    id: 'a1',
+    name: 'erro.png',
+    file: 'a1-erro.png',
+    kind: 'image' as const,
+    size: 3,
+    preview: 'data:image/jpeg;base64,x',
+  };
+
+  /** Uma bridge que guarda o que o QA colou e devolve o anexo, como a main faria. */
+  function attaching() {
+    const ask = answering({});
+    const attachData = vi.fn(() =>
+      Promise.resolve({ isAttached: true as const, attachments: [SHOT] }),
+    );
+
+    window.qazinho = { ...fakeQazinhoApi('darwin'), askAgent: ask, attachData };
+
+    return { ask, attachData };
+  }
+
+  it('sends what the QA pasted with the message, to the chat and to the agent', async () => {
+    const { ask, attachData } = attaching();
+    const { result } = renderHook(() => useChatViewModel());
+
+    act(() => {
+      result.current.onFiles([new File(['png'], 'erro.png', { type: 'image/png' })]);
+    });
+
+    await waitFor(() => {
+      expect(result.current.attachments).toEqual([
+        {
+          key: 'a1',
+          name: 'erro.png',
+          preview: 'data:image/jpeg;base64,x',
+          removeLabel: expect.any(String),
+        },
+      ]);
+    });
+    expect(attachData).toHaveBeenCalledWith(
+      expect.objectContaining({ workspaceId: 'w1', name: 'erro.png' }),
+    );
+
+    act(() => {
+      result.current.onSend();
+    });
+
+    await waitFor(() => {
+      expect(ask).toHaveBeenCalled();
+    });
+    expect(ask.mock.calls[0]?.[0].attachments).toEqual([SHOT]);
+    expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(0)).toMatchObject({
+      kind: 'user',
+      attachments: [SHOT],
+    });
+    expect(result.current.attachments).toEqual([]);
+  });
+
+  it('takes a file out before the message goes', async () => {
+    attaching();
+    const { result } = renderHook(() => useChatViewModel());
+
+    act(() => {
+      result.current.onFiles([new File(['png'], 'erro.png')]);
+    });
+    await waitFor(() => {
+      expect(result.current.attachments).toHaveLength(1);
+    });
+    act(() => {
+      result.current.onRemoveAttachment('a1');
+    });
+
+    expect(result.current.attachments).toEqual([]);
+  });
+
+  it('says a file is too big without sending it to main', () => {
+    const { attachData } = attaching();
+    const { result } = renderHook(() => useChatViewModel());
+    const huge = new File(['x'], 'video.mov');
+
+    Object.defineProperty(huge, 'size', { value: 21 * 1024 * 1024 });
+
+    act(() => {
+      result.current.onFiles([huge]);
+    });
+
+    expect(attachData).not.toHaveBeenCalled();
+    expect(result.current.attachNotice).not.toBe('');
+  });
+
+  /** Um arquivo fica na pasta de um workspace: ele não vai junto com a mensagem de outro. */
+  it('does NOT carry a file into another workspace', async () => {
+    attaching();
+    useWorkspaceStore.setState({
+      workspaces: [makeWorkspace([]), { ...makeWorkspace([]), id: 'w2' }],
+    });
+
+    const { result } = renderHook(() => useChatViewModel());
+
+    act(() => {
+      result.current.onFiles([new File(['png'], 'erro.png')]);
+    });
+    await waitFor(() => {
+      expect(result.current.attachments).toHaveLength(1);
+    });
+    act(() => {
+      useAppStore.setState({ selectedWorkspaceId: 'w2' });
+    });
+
+    expect(result.current.attachments).toEqual([]);
+  });
+});

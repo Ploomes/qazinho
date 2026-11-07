@@ -1,6 +1,12 @@
 import type { IComposerProps } from '@/modules/Chat/screens/Chat/components/Composer/types';
 import type { IChatReference } from '@/shared/types';
-import type { ChangeEvent, KeyboardEvent, UIEvent } from 'react';
+import type {
+  ChangeEvent,
+  ClipboardEvent,
+  DragEvent,
+  KeyboardEvent,
+  UIEvent,
+} from 'react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { splitMentions } from '@/modules/Chat/library';
@@ -30,13 +36,18 @@ export const useComposerViewModel = (props: IComposerProps) => {
   const [chosenTab, setChosenTab] = useState<IChatReference['kind'] | null>(null);
   const [commandHighlight, setCommandHighlight] = useState(0);
   const [commandDismissedAt, setCommandDismissedAt] = useState<string | null>(null);
+  const [isDropping, setDropping] = useState(false);
   const mirrorRef = useRef<HTMLDivElement>(null);
 
   const isLocked = lockedText !== null;
+  const canAttach = !isLocked && !props.isAttaching;
   const canSend =
     !isLocked &&
     !isAnswering &&
-    (command === null ? value.trim().length > 0 : command.isReady);
+    !props.isAttaching &&
+    (command === null
+      ? value.trim().length > 0 || props.attachments.length > 0
+      : command.isReady);
   const isCommandOpen =
     !isLocked &&
     commandPicker !== null &&
@@ -139,10 +150,45 @@ export const useComposerViewModel = (props: IComposerProps) => {
       if (isAnswering) onStop();
       else onSendClick();
     },
-    placeholder: lockedText ?? command?.placeholder ?? t('CHAT.PLACEHOLDER'),
+    placeholder: isDropping
+      ? props.dropLabel
+      : (lockedText ?? command?.placeholder ?? t('CHAT.PLACEHOLDER')),
     fieldClassName: isLocked
       ? 'composer__field composer__field--locked'
-      : 'composer__field',
+      : isDropping
+        ? 'composer__field composer__field--dropping'
+        : 'composer__field',
+    canAttach,
+    attachmentMotion: {
+      initial: { opacity: 0, scale: 0.92 },
+      animate: { opacity: 1, scale: 1 },
+      exit: { opacity: 0, scale: 0.92 },
+      transition: { duration: MOTION.durationFast, ease: MOTION.ease },
+    },
+    onRemoveAttachment: props.onRemoveAttachment,
+    onPaste: (event: ClipboardEvent<HTMLInputElement>) => {
+      const files = [...event.clipboardData.files];
+
+      if (files.length === 0 || !canAttach) return;
+
+      event.preventDefault();
+      props.onFiles(files);
+    },
+    onDragOver: (event: DragEvent<HTMLDivElement>) => {
+      if (!canAttach || !event.dataTransfer.types.includes('Files')) return;
+
+      event.preventDefault();
+      setDropping(true);
+    },
+    onDragLeave: () => {
+      setDropping(false);
+    },
+    onDrop: (event: DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      setDropping(false);
+
+      if (canAttach) props.onFiles([...event.dataTransfer.files]);
+    },
     isPickerOpen,
     isCommandOpen,
     commandHighlight: commandActive,

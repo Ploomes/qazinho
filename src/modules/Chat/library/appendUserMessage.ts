@@ -1,9 +1,10 @@
 import type { UserCommand } from '@/modules/Chat/types';
 import type { IWorkspace } from '@/modules/Workspace';
+import type { IChatAttachment } from '@/shared/types';
 
 /**
  * Põe o que o QA, ou o agente de código dele, mandou no fim do chat: as palavras sem
- * espaços nas pontas, o que mencionou e o comando que deu.
+ * espaços nas pontas, o que mencionou, o comando que deu e os arquivos que anexou.
  */
 export function appendUserMessage(props: {
   workspace: IWorkspace;
@@ -12,11 +13,13 @@ export function appendUserMessage(props: {
   mentions?: string[];
   command?: UserCommand;
   from?: 'agent';
+  attachments?: IChatAttachment[];
 }): IWorkspace {
-  const { workspace, text, at, mentions = [], command, from } = props;
+  const { workspace, text, at, mentions = [], command, from, attachments = [] } = props;
   const trimmed = text.trim();
 
-  if (trimmed.length === 0 && command === undefined) return workspace;
+  if (trimmed.length === 0 && command === undefined && attachments.length === 0)
+    return workspace;
 
   return {
     ...workspace,
@@ -30,6 +33,7 @@ export function appendUserMessage(props: {
         ...(mentions.length > 0 ? { mentions } : {}),
         ...(command === undefined ? {} : { command }),
         ...(from === undefined ? {} : { from }),
+        ...(attachments.length === 0 ? {} : { attachments }),
       },
     ],
   };

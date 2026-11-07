@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import type { KeyboardEvent, UIEvent } from 'react';
+import type { ClipboardEvent, DragEvent, KeyboardEvent, UIEvent } from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { useComposerViewModel } from '@/modules/Chat/screens/Chat/components/Composer/hooks/useComposerViewModel';
@@ -22,6 +22,21 @@ const PROPS = {
   onPickCommand: vi.fn(),
   onCommandBack: vi.fn(),
   onCommandCancel: vi.fn(),
+  attachments: [],
+  attachLabel: 'Attach an image or a file',
+  dropLabel: 'Drop to attach',
+  attachNotice: '',
+  isAttaching: false,
+  onAttach: vi.fn(),
+  onFiles: vi.fn(),
+  onRemoveAttachment: vi.fn(),
+};
+
+const SHOT = {
+  key: 'a1',
+  name: 'erro.png',
+  preview: 'data:image/jpeg;base64,x',
+  removeLabel: 'Take out erro.png',
 };
 
 const PICKER = {
@@ -622,5 +637,96 @@ describe('useComposerViewModel', () => {
         },
       ]);
     });
+  });
+});
+
+describe('useComposerViewModel, attachments', () => {
+  it('sends a message that carries only files, with no words', () => {
+    const onSend = vi.fn();
+    const { result } = renderHook(() =>
+      useComposerViewModel({ ...PROPS, value: '', attachments: [SHOT], onSend }),
+    );
+
+    expect(result.current.canPress).toBe(true);
+
+    result.current.onButtonClick();
+
+    expect(onSend).toHaveBeenCalled();
+  });
+
+  it('does NOT send while a file is still on its way', () => {
+    const { result } = renderHook(() =>
+      useComposerViewModel({ ...PROPS, attachments: [SHOT], isAttaching: true }),
+    );
+
+    expect(result.current.canPress).toBe(false);
+    expect(result.current.canAttach).toBe(false);
+  });
+
+  it('takes an image pasted from the clipboard as a file, not as text', () => {
+    const onFiles = vi.fn();
+    const preventDefault = vi.fn();
+    const file = new File(['png'], 'image.png', { type: 'image/png' });
+    const { result } = renderHook(() => useComposerViewModel({ ...PROPS, onFiles }));
+
+    result.current.onPaste({
+      clipboardData: { files: [file] },
+      preventDefault,
+    } as unknown as ClipboardEvent<HTMLInputElement>);
+
+    expect(onFiles).toHaveBeenCalledWith([file]);
+    expect(preventDefault).toHaveBeenCalled();
+  });
+
+  it('leaves pasted words to the field', () => {
+    const onFiles = vi.fn();
+    const preventDefault = vi.fn();
+    const { result } = renderHook(() => useComposerViewModel({ ...PROPS, onFiles }));
+
+    result.current.onPaste({
+      clipboardData: { files: [] },
+      preventDefault,
+    } as unknown as ClipboardEvent<HTMLInputElement>);
+
+    expect(onFiles).not.toHaveBeenCalled();
+    expect(preventDefault).not.toHaveBeenCalled();
+  });
+
+  it('lights the field while files are dragged over it, and takes them on drop', () => {
+    const onFiles = vi.fn();
+    const file = new File(['%PDF'], 'proposta.pdf');
+    const { result } = renderHook(() => useComposerViewModel({ ...PROPS, onFiles }));
+    const drag = {
+      dataTransfer: { types: ['Files'], files: [file] },
+      preventDefault: vi.fn(),
+    } as unknown as DragEvent<HTMLDivElement>;
+
+    act(() => {
+      result.current.onDragOver(drag);
+    });
+
+    expect(result.current.fieldClassName).toContain('composer__field--dropping');
+    expect(result.current.placeholder).toBe('Drop to attach');
+
+    act(() => {
+      result.current.onDrop(drag);
+    });
+
+    expect(onFiles).toHaveBeenCalledWith([file]);
+    expect(result.current.fieldClassName).not.toContain('dropping');
+  });
+
+  it('does NOT take a file while the chat is locked', () => {
+    const onFiles = vi.fn();
+    const { result } = renderHook(() =>
+      useComposerViewModel({ ...PROPS, lockedText: 'A run is going', onFiles }),
+    );
+
+    result.current.onPaste({
+      clipboardData: { files: [new File(['x'], 'x.png')] },
+      preventDefault: vi.fn(),
+    } as unknown as ClipboardEvent<HTMLInputElement>);
+
+    expect(onFiles).not.toHaveBeenCalled();
   });
 });

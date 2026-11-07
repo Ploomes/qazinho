@@ -5,6 +5,7 @@ import type { IPublishedPlan, ITestCase } from '@/modules/Plan';
 import type { IWalkedBy, IWorkspace, PanelTab, WorkspaceTab } from '@/modules/Workspace';
 import type {
   CodeStep,
+  IChatAttachment,
   IChatQuestion,
   ICodeSource,
   IConfluencePageRef,
@@ -70,6 +71,7 @@ export interface IWorkspaceStore {
     mentions: string[];
     command?: UserCommand;
     from?: 'agent';
+    attachments?: IChatAttachment[];
   }) => void;
   landAgentText: (props: {
     workspaceId: string;

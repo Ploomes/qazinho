@@ -134,6 +134,13 @@ export const en = {
     EMPTY_TITLE: 'What are we testing today?',
     PLACEHOLDER: 'Ask the agent · @ to cite · / for commands',
     SEND: 'Send',
+    ATTACH: 'Attach an image or a file',
+    ATTACH_REMOVE: 'Take out {{name}}',
+    ATTACH_DROP: 'Drop to attach',
+    ATTACH_TOO_MANY: 'A message carries up to {{count}} files.',
+    ATTACH_TOO_BIG: '{{name}} is over {{size}} MB.',
+    ATTACH_UNREADABLE: 'QAzinho could not read {{name}}.',
+    ATTACH_NO_BRIDGE: 'Attaching works in the app.',
     STOP_ANSWER: 'Stop the answer',
     RETRYING:
       'The agent cannot reach its service, so it is trying again ({{attempt}} of {{max}}).',

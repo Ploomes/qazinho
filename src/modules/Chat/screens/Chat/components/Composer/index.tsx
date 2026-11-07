@@ -1,6 +1,6 @@
 import type { IComposerProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
-import { Icon } from '@/shared/components/atoms';
+import { Icon, IconButton } from '@/shared/components/atoms';
 import { CommandPicker, MentionPicker } from './components';
 import { useComposerViewModel } from './hooks';
 import './styles.css';
@@ -32,11 +32,65 @@ export const Composer: React.FC<IComposerProps> = (props) => {
     onTab,
     onInputChange,
     onKeyDown,
+    canAttach,
+    attachmentMotion,
+    onRemoveAttachment,
+    onPaste,
+    onDragOver,
+    onDragLeave,
+    onDrop,
   } = useComposerViewModel(props);
 
   return (
     <div className="composer">
-      <div className={fieldClassName}>
+      <AnimatePresence initial={false}>
+        {props.attachments.length > 0 && (
+          <motion.div
+            key="attachments"
+            className="composer__attachments"
+            {...attachmentMotion}
+          >
+            <AnimatePresence initial={false}>
+              {props.attachments.map((one) => (
+                <motion.span
+                  key={one.key}
+                  className="composer__attachment"
+                  title={one.name}
+                  {...attachmentMotion}
+                >
+                  {one.preview === null ? (
+                    <span className="composer__attachment-icon">
+                      <Icon name="file" />
+                    </span>
+                  ) : (
+                    <img
+                      className="composer__attachment-image"
+                      src={one.preview}
+                      alt=""
+                    />
+                  )}
+                  <span className="composer__attachment-name">{one.name}</span>
+                  <IconButton
+                    icon="close"
+                    size="sm"
+                    label={one.removeLabel}
+                    onClick={() => {
+                      onRemoveAttachment(one.key);
+                    }}
+                  />
+                </motion.span>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div
+        className={fieldClassName}
+        onDragOver={onDragOver}
+        onDragLeave={onDragLeave}
+        onDrop={onDrop}
+      >
         <AnimatePresence>
           {isCommandOpen && props.commandPicker !== null && (
             <CommandPicker
@@ -84,6 +138,17 @@ export const Composer: React.FC<IComposerProps> = (props) => {
           )}
         </AnimatePresence>
 
+        <button
+          type="button"
+          className="composer__attach"
+          disabled={!canAttach}
+          aria-label={props.attachLabel}
+          title={props.attachLabel}
+          onClick={props.onAttach}
+        >
+          <Icon name="attach" size={16} />
+        </button>
+
         <div className="composer__text">
           <div ref={mirrorRef} className="composer__mirror" aria-hidden="true">
             {parts.map((part) =>
@@ -110,6 +175,7 @@ export const Composer: React.FC<IComposerProps> = (props) => {
             onChange={onInputChange}
             onKeyDown={onKeyDown}
             onScroll={onInputScroll}
+            onPaste={onPaste}
           />
         </div>
         <button
@@ -127,6 +193,12 @@ export const Composer: React.FC<IComposerProps> = (props) => {
           </AnimatePresence>
         </button>
       </div>
+
+      {props.attachNotice !== '' && (
+        <p className="composer__notice" role="status">
+          {props.attachNotice}
+        </p>
+      )}
     </div>
   );
 };

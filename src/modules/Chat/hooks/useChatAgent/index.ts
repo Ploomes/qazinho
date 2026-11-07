@@ -1,4 +1,5 @@
 import type {
+  IChatAttachment,
   IChatReference,
   ICodeAsk,
   IConfluenceAsk,
@@ -37,6 +38,7 @@ export const useChatAgent = () => {
     confluence: IConfluenceAsk | null;
     source?: IImportAsk | null;
     isFromAgent?: boolean;
+    attachments?: IChatAttachment[];
   }) => {
     const { workspaceId } = props;
     const workspace = useWorkspaceStore
@@ -82,6 +84,9 @@ export const useChatAgent = () => {
       design: workspace.design,
       variables: useVariablesStore.getState().byProject[workspace.projectId] ?? [],
       ...(props.isFromAgent === true ? { isFromAgent: true } : {}),
+      ...(props.attachments === undefined || props.attachments.length === 0
+        ? {}
+        : { attachments: props.attachments }),
     }).then((turn) => {
       if (turn.failure?.reason === 'stopped') {
         landAgentStopped(workspaceId);

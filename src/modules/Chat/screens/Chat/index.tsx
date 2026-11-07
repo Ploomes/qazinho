@@ -38,6 +38,14 @@ export const Chat: React.FC = () => {
     onRemoveSecret,
     onSendSecret,
     onPickMention,
+    attachments,
+    attachLabel,
+    dropLabel,
+    attachNotice,
+    isAttaching,
+    onAttach,
+    onFiles,
+    onRemoveAttachment,
     onSend,
     onStop,
     question,
@@ -240,7 +248,15 @@ export const Chat: React.FC = () => {
         hasReferences={hasReferences}
         command={command}
         commandPicker={commandPicker}
+        attachments={attachments}
+        attachLabel={attachLabel}
+        dropLabel={dropLabel}
+        attachNotice={attachNotice}
+        isAttaching={isAttaching}
         onChange={onDraftChange}
+        onAttach={onAttach}
+        onFiles={onFiles}
+        onRemoveAttachment={onRemoveAttachment}
         onSend={onSend}
         onStop={onStop}
         onPickMention={onPickMention}
