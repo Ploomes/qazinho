@@ -1,5 +1,6 @@
 import type { AgentSignInProgress } from './AgentSignInProgress';
 import type { AppUpdate } from './AppUpdate';
+import type { AttachOutcome } from './AttachOutcome';
 import type { BugComment } from './BugComment';
 import type { BugFiling } from './BugFiling';
 import type { BugReview } from './BugReview';
@@ -162,6 +163,12 @@ export interface IQazinhoApi {
   forgetVariables: (projectId: string) => Promise<void>;
   copyVariables: (props: { from: string; to: string }) => Promise<VariablesOutcome>;
   revealVariable: (props: { projectId: string; name: string }) => Promise<string | null>;
+  pickAttachments: (workspaceId: string) => Promise<AttachOutcome>;
+  attachData: (props: {
+    workspaceId: string;
+    name: string;
+    data: Uint8Array;
+  }) => Promise<AttachOutcome>;
   githubStatus: () => Promise<IGithubStatus>;
   signInGithub: () => Promise<GithubSignInProgress>;
   cancelGithubSignIn: () => Promise<void>;

@@ -70,6 +70,8 @@ export const CHANNELS = {
   applyVariables: 'variables:apply',
   forgetVariables: 'variables:forget',
   copyVariables: 'variables:copy',
+  pickAttachments: 'chat:attachments-pick',
+  attachData: 'chat:attachments-data',
   revealVariable: 'variables:reveal',
   githubStatus: 'github:status',
   signInGithub: 'github:sign-in',

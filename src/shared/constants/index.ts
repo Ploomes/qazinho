@@ -1,6 +1,7 @@
 export * from './ASSISTANT_WAIT';
 export * from './BACKDROP';
 export * from './CHANNELS';
+export * from './CHAT_ATTACHMENTS';
 export * from './COUNTDOWN';
 export * from './EXPLORATION';
 export * from './MOTION';

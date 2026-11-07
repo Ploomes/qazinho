@@ -82,6 +82,7 @@ import {
   AppBuilder,
   AppPeek,
   Archive,
+  ChatAttachments,
   AssistantAgent,
   OutsideServer,
   BugFiler,
@@ -162,7 +163,7 @@ import {
   spawnCommand,
   sweepDaysOf,
 } from '@/main/library';
-import { ASSISTANT_WAIT, CHANNELS } from '@/shared/constants';
+import { ASSISTANT_WAIT, CHANNELS, CHAT_ATTACHMENTS } from '@/shared/constants';
 import {
   Harness,
   MCP_HOST,
@@ -479,6 +480,21 @@ const bugFiler = new BugFiler({
   now: () => new Date(),
 });
 const variables = new VariableVault({ file: PATHS.variables, cipher: keychain });
+const chatAttachments = new ChatAttachments({
+  root: PATHS.attachments,
+  previewOf: (file) => {
+    const image = nativeImage.createFromPath(file);
+
+    if (image.isEmpty()) return null;
+
+    const resized = image.resize({
+      width: Math.min(CHAT_ATTACHMENTS.previewWidth, image.getSize().width),
+      quality: 'best',
+    });
+
+    return `data:image/jpeg;base64,${resized.toJPEG(CHAT_ATTACHMENTS.previewQuality).toString('base64')}`;
+  },
+});
 const proSync = new ProSync({
   api: proApi,
   token: () => proAccount.token(),
@@ -855,6 +871,10 @@ async function askOnce(props: {
   page: IConfluencePage | null;
 }): Promise<{ turn: IAgentTurn; told: Record<string, string> }> {
   const { ask, command, sessionId, look, code, source, story, page } = props;
+  const attachments = await chatAttachments.filesOf({
+    workspaceId: ask.workspaceId,
+    attachments: ask.attachments ?? [],
+  });
   const chat = harness.chat({
     text: ask.text,
     told: (sessionId === null ? undefined : toldChats.get(sessionId)) ?? {},
@@ -871,6 +891,7 @@ async function askOnce(props: {
     design: ask.design,
     variables: ask.variables,
     isFromAgent: ask.isFromAgent === true,
+    attachments,
   });
   const sources = sourcesFor(ask.workspaceId);
   const storyFolder = join(PATHS.jira, ask.workspaceId);
@@ -1467,6 +1488,7 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.removeWorkspace, async (_event, workspaceId: string) => {
     await codeCopies.release(workspaceId);
     await jiraStories.release(workspaceId);
+    await chatAttachments.forget(workspaceId);
     confluencePages.delete(workspaceId);
     importSources.delete(workspaceId);
     await archive.removeWorkspace(workspaceId);
@@ -1571,6 +1593,33 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.copyVariables, (_event, props: { from: string; to: string }) =>
     variables.copy(props),
+  );
+  ipcMain.handle(CHANNELS.pickAttachments, async (_event, workspaceId: unknown) => {
+    if (typeof workspaceId !== 'string')
+      return { isAttached: false, failure: { reason: 'unreadable', name: '' } };
+
+    const [open] = appWindows();
+    const options = { properties: ['openFile' as const, 'multiSelections' as const] };
+    const picked = open
+      ? await dialog.showOpenDialog(open, options)
+      : await dialog.showOpenDialog(options);
+
+    return picked.canceled
+      ? { isAttached: true, attachments: [] }
+      : chatAttachments.addFiles({ workspaceId, paths: picked.filePaths });
+  });
+  ipcMain.handle(
+    CHANNELS.attachData,
+    (_event, props: { workspaceId: unknown; name: unknown; data: unknown }) =>
+      typeof props.workspaceId === 'string' &&
+      typeof props.name === 'string' &&
+      props.data instanceof Uint8Array
+        ? chatAttachments.addData({
+            workspaceId: props.workspaceId,
+            name: props.name,
+            data: props.data,
+          })
+        : { isAttached: false, failure: { reason: 'unreadable', name: '' } },
   );
   ipcMain.handle(
     CHANNELS.revealVariable,

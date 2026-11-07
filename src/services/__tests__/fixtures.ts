@@ -109,6 +109,8 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     forgetVariables: () => Promise.resolve(),
     copyVariables: () => Promise.resolve({ isSaved: true, variables: [] }),
     revealVariable: () => Promise.resolve(null),
+    pickAttachments: () => Promise.resolve({ isAttached: true, attachments: [] }),
+    attachData: () => Promise.resolve({ isAttached: true, attachments: [] }),
     githubStatus: () =>
       Promise.resolve({
         cli: { isFound: false, path: null },

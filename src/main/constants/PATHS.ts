@@ -18,6 +18,7 @@ export const PATHS = {
   agentHome: join(app.getPath('userData'), 'agent'),
   code: join(app.getPath('userData'), 'code'),
   jira: join(app.getPath('userData'), 'jira'),
+  attachments: join(app.getPath('userData'), 'attachments'),
   builds: join(app.getPath('userData'), 'builds'),
   logs: join(app.getPath('userData'), 'logs'),
 } as const;

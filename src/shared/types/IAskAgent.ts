@@ -1,3 +1,4 @@
+import type { IChatAttachment } from './IChatAttachment';
 import type { IChatReference } from './IChatReference';
 import type { ICodeAsk } from './ICodeAsk';
 import type { IConfluenceAsk } from './IConfluenceAsk';
@@ -32,4 +33,5 @@ export interface IAskAgent {
   design: IDesignLink | null;
   variables: IVariableBrief[];
   isFromAgent?: boolean;
+  attachments?: IChatAttachment[];
 }

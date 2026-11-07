@@ -66,6 +66,7 @@ import type {
   ISavedWorkspace,
   ISetupEvent,
   AppUpdate,
+  AttachOutcome,
   IStartBuild,
   IStartRun,
   IStorageUsage,
@@ -276,6 +277,10 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.copyVariables, props) as Promise<VariablesOutcome>,
   revealVariable: (props: { projectId: string; name: string }) =>
     ipcRenderer.invoke(CHANNELS.revealVariable, props) as Promise<string | null>,
+  pickAttachments: (workspaceId: string) =>
+    ipcRenderer.invoke(CHANNELS.pickAttachments, workspaceId) as Promise<AttachOutcome>,
+  attachData: (props: { workspaceId: string; name: string; data: Uint8Array }) =>
+    ipcRenderer.invoke(CHANNELS.attachData, props) as Promise<AttachOutcome>,
   githubStatus: () => ipcRenderer.invoke(CHANNELS.githubStatus) as Promise<IGithubStatus>,
   signInGithub: () =>
     ipcRenderer.invoke(CHANNELS.signInGithub) as Promise<GithubSignInProgress>,
