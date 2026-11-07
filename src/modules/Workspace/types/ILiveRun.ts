@@ -18,6 +18,7 @@ export interface ILiveRun {
   outcomes: IStepOutcome[];
   shot: string | null;
   streamUrl: string | null;
+  address?: string;
   costUsd: number | null;
   by: IWalkedBy;
   kind?: 'explore';

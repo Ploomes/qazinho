@@ -576,6 +576,8 @@ loopback (`LiveStream`), desenhado por um `<img>`.
 
 - O Chrome renderiza na razão de pixels do QA, limitada a 2, e a janela dele é dimensionada em
   volta do viewport (`Browser.setContentsSize`), ou um frame corta o pé da página.
+- A moldura do navegador mostra o endereço da aba que o agente vê, a cada navegação (`address`),
+  com o valor de uma variável escrito como o nome dela (`privateUrlOf`).
 - O stream roda a 1x no painel, e na razão de pixels só enquanto o dispositivo está em foco
   (`focusDevice`): um frame 2x custa cerca de três vezes a CPU numa página que anima.
 - O Chrome mantém uma janela com pelo menos 500px de largura, então uma página do tamanho de um

@@ -27,6 +27,7 @@ const RUN: IRunInFlight = {
   startedAtMs: Date.now() - 60_000,
   doingIndex: 1,
   streamUrl: 'http://127.0.0.1:5000/t/w1',
+  address: null,
   outcomes: [],
   isPaused: false,
   costUsd: 0.12,
@@ -238,6 +239,20 @@ describe('useRunEvents', () => {
         title: 'Run r-01 finished',
         body: 'Checkout regression · 1 failed · 1 passed · 1 bug',
       });
+    });
+
+    it('follows the address the agent took the tab to', () => {
+      const { send } = listening();
+
+      send({
+        kind: 'address',
+        workspaceId: 'w1',
+        url: 'http://localhost:8000/templates',
+      });
+
+      expect(useWorkspaceStore.getState().workspaces[0]?.live?.address).toBe(
+        'http://localhost:8000/templates',
+      );
     });
 
     it('keeps it inside the app when the QA asked for that', () => {

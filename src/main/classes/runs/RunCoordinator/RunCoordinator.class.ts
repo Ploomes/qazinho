@@ -152,6 +152,7 @@ export class RunCoordinator {
       startedAtMs: Date.now(),
       doingIndex: -1,
       streamUrl: null,
+      address: null,
       outcomes: [],
       isPaused: false,
       costUsd: null,
@@ -275,7 +276,17 @@ export class RunCoordinator {
     let driver: IDeviceDriver | null = null;
 
     try {
-      driver = driverFor(this.shrink === null ? { run } : { run, shrink: this.shrink });
+      driver = driverFor({
+        run,
+        ...(this.shrink === null ? {} : { shrink: this.shrink }),
+        onAddress: (url) => {
+          this.emit({
+            kind: 'address',
+            workspaceId: run.workspaceId,
+            url: privateUrlOf({ url, values: run.values }),
+          });
+        },
+      });
       this.drivers.set(run.workspaceId, driver);
       await mkdir(run.shotDir, { recursive: true });
       await driver.open();

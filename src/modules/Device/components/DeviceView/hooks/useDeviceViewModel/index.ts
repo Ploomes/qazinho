@@ -168,7 +168,7 @@ export const useDeviceViewModel = () => {
     },
     shot,
     stream,
-    urlText: shownUrlOf(target?.value ?? ''),
+    urlText: shownUrlOf(live?.address ?? target?.value ?? ''),
     elapsedLabel: formatElapsed(live?.elapsedSec ?? 0),
     stepsRef,
     onStepsScroll,

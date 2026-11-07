@@ -201,6 +201,7 @@ describe('an exploration', () => {
         startedAtMs: 1_000,
         doingIndex: -1,
         streamUrl: null,
+        address: null,
         outcomes: [],
         isPaused: false,
         costUsd: null,

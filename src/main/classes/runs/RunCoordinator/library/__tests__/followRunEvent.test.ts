@@ -8,6 +8,7 @@ const RUN: IRunInFlight = {
   startedAtMs: 0,
   doingIndex: -1,
   streamUrl: null,
+  address: null,
   outcomes: [],
   isPaused: false,
   costUsd: null,
@@ -37,6 +38,19 @@ describe('followRunEvent', () => {
         event: { kind: 'streaming', workspaceId: 'w1', url: 'http://x' },
       }).streamUrl,
     ).toBe('http://x');
+  });
+
+  it('keeps the address the tab is on, so a page that opens later shows it', () => {
+    expect(
+      followRunEvent({
+        run: RUN,
+        event: {
+          kind: 'address',
+          workspaceId: 'w1',
+          url: 'http://localhost:8000/templates',
+        },
+      }).address,
+    ).toBe('http://localhost:8000/templates');
   });
 
   it('keeps every verdict, and is on no step until the next one starts', () => {

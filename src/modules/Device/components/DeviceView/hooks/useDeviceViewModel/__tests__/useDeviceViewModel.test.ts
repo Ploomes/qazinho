@@ -174,6 +174,42 @@ describe('useDeviceViewModel', () => {
     expect(renderHook(() => useDeviceViewModel()).result.current.stream).toBeNull();
   });
 
+  it("shows the address the agent's tab is on, not the one the run began at", () => {
+    useAppStore.setState({
+      projects: [
+        {
+          id: 'p1',
+          name: 'Shop',
+          targets: [{ id: 't1', kind: 'web', value: 'http://localhost:8000' }],
+        },
+      ] as never,
+    });
+    const walked = {
+      ...walkRun({ verdicts: ['passed'] }),
+      projectId: 'p1',
+      targetId: 't1',
+    };
+
+    useWorkspaceStore.setState({ workspaces: [walked] });
+
+    expect(renderHook(() => useDeviceViewModel()).result.current.urlText).toBe(
+      'http://localhost:8000',
+    );
+
+    useWorkspaceStore.setState({
+      workspaces: [
+        {
+          ...walked,
+          live: { ...walked.live!, address: 'http://localhost:8000/templates/quotes' },
+        },
+      ],
+    });
+
+    expect(renderHook(() => useDeviceViewModel()).result.current.urlText).toBe(
+      'http://localhost:8000/templates/quotes',
+    );
+  });
+
   it('shows the last screenshot the device sent back', () => {
     useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
 

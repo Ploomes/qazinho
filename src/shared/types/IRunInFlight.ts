@@ -14,6 +14,7 @@ export interface IRunInFlight {
   startedAtMs: number;
   doingIndex: number;
   streamUrl: string | null;
+  address: string | null;
   outcomes: IStepOutcome[];
   isPaused: boolean;
   costUsd: number | null;

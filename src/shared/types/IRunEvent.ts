@@ -14,6 +14,7 @@ export type IRunEvent =
   | { kind: 'step'; outcome: IStepOutcome }
   | { kind: 'doing'; workspaceId: string; index: number }
   | { kind: 'streaming'; workspaceId: string; url: string }
+  | { kind: 'address'; workspaceId: string; url: string }
   | { kind: 'note'; workspaceId: string; text: string }
   | { kind: 'cost'; workspaceId: string; costUsd: number }
   | { kind: 'finding'; workspaceId: string; finding: IRunFinding }

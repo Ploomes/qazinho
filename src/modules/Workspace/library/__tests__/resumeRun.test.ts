@@ -14,6 +14,7 @@ function inFlight(props: Partial<IRunInFlight> = {}): IRunInFlight {
     startedAtMs: STARTED,
     doingIndex: 2,
     streamUrl: 'http://127.0.0.1:5000/t/w1',
+    address: null,
     outcomes: [
       makeOutcome({ workspace, index: 0, verdict: 'passed' }),
       makeOutcome({ workspace, index: 1, verdict: 'failed' }),
@@ -59,6 +60,14 @@ describe('resumeRun', () => {
       costUsd: 0.3,
     });
     expect(workspace.live?.outcomes).toHaveLength(2);
+  });
+
+  it('shows the address the tab was on when the page opened again', () => {
+    expect(
+      resumed({ run: inFlight({ address: 'http://localhost:8000/templates/quotes' }) })
+        .live?.address,
+    ).toBe('http://localhost:8000/templates/quotes');
+    expect(resumed().live).not.toHaveProperty('address');
   });
 
   it('files the failures it missed as bugs, so they are not lost with the reload', () => {

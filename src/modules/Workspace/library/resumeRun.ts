@@ -40,6 +40,7 @@ export function resumeRun(props: {
     shot:
       run.outcomes.findLast(({ screenshot }) => screenshot !== null)?.screenshot ?? null,
     streamUrl: run.streamUrl,
+    ...(run.address === null ? {} : { address: run.address }),
     costUsd: run.costUsd,
     by,
     ...(run.isExploring ? { kind: 'explore' as const } : {}),

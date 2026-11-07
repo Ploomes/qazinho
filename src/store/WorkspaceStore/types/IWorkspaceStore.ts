@@ -135,6 +135,7 @@ export interface IWorkspaceStore {
   markDoing: (props: { workspaceId: string; index: number }) => void;
   setContext: (props: { workspaceId: string; tokens: number; window: number }) => void;
   markStreaming: (props: { workspaceId: string; url: string }) => void;
+  markAddress: (props: { workspaceId: string; url: string }) => void;
   landNote: (props: { workspaceId: string; text: string; who: string }) => void;
   landCost: (props: { workspaceId: string; costUsd: number }) => void;
   landFinding: (props: { workspaceId: string; finding: IRunFinding }) => void;

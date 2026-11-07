@@ -12,7 +12,11 @@ import {
  * Um plano, uma porta: a run não se importa se está dirigindo o Chrome ou um celular; o
  * Chrome entra num ambiente protegido com as variáveis do projeto.
  */
-export function driverFor(props: { run: IWalkRun; shrink?: ShrinkImage }): IDeviceDriver {
+export function driverFor(props: {
+  run: IWalkRun;
+  shrink?: ShrinkImage;
+  onAddress?: (url: string) => void;
+}): IDeviceDriver {
   const { run } = props;
 
   if (run.target.kind === 'android')
@@ -38,5 +42,6 @@ export function driverFor(props: { run: IWalkRun; shrink?: ShrinkImage }): IDevi
     pixelRatio: run.pixelRatio,
     access: webAccessOf(run.values),
     ...(props.shrink === undefined ? {} : { shrink: props.shrink }),
+    ...(props.onAddress === undefined ? {} : { onAddress: props.onAddress }),
   });
 }
