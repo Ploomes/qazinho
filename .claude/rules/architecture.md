@@ -601,6 +601,9 @@ loopback (`LiveStream`), desenhado por um `<img>`.
   com o valor de uma variável escrito como o nome dela (`privateUrlOf`).
 - O stream roda a 1x no painel, e na razão de pixels só enquanto o dispositivo está em foco
   (`focusDevice`): um frame 2x custa cerca de três vezes a CPU numa página que anima.
+- Um iframe é lido e alcançado como o resto da página (`frameRootsOf`), os aninhados e os de
+  outro site também: o `look` mostra cada um numa seção `FRAME`, e um alvo é procurado na página
+  e depois em cada iframe, por um locator com o caminho dele, que o código exportado repete.
 - O Chrome mantém uma janela com pelo menos 500px de largura, então uma página do tamanho de um
   celular transmite enquadrada mais larga, e o `DeviceScreen` corta o stream no formato do
   viewport.

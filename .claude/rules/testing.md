@@ -74,6 +74,7 @@ próprio comando, e o CI nunca as roda.
 | `locate.test.ts`       | controles parecidos numerados, campos com rótulo, um dropdown, uma data                 |
 | `dialog.test.ts`       | um confirm respondido OK ou Cancelar, um prompt digitado, e o look avisando             |
 | `tabs.test.ts`         | a nova aba de um link e uma janela de login: o dispositivo vai a elas e volta           |
+| `frames.test.ts`       | um iframe de outro site e um dentro dele: lidos, clicados, digitados, a rede vista      |
 | `peek.test.ts`         | um Chrome sem janela lê uma página para o chat, ou diz por que não abriu                |
 | `fresh.test.ts`        | um caso começa num navegador sem nada salvo, e o stream o acompanha                     |
 | `device-fresh.test.ts` | apps de fixture num AVD e num simulador reais: limpos, reabertos, segurados             |
