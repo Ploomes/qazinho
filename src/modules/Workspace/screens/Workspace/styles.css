@@ -84,6 +84,29 @@
   color: var(--lime-ink);
 }
 
+.workspace__design-drop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-6);
+  height: var(--space-6);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.workspace__design-drop:hover {
+  background: var(--raise2);
+  color: var(--ink);
+}
+
 .workspace__actions {
   display: flex;
   flex: none;

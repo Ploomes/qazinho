@@ -3,7 +3,7 @@ import { Bugs } from '@/modules/Bug';
 import { DeviceView } from '@/modules/Device';
 import { Plan } from '@/modules/Plan';
 import { Runs } from '@/modules/Run';
-import { Button, Icon, IconButton, StatusPill } from '@/shared/components/atoms';
+import { Button, Icon, StatusPill } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { PanelTabs, RunButton, TargetChip, WorkspaceName } from './components';
 import { useWorkspaceViewModel } from './hooks';
@@ -114,12 +114,14 @@ export const Workspace: React.FC = () => {
                 <Icon name="external" />
               </a>
               <Tooltip content={dropDesignLabel}>
-                <IconButton
-                  icon="close"
-                  size="sm"
-                  label={dropDesignLabel}
+                <button
+                  type="button"
+                  className="workspace__design-drop"
+                  aria-label={dropDesignLabel}
                   onClick={onDropDesign}
-                />
+                >
+                  <Icon name="close" />
+                </button>
               </Tooltip>
             </span>
           )}
