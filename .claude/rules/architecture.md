@@ -194,6 +194,18 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     passo do plano falhou, senão num com o mesmo título, senão como um bug novo.
   - O bug guarda cada vez em que foi visto, com a run, o passo, o momento e a tela; uma run que já
     o pegou não muda nada.
+- **O que o agente faz chega à tela enquanto ele faz.** Uma chamada que alguém lê ao vivo
+  (`isStreamed`: o chat e o Estagiário) pede `--include-partial-messages`, e o `followPartial`
+  monta o texto, tirando o campo `reply` do JSON ainda pela metade (`replyInPartial`). Toda
+  ferramenta chamada vira o evento `tool`, com o nome e o alvo, nunca o que é digitado
+  (`toolCallOf`); a página guarda as últimas (`withActivity`) e as escreve nas palavras do QA
+  (`activityLineOf`, `RunActivity`). No Codex, só o evento da ferramenta.
+- **Um bug recém-pego passa pela tela** (`BugFlash`, sobre o `DeviceScreen`). O `bug` e o `report`
+  recebem o tipo do bug (`category`), e a store enfileira o que esta run ainda não mostrou
+  (`bugFlashOf`, `withBugFlash`), sem atrasar a tela (`BUG_FLASH.waitingKept`). Um clique abre o
+  bug, e o mouse em cima o segura. Depois dos dois primeiros da run ele fica mais curto e o flash
+  mais suave (`isQuiet`). A fila só vale para a tela aberta: o `DeviceView` a limpa ao montar e ao
+  sair, e mantém a tela até o último sair, mesmo com a run já terminada.
 - **Um caso que passou é andado de novo sem o agente.** A run dele grava as ações de cada passo, e
   o agente relata, a cada passagem, uma `proof`: palavras na tela que não estariam lá se tivesse
   falhado.

@@ -95,6 +95,16 @@ Antes de um plano num celular, o chat abre o app no emulador ou simulador e lê 
 dele. Um app iOS que não adota o UIScene não abre no iOS 27, e o QAzinho diz que ele fechou na
 hora.
 
+**O chat escreve enquanto o agente escreve, e a run diz o que está fazendo.** A resposta do agente
+chega em pedaços, mesmo a que vem em JSON, e cada ferramenta que ele chama vira uma linha curta
+no chat ("Comparando Título com o Figma"), nas palavras do QA e sem gastar token. Quando um bug é
+pego, a tela do dispositivo pisca como uma foto, a imagem encolhe com a mira travada nela sobre o
+fundo desfocado, e o tipo do bug e o título dele ficam ali alguns segundos; mais curto e mais
+suave depois dos dois primeiros da run. O `tests/smoke/caught.test.ts` prova os três no app
+construído com um agente fake. Um Claude Code real (Haiku) andou uma loja com bugs plantados: a
+resposta chegou em pedaços, as linhas seguiram cada ação e ele disse o tipo em dois de três bugs;
+pelo Codex a resposta ainda chega inteira e nenhuma run foi tentada.
+
 **Um caso que passou é andado de novo sem o agente.** As ações de cada passo são gravadas com as
 palavras na tela que o provaram, e a próxima run as repete no dispositivo e confere as palavras:
 segundos e nenhum custo, contra dezenas de segundos e alguns centavos com o agente. Quando o app

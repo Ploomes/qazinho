@@ -47,4 +47,6 @@ exit={STICKER.panel.exit}`.
   com `gc-in` fora dele.
 - **Hover e press ficam no CSS** e mexem as propriedades separadas `translate` e `scale`, nunca o
   `transform`, por `--lift` e `--press`. O `transform` é do Motion.
-- **A evidência nunca se mexe**: o lightbox e o dispositivo entram direto.
+- **A evidência nunca se mexe**: o lightbox e o dispositivo entram direto, menos o `BugFlash`,
+  o instante em que um bug é pego. O flash dele é um keyframe (`gc-shutter`), fora do movimento
+  reduzido.
