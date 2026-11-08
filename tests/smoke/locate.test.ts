@@ -25,6 +25,9 @@ const PAGE = `<!doctype html><html><head><meta charset="utf-8"></head><body>
   <shop-button>Subscribe now</shop-button>
   <div role="tablist"><div role="tab" tabindex="0">Summary</div><div role="tab" tabindex="-1">Invoices</div></div>
   <div role="switch" aria-checked="false" tabindex="0" aria-label="Dark mode"></div>
+  <div role="tablist"><div role="tab" tabindex="0" onclick="document.getElementById('pick').textContent = 'Tab Proposta picked'">Proposta</div></div>
+  <button onclick="document.getElementById('pick').textContent = 'New template opened'">Novo modelo de proposta</button>
+  <p id="pick">Nothing picked yet</p>
   <script>
     customElements.define('shop-button', class extends HTMLElement {
       connectedCallback() {
@@ -144,5 +147,24 @@ describe('controls drawn as divs with an ARIA role', () => {
 
     expect(screen).toContain('tab: Invoices');
     expect(screen).toContain('switch: Dark mode');
+  });
+});
+
+/**
+ * A lista de modelos de um CRM: a aba "Proposta" ao lado do botão "Novo modelo de
+ * proposta". Um clique em "Proposta" caía no botão, que contém a palavra, e abria o modal
+ * do botão: o agente abriu um bug dizendo que a aba abria o modal.
+ */
+describe('a name said whole, beside a longer one that holds it', () => {
+  it('clicks the tab named exactly, not the button that holds the word', async () => {
+    await driver.act({ kind: 'click', target: 'Proposta', value: '' });
+
+    expect(await driver.describe()).toContain('Tab Proposta picked');
+  });
+
+  it('still reaches the longer one by its own name', async () => {
+    await driver.act({ kind: 'click', target: 'Novo modelo de proposta', value: '' });
+
+    expect(await driver.describe()).toContain('New template opened');
   });
 });
