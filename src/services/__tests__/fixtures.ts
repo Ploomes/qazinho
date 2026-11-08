@@ -21,6 +21,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
     stopAgent: () => Promise.resolve(),
     readAgentLimits: () => Promise.resolve(null),
     exportCode: () => Promise.resolve({ kind: 'cancelled' }),
+    readCode: () => Promise.resolve({ kind: 'nothing', missing: [] }),
     onAgentEvent: () => () => undefined,
     signInAgent: (agentId) =>
       Promise.resolve({

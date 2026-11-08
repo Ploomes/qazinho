@@ -4,6 +4,7 @@ import type { AttachOutcome } from './AttachOutcome';
 import type { BugComment } from './BugComment';
 import type { BugFiling } from './BugFiling';
 import type { BugReview } from './BugReview';
+import type { CodeRead } from './CodeRead';
 import type { ConfluencePageList } from './ConfluencePageList';
 import type { ConfluenceSpaceList } from './ConfluenceSpaceList';
 import type { ConfluenceSwitch } from './ConfluenceSwitch';
@@ -104,6 +105,7 @@ export interface IQazinhoApi {
   onAgentSignIn: (listener: (progress: AgentSignInProgress) => void) => () => void;
   startRun: (run: IStartRun) => Promise<void>;
   exportCode: (request: IExportCode) => Promise<ExportOutcome>;
+  readCode: (request: IExportCode) => Promise<CodeRead>;
   pauseRun: (props: { workspaceId: string; isPaused: boolean }) => Promise<void>;
   stopRun: (workspaceId: string) => Promise<void>;
   answerRun: (props: {

@@ -1,5 +1,5 @@
 import type { ICodeExport } from './types';
-import type { ExportOutcome, IExportCode } from '@/shared/types';
+import type { CodeRead, ExportOutcome, IExportCode } from '@/shared/types';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { casesOf, readBook, recipeFor } from '@/main/classes/runs/RunCoordinator/library';
@@ -28,6 +28,64 @@ export class CodeExport {
    * escolhe, e diz quais casos ainda não têm nenhuma.
    */
   public async export(request: IExportCode): Promise<ExportOutcome> {
+    const built = await this.build(request);
+
+    if (built.kind !== 'built') return built;
+
+    const folder = await this.chooseFolder();
+
+    if (folder === null) return { kind: 'cancelled' };
+
+    const isWritten = await Promise.all(
+      built.files.map(async ({ name, content }) => {
+        await mkdir(dirname(join(folder, name)), { recursive: true });
+        await writeFile(join(folder, name), content);
+      }),
+    ).then(
+      () => true,
+      () => false,
+    );
+
+    if (!isWritten) return { kind: 'failed', reason: 'write' };
+
+    return {
+      kind: 'saved',
+      folder,
+      files: built.files.map(({ name }) => name),
+      exported: built.exported,
+      missing: built.missing,
+    };
+  }
+
+  /** O mesmo código como texto, sem pasta: o agente de fora o guarda onde quiser. */
+  public async read(request: IExportCode): Promise<CodeRead> {
+    const built = await this.build(request);
+
+    if (built.kind !== 'built') return built;
+
+    return {
+      kind: 'code',
+      files: built.files.flatMap(({ name, content }) =>
+        typeof content === 'string' ? [{ name, content }] : [],
+      ),
+      samples: built.files.flatMap(({ name, content }) =>
+        typeof content === 'string' ? [] : [name],
+      ),
+      exported: built.exported,
+      missing: built.missing,
+    };
+  }
+
+  private async build(request: IExportCode): Promise<
+    | { kind: 'nothing'; missing: string[] }
+    | { kind: 'failed'; reason: 'app-id' }
+    | {
+        kind: 'built';
+        files: { name: string; content: string | Buffer }[];
+        exported: string[];
+        missing: string[];
+      }
+  > {
     const book = readBook(
       await readFile(
         join(this.dataRoot, ARCHIVE.workspaces, request.workspaceId, ARCHIVE.recipes),
@@ -57,10 +115,6 @@ export class CodeExport {
 
     if (appId === null) return { kind: 'failed', reason: 'app-id' };
 
-    const folder = await this.chooseFolder();
-
-    if (folder === null) return { kind: 'cancelled' };
-
     const samples = [
       ...new Set(
         recorded.flatMap(({ recipe }) =>
@@ -89,22 +143,10 @@ export class CodeExport {
           name: `${recipe.caseId.toLowerCase()}${CODE_EXPORT.maestroExtension}`,
           content: maestroOf({ appId, steps, recipe }),
         }));
-    const isWritten = await Promise.all(
-      files.map(async ({ name, content }) => {
-        await mkdir(dirname(join(folder, name)), { recursive: true });
-        await writeFile(join(folder, name), content);
-      }),
-    ).then(
-      () => true,
-      () => false,
-    );
-
-    if (!isWritten) return { kind: 'failed', reason: 'write' };
 
     return {
-      kind: 'saved',
-      folder,
-      files: files.map(({ name }) => name),
+      kind: 'built',
+      files,
       exported: recorded.map(({ recipe }) => recipe.caseId),
       missing,
     };

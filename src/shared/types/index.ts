@@ -19,6 +19,7 @@ export type * from './CodeStep';
 export type * from './ConfluencePageList';
 export type * from './ConfluenceRead';
 export type * from './ConfluenceSpaceList';
+export type * from './CodeRead';
 export type * from './ConfluenceSwitch';
 export type * from './ConnectFailure';
 export type * from './DialogAnswer';

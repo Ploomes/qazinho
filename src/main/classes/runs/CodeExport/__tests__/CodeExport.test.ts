@@ -2,7 +2,7 @@ import type { IFlatStep } from '@/shared/types';
 import { mkdir, mkdtemp, readFile, readdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { CodeExport } from '@/main/classes/runs/CodeExport';
 import { fingerprintOf } from '@/main/classes/runs/RunCoordinator/library';
 
@@ -82,6 +82,29 @@ describe('CodeExport', () => {
     expect(await readFile(join(picked, 'qazinho.spec.ts'), 'utf8')).toContain(
       'await control(tab, "Save visit").click();',
     );
+  });
+
+  it('hands the same code as text to an agent, with no folder to pick', async () => {
+    const { root } = await world('web');
+    const chooseFolder = vi.fn(() => Promise.resolve(null));
+    const exporter = new CodeExport({
+      dataRoot: root,
+      chooseFolder,
+      appIdOf: () => Promise.resolve(null),
+    });
+    const read = await exporter.read(request('web'));
+
+    expect(read).toMatchObject({
+      kind: 'code',
+      files: [{ name: 'qazinho.spec.ts' }],
+      samples: [],
+      exported: ['TC-01'],
+      missing: ['TC-02'],
+    });
+    expect(read.kind === 'code' ? read.files[0]?.content : '').toContain(
+      'await control(tab, "Save visit").click();',
+    );
+    expect(chooseFolder).not.toHaveBeenCalled();
   });
 
   it('puts the sample file an upload picked beside the test that uses it', async () => {

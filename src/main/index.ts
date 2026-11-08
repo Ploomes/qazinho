@@ -1427,6 +1427,9 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.exportCode, (_event, request: IExportCode) =>
     codeExport.export(request),
   );
+  ipcMain.handle(CHANNELS.readCode, (_event, request: IExportCode) =>
+    codeExport.read(request),
+  );
   ipcMain.handle(CHANNELS.replayUrl, (_event, run: IRunRef) => replays.urlFor(run));
   ipcMain.on(CHANNELS.alertRun, (event, notice: IRunAlert) => {
     alerts.alert({

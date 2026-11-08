@@ -3,6 +3,7 @@ import type {
   BugComment,
   BugFiling,
   BugReview,
+  CodeRead,
   ConfluencePageList,
   ConfluenceSpaceList,
   ConfluenceSwitch,
@@ -139,6 +140,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.startRun, run) as Promise<void>,
   exportCode: (request: IExportCode) =>
     ipcRenderer.invoke(CHANNELS.exportCode, request) as Promise<ExportOutcome>,
+  readCode: (request: IExportCode) =>
+    ipcRenderer.invoke(CHANNELS.readCode, request) as Promise<CodeRead>,
   pauseRun: (props: { workspaceId: string; isPaused: boolean }) =>
     ipcRenderer.invoke(CHANNELS.pauseRun, props) as Promise<void>,
   stopRun: (workspaceId: string) =>

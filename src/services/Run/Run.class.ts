@@ -1,4 +1,5 @@
 import type {
+  CodeRead,
   ExportOutcome,
   IExportCode,
   INetworkEntry,
@@ -23,6 +24,10 @@ export class Run {
     return (
       (await window.qazinho?.exportCode(request)) ?? { kind: 'failed', reason: 'write' }
     );
+  }
+
+  public static async readCode(request: IExportCode): Promise<CodeRead> {
+    return (await window.qazinho?.readCode(request)) ?? { kind: 'nothing', missing: [] };
   }
 
   public static setPaused(props: { workspaceId: string; isPaused: boolean }): void {
