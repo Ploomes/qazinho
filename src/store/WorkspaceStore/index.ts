@@ -15,7 +15,6 @@ import { PANEL } from '@/modules/Workspace/constants';
 import {
   endRun,
   landAnswered,
-  landSuggestedCases,
   landAsked,
   landCost,
   landExplored,
@@ -348,21 +347,6 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         workspaces: state.workspaces,
         workspaceId,
         change: (workspace) => landExplored({ workspace, summary, cases }),
-      }),
-    })),
-
-  suggestCases: ({ workspaceId, summary, cases }) =>
-    set((state) => ({
-      workspaces: mapWorkspace({
-        workspaces: state.workspaces,
-        workspaceId,
-        change: (workspace) =>
-          landSuggestedCases({
-            workspace,
-            summary,
-            cases,
-            at: formatClock(new Date()),
-          }),
       }),
     })),
 

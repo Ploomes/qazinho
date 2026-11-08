@@ -12,7 +12,6 @@ export * from './landFiled';
 export * from './landFinding';
 export * from './landReview';
 export * from './landStep';
-export * from './landSuggestedCases';
 export * from './landVideo';
 export * from './messageOfSaved';
 export * from './panelWidthOf';
