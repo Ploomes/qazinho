@@ -6,7 +6,6 @@ import type {
   AppToolCall,
   IIntegrationStatus,
   IVariableBrief,
-  IDraftedCase,
   INetworkEntry,
   IRunRef,
   RunMode,
@@ -45,9 +44,11 @@ export interface IOutsidePort {
   waitForChat: (props: { workspaceId: string; ms: number }) => Promise<void>;
   perform: (call: AppToolCall) => Promise<IToolDone>;
   changePlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
-  suggestCases: (props: {
+  setPaused: (props: { workspaceId: string; isPaused: boolean }) => void;
+  answerRun: (props: { workspaceId: string; questionId: string; text: string }) => void;
+  takeSuggestion: (props: {
     workspaceId: string;
-    summary: string;
-    cases: IDraftedCase[];
+    messageId: string;
+    only?: number[];
   }) => void;
 }

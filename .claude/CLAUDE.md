@@ -203,11 +203,15 @@ sintéticos, nenhum atravessou o macOS; ainda não se viu a ilha com um app em t
 monitor externo, nem no Windows ou no Linux.
 
 **O agente de código do QA usa o QAzinho de fora.** Ligado em Configurações › MCPs, o QAzinho vira
-um servidor MCP neste computador, com 29 ferramentas: o agente com que o QA ou o dev trabalha no
+um servidor MCP neste computador, com 39 ferramentas. A regra: o que o QA faz à mão no QAzinho tem
+uma ferramenta, e o que só a IA faz, como planejar a partir de uma história, de um design ou do
+código, vai pela conversa com o chat do workspace. O agente com que o QA ou o dev trabalha no
 próprio editor cria o projeto e o workspace de um app que o QAzinho ainda não conhece, escreve,
-altera e apaga casos do plano, troca o alvo de um projeto, roda o plano ou uma exploração, espera o
-resultado, lê o que quebrou (as telas como arquivos, as chamadas de API que falharam e o que
-responderam), fecha ou manda um bug ao tracker, e conversa com o chat do workspace como o QA. A
+altera e apaga casos do plano, troca o alvo de um projeto, liga um repositório ou um design, constrói
+o app, roda o plano ou uma exploração, pausa, retoma ou para a run, responde a pergunta dela (nunca
+um segredo), leva ao plano a sugestão de uma exploração, espera o resultado, lê o que quebrou (as
+telas como arquivos, as chamadas de API que falharam e o que responderam), fecha ou manda um bug ao
+tracker, e conversa com o chat do workspace como o QA. A
 mensagem dele aparece no chat marcada com as estrelinhas, "Seu agente", e o agente do QAzinho sabe
 que não foi o QA quem escreveu. Antes de mudar ou apagar, a descrição da ferramenta manda o agente perguntar ao usuário no chat dele, com a ferramenta de perguntar que ele já tem, e só chamar depois do sim; o QAzinho não abre cartão. Ele também lista as variáveis de um projeto pelo nome e pela descrição, cadastra uma abrindo a janela onde o QA digita o valor, renomeia ou apaga uma, lê e muda as configurações, e conecta ou desconecta o GitHub e o Jira; nenhum valor ou token passa por ele, e o app não vem à frente. O QAzinho adiciona o servidor ao Claude
 Code ou ao Codex em um clique, ou copia o endereço para outro agente. Um Claude Code real (Haiku),

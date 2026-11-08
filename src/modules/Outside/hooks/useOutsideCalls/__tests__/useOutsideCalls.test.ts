@@ -65,33 +65,47 @@ describe('useOutsideCalls', () => {
     });
   });
 
-  it('leaves suggested cases on the chat of the workspace', async () => {
+  it("takes an exploration's suggestion into the plan, as the QA's button does", async () => {
+    useWorkspaceStore.setState({
+      workspaces: [
+        {
+          ...makeWorkspace([]),
+          chat: [
+            {
+              id: 'm-1',
+              kind: 'suggestion',
+              at: '10:00',
+              runId: 'r-02',
+              summary: 'What the exploration saw',
+              cases: [
+                {
+                  title: 'Coupon',
+                  priority: 'P1',
+                  goal: '',
+                  preconditions: '',
+                  steps: [{ action: 'Apply the coupon', expected: 'The total drops' }],
+                },
+              ],
+              isTaken: false,
+            },
+          ],
+        },
+      ],
+    });
     renderHook(() => {
       useOutsideCalls();
     });
 
     act(() => {
-      call({
-        id: 'c-2',
-        call: {
-          name: 'suggest_cases',
-          args: {
-            workspace: 'w1',
-            summary: 'New coupon',
-            cases: [
-              { title: 'Coupon', priority: 'P1', goal: '', preconditions: '', steps: [] },
-            ],
-          },
-        },
-      });
+      call({ id: 'c-2', call: { name: 'take_suggestion', args: { workspace: 'w1' } } });
     });
 
     await waitFor(() => {
       expect(answers).toHaveLength(1);
     });
-    expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
-      kind: 'suggestion',
-      from: 'outside',
+    expect(useWorkspaceStore.getState().workspaces[0]?.plan).toHaveLength(1);
+    expect(useWorkspaceStore.getState().workspaces[0]?.chat[0]).toMatchObject({
+      isTaken: true,
     });
   });
 

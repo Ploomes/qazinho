@@ -82,7 +82,14 @@ export async function performOutsideTool(props: {
     call.name === 'delete_variable' ||
     call.name === 'change_settings' ||
     call.name === 'connect_integration' ||
-    call.name === 'disconnect_integration'
+    call.name === 'disconnect_integration' ||
+    call.name === 'list_repositories' ||
+    call.name === 'link_repository' ||
+    call.name === 'unlink_repository' ||
+    call.name === 'link_design' ||
+    call.name === 'unlink_design' ||
+    call.name === 'build_app' ||
+    call.name === 'build_status'
   )
     return port.perform(call);
 
@@ -111,17 +118,13 @@ export async function performOutsideTool(props: {
       return stopOf({ workspace, port });
     case 'start_run':
       return startOf({ workspace, call, port });
-    case 'suggest_cases':
-      port.suggestCases({
-        workspaceId: workspace.id,
-        summary: call.args.summary,
-        cases: call.args.cases,
-      });
-
-      return {
-        text: `The QA sees ${countOf({ amount: call.args.cases.length, noun: 'suggested case' })} on a card in the chat of ${workspace.id} "${workspace.name}". They reach the plan only when the QA takes them, so tell them to look.`,
-        isError: false,
-      };
+    case 'pause_run':
+    case 'resume_run':
+      return pauseOf({ workspace, isPaused: call.name === 'pause_run', port });
+    case 'answer_run_question':
+      return answerOf({ workspace, answer: call.args.answer, port });
+    case 'take_suggestion':
+      return takeOf({ workspace, only: call.args.cases ?? null, port });
     case 'run_status':
       return statusOf({ workspaceId: workspace.id, call, port });
     case 'ask_workspace_chat':
@@ -155,6 +158,102 @@ function bugWithFiles(props: { workspace: IWorkspace; bugId: string }): IToolDon
         ? []
         : ['Its screenshots, as files you can read:', ...files]),
     ].join('\n'),
+    isError: false,
+  };
+}
+
+function pauseOf(props: {
+  workspace: IWorkspace;
+  isPaused: boolean;
+  port: IOutsidePort;
+}): IToolDone {
+  const { workspace, isPaused, port } = props;
+  const { live } = workspace;
+  const named = `${workspace.id} "${workspace.name}"`;
+
+  if (live === null || live.isDone)
+    return { text: `${named} has no run going on.`, isError: true };
+
+  if (live.isRunning !== isPaused)
+    return {
+      text: `${live.id} of ${named} is already ${isPaused ? 'paused' : 'going'}.`,
+      isError: false,
+    };
+
+  port.setPaused({ workspaceId: workspace.id, isPaused });
+
+  return {
+    text: isPaused
+      ? `Paused ${live.id} of ${named}: its agent finishes what it is doing and waits. Go on with resume_run.`
+      : `${live.id} of ${named} goes on. Read it with run_status and waitSeconds.`,
+    isError: false,
+  };
+}
+
+function answerOf(props: {
+  workspace: IWorkspace;
+  answer: string;
+  port: IOutsidePort;
+}): IToolDone {
+  const { workspace, answer, port } = props;
+  const question = workspace.live?.isDone === false ? workspace.live.question : undefined;
+  const named = `${workspace.id} "${workspace.name}"`;
+
+  if (question === undefined)
+    return { text: `The run of ${named} waits on no question.`, isError: true };
+
+  if (question.isSecret)
+    return {
+      text: `The run of ${named} asks for a secret (${question.secret.name}): the QA types it in QAzinho, never through you. Tell them it waits.`,
+      isError: true,
+    };
+
+  const picked =
+    question.options.find(
+      (option) => option.trim().toLowerCase() === answer.trim().toLowerCase(),
+    ) ?? answer.trim();
+
+  port.answerRun({ workspaceId: workspace.id, questionId: question.id, text: picked });
+
+  return {
+    text: `Answered "${question.question}" with "${picked}". The run goes on: read it with run_status and waitSeconds.`,
+    isError: false,
+  };
+}
+
+function takeOf(props: {
+  workspace: IWorkspace;
+  only: number[] | null;
+  port: IOutsidePort;
+}): IToolDone {
+  const { workspace, only, port } = props;
+  const named = `${workspace.id} "${workspace.name}"`;
+  const card = workspace.chat.findLast(
+    (message) => message.kind === 'suggestion' && !message.isTaken,
+  );
+
+  if (card?.kind !== 'suggestion')
+    return { text: `The chat of ${named} has no suggested plan to take.`, isError: true };
+
+  const outside = (only ?? []).filter((number) => number > card.cases.length);
+
+  if (outside.length > 0)
+    return {
+      text: `The suggestion has ${countOf({ amount: card.cases.length, noun: 'case' })}, numbered from 1: there is no ${outside.join(', ')}.`,
+      isError: true,
+    };
+
+  const taken =
+    only === null ? card.cases.map((_, index) => index) : only.map((n) => n - 1);
+
+  port.takeSuggestion({
+    workspaceId: workspace.id,
+    messageId: card.id,
+    ...(only === null ? {} : { only: taken }),
+  });
+
+  return {
+    text: `Took ${countOf({ amount: taken.length, noun: 'suggested case' })} into the plan of ${named}. Run them with start_run.`,
     isError: false,
   };
 }
@@ -196,7 +295,7 @@ function startOf(props: {
 
   if (plan.length === 0)
     return {
-      text: `${workspace.id} "${workspace.name}" has no plan yet. The QA writes one in its chat, or you can suggest cases with suggest_cases.`,
+      text: `${workspace.id} "${workspace.name}" has no plan yet. Write its cases with add_cases, after asking the user, or ask its chat to plan with ask_workspace_chat.`,
       isError: true,
     };
 
@@ -307,7 +406,7 @@ function createWorkspace(props: {
   port.addWorkspace(made.workspace);
 
   return {
-    text: `Created workspace ${made.workspace.id} "${made.workspace.name}" in ${found.item.id} on ${made.target.kind}. Its plan is empty: suggest its first cases with suggest_cases, and tell the QA to take them to the plan in QAzinho before you run it.`,
+    text: `Created workspace ${made.workspace.id} "${made.workspace.name}" in ${found.item.id} on ${made.target.kind}. Its plan is empty: write its first cases with add_cases, after asking the user, or ask its chat to plan with ask_workspace_chat.`,
     isError: false,
   };
 }

@@ -546,7 +546,7 @@ O local é desligado até o QA ligá-lo. É o caminho inverso do resto do app: a
   outra, e o `renew` leva o endereço novo aos agentes que guardavam o anterior.
 - **O endereço nunca chega à página.** Ela pede à main para adicioná-lo a um agente (`AgentMcp.addAddress`)
   ou copiá-lo; só a main o lê. Um `Origin` ou um `Host` de fora da máquina é recusado (`isLocalRequest`).
-- As 29 ferramentas vivem no harness (`servers/outside/`, `OutsideHost`), e a resposta a uma chamada
+- As 39 ferramentas vivem no harness (`servers/outside/`, `OutsideHost`), e a resposta a uma chamada
   (`OutsideToolCall`) vem da página, pelas mesmas stores e actions dos cliques do QA
   (`performOutsideTool`), numa ponte só dela: a do Estagiário solta o que espera a cada turno dele. Com
   a janela fechada, a main a abre e pede ao agente que chame de novo.
@@ -574,8 +574,12 @@ O local é desligado até o QA ligá-lo. É o caminho inverso do resto do app: a
   as estrelinhas e "Seu agente", e o agente do chat a lê com a seção `Who wrote this message`
   (`describeSender`). Uma rodada de perguntas aberta é fechada sem resposta antes, como uma mensagem do
   QA faria.
-- Um caso sugerido (`suggest_cases`) fica num cartão no chat (`ISuggestionMessage.from`), e só o QA o
-  leva ao plano (`takeSuggestion`).
+- **O que o QA faz à mão tem uma ferramenta, e o que só a IA faz vai pela conversa com o chat.** Por
+  isso não há `suggest_cases`: o agente escreve casos com `add_cases`, depois de perguntar, ou pede o
+  plano ao chat. Pausar e retomar seguem o botão da run (`pauseRun`), uma pergunta da run é
+  respondida em palavras (`Run.answer`), nunca um segredo, e a sugestão de uma exploração vai ao plano
+  como o botão do cartão a leva (`takeSuggestion`). Um cartão antigo vindo de fora ainda aparece
+  (`ISuggestionMessage.from`).
 
 ## O trabalho pesado fica fora do processo main
 

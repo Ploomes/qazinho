@@ -130,8 +130,20 @@ export const useOutsideCalls = () => {
       changePlan: (change) => {
         useWorkspaceStore.getState().changePlan(change);
       },
-      suggestCases: (suggestion) => {
-        useWorkspaceStore.getState().suggestCases(suggestion);
+      setPaused: ({ workspaceId, isPaused }) => {
+        const store = useWorkspaceStore.getState();
+        const live = store.workspaces.find(({ id }) => id === workspaceId)?.live;
+
+        if (!live || live.isDone || live.isRunning === !isPaused) return;
+
+        store.pauseRun(workspaceId);
+        Run.setPaused({ workspaceId, isPaused });
+      },
+      answerRun: ({ workspaceId, questionId, text }) => {
+        Run.answer({ workspaceId, questionId, reply: { kind: 'said', text } });
+      },
+      takeSuggestion: (take) => {
+        useWorkspaceStore.getState().takeSuggestion(take);
       },
     };
 

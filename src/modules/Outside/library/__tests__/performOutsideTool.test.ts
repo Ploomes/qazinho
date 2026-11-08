@@ -24,6 +24,13 @@ const PROJECT = {
 };
 
 const NOW = QUESTION.askedAtMs;
+const DRAFT = {
+  title: 'Coupon',
+  priority: 'P1' as const,
+  goal: '',
+  preconditions: '',
+  steps: [{ action: 'Apply the coupon', expected: 'The total drops' }],
+};
 
 /** Um app de mentira: o que ele guarda, e o que cada chamada pediu a ele. */
 function appWith(props: {
@@ -39,7 +46,9 @@ function appWith(props: {
   let workspaces = props.workspaces ?? [makeWorkspace()];
   const started: unknown[] = [];
   const stopped: string[] = [];
-  const suggested: unknown[] = [];
+  const paused: unknown[] = [];
+  const answered: unknown[] = [];
+  const took: unknown[] = [];
   const waited: number[] = [];
   const projects: IProject[] = [];
   const added: IWorkspace[] = [];
@@ -118,8 +127,14 @@ function appWith(props: {
         one.id === change.workspaceId ? { ...one, plan: change.plan } : one,
       );
     },
-    suggestCases: (suggestion) => {
-      suggested.push(suggestion);
+    setPaused: (pause) => {
+      paused.push(pause);
+    },
+    answerRun: (answer) => {
+      answered.push(answer);
+    },
+    takeSuggestion: (take) => {
+      took.push(take);
     },
   };
 
@@ -127,7 +142,9 @@ function appWith(props: {
     port,
     started,
     stopped,
-    suggested,
+    paused,
+    answered,
+    took,
     waited,
     projects,
     added,
@@ -233,7 +250,8 @@ describe('performOutsideTool', () => {
       const done = await call({ name: 'start_run', args: { workspace: 'w1' } }, app);
 
       expect(app.started).toEqual([]);
-      expect(done.text).toContain('suggest_cases');
+      expect(done.text).toContain('add_cases');
+      expect(done.text).toContain('ask_workspace_chat');
     });
 
     it('says so when the app could not start it', async () => {
@@ -383,24 +401,178 @@ describe('performOutsideTool', () => {
     expect(done.text).toContain('/runs/r-01/step-1.jpg');
   });
 
-  it('leaves suggested cases waiting on the QA, and says so', async () => {
-    const app = appWith({});
-    const cases = [
-      {
-        title: 'Coupon',
-        priority: 'P1' as const,
-        goal: '',
-        preconditions: '',
-        steps: [],
-      },
-    ];
-    const done = await call(
-      { name: 'suggest_cases', args: { workspace: 'w1', summary: 'New coupon', cases } },
-      app,
-    );
+  describe('what the QA does on a run by hand', () => {
+    it('pauses a run that goes, and resumes a paused one', async () => {
+      const app = appWith({ workspaces: [going()] });
 
-    expect(app.suggested).toEqual([{ workspaceId: 'w1', summary: 'New coupon', cases }]);
-    expect(done.text).toContain('They reach the plan only when the QA takes them');
+      expect(
+        (await call({ name: 'pause_run', args: { workspace: 'w1' } }, app)).text,
+      ).toContain('Paused r-01');
+      expect(app.paused).toEqual([{ workspaceId: 'w1', isPaused: true }]);
+
+      const stopped = appWith({
+        workspaces: [{ ...going(), live: { ...going().live!, isRunning: false } }],
+      });
+
+      await call({ name: 'resume_run', args: { workspace: 'w1' } }, stopped);
+
+      expect(stopped.paused).toEqual([{ workspaceId: 'w1', isPaused: false }]);
+    });
+
+    it('does NOT pause what is already paused, nor a workspace with no run', async () => {
+      const paused = appWith({
+        workspaces: [{ ...going(), live: { ...going().live!, isRunning: false } }],
+      });
+
+      expect(
+        (await call({ name: 'pause_run', args: { workspace: 'w1' } }, paused)).text,
+      ).toContain('already paused');
+      expect(paused.paused).toEqual([]);
+
+      const idle = appWith({});
+
+      expect(
+        await call({ name: 'pause_run', args: { workspace: 'w1' } }, idle),
+      ).toMatchObject({ isError: true });
+    });
+
+    it("answers the run's question with the option it offers, in its own words", async () => {
+      const app = appWith({
+        workspaces: [
+          {
+            ...going(),
+            live: { ...going().live!, question: { ...QUESTION, waitedSec: 3 } },
+          },
+        ],
+      });
+      const done = await call(
+        { name: 'answer_run_question', args: { workspace: 'w1', answer: 'premium+' } },
+        app,
+      );
+
+      expect(done.isError).toBe(false);
+      expect(app.answered).toEqual([
+        { workspaceId: 'w1', questionId: 'q-1', text: 'Premium+' },
+      ]);
+    });
+
+    it('does NOT answer a secret, which the QA types in QAzinho', async () => {
+      const app = appWith({
+        workspaces: [
+          {
+            ...going(),
+            live: {
+              ...going().live!,
+              question: { ...QUESTION, isSecret: true, waitedSec: 3 },
+            },
+          },
+        ],
+      });
+      const done = await call(
+        { name: 'answer_run_question', args: { workspace: 'w1', answer: '123456' } },
+        app,
+      );
+
+      expect(done).toMatchObject({ isError: true });
+      expect(done.text).toContain('types it in QAzinho');
+      expect(app.answered).toEqual([]);
+    });
+
+    it('says when the run waits on no question', async () => {
+      const app = appWith({ workspaces: [going()] });
+
+      expect(
+        await call(
+          { name: 'answer_run_question', args: { workspace: 'w1', answer: 'x' } },
+          app,
+        ),
+      ).toMatchObject({ isError: true });
+    });
+  });
+
+  describe("taking an exploration's suggestion", () => {
+    const suggesting = (isTaken = false) =>
+      appWith({
+        workspaces: [
+          {
+            ...makeWorkspace(),
+            chat: [
+              {
+                id: 'm-3',
+                kind: 'suggestion' as const,
+                at: '10:00',
+                runId: 'r-02',
+                summary: 'What the exploration saw',
+                cases: [
+                  DRAFT,
+                  { ...DRAFT, title: 'Second' },
+                  { ...DRAFT, title: 'Third' },
+                ],
+                isTaken,
+              },
+            ],
+          },
+        ],
+      });
+
+    it('takes every case, or the ones named by their number from 1', async () => {
+      const every = suggesting();
+
+      await call({ name: 'take_suggestion', args: { workspace: 'w1' } }, every);
+
+      expect(every.took).toEqual([{ workspaceId: 'w1', messageId: 'm-3' }]);
+
+      const some = suggesting();
+
+      await call(
+        { name: 'take_suggestion', args: { workspace: 'w1', cases: [1, 3] } },
+        some,
+      );
+
+      expect(some.took).toEqual([{ workspaceId: 'w1', messageId: 'm-3', only: [0, 2] }]);
+    });
+
+    it('does NOT take a case number the card does not have', async () => {
+      const app = suggesting();
+      const done = await call(
+        { name: 'take_suggestion', args: { workspace: 'w1', cases: [4] } },
+        app,
+      );
+
+      expect(done).toMatchObject({ isError: true });
+      expect(app.took).toEqual([]);
+    });
+
+    it('says there is nothing to take once the QA took it', async () => {
+      expect(
+        await call(
+          { name: 'take_suggestion', args: { workspace: 'w1' } },
+          suggesting(true),
+        ),
+      ).toMatchObject({ isError: true });
+    });
+  });
+
+  it("hands linking, unlinking and building to the assistant's own tools", async () => {
+    const app = appWith({});
+
+    const calls: OutsideToolCall[] = [
+      { name: 'list_repositories', args: {} },
+      { name: 'link_repository', args: { project: 'Loja', repository: 'acme/shop' } },
+      { name: 'unlink_design', args: { workspace: 'w1' } },
+      { name: 'build_app', args: { project: 'Loja', platform: 'android' } },
+      { name: 'build_status', args: {} },
+    ];
+
+    for (const one of calls) expect((await call(one, app)).text).toBe(`did ${one.name}`);
+
+    expect(app.performed.map(({ name }) => name)).toEqual([
+      'list_repositories',
+      'link_repository',
+      'unlink_design',
+      'build_app',
+      'build_status',
+    ]);
   });
 
   describe('creating what an app QAzinho does not know yet needs', () => {
@@ -460,7 +632,7 @@ describe('performOutsideTool', () => {
       );
 
       expect(done.isError).toBe(false);
-      expect(done.text).toContain('suggest_cases');
+      expect(done.text).toContain('add_cases');
       expect(app.added).toEqual([
         expect.objectContaining({
           projectId: 'p1',

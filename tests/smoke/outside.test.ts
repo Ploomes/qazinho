@@ -188,7 +188,17 @@ describe('an outside agent', () => {
       'disconnect_integration',
       'ask_workspace_chat',
       'read_workspace_chat',
-      'suggest_cases',
+      'pause_run',
+      'resume_run',
+      'answer_run_question',
+      'take_suggestion',
+      'list_repositories',
+      'link_repository',
+      'unlink_repository',
+      'link_design',
+      'unlink_design',
+      'build_app',
+      'build_status',
     ]);
     expect(client.getInstructions()).toContain('start_run');
   });
@@ -261,10 +271,9 @@ describe('an outside agent', () => {
     expect((await holding).text).not.toContain('still going on');
   }, 60_000);
 
-  it('leaves suggested cases on a card, out of the plan until the QA takes them', async () => {
-    const said = await tool('suggest_cases', {
+  it('writes a case into the plan, which the QA sees there', async () => {
+    const said = await tool('add_cases', {
       workspace: 'w-1',
-      summary: 'Um cupom novo no checkout.',
       cases: [
         {
           title: 'Aplicar um cupom',
@@ -276,16 +285,8 @@ describe('an outside agent', () => {
       ],
     });
 
-    expect(said.text).toContain('They reach the plan only when the QA takes them');
-    expect((await tool('workspace_details', { workspace: 'w-1' })).text).not.toContain(
-      'Aplicar um cupom',
-    );
-
-    await page.getByRole('button', { name: /^Loja/ }).first().click();
-    await page.getByText('Compra', { exact: true }).first().click();
-    await page.waitForSelector('.suggestion-card');
-
-    expect(await page.locator('.suggestion-card').first().textContent()).toContain(
+    expect(said.text).toContain('Aplicar um cupom');
+    expect((await tool('workspace_details', { workspace: 'w-1' })).text).toContain(
       'Aplicar um cupom',
     );
   });
