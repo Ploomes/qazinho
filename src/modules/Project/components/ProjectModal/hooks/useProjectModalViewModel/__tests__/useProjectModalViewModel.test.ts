@@ -157,6 +157,7 @@ describe('useProjectModalViewModel', () => {
         general: true,
         code: false,
         variables: false,
+        memories: false,
         pro: false,
         delete: false,
       });
@@ -173,6 +174,7 @@ describe('useProjectModalViewModel', () => {
         general: false,
         code: false,
         variables: true,
+        memories: false,
         pro: false,
         delete: false,
       });

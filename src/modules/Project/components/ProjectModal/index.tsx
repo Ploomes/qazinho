@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { MemoriesPane } from '@/modules/Memory/components/MemoriesPane';
 import { ProjectProPane } from '@/modules/Pro/components/ProjectProPane';
 import { Button, Eyebrow, Input, Switch } from '@/shared/components/atoms';
 import { FileField } from '@/shared/components/molecules';
@@ -172,6 +173,12 @@ export const ProjectModal: React.FC = () => {
             onChange={onVariablesChange}
           />
         </ProjectPane>
+
+        {isEditing && projectId !== null && (
+          <ProjectPane label={t('PROJECT.SECTION_MEMORIES')} isOpen={isOpen.memories}>
+            <MemoriesPane projectId={projectId} />
+          </ProjectPane>
+        )}
 
         {isEditing && projectId !== null && (
           <ProjectPane label={t('PROJECT.SECTION_PRO')} isOpen={isOpen.pro}>

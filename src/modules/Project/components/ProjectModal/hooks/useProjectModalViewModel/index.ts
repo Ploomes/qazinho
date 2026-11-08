@@ -227,6 +227,21 @@ export const useProjectModalViewModel = () => {
       isFlagged: flagged === id,
       isDanger: false,
     })),
+    ...(isEditing
+      ? [
+          {
+            id: 'memories' as const,
+            label: t('PROJECT.SECTION_MEMORIES'),
+            count: countOf(
+              projects
+                .find(({ id }) => id === editingProjectId)
+                ?.memories?.filter(({ deletedAt }) => deletedAt === null).length ?? 0,
+            ),
+            isFlagged: false,
+            isDanger: false,
+          },
+        ]
+      : []),
     ...(isEditing && isSignedInToPro
       ? [
           {
@@ -338,6 +353,7 @@ export const useProjectModalViewModel = () => {
       general: section === 'general',
       code: section === 'code',
       variables: section === 'variables',
+      memories: section === 'memories',
       pro: section === 'pro',
       delete: section === 'delete',
     },
