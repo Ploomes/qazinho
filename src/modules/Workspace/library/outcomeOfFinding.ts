@@ -26,5 +26,6 @@ export function outcomeOfFinding(props: {
     ...(finding.sameAs === undefined ? {} : { sameAs: finding.sameAs }),
     ...(finding.frame === undefined ? {} : { frame: finding.frame }),
     ...(finding.category === undefined ? {} : { category: finding.category }),
+    ...(finding.box === undefined ? {} : { box: finding.box }),
   };
 }

@@ -1,6 +1,7 @@
 export * from './bugFlashHeadlineOf';
 export * from './bugFlashHoldOf';
 export * from './bugFlashOf';
+export * from './bugFocusOf';
 export * from './deviceStateOf';
 export * from './formatElapsed';
 export * from './imageRatioOf';

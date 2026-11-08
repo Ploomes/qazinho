@@ -30,3 +30,4 @@ export {
   unwalkedOutcome,
   variablePort,
 } from '@salve-software/qazinho-harness/engine';
+export * from './markedBoxOf';

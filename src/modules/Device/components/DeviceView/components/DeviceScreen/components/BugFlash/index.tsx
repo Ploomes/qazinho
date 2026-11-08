@@ -6,8 +6,8 @@ import { useBugFlashViewModel } from './hooks';
 import './styles.css';
 
 /**
- * A tela pisca como uma foto, e o bug recém-pego fica uns segundos no meio dela, com a
- * mira travada na imagem sobre o fundo desfocado, dizendo o que é.
+ * A tela pisca como uma foto, e o bug recém-pego fica uns segundos no meio dela: a imagem
+ * chega perto do que está errado, a mira trava ali, e a legenda diz o que é.
  */
 export const BugFlash: React.FC<IBugFlashProps> = (props) => {
   const {
@@ -17,6 +17,9 @@ export const BugFlash: React.FC<IBugFlashProps> = (props) => {
     headline,
     detail,
     photoAlt,
+    hasFocus,
+    imageClassName,
+    miraClassName,
     shutterClassName,
     onHoldStart,
     onHoldEnd,
@@ -50,18 +53,23 @@ export const BugFlash: React.FC<IBugFlashProps> = (props) => {
             onClick={onOpen}
           >
             <span className="bug-flash__photo">
-              {flash.shot !== null && (
-                <img className="bug-flash__image" src={flash.shot} alt={photoAlt} />
-              )}
-              {BUG_FLASH_CORNERS.map((corner) => (
-                <motion.i
-                  key={corner.key}
-                  className={`bug-flash__corner bug-flash__corner--${corner.key}`}
-                  custom={corner}
-                  variants={BUG_FLASH_MOTION.corner}
-                  aria-hidden="true"
-                />
-              ))}
+              <span className="bug-flash__lens">
+                {flash.shot !== null && (
+                  <img className={imageClassName} src={flash.shot} alt={photoAlt} />
+                )}
+                {hasFocus && <i className="bug-flash__spot" aria-hidden="true" />}
+              </span>
+              <span className={miraClassName}>
+                {BUG_FLASH_CORNERS.map((corner) => (
+                  <motion.i
+                    key={corner.key}
+                    className={`bug-flash__corner bug-flash__corner--${corner.key}`}
+                    custom={corner}
+                    variants={BUG_FLASH_MOTION.corner}
+                    aria-hidden="true"
+                  />
+                ))}
+              </span>
             </span>
             <motion.span
               className="bug-flash__caption"

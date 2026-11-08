@@ -36,6 +36,7 @@ export function bugFlashOf(props: {
     category: outcome.category ?? null,
     isDesign: outcome.frame !== undefined,
     isSeenAgain: caught.how === 'again',
+    box: outcome.box ?? null,
     isQuiet:
       workspace.bugs.filter((one) => isSeenIn({ bug: one, runId: live.id })).length >=
       BUG_FLASH.loudBugs,

@@ -34,14 +34,14 @@ describe('the tools a turn called', () => {
     expect(JSON.stringify(call)).not.toContain('hunter2');
   });
 
-  it('takes the title of a bug', () => {
+  it('takes the title of a bug, even when it points at something on the screen', () => {
     expect(
       toToolCalls(
         turn([
           {
             type: 'tool_use',
             name: 'mcp__qazinho__bug',
-            input: { title: 'Total errado', expected: 'a', got: 'b' },
+            input: { title: 'Total errado', target: 'Total', expected: 'a', got: 'b' },
           },
         ]),
       ),

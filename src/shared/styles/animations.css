@@ -1,3 +1,31 @@
+@keyframes gc-focus-zoom {
+  from {
+    transform: none;
+  }
+}
+
+@keyframes gc-focus-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes gc-mira-lock {
+  from {
+    top: calc(var(--flash-corner-gap) * -1);
+    left: calc(var(--flash-corner-gap) * -1);
+    width: calc(100% + 2 * var(--flash-corner-gap));
+    height: calc(100% + 2 * var(--flash-corner-gap));
+  }
+}
+
+@keyframes gc-mira-corner {
+  from {
+    width: var(--flash-corner);
+    height: var(--flash-corner);
+  }
+}
+
 @keyframes gc-shutter {
   0%,
   8% {

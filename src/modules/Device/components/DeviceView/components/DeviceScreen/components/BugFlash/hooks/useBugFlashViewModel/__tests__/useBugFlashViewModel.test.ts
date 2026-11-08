@@ -15,6 +15,7 @@ const flash = (id: string, more: Partial<IBugFlash> = {}): IBugFlash => ({
   isDesign: false,
   isSeenAgain: false,
   isQuiet: false,
+  box: null,
   ...more,
 });
 

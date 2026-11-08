@@ -33,4 +33,10 @@ describe('how long a caught bug stays on the screen', () => {
       BUG_FLASH.quietHoldMs,
     );
   });
+
+  it('gives the time to see what is marked on the picture', () => {
+    expect(bugFlashHoldOf({ title: '', waiting: 0, hasFocus: true })).toBe(
+      BUG_FLASH.holdMs + BUG_FLASH.focusExtraMs,
+    );
+  });
 });

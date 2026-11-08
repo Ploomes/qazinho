@@ -34,6 +34,7 @@ const flash = (id: string): IBugFlash => ({
   isDesign: false,
   isSeenAgain: false,
   isQuiet: false,
+  box: null,
 });
 
 describe('the queue of caught bugs', () => {

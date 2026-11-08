@@ -202,6 +202,7 @@ export type * from './RunAnswer';
 export type * from './RunFailure';
 export type * from './RunMode';
 export type * from './SaveOutcome';
+export type * from './IScreenBox';
 export type * from './Severity';
 export type * from './BugCategory';
 export type * from './StepVerdict';
