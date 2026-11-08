@@ -28,6 +28,7 @@ export const useDeviceViewModel = () => {
   const selectRun = useWorkspaceStore((state) => state.selectRun);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const openReplay = useAppStore((state) => state.openReplay);
+  const chatDevices = useWorkspaceStore((state) => state.chatDevices);
   const {
     runSteps,
     live,
@@ -70,9 +71,12 @@ export const useDeviceViewModel = () => {
     lastRun?.cases.reduce((total, runCase) => total + runCase.steps.length, 0) ??
     null;
 
-  const hasScreen = isRunLive || (isFocusedNow && shot !== null);
+  const chatDevice = workspace === null ? undefined : chatDevices[workspace.id];
+  const isLearning = !isRunLive && chatDevice !== undefined;
+  const hasScreen = isRunLive || isLearning || (isFocusedNow && shot !== null);
   const isFocused = isFocusedNow && hasScreen;
-  const stream = live?.isDone === false ? live.streamUrl : null;
+  const stream =
+    live?.isDone === false ? live.streamUrl : (chatDevice?.streamUrl ?? null);
   const viewports: IViewportChoice[] = isPhone
     ? []
     : VIEWPORTS.map((option) => ({
@@ -126,8 +130,8 @@ export const useDeviceViewModel = () => {
         : 'device-view__viewport device-view__viewport--browser',
     hasControls: isRunLive,
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
-    hasState: isRunLive,
-    stateText: isRunLive ? t('DEVICE.DRIVING') : '',
+    hasState: isRunLive || isLearning,
+    stateText: isRunLive ? t('DEVICE.DRIVING') : isLearning ? t('DEVICE.LEARNING') : '',
     offTitle: t('DEVICE.NO_DEVICE'),
     ended:
       lastRun === null || workspace === null
@@ -150,7 +154,7 @@ export const useDeviceViewModel = () => {
           },
     mood: moodOfStatus(workspace?.status ?? null),
     viewports,
-    hasViewportPicker: viewports.length > 0 && hasScreen && !isFocused,
+    hasViewportPicker: viewports.length > 0 && hasScreen && !isFocused && !isLearning,
     screenRatio,
     onSelectViewport: (viewportId: ViewportId) => {
       if (!workspace || viewportId === viewport.id) return;
@@ -168,7 +172,9 @@ export const useDeviceViewModel = () => {
     },
     shot,
     stream,
-    urlText: shownUrlOf(live?.address ?? target?.value ?? ''),
+    urlText: shownUrlOf(
+      (isLearning ? chatDevice?.address : live?.address) ?? target?.value ?? '',
+    ),
     elapsedLabel: formatElapsed(live?.elapsedSec ?? 0),
     stepsRef,
     onStepsScroll,

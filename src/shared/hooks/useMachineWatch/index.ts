@@ -22,6 +22,7 @@ export const useMachineWatch = () => {
   const setRetry = useWorkspaceStore((state) => state.setRetry);
   const setReadStep = useWorkspaceStore((state) => state.setReadStep);
   const setLooking = useWorkspaceStore((state) => state.setLooking);
+  const setChatDevice = useWorkspaceStore((state) => state.setChatDevice);
   const setContext = useWorkspaceStore((state) => state.setContext);
   const followInstall = useSetupStore((state) => state.followInstall);
   const setIntegrations = useSetupStore((state) => state.setIntegrations);
@@ -64,10 +65,16 @@ export const useMachineWatch = () => {
           });
         } else if (event.kind === 'look') {
           setLooking({ workspaceId: event.workspaceId, device: event.device });
+        } else if (event.kind === 'device') {
+          setChatDevice({
+            workspaceId: event.workspaceId,
+            streamUrl: event.streamUrl,
+            address: event.address,
+          });
         } else if (event.kind === 'text')
           setLiveText({ workspaceId: event.workspaceId, text: event.text });
       }),
-    [setUsage, setContext, setLiveText, setRetry, setReadStep, setLooking],
+    [setUsage, setContext, setLiveText, setRetry, setReadStep, setLooking, setChatDevice],
   );
 
   useEffect(() => {

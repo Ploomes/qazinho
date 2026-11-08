@@ -44,6 +44,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   retries: {},
   readSteps: {},
   lookingAt: {},
+  chatDevices: {},
   removingWorkspaceId: null,
 
   addWorkspace: (workspace) =>
@@ -163,6 +164,14 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   setLooking: ({ workspaceId, device }) =>
     set((state) => ({ lookingAt: { ...state.lookingAt, [workspaceId]: device } })),
+
+  setChatDevice: ({ workspaceId, streamUrl, address }) =>
+    set((state) => ({
+      chatDevices:
+        streamUrl === null
+          ? withoutKey({ record: state.chatDevices, key: workspaceId })
+          : { ...state.chatDevices, [workspaceId]: { streamUrl, address } },
+    })),
 
   setRetry: ({ workspaceId, attempt, maxRetries }) =>
     set((state) => ({

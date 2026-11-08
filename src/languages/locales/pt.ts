@@ -481,6 +481,7 @@ export const pt: typeof en = {
   },
   DEVICE: {
     DRIVING: 'rodando',
+    LEARNING: 'conhecendo o app',
     NO_DEVICE: 'Nada rodando.',
     STEPS: 'passos',
     STEPS_PROGRESS: '{{done}} de {{total}}',

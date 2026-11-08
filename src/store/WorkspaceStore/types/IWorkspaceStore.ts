@@ -39,6 +39,7 @@ export interface IWorkspaceStore {
   retries: Record<string, { attempt: number; maxRetries: number }>;
   readSteps: Record<string, { step: CodeStep | JiraStep; bytes: number }>;
   lookingAt: Record<string, 'android' | 'ios'>;
+  chatDevices: Record<string, { streamUrl: string; address: string | null }>;
   removingWorkspaceId: string | null;
   addWorkspace: (workspace: IWorkspace) => void;
   loadWorkspaces: (workspaces: IWorkspace[]) => void;
@@ -107,6 +108,11 @@ export interface IWorkspaceStore {
     bytes: number;
   }) => void;
   setLooking: (props: { workspaceId: string; device: 'android' | 'ios' }) => void;
+  setChatDevice: (props: {
+    workspaceId: string;
+    streamUrl: string | null;
+    address: string | null;
+  }) => void;
   setPlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
   changePlan: (props: { workspaceId: string; plan: ITestCase[] }) => void;
   startRun: (props: {

@@ -10,7 +10,7 @@ import { useAppStore, useWorkspaceStore } from '@/store';
 
 beforeEach(() => {
   useAppStore.setState({ selectedWorkspaceId: 'w1' });
-  useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+  useWorkspaceStore.setState({ workspaces: [makeWorkspace()], chatDevices: {} });
 });
 
 describe('useDeviceViewModel', () => {
@@ -608,6 +608,48 @@ describe('useDeviceViewModel', () => {
       rerender();
 
       expect(result.current.isFocused).toBe(false);
+    });
+  });
+
+  /**
+   * O agente do chat conhece o app no navegador do QAzinho antes de planejar: o QA o
+   * acompanha aqui, como acompanha uma run.
+   */
+  describe('the chat learning the app', () => {
+    it('shows the chat browser with no run going, saying what it does and where it is', () => {
+      useWorkspaceStore.setState({
+        chatDevices: {
+          w1: {
+            streamUrl: 'http://127.0.0.1:5000/t/chat~w1',
+            address: 'http://localhost:8000/templates/quotes',
+          },
+        },
+      });
+
+      const { result } = renderHook(() => useDeviceViewModel());
+
+      expect(result.current).toMatchObject({
+        hasScreen: true,
+        stream: 'http://127.0.0.1:5000/t/chat~w1',
+        hasState: true,
+        stateText: 'learning the app',
+        urlText: 'http://localhost:8000/templates/quotes',
+        hasViewportPicker: false,
+      });
+    });
+
+    it('lets a run take the screen over', () => {
+      const walked = walkRun({ verdicts: ['passed'] });
+
+      useWorkspaceStore.setState({
+        workspaces: [{ ...walked, live: { ...walked.live!, streamUrl: 'http://run' } }],
+        chatDevices: { w1: { streamUrl: 'http://chat', address: null } },
+      });
+
+      expect(renderHook(() => useDeviceViewModel()).result.current).toMatchObject({
+        stream: 'http://run',
+        stateText: 'running',
+      });
     });
   });
 });

@@ -477,6 +477,7 @@ export const en = {
   },
   DEVICE: {
     DRIVING: 'running',
+    LEARNING: 'learning the app',
     NO_DEVICE: 'Nothing running.',
     STEPS: 'steps',
     STEPS_PROGRESS: '{{done}} of {{total}}',
