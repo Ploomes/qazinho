@@ -1,3 +1,10 @@
+# [0.6.0](https://github.com/Salve-Software/qazinho/compare/v0.5.0...v0.6.0) (2026-11-08)
+
+
+### Features
+
+* **web:** reach apps inside iframes ([339257c](https://github.com/Salve-Software/qazinho/commit/339257cac0ed99c6193ede031c8fbd4f32681543))
+
 # [0.5.0](https://github.com/Salve-Software/qazinho/compare/v0.4.0...v0.5.0) (2026-11-08)
 
 
