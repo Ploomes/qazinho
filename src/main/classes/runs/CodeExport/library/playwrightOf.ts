@@ -69,6 +69,26 @@ async function reopen(page: Page): Promise<Page> {
 }
 `;
 
+const SCREENS = `async function newScreen(
+  screens: Page[],
+  context: BrowserContext,
+  url: string,
+): Promise<Page> {
+  const next = prepare(await context.newPage());
+
+  screens.push(next);
+  await next.goto(url);
+
+  return next;
+}
+
+async function closeScreen(screens: Page[], page: Page): Promise<Page> {
+  await page.close();
+
+  return screens.filter((one) => !one.isClosed()).at(-1) as Page;
+}
+`;
+
 const VARIABLE = `function variable(name: string): string {
   const value = process.env[name];
 
@@ -104,6 +124,7 @@ export function playwrightOf(props: {
     return [
       `test(${quoted(`${first?.caseId ?? recipe.caseId} · ${first?.caseTitle ?? ''}`)}, async ({ page }) => {`,
       '  let tab = prepare(page);',
+      ...(usesScreens(recipe) ? ['  const screens = [tab];'] : []),
       '',
       '  await tab.goto(APP);',
       ...body,
@@ -112,9 +133,10 @@ export function playwrightOf(props: {
   });
 
   const variables = variablesIn(props.cases.map(({ recipe }) => recipe));
+  const hasScreens = props.cases.some(({ recipe }) => usesScreens(recipe));
 
   return [
-    "import { expect, test, type Page } from '@playwright/test';",
+    `import { expect, test, ${hasScreens ? 'type BrowserContext, ' : ''}type Page } from '@playwright/test';`,
     '',
     ...(variables.length === 0
       ? []
@@ -125,12 +147,17 @@ export function playwrightOf(props: {
     `const APP = ${quoted(props.url)};`,
     '',
     HELPERS,
+    ...(hasScreens ? [SCREENS] : []),
     ...(variables.length === 0 ? [] : [VARIABLE]),
     `test.use({ viewport: { width: ${String(props.viewport.width)}, height: ${String(props.viewport.height)} } });`,
     '',
     tests.join('\n\n'),
     '',
   ].join('\n');
+}
+
+function usesScreens(recipe: ICaseRecipe): boolean {
+  return recipe.steps.some(({ actions }) => actions.some(({ kind }) => kind === 'tab'));
 }
 
 function quoted(text: string): string {
@@ -222,6 +249,28 @@ function lineOf(action: IStepAction): string[] {
         '  ),',
         `  ${aimOf(action)}.click(),`,
         ']);',
+      ];
+    case 'tab':
+      return screenLines(action);
+  }
+}
+
+function screenLines(action: IStepAction): string[] {
+  const url = action.value === '' ? 'APP' : quoted(action.value);
+  const named = `screens[${String(Number(action.value) - 1)}]`;
+
+  switch (action.target) {
+    case 'new':
+      return [`tab = await newScreen(screens, tab.context(), ${url});`];
+    case 'new_session':
+      return [
+        `tab = await newScreen(screens, await tab.context().browser()!.newContext(), ${url});`,
+      ];
+    case 'switch':
+      return [`tab = ${named}!;`];
+    default:
+      return [
+        `tab = await closeScreen(screens, ${action.value === '' ? 'tab' : `${named}!`});`,
       ];
   }
 }

@@ -26,6 +26,50 @@ describe('playwrightOf', () => {
     expect(FILE).toContain('  await shows(tab, "Carrinho 1 (R$ 79,90)");');
   });
 
+  it('opens, moves between and closes screens, each account in its own context', () => {
+    const file = playwrightOf({
+      url: 'https://loja.test/',
+      viewport: { width: 1280, height: 800 },
+      cases: [
+        {
+          steps: STEPS,
+          recipe: {
+            ...RECIPE,
+            steps: RECIPE.steps.map((step) =>
+              step.number === 2
+                ? {
+                    ...step,
+                    actions: [
+                      { kind: 'tab', target: 'new_session', value: '' },
+                      { kind: 'tab', target: 'switch', value: '1' },
+                      { kind: 'tab', target: 'new', value: 'https://loja.test/b' },
+                      { kind: 'tab', target: 'close', value: '2' },
+                    ],
+                  }
+                : step,
+            ),
+          },
+        },
+      ],
+    });
+
+    expect(file).toContain("type BrowserContext, type Page } from '@playwright/test'");
+    expect(file).toContain('  const screens = [tab];');
+    expect(file).toContain(
+      '  tab = await newScreen(screens, await tab.context().browser()!.newContext(), APP);',
+    );
+    expect(file).toContain('  tab = screens[0]!;');
+    expect(file).toContain(
+      '  tab = await newScreen(screens, tab.context(), "https://loja.test/b");',
+    );
+    expect(file).toContain('  tab = await closeScreen(screens, screens[1]!);');
+  });
+
+  it('leaves the screens helpers out of a file with one screen', () => {
+    expect(FILE).not.toContain('newScreen');
+    expect(FILE).not.toContain('BrowserContext');
+  });
+
   it('checks each line of a proof that holds several', () => {
     const file = playwrightOf({
       url: 'https://loja.test/',
