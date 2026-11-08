@@ -241,12 +241,11 @@ export const en = {
       'Write the cases yourself, or say what this workspace covers and let the agent draft them.',
     EMPTY_ACTION: 'Draft it in chat',
     SUMMARY: '{{cases}} · {{steps}}',
-    SOURCE:
-      'Made from the code of {{repository}}: what {{branch}} at {{commit}} changed against {{base}}',
-    SOURCE_WHOLE:
-      'Made from the code of {{repository}}: the whole app on {{branch}} at {{commit}}',
-    STORY: 'Made from the Jira story {{key}}: {{summary}}',
-    PAGE: 'Made from the Confluence page “{{title}}”',
+    SOURCE: 'what {{branch}} at {{commit}} changed against {{base}}',
+    SOURCE_WHOLE: 'the whole app on {{branch}} at {{commit}}',
+    FROM_STORY: 'Jira story',
+    FROM_PAGE: 'Confluence page',
+    FROM_CODE: 'Code',
     CASES_ONE: '1 case',
     CASES_OTHER: '{{count}} cases',
     STEPS_ONE: '1 step',
@@ -300,7 +299,7 @@ export const en = {
       'Writes the plan as it stands now over the page it was published on.',
     PUBLISHED: 'Published on “{{title}}”.',
     PUBLISH_FAILED: 'Confluence did not take the plan. {{reason}}',
-    PUBLISHED_ON: 'Published in Confluence: “{{title}}”',
+    PUBLISHED_ON: 'Published to Confluence',
     PUBLISH_TITLE: 'Test plan · {{workspace}}',
     EXPORT_TIP:
       'Turns the cases that passed into a Playwright test or Maestro flows, saved in a folder you pick.',

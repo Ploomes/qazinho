@@ -229,10 +229,15 @@ describe('usePlanViewModel', () => {
         parentId: '5',
       });
       expect(result.current.publishLabel).toBe('Update in Confluence');
-      expect(result.current.publishedOn).toEqual({
-        text: 'Published in Confluence: “Test plan · Checkout”',
-        url: PAGE.url,
-      });
+      expect(result.current.sources).toEqual([
+        {
+          key: 'published',
+          label: 'Published to Confluence',
+          tag: null,
+          title: 'Test plan · Checkout',
+          url: PAGE.url,
+        },
+      ]);
     });
 
     it('updates the page it published on, with no question asked', async () => {
@@ -386,7 +391,7 @@ describe('usePlanViewModel', () => {
   });
 
   it('names the code the plan was made from, and nothing for a plan made from talk', () => {
-    expect(renderHook(() => usePlanViewModel()).result.current.source).toBeNull();
+    expect(renderHook(() => usePlanViewModel()).result.current.sources).toEqual([]);
 
     useWorkspaceStore.setState({
       workspaces: [
@@ -402,9 +407,15 @@ describe('usePlanViewModel', () => {
       ],
     });
 
-    expect(renderHook(() => usePlanViewModel()).result.current.source).toBe(
-      'Made from the code of acme/loja-web: what feat/cupom at c0ffee0 changed against develop',
-    );
+    expect(renderHook(() => usePlanViewModel()).result.current.sources).toEqual([
+      {
+        key: 'code',
+        label: 'Code',
+        tag: 'acme/loja-web',
+        title: 'what feat/cupom at c0ffee0 changed against develop',
+        url: null,
+      },
+    ]);
   });
 
   it('hands the cases the Figma design the workspace is checked against', () => {
@@ -423,7 +434,7 @@ describe('usePlanViewModel', () => {
   });
 
   it('names the Jira story the plan was made from, with where it opens', () => {
-    expect(renderHook(() => usePlanViewModel()).result.current.story).toBeNull();
+    expect(renderHook(() => usePlanViewModel()).result.current.sources).toEqual([]);
 
     useWorkspaceStore.setState({
       workspaces: [
@@ -439,14 +450,19 @@ describe('usePlanViewModel', () => {
       ],
     });
 
-    expect(renderHook(() => usePlanViewModel()).result.current.story).toEqual({
-      text: 'Made from the Jira story SHOP-12: Aplicar cupom',
-      url: 'https://acme.atlassian.net/browse/SHOP-12',
-    });
+    expect(renderHook(() => usePlanViewModel()).result.current.sources).toEqual([
+      {
+        key: 'story',
+        label: 'Jira story',
+        tag: 'SHOP-12',
+        title: 'Aplicar cupom',
+        url: 'https://acme.atlassian.net/browse/SHOP-12',
+      },
+    ]);
   });
 
   it('names the Confluence page the plan was made from, with where it opens', () => {
-    expect(renderHook(() => usePlanViewModel()).result.current.page).toBeNull();
+    expect(renderHook(() => usePlanViewModel()).result.current.sources).toEqual([]);
 
     useWorkspaceStore.setState({
       workspaces: [
@@ -462,10 +478,15 @@ describe('usePlanViewModel', () => {
       ],
     });
 
-    expect(renderHook(() => usePlanViewModel()).result.current.page).toEqual({
-      text: 'Made from the Confluence page “Checkout: cenários”',
-      url: 'https://acme.atlassian.net/wiki/spaces/QA/pages/98304',
-    });
+    expect(renderHook(() => usePlanViewModel()).result.current.sources).toEqual([
+      {
+        key: 'page',
+        label: 'Confluence page',
+        tag: null,
+        title: 'Checkout: cenários',
+        url: 'https://acme.atlassian.net/wiki/spaces/QA/pages/98304',
+      },
+    ]);
   });
 
   it('names the whole app when the plan came from the base branch itself', () => {
@@ -483,8 +504,8 @@ describe('usePlanViewModel', () => {
       ],
     });
 
-    expect(renderHook(() => usePlanViewModel()).result.current.source).toBe(
-      'Made from the code of acme/loja-web: the whole app on develop at dev0000',
+    expect(renderHook(() => usePlanViewModel()).result.current.sources[0]?.title).toBe(
+      'the whole app on develop at dev0000',
     );
   });
 

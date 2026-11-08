@@ -244,12 +244,11 @@ export const pt: typeof en = {
       'Escreva os casos você mesmo, ou diga o que este workspace cobre e deixe o agente rascunhar.',
     EMPTY_ACTION: 'Rascunhar no chat',
     SUMMARY: '{{cases}} · {{steps}}',
-    SOURCE:
-      'Feito do código de {{repository}}: o que a {{branch}} em {{commit}} mudou em relação à {{base}}',
-    SOURCE_WHOLE:
-      'Feito do código de {{repository}}: o app inteiro na {{branch}} em {{commit}}',
-    STORY: 'Feito da história {{key}} do Jira: {{summary}}',
-    PAGE: 'Feito da página “{{title}}” do Confluence',
+    SOURCE: 'o que a {{branch}} em {{commit}} mudou em relação à {{base}}',
+    SOURCE_WHOLE: 'o app inteiro na {{branch}} em {{commit}}',
+    FROM_STORY: 'História do Jira',
+    FROM_PAGE: 'Página do Confluence',
+    FROM_CODE: 'Código',
     CASES_ONE: '1 caso',
     CASES_OTHER: '{{count}} casos',
     STEPS_ONE: '1 passo',
@@ -303,7 +302,7 @@ export const pt: typeof en = {
       'Escreve o plano como está agora por cima da página em que foi publicado.',
     PUBLISHED: 'Publicado em “{{title}}”.',
     PUBLISH_FAILED: 'O Confluence não aceitou o plano. {{reason}}',
-    PUBLISHED_ON: 'Publicado no Confluence: “{{title}}”',
+    PUBLISHED_ON: 'Publicado no Confluence',
     PUBLISH_TITLE: 'Plano de testes · {{workspace}}',
     EXPORT_TIP:
       'Transforma os casos que passaram num teste Playwright ou em flows do Maestro, salvos numa pasta que você escolhe.',

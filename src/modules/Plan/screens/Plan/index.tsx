@@ -28,9 +28,7 @@ export const Plan: React.FC = () => {
     lockedLabel,
     isEmpty,
     summary,
-    source,
-    story,
-    page,
+    sources,
     onToggleCase,
     onReorder,
     onRunCase,
@@ -45,7 +43,6 @@ export const Plan: React.FC = () => {
     isPublishing,
     publishLabel,
     publishTip,
-    publishedOn,
     publishNotice,
     isPublishOpen,
     publishTitle,
@@ -158,50 +155,36 @@ export const Plan: React.FC = () => {
             </div>
           </div>
 
-          {source !== null && (
-            <div className="plan__source">
-              <span className="plan__source-mark" aria-hidden="true" />
-              {source}
+          {sources.length > 0 && (
+            <div className="plan__sources">
+              {sources.map((one) =>
+                one.url === null ? (
+                  <div key={one.key} className="plan__source" title={one.title}>
+                    <span className="plan__source-label">{one.label}</span>
+                    {one.tag !== null && (
+                      <span className="plan__source-tag">{one.tag}</span>
+                    )}
+                    <span className="plan__source-title">{one.title}</span>
+                  </div>
+                ) : (
+                  <a
+                    key={one.key}
+                    className="plan__source plan__source--link"
+                    href={one.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    title={one.title}
+                  >
+                    <span className="plan__source-label">{one.label}</span>
+                    {one.tag !== null && (
+                      <span className="plan__source-tag">{one.tag}</span>
+                    )}
+                    <span className="plan__source-title">{one.title}</span>
+                    <Icon name="external" />
+                  </a>
+                ),
+              )}
             </div>
-          )}
-
-          {publishedOn !== null && (
-            <a
-              className="plan__source plan__source--link"
-              href={publishedOn.url}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <span className="plan__source-mark" aria-hidden="true" />
-              {publishedOn.text}
-              <Icon name="external" />
-            </a>
-          )}
-
-          {story !== null && (
-            <a
-              className="plan__source plan__source--link"
-              href={story.url}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <span className="plan__source-mark" aria-hidden="true" />
-              {story.text}
-              <Icon name="external" />
-            </a>
-          )}
-
-          {page !== null && (
-            <a
-              className="plan__source plan__source--link"
-              href={page.url}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <span className="plan__source-mark" aria-hidden="true" />
-              {page.text}
-              <Icon name="external" />
-            </a>
           )}
 
           <AnimatePresence initial={false}>

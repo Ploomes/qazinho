@@ -1,4 +1,4 @@
-import type { ICaseRemoval } from '@/modules/Plan/screens/Plan/types';
+import type { ICaseRemoval, IPlanSource } from '@/modules/Plan/screens/Plan/types';
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
 import type { IRunCase } from '@/modules/Run';
 import type { ExportOutcome, PlanPublished, UnreadPlanRead } from '@/shared/types';
@@ -321,32 +321,62 @@ export const usePlanViewModel = () => {
     isLocked,
     lockedLabel: t('PLAN.LOCKED', { agent }),
     isEmpty: plan.length === 0,
-    source:
-      source === null
-        ? null
-        : source.branch === source.base
-          ? t('PLAN.SOURCE_WHOLE', {
-              repository: source.repository,
-              branch: source.branch,
-              commit: source.commit.slice(0, PLAN_SOURCE.shaLength),
-            })
-          : t('PLAN.SOURCE', {
-              repository: source.repository,
-              branch: source.branch,
-              base: source.base,
-              commit: source.commit.slice(0, PLAN_SOURCE.shaLength),
-            }),
-    story:
-      issue === null || issue.source !== 'jira'
-        ? null
-        : {
-            text: t('PLAN.STORY', { key: issue.key, summary: issue.title }),
-            url: issue.url,
-          },
-    page:
-      sourcePage === null
-        ? null
-        : { text: t('PLAN.PAGE', { title: sourcePage.title }), url: sourcePage.url },
+    sources: [
+      ...(issue === null || issue.source !== 'jira'
+        ? []
+        : [
+            {
+              key: 'story',
+              label: t('PLAN.FROM_STORY'),
+              tag: issue.key,
+              title: issue.title,
+              url: issue.url,
+            },
+          ]),
+      ...(sourcePage === null
+        ? []
+        : [
+            {
+              key: 'page',
+              label: t('PLAN.FROM_PAGE'),
+              tag: null,
+              title: sourcePage.title,
+              url: sourcePage.url,
+            },
+          ]),
+      ...(source === null
+        ? []
+        : [
+            {
+              key: 'code',
+              label: t('PLAN.FROM_CODE'),
+              tag: source.repository,
+              title:
+                source.branch === source.base
+                  ? t('PLAN.SOURCE_WHOLE', {
+                      branch: source.branch,
+                      commit: source.commit.slice(0, PLAN_SOURCE.shaLength),
+                    })
+                  : t('PLAN.SOURCE', {
+                      branch: source.branch,
+                      base: source.base,
+                      commit: source.commit.slice(0, PLAN_SOURCE.shaLength),
+                    }),
+              url: null,
+            },
+          ]),
+      ...(published === null
+        ? []
+        : [
+            {
+              key: 'published',
+              label: t('PLAN.PUBLISHED_ON'),
+              tag: null,
+              title: published.page.title,
+              url: published.page.url,
+            },
+          ]),
+    ] satisfies IPlanSource[],
     summary: t('PLAN.SUMMARY', {
       cases:
         plan.length === 1
@@ -393,13 +423,6 @@ export const usePlanViewModel = () => {
         ? t('PLAN.PUBLISH')
         : t('PLAN.PUBLISH_AGAIN'),
     publishTip: published === null ? t('PLAN.PUBLISH_TIP') : t('PLAN.PUBLISH_AGAIN_TIP'),
-    publishedOn:
-      published === null
-        ? null
-        : {
-            text: t('PLAN.PUBLISHED_ON', { title: published.page.title }),
-            url: published.page.url,
-          },
     publishNotice:
       shownPublishing === null
         ? null
