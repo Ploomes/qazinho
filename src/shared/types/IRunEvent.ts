@@ -5,6 +5,7 @@ import type { IRunQuestion } from './IRunQuestion';
 import type { IRunScreen } from './IRunScreen';
 import type { IRunVideo } from './IRunVideo';
 import type { IStepOutcome } from './IStepOutcome';
+import type { KeepEvent } from './KeepEvent';
 import type { RunFailure } from './RunFailure';
 import type { RunHow } from './RunHow';
 
@@ -19,6 +20,7 @@ export type IRunEvent =
   | { kind: 'heard'; workspaceId: string }
   | { kind: 'replied'; workspaceId: string; text: string | null }
   | { kind: 'unheard'; workspaceId: string; texts: string[] }
+  | { kind: 'learnings'; workspaceId: string; events: KeepEvent[] }
   | { kind: 'streaming'; workspaceId: string; url: string }
   | { kind: 'address'; workspaceId: string; url: string }
   | { kind: 'screens'; workspaceId: string; screens: IRunScreen[] }

@@ -6,6 +6,7 @@ import type { IDesignLink } from './IDesignLink';
 import type { IFlatStep } from './IFlatStep';
 import type { IImportAsk } from './IImportAsk';
 import type { IJiraAsk } from './IJiraAsk';
+import type { IMemoryBrief } from './IMemoryBrief';
 import type { ITargetUnderTest } from './ITargetUnderTest';
 import type { IVariableBrief } from './IVariableBrief';
 import type { IViewport } from './IViewport';
@@ -34,4 +35,5 @@ export interface IAskAgent {
   variables: IVariableBrief[];
   isFromAgent?: boolean;
   attachments?: IChatAttachment[];
+  memories?: IMemoryBrief[];
 }

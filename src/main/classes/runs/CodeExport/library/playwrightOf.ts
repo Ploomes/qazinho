@@ -200,7 +200,11 @@ function lineOf(action: IStepAction): string[] {
 
   switch (action.kind) {
     case 'goto':
-      return [`await tab.goto(${quoted(action.target)});`];
+      return [
+        action.target.startsWith('/')
+          ? `await tab.goto(new URL(${quoted(action.target)}, APP).href);`
+          : `await tab.goto(${quoted(action.target)});`,
+      ];
     case 'reopen':
       return ['tab = await reopen(tab);'];
     case 'click':

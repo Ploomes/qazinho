@@ -1,4 +1,4 @@
-import type { IRunEvent, IRunQuestion, IRunRef } from '@/shared/types';
+import type { IRunEvent, IRunQuestion, IRunRef, KeepEvent } from '@/shared/types';
 import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBugReviews } from '@/modules/Bug/hooks/useBugReviews';
@@ -15,6 +15,7 @@ import { Run, Variables } from '@/services';
 import {
   useAppStore,
   useMachineStore,
+  useMemoryStore,
   useSettingsStore,
   useSetupStore,
   useVariablesStore,
@@ -132,6 +133,17 @@ export const useRunEvents = () => {
     });
   };
 
+  const keepWhatTheRunLearned = (props: { workspaceId: string; events: KeepEvent[] }) => {
+    const projectId = useWorkspaceStore
+      .getState()
+      .workspaces.find(({ id }) => id === props.workspaceId)?.projectId;
+
+    if (projectId !== undefined)
+      useMemoryStore
+        .getState()
+        .enqueue({ projectId, workspaceId: props.workspaceId, events: props.events });
+  };
+
   const onRunEvent = useEffectEvent((event: IRunEvent) => {
     if (event.kind === 'doing')
       markDoing({ workspaceId: event.workspaceId, index: event.index, how: event.how });
@@ -146,6 +158,7 @@ export const useRunEvents = () => {
       });
     else if (event.kind === 'unheard')
       landUnheardTalks({ workspaceId: event.workspaceId, texts: event.texts });
+    else if (event.kind === 'learnings') keepWhatTheRunLearned(event);
     else if (event.kind === 'streaming')
       markStreaming({ workspaceId: event.workspaceId, url: event.url });
     else if (event.kind === 'address')

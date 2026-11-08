@@ -1,6 +1,7 @@
 import type { IDesignLink } from './IDesignLink';
 import type { IFlatStep } from './IFlatStep';
 import type { IKnownBug } from './IKnownBug';
+import type { IMemoryBrief } from './IMemoryBrief';
 import type { ITargetUnderTest } from './ITargetUnderTest';
 import type { IViewport } from './IViewport';
 import type { Language } from './Language';
@@ -27,4 +28,5 @@ export interface IStartRun {
   minutes?: number;
   bugs?: IKnownBug[];
   design?: IDesignLink | null;
+  memories?: IMemoryBrief[];
 }

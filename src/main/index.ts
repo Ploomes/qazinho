@@ -924,6 +924,7 @@ async function askOnce(props: {
     variables: ask.variables,
     isFromAgent: ask.isFromAgent === true,
     attachments,
+    memories: ask.memories ?? [],
   });
   const sources = sourcesFor(ask.workspaceId);
   const learning =

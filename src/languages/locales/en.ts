@@ -428,6 +428,7 @@ export const en = {
     UNWALKED_CAPPED: 'The run spent all it may on AI.',
     UNWALKED_ASKED: 'The agent needed a person.',
     UNWALKED_NO_VALUE: 'A variable has no value in this run.',
+    UNWALKED_NO_DATA: 'The test data this recording expects is not there.',
     REPLAY_RUN: 'Run {{id}} · the whole plan',
     REPLAY_CASE: 'Take · {{id}}',
     REPLAY_BUG: 'The moment of {{id}}',

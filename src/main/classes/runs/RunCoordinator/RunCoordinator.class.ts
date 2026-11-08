@@ -19,6 +19,7 @@ import type {
   IFlatStep,
   IIosSetup,
   IRunEvent,
+  KeepEvent,
   IRunInFlight,
   IRunQuestion,
   IRunVideo,
@@ -38,6 +39,7 @@ import type {
   IAttachDevice,
   IDevicePort,
   IExploredScreen,
+  ISaid,
   IExploreFinish,
   IQaQuestion,
   IStepFinding,
@@ -110,6 +112,8 @@ export class RunCoordinator {
   private readonly viewports = new Map<string, IViewport>();
   private readonly questions = new Map<string, IOpenQuestion>();
   private readonly talks = new Map<string, IRunTalk>();
+  private readonly learnings = new Map<string, KeepEvent[]>();
+  private readonly heardMemories = new Map<string, Set<string>>();
 
   public constructor(props: IRunCoordinator) {
     this.runner = props.runner;
@@ -172,6 +176,8 @@ export class RunCoordinator {
       question: null,
       asked: [],
     });
+    this.learnings.set(run.workspaceId, []);
+    this.heardMemories.set(run.workspaceId, new Set());
 
     try {
       await this.walk({
@@ -191,6 +197,7 @@ export class RunCoordinator {
     } finally {
       this.questions.get(run.workspaceId)?.settle({ kind: 'stopped' });
       this.endTalk(run.workspaceId);
+      this.endLearning(run.workspaceId);
       this.walking.delete(run.workspaceId);
       this.inFlightRuns.delete(run.workspaceId);
       this.stopping.delete(run.workspaceId);
@@ -794,11 +801,10 @@ export class RunCoordinator {
       return isOver ? 'This case is over: end your turn now.' : words;
     };
 
-    const onSay = (text: string): Promise<string> => {
+    const onSay = (said: ISaid): Promise<string> => {
       watch = { ...watch, sinceSay: 0 };
-      this.emit({ kind: 'note', workspaceId, text });
 
-      return Promise.resolve('The QA read it. Carry on.');
+      return Promise.resolve(this.tellQa({ run, said }));
     };
 
     const mcpConfig = this.tools.mcpConfigFor(
@@ -839,6 +845,7 @@ export class RunCoordinator {
           actions.set(walking.step.numberInCase, [
             ...(actions.get(walking.step.numberInCase) ?? []),
             recordedAction({
+              appUrl: run.target.value,
               action,
               found: driver.resolution?.() ?? null,
               values: run.values,
@@ -912,6 +919,8 @@ export class RunCoordinator {
             answer.kind === 'said' ? [{ question, answer: answer.text }] : [],
         ),
         isUnderWay: props.isUnderWay,
+        memories: run.memories ?? [],
+        heardMemories: [...(this.heardMemories.get(workspaceId) ?? [])],
       }),
     });
 
@@ -1128,11 +1137,7 @@ export class RunCoordinator {
       onFinding,
       onFinish,
       onAsk,
-      onSay: (text) => {
-        this.emit({ kind: 'note', workspaceId, text });
-
-        return Promise.resolve('The QA read it. Carry on.');
-      },
+      onSay: (said) => Promise.resolve(this.tellQa({ run, said })),
       onAnswer: (text) => Promise.resolve(this.answered({ workspaceId, text })),
       aside: () => this.heard(run),
     };
@@ -1168,6 +1173,7 @@ export class RunCoordinator {
         known: run.bugs ?? [],
         design: run.design ?? null,
         plan: run.plan ?? [],
+        memories: run.memories ?? [],
       }),
     });
     const cost = asking.then(
@@ -1386,6 +1392,11 @@ export class RunCoordinator {
 
     const answer = await this.answerOf({ run, outcome, variable: question.secret });
 
+    if (answer.kind === 'said')
+      this.learnings
+        .get(workspaceId)
+        ?.push({ kind: 'answered', question: question.question, answer: answer.text });
+
     this.emit({
       kind: 'answered',
       workspaceId,
@@ -1460,9 +1471,48 @@ export class RunCoordinator {
     this.talks.set(workspaceId, { waiting: [], isOpen: true, refused: 0 });
     this.emit({ kind: 'heard', workspaceId });
 
-    return talkAside(
-      talk.waiting.map((text) => hiddenValues({ text, values: run.values })),
-    );
+    const heard = talk.waiting.map((text) => hiddenValues({ text, values: run.values }));
+
+    this.learnings
+      .get(workspaceId)
+      ?.push(...heard.map((text) => ({ kind: 'said' as const, text })));
+
+    return talkAside(heard);
+  }
+
+  /**
+   * Mostra ao QA o que o agente diz, cada memória uma vez só em toda a run, e guarda para
+   * pesar depois o que ele disse andando, cada variável lida como o nome dela.
+   */
+  private tellQa(props: { run: IWalkRun; said: ISaid }): string {
+    const { run } = props;
+    const { text, memory } = props.said;
+    const heard = this.heardMemories.get(run.workspaceId);
+    const isKnown = (run.memories ?? []).some(({ id }) => id === memory);
+
+    if (memory === undefined)
+      this.learnings
+        .get(run.workspaceId)
+        ?.push({ kind: 'walked', text: hiddenValues({ text, values: run.values }) });
+
+    if (memory !== undefined && isKnown && heard?.has(memory) === true)
+      return 'The QA already heard that one. Carry on.';
+
+    if (memory !== undefined && isKnown) heard?.add(memory);
+
+    this.emit({ kind: 'note', workspaceId: run.workspaceId, text });
+
+    return 'The QA read it. Carry on.';
+  }
+
+  /** Entrega à página o que a run aprendeu, para ela pesar o que guardar. */
+  private endLearning(workspaceId: string): void {
+    const events = this.learnings.get(workspaceId) ?? [];
+
+    this.learnings.delete(workspaceId);
+    this.heardMemories.delete(workspaceId);
+
+    if (events.length > 0) this.emit({ kind: 'learnings', workspaceId, events });
   }
 
   /**

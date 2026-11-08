@@ -432,6 +432,7 @@ export const pt: typeof en = {
     UNWALKED_CAPPED: 'A run gastou tudo o que podia com a IA.',
     UNWALKED_ASKED: 'O agente precisava de uma pessoa.',
     UNWALKED_NO_VALUE: 'Falta o valor de uma variável nesta run.',
+    UNWALKED_NO_DATA: 'Os dados de teste que esta gravação espera não estão lá.',
     REPLAY_RUN: 'Run {{id}} · o plano inteiro',
     REPLAY_CASE: 'Take · {{id}}',
     REPLAY_BUG: 'O momento do {{id}}',

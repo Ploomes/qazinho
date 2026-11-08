@@ -3,6 +3,7 @@ export * from './AppToolStore';
 export * from './AssistantStore';
 export * from './BuildStore';
 export * from './MachineStore';
+export * from './MemoryStore';
 export * from './ProStore';
 export * from './SettingsStore';
 export * from './SetupStore';

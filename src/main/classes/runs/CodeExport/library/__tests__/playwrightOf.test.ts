@@ -218,4 +218,28 @@ describe('playwrightOf', () => {
     expect(FILE).not.toContain('function variable(');
     expect(FILE).not.toContain('from the environment');
   });
+
+  it('goes to a recorded path on whatever address the file runs against', () => {
+    const [step] = RECIPE.steps;
+    const file = playwrightOf({
+      url: 'https://loja.test/',
+      viewport: { width: 1280, height: 800 },
+      cases: [
+        {
+          steps: STEPS,
+          recipe: {
+            ...RECIPE,
+            steps: [
+              {
+                ...(step as (typeof RECIPE.steps)[number]),
+                actions: [{ kind: 'goto', target: '/carrinho', value: '' }],
+              },
+            ],
+          },
+        },
+      ],
+    });
+
+    expect(file).toContain('await tab.goto(new URL("/carrinho", APP).href);');
+  });
 });
