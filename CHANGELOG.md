@@ -1,3 +1,11 @@
+## [0.6.1](https://github.com/Salve-Software/qazinho/compare/v0.6.0...v0.6.1) (2026-11-08)
+
+
+### Bug Fixes
+
+* **ui:** hide a tip as its popover opens ([a59d5dd](https://github.com/Salve-Software/qazinho/commit/a59d5dd86346260612e5efa224fd7bc2084c490d))
+* **web:** click only what a person could hit ([a21dbfa](https://github.com/Salve-Software/qazinho/commit/a21dbfaf40d3c92bd69b4bb5759fa8bea804f45d))
+
 # [0.6.0](https://github.com/Salve-Software/qazinho/compare/v0.5.0...v0.6.0) (2026-11-08)
 
 
