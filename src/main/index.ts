@@ -962,6 +962,7 @@ async function askOnce(props: {
       readDirs: [...new Set([...chat.readDirs, storyFolder])],
       tools: AGENT_RUN.readTools.split(','),
       permissionTool: chat.permissionTool,
+      isStreamed: true,
       ...(mcpConfig === null ? {} : { mcpConfig }),
     });
 

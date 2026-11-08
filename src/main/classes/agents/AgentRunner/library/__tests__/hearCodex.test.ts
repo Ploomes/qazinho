@@ -23,6 +23,20 @@ describe('hearCodex', () => {
     ).toEqual({ action: "$ bash -lc './gradlew assembleDebug'" });
   });
 
+  it('takes a tool Codex calls by its name and target', () => {
+    expect(
+      hear({
+        type: 'item.started',
+        item: {
+          type: 'mcp_tool_call',
+          server: 'qazinho',
+          tool: 'click',
+          arguments: { target: 'Salvar' },
+        },
+      }),
+    ).toEqual({ tool: { tool: 'click', target: 'Salvar' } });
+  });
+
   it('takes what the agent said', () => {
     expect(
       hear({ type: 'item.completed', item: { type: 'agent_message', text: ' Done. ' } }),

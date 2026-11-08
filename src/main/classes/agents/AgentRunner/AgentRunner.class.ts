@@ -1,4 +1,4 @@
-import type { IAgentClock, IAgentRunner, IRunAgent } from './types';
+import type { IAgentClock, IAgentRunner, ILiveBlock, IRunAgent } from './types';
 import type { ICodexLine } from '@/main/types';
 import type { IAgentEvent, IAgentTurn, IAgentUsage } from '@/shared/types';
 import type { ChildProcess } from 'node:child_process';
@@ -15,6 +15,7 @@ import {
   codexConfigFileOf,
   codexServersOf,
   costOf,
+  followPartial,
   hearCodex,
   killTree,
   readAgentLine,
@@ -23,6 +24,7 @@ import {
   toActions,
   toStructured,
   toText,
+  toToolCalls,
   toUsage,
   withPermissions,
 } from './library';
@@ -122,6 +124,7 @@ export class AgentRunner {
     let result = '';
     let structured = '';
     let spoken = '';
+    let live: ILiveBlock | null = null;
     let isError = false;
     let costUsd: number | null = null;
     let stderr = '';
@@ -144,6 +147,9 @@ export class AgentRunner {
 
         if (heard.action !== undefined)
           this.onEvent({ kind: 'action', workspaceId, text: heard.action });
+
+        if (heard.tool !== undefined)
+          this.onEvent({ kind: 'tool', workspaceId, ...heard.tool });
 
         if (heard.usage) {
           usage = heard.usage;
@@ -170,6 +176,15 @@ export class AgentRunner {
 
       sessionId = event.session_id ?? sessionId;
 
+      if (props.isStreamed === true) {
+        const followed = followPartial({ line: event, block: live });
+
+        live = followed.block;
+
+        if (followed.said !== null)
+          this.onEvent({ kind: 'text', workspaceId, text: followed.said });
+      }
+
       const retry = retryOf(event);
 
       if (retry !== null) this.onEvent({ kind: 'retry', workspaceId, ...retry });
@@ -192,6 +207,9 @@ export class AgentRunner {
 
       for (const action of toActions(event))
         this.onEvent({ kind: 'action', workspaceId, text: action });
+
+      for (const call of toToolCalls(event))
+        this.onEvent({ kind: 'tool', workspaceId, ...call });
 
       if (event.type === 'result') {
         result = event.result ?? '';

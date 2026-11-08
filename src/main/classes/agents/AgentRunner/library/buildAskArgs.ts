@@ -21,6 +21,7 @@ export function buildAskArgs(
     '--output-format',
     'stream-json',
     '--verbose',
+    ...(props.isStreamed === true ? ['--include-partial-messages'] : []),
     '--settings',
     AGENT_RUN.settings,
     ...(model.length === 0 ? [] : ['--model', model]),

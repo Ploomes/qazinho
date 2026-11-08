@@ -3,8 +3,8 @@ import type { IAgentUsage } from './IAgentUsage';
 import type { JiraStep } from './JiraStep';
 
 /**
- * O que chega à página enquanto um turno roda: um comando, um celular ou o navegador do
- * chat aberto para olhar o app, e uma branch ou história do Jira lida para ele.
+ * O que chega à página enquanto um turno roda: um comando, uma ferramenta, um celular
+ * ou navegador aberto para olhar o app, e uma branch ou história lida para ele.
  */
 export type IAgentEvent =
   | { kind: 'text'; workspaceId: string; text: string }
@@ -14,6 +14,7 @@ export type IAgentEvent =
   | { kind: 'jira'; workspaceId: string; step: JiraStep; bytes: number }
   | { kind: 'look'; workspaceId: string; device: 'android' | 'ios' }
   | { kind: 'action'; workspaceId: string; text: string }
+  | { kind: 'tool'; workspaceId: string; tool: string; target: string }
   | {
       kind: 'device';
       workspaceId: string;

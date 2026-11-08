@@ -3,10 +3,16 @@ export interface IAgentLine {
   type: string;
   subtype?: string;
   session_id?: string;
+  parent_tool_use_id?: string | null;
   result?: string;
   is_error?: boolean;
   message?: {
     content?: { type: string; text?: string; name?: string; input?: unknown }[];
+  };
+  event?: {
+    type: string;
+    content_block?: { type: string; name?: string };
+    delta?: { type: string; text?: string; partial_json?: string };
   };
   rate_limit_info?: {
     resetsAt?: number;

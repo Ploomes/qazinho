@@ -1,14 +1,16 @@
 import type { ICodexLine } from '@/main/types';
 import type { IAgentUsage } from '@/shared/types';
+import { toolCallOf } from './toolCallOf';
 
 /**
- * O que um evento do Codex diz: a sessão, uma mensagem, um comando que ele pretendia
- * rodar, o uso, ou como o turno terminou.
+ * O que um evento do Codex diz: a sessão, uma mensagem, um comando ou ferramenta que ele
+ * pretendia rodar, o uso, ou como o turno terminou.
  */
 export function hearCodex(props: { line: ICodexLine; usage: IAgentUsage | null }): {
   sessionId?: string;
   message?: string;
   action?: string;
+  tool?: { tool: string; target: string };
   usage?: IAgentUsage;
   ended?: { isError: boolean; text: string };
 } {
@@ -20,6 +22,18 @@ export function hearCodex(props: { line: ICodexLine; usage: IAgentUsage | null }
     typeof line.item.command === 'string'
   )
     return { action: `$ ${line.item.command.trim().split('\n')[0] ?? ''}` };
+
+  if (
+    line.type === 'item.started' &&
+    line.item?.type === 'mcp_tool_call' &&
+    typeof line.item.tool === 'string'
+  )
+    return {
+      tool: toolCallOf({
+        name: `mcp__${line.item.server ?? ''}__${line.item.tool}`,
+        input: line.item.arguments,
+      }),
+    };
 
   if (line.type === 'thread.started' && line.thread_id !== undefined)
     return { sessionId: line.thread_id };

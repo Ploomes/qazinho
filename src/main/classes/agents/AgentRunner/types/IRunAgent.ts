@@ -1,6 +1,6 @@
 /**
- * Uma chamada à CLI do agente com o harness em volta: o prompt, as ferramentas, as pastas
- * e o ambiente dela.
+ * Uma chamada à CLI do agente com o harness em volta: o prompt, as ferramentas, as
+ * pastas, o ambiente e se o texto chega em pedaços.
  */
 export interface IRunAgent {
   workspaceId: string;
@@ -18,4 +18,5 @@ export interface IRunAgent {
   writeDir?: string;
   env?: Record<string, string>;
   permissionTool?: string;
+  isStreamed?: boolean;
 }

@@ -137,6 +137,7 @@ export class AssistantAgent {
       systemPrompt: assistant.systemPrompt,
       mcpConfig,
       allowedTools: assistant.tools.allowedTools,
+      isStreamed: true,
     });
 
     if (!turn.isError && turn.sessionId !== null)

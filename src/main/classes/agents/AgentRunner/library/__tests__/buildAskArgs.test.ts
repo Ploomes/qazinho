@@ -2,6 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { buildAskArgs } from '@/main/classes/agents/AgentRunner/library';
 
 describe('buildAskArgs', () => {
+  it('asks for the words as they are written only when someone reads them live', () => {
+    const flag = '--include-partial-messages';
+
+    expect(buildAskArgs({ model: '', sessionId: null, isStreamed: true })).toContain(
+      flag,
+    );
+    expect(buildAskArgs({ model: '', sessionId: null })).not.toContain(flag);
+  });
+
   it('asks once, in json, on the model the QA picked', () => {
     const args = buildAskArgs({ model: 'sonnet', sessionId: null });
 
