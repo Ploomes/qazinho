@@ -234,4 +234,21 @@ describe('buildAskArgs', () => {
     expect(args).toContain('--strict-mcp-config');
     expect(args).not.toContain('--permission-prompt-tool');
   });
+
+  // A CLI recusa um --allowedTools sem valor antes de fazer qualquer coisa: uma chamada
+  // sem ferramentas, passando pelas permissões, morria em silêncio (a revisão de um bug
+  // e a memória do agente).
+  it('names no allowed tools for a call that has none, under the permissions', () => {
+    const args = buildAskArgs({
+      model: '',
+      sessionId: null,
+      mcpConfig: '{"mcpServers":{}}',
+      tools: [],
+      allowedTools: [],
+      permissionTool: 'mcp__qazinho__approve_permission',
+    });
+
+    expect(args).not.toContain('--allowedTools');
+    expect(args[args.indexOf('--tools') + 1]).toBe('');
+  });
 });

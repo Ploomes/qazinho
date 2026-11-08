@@ -46,8 +46,9 @@ export function buildAskArgs(
           ...(isOwnServers ? [] : ['--strict-mcp-config']),
           '--tools',
           (tools ?? []).join(','),
-          '--allowedTools',
-          ...(allowedTools ?? []),
+          ...((allowedTools ?? []).length === 0
+            ? []
+            : ['--allowedTools', ...(allowedTools ?? [])]),
           ...(tools === undefined ? [] : readDirs.flatMap((dir) => ['--add-dir', dir])),
         ]),
     ...(isTalk && readDirs.length === 0 ? ['--tools', ''] : []),
