@@ -115,4 +115,22 @@ describe('useTooltipViewModel', () => {
       '--tooltip-right': '50px',
     });
   });
+
+  /**
+   * O botão de Recursos abre um popover com o próprio nome: o tooltip aberto pelo hover
+   * continuava em cima dele depois do clique.
+   */
+  it('closes an open tip once it is turned off, as a popover opens', () => {
+    const { result, rerender } = renderHook(
+      (props: { isOff: boolean }) => useTooltipViewModel(props),
+      { initialProps: { isOff: false } },
+    );
+
+    act(() => {
+      result.current.onOpen();
+    });
+    rerender({ isOff: true });
+
+    expect(result.current.isOpen).toBe(false);
+  });
 });

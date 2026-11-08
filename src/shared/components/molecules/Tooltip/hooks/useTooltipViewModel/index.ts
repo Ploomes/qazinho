@@ -11,7 +11,7 @@ export const useTooltipViewModel = (props: Pick<ITooltipProps, 'side' | 'isOff'>
 
   return {
     anchorRef,
-    isOpen,
+    isOpen: isOpen && props.isOff !== true,
     isBeside,
     panelClassName: isBeside ? 'tooltip__panel tooltip__panel--beside' : 'tooltip__panel',
     hidden: isBeside ? { opacity: 0, x: -4 } : { opacity: 0, y: -4 },
