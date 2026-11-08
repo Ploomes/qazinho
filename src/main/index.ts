@@ -10,6 +10,7 @@ import type {
   IProShare,
   IProSyncBatch,
   IPublishPlan,
+  IKeepMemories,
   IReviewBug,
   IAgentEvent,
   IAgentTurn,
@@ -89,6 +90,7 @@ import {
   OutsideServer,
   BugFiler,
   BugReviewer,
+  MemoryKeeper,
   CodeCopies,
   CodeExport,
   ConfluenceApi,
@@ -123,6 +125,7 @@ import {
   VariableVault,
 } from '@/main/classes';
 import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
+import { MEMORY_KEEPER } from '@/main/classes/agents/MemoryKeeper/constants';
 import { buildIdOf, javaHomesOf } from '@/main/classes/builds/AppBuilder/library';
 import { BUG_REVIEW } from '@/main/classes/integrations/BugReviewer/constants';
 import { uploaderOf } from '@/main/classes/pro/ProSync/library';
@@ -576,7 +579,11 @@ const agentRunner = new AgentRunner({
       return;
     }
 
-    if (event.workspaceId.startsWith(BUG_REVIEW.scopePrefix)) return;
+    if (
+      event.workspaceId.startsWith(BUG_REVIEW.scopePrefix) ||
+      event.workspaceId.startsWith(MEMORY_KEEPER.scopePrefix)
+    )
+      return;
 
     broadcast({
       channel:
@@ -594,6 +601,12 @@ const bugReviewer = new BugReviewer({
   harness,
   findCommand,
   runsRoot: join(PATHS.data, ARCHIVE.runs),
+});
+
+const memoryKeeper = new MemoryKeeper({
+  runner: agentRunner,
+  harness,
+  findCommand,
 });
 
 const builder = new AppBuilder({
@@ -1778,6 +1791,9 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.fileBug, (_event, request: IFileBug) => bugFiler.file(request));
   ipcMain.handle(CHANNELS.reviewBug, (_event, request: IReviewBug) =>
     bugReviewer.review(request),
+  );
+  ipcMain.handle(CHANNELS.keepMemories, (_event, request: IKeepMemories) =>
+    memoryKeeper.keep(request),
   );
   ipcMain.handle(CHANNELS.commentBug, (_event, request: ICommentBug) =>
     bugFiler.comment(request),

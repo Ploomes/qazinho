@@ -92,6 +92,7 @@ export const CHANNELS = {
   filingEvent: 'bug:filing',
   copyShot: 'shot:copy',
   reviewBug: 'bug:review',
+  keepMemories: 'memory:keep',
   commentBug: 'bug:comment',
   askAssistant: 'assistant:ask',
   stopAssistant: 'assistant:stop',

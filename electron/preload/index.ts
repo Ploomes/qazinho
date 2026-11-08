@@ -22,6 +22,7 @@ import type {
   IBuildResult,
   IChatTurn,
   ICommentBug,
+  IKeepMemories,
   IConnectIntegration,
   IConnectResult,
   IDetectedAgent,
@@ -79,6 +80,7 @@ import type {
   JiraProjectList,
   McpActionResult,
   McpSignInProgress,
+  MemoryKeeping,
   PickKind,
   PlanPublished,
   Platform,
@@ -401,6 +403,8 @@ const api: IQazinhoApi = {
   },
   reviewBug: (request: IReviewBug) =>
     ipcRenderer.invoke(CHANNELS.reviewBug, request) as Promise<BugReview>,
+  keepMemories: (request: IKeepMemories) =>
+    ipcRenderer.invoke(CHANNELS.keepMemories, request) as Promise<MemoryKeeping>,
   commentBug: (request: ICommentBug) =>
     ipcRenderer.invoke(CHANNELS.commentBug, request) as Promise<BugComment>,
   listMcpServers: (agentId: string) =>

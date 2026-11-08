@@ -15,6 +15,7 @@ import {
   Run,
   Setup,
   Updates,
+  Memories,
   Variables,
 } from '@/services';
 
@@ -260,5 +261,18 @@ describe('a page with no bridge', () => {
       Updates.install();
     }).not.toThrow();
     expect(Updates.onChange(() => undefined)).toBeTypeOf('function');
+  });
+
+  it('keeps no memory without a bridge', async () => {
+    expect(
+      await Memories.keep({
+        projectId: 'p1',
+        agentId: 'claude-code',
+        model: '',
+        language: 'pt',
+        memories: [],
+        events: [],
+      }),
+    ).toEqual({ isKept: false });
   });
 });

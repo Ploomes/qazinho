@@ -15,6 +15,7 @@ export * from './Island';
 export * from './Jira';
 export * from './Machine';
 export * from './Mcp';
+export * from './Memories';
 export * from './Outside';
 export * from './Platform';
 export * from './Pro';
