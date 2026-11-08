@@ -200,11 +200,21 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
   ferramenta chamada vira o evento `tool`, com o nome e o alvo, nunca o que é digitado
   (`toolCallOf`); a página guarda as últimas (`withActivity`) e as escreve nas palavras do QA
   (`activityLineOf`, `RunActivity`). No Codex, só o evento da ferramenta.
+- **Um plano é escrito, desenvolvido e rodado, e a tela diz em qual etapa está** (`PlanStages`,
+  `planStageOf`). A main diz quais casos têm gravação (`developed`, `recorded`), e o livro é escrito a
+  cada caso. O `doing` diz como o caso anda (`RunHow`), e o `RunButton` leva o plano à etapa seguinte.
+- **O QA fala com a run enquanto ela anda** (`Run.talk`). O texto espera no `RunCoordinator` e chega ao
+  agente junto da resposta da próxima ferramenta (`aside`, `talkAside`). O `report` é segurado até ele
+  responder (`talkHolds`, `answer_qa`). Numa gravação, o caso passa ao agente de onde o app está
+  (`isUnderWay`), sem gravar de novo. O que ninguém leu vai ao chat quando a run acaba (`unheard`).
+- **Um passo que não anda vira um lembrete** (`progressAside`): dizer por quê com `say` a cada poucas
+  ações, e perguntar com `ask_qa` depois de muitas ou de minutos.
 - **Um bug recém-pego passa pela tela** (`BugFlash`, sobre o `DeviceScreen`). O `bug` e o `report`
   recebem o tipo do bug (`category`), e a store enfileira o que esta run ainda não mostrou
   (`bugFlashOf`, `withBugFlash`), sem atrasar a tela (`BUG_FLASH.waitingKept`). Um clique abre o
-  bug, e o mouse em cima o segura. O agente nomeia o que está errado (`target`), ou, num bug
-  contra o design, vale o que ele acabou de medir (`markedBoxOf`); cada driver diz onde aquilo está
+  bug, e o mouse em cima o segura. O agente nomeia o que está errado (`target`) só quando o bug é
+  sobre uma coisa que dá para apontar, e o que não aconteceu, ou ocupa boa parte da tela, fica na foto
+  inteira (`markedBoxOf`); cada driver diz onde aquilo está
   em frações da tela (`locate`, `fractionBoxOf`), um texto pelas letras dele (`screenBoxOf`), e a
   foto chega perto sem passar da borda (`bugFocusOf`). Depois dos dois primeiros da run ele fica
   mais curto e o flash mais suave (`isQuiet`). A fila só vale para a tela aberta: o `DeviceView` a limpa ao montar e ao
@@ -622,6 +632,12 @@ loopback (`LiveStream`), desenhado por um `<img>`.
 - Um clique que a página não recebeu falha em palavras (`pressChecked`): o Chrome aceita um clique
   que nunca entrega, e a ação responderia que deu certo. O aviso de senha vazada, que sem janela
   ninguém fecha e prende o mouse, vem desligado no perfil (`writeChromePrefs`).
+- **Uma run web pode ter mais de uma tela** (`tab`, `IRunScreen`). O stream principal é sempre o da tela
+  do agente, que é o que a gravação lê; cada tela aberta tem o próprio, numa chave (`streamKeyOf`). A
+  `ScreenRail` só aparece com mais de uma, e pede uma foto por segundo (`isStillPath`) em vez de abrir
+  streams, porque o navegador segura só seis conexões por servidor. Pelo mesmo motivo, uma imagem de
+  stream solta a conexão ao sair da tela (`releaseStream`), e uma parte de MJPEG só é desenhada quando a
+  seguinte chega, então uma página parada manda a mesma imagem duas vezes.
 - O Chrome mantém uma janela com pelo menos 500px de largura, então uma página do tamanho de um
   celular transmite enquadrada mais larga, e o `DeviceScreen` corta o stream no formato do
   viewport.

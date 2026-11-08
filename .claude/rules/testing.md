@@ -75,6 +75,7 @@ próprio comando, e o CI nunca as roda.
 | `dialog.test.ts`       | um confirm respondido OK ou Cancelar, um prompt digitado, e o look avisando             |
 | `tabs.test.ts`         | a nova aba de um link e uma janela de login: o dispositivo vai a elas e volta           |
 | `caught.test.ts`       | o app construído: o chat em pedaços, as linhas da run e o bug pego passando pela tela   |
+| `together.test.ts`     | o app construído: as etapas do plano, o QA falando no meio da run, duas telas e contas  |
 | `frames.test.ts`       | um iframe de outro site e um dentro dele: lidos, clicados, digitados, a rede vista      |
 | `peek.test.ts`         | um Chrome sem janela lê uma página para o chat, ou diz por que não abriu                |
 | `fresh.test.ts`        | um caso começa num navegador sem nada salvo, e o stream o acompanha                     |

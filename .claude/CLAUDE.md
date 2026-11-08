@@ -99,12 +99,18 @@ hora.
 chega em pedaços, mesmo a que vem em JSON, e cada ferramenta que ele chama vira uma linha curta
 no chat ("Comparando Título com o Figma"), nas palavras do QA e sem gastar token. Quando um bug é
 pego, a tela do dispositivo pisca como uma foto, a imagem encolhe sobre o fundo desfocado, chega
-perto do que está errado com a mira travada nele, e o tipo do bug e o título dele ficam ali alguns
+perto do que está errado com a mira travada nele, quando o bug é sobre uma coisa só, e o tipo do bug e o título dele ficam ali alguns
 segundos; mais curto e mais suave depois dos dois primeiros da run. O `tests/smoke/caught.test.ts` prova os três no app
 construído com um agente fake. Um Claude Code real (Haiku) andou uma loja com bugs plantados: a
 resposta chegou em pedaços, as linhas seguiram cada ação, e ele apontou o elemento nos três bugs
 da última volta;
 pelo Codex a resposta ainda chega inteira e nenhuma run foi tentada.
+
+**Um plano tem três etapas, e cada uma aparece.** Escrever o plano, desenvolver (o agente anda cada caso uma vez e grava o teste) e rodar (a gravação anda sozinha). A aba Plano mostra em qual o plano está, cada caso desenvolvido leva a marca dele, o botão principal diz "Desenvolver plano", "Desenvolver 3 casos" ou "Rodar plano" conforme o que falta, e a run diz "desenvolvendo", "rodando" ou "ajustando" em todo lugar. Um caso que não passou inteiro continua por desenvolver. Enquanto a run anda, a aba Plano mostra em qual caso ela está e como cada um foi.
+
+**O QA fala com a run enquanto ela anda.** O composer continua aberto durante a run: o que o QA escreve chega ao agente junto da resposta da próxima ferramenta, ele para o plano, confere e responde no chat. Numa gravação, sem agente, o agente assume o caso de onde o app está. O que nenhum agente chegou a ler vai para o chat quando a run acaba. O agente também conta por que faz o que o passo não nomeia (`say`), e pergunta (`ask_qa`) quando não acha o caminho: a run lembra disso a ele num passo que não anda. Um Claude Code real (Haiku) explicou o preparo de um caso, conferiu o que o QA disse e respondeu no chat, e perguntou onde ficava uma tela que não achou; o `tests/smoke/together.test.ts` prova o resto no app construído com um agente fake.
+
+**Uma run web abre mais de uma tela.** Um caso de duas pessoas ao mesmo tempo abre outra aba, ou um navegador limpo para outra conta (`tab`). Com mais de uma tela, o dispositivo mostra a pilha delas e uma coluna à esquerda com cada uma, a do agente marcada, e o QA olha qualquer uma sem mexer no agente. Um Claude Code real (Haiku) andou um mural com duas contas assim, e o caso gravado anda de novo sem ele.
 
 **Um caso que passou é andado de novo sem o agente.** As ações de cada passo são gravadas com as
 palavras na tela que o provaram, e a próxima run as repete no dispositivo e confere as palavras:
