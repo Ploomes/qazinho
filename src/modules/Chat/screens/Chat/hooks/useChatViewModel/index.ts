@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useChatAgent } from '@/modules/Chat/hooks/useChatAgent';
 import {
+  closedMarkdown,
   formatAnswers,
   formatSize,
   groupRunMessages,
@@ -121,6 +122,7 @@ export const useChatViewModel = () => {
   const liveText = workspace === null ? '' : (liveTexts[workspace.id] ?? '');
   const retry = workspace === null ? undefined : retries[workspace.id];
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
+  const agentName = useSettingsStore((state) => state.agent);
   const say = useAssistantStore((state) => state.say);
   const closeAssistant = useAssistantStore((state) => state.close);
   const selectSettingsTab = useSettingsStore((state) => state.selectTab);
@@ -505,7 +507,8 @@ export const useChatViewModel = () => {
     onScroll,
     isEmpty: (workspace?.chat.length ?? 0) === 0 && liveId === null,
     isAgentTyping,
-    liveText: isAgentTyping ? liveText : '',
+    liveText: isAgentTyping ? closedMarkdown(liveText) : '',
+    liveWho: agentName,
     retryText:
       isAgentTyping && retry !== undefined
         ? t('CHAT.RETRYING', { attempt: retry.attempt, max: retry.maxRetries })

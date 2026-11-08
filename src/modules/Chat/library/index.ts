@@ -6,6 +6,7 @@ export * from './appendQuestions';
 export * from './appendRunMessages';
 export * from './appendRunNote';
 export * from './appendUserMessage';
+export * from './closedMarkdown';
 export * from './formatAnswers';
 export * from './formatClock';
 export * from './formatSize';

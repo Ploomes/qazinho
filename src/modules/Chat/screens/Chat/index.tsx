@@ -15,6 +15,7 @@ export const Chat: React.FC = () => {
     isEmpty,
     isAgentTyping,
     liveText,
+    liveWho,
     retryText,
     readStatus,
     lookStatus,
@@ -153,11 +154,17 @@ export const Chat: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: MOTION.durationSlow, ease: MOTION.ease }}
             >
-              <div className="chat__gutter chat__gutter--intern">
-                <Intern mood="thinking" size={40} />
-              </div>
+              {liveText === '' ? (
+                <div className="chat__gutter chat__gutter--intern">
+                  <Intern mood="thinking" size={40} />
+                </div>
+              ) : (
+                <div className="chat__gutter">
+                  <span className="chat__live-who">{liveWho}</span>
+                </div>
+              )}
               <div className="chat__body chat__live">
-                {liveText !== '' && <Markdown isRevealing>{liveText}</Markdown>}
+                {liveText !== '' && <Markdown isStreaming>{liveText}</Markdown>}
                 <TypingDots />
                 <AnimatePresence initial={false}>
                   {lookStatus !== '' && (

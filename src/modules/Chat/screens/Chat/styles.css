@@ -85,6 +85,12 @@
   font: var(--font-mono-sm);
 }
 
+.chat__live-who {
+  display: block;
+  color: var(--lime-ink);
+  font: var(--font-mono-sm);
+}
+
 .chat__live > .typing-dots {
   align-self: flex-start;
 }

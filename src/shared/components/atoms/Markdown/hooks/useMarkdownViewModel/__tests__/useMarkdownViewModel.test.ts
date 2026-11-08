@@ -6,9 +6,9 @@ import { useMarkdownViewModel } from '@/shared/components/atoms/Markdown/hooks/u
 describe('useMarkdownViewModel', () => {
   it('lets the blocks rise in while the agent is still writing them', () => {
     expect(
-      renderHook(() => useMarkdownViewModel({ children: 'hi', isRevealing: true })).result
+      renderHook(() => useMarkdownViewModel({ children: 'hi', isStreaming: true })).result
         .current.className,
-    ).toBe('markdown markdown--reveal');
+    ).toBe('markdown markdown--stream');
   });
 
   it('does NOT move text that is already on screen', () => {
