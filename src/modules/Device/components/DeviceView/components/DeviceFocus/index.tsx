@@ -20,7 +20,7 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
     nowEyebrow,
     now,
     nowNumber,
-    rows,
+    sections,
     stepsRef,
     onStepsScroll,
     hasViewports,
@@ -115,23 +115,32 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
           </div>
         )}
 
-        <div ref={stepsRef} className="device-focus__steps" onScroll={onStepsScroll}>
+        <div className="device-focus__list">
           <Eyebrow>
             {props.stepsWord} {props.doingLabel}
           </Eyebrow>
-          {rows.map((row) => (
-            <div
-              key={row.number}
-              className={
-                row.isCurrent
-                  ? 'device-focus__step device-focus__step--current'
-                  : 'device-focus__step'
-              }
-            >
-              <StatusPill status={row.verdict} label="" />
-              <span>{row.action}</span>
-            </div>
-          ))}
+          <div ref={stepsRef} className="device-focus__steps" onScroll={onStepsScroll}>
+            {sections.map((section) => (
+              <div key={section.key} className="device-focus__section">
+                {section.title !== '' && (
+                  <span className="device-focus__case">{section.title}</span>
+                )}
+                {section.rows.map((row) => (
+                  <div
+                    key={row.number}
+                    className={
+                      row.isCurrent
+                        ? 'device-focus__step device-focus__step--current'
+                        : 'device-focus__step'
+                    }
+                  >
+                    <StatusPill status={row.verdict} label="" />
+                    <span>{row.action}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </motion.aside>
     </motion.div>

@@ -141,26 +141,37 @@ export const DeviceView: React.FC = () => {
         )}
       </div>
 
-      {hasSteps && (
-        <div ref={stepsRef} className="device-view__steps" onScroll={onStepsScroll}>
-          <Eyebrow>
-            {stepsWord} {doingLabel}
-          </Eyebrow>
-          {sections.map((section) => (
-            <div key={section.key} className="device-view__section">
-              {section.title !== '' && (
-                <span className="device-view__case">{section.title}</span>
-              )}
-              {section.rows.map((step) => (
-                <div key={step.number} className="device-view__step">
-                  <StatusPill status={step.verdict} label="" />
-                  <span>{step.action}</span>
+      <AnimatePresence initial={false}>
+        {hasSteps && (
+          <motion.div
+            key="steps"
+            className="device-view__steps"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+          >
+            <Eyebrow>
+              {stepsWord} {doingLabel}
+            </Eyebrow>
+            <div ref={stepsRef} className="device-view__list" onScroll={onStepsScroll}>
+              {sections.map((section) => (
+                <div key={section.key} className="device-view__section">
+                  {section.title !== '' && (
+                    <span className="device-view__case">{section.title}</span>
+                  )}
+                  {section.rows.map((step) => (
+                    <div key={step.number} className="device-view__step">
+                      <StatusPill status={step.verdict} label="" />
+                      <span>{step.action}</span>
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>
-          ))}
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
       {createPortal(
         <AnimatePresence>
           {isFocused && (

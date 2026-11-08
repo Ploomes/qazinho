@@ -6,4 +6,5 @@ export const DEVICE = {
   frameLayoutId: 'device-frame',
   focusSide: 340,
   focusChrome: 36,
+  focusStepsMin: 140,
 } as const;

@@ -53,6 +53,18 @@ describe('useFollowEnd', () => {
     expect(list.scrollTop).toBe(1000);
   });
 
+  /** A lista de passos só existe depois do primeiro passo: nada a seguia quando surgia. */
+  it('follows a list that only appeared when it turned on', async () => {
+    const { list, rerender } = follow({ resetKey: 'a', isOn: false });
+
+    rerender({ resetKey: 'a', isOn: true });
+    list.append(document.createElement('div'));
+
+    await vi.waitFor(() => {
+      expect(list.scrollTo).toHaveBeenCalledWith({ top: 1000, behavior: 'smooth' });
+    });
+  });
+
   it('calls the QA back to the end when something asks for them', () => {
     const { list, rerender } = follow({ resetKey: 'a', callKey: null });
 

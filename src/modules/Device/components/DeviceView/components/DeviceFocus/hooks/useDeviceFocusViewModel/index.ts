@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DEVICE } from '@/modules/Device/constants';
+import { stepSectionsOf } from '@/modules/Device/library';
 import { TITLEBAR } from '@/shared/components/organisms/Titlebar/constants';
 import { useFollowEnd } from '@/shared/hooks/useFollowEnd';
 
@@ -10,7 +11,7 @@ export const useDeviceFocusViewModel = (props: IDeviceFocusProps) => {
   const { steps, onClose } = props;
   const { t } = useTranslation();
   const { listRef: stepsRef, onFollowScroll: onStepsScroll } =
-    useFollowEnd<HTMLDivElement>({ resetKey: null, isOn: props.isLive });
+    useFollowEnd<HTMLDivElement>({ resetKey: null });
 
   useEffect(() => {
     const leave = (event: KeyboardEvent) => {
@@ -35,14 +36,21 @@ export const useDeviceFocusViewModel = (props: IDeviceFocusProps) => {
       '--focus-side': `${String(DEVICE.focusSide)}px`,
       '--focus-chrome': `${String(DEVICE.focusChrome)}px`,
       '--focus-ratio': String(props.ratio),
+      '--focus-steps-min': `${String(DEVICE.focusStepsMin)}px`,
     } as CSSProperties,
     nowEyebrow:
       current?.verdict === 'running' ? t('DEVICE.FOCUS_NOW') : t('DEVICE.FOCUS_NEXT'),
     now: current === null ? t('DEVICE.FOCUS_ALL_DONE') : current.action,
     nowNumber: current === null ? null : current.number,
-    rows: steps
-      .filter(({ verdict }) => verdict !== 'pending')
-      .map((step) => ({ ...step, isCurrent: step.number === current?.number })),
+    sections: stepSectionsOf(steps.filter(({ verdict }) => verdict !== 'pending')).map(
+      (section) => ({
+        ...section,
+        rows: section.rows.map((step) => ({
+          ...step,
+          isCurrent: step.number === current?.number,
+        })),
+      }),
+    ),
     stepsRef,
     onStepsScroll,
     hasViewports: props.viewports.length > 0,

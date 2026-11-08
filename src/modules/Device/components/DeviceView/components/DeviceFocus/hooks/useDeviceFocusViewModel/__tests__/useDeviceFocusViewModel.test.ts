@@ -45,7 +45,11 @@ describe('useDeviceFocusViewModel', () => {
     });
 
     expect(view).toMatchObject({ nowEyebrow: 'now', now: 'Step 2', nowNumber: 2 });
-    expect(view.rows.map(({ number, isCurrent }) => [number, isCurrent])).toEqual([
+    expect(
+      view.sections.flatMap(({ rows }) =>
+        rows.map(({ number, isCurrent }) => [number, isCurrent]),
+      ),
+    ).toEqual([
       [1, false],
       [2, true],
     ]);

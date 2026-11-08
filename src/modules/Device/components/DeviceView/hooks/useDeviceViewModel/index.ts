@@ -96,10 +96,11 @@ export const useDeviceViewModel = () => {
         isActive: option.id === viewport.id,
       }));
   const workspaceId = workspace?.id ?? null;
+  const hasSteps = (isRunLive || isFlashing) && reached.length > 0;
   const { listRef: stepsRef, onFollowScroll: onStepsScroll } =
     useFollowEnd<HTMLDivElement>({
       resetKey: workspaceId,
-      isOn: isRunLive,
+      isOn: hasSteps,
     });
 
   const activity = workspace === null ? undefined : activities[workspace.id]?.at(-1);
@@ -212,7 +213,7 @@ export const useDeviceViewModel = () => {
     doingNow,
     steps,
     sections: stepSectionsOf(reached),
-    hasSteps: isRunLive && reached.length > 0,
+    hasSteps,
     stepsWord: t(isExploring ? 'DEVICE.SCREENS' : 'DEVICE.STEPS'),
     doingLabel:
       isExploring || walked === null

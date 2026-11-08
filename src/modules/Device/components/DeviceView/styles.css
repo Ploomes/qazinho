@@ -156,10 +156,19 @@
 }
 
 .device-view__steps {
+  display: flex;
   flex: 1 1 0;
+  flex-direction: column;
+  gap: var(--space-2);
   min-height: var(--device-steps-min);
-  padding: var(--space-4) var(--device-gutter);
+  padding: var(--space-4) var(--device-gutter) 0;
   border-top: 1px solid var(--line2);
+}
+
+.device-view__list {
+  flex: 1 1 0;
+  min-height: 0;
+  padding-bottom: var(--space-4);
   overflow-y: auto;
   scrollbar-gutter: stable;
 }

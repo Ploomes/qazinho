@@ -1,6 +1,6 @@
 /**
- * Se uma lista segue o fim depois de rolar: colada no fim sempre segue, e só quem rola
- * para cima deixa de seguir, então o próprio scroll até o fim nunca desliga.
+ * Se uma lista segue o fim depois de rolar: quem rola para cima deixa de seguir, por
+ * pouco que seja, e volta ao chegar perto do fim; o scroll até o fim nunca desliga.
  */
 export function followsEndAfter(props: {
   wasFollowing: boolean;
@@ -9,10 +9,20 @@ export function followsEndAfter(props: {
   clientHeight: number;
   scrollHeight: number;
   edgePx: number;
+  leaveEdgePx: number;
 }): boolean {
-  const { wasFollowing, top, previousTop, clientHeight, scrollHeight, edgePx } = props;
+  const {
+    wasFollowing,
+    top,
+    previousTop,
+    clientHeight,
+    scrollHeight,
+    edgePx,
+    leaveEdgePx,
+  } = props;
+  const fromEnd = scrollHeight - top - clientHeight;
 
-  if (scrollHeight - top - clientHeight <= edgePx) return true;
+  if (top < previousTop && fromEnd > leaveEdgePx) return false;
 
-  return top < previousTop ? false : wasFollowing;
+  return fromEnd <= edgePx ? true : wasFollowing;
 }

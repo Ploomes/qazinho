@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { followsEndAfter } from '@/shared/hooks/useFollowEnd/library';
 
-const LIST = { clientHeight: 400, scrollHeight: 2000, edgePx: 48 };
+const LIST = { clientHeight: 400, scrollHeight: 2000, edgePx: 48, leaveEdgePx: 2 };
 
 describe('followsEndAfter', () => {
   it('follows when the list sits within the small margin of its end', () => {
@@ -9,8 +9,15 @@ describe('followsEndAfter', () => {
       followsEndAfter({ ...LIST, wasFollowing: false, top: 1560, previousTop: 1000 }),
     ).toBe(true);
     expect(
-      followsEndAfter({ ...LIST, wasFollowing: false, top: 1552, previousTop: 1600 }),
+      followsEndAfter({ ...LIST, wasFollowing: false, top: 1599, previousTop: 1600 }),
     ).toBe(true);
+  });
+
+  /** Quem sobe uma linha para ler não pode ser puxado de volta pelo próximo passo. */
+  it('stops following at the smallest scroll up', () => {
+    expect(
+      followsEndAfter({ ...LIST, wasFollowing: true, top: 1570, previousTop: 1600 }),
+    ).toBe(false);
   });
 
   it('stops following when the reader scrolls up past the margin', () => {

@@ -143,10 +143,35 @@
   gap: var(--space-3);
 }
 
+.device-focus__list {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: var(--focus-steps-min);
+}
+
 .device-focus__steps {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.device-focus__section {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+}
+
+.device-focus__case {
+  padding: 0 var(--space-3);
+  color: var(--ink);
+  font: var(--font-ui-sm);
+  text-wrap: pretty;
 }
 
 .device-focus__step {

@@ -56,7 +56,7 @@ export const useFollowEnd = <T extends HTMLElement>(props: {
       cancelAnimationFrame(frame);
       observer.disconnect();
     };
-  }, [resetKey]);
+  }, [resetKey, isOn]);
 
   return {
     listRef,
@@ -72,6 +72,7 @@ export const useFollowEnd = <T extends HTMLElement>(props: {
         clientHeight: list.clientHeight,
         scrollHeight: list.scrollHeight,
         edgePx: FOLLOW_END.edgePx,
+        leaveEdgePx: FOLLOW_END.leaveEdgePx,
       });
       previousTop.current = list.scrollTop;
     },
