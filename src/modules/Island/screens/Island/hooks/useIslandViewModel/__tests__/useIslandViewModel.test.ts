@@ -88,7 +88,7 @@ describe('useIslandViewModel', () => {
     });
 
     expect(result.current.shown).toMatchObject({
-      count: '2/8',
+      count: '3/8',
       mood: 'running',
       icon: 'running',
       title: 'Checkout',

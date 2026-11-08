@@ -7,6 +7,7 @@ import type { CSSProperties } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SIDEBAR_SIZE, SIDEBAR_STATUS } from '@/app/components/Sidebar/constants';
+import { currentStepOf } from '@/modules/Run/library';
 import { workspaceMeta } from '@/modules/Workspace';
 import { Agent, Archive, Run } from '@/services';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
@@ -133,7 +134,10 @@ export const useSidebarViewModel = () => {
           project.targets.find(({ id }) => id === workspace.targetId)?.kind ?? null,
         meta: t(workspaceMeta(workspace).key as never, {
           count: workspaceMeta(workspace).count,
-          current: workspace.live?.outcomes.length ?? 0,
+          current: currentStepOf({
+            walked: workspace.live?.outcomes.length ?? 0,
+            total: workspaceMeta(workspace).count,
+          }),
         }),
         icon: SIDEBAR_STATUS[shown].icon,
         statusLabel: t(STATUS[shown].labelKey),

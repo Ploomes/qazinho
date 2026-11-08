@@ -522,7 +522,7 @@ export const pt: typeof en = {
     LEARNING: 'conhecendo o app',
     NO_DEVICE: 'Nada rodando.',
     STEPS: 'passos',
-    STEPS_PROGRESS: '{{done}} de {{total}}',
+    STEPS_PROGRESS: '{{current}} de {{total}}',
     SCREENS: 'telas',
     SHOT_ALT: 'o dispositivo depois do último passo',
     FOCUS: 'Ampliar',

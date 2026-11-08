@@ -518,7 +518,7 @@ export const en = {
     LEARNING: 'learning the app',
     NO_DEVICE: 'Nothing running.',
     STEPS: 'steps',
-    STEPS_PROGRESS: '{{done}} of {{total}}',
+    STEPS_PROGRESS: '{{current}} of {{total}}',
     SCREENS: 'screens',
     SHOT_ALT: 'the device after the last step',
     FOCUS: 'Expand',

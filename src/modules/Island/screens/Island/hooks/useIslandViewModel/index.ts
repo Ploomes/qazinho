@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ISLAND_IDLE, ISLAND_SHAPE } from '@/modules/Island/screens/Island/constants';
 import { useIslandAsk } from '@/modules/Island/screens/Island/hooks/useIslandAsk';
 import { earWidthOf, questionKeyOf } from '@/modules/Island/screens/Island/library';
+import { currentStepOf } from '@/modules/Run/library';
 import { IslandView } from '@/services/IslandView';
 
 export const useIslandViewModel = () => {
@@ -69,7 +70,10 @@ export const useIslandViewModel = () => {
   const shown: IIslandShown | null =
     state.kind === 'running'
       ? {
-          count: state.total > 0 ? `${String(state.done)}/${String(state.total)}` : '',
+          count:
+            state.total > 0
+              ? `${String(currentStepOf({ walked: state.done, total: state.total }))}/${String(state.total)}`
+              : '',
           mood: state.isPaused ? 'sleeping' : 'running',
           icon: state.isPaused ? 'paused' : 'running',
           tone: state.isPaused ? 'paused' : 'running',

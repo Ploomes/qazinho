@@ -38,6 +38,7 @@ import { secretIn, useVariableActions, withoutSecret } from '@/modules/Project';
 import {
   caseVerdict,
   countVerdicts,
+  currentStepOf,
   dayLabelOf,
   walkedStepsOf,
   RUN_ENDS,
@@ -389,7 +390,7 @@ export const useChatViewModel = () => {
     }).length;
     const progress = {
       id: item.runId,
-      current: Math.min((workspace?.walked ?? 0) + 1, stepCount),
+      current: currentStepOf({ walked: workspace?.walked ?? 0, total: stepCount }),
       total: stepCount,
     };
     const shownMessages = item.messages.filter(

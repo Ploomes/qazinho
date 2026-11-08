@@ -140,10 +140,10 @@ describe('useDeviceViewModel', () => {
     expect(result.current.steps[0]?.verdict).toBe('passed');
     expect(result.current.steps[1]?.verdict).toBe('running');
     expect(result.current.steps[2]?.verdict).toBe('pending');
-    expect(result.current.doingLabel).toBe('1 of 6');
+    expect(result.current.doingLabel).toBe('2 of 6');
   });
 
-  it('counts the steps done in the language the QA reads', async () => {
+  it('counts the step it is on in the language the QA reads', async () => {
     const walked = walkRun({ verdicts: ['passed'] });
 
     useWorkspaceStore.setState({ workspaces: [walked] });
@@ -151,7 +151,7 @@ describe('useDeviceViewModel', () => {
 
     const { result } = renderHook(() => useDeviceViewModel());
 
-    expect(result.current.doingLabel).toBe('1 de 6');
+    expect(result.current.doingLabel).toBe('2 de 6');
     await i18n.changeLanguage('en');
   });
 
@@ -298,7 +298,7 @@ describe('useDeviceViewModel', () => {
       expect(result.current.sections[0]?.rows).toMatchObject([
         { number: 1, action: 'Add the product to the cart', verdict: 'failed' },
       ]);
-      expect(result.current.doingLabel).toBe('1 of 3');
+      expect(result.current.doingLabel).toBe('2 of 3');
     });
 
     /** A run acabou de começar: "aperte Rodar plano" seria mentira. */

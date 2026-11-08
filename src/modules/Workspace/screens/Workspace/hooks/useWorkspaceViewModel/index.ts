@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   caseVerdict,
+  currentStepOf,
   flattenPlanSteps,
   useRunActions,
   walkedStepsOf,
@@ -108,10 +109,10 @@ export const useWorkspaceViewModel = () => {
                 ? 'WORKSPACE.PAUSED_STEP'
                 : 'WORKSPACE.LIVE_STEP',
             {
-              current: Math.min(
-                (workspace?.walked ?? 0) + 1,
-                workspace?.runStepCount ?? 0,
-              ),
+              current: currentStepOf({
+                walked: workspace?.walked ?? 0,
+                total: workspace?.runStepCount ?? 0,
+              }),
               total: workspace?.runStepCount ?? 0,
             },
           ),

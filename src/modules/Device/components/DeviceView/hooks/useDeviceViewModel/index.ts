@@ -14,7 +14,7 @@ import {
   stepVerdictsOf,
   viewportOf,
 } from '@/modules/Device/library';
-import { useRunControls } from '@/modules/Run';
+import { currentStepOf, useRunControls } from '@/modules/Run';
 import { Run } from '@/services';
 import { MOTION } from '@/shared/constants';
 import { useFollowEnd } from '@/shared/hooks/useFollowEnd';
@@ -217,7 +217,10 @@ export const useDeviceViewModel = () => {
     doingLabel:
       isExploring || walked === null
         ? ''
-        : t('DEVICE.STEPS_PROGRESS', { done: walked, total: steps.length }),
+        : t('DEVICE.STEPS_PROGRESS', {
+            current: currentStepOf({ walked, total: steps.length }),
+            total: steps.length,
+          }),
     onPause,
     onStop,
   };
