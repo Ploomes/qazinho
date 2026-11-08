@@ -5,6 +5,7 @@ import type { ExportOutcome, PlanPublished, UnreadPlanRead } from '@/shared/type
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { viewportOf } from '@/modules/Device';
+import { usePlanDocument } from '@/modules/Plan/hooks/usePlanDocument';
 import {
   addCase,
   addStep,
@@ -14,7 +15,6 @@ import {
   freeVariableName,
   missingVariablesOf,
   moveCase,
-  planDocOf,
   planOfYaml,
   planWithRestored,
   planWithSecretNamed,
@@ -22,7 +22,7 @@ import {
   removeStep,
   writtenSecretsOf,
 } from '@/modules/Plan/library';
-import { DOC_VERDICT_KEYS, PLAN_SOURCE } from '@/modules/Plan/screens/Plan/constants';
+import { PLAN_SOURCE } from '@/modules/Plan/screens/Plan/constants';
 import { useProUpdate } from '@/modules/Pro';
 import { useVariableActions, VARIABLE_FAILURE_KEYS } from '@/modules/Project';
 import { flattenPlanSteps, useRunActions } from '@/modules/Run';
@@ -41,6 +41,7 @@ import {
 
 export const usePlanViewModel = () => {
   const { t } = useTranslation();
+  const { documentOf } = usePlanDocument();
   const { topRef, isToTopShown, onToTop } = useToTop();
   const workspace = useSelectedWorkspacePart((opened) => ({
     id: opened.id,
@@ -102,7 +103,6 @@ export const usePlanViewModel = () => {
     workspaceId: string;
     text: string;
   } | null>(null);
-  const language = useSettingsStore((state) => state.language);
 
   const workspaceId = workspace?.id ?? null;
   const exported = exportedIn?.workspaceId === workspaceId ? exportedIn.outcome : null;
@@ -225,63 +225,16 @@ export const usePlanViewModel = () => {
   }) => {
     if (workspaceId === null || isPublishing) return;
 
-    const run = (workspace?.runs ?? []).find(({ kind }) => kind !== 'explore') ?? null;
-
     setIsPublishing(true);
 
     const outcome = await Confluence.publish({
       ...props,
-      blocks: planDocOf({
+      blocks: documentOf({
         plan,
-        run,
-        when:
-          run === null
-            ? ''
-            : new Intl.DateTimeFormat(language, {
-                dateStyle: 'medium',
-                timeStyle: 'short',
-              }).format(new Date(run.startedAt)),
-        story:
-          issue === null || issue.source !== 'jira'
-            ? null
-            : { key: issue.key, url: issue.url },
-        page:
-          sourcePage === null ? null : { title: sourcePage.title, url: sourcePage.url },
+        runs: workspace?.runs ?? [],
+        issue,
+        sourcePage,
         design: workspace?.design ?? null,
-        words: {
-          intro: ({ cases, steps }) =>
-            t('PLAN_DOC.INTRO', {
-              cases:
-                cases === 1
-                  ? t('PLAN.CASES_ONE')
-                  : t('PLAN.CASES_OTHER', { count: cases }),
-              steps:
-                steps === 1
-                  ? t('PLAN.STEPS_ONE')
-                  : t('PLAN.STEPS_OTHER', { count: steps }),
-            }),
-          story: t('PLAN_DOC.STORY'),
-          page: t('PLAN_DOC.PAGE'),
-          design: t('PLAN_DOC.DESIGN'),
-          lastRun: t('PLAN_DOC.LAST_RUN'),
-          runLine: (line) => t('PLAN_DOC.RUN_LINE', line),
-          priority: t('PLAN_DOC.PRIORITY'),
-          goal: t('PLAN_DOC.GOAL'),
-          preconditions: t('PLAN_DOC.PRECONDITIONS'),
-          action: t('PLAN_DOC.ACTION'),
-          expected: t('PLAN_DOC.EXPECTED'),
-          frame: t('PLAN_DOC.FRAME'),
-          result: t('PLAN_DOC.RESULT'),
-          verdicts: {
-            pending: t(DOC_VERDICT_KEYS.pending),
-            running: t(DOC_VERDICT_KEYS.running),
-            passed: t(DOC_VERDICT_KEYS.passed),
-            failed: t(DOC_VERDICT_KEYS.failed),
-            blocked: t(DOC_VERDICT_KEYS.blocked),
-            skipped: t(DOC_VERDICT_KEYS.skipped),
-          },
-          keptBy: t('PLAN_DOC.KEPT_BY'),
-        },
       }),
     });
 
