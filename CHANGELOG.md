@@ -1,3 +1,16 @@
+# [0.5.0](https://github.com/Salve-Software/qazinho/compare/v0.4.0...v0.5.0) (2026-11-08)
+
+
+### Bug Fixes
+
+* **plan:** one tidy line per plan source ([8f2024f](https://github.com/Salve-Software/qazinho/commit/8f2024fdd63e6fdad0bae8e8bff3444b47de8fee))
+
+
+### Features
+
+* **chat:** walk the app before planning ([7fcbb05](https://github.com/Salve-Software/qazinho/commit/7fcbb05fc00ff0f86d3af56b1c61be996a86428d))
+* **device:** show the chat learning the app ([3741c7c](https://github.com/Salve-Software/qazinho/commit/3741c7c7efedffd41be31d60555032c998c0df87))
+
 # [0.4.0](https://github.com/Salve-Software/qazinho/compare/v0.3.0...v0.4.0) (2026-11-08)
 
 
