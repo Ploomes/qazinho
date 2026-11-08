@@ -18,6 +18,7 @@ import {
   ME_SCHEMA,
   RECORDINGS_SCHEMA,
   SYNC_BUG_SCHEMA,
+  SYNC_MEMORIES_SCHEMA,
   SYNC_PLAN_SCHEMA,
   SYNC_PROJECT_SCHEMA,
   SYNC_RUN_SCHEMA,
@@ -93,6 +94,13 @@ export class ProApi {
     call: IProSyncCall,
   ): Promise<ProAnswer<z.infer<typeof SYNC_PROJECT_SCHEMA>>> {
     return this.put({ call, schema: SYNC_PROJECT_SCHEMA });
+  }
+
+  /** Manda o que o agente aprendeu num projeto, e recebe a lista como a org a tem. */
+  public async syncMemories(
+    call: IProSyncCall,
+  ): Promise<ProAnswer<z.infer<typeof SYNC_MEMORIES_SCHEMA>>> {
+    return this.put({ call, schema: SYNC_MEMORIES_SCHEMA });
   }
 
   /**

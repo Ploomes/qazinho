@@ -30,6 +30,7 @@ export const SYNC_RECORD_SCHEMA = z.object({
     }),
   ),
   project: z.string().nullable(),
+  memories: z.string().nullable().default(null),
   plans: z.record(
     z.string(),
     z.object({

@@ -2,6 +2,7 @@ import type { IProSync, IProSyncRecord, ProUploader } from './types';
 import type {
   IProPublishBrief,
   IProShare,
+  IMemory,
   IProSyncBatch,
   IProSyncCase,
   IProSyncRun,
@@ -20,6 +21,8 @@ import {
   evidenceKindOf,
   fileFactsOf,
   hashOf,
+  hasNewMemories,
+  memoriesHashOf,
   healedPlansOf,
   movedPlansOf,
   pendingPlansOf,
@@ -171,6 +174,12 @@ export class ProSync {
           continue;
         }
 
+        if (project && hasNewMemories({ record, memories: project.memories }))
+          await this.inTurn({
+            projectId,
+            run: () => this.takeMemories({ projectId, memories: project.memories }),
+          });
+
         if (!project || movedPlansOf({ record, plans: project.plans }).length === 0)
           continue;
 
@@ -298,6 +307,7 @@ export class ProSync {
       plans: batch.plans.length,
       runs: batch.runs.length,
       bugs: batch.bugs.length,
+      memories: batch.memories.filter(({ deletedAt }) => deletedAt === null).length,
       mediaBytes,
     };
   }
@@ -323,6 +333,7 @@ export class ProSync {
       pending: [],
       conflicts: [],
       project: null,
+      memories: null,
       plans: {},
       runs: {},
       bugs: {},
@@ -470,6 +481,7 @@ export class ProSync {
   }): Promise<ProSyncState | null> {
     return (
       (await this.sendProject(props)) ??
+      (await this.sendMemories(props)) ??
       (props.withPlans ? await this.sendEditedPlans(props) : null) ??
       (await this.sendRuns(props)) ??
       (await this.sendBugs(props)) ??
@@ -503,6 +515,52 @@ export class ProSync {
     record.project = hash;
 
     return null;
+  }
+
+  private async sendMemories(props: {
+    batch: IProSyncBatch;
+    record: IProSyncRecord;
+    token: string;
+  }): Promise<ProSyncState | null> {
+    const { batch, record, token } = props;
+    const { projectId } = batch.project;
+
+    if (!hasNewMemories({ record, memories: batch.memories })) return null;
+
+    const answer = await this.api.syncMemories({
+      token,
+      org: record.orgSlug,
+      path: `projects/${encodeURIComponent(projectId)}/memories`,
+      body: { memories: batch.memories },
+    });
+
+    if (!answer.isOk) return stateOfRefusal(answer);
+
+    record.memories = memoriesHashOf(answer.value.memories);
+    this.announce({
+      ...this.shareOf({ projectId, record }),
+      state: 'sending',
+      memories: answer.value.memories,
+    });
+
+    return null;
+  }
+
+  private async takeMemories(props: {
+    projectId: string;
+    memories: IMemory[];
+  }): Promise<IProShare> {
+    const { projectId, memories } = props;
+    const records = await this.read();
+    const record = records[projectId];
+
+    if (record === undefined || this.isUnlinked(record))
+      return this.shareOf({ projectId, record });
+
+    record.memories = memoriesHashOf(memories);
+    await this.write(records);
+
+    return this.announce({ ...this.shareOf({ projectId, record }), memories });
   }
 
   private async sendEditedPlans(props: {

@@ -3,5 +3,6 @@ export interface IProPublishBrief {
   plans: number;
   runs: number;
   bugs: number;
+  memories: number;
   mediaBytes: number;
 }

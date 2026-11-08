@@ -1,5 +1,6 @@
 import type { ProStatus } from '@/shared/types';
 import { useEffect } from 'react';
+import { mergedMemoriesOf } from '@/modules/Memory/library';
 import { PRO_PUSH } from '@/modules/Pro/constants';
 import { changedProjectsOf, isSendingShare, proBatchOf } from '@/modules/Pro/library';
 import { Pro } from '@/services';
@@ -15,7 +16,21 @@ export const useProSync = () => {
     void Pro.status().then(setStatus);
     void Pro.shares().then(setShares);
 
-    return Pro.onSync(landShare);
+    return Pro.onSync(({ memories, ...share }) => {
+      landShare(share);
+
+      if (memories === undefined) return;
+
+      const { projects, updateProject } = useAppStore.getState();
+      const project = projects.find(({ id }) => id === share.projectId);
+
+      if (project === undefined) return;
+
+      const merged = mergedMemoriesOf({ local: project.memories ?? [], org: memories });
+
+      if (JSON.stringify(merged) !== JSON.stringify(project.memories ?? []))
+        updateProject({ ...project, memories: merged });
+    });
   }, [setStatus, setShares, landShare]);
 
   useEffect(() => {

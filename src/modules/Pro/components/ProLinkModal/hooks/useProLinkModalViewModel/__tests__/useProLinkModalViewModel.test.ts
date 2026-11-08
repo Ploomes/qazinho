@@ -16,6 +16,7 @@ const SIGNED_IN: ProStatus = {
 };
 const DOWNLOADED: ProDownload = {
   isDownloaded: true,
+  memories: [],
   orgSlug: 'loja',
   project: {
     projectId: 'p-2',

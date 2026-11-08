@@ -1,3 +1,4 @@
+import type { IMemory } from './IMemory';
 import type { IProSyncBug } from './IProSyncBug';
 import type { IProSyncPlan } from './IProSyncPlan';
 import type { IProSyncProject } from './IProSyncProject';
@@ -12,4 +13,5 @@ export interface IProSyncBatch {
   plans: IProSyncPlan[];
   runs: IProSyncRun[];
   bugs: IProSyncBug[];
+  memories: IMemory[];
 }

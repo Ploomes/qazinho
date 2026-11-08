@@ -1,6 +1,6 @@
 import type { ProAnswer } from '@/main/classes/pro/ProApi';
 import type { IProSync } from '@/main/classes/pro/ProSync';
-import type { IProShare, IProSyncBatch } from '@/shared/types';
+import type { IMemory, IProShare, IProSyncBatch } from '@/shared/types';
 import { writeFileSync } from 'node:fs';
 import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -45,7 +45,8 @@ function fakeApi(refuse: (sent: ISent) => Refusal | null = () => null) {
   const org: {
     plans: { id: string; desktopId: string; version: number }[];
     hasProject: boolean;
-  } = { plans: [], hasProject: true };
+    memories: IMemory[];
+  } = { plans: [], hasProject: true, memories: [] };
   let versions = 0;
   let uploads = 0;
 
@@ -83,6 +84,13 @@ function fakeApi(refuse: (sent: ISent) => Refusal | null = () => null) {
       }),
     syncRecordings: ({ org, path, body }) =>
       answer({ call: { method: 'syncRecordings', org, path, body }, value: null }),
+    syncMemories: ({ org: slug, path, body }) =>
+      answer({
+        call: { method: 'syncMemories', org: slug, path, body },
+        value: {
+          memories: [...org.memories, ...(body as { memories: IMemory[] }).memories],
+        },
+      }),
     syncedProjects: ({ org: slug }) =>
       answer({
         call: { method: 'syncedProjects', org: slug, path: 'projects', body: null },
@@ -95,6 +103,7 @@ function fakeApi(refuse: (sent: ISent) => Refusal | null = () => null) {
             targets: [],
             repositories: [],
             variables: [],
+            memories: org.memories,
             plans: org.plans.map((plan) => ({
               ...plan,
               name: 'Checkout com Pix',
@@ -225,6 +234,7 @@ function batchOf(root: string): IProSyncBatch {
         firstSeenAt: '2026-10-24T10:00:30.000Z',
       },
     ],
+    memories: [],
   };
 }
 
@@ -891,6 +901,7 @@ describe('ProSync', () => {
           })),
         })),
         bugs: [],
+        memories: [],
       },
     });
 
@@ -1087,6 +1098,7 @@ describe('ProSync', () => {
       plans: 1,
       runs: 1,
       bugs: 1,
+      memories: 0,
       mediaBytes: 7,
     });
     expect(
@@ -1174,5 +1186,76 @@ describe('ProSync', () => {
     await writeFile(file, JSON.stringify({ shares: { p1: older } }));
 
     expect(await sync.shares()).toMatchObject([{ projectId: 'p1', pending: [] }]);
+  });
+
+  describe('what the agent learned', () => {
+    const memory = (over: Partial<IMemory> = {}): IMemory => ({
+      id: 'm-1',
+      text: 'Os formulários ficam em Ajustes.',
+      scope: 'project',
+      workspaceId: null,
+      target: 'all',
+      createdAt: '2026-11-01T10:00:00.000Z',
+      updatedAt: '2026-11-01T10:00:00.000Z',
+      deletedAt: null,
+      ...over,
+    });
+
+    it('sends it with the project, and tells the page the list as the org has it', async () => {
+      const { api, sent, org } = fakeApi();
+      const { batch, publish, shares } = await syncWith({ api });
+
+      org.memories = [memory({ id: 'do-colega' })];
+
+      await publish({ batch: { ...batch, memories: [memory()] } });
+
+      expect(sent.find(({ method }) => method === 'syncMemories')?.path).toBe(
+        'projects/p1/memories',
+      );
+      expect(
+        shares
+          .flatMap((share) => share.memories ?? [])
+          .map(({ id }) => id)
+          .sort(),
+      ).toEqual(['do-colega', 'm-1']);
+    });
+
+    it('does not send it again when nothing changed', async () => {
+      const { api, methods } = fakeApi();
+      const { sync, batch, publish } = await syncWith({ api });
+      const taught = { ...batch, memories: [memory()] };
+
+      await publish({ batch: taught });
+      await sync.push(taught);
+
+      expect(methods().filter((method) => method === 'syncMemories')).toHaveLength(1);
+    });
+
+    it('hands the page what a teammate taught the org, on a pull', async () => {
+      const { api, org } = fakeApi();
+      const { sync, publish, shares } = await syncWith({ api });
+
+      await publish();
+      org.memories = [memory({ id: 'do-colega' })];
+      shares.length = 0;
+
+      await sync.pull();
+
+      expect(shares.at(-1)?.memories?.map(({ id }) => id)).toEqual(['do-colega']);
+    });
+
+    it('tells the page nothing on a pull when the org has nothing new', async () => {
+      const { api, org } = fakeApi();
+      const { sync, publish, shares } = await syncWith({ api });
+
+      await publish();
+      org.memories = [memory({ id: 'do-colega' })];
+      await sync.pull();
+      shares.length = 0;
+
+      await sync.pull();
+
+      expect(shares.flatMap((share) => share.memories ?? [])).toEqual([]);
+    });
   });
 });

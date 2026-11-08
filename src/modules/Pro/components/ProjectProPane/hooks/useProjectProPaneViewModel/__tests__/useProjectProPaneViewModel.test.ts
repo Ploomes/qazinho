@@ -112,7 +112,13 @@ describe('useProjectProPaneViewModel', () => {
       window.qazinho = {
         ...fakeQazinhoApi('darwin'),
         briefPro: () =>
-          Promise.resolve({ plans: 1, runs: 3, bugs: 0, mediaBytes: 1_440_000_000 }),
+          Promise.resolve({
+            plans: 1,
+            runs: 3,
+            bugs: 0,
+            memories: 0,
+            mediaBytes: 1_440_000_000,
+          }),
       };
 
       const { result } = pane();

@@ -1,3 +1,4 @@
+import type { IMemory } from './IMemory';
 import type { IProPlanConflict } from './IProPlanConflict';
 import type { ProSyncState } from './ProSyncState';
 
@@ -12,4 +13,5 @@ export interface IProShare {
   syncedAt: string | null;
   pending: string[];
   conflicts: IProPlanConflict[];
+  memories?: IMemory[];
 }

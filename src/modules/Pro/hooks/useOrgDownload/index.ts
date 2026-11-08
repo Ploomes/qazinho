@@ -20,7 +20,7 @@ export const useOrgDownload = () => {
       workspaceOfPlan({ plan, projectId: done.project.projectId }),
     );
 
-    putProject(projectOfDownload(done.project));
+    putProject({ ...projectOfDownload(done.project), memories: done.memories });
 
     for (const workspace of workspaces) addWorkspace(workspace);
 

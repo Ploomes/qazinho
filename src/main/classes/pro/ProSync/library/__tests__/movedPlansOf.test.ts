@@ -27,6 +27,7 @@ const recordOf = (change: Partial<IProSyncRecord> = {}): IProSyncRecord => ({
   mediaFrom: null,
   pending: [],
   conflicts: [],
+  memories: null,
   project: 'hash',
   plans: {
     w1: { planId: 'pl1', version: 2, hash: 'h1', cases: [CASE] },

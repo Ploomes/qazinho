@@ -12,6 +12,7 @@ export interface IProSyncRecord {
   pending: string[];
   conflicts: IProPlanConflict[];
   project: string | null;
+  memories: string | null;
   plans: Record<
     string,
     { planId: string | null; version: number; hash: string; cases: IProSyncCase[] }

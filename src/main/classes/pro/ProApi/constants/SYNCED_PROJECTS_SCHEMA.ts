@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { SYNC_CASE_SCHEMA } from './SYNC_CASE_SCHEMA';
+import { SYNC_MEMORY_SCHEMA } from './SYNC_MEMORY_SCHEMA';
 
 export const SYNCED_PROJECTS_SCHEMA = z.object({
   projects: z.array(
@@ -25,6 +26,7 @@ export const SYNCED_PROJECTS_SCHEMA = z.object({
         }),
       ),
       variables: z.array(z.object({ name: z.string(), description: z.string() })),
+      memories: z.array(SYNC_MEMORY_SCHEMA).default([]),
       plans: z.array(
         z.object({
           id: z.string(),

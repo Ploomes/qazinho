@@ -1508,6 +1508,8 @@ export const pt: typeof en = {
     PANE_STAT_RUNS_OTHER: '{{count}} runs',
     PANE_STAT_BUGS_ONE: '{{count}} bug',
     PANE_STAT_BUGS_OTHER: '{{count}} bugs',
+    PANE_STAT_MEMORIES_ONE: '{{count}} memória',
+    PANE_STAT_MEMORIES_OTHER: '{{count}} memórias',
     PANE_MEDIA_SWITCH: 'Incluir vídeos e telas',
     PANE_PUBLISH: 'Publicar em {{org}}',
     PANE_PUBLISHING: 'Publicando…',
@@ -1565,6 +1567,7 @@ export const pt: typeof en = {
     RUN_WARNING_UPDATE: 'Atualizar e rodar',
     RUN_WARNING_RUN: 'Rodar como está aqui',
     PANE_BRIEF: '{{plans}} · {{runs}} · {{bugs}}',
+    PANE_BRIEF_MEMORIES: '{{plans}} · {{runs}} · {{bugs}} · {{memories}}',
     PANE_MEDIA_SWITCH_SIZE: 'Incluir vídeos e telas ({{size}})',
   },
 };

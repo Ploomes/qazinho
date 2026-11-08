@@ -1,3 +1,4 @@
+import type { IMemory } from './IMemory';
 import type { IProSyncPlan } from './IProSyncPlan';
 import type { IProSyncProject } from './IProSyncProject';
 import type { IVariableBrief } from './IVariableBrief';
@@ -12,6 +13,7 @@ export type ProDownload =
       project: IProSyncProject;
       plans: IProSyncPlan[];
       variables: IVariableBrief[];
+      memories: IMemory[];
     }
   | {
       isDownloaded: false;

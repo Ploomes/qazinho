@@ -29,6 +29,7 @@ const recordOf = (plans: IProSyncRecord['plans']): IProSyncRecord => ({
   mediaFrom: null,
   pending: [],
   conflicts: [],
+  memories: null,
   project: 'hash',
   plans,
   runs: {},

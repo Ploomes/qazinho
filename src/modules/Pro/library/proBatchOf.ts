@@ -66,6 +66,7 @@ export function proBatchOf(props: {
         return synced === null ? [] : [synced];
       }),
     ),
+    memories: project.memories ?? [],
   };
 }
 

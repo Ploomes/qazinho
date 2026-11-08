@@ -99,6 +99,7 @@ export class Pro {
         plans: batch.plans.length,
         runs: batch.runs.length,
         bugs: batch.bugs.length,
+        memories: 0,
         mediaBytes: 0,
       }
     );

@@ -169,6 +169,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
         plans: plans.length,
         runs: runs.length,
         bugs: bugs.length,
+        memories: 0,
         mediaBytes: 0,
       }),
     syncPro: ({ project }) =>

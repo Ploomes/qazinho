@@ -107,6 +107,7 @@ export class ProDownloads {
       project: downloadedProjectOf(project),
       plans: plans.map((plan) => downloadedPlanOf({ plan, targets: project.targets })),
       variables: project.variables,
+      memories: project.memories,
     };
   }
 

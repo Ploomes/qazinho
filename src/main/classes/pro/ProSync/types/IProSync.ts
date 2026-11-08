@@ -13,6 +13,7 @@ export interface IProSync {
     | 'syncPlan'
     | 'syncRun'
     | 'syncBug'
+    | 'syncMemories'
     | 'syncRecordings'
     | 'evidenceUpload'
     | 'syncedProjects'

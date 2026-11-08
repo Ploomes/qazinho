@@ -155,7 +155,10 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
           dateStyle: 'medium',
           timeStyle: 'short',
         }).format(new Date(share.syncedAt));
-  const statOf = (props: { count: number; one: 'PLANS' | 'RUNS' | 'BUGS' }) =>
+  const statOf = (props: {
+    count: number;
+    one: 'PLANS' | 'RUNS' | 'BUGS' | 'MEMORIES';
+  }) =>
     props.count === 1
       ? t(`PRO.PANE_STAT_${props.one}_ONE`, { count: props.count })
       : t(`PRO.PANE_STAT_${props.one}_OTHER`, { count: props.count });
@@ -199,10 +202,11 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
       brief:
         brief === null
           ? ''
-          : t('PRO.PANE_BRIEF', {
+          : t(brief.memories > 0 ? 'PRO.PANE_BRIEF_MEMORIES' : 'PRO.PANE_BRIEF', {
               plans: statOf({ count: brief.plans, one: 'PLANS' }),
               runs: statOf({ count: brief.runs, one: 'RUNS' }),
               bugs: statOf({ count: brief.bugs, one: 'BUGS' }),
+              memories: statOf({ count: brief.memories, one: 'MEMORIES' }),
             }),
       mediaSwitch:
         brief === null

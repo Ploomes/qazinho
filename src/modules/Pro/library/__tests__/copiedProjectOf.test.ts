@@ -22,7 +22,12 @@ describe('copiedProjectOf', () => {
       now: 42,
     });
 
-    expect(project).toEqual({ ...PROJECT, id: 'p-42', name: 'Loja · copy' });
+    expect(project).toEqual({
+      ...PROJECT,
+      id: 'p-42',
+      name: 'Loja · copy',
+      memories: [],
+    });
     expect(project.targets[0]).not.toBe(PROJECT.targets[0]);
   });
 
@@ -67,5 +72,41 @@ describe('copiedProjectOf', () => {
     });
 
     expect(workspaces).toEqual([]);
+  });
+
+  it('copies what the agent learned, each plan memory on the copy of its plan', () => {
+    const memory = {
+      text: 'Em Ajustes.',
+      target: 'all' as const,
+      createdAt: '2026-11-01T10:00:00.000Z',
+      updatedAt: '2026-11-01T10:00:00.000Z',
+      deletedAt: null,
+    };
+    const workspace = { ...makeWorkspace(), id: 'w1', projectId: 'p1', plan: [{}] };
+    const { project } = copiedProjectOf({
+      project: {
+        ...PROJECT,
+        memories: [
+          { ...memory, id: 'a', scope: 'project', workspaceId: null },
+          { ...memory, id: 'b', scope: 'plan', workspaceId: 'w1' },
+          { ...memory, id: 'c', scope: 'plan', workspaceId: 'w-sem-plano' },
+          {
+            ...memory,
+            id: 'd',
+            scope: 'project',
+            workspaceId: null,
+            deletedAt: '2026-11-02T10:00:00.000Z',
+          },
+        ],
+      },
+      workspaces: [workspace as never],
+      name: 'Cópia',
+      now: 42,
+    });
+
+    expect(project.memories?.map(({ id, workspaceId }) => [id, workspaceId])).toEqual([
+      ['a', null],
+      ['b', 'w-42-0'],
+    ]);
   });
 });

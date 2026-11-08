@@ -96,6 +96,7 @@ describe('a page with no bridge', () => {
       plans: [],
       runs: [],
       bugs: [],
+      memories: [],
     };
 
     expect(await Pro.shares()).toEqual([]);
@@ -106,7 +107,13 @@ describe('a page with no bridge', () => {
     expect(await Pro.sendPlans(batch)).toMatchObject({ state: 'off' });
     expect(await Pro.unlink('p1')).toMatchObject({ orgSlug: null, state: 'off' });
     expect(await Pro.remove('p1')).toEqual({ isRemoved: false, failure: 'failed' });
-    expect(await Pro.brief(batch)).toEqual({ plans: 0, runs: 0, bugs: 0, mediaBytes: 0 });
+    expect(await Pro.brief(batch)).toEqual({
+      plans: 0,
+      runs: 0,
+      bugs: 0,
+      memories: 0,
+      mediaBytes: 0,
+    });
     expect(Pro.onSync(() => undefined)).toBeTypeOf('function');
     expect(
       await Pro.resolve({ projectId: 'p1', workspaceId: 'w1', version: 2 }),

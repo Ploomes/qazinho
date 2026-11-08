@@ -14,6 +14,7 @@ export const SYNCED: SyncedProject = {
     { id: 't-android', kind: 'android', label: 'Android', value: 'loja.apk' },
   ],
   repositories: [{ id: '4242', owner: 'loja', name: 'loja-web', baseBranch: 'main' }],
+  memories: [],
   variables: [{ name: 'LOGIN_PASSWORD', description: 'senha do QA' }],
   plans: [
     {
