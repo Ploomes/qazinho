@@ -28,6 +28,14 @@ const PAGE = `<!doctype html><html><head><meta charset="utf-8"></head><body>
   <div role="tablist"><div role="tab" tabindex="0" onclick="document.getElementById('pick').textContent = 'Tab Proposta picked'">Proposta</div></div>
   <button onclick="document.getElementById('pick').textContent = 'New template opened'">Novo modelo de proposta</button>
   <p id="pick">Nothing picked yet</p>
+  <div role="input" tabindex="0" aria-label="Login email" id="custom" style="width:200px;height:24px"></div>
+  <script>
+    const custom = document.getElementById('custom');
+    custom.addEventListener('keydown', (event) => {
+      if (event.key.length === 1) custom.textContent += event.key;
+      event.preventDefault();
+    });
+  </script>
   <script>
     customElements.define('shop-button', class extends HTMLElement {
       connectedCallback() {
@@ -166,5 +174,17 @@ describe('a name said whole, beside a longer one that holds it', () => {
     await driver.act({ kind: 'click', target: 'Novo modelo de proposta', value: '' });
 
     expect(await driver.describe()).toContain('New template opened');
+  });
+});
+
+/**
+ * O login de uma loja: campos desenhados como divs que só escutam o teclado. O fill do
+ * Playwright os recusava, e a run pedia ao QA que entrasse à mão.
+ */
+describe('a field drawn as a div', () => {
+  it('takes what is typed into it, by the keyboard', async () => {
+    await driver.act({ kind: 'fill', target: 'Login email', value: 'qa@shop.test' });
+
+    expect(await driver.describe()).toContain('qa@shop.test');
   });
 });
