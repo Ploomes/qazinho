@@ -36,8 +36,9 @@ A maior parte das coisas é chapada: impressa na superfície, separada por espa�
 
 **A evidência nunca é tocada.** Uma captura de tela ou o dispositivo ao vivo não é inclinado,
 brilhado, contornado nem coberto. A exceção é o instante de um bug pego (`BugFlash`): o QA pediu que
-a tela pisque, a imagem vá para o centro numa moldura sobre o fundo desfocado, e saia em segundos.
-Nada cobre a imagem: a legenda fica embaixo dela.
+a tela pisque, a imagem vá para o centro numa moldura sobre o fundo desfocado, chegue perto do que
+está errado, e saia em segundos. Nada cobre a imagem: a legenda fica embaixo dela, e o resto da
+foto só escurece de leve em volta do elemento marcado.
 
 ## A receita
 

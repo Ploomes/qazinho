@@ -203,8 +203,11 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
 - **Um bug recém-pego passa pela tela** (`BugFlash`, sobre o `DeviceScreen`). O `bug` e o `report`
   recebem o tipo do bug (`category`), e a store enfileira o que esta run ainda não mostrou
   (`bugFlashOf`, `withBugFlash`), sem atrasar a tela (`BUG_FLASH.waitingKept`). Um clique abre o
-  bug, e o mouse em cima o segura. Depois dos dois primeiros da run ele fica mais curto e o flash
-  mais suave (`isQuiet`). A fila só vale para a tela aberta: o `DeviceView` a limpa ao montar e ao
+  bug, e o mouse em cima o segura. O agente nomeia o que está errado (`target`), ou, num bug
+  contra o design, vale o que ele acabou de medir (`markedBoxOf`); cada driver diz onde aquilo está
+  em frações da tela (`locate`, `fractionBoxOf`), um texto pelas letras dele (`screenBoxOf`), e a
+  foto chega perto sem passar da borda (`bugFocusOf`). Depois dos dois primeiros da run ele fica
+  mais curto e o flash mais suave (`isQuiet`). A fila só vale para a tela aberta: o `DeviceView` a limpa ao montar e ao
   sair, e mantém a tela até o último sair, mesmo com a run já terminada.
 - **Um caso que passou é andado de novo sem o agente.** A run dele grava as ações de cada passo, e
   o agente relata, a cada passagem, uma `proof`: palavras na tela que não estariam lá se tivesse
