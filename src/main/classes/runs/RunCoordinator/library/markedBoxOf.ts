@@ -1,20 +1,22 @@
-import type { IScreenBox } from '@/shared/types';
+import type { BugCategory, IScreenBox } from '@/shared/types';
 import type { IDeviceDriver } from '@salve-software/qazinho-harness/engine';
+import { MARKED_BOX } from '@/main/classes/runs/RunCoordinator/constants';
 
 /**
- * Onde está na tela o que um bug aponta: o que o agente nomeou, ou, num bug contra o
- * design, o que ele acabou de medir; nada quando não dá para dizer.
+ * Onde está na tela o que um bug aponta, quando ele é sobre uma coisa só: o que não
+ * aconteceu, ou o que ocupa boa parte da tela, fica na foto inteira.
  */
 export async function markedBoxOf(props: {
   driver: Pick<IDeviceDriver, 'locate'>;
   target?: string;
-  frame?: string;
-  inspected: string | null;
+  category?: BugCategory;
 }): Promise<IScreenBox | null> {
-  const { driver, target, frame, inspected } = props;
-  const named = target ?? (frame === undefined ? null : inspected);
+  const { driver, target, category } = props;
 
-  if (named === null || driver.locate === undefined) return null;
+  if (target === undefined || category === 'behavior' || driver.locate === undefined)
+    return null;
 
-  return driver.locate(named).catch(() => null);
+  const box = await driver.locate(target).catch(() => null);
+
+  return box !== null && box.width * box.height <= MARKED_BOX.maxCover ? box : null;
 }

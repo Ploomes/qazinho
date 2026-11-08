@@ -631,9 +631,8 @@ export class RunCoordinator {
         report.verdict === 'failed'
           ? await markedBoxOf({
               driver,
-              target: report.target,
-              frame: report.frame,
-              inspected,
+              ...(report.target === undefined ? {} : { target: report.target }),
+              ...(report.category === undefined ? {} : { category: report.category }),
             })
           : null;
       const at = Date.now();
@@ -726,7 +725,6 @@ export class RunCoordinator {
     };
 
     let findings = 0;
-    let inspected: string | null = null;
 
     const onFinding = async (finding: IStepFinding): Promise<string> => {
       const walking = pending[0];
@@ -742,9 +740,8 @@ export class RunCoordinator {
       );
       const box = await markedBoxOf({
         driver,
-        target: finding.target,
-        frame: finding.frame,
-        inspected,
+        ...(finding.target === undefined ? {} : { target: finding.target }),
+        ...(finding.category === undefined ? {} : { category: finding.category }),
       });
 
       this.emit({
@@ -822,11 +819,7 @@ export class RunCoordinator {
 
     const port: IDevicePort = {
       describe: () => device.describe(),
-      inspect: (target) => {
-        inspected = target;
-
-        return device.inspect(target);
-      },
+      inspect: (target) => device.inspect(target),
       failedCalls: () => device.failedCalls(),
       calls: (ask) => device.calls(ask),
       glance: () => device.glance(),
@@ -962,7 +955,6 @@ export class RunCoordinator {
     const device = variablePort({ device: driver, values: run.values });
     let screens = 0;
     let findings = 0;
-    let inspected: string | null = null;
     let current = { number: 0, name: '' };
     let last = Date.now();
     let isOver = false;
@@ -1022,9 +1014,8 @@ export class RunCoordinator {
       );
       const box = await markedBoxOf({
         driver,
-        target: finding.target,
-        frame: finding.frame,
-        inspected,
+        ...(finding.target === undefined ? {} : { target: finding.target }),
+        ...(finding.category === undefined ? {} : { category: finding.category }),
       });
 
       this.emit({
@@ -1130,14 +1121,7 @@ export class RunCoordinator {
     const design = this.harness.designAccess(run.design ?? null);
     const attached: IAttachDevice = {
       workspaceId,
-      driver: {
-        ...device,
-        inspect: (target: string) => {
-          inspected = target;
-
-          return device.inspect(target);
-        },
-      },
+      driver: device,
       purpose: 'explore',
       endsAt,
       onScreen,

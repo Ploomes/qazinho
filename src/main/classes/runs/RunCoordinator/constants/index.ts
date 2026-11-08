@@ -1,4 +1,5 @@
 export * from './EXPLORE_PUSHES';
+export * from './MARKED_BOX';
 export * from './RUN_WATCH';
 export {
   RUN_WALK,
