@@ -1,3 +1,20 @@
+# [0.7.0](https://github.com/Salve-Software/qazinho/compare/v0.6.2...v0.7.0) (2026-11-08)
+
+
+### Bug Fixes
+
+* **run:** count the step the run is on ([2e52b2a](https://github.com/Salve-Software/qazinho/commit/2e52b2a27db44b0dc06233914c4491349f30315a))
+* **ui:** a small X on the design chip ([d85f159](https://github.com/Salve-Software/qazinho/commit/d85f159b0096bb87ddcb31f837dbb854d7b9b421))
+
+
+### Features
+
+* **agent:** hear words and tools as they come ([b6dad5b](https://github.com/Salve-Software/qazinho/commit/b6dad5bb4ec456f8cbbff4abee81ef254d8b5d82))
+* **chat:** say what the agent is doing ([0e849ba](https://github.com/Salve-Software/qazinho/commit/0e849babdf9050f0f89978ad75dad00f772ff6f5))
+* **chat:** write the reply as it arrives ([aff3f16](https://github.com/Salve-Software/qazinho/commit/aff3f16de58f2b39ba60b2498ca9ddfa45bc1db1))
+* **device:** flash a caught bug on the screen ([8ac3e7f](https://github.com/Salve-Software/qazinho/commit/8ac3e7ff25a30cc20a2bc61eab9a526db777fd87))
+* **device:** mark what is wrong on a caught bug ([b2c0477](https://github.com/Salve-Software/qazinho/commit/b2c04770cd97a2034618e5810ef77ccb2469b765))
+
 ## [0.6.2](https://github.com/Salve-Software/qazinho/compare/v0.6.1...v0.6.2) (2026-11-08)
 
 
