@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { activityLineOf } from '@/modules/Chat/library';
+import { useScreenSwap } from '@/modules/Device/components/DeviceView/hooks/useScreenSwap';
 import { DEVICE, VIEWPORTS } from '@/modules/Device/constants';
 import {
   deviceStateOf,
@@ -57,6 +58,7 @@ export const useDeviceViewModel = () => {
     onStop,
   } = useRunControls();
   const [isFocusedNow, setFocused] = useState(false);
+  const [picked, setPicked] = useState<{ workspaceId: string; id: number } | null>(null);
 
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
@@ -95,8 +97,23 @@ export const useDeviceViewModel = () => {
   const hasScreen =
     isRunLive || isLearning || isFlashing || (isFocusedNow && shot !== null);
   const isFocused = isFocusedNow && hasScreen;
+  const openScreens = live?.isDone === false ? (live.screens ?? []) : [];
+  const hasRail = openScreens.length > 1;
+  const agentScreen = openScreens.find(({ isAgent }) => isAgent) ?? null;
+  const pickedScreen = hasRail
+    ? (openScreens.find(
+        ({ id }) => picked?.workspaceId === workspace?.id && id === picked?.id,
+      ) ?? null)
+    : null;
+  const shownScreen = pickedScreen ?? agentScreen;
+  const swap = useScreenSwap({
+    shownKey: hasRail ? String(shownScreen?.id ?? '') : 'one',
+    isOn: hasRail,
+  });
   const stream =
-    live?.isDone === false ? live.streamUrl : (chatDevice?.streamUrl ?? null);
+    live?.isDone === false
+      ? (pickedScreen?.streamUrl ?? live.streamUrl)
+      : (chatDevice?.streamUrl ?? null);
   const viewports: IViewportChoice[] = isPhone
     ? []
     : VIEWPORTS.map((option) => ({
@@ -162,9 +179,48 @@ export const useDeviceViewModel = () => {
       '--device-chrome': `${String(DEVICE.chromeHeight)}px`,
       '--device-ratio': String(screenRatio),
       '--device-steps-min': `${String(DEVICE.stepsMinHeight)}px`,
+      '--device-rail-width': `${String(DEVICE.railWidth)}px`,
     } as CSSProperties,
     isPhone,
     hasScreen,
+    rootClassName: hasRail ? 'device-view device-view--screens' : 'device-view',
+    hasRail: hasRail && !isFocused,
+    railLabel: t('DEVICE.SCREENS_LABEL'),
+    screens: openScreens.map((screen) => {
+      const tip = screen.isAgent
+        ? t('DEVICE.SCREEN_AGENT_TIP', { id: screen.id })
+        : t('DEVICE.SCREEN_TIP', { id: screen.id });
+
+      return {
+        id: screen.id,
+        streamUrl: screen.streamUrl,
+        isAgent: screen.isAgent,
+        isShown: screen.id === shownScreen?.id,
+        tip:
+          screen.account > 1
+            ? t('DEVICE.SCREEN_ACCOUNT_TIP', { tip, account: screen.account })
+            : tip,
+      };
+    }),
+    stackClassName:
+      openScreens.length > 2
+        ? 'device-view__browser device-view__browser--stack device-view__browser--stack-deep'
+        : hasRail
+          ? 'device-view__browser device-view__browser--stack'
+          : 'device-view__browser',
+    swap,
+    pickedNotice:
+      pickedScreen !== null && !pickedScreen.isAgent
+        ? t('DEVICE.SCREEN_PICKED', { id: pickedScreen.id })
+        : null,
+    onPickScreen: (id: number) => {
+      if (workspace === null) return;
+
+      setPicked(id === agentScreen?.id ? null : { workspaceId: workspace.id, id });
+    },
+    onFollowAgent: () => {
+      setPicked(null);
+    },
     viewportClassName: isFocused
       ? 'device-view__viewport'
       : isPhone
@@ -233,7 +289,11 @@ export const useDeviceViewModel = () => {
     shot,
     stream,
     urlText: shownUrlOf(
-      (isLearning ? chatDevice?.address : hasScreen ? live?.address : undefined) ??
+      (isLearning
+        ? chatDevice?.address
+        : hasScreen
+          ? (pickedScreen?.url ?? live?.address)
+          : undefined) ??
         target?.value ??
         '',
     ),

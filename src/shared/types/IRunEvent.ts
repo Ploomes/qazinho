@@ -2,6 +2,7 @@ import type { IDraftedCase } from './IDraftedCase';
 import type { IRunAsked } from './IRunAsked';
 import type { IRunFinding } from './IRunFinding';
 import type { IRunQuestion } from './IRunQuestion';
+import type { IRunScreen } from './IRunScreen';
 import type { IRunVideo } from './IRunVideo';
 import type { IStepOutcome } from './IStepOutcome';
 import type { RunFailure } from './RunFailure';
@@ -20,6 +21,7 @@ export type IRunEvent =
   | { kind: 'unheard'; workspaceId: string; texts: string[] }
   | { kind: 'streaming'; workspaceId: string; url: string }
   | { kind: 'address'; workspaceId: string; url: string }
+  | { kind: 'screens'; workspaceId: string; screens: IRunScreen[] }
   | { kind: 'note'; workspaceId: string; text: string }
   | { kind: 'cost'; workspaceId: string; costUsd: number }
   | { kind: 'finding'; workspaceId: string; finding: IRunFinding }

@@ -16,6 +16,7 @@ export const ACTIVITY_KEYS = {
   figma: 'CHAT.DOING_FIGMA',
   bug: 'CHAT.DOING_BUG',
   say: 'CHAT.DOING_SAY',
+  tab: 'CHAT.DOING_TAB_NEW',
   report: 'CHAT.DOING_REPORT',
   screen: 'CHAT.DOING_SCREEN',
   finish: 'CHAT.DOING_FINISH',

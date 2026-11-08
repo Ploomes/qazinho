@@ -16,6 +16,8 @@ export function followRunEvent(props: {
 
   if (event.kind === 'address') return { ...run, address: event.url };
 
+  if (event.kind === 'screens') return { ...run, screens: event.screens };
+
   if (event.kind === 'step')
     return { ...run, doingIndex: -1, outcomes: [...run.outcomes, event.outcome] };
 

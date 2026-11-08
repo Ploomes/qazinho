@@ -17,6 +17,7 @@ import type {
   IRunFinding,
   IRunInFlight,
   IRunQuestion,
+  IRunScreen,
   IRunVideo,
   IStepOutcome,
   IUnreadPlan,
@@ -155,6 +156,7 @@ export interface IWorkspaceStore {
   startAskingUnheard: (workspaceId: string) => void;
   setContext: (props: { workspaceId: string; tokens: number; window: number }) => void;
   markStreaming: (props: { workspaceId: string; url: string }) => void;
+  markScreens: (props: { workspaceId: string; screens: IRunScreen[] }) => void;
   markAddress: (props: { workspaceId: string; url: string }) => void;
   landNote: (props: { workspaceId: string; text: string; who: string }) => void;
   landCost: (props: { workspaceId: string; costUsd: number }) => void;

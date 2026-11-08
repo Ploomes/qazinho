@@ -61,7 +61,9 @@ export class ChatDevices {
     this.open.set(workspaceId, entry);
     await entry.driver.open();
 
-    const isStreaming = await entry.driver.stream((jpeg) => {
+    const isStreaming = await entry.driver.stream((jpeg, screen) => {
+      if (screen !== undefined) return;
+
       this.props.live.push({
         workspaceId: stream,
         jpeg,

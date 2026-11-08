@@ -28,6 +28,18 @@ describe('what the agent did, as the QA reads it', () => {
     });
   });
 
+  it('words each thing it can do with the screens', () => {
+    expect(line({ tool: 'tab', target: 'new_session' })?.text).toContain(
+      'CHAT.DOING_TAB_SESSION',
+    );
+    expect(line({ tool: 'tab', target: 'switch' })?.text).toContain(
+      'CHAT.DOING_TAB_SWITCH',
+    );
+    expect(line({ tool: 'tab', target: 'constructor' })?.text).toContain(
+      'CHAT.DOING_TAB_NEW',
+    );
+  });
+
   it('calls a measure a comparison when there is a design to hold it to', () => {
     expect(line({ tool: 'inspect', target: 'Título' }, true)?.text).toBe(
       'CHAT.DOING_INSPECT_DESIGN|Título',

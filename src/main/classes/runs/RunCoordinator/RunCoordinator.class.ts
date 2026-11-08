@@ -329,6 +329,17 @@ export class RunCoordinator {
             url: privateUrlOf({ url, values: run.values }),
           });
         },
+        onScreens: (screens) => {
+          this.emit({
+            kind: 'screens',
+            workspaceId: run.workspaceId,
+            screens: screens.map((screen) => ({
+              ...screen,
+              url: privateUrlOf({ url: screen.url, values: run.values }),
+              streamUrl: this.live.urlFor(run.workspaceId, screen.id),
+            })),
+          });
+        },
       });
       this.drivers.set(run.workspaceId, driver);
       await mkdir(run.shotDir, { recursive: true });
@@ -1199,11 +1210,16 @@ export class RunCoordinator {
   private async watch(props: { run: IWalkRun; driver: IDeviceDriver }): Promise<void> {
     const { run, driver } = props;
     const { workspaceId } = run;
-    const isStreaming = await driver.stream((jpeg) => {
+    const isStreaming = await driver.stream((jpeg, screen) => {
       const viewport =
         this.viewports.get(workspaceId) ?? run.viewport ?? WEB_DRIVER.viewport;
 
-      this.live.push({ workspaceId, jpeg, ratio: viewport.width / viewport.height });
+      this.live.push({
+        workspaceId,
+        ...(screen === undefined ? {} : { screen }),
+        jpeg,
+        ratio: viewport.width / viewport.height,
+      });
     });
     const url = this.live.urlFor(workspaceId);
 

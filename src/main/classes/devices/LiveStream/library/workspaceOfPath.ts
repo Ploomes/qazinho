@@ -3,7 +3,7 @@
  * recebe nada.
  */
 export function workspaceOfPath(props: { path: string; token: string }): string | null {
-  const [, token, workspace, ...rest] = props.path.split('/');
+  const [, token, workspace, ...rest] = (props.path.split('?')[0] ?? '').split('/');
 
   if (token !== props.token || !workspace || rest.length > 0) return null;
 

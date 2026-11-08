@@ -42,6 +42,7 @@ export function resumeRun(props: {
       run.outcomes.findLast(({ screenshot }) => screenshot !== null)?.screenshot ?? null,
     streamUrl: run.streamUrl,
     ...(run.address === null ? {} : { address: run.address }),
+    ...(run.screens === undefined ? {} : { screens: run.screens }),
     costUsd: run.costUsd,
     by,
     ...(run.isExploring ? { kind: 'explore' as const } : {}),

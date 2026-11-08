@@ -37,6 +37,8 @@ export const useDeviceFocusViewModel = (props: IDeviceFocusProps) => {
       '--focus-chrome': `${String(DEVICE.focusChrome)}px`,
       '--focus-ratio': String(props.ratio),
       '--focus-steps-min': `${String(DEVICE.focusStepsMin)}px`,
+      '--device-rail-width': `${String(DEVICE.railWidth)}px`,
+      '--device-ratio': String(props.ratio),
     } as CSSProperties,
     nowEyebrow:
       current?.verdict === 'running' ? t('DEVICE.FOCUS_NOW') : t('DEVICE.FOCUS_NEXT'),
@@ -54,5 +56,13 @@ export const useDeviceFocusViewModel = (props: IDeviceFocusProps) => {
     stepsRef,
     onStepsScroll,
     hasViewports: props.viewports.length > 0,
+    hasRail: props.screens.length > 1,
+    frameClassName: props.isPhone
+      ? 'device-focus__phone'
+      : props.screens.length > 2
+        ? 'device-focus__browser device-focus__browser--stack device-focus__browser--stack-deep'
+        : props.screens.length > 1
+          ? 'device-focus__browser device-focus__browser--stack'
+          : 'device-focus__browser',
   };
 };

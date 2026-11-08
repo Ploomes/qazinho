@@ -1,7 +1,7 @@
 import type { ILiveQuestion } from './ILiveQuestion';
 import type { IWalkedBy } from './IWalkedBy';
 import type { IRunSuggestion } from '@/modules/Run/types';
-import type { IRunAsked, IStepOutcome, RunHow } from '@/shared/types';
+import type { IRunAsked, IRunScreen, IStepOutcome, RunHow } from '@/shared/types';
 
 /**
  * A run em andamento: o passo, o tempo, o que ela decidiu, e as perguntas que o agente
@@ -21,6 +21,7 @@ export interface ILiveRun {
   shot: string | null;
   streamUrl: string | null;
   address?: string;
+  screens?: IRunScreen[];
   costUsd: number | null;
   by: IWalkedBy;
   kind?: 'explore';

@@ -1,6 +1,7 @@
 import type { IRunAsked } from './IRunAsked';
 import type { IRunFinding } from './IRunFinding';
 import type { IRunQuestion } from './IRunQuestion';
+import type { IRunScreen } from './IRunScreen';
 import type { IStepOutcome } from './IStepOutcome';
 import type { RunHow } from './RunHow';
 import type { TargetKind } from './TargetKind';
@@ -17,6 +18,7 @@ export interface IRunInFlight {
   how?: RunHow;
   streamUrl: string | null;
   address: string | null;
+  screens?: IRunScreen[];
   outcomes: IStepOutcome[];
   isPaused: boolean;
   costUsd: number | null;

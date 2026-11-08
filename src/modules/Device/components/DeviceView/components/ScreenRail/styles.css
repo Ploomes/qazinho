@@ -1,0 +1,72 @@
+.screen-rail {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-self: stretch;
+  justify-content: center;
+  gap: var(--space-3);
+  width: var(--device-rail-width);
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.screen-rail__screen {
+  display: flex;
+  flex: none;
+  align-items: flex-start;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ink3);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.screen-rail__screen:hover,
+.screen-rail__screen--shown {
+  color: var(--ink);
+}
+
+.screen-rail__number {
+  flex: none;
+  width: 10px;
+  font: var(--font-mono-xs);
+  text-align: right;
+}
+
+.screen-rail__picture {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  aspect-ratio: var(--device-ratio);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xs);
+  background: var(--screen);
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.screen-rail__screen:hover .screen-rail__picture {
+  border-color: var(--ink3);
+}
+
+.screen-rail__screen--shown .screen-rail__picture {
+  border-color: var(--lime);
+}
+
+.screen-rail__picture img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+}
+
+.screen-rail__agent {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  display: inline-flex;
+}

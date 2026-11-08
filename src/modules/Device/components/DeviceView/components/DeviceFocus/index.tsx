@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { DeviceScreen } from '@/modules/Device/components/DeviceView/components/DeviceScreen';
 import { LiveClock } from '@/modules/Device/components/DeviceView/components/LiveClock';
+import { ScreenRail } from '@/modules/Device/components/DeviceView/components/ScreenRail';
 import { ViewportPicker } from '@/modules/Device/components/DeviceView/components/ViewportPicker';
 import { DEVICE } from '@/modules/Device/constants';
 import { Button, Eyebrow, Intern, Kbd, StatusPill } from '@/shared/components/atoms';
@@ -24,6 +25,8 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
     stepsRef,
     onStepsScroll,
     hasViewports,
+    hasRail,
+    frameClassName,
   } = useDeviceFocusViewModel(props);
   const { t } = useTranslation();
 
@@ -37,21 +40,33 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
       transition={{ duration: MOTION.duration, ease: MOTION.ease }}
     >
       <div className="device-focus__stage">
-        <motion.div
-          layoutId={DEVICE.frameLayoutId}
-          className={props.isPhone ? 'device-focus__phone' : 'device-focus__browser'}
-          transition={{ duration: MOTION.durationSlow, ease: MOTION.ease }}
-        >
-          {!props.isPhone && (
-            <div className="device-focus__chrome">
-              <span className="device-focus__dot" />
-              <span className="device-focus__dot" />
-              <span className="device-focus__dot" />
-              <span className="device-focus__url">{props.urlText}</span>
-            </div>
-          )}
-          <DeviceScreen shot={props.shot} stream={props.stream} ratio={props.ratio} />
-        </motion.div>
+        {hasRail && (
+          <ScreenRail
+            label={props.railLabel}
+            screens={props.screens}
+            onPick={props.onPickScreen}
+          />
+        )}
+
+        <div className="device-focus__frame">
+          <motion.div
+            layoutId={DEVICE.frameLayoutId}
+            className={frameClassName}
+            transition={{ duration: MOTION.durationSlow, ease: MOTION.ease }}
+          >
+            {!props.isPhone && (
+              <div className="device-focus__chrome">
+                <span className="device-focus__dot" />
+                <span className="device-focus__dot" />
+                <span className="device-focus__dot" />
+                <span className="device-focus__url">{props.urlText}</span>
+              </div>
+            )}
+            <motion.div className="device-focus__swap" animate={props.swap}>
+              <DeviceScreen shot={props.shot} stream={props.stream} ratio={props.ratio} />
+            </motion.div>
+          </motion.div>
+        </div>
       </div>
 
       <motion.aside
@@ -66,6 +81,15 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
             <Intern mood={props.mood} size={26} isStill />
             {props.stateText}
           </span>
+          {props.pickedNotice !== null && (
+            <button
+              type="button"
+              className="device-focus__follow"
+              onClick={props.onFollowAgent}
+            >
+              {props.pickedNotice}
+            </button>
+          )}
           <Button size="sm" variant="ghost" onClick={props.onClose}>
             {t('DEVICE.FOCUS_LEAVE')}
             <Kbd combo="Esc" />

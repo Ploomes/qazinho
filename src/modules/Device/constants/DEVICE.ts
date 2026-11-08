@@ -7,4 +7,7 @@ export const DEVICE = {
   focusSide: 340,
   focusChrome: 36,
   focusStepsMin: 140,
+  railWidth: 112,
+  railRefreshMs: 1_000,
+  swapFrom: { opacity: 0.45, x: 10, y: -10, scale: 0.985 },
 } as const;

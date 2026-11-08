@@ -1,6 +1,7 @@
 import type { IDeviceScreenProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
+import { releaseStream } from '@/modules/Device/library';
 import { MOTION } from '@/shared/constants';
 import { BugFlash } from './components';
 import { useDeviceScreenViewModel } from './hooks';
@@ -17,6 +18,7 @@ export const DeviceScreen: React.FC<IDeviceScreenProps> = (props) => {
         {stream !== null ? (
           <img
             key="stream"
+            ref={releaseStream}
             className="device-screen__stream"
             src={stream}
             alt={t('DEVICE.SHOT_ALT')}

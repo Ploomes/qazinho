@@ -148,6 +148,7 @@ export type * from './IRunFinding';
 export type * from './IRunInFlight';
 export type * from './IRunQuestion';
 export type * from './IRunRef';
+export type * from './IRunScreen';
 export type * from './IRunVideo';
 export type * from './ISavedState';
 export type * from './ISavedWorkspace';

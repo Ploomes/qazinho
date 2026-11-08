@@ -1,5 +1,6 @@
 import type { IWalkRun } from '@/main/classes/runs/RunCoordinator/types';
 import type { ShrinkImage } from '@/main/types';
+import type { IDeviceScreen } from '@salve-software/qazinho-harness';
 import type { IDeviceDriver } from '@salve-software/qazinho-harness/engine';
 import {
   AndroidDriver,
@@ -16,6 +17,7 @@ export function driverFor(props: {
   run: IWalkRun;
   shrink?: ShrinkImage;
   onAddress?: (url: string) => void;
+  onScreens?: (screens: IDeviceScreen[]) => void;
 }): IDeviceDriver {
   const { run } = props;
 
@@ -43,5 +45,6 @@ export function driverFor(props: {
     access: webAccessOf(run.values),
     ...(props.shrink === undefined ? {} : { shrink: props.shrink }),
     ...(props.onAddress === undefined ? {} : { onAddress: props.onAddress }),
+    ...(props.onScreens === undefined ? {} : { onScreens: props.onScreens }),
   });
 }

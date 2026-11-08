@@ -30,6 +30,7 @@ export const useRunEvents = () => {
   const landUnheardTalks = useWorkspaceStore((state) => state.landUnheardTalks);
   const markStreaming = useWorkspaceStore((state) => state.markStreaming);
   const markAddress = useWorkspaceStore((state) => state.markAddress);
+  const markScreens = useWorkspaceStore((state) => state.markScreens);
   const landNote = useWorkspaceStore((state) => state.landNote);
   const landCost = useWorkspaceStore((state) => state.landCost);
   const landFinding = useWorkspaceStore((state) => state.landFinding);
@@ -149,6 +150,8 @@ export const useRunEvents = () => {
       markStreaming({ workspaceId: event.workspaceId, url: event.url });
     else if (event.kind === 'address')
       markAddress({ workspaceId: event.workspaceId, url: event.url });
+    else if (event.kind === 'screens')
+      markScreens({ workspaceId: event.workspaceId, screens: event.screens });
     else if (event.kind === 'note')
       landNote({ workspaceId: event.workspaceId, text: event.text, who: agent });
     else if (event.kind === 'cost')

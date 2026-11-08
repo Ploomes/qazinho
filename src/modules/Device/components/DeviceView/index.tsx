@@ -7,6 +7,7 @@ import {
   DeviceOff,
   DeviceScreen,
   LiveClock,
+  ScreenRail,
   ViewportPicker,
 } from './components';
 import { useDeviceViewModel } from './hooks';
@@ -29,6 +30,15 @@ export const DeviceView: React.FC = () => {
     style,
     isPhone,
     hasScreen,
+    rootClassName,
+    hasRail,
+    railLabel,
+    screens,
+    stackClassName,
+    swap,
+    pickedNotice,
+    onPickScreen,
+    onFollowAgent,
     viewportClassName,
     hasControls,
     pauseLabel,
@@ -61,7 +71,7 @@ export const DeviceView: React.FC = () => {
   } = useDeviceViewModel();
 
   return (
-    <div className="device-view" style={style}>
+    <div className={rootClassName} style={style}>
       <AnimatePresence initial={false}>
         {hasScreen && (
           <motion.div
@@ -79,6 +89,15 @@ export const DeviceView: React.FC = () => {
                   <span className="device-view__state-text">{stateText}</span>
                   {isLive && <LiveClock label={elapsedLabel} />}
                 </span>
+              )}
+              {pickedNotice !== null && (
+                <button
+                  type="button"
+                  className="device-view__follow"
+                  onClick={onFollowAgent}
+                >
+                  {pickedNotice}
+                </button>
               )}
               <span className="device-view__collapse">
                 {hasViewportPicker && (
@@ -107,51 +126,71 @@ export const DeviceView: React.FC = () => {
       </AnimatePresence>
 
       <div className={viewportClassName}>
-        {!hasScreen && isPhone && (
-          <div className="device-view__phone">
-            <DeviceOff title={offTitle} detail={offDetail} mood={offMood} ended={ended} />
-          </div>
+        {hasRail && (
+          <ScreenRail label={railLabel} screens={screens} onPick={onPickScreen} />
         )}
 
-        {!hasScreen && !isPhone && (
-          <div className="device-view__browser">
-            <div className="device-view__chrome">
-              <span className="device-view__dot" />
-              <span className="device-view__dot" />
-              <span className="device-view__dot" />
-              <span className="device-view__url">{urlText}</span>
+        <div className="device-view__stage">
+          {!hasScreen && isPhone && (
+            <div className="device-view__phone">
+              <DeviceOff
+                title={offTitle}
+                detail={offDetail}
+                mood={offMood}
+                ended={ended}
+              />
             </div>
-            <DeviceOff title={offTitle} detail={offDetail} mood={offMood} ended={ended} />
-          </div>
-        )}
+          )}
 
-        {hasScreen && isFocused && <p className="device-view__focused">{focusedText}</p>}
-
-        {hasScreen && !isFocused && isPhone && (
-          <motion.div
-            layoutId={frameLayoutId}
-            transition={frameTransition}
-            className="device-view__phone"
-          >
-            <DeviceScreen shot={shot} stream={stream} ratio={screenRatio} />
-          </motion.div>
-        )}
-
-        {hasScreen && !isFocused && !isPhone && (
-          <motion.div
-            layoutId={frameLayoutId}
-            transition={frameTransition}
-            className="device-view__browser"
-          >
-            <div className="device-view__chrome">
-              <span className="device-view__dot" />
-              <span className="device-view__dot" />
-              <span className="device-view__dot" />
-              <span className="device-view__url">{urlText}</span>
+          {!hasScreen && !isPhone && (
+            <div className="device-view__browser">
+              <div className="device-view__chrome">
+                <span className="device-view__dot" />
+                <span className="device-view__dot" />
+                <span className="device-view__dot" />
+                <span className="device-view__url">{urlText}</span>
+              </div>
+              <DeviceOff
+                title={offTitle}
+                detail={offDetail}
+                mood={offMood}
+                ended={ended}
+              />
             </div>
-            <DeviceScreen shot={shot} stream={stream} ratio={screenRatio} />
-          </motion.div>
-        )}
+          )}
+
+          {hasScreen && isFocused && (
+            <p className="device-view__focused">{focusedText}</p>
+          )}
+
+          {hasScreen && !isFocused && isPhone && (
+            <motion.div
+              layoutId={frameLayoutId}
+              transition={frameTransition}
+              className="device-view__phone"
+            >
+              <DeviceScreen shot={shot} stream={stream} ratio={screenRatio} />
+            </motion.div>
+          )}
+
+          {hasScreen && !isFocused && !isPhone && (
+            <motion.div
+              layoutId={frameLayoutId}
+              transition={frameTransition}
+              className={stackClassName}
+            >
+              <div className="device-view__chrome">
+                <span className="device-view__dot" />
+                <span className="device-view__dot" />
+                <span className="device-view__dot" />
+                <span className="device-view__url">{urlText}</span>
+              </div>
+              <motion.div className="device-view__swap" animate={swap}>
+                <DeviceScreen shot={shot} stream={stream} ratio={screenRatio} />
+              </motion.div>
+            </motion.div>
+          )}
+        </div>
       </div>
 
       <AnimatePresence initial={false}>
@@ -191,6 +230,12 @@ export const DeviceView: React.FC = () => {
             <DeviceFocus
               key="focus"
               isPhone={isPhone}
+              railLabel={railLabel}
+              screens={screens}
+              swap={swap}
+              pickedNotice={pickedNotice}
+              onPickScreen={onPickScreen}
+              onFollowAgent={onFollowAgent}
               shot={shot}
               stream={stream}
               isLive={isLive}

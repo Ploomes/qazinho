@@ -8,12 +8,39 @@
 }
 
 .device-focus__stage {
-  display: grid;
-  place-items: center;
+  display: flex;
+  gap: var(--space-5);
   min-width: 0;
   min-height: 0;
   padding: var(--space-7);
+}
+
+.device-focus__frame {
+  display: grid;
+  flex: 1 1 0;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
   container-type: size;
+}
+
+.device-focus__swap {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.device-focus__follow {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--lime-ink);
+  font: var(--font-mono-xs);
+  text-align: right;
+  cursor: pointer;
 }
 
 .device-focus__browser {
@@ -27,6 +54,22 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   box-shadow: var(--sticker-hero);
+}
+
+.device-focus__browser--stack {
+  box-shadow:
+    8px -8px 0 -1px var(--raise),
+    8px -8px 0 0 var(--line),
+    var(--sticker-hero);
+}
+
+.device-focus__browser--stack-deep {
+  box-shadow:
+    8px -8px 0 -1px var(--raise),
+    8px -8px 0 0 var(--line),
+    16px -16px 0 -1px var(--raise2),
+    16px -16px 0 0 var(--line),
+    var(--sticker-hero);
 }
 
 .device-focus__phone {

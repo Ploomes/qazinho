@@ -4,7 +4,7 @@ import type { AddressInfo } from 'node:net';
 import { randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
 import { LIVE_STREAM } from './constants';
-import { mjpegPart, workspaceOfPath } from './library';
+import { isStillPath, mjpegPart, streamKeyOf, workspaceOfPath } from './library';
 
 /**
  * Serve o dispositivo de cada workspace como MJPEG em loopback, para o vídeo nunca cruzar
@@ -32,27 +32,40 @@ export class LiveStream {
     this.port = (server.address() as AddressInfo).port;
   }
 
-  public urlFor(workspaceId: string): string | null {
+  public urlFor(workspaceId: string, screen?: number): string | null {
     if (!this.server) return null;
 
-    return `http://${LIVE_STREAM.host}:${String(this.port)}/${this.token}/${encodeURIComponent(workspaceId)}`;
+    return `http://${LIVE_STREAM.host}:${String(this.port)}/${this.token}/${encodeURIComponent(streamKeyOf({ workspaceId, screen }))}`;
   }
 
-  public push(props: { workspaceId: string; jpeg: Buffer; ratio: number }): void {
+  public push(props: {
+    workspaceId: string;
+    screen?: number;
+    jpeg: Buffer;
+    ratio: number;
+  }): void {
+    const key = streamKeyOf({ workspaceId: props.workspaceId, screen: props.screen });
     const frame = { jpeg: props.jpeg, at: Date.now(), ratio: props.ratio };
 
-    this.latest.set(props.workspaceId, frame);
+    this.latest.set(key, frame);
 
     const part = mjpegPart({ boundary: LIVE_STREAM.boundary, ...frame });
 
-    for (const viewer of this.viewers.get(props.workspaceId) ?? []) viewer.write(part);
+    for (const viewer of this.viewers.get(key) ?? []) viewer.write(part);
   }
 
   public end(workspaceId: string): void {
-    for (const viewer of this.viewers.get(workspaceId) ?? []) viewer.end();
+    const keys = [...new Set([...this.viewers.keys(), ...this.latest.keys()])].filter(
+      (key) =>
+        key === workspaceId || key.startsWith(`${workspaceId}${LIVE_STREAM.screenMark}`),
+    );
 
-    this.viewers.delete(workspaceId);
-    this.latest.delete(workspaceId);
+    for (const key of keys) {
+      for (const viewer of this.viewers.get(key) ?? []) viewer.end();
+
+      this.viewers.delete(key);
+      this.latest.delete(key);
+    }
   }
 
   public close(): void {
@@ -72,6 +85,23 @@ export class LiveStream {
       return;
     }
 
+    if (isStillPath(request.url ?? '')) {
+      const frame = this.latest.get(workspaceId);
+
+      if (frame === undefined) response.writeHead(204).end();
+      else
+        response
+          .writeHead(200, {
+            'Content-Type': 'image/jpeg',
+            'Cache-Control': 'no-store',
+            'Access-Control-Allow-Origin': '*',
+            Connection: 'close',
+          })
+          .end(frame.jpeg);
+
+      return;
+    }
+
     response.writeHead(200, {
       'Content-Type': `multipart/x-mixed-replace; boundary=${LIVE_STREAM.boundary}`,
       'Cache-Control': 'no-store',
@@ -86,7 +116,12 @@ export class LiveStream {
 
     const latest = this.latest.get(workspaceId);
 
-    if (latest) response.write(mjpegPart({ boundary: LIVE_STREAM.boundary, ...latest }));
+    if (latest) {
+      const part = mjpegPart({ boundary: LIVE_STREAM.boundary, ...latest });
+
+      response.write(part);
+      response.write(part);
+    }
 
     request.on('close', () => {
       viewers.delete(response);

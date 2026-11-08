@@ -6,6 +6,10 @@ describe('workspaceOfPath', () => {
     expect(workspaceOfPath({ path: '/t0k/w%201', token: 't0k' })).toBe('w 1');
   });
 
+  it('reads the workspace of a request for one picture of it', () => {
+    expect(workspaceOfPath({ path: '/t0k/w1~2?still=3', token: 't0k' })).toBe('w1~2');
+  });
+
   it('does NOT answer a path with another token', () => {
     expect(workspaceOfPath({ path: '/guess/w1', token: 't0k' })).toBeNull();
   });

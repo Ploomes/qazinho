@@ -6,6 +6,7 @@ export * from './deviceStateOf';
 export * from './formatElapsed';
 export * from './imageRatioOf';
 export * from './moodOfStatus';
+export * from './releaseStream';
 export * from './shownUrlOf';
 export * from './stepSectionsOf';
 export * from './stepVerdictsOf';

@@ -1,6 +1,12 @@
 import type { IActivityLine } from '@/modules/Chat/types';
-import type { IDeviceStep, IViewportChoice, ViewportId } from '@/modules/Device/types';
+import type {
+  IDeviceStep,
+  IScreenThumb,
+  IViewportChoice,
+  ViewportId,
+} from '@/modules/Device/types';
 import type { InternMood } from '@/shared/components/atoms/Intern/types';
+import type { useAnimationControls } from 'motion/react';
 
 /**
  * O dispositivo sozinho, enchendo o app: a tela, em que o agente está, e os controles da
@@ -8,6 +14,12 @@ import type { InternMood } from '@/shared/components/atoms/Intern/types';
  */
 export interface IDeviceFocusProps {
   isPhone: boolean;
+  railLabel: string;
+  screens: IScreenThumb[];
+  swap: ReturnType<typeof useAnimationControls>;
+  pickedNotice: string | null;
+  onPickScreen: (id: number) => void;
+  onFollowAgent: () => void;
   shot: string | null;
   stream: string | null;
   isLive: boolean;

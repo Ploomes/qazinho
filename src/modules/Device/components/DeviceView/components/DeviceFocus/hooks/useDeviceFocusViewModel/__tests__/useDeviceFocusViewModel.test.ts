@@ -15,6 +15,12 @@ const focus = (props: Partial<IDeviceFocusProps>) =>
   renderHook(() =>
     useDeviceFocusViewModel({
       isPhone: false,
+      railLabel: 'Open screens',
+      screens: [],
+      swap: {} as never,
+      pickedNotice: null,
+      onPickScreen: vi.fn(),
+      onFollowAgent: vi.fn(),
       shot: null,
       stream: null,
       isLive: true,
