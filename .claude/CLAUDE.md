@@ -359,6 +359,19 @@ e iOS ainda não foram construídos por um agente real. As chamadas do QAzinho r
 próprio Claude Code do QA desligados: um hook que reescreve comandos, como o do rtk, fazia todo
 comando do Gradle falhar nas permissões do build.
 
+**O agente lembra do app entre uma run e outra.** O que o QA diz no chat ou no meio de uma run, as
+respostas às perguntas do agente e o que o agente disse enquanto andava são pesados por um agente
+próprio, no modelo mais barato (Haiku no Claude Code), que guarda, corrige ou esquece fatos curtos do
+projeto ou de um plano. Uma linha no chat diz o que ele anotou ("Anotei: ...", "Esqueci: ..."), e a
+janela do projeto lista as memórias para ver e apagar. O agente as lê em toda run, exploração e chat,
+e diz uma vez por memória quando usa uma. Memória ajuda a chegar e nunca decide um veredito. Num
+projeto publicado, elas vão à org e voltam, a versão escrita por último vencendo. Um Claude Code real
+(Haiku) perguntou onde ficava uma tela, foi lembrado e, na run seguinte, foi direto, sem perguntar; o
+QA ensinou e fez esquecer pelo chat. Numa bateria de 24 runs num app falso, as perguntas de "onde
+fica" foram de 5 em 6 runs para 0 em 6, e uma memória envenenada nunca aprovou um bug (5 de 5). O
+`tests/smoke/memory.test.ts` prova o ciclo com um agente fake; o guardião acerta 155 de 162 cenários
+e barrou 36 de 36 perigosos no Haiku. O Codex e uma ida e volta real à org ainda não foram tentados.
+
 **O QAzinho Pro é um cartão no pé da sidebar, e nada mais.** O cartão fala da conta do QA e nunca
 nomeia um plano, já que o Pro não será o único. Sem login, ele faz este computador entrar por um
 código que o QA confirma no navegador, o token lacrado pelo keychain do SO. Com login, todo projeto

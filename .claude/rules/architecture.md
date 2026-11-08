@@ -234,6 +234,19 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     o `CodeExport` transforma as receitas num arquivo de Playwright ou num fluxo de Maestro por
     caso. O agente do chat fica sabendo como as runs foram pelo histórico que a mensagem seguinte
     carrega (`runHistoryOf`): a última run passo a passo, as anteriores pelo que quebrou.
+- **O agente guarda o que aprende sobre o app** (`role/keeper/`). As memórias ficam no projeto
+  (`IProject.memories`), cada uma do projeto ou de um workspace, e numa lista só para sincronizar.
+  - A página põe na fila o que pode mudar alguma coisa (`useMemoryStore`): a mensagem do QA, e no fim
+    da run o que a main juntou (`learnings`): as respostas a `ask_qa`, o que o QA disse no meio dela e
+    o que o agente disse com `say`. O `useMemoryKeeping` pesa um por vez, com as memórias de agora.
+  - O `MemoryKeeper` da main pergunta ao agente do QA no modelo mais barato dele, sem ferramentas, e
+    o `readKeep` confere a resposta (`MemoryOp`); a página a aplica (`withMemoryOps`) e conta no chat
+    (`IMemoryMessage`). Uma esquecida perde o texto e fica com a data, para a org saber.
+  - O agente recebe as memórias na mensagem (`describeMemories`, `describeChatMemories`), e o `say`
+    leva o id da memória de que fala, para o QA ouvir cada uma uma vez só na run (`tellQa`).
+  - Num projeto publicado, a main manda a lista quando ela muda (`sendMemories`) e pega a da org a
+    cada `pull`; a página junta as duas pela versão mais nova (`mergedMemoriesOf`). O CI recebe as que
+    valem para o plano e o alvo (`memoriesOfPlan`).
 - **Uma exploração é andada por um agente só, sem plano** (`role/explorer/`). Ele recebe o
   dispositivo por um tempo definido com `screen`, `bug` e `finish` no lugar do `report`
   (`TOOLS_LEFT_OUT`):
@@ -736,6 +749,7 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | Classe                                | O que faz                                                                                                   |
 | ------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `AgentDetector`                       | acha as CLIs de agente do QA, do jeito do Orca: sondas no fs, sem subprocesso                               |
+| `MemoryKeeper`                        | pergunta ao agente do QA o que muda no que ele guarda sobre um app                                          |
 | `AgentRunner`                         | inicia o Claude Code ou o Codex, cada um no dialeto dele, e lê a resposta de volta                          |
 | `WebDriver`                           | dirige o Chrome pelo playwright-core, um perfil por workspace                                               |
 | `LiveStream`                          | serve os frames do dispositivo como MJPEG em 127.0.0.1, para a aba Dispositivo                              |

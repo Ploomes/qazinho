@@ -101,6 +101,7 @@ próprio comando, e o CI nunca as roda.
 | `strip.test.ts`        | o app construído: os pedidos de uma run sob o vídeo, e baixados desenhados nele         |
 | `island.test.ts`       | o app construído: a janela da ilha transparente, no Dock, sem corte, setas e teclado    |
 | `outside.test.ts`      | um cliente MCP real no app construído: token, navegador, rodar, esperar, parar, sugerir |
+| `memory.test.ts`       | o app construído: a resposta do QA vira memória, a próxima run a usa, o chat a esquece  |
 | `update.test.ts`       | o app construído num feed e numa API fakes: baixa sozinho, o botão, a tela de recusa    |
 
 O `run.test.ts`, o `chat.test.ts`, o `learn.test.ts` e o `visual.test.ts` gastam os tokens do QA
