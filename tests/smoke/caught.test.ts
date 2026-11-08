@@ -59,7 +59,7 @@ process.stdin.on('end', async () => {
     return client.callTool({ name, arguments: args });
   };
   await call('look', {});
-  await call('bug', { title: 'Botão diz Enviar, e não Salvar', severity: 'medium', expected: 'Salvar', got: 'Enviar', category: 'text' });
+  await call('bug', { title: 'Botão diz Enviar, e não Salvar', severity: 'medium', expected: 'Salvar', got: 'Enviar', category: 'text', target: 'Enviar' });
   await later(1500);
   await call('report', { step: 1, verdict: 'passed', why: 'Abriu', got: 'Painel', proof: 'Painel' });
   await client.close();
@@ -219,6 +219,7 @@ describe('a turn and a run that say what they are doing', () => {
       'Botão diz Enviar, e não Salvar',
     );
     expect(await flash.locator('.bug-flash__image').count()).toBe(1);
+    expect(await flash.locator('.bug-flash__mira--focus').count()).toBe(1);
     await flash.waitFor({ state: 'detached', timeout: 12_000 });
   }, 60_000);
 });
