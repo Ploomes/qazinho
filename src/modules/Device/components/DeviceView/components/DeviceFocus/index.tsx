@@ -1,5 +1,5 @@
 import type { IDeviceFocusProps } from './types';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { DeviceScreen } from '@/modules/Device/components/DeviceView/components/DeviceScreen';
 import { LiveClock } from '@/modules/Device/components/DeviceView/components/LiveClock';
@@ -83,6 +83,21 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
             )}
             {now}
           </p>
+          <AnimatePresence mode="wait" initial={false}>
+            {props.doingNow !== null && (
+              <motion.p
+                key={props.doingNow.id}
+                className="device-focus__doing"
+                title={props.doingNow.text}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
+              >
+                {props.doingNow.text}
+              </motion.p>
+            )}
+          </AnimatePresence>
         </div>
 
         {hasViewports && (

@@ -1,3 +1,4 @@
+export * from './activityLineOf';
 export * from './answerRound';
 export * from './appendAgentError';
 export * from './appendAgentMessage';
@@ -21,4 +22,5 @@ export * from './runFactsOf';
 export * from './runHistoryOf';
 export * from './sessionFor';
 export * from './splitMentions';
+export * from './withActivity';
 export * from './withLiveRun';

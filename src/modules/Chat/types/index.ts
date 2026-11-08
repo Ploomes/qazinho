@@ -1,6 +1,9 @@
+export type * from './ActivityKey';
 export type * from './ChatCommandId';
 export type * from './ChatItem';
 export type * from './ChatMessage';
+export type * from './IActivityLine';
+export type * from './IAgentActivity';
 export type * from './IAgentMessage';
 export type * from './IAskMessage';
 export type * from './ICodeCommand';

@@ -15,6 +15,7 @@ const section = (props: Partial<IRunSectionProps> = {}) =>
       isExpanded: false,
       isExpandable: true,
       openLabel: null,
+      activity: [],
       onToggle: vi.fn(),
       onOpen: vi.fn(),
       children: null,
@@ -60,5 +61,13 @@ describe('useRunSectionViewModel', () => {
 
   it('marks the run that is still going', () => {
     expect(section({ isLive: true }).className).toBe('run-section run-section--live');
+  });
+
+  it('tells what the agent is doing only while the run goes on', () => {
+    const activity = [{ id: 1, text: 'Reading the screen', isBug: false }];
+
+    expect(section({ isLive: true, activity }).hasActivity).toBe(true);
+    expect(section({ isLive: false, activity }).hasActivity).toBe(false);
+    expect(section({ isLive: true, activity: [] }).hasActivity).toBe(false);
   });
 });

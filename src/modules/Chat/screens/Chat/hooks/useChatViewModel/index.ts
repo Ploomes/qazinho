@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useChatAgent } from '@/modules/Chat/hooks/useChatAgent';
 import {
+  activityLineOf,
   closedMarkdown,
   formatAnswers,
   formatSize,
@@ -76,6 +77,7 @@ export const useChatViewModel = () => {
     sessionId: opened.sessionId,
     sessionAgentId: opened.sessionAgentId,
     chat: opened.chat,
+    design: opened.design,
     plan: opened.plan,
     runs: opened.runs,
     bugs: opened.bugs,
@@ -93,6 +95,7 @@ export const useChatViewModel = () => {
   }));
   const askingIds = useWorkspaceStore((state) => state.askingIds);
   const liveTexts = useWorkspaceStore((state) => state.liveTexts);
+  const activities = useWorkspaceStore((state) => state.activities);
   const retries = useWorkspaceStore((state) => state.retries);
   const readSteps = useWorkspaceStore((state) => state.readSteps);
   const lookingAt = useWorkspaceStore((state) => state.lookingAt);
@@ -215,6 +218,17 @@ export const useChatViewModel = () => {
   };
 
   const isWalking = workspace?.isWalking === true;
+  const activityLines = (
+    workspace === null ? [] : (activities[workspace.id] ?? [])
+  ).flatMap((activity) => {
+    const line = activityLineOf({
+      activity,
+      hasDesign: workspace?.design !== null,
+      say: (key, values) => t(key, values),
+    });
+
+    return line === null ? [] : [line];
+  });
   const liveId = isWalking ? (workspace?.liveId ?? null) : null;
 
   const send = (text: string, isSecretKept = isSecretSent) => {
@@ -421,6 +435,10 @@ export const useChatViewModel = () => {
                   progress,
                 )
               : t('CHAT.RUN_SECTION', { id: item.runId }),
+      activity:
+        isLive && activityLines.length === 0 && workspace?.walked === 0
+          ? [{ id: 0, text: t('CHAT.DOING_START'), isBug: false }]
+          : activityLines,
       facts: isLive
         ? formatElapsed(workspace?.elapsedSec ?? 0)
         : saved === null
@@ -509,6 +527,7 @@ export const useChatViewModel = () => {
     isAgentTyping,
     liveText: isAgentTyping ? closedMarkdown(liveText) : '',
     liveWho: agentName,
+    activity: isAgentTyping ? activityLines.slice(-1) : [],
     retryText:
       isAgentTyping && retry !== undefined
         ? t('CHAT.RETRYING', { attempt: retry.attempt, max: retry.maxRetries })

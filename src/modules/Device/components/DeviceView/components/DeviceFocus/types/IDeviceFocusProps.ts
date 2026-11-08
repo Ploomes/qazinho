@@ -1,3 +1,4 @@
+import type { IActivityLine } from '@/modules/Chat/types';
 import type { IDeviceStep, IViewportChoice, ViewportId } from '@/modules/Device/types';
 import type { InternMood } from '@/shared/components/atoms/Intern/types';
 
@@ -16,6 +17,7 @@ export interface IDeviceFocusProps {
   mood: InternMood;
   steps: IDeviceStep[];
   doingLabel: string;
+  doingNow: IActivityLine | null;
   stepsWord: string;
   hasControls: boolean;
   pauseLabel: string;

@@ -2,6 +2,7 @@ import type { IDeviceStep, IViewportChoice, ViewportId } from '@/modules/Device/
 import type { CSSProperties } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { activityLineOf } from '@/modules/Chat/library';
 import { DEVICE, VIEWPORTS } from '@/modules/Device/constants';
 import {
   deviceStateOf,
@@ -29,6 +30,7 @@ export const useDeviceViewModel = () => {
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const openReplay = useAppStore((state) => state.openReplay);
   const chatDevices = useWorkspaceStore((state) => state.chatDevices);
+  const activities = useWorkspaceStore((state) => state.activities);
   const {
     runSteps,
     live,
@@ -91,6 +93,16 @@ export const useDeviceViewModel = () => {
       resetKey: workspaceId,
       isOn: isRunLive,
     });
+
+  const activity = workspace === null ? undefined : activities[workspace.id]?.at(-1);
+  const doingNow =
+    activity === undefined
+      ? null
+      : activityLineOf({
+          activity,
+          hasDesign: workspace?.design !== null,
+          say: (key, values) => t(key, values),
+        });
 
   useEffect(() => {
     if (workspaceId === null || stream === null || !isFocused) return;
@@ -179,6 +191,7 @@ export const useDeviceViewModel = () => {
     stepsRef,
     onStepsScroll,
     isLive: state === 'driving',
+    doingNow,
     steps,
     sections: stepSectionsOf(reached),
     hasSteps: isRunLive && reached.length > 0,

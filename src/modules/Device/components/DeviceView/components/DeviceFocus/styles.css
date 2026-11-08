@@ -113,6 +113,15 @@
   gap: var(--space-3);
 }
 
+.device-focus__doing {
+  margin: var(--space-3) 0 0;
+  overflow: hidden;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .device-focus__now-text {
   display: flex;
   gap: var(--space-3);

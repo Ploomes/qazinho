@@ -98,6 +98,14 @@
   overflow-wrap: break-word;
 }
 
+.run-section__activity {
+  overflow: hidden;
+}
+
+.run-section__activity-lines {
+  padding: 0 var(--space-5) var(--space-4) var(--space-7);
+}
+
 .run-section__open {
   display: inline-flex;
   flex: none;

@@ -1,3 +1,4 @@
+import type { IActivityLine } from '@/modules/Chat/types';
 import type { ReactNode } from 'react';
 
 /**
@@ -13,6 +14,7 @@ export interface IRunSectionProps {
   isExpanded: boolean;
   isExpandable: boolean;
   openLabel: string | null;
+  activity: IActivityLine[];
   onToggle: () => void;
   onOpen: () => void;
   children: ReactNode;

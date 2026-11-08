@@ -9,6 +9,7 @@ import {
   appendRunNote,
   appendUserMessage,
   formatClock,
+  withActivity,
 } from '@/modules/Chat/library';
 import { RUN_CLOCK } from '@/modules/Run/constants';
 import { PANEL } from '@/modules/Workspace/constants';
@@ -41,6 +42,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   panelWidth: PANEL.defaultWidth,
   askingIds: [],
   liveTexts: {},
+  activities: {},
   retries: {},
   readSteps: {},
   lookingAt: {},
@@ -149,9 +151,24 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   selectTab: (tab) => set(tab === 'chat' ? { isPanelOpen: true } : { panelTab: tab }),
 
+  noteActivity: ({ workspaceId, tool, target }) =>
+    set((state) => ({
+      activities: {
+        ...state.activities,
+        [workspaceId]: withActivity({
+          activities: state.activities[workspaceId] ?? [],
+          tool,
+          target,
+        }),
+      },
+    })),
+
   setLiveText: ({ workspaceId, text }) =>
     set((state) => ({
       liveTexts: { ...state.liveTexts, [workspaceId]: text },
+      activities: state.askingIds.includes(workspaceId)
+        ? withoutKey({ record: state.activities, key: workspaceId })
+        : state.activities,
       retries: withoutKey({ record: state.retries, key: workspaceId }),
       readSteps: withoutKey({ record: state.readSteps, key: workspaceId }),
       lookingAt: withoutKey({ record: state.lookingAt, key: workspaceId }),
@@ -185,6 +202,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       readSteps: withoutKey({ record: state.readSteps, key: workspaceId }),
       lookingAt: withoutKey({ record: state.lookingAt, key: workspaceId }),
       liveTexts: { ...state.liveTexts, [workspaceId]: '' },
+      activities: withoutKey({ record: state.activities, key: workspaceId }),
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -203,6 +221,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   landAgentText: ({ workspaceId, text, who, agentId, sessionId }) =>
     set((state) => ({
+      activities: withoutKey({ record: state.activities, key: workspaceId }),
       askingIds: state.askingIds.filter((id) => id !== workspaceId),
       retries: withoutKey({ record: state.retries, key: workspaceId }),
       readSteps: withoutKey({ record: state.readSteps, key: workspaceId }),
@@ -282,6 +301,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       readSteps: withoutKey({ record: state.readSteps, key: workspaceId }),
       lookingAt: withoutKey({ record: state.lookingAt, key: workspaceId }),
       liveTexts: { ...state.liveTexts, [workspaceId]: '' },
+      activities: withoutKey({ record: state.activities, key: workspaceId }),
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -296,6 +316,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       readSteps: withoutKey({ record: state.readSteps, key: workspaceId }),
       lookingAt: withoutKey({ record: state.lookingAt, key: workspaceId }),
       liveTexts: { ...state.liveTexts, [workspaceId]: '' },
+      activities: withoutKey({ record: state.activities, key: workspaceId }),
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -311,6 +332,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       readSteps: withoutKey({ record: state.readSteps, key: workspaceId }),
       lookingAt: withoutKey({ record: state.lookingAt, key: workspaceId }),
       liveTexts: { ...state.liveTexts, [workspaceId]: '' },
+      activities: withoutKey({ record: state.activities, key: workspaceId }),
     })),
 
   changePlan: ({ workspaceId, plan }) =>
@@ -334,6 +356,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   startRun: ({ workspaceId, runId, by, kind, caseIds }) =>
     set((state) => ({
+      activities: withoutKey({ record: state.activities, key: workspaceId }),
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -407,6 +430,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   stopRun: (workspaceId) =>
     set((state) => ({
+      activities: withoutKey({ record: state.activities, key: workspaceId }),
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -523,6 +547,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   landRunDone: (workspaceId) =>
     set((state) => ({
+      activities: withoutKey({ record: state.activities, key: workspaceId }),
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -542,6 +567,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   landRunFailed: ({ workspaceId, text, detail }) =>
     set((state) => ({
+      activities: withoutKey({ record: state.activities, key: workspaceId }),
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,

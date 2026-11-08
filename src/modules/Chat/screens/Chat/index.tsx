@@ -2,7 +2,14 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Button, Chip, Icon, Intern, Markdown } from '@/shared/components/atoms';
 import { MOTION, STICKER } from '@/shared/constants';
-import { AskCard, ChatRow, Composer, RunSection, TypingDots } from './components';
+import {
+  AskCard,
+  ChatRow,
+  Composer,
+  RunActivity,
+  RunSection,
+  TypingDots,
+} from './components';
 import { useChatViewModel } from './hooks';
 import './styles.css';
 
@@ -16,6 +23,7 @@ export const Chat: React.FC = () => {
     isAgentTyping,
     liveText,
     liveWho,
+    activity,
     retryText,
     readStatus,
     lookStatus,
@@ -102,6 +110,7 @@ export const Chat: React.FC = () => {
                 isExpanded={item.isExpanded}
                 isExpandable={item.isExpandable}
                 openLabel={item.openLabel}
+                activity={item.activity}
                 onToggle={() => {
                   onToggleRun(item.runId);
                 }}
@@ -166,6 +175,7 @@ export const Chat: React.FC = () => {
               <div className="chat__body chat__live">
                 {liveText !== '' && <Markdown isStreaming>{liveText}</Markdown>}
                 <TypingDots />
+                {activity.length > 0 && <RunActivity lines={activity} />}
                 <AnimatePresence initial={false}>
                   {lookStatus !== '' && (
                     <motion.div

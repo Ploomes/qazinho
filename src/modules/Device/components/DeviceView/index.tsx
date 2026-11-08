@@ -55,6 +55,7 @@ export const DeviceView: React.FC = () => {
     onStepsScroll,
     onPause,
     onStop,
+    doingNow,
   } = useDeviceViewModel();
 
   return (
@@ -175,6 +176,7 @@ export const DeviceView: React.FC = () => {
               mood={mood}
               steps={steps}
               doingLabel={doingLabel}
+              doingNow={doingNow}
               stepsWord={stepsWord}
               hasControls={hasControls}
               pauseLabel={pauseLabel}

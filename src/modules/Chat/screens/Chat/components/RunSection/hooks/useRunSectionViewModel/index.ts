@@ -9,6 +9,7 @@ export const useRunSectionViewModel = (props: IRunSectionProps) => {
     facts: props.facts,
     isBodyShown,
     hasOpen: props.openLabel !== null,
+    hasActivity: props.isLive && props.activity.length > 0,
     className: props.isLive ? 'run-section run-section--live' : 'run-section',
     bodyTransition: { duration: MOTION.duration, ease: MOTION.ease },
     onToggle: () => {

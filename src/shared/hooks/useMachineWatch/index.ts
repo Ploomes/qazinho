@@ -19,6 +19,7 @@ export const useMachineWatch = () => {
     (state) => state.agents.find(({ name }) => name === agentName)?.id ?? null,
   );
   const setLiveText = useWorkspaceStore((state) => state.setLiveText);
+  const noteActivity = useWorkspaceStore((state) => state.noteActivity);
   const setRetry = useWorkspaceStore((state) => state.setRetry);
   const setReadStep = useWorkspaceStore((state) => state.setReadStep);
   const setLooking = useWorkspaceStore((state) => state.setLooking);
@@ -71,10 +72,25 @@ export const useMachineWatch = () => {
             streamUrl: event.streamUrl,
             address: event.address,
           });
+        } else if (event.kind === 'tool') {
+          noteActivity({
+            workspaceId: event.workspaceId,
+            tool: event.tool,
+            target: event.target,
+          });
         } else if (event.kind === 'text')
           setLiveText({ workspaceId: event.workspaceId, text: event.text });
       }),
-    [setUsage, setContext, setLiveText, setRetry, setReadStep, setLooking, setChatDevice],
+    [
+      setUsage,
+      setContext,
+      setLiveText,
+      noteActivity,
+      setRetry,
+      setReadStep,
+      setLooking,
+      setChatDevice,
+    ],
   );
 
   useEffect(() => {

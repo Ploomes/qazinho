@@ -1,5 +1,6 @@
 import type { IRunSectionProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
+import { RunActivity } from '@/modules/Chat/screens/Chat/components/RunActivity';
 import { Caret, Icon } from '@/shared/components/atoms';
 import { useRunSectionViewModel } from './hooks';
 import './styles.css';
@@ -9,8 +10,16 @@ import './styles.css';
  * disse dentro.
  */
 export const RunSection: React.FC<IRunSectionProps> = (props) => {
-  const { hasCaret, facts, isBodyShown, hasOpen, className, bodyTransition, onToggle } =
-    useRunSectionViewModel(props);
+  const {
+    hasCaret,
+    facts,
+    isBodyShown,
+    hasOpen,
+    hasActivity,
+    className,
+    bodyTransition,
+    onToggle,
+  } = useRunSectionViewModel(props);
 
   return (
     <section className={className}>
@@ -47,6 +56,23 @@ export const RunSection: React.FC<IRunSectionProps> = (props) => {
             </button>
           )}
         </div>
+
+        <AnimatePresence initial={false}>
+          {hasActivity && (
+            <motion.div
+              key="activity"
+              className="run-section__activity"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={bodyTransition}
+            >
+              <div className="run-section__activity-lines">
+                <RunActivity lines={props.activity} />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <AnimatePresence initial={false}>
           {isBodyShown && (
