@@ -58,16 +58,20 @@ um sticker. Toda tela o segue.
 
 **O alvo web funciona de ponta a ponta.** Um QA faz um projeto e um workspace, conversa com o
 próprio agente, recebe um plano, o roda e vê o Chrome real ser dirigido passo a passo. O plano sai
-de uma conversa: o agente olha o app, faz uma rodada de perguntas no chat, e confirma o que vai
-escrever antes de escrever. Na run, o agente lê a página, age, a run tira um screenshot, e o
-agente julga o que vê contra o que o QA esperava. Um passo que falha vira um bug com a evidência
-dele. Um bug que volta não é registrado duas vezes: os agentes de cada run ouvem os bugs abertos e
-nomeiam um visto de novo, um passo de plano que falha de novo cai no bug dele, e a aba Bugs conta
-as runs que o viram, com cada tela; um agente fake andando um plano duas vezes deixou um bug por
-problema, cada um visto em duas runs. Tudo é guardado em disco, uma pasta por workspace, com o
-plano ao lado em YAML, cada arquivo escrito inteiro. Um plan.yaml quebrado à mão é posto de lado,
-nunca sobrescrito: a aba Plano diz em qual linha, mostra o arquivo e o lê de novo depois de
-consertado.
+de uma conversa: o agente anda pelo app no navegador do QAzinho, que o QA acompanha na aba
+Dispositivo, conversa sobre o que diverge do que ele esperava, faz uma rodada de perguntas no chat,
+e confirma o que vai escrever antes de escrever. Um Claude Code real (Haiku) andou assim o painel de
+uma loja fake por meio centavo (`tests/smoke/learn.test.ts`): entrou com as variáveis, não salvou
+nada e disse onde as palavras do app discordavam das do QA. Um controle com test id (`data-testid` e
+parecidos) é nomeado e alvejado por ele, que segura quando as palavras mudam; num celular ainda não.
+Na run, o agente lê a página, age, a run tira um screenshot, e o agente julga o que vê contra o que
+o QA esperava. Um passo que falha vira um bug com a evidência dele. Um bug que volta não é
+registrado duas vezes: os agentes de cada run ouvem os bugs abertos e nomeiam um visto de novo, um
+passo de plano que falha de novo cai no bug dele, e a aba Bugs conta as runs que o viram, com cada
+tela; um agente fake andando um plano duas vezes deixou um bug por problema, cada um visto em duas
+runs. Tudo é guardado em disco, uma pasta por workspace, com o plano ao lado em YAML, cada arquivo
+escrito inteiro. Um plan.yaml quebrado à mão é posto de lado, nunca sobrescrito: a aba Plano diz em
+qual linha, mostra o arquivo e o lê de novo depois de consertado.
 
 O `npm run test:smoke` prova isso: ele dirige o navegador real com o agente real.
 

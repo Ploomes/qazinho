@@ -58,6 +58,7 @@ próprio comando, e o CI nunca as roda.
 | ---------------------- | --------------------------------------------------------------------------------------- |
 | `run.test.ts`          | o produto: Chrome real, o agente do próprio QA, um plano andado e julgado               |
 | `chat.test.ts`         | o agente do próprio QA planeja no schema, e fica sabendo de uma run ao retomar          |
+| `learn.test.ts`        | o agente do próprio QA anda uma loja no navegador do chat, entra e diz o que diverge    |
 | `visual.test.ts`       | o agente do próprio QA reprova uma página cujo texto está certo e a tela não            |
 | `page.test.ts`         | `out/renderer` num Chrome comum, sem bridge: a página não pode quebrar                  |
 | `electron.test.ts`     | a janela empacotada, onde `window.qazinho` é o preload real                             |
@@ -99,8 +100,9 @@ próprio comando, e o CI nunca as roda.
 | `outside.test.ts`      | um cliente MCP real no app construído: token, navegador, rodar, esperar, parar, sugerir |
 | `update.test.ts`       | o app construído num feed e numa API fakes: baixa sozinho, o botão, a tela de recusa    |
 
-O `run.test.ts`, o `chat.test.ts` e o `visual.test.ts` gastam os tokens do QA e precisam de um
-agente instalado. Rode-os à mão depois de mexer no pipeline da run ou no schema de uma resposta.
+O `run.test.ts`, o `chat.test.ts`, o `learn.test.ts` e o `visual.test.ts` gastam os tokens do QA
+e precisam de um agente instalado. Rode-os à mão depois de mexer no pipeline da run ou no schema de
+uma resposta.
 
 **Um clique sintético não é um clique.** O Playwright dirige a página pelo CDP, que pula o hit
 test que o gerenciador de janelas faz — então um `-webkit-app-region: drag` engolindo um clique

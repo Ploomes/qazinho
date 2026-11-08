@@ -235,9 +235,10 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
 - **As ferramentas são concedidas por papel** (`TOOL_GRANTS`). O runner e o explorador recebem o
   dispositivo, o assistente recebe o app, e o chat recebe as fontes dele: `read_jira_story`,
   `search_confluence` e `read_confluence_page` (`servers/sources/`), mais as ferramentas de leitura
-  do Figma do QA num workspace com design, e nenhuma outra ferramenta. O `McpHost` serve as
-  ferramentas em loopback, um endereço por workspace pelo tempo de uma run, e um sob o escopo
-  `~assistant` enquanto o assistente responde.
+  do Figma do QA num workspace com design, e, num alvo web, o navegador do próprio chat (`learn`:
+  ler, clicar, digitar, rolar, sem `report`, `bug` nem `ask_qa`), e nenhuma outra ferramenta. O
+  `McpHost` serve as ferramentas em loopback, um endereço por workspace pelo tempo de uma run, e
+  um sob o escopo `~assistant` enquanto o assistente responde.
   - Toda chamada do agente pode usar os servidores MCP do próprio QA, como o da empresa dele: eles
     são do QA e ele responde por eles. O `AgentRunner` entrega a cada chamada do Claude Code o
     `--permission-prompt-tool` no `approve_permission` do QAzinho (`withPermissions`), servido ao
@@ -429,9 +430,15 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
 - **Um plano sai de uma conversa, nunca de um palpite** (`role/chat/planning.md`), do jeito que o
   harness da Ploomes constrói uma tela:
   - Olhar: antes de uma mensagem de chat num alvo web, o `AppPeek` abre o app e o agente lê o que
-    a página dele mostrou. Num alvo Android ou iOS sem plano ainda, o `PhonePeek` abre o app no
-    emulador ou simulador, sem janela, e o agente lê a primeira tela; o chat diz isso enquanto
-    espera.
+    a página dele mostrou. Depois ele anda pelas telas do plano no navegador do próprio chat
+    (`ChatDevices`), um por workspace, que o QA acompanha na aba Dispositivo: entra com `${NOME}`,
+    só olha (nunca salva, envia ou apaga), anota os nomes reais e os test ids, e pergunta ao QA
+    sobre o que diverge. A resposta de cada tela lembra isso a ele (`LEARNING_NOTE`): no corpus, o
+    Haiku usava os nomes reais sem dizer ao QA que eram outros. Um `plan` sem caso é lido como
+    nenhum plano (`readChatAnswer`), ou trocaria o plano do workspace por um vazio. O navegador fica aberto entre mensagens e fecha parado por dez minutos,
+    quando uma run começa ou quando o workspace vai embora. Num alvo Android ou iOS sem plano
+    ainda, o `PhonePeek` abre o app no emulador ou simulador, sem janela, e o agente lê a primeira
+    tela; o chat diz isso enquanto espera.
   - Perguntar (uma pergunta por vez na tela: uma opção responde e segue, "Outra" abre o campo):
     uma rodada de perguntas fechadas nas `questions` da resposta, cada uma com duas a
     quatro opções e as palavras do próprio QA sempre abertas. A página a desenha como
@@ -697,6 +704,7 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | `WebDriver`                           | dirige o Chrome pelo playwright-core, um perfil por workspace                                               |
 | `LiveStream`                          | serve os frames do dispositivo como MJPEG em 127.0.0.1, para a aba Dispositivo                              |
 | `AppPeek`                             | abre um alvo web por um instante antes do chat, e lê o que a página dele mostra                             |
+| `ChatDevices`                         | o navegador em que o agente do chat anda pelo app antes de planejar, um por workspace, na aba Dispositivo   |
 | `PhonePeek`                           | abre um app de celular no emulador ou simulador antes de um plano, e lê a primeira tela                     |
 | `RunCoordinator`                      | anda um plano um caso por turno de agente, cada um com o app aberto de novo, ou pela receita                |
 | `CodeExport`                          | escreve os casos gravados como código Playwright ou Maestro, numa pasta que o QA escolhe                    |
