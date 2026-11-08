@@ -604,6 +604,9 @@ loopback (`LiveStream`), desenhado por um `<img>`.
 - Um iframe é lido e alcançado como o resto da página (`frameRootsOf`), os aninhados e os de
   outro site também: o `look` mostra cada um numa seção `FRAME`, e um alvo é procurado na página
   e depois em cada iframe, por um locator com o caminho dele, que o código exportado repete.
+- Um clique que a página não recebeu falha em palavras (`pressChecked`): o Chrome aceita um clique
+  que nunca entrega, e a ação responderia que deu certo. O aviso de senha vazada, que sem janela
+  ninguém fecha e prende o mouse, vem desligado no perfil (`writeChromePrefs`).
 - O Chrome mantém uma janela com pelo menos 500px de largura, então uma página do tamanho de um
   celular transmite enquadrada mais larga, e o `DeviceScreen` corta o stream no formato do
   viewport.
