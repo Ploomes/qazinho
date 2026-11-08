@@ -1,6 +1,6 @@
 import type { BugFilter, IBugReview } from '@/modules/Bug';
 import type { IAgentActivity, IQuestionAnswer, UserCommand } from '@/modules/Chat';
-import type { ViewportId } from '@/modules/Device';
+import type { IBugFlash, ViewportId } from '@/modules/Device';
 import type { IPublishedPlan, ITestCase } from '@/modules/Plan';
 import type { IWalkedBy, IWorkspace, PanelTab, WorkspaceTab } from '@/modules/Workspace';
 import type {
@@ -37,6 +37,7 @@ export interface IWorkspaceStore {
   askingIds: string[];
   liveTexts: Record<string, string>;
   activities: Record<string, IAgentActivity[]>;
+  bugFlashes: Record<string, IBugFlash[]>;
   retries: Record<string, { attempt: number; maxRetries: number }>;
   readSteps: Record<string, { step: CodeStep | JiraStep; bytes: number }>;
   lookingAt: Record<string, 'android' | 'ios'>;
@@ -103,6 +104,8 @@ export interface IWorkspaceStore {
   landAgentStopped: (workspaceId: string) => void;
   setLiveText: (props: { workspaceId: string; text: string }) => void;
   noteActivity: (props: { workspaceId: string; tool: string; target: string }) => void;
+  shiftBugFlash: (props: { workspaceId: string; id: string }) => void;
+  clearBugFlashes: (workspaceId: string) => void;
   setRetry: (props: { workspaceId: string; attempt: number; maxRetries: number }) => void;
   setReadStep: (props: {
     workspaceId: string;

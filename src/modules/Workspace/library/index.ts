@@ -13,6 +13,7 @@ export * from './landFinding';
 export * from './landReview';
 export * from './landStep';
 export * from './landVideo';
+export * from './outcomeOfFinding';
 export * from './messageOfSaved';
 export * from './panelWidthOf';
 export * from './resumeRun';

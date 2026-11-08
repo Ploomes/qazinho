@@ -203,6 +203,7 @@ export type * from './RunFailure';
 export type * from './RunMode';
 export type * from './SaveOutcome';
 export type * from './Severity';
+export type * from './BugCategory';
 export type * from './StepVerdict';
 export type * from './TargetKind';
 export type * from './UnreadPlanRead';

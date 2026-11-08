@@ -24,11 +24,12 @@ import {
   landReview,
   landStep,
   landVideo,
+  outcomeOfFinding,
   resumeRun,
   startRun,
   takeSuggestion,
 } from '@/modules/Workspace/library';
-import { mapWorkspace, tickWorkspaces, withoutKey } from './library';
+import { mapWorkspace, tickWorkspaces, withBugFlash, withoutKey } from './library';
 
 export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   workspaces: [],
@@ -43,6 +44,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   askingIds: [],
   liveTexts: {},
   activities: {},
+  bugFlashes: {},
   retries: {},
   readSteps: {},
   lookingAt: {},
@@ -162,6 +164,23 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         }),
       },
     })),
+
+  shiftBugFlash: ({ workspaceId, id }) =>
+    set((state) => ({
+      bugFlashes: {
+        ...state.bugFlashes,
+        [workspaceId]: (state.bugFlashes[workspaceId] ?? []).filter(
+          (flash) => flash.id !== id,
+        ),
+      },
+    })),
+
+  clearBugFlashes: (workspaceId) =>
+    set((state) =>
+      (state.bugFlashes[workspaceId]?.length ?? 0) === 0
+        ? state
+        : { bugFlashes: withoutKey({ record: state.bugFlashes, key: workspaceId }) },
+    ),
 
   setLiveText: ({ workspaceId, text }) =>
     set((state) => ({
@@ -357,6 +376,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   startRun: ({ workspaceId, runId, by, kind, caseIds }) =>
     set((state) => ({
       activities: withoutKey({ record: state.activities, key: workspaceId }),
+      bugFlashes: withoutKey({ record: state.bugFlashes, key: workspaceId }),
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -482,6 +502,12 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   landFinding: ({ workspaceId, finding }) =>
     set((state) => ({
+      bugFlashes: withBugFlash({
+        flashes: state.bugFlashes,
+        workspaces: state.workspaces,
+        outcome: outcomeOfFinding({ workspaceId, finding }),
+        isIncidental: true,
+      }),
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
@@ -537,6 +563,15 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
 
   landStep: (outcome) =>
     set((state) => ({
+      bugFlashes:
+        outcome.verdict === 'failed'
+          ? withBugFlash({
+              flashes: state.bugFlashes,
+              workspaces: state.workspaces,
+              outcome,
+              isIncidental: false,
+            })
+          : state.bugFlashes,
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId: outcome.workspaceId,

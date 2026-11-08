@@ -2,12 +2,13 @@ import type { IDeviceScreenProps } from './types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { MOTION } from '@/shared/constants';
+import { BugFlash } from './components';
 import { useDeviceScreenViewModel } from './hooks';
 import './styles.css';
 
 export const DeviceScreen: React.FC<IDeviceScreenProps> = (props) => {
   const { shot, stream } = props;
-  const { className, style } = useDeviceScreenViewModel(props);
+  const { className, style, workspaceId } = useDeviceScreenViewModel(props);
   const { t } = useTranslation();
 
   return (
@@ -35,6 +36,7 @@ export const DeviceScreen: React.FC<IDeviceScreenProps> = (props) => {
           />
         )}
       </AnimatePresence>
+      <BugFlash workspaceId={workspaceId} />
     </div>
   );
 };

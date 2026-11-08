@@ -1,6 +1,7 @@
 import type { IWorkspace } from '@/modules/Workspace/types';
-import type { IRunFinding, IStepOutcome } from '@/shared/types';
+import type { IRunFinding } from '@/shared/types';
 import { catchBug } from '@/modules/Bug/library';
+import { outcomeOfFinding } from './outcomeOfFinding';
 
 /**
  * Um bug que o agente da run registrou ao lado de um passo: cai fora do plano, no bug já
@@ -16,25 +17,7 @@ export function landFinding(props: {
 
   if (!live || live.isDone) return workspace;
 
-  const seen: IStepOutcome = {
-    workspaceId: workspace.id,
-    caseId: finding.caseId,
-    stepNumber: finding.stepNumber,
-    index: finding.index,
-    action: finding.action,
-    expected: finding.expected,
-    verdict: 'failed',
-    why: '',
-    got: finding.got,
-    title: finding.title,
-    severity: finding.severity,
-    tookMs: 0,
-    at: finding.at,
-    screenshot: finding.screenshot,
-    shotFile: finding.shotFile,
-    ...(finding.sameAs === undefined ? {} : { sameAs: finding.sameAs }),
-    ...(finding.frame === undefined ? {} : { frame: finding.frame }),
-  };
+  const seen = outcomeOfFinding({ workspaceId: workspace.id, finding });
   const caught = catchBug({
     workspace,
     outcome: seen,

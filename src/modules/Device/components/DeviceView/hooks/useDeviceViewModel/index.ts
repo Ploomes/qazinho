@@ -1,6 +1,6 @@
 import type { IDeviceStep, IViewportChoice, ViewportId } from '@/modules/Device/types';
 import type { CSSProperties } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { activityLineOf } from '@/modules/Chat/library';
 import { DEVICE, VIEWPORTS } from '@/modules/Device/constants';
@@ -30,6 +30,13 @@ export const useDeviceViewModel = () => {
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const openReplay = useAppStore((state) => state.openReplay);
   const chatDevices = useWorkspaceStore((state) => state.chatDevices);
+  const flashedShot = useWorkspaceStore((state) =>
+    workspace === null ? undefined : state.bugFlashes[workspace.id]?.[0]?.shot,
+  );
+  const isFlashing = useWorkspaceStore((state) =>
+    workspace === null ? false : (state.bugFlashes[workspace.id]?.length ?? 0) > 0,
+  );
+  const clearBugFlashes = useWorkspaceStore((state) => state.clearBugFlashes);
   const activities = useWorkspaceStore((state) => state.activities);
   const {
     runSteps,
@@ -46,7 +53,7 @@ export const useDeviceViewModel = () => {
   const state = deviceStateOf(workspace);
   const isPhone = workspace?.planKind === 'mobile';
   const viewport = viewportOf(workspace?.viewportId);
-  const shot = live?.shot ?? null;
+  const shot = live?.shot ?? flashedShot ?? null;
   const screenRatio = isPhone
     ? ((shot === null ? null : imageRatioOf(shot)) ?? DEVICE.phoneRatio)
     : viewport.width / viewport.height;
@@ -75,7 +82,8 @@ export const useDeviceViewModel = () => {
 
   const chatDevice = workspace === null ? undefined : chatDevices[workspace.id];
   const isLearning = !isRunLive && chatDevice !== undefined;
-  const hasScreen = isRunLive || isLearning || (isFocusedNow && shot !== null);
+  const hasScreen =
+    isRunLive || isLearning || isFlashing || (isFocusedNow && shot !== null);
   const isFocused = isFocusedNow && hasScreen;
   const stream =
     live?.isDone === false ? live.streamUrl : (chatDevice?.streamUrl ?? null);
@@ -103,6 +111,16 @@ export const useDeviceViewModel = () => {
           hasDesign: workspace?.design !== null,
           say: (key, values) => t(key, values),
         });
+
+  useLayoutEffect(() => {
+    if (workspaceId === null) return;
+
+    clearBugFlashes(workspaceId);
+
+    return () => {
+      clearBugFlashes(workspaceId);
+    };
+  }, [workspaceId, clearBugFlashes]);
 
   useEffect(() => {
     if (workspaceId === null || stream === null || !isFocused) return;
