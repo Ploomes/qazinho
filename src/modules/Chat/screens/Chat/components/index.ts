@@ -6,6 +6,7 @@ export * from './Composer';
 export * from './ErrorBlock';
 export * from './FindingNote';
 export * from './HandoffCard';
+export * from './MemoryNote';
 export * from './QuestionRound';
 export * from './RunActivity';
 export * from './RunSection';

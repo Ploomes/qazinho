@@ -6,6 +6,7 @@ import { AskNote } from '@/modules/Chat/screens/Chat/components/AskNote';
 import { ErrorBlock } from '@/modules/Chat/screens/Chat/components/ErrorBlock';
 import { FindingNote } from '@/modules/Chat/screens/Chat/components/FindingNote';
 import { HandoffCard } from '@/modules/Chat/screens/Chat/components/HandoffCard';
+import { MemoryNote } from '@/modules/Chat/screens/Chat/components/MemoryNote';
 import { QuestionRound } from '@/modules/Chat/screens/Chat/components/QuestionRound';
 import { SuggestionCard } from '@/modules/Chat/screens/Chat/components/SuggestionCard';
 import { UserMessage } from '@/modules/Chat/screens/Chat/components/UserMessage';
@@ -55,6 +56,7 @@ export const ChatRow: React.FC<IChatRowProps> = (props) => {
         )}
         {message.kind === 'verdict' && <VerdictNote message={message} />}
         {message.kind === 'ask' && <AskNote message={message} />}
+        {message.kind === 'memory' && <MemoryNote message={message} />}
         {message.kind === 'questions' && (
           <QuestionRound
             message={message}
