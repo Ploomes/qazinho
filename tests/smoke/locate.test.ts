@@ -29,6 +29,7 @@ const PAGE = `<!doctype html><html><head><meta charset="utf-8"></head><body>
   <button onclick="document.getElementById('pick').textContent = 'New template opened'">Novo modelo de proposta</button>
   <p id="pick">Nothing picked yet</p>
   <div role="input" tabindex="0" aria-label="Login email" id="custom" style="width:200px;height:24px"></div>
+  <input data-testid="coupon-code" placeholder="Código promocional">
   <script>
     const custom = document.getElementById('custom');
     custom.addEventListener('keydown', (event) => {
@@ -186,5 +187,20 @@ describe('a field drawn as a div', () => {
     await driver.act({ kind: 'fill', target: 'Login email', value: 'qa@shop.test' });
 
     expect(await driver.describe()).toContain('qa@shop.test');
+  });
+});
+
+/** Um campo com test id: o look o mostra, e o agente o acha por ele mesmo se as palavras mudarem. */
+describe('a control with a test id', () => {
+  it('is listed with its test id', async () => {
+    expect(await driver.describe()).toContain(
+      'input: Código promocional [testid=coupon-code]',
+    );
+  });
+
+  it('is filled by its test id', async () => {
+    await driver.act({ kind: 'fill', target: 'testid=coupon-code', value: 'SAVE10' });
+
+    expect(driver.resolution?.()?.locator).toContain("getByTestId('coupon-code')");
   });
 });
