@@ -2,7 +2,7 @@
   "name": "@salve-software/qazinho",
   "productName": "QAzinho",
   "desktopName": "qazinho.desktop",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "private": true,
   "description": "A local-first desktop app where AI agents test your web and mobile apps from a test plan.",
   "license": "UNLICENSED",

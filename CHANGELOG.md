@@ -1,3 +1,10 @@
+## [0.6.2](https://github.com/Salve-Software/qazinho/compare/v0.6.1...v0.6.2) (2026-11-08)
+
+
+### Bug Fixes
+
+* **web:** deliver every click to the page ([2a9c92d](https://github.com/Salve-Software/qazinho/commit/2a9c92db17683b78229d53f6c09370e652cafc5e))
+
 ## [0.6.1](https://github.com/Salve-Software/qazinho/compare/v0.6.0...v0.6.1) (2026-11-08)
 
 
