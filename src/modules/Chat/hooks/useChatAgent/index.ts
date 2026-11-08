@@ -10,6 +10,8 @@ import { useTranslation } from 'react-i18next';
 import { runHistoryOf, sessionFor } from '@/modules/Chat/library';
 import { CHAT_FAILURE_KEYS } from '@/modules/Chat/screens/Chat/constants';
 import { viewportOf } from '@/modules/Device';
+import { MEMORY } from '@/modules/Memory/constants';
+import { memoriesFor } from '@/modules/Memory/library';
 import { caseIdsUsed, planOfDraft } from '@/modules/Plan';
 import { flattenPlanSteps } from '@/modules/Run';
 import {
@@ -21,6 +23,7 @@ import { Agent } from '@/services';
 import {
   useAppStore,
   useMachineStore,
+  useMemoryStore,
   useSettingsStore,
   useVariablesStore,
   useWorkspaceStore,
@@ -59,6 +62,9 @@ export const useChatAgent = () => {
     const size = viewportOf(workspace.viewportId);
     const { landAgentText, landPlan, landQuestions, landAgentError, landAgentStopped } =
       useWorkspaceStore.getState();
+    const project =
+      useAppStore.getState().projects.find(({ id }) => id === workspace.projectId) ??
+      null;
 
     void Agent.ask({
       workspaceId,
@@ -83,6 +89,11 @@ export const useChatAgent = () => {
       confluence: props.confluence,
       design: workspace.design,
       variables: useVariablesStore.getState().byProject[workspace.projectId] ?? [],
+      memories: memoriesFor({
+        memories: project?.memories,
+        workspaceId,
+        ...(target === null ? {} : { targetKind: target.kind }),
+      }),
       ...(props.isFromAgent === true ? { isFromAgent: true } : {}),
       ...(props.attachments === undefined || props.attachments.length === 0
         ? {}
@@ -175,6 +186,13 @@ export const useChatAgent = () => {
         });
 
       landQuestions({ workspaceId, questions: answer.questions });
+
+      if (props.isFromAgent !== true && props.text.trim().length >= MEMORY.minChars)
+        useMemoryStore.getState().enqueue({
+          projectId: workspace.projectId,
+          workspaceId,
+          events: [{ kind: 'said', text: props.text }],
+        });
     });
   };
 

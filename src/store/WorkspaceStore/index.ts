@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import {
   answerRound,
   appendAgentError,
+  appendMemoryNote,
   appendAgentMessage,
   appendPlanCard,
   appendQuestions,
@@ -368,6 +369,16 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         workspaceId,
         change: (workspace) =>
           appendAgentError({ workspace, text, at: formatClock(new Date()) }),
+      }),
+    })),
+
+  landMemoryChanges: ({ workspaceId, changes }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          appendMemoryNote({ workspace, changes, at: formatClock(new Date()) }),
       }),
     })),
 

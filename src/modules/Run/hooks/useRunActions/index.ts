@@ -2,6 +2,7 @@ import type { RunMode } from '@/shared/types';
 import { useTranslation } from 'react-i18next';
 import { knownBugsOf } from '@/modules/Bug/library';
 import { viewportOf } from '@/modules/Device/library';
+import { memoriesFor } from '@/modules/Memory/library';
 import {
   flattenPlanSteps,
   nextRunId,
@@ -99,6 +100,13 @@ export const useRunActions = () => {
       ...(isExploring ? { minutes: EXPLORATION.minutes } : {}),
       bugs: knownBugsOf(workspace.bugs),
       design: workspace.design,
+      memories: memoriesFor({
+        memories: useAppStore
+          .getState()
+          .projects.find(({ id }) => id === workspace.projectId)?.memories,
+        workspaceId: workspace.id,
+        targetKind: target.kind,
+      }),
     });
 
     return runId;

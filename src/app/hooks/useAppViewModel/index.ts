@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useAppActions, useAssistantEvents, useQuestionRoom } from '@/modules/Assistant';
 import { useBuildEvents } from '@/modules/Build';
 import { useIslandSync } from '@/modules/Island';
+import { useMemoryKeeping } from '@/modules/Memory/hooks/useMemoryKeeping';
 import { useOutsideCalls } from '@/modules/Outside';
 import { useProLinks, useProSync } from '@/modules/Pro';
 import { isRunGoing, useUpdateWatch } from '@/modules/Update';
@@ -62,6 +63,7 @@ export const useAppViewModel = () => {
   useAssistantEvents();
   useQuestionRoom();
   useBuildEvents();
+  useMemoryKeeping();
   useProSync();
   useProLinks();
   useVideoSweep();

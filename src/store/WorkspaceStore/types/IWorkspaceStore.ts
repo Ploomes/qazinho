@@ -1,6 +1,7 @@
 import type { BugFilter, IBugReview } from '@/modules/Bug';
 import type { IAgentActivity, IQuestionAnswer, UserCommand } from '@/modules/Chat';
 import type { IBugFlash, ViewportId } from '@/modules/Device';
+import type { IMemoryChange } from '@/modules/Memory/types';
 import type { IPublishedPlan, ITestCase } from '@/modules/Plan';
 import type { IWalkedBy, IWorkspace, PanelTab, WorkspaceTab } from '@/modules/Workspace';
 import type {
@@ -52,6 +53,7 @@ export interface IWorkspaceStore {
   loadWorkspaces: (workspaces: IWorkspace[]) => void;
   askRemoveWorkspace: (workspaceId: string | null) => void;
   removeWorkspace: (workspaceId: string) => void;
+  landMemoryChanges: (props: { workspaceId: string; changes: IMemoryChange[] }) => void;
   renameWorkspace: (props: { workspaceId: string; name: string }) => void;
   setDesign: (props: { workspaceId: string; design: IDesignLink | null }) => void;
   setUnreadPlan: (props: { workspaceId: string; unreadPlan: IUnreadPlan | null }) => void;

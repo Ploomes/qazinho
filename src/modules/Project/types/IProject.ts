@@ -1,6 +1,6 @@
 import type { IProjectRepository } from './IProjectRepository';
 import type { ITarget } from './ITarget';
-import type { IssueTarget } from '@/shared/types';
+import type { IMemory, IssueTarget } from '@/shared/types';
 
 /**
  * Um ambiente do app sob teste, com todo alvo que o alcança, os repositórios de que é
@@ -12,4 +12,5 @@ export interface IProject {
   targets: ITarget[];
   repositories: IProjectRepository[];
   issueTarget?: IssueTarget;
+  memories?: IMemory[];
 }

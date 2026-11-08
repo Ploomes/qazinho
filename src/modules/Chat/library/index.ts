@@ -1,6 +1,7 @@
 export * from './activityLineOf';
 export * from './answerRound';
 export * from './appendAgentError';
+export * from './appendMemoryNote';
 export * from './appendAgentMessage';
 export * from './appendPlanCard';
 export * from './appendQuestions';

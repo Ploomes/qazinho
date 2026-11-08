@@ -2,6 +2,7 @@ import type { IAgentMessage } from './IAgentMessage';
 import type { IAskMessage } from './IAskMessage';
 import type { IErrorMessage } from './IErrorMessage';
 import type { IFindingMessage } from './IFindingMessage';
+import type { IMemoryMessage } from './IMemoryMessage';
 import type { INoteMessage } from './INoteMessage';
 import type { IPlanMessage } from './IPlanMessage';
 import type { IQuestionsMessage } from './IQuestionsMessage';
@@ -21,4 +22,5 @@ export type ChatMessage =
   | IAskMessage
   | ISuggestionMessage
   | IQuestionsMessage
+  | IMemoryMessage
   | IErrorMessage;

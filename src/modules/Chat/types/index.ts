@@ -19,6 +19,7 @@ export type * from './IFigmaCommand';
 export type * from './IFindingMessage';
 export type * from './IImportCommand';
 export type * from './IJiraCommand';
+export type * from './IMemoryMessage';
 export type * from './INoteMessage';
 export type * from './IPlanMessage';
 export type * from './IQuestionAnswer';
