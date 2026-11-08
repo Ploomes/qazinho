@@ -199,6 +199,8 @@ describe('an outside agent', () => {
       'unlink_design',
       'build_app',
       'build_status',
+      'export_code',
+      'publish_plan',
     ]);
     expect(client.getInstructions()).toContain('start_run');
   });

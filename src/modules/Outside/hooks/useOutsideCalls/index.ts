@@ -4,9 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { useChatAgent } from '@/modules/Chat';
 import { OUTSIDE_SAYS } from '@/modules/Outside/constants';
 import { performOutsideTool } from '@/modules/Outside/library';
+import { usePlanDocument } from '@/modules/Plan';
 import { useRunActions } from '@/modules/Run';
 import { PLATFORM_LABEL } from '@/modules/Workspace';
-import { Outside, Run } from '@/services';
+import { Confluence, Outside, Run } from '@/services';
 import {
   useAppStore,
   useAppToolStore,
@@ -20,6 +21,7 @@ export const useOutsideCalls = () => {
   const { t } = useTranslation();
   const { beginRun, stopWorkspace } = useRunActions();
   const { askAgent } = useChatAgent();
+  const { documentOf, titleOf } = usePlanDocument();
 
   useEffect(() => {
     const port: IOutsidePort = {
@@ -145,6 +147,38 @@ export const useOutsideCalls = () => {
       takeSuggestion: (take) => {
         useWorkspaceStore.getState().takeSuggestion(take);
       },
+      readCode: (request) => Run.readCode(request),
+      listSpaces: () => Confluence.spaces(),
+      publishPlan: async ({ workspaceId, ...where }) => {
+        const workspace = useWorkspaceStore
+          .getState()
+          .workspaces.find(({ id }) => id === workspaceId);
+
+        if (workspace === undefined)
+          return {
+            isPublished: false,
+            failure: 'unreachable',
+            said: `The workspace ${workspaceId} is gone.`,
+          };
+
+        const outcome = await Confluence.publish({
+          ...where,
+          blocks: documentOf(workspace),
+        });
+
+        if (outcome.isPublished)
+          useWorkspaceStore.getState().setPublished({
+            workspaceId,
+            published: {
+              page: outcome.page,
+              spaceId: where.spaceId,
+              parentId: where.parentId,
+            },
+          });
+
+        return outcome;
+      },
+      publishTitle: titleOf,
     };
 
     return Outside.onCall(({ id, call }) => {
@@ -157,5 +191,5 @@ export const useOutsideCalls = () => {
           Outside.answer({ id, text, isError });
         });
     });
-  }, [askAgent, beginRun, stopWorkspace, t]);
+  }, [askAgent, beginRun, documentOf, stopWorkspace, t, titleOf]);
 };

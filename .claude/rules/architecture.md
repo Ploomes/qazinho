@@ -546,7 +546,7 @@ O local é desligado até o QA ligá-lo. É o caminho inverso do resto do app: a
   outra, e o `renew` leva o endereço novo aos agentes que guardavam o anterior.
 - **O endereço nunca chega à página.** Ela pede à main para adicioná-lo a um agente (`AgentMcp.addAddress`)
   ou copiá-lo; só a main o lê. Um `Origin` ou um `Host` de fora da máquina é recusado (`isLocalRequest`).
-- As 39 ferramentas vivem no harness (`servers/outside/`, `OutsideHost`), e a resposta a uma chamada
+- As 41 ferramentas vivem no harness (`servers/outside/`, `OutsideHost`), e a resposta a uma chamada
   (`OutsideToolCall`) vem da página, pelas mesmas stores e actions dos cliques do QA
   (`performOutsideTool`), numa ponte só dela: a do Estagiário solta o que espera a cada turno dele. Com
   a janela fechada, a main a abre e pede ao agente que chame de novo.
@@ -579,7 +579,8 @@ O local é desligado até o QA ligá-lo. É o caminho inverso do resto do app: a
   plano ao chat. Pausar e retomar seguem o botão da run (`pauseRun`), uma pergunta da run é
   respondida em palavras (`Run.answer`), nunca um segredo, e a sugestão de uma exploração vai ao plano
   como o botão do cartão a leva (`takeSuggestion`). Um cartão antigo vindo de fora ainda aparece
-  (`ISuggestionMessage.from`).
+  (`ISuggestionMessage.from`). Exportar devolve o código como texto, sem pasta (`CodeExport.read`), e
+  publicar monta a página como a aba Plano (`usePlanDocument`).
 
 ## O trabalho pesado fica fora do processo main
 

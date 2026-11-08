@@ -2,7 +2,12 @@ import type { IOutsidePort } from '@/modules/Outside/types';
 import type { ITestCase } from '@/modules/Plan';
 import type { IProject } from '@/modules/Project';
 import type { IWorkspace } from '@/modules/Workspace';
-import type { AppToolCall, INetworkEntry, OutsideToolCall } from '@/shared/types';
+import type {
+  AppToolCall,
+  CodeRead,
+  INetworkEntry,
+  OutsideToolCall,
+} from '@/shared/types';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { performOutsideTool } from '@/modules/Outside/library';
 import { startRun } from '@/modules/Workspace/library';
@@ -42,6 +47,8 @@ function appWith(props: {
   slowPerform?: boolean;
   askingIds?: string[];
   onChat?: () => { workspaces: IWorkspace[]; askingIds: string[] };
+  code?: CodeRead;
+  isConfluenceOff?: boolean;
 }) {
   let workspaces = props.workspaces ?? [makeWorkspace()];
   const started: unknown[] = [];
@@ -49,6 +56,8 @@ function appWith(props: {
   const paused: unknown[] = [];
   const answered: unknown[] = [];
   const took: unknown[] = [];
+  const read: unknown[] = [];
+  const published: unknown[] = [];
   const waited: number[] = [];
   const projects: IProject[] = [];
   const added: IWorkspace[] = [];
@@ -76,7 +85,7 @@ function appWith(props: {
             account: 'ana@shop.test',
             site: 'https://shop.atlassian.net',
             connectedAt: '2026-11-01',
-            confluence: true,
+            confluence: props.isConfluenceOff !== true,
           },
         ],
       },
@@ -136,6 +145,30 @@ function appWith(props: {
     takeSuggestion: (take) => {
       took.push(take);
     },
+    readCode: (request) => {
+      read.push(request);
+
+      return Promise.resolve(props.code ?? { kind: 'nothing', missing: [] });
+    },
+    listSpaces: () =>
+      Promise.resolve({
+        isListed: true,
+        spaces: [{ id: 's-1', key: 'QA', name: 'Quality' }],
+      }),
+    publishPlan: (where) => {
+      published.push(where);
+
+      return Promise.resolve({
+        isPublished: true,
+        page: {
+          id: 'pg-1',
+          title: where.title,
+          space: 'QA',
+          url: 'https://shop.atlassian.net/pg-1',
+        },
+      });
+    },
+    publishTitle: (name) => `Test plan · ${name}`,
   };
 
   return {
@@ -145,6 +178,8 @@ function appWith(props: {
     paused,
     answered,
     took,
+    read,
+    published,
     waited,
     projects,
     added,
@@ -573,6 +608,110 @@ describe('performOutsideTool', () => {
       'build_app',
       'build_status',
     ]);
+  });
+
+  describe('exporting the recorded cases as code', () => {
+    it('hands the code as text, with the cases it leaves out', async () => {
+      const app = appWith({
+        code: {
+          kind: 'code',
+          files: [{ name: 'qazinho.spec.ts', content: 'test("TC-01", async () => {});' }],
+          samples: [],
+          exported: ['TC-01'],
+          missing: ['TC-02'],
+        },
+      });
+      const done = await call({ name: 'export_code', args: { workspace: 'w1' } }, app);
+
+      expect(done.isError).toBe(false);
+      expect(done.text).toContain('=== qazinho.spec.ts ===');
+      expect(done.text).toContain('test("TC-01"');
+      expect(done.text).toContain('TC-02 have no recording yet');
+      expect(app.read).toEqual([
+        expect.objectContaining({
+          workspaceId: 'w1',
+          viewport: { width: 1280, height: 800 },
+        }),
+      ]);
+    });
+
+    it('says to run the plan first when nothing was recorded', async () => {
+      const done = await call(
+        { name: 'export_code', args: { workspace: 'w1' } },
+        appWith({}),
+      );
+
+      expect(done).toMatchObject({ isError: true });
+      expect(done.text).toContain('start_run');
+    });
+  });
+
+  describe('publishing the plan to Confluence', () => {
+    it('asks for the space the first time, naming the ones there are', async () => {
+      const app = appWith({});
+      const done = await call({ name: 'publish_plan', args: { workspace: 'w1' } }, app);
+
+      expect(done).toMatchObject({ isError: true });
+      expect(done.text).toContain('QA "Quality"');
+      expect(app.published).toEqual([]);
+    });
+
+    it('publishes in the space named by its key, titled after the workspace', async () => {
+      const app = appWith({});
+      const done = await call(
+        { name: 'publish_plan', args: { workspace: 'w1', space: 'qa' } },
+        app,
+      );
+
+      expect(done.isError).toBe(false);
+      expect(app.published).toEqual([
+        {
+          workspaceId: 'w1',
+          pageId: null,
+          spaceId: 's-1',
+          parentId: null,
+          title: `Test plan · ${makeWorkspace().name}`,
+        },
+      ]);
+    });
+
+    it('writes the next version of a page already published, with no space asked', async () => {
+      const app = appWith({
+        workspaces: [
+          {
+            ...makeWorkspace(),
+            published: {
+              page: { id: 'pg-7', title: 'Plano', space: 'QA', url: 'https://x/pg-7' },
+              spaceId: 's-1',
+              parentId: 'pg-2',
+            },
+          },
+        ],
+      });
+
+      await call({ name: 'publish_plan', args: { workspace: 'w1' } }, app);
+
+      expect(app.published).toEqual([
+        {
+          workspaceId: 'w1',
+          pageId: 'pg-7',
+          spaceId: 's-1',
+          parentId: 'pg-2',
+          title: 'Plano',
+        },
+      ]);
+    });
+
+    it('does NOT publish while Confluence is off', async () => {
+      const app = appWith({ isConfluenceOff: true });
+      const done = await call(
+        { name: 'publish_plan', args: { workspace: 'w1', space: 'QA' } },
+        app,
+      );
+
+      expect(done).toMatchObject({ isError: true });
+      expect(app.published).toEqual([]);
+    });
   });
 
   describe('creating what an app QAzinho does not know yet needs', () => {

@@ -4,10 +4,14 @@ import type { IProject } from '@/modules/Project';
 import type { IWorkspace } from '@/modules/Workspace';
 import type {
   AppToolCall,
+  CodeRead,
+  ConfluenceSpaceList,
+  IExportCode,
   IIntegrationStatus,
-  IVariableBrief,
   INetworkEntry,
   IRunRef,
+  IVariableBrief,
+  PlanPublished,
   RunMode,
   TargetKind,
 } from '@/shared/types';
@@ -51,4 +55,14 @@ export interface IOutsidePort {
     messageId: string;
     only?: number[];
   }) => void;
+  readCode: (request: IExportCode) => Promise<CodeRead>;
+  listSpaces: () => Promise<ConfluenceSpaceList>;
+  publishPlan: (props: {
+    workspaceId: string;
+    pageId: string | null;
+    spaceId: string;
+    parentId: string | null;
+    title: string;
+  }) => Promise<PlanPublished>;
+  publishTitle: (workspaceName: string) => string;
 }

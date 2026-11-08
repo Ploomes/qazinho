@@ -203,13 +203,14 @@ sintéticos, nenhum atravessou o macOS; ainda não se viu a ilha com um app em t
 monitor externo, nem no Windows ou no Linux.
 
 **O agente de código do QA usa o QAzinho de fora.** Ligado em Configurações › MCPs, o QAzinho vira
-um servidor MCP neste computador, com 39 ferramentas. A regra: o que o QA faz à mão no QAzinho tem
+um servidor MCP neste computador, com 41 ferramentas. A regra: o que o QA faz à mão no QAzinho tem
 uma ferramenta, e o que só a IA faz, como planejar a partir de uma história, de um design ou do
 código, vai pela conversa com o chat do workspace. O agente com que o QA ou o dev trabalha no
 próprio editor cria o projeto e o workspace de um app que o QAzinho ainda não conhece, escreve,
 altera e apaga casos do plano, troca o alvo de um projeto, liga um repositório ou um design, constrói
 o app, roda o plano ou uma exploração, pausa, retoma ou para a run, responde a pergunta dela (nunca
-um segredo), leva ao plano a sugestão de uma exploração, espera o resultado, lê o que quebrou (as
+um segredo), leva ao plano a sugestão de uma exploração, exporta o código das gravações, publica o
+plano no Confluence, espera o resultado, lê o que quebrou (as
 telas como arquivos, as chamadas de API que falharam e o que responderam), fecha ou manda um bug ao
 tracker, e conversa com o chat do workspace como o QA. A
 mensagem dele aparece no chat marcada com as estrelinhas, "Seu agente", e o agente do QAzinho sabe
