@@ -21,6 +21,7 @@ export const Plan: React.FC = () => {
     onDismissUnread,
     plan,
     lastRuns,
+    liveStatuses,
     design,
     openCaseId,
     freshCaseId,
@@ -337,6 +338,7 @@ export const Plan: React.FC = () => {
                   key={testCase.id}
                   testCase={testCase}
                   lastRun={lastRuns[testCase.id]}
+                  liveStatus={liveStatuses[testCase.id]}
                   design={design}
                   isOpen={openCaseId === testCase.id}
                   isFresh={freshCaseId === testCase.id}

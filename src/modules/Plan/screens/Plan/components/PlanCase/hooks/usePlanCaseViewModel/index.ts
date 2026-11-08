@@ -20,6 +20,10 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     ({ verdict }) => verdict === 'failed' || verdict === 'blocked',
   );
   const isAllPassed = ran.length > 0 && ran.every(({ verdict }) => verdict === 'passed');
+  const isNow =
+    props.liveStatus === 'running' ||
+    props.liveStatus === 'paused' ||
+    props.liveStatus === 'attention';
   const hasGoal = testCase.goal !== '';
   const hasBefore = testCase.preconditions !== '';
   const how = ran.some(({ by }) => by === 'healed')
@@ -57,6 +61,7 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
       'plan-case',
       isPickedUp ? 'plan-case--picked' : '',
       props.isOpen ? 'plan-case--open' : '',
+      isNow ? 'plan-case--now' : '',
     ]
       .filter((part) => part !== '')
       .join(' '),
@@ -90,7 +95,7 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
               },
       };
     }),
-    verdict: testCase.lastVerdict ?? 'pending',
+    verdict: props.liveStatus ?? testCase.lastVerdict ?? 'pending',
     isTitleFocused: props.isFresh === true,
     canRemoveStep: testCase.steps.length > 1 && !isLocked,
     onHeadClick: () => {

@@ -6,6 +6,7 @@ export * from './editStep';
 export * from './frameUrlOf';
 export * from './freeVariableName';
 export * from './keepVerdicts';
+export * from './liveCasesOf';
 export * from './mapCase';
 export * from './missingVariablesOf';
 export * from './moveCase';

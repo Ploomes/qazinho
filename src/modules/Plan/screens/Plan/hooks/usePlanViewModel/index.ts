@@ -13,6 +13,7 @@ import {
   editCase,
   editStep,
   freeVariableName,
+  liveCasesOf,
   missingVariablesOf,
   moveCase,
   planOfYaml,
@@ -55,6 +56,13 @@ export const usePlanViewModel = () => {
     issue: opened.issue,
     design: opened.design,
     isLocked: opened.live !== null && !opened.live.isDone,
+    liveOutcomes: opened.live?.outcomes ?? null,
+    liveDoingIndex: opened.live?.doingIndex ?? -1,
+    liveCaseIds: opened.live?.caseIds,
+    liveIsDone: opened.live?.isDone ?? true,
+    liveIsRunning: opened.live?.isRunning ?? false,
+    liveQuestion: opened.live?.question,
+    liveKind: opened.live?.kind,
     latest: opened.runs[0] ?? null,
     runs: opened.runs,
     bugs: opened.bugs,
@@ -251,8 +259,28 @@ export const usePlanViewModel = () => {
         },
       });
   };
+  const liveCases =
+    workspace === null || workspace.liveOutcomes === null
+      ? {}
+      : liveCasesOf({
+          plan,
+          live: {
+            outcomes: workspace.liveOutcomes,
+            doingIndex: workspace.liveDoingIndex,
+            caseIds: workspace.liveCaseIds,
+            isDone: workspace.liveIsDone,
+            isRunning: workspace.liveIsRunning,
+            question: workspace.liveQuestion,
+            kind: workspace.liveKind,
+          },
+        });
   const lastRuns: Record<string, IRunCase> = Object.fromEntries(
-    (latest?.cases ?? []).map((runCase) => [runCase.id, runCase]),
+    (latest?.cases ?? [])
+      .filter(({ id }) => !Object.hasOwn(liveCases, id))
+      .map((runCase) => [runCase.id, runCase]),
+  );
+  const liveRuns = Object.entries(liveCases).flatMap(([id, { run }]) =>
+    run === null ? [] : [[id, run] as const],
   );
 
   return {
@@ -315,7 +343,10 @@ export const usePlanViewModel = () => {
       setUnreadPlan({ workspaceId, unreadPlan: null });
     },
     plan,
-    lastRuns,
+    lastRuns: { ...lastRuns, ...Object.fromEntries(liveRuns) },
+    liveStatuses: Object.fromEntries(
+      Object.entries(liveCases).map(([id, { status }]) => [id, status]),
+    ),
     design: workspace?.design ?? null,
     openCaseId,
     isLocked,

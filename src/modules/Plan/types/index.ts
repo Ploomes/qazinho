@@ -1,3 +1,4 @@
+export type * from './ILiveCase';
 export type * from './IPlanDocWords';
 export type * from './IPublishedPlan';
 export type * from './ITestCase';

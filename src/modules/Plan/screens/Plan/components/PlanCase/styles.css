@@ -15,6 +15,10 @@
   background: var(--raise);
 }
 
+.plan-case--now > .plan-case__head {
+  background: var(--raise);
+}
+
 .plan-case__head {
   display: grid;
   grid-template-areas: 'handle pill open title aside';

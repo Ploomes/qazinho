@@ -1,5 +1,6 @@
 import type { ITestCase, ITestStep } from '@/modules/Plan/types';
 import type { IRunCase } from '@/modules/Run';
+import type { PillStatus } from '@/shared/components/atoms/StatusPill/types';
 import type { IDesignLink } from '@/shared/types';
 import type { Ref } from 'react';
 
@@ -7,6 +8,7 @@ export interface IPlanCaseProps {
   ref?: Ref<HTMLLIElement>;
   testCase: ITestCase;
   lastRun?: IRunCase;
+  liveStatus?: PillStatus;
   design?: IDesignLink | null;
   isOpen: boolean;
   isFresh?: boolean;
