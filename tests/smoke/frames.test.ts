@@ -15,7 +15,10 @@ const INNER = 4358;
  * construtor e abria um bug dizendo que a tela não mudou.
  */
 const PAGES: Record<string, string> = {
-  outer: `<h1>Painel</h1><nav><a href="#">Etiquetas</a></nav>
+  outer: `<h1>Painel</h1><nav><a href="#">Etiquetas</a>
+<button onclick="document.getElementById('reports').textContent = 'Relatórios abertos'"><i>doc</i> Relatórios</button></nav>
+<div style="position: fixed; left: 900px; top: 8px; opacity: 0">Relatórios</div>
+<p id="reports">Nenhum relatório</p>
 <iframe title="Builder" src="http://127.0.0.1:${String(INNER)}/" width="900" height="500"></iframe>`,
   '/': `<h1>Construtor</h1>
 <button onclick="fetch('/api/labels').then(() => { document.getElementById('modal').textContent = 'Etiqueta nova aberta'; })">Nova etiqueta</button>
@@ -97,5 +100,17 @@ describe('an app shown in an iframe of another site', () => {
     await driver.act({ kind: 'click', target: 'Abrir fluxo', value: '' });
 
     expect(await driver.describe()).toContain('Fluxo aberto');
+  });
+});
+
+/**
+ * Um menu de ícones: o botão diz "doc Relatórios" e um tooltip transparente diz as palavras
+ * exatas. O clique caía no tooltip, a ação respondia que tinha clicado e nada mudava.
+ */
+describe('words no one could click', () => {
+  it('are passed over for the control that holds them', async () => {
+    await driver.act({ kind: 'click', target: 'Relatórios', value: '' });
+
+    expect(await driver.describe()).toContain('Relatórios abertos');
   });
 });
