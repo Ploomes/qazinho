@@ -201,7 +201,7 @@ describe('a turn and a run that say what they are doing', () => {
   }, 60_000);
 
   it('tells what the agent does in the chat, while the run goes on', async () => {
-    await page.getByRole('button', { name: 'Rodar plano' }).click();
+    await page.getByRole('button', { name: 'Desenvolver plano' }).click();
     await page
       .locator('.run-section--live .run-activity__text', { hasText: 'Lendo a tela' })
       .waitFor({ timeout: 30_000 });

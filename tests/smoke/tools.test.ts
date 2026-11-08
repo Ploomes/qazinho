@@ -152,9 +152,12 @@ describe('the device as MCP tools', () => {
       'drag',
       'hover',
       'upload',
+      'tab',
       'wait',
       'report',
       'bug',
+      'say',
+      'answer_qa',
       'ask_qa',
     ]);
     await client.close();

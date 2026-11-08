@@ -124,8 +124,9 @@ describe('recording a run', () => {
    * aparece.
    */
   it('writes an H.264 MP4 of the browser as it ran, and closes its hidden window after', async () => {
+    await page.getByText('Shop', { exact: true }).first().click();
     await page.getByText('Shop regression').first().click();
-    await page.getByRole('button', { name: 'Run plan' }).click();
+    await page.getByRole('button', { name: 'Develop plan' }).click();
     await page.waitForTimeout(6_000);
     await page.getByRole('button', { name: 'Stop', exact: true }).first().click();
 
@@ -141,7 +142,12 @@ describe('recording a run', () => {
     await page.waitForTimeout(1_000);
 
     expect(
-      await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().length),
+      await app.evaluate(
+        ({ BrowserWindow }) =>
+          BrowserWindow.getAllWindows().filter(
+            (window) => !window.webContents.getURL().includes('island.html'),
+          ).length,
+      ),
     ).toBe(1);
     expect(said).toEqual([]);
   });

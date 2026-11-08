@@ -159,8 +159,9 @@ describe("a run's video with its network", () => {
   it('shows the requests under the video, and downloads the video with them drawn in', async () => {
     const target = join(dataDir, 'with-network.mp4');
 
+    await page.getByText('Shop', { exact: true }).first().click();
     await page.getByText('Shop regression').first().click();
-    await page.getByRole('button', { name: 'Run plan' }).click();
+    await page.getByRole('button', { name: 'Develop plan' }).click();
     await page
       .getByRole('tab', { name: /^Runs/ })
       .or(page.getByRole('button', { name: /^Runs/ }))
