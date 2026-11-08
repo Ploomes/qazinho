@@ -427,8 +427,7 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
   ferramentas do MCP), e o mesmo schema lê de volta o que o agente mandou, com a mensagem que o
   agente recebe quando quebra uma regra. O `jsonSchemaOf` tira a chave `$schema`, que faz o Claude
   Code ignorar um schema em silêncio.
-- **Um plano sai de uma conversa, nunca de um palpite** (`role/chat/planning.md`), do jeito que o
-  harness da Ploomes constrói uma tela:
+- **Um plano sai de uma conversa, nunca de um palpite** (`role/chat/planning.md`):
   - Olhar: antes de uma mensagem de chat num alvo web, o `AppPeek` abre o app e o agente lê o que
     a página dele mostrou. Depois ele anda pelas telas do plano no navegador do próprio chat
     (`ChatDevices`), um por workspace, que o QA acompanha na aba Dispositivo: entra com `${NOME}`,

@@ -25,8 +25,8 @@ const PAGE = `<!doctype html><html><head><meta charset="utf-8"></head><body>
   <shop-button>Subscribe now</shop-button>
   <div role="tablist"><div role="tab" tabindex="0">Summary</div><div role="tab" tabindex="-1">Invoices</div></div>
   <div role="switch" aria-checked="false" tabindex="0" aria-label="Dark mode"></div>
-  <div role="tablist"><div role="tab" tabindex="0" onclick="document.getElementById('pick').textContent = 'Tab Proposta picked'">Proposta</div></div>
-  <button onclick="document.getElementById('pick').textContent = 'New template opened'">Novo modelo de proposta</button>
+  <div role="tablist"><div role="tab" tabindex="0" onclick="document.getElementById('pick').textContent = 'Tab Etiqueta picked'">Etiqueta</div></div>
+  <button onclick="document.getElementById('pick').textContent = 'New label opened'">Nova etiqueta de produto</button>
   <p id="pick">Nothing picked yet</p>
   <div role="input" tabindex="0" aria-label="Login email" id="custom" style="width:200px;height:24px"></div>
   <input data-testid="coupon-code" placeholder="Código promocional">
@@ -160,21 +160,21 @@ describe('controls drawn as divs with an ARIA role', () => {
 });
 
 /**
- * A lista de modelos de um CRM: a aba "Proposta" ao lado do botão "Novo modelo de
- * proposta". Um clique em "Proposta" caía no botão, que contém a palavra, e abria o modal
- * do botão: o agente abriu um bug dizendo que a aba abria o modal.
+ * Uma lista de produtos: a aba "Etiqueta" ao lado do botão "Nova etiqueta de produto". Um
+ * clique em "Etiqueta" caía no botão, que contém a palavra, e abria o modal do botão: o
+ * agente abriu um bug dizendo que a aba abria o modal.
  */
 describe('a name said whole, beside a longer one that holds it', () => {
   it('clicks the tab named exactly, not the button that holds the word', async () => {
-    await driver.act({ kind: 'click', target: 'Proposta', value: '' });
+    await driver.act({ kind: 'click', target: 'Etiqueta', value: '' });
 
-    expect(await driver.describe()).toContain('Tab Proposta picked');
+    expect(await driver.describe()).toContain('Tab Etiqueta picked');
   });
 
   it('still reaches the longer one by its own name', async () => {
-    await driver.act({ kind: 'click', target: 'Novo modelo de proposta', value: '' });
+    await driver.act({ kind: 'click', target: 'Nova etiqueta de produto', value: '' });
 
-    expect(await driver.describe()).toContain('New template opened');
+    expect(await driver.describe()).toContain('New label opened');
   });
 });
 

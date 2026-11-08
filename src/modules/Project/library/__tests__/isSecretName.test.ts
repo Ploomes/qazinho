@@ -4,7 +4,7 @@ import { isSecretName } from '@/modules/Project/library';
 describe('isSecretName', () => {
   it('takes an email or a user name as no secret', () => {
     for (const name of [
-      'CRM_EMAIL',
+      'SHOP_EMAIL',
       'ADMIN_USER',
       'LOGIN',
       'STAGING_URL',
@@ -14,7 +14,7 @@ describe('isSecretName', () => {
   });
 
   it('takes a password, a token or a key as a secret', () => {
-    for (const name of ['CRM_PASSWORD', 'API_TOKEN', 'STRIPE_KEY', 'SENHA', 'SMS_CODE'])
+    for (const name of ['SHOP_PASSWORD', 'API_TOKEN', 'STRIPE_KEY', 'SENHA', 'SMS_CODE'])
       expect(isSecretName(name)).toBe(true);
   });
 

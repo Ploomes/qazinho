@@ -3,8 +3,8 @@ import { storedNameOf } from '@/main/classes/storage/ChatAttachments/library';
 
 describe('storedNameOf', () => {
   it('puts the id before the name, keeping the extension', () => {
-    expect(storedNameOf({ id: 'a1', name: 'proposta brazilcoa.pdf' })).toBe(
-      'a1-proposta brazilcoa.pdf',
+    expect(storedNameOf({ id: 'a1', name: 'proposta final.pdf' })).toBe(
+      'a1-proposta final.pdf',
     );
   });
 

@@ -249,7 +249,7 @@ describe('useVariableFieldViewModel, a value that is no secret', () => {
       result.current.onAdd();
     });
     act(() => {
-      result.current.editor?.onName('crm_email');
+      result.current.editor?.onName('shop_email');
     });
 
     expect(result.current.editor?.isSecret).toBe(false);

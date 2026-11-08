@@ -120,14 +120,14 @@ describe('variableChangesOf', () => {
         drafts: [
           {
             key: 'n',
-            name: 'CRM_EMAIL',
+            name: 'SHOP_EMAIL',
             description: '',
-            value: 'qa@crm.test',
+            value: 'qa@shop.test',
             from: null,
             isSecret: null,
           },
         ],
       }),
-    ).toMatchObject([{ name: 'CRM_EMAIL', isSecret: false }]);
+    ).toMatchObject([{ name: 'SHOP_EMAIL', isSecret: false }]);
   });
 });

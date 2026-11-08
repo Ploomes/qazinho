@@ -160,7 +160,7 @@ describe('useUserMessageViewModel', () => {
   });
 
   it("renders the coding agent's message as Markdown, since it writes lists and bold", () => {
-    const text = '**Sources:**\n- Jira story HC-1682\n- Figma prototype';
+    const text = '**Sources:**\n- Jira story SHOP-1682\n- Figma prototype';
     const { result } = renderHook(() =>
       useUserMessageViewModel({ message: { ...message(text), from: 'agent' } }),
     );
