@@ -5,7 +5,12 @@ import { useBugReviews } from '@/modules/Bug/hooks/useBugReviews';
 import { isSeenIn } from '@/modules/Bug/library';
 import { RUN_FAILURE_KEYS } from '@/modules/Run/constants';
 import { useOpenRun } from '@/modules/Run/hooks/useOpenRun';
-import { caseVerdict, countVerdicts, walkedByOf } from '@/modules/Run/library';
+import {
+  caseVerdict,
+  countVerdicts,
+  tallyPartsOf,
+  walkedByOf,
+} from '@/modules/Run/library';
 import { Run, Variables } from '@/services';
 import {
   useAppStore,
@@ -77,28 +82,7 @@ export const useRunEvents = () => {
               { count: run.counts.passed },
             ),
           ]
-        : [
-            ...(cases.failed === 0
-              ? []
-              : [
-                  t(
-                    cases.failed === 1 ? 'CHAT.RUN_FAILED_ONE' : 'CHAT.RUN_FAILED_OTHER',
-                    {
-                      count: cases.failed,
-                    },
-                  ),
-                ]),
-            ...(cases.passed === 0
-              ? []
-              : [
-                  t(
-                    cases.passed === 1 ? 'CHAT.RUN_PASSED_ONE' : 'CHAT.RUN_PASSED_OTHER',
-                    {
-                      count: cases.passed,
-                    },
-                  ),
-                ]),
-          ]),
+        : tallyPartsOf({ ...cases, say: (key, values) => t(key, values) })),
       ...(bugs === 0
         ? []
         : [

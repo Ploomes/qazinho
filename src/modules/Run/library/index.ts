@@ -24,6 +24,7 @@ export * from './requestBarOf';
 export * from './requestOutcomeOf';
 export * from './runDayOf';
 export * from './takeOf';
+export * from './tallyPartsOf';
 export * from './urlPartsOf';
 export * from './walkedByOf';
 export * from './withExplorationTitle';

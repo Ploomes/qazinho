@@ -9,12 +9,19 @@
   padding: var(--space-6);
   overflow: auto;
   background: var(--screen);
+  animation: gc-in var(--dur-slow) var(--ease) both;
 }
 
 .device-off__title {
   color: var(--ink);
   font: var(--font-display-md);
   letter-spacing: var(--display-tracking);
+}
+
+.device-off__detail {
+  margin-top: calc(-1 * var(--space-3));
+  color: var(--ink2);
+  font: var(--font-ui-md);
 }
 
 .device-off__actions {

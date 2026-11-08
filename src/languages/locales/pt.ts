@@ -521,6 +521,8 @@ export const pt: typeof en = {
     DRIVING: 'rodando',
     LEARNING: 'conhecendo o app',
     NO_DEVICE: 'Nada rodando.',
+    ENDED: 'Run {{id}} terminou.',
+    ENDED_EXPLORE: 'Exploração {{id}} terminou.',
     STEPS: 'passos',
     STEPS_PROGRESS: '{{current}} de {{total}}',
     SCREENS: 'telas',

@@ -14,7 +14,13 @@ import {
   stepVerdictsOf,
   viewportOf,
 } from '@/modules/Device/library';
-import { currentStepOf, useRunControls } from '@/modules/Run';
+import {
+  caseVerdict,
+  countVerdicts,
+  currentStepOf,
+  tallyPartsOf,
+  useRunControls,
+} from '@/modules/Run';
 import { Run } from '@/services';
 import { MOTION } from '@/shared/constants';
 import { useFollowEnd } from '@/shared/hooks/useFollowEnd';
@@ -34,7 +40,10 @@ export const useDeviceViewModel = () => {
     workspace === null ? undefined : state.bugFlashes[workspace.id]?.[0]?.shot,
   );
   const isFlashing = useWorkspaceStore((state) =>
-    workspace === null ? false : (state.bugFlashes[workspace.id]?.length ?? 0) > 0,
+    workspace === null
+      ? false
+      : (state.bugFlashes[workspace.id]?.length ?? 0) > 0 ||
+        state.bugFlashesLeaving.includes(workspace.id),
   );
   const clearBugFlashes = useWorkspaceStore((state) => state.clearBugFlashes);
   const activities = useWorkspaceStore((state) => state.activities);
@@ -163,7 +172,21 @@ export const useDeviceViewModel = () => {
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
     hasState: isRunLive || isLearning,
     stateText: isRunLive ? t('DEVICE.DRIVING') : isLearning ? t('DEVICE.LEARNING') : '',
-    offTitle: t('DEVICE.NO_DEVICE'),
+    offTitle:
+      lastRun === null
+        ? t('DEVICE.NO_DEVICE')
+        : t(lastRun.kind === 'explore' ? 'DEVICE.ENDED_EXPLORE' : 'DEVICE.ENDED', {
+            id: lastRun.id,
+          }),
+    offDetail:
+      lastRun === null
+        ? ''
+        : tallyPartsOf({
+            ...countVerdicts(lastRun.cases.map(({ steps }) => caseVerdict(steps))),
+            say: (key, values) => t(key, values),
+          }).join(' · '),
+    offMood:
+      lastRun === null ? ('sleeping' as const) : moodOfStatus(workspace?.status ?? null),
     ended:
       lastRun === null || workspace === null
         ? null
@@ -204,7 +227,9 @@ export const useDeviceViewModel = () => {
     shot,
     stream,
     urlText: shownUrlOf(
-      (isLearning ? chatDevice?.address : live?.address) ?? target?.value ?? '',
+      (isLearning ? chatDevice?.address : hasScreen ? live?.address : undefined) ??
+        target?.value ??
+        '',
     ),
     elapsedLabel: formatElapsed(live?.elapsedSec ?? 0),
     stepsRef,

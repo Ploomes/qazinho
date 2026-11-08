@@ -17,6 +17,7 @@ export const useBugFlashViewModel = (props: IBugFlashProps) => {
       : (state.bugFlashes[workspaceId] ?? NO_BUG_FLASHES),
   );
   const shift = useWorkspaceStore((state) => state.shiftBugFlash);
+  const settle = useWorkspaceStore((state) => state.settleBugFlashes);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const openBugId = useWorkspaceStore((state) => state.openBugId);
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
@@ -90,6 +91,9 @@ export const useBugFlashViewModel = (props: IBugFlashProps) => {
       flash?.isQuiet === true
         ? 'bug-flash__shutter bug-flash__shutter--soft'
         : 'bug-flash__shutter',
+    onGone: () => {
+      if (workspaceId !== null) settle(workspaceId);
+    },
     onHoldStart: () => {
       setHeld(true);
     },

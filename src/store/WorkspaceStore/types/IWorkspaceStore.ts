@@ -38,6 +38,7 @@ export interface IWorkspaceStore {
   liveTexts: Record<string, string>;
   activities: Record<string, IAgentActivity[]>;
   bugFlashes: Record<string, IBugFlash[]>;
+  bugFlashesLeaving: string[];
   retries: Record<string, { attempt: number; maxRetries: number }>;
   readSteps: Record<string, { step: CodeStep | JiraStep; bytes: number }>;
   lookingAt: Record<string, 'android' | 'ios'>;
@@ -105,6 +106,7 @@ export interface IWorkspaceStore {
   setLiveText: (props: { workspaceId: string; text: string }) => void;
   noteActivity: (props: { workspaceId: string; tool: string; target: string }) => void;
   shiftBugFlash: (props: { workspaceId: string; id: string }) => void;
+  settleBugFlashes: (workspaceId: string) => void;
   clearBugFlashes: (workspaceId: string) => void;
   setRetry: (props: { workspaceId: string; attempt: number; maxRetries: number }) => void;
   setReadStep: (props: {

@@ -9,6 +9,11 @@
   container-type: inline-size;
 }
 
+.device-view__fold {
+  flex: none;
+  overflow: hidden;
+}
+
 .device-view__header {
   display: flex;
   flex: none;
@@ -17,7 +22,6 @@
   height: var(--device-header);
   padding: 0 var(--device-gutter);
   border-bottom: 1px solid var(--line2);
-  animation: gc-in var(--dur) var(--ease) both;
 }
 
 .device-view__state {

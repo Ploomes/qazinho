@@ -21,13 +21,14 @@ export const BugFlash: React.FC<IBugFlashProps> = (props) => {
     imageClassName,
     miraClassName,
     shutterClassName,
+    onGone,
     onHoldStart,
     onHoldEnd,
     onOpen,
   } = useBugFlashViewModel(props);
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="wait" onExitComplete={onGone}>
       {flash !== null && (
         <motion.div
           key={flash.id}

@@ -517,6 +517,8 @@ export const en = {
     DRIVING: 'running',
     LEARNING: 'learning the app',
     NO_DEVICE: 'Nothing running.',
+    ENDED: 'Run {{id}} is over.',
+    ENDED_EXPLORE: 'Exploration {{id}} is over.',
     STEPS: 'steps',
     STEPS_PROGRESS: '{{current}} of {{total}}',
     SCREENS: 'screens',

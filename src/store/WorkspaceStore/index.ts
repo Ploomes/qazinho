@@ -45,6 +45,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   liveTexts: {},
   activities: {},
   bugFlashes: {},
+  bugFlashesLeaving: [],
   retries: {},
   readSteps: {},
   lookingAt: {},
@@ -166,20 +167,38 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
     })),
 
   shiftBugFlash: ({ workspaceId, id }) =>
-    set((state) => ({
-      bugFlashes: {
-        ...state.bugFlashes,
-        [workspaceId]: (state.bugFlashes[workspaceId] ?? []).filter(
-          (flash) => flash.id !== id,
-        ),
-      },
-    })),
+    set((state) => {
+      const left = (state.bugFlashes[workspaceId] ?? []).filter(
+        (flash) => flash.id !== id,
+      );
+
+      return {
+        bugFlashes: { ...state.bugFlashes, [workspaceId]: left },
+        bugFlashesLeaving:
+          left.length === 0 && !state.bugFlashesLeaving.includes(workspaceId)
+            ? [...state.bugFlashesLeaving, workspaceId]
+            : state.bugFlashesLeaving,
+      };
+    }),
+
+  settleBugFlashes: (workspaceId) =>
+    set((state) =>
+      state.bugFlashesLeaving.includes(workspaceId)
+        ? {
+            bugFlashesLeaving: state.bugFlashesLeaving.filter((id) => id !== workspaceId),
+          }
+        : state,
+    ),
 
   clearBugFlashes: (workspaceId) =>
     set((state) =>
-      (state.bugFlashes[workspaceId]?.length ?? 0) === 0
+      (state.bugFlashes[workspaceId]?.length ?? 0) === 0 &&
+      !state.bugFlashesLeaving.includes(workspaceId)
         ? state
-        : { bugFlashes: withoutKey({ record: state.bugFlashes, key: workspaceId }) },
+        : {
+            bugFlashes: withoutKey({ record: state.bugFlashes, key: workspaceId }),
+            bugFlashesLeaving: state.bugFlashesLeaving.filter((id) => id !== workspaceId),
+          },
     ),
 
   setLiveText: ({ workspaceId, text }) =>
@@ -377,6 +396,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
     set((state) => ({
       activities: withoutKey({ record: state.activities, key: workspaceId }),
       bugFlashes: withoutKey({ record: state.bugFlashes, key: workspaceId }),
+      bugFlashesLeaving: state.bugFlashesLeaving.filter((id) => id !== workspaceId),
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,

@@ -43,6 +43,7 @@ import {
   walkedStepsOf,
   RUN_ENDS,
   runDayOf,
+  tallyPartsOf,
   useRunActions,
 } from '@/modules/Run';
 import { Agent, Attachments, Run } from '@/services';
@@ -305,22 +306,12 @@ export const useChatViewModel = () => {
         : countVerdicts(saved.cases.map(({ steps }) => caseVerdict(steps)));
     const passed = counts?.passed ?? message.passed;
     const failed = counts?.failed ?? message.failed;
-    const told = [
-      ...(failed === 0
-        ? []
-        : [
-            failed === 1
-              ? t('CHAT.RUN_FAILED_ONE')
-              : t('CHAT.RUN_FAILED_OTHER', { count: failed }),
-          ]),
-      ...(passed === 0
-        ? []
-        : [
-            passed === 1
-              ? t('CHAT.RUN_PASSED_ONE')
-              : t('CHAT.RUN_PASSED_OTHER', { count: passed }),
-          ]),
-    ].join(' · ');
+    const told = tallyPartsOf({
+      failed,
+      blocked: counts?.blocked ?? 0,
+      passed,
+      say: (key, values) => t(key, values),
+    }).join(' · ');
 
     if (told === '') return t('CHAT.RUN_SECTION', { id: message.runId });
 
