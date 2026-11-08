@@ -1,5 +1,6 @@
 export type { IFlatStep, INetworkEntry, IRunVideo, StepVerdict } from '@/shared/types';
 export type * from './INetworkAt';
+export type * from './IPlanStage';
 export type * from './IReplayChapter';
 export type * from './IReplayMark';
 export type * from './IReplayMoment';

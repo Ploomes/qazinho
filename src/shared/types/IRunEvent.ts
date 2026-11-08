@@ -5,6 +5,7 @@ import type { IRunQuestion } from './IRunQuestion';
 import type { IRunVideo } from './IRunVideo';
 import type { IStepOutcome } from './IStepOutcome';
 import type { RunFailure } from './RunFailure';
+import type { RunHow } from './RunHow';
 
 /**
  * O que a página ouve enquanto uma run real anda o dispositivo, ou uma exploração
@@ -12,7 +13,8 @@ import type { RunFailure } from './RunFailure';
  */
 export type IRunEvent =
   | { kind: 'step'; outcome: IStepOutcome }
-  | { kind: 'doing'; workspaceId: string; index: number }
+  | { kind: 'doing'; workspaceId: string; index: number; how: RunHow }
+  | { kind: 'recorded'; workspaceId: string; caseId: string }
   | { kind: 'streaming'; workspaceId: string; url: string }
   | { kind: 'address'; workspaceId: string; url: string }
   | { kind: 'note'; workspaceId: string; text: string }

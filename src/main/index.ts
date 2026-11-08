@@ -24,6 +24,7 @@ import type {
   IImportSource,
   IJiraStoryCopy,
   IConnectIntegration,
+  IDevelopedAsk,
   IExportCode,
   InstallableId,
   IntegrationId,
@@ -1484,6 +1485,9 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.readCode, (_event, request: IExportCode) =>
     codeExport.read(request),
+  );
+  ipcMain.handle(CHANNELS.developedCases, (_event, ask: IDevelopedAsk) =>
+    runs.developed(ask),
   );
   ipcMain.handle(CHANNELS.replayUrl, (_event, run: IRunRef) => replays.urlFor(run));
   ipcMain.on(CHANNELS.alertRun, (event, notice: IRunAlert) => {

@@ -6,8 +6,8 @@ import { useRunButtonViewModel } from './hooks';
 import './styles.css';
 
 /**
- * Um sticker lima cortado em dois: o plano roda pela face dele, e o caret abre os dois
- * jeitos de rodá-lo, cada um dizendo o que faz.
+ * Um sticker lima cortado em dois: a face leva o plano à etapa seguinte, e o caret abre
+ * os outros jeitos de rodá-lo, cada um dizendo o que faz.
  */
 export const RunButton: React.FC<IRunButtonProps> = (props) => {
   const {
@@ -16,7 +16,7 @@ export const RunButton: React.FC<IRunButtonProps> = (props) => {
     style,
     runLabel,
     isDisabled,
-    blockedTip,
+    tip,
     hasChoices,
     chooseLabel,
     isOpen,
@@ -28,7 +28,7 @@ export const RunButton: React.FC<IRunButtonProps> = (props) => {
   } = useRunButtonViewModel(props);
 
   return (
-    <div ref={ref} className={className} style={style} title={blockedTip}>
+    <div ref={ref} className={className} style={style} title={tip}>
       <div className="run-button__face">
         <button
           type="button"

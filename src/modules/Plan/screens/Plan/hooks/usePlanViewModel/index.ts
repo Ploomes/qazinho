@@ -23,10 +23,10 @@ import {
   removeStep,
   writtenSecretsOf,
 } from '@/modules/Plan/library';
-import { PLAN_SOURCE } from '@/modules/Plan/screens/Plan/constants';
+import { PLAN_NO_CASES, PLAN_SOURCE } from '@/modules/Plan/screens/Plan/constants';
 import { useProUpdate } from '@/modules/Pro';
 import { useVariableActions, VARIABLE_FAILURE_KEYS } from '@/modules/Project';
-import { flattenPlanSteps, useRunActions } from '@/modules/Run';
+import { flattenPlanSteps, planStageOf, useRunActions } from '@/modules/Run';
 import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
 import { Archive, Confluence, Run } from '@/services';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
@@ -63,6 +63,7 @@ export const usePlanViewModel = () => {
     liveIsRunning: opened.live?.isRunning ?? false,
     liveQuestion: opened.live?.question,
     liveKind: opened.live?.kind,
+    liveHow: opened.live?.how ?? null,
     latest: opened.runs[0] ?? null,
     runs: opened.runs,
     bugs: opened.bugs,
@@ -106,6 +107,9 @@ export const usePlanViewModel = () => {
     read: Exclude<UnreadPlanRead, { status: 'read' }>;
   } | null>(null);
   const kept = useVariablesStore((state) => state.byProject[workspace?.projectId ?? '']);
+  const developedIds = useWorkspaceStore(
+    (state) => state.developedCases[workspace?.id ?? ''] ?? PLAN_NO_CASES,
+  );
   const { askVariables, applyVariables } = useVariableActions();
   const [secretFailure, setSecretFailure] = useState<{
     workspaceId: string;
@@ -259,6 +263,7 @@ export const usePlanViewModel = () => {
         },
       });
   };
+  const stage = planStageOf({ plan, developed: developedIds });
   const liveCases =
     workspace === null || workspace.liveOutcomes === null
       ? {}
@@ -344,6 +349,15 @@ export const usePlanViewModel = () => {
     },
     plan,
     lastRuns: { ...lastRuns, ...Object.fromEntries(liveRuns) },
+    developedIds,
+    stages: {
+      total: stage.total,
+      developed: stage.developed.length,
+      how:
+        isLocked && workspace?.liveKind !== 'explore'
+          ? (workspace?.liveHow ?? null)
+          : null,
+    },
     liveStatuses: Object.fromEntries(
       Object.entries(liveCases).map(([id, { status }]) => [id, status]),
     ),

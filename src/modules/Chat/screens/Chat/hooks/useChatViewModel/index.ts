@@ -42,6 +42,7 @@ import {
   dayLabelOf,
   walkedStepsOf,
   RUN_ENDS,
+  RUN_HOW_KEYS,
   runDayOf,
   tallyPartsOf,
   useRunActions,
@@ -86,6 +87,7 @@ export const useChatViewModel = () => {
     liveId: opened.live?.id ?? null,
     liveStartedAt: opened.live?.startedAt ?? '',
     liveCaseIds: opened.live?.caseIds,
+    liveHow: opened.live?.how,
     isWalking: opened.live !== null && !opened.live.isDone,
     isPaused: opened.live !== null && !opened.live.isRunning && !opened.live.isDone,
     walked: opened.live?.outcomes.length ?? 0,
@@ -381,6 +383,7 @@ export const useChatViewModel = () => {
     }).length;
     const progress = {
       id: item.runId,
+      doing: t(RUN_HOW_KEYS[workspace?.liveHow ?? 'replay']),
       current: currentStepOf({ walked: workspace?.walked ?? 0, total: stepCount }),
       total: stepCount,
     };

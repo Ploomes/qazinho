@@ -26,9 +26,11 @@ const OUTCOME = { workspaceId: 'w1', index: 0, verdict: 'passed' } as IStepOutco
 describe('followRunEvent', () => {
   it('moves to the step the agent is on', () => {
     expect(
-      followRunEvent({ run: RUN, event: { kind: 'doing', workspaceId: 'w1', index: 3 } })
-        .doingIndex,
-    ).toBe(3);
+      followRunEvent({
+        run: RUN,
+        event: { kind: 'doing', workspaceId: 'w1', index: 3, how: 'develop' },
+      }),
+    ).toMatchObject({ doingIndex: 3, how: 'develop' });
   });
 
   it('keeps the stream address, so a page that opens later can watch', () => {

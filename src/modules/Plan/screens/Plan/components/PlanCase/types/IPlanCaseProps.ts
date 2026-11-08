@@ -9,6 +9,7 @@ export interface IPlanCaseProps {
   testCase: ITestCase;
   lastRun?: IRunCase;
   liveStatus?: PillStatus;
+  isDeveloped?: boolean;
   design?: IDesignLink | null;
   isOpen: boolean;
   isFresh?: boolean;

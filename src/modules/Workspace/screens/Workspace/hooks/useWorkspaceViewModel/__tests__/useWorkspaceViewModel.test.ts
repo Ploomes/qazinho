@@ -60,20 +60,24 @@ describe('useWorkspaceViewModel', () => {
     });
   });
 
-  it('offers a run with the agent once a case passed, which a later run can walk again', () => {
+  it('offers to develop again once a case has a recording', () => {
     const { result } = renderHook(() => useWorkspaceViewModel());
+    const workspace = useWorkspaceStore.getState().workspaces[0];
 
     expect(result.current.canRunWithAgent).toBe(false);
 
     act(() => {
-      useWorkspaceStore.setState({
-        workspaces: [
-          walkRun({ verdicts: ['passed', 'passed', 'passed'], isFinished: true }),
-        ],
+      useWorkspaceStore.getState().setDevelopedCases({
+        workspaceId: workspace?.id ?? '',
+        caseIds: [workspace?.plan[0]?.id ?? ''],
       });
     });
 
-    expect(result.current.canRunWithAgent).toBe(true);
+    expect(result.current).toMatchObject({
+      canRunWithAgent: true,
+      developedCount: 1,
+      toDevelopCount: (workspace?.plan.length ?? 0) - 1,
+    });
   });
 
   it('links the story the workspace works from to where it opens, and nothing before one', () => {

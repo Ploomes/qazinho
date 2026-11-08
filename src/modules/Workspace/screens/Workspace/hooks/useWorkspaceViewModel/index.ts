@@ -2,13 +2,18 @@ import type { CSSProperties } from 'react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  caseVerdict,
   currentStepOf,
   flattenPlanSteps,
+  planStageOf,
+  RUN_HOW_KEYS,
+  useDevelopedWatch,
   useRunActions,
   walkedStepsOf,
 } from '@/modules/Run';
-import { WORKSPACE_TABS } from '@/modules/Workspace/screens/Workspace/constants';
+import {
+  NO_CASES,
+  WORKSPACE_TABS,
+} from '@/modules/Workspace/screens/Workspace/constants';
 import { EXPLORATION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import { useWorkspaceStore } from '@/store';
@@ -32,21 +37,27 @@ export const useWorkspaceViewModel = () => {
     isLive: opened.live !== null && !opened.live.isDone,
     isPaused: opened.live !== null && !opened.live.isRunning && !opened.live.isDone,
     isAsking: opened.live?.question !== undefined && opened.live.isDone === false,
-    hasPassed: opened.runs.some((run) =>
-      run.cases.some(({ steps }) => caseVerdict(steps) === 'passed'),
-    ),
+    plan: opened.plan,
+    how: opened.live?.how ?? 'replay',
   }));
+  const developedIds = useWorkspaceStore(
+    (state) => state.developedCases[workspace?.id ?? ''] ?? NO_CASES,
+  );
   const tab = useWorkspaceStore((state) => state.panelTab);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
   const setDesign = useWorkspaceStore((state) => state.setDesign);
-  const { onRun, onRunWithAgent, onExplore, onPause, onStop } = useRunActions();
+  const { onRun, onRunDeveloped, onRunWithAgent, onExplore, onPause, onStop } =
+    useRunActions();
+
+  useDevelopedWatch();
 
   const isLive = workspace?.isLive === true;
   const isPaused = workspace?.isPaused === true;
   const isAsking = workspace?.isAsking === true;
 
   const workspaceId = workspace?.id ?? null;
+  const stage = planStageOf({ plan: workspace?.plan ?? [], developed: developedIds });
 
   useEffect(() => {
     if (isLive) selectTab('device');
@@ -109,6 +120,7 @@ export const useWorkspaceViewModel = () => {
                 ? 'WORKSPACE.PAUSED_STEP'
                 : 'WORKSPACE.LIVE_STEP',
             {
+              doing: t(RUN_HOW_KEYS[workspace?.how ?? 'replay']),
               current: currentStepOf({
                 walked: workspace?.walked ?? 0,
                 total: workspace?.runStepCount ?? 0,
@@ -118,7 +130,9 @@ export const useWorkspaceViewModel = () => {
           ),
     canRun: (workspace?.stepCount ?? 0) > 0 && !isLive,
     canRunWithAgent:
-      (workspace?.stepCount ?? 0) > 0 && !isLive && workspace?.hasPassed === true,
+      (workspace?.stepCount ?? 0) > 0 && !isLive && stage.developed.length > 0,
+    developedCount: stage.developed.length,
+    toDevelopCount: stage.toDevelop.length,
     canExplore: workspace !== null && !isLive,
     exploreTip: t('WORKSPACE.EXPLORE_TIP', { minutes: EXPLORATION.minutes }),
     isLive,
@@ -132,6 +146,7 @@ export const useWorkspaceViewModel = () => {
       if (workspace) setDesign({ workspaceId: workspace.id, design: null });
     },
     onRun,
+    onRunDeveloped,
     onRunWithAgent,
     onExplore,
     onPause,

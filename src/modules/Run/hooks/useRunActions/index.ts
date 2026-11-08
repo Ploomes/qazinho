@@ -2,7 +2,13 @@ import type { RunMode } from '@/shared/types';
 import { useTranslation } from 'react-i18next';
 import { knownBugsOf } from '@/modules/Bug/library';
 import { viewportOf } from '@/modules/Device/library';
-import { flattenPlanSteps, nextRunId, walkedByOf } from '@/modules/Run/library';
+import {
+  flattenPlanSteps,
+  nextRunId,
+  planStageOf,
+  walkedByOf,
+  walkedStepsOf,
+} from '@/modules/Run/library';
 import { Run } from '@/services';
 import { EXPLORATION } from '@/shared/constants';
 import {
@@ -43,8 +49,10 @@ export const useRunActions = () => {
     const { workspaceId, mode, caseIds } = props;
     const { workspace, target } = opened(workspaceId);
     const isExploring = mode === 'explore';
-    const steps = isExploring ? [] : flattenPlanSteps(workspace?.plan ?? []);
     const scoped = caseIds === undefined || caseIds.length === 0 ? undefined : caseIds;
+    const steps = isExploring
+      ? []
+      : walkedStepsOf({ plan: workspace?.plan ?? [], caseIds: scoped });
     const live = workspace?.live ?? null;
 
     if (
@@ -125,6 +133,15 @@ export const useRunActions = () => {
     begin({ workspaceId, mode, ...(caseIds === undefined ? {} : { caseIds }) });
   };
 
+  const stageOfSelected = () => {
+    const { workspace } = opened(selectedId());
+
+    return planStageOf({
+      plan: workspace?.plan ?? [],
+      developed: useWorkspaceStore.getState().developedCases[workspace?.id ?? ''] ?? [],
+    });
+  };
+
   const stopWorkspace = (workspaceId: string | null): void => {
     const { workspace } = opened(workspaceId);
 
@@ -141,7 +158,12 @@ export const useRunActions = () => {
       begin({ ...props, mode: 'replay' }),
     stopWorkspace,
     onRun: () => {
-      runOwn('replay');
+      const { developed, toDevelop } = stageOfSelected();
+
+      runOwn('replay', developed.length === 0 ? undefined : toDevelop);
+    },
+    onRunDeveloped: () => {
+      runOwn('replay', stageOfSelected().developed);
     },
     onRunWithAgent: () => {
       runOwn('agent');

@@ -7,6 +7,7 @@ import type { CSSProperties } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SIDEBAR_SIZE, SIDEBAR_STATUS } from '@/app/components/Sidebar/constants';
+import { RUN_HOW_KEYS } from '@/modules/Run/constants';
 import { currentStepOf } from '@/modules/Run/library';
 import { workspaceMeta } from '@/modules/Workspace';
 import { Agent, Archive, Run } from '@/services';
@@ -140,7 +141,10 @@ export const useSidebarViewModel = () => {
           }),
         }),
         icon: SIDEBAR_STATUS[shown].icon,
-        statusLabel: t(STATUS[shown].labelKey),
+        statusLabel:
+          shown === 'running' && workspace.live?.how !== undefined
+            ? t(RUN_HOW_KEYS[workspace.live.how])
+            : t(STATUS[shown].labelKey),
         hasDetail: shown !== 'idle' || workspace.runs.length > 0,
         tone: SIDEBAR_STATUS[shown].tone,
         animation: SIDEBAR_STATUS[shown].animation,

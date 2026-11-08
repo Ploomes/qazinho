@@ -18,6 +18,7 @@ import {
   caseVerdict,
   countVerdicts,
   currentStepOf,
+  RUN_HOW_KEYS,
   tallyPartsOf,
   useRunControls,
 } from '@/modules/Run';
@@ -171,7 +172,11 @@ export const useDeviceViewModel = () => {
     hasControls: isRunLive,
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
     hasState: isRunLive || isLearning,
-    stateText: isRunLive ? t('DEVICE.DRIVING') : isLearning ? t('DEVICE.LEARNING') : '',
+    stateText: isRunLive
+      ? t(RUN_HOW_KEYS[live?.how ?? 'replay'])
+      : isLearning
+        ? t('DEVICE.LEARNING')
+        : '',
     offTitle:
       lastRun === null
         ? t('DEVICE.NO_DEVICE')

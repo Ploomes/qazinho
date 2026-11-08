@@ -31,6 +31,7 @@ export function resumeRun(props: {
   const live: ILiveRun = {
     id: run.runId,
     doingIndex: run.doingIndex,
+    ...(run.how === undefined ? {} : { how: run.how }),
     isRunning: !run.isPaused,
     isDone: false,
     elapsedSec: Math.max(0, Math.round((now - run.startedAtMs) / 1000)),

@@ -11,6 +11,7 @@ export const CHANNELS = {
   agentSignInEvent: 'agent:sign-in-event',
   startRun: 'run:start',
   exportCode: 'run:export-code',
+  developedCases: 'run:developed-cases',
   readCode: 'run:read-code',
   pauseRun: 'run:pause',
   stopRun: 'run:stop',

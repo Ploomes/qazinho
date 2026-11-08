@@ -70,6 +70,13 @@
   min-width: 0;
 }
 
+.plan-case__developed {
+  display: inline-flex;
+  margin-right: var(--space-3);
+  color: var(--pass);
+  font: var(--font-ui-sm);
+}
+
 .plan-case__aside {
   position: relative;
   display: flex;

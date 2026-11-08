@@ -2,6 +2,7 @@ import type { IRunAsked } from './IRunAsked';
 import type { IRunFinding } from './IRunFinding';
 import type { IRunQuestion } from './IRunQuestion';
 import type { IStepOutcome } from './IStepOutcome';
+import type { RunHow } from './RunHow';
 import type { TargetKind } from './TargetKind';
 
 /**
@@ -13,6 +14,7 @@ export interface IRunInFlight {
   runId: string;
   startedAtMs: number;
   doingIndex: number;
+  how?: RunHow;
   streamUrl: string | null;
   address: string | null;
   outcomes: IStepOutcome[];

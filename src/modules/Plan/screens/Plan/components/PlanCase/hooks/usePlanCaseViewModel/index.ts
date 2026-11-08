@@ -105,6 +105,7 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     onFactAdd: (fact: 'goal' | 'before') => {
       setOpenFacts((current) => ({ ...current, [fact]: true }));
     },
+    runCaseLabel: t(props.isDeveloped === true ? 'PLAN.RUN_CASE' : 'PLAN.DEVELOP_CASE'),
     moveLabel: t('PLAN.MOVE_CASE'),
     onHeadKeyDown: (event: KeyboardEvent<HTMLButtonElement>) => {
       if (isLocked || !event.altKey) return;

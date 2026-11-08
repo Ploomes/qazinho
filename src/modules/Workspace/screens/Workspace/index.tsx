@@ -27,6 +27,8 @@ export const Workspace: React.FC = () => {
     liveStatus,
     canRun,
     canRunWithAgent,
+    developedCount,
+    toDevelopCount,
     canExplore,
     exploreTip,
     isLive,
@@ -35,6 +37,7 @@ export const Workspace: React.FC = () => {
     onRename,
     onDropDesign,
     onRun,
+    onRunDeveloped,
     onRunWithAgent,
     onExplore,
     onPause,
@@ -70,7 +73,10 @@ export const Workspace: React.FC = () => {
                 <RunButton
                   canRun={canRun}
                   canChoose={canRunWithAgent}
+                  developed={developedCount}
+                  toDevelop={toDevelopCount}
                   onRun={onRun}
+                  onRunDeveloped={onRunDeveloped}
                   onRunWithAgent={onRunWithAgent}
                 />
               </>

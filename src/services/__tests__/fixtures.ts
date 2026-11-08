@@ -20,6 +20,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
       }),
     stopAgent: () => Promise.resolve(),
     readAgentLimits: () => Promise.resolve(null),
+    developedCases: () => Promise.resolve([]),
     exportCode: () => Promise.resolve({ kind: 'cancelled' }),
     readCode: () => Promise.resolve({ kind: 'nothing', missing: [] }),
     onAgentEvent: () => () => undefined,

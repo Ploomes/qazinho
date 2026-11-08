@@ -26,6 +26,7 @@ import type { ICommentBug } from './ICommentBug';
 import type { IConnectIntegration } from './IConnectIntegration';
 import type { IConnectResult } from './IConnectResult';
 import type { IDetectedAgent } from './IDetectedAgent';
+import type { IDevelopedAsk } from './IDevelopedAsk';
 import type { IDeviceTools } from './IDeviceTools';
 import type { IExportCode } from './IExportCode';
 import type { IFileBug } from './IFileBug';
@@ -105,6 +106,7 @@ export interface IQazinhoApi {
   onAgentSignIn: (listener: (progress: AgentSignInProgress) => void) => () => void;
   startRun: (run: IStartRun) => Promise<void>;
   exportCode: (request: IExportCode) => Promise<ExportOutcome>;
+  developedCases: (ask: IDevelopedAsk) => Promise<string[]>;
   readCode: (request: IExportCode) => Promise<CodeRead>;
   pauseRun: (props: { workspaceId: string; isPaused: boolean }) => Promise<void>;
   stopRun: (workspaceId: string) => Promise<void>;

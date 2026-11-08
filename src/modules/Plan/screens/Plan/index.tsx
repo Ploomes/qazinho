@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, EmptyState, Icon, IconButton } from '@/shared/components/atoms';
 import { ToTop, Tooltip } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
-import { PlanCase, PublishModal, UndoToast } from './components';
+import { PlanCase, PlanStages, PublishModal, UndoToast } from './components';
 import { usePlanViewModel } from './hooks';
 import './styles.css';
 
@@ -22,6 +22,8 @@ export const Plan: React.FC = () => {
     plan,
     lastRuns,
     liveStatuses,
+    developedIds,
+    stages,
     design,
     openCaseId,
     freshCaseId,
@@ -127,6 +129,12 @@ export const Plan: React.FC = () => {
         />
       ) : (
         <div className="plan">
+          <PlanStages
+            total={stages.total}
+            developed={stages.developed}
+            how={stages.how}
+          />
+
           <div ref={topRef} className="plan__head">
             <span className="plan__summary">{summary}</span>
             <span className="plan__note">{t('PLAN.NOTE')}</span>
@@ -339,6 +347,7 @@ export const Plan: React.FC = () => {
                   testCase={testCase}
                   lastRun={lastRuns[testCase.id]}
                   liveStatus={liveStatuses[testCase.id]}
+                  isDeveloped={developedIds.includes(testCase.id)}
                   design={design}
                   isOpen={openCaseId === testCase.id}
                   isFresh={freshCaseId === testCase.id}

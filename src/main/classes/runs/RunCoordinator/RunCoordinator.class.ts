@@ -13,6 +13,7 @@ import type { LiveStream } from '@/main/classes/devices/LiveStream';
 import type { IVariableValue, ShrinkImage } from '@/main/types';
 import type {
   IAndroidSetup,
+  IDevelopedAsk,
   IFlatStep,
   IIosSetup,
   IRunEvent,
@@ -27,6 +28,7 @@ import type {
   QaReply,
   RunAnswer,
   RunFailure,
+  RunHow,
   TargetKind,
 } from '@/shared/types';
 import type {
@@ -245,6 +247,21 @@ export class RunCoordinator {
     await this.drivers.get(props.workspaceId)?.resize(props.viewport);
   }
 
+  /** Os casos de um plano, como ele está agora, que já têm gravação para este alvo. */
+  public async developed(ask: IDevelopedAsk): Promise<string[]> {
+    const book = await this.readBook(ask.workspaceId);
+
+    return casesOf(ask.steps).flatMap((steps) => {
+      const flat = steps.map(({ step }) => step);
+      const caseId = flat[0]?.caseId;
+
+      return caseId !== undefined &&
+        recipeFor({ book, steps: flat, targetKind: ask.targetKind }) !== null
+        ? [caseId]
+        : [];
+    });
+  }
+
   /** Transmite o dispositivo de uma run em detalhe cheio enquanto o QA o vê de perto. */
   public async focus(props: { workspaceId: string; isFocused: boolean }): Promise<void> {
     await this.drivers.get(props.workspaceId)?.focus(props.isFocused);
@@ -455,6 +472,12 @@ export class RunCoordinator {
           isHealing: replayed === 'diverged',
         });
 
+        if (recorded.length > 0)
+          await this.writeBook({
+            workspaceId: run.workspaceId,
+            book: bookWith({ book, recipes: recorded }),
+          }).catch(() => undefined);
+
         if (walked === false) break;
 
         if (walked !== true) return walked;
@@ -490,6 +513,7 @@ export class RunCoordinator {
   }): Promise<boolean | RunFailure> {
     const { run, driver } = props;
     const { workspaceId } = run;
+    const how: RunHow = props.isHealing ? 'adjust' : 'develop';
     const pending = [...props.steps];
     const actions = new Map<number, IStepAction[]>();
     const proofs = new Map<number, string>();
@@ -633,7 +657,10 @@ export class RunCoordinator {
           at,
         });
 
-        if (recipe !== null && !isAnsweredForThisRun) props.recorded.push(recipe);
+        if (recipe !== null && !isAnsweredForThisRun) {
+          props.recorded.push(recipe);
+          this.emit({ kind: 'recorded', workspaceId, caseId: walking.step.caseId });
+        }
 
         return endCase('Filed. That was the last step of this case.');
       }
@@ -644,7 +671,7 @@ export class RunCoordinator {
         return 'The QA stopped the run: end your turn now.';
 
       began = Date.now();
-      this.emit({ kind: 'doing', workspaceId, index: next.index });
+      this.emit({ kind: 'doing', workspaceId, index: next.index, how });
 
       return report.verdict === 'failed'
         ? `Filed as a bug. The action went through, so the case goes on. Next is step ${String(next.step.numberInCase)}: ${next.step.action}`
@@ -734,7 +761,7 @@ export class RunCoordinator {
     const first = pending[0];
 
     if (first !== undefined)
-      this.emit({ kind: 'doing', workspaceId, index: first.index });
+      this.emit({ kind: 'doing', workspaceId, index: first.index, how });
 
     const port: IDevicePort = {
       describe: () => device.describe(),
@@ -1123,7 +1150,7 @@ export class RunCoordinator {
 
       if (kept === undefined) return 'diverged';
 
-      this.emit({ kind: 'doing', workspaceId, index });
+      this.emit({ kind: 'doing', workspaceId, index, how: 'replay' });
 
       const began = Date.now();
       const isDone = await (async () => {

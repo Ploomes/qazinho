@@ -23,6 +23,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
     isTitleFocused,
     canRemoveStep,
     onHeadClick,
+    runCaseLabel,
     moveLabel,
     onHeadKeyDown,
     onFieldCommit,
@@ -96,6 +97,16 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
         />
 
         <span className="plan-case__aside">
+          {props.isDeveloped === true && (
+            <span
+              className="plan-case__developed"
+              title={t('PLAN.DEVELOPED_TIP')}
+              aria-label={t('PLAN.DEVELOPED_TIP')}
+            >
+              <Icon name="recorded" />
+            </span>
+          )}
+
           {priority !== null && <span className="plan-case__priority">{priority}</span>}
 
           {!props.isLocked && (
@@ -104,8 +115,8 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                 <button
                   type="button"
                   className="plan-case__run"
-                  aria-label={t('PLAN.RUN_CASE')}
-                  title={t('PLAN.RUN_CASE')}
+                  aria-label={runCaseLabel}
+                  title={runCaseLabel}
                   onClick={() => {
                     props.onRunCase?.(props.testCase.id);
                   }}

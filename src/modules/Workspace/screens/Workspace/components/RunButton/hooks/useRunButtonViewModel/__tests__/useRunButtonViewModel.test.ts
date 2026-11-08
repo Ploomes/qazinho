@@ -8,18 +8,22 @@ import { useSettingsStore } from '@/store';
 
 function render(props: Partial<IRunButtonProps> = {}) {
   const onRun = vi.fn();
+  const onRunDeveloped = vi.fn();
   const onRunWithAgent = vi.fn();
   const view = renderHook(() =>
     useRunButtonViewModel({
       canRun: true,
       canChoose: true,
+      developed: 3,
+      toDevelop: 0,
       onRun,
+      onRunDeveloped,
       onRunWithAgent,
       ...props,
     }),
   );
 
-  return { onRun, onRunWithAgent, result: view.result };
+  return { onRun, onRunDeveloped, onRunWithAgent, result: view.result };
 }
 
 afterEach(() => {
@@ -49,11 +53,28 @@ describe('useRunButtonViewModel', () => {
       });
     });
 
-    it('says why it cannot run, and nothing once it can', () => {
-      expect(render({ canRun: false }).result.current.blockedTip).toBe(
+    it('says why it cannot run, and what it does once it can', () => {
+      expect(render({ canRun: false }).result.current.tip).toBe(
         'The plan has no step to run yet: write one in the Plan tab, or draft it in the chat.',
       );
-      expect(render().result.current.blockedTip).toBeUndefined();
+      expect(render().result.current.tip).toBe(
+        'The recording walks by itself, in seconds and with no tokens spent. The agent only steps in if the app changed.',
+      );
+    });
+
+    it('names the stage the plan is in', () => {
+      expect(render({ developed: 0, toDevelop: 5 }).result.current.runLabel).toBe(
+        'Develop plan',
+      );
+      expect(render({ developed: 2, toDevelop: 3 }).result.current.runLabel).toBe(
+        'Develop 3 cases',
+      );
+      expect(render({ developed: 4, toDevelop: 1 }).result.current.runLabel).toBe(
+        'Develop 1 case',
+      );
+      expect(render({ developed: 5, toDevelop: 0 }).result.current.runLabel).toBe(
+        'Run plan',
+      );
     });
   });
 
@@ -79,7 +100,7 @@ describe('useRunButtonViewModel', () => {
     });
 
     /**
-     * Antes de qualquer caso passar não há nada a andar de novo sem o agente: os dois
+     * Antes de qualquer caso ser gravado não há nada a andar de novo sem o agente: os dois
      * jeitos são o mesmo.
      */
     it('offers no choice before a case passed', () => {
@@ -109,14 +130,31 @@ describe('useRunButtonViewModel', () => {
 
       expect(plan).toMatchObject({
         title: 'Run plan',
-        hint: 'What passed before runs again without AI: in seconds, and with no tokens spent. The agent walks and judges the rest.',
+        hint: 'The recording walks by itself, in seconds and with no tokens spent. The agent only steps in if the app changed.',
         combo: '⌘↵',
       });
       expect(agent).toMatchObject({
-        title: 'Run everything with the agent',
-        hint: 'The agent walks and judges every case again, even the ones that passed. It takes longer and uses more tokens.',
+        title: 'Develop everything again',
+        hint: 'The agent walks every case and records it again. It takes longer and uses more tokens.',
         combo: null,
       });
+    });
+
+    it('offers to run what is developed while some cases are left', () => {
+      const { onRunDeveloped, result } = render({ developed: 2, toDevelop: 3 });
+
+      expect(result.current.options.map(({ key }) => key)).toEqual([
+        'plan',
+        'developed',
+        'agent',
+      ]);
+      expect(result.current.options[1]?.title).toBe('Run 2 developed cases');
+
+      act(() => {
+        result.current.options[1]?.onPick();
+      });
+
+      expect(onRunDeveloped).toHaveBeenCalledOnce();
     });
 
     it('shows the shortcut the QA bound, not the one it came with', () => {

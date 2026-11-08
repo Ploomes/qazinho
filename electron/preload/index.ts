@@ -25,6 +25,7 @@ import type {
   IConnectIntegration,
   IConnectResult,
   IDetectedAgent,
+  IDevelopedAsk,
   IDeviceTools,
   IExportCode,
   IFileBug,
@@ -142,6 +143,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.exportCode, request) as Promise<ExportOutcome>,
   readCode: (request: IExportCode) =>
     ipcRenderer.invoke(CHANNELS.readCode, request) as Promise<CodeRead>,
+  developedCases: (ask: IDevelopedAsk) =>
+    ipcRenderer.invoke(CHANNELS.developedCases, ask) as Promise<string[]>,
   pauseRun: (props: { workspaceId: string; isPaused: boolean }) =>
     ipcRenderer.invoke(CHANNELS.pauseRun, props) as Promise<void>,
   stopRun: (workspaceId: string) =>

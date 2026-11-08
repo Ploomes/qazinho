@@ -21,6 +21,7 @@ import type {
   IStepOutcome,
   IUnreadPlan,
   JiraStep,
+  RunHow,
 } from '@/shared/types';
 
 /** Os workspaces e tudo o que o QA pode mexer dentro de um deles. */
@@ -39,6 +40,7 @@ export interface IWorkspaceStore {
   activities: Record<string, IAgentActivity[]>;
   bugFlashes: Record<string, IBugFlash[]>;
   bugFlashesLeaving: string[];
+  developedCases: Record<string, string[]>;
   retries: Record<string, { attempt: number; maxRetries: number }>;
   readSteps: Record<string, { step: CodeStep | JiraStep; bytes: number }>;
   lookingAt: Record<string, 'android' | 'ios'>;
@@ -142,7 +144,9 @@ export interface IWorkspaceStore {
   resumeRun: (props: { run: IRunInFlight; by: IWalkedBy }) => void;
   pauseRun: (workspaceId: string) => void;
   stopRun: (workspaceId: string) => void;
-  markDoing: (props: { workspaceId: string; index: number }) => void;
+  markDoing: (props: { workspaceId: string; index: number; how: RunHow }) => void;
+  setDevelopedCases: (props: { workspaceId: string; caseIds: string[] }) => void;
+  markDeveloped: (props: { workspaceId: string; caseId: string }) => void;
   setContext: (props: { workspaceId: string; tokens: number; window: number }) => void;
   markStreaming: (props: { workspaceId: string; url: string }) => void;
   markAddress: (props: { workspaceId: string; url: string }) => void;

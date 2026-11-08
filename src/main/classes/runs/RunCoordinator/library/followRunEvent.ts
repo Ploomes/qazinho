@@ -10,7 +10,7 @@ export function followRunEvent(props: {
 }): IRunInFlight {
   const { run, event } = props;
 
-  if (event.kind === 'doing') return { ...run, doingIndex: event.index };
+  if (event.kind === 'doing') return { ...run, doingIndex: event.index, how: event.how };
 
   if (event.kind === 'streaming') return { ...run, streamUrl: event.url };
 

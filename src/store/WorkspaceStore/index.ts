@@ -46,6 +46,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   activities: {},
   bugFlashes: {},
   bugFlashesLeaving: [],
+  developedCases: {},
   retries: {},
   readSteps: {},
   lookingAt: {},
@@ -479,14 +480,30 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
-  markDoing: ({ workspaceId, index }) =>
+  setDevelopedCases: ({ workspaceId, caseIds }) =>
+    set((state) => ({
+      developedCases: { ...state.developedCases, [workspaceId]: caseIds },
+    })),
+
+  markDeveloped: ({ workspaceId, caseId }) =>
+    set((state) => ({
+      developedCases: {
+        ...state.developedCases,
+        [workspaceId]: [
+          ...(state.developedCases[workspaceId] ?? []).filter((id) => id !== caseId),
+          caseId,
+        ],
+      },
+    })),
+
+  markDoing: ({ workspaceId, index, how }) =>
     set((state) => ({
       workspaces: mapWorkspace({
         workspaces: state.workspaces,
         workspaceId,
         change: (workspace) =>
           workspace.live
-            ? { ...workspace, live: { ...workspace.live, doingIndex: index } }
+            ? { ...workspace, live: { ...workspace.live, doingIndex: index, how } }
             : workspace,
       }),
     })),

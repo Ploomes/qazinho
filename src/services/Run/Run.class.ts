@@ -1,6 +1,7 @@
 import type {
   CodeRead,
   ExportOutcome,
+  IDevelopedAsk,
   IExportCode,
   INetworkEntry,
   IRemovedVideo,
@@ -28,6 +29,10 @@ export class Run {
 
   public static async readCode(request: IExportCode): Promise<CodeRead> {
     return (await window.qazinho?.readCode(request)) ?? { kind: 'nothing', missing: [] };
+  }
+
+  public static async developed(ask: IDevelopedAsk): Promise<string[]> {
+    return (await window.qazinho?.developedCases(ask)) ?? [];
   }
 
   public static setPaused(props: { workspaceId: string; isPaused: boolean }): void {

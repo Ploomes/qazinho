@@ -18,6 +18,7 @@ export * from './momentAt';
 export * from './networkAt';
 export * from './nextRunId';
 export * from './pageOf';
+export * from './planStageOf';
 export * from './replayRequestsOf';
 export * from './replayTimelineOf';
 export * from './requestBarOf';
