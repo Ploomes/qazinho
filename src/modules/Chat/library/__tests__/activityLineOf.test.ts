@@ -17,6 +17,14 @@ describe('what the agent did, as the QA reads it', () => {
       id: 7,
       text: 'CHAT.DOING_CLICK|Salvar',
       isBug: false,
+      isSay: false,
+    });
+  });
+
+  it('marks what the agent says as its own line', () => {
+    expect(line({ tool: 'say', target: 'Creating a template first' })).toMatchObject({
+      text: 'CHAT.DOING_SAY|Creating a template first',
+      isSay: true,
     });
   });
 

@@ -1099,24 +1099,81 @@ describe('useChatViewModel', () => {
   });
 
   describe('a chat while a run goes', () => {
-    it('does NOT send, and says the run has to end or be stopped first', () => {
+    it('hands what the QA says to the run, and asks no new chat turn', () => {
       const ask = answering({});
+      const talk = vi.fn().mockResolvedValue(undefined);
 
+      window.qazinho = { ...window.qazinho, talkRun: talk };
       useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
 
       const { result } = renderHook(() => useChatViewModel());
 
-      expect(result.current.lockedText).toBe('A run is going: stop or wait to talk');
+      expect(result.current.lockedText).toBeNull();
+      expect(result.current.composerHint).toBe(
+        'Saw something? Say it and the agent checks',
+      );
 
       act(() => {
-        result.current.onDraftChange('What is it doing?');
+        result.current.onDraftChange('The header flickered');
       });
       act(() => {
         result.current.onSend();
       });
 
       expect(ask).not.toHaveBeenCalled();
-      expect(useWorkspaceStore.getState().workspaces[0]?.chat).toHaveLength(0);
+      expect(talk).toHaveBeenCalledWith({
+        workspaceId: expect.any(String),
+        text: 'The header flickered',
+      });
+      expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
+        kind: 'user',
+        text: 'The header flickered',
+      });
+      expect(result.current.talkStatus).toBe(
+        'The agent will hear you as soon as it finishes what it is doing',
+      );
+      expect(result.current.draft).toBe('');
+    });
+
+    it('offers no command, mention or attachment while talking to a run', () => {
+      answering({});
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
+
+      const { result } = renderHook(() => useChatViewModel());
+
+      act(() => {
+        result.current.onDraftChange('/fig');
+      });
+
+      expect(result.current).toMatchObject({
+        commandPicker: null,
+        command: null,
+        mentions: [],
+        mentionQuery: null,
+        canAttachFiles: false,
+      });
+    });
+
+    it('takes to the chat what the run ended without hearing', () => {
+      const ask = answering({});
+
+      useWorkspaceStore.setState({
+        workspaces: [walkRun({ verdicts: ['passed'], isFinished: true })],
+      });
+
+      const workspaceId = useWorkspaceStore.getState().workspaces[0]?.id ?? '';
+
+      renderHook(() => useChatViewModel());
+
+      act(() => {
+        useWorkspaceStore
+          .getState()
+          .landUnheardTalks({ workspaceId, texts: ['The header flickered'] });
+      });
+
+      expect(ask).toHaveBeenCalledOnce();
+      expect(ask.mock.calls[0]?.[0]).toMatchObject({ text: 'The header flickered' });
+      expect(useWorkspaceStore.getState().unheardTalks[workspaceId]).toBeUndefined();
     });
 
     it('lets the QA talk again once the run is over', () => {

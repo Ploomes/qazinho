@@ -29,6 +29,9 @@ export const Chat: React.FC = () => {
     lookStatus,
     draft,
     lockedText,
+    composerHint,
+    canAttachFiles,
+    talkStatus,
     suggestions,
     mentions,
     referenceIds,
@@ -156,6 +159,27 @@ export const Chat: React.FC = () => {
             )}
           </AnimatePresence>
 
+          <AnimatePresence initial={false}>
+            {talkStatus !== '' && (
+              <motion.div
+                key="talk"
+                className="chat__row"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: MOTION.durationSlow, ease: MOTION.ease }}
+              >
+                <div className="chat__gutter chat__gutter--intern">
+                  <Intern mood="thinking" size={40} />
+                </div>
+                <div className="chat__body chat__live" role="status">
+                  <p className="chat__talk">{talkStatus}</p>
+                  <TypingDots />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {isAgentTyping && (
             <motion.div
               className="chat__row"
@@ -257,6 +281,8 @@ export const Chat: React.FC = () => {
       <Composer
         value={draft}
         lockedText={lockedText}
+        hint={composerHint}
+        canAttachFiles={canAttachFiles}
         isAnswering={isAgentTyping}
         isAutoFocused={isComposerFocused}
         mentions={mentions}

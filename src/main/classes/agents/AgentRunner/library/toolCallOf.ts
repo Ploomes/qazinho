@@ -2,7 +2,7 @@ import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
 
 const MCP_NAME = /^mcp__(.+?)__(.+)$/;
 
-const TARGET_FIELDS = ['title', 'target', 'name', 'file_path', 'pattern'];
+const TARGET_FIELDS = ['title', 'target', 'name', 'file_path', 'pattern', 'text'];
 
 /**
  * Uma chamada de ferramenta nas palavras da tela: o nome sem o servidor, o Figma como um

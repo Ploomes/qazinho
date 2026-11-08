@@ -35,6 +35,10 @@ export class Run {
     return (await window.qazinho?.developedCases(ask)) ?? [];
   }
 
+  public static talk(props: { workspaceId: string; text: string }): void {
+    void window.qazinho?.talkRun(props);
+  }
+
   public static setPaused(props: { workspaceId: string; isPaused: boolean }): void {
     void window.qazinho?.pauseRun(props);
   }

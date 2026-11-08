@@ -41,6 +41,7 @@ export interface IWorkspaceStore {
   bugFlashes: Record<string, IBugFlash[]>;
   bugFlashesLeaving: string[];
   developedCases: Record<string, string[]>;
+  unheardTalks: Record<string, string[]>;
   retries: Record<string, { attempt: number; maxRetries: number }>;
   readSteps: Record<string, { step: CodeStep | JiraStep; bytes: number }>;
   lookingAt: Record<string, 'android' | 'ios'>;
@@ -147,6 +148,11 @@ export interface IWorkspaceStore {
   markDoing: (props: { workspaceId: string; index: number; how: RunHow }) => void;
   setDevelopedCases: (props: { workspaceId: string; caseIds: string[] }) => void;
   markDeveloped: (props: { workspaceId: string; caseId: string }) => void;
+  talkToRun: (props: { workspaceId: string; text: string }) => void;
+  markTalkHeard: (workspaceId: string) => void;
+  landTalkReply: (props: { workspaceId: string; text: string; who: string }) => void;
+  landUnheardTalks: (props: { workspaceId: string; texts: string[] }) => void;
+  startAskingUnheard: (workspaceId: string) => void;
   setContext: (props: { workspaceId: string; tokens: number; window: number }) => void;
   markStreaming: (props: { workspaceId: string; url: string }) => void;
   markAddress: (props: { workspaceId: string; url: string }) => void;

@@ -17,6 +17,16 @@ describe('the lines of what the agent is doing', () => {
     expect(rows[1]?.className).not.toContain('run-activity__line--bug');
   });
 
+  it('puts what the agent said first, apart from what it is doing', () => {
+    const { rows } = useRunActivityViewModel({
+      lines: [line(1), { ...line(2), isSay: true }, line(3)],
+    });
+
+    expect(rows.map(({ id }) => id)).toEqual([2, 1, 3]);
+    expect(rows[0]?.className).toContain('run-activity__line--say');
+    expect(rows[2]?.isNow).toBe(true);
+  });
+
   it('has nothing to draw with no lines', () => {
     expect(useRunActivityViewModel({ lines: [] }).rows).toEqual([]);
   });

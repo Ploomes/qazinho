@@ -40,7 +40,7 @@ export const useComposerViewModel = (props: IComposerProps) => {
   const mirrorRef = useRef<HTMLDivElement>(null);
 
   const isLocked = lockedText !== null;
-  const canAttach = !isLocked && !props.isAttaching;
+  const canAttach = !isLocked && !props.isAttaching && props.canAttachFiles !== false;
   const canSend =
     !isLocked &&
     !isAnswering &&
@@ -152,7 +152,7 @@ export const useComposerViewModel = (props: IComposerProps) => {
     },
     placeholder: isDropping
       ? props.dropLabel
-      : (lockedText ?? command?.placeholder ?? t('CHAT.PLACEHOLDER')),
+      : (lockedText ?? command?.placeholder ?? props.hint ?? t('CHAT.PLACEHOLDER')),
     fieldClassName: isLocked
       ? 'composer__field composer__field--locked'
       : isDropping

@@ -12,6 +12,7 @@ export const CHANNELS = {
   startRun: 'run:start',
   exportCode: 'run:export-code',
   developedCases: 'run:developed-cases',
+  talkRun: 'run:talk',
   readCode: 'run:read-code',
   pauseRun: 'run:pause',
   stopRun: 'run:stop',

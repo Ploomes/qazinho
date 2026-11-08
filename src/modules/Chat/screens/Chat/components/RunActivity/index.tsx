@@ -24,7 +24,13 @@ export const RunActivity: React.FC<IRunActivityProps> = (props) => {
             transition={{ duration: MOTION.duration, ease: MOTION.ease }}
           >
             <span className="run-activity__mark" aria-hidden="true">
-              {row.isBug ? <Icon name="bug" /> : <span className="run-activity__dot" />}
+              {row.isBug ? (
+                <Icon name="bug" />
+              ) : row.isSay === true ? (
+                <Icon name="sparkle" />
+              ) : (
+                <span className="run-activity__dot" />
+              )}
             </span>
             <span className="run-activity__text">{row.text}</span>
           </motion.li>

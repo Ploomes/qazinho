@@ -4,6 +4,7 @@ import type { IChatAttachment } from '@/shared/types';
 export interface IUserMessage {
   id: string;
   kind: 'user';
+  duringRun?: string;
   at: string;
   text: string;
   mentions?: string[];

@@ -15,6 +15,9 @@ export type IRunEvent =
   | { kind: 'step'; outcome: IStepOutcome }
   | { kind: 'doing'; workspaceId: string; index: number; how: RunHow }
   | { kind: 'recorded'; workspaceId: string; caseId: string }
+  | { kind: 'heard'; workspaceId: string }
+  | { kind: 'replied'; workspaceId: string; text: string | null }
+  | { kind: 'unheard'; workspaceId: string; texts: string[] }
   | { kind: 'streaming'; workspaceId: string; url: string }
   | { kind: 'address'; workspaceId: string; url: string }
   | { kind: 'note'; workspaceId: string; text: string }

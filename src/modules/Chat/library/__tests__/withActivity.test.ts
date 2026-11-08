@@ -25,6 +25,25 @@ describe('the last things the agent did', () => {
     expect(withActivity({ activities: [], tool: 'constructor', target: '' })).toEqual([]);
   });
 
+  it('keeps what the agent said on top of the actions until the step ends', () => {
+    let activities = withActivity({
+      activities: [],
+      tool: 'say',
+      target: 'Creating a template first',
+    });
+
+    for (const target of ['a', 'b', 'c', 'd', 'e'])
+      activities = withActivity({ activities, tool: 'click', target });
+
+    expect(activities[0]).toMatchObject({ tool: 'say' });
+    expect(activities).toHaveLength(AGENT_ACTIVITY.kept + 1);
+    expect(
+      withActivity({ activities, tool: 'report', target: '' }).some(
+        ({ tool }) => tool === 'say',
+      ),
+    ).toBe(false);
+  });
+
   it('forgets the oldest, and never repeats an id', () => {
     let activities = withActivity({ activities: [], tool: 'look', target: '' });
 

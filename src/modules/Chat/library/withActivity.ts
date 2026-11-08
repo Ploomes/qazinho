@@ -3,7 +3,7 @@ import { ACTIVITY_KEYS, AGENT_ACTIVITY } from '@/modules/Chat/constants';
 
 /**
  * As últimas coisas que o agente fez depois de mais uma: o que a tela não sabe dizer fica
- * de fora, e a mesma coisa duas vezes é uma linha só.
+ * de fora, e o motivo que ele deu fica até o passo acabar ou ele dar outro.
  */
 export function withActivity(props: {
   activities: IAgentActivity[];
@@ -17,7 +17,12 @@ export function withActivity(props: {
 
   if (last?.tool === tool && last.target === target) return activities;
 
-  return [...activities, { id: (last?.id ?? 0) + 1, tool, target }].slice(
-    -AGENT_ACTIVITY.kept,
-  );
+  const next = [...activities, { id: (last?.id ?? 0) + 1, tool, target }];
+  const said =
+    tool === 'report' ? [] : next.filter((one) => one.tool === 'say').slice(-1);
+
+  return [
+    ...said,
+    ...next.filter((one) => one.tool !== 'say').slice(-AGENT_ACTIVITY.kept),
+  ].sort((one, other) => one.id - other.id);
 }

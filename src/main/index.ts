@@ -1489,6 +1489,12 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.developedCases, (_event, ask: IDevelopedAsk) =>
     runs.developed(ask),
   );
+  ipcMain.handle(
+    CHANNELS.talkRun,
+    (_event, props: { workspaceId: string; text: string }) => {
+      runs.talk(props);
+    },
+  );
   ipcMain.handle(CHANNELS.replayUrl, (_event, run: IRunRef) => replays.urlFor(run));
   ipcMain.on(CHANNELS.alertRun, (event, notice: IRunAlert) => {
     alerts.alert({

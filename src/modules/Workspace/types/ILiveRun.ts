@@ -11,6 +11,7 @@ export interface ILiveRun {
   id: string;
   doingIndex: number;
   how?: RunHow;
+  talk?: 'waiting' | 'checking';
   isRunning: boolean;
   isDone: boolean;
   elapsedSec: number;

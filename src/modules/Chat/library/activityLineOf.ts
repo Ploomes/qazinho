@@ -19,6 +19,7 @@ export function activityLineOf(props: {
         id: activity.id,
         text: say(key, { target: targetOf(activity) }),
         isBug: activity.tool === 'bug',
+        isSay: activity.tool === 'say',
       };
 }
 

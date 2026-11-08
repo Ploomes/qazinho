@@ -3,4 +3,5 @@ export interface IActivityLine {
   id: number;
   text: string;
   isBug: boolean;
+  isSay?: boolean;
 }

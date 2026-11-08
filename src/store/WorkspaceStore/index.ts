@@ -29,7 +29,13 @@ import {
   startRun,
   takeSuggestion,
 } from '@/modules/Workspace/library';
-import { mapWorkspace, tickWorkspaces, withBugFlash, withoutKey } from './library';
+import {
+  mapWorkspace,
+  tickWorkspaces,
+  withBugFlash,
+  withoutKey,
+  withoutTalk,
+} from './library';
 
 export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   workspaces: [],
@@ -47,6 +53,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   bugFlashes: {},
   bugFlashesLeaving: [],
   developedCases: {},
+  unheardTalks: {},
   retries: {},
   readSteps: {},
   lookingAt: {},
@@ -494,6 +501,75 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
           caseId,
         ],
       },
+    })),
+
+  talkToRun: ({ workspaceId, text }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          workspace.live === null || workspace.live.isDone
+            ? workspace
+            : appendUserMessage({
+                workspace: {
+                  ...workspace,
+                  live: {
+                    ...workspace.live,
+                    talk: workspace.live.talk === 'checking' ? 'checking' : 'waiting',
+                  },
+                },
+                text,
+                at: formatClock(new Date()),
+                duringRun: workspace.live.id,
+              }),
+      }),
+    })),
+
+  markTalkHeard: (workspaceId) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          workspace.live === null
+            ? workspace
+            : { ...workspace, live: { ...workspace.live, talk: 'checking' } },
+      }),
+    })),
+
+  landTalkReply: ({ workspaceId, text, who }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          appendAgentMessage({
+            workspace:
+              workspace.live === null
+                ? workspace
+                : { ...workspace, live: withoutTalk(workspace.live) },
+            text,
+            who,
+            at: formatClock(new Date()),
+          }),
+      }),
+    })),
+
+  landUnheardTalks: ({ workspaceId, texts }) =>
+    set((state) => ({
+      unheardTalks: { ...state.unheardTalks, [workspaceId]: texts },
+    })),
+
+  startAskingUnheard: (workspaceId) =>
+    set((state) => ({
+      unheardTalks: withoutKey({ record: state.unheardTalks, key: workspaceId }),
+      askingIds: [...state.askingIds.filter((id) => id !== workspaceId), workspaceId],
+      retries: withoutKey({ record: state.retries, key: workspaceId }),
+      readSteps: withoutKey({ record: state.readSteps, key: workspaceId }),
+      lookingAt: withoutKey({ record: state.lookingAt, key: workspaceId }),
+      liveTexts: { ...state.liveTexts, [workspaceId]: '' },
+      activities: withoutKey({ record: state.activities, key: workspaceId }),
     })),
 
   markDoing: ({ workspaceId, index, how }) =>

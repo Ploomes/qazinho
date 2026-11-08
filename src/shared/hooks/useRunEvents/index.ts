@@ -25,6 +25,9 @@ export const useRunEvents = () => {
   const { t } = useTranslation();
   const markDoing = useWorkspaceStore((state) => state.markDoing);
   const markDeveloped = useWorkspaceStore((state) => state.markDeveloped);
+  const markTalkHeard = useWorkspaceStore((state) => state.markTalkHeard);
+  const landTalkReply = useWorkspaceStore((state) => state.landTalkReply);
+  const landUnheardTalks = useWorkspaceStore((state) => state.landUnheardTalks);
   const markStreaming = useWorkspaceStore((state) => state.markStreaming);
   const markAddress = useWorkspaceStore((state) => state.markAddress);
   const landNote = useWorkspaceStore((state) => state.landNote);
@@ -133,6 +136,15 @@ export const useRunEvents = () => {
       markDoing({ workspaceId: event.workspaceId, index: event.index, how: event.how });
     else if (event.kind === 'recorded')
       markDeveloped({ workspaceId: event.workspaceId, caseId: event.caseId });
+    else if (event.kind === 'heard') markTalkHeard(event.workspaceId);
+    else if (event.kind === 'replied')
+      landTalkReply({
+        workspaceId: event.workspaceId,
+        text: event.text ?? t('CHAT.TALK_NO_REPLY'),
+        who: agent,
+      });
+    else if (event.kind === 'unheard')
+      landUnheardTalks({ workspaceId: event.workspaceId, texts: event.texts });
     else if (event.kind === 'streaming')
       markStreaming({ workspaceId: event.workspaceId, url: event.url });
     else if (event.kind === 'address')

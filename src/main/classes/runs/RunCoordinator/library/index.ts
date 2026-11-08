@@ -31,3 +31,5 @@ export {
   variablePort,
 } from '@salve-software/qazinho-harness/engine';
 export * from './markedBoxOf';
+export * from './progressAside';
+export * from './talkAside';

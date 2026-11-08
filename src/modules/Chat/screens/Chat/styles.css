@@ -69,6 +69,12 @@
   align-items: stretch;
 }
 
+.chat__talk {
+  margin: 0;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}
+
 .chat__retry {
   margin-top: calc(var(--space-4) * -1);
   overflow: hidden;

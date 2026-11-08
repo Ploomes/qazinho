@@ -21,6 +21,23 @@
   color: var(--ink2);
 }
 
+.run-activity__line--say {
+  align-items: flex-start;
+  color: var(--ink);
+}
+
+.run-activity__line--say .run-activity__mark {
+  color: var(--lime-ink);
+}
+
+.run-activity__line--say .run-activity__text {
+  display: -webkit-box;
+  overflow: hidden;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
 .run-activity__line--bug .run-activity__mark {
   color: var(--fail);
 }

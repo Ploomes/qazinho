@@ -9,6 +9,8 @@ import type { IChatReference } from '@/shared/types';
 export interface IComposerProps {
   value: string;
   lockedText: string | null;
+  hint?: string | null;
+  canAttachFiles?: boolean;
   isAnswering: boolean;
   isAutoFocused: boolean;
   mentions: IChatReference[];

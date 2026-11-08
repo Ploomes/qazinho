@@ -38,7 +38,10 @@ export const useWorkspaceViewModel = () => {
     isPaused: opened.live !== null && !opened.live.isRunning && !opened.live.isDone,
     isAsking: opened.live?.question !== undefined && opened.live.isDone === false,
     plan: opened.plan,
-    how: opened.live?.how ?? 'replay',
+    how:
+      opened.live?.talk === 'checking'
+        ? ('check' as const)
+        : (opened.live?.how ?? 'replay'),
   }));
   const developedIds = useWorkspaceStore(
     (state) => state.developedCases[workspace?.id ?? ''] ?? NO_CASES,

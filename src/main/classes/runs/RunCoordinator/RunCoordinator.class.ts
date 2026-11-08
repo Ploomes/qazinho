@@ -4,6 +4,8 @@ import type {
   IOpenQuestion,
   IRecipeBook,
   IRunCoordinator,
+  IRunTalk,
+  IStepWatch,
   IVideoRecorder,
   IWalkRun,
   QaOutcome,
@@ -50,7 +52,7 @@ import { agentFailure, writeAtomically } from '@/main/library';
 import { EXPLORATION } from '@/shared/constants';
 import { mcpConfigWith } from '@salve-software/qazinho-harness';
 import { WEB_DRIVER } from '@salve-software/qazinho-harness/engine';
-import { EXPLORE_PUSHES, RUN_WALK, UNWALKED } from './constants';
+import { EXPLORE_PUSHES, RUN_WALK, RUN_WATCH, UNWALKED } from './constants';
 import {
   answerWords,
   askedAtOf,
@@ -70,6 +72,7 @@ import {
   outcomeOfReport,
   privateUrlOf,
   proofHolds,
+  progressAside,
   proofWithValues,
   provableProof,
   readBook,
@@ -78,6 +81,7 @@ import {
   recordedAction,
   replayedOutcome,
   stepCarryOn,
+  talkAside,
   unwalkedOutcome,
   variablePort,
 } from './library';
@@ -105,6 +109,7 @@ export class RunCoordinator {
   private readonly inFlightRuns = new Map<string, IRunInFlight>();
   private readonly viewports = new Map<string, IViewport>();
   private readonly questions = new Map<string, IOpenQuestion>();
+  private readonly talks = new Map<string, IRunTalk>();
 
   public constructor(props: IRunCoordinator) {
     this.runner = props.runner;
@@ -185,6 +190,7 @@ export class RunCoordinator {
       });
     } finally {
       this.questions.get(run.workspaceId)?.settle({ kind: 'stopped' });
+      this.endTalk(run.workspaceId);
       this.walking.delete(run.workspaceId);
       this.inFlightRuns.delete(run.workspaceId);
       this.stopping.delete(run.workspaceId);
@@ -231,6 +237,25 @@ export class RunCoordinator {
     if ((reply.kind === 'said' ? reply.text.trim() : reply.value).length === 0) return;
 
     open.settle(reply);
+  }
+
+  /**
+   * Guarda o que o QA disse no meio da run, para o agente ler ao agir de novo; sem run
+   * andando não há quem ouça.
+   */
+  public talk(props: { workspaceId: string; text: string }): void {
+    const { workspaceId } = props;
+    const text = props.text.trim();
+
+    if (!this.walking.has(workspaceId) || text.length === 0) return;
+
+    const talk = this.talks.get(workspaceId);
+
+    this.talks.set(workspaceId, {
+      waiting: [...(talk?.waiting ?? []), text],
+      isOpen: talk?.isOpen ?? false,
+      refused: 0,
+    });
   }
 
   /**
@@ -462,14 +487,16 @@ export class RunCoordinator {
           if (this.stopping.has(run.workspaceId)) break;
         }
 
+        const from = typeof replayed === 'number' ? replayed : 0;
         const walked = await this.walkCase({
           run,
           driver,
-          steps,
+          steps: steps.slice(from),
           costs,
           filed,
           recorded,
           isHealing: replayed === 'diverged',
+          isUnderWay: from > 0,
         });
 
         if (recorded.length > 0)
@@ -499,8 +526,8 @@ export class RunCoordinator {
   }
 
   /**
-   * Um turno de agente por caso, numa sessão própria, guardado como receita quando todo
-   * passo passou com a prova: true segue, false para, uma falha para e diz por quê.
+   * Um turno de agente por caso, guardado como receita quando ele andou o caso inteiro e
+   * todo passo passou com a prova: true segue, false para, uma falha diz por quê.
    */
   private async walkCase(props: {
     run: IWalkRun;
@@ -510,11 +537,14 @@ export class RunCoordinator {
     filed: string[];
     recorded: ICaseRecipe[];
     isHealing: boolean;
+    isUnderWay: boolean;
   }): Promise<boolean | RunFailure> {
     const { run, driver } = props;
     const { workspaceId } = run;
-    const how: RunHow = props.isHealing ? 'adjust' : 'develop';
+    const how: RunHow = props.isHealing || props.isUnderWay ? 'adjust' : 'develop';
     const pending = [...props.steps];
+    let watch: IStepWatch = { actions: 0, sinceSay: 0, askedAt: 0 };
+    let watchedFrom = Date.now();
     const actions = new Map<number, IStepAction[]>();
     const proofs = new Map<number, string>();
     const device = variablePort({ device: driver, values: run.values });
@@ -569,10 +599,16 @@ export class RunCoordinator {
       if (walking === undefined)
         return 'Every step of this case is reported. End your turn now.';
 
+      const held = this.talkHolds(run);
+
+      if (held !== null) return `${held} Then report step ${String(report.step)} again.`;
+
       if (report.step !== walking.step.numberInCase)
         return `Step ${String(walking.step.numberInCase)} is not reported yet: carry it out and report it first.`;
 
       pending.shift();
+      watch = { actions: 0, sinceSay: 0, askedAt: 0 };
+      watchedFrom = Date.now();
 
       if (report.note.length > 0)
         this.emit({ kind: 'note', workspaceId, text: report.note });
@@ -657,7 +693,7 @@ export class RunCoordinator {
           at,
         });
 
-        if (recipe !== null && !isAnsweredForThisRun) {
+        if (recipe !== null && !isAnsweredForThisRun && !props.isUnderWay) {
           props.recorded.push(recipe);
           this.emit({ kind: 'recorded', workspaceId, caseId: walking.step.caseId });
         }
@@ -744,7 +780,17 @@ export class RunCoordinator {
 
       if (answer?.kind === 'secret' && !answer.isKept) isAnsweredForThisRun = true;
 
+      watch = { ...watch, sinceSay: 0, askedAt: watch.actions };
+      watchedFrom = Date.now();
+
       return isOver ? 'This case is over: end your turn now.' : words;
+    };
+
+    const onSay = (text: string): Promise<string> => {
+      watch = { ...watch, sinceSay: 0 };
+      this.emit({ kind: 'note', workspaceId, text });
+
+      return Promise.resolve('The QA read it. Carry on.');
     };
 
     const mcpConfig = this.tools.mcpConfigFor(
@@ -779,6 +825,12 @@ export class RunCoordinator {
 
         const walking = pending[0];
 
+        watch = {
+          ...watch,
+          actions: watch.actions + 1,
+          sinceSay: watch.sinceSay + 1,
+        };
+
         if (walking !== undefined)
           actions.set(walking.step.numberInCase, [
             ...(actions.get(walking.step.numberInCase) ?? []),
@@ -791,7 +843,36 @@ export class RunCoordinator {
       },
     };
 
-    this.tools.attach({ workspaceId, driver: port, onReport, onFinding, onAsk });
+    const aside = (): string | null => {
+      const told = this.heard(run);
+
+      if (told !== null) return told;
+
+      const walking = pending[0];
+
+      if (walking === undefined || isOver) return null;
+
+      const progress = progressAside({
+        watch,
+        stepNumber: walking.step.numberInCase,
+        tookMs: Date.now() - watchedFrom,
+      });
+
+      watch = progress.watch;
+
+      return progress.text;
+    };
+
+    this.tools.attach({
+      workspaceId,
+      driver: port,
+      onReport,
+      onFinding,
+      onAsk,
+      onSay,
+      onAnswer: (text) => Promise.resolve(this.answered({ workspaceId, text })),
+      aside,
+    });
 
     const screen = await device.describe().catch(() => '');
 
@@ -826,6 +907,7 @@ export class RunCoordinator {
           ({ question, answer }) =>
             answer.kind === 'said' ? [{ question, answer: answer.text }] : [],
         ),
+        isUnderWay: props.isUnderWay,
       }),
     });
 
@@ -961,6 +1043,10 @@ export class RunCoordinator {
     const onFinish = (finish: IExploreFinish): Promise<string> => {
       if (isOver) return Promise.resolve('The exploration is over: end your turn now.');
 
+      const held = this.talkHolds(run);
+
+      if (held !== null) return Promise.resolve(`${held} Then call finish again.`);
+
       const early =
         pushes >= EXPLORE_PUSHES
           ? null
@@ -1047,6 +1133,13 @@ export class RunCoordinator {
       onFinding,
       onFinish,
       onAsk,
+      onSay: (text) => {
+        this.emit({ kind: 'note', workspaceId, text });
+
+        return Promise.resolve('The QA read it. Carry on.');
+      },
+      onAnswer: (text) => Promise.resolve(this.answered({ workspaceId, text })),
+      aside: () => this.heard(run),
     };
 
     this.tools.attach(attached);
@@ -1127,24 +1220,30 @@ export class RunCoordinator {
   }
 
   /**
-   * Anda um caso de novo sem o agente, como a receita dele diz, conferindo a prova de
-   * cada passo; os passos dele só são contados quando o caso inteiro se sustentou.
+   * Anda um caso sem o agente, conferindo a prova de cada passo; quando o QA fala, para
+   * ali e devolve o passo em que o agente assume, de onde o app está.
    */
   private async replayCase(props: {
     run: IWalkRun;
     driver: IDeviceDriver;
     steps: { step: IFlatStep; index: number }[];
     recipe: ICaseRecipe;
-  }): Promise<'replayed' | 'diverged' | 'stopped'> {
+  }): Promise<'replayed' | 'diverged' | 'stopped' | number> {
     const { run, driver, recipe } = props;
     const { workspaceId } = run;
     const outcomes: IStepOutcome[] = [];
     const device = variablePort({ device: driver, values: run.values });
 
-    for (const { step, index } of props.steps) {
+    for (const [position, { step, index }] of props.steps.entries()) {
       await this.holdWhilePaused(workspaceId);
 
       if (this.stopping.has(workspaceId)) return 'stopped';
+
+      if (this.hasTalkWaiting(workspaceId)) {
+        for (const outcome of outcomes) this.emit({ kind: 'step', outcome });
+
+        return position;
+      }
 
       const kept = recipe.steps.find(({ number }) => number === step.numberInCase);
 
@@ -1339,8 +1438,79 @@ export class RunCoordinator {
   }
 
   private async holdWhilePaused(workspaceId: string): Promise<void> {
-    while (this.paused.has(workspaceId) && !this.stopping.has(workspaceId))
+    while (
+      this.paused.has(workspaceId) &&
+      !this.stopping.has(workspaceId) &&
+      !this.hasTalkWaiting(workspaceId)
+    )
       await new Promise((wake) => setTimeout(wake, RUN_WALK.holdMs));
+  }
+
+  private hasTalkWaiting(workspaceId: string): boolean {
+    return (this.talks.get(workspaceId)?.waiting.length ?? 0) > 0;
+  }
+
+  /** Entrega ao agente o que o QA disse e ele não leu, cada variável lida como o nome. */
+  private heard(run: IWalkRun): string | null {
+    const { workspaceId } = run;
+    const talk = this.talks.get(workspaceId);
+
+    if (talk === undefined || talk.waiting.length === 0) return null;
+
+    this.talks.set(workspaceId, { waiting: [], isOpen: true, refused: 0 });
+    this.emit({ kind: 'heard', workspaceId });
+
+    return talkAside(
+      talk.waiting.map((text) => hiddenValues({ text, values: run.values })),
+    );
+  }
+
+  /**
+   * O que segura um passo enquanto o QA espera: o que ele disse e o agente ainda não leu,
+   * ou a resposta que o agente não deu, algumas vezes antes de deixar a run seguir.
+   */
+  private talkHolds(run: IWalkRun): string | null {
+    const { workspaceId } = run;
+    const told = this.heard(run);
+
+    if (told !== null) return told;
+
+    const talk = this.talks.get(workspaceId);
+
+    if (talk?.isOpen !== true) return null;
+
+    if (talk.refused >= RUN_WATCH.talkRefusals) {
+      this.talks.set(workspaceId, { ...talk, isOpen: false, refused: 0 });
+      this.emit({ kind: 'replied', workspaceId, text: null });
+
+      return null;
+    }
+
+    this.talks.set(workspaceId, { ...talk, refused: talk.refused + 1 });
+
+    return 'The QA is waiting for your answer: check what they told you and call answer_qa first.';
+  }
+
+  private answered(props: { workspaceId: string; text: string }): string {
+    const { workspaceId, text } = props;
+    const talk = this.talks.get(workspaceId);
+
+    if (talk?.isOpen !== true) return 'The QA asked you nothing right now. Carry on.';
+
+    this.talks.set(workspaceId, { ...talk, isOpen: false, refused: 0 });
+    this.emit({ kind: 'replied', workspaceId, text });
+
+    return 'The QA read your answer. Carry on with the plan.';
+  }
+
+  /** Solta o que o QA disse e nenhum agente chegou a ler, para o chat responder. */
+  private endTalk(workspaceId: string): void {
+    const talk = this.talks.get(workspaceId);
+
+    this.talks.delete(workspaceId);
+
+    if (talk !== undefined && talk.waiting.length > 0)
+      this.emit({ kind: 'unheard', workspaceId, texts: talk.waiting });
   }
 
   private emit(event: IRunEvent): void {

@@ -35,6 +35,23 @@ const CARD: ChatMessage = {
 };
 
 describe('groupRunMessages', () => {
+  it('keeps a run above what the QA told it before it said anything', () => {
+    const talk: ChatMessage = {
+      id: 'm-1',
+      kind: 'user',
+      at: '09:40',
+      text: 'The header flickered',
+      duringRun: 'r-01',
+    };
+    const items = groupRunMessages({
+      messages: [talk, NOTE].map(shown),
+      runIds: ['r-01'],
+    });
+
+    expect(items.map(({ kind }) => kind)).toEqual(['run', 'message']);
+    expect(items[0]).toMatchObject({ runId: 'r-01', messages: [{ message: NOTE }] });
+  });
+
   it('keeps what a run said together where it began, its card on top', () => {
     const items = groupRunMessages({
       messages: [USER, NOTE, FAILED, CARD].map(shown),

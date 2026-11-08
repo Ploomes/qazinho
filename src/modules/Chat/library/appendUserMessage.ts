@@ -14,6 +14,7 @@ export function appendUserMessage(props: {
   command?: UserCommand;
   from?: 'agent';
   attachments?: IChatAttachment[];
+  duringRun?: string;
 }): IWorkspace {
   const { workspace, text, at, mentions = [], command, from, attachments = [] } = props;
   const trimmed = text.trim();
@@ -34,6 +35,7 @@ export function appendUserMessage(props: {
         ...(command === undefined ? {} : { command }),
         ...(from === undefined ? {} : { from }),
         ...(attachments.length === 0 ? {} : { attachments }),
+        ...(props.duringRun === undefined ? {} : { duringRun: props.duringRun }),
       },
     ],
   };

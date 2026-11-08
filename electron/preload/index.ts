@@ -145,6 +145,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.readCode, request) as Promise<CodeRead>,
   developedCases: (ask: IDevelopedAsk) =>
     ipcRenderer.invoke(CHANNELS.developedCases, ask) as Promise<string[]>,
+  talkRun: (props: { workspaceId: string; text: string }) =>
+    ipcRenderer.invoke(CHANNELS.talkRun, props) as Promise<void>,
   pauseRun: (props: { workspaceId: string; isPaused: boolean }) =>
     ipcRenderer.invoke(CHANNELS.pauseRun, props) as Promise<void>,
   stopRun: (workspaceId: string) =>

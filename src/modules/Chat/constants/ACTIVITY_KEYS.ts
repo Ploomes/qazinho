@@ -15,6 +15,7 @@ export const ACTIVITY_KEYS = {
   network: 'CHAT.DOING_NETWORK',
   figma: 'CHAT.DOING_FIGMA',
   bug: 'CHAT.DOING_BUG',
+  say: 'CHAT.DOING_SAY',
   report: 'CHAT.DOING_REPORT',
   screen: 'CHAT.DOING_SCREEN',
   finish: 'CHAT.DOING_FINISH',

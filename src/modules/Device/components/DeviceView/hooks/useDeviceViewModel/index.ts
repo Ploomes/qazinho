@@ -113,7 +113,8 @@ export const useDeviceViewModel = () => {
       isOn: hasSteps,
     });
 
-  const activity = workspace === null ? undefined : activities[workspace.id]?.at(-1);
+  const doneNow = workspace === null ? [] : (activities[workspace.id] ?? []);
+  const activity = doneNow.find(({ tool }) => tool === 'say') ?? doneNow.at(-1);
   const doingNow =
     activity === undefined
       ? null
@@ -173,7 +174,7 @@ export const useDeviceViewModel = () => {
     pauseLabel: isPaused ? t('COMMON.RESUME') : t('COMMON.PAUSE'),
     hasState: isRunLive || isLearning,
     stateText: isRunLive
-      ? t(RUN_HOW_KEYS[live?.how ?? 'replay'])
+      ? t(RUN_HOW_KEYS[live?.talk === 'checking' ? 'check' : (live?.how ?? 'replay')])
       : isLearning
         ? t('DEVICE.LEARNING')
         : '',

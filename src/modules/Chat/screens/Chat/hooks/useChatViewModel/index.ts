@@ -13,7 +13,7 @@ import type {
   QaReply,
 } from '@/shared/types';
 import type { CSSProperties } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useChatAgent } from '@/modules/Chat/hooks/useChatAgent';
 import {
@@ -91,6 +91,8 @@ export const useChatViewModel = () => {
     isWalking: opened.live !== null && !opened.live.isDone,
     isPaused: opened.live !== null && !opened.live.isRunning && !opened.live.isDone,
     walked: opened.live?.outcomes.length ?? 0,
+    liveTalk:
+      opened.live !== null && !opened.live.isDone ? (opened.live.talk ?? null) : null,
     isExploring: opened.live?.kind === 'explore',
     question:
       opened.live !== null && !opened.live.isDone ? (opened.live.question ?? null) : null,
@@ -113,6 +115,8 @@ export const useChatViewModel = () => {
     state.integrations.some(({ id, confluence }) => id === 'jira' && confluence === true),
   );
   const sendMessage = useWorkspaceStore((state) => state.sendMessage);
+  const talkToRun = useWorkspaceStore((state) => state.talkToRun);
+  const startAskingUnheard = useWorkspaceStore((state) => state.startAskingUnheard);
   const setDesign = useWorkspaceStore((state) => state.setDesign);
   const answerQuestions = useWorkspaceStore((state) => state.answerQuestions);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
@@ -235,11 +239,43 @@ export const useChatViewModel = () => {
   });
   const liveId = isWalking ? (workspace?.liveId ?? null) : null;
 
+  const unheardTexts = useWorkspaceStore(
+    (state) => state.unheardTalks[workspace?.id ?? ''] ?? null,
+  );
+  const askUnheard = useEffectEvent(() => {
+    if (workspace === null || unheardTexts === null) return;
+
+    startAskingUnheard(workspace.id);
+    askAgent({
+      text: unheardTexts.join('\n'),
+      references: [],
+      code: null,
+      jira: null,
+      confluence: null,
+      source: null,
+    });
+  });
+  const hasUnheard = unheardTexts !== null;
+
+  useEffect(() => {
+    if (hasUnheard && !isWalking && !isAgentTyping) askUnheard();
+  }, [hasUnheard, isWalking, isAgentTyping, openWorkspaceId]);
+
   const send = (text: string, isSecretKept = isSecretSent) => {
-    if (!workspace || isWalking || isAgentTyping) return;
+    if (!workspace || isAgentTyping) return;
     if (secretIn(text) !== null && !isSecretKept) return;
 
     setSecretSent(false);
+
+    if (isWalking) {
+      if (text.trim().length === 0 || question !== null) return;
+
+      talkToRun({ workspaceId: workspace.id, text });
+      Run.talk({ workspaceId: workspace.id, text });
+      setDraft('');
+
+      return;
+    }
 
     const asked = chatCommand.ask(text);
 
@@ -383,7 +419,11 @@ export const useChatViewModel = () => {
     }).length;
     const progress = {
       id: item.runId,
-      doing: t(RUN_HOW_KEYS[workspace?.liveHow ?? 'replay']),
+      doing: t(
+        RUN_HOW_KEYS[
+          workspace?.liveTalk === 'checking' ? 'check' : (workspace?.liveHow ?? 'replay')
+        ],
+      ),
       current: currentStepOf({ walked: workspace?.walked ?? 0, total: stepCount }),
       total: stepCount,
     };
@@ -485,7 +525,15 @@ export const useChatViewModel = () => {
               !isWalking,
           },
     ),
-    lockedText: question !== null ? '' : isWalking ? t('CHAT.LOCKED_RUNNING') : null,
+    lockedText: question !== null ? '' : null,
+    composerHint: isWalking ? t('CHAT.TALK_PLACEHOLDER') : null,
+    canAttachFiles: !isWalking,
+    talkStatus:
+      workspace?.liveTalk === 'waiting'
+        ? t('CHAT.TALK_WAITING')
+        : workspace?.liveTalk === 'checking'
+          ? t('CHAT.TALK_CHECKING')
+          : '',
     question:
       question === null
         ? null
@@ -623,12 +671,12 @@ export const useChatViewModel = () => {
           ]
         : []),
     ],
-    mentions: mentionCandidates({ references, query: mentionQuery }),
+    mentions: isWalking ? [] : mentionCandidates({ references, query: mentionQuery }),
     referenceIds: references.map(({ id }) => id),
-    mentionQuery,
-    hasReferences: references.length > 0,
-    command: chatCommand.command,
-    commandPicker: chatCommand.picker,
+    mentionQuery: isWalking ? null : mentionQuery,
+    hasReferences: !isWalking && references.length > 0,
+    command: isWalking ? null : chatCommand.command,
+    commandPicker: isWalking ? null : chatCommand.picker,
     onPickCommand: chatCommand.onPick,
     onCommandBack: chatCommand.onBack,
     onCommandCancel: chatCommand.onCancel,

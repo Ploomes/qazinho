@@ -107,6 +107,7 @@ export interface IQazinhoApi {
   startRun: (run: IStartRun) => Promise<void>;
   exportCode: (request: IExportCode) => Promise<ExportOutcome>;
   developedCases: (ask: IDevelopedAsk) => Promise<string[]>;
+  talkRun: (props: { workspaceId: string; text: string }) => Promise<void>;
   readCode: (request: IExportCode) => Promise<CodeRead>;
   pauseRun: (props: { workspaceId: string; isPaused: boolean }) => Promise<void>;
   stopRun: (workspaceId: string) => Promise<void>;
