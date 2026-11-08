@@ -1,3 +1,25 @@
+# [0.4.0](https://github.com/Salve-Software/qazinho/compare/v0.3.0...v0.4.0) (2026-11-08)
+
+
+### Bug Fixes
+
+* **plan:** sources under the summary, smooth fold ([343df46](https://github.com/Salve-Software/qazinho/commit/343df46a2d440c80ca8c47dae0a03619c80a401b))
+* **plan:** space the step rows ([2418ee7](https://github.com/Salve-Software/qazinho/commit/2418ee7340f1a540da574045b42753a5adc4bc83))
+* **project:** space the variable fields ([7f69412](https://github.com/Salve-Software/qazinho/commit/7f69412d7c8357add0ba8d169302bf17292a34d2))
+* **ui:** keep a tooltip above any clipping box ([8b5d62d](https://github.com/Salve-Software/qazinho/commit/8b5d62dc2f51199f006c6d92ca9ebb1fc52a8b38))
+
+
+### Features
+
+* **chat:** attach images and files ([62fe33b](https://github.com/Salve-Software/qazinho/commit/62fe33b34e5638b55bf7f27101279fe3d43dded9))
+* **chat:** keep the files the QA attaches ([e9b0d9c](https://github.com/Salve-Software/qazinho/commit/e9b0d9c453f5f2e91270148421cb010ee8f6f995))
+* **chat:** render the coding agent's message ([5e9c267](https://github.com/Salve-Software/qazinho/commit/5e9c267e201a82cd13a48b6a6d7400d67b4aa957))
+* **device:** show the address the tab is on ([146edc8](https://github.com/Salve-Software/qazinho/commit/146edc823ac8c15e94e71e7bb9073fc86ebe08c6))
+* **outside:** export code and publish the plan ([23f50fb](https://github.com/Salve-Software/qazinho/commit/23f50fbefbd2ed1adfd8ef6b0f265e1ac5e478ee))
+* **outside:** pause, answer, take, link and build ([8466e86](https://github.com/Salve-Software/qazinho/commit/8466e8637db4db13d91178b2a63c28523946d370))
+* **project:** say if a variable is a secret ([930fef7](https://github.com/Salve-Software/qazinho/commit/930fef76a333f9f799bfa7de28c7b63d6abda5b1))
+* **run:** read the recorded code as text ([6fdc658](https://github.com/Salve-Software/qazinho/commit/6fdc6586d356b9b2554cc34d4c39e9813f1db1b6))
+
 # [0.3.0](https://github.com/Salve-Software/qazinho/compare/v0.2.1...v0.3.0) (2026-11-07)
 
 
