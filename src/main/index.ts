@@ -82,6 +82,7 @@ import {
   AppBuilder,
   AppPeek,
   Archive,
+  ChatDevices,
   ChatAttachments,
   AssistantAgent,
   OutsideServer,
@@ -182,6 +183,8 @@ import {
   listAvds,
   newestBuildTools,
   packageOfApk,
+  WEB_DRIVER,
+  WebDriver,
   webAccessOf,
 } from '@salve-software/qazinho-harness/engine';
 
@@ -194,6 +197,34 @@ const resources = new ResourceCollector({
 const deviceTools = new DeviceToolDetector();
 const archive = new Archive(PATHS.data);
 const live = new LiveStream();
+const chatDevices = new ChatDevices({
+  profilesRoot: PATHS.profiles,
+  live,
+  openDriver: ({ url, profileDir, viewport, values, onAddress }) =>
+    new WebDriver({
+      url,
+      profileDir,
+      viewport,
+      access: webAccessOf(values),
+      onAddress,
+      shrink: (shrunk: {
+        image: Buffer;
+        width: number;
+        height: number;
+        quality: number;
+      }) =>
+        nativeImage
+          .createFromBuffer(shrunk.image)
+          .resize({ width: shrunk.width, height: shrunk.height, quality: 'best' })
+          .toJPEG(shrunk.quality),
+    }),
+  onChange: ({ workspaceId, streamUrl, address }) => {
+    broadcast({
+      channel: CHANNELS.agentEvent,
+      event: { kind: 'device', workspaceId, streamUrl, address },
+    });
+  },
+});
 const replays = new ReplayServer({ dataRoot: PATHS.data });
 const storage = new StorageKeeper({
   dataRoot: PATHS.data,
@@ -894,6 +925,17 @@ async function askOnce(props: {
     attachments,
   });
   const sources = sourcesFor(ask.workspaceId);
+  const learning =
+    ask.target?.kind === 'web'
+      ? await chatDevices
+          .ready({
+            workspaceId: ask.workspaceId,
+            url: ask.target.value,
+            values: await variables.valuesOf(ask.projectId).catch(() => []),
+            viewport: ask.viewport ?? WEB_DRIVER.viewport,
+          })
+          .catch(() => null)
+      : null;
   const storyFolder = join(PATHS.jira, ask.workspaceId);
   const mcpConfig = mcpConfigWith({
     config: tools.mcpConfigFor(sources.scope, CHAT_SOURCES.toolMs),
@@ -902,6 +944,9 @@ async function askOnce(props: {
 
   await mkdir(storyFolder, { recursive: true });
   tools.attachSources(sources);
+
+  if (learning !== null)
+    tools.attach({ workspaceId: sources.scope, driver: learning, purpose: 'learn' });
 
   try {
     const turn = await agentRunner.ask({
@@ -923,6 +968,11 @@ async function askOnce(props: {
     return { turn, told: chat.told };
   } finally {
     tools.detachSources(sources.scope);
+
+    if (learning !== null) {
+      tools.detach(sources.scope);
+      chatDevices.release(ask.workspaceId);
+    }
   }
 }
 
@@ -1423,7 +1473,11 @@ void app.whenReady().then(async () => {
     agentRunner.cancel(workspaceId);
   });
   ipcMain.handle(CHANNELS.askAgent, (_event, ask: IAskAgent) => askAgent(ask));
-  ipcMain.handle(CHANNELS.startRun, (_event, run: IStartRun) => runs.start(run));
+  ipcMain.handle(CHANNELS.startRun, async (_event, run: IStartRun) => {
+    await chatDevices.close(run.workspaceId);
+
+    return runs.start(run);
+  });
   ipcMain.handle(CHANNELS.exportCode, (_event, request: IExportCode) =>
     codeExport.export(request),
   );
@@ -1492,6 +1546,7 @@ void app.whenReady().then(async () => {
     await codeCopies.release(workspaceId);
     await jiraStories.release(workspaceId);
     await chatAttachments.forget(workspaceId);
+    await chatDevices.close(workspaceId);
     confluencePages.delete(workspaceId);
     importSources.delete(workspaceId);
     await archive.removeWorkspace(workspaceId);
@@ -1776,6 +1831,7 @@ app.on('will-quit', (event) => {
   }
 
   appUpdater.stop();
+  void chatDevices.closeAll();
   live.close();
   replays.close();
   island.close();

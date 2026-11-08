@@ -1,4 +1,5 @@
 export * from './AppPeek';
+export * from './ChatDevices';
 export * from './DeviceToolDetector';
 export * from './LiveStream';
 export * from './PhonePeek';
