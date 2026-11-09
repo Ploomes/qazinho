@@ -82,11 +82,22 @@ export const VariableField: React.FC<IVariableFieldProps> = (props) => {
                     exit={{ opacity: 0 }}
                     transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
                   >
-                    <span className="variable-field__name">{row.name}</span>
-                    {row.tag !== '' && (
-                      <span className="variable-field__tag">{row.tag}</span>
-                    )}
-                    <span className="variable-field__description">{row.description}</span>
+                    <span className="variable-field__about">
+                      <span className="variable-field__title">
+                        <span className="variable-field__name">{row.name}</span>
+                        {row.tag !== '' && (
+                          <span className="variable-field__tag">{row.tag}</span>
+                        )}
+                      </span>
+                      {row.description !== '' && (
+                        <span
+                          className="variable-field__description"
+                          title={row.description}
+                        >
+                          {row.description}
+                        </span>
+                      )}
+                    </span>
                     {row.isSecret ? (
                       <span className="variable-field__sealed" title={sealedLabel}>
                         <span className="variable-field__lock">

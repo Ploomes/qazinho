@@ -18,9 +18,24 @@
   background: var(--raise);
 }
 
+.variable-field__about {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+  margin-right: var(--space-5);
+}
+
+.variable-field__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
 .variable-field__name {
-  flex: none;
-  max-width: 40%;
+  min-width: 0;
   overflow: hidden;
   color: var(--ink);
   font: var(--font-mono-md);
@@ -35,7 +50,6 @@
 }
 
 .variable-field__description {
-  flex: 1;
   min-width: 0;
   overflow: hidden;
   color: var(--ink2);
@@ -56,7 +70,7 @@
 
 .variable-field__plain {
   flex: none;
-  max-width: 30%;
+  max-width: 40%;
   overflow: hidden;
   color: var(--ink2);
   font: var(--font-mono-sm);
