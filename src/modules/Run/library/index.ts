@@ -24,6 +24,7 @@ export * from './replayTimelineOf';
 export * from './requestBarOf';
 export * from './requestOutcomeOf';
 export * from './runDayOf';
+export * from './runToContinueOf';
 export * from './takeOf';
 export * from './tallyPartsOf';
 export * from './urlPartsOf';

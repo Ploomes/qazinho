@@ -17,6 +17,7 @@ export type * from './IRunNotice';
 export type * from './IRunSpan';
 export type * from './IRunStep';
 export type * from './IRunSuggestion';
+export type * from './IRunToContinue';
 export type * from './ReplayFocus';
 export type * from './RequestOutcome';
 export type * from './RunEnd';
