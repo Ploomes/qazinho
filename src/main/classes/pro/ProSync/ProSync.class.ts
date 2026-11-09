@@ -1,4 +1,4 @@
-import type { IProSync, IProSyncRecord, ProUploader } from './types';
+import type { IProSync, IProSyncRecord, ProDownloader, ProUploader } from './types';
 import type {
   IProPublishBrief,
   IProShare,
@@ -21,6 +21,7 @@ import {
   bugFilesOf,
   evidenceKindOf,
   fileFactsOf,
+  fileRefsIn,
   hashOf,
   hasNewMemories,
   isMemoryRefusal,
@@ -30,6 +31,8 @@ import {
   pendingPlansOf,
   planBodyOf,
   projectBodyOf,
+  readBook,
+  readFileRef,
   recordingsBodyOf,
   removalOf,
   runBodyOf,
@@ -52,6 +55,7 @@ export class ProSync {
   private readonly isVideoRemoved: IProSync['isVideoRemoved'];
   private readonly variablesOf: IProSync['variablesOf'];
   private readonly upload: ProUploader;
+  private readonly download: ProDownloader;
   private readonly now: () => Date;
   private readonly schedule: IProSync['schedule'];
   private readonly onShare: (share: IProShare) => void;
@@ -68,6 +72,7 @@ export class ProSync {
     this.isVideoRemoved = props.isVideoRemoved;
     this.variablesOf = props.variablesOf;
     this.upload = props.upload;
+    this.download = props.download;
     this.now = props.now;
     this.schedule = props.schedule;
     this.onShare = props.onShare;
@@ -281,6 +286,35 @@ export class ProSync {
   }
 
   /** O que publicar um projeto manda, e quanto pesa a mídia do histórico dele. */
+  /** Baixa os arquivos que estas gravações sobem e que esta máquina ainda não tem. */
+  public async fetchFiles(props: {
+    projectId: string;
+    refs: string[];
+    store: string;
+  }): Promise<void> {
+    const record = (await this.read())[props.projectId];
+    const token = await this.token();
+
+    if (record === undefined || token === null) return;
+
+    for (const ref of props.refs) {
+      const read = readFileRef(ref);
+      const file = join(props.store, ref);
+
+      if (read === null || (await stat(file).catch(() => null))?.isFile() === true)
+        continue;
+
+      await this.download({
+        ...this.api.testFileAddress({
+          token,
+          org: record.orgSlug,
+          sha256: read.sha256,
+        }),
+        file,
+      });
+    }
+  }
+
   public async brief(batch: IProSyncBatch): Promise<IProPublishBrief> {
     const files = new Set<string>();
 
@@ -297,6 +331,20 @@ export class ProSync {
 
     for (const bug of batch.bugs) for (const file of bugFilesOf(bug)) files.add(file);
 
+    const planFiles = (
+      await Promise.all(
+        batch.plans.map(async ({ workspaceId }) =>
+          (await this.fileRefsOf(workspaceId)).map((ref) =>
+            this.keptFile({ workspaceId, ref }),
+          ),
+        ),
+      )
+    ).flat();
+    let fileBytes = 0;
+
+    for (const file of planFiles)
+      fileBytes += (await stat(file).catch(() => null))?.size ?? 0;
+
     let mediaBytes = 0;
 
     for (const file of files) {
@@ -311,6 +359,8 @@ export class ProSync {
       bugs: batch.bugs.length,
       memories: batch.memories.filter(({ deletedAt }) => deletedAt === null).length,
       mediaBytes,
+      files: planFiles.length,
+      fileBytes,
     };
   }
 
@@ -487,6 +537,7 @@ export class ProSync {
       (props.withPlans ? await this.sendEditedPlans(props) : null) ??
       (await this.sendRuns(props)) ??
       (await this.sendBugs(props)) ??
+      (await this.sendFiles(props)) ??
       (await this.sendRecordings(props))
     );
   }
@@ -780,6 +831,88 @@ export class ProSync {
     }
 
     return null;
+  }
+
+  private async sendFiles(props: {
+    batch: IProSyncBatch;
+    record: IProSyncRecord;
+    token: string;
+  }): Promise<ProSyncState | null> {
+    const { batch, record, token } = props;
+
+    for (const plan of batch.plans) {
+      if ((record.plans[plan.workspaceId]?.planId ?? null) === null) continue;
+
+      for (const ref of await this.fileRefsOf(plan.workspaceId)) {
+        if (record.evidence[`file:${ref}`] !== undefined) continue;
+
+        const refused = await this.sendFile({
+          ref,
+          file: this.keptFile({ workspaceId: plan.workspaceId, ref }),
+          record,
+          token,
+        });
+
+        if (refused !== null) return refused;
+      }
+    }
+
+    return null;
+  }
+
+  private async sendFile(props: {
+    ref: string;
+    file: string;
+    record: IProSyncRecord;
+    token: string;
+  }): Promise<ProSyncState | null> {
+    const { ref, file, record, token } = props;
+    const read = readFileRef(ref);
+    const facts = isInside({ root: this.archiveRoot, file })
+      ? await fileFactsOf(file)
+      : null;
+
+    if (read === null || facts === null) return null;
+
+    const answer = await this.api.keepTestFile({
+      token,
+      org: record.orgSlug,
+      path: 'test-files',
+      body: { name: read.name, size: facts.size, sha256: facts.sha256 },
+    });
+
+    if (!answer.isOk)
+      return isSkippedEvidence(answer.error) || answer.status === 404
+        ? null
+        : stateOfRefusal(answer);
+
+    if (answer.value.uploadUrl !== null) {
+      const isUploaded = await this.upload({
+        url: answer.value.uploadUrl,
+        headers: answer.value.headers,
+        file,
+      });
+
+      if (!isUploaded) return 'waiting';
+    }
+
+    record.evidence[`file:${ref}`] = answer.value.key;
+
+    return null;
+  }
+
+  private async fileRefsOf(workspaceId: string): Promise<string[]> {
+    return fileRefsIn(readBook(await this.recipesOf(workspaceId)).cases);
+  }
+
+  private keptFile(props: { workspaceId: string; ref: string }): string {
+    return join(
+      this.archiveRoot,
+      ARCHIVE.workspaces,
+      props.workspaceId,
+      ARCHIVE.files,
+      props.ref,
+    );
   }
 
   private async keysOf(props: {

@@ -171,6 +171,8 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
         bugs: bugs.length,
         memories: 0,
         mediaBytes: 0,
+        files: 0,
+        fileBytes: 0,
       }),
     syncPro: ({ project }) =>
       Promise.resolve({

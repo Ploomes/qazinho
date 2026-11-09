@@ -5,4 +5,6 @@ export interface IProPublishBrief {
   bugs: number;
   memories: number;
   mediaBytes: number;
+  files: number;
+  fileBytes: number;
 }

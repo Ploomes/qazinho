@@ -9,5 +9,6 @@ export const ARCHIVE = {
   plan: 'plan.yaml',
   unreadPlan: /^plan\.unread-\d{8}-\d{6}\.yaml$/,
   recipes: 'recipes.json',
+  files: 'files',
   network: 'network.json',
 } as const;

@@ -101,6 +101,8 @@ export class Pro {
         bugs: batch.bugs.length,
         memories: 0,
         mediaBytes: 0,
+        files: 0,
+        fileBytes: 0,
       }
     );
   }

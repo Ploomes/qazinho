@@ -113,6 +113,8 @@ describe('a page with no bridge', () => {
       bugs: 0,
       memories: 0,
       mediaBytes: 0,
+      files: 0,
+      fileBytes: 0,
     });
     expect(Pro.onSync(() => undefined)).toBeTypeOf('function');
     expect(

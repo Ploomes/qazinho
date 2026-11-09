@@ -1,3 +1,4 @@
+import type { ProDownloader } from './ProDownloader';
 import type { ProUploader } from './ProUploader';
 import type { ProApi } from '@/main/classes/pro/ProApi';
 import type { IProShare } from '@/shared/types';
@@ -16,6 +17,8 @@ export interface IProSync {
     | 'syncMemories'
     | 'syncRecordings'
     | 'evidenceUpload'
+    | 'keepTestFile'
+    | 'testFileAddress'
     | 'syncedProjects'
     | 'deleteProject'
   >;
@@ -27,6 +30,7 @@ export interface IProSync {
   isVideoRemoved: (run: { workspaceId: string; runId: string }) => Promise<boolean>;
   variablesOf: (projectId: string) => Promise<{ name: string; description: string }[]>;
   upload: ProUploader;
+  download: ProDownloader;
   now: () => Date;
   schedule: (props: { ms: number; run: () => void }) => () => void;
   onShare: (share: IProShare) => void;

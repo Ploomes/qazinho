@@ -23,6 +23,7 @@ import {
   SYNC_PROJECT_SCHEMA,
   SYNC_RUN_SCHEMA,
   SYNCED_PROJECTS_SCHEMA,
+  TEST_FILE_UPLOAD_SCHEMA,
   UPDATE_REQUIRED_STATUS,
 } from './constants';
 import { answerOf } from './library';
@@ -199,6 +200,35 @@ export class ProApi {
       },
       schema: EVIDENCE_UPLOAD_SCHEMA,
     });
+  }
+
+  /** Guarda na org um arquivo que os testes sobem, ou ouve que ela já o tem. */
+  public async keepTestFile(
+    call: IProSyncCall,
+  ): Promise<ProAnswer<z.infer<typeof TEST_FILE_UPLOAD_SCHEMA>>> {
+    return this.call({
+      request: {
+        method: 'POST',
+        path: `/api/orgs/${encodeURIComponent(call.org)}/${call.path}`,
+        body: call.body,
+        token: call.token,
+      },
+      schema: TEST_FILE_UPLOAD_SCHEMA,
+    });
+  }
+
+  /** Onde baixar um arquivo de teste da org, com o que o pedido precisa levar. */
+  public testFileAddress(props: { token: string; org: string; sha256: string }): {
+    url: string;
+    headers: Record<string, string>;
+  } {
+    return {
+      url: `${this.baseUrl}/api/orgs/${encodeURIComponent(props.org)}/test-files/${props.sha256}`,
+      headers: {
+        [DESKTOP_VERSION_HEADER]: this.version,
+        authorization: `Bearer ${props.token}`,
+      },
+    };
   }
 
   private async put<T>(props: {

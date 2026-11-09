@@ -1,5 +1,6 @@
 export * from './bugBodyOf';
 export * from './bugFilesOf';
+export * from './downloaderOf';
 export * from './evidenceKindOf';
 export * from './hashOf';
 export * from './hasNewMemories';
@@ -17,4 +18,9 @@ export * from './runBodyOf';
 export * from './runFilesOf';
 export * from './stateOfRefusal';
 export * from './uploaderOf';
-export { fileFactsOf } from '@salve-software/qazinho-harness/engine';
+export {
+  fileFactsOf,
+  fileRefsIn,
+  readBook,
+  readFileRef,
+} from '@salve-software/qazinho-harness/engine';

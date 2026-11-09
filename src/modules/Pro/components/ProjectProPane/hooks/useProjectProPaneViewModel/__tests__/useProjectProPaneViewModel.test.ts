@@ -118,6 +118,8 @@ describe('useProjectProPaneViewModel', () => {
             bugs: 0,
             memories: 0,
             mediaBytes: 1_440_000_000,
+            files: 0,
+            fileBytes: 0,
           }),
       };
 

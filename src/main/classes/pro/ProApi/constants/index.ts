@@ -15,3 +15,4 @@ export * from './SYNC_PROJECT_SCHEMA';
 export * from './SYNC_RUN_SCHEMA';
 export * from './SYNCED_PROJECTS_SCHEMA';
 export * from './UPDATE_REQUIRED_STATUS';
+export * from './TEST_FILE_UPLOAD_SCHEMA';

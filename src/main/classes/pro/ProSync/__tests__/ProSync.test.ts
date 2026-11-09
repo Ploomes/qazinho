@@ -123,6 +123,20 @@ function fakeApi(refuse: (sent: ISent) => Refusal | null = () => null) {
         call: { method: 'deleteProject', org, path: `projects/${projectId}`, body: null },
         value: null,
       }),
+    keepTestFile: ({ org, path, body }) =>
+      answer({
+        call: { method: 'keepTestFile', org, path, body },
+        value: {
+          key: 'file/1.bin',
+          isKept: false,
+          uploadUrl: 'https://evidence.test/file',
+          headers: {},
+        },
+      }),
+    testFileAddress: ({ org, sha256 }) => ({
+      url: `https://api.test/${org}/test-files/${sha256}`,
+      headers: { authorization: 'Bearer x' },
+    }),
     evidenceUpload: ({ org, path, body }) => {
       uploads += 1;
 
@@ -243,6 +257,7 @@ async function syncWith(props: {
   isSignedIn?: boolean;
   videoOf?: (root: string) => IProSync['videoOf'];
   isVideoRemoved?: IProSync['isVideoRemoved'];
+  download?: IProSync['download'];
 }) {
   const root = await mkdtemp(join(tmpdir(), 'qazinho-sync-'));
   const account = { isSignedIn: props.isSignedIn ?? true };
@@ -292,6 +307,7 @@ async function syncWith(props: {
 
       return Promise.resolve(upload.isTaken);
     },
+    download: props.download ?? (() => Promise.resolve(true)),
     now: () => new Date('2026-10-24T12:00:00.000Z'),
     schedule: ({ ms, run }) => {
       const retry = { ms, run, isCancelled: false };
@@ -1090,6 +1106,132 @@ describe('ProSync', () => {
     expect(await sync.shares()).toMatchObject([{ projectId: 'p1', orgSlug: 'loja' }]);
   });
 
+  describe('the files a recording picks', () => {
+    const SHA = 'a'.repeat(64);
+    const REF = `${SHA}/nota.pdf`;
+    const withFile = async (root: string) => {
+      await writeFile(
+        join(root, 'workspaces', 'w1', 'recipes.json'),
+        JSON.stringify({
+          cases: [
+            {
+              caseId: 'c1',
+              fingerprint: 'fp',
+              targetKind: 'web',
+              runId: 'r1',
+              recordedAt: 0,
+              steps: [
+                {
+                  number: 1,
+                  proof: 'x',
+                  actions: [{ kind: 'upload', target: 'A', value: 'x', files: [REF] }],
+                },
+              ],
+            },
+          ],
+        }),
+      );
+      await mkdir(join(root, 'workspaces', 'w1', 'files', SHA), { recursive: true });
+      await writeFile(join(root, 'workspaces', 'w1', 'files', REF), 'pdf');
+    };
+
+    it('sends the file to the org before the recording that names it', async () => {
+      const { api, sent, methods } = fakeApi();
+      const { root, publish } = await syncWith({ api });
+
+      await withFile(root);
+      await publish();
+
+      expect(sent.find(({ method }) => method === 'keepTestFile')).toMatchObject({
+        path: 'test-files',
+        body: { name: 'nota.pdf', size: 3 },
+      });
+      expect(methods().indexOf('keepTestFile')).toBeLessThan(
+        methods().indexOf('syncRecordings'),
+      );
+    });
+
+    it('sends it once', async () => {
+      const { api, sent } = fakeApi();
+      const { root, publish, batch, sync } = await syncWith({ api });
+
+      await withFile(root);
+      await publish();
+      await sync.push(batch);
+
+      expect(sent.filter(({ method }) => method === 'keepTestFile')).toHaveLength(1);
+    });
+
+    it('weighs what publishing takes of them', async () => {
+      const { api } = fakeApi();
+      const { root, sync, batch } = await syncWith({ api });
+
+      await withFile(root);
+
+      expect(await sync.brief(batch)).toMatchObject({ files: 1, fileBytes: 3 });
+    });
+
+    /** Uma org cheia não pode segurar o resto do projeto. */
+    it('goes on without a file the org refuses', async () => {
+      const { api, methods } = fakeApi();
+
+      api.keepTestFile = () =>
+        Promise.resolve({
+          isOk: false as const,
+          status: 409,
+          error: 'evidence_full',
+        });
+
+      const { root, publish } = await syncWith({ api });
+
+      await withFile(root);
+      await publish();
+
+      expect(methods()).toContain('syncRecordings');
+    });
+
+    it('fetches only what this machine does not hold, from the org of the project', async () => {
+      const { api } = fakeApi();
+      const asked: string[] = [];
+      const { root, publish, sync } = await syncWith({
+        api,
+        download: ({ url }) => {
+          asked.push(url);
+
+          return Promise.resolve(true);
+        },
+      });
+
+      await publish();
+      await mkdir(join(root, 'store', SHA), { recursive: true });
+      await writeFile(join(root, 'store', REF), 'pdf');
+      await sync.fetchFiles({
+        projectId: 'p1',
+        store: join(root, 'store'),
+        refs: [REF, `${'b'.repeat(64)}/capa.html`],
+      });
+
+      expect(asked).toEqual([`https://api.test/loja/test-files/${'b'.repeat(64)}`]);
+    });
+
+    it('fetches nothing for a project that is not in an org', async () => {
+      const { api } = fakeApi();
+      const asked: string[] = [];
+      const { root, sync } = await syncWith({
+        api,
+        download: ({ url }) => {
+          asked.push(url);
+
+          return Promise.resolve(true);
+        },
+      });
+
+      await sync.fetchFiles({ projectId: 'p1', store: join(root, 'store'), refs: [REF] });
+
+      expect(asked).toEqual([]);
+    });
+  });
+
   it('weighs what publishing sends, the media inside the archive alone', async () => {
     const { api, sent } = fakeApi();
     const { sync, batch } = await syncWith({ api });
@@ -1100,6 +1242,8 @@ describe('ProSync', () => {
       bugs: 1,
       memories: 0,
       mediaBytes: 7,
+      files: 0,
+      fileBytes: 0,
     });
     expect(
       await sync.brief({
@@ -1133,6 +1277,7 @@ describe('ProSync', () => {
       isVideoRemoved: () => Promise.resolve(false),
       variablesOf: () => Promise.resolve([]),
       upload: () => Promise.resolve(true),
+      download: () => Promise.resolve(true),
       now: () => new Date(),
       schedule: () => () => undefined,
       onShare: () => undefined,

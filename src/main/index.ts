@@ -128,7 +128,7 @@ import { AGENT_RUN } from '@/main/classes/agents/AgentRunner/constants';
 import { MEMORY_KEEPER } from '@/main/classes/agents/MemoryKeeper/constants';
 import { buildIdOf, javaHomesOf } from '@/main/classes/builds/AppBuilder/library';
 import { BUG_REVIEW } from '@/main/classes/integrations/BugReviewer/constants';
-import { uploaderOf } from '@/main/classes/pro/ProSync/library';
+import { downloaderOf, uploaderOf } from '@/main/classes/pro/ProSync/library';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import {
   ASSISTANT,
@@ -542,6 +542,7 @@ const proSync = new ProSync({
   variablesOf: async (projectId) =>
     (await variables.list()).find((kept) => kept.projectId === projectId)?.variables ??
     [],
+  download: downloaderOf((url, init) => fetch(url, init)),
   upload: uploaderOf((url, init) => fetch(url, init)),
   now: () => new Date(),
   schedule: ({ ms, run }) => {
