@@ -6,6 +6,7 @@ export * from './COUNTDOWN';
 export * from './EXPLORATION';
 export * from './MOTION';
 export * from './ISLAND_ARGUMENT';
+export * from './MEMORY_LIMIT';
 export * from './RECORDER_ARGUMENT';
 export * from './SHELL';
 export * from './STICKER';

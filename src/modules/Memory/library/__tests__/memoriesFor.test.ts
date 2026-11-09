@@ -2,6 +2,7 @@ import type { IMemory } from '@/shared/types';
 import { describe, expect, it } from 'vitest';
 import { MEMORY } from '@/modules/Memory/constants';
 import { memoriesFor } from '@/modules/Memory/library';
+import { MEMORY_LIMIT } from '@/shared/constants';
 
 const memory = (over: Partial<IMemory> = {}): IMemory => ({
   id: 'm-1',
@@ -68,6 +69,19 @@ describe('memoriesFor', () => {
         workspaceId: 'w-1',
       }),
     ).toHaveLength(1);
+  });
+
+  it('reads all that a full project and a full plan can hold', () => {
+    const project = Array.from({ length: MEMORY_LIMIT.project }, (_, i) =>
+      memory({ id: `p-${String(i)}` }),
+    );
+    const plan = Array.from({ length: MEMORY_LIMIT.plan }, (_, i) =>
+      memory({ id: `w-${String(i)}`, scope: 'plan', workspaceId: 'w-1' }),
+    );
+
+    expect(
+      memoriesFor({ memories: [...project, ...plan], workspaceId: 'w-1' }),
+    ).toHaveLength(MEMORY_LIMIT.project + MEMORY_LIMIT.plan);
   });
 
   it('keeps only the most recent ones', () => {

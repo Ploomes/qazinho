@@ -1,9 +1,10 @@
 import type { IMemoryChange } from '@/modules/Memory/types';
-import type { IMemory, MemoryOp } from '@/shared/types';
+import type { IMemory, MemoryOp, MemoryScope } from '@/shared/types';
+import { MEMORY_LIMIT } from '@/shared/constants';
 
 /**
- * As memórias depois do que o agente pediu, e o que mudou: uma nova, uma corrigida, ou
- * uma esquecida, que perde o texto e fica com a data.
+ * As memórias depois do que o agente pediu, e o que mudou; uma esquecida perde o texto e
+ * fica com a data. Sem lugar para uma nova, sai a que está parada há mais tempo.
  */
 export function withMemoryOps(props: {
   memories: IMemory[];
@@ -12,28 +13,34 @@ export function withMemoryOps(props: {
   now: string;
   newId: () => string;
 }): { memories: IMemory[]; changes: IMemoryChange[] } {
-  const { ops, workspaceId, now, newId } = props;
+  const { workspaceId, now, newId } = props;
   let memories = props.memories;
   const changes: IMemoryChange[] = [];
 
-  for (const op of ops) {
+  for (const op of changesBeforeAdds(props.ops)) {
     if (op.op === 'add') {
       if (memories.some((one) => isActive(one) && one.text === op.text)) continue;
 
+      const owner = op.scope === 'plan' ? workspaceId : null;
+      const pushedOut = pushedOutBy({ memories, scope: op.scope, owner });
+
       memories = [
-        ...memories,
+        ...memories.map((one) => (pushedOut.includes(one) ? forgotten(one, now) : one)),
         {
           id: newId(),
           text: op.text,
           scope: op.scope,
-          workspaceId: op.scope === 'plan' ? workspaceId : null,
+          workspaceId: owner,
           target: op.target,
           createdAt: now,
           updatedAt: now,
           deletedAt: null,
         },
       ];
-      changes.push({ kind: 'added', text: op.text });
+      changes.push(
+        ...pushedOut.map(({ text }) => ({ kind: 'forgotten' as const, text })),
+        { kind: 'added', text: op.text },
+      );
       continue;
     }
 
@@ -51,7 +58,7 @@ export function withMemoryOps(props: {
               target: op.target ?? one.target,
               updatedAt: now,
             }
-          : { ...one, text: '', updatedAt: now, deletedAt: now },
+          : forgotten(one, now),
     );
     changes.push(
       op.op === 'replace'
@@ -61,6 +68,30 @@ export function withMemoryOps(props: {
   }
 
   return { memories, changes };
+}
+
+function changesBeforeAdds(ops: MemoryOp[]): MemoryOp[] {
+  return [
+    ...ops.filter(({ op }) => op !== 'add'),
+    ...ops.filter(({ op }) => op === 'add'),
+  ];
+}
+
+function pushedOutBy(props: {
+  memories: IMemory[];
+  scope: MemoryScope;
+  owner: string | null;
+}): IMemory[] {
+  const { scope, owner } = props;
+  const inScope = props.memories
+    .filter((one) => isActive(one) && one.scope === scope && one.workspaceId === owner)
+    .sort((a, b) => a.updatedAt.localeCompare(b.updatedAt));
+
+  return inScope.slice(0, Math.max(0, inScope.length - MEMORY_LIMIT[scope] + 1));
+}
+
+function forgotten(memory: IMemory, now: string): IMemory {
+  return { ...memory, text: '', updatedAt: now, deletedAt: now };
 }
 
 function isActive({ deletedAt }: IMemory): boolean {
