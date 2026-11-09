@@ -142,6 +142,7 @@ export const pt: typeof en = {
     DOING_GOTO: 'Abrindo {{target}}',
     DOING_REOPEN: 'Reabrindo o app',
     DOING_SCROLL: 'Rolando a tela',
+    DOING_OPEN_DOWNLOAD: 'Abrindo o arquivo baixado',
     DOING_HOVER: 'Passando o mouse em {{target}}',
     DOING_LONG_PRESS: 'Segurando {{target}}',
     DOING_DRAG: 'Arrastando {{target}}',

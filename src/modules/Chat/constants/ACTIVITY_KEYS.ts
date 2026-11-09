@@ -10,6 +10,7 @@ export const ACTIVITY_KEYS = {
   long_press: 'CHAT.DOING_LONG_PRESS',
   drag: 'CHAT.DOING_DRAG',
   upload: 'CHAT.DOING_UPLOAD',
+  open_download: 'CHAT.DOING_OPEN_DOWNLOAD',
   wait: 'CHAT.DOING_WAIT',
   inspect: 'CHAT.DOING_INSPECT',
   network: 'CHAT.DOING_NETWORK',

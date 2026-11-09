@@ -140,6 +140,7 @@ export const en = {
     DOING_GOTO: 'Opening {{target}}',
     DOING_REOPEN: 'Reopening the app',
     DOING_SCROLL: 'Scrolling the screen',
+    DOING_OPEN_DOWNLOAD: 'Opening the downloaded file',
     DOING_HOVER: 'Hovering over {{target}}',
     DOING_LONG_PRESS: 'Holding {{target}}',
     DOING_DRAG: 'Dragging {{target}}',
