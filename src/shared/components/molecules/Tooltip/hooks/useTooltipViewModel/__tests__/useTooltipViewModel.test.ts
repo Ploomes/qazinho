@@ -32,6 +32,23 @@ describe('useTooltipViewModel', () => {
     expect(result.current.isOpen).toBe(false);
   });
 
+  /** Alinhada pela direita, a dica de algo perto da esquerda saía da janela. */
+  it('hangs from the left of what it names when the right would leave the window', () => {
+    const { result } = renderHook(() => useTooltipViewModel({}));
+    const anchor = document.createElement('span');
+
+    anchor.getBoundingClientRect = () =>
+      ({ top: 10, bottom: 30, left: 120, right: 220, height: 20 }) as DOMRect;
+    result.current.anchorRef.current = anchor;
+
+    act(() => {
+      result.current.onOpen();
+    });
+
+    expect(result.current.style).toMatchObject({ '--tooltip-left': '120px' });
+    expect(result.current.style).not.toHaveProperty('--tooltip-right');
+  });
+
   it('does NOT open while it is off', () => {
     const { result } = renderHook(() => useTooltipViewModel({ isOff: true }));
 

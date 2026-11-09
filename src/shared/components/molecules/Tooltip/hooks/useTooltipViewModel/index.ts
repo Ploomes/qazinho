@@ -7,7 +7,11 @@ export const useTooltipViewModel = (props: Pick<ITooltipProps, 'side' | 'isOff'>
   const isBeside = props.side === 'right';
   const anchorRef = useRef<HTMLSpanElement>(null);
   const [isOpen, setOpen] = useState(false);
-  const [place, setPlace] = useState<{ top: number; side: number } | null>(null);
+  const [place, setPlace] = useState<{
+    top: number;
+    side: number;
+    edge: '--tooltip-left' | '--tooltip-right';
+  } | null>(null);
 
   return {
     anchorRef,
@@ -22,7 +26,7 @@ export const useTooltipViewModel = (props: Pick<ITooltipProps, 'side' | 'isOff'>
         ? {}
         : {
             '--tooltip-top': `${String(place.top)}px`,
-            [isBeside ? '--tooltip-left' : '--tooltip-right']: `${String(place.side)}px`,
+            [place.edge]: `${String(place.side)}px`,
           }),
     } as CSSProperties,
     onOpen: () => {
@@ -41,11 +45,19 @@ export const useTooltipViewModel = (props: Pick<ITooltipProps, 'side' | 'isOff'>
                   window.innerHeight - TOOLTIP.edgePx,
                 ),
                 side: box.right + TOOLTIP.gapPx,
+                edge: '--tooltip-left',
               }
-            : {
-                top: box.bottom + TOOLTIP.belowGapPx,
-                side: Math.max(window.innerWidth - box.right, 0),
-              },
+            : box.right < TOOLTIP.maxWidthPx + TOOLTIP.edgePx
+              ? {
+                  top: box.bottom + TOOLTIP.belowGapPx,
+                  side: Math.max(box.left, TOOLTIP.edgePx),
+                  edge: '--tooltip-left',
+                }
+              : {
+                  top: box.bottom + TOOLTIP.belowGapPx,
+                  side: Math.max(window.innerWidth - box.right, 0),
+                  edge: '--tooltip-right',
+                },
         );
       }
 

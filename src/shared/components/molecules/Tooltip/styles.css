@@ -6,7 +6,8 @@
 .tooltip__panel {
   position: fixed;
   top: var(--tooltip-top);
-  right: var(--tooltip-right);
+  right: var(--tooltip-right, auto);
+  left: var(--tooltip-left, auto);
   z-index: 50;
   display: block;
   padding: var(--space-4) 14px;
@@ -22,9 +23,5 @@
 }
 
 .tooltip__panel--beside {
-  position: fixed;
-  top: var(--tooltip-top);
-  right: auto;
-  left: var(--tooltip-left);
   translate: 0 -50%;
 }
