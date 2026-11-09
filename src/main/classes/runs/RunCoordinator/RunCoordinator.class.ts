@@ -60,6 +60,7 @@ import {
   askedAtOf,
   bookWith,
   casesOf,
+  developsACase,
   driverFor,
   earlyFinish,
   expectedValuesOf,
@@ -1241,6 +1242,7 @@ export class RunCoordinator {
   private async watch(props: { run: IWalkRun; driver: IDeviceDriver }): Promise<void> {
     const { run, driver } = props;
     const { workspaceId } = run;
+    const isRecorded = !developsACase({ run, book: await this.readBook(workspaceId) });
     const isStreaming = await driver.stream((jpeg, screen) => {
       const viewport =
         this.viewports.get(workspaceId) ?? run.viewport ?? WEB_DRIVER.viewport;
@@ -1255,15 +1257,17 @@ export class RunCoordinator {
     const url = this.live.urlFor(workspaceId);
 
     if (!isStreaming || url === null) {
-      await driver.record(run.shotDir).catch(() => false);
+      if (isRecorded) await driver.record(run.shotDir).catch(() => false);
 
       return;
     }
 
     this.emit({ kind: 'streaming', workspaceId, url });
-    await this.recorder
-      ?.start({ workspaceId, runId: run.runId, url })
-      .catch(() => undefined);
+
+    if (isRecorded)
+      await this.recorder
+        ?.start({ workspaceId, runId: run.runId, url })
+        .catch(() => undefined);
   }
 
   /**

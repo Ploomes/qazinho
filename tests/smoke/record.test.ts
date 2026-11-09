@@ -1,4 +1,5 @@
 import type { ElectronApplication, Page } from 'playwright-core';
+import { existsSync } from 'node:fs';
 import { chmod, mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
@@ -6,6 +7,7 @@ import { join } from 'node:path';
 import { _electron as electron } from 'playwright-core';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { mp4FactsOf } from '@/main/library';
+import { fingerprintOf } from '@salve-software/qazinho-harness/engine';
 
 /**
  * Um agente que responde as checagens do app, depois pensa pelo tempo que a run deixar.
@@ -78,20 +80,65 @@ beforeAll(async () => {
     'cases:\n  - id: TC-01\n    title: The shop opens\n    priority: P1\n    goal: ""\n    preconditions: ""\n    lastVerdict: null\n    steps:\n      - action: Look at the page\n        expected: It says Shop\n',
   );
   await writeFile(
-    join(dataDir, 'workspaces', 'w-1', 'workspace.json'),
+    join(dataDir, 'workspaces', 'w-1', 'recipes.json'),
     JSON.stringify({
-      id: 'w-1',
-      projectId: 'p-1',
-      name: 'Shop regression',
-      targetId: 't-web',
-      planKind: 'web',
-      status: 'idle',
-      chat: [],
-      runs: [],
-      bugs: [],
-      viewportId: 'desktop',
+      cases: [
+        {
+          caseId: 'TC-01',
+          fingerprint: fingerprintOf({
+            targetKind: 'web',
+            steps: [
+              {
+                caseId: 'TC-01',
+                caseTitle: 'The shop opens',
+                casePriority: 'P1',
+                caseGoal: '',
+                casePreconditions: '',
+                numberInCase: 1,
+                action: 'Look at the page',
+                expected: 'It says Shop',
+              },
+            ],
+          }),
+          targetKind: 'web',
+          steps: [
+            {
+              number: 1,
+              actions: [{ kind: 'wait', target: '', value: '4000' }],
+              proof: 'Shop',
+            },
+          ],
+          runId: 'r-00',
+          recordedAt: 0,
+        },
+      ],
     }),
   );
+  await mkdir(join(dataDir, 'workspaces', 'w-2'), { recursive: true });
+  await writeFile(
+    join(dataDir, 'workspaces', 'w-2', 'plan.yaml'),
+    'cases:\n  - id: TC-01\n    title: The cart opens\n    priority: P1\n    goal: ""\n    preconditions: ""\n    lastVerdict: null\n    steps:\n      - action: Look at the cart\n        expected: It says Shop\n',
+  );
+
+  for (const [id, name] of [
+    ['w-1', 'Shop regression'],
+    ['w-2', 'Shop new plan'],
+  ] as const)
+    await writeFile(
+      join(dataDir, 'workspaces', id, 'workspace.json'),
+      JSON.stringify({
+        id,
+        projectId: 'p-1',
+        name,
+        targetId: 't-web',
+        planKind: 'web',
+        status: 'idle',
+        chat: [],
+        runs: [],
+        bugs: [],
+        viewportId: 'desktop',
+      }),
+    );
 
   app = await electron.launch({
     args: [join(process.cwd(), 'out', 'main', 'index.js'), `--user-data-dir=${dataDir}`],
@@ -126,9 +173,7 @@ describe('recording a run', () => {
   it('writes an H.264 MP4 of the browser as it ran, and closes its hidden window after', async () => {
     await page.getByText('Shop', { exact: true }).first().click();
     await page.getByText('Shop regression').first().click();
-    await page.getByRole('button', { name: 'Develop plan' }).click();
-    await page.waitForTimeout(6_000);
-    await page.getByRole('button', { name: 'Stop', exact: true }).first().click();
+    await page.getByRole('button', { name: 'Run plan' }).click();
 
     const file = join(dataDir, 'runs', 'w-1', 'r-01', 'run.mp4');
     const facts = await recorded(file);
@@ -151,4 +196,19 @@ describe('recording a run', () => {
     ).toBe(1);
     expect(said).toEqual([]);
   });
+
+  /** O agente pensa por minutos: o vídeo de um desenvolvimento ficava enorme e lento. */
+  it('leaves a development out of the video, and still shows it live', async () => {
+    await page.getByText('Shop new plan').first().click();
+    await page.getByRole('button', { name: 'Develop plan' }).click();
+    await page.waitForSelector('.device-screen img, .device-screen canvas', {
+      timeout: 30_000,
+    });
+    await page.waitForTimeout(3_000);
+    await page.getByRole('button', { name: 'Stop', exact: true }).first().click();
+    await page.waitForTimeout(2_000);
+
+    expect(existsSync(join(dataDir, 'runs', 'w-2', 'r-01', 'run.mp4'))).toBe(false);
+    expect(said).toEqual([]);
+  }, 90_000);
 });

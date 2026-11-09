@@ -6,41 +6,16 @@ import { join } from 'node:path';
 import { _electron as electron } from 'playwright-core';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { mp4FactsOf } from '@/main/library';
+import { fingerprintOf } from '@salve-software/qazinho-harness/engine';
 
 const PORT = 4359;
 
-const SDK = join(
-  process.cwd(),
-  'node_modules',
-  '@modelcontextprotocol',
-  'sdk',
-  'dist',
-  'cjs',
-  'client',
-);
-
-/** Um agente que responde as checagens do app, depois paga na página e passa o passo. */
-const PAYING_AGENT = `#!/usr/bin/env node
+/** Um agente que só responde as checagens do app: a run repete a gravação sozinha. */
+const IDLE_AGENT = `#!/usr/bin/env node
 const argv = process.argv.slice(2);
 if (argv[0] === '--version') { console.log('2.1.302 (Claude Code)'); process.exit(0); }
 if (argv[0] === 'auth') { console.log(JSON.stringify({ loggedIn: true })); process.exit(0); }
-const { Client } = require(${JSON.stringify(join(SDK, 'index.js'))});
-const { StreamableHTTPClientTransport } = require(${JSON.stringify(join(SDK, 'streamableHttp.js'))});
-const later = (ms) => new Promise((done) => setTimeout(done, ms));
-process.stdin.on('data', () => undefined);
-process.stdin.on('end', async () => {
-  const config = JSON.parse(argv[argv.indexOf('--mcp-config') + 1]);
-  const client = new Client({ name: 'fake-agent', version: '1.0.0' });
-  await client.connect(new StreamableHTTPClientTransport(new URL(config.mcpServers.qazinho.url)));
-  await later(1500);
-  await client.callTool({ name: 'click', arguments: { target: 'Pay' } });
-  await later(1500);
-  await client.callTool({ name: 'report', arguments: {
-    step: 1, verdict: 'passed', why: 'The shop answered.', got: 'Payment refused', proof: 'Shop',
-  } });
-  await client.close();
-  console.log(JSON.stringify({ type: 'result', result: '', is_error: false, session_id: 's1', total_cost_usd: 0.01 }));
-});
+setInterval(() => undefined, 1000);
 `;
 
 /**
@@ -83,7 +58,7 @@ beforeAll(async () => {
 
   const bin = await mkdtemp(join(tmpdir(), 'qazinho-network-video-bin-'));
 
-  await writeFile(join(bin, 'claude'), PAYING_AGENT);
+  await writeFile(join(bin, 'claude'), IDLE_AGENT);
   await chmod(join(bin, 'claude'), 0o755);
 
   dataDir = await mkdtemp(join(tmpdir(), 'qazinho-network-video-'));
@@ -108,6 +83,45 @@ beforeAll(async () => {
   await writeFile(
     join(dataDir, 'workspaces', 'w-1', 'plan.yaml'),
     'cases:\n  - id: TC-01\n    title: Paying is refused\n    priority: P1\n    goal: ""\n    preconditions: ""\n    lastVerdict: null\n    steps:\n      - action: Pay for the cart\n        expected: The shop says the payment was refused\n',
+  );
+  await writeFile(
+    join(dataDir, 'workspaces', 'w-1', 'recipes.json'),
+    JSON.stringify({
+      cases: [
+        {
+          caseId: 'TC-01',
+          fingerprint: fingerprintOf({
+            targetKind: 'web',
+            steps: [
+              {
+                caseId: 'TC-01',
+                caseTitle: 'Paying is refused',
+                casePriority: 'P1',
+                caseGoal: '',
+                casePreconditions: '',
+                numberInCase: 1,
+                action: 'Pay for the cart',
+                expected: 'The shop says the payment was refused',
+              },
+            ],
+          }),
+          targetKind: 'web',
+          steps: [
+            {
+              number: 1,
+              actions: [
+                { kind: 'wait', target: '', value: '1500' },
+                { kind: 'click', target: 'Pay', value: '' },
+                { kind: 'wait', target: '', value: '1500' },
+              ],
+              proof: 'Shop',
+            },
+          ],
+          runId: 'r-00',
+          recordedAt: 0,
+        },
+      ],
+    }),
   );
   await writeFile(
     join(dataDir, 'workspaces', 'w-1', 'workspace.json'),
@@ -161,7 +175,7 @@ describe("a run's video with its network", () => {
 
     await page.getByText('Shop', { exact: true }).first().click();
     await page.getByText('Shop regression').first().click();
-    await page.getByRole('button', { name: 'Develop plan' }).click();
+    await page.getByRole('button', { name: 'Run plan' }).click();
     await page
       .getByRole('tab', { name: /^Runs/ })
       .or(page.getByRole('button', { name: /^Runs/ }))
