@@ -542,6 +542,8 @@ export const pt: typeof en = {
     STEP: 'passo {{number}}',
     SEEN_ONCE: 'uma vez',
     SEEN_RUNS: 'em {{count}} runs',
+    SHOT_DESIGN: 'Protótipo',
+    SHOT_REAL: 'Tela real',
     SHOT_BEFORE: 'antes',
     SHOT_BROKE: 'o passo que quebrou',
     SHOT_AGAIN: 'de novo na {{run}}',

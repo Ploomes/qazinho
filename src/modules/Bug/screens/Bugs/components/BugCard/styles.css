@@ -184,8 +184,23 @@
 }
 
 .bug-card__hero {
+  display: flex;
   flex: 0 1 360px;
+  flex-direction: column;
+  gap: var(--space-2);
   min-width: 0;
+}
+
+.bug-card__caption {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink3);
+  font: var(--font-ui-xs);
+}
+
+.bug-card__caption--design {
+  color: var(--ink2);
 }
 
 .bug-card__thumbs {

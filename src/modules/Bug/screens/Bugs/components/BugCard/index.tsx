@@ -19,6 +19,8 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
     levelBars,
     provenance,
     hero,
+    design,
+    realLabel,
     thumbs,
     steps,
     stepsToggle,
@@ -194,7 +196,27 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
                         onOpenShot(hero);
                       }}
                     />
+                    {design !== null && (
+                      <span className="bug-card__caption">{realLabel}</span>
+                    )}
                   </span>
+                  {design !== null && (
+                    <span className="bug-card__hero">
+                      <Screenshot
+                        label={design.label}
+                        src={design.src}
+                        file={design.file}
+                        isBad={false}
+                        size="hero"
+                        onOpen={() => {
+                          onOpenShot(design);
+                        }}
+                      />
+                      <span className="bug-card__caption bug-card__caption--design">
+                        <Icon name="figma" /> {design.label}
+                      </span>
+                    </span>
+                  )}
                   <div className="bug-card__thumbs" style={shotsStyle}>
                     {thumbs.map((shot) => (
                       <Screenshot

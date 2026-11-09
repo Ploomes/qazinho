@@ -538,6 +538,8 @@ export const en = {
     STEP: 'step {{number}}',
     SEEN_ONCE: 'once',
     SEEN_RUNS: 'in {{count}} runs',
+    SHOT_DESIGN: 'Prototype',
+    SHOT_REAL: 'Real screen',
     SHOT_BEFORE: 'before',
     SHOT_BROKE: 'the step that broke',
     SHOT_AGAIN: 'again in {{run}}',
