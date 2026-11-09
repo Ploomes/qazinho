@@ -106,6 +106,9 @@ export const pt: typeof en = {
       'O agente anda todos os casos e grava de novo. Leva mais tempo e usa mais tokens.',
     RUN_PLAN_HINT:
       'A gravação anda sozinha, em segundos e sem gastar tokens. O agente só entra se o app mudou.',
+    CONTINUE_RUN: 'Continuar',
+    CONTINUE_HINT_ONE: 'Continua de onde parou: falta 1 caso.',
+    CONTINUE_HINT_OTHER: 'Continua de onde parou: faltam {{count}} casos.',
     RUN_CHOICES: 'Escolher como rodar',
     TABS: 'Seções do workspace',
     TAB_PLAN: 'Plano',

@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SIDEBAR_SIZE, SIDEBAR_STATUS } from '@/app/components/Sidebar/constants';
 import { RUN_HOW_KEYS } from '@/modules/Run/constants';
-import { currentStepOf } from '@/modules/Run/library';
+import { currentStepOf, runToContinueOf } from '@/modules/Run/library';
 import { workspaceMeta } from '@/modules/Workspace';
 import { Agent, Archive, Run } from '@/services';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
@@ -120,7 +120,9 @@ export const useSidebarViewModel = () => {
         workspace,
         shown:
           workspace.live === null || workspace.live.isDone
-            ? workspace.status
+            ? runToContinueOf({ plan: workspace.plan, runs: workspace.runs }) !== null
+              ? ('paused' as const)
+              : workspace.status
             : workspace.live.question !== undefined
               ? ('attention' as const)
               : !workspace.live.isRunning

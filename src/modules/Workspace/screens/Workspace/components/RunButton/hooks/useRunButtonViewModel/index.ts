@@ -13,7 +13,9 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
     canChoose,
     developed,
     toDevelop,
+    toContinue,
     onRun,
+    onRunPlan,
     onRunDeveloped,
     onRunWithAgent,
   } = props;
@@ -37,6 +39,11 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
   const planHint = t(
     isDeveloping ? 'WORKSPACE.DEVELOP_PLAN_HINT' : 'WORKSPACE.RUN_PLAN_HINT',
   );
+  const isContinuing = toContinue > 0;
+  const continueHint = t(
+    toContinue === 1 ? 'WORKSPACE.CONTINUE_HINT_ONE' : 'WORKSPACE.CONTINUE_HINT_OTHER',
+    { count: toContinue },
+  );
 
   return {
     ref,
@@ -46,9 +53,9 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
       ...(isMenuOpen ? ['run-button--open'] : []),
     ].join(' '),
     style: { '--run-menu-width': `${String(RUN_BUTTON.menuWidthPx)}px` } as CSSProperties,
-    runLabel: planTitle,
+    runLabel: isContinuing ? t('WORKSPACE.CONTINUE_RUN') : planTitle,
     isDisabled: !canRun,
-    tip: canRun ? planHint : t('WORKSPACE.RUN_NO_STEPS'),
+    tip: !canRun ? t('WORKSPACE.RUN_NO_STEPS') : isContinuing ? continueHint : planHint,
     hasChoices: canChoose,
     chooseLabel: t('WORKSPACE.RUN_CHOICES'),
     isOpen: isMenuOpen,
@@ -57,15 +64,30 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
       : 'run-button__caret',
     foldTransition: { duration: MOTION.duration, ease: MOTION.ease },
     options: [
+      ...(isContinuing
+        ? [
+            {
+              key: 'continue',
+              icon: 'play' as const,
+              title: t('WORKSPACE.CONTINUE_RUN'),
+              hint: continueHint,
+              combo: runCombo,
+              onPick: () => {
+                setOpen(false);
+                onRun();
+              },
+            },
+          ]
+        : []),
       {
         key: 'plan',
         icon: isDeveloping ? ('sparkle' as const) : ('play' as const),
         title: planTitle,
         hint: planHint,
-        combo: runCombo,
+        combo: isContinuing ? null : runCombo,
         onPick: () => {
           setOpen(false);
-          onRun();
+          onRunPlan();
         },
       },
       ...(isDeveloping && developed > 0
@@ -88,17 +110,21 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
             },
           ]
         : []),
-      {
-        key: 'agent',
-        icon: 'sparkle' as const,
-        title: t('WORKSPACE.REDEVELOP'),
-        hint: t('WORKSPACE.REDEVELOP_HINT'),
-        combo: null,
-        onPick: () => {
-          setOpen(false);
-          onRunWithAgent();
-        },
-      },
+      ...(developed > 0
+        ? [
+            {
+              key: 'agent',
+              icon: 'sparkle' as const,
+              title: t('WORKSPACE.REDEVELOP'),
+              hint: t('WORKSPACE.REDEVELOP_HINT'),
+              combo: null,
+              onPick: () => {
+                setOpen(false);
+                onRunWithAgent();
+              },
+            },
+          ]
+        : []),
     ],
     onRun: () => {
       if (canRun) onRun();

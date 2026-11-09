@@ -29,6 +29,7 @@ export const Workspace: React.FC = () => {
     canRunWithAgent,
     developedCount,
     toDevelopCount,
+    toContinueCount,
     canExplore,
     exploreTip,
     isLive,
@@ -37,6 +38,7 @@ export const Workspace: React.FC = () => {
     onRename,
     onDropDesign,
     onRun,
+    onRunPlan,
     onRunDeveloped,
     onRunWithAgent,
     onExplore,
@@ -75,7 +77,9 @@ export const Workspace: React.FC = () => {
                   canChoose={canRunWithAgent}
                   developed={developedCount}
                   toDevelop={toDevelopCount}
+                  toContinue={toContinueCount}
                   onRun={onRun}
+                  onRunPlan={onRunPlan}
                   onRunDeveloped={onRunDeveloped}
                   onRunWithAgent={onRunWithAgent}
                 />

@@ -8,6 +8,7 @@ import { useSettingsStore } from '@/store';
 
 function render(props: Partial<IRunButtonProps> = {}) {
   const onRun = vi.fn();
+  const onRunPlan = vi.fn();
   const onRunDeveloped = vi.fn();
   const onRunWithAgent = vi.fn();
   const view = renderHook(() =>
@@ -16,14 +17,16 @@ function render(props: Partial<IRunButtonProps> = {}) {
       canChoose: true,
       developed: 3,
       toDevelop: 0,
+      toContinue: 0,
       onRun,
+      onRunPlan,
       onRunDeveloped,
       onRunWithAgent,
       ...props,
     }),
   );
 
-  return { onRun, onRunDeveloped, onRunWithAgent, result: view.result };
+  return { onRun, onRunPlan, onRunDeveloped, onRunWithAgent, result: view.result };
 }
 
 afterEach(() => {
@@ -31,6 +34,33 @@ afterEach(() => {
 });
 
 describe('useRunButtonViewModel', () => {
+  describe('a run the app closed in the middle of', () => {
+    it('offers to continue on its face, saying how many cases are left', () => {
+      const { result } = render({ toContinue: 6 });
+
+      expect(result.current.runLabel).toBe('Continue');
+      expect(result.current.tip).toContain('6 cases left');
+      expect(result.current.options[0]?.key).toBe('continue');
+    });
+
+    it('continues from the first option, and starts over from the plan option', () => {
+      const { onRun, onRunPlan, result } = render({ toContinue: 1 });
+
+      result.current.options.find(({ key }) => key === 'continue')?.onPick();
+      expect(onRun).toHaveBeenCalledOnce();
+      expect(onRunPlan).not.toHaveBeenCalled();
+
+      result.current.options.find(({ key }) => key === 'plan')?.onPick();
+      expect(onRunPlan).toHaveBeenCalledOnce();
+    });
+
+    it('does NOT offer to redo every case while none is developed', () => {
+      const { result } = render({ developed: 0, toDevelop: 4, toContinue: 2 });
+
+      expect(result.current.options.map(({ key }) => key)).toEqual(['continue', 'plan']);
+    });
+  });
+
   describe('onRun', () => {
     it('runs the plan from the face of the button', () => {
       const { onRun, onRunWithAgent, result } = render();

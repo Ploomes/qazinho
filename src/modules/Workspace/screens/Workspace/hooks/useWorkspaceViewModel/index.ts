@@ -5,6 +5,7 @@ import {
   currentStepOf,
   flattenPlanSteps,
   planStageOf,
+  runToContinueOf,
   RUN_HOW_KEYS,
   useDevelopedWatch,
   useRunActions,
@@ -38,6 +39,8 @@ export const useWorkspaceViewModel = () => {
     isPaused: opened.live !== null && !opened.live.isRunning && !opened.live.isDone,
     isAsking: opened.live?.question !== undefined && opened.live.isDone === false,
     plan: opened.plan,
+    toContinue:
+      runToContinueOf({ plan: opened.plan, runs: opened.runs })?.caseIds.length ?? 0,
     how:
       opened.live?.talk === 'checking'
         ? ('check' as const)
@@ -56,7 +59,7 @@ export const useWorkspaceViewModel = () => {
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
   const setDesign = useWorkspaceStore((state) => state.setDesign);
-  const { onRun, onRunDeveloped, onRunWithAgent, onExplore, onPause, onStop } =
+  const { onRun, onRunPlan, onRunDeveloped, onRunWithAgent, onExplore, onPause, onStop } =
     useRunActions();
 
   useDevelopedWatch();
@@ -111,7 +114,10 @@ export const useWorkspaceViewModel = () => {
             title: t('WORKSPACE.DESIGN_OPEN'),
           },
     dropDesignLabel: t('WORKSPACE.DESIGN_DROP'),
-    status: workspace?.status ?? 'idle',
+    status:
+      (workspace?.toContinue ?? 0) > 0
+        ? ('paused' as const)
+        : (workspace?.status ?? 'idle'),
     liveStatus: isAsking
       ? ('attention' as const)
       : isPaused
@@ -151,7 +157,10 @@ export const useWorkspaceViewModel = () => {
           ),
     canRun: (workspace?.stepCount ?? 0) > 0 && !isLive,
     canRunWithAgent:
-      (workspace?.stepCount ?? 0) > 0 && !isLive && stage.developed.length > 0,
+      (workspace?.stepCount ?? 0) > 0 &&
+      !isLive &&
+      (stage.developed.length > 0 || (workspace?.toContinue ?? 0) > 0),
+    toContinueCount: workspace?.toContinue ?? 0,
     developedCount: stage.developed.length,
     toDevelopCount: stage.toDevelop.length,
     canExplore: workspace !== null && !isLive,
@@ -167,6 +176,7 @@ export const useWorkspaceViewModel = () => {
       if (workspace) setDesign({ workspaceId: workspace.id, design: null });
     },
     onRun,
+    onRunPlan,
     onRunDeveloped,
     onRunWithAgent,
     onExplore,

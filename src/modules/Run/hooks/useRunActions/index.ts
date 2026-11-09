@@ -7,6 +7,7 @@ import {
   flattenPlanSteps,
   nextRunId,
   planStageOf,
+  runToContinueOf,
   walkedByOf,
   walkedStepsOf,
 } from '@/modules/Run/library';
@@ -73,6 +74,7 @@ export const useRunActions = () => {
       by: walkedByOf({ agent, model, targetKind: target?.kind ?? 'web', agents }),
       ...(isExploring ? { kind: 'explore' as const } : {}),
       ...(scoped === undefined ? {} : { caseIds: scoped }),
+      mode,
     });
 
     if (target === null) {
@@ -150,6 +152,12 @@ export const useRunActions = () => {
     });
   };
 
+  const runPlan = (): void => {
+    const { developed, toDevelop } = stageOfSelected();
+
+    runOwn('replay', developed.length === 0 ? undefined : toDevelop);
+  };
+
   const stopWorkspace = (workspaceId: string | null): void => {
     const { workspace } = opened(workspaceId);
 
@@ -166,10 +174,21 @@ export const useRunActions = () => {
       begin({ ...props, mode: 'replay' }),
     stopWorkspace,
     onRun: () => {
-      const { developed, toDevelop } = stageOfSelected();
+      const { workspace } = opened(selectedId());
+      const left =
+        workspace === null
+          ? null
+          : runToContinueOf({ plan: workspace.plan, runs: workspace.runs });
 
-      runOwn('replay', developed.length === 0 ? undefined : toDevelop);
+      if (left !== null) {
+        runOwn(left.mode, left.caseIds);
+
+        return;
+      }
+
+      runPlan();
     },
+    onRunPlan: runPlan,
     onRunDeveloped: () => {
       runOwn('replay', stageOfSelected().developed);
     },

@@ -104,6 +104,9 @@ export const en = {
       'The agent walks every case and records it again. It takes longer and uses more tokens.',
     RUN_PLAN_HINT:
       'The recording walks by itself, in seconds and with no tokens spent. The agent only steps in if the app changed.',
+    CONTINUE_RUN: 'Continue',
+    CONTINUE_HINT_ONE: 'Picks up where it stopped: 1 case left.',
+    CONTINUE_HINT_OTHER: 'Picks up where it stopped: {{count}} cases left.',
     RUN_CHOICES: 'Choose how to run',
     TABS: 'Workspace sections',
     TAB_PLAN: 'Plan',
