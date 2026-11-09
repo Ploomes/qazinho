@@ -1,4 +1,5 @@
 export type * from './IAgentLine';
+export type * from './IToolImage';
 export type * from './IBounds';
 export type * from './ICodexLine';
 export type * from './IJiraCredentials';

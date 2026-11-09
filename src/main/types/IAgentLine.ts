@@ -7,7 +7,16 @@ export interface IAgentLine {
   result?: string;
   is_error?: boolean;
   message?: {
-    content?: { type: string; text?: string; name?: string; input?: unknown }[];
+    content?: {
+      type: string;
+      text?: string;
+      id?: string;
+      name?: string;
+      input?: unknown;
+      tool_use_id?: string;
+      content?:
+        { type: string; source?: { media_type?: string; data?: string } }[] | string;
+    }[];
   };
   event?: {
     type: string;

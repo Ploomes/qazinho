@@ -1,8 +1,11 @@
+import type { IToolImage } from '@/main/types';
+
 /**
  * Uma chamada à CLI do agente com o harness em volta: o prompt, as ferramentas, as
  * pastas, o ambiente e se o texto chega em pedaços.
  */
 export interface IRunAgent {
+  onToolImage?: (image: IToolImage) => void;
   workspaceId: string;
   agentId: string;
   command: string;

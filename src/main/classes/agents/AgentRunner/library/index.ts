@@ -14,6 +14,7 @@ export * from './toActions';
 export * from './toStructured';
 export * from './toText';
 export * from './toToolCalls';
+export * from './toToolImages';
 export * from './toolCallOf';
 export * from './toUsage';
 export * from './withPermissions';

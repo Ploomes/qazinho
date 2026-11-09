@@ -26,6 +26,7 @@ import {
   toStructured,
   toText,
   toToolCalls,
+  toToolImages,
   toUsage,
   withPermissions,
 } from './library';
@@ -126,6 +127,7 @@ export class AgentRunner {
     let structured = '';
     let spoken = '';
     let live: ILiveBlock | null = null;
+    const called = new Map<string, { name: string; input: unknown }>();
     let isError = false;
     let costUsd: number | null = null;
     let wasCompacted = false;
@@ -214,6 +216,18 @@ export class AgentRunner {
 
       for (const call of toToolCalls(event))
         this.onEvent({ kind: 'tool', workspaceId, ...call });
+
+      if (props.onToolImage !== undefined) {
+        for (const block of event.message?.content ?? [])
+          if (block.type === 'tool_use' && block.id !== undefined)
+            called.set(block.id, { name: block.name ?? '', input: block.input });
+
+        for (const { callId, ...image } of toToolImages(event)) {
+          const call = called.get(callId);
+
+          if (call !== undefined) props.onToolImage({ ...call, ...image });
+        }
+      }
 
       if (event.type === 'result') {
         result = event.result ?? '';
