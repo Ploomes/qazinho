@@ -97,7 +97,7 @@ export const pt: typeof en = {
       'O agente anda cada caso e grava o teste. É a etapa demorada, e só acontece uma vez.',
     RUN_DEVELOPED_ONE: 'Rodar 1 caso desenvolvido',
     RUN_DEVELOPED_OTHER: 'Rodar {{count}} casos desenvolvidos',
-    RUN_DEVELOPED_HINT: 'Só o que já está gravado, sem IA.',
+    RUN_DEVELOPED_HINT: 'Só o que já está gravado.',
     REDEVELOP: 'Desenvolver tudo de novo',
     EXPLORE: 'Explorar',
     EXPLORE_TIP:
@@ -334,7 +334,7 @@ export const pt: typeof en = {
     EXPECTED_PLACEHOLDER: 'o que você espera ver',
     RUN_CASE: 'Rodar só este caso',
     DEVELOP_CASE: 'Desenvolver só este caso',
-    DEVELOPED_TIP: 'Desenvolvido: roda sem IA',
+    DEVELOPED_TIP: 'Desenvolvido: já tem gravação',
     STAGE_PLAN: 'Plano escrito',
     STAGE_PLAN_TIP: 'Os casos e passos que o teste vai cobrir.',
     STAGE_DEVELOP: 'Desenvolver',

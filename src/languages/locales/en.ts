@@ -93,7 +93,7 @@ export const en = {
       'The agent walks each case and records the test. This is the slow stage, and it only happens once.',
     RUN_DEVELOPED_ONE: 'Run 1 developed case',
     RUN_DEVELOPED_OTHER: 'Run {{count}} developed cases',
-    RUN_DEVELOPED_HINT: 'Only what is already recorded, with no AI.',
+    RUN_DEVELOPED_HINT: 'Only what is already recorded.',
     REDEVELOP: 'Develop everything again',
     RUN_NO_STEPS:
       'The plan has no step to run yet: write one in the Plan tab, or draft it in the chat.',
@@ -331,7 +331,7 @@ export const en = {
     EXPECTED_PLACEHOLDER: 'what you expect to see',
     RUN_CASE: 'Run only this case',
     DEVELOP_CASE: 'Develop only this case',
-    DEVELOPED_TIP: 'Developed: runs with no AI',
+    DEVELOPED_TIP: 'Developed: already recorded',
     STAGE_PLAN: 'Plan written',
     STAGE_PLAN_TIP: 'The cases and steps the test will cover.',
     STAGE_DEVELOP: 'Develop',
