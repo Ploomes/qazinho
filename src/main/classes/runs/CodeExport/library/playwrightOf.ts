@@ -109,15 +109,18 @@ export function playwrightOf(props: {
 }): string {
   const tests = props.cases.map(({ steps, recipe }) => {
     const [first] = steps;
+    const written = withoutFileReading(recipe);
     const body = steps.flatMap((step) => {
-      const kept = recipe.steps.find(({ number }) => number === step.numberInCase);
+      const kept = written.find(({ number }) => number === step.numberInCase);
 
       return [
         `  // ${String(step.numberInCase)}. ${step.action} → ${step.expected}`,
         ...(kept?.actions ?? []).flatMap(lineOf).map((line) => `  ${line}`),
-        ...shownOf(kept?.proof ?? '').map(
-          (shown) => `  await shows(tab, ${quoted(shown)});`,
-        ),
+        ...(kept?.isOnFile === true
+          ? []
+          : shownOf(kept?.proof ?? '').map(
+              (shown) => `  await shows(tab, ${quoted(shown)});`,
+            )),
       ];
     });
 
@@ -156,8 +159,36 @@ export function playwrightOf(props: {
   ].join('\n');
 }
 
+function withoutFileReading(
+  recipe: ICaseRecipe,
+): (ICaseRecipe['steps'][number] & { isOnFile: boolean })[] {
+  let isOnFile = false;
+
+  return recipe.steps.map((step) => {
+    const actions = step.actions.filter((action) => {
+      if (action.kind === 'open_download') {
+        isOnFile = true;
+
+        return true;
+      }
+
+      if (isOnFile && action.kind === 'tab' && action.target === 'close') {
+        isOnFile = false;
+
+        return false;
+      }
+
+      return !isOnFile;
+    });
+
+    return { ...step, actions, isOnFile };
+  });
+}
+
 function usesScreens(recipe: ICaseRecipe): boolean {
-  return recipe.steps.some(({ actions }) => actions.some(({ kind }) => kind === 'tab'));
+  return withoutFileReading(recipe).some(({ actions }) =>
+    actions.some(({ kind }) => kind === 'tab'),
+  );
 }
 
 function quoted(text: string): string {
@@ -253,6 +284,10 @@ function lineOf(action: IStepAction): string[] {
         '  ),',
         `  ${aimOf(action)}.click(),`,
         ']);',
+      ];
+    case 'open_download':
+      return [
+        '// Reading a file the browser saved needs a person: check it by hand here.',
       ];
     case 'tab':
       return screenLines(action);

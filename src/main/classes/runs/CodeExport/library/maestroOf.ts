@@ -113,6 +113,7 @@ function linesOf(action: IStepAction): string[] {
       ];
     case 'hover':
     case 'upload':
+    case 'open_download':
     case 'tab':
       return [
         `# ${action.kind} ${yamlText(action.target)}: a phone has no ${action.kind}`,

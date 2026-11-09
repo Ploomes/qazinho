@@ -9,6 +9,57 @@ const FILE = playwrightOf({
 });
 
 describe('playwrightOf', () => {
+  /** O teste exportado não tem a tela do arquivo: conferir nela quebraria na aba do app. */
+  it('leaves reading a downloaded file to a person, and carries on after it', () => {
+    const code = playwrightOf({
+      url: 'https://app.test',
+      viewport: { width: 1280, height: 800 },
+      cases: [
+        {
+          steps: [1, 2, 3].map((numberInCase) => ({
+            caseId: 'TC-01',
+            caseTitle: 'Baixar',
+            numberInCase,
+            action: `Passo ${String(numberInCase)}`,
+            expected: 'Certo',
+          })) as never,
+          recipe: {
+            caseId: 'TC-01',
+            steps: [
+              {
+                number: 1,
+                actions: [
+                  { kind: 'click', target: 'Baixar', value: '' },
+                  { kind: 'open_download', target: '', value: '' },
+                ],
+                proof: 'Total no PDF',
+              },
+              {
+                number: 2,
+                actions: [{ kind: 'scroll', target: '', value: 'down' }],
+                proof: 'Rodapé no PDF',
+              },
+              {
+                number: 3,
+                actions: [
+                  { kind: 'tab', target: 'close', value: '' },
+                  { kind: 'click', target: 'Voltar', value: '' },
+                ],
+                proof: 'Na tela do app',
+              },
+            ],
+          } as never,
+        },
+      ],
+    });
+
+    expect(code).toContain('check it by hand here');
+    expect(code).not.toContain('Total no PDF');
+    expect(code).not.toContain('Rodapé no PDF');
+    expect(code).not.toContain('closeScreen(screens');
+    expect(code).toContain('Na tela do app');
+  });
+
   it('opens the app anew for each case, at the size the QA runs it', () => {
     expect(FILE).toContain('const APP = "https://loja.test/";');
     expect(FILE).toContain('test.use({ viewport: { width: 1280, height: 800 } });');
