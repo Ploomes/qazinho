@@ -1220,6 +1220,40 @@ describe('ProSync', () => {
       ).toEqual(['do-colega', 'm-1']);
     });
 
+    it('lets the rest of the project go when the org refuses the memories', async () => {
+      const { api } = fakeApi(({ method }) =>
+        method === 'syncMemories'
+          ? {
+              isOk: false,
+              status: 409,
+              error: 'memory_limit',
+              details: { memories: [memory({ id: 'do-colega' })] },
+            }
+          : null,
+      );
+      const { batch, publish, shares } = await syncWith({ api });
+
+      await publish({ batch: { ...batch, memories: [memory()] } });
+
+      expect(shares.at(-1)?.state).not.toBe('failed');
+      expect(shares.flatMap((share) => share.memories ?? []).map(({ id }) => id)).toEqual(
+        ['do-colega'],
+      );
+    });
+
+    it('stops the project when the session itself is refused', async () => {
+      const { api } = fakeApi(({ method }) =>
+        method === 'syncMemories'
+          ? { isOk: false, status: 402, error: 'org_blocked' }
+          : null,
+      );
+      const { batch, publish, shares } = await syncWith({ api });
+
+      await publish({ batch: { ...batch, memories: [memory()] } });
+
+      expect(shares.at(-1)?.state).toBe('blocked');
+    });
+
     it('does not send it again when nothing changed', async () => {
       const { api, methods } = fakeApi();
       const { sync, batch, publish } = await syncWith({ api });

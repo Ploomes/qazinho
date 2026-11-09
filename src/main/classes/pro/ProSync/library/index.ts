@@ -4,6 +4,7 @@ export * from './evidenceKindOf';
 export * from './hashOf';
 export * from './hasNewMemories';
 export * from './healedPlansOf';
+export * from './isMemoryRefusal';
 export * from './isSkippedEvidence';
 export * from './memoriesHashOf';
 export * from './movedPlansOf';

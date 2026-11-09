@@ -36,4 +36,10 @@ describe('memoriesHashOf', () => {
       base,
     );
   });
+
+  it('is the same with or without the ones already forgotten', () => {
+    const gone = memory({ id: 'gone', text: '', deletedAt: '2026-11-02T10:00:00.000Z' });
+
+    expect(memoriesHashOf([memory(), gone])).toBe(memoriesHashOf([memory()]));
+  });
 });

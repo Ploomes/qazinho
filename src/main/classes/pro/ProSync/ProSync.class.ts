@@ -11,6 +11,7 @@ import type {
 } from '@/shared/types';
 import { mkdir, readFile, stat } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
+import { SYNC_MEMORIES_SCHEMA } from '@/main/classes/pro/ProApi/constants';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { isInside } from '@/main/classes/storage/Archive/library';
 import { writeAtomically } from '@/main/library';
@@ -22,6 +23,7 @@ import {
   fileFactsOf,
   hashOf,
   hasNewMemories,
+  isMemoryRefusal,
   memoriesHashOf,
   healedPlansOf,
   movedPlansOf,
@@ -534,7 +536,20 @@ export class ProSync {
       body: { memories: batch.memories },
     });
 
-    if (!answer.isOk) return stateOfRefusal(answer);
+    if (!answer.isOk) {
+      if (!isMemoryRefusal(answer)) return stateOfRefusal(answer);
+
+      const org = SYNC_MEMORIES_SCHEMA.safeParse(answer.details);
+
+      if (org.success)
+        this.announce({
+          ...this.shareOf({ projectId, record }),
+          state: 'sending',
+          memories: org.data.memories,
+        });
+
+      return null;
+    }
 
     record.memories = memoriesHashOf(answer.value.memories);
     this.announce({
