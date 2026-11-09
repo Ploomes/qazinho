@@ -71,9 +71,6 @@
 .plan__source-label {
   flex: none;
   color: var(--ink3);
-  font: var(--font-mono-xs);
-  letter-spacing: var(--tag-tracking);
-  text-transform: uppercase;
 }
 
 .plan__source-tag {

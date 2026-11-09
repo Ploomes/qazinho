@@ -195,9 +195,6 @@ export const Plan: React.FC = () => {
                     title={one.title}
                   >
                     <span className="plan__source-label">{one.label}</span>
-                    {one.tag !== null && (
-                      <span className="plan__source-tag">{one.tag}</span>
-                    )}
                     <span className="plan__source-title">{one.title}</span>
                     <Icon name="external" />
                   </a>

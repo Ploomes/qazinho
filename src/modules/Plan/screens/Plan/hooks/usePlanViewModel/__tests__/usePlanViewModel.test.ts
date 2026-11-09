@@ -483,7 +483,7 @@ describe('usePlanViewModel', () => {
     expect(renderHook(() => usePlanViewModel()).result.current.design).toEqual(design);
   });
 
-  it('names the Jira story the plan was made from, with where it opens', () => {
+  it('leaves the Jira story to the header, which already opens it', () => {
     expect(renderHook(() => usePlanViewModel()).result.current.sources).toEqual([]);
 
     useWorkspaceStore.setState({
@@ -500,15 +500,7 @@ describe('usePlanViewModel', () => {
       ],
     });
 
-    expect(renderHook(() => usePlanViewModel()).result.current.sources).toEqual([
-      {
-        key: 'story',
-        label: 'Jira story',
-        tag: 'SHOP-12',
-        title: 'Aplicar cupom',
-        url: 'https://acme.atlassian.net/browse/SHOP-12',
-      },
-    ]);
+    expect(renderHook(() => usePlanViewModel()).result.current.sources).toEqual([]);
   });
 
   it('names the Confluence page the plan was made from, with where it opens', () => {

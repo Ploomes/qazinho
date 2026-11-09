@@ -396,17 +396,6 @@ export const usePlanViewModel = () => {
     lockedLabel: t('PLAN.LOCKED', { agent }),
     isEmpty: plan.length === 0,
     sources: [
-      ...(issue === null || issue.source !== 'jira'
-        ? []
-        : [
-            {
-              key: 'story',
-              label: t('PLAN.FROM_STORY'),
-              tag: issue.key,
-              title: issue.title,
-              url: issue.url,
-            },
-          ]),
       ...(sourcePage === null
         ? []
         : [

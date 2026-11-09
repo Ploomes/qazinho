@@ -291,7 +291,6 @@ export const pt: typeof en = {
     SUMMARY: '{{cases}} · {{steps}}',
     SOURCE: 'o que a {{branch}} em {{commit}} mudou em relação à {{base}}',
     SOURCE_WHOLE: 'o app inteiro na {{branch}} em {{commit}}',
-    FROM_STORY: 'História do Jira',
     FROM_PAGE: 'Página do Confluence',
     FROM_CODE: 'Código',
     CASES_ONE: '1 caso',

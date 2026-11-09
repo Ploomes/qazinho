@@ -288,7 +288,6 @@ export const en = {
     SUMMARY: '{{cases}} · {{steps}}',
     SOURCE: 'what {{branch}} at {{commit}} changed against {{base}}',
     SOURCE_WHOLE: 'the whole app on {{branch}} at {{commit}}',
-    FROM_STORY: 'Jira story',
     FROM_PAGE: 'Confluence page',
     FROM_CODE: 'Code',
     CASES_ONE: '1 case',
