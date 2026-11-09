@@ -143,4 +143,42 @@ describe('ChatAttachments', () => {
 
     await expect(readdir(join(root, 'w1'))).rejects.toThrow();
   });
+
+  describe('listOf', () => {
+    it('lists what a workspace holds, under the names the QA gave', async () => {
+      const { attachments, root } = await attachmentsIn();
+      const added = await attachments.addData({
+        workspaceId: 'w1',
+        name: 'nota.pdf',
+        data: new Uint8Array([1]),
+      });
+
+      expect(added.isAttached).toBe(true);
+
+      const listed = await attachments.listOf('w1');
+
+      expect(listed.map(({ name }) => name)).toEqual(['nota.pdf']);
+      expect(listed[0]?.path.startsWith(join(root, 'w1'))).toBe(true);
+    });
+
+    it('lists nothing for a workspace that holds nothing, or a name that leaves the folder', async () => {
+      const { attachments } = await attachmentsIn();
+
+      expect(await attachments.listOf('w2')).toEqual([]);
+      expect(await attachments.listOf('../w1')).toEqual([]);
+    });
+
+    it('stops at the newest ones', async () => {
+      const { attachments } = await attachmentsIn();
+
+      for (let index = 0; index <= CHAT_ATTACHMENTS.listedForRun; index += 1)
+        await attachments.addData({
+          workspaceId: 'w1',
+          name: `f${String(index)}.txt`,
+          data: new Uint8Array([1]),
+        });
+
+      expect(await attachments.listOf('w1')).toHaveLength(CHAT_ATTACHMENTS.listedForRun);
+    });
+  });
 });

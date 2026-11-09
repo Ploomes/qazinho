@@ -2,10 +2,10 @@ import type { IChatAttachments } from './types';
 import type { AttachOutcome, IChatAttachment } from '@/shared/types';
 import type { IAttachedFiles } from '@salve-software/qazinho-harness';
 import { randomUUID } from 'node:crypto';
-import { access, copyFile, mkdir, rm, stat, writeFile } from 'node:fs/promises';
+import { access, copyFile, mkdir, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { basename, join } from 'node:path';
 import { CHAT_ATTACHMENTS } from '@/shared/constants';
-import { attachmentKindOf, isStoredName, storedNameOf } from './library';
+import { attachedNameOf, attachmentKindOf, isStoredName, storedNameOf } from './library';
 
 /**
  * Guarda os arquivos que o QA anexa ao chat, numa pasta por workspace que o agente lê, e
@@ -125,6 +125,27 @@ export class ChatAttachments {
     const files = kept.filter((one) => one !== null);
 
     return files.length === 0 ? null : { root, files };
+  }
+
+  /** Os anexos de um workspace, do mais novo ao mais velho, pelo nome real. */
+  public async listOf(workspaceId: string): Promise<{ name: string; path: string }[]> {
+    if (!isStoredName(workspaceId)) return [];
+
+    const root = join(this.root, workspaceId);
+    const found = await readdir(root, { withFileTypes: true }).catch(() => []);
+    const dated = await Promise.all(
+      found
+        .filter((entry) => entry.isFile())
+        .map(async ({ name }) => ({
+          name,
+          at: (await stat(join(root, name))).mtimeMs,
+        })),
+    );
+
+    return dated
+      .sort((one, other) => other.at - one.at)
+      .slice(0, CHAT_ATTACHMENTS.listedForRun)
+      .map(({ name }) => ({ name: attachedNameOf(name), path: join(root, name) }));
   }
 
   /** Apaga os anexos de um workspace que se foi. */
