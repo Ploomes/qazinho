@@ -2,6 +2,7 @@ import type {
   CodeRead,
   ExportOutcome,
   IDevelopedAsk,
+  IDevelopedPlan,
   IExportCode,
   INetworkEntry,
   IRemovedVideo,
@@ -31,8 +32,8 @@ export class Run {
     return (await window.qazinho?.readCode(request)) ?? { kind: 'nothing', missing: [] };
   }
 
-  public static async developed(ask: IDevelopedAsk): Promise<string[]> {
-    return (await window.qazinho?.developedCases(ask)) ?? [];
+  public static async developed(ask: IDevelopedAsk): Promise<IDevelopedPlan> {
+    return (await window.qazinho?.developedCases(ask)) ?? { caseIds: [], files: [] };
   }
 
   public static talk(props: { workspaceId: string; text: string }): void {

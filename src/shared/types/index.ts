@@ -72,6 +72,7 @@ export type * from './IConnectResult';
 export type * from './IDesignLink';
 export type * from './IDetectedAgent';
 export type * from './IDevelopedAsk';
+export type * from './IDevelopedPlan';
 export type * from './IDeviceImage';
 export type * from './IDeviceTools';
 export type * from './IDraftedCase';

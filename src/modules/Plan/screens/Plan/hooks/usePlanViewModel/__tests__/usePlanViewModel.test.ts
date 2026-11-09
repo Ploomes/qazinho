@@ -368,6 +368,56 @@ describe('usePlanViewModel', () => {
     });
   });
 
+  describe('the files the plan takes to the org', () => {
+    const FILES = [
+      { name: 'nota.pdf', size: 2_000_000 },
+      { name: 'logo.png', size: 1_000_000 },
+    ];
+    const share = {
+      projectId: 'p1',
+      orgSlug: 'loja',
+      state: 'synced' as const,
+      syncedAt: null,
+      pending: [],
+      conflicts: [],
+    };
+
+    it('says how many there are and what they weigh, in a project of an org', () => {
+      useWorkspaceStore.setState({ planFiles: { w1: FILES } });
+      useProStore.setState({ shares: [share] });
+
+      expect(renderHook(() => usePlanViewModel()).result.current.filesNotice?.text).toBe(
+        '2 files of this plan are kept in the org (3 MB)',
+      );
+    });
+
+    it('says it in the singular for one', () => {
+      useWorkspaceStore.setState({
+        planFiles: { w1: [FILES[0] as (typeof FILES)[number]] },
+      });
+      useProStore.setState({ shares: [share] });
+
+      expect(renderHook(() => usePlanViewModel()).result.current.filesNotice?.text).toBe(
+        '1 file of this plan is kept in the org (2 MB)',
+      );
+    });
+
+    /** Num projeto só da máquina, nada sai dela: um aviso ali assustaria à toa. */
+    it('says nothing for a project that stays on this machine', () => {
+      useWorkspaceStore.setState({ planFiles: { w1: FILES } });
+      useProStore.setState({ shares: [{ ...share, orgSlug: null }] });
+
+      expect(renderHook(() => usePlanViewModel()).result.current.filesNotice).toBeNull();
+    });
+
+    it('says nothing for a plan with no files', () => {
+      useWorkspaceStore.setState({ planFiles: {} });
+      useProStore.setState({ shares: [share] });
+
+      expect(renderHook(() => usePlanViewModel()).result.current.filesNotice).toBeNull();
+    });
+  });
+
   it('counts the cases and the steps of the plan', () => {
     const { result } = renderHook(() => usePlanViewModel());
 

@@ -297,6 +297,10 @@ export const pt: typeof en = {
     CASES_OTHER: '{{count}} casos',
     STEPS_ONE: '1 passo',
     STEPS_OTHER: '{{count}} passos',
+    FILES_IN_ORG: '{{count}} arquivos deste plano ficam guardados na org ({{size}})',
+    FILES_IN_ORG_ONE: '1 arquivo deste plano fica guardado na org ({{size}})',
+    FILES_IN_ORG_TIP:
+      'As gravações sobem esses arquivos, então a org guarda uma cópia para todo mundo rodar o mesmo teste. Eles contam no armazenamento e ficam lá até alguém apagar.',
     NOTE: 'Clique num caso para abrir, arraste ou use Alt+↑↓ para mover, e corrija qualquer linha que o agente errou.',
     MOVE_CASE: 'Alt+↑ e Alt+↓ movem este caso',
     MISSING_ONE:

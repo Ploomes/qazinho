@@ -23,8 +23,12 @@ import {
   removeStep,
   writtenSecretsOf,
 } from '@/modules/Plan/library';
-import { PLAN_NO_CASES, PLAN_SOURCE } from '@/modules/Plan/screens/Plan/constants';
-import { useProUpdate } from '@/modules/Pro';
+import {
+  PLAN_NO_CASES,
+  PLAN_NO_FILES,
+  PLAN_SOURCE,
+} from '@/modules/Plan/screens/Plan/constants';
+import { bytesLabelOf, useProUpdate } from '@/modules/Pro';
 import { useVariableActions, VARIABLE_FAILURE_KEYS } from '@/modules/Project';
 import { flattenPlanSteps, planStageOf, useRunActions } from '@/modules/Run';
 import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
@@ -42,6 +46,7 @@ import {
 
 export const usePlanViewModel = () => {
   const { t } = useTranslation();
+  const language = useSettingsStore((state) => state.language);
   const { documentOf } = usePlanDocument();
   const { topRef, isToTopShown, onToTop } = useToTop();
   const workspace = useSelectedWorkspacePart((opened) => ({
@@ -109,6 +114,14 @@ export const usePlanViewModel = () => {
   const kept = useVariablesStore((state) => state.byProject[workspace?.projectId ?? '']);
   const developedIds = useWorkspaceStore(
     (state) => state.developedCases[workspace?.id ?? ''] ?? PLAN_NO_CASES,
+  );
+  const planFiles = useWorkspaceStore(
+    (state) => state.planFiles[workspace?.id ?? ''] ?? PLAN_NO_FILES,
+  );
+  const isInOrg = useProStore((state) =>
+    state.shares.some(
+      ({ projectId, orgSlug }) => projectId === workspace?.projectId && orgSlug !== null,
+    ),
   );
   const { askVariables, applyVariables } = useVariableActions();
   const [secretFailure, setSecretFailure] = useState<{
@@ -350,6 +363,22 @@ export const usePlanViewModel = () => {
     plan,
     lastRuns: { ...lastRuns, ...Object.fromEntries(liveRuns) },
     developedIds,
+    filesNotice:
+      isInOrg && planFiles.length > 0
+        ? {
+            text: t(
+              planFiles.length === 1 ? 'PLAN.FILES_IN_ORG_ONE' : 'PLAN.FILES_IN_ORG',
+              {
+                count: planFiles.length,
+                size: bytesLabelOf({
+                  bytes: planFiles.reduce((sum, { size }) => sum + size, 0),
+                  language,
+                }),
+              },
+            ),
+            tip: t('PLAN.FILES_IN_ORG_TIP'),
+          }
+        : null,
     stages: {
       total: stage.total,
       developed: stage.developed.length,

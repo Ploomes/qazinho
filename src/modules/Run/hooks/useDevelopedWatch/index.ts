@@ -32,8 +32,8 @@ export const useDevelopedWatch = () => {
       workspaceId,
       steps: flattenPlanSteps(plan),
       targetKind,
-    }).then((caseIds) => {
-      if (isCurrent) setDeveloped({ workspaceId, caseIds });
+    }).then(({ caseIds, files }) => {
+      if (isCurrent) setDeveloped({ workspaceId, caseIds, files });
     });
 
     return () => {

@@ -43,6 +43,7 @@ export interface IWorkspaceStore {
   bugFlashes: Record<string, IBugFlash[]>;
   bugFlashesLeaving: string[];
   developedCases: Record<string, string[]>;
+  planFiles: Record<string, { name: string; size: number }[]>;
   unheardTalks: Record<string, string[]>;
   retries: Record<string, { attempt: number; maxRetries: number }>;
   readSteps: Record<string, { step: CodeStep | JiraStep; bytes: number }>;
@@ -149,7 +150,11 @@ export interface IWorkspaceStore {
   pauseRun: (workspaceId: string) => void;
   stopRun: (workspaceId: string) => void;
   markDoing: (props: { workspaceId: string; index: number; how: RunHow }) => void;
-  setDevelopedCases: (props: { workspaceId: string; caseIds: string[] }) => void;
+  setDevelopedCases: (props: {
+    workspaceId: string;
+    caseIds: string[];
+    files?: { name: string; size: number }[];
+  }) => void;
   markDeveloped: (props: { workspaceId: string; caseId: string }) => void;
   talkToRun: (props: { workspaceId: string; text: string }) => void;
   markTalkHeard: (workspaceId: string) => void;

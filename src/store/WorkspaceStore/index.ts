@@ -54,6 +54,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   bugFlashes: {},
   bugFlashesLeaving: [],
   developedCases: {},
+  planFiles: {},
   unheardTalks: {},
   retries: {},
   readSteps: {},
@@ -498,9 +499,10 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
-  setDevelopedCases: ({ workspaceId, caseIds }) =>
+  setDevelopedCases: ({ workspaceId, caseIds, files }) =>
     set((state) => ({
       developedCases: { ...state.developedCases, [workspaceId]: caseIds },
+      planFiles: { ...state.planFiles, [workspaceId]: files ?? [] },
     })),
 
   markDeveloped: ({ workspaceId, caseId }) =>

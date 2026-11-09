@@ -24,6 +24,7 @@ export const Plan: React.FC = () => {
     liveStatuses,
     developedIds,
     stages,
+    filesNotice,
     design,
     openCaseId,
     freshCaseId,
@@ -134,6 +135,15 @@ export const Plan: React.FC = () => {
             developed={stages.developed}
             how={stages.how}
           />
+
+          {filesNotice !== null && (
+            <Tooltip content={filesNotice.tip}>
+              <p className="plan__files">
+                <Icon name="attach" />
+                {filesNotice.text}
+              </p>
+            </Tooltip>
+          )}
 
           <div ref={topRef} className="plan__head">
             <span className="plan__summary">{summary}</span>

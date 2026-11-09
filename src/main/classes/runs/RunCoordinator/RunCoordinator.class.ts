@@ -16,6 +16,7 @@ import type { IVariableValue, ShrinkImage } from '@/main/types';
 import type {
   IAndroidSetup,
   IDevelopedAsk,
+  IDevelopedPlan,
   IFlatStep,
   IIosSetup,
   IRunEvent,
@@ -49,7 +50,7 @@ import type {
 import type { IDeviceDriver } from '@salve-software/qazinho-harness/engine';
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { agentFailure, writeAtomically } from '@/main/library';
 import { EXPLORATION } from '@/shared/constants';
@@ -322,10 +323,9 @@ export class RunCoordinator {
   }
 
   /** Os casos de um plano, como ele está agora, que já têm gravação para este alvo. */
-  public async developed(ask: IDevelopedAsk): Promise<string[]> {
+  public async developed(ask: IDevelopedAsk): Promise<IDevelopedPlan> {
     const book = await this.readBook(ask.workspaceId);
-
-    return casesOf(ask.steps).flatMap((steps) => {
+    const caseIds = casesOf(ask.steps).flatMap((steps) => {
       const flat = steps.map(({ step }) => step);
       const caseId = flat[0]?.caseId;
 
@@ -334,6 +334,15 @@ export class RunCoordinator {
         ? [caseId]
         : [];
     });
+    const store = this.filesFolder(ask.workspaceId);
+    const files = await Promise.all(
+      fileRefsIn(book.cases).map(async (ref) => ({
+        name: basename(ref),
+        size: (await stat(join(store, ref)).catch(() => null))?.size ?? 0,
+      })),
+    );
+
+    return { caseIds, files };
   }
 
   /** Transmite o dispositivo de uma run em detalhe cheio enquanto o QA o vê de perto. */

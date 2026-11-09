@@ -294,6 +294,10 @@ export const en = {
     CASES_OTHER: '{{count}} cases',
     STEPS_ONE: '1 step',
     STEPS_OTHER: '{{count}} steps',
+    FILES_IN_ORG: '{{count}} files of this plan are kept in the org ({{size}})',
+    FILES_IN_ORG_ONE: '1 file of this plan is kept in the org ({{size}})',
+    FILES_IN_ORG_TIP:
+      'The recordings upload these files, so the org keeps a copy for everyone to run the same test. They count in its storage and stay until someone deletes them.',
     NOTE: 'Click a case to open it, drag it or press Alt+↑↓ to move it, and change any line the agent got wrong.',
     MOVE_CASE: 'Alt+↑ and Alt+↓ move this case',
     MISSING_ONE:
