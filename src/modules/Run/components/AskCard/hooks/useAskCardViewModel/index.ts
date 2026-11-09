@@ -1,4 +1,4 @@
-import type { IAskCardProps } from '@/modules/Chat/screens/Chat/components/AskCard/types';
+import type { IAskCardProps } from '@/modules/Run/components/AskCard/types';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

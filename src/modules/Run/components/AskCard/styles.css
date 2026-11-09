@@ -1,4 +1,5 @@
 .ask-card {
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
@@ -89,6 +90,17 @@
 .ask-card__input {
   flex: 1;
   min-width: 0;
+}
+
+@container (max-width: 340px) {
+  .ask-card__field {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .ask-card__input {
+    flex-basis: 100%;
+  }
 }
 
 .ask-card__switches {

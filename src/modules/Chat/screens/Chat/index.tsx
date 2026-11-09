@@ -1,15 +1,9 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
+import { AskCard } from '@/modules/Run';
 import { Button, Chip, Icon, Intern, Markdown } from '@/shared/components/atoms';
 import { MOTION, STICKER } from '@/shared/constants';
-import {
-  AskCard,
-  ChatRow,
-  Composer,
-  RunActivity,
-  RunSection,
-  TypingDots,
-} from './components';
+import { ChatRow, Composer, RunActivity, RunSection, TypingDots } from './components';
 import { useChatViewModel } from './hooks';
 import './styles.css';
 

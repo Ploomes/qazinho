@@ -3,7 +3,7 @@ import type { ILiveQuestion } from '@/modules/Workspace';
 import type { FormEvent } from 'react';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { useAskCardViewModel } from '@/modules/Chat/screens/Chat/components/AskCard/hooks/useAskCardViewModel';
+import { useAskCardViewModel } from '@/modules/Run/components/AskCard/hooks/useAskCardViewModel';
 import { EXPLORATION } from '@/shared/constants';
 
 const QUESTION: ILiveQuestion = {
