@@ -1,5 +1,6 @@
 export * from './answerWords';
 export * from './askedAtOf';
+export * from './designFrameOf';
 export * from './developsACase';
 export * from './driverFor';
 export * from './earlyFinish';

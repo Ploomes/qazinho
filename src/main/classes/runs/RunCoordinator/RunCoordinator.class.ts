@@ -12,7 +12,7 @@ import type {
 } from './types';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
-import type { IVariableValue, ShrinkImage } from '@/main/types';
+import type { IToolImage, IVariableValue, ShrinkImage } from '@/main/types';
 import type {
   IAndroidSetup,
   IDevelopedAsk,
@@ -21,6 +21,7 @@ import type {
   IIosSetup,
   IRunEvent,
   KeepEvent,
+  IDesignShot,
   IRunInFlight,
   IRunQuestion,
   IRunVideo,
@@ -95,6 +96,7 @@ import {
   uploadPathOf,
   uploadRuleOf,
   variablePort,
+  designFrameOf,
 } from './library';
 
 /** Anda um plano num dispositivo real: o agente dirige, o requisito julga. */
@@ -120,6 +122,7 @@ export class RunCoordinator {
   private readonly paused = new Set<string>();
   private readonly drivers = new Map<string, IDeviceDriver>();
   private readonly inFlightRuns = new Map<string, IRunInFlight>();
+  private readonly designShots = new Map<string, Map<string, IDesignShot>>();
   private readonly viewports = new Map<string, IViewport>();
   private readonly questions = new Map<string, IOpenQuestion>();
   private readonly talks = new Map<string, IRunTalk>();
@@ -191,6 +194,7 @@ export class RunCoordinator {
     });
     this.learnings.set(run.workspaceId, []);
     this.heardMemories.set(run.workspaceId, new Set());
+    this.designShots.set(run.workspaceId, new Map());
 
     const store = this.filesFolder(run.workspaceId);
     const uploadRefs = new Map<string, string>();
@@ -246,6 +250,7 @@ export class RunCoordinator {
       this.stopping.delete(run.workspaceId);
       this.paused.delete(run.workspaceId);
       this.viewports.delete(run.workspaceId);
+      this.designShots.delete(run.workspaceId);
     }
   }
 
@@ -369,6 +374,38 @@ export class RunCoordinator {
     if (props.kind === 'ios' && props.ios === null) return { reason: 'no-simulator' };
 
     return null;
+  }
+
+  /** Guarda o protótipo que o agente leu do Figma, para os bugs daquele frame. */
+  private keepDesignShot(props: {
+    workspaceId: string;
+    shotDir: string;
+    image: IToolImage;
+  }): void {
+    const { workspaceId, shotDir, image } = props;
+    const frame = designFrameOf(image);
+
+    if (frame === null) return;
+
+    const kind = image.mediaType.split('/').at(-1) ?? 'png';
+    const file = join(shotDir, `design-${frame.replace(/[^\w-]/g, '-')}.${kind}`);
+
+    this.designShots
+      .get(workspaceId)
+      ?.set(frame, { src: `data:${image.mediaType};base64,${image.data}`, file });
+    void mkdir(shotDir, { recursive: true })
+      .then(() => writeFile(file, Buffer.from(image.data, 'base64')))
+      .catch(() => undefined);
+  }
+
+  private designShotOf(props: {
+    workspaceId: string;
+    frame: string | undefined;
+  }): IDesignShot | null {
+    return props.frame === undefined
+      ? null
+      : (this.designShots.get(props.workspaceId)?.get(props.frame.replaceAll('-', ':')) ??
+          null);
   }
 
   private async walk(run: IWalkRun): Promise<void> {
@@ -762,7 +799,7 @@ export class RunCoordinator {
         report.verdict === 'failed'
           ? keptBugId({ asked: report.sameAs, known: run.bugs ?? [] })
           : null;
-      const outcome = outcomeOfReport({
+      const reported = outcomeOfReport({
         report: { ...report, sameAs: kept ?? undefined },
         step: walking.step,
         index: walking.index,
@@ -772,6 +809,8 @@ export class RunCoordinator {
         shot,
         box,
       });
+      const designShot = this.designShotOf({ workspaceId, frame: reported.frame });
+      const outcome = designShot === null ? reported : { ...reported, designShot };
 
       this.emit({
         kind: 'step',
@@ -865,11 +904,14 @@ export class RunCoordinator {
         ...(finding.category === undefined ? {} : { category: finding.category }),
       });
 
+      const designShot = this.designShotOf({ workspaceId, frame: finding.frame });
+
       this.emit({
         kind: 'finding',
         workspaceId,
         finding: {
           ...finding,
+          ...(designShot === null ? {} : { designShot }),
           sameAs: kept ?? undefined,
           caseId: walking.step.caseId,
           stepNumber: walking.step.numberInCase,
@@ -1020,6 +1062,9 @@ export class RunCoordinator {
         viewport: this.viewports.get(workspaceId) ?? run.viewport ?? WEB_DRIVER.viewport,
         language: run.language,
       }),
+      onToolImage: (image) => {
+        this.keepDesignShot({ workspaceId, shotDir: run.shotDir, image });
+      },
       mcpConfig:
         mcpConfigWith({ config: mcpConfig, servers: design.servers }) ?? mcpConfig,
       allowedTools: [
@@ -1294,6 +1339,9 @@ export class RunCoordinator {
         language: run.language,
         minutes,
       }),
+      onToolImage: (image) => {
+        this.keepDesignShot({ workspaceId, shotDir: run.shotDir, image });
+      },
       mcpConfig:
         mcpConfigWith({ config: mcpConfig, servers: design.servers }) ?? mcpConfig,
       allowedTools: [
