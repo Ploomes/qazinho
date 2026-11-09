@@ -1,9 +1,10 @@
-import type { IIslandWindow } from './types';
+import type { IIslandWindow, NotchReading } from './types';
 import type { IIsland, IslandAction, IIslandFrame } from '@/shared/types';
 import { BrowserWindow, ipcMain, screen } from 'electron';
+import { execCommand } from '@/main/library';
 import { CHANNELS, ISLAND_ARGUMENT } from '@/shared/constants';
 import { ISLAND_WINDOW } from './constants';
-import { islandBehaviorOf, islandPlaceOf } from './library';
+import { islandBehaviorOf, islandPlaceOf, measureNotch } from './library';
 
 /**
  * A ilha que fica no topo da tela, onde o notch está: uma janela transparente que mostra
@@ -19,6 +20,8 @@ export class Island {
   private readonly behavior = islandBehaviorOf(process.platform);
   private hasKeyboard = false;
   private release: ReturnType<typeof setTimeout> | null = null;
+  private notch: NotchReading = 'unknown';
+  private measuredScreen = '';
 
   public constructor(props: IIslandWindow) {
     this.preload = props.preload;
@@ -57,10 +60,14 @@ export class Island {
 
     const window = this.open();
     const display = screen.getPrimaryDisplay();
+
+    this.measure(`${String(display.id)}:${JSON.stringify(display.bounds)}`);
+
     const place = islandPlaceOf({
       bounds: display.bounds,
       workArea: display.workArea,
       platform: process.platform,
+      notch: this.notch,
     });
 
     window.setBounds({
@@ -84,6 +91,22 @@ export class Island {
     if (this.window && !this.window.isDestroyed()) this.window.destroy();
 
     this.window = null;
+  }
+
+  private measure(screenKey: string): void {
+    if (screenKey === this.measuredScreen) return;
+
+    this.measuredScreen = screenKey;
+    this.notch = 'unknown';
+
+    void measureNotch({ platform: process.platform, run: execCommand }).then((notch) => {
+      if (screenKey !== this.measuredScreen || notch === 'unknown') return;
+
+      this.notch = notch;
+
+      if (this.frame !== null && this.frame.island.state.kind !== 'idle')
+        this.set(this.frame.island);
+    });
   }
 
   private askKeyboard(isWanted: boolean): void {

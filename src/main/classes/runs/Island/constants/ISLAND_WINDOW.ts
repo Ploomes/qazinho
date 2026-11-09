@@ -3,6 +3,7 @@ export const ISLAND_WINDOW = {
   height: 380,
   keyboardReleaseMs: 150,
   notchWidth: 185,
+  notchCoverPx: 1,
   fallbackBarHeight: 28,
   minNotchBarHeight: 30,
   level: 'screen-saver',
