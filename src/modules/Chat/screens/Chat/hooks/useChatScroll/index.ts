@@ -39,6 +39,15 @@ export const useChatScroll = (props: {
     }
   }, [count, listRef]);
 
+  useLayoutEffect(() => {
+    const list = listRef.current;
+
+    if (!list || start === 0 || list.clientHeight === 0) return;
+    if (list.scrollHeight > list.clientHeight) return;
+
+    setShown({ workspaceId, count: count + CHAT_SCROLL.page });
+  }, [count, listRef, start, workspaceId]);
+
   return {
     listRef,
     visible: messages.slice(start).map((message, index) => ({

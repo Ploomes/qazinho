@@ -25,6 +25,36 @@ function scrolledTo(scrollTop: number) {
 }
 
 describe('useChatScroll', () => {
+  /** O cartão de uma run dobra as mensagens dela: sem o que rolar, as antigas sumiam. */
+  it('brings older messages by itself while the list has nothing to scroll', () => {
+    const { result, rerender } = renderHook(
+      (messages: ChatMessage[]) => useChatScroll({ workspaceId: 'w1', messages }),
+      { initialProps: chat(70) },
+    );
+    const list = document.createElement('div');
+
+    Object.defineProperty(list, 'scrollHeight', { value: 400, configurable: true });
+    Object.defineProperty(list, 'clientHeight', { value: 400, configurable: true });
+    list.scrollTo = () => undefined;
+    result.current.listRef.current = list;
+
+    rerender(chat(71));
+
+    expect(result.current.visible).toHaveLength(71);
+  });
+
+  it('does NOT bring more while the list is hidden, with no height at all', () => {
+    const { result, rerender } = renderHook(
+      (messages: ChatMessage[]) => useChatScroll({ workspaceId: 'w1', messages }),
+      { initialProps: chat(70) },
+    );
+
+    result.current.listRef.current = document.createElement('div');
+    rerender(chat(71));
+
+    expect(result.current.visible).toHaveLength(30);
+  });
+
   it('opens on the latest messages, without replaying them as new', () => {
     const { result } = renderHook(() =>
       useChatScroll({ workspaceId: 'w1', messages: chat(70) }),
