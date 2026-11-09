@@ -1,6 +1,6 @@
 import type { IMemoryChange } from '@/modules/Memory/types';
-import type { IMemory, MemoryOp, MemoryScope } from '@/shared/types';
-import { MEMORY_LIMIT } from '@/shared/constants';
+import type { IMemory, MemoryOp } from '@/shared/types';
+import { overLimitOf } from './overLimitOf';
 
 /**
  * As memórias depois do que o agente pediu, e o que mudou; uma esquecida perde o texto e
@@ -19,13 +19,21 @@ export function withMemoryOps(props: {
 
   for (const op of changesBeforeAdds(props.ops)) {
     if (op.op === 'add') {
-      if (memories.some((one) => isActive(one) && one.text === op.text)) continue;
-
       const owner = op.scope === 'plan' ? workspaceId : null;
-      const pushedOut = pushedOutBy({ memories, scope: op.scope, owner });
 
-      memories = [
-        ...memories.map((one) => (pushedOut.includes(one) ? forgotten(one, now) : one)),
+      if (
+        memories.some(
+          (one) =>
+            isActive(one) &&
+            one.text === op.text &&
+            one.scope === op.scope &&
+            one.workspaceId === owner,
+        )
+      )
+        continue;
+
+      const added: IMemory[] = [
+        ...memories,
         {
           id: newId(),
           text: op.text,
@@ -37,6 +45,11 @@ export function withMemoryOps(props: {
           deletedAt: null,
         },
       ];
+      const pushedOut = overLimitOf(added);
+
+      memories = added.map((one) =>
+        pushedOut.includes(one) ? forgotten(one, now) : one,
+      );
       changes.push(
         ...pushedOut.map(({ text }) => ({ kind: 'forgotten' as const, text })),
         { kind: 'added', text: op.text },
@@ -75,19 +88,6 @@ function changesBeforeAdds(ops: MemoryOp[]): MemoryOp[] {
     ...ops.filter(({ op }) => op !== 'add'),
     ...ops.filter(({ op }) => op === 'add'),
   ];
-}
-
-function pushedOutBy(props: {
-  memories: IMemory[];
-  scope: MemoryScope;
-  owner: string | null;
-}): IMemory[] {
-  const { scope, owner } = props;
-  const inScope = props.memories
-    .filter((one) => isActive(one) && one.scope === scope && one.workspaceId === owner)
-    .sort((a, b) => a.updatedAt.localeCompare(b.updatedAt));
-
-  return inScope.slice(0, Math.max(0, inScope.length - MEMORY_LIMIT[scope] + 1));
 }
 
 function forgotten(memory: IMemory, now: string): IMemory {

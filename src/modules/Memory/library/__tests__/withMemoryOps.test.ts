@@ -143,6 +143,15 @@ describe('withMemoryOps', () => {
     ).toBe('w-1');
   });
 
+  it('adds to this plan the same words another plan already keeps', () => {
+    const other = { ...memory, scope: 'plan' as const, workspaceId: 'w-2' };
+
+    expect(
+      apply([{ op: 'add', text: 'Em Ajustes.', scope: 'plan', target: 'all' }], [other])
+        .changes,
+    ).toEqual([{ kind: 'added', text: 'Em Ajustes.' }]);
+  });
+
   it('does not add what is already kept, word for word', () => {
     const { memories, changes } = apply([
       { op: 'add', text: 'Em Ajustes.', scope: 'project', target: 'all' },

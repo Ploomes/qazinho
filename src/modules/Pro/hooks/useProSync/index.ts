@@ -26,7 +26,11 @@ export const useProSync = () => {
 
       if (project === undefined) return;
 
-      const merged = mergedMemoriesOf({ local: project.memories ?? [], org: memories });
+      const merged = mergedMemoriesOf({
+        local: project.memories ?? [],
+        org: memories,
+        now: new Date().toISOString(),
+      });
 
       if (JSON.stringify(merged) !== JSON.stringify(project.memories ?? []))
         updateProject({ ...project, memories: merged });
