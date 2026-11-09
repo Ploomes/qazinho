@@ -41,7 +41,7 @@ export class MemoryKeeper {
 
     if (turn.isError) return { isKept: false };
 
-    const ops = this.harness.readKeep({ text: turn.text, memories });
+    const ops = this.harness.readKeep({ text: turn.text, memories, events });
 
     return ops === null ? { isKept: false } : { isKept: true, ops };
   }
