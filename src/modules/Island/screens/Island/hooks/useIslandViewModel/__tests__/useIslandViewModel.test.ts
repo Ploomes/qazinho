@@ -107,7 +107,11 @@ describe('useIslandViewModel', () => {
     });
 
     expect(result.current.isOpen).toBe(false);
-    expect(result.current.size).toMatchObject({ width: 185 + 2 * 51, height: 33 });
+    expect(result.current.size).toMatchObject({
+      width: 185 + 34 + 51,
+      height: 33,
+      x: (51 - 34) / 2,
+    });
   });
 
   it('stays small with just the Estagiário and the icon, and widens when a counter shows', () => {
@@ -133,7 +137,7 @@ describe('useIslandViewModel', () => {
       pushFrame({ ...running, barHeight: 28, notchWidth: 0 });
     });
 
-    expect(result.current.size).toMatchObject({ width: 102, height: 28 });
+    expect(result.current.size).toMatchObject({ width: 34 + 51, height: 28, x: 0 });
   });
 
   it('signals that the agent waits for the QA without opening by itself', () => {
@@ -144,7 +148,11 @@ describe('useIslandViewModel', () => {
     });
 
     expect(result.current.isOpen).toBe(false);
-    expect(result.current.size).toMatchObject({ width: 185 + 2 * 34, height: 33 });
+    expect(result.current.size).toMatchObject({
+      width: 185 + 34 + 26,
+      height: 33,
+      x: (26 - 34) / 2,
+    });
     expect(result.current.shown).toMatchObject({
       tone: 'asking',
       mood: 'thinking',
@@ -249,7 +257,7 @@ describe('useIslandViewModel', () => {
     });
 
     expect(result.current.isOpen).toBe(true);
-    expect(result.current.size).toMatchObject({ width: 400, height: 33 + 150 });
+    expect(result.current.size).toMatchObject({ width: 400, height: 33 + 150, x: 0 });
     expect(result.current.pillClassName).toContain('island__pill--open');
     expect(hovered).toEqual([true]);
 

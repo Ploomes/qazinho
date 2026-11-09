@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ISLAND_IDLE, ISLAND_SHAPE } from '@/modules/Island/screens/Island/constants';
 import { useIslandAsk } from '@/modules/Island/screens/Island/hooks/useIslandAsk';
-import { earWidthOf, questionKeyOf } from '@/modules/Island/screens/Island/library';
+import { earWidthsOf, questionKeyOf } from '@/modules/Island/screens/Island/library';
 import { currentStepOf } from '@/modules/Run/library';
 import { IslandView } from '@/services/IslandView';
 
@@ -126,10 +126,12 @@ export const useIslandViewModel = () => {
               stopLabel: t('ISLAND.STOP'),
             }
           : null;
+  const ears = earWidthsOf(shown?.count ?? '');
   const closedWidth = Math.max(
     ISLAND_SHAPE.minFlatWidthPx,
-    notch + earWidthOf(shown?.count ?? '') * 2,
+    notch + ears.left + ears.right,
   );
+  const closedShift = notch > 0 ? (ears.right - ears.left) / 2 : 0;
   const hasBody = isOpen && shown !== null;
 
   useEffect(() => {
@@ -176,6 +178,7 @@ export const useIslandViewModel = () => {
     internSize: ISLAND_SHAPE.internPx,
     size: {
       width: isOpen ? ISLAND_SHAPE.openWidthPx : closedWidth,
+      x: isOpen ? 0 : closedShift,
       height: isOpen ? bar + bodyHeight : bar,
       borderBottomLeftRadius: isOpen
         ? ISLAND_SHAPE.openRadiusPx

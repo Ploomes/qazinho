@@ -1,2 +1,2 @@
-export * from './earWidthOf';
+export * from './earWidthsOf';
 export * from './questionKeyOf';
