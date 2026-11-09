@@ -6,6 +6,7 @@ import { LiveClock } from '@/modules/Device/components/DeviceView/components/Liv
 import { ScreenRail } from '@/modules/Device/components/DeviceView/components/ScreenRail';
 import { ViewportPicker } from '@/modules/Device/components/DeviceView/components/ViewportPicker';
 import { DEVICE } from '@/modules/Device/constants';
+import { AskCard } from '@/modules/Run';
 import { Button, Eyebrow, Intern, Kbd, StatusPill } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { useDeviceFocusViewModel } from './hooks';
@@ -22,6 +23,7 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
     now,
     nowNumber,
     sections,
+    sideRef,
     stepsRef,
     onStepsScroll,
     hasViewports,
@@ -70,6 +72,7 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
       </div>
 
       <motion.aside
+        ref={sideRef}
         className="device-focus__side"
         initial={{ opacity: 0, x: 16 }}
         animate={{ opacity: 1, x: 0 }}
@@ -95,6 +98,26 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
             <Kbd combo="Esc" />
           </Button>
         </div>
+
+        <AnimatePresence initial={false}>
+          {props.question !== null && (
+            <motion.div
+              key={props.question.key}
+              className="device-focus__ask"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+            >
+              <div className="device-focus__ask-body">
+                <AskCard
+                  question={props.question.live}
+                  onAnswer={props.onAnswerQuestion}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="device-focus__now">
           <span className="device-focus__now-head">

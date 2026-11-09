@@ -249,6 +249,7 @@
   padding: var(--space-2) 0;
   color: var(--ink2);
   font: var(--font-ui-xs);
+  overflow-wrap: anywhere;
 }
 
 @container workspace (width < 560px) {

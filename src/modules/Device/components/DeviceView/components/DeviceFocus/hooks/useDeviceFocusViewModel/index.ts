@@ -1,6 +1,6 @@
 import type { IDeviceFocusProps } from '@/modules/Device/components/DeviceView/components/DeviceFocus/types';
 import type { CSSProperties } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DEVICE } from '@/modules/Device/constants';
 import { stepSectionsOf } from '@/modules/Device/library';
@@ -10,6 +10,8 @@ import { useFollowEnd } from '@/shared/hooks/useFollowEnd';
 export const useDeviceFocusViewModel = (props: IDeviceFocusProps) => {
   const { steps, onClose } = props;
   const { t } = useTranslation();
+  const sideRef = useRef<HTMLElement>(null);
+  const questionKey = props.question?.key ?? null;
   const { listRef: stepsRef, onFollowScroll: onStepsScroll } =
     useFollowEnd<HTMLDivElement>({ resetKey: null });
 
@@ -24,6 +26,10 @@ export const useDeviceFocusViewModel = (props: IDeviceFocusProps) => {
       window.removeEventListener('keydown', leave);
     };
   }, [onClose]);
+
+  useEffect(() => {
+    if (questionKey !== null) sideRef.current?.querySelector('input')?.focus();
+  }, [questionKey]);
 
   const current =
     steps.find(({ verdict }) => verdict === 'running') ??
@@ -53,6 +59,7 @@ export const useDeviceFocusViewModel = (props: IDeviceFocusProps) => {
         })),
       }),
     ),
+    sideRef,
     stepsRef,
     onStepsScroll,
     hasViewports: props.viewports.length > 0,

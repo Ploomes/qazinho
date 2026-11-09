@@ -68,6 +68,8 @@ export const DeviceView: React.FC = () => {
     onPause,
     onStop,
     doingNow,
+    question,
+    onAnswerQuestion,
   } = useDeviceViewModel();
 
   return (
@@ -255,6 +257,8 @@ export const DeviceView: React.FC = () => {
               onPause={onPause}
               onStop={onStop}
               onClose={onUnfocus}
+              question={question}
+              onAnswerQuestion={onAnswerQuestion}
             />
           )}
         </AnimatePresence>,

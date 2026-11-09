@@ -40,6 +40,8 @@ const focus = (props: Partial<IDeviceFocusProps>) =>
       onPause: vi.fn(),
       onStop: vi.fn(),
       onClose: vi.fn(),
+      question: null,
+      onAnswerQuestion: vi.fn(),
       ...props,
     }),
   ).result.current;

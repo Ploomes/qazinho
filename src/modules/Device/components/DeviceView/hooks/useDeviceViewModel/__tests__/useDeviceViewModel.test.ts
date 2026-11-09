@@ -615,6 +615,69 @@ describe('useDeviceViewModel', () => {
    * O agente do chat conhece o app no navegador do QAzinho antes de planejar: o QA o
    * acompanha aqui, como acompanha uma run.
    */
+  describe('a question of the agent', () => {
+    const ask = () => {
+      const workspace = walkRun({ verdicts: [] });
+
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...workspace,
+            live:
+              workspace.live === null
+                ? null
+                : {
+                    ...workspace.live,
+                    question: {
+                      id: 'q-1',
+                      question: 'Qual plano?',
+                      options: ['Básico'],
+                      isSecret: false,
+                      secret: { name: 'QA_ANSWER_1', description: 'Qual plano?' },
+                      caseId: 'TC-01',
+                      stepNumber: 1,
+                      action: 'Escolher',
+                      askedAtMs: 0,
+                      waitsUntilMs: 900_000,
+                      waitedSec: 0,
+                    },
+                  },
+          },
+        ],
+      });
+    };
+
+    it('is handed to the focused screen, keyed by the run and the question', () => {
+      ask();
+
+      const { result } = renderHook(() => useDeviceViewModel());
+
+      expect(result.current.question).toMatchObject({
+        key: 'r-01/q-1',
+        live: { question: 'Qual plano?' },
+      });
+    });
+
+    it('answers through the run', () => {
+      const answer = vi.fn();
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), answerRun: answer };
+      ask();
+
+      const { result } = renderHook(() => useDeviceViewModel());
+
+      result.current.onAnswerQuestion({ kind: 'said', text: 'Básico' });
+
+      expect(answer).toHaveBeenCalledWith(expect.objectContaining({ questionId: 'q-1' }));
+    });
+
+    it('is nothing with no question waiting', () => {
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: [] })] });
+
+      expect(renderHook(() => useDeviceViewModel()).result.current.question).toBeNull();
+    });
+  });
+
   describe('the chat learning the app', () => {
     it('shows the chat browser with no run going, saying what it does and where it is', () => {
       useWorkspaceStore.setState({

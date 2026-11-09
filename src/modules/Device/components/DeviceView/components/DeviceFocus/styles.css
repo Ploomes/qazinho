@@ -143,6 +143,16 @@
   font: var(--font-mono-sm);
 }
 
+.device-focus__ask {
+  flex: none;
+  margin-bottom: calc(var(--space-6) * -1);
+  overflow: hidden;
+}
+
+.device-focus__ask-body {
+  padding-bottom: var(--space-6);
+}
+
 .device-focus__now {
   display: flex;
   flex-direction: column;
@@ -172,6 +182,7 @@
   color: var(--ink);
   font: var(--font-display-sm);
   text-wrap: pretty;
+  overflow-wrap: anywhere;
 }
 
 .device-focus__now-number {
@@ -225,6 +236,7 @@
   border-radius: var(--radius-sm);
   color: var(--ink3);
   font: var(--font-ui-sm);
+  overflow-wrap: anywhere;
   transition:
     background-color var(--dur) var(--ease),
     color var(--dur) var(--ease);

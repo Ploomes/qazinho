@@ -1,4 +1,5 @@
 import type { IDeviceStep, IViewportChoice, ViewportId } from '@/modules/Device/types';
+import type { QaReply } from '@/shared/types';
 import type { CSSProperties } from 'react';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -92,6 +93,7 @@ export const useDeviceViewModel = () => {
     lastRun?.cases.reduce((total, runCase) => total + runCase.steps.length, 0) ??
     null;
 
+  const question = live?.isDone === false ? (live.question ?? null) : null;
   const chatDevice = workspace === null ? undefined : chatDevices[workspace.id];
   const isLearning = !isRunLive && chatDevice !== undefined;
   const hasScreen =
@@ -315,5 +317,13 @@ export const useDeviceViewModel = () => {
           }),
     onPause,
     onStop,
+    question:
+      question === null
+        ? null
+        : { key: `${live?.id ?? ''}/${question.id}`, live: question },
+    onAnswerQuestion: (reply: QaReply) => {
+      if (workspace !== null && question !== null)
+        Run.answer({ workspaceId: workspace.id, questionId: question.id, reply });
+    },
   };
 };

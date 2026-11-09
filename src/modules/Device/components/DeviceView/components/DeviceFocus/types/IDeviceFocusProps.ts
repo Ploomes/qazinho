@@ -5,7 +5,9 @@ import type {
   IViewportChoice,
   ViewportId,
 } from '@/modules/Device/types';
+import type { ILiveQuestion } from '@/modules/Workspace';
 import type { InternMood } from '@/shared/components/atoms/Intern/types';
+import type { QaReply } from '@/shared/types';
 import type { useAnimationControls } from 'motion/react';
 
 /**
@@ -39,4 +41,6 @@ export interface IDeviceFocusProps {
   onPause: () => void;
   onStop: () => void;
   onClose: () => void;
+  question: { key: string; live: ILiveQuestion } | null;
+  onAnswerQuestion: (reply: QaReply) => void;
 }
