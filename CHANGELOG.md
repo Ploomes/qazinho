@@ -1,3 +1,28 @@
+# [0.10.0](https://github.com/Salve-Software/qazinho/compare/v0.9.0...v0.10.0) (2026-11-09)
+
+
+### Bug Fixes
+
+* **bug:** set the prototype beside the screen ([bade160](https://github.com/Salve-Software/qazinho/commit/bade16099bab6d15d713f686df947df4155c3205))
+* **chat:** load history with no scroll ([ece14c6](https://github.com/Salve-Software/qazinho/commit/ece14c60fae4f6bd25e3d969454bd96375db4595))
+* **plan:** stop repeating the story ([65753c0](https://github.com/Salve-Software/qazinho/commit/65753c0f71ad7a27e46ab04d2b1b3faaab0fb24d))
+* **project:** set variable values apart ([e5cd5a7](https://github.com/Salve-Software/qazinho/commit/e5cd5a720ff922dd511c4786de5a83ebb186fa3a))
+* **runs:** shorten the run header ([14bb341](https://github.com/Salve-Software/qazinho/commit/14bb341b3fbc794c4107b62e31338b0df6b946ca))
+* **tooltip:** stay inside the window ([ac665db](https://github.com/Salve-Software/qazinho/commit/ac665dbaac2e7d5928b2bf1313879144ad908645))
+
+
+### Features
+
+* **agents:** hear images from tools ([24e12d7](https://github.com/Salve-Software/qazinho/commit/24e12d7170924b225e05d35edd441d82384a3f9d))
+* **bug:** keep the prototype of a bug ([3b42eea](https://github.com/Salve-Software/qazinho/commit/3b42eead17b43f9a935de2bb0f568826e0d75443))
+* **bug:** show the prototype beside it ([f790dab](https://github.com/Salve-Software/qazinho/commit/f790dab14570df72cc9d9f8c9bf891ded45e275d))
+* **filing:** attach the prototype ([bc78835](https://github.com/Salve-Software/qazinho/commit/bc788353f555310d4d645f4e8ef1e8cd3cdac5e2))
+* **run:** find what a closed run left ([ceeab8e](https://github.com/Salve-Software/qazinho/commit/ceeab8e877146962ef41c9c02ef7e8b8e446c1ee))
+* **run:** keep what Figma shows per frame ([ad9ef84](https://github.com/Salve-Software/qazinho/commit/ad9ef84c2d7483f81efbb2a517b2b5ba79f0a214))
+* **run:** remember how a run went ([2500921](https://github.com/Salve-Software/qazinho/commit/2500921510ae96f9031de711c4b74e1118dca1fc))
+* **run:** say when a file opens ([30c3e93](https://github.com/Salve-Software/qazinho/commit/30c3e93e9de24b0216856e5ff2be24f46b0fcf98))
+* **workspace:** continue a closed run ([e60a94d](https://github.com/Salve-Software/qazinho/commit/e60a94d119b958932d81777a0e767b5d39b40377))
+
 # [0.9.0](https://github.com/Salve-Software/qazinho/compare/v0.8.0...v0.9.0) (2026-11-09)
 
 
