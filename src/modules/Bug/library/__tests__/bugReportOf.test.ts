@@ -32,6 +32,7 @@ const BUG: IBug = {
   reviewedRuns: [],
   review: null,
   frame: null,
+  design: null,
 };
 
 /** Palavras que mostram onde cada uma cai, do jeito que o i18n as entrega. */

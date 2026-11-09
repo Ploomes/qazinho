@@ -70,6 +70,7 @@ export type * from './IConfluenceSpace';
 export type * from './IConnectIntegration';
 export type * from './IConnectResult';
 export type * from './IDesignLink';
+export type * from './IDesignShot';
 export type * from './IDetectedAgent';
 export type * from './IDevelopedAsk';
 export type * from './IDevelopedPlan';

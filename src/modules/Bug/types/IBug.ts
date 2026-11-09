@@ -35,4 +35,5 @@ export interface IBug {
   reviewedRuns: string[];
   review: IBugReview | null;
   frame: string | null;
+  design: IBugShot | null;
 }

@@ -62,6 +62,26 @@ describe('toSaved', () => {
     expect(after?.runs[0]?.counts).toEqual(before.runs[0]?.counts);
   });
 
+  it('keeps where the prototype of a bug is, never the picture itself', () => {
+    const workspace = walkRun({ verdicts: [...BROKE], isFinished: true });
+    const [bug] = workspace.bugs;
+    const after = roundTrip({
+      ...workspace,
+      bugs: [
+        {
+          ...bug!,
+          design: { isBad: false, src: 'data:image/png;base64,AAAA', file: '/tmp/d.png' },
+        },
+      ],
+    });
+
+    expect(after?.bugs[0]?.design).toEqual({
+      isBad: false,
+      src: null,
+      file: '/tmp/d.png',
+    });
+  });
+
   it('what came back knows where its screenshots are', () => {
     const after = roundTrip(walkRun({ verdicts: [...BROKE], isFinished: true }));
 

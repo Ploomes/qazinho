@@ -53,6 +53,21 @@ describe('makeBug', () => {
     expect(makeBug({ workspace, outcome, outcomes: [outcome] }).frame).toBeNull();
   });
 
+  it('keeps the prototype the run read for that frame beside the bug', () => {
+    const workspace = walkRun({ verdicts: [] });
+    const outcome = makeOutcome({ workspace, index: 0, verdict: 'failed' });
+    const designShot = { src: 'data:image/png;base64,AAAA', file: '/tmp/d.png' };
+
+    expect(
+      makeBug({
+        workspace,
+        outcome: { ...outcome, frame: '1:6', designShot },
+        outcomes: [outcome],
+      }).design,
+    ).toEqual({ isBad: false, ...designShot });
+    expect(makeBug({ workspace, outcome, outcomes: [outcome] }).design).toBeNull();
+  });
+
   it('takes the title and the severity the agent gave it', () => {
     const bug = bugFrom();
 

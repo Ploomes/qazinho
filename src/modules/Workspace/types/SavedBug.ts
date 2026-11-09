@@ -15,6 +15,7 @@ export type SavedBug = Omit<
   | 'reviewedRuns'
   | 'review'
   | 'frame'
+  | 'design'
 > &
   Partial<
     Pick<
@@ -31,6 +32,7 @@ export type SavedBug = Omit<
       | 'reviewedRuns'
       | 'review'
       | 'frame'
+      | 'design'
     >
   > & {
     step?: string;

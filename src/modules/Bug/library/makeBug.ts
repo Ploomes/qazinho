@@ -54,6 +54,8 @@ export function makeBug(props: {
     reviewedRuns: [],
     review: null,
     frame: outcome.frame ?? null,
+    design:
+      outcome.designShot === undefined ? null : { isBad: false, ...outcome.designShot },
   };
 }
 

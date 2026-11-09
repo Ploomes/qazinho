@@ -28,6 +28,7 @@ export function toSaved(props: { workspace: IWorkspace; at: string }): ISavedWor
         bugs: rest.bugs.map((bug) => ({
           ...bug,
           shots: bug.shots.map((shot) => ({ ...shot, src: null })),
+          design: bug.design === null ? null : { ...bug.design, src: null },
           sightings: bug.sightings.map((sighting) => ({
             ...sighting,
             shot: { ...sighting.shot, src: null },
