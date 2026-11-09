@@ -10,4 +10,5 @@ export interface IAgentTurn {
   usage: IAgentUsage | null;
   isError: boolean;
   costUsd: number | null;
+  wasCompacted?: boolean;
 }

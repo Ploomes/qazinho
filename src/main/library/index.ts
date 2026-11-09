@@ -24,6 +24,7 @@ export * from './searchDirectories';
 export * from './stripAnsi';
 export * from './sweepDaysOf';
 export * from './terminalScriptOf';
+export * from './toldAfterTurn';
 export * from './writeAtomically';
 export {
   describeMeasure,

@@ -16,6 +16,7 @@ import {
   codexServersOf,
   costOf,
   followPartial,
+  isCompaction,
   hearCodex,
   killTree,
   readAgentLine,
@@ -127,6 +128,7 @@ export class AgentRunner {
     let live: ILiveBlock | null = null;
     let isError = false;
     let costUsd: number | null = null;
+    let wasCompacted = false;
     let stderr = '';
 
     child.stderr.on('data', (chunk: Buffer) => {
@@ -175,6 +177,8 @@ export class AgentRunner {
       }
 
       sessionId = event.session_id ?? sessionId;
+
+      if (isCompaction(event)) wasCompacted = true;
 
       if (props.isStreamed === true) {
         const followed = followPartial({ line: event, block: live });
@@ -242,6 +246,7 @@ export class AgentRunner {
       usage,
       isError: isError || code !== 0,
       costUsd,
+      wasCompacted,
     };
   }
 

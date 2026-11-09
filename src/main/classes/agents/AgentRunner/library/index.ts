@@ -5,6 +5,7 @@ export * from './codexServersOf';
 export * from './costOf';
 export * from './followPartial';
 export * from './hearCodex';
+export * from './isCompaction';
 export * from './readAgentLine';
 export * from './replyInPartial';
 export * from './retryOf';

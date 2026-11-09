@@ -6,7 +6,7 @@ import type {
   IAssistantTurn,
 } from '@/shared/types';
 import { ASSISTANT } from '@/main/constants/ASSISTANT';
-import { agentFailure, isLostSession } from '@/main/library';
+import { agentFailure, isLostSession, toldAfterTurn } from '@/main/library';
 import { ASSISTANT_WAIT } from '@/shared/constants';
 import { checkBuildPaths } from './library';
 
@@ -141,7 +141,7 @@ export class AssistantAgent {
     });
 
     if (!turn.isError && turn.sessionId !== null)
-      this.told.set(turn.sessionId, assistant.told);
+      this.told.set(turn.sessionId, toldAfterTurn({ turn, told: assistant.told }));
 
     return turn;
   }

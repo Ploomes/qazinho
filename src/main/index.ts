@@ -167,6 +167,7 @@ import {
   proPageUrlOf,
   spawnCommand,
   sweepDaysOf,
+  toldAfterTurn,
 } from '@/main/library';
 import { ASSISTANT_WAIT, CHANNELS, CHAT_ATTACHMENTS } from '@/shared/constants';
 import {
@@ -1140,10 +1141,13 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     if (!turn.isError && turn.sessionId !== null)
       toldChats.set(
         turn.sessionId,
-        harness.toldAfterReading({
-          told,
-          story: storyRead === story ? null : storyRead,
-          page: pageRead === page ? null : pageRead,
+        toldAfterTurn({
+          turn,
+          told: harness.toldAfterReading({
+            told,
+            story: storyRead === story ? null : storyRead,
+            page: pageRead === page ? null : pageRead,
+          }),
         }),
       );
 
