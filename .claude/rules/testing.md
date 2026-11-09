@@ -93,7 +93,7 @@ próprio comando, e o CI nunca as roda.
 | `review.test.ts`       | um agente fake pesa um bug visto de novo contra a issue num Jira fake                   |
 | `assistant.test.ts`    | um agente fake age pelas ferramentas do app: uma página que responde, espera, ou não    |
 | `build.test.ts`        | um gh fake entrega uma branch e um agente fake a constrói: um APK guardado              |
-| `replay.test.ts`       | um caso gravado, andado de novo sem agente, consertado quando o app muda                |
+| `replay.test.ts`       | um caso gravado, andado de novo sem agente, consertado, ou retomado de onde parou       |
 | `explore.test.ts`      | um explorador fake no Chrome real: telas, um bug, um plano e o relógio                  |
 | `variables.test.ts`    | um agente fake entra com `${NAME}`: a página recebe o valor, o agente não               |
 | `ask.test.ts`          | um agente fake pergunta ao QA no meio da run: uma escolha, um código, silêncio, um stop |

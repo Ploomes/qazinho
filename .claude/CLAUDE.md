@@ -124,8 +124,9 @@ pelo Codex a resposta ainda chega inteira e nenhuma run foi tentada.
 **Um caso que passou é andado de novo sem o agente.** As ações de cada passo são gravadas com as
 palavras na tela que o provaram, e a próxima run as repete no dispositivo e confere as palavras:
 segundos e nenhum custo, contra dezenas de segundos e alguns centavos com o agente. Quando o app
-mudou e uma palavra não aparece, o agente anda o caso de novo e o grava outra vez ("ajustado"). Os
-casos gravados exportam como um arquivo de teste do Playwright ou fluxos do Maestro, gestos
+mudou e uma palavra não aparece, o agente anda o caso de novo e o grava outra vez ("ajustado"). Um
+caso que parou num passo guarda nesta máquina o que passou até ali: a próxima run anda isso sem o
+agente, e ele assume dali até o caso passar inteiro. Os casos gravados exportam como um arquivo de teste do Playwright ou fluxos do Maestro, gestos
 incluídos. Um Claude Code real gravou um plano web e um Android assim, os dois andados de novo
 sem agente, e o arquivo de Playwright exportado passou no Chrome; os fluxos do Maestro ainda não
 rodaram no Maestro. O `tests/smoke/replay.test.ts` prova isso com um agente fake.
@@ -374,7 +375,8 @@ próprio, no modelo mais barato (Haiku no Claude Code), que guarda, corrige ou e
 projeto ou de um plano. Uma linha no chat diz o que ele anotou ("Anotei: ...", "Esqueci: ..."), e a
 janela do projeto lista as memórias para ver e apagar. Cabem 30 por projeto e 10 por plano, de até
 200 caracteres: o agente lê todas, e numa lista cheia o guardião junta fatos ou solta um para outro
-entrar. O agente as lê em toda run, exploração e chat,
+entrar. A API recusa o que passa disso, e o app nunca
+manda além: duas máquinas que encheram a lista juntam as duas e soltam as paradas há mais tempo. O agente as lê em toda run, exploração e chat,
 e diz uma vez por memória quando usa uma. Memória ajuda a chegar e nunca decide um veredito. Num
 projeto publicado, elas vão à org e voltam, a versão escrita por último vencendo. Um Claude Code real
 (Haiku) perguntou onde ficava uma tela, foi lembrado e, na run seguinte, foi direto, sem perguntar; o

@@ -183,7 +183,9 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
   que uma sessão começou e ignora um `--append-system-prompt` novo no `--resume`. O que uma
   mensagem acrescenta (o workspace, as últimas runs dele, o que o `AppPeek` viu, as referências
   @) abre a mensagem dentro de `<qazinho>`, e só o que mudou desde que a sessão leu pela última
-  vez (`changedSections`).
+  vez (`changedSections`). Quando o
+  Claude Code compacta a conversa (`isCompaction`), a mensagem seguinte conta tudo de novo
+  (`toldAfterTurn`).
 - **Uma run é andada por agentes próprios.** Cada caso recebe um agente novo com o prompt do
   runner e as ferramentas do dispositivo, e nada do chat.
 - **Um bug visto de novo cai no que está aberto.** Cada run carrega os bugs do workspace
@@ -229,6 +231,10 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
   - A próxima run anda um caso com receita no dispositivo sem o agente e confere cada prova
     (`replayCase`): custa nada e leva segundos. Quando uma prova não aparece, o caso recomeça com
     o agente, que o grava de novo, e os passos dele aparecem como curados.
+  - Um caso que parou num passo guarda o que passou até ali em `partial`, no `recipes.json`, e nunca
+    vai à org, que conta uma gravação como caso desenvolvido. A próxima run anda isso sem o agente
+    (`partialFor`), e ele assume o passo seguinte de onde o app está. O caso continua por desenvolver
+    até passar inteiro; aí vira receita e a parcial sai (`bookWith`).
   - "Rodar tudo com o agente", no menu do botão de rodar (`RunButton`), anda todo caso com o
     agente; cada jeito diz no menu o que faz. O relatório diz "sem IA" ou "curado" em cada caso, e
     o `CodeExport` transforma as receitas num arquivo de Playwright ou num fluxo de Maestro por
@@ -239,13 +245,19 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
   - A página põe na fila o que pode mudar alguma coisa (`useMemoryStore`): a mensagem do QA, e no fim
     da run o que a main juntou (`learnings`): as respostas a `ask_qa`, o que o QA disse no meio dela e
     o que o agente disse com `say`. O `useMemoryKeeping` pesa um por vez, com as memórias de agora.
-  - O `MemoryKeeper` da main pergunta ao agente do QA no modelo mais barato dele, sem ferramentas, e
-    o `readKeep` confere a resposta (`MemoryOp`); a página a aplica (`withMemoryOps`) e conta no chat
+  - O `MemoryKeeper` da main pergunta ao agente do QA no modelo mais barato dele, sem ferramentas e
+    sem os servidores MCP do QA (`isSealed`), porque o que ele lê pode ter vindo do app testado, e
+    o `readKeep` confere a resposta (`MemoryOp`), sem um `${NOME}` que ninguém citou; a página a aplica (`withMemoryOps`) e conta no chat
     (`IMemoryMessage`). Uma esquecida perde o texto e fica com a data, para a org saber.
   - Cabem `MEMORY_LIMIT.project` memórias no projeto e `MEMORY_LIMIT.plan` em cada plano, de até
     `MEMORY_LIMIT.chars` caracteres, então o agente lê todas. Numa lista cheia, o `describeKeep` pede
     ao guardião que junte ou solte uma na mesma resposta; se ele não abrir lugar, o `withMemoryOps`
-    esquece a que está parada há mais tempo, e o chat conta.
+    esquece a que está parada há mais tempo, e o chat conta. A API recusa o que passa do limite
+    (`400`, ou `409 memory_limit` com a lista da org). Essa recusa não segura o resto do projeto
+    (`isMemoryRefusal`): a página junta a lista da org e abre lugar (`mergedMemoriesOf`, `overLimitOf`).
+  - Uma esquecida sai daqui assim que a org sabe dela (`mergedMemoriesOf`), e só as ativas contam para
+    saber se algo mudou (`memoriesHashOf`). Apagar um workspace esquece as memórias do plano dele
+    (`withoutPlanMemories`).
   - O agente recebe as memórias na mensagem (`describeMemories`, `describeChatMemories`), e o `say`
     leva o id da memória de que fala, para o QA ouvir cada uma uma vez só na run (`tellQa`).
   - Num projeto publicado, a main manda a lista quando ela muda (`sendMemories`) e pega a da org a
@@ -281,7 +293,7 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
   ler, clicar, digitar, rolar, sem `report`, `bug` nem `ask_qa`), e nenhuma outra ferramenta. O
   `McpHost` serve as ferramentas em loopback, um endereço por workspace pelo tempo de uma run, e
   um sob o escopo `~assistant` enquanto o assistente responde.
-  - Toda chamada do agente pode usar os servidores MCP do próprio QA, como o da empresa dele: eles
+  - Toda chamada do agente, menos a do guardião das memórias, pode usar os servidores MCP do próprio QA, como o da empresa dele: eles
     são do QA e ele responde por eles. O `AgentRunner` entrega a cada chamada do Claude Code o
     `--permission-prompt-tool` no `approve_permission` do QAzinho (`withPermissions`), servido ao
     lado das ferramentas de cada grupo e, para uma chamada sem nenhuma (um build, uma revisão),
