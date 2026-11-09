@@ -97,7 +97,11 @@ limpa os dados dele, o iOS o reinstala, a web limpa o navegador (`device-fresh.t
 `fresh.test.ts`). Um passo que fecha o app e o abre de novo faz isso de verdade com `reopen`, com
 os dados mantidos: o Android para o app, o iOS o termina, a web abre o endereço dele numa aba nova.
 O runner também rola até palavras aparecerem, segura um dedo e arrasta uma coisa sobre outra, e na
-web passa o mouse e envia um arquivo de exemplo que o QAzinho fez. Num celular ele rola antes de
+web passa o mouse e envia os arquivos que o QA deu (os que o plano nomeia, os anexados ao chat ou
+um caminho que ele disse), ou um de exemplo que o QAzinho fez. O arquivo vai junto com o plano: o QAzinho
+guarda uma cópia, e num projeto publicado ela sobe para a org com a gravação, então quem puxa o plano e
+o CI usam o mesmo. Sem o arquivo na org, o CI sobe um de exemplo do mesmo tipo e com o mesmo nome, e um
+caso que depende do conteúdo pode falhar. Num celular ele rola antes de
 dizer que algo falta. O navegador e os dois apps de fixture provam a rolagem e o toque longo
 (`tools.test.ts`, `device-fresh.test.ts`); um arrasto num celular ainda não encontrou um app real.
 Antes de um plano num celular, o chat abre o app no emulador ou simulador e lê a primeira tela
@@ -158,7 +162,7 @@ chat segura uma. O `tests/smoke/variables.test.ts` prova a run no Chrome real co
 um Claude Code real (Haiku) planejou um login pedindo a conta pela janela, depois entrou com os
 valores lacrados: 8 passos de 8, sem valor no plano nem no relatório.
 
-**Toda run é gravada e toca de volta com a linha do tempo dela.** Um navegador é gravado a partir
+**Uma run é gravada e toca de volta com a linha do tempo dela, menos a que desenvolve casos**, em que o agente pensa por minutos: o QA a acompanha ao vivo, e ela fica com as telas e o relatório. Um navegador é gravado a partir
 do stream vivo, um simulador pelo `simctl`, um emulador pelo console dele. O vídeo da run abre num
 teatro: um capítulo por caso na cor do veredito dele, um pino por bug, um still de qualquer
 momento sob o cursor, e os passos ao lado, mantidos em sincronia. Cada caso oferece a sua gravação

@@ -128,7 +128,8 @@ Um workspace são três colunas: a sidebar, o chat no meio, e um painel ao lado 
 abas são o plano, o dispositivo (`DeviceView`), as runs e os bugs.
 
 - Sem plano e sem run (`useChatOnly`), o chat é a tela: o painel Agente toma o espaço do centro,
-  e o centro volta com um plano ou uma run.
+  e o centro volta com um plano, uma run ou o navegador em que o chat anda pelo app. Sem plano, esse
+  navegador toma a aba, e o plano escrito a devolve.
 - O chat está sempre lá; o QA escolhe a aba do painel (`panelTab`), e uma run que começa é a única
   coisa que a vira, para o dispositivo. O `selectTab('chat')` só traz o chat de volta.
 - O painel mantém a largura a que o QA o arrasta, estreitada para o chat manter o
@@ -211,6 +212,12 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
   (`isUnderWay`), sem gravar de novo. O que ninguém leu vai ao chat quando a run acaba (`unheard`).
 - **Um passo que não anda vira um lembrete** (`progressAside`): dizer por quê com `say` a cada poucas
   ações, e perguntar com `ask_qa` depois de muitas ou de minutos.
+- **Um upload só pega o que o QA deu à run** (`uploadRuleOf`, `uploadPathOf`, no `variablePort`):
+  o arquivo que o plano nomeia, o que está direto numa pasta que ele nomeia, um anexo do chat (o
+  caso os lista, `describeCase`) ou um caminho que o QA escreveu ao responder. Uma página sob teste
+  fala com o agente, então o resto do disco não sobe. Um anexo vai numa cópia com o nome real, e a
+  gravação guarda o caminho (`files`). Sem caminho, o `upload` escolhe um arquivo de exemplo. O CI
+  não tem os arquivos do QA: lá um de exemplo do mesmo tipo entra com o mesmo nome (`sampleUploadPathOf`).
 - **Um bug recém-pego passa pela tela** (`BugFlash`, sobre o `DeviceScreen`). O `bug` e o `report`
   recebem o tipo do bug (`category`), e a store enfileira o que esta run ainda não mostrou
   (`bugFlashOf`, `withBugFlash`), sem atrasar a tela (`BUG_FLASH.waitingKept`). Um clique abre o
@@ -284,8 +291,11 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     diz (`keepVariable`), e um caso que digitou uma dada só para aquela run não guarda receita.
   - As palavras do QA chegam ao agente com o valor de qualquer variável lido de volta como o nome
     dela.
-  - A página segura a pergunta na run viva, a desenha como `AskCard` no fim do chat, e guarda como
-    terminou na seção da run (`AskNote`) e no passo dela em Runs.
+  - A página segura a pergunta na run viva, a desenha como `AskCard` no fim do chat e na tela
+    ampliada (`DeviceFocus`), abre o chat recolhido, e guarda como terminou na seção da run
+    (`AskNote`) e no passo dela em Runs.
+  - O QA só assiste ao dispositivo: a descrição do `ask_qa` e o corpus proíbem pedir a ele que faça
+    algo na tela.
 - **As ferramentas são concedidas por papel** (`TOOL_GRANTS`). O runner e o explorador recebem o
   dispositivo, o assistente recebe o app, e o chat recebe as fontes dele: `read_jira_story`,
   `search_confluence` e `read_confluence_page` (`servers/sources/`), mais as ferramentas de leitura
@@ -569,9 +579,10 @@ cima e visível em todos os espaços (`ISLAND_ARGUMENT` no mesmo preload entrega
   o QA, da mais antiga à mais nova, vem antes de uma run andando, e o fim de uma run fica oito
   segundos (`ISLAND.endedHoldMs`). Ela manda o estado só quando muda, com o idioma do QA, pelo
   `Island` de `src/services/`.
-- A `Island` da main põe a janela no centro do topo da tela primária (`islandPlaceOf`): a altura
-  da barra de menus é a do notch num Mac que tem um (30 pt ou mais), com a largura fixa dele
-  (`ISLAND_WINDOW.notchWidth`), e uma barra de 28 pt sem largura em qualquer outra tela.
+- A `Island` da main põe a janela no centro do topo da tela primária (`islandPlaceOf`), cobrindo o
+  notch que o macOS mede (`measureNotch`, um `osascript` por tela, porque o Electron não diz):
+  a barra de menus pode ser mais baixa que ele. Sem resposta, ele é deduzido da barra (30 pt ou
+  mais, com `ISLAND_WINDOW.notchWidth`), e qualquer outra tela recebe 28 pt sem largura.
 - Num Mac a janela é um painel (`islandBehaviorOf`), que flutua sobre um app em tela cheia e recebe
   teclado sem ativar o app. O `setVisibleOnAllWorkspaces` vai com `skipTransformProcessType`: sem
   ele, o Electron esconde o app do Dock, e a contagem de runs no ícone com ele.
@@ -673,7 +684,8 @@ loopback (`LiveStream`), desenhado por um `<img>`.
 - Um celular também não tem janela: o emulador sobe com `-no-window` (`bootArgs`) e um simulador
   pelo `simctl`, sem o Simulator.app. O QA o vê só na aba Dispositivo do painel.
 
-**Toda run é gravada, e o vídeo dela também nunca cruza o IPC.**
+**Uma run é gravada, e o vídeo dela também nunca cruza o IPC.** A que tem um caso para o agente
+desenvolver não grava (`developsACase`): a tela continua ao vivo, e a run guarda as telas e a rede.
 
 - Um navegador é gravado a partir do stream vivo dele. O `RunRecorder` abre uma janela escondida,
   cujo serviço `Recorder` lê o mesmo MJPEG em loopback, cada frame carimbado com quando foi
