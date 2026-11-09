@@ -3,7 +3,7 @@
  * pegou, com a run de onde veio.
  */
 export interface IFilingShot {
-  kind: 'before' | 'broke' | 'again';
+  kind: 'before' | 'broke' | 'again' | 'design';
   run: string | null;
   file: string | null;
   src: string | null;

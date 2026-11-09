@@ -39,13 +39,17 @@ export const useSendBug = () => {
       ? t('FILING.NAME_AGAIN', { id: props.id, run: props.shot.run ?? '' })
       : props.shot.kind === 'broke'
         ? t('FILING.NAME_BROKE', { id: props.id })
-        : t('FILING.NAME_BEFORE', { id: props.id });
+        : props.shot.kind === 'design'
+          ? t('FILING.NAME_DESIGN', { id: props.id })
+          : t('FILING.NAME_BEFORE', { id: props.id });
   const labelOf = (shot: IFilingShot) =>
     shot.kind === 'again'
       ? t('FILING.FILE_AGAIN', { run: shot.run ?? '' })
       : shot.kind === 'broke'
         ? t('FILING.FILE_BROKE')
-        : t('FILING.FILE_BEFORE');
+        : shot.kind === 'design'
+          ? t('FILING.FILE_DESIGN')
+          : t('FILING.FILE_BEFORE');
 
   return {
     send: async (props: {

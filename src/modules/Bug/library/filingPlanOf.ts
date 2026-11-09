@@ -31,6 +31,16 @@ export function filingPlanOf(props: {
           file: shot.file,
           src: shot.src,
         })),
+        ...(bug.design === null
+          ? []
+          : [
+              {
+                kind: 'design' as const,
+                run: null,
+                file: bug.design.file,
+                src: bug.design.src,
+              },
+            ]),
         ...(last === null
           ? []
           : [
