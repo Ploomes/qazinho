@@ -242,6 +242,10 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
   - O `MemoryKeeper` da main pergunta ao agente do QA no modelo mais barato dele, sem ferramentas, e
     o `readKeep` confere a resposta (`MemoryOp`); a página a aplica (`withMemoryOps`) e conta no chat
     (`IMemoryMessage`). Uma esquecida perde o texto e fica com a data, para a org saber.
+  - Cabem `MEMORY_LIMIT.project` memórias no projeto e `MEMORY_LIMIT.plan` em cada plano, de até
+    `MEMORY_LIMIT.chars` caracteres, então o agente lê todas. Numa lista cheia, o `describeKeep` pede
+    ao guardião que junte ou solte uma na mesma resposta; se ele não abrir lugar, o `withMemoryOps`
+    esquece a que está parada há mais tempo, e o chat conta.
   - O agente recebe as memórias na mensagem (`describeMemories`, `describeChatMemories`), e o `say`
     leva o id da memória de que fala, para o QA ouvir cada uma uma vez só na run (`tellQa`).
   - Num projeto publicado, a main manda a lista quando ela muda (`sendMemories`) e pega a da org a
