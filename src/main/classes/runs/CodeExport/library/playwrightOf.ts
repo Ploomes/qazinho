@@ -249,7 +249,7 @@ function lineOf(action: IStepAction): string[] {
       return [
         'await Promise.all([',
         "  tab.waitForEvent('filechooser').then((chooser) =>",
-        `    chooser.setFiles(${quoted(`files/${sampleFileOf(action.value).name}`)}),`,
+        `    chooser.setFiles(${uploadFilesIn(action)}),`,
         '  ),',
         `  ${aimOf(action)}.click(),`,
         ']);',
@@ -257,6 +257,17 @@ function lineOf(action: IStepAction): string[] {
     case 'tab':
       return screenLines(action);
   }
+}
+
+function uploadFilesIn(action: IStepAction): string {
+  if (action.files === undefined)
+    return quoted(`files/${sampleFileOf(action.value).name}`);
+
+  const named = action.files.map((file) =>
+    quoted(`files/${file.split(/[\\/]/).at(-1) ?? file}`),
+  );
+
+  return named.length === 1 ? (named[0] ?? '') : `[${named.join(', ')}]`;
 }
 
 function screenLines(action: IStepAction): string[] {

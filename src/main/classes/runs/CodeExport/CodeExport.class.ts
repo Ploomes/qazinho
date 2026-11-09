@@ -1,8 +1,13 @@
 import type { ICodeExport } from './types';
 import type { CodeRead, ExportOutcome, IExportCode } from '@/shared/types';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
-import { casesOf, readBook, recipeFor } from '@/main/classes/runs/RunCoordinator/library';
+import { basename, dirname, join } from 'node:path';
+import {
+  casesOf,
+  readBook,
+  readFileRef,
+  recipeFor,
+} from '@/main/classes/runs/RunCoordinator/library';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { sampleFileOf } from '@/main/library';
 import { CODE_EXPORT } from './constants';
@@ -115,15 +120,32 @@ export class CodeExport {
 
     if (appId === null) return { kind: 'failed', reason: 'app-id' };
 
+    const uploads = recorded.flatMap(({ recipe }) =>
+      recipe.steps.flatMap(({ actions }) =>
+        actions.filter(({ kind }) => kind === 'upload'),
+      ),
+    );
     const samples = [
       ...new Set(
-        recorded.flatMap(({ recipe }) =>
-          recipe.steps.flatMap(({ actions }) =>
-            actions.flatMap(({ kind, value }) => (kind === 'upload' ? [value] : [])),
-          ),
-        ),
+        uploads.flatMap(({ value, files }) => (files === undefined ? [value] : [])),
       ),
     ].map((kind) => sampleFileOf(kind));
+    const ownFiles = await Promise.all(
+      [...new Set(uploads.flatMap(({ files }) => files ?? []))].map(async (file) => ({
+        name: basename(file),
+        bytes: await readFile(
+          readFileRef(file) === null
+            ? file
+            : join(
+                this.dataRoot,
+                ARCHIVE.workspaces,
+                request.workspaceId,
+                ARCHIVE.files,
+                file,
+              ),
+        ).catch(() => null),
+      })),
+    );
     const files: { name: string; content: string | Buffer }[] = isWeb
       ? [
           {
@@ -134,7 +156,12 @@ export class CodeExport {
               cases: recorded,
             }),
           },
-          ...samples.map(({ name, bytes }) => ({
+          ...[
+            ...samples,
+            ...ownFiles.flatMap(({ name, bytes }) =>
+              bytes === null ? [] : [{ name, bytes }],
+            ),
+          ].map(({ name, bytes }) => ({
             name: join(CODE_EXPORT.samplesFolder, name),
             content: bytes,
           })),

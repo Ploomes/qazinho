@@ -163,6 +163,18 @@ describe('playwrightOf', () => {
                   },
                   { kind: 'hover', target: 'Ajuda', value: '' },
                   { kind: 'upload', target: 'Foto', value: 'image' },
+                  {
+                    kind: 'upload',
+                    target: 'Anexar',
+                    value: 'a.html, b.png',
+                    files: ['/qa/lote/a.html', '/qa/lote/b.png'],
+                  },
+                  {
+                    kind: 'upload',
+                    target: 'Nota',
+                    value: 'nota.pdf',
+                    files: ['/qa/nota.pdf'],
+                  },
                 ],
                 proof: 'Card A',
               },
@@ -182,6 +194,8 @@ describe('playwrightOf', () => {
     );
     expect(file).toContain('  await control(tab, "Ajuda").hover();');
     expect(file).toContain('chooser.setFiles("files/qazinho-sample.png")');
+    expect(file).toContain('chooser.setFiles(["files/a.html", "files/b.png"])');
+    expect(file).toContain('chooser.setFiles("files/nota.pdf")');
   });
 
   it('cancels only the dialog a step said to cancel, and answers the rest OK', () => {

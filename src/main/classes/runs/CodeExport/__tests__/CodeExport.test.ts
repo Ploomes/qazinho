@@ -107,6 +107,66 @@ describe('CodeExport', () => {
     expect(chooseFolder).not.toHaveBeenCalled();
   });
 
+  it("copies the QA's own files beside the test, and no sample for them", async () => {
+    const { root, picked } = await world('web');
+    const book = join(root, 'workspaces', 'w-1', 'recipes.json');
+    const own = join(root, 'nota.pdf');
+    const kept = JSON.parse(await readFile(book, 'utf8')) as {
+      cases: { steps: { actions: unknown[] }[] }[];
+    };
+
+    await writeFile(own, 'pdf do QA');
+    kept.cases[0]?.steps[0]?.actions.push({
+      kind: 'upload',
+      target: 'Nota',
+      value: 'nota.pdf',
+      files: [own, join(root, 'sumiu.pdf')],
+    });
+    await writeFile(book, JSON.stringify(kept));
+
+    const exporter = new CodeExport({
+      dataRoot: root,
+      chooseFolder: () => Promise.resolve(picked),
+      appIdOf: () => Promise.resolve(null),
+    });
+
+    expect(await exporter.export(request('web'))).toMatchObject({
+      files: ['qazinho.spec.ts', 'files/nota.pdf'],
+    });
+    expect(await readFile(join(picked, 'files', 'nota.pdf'), 'utf8')).toBe('pdf do QA');
+  });
+
+  it('copies a file the recording names by content from where the plan keeps it', async () => {
+    const { root, picked } = await world('web');
+    const book = join(root, 'workspaces', 'w-1', 'recipes.json');
+    const ref = `${'a'.repeat(64)}/nota.pdf`;
+    const kept = JSON.parse(await readFile(book, 'utf8')) as {
+      cases: { steps: { actions: unknown[] }[] }[];
+    };
+
+    await mkdir(join(root, 'workspaces', 'w-1', 'files', 'a'.repeat(64)), {
+      recursive: true,
+    });
+    await writeFile(join(root, 'workspaces', 'w-1', 'files', ref), 'pdf guardado');
+    kept.cases[0]?.steps[0]?.actions.push({
+      kind: 'upload',
+      target: 'Nota',
+      value: 'nota.pdf',
+      files: [ref],
+    });
+    await writeFile(book, JSON.stringify(kept));
+
+    await new CodeExport({
+      dataRoot: root,
+      chooseFolder: () => Promise.resolve(picked),
+      appIdOf: () => Promise.resolve(null),
+    }).export(request('web'));
+
+    expect(await readFile(join(picked, 'files', 'nota.pdf'), 'utf8')).toBe(
+      'pdf guardado',
+    );
+  });
+
   it('puts the sample file an upload picked beside the test that uses it', async () => {
     const { root, picked } = await world('web');
     const book = join(root, 'workspaces', 'w-1', 'recipes.json');
