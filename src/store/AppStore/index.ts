@@ -1,6 +1,7 @@
 import type { IAppStore } from './types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { withoutPlanMemories } from '@/modules/Memory/library';
 import { STORAGE } from '@/shared/constants';
 
 export const useAppStore = create<IAppStore>()(
@@ -72,6 +73,21 @@ export const useAppStore = create<IAppStore>()(
             ? state.projects.map((one) => (one.id === project.id ? project : one))
             : [...state.projects, project],
           selectedProjectId: state.selectedProjectId ?? project.id,
+        })),
+
+      forgetPlanMemories: (workspaceId) =>
+        set((state) => ({
+          projects: state.projects.map((project) => {
+            const memories = withoutPlanMemories({
+              memories: project.memories ?? [],
+              workspaceId,
+              now: new Date().toISOString(),
+            });
+
+            return memories === (project.memories ?? []) || project.memories === undefined
+              ? project
+              : { ...project, memories };
+          }),
         })),
 
       updateProject: (project) =>

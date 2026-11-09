@@ -23,6 +23,7 @@ export const useSidebarViewModel = () => {
   const openWorkspaceModal = useAppStore((state) => state.openWorkspaceModal);
   const openSettings = useAppStore((state) => state.openSettings);
   const goHome = useAppStore((state) => state.goHome);
+  const forgetPlanMemories = useAppStore((state) => state.forgetPlanMemories);
   const openProjectSettings = useAppStore((state) => state.openProjectSettings);
   const openProSettings = useAppStore((state) => state.openProSettings);
   const shares = useProStore((state) => state.shares);
@@ -200,6 +201,7 @@ export const useSidebarViewModel = () => {
     Run.stop(workspaceId);
     void Agent.stop(workspaceId);
     removeWorkspace(workspaceId);
+    forgetPlanMemories(workspaceId);
     Archive.removeWorkspace(workspaceId);
 
     if (workspaceId === selectedWorkspaceId) goHome();

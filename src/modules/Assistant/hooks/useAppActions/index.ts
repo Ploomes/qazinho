@@ -151,6 +151,7 @@ export const useAppActions = () => {
         Run.stop(workspaceId);
         void Agent.stop(workspaceId);
         useWorkspaceStore.getState().removeWorkspace(workspaceId);
+        useAppStore.getState().forgetPlanMemories(workspaceId);
         Archive.removeWorkspace(workspaceId);
 
         if (useAppStore.getState().selectedWorkspaceId === workspaceId)
