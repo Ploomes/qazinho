@@ -1,3 +1,25 @@
+# [0.9.0](https://github.com/Salve-Software/qazinho/compare/v0.8.0...v0.9.0) (2026-11-09)
+
+
+### Bug Fixes
+
+* **chat:** open on a new question ([d52891a](https://github.com/Salve-Software/qazinho/commit/d52891af07bae7d968d94bb5031f273ca9cf9b28))
+* **island:** measure the real notch ([08f9c9d](https://github.com/Salve-Software/qazinho/commit/08f9c9d76d9451f5eeb584155529818caa198d86))
+* **island:** size ears around the notch ([5a5c209](https://github.com/Salve-Software/qazinho/commit/5a5c209b98419091dc402871e94d8362e1f3e947))
+* **workspace:** show the chat's browser ([6e2d6b2](https://github.com/Salve-Software/qazinho/commit/6e2d6b288a3ad5500abbc312d7abb7d9fa44b9b9))
+
+
+### Features
+
+* **attachments:** list them for a run ([12f699e](https://github.com/Salve-Software/qazinho/commit/12f699e0f6c3509fa64290c35a9172229c0f9d9b))
+* **device:** answer questions in focus ([af70321](https://github.com/Salve-Software/qazinho/commit/af7032145828d7fd823e2dec508822227426f322))
+* **export:** copy the plan's files ([ff59221](https://github.com/Salve-Software/qazinho/commit/ff5922133a132aebb9c1443040f4841aa407e827))
+* **plan:** say which files go to the org ([3bce6ea](https://github.com/Salve-Software/qazinho/commit/3bce6eaaafd71537c09ea6928bdbac407d3f377d))
+* **pro:** keep test files in the org ([1d7cecf](https://github.com/Salve-Software/qazinho/commit/1d7cecffcf36138129c56a3ee664b4f15d40f71d))
+* **pro:** name files when publishing ([defe01d](https://github.com/Salve-Software/qazinho/commit/defe01dda53b5d3505d3162ef6d9f310a0997342))
+* **run:** skip video while developing ([ec2334e](https://github.com/Salve-Software/qazinho/commit/ec2334e03c6c53e4b950dccb2c5ffe5b960c080b))
+* **run:** upload the QA's files ([a7f3421](https://github.com/Salve-Software/qazinho/commit/a7f34219be9243af6227c9a4a4dffc62798a17b2))
+
 # [0.8.0](https://github.com/Salve-Software/qazinho/compare/v0.7.0...v0.8.0) (2026-11-09)
 
 
