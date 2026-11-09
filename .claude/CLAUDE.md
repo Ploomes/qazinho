@@ -53,6 +53,15 @@ um sticker. Toda tela o segue.
 7. **O código é em inglês, a prosa em português.** Nomes, strings, nomes de testes e commits ficam
    em inglês. Os `.md` (o corpus do harness incluído), o JSDoc e os comentários dos testes são em
    português do Brasil.
+8. **Uma mudança que quebra, ou quase, o que o app e a API combinam sobe a versão mínima.** O
+   `MIN_DESKTOP_VERSION` da API é a versão mais velha do app que ela aceita, e abaixo dela um app
+   logado vira uma tela que só atualiza (ADR 035 do `qazinho-server`). Quase quebra é um app já
+   publicado que não falha mas fica fora do que a org passa a guardar; uma rota nova de que ele
+   não precisa não sobe nada. O mínimo só recusa app velho, então a API vai primeiro, depois a
+   release do app com o feed dos três sistemas, e por último o mínimo, na Railway, na versão que
+   leva a mudança (a última tag mais o que os commits somam). Subir antes prende quem está logado
+   sem nada para baixar. Quem termina uma mudança dessas diz o valor e o momento. O `.env` local e
+   o `.env.example` ficam em `0.0.0`, ou o app de desenvolvimento cai na mesma tela.
 
 ## Estado
 

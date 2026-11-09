@@ -736,7 +736,7 @@ sem parar o QA.
 - **Não há rollback.** Uma versão ruim se desfaz publicando uma maior.
 - **Uma atualização obrigatória só trava quem tem conta logada.** O `ProApi` manda a versão em todo
   pedido (`x-qazinho-version`), e a API recusa com 426 uma abaixo do `MIN_DESKTOP_VERSION` dela
-  ([034](https://github.com/Salve-Software/qazinho-server/blob/main/docs/adrs/034-the-api-refuses-a-desktop-too-old.md)).
+  ([035](https://github.com/Salve-Software/qazinho-server/blob/main/docs/adrs/035-the-minimum-desktop-rises-on-a-near-break.md)).
   - O `AppUpdater.require` então procura a cada minuto, e a tela vira o `UpdateRequired`, menos com
     uma run andando, que termina antes.
   - O app sem conta nunca fala com a API, então nunca trava, nem sem rede. Publique a versão antes,
