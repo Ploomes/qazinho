@@ -72,6 +72,8 @@ import {
   markedBoxOf,
   maskedBody,
   outcomeOfReport,
+  partialFor,
+  partialRecipeOf,
   privateUrlOf,
   proofHolds,
   progressAside,
@@ -467,6 +469,7 @@ export class RunCoordinator {
     const filed: string[] = [];
     const book = await this.readBook(run.workspaceId);
     const recorded: ICaseRecipe[] = [];
+    const partial: ICaseRecipe[] = [];
 
     try {
       const wanted = run.caseIds === undefined ? null : new Set(run.caseIds);
@@ -484,20 +487,30 @@ export class RunCoordinator {
 
         if (this.stopping.has(run.workspaceId)) break;
 
+        const flat = steps.map(({ step }) => step);
         const recipe =
           run.mode === 'agent'
             ? null
-            : recipeFor({
-                book,
-                steps: steps.map(({ step }) => step),
-                targetKind: run.target.kind,
-              });
+            : recipeFor({ book, steps: flat, targetKind: run.target.kind });
+        const begun =
+          recipe !== null || run.mode === 'agent'
+            ? null
+            : partialFor({ book, steps: flat, targetKind: run.target.kind });
         const replayed =
-          recipe === null ? null : await this.replayCase({ run, driver, steps, recipe });
+          recipe !== null
+            ? await this.replayCase({ run, driver, steps, recipe })
+            : begun !== null
+              ? await this.replayCase({
+                  run,
+                  driver,
+                  steps: steps.slice(0, begun.steps.length),
+                  recipe: begun,
+                })
+              : null;
 
         if (replayed === 'stopped') break;
 
-        if (replayed === 'replayed') continue;
+        if (replayed === 'replayed' && begun === null) continue;
 
         if (replayed === 'diverged') {
           await driver.restart().catch(() => undefined);
@@ -505,22 +518,30 @@ export class RunCoordinator {
           if (this.stopping.has(run.workspaceId)) break;
         }
 
-        const from = typeof replayed === 'number' ? replayed : 0;
+        const from =
+          replayed === 'replayed'
+            ? (begun?.steps.length ?? 0)
+            : typeof replayed === 'number'
+              ? replayed
+              : 0;
         const walked = await this.walkCase({
           run,
           driver,
           steps: steps.slice(from),
+          caseSteps: flat,
+          prior: replayed === 'replayed' ? begun : null,
           costs,
           filed,
           recorded,
-          isHealing: replayed === 'diverged',
-          isUnderWay: from > 0,
+          partial,
+          isHealing: replayed === 'diverged' && begun === null,
+          isUnderWay: typeof replayed === 'number' && from > 0,
         });
 
-        if (recorded.length > 0)
+        if (recorded.length > 0 || partial.length > 0)
           await this.writeBook({
             workspaceId: run.workspaceId,
-            book: bookWith({ book, recipes: recorded }),
+            book: bookWith({ book, recipes: recorded, partial }),
           }).catch(() => undefined);
 
         if (walked === false) break;
@@ -530,10 +551,10 @@ export class RunCoordinator {
 
       return null;
     } finally {
-      if (recorded.length > 0)
+      if (recorded.length > 0 || partial.length > 0)
         await this.writeBook({
           workspaceId: run.workspaceId,
-          book: bookWith({ book, recipes: recorded }),
+          book: bookWith({ book, recipes: recorded, partial }),
         }).catch(() => undefined);
 
       await Promise.race([
@@ -551,9 +572,12 @@ export class RunCoordinator {
     run: IWalkRun;
     driver: IDeviceDriver;
     steps: { step: IFlatStep; index: number }[];
+    caseSteps: IFlatStep[];
+    prior: ICaseRecipe | null;
     costs: Promise<void>[];
     filed: string[];
     recorded: ICaseRecipe[];
+    partial: ICaseRecipe[];
     isHealing: boolean;
     isUnderWay: boolean;
   }): Promise<boolean | RunFailure> {
@@ -563,8 +587,12 @@ export class RunCoordinator {
     const pending = [...props.steps];
     let watch: IStepWatch = { actions: 0, sinceSay: 0, askedAt: 0 };
     let watchedFrom = Date.now();
-    const actions = new Map<number, IStepAction[]>();
-    const proofs = new Map<number, string>();
+    const actions = new Map<number, IStepAction[]>(
+      props.prior?.steps.map(({ number, actions: kept }) => [number, kept]) ?? [],
+    );
+    const proofs = new Map<number, string>(
+      props.prior?.steps.map(({ number, proof }) => [number, proof]) ?? [],
+    );
     const device = variablePort({ device: driver, values: run.values });
     let began = Date.now();
     let hasFailed = false;
@@ -702,7 +730,7 @@ export class RunCoordinator {
 
       if (next === undefined) {
         const recipe = recipeOf({
-          steps: props.steps.map(({ step }) => step),
+          steps: props.caseSteps,
           targetKind: run.target.kind,
           actions,
           proofs,
@@ -918,7 +946,7 @@ export class RunCoordinator {
           ({ question, answer }) =>
             answer.kind === 'said' ? [{ question, answer: answer.text }] : [],
         ),
-        isUnderWay: props.isUnderWay,
+        isUnderWay: props.isUnderWay || props.prior !== null,
         memories: run.memories ?? [],
         heardMemories: [...(this.heardMemories.get(workspaceId) ?? [])],
       }),
@@ -934,6 +962,19 @@ export class RunCoordinator {
     );
 
     const asked = await Promise.race([asking, caseOver]);
+    const stoppedAt =
+      isAnsweredForThisRun || props.isUnderWay
+        ? null
+        : partialRecipeOf({
+            steps: props.caseSteps,
+            targetKind: run.target.kind,
+            actions,
+            proofs,
+            runId: run.runId,
+            at: Date.now(),
+          });
+
+    if (stoppedAt !== null) props.partial.push(stoppedAt);
 
     if (this.stopping.has(workspaceId)) return false;
 

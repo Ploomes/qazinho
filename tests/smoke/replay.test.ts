@@ -202,3 +202,159 @@ describe('a case walked again without the agent', () => {
     expect(forced.asked).toBe(3);
   }, 120_000);
 });
+
+/**
+ * Anda só o que o prompt lista, como um agente de verdade: o passo 1 quando ele aparece, e
+ * o passo 2 sempre. O passo 2 falha até o arquivo `fixed` existir, que é o bug consertado.
+ */
+const partialScript = (props: { calls: string; fixed: string }) => `#!/usr/bin/env node
+const fs = require('fs');
+const { Client } = require(${JSON.stringify(join(SDK, 'index.js'))});
+const { StreamableHTTPClientTransport } = require(${JSON.stringify(join(SDK, 'streamableHttp.js'))});
+const argv = process.argv;
+let prompt = '';
+process.stdin.on('data', (chunk) => { prompt += chunk; });
+process.stdin.on('end', async () => {
+  const whole = prompt.includes('Click Sign in');
+  fs.appendFileSync(${JSON.stringify(props.calls)}, (whole ? 'whole' : 'rest') + '\\n');
+  const config = JSON.parse(argv[argv.indexOf('--mcp-config') + 1]);
+  const client = new Client({ name: 'fake-agent', version: '1.0.0' });
+  await client.connect(new StreamableHTTPClientTransport(new URL(config.mcpServers.qazinho.url)));
+  if (whole) {
+    await client.callTool({ name: 'click', arguments: { target: 'Sign in' } });
+    await client.callTool({ name: 'report', arguments: {
+      step: 1, verdict: 'passed', why: 'It signed in.', got: 'Signed in', proof: 'Signed in',
+    } });
+  }
+  await client.callTool({ name: 'report', arguments: fs.existsSync(${JSON.stringify(props.fixed)})
+    ? { step: 2, verdict: 'passed', why: 'It greets me.', got: 'Signed in', proof: 'Signed in' }
+    : { step: 2, verdict: 'failed', why: 'The greeting is wrong.', got: 'Hi', title: 'Wrong greeting', goesOn: false } });
+  await client.close();
+  console.log(JSON.stringify({ type: 'result', result: '', is_error: false, session_id: 's1', total_cost_usd: 0.01 }));
+});
+`;
+
+describe('a case that stopped at a step', () => {
+  const workspaceId = 'w-partial';
+  let folder = '';
+  let log = '';
+  let fixed = '';
+  let partialCoordinator: RunCoordinator;
+
+  const walk = async (runId: string) => {
+    events = [];
+
+    await partialCoordinator.start({
+      workspaceId,
+      agentId: 'fake',
+      model: '',
+      target: { kind: 'web', value: `http://127.0.0.1:${String(PORT)}/` },
+      runId,
+      language: 'en',
+      steps: [1, 2].map((numberInCase) => ({
+        caseId: 'TC-02',
+        caseTitle: 'Greeting',
+        casePriority: 'P1',
+        caseGoal: '',
+        casePreconditions: '',
+        numberInCase,
+        action: numberInCase === 1 ? 'Click Sign in' : 'Read the greeting',
+        expected: 'The page says Signed in',
+      })),
+    });
+
+    return {
+      outcomes: verdicts(
+        events.flatMap((event) => (event.kind === 'step' ? [event.outcome] : [])),
+      ),
+      recorded: events.some((event) => event.kind === 'recorded'),
+      asked: (await readFile(log, 'utf8').catch(() => '')).split('\n').filter(Boolean),
+    };
+  };
+
+  const book = async () =>
+    JSON.parse(await readFile(join(folder, 'recipes.json'), 'utf8')) as {
+      cases: { steps: unknown[] }[];
+      partial?: { steps: { number: number; proof: string }[] }[];
+    };
+
+  beforeAll(async () => {
+    greeting = 'Signed in';
+    folder = join(root, 'workspaces', workspaceId);
+    log = join(root, 'partial.log');
+    fixed = join(root, 'fixed');
+    await mkdir(folder, { recursive: true });
+
+    const agent = join(root, 'partial-agent');
+
+    await writeFile(agent, partialScript({ calls: log, fixed }));
+    await chmod(agent, 0o755);
+
+    const tools = new McpHost();
+
+    await tools.start();
+    partialCoordinator = new RunCoordinator({
+      runner: new AgentRunner({
+        owners: new ProcessOwners(),
+        folder: tmpdir(),
+        onEvent: () => undefined,
+      }),
+      findAndroid: async () => null,
+      findIos: async () => null,
+      findCommand: async () => agent,
+      live: new LiveStream(),
+      tools,
+      harness: new Harness(),
+      dataRoot: root,
+      onEvent: (event) => {
+        events.push(event);
+      },
+    });
+  }, 60_000);
+
+  it('keeps what passed before the failure, and the case stays undeveloped', async () => {
+    const first = await walk('r-11');
+
+    expect(first.outcomes).toEqual(['passed agent Signed in', 'failed agent Hi']);
+    expect(first.recorded).toBe(false);
+    expect(first.asked).toEqual(['whole']);
+
+    const kept = await book();
+
+    expect(kept.cases).toEqual([]);
+    expect(kept.partial?.[0]?.steps).toMatchObject([{ number: 1, proof: 'Signed in' }]);
+  }, 120_000);
+
+  it('walks what was recorded by itself, and the agent starts at the step that failed', async () => {
+    const again = await walk('r-12');
+
+    expect(again.outcomes).toEqual(['passed replay Signed in', 'failed agent Hi']);
+    expect(again.asked).toEqual(['whole', 'rest']);
+  }, 120_000);
+
+  it('records the whole case once the step passes, and walks it with no agent after', async () => {
+    await writeFile(fixed, '');
+
+    const passed = await walk('r-13');
+
+    expect(passed.outcomes).toEqual([
+      'passed replay Signed in',
+      'passed agent Signed in',
+    ]);
+    expect(passed.recorded).toBe(true);
+    expect(passed.asked).toEqual(['whole', 'rest', 'rest']);
+
+    const kept = await book();
+
+    expect(kept.cases[0]?.steps).toHaveLength(2);
+    expect(kept.partial).toBeUndefined();
+
+    const after = await walk('r-14');
+
+    expect(after.outcomes).toEqual([
+      'passed replay Signed in',
+      'passed replay Signed in',
+    ]);
+    expect(after.asked).toEqual(['whole', 'rest', 'rest']);
+  }, 180_000);
+});

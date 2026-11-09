@@ -2,6 +2,18 @@ import { describe, expect, it } from 'vitest';
 import { recordingsBodyOf } from '@/main/classes/pro/ProSync/library';
 
 describe('recordingsBodyOf', () => {
+  it('never sends how far a case got, which the org would count as developed', () => {
+    const text = JSON.stringify({
+      cases: [],
+      partial: [{ caseId: 'c1', fingerprint: 'fp', targetKind: 'web', steps: [] }],
+    });
+
+    expect(recordingsBodyOf({ text, branch: 'main' })).toEqual({
+      branch: 'main',
+      recordings: [],
+    });
+  });
+
   it('turns each recipe into a recording of the branch, with when it was recorded', () => {
     const text = JSON.stringify({
       cases: [

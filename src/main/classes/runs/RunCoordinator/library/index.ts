@@ -16,6 +16,8 @@ export {
   keptBugId,
   maskedBody,
   outcomeOfReport,
+  partialFor,
+  partialRecipeOf,
   privateUrlOf,
   proofHolds,
   proofWithValues,
