@@ -9,6 +9,7 @@ const only = () => renderHook(() => useChatOnly()).result.current;
 
 beforeEach(() => {
   useAppStore.setState({ selectedWorkspaceId: 'w1' });
+  useWorkspaceStore.setState({ chatDevices: {} });
 });
 
 describe('useChatOnly', () => {
@@ -31,6 +32,25 @@ describe('useChatOnly', () => {
     });
 
     expect(only()).toBe(false);
+  });
+
+  /** O agente andava pelo app e o QA não via nada: a tela dele some sem o painel. */
+  it('brings the panel back while the chat is walking the app in its browser', () => {
+    useWorkspaceStore.setState({
+      workspaces: [{ ...makeWorkspace(), plan: [] }],
+      chatDevices: { w1: { streamUrl: 'http://127.0.0.1:1/w1', address: null } },
+    });
+
+    expect(only()).toBe(false);
+  });
+
+  it('leaves the chat alone when the browser walking is another workspace', () => {
+    useWorkspaceStore.setState({
+      workspaces: [{ ...makeWorkspace(), plan: [] }],
+      chatDevices: { w2: { streamUrl: 'http://127.0.0.1:1/w2', address: null } },
+    });
+
+    expect(only()).toBe(true);
   });
 
   it('does NOT take over a screen with no workspace', () => {

@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   currentStepOf,
@@ -46,6 +46,12 @@ export const useWorkspaceViewModel = () => {
   const developedIds = useWorkspaceStore(
     (state) => state.developedCases[workspace?.id ?? ''] ?? NO_CASES,
   );
+  const isLearningUnplanned = useWorkspaceStore(
+    (state) =>
+      workspace !== null &&
+      workspace.planCount === 0 &&
+      state.chatDevices[workspace.id] !== undefined,
+  );
   const tab = useWorkspaceStore((state) => state.panelTab);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
@@ -62,9 +68,21 @@ export const useWorkspaceViewModel = () => {
   const workspaceId = workspace?.id ?? null;
   const stage = planStageOf({ plan: workspace?.plan ?? [], developed: developedIds });
 
+  const learnedOn = useRef<string | null>(null);
+  const hasPlan = (workspace?.planCount ?? 0) > 0;
+
   useEffect(() => {
-    if (isLive) selectTab('device');
-  }, [workspaceId, isLive, selectTab]);
+    if (isLearningUnplanned) learnedOn.current = workspaceId;
+
+    if (isLive || isLearningUnplanned) selectTab('device');
+  }, [workspaceId, isLive, isLearningUnplanned, selectTab]);
+
+  useEffect(() => {
+    if (!hasPlan || learnedOn.current !== workspaceId) return;
+
+    learnedOn.current = null;
+    selectTab('plan');
+  }, [workspaceId, hasPlan, selectTab]);
 
   return {
     hasWorkspace: workspace !== null,

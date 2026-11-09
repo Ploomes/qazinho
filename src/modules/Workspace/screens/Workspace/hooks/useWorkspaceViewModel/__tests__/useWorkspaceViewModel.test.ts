@@ -20,7 +20,11 @@ const PROJECT = {
 
 beforeEach(() => {
   useAppStore.setState({ selectedWorkspaceId: 'w1', projects: [PROJECT] });
-  useWorkspaceStore.setState({ workspaces: [makeWorkspace()], panelTab: 'plan' });
+  useWorkspaceStore.setState({
+    workspaces: [makeWorkspace()],
+    panelTab: 'plan',
+    chatDevices: {},
+  });
 });
 
 describe('useWorkspaceViewModel', () => {
@@ -57,6 +61,59 @@ describe('useWorkspaceViewModel', () => {
       rerender();
 
       expect(useWorkspaceStore.getState().panelTab).toBe('device');
+    });
+
+    describe('while the chat walks the app in its browser', () => {
+      const STREAM = { w1: { streamUrl: 'http://127.0.0.1:1/w1', address: null } };
+      const planless = () => ({ ...makeWorkspace(), plan: [] });
+
+      it('shows that browser when there is no plan to show', () => {
+        useWorkspaceStore.setState({ workspaces: [planless()] });
+        const { rerender } = renderHook(() => useWorkspaceViewModel());
+
+        act(() => {
+          useWorkspaceStore.setState({ chatDevices: STREAM });
+        });
+        rerender();
+
+        expect(useWorkspaceStore.getState().panelTab).toBe('device');
+      });
+
+      it('goes to the plan as soon as the chat writes it', () => {
+        useWorkspaceStore.setState({ workspaces: [planless()], chatDevices: STREAM });
+        const { rerender } = renderHook(() => useWorkspaceViewModel());
+
+        act(() => {
+          useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+        });
+        rerender();
+
+        expect(useWorkspaceStore.getState().panelTab).toBe('plan');
+      });
+
+      it('leaves the tab of a workspace that already has a plan', () => {
+        useWorkspaceStore.setState({ panelTab: 'bugs' });
+        const { rerender } = renderHook(() => useWorkspaceViewModel());
+
+        act(() => {
+          useWorkspaceStore.setState({ chatDevices: STREAM });
+        });
+        rerender();
+
+        expect(useWorkspaceStore.getState().panelTab).toBe('bugs');
+      });
+
+      it('lets the QA leave for another tab while it walks', () => {
+        useWorkspaceStore.setState({ workspaces: [planless()], chatDevices: STREAM });
+        const { rerender } = renderHook(() => useWorkspaceViewModel());
+
+        act(() => {
+          useWorkspaceStore.getState().selectTab('bugs');
+        });
+        rerender();
+
+        expect(useWorkspaceStore.getState().panelTab).toBe('bugs');
+      });
     });
   });
 
