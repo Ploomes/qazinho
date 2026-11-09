@@ -1,3 +1,34 @@
+# [0.8.0](https://github.com/Salve-Software/qazinho/compare/v0.7.0...v0.8.0) (2026-11-09)
+
+
+### Bug Fixes
+
+* **agent:** allow calls with no tools ([9928734](https://github.com/Salve-Software/qazinho/commit/9928734545d736ace67a14a1216acbc26eb6892f))
+* **chat:** resend context after compaction ([7613730](https://github.com/Salve-Software/qazinho/commit/76137300b3ef5a4d168800cc8876cefeb2544530))
+* **device:** end a run without a hard cut ([d586712](https://github.com/Salve-Software/qazinho/commit/d586712fafd0fb6d3ecb74e5899be68773bbfc6a))
+* **device:** keep the steps list at its end ([59b59fd](https://github.com/Salve-Software/qazinho/commit/59b59fd703cc80fc5ad68426c2a784d18ed4d0ce))
+* **memory:** forget a removed plan ([7572957](https://github.com/Salve-Software/qazinho/commit/7572957af11b30ed40828e40943093b99e1b779a))
+* **memory:** keep lists within the limit ([4ba6339](https://github.com/Salve-Software/qazinho/commit/4ba6339356fd92510681338b19ff04752fad30b7))
+* **memory:** run the keeper sealed ([e077c95](https://github.com/Salve-Software/qazinho/commit/e077c958d6f3bbfca2c7eed4ad96761b22e6ecd6))
+* **pro:** isolate memory refusals ([8601155](https://github.com/Salve-Software/qazinho/commit/8601155c13ecda3dadde6bd1a93067d3d4dc21c5))
+* **run:** zoom only on one thing ([eea0024](https://github.com/Salve-Software/qazinho/commit/eea0024e4f8cdb304d2c775658fabb841c3143cf))
+* **ui:** drop no-AI wording ([8959ad8](https://github.com/Salve-Software/qazinho/commit/8959ad8c5367f0cd06cc214f9f5af12fa66f9a13))
+
+
+### Features
+
+* **chat:** show memory notes ([e07eabc](https://github.com/Salve-Software/qazinho/commit/e07eabc36f83d8947dbfef80169dd6e5f7a605aa))
+* **device:** show every open screen ([a68b54e](https://github.com/Salve-Software/qazinho/commit/a68b54e908a19996d1fdd81b0f99d0b1cce76daa))
+* **memory:** ask the keeper ([1d2a807](https://github.com/Salve-Software/qazinho/commit/1d2a80750b751c1e65ecbc973a2e5308d9ae9074))
+* **memory:** keep memories per project ([eafa6a3](https://github.com/Salve-Software/qazinho/commit/eafa6a3552d9922e1a53b05e1e90edb1d9052dbf))
+* **memory:** limit what is kept ([d9c0aed](https://github.com/Salve-Software/qazinho/commit/d9c0aed08b911303a298059ef5fb8e75a4079337))
+* **plan:** show the run as it walks the plan ([c7cfee7](https://github.com/Salve-Software/qazinho/commit/c7cfee76ca0e7c69c7d396ee90941c4a0e2d2519))
+* **project:** list memories ([d7802d1](https://github.com/Salve-Software/qazinho/commit/d7802d1e6c0c2dd4ebc136d67e56bbb303d64be5))
+* **pro:** sync memories ([b7e9d15](https://github.com/Salve-Software/qazinho/commit/b7e9d1533d438f069d26f0bd90c20944b2a50216))
+* **replay:** resume from the failed step ([5d9d56e](https://github.com/Salve-Software/qazinho/commit/5d9d56e7ecc8ac4833aa0e0d66255cca7348eea8))
+* **run:** let the QA talk to a running agent ([9e48a81](https://github.com/Salve-Software/qazinho/commit/9e48a818a7e760758fd7602ffb1a7ce703ede14d))
+* **run:** show plan, develop and run as stages ([4ccc4f9](https://github.com/Salve-Software/qazinho/commit/4ccc4f93397c9d09e737254a616c180a6e6fa9f1))
+
 # [0.7.0](https://github.com/Salve-Software/qazinho/compare/v0.6.2...v0.7.0) (2026-11-08)
 
 
