@@ -396,8 +396,6 @@ export const pt: typeof en = {
     WHOLE_PLAN: 'O plano inteiro',
     SOME_CASES_one: '1 caso',
     SOME_CASES_other: '{{count}} casos',
-    TITLE_SOME_one: 'Run {{id}} · 1 caso',
-    TITLE_SOME_other: 'Run {{id}} · {{count}} casos',
     EXPLORATION: 'Exploração',
     TITLE: 'Run {{id}}',
     EXPLORATION_TITLE: 'Exploração {{id}}',

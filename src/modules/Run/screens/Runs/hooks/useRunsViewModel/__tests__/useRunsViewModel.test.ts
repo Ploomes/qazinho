@@ -60,7 +60,7 @@ describe('useRunsViewModel', () => {
     const { result } = renderHook(() => useRunsViewModel());
 
     expect(result.current.runs[0]?.what).toMatch(/cases?$/);
-    expect(result.current.title).toMatch(/cases?$/);
+    expect(result.current.title).toMatch(/^Run r-\d+$/);
   });
 
   it('marks a run that ended before the end, and leaves a finished one plain', () => {
@@ -96,10 +96,10 @@ describe('useRunsViewModel', () => {
       expect(result.current.summary).toEqual({
         lead: null,
         tallies: [
-          { status: 'passed', label: '1 passed' },
-          { status: 'failed', label: '1 failed' },
+          { status: 'passed', icon: 'passed', count: 1, label: '1 passed' },
+          { status: 'failed', icon: 'failed', count: 1, label: '1 failed' },
         ],
-        bugs: '1 bug',
+        bugs: { count: 1, label: '1 bug' },
       });
     });
 

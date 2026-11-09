@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Button, Caret, EmptyState, Icon, StatusPill } from '@/shared/components/atoms';
-import { Screenshot, ToTop } from '@/shared/components/molecules';
+import { Screenshot, ToTop, Tooltip } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
 import { RunPicker } from './components';
 import { useRunsViewModel } from './hooks';
@@ -60,18 +60,34 @@ export const Runs: React.FC = () => {
           onNextPage={onNextPage}
         />
         <p className="runs__summary">
-          <span className="runs__facts">{runDuration}</span>
           {summary.lead !== null && <span>{summary.lead}</span>}
           {summary.tallies.map((tally) => (
-            <span
-              key={tally.status}
-              className={`runs__tally runs__tally--${tally.status}`}
-            >
-              {tally.label}
-            </span>
+            <Tooltip key={tally.status} content={tally.label}>
+              <span
+                className={`runs__tally runs__tally--${tally.status}`}
+                aria-label={tally.label}
+              >
+                <Icon name={tally.icon} />
+                {tally.count}
+              </span>
+            </Tooltip>
           ))}
-          {summary.bugs !== null && <span>{summary.bugs}</span>}
-          {runEnded !== null && <span className="runs__ended">{runEnded.label}</span>}
+          {summary.bugs !== null && (
+            <Tooltip content={summary.bugs.label}>
+              <span className="runs__tally" aria-label={summary.bugs.label}>
+                <Icon name="bug" />
+                {summary.bugs.count}
+              </span>
+            </Tooltip>
+          )}
+          {runEnded !== null && (
+            <Tooltip content={runEnded.label}>
+              <span className="runs__ended" aria-label={runEnded.label}>
+                <Icon name={runEnded.icon} />
+              </span>
+            </Tooltip>
+          )}
+          <span className="runs__facts">{runDuration}</span>
         </p>
         {canWatch && (
           <Button size="sm" onClick={onWatch}>

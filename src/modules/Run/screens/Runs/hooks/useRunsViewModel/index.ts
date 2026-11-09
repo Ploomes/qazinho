@@ -153,11 +153,9 @@ export const useRunsViewModel = () => {
     title:
       run === null
         ? ''
-        : run.kind !== 'explore' && run.cases.length < (workspace?.planSize ?? 0)
-          ? t('RUN.TITLE_SOME', { id: run.id, count: run.cases.length })
-          : t(run.kind === 'explore' ? 'RUN.EXPLORATION_TITLE' : 'RUN.TITLE', {
-              id: run.id,
-            }),
+        : t(run.kind === 'explore' ? 'RUN.EXPLORATION_TITLE' : 'RUN.TITLE', {
+            id: run.id,
+          }),
     canWatch,
     watchLabel: t('RUN.WATCH'),
     onWatch: () => {
@@ -185,6 +183,8 @@ export const useRunsViewModel = () => {
         ? []
         : RUN_VERDICTS.filter((status) => caseCounts[status] > 0).map((status) => ({
             status,
+            icon: STATUS[status].icon,
+            count: caseCounts[status],
             label: t(
               caseCounts[status] === 1
                 ? RUN_TALLY_KEYS[status].one
@@ -195,7 +195,12 @@ export const useRunsViewModel = () => {
       bugs:
         bugCount === 0
           ? null
-          : t(bugCount === 1 ? 'RUN.BUGS_ONE' : 'RUN.BUGS_OTHER', { count: bugCount }),
+          : {
+              count: bugCount,
+              label: t(bugCount === 1 ? 'RUN.BUGS_ONE' : 'RUN.BUGS_OTHER', {
+                count: bugCount,
+              }),
+            },
     },
     cases: ordered.map((runCase) => ({
       ...runCase,

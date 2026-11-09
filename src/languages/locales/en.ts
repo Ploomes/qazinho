@@ -393,8 +393,6 @@ export const en = {
     WHOLE_PLAN: 'The whole plan',
     SOME_CASES_one: '1 case',
     SOME_CASES_other: '{{count}} cases',
-    TITLE_SOME_one: 'Run {{id}} · 1 case',
-    TITLE_SOME_other: 'Run {{id}} · {{count}} cases',
     EXPLORATION: 'Exploration',
     TITLE: 'Run {{id}}',
     EXPLORATION_TITLE: 'Exploration {{id}}',
