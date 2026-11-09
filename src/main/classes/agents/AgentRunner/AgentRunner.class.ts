@@ -53,12 +53,12 @@ export class AgentRunner {
   }
 
   /**
-   * Pergunta ao agente uma vez; toda chamada deixa entrar os servidores MCP do próprio
-   * QA, cada permissão de que precisam respondida pelo QAzinho.
+   * Pergunta ao agente uma vez; uma chamada não selada deixa entrar os servidores MCP do
+   * próprio QA, cada permissão de que precisam respondida pelo QAzinho.
    */
   public async ask(asked: IRunAgent): Promise<IAgentTurn> {
     const props =
-      this.permissions === undefined
+      this.permissions === undefined || asked.isSealed === true
         ? asked
         : withPermissions({
             call: asked,

@@ -19,4 +19,5 @@ export interface IRunAgent {
   env?: Record<string, string>;
   permissionTool?: string;
   isStreamed?: boolean;
+  isSealed?: boolean;
 }

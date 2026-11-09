@@ -1,4 +1,4 @@
-import { chmodSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { chmodSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -42,6 +42,52 @@ const ask = (props: { runner: AgentRunner; command: string }) =>
   });
 
 describe.skipIf(process.platform === 'win32')('AgentRunner', () => {
+  describe('the servers of the QA', () => {
+    const argsOf = async (isSealed: boolean) => {
+      const folder = mkdtempSync(join(tmpdir(), 'qazinho-runner-'));
+      const command = join(folder, 'agent');
+      const log = join(folder, 'args');
+
+      writeFileSync(
+        command,
+        `#!/bin/sh\nprintf '%s\\n' "$@" > '${log}'\ncat > /dev/null\necho '{"type":"result","result":"ok","is_error":false,"session_id":"s"}'\n`,
+      );
+      chmodSync(command, 0o755);
+
+      await new AgentRunner({
+        owners: new ProcessOwners(),
+        folder: mkdtempSync(join(tmpdir(), 'qazinho-agent-home-')),
+        onEvent: () => undefined,
+        permissions: {
+          tool: 'mcp__qazinho__approve',
+          mcpConfig: () => '{"mcpServers":{}}',
+        },
+      }).ask({
+        workspaceId: 'w1',
+        agentId: 'claude-code',
+        command,
+        model: '',
+        sessionId: null,
+        prompt: 'Weigh it.',
+        allowedTools: [],
+        isSealed,
+      });
+
+      return readFileSync(log, 'utf8');
+    };
+
+    it('leaves them out of a sealed call', async () => {
+      const args = await argsOf(true);
+
+      expect(args).toContain('--strict-mcp-config');
+      expect(args).not.toContain('--permission-prompt-tool');
+    });
+
+    it('lets them into any other call', async () => {
+      expect(await argsOf(false)).toContain('--permission-prompt-tool');
+    });
+  });
+
   describe('the clock on a turn', () => {
     it('ends a turn that runs past its time', async () => {
       const turn = await ask({

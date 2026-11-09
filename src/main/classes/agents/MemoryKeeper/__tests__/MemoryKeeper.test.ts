@@ -16,7 +16,7 @@ const keeperWith = (props: {
   command?: string | null;
   text?: string;
   isError?: boolean;
-  onAsk?: (asked: { model: string; workspaceId: string }) => void;
+  onAsk?: (asked: { model: string; workspaceId: string; isSealed?: boolean }) => void;
 }) => {
   const fakes: IMemoryKeeper = {
     findCommand: () =>
@@ -70,6 +70,18 @@ describe('MemoryKeeper', () => {
     }).keep({ ...REQUEST, agentId: 'codex', model: 'gpt-5' });
 
     expect(model).toBe('gpt-5');
+  });
+
+  it('reads what the app said with no server of the QA in reach', async () => {
+    let isSealed: boolean | undefined;
+
+    await keeperWith({
+      onAsk: (asked) => {
+        isSealed = asked.isSealed;
+      },
+    }).keep(REQUEST);
+
+    expect(isSealed).toBe(true);
   });
 
   it('runs out of the chat, under a scope of its own', async () => {

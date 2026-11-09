@@ -37,6 +37,7 @@ export class MemoryKeeper {
       schema: asked.schema,
       systemPrompt: asked.systemPrompt,
       allowedTools: [],
+      isSealed: true,
     });
 
     if (turn.isError) return { isKept: false };
