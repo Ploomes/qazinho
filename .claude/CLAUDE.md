@@ -194,6 +194,8 @@ arquivo na pasta do workspace, e o agente do QA o lê com a mensagem: uma tela c
 uma proposta, a planilha de um caso. Um Claude Code real (Haiku) leu o código escrito numa imagem
 anexada; um PDF e o Codex ainda não foram tentados.
 
+**Um arquivo que o app baixa é aberto e lido.** Toda resposta lista o que o navegador baixou, e o agente abre um PDF, uma imagem ou um texto como um CSV numa tela nova do dispositivo (`open_download`): o QA acompanha, a tela vira evidência, o texto do arquivo serve de prova e o caso grava. Uma planilha ou um documento do Word ainda não abrem. O teste exportado deixa essa leitura para uma pessoa. Só o motor provou isso, num Chrome real sem janela; um agente real ainda não andou um.
+
 **Os testes que o time já tem viram um plano.** O `/import` no chat, também oferecido no chat vazio e na criação do
 workspace, escolhe uma pasta do computador do QA: o QAzinho a lê sem mudar nada e reconhece o que
 dirige os testes (Playwright, Cypress, Maestro, Detox, WebdriverIO, Appium, Selenium) pela config,
@@ -203,6 +205,8 @@ nomeando seletor ou arquivo, o que o teste afirma como resultado esperado, o que
 como pré-condição, e logins e chaves como variáveis do projeto. O que não dá para traduzir ele diz
 em vez de inventar. Testes unitários e o prompt fixado do harness provam isso; nenhum agente real
 importou uma pasta ainda.
+
+**Uma run que o app fechou no meio continua.** Ao reabrir, o workspace aparece pausado e o botão principal vira Continuar, que anda só os casos que não terminaram; o caso cortado recomeça, e o que falta entra numa run nova. Testes unitários provam a escolha dos casos; nenhuma run real foi fechada e continuada.
 
 **O agente pergunta ao QA no meio da run.** O agente de um caso, ou o explorador, que não pode
 seguir sem o QA chama `ask_qa`: um código mandado por texto ao celular dele, uma escolha que o caso
@@ -299,7 +303,7 @@ o `tools.test.ts` mede um controle lá. Um Claude Code real (Haiku) planejou a p
 real, capturado no Figma de uma página de checkout, e andou uma cópia com quatro diferenças
 plantadas: registrou o título, o tamanho do total e a cor e os cantos do botão, cada um no frame
 dele, por cerca de um centavo. O Figma conta cada leitura, algumas por mês em alguns assentos,
-então um caso andado de novo a partir da receita não confere design nenhum.
+então um caso andado de novo a partir da receita não confere design nenhum. Antes do primeiro bug contra um frame o agente pede a imagem dele ao Figma, e o bug mostra o protótipo ao lado da tela real e o manda ao Jira junto; a imagem vem da saída do Claude Code, sem login nenhum passar pelo QAzinho, e pelo Codex não vem.
 
 **Uma história do Jira vira o requisito do plano.** Com o Jira conectado, o `/jira` no chat escolhe
 uma história: as que o QA abriu por último, ou uma achada pela chave ou pelas palavras. O QAzinho a
@@ -308,7 +312,7 @@ usar, os comentários, as issues ligadas e subtarefas, e as imagens, PDFs e text
 baixados para o agente ler. O agente planeja a partir dela: cada critério ganha um caso que o
 nomeia, o que a história deixa em aberto é uma pergunta, e o texto da história nunca é uma
 instrução. Os arquivos somem assim que o plano é escrito; o workspace guarda a história, que o
-cabeçalho e o plano dele abrem no Jira. O Estagiário entrega ao chat de um workspace uma história
+cabeçalho abre no Jira. O Estagiário entrega ao chat de um workspace uma história
 pela chave. O QA também não precisa de comando para isso: a chave ou o link de uma história, ou o
 link ou título de uma página do Confluence, nas palavras dele basta, e o agente do chat a lê pelo
 QAzinho, com o Jira dela. Um Claude Code real (Haiku) achou uma página só pelo título e uma

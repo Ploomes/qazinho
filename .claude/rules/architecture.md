@@ -402,7 +402,7 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     nem abrir uma seção nem fechar o `<qazinho>`. O Claude Code lê os arquivos com `Read`, `Grep` e
     `Glob` só nessa pasta.
   - Os arquivos são apagados assim que um plano volta, quando o workspace vai embora, e na próxima
-    inicialização. O workspace guarda a história (`issue`), que o cabeçalho e o plano dele abrem
+    inicialização. O workspace guarda a história (`issue`), que o cabeçalho abre
     no Jira.
 - **Uma página do Confluence também é um requisito, e o lugar onde um plano é publicado**
   (`role/chat/confluence.md`). O Confluence é ligado ao lado do Jira (`setConfluence`), assim que o
