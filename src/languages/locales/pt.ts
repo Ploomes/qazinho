@@ -1571,6 +1571,8 @@ export const pt: typeof en = {
     RUN_WARNING_UPDATE: 'Atualizar e rodar',
     RUN_WARNING_RUN: 'Rodar como está aqui',
     PANE_BRIEF: '{{plans}} · {{runs}} · {{bugs}}',
+    PANE_BRIEF_FILES:
+      'Leva também {{count}} arquivo(s) dos testes ({{size}}), que ficam guardados na org até alguém apagar.',
     PANE_BRIEF_MEMORIES: '{{plans}} · {{runs}} · {{bugs}} · {{memories}}',
     PANE_MEDIA_SWITCH_SIZE: 'Incluir vídeos e telas ({{size}})',
   },

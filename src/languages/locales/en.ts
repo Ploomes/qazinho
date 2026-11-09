@@ -1562,6 +1562,8 @@ export const en = {
     RUN_WARNING_UPDATE: 'Update and run',
     RUN_WARNING_RUN: 'Run it as it is here',
     PANE_BRIEF: '{{plans}} · {{runs}} · {{bugs}}',
+    PANE_BRIEF_FILES:
+      'It also takes {{count}} test file(s) ({{size}}), kept in the org until someone deletes them.',
     PANE_BRIEF_MEMORIES: '{{plans}} · {{runs}} · {{bugs}} · {{memories}}',
     PANE_MEDIA_SWITCH_SIZE: 'Include videos and screens ({{size}})',
   },

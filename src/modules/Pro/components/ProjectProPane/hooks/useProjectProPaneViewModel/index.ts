@@ -208,6 +208,13 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
               bugs: statOf({ count: brief.bugs, one: 'BUGS' }),
               memories: statOf({ count: brief.memories, one: 'MEMORIES' }),
             }),
+      filesLine:
+        brief === null || brief.files === 0
+          ? ''
+          : t('PRO.PANE_BRIEF_FILES', {
+              count: brief.files,
+              size: bytesLabelOf({ bytes: brief.fileBytes, language }),
+            }),
       mediaSwitch:
         brief === null
           ? t('PRO.PANE_MEDIA_SWITCH')

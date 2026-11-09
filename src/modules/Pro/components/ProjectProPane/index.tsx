@@ -52,6 +52,9 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
           <div className="project-pro__publish">
             <div className="project-pro__brief">
               <span className="project-pro__brief-line">{view.local.brief}</span>
+              {view.local.filesLine !== '' && (
+                <span className="project-pro__brief-line">{view.local.filesLine}</span>
+              )}
               <Switch
                 label={view.local.mediaSwitch}
                 isOn={view.local.isMediaOn}
