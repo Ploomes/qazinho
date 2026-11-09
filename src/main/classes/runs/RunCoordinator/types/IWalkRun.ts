@@ -10,4 +10,7 @@ export interface IWalkRun extends IStartRun {
   idb: string;
   udid: string;
   values: IVariableValue[];
+  uploads: { name: string; path: string }[];
+  uploadPath: (file: string) => Promise<string | null>;
+  uploadRefs: Map<string, string>;
 }

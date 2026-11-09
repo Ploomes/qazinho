@@ -757,6 +757,8 @@ const runs = new RunCoordinator({
     broadcast({ channel: CHANNELS.runEvent, event });
   },
   recorder,
+  attachmentsOf: (workspaceId) => chatAttachments.listOf(workspaceId),
+  fetchFiles: (ask) => proSync.fetchFiles(ask),
   variablesOf: (projectId) => variables.valuesOf(projectId),
   keepVariable: async ({ projectId, variable }) =>
     (

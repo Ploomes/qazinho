@@ -25,6 +25,9 @@ function run(props: { kind: TargetKind; value: string }): IWalkRun {
     idb: '/opt/homebrew/bin/idb',
     udid: 'UDID',
     values: [],
+    uploads: [],
+    uploadPath: () => Promise.resolve(null),
+    uploadRefs: new Map(),
   };
 }
 

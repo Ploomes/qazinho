@@ -24,6 +24,7 @@ export {
   proofWithValues,
   provableProof,
   readBook,
+  readFileRef,
   recipeFor,
   recipeOf,
   recordedAction,
@@ -31,8 +32,12 @@ export {
   resolvedAction,
   stepCarryOn,
   unwalkedOutcome,
+  uploadRuleOf,
+  fileRefsIn,
   variablePort,
 } from '@salve-software/qazinho-harness/engine';
 export * from './markedBoxOf';
 export * from './progressAside';
+export * from './storedFilesOf';
 export * from './talkAside';
+export * from './uploadPathOf';

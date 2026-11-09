@@ -23,4 +23,10 @@ export interface IRunCoordinator {
     variable: IVariableValue;
   }) => Promise<boolean>;
   askWaitMs?: number;
+  attachmentsOf?: (workspaceId: string) => Promise<{ name: string; path: string }[]>;
+  fetchFiles?: (ask: {
+    projectId: string;
+    refs: string[];
+    store: string;
+  }) => Promise<void>;
 }

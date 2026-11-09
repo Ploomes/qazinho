@@ -48,6 +48,7 @@ import type {
 } from '@salve-software/qazinho-harness';
 import type { IDeviceDriver } from '@salve-software/qazinho-harness/engine';
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import { agentFailure, writeAtomically } from '@/main/library';
@@ -88,6 +89,10 @@ import {
   stepCarryOn,
   talkAside,
   unwalkedOutcome,
+  storedFilesOf,
+  fileRefsIn,
+  uploadPathOf,
+  uploadRuleOf,
   variablePort,
 } from './library';
 
@@ -105,6 +110,8 @@ export class RunCoordinator {
   private readonly shrink: ShrinkImage | null;
   private readonly recorder: IVideoRecorder | null;
   private readonly variablesOf: (projectId: string) => Promise<IVariableValue[]>;
+  private readonly attachmentsOf: NonNullable<IRunCoordinator['attachmentsOf']>;
+  private readonly fetchFiles: NonNullable<IRunCoordinator['fetchFiles']> | null;
   private readonly keepVariable: NonNullable<IRunCoordinator['keepVariable']>;
   private readonly askWaitMs: number;
   private readonly stopping = new Set<string>();
@@ -131,6 +138,8 @@ export class RunCoordinator {
     this.shrink = props.shrink ?? null;
     this.recorder = props.recorder ?? null;
     this.variablesOf = props.variablesOf ?? (() => Promise.resolve([]));
+    this.attachmentsOf = props.attachmentsOf ?? (() => Promise.resolve([]));
+    this.fetchFiles = props.fetchFiles ?? null;
     this.keepVariable = props.keepVariable ?? (() => Promise.resolve(false));
     this.askWaitMs = props.askWaitMs ?? RUN_WALK.askWaitMs;
   }
@@ -182,9 +191,39 @@ export class RunCoordinator {
     this.learnings.set(run.workspaceId, []);
     this.heardMemories.set(run.workspaceId, new Set());
 
+    const store = this.filesFolder(run.workspaceId);
+    const uploadRefs = new Map<string, string>();
+
+    await this.fetchMissingFiles({ run, store });
+
+    const uploads = [
+      ...(await storedFilesOf(store)),
+      ...(await this.attachmentsOf(run.workspaceId).catch(() => [])),
+    ];
+    const planTexts = run.steps.flatMap((step) => [
+      step.action,
+      step.expected,
+      step.caseGoal,
+      step.casePreconditions,
+    ]);
+
     try {
       await this.walk({
         ...run,
+        uploads,
+        uploadPath: uploadPathOf({
+          canUpload: (file) =>
+            uploadRuleOf({
+              texts: [...planTexts, ...this.answersOf(run.workspaceId)],
+              folders: [...new Set(uploads.map(({ path }) => dirname(path)))],
+              home: homedir(),
+              platform: process.platform,
+            })(file),
+          attachments: uploads,
+          store,
+          refs: uploadRefs,
+        }),
+        uploadRefs,
         values:
           run.projectId === undefined
             ? []
@@ -356,7 +395,7 @@ export class RunCoordinator {
       await driver.open();
       this.tools.attach({
         workspaceId: run.workspaceId,
-        driver: variablePort({ device: driver, values: run.values }),
+        driver: this.portOf({ run, driver }),
       });
       await this.watch({ run, driver });
     } catch (reason) {
@@ -441,6 +480,43 @@ export class RunCoordinator {
    * Diz como a run terminou, depois entrega a gravação dela: a do próprio celular, ou a
    * feita do stream vivo assim que o arquivo está inteiro.
    */
+  private filesFolder(workspaceId: string): string {
+    return join(this.dataRoot, ARCHIVE.workspaces, workspaceId, ARCHIVE.files);
+  }
+
+  private async fetchMissingFiles(props: {
+    run: IStartRun;
+    store: string;
+  }): Promise<void> {
+    const { run, store } = props;
+
+    if (this.fetchFiles === null || run.projectId === undefined) return;
+
+    const wanted = run.caseIds === undefined ? null : new Set(run.caseIds);
+    const { cases } = await this.readBook(run.workspaceId);
+    const refs = fileRefsIn(
+      cases.filter(({ caseId }) => wanted === null || wanted.has(caseId)),
+    );
+
+    await this.fetchFiles({ projectId: run.projectId, refs, store }).catch(
+      () => undefined,
+    );
+  }
+
+  private answersOf(workspaceId: string): string[] {
+    return (this.inFlightRuns.get(workspaceId)?.asked ?? []).flatMap(({ answer }) =>
+      answer.kind === 'said' ? [answer.text] : [],
+    );
+  }
+
+  private portOf(props: { run: IWalkRun; driver: IDeviceDriver }): IDevicePort {
+    return variablePort({
+      device: props.driver,
+      values: props.run.values,
+      uploadPath: props.run.uploadPath,
+    });
+  }
+
   private async finish(props: {
     run: IWalkRun;
     ended: IRunEvent;
@@ -594,7 +670,7 @@ export class RunCoordinator {
     const proofs = new Map<number, string>(
       props.prior?.steps.map(({ number, proof }) => [number, proof]) ?? [],
     );
-    const device = variablePort({ device: driver, values: run.values });
+    const device = this.portOf({ run, driver });
     let began = Date.now();
     let hasFailed = false;
     let isOver = false;
@@ -875,7 +951,13 @@ export class RunCoordinator {
             ...(actions.get(walking.step.numberInCase) ?? []),
             recordedAction({
               appUrl: run.target.value,
-              action,
+              action:
+                action.files === undefined
+                  ? action
+                  : {
+                      ...action,
+                      files: action.files.map((file) => run.uploadRefs.get(file) ?? file),
+                    },
               found: driver.resolution?.() ?? null,
               values: run.values,
             }),
@@ -950,6 +1032,7 @@ export class RunCoordinator {
         isUnderWay: props.isUnderWay || props.prior !== null,
         memories: run.memories ?? [],
         heardMemories: [...(this.heardMemories.get(workspaceId) ?? [])],
+        uploads: run.uploads,
       }),
     });
 
@@ -1003,7 +1086,7 @@ export class RunCoordinator {
     const minutes = run.minutes ?? EXPLORATION.minutes;
     let endsAt = Date.now() + minutes * 60_000;
     let late: NodeJS.Timeout | undefined;
-    const device = variablePort({ device: driver, values: run.values });
+    const device = this.portOf({ run, driver });
     let screens = 0;
     let findings = 0;
     let current = { number: 0, name: '' };
@@ -1283,7 +1366,7 @@ export class RunCoordinator {
     const { run, driver, recipe } = props;
     const { workspaceId } = run;
     const outcomes: IStepOutcome[] = [];
-    const device = variablePort({ device: driver, values: run.values });
+    const device = this.portOf({ run, driver });
 
     for (const [position, { step, index }] of props.steps.entries()) {
       await this.holdWhilePaused(workspaceId);
