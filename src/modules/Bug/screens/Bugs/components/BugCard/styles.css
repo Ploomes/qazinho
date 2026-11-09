@@ -191,6 +191,14 @@
   min-width: 0;
 }
 
+.bug-card__evidence--compare .bug-card__hero {
+  flex: 1 1 0;
+}
+
+.bug-card__evidence--compare .bug-card__thumbs {
+  flex-basis: 100%;
+}
+
 .bug-card__caption {
   display: inline-flex;
   align-items: center;

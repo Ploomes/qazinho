@@ -56,6 +56,10 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
     hero,
     design: bug.design === null ? null : { ...bug.design, label: t('BUG.SHOT_DESIGN') },
     realLabel: t('BUG.SHOT_REAL'),
+    evidenceClass:
+      bug.design === null
+        ? 'bug-card__evidence'
+        : 'bug-card__evidence bug-card__evidence--compare',
     thumbs: shots.filter((shot) => shot !== hero),
     steps: isAllSteps ? numbered : first,
     stepsToggle:

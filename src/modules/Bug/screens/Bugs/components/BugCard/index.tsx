@@ -21,6 +21,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
     hero,
     design,
     realLabel,
+    evidenceClass,
     thumbs,
     steps,
     stepsToggle,
@@ -184,7 +185,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
               <ExpectedGot isBug expected={bug.expected} got={bug.got} />
 
               {hero !== null && (
-                <div className="bug-card__evidence">
+                <div className={evidenceClass}>
                   <span className="bug-card__hero">
                     <Screenshot
                       label={hero.label}
