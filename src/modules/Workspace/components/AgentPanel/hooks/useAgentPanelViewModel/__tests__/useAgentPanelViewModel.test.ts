@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useAgentPanelViewModel } from '@/modules/Workspace/components/AgentPanel/hooks/useAgentPanelViewModel';
 import { PANEL } from '@/modules/Workspace/constants';
-import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
+import { makeWorkspace, walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 function windowOf(width: number) {
@@ -28,6 +28,62 @@ describe('useAgentPanelViewModel', () => {
     expect(result.current.isOpen).toBe(true);
     expect(result.current.width).toBe(PANEL.defaultWidth);
     expect(result.current.outerWidth).toBe(PANEL.defaultWidth + PANEL.handleWidth);
+  });
+
+  describe('when the agent of a run asks the QA', () => {
+    const asked = (id: string) => {
+      const workspace = walkRun({ verdicts: [] });
+
+      return {
+        ...workspace,
+        live:
+          workspace.live === null
+            ? null
+            : {
+                ...workspace.live,
+                question: {
+                  id,
+                  question: 'Qual plano?',
+                  options: [],
+                  isSecret: false,
+                  secret: { name: 'QA_ANSWER_1', description: 'Qual plano?' },
+                  caseId: 'TC-01',
+                  stepNumber: 1,
+                  action: 'Escolher',
+                  askedAtMs: 0,
+                  waitsUntilMs: 900_000,
+                  waitedSec: 0,
+                },
+              },
+      };
+    };
+
+    /** A pergunta segura a run e mora no chat: recolhido, o QA não sabia que ela existia. */
+    it('opens a collapsed chat, where the question is', () => {
+      useWorkspaceStore.setState({ isPanelOpen: false, workspaces: [asked('q-1')] });
+      renderHook(() => useAgentPanelViewModel());
+
+      expect(useWorkspaceStore.getState().isPanelOpen).toBe(true);
+    });
+
+    it('lets the QA collapse it again while the same question waits', () => {
+      useWorkspaceStore.setState({ workspaces: [asked('q-1')] });
+      const { rerender } = renderHook(() => useAgentPanelViewModel());
+
+      act(() => {
+        useWorkspaceStore.setState({ isPanelOpen: false });
+      });
+      rerender();
+
+      expect(useWorkspaceStore.getState().isPanelOpen).toBe(false);
+    });
+
+    it('does NOT open it with no question waiting', () => {
+      useWorkspaceStore.setState({ isPanelOpen: false });
+      renderHook(() => useAgentPanelViewModel());
+
+      expect(useWorkspaceStore.getState().isPanelOpen).toBe(false);
+    });
   });
 
   it('shrinks to a named rail when the QA collapses it', () => {

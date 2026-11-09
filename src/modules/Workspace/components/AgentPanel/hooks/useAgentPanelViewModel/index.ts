@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PANEL } from '@/modules/Workspace/constants';
 import { useChatOnly } from '@/modules/Workspace/hooks/useChatOnly';
@@ -15,6 +15,10 @@ export const useAgentPanelViewModel = () => {
   const workspace = useSelectedWorkspacePart((opened) => ({
     id: opened.id,
     name: opened.name,
+    questionKey:
+      opened.live !== null && !opened.live.isDone && opened.live.question !== undefined
+        ? `${opened.id}/${opened.live.id}/${opened.live.question.id}`
+        : null,
   }));
   const isChatOnly = useChatOnly();
   const isPanelOpen = useWorkspaceStore((state) => state.isPanelOpen);
@@ -22,12 +26,18 @@ export const useAgentPanelViewModel = () => {
   const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
   const width = useWorkspaceStore((state) => state.panelWidth);
   const togglePanel = useWorkspaceStore((state) => state.togglePanel);
+  const selectTab = useWorkspaceStore((state) => state.selectTab);
   const setPanelWidth = useWorkspaceStore((state) => state.setPanelWidth);
   const collapseCombo = useSettingsStore(
     (state) => state.keybinds.find((keybind) => keybind.id === 'chat')?.combo ?? '',
   );
   const windowWidth = useWindowWidth();
   const [isResizing, setResizing] = useState(false);
+  const questionKey = workspace?.questionKey ?? null;
+
+  useEffect(() => {
+    if (questionKey !== null) selectTab('chat');
+  }, [questionKey, selectTab]);
 
   const sidebarWidth = useSidebarWidth();
   const { inner, outer } = panelWidthOf({
