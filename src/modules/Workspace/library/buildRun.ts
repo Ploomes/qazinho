@@ -107,6 +107,8 @@ export function buildRun(props: { workspace: IWorkspace; endedBy: RunEnd }): IRu
   return {
     id,
     meta: workspace.name,
+    ...(live?.caseIds === undefined ? {} : { caseIds: live.caseIds }),
+    ...(live?.mode === undefined ? {} : { mode: live.mode }),
     startedAt: live?.startedAt ?? '',
     ...(live?.startedAtMs === undefined ? {} : { startedAtMs: live.startedAtMs }),
     durationSec: live?.elapsedSec ?? tookSec(outcomes),

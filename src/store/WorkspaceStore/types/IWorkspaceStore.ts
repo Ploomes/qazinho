@@ -5,6 +5,7 @@ import type { IMemoryChange } from '@/modules/Memory/types';
 import type { IPublishedPlan, ITestCase } from '@/modules/Plan';
 import type { IWalkedBy, IWorkspace, PanelTab, WorkspaceTab } from '@/modules/Workspace';
 import type {
+  RunMode,
   CodeStep,
   IChatAttachment,
   IChatQuestion,
@@ -135,6 +136,7 @@ export interface IWorkspaceStore {
     by: IWalkedBy;
     kind?: 'explore';
     caseIds?: string[];
+    mode?: RunMode;
   }) => void;
   landExplored: (props: {
     workspaceId: string;

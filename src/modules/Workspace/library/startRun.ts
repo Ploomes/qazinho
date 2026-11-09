@@ -1,4 +1,5 @@
 import type { IWalkedBy, IWorkspace } from '@/modules/Workspace/types';
+import type { RunMode } from '@/shared/types';
 
 /** Inicia uma run do plano, ou uma exploração, que não precisa de plano para ir. */
 export function startRun(props: {
@@ -9,8 +10,9 @@ export function startRun(props: {
   by: IWalkedBy;
   kind?: 'explore';
   caseIds?: string[];
+  mode?: RunMode;
 }): IWorkspace {
-  const { workspace, startedAt, startedAtMs, runId, by, kind, caseIds } = props;
+  const { workspace, startedAt, startedAtMs, runId, by, kind, caseIds, mode } = props;
 
   if (workspace.plan.length === 0 && kind !== 'explore') return workspace;
 
@@ -33,6 +35,7 @@ export function startRun(props: {
       by,
       ...(kind === undefined ? {} : { kind }),
       ...(caseIds === undefined ? {} : { caseIds }),
+      ...(mode === undefined ? {} : { mode }),
     },
   };
 }

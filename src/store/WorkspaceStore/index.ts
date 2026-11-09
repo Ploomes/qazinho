@@ -412,7 +412,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
-  startRun: ({ workspaceId, runId, by, kind, caseIds }) =>
+  startRun: ({ workspaceId, runId, by, kind, caseIds, mode }) =>
     set((state) => ({
       activities: withoutKey({ record: state.activities, key: workspaceId }),
       bugFlashes: withoutKey({ record: state.bugFlashes, key: workspaceId }),
@@ -429,6 +429,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
             startedAtMs: Date.now(),
             ...(kind === undefined ? {} : { kind }),
             ...(caseIds === undefined ? {} : { caseIds }),
+            ...(mode === undefined ? {} : { mode }),
           }),
       }),
     })),
