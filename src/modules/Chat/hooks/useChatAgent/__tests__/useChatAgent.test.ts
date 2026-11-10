@@ -146,7 +146,7 @@ describe('useChatAgent', () => {
 
       await waitFor(() => {
         expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
-          text: 'Claude Code is signed out. Sign it in from Settings → Agents, then ask again.',
+          text: 'Claude Code is signed out. Sign it in from Settings → Agent, then ask again.',
         });
       });
     });

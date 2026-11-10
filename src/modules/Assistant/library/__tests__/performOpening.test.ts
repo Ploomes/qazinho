@@ -61,14 +61,14 @@ describe('performOpening', () => {
     });
     expect(
       performOpening({
-        call: { name: 'open_settings', args: { section: 'integrations' } },
+        call: { name: 'open_settings', args: { section: 'connections' } },
         port,
       }).text,
-    ).toBe("QAzinho's settings are on screen, on Integrations.");
+    ).toBe("QAzinho's settings are on screen, on Connections.");
     performOpening({ call: { name: 'open_settings', args: {} }, port });
     performOpening({ call: { name: 'go_home', args: {} }, port });
 
-    expect(did).toEqual(['project p1', 'settings integrations', 'settings -', 'home']);
+    expect(did).toEqual(['project p1', 'settings connections', 'settings -', 'home']);
   });
 
   it('does NOT open a project that is not there', () => {

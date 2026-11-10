@@ -57,12 +57,11 @@ export const useSettingsViewModel = () => {
   const agentId = detected.find(({ name }) => name === agent)?.id ?? 'claude-code';
 
   useEffect(() => {
-    if (tab === 'mcps') void Mcp.list(agentId).then(landMcpServers);
+    if (tab === 'connections') void Mcp.list(agentId).then(landMcpServers);
   }, [tab, agentId, landMcpServers]);
 
   useEffect(() => {
-    if ((tab === 'devices' || tab === 'agents') && managers === null && !isChecking)
-      void check();
+    if (tab === 'agent' && managers === null && !isChecking) void check();
   }, [tab, managers, isChecking, check]);
 
   const toolState = (props: { isFound: boolean; isOn: boolean; path: string | null }) =>
@@ -82,10 +81,10 @@ export const useSettingsViewModel = () => {
 
   return {
     tab,
-    title: t(`SETTINGS.${tab.toUpperCase()}` as 'SETTINGS.AGENTS'),
+    title: t(`SETTINGS.${tab.toUpperCase()}` as 'SETTINGS.AGENT'),
     tabs: SETTINGS_TABS.map((item) => ({
       id: item,
-      label: t(`SETTINGS.${item.toUpperCase()}` as 'SETTINGS.AGENTS'),
+      label: t(`SETTINGS.${item.toUpperCase()}` as 'SETTINGS.AGENT'),
       isActive: item === tab,
     })),
     agents: detected.map((item) => {

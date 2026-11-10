@@ -266,7 +266,7 @@ export const useAppActions = () => {
         if (runAlert !== undefined) useSettingsStore.getState().selectRunAlert(runAlert);
       },
       connectIntegration: (id) => {
-        useSettingsStore.getState().selectTab('integrations');
+        useSettingsStore.getState().selectTab('connections');
         bringForward();
         useAppStore.getState().openSettings();
         useSetupStore.getState().askToConnect(id);

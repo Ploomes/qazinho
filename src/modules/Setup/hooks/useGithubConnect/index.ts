@@ -30,7 +30,11 @@ export const useGithubConnect = (props: { isOn: boolean }) => {
   }, [isOn]);
 
   const look = async () => {
-    setStatus(await Github.status());
+    const seen = await Github.status();
+
+    setStatus(seen);
+
+    return seen;
   };
 
   const begin = async () => {
@@ -76,7 +80,8 @@ export const useGithubConnect = (props: { isOn: boolean }) => {
     },
     onInstall: async () => {
       await install('gh');
-      await look();
+
+      return (await look()).cli.isFound;
     },
     onCancelSignIn: () => {
       void Github.cancelSignIn();

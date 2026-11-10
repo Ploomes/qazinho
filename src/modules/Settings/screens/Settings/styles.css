@@ -83,6 +83,10 @@
   gap: 14px;
 }
 
+.settings__stack--group {
+  margin-top: var(--space-4);
+}
+
 .settings__note {
   margin: 0;
   color: var(--ink3);

@@ -86,7 +86,7 @@ export const Settings: React.FC = () => {
         <div className="settings__page">
           <h1 className="settings__title">{title}</h1>
 
-          {tab === 'agents' && (
+          {tab === 'agent' && (
             <div className="settings__stack">
               {agents.map((item) => (
                 <div key={item.name} className="settings__agent">
@@ -170,8 +170,9 @@ export const Settings: React.FC = () => {
             </div>
           )}
 
-          {tab === 'devices' && (
-            <div className="settings__stack">
+          {tab === 'agent' && (
+            <div className="settings__stack settings__stack--group">
+              <span className="settings__eyebrow">{t('SETTINGS.DEVICES')}</span>
               {devices.map((item) => (
                 <ToolCard
                   key={item.name}
@@ -226,16 +227,18 @@ export const Settings: React.FC = () => {
             </div>
           )}
 
-          {tab === 'integrations' && (
+          {tab === 'connections' && (
             <div className="settings__stack">
+              <span className="settings__eyebrow">{t('SETTINGS.GROUP_TRACKERS')}</span>
               {integrations.map((item) => (
                 <IntegrationCard key={item.id} integration={item} />
               ))}
             </div>
           )}
 
-          {tab === 'mcps' && (
-            <div className="settings__stack">
+          {tab === 'connections' && (
+            <div className="settings__stack settings__stack--group">
+              <span className="settings__eyebrow">{t('SETTINGS.GROUP_AGENT_TOOLS')}</span>
               {mcpServers.map((item) => (
                 <McpCard key={item.id} server={item} />
               ))}
@@ -243,7 +246,7 @@ export const Settings: React.FC = () => {
             </div>
           )}
 
-          {tab === 'appearance' && (
+          {tab === 'general' && (
             <div className="settings__stack settings__stack--wide">
               <div className="settings__themes">
                 {themes.map((item) => (
@@ -323,8 +326,9 @@ export const Settings: React.FC = () => {
             </div>
           )}
 
-          {tab === 'shortcuts' && (
-            <div className="settings__stack settings__stack--wide">
+          {tab === 'general' && (
+            <div className="settings__stack settings__stack--wide settings__stack--group">
+              <span className="settings__eyebrow">{t('SETTINGS.SHORTCUTS')}</span>
               <div className="settings__keybinds">
                 {keybinds.map((item) => (
                   <button

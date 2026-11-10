@@ -10,7 +10,7 @@ beforeEach(() => {
   useSetupStore.setState({ managers: null, isChecking: false, installs: {} });
   useAppStore.setState({ theme: 'dark' });
   useSettingsStore.setState({
-    tab: 'agents',
+    tab: 'agent',
     agent: 'Claude Code',
     model: 'sonnet',
     editingKeybindId: null,
@@ -30,18 +30,15 @@ function agent(props: { id: string; name: string }) {
 }
 
 describe('useSettingsViewModel', () => {
-  it('opens on the agents panel, because nothing runs without one', () => {
+  it('opens on the agent section, because nothing runs without one', () => {
     const { result } = renderHook(() => useSettingsViewModel());
 
-    expect(result.current.tab).toBe('agents');
+    expect(result.current.tab).toBe('agent');
     expect(result.current.tabs.map(({ id }) => id)).toEqual([
-      'agents',
-      'devices',
-      'integrations',
-      'mcps',
-      'appearance',
+      'agent',
+      'connections',
+      'general',
       'storage',
-      'shortcuts',
       'about',
     ]);
   });
@@ -234,7 +231,7 @@ describe('useSettingsViewModel', () => {
       useSetupStore.setState({ managers: null, isChecking: false });
 
       window.qazinho = { ...fakeQazinhoApi('darwin'), checkMachine };
-      useSettingsStore.setState({ tab: 'devices' });
+      useSettingsStore.setState({ tab: 'agent' });
       renderHook(() => useSettingsViewModel());
 
       await waitFor(() => {

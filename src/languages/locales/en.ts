@@ -276,7 +276,7 @@ export const en = {
     LOOKING_ANDROID: 'Opening the app on the emulator to see its first screen…',
     LOOKING_IOS: 'Opening the app on the simulator to see its first screen…',
     FAILED_AGENT_SIGNED_OUT:
-      '{{agent}} is signed out. Sign it in from Settings → Agents, then ask again.',
+      '{{agent}} is signed out. Sign it in from Settings → Agent, then ask again.',
     FAILED_AGENT_ERROR: 'The agent answered with an error: {{said}}',
     FAILED_AGENT_SILENT: 'The agent stopped answering. Ask it again.',
     FAILED_CODE: 'QAzinho could not get the code from GitHub. {{reason}}',
@@ -514,13 +514,13 @@ export const en = {
     FAILED_NO_EMULATOR:
       'QAzinho found no Android emulator to open. Make one in Android Studio, then run the plan again.',
     FAILED_NO_SIMULATOR:
-      'QAzinho needs idb and an iPhone simulator to drive iOS, and one of them is missing: Settings → Devices shows which.',
+      'QAzinho needs idb and an iPhone simulator to drive iOS, and one of them is missing: Settings → Agent shows which.',
     FAILED_UNREACHABLE:
       'Chrome could not open {{url}} ({{code}}). Check that the app is up and that this machine can reach it, then run the plan again.',
     FAILED_AGENT_ERROR: 'The agent answered with an error, so the run stopped: {{said}}',
     FAILED_AGENT_SILENT: 'The agent stopped answering, so the run stopped too.',
     FAILED_AGENT_SIGNED_OUT:
-      '{{agent}} is signed out, so the run stopped. Sign it in from Settings → Agents, then run the plan again.',
+      '{{agent}} is signed out, so the run stopped. Sign it in from Settings → Agent, then run the plan again.',
     FAILED_OTHER: 'The run stopped: {{said}}',
     REPLAY_REMOVED:
       'This run’s video was deleted after {{days}} days, to free space. Its report and screens stay.',
@@ -820,11 +820,12 @@ export const en = {
     ISLAND_TITLE: 'Island at the top of the screen',
     ISLAND: 'Show the island',
     BACK: 'Back to app',
-    AGENTS: 'Agents',
+    AGENT: 'Agent',
+    CONNECTIONS: 'Connections',
+    GENERAL: 'General',
+    GROUP_TRACKERS: 'Trackers',
+    GROUP_AGENT_TOOLS: 'Your coding agent',
     DEVICES: 'Devices',
-    INTEGRATIONS: 'Integrations',
-    MCPS: 'MCPs',
-    APPEARANCE: 'Appearance',
     SHORTCUTS: 'Shortcuts',
     ABOUT: 'About',
     PRESS_KEYS: 'press the keys',
@@ -936,14 +937,11 @@ export const en = {
     CONNECTED: 'connected',
     NOT_CONNECTED: 'not connected',
     GITHUB_TEXT: 'Code to plan from, issues for the bugs.',
-    GITHUB_CLI_MISSING:
-      'gh is not on this machine yet. QAzinho installs it with {{installer}}.',
     GITHUB_CLI_SIGNED_OUT: 'gh is here, not signed in to GitHub yet.',
     GITHUB_CLI_AS: 'gh is signed in as {{account}}.',
     GITHUB_CLI_READY:
       'gh is already signed in as {{account}}: connecting uses that login.',
     GITHUB_CONNECT_AS: 'Connect as {{account}}',
-    GITHUB_INSTALL: 'Install gh',
     GITHUB_INSTALLING: 'Installing gh…',
     GITHUB_CONNECTED_NOTE:
       'Projects pick their repositories through it, and a bug goes to one of them from the Bugs tab.',
@@ -1063,9 +1061,9 @@ export const en = {
   },
   GITHUB: {
     FAILURE_NO_CLI:
-      'The GitHub CLI is not on this machine. Install it in Settings → Integrations.',
+      'The GitHub CLI is not on this machine. Install it in Settings → Connections.',
     FAILURE_SIGNED_OUT:
-      'The GitHub CLI is signed out. Connect GitHub again in Settings → Integrations.',
+      'The GitHub CLI is signed out. Connect GitHub again in Settings → Connections.',
     FAILURE_DENIED:
       'GitHub refused it: this account may lack access, or its organization asks for SSO.',
     FAILURE_NOT_FOUND: 'GitHub did not find it, or this account cannot see it.',
@@ -1073,10 +1071,9 @@ export const en = {
     FAILURE_UNEXPECTED: 'GitHub answered in a way QAzinho did not expect.',
   },
   JIRA: {
-    FAILURE_NOT_CONNECTED:
-      'Jira is not connected. Connect it in Settings → Integrations.',
+    FAILURE_NOT_CONNECTED: 'Jira is not connected. Connect it in Settings → Connections.',
     FAILURE_UNAUTHORIZED:
-      'Jira refused the token. Connect Jira again in Settings → Integrations.',
+      'Jira refused the token. Connect Jira again in Settings → Connections.',
     FAILURE_NOT_FOUND: 'Jira did not find it, or this account cannot see it.',
     FAILURE_UNREACHABLE: 'Jira is out of reach from this machine. Check the network.',
     FAILURE_REJECTED: 'Jira refused what QAzinho sent.',
@@ -1084,7 +1081,7 @@ export const en = {
   },
   CONFLUENCE: {
     FAILURE_NOT_CONNECTED:
-      'Confluence is off. Turn it on beside Jira in Settings → Integrations.',
+      'Confluence is off. Turn it on beside Jira in Settings → Connections.',
     FAILURE_UNAUTHORIZED:
       'Confluence refused this Jira account. Check that it can open Confluence on the same site.',
     FAILURE_NOT_FOUND: 'Confluence did not find it, or this account cannot see it.',
@@ -1156,8 +1153,8 @@ export const en = {
     TIP_CONNECT: 'Connect Jira or GitHub here, then send the bug again.',
     SEND_GITHUB: 'Send to GitHub',
     NO_TRACKER:
-      'Connect Jira or GitHub in Settings → Integrations, and each bug goes there in one click.',
-    OPEN_INTEGRATIONS: 'Open integrations',
+      'Connect Jira or GitHub in Settings → Connections, and each bug goes there in one click.',
+    OPEN_INTEGRATIONS: 'Open connections',
     SENDING: 'Sending {{id}} to {{tracker}}',
     SENDING_SUBTITLE: 'Through your own account. QAzinho keeps the link to the issue.',
     STEP_READY: 'Get the evidence ready',
@@ -1178,9 +1175,9 @@ export const en = {
     FAILED: '{{id}} was not filed',
     FAILED_SUBTITLE: 'Nothing was made in {{tracker}}.',
     FAILURE_NOT_CONNECTED:
-      '{{tracker}} is not connected. Connect it in Settings → Integrations.',
+      '{{tracker}} is not connected. Connect it in Settings → Connections.',
     FAILURE_UNAUTHORIZED:
-      '{{tracker}} refused the access QAzinho goes through. Connect it again in Settings → Integrations.',
+      '{{tracker}} refused the access QAzinho goes through. Connect it again in Settings → Connections.',
     FAILURE_NOT_FOUND:
       '{{tracker}} did not find {{where}}, or this account cannot file there.',
     FAILURE_UNREACHABLE:
@@ -1262,7 +1259,7 @@ export const en = {
     HINT: '↵ send · ⇧↵ new line',
     STOPPED: 'You stopped the answer.',
     SECRET_WARNING:
-      'This looks like a password or a token ({{secret}}). Neither goes in the chat: a token goes in Settings → Integrations, a password in the project’s variables.',
+      'This looks like a password or a token ({{secret}}). Neither goes in the chat: a token goes in Settings → Connections, a password in the project’s variables.',
     SECRET_REMOVE: 'Take it out',
     SECRET_SEND: 'Send anyway',
     FAILED_OTHER: 'The Intern could not answer: {{said}}',
@@ -1376,7 +1373,7 @@ export const en = {
     FAILED_AGENT: 'The build stopped: {{reason}}',
     FAILED_NOTHING: 'The build made nothing QAzinho can run. {{said}}',
     SIGNED_OUT:
-      '{{agent}} is signed out. Sign it in from Settings → Agents, then build again.',
+      '{{agent}} is signed out. Sign it in from Settings → Agent, then build again.',
     SILENT: 'the agent stopped answering. Build again.',
   },
   MASCOT: {

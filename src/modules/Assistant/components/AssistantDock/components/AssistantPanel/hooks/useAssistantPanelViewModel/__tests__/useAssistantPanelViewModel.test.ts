@@ -186,7 +186,7 @@ describe('useAssistantPanelViewModel', () => {
       await waitFor(() => {
         expect(result.current.rows.at(-1)).toMatchObject({
           kind: 'error',
-          text: 'Claude Code is signed out. Sign it in from Settings → Agents, then ask again.',
+          text: 'Claude Code is signed out. Sign it in from Settings → Agent, then ask again.',
         });
       });
       expect(result.current).toMatchObject({
@@ -272,7 +272,7 @@ describe('useAssistantPanelViewModel', () => {
       expect(result.current).toMatchObject({
         canSend: false,
         secretWarning:
-          'This looks like a password or a token (ATATT3…). Neither goes in the chat: a token goes in Settings → Integrations, a password in the project’s variables.',
+          'This looks like a password or a token (ATATT3…). Neither goes in the chat: a token goes in Settings → Connections, a password in the project’s variables.',
       });
 
       act(() => {

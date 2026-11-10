@@ -186,7 +186,7 @@ describe('useBugFilingPopupViewModel', () => {
         result.current.actions.find(({ key }) => key === 'integrations')?.onClick();
       });
 
-      expect(useSettingsStore.getState().tab).toBe('integrations');
+      expect(useSettingsStore.getState().tab).toBe('connections');
       expect(useAppStore.getState().screen).toBe('settings');
       expect(onClose).toHaveBeenCalledTimes(1);
     });

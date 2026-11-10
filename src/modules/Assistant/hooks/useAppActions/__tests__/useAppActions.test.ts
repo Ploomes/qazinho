@@ -298,7 +298,7 @@ describe('useAppActions', () => {
       expect(answers).toHaveLength(1);
     });
     expect(useAppStore.getState().screen).toBe('settings');
-    expect(useSettingsStore.getState().tab).toBe('integrations');
+    expect(useSettingsStore.getState().tab).toBe('connections');
     expect(useSetupStore.getState().connectingId).toBe('github');
     expect(useAssistantStore.getState().isOpen).toBe(false);
   });

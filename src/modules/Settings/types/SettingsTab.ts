@@ -1,9 +1,2 @@
-export type SettingsTab =
-  | 'agents'
-  | 'devices'
-  | 'integrations'
-  | 'mcps'
-  | 'appearance'
-  | 'storage'
-  | 'shortcuts'
-  | 'about';
+/** Uma seção das Configurações, como a navegação dela as lista. */
+export type SettingsTab = 'agent' | 'connections' | 'general' | 'storage' | 'about';

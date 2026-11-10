@@ -114,7 +114,7 @@ describe('useChatViewModel', () => {
 
     beforeEach(() => {
       useAppStore.setState({ screen: 'workspace', modal: null, editingProjectId: null });
-      useSettingsStore.setState({ tab: 'agents' });
+      useSettingsStore.setState({ tab: 'agent' });
       useAssistantStore.setState({ tip: null, isOpen: false });
     });
 
@@ -131,7 +131,7 @@ describe('useChatViewModel', () => {
       const result = picking('jira-plan');
 
       expect(useAppStore.getState().screen).toBe('settings');
-      expect(useSettingsStore.getState().tab).toBe('integrations');
+      expect(useSettingsStore.getState().tab).toBe('connections');
       expect(useAssistantStore.getState().tip?.text).toBe(
         'Connect Jira here, then come back to /jira.',
       );
@@ -684,7 +684,7 @@ describe('useChatViewModel', () => {
       await waitFor(() => {
         expect(useWorkspaceStore.getState().workspaces[0]?.chat.at(-1)).toMatchObject({
           kind: 'error',
-          text: 'O Claude Code está deslogado. Faça login nele em Configurações → Agentes e pergunte de novo.',
+          text: 'O Claude Code está deslogado. Faça login nele em Configurações → Agente e pergunte de novo.',
         });
       });
       await i18n.changeLanguage('en');

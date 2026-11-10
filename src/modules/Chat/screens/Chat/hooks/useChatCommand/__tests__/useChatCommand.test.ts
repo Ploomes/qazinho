@@ -598,7 +598,7 @@ describe('useChatCommand', () => {
 
       await waitFor(() => {
         expect(result.current.picker?.note).toBe(
-          'Jira refused the token. Connect Jira again in Settings → Integrations.',
+          'Jira refused the token. Connect Jira again in Settings → Connections.',
         );
       });
     });
@@ -719,7 +719,7 @@ describe('useChatCommand', () => {
 
       await waitFor(() => {
         expect(result.current.picker?.note).toBe(
-          'Confluence is off. Turn it on beside Jira in Settings → Integrations.',
+          'Confluence is off. Turn it on beside Jira in Settings → Connections.',
         );
       });
     });

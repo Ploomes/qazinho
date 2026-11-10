@@ -177,7 +177,7 @@ describe('performChatAsk', () => {
         port,
       }),
     ).toEqual({
-      text: '"off": Confluence is off, so QAzinho cannot read the page. The QA turns it on beside Jira, with the switch in Jira\'s card in Settings → Integrations.',
+      text: '"off": Confluence is off, so QAzinho cannot read the page. The QA turns it on beside Jira, with the switch in Jira\'s card in Settings → Connections.',
       isError: true,
     });
     expect(did).toEqual([]);

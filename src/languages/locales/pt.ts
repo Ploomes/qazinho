@@ -279,7 +279,7 @@ export const pt: typeof en = {
     LOOKING_ANDROID: 'Abrindo o app no emulador para ver a primeira tela…',
     LOOKING_IOS: 'Abrindo o app no simulador para ver a primeira tela…',
     FAILED_AGENT_SIGNED_OUT:
-      'O {{agent}} está deslogado. Faça login nele em Configurações → Agentes e pergunte de novo.',
+      'O {{agent}} está deslogado. Faça login nele em Configurações → Agente e pergunte de novo.',
     FAILED_AGENT_ERROR: 'O agente respondeu com um erro: {{said}}',
     FAILED_AGENT_SILENT: 'O agente parou de responder. Pergunte de novo.',
     FAILED_CODE: 'O QAzinho não conseguiu pegar o código no GitHub. {{reason}}',
@@ -518,13 +518,13 @@ export const pt: typeof en = {
     FAILED_NO_EMULATOR:
       'O QAzinho não achou um emulador Android para abrir. Crie um no Android Studio e rode o plano de novo.',
     FAILED_NO_SIMULATOR:
-      'O QAzinho precisa do idb e de um simulador de iPhone para dirigir o iOS, e falta um deles: Configurações → Dispositivos mostra qual.',
+      'O QAzinho precisa do idb e de um simulador de iPhone para dirigir o iOS, e falta um deles: Configurações → Agente mostra qual.',
     FAILED_UNREACHABLE:
       'O Chrome não conseguiu abrir {{url}} ({{code}}). Confira se o app está no ar e se esta máquina o alcança, e rode o plano de novo.',
     FAILED_AGENT_ERROR: 'O agente respondeu com um erro, então a run parou: {{said}}',
     FAILED_AGENT_SILENT: 'O agente parou de responder, então a run parou também.',
     FAILED_AGENT_SIGNED_OUT:
-      'O {{agent}} está deslogado, então a run parou. Faça login nele em Configurações → Agentes e rode o plano de novo.',
+      'O {{agent}} está deslogado, então a run parou. Faça login nele em Configurações → Agente e rode o plano de novo.',
     FAILED_OTHER: 'A run parou: {{said}}',
     REPLAY_REMOVED:
       'O vídeo desta run foi apagado depois de {{days}} dias, para liberar espaço. O relatório e as telas continuam.',
@@ -826,11 +826,12 @@ export const pt: typeof en = {
     ISLAND_TITLE: 'Ilha no topo da tela',
     ISLAND: 'Mostrar a ilha',
     BACK: 'Voltar ao app',
-    AGENTS: 'Agentes',
+    AGENT: 'Agente',
+    CONNECTIONS: 'Conexões',
+    GENERAL: 'Geral',
+    GROUP_TRACKERS: 'Trackers',
+    GROUP_AGENT_TOOLS: 'Seu agente de código',
     DEVICES: 'Dispositivos',
-    INTEGRATIONS: 'Integrações',
-    MCPS: 'MCPs',
-    APPEARANCE: 'Aparência',
     SHORTCUTS: 'Atalhos',
     ABOUT: 'Sobre',
     PRESS_KEYS: 'aperte as teclas',
@@ -942,13 +943,10 @@ export const pt: typeof en = {
     CONNECTED: 'conectado',
     NOT_CONNECTED: 'não conectado',
     GITHUB_TEXT: 'Código para planejar, issues para os bugs.',
-    GITHUB_CLI_MISSING:
-      'O gh ainda não está nesta máquina. O QAzinho instala com o {{installer}}.',
     GITHUB_CLI_SIGNED_OUT: 'O gh está aqui, mas ainda não entrou no GitHub.',
     GITHUB_CLI_AS: 'O gh está conectado como {{account}}.',
     GITHUB_CLI_READY: 'O gh já entrou como {{account}}: conectar usa esse login.',
     GITHUB_CONNECT_AS: 'Conectar como {{account}}',
-    GITHUB_INSTALL: 'Instalar o gh',
     GITHUB_INSTALLING: 'Instalando o gh…',
     GITHUB_CONNECTED_NOTE:
       'Os projetos escolhem seus repositórios por aqui, e um bug vai para um deles pela aba Bugs.',
@@ -1069,9 +1067,9 @@ export const pt: typeof en = {
   },
   GITHUB: {
     FAILURE_NO_CLI:
-      'O GitHub CLI não está nesta máquina. Instale em Configurações → Integrações.',
+      'O GitHub CLI não está nesta máquina. Instale em Configurações → Conexões.',
     FAILURE_SIGNED_OUT:
-      'O GitHub CLI saiu da conta. Conecte o GitHub de novo em Configurações → Integrações.',
+      'O GitHub CLI saiu da conta. Conecte o GitHub de novo em Configurações → Conexões.',
     FAILURE_DENIED:
       'O GitHub recusou: esta conta pode não ter acesso, ou a organização dela pede SSO.',
     FAILURE_NOT_FOUND: 'O GitHub não encontrou, ou esta conta não enxerga.',
@@ -1080,9 +1078,9 @@ export const pt: typeof en = {
   },
   JIRA: {
     FAILURE_NOT_CONNECTED:
-      'O Jira não está conectado. Conecte em Configurações → Integrações.',
+      'O Jira não está conectado. Conecte em Configurações → Conexões.',
     FAILURE_UNAUTHORIZED:
-      'O Jira recusou o token. Conecte o Jira de novo em Configurações → Integrações.',
+      'O Jira recusou o token. Conecte o Jira de novo em Configurações → Conexões.',
     FAILURE_NOT_FOUND: 'O Jira não encontrou, ou esta conta não enxerga.',
     FAILURE_UNREACHABLE: 'O Jira está fora de alcance desta máquina. Confira a rede.',
     FAILURE_REJECTED: 'O Jira recusou o que o QAzinho enviou.',
@@ -1090,7 +1088,7 @@ export const pt: typeof en = {
   },
   CONFLUENCE: {
     FAILURE_NOT_CONNECTED:
-      'O Confluence está desligado. Ligue junto do Jira em Configurações → Integrações.',
+      'O Confluence está desligado. Ligue junto do Jira em Configurações → Conexões.',
     FAILURE_UNAUTHORIZED:
       'O Confluence recusou esta conta do Jira. Confira se ela abre o Confluence no mesmo site.',
     FAILURE_NOT_FOUND: 'O Confluence não encontrou, ou esta conta não enxerga.',
@@ -1162,8 +1160,8 @@ export const pt: typeof en = {
     SEND_GITHUB: 'Enviar ao GitHub',
     TIP_CONNECT: 'Conecte o Jira ou o GitHub aqui e mande o bug de novo.',
     NO_TRACKER:
-      'Conecte o Jira ou o GitHub em Configurações → Integrações, e cada bug vai para lá com um clique.',
-    OPEN_INTEGRATIONS: 'Abrir integrações',
+      'Conecte o Jira ou o GitHub em Configurações → Conexões, e cada bug vai para lá com um clique.',
+    OPEN_INTEGRATIONS: 'Abrir conexões',
     SENDING: 'Enviando {{id}} ao {{tracker}}',
     SENDING_SUBTITLE: 'Pela sua própria conta. O QAzinho guarda o link da issue.',
     STEP_READY: 'Preparar a evidência',
@@ -1184,9 +1182,9 @@ export const pt: typeof en = {
     FAILED: '{{id}} não foi registrado',
     FAILED_SUBTITLE: 'Nada foi criado no {{tracker}}.',
     FAILURE_NOT_CONNECTED:
-      'O {{tracker}} não está conectado. Conecte em Configurações → Integrações.',
+      'O {{tracker}} não está conectado. Conecte em Configurações → Conexões.',
     FAILURE_UNAUTHORIZED:
-      'O {{tracker}} recusou o acesso que o QAzinho usa. Conecte de novo em Configurações → Integrações.',
+      'O {{tracker}} recusou o acesso que o QAzinho usa. Conecte de novo em Configurações → Conexões.',
     FAILURE_NOT_FOUND:
       'O {{tracker}} não encontrou {{where}}, ou esta conta não pode registrar lá.',
     FAILURE_UNREACHABLE:
@@ -1268,7 +1266,7 @@ export const pt: typeof en = {
     HINT: '↵ envia · ⇧↵ nova linha',
     STOPPED: 'Você parou a resposta.',
     SECRET_WARNING:
-      'Isso parece uma senha ou um token ({{secret}}). Nenhum dos dois vai no chat: um token vai em Configurações → Integrações, uma senha nas variáveis do projeto.',
+      'Isso parece uma senha ou um token ({{secret}}). Nenhum dos dois vai no chat: um token vai em Configurações → Conexões, uma senha nas variáveis do projeto.',
     SECRET_REMOVE: 'Tirar do texto',
     SECRET_SEND: 'Enviar assim mesmo',
     FAILED_OTHER: 'O Estagiário não conseguiu responder: {{said}}',
@@ -1382,7 +1380,7 @@ export const pt: typeof en = {
     FAILED_AGENT: 'O build parou: {{reason}}',
     FAILED_NOTHING: 'O build não gerou nada que o QAzinho consiga rodar. {{said}}',
     SIGNED_OUT:
-      'O {{agent}} está desconectado. Conecte em Configurações → Agentes e gere de novo.',
+      'O {{agent}} está desconectado. Conecte em Configurações → Agente e gere de novo.',
     SILENT: 'o agente parou de responder. Gere de novo.',
   },
   MASCOT: {

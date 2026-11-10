@@ -9,7 +9,7 @@ import { keybindsOf, migrateSettings, rebind } from './library';
 export const useSettingsStore = create<ISettingsStore>()(
   persist(
     (set) => ({
-      tab: 'agents',
+      tab: 'agent',
       agent: 'Claude Code',
       model: '',
       language: resolveLanguage(navigator.language),

@@ -212,13 +212,13 @@ describe('useBugSendModalViewModel', () => {
       const { result, onCancel } = modal();
 
       expect(result.current.isConnected).toBe(false);
-      expect(result.current.confirmLabel).toBe('Open integrations');
+      expect(result.current.confirmLabel).toBe('Open connections');
 
       act(() => {
         result.current.onConfirm();
       });
 
-      expect(useSettingsStore.getState().tab).toBe('integrations');
+      expect(useSettingsStore.getState().tab).toBe('connections');
       expect(useAppStore.getState().screen).toBe('settings');
       expect(onCancel).toHaveBeenCalledTimes(1);
       expect(useAssistantStore.getState().tip?.text).toBe(

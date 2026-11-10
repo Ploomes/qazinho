@@ -164,7 +164,7 @@ export const useBugSendModalViewModel = (props: IBugSendModalProps) => {
       if (trackers.length === 0) {
         say(t('FILING.TIP_CONNECT'));
         closeAssistant();
-        selectTab('integrations');
+        selectTab('connections');
         openSettings();
         onCancel();
 

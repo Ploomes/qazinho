@@ -65,7 +65,7 @@ function ghIs(status: { isFound: boolean; account: string | null }) {
 
 describe('useIntegrationCardViewModel', () => {
   describe('GitHub, through the GitHub CLI', () => {
-    it('offers to install gh when it is not on the machine, and installs it', async () => {
+    it('connects with one button: installs gh when it is missing, then signs it in', async () => {
       ghIs({ isFound: false, account: null });
       let finish: (result: { isInstalled: boolean }) => void = () => undefined;
 
@@ -74,16 +74,19 @@ describe('useIntegrationCardViewModel', () => {
           finish = resolve;
         }),
       );
+      window.qazinho.signInGithub = vi.fn().mockReturnValue(new Promise(() => undefined));
       const { result } = renderHook(() =>
         useIntegrationCardViewModel({ integration: GITHUB }),
       );
 
       await waitFor(() => {
-        expect(result.current.action).toBe('Install gh');
+        expect(window.qazinho.githubStatus).toHaveBeenCalled();
       });
-      expect(result.current.cliLine).toBe(
-        'gh is not on this machine yet. QAzinho installs it with Homebrew.',
-      );
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(result.current.action).toBe('Connect');
+      expect(result.current.cliLine).toBeNull();
 
       let installing: Promise<void> = Promise.resolve();
 
@@ -95,10 +98,35 @@ describe('useIntegrationCardViewModel', () => {
       expect(result.current.isActionBusy).toBe(true);
       expect(result.current.action).toBe('Installing gh…');
 
+      ghIs({ isFound: true, account: null });
       await act(async () => {
-        finish({ isInstalled: false });
+        finish({ isInstalled: true });
         await installing;
       });
+
+      await waitFor(() => {
+        expect(window.qazinho.signInGithub).toHaveBeenCalled();
+      });
+    });
+
+    it('does not start a sign-in when gh did not install', async () => {
+      ghIs({ isFound: false, account: null });
+      window.qazinho.installTool = vi.fn().mockResolvedValue({ isInstalled: false });
+      window.qazinho.signInGithub = vi.fn().mockReturnValue(new Promise(() => undefined));
+      const { result } = renderHook(() =>
+        useIntegrationCardViewModel({ integration: GITHUB }),
+      );
+
+      await waitFor(() => {
+        expect(window.qazinho.githubStatus).toHaveBeenCalled();
+      });
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(result.current.action).toBe('Connect');
+      await act(() => result.current.onAction());
+
+      expect(window.qazinho.signInGithub).not.toHaveBeenCalled();
     });
 
     it('signs gh in on Connect, and never opens a form for a token', async () => {
@@ -162,21 +190,6 @@ describe('useIntegrationCardViewModel', () => {
         ]);
       });
       expect(result.current.cliLine).toBeNull();
-    });
-  });
-
-  it('says gh comes with winget on Windows', async () => {
-    window.qazinho = fakeQazinhoApi('win32');
-    ghIs({ isFound: false, account: null });
-
-    const { result } = renderHook(() =>
-      useIntegrationCardViewModel({ integration: GITHUB }),
-    );
-
-    await waitFor(() => {
-      expect(result.current.cliLine).toBe(
-        'gh is not on this machine yet. QAzinho installs it with winget.',
-      );
     });
   });
 

@@ -12,9 +12,9 @@ const TRACKERS: Record<IssueTracker, string> = { jira: 'Jira', github: 'GitHub' 
 
 const FAILURES: Record<FilingFailure, string> = {
   'not-connected':
-    'it is not connected anymore. The QA connects it again in Settings → Integrations.',
+    'it is not connected anymore. The QA connects it again in Settings → Connections.',
   unauthorized:
-    'it refused the access QAzinho goes through. The QA connects it again in Settings → Integrations.',
+    'it refused the access QAzinho goes through. The QA connects it again in Settings → Connections.',
   'not-found': 'it did not find that place, or this account cannot file there.',
   unreachable: 'it is out of reach from this machine right now.',
   rejected: 'it refused the issue.',

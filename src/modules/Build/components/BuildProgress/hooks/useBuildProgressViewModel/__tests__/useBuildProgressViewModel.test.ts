@@ -122,7 +122,7 @@ describe('useBuildProgressViewModel', () => {
     const { result } = progress(onRetry);
 
     expect(result.current?.failed).toBe(
-      'The build stopped: Claude Code is signed out. Sign it in from Settings → Agents, then build again.',
+      'The build stopped: Claude Code is signed out. Sign it in from Settings → Agent, then build again.',
     );
     expect(result.current?.steps[1]?.icon).toBe('failed');
 

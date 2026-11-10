@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
 import { useGithubConnect } from '@/modules/Setup/hooks/useGithubConnect';
 import { connectFailureOf, connectionOf, formatDay } from '@/modules/Setup/library';
-import { Confluence, Integrations, Platform } from '@/services';
+import { Confluence, Integrations } from '@/services';
 import { useSettingsStore, useSetupStore } from '@/store';
 
 export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
@@ -52,7 +52,10 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
 
     clearConnect();
 
-    if (isCliMissing) void installCli();
+    if (isCliMissing)
+      void installCli().then((isFound) => {
+        if (isFound) startSignIn();
+      });
     else startSignIn();
   }, [
     isAsked,
@@ -70,9 +73,7 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
     !isCli || cli.status === null
       ? null
       : isCliMissing
-        ? t('SETUP.GITHUB_CLI_MISSING', {
-            installer: Platform.isWindows() ? 'winget' : 'Homebrew',
-          })
+        ? null
         : cli.status.account === null
           ? t('SETUP.GITHUB_CLI_SIGNED_OUT')
           : null;
@@ -94,11 +95,9 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
       ? t('COMMON.DISCONNECT')
       : isInstalling
         ? t('SETUP.GITHUB_INSTALLING')
-        : isCliMissing
-          ? t('SETUP.GITHUB_INSTALL')
-          : isCli && cli.status?.account != null
-            ? t('SETUP.GITHUB_CONNECT_AS', { account: cli.status.account })
-            : t('COMMON.CONNECT'),
+        : isCli && cli.status?.account != null
+          ? t('SETUP.GITHUB_CONNECT_AS', { account: cli.status.account })
+          : t('COMMON.CONNECT'),
     connectLabel: isConnecting ? t('SETUP.CHECKING_TOKEN') : t('COMMON.CONNECT'),
     canConnect: connection !== null && !isConnecting,
     tokenUrl: integration.tokenUrl ?? '',
@@ -173,8 +172,13 @@ export const useIntegrationCardViewModel = (props: IIntegrationCardProps) => {
 
       if (isCliBusy) return;
 
-      if (isCliMissing) await cli.onInstall();
-      else cli.onConnect();
+      if (!isCliMissing) {
+        cli.onConnect();
+
+        return;
+      }
+
+      if (await cli.onInstall()) cli.onConnect();
     },
     onInstall: async () => {
       await cli.onInstall();

@@ -4,13 +4,10 @@ import type { AppToolCall } from '@/shared/types';
 import { findByRef } from './findByRef';
 
 const SECTION_NAMES: Record<SettingsTab, string> = {
-  agents: 'Agents',
-  devices: 'Devices',
-  integrations: 'Integrations',
-  mcps: 'MCPs',
-  appearance: 'Appearance',
+  agent: 'Agent',
+  connections: 'Connections',
+  general: 'General',
   storage: 'Storage',
-  shortcuts: 'Shortcuts',
   about: 'About',
 };
 

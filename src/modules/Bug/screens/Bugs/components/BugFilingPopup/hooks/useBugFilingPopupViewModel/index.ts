@@ -82,7 +82,7 @@ export const useBugFilingPopupViewModel = (props: IBugFilingPopupProps) => {
                   label: t('FILING.OPEN_INTEGRATIONS'),
                   variant: 'primary',
                   onClick: () => {
-                    selectTab('integrations');
+                    selectTab('connections');
                     openSettings();
                     onClose();
                   },

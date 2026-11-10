@@ -157,7 +157,7 @@ export const useChatViewModel = () => {
       closeAssistant();
 
       if (blocker.place === 'integrations') {
-        selectSettingsTab('integrations');
+        selectSettingsTab('connections');
         openSettings();
       } else if (project !== null) {
         openProjectSection({ projectId: project.id, section: 'code' });

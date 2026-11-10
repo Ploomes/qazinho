@@ -6,9 +6,9 @@ import { openRoundOf } from './openRoundOf';
 
 const STORY_REFUSALS: Record<JiraFailure, string> = {
   'not-connected':
-    'Jira is not connected, so QAzinho cannot read the story. The QA connects it in Settings → Integrations.',
+    'Jira is not connected, so QAzinho cannot read the story. The QA connects it in Settings → Connections.',
   unauthorized:
-    'Jira refused the token QAzinho keeps. The QA connects Jira again in Settings → Integrations.',
+    'Jira refused the token QAzinho keeps. The QA connects Jira again in Settings → Connections.',
   'not-found': 'Jira did not find that story, or this account cannot see it.',
   unreachable: 'Jira is out of reach from this machine right now.',
   rejected: 'Jira refused to hand the story over.',
@@ -17,7 +17,7 @@ const STORY_REFUSALS: Record<JiraFailure, string> = {
 
 const PAGE_REFUSALS: Record<JiraFailure, string> = {
   'not-connected':
-    "Confluence is off, so QAzinho cannot read the page. The QA turns it on beside Jira, with the switch in Jira's card in Settings → Integrations.",
+    "Confluence is off, so QAzinho cannot read the page. The QA turns it on beside Jira, with the switch in Jira's card in Settings → Connections.",
   unauthorized:
     'Confluence refused the Jira account QAzinho keeps. The QA checks that the account can open Confluence on the same site.',
   'not-found':

@@ -1,12 +1,9 @@
 import type { SettingsTab } from '@/modules/Settings/types';
 
 export const SETTINGS_TABS: SettingsTab[] = [
-  'agents',
-  'devices',
-  'integrations',
-  'mcps',
-  'appearance',
+  'agent',
+  'connections',
+  'general',
   'storage',
-  'shortcuts',
   'about',
 ];
