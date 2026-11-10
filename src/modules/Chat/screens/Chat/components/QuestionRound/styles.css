@@ -135,7 +135,7 @@
 
 .question-round__option--picked,
 .question-round__option--picked:hover:not(:disabled) {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--lime-soft);
 }
 

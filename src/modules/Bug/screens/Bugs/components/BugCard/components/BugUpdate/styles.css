@@ -17,7 +17,7 @@
 
 .bug-update--suggested,
 .bug-update--posting {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--lime-soft);
 }
 
@@ -78,7 +78,7 @@
   flex: none;
   width: var(--icon-min);
   height: var(--icon-min);
-  border: 1.5px solid var(--lime);
+  border: 1.5px solid var(--lime-ink);
   border-right-color: transparent;
   border-radius: var(--radius-pill);
   animation: gc-spin 1.1s linear infinite;
@@ -125,7 +125,7 @@
 }
 
 .bug-update__comment:focus {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   box-shadow: 0 0 0 3px var(--lime-soft);
 }
 

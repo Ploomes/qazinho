@@ -53,7 +53,7 @@
 }
 
 .screen-rail__screen--shown .screen-rail__picture {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
 }
 
 .screen-rail__picture img {

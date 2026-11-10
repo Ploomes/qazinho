@@ -14,11 +14,11 @@
 }
 
 .file-field:hover {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
 }
 
 .file-field:focus-visible {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   outline: none;
 }
 

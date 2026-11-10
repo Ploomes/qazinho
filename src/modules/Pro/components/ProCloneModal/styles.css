@@ -31,7 +31,7 @@
 
 .pro-clone__org:focus-visible,
 .pro-clone__action:focus-visible {
-  outline: 2px solid var(--lime);
+  outline: 2px solid var(--lime-ink);
   outline-offset: 2px;
 }
 

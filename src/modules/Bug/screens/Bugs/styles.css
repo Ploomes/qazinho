@@ -34,7 +34,7 @@
 }
 
 .bugs__filter--active {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--sel);
   color: var(--ink);
   box-shadow:

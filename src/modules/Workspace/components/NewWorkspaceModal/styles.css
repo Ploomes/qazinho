@@ -23,7 +23,7 @@
 }
 
 .new-workspace__platform--chosen {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--sel);
   color: var(--ink);
   box-shadow:

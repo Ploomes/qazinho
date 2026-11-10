@@ -11,7 +11,7 @@
   width: 5px;
   height: 5px;
   border-radius: var(--radius-pill);
-  background: var(--lime);
+  background: var(--lime-ink);
   animation: gc-dot 1.3s ease-in-out infinite;
 }
 

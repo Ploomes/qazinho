@@ -13,7 +13,7 @@
   align-items: center;
   gap: var(--space-4);
   padding-right: 10px;
-  border: var(--edge-width) solid var(--edge);
+  border: var(--edge-width) solid var(--line-field);
   border-radius: var(--radius-xl);
   background: var(--raise);
   box-shadow: var(--sticker-rest);
@@ -25,12 +25,12 @@
 }
 
 .composer__field:focus-within {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   box-shadow: var(--sticker-lift);
 }
 
 .composer__field--dropping {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--lime-soft);
 }
 
@@ -230,7 +230,7 @@
   max-width: calc(100% - var(--space-4) * 2);
   margin: var(--space-3) 0 var(--space-3) var(--space-4);
   padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--lime);
+  border: 1px solid var(--lime-ink);
   border-radius: var(--radius-pill);
   background: var(--lime-soft);
   overflow: hidden;

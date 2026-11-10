@@ -53,7 +53,7 @@
 
 .pro-merge__side--chosen,
 .pro-merge__side--chosen:hover {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
 }
 
 .pro-merge__pick {
@@ -71,7 +71,7 @@
 }
 
 .pro-merge__side:has(.pro-merge__pick:focus-visible) {
-  outline: 2px solid var(--lime);
+  outline: 2px solid var(--lime-ink);
   outline-offset: 2px;
 }
 
@@ -95,7 +95,7 @@
 }
 
 .pro-merge__side--chosen .pro-merge__radio {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--lime);
 }
 

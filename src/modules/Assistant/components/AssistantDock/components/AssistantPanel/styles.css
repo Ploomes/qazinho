@@ -238,7 +238,7 @@
 }
 
 .assistant-panel__input:focus {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   outline: none;
   box-shadow: 0 0 0 3px var(--lime-soft);
 }

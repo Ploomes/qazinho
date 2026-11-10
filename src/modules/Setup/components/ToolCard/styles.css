@@ -120,7 +120,7 @@
 }
 
 .tool-card--option:focus-visible {
-  outline: 2px solid var(--lime);
+  outline: 2px solid var(--lime-ink);
   outline-offset: 2px;
 }
 
@@ -142,7 +142,7 @@
 
 .tool-card--selected,
 .tool-card--selected:hover {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: linear-gradient(var(--lime-soft), var(--lime-soft)), var(--raise);
   box-shadow: 0 0 0 1px var(--lime);
   cursor: default;
@@ -150,7 +150,7 @@
 
 .tool-card--selected .tool-card__mark,
 .tool-card--selected:hover .tool-card__mark {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--lime);
 }
 

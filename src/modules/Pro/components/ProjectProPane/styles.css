@@ -74,11 +74,11 @@
 
 .project-pro__org--on,
 .project-pro__org--on:hover {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
 }
 
 .project-pro__org:focus-visible {
-  outline: 2px solid var(--lime);
+  outline: 2px solid var(--lime-ink);
   outline-offset: 2px;
 }
 
@@ -136,7 +136,7 @@
 }
 
 .project-pro__org--on .project-pro__org-mark {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--lime);
 }
 

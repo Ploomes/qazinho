@@ -35,7 +35,7 @@
   left: 0;
   height: 3px;
   border-radius: var(--radius-pill);
-  background: var(--lime);
+  background: var(--lime-ink);
   animation: gc-tab var(--dur) var(--ease);
   content: '';
 }
@@ -53,7 +53,7 @@
   width: 7px;
   height: 7px;
   border-radius: var(--radius-pill);
-  background: var(--lime);
+  background: var(--lime-ink);
   animation: gc-blink 2.4s ease-in-out infinite;
 }
 

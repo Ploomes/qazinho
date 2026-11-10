@@ -130,7 +130,7 @@ button.settings__card:hover:not(:disabled) {
 }
 
 .settings__card--on {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
 }
 
 .settings__card--top {
@@ -250,7 +250,7 @@ button.settings__card:hover:not(:disabled) {
 }
 
 .settings__theme--on {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
 }
 
 .settings__swatch {
@@ -316,7 +316,7 @@ button.settings__card:hover:not(:disabled) {
 }
 
 .settings__language--on {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--sel);
   box-shadow:
     0 0 0 1px var(--lime),
@@ -364,7 +364,7 @@ button.settings__card:hover:not(:disabled) {
 
 .settings__choice--on,
 .settings__choice--on:hover {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--sel);
   box-shadow:
     0 0 0 1px var(--lime),
@@ -391,7 +391,7 @@ button.settings__card:hover:not(:disabled) {
 }
 
 .settings__keybind--editing {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--lime-soft);
 }
 
@@ -412,7 +412,7 @@ button.settings__card:hover:not(:disabled) {
 }
 
 .settings__keybind--editing .settings__keybind-keys {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   color: var(--lime-ink);
   animation: gc-breathe 1.4s ease-in-out infinite;
 }

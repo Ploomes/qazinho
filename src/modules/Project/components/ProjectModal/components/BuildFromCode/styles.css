@@ -49,7 +49,7 @@
 
 .build-from-code__repository--chosen,
 .build-from-code__repository--chosen:hover {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--sel);
   color: var(--ink);
 }

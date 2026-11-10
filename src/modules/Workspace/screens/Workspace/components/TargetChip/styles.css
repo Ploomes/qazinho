@@ -108,7 +108,7 @@
 }
 
 .target-chip__pick--active {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--lime-soft);
 }
 

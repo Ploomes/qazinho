@@ -91,6 +91,7 @@
   --line: #2c2e34;
   --line2: #1f2025;
   --sel: #26282e;
+  --line-field: var(--line);
   --stripe: rgba(244, 242, 234, 0.05);
 
   --ink: #f4f2ea;
@@ -129,21 +130,22 @@
 [data-theme='light'] {
   --bg: #e7e3d6;
   --win: #fbf9f3;
-  --panel: #f4f1e8;
+  --panel: #efebde;
   --center: #fbf9f3;
   --raise: #ffffff;
   --raise2: #f6f3eb;
   --screen: #efece3;
   --bubble: #ebe7dc;
 
-  --line: #dfdacd;
-  --line2: #ece8de;
+  --line: #cfc9b7;
+  --line2: #e2ddcd;
   --sel: #ebe7dc;
+  --line-field: #8e897a;
   --stripe: rgba(20, 20, 20, 0.055);
 
   --ink: #141414;
   --ink2: #5a5850;
-  --ink3: #6c6a62;
+  --ink3: #615f58;
 
   --lime: #c6f432;
   --lime-ink: #4d6a00;
@@ -151,15 +153,15 @@
   --on-lime: #141414;
   --on-attn: #ffffff;
 
-  --pass: #11774f;
+  --pass: #0e6b47;
   --pass-soft: rgba(17, 119, 79, 0.12);
-  --fail: #cf3517;
+  --fail: #bd2c10;
   --fail-soft: rgba(255, 77, 46, 0.12);
   --block: #4a5d93;
   --block-soft: rgba(74, 93, 147, 0.11);
-  --skip: #7c7a72;
+  --skip: #66645d;
   --skip-soft: rgba(124, 122, 114, 0.12);
-  --attn: #a9600c;
+  --attn: #8f4f06;
   --attn-soft: rgba(169, 96, 12, 0.13);
   --warn: #a37b00;
 
@@ -186,6 +188,7 @@
 
   --line: rgba(244, 242, 234, 0.22);
   --line2: rgba(244, 242, 234, 0.12);
+  --line-field: var(--line);
   --sel: rgba(244, 242, 234, 0.1);
   --stripe: rgba(244, 242, 234, 0.06);
 

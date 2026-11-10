@@ -46,7 +46,7 @@
 .steps-popup__badge--working::after {
   position: absolute;
   inset: calc(var(--space-2) * -1);
-  border: 1.5px solid var(--lime);
+  border: 1.5px solid var(--lime-ink);
   border-right-color: transparent;
   border-bottom-color: transparent;
   border-radius: var(--radius-pill);
@@ -55,7 +55,7 @@
 }
 
 .steps-popup__badge--connected {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--lime);
 }
 
@@ -175,13 +175,13 @@
 }
 
 .steps-popup__mark--active {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   border-right-color: transparent;
   animation: gc-spin 0.8s linear infinite;
 }
 
 .steps-popup__mark--done {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--lime);
   color: var(--on-lime);
 }

@@ -135,7 +135,7 @@
 
 .sidebar__rail-avatar--selected,
 .sidebar__rail-avatar--selected:hover {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--lime-soft);
   color: var(--lime-ink);
 }
@@ -241,7 +241,7 @@
 }
 
 .sidebar__filter:focus-within {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
 }
 
 .sidebar__filter-input {

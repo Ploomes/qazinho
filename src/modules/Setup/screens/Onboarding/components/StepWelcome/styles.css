@@ -42,7 +42,7 @@
 
 .step-welcome__language--on,
 .step-welcome__language--on:hover {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--sel);
 }
 

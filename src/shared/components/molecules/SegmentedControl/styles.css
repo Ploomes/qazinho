@@ -3,7 +3,7 @@
   align-self: flex-start;
   gap: var(--space-1);
   padding: var(--space-1);
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-field);
   border-radius: var(--radius-md);
   background: var(--raise);
 }
@@ -32,7 +32,7 @@
 .segmented__thumb {
   position: absolute;
   inset: 0;
-  border: 1px solid var(--lime);
+  border: 1px solid var(--lime-ink);
   border-radius: var(--radius-sm);
   background: var(--sel);
 }

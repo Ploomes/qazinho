@@ -53,7 +53,7 @@
 }
 
 .switch--on .switch__track {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--lime);
 }
 

@@ -71,7 +71,7 @@
 }
 
 .suggestion-card__case--chosen .suggestion-card__check {
-  border-color: var(--lime);
+  border-color: var(--lime-ink);
   background: var(--lime);
 }
 
