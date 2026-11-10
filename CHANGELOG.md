@@ -1,3 +1,24 @@
+# [0.11.0](https://github.com/Salve-Software/qazinho/compare/v0.10.0...v0.11.0) (2026-11-10)
+
+
+### Bug Fixes
+
+* **chat:** follow the end again ([da23297](https://github.com/Salve-Software/qazinho/commit/da232973b7d0564b598f71f9e68d902c4d9dfe18))
+* **theme:** show accents on Paper ([17e88bb](https://github.com/Salve-Software/qazinho/commit/17e88bb9868fde747100d72b66c4c8df04146a19))
+
+
+### Features
+
+* **chat:** put each speaker on a side ([7a6ef35](https://github.com/Salve-Software/qazinho/commit/7a6ef35e712a25e72c83ac446cbdc58af717fcaa))
+* **chat:** show answers and fixes in place ([729591c](https://github.com/Salve-Software/qazinho/commit/729591c9038491b90ff86d1834c098d02d41a22b))
+* **device:** show the last run when idle ([8fda779](https://github.com/Salve-Software/qazinho/commit/8fda779326fa792b2724fabbd4b1b93816e9e19a))
+* **plan:** move removal off the case row ([2378111](https://github.com/Salve-Software/qazinho/commit/23781113fdca2618c62ecfe44c0eb1b7c3bb899b))
+* **runs:** show the run in progress ([1dd6da4](https://github.com/Salve-Software/qazinho/commit/1dd6da44ac661b1071a67529e9cdc19652d86f7a))
+* **settings:** group the settings in five sections ([3dbfe1a](https://github.com/Salve-Software/qazinho/commit/3dbfe1af11b74de7d53b600ecc46352580f79e05))
+* **shell:** fold the sidebar in a narrow window ([76cd77c](https://github.com/Salve-Software/qazinho/commit/76cd77cc43f53de0a7a7aeede82e5088bf7daf8e))
+* **theme:** raise the smallest text ([69fb948](https://github.com/Salve-Software/qazinho/commit/69fb9484e742b86f65a555c9610a81787f047ef2))
+* **ui:** hold a region that breaks ([f3cc6bf](https://github.com/Salve-Software/qazinho/commit/f3cc6bfd6e28684e484596d9885b7b1129592a0f))
+
 # [0.10.0](https://github.com/Salve-Software/qazinho/compare/v0.9.0...v0.10.0) (2026-11-09)
 
 
