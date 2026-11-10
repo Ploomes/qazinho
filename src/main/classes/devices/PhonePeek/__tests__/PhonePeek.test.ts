@@ -24,7 +24,6 @@ function phone(props: { fails?: string } = {}) {
     describe: () => Promise.resolve('APP: app.qazinho.visitas\nTEXT:\nVisitas: 0'),
     inspect: () => Promise.resolve(''),
     glance: () => Promise.resolve(null),
-    motion: () => Promise.resolve(null),
     resize: () => Promise.resolve(),
     focus: () => Promise.resolve(),
     shoot: () => Promise.resolve(null),

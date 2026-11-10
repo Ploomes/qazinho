@@ -31,7 +31,6 @@ export type * from './GithubSignInFailure';
 export type * from './GithubSignInPhase';
 export type * from './GithubSignInProgress';
 export type * from './GithubSignInStep';
-export type * from './IActionMotion';
 export type * from './IAgentEvent';
 export type * from './IAgentLimits';
 export type * from './IAgentTurn';
