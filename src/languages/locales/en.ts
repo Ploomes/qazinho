@@ -405,6 +405,11 @@ export const en = {
   },
   RUN: {
     EMPTY_TITLE: 'No runs yet.',
+    LIVE_TITLE: 'Run in progress',
+    LIVE_FACTS: 'step {{done}} of {{total}} · {{time}}',
+    LIVE_WATCH: 'Watch live',
+    LIVE_NOW: 'now',
+    LIVE_QUEUED: 'queued',
     EMPTY_BODY: 'Every run lands here, with its verdicts and screenshots.',
     HISTORY: 'run history',
     PAGE: '{{from}}–{{to}} of {{total}} runs',

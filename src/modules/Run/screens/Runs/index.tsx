@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Caret, EmptyState, Icon, StatusPill } from '@/shared/components/atoms';
 import { Screenshot, ToTop, Tooltip } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
-import { RunPicker } from './components';
+import { LiveRun, RunPicker } from './components';
 import { useRunsViewModel } from './hooks';
 import './styles.css';
 
@@ -26,6 +26,7 @@ export const Runs: React.FC = () => {
     pager,
     summary,
     cases,
+    live,
     isEmpty,
     onSelectRun,
     onPreviousPage,
@@ -36,7 +37,11 @@ export const Runs: React.FC = () => {
   const { t } = useTranslation();
 
   if (isEmpty || run === null || current === null) {
-    return (
+    return live !== null ? (
+      <div className="runs">
+        <LiveRun {...live} />
+      </div>
+    ) : (
       <EmptyState
         mood="sleeping"
         title={t('RUN.EMPTY_TITLE')}
@@ -47,6 +52,7 @@ export const Runs: React.FC = () => {
 
   return (
     <div className="runs">
+      {live !== null && <LiveRun {...live} />}
       <div ref={topRef} className="runs__head">
         <RunPicker
           title={title}

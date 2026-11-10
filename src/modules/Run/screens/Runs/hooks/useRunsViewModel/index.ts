@@ -2,6 +2,7 @@ import type { IRun, ReplayFocus, RunEnd } from '@/modules/Run/types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatElapsed } from '@/modules/Device/library';
+import { liveCasesOf } from '@/modules/Plan/library';
 import {
   RUN_ENDS,
   RUN_PAGE_SIZE,
@@ -19,6 +20,7 @@ import {
   formatCost,
   pageOf,
   runDayOf,
+  walkedStepsOf,
   withExplorationTitle,
 } from '@/modules/Run/library';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
@@ -33,6 +35,8 @@ export const useRunsViewModel = () => {
     planSize: opened.plan.length,
     runs: opened.runs,
     bugs: opened.bugs,
+    plan: opened.plan,
+    live: opened.live,
   }));
   const selectedRunId = useWorkspaceStore((state) => state.selectedRunId);
   const selectRun = useWorkspaceStore((state) => state.selectRun);
@@ -45,6 +49,68 @@ export const useRunsViewModel = () => {
   const { topRef, isToTopShown, onToTop } = useToTop();
 
   const runs = workspace?.runs ?? [];
+  const plan = workspace?.plan ?? [];
+  const going = workspace?.live ?? null;
+  const liveCases = liveCasesOf({ plan, live: going });
+  const liveIds = Object.keys(liveCases);
+  const live =
+    going === null || liveIds.length === 0
+      ? null
+      : {
+          title: t('RUN.LIVE_TITLE'),
+          facts: t('RUN.LIVE_FACTS', {
+            done: going.outcomes.length,
+            total: walkedStepsOf({ plan, caseIds: going.caseIds }).length,
+            time: formatElapsed(going.elapsedSec),
+          }),
+          watchLabel: t('RUN.LIVE_WATCH'),
+          onWatch: () => {
+            selectTab('device');
+          },
+          cases: plan
+            .filter(({ id }) => liveIds.includes(id))
+            .map((testCase) => {
+              const item = liveCases[testCase.id];
+              const status = item?.status ?? 'pending';
+              const isNow =
+                status === 'running' || status === 'paused' || status === 'attention';
+
+              return {
+                key: testCase.id,
+                id: testCase.id,
+                title: testCase.title,
+                status,
+                isNow,
+                isWaiting: status === 'pending',
+                note: isNow
+                  ? t('RUN.LIVE_NOW')
+                  : status === 'pending'
+                    ? t('RUN.LIVE_QUEUED')
+                    : '',
+                steps: isNow
+                  ? (item?.run?.steps ?? []).map((step) => ({
+                      key: `${testCase.id}-${String(step.number)}`,
+                      number: step.number,
+                      action: step.action,
+                      status: step.verdict,
+                      isNow: step.verdict === 'running',
+                      shot: step.shot,
+                      onOpen: () => {
+                        openMedia({
+                          kicker: going.id,
+                          title: t('RUN.STEP_SHOT', {
+                            id: testCase.id,
+                            number: step.number,
+                          }),
+                          src: step.shot,
+                          file: step.shotFile,
+                        });
+                      },
+                    }))
+                  : [],
+              };
+            }),
+        };
   const bugs = workspace?.bugs ?? [];
   const picked = runs.find(({ id }) => id === selectedRunId) ?? runs[0] ?? null;
   const run =
@@ -293,6 +359,7 @@ export const useRunsViewModel = () => {
         };
       }),
     })),
+    live,
     isEmpty: runs.length === 0,
     onSelectRun: (runId: string) => {
       selectRun(runId);

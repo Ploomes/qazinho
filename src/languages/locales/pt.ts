@@ -408,6 +408,11 @@ export const pt: typeof en = {
   },
   RUN: {
     EMPTY_TITLE: 'Nenhuma run ainda.',
+    LIVE_TITLE: 'Run em curso',
+    LIVE_FACTS: 'passo {{done}} de {{total}} · {{time}}',
+    LIVE_WATCH: 'Ver ao vivo',
+    LIVE_NOW: 'agora',
+    LIVE_QUEUED: 'na fila',
     EMPTY_BODY: 'Toda run aparece aqui, com seus vereditos e screenshots.',
     HISTORY: 'histórico de runs',
     PAGE: '{{from}}–{{to}} de {{total}} runs',
