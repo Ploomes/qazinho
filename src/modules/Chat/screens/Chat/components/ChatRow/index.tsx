@@ -77,7 +77,12 @@ export const ChatRow: React.FC<IChatRowProps> = (props) => {
             onVariables={props.onVariables}
           />
         )}
-        {message.kind === 'error' && <ErrorBlock message={message} />}
+        {message.kind === 'error' && (
+          <ErrorBlock
+            message={message}
+            onRetry={props.isRetryable === true ? props.onRetry : undefined}
+          />
+        )}
         {message.kind === 'finding' && (
           <FindingNote message={message} onOpenBug={props.onOpenBug} />
         )}

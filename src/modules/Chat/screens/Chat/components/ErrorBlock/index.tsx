@@ -1,5 +1,5 @@
 import type { IErrorBlockProps } from './types';
-import { Caret, Eyebrow, Intern } from '@/shared/components/atoms';
+import { Button, Caret, Eyebrow, Intern } from '@/shared/components/atoms';
 import { useErrorBlockViewModel } from './hooks';
 import './styles.css';
 
@@ -8,8 +8,21 @@ import './styles.css';
  * veredito.
  */
 export const ErrorBlock: React.FC<IErrorBlockProps> = (props) => {
-  const { kicker, text, fix, detail, hasDetail, isExpanded, toggleLabel, onToggle } =
-    useErrorBlockViewModel(props);
+  const {
+    kicker,
+    text,
+    fix,
+    detail,
+    hasDetail,
+    isExpanded,
+    toggleLabel,
+    canRetry,
+    retryLabel,
+    modelLabel,
+    onRetry,
+    onModel,
+    onToggle,
+  } = useErrorBlockViewModel(props);
 
   return (
     <div className="error-block">
@@ -18,6 +31,16 @@ export const ErrorBlock: React.FC<IErrorBlockProps> = (props) => {
         <Eyebrow>{kicker}</Eyebrow>
         <p className="error-block__text">{text}</p>
         {fix !== null && <span className="error-block__fix">{fix}</span>}
+        {canRetry && (
+          <div className="error-block__actions">
+            <Button size="sm" onClick={onRetry}>
+              {retryLabel}
+            </Button>
+            <Button size="sm" variant="ghost" onClick={onModel}>
+              {modelLabel}
+            </Button>
+          </div>
+        )}
 
         {hasDetail && (
           <>

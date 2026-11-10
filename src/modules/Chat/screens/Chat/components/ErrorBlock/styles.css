@@ -3,9 +3,9 @@
   align-items: flex-start;
   gap: var(--space-4);
   padding: var(--space-5);
-  border: 1.5px dashed var(--fail);
+  border: var(--edge-width) solid var(--edge);
   border-radius: var(--radius-xl);
-  background: var(--fail-soft);
+  background: var(--raise);
 }
 
 .error-block__text {
@@ -15,8 +15,19 @@
 }
 
 .error-block__fix {
-  color: var(--fail);
+  color: var(--ink2);
   font: var(--font-ui-md);
+}
+
+.error-block__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.error-block .eyebrow {
+  color: var(--fail);
 }
 
 .error-block__body {
@@ -35,7 +46,7 @@
   padding: 0;
   border: none;
   background: transparent;
-  color: var(--fail);
+  color: var(--ink3);
   font: var(--font-mono-sm);
   transition: color var(--dur-fast) var(--ease);
 }

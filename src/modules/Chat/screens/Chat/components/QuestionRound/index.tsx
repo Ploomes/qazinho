@@ -87,6 +87,9 @@ export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
                             }}
                           >
                             <span className="question-round__label">{option.label}</span>
+                            {option.hasNote && (
+                              <span className="question-round__note">{option.note}</span>
+                            )}
                             {option.hasLock && (
                               <span className="question-round__lock">
                                 <Icon name="lock" />
@@ -113,6 +116,7 @@ export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
                             }}
                           >
                             <span className="question-round__label">{view.ownLabel}</span>
+                            <span className="question-round__note">{view.ownNote}</span>
                           </button>
                         )}
                       </div>

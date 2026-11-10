@@ -74,6 +74,7 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
     bodyTransition: { duration: MOTION.duration, ease: MOTION.ease },
     isOpen,
     ownLabel: t('CHAT.QUESTIONS_OTHER'),
+    ownNote: t('CHAT.QUESTIONS_OTHER_NOTE'),
     textLabel: t('CHAT.QUESTIONS_OWN'),
     hasFooter: isOpen,
     canBack: isOpen && at > 0,
@@ -106,6 +107,8 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
               tip: [option.description, names.join(', ')]
                 .filter((part) => part !== '')
                 .join(' · '),
+              note: option.description,
+              hasNote: option.description !== '' && !isAnswered,
               isPicked: answer.picked.includes(option.label),
               hasLock: names.length > 0,
             };

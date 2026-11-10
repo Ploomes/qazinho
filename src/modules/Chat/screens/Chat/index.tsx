@@ -63,6 +63,7 @@ export const Chat: React.FC = () => {
     onToggleRun,
     onOpenRun,
     onOpenBug,
+    onRetry,
     onOpenBugs,
   } = useChatViewModel();
   const { t } = useTranslation();
@@ -91,6 +92,8 @@ export const Chat: React.FC = () => {
                 isNew={item.isNew}
                 isFollowUp={item.isFollowUp}
                 isAnswerable={item.isAnswerable}
+                isRetryable={item.isRetryable}
+                onRetry={onRetry}
                 onAnswerQuestions={onAnswerQuestions}
                 onOpenPlan={onOpenPlan}
                 onTakeSuggestion={onTakeSuggestion}

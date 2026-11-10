@@ -145,6 +145,14 @@
   font: var(--font-ui-md);
 }
 
+.question-round__note {
+  flex: 0 1 auto;
+  min-width: 0;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+  text-align: right;
+}
+
 .question-round__lock {
   display: inline-flex;
   flex: none;

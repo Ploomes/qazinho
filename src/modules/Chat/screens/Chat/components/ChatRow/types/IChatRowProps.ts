@@ -16,4 +16,6 @@ export interface IChatRowProps {
   onVariables: (drafts: IVariableBrief[]) => Promise<string[] | null>;
   onOpenBug: (bugId: string) => void;
   isNested?: boolean;
+  isRetryable?: boolean;
+  onRetry?: () => void;
 }

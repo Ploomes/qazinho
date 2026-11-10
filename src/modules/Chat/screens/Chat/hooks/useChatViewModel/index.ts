@@ -198,6 +198,8 @@ export const useChatViewModel = () => {
     (workspace?.chat ?? []).filter(({ kind }) => kind === 'agent').at(-1)?.id ?? null;
   const hasPreview = !isAgentTyping && liveText !== '';
   const lastId = (workspace?.chat ?? []).at(-1)?.id ?? null;
+  const lastSaid = (workspace?.chat ?? []).findLast(({ kind }) => kind === 'user');
+  const lastMessage = (workspace?.chat ?? []).at(-1);
 
   const pending = attached.workspaceId === workspace?.id ? attached.items : [];
   const keep = (props: { workspaceId: string; outcome: AttachOutcome }) => {
@@ -232,6 +234,11 @@ export const useChatViewModel = () => {
   };
 
   const isWalking = workspace?.isWalking === true;
+  const hasOpenQuestions =
+    lastMessage?.kind === 'questions' &&
+    lastMessage.answers === null &&
+    !isAgentTyping &&
+    !isWalking;
   const activityLines = (
     workspace === null ? [] : (activities[workspace.id] ?? [])
   ).flatMap((activity) => {
@@ -538,6 +545,13 @@ export const useChatViewModel = () => {
               previous: messageBefore(index),
             }),
             isNew: item.isNew && !(hasPreview && item.message.id === lastAgentId),
+            isRetryable:
+              item.message.kind === 'error' &&
+              item.message.runId === null &&
+              item.message.id === lastId &&
+              lastSaid !== undefined &&
+              !isAgentTyping &&
+              !isWalking,
             isAnswerable:
               item.message.kind === 'questions' &&
               item.message.answers === null &&
@@ -547,7 +561,11 @@ export const useChatViewModel = () => {
           },
     ),
     lockedText: question !== null ? '' : null,
-    composerHint: isWalking ? t('CHAT.TALK_PLACEHOLDER') : null,
+    composerHint: isWalking
+      ? t('CHAT.TALK_PLACEHOLDER')
+      : hasOpenQuestions
+        ? t('CHAT.QUESTIONS_PLACEHOLDER')
+        : null,
     canAttachFiles: !isWalking,
     talkStatus:
       workspace?.liveTalk === 'waiting'
@@ -579,6 +597,9 @@ export const useChatViewModel = () => {
     },
     onOpenBugs: () => {
       selectTab('bugs');
+    },
+    onRetry: () => {
+      if (lastSaid?.kind === 'user') send(lastSaid.text);
     },
     onOpenBug: (bugId: string) => {
       if (openBugId !== bugId) toggleBug(bugId);
