@@ -5,6 +5,7 @@ import { MOTION } from '@/shared/constants';
 import {
   DeviceFocus,
   DeviceOff,
+  LastRun,
   DeviceScreen,
   LiveClock,
   ScreenRail,
@@ -61,6 +62,8 @@ export const DeviceView: React.FC = () => {
     offDetail,
     offMood,
     ended,
+    lastShot,
+    lastRun,
     doingLabel,
     stepsWord,
     stepsRef,
@@ -140,6 +143,7 @@ export const DeviceView: React.FC = () => {
                 detail={offDetail}
                 mood={offMood}
                 ended={ended}
+                shot={lastShot}
               />
             </div>
           )}
@@ -157,6 +161,7 @@ export const DeviceView: React.FC = () => {
                 detail={offDetail}
                 mood={offMood}
                 ended={ended}
+                shot={lastShot}
               />
             </div>
           )}
@@ -194,6 +199,8 @@ export const DeviceView: React.FC = () => {
           )}
         </div>
       </div>
+
+      {lastRun !== null && <LastRun {...lastRun} />}
 
       <AnimatePresence initial={false}>
         {hasSteps && (

@@ -7,4 +7,10 @@ export interface IDeviceOffProps {
   detail: string;
   mood: InternMood;
   ended: IDeviceOffEnded | null;
+  shot?: {
+    label: string;
+    src: string | null;
+    file: string | null;
+    onOpen: () => void;
+  } | null;
 }

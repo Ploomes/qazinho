@@ -11,6 +11,7 @@ import {
   formatElapsed,
   moodOfStatus,
   imageRatioOf,
+  lastRunGlanceOf,
   shownUrlOf,
   stepSectionsOf,
   stepVerdictsOf,
@@ -38,6 +39,9 @@ export const useDeviceViewModel = () => {
   const selectRun = useWorkspaceStore((state) => state.selectRun);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const openReplay = useAppStore((state) => state.openReplay);
+  const openMedia = useAppStore((state) => state.openMedia);
+  const toggleBug = useWorkspaceStore((state) => state.toggleBug);
+  const openBugId = useWorkspaceStore((state) => state.openBugId);
   const chatDevices = useWorkspaceStore((state) => state.chatDevices);
   const flashedShot = useWorkspaceStore((state) =>
     workspace === null ? undefined : state.bugFlashes[workspace.id]?.[0]?.shot,
@@ -99,6 +103,20 @@ export const useDeviceViewModel = () => {
   const hasScreen =
     isRunLive || isLearning || isFlashing || (isFocusedNow && shot !== null);
   const isFocused = isFocusedNow && hasScreen;
+  const glance =
+    lastRun === null || lastRun.kind === 'explore' || hasScreen
+      ? null
+      : lastRunGlanceOf(lastRun);
+  const lastCounts =
+    lastRun === null
+      ? null
+      : countVerdicts(lastRun.cases.map(({ steps }) => caseVerdict(steps)));
+  const openLastRun = () => {
+    if (lastRun === null) return;
+
+    selectRun(lastRun.id);
+    selectTab('runs');
+  };
   const openScreens = live?.isDone === false ? (live.screens ?? []) : [];
   const hasRail = openScreens.length > 1;
   const agentScreen = openScreens.find(({ isAgent }) => isAgent) ?? null;
@@ -269,6 +287,85 @@ export const useDeviceViewModel = () => {
               selectRun(lastRun.id);
               selectTab('runs');
             },
+          },
+    lastShot:
+      glance?.shot == null || lastRun === null
+        ? null
+        : {
+            label: t('RUN.STEP_SHOT', {
+              id: glance.shot.caseId,
+              number: glance.shot.number,
+            }),
+            src: glance.shot.src,
+            file: glance.shot.file,
+            onOpen: () => {
+              if (glance.shot === null) return;
+
+              openMedia({
+                kicker: lastRun.id,
+                title: t('RUN.STEP_SHOT', {
+                  id: glance.shot.caseId,
+                  number: glance.shot.number,
+                }),
+                src: glance.shot.src,
+                file: glance.shot.file,
+              });
+            },
+          },
+    lastRun:
+      glance?.shot == null ||
+      lastRun === null ||
+      workspace === null ||
+      lastCounts === null
+        ? null
+        : {
+            title: t('DEVICE.LAST_RUN', { id: lastRun.id }),
+            facts: t('DEVICE.LAST_RUN_FACTS', {
+              at: lastRun.startedAt,
+              time: formatElapsed(lastRun.durationSec),
+            }),
+            failedLabel:
+              lastCounts.failed + lastCounts.blocked === 0
+                ? ''
+                : t('DEVICE.LAST_RUN_FAILED', {
+                    count: lastCounts.failed + lastCounts.blocked,
+                  }),
+            passedLabel:
+              lastCounts.passed === 0
+                ? ''
+                : t('DEVICE.LAST_RUN_PASSED', { count: lastCounts.passed }),
+            where: t('DEVICE.LAST_RUN_WHERE', {
+              id: glance.shot.caseId,
+              number: glance.shot.number,
+            }),
+            runsLabel: t('DEVICE.OPEN_RUNS'),
+            canWatch: lastRun.video !== null && lastRun.video !== undefined,
+            watchLabel: t('RUN.WATCH'),
+            onOpenRuns: openLastRun,
+            onWatch: () => {
+              openReplay({
+                workspaceId: workspace.id,
+                runId: lastRun.id,
+                focus: { kind: 'run' },
+              });
+            },
+            cases: glance.failed.map((item) => ({
+              key: item.id,
+              id: item.id,
+              title: item.title,
+              linkLabel: item.bugId ?? t('DEVICE.OPEN_RUNS'),
+              onOpen: () => {
+                if (item.bugId === null) {
+                  openLastRun();
+
+                  return;
+                }
+
+                if (openBugId !== item.bugId) toggleBug(item.bugId);
+
+                selectTab('bugs');
+              },
+            })),
           },
     mood: moodOfStatus(workspace?.status ?? null),
     viewports,

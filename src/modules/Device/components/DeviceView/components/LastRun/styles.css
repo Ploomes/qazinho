@@ -1,0 +1,116 @@
+.last-run {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-6) var(--space-6);
+  animation: gc-in var(--dur) var(--ease);
+}
+
+.last-run__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.last-run__title {
+  margin: 0;
+  color: var(--ink);
+  font: var(--font-display-sm);
+  letter-spacing: var(--display-tracking);
+}
+
+.last-run__facts {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.last-run__grow {
+  flex: 1;
+}
+
+.last-run__sum {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  font: var(--font-ui-md);
+}
+
+.last-run__failed {
+  color: var(--fail);
+  font-weight: 600;
+}
+
+.last-run__passed {
+  color: var(--pass);
+  font-weight: 600;
+}
+
+.last-run__where {
+  margin-left: auto;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
+
+.last-run__cases {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+  list-style: none;
+}
+
+.last-run__case {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  min-height: 40px;
+  padding: 0;
+  border: none;
+  border-bottom: 1px solid var(--line2);
+  background: transparent;
+  color: var(--ink);
+  font: var(--font-ui-md);
+  text-align: left;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.last-run__case:hover {
+  background: var(--raise2);
+}
+
+.last-run__dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--fail);
+}
+
+.last-run__id {
+  flex: none;
+  color: var(--ink3);
+  font: var(--font-mono-sm);
+}
+
+.last-run__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.last-run__link {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--fail);
+  font: var(--font-mono-sm);
+}

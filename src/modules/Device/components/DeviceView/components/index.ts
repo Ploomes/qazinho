@@ -4,3 +4,4 @@ export * from './LiveClock';
 export * from './ViewportPicker';
 export * from './DeviceOff';
 export * from './ScreenRail';
+export * from './LastRun';
