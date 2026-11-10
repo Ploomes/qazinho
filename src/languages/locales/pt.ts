@@ -26,6 +26,17 @@ export const pt: typeof en = {
     GOT: 'Obtido',
     NO_BRIDGE: 'O QAzinho não está falando com a máquina. Reinicie o app.',
   },
+  BROKEN: {
+    TITLE_TAB: 'Esta aba quebrou',
+    TITLE_CHAT: 'O chat quebrou',
+    TITLE_SIDEBAR: 'A barra lateral quebrou',
+    TITLE_SCREEN: 'Esta tela quebrou',
+    TEXT: 'O resto do QAzinho continua funcionando. Seu plano e suas runs estão salvos.',
+    RELOAD: 'Recarregar',
+    COPY: 'Copiar o erro',
+    COPIED: 'Copiado',
+    DETAILS: 'Ver detalhes',
+  },
   TITLEBAR: {
     BETA: 'Beta',
     AGENT: '{{agent}} · {{model}}',

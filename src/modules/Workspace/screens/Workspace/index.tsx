@@ -5,6 +5,7 @@ import { Plan } from '@/modules/Plan';
 import { Runs } from '@/modules/Run';
 import { Button, Icon, StatusPill } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
+import { ErrorBarrier } from '@/shared/components/organisms';
 import { PanelTabs, RunButton, TargetChip, WorkspaceName } from './components';
 import { useWorkspaceViewModel } from './hooks';
 import './styles.css';
@@ -149,15 +150,17 @@ export const Workspace: React.FC = () => {
         />
       </div>
 
-      {tab === 'device' ? (
-        <DeviceView />
-      ) : (
-        <div className="workspace__scroll">
-          {tab === 'plan' && <Plan />}
-          {tab === 'runs' && <Runs />}
-          {tab === 'bugs' && <Bugs />}
-        </div>
-      )}
+      <ErrorBarrier key={tab} region="tab">
+        {tab === 'device' ? (
+          <DeviceView />
+        ) : (
+          <div className="workspace__scroll">
+            {tab === 'plan' && <Plan />}
+            {tab === 'runs' && <Runs />}
+            {tab === 'bugs' && <Bugs />}
+          </div>
+        )}
+      </ErrorBarrier>
     </section>
   );
 };

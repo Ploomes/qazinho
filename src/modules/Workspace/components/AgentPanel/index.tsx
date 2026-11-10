@@ -5,6 +5,7 @@ import {
   WorkspaceName,
 } from '@/modules/Workspace/screens/Workspace/components';
 import { Icon, Kbd } from '@/shared/components/atoms';
+import { ErrorBarrier } from '@/shared/components/organisms';
 import { MOTION } from '@/shared/constants';
 import { useAgentPanelViewModel } from './hooks';
 import './styles.css';
@@ -113,7 +114,9 @@ export const AgentPanel: React.FC = () => {
                 )}
               </header>
 
-              <Chat />
+              <ErrorBarrier region="chat">
+                <Chat />
+              </ErrorBarrier>
             </div>
           </motion.div>
         )}

@@ -7,7 +7,7 @@ import { Settings } from '@/modules/Settings';
 import { Onboarding } from '@/modules/Setup';
 import { UpdateRequired } from '@/modules/Update';
 import { AgentPanel, NewWorkspaceModal, Workspace } from '@/modules/Workspace';
-import { Lightbox, Titlebar } from '@/shared/components/organisms';
+import { ErrorBarrier, Lightbox, Titlebar } from '@/shared/components/organisms';
 import { Sidebar } from './components/Sidebar';
 import { useAppViewModel } from './hooks';
 import './styles.css';
@@ -47,12 +47,20 @@ export const App: React.FC = () => {
         ) : (
           <>
             <div className="app__body">
-              {isOnboarding && <Onboarding />}
-              {!isOnboarding && hasSidebar && <Sidebar />}
-              {!isOnboarding && isWelcome && <Welcome />}
-              {!isOnboarding && !isWelcome && isWorkspace && !isChatOnly && <Workspace />}
-              {!isOnboarding && !isWelcome && isWorkspace && <AgentPanel />}
-              {!isOnboarding && !isWelcome && isSettings && <Settings />}
+              <ErrorBarrier region="screen">
+                {isOnboarding && <Onboarding />}
+                {!isOnboarding && hasSidebar && (
+                  <ErrorBarrier region="sidebar">
+                    <Sidebar />
+                  </ErrorBarrier>
+                )}
+                {!isOnboarding && isWelcome && <Welcome />}
+                {!isOnboarding && !isWelcome && isWorkspace && !isChatOnly && (
+                  <Workspace />
+                )}
+                {!isOnboarding && !isWelcome && isWorkspace && <AgentPanel />}
+                {!isOnboarding && !isWelcome && isSettings && <Settings />}
+              </ErrorBarrier>
             </div>
 
             <AnimatePresence>

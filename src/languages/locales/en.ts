@@ -24,6 +24,17 @@ export const en = {
     GOT: 'Got',
     NO_BRIDGE: 'QAzinho is not talking to the machine. Restart the app.',
   },
+  BROKEN: {
+    TITLE_TAB: 'This tab broke',
+    TITLE_CHAT: 'The chat broke',
+    TITLE_SIDEBAR: 'The sidebar broke',
+    TITLE_SCREEN: 'This screen broke',
+    TEXT: 'The rest of QAzinho keeps working. Your plan and your runs are saved.',
+    RELOAD: 'Reload',
+    COPY: 'Copy the error',
+    COPIED: 'Copied',
+    DETAILS: 'See details',
+  },
   TITLEBAR: {
     BETA: 'Beta',
     AGENT: '{{agent}} · {{model}}',
