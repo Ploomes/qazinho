@@ -49,7 +49,9 @@ describe('useChatScroll', () => {
       { initialProps: chat(70) },
     );
 
-    result.current.listRef.current = document.createElement('div');
+    result.current.listRef.current = Object.assign(document.createElement('div'), {
+      scrollTo: () => undefined,
+    });
     rerender(chat(71));
 
     expect(result.current.visible).toHaveLength(30);
@@ -145,5 +147,46 @@ describe('useChatScroll', () => {
     rerender('r-01/q-1');
 
     expect(scrollTo).toHaveBeenCalledWith({ top: 3_000, behavior: 'smooth' });
+  });
+
+  /** Quem subiu para ler e mandou uma mensagem quer ver a resposta chegar. */
+  it('goes back to the end when the QA sends a message, even when they scrolled up', () => {
+    const { result, rerender } = renderHook(
+      (messages: ChatMessage[]) => useChatScroll({ workspaceId: 'w1', messages }),
+      { initialProps: chat(3) },
+    );
+    const list = scrolledTo(10);
+    const scrollTo = vi.fn();
+
+    list.scrollTo = scrollTo;
+    act(() => {
+      result.current.listRef.current = list;
+      result.current.onScroll();
+    });
+    rerender(chat(4));
+
+    expect(scrollTo).toHaveBeenCalledWith({ top: 3_000, behavior: 'smooth' });
+  });
+
+  it('does NOT jump when only the agent answers', () => {
+    const agent: ChatMessage = {
+      id: 'a-1',
+      kind: 'agent',
+      at: '09:42',
+      who: 'Estagiário',
+      text: 'ok',
+    };
+    const { result, rerender } = renderHook(
+      (messages: ChatMessage[]) => useChatScroll({ workspaceId: 'w1', messages }),
+      { initialProps: chat(3) },
+    );
+    const list = scrolledTo(10);
+    const scrollTo = vi.fn();
+
+    list.scrollTo = scrollTo;
+    result.current.listRef.current = list;
+    rerender([...chat(3), agent]);
+
+    expect(scrollTo).not.toHaveBeenCalled();
   });
 });

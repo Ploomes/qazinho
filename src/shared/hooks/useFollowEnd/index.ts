@@ -11,6 +11,26 @@ export const useFollowEnd = <T extends HTMLElement>(props: {
   const listRef = useRef<T>(null);
   const isFollowing = useRef(true);
   const previousTop = useRef(0);
+  const intentAt = useRef(Number.NEGATIVE_INFINITY);
+  const isPressing = useRef(false);
+
+  const reread = (props: { byUser: boolean }) => {
+    const list = listRef.current;
+
+    if (!list) return;
+
+    isFollowing.current = followsEndAfter({
+      wasFollowing: isFollowing.current,
+      byUser: props.byUser,
+      top: list.scrollTop,
+      previousTop: previousTop.current,
+      clientHeight: list.clientHeight,
+      scrollHeight: list.scrollHeight,
+      edgePx: FOLLOW_END.edgePx,
+      leaveEdgePx: FOLLOW_END.leaveEdgePx,
+    });
+    previousTop.current = list.scrollTop;
+  };
 
   useLayoutEffect(() => {
     const list = listRef.current;
@@ -43,6 +63,19 @@ export const useFollowEnd = <T extends HTMLElement>(props: {
           list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
       });
     });
+    const intend = () => {
+      intentAt.current = performance.now();
+    };
+    const press = () => {
+      isPressing.current = true;
+    };
+    const release = () => {
+      if (!isPressing.current) return;
+
+      isPressing.current = false;
+      previousTop.current = list.scrollTop;
+      reread({ byUser: false });
+    };
 
     observer.observe(list, {
       childList: true,
@@ -51,30 +84,31 @@ export const useFollowEnd = <T extends HTMLElement>(props: {
       attributes: true,
       attributeFilter: ['style'],
     });
+    list.addEventListener('wheel', intend, { passive: true });
+    list.addEventListener('touchmove', intend, { passive: true });
+    list.addEventListener('keydown', intend);
+    list.addEventListener('pointerdown', press);
+    window.addEventListener('pointerup', release);
 
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
+      list.removeEventListener('wheel', intend);
+      list.removeEventListener('touchmove', intend);
+      list.removeEventListener('keydown', intend);
+      list.removeEventListener('pointerdown', press);
+      window.removeEventListener('pointerup', release);
     };
   }, [resetKey, isOn]);
 
   return {
     listRef,
     onFollowScroll: () => {
-      const list = listRef.current;
-
-      if (!list) return;
-
-      isFollowing.current = followsEndAfter({
-        wasFollowing: isFollowing.current,
-        top: list.scrollTop,
-        previousTop: previousTop.current,
-        clientHeight: list.clientHeight,
-        scrollHeight: list.scrollHeight,
-        edgePx: FOLLOW_END.edgePx,
-        leaveEdgePx: FOLLOW_END.leaveEdgePx,
+      reread({
+        byUser:
+          isPressing.current ||
+          performance.now() - intentAt.current < FOLLOW_END.intentMs,
       });
-      previousTop.current = list.scrollTop;
     },
   };
 };

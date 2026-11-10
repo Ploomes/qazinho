@@ -10,9 +10,13 @@ export const useChatScroll = (props: {
   questionId?: string | null;
 }) => {
   const { workspaceId, messages, questionId = null } = props;
+  const sentId = messages.filter(({ kind }) => kind === 'user').at(-1)?.id ?? null;
   const { listRef, onFollowScroll } = useFollowEnd<HTMLDivElement>({
     resetKey: workspaceId,
-    callKey: questionId,
+    callKey:
+      questionId === null && sentId === null
+        ? null
+        : `${questionId ?? ''}|${sentId ?? ''}`,
   });
   const fromBottom = useRef<number | null>(null);
   const [shown, setShown] = useState<{ workspaceId: string | null; count: number }>({

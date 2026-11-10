@@ -82,6 +82,63 @@ describe('useFollowEnd', () => {
     expect(list.scrollTo).not.toHaveBeenCalled();
   });
 
+  /** Uma lista ligada de novo, para os ouvintes de rolagem dela existirem. */
+  function watched() {
+    const followed = follow({ resetKey: 'a' });
+
+    followed.rerender({ resetKey: 'b' });
+    followed.list.scrollTo = vi.fn();
+
+    return followed;
+  }
+
+  const frames = () => new Promise((resolve) => setTimeout(resolve, 50));
+
+  it('stops following when the reader scrolls up with the wheel', async () => {
+    const { list, result } = watched();
+
+    list.dispatchEvent(new Event('wheel'));
+    list.scrollTop = 500;
+    act(() => {
+      result.current.onFollowScroll();
+    });
+    list.append(document.createElement('div'));
+    await frames();
+
+    expect(list.scrollTo).not.toHaveBeenCalled();
+  });
+
+  it('keeps following when the list moved up with no one scrolling', async () => {
+    const { list, result } = watched();
+
+    list.scrollTop = 500;
+    act(() => {
+      result.current.onFollowScroll();
+    });
+    list.append(document.createElement('div'));
+
+    await vi.waitFor(() => {
+      expect(list.scrollTo).toHaveBeenCalledWith({ top: 1000, behavior: 'smooth' });
+    });
+  });
+
+  it('follows again when the scrollbar is let go near the end', async () => {
+    const { list, result } = watched();
+
+    list.dispatchEvent(new Event('pointerdown'));
+    list.scrollTop = 500;
+    act(() => {
+      result.current.onFollowScroll();
+    });
+    list.scrollTop = 790;
+    window.dispatchEvent(new Event('pointerup'));
+    list.append(document.createElement('div'));
+
+    await vi.waitFor(() => {
+      expect(list.scrollTo).toHaveBeenCalledWith({ top: 1000, behavior: 'smooth' });
+    });
+  });
+
   it('reads a scroll without moving the list', () => {
     const { list, result } = follow({ resetKey: 'a' });
 
