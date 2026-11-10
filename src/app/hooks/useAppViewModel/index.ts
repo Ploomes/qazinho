@@ -17,6 +17,7 @@ import {
   useMachineWatch,
   useRunEvents,
   useRunTicker,
+  useSidebarFit,
   useSidebarWidth,
   useVariables,
   useVideoSweep,
@@ -70,6 +71,7 @@ export const useAppViewModel = () => {
   useIslandSync();
   useOutsideCalls();
   useUpdateWatch();
+  useSidebarFit();
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;

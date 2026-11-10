@@ -155,4 +155,7 @@
 }
 
 @container workspace (width < 640px) {
+  .workspace__explore {
+    display: none;
+  }
 }

@@ -18,6 +18,7 @@ export const RunButton: React.FC<IRunButtonProps> = (props) => {
     isDisabled,
     tip,
     hasChoices,
+    foldClassName,
     chooseLabel,
     isOpen,
     caretClassName,
@@ -43,7 +44,7 @@ export const RunButton: React.FC<IRunButtonProps> = (props) => {
           {hasChoices && (
             <motion.span
               key="choices"
-              className="run-button__fold"
+              className={foldClassName}
               initial={{ width: 0, opacity: 0 }}
               animate={{ width: 'auto', opacity: 1 }}
               exit={{ width: 0, opacity: 0 }}
@@ -84,7 +85,7 @@ export const RunButton: React.FC<IRunButtonProps> = (props) => {
                 key={option.key}
                 type="button"
                 role="menuitem"
-                className="run-button__option"
+                className={option.className}
                 onClick={option.onPick}
               >
                 <span className="run-button__option-icon">

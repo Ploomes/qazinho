@@ -111,6 +111,7 @@ export const pt: typeof en = {
     RUN_DEVELOPED_HINT: 'Só o que já está gravado.',
     REDEVELOP: 'Desenvolver tudo de novo',
     EXPLORE: 'Explorar',
+    EXPLORE_HINT: 'O agente percorre o app por {{minutes}} min',
     EXPLORE_TIP:
       'O agente percorre o app sozinho por {{minutes}} minutos, anota cada tela, abre bug do que está quebrado e sugere um plano.',
     REDEVELOP_HINT:

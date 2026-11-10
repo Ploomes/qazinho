@@ -3,7 +3,7 @@ import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RUN_BUTTON } from '@/modules/Workspace/screens/Workspace/components/RunButton/constants';
-import { MOTION } from '@/shared/constants';
+import { EXPLORATION, MOTION } from '@/shared/constants';
 import { useDismiss } from '@/shared/hooks';
 import { useSettingsStore } from '@/store';
 
@@ -19,6 +19,7 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
     onRunDeveloped,
     onRunWithAgent,
   } = props;
+  const canExplore = props.canExplore === true;
   const { t } = useTranslation();
   const [isOpen, setOpen] = useState(false);
   const runCombo = useSettingsStore(
@@ -27,7 +28,7 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
   const ref = useDismiss<HTMLDivElement>(() => {
     setOpen(false);
   });
-  const isMenuOpen = isOpen && canRun && canChoose;
+  const isMenuOpen = isOpen && canRun && (canChoose || canExplore);
   const isDeveloping = toDevelop > 0;
   const planTitle = !isDeveloping
     ? t('WORKSPACE.RUN_PLAN')
@@ -56,7 +57,10 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
     runLabel: isContinuing ? t('WORKSPACE.CONTINUE_RUN') : planTitle,
     isDisabled: !canRun,
     tip: !canRun ? t('WORKSPACE.RUN_NO_STEPS') : isContinuing ? continueHint : planHint,
-    hasChoices: canChoose,
+    hasChoices: canChoose || canExplore,
+    foldClassName: canChoose
+      ? 'run-button__fold'
+      : 'run-button__fold run-button__fold--narrow',
     chooseLabel: t('WORKSPACE.RUN_CHOICES'),
     isOpen: isMenuOpen,
     caretClassName: isMenuOpen
@@ -68,6 +72,7 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
         ? [
             {
               key: 'continue',
+              className: 'run-button__option',
               icon: 'play' as const,
               title: t('WORKSPACE.CONTINUE_RUN'),
               hint: continueHint,
@@ -81,6 +86,7 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
         : []),
       {
         key: 'plan',
+        className: 'run-button__option',
         icon: isDeveloping ? ('sparkle' as const) : ('play' as const),
         title: planTitle,
         hint: planHint,
@@ -94,6 +100,7 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
         ? [
             {
               key: 'developed',
+              className: 'run-button__option',
               icon: 'play' as const,
               title: t(
                 developed === 1
@@ -114,6 +121,7 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
         ? [
             {
               key: 'agent',
+              className: 'run-button__option',
               icon: 'sparkle' as const,
               title: t('WORKSPACE.REDEVELOP'),
               hint: t('WORKSPACE.REDEVELOP_HINT'),
@@ -125,12 +133,28 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
             },
           ]
         : []),
+      ...(canExplore
+        ? [
+            {
+              key: 'explore',
+              className: 'run-button__option run-button__option--explore',
+              icon: 'search' as const,
+              title: t('WORKSPACE.EXPLORE'),
+              hint: t('WORKSPACE.EXPLORE_HINT', { minutes: EXPLORATION.minutes }),
+              combo: null,
+              onPick: () => {
+                setOpen(false);
+                props.onExplore?.();
+              },
+            },
+          ]
+        : []),
     ],
     onRun: () => {
       if (canRun) onRun();
     },
     onToggle: () => {
-      if (canRun && canChoose) setOpen(!isOpen);
+      if (canRun && (canChoose || canExplore)) setOpen(!isOpen);
     },
   };
 };

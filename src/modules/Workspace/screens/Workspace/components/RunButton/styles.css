@@ -155,3 +155,18 @@
     box-shadow: var(--sticker-press);
   }
 }
+
+.run-button__fold--narrow,
+.run-button__option--explore {
+  display: none;
+}
+
+@container workspace (width < 640px) {
+  .run-button__fold--narrow {
+    display: inline-flex;
+  }
+
+  .run-button__option--explore {
+    display: grid;
+  }
+}

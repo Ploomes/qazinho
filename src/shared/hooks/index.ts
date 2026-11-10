@@ -16,3 +16,4 @@ export * from './useToTop';
 export * from './useVariables';
 export * from './useVideoSweep';
 export * from './useWindowWidth';
+export * from './useSidebarFit';

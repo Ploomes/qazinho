@@ -67,11 +67,13 @@ export const Workspace: React.FC = () => {
             ) : (
               <>
                 {canExplore && (
-                  <Tooltip content={exploreTip}>
-                    <Button variant="ghost" onClick={onExplore}>
-                      {t('WORKSPACE.EXPLORE')}
-                    </Button>
-                  </Tooltip>
+                  <span className="workspace__explore">
+                    <Tooltip content={exploreTip}>
+                      <Button variant="ghost" onClick={onExplore}>
+                        {t('WORKSPACE.EXPLORE')}
+                      </Button>
+                    </Tooltip>
+                  </span>
                 )}
                 <RunButton
                   canRun={canRun}
@@ -83,6 +85,8 @@ export const Workspace: React.FC = () => {
                   onRunPlan={onRunPlan}
                   onRunDeveloped={onRunDeveloped}
                   onRunWithAgent={onRunWithAgent}
+                  canExplore={canExplore}
+                  onExplore={onExplore}
                 />
               </>
             )}

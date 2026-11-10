@@ -12,4 +12,6 @@ export interface IRunButtonProps {
   onRunPlan: () => void;
   onRunDeveloped: () => void;
   onRunWithAgent: () => void;
+  canExplore?: boolean;
+  onExplore?: () => void;
 }
