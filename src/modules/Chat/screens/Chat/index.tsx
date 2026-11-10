@@ -89,6 +89,7 @@ export const Chat: React.FC = () => {
                 key={item.key}
                 message={item.message}
                 isNew={item.isNew}
+                isFollowUp={item.isFollowUp}
                 isAnswerable={item.isAnswerable}
                 onAnswerQuestions={onAnswerQuestions}
                 onOpenPlan={onOpenPlan}
@@ -126,6 +127,7 @@ export const Chat: React.FC = () => {
                     key={row.key}
                     message={row.message}
                     isNew={row.isNew}
+                    isFollowUp={row.isFollowUp}
                     isAnswerable={false}
                     isNested
                     onAnswerQuestions={onAnswerQuestions}
@@ -163,7 +165,7 @@ export const Chat: React.FC = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: MOTION.durationSlow, ease: MOTION.ease }}
               >
-                <div className="chat__gutter chat__gutter--intern">
+                <div className="chat__face">
                   <Intern mood="thinking" size={40} />
                 </div>
                 <div className="chat__body chat__live" role="status">
@@ -182,11 +184,14 @@ export const Chat: React.FC = () => {
               transition={{ duration: MOTION.durationSlow, ease: MOTION.ease }}
             >
               {liveText === '' ? (
-                <div className="chat__gutter chat__gutter--intern">
+                <div className="chat__face">
                   <Intern mood="thinking" size={40} />
                 </div>
               ) : (
-                <div className="chat__gutter">
+                <div className="chat__head">
+                  <span className="chat__head-face" aria-hidden="true">
+                    <Intern mood="neutral" size={22} isStill isFigure />
+                  </span>
                   <span className="chat__live-who">{liveWho}</span>
                 </div>
               )}

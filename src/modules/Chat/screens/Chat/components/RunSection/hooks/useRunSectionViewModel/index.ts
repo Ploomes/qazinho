@@ -3,10 +3,11 @@ import { MOTION } from '@/shared/constants';
 
 export const useRunSectionViewModel = (props: IRunSectionProps) => {
   const isBodyShown = props.isExpandable && props.isExpanded;
+  const when = [props.day, props.at].filter((part) => part !== '').join(' ');
 
   return {
     hasCaret: props.isExpandable,
-    facts: props.facts,
+    facts: [when, props.facts].filter((part) => part !== '').join(' · '),
     isBodyShown,
     hasOpen: props.openLabel !== null,
     hasActivity: props.isLive && props.activity.length > 0,

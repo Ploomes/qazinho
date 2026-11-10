@@ -1,4 +1,9 @@
-import type { ChatItem, IQuestionAnswer, IRunMessage } from '@/modules/Chat/types';
+import type {
+  ChatItem,
+  ChatMessage,
+  IQuestionAnswer,
+  IRunMessage,
+} from '@/modules/Chat/types';
 import type { IRun } from '@/modules/Run/types';
 import type {
   AttachFailure,
@@ -24,6 +29,7 @@ import {
   groupRunMessages,
   withLiveRun,
   insertMention,
+  isFollowUp,
   mentionCandidates,
   mentionQueryOf,
   mentionsIn,
@@ -478,7 +484,7 @@ export const useChatViewModel = () => {
         ? formatElapsed(workspace?.elapsedSec ?? 0)
         : saved === null
           ? ''
-          : formatElapsed(saved.durationSec),
+          : t('CHAT.RUN_TOOK', { time: formatElapsed(saved.durationSec) }),
       isLive,
       isExpanded: expandedRuns.includes(item.runId),
       isExpandable: item.messages.length > 0,
@@ -489,33 +495,48 @@ export const useChatViewModel = () => {
               count: bugCount,
             }),
       openLabel: saved === null ? null : t('CHAT.RUN_CARD_ACTION'),
-      rows: shownMessages.map(({ message, isNew }) => ({
+      rows: shownMessages.map(({ message, isNew }, index) => ({
         key: message.id,
         message,
         isNew,
+        isFollowUp: isFollowUp({
+          message,
+          previous: shownMessages[index - 1]?.message ?? null,
+        }),
       })),
     };
   };
 
+  const chatItems = withLiveRun({
+    items: groupRunMessages({
+      messages: visible,
+      runIds: [
+        ...(workspace?.runs.map(({ id }) => id) ?? []),
+        ...(liveId === null ? [] : [liveId]),
+      ],
+    }),
+    liveId,
+    at: workspace?.liveStartedAt ?? '',
+  });
+  const messageBefore = (index: number): ChatMessage | null => {
+    const before = chatItems[index - 1];
+
+    return before?.kind === 'message' ? before.message : null;
+  };
+
   return {
-    chatStyle: { '--chat-gutter': `${String(CHAT.gutterWidth)}px` } as CSSProperties,
-    items: withLiveRun({
-      items: groupRunMessages({
-        messages: visible,
-        runIds: [
-          ...(workspace?.runs.map(({ id }) => id) ?? []),
-          ...(liveId === null ? [] : [liveId]),
-        ],
-      }),
-      liveId,
-      at: workspace?.liveStartedAt ?? '',
-    }).map((item) =>
+    chatStyle: { '--chat-bubble': `${String(CHAT.bubbleShare)}%` } as CSSProperties,
+    items: chatItems.map((item, index) =>
       item.kind === 'run'
         ? sectionOf(item)
         : {
             kind: 'message' as const,
             key: item.message.id,
             message: item.message,
+            isFollowUp: isFollowUp({
+              message: item.message,
+              previous: messageBefore(index),
+            }),
             isNew: item.isNew && !(hasPreview && item.message.id === lastAgentId),
             isAnswerable:
               item.message.kind === 'questions' &&

@@ -213,6 +213,7 @@ export const pt: typeof en = {
     ASKED_AT_STEP: '{{caseId}} · passo {{step}}',
     ASKED_AT_SCREEN: 'tela {{step}}',
     RUN_SECTION: 'Run {{id}}',
+    RUN_TOOK: 'durou {{time}}',
     RUN_SECTION_LIVE: 'Run {{id}} · {{doing}} · passo {{current}} de {{total}}',
     RUN_SECTION_PAUSED: 'Run {{id}} · pausada · passo {{current}} de {{total}}',
     RUN_SECTION_ASKED: 'Run {{id}} · passo {{current}} de {{total}}',

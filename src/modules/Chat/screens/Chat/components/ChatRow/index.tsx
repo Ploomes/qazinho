@@ -11,15 +11,20 @@ import { QuestionRound } from '@/modules/Chat/screens/Chat/components/QuestionRo
 import { SuggestionCard } from '@/modules/Chat/screens/Chat/components/SuggestionCard';
 import { UserMessage } from '@/modules/Chat/screens/Chat/components/UserMessage';
 import { VerdictNote } from '@/modules/Chat/screens/Chat/components/VerdictNote';
-import { Icon } from '@/shared/components/atoms';
+import { Icon, Intern } from '@/shared/components/atoms';
 import { useChatRowViewModel } from './hooks';
 import './styles.css';
 
-/** Uma mensagem no chat: quem a disse e quando na margem, a mensagem ao lado. */
+/**
+ * Uma mensagem no chat: a do QA num balão à direita, a do agente à esquerda com o rosto e
+ * o nome dele, e a hora quando o mouse passa.
+ */
 export const ChatRow: React.FC<IChatRowProps> = (props) => {
   const {
     planTitle,
     className,
+    hasHead,
+    hasFace,
     who,
     whoClassName,
     isFromAgent,
@@ -37,17 +42,24 @@ export const ChatRow: React.FC<IChatRowProps> = (props) => {
       animate={{ opacity: 1, y: 0 }}
       transition={transition}
     >
-      <div className="chat-row__gutter">
-        <span className={whoClassName} title={fromAgentTitle}>
-          {isFromAgent && (
-            <span className="chat-row__from-agent" aria-label={fromAgentTitle}>
-              <Icon name="sparkle" />
+      {hasHead && (
+        <div className="chat-row__head">
+          {hasFace && (
+            <span className="chat-row__face" aria-hidden="true">
+              <Intern mood="neutral" size={22} isStill isFigure />
             </span>
           )}
-          {who}
-        </span>
-        <span className="chat-row__at">{message.at}</span>
-      </div>
+          <span className={whoClassName} title={fromAgentTitle}>
+            {isFromAgent && (
+              <span className="chat-row__from-agent" aria-label={fromAgentTitle}>
+                <Icon name="sparkle" />
+              </span>
+            )}
+            {who}
+          </span>
+          <span className="chat-row__at">{message.at}</span>
+        </div>
+      )}
 
       <div className="chat-row__body">
         {message.kind === 'user' && <UserMessage message={message} />}

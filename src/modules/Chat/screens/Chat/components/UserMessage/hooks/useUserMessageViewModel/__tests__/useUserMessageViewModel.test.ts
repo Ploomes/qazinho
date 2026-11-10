@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import type { IUserMessage } from '@/modules/Chat/types';
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { useUserMessageViewModel } from '@/modules/Chat/screens/Chat/components/UserMessage/hooks/useUserMessageViewModel';
@@ -215,5 +216,49 @@ describe('useUserMessageViewModel', () => {
       { key: 'a1', name: 'erro.png', preview: 'data:image/jpeg;base64,x' },
       { key: 'a2', name: 'proposta.pdf', preview: null },
     ]);
+  });
+
+  it('puts the words and the command in a bubble, and no empty bubble under a file', () => {
+    const only = (over: Partial<IUserMessage>) =>
+      renderHook(() => useUserMessageViewModel({ message: { ...message(''), ...over } }))
+        .result.current.hasBubble;
+
+    expect(only({ text: 'hi' })).toBe(true);
+    expect(
+      only({
+        command: {
+          id: 'jira-plan',
+          key: 'SHOP-12',
+          summary: 'Coupon',
+          url: 'https://shop.atlassian.net/browse/SHOP-12',
+        },
+      }),
+    ).toBe(true);
+    expect(
+      only({
+        attachments: [
+          {
+            id: 'a-1',
+            name: 'cart.png',
+            file: 'cart.png',
+            kind: 'image',
+            size: 1,
+            preview: 'x',
+          },
+        ],
+      }),
+    ).toBe(false);
+  });
+
+  it('dresses what the coding agent wrote apart from what the QA wrote', () => {
+    const { result } = renderHook(() =>
+      useUserMessageViewModel({ message: { ...message('Plan it'), from: 'agent' } }),
+    );
+
+    expect(result.current.className).toBe('user-message user-message--outside');
+    expect(
+      renderHook(() => useUserMessageViewModel({ message: message('hi') })).result.current
+        .className,
+    ).toBe('user-message');
   });
 });

@@ -49,9 +49,14 @@ describe('useRunSectionViewModel', () => {
     });
   });
 
-  it('writes how long and how much under the title', () => {
-    expect(section().facts).toBe('3:45');
-    expect(section({ facts: '' }).facts).toBe('');
+  it('writes when the run began and how long it took under the title', () => {
+    expect(section().facts).toBe('today 09:41 · 3:45');
+    expect(section({ facts: '' }).facts).toBe('today 09:41');
+  });
+
+  it('leaves out the day it does not know, and the time a run has not got yet', () => {
+    expect(section({ day: '' }).facts).toBe('09:41 · 3:45');
+    expect(section({ day: '', at: '', facts: '' }).facts).toBe('');
   });
 
   it('offers the report only once the run has one', () => {

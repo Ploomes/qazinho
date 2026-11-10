@@ -8,6 +8,14 @@ export const useChatRowViewModel = (props: IChatRowProps) => {
 
   const isAgent = message.kind === 'agent' || message.kind === 'note';
   const isFromAgent = message.kind === 'user' && message.from === 'agent';
+  const side =
+    message.kind === 'user'
+      ? isFromAgent
+        ? 'outside'
+        : 'user'
+      : isAgent
+        ? 'agent'
+        : 'card';
 
   return {
     planTitle:
@@ -23,14 +31,25 @@ export const useChatRowViewModel = (props: IChatRowProps) => {
                 : t('PLAN.STEPS_OTHER', { count: message.stepCount }),
           })
         : '',
-    className: props.isNested === true ? 'chat-row chat-row--nested' : 'chat-row',
+    className: [
+      'chat-row',
+      `chat-row--${side}`,
+      ...(props.isNested === true ? ['chat-row--nested'] : []),
+    ].join(' '),
+    hasHead: side !== 'card' && props.isFollowUp !== true,
+    hasFace: isAgent,
     who:
       message.kind === 'user'
         ? t(isFromAgent ? 'CHAT.YOUR_AGENT' : 'CHAT.YOU')
-        : message.kind === 'agent' || message.kind === 'note'
+        : isAgent
           ? message.who
           : '',
-    whoClassName: isAgent ? 'chat-row__who chat-row__who--agent' : 'chat-row__who',
+    whoClassName:
+      side === 'agent'
+        ? 'chat-row__who chat-row__who--agent'
+        : side === 'user'
+          ? 'chat-row__who chat-row__who--unseen'
+          : 'chat-row__who',
     isFromAgent,
     fromAgentTitle: isFromAgent ? t('CHAT.FROM_AGENT') : undefined,
     initial: props.isNew ? { opacity: 0, y: 10 } : false,

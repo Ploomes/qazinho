@@ -943,6 +943,41 @@ describe('useChatViewModel', () => {
       expect(title).toBe('Run r-01 · 1 passou');
     });
 
+    it('shows the face of the agent once over replies it says in a row', () => {
+      answering({});
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...makeWorkspace([]),
+            chat: [
+              { id: 'm-1', kind: 'user', at: '09:40', text: 'Plan it' },
+              {
+                id: 'm-2',
+                kind: 'agent',
+                at: '09:41',
+                who: 'Claude Code',
+                text: 'Sure.',
+              },
+              {
+                id: 'm-3',
+                kind: 'agent',
+                at: '09:41',
+                who: 'Claude Code',
+                text: 'Done.',
+              },
+              { id: 'm-4', kind: 'agent', at: '09:42', who: 'Codex', text: 'Here.' },
+            ],
+          },
+        ],
+      });
+
+      const items = renderHook(() => useChatViewModel()).result.current.items;
+
+      expect(
+        items.map((item) => (item.kind === 'message' ? item.isFollowUp : null)),
+      ).toEqual([false, false, true, false]);
+    });
+
     it('leaves loose the error of a run that broke before its first step', () => {
       answering({});
       useWorkspaceStore.setState({

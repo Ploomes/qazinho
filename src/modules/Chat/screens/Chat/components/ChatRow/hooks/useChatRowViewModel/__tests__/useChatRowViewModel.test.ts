@@ -78,10 +78,52 @@ describe('useChatRowViewModel', () => {
     expect(row(message).initial).toBe(false);
   });
 
-  it('reads as a log line inside a run, and as a chat row everywhere else', () => {
+  it('puts the QA on the right and the agent on the left, with the face of the agent', () => {
+    expect(row({ id: 'm-1', kind: 'user', at: '09:41', text: 'hi' })).toMatchObject({
+      className: 'chat-row chat-row--user',
+      hasFace: false,
+    });
+    expect(
+      row({ id: 'm-2', kind: 'agent', at: '09:41', who: 'Claude Code', text: 'ok' }),
+    ).toMatchObject({ className: 'chat-row chat-row--agent', hasFace: true });
+  });
+
+  it('keeps "you" for a screen reader only, since the side already says it', () => {
+    expect(row({ id: 'm-1', kind: 'user', at: '09:41', text: 'hi' }).whoClassName).toBe(
+      'chat-row__who chat-row__who--unseen',
+    );
+  });
+
+  it('sets apart what the coding agent wrote from what the QA wrote', () => {
+    expect(
+      row({ id: 'm-1', kind: 'user', at: '09:41', text: 'Plan it', from: 'agent' }),
+    ).toMatchObject({
+      className: 'chat-row chat-row--outside',
+      whoClassName: 'chat-row__who',
+    });
+  });
+
+  it('shows no name over a card, nor over a reply the same agent goes on with', () => {
+    expect(
+      row({ id: 'm-4', kind: 'plan', at: '09:41', caseCount: 1, stepCount: 1 }),
+    ).toMatchObject({ className: 'chat-row chat-row--card', hasHead: false });
+    expect(
+      row(
+        { id: 'm-2', kind: 'agent', at: '09:41', who: 'Claude Code', text: 'ok' },
+        { isFollowUp: true },
+      ).hasHead,
+    ).toBe(false);
+    expect(
+      row({ id: 'm-2', kind: 'agent', at: '09:41', who: 'Claude Code', text: 'ok' })
+        .hasHead,
+    ).toBe(true);
+  });
+
+  it('marks a row that sits inside a run', () => {
     const message: ChatMessage = { id: 'm-1', kind: 'user', at: '09:41', text: 'hi' };
 
-    expect(row(message, { isNested: true }).className).toBe('chat-row chat-row--nested');
-    expect(row(message).className).toBe('chat-row');
+    expect(row(message, { isNested: true }).className).toBe(
+      'chat-row chat-row--user chat-row--nested',
+    );
   });
 });

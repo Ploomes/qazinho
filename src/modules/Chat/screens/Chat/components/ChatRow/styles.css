@@ -1,18 +1,38 @@
 .chat-row {
   display: flex;
-  gap: var(--space-6);
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
-.chat-row__gutter {
+.chat-row__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.chat-row__face {
+  display: inline-flex;
   flex: none;
-  width: var(--chat-gutter);
-  text-align: right;
 }
 
 .chat-row__who {
-  display: block;
   color: var(--ink3);
   font: var(--font-mono-sm);
+}
+
+.chat-row__who--agent {
+  color: var(--ink);
+  font: var(--font-ui-strong);
+}
+
+.chat-row__who--unseen {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .chat-row__from-agent {
@@ -22,62 +42,42 @@
   vertical-align: -1px;
 }
 
-.chat-row__who--agent {
-  color: var(--lime-ink);
-}
-
 .chat-row__at {
-  display: block;
-  margin-top: var(--space-1);
   color: var(--ink3);
   font: var(--font-mono-xs);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.chat-row:is(:hover, :focus-within) .chat-row__at {
+  opacity: 1;
 }
 
 .chat-row__body {
-  flex: 1;
   min-width: 0;
 }
 
-.chat-row--nested {
-  flex-direction: column;
-  gap: var(--space-2);
+.chat-row--user {
+  position: relative;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-end;
 }
 
-.chat-row--nested .chat-row__gutter {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-3);
-  width: auto;
-  text-align: left;
+.chat-row--user > .chat-row__head {
+  flex: none;
+  padding-bottom: var(--space-2);
 }
 
-.chat-row--nested .chat-row__at {
-  margin-top: 0;
+.chat-row--user > .chat-row__body,
+.chat-row--outside > .chat-row__body {
+  max-width: var(--chat-bubble);
 }
 
-.chat-row--nested .chat-row__who:empty {
-  display: none;
+.chat-row--outside {
+  align-items: flex-end;
 }
 
-@container agent-panel (width < 560px) {
-  .chat-row {
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .chat-row__gutter {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-3);
-    width: auto;
-    text-align: left;
-  }
-
-  .chat-row__at {
-    margin-top: 0;
-  }
-
-  .chat-row__who:empty {
-    display: none;
-  }
+.chat-row--agent > .chat-row__body > .markdown {
+  color: var(--ink);
 }

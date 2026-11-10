@@ -9,6 +9,8 @@ export const useUserMessageViewModel = (props: IUserMessageProps) => {
   const labelKey = CHAT_COMMANDS.find(({ id }) => id === command?.id)?.labelKey;
 
   return {
+    className: from === 'agent' ? 'user-message user-message--outside' : 'user-message',
+    hasBubble: text !== '' || labelKey !== undefined,
     hasText: text !== '' && from !== 'agent',
     markdown: text !== '' && from === 'agent' ? text : null,
     attachments: attachments.map((one) => ({

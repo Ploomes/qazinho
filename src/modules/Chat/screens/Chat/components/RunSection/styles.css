@@ -1,24 +1,5 @@
 .run-section {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-6);
   animation: gc-in var(--dur) var(--ease);
-}
-
-.run-section__at {
-  display: flex;
-  flex: none;
-  flex-direction: column;
-  align-items: flex-end;
-  width: var(--chat-gutter);
-  padding-top: var(--space-5);
-  color: var(--ink3);
-  font: var(--font-mono-xs);
-  text-align: right;
-}
-
-.run-section__day {
-  color: var(--ink2);
 }
 
 .run-section__box {
@@ -137,22 +118,6 @@
   padding: var(--space-5);
   border-top: 1px solid var(--line2);
   background: var(--panel);
-}
-
-@container agent-panel (width < 560px) {
-  .run-section {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-2);
-  }
-
-  .run-section__at {
-    flex-direction: row;
-    gap: var(--space-3);
-    width: auto;
-    padding-top: 0;
-    text-align: left;
-  }
 }
 
 @container agent-panel (width < 420px) {

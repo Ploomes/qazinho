@@ -3,12 +3,13 @@ import type { IVariableBrief } from '@/shared/types';
 
 /**
  * Uma mensagem no chat, com quem a disse e quando, e o que o QA pode fazer com ela;
- * `isNested` a dispõe dentro da caixa de uma run.
+ * `isNested` a põe dentro da caixa de uma run, `isFollowUp` a junta à fala de antes.
  */
 export interface IChatRowProps {
   message: ChatMessage;
   isNew: boolean;
   isAnswerable: boolean;
+  isFollowUp?: boolean;
   onAnswerQuestions: (props: { messageId: string; answers: IQuestionAnswer[] }) => void;
   onOpenPlan: () => void;
   onTakeSuggestion: (props: { messageId: string; only: number[] }) => void;

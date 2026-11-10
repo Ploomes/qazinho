@@ -14,6 +14,7 @@ export * from './formatClock';
 export * from './formatSize';
 export * from './groupRunMessages';
 export * from './insertMention';
+export * from './isFollowUp';
 export * from './matchesQuery';
 export * from './mentionCandidates';
 export * from './mentionQueryOf';

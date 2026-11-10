@@ -34,6 +34,10 @@ A maior parte das coisas é chapada: impressa na superfície, separada por espa�
 | o composer, inputs                                                | rótulos, eyebrows, o nome do projeto na sidebar |
 | botões primários, preenchidos de lima sem contorno                | botões secundários, ghost e de ícone            |
 
+**O chat separa quem fala pelo lado.** A fala do QA fica à direita, num balão `--bubble` sem linha;
+a do agente fica chapada à esquerda, com o rosto do Estagiário e o nome dele uma vez por sequência.
+A hora aparece com o mouse em cima.
+
 **A evidência nunca é tocada.** Uma captura de tela ou o dispositivo ao vivo não é inclinado,
 brilhado, contornado nem coberto. A exceção é o instante de um bug pego (`BugFlash`): o QA pediu que
 a tela pisque, a imagem vá para o centro numa moldura sobre o fundo desfocado, chegue perto do que

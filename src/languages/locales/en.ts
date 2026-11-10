@@ -210,6 +210,7 @@ export const en = {
     ASKED_AT_STEP: '{{caseId}} · step {{step}}',
     ASKED_AT_SCREEN: 'screen {{step}}',
     RUN_SECTION: 'Run {{id}}',
+    RUN_TOOK: 'took {{time}}',
     RUN_SECTION_LIVE: 'Run {{id}} · {{doing}} · step {{current}} of {{total}}',
     RUN_SECTION_PAUSED: 'Run {{id}} · paused · step {{current}} of {{total}}',
     RUN_SECTION_ASKED: 'Run {{id}} · step {{current}} of {{total}}',
