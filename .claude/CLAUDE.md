@@ -237,13 +237,13 @@ enquanto ele digita, sem tirar da frente o app em que ele está. Um segredo cont
 no app. Quando agentes de vários projetos esperam, a orelha conta as perguntas e a ilha aberta anda
 entre elas com setas, da mais antiga à mais nova, nomeando o projeto e o workspace de cada uma. Numa
 tela sem notch ela fica pendurada na borda de cima, um pill menor, e o QA a desliga em Configurações
-› Aparência. Dois Claude Code reais (Haiku), em dois projetos, perguntaram ao mesmo tempo no app
+› Geral. Dois Claude Code reais (Haiku), em dois projetos, perguntaram ao mesmo tempo no app
 construído e foram respondidos pela ilha, um pelo campo e outro por uma opção, até as runs passarem;
 o `tests/smoke/island.test.ts` prova a janela e o teclado. Os cliques e teclas desses testes são
 sintéticos, nenhum atravessou o macOS; ainda não se viu a ilha com um app em tela cheia ou um
 monitor externo, nem no Windows ou no Linux.
 
-**O agente de código do QA usa o QAzinho de fora.** Ligado em Configurações › MCPs, o QAzinho vira
+**O agente de código do QA usa o QAzinho de fora.** Ligado em Configurações › Conexões, o QAzinho vira
 um servidor MCP neste computador, com 41 ferramentas. A regra: o que o QA faz à mão no QAzinho tem
 uma ferramenta, e o que só a IA faz, como planejar a partir de uma história, de um design ou do
 código, vai pela conversa com o chat do workspace. O agente com que o QA ou o dev trabalha no

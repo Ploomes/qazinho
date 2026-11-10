@@ -137,7 +137,8 @@ abas são o plano, o dispositivo (`DeviceView`), as runs e os bugs.
   alarga sobre o chat, que continua montado, escondido e inerte, então um rascunho nunca se perde.
 - O Estagiário ouve a aba ao lado do chat, ou que o painel está escondido (`describeScreen`).
 - A sidebar se dobra num trilho com a plataforma e o estado de cada workspace (⌘B), guardado nas
-  configurações entre reinícios; o chat e o painel medem o espaço deles pela largura dela
+  configurações entre reinícios, e sozinha numa janela mais estreita que `SHELL.sidebarFoldBelow`
+  (`useSidebarFit`), voltando quando ela alarga; o chat e o painel medem o espaço deles pela largura dela
   (`useSidebarWidth`).
 
 ## IPC

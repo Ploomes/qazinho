@@ -92,7 +92,11 @@ hover e o press, e o Motion faz toda entrada e saída (`animation.md`).
 
 ## Acessibilidade
 
-- O anel de foco é um contorno lima de 2px, 2px para fora do elemento.
+- O anel de foco é um contorno de 2px no `--lime-ink`, 2px para fora do elemento: lima no Night,
+  o verde escuro no Paper, onde o lima some. Toda linha, sublinhado ou ponto que indica algo usa o
+  `--lime-ink`; o lima puro fica como preenchimento, com texto escuro em cima.
+- Uma região que quebra no render vira um aviso com Recarregar (`ErrorBarrier`): a aba, o chat, a
+  sidebar, e a tela como último recurso. O resto do app continua.
 - Um controle que age leva uma palavra, não só a forma.
 - O contraste é conferido nos dois temas: tinta sobre lima, e uma cor de status sobre o fundo
   suave dela.

@@ -31,8 +31,8 @@ font: var(--font-ui-md);
 
 | Grupo       | Tokens                                                                                          |
 | ----------- | ----------------------------------------------------------------------------------------------- |
-| Superfícies | `--bg --win --panel --center --raise --raise2 --screen`                                         |
-| Linhas      | `--line --line2 --sel --stripe`                                                                 |
+| Superfícies | `--bg --win --panel --center --raise --raise2 --screen`, `--bubble` para a fala do QA no chat   |
+| Linhas      | `--line --line2 --sel --stripe`, `--line-field` para a borda de um campo de digitar             |
 | Tinta       | `--ink --ink2 --ink3`                                                                           |
 | Destaque    | `--lime --lime-ink --lime-soft --on-lime`                                                       |
 | Vereditos   | `--pass --fail --block --skip --attn`, cada um com um par `-soft`                               |
