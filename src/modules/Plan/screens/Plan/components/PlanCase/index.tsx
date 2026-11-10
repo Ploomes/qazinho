@@ -124,14 +124,6 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                   <Icon name="play" />
                 </button>
               )}
-              <button
-                type="button"
-                className="plan-case__remove"
-                aria-label={t('PLAN.REMOVE_CASE')}
-                onClick={onCaseRemove}
-              >
-                <Icon name="close" />
-              </button>
             </span>
           )}
         </span>
@@ -292,6 +284,16 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                                   <Icon name={step.verdictIcon} /> {step.verdictLabel}
                                 </span>
                               )}
+                              {step.hasBug && (
+                                <button
+                                  type="button"
+                                  className="plan-case__bug"
+                                  onClick={step.onBugClick}
+                                >
+                                  {step.bugId}
+                                  <Icon name="arrow" />
+                                </button>
+                              )}
                               {step.frame !== null && (
                                 <a
                                   className="plan-case__frame"
@@ -307,6 +309,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                               )}
                             </div>
                           )}
+                          {step.hasWhy && <p className="plan-case__why">{step.why}</p>}
                         </div>
                       </div>
                       {canRemoveStep && (
@@ -326,14 +329,23 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                 </ol>
 
                 {!props.isLocked && (
-                  <button
-                    type="button"
-                    className="plan-case__ghost plan-case__add"
-                    onClick={onStepAdd}
-                  >
-                    <Icon name="plus" />
-                    {t('PLAN.ADD_STEP')}
-                  </button>
+                  <div className="plan-case__foot">
+                    <button
+                      type="button"
+                      className="plan-case__ghost plan-case__add"
+                      onClick={onStepAdd}
+                    >
+                      <Icon name="plus" />
+                      {t('PLAN.ADD_STEP')}
+                    </button>
+                    <button
+                      type="button"
+                      className="plan-case__drop"
+                      onClick={onCaseRemove}
+                    >
+                      {t('PLAN.REMOVE_CASE')}
+                    </button>
+                  </div>
                 )}
               </div>
             </div>

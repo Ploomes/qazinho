@@ -63,6 +63,7 @@ export const Plan: React.FC = () => {
     onDraftInChat,
     onAddCase,
     onRemoveCase,
+    onOpenBug,
     onMoveCase,
     onEditCase,
     onAddStep,
@@ -363,6 +364,7 @@ export const Plan: React.FC = () => {
                   onRunCase={onRunCase}
                   onEditCase={onEditCase}
                   onRemoveCase={onRemoveCase}
+                  onOpenBug={onOpenBug}
                   onMoveCase={onMoveCase}
                   onAddStep={onAddStep}
                   onRemoveStep={onRemoveStep}

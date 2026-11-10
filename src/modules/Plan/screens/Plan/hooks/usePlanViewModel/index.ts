@@ -87,6 +87,8 @@ export const usePlanViewModel = () => {
   const setPlan = useWorkspaceStore((state) => state.setPlan);
   const agent = useSettingsStore((state) => state.agent);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
+  const openBugId = useWorkspaceStore((state) => state.openBugId);
+  const toggleBug = useWorkspaceStore((state) => state.toggleBug);
   const { onRunCase, onStop } = useRunActions();
   const { update: updateFromOrg } = useProUpdate();
   const [removal, setRemoval] = useState<ICaseRemoval | null>(null);
@@ -595,6 +597,11 @@ export const usePlanViewModel = () => {
             text: t('PLAN.CASE_REMOVED', { id: undoable.caseId }),
             actionLabel: t('PLAN.UNDO'),
           },
+    onOpenBug: (bugId: string) => {
+      if (openBugId !== bugId) toggleBug(bugId);
+
+      selectTab('bugs');
+    },
     onRemoveCase: (caseId: string) => {
       if (workspaceId === null || isLocked) return;
 

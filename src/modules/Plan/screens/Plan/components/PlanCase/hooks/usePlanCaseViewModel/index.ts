@@ -72,9 +72,9 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     canAddGoal: !isLocked && !hasGoal && !openFacts.goal,
     canAddBefore: !isLocked && !hasBefore && !openFacts.before,
     steps: testCase.steps.map((step, index) => {
-      const verdict =
-        props.lastRun?.steps.find(({ number }) => number === index + 1)?.verdict ??
-        'pending';
+      const ran = props.lastRun?.steps.find(({ number }) => number === index + 1);
+      const verdict = ran?.verdict ?? 'pending';
+      const isBad = verdict === 'failed' || verdict === 'blocked';
 
       return {
         ...step,
@@ -85,6 +85,13 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
         verdictIcon: STATUS[verdict].icon,
         verdictLabel:
           verdict === 'skipped' ? t('PLAN.NOT_REACHED') : t(STATUS[verdict].labelKey),
+        why: isBad ? (ran?.why ?? '') : '',
+        hasWhy: isBad && (ran?.why ?? '') !== '',
+        bugId: ran?.bugId ?? '',
+        hasBug: isBad && (ran?.bugId ?? null) !== null && props.onOpenBug !== undefined,
+        onBugClick: () => {
+          if (ran?.bugId) props.onOpenBug?.(ran.bugId);
+        },
         frame:
           design === null || step.frame === undefined
             ? null
