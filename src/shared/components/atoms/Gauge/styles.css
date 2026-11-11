@@ -21,7 +21,7 @@
 }
 
 .gauge__used--tight {
-  stroke: var(--lime);
+  stroke: var(--accent);
 }
 
 .gauge__used--empty {

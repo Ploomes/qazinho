@@ -204,7 +204,7 @@
 
 .runs__take:hover {
   border-color: var(--ink2);
-  background: var(--lime-soft);
+  background: var(--accent-soft);
   color: var(--ink);
 }
 

@@ -62,7 +62,7 @@
 }
 
 .session-tip__fill--tight {
-  background: var(--lime);
+  background: var(--accent);
 }
 
 .session-tip__fill--empty {

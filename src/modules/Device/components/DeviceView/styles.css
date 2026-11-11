@@ -64,7 +64,7 @@
   padding: 0;
   border: none;
   background: none;
-  color: var(--lime-ink);
+  color: var(--accent-ink);
   font: var(--font-meta-sm);
   cursor: pointer;
   transition: opacity var(--dur-fast) var(--ease);
@@ -273,7 +273,7 @@
 
 .device-view__caption-mark {
   display: inline-flex;
-  color: var(--lime-ink);
+  color: var(--accent-ink);
 }
 
 @media (prefers-reduced-motion: no-preference) {

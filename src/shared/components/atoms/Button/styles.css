@@ -28,8 +28,8 @@
 
 .button--primary {
   border: var(--edge-width) solid var(--edge);
-  background: var(--lime);
-  color: var(--on-lime);
+  background: var(--accent);
+  color: var(--on-accent);
   font: var(--font-ui-strong);
   box-shadow: var(--sticker-rest);
   transition:

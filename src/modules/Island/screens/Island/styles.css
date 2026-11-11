@@ -61,7 +61,7 @@
 }
 
 .island__icon--running {
-  color: var(--lime);
+  color: var(--accent);
   animation: island-pulse 1.4s ease-in-out infinite;
 }
 
@@ -106,7 +106,7 @@
 }
 
 .island__line--running {
-  color: var(--lime);
+  color: var(--accent);
 }
 
 .island__line--asking {
@@ -145,7 +145,7 @@
   display: block;
   height: 100%;
   border-radius: var(--radius-pill);
-  background: var(--lime);
+  background: var(--accent);
   transition: width var(--dur) var(--ease);
 }
 

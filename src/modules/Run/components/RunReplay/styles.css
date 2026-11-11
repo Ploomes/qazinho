@@ -70,7 +70,7 @@
 
 .run-replay__preparing-icon {
   display: inline-flex;
-  color: var(--lime-ink);
+  color: var(--accent-ink);
 }
 
 .run-replay__preparing-track {
@@ -86,7 +86,7 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: var(--lime);
+  background: var(--accent);
   scale: var(--prepared) 1;
   transform-origin: left center;
   transition: scale var(--dur) var(--ease);
@@ -225,9 +225,9 @@
   padding: var(--space-2) var(--space-4);
   border: var(--edge-width) solid var(--edge);
   border-radius: var(--radius-pill);
-  background: var(--lime);
+  background: var(--accent);
   box-shadow: var(--sticker-rest);
-  color: var(--on-lime);
+  color: var(--on-accent);
   font: var(--font-ui-sm);
   cursor: pointer;
   transition:
@@ -236,7 +236,7 @@
 }
 
 .run-replay__whole-end {
-  color: var(--on-lime);
+  color: var(--on-accent);
   font: var(--font-meta-xs);
   letter-spacing: var(--tag-tracking);
   opacity: 0.7;
@@ -260,9 +260,9 @@
   padding: 0;
   border: var(--edge-width) solid var(--edge);
   border-radius: var(--radius-pill);
-  background: var(--lime);
+  background: var(--accent);
   box-shadow: var(--sticker-rest);
-  color: var(--on-lime);
+  color: var(--on-accent);
   cursor: pointer;
   transition:
     translate var(--dur-fast) var(--ease),

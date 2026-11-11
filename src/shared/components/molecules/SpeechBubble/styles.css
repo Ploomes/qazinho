@@ -51,7 +51,7 @@
   width: 8px;
   height: 1.1em;
   border-radius: 2px;
-  background: var(--lime);
+  background: var(--accent);
   animation: gc-caret 0.9s infinite;
   content: '';
 }

@@ -63,7 +63,7 @@
   height: 16px;
   border: 1px solid var(--line2);
   border-radius: var(--radius-xs);
-  color: var(--on-lime);
+  color: var(--on-accent);
   font-size: var(--icon-min);
   transition:
     background-color var(--dur-fast) var(--ease),
@@ -71,8 +71,8 @@
 }
 
 .suggestion-card__case--chosen .suggestion-card__check {
-  border-color: var(--lime-ink);
-  background: var(--lime);
+  border-color: var(--accent-ink);
+  background: var(--accent);
 }
 
 .suggestion-card__priority {

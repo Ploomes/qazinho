@@ -83,10 +83,10 @@
 @keyframes gc-glow {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(198, 244, 50, 0);
+    box-shadow: 0 0 0 0 transparent;
   }
   50% {
-    box-shadow: 0 0 22px -4px rgba(198, 244, 50, 0.45);
+    box-shadow: 0 0 22px -4px color-mix(in srgb, var(--accent) 45%, transparent);
   }
 }
 

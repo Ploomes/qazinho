@@ -85,7 +85,7 @@
 }
 
 .project-pro__org:focus-visible {
-  outline: 2px solid var(--lime-ink);
+  outline: 2px solid var(--accent-ink);
   outline-offset: -2px;
 }
 
@@ -105,14 +105,14 @@
   width: calc(var(--project-pro-radio) / 2);
   height: calc(var(--project-pro-radio) / 2);
   border-radius: var(--radius-pill);
-  background: var(--lime-ink);
+  background: var(--accent-ink);
   content: '';
   scale: 0;
   transition: scale var(--dur-fast) var(--ease);
 }
 
 .project-pro__org--on .project-pro__radio {
-  border-color: var(--lime-ink);
+  border-color: var(--accent-ink);
 }
 
 .project-pro__org--on .project-pro__radio::after {

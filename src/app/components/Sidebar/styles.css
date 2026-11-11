@@ -135,7 +135,7 @@
 .sidebar__rail-avatar--selected,
 .sidebar__rail-avatar--selected:hover {
   border-color: var(--ink2);
-  background: var(--lime-soft);
+  background: var(--accent-soft);
   color: var(--ink2);
 }
 

@@ -12,7 +12,7 @@ export const SIDEBAR_SIGNAL: Record<
   },
   running: {
     icon: 'running',
-    tone: 'var(--lime-ink)',
+    tone: 'var(--accent-ink)',
     animation: 'gc-pulse 1.8s ease-in-out infinite',
   },
   paused: { icon: 'paused', tone: 'var(--attn)', animation: 'none' },

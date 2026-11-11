@@ -37,7 +37,7 @@
   padding: 0;
   border: none;
   background: none;
-  color: var(--lime-ink);
+  color: var(--accent-ink);
   font: var(--font-meta-xs);
   text-align: right;
   cursor: pointer;
@@ -187,7 +187,7 @@
 
 .device-focus__now-number {
   flex: none;
-  color: var(--lime-ink);
+  color: var(--accent-ink);
   font: var(--font-meta-md);
   line-height: inherit;
 }

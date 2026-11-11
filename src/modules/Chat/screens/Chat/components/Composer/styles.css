@@ -25,13 +25,13 @@
 }
 
 .composer__field:focus-within {
-  border-color: var(--lime-ink);
+  border-color: var(--accent-ink);
   box-shadow: var(--sticker-lift);
 }
 
 .composer__field--dropping {
-  border-color: var(--lime-ink);
-  background: var(--lime-soft);
+  border-color: var(--accent-ink);
+  background: var(--accent-soft);
 }
 
 .composer__attach {
@@ -158,9 +158,9 @@
 
 .composer__mention {
   border-radius: var(--radius-xs);
-  background: var(--lime-soft);
+  background: var(--accent-soft);
   color: var(--ink);
-  box-shadow: 0 0 0 2px var(--lime-soft);
+  box-shadow: 0 0 0 2px var(--accent-soft);
 }
 
 .composer__icon {
@@ -176,8 +176,8 @@
   height: 34px;
   border: var(--edge-width) solid var(--edge);
   border-radius: var(--radius-pill);
-  background: var(--lime);
-  color: var(--on-lime);
+  background: var(--accent);
+  color: var(--on-accent);
   box-shadow: var(--sticker-rest);
   transition:
     translate var(--dur-fast) var(--ease),
@@ -232,7 +232,7 @@
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--line-field);
   border-radius: var(--radius-pill);
-  background: var(--lime-soft);
+  background: var(--accent-soft);
   overflow: hidden;
 }
 

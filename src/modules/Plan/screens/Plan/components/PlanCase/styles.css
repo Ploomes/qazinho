@@ -408,7 +408,7 @@
 }
 
 .plan-case__run:hover {
-  background: var(--lime-soft);
+  background: var(--accent-soft);
   color: var(--ink);
 }
 

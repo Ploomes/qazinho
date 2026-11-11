@@ -171,7 +171,7 @@
 
 .settings__swatch-accent {
   width: 16%;
-  background: var(--lime);
+  background: var(--accent);
 }
 
 .settings__theme-label {
@@ -297,13 +297,13 @@
 }
 
 .settings__keybind:focus-visible {
-  outline: 2px solid var(--lime-ink);
+  outline: 2px solid var(--accent-ink);
   outline-offset: -2px;
 }
 
 .settings__keybind--editing,
 .settings__keybind--editing:hover {
-  background: var(--lime-soft);
+  background: var(--accent-soft);
 }
 
 .settings__keybind-label {
@@ -323,8 +323,8 @@
 }
 
 .settings__keybind--editing .settings__keybind-keys {
-  border-color: var(--lime-ink);
-  color: var(--lime-ink);
+  border-color: var(--accent-ink);
+  color: var(--accent-ink);
   animation: gc-breathe 1.4s ease-in-out infinite;
 }
 

@@ -12,7 +12,7 @@
 }
 
 .status-pill--lime {
-  color: var(--lime-ink);
+  color: var(--accent-ink);
 }
 
 .status-pill--attn {

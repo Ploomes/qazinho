@@ -51,14 +51,14 @@
   width: calc(var(--tool-card-radio) / 2);
   height: calc(var(--tool-card-radio) / 2);
   border-radius: var(--radius-pill);
-  background: var(--lime-ink);
+  background: var(--accent-ink);
   content: '';
   scale: 0;
   transition: scale var(--dur-fast) var(--ease);
 }
 
 .tool-card--selected .tool-card__radio {
-  border-color: var(--lime-ink);
+  border-color: var(--accent-ink);
 }
 
 .tool-card--selected .tool-card__radio::after {
@@ -128,7 +128,7 @@
 }
 
 .tool-card--option:focus-visible {
-  outline: 2px solid var(--lime-ink);
+  outline: 2px solid var(--accent-ink);
   outline-offset: -2px;
 }
 
@@ -139,5 +139,5 @@
 }
 
 .tool-card--selected:hover .tool-card__radio {
-  border-color: var(--lime-ink);
+  border-color: var(--accent-ink);
 }

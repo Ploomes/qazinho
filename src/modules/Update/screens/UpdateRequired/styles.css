@@ -46,7 +46,7 @@
   width: 100%;
   height: 100%;
   border-radius: inherit;
-  background: var(--lime);
+  background: var(--accent);
   transform: scaleX(var(--update-progress, 0));
   transform-origin: left center;
   transition: transform var(--dur) var(--ease);

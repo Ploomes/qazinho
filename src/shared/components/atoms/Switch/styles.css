@@ -33,7 +33,7 @@
 }
 
 .switch--on .switch__icon {
-  color: var(--lime-ink);
+  color: var(--accent-ink);
 }
 
 .switch__track {
@@ -53,8 +53,8 @@
 }
 
 .switch--on .switch__track {
-  border-color: var(--lime-ink);
-  background: var(--lime);
+  border-color: var(--accent-ink);
+  background: var(--accent);
 }
 
 .switch__knob {
@@ -67,5 +67,5 @@
 }
 
 .switch--on .switch__knob {
-  background: var(--on-lime);
+  background: var(--on-accent);
 }

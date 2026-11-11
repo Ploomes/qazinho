@@ -12,9 +12,9 @@ const TOKENS: Record<keyof IStripLook, string> = {
   attn: '--attn',
   fail: '--fail',
   failSoft: '--fail-soft',
-  lime: '--lime',
-  limeInk: '--lime-ink',
-  limeSoft: '--lime-soft',
+  lime: '--accent',
+  limeInk: '--accent-ink',
+  limeSoft: '--accent-soft',
 };
 
 /** As cores da faixa a partir dos tokens do tema, como um estilo computado os lê. */

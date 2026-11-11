@@ -386,7 +386,7 @@ describe('useSidebarViewModel', () => {
       const { result } = renderHook(() => useSidebarViewModel());
 
       expect(rowOf(result)?.kind === 'workspace' && rowOf(result)).toMatchObject({
-        signal: { icon: 'running', tone: 'var(--lime-ink)', count: null },
+        signal: { icon: 'running', tone: 'var(--accent-ink)', count: null },
       });
       expect(rowOf(result)?.kind === 'workspace' && rowOf(result)?.label).toMatch(
         /^Checkout regression, .+, \d+\/\d+$/,

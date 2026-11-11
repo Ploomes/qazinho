@@ -30,7 +30,7 @@
 }
 
 .step-welcome__language:focus-visible {
-  outline: 2px solid var(--lime-ink);
+  outline: 2px solid var(--accent-ink);
   outline-offset: -2px;
 }
 
@@ -50,14 +50,14 @@
   width: calc(var(--step-welcome-radio) / 2);
   height: calc(var(--step-welcome-radio) / 2);
   border-radius: var(--radius-pill);
-  background: var(--lime-ink);
+  background: var(--accent-ink);
   content: '';
   scale: 0;
   transition: scale var(--dur-fast) var(--ease);
 }
 
 .step-welcome__language--on .step-welcome__radio {
-  border-color: var(--lime-ink);
+  border-color: var(--accent-ink);
 }
 
 .step-welcome__language--on .step-welcome__radio::after {

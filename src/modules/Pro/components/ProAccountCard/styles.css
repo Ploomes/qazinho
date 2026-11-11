@@ -28,7 +28,7 @@
 }
 
 .pro-account__card:focus-visible {
-  outline: 2px solid var(--lime-ink);
+  outline: 2px solid var(--accent-ink);
   outline-offset: 2px;
 }
 
@@ -212,7 +212,7 @@
 }
 
 .pro-account__action:focus-visible {
-  outline: 2px solid var(--lime-ink);
+  outline: 2px solid var(--accent-ink);
   outline-offset: -2px;
 }
 

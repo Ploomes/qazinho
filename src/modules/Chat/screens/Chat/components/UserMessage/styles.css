@@ -44,7 +44,7 @@
 .user-message__mention {
   padding: 0 var(--space-2);
   border-radius: var(--radius-xs);
-  background: var(--lime-soft);
+  background: var(--accent-soft);
   color: var(--ink);
   font: var(--font-meta-md);
 }
@@ -57,7 +57,7 @@
   margin: calc(var(--space-1) * -1) calc(var(--space-2) * -1) 0;
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
-  background: var(--lime-soft);
+  background: var(--accent-soft);
 }
 
 .user-message__command-name {

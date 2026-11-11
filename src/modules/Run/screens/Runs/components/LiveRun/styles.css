@@ -18,7 +18,7 @@
   width: 8px;
   height: 8px;
   border-radius: var(--radius-pill);
-  background: var(--lime-ink);
+  background: var(--accent-ink);
   animation: gc-blink 2.4s ease-in-out infinite;
 }
 
@@ -87,7 +87,7 @@
 }
 
 .live-run__note--now {
-  color: var(--lime-ink);
+  color: var(--accent-ink);
 }
 
 .live-run__steps {

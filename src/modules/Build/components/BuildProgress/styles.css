@@ -87,7 +87,7 @@
 .build-progress__step--doing .build-progress__mark::before {
   width: var(--space-3);
   height: var(--space-3);
-  background: var(--lime-ink);
+  background: var(--accent-ink);
   animation: gc-pulse 1.2s ease-in-out infinite;
 }
 

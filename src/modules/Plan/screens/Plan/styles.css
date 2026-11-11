@@ -98,7 +98,7 @@
   padding: var(--space-4) var(--space-5);
   border: 1px solid var(--line-field);
   border-radius: var(--radius-lg);
-  background: var(--lime-soft);
+  background: var(--accent-soft);
   color: var(--ink);
   font: var(--font-ui-sm);
 }
@@ -128,8 +128,8 @@
 }
 
 .plan__export-body--org {
-  border-color: var(--lime-soft);
-  background: var(--lime-soft);
+  border-color: var(--accent-soft);
+  background: var(--accent-soft);
 }
 
 .plan__export-body--failed {

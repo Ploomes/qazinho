@@ -101,7 +101,7 @@
   width: var(--space-3);
   height: var(--space-3);
   border-radius: var(--radius-pill);
-  background: var(--lime-ink);
+  background: var(--accent-ink);
   content: '';
   animation: gc-pulse 1.2s ease-in-out infinite;
 }
@@ -168,7 +168,7 @@
   width: var(--space-2);
   height: var(--space-2);
   border-radius: var(--radius-pill);
-  background: var(--lime-ink);
+  background: var(--accent-ink);
   animation: gc-dot 1.3s ease-in-out infinite;
 }
 
@@ -237,9 +237,9 @@
 }
 
 .assistant-panel__input:focus {
-  border-color: var(--lime-ink);
+  border-color: var(--accent-ink);
   outline: none;
-  box-shadow: 0 0 0 3px var(--lime-soft);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .assistant-panel__build {

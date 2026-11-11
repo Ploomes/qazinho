@@ -46,7 +46,7 @@
 .steps-popup__badge--working::after {
   position: absolute;
   inset: calc(var(--space-2) * -1);
-  border: 1.5px solid var(--lime-ink);
+  border: 1.5px solid var(--accent-ink);
   border-right-color: transparent;
   border-bottom-color: transparent;
   border-radius: var(--radius-pill);
@@ -55,8 +55,8 @@
 }
 
 .steps-popup__badge--connected {
-  border-color: var(--lime-ink);
-  background: var(--lime);
+  border-color: var(--accent-ink);
+  background: var(--accent);
 }
 
 .steps-popup__badge--failed {
@@ -85,7 +85,7 @@
 }
 
 .steps-popup__badge--connected .steps-popup__badge-mark {
-  color: var(--on-lime);
+  color: var(--on-accent);
 }
 
 .steps-popup__badge--failed .steps-popup__badge-mark {
@@ -144,7 +144,7 @@
 }
 
 .steps-popup__step--done + .steps-popup__step::before {
-  background: var(--lime);
+  background: var(--accent);
 }
 
 .steps-popup__step--active {
@@ -175,15 +175,15 @@
 }
 
 .steps-popup__mark--active {
-  border-color: var(--lime-ink);
+  border-color: var(--accent-ink);
   border-right-color: transparent;
   animation: gc-spin 0.8s linear infinite;
 }
 
 .steps-popup__mark--done {
-  border-color: var(--lime-ink);
-  background: var(--lime);
-  color: var(--on-lime);
+  border-color: var(--accent-ink);
+  background: var(--accent);
+  color: var(--on-accent);
 }
 
 .steps-popup__mark--failed {
@@ -209,7 +209,7 @@
   margin-top: var(--space-6);
   padding: var(--space-4) var(--space-5);
   border-radius: var(--radius-md);
-  background: var(--lime-soft);
+  background: var(--accent-soft);
 }
 
 .steps-popup__hint-text {

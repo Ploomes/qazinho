@@ -26,7 +26,7 @@
 }
 
 .assistant-button:focus-visible {
-  outline: 2px solid var(--lime-ink);
+  outline: 2px solid var(--accent-ink);
   outline-offset: 2px;
 }
 
@@ -50,7 +50,7 @@
 }
 
 .assistant-button__close {
-  color: var(--lime);
+  color: var(--accent);
   font: var(--font-display-md);
 }
 
@@ -65,9 +65,9 @@
   padding: 0 var(--space-2);
   border: var(--edge-width) solid var(--edge);
   border-radius: var(--radius-pill);
-  background: var(--lime);
+  background: var(--accent);
   box-shadow: var(--sticker-rest);
-  color: var(--on-lime);
+  color: var(--on-accent);
   font: var(--font-meta-xs);
   rotate: var(--tilt-sm);
 }

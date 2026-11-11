@@ -59,7 +59,7 @@
 }
 
 .first-run__field:focus-visible {
-  outline: 2px solid var(--lime-ink);
+  outline: 2px solid var(--accent-ink);
   outline-offset: 2px;
 }
 
@@ -127,7 +127,7 @@
 
 .first-run__link:focus-visible,
 .first-run__example:focus-visible {
-  outline: 2px solid var(--lime-ink);
+  outline: 2px solid var(--accent-ink);
   outline-offset: 2px;
 }
 

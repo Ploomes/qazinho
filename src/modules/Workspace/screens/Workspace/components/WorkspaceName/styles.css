@@ -56,9 +56,9 @@
 .workspace-name--editing {
   min-width: 8ch;
   margin: 0 calc(var(--space-3) * -1);
-  border-color: var(--lime-ink);
+  border-color: var(--accent-ink);
   background: var(--raise);
-  box-shadow: 0 0 0 3px var(--lime-soft);
+  box-shadow: 0 0 0 3px var(--accent-soft);
   outline: none;
   field-sizing: content;
   animation: gc-in var(--dur-fast) var(--ease);

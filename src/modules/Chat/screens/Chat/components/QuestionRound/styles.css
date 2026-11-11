@@ -136,7 +136,7 @@
 .question-round__option--picked,
 .question-round__option--picked:hover:not(:disabled) {
   border-color: var(--ink2);
-  background: var(--lime-soft);
+  background: var(--accent-soft);
 }
 
 .question-round__label {
@@ -162,7 +162,7 @@
 .question-round__tick {
   display: inline-flex;
   flex: none;
-  color: var(--lime-ink);
+  color: var(--accent-ink);
   animation: gc-in var(--dur-fast) var(--ease);
 }
 

@@ -25,17 +25,17 @@
 }
 
 .install-progress__segment--done {
-  background: var(--lime);
+  background: var(--accent);
 }
 
 .install-progress__segment--current {
-  background: var(--lime-soft);
+  background: var(--accent-soft);
 }
 
 .install-progress__segment--current::after {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, var(--lime), transparent);
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
   animation: gc-shimmer 1.2s var(--ease) infinite;
   content: '';
 }

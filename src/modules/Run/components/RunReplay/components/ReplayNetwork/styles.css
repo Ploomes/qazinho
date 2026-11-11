@@ -117,7 +117,7 @@
   position: absolute;
   inset: 0;
   border-radius: var(--radius-xs);
-  background: var(--lime-soft);
+  background: var(--accent-soft);
   pointer-events: none;
 }
 

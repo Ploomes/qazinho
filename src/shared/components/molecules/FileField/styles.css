@@ -18,7 +18,7 @@
 }
 
 .file-field:focus-visible {
-  border-color: var(--lime-ink);
+  border-color: var(--accent-ink);
   outline: none;
 }
 

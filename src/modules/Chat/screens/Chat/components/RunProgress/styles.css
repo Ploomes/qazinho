@@ -97,7 +97,7 @@
 }
 
 .run-progress__step--running .run-progress__step-icon {
-  color: var(--lime-ink);
+  color: var(--accent-ink);
 }
 
 @media (prefers-reduced-motion: no-preference) {

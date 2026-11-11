@@ -9,7 +9,7 @@
   overflow: hidden;
   border: var(--edge-width) solid var(--edge);
   border-radius: var(--radius-pill);
-  background: var(--lime);
+  background: var(--accent);
   box-shadow: var(--sticker-rest);
   transition:
     translate var(--dur-fast) var(--ease),
@@ -26,7 +26,7 @@
   justify-content: center;
   border: none;
   background: transparent;
-  color: var(--on-lime);
+  color: var(--on-accent);
   font: var(--font-ui-strong);
   white-space: nowrap;
   cursor: pointer;
@@ -46,19 +46,19 @@
 
 .run-button__more {
   padding: 0 var(--space-4) 0 var(--space-3);
-  border-left: 1px solid color-mix(in srgb, var(--on-lime) 22%, transparent);
+  border-left: 1px solid color-mix(in srgb, var(--on-accent) 22%, transparent);
 }
 
 .run-button__run:hover:not(:disabled),
 .run-button__more:hover:not(:disabled),
 .run-button--open .run-button__more {
-  background: color-mix(in srgb, var(--on-lime) 9%, transparent);
+  background: color-mix(in srgb, var(--on-accent) 9%, transparent);
   filter: none;
 }
 
 .run-button__run:focus-visible,
 .run-button__more:focus-visible {
-  outline: 2px solid var(--on-lime);
+  outline: 2px solid var(--on-accent);
   outline-offset: calc(var(--space-2) * -1);
   border-radius: var(--radius-pill);
 }

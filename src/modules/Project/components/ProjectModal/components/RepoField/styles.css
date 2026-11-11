@@ -54,7 +54,7 @@
 .repo-field__base:hover,
 .repo-field__base--open {
   border-color: var(--ink2);
-  background: var(--lime-soft);
+  background: var(--accent-soft);
   color: var(--ink);
 }
 

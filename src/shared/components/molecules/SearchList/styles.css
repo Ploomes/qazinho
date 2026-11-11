@@ -51,8 +51,8 @@
 }
 
 .search-list__input:focus {
-  border-color: var(--lime-ink);
-  box-shadow: 0 0 0 3px var(--lime-soft);
+  border-color: var(--accent-ink);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .search-list__fold {
