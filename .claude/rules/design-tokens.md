@@ -2,9 +2,12 @@
 
 O QAzinho não tem pacote de design system. A escala é um conjunto de custom properties de CSS em
 `src/shared/styles/tokens.css`, declaradas em `[data-theme]`. O layout vem do
-`assets/prototype.html`. O acento da interface é o Laranja (`--accent`: `#B4500F` no Paper, `#F59A55`
-no Night), que trocou o lima neon em 2026-11-11; os status são de saturação baixa, e a falha é
-um vermelho puro (`#C42B2B`, `#EF5B5B`), sem puxar para o laranja nem para o rosa. A marca guarda a
+`assets/prototype.html`. O acento da interface é o amarelo do rebranding (2026-11-11): a Luz
+`#FFD23F` no Night, e no Paper o Profundo `#8F6B00`, porque a Luz some no claro (1,4:1). Os botões
+preenchidos leem `--accent-fill` (a Luz nos dois temas) com `--on-accent-fill` (a Tela `#0A0906`) em
+cima; linha, texto, foco e o que roda leem `--accent`/`--accent-ink`. O fundo do Night é a Tela. A
+pergunta do agente (`--attn`) é laranja, para não se confundir com o amarelo do que roda. Os status
+são de saturação baixa, e a falha é um vermelho puro (`#C42B2B`, `#EF5B5B`). A marca guarda a
 Tinta `#141414` (`--brand-ink`), o Papel `#F4F2EA` (`--brand-paper`) e o lima do Estagiário
 (`--brand-lime`, só nele, no balão dele e na `Tag`) até a marca ser redesenhada; o índigo da folha
 de adesivos fica só no ícone do app. Como elas são usadas está no `sticker-design.md`.
@@ -32,25 +35,25 @@ font: var(--font-ui-md);
 
 ## As escalas
 
-| Grupo       | Tokens                                                                                           |
-| ----------- | ------------------------------------------------------------------------------------------------ |
-| Superfícies | `--bg --win --panel --center --raise --raise2 --screen`, `--bubble` para a fala do QA no chat    |
-| Linhas      | `--line --line2 --sel --stripe`, `--line-field` para a borda de um campo de digitar              |
-| Tinta       | `--ink --ink2 --ink3`                                                                            |
-| Destaque    | `--accent --accent-ink --accent-soft --on-accent`, e `--brand-lime --on-brand-lime` na marca     |
-| Vereditos   | `--pass --fail --block --skip --attn`, cada um com um par `-soft`                                |
-| Espaço      | `--space-1 2px` · `2 4` · `3 8` · `4 12` · `5 16` · `6 20` · `7 24` · `8 30`                     |
-| Ícone       | `--icon-min` 12px, o menor que um ícone dimensionado pelo texto desenha                          |
-| Raio        | `--radius-xs 6` · `sm 8` · `md 12` · `lg 14` · `xl 18` · `2xl 22` · `pill 999`                   |
-| Fonte       | `--font-ui-*`, `--font-meta-*`, `--font-display-sm/md/lg/xl`, `--font-code-*`, `--font-brand-*`  |
-| Tipo        | `--display-tracking` para títulos, `--brand-tracking` na marca, `--font-mono-tag --tag-tracking` |
-| Movimento   | `--ease --ease-in --dur-press --dur-fast --dur --dur-slow`                                       |
-| Linha       | `--edge` (o `--line` do tema), `--edge-width` · `-lg` · `-xl`, todos 1px                         |
-| Logo        | `--sticker-edge --sticker-edge-width --sticker-shadow --sticker-tilt`, para o adesivo do logo    |
-| Elevação    | `--sticker-rest` nenhuma · `--sticker-lift` fina · `--sticker-press` nenhuma · `--sticker-hero`  |
-| Hover       | `--lift` 0px, `--press` 1px: quanto um controle se move sob o cursor e o clique                  |
-| Inclinação  | `--tilt-xs` · `--tilt-sm` · `--tilt-md`, todos 0°: nada gira                                     |
-| Marca       | `--brand-ink --brand-paper`                                                                      |
+| Grupo       | Tokens                                                                                             |
+| ----------- | -------------------------------------------------------------------------------------------------- |
+| Superfícies | `--bg --win --panel --center --raise --raise2 --screen`, `--bubble` para a fala do QA no chat      |
+| Linhas      | `--line --line2 --sel --stripe`, `--line-field` para a borda de um campo de digitar                |
+| Tinta       | `--ink --ink2 --ink3`                                                                              |
+| Destaque    | `--accent --accent-ink --accent-soft --accent-fill --on-accent --on-accent-fill`, e `--brand-lime` |
+| Vereditos   | `--pass --fail --block --skip --attn`, cada um com um par `-soft`                                  |
+| Espaço      | `--space-1 2px` · `2 4` · `3 8` · `4 12` · `5 16` · `6 20` · `7 24` · `8 30`                       |
+| Ícone       | `--icon-min` 12px, o menor que um ícone dimensionado pelo texto desenha                            |
+| Raio        | `--radius-xs 6` · `sm 8` · `md 12` · `lg 14` · `xl 18` · `2xl 22` · `pill 999`                     |
+| Fonte       | `--font-ui-*`, `--font-meta-*`, `--font-display-sm/md/lg/xl`, `--font-code-*`, `--font-brand-*`    |
+| Tipo        | `--display-tracking` para títulos, `--brand-tracking` na marca, `--font-mono-tag --tag-tracking`   |
+| Movimento   | `--ease --ease-in --dur-press --dur-fast --dur --dur-slow`                                         |
+| Linha       | `--edge` (o `--line` do tema), `--edge-width` · `-lg` · `-xl`, todos 1px                           |
+| Logo        | `--sticker-edge --sticker-edge-width --sticker-shadow --sticker-tilt`, para o adesivo do logo      |
+| Elevação    | `--sticker-rest` nenhuma · `--sticker-lift` fina · `--sticker-press` nenhuma · `--sticker-hero`    |
+| Hover       | `--lift` 0px, `--press` 1px: quanto um controle se move sob o cursor e o clique                    |
+| Inclinação  | `--tilt-xs` · `--tilt-sm` · `--tilt-md`, todos 0°: nada gira                                       |
+| Marca       | `--brand-ink --brand-paper`                                                                        |
 
 Um campo de código, o input de URL ou um campo de arquivo ao lado dele, lê `--font-code-field`, para
 dois campos numa linha ficarem da mesma altura.
