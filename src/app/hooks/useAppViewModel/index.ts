@@ -19,6 +19,7 @@ import {
   useRunTicker,
   useSidebarFit,
   useSidebarWidth,
+  useSystemTheme,
   useVariables,
   useVideoSweep,
 } from '@/shared/hooks';
@@ -30,10 +31,11 @@ import {
   useVariablesStore,
   useWorkspaceStore,
 } from '@/store';
+import { shownThemeOf } from '@/store/AppStore/library';
 
 export const useAppViewModel = () => {
   const isChatOnly = useChatOnly();
-  const theme = useAppStore((state) => state.theme);
+  const theme = useAppStore(shownThemeOf);
   const screen = useAppStore((state) => state.screen);
   const projects = useAppStore((state) => state.projects);
   const modal = useAppStore((state) => state.modal);
@@ -72,6 +74,7 @@ export const useAppViewModel = () => {
   useOutsideCalls();
   useUpdateWatch();
   useSidebarFit();
+  useSystemTheme();
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -120,7 +123,8 @@ export const useAppViewModel = () => {
     isTitlebarBare: isUpdateBlocked || !hasOnboarded,
     isOnboarding: !hasOnboarded,
     hasSidebar: projects.length > 0 && screen !== 'settings',
-    isWelcome: screen !== 'settings' && (screen === 'welcome' || projects.length === 0),
+    isFirstRun: screen !== 'settings' && projects.length === 0,
+    isHome: screen === 'welcome' && projects.length > 0,
     isWorkspace: screen === 'workspace',
     isChatOnly,
     isSettings: screen === 'settings',

@@ -1,0 +1,216 @@
+import type { WorkspaceTab } from '@/modules/Workspace/types';
+import type { CSSProperties } from 'react';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { formatClock } from '@/modules/Chat';
+import { HOME_ITEMS, HOME_SCREEN } from '@/modules/Home/constants';
+import { dayKeyOf, homeOf } from '@/modules/Home/library';
+import { projectAppOf, projectMarkOf, useSiteIcons } from '@/modules/Project';
+import { dayLabelOf, flattenPlanSteps, RUN_HOW_KEYS } from '@/modules/Run';
+import { Run } from '@/services';
+import { HOME } from '@/shared/constants';
+import { useAppStore, useWorkspaceStore } from '@/store';
+
+export const useHomeViewModel = () => {
+  const { t, i18n } = useTranslation();
+  const projects = useAppStore((state) => state.projects);
+  const recent = useAppStore((state) => state.recent);
+  const selectWorkspace = useAppStore((state) => state.selectWorkspace);
+  const workspaces = useWorkspaceStore((state) => state.workspaces);
+  const developed = useWorkspaceStore((state) => state.developedCases);
+  const setDeveloped = useWorkspaceStore((state) => state.setDevelopedCases);
+  const selectTab = useWorkspaceStore((state) => state.selectTab);
+  const icons = useSiteIcons(
+    projects.flatMap(({ targets }) => projectAppOf(targets).address ?? []),
+  );
+
+  const home = homeOf({
+    projects,
+    workspaces,
+    developed,
+    recent,
+    shown: HOME.recentShown,
+  });
+
+  const unknownKey = workspaces
+    .filter(
+      (workspace) =>
+        developed[workspace.id] === undefined &&
+        workspace.plan.length > 0 &&
+        (workspace.live === null || workspace.live.isDone),
+    )
+    .map(({ id }) => id)
+    .join('\n');
+
+  useEffect(() => {
+    const ids = unknownKey.split('\n');
+    const known = useAppStore.getState().projects;
+
+    for (const workspace of useWorkspaceStore.getState().workspaces) {
+      const targetKind = known
+        .find(({ id }) => id === workspace.projectId)
+        ?.targets.find(({ id }) => id === workspace.targetId)?.kind;
+
+      if (!ids.includes(workspace.id) || targetKind === undefined) continue;
+
+      void Run.developed({
+        workspaceId: workspace.id,
+        steps: flattenPlanSteps(workspace.plan),
+        targetKind,
+      }).then(({ caseIds, files }) => {
+        setDeveloped({ workspaceId: workspace.id, caseIds, files });
+      });
+    }
+  }, [unknownKey, setDeveloped]);
+
+  const open = (props: { workspaceId: string; tab: WorkspaceTab | null }) => {
+    selectWorkspace(props.workspaceId);
+
+    if (props.tab !== null) selectTab(props.tab);
+  };
+
+  const groups = [
+    {
+      id: 'asking',
+      title: t('HOME.GROUP_ASKING'),
+      items: home.asking.map((item) => ({
+        id: item.workspaceId,
+        ...HOME_ITEMS.asking,
+        text: t('HOME.ASKING', { plan: item.plan, question: item.question }),
+        project: item.project,
+        action: t('HOME.ANSWER'),
+        onAction: () => {
+          open({ workspaceId: item.workspaceId, tab: 'chat' });
+        },
+      })),
+    },
+    {
+      id: 'going',
+      title: t('HOME.GROUP_GOING'),
+      items: home.going.map((item) => ({
+        id: item.workspaceId,
+        ...HOME_ITEMS[item.kind],
+        text:
+          item.kind === 'paused'
+            ? t('HOME.PAUSED', { plan: item.plan })
+            : item.isExplore
+              ? t(item.total === 1 ? 'HOME.EXPLORING_ONE' : 'HOME.EXPLORING_OTHER', {
+                  plan: item.plan,
+                  count: item.total,
+                })
+              : t('HOME.RUNNING', {
+                  plan: item.plan,
+                  how: t(RUN_HOW_KEYS[item.how ?? 'replay']),
+                  current: item.current,
+                  total: item.total,
+                }),
+        project: item.project,
+        action: t('HOME.WATCH'),
+        onAction: () => {
+          open({ workspaceId: item.workspaceId, tab: 'device' });
+        },
+      })),
+    },
+    {
+      id: 'continue',
+      title: t('HOME.GROUP_CONTINUE'),
+      items: home.toContinue.map((item) => ({
+        id: item.workspaceId,
+        ...HOME_ITEMS.toContinue,
+        text: t(item.cases === 1 ? 'HOME.CONTINUE_ONE' : 'HOME.CONTINUE_OTHER', {
+          plan: item.plan,
+          count: item.cases,
+        }),
+        project: item.project,
+        action: t('HOME.OPEN'),
+        onAction: () => {
+          open({ workspaceId: item.workspaceId, tab: 'plan' });
+        },
+      })),
+    },
+    {
+      id: 'failed',
+      title: t('HOME.GROUP_FAILED'),
+      items: home.failed.map((item) => ({
+        id: item.workspaceId,
+        ...HOME_ITEMS.failed,
+        text:
+          item.failed === 0
+            ? t('HOME.FAILED_RUN', { plan: item.plan })
+            : t(item.failed === 1 ? 'HOME.FAILED_ONE' : 'HOME.FAILED_OTHER', {
+                plan: item.plan,
+                count: item.failed,
+              }),
+        project: item.project,
+        action:
+          item.bugs === 0
+            ? t('HOME.SEE_RUN')
+            : item.bugs === 1
+              ? t('HOME.SEE_BUG')
+              : t('HOME.SEE_BUGS', { count: item.bugs }),
+        onAction: () => {
+          open({ workspaceId: item.workspaceId, tab: item.bugs === 0 ? 'runs' : 'bugs' });
+        },
+      })),
+    },
+    {
+      id: 'develop',
+      title: t('HOME.GROUP_DEVELOP'),
+      items: home.toDevelop.map((item) => ({
+        id: item.workspaceId,
+        ...HOME_ITEMS.toDevelop,
+        text: t(item.cases === 1 ? 'HOME.DEVELOP_ONE' : 'HOME.DEVELOP_OTHER', {
+          plan: item.plan,
+          count: item.cases,
+        }),
+        project: item.project,
+        action: t('HOME.OPEN'),
+        onAction: () => {
+          open({ workspaceId: item.workspaceId, tab: 'plan' });
+        },
+      })),
+    },
+  ].filter(({ items }) => items.length > 0);
+
+  return {
+    style: {
+      '--home-column': `${String(HOME_SCREEN.column)}px`,
+      '--home-row': `${String(HOME_SCREEN.row)}px`,
+      '--home-recent': `${String(HOME_SCREEN.recent)}px`,
+    } as CSSProperties,
+    title: t('HOME.TITLE'),
+    lead: t('HOME.LEAD'),
+    isQuiet: groups.length === 0,
+    quiet: t('HOME.QUIET'),
+    groups,
+    hasRecent: home.recent.length > 0,
+    recentTitle: t('HOME.GROUP_RECENT'),
+    markSize: HOME_SCREEN.mark,
+    recent: home.recent.map((item) => {
+      const project = projects.find(({ id }) => id === item.projectId);
+
+      return {
+        id: item.workspaceId,
+        plan: item.plan,
+        project: item.project,
+        mark: projectMarkOf({
+          name: item.project,
+          app: projectAppOf(project?.targets ?? []),
+          icons,
+        }),
+        when: t('HOME.WHEN', {
+          day: dayLabelOf({
+            day: dayKeyOf(item.at),
+            now: new Date(),
+            language: i18n.language,
+            words: { today: t('COMMON.TODAY'), yesterday: t('COMMON.YESTERDAY') },
+          }),
+          time: formatClock(new Date(item.at)),
+        }),
+        onOpen: () => {
+          open({ workspaceId: item.workspaceId, tab: null });
+        },
+      };
+    }),
+  };
+};

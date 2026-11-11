@@ -2,12 +2,14 @@ import type { IAppStore } from './types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { withoutPlanMemories } from '@/modules/Memory/library';
-import { STORAGE } from '@/shared/constants';
+import { HOME, STORAGE } from '@/shared/constants';
+import { shownThemeOf } from './library';
 
 export const useAppStore = create<IAppStore>()(
   persist(
     (set) => ({
-      theme: 'dark',
+      theme: 'system',
+      systemTheme: 'dark',
       screen: 'welcome',
       modal: null,
       projects: [],
@@ -15,6 +17,7 @@ export const useAppStore = create<IAppStore>()(
       editingProjectId: null,
       projectSection: null,
       selectedWorkspaceId: null,
+      recent: [],
       selectedProjectId: null,
       pendingImport: null,
       isResourcesOpen: false,
@@ -24,9 +27,11 @@ export const useAppStore = create<IAppStore>()(
       runNotice: null,
 
       toggleTheme: () =>
-        set((state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
+        set((state) => ({ theme: shownThemeOf(state) === 'dark' ? 'light' : 'dark' })),
 
       setTheme: (theme) => set({ theme }),
+
+      setSystemTheme: (systemTheme) => set({ systemTheme }),
 
       openSettings: () => set({ screen: 'settings' }),
 
@@ -53,7 +58,14 @@ export const useAppStore = create<IAppStore>()(
         set({ modal: null, editingProjectId: null, projectSection: null }),
 
       selectWorkspace: (workspaceId) =>
-        set({ screen: 'workspace', selectedWorkspaceId: workspaceId }),
+        set((state) => ({
+          screen: 'workspace',
+          selectedWorkspaceId: workspaceId,
+          recent: [
+            { workspaceId, at: Date.now() },
+            ...state.recent.filter((one) => one.workspaceId !== workspaceId),
+          ].slice(0, HOME.recentKept),
+        })),
 
       goHome: () => set({ screen: 'welcome', selectedWorkspaceId: null }),
 
@@ -144,7 +156,7 @@ export const useAppStore = create<IAppStore>()(
     }),
     {
       name: STORAGE.appearance,
-      partialize: ({ theme, selectedWorkspaceId }) => ({ theme, selectedWorkspaceId }),
+      partialize: ({ theme, recent }) => ({ theme, recent }),
     },
   ),
 );

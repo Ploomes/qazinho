@@ -1,0 +1,122 @@
+.home {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  background: var(--center);
+}
+
+.home__column {
+  width: min(var(--home-column), 100%);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-7) var(--space-8);
+}
+
+.home__title {
+  margin: 0;
+  color: var(--ink);
+  font: var(--font-display-lg);
+  letter-spacing: var(--display-tracking);
+}
+
+.home__lead {
+  margin: var(--space-2) 0 0;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+}
+
+.home__quiet {
+  margin: var(--space-8) 0 0;
+  color: var(--ink2);
+  font: var(--font-ui-lg);
+}
+
+.home__group {
+  margin-top: var(--space-8);
+}
+
+.home__group-title {
+  margin: 0 0 var(--space-1);
+  color: var(--ink3);
+  font: var(--font-ui-xs);
+  font-weight: 500;
+}
+
+.home__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--home-row);
+  border-bottom: 1px solid var(--line);
+}
+
+.home__glyph {
+  display: inline-flex;
+  flex: none;
+}
+
+.home__text {
+  display: flex;
+  flex: 1;
+  align-items: baseline;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.home__line {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font: var(--font-ui-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home__project {
+  flex: none;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+  white-space: nowrap;
+}
+
+.home__recent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: calc(100% + var(--space-3) * 2);
+  min-height: var(--home-recent);
+  padding: 0 var(--space-3);
+  margin: 0 calc(var(--space-3) * -1);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink2);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.home__recent:hover {
+  background: var(--raise);
+}
+
+.home__recent:focus-visible {
+  outline: 2px solid var(--lime-ink);
+  outline-offset: 2px;
+}
+
+.home__recent-plan {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font: var(--font-ui-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home__when {
+  margin-left: auto;
+  color: var(--ink3);
+  font: var(--font-ui-xs);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

@@ -1,7 +1,9 @@
 import type { IMedia } from './IMedia';
+import type { IRecentPlan } from './IRecentPlan';
 import type { Modal } from './Modal';
 import type { ModelMenuAt } from './ModelMenuAt';
 import type { Screen } from './Screen';
+import type { ShownTheme } from './ShownTheme';
 import type { Theme } from './Theme';
 import type { IProject } from '@/modules/Project';
 import type { ProjectSection } from '@/modules/Project/components/ProjectModal/types';
@@ -13,6 +15,7 @@ import type { IImportSource } from '@/shared/types';
  */
 export interface IAppStore {
   theme: Theme;
+  systemTheme: ShownTheme;
   screen: Screen;
   modal: Modal | null;
   projects: IProject[];
@@ -20,6 +23,7 @@ export interface IAppStore {
   editingProjectId: string | null;
   projectSection: ProjectSection | null;
   selectedWorkspaceId: string | null;
+  recent: IRecentPlan[];
   selectedProjectId: string | null;
   pendingImport: { workspaceId: string; source: IImportSource } | null;
   isResourcesOpen: boolean;
@@ -29,6 +33,7 @@ export interface IAppStore {
   runNotice: IRunNotice | null;
   toggleTheme: () => void;
   setTheme: (theme: Theme) => void;
+  setSystemTheme: (systemTheme: ShownTheme) => void;
   openSettings: () => void;
   closeSettings: () => void;
   openModal: (modal: Modal) => void;

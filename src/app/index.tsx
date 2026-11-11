@@ -1,7 +1,8 @@
 import { AnimatePresence, MotionConfig } from 'motion/react';
 import { AssistantDock } from '@/modules/Assistant';
+import { FirstRun, Home } from '@/modules/Home';
 import { ProLinkModal, ProMergeModal, ProRunWarning } from '@/modules/Pro';
-import { ProjectModal, VariablesModal, Welcome } from '@/modules/Project';
+import { ProjectModal, VariablesModal } from '@/modules/Project';
 import { RunNotice, RunReplay } from '@/modules/Run';
 import { Settings } from '@/modules/Settings';
 import { Onboarding } from '@/modules/Setup';
@@ -19,7 +20,8 @@ export const App: React.FC = () => {
     isTitlebarBare,
     isOnboarding,
     hasSidebar,
-    isWelcome,
+    isFirstRun,
+    isHome,
     isChatOnly,
     isWorkspace,
     isSettings,
@@ -54,12 +56,13 @@ export const App: React.FC = () => {
                     <Sidebar />
                   </ErrorBarrier>
                 )}
-                {!isOnboarding && isWelcome && <Welcome />}
-                {!isOnboarding && !isWelcome && isWorkspace && !isChatOnly && (
+                {!isOnboarding && isFirstRun && <FirstRun />}
+                {!isOnboarding && isHome && <Home />}
+                {!isOnboarding && !isFirstRun && isWorkspace && !isChatOnly && (
                   <Workspace />
                 )}
-                {!isOnboarding && !isWelcome && isWorkspace && <AgentPanel />}
-                {!isOnboarding && !isWelcome && isSettings && <Settings />}
+                {!isOnboarding && !isFirstRun && isWorkspace && <AgentPanel />}
+                {!isOnboarding && !isFirstRun && isSettings && <Settings />}
               </ErrorBarrier>
             </div>
 

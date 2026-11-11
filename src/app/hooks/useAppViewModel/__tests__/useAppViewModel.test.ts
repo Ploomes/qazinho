@@ -137,10 +137,10 @@ describe('useAppViewModel', () => {
     expect(result.current.isOnboarding).toBe(false);
   });
 
-  it('opens on the welcome screen while there is nothing to test', () => {
+  it('opens on the first run while there is nothing to test', () => {
     const { result } = renderHook(() => useAppViewModel());
 
-    expect(result.current.isWelcome).toBe(true);
+    expect(result.current.isFirstRun).toBe(true);
   });
 
   it('writes the theme on the document, because the tokens hang off it', () => {
@@ -151,7 +151,7 @@ describe('useAppViewModel', () => {
     expect(document.documentElement.dataset.theme).toBe('light');
   });
 
-  it('is not the welcome screen once a workspace is open', () => {
+  it('is not the first run once a workspace is open', () => {
     useAppStore.setState({
       screen: 'workspace',
       projects: [{ id: 'p1', name: 'Shop · staging', targets: [], repositories: [] }],
@@ -159,15 +159,15 @@ describe('useAppViewModel', () => {
 
     const { result } = renderHook(() => useAppViewModel());
 
-    expect(result.current.isWelcome).toBe(false);
+    expect(result.current.isFirstRun).toBe(false);
   });
 
-  it('keeps the welcome screen while there is no project, whatever the screen says', () => {
+  it('keeps the first run while there is no project, whatever the screen says', () => {
     useAppStore.setState({ screen: 'workspace', projects: [] });
 
     const { result } = renderHook(() => useAppViewModel());
 
-    expect(result.current.isWelcome).toBe(true);
+    expect(result.current.isFirstRun).toBe(true);
   });
 
   /**
@@ -180,7 +180,7 @@ describe('useAppViewModel', () => {
     const { result } = renderHook(() => useAppViewModel());
 
     expect(result.current.isSettings).toBe(true);
-    expect(result.current.isWelcome).toBe(false);
+    expect(result.current.isFirstRun).toBe(false);
   });
 
   /**

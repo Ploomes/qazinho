@@ -1,0 +1,199 @@
+.first-run {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  background: var(--center);
+}
+
+.first-run__settings {
+  position: absolute;
+  top: var(--space-5);
+  right: var(--space-5);
+}
+
+.first-run__column {
+  display: flex;
+  flex-direction: column;
+  width: min(var(--first-run-column), 100%);
+  min-height: 100%;
+  margin: 0 auto;
+  padding: calc(var(--space-8) * 4) var(--space-7) var(--space-8);
+}
+
+.first-run__step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.first-run__title {
+  margin: var(--space-6) 0 var(--space-2);
+  color: var(--ink);
+  font: var(--font-brand-xl);
+  letter-spacing: var(--brand-tracking);
+}
+
+.first-run__lead {
+  max-width: 100%;
+  margin: 0 0 var(--space-7);
+  color: var(--ink3);
+  font: var(--font-ui-lg);
+}
+
+.first-run__field {
+  width: 100%;
+  height: calc(var(--space-8) + var(--space-5));
+  padding: 0 var(--space-5);
+  border: 1px solid var(--line-field);
+  border-radius: var(--radius-md);
+  outline: none;
+  background: var(--raise);
+  color: var(--ink);
+  font: var(--font-ui-lg);
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.first-run__field::placeholder {
+  color: var(--ink3);
+}
+
+.first-run__field:focus-visible {
+  outline: 2px solid var(--lime-ink);
+  outline-offset: 2px;
+}
+
+.first-run__field--area {
+  height: calc(var(--space-8) * 3 + var(--space-5));
+  padding: var(--space-4) var(--space-5);
+  resize: none;
+}
+
+.first-run__build {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: calc(var(--space-8) + var(--space-5));
+  padding: 0 var(--space-5);
+  border: 1px solid var(--line-field);
+  border-radius: var(--radius-md);
+  background: var(--raise);
+  color: var(--ink);
+  font: var(--font-ui-lg);
+}
+
+.first-run__build-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.first-run__problem {
+  margin: var(--space-3) 0 0;
+  color: var(--fail);
+  font: var(--font-ui-sm);
+}
+
+.first-run__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+}
+
+.first-run__link {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  text-decoration: underline;
+  text-decoration-color: var(--line2);
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease),
+    text-decoration-color var(--dur-fast) var(--ease);
+}
+
+.first-run__link:hover {
+  color: var(--ink);
+  text-decoration-color: currentColor;
+}
+
+.first-run__link:focus-visible,
+.first-run__example:focus-visible {
+  outline: 2px solid var(--lime-ink);
+  outline-offset: 2px;
+}
+
+.first-run__link--quiet {
+  margin-left: auto;
+  color: var(--ink3);
+  text-decoration: none;
+}
+
+.first-run__target {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}
+
+.first-run__examples {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: var(--space-5);
+}
+
+.first-run__examples-title {
+  margin-bottom: var(--space-2);
+  color: var(--ink3);
+  font: var(--font-ui-xs);
+}
+
+.first-run__example {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border: none;
+  background: transparent;
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.first-run__example .icon {
+  color: var(--ink3);
+}
+
+.first-run__example:hover {
+  color: var(--ink);
+}
+
+.first-run__agent {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin: auto 0 0;
+  padding-top: calc(var(--space-8) * 2);
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+}
+
+.first-run__agent .icon {
+  color: var(--pass);
+}
+
+.first-run__agent--missing .icon {
+  color: var(--attn);
+}

@@ -35,19 +35,12 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe('useArchive', () => {
-  /** Um QA volta ao app todo dia: cair na tela de escolher custava dois cliques. */
-  it('opens the workspace the QA left open', async () => {
+  /**
+   * O app abria no último workspace. Agora abre no Início, que diz o que pede o QA e traz
+   * o último plano a um clique, em Abertos por último.
+   */
+  it('opens on the home screen, even when a plan was open when the app closed', async () => {
     mainWith('w1');
-    useAppStore.setState({ selectedWorkspaceId: 'w1' });
-
-    await loaded();
-
-    expect(useAppStore.getState().screen).toBe('workspace');
-    expect(useAppStore.getState().selectedWorkspaceId).toBe('w1');
-  });
-
-  it('goes home when that workspace is gone', async () => {
-    mainWith('w2');
     useAppStore.setState({ selectedWorkspaceId: 'w1' });
 
     await loaded();
