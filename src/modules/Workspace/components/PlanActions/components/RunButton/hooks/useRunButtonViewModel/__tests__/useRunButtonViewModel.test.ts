@@ -1,9 +1,9 @@
 // @vitest-environment jsdom
-import type { IRunButtonProps } from '@/modules/Workspace/screens/Workspace/components/RunButton/types';
+import type { IRunButtonProps } from '@/modules/Workspace/components/PlanActions/components/RunButton/types';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { KEYBINDS } from '@/modules/Settings/constants';
-import { useRunButtonViewModel } from '@/modules/Workspace/screens/Workspace/components/RunButton/hooks/useRunButtonViewModel';
+import { useRunButtonViewModel } from '@/modules/Workspace/components/PlanActions/components/RunButton/hooks/useRunButtonViewModel';
 import { useSettingsStore } from '@/store';
 
 function render(props: Partial<IRunButtonProps> = {}) {

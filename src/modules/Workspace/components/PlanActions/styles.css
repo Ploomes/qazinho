@@ -1,0 +1,11 @@
+.plan-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.plan-actions .run-button__run {
+  padding: var(--space-2) var(--space-5);
+  font: var(--font-ui-sm);
+  font-weight: 600;
+}

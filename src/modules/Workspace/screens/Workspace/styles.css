@@ -16,17 +16,6 @@
   padding: var(--space-6) var(--space-8) var(--space-5);
 }
 
-.workspace__title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-5);
-  min-width: 0;
-}
-
-.workspace__title .workspace-name__heading {
-  flex: 1 1 0;
-}
-
 .workspace__meta {
   min-width: 0;
   color: var(--ink2);
@@ -35,12 +24,6 @@
 
 .workspace__meta > .status-pill--quiet {
   padding-left: 0;
-}
-
-.workspace__actions {
-  display: flex;
-  flex: none;
-  gap: var(--space-3);
 }
 
 .workspace__tabs {
@@ -69,10 +52,6 @@
     padding-left: var(--space-6);
   }
 
-  .workspace__title {
-    gap: var(--space-3);
-  }
-
   .workspace__tabs {
     padding-right: var(--space-6);
     padding-left: var(--space-6);
@@ -81,11 +60,5 @@
   .workspace__scroll {
     padding-right: var(--space-5);
     padding-left: var(--space-6);
-  }
-}
-
-@container workspace (width < 640px) {
-  .workspace__explore {
-    display: none;
   }
 }

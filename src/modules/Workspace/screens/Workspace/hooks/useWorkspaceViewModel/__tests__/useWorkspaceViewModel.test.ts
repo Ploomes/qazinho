@@ -123,26 +123,6 @@ describe('useWorkspaceViewModel', () => {
     });
   });
 
-  it('offers to develop again once a case has a recording', () => {
-    const { result } = renderHook(() => useWorkspaceViewModel());
-    const workspace = useWorkspaceStore.getState().workspaces[0];
-
-    expect(result.current.canRunWithAgent).toBe(false);
-
-    act(() => {
-      useWorkspaceStore.getState().setDevelopedCases({
-        workspaceId: workspace?.id ?? '',
-        caseIds: [workspace?.plan[0]?.id ?? ''],
-      });
-    });
-
-    expect(result.current).toMatchObject({
-      canRunWithAgent: true,
-      developedCount: 1,
-      toDevelopCount: (workspace?.plan.length ?? 0) - 1,
-    });
-  });
-
   it('links the story the workspace works from to where it opens, and nothing before one', () => {
     expect(renderHook(() => useWorkspaceViewModel()).result.current.issue).toBeNull();
 
@@ -211,15 +191,6 @@ describe('useWorkspaceViewModel', () => {
     const { result } = renderHook(() => useWorkspaceViewModel());
 
     expect(result.current.hasWorkspace).toBe(false);
-    expect(result.current.canRun).toBe(false);
-  });
-
-  it('does NOT offer a run to a workspace whose plan is empty', () => {
-    useWorkspaceStore.setState({ workspaces: [makeWorkspace([])] });
-
-    const { result } = renderHook(() => useWorkspaceViewModel());
-
-    expect(result.current.canRun).toBe(false);
   });
 
   it('reads the live step in the header while the agent is driving', () => {
@@ -327,102 +298,6 @@ describe('useWorkspaceViewModel', () => {
     );
   });
 
-  describe('onRun', () => {
-    it('starts the run of the workspace on screen', () => {
-      const { result } = renderHook(() => useWorkspaceViewModel());
-
-      act(() => {
-        result.current.onRun();
-      });
-
-      expect(useWorkspaceStore.getState().workspaces[0]?.status).toBe('running');
-    });
-
-    it('runs an android target too, because QAzinho drives a phone now', () => {
-      useAppStore.setState({
-        projects: [
-          {
-            ...PROJECT,
-            targets: [
-              { id: 't1', kind: 'android', label: 'Android', value: '/tmp/app.apk' },
-            ],
-            repositories: [],
-          },
-        ],
-      });
-
-      const { result } = renderHook(() => useWorkspaceViewModel());
-
-      act(() => {
-        result.current.onRun();
-      });
-
-      expect(useWorkspaceStore.getState().workspaces[0]?.status).toBe('running');
-    });
-
-    /**
-     * As runs de iOS eram recusadas aqui enquanto o idb nunca tinha tocado um simulador
-     * real; agora tocou.
-     */
-    it('runs an iOS build on the simulator, the way it runs the rest', () => {
-      useAppStore.setState({
-        projects: [
-          {
-            ...PROJECT,
-            targets: [{ id: 't1', kind: 'ios', label: 'iOS', value: '/tmp/App.app' }],
-            repositories: [],
-          },
-        ],
-      });
-
-      const { result } = renderHook(() => useWorkspaceViewModel());
-
-      act(() => {
-        result.current.onRun();
-      });
-
-      expect(useWorkspaceStore.getState().workspaces[0]?.status).toBe('running');
-    });
-
-    it('says so instead of pretending when the target left the project', () => {
-      useAppStore.setState({ projects: [{ ...PROJECT, targets: [], repositories: [] }] });
-
-      const { result } = renderHook(() => useWorkspaceViewModel());
-
-      act(() => {
-        result.current.onRun();
-      });
-
-      const [workspace] = useWorkspaceStore.getState().workspaces;
-
-      expect(workspace?.status).toBe('stopped');
-      expect(workspace?.chat.at(-1)).toMatchObject({
-        kind: 'error',
-        text: expect.stringContaining('gone from its project') as string,
-      });
-    });
-  });
-
-  describe('pauseLabel', () => {
-    it('reads resume while the run is held, and pause while it goes', () => {
-      const walked = walkRun({ verdicts: ['passed'] });
-
-      useWorkspaceStore.setState({ workspaces: [walked] });
-
-      expect(renderHook(() => useWorkspaceViewModel()).result.current.pauseLabel).toBe(
-        'Pause',
-      );
-
-      useWorkspaceStore.setState({
-        workspaces: [{ ...walked, live: { ...walked.live!, isRunning: false } }],
-      });
-
-      expect(renderHook(() => useWorkspaceViewModel()).result.current.pauseLabel).toBe(
-        'Resume',
-      );
-    });
-  });
-
   describe('onRename', () => {
     it('renames the open workspace, so the sidebar and the disk follow', () => {
       const { result } = renderHook(() => useWorkspaceViewModel());
@@ -434,29 +309,22 @@ describe('useWorkspaceViewModel', () => {
       expect(useWorkspaceStore.getState().workspaces[0]?.name).toBe('Checkout');
     });
   });
-  it('offers an exploration even with no plan, and never while something walks', () => {
-    useWorkspaceStore.setState({ workspaces: [makeWorkspace([])] });
 
-    const { result } = renderHook(() => useWorkspaceViewModel());
-
-    expect(result.current.canExplore).toBe(true);
-    expect(result.current.exploreTip).toContain('10 minutes');
-
-    act(() => {
-      useWorkspaceStore.setState({
-        workspaces: [
-          startRun({
-            workspace: makeWorkspace([]),
-            startedAt: '10:00',
-            runId: 'r-01',
-            by: WALKED_BY,
-            kind: 'explore',
-          }),
-        ],
-      });
+  it('says how far an exploration went while it walks', () => {
+    useWorkspaceStore.setState({
+      workspaces: [
+        startRun({
+          workspace: makeWorkspace([]),
+          startedAt: '10:00',
+          runId: 'r-01',
+          by: WALKED_BY,
+          kind: 'explore',
+        }),
+      ],
     });
 
-    expect(result.current.canExplore).toBe(false);
-    expect(result.current.statusLabel).toBe('exploring · 0 screens');
+    expect(renderHook(() => useWorkspaceViewModel()).result.current.statusLabel).toBe(
+      'exploring · 0 screens',
+    );
   });
 });

@@ -1,9 +1,9 @@
 // @vitest-environment jsdom
 import { renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 import { useTitlebarViewModel } from '@/shared/components/organisms/Titlebar/hooks/useTitlebarViewModel';
-import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 beforeEach(() => {

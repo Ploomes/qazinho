@@ -1,8 +1,8 @@
-import type { IRunButtonProps } from '@/modules/Workspace/screens/Workspace/components/RunButton/types';
+import type { IRunButtonProps } from '@/modules/Workspace/components/PlanActions/components/RunButton/types';
 import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RUN_BUTTON } from '@/modules/Workspace/screens/Workspace/components/RunButton/constants';
+import { RUN_BUTTON } from '@/modules/Workspace/components/PlanActions/components/RunButton/constants';
 import { EXPLORATION, MOTION } from '@/shared/constants';
 import { useDismiss } from '@/shared/hooks';
 import { useSettingsStore } from '@/store';

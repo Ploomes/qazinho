@@ -2,13 +2,14 @@ import type { ITitlebarProps } from './types';
 import { AnimatePresence } from 'motion/react';
 import { AssistantButton } from '@/modules/Assistant';
 import { UpdateButton } from '@/modules/Update';
+import { PlanActions } from '@/modules/Workspace';
 import { IconButton } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { ResourcePopover } from '@/shared/components/organisms/ResourcePopover';
 import { useTitlebarViewModel } from './hooks';
 import './styles.css';
 
-/** A barra de cima: a barra lateral, onde o QA está, e o Estagiário. */
+/** A barra de cima: a barra lateral, onde o QA está, as ações do plano e o Estagiário. */
 export const Titlebar: React.FC<ITitlebarProps> = (props) => {
   const {
     isBare,
@@ -18,6 +19,7 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
     sidebarLabel,
     onToggleSidebar,
     crumbs,
+    hasPlanActions,
   } = useTitlebarViewModel(props);
 
   return (
@@ -45,6 +47,7 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
           </div>
 
           <div className="titlebar__end">
+            {hasPlanActions && <PlanActions />}
             <UpdateButton />
             <AssistantButton />
           </div>

@@ -34,6 +34,7 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
     hasSidebar: projects.length > 0 && screen !== 'settings',
     sidebarLabel: t(isSidebarShut ? 'SIDEBAR.OPEN' : 'SIDEBAR.SHUT'),
     onToggleSidebar: toggleSidebar,
+    hasPlanActions: screen === 'workspace' && workspace !== null,
     crumbs:
       screen === 'settings'
         ? [{ key: 'settings', label: t('COMMON.SETTINGS') }]
