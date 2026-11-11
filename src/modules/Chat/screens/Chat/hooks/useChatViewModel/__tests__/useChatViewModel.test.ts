@@ -868,12 +868,12 @@ describe('useChatViewModel', () => {
         ],
       });
 
-      expect(sectionOf(renderHook(() => useChatViewModel()).result.current)?.title).toBe(
-        'Run r-01 · stopped · 1 failed',
-      );
+      expect(
+        sectionOf(renderHook(() => useChatViewModel()).result.current)?.title,
+      ).toMatch(/^Run .+, stopped: 1 failed$/);
     });
 
-    it('says the day a run started above its time, and none when no step kept its time', () => {
+    it('says the day a run started with its time, and only the time when no step kept it', () => {
       answering({});
 
       const walked = walkRun({ verdicts: ['passed'], isFinished: true });
@@ -892,15 +892,15 @@ describe('useChatViewModel', () => {
         workspaces: [at({ from: Date.now(), to: Date.now() + 1_000 })],
       });
 
-      expect(sectionOf(renderHook(() => useChatViewModel()).result.current)?.day).toBe(
-        'today',
-      );
+      expect(
+        sectionOf(renderHook(() => useChatViewModel()).result.current)?.title,
+      ).toMatch(/^Run today at /);
 
       useWorkspaceStore.setState({ workspaces: [at(null)] });
 
-      expect(sectionOf(renderHook(() => useChatViewModel()).result.current)?.day).toBe(
-        '',
-      );
+      expect(
+        sectionOf(renderHook(() => useChatViewModel()).result.current)?.title,
+      ).toMatch(/^Run at /);
     });
 
     it('keeps the plain title for a run that walked it all', () => {
@@ -915,9 +915,9 @@ describe('useChatViewModel', () => {
       });
 
       /* O título contava passos e a aba Runs contava casos: agora os dois contam casos. */
-      expect(sectionOf(renderHook(() => useChatViewModel()).result.current)?.title).toBe(
-        'Run r-01 · 2 passed',
-      );
+      expect(
+        sectionOf(renderHook(() => useChatViewModel()).result.current)?.title,
+      ).toMatch(/: 2 passed$/);
     });
 
     it('counts one case in the singular, in Portuguese too', async () => {
@@ -940,7 +940,7 @@ describe('useChatViewModel', () => {
       const title = sectionOf(renderHook(() => useChatViewModel()).result.current)?.title;
 
       await i18n.changeLanguage('en');
-      expect(title).toBe('Run r-01 · 1 passou');
+      expect(title).toMatch(/: 1 passou$/);
     });
 
     it('shows the face of the agent once over replies it says in a row', () => {
@@ -1023,7 +1023,7 @@ describe('useChatViewModel', () => {
 
       expect(view.items.map(({ kind }) => kind)).toEqual(['run']);
       expect(section).toMatchObject({
-        title: 'Run r-01 · running · step 3 of 6',
+        title: 'Run r-01: running step 3 of 6',
         isLive: true,
         isExpanded: false,
         isExpandable: true,
@@ -1238,7 +1238,7 @@ describe('useChatViewModel', () => {
       expect(result.current.lockedText).toBe('');
       expect(
         result.current.items.find((item) => item.kind === 'run') as { title?: string },
-      ).toMatchObject({ title: 'Run r-01 · step 2 of 6' });
+      ).toMatchObject({ title: 'Run r-01 waiting on you at step 2 of 6' });
     });
 
     it("hands the QA's answer to main, for the question it waits on", () => {
@@ -1545,7 +1545,7 @@ describe('useChatViewModel', () => {
       });
 
       expect(renderHook(() => useChatViewModel()).result.current.readStatus).toBe(
-        'Downloading the files of SHOP-12 · 2 MB',
+        'Downloading the files of SHOP-12: 2 MB',
       );
     });
   });
@@ -1681,7 +1681,7 @@ describe('useChatViewModel', () => {
       const { result } = renderHook(() => useChatViewModel());
 
       expect(result.current.readStatus).toBe(
-        'Downloading the code of acme/loja-web · 3.3 MB',
+        'Downloading the code of acme/loja-web: 3.3 MB',
       );
 
       useWorkspaceStore.setState({ readSteps: { w1: { step: 'diff', bytes: 0 } } });
