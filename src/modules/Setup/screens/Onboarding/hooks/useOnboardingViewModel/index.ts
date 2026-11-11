@@ -1,17 +1,17 @@
 import type { OnboardingStep } from '@/modules/Setup/types';
+import type { CSSProperties } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ONBOARDING_STEPS } from '@/modules/Setup/constants';
+import { ONBOARDING_SCREEN, ONBOARDING_STEPS } from '@/modules/Setup/constants';
 import { useMachineCheck } from '@/modules/Setup/hooks';
 import { devicesLineOf, moodOfSetup } from '@/modules/Setup/library';
 import { Platform } from '@/services';
-import { useAppStore, useMachineStore, useSettingsStore, useSetupStore } from '@/store';
+import { useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
 export const useOnboardingViewModel = () => {
   const { t } = useTranslation();
   const [step, setStep] = useState<OnboardingStep>('welcome');
   const [direction, setDirection] = useState(1);
-  const [saidStep, setSaidStep] = useState<OnboardingStep | null>(null);
   const hasChecked = useRef(false);
   const agents = useMachineStore((state) => state.agents);
   const tools = useMachineStore((state) => state.tools);
@@ -19,7 +19,6 @@ export const useOnboardingViewModel = () => {
   const agentInUse = useSettingsStore((state) => state.agent);
   const selectAgent = useSettingsStore((state) => state.selectAgent);
   const finishOnboarding = useSettingsStore((state) => state.finishOnboarding);
-  const openModal = useAppStore((state) => state.openModal);
   const { isChecking, check } = useMachineCheck();
 
   useEffect(() => {
@@ -34,7 +33,10 @@ export const useOnboardingViewModel = () => {
     ONBOARDING_STEPS.findIndex(({ id }) => id === step),
   );
   const last = ONBOARDING_STEPS.length - 1;
-  const hasAgent = agents.some(({ isFound }) => isFound);
+  const current = ONBOARDING_STEPS[index];
+  const hasAgent = agents.some(
+    ({ isFound, isSignedIn }) => isFound && isSignedIn !== false,
+  );
 
   const go = (target: number) => {
     const next = ONBOARDING_STEPS[Math.min(Math.max(target, 0), last)];
@@ -47,44 +49,31 @@ export const useOnboardingViewModel = () => {
 
   return {
     step,
-    enterY: 16 * direction,
-    exitY: -16 * direction,
+    style: {
+      '--onboarding-column': `${String(ONBOARDING_SCREEN.column)}px`,
+    } as CSSProperties,
+    internSize: ONBOARDING_SCREEN.intern,
+    enterY: 12 * direction,
+    exitY: -12 * direction,
     mood: moodOfSetup({ step, installs: Object.values(installs), isChecking, hasAgent }),
-    say:
+    title: current === undefined ? '' : t(current.titleKey),
+    lead:
       step === 'agents' && !hasAgent && !isChecking
-        ? t('SETUP.AGENTS_SAY_NONE')
+        ? t('SETUP.AGENTS_LEAD_NONE')
         : step === 'devices'
           ? devicesLineOf({ isMac: Platform.isMac(), tools })
               .map((key) => t(key))
               .join(' ')
-          : t(`SETUP.${step.toUpperCase()}_SAY` as 'SETUP.WELCOME_SAY'),
-    isSaid: saidStep === step,
+          : current === undefined
+            ? ''
+            : t(current.leadKey),
     isFirst: index === 0,
-    isLast: index === last,
     nextLabel:
-      step === 'welcome'
-        ? t('SETUP.START')
-        : step === 'agents' && !hasAgent
-          ? t('SETUP.CONTINUE_WITHOUT_AGENT')
-          : t('SETUP.CONTINUE'),
-    dots: ONBOARDING_STEPS.map((item, position) => ({
-      id: item.id,
-      label: t(item.labelKey),
-      ariaCurrent: position === index ? ('step' as const) : undefined,
-      state:
-        position < index
-          ? ('done' as const)
-          : position === index
-            ? ('current' as const)
-            : ('todo' as const),
-      canVisit: position < index,
-      onVisit: () => {
-        go(position);
-      },
-    })),
-    onSaid: () => {
-      setSaidStep(step);
-    },
+      step === 'agents' && !hasAgent
+        ? t('SETUP.CONTINUE_WITHOUT_AGENT')
+        : t('SETUP.CONTINUE'),
+    skipLabel: t('SETUP.SKIP_SETUP'),
+    backLabel: t('SETUP.BACK'),
     onNext: () => {
       const found = agents.find(({ isFound }) => isFound);
       const isInUseHere = agents.some(
@@ -94,16 +83,17 @@ export const useOnboardingViewModel = () => {
       if (step === 'agents' && found !== undefined && !isInUseHere)
         selectAgent(found.name);
 
+      if (index === last) {
+        finishOnboarding();
+
+        return;
+      }
+
       go(index + 1);
     },
     onBack: () => {
       go(index - 1);
     },
     onSkipAll: finishOnboarding,
-    onFinish: finishOnboarding,
-    onCreateProject: () => {
-      finishOnboarding();
-      openModal('project');
-    },
   };
 };

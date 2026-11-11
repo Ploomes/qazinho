@@ -3,7 +3,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useOnboardingViewModel } from '@/modules/Setup/screens/Onboarding/hooks/useOnboardingViewModel';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
-import { useAppStore, useMachineStore, useSettingsStore, useSetupStore } from '@/store';
+import { useMachineStore, useSettingsStore, useSetupStore } from '@/store';
 
 const CODEX = {
   id: 'codex',
@@ -19,7 +19,6 @@ beforeEach(() => {
   useSettingsStore.setState({ hasOnboarded: false, agent: 'Claude Code', model: '' });
   useSetupStore.setState({ integrations: [], managers: null, isChecking: false });
   useMachineStore.setState({ agents: [] });
-  useAppStore.setState({ modal: null });
   window.qazinho = fakeQazinhoApi('darwin');
 });
 
@@ -38,85 +37,32 @@ function walkTo(
 }
 
 describe('useOnboardingViewModel', () => {
-  it('opens on the welcome, and looks at the machine once on the way in', async () => {
+  it('opens on the language, and looks at the machine once on the way in', async () => {
     const check = vi.spyOn(window.qazinho, 'checkMachine');
     const { result, rerender } = renderHook(() => useOnboardingViewModel());
 
     rerender();
 
-    expect(result.current.step).toBe('welcome');
-    expect(result.current.isFirst).toBe(true);
+    expect(result.current).toMatchObject({
+      step: 'welcome',
+      isFirst: true,
+      title: 'Which language do we speak?',
+    });
+    expect(result.current.lead).toContain('the Intern');
     await waitFor(() => {
       expect(check).toHaveBeenCalledOnce();
     });
   });
 
-  describe('dots', () => {
-    it('marks the steps behind as done, and lets the QA go back to them only', () => {
-      const { result } = renderHook(() => useOnboardingViewModel());
-
-      walkTo(result, 2);
-
-      expect(result.current.dots.map(({ state }) => state)).toEqual([
-        'done',
-        'done',
-        'current',
-        'todo',
-        'todo',
-      ]);
-      expect(result.current.dots.map(({ canVisit }) => canVisit)).toEqual([
-        true,
-        true,
-        false,
-        false,
-        false,
-      ]);
-    });
-
-    it('goes back to a step that was done', () => {
-      const { result } = renderHook(() => useOnboardingViewModel());
-
-      walkTo(result, 3);
-      act(() => {
-        result.current.dots[1]?.onVisit();
-      });
-
-      expect(result.current.step).toBe('agents');
-    });
-  });
-
-  describe('say', () => {
-    it('greets the QA in the bubble, and holds the step until the line is out', () => {
-      const { result } = renderHook(() => useOnboardingViewModel());
-
-      expect(result.current.say).toContain('the Intern');
-      expect(result.current.isSaid).toBe(false);
-
-      act(() => {
-        result.current.onSaid();
-      });
-
-      expect(result.current.isSaid).toBe(true);
-    });
-
-    it('says something new on the next step, and holds it again until said', () => {
-      const { result } = renderHook(() => useOnboardingViewModel());
-
-      act(() => {
-        result.current.onSaid();
-      });
-      walkTo(result, 1);
-
-      expect(result.current.isSaid).toBe(false);
-    });
-
+  describe('the question of each step', () => {
     it('says iOS cannot be tested on the devices step of a machine that is not a Mac', () => {
       window.qazinho = fakeQazinhoApi('linux');
       const { result } = renderHook(() => useOnboardingViewModel());
 
       walkTo(result, 2);
 
-      expect(result.current.say).toContain('iOS only runs on a Mac.');
+      expect(result.current.title).toBe('And on a phone?');
+      expect(result.current.lead).toContain('iOS only runs on a Mac.');
     });
 
     it('tells a Mac with every tool that iOS is ready', async () => {
@@ -145,7 +91,7 @@ describe('useOnboardingViewModel', () => {
       });
       walkTo(result, 2);
 
-      expect(result.current.say).toBe(
+      expect(result.current.lead).toBe(
         'The web needs nothing else. Android is ready. So is iOS.',
       );
     });
@@ -156,9 +102,44 @@ describe('useOnboardingViewModel', () => {
       walkTo(result, 1);
 
       await waitFor(() => {
-        expect(result.current.say).toContain('I found no agent');
+        expect(result.current.lead).toBe('No coding agent is ready on this machine yet.');
       });
       expect(result.current.mood).toBe('flaky');
+    });
+
+    it('does NOT count a signed-out agent as one to test with', async () => {
+      useMachineStore.setState({ agents: [{ ...CODEX, isSignedIn: false }] });
+      const { result } = renderHook(() => useOnboardingViewModel());
+
+      walkTo(result, 1);
+
+      await waitFor(() => {
+        expect(result.current.nextLabel).toBe('Continue without an agent');
+      });
+    });
+
+    /** Um agente que não diz se entrou não trava a configuração: ele conta. */
+    it('counts an agent that would not say whether it is signed in', () => {
+      useMachineStore.setState({ agents: [{ ...CODEX, isSignedIn: null }] });
+      const { result } = renderHook(() => useOnboardingViewModel());
+
+      walkTo(result, 1);
+
+      expect(result.current.lead).toBe(
+        'The coding agent you already use on this machine.',
+      );
+    });
+
+    it('asks for the trackers last, saying they can wait', () => {
+      const { result } = renderHook(() => useOnboardingViewModel());
+
+      walkTo(result, 3);
+
+      expect(result.current).toMatchObject({
+        step: 'integrations',
+        title: 'Connect GitHub and Jira?',
+        lead: 'You can do it later, in Settings.',
+      });
     });
   });
 
@@ -201,17 +182,43 @@ describe('useOnboardingViewModel', () => {
       expect(useSettingsStore.getState().agent).toBe('Claude Code');
     });
 
-    it('never walks past the last step', () => {
+    /** Depois dos trackers vem a pergunta pelo primeiro app, no mesmo jeito: não há tela de fim. */
+    it('finishes the setup past the last step, and never shows it again', () => {
       const { result } = renderHook(() => useOnboardingViewModel());
 
-      walkTo(result, 9);
+      walkTo(result, 3);
 
-      expect(result.current.step).toBe('done');
-      expect(result.current.isLast).toBe(true);
+      expect(useSettingsStore.getState().hasOnboarded).toBe(false);
+
+      walkTo(result, 1);
+
+      expect(useSettingsStore.getState().hasOnboarded).toBe(true);
     });
   });
 
-  describe('finishing', () => {
+  describe('onBack', () => {
+    it('goes back one step, and never before the first', () => {
+      const { result } = renderHook(() => useOnboardingViewModel());
+
+      walkTo(result, 2);
+      act(() => {
+        result.current.onBack();
+      });
+
+      expect(result.current.step).toBe('agents');
+
+      act(() => {
+        result.current.onBack();
+      });
+      act(() => {
+        result.current.onBack();
+      });
+
+      expect(result.current).toMatchObject({ step: 'welcome', isFirst: true });
+    });
+  });
+
+  describe('onSkipAll', () => {
     it('never shows again once skipped', () => {
       const { result } = renderHook(() => useOnboardingViewModel());
 
@@ -220,18 +227,6 @@ describe('useOnboardingViewModel', () => {
       });
 
       expect(useSettingsStore.getState().hasOnboarded).toBe(true);
-    });
-
-    it('opens the new project modal when the QA wants to start with one', () => {
-      const { result } = renderHook(() => useOnboardingViewModel());
-
-      walkTo(result, 4);
-      act(() => {
-        result.current.onCreateProject();
-      });
-
-      expect(useSettingsStore.getState().hasOnboarded).toBe(true);
-      expect(useAppStore.getState().modal).toBe('project');
     });
   });
 });

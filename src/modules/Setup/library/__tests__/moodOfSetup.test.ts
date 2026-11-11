@@ -4,9 +4,8 @@ import { moodOfSetup } from '@/modules/Setup/library';
 const CALM = { installs: [], isChecking: false, hasAgent: true };
 
 describe('moodOfSetup', () => {
-  it('greets calmly, and celebrates at the end', () => {
+  it('greets calmly', () => {
     expect(moodOfSetup({ ...CALM, step: 'welcome' })).toBe('neutral');
-    expect(moodOfSetup({ ...CALM, step: 'done' })).toBe('passed');
   });
 
   it('gets busy while something installs, and falls apart when it fails', () => {

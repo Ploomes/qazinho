@@ -11,6 +11,33 @@ function pressed(key: string) {
 }
 
 describe('useToolCardViewModel', () => {
+  describe('statusIcon', () => {
+    /** Uma ferramenta que não é opção mostra como está pelo glifo, com a palavra ao lado. */
+    it('marks a found tool as passed, a missing one as needing attention, one off as idle', () => {
+      const iconOf = (state: 'found' | 'missing' | 'off') =>
+        renderHook(() => useToolCardViewModel({ ...CARD, state })).result.current
+          .statusIcon;
+
+      expect([iconOf('found'), iconOf('missing'), iconOf('off')]).toEqual([
+        'passed',
+        'attention',
+        'idle',
+      ]);
+    });
+  });
+
+  describe('hasBadge', () => {
+    it('shows the word beside the name only when there is one', () => {
+      expect(renderHook(() => useToolCardViewModel(CARD)).result.current.hasBadge).toBe(
+        false,
+      );
+      expect(
+        renderHook(() => useToolCardViewModel({ ...CARD, badge: 'in use' })).result
+          .current.hasBadge,
+      ).toBe(true);
+    });
+  });
+
   describe('className', () => {
     it('marks a found tool that can be picked as an option, and the picked one as selected', () => {
       const picked = renderHook(() =>

@@ -23,7 +23,7 @@ export const useStepDevicesViewModel = () => {
 
   return {
     isChecking,
-    hasNote: !isMac || hasMissing,
+    hasNote: !isMac || !tools.androidSdk.isFound || !tools.xcode.isFound,
     note: isMac ? t('SETUP.DEVICES_NOTE') : t('SETUP.IOS_OFF_NOTE'),
     canCheckAgain: hasMissing,
     needsBrew: isMac && managers !== null && !hasBrew && !tools.idb.isFound,

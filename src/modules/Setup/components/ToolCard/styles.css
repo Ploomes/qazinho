@@ -1,93 +1,89 @@
 .tool-card {
+  --tool-card-radio: 16px;
+
   display: flex;
   flex-direction: column;
-  padding: var(--space-5) 18px;
-  border: var(--edge-width-lg) solid var(--edge);
-  border-radius: var(--radius-xl);
-  background: var(--raise);
-  box-shadow: var(--sticker-rest);
-  transition:
-    border-color var(--dur) var(--ease),
-    background-color var(--dur) var(--ease),
-    box-shadow var(--dur) var(--ease);
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  transition: background-color var(--dur-fast) var(--ease);
 }
 
-.tool-card--missing {
-  border-style: dashed;
-  border-color: var(--line);
-  background: transparent;
-  box-shadow: none;
+.tool-card + .tool-card {
+  border-top: 1px solid var(--line);
 }
 
 .tool-card__head {
   display: flex;
-  align-items: flex-start;
-  gap: 14px;
+  align-items: center;
+  gap: var(--space-4);
 }
 
 .tool-card__mark {
-  display: flex;
+  display: inline-flex;
   flex: none;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
-  margin-top: 1px;
-  border: 1.5px solid transparent;
-  border-radius: var(--radius-pill);
-  color: var(--on-lime);
-  font: 700 11px/1 var(--font-ui);
-  transition:
-    background-color var(--dur) var(--ease),
-    border-color var(--dur) var(--ease);
+  width: var(--tool-card-radio);
+  color: var(--ink3);
 }
 
-.tool-card__mark::before {
-  width: 8px;
-  height: 8px;
+.tool-card--found .tool-card__mark {
+  color: var(--pass);
+}
+
+.tool-card--missing .tool-card__mark {
+  color: var(--attn);
+}
+
+.tool-card__radio {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--tool-card-radio);
+  height: var(--tool-card-radio);
+  border: 1.5px solid var(--ink3);
   border-radius: var(--radius-pill);
-  background: var(--ink3);
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.tool-card__radio::after {
+  width: calc(var(--tool-card-radio) / 2);
+  height: calc(var(--tool-card-radio) / 2);
+  border-radius: var(--radius-pill);
+  background: var(--lime-ink);
   content: '';
-  transition:
-    background-color var(--dur) var(--ease),
-    box-shadow var(--dur) var(--ease);
+  scale: 0;
+  transition: scale var(--dur-fast) var(--ease);
 }
 
-.tool-card--found .tool-card__mark::before {
-  background: var(--pass);
-  box-shadow: 0 0 0 4px var(--pass-soft);
+.tool-card--selected .tool-card__radio {
+  border-color: var(--lime-ink);
 }
 
-.tool-card--missing .tool-card__mark::before {
-  background: var(--attn);
-  box-shadow: 0 0 0 4px var(--attn-soft);
+.tool-card--selected .tool-card__radio::after {
+  scale: 1;
 }
 
 .tool-card__text {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-1);
   min-width: 0;
 }
 
 .tool-card__name {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: var(--space-3);
   color: var(--ink);
-  font: 500 14px/1.2 var(--font-ui);
+  font: var(--font-ui-md);
 }
 
 .tool-card__badge {
   color: var(--ink3);
-  font: var(--font-mono-xs);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.tool-card__badge:empty {
-  display: none;
+  font: var(--font-ui-sm);
 }
 
 .tool-card--found .tool-card__badge {
@@ -98,6 +94,10 @@
   color: var(--attn);
 }
 
+.tool-card--option .tool-card__badge {
+  color: var(--ink2);
+}
+
 .tool-card__about {
   color: var(--ink2);
   font: var(--font-ui-sm);
@@ -106,9 +106,13 @@
 .tool-card__detail {
   overflow: hidden;
   color: var(--ink3);
-  font: 400 11px/1.4 var(--font-mono);
+  font: var(--font-ui-sm);
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.tool-card--found .tool-card__detail {
+  font: var(--font-code-xs);
 }
 
 .tool-card--option {
@@ -116,47 +120,24 @@
 }
 
 .tool-card--option:hover {
-  border-color: var(--ink3);
+  background: var(--raise2);
+}
+
+.tool-card--option:hover .tool-card__radio {
+  border-color: var(--ink2);
 }
 
 .tool-card--option:focus-visible {
   outline: 2px solid var(--lime-ink);
-  outline-offset: 2px;
-}
-
-.tool-card--option .tool-card__mark {
-  border-color: var(--ink3);
-}
-
-.tool-card--option .tool-card__mark::before {
-  display: none;
-}
-
-.tool-card--option:hover .tool-card__mark {
-  border-color: var(--ink2);
-}
-
-.tool-card--option .tool-card__badge {
-  color: var(--ink3);
+  outline-offset: -2px;
 }
 
 .tool-card--selected,
 .tool-card--selected:hover {
-  border-color: var(--lime-ink);
-  background: linear-gradient(var(--lime-soft), var(--lime-soft)), var(--raise);
-  box-shadow: 0 0 0 1px var(--lime);
+  background: transparent;
   cursor: default;
 }
 
-.tool-card--selected .tool-card__mark,
-.tool-card--selected:hover .tool-card__mark {
+.tool-card--selected:hover .tool-card__radio {
   border-color: var(--lime-ink);
-  background: var(--lime);
-}
-
-.tool-card--selected .tool-card__badge {
-  padding: 3px var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--lime);
-  color: var(--on-lime);
 }

@@ -1,54 +1,73 @@
 .step-welcome {
+  --step-welcome-radio: 16px;
+
   display: flex;
   flex-direction: column;
-  gap: var(--space-7);
-}
-
-.step-welcome__section {
-  display: flex;
-  flex-direction: column;
-  gap: 11px;
-}
-
-.step-welcome__eyebrow {
-  color: var(--ink3);
-  font: 500 var(--eyebrow-size) / 1 var(--font-mono);
-  letter-spacing: var(--eyebrow-tracking);
-  text-transform: uppercase;
-}
-
-.step-welcome__languages {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--raise);
 }
 
 .step-welcome__language {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 10px 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border: none;
   background: transparent;
-  transition:
-    border-color var(--dur-fast) var(--ease),
-    background-color var(--dur-fast) var(--ease);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.step-welcome__language + .step-welcome__language {
+  border-top: 1px solid var(--line);
 }
 
 .step-welcome__language:hover {
-  border-color: var(--ink3);
+  background: var(--raise2);
 }
 
-.step-welcome__language--on,
-.step-welcome__language--on:hover {
+.step-welcome__language:focus-visible {
+  outline: 2px solid var(--lime-ink);
+  outline-offset: -2px;
+}
+
+.step-welcome__radio {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--step-welcome-radio);
+  height: var(--step-welcome-radio);
+  border: 1.5px solid var(--ink3);
+  border-radius: var(--radius-pill);
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.step-welcome__radio::after {
+  width: calc(var(--step-welcome-radio) / 2);
+  height: calc(var(--step-welcome-radio) / 2);
+  border-radius: var(--radius-pill);
+  background: var(--lime-ink);
+  content: '';
+  scale: 0;
+  transition: scale var(--dur-fast) var(--ease);
+}
+
+.step-welcome__language--on .step-welcome__radio {
   border-color: var(--lime-ink);
-  background: var(--sel);
+}
+
+.step-welcome__language--on .step-welcome__radio::after {
+  scale: 1;
 }
 
 .step-welcome__language-label {
+  flex: 1;
   color: var(--ink2);
-  font: 500 13px/1 var(--font-ui);
+  font: var(--font-ui-md);
   transition: color var(--dur-fast) var(--ease);
 }
 
@@ -58,5 +77,5 @@
 
 .step-welcome__language-code {
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }

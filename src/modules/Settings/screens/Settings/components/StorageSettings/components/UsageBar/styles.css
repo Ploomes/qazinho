@@ -5,7 +5,7 @@
 }
 
 .usage-bar__tone--videos {
-  --tone: var(--lime-ink);
+  --tone: color-mix(in srgb, var(--ink) 88%, var(--center));
 }
 
 .usage-bar__tone--screens {
@@ -101,13 +101,13 @@
 
 .usage-bar__size {
   color: var(--ink);
-  font: var(--font-mono-md);
+  font: var(--font-meta-md);
   text-align: right;
 }
 
 .usage-bar__share {
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
   text-align: right;
 }
 

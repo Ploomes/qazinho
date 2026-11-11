@@ -89,30 +89,25 @@ export const useSettingsViewModel = () => {
     })),
     agents: detected.map((item) => {
       const isDefault = item.name === agent;
-      const note = !item.isFound
-        ? t('SETTINGS.NOT_ON_PATH')
-        : item.isSignedIn === false
-          ? ''
-          : isDefault
-            ? t('SETTINGS.DEFAULT_AGENT')
-            : t('SETTINGS.MAKE_DEFAULT');
-
-      const canSignIn = item.isFound && item.isSignedIn === false;
+      const isSignedOut = item.isFound && item.isSignedIn === false;
       const installable = installableAgentOf(item.id);
       const state = installable === null ? undefined : installs[installable];
 
       return {
         name: item.name,
-        path: item.path ?? t('TOOLS.NOT_FOUND_PATH'),
-        isFound: item.isFound,
+        state: item.isFound && !isSignedOut ? ('found' as const) : ('missing' as const),
+        badge: !item.isFound
+          ? t('SETUP.MISSING')
+          : isDefault && !isSignedOut
+            ? t('SETTINGS.DEFAULT_AGENT')
+            : '',
+        detail: !item.isFound
+          ? t('SETUP.NOT_ON_MACHINE')
+          : isSignedOut
+            ? t('SETUP.NEEDS_SIGN_IN')
+            : (item.path ?? ''),
         isDefault,
-        note,
-        canSignIn,
-        className: [
-          'settings__card',
-          ...(isDefault ? ['settings__card--on'] : []),
-          ...(canSignIn ? ['settings__card--signed-out'] : []),
-        ].join(' '),
+        canSignIn: isSignedOut,
         canInstall:
           !item.isFound &&
           installable !== null &&
@@ -127,6 +122,7 @@ export const useSettingsViewModel = () => {
         },
       };
     }),
+    agentsLabel: t('SETTINGS.AGENT'),
     needsNpm: managers !== null && !hasNpm && detected.some(({ isFound }) => !isFound),
     nodeUrl: SETUP_LINKS.nodejs,
     devices: [

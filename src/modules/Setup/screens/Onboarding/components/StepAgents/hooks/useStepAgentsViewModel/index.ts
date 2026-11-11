@@ -20,7 +20,6 @@ export const useStepAgentsViewModel = () => {
     isChecking,
     needsNpm: managers !== null && !hasNpm && agents.some(({ isFound }) => !isFound),
     nodeUrl: SETUP_LINKS.nodejs,
-    hasAgent: agents.some(({ isFound, isSignedIn }) => isFound && isSignedIn !== false),
     rows: agents.map((agent) => {
       const item = installableAgentOf(agent.id);
       const state = item === null ? undefined : installs[item];
@@ -38,7 +37,11 @@ export const useStepAgentsViewModel = () => {
             : agent.isFound
               ? t('SETUP.FOUND')
               : t('SETUP.MISSING'),
-        detail: agent.isFound ? undefined : t('SETUP.NOT_ON_MACHINE'),
+        detail: isSignedOut
+          ? t('SETUP.NEEDS_SIGN_IN')
+          : agent.isFound
+            ? undefined
+            : t('SETUP.NOT_ON_MACHINE'),
         isInUse,
         canInstall:
           !agent.isFound && item !== null && hasNpm && state?.phase !== 'installing',

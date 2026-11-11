@@ -1,44 +1,48 @@
 .step-devices {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: flex-start;
+  gap: var(--space-3);
 }
 
 .step-devices__group {
-  margin-top: var(--space-3);
+  margin-top: var(--space-4);
   color: var(--ink3);
-  font: 500 var(--eyebrow-size) / 1 var(--font-mono);
-  letter-spacing: var(--eyebrow-tracking);
-  text-transform: uppercase;
+  font: var(--font-ui-xs);
 }
 
 .step-devices__group:first-child {
   margin-top: 0;
 }
 
-.step-devices__get {
-  flex: none;
-  padding: 7px var(--space-4);
+.step-devices__list {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  color: var(--ink);
-  font: var(--font-ui-sm);
-  text-decoration: none;
-  white-space: nowrap;
-  transition:
-    border-color var(--dur-fast) var(--ease),
-    background-color var(--dur-fast) var(--ease);
+  border-radius: var(--radius-md);
+  background: var(--raise);
 }
 
-.step-devices__get:hover {
-  border-color: var(--ink3);
-  background: var(--raise2);
+.step-devices__get {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+  white-space: nowrap;
+}
+
+.step-devices__get .icon {
+  color: var(--ink3);
 }
 
 .step-devices__note {
-  margin: var(--space-3) 0 0;
+  margin: var(--space-2) 0 0;
   color: var(--ink3);
-  font: 400 12px/1.6 var(--font-ui);
+  font: var(--font-ui-sm);
   text-wrap: pretty;
 }
 
@@ -47,12 +51,23 @@
 }
 
 .step-devices__note--attn .step-devices__get {
-  padding: 0;
-  border: none;
-  color: var(--lime-ink);
+  color: inherit;
 }
 
 .step-devices__recheck {
-  display: flex;
-  justify-content: flex-end;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.step-devices__recheck:hover:not(:disabled) {
+  color: var(--ink);
+}
+
+.step-devices__recheck:disabled {
+  cursor: default;
 }

@@ -4,11 +4,11 @@ import { useToolCardViewModel } from './hooks';
 import './styles.css';
 
 /**
- * Uma ferramenta achada ou faltando nesta máquina; como opção, o próprio cartão é o que o
- * QA escolhe.
+ * Uma ferramenta achada ou faltando nesta máquina, uma linha numa lista; como opção, a
+ * própria linha é o que o QA escolhe.
  */
 export const ToolCard: React.FC<IToolCardProps> = (props) => {
-  const { isOption, isSelected, className, onClick, onKeyDown } =
+  const { isOption, isSelected, statusIcon, hasBadge, className, onClick, onKeyDown } =
     useToolCardViewModel(props);
 
   return (
@@ -21,17 +21,21 @@ export const ToolCard: React.FC<IToolCardProps> = (props) => {
       onKeyDown={onKeyDown}
     >
       <div className="tool-card__head">
-        <span className="tool-card__mark">{isSelected && <Icon name="check" />}</span>
+        <span className="tool-card__mark" aria-hidden="true">
+          {isOption ? <span className="tool-card__radio" /> : <Icon name={statusIcon} />}
+        </span>
         <span className="tool-card__text">
           <span className="tool-card__name">
             {props.name}
-            <span className="tool-card__badge">{props.badge}</span>
+            {hasBadge && <span className="tool-card__badge">{props.badge}</span>}
           </span>
           {props.about !== undefined && (
             <span className="tool-card__about">{props.about}</span>
           )}
           {props.detail !== undefined && (
-            <span className="tool-card__detail">{props.detail}</span>
+            <span className="tool-card__detail" title={props.detail}>
+              {props.detail}
+            </span>
           )}
         </span>
         {props.action}

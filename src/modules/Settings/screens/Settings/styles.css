@@ -94,128 +94,18 @@
   text-wrap: pretty;
 }
 
+.settings__tools {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--raise);
+}
+
 .settings__eyebrow {
   color: var(--ink3);
-  font: 500 var(--eyebrow-size) / 1 var(--font-mono);
-  letter-spacing: var(--eyebrow-tracking);
-  text-transform: uppercase;
-}
-
-.settings__card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-  padding: var(--space-5) 18px;
-  border: var(--edge-width-lg) solid var(--edge);
-  border-radius: var(--radius-xl);
-  background: var(--raise);
-  box-shadow: var(--sticker-rest);
-  text-align: left;
-  transition:
-    translate var(--dur-fast) var(--ease),
-    box-shadow var(--dur-fast) var(--ease),
-    border-color var(--dur-fast) var(--ease);
-}
-
-button.settings__card:hover:not(:disabled) {
-  box-shadow: var(--sticker-lift);
-  filter: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  button.settings__card:hover:not(:disabled) {
-    translate: 0 var(--lift);
-  }
-}
-
-.settings__card:disabled {
-  cursor: not-allowed;
-}
-
-.settings__card--on {
-  border-color: var(--lime-ink);
-}
-
-.settings__card--top {
-  align-items: flex-start;
-}
-
-.settings__card--missing {
-  border-color: var(--fail);
-}
-
-.settings__dot {
-  flex: none;
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-pill);
-  background: var(--ink3);
-}
-
-.settings__dot--found {
-  background: var(--pass);
-}
-
-.settings__mark {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  height: 1.6em;
-  color: var(--fail);
-  font: 600 12px/1.6 var(--font-mono);
-}
-
-.settings__mark--found {
-  color: var(--pass);
-}
-
-.settings__card-text {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--space-2);
-  min-width: 0;
-}
-
-.settings__card-text--loose {
-  gap: 6px;
-}
-
-.settings__card-name {
-  color: var(--ink);
-  font: 500 14px/1.2 var(--font-ui);
-}
-
-.settings__card-name--muted {
-  color: var(--ink3);
-}
-
-.settings__card-path {
-  overflow: hidden;
-  color: var(--ink3);
-  font: 400 11px/1.4 var(--font-mono);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.settings__card-note {
-  flex-shrink: 0;
-  color: var(--ink3);
-  font: 500 12px/1 var(--font-ui);
-}
-
-.settings__card-note--missing {
-  color: var(--fail);
-}
-
-.settings__card-status {
-  color: var(--fail);
-  font: var(--font-ui-sm);
-}
-
-.settings__card-status--found {
-  color: var(--pass);
+  font: 500 var(--eyebrow-size) / 1 var(--font-ui);
 }
 
 .settings__themes {
@@ -254,7 +144,7 @@ button.settings__card:hover:not(:disabled) {
 }
 
 .settings__theme--on {
-  border-color: var(--lime-ink);
+  border-color: var(--ink2);
 }
 
 .settings__swatch {
@@ -320,10 +210,10 @@ button.settings__card:hover:not(:disabled) {
 }
 
 .settings__language--on {
-  border-color: var(--lime-ink);
+  border-color: var(--ink2);
   background: var(--sel);
   box-shadow:
-    0 0 0 1px var(--lime),
+    0 0 0 1px var(--ink2),
     var(--sticker-rest);
 }
 
@@ -338,7 +228,7 @@ button.settings__card:hover:not(:disabled) {
 
 .settings__language-code {
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .settings__choices {
@@ -368,10 +258,10 @@ button.settings__card:hover:not(:disabled) {
 
 .settings__choice--on,
 .settings__choice--on:hover {
-  border-color: var(--lime-ink);
+  border-color: var(--ink2);
   background: var(--sel);
   box-shadow:
-    0 0 0 1px var(--lime),
+    0 0 0 1px var(--ink2),
     var(--sticker-rest);
   color: var(--ink);
 }
@@ -379,30 +269,47 @@ button.settings__card:hover:not(:disabled) {
 .settings__keybinds {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--raise);
 }
 
 .settings__keybind {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--space-4);
   width: 100%;
-  padding: var(--space-4) 14px;
-  border: 1px solid var(--line2);
-  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-5);
+  border: none;
   background: transparent;
   text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
 }
 
-.settings__keybind--editing {
-  border-color: var(--lime-ink);
+.settings__keybind + .settings__keybind {
+  border-top: 1px solid var(--line);
+}
+
+.settings__keybind:hover {
+  background: var(--raise2);
+}
+
+.settings__keybind:focus-visible {
+  outline: 2px solid var(--lime-ink);
+  outline-offset: -2px;
+}
+
+.settings__keybind--editing,
+.settings__keybind--editing:hover {
   background: var(--lime-soft);
 }
 
 .settings__keybind-label {
   flex: 1;
   color: var(--ink);
-  font: 400 13px/1.3 var(--font-ui);
+  font: var(--font-ui-sm);
 }
 
 .settings__keybind-keys {
@@ -412,7 +319,7 @@ button.settings__card:hover:not(:disabled) {
   border-radius: var(--radius-sm);
   background: var(--raise2);
   color: var(--ink2);
-  font: var(--font-mono-md);
+  font: var(--font-meta-md);
 }
 
 .settings__keybind--editing .settings__keybind-keys {
@@ -447,7 +354,7 @@ button.settings__card:hover:not(:disabled) {
 
 .settings__about-version {
   color: var(--ink3);
-  font: 400 12px/1 var(--font-mono);
+  font: 400 12px/1 var(--font-ui);
 }
 
 .settings__about-logs {
@@ -482,40 +389,16 @@ button.settings__card:hover:not(:disabled) {
   text-decoration: none;
 }
 
-.settings__agent {
-  position: relative;
-}
-
-.settings__card--signed-out {
-  padding-right: 148px;
-}
-
-.settings__card-note:empty {
-  display: none;
-}
-
-.settings__agent-sign-in {
-  position: absolute;
-  top: 50%;
-  right: 18px;
-  translate: 0 -50%;
-}
-
 .settings__get {
+  display: inline-flex;
   flex: none;
-  padding: var(--space-2) var(--space-4);
-  border: var(--edge-width) solid var(--line);
-  border-radius: var(--radius-sm);
-  color: var(--ink);
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink2);
   font: var(--font-ui-sm);
-  text-decoration: none;
   white-space: nowrap;
-  transition:
-    border-color var(--dur-fast) var(--ease),
-    background-color var(--dur-fast) var(--ease);
 }
 
-.settings__get:hover {
-  border-color: var(--ink3);
-  background: var(--raise2);
+.settings__get .icon {
+  color: var(--ink3);
 }

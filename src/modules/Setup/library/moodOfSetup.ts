@@ -14,8 +14,6 @@ export function moodOfSetup(props: {
   const { step, installs, isChecking, hasAgent } = props;
   const isAtTheMachine = step === 'agents' || step === 'devices';
 
-  if (step === 'done') return 'passed';
-
   if (isAtTheMachine && installs.some((install) => install?.phase === 'installing'))
     return 'running';
 

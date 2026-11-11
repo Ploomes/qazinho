@@ -1,5 +1,6 @@
 import type { IToolCardProps } from '@/modules/Setup/components/ToolCard/types';
 import type { KeyboardEvent } from 'react';
+import { TOOL_STATUS_ICONS } from '@/modules/Setup/components/ToolCard/constants';
 
 export const useToolCardViewModel = (props: IToolCardProps) => {
   const { state, isSelected = false, onSelect } = props;
@@ -8,6 +9,8 @@ export const useToolCardViewModel = (props: IToolCardProps) => {
   return {
     isOption,
     isSelected: isOption && isSelected,
+    statusIcon: TOOL_STATUS_ICONS[state],
+    hasBadge: props.badge !== '',
     className: [
       'tool-card',
       `tool-card--${state}`,

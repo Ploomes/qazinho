@@ -66,25 +66,10 @@ describe('useStepAgentsViewModel', () => {
       expect(codex).toMatchObject({
         state: 'missing',
         badge: '',
+        detail: 'needs a sign-in',
         canInstall: false,
         canSignIn: true,
       });
-    });
-
-    it('does NOT count a signed-out agent as one QAzinho can work with', () => {
-      useMachineStore.setState({ agents: [{ ...CLAUDE, isSignedIn: false }, CODEX] });
-
-      expect(renderHook(() => useStepAgentsViewModel()).result.current.hasAgent).toBe(
-        false,
-      );
-    });
-
-    it('counts an agent that would not say whether it is signed in, rather than block on it', () => {
-      useMachineStore.setState({ agents: [{ ...CLAUDE, isSignedIn: null }, CODEX] });
-
-      expect(renderHook(() => useStepAgentsViewModel()).result.current.hasAgent).toBe(
-        true,
-      );
     });
 
     it('does NOT offer an install when this machine has no npm, and says what to get', () => {
@@ -180,12 +165,5 @@ describe('useStepAgentsViewModel', () => {
 
       expect(install).toHaveBeenCalledWith('codex');
     });
-  });
-
-  it('knows when no agent is on this machine at all', () => {
-    useMachineStore.setState({ agents: [{ ...CLAUDE, isFound: false, path: null }] });
-    const { result } = renderHook(() => useStepAgentsViewModel());
-
-    expect(result.current.hasAgent).toBe(false);
   });
 });

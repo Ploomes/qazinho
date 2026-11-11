@@ -187,9 +187,7 @@
 
 .integration-card__eyebrow {
   color: var(--ink3);
-  font: 500 var(--eyebrow-size) / 1 var(--font-mono);
-  letter-spacing: var(--eyebrow-tracking);
-  text-transform: uppercase;
+  font: 500 var(--eyebrow-size) / 1 var(--font-ui);
 }
 
 .integration-card__error {
@@ -209,14 +207,14 @@
 
 .integration-card__link {
   margin-right: auto;
-  color: var(--lime-ink);
+  color: var(--ink);
   font: var(--font-ui-sm);
   text-decoration: none;
   transition: color var(--dur-fast) var(--ease);
 }
 
 .integration-card__link:hover {
-  color: var(--lime);
+  color: var(--ink);
 }
 
 .integration-card__spinner {

@@ -20,6 +20,7 @@ export const Settings: React.FC = () => {
     title,
     tabs,
     agents,
+    agentsLabel,
     devices,
     needsNpm,
     nodeUrl,
@@ -88,72 +89,42 @@ export const Settings: React.FC = () => {
 
           {tab === 'agent' && (
             <div className="settings__stack">
-              {agents.map((item) => (
-                <div key={item.name} className="settings__agent">
-                  <button
-                    type="button"
-                    className={item.className}
-                    disabled={!item.isFound}
-                    onClick={() => {
+              <div className="settings__tools" role="radiogroup" aria-label={agentsLabel}>
+                {agents.map((item) => (
+                  <ToolCard
+                    key={item.name}
+                    name={item.name}
+                    detail={item.detail}
+                    state={item.state}
+                    badge={item.badge}
+                    isSelected={item.isDefault}
+                    onSelect={() => {
                       onSelectAgent(item.name);
                     }}
+                    action={
+                      item.canSignIn ? (
+                        <Button size="sm" onClick={item.onSignIn}>
+                          {t('SETUP.SIGN_IN')}
+                        </Button>
+                      ) : item.canInstall ? (
+                        <Button size="sm" onClick={item.onInstall}>
+                          {t('SETUP.INSTALL')}
+                        </Button>
+                      ) : undefined
+                    }
                   >
-                    <span
-                      className={
-                        item.isFound
-                          ? 'settings__dot settings__dot--found'
-                          : 'settings__dot'
-                      }
-                    />
-                    <span className="settings__card-text">
-                      <span
-                        className={
-                          item.isFound
-                            ? 'settings__card-name'
-                            : 'settings__card-name settings__card-name--muted'
-                        }
-                      >
-                        {item.name}
-                      </span>
-                      <span className="settings__card-path" title={item.path}>
-                        {item.path}
-                      </span>
-                    </span>
-                    <span
-                      className={
-                        item.isFound
-                          ? 'settings__card-note'
-                          : 'settings__card-note settings__card-note--missing'
-                      }
-                    >
-                      {item.note}
-                    </span>
-                  </button>
-                  {item.canSignIn && (
-                    <span className="settings__agent-sign-in">
-                      <Button size="sm" variant="primary" onClick={item.onSignIn}>
-                        {t('SETUP.SIGN_IN')}
-                      </Button>
-                    </span>
-                  )}
-                  {item.canInstall && (
-                    <span className="settings__agent-sign-in">
-                      <Button size="sm" variant="primary" onClick={item.onInstall}>
-                        {t('SETUP.INSTALL')}
-                      </Button>
-                    </span>
-                  )}
-                  <AnimatePresence initial={false}>
-                    {item.install !== null && (
-                      <InstallProgress
-                        key="install"
-                        state={item.install}
-                        onRetry={item.onInstall}
-                      />
-                    )}
-                  </AnimatePresence>
-                </div>
-              ))}
+                    <AnimatePresence initial={false}>
+                      {item.install !== null && (
+                        <InstallProgress
+                          key="install"
+                          state={item.install}
+                          onRetry={item.onInstall}
+                        />
+                      )}
+                    </AnimatePresence>
+                  </ToolCard>
+                ))}
+              </div>
               {needsNpm && (
                 <p className="settings__note">
                   {t('SETUP.NEEDS_NPM')}{' '}
@@ -173,44 +144,46 @@ export const Settings: React.FC = () => {
           {tab === 'agent' && (
             <div className="settings__stack settings__stack--group">
               <span className="settings__eyebrow">{t('SETTINGS.DEVICES')}</span>
-              {devices.map((item) => (
-                <ToolCard
-                  key={item.name}
-                  name={item.name}
-                  detail={item.detail}
-                  state={item.state}
-                  badge={item.badge}
-                  action={
-                    <>
-                      {item.hasLink && (
-                        <a
-                          className="settings__get"
-                          href={item.link}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {item.linkLabel} <Icon name="external" />
-                        </a>
+              <div className="settings__tools">
+                {devices.map((item) => (
+                  <ToolCard
+                    key={item.name}
+                    name={item.name}
+                    detail={item.detail}
+                    state={item.state}
+                    badge={item.badge}
+                    action={
+                      <>
+                        {item.hasLink && (
+                          <a
+                            className="settings__get"
+                            href={item.link}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {item.linkLabel} <Icon name="external" />
+                          </a>
+                        )}
+                        {item.canInstall && (
+                          <Button size="sm" onClick={onInstallIdb}>
+                            {t('SETUP.INSTALL')}
+                          </Button>
+                        )}
+                      </>
+                    }
+                  >
+                    <AnimatePresence initial={false}>
+                      {item.install !== null && (
+                        <InstallProgress
+                          key="install"
+                          state={item.install}
+                          onRetry={onInstallIdb}
+                        />
                       )}
-                      {item.canInstall && (
-                        <Button size="sm" variant="primary" onClick={onInstallIdb}>
-                          {t('SETUP.INSTALL')}
-                        </Button>
-                      )}
-                    </>
-                  }
-                >
-                  <AnimatePresence initial={false}>
-                    {item.install !== null && (
-                      <InstallProgress
-                        key="install"
-                        state={item.install}
-                        onRetry={onInstallIdb}
-                      />
-                    )}
-                  </AnimatePresence>
-                </ToolCard>
-              ))}
+                    </AnimatePresence>
+                  </ToolCard>
+                ))}
+              </div>
               {needsBrew && (
                 <p className="settings__note">
                   {t('SETUP.NEEDS_BREW')}{' '}

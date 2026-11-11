@@ -53,9 +53,15 @@ describe('useSettingsViewModel', () => {
 
     const { result } = renderHook(() => useSettingsViewModel());
 
-    expect(result.current.agents.map(({ note }) => note)).toEqual([
-      'Default agent',
-      'Make default',
+    expect(
+      result.current.agents.map(({ badge, isDefault, state }) => [
+        badge,
+        isDefault,
+        state,
+      ]),
+    ).toEqual([
+      ['Default agent', true, 'found'],
+      ['', false, 'found'],
     ]);
   });
 
@@ -70,17 +76,15 @@ describe('useSettingsViewModel', () => {
     const { result } = renderHook(() => useSettingsViewModel());
 
     expect(result.current.agents[1]).toMatchObject({
-      note: '',
+      state: 'missing',
+      badge: '',
+      detail: 'needs a sign-in',
       canSignIn: true,
-      className: 'settings__card settings__card--signed-out',
     });
-    expect(result.current.agents[0]).toMatchObject({
-      canSignIn: false,
-      className: 'settings__card settings__card--on',
-    });
+    expect(result.current.agents[0]).toMatchObject({ canSignIn: false });
   });
 
-  it('flags an agent that is not on PATH', () => {
+  it('flags an agent that is not on this machine', () => {
     useMachineStore.setState({
       agents: [
         agent({ id: 'claude-code', name: 'Claude Code' }),
@@ -90,11 +94,11 @@ describe('useSettingsViewModel', () => {
 
     const { result } = renderHook(() => useSettingsViewModel());
 
-    expect(result.current.agents.map(({ note }) => note)).toEqual([
-      'Default agent',
-      'Not on PATH',
-    ]);
-    expect(result.current.agents[1]?.path).toBe('not found');
+    expect(result.current.agents[1]).toMatchObject({
+      state: 'missing',
+      badge: 'missing',
+      detail: 'not on this machine',
+    });
   });
 
   it('offers GitHub and Jira as trackers to connect', () => {
@@ -104,10 +108,11 @@ describe('useSettingsViewModel', () => {
   });
 
   /** O Sobre dizia 0.1.0 fosse qual fosse o build. */
-  it('shows the version the app was built as', () => {
+  /** O BETA saiu da barra de título: o Sobre é onde ele continua dito. */
+  it('shows the version the app was built as, and that it is a beta', () => {
     const { result } = renderHook(() => useSettingsViewModel());
 
-    expect(result.current.version).toBe(`version ${__QAZINHO_VERSION__}`);
+    expect(result.current.version).toBe(`version ${__QAZINHO_VERSION__}, beta`);
     expect(result.current.version).toMatch(/^version \d+\.\d+\.\d+/);
   });
 

@@ -50,13 +50,13 @@
 .install-progress__label {
   flex: none;
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .install-progress__line {
   overflow: hidden;
   color: var(--ink2);
-  font: var(--font-mono-sm);
+  font: var(--font-code-sm);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -65,7 +65,7 @@
   display: inline-flex;
   gap: var(--space-3);
   color: var(--pass);
-  font: var(--font-mono-md);
+  font: var(--font-meta-md);
 }
 
 .install-progress__error {
@@ -95,7 +95,7 @@
   min-width: 0;
   overflow-x: auto;
   color: var(--ink);
-  font: var(--font-mono-sm);
+  font: var(--font-code-sm);
   white-space: nowrap;
   user-select: text;
 }

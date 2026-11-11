@@ -12,7 +12,6 @@ export const StepAgents: React.FC = () => {
     isChecking,
     needsNpm,
     nodeUrl,
-    hasAgent,
     rows,
     signIn,
     signInAgent,
@@ -28,7 +27,7 @@ export const StepAgents: React.FC = () => {
       <div
         className="step-agents__list"
         role="radiogroup"
-        aria-label={t('SETUP.STEP_AGENTS')}
+        aria-label={t('SETUP.AGENTS_TITLE')}
       >
         {rows.map((row) => (
           <ToolCard
@@ -41,11 +40,11 @@ export const StepAgents: React.FC = () => {
             onSelect={row.onUse}
             action={
               row.canSignIn ? (
-                <Button size="sm" variant="primary" onClick={row.onSignIn}>
+                <Button size="sm" onClick={row.onSignIn}>
                   {t('SETUP.SIGN_IN')}
                 </Button>
               ) : row.canInstall ? (
-                <Button size="sm" variant="primary" onClick={row.onInstall}>
+                <Button size="sm" onClick={row.onInstall}>
                   {t('SETUP.INSTALL')}
                 </Button>
               ) : undefined
@@ -85,18 +84,6 @@ export const StepAgents: React.FC = () => {
             </a>
           </motion.p>
         )}
-        {!hasAgent && (
-          <motion.p
-            key="none"
-            className="step-agents__note"
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: MOTION.durationFast, ease: MOTION.ease }}
-          >
-            {t('SETUP.NO_AGENT')}
-          </motion.p>
-        )}
       </AnimatePresence>
 
       {createPortal(
@@ -115,11 +102,14 @@ export const StepAgents: React.FC = () => {
         document.body,
       )}
 
-      <div className="step-agents__recheck">
-        <Button size="sm" variant="ghost" disabled={isChecking} onClick={onCheckAgain}>
-          {isChecking ? t('SETUP.CHECKING') : t('SETUP.CHECK_AGAIN')}
-        </Button>
-      </div>
+      <button
+        type="button"
+        className="step-agents__recheck"
+        disabled={isChecking}
+        onClick={onCheckAgain}
+      >
+        {isChecking ? t('SETUP.CHECKING') : t('SETUP.CHECK_AGAIN')}
+      </button>
     </div>
   );
 };
