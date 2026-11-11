@@ -28,7 +28,7 @@ describe('walkedByOf', () => {
     expect(
       walkedByOf({ agent: 'Claude Code', model: '', targetKind: 'web', agents: [CLAUDE] })
         .modelName,
-    ).toBe('claude-sonnet-4-5');
+    ).toBe('Sonnet 4.5');
   });
 
   it('says nothing of a model nobody named, rather than guess one', () => {

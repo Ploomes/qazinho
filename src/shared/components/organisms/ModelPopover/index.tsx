@@ -60,7 +60,6 @@ export const ModelPopover: React.FC<IModelPopoverProps> = (props) => {
                 ? 'model-popover__row model-popover__row--selected'
                 : 'model-popover__row'
             }
-            disabled={item.isLocked}
             onClick={() => {
               onSelectModel(item.id);
             }}

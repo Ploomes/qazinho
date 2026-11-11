@@ -34,10 +34,6 @@
   color: var(--ink);
 }
 
-.model-popover__row:disabled {
-  opacity: 0.6;
-}
-
 .model-popover__note {
   margin-left: auto;
   color: var(--ink3);

@@ -2,7 +2,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useModelPopoverViewModel } from '@/shared/components/organisms/ModelPopover/hooks/useModelPopoverViewModel';
-import { useAppStore, useSettingsStore } from '@/store';
+import { useAppStore, useMachineStore, useSettingsStore } from '@/store';
 
 beforeEach(() => {
   useSettingsStore.setState({ agent: 'Claude Code', model: 'sonnet' });
@@ -26,6 +26,42 @@ describe('useModelPopoverViewModel', () => {
     const { result } = renderHook(() => useModelPopoverViewModel());
 
     expect(result.current.models.find(({ id }) => id === 'haiku')?.note).toBeNull();
+  });
+
+  /** O padrão do agente aparecia como o id cru da config dele, "claude-fable-5-2". */
+  it('names the agent own default the way a person says it', () => {
+    useMachineStore.setState({
+      agents: [
+        {
+          id: 'claude',
+          name: 'Claude Code',
+          command: 'claude',
+          isFound: true,
+          path: '/usr/local/bin/claude',
+          defaultModel: 'claude-fable-5-2',
+          isSignedIn: true,
+        },
+      ],
+    });
+
+    const { result } = renderHook(() => useModelPopoverViewModel());
+
+    expect(result.current.models[0]?.note).toBe('Fable 5.2');
+  });
+
+  it('leaves the default with nothing beside it when the agent config names no model', () => {
+    useMachineStore.setState({ agents: [] });
+
+    const { result } = renderHook(() => useModelPopoverViewModel());
+
+    expect(result.current.models[0]?.note).toBeNull();
+  });
+
+  /** O Fable vinha cinza por um cadeado que sobrou dos dados de mentira do protótipo. */
+  it('offers every model it lists, none of them greyed out', () => {
+    const { result } = renderHook(() => useModelPopoverViewModel());
+
+    expect(result.current.models.every((one) => !('isLocked' in one))).toBe(true);
   });
 
   it('still offers the agent default for an agent that lists no models', () => {
