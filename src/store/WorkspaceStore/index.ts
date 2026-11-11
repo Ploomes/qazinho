@@ -45,7 +45,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   openCaseId: null,
   openBugId: null,
   selectedRunId: null,
-  bugFilter: 'all',
+  bugFilter: 'open',
   isPanelOpen: true,
   panelWidth: PANEL.defaultWidth,
   askingIds: [],

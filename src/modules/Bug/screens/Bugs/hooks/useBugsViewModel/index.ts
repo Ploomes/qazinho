@@ -1,10 +1,12 @@
-import type { IFilingPlan } from '@/modules/Bug/types';
+import type { BugFilter, IBug, IFilingPlan } from '@/modules/Bug/types';
 import type { IssueTarget } from '@/shared/types';
+import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BUG_FILTER_KEYS, BUG_FILTERS } from '@/modules/Bug/constants';
 import { useBugFiling } from '@/modules/Bug/hooks/useBugFiling';
 import { appearancesOf } from '@/modules/Bug/library';
+import { BUGS_LIST } from '@/modules/Bug/screens/Bugs/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import { useToTop } from '@/shared/hooks/useToTop';
 import { useWorkspaceStore } from '@/store';
@@ -32,23 +34,20 @@ export const useBugsViewModel = () => {
   const bugs = workspace?.bugs ?? [];
   const runs = workspace?.runs ?? [];
   const plan = workspace?.plan ?? [];
-  const open = bugs.filter(({ isDismissed }) => !isDismissed);
-  const dismissed = bugs.filter(({ isDismissed }) => isDismissed);
-  const severities = BUG_FILTERS.filter((id) =>
-    open.some(({ severity }) => severity === id),
-  );
-  const offered = [
-    ...(severities.length > 1 ? severities : []),
-    ...(dismissed.length > 0 ? (['dismissed'] as const) : []),
-  ];
-  const offeredFilters = offered.length === 0 ? [] : (['all', ...offered] as const);
-  const filter = offeredFilters.some((id) => id === bugFilter) ? bugFilter : 'all';
-  const shown =
-    filter === 'dismissed'
-      ? dismissed
-      : filter === 'all'
-        ? open
-        : open.filter(({ severity }) => severity === filter);
+  const inTab = (tab: BugFilter) =>
+    bugs.filter((bug) =>
+      tab === 'dismissed'
+        ? bug.isDismissed
+        : tab === 'filed'
+          ? !bug.isDismissed && bug.filed !== null
+          : !bug.isDismissed && bug.filed === null,
+    );
+  const open = inTab('open');
+  const filed = inTab('filed');
+  const tabs = BUG_FILTERS.filter((id) => id === 'open' || inTab(id).length > 0);
+  const filter = tabs.includes(bugFilter) ? bugFilter : 'open';
+  const shown = inTab(filter);
+  const openBug = bugs.find(({ id }) => id === openBugId) ?? null;
 
   const onOpenRun = (runId: string) => {
     selectRun(runId);
@@ -61,6 +60,29 @@ export const useBugsViewModel = () => {
     if (useWorkspaceStore.getState().openCaseId !== caseId) toggleCase(caseId);
   };
 
+  const pageOf = (bug: IBug) => {
+    const latest =
+      appearancesOf(bug).findLast((seen) => runs.some(({ id }) => id === seen.runId)) ??
+      null;
+    const run = runs.find(({ id }) => id === latest?.runId);
+    const video = run?.video ?? null;
+
+    return {
+      bug,
+      hasRun: run !== undefined,
+      hasCase: plan.some(({ id }) => id === bug.caseId),
+      lastRunId: latest?.runId ?? bug.runId,
+      moment:
+        workspace === null || latest === null || video === null || latest.at === null
+          ? null
+          : {
+              workspaceId: workspace.id,
+              runId: latest.runId,
+              atMs: Math.max(0, latest.at - video.startedAt),
+            },
+    };
+  };
+
   const sendingBug = bugs.find(({ id }) => id === sendingBugId) ?? null;
   const { filing } = filings;
   const filingBug = bugs.find(({ id }) => id === filing?.bugId) ?? null;
@@ -69,51 +91,61 @@ export const useBugsViewModel = () => {
     topRef,
     isToTopShown,
     onToTop,
-    bugs: shown.map((bug) => {
-      const latest =
-        appearancesOf(bug).findLast((seen) => runs.some(({ id }) => id === seen.runId)) ??
-        null;
-      const run = runs.find(({ id }) => id === latest?.runId);
-      const video = run?.video ?? null;
+    style: {
+      '--bugs-thumb-width': `${String(BUGS_LIST.thumbWidthPx)}px`,
+    } as CSSProperties,
+    rows: shown.map((bug) => {
+      const hero = bug.shots.find(({ isBad }) => isBad) ?? bug.shots[0] ?? null;
 
       return {
-        bug,
-        hasRun: run !== undefined,
-        hasCase: plan.some(({ id }) => id === bug.caseId),
-        lastRunId: latest?.runId ?? bug.runId,
-        moment:
-          workspace === null || latest === null || video === null || latest.at === null
-            ? null
-            : {
-                workspaceId: workspace.id,
-                runId: latest.runId,
-                atMs: Math.max(0, latest.at - video.startedAt),
-              },
+        id: bug.id,
+        title: bug.title,
+        thumb: { src: hero?.src ?? null, file: hero?.file ?? null },
+        where: t('BUG.ROW_WHERE', { step: bug.stepNumber, caseId: bug.caseId }),
+        seen:
+          bug.seenRuns > 1
+            ? t('BUG.ROW_SEEN_OTHER', { count: bug.seenRuns })
+            : t('BUG.ROW_SEEN_ONE'),
+        when: bug.runWhen,
+        onOpen: () => {
+          toggleBug(bug.id);
+        },
       };
     }),
+    page: openBug === null ? null : pageOf(openBug),
+    onBack: () => {
+      if (openBug !== null) toggleBug(openBug.id);
+    },
     workspaceId: workspace?.id ?? '',
-    openBugId,
-    filters: offeredFilters.map((id) => ({
+    tabs: tabs.map((id) => ({
       id,
       label: t(BUG_FILTER_KEYS[id]),
+      count: id === 'open' && open.length > 0 ? String(open.length) : null,
       isActive: id === filter,
-      className: id === filter ? 'bugs__filter bugs__filter--active' : 'bugs__filter',
+      className: id === filter ? 'bugs__tab bugs__tab--active' : 'bugs__tab',
       onClick: () => {
         setBugFilter(id);
       },
     })),
-    hasFilters: offeredFilters.length > 0,
     isEmpty: bugs.length === 0,
-    summary:
+    summary: [
       open.length === 0
-        ? t('BUG.SUMMARY_NONE')
+        ? t('BUG.LIST_OPEN_NONE')
         : open.length === 1
-          ? t('BUG.SUMMARY_ONE')
-          : t('BUG.SUMMARY_OTHER', { count: open.length }),
+          ? t('BUG.LIST_OPEN_ONE')
+          : t('BUG.LIST_OPEN_OTHER', { count: open.length }),
+      ...(filed.length === 0
+        ? []
+        : [
+            filed.length === 1
+              ? t('BUG.LIST_FILED_ONE')
+              : t('BUG.LIST_FILED_OTHER', { count: filed.length }),
+          ]),
+    ].join(' '),
+    emptyTab: t('BUG.SUMMARY_NONE'),
     onDismiss: (props: { bugId: string; isDismissed: boolean }) => {
       if (workspace !== null) dismissBug({ workspaceId: workspace.id, ...props });
     },
-    onToggleBug: toggleBug,
     onOpenRun,
     onOpenCase,
     sending:

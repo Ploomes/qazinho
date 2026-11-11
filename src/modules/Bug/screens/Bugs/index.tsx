@@ -2,7 +2,7 @@ import { AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { EmptyState } from '@/shared/components/atoms';
 import { ToTop } from '@/shared/components/molecules';
-import { BugCard, BugFilingPopup, BugSendModal } from './components';
+import { BugFilingPopup, BugPage, BugSendModal, BugThumb } from './components';
 import { useBugsViewModel } from './hooks';
 import './styles.css';
 
@@ -11,14 +11,15 @@ export const Bugs: React.FC = () => {
     topRef,
     isToTopShown,
     onToTop,
-    bugs,
+    style,
+    rows,
+    page,
+    onBack,
     workspaceId,
-    openBugId,
-    filters,
-    hasFilters,
+    tabs,
     isEmpty,
     summary,
-    onToggleBug,
+    emptyTab,
     onOpenRun,
     onOpenCase,
     onDismiss,
@@ -39,45 +40,66 @@ export const Bugs: React.FC = () => {
   }
 
   return (
-    <div className="bugs">
-      <div ref={topRef} className="bugs__head">
-        <span className="bugs__summary">{summary}</span>
-        {hasFilters && (
-          <div className="bugs__filters">
-            {filters.map((item) => (
+    <div ref={topRef} className="bugs" style={style}>
+      {page === null ? (
+        <>
+          <p className="bugs__summary">{summary}</p>
+
+          <div className="bugs__tabs" role="tablist">
+            {tabs.map((tab) => (
               <button
-                key={item.id}
+                key={tab.id}
                 type="button"
-                className={item.className}
-                aria-pressed={item.isActive}
-                onClick={item.onClick}
+                role="tab"
+                className={tab.className}
+                aria-selected={tab.isActive}
+                onClick={tab.onClick}
               >
-                {item.label}
+                {tab.label}
+                {tab.count !== null && <span className="bugs__count">{tab.count}</span>}
               </button>
             ))}
           </div>
-        )}
-      </div>
 
-      <div className="bugs__list">
-        {bugs.map(({ bug, hasRun, hasCase, lastRunId, moment }) => (
-          <BugCard
-            key={bug.id}
-            workspaceId={workspaceId}
-            bug={bug}
-            hasRun={hasRun}
-            hasCase={hasCase}
-            lastRunId={lastRunId}
-            moment={moment}
-            isOpen={openBugId === bug.id}
-            onToggle={onToggleBug}
-            onOpenRun={onOpenRun}
-            onOpenCase={onOpenCase}
-            onSend={onSend}
-            onDismiss={onDismiss}
-          />
-        ))}
-      </div>
+          {rows.length === 0 ? (
+            <p className="bugs__none">{emptyTab}</p>
+          ) : (
+            <div className="bugs__list">
+              {rows.map((row) => (
+                <button
+                  key={row.id}
+                  type="button"
+                  className="bugs__row"
+                  onClick={row.onOpen}
+                >
+                  <BugThumb src={row.thumb.src} file={row.thumb.file} />
+                  <span className="bugs__text">
+                    <span className="bugs__title">{row.title}</span>
+                    <span className="bugs__where">{row.where}</span>
+                  </span>
+                  <span className="bugs__seen">{row.seen}</span>
+                  <span className="bugs__when">{row.when}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </>
+      ) : (
+        <BugPage
+          key={page.bug.id}
+          workspaceId={workspaceId}
+          bug={page.bug}
+          hasRun={page.hasRun}
+          hasCase={page.hasCase}
+          lastRunId={page.lastRunId}
+          moment={page.moment}
+          onBack={onBack}
+          onOpenRun={onOpenRun}
+          onOpenCase={onOpenCase}
+          onSend={onSend}
+          onDismiss={onDismiss}
+        />
+      )}
 
       <ToTop isShown={isToTopShown} onClick={onToTop} />
 

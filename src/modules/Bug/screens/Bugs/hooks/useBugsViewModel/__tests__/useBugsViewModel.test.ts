@@ -19,7 +19,7 @@ beforeEach(() => {
   useWorkspaceStore.setState({
     workspaces: [{ ...WORKSPACE, bugs: [BUG] }],
     openBugId: null,
-    bugFilter: 'all',
+    bugFilter: 'open',
   });
 });
 
@@ -32,7 +32,7 @@ describe('useBugsViewModel', () => {
   it('counts the bugs in the singular when there is only one', () => {
     const { result } = renderHook(() => useBugsViewModel());
 
-    expect(result.current.summary).toBe('1 bug, caught by the agent');
+    expect(result.current.summary).toBe('1 open.');
   });
 
   it('has nothing to show while nothing has broken', () => {
@@ -43,72 +43,69 @@ describe('useBugsViewModel', () => {
     expect(result.current.isEmpty).toBe(true);
   });
 
-  describe('onFilter', () => {
-    const LOW = { ...BUG, id: 'b-low', severity: 'low' as const };
+  describe('the tabs', () => {
+    const FILED = {
+      ...BUG,
+      id: 'BUG-02',
+      filed: { tracker: 'jira' as const, key: 'SHOP-9', url: 'https://x.test/9', at: '' },
+    };
 
-    it('offers no filter while every open bug has the same severity', () => {
+    it('opens on the open bugs, counted, and offers a tab only where there is a bug', () => {
       const { result } = renderHook(() => useBugsViewModel());
 
-      expect(result.current.hasFilters).toBe(false);
-      expect(result.current.filters).toEqual([]);
-    });
-
-    it('offers the severities the open bugs carry, by name, with the one in use marked', async () => {
-      await i18n.changeLanguage('pt');
-      useWorkspaceStore.setState({ workspaces: [{ ...WORKSPACE, bugs: [BUG, LOW] }] });
-
-      const { result } = renderHook(() => useBugsViewModel());
-
-      expect(result.current.filters).toMatchObject([
-        { id: 'all', label: 'todos', isActive: true },
-        { id: 'high', label: 'alta', isActive: false },
-        { id: 'low', label: 'baixa', isActive: false },
+      expect(result.current.tabs).toMatchObject([
+        { id: 'open', label: 'Open', count: '1', isActive: true },
       ]);
+      expect(result.current.rows.map(({ id }) => id)).toEqual([BUG.id]);
     });
 
-    it('keeps the bugs of that severity', () => {
-      useWorkspaceStore.setState({ workspaces: [{ ...WORKSPACE, bugs: [BUG, LOW] }] });
+    it('keeps a sent bug under Sent, and says how many went', () => {
+      useWorkspaceStore.setState({ workspaces: [{ ...WORKSPACE, bugs: [BUG, FILED] }] });
+
       const { result } = renderHook(() => useBugsViewModel());
+
+      expect(result.current.summary).toBe('1 open. 1 was already sent.');
 
       act(() => {
-        result.current.filters.find(({ id }) => id === 'high')?.onClick();
+        result.current.tabs.find(({ id }) => id === 'filed')?.onClick();
       });
 
-      expect(result.current.bugs.map(({ bug }) => bug.id)).toEqual([BUG.id]);
+      expect(result.current.rows.map(({ id }) => id)).toEqual(['BUG-02']);
     });
 
-    it('shows every open bug once the severity picked has none left', () => {
-      useWorkspaceStore.setState({ bugFilter: 'low' });
-
+    it('says where each bug was caught and how many runs saw it', () => {
       const { result } = renderHook(() => useBugsViewModel());
 
-      expect(result.current.bugs.map(({ bug }) => bug.id)).toEqual([BUG.id]);
+      expect(result.current.rows[0]).toMatchObject({
+        title: BUG.title,
+        where: 'Step 2 of TC-02',
+        seen: 'seen in 1 run',
+      });
     });
   });
 
   describe('onDismiss', () => {
-    it('takes a bug the QA says is none out of the open ones, and keeps it under its own filter', () => {
+    it('takes a bug the QA says is none out of the open ones, and keeps it under Closed', () => {
       const { result } = renderHook(() => useBugsViewModel());
 
-      expect(result.current.filters.map(({ id }) => id)).not.toContain('dismissed');
+      expect(result.current.tabs.map(({ id }) => id)).not.toContain('dismissed');
 
       act(() => {
         result.current.onDismiss({ bugId: BUG.id, isDismissed: true });
       });
 
-      expect(result.current.bugs).toEqual([]);
-      expect(result.current.summary).toBe('No bug open');
+      expect(result.current.rows).toEqual([]);
+      expect(result.current.summary).toBe('None open.');
       expect(result.current.isEmpty).toBe(false);
-      expect(result.current.filters.map(({ id }) => id)).toContain('dismissed');
 
       act(() => {
-        result.current.filters.find(({ id }) => id === 'dismissed')?.onClick();
+        result.current.tabs.find(({ id }) => id === 'dismissed')?.onClick();
       });
 
-      expect(result.current.bugs.map(({ bug }) => bug.id)).toEqual([BUG.id]);
+      expect(result.current.rows.map(({ id }) => id)).toEqual([BUG.id]);
     });
 
-    it('does NOT stay on an empty filter once every bug was opened again', () => {
+    it('does NOT stay on an empty tab once every bug was opened again', () => {
       useWorkspaceStore.setState({
         workspaces: [{ ...WORKSPACE, bugs: [{ ...BUG, isDismissed: true }] }],
         bugFilter: 'dismissed',
@@ -120,8 +117,8 @@ describe('useBugsViewModel', () => {
         result.current.onDismiss({ bugId: BUG.id, isDismissed: false });
       });
 
-      expect(result.current.bugs.map(({ bug }) => bug.id)).toEqual([BUG.id]);
-      expect(result.current.hasFilters).toBe(false);
+      expect(result.current.rows.map(({ id }) => id)).toEqual([BUG.id]);
+      expect(result.current.tabs.map(({ id }) => id)).toEqual(['open']);
     });
   });
 
@@ -148,9 +145,11 @@ describe('useBugsViewModel', () => {
         workspaces: [{ ...WORKSPACE, bugs: [BUG], runs: [] }],
       });
 
+      useWorkspaceStore.setState({ openBugId: BUG.id });
+
       const { result } = renderHook(() => useBugsViewModel());
 
-      expect(result.current.bugs[0]?.hasRun).toBe(false);
+      expect(result.current.page?.hasRun).toBe(false);
     });
   });
 
@@ -189,36 +188,45 @@ describe('useBugsViewModel', () => {
         ],
       });
 
+      useWorkspaceStore.setState({ openBugId: 'BUG-02' });
+
       const { result } = renderHook(() => useBugsViewModel());
 
-      expect(result.current.bugs.map(({ hasCase }) => hasCase)).toEqual([true, false]);
+      expect(result.current.page?.hasCase).toBe(false);
     });
   });
 
-  describe('onToggleBug', () => {
-    it('opens a bug and closes it again', () => {
+  describe('a bug opened', () => {
+    it('opens as its page from its row, and goes back to every bug', () => {
       const { result } = renderHook(() => useBugsViewModel());
 
-      act(() => {
-        result.current.onToggleBug('BUG-01');
-      });
-
-      expect(useWorkspaceStore.getState().openBugId).toBe('BUG-01');
+      expect(result.current.page).toBeNull();
 
       act(() => {
-        result.current.onToggleBug('BUG-01');
+        result.current.rows[0]?.onOpen();
       });
 
-      expect(useWorkspaceStore.getState().openBugId).toBeNull();
+      expect(result.current.page?.bug.id).toBe('BUG-01');
+
+      act(() => {
+        result.current.onBack();
+      });
+
+      expect(result.current.page).toBeNull();
     });
   });
 
   it("places a bug in its run's video, a moment that the card can show", () => {
-    useWorkspaceStore.setState({ workspaces: [recordedRun()] });
+    const recorded = recordedRun();
+
+    useWorkspaceStore.setState({
+      workspaces: [recorded],
+      openBugId: recorded.bugs[0]?.id ?? null,
+    });
 
     const { result } = renderHook(() => useBugsViewModel());
 
-    expect(result.current.bugs[0]?.moment).toEqual({
+    expect(result.current.page?.moment).toEqual({
       workspaceId: 'w1',
       runId: 'r-01',
       atMs: 9_500,
@@ -226,9 +234,11 @@ describe('useBugsViewModel', () => {
   });
 
   it('has no moment to show for a bug whose run has no video', () => {
+    useWorkspaceStore.setState({ openBugId: BUG.id });
+
     const { result } = renderHook(() => useBugsViewModel());
 
-    expect(result.current.bugs[0]?.moment).toBeNull();
+    expect(result.current.page?.moment).toBeNull();
   });
 
   describe('a bug seen again', () => {
@@ -261,11 +271,12 @@ describe('useBugsViewModel', () => {
             bugs: [{ ...bug!, sightings: [SIGHTING] }],
           },
         ],
+        openBugId: bug!.id,
       });
 
       const { result } = renderHook(() => useBugsViewModel());
 
-      expect(result.current.bugs[0]).toMatchObject({
+      expect(result.current.page).toMatchObject({
         lastRunId: 'r-02',
         hasRun: true,
         moment: { workspaceId: 'w1', runId: 'r-02', atMs: 10_000 },
@@ -275,11 +286,12 @@ describe('useBugsViewModel', () => {
     it('keeps the run it was first caught in when the later one is gone', () => {
       useWorkspaceStore.setState({
         workspaces: [{ ...WORKSPACE, bugs: [{ ...BUG, sightings: [SIGHTING] }] }],
+        openBugId: BUG.id,
       });
 
       const { result } = renderHook(() => useBugsViewModel());
 
-      expect(result.current.bugs[0]).toMatchObject({ lastRunId: 'r-01', hasRun: true });
+      expect(result.current.page).toMatchObject({ lastRunId: 'r-01', hasRun: true });
     });
   });
 
