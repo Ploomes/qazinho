@@ -2,7 +2,7 @@ import type { ITitlebarProps } from './types';
 import { AnimatePresence } from 'motion/react';
 import { AssistantButton } from '@/modules/Assistant';
 import { UpdateButton } from '@/modules/Update';
-import { Gauge, Icon, IconButton, Logo, Tag, Wordmark } from '@/shared/components/atoms';
+import { Gauge, Icon, IconButton } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { ModelPopover } from '@/shared/components/organisms/ModelPopover';
 import { ResourcePopover } from '@/shared/components/organisms/ResourcePopover';
@@ -18,7 +18,6 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
     isModelMenuOpen,
     resourcesLabel,
     agentLabel,
-    betaLabel,
     sessionUsed,
     sessionLabel,
     sessionTip,
@@ -28,18 +27,6 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
 
   return (
     <header className={className}>
-      {!isBare && (
-        <div className="titlebar__brand">
-          <Logo size={24} />
-          <span className="titlebar__wordmark">
-            <Wordmark />
-          </span>
-          <span className="titlebar__beta">
-            <Tag>{betaLabel}</Tag>
-          </span>
-        </div>
-      )}
-
       {!isBare && (
         <div className="titlebar__meters">
           <UpdateButton />

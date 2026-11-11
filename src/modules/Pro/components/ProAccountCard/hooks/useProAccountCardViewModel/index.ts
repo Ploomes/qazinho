@@ -1,11 +1,8 @@
-import type { ProSignInProgress } from '@/shared/types';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  PRO_ACCOUNT_CARD,
-  PRO_ATTENTION,
-} from '@/modules/Pro/components/ProAccountCard/constants';
+import { PRO_ATTENTION } from '@/modules/Pro/components/ProAccountCard/constants';
 import { PRO_BILLING, PRO_ROLES } from '@/modules/Pro/constants';
+import { useProSignIn } from '@/modules/Pro/hooks/useProSignIn';
 import { attentionOf, initialsOf } from '@/modules/Pro/library';
 import { Pro } from '@/services';
 import { useDismiss } from '@/shared/hooks';
@@ -20,43 +17,17 @@ export const useProAccountCardViewModel = () => {
   const toggleSidebar = useSettingsStore((state) => state.toggleSidebar);
   const [isOpen, setOpen] = useState(false);
   const [isCloning, setCloning] = useState(false);
-  const [signIn, setSignIn] = useState<ProSignInProgress | null>(null);
   const [isSigningOut, setSigningOut] = useState(false);
+  const { signIn, onBegin, onCancel, onClose } = useProSignIn();
   const ref = useDismiss<HTMLDivElement>(() => {
     setOpen(false);
   });
-
-  useEffect(
-    () =>
-      Pro.onSignIn((progress) => {
-        setSignIn((current) => (current === null ? current : progress));
-      }),
-    [],
-  );
 
   const signedIn = status?.isSignedIn === true ? status : null;
   const orgs = signedIn?.orgs ?? [];
   const onlyOrg = orgs.length === 1 ? orgs[0] : undefined;
   const attention = attentionOf({ status, shares });
   const name = signedIn === null ? '' : (signedIn.account.name ?? signedIn.account.email);
-
-  const begin = async () => {
-    setSignIn({
-      steps: ['code', 'browser', 'account'],
-      phase: 'working',
-      at: 'code',
-      code: null,
-      url: null,
-    });
-
-    const ended = await Pro.signIn();
-
-    setSignIn((current) =>
-      current === null || ended.phase === 'cancelled' ? null : ended,
-    );
-
-    if (ended.phase === 'connected') setStatus(await Pro.status());
-  };
 
   const signOut = async () => {
     setSigningOut(true);
@@ -72,7 +43,6 @@ export const useProAccountCardViewModel = () => {
     isShown: status !== null,
     isSignedIn: signedIn !== null,
     className: isShut ? 'pro-account pro-account--shut' : 'pro-account',
-    internSize: PRO_ACCOUNT_CARD.internSize,
     isOpen: isOpen && signedIn !== null && !isShut,
     hasTip: isShut,
     title,
@@ -110,7 +80,7 @@ export const useProAccountCardViewModel = () => {
     isSigningOut,
     onToggle: () => {
       if (signedIn === null) {
-        void begin();
+        onBegin();
 
         return;
       }
@@ -131,16 +101,9 @@ export const useProAccountCardViewModel = () => {
     onCloseClone: () => {
       setCloning(false);
     },
-    onCancelSignIn: () => {
-      void Pro.cancelSignIn();
-      setSignIn(null);
-    },
-    onCloseSignIn: () => {
-      setSignIn(null);
-    },
-    onRetrySignIn: () => {
-      void begin();
-    },
+    onCancelSignIn: onCancel,
+    onCloseSignIn: onClose,
+    onRetrySignIn: onBegin,
     onOpenSite: () => {
       if (onlyOrg !== undefined)
         void Pro.openPage(`/${encodeURIComponent(onlyOrg.slug)}`);

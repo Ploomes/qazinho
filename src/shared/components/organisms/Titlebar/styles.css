@@ -10,19 +10,6 @@
   -webkit-app-region: drag;
 }
 
-.titlebar.titlebar--bare {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: 1;
-  border-bottom-color: transparent;
-  background: transparent;
-  transition:
-    background-color var(--dur) var(--ease),
-    border-color var(--dur) var(--ease);
-}
-
 .titlebar--mac {
   padding-left: 90px;
 }
@@ -33,32 +20,13 @@
   );
 }
 
-.titlebar__brand {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.titlebar__wordmark {
-  font-size: 17px;
-}
-
-.titlebar__beta {
-  display: inline-flex;
-  margin-left: var(--space-1);
-}
-
-.titlebar__beta .tag {
-  padding: var(--space-1) var(--space-3);
-}
-
 .titlebar__meters {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   margin-left: auto;
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
   -webkit-app-region: no-drag;
 }
 
@@ -93,7 +61,7 @@
   border-radius: var(--radius-xs);
   background: transparent;
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .titlebar__session {

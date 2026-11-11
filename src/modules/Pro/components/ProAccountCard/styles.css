@@ -1,6 +1,7 @@
 .pro-account {
   position: relative;
-  margin: 0 var(--space-3) var(--space-3);
+  flex: 1;
+  min-width: 0;
 }
 
 .pro-account__card {
@@ -8,21 +9,22 @@
   align-items: center;
   gap: var(--space-3);
   width: 100%;
-  padding: var(--space-3) var(--space-4);
-  border: var(--edge-width) solid var(--edge);
-  border-radius: var(--radius-lg);
-  background: var(--raise);
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
   color: var(--ink2);
   font: var(--font-ui-sm);
   text-align: left;
   cursor: pointer;
   transition:
     background-color var(--dur-fast) var(--ease),
-    border-color var(--dur-fast) var(--ease);
+    color var(--dur-fast) var(--ease);
 }
 
 .pro-account__card:hover {
-  background: var(--raise2);
+  background: var(--raise);
+  color: var(--ink);
 }
 
 .pro-account__card:focus-visible {
@@ -35,39 +37,27 @@
   flex: none;
   align-items: center;
   justify-content: center;
-  width: var(--space-8);
-  height: var(--space-8);
+  width: var(--sidebar-avatar);
+  height: var(--sidebar-avatar);
   border-radius: var(--radius-pill);
-  background: var(--lime-soft);
-  color: var(--lime-ink);
-  font: var(--font-mono-xs);
+  background: var(--raise2);
+  color: var(--ink2);
+  font: var(--font-ui-xs);
+  font-weight: 600;
 }
 
 .pro-account__mark {
   display: inline-flex;
   flex: none;
-}
-
-.pro-account__text {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--space-1);
-  min-width: 0;
+  justify-content: center;
+  width: var(--sidebar-avatar);
+  color: var(--ink3);
 }
 
 .pro-account__name {
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
-  color: var(--ink);
-  font: var(--font-ui-sm);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.pro-account__line {
-  overflow: hidden;
-  color: var(--ink3);
-  font: var(--font-mono-xs);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -80,9 +70,9 @@
 
 .pro-account__popover {
   position: absolute;
-  right: 0;
   bottom: calc(100% + var(--space-2));
   left: 0;
+  width: calc(var(--sidebar-shown) - var(--space-3) * 2);
   z-index: 32;
   display: flex;
   flex-direction: column;
@@ -232,18 +222,18 @@
 }
 
 .pro-account--shut {
-  margin: 0 var(--space-2) var(--space-2);
+  flex: none;
 }
 
 .pro-account--shut .pro-account__card {
   justify-content: center;
-  padding: var(--space-3) 0;
-  border-color: transparent;
-  background: transparent;
+  width: var(--sidebar-tile);
+  height: var(--sidebar-tile);
+  padding: 0;
+  color: var(--ink3);
 }
 
-.pro-account--shut .pro-account__text,
-.pro-account--shut .pro-account__flag,
-.pro-account--shut .caret {
+.pro-account--shut .pro-account__name,
+.pro-account--shut .pro-account__flag {
   display: none;
 }

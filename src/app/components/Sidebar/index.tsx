@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { ProAccountCard } from '@/modules/Pro';
+import { ProjectMark } from '@/modules/Project';
 import { Caret, Icon, IconButton, Kbd, PlatformIcon } from '@/shared/components/atoms';
 import { Fold, Tooltip } from '@/shared/components/molecules';
 import { STICKER } from '@/shared/constants';
@@ -32,6 +33,11 @@ export const Sidebar: React.FC = () => {
     onRemoveWorkspace,
     onProjectSettings,
     onProSettings,
+    markSize,
+    homeLabel,
+    isHome,
+    homeCount,
+    onHome,
   } = useSidebarViewModel();
   const { t } = useTranslation();
 
@@ -75,6 +81,24 @@ export const Sidebar: React.FC = () => {
       {isShut ? (
         <>
           <div className="sidebar__rail">
+            <Tooltip side="right" content={homeLabel}>
+              <button
+                type="button"
+                className={
+                  isHome
+                    ? 'sidebar__rail-tile sidebar__rail-tile--selected'
+                    : 'sidebar__rail-tile'
+                }
+                aria-label={homeLabel}
+                aria-current={isHome ? 'page' : undefined}
+                onClick={onHome}
+              >
+                <Icon name="home" />
+                {homeCount !== null && (
+                  <span className="sidebar__rail-count">{homeCount}</span>
+                )}
+              </button>
+            </Tooltip>
             {groups.map((group) => (
               <div key={group.id} className="sidebar__rail-group">
                 <Tooltip side="right" content={group.name}>
@@ -90,7 +114,7 @@ export const Sidebar: React.FC = () => {
                       onSelectProject(group.projectId);
                     }}
                   >
-                    {group.initial}
+                    <ProjectMark mark={group.mark} size={markSize} />
                   </button>
                 </Tooltip>
 
@@ -191,23 +215,34 @@ export const Sidebar: React.FC = () => {
         </>
       ) : (
         <>
-          <div className="sidebar__filter">
-            <Icon name="search" size={14} />
+          <button
+            type="button"
+            className={isHome ? 'sidebar__nav sidebar__nav--selected' : 'sidebar__nav'}
+            aria-current={isHome ? 'page' : undefined}
+            onClick={onHome}
+          >
+            <Icon name="home" />
+            <span className="sidebar__label">{homeLabel}</span>
+            {homeCount !== null && <span className="sidebar__count">{homeCount}</span>}
+          </button>
+
+          <label className="sidebar__search">
+            <Icon name="search" />
             <input
               ref={filterRef}
-              className="sidebar__filter-input"
+              className="sidebar__search-input"
               value={filter}
-              placeholder={t('SIDEBAR.FILTER_PLACEHOLDER')}
+              placeholder={t('SIDEBAR.SEARCH')}
               aria-label={t('SIDEBAR.FILTER_LABEL')}
               onChange={(event) => {
                 onFilterChange(event.target.value);
               }}
             />
             <Kbd combo="/" />
-          </div>
+          </label>
 
           <div className="sidebar__section">
-            <span className="sidebar__eyebrow">{t('SIDEBAR.PROJECTS')}</span>
+            <span className="sidebar__heading">{t('SIDEBAR.PROJECTS')}</span>
             <Tooltip side="right" content={t('SIDEBAR.NEW_PROJECT')}>
               <IconButton
                 icon="plus"
@@ -231,14 +266,18 @@ export const Sidebar: React.FC = () => {
                         onToggleProject(group.projectId);
                       }}
                     >
-                      <Caret isOpen={group.isExpanded} />
-                      <span className="sidebar__group-avatar" aria-hidden="true">
-                        {group.initial}
+                      <ProjectMark mark={group.mark} size={markSize} />
+                      <span className="sidebar__group-text">
+                        <span className="sidebar__group-title">
+                          <span className="sidebar__group-name">{group.name}</span>
+                          <span className="sidebar__group-caret">
+                            <Caret isOpen={group.isExpanded} />
+                          </span>
+                        </span>
+                        {group.hasPlace && (
+                          <span className="sidebar__group-place">{group.place}</span>
+                        )}
                       </span>
-                      <span className="sidebar__group-name">{group.name}</span>
-                      {!group.isExpanded && (
-                        <span className="sidebar__group-meta">{group.meta}</span>
-                      )}
                     </button>
 
                     {group.pro !== null && (
@@ -251,7 +290,7 @@ export const Sidebar: React.FC = () => {
                           onProSettings(group.projectId);
                         }}
                       >
-                        <Icon name="link" size={12} />
+                        <Icon name="cloud" size={14} />
                         {group.pro.hasPending && (
                           <span className="sidebar__pro-count">
                             <Icon name="up" size={12} />
@@ -296,7 +335,7 @@ export const Sidebar: React.FC = () => {
                                       onNewWorkspace(row.projectId);
                                     }}
                                   >
-                                    <span className="sidebar__platform">
+                                    <span className="sidebar__add-icon">
                                       <Icon name="plus" />
                                     </span>
                                     <span className="sidebar__label">
@@ -319,50 +358,29 @@ export const Sidebar: React.FC = () => {
                                   <button
                                     type="button"
                                     className="sidebar__open"
+                                    aria-label={row.label}
                                     onClick={() => {
                                       onSelectWorkspace(row.id);
                                     }}
                                   >
-                                    <span className="sidebar__platform">
-                                      {row.platform !== null && (
-                                        <PlatformIcon kind={row.platform} size={15} />
-                                      )}
-                                    </span>
-                                    <span className="sidebar__text">
-                                      <span className="sidebar__name">{row.name}</span>
-                                      {row.hasDetail && (
-                                        <span
-                                          className={
-                                            row.isRemoving
-                                              ? 'sidebar__detail sidebar__detail--hidden'
-                                              : 'sidebar__detail'
-                                          }
-                                        >
-                                          <span
-                                            className="sidebar__icon"
-                                            style={{
-                                              color: row.tone,
-                                              animation: row.animation,
-                                            }}
-                                          >
-                                            <Icon name={row.icon} />
-                                          </span>
-                                          <span style={{ color: row.tone }}>
-                                            {row.statusLabel}
-                                          </span>
-                                          <span aria-hidden="true">·</span>
-                                          <span
-                                            className={
-                                              row.isWaiting
-                                                ? 'sidebar__meta sidebar__meta--waiting'
-                                                : 'sidebar__meta'
-                                            }
-                                          >
-                                            {row.meta}
-                                          </span>
-                                        </span>
-                                      )}
-                                    </span>
+                                    <span className="sidebar__name">{row.name}</span>
+                                    {row.signal !== null && (
+                                      <span
+                                        className={
+                                          row.isRemoving
+                                            ? 'sidebar__signal sidebar__signal--hidden'
+                                            : 'sidebar__signal'
+                                        }
+                                        title={row.signal.label}
+                                        style={{
+                                          color: row.signal.tone,
+                                          animation: row.signal.animation,
+                                        }}
+                                      >
+                                        <Icon name={row.signal.icon} />
+                                        {row.signal.count}
+                                      </span>
+                                    )}
                                   </button>
 
                                   {row.isRemoving ? (
@@ -421,14 +439,17 @@ export const Sidebar: React.FC = () => {
             </AnimatePresence>
           </div>
 
-          <ProAccountCard />
-
           <div className="sidebar__foot">
-            <button type="button" className="sidebar__settings" onClick={onSettings}>
-              <Icon name="settings" />
-              <span className="sidebar__label">{t('COMMON.SETTINGS')}</span>
-            </button>
-            <Tooltip side="right" content={toggleLabel}>
+            <ProAccountCard />
+            <Tooltip content={t('COMMON.SETTINGS')}>
+              <IconButton
+                icon="settings"
+                size="sm"
+                label={t('COMMON.SETTINGS')}
+                onClick={onSettings}
+              />
+            </Tooltip>
+            <Tooltip content={toggleLabel}>
               <IconButton
                 icon="sidebar"
                 size="sm"

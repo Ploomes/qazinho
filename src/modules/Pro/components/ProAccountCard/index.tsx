@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { ProCloneModal } from '@/modules/Pro/components/ProCloneModal';
 import { ProSignIn } from '@/modules/Pro/components/ProSignIn';
-import { Caret, Icon, Intern } from '@/shared/components/atoms';
+import { Icon } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { STICKER } from '@/shared/constants';
 import { useProAccountCardViewModel } from './hooks';
@@ -19,7 +19,6 @@ export const ProAccountCard: React.FC = () => {
     isShown,
     isSignedIn,
     className,
-    internSize,
     isOpen,
     hasTip,
     title,
@@ -127,25 +126,22 @@ export const ProAccountCard: React.FC = () => {
           aria-haspopup={popup}
           aria-expanded={isExpanded}
           aria-label={toggleLabel}
+          title={hasSubtitle ? subtitle : undefined}
           onClick={onToggle}
         >
           {isSignedIn ? (
             <span className="pro-account__avatar">{initials}</span>
           ) : (
             <span className="pro-account__mark">
-              <Intern mood="neutral" size={internSize} isStill isFigure />
+              <Icon name="account" />
             </span>
           )}
-          <span className="pro-account__text">
-            <span className="pro-account__name">{title}</span>
-            {hasSubtitle && <span className="pro-account__line">{subtitle}</span>}
-          </span>
+          <span className="pro-account__name">{title}</span>
           {hasAttention && (
             <span className="pro-account__flag" role="img" aria-label={attention}>
               <Icon name="attention" />
             </span>
           )}
-          {isSignedIn && <Caret isOpen={isOpen} />}
         </button>
       </Tooltip>
 

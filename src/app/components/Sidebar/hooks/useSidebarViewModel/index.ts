@@ -6,7 +6,14 @@ import type {
 import type { CSSProperties } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SIDEBAR_SIZE, SIDEBAR_STATUS } from '@/app/components/Sidebar/constants';
+import {
+  SIDEBAR_SIGNAL,
+  SIDEBAR_SIZE,
+  SIDEBAR_STATUS,
+} from '@/app/components/Sidebar/constants';
+import { planSignalOf } from '@/app/components/Sidebar/library';
+import { homeCountOf, homeOf } from '@/modules/Home';
+import { projectAppOf, projectMarkOf, useSiteIcons } from '@/modules/Project';
 import { RUN_HOW_KEYS } from '@/modules/Run/constants';
 import { currentStepOf, runToContinueOf } from '@/modules/Run/library';
 import { workspaceMeta } from '@/modules/Workspace';
@@ -15,7 +22,7 @@ import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
 import { useAppStore, useProStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 export const useSidebarViewModel = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const projects = useAppStore((state) => state.projects);
   const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
   const selectWorkspace = useAppStore((state) => state.selectWorkspace);
@@ -23,6 +30,7 @@ export const useSidebarViewModel = () => {
   const openWorkspaceModal = useAppStore((state) => state.openWorkspaceModal);
   const openSettings = useAppStore((state) => state.openSettings);
   const goHome = useAppStore((state) => state.goHome);
+  const screen = useAppStore((state) => state.screen);
   const forgetPlanMemories = useAppStore((state) => state.forgetPlanMemories);
   const openProjectSettings = useAppStore((state) => state.openProjectSettings);
   const openProSettings = useAppStore((state) => state.openProSettings);
@@ -38,6 +46,11 @@ export const useSidebarViewModel = () => {
   const selectedProjectId =
     workspaces.find((workspace) => workspace.id === selectedWorkspaceId)?.projectId ??
     null;
+
+  const icons = useSiteIcons(
+    projects.flatMap(({ targets }) => projectAppOf(targets).address ?? []),
+  );
+  const places = new Intl.ListFormat(i18n.language, { type: 'unit', style: 'short' });
 
   const [filter, setFilter] = useState('');
   const [expansions, setExpansions] = useState<Record<string, boolean>>({});
@@ -114,6 +127,7 @@ export const useSidebarViewModel = () => {
     if (query !== '' && !projectMatches && matchingWorkspaces.length === 0) return [];
 
     const shownWorkspaces = projectMatches ? projectWorkspaces : matchingWorkspaces;
+    const app = projectAppOf(project.targets);
 
     const workspaceRows: SidebarGroupRow[] = shownWorkspaces
       .map((workspace) => ({
@@ -130,31 +144,60 @@ export const useSidebarViewModel = () => {
                 : workspace.status,
       }))
       .sort((a, b) => Number(b.shown === 'attention') - Number(a.shown === 'attention'))
-      .map(({ workspace, shown }) => ({
-        kind: 'workspace' as const,
-        id: workspace.id,
-        name: workspace.name,
-        platform:
-          project.targets.find(({ id }) => id === workspace.targetId)?.kind ?? null,
-        meta: t(workspaceMeta(workspace).key as never, {
+      .map(({ workspace, shown }) => {
+        const meta: string = t(workspaceMeta(workspace).key as never, {
           count: workspaceMeta(workspace).count,
           current: currentStepOf({
             walked: workspace.live?.outcomes.length ?? 0,
             total: workspaceMeta(workspace).count,
           }),
-        }),
-        icon: SIDEBAR_STATUS[shown].icon,
-        statusLabel:
+        });
+        const statusLabel =
           shown === 'running' && workspace.live?.how !== undefined
             ? t(RUN_HOW_KEYS[workspace.live.how])
-            : t(STATUS[shown].labelKey),
-        hasDetail: shown !== 'idle' || workspace.runs.length > 0,
-        tone: SIDEBAR_STATUS[shown].tone,
-        animation: SIDEBAR_STATUS[shown].animation,
-        isSelected: workspace.id === selectedWorkspaceId,
-        isWaiting: shown === 'attention',
-        isRemoving: workspace.id === removingWorkspaceId,
-      }));
+            : t(STATUS[shown].labelKey);
+        const bugs = workspace.bugs.filter(({ isDismissed }) => !isDismissed).length;
+        const signal = planSignalOf({ shown, bugs });
+        const said =
+          signal === null
+            ? null
+            : {
+                asking: t('SIDEBAR.ASKED_YOU'),
+                running: t('SIDEBAR.STATUS_META', { status: statusLabel, meta }),
+                paused: statusLabel,
+                bugs: t(bugs === 1 ? 'SIDEBAR.META_BUG_ONE' : 'SIDEBAR.META_BUG_OTHER', {
+                  count: bugs,
+                }),
+                failed: statusLabel,
+              }[signal.kind];
+
+        return {
+          kind: 'workspace' as const,
+          id: workspace.id,
+          name: workspace.name,
+          platform:
+            project.targets.find(({ id }) => id === workspace.targetId)?.kind ?? null,
+          meta,
+          icon: SIDEBAR_STATUS[shown].icon,
+          statusLabel,
+          tone: SIDEBAR_STATUS[shown].tone,
+          animation: SIDEBAR_STATUS[shown].animation,
+          signal:
+            signal === null || said === null
+              ? null
+              : {
+                  ...SIDEBAR_SIGNAL[signal.kind],
+                  count: signal.kind === 'bugs' ? String(signal.count) : null,
+                  label: said,
+                },
+          label:
+            said === null
+              ? workspace.name
+              : t('SIDEBAR.ROW_LABEL', { name: workspace.name, status: said }),
+          isSelected: workspace.id === selectedWorkspaceId,
+          isRemoving: workspace.id === removingWorkspaceId,
+        };
+      });
 
     return [
       {
@@ -162,9 +205,11 @@ export const useSidebarViewModel = () => {
         projectId: project.id,
         name: project.name,
         initial: project.name.charAt(0).toUpperCase(),
+        mark: projectMarkOf({ name: project.name, app, icons }),
+        place: places.format(app.places),
+        hasPlace: app.places.length > 0,
         isSelected: project.id === selectedProjectId,
         isExpanded: isProjectExpanded(project.id),
-        meta: String(projectWorkspaces.length),
         pro: proBadgeOf(project),
         rows: [
           ...workspaceRows,
@@ -209,6 +254,10 @@ export const useSidebarViewModel = () => {
     if (workspaceId === selectedWorkspaceId) goHome();
   };
 
+  const homeCount = homeCountOf(
+    homeOf({ projects, workspaces, developed: {}, recent: [], shown: 0 }),
+  );
+
   return {
     className: isShut ? 'sidebar sidebar--shut' : 'sidebar',
     style: {
@@ -216,6 +265,7 @@ export const useSidebarViewModel = () => {
       '--sidebar-field': `${String(SIDEBAR_SIZE.field)}px`,
       '--sidebar-avatar': `${String(SIDEBAR_SIZE.avatar)}px`,
       '--sidebar-lead': `${String(SIDEBAR_SIZE.lead)}px`,
+      '--sidebar-mark': `${String(SIDEBAR_SIZE.mark)}px`,
     } as CSSProperties,
     isShut,
     toggleLabel: t(isShut ? 'SIDEBAR.OPEN' : 'SIDEBAR.SHUT'),
@@ -246,5 +296,10 @@ export const useSidebarViewModel = () => {
     onRemoveWorkspace,
     onProjectSettings: openProjectSettings,
     onProSettings: openProSettings,
+    markSize: SIDEBAR_SIZE.mark,
+    homeLabel: t('HOME.TITLE'),
+    isHome: screen === 'welcome',
+    homeCount: homeCount > 0 ? String(homeCount) : null,
+    onHome: goHome,
   };
 };

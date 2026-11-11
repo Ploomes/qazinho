@@ -1,3 +1,4 @@
+import type { ISidebarSignal } from './ISidebarSignal';
 import type { IconName } from '@/shared/components/atoms/Icon/types';
 import type { TargetKind } from '@/shared/types';
 
@@ -9,10 +10,10 @@ export interface ISidebarWorkspaceRow {
   meta: string;
   icon: IconName;
   statusLabel: string;
-  hasDetail: boolean;
   tone: string;
   animation: string;
+  signal: ISidebarSignal | null;
+  label: string;
   isSelected: boolean;
-  isWaiting: boolean;
   isRemoving: boolean;
 }

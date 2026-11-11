@@ -1,0 +1,24 @@
+.project-mark {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--project-mark);
+  height: var(--project-mark);
+  overflow: hidden;
+  border-radius: var(--radius-xs);
+  background: var(--raise2);
+  color: var(--ink2);
+  font: var(--font-ui-xs);
+  font-weight: 600;
+}
+
+.project-mark--icon {
+  background: transparent;
+}
+
+.project-mark__icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}

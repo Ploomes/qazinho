@@ -1,5 +1,8 @@
+export type * from './IPlanSignal';
 export type * from './ISidebarAddRow';
 export type * from './ISidebarProBadge';
 export type * from './ISidebarProjectGroup';
+export type * from './ISidebarSignal';
 export type * from './ISidebarWorkspaceRow';
+export type * from './PlanSignalKind';
 export type * from './SidebarGroupRow';

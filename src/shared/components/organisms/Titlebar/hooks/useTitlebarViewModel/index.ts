@@ -33,7 +33,6 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
     isModelMenuOpen: modelMenuAt === 'titlebar',
     resourcesLabel: t('RESOURCES.TITLE'),
     agentLabel: t('TITLEBAR.AGENT', { agent, model: modelName }),
-    betaLabel: t('TITLEBAR.BETA'),
     sessionUsed,
     sessionLabel:
       sessionUsed === null

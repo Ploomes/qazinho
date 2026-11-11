@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useSidebarViewModel } from '@/app/components/Sidebar/hooks/useSidebarViewModel';
 import { landAsked, startRun } from '@/modules/Workspace/library';
@@ -228,7 +228,8 @@ describe('useSidebarViewModel', () => {
       expect(row).toMatchObject({
         icon: 'attention',
         statusLabel: 'needs you',
-        isWaiting: true,
+        signal: { icon: 'attention', tone: 'var(--attn)', count: null },
+        label: 'Onboarding, The agent asked you something',
       });
     });
 
@@ -268,6 +269,168 @@ describe('useSidebarViewModel', () => {
       const { result } = renderHook(() => useSidebarViewModel());
 
       expect(result.current.waitingName).toBeNull();
+    });
+  });
+
+  describe('the project as the app it tests', () => {
+    const SITE = 'https://staging.loja.test/';
+    const ICON = 'data:image/png;base64,iVBORw==';
+    const WEB = { id: 't1', kind: 'web' as const, label: 'Web', value: SITE };
+    const ANDROID = {
+      id: 't2',
+      kind: 'android' as const,
+      label: 'Android',
+      value: 'a.apk',
+    };
+
+    it('shows a web project by the icon of its site, with the host under its name', async () => {
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        siteIcon: () => Promise.resolve(ICON),
+      };
+      useAppStore.setState({ projects: [{ ...PROJECT, targets: [WEB] }] });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      await waitFor(() => {
+        expect(result.current.groups[0]).toMatchObject({
+          mark: { kind: 'icon', src: ICON },
+          place: 'staging.loja.test',
+          hasPlace: true,
+        });
+      });
+    });
+
+    it('shows the platform while the site has no icon to give', () => {
+      window.qazinho = {
+        ...fakeQazinhoApi('darwin'),
+        siteIcon: () => Promise.resolve(null),
+      };
+      useAppStore.setState({ projects: [{ ...PROJECT, targets: [WEB] }] });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.groups[0]!.mark).toEqual({
+        kind: 'platform',
+        platform: 'web',
+      });
+    });
+
+    it('shows a phone project by its platform, and names every place a project runs', () => {
+      useAppStore.setState({ projects: [{ ...PROJECT, targets: [ANDROID, WEB] }] });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.groups[0]).toMatchObject({
+        mark: { kind: 'platform', platform: 'android' },
+        place: 'Android, staging.loja.test',
+      });
+    });
+
+    it('falls back to the initial of a project with no target, with nothing under its name', () => {
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.groups[0]).toMatchObject({
+        mark: { kind: 'initial', initial: 'S' },
+        hasPlace: false,
+      });
+    });
+  });
+
+  describe('the signal of a plan', () => {
+    const rowOf = (result: { current: ReturnType<typeof useSidebarViewModel> }) =>
+      result.current.groups[0]!.rows.find((row) => row.kind === 'workspace');
+
+    /** O normal fica quieto: uma linha sem nada a pedir é só o nome do plano. */
+    it('shows nothing on a plan that needs nothing, and reads as its name alone', () => {
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(rowOf(result)).toMatchObject({ signal: null, label: 'Checkout regression' });
+    });
+
+    it('counts the bugs a run left open, in the fail color', () => {
+      useWorkspaceStore.setState({
+        workspaces: [walkRun({ verdicts: ['passed', 'failed'], isFinished: true })],
+      });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(rowOf(result)).toMatchObject({
+        signal: { icon: 'bug', tone: 'var(--fail)', count: '1', label: '1 bug' },
+        label: 'Checkout regression, 1 bug',
+      });
+    });
+
+    it('marks a failed run whose bugs the QA dismissed, without a count', () => {
+      const walked = walkRun({ verdicts: ['passed', 'failed'], isFinished: true });
+
+      useWorkspaceStore.setState({
+        workspaces: [
+          { ...walked, bugs: walked.bugs.map((bug) => ({ ...bug, isDismissed: true })) },
+        ],
+      });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(rowOf(result)).toMatchObject({
+        signal: { icon: 'failed', count: null, label: 'failed' },
+      });
+    });
+
+    it('marks a run that goes, with how far it is in what the signal says', () => {
+      useWorkspaceStore.setState({ workspaces: [walkRun({ verdicts: ['passed'] })] });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(rowOf(result)?.kind === 'workspace' && rowOf(result)).toMatchObject({
+        signal: { icon: 'running', tone: 'var(--lime-ink)', count: null },
+      });
+      expect(rowOf(result)?.kind === 'workspace' && rowOf(result)?.label).toMatch(
+        /^Checkout regression, .+, \d+\/\d+$/,
+      );
+    });
+  });
+
+  describe('the Home row', () => {
+    it('counts what waits on the QA, and nothing while every plan is at rest', () => {
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+
+      expect(renderHook(() => useSidebarViewModel()).result.current.homeCount).toBeNull();
+
+      useWorkspaceStore.setState({
+        workspaces: [walkRun({ verdicts: ['passed', 'failed'], isFinished: true })],
+      });
+
+      expect(renderHook(() => useSidebarViewModel()).result.current.homeCount).toBe('1');
+    });
+
+    it('is marked while Home is on screen, and not inside a plan', () => {
+      useAppStore.setState({ screen: 'welcome', selectedWorkspaceId: null });
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+
+      expect(renderHook(() => useSidebarViewModel()).result.current.isHome).toBe(true);
+
+      useAppStore.setState({ screen: 'workspace', selectedWorkspaceId: 'w1' });
+
+      expect(renderHook(() => useSidebarViewModel()).result.current.isHome).toBe(false);
+    });
+
+    it('goes back to Home, leaving the plan that was open', () => {
+      useAppStore.setState({ screen: 'workspace', selectedWorkspaceId: 'w1' });
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onHome();
+      });
+
+      expect(useAppStore.getState()).toMatchObject({
+        screen: 'welcome',
+        selectedWorkspaceId: null,
+      });
     });
   });
 
@@ -374,14 +537,15 @@ describe('useSidebarViewModel', () => {
   });
 
   describe('style', () => {
-    it('hands the stylesheet the sizes of the rail tile, the filter field and the avatar', () => {
+    it('hands the stylesheet the sizes of the rail tile, the search row, the avatar and the mark', () => {
       const { result } = renderHook(() => useSidebarViewModel());
 
       expect(result.current.style).toEqual({
         '--sidebar-tile': '36px',
-        '--sidebar-field': '34px',
+        '--sidebar-field': '30px',
         '--sidebar-avatar': '22px',
         '--sidebar-lead': '16px',
+        '--sidebar-mark': '20px',
       });
     });
   });
