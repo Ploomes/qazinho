@@ -70,6 +70,7 @@ import type { IslandAction } from './IslandAction';
 import type { IStartBuild } from './IStartBuild';
 import type { IStartRun } from './IStartRun';
 import type { IStorageUsage } from './IStorageUsage';
+import type { ITrayWords } from './ITrayWords';
 import type { IVideoSweep } from './IVideoSweep';
 import type { IViewport } from './IViewport';
 import type { IWindowControls } from './IWindowControls';
@@ -156,6 +157,7 @@ export interface IQazinhoApi {
   pickFile: (kind: PickKind) => Promise<string | null>;
   fitWindow: (fit: WindowFit) => Promise<void>;
   paintWindowControls: (controls: IWindowControls) => Promise<void>;
+  labelTray: (words: ITrayWords) => Promise<void>;
   openLogs: () => Promise<void>;
   copyDiagnostics: () => Promise<boolean>;
   checkMachine: () => Promise<IMachineCheck>;

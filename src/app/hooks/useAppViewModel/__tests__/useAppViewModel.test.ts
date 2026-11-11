@@ -121,6 +121,37 @@ describe('useAppViewModel', () => {
       document.documentElement.removeAttribute('style');
     });
 
+    /** A janela fechada fica viva na bandeja, e o menu dela fala o idioma do QA. */
+    it('words the tray menu in the language the QA picked, and gives a Mac none', async () => {
+      const labelTray = vi.fn(() => Promise.resolve());
+
+      useSettingsStore.setState({ language: 'pt' });
+      window.qazinho = { ...fakeQazinhoApi('linux'), labelTray };
+      renderHook(() => useAppViewModel());
+
+      await waitFor(() => {
+        expect(labelTray).toHaveBeenLastCalledWith({
+          open: 'Abrir o QAzinho',
+          quit: 'Sair do QAzinho',
+        });
+      });
+
+      useSettingsStore.setState({ language: 'en' });
+
+      await waitFor(() => {
+        expect(labelTray).toHaveBeenLastCalledWith({
+          open: 'Open QAzinho',
+          quit: 'Quit QAzinho',
+        });
+      });
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), labelTray };
+      labelTray.mockClear();
+      renderHook(() => useAppViewModel());
+
+      expect(labelTray).not.toHaveBeenCalled();
+    });
+
     it('opens full straight away once the welcome was done', () => {
       const fitWindow = vi.fn(() => Promise.resolve());
 

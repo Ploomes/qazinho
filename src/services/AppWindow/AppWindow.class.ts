@@ -1,4 +1,4 @@
-import type { IWindowControls, WindowFit } from '@/shared/types';
+import type { ITrayWords, IWindowControls, WindowFit } from '@/shared/types';
 
 /** O único que chama o lado da janela da bridge. */
 export class AppWindow {
@@ -8,5 +8,9 @@ export class AppWindow {
 
   public static paintControls(controls: IWindowControls): void {
     void window.qazinho?.paintWindowControls(controls);
+  }
+
+  public static labelTray(words: ITrayWords): void {
+    void window.qazinho?.labelTray(words);
   }
 }

@@ -40,6 +40,7 @@ import type {
   AppUpdate,
   IStartBuild,
   IStartRun,
+  ITrayWords,
   IViewport,
   IWindowControls,
   McpSignInProgress,
@@ -84,6 +85,7 @@ import {
   AppBridge,
   AppBuilder,
   AppPeek,
+  AppTray,
   Archive,
   ChatDevices,
   ChatAttachments,
@@ -174,6 +176,7 @@ import {
   toldAfterTurn,
 } from '@/main/library';
 import { ASSISTANT_WAIT, CHANNELS, CHAT_ATTACHMENTS } from '@/shared/constants';
+import trayIcon from '@brand/app-icon/app-icon-sinal-32.png?asset';
 import {
   Harness,
   MCP_HOST,
@@ -302,6 +305,16 @@ function bringForward(): BrowserWindow | null {
 }
 
 let isQuitting = false;
+
+const tray = new AppTray({
+  icon: trayIcon,
+  onOpen: () => {
+    bringForward();
+  },
+  onQuit: () => {
+    app.quit();
+  },
+});
 
 const alerts = new RunAlerts((run) => {
   bringForward()?.webContents.send(CHANNELS.openRun, run);
@@ -1704,6 +1717,9 @@ void app.whenReady().then(async () => {
     if (window !== null && process.platform !== 'darwin')
       window.setTitleBarOverlay({ ...controls, height: WINDOW_CONTROLS.height });
   });
+  ipcMain.handle(CHANNELS.labelTray, (_event, words: ITrayWords) => {
+    if (process.platform !== 'darwin') tray.label(words);
+  });
   ipcMain.handle(CHANNELS.fitWindow, (event, fit: WindowFit) => {
     const window = BrowserWindow.fromWebContents(event.sender);
 
@@ -1923,6 +1939,7 @@ app.on('will-quit', (event) => {
   }
 
   appUpdater.stop();
+  tray.close();
   void chatDevices.closeAll();
   live.close();
   replays.close();

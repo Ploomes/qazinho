@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppActions, useAssistantEvents, useQuestionRoom } from '@/modules/Assistant';
 import { useBuildEvents } from '@/modules/Build';
 import { useIslandSync } from '@/modules/Island';
@@ -34,6 +35,7 @@ import {
 import { shownThemeOf } from '@/store/AppStore/library';
 
 export const useAppViewModel = () => {
+  const { t } = useTranslation();
   const isChatOnly = useChatOnly();
   const theme = useAppStore(shownThemeOf);
   const screen = useAppStore((state) => state.screen);
@@ -92,6 +94,12 @@ export const useAppViewModel = () => {
   useEffect(() => {
     AppWindow.fit(hasOnboarded ? 'app' : 'onboarding');
   }, [hasOnboarded]);
+
+  useEffect(() => {
+    if (Platform.isMac()) return;
+
+    AppWindow.labelTray({ open: t('TRAY.OPEN'), quit: t('TRAY.QUIT') });
+  }, [t]);
 
   return {
     shellStyle: {

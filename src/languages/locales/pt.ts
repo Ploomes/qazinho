@@ -1506,6 +1506,10 @@ export const pt: typeof en = {
     SECRET_NOTE: 'Essa resposta é um segredo, então você a digita no app.',
     ANSWER_IN_APP: 'Responder no app',
   },
+  TRAY: {
+    OPEN: 'Abrir o QAzinho',
+    QUIT: 'Sair do QAzinho',
+  },
   STATUS: {
     RUNNING: 'rodando',
     PAUSED: 'pausado',

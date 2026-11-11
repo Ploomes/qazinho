@@ -166,6 +166,7 @@ export type * from './IStorageUsage';
 export type * from './ITargetUnderTest';
 export type * from './IToolStatus';
 export type * from './ITrackerIssue';
+export type * from './ITrayWords';
 export type * from './IUnreadPlan';
 export type * from './IVariableBrief';
 export type * from './IVideoSweep';

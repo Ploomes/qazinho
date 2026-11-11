@@ -1,4 +1,5 @@
 export * from './agents';
+export * from './app';
 export * from './assistant';
 export * from './automation';
 export * from './builds';

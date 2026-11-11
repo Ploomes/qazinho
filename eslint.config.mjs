@@ -173,7 +173,7 @@ export default config(
 
       'import-x/no-unresolved': [
         'error',
-        { ignore: ['^@modelcontextprotocol/sdk/.+\\.js$'] },
+        { ignore: ['^@modelcontextprotocol/sdk/.+\\.js$', '\\?asset$'] },
       ],
 
       '@typescript-eslint/member-ordering': [

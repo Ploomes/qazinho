@@ -1500,6 +1500,10 @@ export const en = {
     SECRET_NOTE: 'This answer is a secret, so you type it in the app.',
     ANSWER_IN_APP: 'Answer in the app',
   },
+  TRAY: {
+    OPEN: 'Open QAzinho',
+    QUIT: 'Quit QAzinho',
+  },
   STATUS: {
     RUNNING: 'running',
     PAUSED: 'paused',

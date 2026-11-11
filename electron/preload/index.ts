@@ -74,6 +74,7 @@ import type {
   IStartBuild,
   IStartRun,
   IStorageUsage,
+  ITrayWords,
   IVideoSweep,
   IViewport,
   IWindowControls,
@@ -242,6 +243,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.fitWindow, fit) as Promise<void>,
   paintWindowControls: (controls: IWindowControls) =>
     ipcRenderer.invoke(CHANNELS.paintWindowControls, controls) as Promise<void>,
+  labelTray: (words: ITrayWords) =>
+    ipcRenderer.invoke(CHANNELS.labelTray, words) as Promise<void>,
   openLogs: () => ipcRenderer.invoke(CHANNELS.openLogs) as Promise<void>,
   copyDiagnostics: () => ipcRenderer.invoke(CHANNELS.copyDiagnostics) as Promise<boolean>,
   checkMachine: () => ipcRenderer.invoke(CHANNELS.checkMachine) as Promise<IMachineCheck>,

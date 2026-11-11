@@ -54,6 +54,7 @@ export const CHANNELS = {
   pickFile: 'files:pick',
   fitWindow: 'window:fit',
   paintWindowControls: 'window:controls',
+  labelTray: 'window:tray',
   openLogs: 'logs:open',
   copyDiagnostics: 'logs:copy',
   checkMachine: 'machine:check',
