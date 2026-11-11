@@ -2,15 +2,22 @@ import type { ITitlebarProps } from './types';
 import { AnimatePresence } from 'motion/react';
 import { AssistantButton } from '@/modules/Assistant';
 import { UpdateButton } from '@/modules/Update';
-import { PlanActions } from '@/modules/Workspace';
+import { PlanActions, PlanName } from '@/modules/Workspace';
 import { ResourcePopover } from '@/shared/components/organisms/ResourcePopover';
 import { useTitlebarViewModel } from './hooks';
 import './styles.css';
 
 /** A barra de cima: onde o QA está, as ações do plano e o Estagiário. */
 export const Titlebar: React.FC<ITitlebarProps> = (props) => {
-  const { isBare, className, isResourcesOpen, crumbs, crumbsLabel, hasPlanActions } =
-    useTitlebarViewModel(props);
+  const {
+    isBare,
+    className,
+    isResourcesOpen,
+    crumbs,
+    crumbsLabel,
+    hasPlanActions,
+    onRename,
+  } = useTitlebarViewModel(props);
 
   return (
     <header className={className}>
@@ -20,7 +27,11 @@ export const Titlebar: React.FC<ITitlebarProps> = (props) => {
             <nav className="titlebar__crumbs" aria-label={crumbsLabel}>
               {crumbs.map((crumb) => (
                 <span key={crumb.key} className="titlebar__crumb">
-                  {crumb.label}
+                  {crumb.isPlan ? (
+                    <PlanName name={crumb.label} onRename={onRename} />
+                  ) : (
+                    crumb.label
+                  )}
                 </span>
               ))}
             </nav>

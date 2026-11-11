@@ -41,9 +41,8 @@
 }
 
 .panel-tabs__badge {
-  color: var(--fail);
+  color: var(--ink3);
   font: var(--font-meta-sm);
-  font-weight: 600;
 }
 
 .panel-tabs__live {

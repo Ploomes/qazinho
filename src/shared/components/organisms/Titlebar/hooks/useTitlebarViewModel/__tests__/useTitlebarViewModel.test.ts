@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { makeWorkspace } from '@/modules/Workspace/library/__tests__/fixtures';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
@@ -84,6 +84,38 @@ describe('useTitlebarViewModel', () => {
           ({ label }) => label,
         ),
       ).toEqual(['Settings']);
+    });
+
+    it('marks the plan as the crumb the QA renames', () => {
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+      useAppStore.setState({
+        projects: [LOJA],
+        screen: 'workspace',
+        selectedWorkspaceId: 'w1',
+      });
+
+      expect(
+        renderHook(() => useTitlebarViewModel()).result.current.crumbs.map(
+          ({ isPlan }) => isPlan,
+        ),
+      ).toEqual([false, true]);
+    });
+
+    it('renames the open plan, so the sidebar and the disk follow', () => {
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+      useAppStore.setState({
+        projects: [LOJA],
+        screen: 'workspace',
+        selectedWorkspaceId: 'w1',
+      });
+
+      const { result } = renderHook(() => useTitlebarViewModel());
+
+      act(() => {
+        result.current.onRename('Checkout');
+      });
+
+      expect(useWorkspaceStore.getState().workspaces[0]?.name).toBe('Checkout');
     });
 
     it('does NOT offer the sidebar before the first project', () => {

@@ -2,7 +2,7 @@
 import type { ChangeEvent, KeyboardEvent } from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { useWorkspaceNameViewModel } from '@/modules/Workspace/screens/Workspace/components/WorkspaceName/hooks/useWorkspaceNameViewModel';
+import { usePlanNameViewModel } from '@/modules/Workspace/components/PlanName/hooks/usePlanNameViewModel';
 
 function typed(value: string) {
   return { target: { value } } as ChangeEvent<HTMLInputElement>;
@@ -13,7 +13,7 @@ function pressed(key: string) {
 }
 
 function editing(onRename = vi.fn()) {
-  const view = renderHook(() => useWorkspaceNameViewModel({ name: 'Tudo ok', onRename }));
+  const view = renderHook(() => usePlanNameViewModel({ name: 'Tudo ok', onRename }));
 
   act(() => {
     view.result.current.onStart();
@@ -22,7 +22,7 @@ function editing(onRename = vi.fn()) {
   return { ...view, onRename };
 }
 
-describe('useWorkspaceNameViewModel', () => {
+describe('usePlanNameViewModel', () => {
   describe('onStart', () => {
     it('turns the name into a field that starts from the current name', () => {
       const { result } = editing();

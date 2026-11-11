@@ -15,7 +15,6 @@ export const useAgentPanelViewModel = () => {
   const { t } = useTranslation();
   const workspace = useSelectedWorkspacePart((opened) => ({
     id: opened.id,
-    name: opened.name,
     questionKey:
       opened.live !== null && !opened.live.isDone && opened.live.question !== undefined
         ? `${opened.id}/${opened.live.id}/${opened.live.question.id}`
@@ -25,7 +24,6 @@ export const useAgentPanelViewModel = () => {
   const { metaKey, metaCases } = useWorkspaceMeta();
   const isPanelOpen = useWorkspaceStore((state) => state.isPanelOpen);
   const isOpen = isPanelOpen || isChatOnly;
-  const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
   const width = useWorkspaceStore((state) => state.panelWidth);
   const togglePanel = useWorkspaceStore((state) => state.togglePanel);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
@@ -56,10 +54,6 @@ export const useAgentPanelViewModel = () => {
     isChatOnly,
     metaKey,
     metaCases,
-    name: workspace?.name === '' ? t('WORKSPACE.UNNAMED') : (workspace?.name ?? ''),
-    onRename: (name: string) => {
-      if (workspace !== null) renameWorkspace({ workspaceId: workspace.id, name });
-    },
     title: t('AGENT.TITLE'),
     railLabel: t('AGENT.TITLE'),
     width: inner,

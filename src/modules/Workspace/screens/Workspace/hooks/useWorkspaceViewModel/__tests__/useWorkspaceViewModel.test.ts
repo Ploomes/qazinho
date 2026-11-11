@@ -28,12 +28,6 @@ beforeEach(() => {
 });
 
 describe('useWorkspaceViewModel', () => {
-  it('reads the workspace the sidebar selected', () => {
-    const { result } = renderHook(() => useWorkspaceViewModel());
-
-    expect(result.current.name).toBe('Checkout regression');
-  });
-
   it('reads the sentence under the title', () => {
     expect(renderHook(() => useWorkspaceViewModel()).result.current).toMatchObject({
       metaKey: 'WORKSPACE.META_ON',
@@ -310,18 +304,6 @@ describe('useWorkspaceViewModel', () => {
     expect(renderHook(() => useWorkspaceViewModel()).result.current.statusLabel).toBe(
       'running · step 6 of 6',
     );
-  });
-
-  describe('onRename', () => {
-    it('renames the open workspace, so the sidebar and the disk follow', () => {
-      const { result } = renderHook(() => useWorkspaceViewModel());
-
-      act(() => {
-        result.current.onRename('Checkout');
-      });
-
-      expect(useWorkspaceStore.getState().workspaces[0]?.name).toBe('Checkout');
-    });
   });
 
   it('says how far an exploration went while it walks', () => {

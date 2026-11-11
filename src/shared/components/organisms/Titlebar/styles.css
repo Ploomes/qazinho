@@ -41,13 +41,16 @@
 }
 
 .titlebar__crumb {
+  display: flex;
+  align-items: center;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .titlebar__crumb + .titlebar__crumb::before {
-  padding: 0 var(--space-3);
+  padding: 0 var(--space-1) 0 var(--space-3);
   color: var(--ink3);
   content: '/';
 }

@@ -1,8 +1,8 @@
-import type { IWorkspaceNameProps } from '@/modules/Workspace/screens/Workspace/components/WorkspaceName/types';
+import type { IPlanNameProps } from '@/modules/Workspace/components/PlanName/types';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
 
-export const useWorkspaceNameViewModel = (props: IWorkspaceNameProps) => {
+export const usePlanNameViewModel = (props: IPlanNameProps) => {
   const { name, onRename } = props;
   const [draft, setDraft] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);

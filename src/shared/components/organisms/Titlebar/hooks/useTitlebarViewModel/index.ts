@@ -13,6 +13,7 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
   const workspace = useWorkspaceStore(
     (state) => state.workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null,
   );
+  const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
 
   const project =
     workspace === null
@@ -31,21 +32,25 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
     isResourcesOpen,
     crumbsLabel: t('COMMON.WHERE'),
     hasPlanActions: screen === 'workspace' && workspace !== null,
+    onRename: (name: string) => {
+      if (workspace !== null) renameWorkspace({ workspaceId: workspace.id, name });
+    },
     crumbs:
       screen === 'settings'
-        ? [{ key: 'settings', label: t('COMMON.SETTINGS') }]
+        ? [{ key: 'settings', label: t('COMMON.SETTINGS'), isPlan: false }]
         : screen === 'bugs'
-          ? [{ key: 'bugs', label: t('BUG.TITLE') }]
+          ? [{ key: 'bugs', label: t('BUG.TITLE'), isPlan: false }]
           : screen === 'workspace' && workspace !== null
             ? [
-                { key: 'project', label: project?.name ?? '' },
+                { key: 'project', label: project?.name ?? '', isPlan: false },
                 {
                   key: 'plan',
                   label: workspace.name === '' ? t('WORKSPACE.UNNAMED') : workspace.name,
+                  isPlan: true,
                 },
               ].filter(({ label }) => label !== '')
             : projects.length > 0
-              ? [{ key: 'home', label: t('HOME.TITLE') }]
+              ? [{ key: 'home', label: t('HOME.TITLE'), isPlan: false }]
               : [],
   };
 };

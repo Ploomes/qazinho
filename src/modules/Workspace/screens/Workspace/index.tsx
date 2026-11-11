@@ -5,7 +5,7 @@ import { Plan } from '@/modules/Plan';
 import { Runs } from '@/modules/Run';
 import { StatusPill } from '@/shared/components/atoms';
 import { ErrorBarrier } from '@/shared/components/organisms';
-import { MetaLink, PanelTabs, TargetChip, WorkspaceName } from './components';
+import { MetaLink, PanelTabs, TargetChip } from './components';
 import { useWorkspaceViewModel } from './hooks';
 import './styles.css';
 
@@ -15,7 +15,6 @@ export const Workspace: React.FC = () => {
     style,
     tab,
     bugCount,
-    name,
     metaKey,
     metaCases,
     toDevelopLine,
@@ -26,7 +25,6 @@ export const Workspace: React.FC = () => {
     liveStatus,
     isLive,
     onSelectTab,
-    onRename,
     onDropDesign,
   } = useWorkspaceViewModel();
 
@@ -37,8 +35,6 @@ export const Workspace: React.FC = () => {
       {!isLive && (
         <>
           <header className="workspace__header">
-            <WorkspaceName name={name} onRename={onRename} />
-
             <div className="workspace__meta">
               {isLive ? (
                 <StatusPill status={liveStatus} shape="round" label={statusLabel} />
@@ -78,16 +74,16 @@ export const Workspace: React.FC = () => {
                 </>
               )}
             </div>
-          </header>
 
-          <div className="workspace__tabs">
-            <PanelTabs
-              current={tab}
-              bugCount={bugCount}
-              isLive={isLive}
-              onSelect={onSelectTab}
-            />
-          </div>
+            <div className="workspace__tabs">
+              <PanelTabs
+                current={tab}
+                bugCount={bugCount}
+                isLive={isLive}
+                onSelect={onSelectTab}
+              />
+            </div>
+          </header>
         </>
       )}
 

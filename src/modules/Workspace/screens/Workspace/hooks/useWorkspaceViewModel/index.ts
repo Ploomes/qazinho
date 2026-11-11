@@ -52,7 +52,6 @@ export const useWorkspaceViewModel = () => {
   );
   const tab = useWorkspaceStore((state) => state.panelTab);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
-  const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
   const setDesign = useWorkspaceStore((state) => state.setDesign);
 
   useDevelopedWatch();
@@ -90,7 +89,6 @@ export const useWorkspaceViewModel = () => {
     } as CSSProperties,
     tab,
     bugCount: workspace?.bugCount ?? 0,
-    name: workspace?.name === '' ? t('WORKSPACE.UNNAMED') : (workspace?.name ?? ''),
     metaKey,
     metaCases,
     toDevelopLine:
@@ -154,9 +152,6 @@ export const useWorkspaceViewModel = () => {
           ),
     isLive,
     onSelectTab: selectTab,
-    onRename: (name: string) => {
-      if (workspace) renameWorkspace({ workspaceId: workspace.id, name });
-    },
     onDropDesign: () => {
       if (workspace) setDesign({ workspaceId: workspace.id, design: null });
     },

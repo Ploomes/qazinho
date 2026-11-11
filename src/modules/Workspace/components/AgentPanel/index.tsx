@@ -1,10 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { Trans } from 'react-i18next';
 import { Chat } from '@/modules/Chat';
-import {
-  TargetChip,
-  WorkspaceName,
-} from '@/modules/Workspace/screens/Workspace/components';
+import { TargetChip } from '@/modules/Workspace/screens/Workspace/components';
 import { Icon, IconButton, Kbd } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { ErrorBarrier } from '@/shared/components/organisms';
@@ -19,8 +16,6 @@ export const AgentPanel: React.FC = () => {
     isChatOnly,
     metaKey,
     metaCases,
-    name,
-    onRename,
     isOpen,
     title,
     railLabel,
@@ -98,16 +93,13 @@ export const AgentPanel: React.FC = () => {
             <div className="agent-panel__inner">
               <header className="agent-panel__header">
                 {isChatOnly ? (
-                  <>
-                    <WorkspaceName name={name} onRename={onRename} />
-                    <div className="agent-panel__meta">
-                      <Trans
-                        i18nKey={metaKey}
-                        values={{ cases: metaCases }}
-                        components={{ app: <TargetChip /> }}
-                      />
-                    </div>
-                  </>
+                  <div className="agent-panel__meta">
+                    <Trans
+                      i18nKey={metaKey}
+                      values={{ cases: metaCases }}
+                      components={{ app: <TargetChip /> }}
+                    />
+                  </div>
                 ) : (
                   <>
                     <span className="agent-panel__title">{title}</span>

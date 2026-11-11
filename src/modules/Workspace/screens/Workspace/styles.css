@@ -12,14 +12,19 @@
   display: flex;
   flex: none;
   flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-6) var(--space-8) var(--space-5);
+  padding: var(--space-5) var(--space-8) 0;
+  border-bottom: 1px solid var(--line2);
 }
 
 .workspace__meta {
   min-width: 0;
+  color: var(--ink3);
+  font: var(--font-meta-sm);
+}
+
+.workspace__meta .target-chip__button,
+.workspace__meta .meta-link {
   color: var(--ink2);
-  font: var(--font-ui-md);
 }
 
 .workspace__meta > .status-pill--quiet {
@@ -32,8 +37,27 @@
   align-items: stretch;
   gap: var(--space-4);
   height: var(--workspace-tabs);
-  padding: 0 var(--space-8);
-  border-bottom: 1px solid var(--line2);
+}
+
+@container workspace (width >= 880px) {
+  .workspace__header {
+    flex-direction: row-reverse;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding-top: 0;
+  }
+
+  .workspace__meta {
+    padding-bottom: var(--space-4);
+    text-align: right;
+  }
+
+  .workspace__meta .target-chip__popover {
+    right: 0;
+    left: auto;
+    transform-origin: top right;
+  }
 }
 
 .workspace__scroll {
@@ -48,11 +72,6 @@
 
 @container workspace (width < 560px) {
   .workspace__header {
-    padding-right: var(--space-6);
-    padding-left: var(--space-6);
-  }
-
-  .workspace__tabs {
     padding-right: var(--space-6);
     padding-left: var(--space-6);
   }
