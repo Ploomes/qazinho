@@ -62,8 +62,8 @@ Todo valor vem de um token em `tokens.css` (`design-tokens.md`).
   papel, e o título da primeira execução (`--font-brand-*`). Rótulo não vai em caixa-alta.
 - **Cor**: os neutros puxam para o quente nos dois temas. O musgo (`--accent`) é a ação principal,
   o foco, o que está rodando e um controle ligado; nenhuma cor neon. O lima fica só na marca (o
-  Estagiário, o balão com que ele fala e a `Tag`, pelo `--brand-lime`). Uma aba
-  ativa, um link ou uma seleção usam a tinta. O que passou não ganha verde em cada linha: ele fica
+  Estagiário, o balão com que ele fala e a `Tag`, pelo `--brand-lime`). A aba ativa veste o sublinhado
+  musgo; um link ou uma seleção usam a tinta. Um gráfico dá uma cor a cada categoria. O que passou não ganha verde em cada linha: ele fica
   no resultado de uma run. Um
   status (`StatusPill`) ou uma etiqueta é só o ícone e o texto na cor dele, sem fundo, borda nem
   preenchimento. Um fato repetido em toda linha é um ícone com tooltip. Um aviso veste a cor de leve
