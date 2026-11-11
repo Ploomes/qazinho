@@ -111,8 +111,8 @@
 
   --pass: #7fb594;
   --pass-soft: rgba(127, 181, 148, 0.13);
-  --fail: #f0738f;
-  --fail-soft: rgba(240, 115, 143, 0.14);
+  --fail: #ef5b5b;
+  --fail-soft: rgba(239, 91, 91, 0.14);
   --block: #9aa9d6;
   --block-soft: rgba(154, 169, 214, 0.13);
   --skip: #7f7d76;
@@ -162,8 +162,8 @@
 
   --pass: #2f6a4a;
   --pass-soft: rgba(47, 106, 74, 0.12);
-  --fail: #a1123f;
-  --fail-soft: rgba(161, 18, 63, 0.12);
+  --fail: #c42b2b;
+  --fail-soft: rgba(196, 43, 43, 0.12);
   --block: #4a5d93;
   --block-soft: rgba(74, 93, 147, 0.11);
   --skip: #66645d;

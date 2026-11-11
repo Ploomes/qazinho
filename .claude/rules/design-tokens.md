@@ -4,7 +4,7 @@ O QAzinho não tem pacote de design system. A escala é um conjunto de custom pr
 `src/shared/styles/tokens.css`, declaradas em `[data-theme]`. O layout vem do
 `assets/prototype.html`. O acento da interface é o Laranja (`--accent`: `#B4500F` no Paper, `#F59A55`
 no Night), que trocou o lima neon em 2026-11-11; os status são de saturação baixa, e a falha é
-carmim (`#A1123F`, `#F0738F`) para não se confundir com o laranja. A marca guarda a
+um vermelho puro (`#C42B2B`, `#EF5B5B`), sem puxar para o laranja nem para o rosa. A marca guarda a
 Tinta `#141414` (`--brand-ink`), o Papel `#F4F2EA` (`--brand-paper`) e o lima do Estagiário
 (`--brand-lime`, só nele, no balão dele e na `Tag`) até a marca ser redesenhada; o índigo da folha
 de adesivos fica só no ícone do app. Como elas são usadas está no `sticker-design.md`.
