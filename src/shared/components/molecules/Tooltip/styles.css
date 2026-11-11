@@ -12,7 +12,7 @@
   display: block;
   padding: var(--space-2) var(--space-3);
   border: var(--edge-width) solid var(--edge);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
   background: var(--raise2);
   box-shadow: var(--sticker-lift);
   color: var(--ink);
@@ -26,4 +26,30 @@
 
 .tooltip__panel--beside {
   translate: 0 -50%;
+}
+
+.tooltip__panel::before {
+  position: absolute;
+  top: calc(var(--tooltip-tail-size) / -2 - var(--edge-width));
+  left: calc(var(--tooltip-tail) - var(--tooltip-tail-size) / 2);
+  width: var(--tooltip-tail-size);
+  height: var(--tooltip-tail-size);
+  border-top: var(--edge-width) solid var(--edge);
+  border-left: var(--edge-width) solid var(--edge);
+  background: inherit;
+  rotate: 45deg;
+  content: '';
+}
+
+.tooltip__panel--from-right::before {
+  right: calc(var(--tooltip-tail) - var(--tooltip-tail-size) / 2);
+  left: auto;
+}
+
+.tooltip__panel--beside::before {
+  top: calc(50% - var(--tooltip-tail-size) / 2);
+  left: calc(var(--tooltip-tail-size) / -2 - var(--edge-width));
+  border-top: none;
+  border-right: none;
+  border-bottom: var(--edge-width) solid var(--edge);
 }

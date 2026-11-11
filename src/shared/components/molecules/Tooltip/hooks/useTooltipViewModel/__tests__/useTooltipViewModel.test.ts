@@ -13,7 +13,10 @@ describe('useTooltipViewModel', () => {
   it('wraps a long tip at a width it never grows past', () => {
     const { result } = renderHook(() => useTooltipViewModel({}));
 
-    expect(result.current.style).toEqual({ '--tooltip-max': '240px' });
+    expect(result.current.style).toEqual({
+      '--tooltip-max': '240px',
+      '--tooltip-tail-size': '8px',
+    });
   });
 
   it('opens on arrival and closes on leaving', () => {
