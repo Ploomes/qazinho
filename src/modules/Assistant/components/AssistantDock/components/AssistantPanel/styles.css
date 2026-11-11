@@ -41,7 +41,7 @@
 .assistant-panel__status {
   overflow: hidden;
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -61,7 +61,6 @@
   min-height: 0;
   padding: var(--space-5);
   overflow-y: auto;
-  scroll-behavior: smooth;
 }
 
 .assistant-panel__row {
@@ -87,7 +86,7 @@
   align-items: center;
   gap: var(--space-3);
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .assistant-panel__tool-icon {
@@ -102,7 +101,7 @@
   width: var(--space-3);
   height: var(--space-3);
   border-radius: var(--radius-pill);
-  background: var(--lime);
+  background: var(--lime-ink);
   content: '';
   animation: gc-pulse 1.2s ease-in-out infinite;
 }
@@ -169,7 +168,7 @@
   width: var(--space-2);
   height: var(--space-2);
   border-radius: var(--radius-pill);
-  background: var(--lime);
+  background: var(--lime-ink);
   animation: gc-dot 1.3s ease-in-out infinite;
 }
 
@@ -274,7 +273,7 @@
   display: inline-flex;
   flex: none;
   color: var(--attn);
-  font: var(--font-mono-md);
+  font: var(--font-meta-md);
 }
 
 .assistant-panel__secret-actions {

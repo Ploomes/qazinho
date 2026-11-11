@@ -20,6 +20,7 @@ import './styles.css';
 export const AssistantPanel: React.FC = () => {
   const {
     listRef,
+    onListScroll,
     inputRef,
     title,
     status,
@@ -107,7 +108,7 @@ export const AssistantPanel: React.FC = () => {
         </span>
       </header>
 
-      <div ref={listRef} className="assistant-panel__list">
+      <div ref={listRef} className="assistant-panel__list" onScroll={onListScroll}>
         <AnimatePresence initial={false} mode="popLayout">
           {isEmpty && (
             <motion.div

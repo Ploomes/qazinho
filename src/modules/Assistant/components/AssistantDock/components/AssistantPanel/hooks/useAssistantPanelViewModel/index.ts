@@ -10,6 +10,7 @@ import {
 import { appSnapshotOf, suggestionsFor, toolLabelOf } from '@/modules/Assistant/library';
 import { secretIn, withoutSecret } from '@/modules/Project';
 import { Assistant } from '@/services';
+import { useFollowEnd } from '@/shared/hooks/useFollowEnd';
 import {
   useAppStore,
   useAssistantStore,
@@ -24,10 +25,13 @@ export const useAssistantPanelViewModel = () => {
   const { t } = useTranslation();
   const [draft, setDraft] = useState('');
   const [isSecretSent, setSecretSent] = useState(false);
-  const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const messages = useAssistantStore((state) => state.messages);
+  const { listRef, onFollowScroll } = useFollowEnd<HTMLDivElement>({
+    resetKey: null,
+    callKey: messages.filter(({ kind }) => kind === 'user').at(-1)?.id ?? null,
+  });
   const isAsking = useAssistantStore((state) => state.isAsking);
   const liveText = useAssistantStore((state) => state.liveText);
   const sessionId = useAssistantStore((state) => state.sessionId);
@@ -56,12 +60,6 @@ export const useAssistantPanelViewModel = () => {
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
-
-  useEffect(() => {
-    const list = listRef.current;
-
-    if (list !== null) list.scrollTop = list.scrollHeight;
-  }, [messages.length, liveText, isAsking]);
 
   const failureOf = (turn: IAssistantTurn) => {
     const { failure } = turn;
@@ -146,6 +144,7 @@ export const useAssistantPanelViewModel = () => {
 
   return {
     listRef,
+    onListScroll: onFollowScroll,
     inputRef,
     title: t('MASCOT.NAME'),
     status: isWaiting
