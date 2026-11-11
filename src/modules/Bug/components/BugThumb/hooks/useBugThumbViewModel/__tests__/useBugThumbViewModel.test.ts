@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { useBugThumbViewModel } from '@/modules/Bug/screens/Bugs/components/BugThumb/hooks/useBugThumbViewModel';
+import { useBugThumbViewModel } from '@/modules/Bug/components/BugThumb/hooks/useBugThumbViewModel';
 import { fakeQazinhoApi } from '@/services/__tests__/fixtures';
 
 beforeEach(() => {

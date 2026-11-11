@@ -682,3 +682,20 @@
   color: var(--ink3);
   font: var(--font-meta-xs);
 }
+
+.sidebar__bugs {
+  width: 100%;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--sidebar-indent);
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sidebar__bugs-count {
+  flex: none;
+  color: var(--fail);
+  font: var(--font-ui-xs);
+  font-variant-numeric: tabular-nums;
+}

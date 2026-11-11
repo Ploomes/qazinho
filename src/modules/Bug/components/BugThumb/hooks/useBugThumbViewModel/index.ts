@@ -1,4 +1,4 @@
-import type { IBugThumbProps } from '@/modules/Bug/screens/Bugs/components/BugThumb/types';
+import type { IBugThumbProps } from '@/modules/Bug/components/BugThumb/types';
 import { useShot } from '@/shared/hooks';
 
 export const useBugThumbViewModel = (props: IBugThumbProps) => {

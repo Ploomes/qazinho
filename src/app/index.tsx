@@ -1,5 +1,6 @@
 import { AnimatePresence, MotionConfig } from 'motion/react';
 import { AssistantDock } from '@/modules/Assistant';
+import { ProjectBugs } from '@/modules/Bug';
 import { FirstRun, Home } from '@/modules/Home';
 import { ProLinkModal, ProMergeModal, ProRunWarning } from '@/modules/Pro';
 import { ProjectModal, VariablesModal } from '@/modules/Project';
@@ -26,6 +27,7 @@ export const App: React.FC = () => {
     isChatOnly,
     isWorkspace,
     isSettings,
+    isProjectBugs,
     modal,
     projectModalKey,
     variablesKey,
@@ -63,6 +65,7 @@ export const App: React.FC = () => {
                 )}
                 {!isOnboarding && !isFirstRun && isWorkspace && <AgentPanel />}
                 {!isOnboarding && !isFirstRun && isSettings && <Settings />}
+                {!isOnboarding && !isFirstRun && isProjectBugs && <ProjectBugs />}
               </ErrorBarrier>
             </div>
 

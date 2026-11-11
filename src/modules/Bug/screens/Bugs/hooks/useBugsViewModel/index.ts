@@ -92,7 +92,7 @@ export const useBugsViewModel = () => {
     isToTopShown,
     onToTop,
     style: {
-      '--bugs-thumb-width': `${String(BUGS_LIST.thumbWidthPx)}px`,
+      '--bug-thumb-width': `${String(BUGS_LIST.thumbWidthPx)}px`,
     } as CSSProperties,
     rows: shown.map((bug) => {
       const hero = bug.shots.find(({ isBad }) => isBad) ?? bug.shots[0] ?? null;

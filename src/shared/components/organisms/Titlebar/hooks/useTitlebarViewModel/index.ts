@@ -13,6 +13,7 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
   const workspace = useWorkspaceStore(
     (state) => state.workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null,
   );
+  const bugsProjectId = useAppStore((state) => state.bugsProjectId);
   const isSidebarShut = useSettingsStore((state) => state.isSidebarShut);
   const toggleSidebar = useSettingsStore((state) => state.toggleSidebar);
 
@@ -38,16 +39,24 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
     crumbs:
       screen === 'settings'
         ? [{ key: 'settings', label: t('COMMON.SETTINGS') }]
-        : screen === 'workspace' && workspace !== null
+        : screen === 'bugs'
           ? [
-              { key: 'project', label: project?.name ?? '' },
               {
-                key: 'plan',
-                label: workspace.name === '' ? t('WORKSPACE.UNNAMED') : workspace.name,
+                key: 'project',
+                label: projects.find(({ id }) => id === bugsProjectId)?.name ?? '',
               },
+              { key: 'bugs', label: t('BUG.TITLE') },
             ].filter(({ label }) => label !== '')
-          : projects.length > 0
-            ? [{ key: 'home', label: t('HOME.TITLE') }]
-            : [],
+          : screen === 'workspace' && workspace !== null
+            ? [
+                { key: 'project', label: project?.name ?? '' },
+                {
+                  key: 'plan',
+                  label: workspace.name === '' ? t('WORKSPACE.UNNAMED') : workspace.name,
+                },
+              ].filter(({ label }) => label !== '')
+            : projects.length > 0
+              ? [{ key: 'home', label: t('HOME.TITLE') }]
+              : [],
   };
 };

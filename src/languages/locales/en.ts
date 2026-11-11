@@ -595,6 +595,8 @@ export const en = {
       'This run’s video was deleted after {{days}} days, to free space. Its report and screens stay.',
   },
   BUG: {
+    TITLE: 'Bugs',
+    PROJECT_ROW_WHERE: '{{plan}}, step {{step}} of {{caseId}}',
     BACK: 'All bugs',
     PAGE_META_ONE:
       'Caught in the <run>run at {{when}}</run>, at <case>step {{step}} of {{caseId}}</case>.',

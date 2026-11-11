@@ -1,0 +1,100 @@
+import type { BugFilter } from '@/modules/Bug/types';
+import type { CSSProperties } from 'react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { BUG_FILTER_KEYS, BUG_FILTERS } from '@/modules/Bug/constants';
+import { PROJECT_BUGS } from '@/modules/Bug/screens/ProjectBugs/constants';
+import { useAppStore, useWorkspaceStore } from '@/store';
+
+export const useProjectBugsViewModel = () => {
+  const { t } = useTranslation();
+  const [filter, setFilter] = useState<BugFilter>('open');
+  const projectId = useAppStore((state) => state.bugsProjectId);
+  const projects = useAppStore((state) => state.projects);
+  const selectWorkspace = useAppStore((state) => state.selectWorkspace);
+  const workspaces = useWorkspaceStore((state) => state.workspaces);
+  const selectTab = useWorkspaceStore((state) => state.selectTab);
+  const toggleBug = useWorkspaceStore((state) => state.toggleBug);
+
+  const project = projects.find(({ id }) => id === projectId) ?? null;
+  const entries = workspaces
+    .filter((workspace) => workspace.projectId === projectId)
+    .flatMap((workspace) => workspace.bugs.map((bug) => ({ workspace, bug })));
+  const inTab = (tab: BugFilter) =>
+    entries.filter(({ bug }) =>
+      tab === 'dismissed'
+        ? bug.isDismissed
+        : tab === 'filed'
+          ? !bug.isDismissed && bug.filed !== null
+          : !bug.isDismissed && bug.filed === null,
+    );
+  const open = inTab('open');
+  const filed = inTab('filed');
+  const tabs = BUG_FILTERS.filter((id) => id === 'open' || inTab(id).length > 0);
+  const shownTab = tabs.includes(filter) ? filter : 'open';
+
+  return {
+    hasProject: project !== null,
+    style: {
+      '--project-bugs-column': `${String(PROJECT_BUGS.column)}px`,
+      '--bug-thumb-width': `${String(PROJECT_BUGS.thumbWidthPx)}px`,
+    } as CSSProperties,
+    title: t('BUG.TITLE'),
+    summary: [
+      open.length === 0
+        ? t('BUG.LIST_OPEN_NONE')
+        : open.length === 1
+          ? t('BUG.LIST_OPEN_ONE')
+          : t('BUG.LIST_OPEN_OTHER', { count: open.length }),
+      ...(filed.length === 0
+        ? []
+        : [
+            filed.length === 1
+              ? t('BUG.LIST_FILED_ONE')
+              : t('BUG.LIST_FILED_OTHER', { count: filed.length }),
+          ]),
+    ].join(' '),
+    isEmpty: entries.length === 0,
+    emptyTitle: t('BUG.EMPTY_TITLE'),
+    emptyBody: t('BUG.EMPTY_BODY'),
+    emptyTab: t('BUG.SUMMARY_NONE'),
+    tabs: tabs.map((id) => ({
+      id,
+      label: t(BUG_FILTER_KEYS[id]),
+      count: id === 'open' && open.length > 0 ? String(open.length) : null,
+      isActive: id === shownTab,
+      className:
+        id === shownTab
+          ? 'project-bugs__tab project-bugs__tab--active'
+          : 'project-bugs__tab',
+      onClick: () => {
+        setFilter(id);
+      },
+    })),
+    rows: inTab(shownTab).map(({ workspace, bug }) => {
+      const hero = bug.shots.find(({ isBad }) => isBad) ?? bug.shots[0] ?? null;
+
+      return {
+        id: `${workspace.id}/${bug.id}`,
+        title: bug.title,
+        thumb: { src: hero?.src ?? null, file: hero?.file ?? null },
+        where: t('BUG.PROJECT_ROW_WHERE', {
+          plan: workspace.name === '' ? t('WORKSPACE.UNNAMED') : workspace.name,
+          step: bug.stepNumber,
+          caseId: bug.caseId,
+        }),
+        seen:
+          bug.seenRuns > 1
+            ? t('BUG.ROW_SEEN_OTHER', { count: bug.seenRuns })
+            : t('BUG.ROW_SEEN_ONE'),
+        when: bug.runWhen,
+        onOpen: () => {
+          selectWorkspace(workspace.id);
+          selectTab('bugs');
+
+          if (useWorkspaceStore.getState().openBugId !== bug.id) toggleBug(bug.id);
+        },
+      };
+    }),
+  };
+};

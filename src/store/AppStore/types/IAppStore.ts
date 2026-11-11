@@ -28,6 +28,7 @@ export interface IAppStore {
   pendingImport: { workspaceId: string; source: IImportSource } | null;
   isResourcesOpen: boolean;
   isSearchOpen: boolean;
+  bugsProjectId: string | null;
   modelMenuAt: ModelMenuAt | null;
   media: IMedia | null;
   replay: IReplayOpen | null;
@@ -44,6 +45,7 @@ export interface IAppStore {
   closeModal: () => void;
   selectWorkspace: (workspaceId: string) => void;
   goHome: () => void;
+  openProjectBugs: (projectId: string) => void;
   addProject: (project: IProject) => void;
   loadProjects: (projects: IProject[]) => void;
   putProject: (project: IProject) => void;

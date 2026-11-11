@@ -598,6 +598,8 @@ export const pt: typeof en = {
       'O vídeo desta run foi apagado depois de {{days}} dias, para liberar espaço. O relatório e as telas continuam.',
   },
   BUG: {
+    TITLE: 'Bugs',
+    PROJECT_ROW_WHERE: '{{plan}}, passo {{step}} do {{caseId}}',
     BACK: 'Todos os bugs',
     PAGE_META_ONE:
       'Pego na <run>run das {{when}}</run>, no <case>passo {{step}} do {{caseId}}</case>.',

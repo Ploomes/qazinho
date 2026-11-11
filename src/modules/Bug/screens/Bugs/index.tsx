@@ -1,8 +1,9 @@
 import { AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
+import { BugThumb } from '@/modules/Bug/components';
 import { EmptyState } from '@/shared/components/atoms';
 import { ToTop } from '@/shared/components/molecules';
-import { BugFilingPopup, BugPage, BugSendModal, BugThumb } from './components';
+import { BugFilingPopup, BugPage, BugSendModal } from './components';
 import { useBugsViewModel } from './hooks';
 import './styles.css';
 
