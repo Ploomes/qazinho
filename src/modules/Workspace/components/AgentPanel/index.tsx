@@ -5,7 +5,8 @@ import {
   TargetChip,
   WorkspaceName,
 } from '@/modules/Workspace/screens/Workspace/components';
-import { Icon, Kbd } from '@/shared/components/atoms';
+import { Icon, IconButton, Kbd } from '@/shared/components/atoms';
+import { Tooltip } from '@/shared/components/molecules';
 import { ErrorBarrier } from '@/shared/components/organisms';
 import { MOTION } from '@/shared/constants';
 import { useAgentPanelViewModel } from './hooks';
@@ -110,15 +111,23 @@ export const AgentPanel: React.FC = () => {
                 ) : (
                   <>
                     <span className="agent-panel__title">{title}</span>
-                    <button
-                      type="button"
-                      className="agent-panel__collapse"
-                      aria-label={hideLabel}
-                      onClick={onToggle}
-                    >
-                      {collapseLabel}
-                      {collapseCombo !== '' && <Kbd combo={collapseCombo} />}
-                    </button>
+                    <span className="agent-panel__collapse">
+                      <Tooltip
+                        content={
+                          <span className="agent-panel__tip">
+                            {collapseLabel}
+                            {collapseCombo !== '' && <Kbd combo={collapseCombo} />}
+                          </span>
+                        }
+                      >
+                        <IconButton
+                          icon="sidebar"
+                          size="sm"
+                          label={hideLabel}
+                          onClick={onToggle}
+                        />
+                      </Tooltip>
+                    </span>
                   </>
                 )}
               </header>

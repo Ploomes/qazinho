@@ -61,20 +61,27 @@
 
 .agent-panel__collapse {
   display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
   margin-left: auto;
-  padding: var(--space-1) var(--space-2);
-  border: none;
-  border-radius: var(--radius-xs);
-  background: transparent;
-  color: var(--ink3);
-  font: var(--font-ui-sm);
-  transition: color var(--dur-fast) var(--ease);
 }
 
-.agent-panel__collapse:hover {
+.agent-panel__collapse .icon-button {
+  border-color: transparent;
+  color: var(--ink3);
+}
+
+.agent-panel__collapse svg {
+  scale: -1 1;
+}
+
+.agent-panel__collapse .icon-button:hover {
+  background: var(--raise);
   color: var(--ink);
+}
+
+.agent-panel__tip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .agent-panel .chat {

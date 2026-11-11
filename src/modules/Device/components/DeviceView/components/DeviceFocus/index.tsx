@@ -7,7 +7,7 @@ import { ScreenRail } from '@/modules/Device/components/DeviceView/components/Sc
 import { ViewportPicker } from '@/modules/Device/components/DeviceView/components/ViewportPicker';
 import { DEVICE } from '@/modules/Device/constants';
 import { AskCard } from '@/modules/Run';
-import { Button, Eyebrow, Intern, Kbd, StatusPill } from '@/shared/components/atoms';
+import { Button, Eyebrow, Intern, StatusPill } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import { useDeviceFocusViewModel } from './hooks';
 import './styles.css';
@@ -95,7 +95,6 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
           )}
           <Button size="sm" variant="ghost" onClick={props.onClose}>
             {t('DEVICE.FOCUS_LEAVE')}
-            <Kbd combo="Esc" />
           </Button>
         </div>
 
