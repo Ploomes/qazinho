@@ -16,8 +16,8 @@ import { useChatRowViewModel } from './hooks';
 import './styles.css';
 
 /**
- * Uma mensagem no chat: a do QA num balão à direita, a do agente à esquerda com o rosto e
- * o nome dele, e a hora quando o mouse passa.
+ * Uma mensagem no chat: a do QA num balão à direita, a do agente num balão à esquerda,
+ * com o rosto e o nome dele, e a hora quando o mouse passa.
  */
 export const ChatRow: React.FC<IChatRowProps> = (props) => {
   const {

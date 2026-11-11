@@ -30,13 +30,14 @@ A maior parte das coisas é chapada: impressa na superfície, separada por espa�
 | Elevado: uma linha de 1px, uma sombra suave só quando flutua      | Chapado: sem linha própria, separado por espaço |
 | ----------------------------------------------------------------- | ----------------------------------------------- |
 | popovers, menus, modais, o popup de login, o painel do Estagiário | linhas de lista, de tabela e da sidebar         |
-| cards: configurações, MCP, integração, alvo, run, handoff         | a conversa do chat, logs, YAML, linhas de passo |
+| cards: configurações, MCP, integração, alvo, run, handoff         | os balões do chat, logs, YAML, linhas de passo  |
 | o composer, inputs                                                | rótulos, eyebrows, o nome do projeto na sidebar |
 | botões primários, preenchidos de laranja sem contorno             | botões secundários, ghost e de ícone            |
 
 **O chat separa quem fala pelo lado.** A fala do QA fica à direita, num balão `--bubble` sem linha;
-a do agente fica chapada à esquerda, com o rosto do Estagiário e o nome dele uma vez por sequência.
-A hora aparece com o mouse em cima.
+a do agente fica num balão `--raise` à esquerda, também sem linha, com o rosto do Estagiário e o
+nome dele uma vez por sequência: texto solto lia estranho ao lado do balão do QA (2026-11-11). O que o
+agente disse dentro de uma run continua chapado no cartão dela. A hora aparece com o mouse em cima.
 
 **A evidência nunca é tocada.** Uma captura de tela ou o dispositivo ao vivo não é inclinado,
 brilhado, contornado nem coberto. A exceção é o instante de um bug pego (`BugFlash`): o QA pediu que

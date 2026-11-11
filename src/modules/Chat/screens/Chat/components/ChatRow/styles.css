@@ -84,3 +84,15 @@
   max-width: 72ch;
   color: var(--ink);
 }
+
+.chat-row--agent:not(.chat-row--nested) {
+  align-items: flex-start;
+}
+
+.chat-row--agent:not(.chat-row--nested) > .chat-row__body {
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-xl) var(--radius-xl) var(--radius-xl) var(--radius-xs);
+  background: var(--raise);
+}
