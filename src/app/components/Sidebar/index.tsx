@@ -88,42 +88,44 @@ export const Sidebar: React.FC = () => {
       {isShut ? (
         <>
           <div className="sidebar__rail">
-            <Tooltip side="right" content={homeLabel}>
-              <button
-                type="button"
-                className={
-                  isHome
-                    ? 'sidebar__rail-tile sidebar__rail-tile--selected'
-                    : 'sidebar__rail-tile'
-                }
-                aria-label={homeLabel}
-                aria-current={isHome ? 'page' : undefined}
-                onClick={onHome}
-              >
-                <Icon name="home" />
-                {homeCount !== null && (
-                  <span className="sidebar__rail-count">{homeCount}</span>
-                )}
-              </button>
-            </Tooltip>
-            <Tooltip side="right" content={bugsLabel}>
-              <button
-                type="button"
-                className={
-                  isBugs
-                    ? 'sidebar__rail-tile sidebar__rail-tile--selected'
-                    : 'sidebar__rail-tile'
-                }
-                aria-label={bugsLabel}
-                aria-current={isBugs ? 'page' : undefined}
-                onClick={onBugs}
-              >
-                <Icon name="bug" />
-                {bugsCount !== null && (
-                  <span className="sidebar__rail-count">{bugsCount}</span>
-                )}
-              </button>
-            </Tooltip>
+            <div className="sidebar__rail-nav">
+              <Tooltip side="right" content={homeLabel}>
+                <button
+                  type="button"
+                  className={
+                    isHome
+                      ? 'sidebar__rail-tile sidebar__rail-tile--selected'
+                      : 'sidebar__rail-tile'
+                  }
+                  aria-label={homeLabel}
+                  aria-current={isHome ? 'page' : undefined}
+                  onClick={onHome}
+                >
+                  <Icon name="home" />
+                  {homeCount !== null && (
+                    <span className="sidebar__rail-count">{homeCount}</span>
+                  )}
+                </button>
+              </Tooltip>
+              <Tooltip side="right" content={bugsLabel}>
+                <button
+                  type="button"
+                  className={
+                    isBugs
+                      ? 'sidebar__rail-tile sidebar__rail-tile--selected'
+                      : 'sidebar__rail-tile'
+                  }
+                  aria-label={bugsLabel}
+                  aria-current={isBugs ? 'page' : undefined}
+                  onClick={onBugs}
+                >
+                  <Icon name="bug" />
+                  {bugsCount !== null && (
+                    <span className="sidebar__rail-count">{bugsCount}</span>
+                  )}
+                </button>
+              </Tooltip>
+            </div>
             {groups.map((group) => (
               <div key={group.id} className="sidebar__rail-group">
                 <Tooltip side="right" content={group.name}>
