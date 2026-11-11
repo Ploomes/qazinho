@@ -1,5 +1,8 @@
 import type { IProjectProPaneProps } from './types';
-import { Button, EmptyState, Eyebrow, Icon, Switch } from '@/shared/components/atoms';
+import { AnimatePresence } from 'motion/react';
+import { createPortal } from 'react-dom';
+import { ProSignIn } from '@/modules/Pro/components/ProSignIn';
+import { Button, Eyebrow, Icon, Switch } from '@/shared/components/atoms';
 import { PaneRow } from './components';
 import { useProjectProPaneViewModel } from './hooks';
 import './styles.css';
@@ -12,11 +15,38 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
   const view = useProjectProPaneViewModel(props);
 
   return (
-    <div className="project-pro" style={view.style}>
-      {view.isSignedOut && (
-        <EmptyState title={view.signedOut.title} body={view.signedOut.text} />
+    <div className="project-pro">
+      {view.hasUnlink && (
+        <header className="project-pro__head">
+          <span className="project-pro__title">{view.head.title}</span>
+          <p className={view.head.stateClassName} role="status">
+            {view.head.hasAlert && <Icon name="attention" />}
+            {view.head.stateLine}
+          </p>
+        </header>
       )}
-      {view.isNoOrg && <EmptyState title={view.noOrg.title} body={view.noOrg.text} />}
+
+      {view.isSignedOut && (
+        <div className="project-pro__line">
+          <p className="project-pro__text">{view.signInText}</p>
+          <Button
+            variant={view.hasUnlink ? 'secondary' : 'primary'}
+            onClick={view.onSignIn}
+          >
+            {view.signInLabel}
+          </Button>
+        </div>
+      )}
+
+      {view.isNoOrg && (
+        <div className="project-pro__line">
+          <p className="project-pro__text">{view.noOrg.text}</p>
+          <Button onClick={view.onCreateOrg}>
+            {view.noOrg.action}
+            <Icon name="external" />
+          </Button>
+        </div>
+      )}
 
       {view.isLocal && (
         <>
@@ -36,13 +66,10 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
                   className={org.className}
                   onClick={org.onClick}
                 >
-                  <span className="project-pro__org-tile">{org.initials}</span>
+                  <span className="project-pro__radio" aria-hidden="true" />
                   <span className="project-pro__org-words">
                     <span className="project-pro__org-name">{org.name}</span>
                     <span className="project-pro__org-note">{org.note}</span>
-                  </span>
-                  <span className="project-pro__org-mark">
-                    {org.isOn && <Icon name="check" />}
                   </span>
                 </button>
               ))}
@@ -72,31 +99,11 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
         </>
       )}
 
-      {view.hasUnlink && (
-        <header className="project-pro__head">
-          <span className="project-pro__head-tile project-pro__head-tile--org">
-            {view.head.initials}
-          </span>
-          <div className="project-pro__head-words">
-            <span className="project-pro__title">{view.head.title}</span>
-            <p className={view.head.stateClassName} role="status">
-              {view.head.hasAlert && <Icon name="attention" />}
-              {view.head.stateLine}
-            </p>
-          </div>
-        </header>
-      )}
-
-      {view.isLinked && (
+      {view.hasPlans && (
         <div className="project-pro__group">
           <Eyebrow>{view.linked.plansLabel}</Eyebrow>
           <div className="project-pro__box">
-            <PaneRow
-              icon={view.linked.pendingIcon}
-              tone={view.linked.pendingTone}
-              title={view.linked.pendingTitle}
-              text={view.linked.pendingText}
-            >
+            <PaneRow title={view.linked.pendingTitle} text={view.linked.pendingText}>
               {view.linked.hasPending && (
                 <Button size="sm" disabled={!view.linked.canSend} onClick={view.onSend}>
                   {view.linked.sendLabel}
@@ -105,8 +112,6 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
             </PaneRow>
             {view.linked.hasUpdates && (
               <PaneRow
-                icon="download"
-                tone="lit"
                 title={view.linked.updatesTitle}
                 text={view.linked.updatesText}
                 note={view.linked.updatesNote}
@@ -129,7 +134,7 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
           <Eyebrow>{view.linkLabel}</Eyebrow>
           <div className="project-pro__box">
             {view.unlinked.canPublishAgain && (
-              <PaneRow icon="up" tone="lit" title={view.unlinked.title}>
+              <PaneRow title={view.unlinked.title}>
                 <Button
                   size="sm"
                   variant="primary"
@@ -141,18 +146,13 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
               </PaneRow>
             )}
             {view.isLinked && (
-              <PaneRow icon="copy" tone="plain" title={view.linked.copyTitle}>
+              <PaneRow title={view.linked.copyTitle}>
                 <Button size="sm" disabled={!view.linked.canCopy} onClick={view.onCopy}>
                   {view.linked.copyLabel}
                 </Button>
               </PaneRow>
             )}
-            <PaneRow
-              icon="link"
-              tone="plain"
-              title={view.unlinkTitle}
-              text={view.unlinkText}
-            >
+            <PaneRow title={view.unlinkTitle} text={view.unlinkText}>
               <Button
                 size="sm"
                 variant="danger-quiet"
@@ -164,6 +164,21 @@ export const ProjectProPane: React.FC<IProjectProPaneProps> = (props) => {
             </PaneRow>
           </div>
         </div>
+      )}
+
+      {createPortal(
+        <AnimatePresence>
+          {view.signIn !== null && (
+            <ProSignIn
+              key="pro-sign-in"
+              progress={view.signIn}
+              onCancel={view.onCancelSignIn}
+              onClose={view.onCloseSignIn}
+              onRetry={view.onSignIn}
+            />
+          )}
+        </AnimatePresence>,
+        document.body,
       )}
     </div>
   );

@@ -97,12 +97,7 @@ export const TargetCard: React.FC<ITargetCardProps> = (props) => {
                       <Button size="sm" variant="ghost" onClick={onBack}>
                         {t('SETUP.BACK')}
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="primary"
-                        disabled={isChecking}
-                        onClick={onCheckAgain}
-                      >
+                      <Button size="sm" disabled={isChecking} onClick={onCheckAgain}>
                         {checkLabel}
                       </Button>
                     </div>
@@ -121,7 +116,7 @@ export const TargetCard: React.FC<ITargetCardProps> = (props) => {
                     </span>
                     <span className="target-card__reason-text">{props.lock.reason}</span>
                     {props.lock.setUp !== null && (
-                      <Button size="sm" variant="primary" onClick={onSetUp}>
+                      <Button size="sm" onClick={onSetUp}>
                         {props.lock.setUp.label}
                       </Button>
                     )}

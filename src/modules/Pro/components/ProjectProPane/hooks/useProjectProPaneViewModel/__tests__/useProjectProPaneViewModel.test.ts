@@ -75,13 +75,43 @@ afterEach(() => {
 
 describe('useProjectProPaneViewModel', () => {
   describe('before a project is linked', () => {
-    it('asks to sign in first while signed out', () => {
+    it('asks to sign in first while signed out, and signs in from the pane', async () => {
+      const signInPro = vi.fn(() => new Promise<never>(() => undefined));
+
+      window.qazinho = { ...fakeQazinhoApi('darwin'), signInPro };
       useProStore.setState({ status: { isSignedIn: false, canKeepToken: true } });
 
-      expect(pane().result.current).toMatchObject({
+      const { result } = pane();
+
+      expect(result.current).toMatchObject({
         isSignedOut: true,
         isLocal: false,
         isLinked: false,
+        signInText: 'Sign in to publish this project to an org.',
+      });
+
+      act(() => {
+        result.current.onSignIn();
+      });
+
+      await waitFor(() => {
+        expect(signInPro).toHaveBeenCalledOnce();
+      });
+      expect(result.current.signIn?.phase).toBe('working');
+    });
+
+    /** Um projeto ligado continua ligado sem a conta: o painel diz isso, e não manda nada. */
+    it('keeps a linked project linked while signed out, asking to sign in to send', () => {
+      useProStore.setState({
+        status: { isSignedIn: false, canKeepToken: true },
+        shares: [LINKED],
+      });
+
+      expect(pane().result.current).toMatchObject({
+        isSignedOut: true,
+        hasUnlink: true,
+        hasPlans: false,
+        signInText: 'Sign in to send what changed here.',
       });
     });
 
@@ -99,11 +129,9 @@ describe('useProjectProPaneViewModel', () => {
     it('offers the orgs the person writes in, on the first paid up', () => {
       const { local } = pane().result.current;
 
-      expect(
-        local.orgs.map(({ slug, isOn, initials }) => [slug, isOn, initials]),
-      ).toEqual([
-        ['late', false, 'A'],
-        ['loja', true, 'LO'],
+      expect(local.orgs.map(({ slug, isOn }) => [slug, isOn])).toEqual([
+        ['late', false],
+        ['loja', true],
       ]);
       expect(local.publishLabel).toBe('Publish to Loja Online');
     });
@@ -227,7 +255,8 @@ describe('useProjectProPaneViewModel', () => {
         isLinked: true,
         isLocal: false,
         hasUnlink: true,
-        head: { initials: 'LO', title: 'Linked to Loja Online', hasAlert: false },
+        hasPlans: true,
+        head: { title: 'Linked to Loja Online', hasAlert: false },
       });
       expect(pane().result.current.head.stateLine).toMatch(/^Last sent Oct 24, 2026/);
     });
@@ -261,7 +290,6 @@ describe('useProjectProPaneViewModel', () => {
       expect(pane().result.current.linked).toMatchObject({
         hasPending: false,
         canSend: false,
-        pendingIcon: 'check',
         pendingTitle: 'No plan waiting to be sent',
       });
 
@@ -271,8 +299,6 @@ describe('useProjectProPaneViewModel', () => {
 
       expect(result.current.linked).toMatchObject({
         hasPending: true,
-        pendingIcon: 'up',
-        pendingTone: 'lit',
         pendingTitle: '1 plan edited here waits to be sent',
         pendingText: 'Checkout regression',
       });

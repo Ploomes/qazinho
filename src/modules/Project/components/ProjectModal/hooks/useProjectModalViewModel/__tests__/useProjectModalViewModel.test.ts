@@ -681,6 +681,20 @@ describe('useProjectModalViewModel', () => {
       expect(result.current.isOpen.pro).toBe(true);
     });
 
+    /** A nuvem da sidebar abre esta seção de um projeto ligado, com ou sem a conta. */
+    it('offers the org section of a linked project while signed out too', () => {
+      useProStore.setState({
+        status: { isSignedIn: false, canKeepToken: true },
+        shares: [LINKED],
+      });
+
+      expect(
+        renderHook(() => useProjectModalViewModel()).result.current.navItems.map(
+          ({ id }) => id,
+        ),
+      ).toContain('pro');
+    });
+
     it('does NOT offer the section while making a project', () => {
       useAppStore.setState({ editingProjectId: null });
       useProStore.setState({ status: signedInAs('owner') });

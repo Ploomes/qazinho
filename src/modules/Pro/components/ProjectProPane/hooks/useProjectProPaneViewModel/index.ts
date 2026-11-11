@@ -1,23 +1,17 @@
-import type { PaneRowTone } from '@/modules/Pro/components/ProjectProPane/components/PaneRow/types';
 import type {
   IProjectProPaneProps,
   PaneWork,
 } from '@/modules/Pro/components/ProjectProPane/types';
-import type { IconName } from '@/shared/components/atoms/Icon/types';
 import type { IProPublishBrief, IProShare } from '@/shared/types';
-import type { CSSProperties } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  PANE_STATE_KEYS,
-  PROJECT_PRO_PANE,
-} from '@/modules/Pro/components/ProjectProPane/constants';
+import { PANE_STATE_KEYS } from '@/modules/Pro/components/ProjectProPane/constants';
 import { PRO_BILLING, PRO_ROLES } from '@/modules/Pro/constants';
+import { useProSignIn } from '@/modules/Pro/hooks/useProSignIn';
 import { useProUpdate } from '@/modules/Pro/hooks/useProUpdate';
 import {
   bytesLabelOf,
   copiedProjectOf,
-  initialsOf,
   planUpdatesOf,
   proBatchOf,
   publishingOrgOf,
@@ -45,6 +39,7 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
   const landVariables = useVariablesStore((state) => state.land);
   const language = useSettingsStore((state) => state.language);
   const { update } = useProUpdate();
+  const { signIn, onBegin, onCancel, onClose } = useProSignIn();
   const [chosen, setChosen] = useState<string | null>(null);
   const [hasHistoryMedia, setHistoryMedia] = useState(false);
   const [brief, setBrief] = useState<IProPublishBrief | null>(null);
@@ -163,22 +158,30 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
       ? t(`PRO.PANE_STAT_${props.one}_ONE`, { count: props.count })
       : t(`PRO.PANE_STAT_${props.one}_OTHER`, { count: props.count });
   const hasPending = pending.length > 0;
-  const pendingIcon: IconName = hasPending ? 'up' : 'check';
-  const pendingTone: PaneRowTone = hasPending ? 'lit' : 'plain';
 
   return {
-    style: {
-      '--project-pro-tile': `${String(PROJECT_PRO_PANE.tilePx)}px`,
-      '--project-pro-head-tile': `${String(PROJECT_PRO_PANE.headTilePx)}px`,
-    } as CSSProperties,
     isSignedOut: signedIn === null,
     isNoOrg: signedIn !== null && orgs.length === 0 && linkedOrg === null,
     isLocal: isLocal && orgs.length > 0,
     isLinked: linkedOrg !== null && !isUnlinked,
+    hasPlans: linkedOrg !== null && !isUnlinked && signedIn !== null,
     isUnlinked: linkedOrg !== null && isUnlinked,
     hasUnlink: linkedOrg !== null,
-    signedOut: { title: t('PRO.PANE_SIGNED_OUT_TITLE'), text: t('PRO.PANE_SIGNED_OUT') },
-    noOrg: { title: t('PRO.PANE_NO_ORG_TITLE'), text: t('PRO.PANE_NO_ORG') },
+    signInText: t(
+      linkedOrg === null ? 'PRO.PANE_SIGN_IN_LOCAL' : 'PRO.PANE_SIGN_IN_LINKED',
+    ),
+    signInLabel: t('PRO.PANE_SIGN_IN'),
+    signIn,
+    onSignIn: onBegin,
+    onCancelSignIn: onCancel,
+    onCloseSignIn: onClose,
+    noOrg: {
+      text: t('PRO.PANE_NO_ORG'),
+      action: t('PRO.PANE_NO_ORG_ACTION'),
+    },
+    onCreateOrg: () => {
+      void Pro.openPage('/app/new');
+    },
     local: {
       orgsLabel: t('PRO.PANE_PUBLISH_TO'),
       orgs: orgs.map((one) => {
@@ -187,7 +190,6 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
         return {
           slug: one.slug,
           name: one.name,
-          initials: initialsOf(one.name),
           note: t('PRO.CARD_ORG_NOTE', {
             role: t(PRO_ROLES[one.role]),
             billing: t(PRO_BILLING[one.billingStatus].labelKey),
@@ -229,7 +231,6 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
       canPublish: working === null && orgSlug !== null && project !== null,
     },
     head: {
-      initials: initialsOf(org),
       title: t('PRO.PANE_LINKED_TITLE', { org }),
       stateLine:
         stateKey !== undefined
@@ -245,8 +246,6 @@ export const useProjectProPaneViewModel = (props: IProjectProPaneProps) => {
     linked: {
       plansLabel: t('PRO.PANE_PLANS'),
       hasPending,
-      pendingIcon,
-      pendingTone,
       pendingTitle: !hasPending
         ? t('PRO.PANE_PENDING_NONE')
         : pending.length === 1

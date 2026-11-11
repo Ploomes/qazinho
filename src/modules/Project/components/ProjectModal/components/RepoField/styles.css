@@ -22,7 +22,7 @@
   min-width: 0;
   overflow: hidden;
   color: var(--ink);
-  font: var(--font-mono-md);
+  font: var(--font-code-md);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -30,7 +30,7 @@
 .repo-field__tag {
   flex: none;
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
 }
 
 .repo-field__base {
@@ -53,20 +53,19 @@
 
 .repo-field__base:hover,
 .repo-field__base--open {
-  border-color: var(--lime-ink);
+  border-color: var(--ink2);
   background: var(--lime-soft);
   color: var(--ink);
 }
 
 .repo-field__base-word {
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
   letter-spacing: var(--tag-tracking);
-  text-transform: uppercase;
 }
 
 .repo-field__base-name {
-  font: var(--font-mono-sm);
+  font: var(--font-code-sm);
 }
 
 .repo-field__chevron {

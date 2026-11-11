@@ -34,7 +34,7 @@
   border-radius: var(--radius-pill);
   background: transparent;
   color: var(--ink2);
-  font: var(--font-mono-sm);
+  font: var(--font-code-sm);
   cursor: pointer;
   transition:
     border-color var(--dur-fast) var(--ease),
@@ -49,14 +49,14 @@
 
 .build-from-code__repository--chosen,
 .build-from-code__repository--chosen:hover {
-  border-color: var(--lime-ink);
+  border-color: var(--ink2);
   background: var(--sel);
   color: var(--ink);
 }
 
 .build-from-code__branch {
   color: var(--ink2);
-  font: var(--font-mono-sm);
+  font: var(--font-code-sm);
 }
 
 .build-from-code__actions {

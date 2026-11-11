@@ -242,7 +242,7 @@ export const useProjectModalViewModel = () => {
           },
         ]
       : []),
-    ...(isEditing && isSignedInToPro
+    ...(isEditing && (isSignedInToPro || linkedOrg !== null)
       ? [
           {
             id: 'pro' as const,

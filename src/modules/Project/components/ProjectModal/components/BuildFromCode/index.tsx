@@ -93,12 +93,7 @@ export const BuildFromCode: React.FC<IBuildFromCodeProps> = (props) => {
                 <Button size="sm" variant="ghost" onClick={onCancel}>
                   {cancelLabel}
                 </Button>
-                <Button
-                  size="sm"
-                  variant="primary"
-                  disabled={!canStart}
-                  onClick={onStart}
-                >
+                <Button size="sm" disabled={!canStart} onClick={onStart}>
                   {startLabel}
                 </Button>
               </div>

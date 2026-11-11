@@ -38,15 +38,15 @@
   min-width: 0;
   overflow: hidden;
   color: var(--ink);
-  font: var(--font-mono-md);
+  font: var(--font-code-md);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .variable-field__tag {
   flex: none;
-  color: var(--lime-ink);
-  font: var(--font-mono-xs);
+  color: var(--ink3);
+  font: var(--font-meta-xs);
 }
 
 .variable-field__description {
@@ -64,7 +64,7 @@
   align-items: center;
   gap: var(--space-2);
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-code-sm);
   letter-spacing: var(--tag-tracking);
 }
 
@@ -73,14 +73,14 @@
   max-width: 40%;
   overflow: hidden;
   color: var(--ink2);
-  font: var(--font-mono-sm);
+  font: var(--font-code-sm);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .variable-field__lock {
   display: inline-flex;
-  color: var(--lime-ink);
+  color: var(--ink3);
 }
 
 .variable-field__empty {

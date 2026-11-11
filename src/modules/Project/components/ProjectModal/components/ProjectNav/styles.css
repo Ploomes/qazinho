@@ -83,14 +83,14 @@
 
 .project-nav__count {
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
   transition:
     background-color var(--dur-fast) var(--ease),
     color var(--dur-fast) var(--ease);
 }
 
 .project-nav__item--active .project-nav__count {
-  color: var(--lime-ink);
+  color: var(--ink2);
 }
 
 .project-nav__flag {
