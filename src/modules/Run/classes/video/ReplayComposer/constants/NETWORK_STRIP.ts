@@ -16,5 +16,5 @@ export const NETWORK_STRIP = {
   barPx: 4,
   freshMs: 300,
   riseY: 6,
-  mono: '"JetBrains Mono", ui-monospace, monospace',
+  mono: '"Geist Mono", ui-monospace, monospace',
 } as const;

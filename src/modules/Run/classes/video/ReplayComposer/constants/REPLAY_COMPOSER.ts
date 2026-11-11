@@ -8,9 +8,5 @@ export const REPLAY_COMPOSER = {
   queueLimit: 6,
   waitMs: 20,
   progressStep: 0.01,
-  fonts: [
-    '400 11px "JetBrains Mono"',
-    '500 11px "JetBrains Mono"',
-    '700 10px "JetBrains Mono"',
-  ],
+  fonts: ['400 11px "Geist Mono"', '500 11px "Geist Mono"', '700 10px "Geist Mono"'],
 } as const;
