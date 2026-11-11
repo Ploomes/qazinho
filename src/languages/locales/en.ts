@@ -660,7 +660,7 @@ export const en = {
     BUG_DATA: 'Wrong data',
     BUG_ERROR: 'Error on screen',
     LEARNING: 'learning the app',
-    NO_DEVICE: 'Nothing running.',
+    NO_DEVICE: 'No run yet',
     ENDED: 'Run {{id}} is over.',
     ENDED_EXPLORE: 'Exploration {{id}} is over.',
     STEPS: 'steps',

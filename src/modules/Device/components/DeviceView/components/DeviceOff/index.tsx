@@ -9,6 +9,7 @@ export const DeviceOff: React.FC<IDeviceOffProps> = ({
   detail,
   mood,
   ended,
+  start,
   shot,
 }) =>
   shot !== undefined && shot !== null ? (
@@ -26,6 +27,11 @@ export const DeviceOff: React.FC<IDeviceOffProps> = ({
       <Intern mood={mood} size={72} />
       <span className="device-off__title">{title}</span>
       {detail !== '' && <span className="device-off__detail">{detail}</span>}
+      {start !== null && (
+        <Button variant="secondary" onClick={start.onStart}>
+          {start.label}
+        </Button>
+      )}
       {ended !== null && (
         <div className="device-off__actions">
           {ended.canWatch && (

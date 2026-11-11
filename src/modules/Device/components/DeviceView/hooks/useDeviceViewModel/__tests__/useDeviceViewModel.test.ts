@@ -34,6 +34,26 @@ describe('useDeviceViewModel', () => {
     expect(renderHook(() => useDeviceViewModel()).result.current.mood).toBe('bug');
   });
 
+  describe('before the first run', () => {
+    it('offers the main action of the plan, named as the titlebar names it', () => {
+      const { start } = renderHook(() => useDeviceViewModel()).result.current;
+
+      expect(start?.label).toBe('Develop plan');
+    });
+
+    it('offers nothing once a run happened, or with no plan to run', () => {
+      useWorkspaceStore.setState({
+        workspaces: [walkRun({ verdicts: ['passed'], isFinished: true })],
+      });
+
+      expect(renderHook(() => useDeviceViewModel()).result.current.start).toBeNull();
+
+      useWorkspaceStore.setState({ workspaces: [{ ...makeWorkspace(), plan: [] }] });
+
+      expect(renderHook(() => useDeviceViewModel()).result.current.start).toBeNull();
+    });
+  });
+
   describe('the last run under its screen', () => {
     /** O id da run é nosso: o QA lê quando foi e como foi, numa frase. */
     it('tells the run in a sentence, with its failures, without its id', () => {

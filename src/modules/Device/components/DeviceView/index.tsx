@@ -62,6 +62,7 @@ export const DeviceView: React.FC = () => {
     offDetail,
     offMood,
     ended,
+    start,
     lastShot,
     lastRun,
     doingLabel,
@@ -145,6 +146,7 @@ export const DeviceView: React.FC = () => {
                 detail={offDetail}
                 mood={offMood}
                 ended={ended}
+                start={start}
                 shot={lastShot}
               />
             </div>
@@ -163,6 +165,7 @@ export const DeviceView: React.FC = () => {
                 detail={offDetail}
                 mood={offMood}
                 ended={ended}
+                start={start}
                 shot={lastShot}
               />
             </div>

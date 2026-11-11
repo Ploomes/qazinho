@@ -663,7 +663,7 @@ export const pt: typeof en = {
     BUG_DATA: 'Dado incorreto',
     BUG_ERROR: 'Erro na tela',
     LEARNING: 'conhecendo o app',
-    NO_DEVICE: 'Nada rodando.',
+    NO_DEVICE: 'Nenhuma run ainda',
     ENDED: 'Run {{id}} terminou.',
     ENDED_EXPLORE: 'Exploração {{id}} terminou.',
     STEPS: 'passos',

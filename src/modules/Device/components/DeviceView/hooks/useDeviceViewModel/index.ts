@@ -23,6 +23,8 @@ import {
   countVerdicts,
   currentStepOf,
   dayLabelOf,
+  planStageOf,
+  useRunActions,
   RUN_HOW_KEYS,
   runDayOf,
   tallyPartsOf,
@@ -57,6 +59,10 @@ export const useDeviceViewModel = () => {
   );
   const clearBugFlashes = useWorkspaceStore((state) => state.clearBugFlashes);
   const activities = useWorkspaceStore((state) => state.activities);
+  const developedIds = useWorkspaceStore((state) =>
+    workspace === null ? undefined : state.developedCases[workspace.id],
+  );
+  const { onRunPlan } = useRunActions();
   const {
     runSteps,
     live,
@@ -125,6 +131,21 @@ export const useDeviceViewModel = () => {
       : lastDay === ''
         ? t('DEVICE.LAST_RUN_AT', { at: lastRun.startedAt })
         : t('DEVICE.LAST_RUN_DAY_AT', { day: lastDay, at: lastRun.startedAt });
+  const stage = planStageOf({
+    plan: workspace?.plan ?? [],
+    developed: developedIds ?? [],
+  });
+  const startLabel =
+    stage.toDevelop.length === 0
+      ? t('WORKSPACE.RUN_PLAN')
+      : stage.developed.length === 0
+        ? t('WORKSPACE.DEVELOP_PLAN')
+        : t(
+            stage.toDevelop.length === 1
+              ? 'WORKSPACE.DEVELOP_ONE'
+              : 'WORKSPACE.DEVELOP_OTHER',
+            { count: stage.toDevelop.length },
+          );
   const lastCounts =
     lastRun === null
       ? null
@@ -285,6 +306,10 @@ export const useDeviceViewModel = () => {
             ...countVerdicts(lastRun.cases.map(({ steps }) => caseVerdict(steps))),
             say: (key, values) => t(key, values),
           }).join(', '),
+    start:
+      lastRun !== null || workspace === null || workspace.plan.length === 0
+        ? null
+        : { label: startLabel, onStart: onRunPlan },
     offMood:
       lastRun === null ? ('sleeping' as const) : moodOfStatus(workspace?.status ?? null),
     ended:
