@@ -81,5 +81,6 @@
 }
 
 .chat-row--agent > .chat-row__body > .markdown {
+  max-width: 72ch;
   color: var(--ink);
 }

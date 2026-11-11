@@ -15,6 +15,7 @@ body {
   font: var(--font-ui-lg);
   -webkit-font-smoothing: antialiased;
   font-variant-ligatures: none;
+  font-variant-numeric: tabular-nums;
   cursor: default;
   user-select: none;
 }
