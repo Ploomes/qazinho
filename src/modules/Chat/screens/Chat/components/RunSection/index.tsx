@@ -48,7 +48,6 @@ export const RunSection: React.FC<IRunSectionProps> = (props) => {
               type="button"
               className="run-section__open"
               aria-label={props.openLabel ?? undefined}
-              title={props.openLabel ?? undefined}
               onClick={props.onOpen}
             >
               <span className="run-section__open-label">{props.openLabel}</span>
