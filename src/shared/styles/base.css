@@ -45,7 +45,7 @@ button {
     transform 0.12s var(--ease);
 }
 
-button:hover:not(:disabled) {
+button:hover:not(:disabled, :has(img)) {
   filter: brightness(1.12);
 }
 
