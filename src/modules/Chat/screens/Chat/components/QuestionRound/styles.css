@@ -33,9 +33,9 @@
   padding: var(--space-2) 0;
   border: none;
   background: transparent;
-  color: var(--ink2);
+  color: var(--ink3);
   font: var(--font-ui-sm);
-  text-align: left;
+  text-align: center;
   cursor: pointer;
   transition: color var(--dur-fast) var(--ease);
 }
@@ -60,7 +60,7 @@
   flex: 1;
   min-width: var(--space-5);
   height: 1px;
-  background: var(--line2);
+  background: var(--line);
 }
 
 .question-round__caret {

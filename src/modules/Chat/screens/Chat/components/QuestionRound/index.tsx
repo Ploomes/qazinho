@@ -24,14 +24,12 @@ export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
           aria-expanded={view.isExpanded}
           onClick={view.onToggle}
         >
-          <span className="question-round__summary-mark">
-            <Icon name="check" />
-          </span>
-          <span className="question-round__summary-text">{view.summary}</span>
           <span className="question-round__rule" aria-hidden="true" />
+          <span className="question-round__summary-text">{view.summary}</span>
           <span className="question-round__caret">
             <Caret isOpen={view.isExpanded} />
           </span>
+          <span className="question-round__rule" aria-hidden="true" />
         </button>
       )}
 
