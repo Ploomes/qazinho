@@ -18,7 +18,6 @@ import {
   stepVerdictsOf,
   viewportOf,
 } from '@/modules/Device/library';
-import { projectAppOf, projectMarkOf, useSiteIcons } from '@/modules/Project';
 import {
   caseVerdict,
   countVerdicts,
@@ -71,8 +70,6 @@ export const useDeviceViewModel = () => {
 
   const project = projects.find(({ id }) => id === workspace?.projectId) ?? null;
   const target = project?.targets.find(({ id }) => id === workspace?.targetId) ?? null;
-  const app = projectAppOf(project?.targets ?? []);
-  const icons = useSiteIcons(app.address === null ? [] : [app.address]);
   const state = deviceStateOf(workspace);
   const isPhone = workspace?.planKind === 'mobile';
   const viewport = viewportOf(workspace?.viewportId);
@@ -414,8 +411,6 @@ export const useDeviceViewModel = () => {
         target?.value ??
         '',
     ),
-    siteMark: projectMarkOf({ name: project?.name ?? '', app, icons }),
-    siteMarkSize: DEVICE.siteMarkSize,
     elapsedLabel: formatElapsed(live?.elapsedSec ?? 0),
     stepsRef,
     onStepsScroll,

@@ -137,27 +137,22 @@
     var(--screen-width) / var(--device-ratio) + var(--device-chrome) + 2 *
       var(--frame-line)
   );
+  overflow: hidden;
+  border: var(--frame-line) solid var(--line);
+  border-radius: var(--radius-md);
   transition:
     width var(--dur) var(--ease),
     height var(--dur) var(--ease);
 }
 
-.device-view__browser > :not(.device-view__chrome) {
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  border: var(--frame-line) solid var(--line);
-  border-radius: var(--radius-sm);
-}
-
-.device-view__browser--stack > :not(.device-view__chrome) {
+.device-view__browser--stack {
   box-shadow:
     7px -7px 0 -1px var(--raise),
     7px -7px 0 0 var(--line);
   transition: box-shadow var(--dur) var(--ease);
 }
 
-.device-view__browser--stack-deep > :not(.device-view__chrome) {
+.device-view__browser--stack-deep {
   box-shadow:
     7px -7px 0 -1px var(--raise),
     7px -7px 0 0 var(--line),
@@ -171,14 +166,22 @@
   align-items: center;
   gap: var(--space-3);
   height: var(--device-chrome);
-  padding: 0 var(--space-1) var(--space-2);
+  padding: 0 var(--space-4);
+  background: var(--raise2);
+}
+
+.device-view__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--line);
 }
 
 .device-view__url {
   flex: 1;
   overflow: hidden;
-  color: var(--ink2);
-  font: var(--font-code-sm);
+  color: var(--ink3);
+  font: var(--font-code-xs);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
