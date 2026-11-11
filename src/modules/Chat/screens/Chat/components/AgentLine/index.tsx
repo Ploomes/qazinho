@@ -6,10 +6,11 @@ import { SessionTip } from './components';
 import { useAgentLineViewModel } from './hooks';
 import './styles.css';
 
-/** O agente e o modelo sob o campo do chat, e o uso da sessão quando ela acaba. */
+/** O modelo dentro do campo do chat, e o uso da sessão quando ela acaba. */
 export const AgentLine: React.FC = () => {
   const {
     agentLabel,
+    modelLabel,
     isModelMenuOpen,
     isSessionShown,
     sessionLabel,
@@ -19,17 +20,6 @@ export const AgentLine: React.FC = () => {
 
   return (
     <div className="agent-line">
-      <button
-        type="button"
-        className="agent-line__model"
-        aria-haspopup="menu"
-        aria-expanded={isModelMenuOpen}
-        onClick={onToggleModelMenu}
-      >
-        {agentLabel}
-        <Icon name="caretDown" />
-      </button>
-
       {isSessionShown && (
         <Tooltip
           content={
@@ -45,6 +35,20 @@ export const AgentLine: React.FC = () => {
           </span>
         </Tooltip>
       )}
+
+      <Tooltip content={agentLabel}>
+        <button
+          type="button"
+          className="agent-line__model"
+          aria-label={agentLabel}
+          aria-haspopup="menu"
+          aria-expanded={isModelMenuOpen}
+          onClick={onToggleModelMenu}
+        >
+          {modelLabel}
+          <Icon name="caretDown" />
+        </button>
+      </Tooltip>
 
       <AnimatePresence>
         {isModelMenuOpen && <ModelPopover key="model" at="composer" />}

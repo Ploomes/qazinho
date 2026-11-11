@@ -178,6 +178,7 @@ export const Composer: React.FC<IComposerProps> = (props) => {
             onPaste={onPaste}
           />
         </div>
+        {props.accessory}
         <button
           type="button"
           className={button.className}

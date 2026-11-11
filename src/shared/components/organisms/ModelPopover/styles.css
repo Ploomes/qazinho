@@ -50,6 +50,6 @@
 }
 
 .model-popover--composer {
-  bottom: calc(100% + var(--space-3));
-  left: 0;
+  right: 0;
+  bottom: calc(100% + var(--space-5));
 }

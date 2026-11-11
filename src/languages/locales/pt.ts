@@ -40,6 +40,7 @@ export const pt: typeof en = {
   },
   USAGE: {
     AGENT: '{{agent}} com {{model}}',
+    SESSION_SHORT: '{{percent}}% da sessão',
     SESSION_USED: '{{percent}}% da sessão usada, reseta às {{resets}}',
     SESSION_ONLY: '{{percent}}% da sessão usada',
     TIP_TITLE: 'Uso do {{agent}}',

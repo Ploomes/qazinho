@@ -1,6 +1,7 @@
 import type { IComposerAttachment } from './IComposerAttachment';
 import type { ICommandPicker, IComposerCommand } from '@/modules/Chat/types';
 import type { IChatReference } from '@/shared/types';
+import type { ReactNode } from 'react';
 
 /**
  * O estado do composer: o @ sendo digitado, por que nada pode ser mandado, e o comando
@@ -24,6 +25,7 @@ export interface IComposerProps {
   dropLabel: string;
   attachNotice: string;
   isAttaching: boolean;
+  accessory?: ReactNode;
   onChange: (value: string) => void;
   onAttach: () => void;
   onFiles: (files: File[]) => void;

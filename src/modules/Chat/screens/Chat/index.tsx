@@ -290,6 +290,7 @@ export const Chat: React.FC = () => {
       </AnimatePresence>
 
       <Composer
+        accessory={<AgentLine />}
         value={draft}
         lockedText={lockedText}
         hint={composerHint}
@@ -318,7 +319,6 @@ export const Chat: React.FC = () => {
         onCommandBack={onCommandBack}
         onCommandCancel={onCommandCancel}
       />
-      <AgentLine />
     </div>
   );
 };

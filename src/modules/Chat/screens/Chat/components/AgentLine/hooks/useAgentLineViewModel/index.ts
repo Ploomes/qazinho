@@ -22,12 +22,10 @@ export const useAgentLineViewModel = () => {
 
   return {
     agentLabel: t('USAGE.AGENT', { agent, model: modelName }),
+    modelLabel: modelName === '' ? agent : modelName,
     isModelMenuOpen: modelMenuAt === 'composer',
     isSessionShown: sessionUsed !== null && sessionUsed >= AGENT_LINE.sessionShownFrom,
-    sessionLabel:
-      resets === ''
-        ? t('USAGE.SESSION_ONLY', { percent: sessionPercent })
-        : t('USAGE.SESSION_USED', { percent: sessionPercent, resets }),
+    sessionLabel: t('USAGE.SESSION_SHORT', { percent: sessionPercent }),
     sessionTip: {
       title: t('USAGE.TIP_TITLE', { agent }),
       rows: [

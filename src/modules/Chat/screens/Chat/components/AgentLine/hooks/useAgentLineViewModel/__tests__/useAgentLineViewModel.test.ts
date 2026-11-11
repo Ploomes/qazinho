@@ -68,11 +68,11 @@ describe('useAgentLineViewModel', () => {
     });
   });
 
-  it('does NOT promise a reset time the agent never gave', () => {
+  it('says how much of the session is used in a few words, the reset in its tooltip', () => {
     usageOf(0.9);
 
     expect(renderHook(() => useAgentLineViewModel()).result.current.sessionLabel).toBe(
-      '90% of session used',
+      '90% of the session',
     );
   });
 
