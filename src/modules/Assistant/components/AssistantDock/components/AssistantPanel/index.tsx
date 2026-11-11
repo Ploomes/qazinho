@@ -148,7 +148,7 @@ export const AssistantPanel: React.FC = () => {
                   </span>
                   <span className="assistant-panel__tool-text">{row.text}</span>
                   {row.failed !== '' && (
-                    <span className="assistant-panel__tool-failed">· {row.failed}</span>
+                    <span className="assistant-panel__tool-failed">{row.failed}</span>
                   )}
                 </span>
               )}

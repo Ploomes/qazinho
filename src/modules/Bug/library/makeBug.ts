@@ -85,5 +85,5 @@ function targetOf(props: { kind: TargetKind; viewportId: ViewportId }): string {
 
   const viewport = viewportOf(props.viewportId);
 
-  return `Web · Chrome ${String(viewport.width)} × ${String(viewport.height)}`;
+  return `Web, Chrome ${String(viewport.width)} × ${String(viewport.height)}`;
 }

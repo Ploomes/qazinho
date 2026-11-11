@@ -123,7 +123,7 @@ export const useReplayTimelineViewModel = (props: IReplayTimelineProps) => {
             },
       className: `replay-timeline__pin replay-timeline__pin--${mark.severity}`,
       style: { '--at': percent(mark.atMs) } as CSSProperties,
-      label: `${mark.bugId} · ${mark.title}`,
+      label: `${mark.bugId}: ${mark.title}`,
       callout: t('RUN.REPLAY_CAUGHT', { id: mark.bugId }),
       calloutClassName:
         duration > 0 && mark.atMs / duration > 1 - REPLAY_TIMELINE.edgeShare
@@ -147,13 +147,11 @@ export const useReplayTimelineViewModel = (props: IReplayTimelineProps) => {
       style: { '--x': `${String((hover ?? 0) * 100)}%` } as CSSProperties,
       time: formatElapsed((hoverMs ?? 0) / 1000),
       chapter:
-        hoveredChapter === null
-          ? ''
-          : `${hoveredChapter.caseId} · ${hoveredChapter.title}`,
+        hoveredChapter === null ? '' : `${hoveredChapter.caseId} ${hoveredChapter.title}`,
       step:
         hoveredStep === null || hovered?.isBetween === true
           ? ''
-          : `${t('RUN.REPLAY_STEP', { number: hoveredStep.number })} · ${hoveredStep.action}`,
+          : `${t('RUN.REPLAY_STEP', { number: hoveredStep.number })}: ${hoveredStep.action}`,
     },
     onPointerDown: (event: PointerEvent<HTMLDivElement>) => {
       event.currentTarget.setPointerCapture(event.pointerId);

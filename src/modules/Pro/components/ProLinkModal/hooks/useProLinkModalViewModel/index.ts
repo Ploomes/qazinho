@@ -35,7 +35,7 @@ export const useProLinkModalViewModel = () => {
       const plan = project?.plans.find((one) => one.workspaceId === workspaceId);
 
       if (project !== undefined)
-        setNames(plan === undefined ? project.name : `${project.name} · ${plan.name}`);
+        setNames(plan === undefined ? project.name : `${project.name} / ${plan.name}`);
     });
   }, [canDownload, orgSlug, projectId, workspaceId]);
 

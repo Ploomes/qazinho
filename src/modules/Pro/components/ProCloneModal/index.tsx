@@ -55,7 +55,7 @@ export const ProCloneModal: React.FC<IProCloneModalProps> = (props) => {
               <span className="pro-clone__text">
                 <span className="pro-clone__name">{project.name}</span>
                 <span className="pro-clone__meta">
-                  {project.code} · {project.meta}
+                  {project.code}, {project.meta}
                 </span>
                 {project.failure !== null && (
                   <span className="pro-clone__failure" role="alert">

@@ -260,6 +260,7 @@
 }
 
 .bug-card__failed-here {
+  margin-left: var(--space-3);
   color: var(--fail);
 }
 

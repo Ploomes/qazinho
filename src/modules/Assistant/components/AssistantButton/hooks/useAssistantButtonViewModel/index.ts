@@ -32,7 +32,7 @@ export const useAssistantButtonViewModel = () => {
     tip:
       combo === null
         ? label
-        : `${label} · ${comboLabelOf({ combo, isMac: Platform.isMac() })}`,
+        : `${label} (${comboLabelOf({ combo, isMac: Platform.isMac() })})`,
     mood: isAsking
       ? ('thinking' as const)
       : unread > 0

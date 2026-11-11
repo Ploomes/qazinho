@@ -54,7 +54,7 @@ export const useIslandAsk = (
       title:
         current.project === ''
           ? current.workspace
-          : `${current.project} · ${current.workspace}`,
+          : `${current.project} / ${current.workspace}`,
       line: t('ISLAND.ASKING'),
       question: current.question,
       position:

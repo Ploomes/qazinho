@@ -15,7 +15,7 @@ export function referencesOf(props: {
   const runs = workspace.runs.map<IChatReference>((run) => ({
     kind: 'run',
     id: run.id,
-    title: `${run.kind === 'explore' ? props.exploration : props.wholePlan} · ${run.startedAt}`,
+    title: `${run.kind === 'explore' ? props.exploration : props.wholePlan}, ${run.startedAt}`,
     facts: runFactsOf({ run, isBrief: false }),
   }));
 

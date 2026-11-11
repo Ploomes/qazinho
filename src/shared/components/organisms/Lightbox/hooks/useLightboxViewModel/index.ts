@@ -62,7 +62,7 @@ export const useLightboxViewModel = () => {
       void Archive.saveShot({
         file: media.file,
         src: media.src,
-        name: `${media.kicker} · ${media.title}`,
+        name: `${media.kicker}: ${media.title}`,
       }).then((outcome) => {
         setSaving({ media, state: outcome });
       });

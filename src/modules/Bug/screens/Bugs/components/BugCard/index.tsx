@@ -255,7 +255,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
                       <span>
                         {step.action}
                         {step.isBad && (
-                          <span className="bug-card__failed-here"> · {failedHere}</span>
+                          <span className="bug-card__failed-here">{failedHere}</span>
                         )}
                       </span>
                     </li>

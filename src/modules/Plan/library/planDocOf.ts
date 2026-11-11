@@ -64,7 +64,7 @@ export function planDocOf(props: {
       ];
 
       return [
-        { kind: 'heading', text: `${testCase.id} · ${testCase.title}` },
+        { kind: 'heading', text: `${testCase.id} ${testCase.title}` },
         { kind: 'facts', items: facts },
         ...(testCase.steps.length === 0
           ? []

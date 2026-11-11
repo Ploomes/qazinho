@@ -282,7 +282,7 @@ export const useRunReplayViewModel = () => {
           }
         : {
             key: `${chapter.caseId}-${String(step.number)}`,
-            kicker: `${chapter.caseId} · ${t('RUN.REPLAY_STEP', { number: step.number })}`,
+            kicker: `${chapter.caseId}, ${t('RUN.REPLAY_STEP', { number: step.number })}`,
             text: step.action,
             icon: STATUS[step.verdict].icon,
             tone: STATUS[step.verdict].tone,

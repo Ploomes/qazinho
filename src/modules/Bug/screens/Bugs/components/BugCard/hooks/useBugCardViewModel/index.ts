@@ -48,7 +48,7 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
 
   return {
     provenance: {
-      place: `${bug.caseId} · ${step}`,
+      place: `${step}, ${bug.caseId}`,
       caseTitle: bug.caseTitle,
       run: props.hasRun ? t('BUG.RUN_AT', { when: runWhen }) : null,
       seen: bug.seenRuns > 1 ? t('BUG.SEEN_IN', { count: bug.seenRuns }) : null,
@@ -142,7 +142,7 @@ export const useBugCardViewModel = (props: IBugCardProps) => {
     },
     onOpenShot: (shot: (typeof shots)[number]) => {
       openMedia({
-        kicker: `${bug.id} · ${step}`,
+        kicker: `${bug.id}, ${step}`,
         title: shot.label,
         src: shot.src,
         file: shot.file,
