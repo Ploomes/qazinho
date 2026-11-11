@@ -30,15 +30,7 @@ import {
 } from '@/modules/Plan/screens/Plan/constants';
 import { bytesLabelOf, useProUpdate } from '@/modules/Pro';
 import { useVariableActions, VARIABLE_FAILURE_KEYS } from '@/modules/Project';
-import {
-  caseVerdict,
-  countVerdicts,
-  dayLabelOf,
-  flattenPlanSteps,
-  runDayOf,
-  tallyPartsOf,
-  useRunActions,
-} from '@/modules/Run';
+import { flattenPlanSteps, useRunActions } from '@/modules/Run';
 import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
 import { Archive, Confluence, Run } from '@/services';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
@@ -53,7 +45,7 @@ import {
 } from '@/store';
 
 export const usePlanViewModel = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const language = useSettingsStore((state) => state.language);
   const { documentOf } = usePlanDocument();
   const { topRef, isToTopShown, onToTop } = useToTop();
@@ -299,34 +291,6 @@ export const usePlanViewModel = () => {
             kind: workspace.liveKind,
           },
         });
-  const lastRunOf = () => {
-    if (latest === null || workspace?.isLocked === true) return null;
-
-    const day = dayLabelOf({
-      day: runDayOf(latest),
-      now: new Date(),
-      language: i18n.language,
-      words: { today: t('COMMON.TODAY'), yesterday: t('COMMON.YESTERDAY') },
-    });
-    const when =
-      day === ''
-        ? t('CHAT.RUN_WHEN', { at: latest.startedAt })
-        : t('CHAT.RUN_WHEN_DAY', { day, at: latest.startedAt });
-    const told =
-      latest.kind === 'explore'
-        ? latest.counts.passed === 1
-          ? t('CHAT.EXPLORE_SCREENS_ONE')
-          : t('CHAT.EXPLORE_SCREENS_OTHER', { count: latest.counts.passed })
-        : tallyPartsOf({
-            ...countVerdicts(latest.cases.map(({ steps }) => caseVerdict(steps))),
-            say: (key, values) => t(key, values),
-          }).join(', ');
-
-    return {
-      text: t('PLAN.LAST_RUN', { when, told }),
-      openLabel: t('PLAN.LAST_RUN_OPEN'),
-    };
-  };
   const lastRuns: Record<string, IRunCase> = Object.fromEntries(
     (latest?.cases ?? [])
       .filter(({ id }) => !Object.hasOwn(liveCases, id))
@@ -394,10 +358,6 @@ export const usePlanViewModel = () => {
 
       setReread(null);
       setUnreadPlan({ workspaceId, unreadPlan: null });
-    },
-    lastRun: lastRunOf(),
-    onOpenLastRun: () => {
-      selectTab('runs');
     },
     plan,
     lastRuns: { ...lastRuns, ...Object.fromEntries(liveRuns) },

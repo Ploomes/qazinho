@@ -392,8 +392,6 @@ export const en = {
     SUGGESTION_WRITE: 'Write the cases myself',
   },
   PLAN: {
-    LAST_RUN: 'The run {{when}} ended: {{told}}.',
-    LAST_RUN_OPEN: 'See in Runs',
     FRAME_OPEN: 'Open this frame in Figma',
     EMPTY_TITLE: 'No plan yet.',
     EMPTY_BODY:

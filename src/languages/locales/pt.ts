@@ -394,8 +394,6 @@ export const pt: typeof en = {
     SUGGESTION_WRITE: 'Escrever os casos eu mesmo',
   },
   PLAN: {
-    LAST_RUN: 'A run {{when}} terminou: {{told}}.',
-    LAST_RUN_OPEN: 'Ver em Runs',
     FRAME_OPEN: 'Abrir este frame no Figma',
     EMPTY_TITLE: 'Nenhum plano ainda.',
     EMPTY_BODY:

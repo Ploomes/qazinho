@@ -19,8 +19,6 @@ export const Plan: React.FC = () => {
     onShowUnread,
     onReadUnread,
     onDismissUnread,
-    lastRun,
-    onOpenLastRun,
     plan,
     lastRuns,
     liveStatuses,
@@ -130,19 +128,6 @@ export const Plan: React.FC = () => {
         />
       ) : (
         <div className="plan">
-          {lastRun !== null && (
-            <p className="plan__last-run">
-              {lastRun.text}
-              <button
-                type="button"
-                className="plan__last-run-open"
-                onClick={onOpenLastRun}
-              >
-                {lastRun.openLabel}
-              </button>
-            </p>
-          )}
-
           {filesNotice !== null && (
             <Tooltip content={filesNotice.tip}>
               <p className="plan__files">
