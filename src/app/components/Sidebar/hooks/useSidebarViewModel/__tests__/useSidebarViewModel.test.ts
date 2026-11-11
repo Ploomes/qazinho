@@ -109,6 +109,15 @@ describe('useSidebarViewModel', () => {
   });
 
   describe('rows', () => {
+    it('lists the plans without an add row, which the project row offers on hover', () => {
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+
+      const { groups } = renderHook(() => useSidebarViewModel()).result.current;
+
+      expect(groups[0]!.rows.map(({ kind }) => kind)).toEqual(['workspace']);
+      expect(groups[0]!.railRows.map(({ kind }) => kind)).toEqual(['workspace', 'add']);
+    });
+
     it('lists just the add row for a project with no workspace', () => {
       const { result } = renderHook(() => useSidebarViewModel());
 
@@ -621,6 +630,7 @@ describe('useSidebarViewModel', () => {
     });
 
     it('lists the workspaces of the open project only, so the rail stays short', () => {
+      useSettingsStore.setState({ isSidebarShut: true });
       useAppStore.setState({
         projects: [PROJECT, { id: 'p2', name: 'Loja', targets: [], repositories: [] }],
         selectedWorkspaceId: 'w1',
@@ -635,7 +645,10 @@ describe('useSidebarViewModel', () => {
       const { result } = renderHook(() => useSidebarViewModel());
 
       expect(
-        result.current.groups.map(({ isExpanded, rows }) => [isExpanded, rows.length]),
+        result.current.groups.map(({ isExpanded, railRows }) => [
+          isExpanded,
+          railRows.length,
+        ]),
       ).toEqual([
         [true, 2],
         [false, 2],

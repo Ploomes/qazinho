@@ -170,6 +170,11 @@ export const useSidebarViewModel = () => {
       });
 
     const pro = proBadgeOf(project);
+    const addRow = {
+      kind: 'add' as const,
+      id: `add-${project.id}`,
+      projectId: project.id,
+    };
 
     return [
       {
@@ -192,10 +197,8 @@ export const useSidebarViewModel = () => {
         isSelected: project.id === selectedProjectId,
         isExpanded: isProjectExpanded(project.id),
         pro,
-        rows: [
-          ...workspaceRows,
-          { kind: 'add' as const, id: `add-${project.id}`, projectId: project.id },
-        ],
+        rows: workspaceRows.length > 0 ? workspaceRows : [addRow],
+        railRows: [...workspaceRows, addRow],
       },
     ];
   });

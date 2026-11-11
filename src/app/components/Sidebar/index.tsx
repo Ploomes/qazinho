@@ -143,7 +143,7 @@ export const Sidebar: React.FC = () => {
                 </Tooltip>
 
                 {group.isExpanded &&
-                  group.rows.map((row) => {
+                  group.railRows.map((row) => {
                     if (row.kind === 'add') {
                       return (
                         <Tooltip

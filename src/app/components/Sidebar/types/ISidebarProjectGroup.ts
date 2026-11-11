@@ -15,4 +15,5 @@ export interface ISidebarProjectGroup {
   isExpanded: boolean;
   pro: ISidebarProBadge | null;
   rows: SidebarGroupRow[];
+  railRows: SidebarGroupRow[];
 }
