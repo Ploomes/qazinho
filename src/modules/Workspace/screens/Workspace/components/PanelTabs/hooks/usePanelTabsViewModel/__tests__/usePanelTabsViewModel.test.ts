@@ -58,7 +58,7 @@ describe('usePanelTabsViewModel', () => {
 
   it('names the tab list, so a screen reader says what the tabs are for', () => {
     expect(renderHook(() => usePanelTabsViewModel(PROPS)).result.current.tabsLabel).toBe(
-      'Workspace sections',
+      'Plan sections',
     );
   });
 });

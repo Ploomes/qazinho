@@ -118,7 +118,7 @@ describe('the built page, with no bridge behind it', () => {
     await page.getByRole('button', { name: 'Create project' }).click();
 
     await page.getByPlaceholder('Checkout regression').fill('Cart');
-    await page.getByRole('button', { name: 'Create workspace' }).click();
+    await page.getByRole('button', { name: 'Create plan' }).click();
 
     expect(await page.locator('body').innerText()).toContain('Cart');
   });

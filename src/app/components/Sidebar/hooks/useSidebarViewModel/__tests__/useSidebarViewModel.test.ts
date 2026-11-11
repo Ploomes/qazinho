@@ -890,7 +890,7 @@ describe('useSidebarViewModel', () => {
         result.current.onFilterChange('  zzz ');
       });
 
-      expect(result.current.emptyLabel).toBe('No project or workspace matches “zzz”.');
+      expect(result.current.emptyLabel).toBe('No project or plan matches “zzz”.');
     });
 
     it('says nothing while the list is not filtered', () => {

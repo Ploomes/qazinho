@@ -53,12 +53,12 @@ describe('useConfirmCardViewModel', () => {
     ).toBe('Its value goes with it, and no plan names it.');
   });
 
-  it('asks about the project by name, and says how many workspaces go with it', () => {
+  it('asks about the project by name, and says how many plans go with it', () => {
     const { result } = card(ASKED);
 
     expect(result.current).toMatchObject({
       title: 'Delete the project “Lojinha”?',
-      body: 'Its 2 workspaces go with it.',
+      body: 'Its 2 plans go with it.',
       goLabel: 'Delete',
       keepLabel: 'Keep',
       isOpen: true,
