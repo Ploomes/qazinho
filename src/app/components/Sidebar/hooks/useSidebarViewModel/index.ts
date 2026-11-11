@@ -81,6 +81,7 @@ export const useSidebarViewModel = () => {
       updates,
       hasPending: pending > 0,
       hasUpdates: updates > 0,
+      isShown: pending + updates > 0,
     };
   };
 
@@ -168,6 +169,8 @@ export const useSidebarViewModel = () => {
         };
       });
 
+    const pro = proBadgeOf(project);
+
     return [
       {
         id: `group-${project.id}`,
@@ -177,9 +180,18 @@ export const useSidebarViewModel = () => {
         mark: projectMarkOf({ name: project.name, app, icons }),
         place: places.format(app.places),
         hasPlace: app.places.length > 0,
+        tip:
+          pro !== null
+            ? pro.label
+            : app.places.length > 0
+              ? t('SIDEBAR.PROJECT_TIP', {
+                  name: project.name,
+                  place: places.format(app.places),
+                })
+              : project.name,
         isSelected: project.id === selectedProjectId,
         isExpanded: isProjectExpanded(project.id),
-        pro: proBadgeOf(project),
+        pro,
         rows: [
           ...workspaceRows,
           { kind: 'add' as const, id: `add-${project.id}`, projectId: project.id },
@@ -290,6 +302,7 @@ export const useSidebarViewModel = () => {
     onProjectSettings: openProjectSettings,
     onProSettings: openProSettings,
     markSize: SIDEBAR_SIZE.mark,
+    railMarkSize: SIDEBAR_SIZE.railMark,
     homeLabel: t('HOME.TITLE'),
     isHome: screen === 'welcome',
     homeCount: homeCount > 0 ? String(homeCount) : null,

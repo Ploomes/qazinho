@@ -42,7 +42,7 @@ describe('useSidebarViewModel', () => {
     it('shows nothing on a project only on this computer', () => {
       const { groups } = renderHook(() => useSidebarViewModel()).result.current;
 
-      expect(groups[0]).toMatchObject({ pro: null });
+      expect(groups[0]).toMatchObject({ pro: null, tip: 'Shop · staging' });
     });
 
     it('marks a linked project, with what waits to be sent and what came from the org', () => {
@@ -70,12 +70,14 @@ describe('useSidebarViewModel', () => {
       expect(groups[0]).toMatchObject({
         pro: {
           label: 'Shop · staging, linked to an org',
-          tip: '2 to send · 1 from the org',
+          tip: '2 to send, 1 from the org',
           pending: 2,
           updates: 1,
           hasPending: true,
           hasUpdates: true,
+          isShown: true,
         },
+        tip: 'Shop · staging, linked to an org',
       });
     });
 
@@ -85,7 +87,7 @@ describe('useSidebarViewModel', () => {
       const { groups } = renderHook(() => useSidebarViewModel()).result.current;
 
       expect(groups[0]).toMatchObject({
-        pro: { tip: '', hasPending: false, hasUpdates: false },
+        pro: { tip: '', hasPending: false, hasUpdates: false, isShown: false },
       });
     });
 
@@ -490,6 +492,8 @@ describe('useSidebarViewModel', () => {
 
       act(() => {
         result.current.onUndoRemove();
+      });
+      act(() => {
         vi.advanceTimersByTime(SIDEBAR_UNDO.holdMs);
       });
 
@@ -548,7 +552,7 @@ describe('useSidebarViewModel', () => {
         '--sidebar-field': '28px',
         '--sidebar-avatar': '22px',
         '--sidebar-lead': '16px',
-        '--sidebar-mark': '20px',
+        '--sidebar-mark': '16px',
       });
     });
   });

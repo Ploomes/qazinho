@@ -9,4 +9,5 @@ export interface ISidebarProBadge {
   updates: number;
   hasPending: boolean;
   hasUpdates: boolean;
+  isShown: boolean;
 }

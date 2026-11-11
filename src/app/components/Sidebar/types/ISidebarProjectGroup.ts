@@ -10,6 +10,7 @@ export interface ISidebarProjectGroup {
   mark: ProjectMarkShape;
   place: string;
   hasPlace: boolean;
+  tip: string;
   isSelected: boolean;
   isExpanded: boolean;
   pro: ISidebarProBadge | null;

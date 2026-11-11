@@ -39,6 +39,7 @@ export const Sidebar: React.FC = () => {
     onProjectSettings,
     onProSettings,
     markSize,
+    railMarkSize,
     homeLabel,
     isHome,
     homeCount,
@@ -137,7 +138,7 @@ export const Sidebar: React.FC = () => {
                       onSelectProject(group.projectId);
                     }}
                   >
-                    <ProjectMark mark={group.mark} size={markSize} />
+                    <ProjectMark mark={group.mark} size={railMarkSize} />
                   </button>
                 </Tooltip>
 
@@ -288,25 +289,26 @@ export const Sidebar: React.FC = () => {
                       type="button"
                       className="sidebar__group-head"
                       aria-expanded={group.isExpanded}
+                      title={group.tip}
                       onClick={() => {
                         onToggleProject(group.projectId);
                       }}
                     >
-                      <ProjectMark mark={group.mark} size={markSize} />
-                      <span className="sidebar__group-text">
-                        <span className="sidebar__group-title">
-                          <span className="sidebar__group-name">{group.name}</span>
-                          <span className="sidebar__group-caret">
-                            <Caret isOpen={group.isExpanded} />
-                          </span>
+                      <span className="sidebar__lead">
+                        <span className="sidebar__lead-mark">
+                          <ProjectMark mark={group.mark} size={markSize} />
                         </span>
-                        {group.hasPlace && (
-                          <span className="sidebar__group-place">{group.place}</span>
-                        )}
+                        <span className="sidebar__lead-caret">
+                          <Caret isOpen={group.isExpanded} />
+                        </span>
                       </span>
+                      <span className="sidebar__group-name">{group.name}</span>
+                      {group.hasPlace && (
+                        <span className="sidebar__group-place">{group.place}</span>
+                      )}
                     </button>
 
-                    {group.pro !== null && (
+                    {group.pro !== null && group.pro.isShown && (
                       <button
                         type="button"
                         className="sidebar__pro"
@@ -316,7 +318,6 @@ export const Sidebar: React.FC = () => {
                           onProSettings(group.projectId);
                         }}
                       >
-                        <Icon name="cloud" size={14} />
                         {group.pro.hasPending && (
                           <span className="sidebar__pro-count">
                             <Icon name="up" size={12} />
@@ -332,18 +333,33 @@ export const Sidebar: React.FC = () => {
                       </button>
                     )}
 
-                    <button
-                      type="button"
-                      className="sidebar__project-settings"
-                      aria-label={t('SIDEBAR.PROJECT_SETTINGS', { name: group.name })}
-                      onClick={() => {
-                        onProjectSettings(group.projectId);
-                      }}
-                    >
-                      <span className="sidebar__project-settings-icon">
-                        <Icon name="settings" size={12} />
-                      </span>
-                    </button>
+                    <Tooltip content={t('SIDEBAR.NEW_WORKSPACE')}>
+                      <button
+                        type="button"
+                        className="sidebar__head-tool"
+                        aria-label={t('SIDEBAR.NEW_WORKSPACE_IN', { name: group.name })}
+                        onClick={() => {
+                          onNewWorkspace(group.projectId);
+                        }}
+                      >
+                        <Icon name="plus" size={14} />
+                      </button>
+                    </Tooltip>
+
+                    <Tooltip content={t('COMMON.SETTINGS')}>
+                      <button
+                        type="button"
+                        className="sidebar__head-tool"
+                        aria-label={t('SIDEBAR.PROJECT_SETTINGS', { name: group.name })}
+                        onClick={() => {
+                          onProjectSettings(group.projectId);
+                        }}
+                      >
+                        <span className="sidebar__project-settings-icon">
+                          <Icon name="settings" size={14} />
+                        </span>
+                      </button>
+                    </Tooltip>
                   </div>
 
                   <AnimatePresence initial={false}>

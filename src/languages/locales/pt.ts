@@ -63,6 +63,8 @@ export const pt: typeof en = {
   },
   SIDEBAR: {
     NEW_WORKSPACE: 'Novo plano',
+    NEW_WORKSPACE_IN: 'Novo plano em {{name}}',
+    PROJECT_TIP: '{{name}}, {{place}}',
     NEW_PROJECT: 'Novo projeto',
     ASKED_YOU: 'O agente te perguntou algo',
     PROJECT_SETTINGS: 'Configurações de {{name}}',
