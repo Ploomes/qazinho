@@ -43,6 +43,7 @@ export const useAppViewModel = () => {
   const media = useAppStore((state) => state.media);
   const replay = useAppStore((state) => state.replay);
   const runNotice = useAppStore((state) => state.runNotice);
+  const isSearchOpen = useAppStore((state) => state.isSearchOpen);
   const hasOnboarded = useSettingsStore((state) => state.hasOnboarded);
   const isUpdateRequired = useUpdateStore((state) => state.update.isRequired);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
@@ -104,6 +105,7 @@ export const useAppViewModel = () => {
     variablesKey,
     hasMedia: media !== null,
     hasRunNotice: runNotice !== null,
+    hasSearch: isSearchOpen && projects.length > 0,
     runNoticeKey: runNotice?.key ?? 'run-notice',
     hasReplay: replay !== null,
     hasProLink,

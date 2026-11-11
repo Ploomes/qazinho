@@ -1,6 +1,7 @@
 import type { IKeybind } from '@/modules/Settings/types';
 
 export const KEYBINDS: IKeybind[] = [
+  { id: 'search', labelKey: 'SETTINGS.KEYBIND_SEARCH', combo: '⌘K' },
   { id: 'workspace', labelKey: 'SETTINGS.KEYBIND_WORKSPACE', combo: '⌘N' },
   { id: 'run', labelKey: 'SETTINGS.KEYBIND_RUN', combo: '⌘↵' },
   { id: 'stop', labelKey: 'SETTINGS.KEYBIND_STOP', combo: '⌘.' },

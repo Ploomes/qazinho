@@ -15,11 +15,10 @@ export const Sidebar: React.FC = () => {
     isShut,
     hasTips,
     onSelectProject,
-    filter,
-    filterRef,
-    onFilterChange,
+    searchLabel,
+    searchCombo,
+    onSearch,
     groups,
-    emptyLabel,
     onToggleProject,
     waitingName,
     onOpenWaiting,
@@ -220,20 +219,11 @@ export const Sidebar: React.FC = () => {
             {homeCount !== null && <span className="sidebar__count">{homeCount}</span>}
           </button>
 
-          <label className="sidebar__search">
+          <button type="button" className="sidebar__nav" onClick={onSearch}>
             <Icon name="search" />
-            <input
-              ref={filterRef}
-              className="sidebar__search-input"
-              value={filter}
-              placeholder={t('SIDEBAR.SEARCH')}
-              aria-label={t('SIDEBAR.FILTER_LABEL')}
-              onChange={(event) => {
-                onFilterChange(event.target.value);
-              }}
-            />
-            <Kbd combo="/" />
-          </label>
+            <span className="sidebar__label">{searchLabel}</span>
+            {searchCombo !== '' && <Kbd combo={searchCombo} />}
+          </button>
 
           <div className="sidebar__section">
             <span className="sidebar__heading">{t('SIDEBAR.PROJECTS')}</span>
@@ -420,16 +410,6 @@ export const Sidebar: React.FC = () => {
                   </AnimatePresence>
                 </Fold>
               ))}
-            </AnimatePresence>
-
-            <AnimatePresence initial={false}>
-              {emptyLabel !== null && (
-                <Fold key="empty" className="sidebar__empty">
-                  <p className="sidebar__empty-text" role="status">
-                    {emptyLabel}
-                  </p>
-                </Fold>
-              )}
             </AnimatePresence>
           </div>
 

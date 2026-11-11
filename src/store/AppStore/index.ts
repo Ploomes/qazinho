@@ -21,6 +21,7 @@ export const useAppStore = create<IAppStore>()(
       selectedProjectId: null,
       pendingImport: null,
       isResourcesOpen: false,
+      isSearchOpen: false,
       modelMenuAt: null,
       media: null,
       replay: null,
@@ -129,6 +130,11 @@ export const useAppStore = create<IAppStore>()(
           isResourcesOpen: !state.isResourcesOpen,
           modelMenuAt: null,
         })),
+
+      openSearch: () =>
+        set({ isSearchOpen: true, isResourcesOpen: false, modelMenuAt: null }),
+
+      closeSearch: () => set({ isSearchOpen: false }),
 
       toggleModelMenu: (at) =>
         set((state) => ({

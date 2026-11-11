@@ -4,7 +4,7 @@ import type {
   SidebarGroupRow,
 } from '@/app/components/Sidebar/types';
 import type { CSSProperties } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   SIDEBAR_SIGNAL,
@@ -52,47 +52,14 @@ export const useSidebarViewModel = () => {
   );
   const places = new Intl.ListFormat(i18n.language, { type: 'unit', style: 'short' });
 
-  const [filter, setFilter] = useState('');
   const [expansions, setExpansions] = useState<Record<string, boolean>>({});
-  const filterRef = useRef<HTMLInputElement>(null);
-
-  const query = isShut ? '' : filter.trim().toLowerCase();
-
-  const isRevealedByFilter = (projectId: string) =>
-    query !== '' &&
-    workspaces.some(
-      (workspace) =>
-        workspace.projectId === projectId && workspace.name.toLowerCase().includes(query),
-    );
+  const openSearch = useAppStore((state) => state.openSearch);
+  const searchCombo = useSettingsStore(
+    (state) => state.keybinds.find(({ id }) => id === 'search')?.combo ?? '',
+  );
 
   const isProjectExpanded = (projectId: string) =>
-    expansions[projectId] ??
-    (projectId === selectedProjectId || isRevealedByFilter(projectId));
-
-  useEffect(() => {
-    if (isShut) return;
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      const target = event.target;
-      const editing =
-        target instanceof HTMLElement &&
-        (target.isContentEditable ||
-          target instanceof HTMLInputElement ||
-          target instanceof HTMLTextAreaElement);
-
-      if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey || editing)
-        return;
-
-      event.preventDefault();
-      filterRef.current?.focus();
-    };
-
-    window.addEventListener('keydown', onKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', onKeyDown);
-    };
-  }, [isShut]);
+    expansions[projectId] ?? projectId === selectedProjectId;
 
   const proBadgeOf = (project: { id: string; name: string }): ISidebarProBadge | null => {
     const share = shares.find(({ projectId }) => projectId === project.id);
@@ -119,14 +86,7 @@ export const useSidebarViewModel = () => {
     const projectWorkspaces = workspaces.filter(
       (workspace) => workspace.projectId === project.id,
     );
-    const projectMatches = query === '' || project.name.toLowerCase().includes(query);
-    const matchingWorkspaces = projectWorkspaces.filter((workspace) =>
-      workspace.name.toLowerCase().includes(query),
-    );
-
-    if (query !== '' && !projectMatches && matchingWorkspaces.length === 0) return [];
-
-    const shownWorkspaces = projectMatches ? projectWorkspaces : matchingWorkspaces;
+    const shownWorkspaces = projectWorkspaces;
     const app = projectAppOf(project.targets);
 
     const workspaceRows: SidebarGroupRow[] = shownWorkspaces
@@ -284,14 +244,10 @@ export const useSidebarViewModel = () => {
     onToggle: toggleSidebar,
     hasTips: isShut,
     onSelectProject,
-    filter,
-    filterRef,
-    onFilterChange: setFilter,
+    searchLabel: t('SEARCH.LABEL'),
+    searchCombo,
+    onSearch: openSearch,
     groups,
-    emptyLabel:
-      groups.length === 0 && query !== ''
-        ? t('SIDEBAR.FILTER_EMPTY', { query: filter.trim() })
-        : null,
     onToggleProject,
     waitingName: waiting?.name ?? null,
     onOpenWaiting: () => {

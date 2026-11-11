@@ -9,6 +9,7 @@ import { Onboarding } from '@/modules/Setup';
 import { UpdateRequired } from '@/modules/Update';
 import { AgentPanel, NewWorkspaceModal, Workspace } from '@/modules/Workspace';
 import { ErrorBarrier, Lightbox, Titlebar } from '@/shared/components/organisms';
+import { SearchPalette } from './components/SearchPalette';
 import { Sidebar } from './components/Sidebar';
 import { useAppViewModel } from './hooks';
 import './styles.css';
@@ -36,6 +37,7 @@ export const App: React.FC = () => {
     hasProLink,
     hasProMerge,
     hasHeldRun,
+    hasSearch,
   } = useAppViewModel();
 
   return (
@@ -76,6 +78,7 @@ export const App: React.FC = () => {
               {hasProLink && <ProLinkModal key="pro-link" />}
               {hasProMerge && <ProMergeModal key="pro-merge" />}
               {hasHeldRun && <ProRunWarning key="pro-run-warning" />}
+              {hasSearch && <SearchPalette key="search" />}
             </AnimatePresence>
 
             {!isOnboarding && <AssistantDock />}

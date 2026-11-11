@@ -17,6 +17,7 @@ export const useKeybinds = () => {
   const openWorkspaceModal = useAppStore((state) => state.openWorkspaceModal);
   const openSettings = useAppStore((state) => state.openSettings);
   const toggleResources = useAppStore((state) => state.toggleResources);
+  const openSearch = useAppStore((state) => state.openSearch);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const togglePanel = useWorkspaceStore((state) => state.togglePanel);
   const toggleSidebar = useSettingsStore((state) => state.toggleSidebar);
@@ -26,6 +27,7 @@ export const useKeybinds = () => {
 
   useEffect(() => {
     const doing: Record<string, () => void> = {
+      search: openSearch,
       workspace: () => {
         if (selectedProjectId !== null) openWorkspaceModal(selectedProjectId);
       },
@@ -89,6 +91,7 @@ export const useKeybinds = () => {
     openWorkspaceModal,
     openSettings,
     toggleResources,
+    openSearch,
     selectTab,
     togglePanel,
     toggleSidebar,

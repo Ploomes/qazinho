@@ -27,6 +27,7 @@ export interface IAppStore {
   selectedProjectId: string | null;
   pendingImport: { workspaceId: string; source: IImportSource } | null;
   isResourcesOpen: boolean;
+  isSearchOpen: boolean;
   modelMenuAt: ModelMenuAt | null;
   media: IMedia | null;
   replay: IReplayOpen | null;
@@ -51,6 +52,8 @@ export interface IAppStore {
   forgetPlanMemories: (workspaceId: string) => void;
   removeProject: (props: { projectId: string; isOpen: boolean }) => void;
   toggleResources: () => void;
+  openSearch: () => void;
+  closeSearch: () => void;
   toggleModelMenu: (at: ModelMenuAt) => void;
   closeModelMenu: () => void;
   requestImport: (props: { workspaceId: string; source: IImportSource }) => void;

@@ -1,0 +1,26 @@
+.search-palette {
+  position: fixed;
+  inset: 0;
+  z-index: 36;
+  display: flex;
+  justify-content: center;
+  padding-top: var(--search-palette-top);
+  background: color-mix(in srgb, var(--bg) 40%, transparent);
+  -webkit-app-region: no-drag;
+}
+
+.search-palette__panel {
+  align-self: flex-start;
+  width: min(var(--search-palette-width), calc(100vw - var(--space-8) * 2));
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--raise);
+  box-shadow: var(--sticker-hero);
+}
+
+.search-palette__panel .search-list__input {
+  border-color: transparent;
+  background: transparent;
+  font: var(--font-ui-md);
+}
