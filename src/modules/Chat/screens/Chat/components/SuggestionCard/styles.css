@@ -78,7 +78,7 @@
 .suggestion-card__priority {
   flex: none;
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
   letter-spacing: var(--tag-tracking);
 }
 

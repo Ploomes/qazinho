@@ -28,7 +28,7 @@
 .import-field__kinds {
   flex: 1;
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .import-field__note {

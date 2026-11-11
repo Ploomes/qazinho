@@ -2,10 +2,7 @@ import type { IPanelTabsProps } from './types';
 import { usePanelTabsViewModel } from './hooks';
 import './styles.css';
 
-/**
- * As abas do workspace: o dispositivo, o plano, as runs e os bugs, cada uma com o que
- * guarda.
- */
+/** As abas do workspace: o dispositivo, o plano, as runs e os bugs abertos contados. */
 export const PanelTabs: React.FC<IPanelTabsProps> = (props) => {
   const { items, tabsLabel, onTabClick } = usePanelTabsViewModel(props);
 

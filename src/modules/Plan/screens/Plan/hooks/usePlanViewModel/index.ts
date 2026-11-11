@@ -30,7 +30,7 @@ import {
 } from '@/modules/Plan/screens/Plan/constants';
 import { bytesLabelOf, useProUpdate } from '@/modules/Pro';
 import { useVariableActions, VARIABLE_FAILURE_KEYS } from '@/modules/Project';
-import { flattenPlanSteps, planStageOf, useRunActions } from '@/modules/Run';
+import { flattenPlanSteps, useRunActions } from '@/modules/Run';
 import { CONFLUENCE_FAILURE_KEYS } from '@/modules/Setup/constants';
 import { Archive, Confluence, Run } from '@/services';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
@@ -68,7 +68,6 @@ export const usePlanViewModel = () => {
     liveIsRunning: opened.live?.isRunning ?? false,
     liveQuestion: opened.live?.question,
     liveKind: opened.live?.kind,
-    liveHow: opened.live?.how ?? null,
     latest: opened.runs[0] ?? null,
     runs: opened.runs,
     bugs: opened.bugs,
@@ -89,7 +88,7 @@ export const usePlanViewModel = () => {
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const openBugId = useWorkspaceStore((state) => state.openBugId);
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
-  const { onRunCase, onStop } = useRunActions();
+  const { onRunCase } = useRunActions();
   const { update: updateFromOrg } = useProUpdate();
   const [removal, setRemoval] = useState<ICaseRemoval | null>(null);
   const [freshCaseId, setFreshCaseId] = useState<string | null>(null);
@@ -159,7 +158,6 @@ export const usePlanViewModel = () => {
   const source = workspace?.planSource ?? null;
   const issue = workspace?.issue ?? null;
   const sourcePage = workspace?.sourcePage ?? null;
-  const stepCount = flattenPlanSteps(plan).length;
   const published = workspace?.published ?? null;
   const unreadPlan = workspace?.unreadPlan ?? null;
   const written = writtenSecretsOf(plan).filter(
@@ -278,7 +276,6 @@ export const usePlanViewModel = () => {
         },
       });
   };
-  const stage = planStageOf({ plan, developed: developedIds });
   const liveCases =
     workspace === null || workspace.liveOutcomes === null
       ? {}
@@ -381,14 +378,6 @@ export const usePlanViewModel = () => {
             tip: t('PLAN.FILES_IN_ORG_TIP'),
           }
         : null,
-    stages: {
-      total: stage.total,
-      developed: stage.developed.length,
-      how:
-        isLocked && workspace?.liveKind !== 'explore'
-          ? (workspace?.liveHow ?? null)
-          : null,
-    },
     liveStatuses: Object.fromEntries(
       Object.entries(liveCases).map(([id, { status }]) => [id, status]),
     ),
@@ -442,20 +431,9 @@ export const usePlanViewModel = () => {
             },
           ]),
     ] satisfies IPlanSource[],
-    summary: t('PLAN.SUMMARY', {
-      cases:
-        plan.length === 1
-          ? t('PLAN.CASES_ONE')
-          : t('PLAN.CASES_OTHER', { count: plan.length }),
-      steps:
-        stepCount === 1
-          ? t('PLAN.STEPS_ONE')
-          : t('PLAN.STEPS_OTHER', { count: stepCount }),
-    }),
     onToggleCase: toggleCase,
     onReorder: write,
     onRunCase,
-    onStop,
     missingNotice:
       missing.length === 0 || isLocked
         ? null

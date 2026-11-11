@@ -63,14 +63,14 @@
 
 .command-picker__label {
   min-width: 0;
-  font: var(--font-mono-md);
+  font: var(--font-meta-md);
   overflow-wrap: anywhere;
 }
 
 .command-picker__tag {
   flex: none;
-  color: var(--lime-ink);
-  font: var(--font-mono-xs);
+  color: var(--ink3);
+  font: var(--font-meta-xs);
 }
 
 .command-picker__detail {

@@ -106,7 +106,7 @@
 
 .chat__code-text {
   color: var(--ink2);
-  font: var(--font-mono-sm);
+  font: var(--font-code-sm);
 }
 
 .chat__live-who {

@@ -5,8 +5,6 @@ import { usePanelTabsViewModel } from '@/modules/Workspace/screens/Workspace/com
 
 const PROPS = {
   current: 'plan' as const,
-  planCount: 4,
-  runCount: 1,
   bugCount: 0,
   isLive: false,
   onSelect: vi.fn(),
@@ -21,15 +19,24 @@ describe('usePanelTabsViewModel', () => {
       expect(result.current.items.find(({ isActive }) => isActive)?.id).toBe('plan');
     });
 
-    it('lists the device, the plan, the runs and the bugs, counting what each holds', () => {
-      const { result } = renderHook(() => usePanelTabsViewModel(PROPS));
+    /** Um número em cada aba é ruído: só os bugs abertos pedem o QA. */
+    it('lists the device, the plan, the runs and the bugs, counting only open bugs', () => {
+      const { result } = renderHook(() =>
+        usePanelTabsViewModel({ ...PROPS, bugCount: 3 }),
+      );
 
       expect(result.current.items.map(({ id, badge }) => [id, badge])).toEqual([
         ['device', ''],
-        ['plan', '4'],
-        ['runs', '1'],
-        ['bugs', '0'],
+        ['plan', ''],
+        ['runs', ''],
+        ['bugs', '3'],
       ]);
+    });
+
+    it('does NOT count the bugs when none is open', () => {
+      const { result } = renderHook(() => usePanelTabsViewModel(PROPS));
+
+      expect(result.current.items.find(({ id }) => id === 'bugs')?.badge).toBe('');
     });
 
     it('marks the device live while a run drives it, and nothing else', () => {

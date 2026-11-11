@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 export const usePanelTabsViewModel = (props: IPanelTabsProps) => {
   const { t } = useTranslation();
-  const { current, planCount, runCount, bugCount, isLive } = props;
+  const { current, bugCount, isLive } = props;
 
   const items = [
     {
@@ -12,22 +12,12 @@ export const usePanelTabsViewModel = (props: IPanelTabsProps) => {
       badge: '',
       isLive,
     },
-    {
-      id: 'plan' as const,
-      label: t('WORKSPACE.TAB_PLAN'),
-      badge: String(planCount),
-      isLive: false,
-    },
-    {
-      id: 'runs' as const,
-      label: t('WORKSPACE.TAB_RUNS'),
-      badge: String(runCount),
-      isLive: false,
-    },
+    { id: 'plan' as const, label: t('WORKSPACE.TAB_PLAN'), badge: '', isLive: false },
+    { id: 'runs' as const, label: t('WORKSPACE.TAB_RUNS'), badge: '', isLive: false },
     {
       id: 'bugs' as const,
       label: t('WORKSPACE.TAB_BUGS'),
-      badge: String(bugCount),
+      badge: bugCount > 0 ? String(bugCount) : '',
       isLive: false,
     },
   ].map((item) => ({ ...item, isActive: item.id === current }));

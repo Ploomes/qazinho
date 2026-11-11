@@ -51,10 +51,10 @@ describe('useChatRowViewModel', () => {
   it('titles a plan card by its cases and steps, one of each in the singular', () => {
     expect(
       row({ id: 'm-4', kind: 'plan', at: '09:41', caseCount: 1, stepCount: 1 }).planTitle,
-    ).toBe('Plan · 1 case · 1 step');
+    ).toBe('Plan written: 1 case, 1 step');
     expect(
       row({ id: 'm-5', kind: 'plan', at: '09:41', caseCount: 3, stepCount: 9 }).planTitle,
-    ).toBe('Plan · 3 cases · 9 steps');
+    ).toBe('Plan written: 3 cases, 9 steps');
   });
 
   it('does NOT put a name on what QAzinho itself wrote', () => {

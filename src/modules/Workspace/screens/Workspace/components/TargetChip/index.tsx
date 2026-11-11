@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { Button, Caret, Icon, PlatformIcon } from '@/shared/components/atoms';
+import { Button, Icon, PlatformIcon } from '@/shared/components/atoms';
 import { STICKER } from '@/shared/constants';
 import { useTargetChipViewModel } from './hooks';
 import './styles.css';
 
-/** O chip de target no header e o popover que troca o build/URL do projeto. */
+/** O app em que o plano roda, um link na frase do cabeçalho, e o popover que o troca. */
 export const TargetChip: React.FC = () => {
   const vm = useTargetChipViewModel();
 
@@ -30,18 +30,10 @@ export const TargetChip: React.FC = () => {
         className="target-chip__button"
         aria-haspopup="dialog"
         aria-expanded={isOpen}
+        title={current?.kindLabel}
         onClick={onToggle}
       >
-        {current === null ? (
-          <span className="target-chip__empty">{pickLabel}</span>
-        ) : (
-          <>
-            <PlatformIcon kind={current.kind} size={16} />
-            <span className="target-chip__kind">{current.kindLabel}</span>
-            <span className="target-chip__build">{current.build}</span>
-          </>
-        )}
-        <Caret isOpen={isOpen} />
+        {current === null ? pickLabel : current.build}
       </button>
 
       <AnimatePresence>

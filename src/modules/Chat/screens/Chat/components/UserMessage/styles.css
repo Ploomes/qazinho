@@ -45,8 +45,8 @@
   padding: 0 var(--space-2);
   border-radius: var(--radius-xs);
   background: var(--lime-soft);
-  color: var(--lime-ink);
-  font: var(--font-mono-md);
+  color: var(--ink);
+  font: var(--font-meta-md);
 }
 
 .user-message__command {
@@ -62,13 +62,13 @@
 
 .user-message__command-name {
   flex-basis: 100%;
-  color: var(--lime-ink);
-  font: var(--font-mono-md);
+  color: var(--ink);
+  font: var(--font-code-md);
 }
 
 .user-message__command-part {
   color: var(--ink);
-  font: var(--font-mono-sm);
+  font: var(--font-code-sm);
 }
 
 .user-message__command-part--strong {

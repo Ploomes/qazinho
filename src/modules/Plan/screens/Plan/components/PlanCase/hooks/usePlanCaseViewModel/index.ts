@@ -15,48 +15,31 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
   const [freshStep, setFreshStep] = useState<number | null>(null);
   const [openFacts, setOpenFacts] = useState({ goal: false, before: false });
 
-  const ran = props.lastRun?.steps ?? [];
-  const stopped = ran.find(
+  const stopped = props.lastRun?.steps.find(
     ({ verdict }) => verdict === 'failed' || verdict === 'blocked',
   );
-  const isAllPassed = ran.length > 0 && ran.every(({ verdict }) => verdict === 'passed');
   const isNow =
     props.liveStatus === 'running' ||
     props.liveStatus === 'paused' ||
     props.liveStatus === 'attention';
   const hasGoal = testCase.goal !== '';
   const hasBefore = testCase.preconditions !== '';
-  const how = ran.some(({ by }) => by === 'healed')
-    ? ('healed' as const)
-    : ran.every(({ by }) => by === 'replay')
-      ? ('replay' as const)
-      : null;
+  const verdict = props.liveStatus ?? testCase.lastVerdict ?? 'pending';
+  const reason = isNow
+    ? ''
+    : stopped !== undefined
+      ? t('PLAN.REASON_STEP', { number: stopped.number })
+      : props.isDeveloped === true
+        ? ''
+        : t('PLAN.REASON_TO_DEVELOP');
 
   return {
-    outcome:
-      stopped !== undefined
-        ? {
-            tone:
-              stopped.verdict === 'failed' ? ('failed' as const) : ('blocked' as const),
-            text: t(
-              stopped.verdict === 'failed'
-                ? 'PLAN.STEP_FAILED_AT'
-                : 'PLAN.STEP_BLOCKED_AT',
-              { number: stopped.number },
-            ),
-            note: null,
-            noteTip: null,
-          }
-        : isAllPassed && how !== null
-          ? {
-              tone: 'passed' as const,
-              text: null,
-              note: how === 'healed' ? ('heal' as const) : ('recorded' as const),
-              noteTip: t(how === 'healed' ? 'RUN.BY_HEALED_TIP' : 'RUN.BY_REPLAY_TIP'),
-            }
-          : null,
-    priority: testCase.priority === 'P1' ? testCase.priority : null,
-    expectLabel: t('PLAN.EXPECT'),
+    reason,
+    priority: reason === '' && testCase.priority === 'P1' ? testCase.priority : null,
+    expectedPrefix: t('PLAN.EXPECTED_PREFIX'),
+    gotPrefix: t('PLAN.GOT_PREFIX'),
+    seeBugLabel: t('PLAN.SEE_BUG'),
+    notReachedLabel: t('PLAN.NOT_REACHED'),
     className: [
       'plan-case',
       isPickedUp ? 'plan-case--picked' : '',
@@ -73,21 +56,20 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
     canAddBefore: !isLocked && !hasBefore && !openFacts.before,
     steps: testCase.steps.map((step, index) => {
       const ran = props.lastRun?.steps.find(({ number }) => number === index + 1);
-      const verdict = ran?.verdict ?? 'pending';
-      const isBad = verdict === 'failed' || verdict === 'blocked';
+      const stepVerdict = ran?.verdict ?? 'pending';
+      const isBad = stepVerdict === 'failed' || stepVerdict === 'blocked';
+      const why = isBad ? (ran?.why ?? '') : '';
 
       return {
         ...step,
         number: index + 1,
         isFresh: index === freshStep,
-        verdict,
-        isVerdictShown: verdict !== 'passed' && verdict !== 'pending',
-        verdictIcon: STATUS[verdict].icon,
-        verdictLabel:
-          verdict === 'skipped' ? t('PLAN.NOT_REACHED') : t(STATUS[verdict].labelKey),
-        why: isBad ? (ran?.why ?? '') : '',
-        hasWhy: isBad && (ran?.why ?? '') !== '',
-        bugId: ran?.bugId ?? '',
+        verdict: stepVerdict,
+        isBad,
+        isUnreached: stepVerdict === 'skipped',
+        hasExpected: !isLocked || step.expected !== '',
+        hasGotPrefix: why !== '',
+        got: why !== '' ? why : t(STATUS[stepVerdict].labelKey),
         hasBug: isBad && (ran?.bugId ?? null) !== null && props.onOpenBug !== undefined,
         onBugClick: () => {
           if (ran?.bugId) props.onOpenBug?.(ran.bugId);
@@ -102,7 +84,9 @@ export const usePlanCaseViewModel = (props: IPlanCaseProps) => {
               },
       };
     }),
-    verdict: props.liveStatus ?? testCase.lastVerdict ?? 'pending',
+    verdict,
+    hasStatus:
+      verdict !== 'passed' && !(verdict === 'pending' && props.isDeveloped === true),
     isTitleFocused: props.isFresh === true,
     canRemoveStep: testCase.steps.length > 1 && !isLocked,
     onHeadClick: () => {

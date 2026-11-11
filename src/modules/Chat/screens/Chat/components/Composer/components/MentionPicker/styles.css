@@ -68,11 +68,11 @@
 
 .mention-picker__tab-count {
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
 }
 
 .mention-picker__tab--active .mention-picker__tab-count {
-  color: var(--lime-ink);
+  color: var(--ink2);
 }
 
 .mention-picker__viewport {
@@ -122,8 +122,8 @@
 }
 
 .mention-picker__id {
-  color: var(--lime-ink);
-  font: var(--font-mono-md);
+  color: var(--ink2);
+  font: var(--font-meta-md);
 }
 
 .mention-picker__title {

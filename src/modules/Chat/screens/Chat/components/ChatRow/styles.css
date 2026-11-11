@@ -18,7 +18,7 @@
 
 .chat-row__who {
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .chat-row__who--agent {
@@ -38,13 +38,13 @@
 .chat-row__from-agent {
   display: inline-flex;
   margin-right: var(--space-2);
-  color: var(--lime-ink);
+  color: var(--ink2);
   vertical-align: -1px;
 }
 
 .chat-row__at {
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
   opacity: 0;
   transition: opacity var(--dur-fast) var(--ease);
 }

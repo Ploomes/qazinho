@@ -45,6 +45,12 @@
   border-bottom: 1px solid var(--line2);
 }
 
+.agent-panel__meta {
+  min-width: 0;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+}
+
 .agent-panel__title {
   display: inline-flex;
   align-items: baseline;
@@ -89,7 +95,7 @@
   border-left: 1px solid var(--line2);
   background: var(--panel);
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
   writing-mode: vertical-rl;
   transition: color var(--dur-fast) var(--ease);
 }

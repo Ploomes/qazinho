@@ -11,6 +11,7 @@ import {
   useRunActions,
   walkedStepsOf,
 } from '@/modules/Run';
+import { useWorkspaceMeta } from '@/modules/Workspace/hooks/useWorkspaceMeta';
 import {
   NO_CASES,
   WORKSPACE_TABS,
@@ -26,12 +27,10 @@ export const useWorkspaceViewModel = () => {
     name: opened.name,
     issue: opened.issue,
     design: opened.design,
-    status: opened.status,
     stepCount: flattenPlanSteps(opened.plan).length,
     runStepCount: walkedStepsOf({ plan: opened.plan, caseIds: opened.live?.caseIds })
       .length,
     planCount: opened.plan.length,
-    runCount: opened.runs.length,
     bugCount: opened.bugs.filter(({ isDismissed }) => !isDismissed).length,
     walked: opened.live?.outcomes.length ?? 0,
     isExploring: opened.live?.kind === 'explore',
@@ -55,6 +54,7 @@ export const useWorkspaceViewModel = () => {
       workspace.planCount === 0 &&
       state.chatDevices[workspace.id] !== undefined,
   );
+  const { metaKey, metaCases } = useWorkspaceMeta();
   const tab = useWorkspaceStore((state) => state.panelTab);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
@@ -93,10 +93,10 @@ export const useWorkspaceViewModel = () => {
       '--workspace-tabs': `${String(WORKSPACE_TABS.height)}px`,
     } as CSSProperties,
     tab,
-    planCount: workspace?.planCount ?? 0,
-    runCount: workspace?.runCount ?? 0,
     bugCount: workspace?.bugCount ?? 0,
     name: workspace?.name ?? '',
+    metaKey,
+    metaCases,
     issue:
       workspace?.issue === null || workspace?.issue === undefined
         ? null
@@ -114,18 +114,13 @@ export const useWorkspaceViewModel = () => {
             title: t('WORKSPACE.DESIGN_OPEN'),
           },
     dropDesignLabel: t('WORKSPACE.DESIGN_DROP'),
-    status:
-      (workspace?.toContinue ?? 0) > 0
-        ? ('paused' as const)
-        : (workspace?.status ?? 'idle'),
     liveStatus: isAsking
       ? ('attention' as const)
       : isPaused
         ? ('paused' as const)
         : ('running' as const),
-    hasStatus: isLive || (workspace?.status ?? 'idle') !== 'idle',
     statusLabel: !isLive
-      ? null
+      ? ''
       : workspace?.isExploring === true
         ? t(
             isAsking

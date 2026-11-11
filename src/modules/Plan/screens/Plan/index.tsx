@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, EmptyState, Icon, IconButton } from '@/shared/components/atoms';
 import { ToTop, Tooltip } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
-import { PlanCase, PlanStages, PublishModal, UndoToast } from './components';
+import { PlanCase, PublishModal, UndoToast } from './components';
 import { usePlanViewModel } from './hooks';
 import './styles.css';
 
@@ -23,7 +23,6 @@ export const Plan: React.FC = () => {
     lastRuns,
     liveStatuses,
     developedIds,
-    stages,
     filesNotice,
     design,
     openCaseId,
@@ -31,7 +30,6 @@ export const Plan: React.FC = () => {
     isLocked,
     lockedLabel,
     isEmpty,
-    summary,
     sources,
     onToggleCase,
     onReorder,
@@ -39,7 +37,6 @@ export const Plan: React.FC = () => {
     orgNotice,
     orgUpdateLabel,
     onOrgUpdate,
-    onStop,
     missingNotice,
     addMissingLabel,
     onAddMissing,
@@ -131,12 +128,6 @@ export const Plan: React.FC = () => {
         />
       ) : (
         <div className="plan">
-          <PlanStages
-            total={stages.total}
-            developed={stages.developed}
-            how={stages.how}
-          />
-
           {filesNotice !== null && (
             <Tooltip content={filesNotice.tip}>
               <p className="plan__files">
@@ -147,120 +138,35 @@ export const Plan: React.FC = () => {
           )}
 
           <div ref={topRef} className="plan__head">
-            <span className="plan__summary">{summary}</span>
-            <span className="plan__note">{t('PLAN.NOTE')}</span>
-            <div className="plan__actions">
-              {isLocked ? (
-                <Tooltip content={t('PLAN.STOP_TIP')}>
-                  <Button variant="danger" onClick={onStop}>
-                    {t('PLAN.STOP_RUN')}
-                  </Button>
-                </Tooltip>
-              ) : (
-                <>
-                  {canPublish && (
-                    <Tooltip content={publishTip}>
-                      <Button disabled={isPublishing} onClick={onPublish}>
-                        {publishLabel}
-                      </Button>
-                    </Tooltip>
-                  )}
-                  {canExport && (
-                    <Tooltip content={t('PLAN.EXPORT_TIP')}>
-                      <Button onClick={onExport}>{exportLabel}</Button>
-                    </Tooltip>
-                  )}
-                </>
-              )}
-            </div>
+            {sources.length > 0 && (
+              <div className="plan__sources">
+                {sources.map((one) =>
+                  one.url === null ? (
+                    <div key={one.key} className="plan__source" title={one.title}>
+                      <span className="plan__source-label">{one.label}</span>
+                      {one.tag !== null && (
+                        <span className="plan__source-tag">{one.tag}</span>
+                      )}
+                      <span className="plan__source-title">{one.title}</span>
+                    </div>
+                  ) : (
+                    <a
+                      key={one.key}
+                      className="plan__source plan__source--link"
+                      href={one.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      title={one.title}
+                    >
+                      <span className="plan__source-label">{one.label}</span>
+                      <span className="plan__source-title">{one.title}</span>
+                      <Icon name="external" />
+                    </a>
+                  ),
+                )}
+              </div>
+            )}
           </div>
-
-          {sources.length > 0 && (
-            <div className="plan__sources">
-              {sources.map((one) =>
-                one.url === null ? (
-                  <div key={one.key} className="plan__source" title={one.title}>
-                    <span className="plan__source-label">{one.label}</span>
-                    {one.tag !== null && (
-                      <span className="plan__source-tag">{one.tag}</span>
-                    )}
-                    <span className="plan__source-title">{one.title}</span>
-                  </div>
-                ) : (
-                  <a
-                    key={one.key}
-                    className="plan__source plan__source--link"
-                    href={one.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    title={one.title}
-                  >
-                    <span className="plan__source-label">{one.label}</span>
-                    <span className="plan__source-title">{one.title}</span>
-                    <Icon name="external" />
-                  </a>
-                ),
-              )}
-            </div>
-          )}
-
-          <AnimatePresence initial={false}>
-            {exportNotice !== null && (
-              <motion.div
-                key="export"
-                className="plan__export"
-                role="status"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
-              >
-                <div className="plan__export-body">
-                  <span className="plan__export-text">{exportNotice}</span>
-                  <Tooltip content={dismissExportLabel}>
-                    <IconButton
-                      icon="close"
-                      label={dismissExportLabel}
-                      size="sm"
-                      onClick={onDismissExport}
-                    />
-                  </Tooltip>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <AnimatePresence initial={false}>
-            {publishNotice !== null && (
-              <motion.div
-                key="publish"
-                className="plan__export"
-                role="status"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
-              >
-                <div
-                  className={
-                    publishNotice.isFailed
-                      ? 'plan__export-body plan__export-body--failed'
-                      : 'plan__export-body'
-                  }
-                >
-                  <span className="plan__export-text">{publishNotice.text}</span>
-                  <Tooltip content={dismissExportLabel}>
-                    <IconButton
-                      icon="close"
-                      label={dismissExportLabel}
-                      size="sm"
-                      onClick={onDismissPublish}
-                    />
-                  </Tooltip>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
 
           <AnimatePresence initial={false}>
             {secretNotice !== null && (
@@ -375,11 +281,92 @@ export const Plan: React.FC = () => {
           </Reorder.Group>
 
           {!isLocked && (
-            <button type="button" className="plan__add" onClick={onAddCase}>
-              <Icon name="plus" />
-              {t('PLAN.ADD_CASE')}
-            </button>
+            <div className="plan__foot">
+              <button type="button" className="plan__add" onClick={onAddCase}>
+                <Icon name="plus" />
+                {t('PLAN.ADD_CASE')}
+              </button>
+              <div className="plan__actions">
+                {canPublish && (
+                  <Tooltip content={publishTip}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={isPublishing}
+                      onClick={onPublish}
+                    >
+                      {publishLabel}
+                    </Button>
+                  </Tooltip>
+                )}
+                {canExport && (
+                  <Tooltip content={t('PLAN.EXPORT_TIP')}>
+                    <Button variant="ghost" size="sm" onClick={onExport}>
+                      {exportLabel}
+                    </Button>
+                  </Tooltip>
+                )}
+              </div>
+            </div>
           )}
+
+          <AnimatePresence initial={false}>
+            {exportNotice !== null && (
+              <motion.div
+                key="export"
+                className="plan__export"
+                role="status"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+              >
+                <div className="plan__export-body">
+                  <span className="plan__export-text">{exportNotice}</span>
+                  <Tooltip content={dismissExportLabel}>
+                    <IconButton
+                      icon="close"
+                      label={dismissExportLabel}
+                      size="sm"
+                      onClick={onDismissExport}
+                    />
+                  </Tooltip>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence initial={false}>
+            {publishNotice !== null && (
+              <motion.div
+                key="publish"
+                className="plan__export"
+                role="status"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: MOTION.duration, ease: MOTION.ease }}
+              >
+                <div
+                  className={
+                    publishNotice.isFailed
+                      ? 'plan__export-body plan__export-body--failed'
+                      : 'plan__export-body'
+                  }
+                >
+                  <span className="plan__export-text">{publishNotice.text}</span>
+                  <Tooltip content={dismissExportLabel}>
+                    <IconButton
+                      icon="close"
+                      label={dismissExportLabel}
+                      size="sm"
+                      onClick={onDismissPublish}
+                    />
+                  </Tooltip>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <ToTop isShown={isToTopShown} onClick={onToTop} />
         </div>

@@ -174,7 +174,7 @@ describe('useComposerViewModel', () => {
 
       expect(result.current).toMatchObject({
         isLocked: false,
-        placeholder: 'Ask the agent · @ to cite · / for commands',
+        placeholder: 'Ask the agent',
         fieldClassName: 'composer__field',
       });
     });

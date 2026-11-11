@@ -124,7 +124,7 @@
 
 .run-button__option-icon {
   display: inline-flex;
-  color: var(--lime-ink);
+  color: var(--ink2);
 }
 
 .run-button__option-title {

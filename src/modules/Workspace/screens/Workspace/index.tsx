@@ -1,12 +1,12 @@
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Bugs } from '@/modules/Bug';
 import { DeviceView } from '@/modules/Device';
 import { Plan } from '@/modules/Plan';
 import { Runs } from '@/modules/Run';
-import { Button, Icon, StatusPill } from '@/shared/components/atoms';
+import { Button, StatusPill } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { ErrorBarrier } from '@/shared/components/organisms';
-import { PanelTabs, RunButton, TargetChip, WorkspaceName } from './components';
+import { MetaLink, PanelTabs, RunButton, TargetChip, WorkspaceName } from './components';
 import { useWorkspaceViewModel } from './hooks';
 import './styles.css';
 
@@ -15,16 +15,14 @@ export const Workspace: React.FC = () => {
     hasWorkspace,
     style,
     tab,
-    planCount,
-    runCount,
     bugCount,
     name,
+    metaKey,
+    metaCases,
     issue,
     design,
     dropDesignLabel,
-    status,
     statusLabel,
-    hasStatus,
     liveStatus,
     canRun,
     canRunWithAgent,
@@ -93,52 +91,42 @@ export const Workspace: React.FC = () => {
           </div>
         </div>
 
-        <div className="workspace__context">
-          {hasStatus &&
-            (statusLabel === null ? (
-              <StatusPill status={status} shape="round" />
-            ) : (
-              <StatusPill status={liveStatus} shape="round" label={statusLabel} />
-            ))}
-
-          <TargetChip />
-
-          {issue !== null && (
-            <a
-              className="workspace__issue"
-              href={issue.url}
-              target="_blank"
-              rel="noreferrer"
-              title={issue.title}
-            >
-              {issue.key}
-              <Icon name="external" />
-            </a>
-          )}
-          {design !== null && (
-            <span className="workspace__design">
-              <a
-                className="workspace__design-link"
-                href={design.url}
-                target="_blank"
-                rel="noreferrer"
-                title={design.title}
-              >
-                <Icon name="figma" />
-                {design.name}
-                <Icon name="external" />
-              </a>
-              <Tooltip content={dropDesignLabel}>
-                <button
-                  type="button"
-                  className="workspace__design-drop"
-                  aria-label={dropDesignLabel}
-                  onClick={onDropDesign}
-                >
-                  <Icon name="close" />
-                </button>
-              </Tooltip>
-            </span>
+        <div className="workspace__meta">
+          {isLive ? (
+            <StatusPill status={liveStatus} shape="round" label={statusLabel} />
+          ) : (
+            <>
+              <Trans
+                i18nKey={metaKey}
+                values={{ cases: metaCases }}
+                components={{ app: <TargetChip /> }}
+              />
+              {issue !== null && (
+                <Trans
+                  i18nKey="WORKSPACE.META_STORY"
+                  values={{ key: issue.key }}
+                  components={{
+                    story: <MetaLink href={issue.url} title={issue.title} />,
+                  }}
+                />
+              )}
+              {design !== null && (
+                <Trans
+                  i18nKey="WORKSPACE.META_DESIGN"
+                  values={{ name: design.name }}
+                  components={{
+                    design: (
+                      <MetaLink
+                        href={design.url}
+                        title={design.title}
+                        dropLabel={dropDesignLabel}
+                        onDrop={onDropDesign}
+                      />
+                    ),
+                  }}
+                />
+              )}
+            </>
           )}
         </div>
       </header>
@@ -146,8 +134,6 @@ export const Workspace: React.FC = () => {
       <div className="workspace__tabs">
         <PanelTabs
           current={tab}
-          planCount={planCount}
-          runCount={runCount}
           bugCount={bugCount}
           isLive={isLive}
           onSelect={onSelectTab}

@@ -26,7 +26,7 @@
   border: none;
   border-left: 1px solid var(--line2);
   background: transparent;
-  color: var(--lime-ink);
+  color: var(--ink);
   font: var(--font-ui-md);
   cursor: pointer;
   transition:
@@ -48,7 +48,7 @@
   bottom: 0;
   left: 0;
   height: var(--space-1);
-  background: var(--lime-ink);
+  background: var(--ink3);
   opacity: 0.75;
   transform-origin: left center;
   animation: gc-drain var(--undo-ms) linear forwards;

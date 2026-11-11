@@ -418,26 +418,8 @@ describe('usePlanViewModel', () => {
     });
   });
 
-  it('counts the cases and the steps of the plan', () => {
-    const { result } = renderHook(() => usePlanViewModel());
-
-    expect(result.current.summary).toBe('2 cases · 6 steps');
-    expect(result.current.isEmpty).toBe(false);
-  });
-
-  it('counts one case of one step in the singular', () => {
-    const plan = makeWorkspace()
-      .plan.slice(0, 1)
-      .map((testCase) => ({
-        ...testCase,
-        steps: testCase.steps.slice(0, 1),
-      }));
-
-    useWorkspaceStore.setState({ workspaces: [makeWorkspace(plan)] });
-
-    expect(renderHook(() => usePlanViewModel()).result.current.summary).toBe(
-      '1 case · 1 step',
-    );
+  it('has a plan to show once it has a case', () => {
+    expect(renderHook(() => usePlanViewModel()).result.current.isEmpty).toBe(false);
   });
 
   it('names the code the plan was made from, and nothing for a plan made from talk', () => {

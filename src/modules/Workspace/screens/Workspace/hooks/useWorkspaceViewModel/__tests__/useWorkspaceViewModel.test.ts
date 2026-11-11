@@ -34,12 +34,18 @@ describe('useWorkspaceViewModel', () => {
     expect(result.current.name).toBe('Checkout regression');
   });
 
+  it('reads the sentence under the title', () => {
+    expect(renderHook(() => useWorkspaceViewModel()).result.current).toMatchObject({
+      metaKey: 'WORKSPACE.META_ON',
+      metaCases: '2 cases',
+    });
+  });
+
   describe('the center tabs', () => {
-    it('reads the tab the QA left it on, with what each tab holds', () => {
+    it('reads the tab the QA left it on', () => {
       const { result } = renderHook(() => useWorkspaceViewModel());
 
       expect(result.current.tab).toBe('plan');
-      expect(result.current.planCount).toBe(2);
     });
 
     it('turns to the tab the QA picked', () => {

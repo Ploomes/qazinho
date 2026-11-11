@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
+import { Trans } from 'react-i18next';
 import { Chat } from '@/modules/Chat';
 import {
   TargetChip,
@@ -15,6 +16,8 @@ export const AgentPanel: React.FC = () => {
   const {
     hasWorkspace,
     isChatOnly,
+    metaKey,
+    metaCases,
     name,
     onRename,
     isOpen,
@@ -96,7 +99,13 @@ export const AgentPanel: React.FC = () => {
                 {isChatOnly ? (
                   <>
                     <WorkspaceName name={name} onRename={onRename} />
-                    <TargetChip />
+                    <div className="agent-panel__meta">
+                      <Trans
+                        i18nKey={metaKey}
+                        values={{ cases: metaCases }}
+                        components={{ app: <TargetChip /> }}
+                      />
+                    </div>
                   </>
                 ) : (
                   <>

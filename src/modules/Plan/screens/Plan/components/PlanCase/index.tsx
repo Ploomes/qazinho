@@ -8,12 +8,16 @@ import './styles.css';
 
 export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
   const {
-    outcome,
+    reason,
     priority,
-    expectLabel,
+    expectedPrefix,
+    gotPrefix,
+    seeBugLabel,
+    notReachedLabel,
     className,
     steps,
     verdict,
+    hasStatus,
     isGoalShown,
     isBeforeShown,
     isGoalFocused,
@@ -71,7 +75,9 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
           <Icon name="drag" />
         </span>
 
-        <StatusPill status={verdict} label="" />
+        <span className="plan-case__status">
+          {hasStatus && <StatusPill status={verdict} label="" />}
+        </span>
 
         <button
           type="button"
@@ -97,16 +103,7 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
         />
 
         <span className="plan-case__aside">
-          {props.isDeveloped === true && (
-            <span
-              className="plan-case__developed"
-              title={t('PLAN.DEVELOPED_TIP')}
-              aria-label={t('PLAN.DEVELOPED_TIP')}
-            >
-              <Icon name="recorded" />
-            </span>
-          )}
-
+          {reason !== '' && <span className="plan-case__reason">{reason}</span>}
           {priority !== null && <span className="plan-case__priority">{priority}</span>}
 
           {!props.isLocked && (
@@ -207,40 +204,6 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
               )}
 
               <div className="plan-case__steps-block">
-                <div className="plan-case__steps-head">
-                  <span className="plan-case__label plan-case__title">
-                    {t('PLAN.STEPS_LABEL')}
-                    <span className="plan-case__count">{steps.length}</span>
-                  </span>
-                  <span className="plan-case__label plan-case__column plan-case__column--action">
-                    {t('PLAN.COLUMN_ACTION')}
-                  </span>
-                  <span className="plan-case__label plan-case__column plan-case__column--expected">
-                    {expectLabel}
-                  </span>
-                  {outcome !== null && (
-                    <span
-                      className={`plan-case__outcome plan-case__outcome--${outcome.tone}`}
-                    >
-                      {outcome.text !== null && (
-                        <>
-                          <Icon name={outcome.tone} />
-                          {outcome.text}
-                        </>
-                      )}
-                      {outcome.note !== null && (
-                        <span
-                          className="plan-case__note"
-                          title={outcome.noteTip ?? undefined}
-                          aria-label={outcome.noteTip ?? undefined}
-                        >
-                          <Icon name={outcome.note} />
-                        </span>
-                      )}
-                    </span>
-                  )}
-                </div>
-
                 <ol className="plan-case__steps">
                   {steps.map((step) => (
                     <li
@@ -248,69 +211,69 @@ export const PlanCase: React.FC<IPlanCaseProps> = ({ ref, ...props }) => {
                       className={`plan-case__step plan-case__step--${step.verdict}`}
                     >
                       <span className="plan-case__step-number">{step.number}</span>
-                      <div className="plan-case__action">
-                        <EditableText
-                          value={step.action}
-                          placeholder={t('PLAN.ACTION_PLACEHOLDER')}
-                          isLocked={props.isLocked}
-                          isAutoFocused={step.isFresh}
-                          onCommit={(action) => {
-                            onStepCommit({ index: step.number - 1, step: { action } });
-                          }}
-                        />
-                      </div>
-                      <div className="plan-case__expected">
-                        <span className="plan-case__expect-icon" title={expectLabel}>
-                          <Icon name="eye" />
-                        </span>
-                        <div className="plan-case__expected-body">
+                      <div className="plan-case__step-body">
+                        <div className="plan-case__action">
                           <EditableText
-                            value={step.expected}
-                            placeholder={t('PLAN.EXPECTED_PLACEHOLDER')}
+                            value={step.action}
+                            placeholder={t('PLAN.ACTION_PLACEHOLDER')}
                             isLocked={props.isLocked}
-                            onCommit={(expected) => {
-                              onStepCommit({
-                                index: step.number - 1,
-                                step: { expected },
-                              });
+                            isAutoFocused={step.isFresh}
+                            onCommit={(action) => {
+                              onStepCommit({ index: step.number - 1, step: { action } });
                             }}
                           />
-                          {(step.isVerdictShown || step.frame !== null) && (
-                            <div className="plan-case__marks">
-                              {step.isVerdictShown && (
-                                <span
-                                  className={`plan-case__verdict plan-case__verdict--${step.verdict}`}
-                                >
-                                  <Icon name={step.verdictIcon} /> {step.verdictLabel}
-                                </span>
-                              )}
-                              {step.hasBug && (
-                                <button
-                                  type="button"
-                                  className="plan-case__bug"
-                                  onClick={step.onBugClick}
-                                >
-                                  {step.bugId}
-                                  <Icon name="arrow" />
-                                </button>
-                              )}
-                              {step.frame !== null && (
-                                <a
-                                  className="plan-case__frame"
-                                  href={step.frame.url}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  title={step.frame.title}
-                                >
-                                  <Icon name="figma" />
-                                  {step.frame.label}
-                                  <Icon name="external" />
-                                </a>
-                              )}
-                            </div>
-                          )}
-                          {step.hasWhy && <p className="plan-case__why">{step.why}</p>}
                         </div>
+                        {step.hasExpected && (
+                          <div className="plan-case__expected">
+                            <span className="plan-case__prefix">{expectedPrefix}</span>
+                            <EditableText
+                              value={step.expected}
+                              placeholder={t('PLAN.EXPECTED_PLACEHOLDER')}
+                              isLocked={props.isLocked}
+                              onCommit={(expected) => {
+                                onStepCommit({
+                                  index: step.number - 1,
+                                  step: { expected },
+                                });
+                              }}
+                            />
+                          </div>
+                        )}
+                        {step.isBad && (
+                          <p className="plan-case__got">
+                            {step.hasGotPrefix && (
+                              <span className="plan-case__prefix">{gotPrefix}</span>
+                            )}
+                            {step.got}
+                            {step.hasBug && ' '}
+                            {step.hasBug && (
+                              <button
+                                type="button"
+                                className="plan-case__bug"
+                                onClick={step.onBugClick}
+                              >
+                                {seeBugLabel}
+                                <Icon name="arrow" />
+                              </button>
+                            )}
+                          </p>
+                        )}
+                        {step.isUnreached && (
+                          <p className="plan-case__unreached">{notReachedLabel}</p>
+                        )}
+                        {step.frame !== null && (
+                          <a
+                            className="plan-case__frame"
+                            href={step.frame.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            title={step.frame.title}
+                          >
+                            <Icon name="figma" />
+                            {step.frame.label}
+                            <Icon name="external" />
+                          </a>
+                        )}
                       </div>
                       {canRemoveStep && (
                         <button

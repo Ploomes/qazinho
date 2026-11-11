@@ -1,45 +1,24 @@
 .target-chip {
   position: relative;
-  display: inline-flex;
-  flex: none;
+  display: inline-block;
 }
 
 .target-chip__button {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: var(--raise);
+  padding: 0;
+  border: none;
+  background: transparent;
   color: var(--ink);
-  font: var(--font-ui-sm);
-  transition:
-    background-color var(--dur-fast) var(--ease),
-    border-color var(--dur-fast) var(--ease);
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: text-decoration-color var(--dur-fast) var(--ease);
 }
 
-.target-chip__button:hover {
-  background: var(--raise2);
-}
-
-.target-chip__kind,
-.target-chip__build,
-.target-chip__empty {
-  text-box: trim-both cap alphabetic;
-}
-
-.target-chip__kind {
-  color: var(--ink2);
-}
-
-.target-chip__build {
-  color: var(--ink);
-  font: var(--font-mono-sm);
-}
-
-.target-chip__empty {
-  color: var(--ink3);
+.target-chip__button:hover,
+.target-chip__button[aria-expanded='true'] {
+  text-decoration-color: currentColor;
 }
 
 .target-chip__popover {
@@ -108,7 +87,7 @@
 }
 
 .target-chip__pick--active {
-  border-color: var(--lime-ink);
+  border-color: var(--ink2);
   background: var(--lime-soft);
 }
 
@@ -127,18 +106,18 @@
   min-width: 0;
   overflow: hidden;
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-code-sm);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .target-chip__pick--active .target-chip__option-value {
-  color: var(--lime-ink);
+  color: var(--ink);
 }
 
 .target-chip__pick .icon {
   flex: none;
-  color: var(--lime-ink);
+  color: var(--ink3);
 }
 
 .target-chip__option .button {

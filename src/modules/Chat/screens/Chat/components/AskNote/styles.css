@@ -23,14 +23,13 @@
 
 .ask-note__label {
   color: var(--ink2);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
   letter-spacing: var(--tag-tracking);
-  text-transform: uppercase;
 }
 
 .ask-note__where {
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
 }
 
 .ask-note__question {
@@ -51,15 +50,15 @@
 
 .ask-note__who {
   flex: none;
-  color: var(--lime-ink);
-  font: var(--font-mono-sm);
+  color: var(--ink2);
+  font: var(--font-meta-sm);
 }
 
 .ask-note__lock {
   display: inline-flex;
   flex: none;
   align-self: center;
-  color: var(--lime-ink);
+  color: var(--ink3);
 }
 
 .ask-note__said {

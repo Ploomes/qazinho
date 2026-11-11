@@ -28,7 +28,7 @@
 .finding-note__id {
   flex: none;
   color: var(--attn);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .finding-note__title {
@@ -44,7 +44,7 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-pill);
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
   white-space: nowrap;
 }
 
@@ -53,7 +53,7 @@
   flex: none;
   align-items: center;
   gap: var(--space-2);
-  color: var(--lime-ink);
+  color: var(--ink);
   font: var(--font-ui-sm);
   white-space: nowrap;
 }

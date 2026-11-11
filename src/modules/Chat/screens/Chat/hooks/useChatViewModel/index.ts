@@ -487,11 +487,7 @@ export const useChatViewModel = () => {
         isLive && activityLines.length === 0 && workspace?.walked === 0
           ? [{ id: 0, text: t('CHAT.DOING_START'), isBug: false }]
           : activityLines,
-      facts: isLive
-        ? formatElapsed(workspace?.elapsedSec ?? 0)
-        : saved === null
-          ? ''
-          : t('CHAT.RUN_TOOK', { time: formatElapsed(saved.durationSec) }),
+      facts: isLive ? formatElapsed(workspace?.elapsedSec ?? 0) : '',
       isLive,
       isExpanded: expandedRuns.includes(item.runId),
       isExpandable: item.messages.length > 0,

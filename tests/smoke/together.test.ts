@@ -274,13 +274,13 @@ const pictureIsDrawn = (selector: string) =>
 describe('a run the QA follows and talks to', () => {
   it('asks for the plan to be developed before anything is recorded', async () => {
     await page.getByRole('tab', { name: /Plano/ }).click();
-    await page.locator('.plan-stages').waitFor({ timeout: 15_000 });
-    await shoot('01-plan-stages');
+    await page.locator('.plan-case__reason').first().waitFor({ timeout: 15_000 });
+    await shoot('01-plan-to-develop');
 
-    expect(await page.locator('.plan-stages__label').allTextContents()).toEqual([
-      'Plano escrito',
-      'Desenvolver',
-      'Rodar',
+    expect(await page.locator('.plan-case__reason').allTextContents()).toEqual([
+      'por desenvolver',
+      'por desenvolver',
+      'por desenvolver',
     ]);
     await page.getByRole('button', { name: 'Desenvolver plano' }).waitFor();
   }, 60_000);
@@ -430,12 +430,7 @@ describe('a run the QA follows and talks to', () => {
     await page.getByRole('button', { name: 'Rodar plano' }).waitFor({ timeout: 20_000 });
     await shoot('12-developed');
 
-    expect(await page.locator('.plan-stages__label').allTextContents()).toEqual([
-      'Plano escrito',
-      'Desenvolvido',
-      'Rodar',
-    ]);
-    expect(await page.locator('.plan-case__developed').count()).toBe(3);
+    expect(await page.locator('.plan-case__reason').count()).toBe(0);
 
     await page.getByRole('button', { name: 'Rodar plano' }).click();
     await page

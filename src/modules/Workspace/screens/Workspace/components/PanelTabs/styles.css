@@ -35,18 +35,15 @@
   left: 0;
   height: 3px;
   border-radius: var(--radius-pill);
-  background: var(--lime-ink);
+  background: var(--ink);
   animation: gc-tab var(--dur) var(--ease);
   content: '';
 }
 
 .panel-tabs__badge {
-  color: var(--ink3);
-  font: var(--font-mono-sm);
-}
-
-.panel-tabs__tab--active .panel-tabs__badge {
-  color: var(--lime-ink);
+  color: var(--fail);
+  font: var(--font-meta-sm);
+  font-weight: 600;
 }
 
 .panel-tabs__live {

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PANEL } from '@/modules/Workspace/constants';
 import { useChatOnly } from '@/modules/Workspace/hooks/useChatOnly';
+import { useWorkspaceMeta } from '@/modules/Workspace/hooks/useWorkspaceMeta';
 import { panelWidthOf } from '@/modules/Workspace/library';
 import { MOTION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
@@ -21,6 +22,7 @@ export const useAgentPanelViewModel = () => {
         : null,
   }));
   const isChatOnly = useChatOnly();
+  const { metaKey, metaCases } = useWorkspaceMeta();
   const isPanelOpen = useWorkspaceStore((state) => state.isPanelOpen);
   const isOpen = isPanelOpen || isChatOnly;
   const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
@@ -52,6 +54,8 @@ export const useAgentPanelViewModel = () => {
     hasWorkspace: workspace !== null,
     isOpen,
     isChatOnly,
+    metaKey,
+    metaCases,
     name: workspace?.name ?? '',
     onRename: (name: string) => {
       if (workspace !== null) renameWorkspace({ workspaceId: workspace.id, name });
