@@ -233,7 +233,7 @@
   margin: var(--space-4) var(--space-4) 0;
   padding: 0 var(--space-3);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
   background: transparent;
   color: var(--ink2);
   font: var(--font-ui-sm);
@@ -253,6 +253,7 @@
 .sidebar__nav--selected:hover {
   background: var(--sel);
   color: var(--ink);
+  font-weight: 500;
 }
 
 .sidebar__nav .icon {
@@ -260,7 +261,7 @@
 }
 
 .sidebar__nav + .sidebar__nav {
-  margin-top: var(--space-1);
+  margin-top: 0;
 }
 
 .sidebar__nav .kbd {
@@ -288,8 +289,8 @@
   flex: none;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-6) calc(var(--space-4) + var(--space-3) - var(--space-1))
-    var(--space-2) calc(var(--space-4) + var(--space-3));
+  padding: var(--space-5) calc(var(--space-4) + var(--space-3) - var(--space-1)) 0
+    calc(var(--space-4) + var(--space-3));
 }
 
 .sidebar__section .icon-button {
@@ -327,9 +328,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-bottom: var(--space-1);
   padding-right: var(--space-3);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
 }
 
 .sidebar__group-head-row:hover {
@@ -396,7 +396,7 @@
 }
 
 .sidebar__slot {
-  padding-bottom: var(--space-1);
+  padding-bottom: 0;
 }
 
 .sidebar__pro {
@@ -478,7 +478,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
   transition: background-color var(--dur-fast) var(--ease);
 }
 
@@ -497,7 +497,8 @@
   align-items: center;
   gap: var(--space-3);
   min-width: 0;
-  padding: var(--space-2) var(--space-3) var(--space-2) var(--sidebar-indent);
+  height: var(--sidebar-field);
+  padding: 0 var(--space-3) 0 var(--sidebar-indent);
   border: none;
   background: transparent;
   color: var(--ink2);
@@ -519,6 +520,10 @@
 .sidebar__row--selected .sidebar__name,
 .sidebar__row:hover .sidebar__name {
   color: var(--ink);
+}
+
+.sidebar__row--selected .sidebar__name {
+  font-weight: 500;
 }
 
 .sidebar__signal {
@@ -595,10 +600,11 @@
   align-items: center;
   gap: var(--space-2);
   width: 100%;
-  padding: var(--space-2) var(--space-3) var(--space-2)
+  height: var(--sidebar-field);
+  padding: 0 var(--space-3) 0
     calc(var(--sidebar-indent) - var(--sidebar-lead) - var(--space-2));
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
   background: transparent;
   color: var(--ink3);
   font: var(--font-ui-sm);

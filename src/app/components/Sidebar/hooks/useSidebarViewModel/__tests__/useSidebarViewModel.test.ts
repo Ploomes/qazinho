@@ -545,7 +545,7 @@ describe('useSidebarViewModel', () => {
 
       expect(result.current.style).toEqual({
         '--sidebar-tile': '36px',
-        '--sidebar-field': '30px',
+        '--sidebar-field': '28px',
         '--sidebar-avatar': '22px',
         '--sidebar-lead': '16px',
         '--sidebar-mark': '20px',
