@@ -34,7 +34,9 @@ export const LastRun: React.FC<ILastRunProps> = (props) => (
         {props.cases.map((item) => (
           <li key={item.key}>
             <button type="button" className="last-run__case" onClick={item.onOpen}>
-              <span className="last-run__dot" />
+              <span className="last-run__mark">
+                <Icon name="failed" />
+              </span>
               <span className="last-run__id">{item.id}</span>
               <span className="last-run__name">{item.title}</span>
               <span className="last-run__link">
