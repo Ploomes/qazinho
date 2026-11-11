@@ -146,7 +146,8 @@ describe('useChatScroll', () => {
     });
     rerender('r-01/q-1');
 
-    expect(scrollTo).toHaveBeenCalledWith({ top: 3_000, behavior: 'smooth' });
+    expect(list.scrollTop).toBe(3_000);
+    expect(scrollTo).not.toHaveBeenCalled();
   });
 
   /** Quem subiu para ler e mandou uma mensagem quer ver a resposta chegar. */
@@ -165,7 +166,8 @@ describe('useChatScroll', () => {
     });
     rerender(chat(4));
 
-    expect(scrollTo).toHaveBeenCalledWith({ top: 3_000, behavior: 'smooth' });
+    expect(list.scrollTop).toBe(3_000);
+    expect(scrollTo).not.toHaveBeenCalled();
   });
 
   it('does NOT jump when only the agent answers', () => {

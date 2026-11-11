@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { FOLLOW_END } from './constants';
-import { followsEndAfter } from './library';
+import { endScrollOf, followsEndAfter } from './library';
 
 export const useFollowEnd = <T extends HTMLElement>(props: {
   resetKey: string | null;
@@ -15,6 +15,17 @@ export const useFollowEnd = <T extends HTMLElement>(props: {
   const isPressing = useRef(false);
   const touchedAt = useRef(Number.NEGATIVE_INFINITY);
   const pressedTop = useRef(0);
+
+  const toEnd = (list: T) => {
+    const behavior = endScrollOf({
+      top: list.scrollTop,
+      clientHeight: list.clientHeight,
+      scrollHeight: list.scrollHeight,
+    });
+
+    if (behavior === 'instant') list.scrollTop = list.scrollHeight;
+    else list.scrollTo({ top: list.scrollHeight, behavior });
+  };
 
   const reread = (props: { byUser: boolean }) => {
     const list = listRef.current;
@@ -50,7 +61,8 @@ export const useFollowEnd = <T extends HTMLElement>(props: {
 
     isFollowing.current = true;
     touchedAt.current = Number.NEGATIVE_INFINITY;
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' });
+
+    if (listRef.current) toEnd(listRef.current);
   }, [callKey]);
 
   useEffect(() => {
@@ -68,8 +80,7 @@ export const useFollowEnd = <T extends HTMLElement>(props: {
           return;
         }
 
-        if (isFollowing.current)
-          list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
+        if (isFollowing.current) toEnd(list);
       });
     });
     const intend = () => {

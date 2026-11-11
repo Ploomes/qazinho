@@ -68,9 +68,21 @@ describe('useFollowEnd', () => {
   it('calls the QA back to the end when something asks for them', () => {
     const { list, rerender } = follow({ resetKey: 'a', callKey: null });
 
+    list.scrollTop = 700;
     rerender({ resetKey: 'a', callKey: 'q-1' });
 
     expect(list.scrollTo).toHaveBeenCalledWith({ top: 1000, behavior: 'smooth' });
+  });
+
+  /** Deslizar mais de uma tela atravessava a conversa inteira na frente do QA. */
+  it('jumps back to the end, without sliding, from more than a screen away', () => {
+    const { list, rerender } = follow({ resetKey: 'a', callKey: null });
+
+    list.scrollTop = 0;
+    rerender({ resetKey: 'a', callKey: 'q-1' });
+
+    expect(list.scrollTo).not.toHaveBeenCalled();
+    expect(list.scrollTop).toBe(1000);
   });
 
   it('does NOT call anyone back when nothing asks', () => {
@@ -144,7 +156,7 @@ describe('useFollowEnd', () => {
   it('keeps following when the list moved up with no one scrolling', async () => {
     const { list, result } = watched();
 
-    list.scrollTop = 500;
+    list.scrollTop = 700;
     act(() => {
       result.current.onFollowScroll();
     });
