@@ -264,8 +264,17 @@
   margin-top: 0;
 }
 
-.sidebar__nav .kbd {
-  margin-left: auto;
+.sidebar__combo {
+  flex: none;
+  color: var(--ink3);
+  font: var(--font-meta-sm);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.sidebar__nav:hover .sidebar__combo,
+.sidebar__nav:focus-visible .sidebar__combo {
+  opacity: 1;
 }
 
 .sidebar__count {

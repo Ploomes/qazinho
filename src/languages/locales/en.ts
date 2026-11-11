@@ -1512,6 +1512,7 @@ export const en = {
     BILLING_BLOCKED: 'blocked',
     BILLING_CANCELED: 'canceled',
     CARD_SIGN_IN: 'Sign in to your account',
+    CARD_ENTER: 'Sign in',
     CARD_ACCOUNT: 'Your account',
     CARD_ORG_LINE: '{{org}}, as {{role}}',
     CARD_ORG_NOTE: '{{role}}, {{billing}}',

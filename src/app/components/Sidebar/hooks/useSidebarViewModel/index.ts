@@ -18,8 +18,9 @@ import { projectAppOf, projectMarkOf, useSiteIcons } from '@/modules/Project';
 import { RUN_HOW_KEYS } from '@/modules/Run/constants';
 import { currentStepOf, runToContinueOf } from '@/modules/Run/library';
 import { workspaceMeta } from '@/modules/Workspace';
-import { Agent, Archive, Run } from '@/services';
+import { Agent, Archive, Platform, Run } from '@/services';
 import { STATUS } from '@/shared/components/atoms/StatusPill/constants';
+import { comboLabelOf } from '@/shared/hooks/useKeybinds/library';
 import { useAppStore, useProStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 export const useSidebarViewModel = () => {
@@ -282,7 +283,10 @@ export const useSidebarViewModel = () => {
     hasTips: isShut,
     onSelectProject,
     searchLabel: t('SEARCH.LABEL'),
-    searchCombo,
+    searchCombo:
+      searchCombo === ''
+        ? ''
+        : comboLabelOf({ combo: searchCombo, isMac: Platform.isMac() }),
     onSearch: openSearch,
     groups,
     onToggleProject,

@@ -78,7 +78,7 @@ describe('useProAccountCardViewModel', () => {
       expect(view().result.current).toMatchObject({
         isShown: true,
         isSignedIn: false,
-        title: 'Sign in to your account',
+        title: 'Sign in',
         hasSubtitle: false,
         popup: undefined,
       });
@@ -91,7 +91,7 @@ describe('useProAccountCardViewModel', () => {
         subtitle: '3 orgs',
         initials: 'AS',
         email: 'ana@loja.dev',
-        machine: 'This computer · MacBook-Ana',
+        machine: 'This computer: MacBook-Ana',
         hasAttention: false,
         popup: 'dialog',
       });
@@ -100,7 +100,7 @@ describe('useProAccountCardViewModel', () => {
     it('names the one org and the role there of a person in a single org', () => {
       useProStore.setState({ status: { ...SIGNED_IN, orgs: [LOJA] } });
 
-      expect(view().result.current.subtitle).toBe('Loja Online · editor');
+      expect(view().result.current.subtitle).toBe('Loja Online, as editor');
     });
 
     it('says an account is in no org yet, and offers nothing to clone', () => {

@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { ProAccountCard } from '@/modules/Pro';
 import { ProjectMark } from '@/modules/Project';
-import { Caret, Icon, IconButton, Kbd, PlatformIcon } from '@/shared/components/atoms';
+import { Caret, Icon, IconButton, PlatformIcon } from '@/shared/components/atoms';
 import { Fold, Tooltip } from '@/shared/components/molecules';
 import { STICKER } from '@/shared/constants';
 import { useSidebarViewModel } from './hooks';
@@ -254,7 +254,7 @@ export const Sidebar: React.FC = () => {
           <button type="button" className="sidebar__nav" onClick={onSearch}>
             <Icon name="search" />
             <span className="sidebar__label">{searchLabel}</span>
-            {searchCombo !== '' && <Kbd combo={searchCombo} />}
+            <span className="sidebar__combo">{searchCombo}</span>
           </button>
 
           <button

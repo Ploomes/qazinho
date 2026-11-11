@@ -36,7 +36,7 @@ export const useProAccountCardViewModel = () => {
     setOpen(false);
   };
 
-  const title = signedIn === null ? t('PRO.CARD_SIGN_IN') : name;
+  const title = signedIn === null ? t('PRO.CARD_ENTER') : name;
 
   return {
     ref,

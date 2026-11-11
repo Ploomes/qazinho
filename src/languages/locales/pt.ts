@@ -1518,6 +1518,7 @@ export const pt: typeof en = {
     BILLING_BLOCKED: 'bloqueada',
     BILLING_CANCELED: 'cancelada',
     CARD_SIGN_IN: 'Acessar sua conta',
+    CARD_ENTER: 'Entrar',
     CARD_ACCOUNT: 'Sua conta',
     CARD_ORG_LINE: '{{org}}, como {{role}}',
     CARD_ORG_NOTE: '{{role}}, {{billing}}',
