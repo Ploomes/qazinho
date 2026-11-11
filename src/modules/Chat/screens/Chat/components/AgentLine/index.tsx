@@ -6,7 +6,7 @@ import { SessionTip } from './components';
 import { useAgentLineViewModel } from './hooks';
 import './styles.css';
 
-/** O agente e o modelo sob o campo do chat, e o uso da sessão só quando ela está acabando. */
+/** O agente e o modelo sob o campo do chat, e o uso da sessão quando ela acaba. */
 export const AgentLine: React.FC = () => {
   const {
     agentLabel,

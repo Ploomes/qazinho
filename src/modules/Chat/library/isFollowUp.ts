@@ -1,6 +1,6 @@
 import type { ChatMessage } from '@/modules/Chat/types';
 
-/** Se o agente desta fala é o da última fala de agente antes dela, que já mostrou o nome. */
+/** Se o agente desta fala é o da última fala de agente antes dela. */
 export function isFollowUp(props: {
   message: ChatMessage;
   earlier: readonly ChatMessage[];
