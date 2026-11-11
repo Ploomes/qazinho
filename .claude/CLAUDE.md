@@ -24,7 +24,7 @@ paralelo.
 **É calmo e plano para trabalhar o dia todo** (`rules/sticker-design.md`): o trabalho fica numa
 superfície Night ou Paper, a do computador por padrão, cartões e popups são elevados só por uma linha de 1px e, quando
 flutuam, uma sombra suave, e nada se inclina nem se cola na tela. A marca vive em poucos toques: o
-acento musgo, o Estagiário desenhado plano, a Bricolage na primeira execução e no logo, que sozinho
+acento laranja, o Estagiário desenhado plano, a Bricolage na primeira execução e no logo, que sozinho
 continua um sticker. Toda tela o segue.
 
 ## As regras que não estão em negociação

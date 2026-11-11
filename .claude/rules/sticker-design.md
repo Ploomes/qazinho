@@ -2,7 +2,7 @@
 
 O QAzinho é um lugar calmo e chapado para trabalhar o dia inteiro. **A superfície carrega o
 trabalho**: listas, planos, chat, logs, a tela do dispositivo. A marca mora em poucos toques, nunca
-em cada peça: o acento musgo, o Estagiário, o wordmark, a Bricolage Grotesque na primeira
+em cada peça: o acento laranja, o Estagiário, o wordmark, a Bricolage Grotesque na primeira
 execução. Nada é
 inclinado, nada veste uma borda de recorte grossa, e nada é colado na tela com tapa, exceto o logo.
 
@@ -32,7 +32,7 @@ A maior parte das coisas é chapada: impressa na superfície, separada por espa�
 | popovers, menus, modais, o popup de login, o painel do Estagiário | linhas de lista, de tabela e da sidebar         |
 | cards: configurações, MCP, integração, alvo, run, handoff         | a conversa do chat, logs, YAML, linhas de passo |
 | o composer, inputs                                                | rótulos, eyebrows, o nome do projeto na sidebar |
-| botões primários, preenchidos de musgo sem contorno               | botões secundários, ghost e de ícone            |
+| botões primários, preenchidos de laranja sem contorno             | botões secundários, ghost e de ícone            |
 
 **O chat separa quem fala pelo lado.** A fala do QA fica à direita, num balão `--bubble` sem linha;
 a do agente fica chapada à esquerda, com o rosto do Estagiário e o nome dele uma vez por sequência.
@@ -50,7 +50,7 @@ Todo valor vem de um token em `tokens.css` (`design-tokens.md`).
 
 - **Linha**: `border: var(--edge-width) solid var(--edge)`, que é 1px do `--line` do tema. As
   três larguras (`--edge-width`, `-lg`, `-xl`) são todas 1px; um card selecionado deixa a linha
-  musgo, não mais grossa.
+  laranja, não mais grossa.
 - **Raio**: `--radius-*` como antes; um card é arredondado, nunca reto.
 - **Sombra**: `--sticker-rest` e `--sticker-press` são nenhuma, `--sticker-lift` é uma sombra fina
   para um controle em hover, e `--sticker-hero` a única sombra suave que um popover ou modal joga.
@@ -60,10 +60,10 @@ Todo valor vem de um token em `tokens.css` (`design-tokens.md`).
   no que é código: um endereço, um caminho, uma chamada, a saída de um comando, o nome de uma
   variável (`--font-code-*`). A Bricolage fica na marca: o wordmark, com a borda de recorte de
   papel, e o título da primeira execução (`--font-brand-*`). Rótulo não vai em caixa-alta.
-- **Cor**: os neutros puxam para o quente nos dois temas. O musgo (`--accent`) é a ação principal,
+- **Cor**: os neutros puxam para o quente nos dois temas. O laranja (`--accent`) é a ação principal,
   o foco, o que está rodando e um controle ligado; nenhuma cor neon. O lima fica só na marca (o
   Estagiário, o balão com que ele fala e a `Tag`, pelo `--brand-lime`). A aba ativa veste o sublinhado
-  musgo; um link ou uma seleção usam a tinta. Um gráfico dá uma cor a cada categoria. O que passou não ganha verde em cada linha: ele fica
+  laranja; um link ou uma seleção usam a tinta. Um gráfico dá uma cor a cada categoria. O que passou não ganha verde em cada linha: ele fica
   no resultado de uma run. Um
   status (`StatusPill`) ou uma etiqueta é só o ícone e o texto na cor dele, sem fundo, borda nem
   preenchimento. Um fato repetido em toda linha é um ícone com tooltip. Um aviso veste a cor de leve
@@ -104,7 +104,7 @@ hover e o press, e o Motion faz toda entrada e saída (`animation.md`).
 - Uma região que quebra no render vira um aviso com Recarregar (`ErrorBarrier`): a aba, o chat, a
   sidebar, e a tela como último recurso. O resto do app continua.
 - Um controle que age leva uma palavra, não só a forma.
-- O contraste é conferido nos dois temas: o `--on-accent` sobre o musgo, e uma cor de status sobre o fundo
+- O contraste é conferido nos dois temas: o `--on-accent` sobre o laranja, e uma cor de status sobre o fundo
   suave dela.
 
 ## Desempenho
