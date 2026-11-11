@@ -1,19 +1,22 @@
 import { AnimatePresence } from 'motion/react';
-import { Icon } from '@/shared/components/atoms';
+import { Gauge, Icon } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
 import { ModelPopover } from '@/shared/components/organisms/ModelPopover';
 import { SessionTip } from './components';
 import { useAgentLineViewModel } from './hooks';
 import './styles.css';
 
-/** O modelo dentro do campo do chat, e o uso da sessão quando ela acaba. */
+/** O modelo dentro do campo do chat, e o anel do uso da sessão do agente. */
 export const AgentLine: React.FC = () => {
   const {
     agentLabel,
     modelLabel,
     isModelMenuOpen,
     isSessionShown,
+    sessionUsed,
+    hasSessionLabel,
     sessionLabel,
+    gaugeLabel,
     sessionTip,
     onToggleModelMenu,
   } = useAgentLineViewModel();
@@ -32,7 +35,8 @@ export const AgentLine: React.FC = () => {
           }
         >
           <span className="agent-line__session" tabIndex={0}>
-            {sessionLabel}
+            <Gauge value={sessionUsed} fills="used" label={gaugeLabel} />
+            {hasSessionLabel && <span>{sessionLabel}</span>}
           </span>
         </Tooltip>
       )}

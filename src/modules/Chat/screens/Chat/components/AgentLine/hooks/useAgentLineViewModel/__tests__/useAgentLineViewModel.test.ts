@@ -23,16 +23,27 @@ beforeEach(() => {
 
 describe('useAgentLineViewModel', () => {
   describe('isSessionShown', () => {
-    /** O uso da sessão só aparece quando está acabando, onde o agente responde. */
-    it('shows the session only from 80% used', () => {
+    /** O QA gostava do anel que dizia quanto da sessão já foi: ele fica sempre à vista. */
+    it('shows the ring whenever the agent reported its session, filled by what is used', () => {
+      usageOf(0.3);
+
+      expect(renderHook(() => useAgentLineViewModel()).result.current).toMatchObject({
+        isSessionShown: true,
+        sessionUsed: 0.3,
+        gaugeLabel: '30% used',
+      });
+    });
+
+    /** O número em palavras só aparece quando a sessão está acabando. */
+    it('says the percent in words only from 80% used', () => {
       usageOf(0.79);
       expect(
-        renderHook(() => useAgentLineViewModel()).result.current.isSessionShown,
+        renderHook(() => useAgentLineViewModel()).result.current.hasSessionLabel,
       ).toBe(false);
 
       usageOf(0.8);
       expect(
-        renderHook(() => useAgentLineViewModel()).result.current.isSessionShown,
+        renderHook(() => useAgentLineViewModel()).result.current.hasSessionLabel,
       ).toBe(true);
     });
 
@@ -68,11 +79,12 @@ describe('useAgentLineViewModel', () => {
     });
   });
 
-  it('says how much of the session is used in a few words, the reset in its tooltip', () => {
+  /** Com o anel ao lado, as palavras sobravam e empurravam o enviar para outra linha. */
+  it('says how much of the session is used as a bare percent beside the ring', () => {
     usageOf(0.9);
 
     expect(renderHook(() => useAgentLineViewModel()).result.current.sessionLabel).toBe(
-      '90% of the session',
+      '90%',
     );
   });
 

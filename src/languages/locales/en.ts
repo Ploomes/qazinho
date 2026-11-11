@@ -38,7 +38,7 @@ export const en = {
   },
   USAGE: {
     AGENT: '{{agent}} with {{model}}',
-    SESSION_SHORT: '{{percent}}% of the session',
+    SESSION_SHORT: '{{percent}}%',
     TIP_TITLE: '{{agent}} usage',
     TIP_SESSION: '5-hour session',
     TIP_WEEK: 'This week',

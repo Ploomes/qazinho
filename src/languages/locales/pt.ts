@@ -40,7 +40,7 @@ export const pt: typeof en = {
   },
   USAGE: {
     AGENT: '{{agent}} com {{model}}',
-    SESSION_SHORT: '{{percent}}% da sessão',
+    SESSION_SHORT: '{{percent}}%',
     TIP_TITLE: 'Uso do {{agent}}',
     TIP_SESSION: 'Sessão de 5 horas',
     TIP_WEEK: 'Esta semana',
