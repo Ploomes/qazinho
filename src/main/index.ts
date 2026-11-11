@@ -68,6 +68,7 @@ import {
   dialog,
   ipcMain,
   nativeImage,
+  powerMonitor,
   safeStorage,
   screen,
   shell,
@@ -151,6 +152,7 @@ import {
 import {
   agentFailure,
   bytesOfDataUrl,
+  closeMoveOf,
   fileNameOf,
   findExistingPath,
   fittedBounds,
@@ -158,6 +160,7 @@ import {
   isInternalNavigation,
   isOpenableUrl,
   isLostSession,
+  isQuitKey,
   isSealable,
   machineDirectories,
   execCommand,
@@ -298,6 +301,8 @@ function bringForward(): BrowserWindow | null {
   return open;
 }
 
+let isQuitting = false;
+
 const alerts = new RunAlerts((run) => {
   bringForward()?.webContents.send(CHANNELS.openRun, run);
 });
@@ -368,6 +373,7 @@ function updaterPort(): IUpdaterPort {
       void found?.downloadPromise?.catch(() => undefined);
     },
     install: () => {
+      isQuitting = true;
       autoUpdater.quitAndInstall(true, true);
     },
   };
@@ -1426,6 +1432,36 @@ function createWindow(): void {
     outsideBridge.dropAll();
   });
 
+  window.on('close', (event) => {
+    const move = closeMoveOf({ isQuitting, isFullScreen: window.isFullScreen() });
+
+    if (move === 'close') return;
+
+    event.preventDefault();
+
+    if (move === 'hide') {
+      window.hide();
+
+      return;
+    }
+
+    window.once('leave-full-screen', () => {
+      window.hide();
+    });
+    window.setFullScreen(false);
+  });
+
+  window.on('session-end', () => {
+    isQuitting = true;
+  });
+
+  window.webContents.on('before-input-event', (event, press) => {
+    if (!isQuitKey({ platform: process.platform, press })) return;
+
+    event.preventDefault();
+    app.quit();
+  });
+
   window.once('ready-to-show', () => {
     setTimeout(() => {
       if (!window.isDestroyed() && !window.isVisible()) window.show();
@@ -1861,8 +1897,19 @@ void app.whenReady().then(async () => {
   createWindow();
 
   app.on('activate', () => {
-    if (appWindows().length === 0) createWindow();
+    const [open] = appWindows();
+
+    if (!open) createWindow();
+    else if (!open.isVisible() && !open.webContents.isLoading()) bringForward();
   });
+
+  powerMonitor.on('shutdown', () => {
+    isQuitting = true;
+  });
+});
+
+app.on('before-quit', () => {
+  isQuitting = true;
 });
 
 app.on('will-quit', (event) => {

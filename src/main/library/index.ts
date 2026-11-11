@@ -1,6 +1,7 @@
 export * from './agentFailure';
 export * from './authorizeUrlIn';
 export * from './bytesOfDataUrl';
+export * from './closeMoveOf';
 export * from './collectSubtree';
 export * from './diagnosticsOf';
 export * from './fileNameOf';
@@ -11,6 +12,7 @@ export * from './imageExtensionOf';
 export * from './isInternalNavigation';
 export * from './isLostSession';
 export * from './isOpenableUrl';
+export * from './isQuitKey';
 export * from './isSealable';
 export * from './linuxTerminalOf';
 export * from './machineDirectories';
