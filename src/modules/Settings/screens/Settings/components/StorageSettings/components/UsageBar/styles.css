@@ -5,15 +5,15 @@
 }
 
 .usage-bar__tone--videos {
-  --tone: color-mix(in srgb, var(--ink) 88%, var(--center));
+  --tone: var(--accent);
 }
 
 .usage-bar__tone--screens {
-  --tone: color-mix(in srgb, var(--ink) 68%, var(--center));
+  --tone: var(--block);
 }
 
 .usage-bar__tone--builds {
-  --tone: color-mix(in srgb, var(--ink) 48%, var(--center));
+  --tone: var(--attn);
 }
 
 .usage-bar__tone--other {

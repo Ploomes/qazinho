@@ -35,7 +35,7 @@
   left: 0;
   height: 3px;
   border-radius: var(--radius-pill);
-  background: var(--ink);
+  background: var(--accent-ink);
   animation: gc-tab var(--dur) var(--ease);
   content: '';
 }

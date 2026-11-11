@@ -39,7 +39,7 @@
 }
 
 .bugs__tab--active {
-  border-bottom-color: var(--ink);
+  border-bottom-color: var(--accent-ink);
   color: var(--ink);
 }
 
