@@ -91,6 +91,8 @@ export const ChatRow: React.FC<IChatRowProps> = (props) => {
         )}
         {message.kind === 'plan' && (
           <HandoffCard
+            isAccent
+            icon="plan"
             title={planTitle}
             action={t('CHAT.PLAN_CARD_ACTION')}
             onOpen={props.onOpenPlan}

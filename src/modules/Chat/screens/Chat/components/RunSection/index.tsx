@@ -6,8 +6,8 @@ import { useRunSectionViewModel } from './hooks';
 import './styles.css';
 
 /**
- * Uma run no chat: uma caixa enquanto anda, uma linha quando acaba, e quando aberta, tudo
- * o que a run disse embaixo.
+ * Uma run no chat como uma caixa: a linha dela em cima, e quando aberta, tudo o que a run
+ * disse dentro.
  */
 export const RunSection: React.FC<IRunSectionProps> = (props) => {
   const {
@@ -31,18 +31,15 @@ export const RunSection: React.FC<IRunSectionProps> = (props) => {
             aria-expanded={isBodyShown}
             onClick={onToggle}
           >
-            {hasCaret && (
-              <span className="run-section__caret">
-                <Caret isOpen={isBodyShown} />
-              </span>
-            )}
+            <span className="run-section__caret">
+              {hasCaret && <Caret isOpen={isBodyShown} />}
+            </span>
             <span className="run-section__dot" aria-hidden="true" />
             <span className="run-section__text">
               <span className="run-section__title">{props.title}</span>
               <span className="run-section__facts">{facts}</span>
             </span>
           </button>
-          <span className="run-section__rule" aria-hidden="true" />
           {hasOpen && (
             <button
               type="button"

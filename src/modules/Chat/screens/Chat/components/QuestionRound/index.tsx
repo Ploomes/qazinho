@@ -28,7 +28,6 @@ export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
             <Icon name="check" />
           </span>
           <span className="question-round__summary-text">{view.summary}</span>
-          <span className="question-round__rule" aria-hidden="true" />
           <span className="question-round__caret">
             <Caret isOpen={view.isExpanded} />
           </span>

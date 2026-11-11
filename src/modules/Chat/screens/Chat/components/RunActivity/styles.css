@@ -27,7 +27,7 @@
 }
 
 .run-activity__line--say .run-activity__mark {
-  color: var(--ink2);
+  color: var(--accent-ink);
 }
 
 .run-activity__line--say .run-activity__text {
@@ -63,7 +63,7 @@
 }
 
 .run-activity__line--now .run-activity__dot {
-  background: var(--accent-ink);
+  background: var(--accent);
   animation: gc-pulse 1.4s ease-in-out infinite;
 }
 
