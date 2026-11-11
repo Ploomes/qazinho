@@ -58,7 +58,10 @@ simuladores de iOS só existem num Mac, então o alvo iOS e o idb vivem só lá.
 - O Windows mostra as notificações sob o nome do próprio app (`setAppUserModelId`).
 - Um QAzinho roda por pasta de dados (`requestSingleInstanceLock`). O Dock mantém um Mac em um
   só, mas o Windows e o Linux iniciam um segundo app a cada abertura; ele sai e traz a janela
-  aberta para a frente.
+  para a frente, mesmo escondida.
+- Fechar a janela a esconde, e o app continua (`closeMoveOf`). O Mac volta pelo Dock e sai com o
+  ⌘Q. O Windows e o Linux ganham um ícone na bandeja (`AppTray`) com Abrir e Sair, e o Linux sai
+  também com o Ctrl+Q (`isQuitKey`), porque nem todo desktop dele mostra a bandeja.
 
 ## Atualizando o app
 

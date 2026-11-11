@@ -104,6 +104,7 @@ próprio comando, e o CI nunca as roda.
 | `memory.test.ts`       | o app construído: a resposta do QA vira memória, a próxima run a usa, o chat a esquece  |
 | `update.test.ts`       | o app construído num feed e numa API fakes: baixa sozinho, o botão, a tela de recusa    |
 | `attach.test.ts`       | o app construído: o navegador do chat, a pergunta na tela ampliada, arquivos do QA      |
+| `close.test.ts`        | o app construído: fechar esconde com a página viva, o Dock a traz, a tela cheia, sair   |
 
 O `run.test.ts`, o `chat.test.ts`, o `learn.test.ts` e o `visual.test.ts` gastam os tokens do QA
 e precisam de um agente instalado. Rode-os à mão depois de mexer no pipeline da run ou no schema de

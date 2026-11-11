@@ -597,6 +597,27 @@ e uma nuvem em cada projeto ligado na sidebar são onde ele aparece.
   (`useProLinks`): ela abre o workspace no plano dele, ou o `ProLinkModal` oferece baixar o
   projeto da org (`useOrgDownload`, que o cartão também usa), ou diz por que não pode.
 
+## Fechar a janela não sai do app
+
+Como no Discord, fechar a janela a esconde, e o processo, a página e as runs continuam
+(`closeMoveOf`).
+
+- A janela principal nunca é destruída enquanto o app vive: a página guarda as stores de que uma
+  run, o Estagiário e o agente de fora dependem. Só uma saída a deixa fechar (`isQuitting`): o
+  `before-quit` (o ⌘Q, o Sair da bandeja, o Ctrl+Q do Linux), o `session-end` do Windows e o
+  `shutdown` do `powerMonitor`.
+- O `quitAndInstall` do Mac fecha as janelas antes do `before-quit`, então a instalação marca a
+  saída antes de chamá-lo: sem isso, ela esconderia a janela e nunca sairia.
+- Uma janela em tela cheia sai dela antes de esconder, ou o Mac deixa um espaço preto no lugar.
+- O Dock (`activate`), uma segunda abertura, uma notificação e o Abrir da ilha a trazem de volta
+  (`bringForward`), com tudo como estava.
+- No Windows e no Linux, um ícone na bandeja (`AppTray`) a abre num clique, e o menu dele tem Abrir
+  e Sair, nas palavras que a página manda no idioma do QA (`labelTray`). O Mac não ganha bandeja:
+  o Dock faz isso. O Linux também sai com o Ctrl+Q (`isQuitKey`), porque nem todo desktop dele
+  mostra a bandeja.
+- O ícone é o do app em 32 px, empacotado pelo electron-vite (`?asset`), já que o `build/` não vai
+  dentro do app.
+
 ## A ilha do notch
 
 Uma terceira página, a `island.html`, é a janela da ilha: transparente, sem moldura, sempre por
@@ -775,7 +796,7 @@ O app instalado se atualiza pelo `electron-updater`, a partir do `Salve-Software
 sem parar o QA.
 
 - O `AppUpdater` da main procura ao abrir e a cada 4 horas (`APP_UPDATE`), baixa em segundo plano e
-  instala ao fechar. Ele fala com o `electron-updater` por uma porta (`IUpdaterPort`), que a raiz de
+  instala quando o app sai. Ele fala com o `electron-updater` por uma porta (`IUpdaterPort`), que a raiz de
   composição liga, e só anda onde dá para atualizar (`canUpdateOf`): um app instalado e, no Linux,
   só um AppImage.
 - O endereço vem do `app-update.yml`, que o build grava a partir do `publish` do
@@ -816,7 +837,7 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | `ResourceCollector` / `ProcessOwners` | uma varredura de processos (`ps`, ou `WindowsProcesses`), cobrada de quem a iniciou                         |
 | `Archive`                             | os projetos, workspaces e planos do QA em disco, cada um escrito inteiro; um plano quebrado de lado         |
 | `SetupInstaller`                      | instala uma CLI de agente, o idb ou o gh a pedido, transmitindo cada linha que imprime                      |
-| `AppUpdater`                          | procura e baixa uma versão nova em segundo plano, e a instala ao fechar ou quando o QA pede                 |
+| `AppUpdater`                          | procura e baixa uma versão nova em segundo plano, e a instala quando o app sai ou o QA pede                 |
 | `IntegrationVault`                    | conecta os trackers: o GitHub como a conta do gh, o token do Jira lacrado pelo `safeStorage`                |
 | `ConfluenceApi`                       | lê e publica páginas do Confluence no site do Jira, com o token do Jira                                     |
 | `AgentTerminal`                       | roda a interface de tela cheia de um agente fora de vista: a lê, aperta as teclas dela                      |
@@ -830,6 +851,7 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | `OutsideServer`                       | abre a porta do QAzinho ao agente que o QA usa no editor, num endereço estável                              |
 | `SiteIcons`                           | busca o ícone do site de um projeto web e o guarda por origem, para a sidebar mostrar o app                 |
 | `Island`                              | a janela transparente do topo da tela que veste o notch e mostra a run, pelo `IIslandFrame`                 |
+| `AppTray`                             | o ícone na bandeja do Windows e do Linux, onde o app fica com a janela fechada                              |
 | `GithubCli`                           | fala com o GitHub pelo gh do próprio QA: status, login por device flow, API, tar                            |
 | `GithubRepos`                         | lista os repositórios do QA e as branches de um repositório, guardados por um tempo                         |
 | `CodeCopies`                          | copia uma branch para o agente ler enquanto planeja, com o diff, e depois a apaga                           |

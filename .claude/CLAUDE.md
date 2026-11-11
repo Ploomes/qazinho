@@ -414,9 +414,18 @@ workspace dele aqui, ou oferece baixar o projeto dele da org primeiro. Testes un
 contra uma plataforma fake; a API da plataforma (qazinho-server) ainda está sendo construída,
 então nenhuma ida e volta real rodou, e nenhum app instalado abriu um link ainda.
 
+**Fechar a janela não fecha o app, como no Discord.** A janela some e o QAzinho continua: uma run
+segue andando, a ilha e as notificações chamam o QA de volta, e o agente de fora ainda o alcança. No
+Mac o Dock a traz de volta e o ⌘Q sai; no Windows e no Linux um ícone na bandeja a abre ou sai do
+app, e no Linux o Ctrl+Q também sai, para um desktop que não mostra a bandeja. O
+`tests/smoke/close.test.ts` prova no app construído, num Mac, que fechar esconde a janela com a
+página viva, que o Dock a traz de volta, que a tela cheia sai antes, e que sair sai. A bandeja
+ainda não foi vista num Windows ou num Linux de verdade.
+
 **O app se atualiza sozinho, sem parar o QA.** Instalado, ele procura uma versão nova ao abrir e a
-cada 4 horas, baixa em segundo plano e instala ao fechar; quando ela está pronta, um "Atualizar"
-discreto aparece na barra de título. Não há rollback: uma versão ruim se desfaz publicando uma maior.
+cada 4 horas, baixa em segundo plano e instala quando o QA sai do app; quando ela está pronta, um
+"Atualizar" discreto aparece na barra de título. Não há rollback: uma versão ruim se desfaz
+publicando uma maior.
 Só uma conta logada pode ser obrigada a atualizar: a API recusa uma versão abaixo do mínimo dela, e o
 app vira uma tela que atualiza, menos com uma run andando; sem login nada trava. O
 `tests/smoke/update.test.ts` anda isso no app construído contra um feed e uma API fakes. Um Mac
