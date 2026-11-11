@@ -189,8 +189,18 @@
   }
 }
 
+.run-section:not(.run-section--live) .run-section__bar {
+  position: relative;
+}
+
 .run-section:not(.run-section--live) .run-section__open {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  padding-left: var(--space-3);
+  background: var(--panel);
   opacity: 0;
+  translate: 0 -50%;
 }
 
 .run-section:not(.run-section--live):is(:hover, :focus-within) .run-section__open {
