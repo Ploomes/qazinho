@@ -60,6 +60,7 @@ describe('lastRunGlanceOf', () => {
       file: '/runs/b.jpg',
       caseId: 'TC-02',
       number: 2,
+      isBad: true,
     });
   });
 
@@ -80,6 +81,7 @@ describe('lastRunGlanceOf', () => {
     );
 
     expect(glance.shot?.src).toBe('b.jpg');
+    expect(glance.shot?.isBad).toBe(false);
     expect(glance.failed).toEqual([]);
   });
 

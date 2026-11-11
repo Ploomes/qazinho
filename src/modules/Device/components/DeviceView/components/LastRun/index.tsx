@@ -1,14 +1,24 @@
 import type { ILastRunProps } from './types';
+import { Trans } from 'react-i18next';
 import { Button, Icon } from '@/shared/components/atoms';
 import './styles.css';
 
-/** A última run sob a tela dela: quando foi, quantos falharam e cada caso que falhou. */
+/** A última run sob a tela dela: de quando é a tela, a run numa frase e o que falhou. */
 export const LastRun: React.FC<ILastRunProps> = (props) => (
   <section className="last-run">
-    <header className="last-run__head">
-      <h2 className="last-run__title">{props.title}</h2>
-      <span className="last-run__facts">{props.facts}</span>
-      <span className="last-run__grow" />
+    <p className="last-run__caption">
+      <Icon name="image" size={12} />
+      {props.caption}
+    </p>
+
+    <div className="last-run__line">
+      <p className="last-run__say">
+        <Trans
+          i18nKey={props.sayKey}
+          values={props.sayValues}
+          components={{ fail: <span className="last-run__failed" /> }}
+        />
+      </p>
       {props.canWatch && (
         <Button size="sm" variant="ghost" onClick={props.onWatch}>
           <Icon name="play" /> {props.watchLabel}
@@ -17,17 +27,7 @@ export const LastRun: React.FC<ILastRunProps> = (props) => (
       <Button size="sm" variant="ghost" onClick={props.onOpenRuns}>
         {props.runsLabel}
       </Button>
-    </header>
-
-    <p className="last-run__sum">
-      {props.failedLabel !== '' && (
-        <span className="last-run__failed">{props.failedLabel}</span>
-      )}
-      {props.passedLabel !== '' && (
-        <span className="last-run__passed">{props.passedLabel}</span>
-      )}
-      <span className="last-run__where">{props.where}</span>
-    </p>
+    </div>
 
     {props.cases.length > 0 && (
       <ul className="last-run__cases">

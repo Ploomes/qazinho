@@ -12,6 +12,7 @@ import {
   moodOfStatus,
   imageRatioOf,
   lastRunGlanceOf,
+  lastRunSayKeyOf,
   shownUrlOf,
   stepSectionsOf,
   stepVerdictsOf,
@@ -22,7 +23,9 @@ import {
   caseVerdict,
   countVerdicts,
   currentStepOf,
+  dayLabelOf,
   RUN_HOW_KEYS,
+  runDayOf,
   tallyPartsOf,
   useRunControls,
 } from '@/modules/Run';
@@ -33,7 +36,7 @@ import { useSelectedWorkspace } from '@/shared/hooks/useSelectedWorkspace';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const useDeviceViewModel = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const projects = useAppStore((state) => state.projects);
   const workspace = useSelectedWorkspace();
   const setViewport = useWorkspaceStore((state) => state.setViewport);
@@ -110,6 +113,21 @@ export const useDeviceViewModel = () => {
     lastRun === null || lastRun.kind === 'explore' || hasScreen
       ? null
       : lastRunGlanceOf(lastRun);
+  const lastDay =
+    lastRun === null
+      ? ''
+      : dayLabelOf({
+          day: runDayOf(lastRun),
+          now: new Date(),
+          language: i18n.language,
+          words: { today: t('DEVICE.TODAY'), yesterday: t('DEVICE.YESTERDAY') },
+        });
+  const lastRunWhen =
+    lastRun === null
+      ? ''
+      : lastDay === ''
+        ? t('DEVICE.LAST_RUN_AT', { at: lastRun.startedAt })
+        : t('DEVICE.LAST_RUN_DAY_AT', { day: lastDay, at: lastRun.startedAt });
   const lastCounts =
     lastRun === null
       ? null
@@ -322,28 +340,25 @@ export const useDeviceViewModel = () => {
       lastCounts === null
         ? null
         : {
-            title: t('DEVICE.LAST_RUN', { id: lastRun.id }),
-            facts: t('DEVICE.LAST_RUN_FACTS', {
-              at: lastRun.startedAt,
-              time: formatElapsed(lastRun.durationSec),
-            }),
-            failedLabel:
-              lastCounts.failed + lastCounts.blocked === 0
-                ? ''
-                : t('DEVICE.LAST_RUN_FAILED', {
-                    count: lastCounts.failed + lastCounts.blocked,
-                  }),
-            passedLabel:
-              lastCounts.passed === 0
-                ? ''
-                : t('DEVICE.LAST_RUN_PASSED', { count: lastCounts.passed }),
-            where: t('DEVICE.LAST_RUN_WHERE', {
+            caption: t(glance.shot.isBad ? 'DEVICE.SHOT_FAILED' : 'DEVICE.SHOT_END', {
               id: glance.shot.caseId,
               number: glance.shot.number,
             }),
-            runsLabel: t('DEVICE.OPEN_RUNS'),
+            sayKey: lastRunSayKeyOf({
+              failed: lastCounts.failed + lastCounts.blocked,
+              passed: lastCounts.passed,
+            }),
+            sayValues: {
+              when: lastRunWhen,
+              failed: t('DEVICE.LAST_RUN_FAILED', {
+                count: lastCounts.failed + lastCounts.blocked,
+              }),
+              passed: t('DEVICE.LAST_RUN_PASSED', { count: lastCounts.passed }),
+              time: formatElapsed(lastRun.durationSec),
+            },
+            runsLabel: t('DEVICE.OPEN_RUN'),
             canWatch: lastRun.video !== null && lastRun.video !== undefined,
-            watchLabel: t('RUN.WATCH'),
+            watchLabel: t('DEVICE.WATCH'),
             onOpenRuns: openLastRun,
             onWatch: () => {
               openReplay({

@@ -34,6 +34,44 @@ describe('useDeviceViewModel', () => {
     expect(renderHook(() => useDeviceViewModel()).result.current.mood).toBe('bug');
   });
 
+  describe('the last run under its screen', () => {
+    /** O id da run é nosso: o QA lê quando foi e como foi, numa frase. */
+    it('tells the run in a sentence, with its failures, without its id', () => {
+      useWorkspaceStore.setState({
+        workspaces: [walkRun({ verdicts: ['passed', 'failed'], isFinished: true })],
+      });
+
+      const { lastRun } = renderHook(() => useDeviceViewModel()).result.current;
+
+      expect(lastRun).toMatchObject({
+        sayKey: 'DEVICE.LAST_RUN_FAILED_ONLY',
+        sayValues: { failed: '1 failed' },
+        runsLabel: 'Open the run',
+      });
+      expect(lastRun?.sayValues.when).toMatch(/ at 09:41$/);
+      expect(JSON.stringify(lastRun)).not.toContain('r-01');
+    });
+
+    it('says the screen is where a case failed, or where the run ended', () => {
+      useWorkspaceStore.setState({
+        workspaces: [walkRun({ verdicts: ['passed', 'failed'], isFinished: true })],
+      });
+
+      expect(
+        renderHook(() => useDeviceViewModel()).result.current.lastRun?.caption,
+      ).toMatch(/^The screen where .+ failed, at step \d+$/);
+
+      useWorkspaceStore.setState({
+        workspaces: [walkRun({ verdicts: ['passed', 'passed'], isFinished: true })],
+      });
+
+      const { lastRun } = renderHook(() => useDeviceViewModel()).result.current;
+
+      expect(lastRun?.caption).toMatch(/^The screen the run ended on: .+, step \d+$/);
+      expect(lastRun?.sayKey).toBe('DEVICE.LAST_RUN_PASSED_ONLY');
+    });
+  });
+
   describe('window size', () => {
     it('offers the window sizes for a browser, the one kept marked, and none for a phone', () => {
       const { result } = renderHook(() => useDeviceViewModel());

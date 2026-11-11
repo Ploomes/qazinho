@@ -7,6 +7,7 @@ type Glance = {
     file: string | null;
     caseId: string;
     number: number;
+    isBad: boolean;
   } | null;
   failed: { id: string; title: string; bugId: string | null }[];
 };
@@ -31,6 +32,7 @@ export function lastRunGlanceOf(run: IRun): Glance {
             file: picked.step.shotFile,
             caseId: picked.caseId,
             number: picked.step.number,
+            isBad: isBad(picked.step),
           },
     failed: run.cases
       .filter(({ steps: caseSteps }) => {
