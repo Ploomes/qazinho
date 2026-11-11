@@ -5,4 +5,5 @@ export const TOOLTIP = {
   edgePx: 32,
   tailMinPx: 10,
   tailPx: 8,
+  roomBelowPx: 64,
 } as const;

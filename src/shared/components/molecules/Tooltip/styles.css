@@ -53,3 +53,16 @@
   border-right: none;
   border-bottom: var(--edge-width) solid var(--edge);
 }
+
+.tooltip__panel--above {
+  translate: 0 -100%;
+}
+
+.tooltip__panel--above::before {
+  top: auto;
+  bottom: calc(var(--tooltip-tail-size) / -2 - var(--edge-width));
+  border-top: none;
+  border-right: var(--edge-width) solid var(--edge);
+  border-bottom: var(--edge-width) solid var(--edge);
+  border-left: none;
+}

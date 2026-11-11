@@ -12,18 +12,24 @@ export const useTooltipViewModel = (props: Pick<ITooltipProps, 'side' | 'isOff'>
     side: number;
     edge: '--tooltip-left' | '--tooltip-right';
     tail: number;
+    isAbove: boolean;
   } | null>(null);
 
   return {
     anchorRef,
     isOpen: isOpen && props.isOff !== true,
     isBeside,
-    panelClassName: isBeside
-      ? 'tooltip__panel tooltip__panel--beside'
-      : place?.edge === '--tooltip-right'
-        ? 'tooltip__panel tooltip__panel--from-right'
-        : 'tooltip__panel',
-    hidden: isBeside ? { opacity: 0, x: -4 } : { opacity: 0, y: -4 },
+    panelClassName: [
+      'tooltip__panel',
+      ...(isBeside ? ['tooltip__panel--beside'] : []),
+      ...(!isBeside && place?.edge === '--tooltip-right'
+        ? ['tooltip__panel--from-right']
+        : []),
+      ...(!isBeside && place?.isAbove === true ? ['tooltip__panel--above'] : []),
+    ].join(' '),
+    hidden: isBeside
+      ? { opacity: 0, x: -4 }
+      : { opacity: 0, y: place?.isAbove === true ? 4 : -4 },
     shown: isBeside ? { opacity: 1, x: 0 } : { opacity: 1, y: 0 },
     style: {
       '--tooltip-max': `${String(TOOLTIP.maxWidthPx)}px`,
@@ -43,6 +49,10 @@ export const useTooltipViewModel = (props: Pick<ITooltipProps, 'side' | 'isOff'>
 
       if (anchor !== null) {
         const box = anchor.getBoundingClientRect();
+        const isAbove = box.bottom + TOOLTIP.roomBelowPx > window.innerHeight;
+        const top = isAbove
+          ? box.top - TOOLTIP.belowGapPx
+          : box.bottom + TOOLTIP.belowGapPx;
 
         setPlace(
           isBeside
@@ -54,19 +64,22 @@ export const useTooltipViewModel = (props: Pick<ITooltipProps, 'side' | 'isOff'>
                 side: box.right + TOOLTIP.gapPx,
                 edge: '--tooltip-left',
                 tail: 0,
+                isAbove: false,
               }
             : box.right < TOOLTIP.maxWidthPx + TOOLTIP.edgePx
               ? {
-                  top: box.bottom + TOOLTIP.belowGapPx,
+                  top,
                   side: Math.max(box.left, TOOLTIP.edgePx),
                   edge: '--tooltip-left',
                   tail: box.left + box.width / 2 - Math.max(box.left, TOOLTIP.edgePx),
+                  isAbove,
                 }
               : {
-                  top: box.bottom + TOOLTIP.belowGapPx,
+                  top,
                   side: Math.max(window.innerWidth - box.right, 0),
                   edge: '--tooltip-right',
                   tail: box.width / 2,
+                  isAbove,
                 },
         );
       }
