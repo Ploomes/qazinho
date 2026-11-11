@@ -13,7 +13,7 @@ describe('useTooltipViewModel', () => {
   it('wraps a long tip at a width it never grows past', () => {
     const { result } = renderHook(() => useTooltipViewModel({}));
 
-    expect(result.current.style).toEqual({ '--tooltip-max': '300px' });
+    expect(result.current.style).toEqual({ '--tooltip-max': '240px' });
   });
 
   it('opens on arrival and closes on leaving', () => {
@@ -79,7 +79,7 @@ describe('useTooltipViewModel', () => {
     expect(result.current.panelClassName).toBe('tooltip__panel tooltip__panel--beside');
     expect(result.current.style).toMatchObject({
       '--tooltip-top': '120px',
-      '--tooltip-left': '66px',
+      '--tooltip-left': '62px',
     });
   });
 
@@ -128,7 +128,7 @@ describe('useTooltipViewModel', () => {
     });
 
     expect(result.current.style).toMatchObject({
-      '--tooltip-top': '336px',
+      '--tooltip-top': '334px',
       '--tooltip-right': '50px',
     });
   });
