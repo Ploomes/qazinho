@@ -61,7 +61,7 @@ Todo valor vem de um token em `tokens.css` (`design-tokens.md`).
   no que é código: um endereço, um caminho, uma chamada, a saída de um comando, o nome de uma
   variável (`--font-code-*`). A Bricolage fica na marca: o wordmark, com a borda de recorte de
   papel, e o título da primeira execução (`--font-brand-*`). Rótulo não vai em caixa-alta.
-- **Cor**: os neutros puxam para o quente nos dois temas. O amarelo (`--accent`, e `--accent-fill` num botão) é a ação principal,
+- **Cor**: os neutros são cinzas sem tom nos dois temas, para o amarelo não tingir tudo. O amarelo (`--accent`, e `--accent-fill` num botão) é a ação principal,
   o foco, o que está rodando e um controle ligado; nenhuma cor neon. O lima fica só na marca (o
   Estagiário, o balão com que ele fala e a `Tag`, pelo `--brand-lime`). A aba ativa veste o sublinhado
   no acento; um link ou uma seleção usam a tinta. Um gráfico dá uma cor a cada categoria. O que passou não ganha verde em cada linha: ele fica

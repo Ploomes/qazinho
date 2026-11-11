@@ -5,7 +5,8 @@ O QAzinho não tem pacote de design system. A escala é um conjunto de custom pr
 `assets/prototype.html`. O acento da interface é o amarelo do rebranding (2026-11-11): a Luz
 `#FFD23F` no Night, e no Paper o Profundo `#8F6B00`, porque a Luz some no claro (1,4:1). Os botões
 preenchidos leem `--accent-fill` (a Luz nos dois temas) com `--on-accent-fill` (a Tela `#0A0906`) em
-cima; linha, texto, foco e o que roda leem `--accent`/`--accent-ink`. O fundo do Night é a Tela. A
+cima; linha, texto, foco e o que roda leem `--accent`/`--accent-ink`. Os neutros dos dois temas são
+cinzas sem tom: puxados para o quente, somados ao amarelo, deixavam tudo amarelado. A
 pergunta do agente (`--attn`) é laranja, para não se confundir com o amarelo do que roda. Os status
 são de saturação baixa, e a falha é um vermelho puro (`#C42B2B`, `#EF5B5B`). A marca guarda a
 Tinta `#141414` (`--brand-ink`), o Papel `#F4F2EA` (`--brand-paper`) e o lima do Estagiário
