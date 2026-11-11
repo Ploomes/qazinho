@@ -58,7 +58,9 @@ export const useSearchPaletteViewModel = () => {
       : []),
     ...(isAsking
       ? workspaces.flatMap((workspace) => {
-          const count = workspace.bugs.filter(({ isDismissed }) => !isDismissed).length;
+          const count = workspace.bugs.filter(
+            ({ isDismissed, filed }) => !isDismissed && filed === null,
+          ).length;
 
           return count === 0
             ? []

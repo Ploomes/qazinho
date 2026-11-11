@@ -116,7 +116,9 @@ export const useSidebarViewModel = () => {
           shown === 'running' && workspace.live?.how !== undefined
             ? t(RUN_HOW_KEYS[workspace.live.how])
             : t(STATUS[shown].labelKey);
-        const bugs = workspace.bugs.filter(({ isDismissed }) => !isDismissed).length;
+        const bugs = workspace.bugs.filter(
+          ({ isDismissed, filed }) => !isDismissed && filed === null,
+        ).length;
         const signal = planSignalOf({ shown, bugs });
         const said =
           signal === null

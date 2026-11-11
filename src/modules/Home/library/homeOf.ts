@@ -59,7 +59,9 @@ export function homeOf(props: {
           ...base,
           kind: 'failed',
           failed: workspace.runs[0]?.counts.failed ?? 0,
-          bugs: workspace.bugs.filter(({ isDismissed }) => !isDismissed).length,
+          bugs: workspace.bugs.filter(
+            ({ isDismissed, filed }) => !isDismissed && filed === null,
+          ).length,
         });
     }
 
