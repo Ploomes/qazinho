@@ -257,3 +257,27 @@
     --device-gutter: var(--space-6);
   }
 }
+
+.device-view__caption {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-4) var(--space-6) var(--space-5);
+  color: var(--ink2);
+  font: var(--font-ui-md);
+  text-align: center;
+}
+
+.device-view__caption-mark {
+  display: inline-flex;
+  color: var(--lime-ink);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .device-view__caption-mark {
+    animation: gc-pulse 1.8s ease-in-out infinite;
+  }
+}

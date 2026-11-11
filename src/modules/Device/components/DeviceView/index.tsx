@@ -71,6 +71,8 @@ export const DeviceView: React.FC = () => {
     onPause,
     onStop,
     doingNow,
+    hasCaption,
+    caption,
     question,
     onAnswerQuestion,
   } = useDeviceViewModel();
@@ -201,6 +203,15 @@ export const DeviceView: React.FC = () => {
       </div>
 
       {lastRun !== null && <LastRun {...lastRun} />}
+
+      {hasCaption && (
+        <p className="device-view__caption" role="status">
+          <span className="device-view__caption-mark">
+            <Icon name="running" />
+          </span>
+          {caption}
+        </p>
+      )}
 
       <AnimatePresence initial={false}>
         {hasSteps && (

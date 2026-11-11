@@ -143,7 +143,7 @@ export const useDeviceViewModel = () => {
         isActive: option.id === viewport.id,
       }));
   const workspaceId = workspace?.id ?? null;
-  const hasSteps = (isRunLive || isFlashing) && reached.length > 0;
+  const hasSteps = !isRunLive && isFlashing && reached.length > 0;
   const { listRef: stepsRef, onFollowScroll: onStepsScroll } =
     useFollowEnd<HTMLDivElement>({
       resetKey: workspaceId,
@@ -401,6 +401,8 @@ export const useDeviceViewModel = () => {
     onStepsScroll,
     isLive: state === 'driving',
     doingNow,
+    hasCaption: isRunLive && doingNow !== null,
+    caption: doingNow?.text ?? '',
     steps,
     sections: stepSectionsOf(reached),
     hasSteps,
