@@ -5,11 +5,11 @@ import { LOGO } from '@/shared/components/atoms/Logo/constants';
 import { useLogoViewModel } from '@/shared/components/atoms/Logo/hooks/useLogoViewModel';
 
 describe('useLogoViewModel', () => {
-  it('falls back to the titlebar size, in lime', () => {
+  it('falls back to the titlebar size, in the signal yellow', () => {
     const { result } = renderHook(() => useLogoViewModel({}));
 
     expect(result.current.size).toBe(LOGO.defaultSize);
-    expect(result.current.className).toBe('logo logo--lime');
+    expect(result.current.className).toBe('logo logo--signal');
   });
 
   it('goes quiet for an empty state', () => {

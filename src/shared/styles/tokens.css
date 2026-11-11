@@ -19,7 +19,7 @@
   --font-code-md: 500 12px/1.4 var(--font-mono);
   --font-code-lg: 600 18px/1 var(--font-mono);
   --font-code-field: 400 13px/1.2 var(--font-mono);
-  --font-mono-tag: 700 10px/1 var(--font-mono);
+  --font-mono-tag: 500 11px/1 var(--font-mono);
 
   --font-display-sm: 600 15px/1.35 var(--font-ui);
   --font-display-md: 600 17px/1.3 var(--font-ui);
@@ -110,6 +110,8 @@
   --on-accent-fill: #0a0906;
   --brand-sinal: #ffd23f;
   --on-brand-sinal: #0a0906;
+  --brand-dot: #ffd23f;
+  --brand-dot-glow: rgba(255, 210, 63, 0.7);
   --on-attn: #0a0906;
 
   --pass: #7fb594;
@@ -163,6 +165,8 @@
   --on-accent-fill: #0a0906;
   --brand-sinal: #ffd23f;
   --on-brand-sinal: #0a0906;
+  --brand-dot: #16150f;
+  --brand-dot-glow: transparent;
   --on-attn: #ffffff;
 
   --pass: #2f6a4a;
