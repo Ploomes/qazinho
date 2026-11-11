@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest';
 import { drawIntern } from '@/shared/components/atoms/Intern/library';
 
 const METHODS = [
-  'setTransform',
   'clearRect',
   'translate',
   'rotate',
@@ -13,8 +12,6 @@ const METHODS = [
   'beginPath',
   'moveTo',
   'lineTo',
-  'quadraticCurveTo',
-  'ellipse',
   'arc',
   'roundRect',
   'closePath',
@@ -23,21 +20,29 @@ const METHODS = [
 ];
 
 /**
- * Um contexto 2D que lembra toda cor com que pintou, toda chamada que recebeu, e a sombra
- * de cada imagem posta nele.
+ * Um contexto 2D que lembra toda cor com que pintou, toda chamada que recebeu, toda
+ * transformação e o brilho de cada imagem posta nele.
  */
 function recorder(name: string) {
   const painted = new Set<string>();
+  const stops = new Set<string>();
   const calls: string[] = [];
-  const shadows: string[] = [];
+  const transforms: number[][] = [];
+  const glows: string[] = [];
+  const gradient = () => ({
+    addColorStop: (_at: number, colour: string) => {
+      stops.add(colour);
+    },
+  });
   const context = {
     canvas: { name },
     fillStyle: '' as unknown,
-    strokeStyle: '',
+    strokeStyle: '' as unknown,
     lineWidth: 0,
     lineCap: '',
     lineJoin: '',
     globalAlpha: 1,
+    globalCompositeOperation: 'source-over',
     shadowColor: '',
     shadowBlur: 0,
     shadowOffsetY: 0,
@@ -45,12 +50,17 @@ function recorder(name: string) {
       if (typeof context.fillStyle === 'string') painted.add(context.fillStyle);
     },
     stroke() {
-      painted.add(context.strokeStyle);
+      if (typeof context.strokeStyle === 'string') painted.add(context.strokeStyle);
     },
-    createLinearGradient: () => ({ addColorStop: () => undefined }),
+    setTransform(...matrix: number[]) {
+      transforms.push(matrix);
+      calls.push(`setTransform(${matrix.join(',')})`);
+    },
+    createLinearGradient: gradient,
+    createRadialGradient: gradient,
     drawImage(image: { name: string }) {
       calls.push(`drawImage(${image.name})`);
-      shadows.push(context.shadowColor);
+      glows.push(context.shadowColor);
     },
     ...Object.fromEntries(
       METHODS.map((method) => [
@@ -65,17 +75,19 @@ function recorder(name: string) {
   return {
     context: context as unknown as CanvasRenderingContext2D,
     painted,
+    stops,
     calls,
-    shadows,
+    transforms,
+    glows,
   };
 }
 
 function draw(props: {
   mood: InternMood;
   t: number;
-  isFigure?: boolean;
+  form?: 'stage' | 'figure' | 'icon';
   size?: number;
-  sticker?: string;
+  ink?: string;
 }) {
   const sheet = recorder('sheet');
   const screen = recorder('screen');
@@ -86,8 +98,8 @@ function draw(props: {
     size: props.size ?? 96,
     mood: props.mood,
     t: props.t,
-    isFigure: props.isFigure ?? false,
-    sticker: props.sticker ?? null,
+    form: props.form ?? 'stage',
+    ink: props.ink ?? '#16150f',
   });
 
   return { sheet, screen };
@@ -105,110 +117,78 @@ const MOODS: InternMood[] = [
 ];
 
 describe('drawIntern', () => {
-  it('draws every mood at every phase in lime with dark eyes', () => {
+  /** A marca nova: o personagem é uma tela escura, e os olhos são a luz do Sinal. */
+  it('lights his eyes in the Signal yellow, on every mood and phase', () => {
     for (const mood of MOODS)
       for (const t of [0, 0.25, 0.5, 0.83, 0.99]) {
         const { sheet } = draw({ mood, t });
 
-        expect(sheet.painted.has('#c6f432')).toBe(true);
-        expect(sheet.painted.has('#141414')).toBe(true);
+        expect(sheet.stops.has('#ffd23f')).toBe(true);
       }
-  });
-
-  /**
-   * O visual de sticker pesava para trabalhar o dia todo: o mascote é chapado, sem borda
-   * de recorte e sem brilho.
-   */
-  it('draws him flat: no white edge, no gloss', () => {
-    const { sheet } = draw({ mood: 'neutral', t: 0 });
-
-    expect(sheet.painted.has('#ffffff')).toBe(false);
-    expect(
-      [...sheet.painted].some((colour) => colour.startsWith('rgba(255, 255, 255')),
-    ).toBe(false);
   });
 
   it('wipes both canvases before each frame, so a moving pose leaves no trail', () => {
     const { sheet, screen } = draw({ mood: 'running', t: 0.3 });
 
-    expect(sheet.calls.slice(0, 2)).toEqual([
-      'setTransform(1,0,0,1,0,0)',
-      'clearRect(0,0,96,96)',
-    ]);
     expect(screen.calls.slice(0, 2)).toEqual([
       'setTransform(1,0,0,1,0,0)',
       'clearRect(0,0,96,96)',
     ]);
+    expect(sheet.calls.slice(0, 2)).toEqual([
+      'setTransform(1,0,0,1,0,0)',
+      'clearRect(0,0,96,96)',
+    ]);
   });
 
-  it('lays him down once, with no shadow under him', () => {
+  it('lays the eyes on the screen twice, under a wide glow and a tight one', () => {
     const { screen } = draw({ mood: 'neutral', t: 0 });
 
-    expect(screen.calls.filter((call) => call === 'drawImage(sheet)')).toHaveLength(1);
-    expect(screen.shadows.filter((shadow) => shadow !== '')).toEqual([]);
-  });
-
-  it('draws the logo as a sticker: a white edge, laid twice under its shadows, at the designer’s tilt', () => {
-    const { sheet, screen } = draw({
-      mood: 'neutral',
-      t: 0,
-      sticker: 'rgba(0, 0, 0, 0.55)',
-    });
-
-    expect(sheet.painted.has('#ffffff')).toBe(true);
-    expect(sheet.calls).toContain(`rotate(${String((-6 * Math.PI) / 180)})`);
     expect(screen.calls.filter((call) => call === 'drawImage(sheet)')).toHaveLength(2);
-    expect(screen.shadows).toEqual(['rgba(0, 0, 0, 0.55)', 'rgba(0, 0, 0, 0.16)']);
+    expect(screen.glows).toEqual(['rgba(255, 210, 63, 0.85)', 'rgba(255, 210, 63, 0.5)']);
   });
 
-  /**
-   * A designer trocou o toco dele por uma antena com uma bolinha na ponta, que balança
-   * com ele.
-   */
-  it('tops him with an antenna, its ball at the tip, swaying with him', () => {
-    const still = draw({ mood: 'neutral', t: 0 });
-    const swaying = draw({ mood: 'neutral', t: 0.25 });
+  it('draws the marks outside his body in the ink it is given, so they show on either theme', () => {
+    for (const mood of ['bug', 'thinking', 'broken', 'sleeping'] as const) {
+      const t = { bug: 0.2, thinking: 0.9, broken: 0.04, sleeping: 0.3 }[mood];
 
-    expect(still.sheet.calls).toContain('quadraticCurveTo(152,30,172,14)');
-    expect(still.sheet.calls).toContain(`arc(176,12,15,0,${String(Math.PI * 2)})`);
-    expect(swaying.sheet.calls).toContain(`rotate(${String(0.06 * 1.4)})`);
+      expect(draw({ mood, t, ink: '#f2f1ec' }).screen.painted.has('#f2f1ec')).toBe(true);
+    }
   });
 
-  it('stands him upright', () => {
-    const { sheet } = draw({ mood: 'neutral', t: 0 });
+  it('shows no thought before the first quarter, and all three by the end', () => {
+    const count = (t: number) =>
+      draw({ mood: 'thinking', t, ink: '#abcdef' }).screen.calls.filter(
+        (call) => call.startsWith('arc(') && !call.startsWith('arc(0,0,1,'),
+      ).length;
 
-    expect(sheet.calls).toContain('rotate(0)');
+    expect(count(0.1)).toBe(0);
+    expect(count(0.9)).toBe(3);
   });
 
-  it('crops a logo tighter than a mood, which keeps room for its marks', () => {
-    const logo = draw({ mood: 'neutral', t: 0, isFigure: true, size: 300 });
-    const stage = draw({ mood: 'neutral', t: 0, size: 340 });
+  it('draws the app icon as the designer’s squircle, with no ground shadow under it', () => {
+    const { screen } = draw({ mood: 'neutral', t: 0, form: 'icon' });
 
-    expect(logo.sheet.calls).toContain('scale(1,1)');
-    expect(stage.sheet.calls).toContain('scale(1,1)');
     expect(
-      draw({ mood: 'neutral', t: 0, isFigure: true, size: 340 }).sheet.calls,
-    ).not.toContain('scale(1,1)');
+      screen.calls.filter((call) => call.startsWith('lineTo(')).length,
+    ).toBeGreaterThan(150);
+    expect(screen.calls).not.toContain(`arc(0,0,1,0,${String(Math.PI * 2)})`);
   });
 
-  it('marks a bug with a red sticker badge, edged in white so it shows on either theme', () => {
-    const { sheet } = draw({ mood: 'bug', t: 0.2 });
+  it('crops a small face tighter than a mood, which keeps room for its marks', () => {
+    const scaleOf = (form: 'stage' | 'figure') =>
+      draw({ mood: 'neutral', t: 0, form, size: 1024 }).screen.transforms[2]?.[0] ?? 0;
 
-    expect(sheet.painted.has('#ff4d2e')).toBe(true);
+    expect(scaleOf('stage')).toBe(1);
+    expect(scaleOf('figure')).toBeGreaterThan(1.2);
   });
 
-  it('draws his thoughts as white-edged dots, one more each quarter, rising to his left clear of the antenna', () => {
-    const arcs = (t: number) =>
-      draw({ mood: 'thinking', t }).sheet.calls.filter((call) =>
-        call.startsWith('arc(62,18'),
-      );
+  it('stands still at rest, and only the running mood sweeps a line down his screen', () => {
+    const sweeps = (mood: InternMood) =>
+      draw({ mood, t: 0.5 }).screen.calls.filter((call) =>
+        call.startsWith('fillRect(182,'),
+      ).length;
 
-    expect(arcs(0.1)).toHaveLength(0);
-    expect(arcs(0.3)).toHaveLength(2);
-    expect(
-      draw({ mood: 'thinking', t: 0.8 }).sheet.calls.filter((call) =>
-        call.startsWith('arc(6,-18'),
-      ),
-    ).toHaveLength(2);
+    expect(sweeps('running')).toBe(2);
+    expect(sweeps('neutral')).toBe(1);
   });
 });

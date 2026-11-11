@@ -14,10 +14,11 @@ export const useInternViewModel = (props: IInternProps) => {
     size = INTERN.defaultSize,
     isStill = false,
     isFigure = false,
-    isSticker = false,
+    isIcon = false,
   } = props;
   const theme = useAppStore(shownThemeOf);
-  const sticker = isSticker ? INTERN.stickerShadow[theme] : null;
+  const ink = INTERN.ink[theme];
+  const form = isIcon ? 'icon' : isFigure ? 'figure' : 'stage';
   const { t } = useTranslation();
   const isCalm = useReducedMotion() ?? false;
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -39,7 +40,7 @@ export const useInternViewModel = (props: IInternProps) => {
     if (!layer) return;
 
     const draw = (phase: number) => {
-      drawIntern({ context, layer, size: pixels, mood, t: phase, isFigure, sticker });
+      drawIntern({ context, layer, size: pixels, mood, t: phase, form, ink });
     };
 
     draw(INTERN_MOODS[mood].stillAt);
@@ -55,7 +56,7 @@ export const useInternViewModel = (props: IInternProps) => {
     return () => {
       cancelAnimationFrame(frame);
     };
-  }, [mood, pixels, isFigure, sticker, isMoving]);
+  }, [mood, pixels, form, ink, isMoving]);
 
   return {
     canvasRef,

@@ -1,13 +1,10 @@
 import type { InternMood } from './InternMood';
 
-/**
- * `isStill` segura a pose parada; `isFigure` o corta justo, para um logo; `isSticker` o
- * desenha como o sticker do logo, recortado, com brilho e inclinado.
- */
+/** O humor e o tamanho dele; parado, cortado justo para um rosto, ou como o ícone. */
 export interface IInternProps {
   mood: InternMood;
   size?: number;
   isStill?: boolean;
   isFigure?: boolean;
-  isSticker?: boolean;
+  isIcon?: boolean;
 }

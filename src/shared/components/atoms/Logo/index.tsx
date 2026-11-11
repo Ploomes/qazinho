@@ -8,7 +8,7 @@ export const Logo: React.FC<ILogoProps> = (props) => {
 
   return (
     <span className={className} aria-hidden="true">
-      <Intern mood="neutral" size={size} isStill isFigure isSticker />
+      <Intern mood="neutral" size={size} isStill isIcon />
     </span>
   );
 };
