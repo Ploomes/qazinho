@@ -27,7 +27,6 @@
   --font-display-xl: 600 28px/1.2 var(--font-ui);
   --display-tracking: -0.02em;
 
-  --font-brand-lg: 700 22px/1.15 var(--font-display);
   --font-brand-xl: 700 34px/1.05 var(--font-display);
   --brand-tracking: -0.045em;
 
@@ -66,11 +65,7 @@
   --lift: 0px;
   --press: 1px;
 
-  --sticker-edge-width: 2px;
-  --sticker-tilt: -2deg;
-
   --brand-ink: #16150f;
-  --brand-screen: #0a0906;
   --notch-black: #000000;
   --brand-paper: #f2f1ec;
 
@@ -127,10 +122,6 @@
   --warn: #f2c94c;
 
   --edge: var(--line);
-  --sticker-edge: #f2f1ec;
-  --sticker-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.45), 0 1px 1px rgba(0, 0, 0, 0.4),
-    0 8px 18px -8px rgba(0, 0, 0, 0.7);
   --sticker-rest: none;
   --sticker-lift: 0 1px 2px rgba(0, 0, 0, 0.25);
   --sticker-press: none;
@@ -182,10 +173,6 @@
   --warn: #a37b00;
 
   --edge: var(--line);
-  --sticker-edge: #ffffff;
-  --sticker-shadow:
-    0 0 0 1px rgba(40, 30, 10, 0.16), 0 1px 1px rgba(40, 30, 10, 0.12),
-    0 8px 16px -8px rgba(60, 50, 30, 0.34);
   --sticker-rest: none;
   --sticker-lift: 0 1px 2px rgba(40, 30, 10, 0.1);
   --sticker-press: none;
