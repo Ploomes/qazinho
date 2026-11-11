@@ -4,12 +4,13 @@ import type {
   SidebarGroupRow,
 } from '@/app/components/Sidebar/types';
 import type { CSSProperties } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   SIDEBAR_SIGNAL,
   SIDEBAR_SIZE,
   SIDEBAR_STATUS,
+  SIDEBAR_UNDO,
 } from '@/app/components/Sidebar/constants';
 import { planSignalOf } from '@/app/components/Sidebar/library';
 import { homeCountOf, homeOf } from '@/modules/Home';
@@ -228,15 +229,24 @@ export const useSidebarViewModel = () => {
     }));
   };
 
-  const onRemoveWorkspace = (workspaceId: string) => {
-    Run.stop(workspaceId);
-    void Agent.stop(workspaceId);
-    removeWorkspace(workspaceId);
-    forgetPlanMemories(workspaceId);
-    Archive.removeWorkspace(workspaceId);
+  useEffect(() => {
+    if (removingWorkspaceId === null) return;
 
-    if (workspaceId === selectedWorkspaceId) goHome();
-  };
+    const workspaceId = removingWorkspaceId;
+    const timer = setTimeout(() => {
+      Run.stop(workspaceId);
+      void Agent.stop(workspaceId);
+      removeWorkspace(workspaceId);
+      forgetPlanMemories(workspaceId);
+      Archive.removeWorkspace(workspaceId);
+
+      if (useAppStore.getState().selectedWorkspaceId === workspaceId) goHome();
+    }, SIDEBAR_UNDO.holdMs);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [removingWorkspaceId, removeWorkspace, forgetPlanMemories, goHome]);
 
   const homeCount = homeCountOf(
     homeOf({
@@ -282,7 +292,11 @@ export const useSidebarViewModel = () => {
     onNewProject,
     onSettings: openSettings,
     onAskRemove: askRemoveWorkspace,
-    onRemoveWorkspace,
+    onUndoRemove: () => {
+      askRemoveWorkspace(null);
+    },
+    removedLabel: t('SIDEBAR.REMOVED'),
+    undoLabel: t('PLAN.UNDO'),
     onProjectSettings: openProjectSettings,
     onProSettings: openProSettings,
     markSize: SIDEBAR_SIZE.mark,

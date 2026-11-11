@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { SIDEBAR_UNDO } from '@/app/components/Sidebar/constants';
 import { useSidebarViewModel } from '@/app/components/Sidebar/hooks/useSidebarViewModel';
 import { landAsked, startRun } from '@/modules/Workspace/library';
 import {
@@ -461,78 +462,80 @@ describe('useSidebarViewModel', () => {
     });
   });
 
-  describe('onRemoveWorkspace', () => {
-    it('asks before it removes, because a workspace holds every run it did', () => {
-      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+  describe('removing a plan', () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
 
-      const { result } = renderHook(() => useSidebarViewModel());
+    const removing = (workspaceId: string) => {
+      vi.useFakeTimers();
+
+      const view = renderHook(() => useSidebarViewModel());
 
       act(() => {
-        result.current.onAskRemove('w1');
+        view.result.current.onAskRemove(workspaceId);
       });
+
+      return view;
+    };
+
+    /** O redesenho troca o "tem certeza?" por Desfazer, alguns segundos antes de apagar. */
+    it('marks the plan as deleted and keeps it while the QA can undo', () => {
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+
+      const { result } = removing('w1');
 
       expect(result.current.groups[0]!.rows[0]).toMatchObject({ isRemoving: true });
       expect(useWorkspaceStore.getState().workspaces).toHaveLength(1);
-    });
-
-    it('drops the workspace once the QA says so', () => {
-      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
-
-      const { result } = renderHook(() => useSidebarViewModel());
 
       act(() => {
-        result.current.onRemoveWorkspace('w1');
+        result.current.onUndoRemove();
+        vi.advanceTimersByTime(SIDEBAR_UNDO.holdMs);
       });
 
-      expect(useWorkspaceStore.getState().workspaces).toEqual([]);
-      expect(useWorkspaceStore.getState().removingWorkspaceId).toBeNull();
+      expect(useWorkspaceStore.getState().workspaces).toHaveLength(1);
     });
 
-    it('stops what the removed workspace had going, its run and its agent', () => {
+    it('drops the plan and stops its run and agent once the time to undo is over', () => {
       const stopRun = vi.fn(() => Promise.resolve());
       const stopAgent = vi.fn(() => Promise.resolve());
 
       window.qazinho = { ...fakeQazinhoApi('darwin'), stopRun, stopAgent };
       useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
 
-      const { result } = renderHook(() => useSidebarViewModel());
+      removing('w1');
 
       act(() => {
-        result.current.onRemoveWorkspace('w1');
+        vi.advanceTimersByTime(SIDEBAR_UNDO.holdMs);
       });
 
+      expect(useWorkspaceStore.getState().workspaces).toEqual([]);
       expect(stopRun).toHaveBeenCalledWith('w1');
       expect(stopAgent).toHaveBeenCalledWith('w1');
     });
 
-    it('leaves the workspace screen when the one on it is gone', () => {
-      useAppStore.setState({ selectedWorkspaceId: 'w1' });
-      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
-
-      const { result } = renderHook(() => useSidebarViewModel());
-
-      act(() => {
-        result.current.onRemoveWorkspace('w1');
-      });
-
-      expect(useAppStore.getState().screen).toBe('welcome');
-      expect(useAppStore.getState().selectedWorkspaceId).toBeNull();
-    });
-
-    it('stays where it is when another workspace is removed', () => {
+    it('leaves the plan screen when the one on it is gone, and stays for another', () => {
       useAppStore.setState({ selectedWorkspaceId: 'w1' });
       useWorkspaceStore.setState({
         workspaces: [makeWorkspace(), { ...makeWorkspace(), id: 'w2' }],
       });
 
-      const { result } = renderHook(() => useSidebarViewModel());
-
+      removing('w2');
       act(() => {
-        result.current.onRemoveWorkspace('w2');
+        vi.advanceTimersByTime(SIDEBAR_UNDO.holdMs);
       });
 
-      expect(useAppStore.getState().screen).toBe('workspace');
       expect(useAppStore.getState().selectedWorkspaceId).toBe('w1');
+
+      removing('w1');
+      act(() => {
+        vi.advanceTimersByTime(SIDEBAR_UNDO.holdMs);
+      });
+
+      expect(useAppStore.getState()).toMatchObject({
+        screen: 'welcome',
+        selectedWorkspaceId: null,
+      });
     });
   });
 

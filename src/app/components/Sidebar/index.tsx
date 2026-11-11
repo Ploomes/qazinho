@@ -29,7 +29,9 @@ export const Sidebar: React.FC = () => {
     onNewProject,
     onSettings,
     onAskRemove,
-    onRemoveWorkspace,
+    onUndoRemove,
+    removedLabel,
+    undoLabel,
     onProjectSettings,
     onProSettings,
     markSize,
@@ -421,23 +423,15 @@ export const Sidebar: React.FC = () => {
 
                                   {row.isRemoving ? (
                                     <span className="sidebar__confirm">
-                                      <button
-                                        type="button"
-                                        className="sidebar__confirm-yes"
-                                        onClick={() => {
-                                          onRemoveWorkspace(row.id);
-                                        }}
-                                      >
-                                        {t('SIDEBAR.REMOVE_YES')}
-                                      </button>
+                                      <span className="sidebar__confirm-text">
+                                        {removedLabel}
+                                      </span>
                                       <button
                                         type="button"
                                         className="sidebar__confirm-no"
-                                        onClick={() => {
-                                          onAskRemove(null);
-                                        }}
+                                        onClick={onUndoRemove}
                                       >
-                                        {t('SIDEBAR.REMOVE_NO')}
+                                        {undoLabel}
                                       </button>
                                     </span>
                                   ) : (

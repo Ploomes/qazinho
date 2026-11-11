@@ -569,33 +569,25 @@
 .sidebar__confirm {
   display: flex;
   flex: none;
-  gap: var(--space-2);
+  align-items: baseline;
+  gap: var(--space-3);
   margin-right: var(--space-3);
 }
 
-.sidebar__confirm-yes,
-.sidebar__confirm-no {
-  padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-xs);
-  background: transparent;
+.sidebar__confirm-text {
   color: var(--ink3);
-  font: var(--font-meta-xs);
-  cursor: pointer;
+  font: var(--font-ui-xs);
 }
 
-.sidebar__confirm-yes {
-  border-color: var(--fail);
-  color: var(--fail);
-}
-
-.sidebar__confirm-yes:hover {
-  background: var(--fail-soft);
-}
-
-.sidebar__confirm-no:hover {
-  border-color: var(--line);
+.sidebar__confirm-no {
+  padding: 0;
+  border: none;
+  background: transparent;
   color: var(--ink);
+  font: var(--font-ui-xs);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
 }
 
 .sidebar__add {
