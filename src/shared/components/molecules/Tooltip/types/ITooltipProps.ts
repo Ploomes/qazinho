@@ -5,4 +5,5 @@ export interface ITooltipProps {
   content: ReactNode;
   side?: 'below' | 'right';
   isOff?: boolean;
+  isWide?: boolean;
 }

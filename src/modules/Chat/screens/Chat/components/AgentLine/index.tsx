@@ -22,6 +22,7 @@ export const AgentLine: React.FC = () => {
     <div className="agent-line">
       {isSessionShown && (
         <Tooltip
+          isWide
           content={
             <SessionTip
               title={sessionTip.title}

@@ -3,8 +3,11 @@ import type { CSSProperties } from 'react';
 import { useRef, useState } from 'react';
 import { TOOLTIP } from '@/shared/components/molecules/Tooltip/constants';
 
-export const useTooltipViewModel = (props: Pick<ITooltipProps, 'side' | 'isOff'>) => {
+export const useTooltipViewModel = (
+  props: Pick<ITooltipProps, 'side' | 'isOff' | 'isWide'>,
+) => {
   const isBeside = props.side === 'right';
+  const maxWidth = props.isWide === true ? TOOLTIP.wideMaxWidthPx : TOOLTIP.maxWidthPx;
   const anchorRef = useRef<HTMLSpanElement>(null);
   const [isOpen, setOpen] = useState(false);
   const [place, setPlace] = useState<{
@@ -32,7 +35,7 @@ export const useTooltipViewModel = (props: Pick<ITooltipProps, 'side' | 'isOff'>
       : { opacity: 0, y: place?.isAbove === true ? 4 : -4 },
     shown: isBeside ? { opacity: 1, x: 0 } : { opacity: 1, y: 0 },
     style: {
-      '--tooltip-max': `${String(TOOLTIP.maxWidthPx)}px`,
+      '--tooltip-max': `${String(maxWidth)}px`,
       '--tooltip-tail-size': `${String(TOOLTIP.tailPx)}px`,
       ...(place === null
         ? {}
@@ -66,7 +69,7 @@ export const useTooltipViewModel = (props: Pick<ITooltipProps, 'side' | 'isOff'>
                 tail: 0,
                 isAbove: false,
               }
-            : box.right < TOOLTIP.maxWidthPx + TOOLTIP.edgePx
+            : box.right < maxWidth + TOOLTIP.edgePx
               ? {
                   top,
                   side: Math.max(box.left, TOOLTIP.edgePx),

@@ -19,6 +19,13 @@ describe('useTooltipViewModel', () => {
     });
   });
 
+  /** Um conteúdo de largura fixa, como o uso da sessão, vazava pela borda do balão. */
+  it('grows wider for a tip whose content holds its own width', () => {
+    const { result } = renderHook(() => useTooltipViewModel({ isWide: true }));
+
+    expect(result.current.style).toMatchObject({ '--tooltip-max': '288px' });
+  });
+
   it('opens on arrival and closes on leaving', () => {
     const { result } = renderHook(() => useTooltipViewModel({}));
 

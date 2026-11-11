@@ -1,5 +1,6 @@
 export const TOOLTIP = {
   maxWidthPx: 240,
+  wideMaxWidthPx: 288,
   gapPx: 6,
   belowGapPx: 6,
   edgePx: 32,
