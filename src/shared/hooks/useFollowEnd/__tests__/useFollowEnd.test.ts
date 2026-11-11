@@ -94,6 +94,39 @@ describe('useFollowEnd', () => {
 
   const frames = () => new Promise((resolve) => setTimeout(resolve, 50));
 
+  /** Abrir uma run no meio do chat rolava até o fim e escondia o topo do que foi aberto. */
+  it('keeps what the reader clicked in place while it grows, instead of running to the end', async () => {
+    const { list } = watched();
+
+    list.dispatchEvent(new Event('pointerdown'));
+    window.dispatchEvent(new Event('pointerup'));
+    list.append(document.createElement('div'));
+    await frames();
+
+    expect(list.scrollTo).not.toHaveBeenCalled();
+  });
+
+  it('follows again once the reader scrolls back to the end', async () => {
+    const { list, result } = watched();
+
+    list.dispatchEvent(new Event('pointerdown'));
+    window.dispatchEvent(new Event('pointerup'));
+    list.append(document.createElement('div'));
+    await frames();
+
+    list.scrollTop = 800;
+    act(() => {
+      result.current.onFollowScroll();
+    });
+    vi.spyOn(performance, 'now').mockReturnValue(performance.now() + 2_000);
+    list.append(document.createElement('div'));
+
+    await vi.waitFor(() => {
+      expect(list.scrollTo).toHaveBeenCalledWith({ top: 1000, behavior: 'smooth' });
+    });
+    vi.restoreAllMocks();
+  });
+
   it('stops following when the reader scrolls up with the wheel', async () => {
     const { list, result } = watched();
 

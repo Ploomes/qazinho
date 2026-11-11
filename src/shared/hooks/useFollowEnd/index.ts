@@ -13,6 +13,8 @@ export const useFollowEnd = <T extends HTMLElement>(props: {
   const previousTop = useRef(0);
   const intentAt = useRef(Number.NEGATIVE_INFINITY);
   const isPressing = useRef(false);
+  const touchedAt = useRef(Number.NEGATIVE_INFINITY);
+  const pressedTop = useRef(0);
 
   const reread = (props: { byUser: boolean }) => {
     const list = listRef.current;
@@ -47,6 +49,7 @@ export const useFollowEnd = <T extends HTMLElement>(props: {
     if (callKey === null) return;
 
     isFollowing.current = true;
+    touchedAt.current = Number.NEGATIVE_INFINITY;
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' });
   }, [callKey]);
 
@@ -59,6 +62,12 @@ export const useFollowEnd = <T extends HTMLElement>(props: {
     const observer = new MutationObserver(() => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
+        if (performance.now() - touchedAt.current < FOLLOW_END.touchHoldMs) {
+          isFollowing.current = false;
+
+          return;
+        }
+
         if (isFollowing.current)
           list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
       });
@@ -68,11 +77,17 @@ export const useFollowEnd = <T extends HTMLElement>(props: {
     };
     const press = () => {
       isPressing.current = true;
+      touchedAt.current = performance.now();
+      pressedTop.current = list.scrollTop;
     };
     const release = () => {
       if (!isPressing.current) return;
 
       isPressing.current = false;
+
+      if (list.scrollTop !== pressedTop.current)
+        touchedAt.current = Number.NEGATIVE_INFINITY;
+
       previousTop.current = list.scrollTop;
       reread({ byUser: false });
     };
