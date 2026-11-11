@@ -45,6 +45,7 @@ export const en = {
     TIP_USED: '{{percent}}% used',
     TIP_RESETS: 'resets at {{resets}}',
     TIP_NOTE: 'Reported by {{agent}}. QAzinho only reads it.',
+    TIP_UNKNOWN: '{{agent}} has not reported the session use yet.',
   },
   UPDATE: {
     ACTION: 'Update',

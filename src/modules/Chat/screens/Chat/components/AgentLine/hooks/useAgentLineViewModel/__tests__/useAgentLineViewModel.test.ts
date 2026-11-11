@@ -22,35 +22,32 @@ beforeEach(() => {
 });
 
 describe('useAgentLineViewModel', () => {
-  describe('isSessionShown', () => {
-    /** O QA gostava do anel que dizia quanto da sessão já foi: ele fica sempre à vista. */
-    it('shows the ring whenever the agent reported its session, filled by what is used', () => {
+  describe('the session ring', () => {
+    /** O QA quer o anel e o número sempre à vista, sem esperar a sessão acabar. */
+    it('shows the ring and the percent at any use, filled by what is used', () => {
       usageOf(0.3);
 
       expect(renderHook(() => useAgentLineViewModel()).result.current).toMatchObject({
-        isSessionShown: true,
         sessionUsed: 0.3,
+        hasSessionLabel: true,
+        sessionLabel: '30%',
         gaugeLabel: '30% used',
       });
     });
 
-    /** O número em palavras só aparece quando a sessão está acabando. */
-    it('says the percent in words only from 80% used', () => {
-      usageOf(0.79);
-      expect(
-        renderHook(() => useAgentLineViewModel()).result.current.hasSessionLabel,
-      ).toBe(false);
+    /** Um 0% inventado seria um mock: sem o que o agente informou, o anel fica vazio. */
+    it('keeps the ring empty, with no number, until the agent reports its session', () => {
+      const { result } = renderHook(() => useAgentLineViewModel());
 
-      usageOf(0.8);
-      expect(
-        renderHook(() => useAgentLineViewModel()).result.current.hasSessionLabel,
-      ).toBe(true);
-    });
-
-    it('does NOT show a session the agent never reported', () => {
-      expect(
-        renderHook(() => useAgentLineViewModel()).result.current.isSessionShown,
-      ).toBe(false);
+      expect(result.current).toMatchObject({
+        sessionUsed: 0,
+        hasSessionLabel: false,
+        gaugeLabel: 'Claude Code has not reported the session use yet.',
+      });
+      expect(result.current.sessionTip.rows).toEqual([]);
+      expect(result.current.sessionTip.note).toBe(
+        'Claude Code has not reported the session use yet.',
+      );
     });
   });
 

@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { AGENT_LINE } from '@/modules/Chat/screens/Chat/components/AgentLine/constants';
 import { formatResetsAt } from '@/modules/Chat/screens/Chat/components/AgentLine/library';
 import { useModelInUse } from '@/modules/Settings';
 import { gaugeTone } from '@/shared/components/atoms/Gauge/library';
@@ -24,22 +23,28 @@ export const useAgentLineViewModel = () => {
     agentLabel: t('USAGE.AGENT', { agent, model: modelName }),
     modelLabel: modelName === '' ? agent : modelName,
     isModelMenuOpen: modelMenuAt === 'composer',
-    isSessionShown: sessionUsed !== null,
     sessionUsed: sessionUsed ?? 0,
-    hasSessionLabel: sessionUsed !== null && sessionUsed >= AGENT_LINE.sessionShownFrom,
+    hasSessionLabel: sessionUsed !== null,
     sessionLabel: t('USAGE.SESSION_SHORT', { percent: sessionPercent }),
-    gaugeLabel: t('USAGE.TIP_USED', { percent: sessionPercent }),
+    gaugeLabel:
+      sessionUsed === null
+        ? t('USAGE.TIP_UNKNOWN', { agent })
+        : t('USAGE.TIP_USED', { percent: sessionPercent }),
     sessionTip: {
       title: t('USAGE.TIP_TITLE', { agent }),
       rows: [
-        {
-          id: 'session',
-          label: t('USAGE.TIP_SESSION'),
-          value: t('USAGE.TIP_USED', { percent: sessionPercent }),
-          detail: resets === '' ? null : t('USAGE.TIP_RESETS', { resets }),
-          fillWidth: `${String(sessionPercent)}%`,
-          fillClassName: `session-tip__fill session-tip__fill--${gaugeTone(1 - (sessionUsed ?? 0))}`,
-        },
+        ...(sessionUsed === null
+          ? []
+          : [
+              {
+                id: 'session',
+                label: t('USAGE.TIP_SESSION'),
+                value: t('USAGE.TIP_USED', { percent: sessionPercent }),
+                detail: resets === '' ? null : t('USAGE.TIP_RESETS', { resets }),
+                fillWidth: `${String(sessionPercent)}%`,
+                fillClassName: `session-tip__fill session-tip__fill--${gaugeTone(1 - (sessionUsed ?? 0))}`,
+              },
+            ]),
         ...(weekUsed === null
           ? []
           : [
@@ -53,7 +58,10 @@ export const useAgentLineViewModel = () => {
               },
             ]),
       ],
-      note: t('USAGE.TIP_NOTE', { agent }),
+      note:
+        sessionUsed === null
+          ? t('USAGE.TIP_UNKNOWN', { agent })
+          : t('USAGE.TIP_NOTE', { agent }),
     },
     onToggleModelMenu: () => {
       toggleModelMenu('composer');

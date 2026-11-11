@@ -47,6 +47,7 @@ export const pt: typeof en = {
     TIP_USED: '{{percent}}% usado',
     TIP_RESETS: 'reseta às {{resets}}',
     TIP_NOTE: 'Informado pelo {{agent}}. O QAzinho só lê.',
+    TIP_UNKNOWN: 'O {{agent}} ainda não informou o uso da sessão.',
   },
   UPDATE: {
     ACTION: 'Atualizar',

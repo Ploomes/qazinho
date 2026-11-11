@@ -12,7 +12,6 @@ export const AgentLine: React.FC = () => {
     agentLabel,
     modelLabel,
     isModelMenuOpen,
-    isSessionShown,
     sessionUsed,
     hasSessionLabel,
     sessionLabel,
@@ -23,23 +22,21 @@ export const AgentLine: React.FC = () => {
 
   return (
     <div className="agent-line">
-      {isSessionShown && (
-        <Tooltip
-          isWide
-          content={
-            <SessionTip
-              title={sessionTip.title}
-              rows={sessionTip.rows}
-              note={sessionTip.note}
-            />
-          }
-        >
-          <span className="agent-line__session" tabIndex={0}>
-            <Gauge value={sessionUsed} fills="used" label={gaugeLabel} />
-            {hasSessionLabel && <span>{sessionLabel}</span>}
-          </span>
-        </Tooltip>
-      )}
+      <Tooltip
+        isWide
+        content={
+          <SessionTip
+            title={sessionTip.title}
+            rows={sessionTip.rows}
+            note={sessionTip.note}
+          />
+        }
+      >
+        <span className="agent-line__session" tabIndex={0}>
+          <Gauge value={sessionUsed} fills="used" label={gaugeLabel} />
+          {hasSessionLabel && <span>{sessionLabel}</span>}
+        </span>
+      </Tooltip>
 
       <Tooltip content={agentLabel}>
         <button
