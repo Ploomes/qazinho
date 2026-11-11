@@ -56,7 +56,7 @@ export const useAgentPanelViewModel = () => {
     isChatOnly,
     metaKey,
     metaCases,
-    name: workspace?.name ?? '',
+    name: workspace?.name === '' ? t('WORKSPACE.UNNAMED') : (workspace?.name ?? ''),
     onRename: (name: string) => {
       if (workspace !== null) renameWorkspace({ workspaceId: workspace.id, name });
     },

@@ -110,4 +110,24 @@ describe('appendUserMessage', () => {
 
     expect(workspace.chat[0]).toMatchObject({ kind: 'user', text: '', command });
   });
+
+  it('names a plan born without a name after the first thing the QA asks', () => {
+    const workspace = appendUserMessage({
+      workspace: { ...makeWorkspace(), name: '' },
+      text: 'o checkout com cupom. ',
+      at: '19:54',
+    });
+
+    expect(workspace.name).toBe('O checkout com cupom');
+  });
+
+  it('does NOT rename a plan the QA already named', () => {
+    const workspace = appendUserMessage({
+      workspace: makeWorkspace(),
+      text: 'o checkout com cupom',
+      at: '19:54',
+    });
+
+    expect(workspace.name).toBe('Checkout regression');
+  });
 });

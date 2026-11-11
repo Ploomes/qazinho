@@ -32,6 +32,7 @@ export const useHomeViewModel = () => {
     developed,
     recent,
     shown: HOME.recentShown,
+    unnamed: t('WORKSPACE.UNNAMED'),
   });
 
   const unknownKey = workspaces

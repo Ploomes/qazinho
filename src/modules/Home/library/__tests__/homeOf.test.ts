@@ -21,6 +21,7 @@ const home = (
     developed: {},
     recent: [],
     shown: 4,
+    unnamed: 'New plan',
     ...over,
   });
 
@@ -134,6 +135,7 @@ describe('homeOf', () => {
           { workspaceId: 'w1', at: 0 },
         ],
         shown: 4,
+        unnamed: 'New plan',
       },
     );
 
@@ -150,6 +152,7 @@ describe('homeOf', () => {
         { workspaceId: 'w1', at: 1 },
       ],
       shown: 1,
+      unnamed: 'New plan',
     });
 
     expect(shown.recent).toHaveLength(1);
@@ -163,6 +166,7 @@ describe('homeOf', () => {
         developed: {},
         recent: [{ workspaceId: 'w1', at: 0 }],
         shown: 4,
+        unnamed: 'New plan',
       }),
     ).toMatchObject({ failed: [], recent: [] });
   });

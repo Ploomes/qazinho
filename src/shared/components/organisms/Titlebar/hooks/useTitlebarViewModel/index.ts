@@ -41,7 +41,10 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
         : screen === 'workspace' && workspace !== null
           ? [
               { key: 'project', label: project?.name ?? '' },
-              { key: 'plan', label: workspace.name },
+              {
+                key: 'plan',
+                label: workspace.name === '' ? t('WORKSPACE.UNNAMED') : workspace.name,
+              },
             ].filter(({ label }) => label !== '')
           : projects.length > 0
             ? [{ key: 'home', label: t('HOME.TITLE') }]

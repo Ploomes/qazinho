@@ -174,7 +174,7 @@ export const useSidebarViewModel = () => {
         return {
           kind: 'workspace' as const,
           id: workspace.id,
-          name: workspace.name,
+          name: workspace.name === '' ? t('WORKSPACE.UNNAMED') : workspace.name,
           platform:
             project.targets.find(({ id }) => id === workspace.targetId)?.kind ?? null,
           meta,
@@ -192,8 +192,13 @@ export const useSidebarViewModel = () => {
                 },
           label:
             said === null
-              ? workspace.name
-              : t('SIDEBAR.ROW_LABEL', { name: workspace.name, status: said }),
+              ? workspace.name === ''
+                ? t('WORKSPACE.UNNAMED')
+                : workspace.name
+              : t('SIDEBAR.ROW_LABEL', {
+                  name: workspace.name === '' ? t('WORKSPACE.UNNAMED') : workspace.name,
+                  status: said,
+                }),
           isSelected: workspace.id === selectedWorkspaceId,
           isRemoving: workspace.id === removingWorkspaceId,
         };
@@ -255,7 +260,14 @@ export const useSidebarViewModel = () => {
   };
 
   const homeCount = homeCountOf(
-    homeOf({ projects, workspaces, developed: {}, recent: [], shown: 0 }),
+    homeOf({
+      projects,
+      workspaces,
+      developed: {},
+      recent: [],
+      shown: 0,
+      unnamed: '',
+    }),
   );
 
   return {

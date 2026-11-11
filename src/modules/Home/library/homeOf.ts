@@ -23,6 +23,7 @@ export function homeOf(props: {
   developed: Record<string, string[]>;
   recent: { workspaceId: string; at: number }[];
   shown: number;
+  unnamed: string;
 }): IHome {
   const asking: IHomeAsking[] = [];
   const going: (IHomeRunning | IHomePaused)[] = [];
@@ -37,7 +38,7 @@ export function homeOf(props: {
 
     const base = {
       workspaceId: workspace.id,
-      plan: workspace.name,
+      plan: workspace.name === '' ? props.unnamed : workspace.name,
       project: project.name,
     };
     const live =
@@ -103,6 +104,7 @@ function recentOf(props: {
   projects: IProject[];
   workspaces: IWorkspace[];
   recent: { workspaceId: string; at: number }[];
+  unnamed: string;
 }): IHomeRecent[] {
   return props.recent.flatMap(({ workspaceId, at }) => {
     const workspace = props.workspaces.find(({ id }) => id === workspaceId);
@@ -113,7 +115,7 @@ function recentOf(props: {
       : [
           {
             workspaceId,
-            plan: workspace.name,
+            plan: workspace.name === '' ? props.unnamed : workspace.name,
             projectId: project.id,
             project: project.name,
             at,

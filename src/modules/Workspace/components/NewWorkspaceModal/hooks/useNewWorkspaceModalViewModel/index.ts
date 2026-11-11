@@ -24,7 +24,7 @@ export const useNewWorkspaceModalViewModel = () => {
   const chosen = targets.find(({ id }) => id === targetId) ?? targets[0] ?? null;
 
   const onCreate = () => {
-    if (name.trim().length === 0 || project === null || chosen === null) return;
+    if (project === null || chosen === null) return;
 
     const id = `w-${String(Date.now())}`;
 
@@ -83,7 +83,7 @@ export const useNewWorkspaceModalViewModel = () => {
     })),
     footerHint: chosen === null ? t('NEW_WORKSPACE.NEEDS_TARGET') : undefined,
     chosenTargetId: chosen?.id ?? null,
-    canCreate: name.trim().length > 0 && chosen !== null,
+    canCreate: chosen !== null,
     onNameChange: setName,
     onCancel: closeModal,
     onCreate,

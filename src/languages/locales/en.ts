@@ -147,6 +147,7 @@ export const en = {
   },
   WORKSPACE: {
     RENAME: 'Rename plan',
+    UNNAMED: 'New plan',
     DESIGN_OPEN: 'Open the design in Figma',
     DESIGN_DROP: 'Stop checking against this design',
     RUN_PLAN: 'Run plan',
@@ -851,7 +852,7 @@ export const en = {
   NEW_WORKSPACE: {
     TITLE: 'New plan',
     NAME: 'What are you testing',
-    NAME_PLACEHOLDER: 'Checkout regression',
+    NAME_PLACEHOLDER: 'Optional',
     PLATFORM: 'Platform',
     CREATE: 'Create plan',
     NEEDS_TARGET: 'This project has no platform to run on',

@@ -1,10 +1,11 @@
 import type { UserCommand } from '@/modules/Chat/types';
 import type { IWorkspace } from '@/modules/Workspace';
 import type { IChatAttachment } from '@/shared/types';
+import { planNameOf } from '@/modules/Home/library/planNameOf';
 
 /**
- * Põe o que o QA, ou o agente de código dele, mandou no fim do chat: as palavras sem
- * espaços nas pontas, o que mencionou, o comando que deu e os arquivos que anexou.
+ * Põe o que o QA, ou o agente de código dele, mandou no fim do chat, e dá o nome ao plano
+ * que nasceu sem um.
  */
 export function appendUserMessage(props: {
   workspace: IWorkspace;
@@ -24,6 +25,7 @@ export function appendUserMessage(props: {
 
   return {
     ...workspace,
+    name: workspace.name === '' && trimmed !== '' ? planNameOf(trimmed) : workspace.name,
     chat: [
       ...workspace.chat,
       {

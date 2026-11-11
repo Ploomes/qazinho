@@ -149,6 +149,7 @@ export const pt: typeof en = {
   },
   WORKSPACE: {
     RENAME: 'Renomear plano',
+    UNNAMED: 'Plano novo',
     DESIGN_OPEN: 'Abrir o design no Figma',
     DESIGN_DROP: 'Parar de conferir com este design',
     RUN_PLAN: 'Rodar plano',
@@ -855,7 +856,7 @@ export const pt: typeof en = {
   NEW_WORKSPACE: {
     TITLE: 'Novo plano',
     NAME: 'O que você vai testar',
-    NAME_PLACEHOLDER: 'Regressão do checkout',
+    NAME_PLACEHOLDER: 'Opcional',
     PLATFORM: 'Plataforma',
     CREATE: 'Criar plano',
     NEEDS_TARGET: 'Este projeto não tem plataforma para rodar',

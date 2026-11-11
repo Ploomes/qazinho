@@ -88,7 +88,7 @@ export const useWorkspaceViewModel = () => {
     } as CSSProperties,
     tab,
     bugCount: workspace?.bugCount ?? 0,
-    name: workspace?.name ?? '',
+    name: workspace?.name === '' ? t('WORKSPACE.UNNAMED') : (workspace?.name ?? ''),
     metaKey,
     metaCases,
     toDevelopLine:
