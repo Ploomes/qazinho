@@ -107,7 +107,7 @@ export const useSidebarViewModel = () => {
       tip: [
         ...(pending > 0 ? [t('SIDEBAR.PRO_PENDING', { count: pending })] : []),
         ...(updates > 0 ? [t('SIDEBAR.PRO_UPDATES', { count: updates })] : []),
-      ].join(' · '),
+      ].join(', '),
       pending,
       updates,
       hasPending: pending > 0,

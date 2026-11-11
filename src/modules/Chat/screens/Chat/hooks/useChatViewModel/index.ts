@@ -333,12 +333,17 @@ export const useChatViewModel = () => {
       ? t('CHAT.EXPLORE_SCREENS_ONE')
       : t('CHAT.EXPLORE_SCREENS_OTHER', { count });
 
-  const runTitleOf = (message: IRunMessage, saved: IRun | null) => {
+  const runTitleOf = (props: {
+    message: IRunMessage;
+    saved: IRun | null;
+    when: string;
+  }) => {
+    const { message, saved, when } = props;
     const end = RUN_ENDS[message.endedBy];
 
     if (message.explored !== undefined) {
       const explored = {
-        id: message.runId,
+        when,
         screens: screensOf(message.explored.screens),
         bugs:
           message.explored.bugs === 1
@@ -362,14 +367,14 @@ export const useChatViewModel = () => {
       blocked: counts?.blocked ?? 0,
       passed,
       say: (key, values) => t(key, values),
-    }).join(' · ');
+    }).join(', ');
 
     if (told === '') return t('CHAT.RUN_SECTION', { id: message.runId });
 
     return end === null
-      ? t('CHAT.RUN_CARD_TITLE', { id: message.runId, told })
+      ? t('CHAT.RUN_CARD_TITLE', { when, told })
       : t('CHAT.RUN_CARD_TITLE_ENDED', {
-          id: message.runId,
+          when,
           told,
           ended: t(end.labelKey),
         });
@@ -445,25 +450,29 @@ export const useChatViewModel = () => {
     );
     const bugCount = item.messages.length - shownMessages.length;
 
+    const day =
+      saved !== null
+        ? dayLabelOf({
+            day: runDayOf(saved),
+            now: new Date(),
+            language: i18n.language,
+            words: { today: t('COMMON.TODAY'), yesterday: t('COMMON.YESTERDAY') },
+          })
+        : isLive
+          ? t('COMMON.TODAY')
+          : '';
+    const when =
+      day === ''
+        ? t('CHAT.RUN_WHEN', { at: item.at })
+        : t('CHAT.RUN_WHEN_DAY', { day, at: item.at });
+
     return {
       kind: 'run' as const,
       key: `run-${item.runId}`,
       runId: item.runId,
-      at: item.at,
-      day:
-        saved !== null
-          ? dayLabelOf({
-              day: runDayOf(saved),
-              now: new Date(),
-              language: i18n.language,
-              words: { today: t('COMMON.TODAY'), yesterday: t('COMMON.YESTERDAY') },
-            })
-          : isLive
-            ? t('COMMON.TODAY')
-            : '',
       title:
         item.card !== null
-          ? runTitleOf(item.card, saved)
+          ? runTitleOf({ message: item.card, saved, when })
           : isLive && workspace?.isExploring === true
             ? t(
                 question !== null

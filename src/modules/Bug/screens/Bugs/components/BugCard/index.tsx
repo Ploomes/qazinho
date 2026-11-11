@@ -121,7 +121,7 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
                   )}
                   {provenance.run !== null && (
                     <>
-                      {' · '}
+                      {', '}
                       <button
                         type="button"
                         className="bug-card__link"
@@ -133,13 +133,13 @@ export const BugCard: React.FC<IBugCardProps> = (props) => {
                   )}
                   {provenance.seen !== null && (
                     <>
-                      {' · '}
+                      {', '}
                       {provenance.seen}
                     </>
                   )}
                   {frameLabel !== null && (
                     <>
-                      {' · '}
+                      {', '}
                       <button
                         type="button"
                         className="bug-card__link"

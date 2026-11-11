@@ -190,7 +190,7 @@ export const useRunsViewModel = () => {
       item.startedAt,
     ]
       .filter((part) => part !== '')
-      .join(' · '),
+      .join(', '),
   });
 
   const onOpenBug = (bugId: string) => {

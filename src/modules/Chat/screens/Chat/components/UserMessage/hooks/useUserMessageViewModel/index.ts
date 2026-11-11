@@ -42,7 +42,7 @@ export const useUserMessageViewModel = (props: IUserMessageProps) => {
                         text:
                           command.frameworks.length === 0
                             ? t('COMMANDS.IMPORT_UNKNOWN')
-                            : command.frameworks.join(' · '),
+                            : command.frameworks.join(', '),
                         isStrong: false,
                       },
                     ]

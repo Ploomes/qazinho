@@ -106,7 +106,7 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
               label: option.label,
               tip: [option.description, names.join(', ')]
                 .filter((part) => part !== '')
-                .join(' · '),
+                .join(', '),
               note: option.description,
               hasNote: option.description !== '' && !isAnswered,
               isPicked: answer.picked.includes(option.label),

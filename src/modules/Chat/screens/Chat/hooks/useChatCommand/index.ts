@@ -72,7 +72,7 @@ export const useChatCommand = (props: {
   const frameworksText = (one: IImportSource) =>
     one.frameworks.length === 0
       ? t('COMMANDS.IMPORT_UNKNOWN')
-      : one.frameworks.map(({ id }) => id).join(' · ');
+      : one.frameworks.map(({ id }) => id).join(', ');
   const slash = command === null && /^\/\S*$/.test(draft) ? draft.slice(1) : null;
   const step =
     command === null

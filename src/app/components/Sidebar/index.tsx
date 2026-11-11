@@ -148,7 +148,6 @@ export const Sidebar: React.FC = () => {
                             <span className="sidebar__tip-name">{row.name}</span>
                             <span className="sidebar__tip-detail">
                               <span style={{ color: row.tone }}>{row.statusLabel}</span>
-                              <span aria-hidden="true">·</span>
                               <span>{row.meta}</span>
                             </span>
                           </span>

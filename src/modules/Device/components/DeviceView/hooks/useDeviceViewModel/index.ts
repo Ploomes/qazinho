@@ -266,7 +266,7 @@ export const useDeviceViewModel = () => {
         : tallyPartsOf({
             ...countVerdicts(lastRun.cases.map(({ steps }) => caseVerdict(steps))),
             say: (key, values) => t(key, values),
-          }).join(' · '),
+          }).join(', '),
     offMood:
       lastRun === null ? ('sleeping' as const) : moodOfStatus(workspace?.status ?? null),
     ended:

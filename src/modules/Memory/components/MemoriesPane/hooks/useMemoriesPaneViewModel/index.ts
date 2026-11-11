@@ -33,7 +33,7 @@ export const useMemoriesPaneViewModel = ({ projectId }: IMemoriesPaneProps) => {
     text: memory.text,
     where: [planName, memory.target === 'all' ? null : t(TARGET_NAME_KEYS[memory.target])]
       .filter((part) => part !== null)
-      .join(' · '),
+      .join(', '),
     onForget: () => {
       onForget(memory.id);
     },

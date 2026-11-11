@@ -720,7 +720,8 @@
 
 .sidebar__tip-detail {
   display: flex;
-  gap: 6px;
+  flex-direction: column;
+  gap: var(--space-1);
   color: var(--ink3);
   font: var(--font-meta-xs);
 }

@@ -96,7 +96,7 @@ export const useRunEvents = () => {
               count: bugs,
             }),
           ]),
-    ].join(' · ');
+    ].join(', ');
 
     Run.alert({
       workspaceId: workspace.id,

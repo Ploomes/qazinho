@@ -19,7 +19,7 @@ export const useImportFieldViewModel = (props: IImportFieldProps) => {
         ? ''
         : folder.frameworks.length === 0
           ? t('COMMANDS.IMPORT_UNKNOWN')
-          : folder.frameworks.map(({ id }) => id).join(' · '),
+          : folder.frameworks.map(({ id }) => id).join(', '),
     path: folder?.dir ?? '',
     pickLabel: t('NEW_WORKSPACE.IMPORT_PICK'),
     removeLabel: t('NEW_WORKSPACE.IMPORT_REMOVE'),

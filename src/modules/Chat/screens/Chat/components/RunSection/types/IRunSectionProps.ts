@@ -6,8 +6,6 @@ import type { ReactNode } from 'react';
  * que disse embaixo.
  */
 export interface IRunSectionProps {
-  at: string;
-  day: string;
   title: string;
   facts: string;
   isLive: boolean;

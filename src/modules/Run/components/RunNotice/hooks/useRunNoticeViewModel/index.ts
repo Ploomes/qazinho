@@ -77,7 +77,7 @@ export const useRunNoticeViewModel = () => {
             ? t('CHAT.EXPLORE_SCREENS_ONE')
             : t('CHAT.EXPLORE_SCREENS_OTHER', { count: screens }),
           ...(bugsSaid === '' ? [] : [bugsSaid]),
-        ].join(' · ')
+        ].join(', ')
       : bugsSaid,
     openLabel: t('RUN.NOTICE_OPEN'),
     canWatch: run?.video !== null && run?.video !== undefined,

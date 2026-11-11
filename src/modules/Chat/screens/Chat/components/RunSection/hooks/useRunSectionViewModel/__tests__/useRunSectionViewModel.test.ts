@@ -7,8 +7,6 @@ import { useRunSectionViewModel } from '@/modules/Chat/screens/Chat/components/R
 const section = (props: Partial<IRunSectionProps> = {}) =>
   renderHook(() =>
     useRunSectionViewModel({
-      at: '09:41',
-      day: 'today',
       title: 'Run r-01',
       facts: '3:45',
       isLive: false,
@@ -49,14 +47,10 @@ describe('useRunSectionViewModel', () => {
     });
   });
 
-  it('writes when the run began and how long it took under the title', () => {
-    expect(section().facts).toBe('today 09:41 · 3:45');
-    expect(section({ facts: '' }).facts).toBe('today 09:41');
-  });
-
-  it('leaves out the day it does not know, and the time a run has not got yet', () => {
-    expect(section({ day: '' }).facts).toBe('09:41 · 3:45');
-    expect(section({ day: '', at: '', facts: '' }).facts).toBe('');
+  /** O dia e a hora entram no título, numa frase; ao lado fica só quanto a run anda. */
+  it('writes only how long a live run took beside the title', () => {
+    expect(section().facts).toBe('3:45');
+    expect(section({ facts: '' }).facts).toBe('');
   });
 
   it('offers the report only once the run has one', () => {
