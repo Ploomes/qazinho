@@ -668,20 +668,17 @@ describe('useSidebarViewModel', () => {
   });
 
   describe('onToggleProject', () => {
-    it('starts the project of the selected workspace open, and the others closed', () => {
+    /** O mock do redesenho mostra a árvore inteira: todo projeto com os planos dele. */
+    it('starts every project open in the wide sidebar', () => {
       useAppStore.setState({
         projects: [PROJECT, { id: 'p2', name: 'Loja', targets: [], repositories: [] }],
-        selectedWorkspaceId: 'w1',
-      });
-      useWorkspaceStore.setState({
-        workspaces: [{ ...makeWorkspace(), projectId: 'p1' }],
       });
 
       const { result } = renderHook(() => useSidebarViewModel());
 
       expect(result.current.groups.map((group) => group.isExpanded)).toEqual([
         true,
-        false,
+        true,
       ]);
     });
 
@@ -692,8 +689,12 @@ describe('useSidebarViewModel', () => {
 
       const { result } = renderHook(() => useSidebarViewModel());
 
+      act(() => {
+        result.current.onToggleProject('p2');
+      });
+
       expect(result.current.groups.map((group) => group.isExpanded)).toEqual([
-        false,
+        true,
         false,
       ]);
 
@@ -702,46 +703,7 @@ describe('useSidebarViewModel', () => {
       });
 
       expect(result.current.groups.map((group) => group.isExpanded)).toEqual([
-        false,
         true,
-      ]);
-
-      act(() => {
-        result.current.onToggleProject('p2');
-      });
-
-      expect(result.current.groups.map((group) => group.isExpanded)).toEqual([
-        false,
-        false,
-      ]);
-    });
-
-    it('follows the selection: the newly selected project opens, without a manual toggle', () => {
-      useAppStore.setState({
-        projects: [PROJECT, { id: 'p2', name: 'Loja', targets: [], repositories: [] }],
-        selectedWorkspaceId: 'w1',
-      });
-      useWorkspaceStore.setState({
-        workspaces: [
-          { ...makeWorkspace(), id: 'w1', projectId: 'p1' },
-          { ...makeWorkspace(), id: 'w2', projectId: 'p2' },
-        ],
-      });
-
-      const { result, rerender } = renderHook(() => useSidebarViewModel());
-
-      expect(result.current.groups.map((group) => group.isExpanded)).toEqual([
-        true,
-        false,
-      ]);
-
-      act(() => {
-        useAppStore.setState({ selectedWorkspaceId: 'w2' });
-      });
-      rerender();
-
-      expect(result.current.groups.map((group) => group.isExpanded)).toEqual([
-        false,
         true,
       ]);
     });

@@ -19,8 +19,11 @@
   box-shadow: var(--sticker-hero);
 }
 
-.search-palette__panel .search-list__input {
+.search-palette__panel .search-list__input,
+.search-palette__panel .search-list__input:focus {
   border-color: transparent;
+  outline: none;
   background: transparent;
+  box-shadow: none;
   font: var(--font-ui-md);
 }

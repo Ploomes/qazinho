@@ -59,7 +59,7 @@ export const useSidebarViewModel = () => {
   );
 
   const isProjectExpanded = (projectId: string) =>
-    expansions[projectId] ?? projectId === selectedProjectId;
+    expansions[projectId] ?? (!isShut || projectId === selectedProjectId);
 
   const proBadgeOf = (project: { id: string; name: string }): ISidebarProBadge | null => {
     const share = shares.find(({ projectId }) => projectId === project.id);
