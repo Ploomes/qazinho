@@ -1,18 +1,24 @@
 import type {
+  ISidebarFlyout,
+  ISidebarFlyoutPlace,
   ISidebarProBadge,
   ISidebarProjectGroup,
+  ISidebarWorkspaceRow,
+  PlanSignalKind,
   SidebarGroupRow,
 } from '@/app/components/Sidebar/types';
 import type { CSSProperties } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  SIDEBAR_FLYOUT,
+  SIDEBAR_PROJECT_SIGNAL_KEYS,
   SIDEBAR_SIGNAL,
   SIDEBAR_SIZE,
   SIDEBAR_STATUS,
   SIDEBAR_UNDO,
 } from '@/app/components/Sidebar/constants';
-import { planSignalOf } from '@/app/components/Sidebar/library';
+import { planSignalOf, projectSignalOf } from '@/app/components/Sidebar/library';
 import { homeCountOf, homeOf } from '@/modules/Home';
 import { projectAppOf, projectMarkOf, useSiteIcons } from '@/modules/Project';
 import { RUN_HOW_KEYS } from '@/modules/Run/constants';
@@ -56,6 +62,8 @@ export const useSidebarViewModel = () => {
   const places = new Intl.ListFormat(i18n.language, { type: 'unit', style: 'short' });
 
   const [expansions, setExpansions] = useState<Record<string, boolean>>({});
+  const [flyoutAt, setFlyoutAt] = useState<ISidebarFlyoutPlace | null>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const openSearch = useAppStore((state) => state.openSearch);
   const searchCombo = useSettingsStore(
     (state) => state.keybinds.find(({ id }) => id === 'search')?.combo ?? '',
@@ -93,7 +101,8 @@ export const useSidebarViewModel = () => {
     const shownWorkspaces = projectWorkspaces;
     const app = projectAppOf(project.targets);
 
-    const workspaceRows: SidebarGroupRow[] = shownWorkspaces
+    const kinds: (PlanSignalKind | null)[] = [];
+    const workspaceRows: ISidebarWorkspaceRow[] = shownWorkspaces
       .map((workspace) => ({
         workspace,
         shown:
@@ -124,6 +133,8 @@ export const useSidebarViewModel = () => {
           ({ isDismissed, filed }) => !isDismissed && filed === null,
         ).length;
         const signal = planSignalOf(shown);
+
+        kinds.push(signal);
         const said =
           signal === null
             ? null
@@ -176,11 +187,14 @@ export const useSidebarViewModel = () => {
       });
 
     const pro = proBadgeOf(project);
-    const addRow = {
+    const addRow: SidebarGroupRow = {
       kind: 'add' as const,
       id: `add-${project.id}`,
       projectId: project.id,
     };
+    const projectKind = projectSignalOf(kinds);
+    const projectSaid =
+      projectKind === null ? '' : t(SIDEBAR_PROJECT_SIGNAL_KEYS[projectKind]);
 
     return [
       {
@@ -204,7 +218,15 @@ export const useSidebarViewModel = () => {
         isExpanded: isProjectExpanded(project.id),
         pro,
         rows: workspaceRows.length > 0 ? workspaceRows : [addRow],
-        railRows: [...workspaceRows, addRow],
+        plans: workspaceRows,
+        signal:
+          projectKind === null
+            ? null
+            : { ...SIDEBAR_SIGNAL[projectKind], label: projectSaid },
+        railLabel:
+          projectKind === null
+            ? project.name
+            : t('SIDEBAR.ROW_LABEL', { name: project.name, status: projectSaid }),
       },
     ];
   });
@@ -219,13 +241,6 @@ export const useSidebarViewModel = () => {
     ) ?? null;
 
   const onNewProject = () => openModal('project');
-
-  const onSelectProject = (projectId: string) => {
-    const first = workspaces.find((workspace) => workspace.projectId === projectId);
-
-    if (first !== undefined) selectWorkspace(first.id);
-    else openWorkspaceModal(projectId);
-  };
 
   const onToggleProject = (projectId: string) => {
     setExpansions((current) => ({
@@ -252,6 +267,55 @@ export const useSidebarViewModel = () => {
       clearTimeout(timer);
     };
   }, [removingWorkspaceId, removeWorkspace, forgetPlanMemories, goHome]);
+
+  const keepFlyout = () => {
+    if (closeTimer.current !== null) clearTimeout(closeTimer.current);
+
+    closeTimer.current = null;
+  };
+
+  const closeFlyout = () => {
+    keepFlyout();
+    setFlyoutAt(null);
+  };
+
+  useEffect(() => {
+    if (flyoutAt === null) return;
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setFlyoutAt(null);
+    };
+
+    window.addEventListener('keydown', onKey);
+
+    return () => {
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [flyoutAt]);
+
+  useEffect(
+    () => () => {
+      if (closeTimer.current !== null) clearTimeout(closeTimer.current);
+    },
+    [],
+  );
+
+  const flyoutGroup =
+    flyoutAt === null || !isShut
+      ? null
+      : (groups.find(({ projectId }) => projectId === flyoutAt.projectId) ?? null);
+  const flyout: ISidebarFlyout | null =
+    flyoutAt === null || flyoutGroup === null
+      ? null
+      : {
+          projectId: flyoutGroup.projectId,
+          name: flyoutGroup.name,
+          place: flyoutGroup.place,
+          mark: flyoutGroup.mark,
+          plans: flyoutGroup.plans,
+          top: flyoutAt.top,
+          left: flyoutAt.right + SIDEBAR_FLYOUT.gapPx,
+        };
 
   const bugsCount = workspaces
     .flatMap(({ bugs }) => bugs)
@@ -281,7 +345,6 @@ export const useSidebarViewModel = () => {
     toggleLabel: t(isShut ? 'SIDEBAR.OPEN' : 'SIDEBAR.SHUT'),
     onToggle: toggleSidebar,
     hasTips: isShut,
-    onSelectProject,
     searchLabel: t('SEARCH.LABEL'),
     searchCombo:
       searchCombo === ''
@@ -325,5 +388,35 @@ export const useSidebarViewModel = () => {
           })
         : undefined,
     onHome: goHome,
+    flyout,
+    newWorkspaceLabel: t('SIDEBAR.NEW_WORKSPACE'),
+    projectSettingsLabel: t('COMMON.SETTINGS'),
+    onFlyoutOpen: (place: ISidebarFlyoutPlace) => {
+      keepFlyout();
+      setFlyoutAt(place);
+    },
+    onFlyoutToggle: (place: ISidebarFlyoutPlace) => {
+      keepFlyout();
+      setFlyoutAt(flyoutAt?.projectId === place.projectId ? null : place);
+    },
+    onFlyoutKeep: keepFlyout,
+    onFlyoutLeave: () => {
+      keepFlyout();
+      closeTimer.current = setTimeout(() => {
+        setFlyoutAt(null);
+      }, SIDEBAR_FLYOUT.closeMs);
+    },
+    onFlyoutPlan: (workspaceId: string) => {
+      closeFlyout();
+      selectWorkspace(workspaceId);
+    },
+    onFlyoutNew: (projectId: string) => {
+      closeFlyout();
+      openWorkspaceModal(projectId);
+    },
+    onFlyoutSettings: (projectId: string) => {
+      closeFlyout();
+      openProjectSettings(projectId);
+    },
   };
 };

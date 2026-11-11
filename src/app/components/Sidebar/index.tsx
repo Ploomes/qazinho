@@ -1,10 +1,12 @@
 import { AnimatePresence, motion } from 'motion/react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { ProAccountCard } from '@/modules/Pro';
 import { ProjectMark } from '@/modules/Project';
-import { Caret, Icon, IconButton, PlatformIcon } from '@/shared/components/atoms';
+import { Caret, Icon, IconButton } from '@/shared/components/atoms';
 import { Fold, Tooltip } from '@/shared/components/molecules';
 import { STICKER } from '@/shared/constants';
+import { RailFlyout } from './components';
 import { useSidebarViewModel } from './hooks';
 import './styles.css';
 
@@ -16,7 +18,6 @@ export const Sidebar: React.FC = () => {
     toggleLabel,
     onToggle,
     hasTips,
-    onSelectProject,
     searchLabel,
     searchCombo,
     onSearch,
@@ -45,6 +46,16 @@ export const Sidebar: React.FC = () => {
     homeCount,
     homeTip,
     onHome,
+    flyout,
+    newWorkspaceLabel,
+    projectSettingsLabel,
+    onFlyoutOpen,
+    onFlyoutToggle,
+    onFlyoutKeep,
+    onFlyoutLeave,
+    onFlyoutPlan,
+    onFlyoutNew,
+    onFlyoutSettings,
   } = useSidebarViewModel();
   const { t } = useTranslation();
 
@@ -107,6 +118,16 @@ export const Sidebar: React.FC = () => {
                   )}
                 </button>
               </Tooltip>
+              <Tooltip side="right" content={searchLabel}>
+                <button
+                  type="button"
+                  className="sidebar__rail-tile"
+                  aria-label={searchLabel}
+                  onClick={onSearch}
+                >
+                  <Icon name="search" />
+                </button>
+              </Tooltip>
               <Tooltip side="right" content={bugsLabel}>
                 <button
                   type="button"
@@ -126,104 +147,87 @@ export const Sidebar: React.FC = () => {
                 </button>
               </Tooltip>
             </div>
-            {groups.map((group) => (
-              <div key={group.id} className="sidebar__rail-group">
-                <Tooltip side="right" content={group.name}>
-                  <button
-                    type="button"
-                    className={
-                      group.isSelected
-                        ? 'sidebar__rail-avatar sidebar__rail-avatar--selected'
-                        : 'sidebar__rail-avatar'
-                    }
-                    aria-label={t('SIDEBAR.PROJECT_SELECT', { name: group.name })}
-                    onClick={() => {
-                      onSelectProject(group.projectId);
-                    }}
-                  >
-                    <ProjectMark mark={group.mark} size={railMarkSize} />
-                  </button>
-                </Tooltip>
+            <div className="sidebar__rail-projects">
+              {groups.map((group) => (
+                <button
+                  key={group.id}
+                  type="button"
+                  className={
+                    group.isSelected
+                      ? 'sidebar__rail-avatar sidebar__rail-avatar--selected'
+                      : 'sidebar__rail-avatar'
+                  }
+                  aria-label={group.railLabel}
+                  aria-haspopup="menu"
+                  aria-expanded={flyout?.projectId === group.projectId}
+                  onPointerEnter={(event) => {
+                    const box = event.currentTarget.getBoundingClientRect();
 
-                {group.isExpanded &&
-                  group.railRows.map((row) => {
-                    if (row.kind === 'add') {
-                      return (
-                        <Tooltip
-                          key={row.id}
-                          side="right"
-                          content={t('SIDEBAR.NEW_WORKSPACE')}
-                        >
-                          <button
-                            type="button"
-                            className="sidebar__rail-tile sidebar__rail-tile--add"
-                            aria-label={t('SIDEBAR.NEW_WORKSPACE')}
-                            onClick={() => {
-                              onNewWorkspace(row.projectId);
-                            }}
-                          >
-                            <Icon name="plus" />
-                          </button>
-                        </Tooltip>
-                      );
-                    }
+                    onFlyoutOpen({
+                      projectId: group.projectId,
+                      top: box.top,
+                      right: box.right,
+                    });
+                  }}
+                  onPointerLeave={onFlyoutLeave}
+                  onClick={(event) => {
+                    const box = event.currentTarget.getBoundingClientRect();
 
-                    return (
-                      <Tooltip
-                        key={row.id}
-                        side="right"
-                        content={
-                          <span className="sidebar__tip">
-                            <span className="sidebar__tip-name">{row.name}</span>
-                            <span className="sidebar__tip-detail">
-                              <span style={{ color: row.tone }}>{row.statusLabel}</span>
-                              <span>{row.meta}</span>
-                            </span>
-                          </span>
-                        }
-                      >
-                        <button
-                          type="button"
-                          className={
-                            row.isSelected
-                              ? 'sidebar__rail-tile sidebar__rail-tile--selected'
-                              : 'sidebar__rail-tile'
-                          }
-                          aria-label={t('SIDEBAR.ROW_LABEL', {
-                            name: row.name,
-                            status: row.statusLabel,
-                          })}
-                          onClick={() => {
-                            onSelectWorkspace(row.id);
-                          }}
-                        >
-                          {row.kind === 'workspace' && row.platform !== null && (
-                            <PlatformIcon kind={row.platform} size={16} />
-                          )}
-                          <span
-                            className="sidebar__badge"
-                            style={{ color: row.tone, animation: row.animation }}
-                          >
-                            <Icon name={row.icon} />
-                          </span>
-                        </button>
-                      </Tooltip>
-                    );
-                  })}
-              </div>
-            ))}
+                    onFlyoutToggle({
+                      projectId: group.projectId,
+                      top: box.top,
+                      right: box.right,
+                    });
+                  }}
+                >
+                  <ProjectMark mark={group.mark} size={railMarkSize} />
+                  {group.signal !== null && (
+                    <span
+                      className="sidebar__badge"
+                      title={group.signal.label}
+                      style={{
+                        color: group.signal.tone,
+                        animation: group.signal.animation,
+                      }}
+                    >
+                      <Icon name={group.signal.icon} />
+                    </span>
+                  )}
+                </button>
+              ))}
 
-            <Tooltip side="right" content={t('SIDEBAR.NEW_PROJECT')}>
-              <button
-                type="button"
-                className="sidebar__rail-add"
-                aria-label={t('SIDEBAR.NEW_PROJECT')}
-                onClick={onNewProject}
-              >
-                <Icon name="plus" />
-              </button>
-            </Tooltip>
+              <Tooltip side="right" content={t('SIDEBAR.NEW_PROJECT')}>
+                <button
+                  type="button"
+                  className="sidebar__rail-tile"
+                  aria-label={t('SIDEBAR.NEW_PROJECT')}
+                  onClick={onNewProject}
+                >
+                  <Icon name="plus" />
+                </button>
+              </Tooltip>
+            </div>
           </div>
+
+          {createPortal(
+            <AnimatePresence>
+              {flyout !== null && (
+                <RailFlyout
+                  key={flyout.projectId}
+                  flyout={flyout}
+                  markSize={markSize}
+                  newLabel={newWorkspaceLabel}
+                  settingsLabel={projectSettingsLabel}
+                  onKeep={onFlyoutKeep}
+                  onLeave={onFlyoutLeave}
+                  onPlan={onFlyoutPlan}
+                  onNew={onFlyoutNew}
+                  onSettings={onFlyoutSettings}
+                />
+              )}
+            </AnimatePresence>,
+            document.body,
+          )}
 
           <div className="sidebar__rail-foot">
             <ProAccountCard />

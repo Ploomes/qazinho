@@ -106,54 +106,52 @@
   border-bottom: 1px solid var(--line2);
 }
 
-.sidebar__rail-group {
+.sidebar__rail-projects {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-2);
   width: 100%;
-  padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--line2);
+  padding-top: var(--space-3);
 }
 
-.sidebar__rail-avatar,
-.sidebar__rail-add {
+.sidebar__rail-avatar {
+  position: relative;
   display: flex;
   flex: none;
   align-items: center;
   justify-content: center;
   width: var(--sidebar-tile);
   height: var(--sidebar-tile);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: var(--raise);
-  color: var(--ink2);
-  font: var(--font-ui-strong);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
   cursor: pointer;
-  transition:
-    background-color var(--dur-fast) var(--ease),
-    border-color var(--dur-fast) var(--ease),
-    color var(--dur-fast) var(--ease);
+  transition: background-color var(--dur-fast) var(--ease);
 }
 
 .sidebar__rail-avatar:hover,
-.sidebar__rail-add:hover {
-  background: var(--raise2);
-  color: var(--ink);
+.sidebar__rail-avatar[aria-expanded='true'] {
+  background: var(--raise);
 }
 
 .sidebar__rail-avatar--selected,
 .sidebar__rail-avatar--selected:hover {
-  border-color: var(--ink2);
-  background: var(--accent-soft);
-  color: var(--ink2);
+  background: var(--sel);
 }
 
-.sidebar__rail-add {
-  margin-top: var(--space-2);
-  border-style: dashed;
-  background: transparent;
-  color: var(--ink3);
+.sidebar__rail-avatar .sidebar__badge {
+  background: var(--panel);
+}
+
+.sidebar__rail-avatar:hover .sidebar__badge,
+.sidebar__rail-avatar[aria-expanded='true'] .sidebar__badge {
+  background: var(--raise);
+}
+
+.sidebar__rail-avatar--selected .sidebar__badge,
+.sidebar__rail-avatar--selected:hover .sidebar__badge {
+  background: var(--sel);
 }
 
 .sidebar__rail-tile {
@@ -183,10 +181,6 @@
 .sidebar__rail-tile--selected:hover {
   background: var(--sel);
   color: var(--ink);
-}
-
-.sidebar__rail-tile--add {
-  color: var(--ink3);
 }
 
 .sidebar__badge {

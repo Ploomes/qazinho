@@ -1,4 +1,6 @@
 import type { ISidebarProBadge } from './ISidebarProBadge';
+import type { ISidebarSignal } from './ISidebarSignal';
+import type { ISidebarWorkspaceRow } from './ISidebarWorkspaceRow';
 import type { SidebarGroupRow } from './SidebarGroupRow';
 import type { ProjectMarkShape } from '@/modules/Project/types';
 
@@ -15,5 +17,7 @@ export interface ISidebarProjectGroup {
   isExpanded: boolean;
   pro: ISidebarProBadge | null;
   rows: SidebarGroupRow[];
-  railRows: SidebarGroupRow[];
+  plans: ISidebarWorkspaceRow[];
+  signal: ISidebarSignal | null;
+  railLabel: string;
 }

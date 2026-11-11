@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { SIDEBAR_UNDO } from '@/app/components/Sidebar/constants';
+import { SIDEBAR_FLYOUT, SIDEBAR_UNDO } from '@/app/components/Sidebar/constants';
 import { useSidebarViewModel } from '@/app/components/Sidebar/hooks/useSidebarViewModel';
 import { landAsked, startRun } from '@/modules/Workspace/library';
 import {
@@ -115,7 +115,7 @@ describe('useSidebarViewModel', () => {
       const { groups } = renderHook(() => useSidebarViewModel()).result.current;
 
       expect(groups[0]!.rows.map(({ kind }) => kind)).toEqual(['workspace']);
-      expect(groups[0]!.railRows.map(({ kind }) => kind)).toEqual(['workspace', 'add']);
+      expect(groups[0]!.plans.map(({ kind }) => kind)).toEqual(['workspace']);
     });
 
     it('lists just the add row for a project with no workspace', () => {
@@ -645,7 +645,7 @@ describe('useSidebarViewModel', () => {
       ]);
     });
 
-    it('lists the workspaces of the open project only, so the rail stays short', () => {
+    const shutWithTwo = () => {
       useSettingsStore.setState({ isSidebarShut: true });
       useAppStore.setState({
         projects: [PROJECT, { id: 'p2', name: 'Loja', targets: [], repositories: [] }],
@@ -655,50 +655,102 @@ describe('useSidebarViewModel', () => {
         workspaces: [
           { ...makeWorkspace(), id: 'w1', projectId: 'p1' },
           { ...makeWorkspace(), id: 'w2', projectId: 'p2' },
+          { ...makeWorkspace(), id: 'w3', projectId: 'p2' },
         ],
       });
+    };
+
+    /** O trilho mostra só projetos: um plano nunca vira um ícone igual ao do projeto. */
+    it('opens a panel with the plans of the project the pointer reaches, beside its icon', () => {
+      shutWithTwo();
 
       const { result } = renderHook(() => useSidebarViewModel());
 
-      expect(
-        result.current.groups.map(({ isExpanded, railRows }) => [
-          isExpanded,
-          railRows.length,
-        ]),
-      ).toEqual([
-        [true, 2],
-        [false, 2],
-      ]);
+      expect(result.current.flyout).toBeNull();
+
+      act(() => {
+        result.current.onFlyoutOpen({ projectId: 'p2', top: 200, right: 52 });
+      });
+
+      expect(result.current.flyout).toMatchObject({
+        projectId: 'p2',
+        name: 'Loja',
+        top: 200,
+        left: 60,
+      });
+      expect(result.current.flyout?.plans.map(({ id }) => id)).toEqual(['w2', 'w3']);
     });
 
-    it('selects the first workspace of the project its avatar opens', () => {
+    it('closes a moment after the pointer leaves, and stays while it reaches the panel', () => {
+      vi.useFakeTimers();
+      shutWithTwo();
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onFlyoutOpen({ projectId: 'p2', top: 200, right: 52 });
+        result.current.onFlyoutLeave();
+        result.current.onFlyoutKeep();
+      });
+      act(() => {
+        vi.advanceTimersByTime(SIDEBAR_FLYOUT.closeMs);
+      });
+
+      expect(result.current.flyout).not.toBeNull();
+
+      act(() => {
+        result.current.onFlyoutLeave();
+      });
+      act(() => {
+        vi.advanceTimersByTime(SIDEBAR_FLYOUT.closeMs);
+      });
+
+      expect(result.current.flyout).toBeNull();
+      vi.useRealTimers();
+    });
+
+    it('toggles on a click, and opens the plan picked in it', () => {
+      shutWithTwo();
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onFlyoutToggle({ projectId: 'p2', top: 200, right: 52 });
+      });
+      act(() => {
+        result.current.onFlyoutPlan('w3');
+      });
+
+      expect(useAppStore.getState().selectedWorkspaceId).toBe('w3');
+      expect(result.current.flyout).toBeNull();
+    });
+
+    it('offers no panel in the wide sidebar, where the plans are already listed', () => {
+      shutWithTwo();
+      useSettingsStore.setState({ isSidebarShut: false });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      act(() => {
+        result.current.onFlyoutOpen({ projectId: 'p2', top: 200, right: 52 });
+      });
+
+      expect(result.current.flyout).toBeNull();
+    });
+
+    it('wears on the project the most urgent signal of its plans', () => {
       useWorkspaceStore.setState({
         workspaces: [
-          { ...makeWorkspace(), id: 'w1' },
-          { ...makeWorkspace(), id: 'w2' },
+          makeWorkspace(),
+          { ...walkRun({ verdicts: ['passed', 'failed'], isFinished: true }), id: 'w2' },
         ],
       });
 
-      const { result } = renderHook(() => useSidebarViewModel());
+      const { groups } = renderHook(() => useSidebarViewModel()).result.current;
 
-      act(() => {
-        result.current.onSelectProject('p1');
-      });
-
-      expect(useAppStore.getState().selectedWorkspaceId).toBe('w1');
-    });
-
-    it('opens the new-workspace modal for a project with no workspace yet', () => {
-      const { result } = renderHook(() => useSidebarViewModel());
-
-      act(() => {
-        result.current.onSelectProject('p1');
-      });
-
-      expect(useAppStore.getState().selectedWorkspaceId).toBeNull();
-      expect(useAppStore.getState()).toMatchObject({
-        modal: 'workspace',
-        selectedProjectId: 'p1',
+      expect(groups[0]).toMatchObject({
+        signal: { icon: 'failed', label: 'a plan failed its last run' },
+        railLabel: 'Shop · staging, a plan failed its last run',
       });
     });
   });
