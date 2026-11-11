@@ -34,61 +34,65 @@ export const Workspace: React.FC = () => {
 
   return (
     <section className="workspace" style={style}>
-      <header className="workspace__header">
-        <WorkspaceName name={name} onRename={onRename} />
+      {!isLive && (
+        <>
+          <header className="workspace__header">
+            <WorkspaceName name={name} onRename={onRename} />
 
-        <div className="workspace__meta">
-          {isLive ? (
-            <StatusPill status={liveStatus} shape="round" label={statusLabel} />
-          ) : (
-            <>
-              <Trans
-                i18nKey={metaKey}
-                values={{ cases: metaCases }}
-                components={{ app: <TargetChip /> }}
-              />
-              {issue !== null && (
-                <Trans
-                  i18nKey="WORKSPACE.META_STORY"
-                  values={{ key: issue.key }}
-                  components={{
-                    story: <MetaLink href={issue.url} title={issue.title} />,
-                  }}
-                />
+            <div className="workspace__meta">
+              {isLive ? (
+                <StatusPill status={liveStatus} shape="round" label={statusLabel} />
+              ) : (
+                <>
+                  <Trans
+                    i18nKey={metaKey}
+                    values={{ cases: metaCases }}
+                    components={{ app: <TargetChip /> }}
+                  />
+                  {issue !== null && (
+                    <Trans
+                      i18nKey="WORKSPACE.META_STORY"
+                      values={{ key: issue.key }}
+                      components={{
+                        story: <MetaLink href={issue.url} title={issue.title} />,
+                      }}
+                    />
+                  )}
+                  {design !== null && (
+                    <Trans
+                      i18nKey="WORKSPACE.META_DESIGN"
+                      values={{ name: design.name }}
+                      components={{
+                        design: (
+                          <MetaLink
+                            href={design.url}
+                            title={design.title}
+                            dropLabel={dropDesignLabel}
+                            onDrop={onDropDesign}
+                          />
+                        ),
+                      }}
+                    />
+                  )}
+                  {toDevelopLine}
+                </>
               )}
-              {design !== null && (
-                <Trans
-                  i18nKey="WORKSPACE.META_DESIGN"
-                  values={{ name: design.name }}
-                  components={{
-                    design: (
-                      <MetaLink
-                        href={design.url}
-                        title={design.title}
-                        dropLabel={dropDesignLabel}
-                        onDrop={onDropDesign}
-                      />
-                    ),
-                  }}
-                />
-              )}
-              {toDevelopLine}
-            </>
-          )}
-        </div>
-      </header>
+            </div>
+          </header>
 
-      <div className="workspace__tabs">
-        <PanelTabs
-          current={tab}
-          bugCount={bugCount}
-          isLive={isLive}
-          onSelect={onSelectTab}
-        />
-      </div>
+          <div className="workspace__tabs">
+            <PanelTabs
+              current={tab}
+              bugCount={bugCount}
+              isLive={isLive}
+              onSelect={onSelectTab}
+            />
+          </div>
+        </>
+      )}
 
       <ErrorBarrier key={tab} region="tab">
-        {tab === 'device' ? (
+        {isLive || tab === 'device' ? (
           <DeviceView />
         ) : (
           <div className="workspace__scroll">

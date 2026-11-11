@@ -8,6 +8,7 @@ import {
   ChatRow,
   Composer,
   RunActivity,
+  RunProgress,
   RunSection,
   TypingDots,
 } from './components';
@@ -21,6 +22,7 @@ export const Chat: React.FC = () => {
     listRef,
     onScroll,
     isEmpty,
+    isRunStage,
     isAgentTyping,
     liveText,
     liveWho,
@@ -91,63 +93,65 @@ export const Chat: React.FC = () => {
         </div>
       ) : (
         <div ref={listRef} className="chat__messages" onScroll={onScroll}>
-          {items.map((item) =>
-            item.kind === 'message' ? (
-              <ChatRow
-                key={item.key}
-                message={item.message}
-                isNew={item.isNew}
-                isFollowUp={item.isFollowUp}
-                isAnswerable={item.isAnswerable}
-                isRetryable={item.isRetryable}
-                onRetry={onRetry}
-                onAnswerQuestions={onAnswerQuestions}
-                onOpenPlan={onOpenPlan}
-                onTakeSuggestion={onTakeSuggestion}
-                onVariables={onVariables}
-                onOpenBug={onOpenBug}
-              />
-            ) : (
-              <RunSection
-                key={item.key}
-                title={item.title}
-                facts={item.facts}
-                isLive={item.isLive}
-                isExpanded={item.isExpanded}
-                isExpandable={item.isExpandable}
-                openLabel={item.openLabel}
-                activity={item.activity}
-                onToggle={() => {
-                  onToggleRun(item.runId);
-                }}
-                onOpen={() => {
-                  onOpenRun(item.runId);
-                }}
-              >
-                {item.bugs !== null && (
-                  <button type="button" className="chat__run-bugs" onClick={onOpenBugs}>
-                    {item.bugs}
-                    <Icon name="arrow" />
-                  </button>
-                )}
-                {item.rows.map((row) => (
-                  <ChatRow
-                    key={row.key}
-                    message={row.message}
-                    isNew={row.isNew}
-                    isFollowUp={row.isFollowUp}
-                    isAnswerable={false}
-                    isNested
-                    onAnswerQuestions={onAnswerQuestions}
-                    onOpenPlan={onOpenPlan}
-                    onTakeSuggestion={onTakeSuggestion}
-                    onVariables={onVariables}
-                    onOpenBug={onOpenBug}
-                  />
-                ))}
-              </RunSection>
-            ),
-          )}
+          {isRunStage && <RunProgress />}
+          {!isRunStage &&
+            items.map((item) =>
+              item.kind === 'message' ? (
+                <ChatRow
+                  key={item.key}
+                  message={item.message}
+                  isNew={item.isNew}
+                  isFollowUp={item.isFollowUp}
+                  isAnswerable={item.isAnswerable}
+                  isRetryable={item.isRetryable}
+                  onRetry={onRetry}
+                  onAnswerQuestions={onAnswerQuestions}
+                  onOpenPlan={onOpenPlan}
+                  onTakeSuggestion={onTakeSuggestion}
+                  onVariables={onVariables}
+                  onOpenBug={onOpenBug}
+                />
+              ) : (
+                <RunSection
+                  key={item.key}
+                  title={item.title}
+                  facts={item.facts}
+                  isLive={item.isLive}
+                  isExpanded={item.isExpanded}
+                  isExpandable={item.isExpandable}
+                  openLabel={item.openLabel}
+                  activity={item.activity}
+                  onToggle={() => {
+                    onToggleRun(item.runId);
+                  }}
+                  onOpen={() => {
+                    onOpenRun(item.runId);
+                  }}
+                >
+                  {item.bugs !== null && (
+                    <button type="button" className="chat__run-bugs" onClick={onOpenBugs}>
+                      {item.bugs}
+                      <Icon name="arrow" />
+                    </button>
+                  )}
+                  {item.rows.map((row) => (
+                    <ChatRow
+                      key={row.key}
+                      message={row.message}
+                      isNew={row.isNew}
+                      isFollowUp={row.isFollowUp}
+                      isAnswerable={false}
+                      isNested
+                      onAnswerQuestions={onAnswerQuestions}
+                      onOpenPlan={onOpenPlan}
+                      onTakeSuggestion={onTakeSuggestion}
+                      onVariables={onVariables}
+                      onOpenBug={onOpenBug}
+                    />
+                  ))}
+                </RunSection>
+              ),
+            )}
 
           <AnimatePresence>
             {question !== null && (

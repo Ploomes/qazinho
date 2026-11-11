@@ -9,6 +9,7 @@ export * from './HandoffCard';
 export * from './MemoryNote';
 export * from './QuestionRound';
 export * from './RunActivity';
+export * from './RunProgress';
 export * from './RunSection';
 export * from './SuggestionCard';
 export * from './TypingDots';

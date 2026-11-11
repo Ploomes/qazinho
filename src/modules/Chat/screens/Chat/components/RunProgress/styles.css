@@ -1,0 +1,107 @@
+.run-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.run-progress__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.run-progress__title {
+  margin: 0;
+  color: var(--ink);
+  font: var(--font-display-sm);
+}
+
+.run-progress__sub {
+  margin: 0;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.run-progress__case {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.run-progress__case-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  color: var(--ink);
+  font: var(--font-ui-md);
+}
+
+.run-progress__case--now .run-progress__case-title {
+  font-weight: 600;
+}
+
+.run-progress__case--waiting .run-progress__case-title {
+  color: var(--ink3);
+}
+
+.run-progress__id {
+  flex: none;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+}
+
+.run-progress__name {
+  flex: 1;
+  min-width: 0;
+}
+
+.run-progress__mark {
+  display: inline-flex;
+  flex: none;
+  align-self: center;
+  color: var(--ink3);
+}
+
+.run-progress__mark--failed {
+  color: var(--fail);
+}
+
+.run-progress__step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-left: var(--space-2);
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+}
+
+.run-progress__step--passed {
+  color: var(--ink2);
+}
+
+.run-progress__step--running {
+  color: var(--ink);
+}
+
+.run-progress__step--failed,
+.run-progress__step--blocked {
+  color: var(--fail);
+}
+
+.run-progress__step-icon {
+  display: inline-flex;
+  flex: none;
+  justify-content: center;
+  width: var(--space-5);
+}
+
+.run-progress__step--running .run-progress__step-icon {
+  color: var(--lime-ink);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .run-progress__step--running .run-progress__step-icon {
+    animation: gc-pulse 1.8s ease-in-out infinite;
+  }
+}

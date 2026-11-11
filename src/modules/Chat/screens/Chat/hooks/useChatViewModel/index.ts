@@ -613,6 +613,7 @@ export const useChatViewModel = () => {
     listRef,
     onScroll,
     isEmpty: (workspace?.chat.length ?? 0) === 0 && liveId === null,
+    isRunStage: isWalking,
     isAgentTyping,
     liveText: isAgentTyping ? closedMarkdown(liveText) : '',
     liveWho: agentName,
