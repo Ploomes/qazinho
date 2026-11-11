@@ -3,23 +3,22 @@ import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BUG_FILTER_KEYS, BUG_FILTERS } from '@/modules/Bug/constants';
-import { PROJECT_BUGS } from '@/modules/Bug/screens/ProjectBugs/constants';
+import { ALL_BUGS } from '@/modules/Bug/screens/AllBugs/constants';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
-export const useProjectBugsViewModel = () => {
+export const useAllBugsViewModel = () => {
   const { t } = useTranslation();
   const [filter, setFilter] = useState<BugFilter>('open');
-  const projectId = useAppStore((state) => state.bugsProjectId);
   const projects = useAppStore((state) => state.projects);
   const selectWorkspace = useAppStore((state) => state.selectWorkspace);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const toggleBug = useWorkspaceStore((state) => state.toggleBug);
 
-  const project = projects.find(({ id }) => id === projectId) ?? null;
-  const entries = workspaces
-    .filter((workspace) => workspace.projectId === projectId)
-    .flatMap((workspace) => workspace.bugs.map((bug) => ({ workspace, bug })));
+  const isMany = projects.length > 1;
+  const entries = workspaces.flatMap((workspace) =>
+    workspace.bugs.map((bug) => ({ workspace, bug })),
+  );
   const inTab = (tab: BugFilter) =>
     entries.filter(({ bug }) =>
       tab === 'dismissed'
@@ -34,10 +33,9 @@ export const useProjectBugsViewModel = () => {
   const shownTab = tabs.includes(filter) ? filter : 'open';
 
   return {
-    hasProject: project !== null,
     style: {
-      '--project-bugs-column': `${String(PROJECT_BUGS.column)}px`,
-      '--bug-thumb-width': `${String(PROJECT_BUGS.thumbWidthPx)}px`,
+      '--all-bugs-column': `${String(ALL_BUGS.column)}px`,
+      '--bug-thumb-width': `${String(ALL_BUGS.thumbWidthPx)}px`,
     } as CSSProperties,
     title: t('BUG.TITLE'),
     summary: [
@@ -64,9 +62,7 @@ export const useProjectBugsViewModel = () => {
       count: id === 'open' && open.length > 0 ? String(open.length) : null,
       isActive: id === shownTab,
       className:
-        id === shownTab
-          ? 'project-bugs__tab project-bugs__tab--active'
-          : 'project-bugs__tab',
+        id === shownTab ? 'all-bugs__tab all-bugs__tab--active' : 'all-bugs__tab',
       onClick: () => {
         setFilter(id);
       },
@@ -78,8 +74,9 @@ export const useProjectBugsViewModel = () => {
         id: `${workspace.id}/${bug.id}`,
         title: bug.title,
         thumb: { src: hero?.src ?? null, file: hero?.file ?? null },
-        where: t('BUG.PROJECT_ROW_WHERE', {
+        where: t(isMany ? 'BUG.ALL_ROW_WHERE' : 'BUG.PROJECT_ROW_WHERE', {
           plan: workspace.name === '' ? t('WORKSPACE.UNNAMED') : workspace.name,
+          project: projects.find(({ id }) => id === workspace.projectId)?.name ?? '',
           step: bug.stepNumber,
           caseId: bug.caseId,
         }),

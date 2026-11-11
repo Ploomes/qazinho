@@ -13,7 +13,6 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
   const workspace = useWorkspaceStore(
     (state) => state.workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null,
   );
-  const bugsProjectId = useAppStore((state) => state.bugsProjectId);
   const isSidebarShut = useSettingsStore((state) => state.isSidebarShut);
   const toggleSidebar = useSettingsStore((state) => state.toggleSidebar);
 
@@ -40,13 +39,7 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
       screen === 'settings'
         ? [{ key: 'settings', label: t('COMMON.SETTINGS') }]
         : screen === 'bugs'
-          ? [
-              {
-                key: 'project',
-                label: projects.find(({ id }) => id === bugsProjectId)?.name ?? '',
-              },
-              { key: 'bugs', label: t('BUG.TITLE') },
-            ].filter(({ label }) => label !== '')
+          ? [{ key: 'bugs', label: t('BUG.TITLE') }]
           : screen === 'workspace' && workspace !== null
             ? [
                 { key: 'project', label: project?.name ?? '' },

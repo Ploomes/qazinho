@@ -1,2 +1,2 @@
 export * from './Bugs';
-export * from './ProjectBugs';
+export * from './AllBugs';

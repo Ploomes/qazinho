@@ -31,8 +31,7 @@ export const useSidebarViewModel = () => {
   const openWorkspaceModal = useAppStore((state) => state.openWorkspaceModal);
   const openSettings = useAppStore((state) => state.openSettings);
   const goHome = useAppStore((state) => state.goHome);
-  const openProjectBugs = useAppStore((state) => state.openProjectBugs);
-  const bugsProjectId = useAppStore((state) => state.bugsProjectId);
+  const openBugs = useAppStore((state) => state.openBugs);
   const screen = useAppStore((state) => state.screen);
   const forgetPlanMemories = useAppStore((state) => state.forgetPlanMemories);
   const openProjectSettings = useAppStore((state) => state.openProjectSettings);
@@ -90,10 +89,6 @@ export const useSidebarViewModel = () => {
       (workspace) => workspace.projectId === project.id,
     );
     const shownWorkspaces = projectWorkspaces;
-    const projectBugs = projectWorkspaces.flatMap(({ bugs }) => bugs);
-    const openBugs = projectBugs.filter(
-      ({ isDismissed, filed }) => !isDismissed && filed === null,
-    ).length;
     const app = projectAppOf(project.targets);
 
     const workspaceRows: SidebarGroupRow[] = shownWorkspaces
@@ -186,17 +181,6 @@ export const useSidebarViewModel = () => {
         isExpanded: isProjectExpanded(project.id),
         pro: proBadgeOf(project),
         rows: [
-          ...(projectBugs.length === 0
-            ? []
-            : [
-                {
-                  kind: 'bugs' as const,
-                  id: `bugs-${project.id}`,
-                  projectId: project.id,
-                  count: openBugs === 0 ? null : String(openBugs),
-                  isSelected: screen === 'bugs' && bugsProjectId === project.id,
-                },
-              ]),
           ...workspaceRows,
           { kind: 'add' as const, id: `add-${project.id}`, projectId: project.id },
         ],
@@ -248,6 +232,10 @@ export const useSidebarViewModel = () => {
     };
   }, [removingWorkspaceId, removeWorkspace, forgetPlanMemories, goHome]);
 
+  const bugsCount = workspaces
+    .flatMap(({ bugs }) => bugs)
+    .filter(({ isDismissed, filed }) => !isDismissed && filed === null).length;
+
   const homeCount = homeCountOf(
     homeOf({
       projects,
@@ -287,8 +275,10 @@ export const useSidebarViewModel = () => {
     },
     onSelectWorkspace: selectWorkspace,
     onNewWorkspace: openWorkspaceModal,
-    onProjectBugs: openProjectBugs,
     bugsLabel: t('BUG.TITLE'),
+    isBugs: screen === 'bugs',
+    bugsCount: bugsCount === 0 ? null : String(bugsCount),
+    onBugs: openBugs,
     onNewProject,
     onSettings: openSettings,
     onAskRemove: askRemoveWorkspace,

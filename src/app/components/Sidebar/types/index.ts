@@ -6,4 +6,3 @@ export type * from './ISidebarSignal';
 export type * from './ISidebarWorkspaceRow';
 export type * from './PlanSignalKind';
 export type * from './SidebarGroupRow';
-export type * from './ISidebarBugsRow';

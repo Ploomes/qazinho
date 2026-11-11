@@ -596,6 +596,7 @@ export const en = {
   BUG: {
     TITLE: 'Bugs',
     PROJECT_ROW_WHERE: '{{plan}}, step {{step}} of {{caseId}}',
+    ALL_ROW_WHERE: '{{plan}} in {{project}}, step {{step}} of {{caseId}}',
     BACK: 'All bugs',
     PAGE_META_ONE:
       'Caught in the <run>run at {{when}}</run>, at <case>step {{step}} of {{caseId}}</case>.',

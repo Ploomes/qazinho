@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { useProjectBugsViewModel } from '@/modules/Bug/screens/ProjectBugs/hooks/useProjectBugsViewModel';
+import { useAllBugsViewModel } from '@/modules/Bug/screens/AllBugs/hooks/useAllBugsViewModel';
 import { walkRun } from '@/modules/Workspace/library/__tests__/fixtures';
 import { useAppStore, useWorkspaceStore } from '@/store';
 
@@ -16,7 +16,6 @@ beforeEach(() => {
   useAppStore.setState({
     projects: [LOJA],
     screen: 'bugs',
-    bugsProjectId: 'p1',
     selectedWorkspaceId: null,
   });
   useWorkspaceStore.setState({
@@ -29,9 +28,9 @@ beforeEach(() => {
   });
 });
 
-describe('useProjectBugsViewModel', () => {
-  it('lists the bugs of every plan of the project, each with its plan', () => {
-    const { result } = renderHook(() => useProjectBugsViewModel());
+describe('useAllBugsViewModel', () => {
+  it('lists the bugs of every plan, each with its plan', () => {
+    const { result } = renderHook(() => useAllBugsViewModel());
 
     expect(result.current.summary).toBe('2 open.');
     expect(result.current.rows.map(({ where }) => where)).toEqual([
@@ -41,7 +40,7 @@ describe('useProjectBugsViewModel', () => {
   });
 
   it('opens a bug on its page, in the Bugs tab of its plan', () => {
-    const { result } = renderHook(() => useProjectBugsViewModel());
+    const { result } = renderHook(() => useAllBugsViewModel());
 
     act(() => {
       result.current.rows[1]?.onOpen();
@@ -60,6 +59,19 @@ describe('useProjectBugsViewModel', () => {
   it('says so when the project has no bug yet', () => {
     useWorkspaceStore.setState({ workspaces: [] });
 
-    expect(renderHook(() => useProjectBugsViewModel()).result.current.isEmpty).toBe(true);
+    expect(renderHook(() => useAllBugsViewModel()).result.current.isEmpty).toBe(true);
+  });
+
+  it('names the project of each bug once there is more than one', () => {
+    useAppStore.setState({
+      projects: [
+        LOJA,
+        { id: 'p2', name: 'App da Loja', targets: [WEB], repositories: [] },
+      ],
+    });
+
+    expect(renderHook(() => useAllBugsViewModel()).result.current.rows[0]?.where).toBe(
+      'Checkout regression in Loja Web, step 2 of TC-02',
+    );
   });
 });

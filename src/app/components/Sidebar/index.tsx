@@ -24,8 +24,10 @@ export const Sidebar: React.FC = () => {
     onOpenWaiting,
     onSelectWorkspace,
     onNewWorkspace,
-    onProjectBugs,
     bugsLabel,
+    isBugs,
+    bugsCount,
+    onBugs,
     onNewProject,
     onSettings,
     onAskRemove,
@@ -100,6 +102,24 @@ export const Sidebar: React.FC = () => {
                 )}
               </button>
             </Tooltip>
+            <Tooltip side="right" content={bugsLabel}>
+              <button
+                type="button"
+                className={
+                  isBugs
+                    ? 'sidebar__rail-tile sidebar__rail-tile--selected'
+                    : 'sidebar__rail-tile'
+                }
+                aria-label={bugsLabel}
+                aria-current={isBugs ? 'page' : undefined}
+                onClick={onBugs}
+              >
+                <Icon name="bug" />
+                {bugsCount !== null && (
+                  <span className="sidebar__rail-count">{bugsCount}</span>
+                )}
+              </button>
+            </Tooltip>
             {groups.map((group) => (
               <div key={group.id} className="sidebar__rail-group">
                 <Tooltip side="right" content={group.name}>
@@ -137,30 +157,6 @@ export const Sidebar: React.FC = () => {
                             }}
                           >
                             <Icon name="plus" />
-                          </button>
-                        </Tooltip>
-                      );
-                    }
-
-                    if (row.kind === 'bugs') {
-                      return (
-                        <Tooltip key={row.id} side="right" content={bugsLabel}>
-                          <button
-                            type="button"
-                            className={
-                              row.isSelected
-                                ? 'sidebar__rail-tile sidebar__rail-tile--selected'
-                                : 'sidebar__rail-tile'
-                            }
-                            aria-label={bugsLabel}
-                            onClick={() => {
-                              onProjectBugs(row.projectId);
-                            }}
-                          >
-                            <Icon name="bug" />
-                            {row.count !== null && (
-                              <span className="sidebar__rail-count">{row.count}</span>
-                            )}
                           </button>
                         </Tooltip>
                       );
@@ -251,6 +247,19 @@ export const Sidebar: React.FC = () => {
             <Icon name="search" />
             <span className="sidebar__label">{searchLabel}</span>
             {searchCombo !== '' && <Kbd combo={searchCombo} />}
+          </button>
+
+          <button
+            type="button"
+            className={isBugs ? 'sidebar__nav sidebar__nav--selected' : 'sidebar__nav'}
+            aria-current={isBugs ? 'page' : undefined}
+            onClick={onBugs}
+          >
+            <Icon name="bug" />
+            <span className="sidebar__label">{bugsLabel}</span>
+            {bugsCount !== null && (
+              <span className="sidebar__bugs-count">{bugsCount}</span>
+            )}
           </button>
 
           <div className="sidebar__section">
@@ -353,32 +362,6 @@ export const Sidebar: React.FC = () => {
                                     <span className="sidebar__label">
                                       {t('SIDEBAR.NEW_WORKSPACE')}
                                     </span>
-                                  </button>
-                                </Fold>
-                              );
-                            }
-
-                            if (row.kind === 'bugs') {
-                              return (
-                                <Fold key={row.id} className="sidebar__slot">
-                                  <button
-                                    type="button"
-                                    className={
-                                      row.isSelected
-                                        ? 'sidebar__row sidebar__row--selected sidebar__bugs'
-                                        : 'sidebar__row sidebar__bugs'
-                                    }
-                                    aria-current={row.isSelected ? 'page' : undefined}
-                                    onClick={() => {
-                                      onProjectBugs(row.projectId);
-                                    }}
-                                  >
-                                    <span className="sidebar__name">{bugsLabel}</span>
-                                    {row.count !== null && (
-                                      <span className="sidebar__bugs-count">
-                                        {row.count}
-                                      </span>
-                                    )}
                                   </button>
                                 </Fold>
                               );

@@ -1,4 +1,4 @@
-.project-bugs {
+.all-bugs {
   flex: 1;
   min-width: 0;
   overflow-y: auto;
@@ -6,35 +6,35 @@
   scrollbar-gutter: stable;
 }
 
-.project-bugs__column {
+.all-bugs__column {
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
-  max-width: var(--project-bugs-column);
+  max-width: var(--all-bugs-column);
   margin: 0 auto;
   padding: var(--space-8) var(--space-8) var(--space-8);
 }
 
-.project-bugs__title {
+.all-bugs__title {
   margin: 0;
   color: var(--ink);
   font: var(--font-display-lg);
   letter-spacing: var(--display-tracking);
 }
 
-.project-bugs__summary {
+.all-bugs__summary {
   margin: calc(var(--space-3) * -1) 0 0;
   color: var(--ink2);
   font: var(--font-ui-md);
 }
 
-.project-bugs__tabs {
+.all-bugs__tabs {
   display: flex;
   gap: var(--space-5);
   border-bottom: 1px solid var(--line2);
 }
 
-.project-bugs__tab {
+.all-bugs__tab {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -51,32 +51,32 @@
     border-color var(--dur-fast) var(--ease);
 }
 
-.project-bugs__tab:hover {
+.all-bugs__tab:hover {
   color: var(--ink);
 }
 
-.project-bugs__tab--active {
+.all-bugs__tab--active {
   border-bottom-color: var(--ink);
   color: var(--ink);
 }
 
-.project-bugs__count {
+.all-bugs__count {
   color: var(--fail);
   font-variant-numeric: tabular-nums;
 }
 
-.project-bugs__none {
+.all-bugs__none {
   margin: 0;
   color: var(--ink3);
   font: var(--font-ui-sm);
 }
 
-.project-bugs__list {
+.all-bugs__list {
   display: flex;
   flex-direction: column;
 }
 
-.project-bugs__row {
+.all-bugs__row {
   display: flex;
   align-items: center;
   gap: var(--space-5);
@@ -91,11 +91,11 @@
   transition: background-color var(--dur-fast) var(--ease);
 }
 
-.project-bugs__row:hover {
+.all-bugs__row:hover {
   background: var(--sel);
 }
 
-.project-bugs__text {
+.all-bugs__text {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -103,20 +103,20 @@
   min-width: 0;
 }
 
-.project-bugs__name {
+.all-bugs__name {
   color: var(--ink);
   font: var(--font-ui-md);
 }
 
-.project-bugs__where,
-.project-bugs__seen,
-.project-bugs__when {
+.all-bugs__where,
+.all-bugs__seen,
+.all-bugs__when {
   color: var(--ink3);
   font: var(--font-ui-sm);
 }
 
-.project-bugs__seen,
-.project-bugs__when {
+.all-bugs__seen,
+.all-bugs__when {
   flex: none;
   font-variant-numeric: tabular-nums;
 }

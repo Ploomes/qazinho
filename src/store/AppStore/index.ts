@@ -22,7 +22,6 @@ export const useAppStore = create<IAppStore>()(
       pendingImport: null,
       isResourcesOpen: false,
       isSearchOpen: false,
-      bugsProjectId: null,
       modelMenuAt: null,
       media: null,
       replay: null,
@@ -70,8 +69,7 @@ export const useAppStore = create<IAppStore>()(
 
       goHome: () => set({ screen: 'welcome', selectedWorkspaceId: null }),
 
-      openProjectBugs: (projectId) =>
-        set({ screen: 'bugs', bugsProjectId: projectId, selectedWorkspaceId: null }),
+      openBugs: () => set({ screen: 'bugs', selectedWorkspaceId: null }),
 
       addProject: (project) =>
         set((state) => ({
