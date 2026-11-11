@@ -1,13 +1,7 @@
 import type { IComposerProps } from '@/modules/Chat/screens/Chat/components/Composer/types';
 import type { IChatReference } from '@/shared/types';
-import type {
-  ChangeEvent,
-  ClipboardEvent,
-  DragEvent,
-  KeyboardEvent,
-  UIEvent,
-} from 'react';
-import { useRef, useState } from 'react';
+import type { ChangeEvent, ClipboardEvent, DragEvent, KeyboardEvent } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { splitMentions } from '@/modules/Chat/library';
 import { MENTION_TABS } from '@/modules/Chat/screens/Chat/components/Composer/constants';
@@ -37,7 +31,6 @@ export const useComposerViewModel = (props: IComposerProps) => {
   const [commandHighlight, setCommandHighlight] = useState(0);
   const [commandDismissedAt, setCommandDismissedAt] = useState<string | null>(null);
   const [isDropping, setDropping] = useState(false);
-  const mirrorRef = useRef<HTMLDivElement>(null);
 
   const isLocked = lockedText !== null;
   const canAttach = !isLocked && !props.isAttaching && props.canAttachFiles !== false;
@@ -122,17 +115,10 @@ export const useComposerViewModel = (props: IComposerProps) => {
   };
 
   return {
-    mirrorRef,
     parts: splitMentions({ text: value, ids: props.referenceIds }).map((part, index) => ({
       ...part,
       key: `${String(index)}-${part.text}`,
     })),
-    onInputScroll: (event: UIEvent<HTMLTextAreaElement>) => {
-      if (!mirrorRef.current) return;
-
-      mirrorRef.current.scrollTop = event.currentTarget.scrollTop;
-      mirrorRef.current.scrollLeft = event.currentTarget.scrollLeft;
-    },
     canPress: isAnswering || canSend,
     isLocked,
     button: isAnswering

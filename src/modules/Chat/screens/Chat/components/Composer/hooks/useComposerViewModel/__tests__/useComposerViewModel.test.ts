@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import type { ClipboardEvent, DragEvent, KeyboardEvent, UIEvent } from 'react';
+import type { ClipboardEvent, DragEvent, KeyboardEvent } from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { useComposerViewModel } from '@/modules/Chat/screens/Chat/components/Composer/hooks/useComposerViewModel';
@@ -123,22 +123,6 @@ describe('useComposerViewModel', () => {
       );
 
       expect(result.current.parts.some(({ isMention }) => isMention)).toBe(false);
-    });
-  });
-
-  describe('onInputScroll', () => {
-    /** O campo tem várias linhas: a cópia marcada rola junto para baixo também. */
-    it('scrolls the marked copy of the text along with the field, down and across', () => {
-      const { result } = renderHook(() => useComposerViewModel(PROPS));
-      const mirror = document.createElement('div');
-
-      result.current.mirrorRef.current = mirror;
-      result.current.onInputScroll({
-        currentTarget: { scrollLeft: 120, scrollTop: 40 },
-      } as unknown as UIEvent<HTMLTextAreaElement>);
-
-      expect(mirror.scrollLeft).toBe(120);
-      expect(mirror.scrollTop).toBe(40);
     });
   });
 

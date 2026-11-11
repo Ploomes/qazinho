@@ -7,9 +7,7 @@ import './styles.css';
 
 export const Composer: React.FC<IComposerProps> = (props) => {
   const {
-    mirrorRef,
     parts,
-    onInputScroll,
     canPress,
     isLocked,
     button,
@@ -149,35 +147,36 @@ export const Composer: React.FC<IComposerProps> = (props) => {
           <Icon name="attach" size={16} />
         </button>
 
-        <div className="composer__text">
-          <div ref={mirrorRef} className="composer__mirror" aria-hidden="true">
-            {parts.map((part) =>
-              part.isMention ? (
-                <span key={part.key} className="composer__mention">
-                  {part.text}
-                </span>
-              ) : (
-                part.text
-              ),
-            )}
+        <div className="composer__scroll">
+          <div className="composer__text">
+            <div className="composer__mirror" aria-hidden="true">
+              {parts.map((part) =>
+                part.isMention ? (
+                  <span key={part.key} className="composer__mention">
+                    {part.text}
+                  </span>
+                ) : (
+                  part.text
+                ),
+              )}
+            </div>
+            <textarea
+              className="input input--bare composer__input"
+              rows={1}
+              value={props.value}
+              placeholder={placeholder}
+              aria-label={placeholder}
+              disabled={isLocked}
+              autoFocus={props.isAutoFocused}
+              role="combobox"
+              aria-expanded={isPickerOpen || isCommandOpen}
+              aria-controls={isCommandOpen ? 'command-picker' : 'mention-picker'}
+              aria-autocomplete="list"
+              onChange={onInputChange}
+              onKeyDown={onKeyDown}
+              onPaste={onPaste}
+            />
           </div>
-          <textarea
-            className="input input--bare composer__input"
-            rows={1}
-            value={props.value}
-            placeholder={placeholder}
-            aria-label={placeholder}
-            disabled={isLocked}
-            autoFocus={props.isAutoFocused}
-            role="combobox"
-            aria-expanded={isPickerOpen || isCommandOpen}
-            aria-controls={isCommandOpen ? 'command-picker' : 'mention-picker'}
-            aria-autocomplete="list"
-            onChange={onInputChange}
-            onKeyDown={onKeyDown}
-            onScroll={onInputScroll}
-            onPaste={onPaste}
-          />
         </div>
         <span className="composer__accessory">{props.accessory}</span>
         <button
