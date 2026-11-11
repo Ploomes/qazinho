@@ -8,9 +8,9 @@
   max-width: var(--assistant-tip-width);
   padding: var(--space-3) var(--space-5);
   border-radius: var(--radius-lg);
-  background: var(--brand-lime);
+  background: var(--brand-sinal);
   box-shadow: var(--sticker-hero);
-  color: var(--on-brand-lime);
+  color: var(--on-brand-sinal);
   font: var(--font-ui-md);
   text-wrap: pretty;
   cursor: pointer;
@@ -28,7 +28,7 @@
   width: var(--assistant-tip-tail);
   height: var(--assistant-tip-tail);
   border-radius: 2px 0 0;
-  background: var(--brand-lime);
+  background: var(--brand-sinal);
   transform: rotate(45deg);
   content: '';
 }
@@ -45,7 +45,7 @@
   height: var(--assistant-tip-face);
   border-radius: var(--radius-pill);
   background: var(--brand-ink);
-  box-shadow: 0 0 0 var(--assistant-tip-ring) var(--brand-lime);
+  box-shadow: 0 0 0 var(--assistant-tip-ring) var(--brand-sinal);
   pointer-events: none;
 }
 

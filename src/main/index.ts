@@ -1384,7 +1384,7 @@ function createWindow(): void {
     ...WINDOW,
     show: false,
     title: 'QAzinho',
-    backgroundColor: '#0b0b0b',
+    backgroundColor: '#0a0906',
     ...(process.platform === 'darwin'
       ? { titleBarStyle: 'hiddenInset' as const, trafficLightPosition: { x: 16, y: 16 } }
       : { titleBarStyle: 'hidden' as const, titleBarOverlay: { ...WINDOW_CONTROLS } }),

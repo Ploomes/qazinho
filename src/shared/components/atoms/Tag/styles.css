@@ -6,7 +6,7 @@
   border: var(--sticker-edge-width) solid var(--sticker-edge);
   border-radius: var(--radius-pill);
   background: var(--brand-ink);
-  color: var(--brand-lime);
+  color: var(--brand-sinal);
   font: var(--font-mono-tag);
   letter-spacing: var(--tag-tracking);
   text-overflow: ellipsis;
