@@ -193,6 +193,8 @@ export const en = {
     META_ON: '{{cases}} on <app/>',
     META_NO_APP: '{{cases}}, <app/>',
     META_STORY: ', from story <story>{{key}}</story>',
+    META_TO_DEVELOP_ONE: '. 1 left to develop.',
+    META_TO_DEVELOP_OTHER: '. {{count}} left to develop.',
     META_DESIGN: ', against the <design>{{name}}</design> design',
   },
   AGENT: {

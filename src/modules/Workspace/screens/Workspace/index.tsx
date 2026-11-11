@@ -18,6 +18,7 @@ export const Workspace: React.FC = () => {
     name,
     metaKey,
     metaCases,
+    toDevelopLine,
     issue,
     design,
     dropDesignLabel,
@@ -71,6 +72,7 @@ export const Workspace: React.FC = () => {
                   }}
                 />
               )}
+              {toDevelopLine}
             </>
           )}
         </div>

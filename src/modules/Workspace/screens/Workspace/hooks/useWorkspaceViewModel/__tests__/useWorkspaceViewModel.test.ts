@@ -38,7 +38,21 @@ describe('useWorkspaceViewModel', () => {
     expect(renderHook(() => useWorkspaceViewModel()).result.current).toMatchObject({
       metaKey: 'WORKSPACE.META_ON',
       metaCases: '2 cases',
+      toDevelopLine: '. 2 left to develop.',
     });
+  });
+
+  it('says nothing is left once every case has a recording', () => {
+    const workspace = useWorkspaceStore.getState().workspaces[0];
+
+    useWorkspaceStore.getState().setDevelopedCases({
+      workspaceId: workspace?.id ?? '',
+      caseIds: workspace?.plan.map(({ id }) => id) ?? [],
+    });
+
+    expect(renderHook(() => useWorkspaceViewModel()).result.current.toDevelopLine).toBe(
+      '',
+    );
   });
 
   describe('the center tabs', () => {

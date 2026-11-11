@@ -195,6 +195,8 @@ export const pt: typeof en = {
     META_ON: '{{cases}} em <app/>',
     META_NO_APP: '{{cases}}, <app/>',
     META_STORY: ', da história <story>{{key}}</story>',
+    META_TO_DEVELOP_ONE: '. Falta 1 para desenvolver.',
+    META_TO_DEVELOP_OTHER: '. Faltam {{count}} para desenvolver.',
     META_DESIGN: ', contra o design <design>{{name}}</design>',
   },
   AGENT: {

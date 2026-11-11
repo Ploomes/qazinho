@@ -3,12 +3,16 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   currentStepOf,
+  planStageOf,
   RUN_HOW_KEYS,
   useDevelopedWatch,
   walkedStepsOf,
 } from '@/modules/Run';
 import { useWorkspaceMeta } from '@/modules/Workspace/hooks/useWorkspaceMeta';
-import { WORKSPACE_TABS } from '@/modules/Workspace/screens/Workspace/constants';
+import {
+  NO_CASES,
+  WORKSPACE_TABS,
+} from '@/modules/Workspace/screens/Workspace/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
 import { useWorkspaceStore } from '@/store';
 
@@ -22,6 +26,7 @@ export const useWorkspaceViewModel = () => {
     runStepCount: walkedStepsOf({ plan: opened.plan, caseIds: opened.live?.caseIds })
       .length,
     planCount: opened.plan.length,
+    plan: opened.plan,
     bugCount: opened.bugs.filter(({ isDismissed }) => !isDismissed).length,
     walked: opened.live?.outcomes.length ?? 0,
     isExploring: opened.live?.kind === 'explore',
@@ -40,6 +45,9 @@ export const useWorkspaceViewModel = () => {
       state.chatDevices[workspace.id] !== undefined,
   );
   const { metaKey, metaCases } = useWorkspaceMeta();
+  const developedIds = useWorkspaceStore(
+    (state) => state.developedCases[workspace?.id ?? ''] ?? NO_CASES,
+  );
   const tab = useWorkspaceStore((state) => state.panelTab);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
@@ -52,6 +60,10 @@ export const useWorkspaceViewModel = () => {
   const isAsking = workspace?.isAsking === true;
 
   const workspaceId = workspace?.id ?? null;
+  const toDevelop = planStageOf({
+    plan: workspace?.plan ?? [],
+    developed: developedIds,
+  }).toDevelop.length;
 
   const learnedOn = useRef<string | null>(null);
   const hasPlan = (workspace?.planCount ?? 0) > 0;
@@ -79,6 +91,12 @@ export const useWorkspaceViewModel = () => {
     name: workspace?.name ?? '',
     metaKey,
     metaCases,
+    toDevelopLine:
+      toDevelop === 0
+        ? ''
+        : toDevelop === 1
+          ? t('WORKSPACE.META_TO_DEVELOP_ONE')
+          : t('WORKSPACE.META_TO_DEVELOP_OTHER', { count: toDevelop }),
     issue:
       workspace?.issue === null || workspace?.issue === undefined
         ? null
