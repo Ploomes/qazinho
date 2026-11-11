@@ -32,10 +32,9 @@
 
 .run-replay__kicker {
   flex: none;
-  color: var(--lime-ink);
-  font: var(--font-mono-xs);
+  color: var(--ink3);
+  font: var(--font-meta-xs);
   letter-spacing: var(--tag-tracking);
-  text-transform: uppercase;
 }
 
 .run-replay__title {
@@ -183,7 +182,7 @@
   flex: none;
   justify-content: center;
   width: var(--space-4);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .run-replay__caption-icon--pass {
@@ -206,7 +205,7 @@
 .run-replay__caption-kicker {
   flex: none;
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
 }
 
 .run-replay__caption-text {
@@ -238,9 +237,8 @@
 
 .run-replay__whole-end {
   color: var(--on-lime);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
   letter-spacing: var(--tag-tracking);
-  text-transform: uppercase;
   opacity: 0.7;
 }
 
@@ -279,7 +277,7 @@
 .run-replay__time {
   flex: none;
   color: var(--ink2);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
   font-variant-numeric: tabular-nums;
 }
 
@@ -312,7 +310,7 @@
   border-radius: var(--radius-pill);
   background: transparent;
   color: var(--ink);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
   cursor: pointer;
   transition:
     border-color var(--dur-fast) var(--ease),

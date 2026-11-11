@@ -55,5 +55,5 @@
 .update-required__note {
   margin: 0;
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }

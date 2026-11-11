@@ -33,7 +33,7 @@
 
 .runs__facts {
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
   white-space: nowrap;
 }
 
@@ -42,7 +42,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .runs__tally--passed {
@@ -130,7 +130,7 @@
 
 .runs__case-id {
   color: var(--ink3);
-  font: 500 11px/1 var(--font-mono);
+  font: 500 11px/1 var(--font-ui);
 }
 
 .runs__case-title {
@@ -141,7 +141,7 @@
 
 .runs__case-duration {
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .runs__case-bug {
@@ -153,7 +153,7 @@
 .runs__walk {
   display: inline-flex;
   flex: none;
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .runs__walk--replay {
@@ -189,7 +189,7 @@
 }
 
 .runs__take:hover {
-  border-color: var(--lime-ink);
+  border-color: var(--ink2);
   background: var(--lime-soft);
   color: var(--ink);
 }
@@ -212,7 +212,7 @@
   flex: none;
   width: 22px;
   color: var(--ink3);
-  font: 400 12px/1.5 var(--font-mono);
+  font: 400 12px/1.5 var(--font-ui);
 }
 
 .runs__step-icon {
@@ -221,7 +221,7 @@
   align-items: center;
   width: 16px;
   height: 1.5em;
-  font: 600 12px/1.5 var(--font-mono);
+  font: 600 12px/1.5 var(--font-ui);
 }
 
 .runs__step-icon--passed {
@@ -276,9 +276,8 @@
   align-items: center;
   gap: var(--space-2);
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
   letter-spacing: var(--tag-tracking);
-  text-transform: uppercase;
 }
 
 .runs__asked-mark {
@@ -306,15 +305,15 @@
 
 .runs__asked-who {
   flex: none;
-  color: var(--lime-ink);
-  font: var(--font-mono-sm);
+  color: var(--ink2);
+  font: var(--font-meta-sm);
 }
 
 .runs__asked-lock {
   display: inline-flex;
   flex: none;
   align-self: center;
-  color: var(--lime-ink);
+  color: var(--ink3);
 }
 
 .runs__asked-said {
@@ -345,7 +344,7 @@
 
 .runs__bug-id {
   color: var(--attn);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .runs__bug--high .runs__bug-id {

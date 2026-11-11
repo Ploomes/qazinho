@@ -32,7 +32,7 @@
 .segmented__thumb {
   position: absolute;
   inset: 0;
-  border: 1px solid var(--lime-ink);
+  border: 1px solid var(--line-field);
   border-radius: var(--radius-sm);
   background: var(--sel);
 }

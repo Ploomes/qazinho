@@ -8,7 +8,7 @@
 
 .meta-grid__key {
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .meta-grid__value {

@@ -23,7 +23,7 @@
 
 .input--mono {
   background: var(--panel);
-  font: var(--font-mono-field);
+  font: var(--font-code-field);
 }
 
 .input--compact {

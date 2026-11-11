@@ -11,9 +11,8 @@
 .replay-log__eyebrow {
   padding: 0 var(--space-3) var(--space-3);
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
   letter-spacing: var(--tag-tracking);
-  text-transform: uppercase;
 }
 
 .replay-log__chapter {
@@ -50,7 +49,7 @@
   flex: none;
   justify-content: center;
   width: var(--space-4);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .replay-log__icon--pass {
@@ -73,7 +72,7 @@
 .replay-log__id {
   flex: none;
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
 }
 
 .replay-log__title {
@@ -88,7 +87,7 @@
 .replay-log__duration {
   flex: none;
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
 }
 
 .replay-log__fold {
@@ -148,7 +147,7 @@
   flex: none;
   width: var(--space-4);
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
   line-height: 1.6;
   text-align: right;
 }
@@ -202,7 +201,7 @@
 .replay-log__bug-id {
   flex: none;
   color: var(--fail);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
 }
 
 .replay-log__bug-title {

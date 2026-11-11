@@ -7,7 +7,7 @@
   border-radius: var(--radius-pill);
   background: var(--raise);
   color: var(--ink2);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
   white-space: nowrap;
 }
 

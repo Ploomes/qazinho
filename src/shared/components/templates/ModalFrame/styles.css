@@ -86,7 +86,7 @@
 
 .modal-frame__hint {
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .modal-frame__actions {

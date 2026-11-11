@@ -65,7 +65,7 @@
 
 .replay-timeline__pin-mark {
   display: inline-flex;
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .replay-timeline__callout {
@@ -100,9 +100,8 @@
 
 .replay-timeline__callout-id {
   color: var(--fail);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
   letter-spacing: var(--tag-tracking);
-  text-transform: uppercase;
 }
 
 .replay-timeline__callout-title {
@@ -218,7 +217,7 @@
   bottom: calc(var(--space-2) * -1);
   left: var(--from);
   width: var(--width);
-  border: var(--edge-width) solid var(--lime-ink);
+  border: var(--edge-width) solid var(--ink2);
   border-radius: var(--radius-sm);
   pointer-events: none;
 }
@@ -294,8 +293,8 @@
 
 .replay-timeline__preview-time {
   padding-left: var(--space-2);
-  color: var(--lime-ink);
-  font: var(--font-mono-xs);
+  color: var(--ink);
+  font: var(--font-meta-xs);
 }
 
 .replay-timeline__preview-chapter,

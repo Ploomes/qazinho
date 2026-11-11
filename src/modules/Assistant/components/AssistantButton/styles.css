@@ -68,6 +68,6 @@
   background: var(--lime);
   box-shadow: var(--sticker-rest);
   color: var(--on-lime);
-  font: var(--font-mono-tag);
+  font: var(--font-meta-xs);
   rotate: var(--tilt-sm);
 }

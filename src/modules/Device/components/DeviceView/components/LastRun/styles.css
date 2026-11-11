@@ -23,7 +23,7 @@
   min-width: 0;
   overflow: hidden;
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -54,7 +54,7 @@
 .last-run__where {
   margin-left: auto;
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .last-run__cases {
@@ -95,7 +95,7 @@
 .last-run__id {
   flex: none;
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .last-run__name {
@@ -112,5 +112,5 @@
   align-items: center;
   gap: var(--space-2);
   color: var(--fail);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }

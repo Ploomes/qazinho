@@ -106,13 +106,13 @@
 
 .search-list__label {
   flex: none;
-  font: var(--font-mono-md);
+  font: var(--font-meta-md);
 }
 
 .search-list__tag {
   flex: none;
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
 }
 
 .search-list__detail {

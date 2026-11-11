@@ -32,7 +32,7 @@
 .screen-rail__number {
   flex: none;
   width: 10px;
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
   text-align: right;
 }
 
@@ -53,7 +53,7 @@
 }
 
 .screen-rail__screen--shown .screen-rail__picture {
-  border-color: var(--lime-ink);
+  border-color: var(--ink2);
 }
 
 .screen-rail__picture img {

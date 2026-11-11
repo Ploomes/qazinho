@@ -11,7 +11,7 @@
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--ink2);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
   white-space: nowrap;
   transition:
     background-color var(--dur-fast) var(--ease),
@@ -62,7 +62,7 @@
 .viewport-picker__mark {
   display: inline-flex;
   width: var(--space-5);
-  color: var(--lime-ink);
+  color: var(--ink);
 }
 
 .viewport-picker__label {
@@ -72,5 +72,5 @@
 
 .viewport-picker__size {
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
 }

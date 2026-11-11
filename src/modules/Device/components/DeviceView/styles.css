@@ -30,7 +30,7 @@
   gap: var(--space-3);
   min-width: 0;
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .device-view__state-text {
@@ -65,7 +65,7 @@
   border: none;
   background: none;
   color: var(--lime-ink);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
   cursor: pointer;
   transition: opacity var(--dur-fast) var(--ease);
 }
@@ -181,7 +181,7 @@
   flex: 1;
   overflow: hidden;
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-code-xs);
   text-overflow: ellipsis;
   white-space: nowrap;
 }

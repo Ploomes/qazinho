@@ -9,21 +9,29 @@
   --font-ui-lg: 400 14px/1.65 var(--font-ui);
   --font-ui-strong: 600 13px/1 var(--font-ui);
 
-  --font-mono-xs: 400 11px/1 var(--font-mono);
-  --font-mono-sm: 400 12px/1 var(--font-mono);
-  --font-mono-md: 500 12px/1 var(--font-mono);
-  --font-mono-lg: 600 18px/1 var(--font-mono);
+  --font-meta-xs: 400 12px/1 var(--font-ui);
+  --font-meta-sm: 400 12px/1.2 var(--font-ui);
+  --font-meta-md: 500 13px/1.2 var(--font-ui);
+  --font-meta-lg: 600 18px/1 var(--font-ui);
+
+  --font-code-xs: 400 11px/1.4 var(--font-mono);
+  --font-code-sm: 400 12px/1.4 var(--font-mono);
+  --font-code-md: 500 12px/1.4 var(--font-mono);
+  --font-code-lg: 600 18px/1 var(--font-mono);
+  --font-code-field: 400 13px/1.2 var(--font-mono);
   --font-mono-tag: 700 10px/1 var(--font-mono);
-  --font-mono-field: 400 13px/1.2 var(--font-mono);
 
-  --font-display-sm: 700 16px/1.3 var(--font-display);
-  --font-display-md: 800 18px/1.1 var(--font-display);
-  --font-display-lg: 800 22px/1.15 var(--font-display);
-  --font-display-xl: 800 34px/1.05 var(--font-display);
-  --display-tracking: -0.03em;
+  --font-display-sm: 600 15px/1.35 var(--font-ui);
+  --font-display-md: 600 17px/1.3 var(--font-ui);
+  --font-display-lg: 600 22px/1.25 var(--font-ui);
+  --font-display-xl: 600 28px/1.2 var(--font-ui);
+  --display-tracking: -0.01em;
 
-  --eyebrow-size: 11px;
-  --eyebrow-tracking: 0.16em;
+  --font-brand-lg: 800 22px/1.15 var(--font-display);
+  --font-brand-xl: 800 34px/1.05 var(--font-display);
+  --brand-tracking: -0.03em;
+
+  --eyebrow-size: 12px;
   --tag-tracking: 0.18em;
 
   --space-1: 2px;
@@ -64,11 +72,6 @@
   --brand-ink: #141414;
   --notch-black: #000000;
   --brand-paper: #f4f2ea;
-  --indigo: #6a4dff;
-  --indigo-deep: #3d20c4;
-  --indigo-dusk: #2a1594;
-  --on-indigo: #f4f2ea;
-  --indigo-shadow: rgba(26, 14, 80, 0.36);
 
   --ease: cubic-bezier(0.2, 0.8, 0.3, 1);
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
@@ -79,24 +82,24 @@
 }
 
 [data-theme='dark'] {
-  --bg: #0f1013;
-  --win: #141518;
-  --panel: #121316;
-  --center: #17181c;
-  --raise: #1d1e23;
-  --raise2: #24262b;
-  --screen: #191a1e;
-  --bubble: #24262b;
+  --bg: #0f0f0e;
+  --win: #181817;
+  --panel: #151514;
+  --center: #1b1b1a;
+  --raise: #222220;
+  --raise2: #2a2a28;
+  --screen: #1d1d1c;
+  --bubble: #2b2b29;
 
-  --line: #2c2e34;
-  --line2: #1f2025;
-  --sel: #26282e;
+  --line: #31302d;
+  --line2: #242422;
+  --sel: #2b2b28;
   --line-field: var(--line);
   --stripe: rgba(244, 242, 234, 0.05);
 
-  --ink: #f4f2ea;
-  --ink2: #b1afa7;
-  --ink3: #8d8b85;
+  --ink: #edece8;
+  --ink2: #b6b4ad;
+  --ink3: #8c8a83;
 
   --lime: #c6f432;
   --lime-ink: #c6f432;
@@ -129,9 +132,9 @@
 
 [data-theme='light'] {
   --bg: #e7e3d6;
-  --win: #fbf9f3;
-  --panel: #efebde;
-  --center: #fbf9f3;
+  --win: #fbfaf6;
+  --panel: #efede6;
+  --center: #fbfaf6;
   --raise: #ffffff;
   --raise2: #f6f3eb;
   --screen: #efece3;
@@ -143,8 +146,8 @@
   --line-field: #8e897a;
   --stripe: rgba(20, 20, 20, 0.055);
 
-  --ink: #141414;
-  --ink2: #5a5850;
+  --ink: #1c1b18;
+  --ink2: #55534d;
   --ink3: #615f58;
 
   --lime: #c6f432;
@@ -174,53 +177,4 @@
   --sticker-lift: 0 1px 2px rgba(40, 30, 10, 0.1);
   --sticker-press: none;
   --sticker-hero: 0 16px 40px -12px rgba(60, 50, 30, 0.3);
-}
-
-[data-theme='indigo'] {
-  --bg: #2a1594;
-  --win: #2f19a8;
-  --panel: #2a1594;
-  --center: #3a22c8;
-  --raise: #1d1e23;
-  --raise2: #24262b;
-  --screen: #191a1e;
-  --bubble: #24262b;
-
-  --line: rgba(244, 242, 234, 0.22);
-  --line2: rgba(244, 242, 234, 0.12);
-  --line-field: var(--line);
-  --sel: rgba(244, 242, 234, 0.1);
-  --stripe: rgba(244, 242, 234, 0.06);
-
-  --ink: #f4f2ea;
-  --ink2: #e2dcff;
-  --ink3: #c3b8f6;
-
-  --lime: #c6f432;
-  --lime-ink: #c6f432;
-  --lime-soft: rgba(198, 244, 50, 0.16);
-  --on-lime: #141414;
-  --on-attn: #141414;
-
-  --pass: #4fc98c;
-  --pass-soft: rgba(79, 201, 140, 0.16);
-  --fail: #ff6a4f;
-  --fail-soft: rgba(255, 77, 46, 0.18);
-  --block: #b9c6ef;
-  --block-soft: rgba(155, 173, 226, 0.16);
-  --skip: #a59fc4;
-  --skip-soft: rgba(127, 125, 118, 0.16);
-  --attn: #ffa25a;
-  --attn-soft: rgba(255, 149, 64, 0.16);
-  --warn: #f5d567;
-
-  --edge: var(--line);
-  --sticker-edge: #ffffff;
-  --sticker-shadow:
-    0 0 0 1px rgba(26, 14, 80, 0.3), 0 1px 1px rgba(26, 14, 80, 0.35),
-    0 10px 22px -8px rgba(26, 14, 80, 0.65);
-  --sticker-rest: none;
-  --sticker-lift: 0 1px 2px rgba(26, 14, 80, 0.3);
-  --sticker-press: none;
-  --sticker-hero: 0 16px 40px -12px rgba(26, 14, 80, 0.6);
 }

@@ -43,7 +43,7 @@
   align-items: center;
   gap: var(--space-4);
   margin-top: var(--space-1);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .run-notice__count {
@@ -86,7 +86,7 @@
   left: var(--space-6);
   height: var(--space-1);
   border-radius: var(--radius-pill);
-  background: var(--lime);
+  background: var(--lime-ink);
   transform-origin: left center;
   animation: gc-drain var(--notice-ms) linear forwards;
 }

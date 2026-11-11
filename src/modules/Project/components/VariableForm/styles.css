@@ -22,9 +22,8 @@
   align-items: center;
   gap: var(--space-2);
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
   letter-spacing: var(--tag-tracking);
-  text-transform: uppercase;
 }
 
 .variable-form__value-head {
@@ -43,7 +42,7 @@
 
 .variable-form__lock {
   display: inline-flex;
-  color: var(--lime-ink);
+  color: var(--ink3);
 }
 
 .variable-form__note {

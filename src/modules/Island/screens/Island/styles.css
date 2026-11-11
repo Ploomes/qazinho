@@ -47,7 +47,7 @@
 
 .island__count {
   color: var(--ink2);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
   white-space: nowrap;
 }
 
@@ -102,7 +102,7 @@
 }
 
 .island__line {
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
 }
 
 .island__line--running {

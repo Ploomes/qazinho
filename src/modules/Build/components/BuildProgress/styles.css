@@ -29,7 +29,7 @@
 .build-progress__elapsed {
   flex: none;
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .build-progress__steps {
@@ -64,7 +64,7 @@
   place-items: center;
   width: var(--space-4);
   height: var(--space-4);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .build-progress__step--done .build-progress__mark {
@@ -87,7 +87,7 @@
 .build-progress__step--doing .build-progress__mark::before {
   width: var(--space-3);
   height: var(--space-3);
-  background: var(--lime);
+  background: var(--lime-ink);
   animation: gc-pulse 1.2s ease-in-out infinite;
 }
 
@@ -106,7 +106,7 @@
 .build-progress__line {
   overflow: hidden;
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-code-xs);
   line-height: 1.6;
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -28,7 +28,7 @@
 }
 
 .moment-tile:hover .moment-tile__screen {
-  border-color: var(--lime-ink);
+  border-color: var(--ink3);
 }
 
 .moment-tile__frame {
@@ -50,7 +50,7 @@
   border-radius: var(--radius-pill);
   background: var(--lime);
   color: var(--on-lime);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
 }
 
 .moment-tile__label {

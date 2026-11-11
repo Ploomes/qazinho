@@ -44,7 +44,7 @@
 .bug-card__id {
   flex: none;
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
 }
 
 .bug-card__level {
@@ -94,8 +94,8 @@
   padding: var(--space-1) var(--space-3);
   border: 1px solid var(--line);
   border-radius: var(--radius-pill);
-  color: var(--lime-ink);
-  font: var(--font-mono-xs);
+  color: var(--ink2);
+  font: var(--font-meta-xs);
   white-space: nowrap;
   animation: gc-in var(--dur) var(--ease);
 }
@@ -103,11 +103,11 @@
 .bug-card__update {
   flex: none;
   padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--lime-ink);
+  border: 1px solid var(--ink2);
   border-radius: var(--radius-pill);
   background: var(--lime-soft);
-  color: var(--lime-ink);
-  font: var(--font-mono-xs);
+  color: var(--ink2);
+  font: var(--font-meta-xs);
   white-space: nowrap;
   animation: gc-in var(--dur) var(--ease);
 }
@@ -164,7 +164,7 @@
 
 .bug-card__link:hover {
   color: var(--ink);
-  text-decoration-color: var(--lime);
+  text-decoration-color: currentColor;
 }
 
 .bug-card__top {
@@ -248,7 +248,7 @@
   justify-content: center;
   width: 18px;
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
 }
 
 .bug-card__step--bad {

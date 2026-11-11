@@ -67,7 +67,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
-  border: 1px solid var(--lime-ink);
+  border: 1px solid var(--ink2);
   border-radius: var(--radius-md);
   background: var(--lime-soft);
 }
@@ -85,7 +85,7 @@
 .bug-send__picked-detail {
   flex: none;
   color: var(--ink2);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .bug-send__goes {
@@ -111,7 +111,7 @@
 
 .bug-send__goes-body .icon {
   flex: none;
-  color: var(--lime-ink);
+  color: var(--ink3);
 }
 
 .bug-send__fold {

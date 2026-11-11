@@ -30,15 +30,15 @@
   border-radius: var(--radius-pill);
   background: transparent;
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .bugs__filter--active {
-  border-color: var(--lime-ink);
+  border-color: var(--ink2);
   background: var(--sel);
   color: var(--ink);
   box-shadow:
-    0 0 0 1px var(--lime),
+    0 0 0 1px var(--ink2),
     var(--sticker-rest);
 }
 

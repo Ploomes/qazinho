@@ -75,7 +75,7 @@
 .pro-clone__meta,
 .pro-clone__here {
   color: var(--ink3);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
 }
 
 .pro-clone__here {

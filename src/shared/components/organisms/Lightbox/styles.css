@@ -29,8 +29,8 @@
 
 .lightbox__kicker {
   flex: none;
-  color: var(--lime-ink);
-  font: 500 11px/1 var(--font-mono);
+  color: var(--ink3);
+  font: 500 11px/1 var(--font-ui);
 }
 
 .lightbox__title {

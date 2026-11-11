@@ -217,9 +217,8 @@
   align-items: center;
   gap: var(--space-2);
   color: var(--fail);
-  font: var(--font-mono-tag);
+  font: var(--font-meta-xs);
   letter-spacing: var(--tag-tracking);
-  text-transform: uppercase;
 }
 
 .bug-flash__headline {

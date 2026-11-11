@@ -6,7 +6,7 @@
   border-radius: var(--radius-pill);
   background: transparent;
   color: var(--ink2);
-  font: var(--font-mono-md);
+  font: var(--font-meta-md);
 }
 
 .icon-button--sm {

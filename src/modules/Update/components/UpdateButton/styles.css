@@ -10,8 +10,8 @@
   border: 0;
   border-radius: var(--radius-xs);
   background: transparent;
-  color: var(--lime-ink);
-  font: var(--font-mono-sm);
+  color: var(--ink);
+  font: var(--font-meta-sm);
   white-space: nowrap;
   cursor: pointer;
   transition:

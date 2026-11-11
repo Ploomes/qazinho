@@ -32,7 +32,7 @@
 
 .island-ask__position {
   color: var(--ink2);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
   white-space: nowrap;
 }
 
@@ -50,7 +50,7 @@
 
 .island-ask__line {
   color: var(--attn);
-  font: var(--font-mono-xs);
+  font: var(--font-meta-xs);
 }
 
 .island-ask__question {
