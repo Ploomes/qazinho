@@ -5,7 +5,7 @@ import './styles.css';
 
 /** Os bugs de todos os projetos e planos, para a triagem do app inteiro. */
 export const AllBugs: React.FC = () => {
-  const { style, title, summary, isEmpty, emptyTitle, emptyBody, emptyTab, tabs, rows } =
+  const { style, title, isEmpty, emptyTitle, emptyBody, emptyTab, tabs, rows } =
     useAllBugsViewModel();
 
   return (
@@ -17,8 +17,6 @@ export const AllBugs: React.FC = () => {
           <EmptyState mood="passed" title={emptyTitle} body={emptyBody} />
         ) : (
           <>
-            <p className="all-bugs__summary">{summary}</p>
-
             <div className="all-bugs__tabs" role="tablist">
               {tabs.map((tab) => (
                 <button
@@ -31,7 +29,7 @@ export const AllBugs: React.FC = () => {
                 >
                   {tab.label}
                   {tab.count !== null && (
-                    <span className="all-bugs__count">{tab.count}</span>
+                    <span className={tab.countClassName}>{tab.count}</span>
                   )}
                 </button>
               ))}

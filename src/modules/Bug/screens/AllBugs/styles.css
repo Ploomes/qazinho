@@ -22,12 +22,6 @@
   letter-spacing: var(--display-tracking);
 }
 
-.all-bugs__summary {
-  margin: calc(var(--space-3) * -1) 0 0;
-  color: var(--ink2);
-  font: var(--font-ui-md);
-}
-
 .all-bugs__tabs {
   display: flex;
   gap: var(--space-5);
@@ -61,8 +55,12 @@
 }
 
 .all-bugs__count {
-  color: var(--fail);
+  color: var(--ink3);
   font-variant-numeric: tabular-nums;
+}
+
+.all-bugs__count--open {
+  color: var(--fail);
 }
 
 .all-bugs__none {

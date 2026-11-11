@@ -120,7 +120,8 @@ export const useBugsViewModel = () => {
     tabs: tabs.map((id) => ({
       id,
       label: t(BUG_FILTER_KEYS[id]),
-      count: id === 'open' && open.length > 0 ? String(open.length) : null,
+      count: inTab(id).length > 0 ? String(inTab(id).length) : null,
+      countClassName: id === 'open' ? 'bugs__count bugs__count--open' : 'bugs__count',
       isActive: id === filter,
       className: id === filter ? 'bugs__tab bugs__tab--active' : 'bugs__tab',
       onClick: () => {
@@ -128,20 +129,6 @@ export const useBugsViewModel = () => {
       },
     })),
     isEmpty: bugs.length === 0,
-    summary: [
-      open.length === 0
-        ? t('BUG.LIST_OPEN_NONE')
-        : open.length === 1
-          ? t('BUG.LIST_OPEN_ONE')
-          : t('BUG.LIST_OPEN_OTHER', { count: open.length }),
-      ...(filed.length === 0
-        ? []
-        : [
-            filed.length === 1
-              ? t('BUG.LIST_FILED_ONE')
-              : t('BUG.LIST_FILED_OTHER', { count: filed.length }),
-          ]),
-    ].join(' '),
     emptyTab: t('BUG.SUMMARY_NONE'),
     onDismiss: (props: { bugId: string; isDismissed: boolean }) => {
       if (workspace !== null) dismissBug({ workspaceId: workspace.id, ...props });

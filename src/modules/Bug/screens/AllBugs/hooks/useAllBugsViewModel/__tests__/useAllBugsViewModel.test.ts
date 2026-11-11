@@ -32,7 +32,7 @@ describe('useAllBugsViewModel', () => {
   it('lists the bugs of every plan, each with its plan', () => {
     const { result } = renderHook(() => useAllBugsViewModel());
 
-    expect(result.current.summary).toBe('2 open.');
+    expect(result.current.tabs[0]?.count).toBe('2');
     expect(result.current.rows.map(({ where }) => where)).toEqual([
       'Checkout regression, step 2 of TC-02',
       'Login, step 2 of TC-02',

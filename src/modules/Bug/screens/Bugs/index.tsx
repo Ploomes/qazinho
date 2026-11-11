@@ -19,7 +19,6 @@ export const Bugs: React.FC = () => {
     workspaceId,
     tabs,
     isEmpty,
-    summary,
     emptyTab,
     onOpenRun,
     onOpenCase,
@@ -44,8 +43,6 @@ export const Bugs: React.FC = () => {
     <div ref={topRef} className="bugs" style={style}>
       {page === null ? (
         <>
-          <p className="bugs__summary">{summary}</p>
-
           <div className="bugs__tabs" role="tablist">
             {tabs.map((tab) => (
               <button
@@ -57,7 +54,9 @@ export const Bugs: React.FC = () => {
                 onClick={tab.onClick}
               >
                 {tab.label}
-                {tab.count !== null && <span className="bugs__count">{tab.count}</span>}
+                {tab.count !== null && (
+                  <span className={tab.countClassName}>{tab.count}</span>
+                )}
               </button>
             ))}
           </div>

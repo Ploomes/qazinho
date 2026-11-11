@@ -38,20 +38,6 @@ export const useAllBugsViewModel = () => {
       '--bug-thumb-width': `${String(ALL_BUGS.thumbWidthPx)}px`,
     } as CSSProperties,
     title: t('BUG.TITLE'),
-    summary: [
-      open.length === 0
-        ? t('BUG.LIST_OPEN_NONE')
-        : open.length === 1
-          ? t('BUG.LIST_OPEN_ONE')
-          : t('BUG.LIST_OPEN_OTHER', { count: open.length }),
-      ...(filed.length === 0
-        ? []
-        : [
-            filed.length === 1
-              ? t('BUG.LIST_FILED_ONE')
-              : t('BUG.LIST_FILED_OTHER', { count: filed.length }),
-          ]),
-    ].join(' '),
     isEmpty: entries.length === 0,
     emptyTitle: t('BUG.EMPTY_TITLE'),
     emptyBody: t('BUG.EMPTY_BODY'),
@@ -59,7 +45,9 @@ export const useAllBugsViewModel = () => {
     tabs: tabs.map((id) => ({
       id,
       label: t(BUG_FILTER_KEYS[id]),
-      count: id === 'open' && open.length > 0 ? String(open.length) : null,
+      count: inTab(id).length > 0 ? String(inTab(id).length) : null,
+      countClassName:
+        id === 'open' ? 'all-bugs__count all-bugs__count--open' : 'all-bugs__count',
       isActive: id === shownTab,
       className:
         id === shownTab ? 'all-bugs__tab all-bugs__tab--active' : 'all-bugs__tab',

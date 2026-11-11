@@ -29,10 +29,13 @@ afterEach(async () => {
 });
 
 describe('useBugsViewModel', () => {
-  it('counts the bugs in the singular when there is only one', () => {
+  it('counts the bugs on each tab, the open ones in red', () => {
     const { result } = renderHook(() => useBugsViewModel());
 
-    expect(result.current.summary).toBe('1 open.');
+    expect(result.current.tabs[0]).toMatchObject({
+      count: '1',
+      countClassName: 'bugs__count bugs__count--open',
+    });
   });
 
   it('has nothing to show while nothing has broken', () => {
@@ -59,12 +62,12 @@ describe('useBugsViewModel', () => {
       expect(result.current.rows.map(({ id }) => id)).toEqual([BUG.id]);
     });
 
-    it('keeps a sent bug under Sent, and says how many went', () => {
+    it('keeps a sent bug under Sent, counted on its tab', () => {
       useWorkspaceStore.setState({ workspaces: [{ ...WORKSPACE, bugs: [BUG, FILED] }] });
 
       const { result } = renderHook(() => useBugsViewModel());
 
-      expect(result.current.summary).toBe('1 open. 1 was already sent.');
+      expect(result.current.tabs.map(({ count }) => count)).toEqual(['1', '1']);
 
       act(() => {
         result.current.tabs.find(({ id }) => id === 'filed')?.onClick();
@@ -95,7 +98,7 @@ describe('useBugsViewModel', () => {
       });
 
       expect(result.current.rows).toEqual([]);
-      expect(result.current.summary).toBe('None open.');
+      expect(result.current.tabs[0]?.count).toBeNull();
       expect(result.current.isEmpty).toBe(false);
 
       act(() => {

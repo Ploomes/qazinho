@@ -5,12 +5,6 @@
   scroll-margin-top: var(--space-7);
 }
 
-.bugs__summary {
-  margin: 0;
-  color: var(--ink2);
-  font: var(--font-ui-md);
-}
-
 .bugs__tabs {
   display: flex;
   gap: var(--space-5);
@@ -44,8 +38,12 @@
 }
 
 .bugs__count {
-  color: var(--fail);
+  color: var(--ink3);
   font-variant-numeric: tabular-nums;
+}
+
+.bugs__count--open {
+  color: var(--fail);
 }
 
 .bugs__none {
