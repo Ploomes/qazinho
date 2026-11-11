@@ -2,25 +2,23 @@
 
 O QAzinho é um lugar calmo e chapado para trabalhar o dia inteiro. **A superfície carrega o
 trabalho**: listas, planos, chat, logs, a tela do dispositivo. A marca mora em poucos toques, nunca
-em cada peça: o acento amarelo, o Estagiário, o wordmark, a Bricolage Grotesque na primeira
-execução. Nada é
-inclinado, nada veste uma borda de recorte grossa, e nada é colado na tela com tapa, exceto o logo.
+em cada peça: o acento amarelo (o Sinal), o personagem, o ícone e o logotipo. Nada é inclinado,
+nada veste uma borda de recorte e nada é colado na tela com tapa.
 
-**O logo continua um adesivo**: o Estagiário no átomo `Logo` (`isSticker`: borda de recorte branca,
-brilho, os -6° e as sombras dele), o `Wordmark`, tinta com uma borda de recorte de papel
-(`--sticker-edge`), e a `Tag` que o assina, "BY SALVE SOFTWARE": Tinta com texto mono lima, uma
-borda de papel de 2px, a sombra e -2° (`--sticker-edge-width`, `--sticker-shadow`,
-`--sticker-tilt`). A `Tag` é só para o lockup, que fica no Sobre, nunca na barra de título; um rótulo em outro lugar é texto simples. Em todo o resto ele é desenhado chapado.
+**A marca é a do rebranding de 2026-11-11** (o HTML "QAzinho Marca" da designer): o personagem é
+uma tela escura e baixinha com dois olhos acesos no Sinal, e o ícone do app é ele quadrado. O
+`Logo` desenha o ícone (`isIcon`), e o `Wordmark` é o logotipo: "QAzınho" em Geist 700, o pingo do
+i feito dos dois olhos, na cor do texto no Paper e acesos no Sinal no Night (`--brand-dot`). A `Tag`
+assina o lockup ("POR SALVE SOFTWARE") em Geist Mono baixinha, só no Sobre.
 
-Antes era uma mesa de adesivos recortados: bordas grossas de papel, sombras levantadas, badges
-inclinadas e entradas com tapa. Isso pesava para usar por horas, e o QA pediu algo mais leve
-(2026-10-22). Os tokens `--sticker-*`, `--edge-*` e `--tilt-*` e o `STICKER` mantêm os nomes, e
-agora guardam os valores mais leves.
+Antes era uma mesa de adesivos recortados, depois um Estagiário lima; os dois saíram. O `STICKER`
+e os tokens `--sticker-*`, `--edge-*` e `--tilt-*` mantêm os nomes e guardam os valores calmos.
 
-A arte da designer está em `assets/`: `antena.js` desenha o Estagiário, a antena dele e cada humor,
-`humores-png/` e `video/` os mostram, `icone/` guarda os ícones do app, e
-`logo/qazinho-lockup.png` é o lockup. O `drawIntern` porta o `antena.js` à mão: quando a designer o
-mudar, porte as formas de novo. O `build/icon.png` é o `icone/indigo/app-icon-indigo-1024.png`.
+A arte da designer está em `assets/`, fora do Prettier: `olhos.js` desenha o personagem e o ícone em
+cada humor, `expressoes/` guarda os oito em PNG, `app-icon/` o ícone em cada tamanho, e
+`qazinho-icone.svg` o ícone em vetor. O `drawIntern` porta o `olhos.js` à mão, com as mesmas
+formas, tempos e poses paradas: quando a designer o mudar, porte de novo. O `build/icon.png` é o
+`app-icon/app-icon-sinal-1024.png`.
 
 ## Elevado ou chapado
 
@@ -56,24 +54,24 @@ Todo valor vem de um token em `tokens.css` (`design-tokens.md`).
 - **Sombra**: `--sticker-rest` e `--sticker-press` são nenhuma, `--sticker-lift` é uma sombra fina
   para um controle em hover, e `--sticker-hero` a única sombra suave que um popover ou modal joga.
 - **Inclinação**: nenhuma. Os `--tilt-*` são 0deg e ficam assim; nada que tem texto gira.
-- **Tipografia**: uma família, a IBM Plex Sans, nos títulos (600, `--font-display-*`), no corpo e
-  nos rótulos, ids, horas e números, que alinham pelos algarismos tabulares. A JetBrains Mono fica só
-  no que é código: um endereço, um caminho, uma chamada, a saída de um comando, o nome de uma
-  variável (`--font-code-*`). A Bricolage fica na marca: o wordmark, com a borda de recorte de
-  papel, e o título da primeira execução (`--font-brand-*`). Rótulo não vai em caixa-alta.
+- **Tipografia**: uma família, a Geist, nos títulos (600, `--font-display-*`), no corpo e nos
+  rótulos, ids, horas e números, que alinham pelos algarismos tabulares, e no logotipo e no título da
+  primeira execução (700, `--font-brand-*`). A Geist Mono fica no que é código: um endereço, um
+  caminho, uma chamada, a saída de um comando, o nome de uma variável (`--font-code-*`), e na
+  assinatura do lockup. Rótulo não vai em caixa-alta.
 - **Cor**: os neutros são cinzas sem tom nos dois temas, para o amarelo não tingir tudo. O amarelo (`--accent`, e `--accent-fill` num botão) é a ação principal,
-  o foco, o que está rodando e um controle ligado; nenhuma cor neon. O lima fica só na marca (o
-  Estagiário, o balão com que ele fala e a `Tag`, pelo `--brand-lime`). A aba ativa veste o sublinhado
+  o foco, o que está rodando e um controle ligado; nenhuma cor neon. O Sinal puro fica na marca: os
+  olhos do personagem e o balão com que ele fala (`--brand-sinal`). A aba ativa veste o sublinhado
   no acento; um link ou uma seleção usam a tinta. Um gráfico dá uma cor a cada categoria. O que passou não ganha verde em cada linha: ele fica
   no resultado de uma run. Um
   status (`StatusPill`) ou uma etiqueta é só o ícone e o texto na cor dele, sem fundo, borda nem
   preenchimento. Um fato repetido em toda linha é um ícone com tooltip. Um aviso veste a cor de leve
   (`--fail-soft` atrás de texto `--fail`), nunca num bloco sólido dela.
-  O índigo fica só no ícone do app.
 - **Temas**: Night (escuro) e Paper (claro). O QA escolhe um dos dois ou o do computador, o padrão
   (`shownThemeOf`). Os dois declaram todos os tokens.
-- **O Estagiário** é desenhado chapado e de pé: lima, olhos escuros, sem borda branca, sem brilho,
-  sem sombra. Ele ainda muda de humor. Só o logo o desenha como adesivo.
+- **O Estagiário** é o personagem da marca: o corpo escuro, a tela e os olhos no Sinal com o brilho
+  e as linhas que a designer desenhou, nos oito humores dela. Os sinais fora do corpo (o balão do
+  bug, os pensamentos, os zzz) usam a tinta do tema, para aparecer nos dois.
 
 ## Movimento
 
