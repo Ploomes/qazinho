@@ -7,7 +7,7 @@ import type { ShownTheme } from './ShownTheme';
 import type { Theme } from './Theme';
 import type { IProject } from '@/modules/Project';
 import type { ProjectSection } from '@/modules/Project/components/ProjectModal/types';
-import type { IReplayOpen, IRunNotice } from '@/modules/Run';
+import type { IReplayOpen } from '@/modules/Run';
 import type { IImportSource } from '@/shared/types';
 
 /**
@@ -31,7 +31,6 @@ export interface IAppStore {
   modelMenuAt: ModelMenuAt | null;
   media: IMedia | null;
   replay: IReplayOpen | null;
-  runNotice: IRunNotice | null;
   toggleTheme: () => void;
   setTheme: (theme: Theme) => void;
   setSystemTheme: (systemTheme: ShownTheme) => void;
@@ -62,6 +61,4 @@ export interface IAppStore {
   closeMedia: () => void;
   openReplay: (replay: IReplayOpen) => void;
   closeReplay: () => void;
-  showRunNotice: (notice: IRunNotice) => void;
-  closeRunNotice: () => void;
 }

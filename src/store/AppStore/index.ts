@@ -25,7 +25,6 @@ export const useAppStore = create<IAppStore>()(
       modelMenuAt: null,
       media: null,
       replay: null,
-      runNotice: null,
 
       toggleTheme: () =>
         set((state) => ({ theme: shownThemeOf(state) === 'dark' ? 'light' : 'dark' })),
@@ -155,10 +154,6 @@ export const useAppStore = create<IAppStore>()(
       openReplay: (replay) => set({ replay }),
 
       closeReplay: () => set({ replay: null }),
-
-      showRunNotice: (runNotice) => set({ runNotice }),
-
-      closeRunNotice: () => set({ runNotice: null }),
     }),
     {
       name: STORAGE.appearance,

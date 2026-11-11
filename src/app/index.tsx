@@ -3,7 +3,7 @@ import { AssistantDock } from '@/modules/Assistant';
 import { FirstRun, Home } from '@/modules/Home';
 import { ProLinkModal, ProMergeModal, ProRunWarning } from '@/modules/Pro';
 import { ProjectModal, VariablesModal } from '@/modules/Project';
-import { RunNotice, RunReplay } from '@/modules/Run';
+import { RunReplay } from '@/modules/Run';
 import { Settings } from '@/modules/Settings';
 import { Onboarding } from '@/modules/Setup';
 import { UpdateRequired } from '@/modules/Update';
@@ -30,8 +30,6 @@ export const App: React.FC = () => {
     projectModalKey,
     variablesKey,
     hasMedia,
-    hasRunNotice,
-    runNoticeKey,
     hasReplay,
     replayKey,
     hasProLink,
@@ -71,7 +69,6 @@ export const App: React.FC = () => {
             <AnimatePresence>
               {hasMedia && <Lightbox key="lightbox" />}
               {hasReplay && <RunReplay key={replayKey} />}
-              {hasRunNotice && <RunNotice key={runNoticeKey} />}
               {modal === 'project' && <ProjectModal key={projectModalKey} />}
               {modal === 'workspace' && <NewWorkspaceModal key="workspace" />}
               {variablesKey !== null && <VariablesModal key={variablesKey} />}

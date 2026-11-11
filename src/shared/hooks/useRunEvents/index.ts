@@ -13,7 +13,6 @@ import {
 } from '@/modules/Run/library';
 import { Run, Variables } from '@/services';
 import {
-  useAppStore,
   useMachineStore,
   useMemoryStore,
   useSettingsStore,
@@ -47,7 +46,6 @@ export const useRunEvents = () => {
   const resumeRun = useWorkspaceStore((state) => state.resumeRun);
   const isLoaded = useWorkspaceStore((state) => state.isLoaded);
   const trackers = useSetupStore((state) => state.integrations.length);
-  const showRunNotice = useAppStore((state) => state.showRunNotice);
   const openRun = useOpenRun();
   const { reviewWorkspace, reviewAll } = useBugReviews();
 
@@ -66,12 +64,6 @@ export const useRunEvents = () => {
     const run = workspace?.runs.find(({ id }) => id === props.runId);
 
     if (!workspace || !run) return;
-
-    showRunNotice({
-      key: `${workspace.id}/${run.id}/${String(Date.now())}`,
-      workspaceId: workspace.id,
-      runId: run.id,
-    });
 
     if (useSettingsStore.getState().runAlert !== 'system') return;
 

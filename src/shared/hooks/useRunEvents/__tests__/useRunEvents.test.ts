@@ -212,7 +212,6 @@ describe('useRunEvents', () => {
     beforeEach(async () => {
       await i18n.changeLanguage('en');
       useAppStore.setState({
-        runNotice: null,
         screen: 'welcome',
         selectedWorkspaceId: null,
       });
@@ -224,20 +223,16 @@ describe('useRunEvents', () => {
       });
     });
 
-    it('says so in the app, and asks main to call the QA back if they are away', () => {
+    it('asks main to call the QA back if they are away', () => {
       const { alertRun, send } = listening();
 
       send({ kind: 'done', workspaceId: 'w1' });
 
-      expect(useAppStore.getState().runNotice).toMatchObject({
-        workspaceId: 'w1',
-        runId: 'r-01',
-      });
       expect(alertRun).toHaveBeenCalledWith({
         workspaceId: 'w1',
         runId: 'r-01',
         title: 'Run r-01 finished',
-        body: 'Checkout regression · 1 failed · 1 passed · 1 bug',
+        body: 'Checkout regression: 1 failed, 1 passed, 1 bug',
       });
     });
 
@@ -262,7 +257,6 @@ describe('useRunEvents', () => {
 
       send({ kind: 'done', workspaceId: 'w1' });
 
-      expect(useAppStore.getState().runNotice).not.toBeNull();
       expect(alertRun).not.toHaveBeenCalled();
     });
 
@@ -284,7 +278,6 @@ describe('useRunEvents', () => {
       });
       send({ kind: 'done', workspaceId: 'w1' });
 
-      expect(useAppStore.getState().runNotice).toBeNull();
       expect(alertRun).not.toHaveBeenCalled();
     });
 

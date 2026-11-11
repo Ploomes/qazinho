@@ -371,6 +371,8 @@ export const en = {
     SUGGESTION_WRITE: 'Write the cases myself',
   },
   PLAN: {
+    LAST_RUN: 'The run {{when}} ended: {{told}}.',
+    LAST_RUN_OPEN: 'See in Runs',
     FRAME_OPEN: 'Open this frame in Figma',
     EMPTY_TITLE: 'No plan yet.',
     EMPTY_BODY:
@@ -496,8 +498,6 @@ export const en = {
     NOTICE_EXPLORE_BROKE: 'Exploration {{id}} stopped short',
     NOTICE_ASKED: 'The agent of {{workspace}} asks you something',
     NOTICE_BODY: '{{workspace}}: {{tally}}',
-    NOTICE_OPEN: 'See the run',
-    NOTICE_WATCH: 'Watch',
     WATCH_CASE: 'Watch the take of {{id}}',
     TAKE: 'Watch',
     BY_REPLAY_TIP: 'No AI: walked from the recording',

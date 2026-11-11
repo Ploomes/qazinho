@@ -13,7 +13,6 @@ export type * from './IRequestAt';
 export type * from './IRun';
 export type * from './IRunCase';
 export type * from './IRunCounts';
-export type * from './IRunNotice';
 export type * from './IRunSpan';
 export type * from './IRunStep';
 export type * from './IRunSuggestion';

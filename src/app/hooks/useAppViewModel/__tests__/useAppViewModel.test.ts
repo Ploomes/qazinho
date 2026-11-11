@@ -278,22 +278,6 @@ describe('useAppViewModel', () => {
     });
   });
 
-  it('mounts the notice of a run that ended under its own key, so a second one replaces the first', () => {
-    useAppStore.setState({ runNotice: { key: 'k-1', workspaceId: 'w1', runId: 'r-01' } });
-
-    const first = renderHook(() => useAppViewModel()).result.current;
-
-    useAppStore.setState({ runNotice: { key: 'k-2', workspaceId: 'w1', runId: 'r-02' } });
-
-    const second = renderHook(() => useAppViewModel()).result.current;
-
-    expect(first.hasRunNotice).toBe(true);
-    expect(first.runNoticeKey).not.toBe(second.runNoticeKey);
-    useAppStore.setState({ runNotice: null });
-
-    expect(renderHook(() => useAppViewModel()).result.current.hasRunNotice).toBe(false);
-  });
-
   it('holds back the warning before a run while the merge it asked for is open', () => {
     useProStore.setState({
       heldRun: { workspaceId: 'w1', mode: 'agent' },

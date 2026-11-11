@@ -373,6 +373,8 @@ export const pt: typeof en = {
     SUGGESTION_WRITE: 'Escrever os casos eu mesmo',
   },
   PLAN: {
+    LAST_RUN: 'A run {{when}} terminou: {{told}}.',
+    LAST_RUN_OPEN: 'Ver em Runs',
     FRAME_OPEN: 'Abrir este frame no Figma',
     EMPTY_TITLE: 'Nenhum plano ainda.',
     EMPTY_BODY:
@@ -499,8 +501,6 @@ export const pt: typeof en = {
     NOTICE_EXPLORE_BROKE: 'Exploração {{id}} parou no meio',
     NOTICE_ASKED: 'O agente de {{workspace}} te pergunta algo',
     NOTICE_BODY: '{{workspace}}: {{tally}}',
-    NOTICE_OPEN: 'Ver a run',
-    NOTICE_WATCH: 'Assistir',
     WATCH_CASE: 'Assistir ao take do {{id}}',
     TAKE: 'Assistir',
     BY_REPLAY_TIP: 'Sem IA: andou pela gravação',
