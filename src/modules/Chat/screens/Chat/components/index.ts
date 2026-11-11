@@ -1,3 +1,4 @@
+export * from './AgentLine';
 export * from './AgentMessage';
 export * from './AskNote';
 export * from './ChatRow';

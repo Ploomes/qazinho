@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatResetsAt } from '@/shared/components/organisms/Titlebar/library';
+import { formatResetsAt } from '@/modules/Chat/screens/Chat/components/AgentLine/library';
 
 const AT = 1_789_575_000;
 

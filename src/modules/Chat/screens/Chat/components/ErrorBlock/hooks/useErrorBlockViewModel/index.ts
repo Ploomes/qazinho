@@ -24,7 +24,7 @@ export const useErrorBlockViewModel = (props: IErrorBlockProps) => {
       props.onRetry?.();
     },
     onModel: () => {
-      toggleModelMenu('titlebar');
+      toggleModelMenu('composer');
     },
     onToggle: () => {
       setExpanded((open) => !open);

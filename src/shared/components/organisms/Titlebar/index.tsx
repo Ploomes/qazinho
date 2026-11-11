@@ -2,80 +2,57 @@ import type { ITitlebarProps } from './types';
 import { AnimatePresence } from 'motion/react';
 import { AssistantButton } from '@/modules/Assistant';
 import { UpdateButton } from '@/modules/Update';
-import { Gauge, Icon, IconButton } from '@/shared/components/atoms';
+import { IconButton } from '@/shared/components/atoms';
 import { Tooltip } from '@/shared/components/molecules';
-import { ModelPopover } from '@/shared/components/organisms/ModelPopover';
 import { ResourcePopover } from '@/shared/components/organisms/ResourcePopover';
-import { SessionTip } from './components';
 import { useTitlebarViewModel } from './hooks';
 import './styles.css';
 
+/** A barra de cima: a barra lateral, onde o QA está, e o Estagiário. */
 export const Titlebar: React.FC<ITitlebarProps> = (props) => {
   const {
     isBare,
     className,
     isResourcesOpen,
-    isModelMenuOpen,
-    resourcesLabel,
-    agentLabel,
-    sessionUsed,
-    sessionLabel,
-    sessionTip,
-    onToggleResources,
-    onToggleModelMenu,
+    hasSidebar,
+    sidebarLabel,
+    onToggleSidebar,
+    crumbs,
   } = useTitlebarViewModel(props);
 
   return (
     <header className={className}>
       {!isBare && (
-        <div className="titlebar__meters">
-          <UpdateButton />
-          {sessionUsed !== null && (
-            <Tooltip
-              content={
-                <SessionTip
-                  title={sessionTip.title}
-                  rows={sessionTip.rows}
-                  note={sessionTip.note}
+        <>
+          <div className="titlebar__place">
+            {hasSidebar && (
+              <Tooltip content={sidebarLabel}>
+                <IconButton
+                  icon="sidebar"
+                  size="sm"
+                  label={sidebarLabel}
+                  onClick={onToggleSidebar}
                 />
-              }
-            >
-              <span className="titlebar__session" tabIndex={0}>
-                <Gauge value={sessionUsed} fills="used" label={sessionLabel ?? ''} />
-                <span className="titlebar__session-label">{sessionLabel}</span>
-              </span>
-            </Tooltip>
-          )}
+              </Tooltip>
+            )}
+            <nav className="titlebar__crumbs" aria-label={sidebarLabel}>
+              {crumbs.map((crumb) => (
+                <span key={crumb.key} className="titlebar__crumb">
+                  {crumb.label}
+                </span>
+              ))}
+            </nav>
+          </div>
 
-          <Tooltip content={resourcesLabel} isOff={isResourcesOpen}>
-            <IconButton
-              icon="resources"
-              label={resourcesLabel}
-              isActive={isResourcesOpen}
-              popup="dialog"
-              onClick={onToggleResources}
-            />
-          </Tooltip>
-
-          <button
-            type="button"
-            className="titlebar__meter-button"
-            aria-haspopup="menu"
-            onClick={onToggleModelMenu}
-          >
-            <span>{agentLabel}</span>
-            <Icon name="caretDown" />
-          </button>
-
-          <span className="titlebar__assistant">
+          <div className="titlebar__end">
+            <UpdateButton />
             <AssistantButton />
-          </span>
-        </div>
+          </div>
+        </>
       )}
 
       <AnimatePresence>
         {isResourcesOpen && <ResourcePopover key="resources" />}
-        {isModelMenuOpen && <ModelPopover key="model" at="titlebar" />}
       </AnimatePresence>
     </header>
   );

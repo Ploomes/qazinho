@@ -1,24 +1,25 @@
 import type { ITitlebarProps } from '@/shared/components/organisms/Titlebar/types';
 import { useTranslation } from 'react-i18next';
-import { useModelInUse } from '@/modules/Settings';
 import { Platform } from '@/services';
-import { gaugeTone } from '@/shared/components/atoms/Gauge/library';
-import { formatResetsAt } from '@/shared/components/organisms/Titlebar/library';
-import { useAppStore, useMachineStore } from '@/store';
+import { useAppStore, useSettingsStore, useWorkspaceStore } from '@/store';
 
 export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
   const { isBare = false } = props;
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const isResourcesOpen = useAppStore((state) => state.isResourcesOpen);
-  const modelMenuAt = useAppStore((state) => state.modelMenuAt);
-  const toggleResources = useAppStore((state) => state.toggleResources);
-  const toggleModelMenu = useAppStore((state) => state.toggleModelMenu);
-  const usage = useMachineStore((state) => state.usage);
-  const { agent, modelName } = useModelInUse();
+  const screen = useAppStore((state) => state.screen);
+  const projects = useAppStore((state) => state.projects);
+  const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
+  const workspace = useWorkspaceStore(
+    (state) => state.workspaces.find(({ id }) => id === selectedWorkspaceId) ?? null,
+  );
+  const isSidebarShut = useSettingsStore((state) => state.isSidebarShut);
+  const toggleSidebar = useSettingsStore((state) => state.toggleSidebar);
 
-  const sessionUsed = usage?.fiveHourUsed ?? null;
-  const sessionPercent = Math.round((sessionUsed ?? 0) * 100);
-  const weekUsed = usage?.sevenDayUsed ?? null;
+  const project =
+    workspace === null
+      ? null
+      : (projects.find(({ id }) => id === workspace.projectId) ?? null);
 
   return {
     isBare,
@@ -30,59 +31,19 @@ export const useTitlebarViewModel = (props: ITitlebarProps = {}) => {
       .filter((part) => part.length > 0)
       .join(' '),
     isResourcesOpen,
-    isModelMenuOpen: modelMenuAt === 'titlebar',
-    resourcesLabel: t('RESOURCES.TITLE'),
-    agentLabel: t('TITLEBAR.AGENT', { agent, model: modelName }),
-    sessionUsed,
-    sessionLabel:
-      sessionUsed === null
-        ? null
-        : (usage?.resetsAt ?? 0) > 0
-          ? t('TITLEBAR.SESSION_USED', {
-              percent: sessionPercent,
-              resets: formatResetsAt({
-                resetsAt: usage?.resetsAt ?? 0,
-                language: i18n.language,
-              }),
-            })
-          : t('TITLEBAR.SESSION_ONLY', { percent: sessionPercent }),
-    sessionTip: {
-      title: t('TITLEBAR.TIP_TITLE', { agent }),
-      rows: [
-        {
-          id: 'session',
-          label: t('TITLEBAR.TIP_SESSION'),
-          value: t('TITLEBAR.TIP_USED', { percent: sessionPercent }),
-          detail:
-            (usage?.resetsAt ?? 0) > 0
-              ? t('TITLEBAR.TIP_RESETS', {
-                  resets: formatResetsAt({
-                    resetsAt: usage?.resetsAt ?? 0,
-                    language: i18n.language,
-                  }),
-                })
-              : null,
-          fillWidth: `${String(sessionPercent)}%`,
-          fillClassName: `session-tip__fill session-tip__fill--${gaugeTone(1 - (sessionUsed ?? 0))}`,
-        },
-        ...(weekUsed === null
-          ? []
-          : [
-              {
-                id: 'week',
-                label: t('TITLEBAR.TIP_WEEK'),
-                value: t('TITLEBAR.TIP_USED', { percent: Math.round(weekUsed * 100) }),
-                detail: null,
-                fillWidth: `${String(Math.round(weekUsed * 100))}%`,
-                fillClassName: `session-tip__fill session-tip__fill--${gaugeTone(1 - weekUsed)}`,
-              },
-            ]),
-      ],
-      note: t('TITLEBAR.TIP_NOTE', { agent }),
-    },
-    onToggleResources: toggleResources,
-    onToggleModelMenu: () => {
-      toggleModelMenu('titlebar');
-    },
+    hasSidebar: projects.length > 0 && screen !== 'settings',
+    sidebarLabel: t(isSidebarShut ? 'SIDEBAR.OPEN' : 'SIDEBAR.SHUT'),
+    onToggleSidebar: toggleSidebar,
+    crumbs:
+      screen === 'settings'
+        ? [{ key: 'settings', label: t('COMMON.SETTINGS') }]
+        : screen === 'workspace' && workspace !== null
+          ? [
+              { key: 'project', label: project?.name ?? '' },
+              { key: 'plan', label: workspace.name },
+            ].filter(({ label }) => label !== '')
+          : projects.length > 0
+            ? [{ key: 'home', label: t('HOME.TITLE') }]
+            : [],
   };
 };

@@ -35,7 +35,7 @@ export const en = {
     COPIED: 'Copied',
     DETAILS: 'See details',
   },
-  TITLEBAR: {
+  USAGE: {
     AGENT: '{{agent}} · {{model}}',
     SESSION_USED: '{{percent}}% of session used · resets {{resets}}',
     SESSION_ONLY: '{{percent}}% of session used',

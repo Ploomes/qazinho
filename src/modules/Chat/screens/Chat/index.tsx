@@ -3,7 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { AskCard } from '@/modules/Run';
 import { Button, Chip, Icon, Intern, Markdown } from '@/shared/components/atoms';
 import { MOTION, STICKER } from '@/shared/constants';
-import { ChatRow, Composer, RunActivity, RunSection, TypingDots } from './components';
+import {
+  AgentLine,
+  ChatRow,
+  Composer,
+  RunActivity,
+  RunSection,
+  TypingDots,
+} from './components';
 import { useChatViewModel } from './hooks';
 import './styles.css';
 
@@ -309,6 +316,7 @@ export const Chat: React.FC = () => {
         onCommandBack={onCommandBack}
         onCommandCancel={onCommandCancel}
       />
+      <AgentLine />
     </div>
   );
 };

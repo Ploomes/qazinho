@@ -37,7 +37,7 @@ export const pt: typeof en = {
     COPIED: 'Copiado',
     DETAILS: 'Ver detalhes',
   },
-  TITLEBAR: {
+  USAGE: {
     AGENT: '{{agent}} · {{model}}',
     SESSION_USED: '{{percent}}% da sessão usada · reseta {{resets}}',
     SESSION_ONLY: '{{percent}}% da sessão usada',
