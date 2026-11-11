@@ -2,6 +2,7 @@ import type { en } from './en';
 
 export const pt: typeof en = {
   COMMON: {
+    WHERE: 'Onde você está',
     TO_TOP: 'Voltar ao topo',
     TODAY: 'hoje',
     YESTERDAY: 'ontem',

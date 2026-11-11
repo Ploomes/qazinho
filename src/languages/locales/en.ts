@@ -1,5 +1,6 @@
 export const en = {
   COMMON: {
+    WHERE: 'Where you are',
     TO_TOP: 'Back to the top',
     TODAY: 'today',
     YESTERDAY: 'yesterday',

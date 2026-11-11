@@ -13,6 +13,8 @@ export const Sidebar: React.FC = () => {
     className,
     style,
     isShut,
+    toggleLabel,
+    onToggle,
     hasTips,
     onSelectProject,
     searchLabel,
@@ -227,6 +229,9 @@ export const Sidebar: React.FC = () => {
                 label={t('COMMON.SETTINGS')}
                 onClick={onSettings}
               />
+            </Tooltip>
+            <Tooltip side="right" content={toggleLabel}>
+              <IconButton icon="sidebar" label={toggleLabel} onClick={onToggle} />
             </Tooltip>
           </div>
         </>
@@ -450,6 +455,14 @@ export const Sidebar: React.FC = () => {
                 size="sm"
                 label={t('COMMON.SETTINGS')}
                 onClick={onSettings}
+              />
+            </Tooltip>
+            <Tooltip content={toggleLabel}>
+              <IconButton
+                icon="sidebar"
+                size="sm"
+                label={toggleLabel}
+                onClick={onToggle}
               />
             </Tooltip>
           </div>

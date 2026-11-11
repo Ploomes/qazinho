@@ -90,7 +90,6 @@ describe('useTitlebarViewModel', () => {
       useAppStore.setState({ projects: [], screen: 'welcome' });
 
       expect(renderHook(() => useTitlebarViewModel()).result.current).toMatchObject({
-        hasSidebar: false,
         crumbs: [],
       });
     });
