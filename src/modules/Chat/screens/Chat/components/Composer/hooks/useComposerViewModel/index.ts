@@ -84,7 +84,7 @@ export const useComposerViewModel = (props: IComposerProps) => {
     onPickCommand(id);
   };
 
-  const onCommandKey = (event: KeyboardEvent<HTMLInputElement>): boolean => {
+  const onCommandKey = (event: KeyboardEvent<HTMLTextAreaElement>): boolean => {
     const picked = commandRows[commandActive];
 
     if (event.key === 'Escape') {
@@ -102,7 +102,7 @@ export const useComposerViewModel = (props: IComposerProps) => {
     return true;
   };
 
-  const onPickerKey = (event: KeyboardEvent<HTMLInputElement>): boolean => {
+  const onPickerKey = (event: KeyboardEvent<HTMLTextAreaElement>): boolean => {
     const picked = shown[highlighted];
     const at = filled.indexOf(tab);
 
@@ -127,9 +127,11 @@ export const useComposerViewModel = (props: IComposerProps) => {
       ...part,
       key: `${String(index)}-${part.text}`,
     })),
-    onInputScroll: (event: UIEvent<HTMLInputElement>) => {
-      if (mirrorRef.current)
-        mirrorRef.current.scrollLeft = event.currentTarget.scrollLeft;
+    onInputScroll: (event: UIEvent<HTMLTextAreaElement>) => {
+      if (!mirrorRef.current) return;
+
+      mirrorRef.current.scrollTop = event.currentTarget.scrollTop;
+      mirrorRef.current.scrollLeft = event.currentTarget.scrollLeft;
     },
     canPress: isAnswering || canSend,
     isLocked,
@@ -166,7 +168,7 @@ export const useComposerViewModel = (props: IComposerProps) => {
       transition: { duration: MOTION.durationFast, ease: MOTION.ease },
     },
     onRemoveAttachment: props.onRemoveAttachment,
-    onPaste: (event: ClipboardEvent<HTMLInputElement>) => {
+    onPaste: (event: ClipboardEvent<HTMLTextAreaElement>) => {
       const files = [...event.clipboardData.files];
 
       if (files.length === 0 || !canAttach) return;
@@ -224,12 +226,12 @@ export const useComposerViewModel = (props: IComposerProps) => {
     onPick: pick,
     onHighlight: setHighlight,
     onTab: showTab,
-    onInputChange: (event: ChangeEvent<HTMLInputElement>) => {
+    onInputChange: (event: ChangeEvent<HTMLTextAreaElement>) => {
       setHighlight(0);
       setCommandHighlight(0);
       onChange(event.target.value);
     },
-    onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
+    onKeyDown: (event: KeyboardEvent<HTMLTextAreaElement>) => {
       if (isCommandOpen && onCommandKey(event)) {
         event.preventDefault();
 
@@ -249,7 +251,8 @@ export const useComposerViewModel = (props: IComposerProps) => {
         return;
       }
 
-      if (event.key !== 'Enter' || event.shiftKey) return;
+      if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing)
+        return;
 
       event.preventDefault();
       onSendClick();

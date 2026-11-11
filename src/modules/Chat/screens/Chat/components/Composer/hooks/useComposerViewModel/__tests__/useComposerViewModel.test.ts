@@ -90,12 +90,13 @@ const EVERY_KIND = {
   ],
 };
 
-function pressed(key: string, shiftKey = false) {
+function pressed(key: string, held: { shiftKey?: boolean; isComposing?: boolean } = {}) {
   return {
     key,
-    shiftKey,
+    shiftKey: held.shiftKey ?? false,
+    nativeEvent: { isComposing: held.isComposing ?? false },
     preventDefault: vi.fn(),
-  } as unknown as KeyboardEvent<HTMLInputElement>;
+  } as unknown as KeyboardEvent<HTMLTextAreaElement>;
 }
 
 describe('useComposerViewModel', () => {
@@ -126,16 +127,18 @@ describe('useComposerViewModel', () => {
   });
 
   describe('onInputScroll', () => {
-    it('scrolls the marked copy of the text along with the field', () => {
+    /** O campo tem várias linhas: a cópia marcada rola junto para baixo também. */
+    it('scrolls the marked copy of the text along with the field, down and across', () => {
       const { result } = renderHook(() => useComposerViewModel(PROPS));
       const mirror = document.createElement('div');
 
       result.current.mirrorRef.current = mirror;
       result.current.onInputScroll({
-        currentTarget: { scrollLeft: 120 },
-      } as unknown as UIEvent<HTMLInputElement>);
+        currentTarget: { scrollLeft: 120, scrollTop: 40 },
+      } as unknown as UIEvent<HTMLTextAreaElement>);
 
       expect(mirror.scrollLeft).toBe(120);
+      expect(mirror.scrollTop).toBe(40);
     });
   });
 
@@ -244,7 +247,17 @@ describe('useComposerViewModel', () => {
     const onSend = vi.fn();
     const { result } = renderHook(() => useComposerViewModel({ ...PROPS, onSend }));
 
-    result.current.onKeyDown(pressed('Enter', true));
+    result.current.onKeyDown(pressed('Enter', { shiftKey: true }));
+
+    expect(onSend).not.toHaveBeenCalled();
+  });
+
+  /** Quem digita com acento ou em japonês confirma a palavra com Enter: isso não envia. */
+  it('does NOT send on the Enter that confirms a composed word', () => {
+    const onSend = vi.fn();
+    const { result } = renderHook(() => useComposerViewModel({ ...PROPS, onSend }));
+
+    result.current.onKeyDown(pressed('Enter', { isComposing: true }));
 
     expect(onSend).not.toHaveBeenCalled();
   });
@@ -672,7 +685,7 @@ describe('useComposerViewModel, attachments', () => {
     result.current.onPaste({
       clipboardData: { files: [file] },
       preventDefault,
-    } as unknown as ClipboardEvent<HTMLInputElement>);
+    } as unknown as ClipboardEvent<HTMLTextAreaElement>);
 
     expect(onFiles).toHaveBeenCalledWith([file]);
     expect(preventDefault).toHaveBeenCalled();
@@ -686,7 +699,7 @@ describe('useComposerViewModel, attachments', () => {
     result.current.onPaste({
       clipboardData: { files: [] },
       preventDefault,
-    } as unknown as ClipboardEvent<HTMLInputElement>);
+    } as unknown as ClipboardEvent<HTMLTextAreaElement>);
 
     expect(onFiles).not.toHaveBeenCalled();
     expect(preventDefault).not.toHaveBeenCalled();
@@ -725,7 +738,7 @@ describe('useComposerViewModel, attachments', () => {
     result.current.onPaste({
       clipboardData: { files: [new File(['x'], 'x.png')] },
       preventDefault: vi.fn(),
-    } as unknown as ClipboardEvent<HTMLInputElement>);
+    } as unknown as ClipboardEvent<HTMLTextAreaElement>);
 
     expect(onFiles).not.toHaveBeenCalled();
   });

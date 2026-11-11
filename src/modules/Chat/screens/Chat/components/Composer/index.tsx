@@ -161,8 +161,9 @@ export const Composer: React.FC<IComposerProps> = (props) => {
               ),
             )}
           </div>
-          <input
+          <textarea
             className="input input--bare composer__input"
+            rows={1}
             value={props.value}
             placeholder={placeholder}
             aria-label={placeholder}
