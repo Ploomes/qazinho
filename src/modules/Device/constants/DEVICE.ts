@@ -1,6 +1,7 @@
 export const DEVICE = {
   headerHeight: 52,
   chromeHeight: 32,
+  siteMarkSize: 14,
   stepsMinHeight: 150,
   phoneRatio: 9 / 19.5,
   frameLayoutId: 'device-frame',

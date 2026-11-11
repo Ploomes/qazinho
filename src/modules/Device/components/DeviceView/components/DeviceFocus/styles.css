@@ -101,13 +101,6 @@
   background: var(--raise2);
 }
 
-.device-focus__dot {
-  width: 9px;
-  height: 9px;
-  border-radius: var(--radius-pill);
-  background: var(--line);
-}
-
 .device-focus__url {
   flex: 1;
   overflow: hidden;

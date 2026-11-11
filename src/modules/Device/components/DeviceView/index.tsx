@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { createPortal } from 'react-dom';
+import { ProjectMark } from '@/modules/Project';
 import { Button, Eyebrow, Icon, Intern, StatusPill } from '@/shared/components/atoms';
 import { MOTION } from '@/shared/constants';
 import {
@@ -52,6 +53,8 @@ export const DeviceView: React.FC = () => {
     shot,
     stream,
     urlText,
+    siteMark,
+    siteMarkSize,
     elapsedLabel,
     isLive,
     steps,
@@ -153,9 +156,7 @@ export const DeviceView: React.FC = () => {
           {!hasScreen && !isPhone && (
             <div className="device-view__browser">
               <div className="device-view__chrome">
-                <span className="device-view__dot" />
-                <span className="device-view__dot" />
-                <span className="device-view__dot" />
+                <ProjectMark mark={siteMark} size={siteMarkSize} />
                 <span className="device-view__url">{urlText}</span>
               </div>
               <DeviceOff
@@ -189,9 +190,7 @@ export const DeviceView: React.FC = () => {
               className={stackClassName}
             >
               <div className="device-view__chrome">
-                <span className="device-view__dot" />
-                <span className="device-view__dot" />
-                <span className="device-view__dot" />
+                <ProjectMark mark={siteMark} size={siteMarkSize} />
                 <span className="device-view__url">{urlText}</span>
               </div>
               <motion.div className="device-view__swap" animate={swap}>

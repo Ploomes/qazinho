@@ -58,9 +58,6 @@ export const DeviceFocus: React.FC<IDeviceFocusProps> = (props) => {
           >
             {!props.isPhone && (
               <div className="device-focus__chrome">
-                <span className="device-focus__dot" />
-                <span className="device-focus__dot" />
-                <span className="device-focus__dot" />
                 <span className="device-focus__url">{props.urlText}</span>
               </div>
             )}
