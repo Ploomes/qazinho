@@ -7,3 +7,4 @@ export type * from './IScreenThumb';
 export type * from './IViewportChoice';
 export type * from './IViewportOption';
 export type * from './ViewportId';
+export type * from './LastRunSayKey';
