@@ -3,8 +3,8 @@
 O QAzinho não tem pacote de design system. A escala é um conjunto de custom properties de CSS em
 `src/shared/styles/tokens.css`, declaradas em `[data-theme]`. O layout vem do
 `assets/prototype.html`; as cores vêm da marca QAzinho: Lima Estagiário `#C6F432` (`--lime`), Tinta
-`#141414` (`--brand-ink`), Bug `#FF4D2E` (`--fail`), Papel `#F4F2EA` (`--brand-paper`) e o índigo
-da folha de adesivos (`--indigo`). Como elas são usadas está no `sticker-design.md`.
+`#141414` (`--brand-ink`), Bug `#FF4D2E` (`--fail`) e Papel `#F4F2EA` (`--brand-paper`); o índigo
+da folha de adesivos fica só no ícone do app. Como elas são usadas está no `sticker-design.md`.
 
 ## Nunca escreva à mão o que a escala define
 
@@ -29,43 +29,42 @@ font: var(--font-ui-md);
 
 ## As escalas
 
-| Grupo       | Tokens                                                                                          |
-| ----------- | ----------------------------------------------------------------------------------------------- |
-| Superfícies | `--bg --win --panel --center --raise --raise2 --screen`, `--bubble` para a fala do QA no chat   |
-| Linhas      | `--line --line2 --sel --stripe`, `--line-field` para a borda de um campo de digitar             |
-| Tinta       | `--ink --ink2 --ink3`                                                                           |
-| Destaque    | `--lime --lime-ink --lime-soft --on-lime`                                                       |
-| Vereditos   | `--pass --fail --block --skip --attn`, cada um com um par `-soft`                               |
-| Espaço      | `--space-1 2px` · `2 4` · `3 8` · `4 12` · `5 16` · `6 20` · `7 24` · `8 30`                    |
-| Ícone       | `--icon-min` 12px, o menor que um ícone dimensionado pelo texto desenha                         |
-| Raio        | `--radius-xs 6` · `sm 8` · `md 12` · `lg 14` · `xl 18` · `2xl 22` · `pill 999`                  |
-| Fonte       | `--font-display --font-ui --font-mono`, `--font-ui-*`, `--font-display-sm/md/lg/xl`             |
-| Tipo        | `--display-tracking` para display em 800, `--font-mono-tag --tag-tracking` para tags            |
-| Movimento   | `--ease --ease-in --dur-press --dur-fast --dur --dur-slow`                                      |
-| Linha       | `--edge` (o `--line` do tema), `--edge-width` · `-lg` · `-xl`, todos 1px                        |
-| Logo        | `--sticker-edge --sticker-edge-width --sticker-shadow --sticker-tilt`, para o adesivo do logo   |
-| Elevação    | `--sticker-rest` nenhuma · `--sticker-lift` fina · `--sticker-press` nenhuma · `--sticker-hero` |
-| Hover       | `--lift` 0px, `--press` 1px: quanto um controle se move sob o cursor e o clique                 |
-| Inclinação  | `--tilt-xs` · `--tilt-sm` · `--tilt-md`, todos 0°: nada gira                                    |
-| Marca       | `--brand-ink --brand-paper --indigo --indigo-deep --indigo-dusk --on-indigo`                    |
+| Grupo       | Tokens                                                                                           |
+| ----------- | ------------------------------------------------------------------------------------------------ |
+| Superfícies | `--bg --win --panel --center --raise --raise2 --screen`, `--bubble` para a fala do QA no chat    |
+| Linhas      | `--line --line2 --sel --stripe`, `--line-field` para a borda de um campo de digitar              |
+| Tinta       | `--ink --ink2 --ink3`                                                                            |
+| Destaque    | `--lime --lime-ink --lime-soft --on-lime`                                                        |
+| Vereditos   | `--pass --fail --block --skip --attn`, cada um com um par `-soft`                                |
+| Espaço      | `--space-1 2px` · `2 4` · `3 8` · `4 12` · `5 16` · `6 20` · `7 24` · `8 30`                     |
+| Ícone       | `--icon-min` 12px, o menor que um ícone dimensionado pelo texto desenha                          |
+| Raio        | `--radius-xs 6` · `sm 8` · `md 12` · `lg 14` · `xl 18` · `2xl 22` · `pill 999`                   |
+| Fonte       | `--font-ui-*`, `--font-meta-*`, `--font-display-sm/md/lg/xl`, `--font-code-*`, `--font-brand-*`  |
+| Tipo        | `--display-tracking` para títulos, `--brand-tracking` na marca, `--font-mono-tag --tag-tracking` |
+| Movimento   | `--ease --ease-in --dur-press --dur-fast --dur --dur-slow`                                       |
+| Linha       | `--edge` (o `--line` do tema), `--edge-width` · `-lg` · `-xl`, todos 1px                         |
+| Logo        | `--sticker-edge --sticker-edge-width --sticker-shadow --sticker-tilt`, para o adesivo do logo    |
+| Elevação    | `--sticker-rest` nenhuma · `--sticker-lift` fina · `--sticker-press` nenhuma · `--sticker-hero`  |
+| Hover       | `--lift` 0px, `--press` 1px: quanto um controle se move sob o cursor e o clique                  |
+| Inclinação  | `--tilt-xs` · `--tilt-sm` · `--tilt-md`, todos 0°: nada gira                                     |
+| Marca       | `--brand-ink --brand-paper`                                                                      |
 
-Um campo mono, o input de URL ou um campo de arquivo ao lado dele, lê `--font-mono-field`, para
+Um campo de código, o input de URL ou um campo de arquivo ao lado dele, lê `--font-code-field`, para
 dois campos numa linha ficarem da mesma altura.
 
 Os dois temas declaram os mesmos nomes: `[data-theme='dark']` é o Night e `[data-theme='light']` é
-o Paper, as duas superfícies do ícone do app.
+o Paper, as duas superfícies do ícone do app. O Sistema não é um terceiro tema: a raiz recebe o do
+computador (`useSystemTheme`).
 
-O `[data-theme='indigo']` não é um tema que o QA escolhe. Um momento da marca (o onboarding, o
-quadro de boas-vindas) o põe na própria raiz, para o texto sobre a mesa índigo ficar legível e os
-cards sobre ela virarem adesivos grafite. Ele também declara os mesmos nomes. Um token que existe
-num escopo e não nos outros é um bug.
+Um token que existe num tema e não no outro é um bug.
 
 ## As três famílias
 
-`Bricolage Grotesque` só para display: títulos e contadores em 800 com `--display-tracking`, como
-o wordmark. `IBM Plex Sans` para todo texto de corpo e de interface. `JetBrains Mono` para tudo o
-que é técnico: ids, horários, caminhos, contadores, eyebrows em maiúsculas, tags, badges, teclas e
-glifos de status.
+`IBM Plex Sans` para tudo o que a interface escreve: os títulos das telas (`--font-display-*`, em
+600), o corpo (`--font-ui-*`) e os rótulos, ids, horas, contadores e teclas (`--font-meta-*`).
+`JetBrains Mono` só para código (`--font-code-*`): endereços, caminhos, chamadas, a saída de um
+comando, o nome e o valor de uma variável. `Bricolage Grotesque` só na marca (`--font-brand-*`): o
+wordmark e o título da primeira execução; a `Tag` do lockup continua em `--font-mono-tag`.
 
 ## Quando um valor não está na escala
 

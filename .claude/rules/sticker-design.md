@@ -2,15 +2,15 @@
 
 O QAzinho é um lugar calmo e chapado para trabalhar o dia inteiro. **A superfície carrega o
 trabalho**: listas, planos, chat, logs, a tela do dispositivo. A marca mora em poucos toques, nunca
-em cada peça: o destaque lima, o Estagiário, o wordmark, a Bricolage Grotesque nos títulos. Nada é
+em cada peça: o destaque lima, o Estagiário, o wordmark, a Bricolage Grotesque na primeira
+execução. Nada é
 inclinado, nada veste uma borda de recorte grossa, e nada é colado na tela com tapa, exceto o logo.
 
 **O logo continua um adesivo**: o Estagiário no átomo `Logo` (`isSticker`: borda de recorte branca,
 brilho, os -6° e as sombras dele), o `Wordmark`, tinta com uma borda de recorte de papel
 (`--sticker-edge`), e a `Tag` que o assina, "BY SALVE SOFTWARE": Tinta com texto mono lima, uma
 borda de papel de 2px, a sombra e -2° (`--sticker-edge-width`, `--sticker-shadow`,
-`--sticker-tilt`). A `Tag` é só para o lockup; um rótulo em outro lugar, como o nome do projeto na
-sidebar, é texto mono simples. Em todo o resto ele é desenhado chapado.
+`--sticker-tilt`). A `Tag` é só para o lockup, que fica no Sobre, nunca na barra de título; um rótulo em outro lugar é texto simples. Em todo o resto ele é desenhado chapado.
 
 Antes era uma mesa de adesivos recortados: bordas grossas de papel, sombras levantadas, badges
 inclinadas e entradas com tapa. Isso pesava para usar por horas, e o QA pediu algo mais leve
@@ -55,16 +55,21 @@ Todo valor vem de um token em `tokens.css` (`design-tokens.md`).
 - **Sombra**: `--sticker-rest` e `--sticker-press` são nenhuma, `--sticker-lift` é uma sombra fina
   para um controle em hover, e `--sticker-hero` a única sombra suave que um popover ou modal joga.
 - **Inclinação**: nenhuma. Os `--tilt-*` são 0deg e ficam assim; nada que tem texto gira.
-- **Tipografia**: títulos em Bricolage Grotesque 800 com `--display-tracking`, corpo em IBM Plex
-  Sans, rótulos, ids e números em JetBrains Mono. O wordmark mantém a borda de recorte de papel; um
-  título da marca, como o das boas-vindas, é tinta simples.
-- **Cor**: o lima é o destaque, o botão primário, o Estagiário e o balão com que ele fala. Um
+- **Tipografia**: uma família, a IBM Plex Sans, nos títulos (600, `--font-display-*`), no corpo e
+  nos rótulos, ids, horas e números, que alinham pelos algarismos tabulares. A JetBrains Mono fica só
+  no que é código: um endereço, um caminho, uma chamada, a saída de um comando, o nome de uma
+  variável (`--font-code-*`). A Bricolage fica na marca: o wordmark, com a borda de recorte de
+  papel, e o título da primeira execução (`--font-brand-*`). Rótulo não vai em caixa-alta.
+- **Cor**: os neutros puxam para o quente nos dois temas. O lima é a ação principal, o foco, o que
+  está rodando, um controle ligado e a marca (o Estagiário e o balão com que ele fala); uma aba
+  ativa, um link ou uma seleção usam a tinta. O que passou não ganha verde em cada linha: ele fica
+  no resultado de uma run. Um
   status (`StatusPill`) ou uma etiqueta é só o ícone e o texto na cor dele, sem fundo, borda nem
   preenchimento. Um fato repetido em toda linha é um ícone com tooltip. Um aviso veste a cor de leve
   (`--fail-soft` atrás de texto `--fail`), nunca num bloco sólido dela.
-  O índigo aparece só em momentos da marca (o onboarding, o quadro de boas-vindas), com
-  `data-theme="indigo"` na raiz deles.
-- **Temas**: Night (escuro) e Paper (claro). Os dois declaram todos os tokens.
+  O índigo fica só no ícone do app.
+- **Temas**: Night (escuro) e Paper (claro). O QA escolhe um dos dois ou o do computador, o padrão
+  (`shownThemeOf`). Os dois declaram todos os tokens.
 - **O Estagiário** é desenhado chapado e de pé: lima, olhos escuros, sem borda branca, sem brilho,
   sem sombra. Ele ainda muda de humor. Só o logo o desenha como adesivo.
 
@@ -93,8 +98,8 @@ hover e o press, e o Motion faz toda entrada e saída (`animation.md`).
 ## Acessibilidade
 
 - O anel de foco é um contorno de 2px no `--lime-ink`, 2px para fora do elemento: lima no Night,
-  o verde escuro no Paper, onde o lima some. Toda linha, sublinhado ou ponto que indica algo usa o
-  `--lime-ink`; o lima puro fica como preenchimento, com texto escuro em cima.
+  o verde escuro no Paper, onde o lima some. O que está rodando também usa o `--lime-ink`; o lima
+  puro fica como preenchimento, com texto escuro em cima. Um link é tinta sublinhada.
 - Uma região que quebra no render vira um aviso com Recarregar (`ErrorBarrier`): a aba, o chat, a
   sidebar, e a tela como último recurso. O resto do app continua.
 - Um controle que age leva uma palavra, não só a forma.

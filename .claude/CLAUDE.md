@@ -22,10 +22,10 @@ ambiente com um ou mais alvos. Os workspaces guardam um plano de testes, e vári
 paralelo.
 
 **É calmo e plano para trabalhar o dia todo** (`rules/sticker-design.md`): o trabalho fica numa
-superfície Night ou Paper, cartões e popups são elevados só por uma linha de 1px e, quando
+superfície Night ou Paper, a do computador por padrão, cartões e popups são elevados só por uma linha de 1px e, quando
 flutuam, uma sombra suave, e nada se inclina nem se cola na tela. A marca vive em poucos toques: o
-acento lima, o Estagiário desenhado plano, o Bricolage nos títulos, e o logo, que sozinho continua
-um sticker. Toda tela o segue.
+acento lima, o Estagiário desenhado plano, a Bricolage na primeira execução e no logo, que sozinho
+continua um sticker. Toda tela o segue.
 
 ## As regras que não estão em negociação
 
@@ -119,7 +119,7 @@ resposta chegou em pedaços, as linhas seguiram cada ação, e ele apontou o ele
 da última volta;
 pelo Codex a resposta ainda chega inteira e nenhuma run foi tentada.
 
-**Um plano tem três etapas, e cada uma aparece.** Escrever o plano, desenvolver (o agente anda cada caso uma vez e grava o teste) e rodar (a gravação anda sozinha). A aba Plano mostra em qual o plano está, cada caso desenvolvido leva a marca dele, o botão principal diz "Desenvolver plano", "Desenvolver 3 casos" ou "Rodar plano" conforme o que falta, e a run diz "desenvolvendo", "rodando" ou "ajustando" em todo lugar. Um caso que não passou inteiro continua por desenvolver. Enquanto a run anda, a aba Plano mostra em qual caso ela está e como cada um foi.
+**Um plano tem três etapas, e o botão diz em qual ele está.** Escrever o plano, desenvolver (o agente anda cada caso uma vez e grava o teste) e rodar (a gravação anda sozinha). O botão principal diz "Desenvolver plano", "Desenvolver 3 casos" ou "Rodar plano" conforme o que falta, cada caso diz ao lado onde parou ("passo 2") ou que está "por desenvolver", um que passou não diz nada, e a run diz "desenvolvendo", "rodando" ou "ajustando" em todo lugar. Um caso que não passou inteiro continua por desenvolver. Enquanto a run anda, a aba Plano mostra em qual caso ela está e como cada um foi.
 
 **O QA fala com a run enquanto ela anda.** O composer continua aberto durante a run: o que o QA escreve chega ao agente junto da resposta da próxima ferramenta, ele para o plano, confere e responde no chat. Numa gravação, sem agente, o agente assume o caso de onde o app está. O que nenhum agente chegou a ler vai para o chat quando a run acaba. O agente também conta por que faz o que o passo não nomeia (`say`), e pergunta (`ask_qa`) quando não acha o caminho: a run lembra disso a ele num passo que não anda. Um Claude Code real (Haiku) explicou o preparo de um caso, conferiu o que o QA disse e respondeu no chat, e perguntou onde ficava uma tela que não achou; o `tests/smoke/together.test.ts` prova o resto no app construído com um agente fake.
 
@@ -206,6 +206,12 @@ como pré-condição, e logins e chaves como variáveis do projeto. O que não d
 em vez de inventar. Testes unitários e o prompt fixado do harness provam isso; nenhum agente real
 importou uma pasta ainda.
 
+**O app abre no Início.** Uma tela junta, de todos os projetos, o que pede o QA agora: uma pergunta
+de uma run, uma run andando ou pausada, uma que o app fechou no meio, um plano cuja última run
+falhou, casos ainda sem gravação, cada um numa linha com a ação que o leva lá; e os planos abertos
+por último. A sidebar abre nele pela linha Início, que conta o que espera o QA. Testes unitários
+provam os grupos; nenhum QA usou ainda.
+
 **Uma run que o app fechou no meio continua.** Ao reabrir, o workspace aparece pausado e o botão principal vira Continuar, que anda só os casos que não terminaram; o caso cortado recomeça, e o que falta entra numa run nova. Testes unitários provam a escolha dos casos; nenhuma run real foi fechada e continuada.
 
 **O agente pergunta ao QA no meio da run.** O agente de um caso, ou o explorador, que não pode
@@ -279,6 +285,8 @@ de verdade, e o `get_screenshot` com uma tela de verdade; essa rota também não
 **Uma primeira execução anda pela máquina** (`Onboarding`): idioma, o agente, as ferramentas de
 dispositivo, os trackers. O GitHub e o Jira conectam de verdade. O token do Jira é conferido com o
 Jira e lacrado pelo keychain do SO.
+Depois dela, o app pergunta qual app o QA vai testar e o que ele quer testar primeiro, e a
+resposta vira o projeto e o primeiro plano, com o chat já começando por ela (`FirstRun`).
 
 **O GitHub passa pela GitHub CLI do próprio QA**, e o QAzinho não guarda token. Conectar roda o
 device flow do gh fora de vista, ou pega um gh já logado, e instala o gh quando falta. Um projeto
@@ -393,7 +401,7 @@ fica" foram de 5 em 6 runs para 0 em 6, e uma memória envenenada nunca aprovou 
 `tests/smoke/memory.test.ts` prova o ciclo com um agente fake; o guardião acerta 152 de 162 cenários
 e barrou 36 de 36 perigosos no Haiku. O Codex e uma ida e volta real à org ainda não foram tentados.
 
-**O QAzinho Pro é um cartão no pé da sidebar, e nada mais.** O cartão fala da conta do QA e nunca
+**O QAzinho Pro é a conta no pé da sidebar, e nada mais.** Ela fala da conta do QA e nunca
 nomeia um plano, já que o Pro não será o único. Sem login, ele faz este computador entrar por um
 código que o QA confirma no navegador, o token lacrado pelo keychain do SO. Com login, todo projeto
 vai à org para a qual a conta aponta, em segundo plano: o que mudou desde a última vez, as telas e

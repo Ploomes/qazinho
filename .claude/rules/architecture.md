@@ -122,10 +122,30 @@ Toda `BrowserWindow` recebe `contextIsolation: true`, `sandbox: true` e `nodeInt
   de uma empresa ainda rodam.
 - O `index.html` carrega uma CSP. Afrouxe uma diretiva com um motivo, nunca a política inteira.
 
+## O Início
+
+O app abre no Início (`Home`), e não no último workspace: o `useArchive` vai para ele depois de
+ler o disco. O `homeOf` lê, de todos os projetos, o que pede o QA (uma pergunta, uma run andando ou
+pausada, uma a continuar, uma falha, casos sem gravação) e os planos abertos por último, que o
+`selectWorkspace` guarda (`recent`, com o tema). Cada item abre o workspace na aba em que a coisa
+está. Ele pergunta à main quais casos têm gravação em cada plano (`Run.developed`).
+
+Sem projeto, o app é a primeira execução (`FirstRun`), duas perguntas sem barra lateral: qual app
+o QA vai testar (um endereço, ou um .apk ou .app escolhido no disco) e o que ele quer testar
+primeiro. Só a segunda cria alguma coisa: o projeto, com o nome do site ou do build
+(`projectNameOf`), e o primeiro plano, com o nome do que o QA escreveu (`planNameOf`), cujo chat
+recebe o texto como a primeira mensagem; ou uma exploração, se ele preferir.
+
 ## O workspace
 
-Um workspace são três colunas: a sidebar, o chat no meio, e um painel ao lado (`SidePanel`) cujas
-abas são o plano, o dispositivo (`DeviceView`), as runs e os bugs.
+Um workspace são três colunas: a sidebar, o workspace no meio (`Workspace`), com as abas do
+dispositivo (`DeviceView`), do plano, das runs e dos bugs, e o painel Agente à direita
+(`AgentPanel`), com o chat.
+
+- O cabeçalho é o título, a ação principal e uma frase, no lugar de chips: quantos casos, em qual
+  app (`TargetChip`, um link que abre a troca do alvo), de qual história e contra qual design
+  (`MetaLink`), montada pelo `Trans` (`metaKey`). Enquanto uma run anda, a frase dá lugar ao passo
+  dela. Nenhuma aba conta o que guarda, menos Bugs, com os abertos.
 
 - Sem plano e sem run (`useChatOnly`), o chat é a tela: o painel Agente toma o espaço do centro,
   e o centro volta com um plano, uma run ou o navegador em que o chat anda pelo app. Sem plano, esse
@@ -136,6 +156,11 @@ abas são o plano, o dispositivo (`DeviceView`), as runs e os bugs.
   `SHELL.centerMinWidth` (`panelWidthOf`). Ele se dobra num trilho com o nome da aba dele, ou se
   alarga sobre o chat, que continua montado, escondido e inerte, então um rascunho nunca se perde.
 - O Estagiário ouve a aba ao lado do chat, ou que o painel está escondido (`describeScreen`).
+- A sidebar mostra cada projeto pelo app que ele testa: o ícone do site (`SiteIcons`, que a main
+  busca na página e guarda por origem em `site-icons.json`), senão a plataforma, e embaixo do nome
+  onde cada alvo roda (`projectAppOf`). Um workspace é uma linha só, e mostra apenas o que pede o QA:
+  uma pergunta, uma run andando ou pausada, os bugs abertos ou uma run que falhou (`planSignalOf`).
+  A conta, as Configurações e o botão de dobrar ficam numa linha no pé.
 - A sidebar se dobra num trilho com a plataforma e o estado de cada workspace (⌘B), guardado nas
   configurações entre reinícios, e sozinha numa janela mais estreita que `SHELL.sidebarFoldBelow`
   (`useSidebarFit`), voltando quando ela alarga; o chat e o painel medem o espaço deles pela largura dela
@@ -204,9 +229,10 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
   ferramenta chamada vira o evento `tool`, com o nome e o alvo, nunca o que é digitado
   (`toolCallOf`); a página guarda as últimas (`withActivity`) e as escreve nas palavras do QA
   (`activityLineOf`, `RunActivity`). No Codex, só o evento da ferramenta.
-- **Um plano é escrito, desenvolvido e rodado, e a tela diz em qual etapa está** (`PlanStages`,
-  `planStageOf`). A main diz quais casos têm gravação (`developed`, `recorded`), e o livro é escrito a
-  cada caso. O `doing` diz como o caso anda (`RunHow`), e o `RunButton` leva o plano à etapa seguinte.
+- **Um plano é escrito, desenvolvido e rodado, e o botão diz em qual etapa está** (`planStageOf`,
+  `RunButton`). A main diz quais casos têm gravação (`developed`, `recorded`), e o livro é escrito a
+  cada caso. O `doing` diz como o caso anda (`RunHow`), e cada caso diz ao lado o que falta
+  (`reason`): o passo em que parou, ou que está por desenvolver. Um que passou não diz nada.
 - **O QA fala com a run enquanto ela anda** (`Run.talk`). O texto espera no `RunCoordinator` e chega ao
   agente junto da resposta da próxima ferramenta (`aside`, `talkAside`). O `report` é segurado até ele
   responder (`talkHolds`, `answer_qa`). Numa gravação, o caso passa ao agente de onde o app está
@@ -521,8 +547,8 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
 Entrar no QAzinho Pro não muda nada em como o app é usado, e não manda nada: um projeto só vai a
 uma org quando o QA o publica, do jeito que o GitHub Desktop publica um repositório
 ([030](https://github.com/Salve-Software/qazinho-server/blob/main/docs/adrs/030-the-desktop-publishes-and-clones-projects.md)).
-O cartão no pé da sidebar (`ProAccountCard`), a seção Org da janela do projeto (`ProjectProPane`)
-e uma marca em cada projeto ligado na sidebar são onde ele aparece.
+A conta no pé da sidebar (`ProAccountCard`), a seção Org da janela do projeto (`ProjectProPane`)
+e uma nuvem em cada projeto ligado na sidebar são onde ele aparece.
 
 - **Entrar** é o device flow da plataforma (`ProAccount`): um código que o QA confirma no
   navegador, o token lacrado com o `safeStorage` em `pro.bin`, como o do Jira. A conta conhece as
@@ -802,6 +828,7 @@ Além do `Harness` e do `McpHost` do harness, que a main constrói e liga:
 | `StorageKeeper`                       | o que o QAzinho guarda neste computador, por tipo, e os vídeos de run que ele solta depois de velhos        |
 | `RunAlerts`                           | chama o QA de volta quando uma run termina ou lhe pergunta algo: uma notificação, um badge                  |
 | `OutsideServer`                       | abre a porta do QAzinho ao agente que o QA usa no editor, num endereço estável                              |
+| `SiteIcons`                           | busca o ícone do site de um projeto web e o guarda por origem, para a sidebar mostrar o app                 |
 | `Island`                              | a janela transparente do topo da tela que veste o notch e mostra a run, pelo `IIslandFrame`                 |
 | `GithubCli`                           | fala com o GitHub pelo gh do próprio QA: status, login por device flow, API, tar                            |
 | `GithubRepos`                         | lista os repositórios do QA e as branches de um repositório, guardados por um tempo                         |
