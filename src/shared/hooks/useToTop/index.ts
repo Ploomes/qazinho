@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { scrollParentOf } from './library';
 
 export const useToTop = () => {
   const [top, setTop] = useState<HTMLElement | null>(null);
@@ -22,7 +23,12 @@ export const useToTop = () => {
     topRef: setTop,
     isToTopShown: !isAtTop,
     onToTop: () => {
-      top?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (top === null) return;
+
+      const scroller = scrollParentOf(top);
+
+      if (scroller === null) top.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      else scroller.scrollTo({ top: 0, behavior: 'smooth' });
     },
   };
 };

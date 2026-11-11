@@ -58,7 +58,27 @@ describe('useToTop', () => {
     expect(result.current.isToTopShown).toBe(false);
   });
 
-  it('scrolls the top of the screen back into view', () => {
+  /** Rolar o topo até a borda escondia o espaço acima dele, e a primeira linha sob as abas. */
+  it('scrolls the list it sits in all the way back to its start', () => {
+    const scroller = document.createElement('div');
+    const top = document.createElement('div');
+    const scrollTo = vi.fn();
+
+    scroller.style.overflowY = 'auto';
+    scroller.scrollTo = scrollTo as typeof scroller.scrollTo;
+    scroller.append(top);
+
+    const { result } = renderHook(() => useToTop());
+
+    act(() => {
+      result.current.topRef(top);
+    });
+    result.current.onToTop();
+
+    expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
+  });
+
+  it('scrolls the top of the screen back into view when nothing around it scrolls', () => {
     const top = document.createElement('div');
     const scrollIntoView = vi.fn();
 
