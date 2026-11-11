@@ -101,18 +101,18 @@
   --ink2: #b6b4ad;
   --ink3: #8c8a83;
 
-  --accent: #7fcf92;
-  --accent-ink: #7fcf92;
-  --accent-soft: rgba(127, 207, 146, 0.14);
-  --on-accent: #10200f;
+  --accent: #f59a55;
+  --accent-ink: #f59a55;
+  --accent-soft: rgba(245, 154, 85, 0.14);
+  --on-accent: #141414;
   --brand-lime: #c6f432;
   --on-brand-lime: #141414;
   --on-attn: #141414;
 
   --pass: #7fb594;
   --pass-soft: rgba(127, 181, 148, 0.13);
-  --fail: #e2694f;
-  --fail-soft: rgba(226, 105, 79, 0.14);
+  --fail: #f0738f;
+  --fail-soft: rgba(240, 115, 143, 0.14);
   --block: #9aa9d6;
   --block-soft: rgba(154, 169, 214, 0.13);
   --skip: #7f7d76;
@@ -152,9 +152,9 @@
   --ink2: #55534d;
   --ink3: #615f58;
 
-  --accent: #2a7349;
-  --accent-ink: #2a7349;
-  --accent-soft: rgba(42, 115, 73, 0.12);
+  --accent: #b4500f;
+  --accent-ink: #b4500f;
+  --accent-soft: rgba(180, 80, 15, 0.12);
   --on-accent: #ffffff;
   --brand-lime: #c6f432;
   --on-brand-lime: #141414;
@@ -162,8 +162,8 @@
 
   --pass: #2f6a4a;
   --pass-soft: rgba(47, 106, 74, 0.12);
-  --fail: #b23a22;
-  --fail-soft: rgba(178, 58, 34, 0.12);
+  --fail: #a1123f;
+  --fail-soft: rgba(161, 18, 63, 0.12);
   --block: #4a5d93;
   --block-soft: rgba(74, 93, 147, 0.11);
   --skip: #66645d;
