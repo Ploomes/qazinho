@@ -13,7 +13,7 @@
 }
 
 .usage-bar__tone--builds {
-  --tone: var(--attn);
+  --tone: var(--pass);
 }
 
 .usage-bar__tone--other {
