@@ -26,4 +26,21 @@ describe('modelNameOf', () => {
       'claude-x',
     );
   });
+
+  /** O id cru empurrava o campo do chat: "claude-fable-5-2" vira "Fable 5.2". */
+  it('writes a full Claude id the way a person says it, the default included', () => {
+    expect(
+      modelNameOf({ model: '', defaultModel: 'claude-fable-5-2', models: CLAUDE }),
+    ).toBe('Fable 5.2');
+    expect(
+      modelNameOf({ model: 'claude-opus-5-5', defaultModel: null, models: CLAUDE }),
+    ).toBe('Opus 5.5');
+    expect(
+      modelNameOf({
+        model: 'claude-sonnet-4-20250514',
+        defaultModel: null,
+        models: CLAUDE,
+      }),
+    ).toBe('Sonnet 4');
+  });
 });
