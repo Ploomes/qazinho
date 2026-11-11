@@ -504,7 +504,7 @@ export const useChatViewModel = () => {
         isNew,
         isFollowUp: isFollowUp({
           message,
-          previous: shownMessages[index - 1]?.message ?? null,
+          earlier: shownMessages.slice(0, index).map((shown) => shown.message),
         }),
       })),
     };
@@ -521,11 +521,10 @@ export const useChatViewModel = () => {
     liveId,
     at: workspace?.liveStartedAt ?? '',
   });
-  const messageBefore = (index: number): ChatMessage | null => {
-    const before = chatItems[index - 1];
-
-    return before?.kind === 'message' ? before.message : null;
-  };
+  const messagesBefore = (index: number): ChatMessage[] =>
+    chatItems
+      .slice(0, index)
+      .flatMap((before) => (before.kind === 'message' ? [before.message] : []));
 
   return {
     chatStyle: { '--chat-bubble': `${String(CHAT.bubbleShare)}%` } as CSSProperties,
@@ -538,7 +537,7 @@ export const useChatViewModel = () => {
             message: item.message,
             isFollowUp: isFollowUp({
               message: item.message,
-              previous: messageBefore(index),
+              earlier: messagesBefore(index),
             }),
             isNew: item.isNew && !(hasPreview && item.message.id === lastAgentId),
             isRetryable:

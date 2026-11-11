@@ -46,7 +46,7 @@ export const ChatRow: React.FC<IChatRowProps> = (props) => {
         <div className="chat-row__head">
           {hasFace && (
             <span className="chat-row__face" aria-hidden="true">
-              <Intern mood="neutral" size={22} isStill isFigure />
+              <Intern mood="neutral" size={18} isStill isFigure />
             </span>
           )}
           <span className={whoClassName} title={fromAgentTitle}>

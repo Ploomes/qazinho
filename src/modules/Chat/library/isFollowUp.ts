@@ -1,17 +1,15 @@
 import type { ChatMessage } from '@/modules/Chat/types';
 
-/** Se uma fala do agente segue outra dele mesmo, que já mostrou o rosto e o nome. */
+/** Se o agente desta fala é o da última fala de agente antes dela, que já mostrou o nome. */
 export function isFollowUp(props: {
   message: ChatMessage;
-  previous: ChatMessage | null;
+  earlier: readonly ChatMessage[];
 }): boolean {
-  const { message, previous } = props;
+  const { message, earlier } = props;
+  const lastWords = earlier.findLast(isAgentWords);
 
   return (
-    previous !== null &&
-    isAgentWords(message) &&
-    isAgentWords(previous) &&
-    message.who === previous.who
+    isAgentWords(message) && lastWords !== undefined && message.who === lastWords.who
   );
 }
 
