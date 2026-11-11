@@ -698,10 +698,3 @@
   color: var(--ink3);
   font: var(--font-meta-xs);
 }
-
-.sidebar__bugs-count {
-  flex: none;
-  color: var(--fail);
-  font: var(--font-ui-xs);
-  font-variant-numeric: tabular-nums;
-}

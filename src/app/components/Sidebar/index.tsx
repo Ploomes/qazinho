@@ -43,6 +43,7 @@ export const Sidebar: React.FC = () => {
     homeLabel,
     isHome,
     homeCount,
+    homeTip,
     onHome,
   } = useSidebarViewModel();
   const { t } = useTranslation();
@@ -242,6 +243,7 @@ export const Sidebar: React.FC = () => {
             type="button"
             className={isHome ? 'sidebar__nav sidebar__nav--selected' : 'sidebar__nav'}
             aria-current={isHome ? 'page' : undefined}
+            title={homeTip}
             onClick={onHome}
           >
             <Icon name="home" />
@@ -263,9 +265,7 @@ export const Sidebar: React.FC = () => {
           >
             <Icon name="bug" />
             <span className="sidebar__label">{bugsLabel}</span>
-            {bugsCount !== null && (
-              <span className="sidebar__bugs-count">{bugsCount}</span>
-            )}
+            {bugsCount !== null && <span className="sidebar__count">{bugsCount}</span>}
           </button>
 
           <div className="sidebar__section">
@@ -420,7 +420,6 @@ export const Sidebar: React.FC = () => {
                                         }}
                                       >
                                         <Icon name={row.signal.icon} />
-                                        {row.signal.count}
                                       </span>
                                     )}
                                   </button>

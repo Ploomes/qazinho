@@ -3,10 +3,7 @@ import { SIDEBAR_SIGNAL } from '@/app/components/Sidebar/constants';
 
 describe('SIDEBAR_SIGNAL', () => {
   it('paints what failed in the fail color, and what waits on the QA in attention', () => {
-    expect([SIDEBAR_SIGNAL.bugs.tone, SIDEBAR_SIGNAL.failed.tone]).toEqual([
-      'var(--fail)',
-      'var(--fail)',
-    ]);
+    expect(SIDEBAR_SIGNAL.failed.tone).toBe('var(--fail)');
     expect([SIDEBAR_SIGNAL.asking.tone, SIDEBAR_SIGNAL.paused.tone]).toEqual([
       'var(--attn)',
       'var(--attn)',

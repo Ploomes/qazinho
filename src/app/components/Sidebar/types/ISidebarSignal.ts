@@ -5,6 +5,5 @@ export interface ISidebarSignal {
   icon: IconName;
   tone: string;
   animation: string;
-  count: string | null;
   label: string;
 }

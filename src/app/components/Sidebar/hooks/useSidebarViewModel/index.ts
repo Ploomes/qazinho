@@ -122,7 +122,7 @@ export const useSidebarViewModel = () => {
         const bugs = workspace.bugs.filter(
           ({ isDismissed, filed }) => !isDismissed && filed === null,
         ).length;
-        const signal = planSignalOf({ shown, bugs });
+        const signal = planSignalOf(shown);
         const said =
           signal === null
             ? null
@@ -130,11 +130,17 @@ export const useSidebarViewModel = () => {
                 asking: t('SIDEBAR.ASKED_YOU'),
                 running: t('SIDEBAR.STATUS_META', { status: statusLabel, meta }),
                 paused: statusLabel,
-                bugs: t(bugs === 1 ? 'SIDEBAR.META_BUG_ONE' : 'SIDEBAR.META_BUG_OTHER', {
-                  count: bugs,
-                }),
-                failed: statusLabel,
-              }[signal.kind];
+                failed:
+                  bugs === 0
+                    ? statusLabel
+                    : t('SIDEBAR.STATUS_META', {
+                        status: statusLabel,
+                        meta: t(
+                          bugs === 1 ? 'SIDEBAR.META_BUG_ONE' : 'SIDEBAR.META_BUG_OTHER',
+                          { count: bugs },
+                        ),
+                      }),
+              }[signal];
 
         return {
           kind: 'workspace' as const,
@@ -151,8 +157,7 @@ export const useSidebarViewModel = () => {
             signal === null || said === null
               ? null
               : {
-                  ...SIDEBAR_SIGNAL[signal.kind],
-                  count: signal.kind === 'bugs' ? String(signal.count) : null,
+                  ...SIDEBAR_SIGNAL[signal],
                   label: said,
                 },
           label:
@@ -309,6 +314,12 @@ export const useSidebarViewModel = () => {
     homeLabel: t('HOME.TITLE'),
     isHome: screen === 'welcome',
     homeCount: homeCount > 0 ? String(homeCount) : null,
+    homeTip:
+      homeCount > 0
+        ? t(homeCount === 1 ? 'SIDEBAR.HOME_COUNT_ONE' : 'SIDEBAR.HOME_COUNT_OTHER', {
+            count: homeCount,
+          })
+        : undefined,
     onHome: goHome,
   };
 };

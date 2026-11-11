@@ -1,4 +1,3 @@
-export type * from './IPlanSignal';
 export type * from './ISidebarAddRow';
 export type * from './ISidebarProBadge';
 export type * from './ISidebarProjectGroup';

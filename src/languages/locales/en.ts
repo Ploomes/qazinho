@@ -62,6 +62,8 @@ export const en = {
   SIDEBAR: {
     NEW_WORKSPACE: 'New plan',
     NEW_WORKSPACE_IN: 'New plan in {{name}}',
+    HOME_COUNT_ONE: '1 thing needs you',
+    HOME_COUNT_OTHER: '{{count}} things need you',
     PROJECT_TIP: '{{name}}, {{place}}',
     NEW_PROJECT: 'New project',
     ASKED_YOU: 'The agent asked you something',

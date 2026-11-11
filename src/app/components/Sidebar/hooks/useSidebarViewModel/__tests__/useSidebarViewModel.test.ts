@@ -240,7 +240,7 @@ describe('useSidebarViewModel', () => {
       expect(row).toMatchObject({
         icon: 'attention',
         statusLabel: 'needs you',
-        signal: { icon: 'attention', tone: 'var(--attn)', count: null },
+        signal: { icon: 'attention', tone: 'var(--attn)' },
         label: 'Onboarding, The agent asked you something',
       });
     });
@@ -362,7 +362,7 @@ describe('useSidebarViewModel', () => {
       expect(rowOf(result)).toMatchObject({ signal: null, label: 'Checkout regression' });
     });
 
-    it('counts the bugs a run left open, in the fail color', () => {
+    it('marks a failed run in the fail color, and says its open bugs only in words', () => {
       useWorkspaceStore.setState({
         workspaces: [walkRun({ verdicts: ['passed', 'failed'], isFinished: true })],
       });
@@ -370,12 +370,12 @@ describe('useSidebarViewModel', () => {
       const { result } = renderHook(() => useSidebarViewModel());
 
       expect(rowOf(result)).toMatchObject({
-        signal: { icon: 'bug', tone: 'var(--fail)', count: '1', label: '1 bug' },
-        label: 'Checkout regression, 1 bug',
+        signal: { icon: 'failed', tone: 'var(--fail)', label: 'failed, 1 bug' },
+        label: 'Checkout regression, failed, 1 bug',
       });
     });
 
-    it('marks a failed run whose bugs the QA dismissed, without a count', () => {
+    it('marks a failed run whose bugs the QA dismissed by its verdict alone', () => {
       const walked = walkRun({ verdicts: ['passed', 'failed'], isFinished: true });
 
       useWorkspaceStore.setState({
@@ -387,7 +387,7 @@ describe('useSidebarViewModel', () => {
       const { result } = renderHook(() => useSidebarViewModel());
 
       expect(rowOf(result)).toMatchObject({
-        signal: { icon: 'failed', count: null, label: 'failed' },
+        signal: { icon: 'failed', label: 'failed' },
       });
     });
 
@@ -397,7 +397,7 @@ describe('useSidebarViewModel', () => {
       const { result } = renderHook(() => useSidebarViewModel());
 
       expect(rowOf(result)?.kind === 'workspace' && rowOf(result)).toMatchObject({
-        signal: { icon: 'running', tone: 'var(--accent-ink)', count: null },
+        signal: { icon: 'running', tone: 'var(--accent-ink)' },
       });
       expect(rowOf(result)?.kind === 'workspace' && rowOf(result)?.label).toMatch(
         /^Checkout regression, .+, \d+\/\d+$/,
@@ -416,6 +416,22 @@ describe('useSidebarViewModel', () => {
       });
 
       expect(renderHook(() => useSidebarViewModel()).result.current.homeCount).toBe('1');
+    });
+
+    it('says in its tooltip what the count is, and has none with nothing to count', () => {
+      useWorkspaceStore.setState({ workspaces: [makeWorkspace()] });
+
+      expect(
+        renderHook(() => useSidebarViewModel()).result.current.homeTip,
+      ).toBeUndefined();
+
+      useWorkspaceStore.setState({
+        workspaces: [walkRun({ verdicts: ['passed', 'failed'], isFinished: true })],
+      });
+
+      expect(renderHook(() => useSidebarViewModel()).result.current.homeTip).toBe(
+        '1 thing needs you',
+      );
     });
 
     it('is marked while Home is on screen, and not inside a plan', () => {

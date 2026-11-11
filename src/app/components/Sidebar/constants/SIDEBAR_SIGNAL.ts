@@ -16,6 +16,5 @@ export const SIDEBAR_SIGNAL: Record<
     animation: 'gc-pulse 1.8s ease-in-out infinite',
   },
   paused: { icon: 'paused', tone: 'var(--attn)', animation: 'none' },
-  bugs: { icon: 'bug', tone: 'var(--fail)', animation: 'none' },
   failed: { icon: 'failed', tone: 'var(--fail)', animation: 'none' },
 };
