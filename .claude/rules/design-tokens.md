@@ -2,11 +2,12 @@
 
 O QAzinho não tem pacote de design system. A escala é um conjunto de custom properties de CSS em
 `src/shared/styles/tokens.css`, declaradas em `[data-theme]`. O layout vem do
-`assets/prototype.html`. As cores são as cinco da marca (2026-11-11): o Sinal `#FFD23F`, a luz dos
-olhos e o acento no Night; o Âmbar `#7D5D00`, o Sinal sobre o claro, o acento do Paper para linha,
-texto e foco, porque o Sinal some no claro (1,4:1); a Tela `#0A0906`, o fundo do Night e do ícone; o
-Grafite `#16150F`, o texto do Paper e as superfícies do Night; e o Papel `#F2F1EC`, o fundo do Paper e
-o texto do Night. Os passos entre elas são quase cinzas, para o amarelo não tingir tudo. Os botões
+`assets/prototype.html`. As cores da marca (2026-11-11) são cinco: o Sinal `#FFD23F`, a luz dos olhos
+e o acento no Night; o Âmbar `#7D5D00`, o acento do Paper para linha, texto e foco, porque o Sinal
+some no claro (1,4:1); e a Tela `#0A0906`, o Grafite `#16150F` e o Papel `#F2F1EC`, que ficam nas
+peças da marca: o ícone, o personagem, o logotipo, o texto sobre um botão. **As superfícies, as
+linhas e a tinta da interface são cinzas sem tom**: a Tela, o Grafite e o Papel puxam para o oliva e
+o creme, e como base deixavam o app inteiro amarelado (o QA reprovou duas vezes). Os botões
 preenchidos leem `--accent-fill` (o Sinal nos dois temas) com `--on-accent-fill` (a Tela) em cima;
 linha, texto, foco e o que roda leem `--accent`/`--accent-ink`. A pergunta do agente (`--attn`) é
 laranja, para não se confundir com o amarelo do que roda. Os status são de saturação baixa, e a
