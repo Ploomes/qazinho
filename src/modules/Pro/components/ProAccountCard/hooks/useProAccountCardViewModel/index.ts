@@ -5,6 +5,7 @@ import { PRO_BILLING, PRO_ROLES } from '@/modules/Pro/constants';
 import { useProSignIn } from '@/modules/Pro/hooks/useProSignIn';
 import { attentionOf, initialsOf } from '@/modules/Pro/library';
 import { Pro } from '@/services';
+import { ICON_BUTTON } from '@/shared/components/atoms/IconButton/constants';
 import { useDismiss } from '@/shared/hooks';
 import { useProStore, useSettingsStore } from '@/store';
 
@@ -43,6 +44,7 @@ export const useProAccountCardViewModel = () => {
     isShown: status !== null,
     isSignedIn: signedIn !== null,
     className: isShut ? 'pro-account pro-account--shut' : 'pro-account',
+    markSize: isShut ? ICON_BUTTON.iconSize.md : ICON_BUTTON.iconSize.sm,
     isOpen: isOpen && signedIn !== null && !isShut,
     hasTip: isShut,
     title,

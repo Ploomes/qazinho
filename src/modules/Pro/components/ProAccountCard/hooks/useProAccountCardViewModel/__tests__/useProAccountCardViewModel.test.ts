@@ -64,6 +64,17 @@ afterEach(() => {
 
 const view = () => renderHook(() => useProAccountCardViewModel());
 
+describe('the account icon', () => {
+  /** O ícone herdava o tamanho da letra e ficava menor que a engrenagem e o botão de dobrar. */
+  it('is drawn the size of the icon buttons beside it, folded or not', () => {
+    expect(view().result.current.markSize).toBe(14);
+
+    useSettingsStore.setState({ isSidebarShut: true });
+
+    expect(view().result.current.markSize).toBe(16);
+  });
+});
+
 describe('useProAccountCardViewModel', () => {
   describe('what it shows', () => {
     it('shows nothing until it knows where this computer stands', () => {

@@ -19,6 +19,7 @@ export const ProAccountCard: React.FC = () => {
     isShown,
     isSignedIn,
     className,
+    markSize,
     isOpen,
     hasTip,
     title,
@@ -133,7 +134,7 @@ export const ProAccountCard: React.FC = () => {
             <span className="pro-account__avatar">{initials}</span>
           ) : (
             <span className="pro-account__mark">
-              <Icon name="account" />
+              <Icon name="account" size={markSize} />
             </span>
           )}
           <span className="pro-account__name">{title}</span>
