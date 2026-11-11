@@ -44,6 +44,7 @@ export const CHANNELS = {
   recorderDone: 'recorder:done',
   readState: 'state:read',
   saveProjects: 'state:projects',
+  siteIcon: 'projects:site-icon',
   saveWorkspace: 'state:workspace',
   removeWorkspace: 'state:remove',
   readUnreadPlan: 'state:unread-plan',

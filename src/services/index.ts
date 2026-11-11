@@ -21,6 +21,7 @@ export * from './Platform';
 export * from './Pro';
 export * from './Run';
 export * from './Setup';
+export * from './Sites';
 export * from './Storage';
 export * from './Updates';
 export * from './Variables';

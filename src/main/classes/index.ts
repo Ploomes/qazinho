@@ -5,6 +5,7 @@ export * from './builds';
 export * from './devices';
 export * from './integrations';
 export * from './pro';
+export * from './projects';
 export * from './resources';
 export * from './runs';
 export * from './setup';

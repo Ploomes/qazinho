@@ -138,6 +138,7 @@ export interface IQazinhoApi {
   onOpenRun: (listener: (run: IRunRef) => void) => () => void;
   readState: () => Promise<ISavedState>;
   saveProjects: (json: string) => Promise<void>;
+  siteIcon: (address: string) => Promise<string | null>;
   saveWorkspace: (saved: ISavedWorkspace) => Promise<void>;
   removeWorkspace: (workspaceId: string) => Promise<void>;
   readUnreadPlan: (unread: {

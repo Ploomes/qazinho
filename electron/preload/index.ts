@@ -220,6 +220,8 @@ const api: IQazinhoApi = {
   readState: () => ipcRenderer.invoke(CHANNELS.readState) as Promise<ISavedState>,
   saveProjects: (json: string) =>
     ipcRenderer.invoke(CHANNELS.saveProjects, json) as Promise<void>,
+  siteIcon: (address: string) =>
+    ipcRenderer.invoke(CHANNELS.siteIcon, address) as Promise<string | null>,
   saveWorkspace: (saved: ISavedWorkspace) =>
     ipcRenderer.invoke(CHANNELS.saveWorkspace, saved) as Promise<void>,
   removeWorkspace: (workspaceId: string) =>

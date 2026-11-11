@@ -14,6 +14,7 @@ import {
   Pro,
   Run,
   Setup,
+  Sites,
   Updates,
   Memories,
   Variables,
@@ -283,5 +284,9 @@ describe('a page with no bridge', () => {
         events: [],
       }),
     ).toEqual({ isKept: false });
+  });
+
+  it('shows a project by its platform when no icon of its site can be asked for', async () => {
+    expect(await Sites.icon('https://staging.loja.test/')).toBeNull();
   });
 });

@@ -121,6 +121,7 @@ import {
   RunAlerts,
   RunRecorder,
   SetupInstaller,
+  SiteIcons,
   UsageReader,
   VariableVault,
 } from '@/main/classes';
@@ -231,6 +232,12 @@ const chatDevices = new ChatDevices({
   },
 });
 const replays = new ReplayServer({ dataRoot: PATHS.data });
+const siteIcons = new SiteIcons({
+  fetcher: (url, init) => fetch(url, init),
+  file: PATHS.siteIcons,
+  now: () => Date.now(),
+});
+
 const storage = new StorageKeeper({
   dataRoot: PATHS.data,
   buildsRoot: PATHS.builds,
@@ -1570,6 +1577,9 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.readState, () => archive.read());
   ipcMain.handle(CHANNELS.saveProjects, (_event, json: string) =>
     archive.saveProjects(json),
+  );
+  ipcMain.handle(CHANNELS.siteIcon, (_event, address: unknown) =>
+    typeof address === 'string' ? siteIcons.of(address) : null,
   );
   ipcMain.handle(CHANNELS.saveWorkspace, (_event, saved: ISavedWorkspace) =>
     archive.saveWorkspace(saved),
