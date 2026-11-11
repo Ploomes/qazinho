@@ -176,8 +176,8 @@
   height: 34px;
   border: var(--edge-width) solid var(--edge);
   border-radius: var(--radius-pill);
-  background: var(--accent);
-  color: var(--on-accent);
+  background: var(--accent-fill);
+  color: var(--on-accent-fill);
   box-shadow: var(--sticker-rest);
   transition:
     translate var(--dur-fast) var(--ease),

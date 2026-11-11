@@ -48,8 +48,8 @@
   width: var(--space-6);
   height: var(--space-6);
   border-radius: var(--radius-pill);
-  background: var(--accent);
-  color: var(--on-accent);
+  background: var(--accent-fill);
+  color: var(--on-accent-fill);
   font: var(--font-meta-xs);
 }
 

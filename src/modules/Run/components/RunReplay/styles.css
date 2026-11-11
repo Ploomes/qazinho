@@ -260,9 +260,9 @@
   padding: 0;
   border: var(--edge-width) solid var(--edge);
   border-radius: var(--radius-pill);
-  background: var(--accent);
+  background: var(--accent-fill);
   box-shadow: var(--sticker-rest);
-  color: var(--on-accent);
+  color: var(--on-accent-fill);
   cursor: pointer;
   transition:
     translate var(--dur-fast) var(--ease),

@@ -82,29 +82,31 @@
 }
 
 [data-theme='dark'] {
-  --bg: #0f0f0e;
-  --win: #181817;
-  --panel: #151514;
-  --center: #1b1b1a;
-  --raise: #222220;
-  --raise2: #2a2a28;
-  --screen: #1d1d1c;
-  --bubble: #2b2b29;
+  --bg: #0a0906;
+  --win: #12110d;
+  --panel: #0e0d0a;
+  --center: #15130f;
+  --raise: #1d1b16;
+  --raise2: #25231d;
+  --screen: #17150f;
+  --bubble: #26241d;
 
-  --line: #31302d;
-  --line2: #242422;
-  --sel: #2b2b28;
+  --line: #2f2c23;
+  --line2: #1f1d17;
+  --sel: #28251d;
   --line-field: var(--line);
   --stripe: rgba(244, 242, 234, 0.05);
 
-  --ink: #edece8;
-  --ink2: #b6b4ad;
-  --ink3: #8c8a83;
+  --ink: #f2efe6;
+  --ink2: #bab5a6;
+  --ink3: #8e8979;
 
-  --accent: #f59a55;
-  --accent-ink: #f59a55;
-  --accent-soft: rgba(245, 154, 85, 0.14);
-  --on-accent: #141414;
+  --accent: #ffd23f;
+  --accent-ink: #ffd23f;
+  --accent-soft: rgba(255, 210, 63, 0.13);
+  --accent-fill: #ffd23f;
+  --on-accent: #0a0906;
+  --on-accent-fill: #0a0906;
   --brand-lime: #c6f432;
   --on-brand-lime: #141414;
   --on-attn: #141414;
@@ -117,8 +119,8 @@
   --block-soft: rgba(154, 169, 214, 0.13);
   --skip: #7f7d76;
   --skip-soft: rgba(127, 125, 118, 0.13);
-  --attn: #d9a04f;
-  --attn-soft: rgba(217, 160, 79, 0.13);
+  --attn: #f0904a;
+  --attn-soft: rgba(240, 144, 74, 0.14);
   --warn: #f2c94c;
 
   --edge: var(--line);
@@ -152,10 +154,12 @@
   --ink2: #55534d;
   --ink3: #615f58;
 
-  --accent: #b4500f;
-  --accent-ink: #b4500f;
-  --accent-soft: rgba(180, 80, 15, 0.12);
+  --accent: #8f6b00;
+  --accent-ink: #8f6b00;
+  --accent-soft: rgba(255, 210, 63, 0.24);
+  --accent-fill: #ffd23f;
   --on-accent: #ffffff;
+  --on-accent-fill: #0a0906;
   --brand-lime: #c6f432;
   --on-brand-lime: #141414;
   --on-attn: #ffffff;
@@ -168,8 +172,8 @@
   --block-soft: rgba(74, 93, 147, 0.11);
   --skip: #66645d;
   --skip-soft: rgba(124, 122, 114, 0.12);
-  --attn: #8f5a0c;
-  --attn-soft: rgba(143, 90, 12, 0.13);
+  --attn: #b4500f;
+  --attn-soft: rgba(180, 80, 15, 0.12);
   --warn: #a37b00;
 
   --edge: var(--line);
