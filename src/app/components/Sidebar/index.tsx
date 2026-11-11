@@ -50,7 +50,6 @@ export const Sidebar: React.FC = () => {
     newWorkspaceLabel,
     projectSettingsLabel,
     onFlyoutOpen,
-    onFlyoutToggle,
     onFlyoutKeep,
     onFlyoutLeave,
     onFlyoutPlan,
@@ -173,7 +172,7 @@ export const Sidebar: React.FC = () => {
                   onClick={(event) => {
                     const box = event.currentTarget.getBoundingClientRect();
 
-                    onFlyoutToggle({
+                    onFlyoutOpen({
                       projectId: group.projectId,
                       top: box.top,
                       right: box.right,

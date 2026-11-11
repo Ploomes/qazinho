@@ -709,14 +709,21 @@ describe('useSidebarViewModel', () => {
       vi.useRealTimers();
     });
 
-    it('toggles on a click, and opens the plan picked in it', () => {
+    /** O hover já abre o painel; um clique logo depois não pode fechá-lo. */
+    it('stays open when the project is clicked, and opens the plan picked in it', () => {
       shutWithTwo();
 
       const { result } = renderHook(() => useSidebarViewModel());
 
       act(() => {
-        result.current.onFlyoutToggle({ projectId: 'p2', top: 200, right: 52 });
+        result.current.onFlyoutOpen({ projectId: 'p2', top: 200, right: 52 });
       });
+      act(() => {
+        result.current.onFlyoutOpen({ projectId: 'p2', top: 200, right: 52 });
+      });
+
+      expect(result.current.flyout?.projectId).toBe('p2');
+
       act(() => {
         result.current.onFlyoutPlan('w3');
       });

@@ -395,10 +395,6 @@ export const useSidebarViewModel = () => {
       keepFlyout();
       setFlyoutAt(place);
     },
-    onFlyoutToggle: (place: ISidebarFlyoutPlace) => {
-      keepFlyout();
-      setFlyoutAt(flyoutAt?.projectId === place.projectId ? null : place);
-    },
     onFlyoutKeep: keepFlyout,
     onFlyoutLeave: () => {
       keepFlyout();
