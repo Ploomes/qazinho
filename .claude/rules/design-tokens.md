@@ -2,9 +2,11 @@
 
 O QAzinho não tem pacote de design system. A escala é um conjunto de custom properties de CSS em
 `src/shared/styles/tokens.css`, declaradas em `[data-theme]`. O layout vem do
-`assets/prototype.html`; as cores vêm da marca QAzinho: Lima Estagiário `#C6F432` (`--lime`), Tinta
-`#141414` (`--brand-ink`), Bug `#FF4D2E` (`--fail`) e Papel `#F4F2EA` (`--brand-paper`); o índigo
-da folha de adesivos fica só no ícone do app. Como elas são usadas está no `sticker-design.md`.
+`assets/prototype.html`. O acento da interface é o Musgo (`--accent`: `#3F6B4B` no Paper, `#9CC3A2`
+no Night), que trocou o lima neon em 2026-11-11; os status são de saturação baixa. A marca guarda a
+Tinta `#141414` (`--brand-ink`), o Papel `#F4F2EA` (`--brand-paper`) e o lima do Estagiário
+(`--brand-lime`, só nele, no balão dele e na `Tag`) até a marca ser redesenhada; o índigo da folha
+de adesivos fica só no ícone do app. Como elas são usadas está no `sticker-design.md`.
 
 ## Nunca escreva à mão o que a escala define
 
@@ -23,7 +25,7 @@ font:
 /* ✅ */
 padding: var(--space-3) var(--space-5);
 border-radius: var(--radius-md);
-color: var(--lime);
+color: var(--accent);
 font: var(--font-ui-md);
 ```
 
@@ -34,7 +36,7 @@ font: var(--font-ui-md);
 | Superfícies | `--bg --win --panel --center --raise --raise2 --screen`, `--bubble` para a fala do QA no chat    |
 | Linhas      | `--line --line2 --sel --stripe`, `--line-field` para a borda de um campo de digitar              |
 | Tinta       | `--ink --ink2 --ink3`                                                                            |
-| Destaque    | `--lime --lime-ink --lime-soft --on-lime`                                                        |
+| Destaque    | `--accent --accent-ink --accent-soft --on-accent`, e `--brand-lime --on-brand-lime` na marca     |
 | Vereditos   | `--pass --fail --block --skip --attn`, cada um com um par `-soft`                                |
 | Espaço      | `--space-1 2px` · `2 4` · `3 8` · `4 12` · `5 16` · `6 20` · `7 24` · `8 30`                     |
 | Ícone       | `--icon-min` 12px, o menor que um ícone dimensionado pelo texto desenha                          |
