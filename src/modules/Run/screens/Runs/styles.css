@@ -101,6 +101,20 @@
   text-align: left;
 }
 
+.runs__case-open::after {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  content: '';
+}
+
+.runs__case-head .runs__take,
+.runs__case-head .runs__case-bug,
+.runs__case-head .runs__walk {
+  position: relative;
+  z-index: 1;
+}
+
 .runs__case-open:hover:not(:disabled) {
   filter: none;
 }
