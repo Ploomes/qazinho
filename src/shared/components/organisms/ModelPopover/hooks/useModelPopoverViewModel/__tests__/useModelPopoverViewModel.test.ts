@@ -12,7 +12,7 @@ describe('useModelPopoverViewModel', () => {
   it('offers the agent own default first, then the models it lists', () => {
     const { result } = renderHook(() => useModelPopoverViewModel());
 
-    expect(result.current.modelHeading).toBe('model');
+    expect(result.current.modelHeading).toBe('Model');
     expect(result.current.models.map(({ id }) => id)).toEqual([
       '',
       'haiku',

@@ -41,7 +41,7 @@
 .model-popover__note {
   margin-left: auto;
   color: var(--ink3);
-  font: var(--font-mono-sm);
+  font: var(--font-meta-sm);
 }
 
 .model-popover--titlebar {

@@ -25,7 +25,8 @@ export interface IOutsidePort {
     askingIds: string[];
     variables: Record<string, IVariableBrief[]>;
     settings: {
-      theme: 'dark' | 'light';
+      theme: 'dark' | 'light' | 'system';
+      shownTheme: 'dark' | 'light';
       language: string;
       runAlert: 'system' | 'app';
       agent: string;

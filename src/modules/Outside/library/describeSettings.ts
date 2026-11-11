@@ -4,18 +4,20 @@ const LANGUAGES: Record<string, string> = { en: 'English', pt: 'Brazilian Portug
 
 /** Como o QAzinho está configurado, para um agente de fora, sem token nem segredo. */
 export function describeSettings(props: {
-  theme: 'dark' | 'light';
+  theme: 'dark' | 'light' | 'system';
+  shownTheme: 'dark' | 'light';
   language: string;
   runAlert: 'system' | 'app';
   agent: string;
   integrations: IIntegrationStatus[];
 }): string {
-  const { theme, language, runAlert, agent, integrations } = props;
+  const { theme, shownTheme, language, runAlert, agent, integrations } = props;
+  const shown = shownTheme === 'dark' ? 'night (dark)' : 'paper (light)';
   const github = integrations.find(({ id }) => id === 'github');
   const jira = integrations.find(({ id }) => id === 'jira');
 
   return [
-    `Theme: ${theme === 'dark' ? 'night (dark)' : 'paper (light)'}.`,
+    theme === 'system' ? `Theme: the computer's, now ${shown}.` : `Theme: ${shown}.`,
     `Language: ${LANGUAGES[language] ?? language}.`,
     runAlert === 'system'
       ? 'A finished run calls the user back with a notification, a sound and a count on the icon.'

@@ -76,6 +76,7 @@ function appWith(props: {
       },
       settings: {
         theme: 'dark',
+        shownTheme: 'dark',
         language: 'pt',
         runAlert: 'system',
         agent: 'Claude Code',

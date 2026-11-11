@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { INTERN, INTERN_MOODS } from '@/shared/components/atoms/Intern/constants';
 import { drawIntern } from '@/shared/components/atoms/Intern/library';
 import { useAppStore } from '@/store';
+import { shownThemeOf } from '@/store/AppStore/library';
 
 export const useInternViewModel = (props: IInternProps) => {
   const {
@@ -15,7 +16,7 @@ export const useInternViewModel = (props: IInternProps) => {
     isFigure = false,
     isSticker = false,
   } = props;
-  const theme = useAppStore((state) => state.theme);
+  const theme = useAppStore(shownThemeOf);
   const sticker = isSticker ? INTERN.stickerShadow[theme] : null;
   const { t } = useTranslation();
   const isCalm = useReducedMotion() ?? false;

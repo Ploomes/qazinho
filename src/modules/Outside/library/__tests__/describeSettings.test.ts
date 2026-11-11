@@ -3,6 +3,7 @@ import { describeSettings } from '@/modules/Outside/library';
 
 const BASE = {
   theme: 'light' as const,
+  shownTheme: 'light' as const,
   language: 'en',
   runAlert: 'app' as const,
   agent: 'Codex',
@@ -17,6 +18,12 @@ describe('describeSettings', () => {
     expect(told).toContain('Language: English.');
     expect(told).toContain('a notice inside QAzinho only');
     expect(told).toContain('Codex');
+  });
+
+  it('says when the theme follows the computer, and which one it shows now', () => {
+    expect(describeSettings({ ...BASE, theme: 'system', shownTheme: 'dark' })).toContain(
+      "Theme: the computer's, now night (dark).",
+    );
   });
 
   it('names who an integration is connected as, and never a token', () => {

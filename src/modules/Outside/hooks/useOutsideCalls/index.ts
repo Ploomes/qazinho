@@ -16,6 +16,7 @@ import {
   useVariablesStore,
   useWorkspaceStore,
 } from '@/store';
+import { shownThemeOf } from '@/store/AppStore/library';
 
 export const useOutsideCalls = () => {
   const { t } = useTranslation();
@@ -33,6 +34,7 @@ export const useOutsideCalls = () => {
         variables: useVariablesStore.getState().byProject,
         settings: {
           theme: useAppStore.getState().theme,
+          shownTheme: shownThemeOf(useAppStore.getState()),
           language: useSettingsStore.getState().language,
           runAlert: useSettingsStore.getState().runAlert,
           agent: useSettingsStore.getState().agent,
