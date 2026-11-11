@@ -21,7 +21,11 @@ export async function performSettingsChange(props: {
     const { theme, language, runAlert } = call.args;
 
     port.changeSettings({
-      ...(theme === undefined ? {} : { theme: theme === 'night' ? 'dark' : 'light' }),
+      ...(theme === undefined
+        ? {}
+        : {
+            theme: theme === 'system' ? 'system' : theme === 'night' ? 'dark' : 'light',
+          }),
       ...(language === undefined ? {} : { language }),
       ...(runAlert === undefined ? {} : { runAlert }),
     });
@@ -91,7 +95,7 @@ function settingsSaid(props: {
     ...(args.theme === undefined
       ? []
       : [
-          `QAzinho is on the theme the QA sees as ${port.themeName(args.theme === 'night' ? 'dark' : 'light')}`,
+          `QAzinho is on the theme the QA sees as ${port.themeName(args.theme === 'system' ? 'system' : args.theme === 'night' ? 'dark' : 'light')}`,
         ]),
     ...(args.language === undefined
       ? []

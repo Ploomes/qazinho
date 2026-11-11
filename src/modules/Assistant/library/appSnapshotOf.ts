@@ -48,7 +48,8 @@ export function appSnapshotOf(props: {
         : null,
     openBugId: isWorkspace && props.panelTab === 'bugs' ? props.openBugId : null,
     language: props.language,
-    theme: props.theme === 'dark' ? 'night' : 'paper',
+    theme:
+      props.theme === 'system' ? 'system' : props.theme === 'dark' ? 'night' : 'paper',
     runAlert: props.runAlert,
     agent: props.agent,
     integrations: INTEGRATIONS.map((id) => ({

@@ -86,7 +86,13 @@ export const useAppActions = () => {
       now: () => Date.now(),
       targetLabel: (kind) => t(PLATFORM_LABEL[kind]),
       themeName: (theme) =>
-        t(theme === 'dark' ? 'SETTINGS.THEME_DARK' : 'SETTINGS.THEME_LIGHT'),
+        t(
+          theme === 'system'
+            ? 'SETTINGS.THEME_SYSTEM'
+            : theme === 'dark'
+              ? 'SETTINGS.THEME_DARK'
+              : 'SETTINGS.THEME_LIGHT',
+        ),
       openWorkspace: ({ workspaceId, tab, runId, bugId }) => {
         const workspaces = useWorkspaceStore.getState();
 
