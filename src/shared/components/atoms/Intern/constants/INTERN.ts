@@ -1,7 +1,7 @@
 export const INTERN = {
   defaultSize: 96,
   ink: {
-    dark: '#f2f1ec',
-    light: '#16150f',
+    dark: '#efefed',
+    light: '#1b1b1a',
   },
 } as const;
