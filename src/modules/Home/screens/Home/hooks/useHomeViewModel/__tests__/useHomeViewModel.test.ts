@@ -56,7 +56,7 @@ describe('useHomeViewModel', () => {
       items: [
         {
           text: 'Checkout regression asks: “Which plan should I pick?”',
-          project: 'Loja Web',
+          project: 'in Loja Web',
           action: 'Answer',
         },
       ],
@@ -82,7 +82,7 @@ describe('useHomeViewModel', () => {
     const group = result.current.groups.find(({ id }) => id === 'failed');
 
     expect(group?.items[0]).toMatchObject({
-      text: 'Checkout regression: 1 case failed',
+      text: 'Checkout regression: 1 case failed and 1 open bug',
       action: 'See the bug',
     });
 
@@ -101,7 +101,7 @@ describe('useHomeViewModel', () => {
     const { result } = renderHook(() => useHomeViewModel());
     const group = result.current.groups.find(({ id }) => id === 'going');
 
-    expect(group?.items[0]?.text).toMatch(/^Checkout regression: .+, step 2 of \d+$/);
+    expect(group?.items[0]?.text).toMatch(/^Checkout regression, .+ step 2 of \d+$/);
 
     act(() => {
       group?.items[0]?.onAction();
@@ -127,7 +127,7 @@ describe('useHomeViewModel', () => {
       expect.objectContaining({ workspaceId: 'w1', targetKind: 'web' }),
     );
     expect(result.current.groups[0]?.items[0]?.text).toBe(
-      'Checkout regression: 1 case not recorded yet',
+      'Checkout regression has 1 case not recorded yet',
     );
   });
 
@@ -142,7 +142,6 @@ describe('useHomeViewModel', () => {
     expect(result.current.recent).toMatchObject([
       {
         plan: 'Checkout regression',
-        project: 'Loja Web',
         when: 'today, 09:12',
         mark: { kind: 'platform', platform: 'web' },
       },
@@ -153,5 +152,16 @@ describe('useHomeViewModel', () => {
     });
 
     expect(useAppStore.getState().selectedWorkspaceId).toBe('w1');
+  });
+
+  it('says only the day of a plan opened before today', () => {
+    const at = new Date().setDate(new Date().getDate() - 1);
+
+    useWorkspaceStore.setState({ workspaces: [inLoja(makeWorkspace())] });
+    useAppStore.setState({ recent: [{ workspaceId: 'w1', at }] });
+
+    expect(renderHook(() => useHomeViewModel()).result.current.recent[0]?.when).toBe(
+      'yesterday',
+    );
   });
 });

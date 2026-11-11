@@ -64,7 +64,6 @@ export const Home: React.FC = () => {
               >
                 <ProjectMark mark={row.mark} size={markSize} />
                 <span className="home__recent-plan">{row.plan}</span>
-                <span className="home__project">{row.project}</span>
                 <span className="home__when">{row.when}</span>
               </button>
             ))}

@@ -1,3 +1,4 @@
+import type { IHomeFailed } from '@/modules/Home/types';
 import type { WorkspaceTab } from '@/modules/Workspace/types';
 import type { CSSProperties } from 'react';
 import { useEffect } from 'react';
@@ -6,7 +7,7 @@ import { formatClock } from '@/modules/Chat';
 import { HOME_ITEMS, HOME_SCREEN } from '@/modules/Home/constants';
 import { dayKeyOf, homeOf } from '@/modules/Home/library';
 import { projectAppOf, projectMarkOf, useSiteIcons } from '@/modules/Project';
-import { dayLabelOf, flattenPlanSteps, RUN_HOW_KEYS } from '@/modules/Run';
+import { dayLabelOf, flattenPlanSteps, RUN_HOW_KEYS, useRunActions } from '@/modules/Run';
 import { Run } from '@/services';
 import { HOME } from '@/shared/constants';
 import { useAppStore, useWorkspaceStore } from '@/store';
@@ -20,6 +21,7 @@ export const useHomeViewModel = () => {
   const developed = useWorkspaceStore((state) => state.developedCases);
   const setDeveloped = useWorkspaceStore((state) => state.setDevelopedCases);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
+  const { onRunPlan } = useRunActions();
   const icons = useSiteIcons(
     projects.flatMap(({ targets }) => projectAppOf(targets).address ?? []),
   );
@@ -63,6 +65,41 @@ export const useHomeViewModel = () => {
     }
   }, [unknownKey, setDeveloped]);
 
+  const whenOf = (at: number) => {
+    const day = dayKeyOf(at);
+    const now = new Date();
+    const label = dayLabelOf({
+      day,
+      now,
+      language: i18n.language,
+      words: { today: t('COMMON.TODAY'), yesterday: t('COMMON.YESTERDAY') },
+    });
+
+    return day === dayKeyOf(now.getTime())
+      ? t('HOME.WHEN', { day: label, time: formatClock(new Date(at)) })
+      : label;
+  };
+
+  const failedTextOf = (item: IHomeFailed) => {
+    const failed =
+      item.failed === 0
+        ? t('HOME.FAILED_RUN', { plan: item.plan })
+        : t(item.failed === 1 ? 'HOME.FAILED_ONE' : 'HOME.FAILED_OTHER', {
+            plan: item.plan,
+            count: item.failed,
+          });
+
+    return item.bugs === 0
+      ? failed
+      : t('HOME.FAILED_WITH_BUGS', {
+          failed,
+          bugs:
+            item.bugs === 1
+              ? t('HOME.BUGS_ONE')
+              : t('HOME.BUGS_OTHER', { count: item.bugs }),
+        });
+  };
+
   const open = (props: { workspaceId: string; tab: WorkspaceTab | null }) => {
     selectWorkspace(props.workspaceId);
 
@@ -81,6 +118,25 @@ export const useHomeViewModel = () => {
         action: t('HOME.ANSWER'),
         onAction: () => {
           open({ workspaceId: item.workspaceId, tab: 'chat' });
+        },
+      })),
+    },
+    {
+      id: 'failed',
+      title: t('HOME.GROUP_FAILED'),
+      items: home.failed.map((item) => ({
+        id: item.workspaceId,
+        ...HOME_ITEMS.failed,
+        text: failedTextOf(item),
+        project: item.project,
+        action:
+          item.bugs === 0
+            ? t('HOME.SEE_RUN')
+            : item.bugs === 1
+              ? t('HOME.SEE_BUG')
+              : t('HOME.SEE_BUGS'),
+        onAction: () => {
+          open({ workspaceId: item.workspaceId, tab: item.bugs === 0 ? 'runs' : 'bugs' });
         },
       })),
     },
@@ -129,31 +185,6 @@ export const useHomeViewModel = () => {
       })),
     },
     {
-      id: 'failed',
-      title: t('HOME.GROUP_FAILED'),
-      items: home.failed.map((item) => ({
-        id: item.workspaceId,
-        ...HOME_ITEMS.failed,
-        text:
-          item.failed === 0
-            ? t('HOME.FAILED_RUN', { plan: item.plan })
-            : t(item.failed === 1 ? 'HOME.FAILED_ONE' : 'HOME.FAILED_OTHER', {
-                plan: item.plan,
-                count: item.failed,
-              }),
-        project: item.project,
-        action:
-          item.bugs === 0
-            ? t('HOME.SEE_RUN')
-            : item.bugs === 1
-              ? t('HOME.SEE_BUG')
-              : t('HOME.SEE_BUGS', { count: item.bugs }),
-        onAction: () => {
-          open({ workspaceId: item.workspaceId, tab: item.bugs === 0 ? 'runs' : 'bugs' });
-        },
-      })),
-    },
-    {
       id: 'develop',
       title: t('HOME.GROUP_DEVELOP'),
       items: home.toDevelop.map((item) => ({
@@ -163,14 +194,24 @@ export const useHomeViewModel = () => {
           plan: item.plan,
           count: item.cases,
         }),
-        project: item.project,
-        action: t('HOME.OPEN'),
+        project: '',
+        action: t('HOME.DEVELOP'),
         onAction: () => {
           open({ workspaceId: item.workspaceId, tab: 'plan' });
+          onRunPlan();
         },
       })),
     },
-  ].filter(({ items }) => items.length > 0);
+  ]
+    .filter(({ items }) => items.length > 0)
+    .map((group) => ({
+      ...group,
+      items: group.items.map((item) => ({
+        ...item,
+        project:
+          item.project === '' ? '' : t('HOME.IN_PROJECT', { project: item.project }),
+      })),
+    }));
 
   return {
     style: {
@@ -192,21 +233,12 @@ export const useHomeViewModel = () => {
       return {
         id: item.workspaceId,
         plan: item.plan,
-        project: item.project,
         mark: projectMarkOf({
           name: item.project,
           app: projectAppOf(project?.targets ?? []),
           icons,
         }),
-        when: t('HOME.WHEN', {
-          day: dayLabelOf({
-            day: dayKeyOf(item.at),
-            now: new Date(),
-            language: i18n.language,
-            words: { today: t('COMMON.TODAY'), yesterday: t('COMMON.YESTERDAY') },
-          }),
-          time: formatClock(new Date(item.at)),
-        }),
+        when: whenOf(item.at),
         onOpen: () => {
           open({ workspaceId: item.workspaceId, tab: null });
         },
