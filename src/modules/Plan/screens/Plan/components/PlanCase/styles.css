@@ -130,6 +130,7 @@
 }
 
 .plan-case__body {
+  max-width: 72ch;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
