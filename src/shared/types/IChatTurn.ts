@@ -15,4 +15,5 @@ export interface IChatTurn extends IAgentTurn {
   code: ICodeSource | null;
   story: IJiraIssueRef | null;
   page: IConfluencePageRef | null;
+  followed: string[];
 }

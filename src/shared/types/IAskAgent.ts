@@ -36,4 +36,5 @@ export interface IAskAgent {
   isFromAgent?: boolean;
   attachments?: IChatAttachment[];
   memories?: IMemoryBrief[];
+  skill?: string | null;
 }

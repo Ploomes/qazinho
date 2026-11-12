@@ -1,55 +1,60 @@
 import type { IUpdaterPort } from '@/main/classes';
 import type {
   AgentSignInProgress,
+  AppUpdate,
   ConfluenceSwitch,
   GithubSignInProgress,
-  ICommentBug,
-  IFileBug,
-  IFilingEvent,
-  IProLink,
-  IProShare,
-  IProSyncBatch,
-  IPublishPlan,
-  IKeepMemories,
-  IReviewBug,
   IAgentEvent,
   IAgentTurn,
-  IAppToolAnswer,
   IApplyVariables,
+  IAppToolAnswer,
   IAskAgent,
   IAssistantAsk,
   IBuildEvent,
   IChatTurn,
   ICodeCopy,
+  ICommentBug,
   IConfluencePage,
-  IImportSource,
-  IJiraStoryCopy,
   IConnectIntegration,
   IDevelopedAsk,
   IExportCode,
+  IFileBug,
+  IFilingEvent,
+  IImportSource,
+  IJiraStoryCopy,
+  IKeepMemories,
+  IMcpServerTarget,
+  IMcpSignIn,
+  ImportPick,
   InstallableId,
   IntegrationId,
+  IProLink,
+  IProShare,
+  IProSyncBatch,
+  IPublishPlan,
+  IRepositoryRef,
+  IReviewBug,
   IRunAlert,
   IRunEvent,
   IRunRef,
-  IRepositoryRef,
-  IMcpServerTarget,
-  IMcpSignIn,
   ISavedWorkspace,
+  ISaveSkill,
   ISetupEvent,
-  AppUpdate,
+  ISkill,
+  ISkillDraftFile,
+  ISkillImport,
   IStartBuild,
   IStartRun,
   ITrayWords,
   IViewport,
   IWindowControls,
+  IWriteSkill,
   McpSignInProgress,
   OutsideToolCall,
   PickKind,
   ProSignInProgress,
   QaReply,
   SaveOutcome,
-  ImportPick,
   WindowFit,
 } from '@/shared/types';
 import type {
@@ -77,23 +82,23 @@ import {
 import { autoUpdater } from 'electron-updater';
 import {
   AgentDetector,
-  AndroidDriver,
-  AppLog,
   AgentLogin,
   AgentMcp,
   AgentRunner,
+  AndroidDriver,
   AppBridge,
   AppBuilder,
+  AppLog,
   AppPeek,
   AppTray,
+  AppUpdater,
   Archive,
-  ChatDevices,
-  ChatAttachments,
   AssistantAgent,
-  OutsideServer,
   BugFiler,
   BugReviewer,
-  MemoryKeeper,
+  canUpdateOf,
+  ChatAttachments,
+  ChatDevices,
   CodeCopies,
   CodeExport,
   ConfluenceApi,
@@ -103,28 +108,30 @@ import {
   GithubRepos,
   ImportScanner,
   IntegrationVault,
-  Island,
   IosDriver,
+  Island,
   JiraApi,
   JiraStories,
   LiveStream,
+  MemoryKeeper,
+  OutsideServer,
   PhonePeek,
   ProAccount,
   ProApi,
-  AppUpdater,
-  canUpdateOf,
-  updateFeedOf,
   ProcessOwners,
   ProDownloads,
   ProSync,
-  ResourceCollector,
-  RunCoordinator,
   ReplayServer,
-  StorageKeeper,
+  ResourceCollector,
   RunAlerts,
+  RunCoordinator,
   RunRecorder,
   SetupInstaller,
   SiteIcons,
+  SkillLibrary,
+  SkillWriter,
+  StorageKeeper,
+  updateFeedOf,
   UsageReader,
   VariableVault,
 } from '@/main/classes';
@@ -133,6 +140,7 @@ import { MEMORY_KEEPER } from '@/main/classes/agents/MemoryKeeper/constants';
 import { buildIdOf, javaHomesOf } from '@/main/classes/builds/AppBuilder/library';
 import { BUG_REVIEW } from '@/main/classes/integrations/BugReviewer/constants';
 import { downloaderOf, uploaderOf } from '@/main/classes/pro/ProSync/library';
+import { SKILL_WRITER } from '@/main/classes/skills/SkillWriter/constants';
 import { ARCHIVE } from '@/main/classes/storage/Archive/constants';
 import {
   ASSISTANT,
@@ -609,7 +617,8 @@ const agentRunner = new AgentRunner({
 
     if (
       event.workspaceId.startsWith(BUG_REVIEW.scopePrefix) ||
-      event.workspaceId.startsWith(MEMORY_KEEPER.scopePrefix)
+      event.workspaceId.startsWith(MEMORY_KEEPER.scopePrefix) ||
+      event.workspaceId.startsWith(SKILL_WRITER.scopePrefix)
     )
       return;
 
@@ -629,6 +638,15 @@ const bugReviewer = new BugReviewer({
   harness,
   findCommand,
   runsRoot: join(PATHS.data, ARCHIVE.runs),
+});
+
+const skillLibrary = new SkillLibrary({ root: PATHS.skills, home: homedir(), github });
+
+const skillWriter = new SkillWriter({
+  runner: agentRunner,
+  harness,
+  library: skillLibrary,
+  findCommand,
 });
 
 const memoryKeeper = new MemoryKeeper({
@@ -793,6 +811,8 @@ const runs = new RunCoordinator({
         changes: [{ kind: 'save', ...variable, from: null }],
       })
     ).isSaved,
+  skillsOf: (projectId) =>
+    skillLibrary.forChat({ projectId, uses: ['cases', 'explore'], calledId: null }),
   shrink: ({ image, width, height, quality }) =>
     nativeImage
       .createFromBuffer(image)
@@ -944,12 +964,18 @@ async function askOnce(props: {
   source: IImportSource | null;
   story: IJiraStoryCopy | null;
   page: IConfluencePage | null;
-}): Promise<{ turn: IAgentTurn; told: Record<string, string> }> {
+}): Promise<{ turn: IAgentTurn; told: Record<string, string>; followed: string[] }> {
   const { ask, command, sessionId, look, code, source, story, page } = props;
   const attachments = await chatAttachments.filesOf({
     workspaceId: ask.workspaceId,
     attachments: ask.attachments ?? [],
   });
+  const skills = await skillLibrary
+    .forChat({ projectId: ask.projectId, uses: ['cases'], calledId: ask.skill ?? null })
+    .catch(() => []);
+
+  void skillLibrary.refreshIfDue().catch(() => undefined);
+
   const chat = harness.chat({
     text: ask.text,
     told: (sessionId === null ? undefined : toldChats.get(sessionId)) ?? {},
@@ -968,6 +994,7 @@ async function askOnce(props: {
     isFromAgent: ask.isFromAgent === true,
     attachments,
     memories: ask.memories ?? [],
+    skills,
   });
   const sources = sourcesFor(ask.workspaceId);
   const learning =
@@ -1011,7 +1038,7 @@ async function askOnce(props: {
       ...(mcpConfig === null ? {} : { mcpConfig }),
     });
 
-    return { turn, told: chat.told };
+    return { turn, told: chat.told, followed: chat.followed };
   } finally {
     tools.detachSources(sources.scope);
 
@@ -1034,6 +1061,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
     code: null,
     story: null,
     page: null,
+    followed: [],
   };
 
   if (!command)
@@ -1149,7 +1177,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
       ask.sessionId !== null &&
       !stoppedChats.has(ask.workspaceId) &&
       isLostSession(first.turn.text);
-    const { turn, told } = isLost
+    const { turn, told, followed } = isLost
       ? await askOnce({ ask, command, sessionId: null, look, code, source, story, page })
       : first;
 
@@ -1162,6 +1190,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
         code: null,
         story: null,
         page: null,
+        followed: [],
       };
 
     const storyRead = jiraStories.storyOf(ask.workspaceId);
@@ -1209,6 +1238,7 @@ async function askAgent(ask: IAskAgent): Promise<IChatTurn> {
               url: storyRead.story.url,
             },
       page: pageRead?.page ?? null,
+      followed: turn.isError ? [] : followed,
     };
   } finally {
     askingChats.delete(ask.workspaceId);
@@ -1385,6 +1415,47 @@ async function pickImport(): Promise<ImportPick> {
   if (picked.canceled || path === undefined) return { kind: 'cancelled' };
 
   return importScanner.pick(path);
+}
+
+async function importSkillFile(): Promise<ISkill[]> {
+  const [open] = appWindows();
+  const options: Electron.OpenDialogOptions = {
+    properties: ['openFile'],
+    filters: [{ name: 'Markdown', extensions: ['md'] }],
+  };
+  const picked = open
+    ? await dialog.showOpenDialog(open, options)
+    : await dialog.showOpenDialog(options);
+  const [path] = picked.filePaths;
+
+  return picked.canceled || path === undefined ? [] : skillLibrary.importFile(path);
+}
+
+async function exportSkill(id: string): Promise<string | null> {
+  const [open] = appWindows();
+  const options: Electron.OpenDialogOptions = {
+    properties: ['openDirectory', 'createDirectory'],
+  };
+  const picked = open
+    ? await dialog.showOpenDialog(open, options)
+    : await dialog.showOpenDialog(options);
+  const [dir] = picked.filePaths;
+
+  return picked.canceled || dir === undefined ? null : skillLibrary.export({ id, dir });
+}
+
+async function attachToSkill(draftId: string): Promise<ISkillDraftFile[]> {
+  const [open] = appWindows();
+  const options: Electron.OpenDialogOptions = {
+    properties: ['openFile', 'multiSelections'],
+  };
+  const picked = open
+    ? await dialog.showOpenDialog(open, options)
+    : await dialog.showOpenDialog(options);
+
+  return picked.canceled
+    ? skillLibrary.draftFiles(draftId)
+    : skillLibrary.attach({ draftId, paths: picked.filePaths });
 }
 
 async function pickFile(kind: PickKind) {
@@ -1667,6 +1738,39 @@ void app.whenReady().then(async () => {
   );
   ipcMain.handle(CHANNELS.pickFile, (_event, kind: PickKind) => pickFile(kind));
   ipcMain.handle(CHANNELS.pickImport, () => pickImport());
+  ipcMain.handle(CHANNELS.listSkills, () => skillLibrary.list());
+  ipcMain.handle(CHANNELS.saveSkill, (_event, skill: ISaveSkill) =>
+    skillLibrary.save(skill),
+  );
+  ipcMain.handle(CHANNELS.removeSkill, (_event, id: string) => skillLibrary.remove(id));
+  ipcMain.handle(CHANNELS.foundSkills, () => skillLibrary.found());
+  ipcMain.handle(
+    CHANNELS.foundSkillsIn,
+    (_event, props: { repository: string; branch: string; folder: string }) =>
+      skillLibrary.foundIn(props),
+  );
+  ipcMain.handle(CHANNELS.importSkills, (_event, request: ISkillImport) =>
+    skillLibrary.import(request),
+  );
+  ipcMain.handle(CHANNELS.importSkillFile, () => importSkillFile());
+  ipcMain.handle(CHANNELS.refreshSkills, async () => {
+    await skillLibrary.refresh();
+
+    return skillLibrary.list();
+  });
+  ipcMain.handle(CHANNELS.exportSkill, (_event, id: string) => exportSkill(id));
+  ipcMain.handle(CHANNELS.attachToSkill, (_event, draftId: string) =>
+    attachToSkill(draftId),
+  );
+  ipcMain.handle(CHANNELS.dropSkillDraft, (_event, draftId: string) =>
+    skillLibrary.dropDraft(draftId),
+  );
+  ipcMain.handle(CHANNELS.writeSkill, (_event, request: IWriteSkill) =>
+    skillWriter.ask(request),
+  );
+  ipcMain.handle(CHANNELS.stopSkill, (_event, draftId: string) => {
+    skillWriter.stop(draftId);
+  });
   ipcMain.handle(CHANNELS.outsideServer, () => outside.status());
   ipcMain.handle(CHANNELS.outsideAgents, () => outside.agentsHere());
   ipcMain.handle(CHANNELS.turnOutsideServer, (_event, isOn: boolean) =>

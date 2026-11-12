@@ -1,5 +1,7 @@
 import type {
   AgentSignInProgress,
+  AppUpdate,
+  AttachOutcome,
   BugComment,
   BugFiling,
   BugReview,
@@ -22,7 +24,6 @@ import type {
   IBuildResult,
   IChatTurn,
   ICommentBug,
-  IKeepMemories,
   IConnectIntegration,
   IConnectResult,
   IDetectedAgent,
@@ -36,9 +37,9 @@ import type {
   IInstallResult,
   IIntegrationStatus,
   IIsland,
-  IslandAction,
   IIslandApi,
   IIslandFrame,
+  IKeepMemories,
   IMachineCheck,
   IMcpServerStatus,
   IMcpServerTarget,
@@ -68,9 +69,13 @@ import type {
   IRunRef,
   ISavedState,
   ISavedWorkspace,
+  ISaveSkill,
   ISetupEvent,
-  AppUpdate,
-  AttachOutcome,
+  ISkill,
+  ISkillDraftFile,
+  ISkillFound,
+  ISkillImport,
+  IslandAction,
   IStartBuild,
   IStartRun,
   IStorageUsage,
@@ -78,6 +83,7 @@ import type {
   IVideoSweep,
   IViewport,
   IWindowControls,
+  IWriteSkill,
   JiraIssueList,
   JiraProjectList,
   McpActionResult,
@@ -93,6 +99,9 @@ import type {
   ProStatus,
   QaReply,
   SaveOutcome,
+  SkillSaved,
+  SkillsFound,
+  SkillWritten,
   UnreadPlanRead,
   VariablesOutcome,
   WindowFit,
@@ -190,6 +199,29 @@ const api: IQazinhoApi = {
   saveVideo: (props: { name: string; data: Uint8Array }) =>
     ipcRenderer.invoke(CHANNELS.saveVideo, props) as Promise<SaveOutcome>,
   pickImport: () => ipcRenderer.invoke(CHANNELS.pickImport) as Promise<ImportPick>,
+  listSkills: () => ipcRenderer.invoke(CHANNELS.listSkills) as Promise<ISkill[]>,
+  saveSkill: (skill: ISaveSkill) =>
+    ipcRenderer.invoke(CHANNELS.saveSkill, skill) as Promise<SkillSaved>,
+  removeSkill: (id: string) =>
+    ipcRenderer.invoke(CHANNELS.removeSkill, id) as Promise<void>,
+  foundSkills: () => ipcRenderer.invoke(CHANNELS.foundSkills) as Promise<ISkillFound[]>,
+  foundSkillsIn: (props: { repository: string; branch: string; folder: string }) =>
+    ipcRenderer.invoke(CHANNELS.foundSkillsIn, props) as Promise<SkillsFound>,
+  importSkills: (request: ISkillImport) =>
+    ipcRenderer.invoke(CHANNELS.importSkills, request) as Promise<ISkill[]>,
+  importSkillFile: () =>
+    ipcRenderer.invoke(CHANNELS.importSkillFile) as Promise<ISkill[]>,
+  refreshSkills: () => ipcRenderer.invoke(CHANNELS.refreshSkills) as Promise<ISkill[]>,
+  exportSkill: (id: string) =>
+    ipcRenderer.invoke(CHANNELS.exportSkill, id) as Promise<string | null>,
+  attachToSkill: (draftId: string) =>
+    ipcRenderer.invoke(CHANNELS.attachToSkill, draftId) as Promise<ISkillDraftFile[]>,
+  dropSkillDraft: (draftId: string) =>
+    ipcRenderer.invoke(CHANNELS.dropSkillDraft, draftId) as Promise<void>,
+  writeSkill: (request: IWriteSkill) =>
+    ipcRenderer.invoke(CHANNELS.writeSkill, request) as Promise<SkillWritten>,
+  stopSkill: (draftId: string) =>
+    ipcRenderer.invoke(CHANNELS.stopSkill, draftId) as Promise<void>,
   setIsland: (island: IIsland) => {
     ipcRenderer.send(CHANNELS.islandSet, island);
   },

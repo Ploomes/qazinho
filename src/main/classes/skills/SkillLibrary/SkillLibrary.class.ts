@@ -16,7 +16,7 @@ import type {
 } from '@/shared/types';
 import { randomUUID } from 'node:crypto';
 import { cp, mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
-import { basename, extname, join } from 'node:path';
+import { basename, dirname, extname, join } from 'node:path';
 import { refPath } from '@/main/classes/integrations/CodeCopies/library';
 import { SKILL_LIBRARY } from '@/main/classes/skills/SkillLibrary/constants';
 import {
@@ -38,6 +38,7 @@ export class SkillLibrary {
   private readonly github: IGithubSkills;
   private readonly now: () => number;
   private readonly newId: () => string;
+  private refreshedAt = 0;
 
   public constructor(props: ISkillLibrary) {
     this.root = props.root;
@@ -340,6 +341,45 @@ export class SkillLibrary {
     await this.writeIndex([...entries.filter(({ id }) => !ids.has(id)), ...updated]);
   }
 
+  /**
+   * Relê as skills de fora no máximo uma vez a cada intervalo, para um chat que manda uma
+   * mensagem usar a versão do repositório sem esperar por ela.
+   */
+  public async refreshIfDue(): Promise<void> {
+    if (this.now() - this.refreshedAt < SKILL_LIBRARY.refreshMs) return;
+
+    this.refreshedAt = this.now();
+    await this.refresh();
+  }
+
+  /**
+   * Traz uma skill de um arquivo que o QA escolheu: um SKILL.md com a pasta dele, ou um
+   * Markdown solto, que vira uma skill criada aqui, desligada.
+   */
+  public async importFile(path: string): Promise<ISkill[]> {
+    if (basename(path) === SKILL_LIBRARY.skillFile)
+      return this.import({ from: 'computer', paths: [dirname(path)] });
+
+    const text = await readFile(path, 'utf8').catch(() => null);
+    const read =
+      text === null
+        ? null
+        : skillOfMarkdown({ text, fallbackName: basename(path, extname(path)) });
+
+    if (read === null) return [];
+
+    const saved = await this.save({
+      id: null,
+      ...read,
+      use: 'cases',
+      projectIds: null,
+      isOn: false,
+      draftId: null,
+    });
+
+    return saved.isSaved ? [saved.skill] : [];
+  }
+
   /** Copia uma skill para uma pasta que o QA escolheu, numa pasta com o nome dela. */
   public async export(props: { id: string; dir: string }): Promise<string | null> {
     const skill = (await this.list()).find(({ id }) => id === props.id);
@@ -386,7 +426,12 @@ export class SkillLibrary {
       if (size <= SKILL_LIBRARY.draftFileMax) await cp(path, join(dir, basename(path)));
     }
 
-    return (await this.filesIn(dir)).map((name) => ({
+    return this.draftFiles(props.draftId);
+  }
+
+  /** Os arquivos que o QA já anexou ao rascunho de uma skill. */
+  public async draftFiles(draftId: string): Promise<ISkillDraftFile[]> {
+    return (await this.filesIn(this.draftDir(draftId))).map((name) => ({
       name,
       isImage: (SKILL_LIBRARY.imageExtensions as readonly string[]).includes(
         extname(name).toLowerCase(),

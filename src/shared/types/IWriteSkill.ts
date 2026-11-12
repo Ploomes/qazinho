@@ -1,4 +1,5 @@
 import type { ISkillDraft } from './ISkillDraft';
+import type { Language } from './Language';
 
 /**
  * Uma mensagem do QA a quem escreve uma skill com ele: o rascunho, a sessão do agente, o
@@ -11,4 +12,5 @@ export interface IWriteSkill {
   sessionId: string | null;
   text: string;
   current: ISkillDraft | null;
+  language: Language;
 }

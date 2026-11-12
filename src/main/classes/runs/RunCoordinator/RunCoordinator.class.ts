@@ -119,6 +119,7 @@ export class RunCoordinator {
   private readonly attachmentsOf: NonNullable<IRunCoordinator['attachmentsOf']>;
   private readonly fetchFiles: NonNullable<IRunCoordinator['fetchFiles']> | null;
   private readonly keepVariable: NonNullable<IRunCoordinator['keepVariable']>;
+  private readonly skillsOf: NonNullable<IRunCoordinator['skillsOf']>;
   private readonly askWaitMs: number;
   private readonly stopping = new Set<string>();
   private readonly walking = new Set<string>();
@@ -149,6 +150,7 @@ export class RunCoordinator {
     this.attachmentsOf = props.attachmentsOf ?? (() => Promise.resolve([]));
     this.fetchFiles = props.fetchFiles ?? null;
     this.keepVariable = props.keepVariable ?? (() => Promise.resolve(false));
+    this.skillsOf = props.skillsOf ?? (() => Promise.resolve([]));
     this.askWaitMs = props.askWaitMs ?? RUN_WALK.askWaitMs;
   }
 
@@ -1363,6 +1365,10 @@ export class RunCoordinator {
     this.tools.attach(attached);
 
     const screen = await device.describe().catch(() => '');
+    const skills =
+      run.projectId === undefined
+        ? []
+        : await this.skillsOf(run.projectId).catch(() => []);
 
     if (this.stopping.has(workspaceId)) return null;
 
@@ -1395,6 +1401,7 @@ export class RunCoordinator {
         design: run.design ?? null,
         plan: run.plan ?? [],
         memories: run.memories ?? [],
+        skills,
       }),
     });
     const cost = asking.then(

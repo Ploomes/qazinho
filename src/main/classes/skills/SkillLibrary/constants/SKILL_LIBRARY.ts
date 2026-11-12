@@ -10,5 +10,6 @@ export const SKILL_LIBRARY = {
   imageExtensions: ['.png', '.jpg', '.jpeg', '.gif', '.webp'],
   filesMax: 20,
   skillsMax: 30,
+  refreshMs: 10 * 60 * 1_000,
   folders: ['.claude/skills', '.agents/skills'],
 } as const;

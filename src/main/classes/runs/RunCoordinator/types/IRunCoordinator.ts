@@ -2,7 +2,7 @@ import type { IVideoRecorder } from './IVideoRecorder';
 import type { AgentRunner } from '@/main/classes/agents/AgentRunner';
 import type { LiveStream } from '@/main/classes/devices/LiveStream';
 import type { IVariableValue, ShrinkImage } from '@/main/types';
-import type { IAndroidSetup, IIosSetup, IRunEvent } from '@/shared/types';
+import type { IAndroidSetup, IIosSetup, IRunEvent, ITeamSkill } from '@/shared/types';
 import type { Harness, McpHost } from '@salve-software/qazinho-harness';
 
 export interface IRunCoordinator {
@@ -29,4 +29,5 @@ export interface IRunCoordinator {
     refs: string[];
     store: string;
   }) => Promise<void>;
+  skillsOf?: (projectId: string) => Promise<ITeamSkill[]>;
 }
