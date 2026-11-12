@@ -48,6 +48,55 @@ describe('replayTimelineOf', () => {
     ]);
   });
 
+  /**
+   * Uma exploração anota a tela em que chegou: a tela vale dali em diante. Contada para
+   * trás, o painel marcava "Termos de Uso" enquanto o vídeo ainda mostrava a página anterior.
+   */
+  it('gives each explored screen the time from its note until the next one', () => {
+    const workspace = recorded(VERDICTS);
+    const base = workspace.runs[0]!;
+    const step = base.cases[0]!.steps[0]!;
+    const startedAt = base.video!.startedAt;
+    const screen = (props: {
+      number: number;
+      action: string;
+      from: number;
+      to: number;
+    }) => ({
+      ...step,
+      number: props.number,
+      action: props.action,
+      bugId: null,
+      span: { from: startedAt + props.from, to: startedAt + props.to },
+    });
+    const run = {
+      ...base,
+      kind: 'explore' as const,
+      video: { ...base.video!, durationMs: 38_971 },
+      cases: [
+        {
+          ...base.cases[0]!,
+          id: 'EX',
+          steps: [
+            screen({ number: 1, action: 'Home', from: 2, to: 3_634 }),
+            screen({ number: 2, action: 'Blog', from: 3_634, to: 15_518 }),
+            screen({ number: 3, action: 'Termos de Uso', from: 15_518, to: 35_741 }),
+          ],
+        },
+      ],
+    };
+
+    expect(
+      replayTimelineOf({ run, bugs: [] })?.chapters[0]?.steps.map(
+        ({ action, fromMs, toMs }) => [action, fromMs, toMs],
+      ),
+    ).toEqual([
+      ['Home', 2, 15_518],
+      ['Blog', 15_518, 35_741],
+      ['Termos de Uso', 35_741, 38_971],
+    ]);
+  });
+
   it('pins each bug of the run at the moment it was caught', () => {
     const workspace = recorded(VERDICTS);
 

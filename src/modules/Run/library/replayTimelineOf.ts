@@ -1,10 +1,10 @@
 import type { IBug } from '@/modules/Bug/types';
-import type { IReplayTimeline, IRun } from '@/modules/Run/types';
+import type { IReplayStep, IReplayTimeline, IRun } from '@/modules/Run/types';
 import { appearancesOf } from '@/modules/Bug/library';
 
 /**
- * O vídeo de uma run disposto em capítulos e marcas, cada um posto por quando aconteceu;
- * null para uma run sem gravação.
+ * O vídeo de uma run em capítulos e marcas; numa exploração, cada tela vale da anotação
+ * dela até a próxima. Null para uma run sem gravação.
  */
 export function replayTimelineOf(props: {
   run: IRun;
@@ -19,7 +19,7 @@ export function replayTimelineOf(props: {
     Math.min(video.durationMs, Math.max(0, at - video.startedAt));
 
   const chapters = run.cases.flatMap((runCase) => {
-    const steps = runCase.steps.flatMap((step) =>
+    const placed = runCase.steps.flatMap((step) =>
       step.span === null
         ? []
         : [
@@ -33,6 +33,10 @@ export function replayTimelineOf(props: {
             },
           ],
     );
+    const steps =
+      run.kind === 'explore'
+        ? screensOf({ notes: placed, endMs: video.durationMs })
+        : placed;
 
     if (steps.length === 0) return [];
 
@@ -68,4 +72,14 @@ export function replayTimelineOf(props: {
       ),
     ),
   };
+}
+
+function screensOf(props: { notes: IReplayStep[]; endMs: number }): IReplayStep[] {
+  const notes = [...props.notes].sort((one, other) => one.toMs - other.toMs);
+
+  return notes.map((note, at) => ({
+    ...note,
+    fromMs: at === 0 ? note.fromMs : note.toMs,
+    toMs: notes[at + 1]?.toMs ?? props.endMs,
+  }));
 }
