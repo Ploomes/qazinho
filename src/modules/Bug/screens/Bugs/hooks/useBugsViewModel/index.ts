@@ -42,8 +42,6 @@ export const useBugsViewModel = () => {
           ? !bug.isDismissed && bug.filed !== null
           : !bug.isDismissed && bug.filed === null,
     );
-  const open = inTab('open');
-  const filed = inTab('filed');
   const tabs = BUG_FILTERS.filter((id) => id === 'open' || inTab(id).length > 0);
   const filter = tabs.includes(bugFilter) ? bugFilter : 'open';
   const shown = inTab(filter);
