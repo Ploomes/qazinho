@@ -9,6 +9,7 @@ import {
   OutsideServerCard,
   ToolCard,
 } from '@/modules/Setup';
+import { SkillsSettings } from '@/modules/Skills';
 import { Button, Icon, Logo, Switch, Tag, Wordmark } from '@/shared/components/atoms';
 import { StorageSettings } from './components';
 import { useSettingsViewModel } from './hooks';
@@ -323,6 +324,8 @@ export const Settings: React.FC = () => {
               </div>
             </div>
           )}
+
+          {tab === 'skills' && <SkillsSettings />}
 
           {tab === 'storage' && <StorageSettings />}
 

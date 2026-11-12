@@ -5,6 +5,7 @@ import { findByRef } from './findByRef';
 
 const SECTION_NAMES: Record<SettingsTab, string> = {
   agent: 'Agent',
+  skills: 'Skills',
   connections: 'Connections',
   general: 'General',
   storage: 'Storage',
