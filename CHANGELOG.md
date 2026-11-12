@@ -1,3 +1,19 @@
+# [0.13.0](https://github.com/Salve-Software/qazinho/compare/v0.12.0...v0.13.0) (2026-11-12)
+
+
+### Bug Fixes
+
+* **explore:** a bug lands on the page it was found ([d0169df](https://github.com/Salve-Software/qazinho/commit/d0169df1b8859965d02fdbf15562c0616734bc3d))
+* **replay:** an explored screen runs from its note ([93ae2b4](https://github.com/Salve-Software/qazinho/commit/93ae2b4651751f0ac47e4916ecef1b3415d259aa))
+* **test:** seek the replay without DOM types ([4b0cc5e](https://github.com/Salve-Software/qazinho/commit/4b0cc5e148bef4c8d7dc0d6330510762893975c8))
+
+
+### Features
+
+* **replay:** only API calls in the network strip ([5332d33](https://github.com/Salve-Software/qazinho/commit/5332d335f471076da315889a858d31a34184ae25))
+* **replay:** open a request in detail ([9288664](https://github.com/Salve-Software/qazinho/commit/92886649661864c45fd0c7184557717b90aea6e7))
+* **runs:** scroll to a bug before its screen ([fa451cc](https://github.com/Salve-Software/qazinho/commit/fa451cc8a95caae1ee19d66af9e4d366befeb0ef))
+
 # [0.12.0](https://github.com/Salve-Software/qazinho/compare/v0.11.0...v0.12.0) (2026-11-12)
 
 
