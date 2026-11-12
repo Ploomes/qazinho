@@ -225,7 +225,14 @@ describe("a run's video with its network", () => {
   /** Um clique numa linha levava o vídeo até o pedido; num do começo parecia recarregar. */
   it('opens a request in detail, with what a failed call answered, and closes it alone', async () => {
     await page.evaluate(() => {
-      const video = document.querySelector<HTMLVideoElement>('.run-replay__video');
+      const web = globalThis as unknown as {
+        document: {
+          querySelector: (
+            selector: string,
+          ) => { currentTime: number; duration: number } | null;
+        };
+      };
+      const video = web.document.querySelector('.run-replay__video');
 
       if (video !== null) video.currentTime = video.duration;
     });
