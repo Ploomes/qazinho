@@ -66,6 +66,14 @@ afterEach(() => {
 
 const KNOWN: IDetectedAgent[] = AGENTS.map((agent) => ({ ...agent, isSignedIn: true }));
 
+const USAGE = {
+  fiveHourUsed: 0.4,
+  sevenDayUsed: 0.2,
+  resetsAt: 1_792_600_000,
+  contextTokens: 0,
+  contextWindow: 0,
+};
+
 describe('useMachineWatch', () => {
   it('asks the machine which agents are installed, once', async () => {
     renderHook(() => useMachineWatch());
@@ -160,7 +168,54 @@ describe('useMachineWatch', () => {
     vi.useRealTimers();
   });
 
-  it('reads the limits again when the window comes back, but not on every glance', async () => {
+  /** A regra do QA (12/11): 15 em 15 minutos parado, de 5 em 5 com a IA trabalhando. */
+  it('reads the limits every 5 minutes while the agent works, and an answer resets the wait', async () => {
+    vi.useFakeTimers();
+
+    let hear: (event: IAgentEvent) => void = () => undefined;
+    const limits = vi.fn((_: string) => Promise.resolve(null));
+
+    window.qazinho.readAgentLimits = limits;
+    window.qazinho.onAgentEvent = vi.fn((listener: (event: IAgentEvent) => void) => {
+      hear = listener;
+
+      return () => undefined;
+    });
+    useMachineStore.setState({ agents: KNOWN });
+
+    renderHook(() => useMachineWatch());
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+
+    expect(limits).toHaveBeenCalledTimes(1);
+
+    const working = async (minutes: number) => {
+      for (let minute = 0; minute < minutes; minute += 1) {
+        hear({ kind: 'tool', workspaceId: 'w1', tool: 'look', target: '' });
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(60_000);
+        });
+      }
+    };
+
+    await working(5);
+
+    expect(limits).toHaveBeenCalledTimes(2);
+
+    hear({ kind: 'usage', workspaceId: 'w1', usage: USAGE, hasLimits: true });
+    await working(4);
+
+    expect(limits).toHaveBeenCalledTimes(2);
+
+    await working(1);
+
+    expect(limits).toHaveBeenCalledTimes(3);
+
+    vi.useRealTimers();
+  });
+
+  it('waits 15 minutes when nothing runs, and does NOT read on a glance at the window', async () => {
     vi.useFakeTimers();
 
     const limits = vi.fn((_: string) => Promise.resolve(null));
@@ -173,16 +228,17 @@ describe('useMachineWatch', () => {
       await vi.advanceTimersByTimeAsync(0);
     });
     window.dispatchEvent(new Event('focus'));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(MACHINE_WATCH.limitsMs - 60_000);
+    });
 
     expect(limits).toHaveBeenCalledTimes(1);
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(MACHINE_WATCH.limitsFocusMs);
+      await vi.advanceTimersByTimeAsync(60_000);
     });
-    window.dispatchEvent(new Event('focus'));
 
     expect(limits).toHaveBeenCalledTimes(2);
-    expect(useMachineStore.getState().usage).toBeNull();
 
     vi.useRealTimers();
   });
@@ -224,6 +280,7 @@ describe('useMachineWatch', () => {
         contextTokens: 50_000,
         contextWindow: 200_000,
       },
+      hasLimits: true,
     });
 
     const [first, second] = useWorkspaceStore.getState().workspaces;

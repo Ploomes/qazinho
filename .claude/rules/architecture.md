@@ -47,6 +47,12 @@ principal nunca o importa, então o `src/services/index.ts` o deixa de fora.
 
 Toda `BrowserWindow` recebe `contextIsolation: true`, `sandbox: true` e `nodeIntegration: false`.
 
+- **O agente do QA só trabalha quando o QA pede.** Uma chamada ao agente nasce de uma mensagem, de um
+  clique ou de uma run do QA; nada a dispara num relógio, ao abrir o app ou ao conectar um tracker.
+  Os limites da conta são lidos pelo `/usage`, que não gasta o plano (`useMachineWatch`): de 15 em 15
+  minutos parado, de 5 em 5 enquanto um agente trabalha, e toda resposta que traz os limites
+  (`hasLimits`, de um `rate_limit_event`) zera a espera.
+
 - Um preload em sandbox só pode dar `require` no `electron` e em alguns polyfills. É por isso que
   ele fica fino, e por isso há um só: uma segunda entrada dividiria um chunk que ele não pode
   requerer. A janela do gravador abre com `RECORDER_ARGUMENT`, e o mesmo preload lhe entrega

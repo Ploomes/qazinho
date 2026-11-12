@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
-import { Agent, Integrations, Machine, Setup } from '@/services';
+import type { IAgentEvent } from '@/shared/types';
+import { useEffect, useEffectEvent, useRef } from 'react';
+import { Agent, Assistant, Builds, Integrations, Machine, Run, Setup } from '@/services';
 import { MACHINE_WATCH } from '@/shared/hooks/useMachineWatch/constants';
 import {
   useMachineStore,
@@ -27,6 +28,17 @@ export const useMachineWatch = () => {
   const setContext = useWorkspaceStore((state) => state.setContext);
   const followInstall = useSetupStore((state) => state.followInstall);
   const setIntegrations = useSetupStore((state) => state.setIntegrations);
+  const limitsAt = useRef(0);
+  const workingAt = useRef(0);
+
+  const hear = useEffectEvent((event: IAgentEvent) => {
+    workingAt.current = Date.now();
+
+    if (event.kind === 'usage' && event.hasLimits) limitsAt.current = Date.now();
+  });
+  const work = useEffectEvent(() => {
+    workingAt.current = Date.now();
+  });
 
   useEffect(() => {
     void Machine.detectAgents().then(setAgents);
@@ -45,6 +57,8 @@ export const useMachineWatch = () => {
   useEffect(
     () =>
       Agent.onEvent((event) => {
+        hear(event);
+
         if (event.kind === 'usage') {
           setUsage(event.usage);
           setContext({
@@ -94,27 +108,45 @@ export const useMachineWatch = () => {
   );
 
   useEffect(() => {
+    const offs = [
+      Assistant.onEvent((event) => {
+        hear(event);
+      }),
+      Builds.onEvent(() => {
+        work();
+      }),
+      Run.onEvent(() => {
+        work();
+      }),
+    ];
+
+    return () => {
+      for (const off of offs) off();
+    };
+  }, []);
+
+  useEffect(() => {
     if (agentId === null) return;
 
-    let readAt = 0;
     const read = () => {
-      readAt = Date.now();
+      limitsAt.current = Date.now();
       void Agent.limits(agentId).then((limits) => {
         if (limits !== null) setLimits(limits);
       });
     };
-    const onFocus = () => {
-      if (Date.now() - readAt >= MACHINE_WATCH.limitsFocusMs) read();
+    const tick = () => {
+      const now = Date.now();
+      const isWorking = now - workingAt.current < MACHINE_WATCH.workingMs;
+      const wait = isWorking ? MACHINE_WATCH.limitsWorkingMs : MACHINE_WATCH.limitsMs;
+
+      if (now - limitsAt.current >= wait) read();
     };
 
     read();
-    const id = window.setInterval(read, MACHINE_WATCH.limitsMs);
-
-    window.addEventListener('focus', onFocus);
+    const id = window.setInterval(tick, MACHINE_WATCH.limitsTickMs);
 
     return () => {
       window.clearInterval(id);
-      window.removeEventListener('focus', onFocus);
     };
   }, [agentId, setLimits]);
 

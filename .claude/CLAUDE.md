@@ -37,6 +37,11 @@ olhos. Toda tela o segue.
    login próprio. Quando o agente está sem login, o QAzinho abre o login do próprio agente
    (`claude auth login`, `codex login`) num terminal que o QA vê, como o Zed faz: a página abre
    no navegador do QA, o agente guarda o que recebe, e o QAzinho só lê o status dele.
+   **O agente do QA só trabalha quando o QA pede**: uma mensagem, um clique ou uma run que ele
+   começou. Nada chama o agente sozinho num relógio ou ao abrir o app, porque o plano do QA conta
+   com "uso comum e individual" (a página legal do Claude Code). Vigiar sozinho é da plataforma,
+   com os créditos da org. Os limites da conta são a exceção, porque o `/usage` não gasta o plano:
+   de 15 em 15 minutos, e de 5 em 5 com a IA trabalhando.
 3. **Um produto da Salve Software, código fechado, em dois planos.** O Free é o app desktop
    inteiro, sem conta e sem limite artificial: baixe e use. O Pro é uma plataforma web paga para
    uma empresa: uma conta e uma org, onde o QA publica os projetos da máquina dele que escolhe,
