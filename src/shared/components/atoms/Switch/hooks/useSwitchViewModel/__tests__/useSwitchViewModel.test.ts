@@ -56,6 +56,19 @@ describe('useSwitchViewModel', () => {
           .className,
       ).toBe('switch switch--on');
     });
+
+    it('hides the label from sight, never from a screen reader, in a row that names it', () => {
+      expect(
+        renderHook(() => useSwitchViewModel({ ...PROPS, isLabelHidden: true })).result
+          .current,
+      ).toMatchObject({
+        className: 'switch switch--bare',
+        labelClassName: 'switch__label switch__label--hidden',
+      });
+      expect(
+        renderHook(() => useSwitchViewModel(PROPS)).result.current.labelClassName,
+      ).toBe('switch__label');
+    });
   });
 
   describe('icon', () => {

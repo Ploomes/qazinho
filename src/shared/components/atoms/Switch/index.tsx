@@ -9,8 +9,16 @@ import './styles.css';
  * ligado.
  */
 export const Switch: React.FC<ISwitchProps> = (props) => {
-  const { className, style, hasIcon, icon, knob, knobTransition, onSwitchClick } =
-    useSwitchViewModel(props);
+  const {
+    className,
+    labelClassName,
+    style,
+    hasIcon,
+    icon,
+    knob,
+    knobTransition,
+    onSwitchClick,
+  } = useSwitchViewModel(props);
 
   return (
     <button
@@ -27,7 +35,7 @@ export const Switch: React.FC<ISwitchProps> = (props) => {
           <Icon name={icon} />
         </span>
       )}
-      <span className="switch__label">{props.label}</span>
+      <span className={labelClassName}>{props.label}</span>
       <span className="switch__track" aria-hidden="true">
         <motion.span
           className="switch__knob"

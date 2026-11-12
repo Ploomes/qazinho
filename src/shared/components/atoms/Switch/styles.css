@@ -69,3 +69,16 @@
 .switch--on .switch__knob {
   background: var(--on-accent);
 }
+
+.switch--bare {
+  padding: var(--space-2);
+}
+
+.switch__label--hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
