@@ -7,7 +7,7 @@ import type { IReplayRequest } from '@/modules/Run/types';
 export interface IReplayNetworkProps {
   requests: IReplayRequest[];
   currentMs: number;
-  isShowingFiles: boolean;
-  onToggleFiles: () => void;
+  isShowingAll: boolean;
+  onToggleAll: () => void;
   onPick: (requestId: number) => void;
 }

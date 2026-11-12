@@ -14,11 +14,11 @@ import {
 import { MOTION } from '@/shared/constants';
 
 export const useReplayNetworkViewModel = (props: IReplayNetworkProps) => {
-  const { requests, currentMs, isShowingFiles, onToggleFiles, onPick } = props;
+  const { requests, currentMs, isShowingAll, onToggleAll, onPick } = props;
   const { t, i18n } = useTranslation();
   const listRef = useRef<HTMLOListElement>(null);
   const quietUntil = useRef(0);
-  const at = networkAt({ requests, atMs: currentMs, isShowingFiles });
+  const at = networkAt({ requests, atMs: currentMs, isShowingAll });
   const latestId = at.rows.at(-1)?.request.id ?? null;
   const typeLabels: Readonly<Record<string, string>> = NETWORK.types;
 
@@ -42,19 +42,19 @@ export const useReplayNetworkViewModel = (props: IReplayNetworkProps) => {
       at.errors === 1
         ? t('RUN.NETWORK_ERRORS_ONE')
         : t('RUN.NETWORK_ERRORS_OTHER', { count: at.errors }),
-    hasFiles: at.files > 0,
-    isShowingFiles,
-    filesLabel: isShowingFiles
-      ? t('RUN.NETWORK_FILES_HIDE')
-      : at.files === 1
-        ? t('RUN.NETWORK_FILES_ONE')
-        : t('RUN.NETWORK_FILES_OTHER', { count: at.files }),
-    filesTitle: t('RUN.NETWORK_FILES_TIP'),
+    hasOthers: at.others > 0,
+    isShowingAll,
+    othersLabel: isShowingAll
+      ? t('RUN.NETWORK_OTHERS_HIDE')
+      : at.others === 1
+        ? t('RUN.NETWORK_OTHERS_ONE')
+        : t('RUN.NETWORK_OTHERS_OTHER', { count: at.others }),
+    othersTitle: t('RUN.NETWORK_OTHERS_TIP'),
     listRef,
     hasEarlier: at.earlier > 0,
     earlier: t('RUN.NETWORK_EARLIER', { count: at.earlier }),
     isEmpty: at.rows.length === 0,
-    empty: at.total === 0 ? t('RUN.NETWORK_ONLY_FILES') : t('RUN.NETWORK_NONE_YET'),
+    empty: at.total === 0 ? t('RUN.NETWORK_NO_API') : t('RUN.NETWORK_NONE_YET'),
     rowLand: { opacity: 1, y: 0 },
     rowTransition: { duration: MOTION.duration, ease: MOTION.ease },
     nowTransition: { duration: MOTION.duration, ease: MOTION.ease },
@@ -104,7 +104,7 @@ export const useReplayNetworkViewModel = (props: IReplayNetworkProps) => {
         },
       };
     }),
-    onToggleFiles,
+    onToggleAll,
     onUserScroll: () => {
       quietUntil.current = Date.now() + REPLAY_NETWORK.quietMs;
     },

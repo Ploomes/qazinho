@@ -1,5 +1,5 @@
 export const NETWORK = {
-  fileTypes: ['stylesheet', 'image', 'media', 'font', 'script', 'texttrack', 'manifest'],
+  apiTypes: ['fetch', 'xhr', 'eventsource', 'websocket'],
   errorOutcomes: ['client', 'server', 'failed'],
   canceled: /ERR_ABORTED/,
   barDecades: 4,

@@ -390,10 +390,10 @@ describe('useRunReplayViewModel', () => {
         expect(result.current.hasNetwork).toBe(true);
       });
       act(() => {
-        result.current.onToggleFiles();
+        result.current.onToggleAll();
       });
 
-      expect(result.current.isShowingFiles).toBe(true);
+      expect(result.current.isShowingAll).toBe(true);
       expect(result.current.faults).toEqual([2_120, 6_300]);
     });
 

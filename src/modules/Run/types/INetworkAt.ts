@@ -1,8 +1,8 @@
 import type { IRequestAt } from './IRequestAt';
 
 /**
- * A rede como um momento do vídeo a mostra: os últimos pedidos, quantos começaram de
- * quantos a run fez, os erros até ali, e os arquivos de fora.
+ * A rede como um momento do vídeo a mostra: os últimos pedidos, quantos começaram, os
+ * erros até ali, e quantos pedidos que não são de API ficaram de fora.
  */
 export interface INetworkAt {
   rows: IRequestAt[];
@@ -10,5 +10,5 @@ export interface INetworkAt {
   total: number;
   errors: number;
   earlier: number;
-  files: number;
+  others: number;
 }

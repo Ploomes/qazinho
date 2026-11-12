@@ -45,7 +45,7 @@ export const useRunReplayViewModel = () => {
   const [prepared, setPrepared] = useState(0);
   const [measuredRatio, setMeasuredRatio] = useState<number | null>(null);
   const [requests, setRequests] = useState<IReplayRequest[]>([]);
-  const [isShowingFiles, setShowingFiles] = useState(false);
+  const [isShowingAll, setShowingAll] = useState(false);
   const [pickedId, setPickedId] = useState<number | null>(null);
   const isNetworkOn = useSettingsStore((state) => state.replayNetwork);
   const showReplayNetwork = useSettingsStore((state) => state.showReplayNetwork);
@@ -146,7 +146,7 @@ export const useRunReplayViewModel = () => {
     const data = await new ReplayComposer({
       video,
       requests,
-      isShowingFiles,
+      isShowingAll,
       durationMs,
       look: lookOf(getComputedStyle(document.documentElement)),
       words: {
@@ -354,12 +354,12 @@ export const useRunReplayViewModel = () => {
     networkLabel: t('RUN.REPLAY_NETWORK'),
     networkTip: t('RUN.REPLAY_NETWORK_TIP'),
     requests,
-    isShowingFiles,
+    isShowingAll,
     faults: isNetworkShown
       ? requests
           .filter(
-            ({ isFile, outcome }) =>
-              (isShowingFiles || !isFile) && errorOutcomes.includes(outcome),
+            ({ isApi, outcome }) =>
+              (isShowingAll || isApi) && errorOutcomes.includes(outcome),
           )
           .map(({ fromMs, toMs }) => toMs ?? fromMs)
       : [],
@@ -466,8 +466,8 @@ export const useRunReplayViewModel = () => {
       setRate(next);
     },
     onToggleNetwork: showReplayNetwork,
-    onToggleFiles: () => {
-      setShowingFiles(!isShowingFiles);
+    onToggleAll: () => {
+      setShowingAll(!isShowingAll);
     },
     picked: requests.find(({ id }) => id === pickedId) ?? null,
     onPickRequest: (requestId: number) => {

@@ -2,17 +2,17 @@ import type { INetworkAt, IReplayRequest } from '@/modules/Run/types';
 import { NETWORK } from '@/modules/Run/constants';
 
 /**
- * A rede num momento do vídeo: os últimos pedidos que começaram até ali, cada um
- * terminado ou ainda esperando, com os arquivos de fora a menos que o QA os mostre.
+ * A rede num momento do vídeo: as últimas chamadas de API que começaram até ali, cada uma
+ * terminada ou esperando, e o resto da rede só quando o QA pede tudo.
  */
 export function networkAt(props: {
   requests: IReplayRequest[];
   atMs: number;
-  isShowingFiles: boolean;
+  isShowingAll: boolean;
 }): INetworkAt {
-  const { requests, atMs, isShowingFiles } = props;
+  const { requests, atMs, isShowingAll } = props;
   const errors: readonly string[] = NETWORK.errorOutcomes;
-  const kept = isShowingFiles ? requests : requests.filter(({ isFile }) => !isFile);
+  const kept = isShowingAll ? requests : requests.filter(({ isApi }) => isApi);
   const started = kept.filter(({ fromMs }) => fromMs <= atMs);
   const isDone = (request: IReplayRequest) =>
     request.toMs !== null && request.toMs <= atMs;
@@ -29,6 +29,6 @@ export function networkAt(props: {
       (request) => isDone(request) && errors.includes(request.outcome),
     ).length,
     earlier: Math.max(0, started.length - NETWORK.rowLimit),
-    files: requests.filter(({ isFile }) => isFile).length,
+    others: requests.filter(({ isApi }) => !isApi).length,
   };
 }

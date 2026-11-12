@@ -12,7 +12,7 @@ const request = (props: Partial<IReplayRequest>): IReplayRequest => ({
   host: null,
   path: '/api/cart',
   type: 'fetch',
-  isFile: false,
+  isApi: true,
   outcome: 'ok',
   status: 200,
   failure: null,

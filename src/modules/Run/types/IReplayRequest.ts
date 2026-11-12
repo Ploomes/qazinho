@@ -11,7 +11,7 @@ export interface IReplayRequest {
   host: string | null;
   path: string;
   type: string;
-  isFile: boolean;
+  isApi: boolean;
   outcome: RequestOutcome;
   status: number | null;
   failure: string | null;

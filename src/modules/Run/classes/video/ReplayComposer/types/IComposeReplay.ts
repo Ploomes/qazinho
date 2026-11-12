@@ -9,7 +9,7 @@ import type { IReplayRequest } from '@/modules/Run/types';
 export interface IComposeReplay {
   video: Uint8Array;
   requests: IReplayRequest[];
-  isShowingFiles: boolean;
+  isShowingAll: boolean;
   durationMs: number;
   look: IStripLook;
   words: IStripWords;

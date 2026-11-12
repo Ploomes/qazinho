@@ -14,7 +14,7 @@ export function replayRequestsOf(props: {
 }): IReplayRequest[] {
   const { entries, video } = props;
   const appOrigin = appOriginOf(entries);
-  const files: readonly string[] = NETWORK.fileTypes;
+  const apis: readonly string[] = NETWORK.apiTypes;
 
   return entries
     .map((entry) => {
@@ -31,7 +31,7 @@ export function replayRequestsOf(props: {
         host: parts.origin === appOrigin ? null : parts.host,
         path: parts.path,
         type: entry.type,
-        isFile: files.includes(entry.type),
+        isApi: apis.includes(entry.type),
         outcome: requestOutcomeOf(entry),
         status: entry.status,
         failure: entry.failure,

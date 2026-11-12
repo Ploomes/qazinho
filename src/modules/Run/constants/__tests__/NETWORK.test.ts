@@ -2,11 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { NETWORK } from '@/modules/Run/constants';
 
 describe('NETWORK', () => {
-  it('keeps the calls a QA reads out of the files it hides', () => {
-    const files: readonly string[] = NETWORK.fileTypes;
+  /** Só as chamadas de API ficam à vista; a página, os arquivos e o favicon vão para o resto. */
+  it('counts as API calls only what the app asked its servers, never a page or a file', () => {
+    const apis: readonly string[] = NETWORK.apiTypes;
 
-    for (const type of ['document', 'fetch', 'xhr', 'websocket', 'eventsource', 'other'])
-      expect(files).not.toContain(type);
+    for (const type of ['fetch', 'xhr', 'websocket', 'eventsource'])
+      expect(apis).toContain(type);
+    for (const type of ['document', 'other', 'image', 'script', 'stylesheet', 'font'])
+      expect(apis).not.toContain(type);
   });
 
   it('names every kind of request with a short label of its own', () => {
@@ -16,8 +19,8 @@ describe('NETWORK', () => {
     expect(labels.every((label) => label.length <= 5)).toBe(true);
   });
 
-  it('gives every file it hides a label', () => {
-    expect(NETWORK.fileTypes.every((type) => type in NETWORK.types)).toBe(true);
+  it('gives every kind of API call a label', () => {
+    expect(NETWORK.apiTypes.every((type) => type in NETWORK.types)).toBe(true);
   });
 
   it('fills a bar a whole decade at a time, a ten-second request reaching the end', () => {

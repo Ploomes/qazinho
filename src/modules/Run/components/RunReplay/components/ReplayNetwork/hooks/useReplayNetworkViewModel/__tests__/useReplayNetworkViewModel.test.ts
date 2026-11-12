@@ -11,8 +11,8 @@ const request = (props: Partial<IReplayRequest>): IReplayRequest => ({
   url: 'https://shop.test/',
   host: null,
   path: '/',
-  type: 'document',
-  isFile: false,
+  type: 'fetch',
+  isApi: true,
   outcome: 'ok',
   status: 200,
   failure: null,
@@ -29,7 +29,7 @@ const REQUESTS = [
   request({
     id: 2,
     type: 'script',
-    isFile: true,
+    isApi: false,
     url: 'https://cdn.test/app.js',
     host: 'cdn.test',
     path: '/app.js',
@@ -66,20 +66,20 @@ const REQUESTS = [
   }),
 ];
 
-function render(props: { currentMs: number; isShowingFiles?: boolean }) {
+function render(props: { currentMs: number; isShowingAll?: boolean }) {
   const onPick = vi.fn();
-  const onToggleFiles = vi.fn();
+  const onToggleAll = vi.fn();
   const { result } = renderHook(() =>
     useReplayNetworkViewModel({
       requests: REQUESTS,
       currentMs: props.currentMs,
-      isShowingFiles: props.isShowingFiles ?? false,
-      onToggleFiles,
+      isShowingAll: props.isShowingAll ?? false,
+      onToggleAll,
       onPick,
     }),
   );
 
-  return { result, onPick, onToggleFiles };
+  return { result, onPick, onToggleAll };
 }
 
 describe('useReplayNetworkViewModel', () => {
@@ -175,19 +175,19 @@ describe('useReplayNetworkViewModel', () => {
       });
     });
 
-    it('offers the files it keeps out, and hides them again once shown', () => {
+    it('offers the other requests it keeps out, and only the API calls again once shown', () => {
       expect(render({ currentMs: 0 }).result.current).toMatchObject({
-        hasFiles: true,
-        filesLabel: '+1 file',
+        hasOthers: true,
+        othersLabel: '+1 other request',
       });
       expect(
-        render({ currentMs: 0, isShowingFiles: true }).result.current.filesLabel,
-      ).toBe('Hide files');
+        render({ currentMs: 0, isShowingAll: true }).result.current.othersLabel,
+      ).toBe('API calls only');
     });
 
-    it('lists the files once shown', () => {
+    it('lists every request once all are shown', () => {
       expect(
-        render({ currentMs: 300, isShowingFiles: true }).result.current.rows.map(
+        render({ currentMs: 300, isShowingAll: true }).result.current.rows.map(
           ({ key }) => key,
         ),
       ).toEqual([1, 2]);
@@ -200,30 +200,38 @@ describe('useReplayNetworkViewModel', () => {
         useReplayNetworkViewModel({
           requests: [request({ fromMs: 2_000 })],
           currentMs: 0,
-          isShowingFiles: false,
-          onToggleFiles: vi.fn(),
+          isShowingAll: false,
+          onToggleAll: vi.fn(),
           onPick: vi.fn(),
         }),
       );
 
       expect(result.current).toMatchObject({
         isEmpty: true,
-        empty: 'Nothing went over the network yet.',
+        empty: 'No calls yet.',
       });
     });
 
-    it('says only files went over it when the run made nothing else', () => {
+    /** Um site sem API: a página e o favicon passam pela rede, e nenhuma chamada. */
+    it('says the app made no API calls when only pages and files went over the network', () => {
       const { result } = renderHook(() =>
         useReplayNetworkViewModel({
-          requests: [request({ type: 'image', isFile: true })],
+          requests: [
+            request({ id: 1, type: 'document', isApi: false }),
+            request({ id: 2, type: 'other', path: '/favicon-32.png', isApi: false }),
+          ],
           currentMs: 5_000,
-          isShowingFiles: false,
-          onToggleFiles: vi.fn(),
+          isShowingAll: false,
+          onToggleAll: vi.fn(),
           onPick: vi.fn(),
         }),
       );
 
-      expect(result.current.empty).toBe('Only files went over the network.');
+      expect(result.current).toMatchObject({
+        isEmpty: true,
+        empty: 'The app made no API calls.',
+        othersLabel: '+2 other requests',
+      });
     });
   });
 });

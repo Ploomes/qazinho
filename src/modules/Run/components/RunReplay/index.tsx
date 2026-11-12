@@ -42,7 +42,7 @@ export const RunReplay: React.FC = () => {
     networkLabel,
     networkTip,
     requests,
-    isShowingFiles,
+    isShowingAll,
     faults,
     foldTransition,
     canWatchWhole,
@@ -74,7 +74,7 @@ export const RunReplay: React.FC = () => {
     onScrub,
     onRate,
     onToggleNetwork,
-    onToggleFiles,
+    onToggleAll,
     onWatchWhole,
     picked,
     onPickRequest,
@@ -217,8 +217,8 @@ export const RunReplay: React.FC = () => {
                     <ReplayNetwork
                       requests={requests}
                       currentMs={currentMs}
-                      isShowingFiles={isShowingFiles}
-                      onToggleFiles={onToggleFiles}
+                      isShowingAll={isShowingAll}
+                      onToggleAll={onToggleAll}
                       onPick={onPickRequest}
                     />
                   </motion.div>

@@ -182,7 +182,7 @@ export class ReplayComposer {
   private emit(props: { job: IComposeJob; atUs: number }): void {
     const { job, atUs } = props;
     const { context, layout } = job;
-    const { requests, isShowingFiles, look, words, durationMs, onProgress } = this.props;
+    const { requests, isShowingAll, look, words, durationMs, onProgress } = this.props;
     const isKey = atUs - this.keyAtUs >= REPLAY_COMPOSER.keyEveryUs;
 
     context.fillStyle = look.screen;
@@ -200,7 +200,7 @@ export class ReplayComposer {
       scale: layout.scale,
       requests,
       atMs: atUs / 1_000,
-      isShowingFiles,
+      isShowingAll,
       look,
       words,
     });

@@ -15,10 +15,10 @@ export const ReplayNetwork: React.FC<IReplayNetworkProps> = (props) => {
     count,
     hasErrors,
     errors,
-    hasFiles,
-    isShowingFiles,
-    filesLabel,
-    filesTitle,
+    hasOthers,
+    isShowingAll,
+    othersLabel,
+    othersTitle,
     listRef,
     hasEarlier,
     earlier,
@@ -29,7 +29,7 @@ export const ReplayNetwork: React.FC<IReplayNetworkProps> = (props) => {
     nowTransition,
     swapTransition,
     rows,
-    onToggleFiles,
+    onToggleAll,
     onUserScroll,
   } = useReplayNetworkViewModel(props);
 
@@ -58,15 +58,15 @@ export const ReplayNetwork: React.FC<IReplayNetworkProps> = (props) => {
           )}
         </AnimatePresence>
 
-        {hasFiles && (
+        {hasOthers && (
           <button
             type="button"
-            className="replay-network__files"
-            aria-pressed={isShowingFiles}
-            title={filesTitle}
-            onClick={onToggleFiles}
+            className="replay-network__others"
+            aria-pressed={isShowingAll}
+            title={othersTitle}
+            onClick={onToggleAll}
           >
-            {filesLabel}
+            {othersLabel}
           </button>
         )}
       </header>

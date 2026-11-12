@@ -27,7 +27,7 @@ export function drawNetworkStrip(props: {
   scale: number;
   requests: IReplayRequest[];
   atMs: number;
-  isShowingFiles: boolean;
+  isShowingAll: boolean;
   look: IStripLook;
   words: IStripWords;
 }): void {
@@ -38,7 +38,7 @@ export function drawNetworkStrip(props: {
   const at = networkAt({
     requests: props.requests,
     atMs,
-    isShowingFiles: props.isShowingFiles,
+    isShowingAll: props.isShowingAll,
   });
   const typeLabels: Readonly<Record<string, string>> = NETWORK.types;
   const left = box.x + px(NETWORK_STRIP.padPx);

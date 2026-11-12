@@ -89,18 +89,27 @@ describe('replayRequestsOf', () => {
     ]);
   });
 
-  it('marks scripts, styles, images and fonts as files', () => {
+  it('marks fetch, XHR, event streams and sockets as API calls, and nothing else', () => {
     const requests = replayRequestsOf({
       entries: [
-        entry({ id: 1 }),
-        entry({ id: 2, type: 'script', startedAt: 12_100 }),
+        entry({ id: 1, type: 'document' }),
+        entry({ id: 2, type: 'other', startedAt: 12_100 }),
         entry({ id: 3, type: 'fetch', startedAt: 12_200 }),
-        entry({ id: 4, type: 'image', startedAt: 12_300 }),
+        entry({ id: 4, type: 'xhr', startedAt: 12_300 }),
+        entry({ id: 5, type: 'websocket', startedAt: 12_400 }),
+        entry({ id: 6, type: 'image', startedAt: 12_500 }),
       ],
       video: VIDEO,
     });
 
-    expect(requests.map(({ isFile }) => isFile)).toEqual([false, true, false, true]);
+    expect(requests.map(({ isApi }) => isApi)).toEqual([
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+    ]);
   });
 
   it('orders the requests by when they started, the first one noted first on a tie', () => {
