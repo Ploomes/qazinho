@@ -250,7 +250,8 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
   (`bugFlashOf`, `withBugFlash`), sem atrasar a tela (`BUG_FLASH.waitingKept`). Um clique abre o
   bug, e o mouse em cima o segura. O agente nomeia o que está errado (`target`) só quando o bug é
   sobre uma coisa que dá para apontar, e o que não aconteceu, ou ocupa boa parte da tela, fica na foto
-  inteira (`markedBoxOf`); cada driver diz onde aquilo está
+  inteira (`markedBoxOf`). Antes da foto, o navegador rola até a coisa apontada quando ela está fora
+  da tela (`revealTarget`, `reveal`), ou a foto nunca mostraria o bug. Cada driver diz onde aquilo está
   em frações da tela (`locate`, `fractionBoxOf`), um texto pelas letras dele (`screenBoxOf`), e a
   foto chega perto sem passar da borda (`bugFocusOf`). Depois dos dois primeiros da run ele fica
   mais curto e o flash mais suave (`isQuiet`). A fila só vale para a tela aberta: o `DeviceView` a limpa ao montar e ao
