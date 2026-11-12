@@ -13,15 +13,17 @@ import { Harness, McpHost } from '@salve-software/qazinho-harness';
 const PORT = 4354;
 
 /**
- * Uma loja de duas páginas: o total do carrinho discorda do único item dele, para o
- * explorador achar.
+ * Uma loja de três páginas: o total do carrinho discorda do único item dele, e a ajuda
+ * tem um erro de digitação, para o explorador achar.
  */
 const server = createServer((request, response) => {
   response.writeHead(200, { 'content-type': 'text/html' });
   response.end(
     request.url === '/cart'
-      ? '<!doctype html><html><body><h1>Cart</h1><p>Shirt R$ 79,90</p><p>Total R$ 0,00</p></body></html>'
-      : '<!doctype html><html><body><h1>Shop</h1><a href="/cart">Cart</a></body></html>',
+      ? '<!doctype html><html><body><h1>Cart</h1><p>Shirt R$ 79,90</p><p>Total R$ 0,00</p><a href="/help">Help</a></body></html>'
+      : request.url === '/help'
+        ? '<!doctype html><html><body><h1>Hepl</h1></body></html>'
+        : '<!doctype html><html><body><h1>Shop</h1><a href="/cart">Cart</a></body></html>',
   );
 });
 
@@ -65,6 +67,8 @@ process.stdin.on('end', async () => {
   await call('click', { target: 'Cart' });
   await call('screen', { name: 'Cart', about: 'What the buyer picked, and the total.' });
   await call('bug', { title: 'Cart total ignores the shirt', severity: 'high', expected: 'Total R$ 79,90', got: 'Total R$ 0,00' });
+  await call('click', { target: 'Help' });
+  await call('bug', { title: 'Help title is misspelled', severity: 'low', expected: 'Help', got: 'Hepl' });
   const finish = {
     summary: 'Two screens. The cart total is wrong.',
     cases: [{ title: 'Cart total adds the items', priority: 'P1', goal: 'The total is the sum of the items.', preconditions: 'One shirt in the cart.', steps: [{ action: 'Open the cart', expected: 'Total R$ 79,90' }] }],
@@ -142,18 +146,29 @@ describe('an exploration of the app with no plan', () => {
     const screens = seen.flatMap((event) =>
       event.kind === 'step' ? [`${event.outcome.caseId} ${event.outcome.action}`] : [],
     );
-    const finding = seen.find((event) => event.kind === 'finding');
+    const findings = seen.filter((event) => event.kind === 'finding');
     const explored = seen.find((event) => event.kind === 'explored');
 
-    expect(screens).toEqual(['EX Shop', 'EX Cart']);
-    expect(finding).toMatchObject({
-      finding: {
-        caseId: 'EX',
-        stepNumber: 2,
-        action: 'Cart',
-        title: 'Cart total ignores the shirt',
+    /** A ajuda nunca foi anotada: o bug achado nela a anota antes, e cai nela. */
+    expect(screens).toEqual(['EX Shop', 'EX Cart', 'EX /help']);
+    expect(findings).toMatchObject([
+      {
+        finding: {
+          caseId: 'EX',
+          stepNumber: 2,
+          action: 'Cart',
+          title: 'Cart total ignores the shirt',
+        },
       },
-    });
+      {
+        finding: {
+          caseId: 'EX',
+          stepNumber: 3,
+          action: '/help',
+          title: 'Help title is misspelled',
+        },
+      },
+    ]);
     expect(explored).toMatchObject({
       summary: 'Two screens. The cart total is wrong.',
       cases: [{ title: 'Cart total adds the items' }],

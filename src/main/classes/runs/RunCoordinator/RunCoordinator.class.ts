@@ -68,6 +68,8 @@ import {
   earlyFinish,
   expectedValuesOf,
   exploredOutcome,
+  pageKeyOf,
+  screenNameOf,
   failureOf,
   findingAnswer,
   followRunEvent,
@@ -128,6 +130,7 @@ export class RunCoordinator {
   private readonly talks = new Map<string, IRunTalk>();
   private readonly learnings = new Map<string, KeepEvent[]>();
   private readonly heardMemories = new Map<string, Set<string>>();
+  private readonly addresses = new Map<string, { url: string; at: number }>();
 
   public constructor(props: IRunCoordinator) {
     this.runner = props.runner;
@@ -418,11 +421,10 @@ export class RunCoordinator {
         run,
         ...(this.shrink === null ? {} : { shrink: this.shrink }),
         onAddress: (url) => {
-          this.emit({
-            kind: 'address',
-            workspaceId: run.workspaceId,
-            url: privateUrlOf({ url, values: run.values }),
-          });
+          const shown = privateUrlOf({ url, values: run.values });
+
+          this.addresses.set(run.workspaceId, { url: shown, at: Date.now() });
+          this.emit({ kind: 'address', workspaceId: run.workspaceId, url: shown });
         },
         onScreens: (screens) => {
           this.emit({
@@ -450,6 +452,7 @@ export class RunCoordinator {
       await driver?.close();
       await this.keepNetwork({ run, driver });
       this.drivers.delete(run.workspaceId);
+      this.addresses.delete(run.workspaceId);
       this.tools.detach(run.workspaceId);
       this.live.end(run.workspaceId);
       await this.finish({
@@ -478,6 +481,7 @@ export class RunCoordinator {
     await driver.close();
     await this.keepNetwork({ run, driver });
     this.drivers.delete(run.workspaceId);
+    this.addresses.delete(run.workspaceId);
     this.tools.detach(run.workspaceId);
     this.live.end(run.workspaceId);
     await this.finish({
@@ -1143,6 +1147,7 @@ export class RunCoordinator {
     let screens = 0;
     let findings = 0;
     let current = { number: 0, name: '' };
+    let notedPage: string | null = null;
     let last = Date.now();
     let isOver = false;
     let pushes = 0;
@@ -1164,21 +1169,21 @@ export class RunCoordinator {
       return said;
     };
 
-    const onScreen = async (screen: IExploredScreen): Promise<string> => {
-      if (isOver) return 'The exploration is over: end your turn now.';
-
+    const note = async (noted: { screen: IExploredScreen; at?: number }) => {
       screens += 1;
 
       const number = screens;
       const shot = await driver.shoot(join(run.shotDir, `screen-${String(number)}.jpg`));
-      const at = Date.now();
+      const at = Math.max(last, noted.at ?? Date.now());
+      const here = this.addresses.get(workspaceId);
 
-      current = { number, name: screen.name };
+      current = { number, name: noted.screen.name };
+      notedPage = here === undefined ? null : pageKeyOf(here.url);
       this.emit({
         kind: 'step',
         outcome: exploredOutcome({
           workspaceId,
-          screen,
+          screen: noted.screen,
           number,
           tookMs: at - last,
           at,
@@ -1187,11 +1192,24 @@ export class RunCoordinator {
       });
       last = at;
 
+      return number;
+    };
+
+    const onScreen = async (screen: IExploredScreen): Promise<string> => {
+      if (isOver) return 'The exploration is over: end your turn now.';
+
+      const number = await note({ screen });
+
       return `Noted screen ${String(number)}: ${screen.name}. Carry on exploring.`;
     };
 
     const onFinding = async (finding: IStepFinding): Promise<string> => {
       if (isOver) return 'The exploration is over: end your turn now.';
+
+      const here = this.addresses.get(workspaceId);
+
+      if (here !== undefined && pageKeyOf(here.url) !== notedPage)
+        await note({ screen: { name: screenNameOf(here.url), about: '' }, at: here.at });
 
       findings += 1;
 
