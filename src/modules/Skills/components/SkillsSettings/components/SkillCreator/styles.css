@@ -1,0 +1,166 @@
+.skill-creator {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  height: 100%;
+}
+
+.skill-creator__talk {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.skill-creator__intro,
+.skill-creator__writing {
+  margin: 0;
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+}
+
+.skill-creator__line {
+  max-width: 85%;
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  color: var(--ink);
+  font: var(--font-ui-sm);
+  white-space: pre-wrap;
+}
+
+.skill-creator__line--qa {
+  align-self: flex-end;
+  background: var(--bubble);
+}
+
+.skill-creator__line--agent {
+  align-self: flex-start;
+  background: var(--raise);
+}
+
+.skill-creator__question {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--raise);
+}
+
+.skill-creator__header {
+  color: var(--ink3);
+  font: var(--font-meta-sm);
+}
+
+.skill-creator__ask {
+  color: var(--ink);
+  font: var(--font-ui-md);
+}
+
+.skill-creator__option {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+
+.skill-creator__option:hover {
+  border-color: var(--accent-ink);
+  background: var(--accent-soft);
+}
+
+.skill-creator__option-label {
+  color: var(--ink);
+  font: var(--font-ui-md);
+}
+
+.skill-creator__option-text {
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+}
+
+.skill-creator__ready {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--accent-ink);
+  border-radius: var(--radius-lg);
+  background: var(--accent-soft);
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}
+
+.skill-creator__ready .icon {
+  color: var(--accent-ink);
+}
+
+.skill-creator__ready-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.skill-creator__ready-title {
+  color: var(--ink);
+  font: var(--font-ui-md);
+}
+
+.skill-creator__error {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--fail-soft);
+  color: var(--fail);
+  font: var(--font-ui-sm);
+}
+
+.skill-creator__composer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--line-field);
+  border-radius: var(--radius-lg);
+  background: var(--raise);
+}
+
+.skill-creator__field {
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font: var(--font-ui-sm);
+  resize: none;
+}
+
+.skill-creator__field:focus {
+  outline: none;
+}
+
+.skill-creator__tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.skill-creator__tools > .button:last-child {
+  margin-left: auto;
+}
+
+.skill-creator__file {
+  color: var(--ink3);
+  font: var(--font-meta-sm);
+}
