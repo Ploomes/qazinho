@@ -69,6 +69,7 @@ import {
   expectedValuesOf,
   exploredOutcome,
   pageKeyOf,
+  revealTarget,
   screenNameOf,
   failureOf,
   findingAnswer,
@@ -786,6 +787,13 @@ export class RunCoordinator {
       if (report.note.length > 0)
         this.emit({ kind: 'note', workspaceId, text: report.note });
 
+      if (report.verdict === 'failed')
+        await revealTarget({
+          driver,
+          ...(report.target === undefined ? {} : { target: report.target }),
+          ...(report.category === undefined ? {} : { category: report.category }),
+        });
+
       const shot = await driver.shoot(
         join(run.shotDir, `step-${String(walking.index + 1)}.jpg`),
       );
@@ -899,6 +907,13 @@ export class RunCoordinator {
       props.filed.push(finding.title);
 
       const kept = keptBugId({ asked: finding.sameAs, known: run.bugs ?? [] });
+
+      await revealTarget({
+        driver,
+        ...(finding.target === undefined ? {} : { target: finding.target }),
+        ...(finding.category === undefined ? {} : { category: finding.category }),
+      });
+
       const shot = await driver.shoot(
         join(run.shotDir, `finding-${String(walking.index + 1)}-${String(findings)}.jpg`),
       );
@@ -1214,6 +1229,13 @@ export class RunCoordinator {
       findings += 1;
 
       const kept = keptBugId({ asked: finding.sameAs, known: run.bugs ?? [] });
+
+      await revealTarget({
+        driver,
+        ...(finding.target === undefined ? {} : { target: finding.target }),
+        ...(finding.category === undefined ? {} : { category: finding.category }),
+      });
+
       const shot = await driver.shoot(
         join(run.shotDir, `finding-explore-${String(findings)}.jpg`),
       );

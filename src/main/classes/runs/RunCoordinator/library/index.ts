@@ -40,6 +40,7 @@ export {
 export * from './markedBoxOf';
 export * from './pageKeyOf';
 export * from './progressAside';
+export * from './revealTarget';
 export * from './screenNameOf';
 export * from './storedFilesOf';
 export * from './talkAside';
