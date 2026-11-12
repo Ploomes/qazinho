@@ -762,6 +762,8 @@ desenvolver não grava (`developsACase`): a tela continua ao vivo, e a run guard
   tokens com cara de segredo como pontos antes de o `hiddenValues` nomear cada variável. O `body`
   guardado é mascarado do mesmo jeito, e o relatório de um bug o carrega sob o pedido dele
   (`answer`).
+- A faixa mostra só as chamadas de API (`NETWORK.apiTypes`: fetch, XHR, eventos e websocket,
+  `isApi`); o resto da rede, a página e o favicon incluídos, aparece com o botão das outras.
 - Um clique numa linha abre o detalhe do pedido sobre o teatro (`RequestDetail`): o endereço
   inteiro, o status, quanto levou, o erro e o começo do que uma chamada que falhou respondeu
   (`body`), e o "Ver no vídeo" que leva o vídeo até ele. O Esc fecha só o detalhe.

@@ -175,8 +175,9 @@ também, é um JPEG no tamanho cheio.
 
 **Uma run web guarda a rede ao lado do vídeo.** O Chrome anota cada pedido que o app faz, com o
 status, o tempo e o tamanho, e a run os guarda com o valor de uma variável escrito como o nome
-dela e um token como pontos. No teatro, o botão Rede dobra uma faixa aberta sob o vídeo: cada
-pedido cai quando o vídeo o alcança e espera a resposta dele, e um clique abre o detalhe dele (o
+dela e um token como pontos. No teatro, o botão Rede dobra uma faixa aberta sob o vídeo, com só as
+chamadas de API à vista (as páginas, os arquivos e o favicon ficam num botão): cada uma cai quando
+o vídeo a alcança e espera a resposta dela, e um clique abre o detalhe dele (o
 endereço inteiro, quanto levou e, numa chamada que falhou, o que respondeu), de onde o vídeo vai até
 ele; um que falhou deixa uma marca na linha do tempo. Com a faixa à mostra, Baixar refaz o vídeo com a
 faixa desenhada sob ele. O `tests/smoke/network.test.ts` prova a captura no Chrome real, e o
