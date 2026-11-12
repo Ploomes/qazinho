@@ -1327,6 +1327,10 @@ export const pt: typeof en = {
     REGRESSION_LINE: 'Este bug voltou depois que a issue foi fechada.',
     SEEN_AGAIN: 'Visto de novo em:',
     NAME_CLIP: '{{id}} {{run}} trecho',
+    PENDING_ONE: 'Voltou em 1 run depois da {{key}}',
+    PENDING_OTHER: 'Voltou em {{count}} runs depois da {{key}}',
+    REVIEW: 'Revisar',
+    CONNECT: 'Conectar o {{tracker}}',
   },
   ASSISTANT: {
     OPEN: 'Falar com o Estagiário',

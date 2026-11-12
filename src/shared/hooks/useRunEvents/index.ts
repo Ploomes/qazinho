@@ -16,7 +16,6 @@ import {
   useMachineStore,
   useMemoryStore,
   useSettingsStore,
-  useSetupStore,
   useVariablesStore,
   useWorkspaceStore,
 } from '@/store';
@@ -45,9 +44,8 @@ export const useRunEvents = () => {
   const landRunFailed = useWorkspaceStore((state) => state.landRunFailed);
   const resumeRun = useWorkspaceStore((state) => state.resumeRun);
   const isLoaded = useWorkspaceStore((state) => state.isLoaded);
-  const trackers = useSetupStore((state) => state.integrations.length);
   const openRun = useOpenRun();
-  const { reviewWorkspace, reviewAll } = useBugReviews();
+  const { reviewWorkspace } = useBugReviews();
 
   const endingOf = (workspaceId: string) => {
     const live = useWorkspaceStore
@@ -209,14 +207,6 @@ export const useRunEvents = () => {
   useEffect(() => Run.onEvent(onRunEvent), []);
 
   useEffect(() => Run.onOpen(onOpenRun), []);
-
-  const reviewOnLoad = useEffectEvent(() => {
-    reviewAll();
-  });
-
-  useEffect(() => {
-    if (isLoaded) reviewOnLoad();
-  }, [isLoaded, trackers]);
 
   useEffect(() => {
     if (!isLoaded) return;

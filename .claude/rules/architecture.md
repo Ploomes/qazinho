@@ -497,9 +497,11 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
     espera antes um cartão de confirmação.
 - **Um bug registrado e visto de novo chega à issue dele como um comentário** (`role/reporter/`),
   pesado pelo agente do QA e postado só pelo QA:
-  - Quando uma run termina, na inicialização e quando um tracker conecta, o `useBugReviews` pega
-    cada bug registrado com vistas de runs ainda não pesadas (`unreviewedOf`), um por vez, e só
-    enquanto o tracker dele está conectado.
+  - Quando uma run do QA termina, o `useBugReviews` pega cada bug registrado com vistas de runs
+    ainda não pesadas (`unreviewedOf`), um por vez, e só enquanto o tracker dele está conectado.
+    Nada revisa sozinho ao abrir o app ou ao conectar um tracker: o agente do QA só trabalha
+    quando o QA pede. Um bug com vistas ainda não pesadas mostra "Revisar" no cartão
+    (`BugUpdate`), ou leva a conectar o tracker.
   - O `BugReviewer` da main lê a issue como está pelo `BugFiler.read` (status, texto,
     comentários) e pergunta ao agente com o bug e cada vista (`describeReview`), com as telas
     legíveis na pasta da run. Uma issue fechada é sempre uma regressão, e nunca é reaberta.

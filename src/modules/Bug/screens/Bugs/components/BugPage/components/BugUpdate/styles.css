@@ -30,7 +30,8 @@
 .bug-update--nothing-new,
 .bug-update--reviewing,
 .bug-update--posted,
-.bug-update--failed {
+.bug-update--failed,
+.bug-update--pending {
   padding: var(--space-3) var(--space-4);
 }
 
@@ -62,6 +63,10 @@
 .bug-update--regression .bug-update__head .icon,
 .bug-update--failed .bug-update__head .icon {
   color: var(--fail);
+}
+
+.bug-update--pending .bug-update__head .icon {
+  color: var(--attn);
 }
 
 .bug-update--nothing-new .bug-update__head,

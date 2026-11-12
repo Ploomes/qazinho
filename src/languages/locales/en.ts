@@ -1320,6 +1320,10 @@ export const en = {
     REGRESSION_LINE: 'This bug came back after the issue was closed.',
     SEEN_AGAIN: 'Seen again in:',
     NAME_CLIP: '{{id}} {{run}} clip',
+    PENDING_ONE: 'Seen again in 1 run since {{key}}',
+    PENDING_OTHER: 'Seen again in {{count}} runs since {{key}}',
+    REVIEW: 'Review',
+    CONNECT: 'Connect {{tracker}}',
   },
   ASSISTANT: {
     OPEN: 'Talk to the Intern',
