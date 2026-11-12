@@ -302,9 +302,11 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
   (`TOOLS_LEFT_OUT`):
   - Cada ação responde com o tempo que resta, e nenhuma é executada depois que ele acaba; um
     finish com mais de um terço dele sobrando é devolvido uma vez (`earlyFinish`).
-  - Cada tela que ele anota é um passo de um caso só (`EXPLORATION.caseId`), cada bug um achado
-    na tela anotada por último, e o finish o plano que ele sugere, que o chat guarda num cartão
-    até o QA levá-lo ao plano (`takeSuggestion`). O agente do chat o ouve no histórico de runs.
+  - Cada tela que ele anota é um passo de um caso só (`EXPLORATION.caseId`), e vale da anotação até
+    a próxima no teatro (`replayTimelineOf`). Cada bug é um achado na tela em que o navegador está:
+    uma página que ele não anotou é anotada antes, pelo caminho dela (`screenNameOf`, `pageKeyOf`).
+    O finish é o plano que ele sugere, que o chat guarda num cartão até o QA levá-lo ao plano
+    (`takeSuggestion`). O agente do chat o ouve no histórico de runs.
 - **O agente pergunta ao QA no meio da run** (`ask_qa`, `asking-the-qa.md` em `role/runner/` e
   `role/explorer/`). A chamada segura até o QA responder:
   - O `RunCoordinator` guarda a pergunta (`IOpenQuestion`) e avisa a página (`asked`). A página
