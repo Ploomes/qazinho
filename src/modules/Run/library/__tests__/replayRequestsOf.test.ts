@@ -46,6 +46,22 @@ describe('replayRequestsOf', () => {
     expect(request).toMatchObject({ toMs: null, outcome: 'unknown' });
   });
 
+  /** O detalhe de um pedido mostra o que uma chamada que falhou respondeu, guardado na run. */
+  it('keeps what a failed call answered, and nothing for one that kept no answer', () => {
+    const requests = replayRequestsOf({
+      entries: [
+        entry({ id: 1, status: 500, body: '{"error":"cart is empty"}' }),
+        entry({ id: 2, startedAt: 11_000 }),
+      ],
+      video: VIDEO,
+    });
+    const failed = requests.find(({ id }) => id === 1);
+    const kept = requests.find(({ id }) => id === 2);
+
+    expect(failed?.body).toBe('{"error":"cart is empty"}');
+    expect(kept?.body).toBeNull();
+  });
+
   it('shows the host only of a request that left the app', () => {
     const requests = replayRequestsOf({
       entries: [

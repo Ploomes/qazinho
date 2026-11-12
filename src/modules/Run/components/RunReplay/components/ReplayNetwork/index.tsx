@@ -6,7 +6,7 @@ import './styles.css';
 
 /**
  * Os pedidos que o app fez, sob o vídeo e em sincronia com ele: cada um cai quando
- * começa, espera a resposta, e leva o vídeo até lá num clique.
+ * começa, espera a resposta, e abre o detalhe dele num clique.
  */
 export const ReplayNetwork: React.FC<IReplayNetworkProps> = (props) => {
   const {

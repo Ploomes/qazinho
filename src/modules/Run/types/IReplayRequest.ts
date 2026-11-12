@@ -1,8 +1,8 @@
 import type { RequestOutcome } from './RequestOutcome';
 
 /**
- * Um pedido posto no vídeo de uma run: onde começa e termina lá, com o endereço dividido
- * em outro host e o caminho; `toMs` é null para um que nunca terminou.
+ * Um pedido posto no vídeo de uma run, o endereço em host e caminho; `toMs` null nunca
+ * terminou, e `body` é o começo da resposta de uma chamada que falhou.
  */
 export interface IReplayRequest {
   id: number;
@@ -19,4 +19,5 @@ export interface IReplayRequest {
   toMs: number | null;
   durationMs: number | null;
   size: number | null;
+  body: string | null;
 }

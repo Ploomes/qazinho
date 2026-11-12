@@ -18,6 +18,7 @@ const request = (props: Partial<IReplayRequest>): IReplayRequest => ({
   toMs: 1_400,
   durationMs: 400,
   size: 120,
+  body: null,
   ...props,
 });
 

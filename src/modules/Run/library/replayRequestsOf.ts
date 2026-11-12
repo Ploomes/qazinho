@@ -42,6 +42,7 @@ export function replayRequestsOf(props: {
             : Math.max(fromMs, entry.startedAt + entry.durationMs - video.startedAt),
         durationMs: entry.durationMs,
         size: entry.size,
+        body: entry.body ?? null,
       };
     })
     .sort((one, other) => one.fromMs - other.fromMs || one.id - other.id);

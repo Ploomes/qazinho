@@ -221,4 +221,31 @@ describe("a run's video with its network", () => {
     ).toBeLessThan(500);
     expect(said).toEqual([]);
   }, 180_000);
+
+  /** Um clique numa linha levava o vídeo até o pedido; num do começo parecia recarregar. */
+  it('opens a request in detail, with what a failed call answered, and closes it alone', async () => {
+    await page.evaluate(() => {
+      const video = document.querySelector<HTMLVideoElement>('.run-replay__video');
+
+      if (video !== null) video.currentTime = video.duration;
+    });
+    await page
+      .locator('.replay-network__button')
+      .filter({ hasText: '/api/pay' })
+      .first()
+      .click({ timeout: 10_000 });
+
+    const detail = page.getByRole('dialog', { name: /POST \/api\/pay/ });
+
+    await detail.waitFor();
+
+    await expect(detail.textContent()).resolves.toContain('500');
+    await expect(detail.textContent()).resolves.toContain('{"error":"declined"}');
+
+    await page.keyboard.press('Escape');
+    await detail.waitFor({ state: 'detached' });
+
+    expect(await page.locator('.run-replay__video').count()).toBe(1);
+    expect(said).toEqual([]);
+  }, 60_000);
 });

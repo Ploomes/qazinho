@@ -20,6 +20,7 @@ const request = (props: Partial<IReplayRequest>): IReplayRequest => ({
   toMs: 120,
   durationMs: 120,
   size: 1_884,
+  body: null,
   ...props,
 });
 
@@ -66,7 +67,7 @@ const REQUESTS = [
 ];
 
 function render(props: { currentMs: number; isShowingFiles?: boolean }) {
-  const onSeek = vi.fn();
+  const onPick = vi.fn();
   const onToggleFiles = vi.fn();
   const { result } = renderHook(() =>
     useReplayNetworkViewModel({
@@ -74,11 +75,11 @@ function render(props: { currentMs: number; isShowingFiles?: boolean }) {
       currentMs: props.currentMs,
       isShowingFiles: props.isShowingFiles ?? false,
       onToggleFiles,
-      onSeek,
+      onPick,
     }),
   );
 
-  return { result, onSeek, onToggleFiles };
+  return { result, onPick, onToggleFiles };
 }
 
 describe('useReplayNetworkViewModel', () => {
@@ -151,20 +152,13 @@ describe('useReplayNetworkViewModel', () => {
       expect(rows.map(({ isLatest }) => isLatest)).toEqual([false, true]);
     });
 
-    it('jumps the video to a little before a request on a click', () => {
-      const { result, onSeek } = render({ currentMs: 6_000 });
+    /** Um clique levava o vídeo até o pedido, e num pedido do começo parecia recarregar. */
+    it('opens the detail of the request clicked, without moving the video', () => {
+      const { result, onPick } = render({ currentMs: 6_000 });
 
       result.current.rows[1]?.onClick();
 
-      expect(onSeek).toHaveBeenCalledWith(4_000 - NETWORK.leadMs);
-    });
-
-    it('never jumps before the video starts', () => {
-      const { result, onSeek } = render({ currentMs: 6_000 });
-
-      result.current.rows[0]?.onClick();
-
-      expect(onSeek).toHaveBeenCalledWith(0);
+      expect(onPick).toHaveBeenCalledExactlyOnceWith(result.current.rows[1]?.key);
     });
   });
 
@@ -208,7 +202,7 @@ describe('useReplayNetworkViewModel', () => {
           currentMs: 0,
           isShowingFiles: false,
           onToggleFiles: vi.fn(),
-          onSeek: vi.fn(),
+          onPick: vi.fn(),
         }),
       );
 
@@ -225,7 +219,7 @@ describe('useReplayNetworkViewModel', () => {
           currentMs: 5_000,
           isShowingFiles: false,
           onToggleFiles: vi.fn(),
-          onSeek: vi.fn(),
+          onPick: vi.fn(),
         }),
       );
 

@@ -14,7 +14,7 @@ import {
 import { MOTION } from '@/shared/constants';
 
 export const useReplayNetworkViewModel = (props: IReplayNetworkProps) => {
-  const { requests, currentMs, isShowingFiles, onToggleFiles, onSeek } = props;
+  const { requests, currentMs, isShowingFiles, onToggleFiles, onPick } = props;
   const { t, i18n } = useTranslation();
   const listRef = useRef<HTMLOListElement>(null);
   const quietUntil = useRef(0);
@@ -100,7 +100,7 @@ export const useReplayNetworkViewModel = (props: IReplayNetworkProps) => {
             ? ''
             : formatRequestSize({ bytes: request.size, language: i18n.language }),
         onClick: () => {
-          onSeek(Math.max(0, request.fromMs - NETWORK.leadMs));
+          onPick(request.id);
         },
       };
     }),

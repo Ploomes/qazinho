@@ -46,6 +46,7 @@ export const useRunReplayViewModel = () => {
   const [measuredRatio, setMeasuredRatio] = useState<number | null>(null);
   const [requests, setRequests] = useState<IReplayRequest[]>([]);
   const [isShowingFiles, setShowingFiles] = useState(false);
+  const [pickedId, setPickedId] = useState<number | null>(null);
   const isNetworkOn = useSettingsStore((state) => state.replayNetwork);
   const showReplayNetwork = useSettingsStore((state) => state.showReplayNetwork);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -215,6 +216,15 @@ export const useRunReplayViewModel = () => {
   };
 
   const onKey = useEffectEvent((event: KeyboardEvent) => {
+    if (pickedId !== null) {
+      if (event.key === 'Escape') {
+        setPickedId(null);
+        event.preventDefault();
+      }
+
+      return;
+    }
+
     if (event.key === 'Escape') closeReplay();
     else if (event.key === ' ') togglePlay();
     else if (event.key === 'ArrowLeft') seek(shownMs.current - REPLAY.seekMs);
@@ -458,6 +468,13 @@ export const useRunReplayViewModel = () => {
     onToggleNetwork: showReplayNetwork,
     onToggleFiles: () => {
       setShowingFiles(!isShowingFiles);
+    },
+    picked: requests.find(({ id }) => id === pickedId) ?? null,
+    onPickRequest: (requestId: number) => {
+      setPickedId(requestId);
+    },
+    onCloseRequest: () => {
+      setPickedId(null);
     },
     onWatchWhole: () => {
       setFocus({ kind: 'run' });

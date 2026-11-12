@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { Button, Icon, IconButton, Intern, Switch } from '@/shared/components/atoms';
 import { BACKDROP, STICKER } from '@/shared/constants';
-import { ReplayLog, ReplayNetwork, ReplayTimeline } from './components';
+import { ReplayLog, ReplayNetwork, ReplayTimeline, RequestDetail } from './components';
 import { useRunReplayViewModel } from './hooks';
 import './styles.css';
 
@@ -76,6 +76,9 @@ export const RunReplay: React.FC = () => {
     onToggleNetwork,
     onToggleFiles,
     onWatchWhole,
+    picked,
+    onPickRequest,
+    onCloseRequest,
   } = useRunReplayViewModel();
 
   if (!isOpen || timeline === null) return null;
@@ -216,7 +219,7 @@ export const RunReplay: React.FC = () => {
                       currentMs={currentMs}
                       isShowingFiles={isShowingFiles}
                       onToggleFiles={onToggleFiles}
-                      onSeek={onSeek}
+                      onPick={onPickRequest}
                     />
                   </motion.div>
                 )}
@@ -326,6 +329,17 @@ export const RunReplay: React.FC = () => {
           </button>
         </div>
       </motion.section>
+
+      <AnimatePresence>
+        {picked !== null && (
+          <RequestDetail
+            key={picked.id}
+            request={picked}
+            onSeek={onSeek}
+            onClose={onCloseRequest}
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
