@@ -98,7 +98,7 @@ próprio comando, e o CI nunca as roda.
 | `variables.test.ts`    | um agente fake entra com `${NAME}`: a página recebe o valor, o agente não               |
 | `ask.test.ts`          | um agente fake pergunta ao QA no meio da run: uma escolha, um código, silêncio, um stop |
 | `network.test.ts`      | Chrome real: cada pedido guardado com status, tempo e tamanho, segredos fora            |
-| `strip.test.ts`        | o app construído: os pedidos de uma run sob o vídeo, e baixados desenhados nele         |
+| `strip.test.ts`        | o app construído: os pedidos de uma run sob o vídeo, o detalhe de um, e o download      |
 | `island.test.ts`       | o app construído: a janela da ilha transparente, no Dock, sem corte, setas e teclado    |
 | `outside.test.ts`      | um cliente MCP real no app construído: token, navegador, rodar, esperar, parar, sugerir |
 | `memory.test.ts`       | o app construído: a resposta do QA vira memória, a próxima run a usa, o chat a esquece  |

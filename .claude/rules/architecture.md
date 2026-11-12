@@ -760,6 +760,9 @@ desenvolver não grava (`developsACase`): a tela continua ao vivo, e a run guard
   tokens com cara de segredo como pontos antes de o `hiddenValues` nomear cada variável. O `body`
   guardado é mascarado do mesmo jeito, e o relatório de um bug o carrega sob o pedido dele
   (`answer`).
+- Um clique numa linha abre o detalhe do pedido sobre o teatro (`RequestDetail`): o endereço
+  inteiro, o status, quanto levou, o erro e o começo do que uma chamada que falhou respondeu
+  (`body`), e o "Ver no vídeo" que leva o vídeo até ele. O Esc fecha só o detalhe.
 - A página os desenha sob o vídeo (`ReplayNetwork`), e refaz o vídeo para baixar com eles
   desenhados: o `ReplayComposer` lê o MP4 da run (`readMp4`), o decodifica com WebCodecs, desenha a
   faixa em cada frame (`drawNetworkStrip`), segura a imagem enquanto a tela ficou parada, e
