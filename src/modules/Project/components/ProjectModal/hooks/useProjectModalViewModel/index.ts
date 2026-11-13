@@ -44,6 +44,9 @@ export const useProjectModalViewModel = () => {
   const isGithubConnected = useSetupStore((state) =>
     state.integrations.some(({ id }) => id === 'github'),
   );
+  const isJiraConnected = useSetupStore((state) =>
+    state.integrations.some(({ id }) => id === 'jira'),
+  );
   const builds = useBuildStore((state) => state.builds);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const removeWorkspacesOf = useWorkspaceStore((state) => state.removeWorkspacesOf);
@@ -82,6 +85,9 @@ export const useProjectModalViewModel = () => {
   const [app, setApp] = useState(saved('ios')?.value ?? '');
   const [repositories, setRepositories] = useState<IProjectRepository[]>(
     editing?.repositories ?? [],
+  );
+  const [readyStatuses, setReadyStatuses] = useState<string[]>(
+    editing?.readyStatuses ?? [],
   );
   const [section, setSection] = useState<ProjectSection>(projectSection ?? 'general');
   const [buildIds, setBuildIds] = useState<Record<BuildPlatform, string | null>>({
@@ -173,9 +179,14 @@ export const useProjectModalViewModel = () => {
     const projectId = editing?.id ?? newProjectId();
     const changes = variableChangesOf({ saved: savedVariables, drafts: variables });
     const save = () => {
-      if (editing)
-        updateProject({ ...editing, name: name.trim(), targets, repositories });
-      else addProject({ id: projectId, name: name.trim(), targets, repositories });
+      const ready = readyStatuses.length === 0 ? {} : { readyStatuses };
+
+      if (editing) {
+        const { readyStatuses: _before, ...kept } = editing;
+
+        updateProject({ ...kept, name: name.trim(), targets, repositories, ...ready });
+      } else
+        addProject({ id: projectId, name: name.trim(), targets, repositories, ...ready });
     };
 
     if (changes.length === 0) {
@@ -342,6 +353,8 @@ export const useProjectModalViewModel = () => {
     apk: apkValue,
     app: appValue,
     repositories,
+    hasReadyField: isJiraConnected,
+    readyStatuses,
     projectId: editing?.id ?? null,
     androidBuilder: builderOf({ platform: 'android', buildId: androidBuild.buildId }),
     iosBuilder: builderOf({ platform: 'ios', buildId: iosBuild.buildId }),
@@ -394,6 +407,7 @@ export const useProjectModalViewModel = () => {
       : ((isFirstName ? undefined : blocking) ?? variableFailure ?? undefined),
     onNameChange: setName,
     onRepositoriesChange: setRepositories,
+    onReadyChange: setReadyStatuses,
     variables,
     savedVariables,
     onVariablesChange: (changed: IVariableDraft[]) => {

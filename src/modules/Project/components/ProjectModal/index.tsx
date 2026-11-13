@@ -8,6 +8,7 @@ import {
   BuildFromCode,
   ProjectNav,
   ProjectPane,
+  ReadyField,
   RepoField,
   TargetCard,
   VariableField,
@@ -27,6 +28,8 @@ export const ProjectModal: React.FC = () => {
     apk,
     app,
     repositories,
+    hasReadyField,
+    readyStatuses,
     variables,
     savedVariables,
     projectId,
@@ -49,6 +52,7 @@ export const ProjectModal: React.FC = () => {
     isConfirmQuiet,
     onNameChange,
     onRepositoriesChange,
+    onReadyChange,
     onVariablesChange,
     onUrlChange,
     onPickApk,
@@ -159,6 +163,12 @@ export const ProjectModal: React.FC = () => {
               </TargetCard>
             </div>
           </div>
+
+          {hasReadyField && (
+            <div className="project-modal__group">
+              <ReadyField statuses={readyStatuses} onChange={onReadyChange} />
+            </div>
+          )}
         </ProjectPane>
 
         <ProjectPane label={t('PROJECT.SECTION_CODE')} isOpen={isOpen.code}>

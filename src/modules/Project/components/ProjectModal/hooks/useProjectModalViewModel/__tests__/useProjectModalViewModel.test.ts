@@ -458,6 +458,49 @@ describe('useProjectModalViewModel', () => {
       ]);
     });
 
+    it('offers the Jira statuses that mean ready only with Jira connected, and saves them', () => {
+      const { result, rerender } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.hasReadyField).toBe(false);
+
+      act(() => {
+        useSetupStore.setState({
+          integrations: [
+            { id: 'jira', account: 'ana@shop.test', site: 'shop.atlassian.net' },
+          ],
+        } as never);
+      });
+      rerender();
+
+      expect(result.current.hasReadyField).toBe(true);
+
+      act(() => {
+        result.current.onReadyChange(['Ready for QA']);
+      });
+      act(() => {
+        result.current.onConfirm();
+      });
+
+      expect(useAppStore.getState().projects[0]?.readyStatuses).toEqual(['Ready for QA']);
+    });
+
+    it('lets go of the statuses once the QA turns them all off', () => {
+      useAppStore.setState({ projects: [{ ...SAVED, readyStatuses: ['In QA'] }] });
+
+      const { result } = renderHook(() => useProjectModalViewModel());
+
+      expect(result.current.readyStatuses).toEqual(['In QA']);
+
+      act(() => {
+        result.current.onReadyChange([]);
+      });
+      act(() => {
+        result.current.onConfirm();
+      });
+
+      expect(useAppStore.getState().projects[0]).not.toHaveProperty('readyStatuses');
+    });
+
     /**
      * Os alvos eram salvos como "Android · Pixel 7" e "iOS · iPhone 16", celulares que
      * ninguém escolheu.

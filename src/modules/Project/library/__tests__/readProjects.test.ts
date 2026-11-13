@@ -42,6 +42,16 @@ describe('readProjects', () => {
     expect(readProjects(JSON.stringify([older]))[0]?.repositories).toEqual([]);
   });
 
+  it('keeps the Jira statuses that mean ready, and drops a list that is not of names', () => {
+    const ready = { ...PROJECT, readyStatuses: ['Ready for QA'] };
+    const broken = { ...PROJECT, readyStatuses: ['Ready for QA', 7] };
+
+    expect(readProjects(JSON.stringify([ready]))[0]?.readyStatuses).toEqual([
+      'Ready for QA',
+    ]);
+    expect(readProjects(JSON.stringify([broken]))[0]).not.toHaveProperty('readyStatuses');
+  });
+
   it('an entry with no id is skipped, and the rest still load', () => {
     const json = JSON.stringify([{ name: 'no id' }, PROJECT]);
 

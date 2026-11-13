@@ -26,11 +26,16 @@ export function readProjects(json: string): IProject[] {
         typeof (one as IProject).id === 'string' &&
         Array.isArray((one as IProject).targets),
     )
-    .map(({ issueTarget, ...project }) => ({
+    .map(({ issueTarget, readyStatuses, ...project }) => ({
       ...project,
       ...(issueTargetIn(issueTarget) === undefined
         ? {}
         : { issueTarget: issueTargetIn(issueTarget) }),
+      ...(Array.isArray(readyStatuses) &&
+      readyStatuses.length > 0 &&
+      readyStatuses.every((status) => typeof status === 'string')
+        ? { readyStatuses }
+        : {}),
       repositories: repositoriesOf(project.repositories),
       targets: project.targets.map((target) =>
         target.kind === 'web'

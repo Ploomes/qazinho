@@ -885,6 +885,11 @@ export const en = {
     NAME: 'Project name',
     NAME_PLACEHOLDER: 'Shop staging',
     TARGETS: 'Where to test',
+    READY: 'Ready for testing',
+    READY_NOTE:
+      'A Jira story in one of these statuses has arrived for testing. Before them, the plan is written ahead of the app.',
+    READY_LOADING: 'Reading the statuses of your Jira…',
+    READY_FILTER: 'Filter statuses',
     WEB: 'Web',
     WEB_PLACEHOLDER: 'https://staging.yourshop.com',
     ANDROID: 'Android',

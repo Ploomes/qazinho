@@ -890,6 +890,11 @@ export const pt: typeof en = {
     NAME: 'Nome do projeto',
     NAME_PLACEHOLDER: 'Loja staging',
     TARGETS: 'Onde testar',
+    READY: 'Pronta para teste',
+    READY_NOTE:
+      'Uma história do Jira num desses status chegou para teste. Antes deles, o plano é escrito antes do app.',
+    READY_LOADING: 'Lendo os status do seu Jira…',
+    READY_FILTER: 'Filtrar status',
     WEB: 'Web',
     WEB_PLACEHOLDER: 'https://staging.sualoja.com',
     ANDROID: 'Android',
