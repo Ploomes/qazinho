@@ -1,5 +1,7 @@
 export * from './isSecretName';
 export * from './issueTargetIn';
+export * from './nameSourcesOf';
+export * from './namingWorkspaceOf';
 export * from './newProjectId';
 export * from './passwordsIn';
 export * from './projectAppOf';

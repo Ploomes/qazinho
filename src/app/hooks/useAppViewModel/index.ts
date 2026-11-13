@@ -8,6 +8,7 @@ import { useIslandSync } from '@/modules/Island';
 import { useMemoryKeeping } from '@/modules/Memory/hooks/useMemoryKeeping';
 import { useOutsideCalls } from '@/modules/Outside';
 import { useProLinks, useProSync } from '@/modules/Pro';
+import { useProjectNaming } from '@/modules/Project';
 import { useSkills } from '@/modules/Skills';
 import { useTemplates } from '@/modules/Template';
 import { isRunGoing, useUpdateWatch } from '@/modules/Update';
@@ -82,6 +83,7 @@ export const useAppViewModel = () => {
   useIslandSync();
   useOutsideCalls();
   useUpdateWatch();
+  useProjectNaming();
   useSidebarFit();
   useSystemTheme();
 

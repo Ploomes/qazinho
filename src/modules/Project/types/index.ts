@@ -6,6 +6,7 @@ export type * from './IProjectPlatformMark';
 export type * from './IProjectRepository';
 export type * from './IReadyColumn';
 export type * from './ITarget';
+export type * from './INameSource';
 export type * from './IVariableDraft';
 export type * from './NameOrigin';
 export type * from './ProjectMarkShape';
