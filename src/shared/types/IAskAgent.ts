@@ -7,6 +7,7 @@ import type { IFlatStep } from './IFlatStep';
 import type { IImportAsk } from './IImportAsk';
 import type { IJiraAsk } from './IJiraAsk';
 import type { IMemoryBrief } from './IMemoryBrief';
+import type { IPlanDoubt } from './IPlanDoubt';
 import type { ITargetUnderTest } from './ITargetUnderTest';
 import type { IVariableBrief } from './IVariableBrief';
 import type { IViewport } from './IViewport';
@@ -37,4 +38,5 @@ export interface IAskAgent {
   attachments?: IChatAttachment[];
   memories?: IMemoryBrief[];
   skill?: string | null;
+  doubts?: IPlanDoubt[];
 }

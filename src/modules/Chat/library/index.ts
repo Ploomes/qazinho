@@ -20,6 +20,7 @@ export * from './matchesQuery';
 export * from './mentionCandidates';
 export * from './mentionQueryOf';
 export * from './mentionsIn';
+export * from './nextDoubtIdsOf';
 export * from './referencesOf';
 export * from './runFactsOf';
 export * from './runHistoryOf';

@@ -75,6 +75,7 @@ export const ChatRow: React.FC<IChatRowProps> = (props) => {
           <QuestionRound
             message={message}
             isAnswerable={props.isAnswerable}
+            canAskStory={props.canAskStory}
             onAnswer={props.onAnswerQuestions}
             onVariables={props.onVariables}
           />

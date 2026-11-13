@@ -16,6 +16,7 @@ import type {
   IFiledIssue,
   IJiraIssueRef,
   IManualTurn,
+  IPlanDoubt,
   IPlanStrategy,
   IRunAsked,
   IRunFinding,
@@ -170,6 +171,7 @@ export interface IWorkspaceStore {
   setContext: (props: { workspaceId: string; tokens: number; window: number }) => void;
   markStreaming: (props: { workspaceId: string; url: string }) => void;
   markManual: (props: { workspaceId: string; turn: IManualTurn }) => void;
+  setDoubts: (props: { workspaceId: string; doubts: IPlanDoubt[] }) => void;
   markScreens: (props: { workspaceId: string; screens: IRunScreen[] }) => void;
   markAddress: (props: { workspaceId: string; url: string }) => void;
   landNote: (props: { workspaceId: string; text: string; who: string }) => void;

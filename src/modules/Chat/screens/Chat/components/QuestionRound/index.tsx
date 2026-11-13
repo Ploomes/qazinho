@@ -119,6 +119,21 @@ export const QuestionRound: React.FC<IQuestionRoundProps> = (props) => {
                             <span className="question-round__note">{view.ownNote}</span>
                           </button>
                         )}
+                        {view.canAskStory && (
+                          <button
+                            type="button"
+                            aria-pressed={question.isOnStory}
+                            className={question.storyClassName}
+                            onClick={() => {
+                              view.onAskStory(question.index);
+                            }}
+                          >
+                            <span className="question-round__label">
+                              {view.storyLabel}
+                            </span>
+                            <span className="question-round__note">{view.storyNote}</span>
+                          </button>
+                        )}
                       </div>
 
                       <AnimatePresence initial={false}>

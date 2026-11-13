@@ -701,6 +701,15 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
+  setDoubts: ({ workspaceId, doubts }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) => ({ ...workspace, doubts }),
+      }),
+    })),
+
   markScreens: ({ workspaceId, screens }) =>
     set((state) => ({
       workspaces: mapWorkspace({

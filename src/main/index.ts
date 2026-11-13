@@ -997,6 +997,7 @@ async function askOnce(props: {
     attachments,
     memories: ask.memories ?? [],
     skills,
+    doubts: ask.doubts ?? [],
   });
   const sources = sourcesFor(ask.workspaceId);
   const learning =

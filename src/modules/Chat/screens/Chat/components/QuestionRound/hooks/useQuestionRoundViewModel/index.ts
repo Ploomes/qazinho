@@ -21,8 +21,10 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
   const lastIndex = message.questions.length - 1;
   const current = message.questions[at];
   const draftNow = drafts[at];
-  const isAnsweredDraft = ({ picked, text }: IQuestionAnswer) =>
-    picked.length > 0 || text.trim().length > 0;
+  const isAnsweredDraft = ({ picked, text, toStory }: IQuestionAnswer) =>
+    picked.length > 0 || text.trim().length > 0 || toStory === true;
+  const offStory = ({ picked, text, kept }: IQuestionAnswer): IQuestionAnswer =>
+    kept === undefined ? { picked, text } : { picked, text, kept };
   const isComplete = drafts.every(isAnsweredDraft);
   const isOwnOpenNow = openOwn.includes(at);
   const canNext =
@@ -73,6 +75,9 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
     isBodyShown: !isAnswered || isExpanded,
     bodyTransition: { duration: MOTION.duration, ease: MOTION.ease },
     isOpen,
+    canAskStory: isOpen && props.canAskStory === true,
+    storyLabel: t('CHAT.QUESTIONS_STORY'),
+    storyNote: t('CHAT.QUESTIONS_STORY_NOTE'),
     ownLabel: t('CHAT.QUESTIONS_OTHER'),
     ownNote: t('CHAT.QUESTIONS_OTHER_NOTE'),
     textLabel: t('CHAT.QUESTIONS_OWN'),
@@ -97,7 +102,16 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
         hint: question.isMultiSelect && !isAnswered ? t('CHAT.QUESTIONS_PICK_ANY') : '',
         text: answer.text,
         isOwnOpen: openOwn.includes(index),
-        said: isAnswered ? answer.text.trim() : '',
+        isOnStory: answer.toStory === true,
+        storyClassName:
+          answer.toStory === true
+            ? 'question-round__option question-round__option--picked'
+            : 'question-round__option',
+        said: !isAnswered
+          ? ''
+          : answer.doubtId !== undefined
+            ? t('CHAT.QUESTIONS_ON_STORY', { id: answer.doubtId })
+            : answer.text.trim(),
         options: question.options
           .map((option) => {
             const names = (option.variables ?? []).map(({ name }) => name);
@@ -151,7 +165,7 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
           draftsWith({
             index: picking.index,
             draft: {
-              ...draft,
+              ...offStory(draft),
               picked: draft.picked.includes(picking.label)
                 ? draft.picked.filter((label) => label !== picking.label)
                 : [...draft.picked, picking.label],
@@ -164,8 +178,13 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
 
       pickAndGo({
         index: picking.index,
-        draft: { ...draft, picked: [picking.label], text: '' },
+        draft: { ...offStory(draft), picked: [picking.label], text: '' },
       });
+    },
+    onAskStory: (index: number) => {
+      if (!isOpen || props.canAskStory !== true) return;
+
+      pickAndGo({ index, draft: { picked: [], text: '', toStory: true } });
     },
     onOwn: (index: number) => {
       const draft = drafts[index];
@@ -174,7 +193,7 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
 
       if (openOwn.includes(index)) {
         setOpenOwn(openOwn.filter((one) => one !== index));
-        setDrafts(draftsWith({ index, draft: { ...draft, text: '' } }));
+        setDrafts(draftsWith({ index, draft: { ...offStory(draft), text: '' } }));
 
         return;
       }
@@ -182,7 +201,7 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
       setOpenOwn([...openOwn, index]);
 
       if (message.questions[index]?.isMultiSelect !== true)
-        setDrafts(draftsWith({ index, draft: { ...draft, picked: [] } }));
+        setDrafts(draftsWith({ index, draft: { ...offStory(draft), picked: [] } }));
     },
     onText: (typing: { index: number; text: string }) => {
       const draft = drafts[typing.index];
@@ -190,7 +209,10 @@ export const useQuestionRoundViewModel = (props: IQuestionRoundProps) => {
       if (!isOpen || !draft) return;
 
       setDrafts(
-        draftsWith({ index: typing.index, draft: { ...draft, text: typing.text } }),
+        draftsWith({
+          index: typing.index,
+          draft: { ...offStory(draft), text: typing.text },
+        }),
       );
     },
     onOwnKey: (event: KeyboardEvent<HTMLInputElement>) => {

@@ -815,6 +815,64 @@ describe('useChatViewModel', () => {
       });
     });
 
+    /**
+     * O QA não sabe e o agente também não: a pergunta vira a próxima dúvida do plano, que a
+     * história recebe num comentário, e o agente planeja sabendo dela.
+     */
+    it('turns a question sent to the story into the next doubt, which the agent hears', async () => {
+      useWorkspaceStore.setState({
+        workspaces: [
+          {
+            ...makeWorkspace([]),
+            issue: {
+              key: 'SHOP-878',
+              title: 'Coupons at checkout',
+              source: 'jira',
+              url: 'https://shop.atlassian.net/browse/SHOP-878',
+            },
+            doubts: [
+              { id: 'D1', question: 'Does a coupon stack?', sent: null, answer: null },
+            ],
+          },
+        ],
+      });
+
+      const { ask, view } = await asked('Two things first.');
+      const round = useWorkspaceStore.getState().workspaces[0]?.chat.at(-1);
+
+      expect(view.result.current.canAskStory).toBe(true);
+
+      act(() => {
+        view.result.current.onAnswerQuestions({
+          messageId: round?.id ?? '',
+          answers: [{ picked: [], text: '', toStory: true }],
+        });
+      });
+
+      await waitFor(() => {
+        expect(ask).toHaveBeenCalledTimes(2);
+      });
+      expect(ask.mock.calls[1]?.[0].text).toBe(
+        'Scope (What should the plan cover?): sent to the story as D2, since no one here knows yet',
+      );
+      expect(ask.mock.calls[1]?.[0].doubts?.map(({ id }) => id)).toEqual(['D1', 'D2']);
+      expect(useWorkspaceStore.getState().workspaces[0]?.doubts?.at(-1)).toEqual({
+        id: 'D2',
+        question: 'What should the plan cover?',
+        sent: null,
+        answer: null,
+      });
+      expect(useWorkspaceStore.getState().workspaces[0]?.chat[2]).toMatchObject({
+        answers: [{ toStory: true, doubtId: 'D2' }],
+      });
+    });
+
+    it('does NOT offer the story to a workspace with no Jira story', async () => {
+      const { view } = await asked('Two things first.');
+
+      expect(view.result.current.canAskStory).toBe(false);
+    });
+
     it('does NOT take answers while the agent is still working', async () => {
       const { ask, view } = await asked('Two things first.');
       const round = useWorkspaceStore.getState().workspaces[0]?.chat.at(-1);

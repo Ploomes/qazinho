@@ -27,13 +27,14 @@ import {
   formatAnswers,
   formatSize,
   groupRunMessages,
-  withLiveRun,
   insertMention,
   isFollowUp,
   mentionCandidates,
   mentionQueryOf,
   mentionsIn,
+  nextDoubtIdsOf,
   referencesOf,
+  withLiveRun,
 } from '@/modules/Chat/library';
 import { ATTACH_FAILURE_KEYS, CHAT } from '@/modules/Chat/screens/Chat/constants';
 import { useChatCommand } from '@/modules/Chat/screens/Chat/hooks/useChatCommand';
@@ -90,6 +91,8 @@ export const useChatViewModel = () => {
     chat: opened.chat,
     design: opened.design,
     plan: opened.plan,
+    doubts: opened.doubts,
+    canAskStory: opened.issue?.source === 'jira',
     runs: opened.runs,
     bugs: opened.bugs,
     liveId: opened.live?.id ?? null,
@@ -127,6 +130,7 @@ export const useChatViewModel = () => {
   const startAskingUnheard = useWorkspaceStore((state) => state.startAskingUnheard);
   const setDesign = useWorkspaceStore((state) => state.setDesign);
   const answerQuestions = useWorkspaceStore((state) => state.answerQuestions);
+  const setDoubts = useWorkspaceStore((state) => state.setDoubts);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
   const setPlan = useWorkspaceStore((state) => state.setPlan);
   const toggleCase = useWorkspaceStore((state) => state.toggleCase);
@@ -392,9 +396,28 @@ export const useChatViewModel = () => {
     if (!workspace || round?.kind !== 'questions' || round.answers !== null) return;
     if (isAgentTyping || isWalking) return;
 
-    answerQuestions({ workspaceId: workspace.id, ...props });
+    const kept = workspace.doubts ?? [];
+    const ids = nextDoubtIdsOf({
+      doubts: kept,
+      count: props.answers.filter(({ toStory }) => toStory === true).length,
+    });
+    const answers = props.answers.map((one) =>
+      one.toStory === true ? { ...one, doubtId: ids.shift() } : one,
+    );
+    const asked = answers.flatMap(({ doubtId }, index) => {
+      const question = round.questions[index]?.question;
+
+      return doubtId === undefined || question === undefined
+        ? []
+        : [{ id: doubtId, question, sent: null, answer: null }];
+    });
+
+    if (asked.length > 0)
+      setDoubts({ workspaceId: workspace.id, doubts: [...kept, ...asked] });
+
+    answerQuestions({ workspaceId: workspace.id, messageId: props.messageId, answers });
     askAgent({
-      text: formatAnswers({ questions: round.questions, answers: props.answers }),
+      text: formatAnswers({ questions: round.questions, answers }),
       references: [],
       code: null,
       jira: null,
@@ -565,6 +588,7 @@ export const useChatViewModel = () => {
               !isWalking,
           },
     ),
+    canAskStory: workspace?.canAskStory ?? false,
     lockedText: question !== null ? '' : null,
     composerHint: isWalking
       ? t('CHAT.TALK_PLACEHOLDER')

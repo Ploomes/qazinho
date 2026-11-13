@@ -14,6 +14,9 @@ export function formatAnswers(props: {
       const answer = props.answers[index];
       const kept = answer?.kept ?? [];
       const said = [
+        answer?.doubtId === undefined
+          ? ''
+          : `sent to the story as ${answer.doubtId}, since no one here knows yet`,
         answer?.picked.join(', ') ?? '',
         kept.length === 0
           ? ''

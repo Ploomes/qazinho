@@ -101,6 +101,9 @@ export const useChatAgent = () => {
         workspaceId,
         ...(target === null ? {} : { targetKind: target.kind }),
       }),
+      ...(workspace.doubts === undefined || workspace.doubts.length === 0
+        ? {}
+        : { doubts: workspace.doubts }),
       ...(props.isFromAgent === true ? { isFromAgent: true } : {}),
       ...(props.skill == null ? {} : { skill: props.skill }),
       ...(props.attachments === undefined || props.attachments.length === 0
