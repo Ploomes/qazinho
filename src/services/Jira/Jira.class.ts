@@ -1,9 +1,10 @@
 import type {
+  BoardColumnList,
   IStoryAnswersAsk,
   IStoryDoubtsPost,
+  JiraBoardList,
   JiraIssueList,
   JiraProjectList,
-  JiraStatusList,
   StoryAnswers,
   StoryDoubtsPosted,
   StoryPeople,
@@ -30,9 +31,18 @@ export class Jira {
     );
   }
 
-  public static async statuses(): Promise<JiraStatusList> {
+  public static async boards(query: string): Promise<JiraBoardList> {
     return (
-      (await window.qazinho?.listJiraStatuses()) ?? {
+      (await window.qazinho?.listJiraBoards(query)) ?? {
+        isListed: false,
+        failure: 'unreachable',
+      }
+    );
+  }
+
+  public static async columns(boardId: number): Promise<BoardColumnList> {
+    return (
+      (await window.qazinho?.listBoardColumns(boardId)) ?? {
         isListed: false,
         failure: 'unreachable',
       }

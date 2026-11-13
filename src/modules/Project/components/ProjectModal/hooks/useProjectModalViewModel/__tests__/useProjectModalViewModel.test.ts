@@ -458,7 +458,7 @@ describe('useProjectModalViewModel', () => {
       ]);
     });
 
-    it('offers the Jira statuses that mean ready only with Jira connected, and saves them', () => {
+    it('offers the column that means ready only with Jira connected, and saves it', () => {
       const { result, rerender } = renderHook(() => useProjectModalViewModel());
 
       expect(result.current.hasReadyField).toBe(false);
@@ -475,29 +475,44 @@ describe('useProjectModalViewModel', () => {
       expect(result.current.hasReadyField).toBe(true);
 
       act(() => {
-        result.current.onReadyChange(['Ready for QA']);
+        result.current.onReadyChange({
+          column: { boardId: 7, board: 'Shop board', column: 'Ready for QA' },
+          statuses: ['Ready for QA'],
+        });
       });
       act(() => {
         result.current.onConfirm();
       });
 
-      expect(useAppStore.getState().projects[0]?.readyStatuses).toEqual(['Ready for QA']);
+      expect(useAppStore.getState().projects[0]).toMatchObject({
+        readyColumn: { boardId: 7, board: 'Shop board', column: 'Ready for QA' },
+        readyStatuses: ['Ready for QA'],
+      });
     });
 
-    it('lets go of the statuses once the QA turns them all off', () => {
-      useAppStore.setState({ projects: [{ ...SAVED, readyStatuses: ['In QA'] }] });
+    it('lets go of the column once the QA drops it', () => {
+      useAppStore.setState({
+        projects: [
+          {
+            ...SAVED,
+            readyColumn: { boardId: 7, board: 'Shop board', column: 'In QA' },
+            readyStatuses: ['In QA'],
+          },
+        ],
+      });
 
       const { result } = renderHook(() => useProjectModalViewModel());
 
       expect(result.current.readyStatuses).toEqual(['In QA']);
 
       act(() => {
-        result.current.onReadyChange([]);
+        result.current.onReadyChange(null);
       });
       act(() => {
         result.current.onConfirm();
       });
 
+      expect(useAppStore.getState().projects[0]).not.toHaveProperty('readyColumn');
       expect(useAppStore.getState().projects[0]).not.toHaveProperty('readyStatuses');
     });
 

@@ -549,23 +549,56 @@ describe('JiraApi', () => {
     });
   });
 
-  describe('statuses and a story status', () => {
-    it('lists the statuses of the site, for the QA to say which mean ready', async () => {
+  describe('boards, their columns and a story status', () => {
+    it('lists the boards of the QA, filtered by the name typed', async () => {
       const { jira } = api({
-        '/rest/api/3/status': {
+        '/rest/agile/1.0/board?maxResults=50&name=Shop': {
           status: 200,
-          body: [{ name: 'Ready for QA', statusCategory: { key: 'indeterminate' } }],
+          body: { values: [{ id: 7, name: 'Shop', location: { projectKey: 'SHOP' } }] },
         },
       });
 
-      expect(await jira.statuses()).toEqual({
+      expect(await jira.boards(' Shop ')).toEqual({
         isListed: true,
-        statuses: [{ name: 'Ready for QA', category: 'indeterminate' }],
+        boards: [{ id: 7, name: 'Shop', project: 'SHOP' }],
       });
-      expect(await api({}, false).jira.statuses()).toEqual({
+      expect(await api({}, false).jira.boards('')).toEqual({
         isListed: false,
         failure: 'not-connected',
       });
+    });
+
+    it('reads the columns of a board, each with the statuses that fall in it', async () => {
+      const { jira } = api({
+        '/rest/agile/1.0/board/7/configuration': {
+          status: 200,
+          body: {
+            columnConfig: {
+              columns: [
+                { name: 'To do', statuses: [{ id: '1' }] },
+                { name: 'Ready for QA', statuses: [{ id: '10' }, { id: '11' }] },
+              ],
+            },
+          },
+        },
+        '/rest/api/3/status': {
+          status: 200,
+          body: [
+            { id: '1', name: 'To Do' },
+            { id: '10', name: 'Ready for QA' },
+            { id: '11', name: 'In QA' },
+          ],
+        },
+      });
+
+      expect(await jira.columns(7)).toEqual({
+        isListed: true,
+        columns: [
+          { name: 'To do', statuses: ['To Do'] },
+          { name: 'Ready for QA', statuses: ['Ready for QA', 'In QA'] },
+        ],
+      });
+      expect(await jira.columns(8)).toEqual({ isListed: false, failure: 'not-found' });
     });
 
     it('reads the status a story is in now', async () => {

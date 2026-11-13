@@ -1,6 +1,7 @@
 import type { AgentSignInProgress } from './AgentSignInProgress';
 import type { AppUpdate } from './AppUpdate';
 import type { AttachOutcome } from './AttachOutcome';
+import type { BoardColumnList } from './BoardColumnList';
 import type { BugComment } from './BugComment';
 import type { BugFiling } from './BugFiling';
 import type { BugReview } from './BugReview';
@@ -86,7 +87,7 @@ import type { IWindowControls } from './IWindowControls';
 import type { IWriteSkill } from './IWriteSkill';
 import type { JiraIssueList } from './JiraIssueList';
 import type { JiraProjectList } from './JiraProjectList';
-import type { JiraStatusList } from './JiraStatusList';
+import type { JiraBoardList } from './JiraBoardList';
 import type { McpActionResult } from './McpActionResult';
 import type { McpSignInProgress } from './McpSignInProgress';
 import type { MemoryKeeping } from './MemoryKeeping';
@@ -257,7 +258,8 @@ export interface IQazinhoApi {
   listBranches: (repository: IRepositoryRef) => Promise<IBranchList>;
   searchJira: (query: string) => Promise<JiraIssueList>;
   listJiraProjects: () => Promise<JiraProjectList>;
-  listJiraStatuses: () => Promise<JiraStatusList>;
+  listJiraBoards: (query: string) => Promise<JiraBoardList>;
+  listBoardColumns: (boardId: number) => Promise<BoardColumnList>;
   readStoryStatus: (key: string) => Promise<StoryStatus>;
   readStoryPeople: (key: string) => Promise<StoryPeople>;
   askStory: (post: IStoryDoubtsPost) => Promise<StoryDoubtsPosted>;

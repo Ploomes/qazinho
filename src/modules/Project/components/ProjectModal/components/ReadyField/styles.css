@@ -17,36 +17,92 @@
   font: var(--font-ui-xs);
 }
 
-.ready-field__statuses {
+.ready-field__picked {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-3);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--raise);
 }
 
-.ready-field__status {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  border: 1px solid var(--line2);
-  border-radius: var(--radius-pill);
-  background: transparent;
+.ready-field__picked-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.ready-field__picked-name {
+  color: var(--ink);
+  font: var(--font-ui-md);
+}
+
+.ready-field__picked-statuses {
+  color: var(--ink3);
+  font: var(--font-ui-xs);
+}
+
+.ready-field__change {
+  padding: 0;
+  border: 0;
+  background: none;
   color: var(--ink2);
   font: var(--font-ui-sm);
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.ready-field__change:hover {
+  color: var(--ink);
+}
+
+.ready-field__columns {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ready-field__columns-title {
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}
+
+.ready-field__column {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
   cursor: pointer;
   transition:
     border-color var(--dur-fast) var(--ease),
-    background-color var(--dur-fast) var(--ease),
-    color var(--dur-fast) var(--ease);
+    background-color var(--dur-fast) var(--ease);
 }
 
-.ready-field__status:hover {
+.ready-field__column:hover {
   border-color: var(--ink2);
-  color: var(--ink);
+  background: var(--accent-soft);
 }
 
-.ready-field__status--on {
-  border-color: var(--accent-ink);
-  background: var(--accent-soft);
-  color: var(--ink);
+.ready-field__column-name {
+  flex: none;
+  font: var(--font-ui-md);
+}
+
+.ready-field__column-detail {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink3);
+  font: var(--font-ui-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

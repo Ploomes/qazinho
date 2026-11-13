@@ -3,6 +3,7 @@ import type { ITargetLock } from '@/modules/Project/components/ProjectModal/comp
 import type { ProjectSection } from '@/modules/Project/components/ProjectModal/types';
 import type {
   IProjectRepository,
+  IReadyColumn,
   ITarget,
   IVariableDraft,
 } from '@/modules/Project/types';
@@ -86,8 +87,13 @@ export const useProjectModalViewModel = () => {
   const [repositories, setRepositories] = useState<IProjectRepository[]>(
     editing?.repositories ?? [],
   );
-  const [readyStatuses, setReadyStatuses] = useState<string[]>(
-    editing?.readyStatuses ?? [],
+  const [ready, setReady] = useState<{
+    column: IReadyColumn;
+    statuses: string[];
+  } | null>(() =>
+    editing?.readyColumn === undefined
+      ? null
+      : { column: editing.readyColumn, statuses: editing.readyStatuses ?? [] },
   );
   const [section, setSection] = useState<ProjectSection>(projectSection ?? 'general');
   const [buildIds, setBuildIds] = useState<Record<BuildPlatform, string | null>>({
@@ -179,14 +185,23 @@ export const useProjectModalViewModel = () => {
     const projectId = editing?.id ?? newProjectId();
     const changes = variableChangesOf({ saved: savedVariables, drafts: variables });
     const save = () => {
-      const ready = readyStatuses.length === 0 ? {} : { readyStatuses };
+      const readyOf =
+        ready === null
+          ? {}
+          : { readyColumn: ready.column, readyStatuses: ready.statuses };
 
       if (editing) {
-        const { readyStatuses: _before, ...kept } = editing;
+        const { readyColumn: _column, readyStatuses: _statuses, ...kept } = editing;
 
-        updateProject({ ...kept, name: name.trim(), targets, repositories, ...ready });
+        updateProject({ ...kept, name: name.trim(), targets, repositories, ...readyOf });
       } else
-        addProject({ id: projectId, name: name.trim(), targets, repositories, ...ready });
+        addProject({
+          id: projectId,
+          name: name.trim(),
+          targets,
+          repositories,
+          ...readyOf,
+        });
     };
 
     if (changes.length === 0) {
@@ -354,7 +369,8 @@ export const useProjectModalViewModel = () => {
     app: appValue,
     repositories,
     hasReadyField: isJiraConnected,
-    readyStatuses,
+    readyColumn: ready?.column ?? null,
+    readyStatuses: ready?.statuses ?? [],
     projectId: editing?.id ?? null,
     androidBuilder: builderOf({ platform: 'android', buildId: androidBuild.buildId }),
     iosBuilder: builderOf({ platform: 'ios', buildId: iosBuild.buildId }),
@@ -407,7 +423,7 @@ export const useProjectModalViewModel = () => {
       : ((isFirstName ? undefined : blocking) ?? variableFailure ?? undefined),
     onNameChange: setName,
     onRepositoriesChange: setRepositories,
-    onReadyChange: setReadyStatuses,
+    onReadyChange: setReady,
     variables,
     savedVariables,
     onVariablesChange: (changed: IVariableDraft[]) => {

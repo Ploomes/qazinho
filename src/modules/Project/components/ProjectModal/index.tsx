@@ -29,6 +29,7 @@ export const ProjectModal: React.FC = () => {
     app,
     repositories,
     hasReadyField,
+    readyColumn,
     readyStatuses,
     variables,
     savedVariables,
@@ -166,7 +167,11 @@ export const ProjectModal: React.FC = () => {
 
           {hasReadyField && (
             <div className="project-modal__group">
-              <ReadyField statuses={readyStatuses} onChange={onReadyChange} />
+              <ReadyField
+                column={readyColumn}
+                statuses={readyStatuses}
+                onChange={onReadyChange}
+              />
             </div>
           )}
         </ProjectPane>

@@ -230,7 +230,8 @@ describe('a page with no bridge', () => {
       false,
     );
     expect(await Jira.projects()).toEqual({ isListed: false, failure: 'unreachable' });
-    expect(await Jira.statuses()).toEqual({ isListed: false, failure: 'unreachable' });
+    expect(await Jira.boards('')).toEqual({ isListed: false, failure: 'unreachable' });
+    expect(await Jira.columns(1)).toEqual({ isListed: false, failure: 'unreachable' });
     expect(await Jira.status('SHOP-878')).toEqual({
       isRead: false,
       failure: 'unreachable',

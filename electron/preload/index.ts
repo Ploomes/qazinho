@@ -2,6 +2,7 @@ import type {
   AgentSignInProgress,
   AppUpdate,
   AttachOutcome,
+  BoardColumnList,
   BugComment,
   BugFiling,
   BugReview,
@@ -88,9 +89,9 @@ import type {
   IViewport,
   IWindowControls,
   IWriteSkill,
+  JiraBoardList,
   JiraIssueList,
   JiraProjectList,
-  JiraStatusList,
   McpActionResult,
   McpSignInProgress,
   MemoryKeeping,
@@ -435,8 +436,10 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.searchJira, query) as Promise<JiraIssueList>,
   listJiraProjects: () =>
     ipcRenderer.invoke(CHANNELS.listJiraProjects) as Promise<JiraProjectList>,
-  listJiraStatuses: () =>
-    ipcRenderer.invoke(CHANNELS.listJiraStatuses) as Promise<JiraStatusList>,
+  listJiraBoards: (query: string) =>
+    ipcRenderer.invoke(CHANNELS.listJiraBoards, query) as Promise<JiraBoardList>,
+  listBoardColumns: (boardId: number) =>
+    ipcRenderer.invoke(CHANNELS.listBoardColumns, boardId) as Promise<BoardColumnList>,
   readStoryStatus: (key: string) =>
     ipcRenderer.invoke(CHANNELS.readStoryStatus, key) as Promise<StoryStatus>,
   readStoryPeople: (key: string) =>

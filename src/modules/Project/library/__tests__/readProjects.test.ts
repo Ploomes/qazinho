@@ -42,13 +42,20 @@ describe('readProjects', () => {
     expect(readProjects(JSON.stringify([older]))[0]?.repositories).toEqual([]);
   });
 
-  it('keeps the Jira statuses that mean ready, and drops a list that is not of names', () => {
-    const ready = { ...PROJECT, readyStatuses: ['Ready for QA'] };
-    const broken = { ...PROJECT, readyStatuses: ['Ready for QA', 7] };
+  it('keeps the column that means ready and its statuses, and drops a broken one', () => {
+    const column = { boardId: 7, board: 'Shop board', column: 'Ready for QA' };
+    const ready = { ...PROJECT, readyColumn: column, readyStatuses: ['Ready for QA'] };
+    const broken = {
+      ...PROJECT,
+      readyColumn: { board: 'x' },
+      readyStatuses: ['Ready', 7],
+    };
 
-    expect(readProjects(JSON.stringify([ready]))[0]?.readyStatuses).toEqual([
-      'Ready for QA',
-    ]);
+    expect(readProjects(JSON.stringify([ready]))[0]).toMatchObject({
+      readyColumn: column,
+      readyStatuses: ['Ready for QA'],
+    });
+    expect(readProjects(JSON.stringify([broken]))[0]).not.toHaveProperty('readyColumn');
     expect(readProjects(JSON.stringify([broken]))[0]).not.toHaveProperty('readyStatuses');
   });
 

@@ -1973,7 +1973,10 @@ void app.whenReady().then(async () => {
   ipcMain.handle(CHANNELS.listRepositories, () => repos.repositories());
   ipcMain.handle(CHANNELS.searchJira, (_event, query: string) => jira.search(query));
   ipcMain.handle(CHANNELS.listJiraProjects, () => jira.projects());
-  ipcMain.handle(CHANNELS.listJiraStatuses, () => jira.statuses());
+  ipcMain.handle(CHANNELS.listJiraBoards, (_event, query: string) => jira.boards(query));
+  ipcMain.handle(CHANNELS.listBoardColumns, (_event, boardId: number) =>
+    jira.columns(boardId),
+  );
   ipcMain.handle(CHANNELS.readStoryStatus, (_event, key: string) => jira.status(key));
   ipcMain.handle(CHANNELS.readStoryPeople, (_event, key: string) => jira.people(key));
   ipcMain.handle(CHANNELS.askStory, (_event, post: IStoryDoubtsPost) =>

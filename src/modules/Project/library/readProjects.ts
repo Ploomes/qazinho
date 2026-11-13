@@ -26,7 +26,7 @@ export function readProjects(json: string): IProject[] {
         typeof (one as IProject).id === 'string' &&
         Array.isArray((one as IProject).targets),
     )
-    .map(({ issueTarget, readyStatuses, ...project }) => ({
+    .map(({ issueTarget, readyColumn, readyStatuses, ...project }) => ({
       ...project,
       ...(issueTargetIn(issueTarget) === undefined
         ? {}
@@ -35,6 +35,11 @@ export function readProjects(json: string): IProject[] {
       readyStatuses.length > 0 &&
       readyStatuses.every((status) => typeof status === 'string')
         ? { readyStatuses }
+        : {}),
+      ...(typeof readyColumn?.boardId === 'number' &&
+      typeof readyColumn.board === 'string' &&
+      typeof readyColumn.column === 'string'
+        ? { readyColumn }
         : {}),
       repositories: repositoriesOf(project.repositories),
       targets: project.targets.map((target) =>

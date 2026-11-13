@@ -1,6 +1,7 @@
 import type { IJiraApi, JiraAnswer, JiraFetcher, JiraFiled } from './types';
 import type { IJiraCredentials } from '@/main/types';
 import type {
+  BoardColumnList,
   BugComment,
   IBugReport,
   IJiraIssueRef,
@@ -8,10 +9,10 @@ import type {
   IStoryAnswersAsk,
   IStoryDoubtsPost,
   ITrackerIssue,
+  JiraBoardList,
   JiraFailure,
   JiraIssueList,
   JiraProjectList,
-  JiraStatusList,
   StoryAnswers,
   StoryDoubtsPosted,
   StoryPeople,
@@ -23,10 +24,11 @@ import {
   adfOfDoubts,
   adfOfReport,
   askAtlassian,
+  boardColumnsOf,
   bugTypeOf,
+  jiraBoardsOf,
   jiraIssueOf,
   jiraProjectsOf,
-  jiraStatusesOf,
   jiraStoryOf,
   pickedIssuesOf,
   storyAnswersOf,
@@ -277,17 +279,48 @@ export class JiraApi {
     };
   }
 
-  /** Os status do site do Jira, para o QA dizer quais contam como pronta para teste. */
-  public async statuses(): Promise<JiraStatusList> {
+  /** Os boards do Jira do QA, os que casam com o nome digitado. */
+  public async boards(query: string): Promise<JiraBoardList> {
     const signed = await this.credentials();
 
     if (signed === null) return { isListed: false, failure: 'not-connected' };
 
-    const answer = await this.request({ signed, path: '/rest/api/3/status' });
+    const params = new URLSearchParams({ maxResults: String(JIRA_READ.boards) });
+
+    if (query.trim() !== '') params.set('name', query.trim());
+
+    const answer = await this.request({
+      signed,
+      path: `/rest/agile/1.0/board?${params.toString()}`,
+    });
 
     return answer.isOk
-      ? { isListed: true, statuses: jiraStatusesOf(answer.body) }
+      ? { isListed: true, boards: jiraBoardsOf(answer.body) }
       : { isListed: false, failure: answer.failure };
+  }
+
+  /** As colunas de um board, cada uma com os status que caem nela. */
+  public async columns(boardId: number): Promise<BoardColumnList> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isListed: false, failure: 'not-connected' };
+
+    const [config, statuses] = await Promise.all([
+      this.request({
+        signed,
+        path: `/rest/agile/1.0/board/${String(boardId)}/configuration`,
+      }),
+      this.request({ signed, path: '/rest/api/3/status' }),
+    ]);
+
+    if (!config.isOk) return { isListed: false, failure: config.failure };
+
+    if (!statuses.isOk) return { isListed: false, failure: statuses.failure };
+
+    return {
+      isListed: true,
+      columns: boardColumnsOf({ config: config.body, statuses: statuses.body }),
+    };
   }
 
   /** Em que status uma história está agora. */
