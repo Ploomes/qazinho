@@ -25,7 +25,7 @@ export interface IProSyncRun {
       why: string | null;
       bugId: string | null;
       shotFile: string | null;
-      by: 'agent' | 'replay' | 'healed';
+      by: 'agent' | 'replay' | 'healed' | 'qa';
       proof: string | null;
       span: { from: number; to: number } | null;
     }[];
