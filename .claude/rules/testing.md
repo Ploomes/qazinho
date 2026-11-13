@@ -111,9 +111,9 @@ próprio comando, e o CI nunca as roda.
 | `watcher.test.ts`      | o agente do próprio QA lê uma história que mudou e propõe as trocas do plano               |
 
 O `run.test.ts`, o `chat.test.ts`, o `learn.test.ts`, o `visual.test.ts`, o `skills.test.ts`, o
-`ahead.test.ts` e o `watcher.test.ts` gastam os tokens do QA e precisam de um agente instalado. Rode-os à mão, uma vez,
-depois de mexer no pipeline da run ou no schema de uma resposta; quando um falha, leia o que o
-agente escreveu em vez de rodá-lo de novo.
+`ahead.test.ts` e o `watcher.test.ts` gastam os tokens do QA e precisam de um agente instalado.
+Rode-os à mão, uma vez, depois de mexer no pipeline da run ou no schema de uma resposta; quando um
+falha, leia o que o agente escreveu em vez de rodá-lo de novo.
 
 **Um clique sintético não é um clique.** O Playwright dirige a página pelo CDP, que pula o hit
 test que o gerenciador de janelas faz — então um `-webkit-app-region: drag` engolindo um clique
