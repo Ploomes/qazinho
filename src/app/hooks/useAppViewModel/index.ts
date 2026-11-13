@@ -7,6 +7,7 @@ import { useIslandSync } from '@/modules/Island';
 import { useMemoryKeeping } from '@/modules/Memory/hooks/useMemoryKeeping';
 import { useOutsideCalls } from '@/modules/Outside';
 import { useProLinks, useProSync } from '@/modules/Pro';
+import { useSkills } from '@/modules/Skills';
 import { isRunGoing, useUpdateWatch } from '@/modules/Update';
 import { useChatOnly } from '@/modules/Workspace';
 import { AppWindow, Platform } from '@/services';
@@ -59,6 +60,7 @@ export const useAppViewModel = () => {
 
   useArchive();
   useVariables();
+  useSkills();
   useLanguage();
   useKeybinds();
   useRunTicker();
