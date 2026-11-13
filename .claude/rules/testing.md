@@ -106,6 +106,7 @@ próprio comando, e o CI nunca as roda.
 | `attach.test.ts`       | o app construído: o navegador do chat, a pergunta na tela ampliada, arquivos do QA      |
 | `close.test.ts`        | o app construído: fechar esconde com a página viva, o Dock a traz, a tela cheia, sair   |
 | `skills.test.ts`       | o agente do próprio QA segue uma skill ligada e uma chamada, e escreve uma de exemplos  |
+| `manual.test.ts`       | um caso à mão no Chrome real: o preparo, os gestos e as marcas do QA, uma variável      |
 
 O `run.test.ts`, o `chat.test.ts`, o `learn.test.ts`, o `visual.test.ts` e o `skills.test.ts`
 gastam os tokens do QA e precisam de um agente instalado. Rode-os à mão depois de mexer no pipeline

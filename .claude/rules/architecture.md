@@ -299,6 +299,23 @@ responde a uma pergunta por canal, para um alvo `{ role, platform }`:
   - O `SkillWriter` escreve uma skill com o QA: o agente dele lê os arquivos que o QA anexou ao
     rascunho, pergunta o que os exemplos deixam em aberto e devolve a skill no schema `SKILL_DRAFT`,
     que o QA revisa no editor antes de guardar. Nada guarda uma skill sem o QA confirmar.
+- **Um caso à mão é andado pelo QA** (`isManual` no caso, `mode: 'manual'` na run). Desenvolver e
+  rodar o plano o deixam de fora (`planStageOf`, `begin`, `walkSteps`), e os que o QA não fez
+  desde a última run do plano esperam por ele (`manualWaitingOf`), no Plano e no Início:
+  - O `walkManual` abre o caso do zero e grava. O preparo vem da gravação dele (`book.preps`, que
+    fica nesta máquina) ou do agente, num turno só com a mensagem do preparo (`Harness.prepare`),
+    que vira essa gravação (`agentPrep`, `bookWithPrep`). O evento `manual` abre a vez do QA.
+  - A página manda os gestos (`DeviceInput`, em frações da tela) por `touchRun`, um depois do
+    outro, e cada driver os faz (`touch`: o mouse e o teclado do Playwright, `adbInputOf`,
+    `idbInputOf`). Um celular não transmite sozinho: o `pumpFrames` manda o `snapshot` dele ao
+    stream enquanto o caso anda.
+  - `markRun` guarda a tela de agora como o passo, marcado pelo QA (`markedOutcomeOf`, `by: 'qa'`):
+    uma falha leva a nota dele como o que veio e vira um bug como qualquer outra. `typeRunVariable`
+    digita o valor de uma variável que só a main conhece, e `endManual` deixa sem marca o que
+    falta (`ended`).
+  - A `DeviceScreen` vira uma superfície (`role="application"`) que leva o ponteiro, a roda e o
+    teclado ao dispositivo, e o `ManualPanel` mostra o preparo, o passo, o esperado e as marcas.
+  - O CI nunca anda um caso à mão: o `PlanWalker` o deixa de fora com o porquê (`manual`).
 - **O agente guarda o que aprende sobre o app** (`role/keeper/`). As memórias ficam no projeto
   (`IProject.memories`), cada uma do projeto ou de um workspace, e numa lista só para sincronizar.
   - A página põe na fila o que pode mudar alguma coisa (`useMemoryStore`): a mensagem do QA, e no fim

@@ -227,6 +227,19 @@ uma skill pedia, respondeu do jeito que a skill chamada mandava, e escreveu uma 
 três casos anexados (`tests/smoke/skills.test.ts`); o app construído mostrou o "/" e a linha com
 uma bridge fake. Pelo Codex isso não foi tentado.
 
+**Um caso que não dá para automatizar é feito à mão.** "Marcar como à mão", no pé de um caso,
+o tira de desenvolver e de rodar: o plano diz "à mão" ao lado dele, e o CI o deixa de fora com esse
+porquê. Depois que o plano roda, o plano e o Início lembram dos casos à mão que esperam o QA, com
+"Fazer agora". O caso abre do zero e é gravado; o agente leva o app às pré-condições e grava esse
+preparo, que a vez seguinte anda sem IA. Aí é a vez do QA: a tela do dispositivo recebe o clique, a
+rolagem, o arrasto e o teclado dele (num celular, a main manda a tela em quadros enquanto ele
+dirige), e um painel mostra o passo e o esperado, com Passou, Falhou e Pular. Cada marca guarda a
+tela daquele momento como o passo, e uma falha vira um bug com a nota dele como o que veio. Uma
+variável é digitada pelo nome, sem o valor passar pela página. O `tests/smoke/manual.test.ts` prova
+isso no Chrome real com um agente fake: o preparo gravado e reusado, os cliques e o texto chegando à
+página, as marcas, e uma run do plano sem o caso à mão. O toque num emulador e num simulador só foi
+provado por testes unitários.
+
 **O app abre no Início.** Uma tela junta, de todos os projetos, o que pede o QA agora: uma pergunta
 de uma run, uma run andando ou pausada, uma que o app fechou no meio, um plano cuja última run
 falhou, casos ainda sem gravação, cada um numa linha com a ação que o leva lá; e os planos abertos
