@@ -119,6 +119,7 @@ import type {
   SkillSaved,
   SkillsFound,
   SkillWritten,
+  SprintStories,
   StoryAnswers,
   StoryDoubtsPosted,
   StoryPeople,
@@ -475,6 +476,8 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.readChange, request) as Promise<ChangeReading>,
   listJiraBoards: (query: string) =>
     ipcRenderer.invoke(CHANNELS.listJiraBoards, query) as Promise<JiraBoardList>,
+  sprintStories: (boardId: number) =>
+    ipcRenderer.invoke(CHANNELS.sprintStories, boardId) as Promise<SprintStories>,
   listBoardColumns: (boardId: number) =>
     ipcRenderer.invoke(CHANNELS.listBoardColumns, boardId) as Promise<BoardColumnList>,
   readStoryStatus: (key: string) =>

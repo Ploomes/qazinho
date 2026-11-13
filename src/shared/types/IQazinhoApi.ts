@@ -118,6 +118,7 @@ import type { SaveOutcome } from './SaveOutcome';
 import type { SkillSaved } from './SkillSaved';
 import type { SkillsFound } from './SkillsFound';
 import type { SkillWritten } from './SkillWritten';
+import type { SprintStories } from './SprintStories';
 import type { StoryAnswers } from './StoryAnswers';
 import type { StoryDoubtsPosted } from './StoryDoubtsPosted';
 import type { StoryPeople } from './StoryPeople';
@@ -284,6 +285,7 @@ export interface IQazinhoApi {
   checkSources: (ask: ISourcesCheckAsk) => Promise<ISourcesChecked>;
   readChange: (request: IReadChange) => Promise<ChangeReading>;
   listJiraBoards: (query: string) => Promise<JiraBoardList>;
+  sprintStories: (boardId: number) => Promise<SprintStories>;
   listBoardColumns: (boardId: number) => Promise<BoardColumnList>;
   readStoryStatus: (key: string) => Promise<StoryStatus>;
   tellStory: (told: ITellStory) => Promise<BugComment>;

@@ -248,6 +248,7 @@ export function fakeQazinhoApi(platform: Platform): IQazinhoApi {
       }),
     readChange: () => Promise.resolve({ isRead: false, reason: 'agent-missing' }),
     listJiraBoards: () => Promise.resolve({ isListed: false, failure: 'not-connected' }),
+    sprintStories: () => Promise.resolve({ isListed: false, failure: 'not-connected' }),
     listBoardColumns: () =>
       Promise.resolve({ isListed: false, failure: 'not-connected' }),
     readStoryStatus: () => Promise.resolve({ isRead: false, failure: 'not-connected' }),

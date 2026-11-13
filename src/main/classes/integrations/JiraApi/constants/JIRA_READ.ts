@@ -8,4 +8,5 @@ export const JIRA_READ = {
   timeoutMs: 20_000,
   downloadTimeoutMs: 120_000,
   pickerSize: 20,
+  sprintStories: 100,
 } as const;

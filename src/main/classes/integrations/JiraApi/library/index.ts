@@ -1,3 +1,4 @@
+export * from './activeSprintOf';
 export * from './adfOfDoubts';
 export * from './adfOfNote';
 export * from './adfOfReport';
@@ -13,4 +14,5 @@ export * from './jiraProjectsOf';
 export * from './jiraSaidOf';
 export * from './jiraStoryOf';
 export * from './pickedIssuesOf';
+export * from './sprintStoriesOf';
 export * from './storyAnswersOf';

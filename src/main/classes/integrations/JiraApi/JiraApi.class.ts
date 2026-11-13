@@ -14,6 +14,7 @@ import type {
   JiraFailure,
   JiraIssueList,
   JiraProjectList,
+  SprintStories,
   StoryAnswers,
   StoryDoubtsPosted,
   StoryPeople,
@@ -22,6 +23,7 @@ import type {
 import { writeFile } from 'node:fs/promises';
 import { JIRA_READ, JIRA_WRITE } from './constants';
 import {
+  activeSprintOf,
   adfOfDoubts,
   adfOfNote,
   adfOfReport,
@@ -34,6 +36,7 @@ import {
   jiraProjectsOf,
   jiraStoryOf,
   pickedIssuesOf,
+  sprintStoriesOf,
   storyAnswersOf,
 } from './library';
 
@@ -324,6 +327,41 @@ export class JiraApi {
       isListed: true,
       columns: boardColumnsOf({ config: config.body, statuses: statuses.body }),
     };
+  }
+
+  /** As histórias da sprint aberta de um board, sem subtarefas nem épicos. */
+  public async sprintStories(boardId: number): Promise<SprintStories> {
+    const signed = await this.credentials();
+
+    if (signed === null) return { isListed: false, failure: 'not-connected' };
+
+    const sprints = await this.request({
+      signed,
+      path: `/rest/agile/1.0/board/${String(boardId)}/sprint?state=active`,
+    });
+
+    if (!sprints.isOk) return { isListed: false, failure: sprints.failure };
+
+    const sprint = activeSprintOf(sprints.body);
+
+    if (sprint === null) return { isListed: true, sprint: null, stories: [] };
+
+    const params = new URLSearchParams({
+      fields: 'summary,status,issuetype',
+      maxResults: String(JIRA_READ.sprintStories),
+    });
+    const issues = await this.request({
+      signed,
+      path: `/rest/agile/1.0/sprint/${String(sprint.id)}/issue?${params.toString()}`,
+    });
+
+    return issues.isOk
+      ? {
+          isListed: true,
+          sprint: sprint.name,
+          stories: sprintStoriesOf({ body: issues.body, site: signed.site }),
+        }
+      : { isListed: false, failure: issues.failure };
   }
 
   /** Em que status uma história está agora. */

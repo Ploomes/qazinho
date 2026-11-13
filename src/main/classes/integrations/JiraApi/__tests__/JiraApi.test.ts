@@ -549,6 +549,74 @@ describe('JiraApi', () => {
     });
   });
 
+  describe('sprintStories', () => {
+    it('reads the stories of the open sprint of a board', async () => {
+      const { jira } = api({
+        '/rest/agile/1.0/board/7/sprint?state=active': {
+          status: 200,
+          body: { values: [{ id: 42, name: 'Sprint 42', state: 'active' }] },
+        },
+        '/rest/agile/1.0/sprint/42/issue?fields=summary%2Cstatus%2Cissuetype&maxResults=100':
+          {
+            status: 200,
+            body: {
+              issues: [
+                {
+                  key: 'SHOP-892',
+                  fields: {
+                    summary: 'Frete grátis acima de R$ 200',
+                    status: { name: 'Pronto para dev' },
+                    issuetype: { hierarchyLevel: 0 },
+                  },
+                },
+              ],
+            },
+          },
+      });
+
+      expect(await jira.sprintStories(7)).toEqual({
+        isListed: true,
+        sprint: 'Sprint 42',
+        stories: [
+          {
+            key: 'SHOP-892',
+            title: 'Frete grátis acima de R$ 200',
+            status: 'Pronto para dev',
+            url: `${SITE}/browse/SHOP-892`,
+          },
+        ],
+      });
+    });
+
+    it('says a board with no open sprint has nothing to plan, without asking for issues', async () => {
+      const { jira, asked } = api({
+        '/rest/agile/1.0/board/7/sprint?state=active': {
+          status: 200,
+          body: { values: [] },
+        },
+      });
+
+      expect(await jira.sprintStories(7)).toEqual({
+        isListed: true,
+        sprint: null,
+        stories: [],
+      });
+      expect(asked).toHaveLength(1);
+    });
+
+    it('says Jira is not connected, or why it refused', async () => {
+      expect(await api({}, false).jira.sprintStories(7)).toEqual({
+        isListed: false,
+        failure: 'not-connected',
+      });
+      expect(
+        await api({
+          '/rest/agile/1.0/board/7/sprint?state=active': { status: 401, body: {} },
+        }).jira.sprintStories(7),
+      ).toMatchObject({ isListed: false });
+    });
+  });
+
   describe('boards, their columns and a story status', () => {
     it('lists the boards of the QA, filtered by the name typed', async () => {
       const { jira } = api({

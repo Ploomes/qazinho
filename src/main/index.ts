@@ -2079,6 +2079,9 @@ void app.whenReady().then(async () => {
     changeReader.read(request),
   );
   ipcMain.handle(CHANNELS.listJiraBoards, (_event, query: string) => jira.boards(query));
+  ipcMain.handle(CHANNELS.sprintStories, (_event, boardId: number) =>
+    jira.sprintStories(boardId),
+  );
   ipcMain.handle(CHANNELS.listBoardColumns, (_event, boardId: number) =>
     jira.columns(boardId),
   );

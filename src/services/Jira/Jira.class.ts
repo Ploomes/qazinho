@@ -7,6 +7,7 @@ import type {
   JiraBoardList,
   JiraIssueList,
   JiraProjectList,
+  SprintStories,
   StoryAnswers,
   StoryDoubtsPosted,
   StoryPeople,
@@ -36,6 +37,15 @@ export class Jira {
   public static async boards(query: string): Promise<JiraBoardList> {
     return (
       (await window.qazinho?.listJiraBoards(query)) ?? {
+        isListed: false,
+        failure: 'unreachable',
+      }
+    );
+  }
+
+  public static async sprint(boardId: number): Promise<SprintStories> {
+    return (
+      (await window.qazinho?.sprintStories(boardId)) ?? {
         isListed: false,
         failure: 'unreachable',
       }
