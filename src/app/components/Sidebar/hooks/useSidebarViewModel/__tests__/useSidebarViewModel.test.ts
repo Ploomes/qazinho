@@ -347,6 +347,22 @@ describe('useSidebarViewModel', () => {
         hasPlace: false,
       });
     });
+
+    it('marks the name of a project that waits for the name of its app', () => {
+      useAppStore.setState({
+        projects: [
+          PROJECT,
+          { ...PROJECT, id: 'p2', name: 'New project', isNamePending: true },
+        ],
+      });
+
+      const { result } = renderHook(() => useSidebarViewModel());
+
+      expect(result.current.groups.map(({ nameClassName }) => nameClassName)).toEqual([
+        'sidebar__group-name',
+        'sidebar__group-name sidebar__group-name--pending',
+      ]);
+    });
   });
 
   describe('the signal of a plan', () => {

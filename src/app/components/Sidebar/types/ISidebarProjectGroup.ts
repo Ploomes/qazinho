@@ -8,6 +8,7 @@ export interface ISidebarProjectGroup {
   id: string;
   projectId: string;
   name: string;
+  nameClassName: string;
   initial: string;
   mark: ProjectMarkShape;
   place: string;

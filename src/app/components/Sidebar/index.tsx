@@ -7,6 +7,7 @@ import { Caret, Icon, IconButton } from '@/shared/components/atoms';
 import { Fold, Tooltip } from '@/shared/components/molecules';
 import { STICKER } from '@/shared/constants';
 import { RailFlyout } from './components';
+import { SIDEBAR_NAME_MOTION } from './constants';
 import { useSidebarViewModel } from './hooks';
 import './styles.css';
 
@@ -307,7 +308,17 @@ export const Sidebar: React.FC = () => {
                           <Caret isOpen={group.isExpanded} />
                         </span>
                       </span>
-                      <span className="sidebar__group-name">{group.name}</span>
+                      <AnimatePresence mode="wait" initial={false}>
+                        <motion.span
+                          key={group.name}
+                          className={group.nameClassName}
+                          initial={SIDEBAR_NAME_MOTION.initial}
+                          animate={SIDEBAR_NAME_MOTION.animate}
+                          exit={SIDEBAR_NAME_MOTION.exit}
+                        >
+                          {group.name}
+                        </motion.span>
+                      </AnimatePresence>
                       {group.hasPlace && (
                         <span className="sidebar__group-place">{group.place}</span>
                       )}

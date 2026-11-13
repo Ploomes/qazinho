@@ -201,6 +201,10 @@ export const useSidebarViewModel = () => {
         id: `group-${project.id}`,
         projectId: project.id,
         name: project.name,
+        nameClassName:
+          project.isNamePending === true
+            ? 'sidebar__group-name sidebar__group-name--pending'
+            : 'sidebar__group-name',
         initial: project.name.charAt(0).toUpperCase(),
         mark: projectMarkOf({ name: project.name, app, icons }),
         place: places.format(app.places),
