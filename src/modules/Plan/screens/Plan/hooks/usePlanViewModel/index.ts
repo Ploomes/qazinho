@@ -493,6 +493,7 @@ export const usePlanViewModel = () => {
         by: 'plan',
       });
     },
+    hasTopActions: plan.length > 0 && !isLocked && (isConfluenceOn || target !== null),
     canPublish: isConfluenceOn && plan.length > 0 && !isLocked,
     isPublishing,
     publishLabel: isPublishing

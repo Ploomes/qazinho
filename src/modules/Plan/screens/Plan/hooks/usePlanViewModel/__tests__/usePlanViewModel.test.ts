@@ -429,6 +429,19 @@ describe('usePlanViewModel', () => {
 
       expect(renderHook(() => usePlanViewModel()).result.current.canExport).toBe(false);
     });
+
+    /** Exportar ficava no fim da lista, e o QA rolava o plano inteiro para achá-lo. */
+    it('puts the export at the top of the plan, and nothing there when it has nothing', () => {
+      expect(renderHook(() => usePlanViewModel()).result.current.hasTopActions).toBe(
+        true,
+      );
+
+      useAppStore.setState({ projects: [] });
+
+      expect(renderHook(() => usePlanViewModel()).result.current.hasTopActions).toBe(
+        false,
+      );
+    });
   });
 
   describe('the files the plan takes to the org', () => {
