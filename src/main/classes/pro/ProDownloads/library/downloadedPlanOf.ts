@@ -22,6 +22,8 @@ export function downloadedPlanOf(props: {
     targetKind: target?.kind ?? plan.targetKind ?? 'web',
     issue: plan.issue ?? null,
     design: plan.design ?? null,
+    strategy: plan.strategy ?? null,
+    doubts: plan.doubts ?? [],
     cases: plan.cases,
   };
 }

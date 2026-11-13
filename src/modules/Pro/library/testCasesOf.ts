@@ -20,5 +20,11 @@ export function testCasesOf(props: {
     ),
     lastVerdict: props.local.find(({ id }) => id === one.id)?.lastVerdict ?? null,
     ...(one.isManual === true ? { isManual: true } : {}),
+    ...(one.sources === undefined || one.sources.length === 0
+      ? {}
+      : { sources: one.sources }),
+    ...(one.blockedBy === undefined || one.blockedBy.length === 0
+      ? {}
+      : { blockedBy: one.blockedBy }),
   }));
 }

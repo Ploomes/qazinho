@@ -47,6 +47,8 @@ export function copiedProjectOf(props: {
       design: workspace.design,
       chat: [],
       plan: workspace.plan.map((testCase) => ({ ...testCase, lastVerdict: null })),
+      strategy: workspace.strategy ?? null,
+      doubts: workspace.doubts ?? [],
       unreadPlan: null,
       plainValues: [],
       planSource: null,

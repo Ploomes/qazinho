@@ -18,5 +18,11 @@ export function syncedCaseOf(testCase: ITestCase): IProSyncCase {
       frame === undefined ? { action, expected } : { action, expected, frame },
     ),
     ...(testCase.isManual === true ? { isManual: true } : {}),
+    ...(testCase.sources === undefined || testCase.sources.length === 0
+      ? {}
+      : { sources: testCase.sources }),
+    ...(testCase.blockedBy === undefined || testCase.blockedBy.length === 0
+      ? {}
+      : { blockedBy: testCase.blockedBy }),
   };
 }

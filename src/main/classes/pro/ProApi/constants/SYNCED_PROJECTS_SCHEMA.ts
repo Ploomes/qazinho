@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import { SYNC_CASE_SCHEMA } from './SYNC_CASE_SCHEMA';
+import { SYNC_DOUBT_SCHEMA } from './SYNC_DOUBT_SCHEMA';
+import { SYNC_STRATEGY_SCHEMA } from './SYNC_STRATEGY_SCHEMA';
 import { SYNC_MEMORY_SCHEMA } from './SYNC_MEMORY_SCHEMA';
 
 export const SYNCED_PROJECTS_SCHEMA = z.object({
@@ -51,6 +53,8 @@ export const SYNCED_PROJECTS_SCHEMA = z.object({
               name: z.string(),
             })
             .nullish(),
+          strategy: SYNC_STRATEGY_SCHEMA.nullish(),
+          doubts: z.array(SYNC_DOUBT_SCHEMA).nullish(),
           cases: z.array(SYNC_CASE_SCHEMA),
           editedBy: z.string().nullish(),
           editedAt: z.string().nullish(),

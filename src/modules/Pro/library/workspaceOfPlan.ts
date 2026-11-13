@@ -37,6 +37,8 @@ export function workspaceOfPlan(props: {
     design: plan.design,
     chat: [],
     plan: testCasesOf({ cases: plan.cases, local: [] }),
+    strategy: plan.strategy ?? null,
+    doubts: plan.doubts ?? [],
     unreadPlan: null,
     plainValues: [],
     planSource: null,
