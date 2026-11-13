@@ -40,6 +40,13 @@ export const useAppStore = create<IAppStore>()(
           screen: state.selectedWorkspaceId === null ? 'welcome' : 'workspace',
         })),
 
+      openNewProject: () => set({ screen: 'newProject', modal: null }),
+
+      closeNewProject: () =>
+        set((state) => ({
+          screen: state.selectedWorkspaceId === null ? 'welcome' : 'workspace',
+        })),
+
       openModal: (modal) => set({ modal, editingProjectId: null, projectSection: null }),
 
       openProjectSettings: (projectId) =>

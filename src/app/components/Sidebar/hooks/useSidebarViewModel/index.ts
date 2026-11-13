@@ -34,7 +34,7 @@ export const useSidebarViewModel = () => {
   const projects = useAppStore((state) => state.projects);
   const selectedWorkspaceId = useAppStore((state) => state.selectedWorkspaceId);
   const selectWorkspace = useAppStore((state) => state.selectWorkspace);
-  const openModal = useAppStore((state) => state.openModal);
+  const openNewProject = useAppStore((state) => state.openNewProject);
   const openWorkspaceModal = useAppStore((state) => state.openWorkspaceModal);
   const openSettings = useAppStore((state) => state.openSettings);
   const goHome = useAppStore((state) => state.goHome);
@@ -240,7 +240,7 @@ export const useSidebarViewModel = () => {
         live.question !== undefined,
     ) ?? null;
 
-  const onNewProject = () => openModal('project');
+  const onNewProject = () => openNewProject();
 
   const onToggleProject = (projectId: string) => {
     setExpansions((current) => ({

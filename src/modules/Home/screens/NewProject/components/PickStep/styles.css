@@ -1,0 +1,174 @@
+.pick-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.pick-step__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.pick-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  width: 100%;
+  height: 100%;
+  padding: var(--space-6) var(--space-5) var(--space-5);
+  border: var(--edge-width) solid var(--edge);
+  border-radius: var(--radius-lg);
+  background: var(--raise);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--dur) var(--ease),
+    background-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    translate var(--dur-fast) var(--ease),
+    scale var(--dur-press) var(--ease);
+}
+
+.pick-card:hover {
+  border-color: var(--line2);
+  box-shadow: var(--sticker-lift);
+}
+
+.pick-card:active {
+  scale: 0.985;
+}
+
+.pick-card:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+}
+
+.pick-card--on,
+.pick-card--on:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.pick-card__icon {
+  display: grid;
+  place-items: center;
+  width: calc(var(--space-8) + var(--space-2));
+  height: calc(var(--space-8) + var(--space-2));
+  margin-bottom: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--raise2);
+  color: var(--ink2);
+  font-size: var(--space-6);
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.pick-card--on .pick-card__icon {
+  background: var(--accent-fill);
+  color: var(--on-accent-fill);
+}
+
+.pick-card__label {
+  font: var(--font-ui-strong);
+}
+
+.pick-card__text {
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+}
+
+.pick-card__check {
+  position: absolute;
+  top: var(--space-5);
+  right: var(--space-5);
+  display: grid;
+  place-items: center;
+  width: calc(var(--space-5) + var(--space-2));
+  height: calc(var(--space-5) + var(--space-2));
+  border: var(--edge-width) solid var(--line2);
+  border-radius: var(--radius-xs);
+  transition:
+    border-color var(--dur) var(--ease),
+    background-color var(--dur) var(--ease);
+}
+
+.pick-card--on .pick-card__check,
+.pick-none--on .pick-card__check {
+  border-color: var(--accent-fill);
+  background: var(--accent-fill);
+}
+
+.pick-card__tick {
+  display: grid;
+  place-items: center;
+  color: var(--on-accent-fill);
+  font-size: var(--space-4);
+}
+
+.pick-none {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  border: var(--edge-width) dashed var(--line2);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--dur) var(--ease),
+    background-color var(--dur) var(--ease);
+}
+
+.pick-none:hover {
+  border-color: var(--ink3);
+}
+
+.pick-none:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+}
+
+.pick-none--on,
+.pick-none--on:hover {
+  border-style: solid;
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.pick-none__icon {
+  display: grid;
+  place-items: center;
+  color: var(--accent-ink);
+}
+
+.pick-none__words {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  min-width: 0;
+}
+
+.pick-none__label {
+  font: var(--font-ui-strong);
+}
+
+.pick-none__text {
+  color: var(--ink3);
+  font: var(--font-ui-sm);
+}
+
+.pick-none__check {
+  position: static;
+  flex: none;
+}

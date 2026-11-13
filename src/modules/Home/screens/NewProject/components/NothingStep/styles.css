@@ -1,0 +1,43 @@
+.nothing-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.nothing-step__ways {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.nothing-step__fold {
+  overflow: hidden;
+}
+
+.nothing-step__idea {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+}
+
+.nothing-step__text {
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--line-field);
+  border-radius: var(--radius-md);
+  outline: none;
+  background: var(--raise);
+  color: var(--ink);
+  font: var(--font-ui-md);
+  resize: vertical;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.nothing-step__text:focus {
+  border-color: var(--accent-ink);
+}
+
+.nothing-step__text::placeholder {
+  color: var(--ink3);
+}

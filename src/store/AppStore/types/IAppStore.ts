@@ -36,6 +36,8 @@ export interface IAppStore {
   setSystemTheme: (systemTheme: ShownTheme) => void;
   openSettings: () => void;
   closeSettings: () => void;
+  openNewProject: () => void;
+  closeNewProject: () => void;
   openModal: (modal: Modal) => void;
   openProjectSettings: (projectId: string) => void;
   openProSettings: (projectId: string) => void;

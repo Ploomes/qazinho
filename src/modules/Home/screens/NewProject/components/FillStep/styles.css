@@ -1,0 +1,43 @@
+.fill-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.fill-step__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.fill-step__code {
+  padding: var(--space-5);
+  border: var(--edge-width) solid var(--edge);
+  border-radius: var(--radius-lg);
+  background: var(--raise);
+}
+
+.fill-step__project {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding-top: var(--space-2);
+}
+
+.fill-step__mark {
+  display: inline-flex;
+  flex: none;
+}
+
+.fill-step__name {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.fill-step__name-label {
+  color: var(--ink3);
+  font: var(--font-meta-sm);
+}

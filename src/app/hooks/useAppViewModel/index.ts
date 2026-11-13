@@ -143,6 +143,7 @@ export const useAppViewModel = () => {
     isWorkspace: screen === 'workspace',
     isChatOnly,
     isSettings: screen === 'settings',
+    isNewProject: screen === 'newProject',
     isBugs: screen === 'bugs',
   };
 };
