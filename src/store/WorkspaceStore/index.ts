@@ -687,6 +687,18 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
       }),
     })),
 
+  markManual: ({ workspaceId, turn }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          workspace.live === null || workspace.live.isDone
+            ? workspace
+            : { ...workspace, live: { ...workspace.live, manual: turn, how: 'manual' } },
+      }),
+    })),
+
   markScreens: ({ workspaceId, screens }) =>
     set((state) => ({
       workspaces: mapWorkspace({

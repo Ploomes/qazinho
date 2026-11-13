@@ -28,6 +28,7 @@ export const useRunEvents = () => {
   const landTalkReply = useWorkspaceStore((state) => state.landTalkReply);
   const landUnheardTalks = useWorkspaceStore((state) => state.landUnheardTalks);
   const markStreaming = useWorkspaceStore((state) => state.markStreaming);
+  const markManual = useWorkspaceStore((state) => state.markManual);
   const markAddress = useWorkspaceStore((state) => state.markAddress);
   const markScreens = useWorkspaceStore((state) => state.markScreens);
   const landNote = useWorkspaceStore((state) => state.landNote);
@@ -151,6 +152,8 @@ export const useRunEvents = () => {
     else if (event.kind === 'learnings') keepWhatTheRunLearned(event);
     else if (event.kind === 'streaming')
       markStreaming({ workspaceId: event.workspaceId, url: event.url });
+    else if (event.kind === 'manual')
+      markManual({ workspaceId: event.workspaceId, turn: event.turn });
     else if (event.kind === 'address')
       markAddress({ workspaceId: event.workspaceId, url: event.url });
     else if (event.kind === 'screens')

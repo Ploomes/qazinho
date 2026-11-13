@@ -1,4 +1,5 @@
 import type { IDraftedCase } from './IDraftedCase';
+import type { IManualTurn } from './IManualTurn';
 import type { IRunAsked } from './IRunAsked';
 import type { IRunFinding } from './IRunFinding';
 import type { IRunQuestion } from './IRunQuestion';
@@ -10,8 +11,8 @@ import type { RunFailure } from './RunFailure';
 import type { RunHow } from './RunHow';
 
 /**
- * O que a página ouve enquanto uma run real anda o dispositivo, ou uma exploração
- * percorre o app, as perguntas do agente ao QA incluídas.
+ * O que a página ouve enquanto uma run real anda o dispositivo, uma exploração percorre o
+ * app ou o QA anda um caso à mão, as perguntas do agente ao QA incluídas.
  */
 export type IRunEvent =
   | { kind: 'step'; outcome: IStepOutcome }
@@ -28,6 +29,7 @@ export type IRunEvent =
   | { kind: 'cost'; workspaceId: string; costUsd: number }
   | { kind: 'finding'; workspaceId: string; finding: IRunFinding }
   | { kind: 'asked'; workspaceId: string; question: IRunQuestion }
+  | { kind: 'manual'; workspaceId: string; turn: IManualTurn }
   | { kind: 'answered'; workspaceId: string; asked: IRunAsked }
   | { kind: 'done'; workspaceId: string }
   | { kind: 'explored'; workspaceId: string; summary: string; cases: IDraftedCase[] }

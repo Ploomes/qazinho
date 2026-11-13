@@ -1,3 +1,4 @@
+import type { IManualTurn } from './IManualTurn';
 import type { IRunAsked } from './IRunAsked';
 import type { IRunFinding } from './IRunFinding';
 import type { IRunQuestion } from './IRunQuestion';
@@ -8,7 +9,7 @@ import type { TargetKind } from './TargetKind';
 
 /**
  * Uma run ou exploração que a main ainda anda, como está agora, com a pergunta que o
- * agente espera: o que uma página recém-aberta precisa para retomá-la.
+ * agente espera ou a vez do QA: o que uma página recém-aberta precisa para retomá-la.
  */
 export interface IRunInFlight {
   workspaceId: string;
@@ -29,4 +30,5 @@ export interface IRunInFlight {
   isExploring: boolean;
   question: IRunQuestion | null;
   asked: IRunAsked[];
+  manual?: IManualTurn;
 }

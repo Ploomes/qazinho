@@ -46,6 +46,7 @@ export function resumeRun(props: {
     costUsd: run.costUsd,
     by,
     ...(run.isExploring ? { kind: 'explore' as const } : {}),
+    ...(run.manual === undefined ? {} : { manual: run.manual, mode: 'manual' as const }),
     ...(run.question === null
       ? {}
       : {

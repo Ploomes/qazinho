@@ -9,6 +9,7 @@ import type {
   ConfluencePageList,
   ConfluenceSpaceList,
   ConfluenceSwitch,
+  DeviceInput,
   ExportOutcome,
   GithubSignInProgress,
   IAgentEvent,
@@ -41,6 +42,7 @@ import type {
   IIslandFrame,
   IKeepMemories,
   IMachineCheck,
+  IManualMark,
   IMcpServerStatus,
   IMcpServerTarget,
   IMcpSignIn,
@@ -166,6 +168,14 @@ const api: IQazinhoApi = {
     ipcRenderer.invoke(CHANNELS.stopRun, workspaceId) as Promise<void>,
   answerRun: (props: { workspaceId: string; questionId: string; reply: QaReply }) =>
     ipcRenderer.invoke(CHANNELS.answerRun, props) as Promise<void>,
+  touchRun: (props: { workspaceId: string; input: DeviceInput }) =>
+    ipcRenderer.invoke(CHANNELS.touchRun, props) as Promise<void>,
+  markRun: (mark: IManualMark) =>
+    ipcRenderer.invoke(CHANNELS.markRun, mark) as Promise<void>,
+  typeRunVariable: (props: { workspaceId: string; name: string }) =>
+    ipcRenderer.invoke(CHANNELS.typeRunVariable, props) as Promise<boolean>,
+  endManual: (workspaceId: string) =>
+    ipcRenderer.invoke(CHANNELS.endManual, workspaceId) as Promise<void>,
   resizeDevice: (props: { workspaceId: string; viewport: IViewport }) =>
     ipcRenderer.invoke(CHANNELS.resizeDevice, props) as Promise<void>,
   focusDevice: (props: { workspaceId: string; isFocused: boolean }) =>
