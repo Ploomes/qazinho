@@ -8,6 +8,7 @@ import {
   RUN_PAGE_SIZE,
   RUN_TALLY_KEYS,
   RUN_VERDICTS,
+  RUN_WALK_LOOKS,
   UNWALKED_KEYS,
 } from '@/modules/Run/constants';
 import {
@@ -288,8 +289,8 @@ export const useRunsViewModel = () => {
         return walk === null
           ? null
           : {
-              icon: walk === 'replay' ? ('recorded' as const) : ('heal' as const),
-              title: t(walk === 'replay' ? 'RUN.BY_REPLAY_TIP' : 'RUN.BY_HEALED_TIP'),
+              icon: RUN_WALK_LOOKS[walk].icon,
+              title: t(RUN_WALK_LOOKS[walk].tipKey),
               className: `runs__walk runs__walk--${walk}`,
             };
       })(),

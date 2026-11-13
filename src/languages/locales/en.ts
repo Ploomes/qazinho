@@ -524,6 +524,7 @@ export const en = {
     TAKE: 'Watch',
     BY_REPLAY_TIP: 'No AI: walked from the recording',
     BY_HEALED_TIP: 'Adjusted: the agent recorded it again',
+    BY_QA_TIP: 'By hand: the QA walked it',
     HOW_DEVELOP: 'developing',
     HOW_REPLAY: 'running',
     HOW_ADJUST: 'adjusting',

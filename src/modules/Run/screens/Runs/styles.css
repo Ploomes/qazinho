@@ -178,6 +178,10 @@
   color: var(--attn);
 }
 
+.runs__walk--qa {
+  color: var(--ink2);
+}
+
 .runs__take {
   opacity: 0;
   display: inline-flex;

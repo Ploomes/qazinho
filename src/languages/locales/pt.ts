@@ -527,6 +527,7 @@ export const pt: typeof en = {
     TAKE: 'Assistir',
     BY_REPLAY_TIP: 'Sem IA: andou pela gravação',
     BY_HEALED_TIP: 'Ajustado: o agente gravou de novo',
+    BY_QA_TIP: 'À mão: o QA fez',
     HOW_DEVELOP: 'desenvolvendo',
     HOW_REPLAY: 'rodando',
     HOW_ADJUST: 'ajustando',
