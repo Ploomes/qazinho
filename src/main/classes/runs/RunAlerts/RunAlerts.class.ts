@@ -7,11 +7,16 @@ import { app, Notification } from 'electron';
  */
 export class RunAlerts {
   private readonly onOpen: (run: IRunRef) => void;
+  private readonly onUnseen: (unseen: number) => void;
   private readonly shown = new Set<Notification>();
   private unseen = 0;
 
-  public constructor(onOpen: (run: IRunRef) => void) {
-    this.onOpen = onOpen;
+  public constructor(props: {
+    onOpen: (run: IRunRef) => void;
+    onUnseen: (unseen: number) => void;
+  }) {
+    this.onOpen = props.onOpen;
+    this.onUnseen = props.onUnseen;
   }
 
   /**
@@ -24,7 +29,7 @@ export class RunAlerts {
     if (!isAway) return;
 
     this.unseen += 1;
-    app.setBadgeCount(this.unseen);
+    this.onUnseen(this.unseen);
     app.dock?.bounce('informational');
 
     if (!Notification.isSupported()) return;
@@ -52,6 +57,6 @@ export class RunAlerts {
     if (this.unseen === 0) return;
 
     this.unseen = 0;
-    app.setBadgeCount(0);
+    this.onUnseen(0);
   }
 }
