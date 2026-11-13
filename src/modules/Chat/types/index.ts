@@ -25,6 +25,7 @@ export type * from './IPlanMessage';
 export type * from './IQuestionAnswer';
 export type * from './IQuestionsMessage';
 export type * from './IRunMessage';
+export type * from './ISkillsMessage';
 export type * from './ISuggestionMessage';
 export type * from './IUserMessage';
 export type * from './IVerdictMessage';

@@ -8,6 +8,7 @@ import {
   appendPlanCard,
   appendQuestions,
   appendRunNote,
+  appendSkillsNote,
   appendUserMessage,
   formatClock,
   withActivity,
@@ -380,6 +381,16 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         workspaceId,
         change: (workspace) =>
           appendMemoryNote({ workspace, changes, at: formatClock(new Date()) }),
+      }),
+    })),
+
+  landFollowedSkills: ({ workspaceId, names }) =>
+    set((state) => ({
+      workspaces: mapWorkspace({
+        workspaces: state.workspaces,
+        workspaceId,
+        change: (workspace) =>
+          appendSkillsNote({ workspace, names, at: formatClock(new Date()) }),
       }),
     })),
 

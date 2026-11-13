@@ -11,6 +11,7 @@ export * from './QuestionRound';
 export * from './RunActivity';
 export * from './RunProgress';
 export * from './RunSection';
+export * from './SkillsNote';
 export * from './SuggestionCard';
 export * from './TypingDots';
 export * from './UserMessage';

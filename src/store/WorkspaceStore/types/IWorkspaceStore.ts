@@ -56,6 +56,7 @@ export interface IWorkspaceStore {
   askRemoveWorkspace: (workspaceId: string | null) => void;
   removeWorkspace: (workspaceId: string) => void;
   landMemoryChanges: (props: { workspaceId: string; changes: IMemoryChange[] }) => void;
+  landFollowedSkills: (props: { workspaceId: string; names: string[] }) => void;
   renameWorkspace: (props: { workspaceId: string; name: string }) => void;
   setDesign: (props: { workspaceId: string; design: IDesignLink | null }) => void;
   setUnreadPlan: (props: { workspaceId: string; unreadPlan: IUnreadPlan | null }) => void;

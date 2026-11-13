@@ -281,6 +281,8 @@ export const pt: typeof en = {
     MEMORY_ADDED: 'Anotei: {{text}}',
     MEMORY_REPLACED: 'Atualizei: {{text}}',
     MEMORY_FORGOTTEN: 'Esqueci: {{text}}',
+    FOLLOWING_SKILL_ONE: 'Seguindo a skill {{names}}',
+    FOLLOWING_SKILL_OTHER: 'Seguindo as skills {{names}}',
     FROM_AGENT: 'Enviado pelo agente de código do seu editor',
     EMPTY_TITLE: 'O que vamos testar hoje?',
     PLACEHOLDER: 'Pergunte ao agente',

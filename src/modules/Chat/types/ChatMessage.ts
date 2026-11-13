@@ -7,6 +7,7 @@ import type { INoteMessage } from './INoteMessage';
 import type { IPlanMessage } from './IPlanMessage';
 import type { IQuestionsMessage } from './IQuestionsMessage';
 import type { IRunMessage } from './IRunMessage';
+import type { ISkillsMessage } from './ISkillsMessage';
 import type { ISuggestionMessage } from './ISuggestionMessage';
 import type { IUserMessage } from './IUserMessage';
 import type { IVerdictMessage } from './IVerdictMessage';
@@ -23,4 +24,5 @@ export type ChatMessage =
   | ISuggestionMessage
   | IQuestionsMessage
   | IMemoryMessage
+  | ISkillsMessage
   | IErrorMessage;

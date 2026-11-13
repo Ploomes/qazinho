@@ -279,6 +279,8 @@ export const en = {
     MEMORY_ADDED: 'Noted: {{text}}',
     MEMORY_REPLACED: 'Updated: {{text}}',
     MEMORY_FORGOTTEN: 'Forgot: {{text}}',
+    FOLLOWING_SKILL_ONE: 'Following the {{names}} skill',
+    FOLLOWING_SKILL_OTHER: 'Following the {{names}} skills',
     FROM_AGENT: 'Sent by the coding agent in your editor',
     EMPTY_TITLE: 'What are we testing today?',
     PLACEHOLDER: 'Ask the agent',

@@ -60,8 +60,14 @@ export const useChatAgent = () => {
         .projects.find(({ id }) => id === workspace.projectId)
         ?.targets.find(({ id }) => id === workspace.targetId) ?? null;
     const size = viewportOf(workspace.viewportId);
-    const { landAgentText, landPlan, landQuestions, landAgentError, landAgentStopped } =
-      useWorkspaceStore.getState();
+    const {
+      landAgentText,
+      landPlan,
+      landQuestions,
+      landAgentError,
+      landAgentStopped,
+      landFollowedSkills,
+    } = useWorkspaceStore.getState();
     const project =
       useAppStore.getState().projects.find(({ id }) => id === workspace.projectId) ??
       null;
@@ -159,6 +165,8 @@ export const useChatAgent = () => {
 
       const live = now?.live;
       const isWalking = live !== null && live !== undefined && !live.isDone;
+
+      landFollowedSkills({ workspaceId, names: turn.followed });
 
       if (plan === null || isWalking)
         landAgentText({

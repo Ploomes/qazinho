@@ -7,6 +7,7 @@ export * from './appendPlanCard';
 export * from './appendQuestions';
 export * from './appendRunMessages';
 export * from './appendRunNote';
+export * from './appendSkillsNote';
 export * from './appendUserMessage';
 export * from './closedMarkdown';
 export * from './formatAnswers';
