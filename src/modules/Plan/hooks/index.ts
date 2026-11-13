@@ -1,2 +1,2 @@
 export * from './usePlanDocument';
-export * from './useStoryAnswers';
+export * from './useStoryCheck';

@@ -3,7 +3,7 @@ import type { IconName } from '@/shared/components/atoms/Icon/types';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useChatAgent } from '@/modules/Chat';
-import { useStoryAnswers } from '@/modules/Plan/hooks/useStoryAnswers';
+import { useStoryCheck } from '@/modules/Plan/hooks/useStoryCheck';
 import {
   doubtsWithSent,
   heldDoubtsOf,
@@ -22,7 +22,7 @@ import {
 export const usePlanDoubtsViewModel = (props: IPlanDoubtsProps) => {
   const { workspaceId, doubts, issue, plan, isLocked } = props;
   const { t, i18n } = useTranslation();
-  const { read } = useStoryAnswers();
+  const { check } = useStoryCheck();
   const { askAgent } = useChatAgent();
   const isJiraConnected = useSetupStore((state) =>
     state.integrations.some(({ id }) => id === 'jira'),
@@ -48,8 +48,8 @@ export const usePlanDoubtsViewModel = (props: IPlanDoubtsProps) => {
   } | null>(null);
 
   useEffect(() => {
-    void read({ workspaceId });
-  }, [workspaceId, read]);
+    void check({ workspaceId });
+  }, [workspaceId, check]);
 
   const isOnJira = issue?.source === 'jira';
   const storyKey = issue?.key ?? '';
@@ -143,7 +143,7 @@ export const usePlanDoubtsViewModel = (props: IPlanDoubtsProps) => {
       if (isReading) return;
 
       setReading(true);
-      void read({ workspaceId, isForced: true }).then((said) => {
+      void check({ workspaceId, isForced: true }).then((said) => {
         setReading(false);
 
         if (said === null) return;
