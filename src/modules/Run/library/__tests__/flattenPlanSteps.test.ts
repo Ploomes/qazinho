@@ -92,4 +92,13 @@ describe('flattenPlanSteps', () => {
   it('skips a case that has no steps yet', () => {
     expect(flattenPlanSteps([{ ...CASE, steps: [] }])).toEqual([]);
   });
+
+  it('marks every step of a case the QA walks by hand, and no other', () => {
+    expect(
+      flattenPlanSteps([
+        { ...CASE, isManual: true },
+        { ...CASE, id: 'TC-02' },
+      ]).map(({ caseIsManual }) => caseIsManual === true),
+    ).toEqual([true, true, false, false]);
+  });
 });

@@ -2,7 +2,10 @@ import type { ITestStep } from './ITestStep';
 import type { Priority } from './Priority';
 import type { StepVerdict } from '@/shared/types';
 
-/** Um caso no plano do workspace: o que ele cobre, e os passos que o cobrem. */
+/**
+ * Um caso no plano do workspace: o que ele cobre, os passos que o cobrem, e se o QA o
+ * anda à mão.
+ */
 export interface ITestCase {
   id: string;
   title: string;
@@ -11,4 +14,5 @@ export interface ITestCase {
   preconditions: string;
   steps: ITestStep[];
   lastVerdict: StepVerdict | null;
+  isManual?: boolean;
 }
