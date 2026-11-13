@@ -31,7 +31,14 @@ export const Home: React.FC = () => {
 
         {groups.map((group) => (
           <div key={group.id} className="home__group">
-            <h2 className="home__group-title">{group.title}</h2>
+            <div className="home__group-top">
+              <h2 className="home__group-title">{group.title}</h2>
+              {group.hasAction && (
+                <Button size="sm" variant="secondary" onClick={group.onGroupAction}>
+                  {group.actionLabel}
+                </Button>
+              )}
+            </div>
             {group.items.map((item) => (
               <div key={item.id} className="home__item">
                 <span

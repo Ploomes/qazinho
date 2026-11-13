@@ -1,11 +1,12 @@
-import type { IHomeFailed } from '@/modules/Home/types';
+import type { IHomeFailed, IHomeToPlan } from '@/modules/Home/types';
 import type { WorkspaceTab } from '@/modules/Workspace/types';
 import type { CSSProperties } from 'react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatClock } from '@/modules/Chat';
 import { HOME_ITEMS, HOME_SCREEN } from '@/modules/Home/constants';
-import { dayKeyOf, homeOf } from '@/modules/Home/library';
+import { useSprintStories } from '@/modules/Home/hooks';
+import { dayKeyOf, homeOf, sprintWorkspaceOf } from '@/modules/Home/library';
 import { useStoryCheck, waitingDoubtsOf } from '@/modules/Plan';
 import { projectAppOf, projectMarkOf, useSiteIcons } from '@/modules/Project';
 import { dayLabelOf, flattenPlanSteps, RUN_HOW_KEYS, useRunActions } from '@/modules/Run';
@@ -22,6 +23,11 @@ export const useHomeViewModel = () => {
   const developed = useWorkspaceStore((state) => state.developedCases);
   const setDeveloped = useWorkspaceStore((state) => state.setDevelopedCases);
   const selectTab = useWorkspaceStore((state) => state.selectTab);
+  const addWorkspace = useWorkspaceStore((state) => state.addWorkspace);
+  const queuePlans = useWorkspaceStore((state) => state.queuePlans);
+  const planQueue = useWorkspaceStore((state) => state.planQueue);
+  const askingIds = useWorkspaceStore((state) => state.askingIds);
+  const sprints = useSprintStories();
   const { onRunPlan, onWalkByHand } = useRunActions();
   const { check } = useStoryCheck();
   const icons = useSiteIcons(
@@ -35,6 +41,8 @@ export const useHomeViewModel = () => {
     recent,
     shown: HOME.recentShown,
     unnamed: t('WORKSPACE.UNNAMED'),
+    sprints,
+    planning: { queued: planQueue, asking: askingIds },
   });
 
   const unknownKey = workspaces
@@ -129,6 +137,23 @@ export const useHomeViewModel = () => {
     if (props.tab !== null) selectTab(props.tab);
   };
 
+  const plan = ({ stories, now }: { stories: IHomeToPlan[]; now: number }) => {
+    const made = stories.flatMap((story, index) => {
+      const project = projects.find(({ id }) => id === story.projectId);
+
+      return project === undefined
+        ? []
+        : [sprintWorkspaceOf({ project, story, now: now + index })];
+    });
+
+    for (const workspace of made) addWorkspace(workspace);
+
+    queuePlans(made.map(({ id }) => id));
+
+    return made;
+  };
+  const sprintNames = [...new Set(home.toPlan.map(({ sprint }) => sprint))];
+
   const groups = [
     {
       id: 'asking',
@@ -137,6 +162,23 @@ export const useHomeViewModel = () => {
         id: item.workspaceId,
         ...HOME_ITEMS.asking,
         text: t('HOME.ASKING', { plan: item.plan, question: item.question }),
+        project: item.project,
+        action: t('HOME.ANSWER'),
+        onAction: () => {
+          open({ workspaceId: item.workspaceId, tab: 'chat' });
+        },
+      })),
+    },
+    {
+      id: 'toAnswer',
+      title: t('HOME.GROUP_TO_ANSWER'),
+      items: home.toAnswer.map((item) => ({
+        id: item.workspaceId,
+        ...HOME_ITEMS.toAnswer,
+        text: t(item.questions === 1 ? 'HOME.TO_ANSWER_ONE' : 'HOME.TO_ANSWER_OTHER', {
+          plan: item.plan,
+          count: item.questions,
+        }),
         project: item.project,
         action: t('HOME.ANSWER'),
         onAction: () => {
@@ -292,10 +334,54 @@ export const useHomeViewModel = () => {
         },
       })),
     },
+    {
+      id: 'drafting',
+      title: t('HOME.GROUP_DRAFTING'),
+      items: home.drafting.map((item) => ({
+        id: item.workspaceId,
+        ...HOME_ITEMS.drafting,
+        text: t(item.isQueued ? 'HOME.DRAFTING_QUEUED' : 'HOME.DRAFTING', {
+          key: item.key,
+        }),
+        project: item.project,
+        action: t('HOME.OPEN'),
+        onAction: () => {
+          open({ workspaceId: item.workspaceId, tab: 'chat' });
+        },
+      })),
+    },
+    {
+      id: 'toPlan',
+      title:
+        sprintNames.length === 1
+          ? t('HOME.GROUP_TO_PLAN_SPRINT', { sprint: sprintNames[0] ?? '' })
+          : t('HOME.GROUP_TO_PLAN'),
+      items: home.toPlan.map((item) => ({
+        id: `${item.projectId}-${item.key}`,
+        ...HOME_ITEMS.toPlan,
+        text: t('HOME.TO_PLAN', {
+          key: item.key,
+          title: item.title,
+          status: item.status,
+        }),
+        project: item.project,
+        action: t('HOME.PLAN'),
+        onAction: () => {
+          const [made] = plan({ stories: [item], now: Date.now() });
+
+          if (made !== undefined) open({ workspaceId: made.id, tab: 'chat' });
+        },
+      })),
+    },
   ]
     .filter(({ items }) => items.length > 0)
     .map((group) => ({
       ...group,
+      hasAction: group.id === 'toPlan' && group.items.length > 1,
+      actionLabel: t('HOME.PLAN_ALL', { count: group.items.length }),
+      onGroupAction: () => {
+        plan({ stories: home.toPlan, now: Date.now() });
+      },
       items: group.items.map((item) => ({
         ...item,
         project:

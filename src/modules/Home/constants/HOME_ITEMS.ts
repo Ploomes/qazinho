@@ -23,4 +23,7 @@ export const HOME_ITEMS: Record<
   changed: { icon: 'reload', tone: 'var(--attn)', animation: 'none' },
   byHand: { icon: 'manual', tone: 'var(--ink2)', animation: 'none' },
   toDevelop: { icon: 'pending', tone: 'var(--ink3)', animation: 'none' },
+  toAnswer: { icon: 'ask', tone: 'var(--attn)', animation: 'none' },
+  drafting: { icon: 'running', tone: 'var(--accent-ink)', animation: 'none' },
+  toPlan: { icon: 'plus', tone: 'var(--ink3)', animation: 'none' },
 };

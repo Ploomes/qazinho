@@ -9,4 +9,7 @@ export type HomeItemKind =
   | 'answered'
   | 'changed'
   | 'byHand'
-  | 'toDevelop';
+  | 'toDevelop'
+  | 'toAnswer'
+  | 'drafting'
+  | 'toPlan';

@@ -1,3 +1,4 @@
+import type { IQuestionsMessage } from '@/modules/Chat/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
 import { describe, expect, it } from 'vitest';
 import { homeOf } from '@/modules/Home/library';
@@ -22,8 +23,35 @@ const home = (
     recent: [],
     shown: 4,
     unnamed: 'New plan',
+    sprints: {},
+    planning: { queued: [], asking: [] },
     ...over,
   });
+
+const ROUND: IQuestionsMessage = {
+  id: 'm-2',
+  kind: 'questions',
+  at: '10:00',
+  questions: [
+    {
+      header: 'Frete',
+      question: 'O frete grátis vale para todo o país?',
+      options: [
+        { label: 'Sim', description: 'Todo CEP.' },
+        { label: 'Não', description: 'Só capitais.' },
+      ],
+      isMultiSelect: false,
+    },
+  ],
+  answers: null,
+};
+
+const STORY = {
+  key: 'SHOP-892',
+  title: 'Frete grátis acima de R$ 200',
+  status: 'Pronto para dev',
+  url: 'https://acme.atlassian.net/browse/SHOP-892',
+};
 
 describe('homeOf', () => {
   it('puts a question the agent asks in the group that waits for the QA', () => {
@@ -280,7 +308,74 @@ describe('homeOf', () => {
         recent: [{ workspaceId: 'w1', at: 0 }],
         shown: 4,
         unnamed: 'New plan',
+        sprints: {},
+        planning: { queued: [], asking: [] },
       }),
     ).toMatchObject({ failed: [], recent: [] });
+  });
+
+  it('lists the stories of the open sprint that no plan of the project has', () => {
+    const planned = {
+      ...makeWorkspace([]),
+      issue: { key: 'SHOP-893', title: 'Endereço', source: 'jira' as const, url: '' },
+    };
+
+    expect(
+      home([planned], {
+        sprints: {
+          p1: {
+            sprint: 'Sprint 42',
+            stories: [STORY, { ...STORY, key: 'SHOP-893', title: 'Endereço' }],
+          },
+        },
+      }).toPlan,
+    ).toEqual([
+      {
+        ...STORY,
+        kind: 'toPlan',
+        projectId: 'p1',
+        project: 'Loja Web',
+        sprint: 'Sprint 42',
+      },
+    ]);
+  });
+
+  it('offers nothing to plan with no open sprint, or none read', () => {
+    expect(home([], { sprints: { p1: { sprint: null, stories: [] } } }).toPlan).toEqual(
+      [],
+    );
+    expect(home([]).toPlan).toEqual([]);
+  });
+
+  it('says a chat waits for the QA’s answers, and a story plan being written or queued', () => {
+    const waiting = { ...makeWorkspace([]), id: 'w1', chat: [ROUND] };
+    const writing = {
+      ...makeWorkspace([]),
+      id: 'w2',
+      issue: { key: 'SHOP-892', title: 'Frete', source: 'jira' as const, url: '' },
+    };
+    const queued = { ...writing, id: 'w3', issue: { ...writing.issue, key: 'SHOP-894' } };
+    const shown = home([waiting, writing, queued], {
+      planning: { queued: ['w3'], asking: ['w2'] },
+    });
+
+    expect(shown.toAnswer).toEqual([
+      expect.objectContaining({ workspaceId: 'w1', kind: 'toAnswer', questions: 1 }),
+    ]);
+    expect(shown.drafting.map(({ key, isQueued }) => [key, isQueued])).toEqual([
+      ['SHOP-892', false],
+      ['SHOP-894', true],
+    ]);
+  });
+
+  it('does NOT call a chat answering a plan that exists a plan being written', () => {
+    const answering = {
+      ...makeWorkspace(),
+      issue: { key: 'SHOP-892', title: 'Frete', source: 'jira' as const, url: '' },
+    };
+
+    expect(
+      home([answering], { planning: { queued: [], asking: ['w1'] } }).drafting,
+    ).toEqual([]);
   });
 });

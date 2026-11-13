@@ -329,6 +329,8 @@ export const useSidebarViewModel = () => {
       recent: [],
       shown: 0,
       unnamed: '',
+      sprints: {},
+      planning: { queued: [], asking: [] },
     }),
   );
 

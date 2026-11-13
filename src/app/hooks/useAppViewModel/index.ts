@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppActions, useAssistantEvents, useQuestionRoom } from '@/modules/Assistant';
 import { useBuildEvents } from '@/modules/Build';
+import { usePlanQueue } from '@/modules/Home';
 import { useIslandSync } from '@/modules/Island';
 import { useMemoryKeeping } from '@/modules/Memory/hooks/useMemoryKeeping';
 import { useOutsideCalls } from '@/modules/Outside';
@@ -64,6 +65,7 @@ export const useAppViewModel = () => {
   useVariables();
   useSkills();
   useTemplates();
+  usePlanQueue();
   useLanguage();
   useKeybinds();
   useRunTicker();

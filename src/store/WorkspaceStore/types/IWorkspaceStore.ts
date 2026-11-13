@@ -54,6 +54,8 @@ export interface IWorkspaceStore {
   isPanelOpen: boolean;
   panelWidth: number;
   askingIds: string[];
+  planQueue: string[];
+  planning: string | null;
   liveTexts: Record<string, string>;
   activities: Record<string, IAgentActivity[]>;
   bugFlashes: Record<string, IBugFlash[]>;
@@ -95,6 +97,8 @@ export interface IWorkspaceStore {
   }) => void;
   removeWorkspacesOf: (projectId: string) => void;
   selectTab: (tab: WorkspaceTab) => void;
+  queuePlans: (workspaceIds: string[]) => void;
+  takeQueued: (workspaceId: string) => void;
   sendMessage: (props: {
     workspaceId: string;
     text: string;

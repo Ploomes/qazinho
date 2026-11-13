@@ -5,15 +5,20 @@ import type {
   IHomeAsking,
   IHomeChanged,
   IHomeByHand,
+  IHomeDrafting,
   IHomeFailed,
   IHomePaused,
   IHomeRecent,
   IHomeRunning,
+  IHomeToAnswer,
   IHomeToContinue,
   IHomeToDevelop,
+  IHomeToPlan,
+  ISprintRead,
 } from '@/modules/Home/types';
 import type { IProject } from '@/modules/Project/types';
 import type { IWorkspace } from '@/modules/Workspace/types';
+import { openRoundOf } from '@/modules/Assistant/library';
 import { changeNameOf, heldDoubtsOf } from '@/modules/Plan/library';
 import {
   currentStepOf,
@@ -24,8 +29,8 @@ import {
 import { workspaceMeta } from '@/modules/Workspace/library';
 
 /**
- * O que o Início mostra: em cada plano de cada projeto, o que pede o QA agora, e os
- * planos abertos por último, os mais novos primeiro.
+ * O que o Início mostra: o que pede o QA em cada plano, as histórias da sprint sem plano,
+ * e os planos abertos por último, os mais novos primeiro.
  */
 export function homeOf(props: {
   projects: IProject[];
@@ -34,8 +39,12 @@ export function homeOf(props: {
   recent: { workspaceId: string; at: number }[];
   shown: number;
   unnamed: string;
+  sprints: Record<string, ISprintRead>;
+  planning: { queued: string[]; asking: string[] };
 }): IHome {
   const asking: IHomeAsking[] = [];
+  const toAnswer: IHomeToAnswer[] = [];
+  const drafting: IHomeDrafting[] = [];
   const going: (IHomeRunning | IHomePaused)[] = [];
   const toContinue: IHomeToContinue[] = [];
   const failed: IHomeFailed[] = [];
@@ -58,6 +67,16 @@ export function homeOf(props: {
     const live =
       workspace.live !== null && !workspace.live.isDone ? workspace.live : null;
     const developed = props.developed[workspace.id];
+    const round = live === null ? openRoundOf(workspace) : [];
+    const isQueued = props.planning.queued.includes(workspace.id);
+    const isDrafting =
+      isQueued ||
+      (props.planning.asking.includes(workspace.id) && workspace.plan.length === 0);
+
+    if (round.length > 0)
+      toAnswer.push({ ...base, kind: 'toAnswer', questions: round.length });
+    else if (isDrafting && workspace.issue !== null)
+      drafting.push({ ...base, kind: 'drafting', key: workspace.issue.key, isQueued });
 
     if (live?.question !== undefined)
       asking.push({ ...base, kind: 'asking', question: live.question.question });
@@ -114,6 +133,7 @@ export function homeOf(props: {
 
   return {
     asking,
+    toAnswer,
     going,
     toContinue,
     failed,
@@ -122,8 +142,41 @@ export function homeOf(props: {
     changed,
     byHand,
     toDevelop,
+    drafting,
+    toPlan: toPlanOf(props),
     recent: recentOf(props).slice(0, props.shown),
   };
+}
+
+function toPlanOf(props: {
+  projects: IProject[];
+  workspaces: IWorkspace[];
+  sprints: Record<string, ISprintRead>;
+}): IHomeToPlan[] {
+  return props.projects.flatMap((project) => {
+    const read = props.sprints[project.id];
+    const planned = new Set(
+      props.workspaces.flatMap((workspace) =>
+        workspace.projectId === project.id && workspace.issue !== null
+          ? [workspace.issue.key]
+          : [],
+      ),
+    );
+
+    if (read === undefined || read.sprint === null) return [];
+
+    const sprint = read.sprint;
+
+    return read.stories
+      .filter(({ key }) => !planned.has(key))
+      .map((story) => ({
+        ...story,
+        kind: 'toPlan' as const,
+        projectId: project.id,
+        project: project.name,
+        sprint,
+      }));
+  });
 }
 
 function runningOf(props: {

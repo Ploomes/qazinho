@@ -50,6 +50,8 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   isPanelOpen: true,
   panelWidth: PANEL.defaultWidth,
   askingIds: [],
+  planQueue: [],
+  planning: null,
   liveTexts: {},
   activities: {},
   bugFlashes: {},
@@ -76,6 +78,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
     set((state) => ({
       removingWorkspaceId: null,
       workspaces: state.workspaces.filter(({ id }) => id !== workspaceId),
+      planQueue: state.planQueue.filter((id) => id !== workspaceId),
     })),
 
   renameWorkspace: ({ workspaceId, name }) =>
@@ -166,6 +169,20 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
     })),
 
   selectTab: (tab) => set(tab === 'chat' ? { isPanelOpen: true } : { panelTab: tab }),
+
+  queuePlans: (workspaceIds) =>
+    set((state) => ({
+      planQueue: [
+        ...state.planQueue,
+        ...workspaceIds.filter((id) => !state.planQueue.includes(id)),
+      ],
+    })),
+
+  takeQueued: (workspaceId) =>
+    set((state) => ({
+      planQueue: state.planQueue.filter((id) => id !== workspaceId),
+      planning: workspaceId,
+    })),
 
   noteActivity: ({ workspaceId, tool, target }) =>
     set((state) => ({
