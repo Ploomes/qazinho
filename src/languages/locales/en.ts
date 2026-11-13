@@ -207,6 +207,8 @@ export const en = {
     RUN_DEVELOPED_HINT: 'Only what is already recorded.',
     REDEVELOP: 'Develop everything again',
     WAITING_APP: 'Waiting for the app',
+    NEEDS_APP: 'Choose the app',
+    NEEDS_APP_HINT: 'Say where the app runs, then develop the plan.',
     WAITING_APP_HINT: '{{key}} has not arrived for testing yet.',
     DEVELOP_NOW: 'Develop now',
     DEVELOP_NOW_HINT: 'The agent walks the app as it is today.',

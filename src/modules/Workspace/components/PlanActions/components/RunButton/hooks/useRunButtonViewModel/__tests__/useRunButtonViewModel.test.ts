@@ -115,6 +115,34 @@ describe('useRunButtonViewModel', () => {
     });
   });
 
+  /** Um plano escrito de uma história antes do app: desenvolver começa por dizer onde ele roda. */
+  describe('a plan with no app yet', () => {
+    it('asks for the app on its face, and opens where the QA says it', () => {
+      const onPickApp = vi.fn();
+      const { onRun, onRunPlan, result } = render({
+        developed: 0,
+        toDevelop: 3,
+        waitsFor: 'SHOP-878',
+        needsApp: true,
+        onPickApp,
+      });
+
+      expect(result.current).toMatchObject({
+        runLabel: 'Choose the app',
+        tip: 'Say where the app runs, then develop the plan.',
+        hasChoices: false,
+      });
+
+      act(() => {
+        result.current.onRun();
+      });
+
+      expect(onPickApp).toHaveBeenCalledOnce();
+      expect(onRun).not.toHaveBeenCalled();
+      expect(onRunPlan).not.toHaveBeenCalled();
+    });
+  });
+
   describe('onRun', () => {
     it('runs the plan from the face of the button', () => {
       const { onRun, onRunWithAgent, result } = render();

@@ -55,6 +55,46 @@ describe('usePlanActionsViewModel', () => {
     expect(result.current.canRun).toBe(false);
   });
 
+  it('asks for the app of a plan written before it, and opens the project where it goes', () => {
+    useWorkspaceStore.setState({ workspaces: [{ ...makeWorkspace(), targetId: '' }] });
+
+    const { result } = renderHook(() => usePlanActionsViewModel());
+
+    expect(result.current).toMatchObject({ needsApp: true, canExplore: false });
+
+    act(() => {
+      result.current.onPickApp();
+    });
+
+    expect(useAppStore.getState()).toMatchObject({
+      modal: 'project',
+      editingProjectId: 'p1',
+      projectSection: 'general',
+    });
+  });
+
+  it('says what story a plan ahead of the app waits for', () => {
+    useWorkspaceStore.setState({
+      workspaces: [
+        {
+          ...makeWorkspace(),
+          storyStage: 'ahead',
+          issue: {
+            key: 'SHOP-878',
+            title: 'Coupons',
+            source: 'jira',
+            url: 'https://shop.atlassian.net/browse/SHOP-878',
+          },
+        },
+      ],
+    });
+
+    expect(renderHook(() => usePlanActionsViewModel()).result.current).toMatchObject({
+      waitsFor: 'SHOP-878',
+      needsApp: false,
+    });
+  });
+
   describe('onRun', () => {
     it('starts the run of the workspace on screen', () => {
       const { result } = renderHook(() => usePlanActionsViewModel());

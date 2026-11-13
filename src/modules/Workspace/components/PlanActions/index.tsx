@@ -18,6 +18,8 @@ export const PlanActions: React.FC = () => {
     toDevelopCount,
     toContinueCount,
     waitsFor,
+    needsApp,
+    onPickApp,
     canExplore,
     exploreLabel,
     exploreTip,
@@ -61,6 +63,8 @@ export const PlanActions: React.FC = () => {
             toDevelop={toDevelopCount}
             toContinue={toContinueCount}
             waitsFor={waitsFor}
+            needsApp={needsApp}
+            onPickApp={onPickApp}
             onRun={onRun}
             onRunPlan={onRunPlan}
             onRunDeveloped={onRunDeveloped}

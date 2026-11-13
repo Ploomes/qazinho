@@ -21,6 +21,7 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
   } = props;
   const canExplore = props.canExplore === true;
   const waitsFor = props.waitsFor ?? null;
+  const needsApp = props.needsApp === true;
   const { t } = useTranslation();
   const [isOpen, setOpen] = useState(false);
   const runCombo = useSettingsStore(
@@ -31,8 +32,9 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
   });
   const isDeveloping = toDevelop > 0;
   const isContinuing = toContinue > 0;
-  const isWaiting = waitsFor !== null && isDeveloping && !isContinuing;
-  const isMenuOpen = isOpen && canRun && (canChoose || canExplore || isWaiting);
+  const isWaiting = waitsFor !== null && isDeveloping && !isContinuing && !needsApp;
+  const hasChoices = !needsApp && (canChoose || canExplore || isWaiting);
+  const isMenuOpen = isOpen && canRun && hasChoices;
   const planTitle = isWaiting
     ? t('WORKSPACE.DEVELOP_NOW')
     : !isDeveloping
@@ -59,20 +61,24 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
       ...(isWaiting ? ['run-button--waiting'] : []),
     ].join(' '),
     style: { '--run-menu-width': `${String(RUN_BUTTON.menuWidthPx)}px` } as CSSProperties,
-    runLabel: isContinuing
-      ? t('WORKSPACE.CONTINUE_RUN')
-      : isWaiting
-        ? t('WORKSPACE.WAITING_APP')
-        : planTitle,
+    runLabel: needsApp
+      ? t('WORKSPACE.NEEDS_APP')
+      : isContinuing
+        ? t('WORKSPACE.CONTINUE_RUN')
+        : isWaiting
+          ? t('WORKSPACE.WAITING_APP')
+          : planTitle,
     isDisabled: !canRun,
     tip: !canRun
       ? t('WORKSPACE.RUN_NO_STEPS')
-      : isContinuing
-        ? continueHint
-        : isWaiting
-          ? t('WORKSPACE.WAITING_APP_HINT', { key: waitsFor })
-          : planHint,
-    hasChoices: canChoose || canExplore || isWaiting,
+      : needsApp
+        ? t('WORKSPACE.NEEDS_APP_HINT')
+        : isContinuing
+          ? continueHint
+          : isWaiting
+            ? t('WORKSPACE.WAITING_APP_HINT', { key: waitsFor })
+            : planHint,
+    hasChoices,
     foldClassName: canChoose
       ? 'run-button__fold'
       : 'run-button__fold run-button__fold--narrow',
@@ -168,11 +174,12 @@ export const useRunButtonViewModel = (props: IRunButtonProps) => {
     onRun: () => {
       if (!canRun) return;
 
-      if (isWaiting) setOpen(!isOpen);
+      if (needsApp) props.onPickApp?.();
+      else if (isWaiting) setOpen(!isOpen);
       else onRun();
     },
     onToggle: () => {
-      if (canRun && (canChoose || canExplore || isWaiting)) setOpen(!isOpen);
+      if (canRun && hasChoices) setOpen(!isOpen);
     },
   };
 };

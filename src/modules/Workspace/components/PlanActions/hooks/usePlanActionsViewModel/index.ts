@@ -8,7 +8,7 @@ import {
 import { NO_CASES } from '@/modules/Workspace/screens/Workspace/constants';
 import { EXPLORATION } from '@/shared/constants';
 import { useSelectedWorkspacePart } from '@/shared/hooks/useSelectedWorkspacePart';
-import { useWorkspaceStore } from '@/store';
+import { useAppStore, useWorkspaceStore } from '@/store';
 
 export const usePlanActionsViewModel = () => {
   const { t } = useTranslation();
@@ -22,7 +22,17 @@ export const usePlanActionsViewModel = () => {
     toContinue:
       runToContinueOf({ plan: opened.plan, runs: opened.runs })?.caseIds.length ?? 0,
     waitsFor: opened.storyStage === 'ahead' ? (opened.issue?.key ?? null) : null,
+    projectId: opened.projectId,
+    targetId: opened.targetId,
   }));
+  const hasApp = useAppStore((state) =>
+    state.projects.some(
+      ({ id, targets }) =>
+        id === workspace?.projectId &&
+        targets.some((target) => target.id === workspace.targetId),
+    ),
+  );
+  const openProjectSection = useAppStore((state) => state.openProjectSection);
   const developedIds = useWorkspaceStore(
     (state) => state.developedCases[workspace?.id ?? ''] ?? NO_CASES,
   );
@@ -48,7 +58,12 @@ export const usePlanActionsViewModel = () => {
     toDevelopCount: stage.toDevelop.length,
     toContinueCount: toContinue,
     waitsFor: workspace?.waitsFor ?? null,
-    canExplore: workspace !== null && !isLive,
+    needsApp: workspace !== null && !hasApp,
+    onPickApp: () => {
+      if (workspace !== null)
+        openProjectSection({ projectId: workspace.projectId, section: 'general' });
+    },
+    canExplore: workspace !== null && !isLive && hasApp,
     exploreLabel: t('WORKSPACE.EXPLORE'),
     exploreTip: t('WORKSPACE.EXPLORE_TIP', { minutes: EXPLORATION.minutes }),
     onRun,

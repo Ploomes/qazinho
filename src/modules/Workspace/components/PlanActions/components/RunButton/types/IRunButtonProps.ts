@@ -14,5 +14,7 @@ export interface IRunButtonProps {
   onRunWithAgent: () => void;
   canExplore?: boolean;
   waitsFor?: string | null;
+  needsApp?: boolean;
+  onPickApp?: () => void;
   onExplore?: () => void;
 }
