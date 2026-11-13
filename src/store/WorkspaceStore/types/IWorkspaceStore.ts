@@ -53,6 +53,7 @@ export interface IWorkspaceStore {
   readSteps: Record<string, { step: CodeStep | JiraStep; bytes: number }>;
   lookingAt: Record<string, 'android' | 'ios'>;
   chatDevices: Record<string, { streamUrl: string; address: string | null }>;
+  storyReadAt: Record<string, number>;
   removingWorkspaceId: string | null;
   addWorkspace: (workspace: IWorkspace) => void;
   loadWorkspaces: (workspaces: IWorkspace[]) => void;
@@ -172,6 +173,7 @@ export interface IWorkspaceStore {
   markStreaming: (props: { workspaceId: string; url: string }) => void;
   markManual: (props: { workspaceId: string; turn: IManualTurn }) => void;
   setDoubts: (props: { workspaceId: string; doubts: IPlanDoubt[] }) => void;
+  markStoryRead: (props: { workspaceId: string; at: number }) => void;
   markScreens: (props: { workspaceId: string; screens: IRunScreen[] }) => void;
   markAddress: (props: { workspaceId: string; url: string }) => void;
   landNote: (props: { workspaceId: string; text: string; who: string }) => void;

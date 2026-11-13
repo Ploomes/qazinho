@@ -3,7 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { Button, EmptyState, Icon, IconButton } from '@/shared/components/atoms';
 import { ToTop, Tooltip } from '@/shared/components/molecules';
 import { MOTION } from '@/shared/constants';
-import { PlanCase, PublishModal, UndoToast } from './components';
+import {
+  PlanCase,
+  PlanDoubts,
+  PlanStrategy,
+  PublishModal,
+  UndoToast,
+} from './components';
 import { usePlanViewModel } from './hooks';
 import './styles.css';
 
@@ -32,6 +38,10 @@ export const Plan: React.FC = () => {
     isLocked,
     lockedLabel,
     isEmpty,
+    workspaceId,
+    strategy,
+    doubts,
+    issue,
     sources,
     onToggleCase,
     onReorder,
@@ -168,6 +178,7 @@ export const Plan: React.FC = () => {
                 )}
               </div>
             )}
+            {strategy !== null && <PlanStrategy strategy={strategy} />}
           </div>
 
           <AnimatePresence initial={false}>
@@ -261,6 +272,14 @@ export const Plan: React.FC = () => {
               </motion.div>
             )}
           </AnimatePresence>
+
+          <PlanDoubts
+            workspaceId={workspaceId}
+            doubts={doubts}
+            issue={issue}
+            plan={plan}
+            isLocked={isLocked}
+          />
 
           {isLocked && (
             <div className="plan__locked">

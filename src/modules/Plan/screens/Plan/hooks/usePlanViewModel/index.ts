@@ -25,6 +25,7 @@ import {
 } from '@/modules/Plan/library';
 import {
   PLAN_NO_CASES,
+  PLAN_NO_DOUBTS,
   PLAN_NO_FILES,
   PLAN_SOURCE,
 } from '@/modules/Plan/screens/Plan/constants';
@@ -60,6 +61,8 @@ export const usePlanViewModel = () => {
     plainValues: opened.plainValues,
     issue: opened.issue,
     design: opened.design,
+    strategy: opened.strategy ?? null,
+    doubts: opened.doubts,
     isLocked: opened.live !== null && !opened.live.isDone,
     liveOutcomes: opened.live?.outcomes ?? null,
     liveDoingIndex: opened.live?.doingIndex ?? -1,
@@ -388,6 +391,10 @@ export const usePlanViewModel = () => {
     isLocked,
     lockedLabel: t('PLAN.LOCKED', { agent }),
     isEmpty: plan.length === 0,
+    workspaceId: workspaceId ?? '',
+    strategy: workspace?.strategy ?? null,
+    doubts: workspace?.doubts ?? PLAN_NO_DOUBTS,
+    issue,
     sources: [
       ...(sourcePage === null
         ? []

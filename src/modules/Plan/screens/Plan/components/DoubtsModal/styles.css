@@ -1,0 +1,48 @@
+.doubts-modal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.doubts-modal__part {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.doubts-modal__label {
+  color: var(--ink);
+  font: var(--font-ui-md);
+}
+
+.doubts-modal__mention {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink2);
+  font: var(--font-ui-sm);
+}
+
+.doubts-modal__doubt {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.doubts-modal__doubt > :last-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.doubts-modal__id {
+  flex: none;
+  color: var(--ink2);
+  font: var(--font-meta-sm);
+}
+
+.doubts-modal__note {
+  margin: 0;
+  color: var(--ink3);
+  font: var(--font-ui-xs);
+  text-wrap: pretty;
+}

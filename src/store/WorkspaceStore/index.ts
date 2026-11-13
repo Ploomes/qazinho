@@ -61,6 +61,7 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
   readSteps: {},
   lookingAt: {},
   chatDevices: {},
+  storyReadAt: {},
   removingWorkspaceId: null,
 
   addWorkspace: (workspace) =>
@@ -709,6 +710,9 @@ export const useWorkspaceStore = create<IWorkspaceStore>((set) => ({
         change: (workspace) => ({ ...workspace, doubts }),
       }),
     })),
+
+  markStoryRead: ({ workspaceId, at }) =>
+    set((state) => ({ storyReadAt: { ...state.storyReadAt, [workspaceId]: at } })),
 
   markScreens: ({ workspaceId, screens }) =>
     set((state) => ({
